@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4cb98ac2902a338b410ee2a3a4db360f32fd6701",
+  "sourceRevision": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16308,
-    "edges": 64937,
+    "nodes": 16311,
+    "edges": 64947,
     "byNodeType": {
       "Artifact": 6787,
       "Command": 293,
-      "Commit": 4436,
+      "Commit": 4439,
       "Contract": 134,
       "Document": 939,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5381,
-      "CHANGED": 24894,
+      "CHANGED": 24901,
       "CONTAINS": 6808,
       "DECLARES": 293,
       "DEFINED_IN": 1737,
       "DEPENDS_ON": 69,
       "EXECUTES": 1126,
       "HANDLED_BY": 929,
-      "HAS_COMMIT": 4436,
+      "HAS_COMMIT": 4439,
       "IMPLEMENTS": 124,
       "IMPORTS": 7311,
       "INHERITS": 45,
@@ -40482,18 +40482,18 @@
       "extension": ".md",
       "bytes": 59888,
       "lines": 191,
-      "version": "37bed7a8f6e169c7",
+      "version": "51e47ce805d684b0",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "37bed7a8f6e169c7"
+          "version": "51e47ce805d684b0"
         }
       ],
-      "lastChangedAt": "2026-10-17T08:47:28.000Z",
+      "lastChangedAt": "2026-10-17T09:02:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4cb98ac2902a338b410ee2a3a4db360f32fd6701"
+      "lastChangedCommit": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -132108,18 +132108,18 @@
       "extension": ".js",
       "bytes": 17775,
       "lines": 270,
-      "version": "0e3ad647581b9921",
+      "version": "2f8df22bade33d7a",
       "text": true,
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "0e3ad647581b9921"
+          "version": "2f8df22bade33d7a"
         }
       ],
-      "lastChangedAt": "2026-10-16T16:18:55.000Z",
+      "lastChangedAt": "2026-10-17T09:02:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      "lastChangedCommit": "bcb7250445084b6aaf4e2d4f182b7acd88bed8ae"
     },
     {
       "key": "Artifact:test/city-scene-browser.js",
@@ -155036,18 +155036,18 @@
       "extension": ".js",
       "bytes": 101431,
       "lines": 1287,
-      "version": "6e55c70837b0d57d",
+      "version": "c8d017dd82c77344",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "6e55c70837b0d57d"
+          "version": "c8d017dd82c77344"
         }
       ],
-      "lastChangedAt": "2026-10-17T08:47:28.000Z",
+      "lastChangedAt": "2026-10-17T09:02:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4cb98ac2902a338b410ee2a3a4db360f32fd6701"
+      "lastChangedCommit": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -190594,6 +190594,22 @@
       ]
     },
     {
+      "key": "Commit:6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "type": "Commit",
+      "id": "6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "label": "Regenerate enterprise knowledge after reviewed gameplay repairs",
+      "title": "Regenerate enterprise knowledge after reviewed gameplay repairs",
+      "date": "2026-10-17T08:51:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "provenance": [
+        {
+          "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6d129e9095ee34c543772872e50ae6e90d4601e6"
+        }
+      ]
+    },
+    {
       "key": "Commit:6d20477794c53ba17f48ce08cede2b1e3ae2f260",
       "type": "Commit",
       "id": "6d20477794c53ba17f48ce08cede2b1e3ae2f260",
@@ -208482,6 +208498,22 @@
       ]
     },
     {
+      "key": "Commit:ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
+      "type": "Commit",
+      "id": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
+      "label": "Pin enterprise review after city quest expectation repair",
+      "title": "Pin enterprise review after city quest expectation repair",
+      "date": "2026-10-17T09:02:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
+      "provenance": [
+        {
+          "commit": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db"
+        }
+      ]
+    },
+    {
       "key": "Commit:ab7550dccd5c92008d3e055cb07ea9eec786b630",
       "type": "Commit",
       "id": "ab7550dccd5c92008d3e055cb07ea9eec786b630",
@@ -213422,6 +213454,22 @@
         {
           "commit": "bcb514b2306f153e14d1417c17d8f03de1fd2bc6",
           "url": "https://github.com/OmertaDev/Omerta/commit/bcb514b2306f153e14d1417c17d8f03de1fd2bc6"
+        }
+      ]
+    },
+    {
+      "key": "Commit:bcb7250445084b6aaf4e2d4f182b7acd88bed8ae",
+      "type": "Commit",
+      "id": "bcb7250445084b6aaf4e2d4f182b7acd88bed8ae",
+      "label": "Keep city quest validation aligned with the recovery package",
+      "title": "Keep city quest validation aligned with the recovery package",
+      "date": "2026-10-17T09:02:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bcb7250445084b6aaf4e2d4f182b7acd88bed8ae",
+      "provenance": [
+        {
+          "commit": "bcb7250445084b6aaf4e2d4f182b7acd88bed8ae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bcb7250445084b6aaf4e2d4f182b7acd88bed8ae"
         }
       ]
     },
@@ -243086,12 +243134,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 191,
-      "version": "37bed7a8f6e169c7",
+      "version": "51e47ce805d684b0",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "37bed7a8f6e169c7"
+          "version": "51e47ce805d684b0"
         }
       ]
     },
@@ -258284,6 +258332,9 @@
           "commit": "6d09e2e338ad6ec509200a1be480dca1c417e367"
         },
         {
+          "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
+        },
+        {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
         },
         {
@@ -260504,6 +260555,9 @@
           "commit": "6d09e2e338ad6ec509200a1be480dca1c417e367"
         },
         {
+          "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
+        },
+        {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
         },
         {
@@ -262722,6 +262776,9 @@
         },
         {
           "commit": "6d09e2e338ad6ec509200a1be480dca1c417e367"
+        },
+        {
+          "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
         },
         {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
@@ -265569,6 +265626,9 @@
         },
         {
           "commit": "6d09e2e338ad6ec509200a1be480dca1c417e367"
+        },
+        {
+          "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
         },
         {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
@@ -280619,7 +280679,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4cb98ac2902a338b410ee2a3a4db360f32fd6701",
+      "revision": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
       "currentBranch": "codex/economy-enterprise-spaces-oct15",
       "defaultBranch": "main",
       "visibility": "public",
@@ -318629,12 +318689,12 @@
       "id": "test/city-rpg.js",
       "label": "test/city-rpg.js",
       "lines": 270,
-      "version": "0e3ad647581b9921",
+      "version": "2f8df22bade33d7a",
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "0e3ad647581b9921"
+          "version": "2f8df22bade33d7a"
         }
       ]
     },
@@ -454230,6 +454290,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6d20477794c53ba17f48ce08cede2b1e3ae2f260",
       "to": "Artifact:src/depotacquisitionruntime.js",
       "provenance": {
@@ -497462,6 +497554,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ab7550dccd5c92008d3e055cb07ea9eec786b630",
       "to": "Artifact:docs/release/readiness-work/tooling-repairs.json",
       "provenance": {
@@ -525650,6 +525758,14 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "bcb514b2306f153e14d1417c17d8f03de1fd2bc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bcb7250445084b6aaf4e2d4f182b7acd88bed8ae",
+      "to": "Artifact:test/city-rpg.js",
+      "provenance": {
+        "commit": "bcb7250445084b6aaf4e2d4f182b7acd88bed8ae"
       }
     },
     {
@@ -692239,6 +692355,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6d129e9095ee34c543772872e50ae6e90d4601e6",
+      "provenance": {
+        "commit": "6d129e9095ee34c543772872e50ae6e90d4601e6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6d20477794c53ba17f48ce08cede2b1e3ae2f260",
       "provenance": {
         "commit": "6d20477794c53ba17f48ce08cede2b1e3ae2f260"
@@ -701183,6 +701307,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db",
+      "provenance": {
+        "commit": "ab4fe36a2a5c575487b28ddec0a3681a3ec2c9db"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ab7550dccd5c92008d3e055cb07ea9eec786b630",
       "provenance": {
         "commit": "ab7550dccd5c92008d3e055cb07ea9eec786b630"
@@ -703650,6 +703782,14 @@
       "to": "Commit:bcb514b2306f153e14d1417c17d8f03de1fd2bc6",
       "provenance": {
         "commit": "bcb514b2306f153e14d1417c17d8f03de1fd2bc6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:bcb7250445084b6aaf4e2d4f182b7acd88bed8ae",
+      "provenance": {
+        "commit": "bcb7250445084b6aaf4e2d4f182b7acd88bed8ae"
       }
     },
     {

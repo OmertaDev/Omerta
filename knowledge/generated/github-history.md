@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4cb98ac2902a`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ab4fe36a2a5c`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4436 |
+| Commits in clone | 4439 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-17 — Bind enterprise recovery review to repaired gameplay sources |
+| Latest commit | 2026-10-17 — Pin enterprise review after city quest expectation repair |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3473 |
+| OmertaDev | 3476 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 118 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 737 | historical |
-| knowledge/generated/graph-summary.md | 737 | historical |
-| knowledge/generated/graph.json | 737 | historical |
-| knowledge/generated/inventory.md | 737 | historical |
+| knowledge/generated/github-history.md | 738 | historical |
+| knowledge/generated/graph-summary.md | 738 | historical |
+| knowledge/generated/graph.json | 738 | historical |
+| knowledge/generated/inventory.md | 738 | historical |
 | [SPEC.md](../../SPEC.md) | 579 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 476 | yes |
@@ -55,8 +55,8 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 110 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 108 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 111 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 109 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 103 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 95 | yes |
