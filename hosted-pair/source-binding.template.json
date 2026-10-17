@@ -1,0 +1,66 @@
+{
+  "schema": "omerta.hosted-source-pair-binding.v1",
+  "phase": "PREPARATION_ONLY_UNBOUND",
+  "platform": "linux",
+  "arch": "x64",
+  "runtime": {
+    "node": {
+      "path": null,
+      "version": "v22.23.3",
+      "sha256": null,
+      "provenance": null
+    },
+    "git": {
+      "path": null,
+      "sha256": null
+    },
+    "npmCli": {
+      "path": null,
+      "sha256": null
+    },
+    "path": null
+  },
+  "independentApproval": {
+    "driverReferenceSHA256": "f40e92b119b30b203542011bc16859762680cccd9f7ec138eed4f2c9e647e0ca",
+    "receipt": null
+  },
+  "sides": {
+    "candidate": {
+      "source": "19f174540b0b65870800317ed98085ef36696976",
+      "tree": "c04003a12493eea9b725daa016a32159ec5e64b4",
+      "directory": null,
+      "expectedSchema": {
+        "blob": "1809d354c1876cdef832792e0047586d209baaae",
+        "rawSHA256": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
+        "rawBytes": 589940,
+        "mode": "100755"
+      },
+      "expectedDependencies": {
+        "path": null,
+        "bytes": 239089,
+        "sha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7"
+      }
+    },
+    "predecessor": {
+      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "tree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
+      "directory": null,
+      "expectedSchema": {
+        "blob": "1809d354c1876cdef832792e0047586d209baaae",
+        "rawSHA256": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
+        "rawBytes": 589940,
+        "mode": "100755"
+      },
+      "expectedDependencies": {
+        "path": null,
+        "bytes": 239089,
+        "sha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7"
+      }
+    }
+  },
+  "referenceSourcesOnly": {
+    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+    "actualGUIFinal": "19f174540b0b65870800317ed98085ef36696976",
+    "actualDeployedPredecessor": null
+  }
+}

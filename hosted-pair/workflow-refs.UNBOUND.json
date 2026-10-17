@@ -1,0 +1,10 @@
+{
+  "schema": "omerta.gui19f-d8-workflow-template.v1",
+  "enabled": false,
+  "source": "19f174540b0b65870800317ed98085ef36696976",
+  "predecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "operationalAuthority": false,
+  "rootTemplateReviewSHA256": null,
+  "checkoutActionSHA": null,
+  "uploadActionSHA": null
+}

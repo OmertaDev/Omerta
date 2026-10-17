@@ -1,0 +1,41 @@
+{
+  "phase": "FROZEN_PREPARATION_ONLY_STRICT_SOURCE_PROOF_ADAPTER_NOT_EXECUTABLE_OR_ADMISSION",
+  "frozenAt": "2026-10-17T03:54:06.3876696Z",
+  "directory": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-proof-adapter-preparation-4774d2ca-49b0-4799-a282-d43ba3456878",
+  "files": [
+    {
+      "file": "input.template.json",
+      "bytes": 1224,
+      "sha256": "c0b9ed533a79f58bb07ddf6f2246533f89319565042bcb2c43a625fed75e17b3"
+    },
+    {
+      "file": "INTEGRATION.md",
+      "bytes": 5136,
+      "sha256": "6d185a83917f6c29cc8e2fa01df485e43dbea4cc5759b3883c25433385ceaedb"
+    },
+    {
+      "file": "strict-source-proof-adapter.mjs",
+      "bytes": 8302,
+      "sha256": "7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b"
+    },
+    {
+      "file": "syntax-check.json",
+      "bytes": 799,
+      "sha256": "b2a8946ae6901ab1e5b12999da8df52be79934f0a1978f1968cb37096173a97e"
+    }
+  ],
+  "moduleFirstStatementThrows": true,
+  "syntaxOnlyPassed": true,
+  "staticImports": 0,
+  "sourceBinding": "UNBOUND",
+  "sourceModuleSuccessor": "UNBOUND",
+  "proofModuleSuccessor": "UNBOUND",
+  "proofContractActualCandidate": "UNBOUND",
+  "runtimeAndExpectedBaselineApproval": "UNBOUND",
+  "moduleImported": false,
+  "moduleInvoked": false,
+  "serviceOrDatabaseImplementation": false,
+  "nativeCommandImplementation": false,
+  "sourceFilesModified": false,
+  "priorFrozenPackagesModified": false
+}

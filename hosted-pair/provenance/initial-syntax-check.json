@@ -1,0 +1,103 @@
+{
+  "phase": "SYNTAX_ONLY_NO_MODULE_IMPORT_OR_EXECUTION",
+  "executable": "C:/Program Files/nodejs/node.exe",
+  "environment": "Cleared; SystemRoot and WINDIR only",
+  "rows": [
+    {
+      "file": "materialize-hosted.cjs",
+      "bytes": 18983,
+      "sha256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "build-preparation.cjs",
+      "bytes": 19503,
+      "sha256": "c5687463e0a759912f79fcd80603e7d407d5936930fea501d855559645e05d26",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "synthetic-tests.cjs",
+      "bytes": 4488,
+      "sha256": "76940e9977a00307ec23341f8b7aa7656ab8440688a9ce68b16f4092c7ca78ad",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "synthetic-cases.js",
+      "bytes": 19760,
+      "sha256": "9aa28f154b7ac11f6fa046234736ceb4eecc92fb5545f5ee6a768365e7313968",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "inputs/hosted-observer-PREPARATION.cjs",
+      "bytes": 27019,
+      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "inputs/hosted-source-guard-PREPARATION.mjs",
+      "bytes": 36295,
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "inputs/strict-source-proof-adapter-PREPARATION.mjs",
+      "bytes": 8302,
+      "sha256": "7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "inputs/proof-validator-PREPARATION.mjs",
+      "bytes": 6995,
+      "sha256": "daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "postimages/hosted-observer.EXECUTABLE.cjs",
+      "bytes": 26901,
+      "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "postimages/hosted-source-guard.EXECUTABLE.mjs",
+      "bytes": 36185,
+      "sha256": "b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "postimages/strict-source-proof-adapter.EXECUTABLE.mjs",
+      "bytes": 8199,
+      "sha256": "9b942d5afe7d79aacfab96106884a00e4c5a9d55e4041666bfbcad8aa97a312d",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "postimages/proof-validator.EXECUTABLE.mjs",
+      "bytes": 6892,
+      "sha256": "9266bc453bc0863065fd7ff0d2fed9fd85af7c7e96ae2d10b2a8854b874f15e2",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

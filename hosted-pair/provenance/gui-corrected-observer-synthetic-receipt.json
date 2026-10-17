@@ -1,0 +1,120 @@
+{
+  "phase": "FROZEN_SYNTHETIC_RETEST_HO_STARTUP_R1_CLOSED_FOR_A6E7_SOURCE_ONLY",
+  "createdAt": "2026-10-17T04:38:37.0004395Z",
+  "sourceManifest": {
+    "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/manifest.json",
+    "bytes": 2446,
+    "sha256": "c876e75d91dcd15d0d533bf76ea765980132519238690d71192b9243c40126a3"
+  },
+  "observer": {
+    "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/hosted-observer.cjs",
+    "bytes": 27019,
+    "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+  },
+  "historicalTests": {
+    "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-synthetic-2359696b-2031-4815-9e22-d9e8dd763ee2/manifest.json",
+    "bytes": 4098,
+    "sha256": "ed35d045fedaa293ef55175ee192b1d3a38fbb9ab906db8b93c9a46a3ee77c07",
+    "preserved": true
+  },
+  "harness": {
+    "file": "synthetic-tests.mjs",
+    "bytes": 33557,
+    "sha256": "e5599617d56e2f97fb37964d646ce74a3fb4977e40d26bca48bfc31769a30bde"
+  },
+  "finalResult": {
+    "file": "results-final.json",
+    "bytes": 58144,
+    "sha256": "5414b3b105726bab826ed7731067e40dca973474208bb5add120d659311b8df6"
+  },
+  "launch": {
+    "executable": "C:/Program Files/nodejs/node.exe",
+    "version": "v24.19.0",
+    "arguments": [
+      "--experimental-vm-modules",
+      "./synthetic-tests.mjs",
+      "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-deadline-synthetic-3379e04d-7913-455e-a97f-961c263f7194/results-final.json"
+    ],
+    "workingDirectory": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-deadline-synthetic-3379e04d-7913-455e-a97f-961c263f7194",
+    "exitCode": 0,
+    "stdout": {
+      "file": "final.stdout.txt",
+      "bytes": 635,
+      "sha256": "fd1879586e834723348205534f316fa2e59d1ab94c623209608b292d7410e74a"
+    },
+    "stderr": {
+      "file": "final.stderr.txt",
+      "bytes": 175,
+      "sha256": "6b799353cbbf63967c70f1e843ab4f8e87684c21537faa5be60bd5540442f9f0"
+    },
+    "stderrClassification": "Standard Node experimental VM-modules warning only"
+  },
+  "totals": {
+    "positive": 29,
+    "refusal": 107,
+    "unexpectedFailures": 0,
+    "knownFindings": 0
+  },
+  "findingRetest": {
+    "id": "HO-STARTUP-R1",
+    "status": "CLOSED_FOR_REVIEWED_CORRECTED_SOURCE_SYNTHETIC_SCOPE",
+    "sourceDeltaBytes": 37,
+    "sourceDelta": "if(Date.now()-started>=limitMs)break;",
+    "inverseWholeSourceEqualsHistorical": true,
+    "cases": [
+      {
+        "elapsedMs": 49999,
+        "status": "ACCEPTED",
+        "complete": true
+      },
+      {
+        "elapsedMs": 50000,
+        "status": "REFUSED",
+        "complete": false
+      },
+      {
+        "elapsedMs": 51000,
+        "status": "REFUSED",
+        "complete": false
+      }
+    ]
+  },
+  "harnessChangesOnly": [
+    "Expected observer/manifest hashes updated to actual corrected successor.",
+    "Historical unmet-refusal recording replaced by exact deadline refusal assertions at50000/51000ms and below-bound acceptance49999ms.",
+    "Result phase now identifies corrected-source-only closure."
+  ],
+  "realOperations": {
+    "applicationImports": 0,
+    "nodeModulesImports": 0,
+    "network": 0,
+    "downloadedCodeExecution": 0,
+    "gitMutations": 0,
+    "PostgreSQL": 0,
+    "Docker": 0,
+    "CIM": 0,
+    "ports": 0,
+    "nativeCommands": 0,
+    "canonicalExecution": 0
+  },
+  "originalFilesAndDiskBarriersPreserved": true,
+  "originalClosureReverified": true,
+  "limitations": {
+    "originalFrozenFilesModified": false,
+    "barriersRemovedOnlyFromInMemoryTestCopies": true,
+    "originalMainInvoked": false,
+    "originalTestFilesExecuted": false,
+    "modules": "Builtins only; observer dynamic imports replaced by SyntheticModule stubs",
+    "filesystem": "Observer sees in-memory VFS only; harness reads its copied input evidence and writes its result only",
+    "canonicalDigest": "Synthetic fixed marker models the already-pinned canonical digest; canonical source is neither read nor executed",
+    "strictAdapter": "Observer before/after call order and failure paths exercised through a stub; actual prepared adapter implementation is not executed",
+    "strictProof": "Actual frozen proofShape function evaluated in a VM with only its first throw removed",
+    "unverified": [
+      "Actual Linux/Node22 runtime, Git/npm/source/dependency captures, PostgreSQL/service/process reality, cryptographic retention and executable materialization",
+      "Real adapter capture/proof-source bridge internals beyond separately reviewed static evidence"
+    ]
+  },
+  "runtimeAdmission": null,
+  "executionApproval": null,
+  "sourceReservation": null
+}

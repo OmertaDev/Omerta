@@ -1,0 +1,21 @@
+{
+  "phase": "OBSERVED_PARENT_PRE_CHECKOUT_FAILURE_BOUND_GUI_TEMPLATE_REPAIR_ONLY",
+  "runId": "39003881167",
+  "control": "c98ed5fc750c266a6d35519ef2f60790a1edb61c",
+  "controlTree": "409acac84d504005a5ebf1245ca386b6fd66c5ab",
+  "rawLog": {
+    "file": "provenance/root-run-39003881167-main-job.log",
+    "bytes": 28343,
+    "sha256": "57dce2687b7f0c5bf36fdff0c1b0468b7a793201e0192a01a819d239b72f9ad2"
+  },
+  "evidenceLines": {
+    "dockerCreate117": true,
+    "runnerInspector128": true,
+    "missingHealth129": true,
+    "exitOne130": true
+  },
+  "observerReached": false,
+  "canonicalProofReached": false,
+  "guiRepair": "Remove only explicit service options: --no-healthcheck from accepted workflow topology; preserve exact actual healthcheck/state refusal and bounded readiness code.",
+  "actualGuiRetry": null
+}

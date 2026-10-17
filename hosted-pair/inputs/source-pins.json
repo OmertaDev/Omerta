@@ -1,0 +1,125 @@
+{
+  "phase": "PREPARATION_ONLY_COMMITTED_SOURCE_PINS_NOT_ADMISSION",
+  "createdAt": "2026-10-17T04:09:28.0286715Z",
+  "profile": "STRICT_GUI_SAME_SCHEMA",
+  "sides": {
+    "candidate": {
+      "source": "19f174540b0b65870800317ed98085ef36696976",
+      "tree": "c04003a12493eea9b725daa016a32159ec5e64b4",
+      "files": {
+        "schema.sql": {
+          "blob": "1809d354c1876cdef832792e0047586d209baaae",
+          "mode": "100755",
+          "canonicalLinuxBytes": 589940,
+          "canonicalLinuxSHA256": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
+          "rawSourceEqualsGitRequired": true
+        },
+        "package-lock.json": {
+          "blob": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+          "mode": "100644",
+          "canonicalLinuxBytes": 257066,
+          "canonicalLinuxSHA256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+          "rawSourceEqualsGitRequired": true
+        },
+        "package.json": {
+          "blob": "d72e7efd8a0bca679a19588ab718ce8330633b07",
+          "mode": "100644",
+          "canonicalLinuxBytes": 55413,
+          "canonicalLinuxSHA256": "a81009962454326c1c276c95101084f1a44c9d1ef3b7b8642f65478f7142ada2",
+          "rawSourceEqualsGitRequired": true
+        },
+        "tools/rc1-source-pair.js": {
+          "blob": "fa4edae199c1357fd96df5c34a607e45e24cb0c8",
+          "mode": "100644",
+          "canonicalLinuxBytes": 96040,
+          "canonicalLinuxSHA256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+          "rawSourceEqualsGitRequired": true
+        }
+      },
+      "appVersion": "1.5.0",
+      "actualCheckoutDirectory": null,
+      "observedDeployed": false
+    },
+    "expectedPredecessor": {
+      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "tree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
+      "files": {
+        "schema.sql": {
+          "blob": "1809d354c1876cdef832792e0047586d209baaae",
+          "mode": "100755",
+          "canonicalLinuxBytes": 589940,
+          "canonicalLinuxSHA256": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
+          "rawSourceEqualsGitRequired": true
+        },
+        "package-lock.json": {
+          "blob": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+          "mode": "100644",
+          "canonicalLinuxBytes": 257066,
+          "canonicalLinuxSHA256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+          "rawSourceEqualsGitRequired": true
+        },
+        "package.json": {
+          "blob": "9f43c08b9da8740a6246cf37711cc723aecaa715",
+          "mode": "100644",
+          "canonicalLinuxBytes": 55271,
+          "canonicalLinuxSHA256": "d6d83610d52e7f7e4480e157f71ec06ea5c7e7673a1cdada8c749a713d01e3e7",
+          "rawSourceEqualsGitRequired": true
+        },
+        "tools/rc1-source-pair.js": {
+          "blob": "fa4edae199c1357fd96df5c34a607e45e24cb0c8",
+          "mode": "100644",
+          "canonicalLinuxBytes": 96040,
+          "canonicalLinuxSHA256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+          "rawSourceEqualsGitRequired": true
+        }
+      },
+      "appVersion": "1.5.0",
+      "actualCheckoutDirectory": null,
+      "observedDeployed": false
+    }
+  },
+  "strictEquality": {
+    "schemaBlobModeBytesSHA256Equal": true,
+    "lockBlobModeBytesSHA256Equal": true,
+    "appVersionEqual": true
+  },
+  "ancestry": {
+    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+    "candidate": "19f174540b0b65870800317ed98085ef36696976",
+    "gitMergeBaseIsAncestorExitCode": 0,
+    "mergeBase": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+    "genuineCommitAncestryVerified": true,
+    "replacementObjectsDisabled": true
+  },
+  "independentlyReviewedDependencyBaseline": {
+    "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-expected-dependencies-canonical-git-f6e79b5e-d946-4ab6-b0c9-5918d57e50a1/expected-dependencies-linux-x64.json",
+    "bytes": 239089,
+    "sha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7",
+    "sourceLockSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+    "independentReview": {
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-baseline-independent-review-4ba0d087-7b33-4268-a7cf-f38425e0a5e2/review-receipt.json",
+      "bytes": 5907,
+      "sha256": "1dc7f2b4b721c83b8a6d55d9f1218818380c0802c9a9b843b945d3c15e5b9cef"
+    }
+  },
+  "unbound": {
+    "actualDeployedPredecessor": null,
+    "actualDeploymentReceipt": null,
+    "runtime": null,
+    "database": null,
+    "executionApproval": null,
+    "sourceReservation": null
+  },
+  "scope": {
+    "binaryGitObjectReads": true,
+    "replacementObjectsDisabled": true,
+    "gitGlobalAndSystemConfigDisabled": true,
+    "gitMutations": false,
+    "fullSourceCapture": false,
+    "applicationImports": false,
+    "testsOrNpm": false,
+    "databaseOrCim": false,
+    "previousFrozenPackagesModified": false
+  },
+  "limitation": "Expected Root predecessor is a committed ancestor only; it is NOT observed deployed. Actual paired deployment, checkout/runtime/database identity, source reservation and execution approval remain UNBOUND."
+}

@@ -13,3 +13,6 @@ omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol text eol=lf
 omerta-contracts/src/genesis-auction/GenesisCharacterEligibility.sol text eol=lf
 public/genesis-deploy-artifact.js text eol=lf
 public/genesis-deploy-vendor/** -text
+
+# Preserve exact bytes of the isolated hosted proof package.
+hosted-pair/** -text

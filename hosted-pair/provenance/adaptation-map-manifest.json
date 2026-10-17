@@ -1,0 +1,29 @@
+{
+  "phase": "FROZEN_STATIC_GUI_MATERIALIZER_ADAPTATION_MAP_NOT_ADMISSION",
+  "createdAt": "2026-10-17T04:51:41.3045047Z",
+  "files": [
+    {
+      "file": "ADAPTATION.md",
+      "bytes": 7135,
+      "sha256": "69fb4bc7f38f34683dc12d2c180dc4a8a38e1b5ecccceb329d893a80e335efd1"
+    },
+    {
+      "file": "closed-input-verification.json",
+      "bytes": 25465,
+      "sha256": "07b9fa5542014cebbb443fca98385d85270c9c1f1f5c75042a079f1b6c3171e8"
+    },
+    {
+      "file": "scoped-review.json",
+      "bytes": 1718,
+      "sha256": "5abf167aaa068c5ff3dfabbd19e3c45ba6535b9f0f0d5b3519dc565123626c69"
+    },
+    {
+      "file": "static-joins.json",
+      "bytes": 4657,
+      "sha256": "6a870c5f5cef814db8753da129f56316177998d57270665522fe03f01202dcaa"
+    }
+  ],
+  "operationalAuthority": false,
+  "executablePostimages": null,
+  "actualApproval": null
+}

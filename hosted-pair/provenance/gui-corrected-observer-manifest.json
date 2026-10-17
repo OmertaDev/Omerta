@@ -1,0 +1,74 @@
+{
+  "phase": "FROZEN_DISABLED_STRICT_GUI_STARTUP_DEADLINE_SUCCESSOR_NOT_ADMISSION",
+  "frozenAt": "2026-10-17T04:36:12.058Z",
+  "source": "19f174540b0b65870800317ed98085ef36696976",
+  "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "parentManifest": {
+    "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-preparation-c947957c-a0ff-46e0-900f-de9fa51b4794/manifest.json",
+    "bytes": 2064,
+    "sha256": "6230abfd4da12ae359122cd2d091b49f5ba3f0b4d9bd9b31045923298d92e748"
+  },
+  "inheritedFinding": "HO-STARTUP-R1",
+  "exactObserverInsertion": "if(Date.now()-started>=limitMs)break;",
+  "observerDeltaBytes": 37,
+  "otherObserverBytesExact": true,
+  "enabled": false,
+  "firstExecutableStatementThrows": true,
+  "workflowMaterializerFails": true,
+  "canonicalCLIUnchanged": true,
+  "strictSameSchema": true,
+  "additiveStatusesAllowed": false,
+  "sourcePairExecuted": false,
+  "applicationImported": false,
+  "PG": false,
+  "Docker": false,
+  "CIM": false,
+  "previousFrozenPackagesModified": false,
+  "files": [
+    {
+      "file": "HANDOFF.md",
+      "bytes": 4070,
+      "sha256": "e19cbc04196a2bae5290b76bd3075c7b6eeba8ae8ce630cd647dcb772dab7766"
+    },
+    {
+      "file": "hosted-binding.json",
+      "bytes": 840,
+      "sha256": "066dfbad5608afbb183554bcc685524f9812ecc8a3b6b3124d05199ad3943b31"
+    },
+    {
+      "file": "hosted-observer.cjs",
+      "bytes": 27019,
+      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+    },
+    {
+      "file": "proof-contract.json",
+      "bytes": 1670,
+      "sha256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace"
+    },
+    {
+      "file": "provenance.json",
+      "bytes": 4322,
+      "sha256": "8e0cfaefe008fae36a3808dc834838a106f3f7a492ccd6f4a9ce3f42a51ef573"
+    },
+    {
+      "file": "source-binding.template.json",
+      "bytes": 1945,
+      "sha256": "8523320c6ef6b26ff7998320a6b608866ab23eb93cba56d90e6d5489660c2bde"
+    },
+    {
+      "file": "source-pins.json",
+      "bytes": 5347,
+      "sha256": "2154e64e93b31776c4fff2f417f68e98f54e39bfc795cb7430abbf2fbd00680b"
+    },
+    {
+      "file": "syntax-check.json",
+      "bytes": 531,
+      "sha256": "c5b9bd4064d3f2be02adc7805e6757471ada7410b520f54ebfaa07bfd515470e"
+    },
+    {
+      "file": "workflow.yml.template",
+      "bytes": 4601,
+      "sha256": "7ebf4d8b5dccf9908ae2aa3f110e7c28a18ab368346744bec165be1695ed752e"
+    }
+  ]
+}

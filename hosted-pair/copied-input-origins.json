@@ -1,0 +1,229 @@
+{
+  "phase": "COPIED_INPUTS_WITHOUT_SCRIPT_EXECUTION",
+  "files": [
+    {
+      "file": "provenance/parent-materialize-hosted.cjs",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/materialize-hosted.cjs",
+      "bytes": 14517,
+      "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+    },
+    {
+      "file": "provenance/parent-registered-manifest.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/manifest.json",
+      "bytes": 9054,
+      "sha256": "3355d6d2942cd726994d649c74c0e4929e31b7aed7b9282b8214c86247ee2fce"
+    },
+    {
+      "file": "provenance/parent-materializer-independent-manifest.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-materializer-independent-20261017/manifest.json",
+      "bytes": 2275,
+      "sha256": "6e261f6037162e521b072f046c5a8e1868d896f72fee31e95c2e5e48ef04754b"
+    },
+    {
+      "file": "provenance/parent-materializer-independent-REVIEW.md",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-materializer-independent-20261017/REVIEW.md",
+      "bytes": 3345,
+      "sha256": "455de5a19a4e452eb72d22d4bb9cb3925c1404637b6465f6ec3d3266ff6e0b15"
+    },
+    {
+      "file": "provenance/registered-path-edits.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/registered-path-edits.json",
+      "bytes": 1358,
+      "sha256": "e96885aff9bdf3d13825b43d47e4448d10a9c5f91de96760cb9bf32623115c8c"
+    },
+    {
+      "file": "provenance/registered-workflow-finding.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/registered-workflow-finding.json",
+      "bytes": 669,
+      "sha256": "83230a935bc41a6e9733b0540b4786ce5050addea343ef6e914555992ea86a16"
+    },
+    {
+      "file": "provenance/rc1-ci-retain.d8.mjs",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/provenance/rc1-ci-retain.d8.mjs",
+      "bytes": 4375,
+      "sha256": "d15e3a917b9e9aa29a7cc9e68024fe9b7a10c4bd37baed7c379966e85b6388c5"
+    },
+    {
+      "file": "provenance/linux-dependencies-manifest.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/provenance/linux-dependencies-manifest.json",
+      "bytes": 1603,
+      "sha256": "f4d30426dbb085f1c987c42f49ca7b7e982e77d2176a7bb6bf8884aeb76f3526"
+    },
+    {
+      "file": "provenance/git-author-manifest.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/provenance/git-author-manifest.json",
+      "bytes": 7526,
+      "sha256": "f46832bcdf8c9fa7a6e80fc221c1c404c436196d31be85de0df24fc7e04a1bcf"
+    },
+    {
+      "file": "install-approved-runtime.sh",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/install-approved-runtime.sh",
+      "bytes": 1748,
+      "sha256": "766f977fe691a837bf092edcaf270999bf6c6c6a7ab038f0e488619d4d397932"
+    },
+    {
+      "file": "inputs/driver-and-boot.reference.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/inputs/driver-and-boot.reference.json",
+      "bytes": 26824,
+      "sha256": "f40e92b119b30b203542011bc16859762680cccd9f7ec138eed4f2c9e647e0ca"
+    },
+    {
+      "file": "inputs/phosphor-embedded.reference.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/inputs/phosphor-embedded.reference.json",
+      "bytes": 4655,
+      "sha256": "195b285bde26866e8cd20fbb0dbd88bd82ea41371376b3b55c31b37f1aff5e76"
+    },
+    {
+      "file": "inputs/pino-embedded.reference.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/inputs/pino-embedded.reference.json",
+      "bytes": 7252,
+      "sha256": "719775f96ad413f00f7d0f2df9377b0c30ffbf3c5e55c2acb65f67383405ac85"
+    },
+    {
+      "file": "inputs/expected-dependencies-linux-x64.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/inputs/expected-dependencies-linux-x64.json",
+      "bytes": 239089,
+      "sha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7"
+    },
+    {
+      "file": "inputs/expected-runtime-git.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/inputs/expected-runtime-git.json",
+      "bytes": 3105,
+      "sha256": "1625dc4323716c8b48e8cc9f5568b51fe69dba3311640da89155346f6d1ca7f9"
+    },
+    {
+      "file": "inputs/node-runtime-provenance.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/inputs/node-runtime-provenance.json",
+      "bytes": 4280,
+      "sha256": "08b93b7d7637e5490fae18c7b069c3ff3ced4f09573b6fc2a7672b9edb0e9139"
+    },
+    {
+      "file": "inputs/root-git-acceptance.json",
+      "origin": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-registered-workflow-successor-20261017/inputs/root-git-acceptance.json",
+      "bytes": 1038,
+      "sha256": "d413988342dfaef4955f9acc9afb930433b4c6ccd0df7ba09cfb014bddf185aa"
+    },
+    {
+      "file": "provenance/gui-corrected-observer-manifest.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/manifest.json",
+      "bytes": 2446,
+      "sha256": "c876e75d91dcd15d0d533bf76ea765980132519238690d71192b9243c40126a3"
+    },
+    {
+      "file": "inputs/source-pins.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/source-pins.json",
+      "bytes": 5347,
+      "sha256": "2154e64e93b31776c4fff2f417f68e98f54e39bfc795cb7430abbf2fbd00680b"
+    },
+    {
+      "file": "source-binding.template.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/source-binding.template.json",
+      "bytes": 1945,
+      "sha256": "8523320c6ef6b26ff7998320a6b608866ab23eb93cba56d90e6d5489660c2bde"
+    },
+    {
+      "file": "hosted-binding.UNBOUND.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/hosted-binding.json",
+      "bytes": 840,
+      "sha256": "066dfbad5608afbb183554bcc685524f9812ecc8a3b6b3124d05199ad3943b31"
+    },
+    {
+      "file": "inputs/proof-contract.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/proof-contract.json",
+      "bytes": 1670,
+      "sha256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace"
+    },
+    {
+      "file": "provenance/source-guard-manifest.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-guard-preparation-879ce748-d847-4446-a040-d268faef9a90/manifest.json",
+      "bytes": 1878,
+      "sha256": "6bc7271cd7042ab54a9094a5b9365c4fcb8b1e3ff782be254bcbd9dc252ef1e0"
+    },
+    {
+      "file": "provenance/strict-adapter-manifest.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-proof-adapter-preparation-4774d2ca-49b0-4799-a282-d43ba3456878/manifest.json",
+      "bytes": 1464,
+      "sha256": "3c1c15eddd04779f2911f8aeaf115570a153dfae99fbee4ef2dd094a038fa188"
+    },
+    {
+      "file": "provenance/proof-validator-manifest.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-proof-validation-8f0c7466-b334-4cc9-b0cd-b15ba23ee2c5/manifest.json",
+      "bytes": 976,
+      "sha256": "ff8551c21d58186f580a00e4498402c9d50493110ec01396e1045260e25ffa51"
+    },
+    {
+      "file": "provenance/gui-original-disabled-static-review.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-static-review-c8eeb4c9-adcb-4278-b301-700a2394155f/review-receipt.json",
+      "bytes": 8540,
+      "sha256": "f1ec6697e1bfa473d98a06ddd26873ee19ccecf1ca8052fbecc58648895165e1"
+    },
+    {
+      "file": "provenance/gui-startup-correction-static-review.json",
+      "origin": "C:/Users/Jorge/.codex/worktrees/city-world-hud/Omerta/output/security/dashboard-game-parity-19f17454-strict-gui-startup-deadline-static-review.json",
+      "bytes": 3396,
+      "sha256": "7df98531a079d6bb2f36776dfa79b271c760596890a4bb28f8330210eea7d7cf"
+    },
+    {
+      "file": "provenance/gui-corrected-observer-synthetic-receipt.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-deadline-synthetic-3379e04d-7913-455e-a97f-961c263f7194/test-receipt.json",
+      "bytes": 4894,
+      "sha256": "8ba6bc914a08be991d32e5db45f4af22b9cdb0c97d9eded019af6feb561f330f"
+    },
+    {
+      "file": "provenance/adaptation-map-manifest.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-map-7e240fc1-edd4-4354-b7f6-59b6238b2ba0/manifest.json",
+      "bytes": 879,
+      "sha256": "d994357bd6c4dda703fc07876c090acb90c017b15271dbe91657aeb969e60aaf"
+    },
+    {
+      "file": "provenance/adaptation-map-ADAPTATION.md",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-map-7e240fc1-edd4-4354-b7f6-59b6238b2ba0/ADAPTATION.md",
+      "bytes": 7135,
+      "sha256": "69fb4bc7f38f34683dc12d2c180dc4a8a38e1b5ecccceb329d893a80e335efd1"
+    },
+    {
+      "file": "provenance/adaptation-map-scoped-review.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-map-7e240fc1-edd4-4354-b7f6-59b6238b2ba0/scoped-review.json",
+      "bytes": 1718,
+      "sha256": "5abf167aaa068c5ff3dfabbd19e3c45ba6535b9f0f0d5b3519dc565123626c69"
+    },
+    {
+      "file": "provenance/adaptation-map-static-joins.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-map-7e240fc1-edd4-4354-b7f6-59b6238b2ba0/static-joins.json",
+      "bytes": 4657,
+      "sha256": "6a870c5f5cef814db8753da129f56316177998d57270665522fe03f01202dcaa"
+    },
+    {
+      "file": "provenance/adaptation-map-closed-input-verification.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-map-7e240fc1-edd4-4354-b7f6-59b6238b2ba0/closed-input-verification.json",
+      "bytes": 25465,
+      "sha256": "07b9fa5542014cebbb443fca98385d85270c9c1f1f5c75042a079f1b6c3171e8"
+    },
+    {
+      "file": "inputs/hosted-observer-PREPARATION.cjs",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/hosted-observer.cjs",
+      "bytes": 27019,
+      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+    },
+    {
+      "file": "inputs/hosted-source-guard-PREPARATION.mjs",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-guard-preparation-879ce748-d847-4446-a040-d268faef9a90/hosted-source-guard.mjs",
+      "bytes": 36295,
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"
+    },
+    {
+      "file": "inputs/strict-source-proof-adapter-PREPARATION.mjs",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-proof-adapter-preparation-4774d2ca-49b0-4799-a282-d43ba3456878/strict-source-proof-adapter.mjs",
+      "bytes": 8302,
+      "sha256": "7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b"
+    },
+    {
+      "file": "inputs/proof-validator-PREPARATION.mjs",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-proof-validation-8f0c7466-b334-4cc9-b0cd-b15ba23ee2c5/proof-validator.mjs",
+      "bytes": 6995,
+      "sha256": "daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956"
+    }
+  ],
+  "allCopiesExactAtCreation": true,
+  "initialPreparationDiagnostic": "An initial inline PowerShell copy-list expression joined the first source/destination strings and failed before copying any file. Corrected by this builtin-only explicit preparation builder; no parent/frozen/product file changed."
+}

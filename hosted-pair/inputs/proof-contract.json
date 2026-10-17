@@ -1,0 +1,70 @@
+{
+  "phase": "PREPARATION_ONLY_STRICT_SAME_SCHEMA_CONTRACT",
+  "candidate": "19f174540b0b65870800317ed98085ef36696976",
+  "canonicalCli": {
+    "file": "tools/rc1-source-pair.js",
+    "blob": "fa4edae199c1357fd96df5c34a607e45e24cb0c8",
+    "rawSha256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+    "gitSha256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce"
+  },
+  "assertionIds": [
+    "fixture",
+    "predecessor-committed",
+    "upgraded",
+    "upgrade preserves acknowledged state",
+    "predecessor receipt after upgrade",
+    "upgrade-replayed",
+    "upgrade replay creates no new effect",
+    "candidate-committed",
+    "rolled-back",
+    "rollback preserves acknowledged state",
+    "both receipts after rollback",
+    "rollback-replayed",
+    "rollback replay creates no new effect",
+    "both receipts after second upgrade",
+    "re-upgraded",
+    "second upgrade preserves acknowledged state"
+  ],
+  "snapshotIndexesWithoutStatus": [
+    0,
+    1,
+    2,
+    5,
+    7,
+    8,
+    11,
+    14
+  ],
+  "strictEqualityIndexes": [
+    3,
+    6,
+    9,
+    12,
+    15
+  ],
+  "receiptReplayIndexes": [
+    4,
+    10,
+    13
+  ],
+  "receiptCounts": [
+    1,
+    2,
+    2
+  ],
+  "childLabels": [
+    "1-predecessor",
+    "2-candidate",
+    "3-predecessor",
+    "4-candidate"
+  ],
+  "indexedArtifacts": 41,
+  "directoryFilesIncludingIndex": 42,
+  "additiveStatusesAllowed": false,
+  "normalIpcChildrenRequired": 4,
+  "executorZeroObservations": 2,
+  "coordinatorLeaseRetained": true,
+  "leaseReleased": false,
+  "deadlineMs": 1800000,
+  "deadlineMeaning": "Failure marker only; never kill, fabricate closure or release."
+}

@@ -1,0 +1,134 @@
+# SOURCE-ONLY TEMPLATE: action refs and Root-reviewed approval remain unbound.
+# Root must use a new isolated managed proof branch; never mutate d8 or BG.
+name: Root d8 BG isolated canonical M6 proof
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: root-d8-bg-hosted-sourcepair
+  cancel-in-progress: false
+env:
+  LEGAL_OPERATOR_NAME: CI Test Operator
+  LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+  PRIVACY_CONTACT_EMAIL: privacy@example.test
+  DMCA_AGENT_NAME: CI Test Agent
+  DMCA_AGENT_EMAIL: copyright@example.test
+  DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+  DMCA_AGENT_PHONE: '+1 202 555 0100'
+  DMCA_AGENT_REGISTERED: 'true'
+  PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+  CHAIN_ENABLED: 'off'
+  RESOURCE_ECONOMY: 'off'
+jobs:
+  retention-controls:
+    if: ${{ vars.HOSTED_PAIR_ENABLED == 'true' }}
+    name: Existing authenticated evidence transport controls
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@__CHECKOUT_SHA__
+        with:
+          ref: ${{ github.sha }}
+          path: tmp/rc1-retention-tools
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@__CHECKOUT_SHA__
+        with:
+          ref: d8e9f2e1feaf1df1f64584268069ba9917e30849
+          path: candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install only approved archive and signed-package bytes
+        run: bash tmp/rc1-retention-tools/hosted-pair/install-approved-runtime.sh
+      - name: Existing authenticated envelope controls
+        working-directory: candidate
+        run: '"$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" test/rc1-ci-envelope.js'
+  rootd8-bg-pair:
+    if: ${{ vars.HOSTED_PAIR_ENABLED == 'true' }}
+    needs: retention-controls
+    runs-on: ubuntu-24.04
+    # NEW finite job bound, not an observed runtime or inferred closure.
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports: ['5432:5432']
+        options: --no-healthcheck
+    steps:
+      - uses: actions/checkout@__CHECKOUT_SHA__
+        with:
+          ref: d8e9f2e1feaf1df1f64584268069ba9917e30849
+          path: candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@__CHECKOUT_SHA__
+        with:
+          ref: b8fcce7baaa91b29661921a17e5510a47e9f725a
+          path: predecessor
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@__CHECKOUT_SHA__
+        with:
+          # Workflow-only control commit is separate from both application refs.
+          ref: ${{ github.sha }}
+          path: tmp/rc1-retention-tools
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install approved complete Node archive and exact Git package
+        run: bash tmp/rc1-retention-tools/hosted-pair/install-approved-runtime.sh
+      - name: Ordinary separate candidate and predecessor npm ci
+        shell: bash
+        run: |
+          set -euo pipefail
+          NODE="$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node"
+          NPM="$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/lib/node_modules/npm/bin/npm-cli.js"
+          (cd candidate && "$NODE" "$NPM" ci)
+          (cd predecessor && "$NODE" "$NPM" ci)
+      - name: Require restricted evidence recipient
+        env:
+          RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
+        run: test -n "$RC1_EVIDENCE_PUBLIC_KEY"
+      - name: Materialize Root-reviewed static inputs with actual job paths
+        env:
+          HOSTED_PAIR_APPROVAL_JSON: ${{ vars.HOSTED_PAIR_APPROVAL_JSON }}
+          HOSTED_PAIR_APPROVAL_SHA256: ${{ vars.HOSTED_PAIR_APPROVAL_SHA256 }}
+          HOSTED_PAIR_SERVICE_ID: ${{ job.services.postgres.id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$HOSTED_PAIR_APPROVAL_JSON"
+          test -n "$HOSTED_PAIR_APPROVAL_SHA256"
+          umask 077
+          printf '%s' "$HOSTED_PAIR_APPROVAL_JSON" > "$RUNNER_TEMP/hosted-pair-root-approval.json"
+          "$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tmp/rc1-retention-tools/hosted-pair/materialize-hosted.cjs prepare "$RUNNER_TEMP/hosted-pair-root-approval.json" "$HOSTED_PAIR_APPROVAL_SHA256"
+      - name: Original canonical M6 under byte-exact reviewed observer
+        env:
+          HOSTED_PAIR_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: '"$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" "$RUNNER_TEMP/rc1-hosted-controls/hosted-observer.cjs"'
+      - name: Reverify complete approved Node and bundled npm distribution
+        if: always()
+        env:
+          HOSTED_PAIR_APPROVAL_SHA256: ${{ vars.HOSTED_PAIR_APPROVAL_SHA256 }}
+          HOSTED_PAIR_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: '"$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tmp/rc1-retention-tools/hosted-pair/materialize-hosted.cjs verify-runtime "$RUNNER_TEMP/hosted-pair-root-approval.json" "$HOSTED_PAIR_APPROVAL_SHA256"'
+      - name: Existing authenticated encryption even after failure
+        if: always()
+        env:
+          RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
+          RC1_CI_POSTGRES: '18.4'
+          RC1_REPLAY_SOURCE: d8e9f2e1feaf1df1f64584268069ba9917e30849
+        working-directory: candidate
+        run: 'GITHUB_WORKSPACE="$GITHUB_WORKSPACE/candidate" "$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tools/rc1-ci-retain.mjs'
+      - name: Retain authenticated restricted evidence
+        if: always()
+        uses: actions/upload-artifact@__UPLOAD_SHA__
+        with:
+          name: rc1-private-rootd8-bg-sourcepair-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
+          if-no-files-found: error
+          retention-days: 30

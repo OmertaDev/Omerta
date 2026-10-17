@@ -1,0 +1,69 @@
+{
+  "phase": "PASS_SCOPED_DISABLED_HOSTED_MATERIALIZER_REGISTERED_SUCCESSOR",
+  "authorManifestSHA256": "3355d6d2942cd726994d649c74c0e4929e31b7aed7b9282b8214c86247ee2fce",
+  "originalAuthorManifestSHA256": "1aa42dd89eb2b2f45912a64eae84b2a398bcb0451406c2b1ae68cd3a68eac031",
+  "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "controllerSHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+  "observerSHA256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2",
+  "HOSTED_DISPATCH_R1": "RESOLVED_IN_PREPARATION_USING_ROOT_REPORTED_REGISTERED_PATH",
+  "controls": {
+    "positive": 7,
+    "refused": 56
+  },
+  "operationalAuthority": false,
+  "actualApproval": null,
+  "actualWorkflow": null,
+  "actualRuntime": null,
+  "actualPAIR": null,
+  "network": false,
+  "PG": false,
+  "Docker": false,
+  "CIM": false,
+  "currentRaw": false,
+  "ledger": false,
+  "canonicalWrites": false,
+  "findings": [],
+  "files": [
+    {
+      "file": "REVIEW.md",
+      "bytes": 3345,
+      "sha256": "455de5a19a4e452eb72d22d4bb9cb3925c1404637b6465f6ec3d3266ff6e0b15"
+    },
+    {
+      "file": "author-manifest.json",
+      "bytes": 9054,
+      "sha256": "3355d6d2942cd726994d649c74c0e4929e31b7aed7b9282b8214c86247ee2fce"
+    },
+    {
+      "file": "controls-results.json",
+      "bytes": 265,
+      "sha256": "eea9b17710b9c9ee248a0caaf4dd45addeb0782c1d06ab54f3036a55f0997c90"
+    },
+    {
+      "file": "finding-HOSTED-DISPATCH-R1.json",
+      "bytes": 669,
+      "sha256": "83230a935bc41a6e9733b0540b4786ce5050addea343ef6e914555992ea86a16"
+    },
+    {
+      "file": "original-materializer-manifest.json",
+      "bytes": 7477,
+      "sha256": "1aa42dd89eb2b2f45912a64eae84b2a398bcb0451406c2b1ae68cd3a68eac031"
+    },
+    {
+      "file": "results.json",
+      "bytes": 1036,
+      "sha256": "92718e1c7abb46e9365f867d36f6bed8d003a155994335f40f30246de10435cb"
+    },
+    {
+      "file": "review.cjs",
+      "bytes": 16886,
+      "sha256": "91cfc62b06c1ef3edca58f96964871dea69a9696e9278c8db23cbce91f0fde26"
+    },
+    {
+      "file": "root-git-expectation-acceptance.json",
+      "bytes": 1038,
+      "sha256": "d413988342dfaef4955f9acc9afb930433b4c6ccd0df7ba09cfb014bddf185aa"
+    }
+  ]
+}

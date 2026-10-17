@@ -1,0 +1,1 @@
+{"phase":"STATIC_PREPARATION_REVIEW_PASS","originalInputsUnchanged":37,"byteExactRuntimeHelpers":12,"barrierInverses":4,"source":"19f174540b0b65870800317ed98085ef36696976","expectedPredecessor":"d8e9f2e1feaf1df1f64584268069ba9917e30849","operationalAuthority":false}

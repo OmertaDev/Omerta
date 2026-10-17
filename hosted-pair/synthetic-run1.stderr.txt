@@ -1,0 +1,17 @@
+<anonymous_script>:24
+  put(output,'hosted-binding.json',serial(config));put(output,'materialization-receipt.json',serial({phase:'ROOT_APPROVED_GUI_JOB_INPUTS_MATERIALIZED_NO_PAIR_RESULT',approval:retainedApproval,modules,binding,proofContract:contract,runtime,source:SOURCE,predecessor:PRED,workflowCommit:a.workflowCommit,independentReviewSHA256:a.independentReviewSHA256}));
+                                                                                                                                                                                                                                                      ^
+
+ReferenceError: SOURCE is not defined
+    at prepare (eval at actualFunction (synthetic-cases.js:53:41), <anonymous>:24:247)
+    at prepareModel (synthetic-cases.js:60:2309)
+    at synthetic-cases.js:61:86
+    at yes (synthetic-cases.js:5:23)
+    at synthetic-cases.js:61:1
+    at Script.runInContext (node:vm:149:12)
+    at Object.<anonymous> (C:\Users\Jorge\AppData\Local\Temp\omerta-dashboard-strict-gui-materialization-preparation-9f433ed9-c268-47fe-bb6f-21d632794a76\synthetic-tests.cjs:18:86)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+
+Node.js v24.19.0

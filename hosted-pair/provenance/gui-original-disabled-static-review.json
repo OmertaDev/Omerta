@@ -1,0 +1,205 @@
+{
+  "phase": "INDEPENDENT_STATIC_REVIEW_DISABLED_STRICT_GUI_OBSERVER",
+  "reviewedAtUtc": "2026-10-17T04:26:47.6869140Z",
+  "result": "PASS_STATIC_PREPARATION_SCOPE_ONLY",
+  "findings": [],
+  "frozenPackage": {
+    "path": "C:\\Users\\Jorge\\AppData\\Local\\Temp\\omerta-dashboard-strict-gui-observer-preparation-c947957c-a0ff-46e0-900f-de9fa51b4794",
+    "manifestBytes": 2064,
+    "manifestSha256": "6230abfd4da12ae359122cd2d091b49f5ba3f0b4d9bd9b31045923298d92e748",
+    "observerBytes": 26982,
+    "observerSha256": "ad3d57a180b6d4c37561c757aeec3106e3c33a19f0d8f3638efe3e35e1face92",
+    "all9FilesVerifiedUnchanged": true,
+    "files": [
+      {
+        "file": "HANDOFF.md",
+        "bytes": 3389,
+        "sha256": "b881fad0067fcee1cc36be4e04a9978a05f9b835cf23a26b46544b320b43a50d"
+      },
+      {
+        "file": "hosted-binding.json",
+        "bytes": 840,
+        "sha256": "066dfbad5608afbb183554bcc685524f9812ecc8a3b6b3124d05199ad3943b31"
+      },
+      {
+        "file": "hosted-observer.cjs",
+        "bytes": 26982,
+        "sha256": "ad3d57a180b6d4c37561c757aeec3106e3c33a19f0d8f3638efe3e35e1face92"
+      },
+      {
+        "file": "proof-contract.json",
+        "bytes": 1670,
+        "sha256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace"
+      },
+      {
+        "file": "provenance.json",
+        "bytes": 2780,
+        "sha256": "af0a62c2ed7964d8d9372dbd81064cf342edf62e4774e38e4a02adde2e321bb7"
+      },
+      {
+        "file": "source-binding.template.json",
+        "bytes": 1945,
+        "sha256": "8523320c6ef6b26ff7998320a6b608866ab23eb93cba56d90e6d5489660c2bde"
+      },
+      {
+        "file": "source-pins.json",
+        "bytes": 5347,
+        "sha256": "2154e64e93b31776c4fff2f417f68e98f54e39bfc795cb7430abbf2fbd00680b"
+      },
+      {
+        "file": "syntax-check.json",
+        "bytes": 247,
+        "sha256": "c591a3d39abf6af4852639aebe905a4f2edefdf7128851d6916907094529e135"
+      },
+      {
+        "file": "workflow.yml.template",
+        "bytes": 4601,
+        "sha256": "7ebf4d8b5dccf9908ae2aa3f110e7c28a18ab368346744bec165be1695ed752e"
+      }
+    ]
+  },
+  "provenanceReferencesVerified": [
+    "parentManifest",
+    "parentObserver",
+    "adapter",
+    "guard",
+    "proof",
+    "historicalProofContract",
+    "sourcePins",
+    "baseline",
+    "baseline.independentReview"
+  ],
+  "sourceBindingChecks": {
+    "candidate": "19f174540b0b65870800317ed98085ef36696976",
+    "candidateTree": "c04003a12493eea9b725daa016a32159ec5e64b4",
+    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+    "predecessorTree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
+    "bothSides4FileBinaryGitPinsVerified": true,
+    "replacementObjectsDisabled": true,
+    "schemaEqual": true,
+    "lockEqual": true,
+    "appVersionEqual": "1.5.0",
+    "packageJsonPerSideDifferentAndCorrectlyPinned": true,
+    "canonicalCliBlob": "fa4edae199c1357fd96df5c34a607e45e24cb0c8",
+    "canonicalCliLinuxRawAndGitSha256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+    "baselineSha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7",
+    "baselineBytes": 239089,
+    "baselineLockSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+    "contractChanges": "Candidate f4 to19f and canonical CLI rawSha256 from Windows representation to independently verified Linux/Git bytes; all assertion indexes/counts and strict status requirements preserved."
+  },
+  "parentFunctionComparison": [
+    {
+      "name": "regular",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "ref",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "admission",
+      "byteIdenticalFunctionLine": false
+    },
+    {
+      "name": "guardPairBinding",
+      "byteIdenticalFunctionLine": false
+    },
+    {
+      "name": "serviceFacts",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "compareGuardReceipts",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "startupReady",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "sqlIdentity",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "closedZero",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "deadline",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "docker",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "zero",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "childEnv",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "linuxProcesses",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "foreignNodes",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "monitorCohort",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "spawnObserved",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "proof",
+      "byteIdenticalFunctionLine": false
+    },
+    {
+      "name": "readProof",
+      "byteIdenticalFunctionLine": false
+    },
+    {
+      "name": "survivingPids",
+      "byteIdenticalFunctionLine": true
+    },
+    {
+      "name": "runHostedPair",
+      "byteIdenticalFunctionLine": false
+    }
+  ],
+  "staticChecks": [
+    "Observer first executable statement throws before any require/import; enabled false; GUI binding review false; actual runtime/workflow/admission/deployment fields null; workflow remains .template and materializer unconditionally exits1.",
+    "Strict adapter API input names match the pinned createStrictHostedProofAdapter contract. Exactly one before() and one afterAndValidate(beforeState) surround the unchanged canonical CLI. Success requires adapter source/dependency/runtime comparisons plus strict proof validation.",
+    "All16 assertion IDs remain exact. Strict proof validator enforces snapshot shapes, equality indexes3/6/9/12/15, replay indexes4/10/13 with counts1/2/2, and rejects additive bootstrap statuses.",
+    "Observer independently retains PostgreSQL18.4 and database.created/name checks, interruption/failure checks, four observed normal IPC children, exact41 artifact names and42-file hash closure, two receipts andfive replay files.",
+    "Service identity/read-only zero checks, explicit reader closure, initial/final zero, outer EXIT/CLOSE/log closure, survivor checks and unknown-Node checks remain byte-identical functions from the pinned parent. Deadline markers never infer successful closure or kill/release the cohort.",
+    "beforeStarted is set immediately before awaiting before(); failure-finally independently captures and verifies strict schema/lock/version even if before() throws. A before comparison occurs only when a verified before receipt exists, and absence is explicitly false. The one-shot adapter after method is never retried.",
+    "Controls retain observer, source guard, strict adapter, proof validator, source binding, strict contract, independent approval, both expected dependency descriptors and all three exact guard-reference files; reference bytes and hashes independently verified.",
+    "GUI workflow names/concurrency/artifact names are distinct; d8/19f sources and canonical CLI remain pinned. Financial flags off, no recurring PG healthcheck, owned bounded readiness, candidate retention workspace, always-run restricted encryption/upload and30-day retention preserved."
+  ],
+  "scope": {
+    "staticReadsAndHashComparisonsOnly": true,
+    "binaryGitObjectReadsOnly": true,
+    "targetImports": false,
+    "testsOrTargetExecution": false,
+    "applicationOrDependencyExecution": false,
+    "PG": false,
+    "Docker": false,
+    "CIM": false,
+    "reviewNetwork": false,
+    "productEdits": false,
+    "frozenPackageEdits": false,
+    "separateAlreadyAuthorizedCIMonitorContinued": true
+  },
+  "limitations": [
+    "No executable successor or hosted native/source-pair run is authorized by this receipt. This successor has not received synthetic execution tests in this review.",
+    "Actual paired Root deployment, approved executable materializer/control bundle, source reservations, runtime provenance including complete official bundled npm tree, Git provenance, service identity and retained run evidence remain unbound.",
+    "Final19f actual PR CI andForge remain mandatory; no historical f4 result is promoted."
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-17T04:27:57.523Z",
+  "phase": "ROOT_ACCEPTS_INDEPENDENTLY_REVIEWED_GIT_BINARY_EXPECTATION_ONLY",
+  "author": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-official-git-provenance-126629f4-f18a-4c01-915a-7bc9bd1b6748",
+  "peer": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-git-provenance-independent-review-c80c3a14-5bc0-42f9-ab55-5cbda87b71eb",
+  "expected": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-official-git-provenance-126629f4-f18a-4c01-915a-7bc9bd1b6748/expected-runtime-git.json",
+  "expectedSHA256": "1625dc4323716c8b48e8cc9f5568b51fe69dba3311640da89155346f6d1ca7f9",
+  "binary": {
+    "path": "/usr/bin/git",
+    "sha256": "d4d2ba562243015206d4248edfec871a74786499292d00ed072dbca2f5ae8073"
+  },
+  "scope": "Rehashed both complete sealed packets; reuse signed-package derivation and independently executed verification. Root did not repeat gpgv or execute downloaded Git.",
+  "actualFutureRuntimeApproved": false,
+  "sourcePAIR": false,
+  "PG": false,
+  "financialActivation": false
+}

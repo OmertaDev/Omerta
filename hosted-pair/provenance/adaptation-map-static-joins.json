@@ -1,0 +1,102 @@
+{
+  "phase": "STATIC_ADAPTATION_JOINS_ONLY_NOT_EXECUTABLE_OR_APPROVAL",
+  "fourRegisteredPathEdits": [
+    {
+      "file": "materialize-hosted.cjs",
+      "count": 1,
+      "beforeSHA256": "f20719c4f5d1d41094b8c16db2e346742ace1d2263226005aa4a02791821e667",
+      "afterSHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+      "old": "rootd8-bg-sourcepair.yml",
+      "replacement": "rc1-recovery.yml",
+      "wholeByteInverse": true
+    },
+    {
+      "file": "root-approval.UNBOUND.json",
+      "count": 1,
+      "beforeSHA256": "563d303411f52d122ff20f14e4eb4812937224c84aa1f44260f2ec5c38961b93",
+      "afterSHA256": "dd083ac1ef3f15f5c5d8d63fb0355317f358d7f9a13f8ca97dcf72eacea1c4b4",
+      "old": "rootd8-bg-sourcepair.yml",
+      "replacement": "rc1-recovery.yml",
+      "wholeByteInverse": true
+    },
+    {
+      "file": "test-materializer.cjs",
+      "count": 1,
+      "beforeSHA256": "d194156c53a8aaa14bada957302a668c6fb3833b9781624ff41bd423f4a67501",
+      "afterSHA256": "f8be89062a7ccddf62a758cb4c886693e8f6396210acf113985f657016e78314",
+      "old": "rootd8-bg-sourcepair.yml",
+      "replacement": "rc1-recovery.yml",
+      "wholeByteInverse": true
+    },
+    {
+      "file": "HANDOFF.md",
+      "count": 1,
+      "beforeSHA256": "81e8359b5f80ace07b0cf2859b5ab31a32d174ee2b803bae3ab09336b6f18dcf",
+      "afterSHA256": "6da8ceb4ead8bd4a3b3d0f05bfd42cd14658a7b3d60fe4d8423893e9dfb75571",
+      "old": "rootd8-bg-sourcepair.yml",
+      "replacement": "rc1-recovery.yml",
+      "wholeByteInverse": true
+    }
+  ],
+  "otherInheritedManifestFilesUnchanged": 30,
+  "peerAuthorManifestExact": true,
+  "barrierPreimages": [
+    {
+      "name": "observer",
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632/hosted-observer.cjs",
+      "bytes": 27019,
+      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720",
+      "barrierLine": 2,
+      "barrierLiteral": "throw new Error('PREPARATION ONLY: strict GUI controller is disabled pending independent review and bound admission');",
+      "barrierRetainedOnDisk": true,
+      "futurePostimage": null
+    },
+    {
+      "name": "guard",
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-guard-preparation-879ce748-d847-4446-a040-d268faef9a90/hosted-source-guard.mjs",
+      "bytes": 36295,
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93",
+      "barrierLine": 1,
+      "barrierLiteral": "throw new Error('PREPARATION ONLY: independently bind and review a separate executable successor before use');",
+      "barrierRetainedOnDisk": true,
+      "futurePostimage": null
+    },
+    {
+      "name": "adapter",
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-proof-adapter-preparation-4774d2ca-49b0-4799-a282-d43ba3456878/strict-source-proof-adapter.mjs",
+      "bytes": 8302,
+      "sha256": "7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b",
+      "barrierLine": 1,
+      "barrierLiteral": "throw new Error('PREPARATION ONLY: no executable source/proof integration or admission is authorized');",
+      "barrierRetainedOnDisk": true,
+      "futurePostimage": null
+    },
+    {
+      "name": "proofValidator",
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-proof-validation-8f0c7466-b334-4cc9-b0cd-b15ba23ee2c5/proof-validator.mjs",
+      "bytes": 6995,
+      "sha256": "daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956",
+      "barrierLine": 1,
+      "barrierLiteral": "throw new Error('PREPARATION_ONLY_UNBOUND: hosted proof validator is not executable or an admission.');",
+      "barrierRetainedOnDisk": true,
+      "futurePostimage": null
+    }
+  ],
+  "guiScopedReviews": [
+    {
+      "name": "guiDeadlineStaticReview",
+      "path": "C:/Users/Jorge/.codex/worktrees/city-world-hud/Omerta/output/security/dashboard-game-parity-19f17454-strict-gui-startup-deadline-static-review.json",
+      "bytes": 3396,
+      "sha256": "7df98531a079d6bb2f36776dfa79b271c760596890a4bb28f8330210eea7d7cf"
+    },
+    {
+      "name": "guiSyntheticReceipt",
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-deadline-synthetic-3379e04d-7913-455e-a97f-961c263f7194/test-receipt.json",
+      "bytes": 4894,
+      "sha256": "8ba6bc914a08be991d32e5db45f4af22b9cdb0c97d9eded019af6feb561f330f"
+    }
+  ],
+  "futureExecutablePostimagesCreated": false,
+  "actualApproval": null,
+  "actualRuntime": null
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "file": "materialize-hosted.cjs",
+    "count": 1,
+    "beforeSHA256": "f20719c4f5d1d41094b8c16db2e346742ace1d2263226005aa4a02791821e667",
+    "afterSHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+    "old": "rootd8-bg-sourcepair.yml",
+    "replacement": "rc1-recovery.yml",
+    "wholeInverse": true
+  },
+  {
+    "file": "root-approval.UNBOUND.json",
+    "count": 1,
+    "beforeSHA256": "563d303411f52d122ff20f14e4eb4812937224c84aa1f44260f2ec5c38961b93",
+    "afterSHA256": "dd083ac1ef3f15f5c5d8d63fb0355317f358d7f9a13f8ca97dcf72eacea1c4b4",
+    "old": "rootd8-bg-sourcepair.yml",
+    "replacement": "rc1-recovery.yml",
+    "wholeInverse": true
+  },
+  {
+    "file": "test-materializer.cjs",
+    "count": 1,
+    "beforeSHA256": "d194156c53a8aaa14bada957302a668c6fb3833b9781624ff41bd423f4a67501",
+    "afterSHA256": "f8be89062a7ccddf62a758cb4c886693e8f6396210acf113985f657016e78314",
+    "old": "rootd8-bg-sourcepair.yml",
+    "replacement": "rc1-recovery.yml",
+    "wholeInverse": true
+  },
+  {
+    "file": "HANDOFF.md",
+    "count": 1,
+    "beforeSHA256": "81e8359b5f80ace07b0cf2859b5ab31a32d174ee2b803bae3ab09336b6f18dcf",
+    "afterSHA256": "6da8ceb4ead8bd4a3b3d0f05bfd42cd14658a7b3d60fe4d8423893e9dfb75571",
+    "old": "rootd8-bg-sourcepair.yml",
+    "replacement": "rc1-recovery.yml",
+    "wholeInverse": true
+  }
+]

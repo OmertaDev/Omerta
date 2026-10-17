@@ -1,0 +1,225 @@
+{
+  "phase": "FROZEN_PUBLIC_GIT_DISTRIBUTION_PROVENANCE_PENDING_PEER_REVIEW",
+  "createdAt": "2026-10-17T04:25:15.9072834Z",
+  "files": [
+    {
+      "file": "derivation-result.json",
+      "bytes": 4785,
+      "sha256": "500fcdf8d5491375e0ea3cf0514b5a61b64a17a148808ed1fc45df24b71b6b91"
+    },
+    {
+      "file": "derive-package.mjs",
+      "bytes": 10997,
+      "sha256": "82969b179f75e00b7344c91c3e91e60c4e16e82acc1125a20fbdce49aaa41a4a"
+    },
+    {
+      "file": "expected-runtime-git.json",
+      "bytes": 3105,
+      "sha256": "1625dc4323716c8b48e8cc9f5568b51fe69dba3311640da89155346f6d1ca7f9"
+    },
+    {
+      "file": "public-gpg-home/pubring.kbx",
+      "bytes": 1345,
+      "sha256": "4724e2c1bf9831f25afbc1d79dc6f47318903f81cc053be474d3d31413b69f35"
+    },
+    {
+      "file": "public-gpg-home/pubring.kbx~",
+      "bytes": 32,
+      "sha256": "c383ac6b0879cebc7ed5cebedf688b7d7aa013a4520098d159765a0651126d12"
+    },
+    {
+      "file": "public-gpg-home/trustdb.gpg",
+      "bytes": 1200,
+      "sha256": "ef059ad81d60057c4ff2b04dc348123cf34197181e77d543c551a048a67b4509"
+    },
+    {
+      "file": "public/exact-version-published-binaries.json",
+      "bytes": 1402,
+      "sha256": "343c13753118b21fa4284e8b051d310e5bcb7372f5b1c8bed15c4dd49ac51cf3"
+    },
+    {
+      "file": "public/git_2.55.0-0ppa1~ubuntu24.04.2_amd64.deb",
+      "bytes": 7409882,
+      "sha256": "6238a37c11c1bd4b18a5194f766ccfcb2f26c116e7d8ecd07bac143863b69498"
+    },
+    {
+      "file": "public/git-core-legacy-signing-key.asc",
+      "bytes": 623,
+      "sha256": "c861e03ade6298448b1ffd30e28c2f14903c910250410f4c1996b1374509e13f"
+    },
+    {
+      "file": "public/git-core-signing-key.asc",
+      "bytes": 1700,
+      "sha256": "cb4b9907b85162db8dd87908bfcc79a76c5d5302da6e6d8fbc1c45cf80d961b3"
+    },
+    {
+      "file": "public/git-upstream-install-linux.html",
+      "bytes": 7234,
+      "sha256": "67976912aefde918badf91e79a3fc56f9c7426051a1913c4917372d8a509ba4c"
+    },
+    {
+      "file": "public/noble-amd64-Packages.gz",
+      "bytes": 3812,
+      "sha256": "fbde5a025fcb3bf2550eae79f6c092502018e049022642bf0966cb98d64364c1"
+    },
+    {
+      "file": "public/noble-InRelease",
+      "bytes": 24337,
+      "sha256": "095c532adaf81efc8280a625bfcf42c8079481280de4be9e26f9574c4581600d"
+    },
+    {
+      "file": "public/ppa-api.json",
+      "bytes": 2729,
+      "sha256": "d7a52669e6ee984a9d80e4303da057f335835d2b29de6260abdf9ec04951bf68"
+    },
+    {
+      "file": "README.md",
+      "bytes": 2708,
+      "sha256": "14e1618ecacedf0c3f633f1a18685df8a8dc6044091270fba7253c8ddb38afa6"
+    },
+    {
+      "file": "retrieval-deb.json",
+      "bytes": 503,
+      "sha256": "0d6d3911eef67ddffa77bb4701b8386ccbcfba4c6c484023dcb6c0aa51f76346"
+    },
+    {
+      "file": "retrieval-initial.json",
+      "bytes": 1111,
+      "sha256": "6700d38e5d67fe94803fd40aa7323954498385f1bb13e498d979abd87ff93f72"
+    },
+    {
+      "file": "retrieval-legacy-key.json",
+      "bytes": 438,
+      "sha256": "7145e3b21d4adbb61d4863b5e2b875c0e55e58472d381c99627d672c571b5533"
+    },
+    {
+      "file": "retrieval-metadata.json",
+      "bytes": 1293,
+      "sha256": "1739b4a4b465fd6c3b81123672f3565b427246cc2a5b1cf9c0b262352ae03709"
+    },
+    {
+      "file": "retrieval-packages.json",
+      "bytes": 323,
+      "sha256": "85fcb6507f3ade9f9f8067492c2559c68906fef1309f5b24f79a735130899968"
+    },
+    {
+      "file": "verification-summary.json",
+      "bytes": 4168,
+      "sha256": "c163f0bccc06e1194bfc45ff028a4ecc7419415bb0b6d99870f9ab8bb6c48284"
+    },
+    {
+      "file": "verification/dearmor-legacy.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "verification/dearmor-legacy.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "verification/deb-members.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "verification/deb-members.stdout.txt",
+      "bytes": 46,
+      "sha256": "0fb548ef684e55537f2c870b62fbba7e1562830ae6d72cb45c19d6c5fbef528c"
+    },
+    {
+      "file": "verification/derive-package.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "verification/derive-package.stdout.json",
+      "bytes": 1560,
+      "sha256": "f38a22ccf5376988d5f1974ede0bdf4bd78e5b921a7d5e27ea036d4b61c87bf5"
+    },
+    {
+      "file": "verification/expected-usr-bin-git.bin",
+      "bytes": 4576040,
+      "sha256": "d4d2ba562243015206d4248edfec871a74786499292d00ed072dbca2f5ae8073"
+    },
+    {
+      "file": "verification/git-package-stanza.txt",
+      "bytes": 1319,
+      "sha256": "b20347e895c5fa81234beca8402d2c56a3f5887d740eb7fca46e22790b5cd7bc"
+    },
+    {
+      "file": "verification/gpgv-both-inrelease.stderr.txt",
+      "bytes": 396,
+      "sha256": "dad9ec168a3bc608d90c0223139128796b3009c89f43b04aba9fafba50bf2c5a"
+    },
+    {
+      "file": "verification/gpgv-both-inrelease.stdout.txt",
+      "bytes": 720,
+      "sha256": "e2d2f440ca804d75d5cfb8566fabaebfbdc5a37d6e750b0f78f7c07bdbf3ae8b"
+    },
+    {
+      "file": "verification/gpgv-inrelease.stderr.txt",
+      "bytes": 370,
+      "sha256": "8f5e3c6ffcbdc87b51330489a16bee90d26208b666e96ab2ccd1c838595cf45e"
+    },
+    {
+      "file": "verification/gpgv-inrelease.stdout.txt",
+      "bytes": 507,
+      "sha256": "857047ebf00262324d2696a974540f424638dbbba55b1763ea8c1554836d8d18"
+    },
+    {
+      "file": "verification/import-key.stderr.txt",
+      "bytes": 255,
+      "sha256": "ef5ac9c9cf8e9d1be9adb175af2a06785b24c85dceab232bb47e8ea91eac9578"
+    },
+    {
+      "file": "verification/import-key.stdout.txt",
+      "bytes": 290,
+      "sha256": "718649efb89248d1d5d1e4d997ca1ca3e47c2084e6f93a29160eb824ad07f9b6"
+    },
+    {
+      "file": "verification/legacy-public-key.gpg",
+      "bytes": 369,
+      "sha256": "18784b89b0dddeab155f111da4fb528cbe8ebe4c2ceaf3fb2b9eea7789fa2502"
+    },
+    {
+      "file": "verification/noble-amd64-Packages",
+      "bytes": 11080,
+      "sha256": "77ee04a837b63d7a574d374397a7d6e3243d6a1f6472247f7da88f30f70feb2b"
+    },
+    {
+      "file": "verification/package-control.txt",
+      "bytes": 1614,
+      "sha256": "97ff6239cbdff75838e2e0c38e994b07bf05f23ae71d7b8512415b6ee67ff0da"
+    },
+    {
+      "file": "verification/show-key-corrected.stderr.txt",
+      "bytes": 272,
+      "sha256": "16ee48620ed99cc140101c73f0645623a83a0975d0ef62c94557933e3729b56e"
+    },
+    {
+      "file": "verification/show-key-corrected.stdout.txt",
+      "bytes": 234,
+      "sha256": "34c74e9888fce8932ce1febf6af9d9290e8647c70cd8c543796b502f207290f7"
+    },
+    {
+      "file": "verification/show-key.stderr.txt",
+      "bytes": 425,
+      "sha256": "d4dba13dcd2013406e726da929eee3c20c51835213d27ac02a4bd6d32e9dce14"
+    },
+    {
+      "file": "verification/show-key.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "directories": [
+    "public",
+    "public-gpg-home",
+    "verification"
+  ],
+  "links": 0,
+  "runtimeAdmission": null,
+  "executionApproval": null,
+  "sourceReservation": null
+}

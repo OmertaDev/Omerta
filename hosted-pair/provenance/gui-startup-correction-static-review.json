@@ -1,0 +1,70 @@
+{
+  "status": "PASS_STATIC_ONE_INSERTION_DISABLED_SUCCESSOR",
+  "reviewedAt": "2026-10-17T04:37:56.2048113Z",
+  "scope": "HO-STARTUP-R1 exact static successor only",
+  "manifest": {
+    "path": "C:\\Users\\Jorge\\AppData\\Local\\Temp\\omerta-dashboard-strict-gui-observer-deadline-successor-699325d0-9fbf-4d87-8024-ab797e761632\\manifest.json",
+    "bytes": 2446,
+    "sha256": "c876e75d91dcd15d0d533bf76ea765980132519238690d71192b9243c40126a3",
+    "closedIndexedFiles": 9,
+    "totalFiles": 10
+  },
+  "observer": {
+    "bytes": 27019,
+    "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+  },
+  "parent": {
+    "manifestSHA256": "6230abfd4da12ae359122cd2d091b49f5ba3f0b4d9bd9b31045923298d92e748",
+    "observerBytes": 26982,
+    "observerSHA256": "ad3d57a180b6d4c37561c757aeec3106e3c33a19f0d8f3638efe3e35e1face92"
+  },
+  "correction": {
+    "insertion": "if(Date.now()-started>=limitMs)break;",
+    "bytes": 37,
+    "after": "row.attempts.push({status:0});",
+    "before": "row.complete=true;",
+    "wholeByteExactInverse": true,
+    "startupReadyEqualsIndependentlyReviewedRootSuccessor": true,
+    "meaning": "Successful readiness at or after limit reaches unchanged deadline refusal before complete=true."
+  },
+  "unchangedFiles": [
+    "hosted-binding.json",
+    "proof-contract.json",
+    "source-binding.template.json",
+    "source-pins.json",
+    "workflow.yml.template"
+  ],
+  "honestChangedMetadata": [
+    "HANDOFF appends correction scope and requires fresh successor verification.",
+    "Provenance retains every historical key and adds parent/correction descriptors.",
+    "Syntax receipt names and hashes this successor; inspected only, not rerun."
+  ],
+  "parentReview": {
+    "authorManifest": {
+      "path": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-startup-deadline-successor-20261017/manifest.json",
+      "bytes": 8669,
+      "sha256": "57cdec5ec08b90a0496de1464811f939ada9ca7a2a17ceb6f59aac13a9b1f8e8"
+    },
+    "independentManifest": {
+      "path": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-startup-deadline-independent-20261017/manifest.json",
+      "bytes": 2157,
+      "sha256": "e680de44704fb2cd366de0be58fe811dca3187cc6a053fd9ce6e63ac24aee70b"
+    },
+    "reviewSHA256": "0c4655c83bae1efd1ae818b318bf728371ffc5f965783f4e6321bc9a8edab7ad",
+    "historicalControlsOnly": true
+  },
+  "barriers": {
+    "firstExecutableStatementThrows": true,
+    "bindingEnabled": false,
+    "guiBindingSchemaReviewed": false,
+    "workflowMaterializerFails": true,
+    "strictSchemaAndAssertionContractUnchanged": true,
+    "allOtherObserverOperationalBytesUnchanged": true
+  },
+  "limits": [
+    "Static-only review; no observer/module import, execution, synthetic test, application dependency, PostgreSQL, Docker, CIM, network, source edit or workflow action.",
+    "Capture agent owns fresh synthetic verification; historical parent controls are not relabeled as tests of this GUI successor.",
+    "No runtime, source-pair, service admission, release, deployment or operational authority granted.",
+    "Full browser sealed evidence remains untouched."
+  ]
+}

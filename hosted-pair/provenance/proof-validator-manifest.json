@@ -1,0 +1,29 @@
+{
+  "phase": "FROZEN_NON_EXECUTABLE_HOSTED_PROOF_VALIDATOR_PREPARATION",
+  "createdAt": "2026-10-17T03:40:36.462Z",
+  "provenance": {
+    "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-parity-pair-preparation-f4d796e2-v4-da73e0ac-3b79-4fe0-a204-9b39e8a427c7/execute-pair.mjs",
+    "sha256": "6d338f92dd3905c9fc6717524ae1c9bb7b07732178305c518e3b93a0e8262209"
+  },
+  "exactLfNormalizedExtracts": {
+    "proofShape": true,
+    "proofIndex": true,
+    "proofSources": true
+  },
+  "sourceBinding": "UNBOUND_FINAL_GUI_AND_ACTUAL_RELEASED_PREDECESSOR",
+  "files": [
+    {
+      "file": "proof-validator.mjs",
+      "bytes": 6995,
+      "sha256": "daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956"
+    },
+    {
+      "file": "proof-contract.json",
+      "bytes": 1670,
+      "sha256": "345a2f94efdfce0fe795f05e3f1ee5dac577e5bec905bbfe5fefcf6aaed84a99"
+    }
+  ],
+  "actualSourceCapture": false,
+  "databaseActions": false,
+  "executionPermitted": false
+}

@@ -1,0 +1,1 @@
+{"phase":"PASS_SYNTHETIC_DISABLED_GUI_MATERIALIZER_CONTROLS_ONLY","counts":{"positive":22,"refusals":135},"realCapabilityAttempts":{"unexpectedFilesystem":0,"unexpectedProcess":0,"unexpectedImport":0,"dynamicImport":0}}
