@@ -361,6 +361,7 @@
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
 | [docs/business-partnerships-security-review.md](../../docs/business-partnerships-security-review.md) | documentation | 36 | 2026-10-13 |
+| [docs/business-relocation-design.md](../../docs/business-relocation-design.md) | design | 129 | 2026-10-15 |
 | [docs/business-season-integration-review.md](../../docs/business-season-integration-review.md) | documentation | 20 | 2026-10-12 |
 | [docs/business-season-migration-review.md](../../docs/business-season-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/business-season-source-transfer-review.md](../../docs/business-season-source-transfer-review.md) | documentation | 23 | 2026-10-12 |
@@ -485,6 +486,9 @@
 | [docs/equipment-economy-migration-proposal-review.md](../../docs/equipment-economy-migration-proposal-review.md) | documentation | 89 | 2026-10-13 |
 | [docs/equipment-insurance-security-review.md](../../docs/equipment-insurance-security-review.md) | documentation | 24 | 2026-10-13 |
 | [docs/equipment-maintenance-review.md](../../docs/equipment-maintenance-review.md) | documentation | 28 | 2026-10-13 |
+| [docs/equipment-recovery-integration-proposal.md](../../docs/equipment-recovery-integration-proposal.md) | documentation | 78 | 2026-10-15 |
+| [docs/equipment-recovery-security-review.md](../../docs/equipment-recovery-security-review.md) | documentation | 109 | 2026-10-15 |
+| [docs/equipment-recovery.md](../../docs/equipment-recovery.md) | documentation | 26 | 2026-10-16 |
 | [docs/equipment-rental-estate-callers-review.md](../../docs/equipment-rental-estate-callers-review.md) | documentation | 34 | 2026-10-13 |
 | [docs/equipment-rental-primitive-review.md](../../docs/equipment-rental-primitive-review.md) | documentation | 24 | 2026-10-13 |
 | [docs/equipment-rentals-integration-design.md](../../docs/equipment-rentals-integration-design.md) | design | 33 | 2026-10-13 |
@@ -521,7 +525,9 @@
 | [docs/logistics-hub-migration-review.md](../../docs/logistics-hub-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/management-teams-design.md](../../docs/management-teams-design.md) | design | 26 | 2026-10-13 |
 | [docs/management-teams-security-review.md](../../docs/management-teams-security-review.md) | documentation | 18 | 2026-10-13 |
+| [docs/manufacturing-license-design.md](../../docs/manufacturing-license-design.md) | design | 15 | 2026-10-15 |
 | [docs/merchant-returns-security-review.md](../../docs/merchant-returns-security-review.md) | documentation | 46 | 2026-10-15 |
+| [docs/mobile-shops-security-review.md](../../docs/mobile-shops-security-review.md) | documentation | 82 | 2026-10-15 |
 | [docs/multi-hop-courier-security-review.md](../../docs/multi-hop-courier-security-review.md) | documentation | 45 | 2026-10-15 |
 | [docs/multihop-courier-owner-estate-review.md](../../docs/multihop-courier-owner-estate-review.md) | documentation | 16 | 2026-10-15 |
 | [docs/multihop-courier-recovery-review.md](../../docs/multihop-courier-recovery-review.md) | documentation | 16 | 2026-10-15 |
@@ -545,7 +551,7 @@
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 187 | 2026-10-17 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 191 | 2026-10-17 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md](../../docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md) | documentation | 92 | 2026-10-14 |
@@ -697,6 +703,7 @@
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2744 | 2026-10-16 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
+| [docs/workshop-floor-integration.md](../../docs/workshop-floor-integration.md) | documentation | 22 | 2026-10-15 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 50 | 2026-09-25 |
 | [GTM.md](../../GTM.md) | documentation | 295 | 2026-09-25 |
@@ -715,7 +722,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-16 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-17 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |

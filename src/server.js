@@ -1,8 +1,11 @@
+import {register as registerEquipmentRecovery} from './routes/equipmentrecovery.js';
+import {register as registerManufacturingLicenses} from './manufacturinglicensesroutes.js';
 import {register as registerCrossDocking} from './routes/crossdocking.js';
 import {register as registerProductionSlots} from './routes/productionslots.js';
 import {register as registerMerchantReturns} from './routes/merchantreturns.js';
 import { register as registerMultiHopCourier } from './routes/multihopcourier.js';
 import { register as registerCustomerVaults } from './routes/customervaults.js';
+import {register as registerBusinessRelocations} from './businessrelocationroutes.js';
 import { register as registerCommissionedCrafting } from './routes/commissionedcrafting.js';
 import * as DeedUpgrades from './deed-upgrades.js';
 import Fastify from 'fastify';
@@ -93,6 +96,7 @@ import { register as registerMarketFeed } from './routes/marketfeed.js';
 import { register as registerStrategyLeagues } from './routes/strategyleagues.js';
 import { register as registerCompanyOperators } from './routes/companyoperators.js';
 import { register as registerCompanyProduction } from './routes/companyproduction.js';
+import {registerWorkshopFloor} from './workshopfloor-api.js';
 import { register as registerCompanyDemand } from './routes/companydemand.js';
 import { register as registerCompanyForecast } from './routes/companyforecast.js';
 import { register as registerCompanySpecialization } from './routes/companyspecialization.js';
@@ -103,6 +107,8 @@ import { assertCommercialDisputeAccess } from './commercialdisputes.js';
 import { register as registerEquipmentInsurance } from './routes/equipmentinsurance.js';
 import { register as registerCustomerLayaway } from './routes/customerlayaway.js';
 import { register as registerConsignments } from './routes/consignments.js';
+import { register as registerMobileShops } from './routes/mobileshops.js';
+import { mobileShopListingReference, runMobileShop } from './mobileshops.js';
 import { register as registerAtomicBarter } from './routes/atomicbarter.js';
 import { register as registerPickingPacking } from './routes/pickingpacking.js';
 import { register as registerDecisionReplay } from './routes/decisionreplay.js';
@@ -113,7 +119,7 @@ import { register as registerTerritoryEconomics } from './routes/territoryeconom
 import { withInfrastructureProductionScope } from './infrastructureconcessions.js';
 import { register as registerEquipmentRentals } from './routes/equipmentrentals.js';
 import { register as registerServiceSubscriptions } from './routes/servicesubscriptions.js';
-import { relayEscrowCustody,assertItemTransaction } from './items.js';
+import { relayEscrowCustody,assertItemTransaction,withItemRead } from './items.js';
 import { register as registerCommercialNegotiation } from './routes/commercialnegotiation.js';
 import { register as registerContractAuctions } from './routes/contractauctions.js';
 import { register as registerWorkerTraining } from './routes/workertraining.js';
@@ -2452,10 +2458,16 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Market.listItem(ch, req.body || {}, client, h)));
   app.post('/v1/market/:id/bid', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Market.bidListing(ch, req.params.id, req.body?.amount, client, h)));
-  app.post('/v1/market/:id/buy', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Market.buyListing(ch, req.params.id, req.body?.qty, client, h)));
-  app.post('/v1/market/:id/cancel', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Market.cancelListing(ch, req.params.id, client, h)));
+  app.post('/v1/market/:id/buy', { preHandler: auth }, async (req) => {
+    const linked = await withItemRead(pool, c => mobileShopListingReference(c, req.params.id));
+    if (linked) return runMobileShop(pool, req.user.sub, 'buy', { ...linked, quantity: req.body?.qty ?? 1, consent: true }, req.headers['idempotency-key']);
+    return G.withCharacter(pool, req.user.sub, (ch, client, h) => Market.buyListing(ch, req.params.id, req.body?.qty, client, h));
+  });
+  app.post('/v1/market/:id/cancel', { preHandler: auth }, async (req) => {
+    const linked = await withItemRead(pool, c => mobileShopListingReference(c, req.params.id));
+    if (linked) return runMobileShop(pool, req.user.sub, 'close', { ...linked, consent: true }, req.headers['idempotency-key']);
+    return G.withCharacter(pool, req.user.sub, (ch, client, h) => Market.cancelListing(ch, req.params.id, client, h));
+  });
   // step two — standing buy orders (WTB): post escrows cash at your dock; sellers fill from the
   // trunk and are paid on the spot; the buyer claims delivered goods into trunk space.
   app.post('/v1/market/order', { preHandler: auth }, async (req) =>
@@ -2488,6 +2500,9 @@ export async function buildServer() {
   registerStrategyLeagues(app, { pool, auth });
   registerCompanyOperators(app, { pool, auth });
   registerCompanyProduction(app, { pool, auth, beforeCraft: assertCompanySpecializationBeforeCraft, sourceScope: withInfrastructureProductionScope });
+  registerEquipmentRecovery(app,{pool,auth});
+  registerManufacturingLicenses(app,{pool,auth});
+  registerWorkshopFloor(app,{pool,auth});
   registerCompanyDemand(app, { pool, auth });
   registerCompanyForecast(app, { pool, auth });
   registerCompanySpecialization(app, { pool, auth });
@@ -2496,10 +2511,12 @@ export async function buildServer() {
   registerCommercialDisputes(app, { pool, auth, workflowGuard: assertCommercialDisputeAccess });
   registerEquipmentInsurance(app, { pool, auth });
   registerConsignments(app, { pool, auth });
+  registerMobileShops(app, { pool, auth });
   registerCustomerLayaway(app, { pool, auth });
   registerMultiHopCourier(app, { pool, auth });
   // Enabled with the actual estate-start/preactor and reserve-book integration in this release.
   registerCustomerVaults(app, { pool, auth, assertEstateBridgeReady: async () => true });
+  registerBusinessRelocations(app,{pool,auth});
   registerCommissionedCrafting(app, { pool, auth }); registerCrossDocking(app,{pool,auth}); registerProductionSlots(app,{pool,auth});
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });

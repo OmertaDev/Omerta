@@ -640,7 +640,8 @@ export function recipeCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTE
   const runtime = contextOf(craftingContext);
   const context = previewContext(ctx);
   return [...CRAFTING_DEFINITIONS.get(runtime).values()]
-    .filter((recipe) => recipe.visibility === 'public')
+    // Exact UID recovery has its own source quote and consent action.
+    .filter((recipe) => recipe.visibility === 'public' && recipe.id !== 'recipe:recover_worn_precision_tool')
     .flatMap((recipe) => {
       const revealed = recipe.discovery.mode === 'public' || (SERVER_PREVIEWS.has(ctx) && discovered(recipe, ctx));
       if (!revealed) return recipe.discovery.mode === 'partial' ? [{ ...partialRecipe(recipe), available: false, blockedBy: [{ adapter: 'discovery' }] }] : [];
@@ -896,7 +897,8 @@ export async function planCraftingSnapshot(client, accountId, craftingContext, r
   if (!character) return { groups: [], render: async () => [] };
   // A public recipe does not declassify its input/output definitions. This public
   // crafting board omits recipes whose entries would name hidden objects.
-  const recipes = recipeIds.map((recipeId) => recipeOf(runtime, recipeId)).filter((recipe) => publicRecipe(runtime, recipe));
+  const recipes = recipeIds.map((recipeId) => recipeOf(runtime, recipeId))
+    .filter((recipe) => publicRecipe(runtime, recipe) && recipe.id !== 'recipe:recover_worn_precision_tool');
   for (const recipe of recipes) {
     assertNoUnsupportedEconomy(recipe);
     if (inputsOf(recipe).some((entry) => entry.assetType)) fail('unsupported_salvage_recipe', 'Salvage uses its dedicated board.');
@@ -988,6 +990,7 @@ export async function craftWorldGraphRecipe(
   const accountId = canonicalString(h?.accountId, 'Authenticated account id');
   const owner = { scope: 'account', id: accountId };
   const recipe = recipeOf(context, recipeId);
+  if (recipe.id === 'recipe:recover_worn_precision_tool') fail('recovery_required', 'Use the exact equipment recovery action.');
   assertNoUnsupportedEconomy(recipe);
   if (inputsOf(recipe).some((entry) => entry.assetType === 'car')) {
     fail('salvage_required', 'Vehicle recipes must use salvageCar.');
@@ -1084,4 +1087,38 @@ export async function salvageCar(
       };
     },
   );
+}
+
+// Closed authored recovery action: the exact worn UID is consumed by canonical crafting.
+export async function recoverWorldGraphEquipment(client, h, termsValue, idempotencyKey) {
+  const Recovery = await import('./equipmentrecovery.js');
+  const terms = Recovery.equipmentRecoveryTerms(termsValue);
+  const context = contextOf(DEFAULT_CRAFTING_CONTEXT);
+  const accountId = canonicalString(h?.accountId, 'Authenticated account id');
+  const owner = { scope: 'account', id: accountId };
+  const recipe = recipeOf(context, 'recipe:recover_worn_precision_tool');
+  assertNoUnsupportedEconomy(recipe);
+  if (cashCostOf(recipe) !== 0
+      || JSON.stringify(inputsOf(recipe).map(e => ({templateId:e.templateId,quantity:Number(e.quantity)}))) !== JSON.stringify([{templateId:'item:precision_lock_tool',quantity:1}])
+      || JSON.stringify(outputsOf(recipe).map(e => ({templateId:e.templateId,quantity:Number(e.quantity),quality:e.quality||QUALITY}))) !== JSON.stringify([{templateId:'mat:salvage_parts',quantity:1,quality:'standard'}])) {
+    fail('unsupported_recovery_recipe', 'The closed recovery recipe changed.');
+  }
+  return withItemMutation(client, owner, 'craft', idempotencyKey,
+    { ...graphMutationAuthority(context, recipe), equipmentRecovery: terms },
+    async mutation => {
+      const actor = await actorContext(client, accountId);
+      if (actor.character.id !== terms.originalCharacterId) fail('crafting_unavailable', 'Crafting is unavailable.');
+      const asOf = Date.now();
+      await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);
+      if (!discovered(recipe, actor)) fail('recipe_unavailable', 'That recipe is unavailable.');
+      assertRequirements(recipe, actor);
+      const source = await Recovery.lockEquipmentRecoverySource(client, accountId, terms);
+      await reserveRecipeScarcity(client, recipe, actor, asOf);
+      const cash = await debitRecipeCash(client, actor, recipe);
+      const inputs = [await consumeItem(client, owner, terms.itemId, `craft ${recipe.id} input`, mutation)];
+      const outputs = await produceRecipeOutputs(client, context, owner, recipe, mutation, 'crafted');
+      return { ok:true, kind:'equipment_recovery', recipe:graphIdentity(context, recipe), ...cash,
+        itemId:terms.itemId, businessId:terms.businessId, originalCharacterId:terms.originalCharacterId,
+        sourceHash:source.sourceHash, inputs, outputs };
+    });
 }

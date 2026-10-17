@@ -9321,3 +9321,114 @@ CREATE TABLE IF NOT EXISTS merchant_return_requests (
  CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND return_ref IS NULL) OR
  (receipt IS NOT NULL AND account_ref IS NOT NULL AND original_character IS NOT NULL AND return_ref IS NOT NULL))
 );
+
+
+CREATE TABLE IF NOT EXISTS workshop_floorplans (
+ business_id TEXT PRIMARY KEY REFERENCES business_depots(id), id TEXT NOT NULL UNIQUE,
+ account_id TEXT NOT NULL REFERENCES accounts(id), original_character TEXT NOT NULL REFERENCES characters(id),
+ revision INTEGER NOT NULL CHECK(revision BETWEEN 1 AND 2147483647),
+ source_json JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), allocations JSONB NOT NULL
+);
+CREATE TABLE IF NOT EXISTS workshop_floor_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL, body_hash TEXT NOT NULL, run_id TEXT NOT NULL UNIQUE,
+ request_json JSONB NOT NULL, receipt JSONB, source_json JSONB,
+ account_ref TEXT REFERENCES accounts(id), original_character TEXT REFERENCES characters(id), business_ref TEXT REFERENCES business_depots(id),
+ PRIMARY KEY(account_id,key_hash), CHECK(account_ref IS NULL OR account_ref=account_id),
+ CHECK((receipt IS NULL AND source_json IS NULL AND account_ref IS NULL AND original_character IS NULL AND business_ref IS NULL)
+ OR (receipt IS NOT NULL AND source_json IS NOT NULL AND account_ref IS NOT NULL AND original_character IS NOT NULL AND business_ref IS NOT NULL))
+);
+
+-- Voluntary manufacturing instructions use canonical production and direct royalty journals.
+CREATE TABLE IF NOT EXISTS manufacturing_licenses (
+ id TEXT PRIMARY KEY,licensor_account TEXT NOT NULL REFERENCES accounts(id),licensor_character TEXT NOT NULL REFERENCES characters(id),
+ licensee_account TEXT NOT NULL REFERENCES accounts(id),licensee_character TEXT NOT NULL REFERENCES characters(id),
+ licensor_business TEXT NOT NULL REFERENCES business_depots(id),licensee_business TEXT REFERENCES business_depots(id),
+ acceptance_key TEXT,production_key TEXT NOT NULL,production_hash TEXT NOT NULL,source_pin JSONB NOT NULL,source_hash TEXT NOT NULL,
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 10000),maximum_runs INT NOT NULL CHECK(maximum_runs BETWEEN 1 AND 8),
+ completed_runs INT NOT NULL DEFAULT 0 CHECK(completed_runs BETWEEN 0 AND maximum_runs),expires_at TIMESTAMPTZ NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('offered','accepted','cancelled','exhausted')),
+ CONSTRAINT manufacturing_license_distinct CHECK(licensor_account<>licensee_account AND licensor_character<>licensee_character),
+ CONSTRAINT manufacturing_license_hashes CHECK(char_length(production_hash)=64 AND char_length(source_hash)=64),
+ CONSTRAINT manufacturing_license_business CHECK(status NOT IN ('accepted','exhausted') OR licensee_business IS NOT NULL),
+ CONSTRAINT manufacturing_license_exhaustion CHECK((status='exhausted')=(completed_runs=maximum_runs))
+);
+CREATE TABLE IF NOT EXISTS manufacturing_license_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL,body_hash TEXT NOT NULL,receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key),CONSTRAINT manufacturing_license_request_hash CHECK(char_length(body_hash)=64)
+);
+
+-- Mobile shops retain canonical market listings, cargo and transactions.
+CREATE TABLE IF NOT EXISTS mobile_shops (
+  id TEXT PRIMARY KEY,
+  seller_account TEXT NOT NULL REFERENCES accounts(id),
+  seller_character TEXT NOT NULL REFERENCES characters(id),
+  listing_id TEXT NOT NULL UNIQUE,
+  district TEXT NOT NULL,
+  initial_quantity INTEGER NOT NULL CHECK(initial_quantity BETWEEN 1 AND 10),
+  remaining_quantity INTEGER NOT NULL CHECK(remaining_quantity BETWEEN 0 AND initial_quantity),
+  unit_price INTEGER NOT NULL CHECK(unit_price BETWEEN 1 AND 1000000),
+  source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+  expires_at TIMESTAMPTZ NOT NULL,
+  listing_expires_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL CHECK(status IN('active','cancelled','sold','estate_scattered')),
+  CHECK(initial_quantity*unit_price<=1000000),
+  CHECK(expires_at<=listing_expires_at)
+);
+-- No listing FK: canonical estate deletes listing rows. Historical shop is not stock.
+CREATE UNIQUE INDEX IF NOT EXISTS mobile_shop_one_active ON mobile_shops(seller_character) WHERE status='active';
+CREATE TABLE IF NOT EXISTS mobile_shop_requests (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),
+  body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),
+  original_character TEXT NOT NULL REFERENCES characters(id),
+  shop_id TEXT NOT NULL REFERENCES mobile_shops(id),
+  receipt JSONB NOT NULL,
+  journal_ids JSONB NOT NULL,
+  PRIMARY KEY(account_id,key_hash)
+);
+
+
+-- OFF-REPOSITORY coordinator proposal, not applied to canonical schema.
+CREATE TABLE IF NOT EXISTS business_relocation_plans (
+ id TEXT PRIMARY KEY,
+ depot_id TEXT NOT NULL REFERENCES business_depots(id),
+ account_id TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id),
+ destination TEXT NOT NULL,
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ source_snapshot JSONB NOT NULL,
+ expires_at TIMESTAMPTZ NOT NULL,
+ revision INT NOT NULL CHECK(revision BETWEEN 1 AND 2),
+ state TEXT NOT NULL CHECK(state IN ('ready','executed','cancelled','expired','owner_dead')),
+ receipt JSONB,
+ CHECK((state='executed')=(receipt IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS business_relocation_one_ready
+ ON business_relocation_plans(account_id) WHERE state='ready';
+CREATE UNIQUE INDEX IF NOT EXISTS business_relocation_depot_ready
+ ON business_relocation_plans(depot_id) WHERE state='ready';
+CREATE TABLE IF NOT EXISTS business_relocation_requests (
+ account_id TEXT NOT NULL,
+ key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),
+ body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),
+ run_id TEXT NOT NULL UNIQUE,
+ receipt JSONB,
+ account_ref TEXT REFERENCES accounts(id),
+ actor_ref TEXT REFERENCES characters(id),
+ PRIMARY KEY(account_id,key_hash),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL)
+ OR(receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL))
+);
+
+-- Metadata only; no escrow, new material bucket, deposit or service enrollment.
+CREATE TABLE IF NOT EXISTS equipment_recovery_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),
+ key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),
+ body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),
+ original_character TEXT NOT NULL REFERENCES characters(id),
+ business_id TEXT NOT NULL REFERENCES business_depots(id),
+ item_id TEXT NOT NULL UNIQUE REFERENCES item_instances(id),
+ receipt JSONB NOT NULL,
+ craft_key TEXT NOT NULL UNIQUE,
+ PRIMARY KEY(account_id,key_hash)
+);

@@ -13,6 +13,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import crypto from 'node:crypto';
+import {ENTERPRISE_STRUCTURAL_CHECKS,ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from '../tools/enterprise-graph-helpers.js';
 import {
   build,
   extractCommercialHelperReconciliations,
@@ -69,6 +71,7 @@ assert.deepEqual(inv.mute.sort(), [
   'atomic barter canonical two-item bindings',
   // Consent/provenance checks introduce no money bucket; canonical cash/GIN
   // custody remains independently reconciled by the corresponding ledger checks.
+  'business relocation history',
   'buyer cooperative settlement provenance',
   'character cash',
   'company bank portfolio authority and lifetime budget',
@@ -78,6 +81,7 @@ assert.deepEqual(inv.mute.sort(), [
   'cross docking canonical source and handoff history',
   'delivery finance bindings',
   'desk inventory backed',
+  'equipment recovery consumed UID and material history',
   'equipment rental physical title',
   'family operation capital',
   'family operation custody',
@@ -86,6 +90,7 @@ assert.deepEqual(inv.mute.sort(), [
   'franchise royalty provenance',
   'freight metadata history bindings',
   'logistics coverage bindings',
+  'mobile shop canonical source/history',
   'physical equipment condition provenance',
   'production slot canonical reservation history',
   'reason vocabulary',
@@ -95,6 +100,7 @@ assert.deepEqual(inv.mute.sort(), [
   'strategy license bindings',
   'warehouse journal ownership',
   'worker training canonical source',
+  'workshop floor source and allocation history',
   'world graph object transitions',
   'world graph salvage car audit',
   'world graph stack conservation',
@@ -106,6 +112,7 @@ for (const [check, reasons] of [
   ['buyer cooperative GIN custody', ['buyer_cooperative:claim', 'buyer_cooperative:death_gin']],
 ]) for (const reason of reasons) assert(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === 'Check:' + check && edge.to === 'Reason:' + reason), 'cooperative currency graph coverage lost: ' + check + ' / ' + reason);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ...ENTERPRISE_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
   ['atomic barter canonical two-item bindings', 'original-party exact two physical-item transfer and replay witnesses; no cash'],
   ['cross docking canonical source and handoff history', 'original courier/hub/item/handoff receipt bindings; canonical courier fees reconcile separately'],
   ['production slot canonical reservation history', 'original commission/profile/window/production receipt bindings; canonical commission fees reconcile separately'],
@@ -149,6 +156,26 @@ for (const [name, prefix] of [
     && edge.from === 'Check:' + name && edge.to === 'Reason:' + prefix + ':' + suffix),
   'Canonical cash reconciliation lost: ' + name + '/' + suffix);
 }
+// Enterprise provenance remains closed to reviewed whole helper bytes and the
+// exact issue-only push; imported royalty arithmetic must have real reason edges.
+const enterpriseInvariant=fs.readFileSync(new URL('../src/invariants.js',import.meta.url),'utf8').replace(/\r\n?/g,'\n');
+for(const p of ENTERPRISE_STRUCTURAL_CHECKS){
+  const helper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8').replace(/\r\n?/g,'\n');
+  assert.equal(crypto.createHash('sha256').update(helper).digest('hex'),p.sha256,'Reviewed structural helper changed: '+p.file);
+  assert.equal(enterpriseInvariant.split('\n').filter(line=>line.trim()===p.push).length,1,'Provenance check gained unknown arithmetic or lost its binding');
+}
+const enterpriseMoneyProfile=ENTERPRISE_HELPER_PROFILES[0];
+assert.equal(ENTERPRISE_HELPER_PROFILES.length,1);assert.equal(ENTERPRISE_STRUCTURAL_CHECKS.length,4);
+const enterpriseMoney=fs.readFileSync(new URL('../'+enterpriseMoneyProfile.file,import.meta.url),'utf8').replace(/\r\n?/g,'\n');
+const royaltyTerms=extractEnterpriseHelperReconciliations(enterpriseInvariant,{[enterpriseMoneyProfile.file]:enterpriseMoney});
+assert.deepEqual(royaltyTerms.map(t=>t.reason),['manufacturing_license:pay','manufacturing_license:receive']);
+assert(royaltyTerms.every(t=>t.check===enterpriseMoneyProfile.check&&t.sourceSha256===enterpriseMoneyProfile.sha256&&t.line>0&&t.bindingLine>0));
+assert.deepEqual(extractEnterpriseHelperReconciliations(enterpriseInvariant.replaceAll('\n','\r\n'),{[enterpriseMoneyProfile.file]:enterpriseMoney.replaceAll('\n','\r\n')}),royaltyTerms);
+for(const reason of royaltyTerms.map(t=>t.reason))assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+enterpriseMoneyProfile.check&&e.to==='Reason:'+reason),'Real royalty reason coverage lost: '+reason);
+for(const bad of[enterpriseMoney+' ',enterpriseMoney.replace('royaltyNet=receivedCash-paidCash','royaltyNet=0'),enterpriseMoney.replace("leg.currency!=='cash'","leg.currency!=='gin'")])assert.deepEqual(extractEnterpriseHelperReconciliations(enterpriseInvariant,{[enterpriseMoneyProfile.file]:bad}),[]);
+for(const literal of[enterpriseMoneyProfile.import,enterpriseMoneyProfile.call,enterpriseMoneyProfile.push])for(const bad of[enterpriseInvariant.replace(literal,''),enterpriseInvariant+'\n'+literal])assert.deepEqual(extractEnterpriseHelperReconciliations(bad,{[enterpriseMoneyProfile.file]:enterpriseMoney}),[]);
+assert.deepEqual(extractEnterpriseHelperReconciliations(enterpriseInvariant,{[enterpriseMoneyProfile.file]:enterpriseMoney,'src/unknown.js':enterpriseMoney}),[]);
+assert(!inv.mute.includes(enterpriseMoneyProfile.check),'Actual royalty accounting must never be classified as mute provenance');
 // Ownership checks structural journal references; warehouse cash still needs its
 // separate literal ledger reconciliation, which must not join the mute list.
 const warehouseAudit = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');

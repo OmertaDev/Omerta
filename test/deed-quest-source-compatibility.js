@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {marketOverDeedSourceBaseline} from '../tools/deed-market-source-compatibility.js';
+import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
@@ -26,7 +27,7 @@ assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schem
   'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
-  const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, fs.readFileSync(file, 'utf8'))), current = lf(raw);
+  const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file) ? enterpriseOverRootSourceBaseline(file, fs.readFileSync(file, 'utf8')) : fs.readFileSync(file, 'utf8')))), current = lf(raw);
   assert(raw === current || raw === current.replaceAll('\n', '\r\n'), 'Working candidate has uniform line endings');
   const predecessor = git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`);
   assert.equal(hash(current), pin.currentSha256);
@@ -238,7 +239,73 @@ nextLayerJointRefusals.push(nextLayerJointCurrent.replace(jointA.current, '@@joi
   .replace(jointB.current, () => jointA.current).replace('@@joint-reader-reorder@@', () => jointB.current));
 for (const raw of nextLayerJointRefusals) assert.throws(() => inspectNextLayerJointReader(raw));
 console.log('Next-layer joint reader inspection PASS: 2 line-ending positives, ' + nextLayerJointRefusals.length + ' refusing controls; source text only');
-const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8')))
+// Inspect the exact Enterprise TEST-reader additions before the unchanged joint/activity proofs.
+// This reconstructs source text only and grants no native or historical runtime admission.
+const nextLayerEnterprisePin = Object.freeze({
+  "revision": "2f716bc9623016beeb0ca4d93d1d26dd472610c6",
+  "file": "test/next-layer-source-compatibility.js",
+  "mode": "100644",
+  "blob": "cadb9c7e8f186e59833db870afdddfaeeb443d1e",
+  "sha256": "463e8efccdeb49612b4356db36a6be0de013091e7cb1738991749a00f591b29b",
+  "rawSha256": {
+    "lf": "463e8efccdeb49612b4356db36a6be0de013091e7cb1738991749a00f591b29b",
+    "crlf": "347ac35083dc21a069e08e6cfdb7d027508fb502fb10589a1ed3c8a47a979b7d"
+  },
+  "predecessorRevision": "3217dd945b5c5641ab0414630c58c1f97ef40ec1",
+  "predecessorBlob": "8878ffb12bde51589a0683761f714e50002bbc81",
+  "predecessorSha256": "93680640a6e868c89f14421d63b55b74dcd5a3442c1e22eccb165f7d63887463"
+});
+const nextLayerEnterpriseCurrent = git('show', nextLayerEnterprisePin.revision+':'+nextLayerEnterprisePin.file);
+assert.equal(git('ls-tree', nextLayerEnterprisePin.revision, '--', nextLayerEnterprisePin.file),
+  nextLayerEnterprisePin.mode+' blob '+nextLayerEnterprisePin.blob+'\t'+nextLayerEnterprisePin.file+'\n');
+assert.equal(hash(nextLayerEnterpriseCurrent), nextLayerEnterprisePin.sha256);
+assert.equal(blob(nextLayerEnterpriseCurrent), nextLayerEnterprisePin.blob);
+const nextLayerEnterpriseInverses = [
+  {
+    "current": "import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\nimport {marketOperationsSourceBaseline} from '../tools/market-operations-source-compatibility.js';\nimport {deedOverMarketSourceBaseline} from '../tools/deed-market-source-compatibility.js';\n// Only the exact market-source inverse precedes this unchanged historical source proof. Native admission stays raw.\n",
+    "baseline": "import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {marketOperationsSourceBaseline} from '../tools/market-operations-source-compatibility.js';\nimport {deedOverMarketSourceBaseline} from '../tools/deed-market-source-compatibility.js';\n// Only the exact market-source inverse precedes this unchanged historical source proof. Native admission stays raw.\n"
+  },
+  {
+    "current": "let negatives=0,hunks=0;\nfor(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){\n  const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);\n  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')))))).replaceAll('\\r\\n','\\n'),current,'Complete actual source is independently pinned');\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);\n  const actual=[];let chunk;\n",
+    "baseline": "let negatives=0,hunks=0;\nfor(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){\n  const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);\n  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))))).replaceAll('\\r\\n','\\n'),current,'Complete actual source is independently pinned');\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);\n  const actual=[];let chunk;\n"
+  },
+  {
+    "current": "for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){\n  const text='unknown\\r\\nbytes\\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;\n}\nconst file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8'))));\nconst prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));\nassert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);\nassert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);\n",
+    "baseline": "for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){\n  const text='unknown\\r\\nbytes\\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;\n}\nconst file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,fs.readFileSync(file,'utf8')));\nconst prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));\nassert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);\nassert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);\n"
+  }
+];
+const inspectNextLayerEnterpriseReader = raw => {
+  assert.equal(typeof raw, 'string');
+  let text = lf(raw);
+  assert(!text.includes('\r') && (raw === text || raw === text.replaceAll('\n', '\r\n')),
+    'Enterprise reader inspection requires uniform line endings');
+  assert.equal(hash(text), nextLayerEnterprisePin.sha256);
+  assert.equal(blob(text), nextLayerEnterprisePin.blob);
+  assert.equal(hash(raw), nextLayerEnterprisePin.rawSha256[raw.includes('\r\n') ? 'crlf' : 'lf']);
+  assert.equal(text, nextLayerEnterpriseCurrent);
+  for (const {current, baseline} of nextLayerEnterpriseInverses) {
+    assert.equal(text.split(current).length-1, 1, 'Exact Enterprise TEST reader inverse occurs once');
+    text = text.replace(current, () => baseline);
+  }
+  assert.equal(hash(text), nextLayerEnterprisePin.predecessorSha256);
+  assert.equal(blob(text), nextLayerEnterprisePin.predecessorBlob);
+  assert.equal(text, nextLayerJointCurrent);
+  return text;
+};
+for (const raw of [nextLayerEnterpriseCurrent, nextLayerEnterpriseCurrent.replaceAll('\n', '\r\n')])
+  assert.equal(inspectNextLayerEnterpriseReader(raw), nextLayerJointCurrent);
+const nextLayerEnterpriseRefusals = [nextLayerEnterpriseCurrent+'\n// unknown Enterprise reader drift\n',
+  nextLayerEnterpriseCurrent.slice(1), '\ufeff'+nextLayerEnterpriseCurrent,
+  nextLayerEnterpriseCurrent.replace(/\S/, '?'), nextLayerEnterpriseCurrent.replace('\n', '\r\n'),
+  nextLayerEnterpriseCurrent.replace('\n', '\r'), nextLayerEnterpriseCurrent+'\0', nextLayerJointCurrent];
+for (const {current, baseline} of nextLayerEnterpriseInverses)
+  nextLayerEnterpriseRefusals.push(nextLayerEnterpriseCurrent.replace(current, ''),
+    nextLayerEnterpriseCurrent.replace(current, () => current+current),
+    nextLayerEnterpriseCurrent.replace(current, () => baseline),
+    nextLayerEnterpriseCurrent.replace(current, () => current.replace(/\S/, '?')));
+for (const raw of nextLayerEnterpriseRefusals) assert.throws(() => inspectNextLayerEnterpriseReader(raw));
+console.log('Next-layer Enterprise reader inspection PASS: 2 line-ending positives, '+nextLayerEnterpriseRefusals.length+' refusing controls; source text only');
+const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(inspectNextLayerEnterpriseReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))))
   .replace("import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n", '')
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),

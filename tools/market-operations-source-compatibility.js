@@ -1,6 +1,7 @@
 // Exact market-operations source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import {enterpriseSourceBaseline} from './enterprise-source-compatibility.js';
 export const MARKET_OPERATIONS_SOURCE_REVISION="25bfdbc3244fc37eaff95d3e5a98a148ad5d6845";
 export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="2c8eaacf104e8555d5140136b5ed19027ecd4766";
 export const MARKET_OPERATIONS_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
@@ -396,4 +397,4 @@ const uniform=function uniformEndings(t){return t===lf(t)||t===lf(t).replaceAll(
 const hash=t=>crypto.createHash('sha256').update(t).digest('hex');
 const blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
 export function assertMarketOperationsSourceTransfer(file,input){assert(Object.hasOwn(MARKET_OPERATIONS_SOURCE_DOMAINS,file),'Unknown market-operations source domain');assert.equal(typeof input,'string');assert(uniform(input),'Mixed market-operations source endings');const p=MARKET_OPERATIONS_SOURCE_DOMAINS[file],text=lf(input);assert.equal(hash(text),p.currentSha256,'Complete market-operations source drift');assert.equal(blob(text),p.currentBlob);let baselineText=text;for(const h of p.inverses){assert(h.current);assert.equal(baselineText.split(h.current).length,2,'Exact inverse occurs once');baselineText=baselineText.replace(h.current,()=>h.baseline);}assert.equal(hash(baselineText),p.baselineSha256);assert.equal(blob(baselineText),p.baselineBlob);return{baselineText,sourceRevision:MARKET_OPERATIONS_SOURCE_REVISION,predecessorRevision:MARKET_OPERATIONS_SOURCE_PREDECESSOR,phase:MARKET_OPERATIONS_SOURCE_PHASE};}
-export function marketOperationsSourceBaseline(file,input){if(typeof input!=='string'||!Object.hasOwn(MARKET_OPERATIONS_SOURCE_DOMAINS,file)||!uniform(input))return input;return hash(lf(input))===MARKET_OPERATIONS_SOURCE_DOMAINS[file].currentSha256?assertMarketOperationsSourceTransfer(file,input).baselineText:input;}
+export function marketOperationsSourceBaseline(file,input){if(typeof input==='string'&&uniform(input))input=enterpriseSourceBaseline(file,input);if(typeof input!=='string'||!Object.hasOwn(MARKET_OPERATIONS_SOURCE_DOMAINS,file)||!uniform(input))return input;return hash(lf(input))===MARKET_OPERATIONS_SOURCE_DOMAINS[file].currentSha256?assertMarketOperationsSourceTransfer(file,input).baselineText:input;}

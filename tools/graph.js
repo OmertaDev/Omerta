@@ -40,6 +40,7 @@
 import fs from 'node:fs';
 import {NEXT_LAYER_HELPER_PROFILES,extractNextLayerHelperReconciliations} from './next-layer-graph-helpers.js';
 import {MARKET_OPERATIONS_HELPER_PROFILES,extractMarketOperationsHelperReconciliations} from './market-operations-graph-helpers.js';
+import {ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from './enterprise-graph-helpers.js';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -336,7 +337,7 @@ export const NEXT_FIVE_HELPER_PROFILES=Object.freeze([
       "t.character_id!==row.maker_character:t.character_id!==row.customer_character",
       "Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)"
     ],
-    "sha256": "9afbbcc81f5245971527810dbbace472e4d9bb2559f47402fb87e73be0a9d261",
+    "sha256": "dddba626ab010885ac02c15252573d914dde368cd90b97171b24216279cf7f24",
     "import": "import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';",
     "call": "const commissionIssues = await collectCommissionedCraftingIssues(pool);",
     "push": "push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });",
@@ -677,6 +678,12 @@ export function build() {
   const nextFiveHelpers=Object.fromEntries(NEXT_FIVE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
   for(const term of extractNextFiveHelperReconciliations(inv,nextFiveHelpers)){
     const prov={file:term.file,line:term.line,hash:sha(nextFiveHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
+  }
+
+  const enterpriseHelpers=Object.fromEntries(ENTERPRISE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for(const term of extractEnterpriseHelperReconciliations(inv,enterpriseHelpers)){
+    const prov={file:term.file,line:term.line,hash:sha(enterpriseHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
     node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 

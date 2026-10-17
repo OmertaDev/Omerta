@@ -24,10 +24,24 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
  'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
- 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
+ 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','manufacturing_licenses:licensor_business','manufacturing_licenses:licensee_business','equipment_recovery_requests:business_id','workshop_floorplans:business_id','workshop_floor_requests:business_ref','business_relocation_plans:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
 
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
+ const relocations=(await c.query('SELECT id,state FROM business_relocation_plans WHERE (depot_id=$1) IS TRUE ORDER BY id',[depotId])).rows;
+ if(relocations.length){const {collectBusinessRelocationIssues}=await import('./businessrelocationhistory.js');if((await collectBusinessRelocationIssues(c)).length)fail('relocation_history_changed');}
+ if(relocations.some(row=>!['ready','executed','cancelled','expired','owner_dead'].includes(row.state)))fail('relocation_history_changed');
+ if(relocations.some(row=>row.state==='ready'))fail('relocation_pending');
+
+ const floor=(await c.query('SELECT business_id FROM workshop_floorplans WHERE business_id=$1 LIMIT 1',[depotId])).rows;
+ const floorHistory=(await c.query('SELECT run_id FROM workshop_floor_requests WHERE business_ref=$1 LIMIT 1',[depotId])).rows;
+ if(floor.length||floorHistory.length){const {collectWorkshopFloorIssues}=await import('./workshopfloor.js');if((await collectWorkshopFloorIssues(c)).length)fail('floor_history_changed');}
+ const recovery=(await c.query('SELECT item_id FROM equipment_recovery_requests WHERE business_id=$1 LIMIT 1',[depotId])).rows;
+ if(recovery.length){const {collectEquipmentRecoveryIssues}=await import('./equipmentrecoveryhistory.js');if((await collectEquipmentRecoveryIssues(c)).length)fail('equipment_recovery_history_changed');}
+ const manufacturing=(await c.query('SELECT * FROM manufacturing_licenses WHERE licensor_business=$1 OR licensee_business=$1 ORDER BY id',[depotId])).rows;
+ if(manufacturing.length){const {collectManufacturingLicenseIssues}=await import('./manufacturinglicensesinvariants.js');if((await collectManufacturingLicenseIssues(c)).length)fail('manufacturing_license_history_changed');}
+ const manufacturingNow=+new Date((await c.query('SELECT clock_timestamp() AS now')).rows[0].now);
+ if(manufacturing.some(r=>['offered','accepted'].includes(r.status)&&+new Date(r.expires_at)>manufacturingNow))fail('manufacturing_license_obligation');
  const slots=(await c.query('SELECT * FROM production_slot_reservations WHERE (business_id=$1) IS TRUE ORDER BY id',[depotId])).rows;
  if(slots.length){const {collectProductionSlotIssues}=await import('./productionslots.js');if((await collectProductionSlotIssues(c)).length)fail('slot_history_changed');}
  for(const row of slots){
@@ -114,7 +128,7 @@ async function inspect({client:c,depot,seller,buyer}){assertItemTransaction(c);c
  const chars=[];for(const key of [seller.id,buyer.id].sort()){const ch=(await c.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1 FOR UPDATE',[key])).rows[0];if(!ch?.alive||ch.is_npc)fail('parties');chars.push(ch);}if(!chars.some(x=>x.id===seller.id&&x.account_id===seller.account_id)||!chars.some(x=>x.id===buyer.id&&x.account_id===buyer.account_id))fail('original_identity');
  for(const key of [seller.account_id,buyer.account_id].sort())if((await c.query('SELECT status FROM accounts WHERE id=$1 FOR UPDATE',[key])).rows[0]?.status!=='active')fail('accounts');
  const d=(await c.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[depot.id])).rows[0];if(!d||d.status!=='open'||d.owner_character!==seller.id||stable(d)!==stable(depot))fail('source_changed');if((await c.query("SELECT id FROM business_depots WHERE owner_character=$1 AND status='open' LIMIT 1",[buyer.id])).rows.length)fail('buyer_depot');
- const references=(await c.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema='public' AND column_name IN ('depot_id','operator_depot_id','recipient_depot_id','business_id') ORDER BY table_name,column_name")).rows.map(r=>r.table_name+':'+r.column_name);if(!references.length||references.some(x=>!DEPOT_ACQUISITION_REFERENCES.includes(x))||DEPOT_ACQUISITION_REFERENCES.some(x=>!references.includes(x)))fail('unsupported_schema');
+ const references=(await c.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema='public' AND column_name IN ('depot_id','operator_depot_id','recipient_depot_id','business_id','business_ref','licensor_business','licensee_business') ORDER BY table_name,column_name")).rows.map(r=>r.table_name+':'+r.column_name);if(!references.length||references.some(x=>!DEPOT_ACQUISITION_REFERENCES.includes(x))||DEPOT_ACQUISITION_REFERENCES.some(x=>!references.includes(x)))fail('unsupported_schema');
  if(d.warehouse_enabled)fail('warehouse_offer');if(!Number.isSafeInteger(Number(d.treasury))||Number(d.treasury)<0||!Number.isSafeInteger(Number(d.stock))||Number(d.stock)<0||Number(d.stock)>40||!Number.isSafeInteger(Number(d.stock_cost))||Number(d.stock_cost)<0)fail('assets');
  const book=(await c.query('SELECT COALESCE(SUM(cash_delta),0) cash,COALESCE(SUM(stock_delta),0) stock,COALESCE(SUM(cost_delta),0) cost FROM business_depot_journal WHERE depot_id=$1',[d.id])).rows[0];if(Number(book.cash)!==Number(d.treasury)||Number(book.stock)!==Number(d.stock)||Number(book.cost)!==Number(d.stock_cost)||(Number(d.stock)===0&&Number(d.stock_cost)!==0))fail('asset_books');
  // Literal queries only. All writers of these scopes must share the current owner/Depot locks.

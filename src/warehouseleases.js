@@ -1,3 +1,6 @@
+import {assertItemTransaction,itemTransactionIdentity} from './items.js';
+import {assertWorkshopFloorStorage as workshopFloorStorageAdmission} from './workshopfloor-admission.js';
+export {workshopFloorStorageAdmission};
 import crypto from 'node:crypto';
 import { GameError, trunkCap } from './game.js';
 import { jailed, safeHoused } from './rules.js';
@@ -65,6 +68,7 @@ export async function configureWarehouseOffer(ch, depotId, body, client) {
   if (body.enabled && (!slots || !price)) fail('warehouse_terms', 'An enabled offer needs positive slots and rent.');
   const depot = await lockedDepot(client, depotId);
   if (depot.owner_character !== ch.id || depot.status !== 'open') fail('not_yours', 'No open warehouse of yours.');
+  if(body.enabled)await workshopCheck(client,Object.freeze({businessId:depot.id,operation:'warehouse_offer',originalCharacter:depot.owner_character}));
   if (Number(depot.warehouse_revision) !== expected) fail('warehouse_revision', 'Refresh the warehouse offer.');
   await client.query('UPDATE business_depots SET warehouse_enabled=$2,warehouse_slots=$3,warehouse_cash_per_unit_day=$4,warehouse_revision=$5 WHERE id=$1',
     [depotId, body.enabled, slots, price, expected + 1]);
@@ -82,6 +86,7 @@ export async function leaseWarehouse(ch, landlord, depotId, body, client, h) {
   const depot = await lockedDepot(client, depotId), now = new Date();
   if (!landlord?.alive || depot.owner_character !== landlord.id || depot.status !== 'open') fail('no_depot', 'That warehouse is not operating.');
   if (ch.id === landlord.id || ch.account_id === landlord.account_id) fail('own', 'Rent only an independent warehouse.');
+  await workshopCheck(client,Object.freeze({businessId:depot.id,operation:'warehouse_lease',originalCharacter:depot.owner_character}));
   atDock(ch, depot);
   if (!depot.warehouse_enabled || Number(depot.warehouse_revision) !== terms.expectedOfferRevision) fail('warehouse_revision', 'Refresh the warehouse offer.');
   const price = integer(Number(depot.warehouse_cash_per_unit_day), 1, 100000), fee = warehouseLeaseFee(terms.units, price);
@@ -180,3 +185,7 @@ export async function closeWarehouseClaimsAtDeath(client, characterId) {
     }
   }
 }
+
+const workshopScopes=new WeakMap();
+async function workshopCheck(c,ctx){const token=Object.freeze({}),scope={c,transaction:itemTransactionIdentity(c),ctx,active:true};workshopScopes.set(token,scope);try{return await workshopFloorStorageAdmission(c,ctx,token);}finally{scope.active=false;}}
+export function assertWorkshopFloorStorageScope(c,ctx,token){assertItemTransaction(c);const scope=workshopScopes.get(token);if(!scope?.active||scope.c!==c||scope.transaction!==itemTransactionIdentity(c)||scope.ctx!==ctx)throw new GameError('workshop_floor','canonical_storage_scope');return true;}

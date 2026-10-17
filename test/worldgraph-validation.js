@@ -1108,12 +1108,12 @@ assert.deepEqual(phase1First.packageIds, [
   'staged-crew-missions', 'city-neighbor-favors', 'city-shutter-lock', 'city-loading-route',
   'city-careful-negotiation', 'city-sealed-record', 'city-rotating-account-0',
   'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',
-  'neighborhood-broadcast', 'property-investigation',
+  'neighborhood-broadcast', 'property-investigation', 'equipment-recovery',
 ]);
-assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 23);
-assert.equal(phase1First.packages, 23);
-assert.equal(phase1First.nodes, 182);
-assert.equal(phase1First.recipes, 4);
+assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 24);
+assert.equal(phase1First.packages, 24);
+assert.equal(phase1First.nodes, 183);
+assert.equal(phase1First.recipes, 5);
 assert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');
 assert.deepEqual(phase1First.executableDefinitions, {
   crafting: true,
@@ -1858,12 +1858,14 @@ const packageSources = fs.readdirSync(path.join(root, 'src', 'content'))
     fs.readFileSync(path.join(root, 'src', 'content', file), 'utf8'),
   )).sort();
 assert.deepEqual(packageSources, [
-  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'company-production-quality.js', 'core-materials.js', 'district-story-arcs.js', 'neighborhood-broadcast.js', 'neighborhood-initiation.js', 'phase1.js', 'property-investigation.js', 'staged-crew-missions.js',
+  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'company-production-quality.js', 'core-materials.js', 'district-story-arcs.js', 'equipment-recovery.js', 'neighborhood-broadcast.js', 'neighborhood-initiation.js', 'phase1.js', 'property-investigation.js', 'staged-crew-missions.js',
 ], 'every production world-graph package module must be present in the canonical Phase 1 manifest');
 const phase1RuntimeFiles = [
   'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',
   'src/worldgraph.js', 'src/worldgraph-validate.js', 'src/routes/worldgraph.js',
   'src/content/core-materials.js', 'src/content/automotive-salvage.js',
+  'src/content/equipment-recovery.js', 'src/equipmentrecovery.js',
+  'src/equipmentrecoveryhistory.js', 'src/routes/equipmentrecovery.js',
   'src/content/belladonna.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
   'src/content/neighborhood-initiation.js', 'src/content/neighborhood-initiation.json',
   'src/content/neighborhood-broadcast.js',

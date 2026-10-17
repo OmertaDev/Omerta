@@ -16,6 +16,9 @@
 // → market_listings (pot class) → street_tax singleton. Acyclic vs the global order; residual
 // races fall back to the 40P01→contention mapping.
 import crypto from 'node:crypto';
+const assertMobileShopMarketAdmission = async (...args) => (await import('./mobileshops.js')).assertMobileShopMarketAdmission(...args);
+const retireMobileShopSource = async (...args) => (await import('./mobileshops.js')).retireMobileShopSource(...args);
+export const mobileShopHookRevision = 'mobile_shop_market_v1';
 import { assertCommercialDisputeAccess } from './commercialdisputes.js';
 import { assertEstateResolutionScope } from './social/estate.js';
 import { assertDeliveryFinanceDelivery } from './deliveryfinance.js';
@@ -104,6 +107,7 @@ export async function listItem(ch, opts, client, h) {
   }
 
   // ── goods go FIXED-PRICE, pinned to this dock ──
+  await assertMobileShopMarketAdmission(client, { action: 'list_good' });
   if (!GOODS.find((g) => g.id === opts.goodId)) throw new GameError('bad_good', 'No such good.');
   const have = h.owned.cargo[opts.goodId] || 0;
   const qty = Math.floor(Number(opts.qty) || 0);
@@ -292,6 +296,7 @@ export async function claimOrder(ch, listingId, client, h) {
 
 // ── BUY — cars at buy-now (instant settle); goods at the dock (partial, trunk-clamped) ──
 export async function buyListing(ch, listingId, qty, client, h) {
+  await assertMobileShopMarketAdmission(client, { action: 'buy_good', listingId });
   if (jailed(ch)) throw new GameError('jailed', 'No dealing from lockup.');
   const pre = (await client.query("SELECT * FROM market_listings WHERE id=$1 AND status='live'", [listingId])).rows[0];
   if (!pre) throw new GameError('no_listing', 'Nothing on the block by that number.');
@@ -357,6 +362,7 @@ export async function buyListing(ch, listingId, qty, client, h) {
   const left = Number(l.qty) - n; // absolute write — the pg-mem INT quirk
   if (left > 0) await client.query('UPDATE market_listings SET qty=$2 WHERE id=$1', [listingId, left]);
   else await client.query("UPDATE market_listings SET qty=0, status='sold' WHERE id=$1", [listingId]);
+  if (left === 0) await retireMobileShopSource(client, listingId, 'sold');
   await h.notify(client, l.seller_character, 'market_sold', { listing: l.id, kind: 'good', good: l.good_id, qty: n, net });
   await h.track(client, ch.account_id, 'market_buy', { kind: 'good', qty: n, paid: gross });
   bus.emit('streets', { type: 'market_sale', kind: 'good' });
@@ -366,6 +372,7 @@ export async function buyListing(ch, listingId, qty, client, h) {
 // ── CANCEL / RECLAIM — poster only, never over a standing bid; goods need trunk space;
 // an order refunds its REMAINING escrow (delivered goods stay claimable — they're paid for) ──
 export async function cancelListing(ch, listingId, client, h) {
+  await assertMobileShopMarketAdmission(client, { action: 'cancel_good', listingId });
   if (jailed(ch)) throw new GameError('jailed', 'No dealing from lockup.');
   const l = (await client.query(
     "SELECT * FROM market_listings WHERE id=$1 AND status IN ('live','expired') FOR UPDATE", [listingId])).rows[0];
@@ -407,6 +414,7 @@ export async function cancelListing(ch, listingId, client, h) {
     await setCargo(client, ch.id, l.good_id, back);
   }
   await client.query("UPDATE market_listings SET status='cancelled', bid=NULL, bidder=NULL WHERE id=$1", [listingId]);
+  await retireMobileShopSource(client, listingId, 'cancelled');
   // name what came back: a car listing is the iron, a goods lot is the freight. 'what was on it'
   // is the line a player got either way, and the row has known which all along.
   const cn = l.kind === 'car' ? (await client.query('SELECT model_id FROM cars WHERE id=$1', [l.car_id])).rows[0] : null;
@@ -686,6 +694,7 @@ export async function voidListingsAtDeath(client, victimId, killerCh, lootRate =
     }
   }
   await client.query("DELETE FROM market_listings WHERE seller_character=$1 AND id NOT IN (SELECT order_id FROM buyer_cooperative_orders)", [victimId]);
+  for (const listing of rows) await retireMobileShopSource(client, listing.id, 'estate_scattered', estateScope);
   return { selfRefund, looted };
 }
 // the dead man's standing BIDS burn (the dead-funder precedent) — the auctions reopen.

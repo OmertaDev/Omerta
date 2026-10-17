@@ -666,6 +666,14 @@ const DISPOSITION = {
   production_slot_requests: 'ledger', // immutable original actor request acknowledgements confer no new capacity or crafting authority
   merchant_return_rights: 'escrow', // prefunded original seller reserve is refunded by canonical seller/buyer estate recovery; heirs receive no return execution authority
   merchant_return_requests: 'ledger', // original actor return/refund acknowledgements preserve history without new payment authority
+  workshop_floorplans: 'metadata', // original-character layout/source stays historical; canonical estate closes its Depot and current owner/title/premises gates prevent heir reuse
+  workshop_floor_requests: 'ledger', // original account/body/key layout acknowledgements retain source history without inherited allocation authority
+  manufacturing_licenses: 'metadata', // both original living parties, current owned Depots and genuine production/consent source remain mandatory; no stored royalty escrow is inherited
+  mobile_shops: 'special', // actual canonical listing death transition retires the linked shop through estate-scattered source validation
+  mobile_shop_requests: 'ledger', // immutable original seller/buyer request acknowledgements and receipts grant no fresh inherited trade authority
+  business_relocation_plans: 'special', // actual estate retires only ready original-owner plans, moving zero cash and stock; terminal plan history remains intact
+  business_relocation_requests: 'ledger', // original actor/account/body/key relocation receipts survive without new heir travel or business authority
+  equipment_recovery_requests: 'ledger', // original actor/item/craft acknowledgements retain canonical destructive-recovery history and grant no second recovery
   employment_organizations: 'special', // original founder death retires consent; actual Crew roster, leader and Depot checks govern fresh publication
   employment_organization_requests: 'ledger', // original actor request receipts retain historical Crew consent and budgets
   business_partnerships: 'special', // original-party death retires relationship; at-risk capital remains in canonical Depot estate, without a principal guarantee

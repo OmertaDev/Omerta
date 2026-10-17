@@ -1,3 +1,4 @@
+import { enterpriseOverRootSourceBaseline, hasEnterpriseOverRootSource } from '../tools/enterprise-current-source-compatibility.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -7,7 +8,7 @@ import { verifyWorldRecoverySources, WORLD_DURATION_CANDIDATES } from '../tools/
 import { reviewWorldCheckpointSeries } from '../tools/rc1-world-checkpoint-series.js';
 
 const DAY = 86400000, hash = value => sha256(canonicalJson(value)), copy = value => structuredClone(value);
-const source = await verifyWorldRecoverySources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile: file => fs.readFile(file) });
+const source = await verifyWorldRecoverySources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile: async file => { const raw = await fs.readFile(file); return hasEnterpriseOverRootSource(file) ? Buffer.from(enterpriseOverRootSourceBaseline(file, String(raw))) : raw; } });
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
 function fixture({ days = 90, missingDay = null, changedConcentration = false, growth = false, interiorGrowth = false, economyGap = false, earlyPartial = false, duplicateFinal = false } = {}) {
   const files = new Map(), values = new Map(), configurationSha256 = hash('frozen configuration');
