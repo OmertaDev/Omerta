@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { privateKeyToAccount } from 'viem/accounts';
 import { encodeEventTopics,encodeAbiParameters,decodeFunctionData,decodeFunctionResult,decodeEventLog,encodeFunctionResult,keccak256 } from 'viem';
 import { canonicalTrainingWorkOutcome,trainingWorkHash,workEscrowConsent } from '../src/fundedworkescrowadapter.js';
-import { observeBaseWorkEscrowSource,baseWorkEscrowConsent,BASE_USDC } from '../src/fundedworkescrowbaseadapter.js';
+import { observeBaseWorkEscrowSource,observeBaseWorkEscrowOutcomeSource,baseWorkEscrowConsent,BASE_USDC } from '../src/fundedworkescrowbaseadapter.js';
 import { BASE_WORK_ESCROW_COMPILER,BASE_WORK_ESCROW_ABI,BASE_WORK_ESCROW_RUNTIME_KECCAK,BASE_WORK_ESCROW_CREATION_KECCAK,BASE_WORK_ESCROW_SOURCE_SHA256 } from '../src/fundedworkescrowbaseartifact.js';
 assert(!process.env.DATABASE_URL,'Reject ambient endpoint');
 assert.deepEqual(process.argv.slice(2),[],'This focused observer test admits memory source only');
@@ -14,6 +14,7 @@ assert.deepEqual(BASE_WORK_ESCROW_ABI,artifact.abi);assert.equal(keccak256(artif
 assert.equal(crypto.createHash('sha256').update(fs.readFileSync('omerta-contracts/src/market-v2/OmertaWorkEscrowBase.sol','utf8').replaceAll('\r\n','\n')).digest('hex'),BASE_WORK_ESCROW_SOURCE_SHA256);
 const forbidden=new Proxy({}, {get(){throw Error('Missing deployment must not access provider');}});
 assert.equal((await observeBaseWorkEscrowSource(forbidden,null,forbidden,forbidden,forbidden,forbidden)).available,false);
+assert.equal((await observeBaseWorkEscrowOutcomeSource(forbidden,null,forbidden,forbidden,forbidden,forbidden)).available,false);
 Object.assign(process.env,{RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',INVITE_MODE:'off',DEPOT_PILOT:'on',JWT_SECRET:'funded-work-source-fixture',MARKET_SEED:'funded-work-source-fixture',MOD_KEY:'funded-work-source-fixture-mod'});
 const{buildServer}=await import('./server-fixture.js'),G=await import('../src/game.js'),T=await import('../src/workertraining.js');
 const app=await buildServer(),pool=app.pool;let serial=0;
@@ -41,7 +42,17 @@ function rpcReader(state,asset,change=(_q,v)=>v){const calls=[];const workHash=t
  else throw Error('Unexpected RPC '+q.method);return change(q,v,calls.length);}};
 }
 let extraRefusals=0;
+let outcomeChecks=0,outcomeRefusals=0;
 const events={allocation:{transactionHash:earnedHash,logIndex:0},funding:{transactionHash:h,logIndex:0},current:{transactionHash:allocationHash,logIndex:0}};
+const outcomeEvents={funding:events.funding,acceptance:events.current};
+function preallocationReader(asset,change=(_q,v)=>v,state=2){
+ const completed=Math.floor(+new Date(outcome.trainedAt)/1000);
+ return rpcReader(state,asset,(q,v,calls)=>{
+  if(q.method==='eth_getBlockByNumber')v.timestamp='0x'+BigInt(completed-(q.params[0]==='0x63'?10:q.params[0]==='0x64'?5:q.params[0]==='0x66'?1:0)).toString(16);
+  if(q.method==='eth_getTransactionReceipt'&&q.params[0]!==deploymentHash){v.transactionIndex='0x0';for(const log of v.logs)log.transactionIndex='0x0';}
+  return change(q,v,calls);
+ });
+}
 // buildServer installs the canonical training schema; require it instead of replaying component DDL.
 try{await pool.query('SELECT id FROM worker_training_courses LIMIT 0');const employer=await player(signers[0]),worker=await player(signers[1]);
  const course=await G.withCharacter(pool,employer.account,(ch,c,helpers)=>T.createWorkerTraining(ch,{depotId:employer.depot,stat:'cunning',sessions:1,wageCash:100,durationSeconds:600},'source-course',c,helpers));
@@ -104,11 +115,40 @@ try{await pool.query('SELECT id FROM worker_training_courses LIMIT 0');const emp
   const oldDomain={funderSignature:await signers[0].signTypedData(workEscrowConsent(contract,trainingWorkHash(t),0)),payeeSignature:await signers[1].signTypedData(workEscrowConsent(contract,trainingWorkHash(t),1))},oldDomainReader=rpcReader(3,asset);await assert.rejects(observeBaseWorkEscrowSource(oldDomainReader,deployment,t,oldDomain,events,pool),e=>e.code==='funded_work_original_job_consent');assert.equal(oldDomainReader.calls.length,0);extraRefusals++;
   const pinned=rpcReader(3,asset);const pinnedProof=await observeBaseWorkEscrowSource(pinned,deployment,t,consent,events,pool);assert.equal(pinnedProof.executableWorkGrant,false);for(const q of pinned.calls){assert(!q.method.startsWith('eth_send'));if(['eth_getCode','eth_getBalance','eth_call'].includes(q.method))assert.deepEqual(q.params[1],{blockHash:blockHash('0x67'),requireCanonical:true});}
 
+  const beforeRows=(await pool.query('SELECT course_id,ordinal,wage_transaction,trained_at FROM worker_training_sessions ORDER BY course_id,ordinal')).rows;
+  const read=preallocationReader(asset),earned=await observeBaseWorkEscrowOutcomeSource(read,deployment,t,consent,outcomeEvents,pool);
+  assert.equal(earned.outcome.canonicalOutcomeHash,outcome.outcomeHash);assert.equal(earned.outcome.trainedAt,outcome.trainedAt);assert.equal(earned.outcome.courseId,t.courseId);assert.equal(earned.outcome.ordinal,1);assert.equal(earned.outcome.ordering,'acceptance_before_recorded_completion');assert.equal(earned.outcome.acceptance.transactionHash,outcomeEvents.acceptance.transactionHash);assert.equal(earned.outcome.acceptance.blockNumber,'102');assert(+new Date(earned.outcome.acceptance.acceptedAt)<+new Date(earned.outcome.trainedAt));
+  assert.equal(earned.observation.state,'Accepted');assert.equal(earned.observation.canonicalOutcomeHash,null);assert.equal(earned.observation.paidVerified,false);assert.equal(earned.financialActivation,false);assert.equal(earned.executableWorkGrant,false);assert.equal(earned.observationOnly,true);assert(Object.isFrozen(earned)&&Object.isFrozen(earned.outcome)&&Object.isFrozen(earned.outcome.acceptance));assert(!read.calls.some(q=>q.method.startsWith('eth_send')||q.method==='eth_getTransactionReceipt'&&q.params[0]===earnedHash));
+  for(const q of read.calls)if(['eth_getCode','eth_getBalance','eth_call'].includes(q.method))assert.deepEqual(q.params[1],{blockHash:blockHash('0x67'),requireCanonical:true});
+  const repeated=await observeBaseWorkEscrowOutcomeSource(preallocationReader(asset),deployment,t,consent,outcomeEvents,pool);assert.deepEqual(repeated,earned);assert.deepEqual((await pool.query('SELECT course_id,ordinal,wage_transaction,trained_at FROM worker_training_sessions ORDER BY course_id,ordinal')).rows,beforeRows);outcomeChecks++;
+  const legacyAccepted=await observeBaseWorkEscrowSource(preallocationReader(asset),deployment,t,consent,{...events,allocation:null},pool);assert.equal(legacyAccepted.canonicalOutcomeHash,null);assert.equal(legacyAccepted.state,'Accepted');outcomeChecks++;
+  const sameBlockEvents={...outcomeEvents,acceptance:{...outcomeEvents.acceptance,logIndex:1}},sameBlockReader=preallocationReader(asset,(q,v)=>{if(q.method==='eth_getTransactionReceipt'&&q.params[0]===allocationHash){v.blockNumber='0x64';v.blockHash=blockHash('0x64');v.transactionIndex='0x1';Object.assign(v.logs[0],{blockNumber:'0x64',blockHash:blockHash('0x64'),transactionIndex:'0x1',logIndex:'0x1'});}return v;});assert.equal((await observeBaseWorkEscrowOutcomeSource(sameBlockReader,deployment,t,consent,sameBlockEvents,pool)).outcome.acceptance.transactionIndex,'1');outcomeChecks++;
+  const outcomeVectors=[
+   ['missing exact receipt index',(q,v)=>{if(q.method==='eth_getTransactionReceipt'&&q.params[0]===allocationHash)delete v.transactionIndex;return v;}],
+   ['inconsistent accepted log index',(q,v)=>{if(q.method==='eth_getTransactionReceipt'&&q.params[0]===allocationHash)v.logs[0].transactionIndex='0x1';return v;}],
+   ['acceptance before funding',(q,v)=>{if(q.method==='eth_getBlockByNumber'&&q.params[0]==='0x66')v.timestamp='0x'+BigInt(Math.floor(+new Date(outcome.trainedAt)/1000)-6).toString(16);return v;}],
+   ['no ceil promotion of completion',(q,v)=>{if(q.method==='eth_getBlockByNumber'&&q.params[0]==='0x66')v.timestamp='0x'+BigInt(Math.ceil(+new Date(outcome.trainedAt)/1000)).toString(16);return v;}],
+   ['same-block log precedes funding',(q,v)=>{if(q.method==='eth_getTransactionReceipt'&&q.params[0]===allocationHash){v.blockNumber='0x64';v.blockHash=blockHash('0x64');v.logs[0].blockNumber='0x64';v.logs[0].blockHash=blockHash('0x64');}return v;}],
+   ['final reorg',(q,v)=>{if(q.method==='eth_getBlockByNumber'&&q.params[0]==='0x67')v.hash='0x'+'9'.repeat(64);return v;}],
+   ['second chain disagreement',(q,v,calls)=>q.method==='eth_chainId'&&calls>1?'0x1':v],
+   ['creation input mismatch',(q,v)=>{if(q.method==='eth_getTransactionByHash')v.input='0x6000';return v;}],
+   ['runtime mismatch',(q,v)=>q.method==='eth_getCode'?'0x6000':v],
+   ['accepted event not finalized',(q,v)=>{if(q.method==='eth_getTransactionReceipt'&&q.params[0]===allocationHash)v.blockNumber='0x68';return v;}],
+   ['custody shortfall',(q,v)=>q.method==='eth_getBalance'?'0x0':q.method==='eth_call'&&q.params[0].to===BASE_USDC?'0x'+'0'.repeat(64):v]
+  ];
+  for(const[name,mutate]of outcomeVectors){await assert.rejects(observeBaseWorkEscrowOutcomeSource(preallocationReader(asset,mutate),deployment,t,consent,outcomeEvents,pool),undefined,name);outcomeRefusals++;}
+  for(const state of[1,3,4,5]){await assert.rejects(observeBaseWorkEscrowOutcomeSource(preallocationReader(asset,undefined,state),deployment,t,consent,outcomeEvents,pool),e=>e.code==='funded_work_accepted_outcome_state');outcomeRefusals++;}
+  for(const refs of[{...outcomeEvents,allocation:events.allocation},{...outcomeEvents,acceptance:events.funding},{...outcomeEvents,acceptance:null}]){await assert.rejects(observeBaseWorkEscrowOutcomeSource(preallocationReader(asset),deployment,t,consent,refs,pool));outcomeRefusals++;}
+  await assert.rejects(observeBaseWorkEscrowOutcomeSource(preallocationReader(asset),deployment,t,{...consent,payeeSignature:consent.funderSignature},outcomeEvents,pool));outcomeRefusals++;
+  const savedTerms=t;t={...t,ordinal:2};const missingConsent={funderSignature:await signers[0].signTypedData(baseWorkEscrowConsent(contract,trainingWorkHash(t),0)),payeeSignature:await signers[1].signTypedData(baseWorkEscrowConsent(contract,trainingWorkHash(t),1))};await assert.rejects(observeBaseWorkEscrowOutcomeSource(preallocationReader(asset),deployment,t,missingConsent,outcomeEvents,pool),e=>e.code==='funded_work_canonical_outcome_missing');t=savedTerms;outcomeRefusals++;
+  t={...t,deadline:Math.floor(+new Date(outcome.trainedAt)/1000)};const expiredConsent={funderSignature:await signers[0].signTypedData(baseWorkEscrowConsent(contract,trainingWorkHash(t),0)),payeeSignature:await signers[1].signTypedData(baseWorkEscrowConsent(contract,trainingWorkHash(t),1))};await assert.rejects(observeBaseWorkEscrowOutcomeSource(preallocationReader(asset),deployment,t,expiredConsent,outcomeEvents,pool),e=>e.code==='funded_work_accepted_completion_order');t=savedTerms;outcomeRefusals++;
+
   await assert.rejects(observeBaseWorkEscrowSource(rpcReader(3,asset),deployment,t,{...consent,payeeSignature:consent.funderSignature},events,pool),/original_job_consent/);
  }
- await pool.query('UPDATE transactions SET amount=amount + 1 WHERE id=$1',[trained.wageTransaction]);await assert.rejects(canonicalTrainingWorkOutcome(pool,t),e=>e.code==='funded_work_canonical_outcome');await pool.query('UPDATE transactions SET amount=amount - 1 WHERE id=$1',[trained.wageTransaction]);
+ await pool.query('UPDATE transactions SET amount=amount + 1 WHERE id=$1',[trained.wageTransaction]);await assert.rejects(canonicalTrainingWorkOutcome(pool,t),e=>e.code==='funded_work_canonical_outcome');await assert.rejects(observeBaseWorkEscrowOutcomeSource(preallocationReader(t.asset),deployment,t,consent,outcomeEvents,pool),e=>e.code==='funded_work_canonical_outcome');outcomeRefusals++;await pool.query('UPDATE transactions SET amount=amount - 1 WHERE id=$1',[trained.wageTransaction]);
  await assert.rejects(canonicalTrainingWorkOutcome(pool,{...t,workerCharacter:employer.id}),e=>e.code==='funded_work_canonical_source');
  assert.equal(extraRefusals,68);
  console.log('base observer extra refused vectors',extraRefusals);
+ console.log('base preallocation outcome',JSON.stringify({checks:outcomeChecks,refusals:outcomeRefusals,ordering:'acceptance_before_recorded_completion',sessionStartProof:false,allocationRequired:false,gameWritesByObserver:0,financialActivation:false,executableWorkGrant:false}));
  console.log('fundedworkescrowbaseadapter','memory canonical game source','PASS: honest offline authoritative-RPC vectors for ten ETH/USDC lifecycle states + actual canonical F11 paid train and actual JWT wallet challenge signatures; source/consent/code/creation/outcome/custody negatives. No deployed source, real funding, payment or public activation claim.');
 }finally{await app.close();}
