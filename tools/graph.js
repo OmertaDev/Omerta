@@ -312,7 +312,8 @@ export const NEXT_FIVE_HELPER_PROFILES=Object.freeze([
       "legs[i]?.currency!=='cash'",
       "Number(legs[i]?.amount)!==amount"
     ],
-    "sha256": "a922fc2b2017838aba0fdfc65b20355809673bd5d33a27b6c4b98d1262cf539f",
+    "sha256": "f69d2a98288c6350930689a0106cd27163268ad88f2f58a400204ea6a7442362",
+    "end": "\n\n// N16/N17 proposal: fixed source-bound private contexts, no caller-installed adapters.\n",
     "import": "import { collectConsignmentIssues } from './consignments.js';",
     "call": "const consignmentIssues = await collectConsignmentIssues(pool);",
     "push": "push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });",
@@ -376,7 +377,9 @@ export function extractNextFiveHelperReconciliations(invariants,helpers){
  const lines=invariants.split('\n'),terms=[],exact=statement=>lines.flatMap((line,i)=>line.trim()===statement?[i]:[]);
  for(const p of NEXT_FIVE_HELPER_PROFILES){if(typeof helpers[p.file]!=='string')continue;const helper=normalizeText(helpers[p.file]);if(crypto.createHash('sha256').update(helper).digest('hex')!==p.sha256)continue;
   const imports=exact(p.import),calls=exact(p.call),pushes=exact(p.push);if(imports.length!==1||calls.length!==1||pushes.length!==1||imports[0]>=calls[0]||calls[0]>=pushes[0]||p.extraBindings.some(s=>exact(s).length!==1||exact(s)[0]>=pushes[0]))continue;
-  const start=helper.indexOf('export async function '+p.fn+'(');if(start<0)continue;const body=helper.slice(start),query=body.indexOf(p.sql);if(query<0||body.indexOf(p.sql,query+1)!==-1||!body.includes('return issues;')||p.anchors.some(a=>!body.includes(a)))continue;
+  const start=helper.indexOf('export async function '+p.fn+'(');if(start<0)continue;let end=helper.length;
+  if(p.end!==undefined){if(typeof p.end!=='string'||!p.end.length)continue;end=helper.indexOf(p.end,start);if(end<0||helper.indexOf(p.end)!==end||helper.indexOf(p.end,end+1)!==-1)continue;}
+  const body=helper.slice(start,end),query=body.indexOf(p.sql);if(query<0||body.indexOf(p.sql,query+1)!==-1||!body.includes('return issues;')||p.anchors.some(a=>!body.includes(a)))continue;
   for(const reason of p.reasons)terms.push({check:p.check,reason,file:p.file,line:helper.slice(0,start+query).split('\n').length,bindingLine:pushes[0]+1,sourceSha256:p.sha256});
  }return terms;
 }
