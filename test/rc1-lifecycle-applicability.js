@@ -1,3 +1,4 @@
+import { baseWorkHistoricalSourceBaseline } from './lib/base-work-source-compatibility.js';
 import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
@@ -15,7 +16,7 @@ if (!isHistoricalSourceFixture()) {
   assert.equal(sha256(current), '89decd4437290888d81602171e6de006d26da6596985f150bc3caeebe2c210e5');
   for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed C2 lifecycle source\n']) {
     await assert.rejects(verifyLifecycleSources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision,
-      readFile: candidate => candidate === file ? supplied : fs.readFile(candidate) }),
+      readFile: candidate => candidate === file ? supplied : fs.readFile(candidate).then(raw => baseWorkHistoricalSourceBaseline(candidate, raw)) }),
     /Lifecycle source changed: src\/made.js/);
   }
   console.log('PASS: historical lifecycle source guard rejects exact C2, CRLF and tampering; current source is not admitted');
@@ -24,11 +25,11 @@ if (!isHistoricalSourceFixture()) {
 }
 
 const hash = value => sha256(canonicalJson(value)), copy = value => structuredClone(value);
-const source = await verifyLifecycleSources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile: file => fs.readFile(file) });
+const source = await verifyLifecycleSources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile: file => fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) });
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyLifecycleSources({ sourceRevision: source.sourceRevision,
-  readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
+  readFile: async file => (await fs.readFile(file, 'utf8').then(raw => baseWorkHistoricalSourceBaseline(file, raw))).replace(/\r?\n/g, ending) }), source);
 await assert.rejects(verifyLifecycleSources({ sourceRevision: source.sourceRevision,
-  readFile: file => file === 'src/brokers.js' ? 'changed' : fs.readFile(file) }), /source changed/);
+  readFile: file => file === 'src/brokers.js' ? 'changed' : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) }), /source changed/);
 const reference = path => ({ path, sha256: hash(path) }), startAt = 1790204400000, endAt = 1790208000000;
 function snapshot(account = {}) {
   const data = { tables: { characters: [JSON.stringify({ alive: true, is_npc: false })],

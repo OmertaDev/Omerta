@@ -1,3 +1,4 @@
+import { baseWorkHistoricalSourceBaseline } from './lib/base-work-source-compatibility.js';
 import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
 import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
@@ -22,7 +23,7 @@ if (!isHistoricalSourceFixture()) {
   assert.equal(sha256(current), '14906ce7b480b8acd325c4967df6e6129d99c08e3f00bec798cacebe469895fd');
   for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed C2 checkpoint source\n']) {
     await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision,
-      readFile: candidate => candidate === file ? supplied : fs.readFile(candidate) }),
+      readFile: candidate => candidate === file ? supplied : fs.readFile(candidate).then(raw => baseWorkHistoricalSourceBaseline(candidate, raw)) }),
     /Checkpoint review source changed: src\/routes\/coordination.js/);
   }
   console.log('PASS: historical checkpoint source guard rejects exact C2, CRLF and tampering; current source is not admitted');
@@ -57,17 +58,17 @@ assert.equal(rpgCatalog.nodes.length - catalog.nodes.length, CHECKPOINT_RPG_CATA
 assert.equal(hash(rpgCatalog.nodes.filter(node => CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds.includes(node.packageId))),
   CHECKPOINT_RPG_CATALOG_TRANSFER.addedNodesSha256);
 assert.equal(cityGameplayRecoveryCatalog(catalog), catalog);
-const source = await verifyCheckpointRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
+const source = await verifyCheckpointRecoverySources({ readFile: file => fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
-  readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
-await assert.rejects(verifyCheckpointRecoverySources({ readFile: file => file === 'src/mysteries.js' ? Buffer.from('changed') : fs.readFile(file), sourceRevision: source.sourceRevision }));
+  readFile: async file => (await fs.readFile(file, 'utf8').then(raw => baseWorkHistoricalSourceBaseline(file, raw))).replace(/\r?\n/g, ending) }), source);
+await assert.rejects(verifyCheckpointRecoverySources({ readFile: file => file === 'src/mysteries.js' ? Buffer.from('changed') : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)), sourceRevision: source.sourceRevision }));
 assert.equal(CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER.predecessorSha256, 'e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed');
 assert.match(CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER.scope, /separate current-source native proofs/);
 const crewSource = playerIntelSourceBaseline('src/crew.js', (await fs.readFile('src/crew.js', 'utf8')).replaceAll('\r\n', '\n'));
 assert.equal(assertCrewLogisticsSourceTransfer('src/crew.js', crewSource).baselineSha256, source.extensionPins['src/crew.js']);
 for (const [chunk] of CREW_LOGISTICS_SOURCE_INVERSES['src/crew.js'])
   for (const changed of [crewSource.replace(chunk, ''), crewSource.replace(chunk, chunk + chunk)])
-    await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision, readFile: file => file === 'src/crew.js' ? changed : fs.readFile(file) }), /source changed/);
+    await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision, readFile: file => file === 'src/crew.js' ? changed : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) }), /source changed/);
 const extensionFiles = ['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'];
 assert.deepEqual(CHECKPOINT_RECOVERY_REVIEW.citySourceReviewTransfer.sourcePins,
   Object.fromEntries(extensionFiles.map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])));
@@ -100,7 +101,7 @@ for (const [file, before, after] of [
   assert.notEqual(changed, text, 'Negative control must alter real owner, choice, recipe, exploration or route bytes: ' + before);
   assert.throws(() => assertCitySourceTransfer(file, changed), /source changed/);
   await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
-    readFile: candidate => candidate === file ? changed : fs.readFile(candidate) }), /source changed/);
+    readFile: candidate => candidate === file ? changed : fs.readFile(candidate).then(raw => baseWorkHistoricalSourceBaseline(candidate, raw)) }), /source changed/);
 }
 for (const file of extensionFiles) {
   const text = sourceTexts[file];

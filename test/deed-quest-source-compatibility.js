@@ -1,3 +1,4 @@
+import { baseWorkHistoricalTestGateBaseline } from './lib/base-work-test-gate-source-compatibility.js';
 import { baseWorkHistoricalSourceBaseline } from './lib/base-work-source-compatibility.js';
 // New exact source evidence composes with historical guards; it never revises their pins.
 import assert from 'node:assert/strict';
@@ -27,7 +28,7 @@ assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schem
   'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
-  const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, baseWorkHistoricalSourceBaseline(file, fs.readFileSync(file, 'utf8')))), current = lf(raw);
+  const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, baseWorkHistoricalSourceBaseline(file, baseWorkHistoricalTestGateBaseline(file, fs.readFileSync(file, 'utf8'))))), current = lf(raw);
   assert(raw === current || raw === current.replaceAll('\n', '\r\n'), 'Working candidate has uniform line endings');
   const predecessor = git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`);
   assert.equal(hash(current), pin.currentSha256);
@@ -239,6 +240,27 @@ nextLayerJointRefusals.push(nextLayerJointCurrent.replace(jointA.current, '@@joi
   .replace(jointB.current, () => jointA.current).replace('@@joint-reader-reorder@@', () => jointB.current));
 for (const raw of nextLayerJointRefusals) assert.throws(() => inspectNextLayerJointReader(raw));
 console.log('Next-layer joint reader inspection PASS: 2 line-ending positives, ' + nextLayerJointRefusals.length + ' refusing controls; source text only');
+// Proposed TEST caller inverse only: return exact actual a144 bytes before the unchanged earlier inspectors.
+function inspectBaseWorkTestGateNextLayerReader(input) {
+  if (typeof input !== 'string') return input;
+  const text = lf(input);
+  if ((input !== text && input !== text.replaceAll('\n', '\r\n')) || hash(text) !== 'd4b211b04ca3614f806305604a7d6b7e8f0f32a1f43f3a83b60d5388416cb3ef') return input;
+  const imported = "import { baseWorkHistoricalTestGateBaseline } from './lib/base-work-test-gate-source-compatibility.js';\n", wrapped = "baseWorkHistoricalTestGateBaseline(file, fs.readFileSync(file,'utf8'))", original = "fs.readFileSync(file,'utf8')";
+  assert.equal(text.split(imported).length, 2);
+  let baseline = text.replace(imported, '');
+  assert.equal(baseline.split(wrapped).length, 2); baseline = baseline.replace(wrapped, () => original);
+  assert.equal(hash(baseline), '1c56bfad2fe294acea6499a9d8d0d9bc0dc3329c2e37c2f9810fd65ad2ac620b');
+  return baseline;
+}
+const baseWorkTestGateNextLayerRaw = fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8');
+for (const input of [lf(baseWorkTestGateNextLayerRaw), lf(baseWorkTestGateNextLayerRaw).replaceAll('\n', '\r\n')])
+  assert.equal(inspectBaseWorkTestGateNextLayerReader(input), git('show', 'a144a8ee803ba7557b3bb0b15f7091d2f9c19280:test/next-layer-source-compatibility.js'));
+for (const bad of [baseWorkTestGateNextLayerRaw + '\n// unknown TEST caller\n', baseWorkTestGateNextLayerRaw.slice(1), '\ufeff' + baseWorkTestGateNextLayerRaw,
+  lf(baseWorkTestGateNextLayerRaw).replace('\n', '\r\n'), baseWorkTestGateNextLayerRaw.replace("import { baseWorkHistoricalTestGateBaseline } from './lib/base-work-test-gate-source-compatibility.js';\n", ''),
+  baseWorkTestGateNextLayerRaw.replace("baseWorkHistoricalTestGateBaseline(file, fs.readFileSync(file,'utf8'))", "baseWorkHistoricalTestGateBaseline(file, fs.readFileSync(file,'utf8'))baseWorkHistoricalTestGateBaseline(file, fs.readFileSync(file,'utf8'))")]) {
+  assert.equal(inspectBaseWorkTestGateNextLayerReader(bad), bad);
+  assert.throws(() => inspectNextLayerJointReader(bad));
+}
 // TEST-only exact inverse of the new Next-layer caller; original historical inspectors below remain unchanged.
 function inspectBaseWorkNextLayerReader(input) {
   if (typeof input !== 'string') return input;
@@ -251,7 +273,7 @@ function inspectBaseWorkNextLayerReader(input) {
   assert.equal(hash(prior), '93680640a6e868c89f14421d63b55b74dcd5a3442c1e22eccb165f7d63887463');
   return prior;
 }
-const baseWorkNextLayerRaw = fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8');
+const baseWorkNextLayerRaw = inspectBaseWorkTestGateNextLayerReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'));
 for (const input of [lf(baseWorkNextLayerRaw), lf(baseWorkNextLayerRaw).replaceAll('\n', '\r\n')])
   assert.equal(inspectBaseWorkNextLayerReader(input), git('show', '8fe7faf28007107611bd98f3728d1e00d984e5d4:test/next-layer-source-compatibility.js'));
 for (const bad of [baseWorkNextLayerRaw + '\n// unknown caller change\n', baseWorkNextLayerRaw.slice(1), lf(baseWorkNextLayerRaw).replace('\n', '\r\n'),
@@ -259,7 +281,7 @@ for (const bad of [baseWorkNextLayerRaw + '\n// unknown caller change\n', baseWo
   assert.equal(inspectBaseWorkNextLayerReader(bad), bad);
   assert.throws(() => inspectNextLayerJointReader(bad));
 }
-const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(inspectBaseWorkNextLayerReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))))
+const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(inspectBaseWorkNextLayerReader(inspectBaseWorkTestGateNextLayerReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8')))))
   .replace("import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n", '')
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),

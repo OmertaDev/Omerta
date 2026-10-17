@@ -1,3 +1,4 @@
+import { baseWorkHistoricalTestGateBaseline } from './lib/base-work-test-gate-source-compatibility.js';
 import { baseWorkHistoricalSourceBaseline } from './lib/base-work-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -15,7 +16,7 @@ assert.deepEqual(Object.keys(MARKET_OPERATIONS_SOURCE_DOMAINS),["package.json","
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(MARKET_OPERATIONS_SOURCE_DOMAINS)){
   const current=git('show',MARKET_OPERATIONS_SOURCE_REVISION+':'+file),prior=git('show',MARKET_OPERATIONS_SOURCE_PREDECESSOR+':'+file);
-  assert.equal(deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,baseWorkHistoricalSourceBaseline(file, fs.readFileSync(file,'utf8')))).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned after the exact City activity and Deed junctions');
+  assert.equal(deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,baseWorkHistoricalSourceBaseline(file, baseWorkHistoricalTestGateBaseline(file, fs.readFileSync(file,'utf8'))))).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned after the exact City activity and Deed junctions');
   assert.equal(git('rev-parse',MARKET_OPERATIONS_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);
   assert.equal(git('rev-parse',MARKET_OPERATIONS_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);
   const actual=[];let chunk;
