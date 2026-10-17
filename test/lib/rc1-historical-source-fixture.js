@@ -179,8 +179,7 @@ function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
     const raw = originalRead(path.join(root, file));
-    const input = file === 'src/server.js' && (target === 'test/rc1-checkpoint-recovery-review.js'
-      || target === 'test/rc1-lifecycle-applicability.js') ? baseWorkHistoricalSourceBaseline(file, raw) : raw;
+    const input = file === 'src/server.js' && entries.has(target) ? baseWorkHistoricalSourceBaseline(file, raw) : raw;
     const selected = historicalApplicationSource(file, input);
     checked.add(file);
     return selected;
