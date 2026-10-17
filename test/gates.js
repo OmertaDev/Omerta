@@ -2175,7 +2175,6 @@ const SCENERY_WAIVED = {
     'races.js:grandPrix':   'a DB row id — the open race the entry posts back to',
     'stable.js:stakes':     'a DB row id — the open stakes race',
     'port.js:boat':         'a boats row id — the vessel is named by its own catalog elsewhere',
-    'defense.js:guard':     'a CHARACTER id — the bodyguard hired, not a catalog rung',
     'population.js:band':   'an internal spawn return, never a player-facing reply',
     'favors.js:good':       'the client resolves it through goodName off the published /v1/rules catalog',
     'game.js:approach':     'published on /v1/rules; the client COMPARES it to pick a phrase, never renders it',
