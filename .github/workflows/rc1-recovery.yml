@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: '2156c55e67d8f8f71e90b350cfbb608b5ba3f7ec'
+          ref: 'f4d796e258db8713a91ce48190f9747aa0ea1ea5'
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
@@ -61,7 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: '2156c55e67d8f8f71e90b350cfbb608b5ba3f7ec'
+          ref: 'f4d796e258db8713a91ce48190f9747aa0ea1ea5'
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
