@@ -1,0 +1,148 @@
+{
+  "phase": "SCOPED_DISABLED_HOSTED_OBSERVER_SERVICE_AND_WORKFLOW_PREPARATION_NATIVE_PENDING",
+  "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "canonicalRuntimeUnchanged": true,
+  "canonicalCLI_SHA256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+  "guiPreparationSHA256": "6bc7271cd7042ab54a9094a5b9365c4fcb8b1e3ff782be254bcbd9dc252ef1e0",
+  "packagingSuccessorSHA256": "c434969b1301ff469c1e60b04f0cba802eb47fe05bc1bb4221d70977f4742eb2",
+  "RootPackagingReviewSHA256": "00d932113fc229402b8122d0a382d2053fab5c6f4298d549093468074c7d0595",
+  "enabled": false,
+  "executableGUI": null,
+  "independentInputApproval": null,
+  "workflowCommit": null,
+  "actualRun": null,
+  "RootAdmission": null,
+  "actualServiceIdentity": null,
+  "actualSourceCapture": null,
+  "actualCanonicalPAIR": null,
+  "actualClosure": null,
+  "actualRetention": null,
+  "localWindowsAuthority": false,
+  "allNodeModulesByteGate": false,
+  "PG": false,
+  "Docker": false,
+  "CIM": false,
+  "currentRaw": false,
+  "network": false,
+  "ledger": false,
+  "keysRead": false,
+  "canonical": false,
+  "files": [
+    {
+      "file": "gui-api-contract.json",
+      "sha256": "e08f4f36f06d47af38e1f8380bbd3c586319130b99f2c216c714465a90e4e2ed",
+      "bytes": 2077
+    },
+    {
+      "file": "gui-binding.current-template.json",
+      "sha256": "7c8c98f1c3233d76886386a1b50fc0c156ea3bfc4e8e4ca8da1474ff2180cc8a",
+      "bytes": 1698
+    },
+    {
+      "file": "HANDOFF.md",
+      "sha256": "8a4b6d657a88a381589f94fb3397bb7a91780722151ca6cb100f6cd337ab75d9",
+      "bytes": 6533
+    },
+    {
+      "file": "hosted-binding.json",
+      "sha256": "fffebb08ab6fbf263c8e76ef4062cd4c723bf61eabf2b7c3dc63b4203d162648",
+      "bytes": 563
+    },
+    {
+      "file": "hosted-observer.cjs",
+      "sha256": "971549d8129b87d3064272764055e64ccc31a625a182f54f1647c61b4fc17c78",
+      "bytes": 25711
+    },
+    {
+      "file": "materialization-gates.json",
+      "sha256": "1b86a43ace008f9d22f3dd21086352c14e206bf6a5379deff2b6b9c1d6333ad5",
+      "bytes": 2506
+    },
+    {
+      "file": "negative-entry-result.json",
+      "sha256": "3021f22476c1be4c6f0861d1dc1faafa1028117a67cb9bffc808fd91c02831d5",
+      "bytes": 523
+    },
+    {
+      "file": "provenance/gui-preparation/binding.template.json",
+      "sha256": "2f962cf5bbed62eb58e238980a85681aeeb64b47761af3a8a5a121005f778f29",
+      "bytes": 1004
+    },
+    {
+      "file": "provenance/gui-preparation/driver-and-boot.reference.json",
+      "sha256": "f40e92b119b30b203542011bc16859762680cccd9f7ec138eed4f2c9e647e0ca",
+      "bytes": 26824
+    },
+    {
+      "file": "provenance/gui-preparation/hosted-source-guard.mjs",
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93",
+      "bytes": 36295
+    },
+    {
+      "file": "provenance/gui-preparation/manifest.json",
+      "sha256": "6bc7271cd7042ab54a9094a5b9365c4fcb8b1e3ff782be254bcbd9dc252ef1e0",
+      "bytes": 1878
+    },
+    {
+      "file": "provenance/gui-preparation/phosphor-embedded.reference.json",
+      "sha256": "195b285bde26866e8cd20fbb0dbd88bd82ea41371376b3b55c31b37f1aff5e76",
+      "bytes": 4655
+    },
+    {
+      "file": "provenance/gui-preparation/pino-embedded.reference.json",
+      "sha256": "719775f96ad413f00f7d0f2df9377b0c30ffbf3c5e55c2acb65f67383405ac85",
+      "bytes": 7252
+    },
+    {
+      "file": "provenance/gui-preparation/README.md",
+      "sha256": "1b5377e9975131a3742e7a225fbd0be4a9b0f386c4e027931bf594e9bf206da9",
+      "bytes": 8610
+    },
+    {
+      "file": "provenance/gui-preparation/syntax-check.json",
+      "sha256": "e2c8da1efe9504cd48e7370168d03dd672bf8fae64381d0ea7fbf206003ec055",
+      "bytes": 776
+    },
+    {
+      "file": "retained-early-negative-entry-result.json",
+      "sha256": "7c586e406b2ef8c066674b41f2f159b316a79444929a2560f589f453d37bf12c",
+      "bytes": 516
+    },
+    {
+      "file": "retained-initial-core-tests.json",
+      "sha256": "b5684f08d12a7a09f82c1b2d35c84be0d60510ee0ca4cbe365194b747850de04",
+      "bytes": 18826
+    },
+    {
+      "file": "review-controls-results.json",
+      "sha256": "e7d3d862dfe2a751e98dfcae3fd8c93a6c0235fd64dd8330f6c7b2a288abffce",
+      "bytes": 1830
+    },
+    {
+      "file": "review-controls.cjs",
+      "sha256": "d947d912e1a5a1c2e0051b59a4e538d1ffc379bc192e13735f8eab2ac95220b5",
+      "bytes": 4447
+    },
+    {
+      "file": "test-observations.json",
+      "sha256": "f2b45a93c1b2dc3a5844b0072944fd52053902c3073a9cbdc54768c1d3f166b0",
+      "bytes": 783
+    },
+    {
+      "file": "tests-results.json",
+      "sha256": "de40e0324a58411fe35447bb0ac00e65811e4061ddbe4f8867b3df2ebbb2a445",
+      "bytes": 21532
+    },
+    {
+      "file": "tests.cjs",
+      "sha256": "db8708963177ed3013ad33eecec2b87da042529e656a1a26c87f4502f3caf539",
+      "bytes": 15440
+    },
+    {
+      "file": "workflow.yml.template",
+      "sha256": "2925b7cfef9225426e37bc8377c1d7e476102ab194f08f4d2b2f0982db127ad7",
+      "bytes": 4596
+    }
+  ]
+}

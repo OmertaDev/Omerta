@@ -1,0 +1,560 @@
+{
+  "phase": "BLOCKED_PREPARATION_HO_STARTUP_R1",
+  "authorManifestSHA256": "5ae308d841be4e585205f3d3e700b1b69919620cdc000c488670b8f2e4004d12",
+  "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "canonicalCLI_SHA256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+  "authorIndexedArtifacts": 23,
+  "controllerFunctions": 21,
+  "findings": [
+    {
+      "id": "HO-STARTUP-R1",
+      "status": "CONFIRMED",
+      "scope": "Successful readiness after selected50s cutoff",
+      "reproduction": "startup-deadline-valid-counterexample.json",
+      "minimalSuccessor": "Post-success elapsed>=limitMs refusal before complete"
+    }
+  ],
+  "authorControlReruns": {
+    "core": {
+      "positive": 11,
+      "refusal": 70,
+      "readers": 8,
+      "FD": 8
+    },
+    "review": {
+      "positive": 5,
+      "refusal": 8
+    }
+  },
+  "fundedWorkCompilePrerequisiteForCanonicalPAIR": false,
+  "extraGateProposed": false,
+  "actualFieldsRemainNull": true,
+  "frozenGUIImported": false,
+  "controllerOperationalMainExecuted": false,
+  "PG": false,
+  "Docker": false,
+  "CIM": false,
+  "currentRaw": false,
+  "network": false,
+  "ledger": false,
+  "keysRead": false,
+  "canonicalWrites": false,
+  "files": [
+    {
+      "file": "author-manifest.json",
+      "sha256": "5ae308d841be4e585205f3d3e700b1b69919620cdc000c488670b8f2e4004d12",
+      "bytes": 5015
+    },
+    {
+      "file": "author-review-controls-rerun.json",
+      "sha256": "e7d3d862dfe2a751e98dfcae3fd8c93a6c0235fd64dd8330f6c7b2a288abffce",
+      "bytes": 1830
+    },
+    {
+      "file": "author-tests-rerun.json",
+      "sha256": "aef5bb07fbccd05f930076448ca503158275c5e5a268e17216a9398880fbfd5c",
+      "bytes": 21532
+    },
+    {
+      "file": "childEnv.txt",
+      "sha256": "221d321a8615bad220523c6f5052bc6634905ff4db754ff216f38f8585897ef6",
+      "bytes": 422
+    },
+    {
+      "file": "closedZero.txt",
+      "sha256": "c50ad79addf14c9019641a8b99d73c2ed12b3aee1dc5bcef57bbd250602faec2",
+      "bytes": 218
+    },
+    {
+      "file": "compareGuardReceipts.txt",
+      "sha256": "3d4f9becf276d1cd9ba258eeedc6ce0993e684d16663cc21a8d4a60904ce81d3",
+      "bytes": 1013
+    },
+    {
+      "file": "configuration-review.json",
+      "sha256": "4d1acd2dd77d5c1f91ada30d1a960df930f4395e2af907d5e16aa688aea37cd1",
+      "bytes": 7775
+    },
+    {
+      "file": "FINDINGS.md",
+      "sha256": "a3e8910305463dc456b8e2e69804c3eefbcd67da863303d9bed6d11c75df93f3",
+      "bytes": 4628
+    },
+    {
+      "file": "foreignNodes.txt",
+      "sha256": "53d8f37c87569223de8730558aa82895f07eb8856a4463ee59657c928a5b58da",
+      "bytes": 166
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f1.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f10.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f11.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f12.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f13.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f14.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f15.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f16.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f17.json",
+      "sha256": "204e42743661de102d7cc8694004060ab85180f83df5e890836bf15e06099b76",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f18.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f19.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f2.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f20.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f21.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f22.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f23.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f24.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f25.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f26.json",
+      "sha256": "607425e790b139976459dd208162e470da5eb56ba202ff15039becfab5d438e4",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f27.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f28.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f29.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f3.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f30.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f31.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f32.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f33.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f34.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f35.json",
+      "sha256": "d39cde341776643f213fb09afb202bbfdd5f9f347a223913570505780af0f2af",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f36.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f37.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f38.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f39.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f4.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f40.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f41.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f42.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f43.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f44.json",
+      "sha256": "83e2731c20c33bd55faa0a2aed325ef0688aa83f0d168c2f7e83c773c9980289",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f45.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f46.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f47.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f48.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f49.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f5.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f50.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f51.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f52.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f53.json",
+      "sha256": "fa8af41a0ee6181a2d7f4342c8a9f5934676bab055817dd18dff8a6caccefffd",
+      "bytes": 275
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f54.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f55.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f56.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f57.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f58.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f59.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f6.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f60.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f61.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f62.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f63.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f64.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f65.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f66.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f67.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f68.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f69.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f7.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f70.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f71.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f72.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f73.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f74.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f75.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f76.json",
+      "sha256": "ad5b65287ef49361a42c93bb4d971508c336fe4f1656e082d528faa304bae480",
+      "bytes": 263
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f77.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f8.json",
+      "sha256": "a5ea423c26a3fd37a0fe2a407538f29175d26a0dba632d8b7d15724a34573abb",
+      "bytes": 277
+    },
+    {
+      "file": "guard-compare-fixtures-1792211144897/f9.json",
+      "sha256": "fd468f2bea7bfb0b713cfba6c97fb9f8bc3b6a90143b08df0c41dbcd13f77c2a",
+      "bytes": 261
+    },
+    {
+      "file": "immutable-prerequisite-pins.json",
+      "sha256": "af30a1fbf146ada6f5768bf6214834783609e3c2374974f33fd26eaf310e2348",
+      "bytes": 4267
+    },
+    {
+      "file": "inspect.cjs",
+      "sha256": "b8a4b20123763cc87d83c4899418ef5cf7c5d952b005f2024f26ff824f6b2aeb",
+      "bytes": 3172
+    },
+    {
+      "file": "inspection.json",
+      "sha256": "10a29bbd982b78194c69b4c990e153b1041bcb805874db05413190ebdbd35a3a",
+      "bytes": 1827
+    },
+    {
+      "file": "monitorCohort.txt",
+      "sha256": "b003f5becf6b461fa873ead6bc1735a877727cf649e1437d12fc22ef71ba5f8a",
+      "bytes": 442
+    },
+    {
+      "file": "prerequisite-audit.json",
+      "sha256": "4a4d4a7feca1cc6480d8869cb69d6fb1e9f8752d97da9d5c2ae9531eca5d7117",
+      "bytes": 9589
+    },
+    {
+      "file": "prerequisites.cjs",
+      "sha256": "1a0662f58cd80c0276d32ebb4ed789c8b30f4a799e1999e8b15d3ef9dcb98c7a",
+      "bytes": 3774
+    },
+    {
+      "file": "proof.txt",
+      "sha256": "7d6b9fdfe60519b72f91958b20e1bdc7b8a23a2245bc194c1d38d4ac98575e85",
+      "bytes": 1668
+    },
+    {
+      "file": "reviewed-functions.json",
+      "sha256": "1dce2a2c549b513cf7365b7e809964288c64911b704846bf2cd38bdf1c01d22e",
+      "bytes": 22967
+    },
+    {
+      "file": "seal.cjs",
+      "sha256": "bd42c3639b09b2571e74c79c60555c815e75c6e5368b70ddea6155fcd396a8af",
+      "bytes": 2289
+    },
+    {
+      "file": "spawnObserved.txt",
+      "sha256": "8fe853672f4bb3cfeabc58bd096a5b3ef79e88113c892c9e14e8d7db978de085",
+      "bytes": 1415
+    },
+    {
+      "file": "sqlIdentity.txt",
+      "sha256": "76038766843268885e343d2bb7370e2da1606b0d01493cfa19e4eee375318216",
+      "bytes": 687
+    },
+    {
+      "file": "startup-deadline-counterexample.cjs",
+      "sha256": "e24d50d40f35acacbb2b9052841aba0b5909dbe363b70a3102ea876a3d042ee9",
+      "bytes": 2245
+    },
+    {
+      "file": "startup-deadline-counterexample.json",
+      "sha256": "10f1eb98ecb9f440b181a5def16ea7b2bb8452c4cfcc7189dafb338408816c88",
+      "bytes": 1754
+    },
+    {
+      "file": "startup-deadline-valid-counterexample.cjs",
+      "sha256": "e616058a89743e69fdbc031bc4e8ffe03957a4c01782d011316e22605ac4269d",
+      "bytes": 2537
+    },
+    {
+      "file": "startup-deadline-valid-counterexample.json",
+      "sha256": "755b30a352a3ac9daafbbfd3d0725d8fee9cd8a4d27d9ed9d0f0ae3f3401bced",
+      "bytes": 7357
+    },
+    {
+      "file": "startupReady.txt",
+      "sha256": "978c7dee9c339270e15c145cebc12eaa6ad38b889ae65d36bd34f9eb984bfa8e",
+      "bytes": 864
+    },
+    {
+      "file": "zero.txt",
+      "sha256": "558b51c866e19da4412d0819d37bca550b3e662ff6c4b9dc16ac80960c14c2a4",
+      "bytes": 1809
+    }
+  ]
+}

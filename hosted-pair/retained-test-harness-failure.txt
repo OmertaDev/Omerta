@@ -1,0 +1,1 @@
+Initial source-only control run exited 1 in runtimeCheck extracted VM: assert.deepEqual(process.execArgv,[]) compared host and VM realm arrays. Both were empty. Product source was unchanged; correction creates execArgv in the same VM realm as the actual extracted function. No dynamic runtime/guard/PG/network invocation occurred.

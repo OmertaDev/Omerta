@@ -1,0 +1,102 @@
+{
+  "schema": "omerta.reviewed-embedded-dependency-tree.v1",
+  "phase": "REVIEWED_EXACT_BUNDLE_PROVENANCE_ONLY",
+  "reviewedBase": "2156c55e67d8f8f71e90b350cfbb608b5ba3f7ec",
+  "unchangedLockAtSuccessor": "4b6e33ccf85b32dd73f68dc25270c8817824bb9d",
+  "canonicalLockGitBlob": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+  "packagePath": "node_modules/@phosphor-icons/webcomponents",
+  "packageName": "@phosphor-icons/webcomponents",
+  "version": "2.1.5",
+  "resolved": "https://registry.npmjs.org/@phosphor-icons/webcomponents/-/webcomponents-2.1.5.tgz",
+  "integrity": "sha512-JcvQkZxvcX2jK+QCclm8+e8HXqtdFW9xV4/kk2aL9Y3dJA2oQVt+pzbv1orkumz3rfx4K9mn9fDoMr1He1yr7Q==",
+  "packageJson": {
+    "bytes": 1200,
+    "sha256": "198af43a862a2175066970313b3f6ad324c9a99649702588fdbc4767707f076c",
+    "installedMatchesPublishedTarMember": true
+  },
+  "requester": {
+    "packagePath": "node_modules/@reown/appkit-ui",
+    "requestedVersion": "2.1.5"
+  },
+  "tarball": {
+    "bytes": 2466479,
+    "sha256": "2c4f78733690c943140504b3c1ebcdd41b843b3eb33cedb98702c1fe9616bbbf",
+    "sha512IntegrityVerifiedBeforeTarRead": true,
+    "regularFileCount": 3037,
+    "regularFileBytes": 14279247,
+    "registryMetadataUrl": "https://registry.npmjs.org/@phosphor-icons%2Fwebcomponents/2.1.5",
+    "registryMetadataFileCount": 3037,
+    "registryMetadataUnpackedSize": 14279247,
+    "registryMetadataSha1": "79dcdcc49ae17ea309080eebc463710221ced890",
+    "readOnlyInMemory": true,
+    "redirectsAllowed": false,
+    "installedOrExtracted": false
+  },
+  "bundlePath": "node_modules/@phosphor-icons/webcomponents/dist/node_modules/.pnpm",
+  "tarMemberPrefix": "package/dist/node_modules/.pnpm/",
+  "requiredOccurrenceCount": 1,
+  "fileCount": 6,
+  "fileBytes": 25037,
+  "descendantDirectoryCount": 11,
+  "directories": [
+    "@lit_reactive-element@2.0.4",
+    "@lit_reactive-element@2.0.4/node_modules",
+    "@lit_reactive-element@2.0.4/node_modules/@lit",
+    "@lit_reactive-element@2.0.4/node_modules/@lit/reactive-element",
+    "@lit_reactive-element@2.0.4/node_modules/@lit/reactive-element/decorators",
+    "lit-element@4.0.6",
+    "lit-element@4.0.6/node_modules",
+    "lit-element@4.0.6/node_modules/lit-element",
+    "lit-html@3.1.4",
+    "lit-html@3.1.4/node_modules",
+    "lit-html@3.1.4/node_modules/lit-html"
+  ],
+  "files": [
+    {
+      "path": "@lit_reactive-element@2.0.4/node_modules/@lit/reactive-element/css-tag.mjs",
+      "bytes": 1926,
+      "sha256": "5465bf95431846a46531a8590642d1162ca4838c262f486716673eafdbbe5cac"
+    },
+    {
+      "path": "@lit_reactive-element@2.0.4/node_modules/@lit/reactive-element/decorators/custom-element.mjs",
+      "bytes": 266,
+      "sha256": "e7fe4f693f6e89c1789aea995698811c309ace89a6baecb9671ac97d6b15d34e"
+    },
+    {
+      "path": "@lit_reactive-element@2.0.4/node_modules/@lit/reactive-element/decorators/property.mjs",
+      "bytes": 1795,
+      "sha256": "7abd1a38dcb515f1773929ee6cf32e85ddfc87977f50b3eb482961601fbf5c32"
+    },
+    {
+      "path": "@lit_reactive-element@2.0.4/node_modules/@lit/reactive-element/reactive-element.mjs",
+      "bytes": 8895,
+      "sha256": "6df6ead66ec5f91f7752804b7e416e261ca9c0724b699e299f479848d66a3b09"
+    },
+    {
+      "path": "lit-element@4.0.6/node_modules/lit-element/lit-element.mjs",
+      "bytes": 1864,
+      "sha256": "8aa9ec966e351d0e03acd9975f0502b8080b80deea1cfff97839fa4ab0d2abac"
+    },
+    {
+      "path": "lit-html@3.1.4/node_modules/lit-html/lit-html.mjs",
+      "bytes": 10291,
+      "sha256": "ca3b9345ef5568d407ecb91694626481ca1cbc6d1351c2d558f0f6f7166b1ef8"
+    }
+  ],
+  "installedObservation": {
+    "allSixFileLengthsAndHashesMatchTarMembers": true,
+    "exactFileAndDerivedDirectoryMembership": true,
+    "reparseLinkCount": 0,
+    "packageJsonCountInsideBundle": 0,
+    "observedUsage": "dist/icons/PhAcorn.mjs first six imports explicitly reference these six files"
+  },
+  "requiredGuardBehavior": [
+    "Intercept this exact bundlePath once; every other node_modules entry retains existing checks.",
+    "Require exact locked version, resolved URL, integrity and parent package.json length/hash.",
+    "Require exact case-sensitive files and directories; reject added, missing, renamed or empty extra directories.",
+    "Require ordinary files/directories, no links or reparse redirects, and canonical contained real paths.",
+    "Hash every file and compare exact length/hash to this published-tarball-derived manifest.",
+    "Record the same verified bundle evidence before and after; preserve installed-lock versus physical-package equality.",
+    "Do not skip the enclosing dist/node_modules directory or allow arbitrary .pnpm trees."
+  ]
+}

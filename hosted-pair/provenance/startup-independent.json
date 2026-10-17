@@ -1,0 +1,67 @@
+{
+  "phase": "PASS_SCOPED_DISABLED_HO_STARTUP_R1_SUCCESSOR",
+  "authorManifestSHA256": "57cdec5ec08b90a0496de1464811f939ada9ca7a2a17ceb6f59aac13a9b1f8e8",
+  "originalAuthorManifestSHA256": "5ae308d841be4e585205f3d3e700b1b69919620cdc000c488670b8f2e4004d12",
+  "originalFindingManifestSHA256": "331e7b9504581ec405c8f2502b921f806d6958d7bc1a6ac0dcf8f996381ceeea",
+  "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "observerSHA256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2",
+  "wholeOneInsertionInverse": true,
+  "other20FunctionsAnd22FilesExact": true,
+  "controls": {
+    "positive": 5,
+    "refused": 9
+  },
+  "finding": {
+    "id": "HO-STARTUP-R1",
+    "status": "RESOLVED_IN_DISABLED_PREPARATION"
+  },
+  "enabled": false,
+  "operationalBinding": null,
+  "actualExecution": null,
+  "authority": false,
+  "PG": false,
+  "Docker": false,
+  "CIM": false,
+  "currentRaw": false,
+  "network": false,
+  "ledger": false,
+  "canonicalWrites": false,
+  "files": [
+    {
+      "file": "REVIEW.md",
+      "bytes": 1964,
+      "sha256": "0c4655c83bae1efd1ae818b318bf728371ffc5f965783f4e6321bc9a8edab7ad"
+    },
+    {
+      "file": "author-artifacts-rehashed.json",
+      "bytes": 5827,
+      "sha256": "f6462d98e6960a66ad44224c7869fce8fb6bfacb50997e7192f3c5305372803d"
+    },
+    {
+      "file": "author-manifest.json",
+      "bytes": 8669,
+      "sha256": "57cdec5ec08b90a0496de1464811f939ada9ca7a2a17ceb6f59aac13a9b1f8e8"
+    },
+    {
+      "file": "controls-results.json",
+      "bytes": 20081,
+      "sha256": "7136db864d939eef6aa3a75a0f1004a4a58c014fee29ba3f6a28f34ab6116f1f"
+    },
+    {
+      "file": "original-review-manifest.json",
+      "bytes": 19112,
+      "sha256": "331e7b9504581ec405c8f2502b921f806d6958d7bc1a6ac0dcf8f996381ceeea"
+    },
+    {
+      "file": "review.cjs",
+      "bytes": 10653,
+      "sha256": "bf47112785f1091f56e62e9e166f8f98a095de5c79e1574ca689f37f8f417ab9"
+    },
+    {
+      "file": "root-git-expectation-acceptance.json",
+      "bytes": 1038,
+      "sha256": "d413988342dfaef4955f9acc9afb930433b4c6ccd0df7ba09cfb014bddf185aa"
+    }
+  ]
+}

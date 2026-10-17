@@ -1,0 +1,159 @@
+{
+  "phase": "IMMUTABLE_GIT_ONLY_NO_CURRENT_SOURCE_CAPTURE",
+  "joins": [
+    {
+      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "file": "schema.sql",
+      "bytes": 589940,
+      "sha256": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b"
+    },
+    {
+      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "file": "package-lock.json",
+      "bytes": 257066,
+      "sha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1"
+    },
+    {
+      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "file": "tools/rc1-ci-retain.mjs",
+      "bytes": 4375,
+      "sha256": "d15e3a917b9e9aa29a7cc9e68024fe9b7a10c4bd37baed7c379966e85b6388c5"
+    },
+    {
+      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "file": "tools/rc1-ci-envelope.js",
+      "bytes": 14277,
+      "sha256": "ccec77c5618bf455e3685ff84805a2613f44b690d891b84917e1e4b25e4d68aa"
+    },
+    {
+      "source": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+      "file": "schema.sql",
+      "bytes": 583823,
+      "sha256": "1fbe97d1f971d908623d5cd7cbd7aab4e2411844c1d8be2688cdbaaba558f137"
+    },
+    {
+      "source": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+      "file": "package-lock.json",
+      "bytes": 257066,
+      "sha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1"
+    },
+    {
+      "source": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+      "file": "tools/rc1-ci-retain.mjs",
+      "bytes": 4375,
+      "sha256": "d15e3a917b9e9aa29a7cc9e68024fe9b7a10c4bd37baed7c379966e85b6388c5"
+    },
+    {
+      "source": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+      "file": "tools/rc1-ci-envelope.js",
+      "bytes": 14277,
+      "sha256": "ccec77c5618bf455e3685ff84805a2613f44b690d891b84917e1e4b25e4d68aa"
+    }
+  ],
+  "copied": [
+    {
+      "file": "inputs/hosted-source-guard-PREPARATION.mjs",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-observer-preparation-20261017/provenance/gui-preparation/hosted-source-guard.mjs",
+      "bytes": 36295,
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"
+    },
+    {
+      "file": "inputs/driver-and-boot.reference.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-observer-preparation-20261017/provenance/gui-preparation/driver-and-boot.reference.json",
+      "bytes": 26824,
+      "sha256": "f40e92b119b30b203542011bc16859762680cccd9f7ec138eed4f2c9e647e0ca"
+    },
+    {
+      "file": "inputs/phosphor-embedded.reference.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-observer-preparation-20261017/provenance/gui-preparation/phosphor-embedded.reference.json",
+      "bytes": 4655,
+      "sha256": "195b285bde26866e8cd20fbb0dbd88bd82ea41371376b3b55c31b37f1aff5e76"
+    },
+    {
+      "file": "inputs/pino-embedded.reference.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-observer-preparation-20261017/provenance/gui-preparation/pino-embedded.reference.json",
+      "bytes": 7252,
+      "sha256": "719775f96ad413f00f7d0f2df9377b0c30ffbf3c5e55c2acb65f67383405ac85"
+    },
+    {
+      "file": "inputs/hosted-observer.cjs",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-startup-deadline-successor-20261017/hosted-observer.cjs",
+      "bytes": 25748,
+      "sha256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2"
+    },
+    {
+      "file": "inputs/expected-dependencies-linux-x64.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-expected-dependencies-canonical-git-f6e79b5e-d946-4ab6-b0c9-5918d57e50a1/expected-dependencies-linux-x64.json",
+      "bytes": 239089,
+      "sha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7"
+    },
+    {
+      "file": "inputs/node-runtime-provenance.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-expected-dependencies-f4d7-b3144c6b-10a6-451f-8c6d-82a38884719c/node-npm-platform-evidence/runtime-provenance.json",
+      "bytes": 4280,
+      "sha256": "08b93b7d7637e5490fae18c7b069c3ff3ced4f09573b6fc2a7672b9edb0e9139"
+    },
+    {
+      "file": "inputs/expected-runtime-git.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-official-git-provenance-126629f4-f18a-4c01-915a-7bc9bd1b6748/expected-runtime-git.json",
+      "bytes": 3105,
+      "sha256": "1625dc4323716c8b48e8cc9f5568b51fe69dba3311640da89155346f6d1ca7f9"
+    },
+    {
+      "file": "inputs/root-git-acceptance.json",
+      "origin": "C:/Users/Jorge/.codex/restart-handoffs/2026-10-15/agent-economy-resume/root-accepted-hosted-git-binary-provenance.json",
+      "bytes": 1038,
+      "sha256": "d413988342dfaef4955f9acc9afb930433b4c6ccd0df7ba09cfb014bddf185aa"
+    },
+    {
+      "file": "provenance/original5ae-manifest.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-observer-preparation-20261017/manifest.json",
+      "bytes": 5015,
+      "sha256": "5ae308d841be4e585205f3d3e700b1b69919620cdc000c488670b8f2e4004d12"
+    },
+    {
+      "file": "provenance/original5ae-independent.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-observer-independent-20261017/manifest.json",
+      "bytes": 19112,
+      "sha256": "331e7b9504581ec405c8f2502b921f806d6958d7bc1a6ac0dcf8f996381ceeea"
+    },
+    {
+      "file": "provenance/startup-successor-manifest.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-startup-deadline-successor-20261017/manifest.json",
+      "bytes": 8669,
+      "sha256": "57cdec5ec08b90a0496de1464811f939ada9ca7a2a17ceb6f59aac13a9b1f8e8"
+    },
+    {
+      "file": "provenance/startup-independent.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-startup-deadline-independent-20261017/manifest.json",
+      "bytes": 2157,
+      "sha256": "e680de44704fb2cd366de0be58fe811dca3187cc6a053fd9ce6e63ac24aee70b"
+    },
+    {
+      "file": "provenance/gui6bc-manifest.json",
+      "origin": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review/rootd8-bg-hosted-observer-preparation-20261017/provenance/gui-preparation/manifest.json",
+      "bytes": 1878,
+      "sha256": "6bc7271cd7042ab54a9094a5b9365c4fcb8b1e3ff782be254bcbd9dc252ef1e0"
+    },
+    {
+      "file": "provenance/linux-dependencies-manifest.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-expected-dependencies-canonical-git-f6e79b5e-d946-4ab6-b0c9-5918d57e50a1/closed-successor-manifest.json",
+      "bytes": 1603,
+      "sha256": "f4d30426dbb085f1c987c42f49ca7b7e982e77d2176a7bb6bf8884aeb76f3526"
+    },
+    {
+      "file": "provenance/git-author-manifest.json",
+      "origin": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-official-git-provenance-126629f4-f18a-4c01-915a-7bc9bd1b6748/manifest.json",
+      "bytes": 7526,
+      "sha256": "f46832bcdf8c9fa7a6e80fc221c1c404c436196d31be85de0df24fc7e04a1bcf"
+    }
+  ],
+  "capabilityAttempts": {
+    "PG": 0,
+    "CIM": 0,
+    "network": 0,
+    "actualBinding": 0,
+    "workflowExecution": 0,
+    "canonicalWrites": 0
+  }
+}

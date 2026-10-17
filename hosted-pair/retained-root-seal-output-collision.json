@@ -1,0 +1,10 @@
+{
+  "phase": "RETAINED_ROOT_SEAL_OUTPUT_COLLISION",
+  "toolChunk": "f282bf",
+  "sourceControls": "14 positive/74 refusal actual child success",
+  "sealExit": 1,
+  "reason": "Copied parent guard inverse met deliberate wx refusal",
+  "correction": "Preserved original inverse in provenance; same sealer generates fresh exact inverse",
+  "PG": false,
+  "CI": false
+}

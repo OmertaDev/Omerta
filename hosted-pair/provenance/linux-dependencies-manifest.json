@@ -1,0 +1,48 @@
+{
+  "phase": "FROZEN_CANONICAL_GIT_BASELINE_SUCCESSOR",
+  "preparedAtUtc": "2026-10-17T04:04:52.219Z",
+  "originalManifestSha256": "b38e76be5fcd1a04efa82fd0aae84603c140c494d35b93f8317214a02bb62f56",
+  "descriptorSha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7",
+  "files": [
+    {
+      "path": "canonical-git-successor-evidence.json",
+      "bytes": 3607,
+      "sha256": "7d0fff0b98b6a876e04cd32d7b44d3a7c9e45139429dbd951456cde9eb82e93d"
+    },
+    {
+      "path": "derive-canonical-successor.mjs",
+      "bytes": 6309,
+      "sha256": "c964eb5ca94285ef45821d5e39755fbbde5de6930e77f896f0bf6bc740c12c04"
+    },
+    {
+      "path": "expected-dependencies-linux-x64.json",
+      "bytes": 239089,
+      "sha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7"
+    },
+    {
+      "path": "git-read-receipts.json",
+      "bytes": 1854,
+      "sha256": "8b6ee8af1ea92e66aa544ad5f3b478551012dfcc96d26908a3566e23eecf6b6b"
+    },
+    {
+      "path": "package-lock.git.json",
+      "bytes": 257066,
+      "sha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1"
+    },
+    {
+      "path": "package.git.json",
+      "bytes": 55413,
+      "sha256": "a81009962454326c1c276c95101084f1a44c9d1ef3b7b8642f65478f7142ada2"
+    },
+    {
+      "path": "read-canonical-git.ps1",
+      "bytes": 2114,
+      "sha256": "655f0f626612505aa7b1420db8fb69d265b27909ea21fd562f3dfee12abc51f2"
+    },
+    {
+      "path": "source-git-blob-bindings.txt",
+      "bytes": 164,
+      "sha256": "ea5d21608d3da22aa1b41a215dfce70ae6f4115d3e90a216a133585b0e9470e4"
+    }
+  ]
+}

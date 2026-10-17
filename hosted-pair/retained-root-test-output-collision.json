@@ -1,0 +1,9 @@
+{
+  "phase": "RETAINED_ROOT_TEST_OUTPUT_COLLISION",
+  "toolChunk": "fdfb69",
+  "exitCode": 1,
+  "reason": "Copied parent tests-results.json met deliberate wx refusal; no control or guard bypass",
+  "correction": "Preserved parent output in provenance and reran same corrected-path source controls into fresh output",
+  "PG": false,
+  "CI": false
+}

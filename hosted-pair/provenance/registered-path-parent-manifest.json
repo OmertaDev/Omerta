@@ -1,0 +1,220 @@
+{
+  "phase": "SOURCE_ONLY_HOSTED_MATERIALIZATION_PREPARATION",
+  "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "operationalAuthority": false,
+  "actualWorkflow": null,
+  "actualApproval": null,
+  "actualRunner": null,
+  "actualService": null,
+  "actualBinding": null,
+  "actualExecution": null,
+  "actualResult": null,
+  "actualRetention": null,
+  "observer": {
+    "sha256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2",
+    "author": "57cdec5ec08b90a0496de1464811f939ada9ca7a2a17ceb6f59aac13a9b1f8e8",
+    "independent": "e680de44704fb2cd366de0be58fe811dca3187cc6a053fd9ce6e63ac24aee70b"
+  },
+  "guard": {
+    "before": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93",
+    "post": "b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0",
+    "inverseSpans": 1,
+    "unchangedFunctions": 10
+  },
+  "acceptedInputs": {
+    "dependencies": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7",
+    "nodeArchive": "1084aa36196bba4c3a5e69a1ee388a6e4ff729dad09445fbcd434b28fe3c24af",
+    "nodeBinary": "fde6a4bf8d0562f7751d1a2d6cb9b417c4cfe107bbcb0aa3e9a24e125e348f48",
+    "npmCli": "8e5f6f3429f8cdbe693cdc29904e9d5a7b127a494bd15c804bd54c7403bfcbe7",
+    "gitDescriptor": "1625dc4323716c8b48e8cc9f5568b51fe69dba3311640da89155346f6d1ca7f9",
+    "gitBinary": "d4d2ba562243015206d4248edfec871a74786499292d00ed072dbca2f5ae8073"
+  },
+  "entry": "materialize-hosted.cjs",
+  "entrySHA256": "f20719c4f5d1d41094b8c16db2e346742ace1d2263226005aa4a02791821e667",
+  "controls": {
+    "positive": 14,
+    "refusals": 74
+  },
+  "capabilityAttempts": {
+    "network": 0,
+    "PG": 0,
+    "Docker": 0,
+    "CIM": 0,
+    "guardCapture": 0,
+    "actualJobBinding": 0,
+    "canonicalWrites": 0
+  },
+  "files": [
+    {
+      "file": "HANDOFF.md",
+      "bytes": 8579,
+      "sha256": "81e8359b5f80ace07b0cf2859b5ab31a32d174ee2b803bae3ab09336b6f18dcf"
+    },
+    {
+      "file": "guard-barrier-inverse.json",
+      "bytes": 556,
+      "sha256": "9bb044b03cd5a6d949e04b7151cf6ed0838c7adf1f8bd403abffc51200b27cbf"
+    },
+    {
+      "file": "hosted-source-guard.EXECUTABLE.mjs",
+      "bytes": 36185,
+      "sha256": "b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0"
+    },
+    {
+      "file": "immutable-input-joins.json",
+      "bytes": 8207,
+      "sha256": "a6f70ab4fbfd6115bf620fe1fea7129acfe6297727a8cae798bed3e271291ada"
+    },
+    {
+      "file": "inputs/driver-and-boot.reference.json",
+      "bytes": 26824,
+      "sha256": "f40e92b119b30b203542011bc16859762680cccd9f7ec138eed4f2c9e647e0ca"
+    },
+    {
+      "file": "inputs/expected-dependencies-linux-x64.json",
+      "bytes": 239089,
+      "sha256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7"
+    },
+    {
+      "file": "inputs/expected-runtime-git.json",
+      "bytes": 3105,
+      "sha256": "1625dc4323716c8b48e8cc9f5568b51fe69dba3311640da89155346f6d1ca7f9"
+    },
+    {
+      "file": "inputs/hosted-observer.cjs",
+      "bytes": 25748,
+      "sha256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2"
+    },
+    {
+      "file": "inputs/hosted-source-guard-PREPARATION.mjs",
+      "bytes": 36295,
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"
+    },
+    {
+      "file": "inputs/node-runtime-provenance.json",
+      "bytes": 4280,
+      "sha256": "08b93b7d7637e5490fae18c7b069c3ff3ced4f09573b6fc2a7672b9edb0e9139"
+    },
+    {
+      "file": "inputs/phosphor-embedded.reference.json",
+      "bytes": 4655,
+      "sha256": "195b285bde26866e8cd20fbb0dbd88bd82ea41371376b3b55c31b37f1aff5e76"
+    },
+    {
+      "file": "inputs/pino-embedded.reference.json",
+      "bytes": 7252,
+      "sha256": "719775f96ad413f00f7d0f2df9377b0c30ffbf3c5e55c2acb65f67383405ac85"
+    },
+    {
+      "file": "inputs/root-git-acceptance.json",
+      "bytes": 1038,
+      "sha256": "d413988342dfaef4955f9acc9afb930433b4c6ccd0df7ba09cfb014bddf185aa"
+    },
+    {
+      "file": "install-approved-runtime.sh",
+      "bytes": 1748,
+      "sha256": "766f977fe691a837bf092edcaf270999bf6c6c6a7ab038f0e488619d4d397932"
+    },
+    {
+      "file": "materialize-hosted.cjs",
+      "bytes": 14525,
+      "sha256": "f20719c4f5d1d41094b8c16db2e346742ace1d2263226005aa4a02791821e667"
+    },
+    {
+      "file": "prepare-files.cjs",
+      "bytes": 5083,
+      "sha256": "32612216253d4144abf2d1e8bb9c03f169e35f091162f9981b1a2f00833caf16"
+    },
+    {
+      "file": "provenance/81ef-retention-workflow.yml",
+      "bytes": 3143,
+      "sha256": "e62d3a1f3991f225b393fbee13cc68b341fadafd55f20e446353e4434d4cc7c1"
+    },
+    {
+      "file": "provenance/git-author-manifest.json",
+      "bytes": 7526,
+      "sha256": "f46832bcdf8c9fa7a6e80fc221c1c404c436196d31be85de0df24fc7e04a1bcf"
+    },
+    {
+      "file": "provenance/gui6bc-manifest.json",
+      "bytes": 1878,
+      "sha256": "6bc7271cd7042ab54a9094a5b9365c4fcb8b1e3ff782be254bcbd9dc252ef1e0"
+    },
+    {
+      "file": "provenance/linux-dependencies-manifest.json",
+      "bytes": 1603,
+      "sha256": "f4d30426dbb085f1c987c42f49ca7b7e982e77d2176a7bb6bf8884aeb76f3526"
+    },
+    {
+      "file": "provenance/original5ae-independent.json",
+      "bytes": 19112,
+      "sha256": "331e7b9504581ec405c8f2502b921f806d6958d7bc1a6ac0dcf8f996381ceeea"
+    },
+    {
+      "file": "provenance/original5ae-manifest.json",
+      "bytes": 5015,
+      "sha256": "5ae308d841be4e585205f3d3e700b1b69919620cdc000c488670b8f2e4004d12"
+    },
+    {
+      "file": "provenance/rc1-ci-retain.d8.mjs",
+      "bytes": 4375,
+      "sha256": "d15e3a917b9e9aa29a7cc9e68024fe9b7a10c4bd37baed7c379966e85b6388c5"
+    },
+    {
+      "file": "provenance/startup-independent.json",
+      "bytes": 2157,
+      "sha256": "e680de44704fb2cd366de0be58fe811dca3187cc6a053fd9ce6e63ac24aee70b"
+    },
+    {
+      "file": "provenance/startup-successor-manifest.json",
+      "bytes": 8669,
+      "sha256": "57cdec5ec08b90a0496de1464811f939ada9ca7a2a17ceb6f59aac13a9b1f8e8"
+    },
+    {
+      "file": "retained-test-harness-failure.txt",
+      "bytes": 332,
+      "sha256": "33ed80fdf1e07316f9d35c67e741bbd40253f0f82131e9cf61c04355e272fa02"
+    },
+    {
+      "file": "root-approval.UNBOUND.json",
+      "bytes": 896,
+      "sha256": "563d303411f52d122ff20f14e4eb4812937224c84aa1f44260f2ec5c38961b93"
+    },
+    {
+      "file": "seal.cjs",
+      "bytes": 2918,
+      "sha256": "5649ffb2f2df45dc23c1af457cce2ca8928b56056650c43ed1d242ed3e639d7c"
+    },
+    {
+      "file": "test-materializer-initial-vm-realm.cjs",
+      "bytes": 11030,
+      "sha256": "1fe0f99ce233088e8663fe4e2039b285427017112d9b0474f737ed4aae1e47f3"
+    },
+    {
+      "file": "test-materializer.cjs",
+      "bytes": 11519,
+      "sha256": "d194156c53a8aaa14bada957302a668c6fb3833b9781624ff41bd423f4a67501"
+    },
+    {
+      "file": "tests-results-before-static-workflow-split.json",
+      "bytes": 8426,
+      "sha256": "703f387262a073583bf5553b63c4bf9063e598ffbcfec1f8d33e4f0375f73631"
+    },
+    {
+      "file": "tests-results.json",
+      "bytes": 8535,
+      "sha256": "039b33bc45de4f8f785a708f61e840516df90d73eb2c411f11e0d16e2c9ec308"
+    },
+    {
+      "file": "workflow-refs.UNBOUND.json",
+      "bytes": 318,
+      "sha256": "01820429979656e802bb13fc2e0fc7b9f377896da93f28e944434afaf452160e"
+    },
+    {
+      "file": "workflow.yml.template",
+      "bytes": 6080,
+      "sha256": "bf944655f899dd0f8e4d96530413aaa700316de3607756a756099b259b051e5b"
+    }
+  ]
+}

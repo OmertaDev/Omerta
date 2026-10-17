@@ -1,0 +1,16 @@
+{
+  "id": "HOSTED-DISPATCH-R1",
+  "phase": "SOURCE_PREPARATION_CORRECTED_NOT_DISPATCHED",
+  "source": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch",
+  "observed": {
+    "newPath": "rootd8-bg-sourcepair.yml",
+    "newPathGetStatus": 404,
+    "existingPath": ".github/workflows/rc1-recovery.yml",
+    "existingWorkflowId": 361762219,
+    "existingState": "active",
+    "rootReadChunk": "791e3b"
+  },
+  "correction": "Use the already registered workflow path solely on a distinct never-merge proof branch. No default/main workflow change.",
+  "operationalAuthority": false,
+  "actualWorkflow": null
+}

@@ -1,0 +1,371 @@
+{
+  "phase": "SOURCE_ONLY_MATERIALIZER_CONTROLS",
+  "counts": {
+    "positive": 14,
+    "refusals": 73
+  },
+  "guardFunctionsPreserved": 10,
+  "parsedSources": 5,
+  "observations": [
+    {
+      "name": "literal barrier whole inverse",
+      "pass": true
+    },
+    {
+      "name": "exact renderer and published executable postimage agree",
+      "pass": true
+    },
+    {
+      "name": "tampered original",
+      "refused": true
+    },
+    {
+      "name": "missing barrier",
+      "refused": true
+    },
+    {
+      "name": "duplicate barrier",
+      "refused": true
+    },
+    {
+      "name": "all guard function bodies preserved",
+      "pass": true
+    },
+    {
+      "name": "observer exact approved R1 bytes",
+      "pass": true
+    },
+    {
+      "name": "default UNBOUND authority",
+      "refused": true
+    },
+    {
+      "name": "synthetic reviewed-config admission",
+      "pass": true
+    },
+    {
+      "name": "missing materializerSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing packageManifestSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing independentReviewSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing rootConfigReviewSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing repository",
+      "refused": true
+    },
+    {
+      "name": "missing workflowCommit",
+      "refused": true
+    },
+    {
+      "name": "missing privateWorkflowRef",
+      "refused": true
+    },
+    {
+      "name": "missing proofRef",
+      "refused": true
+    },
+    {
+      "name": "missing checkoutActionSHA",
+      "refused": true
+    },
+    {
+      "name": "missing uploadActionSHA",
+      "refused": true
+    },
+    {
+      "name": "missing observerPeerSHA256",
+      "refused": true
+    },
+    {
+      "name": "wrong job field GITHUB_SHA",
+      "refused": true
+    },
+    {
+      "name": "wrong job field GITHUB_REPOSITORY",
+      "refused": true
+    },
+    {
+      "name": "wrong job field GITHUB_WORKFLOW_REF",
+      "refused": true
+    },
+    {
+      "name": "wrong job field GITHUB_JOB",
+      "refused": true
+    },
+    {
+      "name": "wrong job field GITHUB_RUN_ID",
+      "refused": true
+    },
+    {
+      "name": "wrong job field GITHUB_RUN_ATTEMPT",
+      "refused": true
+    },
+    {
+      "name": "wrong job field HOSTED_PAIR_SERVICE_ID",
+      "refused": true
+    },
+    {
+      "name": "wrong job field CHAIN_ENABLED",
+      "refused": true
+    },
+    {
+      "name": "wrong job field RESOURCE_ECONOMY",
+      "refused": true
+    },
+    {
+      "name": "ambient DATABASE_URL=",
+      "refused": true
+    },
+    {
+      "name": "ambient DATABASE_URL=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient OTHER_DATABASE_URL=",
+      "refused": true
+    },
+    {
+      "name": "ambient OTHER_DATABASE_URL=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient PGHOST=",
+      "refused": true
+    },
+    {
+      "name": "ambient PGHOST=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient PGDATABASE=",
+      "refused": true
+    },
+    {
+      "name": "ambient PGDATABASE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient PGUNKNOWN=",
+      "refused": true
+    },
+    {
+      "name": "ambient PGUNKNOWN=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient RC1_PAIR_DATABASE_URL=",
+      "refused": true
+    },
+    {
+      "name": "ambient RC1_PAIR_DATABASE_URL=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient NODE_OPTIONS=",
+      "refused": true
+    },
+    {
+      "name": "ambient NODE_OPTIONS=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient NODE_PATH=",
+      "refused": true
+    },
+    {
+      "name": "ambient NODE_PATH=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient NODE_PG_FORCE_NATIVE=",
+      "refused": true
+    },
+    {
+      "name": "ambient NODE_PG_FORCE_NATIVE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient GENESIS_AUCTION_MANIFEST_FILE=",
+      "refused": true
+    },
+    {
+      "name": "ambient GENESIS_AUCTION_MANIFEST_FILE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient NEXT_LAYER_NATIVE_SOURCE=",
+      "refused": true
+    },
+    {
+      "name": "ambient NEXT_LAYER_NATIVE_SOURCE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient MARKET_OPERATIONS_NATIVE_SOURCE=",
+      "refused": true
+    },
+    {
+      "name": "ambient MARKET_OPERATIONS_NATIVE_SOURCE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "workflow cannot alias application ref d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "refused": true
+    },
+    {
+      "name": "workflow cannot alias application ref b8fcce7baaa91b29661921a17e5510a47e9f725a",
+      "refused": true
+    },
+    {
+      "name": "loader flag",
+      "refused": true
+    },
+    {
+      "name": "real side/schema/dependency field contract",
+      "pass": true
+    },
+    {
+      "name": "runtime paths derive only from actual job roots",
+      "pass": true
+    },
+    {
+      "name": "actual observer binding validator accepts materializer shape",
+      "pass": true
+    },
+    {
+      "name": "actual observer refuses side drift candidate:source",
+      "refused": true
+    },
+    {
+      "name": "actual observer refuses side drift candidate:tree",
+      "refused": true
+    },
+    {
+      "name": "actual observer refuses side drift candidate:expectedSchema",
+      "refused": true
+    },
+    {
+      "name": "actual observer refuses side drift predecessor:source",
+      "refused": true
+    },
+    {
+      "name": "actual observer refuses side drift predecessor:tree",
+      "refused": true
+    },
+    {
+      "name": "actual observer refuses side drift predecessor:expectedSchema",
+      "refused": true
+    },
+    {
+      "name": "actual observer preserves canonical M6 16/4/41 contract",
+      "pass": true
+    },
+    {
+      "name": "whole npm comparator exact positive",
+      "pass": true
+    },
+    {
+      "name": "whole npm tree drift 57",
+      "refused": true
+    },
+    {
+      "name": "whole npm tree drift 58",
+      "refused": true
+    },
+    {
+      "name": "whole npm tree drift 59",
+      "refused": true
+    },
+    {
+      "name": "whole npm tree drift 60",
+      "refused": true
+    },
+    {
+      "name": "whole npm tree drift 61",
+      "refused": true
+    },
+    {
+      "name": "whole npm tree drift 62",
+      "refused": true
+    },
+    {
+      "name": "whole npm tree drift 63",
+      "refused": true
+    },
+    {
+      "name": "actual runtimeCheck archive/npm-tree positive prefix",
+      "pass": true
+    },
+    {
+      "name": "actual runtimeCheck wrong expected bytes /job/temp/rc1-hosted-runtime/node.tar.gz",
+      "refused": true
+    },
+    {
+      "name": "actual runtimeCheck wrong expected bytes /job/temp/rc1-hosted-runtime/git.deb",
+      "refused": true
+    },
+    {
+      "name": "actual runtimeCheck wrong expected bytes /job/temp/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node",
+      "refused": true
+    },
+    {
+      "name": "actual runtimeCheck wrong expected bytes /job/temp/rc1-hosted-runtime/node-v22.23.3-linux-x64/lib/node_modules/npm/bin/npm-cli.js",
+      "refused": true
+    },
+    {
+      "name": "actual runtimeCheck wrong expected bytes /job/temp/rc1-hosted-runtime/git/usr/bin/git",
+      "refused": true
+    },
+    {
+      "name": "actual runtimeCheck edited full npm tree",
+      "refused": true
+    },
+    {
+      "name": "actual runtimeCheck extra npm member",
+      "refused": true
+    },
+    {
+      "name": "real YAML static workflow parser",
+      "pass": true
+    },
+    {
+      "name": "all action refs late explicit; sibling refs immutable",
+      "pass": true
+    },
+    {
+      "name": "preserved restricted encrypted transport and absence of blanket compile gate",
+      "pass": true
+    },
+    {
+      "name": "no workflow rendering from disabled config",
+      "refused": true
+    },
+    {
+      "name": "unknown template placeholder multiplicity",
+      "refused": true
+    }
+  ],
+  "limitations": [
+    "Synthetic authority and job paths were in-memory only. No Root approval, job binding, guard capture, runtime installation, network, Docker, PG, CI, current raw or canonical effects."
+  ],
+  "capabilityAttempts": {
+    "network": 0,
+    "PG": 0,
+    "Docker": 0,
+    "CIM": 0,
+    "guardCapture": 0,
+    "actualJobBinding": 0,
+    "canonicalWrites": 0
+  }
+}

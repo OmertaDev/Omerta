@@ -1,0 +1,83 @@
+{
+  "phase": "OFFICIAL_NODE_BUNDLED_NPM_PROVENANCE",
+  "node": {
+    "version": "v22.23.3",
+    "platform": "linux",
+    "arch": "x64",
+    "officialShasumsUrl": "https://nodejs.org/dist/v22.23.3/SHASUMS256.txt",
+    "officialShasumsSha256": "4fe99a2ba9d552a6f51c13ed68fb11104cfa5df601aec616be689253a8139e7a",
+    "archiveUrl": "https://nodejs.org/dist/v22.23.3/node-v22.23.3-linux-x64.tar.gz",
+    "archiveBytes": 56792076,
+    "archiveSha256": "1084aa36196bba4c3a5e69a1ee388a6e4ff729dad09445fbcd434b28fe3c24af",
+    "binaryPathInArchive": "node-v22.23.3-linux-x64/bin/node",
+    "binaryBytes": 124827920,
+    "binarySha256": "fde6a4bf8d0562f7751d1a2d6cb9b417c4cfe107bbcb0aa3e9a24e125e348f48",
+    "authentication": "Official HTTPS checksum list and archive SHA256 match; no detached signature verification claimed."
+  },
+  "npm": {
+    "name": "npm",
+    "version": "10.9.9",
+    "cliPathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/bin/npm-cli.js",
+    "cliBytes": 54,
+    "cliSha256": "8e5f6f3429f8cdbe693cdc29904e9d5a7b127a494bd15c804bd54c7403bfcbe7",
+    "packageJsonBytes": 6706,
+    "packageJsonSha256": "7c04bf69824d17a1db64defd3a9a86d538781bf2d6ca2764e3f1143fa5b71166"
+  },
+  "policyFiles": [
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/lib/commands/ci.js",
+      "bytes": 4325,
+      "sha256": "76cacc0ed9bbee8a7c1e5d5656201403a4dd688d31ee141b531c9e85a7e75e9e",
+      "retained": "76cacc0ed9bbee8a7c1e5d5656201403a4dd688d31ee141b531c9e85a7e75e9e.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/node_modules/npm-install-checks/lib/index.js",
+      "bytes": 2254,
+      "sha256": "2372095fc73982184f77759432935af6259b51201c750464fe7ed52033ab0640",
+      "retained": "2372095fc73982184f77759432935af6259b51201c750464fe7ed52033ab0640.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/build-ideal-tree.js",
+      "bytes": 54329,
+      "sha256": "496a1cff821848cc5d01341a70d916b01d017a380a12553e30906a468f27a47f",
+      "retained": "496a1cff821848cc5d01341a70d916b01d017a380a12553e30906a468f27a47f.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/reify.js",
+      "bytes": 60134,
+      "sha256": "f3a2443071941e92d1dd176dc77dbc7ba669850c5d1f50bb7df8ef08b4cfb310",
+      "retained": "f3a2443071941e92d1dd176dc77dbc7ba669850c5d1f50bb7df8ef08b4cfb310.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/arborist/load-virtual.js",
+      "bytes": 9577,
+      "sha256": "5dbdd71e6abeacf4f82413729ffe3868543d7e572892950753eb401a768844d0",
+      "retained": "5dbdd71e6abeacf4f82413729ffe3868543d7e572892950753eb401a768844d0.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/node_modules/@npmcli/arborist/lib/shrinkwrap.js",
+      "bytes": 37711,
+      "sha256": "97d50500314b6345cee444a04fa7f93ff154599639f47a79bb16d28ba6988746",
+      "retained": "97d50500314b6345cee444a04fa7f93ff154599639f47a79bb16d28ba6988746.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/node_modules/npm-pick-manifest/lib/index.js",
+      "bytes": 7009,
+      "sha256": "d999a3a66673dec0df43b929b7ceddfdd6ee69887842f87702ae9fdf3bcbbbe3",
+      "retained": "d999a3a66673dec0df43b929b7ceddfdd6ee69887842f87702ae9fdf3bcbbbe3.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/lib/commands/install.js",
+      "bytes": 5277,
+      "sha256": "a8fac192d66e09fdf017ff9d48cd486948785309622c895a0c790c8cf691f829",
+      "retained": "a8fac192d66e09fdf017ff9d48cd486948785309622c895a0c790c8cf691f829.txt"
+    },
+    {
+      "pathInArchive": "node-v22.23.3-linux-x64/lib/node_modules/npm/lib/base-cmd.js",
+      "bytes": 6268,
+      "sha256": "286c3042a3d2762ba9a77a7dd2e01a9e3ce19ffe4ae99befabed83c62ee690e1",
+      "retained": "286c3042a3d2762ba9a77a7dd2e01a9e3ce19ffe4ae99befabed83c62ee690e1.txt"
+    }
+  ],
+  "limitation": "Only selected platform-selection and lock-loading implementation text retained for deriving optional package presence; no npm code executed or tree audit performed."
+}

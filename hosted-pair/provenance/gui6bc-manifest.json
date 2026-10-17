@@ -1,0 +1,55 @@
+{
+  "phase": "FROZEN_PREPARATION_ONLY_HOSTED_SOURCE_GUARD_NOT_EXECUTABLE_OR_ADMISSION",
+  "frozenAt": "2026-10-17T03:50:22.3988488Z",
+  "directory": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-hosted-source-guard-preparation-879ce748-d847-4446-a040-d268faef9a90",
+  "files": [
+    {
+      "file": "binding.template.json",
+      "bytes": 1004,
+      "sha256": "2f962cf5bbed62eb58e238980a85681aeeb64b47761af3a8a5a121005f778f29"
+    },
+    {
+      "file": "driver-and-boot.reference.json",
+      "bytes": 26824,
+      "sha256": "f40e92b119b30b203542011bc16859762680cccd9f7ec138eed4f2c9e647e0ca"
+    },
+    {
+      "file": "hosted-source-guard.mjs",
+      "bytes": 36295,
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"
+    },
+    {
+      "file": "phosphor-embedded.reference.json",
+      "bytes": 4655,
+      "sha256": "195b285bde26866e8cd20fbb0dbd88bd82ea41371376b3b55c31b37f1aff5e76"
+    },
+    {
+      "file": "pino-embedded.reference.json",
+      "bytes": 7252,
+      "sha256": "719775f96ad413f00f7d0f2df9377b0c30ffbf3c5e55c2acb65f67383405ac85"
+    },
+    {
+      "file": "README.md",
+      "bytes": 8610,
+      "sha256": "1b5377e9975131a3742e7a225fbd0be4a9b0f386c4e027931bf594e9bf206da9"
+    },
+    {
+      "file": "syntax-check.json",
+      "bytes": 776,
+      "sha256": "e2c8da1efe9504cd48e7370168d03dd672bf8fae64381d0ea7fbf206003ec055"
+    }
+  ],
+  "moduleFirstStatementThrows": true,
+  "syntaxOnlyPassed": true,
+  "staticImports": 0,
+  "runtimeBinding": "UNBOUND",
+  "candidateBinding": "UNBOUND",
+  "predecessorBinding": "UNBOUND",
+  "expectedDependencyInventory": "UNBOUND",
+  "independentApproval": "UNBOUND",
+  "moduleImported": false,
+  "moduleInvoked": false,
+  "nativeOrDatabaseActions": false,
+  "sourceFilesModified": false,
+  "priorFrozenPackagesModified": false
+}

@@ -1,0 +1,15 @@
+{
+  "file": "hosted-source-guard.EXECUTABLE.mjs",
+  "before": {
+    "bytes": 36295,
+    "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"
+  },
+  "post": {
+    "bytes": 36185,
+    "sha256": "b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0"
+  },
+  "removed": "throw new Error('PREPARATION ONLY: independently bind and review a separate executable successor before use');",
+  "position": 0,
+  "inverse": "Prepend exactly removed literal at byte0; no newline or other byte change",
+  "unchangedSuffixBytes": 36185
+}
