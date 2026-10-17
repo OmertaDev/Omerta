@@ -1,5 +1,5 @@
 const freeze=v=>{if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
-export const ENTERPRISE_CURRENT_SOURCE_REVISION="9326f91b81257e078288bdca58e2a6280c942610";
+export const ENTERPRISE_CURRENT_SOURCE_REVISION="f1040cf819f84b6c1090c1bfa2616f8dca5adeb8";
 export const ENTERPRISE_ROOT_PREDECESSOR="b6be98c7e0233c4b35a74467828e24080b16b0eb";
 export const ENTERPRISE_CURRENT_LEGACY_PREDECESSOR="6b864d5dbc5ae657966b7b8af0bdf746070d862d";
 export const ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS=freeze({
@@ -678,8 +678,8 @@ export const ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS=freeze({
     ]
   },
   "test/lib/rc1-historical-source-fixture.js": {
-    "currentSha256": "663dddf6a07faa6b676982ff60f57f7c6cc64c2150f22425adfc6844763cc3c5",
-    "currentBlob": "3ccc1df70aa4b585ee7f6ecef5ea7cfa7f5051cd",
+    "currentSha256": "7980a1acc4380d6a274138b4d88013dfdd58b0672d384f8e1a2e1c643c5d0418",
+    "currentBlob": "4eb0767a9633486805d89b09dd65cad64041266c",
     "baselineSha256": "fdc95131ec6f2678ca15e269eb23b9ca09afc7ad99af8905adda5f2fbdf41034",
     "baselineBlob": "0d2cda82dfefb9033df64f213ba6571b3a122d0b",
     "currentMode": "100644",
@@ -707,7 +707,7 @@ export const ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS=freeze({
         "baseline": "  assert.equal(sha256(current), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);\n  return null;\n}\nfunction historicalApplicationSource(file, input) {\n  assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',\n    'Historical application provenance excludes tool and test domains');\n  const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];\n  let witness = marketOverDeedSourceBaseline(file, String(input));\n  if (domain) {\n    const raw = uniformHistoricalInput(file, witness);\n    if (sha256(canonical(raw)) === domain.currentSha256)\n"
       },
       {
-        "current": "  assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);\n  return blob(file, history);\n}\n\nfunction currentHistoricalApplicationSource(file,input){\n  const p=Object.hasOwn(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,file)?ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS[file]:Object.hasOwn(ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES,file)?ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES[file]:null;\n  // Only exact declared current bytes take the new layer; every other input still faces the unchanged full Root historical-body guards.\n  if(p&&typeof input==='string'&&sha256(canonical(input))===p.currentSha256)return historicalApplicationSource(file,enterpriseOverRootSourceBaseline(file,input));\n  return historicalApplicationSource(file,input);\n}\n\nfunction historical(file) {\n  loadInventories();\n  if (!checked.has(file)) {\n    const selected = currentHistoricalApplicationSource(file, originalRead(path.join(root, file)));\n    checked.add(file);\n    return selected;\n  }\n",
+        "current": "  assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);\n  return blob(file, history);\n}\n\nfunction currentHistoricalApplicationSource(file,input){\n  const p=Object.hasOwn(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,file)?ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS[file]:Object.hasOwn(ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES,file)?ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES[file]:null;\n  // Only exact declared current bytes take the new layer; every other input still faces the unchanged full Root historical-body guards.\n  if(p&&typeof input==='string'&&sha256(canonical(input))===p.currentSha256)return historicalApplicationSource(file,enterpriseOverRootSourceBaseline(file,input));\n  return historicalApplicationSource(file,input);\n}\n\nfunction historical(file) {\n  loadInventories();\n  if (!checked.has(file)) {\n    const selected = currentHistoricalApplicationSource(file, String(originalRead(path.join(root, file))));\n    checked.add(file);\n    return selected;\n  }\n",
         "baseline": "  assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);\n  return blob(file, history);\n}\nfunction historical(file) {\n  loadInventories();\n  if (!checked.has(file)) {\n    const selected = historicalApplicationSource(file, originalRead(path.join(root, file)));\n    checked.add(file);\n    return selected;\n  }\n"
       },
       {
