@@ -46,6 +46,6 @@ for(const file of Object.keys(P.COMPANY_BANK_SOURCE_CURRENT_PINS)) {
 }
 for(const file of ['src/companybankportfolios.js','src/game.js','toString']){assert.throws(()=>P.assertCompanyBankSourceTransfer(file,''));assert.throws(()=>P.qualifyCompanyBankSource(file,''));}
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer,P.COMPANY_BANK_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer,W.COMPANY_WORKFLOW_SOURCE_TRANSFER);
-const currentReader=file=>fs.readFileSync(file,'utf8'),priorReader=file=>Object.hasOwn(P.COMPANY_BANK_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMPANY_BANK_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
+const currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')),priorReader=file=>Object.hasOwn(P.COMPANY_BANK_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMPANY_BANK_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
 assert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMPANY_BANK_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMPANY_BANK_SOURCE_REVIEWED_REVISION}));
 console.log(`rc1-company-bank-source-compatibility: PASS ${hunks} exact Git hunks; ${texts} complete text, ${hashes} SHA256, ${blobs} Git blob comparisons; ${negatives} adversarial controls; CRLF, prior metadata, worker cap/cadence/ordering; source-only scope`);

@@ -50,7 +50,7 @@ for(const file of Object.keys(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS)) {
 }
 for(const file of ['src/buyercooperatives.js','src/game.js','toString']){assert.throws(()=>P.assertBuyerCooperativeSourceTransfer(file,''));assert.throws(()=>P.qualifyBuyerCooperativeSource(file,''));}
 assert.deepEqual(WORLD_RECOVERY_REVIEW.buyerCooperativeSourceReviewTransfer,P.BUYER_COOPERATIVE_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer,W.COMPANY_WORKFLOW_SOURCE_TRANSFER);
-const currentReader=file=>fs.readFileSync(file,'utf8'),priorReader=file=>Object.hasOwn(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS,file)?git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
+const currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')),priorReader=file=>Object.hasOwn(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS,file)?git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
 assert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.BUYER_COOPERATIVE_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.BUYER_COOPERATIVE_SOURCE_REVIEWED_REVISION}));
 console.log(`rc1-buyer-cooperative-source-compatibility: PASS ${hunks} exact Git hunks; ${texts} complete text, ${hashes} SHA256, ${blobs} Git blob comparisons; ${negatives} adversarial controls; CRLF, prior metadata, worker cap/cadence/ordering; source-only scope`);
 

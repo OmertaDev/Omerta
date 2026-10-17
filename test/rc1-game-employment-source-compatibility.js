@@ -67,7 +67,7 @@ for (const changed of changedSources) {
   assert.throws(() => assertGameEmploymentSourceTransfer(file, changed), /source changed/); assert.throws(() => qualifyGameEmploymentSource(file, changed), /source changed/);
   assert.throws(() => assertGameEmploymentSourceTransfer(file, changed.replaceAll('\n', '\r\n')), /source changed/);
   assert.throws(() => Deed.assertDeedServerCompatibility(changed), /source changed/);
-  await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : fs.readFileSync(candidate) }), /source changed/);
+  await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) }), /source changed/);
   negatives++;
 }
 for (const unknown of ['src/worker.js', 'src/gameemployment.js', 'toString']) {
@@ -89,8 +89,8 @@ const economy = Deed.assertEconomySourceTransfer(file, current); assert.deepEqua
 assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer, COMPANY_OPERATOR_SOURCE_TRANSFER);
 assert.match(GAME_EMPLOYMENT_SOURCE_TRANSFER.scope, /no worker, world-soak, native, financial, deployment or onchain qualification/);
-const actual = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => fs.readFileSync(candidate) });
-const historical = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? baseline : fs.readFileSync(candidate) });
+const actual = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) });
+const historical = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? baseline : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) });
 assert.deepEqual(actual, historical, 'Historical qualification parity unchanged');
 for (const sourceFile of ['src/invariants.js', 'src/social/estate.js']) {
   const source = normalize(companyWorkflowSourceBaseline(sourceFile,cityGameplaySourceBaseline(sourceFile,cityActivitySourceBaseline(sourceFile,(hasEnterpriseOverRootSource(sourceFile)?enterpriseOverRootSourceBaseline(sourceFile,fs.readFileSync(sourceFile,'utf8')):fs.readFileSync(sourceFile,'utf8')))))), prior = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[sourceFile]);

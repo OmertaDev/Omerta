@@ -65,7 +65,7 @@ for (const file of Object.keys(COMPANY_WORKFLOW_SOURCE_CURRENT_PINS)) {
     if (file === 'src/server.js') assert.throws(() => Deed.assertDeedServerCompatibility(changed), /source changed/);
     if (file === 'src/invariants.js') assert.throws(() => Deed.assertDeedBacklogCompatibility(file, changed), /source changed/);
     // WQ's historical file domain is unchanged; invariant/estate bytes have their own closed guards.
-    if (Object.hasOwn(WORLD_RECOVERY_REVIEW.sourceFiles, file)) await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: COMPANY_WORKFLOW_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : fs.readFileSync(candidate) }), /source changed/);
+    if (Object.hasOwn(WORLD_RECOVERY_REVIEW.sourceFiles, file)) await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: COMPANY_WORKFLOW_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) }), /source changed/);
     else assert.throws(() => qualifyIntelSource(file, invoiceSourceBaseline(file, changed)), /source changed/);
     negatives++;
   }
@@ -96,6 +96,6 @@ for (const [key, value] of Object.entries(oldIntel)) if (key !== 'actualSha256')
 assert.equal(intel.actualSha256, COMPANY_WORKFLOW_SOURCE_CURRENT_PINS['src/worker.js']);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer, COMPANY_WORKFLOW_SOURCE_TRANSFER); assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER); assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer, COMPANY_OPERATOR_SOURCE_TRANSFER);
 assert.match(COMPANY_WORKFLOW_SOURCE_TRANSFER.scope, /no world-soak, native, financial, deployment or onchain qualification/);
-const currentQualification = await verifyWorldRecoverySources({ sourceRevision: COMPANY_WORKFLOW_SOURCE_REVIEWED_REVISION, readFile: file => fs.readFileSync(file) });
-const priorQualification = await verifyWorldRecoverySources({ sourceRevision: COMPANY_WORKFLOW_SOURCE_REVIEWED_REVISION, readFile: file => predecessors.get(file) || fs.readFileSync(file) }); assert.deepEqual(currentQualification, priorQualification);
+const currentQualification = await verifyWorldRecoverySources({ sourceRevision: COMPANY_WORKFLOW_SOURCE_REVIEWED_REVISION, readFile: file => (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file))):fs.readFileSync(file)) });
+const priorQualification = await verifyWorldRecoverySources({ sourceRevision: COMPANY_WORKFLOW_SOURCE_REVIEWED_REVISION, readFile: file => predecessors.get(file) || (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file))):fs.readFileSync(file)) }); assert.deepEqual(currentQualification, priorQualification);
 console.log(`rc1-company-workflow-source-compatibility: PASS ${hunks} exact Git hunks; ${completeTextComparisons} full text + ${sha256Comparisons} SHA256 + ${blobComparisons} Git blob comparisons; ${negatives} missing/duplicate/reordered/full-file/context/auth/import/worker-cap-cadence/estate/invariant/older-layer controls; LF/CRLF; completecurrent metadata; original N02/N01/historical scope only`);
