@@ -1,6 +1,7 @@
 // Opt-in agent-owned x402 client. No CLI auto-run, environment, wallet keys or platform funds.
 import {createHash, randomBytes as cryptoRandomBytes} from 'node:crypto';
 import {getAddress, hashTypedData, recoverTypedDataAddress} from 'viem';
+import {walletComputeProfile} from './wallet-compute-profiles.js';
 
 export const WALLET_COMPUTE_NETWORK = 'eip155:8453';
 export const WALLET_COMPUTE_USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
@@ -33,7 +34,7 @@ function integer(value,min,max,code='INVALID_INTEGER'){check(Number.isSafeIntege
 function url(value){try{const u=new URL(value);check(u.protocol==='https:'&&!u.username&&!u.password&&!u.hash&&!u.search&&u.href===value);return u.href;}catch{fail('INVALID_RESOURCE');}}
 function digest(value){check(typeof value==='string'&&/^[a-f0-9]{64}$/.test(value),'INVALID_DIGEST');return value;}
 const day = ms => new Date(ms).toISOString().slice(0,10);
-const domain = () => ({name:'USD Coin',version:'2',chainId:8453,verifyingContract:WALLET_COMPUTE_USDC});
+const domain = profile => ({name:profile.name,version:profile.version,chainId:profile.chainId,verifyingContract:profile.asset});
 function decodeHeader(value){
   check(typeof value==='string'&&value.length>0&&value.length<=32768&&/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value),'INVALID_PAYMENT_HEADER');
   const bytes=Buffer.from(value,'base64');check(bytes.toString('base64')===value,'INVALID_PAYMENT_HEADER');
@@ -78,21 +79,46 @@ function requestInput(value,policy){
   const serialized=canonical(body);check(Buffer.byteLength(serialized)<=MAX_BODY,'BODY_TOO_LARGE');
   return freeze({attemptId:value.attemptId,resourceUrl:endpoint,body,serialized,resource,bodyDigest:hash(serialized),requestDigest:hash(canonical({method:'POST',url:endpoint,bodyDigest:hash(serialized)}))});
 }
-function quoteInput(encoded,request){
-  const q=decodeHeader(encoded);object(q,['x402Version','resource','accepts'],['error','extensions']);check(q.x402Version===2,'X402_VERSION_UNSUPPORTED');
+function legacyQuoteInput(initial,request,profile){
+  // A v1 body is selected explicitly. A v2 challenge never causes an automatic downgrade.
+  check(initial.response.headers.get('PAYMENT-REQUIRED')===null,'X402_VERSION_UNSUPPORTED');
+  check(initial.body.length<=32768,'INVALID_PAYMENT_HEADER');let q;
+  try{q=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(initial.body));}catch{fail('INVALID_PAYMENT_HEADER');}
+  object(q,['x402Version','accepts'],['error']);check(q.x402Version===1,'X402_VERSION_UNSUPPORTED');
+  if(q.error!==undefined)check(typeof q.error==='string'&&q.error.length<=1024,'INVALID_REQUIREMENTS');
+  check(Array.isArray(q.accepts)&&q.accepts.length>0&&q.accepts.length<=16,'INVALID_ACCEPTS');
+  const choices=[];for(const r of q.accepts){
+    check(r&&typeof r==='object'&&!Array.isArray(r),'INVALID_REQUIREMENTS');
+    if(r.scheme!=='exact'||r.network!==profile.network)continue;
+    object(r,['scheme','network','maxAmountRequired','resource','payTo','maxTimeoutSeconds','asset','extra'],['description','mimeType']);
+    check(r.resource===request.resourceUrl,'RESOURCE_QUOTE_MISMATCH');
+    if(r.description!==undefined)check(typeof r.description==='string'&&r.description.length<=1024,'INVALID_REQUIREMENTS');
+    if(r.mimeType!==undefined)check(r.mimeType==='application/json','INVALID_REQUIREMENTS');
+    object(r.extra,['name','version']);check(r.extra.name===profile.name&&r.extra.version===profile.version,'DOMAIN_UNSUPPORTED');
+    check(address(r.asset)===profile.asset.toLowerCase(),'ASSET_UNSUPPORTED');check(address(r.payTo)===request.resource.payTo,'MERCHANT_NOT_ALLOWED');
+    atoms(r.maxAmountRequired);integer(r.maxTimeoutSeconds,2,300);choices.push(clone(r));
+  }
+  check(choices.length===1,'EXACT_QUOTE_AMBIGUOUS_OR_UNSUPPORTED');const selected=choices[0];
+  return freeze({accepted:{scheme:selected.scheme,network:selected.network,amount:selected.maxAmountRequired,asset:selected.asset,
+    payTo:selected.payTo,maxTimeoutSeconds:selected.maxTimeoutSeconds,extra:selected.extra},resource:{url:selected.resource},
+    quoteDigest:hash(canonical({x402Version:1,accepted:selected}))});
+}
+function quoteInput(initial,request,profile){
+  if(profile.x402Version===1)return legacyQuoteInput(initial,request,profile);
+  const q=decodeHeader(initial.response.headers.get('PAYMENT-REQUIRED'));object(q,['x402Version','resource','accepts'],['error','extensions']);check(q.x402Version===2,'X402_VERSION_UNSUPPORTED');
   object(q.resource,['url'],['description','mimeType']);check(q.resource.url===request.resourceUrl,'RESOURCE_QUOTE_MISMATCH');
   if(q.resource.description!==undefined)check(typeof q.resource.description==='string'&&q.resource.description.length<=1024);
   if(q.resource.mimeType!==undefined)check(q.resource.mimeType==='application/json');
   check(Array.isArray(q.accepts)&&q.accepts.length>0&&q.accepts.length<=16,'INVALID_ACCEPTS');
   const choices=[];for(const r of q.accepts){
     check(r&&typeof r==='object'&&!Array.isArray(r),'INVALID_REQUIREMENTS');
-    if(r.scheme!=='exact'||r.network!==WALLET_COMPUTE_NETWORK)continue;
+    if(r.scheme!=='exact'||r.network!==profile.network)continue;
     object(r,['scheme','network','amount','asset','payTo','maxTimeoutSeconds','extra']);
     object(r.extra,['name','version'],['assetTransferMethod','paymentFlow']);
     if(r.extra.assetTransferMethod!==undefined&&r.extra.assetTransferMethod!=='eip3009')continue;
     if(r.extra.paymentFlow!==undefined&&r.extra.paymentFlow!=='authorization')continue;
-    check(address(r.asset)===WALLET_COMPUTE_USDC.toLowerCase(),'ASSET_UNSUPPORTED');check(address(r.payTo)===request.resource.payTo,'MERCHANT_NOT_ALLOWED');
-    check(r.extra.name==='USD Coin'&&r.extra.version==='2','DOMAIN_UNSUPPORTED');atoms(r.amount);integer(r.maxTimeoutSeconds,2,300);
+    check(address(r.asset)===profile.asset.toLowerCase(),'ASSET_UNSUPPORTED');check(address(r.payTo)===request.resource.payTo,'MERCHANT_NOT_ALLOWED');
+    check(r.extra.name===profile.name&&r.extra.version===profile.version,'DOMAIN_UNSUPPORTED');atoms(r.amount);integer(r.maxTimeoutSeconds,2,300);
     choices.push(clone(r));
   }
   check(choices.length===1,'EXACT_QUOTE_AMBIGUOUS_OR_UNSUPPORTED');
@@ -100,10 +126,10 @@ function quoteInput(encoded,request){
   const quoteDigest=hash(canonical({x402Version:2,resource,accepted,...(extensions===undefined?{}:{extensions})}));
   return freeze({accepted,resource,extensions,quoteDigest});
 }
-function settlementHeader(header,attempt){
+function settlementHeader(header,attempt,profile){
   if(header===null||header===undefined)return {status:'missing',value:null};
   try{const r=decodeHeader(header);object(r,['success','transaction','network'],['payer','amount','errorReason']);
-    check(typeof r.success==='boolean'&&r.network===WALLET_COMPUTE_NETWORK);
+    check(typeof r.success==='boolean'&&r.network===profile.network);
     check(typeof r.transaction==='string'&&(r.success?/^0x[\da-fA-F]{64}$/.test(r.transaction):r.transaction===''||/^0x[\da-fA-F]{64}$/.test(r.transaction)));
     if(r.payer!==undefined)check(address(r.payer)===attempt.wallet);if(r.amount!==undefined)check(atoms(r.amount)===atoms(attempt.amountAtoms));
     if(r.errorReason!==undefined)check(typeof r.errorReason==='string'&&r.errorReason.length<=256);
@@ -125,9 +151,9 @@ function validateState(state,scope,policyDigest,now){
 
 // Explicit owner initialization only. A missing/reset journal is never initialized by compute().
 export function createWalletComputeJournalState(input){
-  object(input,['enabled','walletAddress','policy']);check(input.enabled===true,'NOT_OPTED_IN');
-  const wallet=address(input.walletAddress),policy=policyInput(clone(input.policy));
-  return freeze({version:1,scope:{version:1,wallet,network:WALLET_COMPUTE_NETWORK,asset:WALLET_COMPUTE_USDC.toLowerCase()},policyDigest:hash(canonical(policy)),revision:0,lastNowMs:0,attempts:[]});
+  object(input,['enabled','walletAddress','policy'],['profile']);check(input.enabled===true,'NOT_OPTED_IN');
+  const profile=walletComputeProfile(input.profile),wallet=address(input.walletAddress),policy=policyInput(clone(input.policy));
+  return freeze({version:1,scope:{version:1,wallet,network:profile.network,asset:profile.asset.toLowerCase()},policyDigest:hash(canonical(policy)),revision:0,lastNowMs:0,attempts:[]});
 }
 
 /**
@@ -139,16 +165,16 @@ export function createWalletComputeJournalState(input){
  * releases ambiguity or gives day-rollover credit without a separately reviewed reconciliation.
  */
 export function createWalletComputeClient(config){
-  object(config,['enabled','walletAddress','signer','policy','journal','authorize'],['fetchImpl','now','randomBytes']);check(config.enabled===true,'NOT_OPTED_IN');
-  const wallet=address(config.walletAddress),signer=config.signer;check(signer&&typeof signer.signTypedData==='function','SIGNER_REQUIRED');
+  object(config,['enabled','walletAddress','signer','policy','journal','authorize'],['profile','fetchImpl','now','randomBytes']);check(config.enabled===true,'NOT_OPTED_IN');
+  const profile=walletComputeProfile(config.profile),wallet=address(config.walletAddress),signer=config.signer;check(signer&&typeof signer.signTypedData==='function','SIGNER_REQUIRED');
   check(address(signer.address??signer.account?.address)===wallet,'SIGNER_ADDRESS_MISMATCH');
-  if(signer.chain?.id!==undefined)check(signer.chain.id===8453,'SIGNER_CHAIN_MISMATCH');
+  if(signer.chain?.id!==undefined)check(signer.chain.id===profile.chainId,'SIGNER_CHAIN_MISMATCH');
   const policy=policyInput(clone(config.policy)),policyDigest=hash(canonical(policy)),journal=config.journal;
   check(journal&&journal.version===1&&journal.atomic===true&&journal.durable===true&&typeof journal.transact==='function','DURABLE_ATOMIC_JOURNAL_REQUIRED');
   check(typeof config.authorize==='function','OWNER_AUTHORIZATION_REQUIRED');const authorize=config.authorize,transact=journal.transact.bind(journal),signTypedData=signer.signTypedData.bind(signer);
   const fetchImpl=config.fetchImpl??globalThis.fetch,now=config.now??Date.now,random=config.randomBytes??cryptoRandomBytes;
   check(typeof fetchImpl==='function'&&typeof now==='function'&&typeof random==='function');
-  const scope=freeze({version:1,wallet,network:WALLET_COMPUTE_NETWORK,asset:WALLET_COMPUTE_USDC.toLowerCase()});
+  const scope=freeze({version:1,wallet,network:profile.network,asset:profile.asset.toLowerCase()});
   async function compute(input){
     const request=requestInput(input,policy);let lastClock=0;
     const clock=()=>{const n=now();integer(n,10000,8640000000000000,'INVALID_CLOCK');check(n>=lastClock,'CLOCK_MOVED_BACKWARD');lastClock=n;return n;};
@@ -164,7 +190,7 @@ export function createWalletComputeClient(config){
     }
     async function http(payment){
       const controller=new AbortController(),httpDeadline=Math.min(deadline,clock()+HTTP_MS),timer=setTimeout(()=>controller.abort(),Math.max(1,httpDeadline-clock()));
-      try{const headers={'content-type':'application/json'};if(payment)headers['PAYMENT-SIGNATURE']=payment;
+      try{const headers={'content-type':'application/json'};if(payment)headers[profile.signatureHeader]=payment;
         const response=await bounded(()=>fetchImpl(request.resourceUrl,{method:'POST',headers,body:request.serialized,redirect:'error',credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',signal:controller.signal}),httpDeadline);
         check(response&&Number.isInteger(response.status)&&response.status>=100&&response.status<=599&&response.headers&&typeof response.headers.get==='function','INVALID_HTTP_RESPONSE');
         check(response.redirected!==true&&(!response.url||response.url===request.resourceUrl),'REDIRECT_OR_RESOURCE_MISMATCH');
@@ -177,12 +203,12 @@ export function createWalletComputeClient(config){
     try{
       await transaction((state,at)=>{check(!state.attempts.some(e=>e.id===request.attemptId),'ATTEMPT_ALREADY_RECORDED');check(!state.attempts.some(e=>e.requestDigest===request.requestDigest&&['quoting','reserved','authorized','ambiguous'].includes(e.state)),'REQUEST_HAS_UNRESOLVED_ATTEMPT');check(state.attempts.length<MAX_ATTEMPTS,'JOURNAL_FULL');
         state.attempts.push({id:request.attemptId,url:request.resourceUrl,model:request.body.model,requestDigest:request.requestDigest,bodyDigest:request.bodyDigest,startedAtMs:at,updatedAtMs:at,dayUTC:day(at),state:'quoting',amountAtoms:'0',merchant:null,quoteDigest:null,typedDataHash:null,nonceHash:null,validAfter:null,validBefore:null,signatureHash:null});});phase='quoting';
-      const initial=await http(null);check(initial.response.status===402,'UNPAID_402_REQUIRED');const quote=quoteInput(initial.response.headers.get('PAYMENT-REQUIRED'),request);
+      const initial=await http(null);check(initial.response.status===402,'UNPAID_402_REQUIRED');const quote=quoteInput(initial,request,profile);
       const seconds=Math.floor(clock()/1000),nonceBytes=Buffer.from(random(32));check(nonceBytes.length===32&&!nonceBytes.every(b=>b===0),'INVALID_NONCE');
-      const authorization=freeze({from:wallet,to:quote.accepted.payTo,value:quote.accepted.amount,validAfter:String(seconds-5),validBefore:String(seconds+Math.min(policy.authorizationSeconds,quote.accepted.maxTimeoutSeconds)),nonce:'0x'+nonceBytes.toString('hex')});
+      const authorization=freeze({from:wallet,to:quote.accepted.payTo,value:quote.accepted.amount,validAfter:String(seconds-profile.backdateSeconds),validBefore:String(seconds+Math.min(policy.authorizationSeconds,quote.accepted.maxTimeoutSeconds)),nonce:'0x'+nonceBytes.toString('hex')});
       // EIP-3009 signs only token-transfer fields. URL/model/body stay local policy/journal bindings.
-      const typed=()=>({domain:domain(),types:clone(TYPES),primaryType:'TransferWithAuthorization',message:{...authorization,value:BigInt(authorization.value),validAfter:BigInt(authorization.validAfter),validBefore:BigInt(authorization.validBefore)}}),typedDataHash=hashTypedData(typed()),nonceHash=hash(nonceBytes);
-      const proposal={attemptId:request.attemptId,wallet,network:WALLET_COMPUTE_NETWORK,asset:WALLET_COMPUTE_USDC,resourceUrl:request.resourceUrl,model:request.body.model,bodyDigest:request.bodyDigest,requestDigest:request.requestDigest,payTo:address(quote.accepted.payTo),amountAtoms:quote.accepted.amount,validAfter:authorization.validAfter,validBefore:authorization.validBefore,quoteDigest:quote.quoteDigest,extensions:quote.extensions??null,typedDataHash};
+      const typed=()=>({domain:domain(profile),types:clone(TYPES),primaryType:'TransferWithAuthorization',message:{...authorization,value:BigInt(authorization.value),validAfter:BigInt(authorization.validAfter),validBefore:BigInt(authorization.validBefore)}}),typedDataHash=hashTypedData(typed()),nonceHash=hash(nonceBytes);
+      const proposal={attemptId:request.attemptId,wallet,paymentProfile:profile.id,x402Version:profile.x402Version,network:profile.network,asset:profile.asset,resourceUrl:request.resourceUrl,model:request.body.model,bodyDigest:request.bodyDigest,requestDigest:request.requestDigest,payTo:address(quote.accepted.payTo),amountAtoms:quote.accepted.amount,validAfter:authorization.validAfter,validBefore:authorization.validBefore,quoteDigest:quote.quoteDigest,extensions:quote.extensions??null,typedDataHash};
       const approvalDigest=hash(canonical(proposal)),approval=await bounded(()=>authorize(freeze(clone({...proposal,approvalDigest}))));object(approval,['approved','approvalDigest']);check(approval.approved===true&&approval.approvalDigest===approvalDigest,'OWNER_AUTHORIZATION_REFUSED');
       await transaction((state,at)=>{const entry=state.attempts.find(e=>e.id===request.attemptId);check(entry?.state==='quoting','JOURNAL_STATE_CHANGED');check(Math.floor(at/1000)<Number(authorization.validBefore)-1,'AUTHORIZATION_EXPIRED');
         const amount=atoms(quote.accepted.amount),spent=state.attempts.reduce((sum,e)=>sum+atoms(e.amountAtoms,true),0n);
@@ -192,10 +218,12 @@ export function createWalletComputeClient(config){
       check(typeof signature==='string'&&/^0x[\da-fA-F]{130}$/.test(signature),'UNSUPPORTED_SIGNATURE');
       let recovered;try{recovered=await bounded(()=>recoverTypedDataAddress({...typed(),signature}));}catch{fail('SIGNATURE_VERIFICATION_FAILED');}check(address(recovered)===wallet,'SIGNATURE_WALLET_MISMATCH');
       await transaction((state,at)=>{const entry=state.attempts.find(e=>e.id===request.attemptId);check(entry?.state==='reserved'&&entry.typedDataHash===typedDataHash.slice(2),'JOURNAL_STATE_CHANGED');check(Math.floor(at/1000)<Number(authorization.validBefore)-1,'AUTHORIZATION_EXPIRED');Object.assign(entry,{state:'authorized',signatureHash:hash(signature),updatedAtMs:at});});phase='authorized';
-      const payment=Buffer.from(JSON.stringify({x402Version:2,resource:quote.resource,accepted:quote.accepted,payload:{signature,authorization},...(quote.extensions===undefined?{}:{extensions:quote.extensions})})).toString('base64');
+      const envelope=profile.x402Version===1?{x402Version:1,scheme:'exact',network:profile.network,payload:{signature,authorization}}
+        :{x402Version:2,resource:quote.resource,accepted:quote.accepted,payload:{signature,authorization},...(quote.extensions===undefined?{}:{extensions:quote.extensions})};
+      const payment=Buffer.from(JSON.stringify(envelope)).toString('base64');
       check(Math.floor(clock()/1000)<Number(authorization.validBefore)-1,'AUTHORIZATION_EXPIRED');
       const paid=await http(payment);let body;try{body=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(paid.body));}catch{fail('INVALID_PROVIDER_JSON');}
-      providerResult=freeze({status:paid.response.status,body,bodyDigest:hash(paid.body)});declaredSettlement=freeze(settlementHeader(paid.response.headers.get('PAYMENT-RESPONSE'),{wallet,amountAtoms:held}));
+      providerResult=freeze({status:paid.response.status,body,bodyDigest:hash(paid.body)});declaredSettlement=freeze(settlementHeader(paid.response.headers.get(profile.responseHeader),{wallet,amountAtoms:held},profile));
       const successful=paid.response.status===200&&declaredSettlement.status==='declared'&&declaredSettlement.value.success===true;
       await transaction((state,at)=>{const entry=state.attempts.find(e=>e.id===request.attemptId);check(entry?.state==='authorized','JOURNAL_STATE_CHANGED');entry.state=successful?'response':'ambiguous';entry.updatedAtMs=at;});phase=successful?'response':'ambiguous';
       return freeze({attemptId:request.attemptId,state:phase,amountHeldAtoms:held,providerResult,declaredSettlement,verifiedOnChainReceipt:null,settlementVerified:false,inferenceQualityVerified:false,gameOutcomeVerified:false,automaticRetry:false});

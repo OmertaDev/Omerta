@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {types} from 'node:util';
-import {WALLET_COMPUTE_NETWORK,WALLET_COMPUTE_USDC} from './wallet-compute-client.js';
+import {walletComputeScopeSupported} from './wallet-compute-profiles.js';
 
 const PROFILE='wallet-compute-journal-v1',APP_ID=0x57434a31;
 const MAX_JSON=1048576,MAX_FILE=8388608,MAX_REVISION=Number.MAX_SAFE_INTEGER-1;
@@ -35,7 +35,7 @@ function digest(s){check(typeof s==='string'&&/^[a-f0-9]{64}$/.test(s),'INVALID_
 function amount(s,zero=false){check(typeof s==='string'&&/^(0|[1-9]\d{0,77})$/.test(s),'INVALID_JOURNAL_STATE');const n=BigInt(s);check(n<1n<<256n&&(zero?n>=0n:n>0n),'INVALID_JOURNAL_STATE');return n;}
 function scopeInput(scope){
   object(scope,['version','wallet','network','asset']);
-  check(scope.version===1&&typeof scope.wallet==='string'&&/^0x[a-f0-9]{40}$/.test(scope.wallet)&&scope.network===WALLET_COMPUTE_NETWORK&&scope.asset===WALLET_COMPUTE_USDC.toLowerCase(),'JOURNAL_SCOPE_MISMATCH');
+  check(scope.version===1&&typeof scope.wallet==='string'&&/^0x[a-f0-9]{40}$/.test(scope.wallet)&&walletComputeScopeSupported(scope),'JOURNAL_SCOPE_MISMATCH');
   return clone(scope);
 }
 function json(value){
