@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {nextFiveSourceBaseline} from '../tools/next-five-source-compatibility.js';
+import {finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
 import { FIRST_FIVE_ADDITIVE_PAIR as pin,qualifyFirstFiveAdditiveBootstrap,sourcePairStateDifference,sourcePairReviewedTreeHash,ADDITIVE_KNOWLEDGE_OUTPUTS } from '../tools/rc1-source-pair.js';
-const catalog=JSON.parse(nextFiveSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',await fs.readFile(new URL('lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8')));
+const catalog=JSON.parse(nextFiveSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',finalServicesOverCommerceSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',await fs.readFile(new URL('lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8'))));
 const predecessor={source:pin.predecessor,additiveSource:{tree:pin.predecessorTree,schema:pin.predecessorSchema,catalog:pin.predecessorCatalog}},candidate={source:pin.reviewedCandidate,additiveSource:{tree:pin.candidateTree,schema:pin.candidateSchema,catalog:pin.candidateCatalog,catalogTables:Object.fromEntries(pin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]??null}]))}};
 const old={tables:{accounts:['{"id":"owned-source-pair-fixture"}'],characters:[],telemetry:[]},sequences:[{sequencename:'item_events_sequence_seq',last_value:'10'}]},fresh={tables:{...old.tables,...Object.fromEntries(pin.tables.map(name=>[name,[]]))},sequences:structuredClone(old.sequences)};
 const qualified=qualifyFirstFiveAdditiveBootstrap(old,fresh,predecessor,candidate);assert.equal(qualified.relation,'REVIEWED_SEVEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');assert.notEqual(qualified.beforeNormalizedSha256,qualified.afterNormalizedSha256);assert.deepEqual(qualified.addedEmptyTables,pin.tables);assert.deepEqual(sourcePairStateDifference(old,fresh).added,pin.tables);
@@ -708,4 +709,58 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   for(const file of ['src/customervaults.js','src/crossdocking.js','public/index.html','tools/mobile.js','schema.sql','package.json','.github/workflows/ci.yml','test/lib/phase2-architecture-upgrade-catalog.json'])A.notEqual(M.sourcePairReviewedTreeHash([...records,record(file)]),hash);
   for(const file of ['tools/rc1-source-pair.js','test/rc1-source-pair-additive.js','docs/rc1-source-pair-additive-review.md',...M.ADDITIVE_KNOWLEDGE_OUTPUTS])A.equal(M.sourcePairReviewedTreeHash([...records,record(file)]),hash);
   console.log('rc1-source-pair Commerce EMPTY bootstrap PASS: '+negatives+' refusals; '+dispatch+' exact selectors; '+strict+' strict phases;17EMPTY/200structural/181NN; no native, financial or deployment clearance');
+}
+
+{
+  // Synthetic-bound pure controls are not a final-source or PostgreSQL qualification.
+  const A=(await import('node:assert/strict')).default,F=await import('node:fs/promises'),{execFileSync}=await import('node:child_process'),{canonicalJson,sha256}=await import('../tools/rc1-native-proof.js');
+  const M=await import('../tools/rc1-source-pair.js'),pin=M.FINALSERVICES_ADDITIVE_PAIR;
+  const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{encoding:'utf8',maxBuffer:32*1024*1024});
+  const catalogText=await F.readFile(new URL('lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8'),catalog=JSON.parse(catalogText),old=JSON.parse(git('show',pin.predecessor+':test/lib/phase2-architecture-upgrade-catalog.json'));
+  A.equal(pin.predecessor,'a7319058183ff6420745be685cf39e39cc091a7e');A.equal(pin.tables.length,26);A.equal(pin.constraints,332);A.equal(pin.notNull,283);
+  A.equal(sha256(catalogText),pin.candidateCatalog);A.equal(old.added.length,1675);A.equal(catalog.added.length,2007);A.deepEqual(catalog.added.slice(0,1675),old.added);
+  const restored={...catalog,added:catalog.added.slice(0,1675),notNullColumns:{...catalog.notNullColumns}};
+  for(const name of pin.tables){A(!Object.hasOwn(old.notNullColumns,name));delete restored.notNullColumns[name];}A.deepEqual(restored,old,'Every prior/unknown catalog field, ordered row and map remains exact');
+  const catalogTables=Object.fromEntries(pin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]}]));A.equal(sha256(canonicalJson(catalogTables)),pin.candidateTableCatalog);
+  const pairSource=(await F.readFile(new URL('../tools/rc1-source-pair.js',import.meta.url),'utf8')).replaceAll('\r\n','\n');
+  const functionStart=pairSource.indexOf('export function qualifyFinalservicesAdditiveBootstrap('),functionEnd=pairSource.indexOf('export function qualifyCommerceAdditiveBootstrap(',functionStart);A(functionStart>0&&functionEnd>functionStart);
+  A((pin.reviewedCandidate===null)===(pin.candidateTree===null),'Both future-source pins are either explicitly unbound or reviewed');
+  const unbound=pin.reviewedCandidate===null,boundPin=unbound?{...pin,reviewedCandidate:'1'.repeat(40),candidateTree:'2'.repeat(64)}:pin;
+  if(unbound)A.throws(()=>M.qualifyFinalservicesAdditiveBootstrap({}, {}, {}, {}),/UNBOUND final-services candidate/);
+  else {A.equal(M.sourcePairReviewedTreeHash(git('ls-tree','-r','-z',pin.reviewedCandidate).split('\0').filter(Boolean)),pin.candidateTree);A.equal(sha256(git('show',pin.reviewedCandidate+':schema.sql')),pin.candidateSchema);A.equal(sha256(git('show',pin.reviewedCandidate+':test/lib/phase2-architecture-upgrade-catalog.json')),pin.candidateCatalog);}
+  const qualify=new Function('assert','canonicalJson','sha256','sourcePairStateDifference','FINALSERVICES_ADDITIVE_PAIR','return '+pairSource.slice(functionStart,functionEnd).replace(/^export /,''))(A,canonicalJson,sha256,M.sourcePairStateDifference,boundPin);
+  const p={source:pin.predecessor,finalservicesAdditiveSource:{tree:pin.predecessorTree,schema:pin.predecessorSchema,catalog:pin.predecessorCatalog}},c={source:boundPin.reviewedCandidate,finalservicesAdditiveSource:{tree:boundPin.candidateTree,schema:pin.candidateSchema,catalog:pin.candidateCatalog,catalogTables}};
+  A.equal(M.sourcePairReviewedTreeHash(git('ls-tree','-r','-z',pin.predecessor).split('\0').filter(Boolean)),pin.predecessorTree);A.equal(sha256(git('show',pin.predecessor+':schema.sql')),pin.predecessorSchema);A.equal(sha256(git('show',pin.predecessor+':test/lib/phase2-architecture-upgrade-catalog.json')),pin.predecessorCatalog);
+  const oldSchema=git('show',pin.predecessor+':schema.sql'),currentSchema=await F.readFile(new URL('../schema.sql',import.meta.url),'utf8');A.equal(sha256(currentSchema),pin.candidateSchema);A(currentSchema.startsWith(oldSchema),'The entire predecessor schema is an exact prefix');
+  const oldTables=[...oldSchema.replace(/\/\*[\s\S]*?\*\//g,'').replace(/--[^\n]*/g,'').matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-z_][a-z0-9_]*)\s*\(/gi)].map(r=>r[1]).sort();A.equal(oldTables.length,572);A.equal(new Set(oldTables).size,572);
+  const before={tables:Object.fromEntries(oldTables.map(name=>[name,['{"original_ack":true}']])),sequences:[{sequencename:'item_events_sequence_seq',last_value:'10',is_called:true,start_value:'1',increment_by:'1',min_value:'1',max_value:'9223372036854775807',cache_size:'1',cycle:false}]};before.tables.unknown_existing_custody=['{"opaque":1}','{"opaque":2}'];
+  const after=structuredClone(before);for(const name of pin.tables){A(!Object.hasOwn(before.tables,name));after.tables[name]=[];}
+  const result=qualify(before,after,p,c);A.equal(result.relation,'REVIEWED_FINALSERVICES_TWENTY_SIX_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');A.deepEqual(result.addedEmptyTables,pin.tables);A(result.predecessorRowsExact&&result.allSequencesExact);A.notEqual(result.beforeNormalizedSha256,result.afterNormalizedSha256);
+  let negatives=0;const reject=mutate=>{const a=structuredClone(before),b=structuredClone(after),previous=structuredClone(p),current=structuredClone(c);mutate(a,b,previous,current);A.throws(()=>qualify(a,b,previous,current),e=>e?.code==='ERR_ASSERTION');negatives++;};
+  for(const name of pin.tables){
+    reject((_a,b)=>{delete b.tables[name];});reject((_a,b)=>{b.tables[name]={};});reject((_a,b)=>{b.tables[name]=['{"not_empty":true}'];});
+    for(let i=0;i<catalogTables[name].constraints.length;i++){
+      for(const field of ['table_name','name','definition','unknown'])reject((_a,_b,_p,c)=>{c.finalservicesAdditiveSource.catalogTables[name].constraints[i][field]='unknown';});
+      reject((_a,_b,_p,c)=>{c.finalservicesAdditiveSource.catalogTables[name].constraints.splice(i,1);});reject((_a,_b,_p,c)=>{c.finalservicesAdditiveSource.catalogTables[name].constraints.push(c.finalservicesAdditiveSource.catalogTables[name].constraints[i]);});
+    }
+    for(let i=0;i<catalogTables[name].notNullColumns.length;i++)for(const op of ['missing','renamed','duplicated'])reject((_a,_b,_p,c)=>{const cols=c.finalservicesAdditiveSource.catalogTables[name].notNullColumns;if(op==='missing')cols.splice(i,1);else if(op==='renamed')cols[i]+='_unknown';else cols.push(cols[i]);});
+  }
+  for(const side of ['predecessor','candidate'])for(const field of ['tree','schema','catalog'])reject((_a,_b,p,c)=>{(side==='predecessor'?p:c).finalservicesAdditiveSource[field]='0'.repeat(64);});
+  reject((_a,_b,p)=>{p.source='0'.repeat(40);});reject((_a,_b,_p,c)=>{c.source='unknown';});reject((_a,_b,_p,c)=>{delete c.finalservicesAdditiveSource;});reject((_a,_b,_p,c)=>{c.finalservicesAdditiveSource.catalogTables.unknown={constraints:[],notNullColumns:[]};});reject((_a,b)=>{b.tables.unknown_added=[];});
+  for(const name of Object.keys(before.tables)){reject((_a,b)=>{delete b.tables[name];});reject((_a,b)=>{b.tables[name]=[...b.tables[name],'{"changed":true}'];});}
+  for(const field of Object.keys(before.sequences[0])){reject((_a,b)=>{delete b.sequences[0][field];});reject((_a,b)=>{b.sequences[0][field]='unknown';});}reject((_a,b)=>{b.sequences.push({sequencename:'unknown',last_value:null});});
+  const families=Object.keys(M).filter(name=>name.endsWith('_ADDITIVE_PAIR')&&name!=='FINALSERVICES_ADDITIVE_PAIR').map(name=>[name,'qualify'+({FIRST_FIVE:'FirstFive',SECOND_BATCH:'SecondBatch',THIRD_BATCH:'ThirdBatch',FOURTH_BATCH:'FourthBatch',COMMERCIAL_MAIN:'CommercialMain',AUTONOMY_MAIN:'AutonomyMain',COMMERCE:'Commerce',ENTERPRISE:'Enterprise',ROOT_MARKET_COMBINED:'RootMarketCombined',MARKET_OPERATIONS:'MarketOperations',NEXT_LAYER:'NextLayer',NEXT_THIRTY_FIRST_FIVE:'NextThirtyFirstFive',FIFTH_BATCH:'FifthBatch'}[name.replace('_ADDITIVE_PAIR','')])+'AdditiveBootstrap']);A.equal(families.length,13);
+  for(const[name,fn]of families){A.equal(typeof M[fn],'function');A.throws(()=>M[fn](before,after,p,c),e=>e?.code==='ERR_ASSERTION');A.throws(()=>qualify(before,after,{...p,source:M[name].predecessor},c),e=>e?.code==='ERR_ASSERTION');}
+  const start=pairSource.indexOf('  const equal = (a, b, label, additive = false) => {'),end=pairSource.indexOf('\n  try {',start);A(start>0&&end>start);
+  const build=(current,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate','FINALSERVICES_ADDITIVE_PAIR','qualifyFinalservicesAdditiveBootstrap',...families.flat(),pairSource.slice(start,end)+'\nreturn equal;')(A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{},p,current,boundPin,spy?()=>{calls.push('qualifyFinalservicesAdditiveBootstrap');return{selectorOnly:true};}:qualify,...families.flatMap(([name,fn])=>[M[name],M[fn]]));
+  let dispatch=0,strict=0;
+  for(const label of ['upgrade preserves acknowledged state','upgrade replay creates no new effect']){const calls=[];build(c,true,calls)(before,after,label,true);A.deepEqual(calls,['qualifyFinalservicesAdditiveBootstrap']);build(c,false,[])(before,after,label,true);A.throws(()=>build(c,false,[])(before,after,label,false));dispatch++;}
+  const bad=structuredClone(c);bad.finalservicesAdditiveSource.tree='0'.repeat(64);for(const label of ['upgrade preserves acknowledged state','upgrade replay creates no new effect'])A.throws(()=>build(bad,false,[])(before,after,label,true));
+  for(const label of ['rollback preserves acknowledged state','rollback replay creates no new effect','second upgrade preserves acknowledged state']){
+    build(c,false,[])(after,structuredClone(after),label,false);A.throws(()=>build(c,false,[])(before,after,label,true));strict++;
+    for(const name of Object.keys(after.tables)){const changed=structuredClone(after);changed.tables[name]=[...changed.tables[name],'{"phase":true}'];A.throws(()=>build(c,false,[])(after,changed,label,false));strict++;}
+    for(const field of Object.keys(after.sequences[0])){const changed=structuredClone(after);changed.sequences[0][field]='phase';A.throws(()=>build(c,false,[])(after,changed,label,false));strict++;}
+    const unknown=structuredClone(after);unknown.tables.unknown_after_rollback=[];A.throws(()=>build(c,false,[])(after,unknown,label,false));strict++;
+  }
+  console.log('rc1-source-pair final-services '+(unbound?'UNBOUND synthetic pure controls':'source-bound pure controls')+' PASS: '+negatives+' refusals; '+dispatch+' exact selectors; '+strict+' strict phases;26EMPTY/332structural/283NN; no native, financial or deployment clearance');
 }
