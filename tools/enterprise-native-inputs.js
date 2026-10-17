@@ -1,5 +1,5 @@
 // Actual immutable C input-union proposal; no native/final/physical admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="5faf78c497d03fc65e7ccc19b2e5d07b2bda70d7";
+export const ENTERPRISE_NATIVE_BASE_REVISION="0c20a960513b5bb3f9095d818a998a333aecefb6";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -7902,8 +7902,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/gates.js",
-    "blob": "47d22ce92bdf2270f33ba3866627ec0464fa3091",
-    "sha256": "9c0ec4172288c836f60bc11341e715248c7063f228e1fce2aee5a5464d0b42ae"
+    "blob": "467b05c6a93edb78929006c23de48fdd0f2933f0",
+    "sha256": "2a6fac1a728437c5915f500ab1d64b5c4681d6c3c28c20352c3c80970be9e5db"
   },
   {
     "file": "test/graph.js",
@@ -9362,8 +9362,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/commerce-enterprise-source-data.js",
-    "blob": "7c900036361ee63116b41498776a2fc1a18ac9cc",
-    "sha256": "81aa4c69781e6b09adaa4f176d9bd97f5da72b1de56930b86e42df4ba024be31"
+    "blob": "6c884bd5ca4230188d9bfa2d3a7d3495816f4bd7",
+    "sha256": "617c259ae30d8e5811f6fe4f8d86ea96f6b862d498975c04667e32356760caa0"
   },
   {
     "file": "tools/commerce-graph-helpers.js",
