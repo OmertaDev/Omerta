@@ -107,6 +107,7 @@ function settlementHeader(header,attempt){
     check(typeof r.transaction==='string'&&(r.success?/^0x[\da-fA-F]{64}$/.test(r.transaction):r.transaction===''||/^0x[\da-fA-F]{64}$/.test(r.transaction)));
     if(r.payer!==undefined)check(address(r.payer)===attempt.wallet);if(r.amount!==undefined)check(atoms(r.amount)===atoms(attempt.amountAtoms));
     if(r.errorReason!==undefined)check(typeof r.errorReason==='string'&&r.errorReason.length<=256);
+    check(!r.success||r.errorReason===undefined);if(r.errorReason==='settlement_pending')check(/^0x[\da-fA-F]{64}$/.test(r.transaction));
     return {status:'declared',value:clone(r)};
   }catch{return {status:'malformed',value:null};}
 }
