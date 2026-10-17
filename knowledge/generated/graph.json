@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "15e21b17450cca0972a31233c18497816dd536d9",
+  "sourceRevision": "3588b78645144a9aa9f749734cb9db3bf2553038",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16091,
-    "edges": 63828,
+    "nodes": 16096,
+    "edges": 63850,
     "byNodeType": {
-      "Artifact": 6724,
+      "Artifact": 6725,
       "Command": 291,
-      "Commit": 4348,
+      "Commit": 4351,
       "Contract": 135,
       "Document": 933,
       "Domain": 13,
@@ -60,24 +60,24 @@
       "Route": 1045,
       "Subsystem": 8,
       "Table": 546,
-      "TestSuite": 908,
+      "TestSuite": 909,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5328,
-      "CHANGED": 24626,
-      "CONTAINS": 6745,
+      "BELONGS_TO": 5329,
+      "CHANGED": 24640,
+      "CONTAINS": 6746,
       "DECLARES": 291,
       "DEFINED_IN": 1726,
       "DEPENDS_ON": 69,
       "EXECUTES": 1102,
       "HANDLED_BY": 926,
-      "HAS_COMMIT": 4348,
+      "HAS_COMMIT": 4351,
       "IMPLEMENTS": 124,
-      "IMPORTS": 7027,
+      "IMPORTS": 7029,
       "INHERITS": 45,
       "REFERENCES": 3813,
-      "REPRESENTS": 2387,
+      "REPRESENTS": 2388,
       "TESTS": 2221,
       "TRACKS": 126,
       "USES_TABLE": 2924
@@ -117457,18 +117457,18 @@
       "extension": ".md",
       "bytes": 57050,
       "lines": 760,
-      "version": "026aeb319de5d0de",
+      "version": "1f7bf5d2883ec669",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "026aeb319de5d0de"
+          "version": "1f7bf5d2883ec669"
         }
       ],
-      "lastChangedAt": "2026-10-17T18:43:48.000Z",
+      "lastChangedAt": "2026-10-17T19:07:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "15e21b17450cca0972a31233c18497816dd536d9"
+      "lastChangedCommit": "3588b78645144a9aa9f749734cb9db3bf2553038"
     },
     {
       "key": "Artifact:src/access.js",
@@ -130404,20 +130404,20 @@
       "path": "test/base-work-test-gate-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7124,
-      "lines": 82,
-      "version": "4aea1b3ac7c00a32",
+      "bytes": 13402,
+      "lines": 140,
+      "version": "40daf0bccf36f00f",
       "text": true,
       "provenance": [
         {
           "file": "test/base-work-test-gate-source-compatibility.js",
           "line": 1,
-          "version": "4aea1b3ac7c00a32"
+          "version": "40daf0bccf36f00f"
         }
       ],
-      "lastChangedAt": "2026-10-17T10:07:48.000Z",
+      "lastChangedAt": "2026-10-17T19:06:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ea4e28c7ac858cdbd92e18c7453146592074d2c5"
+      "lastChangedCommit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
     },
     {
       "key": "Artifact:test/baseworkexecutionadmission.js",
@@ -138178,20 +138178,20 @@
       "path": "test/lib/base-work-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 22920,
-      "lines": 82,
-      "version": "de6a1129e3ce1bd5",
+      "bytes": 23082,
+      "lines": 84,
+      "version": "56299096f67c1a3e",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/base-work-source-compatibility.js",
           "line": 1,
-          "version": "de6a1129e3ce1bd5"
+          "version": "56299096f67c1a3e"
         }
       ],
-      "lastChangedAt": "2026-10-17T09:51:26.000Z",
+      "lastChangedAt": "2026-10-17T19:06:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a144a8ee803ba7557b3bb0b15f7091d2f9c19280"
+      "lastChangedCommit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
     },
     {
       "key": "Artifact:test/lib/base-work-test-gate-source-compatibility.js",
@@ -138790,6 +138790,29 @@
       "lastChangedAt": "2026-08-24T18:49:55.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+    },
+    {
+      "key": "Artifact:test/lib/wallet-compute-package-source-compatibility.js",
+      "type": "Artifact",
+      "id": "test/lib/wallet-compute-package-source-compatibility.js",
+      "label": "wallet-compute-package-source-compatibility.js",
+      "path": "test/lib/wallet-compute-package-source-compatibility.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 32054,
+      "lines": 59,
+      "version": "5b11b6ecb41453f2",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/wallet-compute-package-source-compatibility.js",
+          "line": 1,
+          "version": "5b11b6ecb41453f2"
+        }
+      ],
+      "lastChangedAt": "2026-10-17T19:06:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
     },
     {
       "key": "Artifact:test/liquidity-deployment-plan.js",
@@ -173391,6 +173414,22 @@
       ]
     },
     {
+      "key": "Commit:3588b78645144a9aa9f749734cb9db3bf2553038",
+      "type": "Commit",
+      "id": "3588b78645144a9aa9f749734cb9db3bf2553038",
+      "label": "Refresh measured gameplay census after release repairs",
+      "title": "Refresh measured gameplay census after release repairs",
+      "date": "2026-10-17T19:07:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3588b78645144a9aa9f749734cb9db3bf2553038",
+      "provenance": [
+        {
+          "commit": "3588b78645144a9aa9f749734cb9db3bf2553038",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3588b78645144a9aa9f749734cb9db3bf2553038"
+        }
+      ]
+    },
+    {
       "key": "Commit:359d92353623591c41208f3d4692558b5e7ea2ea",
       "type": "Commit",
       "id": "359d92353623591c41208f3d4692558b5e7ea2ea",
@@ -176507,6 +176546,22 @@
         {
           "commit": "402b8a79761981ce03f0fc4b08956cdb6f71022c",
           "url": "https://github.com/OmertaDev/Omerta/commit/402b8a79761981ce03f0fc4b08956cdb6f71022c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "type": "Commit",
+      "id": "402e8a24388a7f5a20a61b4443643f89411df54b",
+      "label": "Refresh Robinhood compute knowledge after reviewed source and census",
+      "title": "Refresh Robinhood compute knowledge after reviewed source and census",
+      "date": "2026-10-17T18:47:35.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/402e8a24388a7f5a20a61b4443643f89411df54b",
+      "provenance": [
+        {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/402e8a24388a7f5a20a61b4443643f89411df54b"
         }
       ]
     },
@@ -210747,6 +210802,22 @@
         {
           "commit": "bc30ff4c0f85562f848580d266c996fe41a4d2c7",
           "url": "https://github.com/OmertaDev/Omerta/commit/bc30ff4c0f85562f848580d266c996fe41a4d2c7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+      "type": "Commit",
+      "id": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+      "label": "test: preserve exact package provenance for Robinhood compute",
+      "title": "test: preserve exact package provenance for Robinhood compute",
+      "date": "2026-10-17T19:06:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+      "provenance": [
+        {
+          "commit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
         }
       ]
     },
@@ -245212,12 +245283,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "026aeb319de5d0de",
+      "version": "1f7bf5d2883ec669",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "026aeb319de5d0de"
+          "version": "1f7bf5d2883ec669"
         }
       ]
     },
@@ -253166,6 +253237,9 @@
           "commit": "3eb4f4111453574634bcc57d1a8e9ef17904d10e"
         },
         {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+        },
+        {
           "commit": "4a9e6bf2120fe1cd04c5a4a708a53b6a6c85cc88"
         },
         {
@@ -253485,6 +253559,9 @@
         },
         {
           "commit": "400368f0da2decd95264cc5729a4d6ea95490dc2"
+        },
+        {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
         },
         {
           "commit": "40619e25df4c55cae598b33c19c361997a347a87"
@@ -254865,6 +254942,9 @@
         },
         {
           "commit": "400368f0da2decd95264cc5729a4d6ea95490dc2"
+        },
+        {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
         },
         {
           "commit": "40619e25df4c55cae598b33c19c361997a347a87"
@@ -257063,6 +257143,9 @@
           "commit": "400368f0da2decd95264cc5729a4d6ea95490dc2"
         },
         {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+        },
+        {
           "commit": "40619e25df4c55cae598b33c19c361997a347a87"
         },
         {
@@ -259259,6 +259342,9 @@
           "commit": "400368f0da2decd95264cc5729a4d6ea95490dc2"
         },
         {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+        },
+        {
           "commit": "40619e25df4c55cae598b33c19c361997a347a87"
         },
         {
@@ -260987,6 +261073,9 @@
           "commit": "3e5169ae920abee55cbaa498d4ea0da0f1a63b65"
         },
         {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+        },
+        {
           "commit": "444a7457209290ace2cb13fceac0fa8729d498bf"
         },
         {
@@ -262071,6 +262160,9 @@
         },
         {
           "commit": "400368f0da2decd95264cc5729a4d6ea95490dc2"
+        },
+        {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
         },
         {
           "commit": "40619e25df4c55cae598b33c19c361997a347a87"
@@ -263858,6 +263950,9 @@
           "commit": "3e825926d8d78aad8634bb865ee12dbc99fef2e6"
         },
         {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+        },
+        {
           "commit": "40fbac8f4e4b1dfd5d4b50f525139aea39e180d3"
         },
         {
@@ -264539,6 +264634,9 @@
           "commit": "3d4652f56bba471298253c1b3fa76a9873d22905"
         },
         {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+        },
+        {
           "commit": "40fbac8f4e4b1dfd5d4b50f525139aea39e180d3"
         },
         {
@@ -264936,6 +265034,9 @@
         },
         {
           "commit": "3d4652f56bba471298253c1b3fa76a9873d22905"
+        },
+        {
+          "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
         },
         {
           "commit": "444a7457209290ace2cb13fceac0fa8729d498bf"
@@ -277199,12 +277300,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "15e21b17450cca0972a31233c18497816dd536d9",
+      "revision": "3588b78645144a9aa9f749734cb9db3bf2553038",
       "currentBranch": "codex/robinhood-x402-usdg-oct17",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6724,
+      "currentArtifactCount": 6725,
       "provenance": [
         {
           "file": "README.md",
@@ -314299,13 +314400,13 @@
       "type": "TestSuite",
       "id": "test/base-work-test-gate-source-compatibility.js",
       "label": "test/base-work-test-gate-source-compatibility.js",
-      "lines": 82,
-      "version": "4aea1b3ac7c00a32",
+      "lines": 140,
+      "version": "40daf0bccf36f00f",
       "provenance": [
         {
           "file": "test/base-work-test-gate-source-compatibility.js",
           "line": 1,
-          "version": "4aea1b3ac7c00a32"
+          "version": "40daf0bccf36f00f"
         }
       ]
     },
@@ -319219,13 +319320,13 @@
       "type": "TestSuite",
       "id": "test/lib/base-work-source-compatibility.js",
       "label": "test/lib/base-work-source-compatibility.js",
-      "lines": 82,
-      "version": "de6a1129e3ce1bd5",
+      "lines": 84,
+      "version": "56299096f67c1a3e",
       "provenance": [
         {
           "file": "test/lib/base-work-source-compatibility.js",
           "line": 1,
-          "version": "de6a1129e3ce1bd5"
+          "version": "56299096f67c1a3e"
         }
       ]
     },
@@ -319601,6 +319702,21 @@
           "file": "test/lib/srcfiles.js",
           "line": 1,
           "version": "d57b797127522458"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/wallet-compute-package-source-compatibility.js",
+      "type": "TestSuite",
+      "id": "test/lib/wallet-compute-package-source-compatibility.js",
+      "label": "test/lib/wallet-compute-package-source-compatibility.js",
+      "lines": 59,
+      "version": "5b11b6ecb41453f2",
+      "provenance": [
+        {
+          "file": "test/lib/wallet-compute-package-source-compatibility.js",
+          "line": 1,
+          "version": "5b11b6ecb41453f2"
         }
       ]
     },
@@ -358261,6 +358377,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/lib/srcfiles.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/wallet-compute-package-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/wallet-compute-package-source-compatibility.js",
         "line": 1
       }
     },
@@ -409026,6 +409151,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3588b78645144a9aa9f749734cb9db3bf2553038",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "3588b78645144a9aa9f749734cb9db3bf2553038"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:359d92353623591c41208f3d4692558b5e7ea2ea",
       "to": "Artifact:.github/workflows/rc1-recovery.yml",
       "provenance": {
@@ -418310,6 +418443,86 @@
       "to": "Artifact:tools/rc1-source-pair.js",
       "provenance": {
         "commit": "402b8a79761981ce03f0fc4b08956cdb6f71022c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/contracts.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
       }
     },
     {
@@ -519722,6 +519935,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+      "to": "Artifact:test/base-work-test-gate-source-compatibility.js",
+      "provenance": {
+        "commit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+      "to": "Artifact:test/lib/base-work-source-compatibility.js",
+      "provenance": {
+        "commit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+      "to": "Artifact:test/lib/wallet-compute-package-source-compatibility.js",
+      "provenance": {
+        "commit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:bc4890a1c8bc6e8e04c04dfc014a67ecd6456a54",
       "to": "Artifact:docs/wallet-funded-compute.md",
       "provenance": {
@@ -605509,6 +605746,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/wallet-compute-package-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/wallet-compute-package-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/liquidity-deployment-plan.js",
       "provenance": {
         "file": "test/liquidity-deployment-plan.js",
@@ -676705,6 +676951,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3588b78645144a9aa9f749734cb9db3bf2553038",
+      "provenance": {
+        "commit": "3588b78645144a9aa9f749734cb9db3bf2553038"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:359d92353623591c41208f3d4692558b5e7ea2ea",
       "provenance": {
         "commit": "359d92353623591c41208f3d4692558b5e7ea2ea"
@@ -678260,6 +678514,14 @@
       "to": "Commit:402b8a79761981ce03f0fc4b08956cdb6f71022c",
       "provenance": {
         "commit": "402b8a79761981ce03f0fc4b08956cdb6f71022c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:402e8a24388a7f5a20a61b4443643f89411df54b",
+      "provenance": {
+        "commit": "402e8a24388a7f5a20a61b4443643f89411df54b"
       }
     },
     {
@@ -695380,6 +695642,14 @@
       "to": "Commit:bc30ff4c0f85562f848580d266c996fe41a4d2c7",
       "provenance": {
         "commit": "bc30ff4c0f85562f848580d266c996fe41a4d2c7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1",
+      "provenance": {
+        "commit": "bc40e6c30c3175b0254926d90d0c9ae1b4cc33f1"
       }
     },
     {
@@ -725543,6 +725813,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/base-work-test-gate-source-compatibility.js",
+      "to": "Artifact:test/lib/base-work-source-compatibility.js",
+      "provenance": {
+        "file": "test/base-work-test-gate-source-compatibility.js",
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/base-work-test-gate-source-compatibility.js",
       "to": "Artifact:tools/deed-market-source-compatibility.js",
       "provenance": {
         "file": "test/base-work-test-gate-source-compatibility.js",
@@ -741027,6 +741306,15 @@
       "provenance": {
         "file": "test/levers.js",
         "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/base-work-source-compatibility.js",
+      "to": "Artifact:test/lib/wallet-compute-package-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/base-work-source-compatibility.js",
+        "line": 4
       }
     },
     {
@@ -820685,6 +820973,15 @@
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
         "file": "test/lib/srcfiles.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/wallet-compute-package-source-compatibility.js",
+      "to": "Artifact:test/lib/wallet-compute-package-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/wallet-compute-package-source-compatibility.js",
         "line": 1
       }
     },
