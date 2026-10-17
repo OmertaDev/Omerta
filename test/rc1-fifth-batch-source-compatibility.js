@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import {nextFiveSourceBaseline} from '../tools/next-five-source-compatibility.js';
@@ -49,7 +51,7 @@ console.log('FIFTH source transfer PASS: 7 literal domains, '+hunks+' actual Git
 
 // Legacy EOL normalization is intentionally unchanged; substantive full-caller drift must still refuse.
 const worldFiles=['src/server.js','src/worker.js'];
-const worldRead=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))):fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n');
+const worldRead=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8'))))):fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n');
 await verifyWorldRecoverySources({sourceRevision:O.FIFTH_BATCH_SOURCE_REVISION,readFile:worldRead});
 let worldNegatives=0;
 for(const file of worldFiles){const text=worldRead(file),d=O.FIFTH_BATCH_SOURCE_DOMAINS[file];const bads=[text+'\n// unknown substantive change\n',text.slice(1),text.replace(/\S/,'?')];for(const h of d.inverses)bads.push(text.replace(h.current,''),text.replace(h.current,()=>h.current+h.current),text.replace(h.current,()=>h.current.replace(/\S/,'?')));for(const bad of bads){await assert.rejects(()=>verifyWorldRecoverySources({sourceRevision:O.FIFTH_BATCH_SOURCE_REVISION,readFile:f=>f===file?bad:worldRead(f)}),file+' substantive mutation index '+bads.indexOf(bad));worldNegatives++;}}

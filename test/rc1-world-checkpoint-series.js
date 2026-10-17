@@ -1,3 +1,4 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from '../tools/commerce-current-enterprise-source-compatibility.js';
 import { enterpriseOverRootSourceBaseline, hasEnterpriseOverRootSource } from '../tools/enterprise-current-source-compatibility.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
@@ -9,7 +10,7 @@ import { verifyWorldRecoverySources, WORLD_DURATION_CANDIDATES } from '../tools/
 import { reviewWorldCheckpointSeries } from '../tools/rc1-world-checkpoint-series.js';
 
 const DAY = 86400000, hash = value => sha256(canonicalJson(value)), copy = value => structuredClone(value);
-const source = await verifyWorldRecoverySources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile: async file => { const actualCurrentRaw = await fs.readFile(file); const raw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, String(actualCurrentRaw)) : actualCurrentRaw; return hasEnterpriseOverRootSource(file) ? Buffer.from(enterpriseOverRootSourceBaseline(file, String(raw))) : raw; } });
+const source = await verifyWorldRecoverySources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile: async file => { const actualFinalServicesRaw = await fs.readFile(file); const actualCurrentRaw = hasFinalServicesCommerceSource(file) ? finalServicesOverCommerceSourceBaseline(file, String(actualFinalServicesRaw)) : actualFinalServicesRaw; const raw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, String(actualCurrentRaw)) : actualCurrentRaw; return hasEnterpriseOverRootSource(file) ? Buffer.from(enterpriseOverRootSourceBaseline(file, String(raw))) : raw; } });
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
 function fixture({ days = 90, missingDay = null, changedConcentration = false, growth = false, interiorGrowth = false, economyGap = false, earlyPartial = false, duplicateFinal = false } = {}) {
   const files = new Map(), values = new Map(), configurationSha256 = hash('frozen configuration');

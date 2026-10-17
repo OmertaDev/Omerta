@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../../tools/commerce-current-enterprise-source-compatibility.js";
 import {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';
 // Closed pure-control fixtures. Historical source execution never admits the current release.
@@ -188,7 +190,7 @@ function currentHistoricalApplicationSource(file,input){
 function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
-    const actualCurrentRaw = String(originalRead(path.join(root, file)));
+    const actualCurrentRaw = String(selectFinalServicesCommerceTestSource(file,originalRead(path.join(root, file))));
     const selected = currentHistoricalApplicationSource(file, hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : actualCurrentRaw);
     checked.add(file);
     return selected;
@@ -414,7 +416,7 @@ function rejectHistoricalApplicationSources() {
     'src/db.js', 'src/deeds.js', 'src/explore.js'];
   let positives = 0, refusals = 0;
   for (const file of files) {
-    const actualCurrentRaw = String(originalRead(path.join(root, file))),
+    const actualCurrentRaw = String(selectFinalServicesCommerceTestSource(file,originalRead(path.join(root, file)))),
       raw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : actualCurrentRaw, current = canonical(raw);
     const rootRaw = enterpriseOverRootSourceBaseline(file,raw), rootCurrent = canonical(rootRaw);
     const deedRaw = marketOverDeedSourceBaseline(file, rootRaw), deedCurrent = canonical(deedRaw);
@@ -450,7 +452,7 @@ function rejectHistoricalApplicationSources() {
 }
 
 function rejectCityActivityHistoricalSources() {
-  const file = 'src/server.js', actualCurrentUnionRaw = String(originalRead(path.join(root, file))),
+  const file = 'src/server.js', actualCurrentUnionRaw = String(selectFinalServicesCommerceTestSource(file,originalRead(path.join(root, file)))),
     unionRaw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentUnionRaw) : actualCurrentUnionRaw;
   const raw = enterpriseOverGuiSourceBaseline(file, unionRaw), current = canonical(raw);
   const combinedProof = qualifyCityActivityMarketSource(file, raw);

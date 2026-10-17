@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
@@ -34,7 +36,7 @@ for(const altered of [homeRaw+'\n// unknown Home suffix\n',homeRaw.replace('regi
 }
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(MARKET_FEED_SOURCE_CURRENT_PINS)) {
-  const current = normalize(strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):fs.readFileSync(file, 'utf8')))))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(marketFeedSourceBaseline(file, current), baseline);
   assert.equal(marketFeedSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

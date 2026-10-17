@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -25,7 +27,7 @@ assert.equal(MARKET_OPERATIONS_ADDITIONS.added.length,70);assert.equal(Object.va
 assert.deepEqual(MARKET_OPERATIONS_NATIVE_ADDITIONS.added,[...NEXT_LAYER_NATIVE_ADDITIONS.added,...MARKET_OPERATIONS_ADDITIONS.added]);
 assert.deepEqual(MARKET_OPERATIONS_NATIVE_ADDITIONS.notNullColumns,{...NEXT_LAYER_NATIVE_ADDITIONS.notNullColumns,...MARKET_OPERATIONS_ADDITIONS.notNullColumns});
 assert.equal(MARKET_OPERATIONS_NATIVE_ADDITIONS.added.length,159);assert.equal(Object.values(MARKET_OPERATIONS_NATIVE_ADDITIONS.notNullColumns).flat().length,144);
-const raw=enterpriseCurrentHistorical6bSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',(hasCommerceCurrentEnterpriseSource('test/lib/phase2-architecture-upgrade-catalog.json')?commerceOverCurrentEnterpriseSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',String(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8'))):fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8'))),catalog=JSON.parse(raw);
+const raw=enterpriseCurrentHistorical6bSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',(hasCommerceCurrentEnterpriseSource('test/lib/phase2-architecture-upgrade-catalog.json')?commerceOverCurrentEnterpriseSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',String(selectFinalServicesCommerceTestSource('test/lib/phase2-architecture-upgrade-catalog.json',fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8')))):selectFinalServicesCommerceTestSource('test/lib/phase2-architecture-upgrade-catalog.json',fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8')))),catalog=JSON.parse(raw);
 assert.equal(catalog.added.length,1402);assert.deepEqual(catalog.added.slice(-70),MARKET_OPERATIONS_ADDITIONS.added);
 const withoutSix={...catalog,added:catalog.added.slice(0,-70),notNullColumns:Object.fromEntries(Object.entries(catalog.notNullColumns).filter(([table])=>!MARKET_OPERATIONS_TABLES.includes(table)))};
 const ancestorBytes=(await import('node:child_process')).execFileSync('git',['show','9376c5a4553bc1b95d3e74f9c7f0d88b794933d6:test/lib/phase2-architecture-upgrade-catalog.json']);

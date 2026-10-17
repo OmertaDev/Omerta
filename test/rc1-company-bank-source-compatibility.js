@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
@@ -22,7 +24,7 @@ let texts=0,hashes=0,blobs=0,negatives=0,hunks=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 assert.deepEqual(Object.keys(P.COMPANY_BANK_SOURCE_CURRENT_PINS),['src/server.js','src/worker.js','src/invariants.js','src/social/estate.js']);
 for(const file of Object.keys(P.COMPANY_BANK_SOURCE_CURRENT_PINS)) {
- const current=companyLogisticsHubSourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))),prior=git('show',`${P.COMPANY_BANK_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=companyLogisticsHubSourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):fs.readFileSync(file,'utf8')))),prior=git('show',`${P.COMPANY_BANK_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${P.COMPANY_BANK_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',`c0dfd2b56db4991bd56d4a5ce1ce29d7fe24e5d1:${file}`));
  entire(current,git('show',P.COMPANY_BANK_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',P.COMPANY_BANK_SOURCE_BASELINE_BLOBS[file]));
  for(const [text,pins,bs]of [[current,P.COMPANY_BANK_SOURCE_CURRENT_PINS,P.COMPANY_BANK_SOURCE_CURRENT_BLOBS],[prior,P.COMPANY_BANK_SOURCE_BASELINE_PINS,P.COMPANY_BANK_SOURCE_BASELINE_BLOBS]]) {assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
@@ -47,6 +49,6 @@ for(const file of Object.keys(P.COMPANY_BANK_SOURCE_CURRENT_PINS)) {
 }
 for(const file of ['src/companybankportfolios.js','src/game.js','toString']){assert.throws(()=>P.assertCompanyBankSourceTransfer(file,''));assert.throws(()=>P.qualifyCompanyBankSource(file,''));}
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer,P.COMPANY_BANK_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer,W.COMPANY_WORKFLOW_SOURCE_TRANSFER);
-const currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))):fs.readFileSync(file,'utf8')),priorReader=file=>Object.hasOwn(P.COMPANY_BANK_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMPANY_BANK_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
+const currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8'))))):fs.readFileSync(file,'utf8')),priorReader=file=>Object.hasOwn(P.COMPANY_BANK_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMPANY_BANK_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
 assert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMPANY_BANK_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMPANY_BANK_SOURCE_REVIEWED_REVISION}));
 console.log(`rc1-company-bank-source-compatibility: PASS ${hunks} exact Git hunks; ${texts} complete text, ${hashes} SHA256, ${blobs} Git blob comparisons; ${negatives} adversarial controls; CRLF, prior metadata, worker cap/cadence/ordering; source-only scope`);
