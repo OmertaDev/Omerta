@@ -47,7 +47,7 @@ jobs:
           --health-retries 12
     env:
       RC1_CI_POSTGRES: ${{ matrix.postgres }}
-      RC1_DIAGNOSTIC_OUTPUT: ${{ runner.temp }}/rc1-depot-next-five-diagnostic
+      RC1_DIAGNOSTIC_OUTPUT: ${{ github.workspace }}/tmp/rc1-depot-next-five-diagnostic
     steps:
       - name: Check out the exact failed source
         uses: actions/checkout@v4
