@@ -1,5 +1,5 @@
 // Actual immutable C input-union proposal; no native/final/physical admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="454072cecc896bfe88d957b27b12ab7d7ad364bc";
+export const ENTERPRISE_NATIVE_BASE_REVISION="773b9ac62aab8232c2f82c7ee7311e331678e4cd";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -9119,8 +9119,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/commerce-current-native-guard.js",
-    "blob": "89838e9a6faa51977ad5117ebece0653ea6cb4cb",
-    "sha256": "7f6416a1afadbfba4a769d27d6505fbf3d5030632eb296a23f44c94734a015fe"
+    "blob": "6ed15171a6d4467014c0db205e8409cfae134bc2",
+    "sha256": "59b71be38666d373d7e6215ee250a58e857ca5ec18cd3eb1a150f06853e1d16b"
   },
   {
     "file": "test/commerce-release-phase2-migration-catalog.js",
