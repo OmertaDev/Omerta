@@ -1,5 +1,5 @@
 // Genuine immutable authored-source proposal; no raw/native admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="ff0a2f14ecfccc2fd14141e6e8a5ef38df11b237";
+export const ENTERPRISE_NATIVE_BASE_REVISION="3f6225ecffee0ca14a20371e8ceeb82a728044cc";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -4655,8 +4655,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "public/index.html",
-    "blob": "27e9d3728eff13c104726a670158910d7cb12f7b",
-    "sha256": "702c554c81e00ec053d81a993e4808ae213d948192670a152867864608890771"
+    "blob": "4c862682a50c32979d9c49124fd9f2af46409fdb",
+    "sha256": "9eef7cd58e115a195b2c7620eb66d9d329311cc1694db8710a8c52ae9218a45d"
   },
   {
     "file": "public/invite.html",
