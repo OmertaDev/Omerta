@@ -304,6 +304,11 @@ for(const bad of [
   {...laboratorySources,'invariants.js':laboratorySources['invariants.js'].replace('labIssues.length, 0, 0','labIssues.length, 1, 0')},
 ])assert(!laboratoryOracleAdmission(bad),'Mutation, raw/private DTO exposure, routed alias or monetary-credit drift must reject');
 const COLLECT_EXEMPT = {
+  collectCollateralAuctionIssues: "read-only original auction consent, bid escrow, cash-journal, title-transfer and terminal-loan provenance oracle; no player collection, settlement or mutation authority",
+  collectCollateralLendingIssues: "read-only complete original pledge, request, cash-journal and terminal source oracle; no player collection, repayment or mutation authority",
+  collectCollateralLendingPledgeIssues: "read-only exact original pledge and request-source finalization oracle; no player collection, release or mutation authority",
+  collectProductionBookingIssues: "read-only original customer/maker consent, reservation, commission, bonus-journal and completion provenance oracle; no player collection, payment or mutation authority",
+  collectSyndicatedLoanIssues: "read-only original facility, lender funding, membership and underlying-loan provenance oracle; no player collection, funding or mutation authority",
   collectEventMarketIssues: "read-only original event funding, vendor/venue consent, participant, GIN/UID sale and reward history oracle; no player collection, reward payment or mutation authority",
   collectMerchantLoyaltyIssues: "read-only original merchant program, consumed purchase quote and request/receipt binding oracle; no player collection, discount grant or mutation authority",
   collectSaleAttributionIssues: "read-only original publisher consent, merchant reserve, paired cash legs and canonical completed-sale witness oracle; no player collection, commission payment or mutation authority",
