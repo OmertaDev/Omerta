@@ -1,5 +1,5 @@
 // Genuine immutable authored-source proposal; no raw/native admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="48fb09bfb82098523607bee1b7e42bca0ff66e44";
+export const ENTERPRISE_NATIVE_BASE_REVISION="d6a534e51881ce3ecbeac1918a667352ef8aaf80";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -5035,8 +5035,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/command-diagnostics.js",
-    "blob": "1c5e18f9788096fdbdfb3ac6f79c386aca538f7b",
-    "sha256": "f7be24eb60c6a3976ad8e0bbbacf6a935ff08b6508dedd4f570032f59b28cb5c"
+    "blob": "b8c1a37d68f57e2d24ccb82a946d73532455d96b",
+    "sha256": "bcd1125843f95e378fc30b5de673d5e919ac423095ff38385cbcb7d48de8b8e5"
   },
   {
     "file": "src/commercialdisputes.js",
@@ -6650,8 +6650,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/routes/commands.js",
-    "blob": "7229b6de9ef11f69e0a861103d7811b984d64d64",
-    "sha256": "eef5b46e04e02dddd80b52d5466a8a50e618f21626abd9e8955c1a9bca2c4dc4"
+    "blob": "64073121e4ecfc604583911472b73c7adb5282d0",
+    "sha256": "c893c9d0f05a7cce417ada2e6b1c8d4aa9911ff7aa0cc74fe79a31508769e2b4"
   },
   {
     "file": "src/routes/commercialdisputes.js",
@@ -7685,8 +7685,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/depotacquisition-next-five.js",
-    "blob": "909cffc0fbbb6158a7ebd3e2507b55730b68a1a4",
-    "sha256": "41ce18365cceb5f9fcd2c7dbad068cfb2b8d689ee96d59421f5d1a74ce89f3be"
+    "blob": "1a834d51acd871eece1ee4ea7f87ebe99e31725b",
+    "sha256": "8b9baed3c98002807f50933f55a35349359cb1acbabc6f997a9461aefcb1b424"
   },
   {
     "file": "test/depotacquisition-production-slots.js",
@@ -8885,8 +8885,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/enterprise-current-source-data.js",
-    "blob": "0bb20b85ca884fc5c36d4dd848b1f2b045555f0c",
-    "sha256": "635551931394f3c4062ead72df52afdacbd843d850e393f0a9c5db2d4080b8b2"
+    "blob": "ee687d764e27685cc5df80e79ce30f9869782049",
+    "sha256": "010bbd0c605a3e0f5cd4b9211ae6bf9a2ec3a5f61506bd0fc2e71d19c39c16ac"
   },
   {
     "file": "tools/enterprise-current-source-compatibility.js",
