@@ -29,7 +29,7 @@ async function joinWithStockLockProbe(buyer,event,attribution,key){
   assert.deepEqual(locks,['mobile_shops'],'Shop is the first stock lock');
  }catch(e){failure=e;}finally{
   clearTimeout(timer);pool.connect=connect;
-  for(const c of [probe,holder])if(c){try{await c.query('ROLLBACK');}catch(e){failure??=e;}finally{c.release();}}
+  for(const c of [probe,holder])if(c){try{await c.query('ROLLBACK');}catch(e){failure??=e;}finally{try{c.release();}catch(e){failure??=e;}}}
  }
  try{result=await joined;}catch(e){failure??=e;}if(failure)throw failure;
  assert.deepEqual(locks,['mobile_shops','market_listings'],'Join resumes in canonical shop/listing order');
