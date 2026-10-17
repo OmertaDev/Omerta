@@ -39,6 +39,22 @@ function decodeHeader(value){
   const bytes=Buffer.from(value,'base64');check(bytes.toString('base64')===value,'INVALID_PAYMENT_HEADER');
   try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{fail('INVALID_PAYMENT_HEADER');}
 }
+function inertExtensions(value){
+  object(value,[],['bazaar','eip2612GasSponsoring']);
+  check(Buffer.byteLength(JSON.stringify(value))<=16384,'EXTENSIONS_TOO_LARGE');let nodes=0;
+  const inspect=(item,depth)=>{check(++nodes<=2048&&depth<=16,'EXTENSIONS_TOO_COMPLEX');
+    if(item===null||typeof item==='boolean')return;
+    if(typeof item==='string'){check(item.length<=8192,'EXTENSIONS_TOO_LARGE');return;}
+    if(typeof item==='number'){check(Number.isFinite(item),'INVALID_EXTENSION_DATA');return;}
+    check(item&&typeof item==='object','INVALID_EXTENSION_DATA');
+    if(Array.isArray(item)){check(item.length<=256,'EXTENSIONS_TOO_COMPLEX');item.forEach(child=>inspect(child,depth+1));return;}
+    object(item,[],Object.keys(item));check(Object.keys(item).length<=256,'EXTENSIONS_TOO_COMPLEX');
+    for(const [key,child]of Object.entries(item)){check(key.length<=256,'EXTENSIONS_TOO_COMPLEX');inspect(child,depth+1);}
+  };
+  for(const entry of Object.values(value)){object(entry,['info','schema']);object(entry.info,[],Object.keys(entry.info));object(entry.schema,[],Object.keys(entry.schema));inspect(entry,0);}
+  // Only reviewed passive advertisements are echoed. No schema evaluation, permits or callbacks.
+  return freeze(clone(value));
+}
 function policyInput(value){
   object(value,['perCallAtoms','dailyAtoms','totalAtoms','authorizationSeconds','resources']);
   const perCall=atoms(value.perCallAtoms),daily=atoms(value.dailyAtoms),total=atoms(value.totalAtoms);
@@ -80,9 +96,9 @@ function quoteInput(encoded,request){
     choices.push(clone(r));
   }
   check(choices.length===1,'EXACT_QUOTE_AMBIGUOUS_OR_UNSUPPORTED');
-  const accepted=choices[0],resource=clone(q.resource),quoteDigest=hash(canonical({x402Version:2,resource,accepted}));
-  // Challenge extensions, including Permit2 suggestions, are inert and never echoed or signed.
-  return freeze({accepted,resource,quoteDigest});
+  const accepted=choices[0],resource=clone(q.resource),extensions=q.extensions===undefined?undefined:inertExtensions(q.extensions);
+  const quoteDigest=hash(canonical({x402Version:2,resource,accepted,...(extensions===undefined?{}:{extensions})}));
+  return freeze({accepted,resource,extensions,quoteDigest});
 }
 function settlementHeader(header,attempt){
   if(header===null||header===undefined)return {status:'missing',value:null};
@@ -165,7 +181,7 @@ export function createWalletComputeClient(config){
       const authorization=freeze({from:wallet,to:quote.accepted.payTo,value:quote.accepted.amount,validAfter:String(seconds-5),validBefore:String(seconds+Math.min(policy.authorizationSeconds,quote.accepted.maxTimeoutSeconds)),nonce:'0x'+nonceBytes.toString('hex')});
       // EIP-3009 signs only token-transfer fields. URL/model/body stay local policy/journal bindings.
       const typed=()=>({domain:domain(),types:clone(TYPES),primaryType:'TransferWithAuthorization',message:{...authorization,value:BigInt(authorization.value),validAfter:BigInt(authorization.validAfter),validBefore:BigInt(authorization.validBefore)}}),typedDataHash=hashTypedData(typed()),nonceHash=hash(nonceBytes);
-      const proposal={attemptId:request.attemptId,wallet,network:WALLET_COMPUTE_NETWORK,asset:WALLET_COMPUTE_USDC,resourceUrl:request.resourceUrl,model:request.body.model,bodyDigest:request.bodyDigest,requestDigest:request.requestDigest,payTo:address(quote.accepted.payTo),amountAtoms:quote.accepted.amount,validAfter:authorization.validAfter,validBefore:authorization.validBefore,quoteDigest:quote.quoteDigest,typedDataHash};
+      const proposal={attemptId:request.attemptId,wallet,network:WALLET_COMPUTE_NETWORK,asset:WALLET_COMPUTE_USDC,resourceUrl:request.resourceUrl,model:request.body.model,bodyDigest:request.bodyDigest,requestDigest:request.requestDigest,payTo:address(quote.accepted.payTo),amountAtoms:quote.accepted.amount,validAfter:authorization.validAfter,validBefore:authorization.validBefore,quoteDigest:quote.quoteDigest,extensions:quote.extensions??null,typedDataHash};
       const approvalDigest=hash(canonical(proposal)),approval=await bounded(()=>authorize(freeze(clone({...proposal,approvalDigest}))));object(approval,['approved','approvalDigest']);check(approval.approved===true&&approval.approvalDigest===approvalDigest,'OWNER_AUTHORIZATION_REFUSED');
       await transaction((state,at)=>{const entry=state.attempts.find(e=>e.id===request.attemptId);check(entry?.state==='quoting','JOURNAL_STATE_CHANGED');check(Math.floor(at/1000)<Number(authorization.validBefore)-1,'AUTHORIZATION_EXPIRED');
         const amount=atoms(quote.accepted.amount),spent=state.attempts.reduce((sum,e)=>sum+atoms(e.amountAtoms,true),0n);
@@ -175,7 +191,7 @@ export function createWalletComputeClient(config){
       check(typeof signature==='string'&&/^0x[\da-fA-F]{130}$/.test(signature),'UNSUPPORTED_SIGNATURE');
       let recovered;try{recovered=await bounded(()=>recoverTypedDataAddress({...typed(),signature}));}catch{fail('SIGNATURE_VERIFICATION_FAILED');}check(address(recovered)===wallet,'SIGNATURE_WALLET_MISMATCH');
       await transaction((state,at)=>{const entry=state.attempts.find(e=>e.id===request.attemptId);check(entry?.state==='reserved'&&entry.typedDataHash===typedDataHash.slice(2),'JOURNAL_STATE_CHANGED');check(Math.floor(at/1000)<Number(authorization.validBefore)-1,'AUTHORIZATION_EXPIRED');Object.assign(entry,{state:'authorized',signatureHash:hash(signature),updatedAtMs:at});});phase='authorized';
-      const payment=Buffer.from(JSON.stringify({x402Version:2,resource:quote.resource,accepted:quote.accepted,payload:{signature,authorization}})).toString('base64');
+      const payment=Buffer.from(JSON.stringify({x402Version:2,resource:quote.resource,accepted:quote.accepted,payload:{signature,authorization},...(quote.extensions===undefined?{}:{extensions:quote.extensions})})).toString('base64');
       check(Math.floor(clock()/1000)<Number(authorization.validBefore)-1,'AUTHORIZATION_EXPIRED');
       const paid=await http(payment);let body;try{body=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(paid.body));}catch{fail('INVALID_PROVIDER_JSON');}
       providerResult=freeze({status:paid.response.status,body,bodyDigest:hash(paid.body)});declaredSettlement=freeze(settlementHeader(paid.response.headers.get('PAYMENT-RESPONSE'),{wallet,amountAtoms:held}));
