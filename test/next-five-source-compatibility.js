@@ -1,5 +1,6 @@
 import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
 const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
+import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
@@ -18,7 +19,7 @@ assert.deepEqual(Object.keys(NEXT_FIVE_SOURCE_DOMAINS),['package.json','schema.s
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_FIVE_SOURCE_DOMAINS)){
  const current=git('show',NEXT_FIVE_SOURCE_REVISION+':'+file),prior=git('show',NEXT_FIVE_SOURCE_PREDECESSOR+':'+file);
- assert.equal(nextLayerSourceBaseline(file,deedQuestSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8'))))))).replaceAll('\r\n','\n'),current,'Complete actual first-five source is independently pinned');
+ assert.equal(nextLayerSourceBaseline(file,deedQuestSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):continuousCityHistoricalInput(file, selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))))))).replaceAll('\r\n','\n'),current,'Complete actual first-five source is independently pinned');
  const actual=[];let chunk;
  for(const line of git('diff','--no-ext-diff','--unified='+pin.contextLines,pin.baselineBlob,pin.currentBlob).split('\n')){
   if(line.startsWith('@@')){chunk={current:'',baseline:''};actual.push(chunk);}
@@ -40,7 +41,7 @@ for(const[file,pin]of Object.entries(NEXT_FIVE_SOURCE_DOMAINS)){
 for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){
  const text='unknown\r\nbytes\n';assert.throws(()=>assertNextFiveSourceTransfer(file,text));assert.equal(nextFiveSourceBaseline(file,text),text);negatives++;
 }
-const file='test/lib/phase2-architecture-upgrade-catalog.json',currentCatalog=JSON.parse(nextLayerSourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8'))))));
+const file='test/lib/phase2-architecture-upgrade-catalog.json',currentCatalog=JSON.parse(nextLayerSourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))):continuousCityHistoricalInput(file, selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')))))));
 const oldCatalog=JSON.parse(git('show',NEXT_FIVE_SOURCE_PREDECESSOR+':'+file));
 assert.equal(oldCatalog.added.length,1153);assert.equal(currentCatalog.added.length,1243);
 assert.deepEqual(currentCatalog.added.slice(0,1153),oldCatalog.added);assert.deepEqual(currentCatalog.removed,oldCatalog.removed);

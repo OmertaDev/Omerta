@@ -33,7 +33,7 @@
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
     let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1;
     let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
-    let trackedObjectiveId = '', roomDraft = null, chatUnread = 0;
+    let trackedObjectiveId = '', roomDraft = null, chatUnread = 0, selectedPlotId = '', atlasZoom = 'city';
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
     let scope = identity();
@@ -301,6 +301,11 @@
     function catalogName(id, catalog) { return list(catalog).find(item => item?.id === id)?.name || caption(id); }
     function actualDistrict() { return String(options.character?.loc || options.district?.id || ''); }
     function atlasDistricts() { return list(boards.atlas?.districts).filter(district => district && typeof district.id === 'string' && typeof district.name === 'string'); }
+    function worldLayout() { const layout = window.CityWorldLayout; return layout?.world && Array.isArray(layout.plots) && typeof layout.getDistrict === 'function' ? layout : null; }
+    function homePlot(home) {
+      const plot = typeof home?.buildingId === 'string' ? worldLayout()?.getPlot(home.buildingId) : null;
+      return plot?.districtId === home?.districtId ? plot : null;
+    }
     function currentHomes(board) {
       return board && board.viewer?.characterId === options.character?.id
         && Number(board.viewer?.generation) === Number(options.character?.generation)
@@ -348,7 +353,7 @@
       if (!currentHomes(board) || !Array.isArray(board.homes)) return false;
       const fresh = list(board.homes).filter(home => validHome(home, board.districtId));
       const mine = validHome(board.myHome, board.districtId) ? board.myHome : null;
-      const fields = home => home && [home.key, home.street, home.districtId, home.mine, home.ownership, home.owner?.name, home.owner?.kind];
+      const fields = home => home && [home.key, home.street, home.districtId, home.buildingId, home.mine, home.ownership, home.owner?.name, home.owner?.kind];
       const fingerprint = JSON.stringify([board.viewer, board.districtId, fresh.map(fields), fields(mine), board.nextCursor, board.total]);
       if (fingerprint === lastHomesHydration) return true;
       lastHomesHydration = fingerprint;
@@ -379,7 +384,7 @@
     }
     function inspectDistrict(id) {
       if (!atlasDistricts().some(district => district.id === id)) return;
-      selectedDistrict = id; selectedHome = ''; setNotice(''); render(); changed(); focusMapDetail('[data-city-district-detail]'); readHomes();
+      selectedDistrict = id; selectedHome = ''; selectedPlotId = ''; setNotice(''); render(); changed(); focusMapDetail('[data-city-district-detail]'); readHomes();
     }
     function focusMapDetail(selector) {
       const target = content.querySelector(selector); if (!target) return;
@@ -434,7 +439,7 @@
       content.append(grid);
       const localHomes = currentHomes(localHomesBoard) ? list(lastFrame?.homes || options.getState?.()?.homes).filter(home => localHomesBoard.homes.some(item => item.key === home.key)) : [];
       if (localHomes.length && options.onHome) {
-        heading('Neighborhood streets', 'Walk to a recorded street. House placement is illustrative.');
+        heading('Neighborhood streets', worldLayout() ? 'Walk to a recorded street on its permanent house plot.' : 'Walk to a recorded street. House placement is illustrative.');
         const homes = el('div', 'city-world__destination-grid');
         for (const home of localHomes) {
           const go = button('Walk to ' + home.street, () => { close(false); options.onHome?.(home.key); });
@@ -444,12 +449,108 @@
       }
       paintMap();
     }
+    function inspectPlot(plot) {
+      if (!plot || !atlasDistricts().some(district => district.id === plot.districtId)) return;
+      selectedDistrict = plot.districtId; selectedPlotId = plot.id;
+      selectedHome = homeDistrict === plot.districtId ? homeRows.find(home => home.buildingId === plot.id)?.key || '' : '';
+      setNotice(''); render(); changed(); focusMapDetail('[data-city-plot-detail]');
+      if (homeDistrict !== plot.districtId) readHomes();
+    }
+    function renderConnectedAtlas(layout, districts) {
+      const diagram = el('div', 'city-world__atlas-diagram city-world__atlas-diagram--connected');
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      const scale = 768 / layout.world.width, height = layout.world.height * scale;
+      const area = atlasZoom === 'district' ? layout.getDistrict(selectedDistrict)?.bounds : null;
+      svg.setAttribute('viewBox', area ? [area.x * scale, area.y * scale, area.width * scale, area.height * scale].join(' ') : '0 0 768 ' + height); svg.setAttribute('aria-hidden', 'true');
+      svg.dataset.cityWorldAtlas = layout.metadata?.version || 'connected'; svg.dataset.cityWorldPlotCount = String(layout.plots.length);
+      function shape(tag, attributes, className) {
+        const node = document.createElementNS(svg.namespaceURI, tag);
+        for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, String(value));
+        if (className) node.setAttribute('class', className); svg.append(node); return node;
+      }
+      const rectPath = rect => 'M' + rect.x * scale + ',' + rect.y * scale + 'h' + rect.width * scale + 'v' + rect.height * scale + 'h' + -rect.width * scale + 'z';
+      for (const district of districts) {
+        const region = layout.getDistrict(district.id); if (!region) continue;
+        shape('path', { d: rectPath(region.bounds) }, 'city-world__atlas-region' + (district.id === selectedDistrict ? ' is-selected' : ''));
+      }
+      shape('path', { d: layout.roads.map(rectPath).join('') }, 'city-world__atlas-roads');
+      // Plot geometry is public. Only accepted, current directory rows can add an ownership highlight.
+      shape('path', { d: layout.plots.map(plot => rectPath(plot.building)).join('') }, 'city-world__atlas-plots');
+      const known = new Map();
+      for (const board of [localHomesBoard, boards.homes]) if (currentHomes(board)) for (const home of list(board.homes)) {
+        const plot = homePlot(home); if (plot && plot.districtId === home.districtId) known.set(plot.id, { plot, home });
+      }
+      for (const [mine, className] of [[false, 'city-world__atlas-records'], [true, 'city-world__atlas-owned']]) {
+        shape('path', { d: Array.from(known.values()).filter(item => item.home.mine === mine).map(item => rectPath(item.plot.building)).join('') }, className);
+      }
+      const focused = homePlot(homeRows.find(home => home.key === selectedHome)) || layout.getPlot(selectedPlotId);
+      if (focused) {
+        const box = focused.building;
+        shape('rect', { x: box.x * scale - 3, y: box.y * scale - 3, width: box.width * scale + 6, height: box.height * scale + 6 }, 'city-world__atlas-focused');
+      }
+      for (const district of districts) {
+        const region = layout.getDistrict(district.id); if (!region) continue;
+        const core = region.core, node = shape('rect', { x: core.x * scale, y: core.y * scale, width: core.width * scale, height: core.height * scale, rx: 5 }, 'city-world__atlas-core' + (district.id === actualDistrict() ? ' is-here' : ''));
+        node.dataset.cityAtlasDistrict = district.id; onRender(node, 'click', () => inspectDistrict(district.id));
+        const name = shape('text', { x: (core.x + core.width / 2) * scale, y: (core.y + core.height / 2) * scale + 4 }); name.textContent = district.name;
+        onRender(name, 'click', () => inspectDistrict(district.id));
+        const suburb = shape('text', { x: (region.bounds.x + region.bounds.width / 2) * scale, y: (region.bounds.y + region.bounds.height - 70) * scale }, 'city-world__atlas-suburb');
+        suburb.textContent = region.capacity + ' homes · suburban streets';
+      }
+      const position = shape('circle', { r: 5 }, 'city-world__atlas-position'); position.dataset.cityAtlasPosition = '';
+      onRender(svg, 'click', event => {
+        const matrix = svg.getScreenCTM(); if (!matrix) return;
+        const point = svg.createSVGPoint(); point.x = event.clientX; point.y = event.clientY;
+        const local = point.matrixTransform(matrix.inverse()), x = local.x / scale, y = local.y / scale;
+        const plot = layout.plots.find(item => x >= item.building.x && x <= item.building.x + item.building.width && y >= item.building.y && y <= item.building.y + item.building.height);
+        if (plot) inspectPlot(plot);
+      });
+      diagram.append(svg); content.append(diagram);
+      const zoom = el('div', 'city-world__map-modes');
+      for (const [id, label] of [['city', 'Whole city'], ['district', 'Selected district']]) {
+        const choice = button(label, () => { atlasZoom = id; render(); }); choice.dataset.cityAtlasZoom = id;
+        choice.setAttribute('aria-pressed', String(atlasZoom === id)); zoom.append(choice);
+      }
+      content.append(zoom);
+      content.append(el('p', 'city-world__map-legend', '2,500 permanent house plots · ● You · pale green: your recorded deed · outlined: selected plot'));
+      content.append(el('p', 'city-world__hint', 'Suburban streets join the district centers. Tap a house or find its building number below. Unloaded ownership records are not shown.'));
+      const finder = el('form', 'city-world__plot-finder'), districtLabel = el('label', '', 'District'), label = el('label', '', 'Building number');
+      const districtSelect = el('select'); districtSelect.dataset.cityPlotDistrict = ''; districtSelect.setAttribute('aria-label', 'Deed building district');
+      for (const district of districts) { const option = el('option', '', district.name); option.value = district.id; districtSelect.append(option); }
+      districtSelect.value = selectedDistrict || actualDistrict(); districtLabel.append(districtSelect);
+      const input = el('input'); input.type = 'number'; input.min = '1'; input.step = '1'; input.inputMode = 'numeric'; input.required = true; input.dataset.cityPlotNumber = ''; input.setAttribute('aria-label', 'Deed building number');
+      function plotLimit() { input.max = String(layout.getDistrict(districtSelect.value)?.capacity || 0); input.placeholder = '1–' + input.max; }
+      plotLimit(); onRender(districtSelect, 'change', plotLimit);
+      const submit = el('button', '', 'Find building'); submit.type = 'submit'; submit.dataset.cityFindPlot = '';
+      label.append(input); finder.append(districtLabel, label, submit);
+      onRender(finder, 'submit', event => { event.preventDefault(); const plot = layout.plots.find(item => item.districtId === districtSelect.value && item.number === Number(input.value)); if (plot) inspectPlot(plot); });
+      content.append(finder);
+      if (focused) {
+        const detail = el('section', 'city-world__home-detail'); detail.dataset.cityPlotDetail = focused.id; detail.dataset.worldControl = 'plot:' + focused.id; detail.tabIndex = -1;
+        const home = known.get(focused.id)?.home, district = districts.find(item => item.id === focused.districtId);
+        detail.append(el('h4', '', 'Building ' + focused.number + ' · ' + (district?.name || caption(focused.districtId))), el('p', '', home ? home.mine ? 'Your recorded street: ' + home.street : 'Recorded street: ' + home.street : 'This house has a permanent Deed building identity. Ownership records for this plot are not loaded.'));
+        if (typeof options.onPlotInspect === 'function') detail.append(button('Open Deed building →', () => { close(false); options.onPlotInspect({ buildingId: focused.id, districtId: focused.districtId }); }));
+        content.append(detail);
+      }
+      paintAtlasPosition();
+    }
+    function paintAtlasPosition() {
+      const marker = content.querySelector('[data-city-atlas-position]'), layout = worldLayout(); if (!marker || !layout) return;
+      const frame = lastFrame || options.getState?.() || {}, pose = frame.position || frame.player;
+      const origin = frame.world?.origin || layout.getDistrict(actualDistrict())?.origin;
+      if (!pose || !origin) { marker.style.display = 'none'; return; }
+      const scale = 768 / layout.world.width;
+      marker.style.display = ''; marker.setAttribute('cx', (pose.x + origin.x) * scale); marker.setAttribute('cy', (pose.y + origin.y) * scale);
+    }
     function renderAtlas() {
       const districts = atlasDistricts(), category = list(boards.collection?.categories).find(item => item.id === 'districts');
       const visits = category ? new Set(list(category.items).filter(item => item.got === true).map(item => item.id)) : null;
-      heading('The city beyond this block', 'Inspect districts and their recorded streets. Choosing a district does not travel or spend cash.');
+      const layout = worldLayout();
+      heading(layout ? 'One city · six connected districts' : 'The city beyond this block', 'Inspect districts and their recorded streets. Choosing a district does not travel or spend cash.');
       content.append(el('p', 'city-world__hint', visits ? visits.size + ' / ' + districts.length + ' districts recorded in your Collection' : 'Your recorded visits are loading…'));
       if (!districts.length) { content.append(el('p', 'city-world__hint', 'The world overview is not available yet.')); return; }
+      if (layout) renderConnectedAtlas(layout, districts);
+      else {
       const diagram = el('div', 'city-world__atlas-diagram');
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', '0 0 480 280'); svg.setAttribute('aria-hidden', 'true');
       const positions = new Map(districts.map((district, index) => [district.id, { x: 90 + index % 3 * 150, y: 70 + Math.floor(index / 3) * 140 }])), drawn = new Set();
@@ -469,6 +570,7 @@
         onRender(name, 'click', () => inspectDistrict(district.id));
       }
       diagram.append(svg); content.append(diagram, el('p', 'city-world__hint', 'Tap a district or use the list. Overview positions are illustrative.'));
+      }
       const grid = el('div', 'city-world__districts');
       for (const district of districts) {
         const choose = button('', () => inspectDistrict(district.id), 'city-world__district'); choose.dataset.cityDistrict = district.id;
@@ -492,7 +594,7 @@
     }
     function renderHomes(district) {
       const section = el('section', 'city-world__homes'); section.dataset.cityHomesDistrict = district.id;
-      section.append(el('h4', '', 'Street directory'), el('p', 'city-world__hint', 'Deed records and public stewards. House placement is illustrative, not a tracked residence.'));
+      section.append(el('h4', '', 'Street directory'), el('p', 'city-world__hint', worldLayout() ? 'Deed records and public stewards. Each recorded building keeps its permanent plot; house markers do not track residents.' : 'Deed records and public stewards. House placement is illustrative, not a tracked residence.'));
       if (homeDistrict !== district.id) { section.append(el('p', 'city-world__hint', 'This district’s streets have not loaded yet.')); content.append(section); return; }
       section.append(el('p', 'city-world__hint', homeRows.length + ' shown · ' + homeTotal + ' recorded streets'));
       const grid = el('div', 'city-world__home-list');
@@ -725,6 +827,8 @@
       for (const field of content.querySelectorAll('input,select')) if (drafts.has(field.getAttribute('aria-label'))) {
         const draft=drafts.get(field.getAttribute('aria-label'));field.value=draft.value;if(field.type==='checkbox')field.checked=draft.checked;
       }
+      const plotNumber = content.querySelector('[data-city-plot-number]'), plotDistrict = content.querySelector('[data-city-plot-district]');
+      if (plotNumber && plotDistrict) { plotNumber.max = String(worldLayout()?.getDistrict(plotDistrict.value)?.capacity || 0); plotNumber.placeholder = '1–' + plotNumber.max; }
       renderedOpening = opening;
       paintReadState(); dock.scrollTop = scroll;
       if (options.receipt) {
@@ -757,44 +861,61 @@
       }
       dock.scrollTop = scroll;
       if (focused) {
-        const target = (focusKey ? Array.from(dock.querySelectorAll('button,input,select,[data-city-nearby-feed]')).find(node => !node.disabled && (node.dataset.worldControl || node.getAttribute('aria-label')) === focusKey) : null) || content;
+        const target = (focusKey ? Array.from(dock.querySelectorAll('button,input,select,[data-city-nearby-feed],[data-city-plot-detail]')).find(node => !node.disabled && (node.dataset.worldControl || node.getAttribute('aria-label')) === focusKey) : null) || content;
         target.focus({ preventScroll: true }); if (selection && target.matches('input[type="text"]')) target.setSelectionRange(...selection);
       }
       changed();
     }
     function paintMap() {
+      paintAtlasPosition();
       const canvas = content.querySelector('[data-city-minimap]'); if (!canvas) return;
       const context = canvas.getContext('2d'); if (!context) return;
       const state = lastFrame || options.getState?.() || {}, world = state.world || { width: 960, height: 640 };
-      const sx = canvas.width / world.width, sy = canvas.height / world.height;
+      const layout = worldLayout(), pose = state.position || state.player;
+      const connected = layout && world.width === layout.world.width;
+      const origin = world.origin || layout?.getDistrict(actualDistrict())?.origin || { x: 0, y: 0 };
+      const view = connected ? { width: Math.min(960, world.width), height: Math.min(640, world.height) } : { width: world.width, height: world.height };
+      view.x = connected ? Math.max(number(world.x), Math.min(number(world.x) + world.width - view.width, number(pose?.x) - view.width / 2)) : number(world.x);
+      view.y = connected ? Math.max(number(world.y), Math.min(number(world.y) + world.height - view.height, number(pose?.y) - view.height / 2)) : number(world.y);
+      const sx = canvas.width / view.width, sy = canvas.height / view.height;
+      const px = x => (x - view.x) * sx, py = y => (y - view.y) * sy;
+      canvas.dataset.cityMapBounds = [view.x, view.y, view.width, view.height].join(',');
       context.fillStyle = '#182c2c'; context.fillRect(0, 0, canvas.width, canvas.height);
       context.fillStyle = '#47554b';
-      if (Array.isArray(state.roads)) for (const road of list(state.roads, 96)) context.fillRect(road.x * sx, road.y * sy, road.width * sx, road.height * sy);
+      if (connected) for (const road of layout.roads) context.fillRect(px(road.x - origin.x), py(road.y - origin.y), road.width * sx, road.height * sy);
+      else if (Array.isArray(state.roads)) for (const road of list(state.roads, 96)) context.fillRect(px(road.x), py(road.y), road.width * sx, road.height * sy);
       else { context.fillRect(0, 96, canvas.width, 72); context.fillRect(145, 0, 55, canvas.height); }
-      for (const obstacle of list(state.obstacles, 160)) { context.fillStyle = '#927854'; context.fillRect(obstacle.x * sx, obstacle.y * sy, obstacle.width * sx, obstacle.height * sy); }
+      if (connected) {
+        context.fillStyle = '#7d765f';
+        for (const plot of layout.nearPlots({ x: view.x + origin.x, y: view.y + origin.y, width: view.width, height: view.height })) {
+          const box = plot.building; context.fillRect(px(box.x - origin.x), py(box.y - origin.y), box.width * sx, box.height * sy);
+        }
+      }
+      for (const obstacle of list(state.obstacles, 160)) { context.fillStyle = '#927854'; context.fillRect(px(obstacle.x), py(obstacle.y), obstacle.width * sx, obstacle.height * sy); }
       const route = list(state.route, 300).filter(point => Number.isFinite(point?.x) && Number.isFinite(point?.y));
-      const pose = state.position || state.player;
       if (route.length && pose) {
-        context.strokeStyle = '#d7e8bc'; context.lineWidth = 3; context.setLineDash([5, 3]); context.beginPath(); context.moveTo(pose.x * sx, pose.y * sy);
-        for (const point of route) context.lineTo(point.x * sx, point.y * sy);
+        context.strokeStyle = '#d7e8bc'; context.lineWidth = 3; context.setLineDash([5, 3]); context.beginPath(); context.moveTo(px(pose.x), py(pose.y));
+        for (const point of route) context.lineTo(px(point.x), py(point.y));
         context.stroke(); context.setLineDash([]);
       }
       const objective = trackableObjectives().find(item => item.id === trackedObjectiveId);
       const targetId = state.questVenueId || objective?.venueId;
-      for (const home of list(state.homes)) if (currentHomes(localHomesBoard) && localHomesBoard.homes.some(item => item.key === home.key) && home.entrance) {
-        context.fillStyle = home.mine ? '#b1d88f' : '#b0b8a7'; context.fillRect(home.entrance.x * sx - 3, home.entrance.y * sy - 3, 6, 6);
+      for (const home of list(state.homes)) if (currentHomes(localHomesBoard) && home.entrance) {
+        const record = localHomesBoard.homes.find(item => item.key === home.key); if (!record) continue;
+        context.fillStyle = record.mine ? '#b1d88f' : '#b0b8a7'; context.fillRect(px(home.entrance.x) - 3, py(home.entrance.y) - 3, 6, 6);
       }
-      for (const exit of list(state.exits, 16)) { context.fillStyle = '#9fc4da'; context.fillRect(exit.x * sx - 3, exit.y * sy - 3, 6, 6); }
+      for (const exit of list(state.exits, 16)) { context.fillStyle = '#9fc4da'; context.fillRect(px(exit.x) - 3, py(exit.y) - 3, 6, 6); }
       for (const venue of list(options.venues, 16)) {
-        context.fillStyle = '#e7b65d'; context.fillRect(venue.x * sx - 4, venue.y * sy - 4, 8, 8);
+        if (venue.x < view.x || venue.x > view.x + view.width || venue.y < view.y || venue.y > view.y + view.height) continue;
+        context.fillStyle = '#e7b65d'; context.fillRect(px(venue.x) - 4, py(venue.y) - 4, 8, 8);
         if (venue.id === targetId) {
           context.strokeStyle = '#fff0a0'; context.lineWidth = 2; context.beginPath();
-          context.moveTo(venue.x * sx, venue.y * sy - 11); context.lineTo(venue.x * sx + 11, venue.y * sy); context.lineTo(venue.x * sx, venue.y * sy + 11); context.lineTo(venue.x * sx - 11, venue.y * sy); context.closePath(); context.stroke();
+          context.moveTo(px(venue.x), py(venue.y) - 11); context.lineTo(px(venue.x) + 11, py(venue.y)); context.lineTo(px(venue.x), py(venue.y) + 11); context.lineTo(px(venue.x) - 11, py(venue.y)); context.closePath(); context.stroke();
         }
-        context.fillStyle = '#eae1c3'; context.font = '10px monospace'; context.fillText(String(venue.name || '').slice(0, 14), Math.max(2, Math.min(canvas.width - 86, venue.x * sx - 30)), venue.y * sy + 17);
+        context.fillStyle = '#eae1c3'; context.font = '10px monospace'; context.fillText(String(venue.name || '').slice(0, 14), Math.max(2, Math.min(canvas.width - 86, px(venue.x) - 30)), py(venue.y) + 17);
       }
-      for (const actor of list(state.actorMarkers, 24)) { context.fillStyle = actor.kind === 'agent' ? '#9ec5ef' : actor.kind === 'npc' ? '#c6b696' : '#a5d9c6'; context.fillRect(actor.x * sx - 2, actor.y * sy - 2, 4, 4); }
-      if (pose) { context.fillStyle = '#fff4bf'; context.beginPath(); context.arc(pose.x * sx, pose.y * sy, 5, 0, Math.PI * 2); context.fill(); }
+      for (const actor of list(state.actorMarkers, 24)) { context.fillStyle = actor.kind === 'agent' ? '#9ec5ef' : actor.kind === 'npc' ? '#c6b696' : '#a5d9c6'; context.fillRect(px(actor.x) - 2, py(actor.y) - 2, 4, 4); }
+      if (pose) { context.fillStyle = '#fff4bf'; context.beginPath(); context.arc(px(pose.x), py(pose.y), 5, 0, Math.PI * 2); context.fill(); }
       const target = list(options.venues, 16).find(venue => venue.id === targetId), destination = list(options.venues, 16).find(venue => venue.id === state.selectedVenue);
       canvas.setAttribute('aria-label', 'Neighborhood minimap with your position and venue waypoints.' + (target ? ' Tracked objective: ' + target.name + '.' : '') + (route.length ? ' Walking route' + (destination ? ' to ' + destination.name : '') + ' shown.' : '') + ' Accessible destinations follow.');
     }
@@ -854,7 +975,7 @@
         if (ownerChanged) {
           close(false); stopPolling(); scope = owner; boards = Object.create(null); options.social = null; options.chat = null; options.receipt = null; options.recovery = false;
           options.atlas = null; options.collection = null; options.homes = null;
-          selectedDistrict = ''; selectedHome = ''; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; lastFrame = null;
+          selectedDistrict = ''; selectedHome = ''; selectedPlotId = ''; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; lastFrame = null;
           options.onHomes?.(null);
           options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {};
           pending = false; trackedObjectiveId = ''; options.trackedObjectiveId = next.trackedObjectiveId || ''; roomDraft = null; chatUnread = 0; clearResourceReceipt(); lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
@@ -897,7 +1018,9 @@
       openMapOverview(districtId) {
         const allowed = atlasDistricts().some(district => district.id === districtId)
           || list(options.rules?.districts).some(district => (district.id || district) === districtId);
-        selectedDistrict = allowed ? districtId : actualDistrict();
+        const nextDistrict = allowed ? districtId : actualDistrict();
+        if (selectedDistrict !== nextDistrict) { selectedPlotId = ''; selectedHome = ''; }
+        selectedDistrict = nextDistrict;
         open('map', { world: true });
       },
       inspectHome(key, focus = false) {

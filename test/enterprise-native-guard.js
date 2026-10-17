@@ -1,7 +1,29 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {ENTERPRISE_NATIVE_PROOFS,ENTERPRISE_NATIVE_FILES,assertEnterpriseInventory,assertEnterpriseNativeMode,assertEnterpriseNativeTrackedBytes,assertEnterpriseInputDefinition,assertEnterpriseDirectoryEntries,assertEnterpriseBackend,enterpriseChildEnv,assertEnterpriseResults,assertEnterpriseCleanup} from '../tools/enterprise-native.js';
-import {ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from '../tools/enterprise-native-inputs.js';
+import crypto from 'node:crypto';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {parse} from 'acorn';
+import {ENTERPRISE_NATIVE_PROOFS,ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES,ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES,assertEnterpriseInventory,assertEnterpriseNativeMode,assertEnterpriseNativeTrackedBytes,assertEnterpriseInputDefinition,assertEnterpriseSuccessorInputDefinition as historicalDefinition,assertEnterpriseSuccessorTrackedInput as historicalTrackedInput,assertEnterpriseCombinedInputDefinition,assertEnterpriseCombinedTrackedInput,assertEnterpriseDirectoryEntries,assertEnterpriseBackend,enterpriseChildEnv,assertEnterpriseResults,assertEnterpriseCleanup} from '../tools/enterprise-native.js';
+import {ENTERPRISE_NATIVE_BASE_REVISION as COMMERCE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_BASE_INPUTS as COMMERCE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_FILES as COMMERCE_NATIVE_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS,ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS} from '../tools/enterprise-native-inputs.js';
+import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS} from '../tools/enterprise-native-continuous-city-inputs.js';
+
+// Historical predicate controls use one exact immutable E definition; never current admission.
+const historicalGit=(...args)=>execFileSync('git',['--no-optional-locks','--no-replace-objects',...args],{cwd:fileURLToPath(new URL('../',import.meta.url)),maxBuffer:8*1024*1024,windowsHide:true});
+const historicalDigest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+const historicalInputSource="792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",historicalInputPin=Object.freeze({"file":"tools/enterprise-native-inputs.js","mode":"100644","blob":"2da87691ee5501e3b17817bfc43f874ba20fae30","sha256":"f0bf74c00d1253d25ec9cfc9d4df733a4bf08807d96cb9b4688951f18d03d1cb"}),historicalGUISource="6301827eb77fa304891e7e9fa2fcd69a89342621";
+function pinnedHistoricalBytes(revision,pin){assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(historicalGit('rev-parse',revision+'^{commit}').toString().trim(),revision);const line=historicalGit('ls-tree','-z',revision,'--',pin.file).toString(),expected=pin.mode+' blob '+pin.blob+'\t'+pin.file+'\0';assert.equal(line,expected,'Exact immutable historical mode/blob before decode');const bytes=historicalGit('cat-file','blob',pin.blob);assert.equal(historicalDigest(bytes),pin.sha256,'Exact immutable historical full bytes before decode');return bytes;}
+function decodeHistoricalNativeDefinition(){
+ const bytes=pinnedHistoricalBytes(historicalInputSource,historicalInputPin),source=bytes.toString('utf8');assert(Buffer.from(source).equals(bytes));const ast=parse(source,{ecmaVersion:'latest',sourceType:'module'}),values=new Map();
+ const decode=node=>{if(node.type==='Literal')return node.value;if(node.type==='ArrayExpression'){assert(node.elements.every(Boolean));return Object.freeze(node.elements.map(decode));}if(node.type==='ObjectExpression'){const keys=new Set();return Object.freeze(Object.fromEntries(node.properties.map(p=>{assert(p.type==='Property'&&!p.computed&&!p.method&&p.kind==='init');const key=p.key.name??p.key.value;assert(typeof key==='string'&&!keys.has(key)&&!['__proto__','constructor','prototype'].includes(key));keys.add(key);return[key,decode(p.value)];})));}if(node.type==='CallExpression'&&!node.optional&&node.arguments.length===1&&node.callee.type==='MemberExpression'&&!node.callee.computed){const callee=node.callee;if(callee.object.name==='Object'&&callee.property.name==='freeze')return Object.freeze(decode(node.arguments[0]));if(callee.property.name==='map'&&node.arguments[0].type==='MemberExpression'&&!node.arguments[0].computed&&node.arguments[0].object.name==='Object'&&node.arguments[0].property.name==='freeze'){const rows=decode(callee.object);assert(Array.isArray(rows));return Object.freeze(rows.map(Object.freeze));}const expected='r=>Object.freeze({directory:r.directory,eligibleNames:Object.freeze(r.eligibleNames)})';if(callee.property.name==='map'&&source.slice(node.arguments[0].start,node.arguments[0].end)===expected){const rows=decode(callee.object);return Object.freeze(rows.map(r=>Object.freeze({directory:r.directory,eligibleNames:Object.freeze(r.eligibleNames)})));}}throw Error('Unsupported historical native literal shape');};
+ for(const statement of ast.body){assert(statement.type==='ExportNamedDeclaration'&&statement.declaration?.type==='VariableDeclaration'&&statement.declaration.kind==='const'&&statement.declaration.declarations.length===1);const d=statement.declaration.declarations[0];assert(d.id.type==='Identifier'&&!values.has(d.id.name));values.set(d.id.name,decode(d.init));}
+ assert.deepEqual([...values.keys()],['ENTERPRISE_NATIVE_BASE_REVISION','ENTERPRISE_NATIVE_FILES','ENTERPRISE_NATIVE_BASE_INPUTS','ENTERPRISE_NATIVE_BINARY_FILES','ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS']);return Object.freeze({baseRevision:values.get('ENTERPRISE_NATIVE_BASE_REVISION'),files:values.get('ENTERPRISE_NATIVE_FILES'),baseInputs:values.get('ENTERPRISE_NATIVE_BASE_INPUTS')});
+}
+const historicalBasis=decodeHistoricalNativeDefinition(),ENTERPRISE_NATIVE_BASE_REVISION=historicalBasis.baseRevision,ENTERPRISE_NATIVE_BASE_INPUTS=historicalBasis.baseInputs,HISTORICAL_ENTERPRISE_NATIVE_FILES=historicalBasis.files;
+const assertEnterpriseSuccessorInputDefinition=(manifest=ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS)=>historicalDefinition(manifest,historicalBasis);
+const assertEnterpriseSuccessorTrackedInput=(file,current,authored,canonical,manifest=ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS)=>historicalTrackedInput(file,current,authored,canonical,manifest,historicalBasis);
+
 assert.deepEqual(process.argv.slice(2),[],'Complete source-only guard test; no native selector');
 const checks=[];const pass=(name,fn)=>{fn();checks.push({name,pass:true});},reject=(name,fn)=>{assert.throws(fn);checks.push({name,refused:true});},clone=x=>JSON.parse(JSON.stringify(x));
 const local={ENTERPRISE_NATIVE_PROFILE:'local',ENTERPRISE_NATIVE_ADMIN39_DATABASE_URL:'postgresql://pilot_runner@127.0.0.1:35439/postgres',ENTERPRISE_NATIVE_ADMIN49_DATABASE_URL:'postgresql://pilot_runner@127.0.0.1:35449/postgres',CHAIN_ENABLED:'off',RESOURCE_ECONOMY:'off'},ci={ENTERPRISE_NATIVE_PROFILE:'ci',ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL:'postgresql://postgres:pgcheck@127.0.0.1:5432/postgres',CHAIN_ENABLED:'off',RESOURCE_ECONOMY:'off'};
@@ -26,4 +48,63 @@ const syntheticSource={revision:'b'.repeat(40),files:Object.fromEntries(ENTERPRI
 for(const mutate of[r=>r.pop(),r=>{r[0].code=1;},r=>{r[0].signal='SIGTERM';},r=>{r[0].error='spawn_error';},r=>{r[0].state='skipped';},r=>{r[0].sourceSha256='d'.repeat(64);},r=>{r[0].port=35449;},r=>{r[0].durationMs=310001;},r=>{r[0].extra=true;},r=>{r[1].database=r[0].database;}])reject('synthetic result incomplete/failure/identity refuses',()=>{const x=clone(rows);mutate(x);assertEnterpriseResults(x,syntheticSource,'local');});
 const cleanup={complete:true,adminsClosed:true,adminEndings:[{closed:true},{closed:true}],freshZeros:[35439,35449].map(port=>({port,complete:true,readerClosed:true,identity:identity(port),activeNonAdminDatabaseClientSessions:[]}))};pass('synthetic cleanup predicate only',()=>assertEnterpriseCleanup(cleanup,'local'));for(const mutate of[x=>{x.complete=false;},x=>{x.adminsClosed=false;},x=>{x.adminEndings[0].closed=false;},x=>{x.freshZeros.pop();},x=>{x.freshZeros[0].readerClosed=false;},x=>{x.freshZeros[0].complete=false;},x=>{x.freshZeros[0].activeNonAdminDatabaseClientSessions=[{datname:'unknown',pid:1}];},x=>{x.freshZeros[0].failure={message:'reader failed'};},x=>{x.freshZeros[0].identity=identity(35449);}])reject('synthetic cleanup failure refuses completion',()=>{const x=clone(cleanup);mutate(x);assertEnterpriseCleanup(x,'local');});
 const source=fs.readFileSync(new URL('../tools/enterprise-native.js',import.meta.url),'utf8'),run=source.slice(source.indexOf('async function run(){'));assert(run.indexOf('assertEnterpriseNativeMode(')<run.indexOf('captureEnterpriseSource()'));assert(run.indexOf('captureEnterpriseSource()')<run.indexOf("await import('pg')"));assert(run.indexOf('await import(\'pg\')')<run.indexOf('spawn(process.execPath'));assert(run.lastIndexOf('assertEnterpriseCleanup(result.cleanup,profile)')<run.lastIndexOf('result.complete=true'));assert(source.includes("child.once('close'"));assert(source.includes('await reader.end();receipt.readerClosed=true'));assert(ENTERPRISE_NATIVE_FILES.includes('tools/enterprise-native.js'));
+// Synthetic successor definitions test refusal only; they never replace actual Git capture.
+const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+const digest=(algorithm,bytes)=>crypto.createHash(algorithm).update(bytes).digest('hex');
+const gitBlob=bytes=>digest('sha1',Buffer.concat([Buffer.from('blob '+bytes.length+'\0'),bytes]));
+const authoredBytes=Buffer.from('// synthetic authored GUI runtime\n');
+const authoredPin={blob:gitBlob(authoredBytes),sha256:digest('sha256',authoredBytes),mode:'100644'};
+const oldServerPin=ENTERPRISE_NATIVE_BASE_INPUTS.find(row=>row.file==='src/server.js');
+const successor=freeze({status:'SEALED',revision:'b'.repeat(40),predecessor:'792f1da708375fc28fca6fe9c4fb9c2c7c756ee6',legacyBaseRevision:ENTERPRISE_NATIVE_BASE_REVISION,
+ replacements:ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES.map(file=>{const old=ENTERPRISE_NATIVE_BASE_INPUTS.find(row=>row.file===file);return{file,before:{blob:old.blob,sha256:old.sha256},after:{...authoredPin}};}),
+ additions:ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES.map(file=>({file,...authoredPin}))});
+const record={type:'blob',mode:'100644',blob:authoredPin.blob};
+pass('synthetic exact successor declaration preserves old pins',()=>assertEnterpriseSuccessorInputDefinition(successor));
+for(const field of ['replacements','additions'])for(const row of successor[field])reject('successor refuses omitted '+row.file,()=>{const changed=clone(successor);changed[field]=changed[field].filter(item=>item.file!==row.file);assertEnterpriseSuccessorInputDefinition(freeze(changed));});
+assert.equal(ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES.length,14);assert.equal(ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES.length,46);
+pass('synthetic actual authored replacement bytes',()=>assertEnterpriseSuccessorTrackedInput('src/server.js',record,record,authoredBytes,successor));
+pass('synthetic actual authored new boot asset bytes',()=>assertEnterpriseSuccessorTrackedInput('public/city-world-layout.js',record,record,authoredBytes,successor));
+for(const mutate of[
+ x=>{x.status='UNSEALED';},x=>{x.revision='HEAD';},x=>{x.predecessor='c'.repeat(40);},x=>{x.legacyBaseRevision='c'.repeat(40);},
+ x=>{x.stagedFiles=['src/server.js'];},x=>{x.replacements[0].before.blob='c'.repeat(40);},x=>{x.replacements[0].before.sha256='c'.repeat(64);},
+ x=>{x.replacements[0].after.blob=x.replacements[0].before.blob;},x=>{x.replacements[0].after.sha256=x.replacements[0].before.sha256;},
+ x=>{x.replacements[0].after.mode='120000';},x=>{x.replacements[0].file='tools/enterprise-native.js';},x=>{x.replacements.push(x.replacements[0]);},
+ x=>{x.additions=[];},x=>{x.additions.push(x.additions[0]);},x=>{x.additions[0].file='../public/city-world-layout.js';},
+ x=>{x.additions[0].file='public\\city-world-layout.js';},x=>{x.additions[0].file='src/server.js';},
+ x=>{x.additions.push({file:'tools/enterprise-native-continuous-city-inputs.js',...authoredPin});},
+ x=>{x.additions.push({file:'tools/enterprise-native-guard.js',...authoredPin,unknown:true});}
+])reject('successor manifest mutation fails closed',()=>{const changed=clone(successor);mutate(changed);assertEnterpriseSuccessorInputDefinition(freeze(changed));});
+reject('mutable successor metadata',()=>assertEnterpriseSuccessorInputDefinition(clone(successor)));
+for(const [file,current,authored,bytes]of[
+ ['unknown-input.js',record,record,authoredBytes],['src/server.js',{...record,blob:oldServerPin.blob},record,authoredBytes],
+ ['src/server.js',record,{...record,blob:oldServerPin.blob},authoredBytes],['src/server.js',record,record,Buffer.from(authoredBytes+'// unreviewed\n')],
+ ['public/city-world-layout.js',record,record,Buffer.from(authoredBytes+'\n')],['src/server.js',{...record,mode:'100755'},record,authoredBytes],
+ ['src/server.js',{...record,type:'tree'},record,authoredBytes],['src/server.js',record,null,authoredBytes]
+])reject('current/authored runtime source mutation',()=>assertEnterpriseSuccessorTrackedInput(file,current,authored,bytes,successor));
+assert.equal(HISTORICAL_ENTERPRISE_NATIVE_FILES.length,1490,'Historical input inventory remains intact');
+assert.equal(ENTERPRISE_NATIVE_BASE_INPUTS.length,1487,'Historical three staged-file exemptions remain intact');
+assert(!source.includes('SourceBaseline('),'Native capture never projects current runtime bytes to historical code');
+if(ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.status==='UNSEALED')reject('unsealed real successor cannot admit native execution',()=>assertEnterpriseSuccessorInputDefinition());
+else{
+ pass('real successor declaration is sealed',()=>assertEnterpriseSuccessorInputDefinition());
+ for(const row of [...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.replacements.map(row=>({file:row.file,...row.after})),...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.additions]){
+  const canonical=pinnedHistoricalBytes(historicalGUISource,row);
+  const actual={type:'blob',mode:row.mode,blob:gitBlob(canonical)};
+  pass('actual successor bytes '+row.file,()=>assertEnterpriseSuccessorTrackedInput(row.file,actual,{type:'blob',mode:row.mode,blob:row.blob},canonical));
+ }
+}
+
+// Combined definitions are pure source controls; actual generated source remains unknown.
+if(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.status==='UNSEALED'){reject('actual combined native definition remains unsealed',()=>assertEnterpriseCombinedInputDefinition());assert.equal(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision,null);}else pass('actual compiled combined declaration is sealed',()=>assertEnterpriseCombinedInputDefinition());
+assert.equal(COMMERCE_NATIVE_FILES.length,1569);assert.equal(COMMERCE_NATIVE_BASE_INPUTS.length,1566);assert.equal(COMMERCE_NATIVE_BASE_REVISION,"181422abe5312e24be5bd76ec56fe87454bda664");
+const combined=freeze({...clone(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS),status:'SEALED',revision:'d'.repeat(40),guiSource:"6301827eb77fa304891e7e9fa2fcd69a89342621",guiWitnessSHA256:"e68690266599639a1ecdba0c44fcafbb8d48934de50bea3a3b5dc6db35d7c0d6",replacements:[{file:'src/server.js',before:{blob:COMMERCE_NATIVE_BASE_INPUTS.find(r=>r.file==='src/server.js').blob,sha256:COMMERCE_NATIVE_BASE_INPUTS.find(r=>r.file==='src/server.js').sha256},after:{...authoredPin}}],additions:[{"file":"tools/enterprise-native-continuous-city-inputs.js","mode":"100644","blob":"e1b57dc4289462bb1fab7a8ba18f2d4bfbd4d9f6","sha256":"e68690266599639a1ecdba0c44fcafbb8d48934de50bea3a3b5dc6db35d7c0d6"}]});
+pass('synthetic combined definition preserves original C prefix and ordinary GUI witness',()=>assertEnterpriseCombinedInputDefinition(combined));
+pass('synthetic combined actual replacement pin',()=>assertEnterpriseCombinedTrackedInput('src/server.js',record,record,authoredBytes,combined));
+for(const mutate of[x=>{x.status='UNSEALED';},x=>{x.version=2;},x=>{x.revision=null;},x=>{x.commerceSource='a'.repeat(40);},x=>{x.commerceDefinitionSHA256='a'.repeat(64);},x=>{x.guiSource='a'.repeat(40);},x=>{x.guiWitnessSHA256='a'.repeat(64);},x=>{x.stagedFiles=['outside'];},x=>{x.replacements[0].before.blob='a'.repeat(40);},x=>{x.replacements[0].before.sha256='a'.repeat(64);},x=>{x.replacements[0].file='tools/enterprise-native.js';},x=>{x.replacements.push(x.replacements[0]);},x=>{x.replacements[0].after.blob=x.replacements[0].before.blob;},x=>{x.replacements[0].after.sha256=x.replacements[0].before.sha256;},x=>{x.replacements[0].after.mode='120000';},x=>{x.additions=[];},x=>{x.additions.push(x.additions[0]);},x=>{x.additions[0].file='test/deed-discovery-fixture.js';},x=>{x.additions[0].file='../outside';},x=>{x.additions[0].file='C:/outside';},x=>{x.additions[0].file='dir\\outside';},x=>{x.additions[0].blob='a'.repeat(40);},x=>{x.additions[0].mode='100755';},x=>{x.additions[0].sha256='a'.repeat(64);}])reject('combined definition mutation refuses',()=>{const x=clone(combined);mutate(x);assertEnterpriseCombinedInputDefinition(freeze(x));});
+reject('mutable combined definition refuses',()=>assertEnterpriseCombinedInputDefinition(clone(combined)));
+for(const[current,authored,bytes]of[[{...record,blob:'a'.repeat(40)},record,authoredBytes],[record,{...record,blob:'a'.repeat(40)},authoredBytes],[{...record,mode:'100755'},record,authoredBytes],[record,record,Buffer.from('changed')],[{...record,type:'tree'},record,authoredBytes],[record,null,authoredBytes]])reject('actual combined pin drift refuses',()=>assertEnterpriseCombinedTrackedInput('src/server.js',current,authored,bytes,combined));
+reject('unknown combined input refuses',()=>assertEnterpriseCombinedTrackedInput('unknown',record,record,authoredBytes,combined));
+reject('historical predicate cannot silently use C basis',()=>historicalDefinition(ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS,Object.freeze({baseRevision:COMMERCE_NATIVE_BASE_REVISION,baseInputs:COMMERCE_NATIVE_BASE_INPUTS,files:COMMERCE_NATIVE_FILES})));
+const captureSource=source.slice(source.indexOf('export function captureEnterpriseSource(){'),source.indexOf('function assertStable('));assert(captureSource.indexOf('assertEnterpriseCombinedInputDefinition()')<captureSource.indexOf("textGit('rev-parse'"));assert(!captureSource.includes('assertEnterpriseSuccessorInputDefinition'));assert(captureSource.includes('if(!STAGED.includes(f))'));assert(!captureSource.includes('SUCCESSOR_STAGED.includes'));assert(source.includes('const SUCCESSOR_STAGED=STAGED;'));assert(!captureSource.includes('SourceBaseline('));
+
 console.log(JSON.stringify({phase:'SOURCE_ONLY_ENTERPRISE_NATIVE_GUARDS',checks:checks.length,syntheticAdmissionFixturesOnly:true,postgresImportsOrConnections:0,nativeExecution:false,sourceCaptureExecuted:false,release:false}));

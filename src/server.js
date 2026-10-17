@@ -638,7 +638,7 @@ export async function buildServer() {
     .header('cache-control', 'no-cache').send(uiCss));
   // City scenes are optional local assets; gameplay remains authoritative through the API.
   for (const [file, type] of [
-    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'],
+    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
     ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],
     ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],

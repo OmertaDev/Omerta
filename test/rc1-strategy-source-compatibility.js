@@ -1,5 +1,6 @@
 import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
 const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
+import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
@@ -21,7 +22,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(STRATEGY_SOURCE_CURRENT_PINS)) {
-  const current = normalize(companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8'))))))))), baseline = gitText(STRATEGY_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):continuousCityHistoricalInput(file, selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8'))))):continuousCityHistoricalInput(file, selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))))))))), baseline = gitText(STRATEGY_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(strategySourceBaseline(file, current), baseline);
   assert.equal(strategySourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

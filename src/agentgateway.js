@@ -935,16 +935,18 @@ const OPERATION_CONTRACTS = {
         } },
         districtId: { type: 'string' }, placement: { const: 'illustrative' },
         homes: { type: 'array', maxItems: 64, items: { type: 'object', additionalProperties: false,
-          required: ['key', 'street', 'districtId', 'owner', 'mine', 'ownership'], properties: {
+          required: ['key', 'street', 'districtId', 'buildingId', 'owner', 'mine', 'ownership'], properties: {
             key: { type: 'string', minLength: 1, maxLength: 128 }, street: { type: 'string', minLength: 1, maxLength: 128 },
+            buildingId: { type: ['string', 'null'], pattern: '^(docks|neon|foundry|brick|canal|cathedral)-[0-9]{4}$' },
             districtId: { type: 'string' }, mine: { type: 'boolean' }, ownership: { enum: ['city', 'external', 'estate'] },
             owner: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['name', 'kind'], properties: {
               name: { type: 'string' }, kind: { enum: ['player', 'agent', 'npc'] },
             } }] },
           } } },
         myHome: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false,
-          required: ['key', 'street', 'districtId', 'owner', 'mine', 'ownership'], properties: {
+          required: ['key', 'street', 'districtId', 'buildingId', 'owner', 'mine', 'ownership'], properties: {
             key: { type: 'string', minLength: 1, maxLength: 128 }, street: { type: 'string', minLength: 1, maxLength: 128 },
+            buildingId: { type: ['string', 'null'], pattern: '^(docks|neon|foundry|brick|canal|cathedral)-[0-9]{4}$' },
             districtId: { type: 'string' }, mine: { type: 'boolean' }, ownership: { enum: ['city', 'external', 'estate'] },
             owner: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['name', 'kind'], properties: {
               name: { type: 'string' }, kind: { enum: ['player', 'agent', 'npc'] },

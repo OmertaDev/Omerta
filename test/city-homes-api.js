@@ -104,39 +104,63 @@ try {
   assert.equal(first.total, 4); assert.equal(first.placement, 'illustrative');
   assert.deepEqual(first.viewer, { characterId: viewer.id, generation: Number(viewer.generation), district: 'docks' });
   assert.equal(first.myHome.key, 'zulu home'); assert.equal(first.myHome.mine, true);
+  assert.equal(first.myHome.buildingId, 'docks-0004', 'An out-of-page own address retains its permanent building.');
   assert(!first.homes.some(home => home.key === first.myHome.key), 'Own address is issued even outside the public page.');
   const all = await read();
-  for (const [key, kind, owner] of [['agent avenue', 'agent', agent], ['resident road', 'npc', npc], ['alpha street', 'player', seller]]) {
+  for (const [key, kind, owner, buildingId] of [['agent avenue', 'agent', agent, 'docks-0002'],
+    ['resident road', 'npc', npc, 'docks-0003'], ['alpha street', 'player', seller, 'docks-0001']]) {
     assert.deepEqual(all.homes.find(home => home.key === key).owner, { name: owner.name, kind });
     assert.equal(all.homes.find(home => home.key === key).mine, false);
+    assert.equal(all.homes.find(home => home.key === key).buildingId, buildingId);
   }
-  let page = first; const keys = first.homes.map(home => home.key);
-  while (page.nextCursor) { page = await read(viewer, 'district=docks&limit=1&after=' + encodeURIComponent(page.nextCursor)); keys.push(...page.homes.map(home => home.key)); }
+  let page = first; const pagedHomes = [...first.homes];
+  while (page.nextCursor) { page = await read(viewer, 'district=docks&limit=1&after=' + encodeURIComponent(page.nextCursor)); pagedHomes.push(...page.homes); }
+  const keys = pagedHomes.map(home => home.key);
   assert.deepEqual(keys, all.homes.map(home => home.key));
+  assert.deepEqual(pagedHomes.map(home => [home.key, home.buildingId]), all.homes.map(home => [home.key, home.buildingId]),
+    'Paging never changes a canonical street-to-building assignment.');
   assert.equal(new Set(keys).size, 4, 'Keyset pages neither duplicate nor lose canonical addresses.');
   const serialized = JSON.stringify(all);
   for (const forbidden of [viewer.account, seller.account, agent.account, npc.account, 'account_id', 'wallet', 'cash', 'sale_price', 'controller', 'history', 'upgrades', 'onchain_token_id'])
     assert(!serialized.includes(forbidden), 'Directory must exclude private field: ' + forbidden);
   const malformed = structuredClone(all); malformed.homes[0].owner.wallet = 'private';
   assert.equal(validate(malformed), false, 'Closed owner schema rejects private additions.');
+  const missingBuilding = structuredClone(all); delete missingBuilding.homes[0].buildingId;
+  assert.equal(validate(missingBuilding), false, 'Every address declares whether its canonical building is known.');
+  const malformedBuilding = structuredClone(all); malformedBuilding.myHome.buildingId = 'not-a-building';
+  assert.equal(validate(malformedBuilding), false, 'Own address schema rejects malformed building identities.');
   assert.deepEqual(await snapshot(), before, 'Directory reads change no resources, deeds or ledger.');
   await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district) VALUES($1,$2,$3,$4)',
     ['homes-legacy', 'Legacy Café', 'legacy café', 'docks']);
   const legacyPage = await read(viewer, 'district=docks&limit=64');
   const legacyIndex = legacyPage.homes.findIndex(home => home.key === 'legacy café');
   assert(legacyIndex > 0, 'The real stored legacy asset is projected without renaming.');
+  assert.equal(legacyPage.homes[legacyIndex].buildingId, null, 'A read does not invent an assignment for a legacy address.');
+  for (const buildingId of ['docks-9999', 'neon-0001']) {
+    await app.pool.query('UPDATE street_deeds SET building_id=$2 WHERE account_id=$1', ['homes-legacy', buildingId]);
+    const prior = await snapshot();
+    assert.equal((await read()).homes.find(home => home.key === 'legacy café').buildingId, null,
+      'Unknown or district-mismatched assignments are not exposed as canonical buildings.');
+    assert.deepEqual(await snapshot(), prior, 'Invalid assignment projection remains read-only.');
+  }
+  await app.pool.query('UPDATE street_deeds SET building_id=NULL WHERE account_id=$1', ['homes-legacy']);
   const legacyIssued = await read(viewer, 'district=docks&limit=1&after=' + encodeURIComponent(legacyPage.homes[legacyIndex - 1].key));
   assert.equal(legacyIssued.nextCursor, 'legacy café', 'The directory issues its actual legacy Unicode key.');
   const afterLegacy = await read(viewer, 'district=docks&limit=1&after=' + encodeURIComponent(legacyIssued.nextCursor));
   assert.notEqual(afterLegacy.homes[0].key, legacyIssued.nextCursor, 'The exact issued Unicode cursor remains usable.');
   for (let i = 0; i < 66; i++) await app.pool.query(
-    'INSERT INTO street_deeds(account_id,name,name_lc,district) VALUES($1,$2,$3,$4)',
-    ['homes-page-' + i, 'Page Street ' + String(i).padStart(2, '0'), 'page street ' + String(i).padStart(2, '0'), 'docks']);
+    'INSERT INTO street_deeds(account_id,name,name_lc,district,building_id) VALUES($1,$2,$3,$4,$5)',
+    ['homes-page-' + i, 'Page Street ' + String(i).padStart(2, '0'), 'page street ' + String(i).padStart(2, '0'), 'docks',
+      'docks-' + String(i + 5).padStart(4, '0')]);
   const bounded = await read(viewer, 'district=docks&limit=64');
   assert.equal(bounded.homes.length, 64); assert.equal(bounded.total, 71); assert(bounded.nextCursor);
   assert.equal((await read()).homes.length, 32, 'Default page size is bounded independently from district total.');
   assert.equal(bounded.myHome.key, 'zulu home');
-  assert.equal((await read(viewer, 'district=docks&limit=64&after=' + encodeURIComponent(bounded.nextCursor))).homes.length, 7);
+  const lastPage = await read(viewer, 'district=docks&limit=64&after=' + encodeURIComponent(bounded.nextCursor));
+  assert.equal(lastPage.homes.length, 7);
+  const pageProperties = [...bounded.homes, ...lastPage.homes].filter(home => home.key.startsWith('page street '));
+  assert.equal(pageProperties.length, 66);
+  for (const home of pageProperties) assert.equal(home.buildingId, 'docks-' + String(Number(home.key.slice(-2)) + 5).padStart(4, '0'));
   for (const district of ['neon', 'foundry', 'brick', 'canal', 'cathedral']) {
     const other = await read(viewer, 'district=' + district); assert.equal(other.districtId, district);
     assert.equal(other.viewer.district, 'docks'); assert.equal(other.myHome, null); assert.equal(other.total, 0);
@@ -158,6 +182,7 @@ try {
   assert.equal((await post(buyer, '/v1/deeds/buy/' + seller.id)).statusCode, 200, 'Real canonical purchase transfers the deed.');
   const bought = await read(buyer, 'district=docks&limit=1');
   assert.equal(bought.myHome.key, 'alpha street'); assert.equal(bought.myHome.mine, true);
+  assert.equal(bought.myHome.buildingId, 'docks-0001', 'Real ownership transfer preserves the permanent building.');
   assert.deepEqual(bought.myHome.owner, { name: buyer.name, kind: 'player' });
   assert.equal((await read(seller)).myHome, null);
   assert.equal((await read()).homes.find(home => home.key === 'alpha street').mine, false);
@@ -185,6 +210,7 @@ try {
       releasePage();
       const historic = await snapshotRead;
       assert.equal(historic.myHome.key, 'alpha street');
+      assert.equal(historic.myHome.buildingId, 'docks-0001');
       assert.deepEqual(historic.myHome.owner, { name: buyer.name, kind: 'player' }, 'Native read retains one coherent pre-transfer owner snapshot.');
       assert.equal((await read(buyer)).myHome, null, 'A fresh HTTP read sees the committed new owner.');
       assert.equal((await read(seller)).myHome.key, 'alpha street');
@@ -206,18 +232,25 @@ try {
   const inherited = await read(buyer);
   assert.equal(inherited.viewer.characterId, heir.id); assert.equal(inherited.viewer.generation, Number(heir.generation));
   assert.deepEqual(inherited.myHome.owner, { name: heir.name, kind: 'player' }); assert.equal(inherited.myHome.key, 'alpha street');
+  assert.equal(inherited.myHome.buildingId, 'docks-0001', 'Succession preserves the permanent building.');
   await app.pool.query('UPDATE characters SET alive=false WHERE account_id=$1', [npc.account]);
   const estate = (await read(viewer, 'district=docks&limit=64&after=page%20street%2065')).homes.find(home => home.key === 'resident road');
   assert.equal(estate.ownership, 'estate'); assert.equal(estate.owner, null);
+  assert.equal(estate.buildingId, 'docks-0003', 'An estate retains its permanent building without exposing an owner.');
   await app.pool.query('UPDATE street_deeds SET onchain_token_id=$2 WHERE account_id=$1', [agent.account, '123']);
   const external = (await read(agent)).myHome;
   assert.equal(external.ownership, 'external'); assert.equal(external.owner, null); assert.equal(external.mine, false);
+  assert.equal(external.buildingId, 'docks-0002', 'External ownership retains the same permanent building.');
+  await app.pool.query('UPDATE street_deeds SET account_id=$2,onchain_token_id=NULL WHERE account_id=$1', [agent.account, 'onchain:homes-fixture']);
+  const externalAccount = (await read()).homes.find(home => home.key === 'agent avenue');
+  assert.equal(externalAccount.ownership, 'external'); assert.equal(externalAccount.owner, null); assert.equal(externalAccount.mine, false);
+  assert.equal(externalAccount.buildingId, 'docks-0002', 'Synthetic external ownership also preserves the permanent building.');
   await app.pool.query("UPDATE characters SET loc='cathedral' WHERE id=$1", [viewer.id]);
   assert.equal((await read()).viewer.district, 'cathedral', 'Requested display district never spoofs actual viewer location.');
   await app.pool.query('UPDATE accounts SET token_version=token_version+1 WHERE id=$1', [viewer.account]);
   const revoked = await app.inject({ url: '/v1/city/homes?district=docks', headers: viewer.headers });
   assert.equal(revoked.statusCode, 401); privateHeaders(revoked);
-  console.log('city-homes-api PASS: authenticated closed private DTO, deterministic bounded pages, out-of-page own address, player/agent/NPC stewards, real claim/list/purchase, actual estate/heir, external ownership, current viewer travel and auth revocation, neutral reads' +
+  console.log('city-homes-api PASS: authenticated closed private DTO, canonical building identity across bounded pages/ownership/estate/external states, null invalid or legacy assignment, out-of-page own address, player/agent/NPC stewards, real claim/list/purchase, actual estate/heir, current viewer travel and auth revocation, neutral reads' +
     (postgres ? '; actual application owned-schema PostgreSQL projection and real transfer/read snapshot coherence' : ' (pg-mem; native snapshot proof pending)'));
 } finally {
   if (app) await app.close();
