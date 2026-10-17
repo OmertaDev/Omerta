@@ -1,8 +1,8 @@
 // Frozen actual Base source artifact; no approved deployment or financial activation.
 export const BASE_WORK_ESCROW_COMPILER=Object.freeze({version:'0.8.26+commit.8a97fa7a',optimizerRuns:800,viaIR:true,evmVersion:'cancun'});
-export const BASE_WORK_ESCROW_RUNTIME_KECCAK='0xc0272d1d4897c0e4da95251a2bab49c8765951a6f28d7c8c30cce443d08620cd';
-export const BASE_WORK_ESCROW_CREATION_KECCAK='0xf45970691498b55a09d1f778b863c2d0ee8024ba3f849c605627645ab2b6498d';
-export const BASE_WORK_ESCROW_SOURCE_SHA256='c25690ea202ddecaa1c755650c1a8b60ae7ae94836e6c08c244d2dbe21381b2a';
+export const BASE_WORK_ESCROW_RUNTIME_KECCAK='0xa4944fc34ce6ff78fa9a6b7a430f96054be2f816c986bafdfe76d3718a8ade52';
+export const BASE_WORK_ESCROW_CREATION_KECCAK='0x02ea9662e4f58879f4d48a0a463f31e017e5a26de4fbde6fc234a7df0776c38c';
+export const BASE_WORK_ESCROW_SOURCE_SHA256='37489f2ab472d94c761ae27908bad9cc56b9b3aca18d7089881bfb6061a25c6d';
 export const BASE_WORK_ESCROW_ABI=Object.freeze([
   {
     "type": "constructor",

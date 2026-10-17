@@ -157,8 +157,9 @@ contract OmertaWorkEscrowBaseTest is Test {
         assertEq(funder.balance, 100 ether); assertEq(address(escrow).balance, 0);
     }
     function testExactTermBoundsAndZeroTerms() public {
+        assertEq(escrow.MAX_TERM(), 24 hours);
         uint64 early = uint64(block.timestamp + 59);
-        uint64 late = uint64(block.timestamp + 901);
+        uint64 late = uint64(block.timestamp + 24 hours + 1);
         uint64 valid = uint64(block.timestamp + 120);
         vm.prank(funder); vm.expectRevert(OmertaWorkEscrowBase.InvalidTerms.selector);
         escrow.fund(1, worker, address(0), 1, workHash, early);
@@ -173,7 +174,7 @@ contract OmertaWorkEscrowBaseTest is Test {
         vm.prank(funder); vm.expectRevert(OmertaWorkEscrowBase.InvalidTerms.selector);
         escrow.fund(1, worker, address(0), 1, bytes32(0), valid);
         vm.prank(funder); escrow.fund{value: 1}(1, worker, address(0), 1, workHash, uint64(block.timestamp + 60));
-        vm.prank(funder); escrow.fund{value: 1}(2, worker, address(0), 1, keccak256("max term"), uint64(block.timestamp + 900));
+        vm.prank(funder); escrow.fund{value: 1}(2, worker, address(0), 1, keccak256("max term"), uint64(block.timestamp + 24 hours));
         assertEq(escrow.liability(address(0)), 2);
     }
     function testIdentifierBindsBaseContractAndOriginalFunder() public {
@@ -219,6 +220,90 @@ contract OmertaWorkEscrowBaseTest is Test {
     }
 
 
+    function testNativeLongWorkAfterOldCeilingAndLateSettlement() public {
+        uint256 started = vm.getBlockTimestamp();
+        uint64 deadline = uint64(started + 24 hours);
+        vm.prank(funder);
+        bytes32 id = escrow.fund{value: 1 ether}(1, worker, address(0), 1 ether, workHash, deadline);
+        vm.warp(started + 2 hours);
+        assertEq(vm.getBlockTimestamp(), started + 2 hours);
+        vm.prank(worker); escrow.accept(id);
+        vm.warp(started + 23 hours);
+        assertEq(vm.getBlockTimestamp(), uint256(deadline) - 1 hours);
+        vm.prank(funder); escrow.allocate(id, outcome);
+        vm.warp(uint256(deadline) + 7 days);
+        vm.prank(funder); vm.expectRevert(OmertaWorkEscrowBase.InvalidState.selector); escrow.recover(id);
+        vm.prank(worker); escrow.settle(id);
+        assertEq(worker.balance, 1 ether);
+        assertEq(escrow.liability(address(0)), 0);
+        assertEq(uint256(escrow.work(id).state), uint256(OmertaWorkEscrowBase.State.Settled));
+    }
+    function testUSDCExactDayExpiryFundedAndAcceptedRefunds() public {
+        uint64 deadline = uint64(block.timestamp + 24 hours);
+        vm.prank(funder);
+        bytes32 first = escrow.fund(1, worker, USDC, 100, workHash, deadline);
+        vm.prank(funder);
+        bytes32 second = escrow.fund(2, worker, USDC, 200, keccak256("second day work"), deadline);
+        vm.warp(uint256(deadline) - 4 hours);
+        vm.prank(worker); escrow.accept(second);
+        vm.warp(uint256(deadline) - 1);
+        vm.prank(funder); vm.expectRevert(OmertaWorkEscrowBase.InvalidState.selector); escrow.recover(first);
+        vm.prank(funder); vm.expectRevert(OmertaWorkEscrowBase.InvalidState.selector); escrow.recover(second);
+        vm.warp(deadline);
+        vm.prank(worker); vm.expectRevert(OmertaWorkEscrowBase.InvalidState.selector); escrow.accept(first);
+        vm.prank(funder); vm.expectRevert(OmertaWorkEscrowBase.InvalidState.selector); escrow.allocate(second, outcome);
+        vm.prank(worker); vm.expectRevert(OmertaWorkEscrowBase.Unauthorized.selector); escrow.recover(first);
+        vm.prank(funder); escrow.recover(first);
+        vm.prank(funder); escrow.recover(second);
+        assertEq(BaseWorkFixtureUSDC(USDC).balanceOf(funder), 1000e6);
+        assertEq(BaseWorkFixtureUSDC(USDC).balanceOf(worker), 0);
+        assertEq(escrow.liability(USDC), 0);
+        assertEq(uint256(escrow.work(first).state), uint256(OmertaWorkEscrowBase.State.Refunded));
+        assertEq(uint256(escrow.work(second).state), uint256(OmertaWorkEscrowBase.State.Refunded));
+    }
+    function testUint64DeadlineBoundaryAndWrappedDeadlineRefusal() public {
+        vm.warp(uint256(type(uint64).max) - 24 hours);
+        vm.prank(funder);
+        bytes32 id = escrow.fund{value: 1}(1, worker, address(0), 1, workHash, type(uint64).max);
+        assertEq(escrow.work(id).deadline, type(uint64).max);
+        vm.warp(uint256(type(uint64).max) - 30);
+        uint64 wrapped = uint64(block.timestamp + 60);
+        bytes32 otherWork = keccak256("wrapped deadline must not fund");
+        vm.prank(funder); vm.expectRevert(OmertaWorkEscrowBase.InvalidTerms.selector);
+        escrow.fund{value: 1}(2, worker, address(0), 1, otherWork, wrapped);
+        assertFalse(escrow.usedNonce(funder, 2));
+        assertFalse(escrow.usedWork(keccak256(abi.encode(funder, otherWork))));
+        assertEq(escrow.liability(address(0)), 1);
+        assertEq(address(escrow).balance, 1);
+        vm.warp(type(uint64).max);
+        vm.prank(funder); escrow.recover(id);
+        assertEq(funder.balance, 100 ether);
+    }
+    function testTimestampArithmeticOverflowRevertsBeforeFunding() public {
+        vm.warp(type(uint256).max - 59);
+        vm.prank(funder); vm.expectRevert(abi.encodeWithSignature("Panic(uint256)", 0x11));
+        escrow.fund{value: 1}(1, worker, address(0), 1, workHash, type(uint64).max);
+        assertFalse(escrow.usedNonce(funder, 1));
+        assertFalse(escrow.usedWork(keccak256(abi.encode(funder, workHash))));
+        assertEq(escrow.liability(address(0)), 0);
+        assertEq(address(escrow).balance, 0);
+        assertEq(funder.balance, 100 ether);
+    }
+    function testFuzzLongTermStrictAllocationAndSettlement(uint32 seed) public {
+        uint256 term = bound(uint256(seed), 901, 24 hours);
+        uint64 deadline = uint64(block.timestamp + term);
+        vm.prank(funder);
+        bytes32 id = escrow.fund{value: 1}(1, worker, address(0), 1, workHash, deadline);
+        vm.warp(uint256(deadline) - 1);
+        vm.prank(worker); escrow.accept(id);
+        vm.prank(funder); escrow.allocate(id, outcome);
+        vm.warp(uint256(deadline) + 1 days);
+        vm.prank(worker); escrow.settle(id);
+        assertEq(worker.balance, 1);
+        assertEq(escrow.liability(address(0)), 0);
+        assertEq(uint256(escrow.work(id).state), uint256(OmertaWorkEscrowBase.State.Settled));
+    }
+
 }
 
 
@@ -249,7 +334,7 @@ contract BaseWorkEscrowHandler is Test {
         address asset = usdc ? address(token) : address(0);
         vm.prank(original);
         bytes32 id = escrow.fund{value: usdc ? 0 : amount}(next, payees[actorSeed % 2], asset, amount, workHash,
-            uint64(block.timestamp + 60 + next % 841));
+            uint64(block.timestamp + 60 + uint256(seed) % 86341));
         ids.push(id);
     }
     function accept(uint256 seed) external {
@@ -277,7 +362,7 @@ contract BaseWorkEscrowHandler is Test {
             || block.timestamp < w.deadline) return;
         vm.prank(w.funder); escrow.recover(id);
     }
-    function elapse(uint32 seed) external { vm.warp(block.timestamp + bound(uint256(seed), 0, 901)); }
+    function elapse(uint32 seed) external { vm.warp(block.timestamp + bound(uint256(seed), 0, 86401)); }
 }
 
 contract OmertaWorkEscrowBaseInvariantTest is StdInvariant, Test {

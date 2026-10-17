@@ -12,7 +12,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 contract OmertaWorkEscrowBase is ReentrancyGuard {
     using SafeERC20 for IERC20;
     address public constant USDC = 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913;
-    uint64 public constant MAX_TERM = 15 minutes;
+    uint64 public constant MAX_TERM = 24 hours;
     enum State { Empty, Funded, Accepted, Allocated, Settled, Refunded }
     struct Work {
         address funder;
