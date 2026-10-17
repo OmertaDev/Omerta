@@ -1,0 +1,11 @@
+{
+  "initialChunk": "169484",
+  "initialExit": 1,
+  "cause": "Source-only prefix test VM omitted assert; actual prepare refused at ReferenceError before the intended denied tar boundary.",
+  "retainedScript": "test-initial-missing-assert.cjs",
+  "correctedChunk": "ad8709",
+  "correctedExit": 0,
+  "correction": "Add assert dependency to test sandbox only.",
+  "proposedSourceChanged": false,
+  "actualTarExecution": 0
+}

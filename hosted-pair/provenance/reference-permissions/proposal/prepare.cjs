@@ -1,0 +1,13 @@
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto'),A=require('node:assert/strict');
+const R='C:/Users/Jorge/.codex/worktrees/economy-main-oct15/Omerta',SOURCE='398e2a6cca3ce439a633cde6f62d06761b69a09f',FILE='hosted-pair/materialize-hosted.cjs',P=__dirname;
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),put=(f,v)=>{const t=path.join(P,f);fs.mkdirSync(path.dirname(t),{recursive:true});fs.writeFileSync(t,typeof v==='string'||Buffer.isBuffer(v)?v:JSON.stringify(v,null,2)+'\n',{flag:'wx'});};
+const raw=cp.execFileSync('git',['--no-replace-objects','-c','core.longpaths=true','-C',R,'show',SOURCE+':'+FILE]);
+A.equal(sha(raw),'f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61');
+const before="cp.execFileSync('tar',['--extract','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});";
+const after="cp.execFileSync('tar',['--extract','--same-permissions','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});";
+const text=raw.toString();A.equal(text.split(before).length-1,1);const next=text.replace(before,()=>after);A.equal(next.split(after).length-1,1);A.equal(next.replace(after,()=>before),text);
+put('baseline/materialize-hosted.cjs',raw);put('proposed/'+FILE,next);
+put('source-inverse.json',{source:SOURCE,file:FILE,before,after,beforeSHA256:sha(raw),afterSHA256:sha(next),wholeInverse:true,changedSpans:1,otherSourceBytesExact:true,unchangedWorkflowUmask:'077',actualApproval:null,actualWorkflow:null,actualExecution:null});
+const lines=text.split('\n'),at=lines.findIndex(l=>l.includes(before));const context=lines.slice(at-2,at).map(l=>' '+l).concat('-'+lines[at],'+'+lines[at].replace(before,()=>after),lines.slice(at+1,at+3).map(l=>' '+l));
+put('minimal.patch','diff --git a/'+FILE+' b/'+FILE+'\n--- a/'+FILE+'\n+++ b/'+FILE+'\n@@ -'+(at-1)+',5 +'+(at-1)+',5 @@\n'+context.join('\n')+'\n');
+console.log(JSON.stringify({source:SOURCE,file:FILE,sourceSHA256:sha(raw),proposedSHA256:sha(next),spans:1}));

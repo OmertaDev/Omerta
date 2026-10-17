@@ -31,7 +31,7 @@
     "gitBinary": "d4d2ba562243015206d4248edfec871a74786499292d00ed072dbca2f5ae8073"
   },
   "entry": "materialize-hosted.cjs",
-  "entrySHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+  "entrySHA256": "6170177d557697d118d5b00cf7f7a93c1f6875899cabefc5faee36e0b38467d5",
   "controls": {
     "focused": {
       "positive": 4,
@@ -50,24 +50,9 @@
   },
   "files": [
     {
-      "file": "guard-barrier-inverse.json",
-      "bytes": 556,
-      "sha256": "9bb044b03cd5a6d949e04b7151cf6ed0838c7adf1f8bd403abffc51200b27cbf"
-    },
-    {
       "file": "HANDOFF.md",
       "bytes": 8571,
       "sha256": "6da8ceb4ead8bd4a3b3d0f05bfd42cd14658a7b3d60fe4d8423893e9dfb75571"
-    },
-    {
-      "file": "health-none-controls-results.json",
-      "bytes": 473,
-      "sha256": "5e82da9115bc04facde749622c856423f1f63afd00e9bc2bdd9e5681651084a1"
-    },
-    {
-      "file": "health-none-exact-inverses.json",
-      "bytes": 1506,
-      "sha256": "bbcb828ba804b64061c2b013090d1026a7ed4d4807a6d7279cbcae179c93607d"
     },
     {
       "file": "HEALTH-SUCCESSOR.md",
@@ -78,6 +63,21 @@
       "file": "HOSTED-HEALTH-R1.json",
       "bytes": 1314,
       "sha256": "015ff77597549bc69cc58c61b16453e9c69147b7345805899047dc6248769bff"
+    },
+    {
+      "file": "guard-barrier-inverse.json",
+      "bytes": 556,
+      "sha256": "9bb044b03cd5a6d949e04b7151cf6ed0838c7adf1f8bd403abffc51200b27cbf"
+    },
+    {
+      "file": "health-none-controls-results.json",
+      "bytes": 473,
+      "sha256": "5e82da9115bc04facde749622c856423f1f63afd00e9bc2bdd9e5681651084a1"
+    },
+    {
+      "file": "health-none-exact-inverses.json",
+      "bytes": 1506,
+      "sha256": "bbcb828ba804b64061c2b013090d1026a7ed4d4807a6d7279cbcae179c93607d"
     },
     {
       "file": "hosted-source-guard.EXECUTABLE.mjs",
@@ -141,8 +141,8 @@
     },
     {
       "file": "materialize-hosted.cjs",
-      "bytes": 14517,
-      "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+      "bytes": 14538,
+      "sha256": "6170177d557697d118d5b00cf7f7a93c1f6875899cabefc5faee36e0b38467d5"
     },
     {
       "file": "postimages/.github/workflows/rc1-recovery.yml",
@@ -225,6 +225,186 @@
       "sha256": "d15e3a917b9e9aa29a7cc9e68024fe9b7a10c4bd37baed7c379966e85b6388c5"
     },
     {
+      "file": "provenance/reference-permissions/finding/FINDING.md",
+      "bytes": 5640,
+      "sha256": "5d74e1322e110f0bb48a381a1112ed09a715bc0d74aa9f01d56f9cb4c905acc3"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/actual-failure-excerpt.log",
+      "bytes": 2569,
+      "sha256": "db6cf777736fd1bbcfd6114adb0d13d2989f8ecc50eb48405c292749687f1834"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/actual398e-install-approved-runtime.sh",
+      "bytes": 1748,
+      "sha256": "766f977fe691a837bf092edcaf270999bf6c6c6a7ab038f0e488619d4d397932"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/actual398e-materialize-hosted.cjs",
+      "bytes": 14517,
+      "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/actual398e-workflow.yml",
+      "bytes": 6192,
+      "sha256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/compare.cjs",
+      "bytes": 7647,
+      "sha256": "316eecaebabc71481af66284df0bb31d2f8b8d05df2b1122d3b1accb1ce3a642"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/comparison.json",
+      "bytes": 1415215,
+      "sha256": "cfd74f776e2bf014905e0d0f5223f7017f21fe49059900576ca4b6741b7e1d2c"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/manifest.json",
+      "bytes": 3506,
+      "sha256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/official-npm-inventory.json",
+      "bytes": 727385,
+      "sha256": "8425fede4266f8cef729611d07770db5809539c67fda680da9064121ade7cc44"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/reference-npm-inventory.json",
+      "bytes": 727385,
+      "sha256": "c6df9a3c22f242381449a3871170c6ee9a7566f7b4744c45727c74349435ec1c"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/runtime-npm-inventory.json",
+      "bytes": 727385,
+      "sha256": "ec34bf26ed3f1a1abbf540528cd131d149a8cbbfda6dae7642c16914ac5d42e1"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/seal.cjs",
+      "bytes": 2241,
+      "sha256": "7bb56d5ca9ff9e242215b98d239e4761f7ab18db0290fd26036ef4bd3f87ad6b"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/source-and-procedure.json",
+      "bytes": 3413,
+      "sha256": "64a65663ebbb3884d404f5f16eed8d8c99cc22855738a5f5e1af9ae90889d3a4"
+    },
+    {
+      "file": "provenance/reference-permissions/finding/source-join.cjs",
+      "bytes": 5529,
+      "sha256": "4ed2eb626b8e9e450e0798ba98ad1e62a431a13490c88a3001a793447efa3486"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/REVIEW.md",
+      "bytes": 3196,
+      "sha256": "e5f65d33104f4b4304aaee215a381be964caf42a4474efbc99a569ff25557c80"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/author-manifest.json",
+      "bytes": 3383,
+      "sha256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/manifest.json",
+      "bytes": 2272,
+      "sha256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/results.json",
+      "bytes": 3618,
+      "sha256": "639276fbba9b52a7a4e1ec500f517624feebdf980000c19f7ea9a85b0a0bf824"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/retained-tar-order-model-failure.json",
+      "bytes": 515,
+      "sha256": "5364acaed7b3eab16e66b755f49119e49689096ea8a0d349fef46ac6324bd09d"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/review-initial-tar-order.cjs",
+      "bytes": 6591,
+      "sha256": "9506bcc54c474afae262602eebea2a10f8b455b3a017c9968aa7881a1f1cec5f"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/review.cjs",
+      "bytes": 6790,
+      "sha256": "a44bbd9d8cc348d3051eeac9be41bf637d88c8a98aa4fa0f7a1f396b6bf50fb5"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/seal.cjs",
+      "bytes": 2008,
+      "sha256": "7238a30141e53913d7958705de5405d785bb56a99ce0f0559e9bec5901099880"
+    },
+    {
+      "file": "provenance/reference-permissions/independent/source-inverse.json",
+      "bytes": 784,
+      "sha256": "b60769911fac0579cf9608b22438e7173045d92ae61c95eec5c622abc774bce6"
+    },
+    {
+      "file": "provenance/reference-permissions/parent/manifest.json",
+      "bytes": 11213,
+      "sha256": "ca22beb17ddcb6990459695406a299a8ec9dff45fc276168dac00d1b4f5b4840"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/HANDOFF.md",
+      "bytes": 2863,
+      "sha256": "3d06abcfee20f4ffb8a8db117ae6624e8f485f3d32b387ff9b75a100e9b45661"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/baseline/materialize-hosted.cjs",
+      "bytes": 14517,
+      "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/controls-results.json",
+      "bytes": 1084,
+      "sha256": "5d3c4b2bed958ac652252597598d3e8200781c213e342fd3e082a4b6fa69a1df"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/manifest.json",
+      "bytes": 3383,
+      "sha256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/minimal.patch",
+      "bytes": 1084,
+      "sha256": "1f8301fc2b7a16b742ddbd0f7784e6594f9eaaecdc0fcd61069ad3c2e7ae4c6d"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/prepare.cjs",
+      "bytes": 2099,
+      "sha256": "be4764c65af72c7f0542b2d82a1df81ae0ff72d51c3d9fa8c2595474b87517e2"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/proposed/hosted-pair/materialize-hosted.cjs",
+      "bytes": 14538,
+      "sha256": "6170177d557697d118d5b00cf7f7a93c1f6875899cabefc5faee36e0b38467d5"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/retained-harness-failure.json",
+      "bytes": 421,
+      "sha256": "f678e221a34ad0c9a8fdfe9143d0b7c53904579664a6788ff364b9d28fd2c963"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/seal.cjs",
+      "bytes": 2929,
+      "sha256": "dc5587bc055248bda249cf57541557b3f5d1915ef758d42ab4d74c05d3d69731"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/source-inverse.json",
+      "bytes": 784,
+      "sha256": "b60769911fac0579cf9608b22438e7173045d92ae61c95eec5c622abc774bce6"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/test-initial-missing-assert.cjs",
+      "bytes": 3972,
+      "sha256": "593340123aef101f14b92cad75a229ef5badf00897a80a3b1f43c09cc68c7a64"
+    },
+    {
+      "file": "provenance/reference-permissions/proposal/test.cjs",
+      "bytes": 3981,
+      "sha256": "4f17dde1dfcea7c80df311c96600a2aee933e894a823eb2932e444bcfb6749cf"
+    },
+    {
       "file": "provenance/registered-path-parent-HANDOFF.md",
       "bytes": 8579,
       "sha256": "81e8359b5f80ace07b0cf2859b5ab31a32d174ee2b803bae3ab09336b6f18dcf"
@@ -248,6 +428,11 @@
       "file": "provenance/startup-successor-manifest.json",
       "bytes": 8669,
       "sha256": "57cdec5ec08b90a0496de1464811f939ada9ca7a2a17ceb6f59aac13a9b1f8e8"
+    },
+    {
+      "file": "reference-permissions-package-joins.json",
+      "bytes": 885,
+      "sha256": "f6acb88ae825db275a4479970bcee6b00c6cfced07355495daba02c241454f1b"
     },
     {
       "file": "registered-path-edits.json",
@@ -326,5 +511,23 @@
   "priorAuthorControlsHistoricalOnly": {
     "positive": 14,
     "refusals": 74
-  }
+  },
+  "referencePermissionsRepair": {
+    "parentManifestSHA256": "ca22beb17ddcb6990459695406a299a8ec9dff45fc276168dac00d1b4f5b4840",
+    "proposalManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+    "findingManifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
+    "independentManifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+    "parentIndexedPaths": 53,
+    "parentPathsUnchanged": 52,
+    "onlyOperationalChange": "Fresh reference tar extraction adds --same-permissions",
+    "wholeControllerInverse": true,
+    "otherFunctionsUnchanged": 16,
+    "workflowSHA256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05",
+    "observerSHA256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2",
+    "actualWorkflow": null,
+    "actualRuntime": null,
+    "actualSourcePair": null,
+    "operationalAuthority": false
+  },
+  "inheritedControlsQualification": "Parent source controls retained at their original scope; new one-flag controls and independent review are separately indexed; no fresh runtime or M6 pass"
 }

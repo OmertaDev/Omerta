@@ -1,0 +1,15 @@
+{
+  "source": "398e2a6cca3ce439a633cde6f62d06761b69a09f",
+  "file": "hosted-pair/materialize-hosted.cjs",
+  "before": "cp.execFileSync('tar',['--extract','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});",
+  "after": "cp.execFileSync('tar',['--extract','--same-permissions','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});",
+  "beforeSHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+  "afterSHA256": "6170177d557697d118d5b00cf7f7a93c1f6875899cabefc5faee36e0b38467d5",
+  "wholeInverse": true,
+  "changedSpans": 1,
+  "otherSourceBytesExact": true,
+  "unchangedWorkflowUmask": "077",
+  "actualApproval": null,
+  "actualWorkflow": null,
+  "actualExecution": null
+}

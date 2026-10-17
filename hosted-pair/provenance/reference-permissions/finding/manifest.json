@@ -1,0 +1,110 @@
+{
+  "phase": "CONFIRMED_HO_NPM_UMASK_R1_ACTUAL_ARCHIVE_SOURCE_ANALYSIS_FIX_UNEXECUTED",
+  "finding": "HO-NPM-UMASK-R1",
+  "run": 39004762233,
+  "workflowSource": "398e2a6cca3ce439a633cde6f62d06761b69a09f",
+  "archive": {
+    "path": "C:/Users/Jorge/.codex/restart-handoffs/2026-10-15/agent-economy-resume/hosted-health-39004762233/payload.tar.gz",
+    "sha256": "682e0ad1d7ed65908daaacd8313c76a9e1207fb81ec3385d253998d98562f35d",
+    "bytes": 194730116,
+    "tarSemanticHeaders": 12714,
+    "exactRootPathsList": true
+  },
+  "rootSuppliedAuthenticatedPlaintext": true,
+  "reviewerAEADReverification": false,
+  "allNpmPathsTypesLinksBytesEqual": true,
+  "rootInclusiveEntries": 2464,
+  "actualComparatorEntries": 2463,
+  "installedModesEqualOfficial": true,
+  "referenceModesPrecisely077Mask": true,
+  "actualComparatorModePatterns": {
+    "Directory:755>700": 499,
+    "File:644>600": 1925,
+    "File:755>700": 39
+  },
+  "source": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+  "actualNormalTools": [
+    "f4a8a1",
+    "a07b81"
+  ],
+  "proposal": "Add only --same-permissions to fresh reference tar extraction; preserve all full comparisons/pins and evidence umask077",
+  "sourceEdits": 0,
+  "workflowEdits": 0,
+  "keysRead": 0,
+  "decryptions": 0,
+  "filesystemExtraction": 0,
+  "symlinksFollowed": 0,
+  "payloadExecutions": 0,
+  "PG": 0,
+  "CIM": 0,
+  "network": 0,
+  "dispatch": 0,
+  "canonicalM6Passed": false,
+  "files": [
+    {
+      "file": "FINDING.md",
+      "bytes": 5640,
+      "sha256": "5d74e1322e110f0bb48a381a1112ed09a715bc0d74aa9f01d56f9cb4c905acc3"
+    },
+    {
+      "file": "actual-failure-excerpt.log",
+      "bytes": 2569,
+      "sha256": "db6cf777736fd1bbcfd6114adb0d13d2989f8ecc50eb48405c292749687f1834"
+    },
+    {
+      "file": "actual398e-install-approved-runtime.sh",
+      "bytes": 1748,
+      "sha256": "766f977fe691a837bf092edcaf270999bf6c6c6a7ab038f0e488619d4d397932"
+    },
+    {
+      "file": "actual398e-materialize-hosted.cjs",
+      "bytes": 14517,
+      "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+    },
+    {
+      "file": "actual398e-workflow.yml",
+      "bytes": 6192,
+      "sha256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05"
+    },
+    {
+      "file": "compare.cjs",
+      "bytes": 7647,
+      "sha256": "316eecaebabc71481af66284df0bb31d2f8b8d05df2b1122d3b1accb1ce3a642"
+    },
+    {
+      "file": "comparison.json",
+      "bytes": 1415215,
+      "sha256": "cfd74f776e2bf014905e0d0f5223f7017f21fe49059900576ca4b6741b7e1d2c"
+    },
+    {
+      "file": "official-npm-inventory.json",
+      "bytes": 727385,
+      "sha256": "8425fede4266f8cef729611d07770db5809539c67fda680da9064121ade7cc44"
+    },
+    {
+      "file": "reference-npm-inventory.json",
+      "bytes": 727385,
+      "sha256": "c6df9a3c22f242381449a3871170c6ee9a7566f7b4744c45727c74349435ec1c"
+    },
+    {
+      "file": "runtime-npm-inventory.json",
+      "bytes": 727385,
+      "sha256": "ec34bf26ed3f1a1abbf540528cd131d149a8cbbfda6dae7642c16914ac5d42e1"
+    },
+    {
+      "file": "seal.cjs",
+      "bytes": 2241,
+      "sha256": "7bb56d5ca9ff9e242215b98d239e4761f7ab18db0290fd26036ef4bd3f87ad6b"
+    },
+    {
+      "file": "source-and-procedure.json",
+      "bytes": 3413,
+      "sha256": "64a65663ebbb3884d404f5f16eed8d8c99cc22855738a5f5e1af9ae90889d3a4"
+    },
+    {
+      "file": "source-join.cjs",
+      "bytes": 5529,
+      "sha256": "4ed2eb626b8e9e450e0798ba98ad1e62a431a13490c88a3001a793447efa3486"
+    }
+  ]
+}

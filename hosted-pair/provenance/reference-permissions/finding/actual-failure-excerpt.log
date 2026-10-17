@@ -1,0 +1,19 @@
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:19.8737656Z   HOSTED_PAIR_APPROVAL_SHA256: 2a3d1d2f255b0bb3fdc5a33295692a598f2cf561f62548dba5f80af63075f4e6
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:19.8738506Z   HOSTED_PAIR_SERVICE_ID: 484d4ab62021c77f158f8ef3e37170fe2131f4c224689cac8bb299587f4d1b9f
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:19.8738925Z ##[endgroup]
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8719602Z Whole bundled npm tree differs from the hash-verified complete official Node archive
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8720480Z + actual - expected
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8720707Z 
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8720818Z   [
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8721056Z     {
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8721301Z       bytes: 0,
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8721576Z +     mode: 420,
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8721809Z -     mode: 384,
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8722026Z       path: '.npmrc',
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8722383Z       sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8722768Z       type: 'file'
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8722969Z     },
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8723152Z     {
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8723347Z       bytes: 9742,
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8723579Z +     mode: 420,
+rootd8-bg-pair	Materialize Root-reviewed static inputs with actual job paths	2026-10-17T05:09:22.8723774Z -     mode: 384,

@@ -53,7 +53,7 @@ function prepare(file,digest,env=process.env){
   for(const r of manifest.files)pinned(path.join(bundle,r.file),r.sha256);
   const output=job.temporary+'/rc1-hosted-controls';assert(!fs.existsSync(output),'Fresh materialization only');fs.mkdirSync(output,{mode:0o700});
   const runtimeOutput=job.temporary+'/rc1-hosted-runtime-reference';assert(!fs.existsSync(runtimeOutput));fs.mkdirSync(runtimeOutput,{mode:0o700});pinned(job.nodeArchive,NODE_ARCHIVE);
-  cp.execFileSync('tar',['--extract','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});
+  cp.execFileSync('tar',['--extract','--same-permissions','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});
   const runtime=runtimeCheck(job,runtimeOutput+'/node-v22.23.3-linux-x64');put(output,'runtime-before.json',serial(runtime));
   const deps=put(output,'expected-dependencies-linux-x64.json',pinned(path.join(bundle,'inputs/expected-dependencies-linux-x64.json'),DEPS_SHA));
   const nodeProvenance=put(output,'node-runtime-provenance.json',bytes(path.join(bundle,'inputs/node-runtime-provenance.json'))),gitAcceptance=put(output,'root-git-acceptance.json',bytes(path.join(bundle,'inputs/root-git-acceptance.json')));

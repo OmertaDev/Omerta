@@ -1,0 +1,17 @@
+{
+  "parentManifestSHA256": "ca22beb17ddcb6990459695406a299a8ec9dff45fc276168dac00d1b4f5b4840",
+  "proposalManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+  "findingManifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
+  "independentManifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+  "parentIndexedPaths": 53,
+  "parentPathsUnchanged": 52,
+  "onlyOperationalChange": "Fresh reference tar extraction adds --same-permissions",
+  "wholeControllerInverse": true,
+  "otherFunctionsUnchanged": 16,
+  "workflowSHA256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05",
+  "observerSHA256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2",
+  "actualWorkflow": null,
+  "actualRuntime": null,
+  "actualSourcePair": null,
+  "operationalAuthority": false
+}
