@@ -1,0 +1,231 @@
+{
+  "phase": "implementation before deployment or activation",
+  "baseCommit": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "sourceState": "staged changes over base; exact raw SHA-256 plus portable Git blob identity",
+  "generatedAt": "2026-10-17T03:37:29.781Z",
+  "files": [
+    {
+      "path": ".env.example",
+      "rawSha256": "e6c05ac8ca457d907d28469b1cfb0ab69fb4932a0713a03a03f3c18055ab6317",
+      "gitBlob": "00df9697a247b72fadf4e85731280b008343f870"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "rawSha256": "a3251881465b31dc9df6e7861f29681830041c6a0cf6a215b05dbdc097dfe6cb",
+      "gitBlob": "f592c98583f52e270fda8f80a06dc44d551ee802"
+    },
+    {
+      "path": "AGENTS.md",
+      "rawSha256": "df46046872e6915f27bb52c0162ba10352b53abf2cb773ea162415fec6c9af93",
+      "gitBlob": "166c80bf3c162a774cd3b47f7f97841821d940d1"
+    },
+    {
+      "path": "CHAIN-AUDIT-PACKET-O1.md",
+      "rawSha256": "6385514705515c2de795bdc26abbe1f04f915849a5de7a1546116c3fa15a0d24",
+      "gitBlob": "190e60504495471104f32206a356d31c5fa916ec"
+    },
+    {
+      "path": "CHAIN-DEPLOY.md",
+      "rawSha256": "13e6945b0ffc9de26e8c92c854063baa0161a874ca24dd2b02b250393a3ff46f",
+      "gitBlob": "67a0ca4dfa79efbfc54f6f9a36cbfc41bd4508b2"
+    },
+    {
+      "path": "MARKETING-POSTS.md",
+      "rawSha256": "daa98096ff59bfdd0ac52407ecf3425911bfe438077f1624fa74a1c6cfb8652d",
+      "gitBlob": "aae2466c4d5b45a0f4be5b8096be14df41246b60"
+    },
+    {
+      "path": "SPEC.md",
+      "rawSha256": "b4247a25e78a08cebc51140420441d002d4dcec02cbb3576a3723e8ffe96ec0e",
+      "gitBlob": "b50dcb390130d4bc547c3adf22559debe41abe5a"
+    },
+    {
+      "path": "docs/WIKI.md",
+      "rawSha256": "7dc28dd076a39f4e0ec73b17a37e57504bdb0d9df42605959ee82bfbe3e3df96",
+      "gitBlob": "5c91a1a7273e3161839e17ab79570fba1b77b72a"
+    },
+    {
+      "path": "docs/deed-custody-review-backend.md",
+      "rawSha256": "347c171463228b62b3bf4dd17b21ac064618618e571a8122b8434a3e061a8a49",
+      "gitBlob": "e70cb5a387c46459c80c5d3879c8d0d5d8582cae"
+    },
+    {
+      "path": "docs/deed-custody-review-contracts.md",
+      "rawSha256": "d80b8e52c9c3a243939d027049e67124278f8a255bd8c5a540486000b5b8ee57",
+      "gitBlob": "ce1d002a352f49116d6db09350b7e69421da89dd"
+    },
+    {
+      "path": "docs/deed-death-safehouse-design.md",
+      "rawSha256": "d502dbb15b6580f6f00729255bcd1df2a3225c112ff0b7615462e9b5ad76335c",
+      "gitBlob": "8658833ddf8d37e85a29111ad60c7d6ab9535322"
+    },
+    {
+      "path": "omerta-contracts/src/CharacterDeedCustody.sol",
+      "rawSha256": "564d66302db4772064cc97acdece0c4dbef9047196e77e1eff8e9775b83edfa1",
+      "gitBlob": "27be1cdb402bec705b31655e766e86218a5db72b"
+    },
+    {
+      "path": "omerta-contracts/src/DeedStockAccount.sol",
+      "rawSha256": "dbfefafad3bdf325f1a44d1c3fe36910ef9ec7efb4e468e6db8694fef3fbd4eb",
+      "gitBlob": "085fae4a6e530adf2af5630d114ebe2027a8220c"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/IOmertaRestrictedOMRV2.sol",
+      "rawSha256": "216ce375eab9ba903af955fb9d57929bf46ab614649fad9b69f349129e73226c",
+      "gitBlob": "649d1c69be36b82cf007cb9ff0be8b35b36c30a4"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol",
+      "rawSha256": "8cd1c5db60078f97be38d8292528cef40457e634dad7bdfd4468c374b87ecee7",
+      "gitBlob": "76c0d937fc2f0c84c70dd54342c6369abc37c8b4"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol",
+      "rawSha256": "ad6d4729b5678194c74f8a67ec87dc648817693eee2f8b2ac5261ec16b095b7c",
+      "gitBlob": "597356b6a5d83512ffaa3bdd83c1026fc9edfe20"
+    },
+    {
+      "path": "omerta-contracts/test/CharacterDeedCustody.t.sol",
+      "rawSha256": "affa32f502398be668dc832af0dbdc37297f10d634f3194678d9957fa358ca1f",
+      "gitBlob": "245cc82e41b9d93390cd904a10531f5d95cbdc99"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/RestrictedOMRV2.t.sol",
+      "rawSha256": "f0a59ffda96b81454178ecc45f0fa98dab40286ee7b90db97531c59096564dab",
+      "gitBlob": "73f072be0157bac38f7f426844af083035f7b267"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/RestrictedPoolManagerV2.t.sol",
+      "rawSha256": "d2037ee18b08aed79f30cc8b467ddcf2b10e59120219204e4987806f29c1a254",
+      "gitBlob": "7161564053b693d947dcaa942f2035e26dedc038"
+    },
+    {
+      "path": "package.json",
+      "rawSha256": "6cc4df91644073478ae43754b6d8f394ced45d5eaba3ecbf7b09448a381e38f3",
+      "gitBlob": "b62fcb1e0395cfc6df6b90cae43569f0859cd0a8"
+    },
+    {
+      "path": "public/index.html",
+      "rawSha256": "8a9cbe8834760d6487a730b98c54141a2a7bc8d71cfe76f87d85e1f7a689e428",
+      "gitBlob": "2b2ae92187ed87731c017ac87a6cf9bea6cb88bd"
+    },
+    {
+      "path": "schema.sql",
+      "rawSha256": "b34ab7020df0737e1e428cf817b9b168a495de6dd477e0b660930efa55c63bad",
+      "gitBlob": "6bd52cde359f98dd1482751469a7083bdd896d3b"
+    },
+    {
+      "path": "src/deedcustody.js",
+      "rawSha256": "30b0e8ddf379a30192d2eace4ff1ad9512e5dcacbed2b12afdcc9e92344487a4",
+      "gitBlob": "98c5fecc6ce9666877adade7b8b73bc1d0e041ed"
+    },
+    {
+      "path": "src/deedcustodychain.js",
+      "rawSha256": "0e0ef07d3b2e07979c1c88b20d0d764003b9112ca7c849bf033d4a2d13652117",
+      "gitBlob": "1e7807efdc2e2d108610d6924f3958c88704a118"
+    },
+    {
+      "path": "src/game.js",
+      "rawSha256": "153d393272d619ef4b7d9806ce922a66461ea536ef86d0b8b04658a1ec554127",
+      "gitBlob": "074f4beb97f0e69896e80c2bd585c9b3f9ede140"
+    },
+    {
+      "path": "src/preflight.js",
+      "rawSha256": "73ab993baaa2330ebc760c4f1bf63888d31e42d5fd00e40384e0055c105175c1",
+      "gitBlob": "e0b5ce8326bf9dcc6954f0067658476675089cd6"
+    },
+    {
+      "path": "src/routes/deeds.js",
+      "rawSha256": "2a32a0af09f76eca632de4145398eb2aefd7e597d06058c50a1c8aa15fe8a931",
+      "gitBlob": "fe0fcbc904493bce14d7b806e8b4663493f7d24d"
+    },
+    {
+      "path": "src/social/estate.js",
+      "rawSha256": "870ab4a9840e887eb63eb35b87a99fc600c6ccff221fcc5f8155227137149787",
+      "gitBlob": "f900962778338ef3a800a50dcac24b5ca6043e0b"
+    },
+    {
+      "path": "src/stockdeliver.js",
+      "rawSha256": "56be8bd6abf57d246663b2482135e16fbad6982d541bf091512b4687b2e0b958",
+      "gitBlob": "b56c5136f238acd43e66e1a43cf6ead0d45e3275"
+    },
+    {
+      "path": "src/worker.js",
+      "rawSha256": "2e5e6810a1ec3f83ffdcf087b4e17d68f7006fb9b52bea6486c6e012b89ea1c5",
+      "gitBlob": "42cf82798b2939f16f1b9c51b8b5a5329fc9a92c"
+    },
+    {
+      "path": "test/deed-custody-ui.js",
+      "rawSha256": "bb6948c37dbc259ca39ab2f1b85823a1cebb25cc707528e621e7d10c4bf78613",
+      "gitBlob": "922fc610c61bbe68fa811c690b2ef2816a547b5f"
+    },
+    {
+      "path": "test/deedcustody-estate-hook.js",
+      "rawSha256": "9de6e96dabab882c15a4addd4638228179c3eebd4bd446479c5b3465513e73ec",
+      "gitBlob": "f6df92dc7242debf0476b4b4ceaf2dcd605daab7"
+    },
+    {
+      "path": "test/deedcustody-estates-chain.js",
+      "rawSha256": "35f344c84d3a5fcfe0fac189e8874d2b6a89090ff3018259c2593d1909c658df",
+      "gitBlob": "8af24d0adff332c71546327c26f3cba8ec8cc661"
+    },
+    {
+      "path": "test/deedcustody-exit-keeper.js",
+      "rawSha256": "3ed5a8246979fa223f0cafad736dff11463a01cd66349072b2d842628e848437",
+      "gitBlob": "98af79aff92e3daf4eaa7a0c7109499076b9f560"
+    },
+    {
+      "path": "test/deedcustody-postgres.js",
+      "rawSha256": "03ac4dbdd97c9ee12758ea9131326e6579249e50b32ec33121f7ab4a0f0ea54e",
+      "gitBlob": "9fd089a7fadcdadf63f630ceb5f1cd768e441f10"
+    },
+    {
+      "path": "test/deedcustody-preflight.js",
+      "rawSha256": "d212802a17c69645a60dccd2ecffbf916164775d411b5883ccce08393d10cc70",
+      "gitBlob": "0cc184f2e06b86ff5aa45c103347b6de0fdf0840"
+    },
+    {
+      "path": "test/deedcustody-review.js",
+      "rawSha256": "36459eb25f6dd9ad08d275d1c1736e5756b553783e6025814ffb28fb11f63fe9",
+      "gitBlob": "48050eddbf544e783d94df55d73f5cda16873f79"
+    },
+    {
+      "path": "test/deedcustody-safe-house.js",
+      "rawSha256": "5e600c5abe687fb89f9b684bc057fad0625284f1300330006faf0187ef099464",
+      "gitBlob": "3298674361546e5baf30d600c0474a3641013fab"
+    },
+    {
+      "path": "test/deedcustody-worker.js",
+      "rawSha256": "2ad987837242eee0b89c8561bb7f87289035f9251730c03289dfce4d9408d99c",
+      "gitBlob": "00afdffda1382d6cd07665c7941185706371e19b"
+    },
+    {
+      "path": "test/deedcustody.js",
+      "rawSha256": "365be9598903f89f9af3ea40949ba9f7cc2a16752a2ff00cb1627faf4ed9156b",
+      "gitBlob": "6051b438b515120da2b1b50e9c968cd9772dfad5"
+    },
+    {
+      "path": "test/deedcustodychain.js",
+      "rawSha256": "0d5ed78b34df4fa39fddc9dca7be7a681426647166090d4b2bfc3487864e48a7",
+      "gitBlob": "ad44f91563dcb093b87bf516e11c03f026715576"
+    },
+    {
+      "path": "test/gates.js",
+      "rawSha256": "d30e85313f320ba66c8e26526bfc3844ad7892650fb6bd019d0365bdf05f165e",
+      "gitBlob": "f33bb01b35125849cc02e0db26fcc950847aff07"
+    },
+    {
+      "path": "test/preflight.js",
+      "rawSha256": "a230c760f740f318048b4415ae359ec0ac537ecebc8eaf7bbacad5e9dfc2ee26",
+      "gitBlob": "ccaf84758d3767cc739e7648c1d610490febe042"
+    }
+  ],
+  "checks": {
+    "contracts": "140 unique selected tests; fixture retest closure retained",
+    "backend": "focused custody and related regressions",
+    "persistence": "native PostgreSQL locks, rollback and recovery",
+    "ui": "actual browser and wallet consent race tests",
+    "worker": "actual-source failure isolation proof",
+    "repository": "preflight, gates and documentation guards"
+  }
+}

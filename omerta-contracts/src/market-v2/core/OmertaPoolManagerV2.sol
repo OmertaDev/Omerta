@@ -115,6 +115,10 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     mapping(Currency currency => mapping(uint8 bucket => uint256 amount)) public owed;
     mapping(Currency currency => uint256 amount) public totalOwed;
     uint256 private _withdrawalGuard = 1;
+    /// @notice Actual raw OMR turnover, once per successful swap; LP changes/donations are excluded.
+    mapping(uint256 utcDay => uint256 amount) public dailyOmrVolume;
+    /// @notice The first full UTC day observed by this deployment (deployment's partial day is excluded).
+    uint256 public immutable volumeTrackingStartDay = block.timestamp / 1 days + 1;
 
     error InvalidRestrictedConfiguration();
     error RestrictedPolicyNotSealed();
@@ -284,6 +288,10 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
             );
         }
 
+        // _checkPoolKey pins OMR as currency1. Use filled raw delta, before trade/hook fees.
+        // Any later swap/unlock revert also rolls back the counter.
+        int256 rawOmr = int256(swapDelta.amount1());
+        dailyOmrVolume[block.timestamp / 1 days] += uint256(rawOmr < 0 ? -rawOmr : rawOmr);
         uint256 tradeFee = _accrueTradeRevenue(key, params, swapDelta);
         BalanceDelta hookDelta;
         (swapDelta, hookDelta) = key.hooks.afterSwap(key, params, swapDelta, hookData, beforeSwapDelta);

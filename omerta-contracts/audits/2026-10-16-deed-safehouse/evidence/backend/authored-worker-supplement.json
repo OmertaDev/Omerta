@@ -1,0 +1,62 @@
+{
+  "kind": "authored supplemental correction, not independent review",
+  "generatedAt": "2026-10-17T03:35:16.544Z",
+  "finding": "ROOT-W01",
+  "problem": "Unwrapped custody jobs could skip unrelated following worker jobs. Simply wrapping them could otherwise let dependent stock work proceed after a contained failure.",
+  "correction": "Separate safe wrappers, explicit readiness false while enabled until non-dormant sync and a non-alert idle/settled keeper result; dependent stock sync/delivery gated on readiness, unrelated jobs preserved.",
+  "files": [
+    {
+      "path": "src/worker.js",
+      "sha256": "2e5e6810a1ec3f83ffdcf087b4e17d68f7006fb9b52bea6486c6e012b89ea1c5"
+    },
+    {
+      "path": "test/deedcustody-worker.js",
+      "sha256": "2ad987837242eee0b89c8561bb7f87289035f9251730c03289dfce4d9408d99c"
+    },
+    {
+      "path": "test/gates.js",
+      "sha256": "d30e85313f320ba66c8e26526bfc3844ad7892650fb6bd019d0365bdf05f165e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6cc4df91644073478ae43754b6d8f394ced45d5eaba3ecbf7b09448a381e38f3"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "a3251881465b31dc9df6e7861f29681830041c6a0cf6a215b05dbdc097dfe6cb"
+    }
+  ],
+  "checks": [
+    {
+      "command": "node test/deedcustody-worker.js",
+      "exit": 0,
+      "evidence": "Actual safe-wrapper and custody/stock/identity source executed with injected failures, null/undefined/dormant/error states, healthy idle/settled completion and inactive legacy behavior."
+    },
+    {
+      "command": "node test/gates.js",
+      "exit": 0,
+      "evidence": "All93 worker jobs isolated,138 null-safe un-nested safe jobs; all50 Promise.all sites exact-classified,733 root-level test suites covered or declared, actual CI/browser/native command ledgers passed."
+    },
+    {
+      "command": "node test/deedcustodychain.js",
+      "exit": 0,
+      "evidence": "Genuine compiled ABI parity and actual custody adapter/ownership projection suite."
+    },
+    {
+      "command": "npm run test:deed-custody:postgres",
+      "exit": 0,
+      "evidence": "Private loopback15459 random disposable schema, actual PostgreSQL death ordering and exit crash/finality barrier, cleanup completed."
+    }
+  ],
+  "coverageWiring": {
+    "browser": "Real Playwright UI moved from no-browser suites alias to existing Chromium browser job via test:deed-custody:browser.",
+    "native": "Existing PostgreSQL core job invokes test:deed-custody:postgres with explicit COORDINATION_TEST_DATABASE_URL.",
+    "memory": "New actual-source worker proof is registered in normal test:deed-custody alias.",
+    "rpc": "Three exact viem-only Promise.all marks classified; shared SQL concurrency remains rejected."
+  },
+  "historicalEvidence": "Original independent source manifests, backend-verification.json and logs remain unchanged; this supplement pins the authored correction and does not relabel them as new independent executions.",
+  "productionChanges": false,
+  "gatesToolSession": 49294,
+  "rootIndependentVerification": "Root confirmed direct inspection of worker, keeper return states and all three exact RPC batches, narrow CI/guard diff, plus independent worker proof PASS.",
+  "nativeDatabaseCleanup": "Private PostgreSQL18 port15459 data directory and port verified; pg_ctl fast stop exited0 after final native alias completed. No data directory deletion."
+}

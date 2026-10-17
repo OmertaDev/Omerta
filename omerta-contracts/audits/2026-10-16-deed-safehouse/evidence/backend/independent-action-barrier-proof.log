@@ -1,0 +1,34 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  Comparison {
++   code: 'no_character'
+-   code: 'custody_exit_finalizing'
+  }
+
+    at async file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/output/deed-custody-review/independent-action-barrier-proof.mjs:26:3 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: GameError: Create a character first.
+      at file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/src/game.js:1180:31
+      at async file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/src/game.js:1144:20
+      at async ownedAction (file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/src/items.js:328:24)
+      at async file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/src/content/phase2-transactions.js:124:22
+      at async file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/src/items.js:365:7
+      at async withCharacter (file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/src/game.js:1142:41)
+      at async waitForActual (node:assert:646:5)
+      at async strict.rejects (node:assert:769:25)
+      at async file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/output/deed-custody-review/independent-action-barrier-proof.mjs:26:3 {
+    code: 'no_character'
+  },
+  expected: { code: 'custody_exit_finalizing' },
+  operator: 'rejects',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

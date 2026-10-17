@@ -1,0 +1,104 @@
+{
+  "phase": "source implementation, inactive financial rail; not production deployment clearance",
+  "generatedAt": "2026-10-17T03:22:17.839Z",
+  "base": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "files": [
+    {
+      "path": "schema.sql",
+      "sha256": "b34ab7020df0737e1e428cf817b9b168a495de6dd477e0b660930efa55c63bad"
+    },
+    {
+      "path": "src/deedcustody.js",
+      "sha256": "30b0e8ddf379a30192d2eace4ff1ad9512e5dcacbed2b12afdcc9e92344487a4"
+    },
+    {
+      "path": "src/deedcustodychain.js",
+      "sha256": "0e0ef07d3b2e07979c1c88b20d0d764003b9112ca7c849bf033d4a2d13652117"
+    },
+    {
+      "path": "src/routes/deeds.js",
+      "sha256": "2a32a0af09f76eca632de4145398eb2aefd7e597d06058c50a1c8aa15fe8a931"
+    },
+    {
+      "path": "src/social/estate.js",
+      "sha256": "870ab4a9840e887eb63eb35b87a99fc600c6ccff221fcc5f8155227137149787"
+    },
+    {
+      "path": "src/stockdeliver.js",
+      "sha256": "56be8bd6abf57d246663b2482135e16fbad6982d541bf091512b4687b2e0b958"
+    },
+    {
+      "path": "src/worker.js",
+      "sha256": "2573071824f71725c2de4fd895403c1d264a4bce8da1ab96e2542404c7cea0b1"
+    },
+    {
+      "path": "src/game.js",
+      "sha256": "153d393272d619ef4b7d9806ce922a66461ea536ef86d0b8b04658a1ec554127"
+    },
+    {
+      "path": "test/deedcustody.js",
+      "sha256": "365be9598903f89f9af3ea40949ba9f7cc2a16752a2ff00cb1627faf4ed9156b"
+    },
+    {
+      "path": "test/deedcustodychain.js",
+      "sha256": "0d5ed78b34df4fa39fddc9dca7be7a681426647166090d4b2bfc3487864e48a7"
+    },
+    {
+      "path": "test/deedcustody-estates-chain.js",
+      "sha256": "35f344c84d3a5fcfe0fac189e8874d2b6a89090ff3018259c2593d1909c658df"
+    },
+    {
+      "path": "test/deedcustody-review.js",
+      "sha256": "36459eb25f6dd9ad08d275d1c1736e5756b553783e6025814ffb28fb11f63fe9"
+    },
+    {
+      "path": "test/deedcustody-exit-keeper.js",
+      "sha256": "3ed5a8246979fa223f0cafad736dff11463a01cd66349072b2d842628e848437"
+    },
+    {
+      "path": "test/deedcustody-safe-house.js",
+      "sha256": "5e600c5abe687fb89f9b684bc057fad0625284f1300330006faf0187ef099464"
+    },
+    {
+      "path": "test/deedcustody-postgres.js",
+      "sha256": "03ac4dbdd97c9ee12758ea9131326e6579249e50b32ec33121f7ab4a0f0ea54e"
+    },
+    {
+      "path": "test/deedcustody-estate-hook.js",
+      "sha256": "9de6e96dabab882c15a4addd4638228179c3eebd4bd446479c5b3465513e73ec"
+    }
+  ],
+  "checks": {
+    "test/deedcustody.js": "PASS after final tracked-only hook, including pending-incoming killer death while rail off",
+    "test/deedcustodychain.js": "PASS including genuinely compiled ABI selectors, indexed event fields and named tuple outputs",
+    "test/deedcustody-estates-chain.js": "PASS",
+    "test/deedcustody-review.js": "PASS",
+    "test/deedcustody-exit-keeper.js": "PASS",
+    "test/deedcustody-safe-house.js": "PASS; real EIP712 signatures and deterministic RPC; actual OMR burns are Solidity-suite scope",
+    "test/deedcustody-postgres.js": "PASS native PostgreSQL isolated schema at loopback15459; cleanup completed",
+    "test/routes.js": "PASS",
+    "test/estate.js": "PASS",
+    "test/deeds.js": "PASS",
+    "test/stockdeliver.js": "PASS",
+    "test/pen.js": "PASS",
+    "test/deedcustody-estate-hook.js": "PASS after final tracked-only hook: genuine full server and actual moderator estate, rail disabled",
+    "test/social.js": "PASS before final tracked-only estate hook; final new hook separately verified by full-server focused test"
+  },
+  "finding": {
+    "id": "ROOT-D01",
+    "status": "fixed and retested",
+    "description": "A submitted exit could previously physically release a deed after an admitted offchain death. Exact durable raw-journal intent now creates a gameplay/death barrier until finalized release or canonical revert; immutable pending consent covers a worker crash before status projection.",
+    "proofs": [
+      "native atomic death/cash rollback",
+      "prepared/submitted/mined/settled journal states while exit row remains pending",
+      "cancel/refresh cannot erase barrier",
+      "confirmed release or canonical reverted journal permits actions",
+      "real PostgreSQL global death and character lock ordering"
+    ]
+  },
+  "limitations": [
+    "Backend Safe House quote tests use deterministic RPC; actual burn and volume accounting belong to compiled contract tests.",
+    "No onchain transactions, production deployment, fee burns or financial activation performed."
+  ],
+  "retainedBehavior": "Untracked lives create no historical chain gas backlog. Already tracked lives retain ordered death journal even while rail disabled."
+}

@@ -1,0 +1,1 @@
+independent backend Safe House proof: PASS (real owner signatures, attacker rejection, exact fee/days/day/nonce binding, idempotent queue, pending not protected, replay and UTC expiry, postdeath and changed life rejection, runtime pins, finalized-only coverage; isolated native PostgreSQL)

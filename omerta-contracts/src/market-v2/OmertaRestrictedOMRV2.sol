@@ -13,7 +13,7 @@ interface IRestrictedSettlementPolicyV2 {
     function revenuePolicyId() external view returns (bytes32);
 }
 
-/// @notice Fixed-supply OMR whose sealed transfer policy admits only pinned settlement and custody contracts.
+/// @notice Capped-supply OMR whose sealed policy admits only pinned settlement and custody contracts.
 /// @dev Custody operators must be reviewed typed contracts, with fixed runtime and no arbitrary forwarding.
 ///      Approvals and permits are standard ERC20 approvals; they never bypass the caller's transfer role.
 contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOMRV2 {
@@ -85,6 +85,17 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
             registeredWallet[wallet] = true;
             emit WalletRegistered(wallet);
         }
+    }
+
+    /// @notice Destroy approved OMR for a typed protocol custody payment, reducing total supply.
+    /// @dev Requires a sealed, runtime-pinned custody operator and the owner's ordinary allowance.
+    function burnFrom(address account, uint256 amount) external override {
+        address caller = _msgSender();
+        if (!policySealed || !isOperator(caller) || operatorRole[caller] != OperatorRole.ProtocolCustody) {
+            revert UnauthorizedTransfer();
+        }
+        _spendAllowance(account, caller, amount);
+        _burn(account, amount);
     }
 
     function contractHolderCount() external view returns (uint256) {
@@ -202,6 +213,14 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
 
     function _update(address from, address to, uint256 value) internal override {
         if (from != address(0)) {
+            if (to == address(0)) {
+                address burner = _msgSender();
+                if (!policySealed || !isOperator(burner) || operatorRole[burner] != OperatorRole.ProtocolCustody) {
+                    revert UnauthorizedTransfer();
+                }
+                super._update(from, to, value);
+                return;
+            }
             if (!isRecipient(to)) revert InvalidRecipient();
             address caller = _msgSender();
             if (!policySealed) {

@@ -1,5 +1,6 @@
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
+import { assertCharacterDeedActionsAvailable } from './deedcustody.js';
 import { recordMeeting } from './contacts.js';
 import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
 import { claimQualifiedAgentReferral } from './agentreferrals.js';
@@ -1182,6 +1183,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     if (lockHooks?.afterAccountLock) {
       await lockHooks.afterAccountLock(client, accountId, ch, prelockState);
     }
+    await assertCharacterDeedActionsAvailable(client, ch.id);
     const owned = await loadOwned(client, ch);
     await accrueAndLedger(client, ch, acct, owned);
 
@@ -1446,6 +1448,8 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     const victim = rentalDeath.characters.find(row => row.id === targetCharacterId && row.alive);
     if (!ch) throw new GameError('no_character', 'Create a character first.');
     if (!victim) throw new GameError('no_target', "They're gone — nobody by that name on the streets.");
+    await assertCharacterDeedActionsAvailable(client, ch.id);
+    await assertCharacterDeedActionsAvailable(client, victim.id);
     if (requireKnown && (victim.loc !== ch.loc || !meet)) await requireKnownPlayer(client, ch, victim.id);
 
     const lockAcct = async (accId) =>

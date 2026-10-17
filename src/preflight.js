@@ -154,6 +154,12 @@ export const OPERATIONAL_ENV = [
   'GEARVAULT_ADDRESS',
   // StreetDeed (Extracted/Redeemed events) — the on-chain tradeable deed NFT. Dormant unless set.
   'STREET_DEED_ADDRESS',
+  // Restricted character-life custody. Explicitly dormant until exact deployment review.
+  'CHARACTER_DEED_CUSTODY_ENABLED', 'CHARACTER_DEED_CUSTODY_ADDRESS',
+  'CHARACTER_DEED_CUSTODY_CODE_HASH', 'CHARACTER_DEED_CUSTODY_START_BLOCK',
+  'CHARACTER_DEED_OPERATOR_PK', 'ERC6551_ACCOUNT_IMPL',
+  'CHARACTER_DEED_MAX_GAS', 'CHARACTER_DEED_MAX_FEE_WEI',
+  'CHARACTER_DEED_PRIORITY_FEE_WEI', 'CHARACTER_DEED_DAILY_GAS_WEI',
   // THE STOCK DELIVERY RAIL (brokers §3.4) — deliver treasury-bought stock into the player's on-chain
   // Street Deed's ERC-6551 TBA. Dormant unless STOCK_VAULT_ADDRESS is set (the Delivered watcher) +
   // the ERC-6551 config (the canonical registry is the default; the account impl + salt are deploy
@@ -299,6 +305,23 @@ export function normalizeRwaReviewerConfig(env = process.env) {
 export function preflight(env = process.env) {
   const errors = [], warnings = [];
   if (!isHardened(env)) return { errors, warnings };  // dev/CI keeps the convenient fallbacks
+  if (env.CHARACTER_DEED_CUSTODY_ENABLED != null
+    && !['true', 'false'].includes(env.CHARACTER_DEED_CUSTODY_ENABLED))
+    errors.push('CHARACTER_DEED_CUSTODY_ENABLED must be true or false when supplied.');
+  if (env.CHARACTER_DEED_CUSTODY_ENABLED === 'true') {
+    for (const key of ['CHARACTER_DEED_CUSTODY_ADDRESS', 'STREET_DEED_ADDRESS',
+      'DYNASTY_NFT_ADDRESS', 'ERC6551_ACCOUNT_IMPL', 'OMR_ADDRESS']) {
+      if (!/^0x[0-9a-f]{40}$/i.test(env[key] || '') || /^0x0{40}$/i.test(env[key] || ''))
+        errors.push(`${key} must identify the reviewed Deed custody deployment.`);
+    }
+    if (!/^0x[0-9a-f]{64}$/i.test(env.CHARACTER_DEED_CUSTODY_CODE_HASH || '')
+      || /^0x0{64}$/i.test(env.CHARACTER_DEED_CUSTODY_CODE_HASH || ''))
+      errors.push('CHARACTER_DEED_CUSTODY_CODE_HASH must pin the reviewed runtime.');
+    if (!/^[0-9]+$/.test(env.CHARACTER_DEED_CUSTODY_START_BLOCK || ''))
+      errors.push('CHARACTER_DEED_CUSTODY_START_BLOCK must pin the deployment block.');
+    if (!/^[1-9][0-9]*$/.test(env.CHAIN_ID || '') || !env.CHAIN_RPC_URL)
+      errors.push('Deed custody requires an explicit chain ID and RPC.');
+  }
   const deferLegal = env.LEGAL_PROFILE_DEFER === 'on';
   if (env.LEGAL_PROFILE_DEFER != null && !['on', 'off'].includes(env.LEGAL_PROFILE_DEFER))
     errors.push('LEGAL_PROFILE_DEFER must be on or off when supplied.');

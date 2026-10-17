@@ -1,0 +1,10 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+reclaim: 1 expired voucher(s) but no on-chain reader (CHAIN_RPC_URL unset/down) — skipping to avoid a blind refund; set the RPC so usedNonce can confirm before refunding
+🚨 §10.4 CHAIN-BOUNDARY ALARM: Claimed(8) arrived for an already-EXPIRED (refunded) voucher — double-resolution
+  ✓ F1 clamp: rounding the ceiling breaches it 50% of the time; rounding the oracle price never does
+  ✓ v4 oracle watchdog: unset/healthy/due/keeper_late/rebaselining/skew classified + dormant end-to-end + mod view
+  ✓ quoteBond reads the oracle before it opens a transaction (no RPC under a held row lock)
+  ✓ the identity NFT has an entrance: a made account signs one MintVoucher, EIP-712 parity holds, and the reclaim rail ignores it
+  ✓ identity replacement uses the correct chain and a confirmed block strictly beyond the signed deadline
+  ✓ chain parity: all five values the chain holds and the backend restates are crossed (the two splits, the two fee prices, the withdrawal cap and the sell tax on both layers)
+✅ M6-B chain test passed — SIWE wallet link, EIP-712 voucher signing parity (recovers the signer), full-reserve withdrawal queue (debit→queue→fund→drain→sign), $OMR ledger conservation, gear-mint vouchers, Claimed reserve release, expired-voucher reclaim (OMR refund + reserve free + gear restore, §10.4 exact), §11 mint-gate + fee reconcile + concurrent-credit safety, bond-quote signing parity (recovers the signer) + watcher enrichment + wallet-submit calldata (server-encoded bond() for MetaMask/Robinhood Wallet), and THE EXIT TOLL (gross debit → net voucher, tax:dev/tax:buyback transfers, dev-fund claim, conservation exact)

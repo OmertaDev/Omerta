@@ -76,6 +76,7 @@ import { sweepGrandPrix } from './races.js';
 import { sweepStakes } from './stable.js';
 import { syncFeeEvents, syncClaimedEvents, syncBondEvents, syncHarvestFees, syncRedeemedEvents, syncDeedExtractedEvents, syncDeedRedeemedEvents, syncDeedTransferEvents, syncStockDeliveredEvents, syncStorePaidEvents, syncDynastyMintEvents, syncDynastyTransferEvents, makeViemSource, DEFAULT_CONFIRMATIONS } from './watcher.js';
 import { runStockDeliveryKeeper, deliveryKeeperReady } from './stockdeliver.js';
+import { syncCharacterDeedEvents, runCharacterDeedKeeper } from './deedcustodychain.js';
 import { allocateEpoch } from './brokers.js';
 import { syncApprovedStockTokenCatalog, stockTokenCatalogReady } from './stockcatalog.js';
 import { publishResolvedStockBallot, resolvedBallotPublisherReady } from './rwastockkeeper.js';
@@ -1028,9 +1029,18 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
             if (dt?.processed) log(`deed transfers: ${dt.processed} ownership move(s) recorded`);
             if (dr?.processed) console.log(`🏙️  deed sync: ${dr.processed} street(s) burned back to the city (blocks ${dr.from}–${dr.to})`);
           }
+          let custodyReady = process.env.CHARACTER_DEED_CUSTODY_ENABLED !== 'true';
+          if (process.env.CHARACTER_DEED_CUSTODY_ENABLED === 'true') {
+            // Isolate each job, but keep dependent stock work closed on missing, dormant or failed results.
+            const custodySynced = await safe('character deed sync', () => syncCharacterDeedEvents(pool));
+            if (custodySynced && custodySynced.dormant !== true) {
+              const custodyKept = await safe('character deed keeper', () => runCharacterDeedKeeper(pool));
+              custodyReady = custodyKept?.alert !== true && ['idle', 'settled'].includes(custodyKept?.state);
+            }
+          }
           // STOCK DELIVERY (StockVault Delivered → confirm a staged delivery into a deed's TBA, flip
           // the allocation). Brokers §3.4. Dormant unless STOCK_VAULT_ADDRESS is set.
-          if (process.env.STOCK_VAULT_ADDRESS) {
+          if (custodyReady && process.env.STOCK_VAULT_ADDRESS) {
             const sd = await safe('stock delivered sync', () => syncStockDeliveredEvents(pool, source, { startBlock }));
             if (sd?.processed) console.log(`📈 stock delivery: confirmed ${sd.processed} delivery(ies) into deed TBAs (blocks ${sd.from}–${sd.to})`);
             // THE DELIVERY KEEPER — the tx sender the rail was missing: stage + claim + send

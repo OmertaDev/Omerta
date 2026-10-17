@@ -1,0 +1,326 @@
+Compiling 147 files with Solc 0.8.26
+Compiling 177 files with Solc 0.8.26
+Solc 0.8.26 finished in 81.58s
+Solc 0.8.26 finished in 161.80s
+Compiler run successful with warnings:
+Warning (8760): This declaration has the same name as another declaration.
+   --> src/AcquisitionVaultCore.sol:170:9:
+    |
+170 |         uint256 globalLifetimeCanonicalDepositCapWei
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The other declaration is here:
+   --> src/AcquisitionVaultCore.sol:205:5:
+    |
+205 |     function globalLifetimeCanonicalDepositCapWei() external view returns (uint256) {
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+Warning (8760): This declaration has the same name as another declaration.
+   --> src/AcquisitionVaultCore.sol:363:13:
+    |
+363 |             uint256 globalLifetimeCanonicalDepositCapWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The other declaration is here:
+   --> src/AcquisitionVaultCore.sol:205:5:
+    |
+205 |     function globalLifetimeCanonicalDepositCapWei() external view returns (uint256) {
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:364:13:
+    |
+364 |             uint256 availableWei,
+    |             ^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:146:5:
+    |
+146 |     uint256 public availableWei;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:365:13:
+    |
+365 |             uint256 unattributedWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:147:5:
+    |
+147 |     uint256 public unattributedWei;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:366:13:
+    |
+366 |             uint256 ordinaryReservedWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:148:5:
+    |
+148 |     uint256 public ordinaryReservedWei;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:367:13:
+    |
+367 |             uint256 reconciliationLiabilityWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:149:5:
+    |
+149 |     uint256 public reconciliationLiabilityWei;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:368:13:
+    |
+368 |             uint256 reconciliationBackingWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:150:5:
+    |
+150 |     uint256 public reconciliationBackingWei;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:369:13:
+    |
+369 |             uint256 accountingSequence,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:151:5:
+    |
+151 |     uint256 public accountingSequence;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:370:13:
+    |
+370 |             uint256 lastObservedBalanceDeficitWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:152:5:
+    |
+152 |     uint256 public lastObservedBalanceDeficitWei;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2519): This declaration shadows an existing declaration.
+   --> src/AcquisitionVaultCore.sol:371:13:
+    |
+371 |             uint256 globalLifetimeCanonicalDepositedWei
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Note: The shadowed declaration is here:
+   --> src/AcquisitionVaultCore.sol:153:5:
+    |
+153 |     uint256 public globalLifetimeCanonicalDepositedWei;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5740): Unreachable code.
+  --> lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol:72:9:
+   |
+72 |         _nonReentrantAfter();
+   |         ^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:354:13:
+    |
+354 |             uint256 schemaVersion,
+    |             ^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:355:13:
+    |
+355 |             address factory,
+    |             ^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:356:13:
+    |
+356 |             bytes32 manifestHash,
+    |             ^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:357:13:
+    |
+357 |             address authority,
+    |             ^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:358:13:
+    |
+358 |             address registry,
+    |             ^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:359:13:
+    |
+359 |             address budgetBook,
+    |             ^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:360:13:
+    |
+360 |             address intentExecution,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:361:13:
+    |
+361 |             address reconciliation,
+    |             ^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:362:13:
+    |
+362 |             bool finalized,
+    |             ^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:363:13:
+    |
+363 |             uint256 globalLifetimeCanonicalDepositCapWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:364:13:
+    |
+364 |             uint256 availableWei,
+    |             ^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:365:13:
+    |
+365 |             uint256 unattributedWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:366:13:
+    |
+366 |             uint256 ordinaryReservedWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:367:13:
+    |
+367 |             uint256 reconciliationLiabilityWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:368:13:
+    |
+368 |             uint256 reconciliationBackingWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:369:13:
+    |
+369 |             uint256 accountingSequence,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:370:13:
+    |
+370 |             uint256 lastObservedBalanceDeficitWei,
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (5667): Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> src/AcquisitionVaultCore.sol:371:13:
+    |
+371 |             uint256 globalLifetimeCanonicalDepositedWei
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2018): Function state mutability can be restricted to view
+   --> src/ProtocolLiquidityVault.sol:608:5:
+    |
+608 |     function renounceOwnership() public override onlyOwner { revert InvalidConfiguration(); }
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:181:5:
+    |
+181 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+Warning (2018): Function state mutability can be restricted to view
+   --> src/AcquisitionVault.sol:165:5:
+    |
+165 |     function renounceOwnership() public override onlyOwner {
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 30 tests for test/CharacterDeedCustody.t.sol:CharacterDeedCustodyTest
+[PASS] testFuzz_death_chain_moves_only_to_recorded_successor_preserving_stock(uint8,uint8) (runs: 512, μ: 4768162, ~: 3806557)
+[PASS] test_alternate_registry_salt_account_is_not_canonical() (gas: 179107)
+[PASS] test_canonical_vault_cannot_create_allowances_or_delegate_signatures_even_unequipped() (gas: 265180)
+[PASS] test_contract_owner_signature_and_rejected_exit_receiver_are_atomic() (gas: 1064546)
+[PASS] test_coverage_history_preserves_gaps_and_renewals_and_expiry_boundary() (gas: 494890)
+[PASS] test_death_timestamp_and_sequence_reject_stale_future_and_reordered_transactions() (gas: 435848)
+[PASS] test_equipment_requires_direct_owner_unlock_and_approval() (gas: 441254)
+[PASS] test_equipped_account_has_no_unlock_redeem_approval_or_execute_bypass() (gas: 297868)
+[PASS] test_estate_auto_binds_same_identity_heir_and_releases_only_after_24_hours() (gas: 1015950)
+[PASS] test_estate_rejects_wrong_identity_reused_heir_self_and_replay_without_rewriting_edge() (gas: 1455672)
+[PASS] test_exit_old_future_oversized_and_changed_domain_intents_are_rejected() (gas: 283711)
+[PASS] test_expired_coverage_routes_to_successive_killers_and_does_not_protect_other_dynasty() (gas: 997134)
+[PASS] test_late_purchase_cannot_retroactively_protect_an_unreported_death() (gas: 1019762)
+[PASS] test_life_registry_is_operator_only_unique_and_bound_to_soulbound_owner() (gas: 452299)
+[PASS] test_max_hops_is_bounded_and_long_chain_can_make_finite_partial_progress() (gas: 32136109)
+[PASS] test_native_currency_withdrawal_is_owner_only_and_equipment_locks_it() (gas: 1020464)
+[PASS] test_pending_unminted_killer_can_receive_then_die_and_bind_without_redirecting_to_heir() (gas: 1610380)
+[PASS] test_player_loot_waits_at_immature_estate_then_follows_killed_heir_to_next_killer() (gas: 1956874)
+[PASS] test_prebound_heir_anchors_unminted_parent_and_estate_chain_retains_one_family() (gas: 1936392)
+[PASS] test_protected_heir_death_before_prior_settlement_keeps_same_account_coverage() (gas: 1347663)
+[PASS] test_safe_house_burns_approved_real_OMR_and_covers_whole_vault() (gas: 1024178)
+[PASS] test_safe_house_price_uses_previous_complete_day_with_floor_ceiling_and_no_partial_day() (gas: 87586)
+[PASS] test_safe_house_rejects_UTC_rollover_and_changed_maximum_burn() (gas: 294773)
+[FAIL: next call did not revert as expected] test_safe_house_signature_nonce_price_day_allowance_and_horizon_are_atomic() (gas: 602970)
+[PASS] test_successive_killers_receive_same_deed_vault_and_heir_never_receives_old_life_loot() (gas: 925563)
+[PASS] test_unequip_requires_operator_owner_signature_freshness_nonce_and_live_life() (gas: 740095)
+[PASS] test_unminted_estate_lineage_enforces_identity_when_bound_in_either_order() (gas: 2473842)
+[PASS] test_unsafe_deposit_still_counts_as_equipped_and_locks_stock() (gas: 602863)
+[PASS] test_vault_withdrawal_reentry_fails_and_no_arbitrary_external_execute_exists() (gas: 956720)
+[PASS] test_zero_killer_requires_heir_and_player_death_is_single_use_ordered_and_acyclic() (gas: 599945)
+Suite result: FAILED. 29 passed; 1 failed; 0 skipped; finished in 190.97ms (241.63ms CPU time)
+
+Ran 1 test for test/CharacterDeedCustody.t.sol:SafeHouseCoverageInvariantTest
+[PASS] invariant_historical_coverage_matches_linear_model_and_every_period_reduces_supply() (runs: 512, calls: 32768, reverts: 0)
+
+╭--------------------------+----------+-------+---------+----------╮
+| Contract                 | Selector | Calls | Reverts | Discards |
++==================================================================+
+| SafeHouseCoverageHandler | advance  | 10852 | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| SafeHouseCoverageHandler | query    | 11070 | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| SafeHouseCoverageHandler | renew    | 10846 | 0       | 0        |
+╰--------------------------+----------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 12.38s (12.32s CPU time)
+
+Ran 1 test for test/CharacterDeedCustody.t.sol:CharacterDeedCustodyInvariantTest
+[PASS] invariant_deed_stock_lock_and_successor_graph_match_independent_model() (runs: 512, calls: 32768, reverts: 0)
+
+╭-----------------------------+---------------------+-------+---------+----------╮
+| Contract                    | Selector            | Calls | Reverts | Discards |
++================================================================================+
+| CharacterDeedCustodyHandler | advanceTime         | 5463  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | attemptBypass       | 5500  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | attemptUnsignedExit | 5404  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | death               | 5430  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | estate              | 5485  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | settle              | 5486  | 0       | 0        |
+╰-----------------------------+---------------------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 24.95s (24.89s CPU time)
+
+Ran 3 test suites in 24.98s (37.52s CPU time): 31 tests passed, 1 failed, 0 skipped (32 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/CharacterDeedCustody.t.sol:CharacterDeedCustodyTest
+[FAIL: next call did not revert as expected] test_safe_house_signature_nonce_price_day_allowance_and_horizon_are_atomic() (gas: 602970)
+
+Encountered a total of 1 failing tests, 31 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

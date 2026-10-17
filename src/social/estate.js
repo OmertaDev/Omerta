@@ -1,5 +1,6 @@
 import {recoverMultiHopCourierAtEstateStart,assertMultiHopCourierEstateCleared} from '../multihopcourier.js';
 import { recoverCustomerVaultsAtEstateStart } from '../customervaults.js';
+import { recordTrackedCharacterDeedDeath, assertCharacterDeedActionsAvailable } from '../deedcustody.js';
 import { recoverCustomerLayawayAtEstateStart, recoverCustomerLayawayInEstate } from '../customerlayaway.js';
 import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';
 import { retireIntelligenceAtDeath } from '../economicintelligence.js';
@@ -173,6 +174,7 @@ export async function clearInboundPointers(client, charId, accountId) {
 }
 
 export async function runEstate(client, h, victim, killerName, opts = {}) {
+  if (!victim.is_npc) await assertCharacterDeedActionsAvailable(client, victim.id);
   assertItemTransaction(client);
   await assertEquipmentRentalDeathScope(client, victim.id, h.rentalDeathScope);
   const originalVictim = (await client.query('SELECT account_id,alive,generation FROM characters WHERE id=$1', [victim.id])).rows[0];
@@ -554,6 +556,13 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
      // FIVE PILLARS #1: the honor ECHO — identity shadows the name at a quarter strength (the
      // npc-memory precedent; a Mad Dog's heir starts under the cloud, a Man of Honor's with a nod)
      Math.round(Number(victim.honor || 0) * HONOR.HEIR_KEEP), !!victim.is_npc, victim.is_npc ? stake : 0]);
+  // The same transaction commits the mortal death, exact heir, and ordered chain outbox.
+  // Player kills retain the heir too: protected deeds follow that historical life.
+  if (!victim.is_npc) await recordTrackedCharacterDeedDeath(client, {
+    victimCharacterId: victim.id,
+    killerCharacterId: opts.killerCh && !opts.killerCh.is_npc ? opts.killerCh.id : null,
+    heirCharacterId: heirId,
+  });
   // legacy stake above the base 500 is a ledgered faucet (base 500 matches every fresh character)
   if (stake > 500) await h.ledger(client, { characterId: heirId, currency: 'cash', amount: stake - 500, reason: 'death:legacy' });
   // …and the names that remember the bloodline follow the heir (fresh touched_at — the clock restarts)

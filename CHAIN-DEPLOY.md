@@ -87,9 +87,9 @@ touches mainnet** until §0 is satisfied.
    caps, RT#8's two-step ownership, the four-way sell tax — so re-measure rather than quoting this
    figure, and if the two disagree the tree is right and this line is stale.)*
 
-   **In the batch — 39 contracts + 1 interface, every contract carrying tests:**
+   **In the batch — 41 contracts + 1 interface, every contract carrying tests:**
 
-   This is the current 40-file top-level Solidity inventory. `IOmrOracle` is the standalone
+   This is the current 42-file top-level Solidity inventory. `IOmrOracle` is the standalone
    top-level consumer interface; the remaining top-level files are
    contract-bearing or abstract contract sources. Compatibility and module interfaces under
    `src/interfaces/` remain in source/audit scope even though they are not independently deployable.
@@ -109,6 +109,7 @@ touches mainnet** until §0 is satisfied.
    | Genesis participation | CCA and `GenesisLifecycleController` | seven-day auction; zero CCA validation hook; no per-wallet bid cap; exact factory prediction and controller binding; no NFT or identity gate |
    | THE BANK | `Denari` (the DNR debt token, né `nUSD`), `CollateralEscrow`, `Alchemist`, `Transmuter`, `FlashGuard` | that no oracle sits on the borrow path and no `liquidate()` exists anywhere — the design's central claim, and the class that cost Inverse ~$21M twice |
    | Street Deeds | `StreetDeed` | the EIP-712 self-mint (name↔tokenId bijection, the daily cap, replay/deadline; NO owner mint), that `redeem` (the burn-to-re-import) is never pausable so a paused contract can never trap a holder's asset, and the **default-ON per-token transfer lock** (added 2026-08-14, the drain-before-sale mitigation): mint locks, every transfer arrival RE-LOCKS, only the OWNER may unlock (an approved operator deliberately cannot — operator-unlock IS the drain vector), `redeem` is never blocked by it, and the unlock emits `TransferLockSet` — the public "listing" act a buyer anchors TBA-content checks on |
+   | Deed death custody (dormant) | `CharacterDeedCustody` (including `CharacterDeedAccount`), `DeedStockAccount` | successive kill/heir settlement, historical Safe House intervals, owner consent, actual restricted OMR burn, previous completed UTC-day canonical volume, constrained asset withdrawals and durable exit/death serialization; [pinned implementation review](omerta-contracts/audits/2026-10-16-deed-safehouse/README.md). New immutable deployments, wallet migration and operational activation checks remain required |
    | the identity NFT | `DynastyNFT` | the EIP-712 self-mint (NO owner mint, nonce/deadline/daily-cap walls), that it gates **NOTHING on `balanceOf`** (the entitlement is account-bound off-chain — the token is a transferable trophy), and the uncapped sequential supply + EIP-2981 royalty |
    | the stock machine | `StockTokenRegistry`, `StockTokenRegistryV2`, `RwaStockBuyer`, `StockVault` | legacy compatibility plus additive immutable version identity; atomic ticker/token/provider conflict replacement; activation TTL; monotonic ballot eligibility that cannot revive after same-key reactivation; one immutable closed-day family result and frozen purchase budget/deadline; ballot-bound exact-token purchase through a Safe-approved adapter; daily ETH/slippage/one-shot walls; pre-held transfer only; EIP-712 allocation authorization; per-token delivery caps, pause, rotation, and sweep |
    | gameplay settlement gas | `SettlementGasPool` | immutable gameplay-vault credit authority; terminal replay keys; exact executor liabilities and self-only pull withdrawals; bounded gas/data-fee accounting; delayed configuration; and migration of unreserved ETH only to one exact successor while old credits stay backed |

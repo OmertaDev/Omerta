@@ -1,0 +1,372 @@
+{
+  "phase": "isolated implementation review; no deployment or activation clearance",
+  "generatedAt": "2026-10-17T03:37:27.990Z",
+  "baseCommit": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "sourceState": "reviewed working-tree source pinned by raw-byte manifests in evidence",
+  "files": [
+    {
+      "source": "output/deed-custody-review/authored-worker-supplement.json",
+      "path": "backend/authored-worker-supplement.json",
+      "sha256": "7bfd2c2d3c78867b5a944e88b47159c7c14c60f7feb6f8f18a545962ef2e7eb2",
+      "uncompressedSha256": "7bfd2c2d3c78867b5a944e88b47159c7c14c60f7feb6f8f18a545962ef2e7eb2",
+      "bytes": 3388
+    },
+    {
+      "source": "output/deed-custody-review/backend-verification.json",
+      "path": "backend/backend-verification.json",
+      "sha256": "85f337d2e3648902b017fbff2749f96a87c15954bc0c93c8e43824c8b2cb1e63",
+      "uncompressedSha256": "85f337d2e3648902b017fbff2749f96a87c15954bc0c93c8e43824c8b2cb1e63",
+      "bytes": 4606
+    },
+    {
+      "source": "output/deed-custody-review/chain.log",
+      "path": "backend/chain.log",
+      "sha256": "2a54f1e888b19d5c48d4537730411297b9c0e384494ba09b2566c45c19bb16b2",
+      "uncompressedSha256": "2a54f1e888b19d5c48d4537730411297b9c0e384494ba09b2566c45c19bb16b2",
+      "bytes": 1742
+    },
+    {
+      "source": "output/deed-custody-review/custody-suite-final.log",
+      "path": "backend/custody-suite-final.log",
+      "sha256": "95cd1050d30a1ee60098d1d4edeece91fa30b1eb7590f104e02bd1ae509199c6",
+      "uncompressedSha256": "95cd1050d30a1ee60098d1d4edeece91fa30b1eb7590f104e02bd1ae509199c6",
+      "bytes": 1979
+    },
+    {
+      "source": "output/deed-custody-review/custody-suite.log",
+      "path": "backend/custody-suite.log",
+      "sha256": "18bc3c32d96e5f55a0892e46e6bb099366148d664de08fffee175935bc008b1b",
+      "uncompressedSha256": "18bc3c32d96e5f55a0892e46e6bb099366148d664de08fffee175935bc008b1b",
+      "bytes": 2193
+    },
+    {
+      "source": "output/deed-custody-review/deeds.log",
+      "path": "backend/deeds.log",
+      "sha256": "8b1fd7afa591bebed0efae4ccc96ce995bfcbc0396b056b8afabfceccd59b963",
+      "uncompressedSha256": "8b1fd7afa591bebed0efae4ccc96ce995bfcbc0396b056b8afabfceccd59b963",
+      "bytes": 77
+    },
+    {
+      "source": "output/deed-custody-review/discovery-ui-retest.log",
+      "path": "backend/discovery-ui-retest.log",
+      "sha256": "d77d087f1d238c902001d6056ce22593e0827b4fc28c1c6206e367e47d73d11b",
+      "uncompressedSha256": "d77d087f1d238c902001d6056ce22593e0827b4fc28c1c6206e367e47d73d11b",
+      "bytes": 166
+    },
+    {
+      "source": "output/deed-custody-review/docs-final.log",
+      "path": "backend/docs-final.log",
+      "sha256": "5c449a6bc63d6461aee4eb2446aac293bd70acfa86d85d0add67f2eb256532b9",
+      "uncompressedSha256": "5c449a6bc63d6461aee4eb2446aac293bd70acfa86d85d0add67f2eb256532b9",
+      "bytes": 1174
+    },
+    {
+      "source": "output/deed-custody-review/docs-release-final.log",
+      "path": "backend/docs-release-final.log",
+      "sha256": "39498ddcdb87d4ab2005bc0f076d62d31aab67c87bce125a3a1f24a25e181284",
+      "uncompressedSha256": "39498ddcdb87d4ab2005bc0f076d62d31aab67c87bce125a3a1f24a25e181284",
+      "bytes": 4507
+    },
+    {
+      "source": "output/deed-custody-review/docs-retest-scope.log",
+      "path": "backend/docs-retest-scope.log",
+      "sha256": "da3a6b33326410f0bcd1bf44e240ae48fb83d50d2947d82f2e4226a22d6be109",
+      "uncompressedSha256": "da3a6b33326410f0bcd1bf44e240ae48fb83d50d2947d82f2e4226a22d6be109",
+      "bytes": 4507
+    },
+    {
+      "source": "output/deed-custody-review/docs-retest.log",
+      "path": "backend/docs-retest.log",
+      "sha256": "bed1109bab80a40b334ae43076a946cd62f491fe366c34c2b9d048e39550b770",
+      "uncompressedSha256": "bed1109bab80a40b334ae43076a946cd62f491fe366c34c2b9d048e39550b770",
+      "bytes": 1516
+    },
+    {
+      "source": "output/deed-custody-review/estate.log",
+      "path": "backend/estate.log",
+      "sha256": "153497c472b8d63c0cfe2981ad10de4dfa6bf23d503c6ab4ebb743fe822d6c13",
+      "uncompressedSha256": "153497c472b8d63c0cfe2981ad10de4dfa6bf23d503c6ab4ebb743fe822d6c13",
+      "bytes": 757
+    },
+    {
+      "source": "output/deed-custody-review/gates-final.log",
+      "path": "backend/gates-final.log",
+      "sha256": "a9f0f9f4ea83b4f4f94534e21396bd1caf2156aa061621dce4956235c5fdcfd3",
+      "uncompressedSha256": "a9f0f9f4ea83b4f4f94534e21396bd1caf2156aa061621dce4956235c5fdcfd3",
+      "bytes": 2280
+    },
+    {
+      "source": "output/deed-custody-review/independent-action-barrier-proof-retest.log",
+      "path": "backend/independent-action-barrier-proof-retest.log",
+      "sha256": "22d96f22552ff18df556a8cbda89df2fae06332acba917b68a220c35d5c5bb61",
+      "uncompressedSha256": "22d96f22552ff18df556a8cbda89df2fae06332acba917b68a220c35d5c5bb61",
+      "bytes": 290
+    },
+    {
+      "source": "output/deed-custody-review/independent-action-barrier-proof.log",
+      "path": "backend/independent-action-barrier-proof.log",
+      "sha256": "65c0ac5706f3a5ae11aa17f1e84d339b9b1708b5a825686a71aeb223f4f21d29",
+      "uncompressedSha256": "65c0ac5706f3a5ae11aa17f1e84d339b9b1708b5a825686a71aeb223f4f21d29",
+      "bytes": 1652
+    },
+    {
+      "source": "output/deed-custody-review/independent-action-barrier-proof.mjs",
+      "path": "backend/independent-action-barrier-proof.mjs",
+      "sha256": "610f67cf450f4599301b5b6ddbd8797242bdf32458415ebd4a79dc96b5e297a2",
+      "uncompressedSha256": "610f67cf450f4599301b5b6ddbd8797242bdf32458415ebd4a79dc96b5e297a2",
+      "bytes": 3490
+    },
+    {
+      "source": "output/deed-custody-review/independent-backend-proof.log",
+      "path": "backend/independent-backend-proof.log",
+      "sha256": "0e04a35961abcf94856d456960c3a1688a94bc88df9a0bc8c8bb665d8753fee8",
+      "uncompressedSha256": "0e04a35961abcf94856d456960c3a1688a94bc88df9a0bc8c8bb665d8753fee8",
+      "bytes": 291
+    },
+    {
+      "source": "output/deed-custody-review/independent-backend-proof.mjs",
+      "path": "backend/independent-backend-proof.mjs",
+      "sha256": "11263631d85e9b4678d0808d2af62b458c5519d2f7d3f3f2133b4e8dcab63d86",
+      "uncompressedSha256": "11263631d85e9b4678d0808d2af62b458c5519d2f7d3f3f2133b4e8dcab63d86",
+      "bytes": 7181
+    },
+    {
+      "source": "output/deed-custody-review/independent-backend-source-pins-pre-tracked-life.json",
+      "path": "backend/independent-backend-source-pins-pre-tracked-life.json",
+      "sha256": "d61f40822edd35267ffebb00755254d09be2b8d811b978ec779ae6a367f34c97",
+      "uncompressedSha256": "d61f40822edd35267ffebb00755254d09be2b8d811b978ec779ae6a367f34c97",
+      "bytes": 2453
+    },
+    {
+      "source": "output/deed-custody-review/independent-backend-source-pins.json",
+      "path": "backend/independent-backend-source-pins.json",
+      "sha256": "af9d0daf7cb79f9ce149d1ac86850c6c9f8b60be02cfb5be566a19cd9389773c",
+      "uncompressedSha256": "af9d0daf7cb79f9ce149d1ac86850c6c9f8b60be02cfb5be566a19cd9389773c",
+      "bytes": 2775
+    },
+    {
+      "source": "output/deed-custody-review/independent-chain-suite.log",
+      "path": "backend/independent-chain-suite.log",
+      "sha256": "0fe4dc0cbe8228d63e1aa45e89057f2785cc063f887bae341cc8781e34b47f7f",
+      "uncompressedSha256": "0fe4dc0cbe8228d63e1aa45e89057f2785cc063f887bae341cc8781e34b47f7f",
+      "bytes": 130
+    },
+    {
+      "source": "output/deed-custody-review/independent-contract-source-pins.json",
+      "path": "backend/independent-contract-source-pins.json",
+      "sha256": "7a7a68d7a29cf93ffed02bf9ac24b501dbac4b3ff4f7420b0af4a5d684f386bb",
+      "uncompressedSha256": "7a7a68d7a29cf93ffed02bf9ac24b501dbac4b3ff4f7420b0af4a5d684f386bb",
+      "bytes": 3233
+    },
+    {
+      "source": "output/deed-custody-review/independent-estate-hook-suite.log",
+      "path": "backend/independent-estate-hook-suite.log",
+      "sha256": "76c84da373435575979cb2a7d57b23ebf8dfb0efd13fd207a958d98fcdbbd173",
+      "uncompressedSha256": "76c84da373435575979cb2a7d57b23ebf8dfb0efd13fd207a958d98fcdbbd173",
+      "bytes": 219
+    },
+    {
+      "source": "output/deed-custody-review/independent-estate-suite.log",
+      "path": "backend/independent-estate-suite.log",
+      "sha256": "54d2eb135e87f416062675802f39ccb2ad81787b4b3ad4e5c14b627e4623ac25",
+      "uncompressedSha256": "54d2eb135e87f416062675802f39ccb2ad81787b4b3ad4e5c14b627e4623ac25",
+      "bytes": 169
+    },
+    {
+      "source": "output/deed-custody-review/independent-exit-keeper-suite.log",
+      "path": "backend/independent-exit-keeper-suite.log",
+      "sha256": "d81045cb12ad463301e46ab85b13a06dae3e4805a6e9a28adb854ac8014c39d3",
+      "uncompressedSha256": "d81045cb12ad463301e46ab85b13a06dae3e4805a6e9a28adb854ac8014c39d3",
+      "bytes": 230
+    },
+    {
+      "source": "output/deed-custody-review/independent-native-postgres-receipt.txt",
+      "path": "backend/independent-native-postgres-receipt.txt",
+      "sha256": "310e1a59a0e7f328cc31e8d2126b8e92a501f12c4b35a1155b387515202f6b4a",
+      "uncompressedSha256": "310e1a59a0e7f328cc31e8d2126b8e92a501f12c4b35a1155b387515202f6b4a",
+      "bytes": 919
+    },
+    {
+      "source": "output/deed-custody-review/independent-recovery-suite.log",
+      "path": "backend/independent-recovery-suite.log",
+      "sha256": "2555516a8dae11685b49f4b5ac828fccee8680cdd5de38d63c63356715b7eb05",
+      "uncompressedSha256": "2555516a8dae11685b49f4b5ac828fccee8680cdd5de38d63c63356715b7eb05",
+      "bytes": 202
+    },
+    {
+      "source": "output/deed-custody-review/independent-safe-house-suite.log",
+      "path": "backend/independent-safe-house-suite.log",
+      "sha256": "f6ab6f0ca228fbe54ebdee2b11c514a0b07f8458eba31a0b84729940ac9f2997",
+      "uncompressedSha256": "f6ab6f0ca228fbe54ebdee2b11c514a0b07f8458eba31a0b84729940ac9f2997",
+      "bytes": 229
+    },
+    {
+      "source": "output/deed-custody-review/independent-state-suite.log",
+      "path": "backend/independent-state-suite.log",
+      "sha256": "871dbb48d7439c91ee048bc77ad7a6f5dff5f25c30b73d40b3cc7c02044bc805",
+      "uncompressedSha256": "871dbb48d7439c91ee048bc77ad7a6f5dff5f25c30b73d40b3cc7c02044bc805",
+      "bytes": 178
+    },
+    {
+      "source": "output/deed-custody-review/independent-tracked-life-retest.log",
+      "path": "backend/independent-tracked-life-retest.log",
+      "sha256": "871dbb48d7439c91ee048bc77ad7a6f5dff5f25c30b73d40b3cc7c02044bc805",
+      "uncompressedSha256": "871dbb48d7439c91ee048bc77ad7a6f5dff5f25c30b73d40b3cc7c02044bc805",
+      "bytes": 178
+    },
+    {
+      "source": "output/deed-custody-review/native-boot.log",
+      "path": "backend/native-boot.log",
+      "sha256": "0c9aee72f56ce814ba2ab94082968a89050c3512db1bf70dea11193ad61cb3a2",
+      "uncompressedSha256": "0c9aee72f56ce814ba2ab94082968a89050c3512db1bf70dea11193ad61cb3a2",
+      "bytes": 340
+    },
+    {
+      "source": "output/deed-custody-review/reimport.log",
+      "path": "backend/reimport.log",
+      "sha256": "9881168aad0d96f275b553c2f8ddf317d6cf47143f8244703513b60746eb6b0f",
+      "uncompressedSha256": "9881168aad0d96f275b553c2f8ddf317d6cf47143f8244703513b60746eb6b0f",
+      "bytes": 160
+    },
+    {
+      "source": "output/deed-custody-review/repository-guards.log",
+      "path": "backend/repository-guards.log",
+      "sha256": "a21d0fe1243e103639b0deaa56b8119b27a7050c4bfe82d3c8d5a481685973ba",
+      "uncompressedSha256": "a21d0fe1243e103639b0deaa56b8119b27a7050c4bfe82d3c8d5a481685973ba",
+      "bytes": 519
+    },
+    {
+      "source": "output/deed-custody-review/schema-persist.log",
+      "path": "backend/schema-persist.log",
+      "sha256": "d849bfb7d3afb02823f81689773c648dc01b16db2973f5da254ef0da476e8146",
+      "uncompressedSha256": "d849bfb7d3afb02823f81689773c648dc01b16db2973f5da254ef0da476e8146",
+      "bytes": 1179
+    },
+    {
+      "source": "output/deed-custody-review/smoke.log",
+      "path": "backend/smoke.log",
+      "sha256": "6660ff1dde9af8b7ab20112db9cfd80c77b5c62bcaee2ea667f3a610daf1da8e",
+      "uncompressedSha256": "6660ff1dde9af8b7ab20112db9cfd80c77b5c62bcaee2ea667f3a610daf1da8e",
+      "bytes": 204
+    },
+    {
+      "source": "output/deed-custody-review/stockdeliver.log",
+      "path": "backend/stockdeliver.log",
+      "sha256": "d0f97207e4724b9f6fa5c3a1a377e40872f22b32cf254d02aa617a87181d187e",
+      "uncompressedSha256": "d0f97207e4724b9f6fa5c3a1a377e40872f22b32cf254d02aa617a87181d187e",
+      "bytes": 463
+    },
+    {
+      "source": "output/deed-custody-review/ui-clock-retest.log",
+      "path": "backend/ui-clock-retest.log",
+      "sha256": "ec71f8e02f8aad1522ca5c2791325fb23b4a4d4f6d17ec725718ab8b962ec64a",
+      "uncompressedSha256": "ec71f8e02f8aad1522ca5c2791325fb23b4a4d4f6d17ec725718ab8b962ec64a",
+      "bytes": 175
+    },
+    {
+      "source": "output/deed-safehouse-affected-forge-final.log",
+      "path": "contracts/deed-safehouse-affected-forge-final.log",
+      "sha256": "463894e63af54dd4768f48f0add742a35d73b4d0dfe7ca617b3f7847ca3376ec",
+      "uncompressedSha256": "463894e63af54dd4768f48f0add742a35d73b4d0dfe7ca617b3f7847ca3376ec",
+      "bytes": 41922
+    },
+    {
+      "source": "output/deed-safehouse-contract-review.json",
+      "path": "contracts/deed-safehouse-contract-review.json",
+      "sha256": "c6425f7f5174d1c0e0ec7b70e4e529484561ecff0d107c2fc566fddfe17ea660",
+      "uncompressedSha256": "c6425f7f5174d1c0e0ec7b70e4e529484561ecff0d107c2fc566fddfe17ea660",
+      "bytes": 44433
+    },
+    {
+      "source": "output/deed-safehouse-custody-forge.log",
+      "path": "contracts/deed-safehouse-custody-forge.log",
+      "sha256": "68fce81353a22fee1ce3591e474dbe57503a1daa64757fa3d4d0249fe3d5dd98",
+      "uncompressedSha256": "68fce81353a22fee1ce3591e474dbe57503a1daa64757fa3d4d0249fe3d5dd98",
+      "bytes": 16352
+    },
+    {
+      "source": "output/deed-safehouse-custody-retest.log",
+      "path": "contracts/deed-safehouse-custody-retest.log",
+      "sha256": "5d1a4a32677b20a950743aee0de277d36cd3923cea850c0d401c05379a8fd5fb",
+      "uncompressedSha256": "5d1a4a32677b20a950743aee0de277d36cd3923cea850c0d401c05379a8fd5fb",
+      "bytes": 23603
+    },
+    {
+      "source": "output/deed-safehouse-custody-slither-solc.log",
+      "path": "contracts/deed-safehouse-custody-slither-solc.log.gz",
+      "sha256": "e83e5176214ae0eeb02db677f131deadc777327bc35bf07ba3cb349452451acc",
+      "uncompressedSha256": "e9be7985207896038335e70fb9cb225dffbe33d50b26a90d92116187777e298d",
+      "bytes": 5616
+    },
+    {
+      "source": "output/deed-safehouse-custody-slither.json",
+      "path": "contracts/deed-safehouse-custody-slither.json.gz",
+      "sha256": "c433bf97b4c2d7ad5305c2446d322475580506b18c8e1e2f264d64da8370123b",
+      "uncompressedSha256": "c533eac96bc382156844d59a7c6dd62f80e0865672234adabb7b734cc5124b2a",
+      "bytes": 204975
+    },
+    {
+      "source": "output/deed-safehouse-custody-slither.log",
+      "path": "contracts/deed-safehouse-custody-slither.log.gz",
+      "sha256": "4ce485a847b9e30e0a5fe2075ed15c4c5fa9e8cf321a6600deddd5b3e2a73f97",
+      "uncompressedSha256": "f66c3275795ce1494e7423a9918bd24fcf457b718c2f2ff11545073139aa382c",
+      "bytes": 836
+    },
+    {
+      "source": "output/deed-safehouse-foreign-manager-build.log",
+      "path": "contracts/deed-safehouse-foreign-manager-build.log",
+      "sha256": "250eb47d6198c55ce3853662791a92cb9ef372eac09df53345b0d34f2d3bbce1",
+      "uncompressedSha256": "250eb47d6198c55ce3853662791a92cb9ef372eac09df53345b0d34f2d3bbce1",
+      "bytes": 93
+    },
+    {
+      "source": "output/deed-safehouse-foreign-manager-retest.log",
+      "path": "contracts/deed-safehouse-foreign-manager-retest.log",
+      "sha256": "025da23db6c14fddec5831969ce90e722d780fa091ba0c47d6a1090281e875b1",
+      "uncompressedSha256": "025da23db6c14fddec5831969ce90e722d780fa091ba0c47d6a1090281e875b1",
+      "bytes": 663
+    },
+    {
+      "source": "output/deed-safehouse-manager-slither.json",
+      "path": "contracts/deed-safehouse-manager-slither.json.gz",
+      "sha256": "40c1412a3a8be573d3019bb5c05f07028b52d8261cd98e3938c080361f03a781",
+      "uncompressedSha256": "0ff9c0baff9a796ab8babf2074885c1d01e64d49c7b3d3c7d64750e4090f02c6",
+      "bytes": 102688
+    },
+    {
+      "source": "output/deed-safehouse-manager-slither.log",
+      "path": "contracts/deed-safehouse-manager-slither.log.gz",
+      "sha256": "ec421fcb901dec4af067f371dc4058255457c9cd2389871b095a8fd2dd6aad98",
+      "uncompressedSha256": "235d116a881a51b76eddb36999fe84031e79d80b5cc6340e72daf842e2b0986c",
+      "bytes": 6031
+    },
+    {
+      "source": "output/deed-safehouse-native-solc.json",
+      "path": "contracts/deed-safehouse-native-solc.json.gz",
+      "sha256": "40524352bcdb49083a313843fed50fa5c53bf9e359fd420961f1a5365258b67d",
+      "uncompressedSha256": "5cb7951809912c66bcac1031a7ffa043d656767e74f863a1ce89589def54ff63",
+      "bytes": 36728
+    },
+    {
+      "source": "output/deed-safehouse-native-solc.stderr.log",
+      "path": "contracts/deed-safehouse-native-solc.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "uncompressedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "source": "output/deed-safehouse-token-slither.json",
+      "path": "contracts/deed-safehouse-token-slither.json.gz",
+      "sha256": "d78bdc2478da3361f089eac5ce35168a8f2f3b9429751a634f6fd8a8b9fa01bb",
+      "uncompressedSha256": "6c1fd5a4f58f725d4205a24226f76880a046ee6e5cb075b3a78377c9a8074acd",
+      "bytes": 159929
+    },
+    {
+      "source": "output/deed-safehouse-token-slither.log",
+      "path": "contracts/deed-safehouse-token-slither.log.gz",
+      "sha256": "94b73f8ced5232a011d59f9829a88d5ceef7abafe74371a41a1a4863a51dab9d",
+      "uncompressedSha256": "ce677e68a45cabb37b1b8c92524aa7aa4ac48976c543a5f9c398a94cadeaaefb",
+      "bytes": 3984
+    }
+  ]
+}

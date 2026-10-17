@@ -1,0 +1,27 @@
+
+> omerta-backend@1.5.0 test:deed-custody
+> node test/deedcustody-preflight.js && node test/deedcustody.js && node test/deedcustodychain.js && node test/deedcustody-estates-chain.js && node test/deedcustody-review.js && node test/deedcustody-exit-keeper.js && node test/deedcustody-safe-house.js && node test/deed-custody-ui.js
+
+Deed custody preflight: dormant defaults and exact deployment gates pass
+deedcustody: PASS (life identity, ordered kill/estate successors, exact-generation backfill, estate delay, heir death cascade, finality, exit notice/consent, projection replay)
+Compiled ABI comparison skipped: run Forge build to create the local artifact.
+custody chain adapter: deployment pins, unsafe deposits, ordered A→B→C, nested stock targeting and callback authority passed
+Estate chain integration: chronological mixed deaths, canonical maturity, non-blocking delayed loot, finality, successor stocks and conflicting-event rejection passed.
+deedcustody-review: PASS (101st-life eligibility behind unminted and policy-held dynasties, reproduced legacy action_rebound, refreshed intent retry, exact replay idempotency with real signed journal)
+deedcustody-exit-keeper: PASS (204-row starvation proof, nested real contract revert, valid signed journal send, transient RPC preservation, submitted/mined-reverted live/dead recovery with unchanged notice and locked equipment)
+deedcustody-safe-house: PASS (canonical completed-day quote, exact approval/max burn, real owner EIP712 signatures, UTC rollover/missing history fail closed, finalized coverage, protected heir and post-death purchase exclusion)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: An expired timestamp is never displayed as current protection.
+    at file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/test/deed-custody-ui.js:144:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'Safe House confirmed until 10/16/2026, 11:18:56 PM (2026-10-17T03:18:56.788Z). All assets in its canonical deed wallet are covered.',
+  expected: /Exposed/,
+  operator: 'match',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

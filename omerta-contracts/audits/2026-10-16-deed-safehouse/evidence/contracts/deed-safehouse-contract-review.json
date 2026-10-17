@@ -1,0 +1,834 @@
+{
+  "phase": "isolated implementation and regression review; no deployment or activation",
+  "created_utc": "2026-10-17T03:24:21.374159+00:00",
+  "base_commit": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "working_tree_dirty": true,
+  "reviewed_file_sha256": {
+    "omerta-contracts/src/CharacterDeedCustody.sol": "564d66302db4772064cc97acdece0c4dbef9047196e77e1eff8e9775b83edfa1",
+    "omerta-contracts/src/DeedStockAccount.sol": "dbfefafad3bdf325f1a44d1c3fe36910ef9ec7efb4e468e6db8694fef3fbd4eb",
+    "omerta-contracts/src/StreetDeed.sol": "78d7c908b6b4f654e9f4d8357b3321f3e60f80b496fba3b523d483e53a4ab4e3",
+    "omerta-contracts/src/DynastyNFT.sol": "6b301b79625be04b9ef2cf5c4f4693f79e2839a99fe1a265a9d25e485d551a04",
+    "omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol": "8cd1c5db60078f97be38d8292528cef40457e634dad7bdfd4468c374b87ecee7",
+    "omerta-contracts/src/market-v2/IOmertaRestrictedOMRV2.sol": "216ce375eab9ba903af955fb9d57929bf46ab614649fad9b69f349129e73226c",
+    "omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol": "ad6d4729b5678194c74f8a67ec87dc648817693eee2f8b2ac5261ec16b095b7c",
+    "omerta-contracts/test/CharacterDeedCustody.t.sol": "affa32f502398be668dc832af0dbdc37297f10d634f3194678d9957fa358ca1f",
+    "omerta-contracts/test/market-v2/RestrictedOMRV2.t.sol": "f0a59ffda96b81454178ecc45f0fa98dab40286ee7b90db97531c59096564dab",
+    "omerta-contracts/test/market-v2/RestrictedPoolManagerV2.t.sol": "d2037ee18b08aed79f30cc8b467ddcf2b10e59120219204e4987806f29c1a254",
+    "omerta-contracts/foundry.toml": "ae6e9a46256baf10127275a1148a154f83b99ff4c8d6eca159c098880c8ae800"
+  },
+  "toolchain": {
+    "forge": "1.7.1 4072e48705af9d93e3c0f6e29e93b5e9a40caed8",
+    "solc": "0.8.26+commit.8a97fa7a.Windows.msvc",
+    "optimizer_runs": 800,
+    "evm": "cancun",
+    "slither": "0.11.6"
+  },
+  "artifacts": [
+    {
+      "path": "omerta-contracts/out/CharacterDeedCustody.sol/CharacterDeedCustody.constellation-via-ir.json",
+      "sha256": "f5d58dac35c6e4f84c5f9c7d4c16ad1453334f287a7cef14bb382876e0d430d8",
+      "via_ir": true,
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "@uniswap/v4-periphery/=lib/v4-periphery/",
+          "forge-std/=lib/forge-std/src/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/CharacterDeedCustody.sol": "CharacterDeedCustody"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "runtime_template_bytes": 15881,
+      "runtime_template_sha256": "62ff41bc1786e9646bfb73d76dd3503c6ff7fa94e5ade68941262b6cd45f17d2",
+      "immutables_require_deployment_address_verification": true
+    },
+    {
+      "path": "omerta-contracts/out/CharacterDeedCustody.sol/CharacterDeedCustody.json",
+      "sha256": "0fec58b063ede2ccfcdd995f33cff6300d93eaa76ff3342c90c476e69c7bba8b",
+      "via_ir": false,
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "@uniswap/v4-periphery/=lib/v4-periphery/",
+          "forge-std/=lib/forge-std/src/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/CharacterDeedCustody.sol": "CharacterDeedCustody"
+        },
+        "evmVersion": "cancun",
+        "libraries": {}
+      },
+      "runtime_template_bytes": 17018,
+      "runtime_template_sha256": "4875f777faf83ff6c2c4bbbc509335a9d23cdd3ef9c896ed3fe48b920a127d8b",
+      "immutables_require_deployment_address_verification": true
+    },
+    {
+      "path": "omerta-contracts/out/DeedStockAccount.sol/DeedStockAccount.constellation-via-ir.json",
+      "sha256": "4e8ae630548bf92156df17f5eebd8f89728f0078e2f9ec2a437a7e053700d40d",
+      "via_ir": true,
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "@uniswap/v4-periphery/=lib/v4-periphery/",
+          "forge-std/=lib/forge-std/src/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/DeedStockAccount.sol": "DeedStockAccount"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "runtime_template_bytes": 2645,
+      "runtime_template_sha256": "cd02006e4ac6eb4bac04aea2a8aaa3288a1c9e9b8d0536f0508afe069d0cdf7d",
+      "immutables_require_deployment_address_verification": true
+    },
+    {
+      "path": "omerta-contracts/out/DeedStockAccount.sol/DeedStockAccount.json",
+      "sha256": "f82e76dc2ad741ddc5e46563b1975b6947f4470ac2be3140421688fa3bd992ef",
+      "via_ir": false,
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "@uniswap/v4-periphery/=lib/v4-periphery/",
+          "forge-std/=lib/forge-std/src/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/DeedStockAccount.sol": "DeedStockAccount"
+        },
+        "evmVersion": "cancun",
+        "libraries": {}
+      },
+      "runtime_template_bytes": 3312,
+      "runtime_template_sha256": "ee6af4c30dc6fc6a80e7ae89f7667014b573b9b1791431c75919ce228368c338",
+      "immutables_require_deployment_address_verification": true
+    },
+    {
+      "path": "omerta-contracts/out/OmertaRestrictedOMRV2.sol/OmertaRestrictedOMRV2.json",
+      "sha256": "ebcbce7572e0ecf6e641675ba338a5e96f5042f8aa1d3245a101e7ac80728c3b",
+      "via_ir": true,
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "@uniswap/v4-periphery/=lib/v4-periphery/",
+          "forge-std/=lib/forge-std/src/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/market-v2/OmertaRestrictedOMRV2.sol": "OmertaRestrictedOMRV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "runtime_template_bytes": 8294,
+      "runtime_template_sha256": "f0d873cb0bf908eb5cfc9078eab630ddb1992cfd2b8a4b92e37944ed38e1e74c",
+      "immutables_require_deployment_address_verification": true
+    },
+    {
+      "path": "omerta-contracts/out/OmertaPoolManagerV2.sol/OmertaPoolManagerV2.json",
+      "sha256": "70518b6469ba426114803229c9ff1f877b08ece64d9f869a91485948465af0db",
+      "via_ir": false,
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "@uniswap/v4-periphery/=lib/v4-periphery/",
+          "forge-std/=lib/forge-std/src/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/market-v2/core/OmertaPoolManagerV2.sol": "OmertaPoolManagerV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {}
+      },
+      "runtime_template_bytes": 24555,
+      "runtime_template_sha256": "4a331043fd6efb7a20710078bf5a36a04bd643f6df7c07b5196fc2e0cdaac2eb",
+      "immutables_require_deployment_address_verification": true
+    }
+  ],
+  "static": [
+    {
+      "scope": "custody",
+      "path": "output\\deed-safehouse-custody-slither.json",
+      "sha256": "c533eac96bc382156844d59a7c6dd62f80e0865672234adabb7b734cc5124b2a",
+      "analysis_success": true,
+      "exit": -1,
+      "diagnostics": 107,
+      "rules": {
+        "incorrect-exp": 2,
+        "uninitialized-state": 1,
+        "divide-before-multiply": 11,
+        "incorrect-equality": 1,
+        "uninitialized-local": 2,
+        "unused-return": 2,
+        "shadowing-local": 1,
+        "missing-zero-check": 2,
+        "timestamp": 7,
+        "assembly": 51,
+        "pragma": 1,
+        "dead-code": 7,
+        "solc-version": 5,
+        "low-level-calls": 2,
+        "missing-inheritance": 1,
+        "naming-convention": 2,
+        "too-many-digits": 7,
+        "unindexed-event-address": 2
+      }
+    },
+    {
+      "scope": "token",
+      "path": "output\\deed-safehouse-token-slither.json",
+      "sha256": "6c1fd5a4f58f725d4205a24226f76880a046ee6e5cb075b3a78377c9a8074acd",
+      "analysis_success": true,
+      "exit": -1,
+      "diagnostics": 79,
+      "rules": {
+        "incorrect-exp": 1,
+        "divide-before-multiply": 9,
+        "shadowing-local": 1,
+        "missing-zero-check": 3,
+        "timestamp": 1,
+        "assembly": 42,
+        "pragma": 1,
+        "dead-code": 3,
+        "solc-version": 4,
+        "naming-convention": 5,
+        "too-many-digits": 7,
+        "cache-array-length": 2
+      }
+    },
+    {
+      "scope": "manager",
+      "path": "output\\deed-safehouse-manager-slither.json",
+      "sha256": "0ff9c0baff9a796ab8babf2074885c1d01e64d49c7b3d3c7d64750e4090f02c6",
+      "analysis_success": true,
+      "exit": -1,
+      "diagnostics": 134,
+      "rules": {
+        "incorrect-exp": 1,
+        "incorrect-shift": 3,
+        "divide-before-multiply": 15,
+        "uninitialized-local": 3,
+        "unused-return": 6,
+        "missing-zero-check": 2,
+        "incorrect-modifier": 1,
+        "assembly": 68,
+        "pragma": 1,
+        "cyclomatic-complexity": 3,
+        "dead-code": 5,
+        "solc-version": 3,
+        "low-level-calls": 1,
+        "naming-convention": 12,
+        "too-many-digits": 9,
+        "unimplemented-functions": 1
+      }
+    }
+  ],
+  "methods": {
+    "pashov": "c577eb7799c349de0acb187ba00ca98e14e436fd access-control/execution-trace passes",
+    "plamen": "795962b96e254f2e423a2635fe7f8cb8ea1e6d69 NFT callback/ownership/approval passes",
+    "trailofbits": "d3323cefbcf645678b8dc481de204b02ad3d02dc trust-boundary model/spec-property comparison; scoped manual adaptation, no full orchestrator"
+  },
+  "model": {
+    "assets": "StreetDeed ERC721, canonical ERC6551 ordinary ERC20 stocks/native balance, payer canonical OMR allowance",
+    "oracle": "lifecycleOperator attests serial authoritative game deaths, same-account heirs, and fresh safe exit/payment state. Undisclosed offchain deaths cannot invalidate already finalized exits; backend ordering/finality required.",
+    "coverage": "per-deed per-dynasty retained intervals, evaluated at authoritative deathAt; no same-second initial cover, no retroactive postmortem cover; protected route same-dynasty heir after deathAt+86400, uncovered route killer; every path remains vault-locked until authorized exit",
+    "pricing": "previous completed full UTC day actual raw OMR swap delta magnitude; clamp(volume/20000,1e18,25e18); today price bound in owner request, maxBurn consent; all prepaid 24h periods priced at purchase; 7-day horizon; LP/donations/direct transfers/reverts excluded",
+    "burn": "sealed runtime-pinned ProtocolCustody caller plus payer allowance; ERC20 totalSupply destruction, no treasury recycle or issuance",
+    "external_calls": "ERC721 safe transfers restricted vault callbacks; canonical registry creation; static ERC1271; canonical OMR burnFrom; ordinary ERC20 fixed-owner withdrawals; native fixed-owner withdrawal guarded by reentrancy lock"
+  },
+  "triage": [
+    {
+      "id": "SH-STATIC-001",
+      "rule": "uninitialized-state _coverage",
+      "disposition": "false positive: storage alias windows.push/current.endsAt in _extendCoverage writes mapping-backed arrays; paid coverage and 32768-call historical-model invariant prove reads observe writes"
+    },
+    {
+      "id": "SH-STATIC-002",
+      "rule": "uninitialized-local receipt/low",
+      "disposition": "false positive: Solidity initializes low to zero; every receipt field assigned before burn/event; interval binary search independently modeled"
+    },
+    {
+      "id": "SH-STATIC-003",
+      "rule": "incorrect-equality priceDay",
+      "disposition": "intentional exact owner-consented UTC day; rejects stale prices and rollover without burn"
+    },
+    {
+      "id": "SH-STATIC-004",
+      "rule": "incorrect-exp/incorrect-shift in vendored Math/Base64/FullMath/TickBitmap/BitMath",
+      "disposition": "intentional bit operations/Newton inverse and bitmap algorithms in pinned dependencies; not exponentiation or shifted operands bugs"
+    },
+    {
+      "id": "SH-STATIC-005",
+      "rule": "timestamp",
+      "disposition": "required time-domain semantics, not randomness. Boundary/nonfuture/monotonic/TTL/horizon tests; authoritative oracle timestamps remain trusted"
+    },
+    {
+      "id": "SH-STATIC-006",
+      "rule": "missing-zero-check",
+      "disposition": "custody creates life account with address(this); treasury Ownable constructor rejects zero; manager runtime validation rejects zero/no code; zero protocol fee controller is existing allowed disable state"
+    },
+    {
+      "id": "SH-STATIC-007",
+      "rule": "low-level native call/assembly",
+      "disposition": "native destination fixed to direct current NFT owner, equipped lock + nonReentrant + revert on failed receipt; ERC6551 immutable footer/canonical-registry binding checked. Other calls inherited cryptographic/transfer helpers"
+    },
+    {
+      "id": "SH-STATIC-008",
+      "rule": "manager divide-before-multiply",
+      "disposition": "existing rounded fee then rounded recipient allocations; remainder retained in fourth bucket, existing conservation/fee suites rerun"
+    },
+    {
+      "id": "SH-STATIC-009",
+      "rule": "unimplemented-functions protocolFeesAccrued",
+      "disposition": "false positive inherited public mapping supplies ABI getter; existing manager protocol fee withdrawal tests exercise it"
+    },
+    {
+      "id": "SH-STATIC-010",
+      "rule": "other library/default initialization/dead-code/pragma/naming/optimization findings",
+      "disposition": "inherited pinned library patterns or style; compiler exact0.8.26, optimizer800/Cancun. No affected behavior change warranted"
+    }
+  ],
+  "residuals": [
+    "Central game-result operator can attest false deaths; onchain contract cannot prove offchain combat.",
+    "Canonical immutable OMR and manager require fresh deployment/configuration; existing sealed token cannot add custody role or burn surface. No activation performed.",
+    "SafeHouse unavailable until second UTC midnight after manager deployment, ensuring previous full tracked day.",
+    "Manager runtime currently24555 bytes,21 bytes below EIP170; future edits require size review.",
+    "Price tracks OMR turnover, not USD price; actual wash trades can influence following day bounded quote while paying trading fees.",
+    "Ordinary stock token issuers retain any seizure/upgrade/rebase/transfer restriction powers. Existing generic token-bound accounts require separate checked asset migration.",
+    "Review covers hashed source and executed selected suites only; backend PostgreSQL concurrency and release deployment proofs are parent scope."
+  ],
+  "checks_pending": [],
+  "imported_dependency_files": {
+    "lib/openzeppelin-contracts/contracts/access/Ownable.sol": {
+      "sha256": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81",
+      "compiler_keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb"
+    },
+    "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol": {
+      "sha256": "c75345d7b9feef17ae29f2a800ca2f65f8021cf80436a41d6ec00f57f5180f36",
+      "compiler_keccak256": "0xdcad8898fda432696597752e8ec361b87d85c82cb258115427af006dacf7128c"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC1271.sol": {
+      "sha256": "2d17bba201aa2f9c55e317315b872272a60361848dfceb6b1e77081265c79a27",
+      "compiler_keccak256": "0x66c7ec42c6c43712be2107a50ab4529379bc76a632b425babec698d9da921ac6"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": {
+      "sha256": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+      "compiler_keccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": {
+      "sha256": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+      "compiler_keccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": {
+      "sha256": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+      "compiler_keccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC5267.sol": {
+      "sha256": "f89772d2d4fafcbef8b73bb10ee9a3373edec2eedb2f1b302320915b351dc3d1",
+      "compiler_keccak256": "0xfb223a85dd0b2175cfbbaa325a744e2cd74ecd17c3df2b77b0722f991d2725ee"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC7913.sol": {
+      "sha256": "f66aad4249885b0f11369bfa825dded60aa4baa0d76d9becdac9daa48c350350",
+      "compiler_keccak256": "0xe5a126930df1d54e4a6dd5fea09010c4a7db0ea974c6c17a1e6082879f5a032b"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol": {
+      "sha256": "fa7068f56bc180571a6095be6eaef06d51dbe81e30cb128397d993c9599ecc30",
+      "compiler_keccak256": "0x1b88b3fb3d85ba5496d7d5f396f83ee1fddcdd6762059ff65992655b67920998"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+      "sha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+      "compiler_keccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": {
+      "sha256": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+      "compiler_keccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol": {
+      "sha256": "ef8e2398c78851bd2ec12bc48d923058c557889d5a3d5ee4919c17ff0fb3517e",
+      "compiler_keccak256": "0xf6bb0dc431a9c50e25756412ec14cfcd4dc61dd40b8dc0e1b58ec09fce6d5564"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": {
+      "sha256": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17",
+      "compiler_keccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol": {
+      "sha256": "eafee3ffdc7cb2fba4bf6bd16fb28f8e5b4679742e81c2ad42a1b1df5c179feb",
+      "compiler_keccak256": "0x88cd5e3bee2e8c36b8d9058fbcaa81ad5704281b25634122234b55ea853d8055"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
+      "sha256": "33223782ea652dca413702ce92f9f59d91d758a035065b24bbedb7dc60c63a78",
+      "compiler_keccak256": "0xf46268c37522320bb2119a5a394bc5c739a95c0c574c8d08e8c643f4d06e5c76"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC721/utils/ERC721Utils.sol": {
+      "sha256": "b48e95db8c85866c1d88af8e82f346e0d22d24b5aac5b936079d958c72e13b9f",
+      "compiler_keccak256": "0xc7efbc23214ad7dced8bf2249460f4bda114d57f6a0079f84040654280f455bd"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Base64.sol": {
+      "sha256": "1c143572893f50f04fe8e507d89f9997cd3242102ba4200c8de0803ecbaf8cec",
+      "compiler_keccak256": "0xe802369c4d2d254590d371eca16c8d247d7e0782ad2faaaa0180159ea8e736af"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Bytes.sol": {
+      "sha256": "3ce9120a27934c75a074cb785d3a88868069ef6529dbe4dc6b845af0836f3c70",
+      "compiler_keccak256": "0xf80e4b96b6849936ea0fabd76cf81b13d7276295fddb1e1c07afb3ddf650b0ac"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+      "sha256": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6",
+      "compiler_keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Panic.sol": {
+      "sha256": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+      "compiler_keccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Pausable.sol": {
+      "sha256": "2c26130748f06552c65ca74d89eaf78c9324a3cbac3ba6fdbadaa8beba0cb0b4",
+      "compiler_keccak256": "0xdb484371dfbb848cb6f5d70464e9ac9b2900e4164ead76bbce4fef0b44bcc68f"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol": {
+      "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+      "compiler_keccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/ShortStrings.sol": {
+      "sha256": "1cfa08d3c551e9ec0b9cd249b09987f04e7e90f352e1a5e3b0d6a3bc426b3de7",
+      "compiler_keccak256": "0x0768b3bdb701fe4994b3be932ca8635551dfebe04c645f77500322741bebf57c"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+      "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+      "compiler_keccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Strings.sol": {
+      "sha256": "e318709bbe73a7831d64c1351e8bdc43780b245f25191234e361e6ab9b98c67b",
+      "compiler_keccak256": "0x1fdc2de9585ab0f1c417f02a873a2b6343cd64bb7ffec6b00ffa11a4a158d9e8"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol": {
+      "sha256": "ba7c2d314fcd61c9783e0b3f0c664d004b76b408fda6a84edc8267d17c5012d6",
+      "compiler_keccak256": "0xbeb5cad8aaabe0d35d2ec1a8414d91e81e5a8ca679add4cf57e2f33476861f40"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol": {
+      "sha256": "2845caaaf70757b6cce612ae4ffbec2c382cb3d1cb9765c98fa649c0f5f1c794",
+      "compiler_keccak256": "0x8440117ea216b97a7bad690a67449fd372c840d073c8375822667e14702782b4"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/cryptography/MessageHashUtils.sol": {
+      "sha256": "538a0d7c4f0ec5a8562f58561890f7b49d14580674ecf58bc5f505b45c73df65",
+      "compiler_keccak256": "0x6d8579873b9650426bfbd2a754092d1725049ca05e4e3c8c2c82dd9f3453129d"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/cryptography/SignatureChecker.sol": {
+      "sha256": "acc520422fac0a9edb85d7268085a63219a0db9e4406cd155d5c74c94e35f590",
+      "compiler_keccak256": "0x0d53049a9969f2bc5cb88b32c909e2729a5fa157d258305b42b502427ad492c6"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol": {
+      "sha256": "61a2b12c96857aaa35f48aeda67a4281637a42494c0b3795be0ae976aa7b3793",
+      "compiler_keccak256": "0x2d9dc2fe26180f74c11c13663647d38e259e45f95eb88f57b61d2160b0109d3e"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+      "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+      "compiler_keccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": {
+      "sha256": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+      "compiler_keccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol": {
+      "sha256": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+      "compiler_keccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/math/SignedMath.sol": {
+      "sha256": "1ed50b1056af886752f0fb48a0165d381e69bb4a4b18b893b066dc144a7e08d7",
+      "compiler_keccak256": "0xb1970fac7b64e6c09611e6691791e848d5e3fe410fa5899e7df2e0afd77a99e3"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol": {
+      "sha256": "50f34ae16a067a41c2c1091445d11d63788e54c717677cb6d6b0e4cdea2ad21d",
+      "compiler_keccak256": "0x669464167428061ee0f8618b73b3ee90aff8405683e7ddde8cd77dadaa1afe29"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Permit.sol": {
+      "sha256": "53584e84cd4851447b3149219f8c1b41397f7c753f85da07eda7f17ac6846e47",
+      "compiler_keccak256": "0x73d9dc25e0edb50767d29665bea0092e29b68776feb39c3f48781e4bab7cdda5"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+      "sha256": "0b7132f17d14d1d84b41b0bb429be62dafdff00fd3470f68724d8018eb07f57a",
+      "compiler_keccak256": "0xd6fa4088198f04eef10c5bce8a2f4d60554b7ec4b987f684393c01bf79b94d9f"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol": {
+      "sha256": "c302edfbf7f396e1130be81278c5c994543868f0f5bf0c0fb3f557e166d8d3f2",
+      "compiler_keccak256": "0x53befc41288eaa87edcd3a7be7e8475a32e44c6a29f9bf52fae789781301d9ff"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Nonces.sol": {
+      "sha256": "9b4cbb85d1f5053c744e83302538eb643a713ffd14bc37665b224f1c66529339",
+      "compiler_keccak256": "0x0082767004fca261c332e9ad100868327a863a88ef724e844857128845ab350f"
+    },
+    "lib/v4-core/lib/solmate/src/auth/Owned.sol": {
+      "sha256": "8ac2f2dc41ab8012e93adb3791326ffa1e4059a20c306a777109dd81816b9125",
+      "compiler_keccak256": "0xfedb27d14c508342c33eb067c9a02eabcdb0f9dcf93b04ded1001f580d12d0ea"
+    },
+    "lib/v4-core/src/ERC6909.sol": {
+      "sha256": "0f1bf94844851b561ae53d57263366d18f4c4431eb47096871e8715837c6ec9d",
+      "compiler_keccak256": "0x22476a1c183be1b547a509b3e6906abaccb6408375f798fce805ff7877aca09f"
+    },
+    "lib/v4-core/src/ERC6909Claims.sol": {
+      "sha256": "6fa9989899398646fd7c33f837254a69e7c75b77af120970ede397c3d0fbdc37",
+      "compiler_keccak256": "0xf496ef3a5a9bf4f4aa2eec951dbeff09a01ef058bb9f64b1664cf46c9e85cd49"
+    },
+    "lib/v4-core/src/Extsload.sol": {
+      "sha256": "ac157c05d62562eed212cdf290046a85d192e7b1f8aba69c3ce358b0ebac4279",
+      "compiler_keccak256": "0x784074bd04a1541c7c6ace074e30245746133fd37c3ba16b025dce394db986ce"
+    },
+    "lib/v4-core/src/Exttload.sol": {
+      "sha256": "386b5618307a20144a44308b81188c7755a6c279db6c5824cf63a910864324d4",
+      "compiler_keccak256": "0x769ee2733a08112c652274f4b972c45fb56cc46109f233b9a30f81561b15dd54"
+    },
+    "lib/v4-core/src/NoDelegateCall.sol": {
+      "sha256": "525bf4df92c4ac0fd582e1b6ac18fdfb5d147d410f38f19231e4c9a469187415",
+      "compiler_keccak256": "0xacb81aecb7c74c86650a035462dae38c313b4b7b5842e14b645f864f61da2b51"
+    },
+    "lib/v4-core/src/interfaces/IExtsload.sol": {
+      "sha256": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+      "compiler_keccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+    },
+    "lib/v4-core/src/interfaces/IExttload.sol": {
+      "sha256": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+      "compiler_keccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+    },
+    "lib/v4-core/src/interfaces/IHooks.sol": {
+      "sha256": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+      "compiler_keccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+    },
+    "lib/v4-core/src/interfaces/IPoolManager.sol": {
+      "sha256": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+      "compiler_keccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+    },
+    "lib/v4-core/src/interfaces/IProtocolFees.sol": {
+      "sha256": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+      "compiler_keccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+    },
+    "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol": {
+      "sha256": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e",
+      "compiler_keccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+    },
+    "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+      "sha256": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+      "compiler_keccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+    },
+    "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": {
+      "sha256": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+      "compiler_keccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+    },
+    "lib/v4-core/src/libraries/BitMath.sol": {
+      "sha256": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+      "compiler_keccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+    },
+    "lib/v4-core/src/libraries/CurrencyDelta.sol": {
+      "sha256": "dfbb3d232c2d52bb09c8dcbb38b4a8fd16c616b8e6bf49e6f4ee948760530f7b",
+      "compiler_keccak256": "0x80dbd898cf0f90c5c27192689b16c34edc765d6ab21b8358e3bb792c7fef238c"
+    },
+    "lib/v4-core/src/libraries/CurrencyReserves.sol": {
+      "sha256": "b38f1d3807d90bbccb865c0d96caf1ef92d6df9b69adbbe43b1d12e1241523c9",
+      "compiler_keccak256": "0x1576616129933fcdf3b684cea33cffd9c95e18fafbd2832a8c48ac3d8526d4c3"
+    },
+    "lib/v4-core/src/libraries/CustomRevert.sol": {
+      "sha256": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+      "compiler_keccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+    },
+    "lib/v4-core/src/libraries/FixedPoint128.sol": {
+      "sha256": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb",
+      "compiler_keccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+    },
+    "lib/v4-core/src/libraries/FixedPoint96.sol": {
+      "sha256": "66ee26d4fb3ac639124bdfa27d3256d196970997fa127c09e9bf7154e30d4590",
+      "compiler_keccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741"
+    },
+    "lib/v4-core/src/libraries/FullMath.sol": {
+      "sha256": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3",
+      "compiler_keccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+    },
+    "lib/v4-core/src/libraries/Hooks.sol": {
+      "sha256": "297d577998cdede64d48b47b12f15e4f442eea032fbb9676bb3c2f89da89b83c",
+      "compiler_keccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+    },
+    "lib/v4-core/src/libraries/LPFeeLibrary.sol": {
+      "sha256": "e96c3fa7deac991dc09b6c5e560a340d01d6c68ccba483d4b29f8a66e5aa44e0",
+      "compiler_keccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+    },
+    "lib/v4-core/src/libraries/LiquidityMath.sol": {
+      "sha256": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a",
+      "compiler_keccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+    },
+    "lib/v4-core/src/libraries/Lock.sol": {
+      "sha256": "29cd41a53de22514164e638e7bc965ccf4d9f34b455b43a1a15e06a8cb86e7f1",
+      "compiler_keccak256": "0x9338be4b5695f1da5f3d3f7a3eeaf7a356c1045458289586ac0cbe9cef77c6d5"
+    },
+    "lib/v4-core/src/libraries/NonzeroDeltaCount.sol": {
+      "sha256": "0ae35ca64da2527b4e1f7afa4ca10c4b65af952dc473c33b6663101e8d199f40",
+      "compiler_keccak256": "0x0666ebd5d3528d7d52c48538296367a4cff97a578cf13365c51983fae3219b87"
+    },
+    "lib/v4-core/src/libraries/ParseBytes.sol": {
+      "sha256": "6a6f3d1cec0143fd70ea68c34e6dce3bde72f368b213f1a225ada23dbfd99bb8",
+      "compiler_keccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+    },
+    "lib/v4-core/src/libraries/Pool.sol": {
+      "sha256": "59c493035ad25d56f24a457e8b40d9d1e3784504b8ff13d171db1eb25c6f128e",
+      "compiler_keccak256": "0xb8191707c5913f5e2f589cec5167e3fac4a5b86bd84f61fdba0fbe6a8ce8a3a0"
+    },
+    "lib/v4-core/src/libraries/Position.sol": {
+      "sha256": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb",
+      "compiler_keccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+    },
+    "lib/v4-core/src/libraries/ProtocolFeeLibrary.sol": {
+      "sha256": "f8d96d9c8b5d12ab927b34551699bd7086750475f70254c9505e636f2cafe56a",
+      "compiler_keccak256": "0xf483001899229ab10f5a626fe1c5866134d9e965b48ce6cf55ce0d7f74f7d8ec"
+    },
+    "lib/v4-core/src/libraries/SafeCast.sol": {
+      "sha256": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+      "compiler_keccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+    },
+    "lib/v4-core/src/libraries/SqrtPriceMath.sol": {
+      "sha256": "42440c21bbab86c7eed4716b281ed5ca281cf14af8b5e06dc6dc3bc6864bcfdf",
+      "compiler_keccak256": "0xf8079fe6e3460db495451d06b1705e18f1c4075c1af96a31ad313545f7082982"
+    },
+    "lib/v4-core/src/libraries/SwapMath.sol": {
+      "sha256": "eb3971ea0ba84ff0a01f2fbe43f62f9c393121ef1724774ed3f3ab7760780e4a",
+      "compiler_keccak256": "0x6baa782ae523269c079cc763639a9b91a25fcfa1743c049c76e43741ef494bd9"
+    },
+    "lib/v4-core/src/libraries/TickBitmap.sol": {
+      "sha256": "19b25dccfac8bd90f9d615fb182547eb7b5908a5cbf21a1c5920b92c47383cb6",
+      "compiler_keccak256": "0x6779f89e28a0b4af6e09d518caf014b7e8fc627400f5561f86fed11635b1458a"
+    },
+    "lib/v4-core/src/libraries/TickMath.sol": {
+      "sha256": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+      "compiler_keccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+    },
+    "lib/v4-core/src/libraries/UnsafeMath.sol": {
+      "sha256": "2de236e7ca0b9572a6b0184557565b6fd54e177224e202c727fe248785ede427",
+      "compiler_keccak256": "0xa6e55e0a43a15df2df471d9972cd48f613d07c663ecb8bbeaf7623f6f99bcce4"
+    },
+    "lib/v4-core/src/types/BalanceDelta.sol": {
+      "sha256": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+      "compiler_keccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+    },
+    "lib/v4-core/src/types/BeforeSwapDelta.sol": {
+      "sha256": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+      "compiler_keccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+    },
+    "lib/v4-core/src/types/Currency.sol": {
+      "sha256": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+      "compiler_keccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+    },
+    "lib/v4-core/src/types/PoolId.sol": {
+      "sha256": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+      "compiler_keccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+    },
+    "lib/v4-core/src/types/PoolKey.sol": {
+      "sha256": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+      "compiler_keccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+    },
+    "lib/v4-core/src/types/PoolOperation.sol": {
+      "sha256": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+      "compiler_keccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+    },
+    "lib/v4-core/src/types/Slot0.sol": {
+      "sha256": "378b45486644dc7e49726358e83d0e2fffdaee088d18cac1a3df00d02c3635b4",
+      "compiler_keccak256": "0x8b4912fac7e25ea680056748121113f902d56f8b2640f421d5c38d438db11c1b"
+    }
+  },
+  "findings_and_proofs": [
+    {
+      "id": "SH-DESIGN-001",
+      "status": "remediated implementation gap",
+      "impact": "Canonical OMR had no literal burn path; routing fees to a treasury would not reduce supply.",
+      "fix": "Allowance-consuming burnFrom restricted to sealed runtime-pinned ProtocolCustody; custody owner-signed maxBurn/nonce/day attestation.",
+      "proof": "testBurnIsAllowanceConsumingOnlySealedPinnedCustodyAndReducesSupply; safehouse burn/conservation invariant."
+    },
+    {
+      "id": "SH-DESIGN-002",
+      "status": "rejected design lead with executable negative proofs",
+      "impact": "Overwriting one coverage deadline or applying coverage to a Deed regardless of dynasty could retroactively rescue old deaths or redirect killer assets.",
+      "fix": "Retain per-Deed per-dynasty intervals and binary-search authoritative deathAt; protected heirs preserve same dynasty; initialwindowstartsnextsecond.",
+      "proof": "late_purchase_cannot_retroactively_protect_an_unreported_death; coverage_history_preserves_gaps; protected_heir_death_before_prior_settlement; historicalcoverage32,768call invariant."
+    },
+    {
+      "id": "SH-DESIGN-003",
+      "status": "remediated asset recovery limitation",
+      "impact": "ERC6551 native funds (including forced receipts) lacked a withdrawal path in the old ERC20-only draft.",
+      "fix": "Fixed-current-owner nonReentrant withdrawNative, locked while equipped and across death settlements.",
+      "proof": "native_currency_withdrawal_is_owner_only_and_equipment_locks_it; whole_vault native+stock conservation."
+    },
+    {
+      "id": "SH-HARNESS-001",
+      "status": "fixed and native retest passed",
+      "impact": "New expectedRevert test invoked an external quote/hash getter before target action; expected revert attached to getter.",
+      "fix": "Construct and sign request before installing expected revert.",
+      "proof": "output/deed-safehouse-custody-retest.log exit0; subsequent combined run all30custodyunits+2invariants passed."
+    },
+    {
+      "id": "SH-HARNESS-002",
+      "status": "closed by genuine fixture build and exact native retest",
+      "impact": "Scoped match-contract build omitted vendored foreign PoolManager used by existing negative tests via vm.getCode; 2 tests fail before contract assertion.",
+      "fix": "Explicitly build lib/v4-core/src/PoolManager.sol then retest exact two failures against unchangedsource.",
+      "proof": "output/deed-safehouse-foreign-manager-build.log exit0; output/deed-safehouse-foreign-manager-retest.log 2/2pass exit0; authoredsource unchanged"
+    }
+  ],
+  "completed_utc": "2026-10-17T03:28:13.914456+00:00",
+  "checks": [
+    {
+      "command": "forge test --match-path test/CharacterDeedCustody.t.sol -vv",
+      "exit": 1,
+      "log": "output/deed-safehouse-custody-forge.log",
+      "result": "31 passed / 1 harness expectedRevert failure; initial scope development evidence",
+      "log_sha256": "68fce81353a22fee1ce3591e474dbe57503a1daa64757fa3d4d0249fe3d5dd98"
+    },
+    {
+      "command": "forge test --match-path test/CharacterDeedCustody.t.sol --match-test test_safe_house_signature_nonce_price_day_allowance_and_horizon_are_atomic -vvvv",
+      "exit": 0,
+      "log": "output/deed-safehouse-custody-retest.log",
+      "result": "1 passed after request construction moved before expectRevert",
+      "log_sha256": "5d1a4a32677b20a950743aee0de277d36cd3923cea850c0d401c05379a8fd5fb"
+    },
+    {
+      "command": "forge test --match-contract 'CharacterDeedCustodyTest|CharacterDeedCustodyInvariantTest|SafeHouseCoverageInvariantTest|Restricted.*Test' --fuzz-seed 0x4f4d455254413230323631303136 -vv",
+      "exit": 1,
+      "log": "output/deed-safehouse-affected-forge-final.log",
+      "result": "138 passed / 2 missing vendored foreign PoolManager artifact failures / 0 skipped / 140 total; no authored assertion failure",
+      "log_sha256": "463894e63af54dd4768f48f0add742a35d73b4d0dfe7ca617b3f7847ca3376ec"
+    },
+    {
+      "command": "forge build lib/v4-core/src/PoolManager.sol",
+      "exit": 0,
+      "log": "output/deed-safehouse-foreign-manager-build.log",
+      "result": "Genuine native vendored negative-test fixture artifact compiled; no source changes",
+      "log_sha256": "250eb47d6198c55ce3853662791a92cb9ef372eac09df53345b0d34f2d3bbce1"
+    },
+    {
+      "command": "forge test --match-test 'testNativeForeignManagerCannotBePrefundedBeforeSeal|test_foreignManagerAndCounterfactualCannotReceiveRevenueInventory' -vv",
+      "exit": 0,
+      "log": "output/deed-safehouse-foreign-manager-retest.log",
+      "result": "2 passed / 0 failed / 0 skipped; closes both harness failures on unchanged authored source",
+      "log_sha256": "025da23db6c14fddec5831969ce90e722d780fa091ba0c47d6a1090281e875b1"
+    }
+  ],
+  "executed_budgets": {
+    "seed": "0x4f4d455254413230323631303136",
+    "fuzz_runs": 512,
+    "custody_stateful": {
+      "runs": 512,
+      "depth": 64,
+      "calls": 32768,
+      "reverts": 0
+    },
+    "coverage_stateful": {
+      "runs": 512,
+      "depth": 64,
+      "calls": 32768,
+      "reverts": 0
+    },
+    "manager_stateful": {
+      "runs": 512,
+      "depth": 500,
+      "calls": 256000,
+      "reverts": 0
+    },
+    "revenue_boundaries_stateful": {
+      "runs": 512,
+      "depth": 500,
+      "calls": 256000,
+      "reverts": 0
+    }
+  },
+  "conclusion": "All 140 selected fully-qualified contract tests verified passing across retained main run plus exact 2-test fixture retest. Both new custody/coverage invariants and existing fee/revenue invariants passed stated budgets. Static findings triaged for this hashed source only. No confirmed critical/high issue remains in this scope. This is implementation review evidence, not deployment/activation clearance."
+}

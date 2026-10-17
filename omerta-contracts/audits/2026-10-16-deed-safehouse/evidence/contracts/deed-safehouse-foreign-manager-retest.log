@@ -1,0 +1,11 @@
+No files changed, compilation skipped
+
+Ran 1 test for test/market-v2/RestrictedMarketIntegrationV2.t.sol:RestrictedMarketIntegrationV2Test
+[PASS] test_foreignManagerAndCounterfactualCannotReceiveRevenueInventory() (gas: 4635237)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 5.54ms (3.12ms CPU time)
+
+Ran 1 test for test/market-v2/RestrictedOMRV2.t.sol:RestrictedOMRV2Test
+[PASS] testNativeForeignManagerCannotBePrefundedBeforeSeal() (gas: 4844498)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 6.31ms (5.14ms CPU time)
+
+Ran 2 test suites in 12.88ms (11.85ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)

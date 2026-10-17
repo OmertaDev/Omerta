@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+deedcustody-estate-hook: PASS (real moderator death/estate skips untracked gas backlog, tracked death and exact heir remain journaled with rail disabled)
