@@ -1,0 +1,74 @@
+{
+  "phase": "isolated source implementation before deployment or activation",
+  "sourceCommit": "0022273036676a5d41e69d89d0dd502636c05a7a",
+  "sourceWorkingTreeCleanBeforeManifest": true,
+  "reviewBaseCommit": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "reviewPackageSha256": "4bf5b1b01eaa370efedd527b326cb14d4e13a6a65f96a4ccc8ec10048e93a9fe",
+  "packageFiles": [
+    {
+      "path": "omerta-contracts/audits/2026-10-16-deed-safehouse/README.md",
+      "sha256": "fa0b71694f6d5c2301101262be7e1da59fd9983d0505dd97a621085b3b431e83"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-16-deed-safehouse/evidence-manifest.json",
+      "sha256": "6cc197cb805c1641414e5b7a088c9077aa1250fbb56f2877a45af65e58344332"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-16-deed-safehouse/reviewed-source.json",
+      "sha256": "6c31d473c4d7cece93e9f6818ef683055ed90efd2a64da7bfde24d1bf969dde8"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-16-deed-safehouse/evidence/contracts/deed-safehouse-contract-review.json",
+      "sha256": "c6425f7f5174d1c0e0ec7b70e4e529484561ecff0d107c2fc566fddfe17ea660"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-16-deed-safehouse/evidence/backend/backend-verification.json",
+      "sha256": "85f337d2e3648902b017fbff2749f96a87c15954bc0c93c8e43824c8b2cb1e63"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-16-deed-safehouse/evidence/backend/authored-worker-supplement.json",
+      "sha256": "7bfd2c2d3c78867b5a944e88b47159c7c14c60f7feb6f8f18a545962ef2e7eb2"
+    },
+    {
+      "path": "docs/deed-custody-review-contracts.md",
+      "sha256": "d80b8e52c9c3a243939d027049e67124278f8a255bd8c5a540486000b5b8ee57"
+    },
+    {
+      "path": "docs/deed-custody-review-backend.md",
+      "sha256": "347c171463228b62b3bf4dd17b21ac064618618e571a8122b8434a3e061a8a49"
+    },
+    {
+      "path": "docs/deed-death-safehouse-design.md",
+      "sha256": "d502dbb15b6580f6f00729255bcd1df2a3225c112ff0b7615462e9b5ad76335c"
+    }
+  ],
+  "conclusion": "Pinned implementation reviewed and relevant checks passed; no confirmed in-scope critical/high finding remains open. No full-repository release or production activation clearance.",
+  "evidence": {
+    "retainedFiles": 52,
+    "contractUniqueTests": 140,
+    "statefulInvariantCalls": 577536,
+    "contractTestClosure": "138 passing in aggregate plus exact 2-test fixture retest on unchanged source; original failures retained",
+    "backend": "Focused custody/ABI/estate/recovery/signature tests, related regressions, schema replay and persistence",
+    "nativePostgres": "Real lock contention, rollback, raw-exit crash/finality barriers, actual action/estate proofs",
+    "browser": "Actual Playwright owner consent, quote/day/actor/network and expiry cases",
+    "worker": "Actual-source failure isolation and dependent stock closure",
+    "guards": "Preflight, routes, documentation and full repository gate matrix passed",
+    "static": "Slither diagnostics and triage retained; not a zero-diagnostic claim"
+  },
+  "financialFeatureEnabledByDefault": false,
+  "deploymentPerformed": false,
+  "productionConfigurationChanged": false,
+  "deploymentRequirements": [
+    "Exact new immutable contract/runtime and sealed token-role verification",
+    "Explicit checked migration of existing generic Deed wallets and approvals",
+    "Funded ordered keeper, signer separation, budgets, finality and recovery checks",
+    "Shared release integration and deployment/activation acceptance",
+    "One full canonical UTC volume day; first price at second UTC midnight after manager deployment"
+  ],
+  "limits": [
+    "Combat, heirs and death time are game-operator attestations",
+    "Only the canonical ETH/OMR manager volume is counted; fee-paying wash volume can affect the bounded next-day fee",
+    "Prepaid protection is nonrefundable and bounded to a seven-day horizon",
+    "Canonical manager runtime is 24555 bytes, leaving 21 bytes below EIP-170"
+  ]
+}
