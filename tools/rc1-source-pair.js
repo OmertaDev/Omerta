@@ -215,12 +215,12 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
 // Exact merged source/schema/catalog pins; empty bootstrap is not native or activation clearance.
 // PREPARATION identity only; future final source must be genuinely reviewed and repinned.
 export const ENTERPRISE_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "19f174540b0b65870800317ed98085ef36696976",
-  "reviewedCandidate": "37ba38104ce89378947b01510ff837ce6d24f618",
-  "predecessorTree": "732196b89e59cd33fd5b367e5c4585e2df55a2107f221800e23bc9e8af771ab7",
+  "predecessor": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+  "reviewedCandidate": "a5ff3801ee37c29125cc61e1cb11078ebe38d5e6",
+  "predecessorTree": "d5d2fc3917c0e9dddfc74128a9007020a242101dcc2c3b23158d75d4e009baa5",
   "predecessorSchema": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
   "predecessorCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
-  "candidateTree": "69f7ed8029e331b903c3c9ca5b3cc3b625efc2ac2b431a79a725a31589aff52e",
+  "candidateTree": "07ef1d01e163c90eb135ed59707320b3705efeae46274331661bb29d18660b9d",
   "candidateSchema": "9b80153efdeb616208d2d6776a268fc88deb1a6246ad0ddd54844c4c5ef76289",
   "candidateCatalog": "f45eb6f97c65ee00d3ad97e0c3a50756acbde77558abd1a86220bf9780006a65",
   "constraints": 73,
