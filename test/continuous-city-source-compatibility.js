@@ -197,7 +197,10 @@ async function normalizeCombinedCatalogueForLegacyProof(input) {
   return normalized;
 }
 for (const file of ['tools/enterprise-current-source-compatibility.js', 'tools/enterprise-current-source-data.js', 'tools/enterprise-native-inputs.js']) {
-  assert.equal(lf(file === 'tools/enterprise-native-inputs.js' ? await normalizeCombinedCatalogueForLegacyProof(fs.readFileSync(file, 'utf8')) : fs.readFileSync(file, 'utf8')), git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file), 'Predecessor guard/data is immutable: ' + file);
+  assert.equal(lf(file === 'tools/enterprise-native-inputs.js' ? await normalizeCombinedCatalogueForLegacyProof(fs.readFileSync(file, 'utf8')) : fs.readFileSync(file, 'utf8')),
+    file === 'tools/enterprise-native-inputs.js'
+      ? (assert.equal(git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file), readPinnedCatalogueReference(COMBINED_NATIVE_REFERENCE), 'Immutable source catalogue must equal the exact reviewed B definition'), readPinnedCatalogueReference(LEGACY_NATIVE_REFERENCE))
+      : git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file), 'Predecessor guard/data is immutable: ' + file);
 }
 console.log(JSON.stringify({ phase: 'CONTINUOUS_CITY_EXACT_SOURCE_ONLY', source: CONTINUOUS_CITY_SOURCE_REVISION,
   predecessor: CONTINUOUS_CITY_SOURCE_PREDECESSOR, sourceFiles: 16, addedFiles: additions, fixtureReaders: 36,
