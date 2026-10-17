@@ -19,7 +19,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(COMPANY_SUCCESSION_SOURCE_CURRENT_PINS)) {
-  const current = normalize(marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):fs.readFileSync(file, 'utf8'))))))), baseline = gitText(COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))))))), baseline = gitText(COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(companySuccessionSourceBaseline(file, current), baseline);
   assert.equal(companySuccessionSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

@@ -17,7 +17,7 @@ assert.deepEqual(Object.keys(transfer.currentPins), ['src/server.js', 'src/game.
   'src/secrets.js', 'src/contacts.js', 'src/wire.js']);
 let negatives = 0, hunks = 0;
 for (const file of Object.keys(transfer.currentPins)) {
-  const source = cityGameplaySourceBaseline(file, firstBatchSourceBaseline(file, cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):fs.readFileSync(file, 'utf8'))))).replaceAll('\r\n', '\n');
+  const source = cityGameplaySourceBaseline(file, firstBatchSourceBaseline(file, cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))):selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8')))))).replaceAll('\r\n', '\n');
   const baseline = git('show', `${transfer.predecessorRevision}:${file}`);
   assert.equal(source, git('show', `${transfer.sourceRevision}:${file}`), 'complete frozen runtime');
   assert.equal(source, git('show', transfer.currentBlobs[file]));
