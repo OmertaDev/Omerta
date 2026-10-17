@@ -1,7 +1,4 @@
-import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
-import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
-const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
-const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
+import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {nextFiveSourceBaseline} from '../tools/next-five-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
@@ -23,7 +20,7 @@ for (const [profile, files] of Object.entries(COMPOSITION_PROFILES)) {
   for (const [file, pin] of Object.entries(files)) {
     const current = git('show', COMPOSITION_REVISION + ':' + file);
     const prior = git('cat-file', 'blob', pin.baselineBlob);
-    assert.equal(nextFiveSourceBaseline(file, lf(cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))))), current, 'Complete actual source retains its reviewed composition');
+    assert.equal(nextFiveSourceBaseline(file, lf(cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))))), current, 'Complete actual source retains its reviewed composition');
     const actual = []; let hunk;
     for (const line of git('diff', '--no-ext-diff', '--unified=' + pin.contextLines, pin.baselineBlob, pin.currentBlob).split('\n')) {
       if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; actual.push(hunk); }

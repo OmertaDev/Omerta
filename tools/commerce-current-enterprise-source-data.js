@@ -1,6 +1,6 @@
 // Source-only preparation. Root must bind actual committed A and the genuine active E source.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
-export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION="6097de53a5cfc18039ca51ee7c9dde169c8a17f1";
+export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION="2d61a364131323ebf71d9ac82bbd62c7d36ffdf4";
 export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_PREDECESSOR="792466312e55b8baba962a80d4020bf554da47ed";
 export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_PHASE='closed current C to active Enterprise text projection only; no mode, native, migration, financial, deployment or release qualification';
 export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS=freeze({
@@ -357,6 +357,87 @@ export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS=freeze({
       }
     ]
   },
+  "test/rc1-city-gameplay-source-compatibility.js": {
+    "currentSha256": "6588c3a441d4f762b5de23c91a8400eb7bc5091dc48e97bf1894a610ed4fa8d8",
+    "currentBlob": "ad1f37112359d8c052c7069e1ecc668d4b01f64c",
+    "currentMode": "100644",
+    "baselineSha256": "270e6c7e5b830b7d602f3d5239561acc60d546d5323b70d99582aa579ad3a4cf",
+    "baselineBlob": "8c0af876c4326ca8d3ef45334d5b9835253b6cd1",
+    "baselineMode": "100644",
+    "context": 3,
+    "inverses": [
+      {
+        "current": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {enterpriseCurrentHistorical6bSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\nimport { firstBatchSourceBaseline, FIRST_BATCH_SOURCE_PREDECESSOR } from '../tools/rc1-first-batch-source-compatibility.js';\n",
+        "baseline": "import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {enterpriseCurrentHistorical6bSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\nimport { firstBatchSourceBaseline, FIRST_BATCH_SOURCE_PREDECESSOR } from '../tools/rc1-first-batch-source-compatibility.js';\n"
+      },
+      {
+        "current": "assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\\/RPG\\/Home\\/NPC\\/PvE\\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);\nlet negatives = 0;\nfor (const file of files) {\n  const raw = firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))))), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);\n  assert.equal(hash(current), CITY_GAMEPLAY_SOURCE_CURRENT_PINS[file], 'Exact current source: ' + file);\n  assert.equal(blob(current), CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS[file]);\n  assert.equal(hash(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS[file]); assert.equal(blob(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);\n",
+        "baseline": "assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\\/RPG\\/Home\\/NPC\\/PvE\\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);\nlet negatives = 0;\nfor (const file of files) {\n  const raw = firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,fs.readFileSync(file, 'utf8')))), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);\n  assert.equal(hash(current), CITY_GAMEPLAY_SOURCE_CURRENT_PINS[file], 'Exact current source: ' + file);\n  assert.equal(blob(current), CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS[file]);\n  assert.equal(hash(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS[file]); assert.equal(blob(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);\n"
+      },
+      {
+        "current": "  }\n}\nfor (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {\n  const current = normalize(firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))))), combinedParent = companyBankSourceBaseline(file, cityGameplaySourceBaseline(file, current));\n  assert.equal(hash(combinedParent), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file], 'Gameplay preserves the complete premises parent: ' + file);\n  const workflow = commercialPremisesSourceBaseline(file, combinedParent);\n  assert.equal(hash(workflow), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file]);\n",
+        "baseline": "  }\n}\nfor (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {\n  const current = normalize(firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,fs.readFileSync(file, 'utf8'))))), combinedParent = companyBankSourceBaseline(file, cityGameplaySourceBaseline(file, current));\n  assert.equal(hash(combinedParent), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file], 'Gameplay preserves the complete premises parent: ' + file);\n  const workflow = commercialPremisesSourceBaseline(file, combinedParent);\n  assert.equal(hash(workflow), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file]);\n"
+      },
+      {
+        "current": "    baseline: (input,file) => commercialPremisesSourceBaseline(file,input), assertTransfer: assertCompanyWorkflowSourceTransfer },\n]) {\n  for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {\n    const current = normalize(firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))))), parent = layer.baseline(companyBankSourceBaseline(file,cityGameplaySourceBaseline(file,current)),file);\n    assert.equal(hash(parent),layer.pins[file]);\n    for (const chunk of layer.inverses[file]) {\n      assert.equal(parent.split(chunk.current).length,2,'Each premises/workflow predecessor hunk is exact and unique: ' + file);\n",
+        "baseline": "    baseline: (input,file) => commercialPremisesSourceBaseline(file,input), assertTransfer: assertCompanyWorkflowSourceTransfer },\n]) {\n  for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {\n    const current = normalize(firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,fs.readFileSync(file,'utf8'))))), parent = layer.baseline(companyBankSourceBaseline(file,cityGameplaySourceBaseline(file,current)),file);\n    assert.equal(hash(parent),layer.pins[file]);\n    for (const chunk of layer.inverses[file]) {\n      assert.equal(parent.split(chunk.current).length,2,'Each premises/workflow predecessor hunk is exact and unique: ' + file);\n"
+      },
+      {
+        "current": "    }\n  }\n}\nconst server = normalize(firstBatchSourceBaseline('src/server.js',cityActivitySourceBaseline('src/server.js',enterpriseCurrentHistorical6bSourceBaseline('src/server.js',(hasCommerceCurrentEnterpriseSource('src/server.js')?commerceOverCurrentEnterpriseSourceBaseline('src/server.js',String(fs.readFileSync('src/server.js', 'utf8'))):fs.readFileSync('src/server.js', 'utf8')))))), latestParentServer = cityGameplaySourceBaseline('src/server.js', server);\nconst intel = assertPlayerIntelSourceTransfer('src/server.js', latestParentServer);\nassert.equal(intel.baselineText, git('show', CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0] + ':src/server.js'));\nassert.equal(intel.baselinePins['src/server.js'], PLAYER_INTEL_SOURCE_TRANSFER.baselinePins['src/server.js']);\n",
+        "baseline": "    }\n  }\n}\nconst server = normalize(firstBatchSourceBaseline('src/server.js',cityActivitySourceBaseline('src/server.js',enterpriseCurrentHistorical6bSourceBaseline('src/server.js',fs.readFileSync('src/server.js', 'utf8'))))), latestParentServer = cityGameplaySourceBaseline('src/server.js', server);\nconst intel = assertPlayerIntelSourceTransfer('src/server.js', latestParentServer);\nassert.equal(intel.baselineText, git('show', CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0] + ':src/server.js'));\nassert.equal(intel.baselinePins['src/server.js'], PLAYER_INTEL_SOURCE_TRANSFER.baselinePins['src/server.js']);\n"
+      },
+      {
+        "current": "  'src/gameemployment.js','src/gameemploymentinvariants.js','src/routes/gameemployment.js','src/commercialpremises.js',\n  'src/commercialpremisesinvariants.js','src/routes/commercialpremises.js','src/companyworkflows.js','src/companyworkflowrunner.js',\n  'src/companyworkflowinvariants.js','src/routes/companyworkflows.js','src/worker.js']) {\n  const text = firstBatchSourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))); assert.equal(cityGameplaySourceBaseline(file, text), text, 'Files outside the closed17 map have no gameplay predecessor alias.');\n  assert.throws(() => qualifyCityGameplaySource(file, text), /Unknown gameplay source/); negatives++;\n}\nfor (const file of ['toString','constructor','./src/server.js']) {\n",
+        "baseline": "  'src/gameemployment.js','src/gameemploymentinvariants.js','src/routes/gameemployment.js','src/commercialpremises.js',\n  'src/commercialpremisesinvariants.js','src/routes/commercialpremises.js','src/companyworkflows.js','src/companyworkflowrunner.js',\n  'src/companyworkflowinvariants.js','src/routes/companyworkflows.js','src/worker.js']) {\n  const text = firstBatchSourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,fs.readFileSync(file, 'utf8'))); assert.equal(cityGameplaySourceBaseline(file, text), text, 'Files outside the closed17 map have no gameplay predecessor alias.');\n  assert.throws(() => qualifyCityGameplaySource(file, text), /Unknown gameplay source/); negatives++;\n}\nfor (const file of ['toString','constructor','./src/server.js']) {\n"
+      }
+    ]
+  },
+  "test/rc1-first-batch-source-compatibility.js": {
+    "currentSha256": "dd48de98ba7602940e0f22eab4d11f88a48839a0de653b55e434dbe0431ebe7e",
+    "currentBlob": "02591fa15e41ec0c6b396905a1f30d5120a5cd0d",
+    "currentMode": "100644",
+    "baselineSha256": "ed864d02f3b7f98e13c2b6fec35663c7b8fe9b1dc6a09069c64e98caca9775e8",
+    "baselineBlob": "f1c6d0b3645accfafbc726f045f4ce1a4872b417",
+    "baselineMode": "100644",
+    "context": 3,
+    "inverses": [
+      {
+        "current": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {enterpriseCurrentHistorical6bSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\nimport { secondBatchSourceBaseline, assertSecondBatchSourceTransfer, SECOND_BATCH_SOURCE_DOMAINS } from '../tools/rc1-second-batch-source-compatibility.js';\n",
+        "baseline": "import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {enterpriseCurrentHistorical6bSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\nimport { secondBatchSourceBaseline, assertSecondBatchSourceTransfer, SECOND_BATCH_SOURCE_DOMAINS } from '../tools/rc1-second-batch-source-compatibility.js';\n"
+      },
+      {
+        "current": "for(const[file,d]of Object.entries(O.FIRST_BATCH_SOURCE_DOMAINS)){\n const revision=d.currentRevision??O.FIRST_BATCH_SOURCE_REVISION;\n assert.equal(d.currentRevision??null,file==='package.json'?'b34c79f9e43bd2960801f3ecc9a3426af5907d3a':null,'Only the two reviewed recovery script additions use a separate exact package revision');\n const raw=lf(cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))));if(Object.hasOwn(SECOND_BATCH_SOURCE_DOMAINS,file))assert.equal(assertSecondBatchSourceTransfer(file,raw).baselineText,secondBatchSourceBaseline(file,raw));const current=secondBatchSourceBaseline(file,raw),pinned=git('show',revision+':'+file);entire(current,pinned);entire(current,git('show',d.currentBlob));assert.equal(hash(current),d.currentSha256);hashes++;assert.equal(blob(current),d.currentBlob);blobs++;\n const proof=O.assertFirstBatchSourceTransfer(file,current);assert.equal(proof.sourceRevision,revision);entire(O.assertFirstBatchSourceTransfer(file,current.replaceAll('\\n','\\r\\n')).baselineText,proof.baselineText);\n const actualHunks=[];let chunk=null;for(const line of git('diff','--no-ext-diff','--unified=3',O.FIRST_BATCH_SOURCE_PREDECESSOR,revision,'--',file).split('\\n')){if(line.startsWith('@@')){chunk={current:'',baseline:''};actualHunks.push(chunk);}else if(chunk){if(line[0]==='+')chunk.current+=line.slice(1)+'\\n';else if(line[0]==='-')chunk.baseline+=line.slice(1)+'\\n';else if(line[0]===' '){chunk.current+=line.slice(1)+'\\n';chunk.baseline+=line.slice(1)+'\\n';}}}assert.deepEqual(d.inverses,d.predecessorAbsent?[]:actualHunks,'Only complete actual Git diff contexts are reversible');\n if(d.predecessorAbsent){assert(['src/content/company-production-quality.js','src/company-economy-contracts.js'].includes(file));assert.throws(()=>git('show',O.FIRST_BATCH_SOURCE_PREDECESSOR+':'+file));assert.equal(proof.baselineText,null);assert.equal(d.baselineSha256,null);assert.equal(d.baselineBlob,null);assert.deepEqual(d.inverses,[]);entire(O.firstBatchSourceBaseline(file,current),current);}\n",
+        "baseline": "for(const[file,d]of Object.entries(O.FIRST_BATCH_SOURCE_DOMAINS)){\n const revision=d.currentRevision??O.FIRST_BATCH_SOURCE_REVISION;\n assert.equal(d.currentRevision??null,file==='package.json'?'b34c79f9e43bd2960801f3ecc9a3426af5907d3a':null,'Only the two reviewed recovery script additions use a separate exact package revision');\n const raw=lf(cityActivitySourceBaseline(file,enterpriseCurrentHistorical6bSourceBaseline(file,fs.readFileSync(file,'utf8'))));if(Object.hasOwn(SECOND_BATCH_SOURCE_DOMAINS,file))assert.equal(assertSecondBatchSourceTransfer(file,raw).baselineText,secondBatchSourceBaseline(file,raw));const current=secondBatchSourceBaseline(file,raw),pinned=git('show',revision+':'+file);entire(current,pinned);entire(current,git('show',d.currentBlob));assert.equal(hash(current),d.currentSha256);hashes++;assert.equal(blob(current),d.currentBlob);blobs++;\n const proof=O.assertFirstBatchSourceTransfer(file,current);assert.equal(proof.sourceRevision,revision);entire(O.assertFirstBatchSourceTransfer(file,current.replaceAll('\\n','\\r\\n')).baselineText,proof.baselineText);\n const actualHunks=[];let chunk=null;for(const line of git('diff','--no-ext-diff','--unified=3',O.FIRST_BATCH_SOURCE_PREDECESSOR,revision,'--',file).split('\\n')){if(line.startsWith('@@')){chunk={current:'',baseline:''};actualHunks.push(chunk);}else if(chunk){if(line[0]==='+')chunk.current+=line.slice(1)+'\\n';else if(line[0]==='-')chunk.baseline+=line.slice(1)+'\\n';else if(line[0]===' '){chunk.current+=line.slice(1)+'\\n';chunk.baseline+=line.slice(1)+'\\n';}}}assert.deepEqual(d.inverses,d.predecessorAbsent?[]:actualHunks,'Only complete actual Git diff contexts are reversible');\n if(d.predecessorAbsent){assert(['src/content/company-production-quality.js','src/company-economy-contracts.js'].includes(file));assert.throws(()=>git('show',O.FIRST_BATCH_SOURCE_PREDECESSOR+':'+file));assert.equal(proof.baselineText,null);assert.equal(d.baselineSha256,null);assert.equal(d.baselineBlob,null);assert.deepEqual(d.inverses,[]);entire(O.firstBatchSourceBaseline(file,current),current);}\n"
+      }
+    ]
+  },
+  "test/lib/rc1-historical-source-fixture.js": {
+    "currentSha256": "f62744c9f0cb55630bba46a169a091621badf1e3b8583418ea0287f9e6244146",
+    "currentBlob": "03c53f8fd02323718e5ad5f226e70cc20a1d5bf3",
+    "currentMode": "100644",
+    "baselineSha256": "7980a1acc4380d6a274138b4d88013dfdd58b0672d384f8e1a2e1c643c5d0418",
+    "baselineBlob": "4eb0767a9633486805d89b09dd65cad64041266c",
+    "baselineMode": "100644",
+    "context": 3,
+    "inverses": [
+      {
+        "current": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';\n// Closed pure-control fixtures. Historical source execution never admits the current release.\nimport {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';\n",
+        "baseline": "import {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';\n// Closed pure-control fixtures. Historical source execution never admits the current release.\nimport {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';\n"
+      },
+      {
+        "current": "function historical(file) {\n  loadInventories();\n  if (!checked.has(file)) {\n    const actualCurrentRaw = String(originalRead(path.join(root, file)));\n    const selected = currentHistoricalApplicationSource(file, hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : actualCurrentRaw);\n    checked.add(file);\n    return selected;\n  }\n",
+        "baseline": "function historical(file) {\n  loadInventories();\n  if (!checked.has(file)) {\n    const selected = currentHistoricalApplicationSource(file, String(originalRead(path.join(root, file))));\n    checked.add(file);\n    return selected;\n  }\n"
+      },
+      {
+        "current": "    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n  let positives = 0, refusals = 0;\n  for (const file of files) {\n    const actualCurrentRaw = String(originalRead(path.join(root, file))),\n      raw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : actualCurrentRaw, current = canonical(raw);\n    const rootRaw = enterpriseOverRootSourceBaseline(file,raw), rootCurrent = canonical(rootRaw);\n    const deedRaw = marketOverDeedSourceBaseline(file, rootRaw), deedCurrent = canonical(deedRaw);\n    const witness = assertDeedQuestSourceTransfer(file, deedRaw).baselineText;\n",
+        "baseline": "    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n  let positives = 0, refusals = 0;\n  for (const file of files) {\n    const raw = String(originalRead(path.join(root, file))), current = canonical(raw);\n    const rootRaw = enterpriseOverRootSourceBaseline(file,raw), rootCurrent = canonical(rootRaw);\n    const deedRaw = marketOverDeedSourceBaseline(file, rootRaw), deedCurrent = canonical(deedRaw);\n    const witness = assertDeedQuestSourceTransfer(file, deedRaw).baselineText;\n"
+      },
+      {
+        "current": "}\n\nfunction rejectCityActivityHistoricalSources() {\n  const file = 'src/server.js', actualCurrentUnionRaw = String(originalRead(path.join(root, file))),\n    unionRaw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentUnionRaw) : actualCurrentUnionRaw;\n  const raw = enterpriseOverGuiSourceBaseline(file, unionRaw), current = canonical(raw);\n  const combinedProof = qualifyCityActivityMarketSource(file, raw);\n  const retained = String(git(['cat-file', 'blob', CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob]));\n",
+        "baseline": "}\n\nfunction rejectCityActivityHistoricalSources() {\n  const file = 'src/server.js', unionRaw = String(originalRead(path.join(root, file)));\n  const raw = enterpriseOverGuiSourceBaseline(file, unionRaw), current = canonical(raw);\n  const combinedProof = qualifyCityActivityMarketSource(file, raw);\n  const retained = String(git(['cat-file', 'blob', CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob]));\n"
+      }
+    ]
+  },
   "test/migrate.js": {
     "currentSha256": "f727e001fa28f587f9398ac1bdf4c9f4f171a090a36274185db5a3e211b3a05a",
     "currentBlob": "e7f1fa84d0cdb66581e85d764a34eaa41bcc03f0",
@@ -521,36 +602,6 @@ export const COMMERCE_CURRENT_ENTERPRISE_IDENTITY_SOURCES=freeze({
     "currentMode": "100644",
     "baselineSha256": "f6b5dc19d1b3b7beca45baa87e5a698dc8d958d5e93de3ac7e58de7fe48abe17",
     "baselineBlob": "0f5272b41cb138775276a3bc25ad368cec7d8126",
-    "baselineMode": "100644",
-    "context": 3,
-    "inverses": []
-  },
-  "test/rc1-city-gameplay-source-compatibility.js": {
-    "currentSha256": "270e6c7e5b830b7d602f3d5239561acc60d546d5323b70d99582aa579ad3a4cf",
-    "currentBlob": "8c0af876c4326ca8d3ef45334d5b9835253b6cd1",
-    "currentMode": "100644",
-    "baselineSha256": "270e6c7e5b830b7d602f3d5239561acc60d546d5323b70d99582aa579ad3a4cf",
-    "baselineBlob": "8c0af876c4326ca8d3ef45334d5b9835253b6cd1",
-    "baselineMode": "100644",
-    "context": 3,
-    "inverses": []
-  },
-  "test/rc1-first-batch-source-compatibility.js": {
-    "currentSha256": "ed864d02f3b7f98e13c2b6fec35663c7b8fe9b1dc6a09069c64e98caca9775e8",
-    "currentBlob": "f1c6d0b3645accfafbc726f045f4ce1a4872b417",
-    "currentMode": "100644",
-    "baselineSha256": "ed864d02f3b7f98e13c2b6fec35663c7b8fe9b1dc6a09069c64e98caca9775e8",
-    "baselineBlob": "f1c6d0b3645accfafbc726f045f4ce1a4872b417",
-    "baselineMode": "100644",
-    "context": 3,
-    "inverses": []
-  },
-  "test/lib/rc1-historical-source-fixture.js": {
-    "currentSha256": "7980a1acc4380d6a274138b4d88013dfdd58b0672d384f8e1a2e1c643c5d0418",
-    "currentBlob": "4eb0767a9633486805d89b09dd65cad64041266c",
-    "currentMode": "100644",
-    "baselineSha256": "7980a1acc4380d6a274138b4d88013dfdd58b0672d384f8e1a2e1c643c5d0418",
-    "baselineBlob": "4eb0767a9633486805d89b09dd65cad64041266c",
     "baselineMode": "100644",
     "context": 3,
     "inverses": []

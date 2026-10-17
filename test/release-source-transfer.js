@@ -1,7 +1,4 @@
-import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
-import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
-const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
-const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
+import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { economyReleaseSource } from '../tools/economy-release-composition.js';
@@ -36,7 +33,7 @@ function reject(file, text) {
 for (const [file, domain] of Object.entries(RELEASE_SOURCE_DOMAINS)) {
   const current = git('show', RELEASE_SOURCE_REVISION + ':' + file);
   const prior = git('show', RELEASE_SOURCE_PREDECESSOR + ':' + file);
-  entire(economyReleaseSource('main', file, cityPlaySourceBaseline(file, lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))))), current);
+  entire(economyReleaseSource('main', file, cityPlaySourceBaseline(file, lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))))), current);
   entire(current, git('cat-file', 'blob', domain.currentBlob));
   entire(prior, git('cat-file', 'blob', domain.baselineBlob));
   assert.equal(hash(current), domain.currentSha256); assert.equal(blob(current), domain.currentBlob);
@@ -115,7 +112,7 @@ const rejectCity = (file, text) => {
   cityNegatives++;
 };
 for (const [file, domain] of Object.entries(CITY_PLAY_SOURCE_DOMAINS)) {
-  const current = economyReleaseSource('city', file, lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))));
+  const current = economyReleaseSource('city', file, lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))));
   const prior = git('show', CITY_PLAY_SOURCE_PREDECESSOR + ':' + file);
   assert(Object.isFrozen(domain) && Object.isFrozen(domain.inverses));
   assert.equal(hash(current), domain.currentSha256); assert.equal(blob(current), domain.currentBlob);

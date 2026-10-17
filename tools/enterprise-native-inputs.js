@@ -1,5 +1,5 @@
 // Actual immutable C input-union proposal; no native/final/physical admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="f721bdb7eddd50d8b9f8809ed4325861cbcb7fa5";
+export const ENTERPRISE_NATIVE_BASE_REVISION="773b9ac62aab8232c2f82c7ee7311e331678e4cd";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -8014,8 +8014,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/lib/rc1-historical-source-fixture.js",
-    "blob": "4eb0767a9633486805d89b09dd65cad64041266c",
-    "sha256": "7980a1acc4380d6a274138b4d88013dfdd58b0672d384f8e1a2e1c643c5d0418"
+    "blob": "03c53f8fd02323718e5ad5f226e70cc20a1d5bf3",
+    "sha256": "f62744c9f0cb55630bba46a169a091621badf1e3b8583418ea0287f9e6244146"
   },
   {
     "file": "test/lib/rc1-historical-worker-source.js",
@@ -8114,8 +8114,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/market-operations-director-catalog.js",
-    "blob": "557096172655dd99606c408f6635071a3818f974",
-    "sha256": "53d8847c12a2a260bf66ed26393e207b462aca0a2503324992b468eca4853aa4"
+    "blob": "b4dea25cd378e8edc61ea974e932000c9ffeb163",
+    "sha256": "e4bda0bc4efdb4db3b55af41d5b465510c73c76b4271c0becfd63701cfbdfe38"
   },
   {
     "file": "test/market-operations-graph-helpers.js",
@@ -8129,13 +8129,13 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/market-operations-release-phase2-migration-catalog.js",
-    "blob": "2c37ae708b9ded9fba7f783ed3247f4ce99efe9e",
-    "sha256": "cd3c921cfab74bf4a00d0c797cddfb4bbe84de76c18b40feca28d3599e1c6ad2"
+    "blob": "55129086c8ca7b00ba50b71d76ed2e8fc05f547c",
+    "sha256": "2f5ec4a8cc01f4f5ec01d6681a5dd059b16d95105e233641d585ef4883e92354"
   },
   {
     "file": "test/market-operations-source-compatibility.js",
-    "blob": "bfffe517a2b7192d1e15647ddac30c6855d835d0",
-    "sha256": "290acf04a3f5870a09c98f5986ea355ee897dcb1d2626953e1ad3372aa05526b"
+    "blob": "2fd1d0a71956beabaa65d84c8cc9491d62d863e6",
+    "sha256": "2b4568bf1ee56b6ec00fd4bad30f99363dcc35ac7ad2f974325271b80905333b"
   },
   {
     "file": "test/merchantreturns-api.js",
@@ -8229,8 +8229,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/next-layer-source-compatibility.js",
-    "blob": "cadb9c7e8f186e59833db870afdddfaeeb443d1e",
-    "sha256": "463e8efccdeb49612b4356db36a6be0de013091e7cb1738991749a00f591b29b"
+    "blob": "3c89a3558ae954a24520ad59681eb4ac5b77bc70",
+    "sha256": "ea1f52c8311d35f1339610693a0794a689777687afa8e85e240463577c16954d"
   },
   {
     "file": "test/phase2-lot-boundary.js",
@@ -8284,13 +8284,13 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/rc1-city-gameplay-source-compatibility.js",
-    "blob": "8c0af876c4326ca8d3ef45334d5b9835253b6cd1",
-    "sha256": "270e6c7e5b830b7d602f3d5239561acc60d546d5323b70d99582aa579ad3a4cf"
+    "blob": "ad1f37112359d8c052c7069e1ecc668d4b01f64c",
+    "sha256": "6588c3a441d4f762b5de23c91a8400eb7bc5091dc48e97bf1894a610ed4fa8d8"
   },
   {
     "file": "test/rc1-first-batch-source-compatibility.js",
-    "blob": "f1c6d0b3645accfafbc726f045f4ce1a4872b417",
-    "sha256": "ed864d02f3b7f98e13c2b6fec35663c7b8fe9b1dc6a09069c64e98caca9775e8"
+    "blob": "02591fa15e41ec0c6b396905a1f30d5120a5cd0d",
+    "sha256": "dd48de98ba7602940e0f22eab4d11f88a48839a0de653b55e434dbe0431ebe7e"
   },
   {
     "file": "test/rc1-native-world-workload.js",
@@ -9119,8 +9119,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/commerce-current-native-guard.js",
-    "blob": "89838e9a6faa51977ad5117ebece0653ea6cb4cb",
-    "sha256": "7f6416a1afadbfba4a769d27d6505fbf3d5030632eb296a23f44c94734a015fe"
+    "blob": "6ed15171a6d4467014c0db205e8409cfae134bc2",
+    "sha256": "59b71be38666d373d7e6215ee250a58e857ca5ec18cd3eb1a150f06853e1d16b"
   },
   {
     "file": "test/commerce-release-phase2-migration-catalog.js",
@@ -9309,8 +9309,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/shoppingbasket-fixture.js",
-    "blob": "e9a72536824bfa1286b5b4e12e7810221126ed3a",
-    "sha256": "73eaee02af2af709a23a5bc707155f7b769d70f90f5dc2260b1f7e0e359eb074"
+    "blob": "579f61beb9730ff06a0290600e0f24308170e37f",
+    "sha256": "d4c58f2b95754ced8723b82c5d000d39690022aca856390b079a19131eb146c6"
   },
   {
     "file": "test/shoppingbasket-native-estate.js",
@@ -9364,8 +9364,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/commerce-enterprise-source-data.js",
-    "blob": "6573c40eb354d41d6eb5067c99e253158b8eb2fb",
-    "sha256": "20aaa8d4e9b5e467839885ed650743dcbfe02f987b5993b3f8cf7a146cc17a26"
+    "blob": "000719bf8d16c77ba9ea34c408df2d6ec927bd11",
+    "sha256": "e92746d80287907d86e72c0b2860259daf5774fad5a0fbb632fc0df693c62c6b"
   },
   {
     "file": "tools/commerce-graph-helpers.js",
@@ -9374,8 +9374,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/commerce-native.js",
-    "blob": "f86dc7ffa6985bdb8c108bc057ca2ff6f7161e26",
-    "sha256": "ff2708d09efd516697502996cdc7722d621cd24650ce40095cc4620ff172a317"
+    "blob": "7bce19226d406d5132a644c8c7491216bf0f7195",
+    "sha256": "18bd52ea2c84b0b4c964f853165d8b8178e91dba66cfaabe1a6bc52082061314"
   },
   {
     "file": "tools/commerce-release-phase2-migration-catalog.js",
@@ -9399,8 +9399,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/commerce-current-enterprise-source-data.js",
-    "blob": "3c151da0760524fb9061cb3eb3023bf78f61b9d1",
-    "sha256": "deeac8b40f318de043c2e107aba665a28d180853cdc46c43ada4ef67ef432419"
+    "blob": "12a948e51b1f10afbab884f8fbceb8e7952c7b55",
+    "sha256": "718377da3a928b42004fa8e56600573d85e472852f5a0cdb20a3edefa9334c54"
   }
 ].map(Object.freeze));
 export const ENTERPRISE_NATIVE_BINARY_FILES=Object.freeze([

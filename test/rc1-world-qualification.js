@@ -1,7 +1,4 @@
-import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
-import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
-const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
-const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
+import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {enterpriseOverGuiSourceBaseline,enterpriseOverRootSourceBaseline,hasEnterpriseOverRootSource,ENTERPRISE_OVER_GUI_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../tools/enterprise-current-source-compatibility.js';
 import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { BUSINESS_SEASON_SOURCE_TRANSFER } from '../tools/rc1-business-season-source-compatibility.js';
@@ -75,8 +72,8 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 async function readEnterpriseWorldSource(file, encoding) {
   assert.equal(typeof file, 'string');
   assert(encoding === undefined || encoding === 'utf8', 'Closed world source read encoding');
-  const physical = await fs.readFile(file, encoding);
-  const raw = selectFinalServicesEnterpriseTestSource(file,String(physical));
+  const actualCurrentRaw = await fs.readFile(file, encoding);
+  const raw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, String(actualCurrentRaw)) : actualCurrentRaw;
   let selected;
   if (Object.hasOwn(ENTERPRISE_OVER_GUI_SOURCE_DOMAINS, file)) {
     selected = enterpriseOverGuiSourceBaseline(file, String(raw));
@@ -87,7 +84,7 @@ async function readEnterpriseWorldSource(file, encoding) {
     assert.equal(sha256(text), p.currentSha256, 'Actual physical Enterprise world input changed');
     assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex'), p.currentBlob);
     selected = enterpriseOverRootSourceBaseline(file, String(raw));
-  } else return physical; // Unknown downstream guard receives the original untouched bytes.
+  } else return raw; // Existing downstream closed source guard receives unchanged bytes.
   return encoding === 'utf8' ? selected : Buffer.from(selected);
 }
 
@@ -101,7 +98,8 @@ assert.deepEqual(CITY_ACTIVITY_MARKET_SERVER_INVERSES, CITY_ACTIVITY_SOURCE_INVE
 assert.deepEqual(CITY_ACTIVITY_MARKET_PACKAGE_INVERSES, CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES);
 let jointPositives = 0, jointRefusals = 0;
 for (const [file, pin] of Object.entries(CITY_ACTIVITY_MARKET_SOURCE_DOMAINS)) {
-  const unionRaw = selectFinalServicesEnterpriseTestSource(file,await fs.readFile(file, 'utf8'));
+  const actualCurrentUnionRaw = await fs.readFile(file, 'utf8');
+  const unionRaw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentUnionRaw) : actualCurrentUnionRaw;
   const raw = enterpriseOverGuiSourceBaseline(file, unionRaw), current = raw.replaceAll('\r\n', '\n');
   const expected = readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR + ':' + file);
   assert.equal(current, readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_REVISION + ':' + file));

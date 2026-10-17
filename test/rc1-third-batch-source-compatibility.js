@@ -1,7 +1,4 @@
-import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
-import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
-const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
-const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
+import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { fourthBatchSourceBaseline } from '../tools/rc1-fourth-batch-source-compatibility.js';
@@ -21,7 +18,7 @@ let texts=0,hashes=0,blobs=0,hunks=0,negatives=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 const reject=(f,t)=>{assert.throws(()=>O.assertThirdBatchSourceTransfer(f,t));negatives++;entire(O.thirdBatchSourceBaseline(f,t),lf(t));};
 for(const [file,d] of Object.entries(O.THIRD_BATCH_SOURCE_DOMAINS)){
- const current=fourthBatchSourceBaseline(file,releaseSourceBaseline(file,lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))))),prior=git('show',O.THIRD_BATCH_SOURCE_PREDECESSOR+':'+file);
+ const current=fourthBatchSourceBaseline(file,releaseSourceBaseline(file,lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))))),prior=git('show',O.THIRD_BATCH_SOURCE_PREDECESSOR+':'+file);
  entire(current,git('show',O.THIRD_BATCH_SOURCE_REVISION+':'+file));entire(current,git('cat-file','blob',d.currentBlob));
  assert.equal(hash(current),d.currentSha256);hashes++;assert.equal(blob(current),d.currentBlob);blobs++;
  entire(prior,git('cat-file','blob',d.baselineBlob));assert.equal(hash(prior),d.baselineSha256);hashes++;assert.equal(blob(prior),d.baselineBlob);blobs++;

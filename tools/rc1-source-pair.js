@@ -215,12 +215,12 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
 // Exact merged source/schema/catalog pins; empty bootstrap is not native or activation clearance.
 // PREPARATION identity only; future final source must be genuinely reviewed and repinned.
 export const COMMERCE_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "6a3124af8cd12688825a1899f5df187760bb057d",
-  "reviewedCandidate": "979cac5a9e6f61cdce4a421b209829c0d97a65fb",
-  "predecessorTree": "9d3bf2677bae3a185d84fdf832e76c632f644841488771be52ca11378822c330",
+  "predecessor": "dd1ddae8bbf2642f5bca3cb0ddb32e0f7d2671d0",
+  "reviewedCandidate": "1fd3c5a7678afd06321cbfcf74631ce26d30b764",
+  "predecessorTree": "5cb76ba781eed9adefc71379c7f840e9ae48a204138f5303c2c6f136110cb6e8",
   "predecessorSchema": "9b80153efdeb616208d2d6776a268fc88deb1a6246ad0ddd54844c4c5ef76289",
   "predecessorCatalog": "f45eb6f97c65ee00d3ad97e0c3a50756acbde77558abd1a86220bf9780006a65",
-  "candidateTree": "309acd970132f02f1c133651dd939a059aaa17f6a32c0657e14f1b728da98088",
+  "candidateTree": "a746722cf6c080b45cd2476d344e494a47df6fa226ebece737015ec4d4a2664d",
   "candidateSchema": "833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335",
   "candidateCatalog": "44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917",
   "constraints": 200,
@@ -231,11 +231,11 @@ export const COMMERCE_ADDITIVE_PAIR = Object.freeze({
 
 export const ENTERPRISE_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "2b7875977b6285d35abea7e35240b11ed7e2e52d",
-  "reviewedCandidate": "64b7188018d42d2ac3949bf314440035ef3778d3",
+  "reviewedCandidate": "e1b459b78d1e6dbf50788cf8afbf691298aac5f1",
   "predecessorTree": "639a8dcf3e794e7bd999e2311dae7452a4d4a56c59e33692e29a447fef956441",
   "predecessorSchema": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
   "predecessorCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
-  "candidateTree": "9d3bf2677bae3a185d84fdf832e76c632f644841488771be52ca11378822c330",
+  "candidateTree": "5cb76ba781eed9adefc71379c7f840e9ae48a204138f5303c2c6f136110cb6e8",
   "candidateSchema": "9b80153efdeb616208d2d6776a268fc88deb1a6246ad0ddd54844c4c5ef76289",
   "candidateCatalog": "f45eb6f97c65ee00d3ad97e0c3a50756acbde77558abd1a86220bf9780006a65",
   "constraints": 73,
