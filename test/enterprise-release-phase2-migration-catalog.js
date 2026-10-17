@@ -31,7 +31,34 @@ const frozenText=(relative,expected)=>{const raw=fs.readFileSync(new URL(relativ
 // Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.
 const dispatchSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchSchema));
 const commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa21bcfe2f3bc163b26f08eea4c6f0dac97c';
-if(commerceCurrent){
+const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';
+if(commerceDeedCurrent){
+  frozenText('../tools/commerce-deed-release-phase2-native-catalog.js','dc84df23e59ad3282fc16c556943150be1e9fcc219facd2e94b83f6b2c817f4b');
+  frozenText('../tools/commerce-release-phase2-native-catalog.js','be4307efac154a7e5f0c17c6bb020a7dc6ae96d053bfe2163e944a694d6db637');
+  frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e');
+  const compiler=await import('../tools/commerce-deed-release-phase2-native-catalog.js'),commerce=await import('../tools/commerce-release-phase2-migration-catalog.js'),historical=await import('../tools/enterprise-release-phase2-migration-catalog.js');
+  const sources=compiler.commerceCurrentDeedSources(dispatchSchema),old=commerce.commerceNativeBranchSources(),catalog=JSON.parse(frozenText('./lib/phase2-architecture-upgrade-catalog.json','44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917')),expected=commerce.commerceCatalogExpectedData();
+  assert.deepEqual(catalog,expected);assert.equal(catalog.added.length,1675);assert.equal(Object.keys(catalog.notNullColumns).length,215);assert.equal(catalog.removed.length,3);assert.equal(sources.predecessor,old.current);assert.equal(sources.premainPredecessor,old.iv);
+  for(const[name,count]of[['current',572],['premain',565]])assert.equal((sources[name].match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,count);for(const raw of[sources.current,sources.current.replaceAll('\n','\r\n')])assert.equal(compiler.commerceCurrentDeedSources(raw).current,sources.current);
+  const retainedTables=compiler.COMMERCE_NATIVE_TABLES,retained=new Set(retainedTables),main=new Set(compiler.COMMERCE_RELEASE_PHASE2_TABLES),structural=catalog.added.filter(row=>retained.has(row.table_name));assert.equal(retainedTables.length,40);assert.equal(main.size,7);assert.equal(structural.length,432);assert.equal(retainedTables.reduce((n,t)=>n+catalog.notNullColumns[t].length,0),398);
+  let negative=0;const rejected=fn=>{assert.throws(fn,error=>error?.code==='ERR_ASSERTION');negative++;},verifyCatalog=value=>assert(isDeepStrictEqual(value,expected));
+  for(const text of[sources.current,sources.premain])for(const fn of[commerce.commerceMigrationPredecessor,historical.enterpriseMigrationPredecessor,historical.enterpriseNativeHistoricalPredecessor])rejected(()=>fn(text));
+  for(const bad of[sources.current+' ',sources.current.slice(1),'\ufeff'+sources.current,sources.current.replace('\n','\r\n'),sources.current.replace('street_deed_discoveries','unreviewed_deed_discoveries'),sources.premain,old.current,old.iv,old.main,old.common])rejected(()=>compiler.commerceCurrentDeedSources(bad));
+  for(const t of retainedTables)for(const mutate of[v=>v.added.splice(v.added.findIndex(row=>row.table_name===t),1),v=>v.added.find(row=>row.table_name===t).definition+=' changed',v=>v.added.push({...v.added.find(row=>row.table_name===t)}),v=>{delete v.notNullColumns[t];},v=>v.notNullColumns[t].push('unreviewed')]){const value=structuredClone(catalog);mutate(value);rejected(()=>verifyCatalog(value));}
+  console.log('Current572/565 strict same-E16-slot source/catalog proof PASS; old568/551 ingress refuses current source; all40 retained/catalog1675 unchanged; '+negative+' controls. Native proof remains separate.');
+  if(native){
+    const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});
+    try{
+      const result=await compiler.verifyCommerceEnterpriseSlotBranches(pool,endpoint.href,dispatchSchema),freeze=value=>{if(value&&typeof value==='object'){assert(Object.isFrozen(value));Object.values(value).forEach(freeze);}};for(const name of['current','iv','main','common'])freeze(result[name]);
+      const sorted=rows=>rows.map(row=>JSON.stringify(row)).sort(),same=(a,b,message)=>assert.deepEqual(sorted(a),sorted(b),message),version=(await pool.query("SELECT current_setting('server_version') AS version")).rows[0].version;
+      for(const field of['relations','columns','constraints','indexes']){same(result.deedCurrent.projectMetadata(result.current)[field],result.historical.current[field],'Every complete572→568 '+field+' exact');same(result.deedPremain.projectMetadata(result.iv)[field],result.historical.iv[field],'Every complete565→561 '+field+' exact');}
+      for(const t of retainedTables)same(result.current.columns.filter(row=>row.table_name===t&&row.not_null).map(row=>row.column_name),catalog.notNullColumns[t],'All398 required columns remain exact');
+      for(const includeNotNull of[true,false]){const rows=result.current.constraints.filter(row=>includeNotNull||row.type!=='n'),iv=result.iv.constraints.filter(row=>includeNotNull||row.type!=='n'),kept=rows.filter(row=>retained.has(row.table_name));same(kept,iv.filter(row=>retained.has(row.table_name)),'All40 retained native tables exact before projection');same(kept.filter(row=>row.type!=='n').map(({table_name,name,definition})=>({table_name,name,definition})),structural,'All432 actual structural constraints equal catalog');assert.equal(kept.length,includeNotNull&&/^18\.4\b/.test(version)?830:432);const projected=rows.filter(row=>!main.has(row.table_name));same(projected,iv,'Only seven original C2 tables projected; all four Deed tables retained');same(projected.filter(row=>retained.has(row.table_name)),kept,'No retained table disappears');}
+      result.verify(result.current);assert.deepEqual((await pool.query("SELECT nspname FROM pg_namespace WHERE nspname !~ '^pg_' AND nspname<>'information_schema' ORDER BY nspname")).rows.map(row=>row.nspname),['public']);assert.deepEqual((await pool.query("SELECT c.relname,c.relkind FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' ORDER BY c.relname,c.relkind")).rows,[]);
+      console.log('Current572/565 plus original568/561/487/480 four-family same-slot native proof PASS; '+result.causal+' causal controls. Populated15/30 ordinals and35 DDL proofs remain separate.');
+    }finally{await pool.end();}
+  }
+}else if(commerceCurrent){
   frozenText('../tools/commerce-release-phase2-migration-catalog.js','fad81787d2a45dd26bb2b482937879152d92feb77a811a20107490d6fd8d582c');
   frozenText('../tools/commerce-release-phase2-native-catalog.js','be4307efac154a7e5f0c17c6bb020a7dc6ae96d053bfe2163e944a694d6db637');
   frozenText('../tools/enterprise-release-phase2-migration-catalog.js','fc35f2b8770f3c7bd77347478c55eb944935fed019d40a43b101c70e5bc82570');
