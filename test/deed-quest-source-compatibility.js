@@ -1,3 +1,4 @@
+import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 // New exact source evidence composes with historical guards; it never revises their pins.
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import assert from 'node:assert/strict';
@@ -31,7 +32,7 @@ let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
   const actualSource = fs.readFileSync(file, 'utf8');
   const enterprise = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualSource)
-    : hasCommerceEnterpriseSource(file) ? commerceOverEnterpriseSourceBaseline(file, actualSource) : actualSource;
+    : hasCommerceEnterpriseSource(file) ? commerceOverEnterpriseSourceBaseline(file, actualSource) : continuousCityHistoricalInput(file, actualSource);
   const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file) ? enterpriseOverRootSourceBaseline(file, enterprise) : enterprise))), current = lf(raw);
   assert(raw === current || raw === current.replaceAll('\n', '\r\n'), 'Working candidate has uniform line endings');
   const predecessor = git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`);
@@ -348,7 +349,45 @@ const inspectCurrentCommerceNextLayerTest = raw => {
   assert.equal(text, git('show', currentCommerceNextLayerTestPin.baselineRevision+':test/next-layer-source-compatibility.js'));
   return text;
 };
-const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(inspectNextLayerEnterpriseReader(inspectCurrentCommerceNextLayerTest(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8')))))
+// A closed TEST-postimage inverse precedes the unchanged C reader inspector. No future Git source is named.
+const combinedCityCommerceNextLayerTestPin = Object.freeze({
+  "postimageSha256": "6bc01e843b5514d6a713619c2a7a67c148c5eee45848c684bc32e971509e5f5f",
+  "postimageBlob": "6110cea06fd269d8d7a2812873afc2af60db107a",
+  "baselineRevision": "a7319058183ff6420745be685cf39e39cc091a7e",
+  "baselineSha256": "ea1f52c8311d35f1339610693a0794a689777687afa8e85e240463577c16954d",
+  "baselineBlob": "3c89a3558ae954a24520ad59681eb4ac5b77bc70",
+  "mode": "100644",
+  "sourceOnly": true,
+  "inverses": [
+    {
+      "current": "import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n",
+      "baseline": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n"
+    },
+    {
+      "current": "let negatives=0,hunks=0;\nfor(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){\n  const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);\n  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8')))))))).replaceAll('\\r\\n','\\n'),current,'Complete actual source is independently pinned');\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);\n  const actual=[];let chunk;\n",
+      "baseline": "let negatives=0,hunks=0;\nfor(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){\n  const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);\n  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8'))))))).replaceAll('\\r\\n','\\n'),current,'Complete actual source is independently pinned');\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);\n  const actual=[];let chunk;\n"
+    },
+    {
+      "current": "for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){\n  const text='unknown\\r\\nbytes\\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;\n}\nconst file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))))));\nconst prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));\nassert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);\nassert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);\n",
+      "baseline": "for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){\n  const text='unknown\\r\\nbytes\\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;\n}\nconst file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))));\nconst prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));\nassert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);\nassert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);\n"
+    }
+  ]
+});
+const inspectCombinedCityCommerceNextLayerTest = raw => {
+  if (typeof raw !== 'string') return raw;
+  let text = lf(raw);
+  if (text.includes('\r') || !(raw === text || raw === text.replaceAll('\n', '\r\n'))
+      || hash(text) !== combinedCityCommerceNextLayerTestPin.postimageSha256
+      || blob(text) !== combinedCityCommerceNextLayerTestPin.postimageBlob) return raw;
+  for (const inverse of combinedCityCommerceNextLayerTestPin.inverses) {
+    assert.equal(text.split(inverse.current).length, 2, 'Unique known combined TEST-postimage inverse');
+    text = text.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(text), combinedCityCommerceNextLayerTestPin.baselineSha256);
+  assert.equal(blob(text), combinedCityCommerceNextLayerTestPin.baselineBlob);
+  return text;
+};
+const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(inspectNextLayerEnterpriseReader(inspectCurrentCommerceNextLayerTest(inspectCombinedCityCommerceNextLayerTest(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))))))
   .replace("import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n", '')
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),

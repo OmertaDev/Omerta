@@ -1,3 +1,4 @@
+import { continuousCityHistoricalInput } from '../../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../../tools/commerce-current-enterprise-source-compatibility.js";
 import {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';
 // Closed pure-control fixtures. Historical source execution never admits the current release.
@@ -189,7 +190,7 @@ function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
     const actualCurrentRaw = String(originalRead(path.join(root, file)));
-    const selected = currentHistoricalApplicationSource(file, hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : actualCurrentRaw);
+    const selected = currentHistoricalApplicationSource(file, hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : continuousCityHistoricalInput(file, actualCurrentRaw));
     checked.add(file);
     return selected;
   }
@@ -415,7 +416,7 @@ function rejectHistoricalApplicationSources() {
   let positives = 0, refusals = 0;
   for (const file of files) {
     const actualCurrentRaw = String(originalRead(path.join(root, file))),
-      raw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : actualCurrentRaw, current = canonical(raw);
+      raw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : continuousCityHistoricalInput(file, actualCurrentRaw), current = canonical(raw);
     const rootRaw = enterpriseOverRootSourceBaseline(file,raw), rootCurrent = canonical(rootRaw);
     const deedRaw = marketOverDeedSourceBaseline(file, rootRaw), deedCurrent = canonical(deedRaw);
     const witness = assertDeedQuestSourceTransfer(file, deedRaw).baselineText;
@@ -451,7 +452,7 @@ function rejectHistoricalApplicationSources() {
 
 function rejectCityActivityHistoricalSources() {
   const file = 'src/server.js', actualCurrentUnionRaw = String(originalRead(path.join(root, file))),
-    unionRaw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentUnionRaw) : actualCurrentUnionRaw;
+    unionRaw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentUnionRaw) : continuousCityHistoricalInput(file, actualCurrentUnionRaw);
   const raw = enterpriseOverGuiSourceBaseline(file, unionRaw), current = canonical(raw);
   const combinedProof = qualifyCityActivityMarketSource(file, raw);
   const retained = String(git(['cat-file', 'blob', CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob]));

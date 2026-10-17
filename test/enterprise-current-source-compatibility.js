@@ -1,3 +1,5 @@
+import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
+import './continuous-city-source-compatibility.js';
 // Current typed source/data proof only. This does not qualify native/migration/gameplay/release execution.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

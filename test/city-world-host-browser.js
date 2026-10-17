@@ -7,6 +7,7 @@ import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
 import { PACING } from '../src/rules.js';
 import { earnBuildingClaim } from './deed-discovery-fixture.js';
+import { ensureDeedBuildings } from '../src/deedbuildings.js';
 
 assert(!process.env.DATABASE_URL, 'World host browser fixtures require disposable pg-mem.');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';
@@ -138,7 +139,10 @@ try {
     await page.locator('#btn-player-view').click();
     if (engineFailure) await page.locator('.omerta-city--unavailable').waitFor();
     else if (!pendingEntry) await page.waitForFunction(() => window.__worldHandles.at(-1)?.handle.getState().ready);
-    if (!moduleFailure) await page.locator('[data-city-world-tools]').waitFor({ state: 'visible' });
+    if (!moduleFailure) {
+      try { await page.locator('[data-city-world-tools]').waitFor({ state: 'visible' }); }
+      catch (error) { console.error('World tools boot failure:', { errors, sceneHandles: await page.evaluate(() => window.__worldHandles.length) }); throw error; }
+    }
     return { page, context, requests, releaseArt };
   };
   const state = page => page.evaluate(() => window.__worldHandles.at(-1).handle.getState());
@@ -1216,6 +1220,9 @@ try {
     await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district) VALUES($1,$2,$3,$4)', [account, street, street.toLowerCase(), 'docks']);
     historicalAccounts.push(account);
   }
+  // Production migration assigns these identities before read-only directory access.
+  // Late-inserted legacy fixtures need the same permanent assignment before this browser journey.
+  await ensureDeedBuildings(app.pool);
   const clearHistoricalHomes = async () => { for (const account of historicalAccounts) await app.pool.query('DELETE FROM street_deeds WHERE account_id=$1', [account]); };
   fixtureCleanup.push(clearHistoricalHomes);
   await preferences(neighbor, { chatEnabled: false });
@@ -1356,8 +1363,20 @@ try {
   const mapReply = await app.inject({ url: '/v1/map', headers: neighbor.headers }); assert.equal(mapReply.statusCode, 200);
   const mapBoard = mapReply.json(); assert.equal(mapBoard.total, 6);
   assert.deepEqual(await cityPage.locator('[data-city-district]').evaluateAll(nodes => nodes.map(node => node.dataset.cityDistrict)), mapBoard.districts.map(district => district.id));
-  const edges = new Set(mapBoard.districts.flatMap(district => district.neighbours.map(id => [district.id, id].sort().join(':'))));
-  assert.equal(await cityPage.locator('.city-world__atlas-diagram line').count(), edges.size);
+  const mappedWorld = await cityPage.evaluate(() => {
+    const layout = window.CityWorldLayout, svg = document.querySelector('[data-city-world-atlas]');
+    const plotPath = document.querySelector('.city-world__atlas-plots')?.getAttribute('d') || '';
+    const roadPath = document.querySelector('.city-world__atlas-roads')?.getAttribute('d') || '';
+    return { version: svg?.dataset.cityWorldAtlas, total: Number(svg?.dataset.cityWorldPlotCount),
+      plotMarks: plotPath.split('M').length - 1, roadMarks: roadPath.split('M').length - 1,
+      roadCount: layout?.roads.length, identities: layout?.plots.map(plot => plot.id),
+      districts: Array.from(document.querySelectorAll('[data-city-atlas-district]'), node => node.dataset.cityAtlasDistrict) };
+  });
+  assert.equal(mappedWorld.version, 'continuous-city-v1');
+  assert.equal(mappedWorld.total, 2500); assert.equal(mappedWorld.plotMarks, 2500);
+  assert.equal(new Set(mappedWorld.identities).size, 2500, 'The live host overview contains every permanent building exactly once.');
+  assert.equal(mappedWorld.roadMarks, mappedWorld.roadCount, 'The overview renders the shared traversable streets instead of schematic district links.');
+  assert.deepEqual(mappedWorld.districts, mapBoard.districts.map(district => district.id));
   for (const visit of await recorded(neighbor)) {
     const row = cityPage.locator(`[data-city-district="${visit.id}"]`);
     assert.equal((await row.textContent()).includes('Visited'), visit.got, 'Only the actual Collection GET records a visit.');
@@ -1504,7 +1523,8 @@ try {
   assert.deepEqual(claimedBoard.viewer, { characterId: seller.id, generation: Number(seller.generation), district: sellerLocation });
   assert.equal(claimedBoard.districtId, propertyDistrict); assert.equal(claimedBoard.placement, 'illustrative');
   assert.equal(claimedBoard.myHome.key, key); assert.equal(claimedBoard.myHome.mine, true);
-  assert.deepEqual(Object.keys(claimedBoard.myHome).sort(), ['districtId', 'key', 'mine', 'owner', 'ownership', 'street']);
+  assert.deepEqual(Object.keys(claimedBoard.myHome).sort(), ['buildingId', 'districtId', 'key', 'mine', 'owner', 'ownership', 'street']);
+  assert.equal(claimedBoard.myHome.buildingId, 'brick-0417');
   assert.deepEqual(Object.keys(claimedBoard.myHome.owner).sort(), ['kind', 'name']);
   const deeds = await app.inject({ url: '/v1/deeds', headers: viewer.headers }); assert.equal(deeds.statusCode, 200);
   const salePrice = deeds.json().market.minPrice;
@@ -1526,6 +1546,7 @@ try {
   assert.deepEqual(parcelRows, [{ name_lc: key, district: propertyDistrict, account_id: neighbor.character.account_id }], 'A sale transfers the same parcel instead of duplicating it.');
   const transferred = (await app.inject({ url: '/v1/city/homes?district=brick', headers: neighbor.headers })).json();
   assert.equal(transferred.myHome.key, key); assert.equal(transferred.myHome.mine, true); assert.equal(transferred.myHome.owner.name, 'Nearby Player');
+  assert.equal(transferred.myHome.buildingId, claimedBoard.myHome.buildingId, 'A sale preserves the permanent map plot identity.');
   assert.equal(transferred.homes.filter(home => home.key === key).length, 1);
   await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
   assert.equal(await cityPage.locator('[data-city-home-walk]').count(), 0, 'A remote property cannot invent a local entrance or move the player.');

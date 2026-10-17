@@ -1,4 +1,4 @@
-/* The neighborhood is a local exploration view. Venues open the existing game screens. */
+/* One connected city; district access and home ownership remain server-authoritative. */
 (function () {
   'use strict';
 
@@ -124,15 +124,30 @@
     let district = options.district || {};
     let character = options.character || {};
     let region = REGIONS[district.id] || REGIONS.docks;
-    const world = { ...WORLD };
+    const layout = window.CityWorldLayout;
+    let origin = layout?.getDistrict(district.id)?.origin || { x: 0, y: 0 };
+    const world = layout ? { x: -origin.x, y: -origin.y, width: layout.world.width, height: layout.world.height, origin: { ...origin } } : { ...WORLD };
+    const globalPoint = p => ({ x: p.x + origin.x, y: p.y + origin.y });
+    const localPoint = p => ({ x: p.x - origin.x, y: p.y - origin.y });
+    const localRect = r => ({ ...r, ...localPoint(r) });
+    const cityNavigator = layout?.createNavigator({ obstacles: layout.districts.flatMap(place => {
+      const items = [...OBSTACLES];
+      if (REGIONS[place.id]?.landmark) items.push(REGIONS[place.id].landmark);
+      // The docks keep their quay; the suburb can be reached around either end.
+      if (place.id === 'docks') items.push({ x: 0, y: 554, width: WORLD.width, height: 86 });
+      return items.map(r => ({ x: r.x + place.origin.x, y: r.y + place.origin.y, width: r.width, height: r.height }));
+    }) });
+    let cityRoads = layout?.roads.map(localRect) || null;
     let walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
     let obstacles = baseObstacles();
     let homeBoard = null, homes = [], exits = [], selectedHome = null, selectedExit = null;
     const homeSlots = new Map(), homeMarkers = new Map(), exitLabels = new Map(), permeableHomes = new Set();
-    let extensionGround = null, regionInk = null;
-    const canWalk = (x, y) => traversable(x, y, world, obstacles, walkBottom);
-    const findRoute = (start, end) => route(start, end, world, obstacles, walkBottom);
-    world.width = widthForHomes(district.deeds);
+    let extensionGround = null, regionInk = null, cityGround = null, suburbInk = null, suburbStamp = '', visiblePlots = 0;
+    const cityLabels = [];
+    let crossingPending = false, crossingMessage = '', crossingSequence = 0, pendingPlot = null;
+    const canWalk = (x, y) => cityNavigator ? cityNavigator.isWalkable(globalPoint({ x, y })) : traversable(x, y, world, obstacles, walkBottom);
+    const findRoute = (start, end) => cityNavigator ? cityNavigator.route(globalPoint(start), globalPoint(end)).map(localPoint) : route(start, end, world, obstacles, walkBottom);
+    if (!layout) world.width = widthForHomes(district.deeds);
     const reducedMotion = Boolean(options.reducedMotion);
     let destroyed = false, ready = false, game = null, scene = null, bootTimer = null;
     let worldUI = null, worldOpening = false, look = 'classic';
@@ -152,7 +167,7 @@
     let paging = false, encounterPending = false, pagingNotice = '', actorNotice = '', actorRenderSignature = '', presenceSignature = '';
     const sceneIdentity = () => [character.id, character.generation, district.id].join(':');
     const requestedPosition = options.position || {};
-    const validPosition = canWalk(requestedPosition.x, requestedPosition.y);
+    const validPosition = canWalk(requestedPosition.x, requestedPosition.y) && (!layout || layout.regionAt(globalPoint(requestedPosition))?.id === district.id);
     const initialPosition = validPosition
       ? { x: requestedPosition.x, y: requestedPosition.y } : { x: 430, y: 366 };
     let playerFacing = validPosition && ['up', 'down', 'left', 'right'].includes(requestedPosition.facing) ? requestedPosition.facing : 'down';
@@ -165,7 +180,7 @@
     listen(document, 'visibilitychange', () => { if (document.hidden) queuedHome = null; });
     listen(window, 'blur', () => { queuedHome = null; });
     const root = element('section', 'omerta-city');
-    root.setAttribute('aria-label', 'Explore your current neighborhood');
+    root.setAttribute('aria-label', layout ? 'Explore the connected city' : 'Explore your current neighborhood');
     for (const type of ['click', 'pointerdown', 'keydown']) listen(root, type, event => {
       if (externalPanel && event.target?.closest('button, a, input, select, textarea, canvas, summary')) {
         event.preventDefault(); event.stopImmediatePropagation();
@@ -362,7 +377,7 @@
       dpad.append(button);
       moveButtons.set(direction, button);
       listen(button, 'pointerdown', event => {
-        if (!ready || !game || destroyed || externalPanel) return;
+        if (!ready || !game || destroyed || externalPanel || crossingPending) return;
         event.preventDefault();
         game.canvas.focus({ preventScroll: true });
         hideGameDock(false);
@@ -374,7 +389,7 @@
       });
       for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) listen(button, event, () => stopMovement());
       listen(button, 'keydown', event => {
-        if (!ready || externalPanel || ![' ', 'Enter'].includes(event.key)) return;
+        if (!ready || externalPanel || crossingPending || ![' ', 'Enter'].includes(event.key)) return;
         event.preventDefault();
         if (!event.repeat) { stopMovement(); heldMoves.add(direction); button.classList.add('is-held'); }
       });
@@ -477,6 +492,7 @@
             return true;
           },
           onHome: key => { if (!walkHome(key)) showHome(key); }, onHomes: acceptHomes,
+          onPlotInspect: options.onPlotInspect,
           onTravel: options.onWorldTravel,
           onRead: options.onWorldRead, onAction: options.onWorldAction, onRetry: options.onWorldRetry,
           onCrew: () => showGameDock('crew'),
@@ -495,7 +511,7 @@
         intel: options.intel || [], npcQuests: options.npcQuests || {}, progress: options.progress, reducedMotion,
         scopeKey: options.worldScopeKey, receipt: options.worldReceipt, resourceReceipt, recovery: options.worldRecovery === true,
         social: options.worldSocial, chat: options.worldChat, atlas: options.worldAtlas,
-        collection: options.worldCollection, homes: options.worldHomes, onTravel: options.onWorldTravel, trackerVisible: tracked };
+        collection: options.worldCollection, homes: options.worldHomes, onTravel: options.onWorldTravel, onPlotInspect: options.onPlotInspect, trackerVisible: tracked };
     }
     function widthForHomes(count) {
       const bounded = Math.max(0, Math.min(64, Math.floor(Number(count) || 0)));
@@ -510,11 +526,12 @@
       return result;
     }
     function homeState() {
-      return homes.map(home => ({ key: home.key, street: home.street, districtId: home.districtId,
+      return homes.map(home => ({ key: home.key, buildingId: home.buildingId || null, street: home.street, districtId: home.districtId,
         owner: home.owner ? { ...home.owner } : null, mine: home.mine, ownership: home.ownership,
         x: home.entrance.x, y: home.entrance.y, entrance: { ...home.entrance }, building: { ...home.building } }));
     }
     function roadState() {
+      if (cityRoads) return cityRoads;
       const roads = [{ x: 0, y: 248, width: world.width, height: 48 }, { x: 334, y: 226, width: 140, height: 326 },
         { x: 732, y: 210, width: 44, height: 342 }];
       for (let x = WORLD.width + 208; x < world.width; x += 192) roads.push({ x, y: 192, width: 32, height: Math.max(336, walkBottom - 192) });
@@ -531,7 +548,9 @@
           || typeof item.street !== 'string' || !['city', 'external', 'estate'].includes(item.ownership)) continue;
         const owner = item.owner && typeof item.owner.name === 'string' && ['player', 'agent', 'npc'].includes(item.owner.kind)
           ? { name: item.owner.name, kind: item.owner.kind } : null;
-        rows.set(item.key, { key: item.key, street: item.street, districtId: item.districtId, owner,
+        const plot = layout?.getPlot(item.buildingId);
+        if (layout && (!plot || plot.districtId !== district.id)) continue;
+        rows.set(item.key, { key: item.key, buildingId: plot?.id || null, street: item.street, districtId: item.districtId, owner,
           mine: item.mine === true, ownership: item.ownership });
       }
       const own = board.myHome?.key;
@@ -543,6 +562,11 @@
       const used = new Set(homeSlots.values());
       const capacity = Math.max(1, Math.min(64, Math.max(homes.length, Number(district.deeds) || 0)));
       for (const home of homes) {
+        if (layout) {
+          const plot = layout.getPlot(home.buildingId);
+          home.building = localRect(plot.building); home.entrance = localPoint(plot.entrance);
+          continue;
+        }
         if (!homeSlots.has(home.key)) {
           let hash = 0; for (const c of home.key) hash = (Math.imul(hash, 31) + c.charCodeAt(0)) >>> 0;
           let slot = hash % capacity; while (used.has(slot)) slot = (slot + 1) % 64;
@@ -556,6 +580,14 @@
       updateGeometry(); renderActorDock(); return true;
     }
     function updateGeometry() {
+      if (layout) {
+        origin = layout.getDistrict(district.id)?.origin || origin;
+        Object.assign(world, { x: -origin.x, y: -origin.y, origin: { ...origin } });
+        cityRoads = layout.roads.map(localRect);
+        obstacles = baseObstacles(); exits = [];
+        suburbStamp = '';
+        renderHomeDirectory(); drawHomes(); fitCamera(); return;
+      }
       const count = Math.max(Number(district.deeds) || 0, homes.length, ...Array.from(homeSlots.values(), slot => slot + 1));
       // A page window or failed read cannot erase the ground below a walking player.
       world.width = Math.max(world.width, widthForHomes(count));
@@ -596,6 +628,7 @@
     }
     function drawHomes() {
       if (!scene || !ready) return;
+      if (layout) { drawConnectedCity(); return; }
       if (!extensionGround) extensionGround = scene.add.graphics().setDepth(0);
       extensionGround.clear();
       if (world.width > WORLD.width) {
@@ -662,6 +695,155 @@
         const sign = home.street.length > 32 ? home.street.slice(0, 31) + '…' : home.street;
         marker.name.setPosition(b.x + b.width / 2, b.y + 112).setText(sign + '\n' + (home.owner ? home.owner.kind.toUpperCase() : home.ownership.toUpperCase())).setDepth(b.y + 1);
       }
+    }
+    function drawConnectedCity() {
+      if (!scene || !ready || !layout || !player) return;
+      if (!cityGround) {
+        cityGround = scene.add.graphics().setDepth(-50000);
+        for (const place of layout.districts) {
+          const b = localRect(place.bounds), palette = REGIONS[place.id];
+          cityGround.fillStyle(palette.ground).fillRect(b.x, b.y, b.width, b.height);
+        }
+        cityGround.lineStyle(1, 0xb8a78b, .35);
+        for (const road of cityRoads) {
+          cityGround.fillStyle(0x3e4441).fillRect(road.x, road.y, road.width, road.height);
+          cityGround.strokeRect(road.x, road.y, road.width, road.height);
+        }
+        for (const place of layout.districts) {
+          const core = localRect(place.core);
+          if (place.id !== district.id) {
+            const palette = REGIONS[place.id];
+            cityGround.fillStyle(palette.ground).fillRect(core.x, core.y, WORLD.width, WORLD.height);
+            cityGround.fillStyle(palette.road).fillRect(core.x, core.y + 248, WORLD.width, 48)
+              .fillRect(core.x + 334, core.y + 226, 140, 326).fillRect(core.x + 732, core.y + 210, 44, 342);
+            for (const venue of VENUES.filter(item => item.building)) {
+              const b = { ...venue.building, x: core.x + venue.building.x, y: core.y + venue.building.y };
+              cityGround.fillStyle(0x24312d).fillRect(b.x, b.y, b.width, b.height);
+              cityGround.fillStyle(0x8b7962).fillRect(b.x + 7, b.y + 8, b.width - 14, b.height - 8);
+              cityGround.fillStyle(place.id === 'neon' ? 0x624957 : 0x59483e).fillRect(b.x - 3, b.y, b.width + 6, 28);
+              for (let x = b.x + 20; x < b.x + b.width - 25; x += 38)
+                for (let y = b.y + 46; y < b.y + b.height - 28; y += 40)
+                  cityGround.fillStyle(0xbda878).fillRect(x, y, 18, 24);
+            }
+            if (place.id === 'docks') cityGround.fillStyle(palette.water).fillRect(core.x, core.y + 554, WORLD.width, 86);
+            else if (palette.landmark) {
+              const mark = palette.landmark;
+              cityGround.fillStyle(0x839174).fillRect(core.x + mark.x, core.y + mark.y, mark.width, mark.height);
+            }
+          }
+          cityLabels.push(scene.add.text(core.x + WORLD.width / 2, core.y - 38, place.name.toUpperCase(), {
+            fontFamily: 'monospace', fontSize: 18, color: '#ecddba', stroke: '#24312d', strokeThickness: 4
+          }).setOrigin(.5).setDepth(-20000));
+          cityLabels.push(scene.add.text(core.x + WORLD.width / 2, core.y + WORLD.height + 52, 'RESIDENTIAL STREETS · ' + place.capacity + ' HOMES', {
+            fontFamily: 'monospace', fontSize: 12, color: '#d9cfb6', stroke: '#24312d', strokeThickness: 3
+          }).setOrigin(.5).setDepth(-20000));
+        }
+      }
+      const camera = scene.cameras.main, view = camera.worldView;
+      // Only the nearby city blocks need detailed house art and labels.
+      const stamp = [Math.floor(player.x / 128), Math.floor(player.y / 128), Math.round(camera.zoom * 100), Math.round(view.width), Math.round(view.height)].join(':');
+      if (suburbStamp === stamp) return;
+      suburbStamp = stamp;
+      if (!suburbInk) suburbInk = scene.add.graphics().setDepth(-10000);
+      const g = suburbInk; g.clear();
+      const radiusX = Math.max(760, view.width), radiusY = Math.max(540, view.height);
+      const nearby = layout.nearPlots({ x: player.x + origin.x - radiusX, y: player.y + origin.y - radiusY, width: radiusX * 2, height: radiusY * 2 });
+      visiblePlots = nearby.length;
+      for (const plot of nearby) {
+        const b = localRect(plot.building), entrance = localPoint(plot.entrance);
+        const home = homes.find(home => home.buildingId === plot.id);
+        const roof = [0x74534b, 0x59685e, 0x696376, 0x7a6850][plot.number % 4];
+        g.fillStyle(0x7e806b, .3);
+        for (let x = b.x - 10; x < b.x + 80; x += 16) {
+          g.fillRect(x, b.y + 59, 13, 1).fillRect(x + 5, b.y + 69, 13, 1);
+          g.fillRect(x, b.y + 60, 1, 6).fillRect(x + 5, b.y + 70, 1, 6);
+        }
+        g.fillStyle(0x172522, .4).fillRect(b.x + 5, b.y + 5, b.width, b.height);
+        g.fillStyle(0x84745d).fillRect(b.x, b.y + 12, b.width, b.height - 12);
+        g.fillStyle(0xb0a085, .3);
+        for (let y = b.y + 26; y < b.y + 53; y += 6) g.fillRect(b.x + 2, y, b.width - 4, 1);
+        g.fillStyle(0x5a4d40, .5);
+        for (let x = b.x + 7; x < b.x + b.width - 5; x += 14) g.fillRect(x, b.y + 26, 1, 5).fillRect(x + 5, b.y + 38, 1, 5);
+        g.fillStyle(0xaca080, .65).fillRect(b.x + 1, b.y + 35, b.width - 2, 2);
+        g.fillStyle(roof).fillTriangle(b.x - 3, b.y + 20, b.x + b.width / 2, b.y - 8, b.x + b.width + 3, b.y + 20);
+        g.lineStyle(1, 0xb9ac8c, .4);
+        for (let y = 0; y < 20; y += 5) {
+          const inset = (20 - y) * 1.3;
+          g.lineBetween(b.x + inset, b.y + y, b.x + b.width - inset, b.y + y);
+        }
+        g.fillStyle(0x6b594b).fillRect(b.x + 52, b.y - 5, 7, 12);
+        g.fillStyle(0xb3a082).fillRect(b.x + 51, b.y - 7, 9, 3);
+        g.fillStyle(0x242f2b).fillRect(b.x - 3, b.y + 20, b.width + 6, 4);
+        for (const x of [b.x + 11, b.x + b.width - 22]) {
+          g.fillStyle(0x283a36).fillRect(x - 2, b.y + 28, 14, 16);
+          g.fillStyle(plot.number % 3 ? 0xc3a66a : 0x8da39b).fillRect(x, b.y + 30, 10, 12);
+          g.fillStyle(0x635b47).fillRect(x + 4, b.y + 30, 2, 12);
+          g.fillStyle(0x3b4c38).fillRect(x - 2, b.y + 43, 14, 4);
+          g.fillStyle(plot.number % 2 ? 0xad8666 : 0x86a174).fillRect(x, b.y + 42, 3, 2).fillRect(x + 7, b.y + 42, 3, 2);
+        }
+        g.fillStyle(0x362f27).fillRect(b.x + 29, b.y + 34, 14, 20);
+        g.fillStyle(0x6a523d).fillRect(b.x + 32, b.y + 36, 8, 18);
+        g.fillStyle(0xd2b57c).fillRect(b.x + 38, b.y + 45, 1, 2);
+        g.fillStyle(0x9a9076).fillRect(entrance.x - 8, b.y + b.height, 16, 15);
+        if (home) g.lineStyle(2, home.mine ? 0xe8b34b : 0x9da99b, .9).strokeRect(entrance.x - 6, entrance.y - 6, 12, 12);
+      }
+      const shown = new Set(nearby.map(plot => plot.id));
+      for (const [key, marker] of homeMarkers) {
+        if (!homes.some(home => home.key === key && shown.has(home.buildingId))) { marker.name.destroy(); homeMarkers.delete(key); }
+      }
+      for (const home of homes) {
+        if (!shown.has(home.buildingId)) continue;
+        let marker = homeMarkers.get(home.key);
+        if (!marker) {
+          marker = { name: scene.add.text(0, 0, '', { fontFamily: 'monospace', fontSize: 9, color: '#efdfba',
+            stroke: '#172923', strokeThickness: 3, align: 'center', wordWrap: { width: 86 } }).setOrigin(.5) };
+          homeMarkers.set(home.key, marker);
+        }
+        marker.name.setPosition(home.building.x + 36, home.building.y - 16).setText(home.street).setDepth(10000);
+      }
+    }
+    function nearbyPlots(point, distance = 90) {
+      if (!layout) return [];
+      const p = globalPoint(point);
+      return layout.nearPlots({ x: p.x - distance, y: p.y - distance, width: distance * 2, height: distance * 2 });
+    }
+    function inspectPlot(plot) {
+      if (destroyed || externalPanel || !plot) return;
+      stopMovement();
+      options.onPlotInspect?.({ buildingId: plot.id, districtId: plot.districtId });
+    }
+    function walkPlot(plot) {
+      if (destroyed || externalPanel || crossingPending || !plot) return;
+      const entrance = localPoint(plot.entrance);
+      if (Math.hypot(player.x - entrance.x, player.y - entrance.y) < 42) { inspectPlot(plot); return; }
+      pendingPlot = plot; path = findRoute(player, entrance); redrawPath();
+    }
+    function advanceTo(x, y) {
+      if (crossingPending || !canWalk(x, y)) return false;
+      const target = layout?.regionAt(globalPoint({ x, y }));
+      if (target && target.id !== district.id) {
+        requestCrossing(target, { ...globalPoint({ x, y }), facing: playerFacing });
+        return false;
+      }
+      player.setPosition(x, y); return true;
+    }
+    async function requestCrossing(target, worldPosition) {
+      if (destroyed || externalPanel || crossingPending || options.worldRecovery || typeof options.onWorldTravel !== 'function') return;
+      stopMovement(); crossingPending = true;
+      const identity = sceneIdentity(), scope = options.worldScopeKey, sequence = ++crossingSequence;
+      const current = () => !destroyed && identity === sceneIdentity() && scope === options.worldScopeKey && sequence === crossingSequence;
+      crossingMessage = 'Crossing to ' + target.name + ' requires a confirmed ride.';
+      try {
+        const result = await options.onWorldTravel(target.id, { worldPosition, isCurrent: current });
+        if (!current()) return;
+        if (result?.ignored) crossingMessage = 'You stayed in ' + district.name + '.';
+        else if (result?.code >= 400) {
+          crossingMessage = result.body?.message || 'The crossing is not confirmed. Check Travel before trying again.';
+          openWorldMap(target.id);
+        }
+      } catch (_) {
+        if (current()) { crossingMessage = 'The crossing is not confirmed. Check Travel to recover the result.'; openWorldMap(target.id); }
+      } finally { if (current()) crossingPending = false; }
     }
     function openWorldMap(districtId, fallback = true) {
       if (destroyed || externalPanel || (!fallback && typeof worldUI?.openMapOverview !== 'function')) return false;
@@ -1416,7 +1598,7 @@
     function stopMovement() {
       routePreview = []; routePreviewVenue = null;
       queuedVenue = null;
-      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; queuedHome = null;
+      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingPlot = null; pendingExit = null; queuedHome = null;
       for (const button of moveButtons.values()) button.classList.remove('is-held');
       redrawPath();
       updateReadiness();
@@ -1650,6 +1832,11 @@
       if (actor) targets.push({ actor, x: actor.x, y: actor.y });
       if (venue) targets.push({ venue, x: venue.x, y: venue.y });
       for (const home of homes) if (Math.hypot(home.entrance.x - player.x, home.entrance.y - player.y) < 42) targets.push({ home, ...home.entrance });
+      for (const plot of nearbyPlots(player)) {
+        if (homes.some(home => home.buildingId === plot.id)) continue;
+        const entrance = localPoint(plot.entrance);
+        if (Math.hypot(entrance.x - player.x, entrance.y - player.y) < 42) targets.push({ plot, ...entrance });
+      }
       for (const exit of exits) if (Math.hypot(exit.x - player.x, exit.y - player.y) < 42) targets.push({ exit, x: exit.x, y: exit.y });
       targets.sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y));
       return targets[0] || null;
@@ -1658,7 +1845,7 @@
       if (externalPanel) return;
       const target = nearTarget();
       if (target?.actor) showActor(target.actor.id); else if (target?.home) showHome(target.home.key);
-      else if (target?.exit) showExit(target.exit.id); else if (target?.venue) showVenue(target.venue);
+      else if (target?.plot) inspectPlot(target.plot); else if (target?.exit) showExit(target.exit.id); else if (target?.venue) showVenue(target.venue);
     }
     function walkToVenue(id) {
       const venue = VENUES.find(venue => venue.id === id);
@@ -1781,7 +1968,7 @@
       zoomOut.disabled = zoomPreference <= .65 || zoom <= minimumZoom + .001;
       zoomIn.disabled = zoomPreference >= 1.6 || zoom >= maximumZoom - .001;
       zoomOut.title = zoomIn.title = 'Neighborhood zoom: ' + Math.round(zoom * 100) + '%';
-      camera.setBounds(0, 0, world.width, world.height);
+      camera.setBounds(world.x || 0, world.y || 0, world.width, world.height);
       // Retain the avatar and its name above the feet in a short viewport.
       const followOffsetY = Math.max(0, (170 * zoom - size.height) / (2 * zoom));
       camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
@@ -2114,13 +2301,14 @@
       canvas.setAttribute('role', 'img');
       canvas.setAttribute('aria-label', 'Playable neighborhood map. Tap to walk, or focus and use arrow keys or WASD. E or Enter opens a nearby venue. Destination buttons below provide the same access.');
       listen(canvas, 'keydown', event => {
-        if (externalPanel || document.activeElement !== canvas || event.ctrlKey || event.metaKey || event.altKey) return;
+        if (externalPanel || crossingPending || document.activeElement !== canvas || event.ctrlKey || event.metaKey || event.altKey) return;
         const key = event.key.toLowerCase();
         if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(key)) {
           event.preventDefault();
+          if (event.repeat) return;
           worldUI?.close(false);
           hideGameDock(false);
-          keys.add(key); heldMoves.clear(); path = []; routePreview = []; routePreviewVenue = null; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; redrawPath();
+          keys.add(key); heldMoves.clear(); path = []; routePreview = []; routePreviewVenue = null; pendingVenue = null; pendingActor = null; pendingHome = null; pendingPlot = null; pendingExit = null; redrawPath();
         } else if (key === 'e' || key === 'enter') {
           event.preventDefault(); inspectNearby();
         } else if (key === 'escape') { event.preventDefault(); stopMovement(); hideGameDock(true); hideVenue(false); hideActor(false); }
@@ -2139,7 +2327,7 @@
         if (document.hidden) stopMovement();
       });
       s.input.on('pointerdown', pointer => {
-        if (externalPanel) return;
+        if (externalPanel || crossingPending) return;
         const point = s.cameras.main.getWorldPoint(pointer.x, pointer.y);
         worldUI?.close(false);
         hideGameDock(false);
@@ -2168,6 +2356,11 @@
         const home = homes.find(home => point.x >= home.building.x && point.x <= home.building.x + home.building.width
           && point.y >= home.building.y - 12 && point.y <= home.entrance.y + 14);
         if (home) { walkHome(home.key); return; }
+        const plot = nearbyPlots(point).find(plot => {
+          const b = localRect(plot.building);
+          return point.x >= b.x - 3 && point.x <= b.x + b.width + 3 && point.y >= b.y - 8 && point.y <= b.y + b.height + 18;
+        });
+        if (plot) { walkPlot(plot); return; }
         const exit = exits.find(exit => Math.hypot(point.x - exit.x, point.y - exit.y) < 30);
         if (exit) { walkExit(exit.id); return; }
         const venue = VENUES.find(v => Math.hypot(point.x - v.x, point.y - v.y) < 35 ||
@@ -2209,38 +2402,39 @@
       }
       const previousX = player.x, previousY = player.y;
       let dx = 0, dy = 0, moving = false;
-      if (!externalPanel && game && document.activeElement === game.canvas) {
+      if (!externalPanel && !crossingPending && game && document.activeElement === game.canvas) {
         dx = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'));
         dy = Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w'));
       }
-      if (!externalPanel) {
+      if (!externalPanel && !crossingPending) {
         dx += Number(heldMoves.has('right')) - Number(heldMoves.has('left'));
         dy += Number(heldMoves.has('down')) - Number(heldMoves.has('up'));
       }
       if (dx || dy) {
         const length = Math.hypot(dx, dy);
         const stepX = dx / length * SPEED * dt, stepY = dy / length * SPEED * dt;
-        if (canWalk(player.x + stepX, player.y)) player.x += stepX;
-        if (canWalk(player.x, player.y + stepY)) player.y += stepY;
+        advanceTo(player.x + stepX, player.y);
+        if (!crossingPending) advanceTo(player.x, player.y + stepY);
         moving = true;
-      } else if (!externalPanel && path.length) {
+      } else if (!externalPanel && !crossingPending && path.length) {
         const point = path[0];
         const distance = Math.hypot(point.x - player.x, point.y - player.y);
         if (distance < SPEED * dt + 0.25) {
-          player.setPosition(point.x, point.y);
-          path.shift();
-          if (!path.length) { redrawPath(); if (pendingActor) showActor(pendingActor); else if (pendingHome) showHome(pendingHome); else if (pendingExit) showExit(pendingExit); else if (pendingVenue) showVenue(pendingVenue); }
+          if (advanceTo(point.x, point.y)) {
+            path.shift();
+            if (!path.length) { redrawPath(); if (pendingActor) showActor(pendingActor); else if (pendingHome) showHome(pendingHome); else if (pendingPlot) inspectPlot(pendingPlot); else if (pendingExit) showExit(pendingExit); else if (pendingVenue) showVenue(pendingVenue); }
+          } else if (!crossingPending) stopMovement();
         } else {
           const nextX = player.x + (point.x - player.x) / distance * SPEED * dt;
           const nextY = player.y + (point.y - player.y) / distance * SPEED * dt;
-          if (canWalk(nextX, nextY)) player.setPosition(nextX, nextY);
-          else { path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; redrawPath(); }
+          if (!advanceTo(nextX, nextY) && !crossingPending) stopMovement();
         }
         moving = true;
       }
       const movedX = player.x - previousX, movedY = player.y - previousY;
       moving = Math.hypot(movedX, movedY) > 0.01;
       if (moving) {
+        crossingMessage = '';
         if (Math.abs(movedX) > Math.abs(movedY)) playerFacing = movedX < 0 ? 'left' : 'right';
         else playerFacing = movedY < 0 ? 'up' : 'down';
       }
@@ -2271,10 +2465,10 @@
           }
         });
       }
-      const target = nearTarget(), nearby = target?.venue || target?.actor || target?.home || target?.exit;
-      interact.disabled = externalPanel || !nearby;
-      const nearbyName = target?.actor ? actorName(target.actor.actor) : target?.home?.street || target?.exit?.name || target?.venue?.name;
-      const interactionCopy = target?.actor ? 'Talk to ' + nearbyName : target?.home ? 'Inspect street' : target?.exit ? 'Route to ' + nearbyName
+      const target = nearTarget(), nearby = target?.venue || target?.actor || target?.home || target?.plot || target?.exit;
+      interact.disabled = externalPanel || crossingPending || !nearby;
+      const nearbyName = target?.actor ? actorName(target.actor.actor) : target?.home?.street || target?.plot?.id || target?.exit?.name || target?.venue?.name;
+      const interactionCopy = target?.actor ? 'Talk to ' + nearbyName : target?.home ? 'Inspect street' : target?.plot ? 'Inspect property' : target?.exit ? 'Route to ' + nearbyName
         : target?.venue ? 'Enter ' + nearbyName : 'Move closer to interact';
       const controlsChanged = interact.textContent !== interactionCopy || cancel.disabled !== (!moving && !path.length && !keys.size && !heldMoves.size);
       setText(interact, interactionCopy);
@@ -2288,7 +2482,8 @@
       }
       const nearbyText = nearbyName ? 'Nearby: ' + nearbyName : 'Move near a person or place to interact.';
       if (nearbyCopy.textContent !== nearbyText) nearbyCopy.textContent = nearbyText;
-      if (status.textContent) status.textContent = '';
+      if (status.textContent !== crossingMessage) status.textContent = crossingMessage;
+      if (layout) drawConnectedCity();
       updateActivities(time, dt, moving);
       updateReadiness();
       updateVenueStates();
@@ -2303,6 +2498,7 @@
         const camera = scene && scene.cameras.main;
         return {
           ready, reducedMotion, externalPanel, art: { ...artState }, facing: playerFacing,
+          connected: !!layout, plotCount: layout?.plots.length || homes.length, visiblePlots, crossingPending,
           activities: Array.from(activities.values(), activity => ({ id: activity.id, actorId: activity.actorId,
             generation: activity.generation, self: activity.self, kind: activity.kind, label: activity.label,
             startedAt: activity.startedAt, expiresAt: activity.expiresAt, pathLength: activity.path.length,
@@ -2332,10 +2528,12 @@
       update: function (nextOptions) {
         if (destroyed || !nextOptions) return;
         const identity = sceneIdentity();
+        const previousDistrict = district.id;
         const worldScopeChanged = 'worldScopeKey' in nextOptions && nextOptions.worldScopeKey !== options.worldScopeKey;
         if (nextOptions.district) district = nextOptions.district;
         if (nextOptions.character) character = nextOptions.character;
-        if (identity !== sceneIdentity()) {
+        if (identity !== sceneIdentity() || worldScopeChanged) {
+          crossingSequence++; crossingPending = false; crossingMessage = '';
           hideGameDock(false);
           hideActor(false); actorPage = 0; actorNotice = ''; paging = false; encounterPending = false;
           options.actors = []; options.intel = []; options.objectives = []; options.encounterReceipt = null; options.encounterRecovery = false;
@@ -2351,13 +2549,18 @@
           homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); hideActor(false); stopMovement();
           look = 'classic'; player?.setTint(lookTints.classic);
         }
+        if (layout && previousDistrict !== district.id) {
+          cityGround?.destroy(); cityGround = null; suburbInk?.destroy(); suburbInk = null;
+          cityLabels.splice(0).forEach(label => label.destroy()); suburbStamp = '';
+          player?.setPosition(430, 366);
+        }
         if (typeof nextOptions.onNavigate === 'function') options.onNavigate = nextOptions.onNavigate;
         if (typeof nextOptions.onPositionChange === 'function') options.onPositionChange = nextOptions.onPositionChange;
         if (typeof nextOptions.onQuestAction === 'function') options.onQuestAction = nextOptions.onQuestAction;
         for (const key of ['renderTraining', 'renderFixer']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
         for (const key of ['onPresencePage', 'onEncounter', 'onIntelAction', 'onEncounterRetry']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
         for (const key of ['venueActions', 'progress', 'npcQuests', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
-        for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
+        for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'onPlotInspect', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
         if ('resourceReceipt' in nextOptions && identity === sceneIdentity() && !worldScopeChanged) acceptResourceReceipt(nextOptions.resourceReceipt);
         if ('activityReceipt' in nextOptions) {
           options.activityReceipt = nextOptions.activityReceipt;

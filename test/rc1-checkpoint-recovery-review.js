@@ -1,3 +1,4 @@
+import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
@@ -24,7 +25,7 @@ if (!isHistoricalSourceFixture()) {
   assert.equal(sha256(current), '14906ce7b480b8acd325c4967df6e6129d99c08e3f00bec798cacebe469895fd');
   for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed C2 checkpoint source\n']) {
     await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision,
-      readFile: async candidate => candidate === file ? supplied : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String((hasCommerceCurrentEnterpriseSource(candidate)?commerceOverCurrentEnterpriseSourceBaseline(candidate,String(await fs.readFile(candidate))):await fs.readFile(candidate)))):fs.readFile(candidate)) }),
+      readFile: async candidate => candidate === file ? supplied : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String((hasCommerceCurrentEnterpriseSource(candidate)?commerceOverCurrentEnterpriseSourceBaseline(candidate,String(await fs.readFile(candidate))):continuousCityHistoricalInput(candidate, await fs.readFile(candidate))))):continuousCityHistoricalInput(candidate, await fs.readFile(candidate))) }),
     /Checkpoint review source changed: src\/routes\/coordination.js/);
   }
   console.log('PASS: historical checkpoint source guard rejects exact C2, CRLF and tampering; current source is not admitted');
