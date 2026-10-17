@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3f72301ff2e47bb8219d1febe5bf71e345063128",
+  "sourceRevision": "a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16099,
-    "edges": 63859,
+    "nodes": 16101,
+    "edges": 63867,
     "byNodeType": {
       "Artifact": 6725,
       "Command": 291,
-      "Commit": 4354,
+      "Commit": 4356,
       "Contract": 135,
       "Document": 933,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5329,
-      "CHANGED": 24646,
+      "CHANGED": 24652,
       "CONTAINS": 6746,
       "DECLARES": 291,
       "DEFINED_IN": 1726,
       "DEPENDS_ON": 69,
       "EXECUTES": 1102,
       "HANDLED_BY": 926,
-      "HAS_COMMIT": 4354,
+      "HAS_COMMIT": 4356,
       "IMPLEMENTS": 124,
       "IMPORTS": 7029,
       "INHERITS": 45,
@@ -147700,20 +147700,20 @@
       "path": "test/wallet-compute-journal.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 25250,
+      "bytes": 25428,
       "lines": 162,
-      "version": "e55ebc3e2404929c",
+      "version": "89bc962edbc7afdd",
       "text": true,
       "provenance": [
         {
           "file": "test/wallet-compute-journal.js",
           "line": 1,
-          "version": "e55ebc3e2404929c"
+          "version": "89bc962edbc7afdd"
         }
       ],
-      "lastChangedAt": "2026-10-17T08:41:18.000Z",
+      "lastChangedAt": "2026-10-17T20:31:38.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "75620b2500a2fe03a9c5b612ec48f2b3eb1a3dd9"
+      "lastChangedCommit": "a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66"
     },
     {
       "key": "Artifact:test/wallet-compute-robinhood.js",
@@ -160482,6 +160482,22 @@
         {
           "commit": "076b4f513b82dac62d4690427ef5077dc94b0366",
           "url": "https://github.com/OmertaDev/Omerta/commit/076b4f513b82dac62d4690427ef5077dc94b0366"
+        }
+      ]
+    },
+    {
+      "key": "Commit:076e786be996df299dcd94e5c39b9852c8724857",
+      "type": "Commit",
+      "id": "076e786be996df299dcd94e5c39b9852c8724857",
+      "label": "Refresh Robinhood compute knowledge after reviewed source and census",
+      "title": "Refresh Robinhood compute knowledge after reviewed source and census",
+      "date": "2026-10-17T19:18:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/076e786be996df299dcd94e5c39b9852c8724857",
+      "provenance": [
+        {
+          "commit": "076e786be996df299dcd94e5c39b9852c8724857",
+          "url": "https://github.com/OmertaDev/Omerta/commit/076e786be996df299dcd94e5c39b9852c8724857"
         }
       ]
     },
@@ -205250,6 +205266,22 @@
         {
           "commit": "a7fc9ce5b081a97c0f687cb00a8ad31282441641",
           "url": "https://github.com/OmertaDev/Omerta/commit/a7fc9ce5b081a97c0f687cb00a8ad31282441641"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
+      "type": "Commit",
+      "id": "a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
+      "label": "Wait for actual journal worker pipes before recording test closure",
+      "title": "Wait for actual journal worker pipes before recording test closure",
+      "date": "2026-10-17T20:31:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
+      "provenance": [
+        {
+          "commit": "a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66"
         }
       ]
     },
@@ -253354,6 +253386,9 @@
           "commit": "076b4f513b82dac62d4690427ef5077dc94b0366"
         },
         {
+          "commit": "076e786be996df299dcd94e5c39b9852c8724857"
+        },
+        {
           "commit": "0882243a84177f7f7e5a5acb667a08585334e05d"
         },
         {
@@ -254432,6 +254467,9 @@
         },
         {
           "commit": "076b4f513b82dac62d4690427ef5077dc94b0366"
+        },
+        {
+          "commit": "076e786be996df299dcd94e5c39b9852c8724857"
         },
         {
           "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
@@ -256636,6 +256674,9 @@
           "commit": "076b4f513b82dac62d4690427ef5077dc94b0366"
         },
         {
+          "commit": "076e786be996df299dcd94e5c39b9852c8724857"
+        },
+        {
           "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
         },
         {
@@ -258836,6 +258877,9 @@
         },
         {
           "commit": "076b4f513b82dac62d4690427ef5077dc94b0366"
+        },
+        {
+          "commit": "076e786be996df299dcd94e5c39b9852c8724857"
         },
         {
           "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
@@ -261659,6 +261703,9 @@
         },
         {
           "commit": "076b4f513b82dac62d4690427ef5077dc94b0366"
+        },
+        {
+          "commit": "076e786be996df299dcd94e5c39b9852c8724857"
         },
         {
           "commit": "07b93a87de0360959acf9d9e96af129acd95cf1d"
@@ -277360,7 +277407,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3f72301ff2e47bb8219d1febe5bf71e345063128",
+      "revision": "a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
       "currentBranch": "codex/robinhood-x402-usdg-oct17",
       "defaultBranch": "main",
       "visibility": "public",
@@ -325576,12 +325623,12 @@
       "id": "test/wallet-compute-journal.js",
       "label": "test/wallet-compute-journal.js",
       "lines": 162,
-      "version": "e55ebc3e2404929c",
+      "version": "89bc962edbc7afdd",
       "provenance": [
         {
           "file": "test/wallet-compute-journal.js",
           "line": 1,
-          "version": "e55ebc3e2404929c"
+          "version": "89bc962edbc7afdd"
         }
       ]
     },
@@ -377855,6 +377902,46 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "076b4f513b82dac62d4690427ef5077dc94b0366"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:076e786be996df299dcd94e5c39b9852c8724857",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "076e786be996df299dcd94e5c39b9852c8724857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:076e786be996df299dcd94e5c39b9852c8724857",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "076e786be996df299dcd94e5c39b9852c8724857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:076e786be996df299dcd94e5c39b9852c8724857",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "076e786be996df299dcd94e5c39b9852c8724857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:076e786be996df299dcd94e5c39b9852c8724857",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "076e786be996df299dcd94e5c39b9852c8724857"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:076e786be996df299dcd94e5c39b9852c8724857",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "076e786be996df299dcd94e5c39b9852c8724857"
       }
     },
     {
@@ -490191,6 +490278,14 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "a7fc9ce5b081a97c0f687cb00a8ad31282441641"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
+      "to": "Artifact:test/wallet-compute-journal.js",
+      "provenance": {
+        "commit": "a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66"
       }
     },
     {
@@ -670595,6 +670690,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:076e786be996df299dcd94e5c39b9852c8724857",
+      "provenance": {
+        "commit": "076e786be996df299dcd94e5c39b9852c8724857"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:076ff5659df5e513218bd482207717e29127399c",
       "provenance": {
         "commit": "076ff5659df5e513218bd482207717e29127399c"
@@ -692974,6 +693077,14 @@
       "to": "Commit:a7fc9ce5b081a97c0f687cb00a8ad31282441641",
       "provenance": {
         "commit": "a7fc9ce5b081a97c0f687cb00a8ad31282441641"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66",
+      "provenance": {
+        "commit": "a7fdbe6b5d3bbf258be860b6ee6befca2cdb7d66"
       }
     },
     {
