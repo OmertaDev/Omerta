@@ -122,6 +122,8 @@ import { register as registerStrategyLaboratories } from './routes/strategylabor
 import { register as registerEconomicIntelligence } from './routes/economicintelligence.js';
 import { register as registerAgentOperatingMemory } from './routes/agentoperatingmemory.js';
 import { register as registerFundedExternalWork } from './routes/fundedexternalwork.js';
+import { registerBaseWorkObservations } from './routes/baseworkobservations.js';
+import { createBaseWorkObserver } from './baseworkobserver.js';
 import { register as registerCompanyRestructuring } from './routes/companyrestructuring.js';
 import { register as registerCompanyAcquisitions } from './companyacquisitions-routes.js';
 import { canonicalDepotAcquisitionRuntime } from './depotacquisitionruntime.js';
@@ -2505,6 +2507,11 @@ export async function buildServer() {
   registerStrategyLaboratories(app, { pool, auth });
   registerAgentOperatingMemory(app, { pool, auth, readAuthorizedAgentTurn: account => readAgentTurn(account) });
   registerFundedExternalWork(app, { pool, auth });
+  const baseWorkObserverConfig = (() => {
+    try { return JSON.parse(process.env.BASE_WORK_ESCROW_OBSERVER_CONFIG || 'null'); }
+    catch { return null; }
+  })();
+  registerBaseWorkObservations(app, { pool, auth, observer: createBaseWorkObserver(baseWorkObserverConfig) });
   registerCompanyRestructuring(app, { pool, auth });
   registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });
   registerGameEmployment(app, { pool, auth });
