@@ -3,7 +3,43 @@ import assert from 'node:assert/strict';
 import { buildServer } from './server-fixture.js';
 import { addPlayer, findCommand } from './lib/player-command-support.js';
 import { FURNACE_IDS } from '../src/content/furnace-ledger.js';
-import { commandDiagnostic } from '../src/command-diagnostics.js';
+import { commandDiagnostic, commandRequestStart, traceAuthorizedCommand } from '../src/command-diagnostics.js';
+
+function signal() {
+  let resolve;
+  const promise = new Promise(done => { resolve = done; });
+  return { promise, resolve };
+}
+async function within(promise, message) {
+  let timer;
+  try {
+    return await Promise.race([promise, new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(message)), 10000);
+    })]);
+  } finally { clearTimeout(timer); }
+}
+function holdActivityRead(pool, accountId) {
+  const query = pool.query, entered = signal(), released = signal(), finished = signal();
+  let reads = 0, held = false;
+  pool.query = function (...args) {
+    const [sql, values] = args;
+    if (typeof sql === 'string' && sql.replace(/\s+/g, ' ').trim()
+      === 'SELECT id,account_id,generation,loc,alive FROM characters WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1'
+      && values?.[0] === accountId && ++reads === 2) {
+      // The first read captures the authenticated actor before execution. Hold
+      // the actual after-response read so a timing delay cannot pass this control.
+      held = true;
+      entered.resolve();
+      return released.promise.then(() => query.apply(this, args)).finally(finished.resolve);
+    }
+    return query.apply(this, args);
+  };
+  return { entered: entered.promise, async close() {
+    pool.query = query;
+    released.resolve();
+    if (held) await within(finished.promise, 'Held activity read did not finish');
+  } };
+}
 
 assert(!process.env.DATABASE_URL, 'Use the separate PostgreSQL lane for persistence proof');
 for (const flag of ['CORE_PROGRESSION','WORLD_GRAPH_KERNEL','COORDINATION_ENGINE','COORDINATION_KNOWLEDGE',
@@ -11,7 +47,12 @@ for (const flag of ['CORE_PROGRESSION','WORLD_GRAPH_KERNEL','COORDINATION_ENGINE
 const owner = 'rc1-private-account-sentinel';
 process.env.COORDINATION_ACCOUNT_IDS = owner;
 const app = await buildServer();
+const untracedResponse = signal();
+app.addHook('onResponse', async req => {
+  if (req.method === 'GET' && req.routeOptions?.url === '/health') untracedResponse.resolve();
+});
 const captured = [], original = console.info;
+let heldActivity;
 console.info = (...args) => captured.push(args.join(' '));
 try {
   await addPlayer(app.pool, owner);
@@ -26,7 +67,9 @@ try {
   const request = { method: 'POST', url: '/v1/commands/execute',
     headers: { ...headers, 'idempotency-key': executionId, 'x-correlation-id': 'untrusted-private-value' },
     payload: { executionId, confirmed: true } };
+  heldActivity = holdActivityRead(app.pool, owner);
   const response = await app.inject(request);
+  await within(heldActivity.entered, 'The command must reach its actual activity read');
   await new Promise(setImmediate);
   assert.equal(response.statusCode, 200, response.body);
   const correlation = response.headers['x-correlation-id'];
@@ -41,6 +84,7 @@ try {
   const log = captured.join('\n');
   for (const secret of [owner, token, executionId, FURNACE_IDS.inspection, 'untrusted-private-value'])
     assert(!log.includes(secret), 'no identities, tokens, target IDs or caller-controlled context in diagnostics');
+  await heldActivity.close(); heldActivity = null;
   captured.length = 0;
   const replay = await app.inject(request);
   await new Promise(setImmediate);
@@ -72,8 +116,21 @@ try {
     assert.equal(captured.filter((line) => line.includes('"phase":"authorization"') && line.includes('"outcome":"denied"')).length, 1,
       'direct revocation/banning denial is logged exactly once');
   }
+  // A global completion hook must ignore an untraced real route even when an
+  // unrelated diagnostic context is inherited by the injection's async work.
+  const inheritedRequest = {};
+  await commandRequestStart(inheritedRequest, { header() {} });
+  await traceAuthorizedCommand(inheritedRequest, async () => {
+    captured.length = 0;
+    const untraced = await app.inject({ method: 'GET', url: '/health' });
+    await within(untracedResponse.promise, 'Untraced response hook did not finish');
+    assert.equal(untraced.statusCode, 200, untraced.body);
+    assert(!captured.some(line => line.includes('"component":"player-command"')),
+      'untraced routes must not inherit another command diagnostic context');
+  });
   console.log('PASS RC1-OBS: request/auth/command/mutation/consequence/opportunity/response correlation, replay, denial and log privacy');
 } finally {
+  if (heldActivity) await heldActivity.close();
   console.info = original;
   await app.close();
 }

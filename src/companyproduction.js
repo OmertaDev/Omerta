@@ -1,3 +1,5 @@
+import {assertProductionSlotBeforeCraft as productionReservationAdmission} from './productionslots.js';
+export {productionReservationAdmission};
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { GameError } from './game.js';
@@ -83,6 +85,7 @@ async function runProduction(client, accountId, body, requestKey, options) {
     const recipeCashCost = declared.get(step.recipeId).cashCost;
     const context = Object.freeze({ accountId, originalCharacter, businessId: business.id, requestKey, recipeId: step.recipeId,
       ordinal, totalCrafts: normalized.totalCrafts, agent: options.agentCredential, totalCashCost, recipeCashCost });
+    const slotAdmission = await productionReservationAdmission(client, context);
     const admission = await options.beforeCraft(client, context);
     if (options.agentCredential && admission?.productionAuthorized !== true) {
       await guardDelegatedControl(client, business.id, true);
@@ -90,7 +93,7 @@ async function runProduction(client, accountId, body, requestKey, options) {
     }
     const expiry = options.agentCredential ? admission.agentGrantExpiresAt : null;
     if (options.agentCredential && expiry !== null && (typeof expiry !== 'string' || !Number.isFinite(Date.parse(expiry)))) fail('internal_context');
-    const sourceExpiry = admission?.productionSourceExpiresAt ?? null;
+    const sourceExpiry = slotAdmission?.productionSourceExpiresAt ? new Date(Math.min(Date.parse(slotAdmission.productionSourceExpiresAt), admission?.productionSourceExpiresAt ? Date.parse(admission.productionSourceExpiresAt) : Infinity)).toISOString() : admission?.productionSourceExpiresAt ?? null;
     if (sourceExpiry !== null && (typeof sourceExpiry !== 'string' || !Number.isFinite(Date.parse(sourceExpiry)))) fail('internal_context');
     const receipt = await craftWorldGraphRecipe(client, { accountId, expectedCharacterId: originalCharacter }, step.recipeId, key);
     if (receipt.cashCost !== recipeCashCost) fail('source_changed');

@@ -75,6 +75,7 @@ assert.deepEqual(inv.mute.sort(), [
   'company middle five source bindings',
   'company succession bindings',
   'company workflow provenance',
+  'cross docking canonical source and handoff history',
   'delivery finance bindings',
   'desk inventory backed',
   'equipment rental physical title',
@@ -86,6 +87,7 @@ assert.deepEqual(inv.mute.sort(), [
   'freight metadata history bindings',
   'logistics coverage bindings',
   'physical equipment condition provenance',
+  'production slot canonical reservation history',
   'reason vocabulary',
   'service subscription repair bindings',
   'strategy laboratory canonical observations',
@@ -105,6 +107,8 @@ for (const [check, reasons] of [
 ]) for (const reason of reasons) assert(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === 'Check:' + check && edge.to === 'Reason:' + reason), 'cooperative currency graph coverage lost: ' + check + ' / ' + reason);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ['atomic barter canonical two-item bindings', 'original-party exact two physical-item transfer and replay witnesses; no cash'],
+  ['cross docking canonical source and handoff history', 'original courier/hub/item/handoff receipt bindings; canonical courier fees reconcile separately'],
+  ['production slot canonical reservation history', 'original commission/profile/window/production receipt bindings; canonical commission fees reconcile separately'],
   ['freight metadata history bindings', 'original manifest/consent/completion receipt identities; canonical cash and GIN remain independently reconciled'],
   ['equipment rental physical title', 'exact physical custody/title and original paid lease bindings'],
   ['service subscription repair bindings', 'original consent, actual repair and exact cycle payment bindings'],
@@ -123,6 +127,27 @@ for (const [name, taxonomy] of NON_CURRENCY_WORLD_GRAPH_CHECKS) {
   assert.equal(g.edges.some((edge) => (
     edge.type === 'RECONCILES' && edge.from === `Check:${name}`
   )), false, `${taxonomy} SQL must not be misclassified as a transaction currency/reason term`);
+}
+// These two issue-count checks validate canonical metadata, not another cash
+// bucket. Keep both their read-only scope and the real parent cash edges explicit.
+for (const [file, name] of [
+  ['crossdocking.js', 'collectCrossDockIssues'],
+  ['productionslots.js', 'collectProductionSlotIssues'],
+]) {
+  const source = fs.readFileSync(new URL('../src/' + file, import.meta.url), 'utf8');
+  const collector = source.split('\n').find(line => line.startsWith('export async function ' + name + '(c){'));
+  assert(collector, 'Canonical source-only collector disappeared: ' + name);
+  assert.doesNotMatch(collector, /\b(?:FROM|INTO|UPDATE)\s+(?:transactions|resource_ledger|resource_treasuries)\b/i,
+    'A monetary collector requires real graph reconciliation, not the provenance taxonomy');
+  assert.doesNotMatch(collector, /\b(?:INSERT|UPDATE|DELETE)\s/i, 'History collection must remain read-only');
+}
+for (const [name, prefix] of [
+  ['multi-hop courier reserved fees', 'multi_hop_courier'],
+  ['commissioned crafting reserved fee', 'commissioned_crafting'],
+]) for (const suffix of ['reserve', 'fee', 'refund']) {
+  assert(g.edges.some(edge => edge.type === 'RECONCILES'
+    && edge.from === 'Check:' + name && edge.to === 'Reason:' + prefix + ':' + suffix),
+  'Canonical cash reconciliation lost: ' + name + '/' + suffix);
 }
 // Ownership checks structural journal references; warehouse cash still needs its
 // separate literal ledger reconciliation, which must not join the mute list.

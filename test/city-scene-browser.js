@@ -34,7 +34,8 @@ for (const phase of ['queued', 'dispatched', 'revoked', 'default']) {
   const held = new Promise(resolve => { release = resolve; });
   const started = new Promise(resolve => { entered = resolve; });
   const calls = [], view = { open: true };
-  const scope = { token: 'first', projections: { invalidate() {} }, apiNow: async (method, path) => {
+  const scope = { token: 'first', projections: { invalidate() {}, snapshot: () => ({}), current: () => true },
+    cityIdentity: () => 'owner:1:docks', _cityAuthorityRevision: 0, uuid: () => 'fixture-key', recordCityAction() {}, scheduleCityPresence() {}, apiNow: async (method, path) => {
     calls.push({ method, path }); entered();
     if (path === '/held' || phase !== 'default') await held;
     return { code: 200, body: { ok: true } };
@@ -345,8 +346,8 @@ try {
     assert.equal(await page.locator('[data-city-progress]').count(), 1);
   };
   const returnToCity = async page => {
-    await page.locator('#city-session-bar').waitFor({ state: 'visible' });
-    await page.locator('#city-return').click();
+    if (await page.locator('#city-panel-close').isVisible()) await page.locator('#city-panel-close').click();
+    else { await page.locator('#city-session-bar').waitFor({ state: 'visible' }); await page.locator('#city-return').click(); }
     await waitForCity(page);
   };
   const refreshHudFromClient = async page => {
@@ -541,10 +542,14 @@ try {
     await toggle.locator('#btn-dashboard-view').click();
     assert.equal(await toggle.locator('#tabbodies > .on').getAttribute('id'), dashboard, 'Dashboard returns to the previous screen.');
     await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
-    await toggle.locator('#map-mode-territory').click(); await assertSwitch(false);
+    const territoryHandles = await toggle.evaluate(() => window.__cityHandles.length);
+    await toggle.locator('#map-mode-territory').click(); await assertSwitch(true);
+    assert.equal((await state(toggle)).externalPanel, true, 'The territory board opens beside the retained player scene.');
+    assert.equal(await toggle.evaluate(() => window.__cityHandles.length), territoryHandles, 'Territory inspection does not replace the scene.');
+    assert.equal(await toggle.locator('#map-territory-board').evaluate(node => node.parentNode.id), 'city-panel-body');
     await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
     await toggle.locator('#btn-dashboard-view').click();
-    assert.equal(await toggle.locator('#map-mode-territory').getAttribute('aria-pressed'), 'true', 'Returning restores the prior territory board.');
+    assert.equal(await toggle.locator('#tabbodies > .on').getAttribute('id'), dashboard, 'Dashboard returns to its previous screen after in-game territory inspection.');
     assert.deepEqual(gameplayRequests(toggleRequests), [], 'View switching never submits gameplay or rewards.');
     if (shots) await toggle.screenshot({ path: path.join(shots, 'player-view-toggle-' + viewport.width + '.png') });
     await toggle.close();
@@ -1072,13 +1077,14 @@ try {
 
   // Selecting an existing district board never presents a second travel transaction.
   await page.locator('#map-mode-territory').click();
-  assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'Territory mode disposes the walking canvas.');
-  assert(await page.evaluate(() => window.__cityHandles.at(-1).destroyed), 'Territory mode destroys the scene handle.');
-  await page.locator('#map-mode-walk').click();
+  assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'Territory inspection retains the walking canvas.');
+  assert(!(await page.evaluate(() => window.__cityHandles.at(-1).destroyed)), 'Territory inspection preserves the scene handle.');
+  assert.equal((await state(page)).externalPanel, true);
+  await page.locator('#city-panel-close').click();
   await waitForCity(page);
 
-  // Contextual docks retain the world; their explicit full-screen secondary controls still
-  // reuse the corresponding gameplay screens and dispose the old scene.
+  // Contextual docks and their full-operation controls reuse the existing gameplay
+  // screens while retaining the same neighborhood and movement position.
   for (const [destination, tab] of Object.entries({
     fixer: 'streets', workshop: 'garage', training: 'life', clubhouse: 'crew', stories: 'desk',
   })) {
@@ -1096,8 +1102,9 @@ try {
       await page.getByRole('button', { name: 'Full Crew · membership & invitations →', exact: true }).click();
     }
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'attached' });
-    assert(await page.evaluate(() => window.__cityHandles.at(-1).destroyed), `${destination} navigation destroys the old scene.`);
-    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'Tab switch removes the previous canvas.');
+    assert(!(await page.evaluate(() => window.__cityHandles.at(-1).destroyed)), `${destination} navigation retains the current scene.`);
+    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'The canonical operation keeps one live canvas.');
+    assert.equal((await state(page)).externalPanel, true, 'The operation panel pauses street input.');
     if (destination === 'fixer') {
       // Complete the first playable loop through the existing authoritative crime control.
       const crimeResponse = page.waitForResponse(response => response.request().method() === 'POST'
@@ -1193,7 +1200,7 @@ try {
       });
       await page.locator('#btn-refresh').click(); await jailedRead;
       await page.waitForSelector('#tab-pen.on');
-      assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'A fresh sentence retains the existing Pen landing.');
+      assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'A fresh sentence opens the existing Pen beside the retained city.');
       const admissionDialog = page.locator('.modal-bg[data-managed-dialog]');
       if (await admissionDialog.count()) {
         assert.equal((await admissionDialog.last().locator('h2').textContent()).trim(), 'YOUR FIRST STRETCH');
@@ -1292,11 +1299,11 @@ try {
   await gym.locator('[data-city-training-close]').click();
   await selectTab(page, 'streets'); await page.unroute('**/v1/train/muscle');
   const checkedMove = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/train/muscle');
-  await page.locator('#operation-feed [data-operation-receipt].operation-receipt--error').filter({ hasText: /train muscle/i }).first().locator('[data-operation-retry]').click();
+  await page.locator('#city-panel-feedback [data-operation-receipt].operation-receipt--error').filter({ hasText: /train muscle/i }).first().locator('[data-operation-retry]').click();
   const checkedReply = await checkedMove;
   assert.equal(checkedReply.status(), 200);
   assert.equal(checkedReply.request().headers()['idempotency-key'], lostKey, 'Global recovery after dock retirement preserves the original request key.');
-  await page.locator('#operation-feed [data-operation-receipt].operation-receipt--success').filter({ hasText: /train muscle/i }).first().waitFor();
+  await page.locator('#city-panel-feedback [data-operation-receipt].operation-receipt--success').filter({ hasText: /train muscle/i }).first().waitFor();
   await returnToCity(page); await openCoreTraining(page);
   await gym.locator('[data-operation-receipt].operation-receipt--success').waitFor({ state: 'attached' });
   await assertCoreStats(page, (await checkedReply.json()).character);
@@ -1326,7 +1333,8 @@ try {
     }
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'visible' });
     await page.waitForFunction(tab => document.querySelector('#tab-' + tab)?.textContent.trim().length > 0, tab);
-    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, tab + ' disposes the exploration renderer.');
+    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, tab + ' retains the exploration renderer.');
+    assert.equal((await state(page)).externalPanel, true, tab + ' pauses street input behind its panel.');
     await returnToCity(page);
     await assertPosition(page, directoryPose, tab + ' returns to the same City session');
   }
@@ -1441,7 +1449,9 @@ try {
   await page.locator('.fieldwork-item').filter({ hasText: 'Neighborhood Notebook' }).waitFor({ state: 'visible' });
   await page.evaluate(() => { window.__journalControllerRoot = document.querySelector('.world-fieldwork'); });
   const repeatedJournalRequests = requests.length;
-  await page.locator('#city-journal').click();
+  await page.locator('#city-all-actions').click(); await page.locator('#jump-q').fill('fieldwork');
+  await page.locator('#jump-list [data-jump="fieldwork"]').click();
+  await page.locator('[data-fieldwork-view="mysteries"]').click();
   await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor({ state: 'visible' });
   assert.equal(await page.evaluate(() => window.__journalControllerRoot === document.querySelector('.world-fieldwork')), true,
     'Session Journal navigation selects the existing controller rather than remounting the reader.');

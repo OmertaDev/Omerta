@@ -44,6 +44,13 @@
     { x: 832, y: 502, width: 32, height: 34 }
   ]);
   const ACTOR_PAGE_SIZE = 24;
+  const ACTIVITY_AGE = 60000, ACTIVITY_DURATION = 6000, ACTIVITY_MEMORY = 256;
+  const ACTIVITY_KINDS = {
+    work: ['WORK', 0xe8b34b], train: ['TRAINING', 0xb9d99b], trade: ['TRADE', 0xe2c48b],
+    social: ['SOCIAL', 0x9ccfbe], move: ['TRAVEL', 0xa9cae5], fight: ['FIGHT', 0xe5a49a],
+    craft: ['CRAFT', 0xd2bc99], rest: ['REST', 0x9fc7d1], property: ['PROPERTY', 0xcab8df],
+    play: ['PLAY', 0xcbb1db], race: ['RACE', 0x9bbfdc]
+  };
   const REGIONS = {
     docks: { ground: 0x55564d, road: 0x3e4445, water: 0x243b43 },
     brick: { ground: 0x735c4d, road: 0x493b35, water: 0x3e4037, landmark: { name: 'Kiln Square', x: 548, y: 52, width: 80, height: 112 } },
@@ -133,6 +140,8 @@
     let routePreview = [], routePreviewVenue = null;
     let zoomPreference = 1, resourceReceipt = null;
     const seenResourceReceipts = new Set();
+    let externalPanel = options.externalPanel === true, activityTimer = null, activitySignature = '', activityHudLayout = '';
+    const activities = new Map(), seenActivities = new Set();
     const lookTints = { classic: 0xffffff, moss: 0x9aad80, wine: 0xba8790, ink: 0x8795ae };
     let player = null, selected = null, pendingVenue = null, pendingHome = null, pendingExit = null, queuedHome = null, queuedVenue = null, path = [];
     let gameKind = '', gameOpening = 0, gameReturn = null, venueOpening = 0;
@@ -157,6 +166,11 @@
     listen(window, 'blur', () => { queuedHome = null; });
     const root = element('section', 'omerta-city');
     root.setAttribute('aria-label', 'Explore your current neighborhood');
+    for (const type of ['click', 'pointerdown', 'keydown']) listen(root, type, event => {
+      if (externalPanel && event.target?.closest('button, a, input, select, textarea, canvas, summary')) {
+        event.preventDefault(); event.stopImmediatePropagation();
+      }
+    }, true);
     const header = element('div', 'omerta-city__header');
     const heading = element('div');
     heading.append(element('div', 'omerta-city__eyebrow', 'The neighborhood'));
@@ -257,9 +271,14 @@
     mapTools.append(recenter, worldMapButton, zoomOut, zoomIn);
     worldHead.append(worldResources);
     worldHud.append(worldHead, readiness, mapTools, resourceHelp);
-    const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · marker positions are approximate');
+    const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · positions and activity paths are approximate');
     presenceCaption.hidden = true;
     worldHud.append(presenceCaption);
+    const activityStatus = element('div', 'omerta-city__activity');
+    activityStatus.dataset.cityActivity = ''; activityStatus.hidden = true;
+    activityStatus.setAttribute('role', 'status'); activityStatus.setAttribute('aria-live', 'polite');
+    activityStatus.setAttribute('aria-atomic', 'true');
+    worldHud.append(activityStatus);
     const nextMove = element('div', 'omerta-city__next-move');
     const nextCopy = element('div');
     nextCopy.setAttribute('role', 'status');
@@ -343,7 +362,7 @@
       dpad.append(button);
       moveButtons.set(direction, button);
       listen(button, 'pointerdown', event => {
-        if (!ready || !game || destroyed) return;
+        if (!ready || !game || destroyed || externalPanel) return;
         event.preventDefault();
         game.canvas.focus({ preventScroll: true });
         hideGameDock(false);
@@ -355,7 +374,7 @@
       });
       for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) listen(button, event, () => stopMovement());
       listen(button, 'keydown', event => {
-        if (!ready || ![' ', 'Enter'].includes(event.key)) return;
+        if (!ready || externalPanel || ![' ', 'Enter'].includes(event.key)) return;
         event.preventDefault();
         if (!event.repeat) { stopMovement(); heldMoves.add(direction); button.classList.add('is-held'); }
       });
@@ -403,7 +422,7 @@
     const intelOpen = element('button', '', 'Street intel & objectives');
     intelOpen.type = 'button'; intelOpen.setAttribute('data-city-intel-open', '');
     presenceHead.append(presenceTitle, intelOpen);
-    const placement = element('p', 'omerta-city__placement', 'District presence · marker positions are approximate, not live walking locations.');
+    const placement = element('p', 'omerta-city__placement', 'District presence · marker positions and activity paths are approximate. Activity shows recently confirmed actions.');
     const actorList = element('div', 'omerta-city__actor-list');
     const actorPager = element('div', 'omerta-city__actor-pager');
     const actorsPrevious = element('button', '', 'Previous people');
@@ -645,7 +664,7 @@
       }
     }
     function openWorldMap(districtId, fallback = true) {
-      if (destroyed || (!fallback && typeof worldUI?.openMapOverview !== 'function')) return false;
+      if (destroyed || externalPanel || (!fallback && typeof worldUI?.openMapOverview !== 'function')) return false;
       pauseRoute(); hideVenue(false); hideActor(false); hideGameDock(false);
       if (typeof worldUI?.openMapOverview === 'function') {
         worldUI.openMapOverview(typeof districtId === 'string' ? districtId : undefined);
@@ -658,7 +677,7 @@
     }
     function walkHome(key) {
       const home = homes.find(item => item.key === key);
-      if (destroyed || !home) return false;
+      if (destroyed || externalPanel || !home) return false;
       if (!ready || !player) {
         if (root.classList.contains('omerta-city--unavailable')) showHome(key);
         else queuedHome = { key, identity: sceneIdentity(), scope: options.worldScopeKey };
@@ -670,21 +689,21 @@
       return true;
     }
     function showHome(key, trigger) {
-      if (destroyed || !homes.some(home => home.key === key)) return;
+      if (destroyed || externalPanel || !homes.some(home => home.key === key)) return;
       worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
       selectedHome = key; selectedExit = null; selectedActor = null; actorView = 'home'; actorOpening++;
       actorReturn = trigger; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
       renderActorDock(); fitWorldFrame(); revealVenue(viewport); actorBody.focus({ preventScroll: true }); syncPointerBounds();
     }
     function walkExit(id, trigger) {
-      const exit = exits.find(item => item.id === id); if (destroyed || !exit) return;
+      const exit = exits.find(item => item.id === id); if (destroyed || externalPanel || !exit) return;
       if (!ready || !player) { showExit(id, trigger); return; }
       worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false); game.canvas.focus({ preventScroll: true });
       if (Math.hypot(player.x - exit.x, player.y - exit.y) < 42) showExit(id, trigger);
       else { pendingExit = id; path = findRoute(player, exit); redrawPath(); revealVenue(viewport); }
     }
     function showExit(id, trigger) {
-      if (destroyed || !exits.some(item => item.id === id)) return;
+      if (destroyed || externalPanel || !exits.some(item => item.id === id)) return;
       worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
       selectedExit = id; selectedHome = null; selectedActor = null; actorView = 'exit'; actorOpening++;
       actorReturn = trigger; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
@@ -752,6 +771,7 @@
       if (!scene || !ready) return;
       const actors = pageActors(), ids = new Set(actors.map(actor => actor.id)), slots = actorSlots(), used = new Set();
       for (const [id, marker] of actorSprites) if (!ids.has(id)) {
+        removeActivity(id);
         marker.sprite.destroy(); marker.name.destroy(); marker.ring.destroy(); actorSprites.delete(id);
       }
       if (!slots.length) return;
@@ -773,11 +793,18 @@
           ring.lineStyle(1, actor.kind === 'agent' ? 0x9ec5ef : actor.kind === 'npc' ? 0xc6b696 : 0xa5d9c6, 0.8).strokeEllipse(0, 0, 28, 10);
           marker = { sprite, name, ring }; actorSprites.set(actor.id, marker);
         }
-        marker.x = position.x; marker.y = position.y; marker.actor = actor;
-        marker.sprite.setPosition(position.x, position.y).setDepth(position.y);
-        marker.name.setPosition(position.x, position.y - 73).setText(actor.kind.toUpperCase()).setDepth(position.y + 1);
-        marker.ring.setPosition(position.x, position.y).setDepth(position.y - 1);
+        if (!marker.actor || marker.actor.generation !== actor.generation || !canWalk(marker.x, marker.y)) {
+          if (marker.actor && marker.actor.generation !== actor.generation) rememberActivity(actor.activity, actor);
+          removeActivity(actor.id);
+          marker.x = position.x; marker.y = position.y;
+        }
+        marker.actor = actor;
+        marker.sprite.setPosition(marker.x, marker.y).setDepth(marker.y);
+        marker.name.setPosition(marker.x, marker.y - 73).setText(actor.kind.toUpperCase()).setDepth(marker.y + 1);
+        marker.ring.setPosition(marker.x, marker.y).setDepth(marker.y - 1);
+        acceptActivity(actor.activity, actor);
       }
+      renderActivityStatus();
     }
     function intelLead(entry) {
       const venue = VENUES.find(venue => venue.id === entry.lead?.venueId);
@@ -919,7 +946,7 @@
       else if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus || button.dataset.cityIntelLead === oldFocus)) || actorBody).focus({ preventScroll: true });
     }
     function showActor(id, trigger) {
-      if (destroyed || !findActor(id)) return;
+      if (destroyed || externalPanel || !findActor(id)) return;
       worldUI?.close(false);
       hideGameDock(false);
       stopMovement(); hideVenue(false); selectedHome = null; selectedExit = null; selectedActor = id; actorView = 'person'; actorOpening++;
@@ -929,7 +956,7 @@
       actorBody.focus({ preventScroll: true }); syncPointerBounds();
     }
     function showIntel() {
-      if (destroyed) return;
+      if (destroyed || externalPanel) return;
       worldUI?.close(false);
       hideGameDock(false);
       stopMovement(); hideVenue(false); selectedHome = null; selectedExit = null; selectedActor = null; actorView = 'journal'; actorOpening++;
@@ -1028,6 +1055,122 @@
       if (String(resourceReceipt?.id) === id || seenResourceReceipts.has(id)) return;
       seenResourceReceipts.add(id);
       resourceReceipt = next;
+    }
+    function activityId(event, actor) {
+      return event && ['string', 'number'].includes(typeof event.id) && String(event.id).length > 0 && String(event.id).length <= 200
+        ? JSON.stringify([actor.id, actor.generation, String(event.id)]) : null;
+    }
+    function rememberActivity(event, actor) {
+      const id = activityId(event, actor);
+      if (!id) return;
+      seenActivities.add(id);
+      while (seenActivities.size > ACTIVITY_MEMORY) seenActivities.delete(seenActivities.values().next().value);
+    }
+    function removeActivity(actorId) {
+      const activity = activities.get(actorId);
+      if (!activity) return;
+      activity.badge?.destroy(); activity.ring?.destroy();
+      const sprite = activity.self ? player : actorSprites.get(actorId)?.sprite;
+      sprite?.setAngle(0).setScale(1);
+      activities.delete(actorId);
+    }
+    function renderActivityStatus() {
+      const lines = Array.from(activities.values()).reverse().slice(0, 3).map(activity => ({ id: activity.id,
+        text: (activity.self ? 'You' : actorName(findActor(activity.actorId))) + ' · ' + activity.label }));
+      const signature = JSON.stringify(lines);
+      if (signature === activitySignature) return;
+      activitySignature = signature;
+      activityStatus.replaceChildren(); activityStatus.hidden = !lines.length;
+      if (lines.length) {
+        activityStatus.append(element('strong', 'omerta-city__activity-title', 'Confirmed activity'));
+        for (const line of lines) {
+          const item = element('span', 'omerta-city__activity-line', line.text);
+          item.dataset.cityActivityId = line.id; activityStatus.append(item);
+        }
+      }
+      fitWorldFrame();
+    }
+    function expireActivities() {
+      if (activityTimer) { clearTimeout(activityTimer); activityTimer = null; }
+      const now = Date.now();
+      for (const [id, activity] of activities) if (activity.expiresAt <= now) removeActivity(id);
+      renderActivityStatus();
+      if (activities.size) activityTimer = setTimeout(expireActivities,
+        Math.max(1, Math.min(...Array.from(activities.values(), activity => activity.expiresAt)) - now));
+    }
+    function acceptActivity(event, actor = character) {
+      const self = actor === character, now = Date.now();
+      if (!event || self && (event.state !== 'confirmed' || event.actorId !== character.id
+        || event.generation !== character.generation || event.district !== district.id)
+        || !self && event.state !== undefined && event.state !== 'confirmed') return;
+      const id = activityId(event, actor);
+      const at = typeof event.at === 'number' ? event.at : typeof event.at === 'string' ? Date.parse(event.at) : NaN;
+      if (!id || seenActivities.has(id) || !Number.isFinite(at) || at < now - ACTIVITY_AGE || at > now + 5000) return;
+      const kind = Object.hasOwn(ACTIVITY_KINDS, event.kind) ? event.kind : 'work';
+      const label = typeof event.label === 'string' && event.label.trim() ? event.label.trim().slice(0, 160) : 'Action confirmed';
+      const venue = VENUES.find(venue => venue.id === event.venueId);
+      rememberActivity(event, actor); removeActivity(actor.id);
+      const marker = self ? null : actorSprites.get(actor.id);
+      activities.set(actor.id, { id: String(event.id), actorId: actor.id, generation: actor.generation, self, kind, label,
+        at, startedAt: now, expiresAt: Math.min(now + ACTIVITY_DURATION, at + ACTIVITY_AGE),
+        // These few steps illustrate the public action; they are never a live location claim.
+        path: marker && venue && !reducedMotion ? findRoute(marker, venue).slice(0, 5) : [] });
+      expireActivities();
+    }
+    function clearActivities(nextOptions = {}) {
+      for (const source of [options, nextOptions]) {
+        const owner = source.character || character;
+        rememberActivity(source.activityReceipt, owner);
+        for (const actor of Array.isArray(source.actors) ? source.actors : []) rememberActivity(actor.activity, actor);
+      }
+      for (const id of activities.keys()) removeActivity(id);
+      if (activityTimer) { clearTimeout(activityTimer); activityTimer = null; }
+      renderActivityStatus();
+    }
+    function updateActivities(time, dt, playerMoving) {
+      const now = Date.now();
+      for (const [id, activity] of activities) {
+        const marker = activity.self ? null : actorSprites.get(id), sprite = activity.self ? player : marker?.sprite;
+        if (!sprite || activity.expiresAt <= now || !activity.self && marker.actor.generation !== activity.generation) {
+          removeActivity(id); renderActivityStatus(); continue;
+        }
+        if (marker && activity.path.length && !reducedMotion) {
+          if (id === selectedActor || id === pendingActor) activity.path = [];
+          else {
+            const point = activity.path[0], distance = Math.hypot(point.x - marker.x, point.y - marker.y), step = Math.min(distance, dt * 42);
+            const x = distance ? marker.x + (point.x - marker.x) / distance * step : point.x;
+            const y = distance ? marker.y + (point.y - marker.y) / distance * step : point.y;
+            if (canWalk(x, y)) {
+              if (x !== marker.x) sprite.setFlipX(x < marker.x);
+              marker.x = x; marker.y = y;
+              sprite.setPosition(x, y).setDepth(y); marker.name.setPosition(x, y - 73).setDepth(y + 1);
+              marker.ring.setPosition(x, y).setDepth(y - 1);
+              if (distance <= step + 0.25) activity.path.shift();
+            } else activity.path = [];
+          }
+        }
+        if (!activity.badge) {
+          activity.badge = scene.add.text(0, 0, ACTIVITY_KINDS[activity.kind][0], { fontFamily: 'monospace', fontSize: 10,
+            resolution: 2, color: '#f4e8d2', backgroundColor: '#25382f', padding: { x: 4, y: 3 } }).setOrigin(0.5);
+          activity.ring = scene.add.graphics();
+        }
+        const phase = (now - activity.startedAt) / 180, pulse = reducedMotion ? 0 : Math.sin(phase) * 2;
+        activity.ring.clear().lineStyle(2, ACTIVITY_KINDS[activity.kind][1], .9).strokeEllipse(0, 0, 37 + pulse, 15 + pulse);
+        activity.ring.setPosition(sprite.x, sprite.y + 1).setDepth(sprite.y - 1);
+        let badgeX = sprite.x, badgeY = sprite.y - (activity.self && artState.player !== 'generated' ? 55 : 90);
+        if (externalPanel && activity.self) {
+          // Keep the confirmation beside the avatar in the compact operation view.
+          const view = scene.cameras.main.worldView, marginX = activity.badge.displayWidth / 2 + 6,
+            marginY = activity.badge.displayHeight / 2 + 6;
+          badgeX = Math.max(view.x + marginX, Math.min(view.right - marginX, sprite.x + 64));
+          badgeY = Math.max(view.y + marginY, Math.min(view.bottom - marginY, sprite.y - 42));
+        }
+        activity.badge.setPosition(badgeX, badgeY).setDepth(sprite.y + 3);
+        if (!reducedMotion && !(activity.self && playerMoving)) {
+          const energetic = ['work', 'train', 'fight', 'craft'].includes(activity.kind);
+          sprite.setAngle(energetic ? Math.sin(phase) * 3 : 0).setScale(1, energetic ? 1 + Math.sin(phase * 2) * .025 : 1);
+        } else sprite.setAngle(0);
+      }
     }
     function appendActionPreview(button, action) {
       const label = element('span', '', button.textContent);
@@ -1222,6 +1365,7 @@
       return Array.from(result.values());
     }
     function navigate(tab, context) {
+      if (destroyed || externalPanel) return;
       reportPosition(true);
       const details = context && Object.getPrototypeOf(context) === Object.prototype ? { ...context } : { venueId: context };
       if (typeof options.onNavigate === 'function') options.onNavigate(tab, details);
@@ -1277,6 +1421,24 @@
       redrawPath();
       updateReadiness();
     }
+    function closePanels() {
+      stopMovement(); worldUI?.close(false); hideVenue(false); hideActor(false); hideGameDock(false); closeResourceHelp(false);
+    }
+    function syncExternalPanel() {
+      root.classList.toggle('has-external-panel', externalPanel);
+      for (const node of [controls, destinations, nextMove, presence, homeSection, mapTools, resourceHelp]) node.inert = externalPanel;
+      journal.disabled = externalPanel;
+      for (const button of moveButtons.values()) button.disabled = externalPanel || !ready;
+      for (const button of buttons.values()) button.disabled = externalPanel;
+      const toolbar = root.querySelector('.city-world__toolbar'); if (toolbar) toolbar.inert = externalPanel;
+      const tools = document.getElementById('player-view-switch')?.querySelector('[data-city-world-tools]') || root.querySelector('[data-city-world-tools]');
+      if (tools) tools.disabled = externalPanel;
+      if (game?.canvas) {
+        game.canvas.tabIndex = externalPanel ? -1 : 0;
+        game.canvas.setAttribute('aria-disabled', String(externalPanel));
+      }
+      if (externalPanel) { interact.disabled = true; cancel.disabled = true; }
+    }
     function pauseRoute() {
       const preview = (path.length ? path : routePreview).map(point => ({ ...point }));
       const venue = pendingVenue?.id || routePreviewVenue;
@@ -1327,7 +1489,7 @@
     function showGameDock(kind) {
       if (kind === 'clubhouse') kind = 'crew';
       const render = kind === 'training' ? options.renderTraining : kind === 'fixer' ? options.renderFixer : kind === 'crew' ? options.renderCrew : null;
-      if (destroyed || !ready || typeof render !== 'function') return false;
+      if (destroyed || externalPanel || !ready || typeof render !== 'function') return false;
       worldUI?.close(false);
       stopMovement(); hideActor(false); hideGameDock(false);
       gameReturn = selected?.id || kind; hideVenue(false);
@@ -1360,7 +1522,7 @@
     listen(gameClose, 'click', () => hideGameDock(true));
     listen(gameDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideGameDock(true); } });
     function showVenue(venue) {
-      if (destroyed) return;
+      if (destroyed || externalPanel) return;
       venueOpening++;
       worldUI?.close(false);
       hideGameDock(false);
@@ -1493,13 +1655,14 @@
       return targets[0] || null;
     }
     function inspectNearby() {
+      if (externalPanel) return;
       const target = nearTarget();
       if (target?.actor) showActor(target.actor.id); else if (target?.home) showHome(target.home.key);
       else if (target?.exit) showExit(target.exit.id); else if (target?.venue) showVenue(target.venue);
     }
     function walkToVenue(id) {
       const venue = VENUES.find(venue => venue.id === id);
-      if (!venue || destroyed) return false;
+      if (!venue || destroyed || externalPanel) return false;
       if (root.classList.contains('omerta-city--unavailable')) { showVenue(venue); return true; }
       if (!ready || !player || !game) { queuedVenue = { id, identity: sceneIdentity(), scope: options.worldScopeKey }; return true; }
       worldUI?.close(false);
@@ -1512,7 +1675,7 @@
       return true;
     }
     function centerPlayer() {
-      if (!ready || !game || !player || destroyed) return false;
+      if (!ready || !game || !player || destroyed || externalPanel) return false;
       fitCamera();
       revealVenue(viewport);
       game.canvas.focus({ preventScroll: true });
@@ -1527,15 +1690,15 @@
     function fitWorldFrame() {
       if (destroyed) return;
       const phone = window.innerWidth <= 680;
-      const inspecting = Boolean(!actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());
+      const inspecting = Boolean(externalPanel || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());
       viewport.classList.toggle('is-inspecting', inspecting);
       root.classList.toggle('is-inspecting', inspecting);
-      if (!phone || !inspecting) {
+      if (!externalPanel && (!phone || !inspecting)) {
         worldHud.style.removeProperty('--city-hud-height');
         worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', 'Walking resources and readiness');
       }
-      if (!phone && !document.body.classList.contains('city-player-view')) {
+      if (!externalPanel && !phone && !document.body.classList.contains('city-player-view')) {
         actorDock.style.removeProperty('--city-actor-height');
         gameDock.style.removeProperty('--city-training-height');
         if (canvasHost.style.getPropertyValue('--city-map-height')) {
@@ -1558,10 +1721,15 @@
       controls.style.setProperty('--city-controls-bottom', Math.max(0, window.innerHeight - bottom) + 'px');
       const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
         ? nextMove.getBoundingClientRect().height : 0;
-      if (phone && (inspecting || shortFrame)) {
+      if (externalPanel) {
+        worldHud.style.setProperty('--city-hud-height', (phone ? 120 : 160) + 'px');
+        worldHud.tabIndex = 0;
+        worldHud.setAttribute('aria-label', 'Character resources and confirmed activity. Scroll to read all resources, warnings and latest feedback.');
+      } else if (phone && (inspecting || shortFrame)) {
         // Reserve the real map and dock floors before measuring the HUD. Long
         // warnings and confirmed feedback remain available by keyboard scroll.
-        let hudHeight = Math.max(0, bottom - top - 16 - 96 - (inspecting ? 64 : controls.getBoundingClientRect().height));
+        const loadingWorld = worldUI?.isOpen() && root.querySelector('.city-world__content[aria-busy="true"]');
+        let hudHeight = Math.max(0, bottom - top - 16 - 96 - (loadingWorld ? 120 : inspecting ? 64 : controls.getBoundingClientRect().height));
         // Keep the issued objective with the map when the resource row still
         // fits. More severe chrome pressure retains the existing scroll budget.
         if (guidanceHeight && hudHeight - guidanceHeight >= worldHead.getBoundingClientRect().height) hudHeight -= guidanceHeight;
@@ -1570,6 +1738,11 @@
         if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
       }
+      const activityLayout = externalPanel ? [worldHud.clientHeight, worldHud.scrollHeight, activitySignature].join(':') : '';
+      if (activityLayout !== activityHudLayout && externalPanel && activities.size) {
+        worldHud.scrollTop = worldHud.scrollHeight - worldHud.clientHeight;
+      }
+      activityHudLayout = activityLayout;
       const frameAvailable = bottom - top - worldHud.getBoundingClientRect().height - controls.getBoundingClientRect().height - 16;
       const available = frameAvailable - (guidanceHeight + 96 <= frameAvailable ? guidanceHeight : 0);
       if (!actorDock.hidden) actorDock.style.setProperty('--city-actor-height', Math.max(64, Math.min(240, available - 96)) + 'px');
@@ -1578,7 +1751,7 @@
         const panel = worldUI.getState().panel, preferred = ['room', 'map'].includes(panel) ? 360 : 240;
         worldUI.setHeight(Math.max(64, Math.min(preferred, available - 96)));
       }
-      const maximum = phone ? 440 : Math.min(640, canvasHost.clientWidth * 2 / 3);
+      const maximum = externalPanel ? (phone ? 128 : 300) : phone ? 440 : Math.min(640, canvasHost.clientWidth * 2 / 3);
       const panelHeight = (actorDock.hidden ? 0 : actorDock.getBoundingClientRect().height) + (gameDock.hidden ? 0 : gameDock.getBoundingClientRect().height) + (worldUI?.panelHeight() || 0);
       const height = Math.max(96, Math.min(maximum, Math.floor(available - panelHeight)));
       const value = height + 'px';
@@ -1941,7 +2114,7 @@
       canvas.setAttribute('role', 'img');
       canvas.setAttribute('aria-label', 'Playable neighborhood map. Tap to walk, or focus and use arrow keys or WASD. E or Enter opens a nearby venue. Destination buttons below provide the same access.');
       listen(canvas, 'keydown', event => {
-        if (document.activeElement !== canvas || event.ctrlKey || event.metaKey || event.altKey) return;
+        if (externalPanel || document.activeElement !== canvas || event.ctrlKey || event.metaKey || event.altKey) return;
         const key = event.key.toLowerCase();
         if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(key)) {
           event.preventDefault();
@@ -1966,6 +2139,7 @@
         if (document.hidden) stopMovement();
       });
       s.input.on('pointerdown', pointer => {
+        if (externalPanel) return;
         const point = s.cameras.main.getWorldPoint(pointer.x, pointer.y);
         worldUI?.close(false);
         hideGameDock(false);
@@ -2010,7 +2184,7 @@
       updateVenueStates();
       syncActorSprites();
       drawHomes();
-      for (const button of moveButtons.values()) button.disabled = false;
+      syncExternalPanel();
       if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
       status.textContent = '';
       fitCamera();
@@ -2035,19 +2209,21 @@
       }
       const previousX = player.x, previousY = player.y;
       let dx = 0, dy = 0, moving = false;
-      if (game && document.activeElement === game.canvas) {
+      if (!externalPanel && game && document.activeElement === game.canvas) {
         dx = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'));
         dy = Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w'));
       }
-      dx += Number(heldMoves.has('right')) - Number(heldMoves.has('left'));
-      dy += Number(heldMoves.has('down')) - Number(heldMoves.has('up'));
+      if (!externalPanel) {
+        dx += Number(heldMoves.has('right')) - Number(heldMoves.has('left'));
+        dy += Number(heldMoves.has('down')) - Number(heldMoves.has('up'));
+      }
       if (dx || dy) {
         const length = Math.hypot(dx, dy);
         const stepX = dx / length * SPEED * dt, stepY = dy / length * SPEED * dt;
         if (canWalk(player.x + stepX, player.y)) player.x += stepX;
         if (canWalk(player.x, player.y + stepY)) player.y += stepY;
         moving = true;
-      } else if (path.length) {
+      } else if (!externalPanel && path.length) {
         const point = path[0];
         const distance = Math.hypot(point.x - player.x, point.y - player.y);
         if (distance < SPEED * dt + 0.25) {
@@ -2096,13 +2272,13 @@
         });
       }
       const target = nearTarget(), nearby = target?.venue || target?.actor || target?.home || target?.exit;
-      interact.disabled = !nearby;
+      interact.disabled = externalPanel || !nearby;
       const nearbyName = target?.actor ? actorName(target.actor.actor) : target?.home?.street || target?.exit?.name || target?.venue?.name;
       const interactionCopy = target?.actor ? 'Talk to ' + nearbyName : target?.home ? 'Inspect street' : target?.exit ? 'Route to ' + nearbyName
         : target?.venue ? 'Enter ' + nearbyName : 'Move closer to interact';
       const controlsChanged = interact.textContent !== interactionCopy || cancel.disabled !== (!moving && !path.length && !keys.size && !heldMoves.size);
       setText(interact, interactionCopy);
-      cancel.disabled = !moving && !path.length && !keys.size && !heldMoves.size;
+      cancel.disabled = externalPanel || !moving && !path.length && !keys.size && !heldMoves.size;
       root.classList.toggle('is-walking', !cancel.disabled);
       if (controlsChanged && !hudObserver) fitWorldFrame();
       for (const [id, marker] of actorSprites) {
@@ -2113,6 +2289,7 @@
       const nearbyText = nearbyName ? 'Nearby: ' + nearbyName : 'Move near a person or place to interact.';
       if (nearbyCopy.textContent !== nearbyText) nearbyCopy.textContent = nearbyText;
       if (status.textContent) status.textContent = '';
+      updateActivities(time, dt, moving);
       updateReadiness();
       updateVenueStates();
       reportPosition(false);
@@ -2125,7 +2302,13 @@
     function sceneState() {
         const camera = scene && scene.cameras.main;
         return {
-          ready, reducedMotion, art: { ...artState }, facing: playerFacing,
+          ready, reducedMotion, externalPanel, art: { ...artState }, facing: playerFacing,
+          activities: Array.from(activities.values(), activity => ({ id: activity.id, actorId: activity.actorId,
+            generation: activity.generation, self: activity.self, kind: activity.kind, label: activity.label,
+            startedAt: activity.startedAt, expiresAt: activity.expiresAt, pathLength: activity.path.length,
+            rendered: !!activity.badge, moving: !reducedMotion && activity.path.length > 0,
+            badge: activity.badge ? { x: activity.badge.x, y: activity.badge.y,
+              width: activity.badge.displayWidth, height: activity.badge.displayHeight } : null })),
           resources: resourceState(), position: positionState(), selectedVenue: selected?.id || null,
           selectedActor, actorOpening, actorPage,
           trainingOpen: gameKind === 'training', gameDock: gameKind || null, gameOpening, worldUI: worldUI?.getState() || null, look,
@@ -2143,6 +2326,8 @@
         };
       }
 
+    syncExternalPanel();
+    acceptActivity(options.activityReceipt);
     return {
       update: function (nextOptions) {
         if (destroyed || !nextOptions) return;
@@ -2156,6 +2341,7 @@
           options.actors = []; options.intel = []; options.objectives = []; options.encounterReceipt = null; options.encounterRecovery = false;
         }
         if (identity !== sceneIdentity() || worldScopeChanged) {
+          clearActivities(nextOptions);
           for (const receipt of [resourceReceipt, nextOptions.resourceReceipt]) if (receipt?.id !== undefined) seenResourceReceipts.add(String(receipt.id));
           resourceReceipt = null;
           trackedObjectiveId = null; trackedVenueId = null;
@@ -2173,6 +2359,16 @@
         for (const key of ['venueActions', 'progress', 'npcQuests', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
         for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
         if ('resourceReceipt' in nextOptions && identity === sceneIdentity() && !worldScopeChanged) acceptResourceReceipt(nextOptions.resourceReceipt);
+        if ('activityReceipt' in nextOptions) {
+          options.activityReceipt = nextOptions.activityReceipt;
+          if (identity === sceneIdentity() && !worldScopeChanged) acceptActivity(nextOptions.activityReceipt);
+        }
+        if ('externalPanel' in nextOptions) {
+          const wasExternal = externalPanel;
+          externalPanel = nextOptions.externalPanel === true;
+          syncExternalPanel();
+          if (externalPanel && !wasExternal) closePanels();
+        }
         region = REGIONS[district.id] || REGIONS.docks;
         walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
         if ('worldHomes' in nextOptions && nextOptions.worldHomes === null) { homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); }
@@ -2182,10 +2378,11 @@
         updateHud();
         if (selected) { renderActions(selected); renderQuest(selected); }
         renderPresence(); renderActorDock(); renderGameDock();
-        worldUI?.update(worldOptions()); fitWorldFrame();
+        worldUI?.update(worldOptions()); syncExternalPanel(); fitWorldFrame();
       },
       destroy: function () {
         if (destroyed) return;
+        clearActivities();
         if (gameKind === 'crew') options.retireCrew?.();
         reportPosition(true);
         destroyed = true; ready = false;
@@ -2210,6 +2407,7 @@
       walkToVenue,
       recenter: centerPlayer,
       cancelNavigation: stopMovement,
+      closePanels,
       walkHome,
       showWorldMap: districtId => openWorldMap(districtId, false)
     };

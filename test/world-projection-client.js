@@ -232,11 +232,13 @@ for (const session of ['B', null]) {
 const apiStart = main.indexOf('  async function api('), apiEnd = main.indexOf('  async function apiNow(', apiStart);
 let resolveApi;
 const apiContext = vm.createContext({ token: 'old', _authQueue: Promise.resolve(), projections: { invalidate() {} },
+  uuid: () => 'projection-request', scheduleCityPresence() {},
   apiNow: () => new Promise((resolve) => { resolveApi = resolve; }) });
 vm.runInContext(main.slice(apiStart, apiEnd) + '\nthis.callApi = api;', apiContext);
 {
   const invalidations = [];
   const passive = vm.createContext({ token: 'current', _authQueue: Promise.resolve(),
+    uuid: () => 'passive-request', scheduleCityPresence() {},
     projections: { invalidate: (kind) => invalidations.push(kind) }, apiNow: async () => ({ code: 200, body: { ok: true } }) });
   vm.runInContext(main.slice(apiStart, apiEnd) + '\nthis.callApi = api;', passive);
   await passive.callApi('POST', '/v1/screens', { screens: ['world'] });

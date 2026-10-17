@@ -866,6 +866,13 @@ jobs:
           NEXT_LAYER_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
         run: npm run test:agent-economy-next-layer:postgres
 
+      - name: Cross-docking, production reservations and merchant-funded returns (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RESOURCE_ECONOMY: 'off'
+          MARKET_OPERATIONS_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
+        run: npm run test:agent-economy-market-operations:postgres
+
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'
         env:

@@ -14,8 +14,8 @@ import { runLedgerInvariants } from '../src/invariants.js';
 import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
-import { createNextLayerReleasePhase2MigrationCatalog, readNextLayerReleasePhase2Metadata, createCurrentDeedNativeCatalog,
-  verifyNextLayerReleasePhase2CausalNegatives, verifyNextLayerNativeBranches } from '../tools/next-layer-release-phase2-migration-catalog.js';
+import { createMarketOperationsReleasePhase2MigrationCatalog, readMarketOperationsReleasePhase2Metadata, createCurrentMarketDeedNativeCatalog,
+  verifyMarketOperationsReleasePhase2CausalNegatives, verifyMarketOperationsNativeBranches } from '../tools/market-operations-release-phase2-migration-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
@@ -185,12 +185,12 @@ async function child(url) {
       // Full native next-layer metadata is attested before ordinary lot fixtures run.
       const layerReferenceUrl = new URL(url.toString()); layerReferenceUrl.searchParams.delete('options');
       cityGameplayMigrationEndpoint(layerReferenceUrl.toString());
-      const layerNative = await verifyNextLayerNativeBranches(pool, layerReferenceUrl.toString());
-      const deedNative = await createCurrentDeedNativeCatalog(pool, layerReferenceUrl.toString(), schema,
+      const layerNative = await verifyMarketOperationsNativeBranches(pool, layerReferenceUrl.toString());
+      const deedNative = await createCurrentMarketDeedNativeCatalog(pool, layerReferenceUrl.toString(), schema,
         {profile:'fresh', includeNotNull:true});
-      const currentMetadata = await readNextLayerReleasePhase2Metadata(pool);
+      const currentMetadata = await readMarketOperationsReleasePhase2Metadata(pool);
       assert.throws(() => layerNative.verify(currentMetadata), error => error?.code === 'ERR_ASSERTION',
-        'Current540 Deed metadata has no historical536 native admission');
+        'Current546 Deed metadata has no historical542 market native admission');
       layerNative.verify(deedNative.projectMetadata(currentMetadata));
       const { runLots } = await import('./phase2-lots.js');
       const fixtureFactory = lotFixtureFactory(pool, url);
@@ -231,7 +231,7 @@ async function child(url) {
       const version = Number(settings.server_version_num);
       assert.throws(() => equipmentEconomyMigrationProjection(schema,gameplayMetadata), error => error?.code === 'ERR_ASSERTION',
         'The source-only C2 envelope does not confer historical native admission');
-      const release = await createNextLayerReleasePhase2MigrationCatalog(pool,referenceUrl.toString(),schema,
+      const release = await createMarketOperationsReleasePhase2MigrationCatalog(pool,referenceUrl.toString(),schema,
         { includeNotNull: true, legacyProfile: 'phase2' });
       const equipment = equipmentEconomyMigrationProjection(release.predecessorSource,gameplayMetadata);
       const cityProjection = gameplayUpgradeProjection(gameplayCatalog,oldConstraints,version);
@@ -245,9 +245,9 @@ async function child(url) {
       verifyPlayerIntelUpgradeCausalNegatives(oldConstraints,normalized,version);
       verifyGameplayUpgradeCausalNegatives(gameplayCatalog,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
       verifyEquipmentEconomyUpgradeCausalNegatives(equipment,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
-      await verifyNextLayerReleasePhase2CausalNegatives(pool,release,upgradedConstraints,
+      await verifyMarketOperationsReleasePhase2CausalNegatives(pool,release,upgradedConstraints,
         rows => verifyUpgradeConstraintCatalog(oldConstraints,projection.normalize(rows),version));
-      release.verifyMetadata(await readNextLayerReleasePhase2Metadata(pool));
+      release.verifyMetadata(await readMarketOperationsReleasePhase2Metadata(pool));
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
       console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
       console.log('phase2-postgres: exact account-owned PlayerIntel identity and required columns pass with removal, alteration, renamed binding and unknown-addition negatives');
