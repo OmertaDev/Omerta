@@ -890,6 +890,25 @@ try {
   const fallback = await fallbackContext.newPage();
   fallback.on('pageerror', error => errors.push(error.message));
   await fallback.route('**/vendor/phaser.js*', route => route.abort('failed'));
+  await fallback.route(base + '/', async route => {
+    const reply = await route.fetch(), html = await reply.text(), anchor = '  async function mountCityNeighborhood() {';
+    assert.equal(html.split(anchor).length, 2);
+    // Observe an applied board refresh, not a superseded read, without forcing or delaying it.
+    await route.fulfill({ response: reply, body: html.replace(anchor, `
+  const fallbackNeighborhoodMount = mountCityNeighborhood;
+  mountCityNeighborhood = async function (...args) {
+    const notice = document.querySelector('.omerta-city__actor-notice')?.textContent;
+    const observed = !window.__fallbackEncounterRefresh && notice?.startsWith('Intel recorded:')
+      ? window.__fallbackEncounterRefresh = {
+        actorId: document.querySelector('[data-city-actor][aria-expanded="true"]')?.dataset.cityActor,
+        intelId: document.querySelector('[data-city-encounter-intel]')?.dataset.cityEncounterIntel,
+        notice, complete: false } : null;
+    const result = await fallbackNeighborhoodMount.apply(this, args);
+    if (observed) observed.complete = true;
+    return result;
+  }
+` + anchor) });
+  });
   await fallback.goto(base, { waitUntil: 'networkidle' }); await fallback.locator('#btn-player-view').click();
   await fallback.waitForSelector('.omerta-city--unavailable [data-city-actor]');
   const fallbackCalls = []; fallback.on('request', request => fallbackCalls.push({ method: request.method(), path: new URL(request.url()).pathname }));
@@ -901,9 +920,25 @@ try {
   await fallback.setViewportSize({ width: 375, height: 812 });
   assert.deepEqual(mutations(fallbackCalls), []);
   await fallback.locator('[data-city-encounter]').click();
-  await fallback.waitForFunction(() => document.querySelector('.omerta-city__actor-notice')?.textContent.startsWith('Intel recorded:'));
+  await fallback.waitForFunction(() => window.__fallbackEncounterRefresh?.complete);
+  await fallback.waitForSelector('.omerta-city--unavailable [data-city-actor]');
+  const afterFallbackRefresh = await fallback.evaluate(() => ({
+    expected: window.__fallbackEncounterRefresh,
+    open: document.querySelector('.omerta-city__actor-dock')?.hidden === false,
+    actorId: document.querySelector('[data-city-actor][aria-expanded="true"]')?.dataset.cityActor,
+    intelId: document.querySelector('[data-city-encounter-intel]')?.dataset.cityEncounterIntel,
+    notice: document.querySelector('.omerta-city__actor-notice')?.textContent,
+  }));
+  assert(afterFallbackRefresh.expected.actorId && afterFallbackRefresh.expected.intelId, 'The refresh observes the real selected actor and confirmed intel.');
+  assert(afterFallbackRefresh.open, 'The fallback inspector stays open after the post-encounter board refresh.');
+  assert.equal(afterFallbackRefresh.actorId, afterFallbackRefresh.expected.actorId);
+  assert.equal(afterFallbackRefresh.intelId, afterFallbackRefresh.expected.intelId);
+  assert.equal(afterFallbackRefresh.notice, afterFallbackRefresh.expected.notice);
   await fallback.locator('[data-city-actor-close]').click();
-  await fallback.waitForFunction(() => document.activeElement?.hasAttribute('data-city-actor'));
+  await fallback.waitForFunction(id => document.activeElement?.dataset.cityActor === id, afterFallbackRefresh.expected.actorId);
+  await fallback.locator('[data-city-actor="' + afterFallbackRefresh.expected.actorId + '"]').click();
+  assert.equal(await fallback.locator('[data-city-encounter-intel]').getAttribute('data-city-encounter-intel'), afterFallbackRefresh.expected.intelId);
+  await fallback.locator('[data-city-actor-close]').click();
   await fallback.locator('[data-city-intel-open]').click(); assert.equal(await fallback.locator('[data-city-intel]').count(), 1);
   await fallbackContext.close();
 

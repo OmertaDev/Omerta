@@ -9943,7 +9943,11 @@
     if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
     const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
     if (key !== cityIdentity()) return;
-    if (_cityScene && _citySceneKey === key && !host.querySelector('.omerta-city--unavailable')) {
+    const unavailable = host.querySelector('.omerta-city--unavailable');
+    // Retry an unavailable renderer only when doing so will not dismiss an active interaction.
+    const interacting = unavailable?.classList.contains('is-inspecting')
+      || unavailable?.querySelector('.omerta-city__interaction:not([hidden])');
+    if (_cityScene && _citySceneKey === key && (!unavailable || interacting)) {
       _cityScene.update?.({ ...options, ...cityWorldOptions(), character: { ...me }, progress: cityProgress() });
       fulfillCityHomeEntry();
       fulfillCityFirstJobEntry();
