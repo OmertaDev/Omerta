@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3588b78645144a9aa9f749734cb9db3bf2553038",
+  "sourceRevision": "3f72301ff2e47bb8219d1febe5bf71e345063128",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16096,
-    "edges": 63850,
+    "nodes": 16099,
+    "edges": 63859,
     "byNodeType": {
       "Artifact": 6725,
       "Command": 291,
-      "Commit": 4351,
+      "Commit": 4354,
       "Contract": 135,
       "Document": 933,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5329,
-      "CHANGED": 24640,
+      "CHANGED": 24646,
       "CONTAINS": 6746,
       "DECLARES": 291,
       "DEFINED_IN": 1726,
       "DEPENDS_ON": 69,
       "EXECUTES": 1102,
       "HANDLED_BY": 926,
-      "HAS_COMMIT": 4351,
+      "HAS_COMMIT": 4354,
       "IMPLEMENTS": 124,
       "IMPORTS": 7029,
       "INHERITS": 45,
@@ -30889,20 +30889,20 @@
       "path": "CHAIN-AUDIT-PACKET-O1.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 40376,
-      "lines": 442,
-      "version": "1f731509819a5d98",
+      "bytes": 40889,
+      "lines": 446,
+      "version": "b24291d1ac1b7b3e",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET-O1.md",
           "line": 1,
-          "version": "1f731509819a5d98"
+          "version": "b24291d1ac1b7b3e"
         }
       ],
-      "lastChangedAt": "2026-10-14T22:02:10.000Z",
+      "lastChangedAt": "2026-10-17T19:13:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d9f9bf357678ee3ee32d2695d8b74b3660462eb5"
+      "lastChangedCommit": "405ad59f79acd53a12b703a7eaf48830cd1a3021"
     },
     {
       "key": "Artifact:CHAIN-AUDIT-PACKET.md",
@@ -56858,18 +56858,18 @@
       "extension": ".md",
       "bytes": 7062,
       "lines": 129,
-      "version": "0dfc7d0bc94ec47c",
+      "version": "9ba91bbd7fa08bfe",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "0dfc7d0bc94ec47c"
+          "version": "9ba91bbd7fa08bfe"
         }
       ],
-      "lastChangedAt": "2026-10-17T18:43:48.000Z",
+      "lastChangedAt": "2026-10-17T19:14:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "15e21b17450cca0972a31233c18497816dd536d9"
+      "lastChangedCommit": "3f72301ff2e47bb8219d1febe5bf71e345063128"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -176326,6 +176326,22 @@
       ]
     },
     {
+      "key": "Commit:3f72301ff2e47bb8219d1febe5bf71e345063128",
+      "type": "Commit",
+      "id": "3f72301ff2e47bb8219d1febe5bf71e345063128",
+      "label": "docs: refresh the executable financial test suite count",
+      "title": "docs: refresh the executable financial test suite count",
+      "date": "2026-10-17T19:14:49.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3f72301ff2e47bb8219d1febe5bf71e345063128",
+      "provenance": [
+        {
+          "commit": "3f72301ff2e47bb8219d1febe5bf71e345063128",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3f72301ff2e47bb8219d1febe5bf71e345063128"
+        }
+      ]
+    },
+    {
       "key": "Commit:3f751fd0f8c38797878a8d81b7fd3a37bb45f8a0",
       "type": "Commit",
       "id": "3f751fd0f8c38797878a8d81b7fd3a37bb45f8a0",
@@ -176642,6 +176658,22 @@
         {
           "commit": "40479023cde97fb7c2009e804edeb0e1c465e283",
           "url": "https://github.com/OmertaDev/Omerta/commit/40479023cde97fb7c2009e804edeb0e1c465e283"
+        }
+      ]
+    },
+    {
+      "key": "Commit:405ad59f79acd53a12b703a7eaf48830cd1a3021",
+      "type": "Commit",
+      "id": "405ad59f79acd53a12b703a7eaf48830cd1a3021",
+      "label": "docs: include Base work escrow in the owned contract review scope",
+      "title": "docs: include Base work escrow in the owned contract review scope",
+      "date": "2026-10-17T19:13:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/405ad59f79acd53a12b703a7eaf48830cd1a3021",
+      "provenance": [
+        {
+          "commit": "405ad59f79acd53a12b703a7eaf48830cd1a3021",
+          "url": "https://github.com/OmertaDev/Omerta/commit/405ad59f79acd53a12b703a7eaf48830cd1a3021"
         }
       ]
     },
@@ -191810,6 +191842,22 @@
         {
           "commit": "77ebd54a914416b46bb8b9201d872f47505c8292",
           "url": "https://github.com/OmertaDev/Omerta/commit/77ebd54a914416b46bb8b9201d872f47505c8292"
+        }
+      ]
+    },
+    {
+      "key": "Commit:782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "type": "Commit",
+      "id": "782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "label": "Refresh Robinhood compute knowledge after reviewed source and census",
+      "title": "Refresh Robinhood compute knowledge after reviewed source and census",
+      "date": "2026-10-17T19:10:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "provenance": [
+        {
+          "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195",
+          "url": "https://github.com/OmertaDev/Omerta/commit/782445562fb0015be25cfb7e713fc2b3f59f4195"
         }
       ]
     },
@@ -236482,13 +236530,13 @@
       "id": "CHAIN-AUDIT-PACKET-O1.md",
       "label": "CHAIN-AUDIT-PACKET-O1.md",
       "documentType": "documentation",
-      "lines": 442,
-      "version": "1f731509819a5d98",
+      "lines": 446,
+      "version": "b24291d1ac1b7b3e",
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET-O1.md",
           "line": 1,
-          "version": "1f731509819a5d98"
+          "version": "b24291d1ac1b7b3e"
         }
       ]
     },
@@ -242931,12 +242979,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 129,
-      "version": "0dfc7d0bc94ec47c",
+      "version": "9ba91bbd7fa08bfe",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "0dfc7d0bc94ec47c"
+          "version": "9ba91bbd7fa08bfe"
         }
       ]
     },
@@ -255409,6 +255457,9 @@
           "commit": "76e72e3e5983112abbeb52d3f72534575f62ea2a"
         },
         {
+          "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
+        },
+        {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
         },
         {
@@ -257608,6 +257659,9 @@
           "commit": "76e72e3e5983112abbeb52d3f72534575f62ea2a"
         },
         {
+          "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
+        },
+        {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
         },
         {
@@ -259805,6 +259859,9 @@
         },
         {
           "commit": "76e72e3e5983112abbeb52d3f72534575f62ea2a"
+        },
+        {
+          "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
         },
         {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
@@ -262625,6 +262682,9 @@
         },
         {
           "commit": "76e72e3e5983112abbeb52d3f72534575f62ea2a"
+        },
+        {
+          "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
         },
         {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
@@ -277300,7 +277360,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3588b78645144a9aa9f749734cb9db3bf2553038",
+      "revision": "3f72301ff2e47bb8219d1febe5bf71e345063128",
       "currentBranch": "codex/robinhood-x402-usdg-oct17",
       "defaultBranch": "main",
       "visibility": "public",
@@ -418039,6 +418099,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3f72301ff2e47bb8219d1febe5bf71e345063128",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "3f72301ff2e47bb8219d1febe5bf71e345063128"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3f751fd0f8c38797878a8d81b7fd3a37bb45f8a0",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -418707,6 +418775,14 @@
       "to": "Artifact:src/itemdurability.js",
       "provenance": {
         "commit": "40479023cde97fb7c2009e804edeb0e1c465e283"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:405ad59f79acd53a12b703a7eaf48830cd1a3021",
+      "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "provenance": {
+        "commit": "405ad59f79acd53a12b703a7eaf48830cd1a3021"
       }
     },
     {
@@ -459603,6 +459679,38 @@
       "to": "Artifact:test/wallet-connect-browser.js",
       "provenance": {
         "commit": "77ebd54a914416b46bb8b9201d872f47505c8292"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
       }
     },
     {
@@ -678407,6 +678515,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3f72301ff2e47bb8219d1febe5bf71e345063128",
+      "provenance": {
+        "commit": "3f72301ff2e47bb8219d1febe5bf71e345063128"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3f751fd0f8c38797878a8d81b7fd3a37bb45f8a0",
       "provenance": {
         "commit": "3f751fd0f8c38797878a8d81b7fd3a37bb45f8a0"
@@ -678562,6 +678678,14 @@
       "to": "Commit:40479023cde97fb7c2009e804edeb0e1c465e283",
       "provenance": {
         "commit": "40479023cde97fb7c2009e804edeb0e1c465e283"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:405ad59f79acd53a12b703a7eaf48830cd1a3021",
+      "provenance": {
+        "commit": "405ad59f79acd53a12b703a7eaf48830cd1a3021"
       }
     },
     {
@@ -686146,6 +686270,14 @@
       "to": "Commit:77ebd54a914416b46bb8b9201d872f47505c8292",
       "provenance": {
         "commit": "77ebd54a914416b46bb8b9201d872f47505c8292"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:782445562fb0015be25cfb7e713fc2b3f59f4195",
+      "provenance": {
+        "commit": "782445562fb0015be25cfb7e713fc2b3f59f4195"
       }
     },
     {
@@ -780077,7 +780209,7 @@
       "to": "Artifact:docs/agent-economy-autonomy-release-review.md",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET-O1.md",
-        "line": 148
+        "line": 152
       }
     },
     {
@@ -780104,7 +780236,7 @@
       "to": "Artifact:omerta-contracts/audits/2026-10-01-red-team/report.md",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET-O1.md",
-        "line": 150
+        "line": 154
       }
     },
     {
@@ -780158,7 +780290,7 @@
       "to": "Artifact:src/dexbot.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET-O1.md",
-        "line": 319
+        "line": 323
       }
     },
     {
@@ -780167,7 +780299,7 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET-O1.md",
-        "line": 425
+        "line": 429
       }
     },
     {
@@ -780176,7 +780308,7 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "file": "CHAIN-AUDIT-PACKET-O1.md",
-        "line": 355
+        "line": 359
       }
     },
     {

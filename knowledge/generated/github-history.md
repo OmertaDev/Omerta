@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3588b7864514`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3f72301ff2e4`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4351 |
+| Commits in clone | 4354 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-17 — Refresh measured gameplay census after release repairs |
+| Latest commit | 2026-10-17 — docs: refresh the executable financial test suite count |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3388 |
+| OmertaDev | 3391 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 118 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 730 | historical |
-| knowledge/generated/graph-summary.md | 730 | historical |
-| knowledge/generated/graph.json | 730 | historical |
-| knowledge/generated/inventory.md | 730 | historical |
+| knowledge/generated/github-history.md | 731 | historical |
+| knowledge/generated/graph-summary.md | 731 | historical |
+| knowledge/generated/graph.json | 731 | historical |
+| knowledge/generated/inventory.md | 731 | historical |
 | [SPEC.md](../../SPEC.md) | 571 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 476 | yes |
@@ -55,7 +55,7 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 118 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 102 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 103 | yes |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 99 | yes |
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 97 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
