@@ -1,3 +1,4 @@
+import { baseWorkHistoricalSourceBaseline } from './base-work-source-compatibility.js';
 // Closed pure-control fixtures. Historical source execution never admits the current release.
 import { economyReleaseSource } from '../../tools/economy-release-composition.js';
 import { fourthBatchSourceBaseline } from '../../tools/rc1-fourth-batch-source-compatibility.js';
@@ -177,7 +178,10 @@ function historicalApplicationSource(file, input) {
 function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
-    const selected = historicalApplicationSource(file, originalRead(path.join(root, file)));
+    const raw = originalRead(path.join(root, file));
+    const input = file === 'src/server.js' && (target === 'test/rc1-checkpoint-recovery-review.js'
+      || target === 'test/rc1-lifecycle-applicability.js') ? baseWorkHistoricalSourceBaseline(file, raw) : raw;
+    const selected = historicalApplicationSource(file, input);
     checked.add(file);
     return selected;
   }
