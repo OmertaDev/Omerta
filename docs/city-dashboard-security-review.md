@@ -565,3 +565,26 @@ The evidence index is `output/security/dashboard-game-parity-combined-evidence-i
 | `output/security/dashboard-game-parity-e321-native-economy-16.log` | `0c91e819907bef7df0330f2f8a2d8e515f5dba2fdbdbd6702a99dc6c690a6173` |
 
 **Latest disposition:** the bounded combined runtime/DTO, actual HTTP replay, fixture and source-comparison review is complete with the confirmed findings resolved. The repaired 22-command market memory suite and 32 focused source consumers pass; historical failures remain preserved. Final combined full hosted CI and its required native/browser lanes remain pending hard merge/deployment gates. No production acceptance, onchain acceptance or inherited economic/native/source-pair qualification is asserted.
+
+
+## Hosted diagnostic ordering and race-fixture repairs — 2026-10-17
+
+Reviewed working tree is based on full commit `0b01a6a92672f833ce1db32c21e8de4e005f2621`; the exact five reviewed source hashes and retained evidence are in `output/security/dashboard-game-parity-ci-repairs-independent.json` (SHA-256 `f0211761713fdc8a812d9d4b4d10eddaed006c9cf10e0fdccdb1318443616fce`). This is a pre-release review of two runtime diagnostic changes and three test changes. Root independently inspected the complete diff, actual callers, hook ordering, async-context boundary, race refusal path and retained assertions. The prior report bytes and all historical conclusions remain preserved above.
+
+### DGP-CI-03 — Required response diagnostic waited behind optional activity (resolved locally)
+
+The complete hosted npm suite passed, but the subsequent RC1 observability check failed: the command route response hook ran after a global optional City actor read. Moving the existing completion hook into earlier registration preserves request-specific diagnostics without waiting for that read. An explicit absent-trace return prevents unrelated routes from using inherited async-local diagnostic context. No request data, owner identity, response payload or new diagnostic fields are logged.
+
+The regression holds the real after-response actor read, preserving every original timeline, privacy, denial, replay and failing-log-sink assertion. Old ordering fails while the read is held; the repair passes. An actual untraced health request under inherited context emits no command diagnostics. The standalone director API test also passes. Syntax and whitespace checks pass for all five changed files. No accounting, authorization, contract or schema implementation changes are part of this repair; financial fuzzing and contract analysis are outside this diagnostic-only runtime delta.
+
+### DGP-CI-04 — Passive-projection VM lacked current API dependencies (resolved locally)
+
+After the ordering fix, the chained passive-projection test failed because its extracted API function requires uuid and scheduleCityPresence. The fixture now supplies a deterministic UUID and inert presentation scheduler. All original client invalidation, server-hint and gameplay-invalidation assertions remain intact. The complete unchanged test:rc1:observability command passes both children. The intermediate fixture failure is retained separately.
+
+### DGP-CI-05 — Native sale race over-specified its immediate refusal (native retest pending)
+
+Exact original source diagnostic run38986480879 failed on both PostgreSQL16 and18.4. Commission acceptance can expand the discovered actor union; the existing runtime then correctly refuses the concurrent sale with the exact400 contention response before settlement. The test previously demanded commission_accepted immediately. The test-only repair retains exactly one initial200, allows only that exact contention as an intermediate response, retries the unchanged sale path/body/key once, and requires the exact final400 commission_accepted plus an unchanged full commission row. Original ownership, zero-sale-journal, reserve100, cash, refund and global invariants remain. Runtime concurrency and idempotency behavior are unchanged.
+
+The memory test passes, but its native race branch is unexecuted locally. The actual failed native logs and encrypted artifacts are indexed in output/security/dashboard-game-parity-depot-diagnostic-failure-receipt.json (SHA-256 fdb1c923c75728842f8a67b553bee713d294ae4aa586537919093f3028eeea2d). The repaired native branch must pass on the successor.
+
+The five changed files are not historical source-transfer domain keys. Embedded unchanged package-command strings do not require pin adaptation. Current native and source-pair inventories must record the actual successor; no older source is aliased to these bytes. Full successor CI, browser, required native checks and the production source-pair/cutover remain outstanding release gates.

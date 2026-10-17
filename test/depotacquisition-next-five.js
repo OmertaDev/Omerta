@@ -83,10 +83,23 @@ try{
  const unknown=await player(),unknownBuyer=await buyer();await app.pool.query('CREATE TABLE unsupported_next_five_depot(id TEXT PRIMARY KEY,business_id TEXT)');assert.equal((await quote(unknown,unknownBuyer)).body.message,'unsupported_schema');await app.pool.query('DROP TABLE unsupported_next_five_depot');
  if(native){
   const owner=await player(),patron=await player(),purchaser=await buyer(),pending=await fund(owner,patron),sale=await deal(owner,purchaser),beforeCash=await cash(patron);
-  const race=await Promise.all([call(owner,'POST','/v1/company/commissions/accept',cref(pending),'maker-consent-race'),call(owner,'POST',base+'/'+sale.id+'/execute',{termsHash:sale.termsHash},'sale-consent-race')]);
+  const saleRequest=Object.freeze([owner,'POST',base+'/'+sale.id+'/execute',Object.freeze({termsHash:sale.termsHash}),'sale-consent-race']);
+  const race=await Promise.all([call(owner,'POST','/v1/company/commissions/accept',cref(pending),'maker-consent-race'),call(...saleRequest)]);
   assert.equal(race.filter(x=>x.code===200).length,1,JSON.stringify(race));
   const contract=(await app.pool.query('SELECT * FROM commissioned_crafting_contracts WHERE id=$1',[pending.commissionId])).rows[0];
-  if(race[0].code===200){assert.equal(race[1].body.message,'commission_accepted');assert.equal(contract.status,'accepted');assert.equal((await app.pool.query('SELECT owner_character FROM business_depots WHERE id=$1',[owner.business])).rows[0].owner_character,owner.id);assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[sale.id])).rows.length,0);}
+  if(race[0].code===200){
+   let saleRefusal=race[1];
+   if(saleRefusal.body.error==='contention'){
+    assert.equal(saleRefusal.code,400,JSON.stringify(saleRefusal));
+    assert.deepEqual(saleRefusal.body,{error:'contention',message:'Commission counterpart changed; retry the whole action.'});
+    // Acceptance may expand the actor union after discovery; retry the unchanged request once.
+    saleRefusal=await call(...saleRequest);
+    assert.deepEqual((await app.pool.query('SELECT * FROM commissioned_crafting_contracts WHERE id=$1',[pending.commissionId])).rows[0],contract);
+   }
+   assert.equal(saleRefusal.code,400,JSON.stringify(saleRefusal));
+   assert.deepEqual(saleRefusal.body,{error:'depot_acquisition_runtime',message:'commission_accepted'});
+   assert.equal(contract.status,'accepted');assert.equal((await app.pool.query('SELECT owner_character FROM business_depots WHERE id=$1',[owner.business])).rows[0].owner_character,owner.id);assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[sale.id])).rows.length,0);
+  }
   else{assert.equal(race[0].body.message,'business');assert.equal(race[1].code,200);assert.equal(contract.status,'funded');assert.equal((await app.pool.query('SELECT owner_character FROM business_depots WHERE id=$1',[owner.business])).rows[0].owner_character,purchaser.id);assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[sale.id])).rows.length,2);}
   assert.equal(await cash(patron),beforeCash);assert.equal(Number(contract.fee_remaining),100);assert.equal((await ok(patron,'POST','/v1/company/commissions/refund',cref(pending),'race-source-refund')).refundedFee,100);assert.equal(await cash(patron),beforeCash+100);await global();
  }

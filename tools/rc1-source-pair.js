@@ -257,11 +257,11 @@ export const ROOT_MARKET_COMBINED_ADDITIVE_PAIR = Object.freeze({
 
 export const MARKET_OPERATIONS_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
-  "reviewedCandidate": "f318f36ba459a2f29bc88927f39cba4ba8e0a4ca",
+  "reviewedCandidate": "019bcd66d09179554aeaadee3b2265cbaa8135bb",
   "predecessorTree": "dfbf7b9de5b71641b1f975bba74046552a7434034ccda892fa2da8f1d6da12ed",
   "predecessorSchema": "1fbe97d1f971d908623d5cd7cbd7aab4e2411844c1d8be2688cdbaaba558f137",
   "predecessorCatalog": "24643ba13f016271634dbbdef3590ee09b6688f844cbc80b7ffacf64da303522",
-  "candidateTree": "dea80ada4bb4748eca84204b3ce7dda0bc7cbed71e6d6b90ccfeadf5c726baa6",
+  "candidateTree": "56fe4b8a8e5d50d327a5d6c3bd00134ce1715981c2f4ea727933f46c72010b6f",
   "candidateSchema": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
   "candidateCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
   "constraints": 70,
