@@ -10537,3 +10537,6 @@ export const ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS=Object.freeze([
     ]
   }
 ].map(r=>Object.freeze({directory:r.directory,eligibleNames:Object.freeze(r.eligibleNames)})));
+
+// Separately reviewed combined-source definition; Root must compile actual authored inputs.
+export const ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS=Object.freeze({"version":1,"status":"UNSEALED","revision":null,"commerceSource":"a7319058183ff6420745be685cf39e39cc091a7e","commerceDefinitionSHA256":"0b48fd7ba46c4b39f1dec0b61148236fa6f2b174a13518e6ce21d66267075447","guiSource":"3b2617aace9aabe94de816f6104783ebd62cb53b","guiWitnessSHA256":"cd27e2ee872445bd04d370b8ea80e0cb6f9c3db9ee1450ff65312ea2ac18e13a","replacements":Object.freeze([]),"additions":Object.freeze([])});
