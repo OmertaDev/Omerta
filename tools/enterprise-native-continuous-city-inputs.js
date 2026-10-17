@@ -6,11 +6,11 @@
 // Only this new metadata file joins the historical three captured staged metadata exemptions.
 export const ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS = Object.freeze({
   status: 'SEALED',
-  revision: "7051faddd4beea253d0fb2f9693546c883e01ab5",
+  revision: "05f489f48b6b685b94eca5f27ebaeb52c321f2c6",
   predecessor: "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
   legacyBaseRevision: "5909e505513186136f19c0d76997359321594926",
   replacements: Object.freeze([
-    Object.freeze({file:"package.json",before:Object.freeze({"blob":"7920761b7e8eba7a1ae653ad6a6b0a66edcea560","sha256":"8d0af502e9503e78f82809f3652c9e51549d85fa5ad07d45452cf829e6345cb2"}),after:Object.freeze({"blob":"ed39c51c33b30874da5d854884f4ab7e481f970c","sha256":"1adbcad0550ccf63c2ad7c050b9dde86d5f8d3175d5f589f4742878a35676465","mode":"100644"})}),
+    Object.freeze({file:"package.json",before:Object.freeze({"blob":"7920761b7e8eba7a1ae653ad6a6b0a66edcea560","sha256":"8d0af502e9503e78f82809f3652c9e51549d85fa5ad07d45452cf829e6345cb2"}),after:Object.freeze({"blob":"ab87745c354a5015f78c0611106eb053c06a0360","sha256":"09a04bdefa1e197ee987423581920c9b7b02aa0a8cda3371f32d907c87e7fb6d","mode":"100644"})}),
     Object.freeze({file:"public/city-scene.js",before:Object.freeze({"blob":"1c0a43f0d3e9a67706ca5eec20f2d64baf259f7d","sha256":"a6fab5d4faecc0b17b8c80f8a2d75b8bb1006dc65da92c0b0978d4e50cb99f34"}),after:Object.freeze({"blob":"2c41d459295bb21a2a1d8b83c5e7808b4c744948","sha256":"028e83519713e2bd0d5f17b37a2c64000d565eb96c890c038c024b5c77bc51e5","mode":"100644"})}),
     Object.freeze({file:"public/city-world-ui.css",before:Object.freeze({"blob":"b4de1210ef45c01972a3ba909c9f4c6a07f4954e","sha256":"c7fb64fc92103baa0f654070ec0b61c72b2d81c3ac731563dff280e46a861cc4"}),after:Object.freeze({"blob":"864b0fd044a8bf890d69879e80dceadeb3d9f06d","sha256":"1644bc26395c31cae7653c2cbcca245b54181f4e4b21422e850b48075f19f929","mode":"100644"})}),
     Object.freeze({file:"public/city-world-ui.js",before:Object.freeze({"blob":"76872f4a6a13576d2d9b631619021ce275a61c36","sha256":"0dcbf85f36dc6961df9a9b6265a4833442dfa6feca50b0687f465a4fa1a49e2f"}),after:Object.freeze({"blob":"57418025cde951835a69ef6be48543ff1b41672f","sha256":"03570ca46d0fb58ee0e27979747beb32c96107bb833f7dd3d80c0a83d243895f","mode":"100644"})}),
@@ -34,7 +34,7 @@ export const ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS = Object.freeze({
     Object.freeze({"file":"test/city-world-layout-ui-browser.js","blob":"e5450529d0fd7da90f4d4c573e1ff56848d74ada","sha256":"87bd3c463866d7f69d5f8fb3570a5f7ecc43140a66cdb9d296ffccf4536941d7","mode":"100644"}),
     Object.freeze({"file":"test/city-world-layout.js","blob":"c1facc447a8d030e00e62041e3bbddf8bf3f9948","sha256":"38ac73f565375329d2a095477be1960a606d46cb1729a337f95e69bc883ea831","mode":"100644"}),
     Object.freeze({"file":"test/continuous-city-host-contract.js","blob":"3c598b977122aceb6581bdcd3f71201890cd840a","sha256":"6cd0d39259389b87c53e88ba2bfab662e1cfef0554dfdd0d214713a18a97b01a","mode":"100644"}),
-    Object.freeze({"file":"test/continuous-city-source-compatibility.js","blob":"3d6afc1a12e55dd94adb42427a5d61f3b08389eb","sha256":"78ff74a12fd22842d4480a9941b19c1359d2c3ff2b3445dd5fe93de196be73aa","mode":"100644"}),
+    Object.freeze({"file":"test/continuous-city-source-compatibility.js","blob":"d7b36dc4af2b59c8668a4db0db25caeea6d62c57","sha256":"a20e83f44ba73b784c3a58763997e1cc29458668fb590aa2df5da14325b09a32","mode":"100644"}),
     Object.freeze({"file":"test/deed-discovery-fixture.js","blob":"d42283113efafff67b782a278a9565d1fdf32237","sha256":"b5c26b23995e49ddfbe46d933620f3b7f19b36eeae4390de869a7e81c7b6e2bd","mode":"100644"}),
     Object.freeze({"file":"test/deed-quest-source-compatibility.js","blob":"75cd4bc5992f6537646ff9eb9d7ee4161f3195a1","sha256":"a1ec231aa1faead389b8c6c1310abad347e8d22ac2cf77dc13a522cbc67223a4","mode":"100644"}),
     Object.freeze({"file":"test/economy-release-composition.js","blob":"55d4c4f66e9397b7963af2c6459ae2c6236ffa1d","sha256":"8a43357f0052859cb285ec3eeff5a469e17a36bd6704123ead1a30583638f4ac","mode":"100644"}),
@@ -68,7 +68,7 @@ export const ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS = Object.freeze({
     Object.freeze({"file":"test/release-source-transfer.js","blob":"3b4a152612354c160f34630b88445d91fc704e98","sha256":"c51bd76a15cbee314761366fb0c843fb44f6b97e11e7db1646e3d75ab95028a3","mode":"100644"}),
     Object.freeze({"file":"tools/continuous-city-fixture-source-data.js","blob":"8a685986be799b65f1e160b903f966073e1b75a9","sha256":"1f877ad274ed3599a4761f1a8b9a5ef11cbe19fb11350dd5d72328b7b5ac48eb","mode":"100644"}),
     Object.freeze({"file":"tools/continuous-city-source-compatibility.js","blob":"dbb7423a122854dab35e244bc369f2ff7b43e81f","sha256":"646e3b3d17cd8f2e19d16990f4741406365343abd0acfe136010031b3ff4d862","mode":"100644"}),
-    Object.freeze({"file":"tools/continuous-city-source-data.js","blob":"dd0310b0123c44072531ce3c4fa189e986aef51b","sha256":"647a07a838fbf49e4984dc5703ba5752353bc71521844282f853ddebcbf58c94","mode":"100644"}),
+    Object.freeze({"file":"tools/continuous-city-source-data.js","blob":"f74e3e2a4632c5e6c435e06672ef8a81ef823684","sha256":"512f633fcf19ca6cdc3eddf82fbaddb06cef731b7bccbd90959805637969f40d","mode":"100644"}),
     Object.freeze({"file":"tools/genesis-auction-deployment-plan.js","blob":"09cd9bb50a2ad3f0772d274be2df4f23c27e4f4d","sha256":"99482795456732aba622e3715448edf39ae50a38066d79c33e38382558174ca2","mode":"100644"}),
     Object.freeze({"file":"tools/genesis-auction-preflight.js","blob":"dd33b91629b545fd176cfba4cab673a9057bf7d6","sha256":"6e9b6ee51bd26bb5e4d4cce4deb7481c5994724d548ff49ee76390f0b1bd7bd7","mode":"100644"}),
     Object.freeze({"file":"tools/market-v2-deployment-plan.js","blob":"44d7016f3bf5b505732881026051fff1ce711564","sha256":"0d989d3c8cc6c650e9056aba8868b36b0b12a7ae38ef6e3a1ef87a5db1eb76d5","mode":"100644"}),
