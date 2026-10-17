@@ -8,7 +8,7 @@
 | [src/accrual.js](../../src/accrual.js) | 204 | platform-core | 0 / 4 | 0 | 3 | 5 |
 | [src/age.js](../../src/age.js) | 38 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 17 | 3 | 5 | 15 |
-| [src/agentgateway.js](../../src/agentgateway.js) | 2388 | platform-core | 31 / 8 | 0 | 23 | 7 |
+| [src/agentgateway.js](../../src/agentgateway.js) | 2390 | platform-core | 31 / 8 | 0 | 23 | 7 |
 | [src/agentoperatingmemory.js](../../src/agentoperatingmemory.js) | 70 | platform-core | 3 / 5 | 0 | 11 | 2 |
 | [src/agentreferrals.js](../../src/agentreferrals.js) | 113 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/agentturn.js](../../src/agentturn.js) | 726 | platform-core | 19 / 3 | 0 | 5 | 1 |
@@ -61,7 +61,7 @@
 | [src/city-world-opportunities-contract.js](../../src/city-world-opportunities-contract.js) | 103 | platform-core | 4 / 1 | 0 | 1 | 1 |
 | [src/city-world-opportunities.js](../../src/city-world-opportunities.js) | 222 | platform-core | 6 / 1 | 0 | 5 | 0 |
 | [src/city-world-opportunity-adapters.js](../../src/city-world-opportunity-adapters.js) | 61 | platform-core | 1 / 2 | 0 | 0 | 0 |
-| [src/cityhomes.js](../../src/cityhomes.js) | 58 | platform-core | 3 / 2 | 1 | 5 | 1 |
+| [src/cityhomes.js](../../src/cityhomes.js) | 59 | platform-core | 4 / 2 | 1 | 5 | 1 |
 | [src/citymap.js](../../src/citymap.js) | 123 | world-progression | 2 / 1 | 1 | 7 | 0 |
 | [src/citywide.js](../../src/citywide.js) | 32 | world-progression | 5 / 3 | 1 | 0 | 1 |
 | [src/citywire.js](../../src/citywire.js) | 96 | platform-core | 1 / 2 | 0 | 1 | 1 |
@@ -181,7 +181,7 @@
 | [src/decisionproofs.js](../../src/decisionproofs.js) | 65 | platform-core | 1 / 2 | 0 | 1 | 1 |
 | [src/decisionreplay.js](../../src/decisionreplay.js) | 70 | platform-core | 3 / 3 | 2 | 8 | 2 |
 | [src/deed-upgrades.js](../../src/deed-upgrades.js) | 65 | platform-core | 3 / 5 | 1 | 5 | 2 |
-| [src/deedbuildings.js](../../src/deedbuildings.js) | 124 | platform-core | 0 / 8 | 1 | 4 | 5 |
+| [src/deedbuildings.js](../../src/deedbuildings.js) | 124 | platform-core | 0 / 11 | 1 | 4 | 7 |
 | [src/deeddiscovery.js](../../src/deeddiscovery.js) | 221 | platform-core | 4 / 8 | 0 | 8 | 5 |
 | [src/deedquesteligibility.js](../../src/deedquesteligibility.js) | 56 | platform-core | 2 / 2 | 0 | 3 | 1 |
 | [src/deeds.js](../../src/deeds.js) | 633 | enterprise-logistics | 6 / 13 | 11 | 12 | 7 |

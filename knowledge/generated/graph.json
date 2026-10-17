@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ac453bea002dd43d74ed1438bf87e29f9bafd757",
+  "sourceRevision": "8627c7f6269ced16a99d353d626e39d6c6ee3362",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16327,
-    "edges": 64994,
+    "nodes": 16340,
+    "edges": 65043,
     "byNodeType": {
-      "Artifact": 6787,
-      "Command": 293,
-      "Commit": 4455,
+      "Artifact": 6792,
+      "Command": 294,
+      "Commit": 4458,
       "Contract": 134,
       "Document": 939,
       "Domain": 13,
@@ -60,25 +60,25 @@
       "Route": 1048,
       "Subsystem": 8,
       "Table": 555,
-      "TestSuite": 939,
+      "TestSuite": 943,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5381,
-      "CHANGED": 24931,
-      "CONTAINS": 6808,
-      "DECLARES": 293,
+      "BELONGS_TO": 5386,
+      "CHANGED": 24951,
+      "CONTAINS": 6813,
+      "DECLARES": 294,
       "DEFINED_IN": 1737,
       "DEPENDS_ON": 69,
-      "EXECUTES": 1126,
+      "EXECUTES": 1130,
       "HANDLED_BY": 929,
-      "HAS_COMMIT": 4455,
+      "HAS_COMMIT": 4458,
       "IMPLEMENTS": 124,
-      "IMPORTS": 7312,
+      "IMPORTS": 7317,
       "INHERITS": 45,
       "REFERENCES": 3814,
-      "REPRESENTS": 2441,
-      "TESTS": 2339,
+      "REPRESENTS": 2445,
+      "TESTS": 2341,
       "TRACKS": 126,
       "USES_TABLE": 3064
     }
@@ -87371,20 +87371,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 57036,
-      "lines": 324,
-      "version": "8d0af502e9503e78",
+      "bytes": 57286,
+      "lines": 325,
+      "version": "1adbcad0550ccf63",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "8d0af502e9503e78"
+          "version": "1adbcad0550ccf63"
         }
       ],
-      "lastChangedAt": "2026-10-16T22:57:50.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc74f90100d398e1ce9d76696f1ea24a6e065fbe"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:Procfile",
@@ -116765,20 +116765,43 @@
       "path": "public/city-scene.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 155121,
-      "lines": 2418,
-      "version": "a6fab5d4faecc0b1",
+      "bytes": 168362,
+      "lines": 2621,
+      "version": "028e83519713e2bd",
       "text": true,
       "provenance": [
         {
           "file": "public/city-scene.js",
           "line": 1,
-          "version": "a6fab5d4faecc0b1"
+          "version": "028e83519713e2bd"
         }
       ],
-      "lastChangedAt": "2026-10-16T22:20:38.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "554257d4685da02ba91de27331f004dbe7beb1f1"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
+    },
+    {
+      "key": "Artifact:public/city-world-layout.js",
+      "type": "Artifact",
+      "id": "public/city-world-layout.js",
+      "label": "city-world-layout.js",
+      "path": "public/city-world-layout.js",
+      "kind": "web-surface",
+      "extension": ".js",
+      "bytes": 15830,
+      "lines": 309,
+      "version": "f80ae0cdae8e2875",
+      "text": true,
+      "provenance": [
+        {
+          "file": "public/city-world-layout.js",
+          "line": 1,
+          "version": "f80ae0cdae8e2875"
+        }
+      ],
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:public/city-world-ui.css",
@@ -116788,20 +116811,20 @@
       "path": "public/city-world-ui.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 16198,
-      "lines": 133,
-      "version": "c7fb64fc92103baa",
+      "bytes": 18019,
+      "lines": 151,
+      "version": "1644bc26395c31ca",
       "text": true,
       "provenance": [
         {
           "file": "public/city-world-ui.css",
           "line": 1,
-          "version": "c7fb64fc92103baa"
+          "version": "1644bc26395c31ca"
         }
       ],
-      "lastChangedAt": "2026-10-16T05:58:47.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f8d9115e6dea608c1960d31b7365e69ebb0fbf1b"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:public/city-world-ui.js",
@@ -116811,20 +116834,20 @@
       "path": "public/city-world-ui.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 78998,
-      "lines": 918,
-      "version": "0dcbf85f36dc6961",
+      "bytes": 90495,
+      "lines": 1041,
+      "version": "03570ca46d0fb58e",
       "text": true,
       "provenance": [
         {
           "file": "public/city-world-ui.js",
           "line": 1,
-          "version": "0dcbf85f36dc6961"
+          "version": "03570ca46d0fb58e"
         }
       ],
-      "lastChangedAt": "2026-10-16T05:58:47.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f8d9115e6dea608c1960d31b7365e69ebb0fbf1b"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:public/consigliere.html",
@@ -117225,20 +117248,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1466012,
-      "lines": 15491,
-      "version": "9b963c0e87676a74",
+      "bytes": 1468176,
+      "lines": 15524,
+      "version": "9f8baaf26731853d",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "9b963c0e87676a74"
+          "version": "9f8baaf26731853d"
         }
       ],
-      "lastChangedAt": "2026-10-17T16:12:05.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5909e505513186136f19c0d76997359321594926"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -117823,20 +117846,20 @@
       "path": "src/agentgateway.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 154448,
-      "lines": 2388,
-      "version": "5d9c3add0aa84bfa",
+      "bytes": 154716,
+      "lines": 2390,
+      "version": "e7b51ba30ab4773d",
       "text": true,
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "5d9c3add0aa84bfa"
+          "version": "e7b51ba30ab4773d"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:src/agentoperatingmemory.js",
@@ -119065,20 +119088,20 @@
       "path": "src/cityhomes.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 3975,
-      "lines": 58,
-      "version": "4748763673b2f189",
+      "bytes": 4100,
+      "lines": 59,
+      "version": "ee2c6a581cedfa28",
       "text": true,
       "provenance": [
         {
           "file": "src/cityhomes.js",
           "line": 1,
-          "version": "4748763673b2f189"
+          "version": "ee2c6a581cedfa28"
         }
       ],
-      "lastChangedAt": "2026-10-12T05:44:35.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:src/citymap.js",
@@ -129093,20 +129116,20 @@
       "path": "src/server.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 299054,
+      "bytes": 299106,
       "lines": 3935,
-      "version": "27c864904f766d8d",
+      "version": "f1f043bff0542539",
       "text": true,
       "provenance": [
         {
           "file": "src/server.js",
           "line": 1,
-          "version": "27c864904f766d8d"
+          "version": "f1f043bff0542539"
         }
       ],
-      "lastChangedAt": "2026-10-16T22:20:38.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "554257d4685da02ba91de27331f004dbe7beb1f1"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:src/servicesubscriptions.js",
@@ -131800,6 +131823,29 @@
       "lastChangedCommit": "43ecc8e7faaebf60d0a0685b844a2ad556570c99"
     },
     {
+      "key": "Artifact:test/city-connected-scene-browser.js",
+      "type": "Artifact",
+      "id": "test/city-connected-scene-browser.js",
+      "label": "city-connected-scene-browser.js",
+      "path": "test/city-connected-scene-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 17262,
+      "lines": 215,
+      "version": "469e137f43bc113e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/city-connected-scene-browser.js",
+          "line": 1,
+          "version": "469e137f43bc113e"
+        }
+      ],
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
+    },
+    {
       "key": "Artifact:test/city-dashboard-host-browser.js",
       "type": "Artifact",
       "id": "test/city-dashboard-host-browser.js",
@@ -131991,20 +132037,20 @@
       "path": "test/city-homes-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 17534,
-      "lines": 234,
-      "version": "e5b0e1e53ad5f141",
+      "bytes": 20656,
+      "lines": 267,
+      "version": "ca7a5e67405a3959",
       "text": true,
       "provenance": [
         {
           "file": "test/city-homes-api.js",
           "line": 1,
-          "version": "e5b0e1e53ad5f141"
+          "version": "ca7a5e67405a3959"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:test/city-neighborhood-broadcast.js",
@@ -132129,20 +132175,20 @@
       "path": "test/city-scene-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 152761,
-      "lines": 2024,
-      "version": "4aa019fb74258e87",
+      "bytes": 153132,
+      "lines": 2028,
+      "version": "2432ea65b621c985",
       "text": true,
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "4aa019fb74258e87"
+          "version": "2432ea65b621c985"
         }
       ],
-      "lastChangedAt": "2026-10-17T03:09:05.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4b6e33ccf85b32dd73f68dc25270c8817824bb9d"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:test/city-social-api.js",
@@ -132175,20 +132221,66 @@
       "path": "test/city-world-host-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 145397,
-      "lines": 1677,
-      "version": "d391ee0f72eed3e1",
+      "bytes": 147136,
+      "lines": 1698,
+      "version": "cd05dbe5249db3e4",
       "text": true,
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "d391ee0f72eed3e1"
+          "version": "cd05dbe5249db3e4"
         }
       ],
-      "lastChangedAt": "2026-10-17T08:40:37.000Z",
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "baf261b63ed6006cfe5544ed80d21400fa28f5e4"
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
+    },
+    {
+      "key": "Artifact:test/city-world-layout-ui-browser.js",
+      "type": "Artifact",
+      "id": "test/city-world-layout-ui-browser.js",
+      "label": "city-world-layout-ui-browser.js",
+      "path": "test/city-world-layout-ui-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 10337,
+      "lines": 119,
+      "version": "87bd3c463866d7f6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/city-world-layout-ui-browser.js",
+          "line": 1,
+          "version": "87bd3c463866d7f6"
+        }
+      ],
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
+    },
+    {
+      "key": "Artifact:test/city-world-layout.js",
+      "type": "Artifact",
+      "id": "test/city-world-layout.js",
+      "label": "city-world-layout.js",
+      "path": "test/city-world-layout.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 7691,
+      "lines": 114,
+      "version": "38ac73f565375329",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/city-world-layout.js",
+          "line": 1,
+          "version": "38ac73f565375329"
+        }
+      ],
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:test/city-world-opportunities.js",
@@ -134075,6 +134167,29 @@
       "lastChangedAt": "2026-08-26T22:53:14.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "c6cfc106267c5d6f02ae7c114125bdc5c6f0e923"
+    },
+    {
+      "key": "Artifact:test/continuous-city-host-contract.js",
+      "type": "Artifact",
+      "id": "test/continuous-city-host-contract.js",
+      "label": "continuous-city-host-contract.js",
+      "path": "test/continuous-city-host-contract.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 10245,
+      "lines": 160,
+      "version": "6cd0d39259389b87",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/continuous-city-host-contract.js",
+          "line": 1,
+          "version": "6cd0d39259389b87"
+        }
+      ],
+      "lastChangedAt": "2026-10-17T18:33:51.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
     },
     {
       "key": "Artifact:test/contractauctions.js",
@@ -157208,7 +157323,7 @@
       "type": "Command",
       "id": "npm:test",
       "label": "npm run test",
-      "command": "node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy",
+      "command": "node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy",
       "provenance": [
         {
           "file": "package.json",
@@ -157429,7 +157544,7 @@
       "type": "Command",
       "id": "npm:test:city",
       "label": "npm run test:city",
-      "command": "node test/city-rpg.js && node test/worldgraph-api.js && node test/worldgraph-validation.js && node test/operations.js && node test/pwa.js && node test/citymap.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city-gameplay",
+      "command": "node test/city-rpg.js && node test/worldgraph-api.js && node test/worldgraph-validation.js && node test/operations.js && node test/pwa.js && node test/citymap.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay",
       "provenance": [
         {
           "file": "package.json",
@@ -157533,7 +157648,20 @@
       "type": "Command",
       "id": "npm:test:city:browser",
       "label": "npm run test:city:browser",
-      "command": "node test/city-scene-browser.js && node test/city-activity-browser.js && node test/city-dashboard-host-browser.js && node test/world-fieldwork-browser.js && node test/city-presence-browser.js && node test/city-world-ui-browser.js && node test/city-world-host-browser.js && npm run test:city-gameplay:browser",
+      "command": "node test/city-connected-scene-browser.js && node test/city-scene-browser.js && node test/city-activity-browser.js && node test/city-dashboard-host-browser.js && node test/world-fieldwork-browser.js && node test/city-presence-browser.js && node test/city-world-ui-browser.js && node test/city-world-layout-ui-browser.js && node test/city-world-host-browser.js && npm run test:city-gameplay:browser",
+      "provenance": [
+        {
+          "file": "package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "key": "Command:npm:test:city:layout",
+      "type": "Command",
+      "id": "npm:test:city:layout",
+      "label": "npm run test:city:layout",
+      "command": "node test/city-world-layout.js && node test/continuous-city-host-contract.js",
       "provenance": [
         {
           "file": "package.json",
@@ -171166,6 +171294,22 @@
         {
           "commit": "280762b07e664482f9e3b70c6898c68efb226aee",
           "url": "https://github.com/OmertaDev/Omerta/commit/280762b07e664482f9e3b70c6898c68efb226aee"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "type": "Commit",
+      "id": "2811894850d38ee4c7d703953a9fb759756478a5",
+      "label": "Connect all districts with permanent residential streets",
+      "title": "Connect all districts with permanent residential streets",
+      "date": "2026-10-17T18:33:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2811894850d38ee4c7d703953a9fb759756478a5",
+      "provenance": [
+        {
+          "commit": "2811894850d38ee4c7d703953a9fb759756478a5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2811894850d38ee4c7d703953a9fb759756478a5"
         }
       ]
     },
@@ -194626,6 +194770,22 @@
       ]
     },
     {
+      "key": "Commit:792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "type": "Commit",
+      "id": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "label": "Refresh enterprise knowledge after the deed claim busy guard",
+      "title": "Refresh enterprise knowledge after the deed claim busy guard",
+      "date": "2026-10-17T16:30:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "provenance": [
+        {
+          "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+        }
+      ]
+    },
+    {
       "key": "Commit:7951b6709d9593f70a3e3cb276c9efba818609e6",
       "type": "Commit",
       "id": "7951b6709d9593f70a3e3cb276c9efba818609e6",
@@ -198334,6 +198494,22 @@
         {
           "commit": "86264f4333b0d6f299861b12fff05b368dd69557",
           "url": "https://github.com/OmertaDev/Omerta/commit/86264f4333b0d6f299861b12fff05b368dd69557"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8627c7f6269ced16a99d353d626e39d6c6ee3362",
+      "type": "Commit",
+      "id": "8627c7f6269ced16a99d353d626e39d6c6ee3362",
+      "label": "Merge pending E release into continuous city candidate",
+      "title": "Merge pending E release into continuous city candidate",
+      "date": "2026-10-17T18:34:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8627c7f6269ced16a99d353d626e39d6c6ee3362",
+      "provenance": [
+        {
+          "commit": "8627c7f6269ced16a99d353d626e39d6c6ee3362",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8627c7f6269ced16a99d353d626e39d6c6ee3362"
         }
       ]
     },
@@ -250851,6 +251027,10 @@
           "line": 7
         },
         {
+          "file": "test/city-connected-scene-browser.js",
+          "line": 7
+        },
+        {
           "file": "test/city-dashboard-host-browser.js",
           "line": 6
         },
@@ -250873,6 +251053,10 @@
         {
           "file": "test/city-world-host-browser.js",
           "line": 6
+        },
+        {
+          "file": "test/city-world-layout-ui-browser.js",
+          "line": 4
         },
         {
           "file": "test/city-world-ui-browser.js",
@@ -258708,6 +258892,9 @@
           "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
+          "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -260940,6 +261127,9 @@
           "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
         },
         {
+          "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -263170,6 +263360,9 @@
         },
         {
           "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
+          "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -266029,6 +266222,9 @@
         },
         {
           "commit": "7911060b4ea1368fcbfef42f60e862b6ecb6c57a"
+        },
+        {
+          "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -269526,13 +269722,13 @@
       "type": "Module",
       "id": "src/agentgateway.js",
       "label": "src/agentgateway.js",
-      "lines": 2388,
-      "version": "5d9c3add0aa84bfa",
+      "lines": 2390,
+      "version": "e7b51ba30ab4773d",
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "5d9c3add0aa84bfa"
+          "version": "e7b51ba30ab4773d"
         }
       ]
     },
@@ -270321,13 +270517,13 @@
       "type": "Module",
       "id": "src/cityhomes.js",
       "label": "src/cityhomes.js",
-      "lines": 58,
-      "version": "4748763673b2f189",
+      "lines": 59,
+      "version": "ee2c6a581cedfa28",
       "provenance": [
         {
           "file": "src/cityhomes.js",
           "line": 1,
-          "version": "4748763673b2f189"
+          "version": "ee2c6a581cedfa28"
         }
       ]
     },
@@ -276817,12 +277013,12 @@
       "id": "src/server.js",
       "label": "src/server.js",
       "lines": 3935,
-      "version": "27c864904f766d8d",
+      "version": "f1f043bff0542539",
       "provenance": [
         {
           "file": "src/server.js",
           "line": 1,
-          "version": "27c864904f766d8d"
+          "version": "f1f043bff0542539"
         }
       ]
     },
@@ -280971,12 +281167,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ac453bea002dd43d74ed1438bf87e29f9bafd757",
-      "currentBranch": "codex/economy-enterprise-spaces-oct15",
+      "revision": "8627c7f6269ced16a99d353d626e39d6c6ee3362",
+      "currentBranch": "codex/continuous-city-world-map-20261017",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6787,
+      "currentArtifactCount": 6792,
       "provenance": [
         {
           "file": "README.md",
@@ -318781,6 +318977,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/city-connected-scene-browser.js",
+      "type": "TestSuite",
+      "id": "test/city-connected-scene-browser.js",
+      "label": "test/city-connected-scene-browser.js",
+      "lines": 215,
+      "version": "469e137f43bc113e",
+      "provenance": [
+        {
+          "file": "test/city-connected-scene-browser.js",
+          "line": 1,
+          "version": "469e137f43bc113e"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/city-dashboard-host-browser.js",
       "type": "TestSuite",
       "id": "test/city-dashboard-host-browser.js",
@@ -318905,13 +319116,13 @@
       "type": "TestSuite",
       "id": "test/city-homes-api.js",
       "label": "test/city-homes-api.js",
-      "lines": 234,
-      "version": "e5b0e1e53ad5f141",
+      "lines": 267,
+      "version": "ca7a5e67405a3959",
       "provenance": [
         {
           "file": "test/city-homes-api.js",
           "line": 1,
-          "version": "e5b0e1e53ad5f141"
+          "version": "ca7a5e67405a3959"
         }
       ]
     },
@@ -318995,13 +319206,13 @@
       "type": "TestSuite",
       "id": "test/city-scene-browser.js",
       "label": "test/city-scene-browser.js",
-      "lines": 2024,
-      "version": "4aa019fb74258e87",
+      "lines": 2028,
+      "version": "2432ea65b621c985",
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "4aa019fb74258e87"
+          "version": "2432ea65b621c985"
         }
       ]
     },
@@ -319025,13 +319236,43 @@
       "type": "TestSuite",
       "id": "test/city-world-host-browser.js",
       "label": "test/city-world-host-browser.js",
-      "lines": 1677,
-      "version": "d391ee0f72eed3e1",
+      "lines": 1698,
+      "version": "cd05dbe5249db3e4",
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "d391ee0f72eed3e1"
+          "version": "cd05dbe5249db3e4"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/city-world-layout-ui-browser.js",
+      "type": "TestSuite",
+      "id": "test/city-world-layout-ui-browser.js",
+      "label": "test/city-world-layout-ui-browser.js",
+      "lines": 119,
+      "version": "87bd3c463866d7f6",
+      "provenance": [
+        {
+          "file": "test/city-world-layout-ui-browser.js",
+          "line": 1,
+          "version": "87bd3c463866d7f6"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/city-world-layout.js",
+      "type": "TestSuite",
+      "id": "test/city-world-layout.js",
+      "label": "test/city-world-layout.js",
+      "lines": 114,
+      "version": "38ac73f565375329",
+      "provenance": [
+        {
+          "file": "test/city-world-layout.js",
+          "line": 1,
+          "version": "38ac73f565375329"
         }
       ]
     },
@@ -320262,6 +320503,21 @@
           "file": "test/contextplus.js",
           "line": 1,
           "version": "2b751afea198988d"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/continuous-city-host-contract.js",
+      "type": "TestSuite",
+      "id": "test/continuous-city-host-contract.js",
+      "label": "test/continuous-city-host-contract.js",
+      "lines": 160,
+      "version": "6cd0d39259389b87",
+      "provenance": [
+        {
+          "file": "test/continuous-city-host-contract.js",
+          "line": 1,
+          "version": "6cd0d39259389b87"
         }
       ]
     },
@@ -354079,6 +354335,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:public/city-world-layout.js",
+      "to": "Domain:client-experience",
+      "provenance": {
+        "file": "public/city-world-layout.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:public/city-world-ui.css",
       "to": "Domain:client-experience",
       "provenance": {
@@ -359884,6 +360149,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/city-connected-scene-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/city-connected-scene-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/city-dashboard-host-browser.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -360032,6 +360306,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/city-world-host-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/city-world-layout-ui-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/city-world-layout-ui-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/city-world-layout.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/city-world-layout.js",
         "line": 1
       }
     },
@@ -360770,6 +361062,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/contextplus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/continuous-city-host-contract.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/continuous-city-host-contract.js",
         "line": 1
       }
     },
@@ -403858,6 +404159,134 @@
       "to": "Artifact:tools/rc1-source-pair.js",
       "provenance": {
         "commit": "280762b07e664482f9e3b70c6898c68efb226aee"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:public/city-scene.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:public/city-world-layout.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:public/city-world-ui.css",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:public/city-world-ui.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:src/agentgateway.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:src/cityhomes.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:test/city-connected-scene-browser.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:test/city-homes-api.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:test/city-scene-browser.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:test/city-world-host-browser.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:test/city-world-layout-ui-browser.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:test/city-world-layout.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "to": "Artifact:test/continuous-city-host-contract.js",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
       }
     },
     {
@@ -466234,6 +466663,38 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "commit": "792466312e55b8baba962a80d4020bf554da47ed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
       }
     },
     {
@@ -610260,6 +610721,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/city-connected-scene-browser.js",
+      "provenance": {
+        "file": "test/city-connected-scene-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/city-dashboard-host-browser.js",
       "provenance": {
         "file": "test/city-dashboard-host-browser.js",
@@ -610407,6 +610877,24 @@
       "to": "Artifact:test/city-world-host-browser.js",
       "provenance": {
         "file": "test/city-world-host-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/city-world-layout-ui-browser.js",
+      "provenance": {
+        "file": "test/city-world-layout-ui-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/city-world-layout.js",
+      "provenance": {
+        "file": "test/city-world-layout.js",
         "line": 1
       }
     },
@@ -611145,6 +611633,15 @@
       "to": "Artifact:test/contextplus.js",
       "provenance": {
         "file": "test/contextplus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/continuous-city-host-contract.js",
+      "provenance": {
+        "file": "test/continuous-city-host-contract.js",
         "line": 1
       }
     },
@@ -639173,6 +639670,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:web",
+      "to": "Artifact:public/city-world-layout.js",
+      "provenance": {
+        "file": "public/city-world-layout.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:web",
       "to": "Artifact:public/city-world-ui.css",
       "provenance": {
         "file": "public/city-world-ui.css",
@@ -640412,6 +640918,15 @@
       "type": "DECLARES",
       "from": "Artifact:package.json",
       "to": "Command:npm:test:city:browser",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "DECLARES",
+      "from": "Artifact:package.json",
+      "to": "Command:npm:test:city:layout",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -657818,7 +658333,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1719
+      "weight": 1721
     },
     {
       "type": "DEPENDS_ON",
@@ -663649,6 +664164,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:city:browser",
+      "to": "Artifact:test/city-connected-scene-browser.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:city:browser",
       "to": "Artifact:test/city-dashboard-host-browser.js",
       "provenance": {
         "file": "package.json",
@@ -663685,6 +664209,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:city:browser",
+      "to": "Artifact:test/city-world-layout-ui-browser.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:city:browser",
       "to": "Artifact:test/city-world-ui-browser.js",
       "provenance": {
         "file": "package.json",
@@ -663695,6 +664228,24 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:city:browser",
       "to": "Artifact:test/world-fieldwork-browser.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:city:layout",
+      "to": "Artifact:test/city-world-layout.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:city:layout",
+      "to": "Artifact:test/continuous-city-host-contract.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -683175,6 +683726,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2811894850d38ee4c7d703953a9fb759756478a5",
+      "provenance": {
+        "commit": "2811894850d38ee4c7d703953a9fb759756478a5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2820fd1cf84b68b88874bbdeb30e9caa366c6f5a",
       "provenance": {
         "commit": "2820fd1cf84b68b88874bbdeb30e9caa366c6f5a"
@@ -694903,6 +695462,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:792f1da708375fc28fca6fe9c4fb9c2c7c756ee6",
+      "provenance": {
+        "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7951b6709d9593f70a3e3cb276c9efba818609e6",
       "provenance": {
         "commit": "7951b6709d9593f70a3e3cb276c9efba818609e6"
@@ -696754,6 +697321,14 @@
       "to": "Commit:86264f4333b0d6f299861b12fff05b368dd69557",
       "provenance": {
         "commit": "86264f4333b0d6f299861b12fff05b368dd69557"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8627c7f6269ced16a99d353d626e39d6c6ee3362",
+      "provenance": {
+        "commit": "8627c7f6269ced16a99d353d626e39d6c6ee3362"
       }
     },
     {
@@ -716829,6 +717404,15 @@
       "provenance": {
         "file": "src/city-world-opportunity-adapters.js",
         "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/cityhomes.js",
+      "to": "Artifact:src/deedbuildings.js",
+      "provenance": {
+        "file": "src/cityhomes.js",
+        "line": 5
       }
     },
     {
@@ -737218,6 +737802,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/city-connected-scene-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/city-connected-scene-browser.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/city-dashboard-host-browser.js",
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
@@ -737672,7 +738265,7 @@
       "to": "Artifact:src/cityhomes.js",
       "provenance": {
         "file": "test/city-homes-api.js",
-        "line": 180
+        "line": 205
       }
     },
     {
@@ -738065,6 +738658,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/city-world-host-browser.js",
+      "to": "Artifact:src/deedbuildings.js",
+      "provenance": {
+        "file": "test/city-world-host-browser.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-world-host-browser.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/city-world-host-browser.js",
@@ -738096,6 +738698,24 @@
       "provenance": {
         "file": "test/city-world-host-browser.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-world-layout-ui-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/city-world-layout-ui-browser.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-world-layout.js",
+      "to": "Artifact:src/deedbuildings.js",
+      "provenance": {
+        "file": "test/city-world-layout.js",
+        "line": 5
       }
     },
     {
@@ -829747,6 +830367,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/city-connected-scene-browser.js",
+      "to": "Artifact:test/city-connected-scene-browser.js",
+      "provenance": {
+        "file": "test/city-connected-scene-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/city-dashboard-host-browser.js",
       "to": "Artifact:test/city-dashboard-host-browser.js",
       "provenance": {
@@ -829895,6 +830524,24 @@
       "to": "Artifact:test/city-world-host-browser.js",
       "provenance": {
         "file": "test/city-world-host-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/city-world-layout-ui-browser.js",
+      "to": "Artifact:test/city-world-layout-ui-browser.js",
+      "provenance": {
+        "file": "test/city-world-layout-ui-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/city-world-layout.js",
+      "to": "Artifact:test/city-world-layout.js",
+      "provenance": {
+        "file": "test/city-world-layout.js",
         "line": 1
       }
     },
@@ -830633,6 +831280,15 @@
       "to": "Artifact:test/contextplus.js",
       "provenance": {
         "file": "test/contextplus.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/continuous-city-host-contract.js",
+      "to": "Artifact:test/continuous-city-host-contract.js",
+      "provenance": {
+        "file": "test/continuous-city-host-contract.js",
         "line": 1
       }
     },
@@ -838724,7 +839380,7 @@
       "to": "Artifact:src/cityhomes.js",
       "provenance": {
         "file": "test/city-homes-api.js",
-        "line": 180
+        "line": 205
       }
     },
     {
@@ -838955,10 +839611,28 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/city-world-host-browser.js",
+      "to": "Artifact:src/deedbuildings.js",
+      "provenance": {
+        "file": "test/city-world-host-browser.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-world-host-browser.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/city-world-host-browser.js",
         "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-world-layout.js",
+      "to": "Artifact:src/deedbuildings.js",
+      "provenance": {
+        "file": "test/city-world-layout.js",
+        "line": 5
       }
     },
     {
@@ -858857,7 +859531,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2306
+        "line": 2308
       }
     },
     {
@@ -858893,7 +859567,7 @@
       "to": "Table:businesses",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2370
+        "line": 2372
       }
     },
     {
@@ -858911,7 +859585,7 @@
       "to": "Table:collection_log",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2363
+        "line": 2365
       }
     },
     {
@@ -858965,7 +859639,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2363
+        "line": 2365
       }
     },
     {
@@ -858974,7 +859648,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2363
+        "line": 2365
       }
     },
     {
@@ -858983,7 +859657,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2363
+        "line": 2365
       }
     },
     {
@@ -859001,7 +859675,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 1284
+        "line": 1286
       }
     },
     {
@@ -859037,7 +859711,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2363
+        "line": 2365
       }
     },
     {
@@ -859046,7 +859720,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2335
+        "line": 2337
       }
     },
     {
@@ -861575,7 +862249,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/cityhomes.js",
-        "line": 41
+        "line": 42
       }
     },
     {
@@ -861584,7 +862258,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/cityhomes.js",
-        "line": 29
+        "line": 30
       }
     },
     {
@@ -861611,7 +862285,7 @@
       "to": "Table:street_deeds",
       "provenance": {
         "file": "src/cityhomes.js",
-        "line": 32
+        "line": 33
       }
     },
     {
