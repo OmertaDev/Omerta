@@ -1,5 +1,5 @@
-// Genuine immutable authored-source proposal; no raw/native admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="3f6225ecffee0ca14a20371e8ceeb82a728044cc";
+// Actual immutable C input-union proposal; no native/final/physical admission.
+export const ENTERPRISE_NATIVE_BASE_REVISION="158a550192d9f61ed041eedef30751251290966c";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -1490,13 +1490,90 @@ export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   "tools/equipment-economy-native.js",
   "src/city-activity.js",
   "tools/rc1-city-activity-market-source-compatibility.js",
-  "tools/rc1-city-activity-source-compatibility.js"
+  "tools/rc1-city-activity-source-compatibility.js",
+  "src/commercialcampaignruntime.js",
+  "src/commercialcampaigns-contracts.js",
+  "src/commercialcampaigns-schema.js",
+  "src/commercialcampaigns.js",
+  "src/eventmarkets-contracts.js",
+  "src/eventmarkets-schema.js",
+  "src/eventmarkets.js",
+  "src/merchantloyalty-api.js",
+  "src/merchantloyalty-contracts.js",
+  "src/merchantloyalty-schema.js",
+  "src/merchantloyalty.js",
+  "src/routes/commercialcampaigns.js",
+  "src/routes/eventmarkets.js",
+  "src/saleattribution-contracts.js",
+  "src/saleattribution-routes.js",
+  "src/saleattribution.js",
+  "src/shoppingbasket-api.js",
+  "src/shoppingbasket-contracts.js",
+  "src/shoppingbasket-schema.js",
+  "src/shoppingbasket.js",
+  "test/atomicbarter.js",
+  "test/city-gameplay-panels-browser.js",
+  "test/commerce-current-native-guard.js",
+  "test/commerce-release-phase2-migration-catalog.js",
+  "test/commerce-source-compatibility.js",
+  "test/commercialcampaigns-integration.js",
+  "test/commercialcampaigns-metadata-native.js",
+  "test/consignments-api.js",
+  "test/consignments.js",
+  "test/deed-discovery-fixture.js",
+  "test/eventmarkets-finite-fixture.js",
+  "test/eventmarkets-integration.js",
+  "test/eventmarkets-recovery-fixture.js",
+  "test/merchantloyalty-accounting.js",
+  "test/merchantloyalty-api.js",
+  "test/merchantloyalty-boundary.js",
+  "test/merchantloyalty-current-native-fixture.js",
+  "test/merchantloyalty-estate.js",
+  "test/merchantloyalty-expiry.js",
+  "test/merchantloyalty-fixture.js",
+  "test/merchantloyalty-native-estate.js",
+  "test/merchantloyalty-native-expiry.js",
+  "test/merchantloyalty-native-races.js",
+  "test/merchantloyalty-native-rollback.js",
+  "test/merchantloyalty.js",
+  "test/saleattribution-api.js",
+  "test/saleattribution-current-native-fixture.js",
+  "test/saleattribution-expiry.js",
+  "test/saleattribution-fixture.js",
+  "test/saleattribution-native-estate.js",
+  "test/saleattribution-native-races.js",
+  "test/saleattribution-native-rollback.js",
+  "test/saleattribution-witness.js",
+  "test/saleattribution.js",
+  "test/shoppingbasket-api.js",
+  "test/shoppingbasket-atomicity.js",
+  "test/shoppingbasket-boundary.js",
+  "test/shoppingbasket-current-native-fixture.js",
+  "test/shoppingbasket-estate.js",
+  "test/shoppingbasket-expiry.js",
+  "test/shoppingbasket-fixture.js",
+  "test/shoppingbasket-native-estate.js",
+  "test/shoppingbasket-native-expiry.js",
+  "test/shoppingbasket-native-races.js",
+  "test/shoppingbasket-native-rollback.js",
+  "test/shoppingbasket.js",
+  "tools/commerce-current-native-data.js",
+  "tools/commerce-current-native-guard.js",
+  "tools/commerce-current-native.js",
+  "tools/commerce-deed-release-phase2-native-catalog.js",
+  "tools/commerce-enterprise-source-compatibility.js",
+  "tools/commerce-enterprise-source-data.js",
+  "tools/commerce-graph-helpers.js",
+  "tools/commerce-native.js",
+  "tools/commerce-release-phase2-migration-catalog.js",
+  "tools/commerce-release-phase2-native-catalog.js",
+  "tools/commerce-source-compatibility.js"
 ]);
 export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   {
     "file": ".github/workflows/ci.yml",
-    "blob": "e11f5fc9cedba55b8b30edc2705472650ccecd12",
-    "sha256": "6fc388a14aa01fd6e81b11b56da3dd63649118915be3d36f27defc2e48389750"
+    "blob": "1cb1140814522f5594f2075b9a32d6b5f973d93c",
+    "sha256": "dbbc7f5218c0641a2dca56ccedd07cde392e8d1c4abd11e1155577eec70b48d4"
   },
   {
     "file": ".github/workflows/forge.yml",
@@ -1740,8 +1817,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "package.json",
-    "blob": "7920761b7e8eba7a1ae653ad6a6b0a66edcea560",
-    "sha256": "8d0af502e9503e78f82809f3652c9e51549d85fa5ad07d45452cf829e6345cb2"
+    "blob": "493a6e8fc8d6987577d9d31973bf4d2287bbba94",
+    "sha256": "8f017fa715916955f6ec51cd42516301608a365f91cec9402e837aaa5b6237cd"
   },
   {
     "file": "public/admin.html",
@@ -4710,8 +4787,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "schema.sql",
-    "blob": "bf7927fabc8c47b01936f63aa609972ba35845af",
-    "sha256": "9b80153efdeb616208d2d6776a268fc88deb1a6246ad0ddd54844c4c5ef76289"
+    "blob": "e95c5fbfb0686e6ad4b7edc80d76cb04455a5bb1",
+    "sha256": "833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335"
   },
   {
     "file": "src/access.js",
@@ -4735,8 +4812,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/agentgateway.js",
-    "blob": "c69229018aa16a8d7ed2a7ceca130ad9f6fa779d",
-    "sha256": "5d9c3add0aa84bfa11da7436e450f09fb5cd43110f506fd59b538a5cf0b1dc1f"
+    "blob": "5fcdd3968495dcee9b038ca8a91672578be093bb",
+    "sha256": "7ea1a1e0e572b3b717ed7130879d2bdc56916a2a163483996a0f0d555f6e428e"
   },
   {
     "file": "src/agentoperatingmemory.js",
@@ -5075,8 +5152,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/commissionedcrafting.js",
-    "blob": "8fb2abaab1ec3fdee9fb8154e723b4f8d62fda4c",
-    "sha256": "dddba626ab010885ac02c15252573d914dde368cd90b97171b24216279cf7f24"
+    "blob": "7d9aa0b5b3c5770ee93c57f9f1ab63ee995fb7a2",
+    "sha256": "f89a0f1ea30c9a1d299d36710e8d3e6b819ebe3449de1e1837be6213251b465c"
   },
   {
     "file": "src/community.js",
@@ -5195,8 +5272,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/companyrestructuring.js",
-    "blob": "1a7efa4d418f6e74909c111ce9155fd3a2f1f764",
-    "sha256": "ce1671b2c030776cb765f2c295a7724c15e9872619d336b78b85107e1e8aff12"
+    "blob": "24a11ebc6af9dd44f900b534b6be3474f5b2157d",
+    "sha256": "86b31196d90bfd33c29d33b6b1b1c1bae5e17b2e266e690b8710c590420796c5"
   },
   {
     "file": "src/companyspecialization.js",
@@ -5245,8 +5322,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/consignments.js",
-    "blob": "ab1c9c7aa33c67a3d4336e388f4dd9d4016c9095",
-    "sha256": "a922fc2b2017838aba0fdfc65b20355809673bd5d33a27b6c4b98d1262cf539f"
+    "blob": "e370a56237bd09b78e31b452d0d6e41c7de4d17a",
+    "sha256": "f69d2a98288c6350930689a0106cd27163268ad88f2f58a400204ea6a7442362"
   },
   {
     "file": "src/contacts.js",
@@ -5630,8 +5707,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/depotacquisitionruntime.js",
-    "blob": "54d0c3b90eae07e889a84943b0e1f82baa52bf0f",
-    "sha256": "25439dbf6f53257fe7f2dea0097ddc9dce17772aa04d3b34799ddf7292b107b9"
+    "blob": "b0c51fb101801a8592ef2ce293cb8590a7ce8dcc",
+    "sha256": "6643e99472f1c05bcc58b7ea32fc260010d1eadbab66117bd0e28fa915b7bda7"
   },
   {
     "file": "src/depotbook.js",
@@ -5645,8 +5722,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/depotrelocationruntime.js",
-    "blob": "8717c898ae3ff0823bdb81e7b11f1ff75bc6c641",
-    "sha256": "6eac295f8392773238a13cf2cd6a3ad04f003a547c82231e52ef2827cd189567"
+    "blob": "2f1acee1b905ea8d7ee4a15fe63a306c24e4f82f",
+    "sha256": "cb586258ce83f9c5fd29e56dd273eae90bac3f5945d4de82d0b83d48d4d5cd36"
   },
   {
     "file": "src/desk.js",
@@ -5895,8 +5972,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/game.js",
-    "blob": "c15e6f171c4be7240b7aea96121762c21f772163",
-    "sha256": "f429d6f54255e20b7b123efb20802a9ce70701c422620693ff702c9deb2424f0"
+    "blob": "0b9d2004d4a87bbbebdd2ec45c4b5123a7f50ca0",
+    "sha256": "811c4b3e97d2ed391c541597dd82ea5b4c3b13aea4328beb2b3aa5da739c4ee7"
   },
   {
     "file": "src/gameemployment.js",
@@ -6070,8 +6147,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/invariants.js",
-    "blob": "cfbbdf5407b78f9d564fc92a95fb3fb64275d042",
-    "sha256": "19485e788c2c93dfd5a7f1264edf5f85a5a0dd9217177bf4c9705535e3336465"
+    "blob": "7532fe24eae8663e2a1b8b04b6b209a9e075565b",
+    "sha256": "3aaeec0f05c5fe40a13921d022471489341b3201da5368bb05119d3db73534c5"
   },
   {
     "file": "src/invites.js",
@@ -6270,8 +6347,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/merchantreturns.js",
-    "blob": "8ed7f2db2d2887968955564e9e306d139e6c6bdc",
-    "sha256": "91635c1a9256db7e87c43b76c67e3280a0aca0c3de354ac265de4b4a7647824b"
+    "blob": "f518de0208aaa611bd9f4d34a35a9cdb386348f1",
+    "sha256": "0fbff46e3f29f882a99ba78d7a0fe987b85cf5f18809b479c5d2e2ba65d0ed29"
   },
   {
     "file": "src/merchantreturnsinvariants.js",
@@ -6285,8 +6362,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/mobileshops.js",
-    "blob": "9bb06aa8aa86a1b712c7ef95d35c91641a0860da",
-    "sha256": "bce9669450f81352bc0ff48286ecfc8f9c87f07d6f98dd44de1be9608229231f"
+    "blob": "41347b97c38d5aaa4d31a58fbc27d88e81a7d3ae",
+    "sha256": "7489f3710e4dc1e41de1f4d0280a348e47c6fea3036fe6405d7ef5a0af2f922d"
   },
   {
     "file": "src/multihopcourier-contracts.js",
@@ -6295,8 +6372,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/multihopcourier.js",
-    "blob": "6120f0118c6b142f5a640977a5260af98bb1ceec",
-    "sha256": "f7ee9960a2051ec607aa359d477d095d9ca3ff637c1e78d128e7c8dcb9f1f722"
+    "blob": "505eaa27002120a2761ba0422b1bb78d1d43c9bf",
+    "sha256": "dfbca26d67cbeaafd5cc4a69fa9c4b7cf0f819fa7de8d5dcb5423bbe005447e0"
   },
   {
     "file": "src/mysteries.js",
@@ -7155,8 +7232,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/server.js",
-    "blob": "213a223a80617e95ad8a0ca8946379975380a16f",
-    "sha256": "27c864904f766d8d564a9f3a4f5429077cb3ba3ee26dfb5053b902f260f78c5e"
+    "blob": "ff9178037e2926ff19d93e20631f973426bd965e",
+    "sha256": "246ec1740b622d8120d8a4f8c9b38abe105b5951f63c9e65359221962ab73f1d"
   },
   {
     "file": "src/servicesubscriptions.js",
@@ -7190,13 +7267,13 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/social/defense.js",
-    "blob": "3a6818a17fbcadbac2ab51fe14ece0cefa44e711",
-    "sha256": "415fc1c2ab0fd3d42f0ff83d470d8f0962134938a1426d479f6874a030a1359c"
+    "blob": "a9b3bd4a4fbd941313d297fa1de9ccd98ccb3614",
+    "sha256": "0058edfdfaf25345307a3e5b7b9507c83d91c1ff5c5b9faec6fe6f38a80190b5"
   },
   {
     "file": "src/social/estate.js",
-    "blob": "8e560bda51ab728396a84f875f13ba80af1f9869",
-    "sha256": "2f7aedfd50860a7bc0857606ffc79d19b0714390da996c7837e0e057efc563d4"
+    "blob": "28aa6601f3e1218d8a7f6433e4e4b1fdb04223cf",
+    "sha256": "9f7030bef3dce98ba1160385b20451224117674cc0cb17efac111e7c2025124d"
   },
   {
     "file": "src/social/exchange.js",
@@ -7700,8 +7777,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/director-migration.js",
-    "blob": "f387cea13e9f607a56b8494f7540c6fd60791d51",
-    "sha256": "8fb9de3ce946ac88e440a9391225a2a19695f6759eb7f7e277e5c2469fa75e4d"
+    "blob": "beee063d52c4b817c655475204ea30e6807c823a",
+    "sha256": "5174ae4d7f531d21520b3356d3dc0407fe465490e6f661fe0b2ae3eee068cddd"
   },
   {
     "file": "test/economicdependencymap-fixture.js",
@@ -7720,13 +7797,13 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/enterprise-release-phase2-migration-catalog.js",
-    "blob": "20bf8a302c4a89dd1274a652f50ef57d5c4d035a",
-    "sha256": "378c635e9b08ca49d16c029ad72bd160736e102aeed414b69204a4496442c0c4"
+    "blob": "8db275cac3a74e2eee02b0674ac9426f27c71ca4",
+    "sha256": "499748c0c688c3f40ec185cd8cf538a7e1dde717c1ed4a8f98b046982120741f"
   },
   {
     "file": "test/enterprise-source-compatibility.js",
-    "blob": "a1fff6b9d10111c8068f5814f1616a99f94a40db",
-    "sha256": "e1b2100eafbb2251907c4a7cba04102c4db101f7633958916b2d8bcbf3c93864"
+    "blob": "04c0db53662c34ab8ab417c7b8402e114dd9ee73",
+    "sha256": "52692f9d9af8fda81a555c8c91c3a78ad828d054e292227099ca5f1a4455c3b5"
   },
   {
     "file": "test/equipmentinsurance-fixture.js",
@@ -7825,13 +7902,13 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/gates.js",
-    "blob": "62da7e1b95bcfda6d532792291273db02b6c803c",
-    "sha256": "46b3f5ab9a7046b5b3d4af126fd1c41e8af8f7b85aa1ed8007285a397cfd7288"
+    "blob": "47d22ce92bdf2270f33ba3866627ec0464fa3091",
+    "sha256": "9c0ec4172288c836f60bc11341e715248c7063f228e1fce2aee5a5464d0b42ae"
   },
   {
     "file": "test/graph.js",
-    "blob": "a9f2350b5de3c5bd3669ed488f1aec9521f09003",
-    "sha256": "e95ffcbfc4cc0dcea3586db59e6f90f46c6da3a7b16e7ced10476979b80063db"
+    "blob": "6c3cd698f8f72f46c6a36309abf6d9f9dc7e11fa",
+    "sha256": "ecc63b6ca017cfbb53cf35e43abca31cf14cfdb855d762ff3db0d9c7ebcf4133"
   },
   {
     "file": "test/lib/campaign-network-support.js",
@@ -7885,8 +7962,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/lib/phase2-architecture-upgrade-catalog.json",
-    "blob": "38ecec0a3071dcc1d0c8d56df6e45025b3609750",
-    "sha256": "f45eb6f97c65ee00d3ad97e0c3a50756acbde77558abd1a86220bf9780006a65"
+    "blob": "ad01d33ca72695cb0e4f2fb6bc751b45eeeded86",
+    "sha256": "44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917"
   },
   {
     "file": "test/lib/phase2-definition-fixtures.js",
@@ -8075,8 +8152,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/migrate.js",
-    "blob": "95ad32dd6e4d590399a76440892a5481a870d05b",
-    "sha256": "d754cf776118d76141121a698833eeb9774cb47163cac840ecf8290c7bc343f1"
+    "blob": "e7f1fa84d0cdb66581e85d764a34eaa41bcc03f0",
+    "sha256": "f727e001fa28f587f9398ac1bdf4c9f4f171a090a36274185db5a3e211b3a05a"
   },
   {
     "file": "test/mobileshops-api.js",
@@ -8165,8 +8242,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/phase2-postgres.js",
-    "blob": "b5779a91dcdaf00134cbe66ee5df374eced379ed",
-    "sha256": "490df9fc80d553a9b7b41a3602f266be4950efa48b25cc014c7d098c521629c3"
+    "blob": "084a3a46d61eba9748269ad0db9b131c417b1068",
+    "sha256": "d611dfc5999a22580b653bfed1b7b1d6cd1c1416bc0661cfce23330afb840ff6"
   },
   {
     "file": "test/productionslots-api.js",
@@ -8295,8 +8372,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/enterprise-graph-helpers.js",
-    "blob": "a711d98c821ddac964511f5b87a85304d198b7a1",
-    "sha256": "26e6c15734ae2dc28a73a8db9d0252fe539dc9e87b6d6936d97bc73ddfdb4258"
+    "blob": "e539f482d08b3f08d8076dc834f245ba20bbee79",
+    "sha256": "606aa57eb06c2d364fefa8e0c3ec6e584c7bd463aa48dccea7bff04384750c11"
   },
   {
     "file": "tools/enterprise-release-phase2-migration-catalog.js",
@@ -8305,13 +8382,13 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/enterprise-source-compatibility.js",
-    "blob": "07e85591bbf2d6a95694130f4d0dab385fccc1cc",
-    "sha256": "2997b6af404da8284ac1025512e666d59f56defac7645e72fb24f9c81d5dcf48"
+    "blob": "df8dc5c3ab9809b2207a87386b36b9f7b8858202",
+    "sha256": "d9a5d15242ae564d4b326dd6e65409451858f988a3567168b5ecf8c6c80b7195"
   },
   {
     "file": "tools/graph.js",
-    "blob": "4c6e61ca17df42a3549411726521b122a94a4180",
-    "sha256": "29e2271d83d8cbd5d8c71f0339d06b5c76d7ae7e658b2f417b05f4c382fa2376"
+    "blob": "1cb57e5b8e84fba6399d0dd3ba056ad239347cf0",
+    "sha256": "378d514638f7ea40a0c9b100cf3368ff93114e3c3f721df0307f18d459c0e4ca"
   },
   {
     "file": "tools/market-operations-graph-helpers.js",
@@ -8345,8 +8422,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/next-layer-graph-helpers.js",
-    "blob": "627226eb5b54f0fd60f6a0ef9006ddbf85c90b59",
-    "sha256": "0054079a1f9c8d63708023d21e7de1a0e7d2b5514121ff1a64e9053e3db5241b"
+    "blob": "8aa4aa83feb76a26d5012535b1535d1b743914d5",
+    "sha256": "c91f2975118600da9216758c6c5068c2e9a4dae5c2cd9b57d9bc337971e9ac29"
   },
   {
     "file": "tools/next-layer-native.js",
@@ -8895,8 +8972,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/enterprise-current-source-compatibility.js",
-    "blob": "b526a843eb436654724bb4924604117d918e4322",
-    "sha256": "c7f83990127cc8dedff482f555f16b70cfce39fe0b614cc51cabe1dd77eb5d10"
+    "blob": "f1217465e26473e4bed0114a21b017e20e28bc5a",
+    "sha256": "ae3ebd7147db0ac7959689cdc6c35ae06d3543d534d9b812bd53f1a805d33f7b"
   },
   {
     "file": "tools/city-gameplay-native.js",
@@ -8927,6 +9004,391 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
     "file": "tools/rc1-city-activity-source-compatibility.js",
     "blob": "bfb3c3813d5c9c0b77c3b04b1428eb97b162cbab",
     "sha256": "27752c326c43b94e3b8112d819cc62350f147e23e22966115932e5ac7025b00e"
+  },
+  {
+    "file": "src/commercialcampaignruntime.js",
+    "blob": "9046ea6bd131f32b838d2f86e0618393d70a82b1",
+    "sha256": "74b5776f868528d0dd1617095613648dc7b4ad9823e6096b944b6101d51f5afb"
+  },
+  {
+    "file": "src/commercialcampaigns-contracts.js",
+    "blob": "4797acb9625f96f9a527d8b1b6578a22654f607d",
+    "sha256": "27e6118da0f44d2075e34ea85343946a565fa0315ee5920cb3bd7994da0c0a67"
+  },
+  {
+    "file": "src/commercialcampaigns-schema.js",
+    "blob": "5dbd1c508be7391e14c859f56f32faa4d48c3ed7",
+    "sha256": "c140514294a0b8da7970cc64af96f193e6d3b5b1b56367fe583094c19f6b86d4"
+  },
+  {
+    "file": "src/commercialcampaigns.js",
+    "blob": "dede492346c39d1146a7ca8e7f927f878a3cf91e",
+    "sha256": "f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c"
+  },
+  {
+    "file": "src/eventmarkets-contracts.js",
+    "blob": "f1121e8397e9e18cfab259adfe4c5f14e228efa8",
+    "sha256": "ae29920e488441cec33049145e54aefb10c91b386072c57adb04f687d51f43e1"
+  },
+  {
+    "file": "src/eventmarkets-schema.js",
+    "blob": "3a1f1203b2a3f9d1ba4b524065d80b286442410d",
+    "sha256": "201aa209e7d20ad11a7de00d85a35b6f2a3a93900ef53853ffe89d8c5360652a"
+  },
+  {
+    "file": "src/eventmarkets.js",
+    "blob": "0c04bd5df7fbde44cab4a18c37f25c59ce02fb02",
+    "sha256": "c154f5fc04bb20adf223b7201d66282a37b5580b05d841ecb244de633eeefe9a"
+  },
+  {
+    "file": "src/merchantloyalty-api.js",
+    "blob": "7e672805aa1d8a23a99d9bbb887f6947fa3e6dbe",
+    "sha256": "6fcf5e451776b1b1790451b588ecedfe68cca2062b1912a343efae6b5fc9045c"
+  },
+  {
+    "file": "src/merchantloyalty-contracts.js",
+    "blob": "89a5bbbf006c9b077e0d16bc05c4325ca5284b25",
+    "sha256": "89d4543cf9d3b3a578c445b6fa4a9416c74a08139477a9c780217f23a39d4724"
+  },
+  {
+    "file": "src/merchantloyalty-schema.js",
+    "blob": "fc692eef353b6c72c4de7085f8292b907c4417d1",
+    "sha256": "d308b35bc3e40f617d22b152dd3e88fb59cc08bf1d9ad93003b27e47ce767145"
+  },
+  {
+    "file": "src/merchantloyalty.js",
+    "blob": "38f6d537d81e71b1c7ee55dfb53962a2b534dd41",
+    "sha256": "8cf4b3e14f7f5f2ef0a798cd1e435bac4fdf50ea96c25a546b30032faf4bf700"
+  },
+  {
+    "file": "src/routes/commercialcampaigns.js",
+    "blob": "9fadacf57eb65c7ffb706fe070668c7687d4da6f",
+    "sha256": "f776676eb450c57ff045a249d99ad708231d91b0b3a4789a9fda906e6fe13862"
+  },
+  {
+    "file": "src/routes/eventmarkets.js",
+    "blob": "3315f29291d2a2bba211fc609b206c98e63f1613",
+    "sha256": "0d75356d1954e84c54c06bd17b26693d88ce136e298395c4c030492f889c316a"
+  },
+  {
+    "file": "src/saleattribution-contracts.js",
+    "blob": "76d485743912367e8eb7843a666638bfebeef311",
+    "sha256": "6dd1037cd61b2539a442fb3b2d1505561caedabf86f3ef1794c3aa3f94b34f14"
+  },
+  {
+    "file": "src/saleattribution-routes.js",
+    "blob": "812f7fcc195c083433efcaa0b89b7eb7a96e0d21",
+    "sha256": "17fc5c417b15521ea027c4d0e8667c3b85fe8631895e1851a63b2ecdfbdf719e"
+  },
+  {
+    "file": "src/saleattribution.js",
+    "blob": "a03e71ca3fd8780fc7d9e863c2c508419a7a7a18",
+    "sha256": "6fe23fcc2ab1413eac75bf69776a0df1b7a6c7c27213f9758eadbb51839ccd13"
+  },
+  {
+    "file": "src/shoppingbasket-api.js",
+    "blob": "c50041bfff0272ddbfb697065ee742eee9ffde32",
+    "sha256": "adb697191097ff5c82bac4bd57df6a61d97f52f62dfde4f1eb1681326261c3c4"
+  },
+  {
+    "file": "src/shoppingbasket-contracts.js",
+    "blob": "a0e74528c1f7f035a976adee6e7e558fd1a02d37",
+    "sha256": "9c6157a797daa2b42cef54e73ade9606d3e6c7695d146ac663a24e0f3ad521b2"
+  },
+  {
+    "file": "src/shoppingbasket-schema.js",
+    "blob": "88d19bf58a62772e08dcca252f92c7ddbe2d3ee4",
+    "sha256": "397eefe78eba764d04ab2541e8d6aaaa6766c310c836b453b43f38c89b561859"
+  },
+  {
+    "file": "src/shoppingbasket.js",
+    "blob": "6084e7af4f63e5328543ad86d046466a98129ec1",
+    "sha256": "40a57a58f485354e31d5108252893aa122af6d97c73f3ae688f66f2bd0f903d6"
+  },
+  {
+    "file": "test/atomicbarter.js",
+    "blob": "2e4617b5e602501f27a0dac8d81dc1e14c5e0f35",
+    "sha256": "e2b38a2fd938b84064c08382a8003238e8ecd1017ede15093ce3aa359aad0dde"
+  },
+  {
+    "file": "test/city-gameplay-panels-browser.js",
+    "blob": "b3d408697ad4041574f9588ae551cfe8d5ec1823",
+    "sha256": "077f54b688c32cd3951bd87aa608681141dfecf2cf9f253cc38f85ec4bd5cf60"
+  },
+  {
+    "file": "test/commerce-current-native-guard.js",
+    "blob": "89838e9a6faa51977ad5117ebece0653ea6cb4cb",
+    "sha256": "7f6416a1afadbfba4a769d27d6505fbf3d5030632eb296a23f44c94734a015fe"
+  },
+  {
+    "file": "test/commerce-release-phase2-migration-catalog.js",
+    "blob": "a2eb770dcba2250b19e7147a5fb92cca1b396b69",
+    "sha256": "d0f4215a372c88492d4ea187ed4512ccb0347c4c5a5c43e583e9a8b390914dd3"
+  },
+  {
+    "file": "test/commerce-source-compatibility.js",
+    "blob": "3bc82795a84c46db75b7fd8aa1cb8fa8915413b7",
+    "sha256": "8764d5f8a5d473180d83b050b77d68edf29cd1d1c5127fa9b9f4f987082955df"
+  },
+  {
+    "file": "test/commercialcampaigns-integration.js",
+    "blob": "251031e3ef43c7230e04e094e6db93b34b2c8035",
+    "sha256": "6a0f35168929b1129fb9a4f32ba4cca627f7f1e21d0d1c07ceaa0d5fec5ea4e0"
+  },
+  {
+    "file": "test/commercialcampaigns-metadata-native.js",
+    "blob": "33a0bfe014eacf1b6bdbc87c270ccd91f04a292a",
+    "sha256": "048f36c4a34a789c3048696efec31ac1d20a28240d72ac10987bd6a4e2cd2283"
+  },
+  {
+    "file": "test/consignments-api.js",
+    "blob": "b12ea6589e7a2fd4bddc710bb83a3d4f1a4201bd",
+    "sha256": "2900353b31ac374943144219d6726f8ffd10d1288821a575bbbaa86a2780886d"
+  },
+  {
+    "file": "test/consignments.js",
+    "blob": "7fa036812a009fa89907bc5d88f22431667d2d6f",
+    "sha256": "9ad339fd74e7822ca7d66fe4adcec9a1bf58103318c9f98e1a901cf016b8e677"
+  },
+  {
+    "file": "test/deed-discovery-fixture.js",
+    "blob": "d42283113efafff67b782a278a9565d1fdf32237",
+    "sha256": "b5c26b23995e49ddfbe46d933620f3b7f19b36eeae4390de869a7e81c7b6e2bd"
+  },
+  {
+    "file": "test/eventmarkets-finite-fixture.js",
+    "blob": "4b5b7ce319a069ace9c3d278724d7af04995a48b",
+    "sha256": "78653825313733cc57779823e392ab94409b72a07149c5c41f88878b11d50662"
+  },
+  {
+    "file": "test/eventmarkets-integration.js",
+    "blob": "55ef11abee10d262491abbcf60ed41ab82363f46",
+    "sha256": "3f68261b478ab75f4e2c6a459053180d4eddd1d63849ef195d6733e33c1e9716"
+  },
+  {
+    "file": "test/eventmarkets-recovery-fixture.js",
+    "blob": "ebb81fcfa18bfdac85d509dc7294d8b0ec96a780",
+    "sha256": "25c7055534faa033fff24f5d777e4e57998a1127fb907e70b8662163782e2ca4"
+  },
+  {
+    "file": "test/merchantloyalty-accounting.js",
+    "blob": "804e88ab7946941b6379b220320cce90cfab2c60",
+    "sha256": "186a7aa5d6c62aa6e7907608d6b56805ec816526155dcb9dbc9e56be39d535e8"
+  },
+  {
+    "file": "test/merchantloyalty-api.js",
+    "blob": "21e92c5695147d8ae8c1398ce20ddf92e6cc901e",
+    "sha256": "d30bc8c7caa3780be243341975bac918aa4e64d911b237591e620f6b0030709c"
+  },
+  {
+    "file": "test/merchantloyalty-boundary.js",
+    "blob": "5d5815505f3217f9df58bafd61806514129f659b",
+    "sha256": "9d474b8009d423ee141569b979db15c90f12f546fff13ddebcbdc1f59be48bb0"
+  },
+  {
+    "file": "test/merchantloyalty-current-native-fixture.js",
+    "blob": "cf0b7fac69e33c99639450f439364c24e8f504b7",
+    "sha256": "f067a9b3e2c9678cb1dec8e677bfe7d82377e64fcea35dcf74227a498052a490"
+  },
+  {
+    "file": "test/merchantloyalty-estate.js",
+    "blob": "3f890b31da3eb7c622740909f23a753fc70e8242",
+    "sha256": "56a2189b1034ac571f3f87270f7152b506403bd1a69029cc853218bf0843fcff"
+  },
+  {
+    "file": "test/merchantloyalty-expiry.js",
+    "blob": "90f011d546cc1ad59520da1b6b52a7bbf2561ec2",
+    "sha256": "042465f403f414759514ce8ed0ebef28c422504cf515b8e71c69a418b1dbc035"
+  },
+  {
+    "file": "test/merchantloyalty-fixture.js",
+    "blob": "c65eefb37d9745e4f6d6a598ef7baae3ce40fb10",
+    "sha256": "12960e45fca65e10fcce7d85c1da5f2bedae0b46a4a6330171d3c7d9c045437f"
+  },
+  {
+    "file": "test/merchantloyalty-native-estate.js",
+    "blob": "8a7f68db1330ed13e637bc34cafafd8b679dcc5b",
+    "sha256": "b817eaeced79e9a4fe7387febf3a2737f80e1335e24ccb5d03159781bd08fca9"
+  },
+  {
+    "file": "test/merchantloyalty-native-expiry.js",
+    "blob": "1a025732d990f81b88782fc82e89c2e68b0864b6",
+    "sha256": "d4a2c526be93c0195136326348ac3b8b46edf6d5b5f9f7f132b9856fa530c27e"
+  },
+  {
+    "file": "test/merchantloyalty-native-races.js",
+    "blob": "bcf18dc203b8f661dc2e98460a9c90afaa41b5b5",
+    "sha256": "0cc1a490934ed87c3555d8b4da25ac5bbab929d1058dac441451ad5b664dcd3f"
+  },
+  {
+    "file": "test/merchantloyalty-native-rollback.js",
+    "blob": "b4f112d9fc4fd91c8a9683e46a0c72aebf8f21ca",
+    "sha256": "a13f730a54f7cc4b98622694948e00bd4350c07a259252fee13869f1f1c3e184"
+  },
+  {
+    "file": "test/merchantloyalty.js",
+    "blob": "82a4df2c09e07f0cdc10d1b5626e4312088df9ab",
+    "sha256": "b72ad8fbb7d7ce3ee9e775a25d1c244aa5f56cc36b636c43713649087ae83800"
+  },
+  {
+    "file": "test/saleattribution-api.js",
+    "blob": "7c9408179a8eb88150ac817390966b6445bed01a",
+    "sha256": "6b6b2a74464fb54c88b2f8b48aaa891609116d97aecad0b441de8abdb1f637af"
+  },
+  {
+    "file": "test/saleattribution-current-native-fixture.js",
+    "blob": "f30217e51e0d2ea43f3f333fc0de0a0f468610ec",
+    "sha256": "73cc7701728d29a7c39dca6800a485cfb68501f9d26ff9808ce38a4033d5a65a"
+  },
+  {
+    "file": "test/saleattribution-expiry.js",
+    "blob": "ff178754c93a0681520b30d34c69dfe06e785c5d",
+    "sha256": "a5faf3f352bfb111be4622cc5389b08ffd3d9584608ada439cc3205ab6d8830a"
+  },
+  {
+    "file": "test/saleattribution-fixture.js",
+    "blob": "2ebf2125b7646317808669e785889bece546fc5e",
+    "sha256": "e54e6b0ca2bdb410001ea14a6e415dd1203754a0dc0046a9448fffbb98c6290b"
+  },
+  {
+    "file": "test/saleattribution-native-estate.js",
+    "blob": "99b6aba4ef563738839f5e888041d9c52ac067aa",
+    "sha256": "d16648841589349c40c67e09951dd17ceefcaee4fa1374e31761e23fa753f23c"
+  },
+  {
+    "file": "test/saleattribution-native-races.js",
+    "blob": "f40866c1b6a42f6432f2d22a3602b9869b5238d4",
+    "sha256": "f45496b920bd650af2012d9843ceddbd655ebde277e530dba3d0c6602da02188"
+  },
+  {
+    "file": "test/saleattribution-native-rollback.js",
+    "blob": "7d513efe2c9797333d51dc5a68ccb8016584475f",
+    "sha256": "47605c85ed7fcb18868babd170c8e8d2aabedb7a2dd97742c8975ebe21a4a016"
+  },
+  {
+    "file": "test/saleattribution-witness.js",
+    "blob": "9ec1515e9c4ef056a78ad2c05b6eaa4a6819cdbe",
+    "sha256": "22746221f6130cf455096399ec180b34e6d7a39d81d61cc121336b7c6e2340ec"
+  },
+  {
+    "file": "test/saleattribution.js",
+    "blob": "7f0cc23c99908b0634cd8cba5c948654b40b7a09",
+    "sha256": "91c934622e88f293f336f352f5774322d6082448f2f19454e926621b0c3a3134"
+  },
+  {
+    "file": "test/shoppingbasket-api.js",
+    "blob": "3c4ab81a823874f0e059cda909554b40bc5c4f8c",
+    "sha256": "897c10d9328fa4d0e94a30b46730ef474e20f1e43810b14b2d6e5534b11c0da0"
+  },
+  {
+    "file": "test/shoppingbasket-atomicity.js",
+    "blob": "c40ddbd9036ce0c9ceaf8dc2d36727f3431db1fd",
+    "sha256": "315e144c6123620abaa94be05879b26a9351572d0539b4f1bfe90eaf881d0ad6"
+  },
+  {
+    "file": "test/shoppingbasket-boundary.js",
+    "blob": "2f4b54471bd9205f2d500bbbbc671a9dbcbd32c6",
+    "sha256": "a64f7ca36396bfedc235cce4c4fab770b01177193665b318d15f54e1feb873ca"
+  },
+  {
+    "file": "test/shoppingbasket-current-native-fixture.js",
+    "blob": "f9cd35601a22dfbdcc9b0fbb56f8ddd2a6422244",
+    "sha256": "f9bdcc81b86f389117aeef78a0cd7c28b16a0db0f3214dadb11bf4437efd757f"
+  },
+  {
+    "file": "test/shoppingbasket-estate.js",
+    "blob": "ae44fdb5572a2989e03f0e74e86316dd40d3fb0d",
+    "sha256": "74912377263a28155534a56a0bb648e16e81189faa2e6308304bfcb21128c73c"
+  },
+  {
+    "file": "test/shoppingbasket-expiry.js",
+    "blob": "e9e948adf755ae7560ee6bdebe9dfe3c4a65af38",
+    "sha256": "9d8ddbbb6785d724a3f4eb010013d85bc6c99027c31ed82e659105bc1c23b990"
+  },
+  {
+    "file": "test/shoppingbasket-fixture.js",
+    "blob": "e9a72536824bfa1286b5b4e12e7810221126ed3a",
+    "sha256": "73eaee02af2af709a23a5bc707155f7b769d70f90f5dc2260b1f7e0e359eb074"
+  },
+  {
+    "file": "test/shoppingbasket-native-estate.js",
+    "blob": "96c01e14cea97649c2a97beb7ebc1ee74256e9b3",
+    "sha256": "a5b23d82bb2fbf6cb2567bfb2231179b9043b8075c94cc3dec50c2faa3cd054c"
+  },
+  {
+    "file": "test/shoppingbasket-native-expiry.js",
+    "blob": "a7289f603de6b5a405d91a369d5ec3c88b34db12",
+    "sha256": "9a5a7ccf1798b58ab41187aa627f267a978d2e5867c3181112032f9d54983c9c"
+  },
+  {
+    "file": "test/shoppingbasket-native-races.js",
+    "blob": "df5b637963fd13999d4bc1931e625af4ada51d52",
+    "sha256": "f602684ab0dcdb22df5bcc8efa2cb0fbd9b420b1501bf89d20a346373c3a73e3"
+  },
+  {
+    "file": "test/shoppingbasket-native-rollback.js",
+    "blob": "2379362b176f5459034ffdd66e4e1f73b3cc7a8d",
+    "sha256": "d3e61115781abb17060b861ed7e3129121502b92d13334c0eaf1626899fcff36"
+  },
+  {
+    "file": "test/shoppingbasket.js",
+    "blob": "d51b395d9ea763ec3be234d45dd02e8597260f24",
+    "sha256": "ecffa144e7327fc0d4702165315744f67543b6f6895633705e31b561d5489b58"
+  },
+  {
+    "file": "tools/commerce-current-native-data.js",
+    "blob": "a5dc6588f2bec318629c02d3537beabf2853ef03",
+    "sha256": "d3781dcde4b9c3454c4858fa5946d1fd852c62e9a296eec954b3f44ac68401dd"
+  },
+  {
+    "file": "tools/commerce-current-native-guard.js",
+    "blob": "d73bd356111f875adfe757e0bddbfbbf895ba46e",
+    "sha256": "5e10e415a049bb9d3c716341d4d6ccbfc1b54a0c15346e366bfb7f1db0b4adcc"
+  },
+  {
+    "file": "tools/commerce-current-native.js",
+    "blob": "3ab9401832a98a1422af0426ca4c2eaa947ed4f5",
+    "sha256": "3605bfcf32f581ee62450dc1a32a5b6db3f51ffdaefc5c9c4886740c23401feb"
+  },
+  {
+    "file": "tools/commerce-deed-release-phase2-native-catalog.js",
+    "blob": "637c279ef537ec1c6a213a2f156235a6aeec62be",
+    "sha256": "dc84df23e59ad3282fc16c556943150be1e9fcc219facd2e94b83f6b2c817f4b"
+  },
+  {
+    "file": "tools/commerce-enterprise-source-compatibility.js",
+    "blob": "3568959b04299221e439511de7f740190af7b15a",
+    "sha256": "e0c99568d2bc36c12f172f440cf8632adc5d291a94d8b02ced87389e5f25cf1d"
+  },
+  {
+    "file": "tools/commerce-enterprise-source-data.js",
+    "blob": "7c900036361ee63116b41498776a2fc1a18ac9cc",
+    "sha256": "81aa4c69781e6b09adaa4f176d9bd97f5da72b1de56930b86e42df4ba024be31"
+  },
+  {
+    "file": "tools/commerce-graph-helpers.js",
+    "blob": "57dca3dea43dc89ef72e076342ef21eefd9388cf",
+    "sha256": "3581d5693483be9888f85356e951b579c3b7b2cb5dbe234632aa9c575a60d4bb"
+  },
+  {
+    "file": "tools/commerce-native.js",
+    "blob": "f86dc7ffa6985bdb8c108bc057ca2ff6f7161e26",
+    "sha256": "ff2708d09efd516697502996cdc7722d621cd24650ce40095cc4620ff172a317"
+  },
+  {
+    "file": "tools/commerce-release-phase2-migration-catalog.js",
+    "blob": "7caae09a85cc205192ca2891ecc83817534ceefb",
+    "sha256": "fad81787d2a45dd26bb2b482937879152d92feb77a811a20107490d6fd8d582c"
+  },
+  {
+    "file": "tools/commerce-release-phase2-native-catalog.js",
+    "blob": "557b79fa931da5f1201f085779c5701d44526087",
+    "sha256": "be4307efac154a7e5f0c17c6bb020a7dc6ae96d053bfe2163e944a694d6db637"
+  },
+  {
+    "file": "tools/commerce-source-compatibility.js",
+    "blob": "f79d143f49eb63a301a60f2bb61f867cd5da118b",
+    "sha256": "c1a37eb50e974e88ec187bf9c27fccc288f7e1ae6578b4a00761c99c631257c1"
   }
 ].map(Object.freeze));
 export const ENTERPRISE_NATIVE_BINARY_FILES=Object.freeze([
