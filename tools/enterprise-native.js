@@ -4,9 +4,77 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {execFileSync,spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_BINARY_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from './enterprise-native-inputs.js';
+import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_BINARY_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from './enterprise-native-inputs.js';
+import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS} from './enterprise-native-continuous-city-inputs.js';
 
-export {ENTERPRISE_NATIVE_FILES};
+const SUCCESSOR_DATA='tools/enterprise-native-continuous-city-inputs.js';
+const SUCCESSOR_PREDECESSOR='792f1da708375fc28fca6fe9c4fb9c2c7c756ee6';
+// Closed GUI and bridge import/read closure; historical boot assets and inputs remain intact.
+export const ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES=Object.freeze([
+ 'package.json',
+ 'public/city-scene.js',
+ 'public/city-world-ui.css',
+ 'public/city-world-ui.js',
+ 'public/index.html',
+ 'src/agentgateway.js',
+ 'src/cityhomes.js',
+ 'src/server.js',
+ 'test/enterprise-current-source-compatibility.js',
+ 'test/lib/rc1-historical-source-fixture.js',
+ 'test/market-operations-source-compatibility.js',
+ 'test/next-layer-source-compatibility.js',
+ 'test/rc1-city-gameplay-source-compatibility.js',
+ 'test/rc1-first-batch-source-compatibility.js',
+]);
+export const ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES=Object.freeze([
+ 'public/city-world-layout.js',
+ 'test/city-connected-scene-browser.js',
+ 'test/city-homes-api.js',
+ 'test/city-scene-browser.js',
+ 'test/city-world-host-browser.js',
+ 'test/city-world-layout-ui-browser.js',
+ 'test/city-world-layout.js',
+ 'test/continuous-city-host-contract.js',
+ 'test/continuous-city-source-compatibility.js',
+ 'test/deed-discovery-fixture.js',
+ 'test/deed-quest-source-compatibility.js',
+ 'test/economy-release-composition.js',
+ 'test/next-five-source-compatibility.js',
+ 'test/player-intel-source-compatibility.js',
+ 'test/rc1-business-season-source-compatibility.js',
+ 'test/rc1-buyer-cooperative-source-compatibility.js',
+ 'test/rc1-checkpoint-recovery-review.js',
+ 'test/rc1-commercial-premises-source-compatibility.js',
+ 'test/rc1-commercial-reputation-source-compatibility.js',
+ 'test/rc1-company-bank-source-compatibility.js',
+ 'test/rc1-company-logistics-hub-source-compatibility.js',
+ 'test/rc1-company-operator-source-compatibility.js',
+ 'test/rc1-company-opportunity-source-compatibility.js',
+ 'test/rc1-company-succession-source-compatibility.js',
+ 'test/rc1-company-workflow-source-compatibility.js',
+ 'test/rc1-fifth-batch-source-compatibility.js',
+ 'test/rc1-fourth-batch-source-compatibility.js',
+ 'test/rc1-game-employment-source-compatibility.js',
+ 'test/rc1-intel-source-compatibility.js',
+ 'test/rc1-invoice-source-compatibility.js',
+ 'test/rc1-lifecycle-applicability.js',
+ 'test/rc1-logistics-coverage-source-compatibility.js',
+ 'test/rc1-market-feed-source-compatibility.js',
+ 'test/rc1-second-batch-source-compatibility.js',
+ 'test/rc1-strategy-league-source-compatibility.js',
+ 'test/rc1-strategy-source-compatibility.js',
+ 'test/rc1-third-batch-source-compatibility.js',
+ 'test/rc1-world-checkpoint-series.js',
+ 'test/rc1-world-qualification.js',
+ 'test/release-source-transfer.js',
+ 'tools/continuous-city-fixture-source-data.js',
+ 'tools/continuous-city-source-compatibility.js',
+ 'tools/continuous-city-source-data.js',
+ 'tools/genesis-auction-deployment-plan.js',
+ 'tools/genesis-auction-preflight.js',
+ 'tools/market-v2-deployment-plan.js',
+]);
+export const ENTERPRISE_NATIVE_FILES=Object.freeze([...HISTORICAL_ENTERPRISE_NATIVE_FILES,...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.additions.map(row=>row.file),SUCCESSOR_DATA]);
 const ROOT=fileURLToPath(new URL('../',import.meta.url));
 export const ENTERPRISE_NATIVE_PROOFS=Object.freeze([
  ['workshopfloor','WORKSHOP_FLOOR_TEST_DATABASE_URL','workshop_floor_test_',35439,300000],
@@ -28,6 +96,8 @@ export const ENTERPRISE_NATIVE_PROOFS=Object.freeze([
 ].map(row=>Object.freeze(row)));
 const INVENTORY=JSON.stringify(ENTERPRISE_NATIVE_PROOFS);
 const STAGED=Object.freeze(['tools/enterprise-native.js','test/enterprise-native-guard.js','tools/enterprise-native-inputs.js']);
+// Preserve the historical metadata exemptions; only the separate successor manifest is added.
+const SUCCESSOR_STAGED=Object.freeze([...STAGED,SUCCESSOR_DATA]);
 const ADMINS=Object.freeze({35439:'postgresql://pilot_runner@127.0.0.1:35439/postgres',35449:'postgresql://pilot_runner@127.0.0.1:35449/postgres',5432:'postgresql://postgres:pgcheck@127.0.0.1:5432/postgres'});
 const DIRECTORIES=Object.freeze({35439:'c:/users/jorge/appdata/local/temp/omerta-economy-oct15-pg184',35449:'c:/users/jorge/appdata/local/temp/omerta-employment-pg184-proof'});
 const LEGAL=Object.freeze({LEGAL_OPERATOR_NAME:'CI Test Operator',LEGAL_POSTAL_ADDRESS:'123 Fixture Street, Test City',PRIVACY_CONTACT_EMAIL:'privacy@example.test',DMCA_AGENT_NAME:'CI Test Agent',DMCA_AGENT_EMAIL:'copyright@example.test',DMCA_AGENT_ADDRESS:'123 Fixture Street, Test City',DMCA_AGENT_PHONE:'+1 202 555 0100',DMCA_AGENT_REGISTERED:'true',PAYMENT_REFUND_POLICY:'Test fixture policy; not a production policy.'});
@@ -50,22 +120,60 @@ export function assertEnterpriseNativeTrackedBytes(raw,canonical,binary){
  assert(!binary,'Binary inputs must match exact Git bytes');const a=raw.toString('utf8'),b=canonical.toString('utf8');assert(Buffer.from(a).equals(raw)&&Buffer.from(b).equals(canonical),'Lossless UTF8 text required');assert(!a.includes('\0')&&!b.includes('\0'));assert(!b.includes('\r'),'Canonical text must use Git LF');assert.equal(a,b.replaceAll('\n','\r\n'),'Only exact Git LF or uniform checkout CRLF');
 }
 export function assertEnterpriseInputDefinition(){
- assert.match(ENTERPRISE_NATIVE_BASE_REVISION,/^[a-f0-9]{40}$/);assert(Object.isFrozen(ENTERPRISE_NATIVE_FILES)&&Object.isFrozen(ENTERPRISE_NATIVE_BASE_INPUTS)&&Object.isFrozen(ENTERPRISE_NATIVE_BINARY_FILES));assert(Array.isArray(ENTERPRISE_NATIVE_FILES)&&ENTERPRISE_NATIVE_FILES.length>0);assert.equal(new Set(ENTERPRISE_NATIVE_FILES).size,ENTERPRISE_NATIVE_FILES.length);
- for(const f of ENTERPRISE_NATIVE_FILES)assert(typeof f==='string'&&!f.includes('\\')&&!f.includes(':')&&!f.includes('\0')&&!path.posix.isAbsolute(f)&&f.split('/').every(p=>p&&p!=='.'&&p!=='..'&&p!=='.git'),'Canonical relative input only');
- for(const f of STAGED)assert(ENTERPRISE_NATIVE_FILES.includes(f),'All parent/guard/data staged paths are captured');
- assert.equal(new Set(ENTERPRISE_NATIVE_BASE_INPUTS.map(x=>x.file)).size,ENTERPRISE_NATIVE_BASE_INPUTS.length);assert.deepEqual(ENTERPRISE_NATIVE_BASE_INPUTS.map(x=>x.file).sort(),ENTERPRISE_NATIVE_FILES.filter(f=>!STAGED.includes(f)).slice().sort());
+ assert.match(ENTERPRISE_NATIVE_BASE_REVISION,/^[a-f0-9]{40}$/);assert(Object.isFrozen(HISTORICAL_ENTERPRISE_NATIVE_FILES)&&Object.isFrozen(ENTERPRISE_NATIVE_BASE_INPUTS)&&Object.isFrozen(ENTERPRISE_NATIVE_BINARY_FILES));assert(Array.isArray(HISTORICAL_ENTERPRISE_NATIVE_FILES)&&HISTORICAL_ENTERPRISE_NATIVE_FILES.length>0);assert.equal(new Set(HISTORICAL_ENTERPRISE_NATIVE_FILES).size,HISTORICAL_ENTERPRISE_NATIVE_FILES.length);
+ for(const f of HISTORICAL_ENTERPRISE_NATIVE_FILES)assert(typeof f==='string'&&!f.includes('\\')&&!f.includes(':')&&!f.includes('\0')&&!path.posix.isAbsolute(f)&&f.split('/').every(p=>p&&p!=='.'&&p!=='..'&&p!=='.git'),'Canonical relative input only');
+ for(const f of STAGED)assert(HISTORICAL_ENTERPRISE_NATIVE_FILES.includes(f),'All parent/guard/data staged paths are captured');
+ assert.equal(new Set(ENTERPRISE_NATIVE_BASE_INPUTS.map(x=>x.file)).size,ENTERPRISE_NATIVE_BASE_INPUTS.length);assert.deepEqual(ENTERPRISE_NATIVE_BASE_INPUTS.map(x=>x.file).sort(),HISTORICAL_ENTERPRISE_NATIVE_FILES.filter(f=>!STAGED.includes(f)).slice().sort());
  for(const r of ENTERPRISE_NATIVE_BASE_INPUTS){assert(Object.isFrozen(r));assert.deepEqual(Object.keys(r).sort(),['file','blob','sha256'].sort());assert.match(r.blob,/^[a-f0-9]{40}$/);assert.match(r.sha256,/^[a-f0-9]{64}$/);}
  assert.equal(new Set(ENTERPRISE_NATIVE_BINARY_FILES).size,ENTERPRISE_NATIVE_BINARY_FILES.length);for(const f of ENTERPRISE_NATIVE_BINARY_FILES)assert(ENTERPRISE_NATIVE_FILES.includes(f)&&!STAGED.includes(f));for(const[name]of ENTERPRISE_NATIVE_PROOFS)assert(ENTERPRISE_NATIVE_FILES.includes('test/'+name+'.js'));assert(ENTERPRISE_NATIVE_FILES.includes('src/server.js'),'Whole actual directory-predicate source is pinned');
  assert(Object.isFrozen(ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS));assert.deepEqual(ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS.map(r=>r.directory),['public/art','public/art/hype']);for(const r of ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS){assert(Object.isFrozen(r)&&Object.isFrozen(r.eligibleNames));assert.deepEqual(Object.keys(r).sort(),['directory','eligibleNames'].sort());assert.equal(new Set(r.eligibleNames).size,r.eligibleNames.length);assert.deepEqual(r.eligibleNames,[...r.eligibleNames].sort());for(const name of r.eligibleNames)assert(ENTERPRISE_NATIVE_FILES.includes(r.directory+'/'+name));assertEnterpriseDirectoryEntries(r.directory,r.eligibleNames);}
+}
+export function assertEnterpriseSuccessorInputDefinition(manifest=ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS){
+ assert.equal(manifest.status,'SEALED','Commit actual authored source before sealing native successor inputs');
+ assert(Object.isFrozen(manifest)&&Object.isFrozen(manifest.replacements)&&Object.isFrozen(manifest.additions));
+ assert.deepEqual(Object.keys(manifest).sort(),['status','revision','predecessor','legacyBaseRevision','replacements','additions'].sort());
+ assert.match(manifest.revision,/^[a-f0-9]{40}$/);assert.equal(manifest.predecessor,SUCCESSOR_PREDECESSOR);assert.equal(manifest.legacyBaseRevision,ENTERPRISE_NATIVE_BASE_REVISION);
+ const old=new Map(ENTERPRISE_NATIVE_BASE_INPUTS.map(row=>[row.file,row])),seen=new Set();
+ const pin=value=>{assert(Object.isFrozen(value));assert.deepEqual(Object.keys(value).sort(),['blob','sha256','mode'].sort());assert.match(value.blob,/^[a-f0-9]{40}$/);assert.match(value.sha256,/^[a-f0-9]{64}$/);assert(['100644','100755'].includes(value.mode));};
+ for(const row of manifest.replacements){
+  assert(Object.isFrozen(row)&&Object.isFrozen(row.before));assert.deepEqual(Object.keys(row).sort(),['file','before','after'].sort());assert(old.has(row.file)&&!seen.has(row.file),'Unique existing historical pin replacement required');seen.add(row.file);
+  assert.deepEqual(Object.keys(row.before).sort(),['blob','sha256'].sort());assert.equal(row.before.blob,old.get(row.file).blob,'Historical blob pin remains immutable');assert.equal(row.before.sha256,old.get(row.file).sha256,'Historical SHA256 pin remains immutable');
+  pin(row.after);assert.notEqual(row.after.blob,row.before.blob,'Only actual changed authored inputs belong in the delta');assert.notEqual(row.after.sha256,row.before.sha256);
+ }
+ for(const row of manifest.additions){
+  assert(Object.isFrozen(row));assert.deepEqual(Object.keys(row).sort(),['file','blob','sha256','mode'].sort());
+  const f=row.file;assert(typeof f==='string'&&!f.includes('\\')&&!f.includes(':')&&!f.includes('\0')&&!path.posix.isAbsolute(f)&&f.split('/').every(p=>p&&p!=='.'&&p!=='..'&&p!=='.git'),'Canonical relative successor input only');
+  assert(!HISTORICAL_ENTERPRISE_NATIVE_FILES.includes(f)&&f!==SUCCESSOR_DATA&&!seen.has(f),'Only unique additional inputs; no new metadata exemptions');seen.add(f);
+  assert.match(row.blob,/^[a-f0-9]{40}$/);assert.match(row.sha256,/^[a-f0-9]{64}$/);assert(['100644','100755'].includes(row.mode));
+ }
+ assert.deepEqual(manifest.replacements.map(row=>row.file).sort(),[...ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES],'Complete closed authored replacement set required');
+ assert.deepEqual(manifest.additions.map(row=>row.file).sort(),[...ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES],'Complete closed GUI/bridge helper, data, test, asset, and physical-read additions required');
+}
+export function assertEnterpriseSuccessorTrackedInput(file,current,authored,canonical,manifest=ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS){
+ const pin=manifest.replacements.find(row=>row.file===file)?.after||manifest.additions.find(row=>row.file===file)||ENTERPRISE_NATIVE_BASE_INPUTS.find(row=>row.file===file);
+ assert(pin,'No undeclared runtime input: '+file);assert(Buffer.isBuffer(canonical));
+ assert(current&&authored&&current.type==='blob'&&authored.type==='blob'&&['100644','100755'].includes(current.mode),'Regular current and authored source required: '+file);
+ assert.equal(current.mode,authored.mode,'Actual authored mode drift: '+file);if(pin.mode)assert.equal(current.mode,pin.mode,'Sealed input mode drift: '+file);
+ assert.equal(authored.blob,pin.blob,'Pin must name the actual committed authored source: '+file);
+ assert.equal(current.blob,pin.blob,'Actual runtime input changed after authored seal: '+file);assert.equal(sha(canonical),pin.sha256,'Actual runtime bytes changed after authored seal: '+file);
 }
 export function assertEnterpriseDirectoryEntries(directory,entries){const row=ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS.find(r=>r.directory===directory);assert(row,'Only the two source-defined boot directory scans');const extensions=directory==='public/art'?['.jpg','.jpeg','.png','.webp','.woff2','.mp4','.m4a']:['.mp4','.m4a'];assert(Array.isArray(entries));for(const name of entries)assert(typeof name==='string'&&name&&!name.includes('/')&&!name.includes('\\')&&name!=='.'&&name!=='..');const eligible=entries.filter(name=>extensions.includes(name.slice(name.lastIndexOf('.')).toLowerCase())).sort();assert.deepEqual(eligible,row.eligibleNames,'Unseen/removed/ignored eligible boot input; no finite-inventory fallback');return eligible;}
 function inspectDirectories(){return ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS.map(r=>({directory:r.directory,eligibleNames:assertEnterpriseDirectoryEntries(r.directory,fs.readdirSync(path.join(ROOT,r.directory)))}));}
 function tree(revision){return git('ls-tree','-r','-z',revision).toString().split('\0').filter(Boolean).map(line=>{const i=line.indexOf('\t'),[mode,type,blob]=line.slice(0,i).split(' ');return{file:line.slice(i+1),mode,type,blob,line};});}
 export function captureEnterpriseSource(){
- assertEnterpriseInputDefinition();const revision=textGit('rev-parse','HEAD');assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(textGit('status','--porcelain','--untracked-files=all'),'','Clean exact committed source required');git('merge-base','--is-ancestor',ENTERPRISE_NATIVE_BASE_REVISION,revision);
- const records=tree(revision),current=new Map(records.map(r=>[r.file,r])),base=new Map(tree(ENTERPRISE_NATIVE_BASE_REVISION).map(r=>[r.file,r])),pins=new Map(ENTERPRISE_NATIVE_BASE_INPUTS.map(r=>[r.file,r])),binary=new Set(ENTERPRISE_NATIVE_BINARY_FILES),files={};
- for(const f of ENTERPRISE_NATIVE_FILES){const tracked=current.get(f);assert(tracked&&tracked.type==='blob'&&['100644','100755'].includes(tracked.mode),'Regular committed file required: '+f);const file=path.join(ROOT,f),stat=fs.lstatSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());const raw=fs.readFileSync(file),canonical=git('show',revision+':'+f);assert.equal(stat.size,raw.length,'Stable actual boot stat size');assertEnterpriseNativeTrackedBytes(raw,canonical,binary.has(f));if(!STAGED.includes(f)){const pin=pins.get(f),old=base.get(f);assert(old&&old.type==='blob');assert.equal(old.blob,pin.blob,f);assert.equal(old.mode,tracked.mode,f);assert.equal(sha(git('show',ENTERPRISE_NATIVE_BASE_REVISION+':'+f)),pin.sha256,f);assert.equal(tracked.blob,pin.blob,'Old input changed; reseal actual authored base before native: '+f);assert.equal(sha(canonical),pin.sha256,f);}files[f]={sha256:sha(raw),gitSha256:sha(canonical),blob:tracked.blob,binary:binary.has(f),bytes:raw.length};}
- const result={revision,baseRevision:ENTERPRISE_NATIVE_BASE_REVISION,fullGitTreeSha256:sha(JSON.stringify(records.map(r=>r.line).sort())),stagedFiles:[...STAGED],directoryMemberships:inspectDirectories(),directoryPredicateSource:{file:'src/server.js',...files['src/server.js']},files};assertStable(result);return result;
+ assertEnterpriseInputDefinition();assertEnterpriseSuccessorInputDefinition();const successor=ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS,revision=textGit('rev-parse','HEAD');assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(textGit('status','--porcelain','--untracked-files=all'),'','Clean exact committed source required');
+ git('merge-base','--is-ancestor',ENTERPRISE_NATIVE_BASE_REVISION,successor.predecessor);git('merge-base','--is-ancestor',successor.predecessor,successor.revision);git('merge-base','--is-ancestor',successor.revision,revision);
+ const records=tree(revision),current=new Map(records.map(r=>[r.file,r])),base=new Map(tree(ENTERPRISE_NATIVE_BASE_REVISION).map(r=>[r.file,r])),authored=new Map(tree(successor.revision).map(r=>[r.file,r])),pins=new Map(ENTERPRISE_NATIVE_BASE_INPUTS.map(r=>[r.file,r])),binary=new Set(ENTERPRISE_NATIVE_BINARY_FILES),files={};
+ assert.equal(new Set(ENTERPRISE_NATIVE_FILES).size,ENTERPRISE_NATIVE_FILES.length,'Complete successor input inventory has no duplicates');
+ for(const f of ENTERPRISE_NATIVE_FILES){
+  const tracked=current.get(f);assert(tracked&&tracked.type==='blob'&&['100644','100755'].includes(tracked.mode),'Regular committed file required: '+f);const file=path.join(ROOT,f),stat=fs.lstatSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());const raw=fs.readFileSync(file),canonical=git('show',revision+':'+f);assert.equal(stat.size,raw.length,'Stable actual boot stat size');assertEnterpriseNativeTrackedBytes(raw,canonical,binary.has(f));
+  if(!SUCCESSOR_STAGED.includes(f)){
+   const pin=pins.get(f),old=base.get(f);if(pin){assert(old&&old.type==='blob');assert.equal(old.blob,pin.blob,f);assert.equal(old.mode,tracked.mode,f);assert.equal(sha(git('show',ENTERPRISE_NATIVE_BASE_REVISION+':'+f)),pin.sha256,f);}
+   assertEnterpriseSuccessorTrackedInput(f,tracked,authored.get(f),canonical,successor);
+  }
+  files[f]={sha256:sha(raw),gitSha256:sha(canonical),blob:tracked.blob,binary:binary.has(f),bytes:raw.length};
+ }
+ const result={revision,baseRevision:ENTERPRISE_NATIVE_BASE_REVISION,authoredRevision:successor.revision,predecessorRevision:successor.predecessor,fullGitTreeSha256:sha(JSON.stringify(records.map(r=>r.line).sort())),stagedFiles:[...SUCCESSOR_STAGED],historicalStagedFiles:[...STAGED],successorReplacements:successor.replacements.map(row=>row.file),successorAdditions:successor.additions.map(row=>row.file),directoryMemberships:inspectDirectories(),directoryPredicateSource:{file:'src/server.js',...files['src/server.js']},files};assertStable(result);return result;
 }
 function assertStable(source){assert.equal(textGit('rev-parse','HEAD'),source.revision);assert.equal(textGit('status','--porcelain','--untracked-files=all'),'');for(const[f,p]of Object.entries(source.files)){const file=path.join(ROOT,f),stat=fs.lstatSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());assert.equal(stat.size,p.bytes,'Actual boot stat size changed: '+f);assert.equal(sha(fs.readFileSync(file)),p.sha256,'Input changed during qualification: '+f);}assert.deepEqual(inspectDirectories(),source.directoryMemberships);}
 export function assertEnterpriseBackend(row,profile,port){assert(profile==='local'||profile==='ci');assert.deepEqual(Object.keys(row).sort(),['role','database','version','directory'].sort());assert.equal(row.role,profile==='local'?'pilot_runner':'postgres');assert.equal(row.database,'postgres');assert.equal(typeof row.directory,'string');assert(row.directory.length);if(profile==='local'){assert(port===35439||port===35449);assert.match(row.version,/^18\.4\b/);assert.equal(row.directory.replaceAll('\\','/').toLowerCase(),DIRECTORIES[port]);}else{assert.equal(port,5432);assert.match(row.version,/^(?:16\b|18\.4\b)/);}}

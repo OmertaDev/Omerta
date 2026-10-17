@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {ENTERPRISE_NATIVE_PROOFS,ENTERPRISE_NATIVE_FILES,assertEnterpriseInventory,assertEnterpriseNativeMode,assertEnterpriseNativeTrackedBytes,assertEnterpriseInputDefinition,assertEnterpriseDirectoryEntries,assertEnterpriseBackend,enterpriseChildEnv,assertEnterpriseResults,assertEnterpriseCleanup} from '../tools/enterprise-native.js';
-import {ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from '../tools/enterprise-native-inputs.js';
+import crypto from 'node:crypto';
+import {ENTERPRISE_NATIVE_PROOFS,ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES,ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES,assertEnterpriseInventory,assertEnterpriseNativeMode,assertEnterpriseNativeTrackedBytes,assertEnterpriseInputDefinition,assertEnterpriseSuccessorInputDefinition,assertEnterpriseSuccessorTrackedInput,assertEnterpriseDirectoryEntries,assertEnterpriseBackend,enterpriseChildEnv,assertEnterpriseResults,assertEnterpriseCleanup} from '../tools/enterprise-native.js';
+import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from '../tools/enterprise-native-inputs.js';
+import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS} from '../tools/enterprise-native-continuous-city-inputs.js';
 assert.deepEqual(process.argv.slice(2),[],'Complete source-only guard test; no native selector');
 const checks=[];const pass=(name,fn)=>{fn();checks.push({name,pass:true});},reject=(name,fn)=>{assert.throws(fn);checks.push({name,refused:true});},clone=x=>JSON.parse(JSON.stringify(x));
 const local={ENTERPRISE_NATIVE_PROFILE:'local',ENTERPRISE_NATIVE_ADMIN39_DATABASE_URL:'postgresql://pilot_runner@127.0.0.1:35439/postgres',ENTERPRISE_NATIVE_ADMIN49_DATABASE_URL:'postgresql://pilot_runner@127.0.0.1:35449/postgres',CHAIN_ENABLED:'off',RESOURCE_ECONOMY:'off'},ci={ENTERPRISE_NATIVE_PROFILE:'ci',ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL:'postgresql://postgres:pgcheck@127.0.0.1:5432/postgres',CHAIN_ENABLED:'off',RESOURCE_ECONOMY:'off'};
@@ -26,4 +28,49 @@ const syntheticSource={revision:'b'.repeat(40),files:Object.fromEntries(ENTERPRI
 for(const mutate of[r=>r.pop(),r=>{r[0].code=1;},r=>{r[0].signal='SIGTERM';},r=>{r[0].error='spawn_error';},r=>{r[0].state='skipped';},r=>{r[0].sourceSha256='d'.repeat(64);},r=>{r[0].port=35449;},r=>{r[0].durationMs=310001;},r=>{r[0].extra=true;},r=>{r[1].database=r[0].database;}])reject('synthetic result incomplete/failure/identity refuses',()=>{const x=clone(rows);mutate(x);assertEnterpriseResults(x,syntheticSource,'local');});
 const cleanup={complete:true,adminsClosed:true,adminEndings:[{closed:true},{closed:true}],freshZeros:[35439,35449].map(port=>({port,complete:true,readerClosed:true,identity:identity(port),activeNonAdminDatabaseClientSessions:[]}))};pass('synthetic cleanup predicate only',()=>assertEnterpriseCleanup(cleanup,'local'));for(const mutate of[x=>{x.complete=false;},x=>{x.adminsClosed=false;},x=>{x.adminEndings[0].closed=false;},x=>{x.freshZeros.pop();},x=>{x.freshZeros[0].readerClosed=false;},x=>{x.freshZeros[0].complete=false;},x=>{x.freshZeros[0].activeNonAdminDatabaseClientSessions=[{datname:'unknown',pid:1}];},x=>{x.freshZeros[0].failure={message:'reader failed'};},x=>{x.freshZeros[0].identity=identity(35449);}])reject('synthetic cleanup failure refuses completion',()=>{const x=clone(cleanup);mutate(x);assertEnterpriseCleanup(x,'local');});
 const source=fs.readFileSync(new URL('../tools/enterprise-native.js',import.meta.url),'utf8'),run=source.slice(source.indexOf('async function run(){'));assert(run.indexOf('assertEnterpriseNativeMode(')<run.indexOf('captureEnterpriseSource()'));assert(run.indexOf('captureEnterpriseSource()')<run.indexOf("await import('pg')"));assert(run.indexOf('await import(\'pg\')')<run.indexOf('spawn(process.execPath'));assert(run.lastIndexOf('assertEnterpriseCleanup(result.cleanup,profile)')<run.lastIndexOf('result.complete=true'));assert(source.includes("child.once('close'"));assert(source.includes('await reader.end();receipt.readerClosed=true'));assert(ENTERPRISE_NATIVE_FILES.includes('tools/enterprise-native.js'));
+// Synthetic successor definitions test refusal only; they never replace actual Git capture.
+const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+const digest=(algorithm,bytes)=>crypto.createHash(algorithm).update(bytes).digest('hex');
+const gitBlob=bytes=>digest('sha1',Buffer.concat([Buffer.from('blob '+bytes.length+'\0'),bytes]));
+const authoredBytes=Buffer.from('// synthetic authored GUI runtime\n');
+const authoredPin={blob:gitBlob(authoredBytes),sha256:digest('sha256',authoredBytes),mode:'100644'};
+const oldServerPin=ENTERPRISE_NATIVE_BASE_INPUTS.find(row=>row.file==='src/server.js');
+const successor=freeze({status:'SEALED',revision:'b'.repeat(40),predecessor:'792f1da708375fc28fca6fe9c4fb9c2c7c756ee6',legacyBaseRevision:ENTERPRISE_NATIVE_BASE_REVISION,
+ replacements:ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES.map(file=>{const old=ENTERPRISE_NATIVE_BASE_INPUTS.find(row=>row.file===file);return{file,before:{blob:old.blob,sha256:old.sha256},after:{...authoredPin}};}),
+ additions:ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES.map(file=>({file,...authoredPin}))});
+const record={type:'blob',mode:'100644',blob:authoredPin.blob};
+pass('synthetic exact successor declaration preserves old pins',()=>assertEnterpriseSuccessorInputDefinition(successor));
+for(const field of ['replacements','additions'])for(const row of successor[field])reject('successor refuses omitted '+row.file,()=>{const changed=clone(successor);changed[field]=changed[field].filter(item=>item.file!==row.file);assertEnterpriseSuccessorInputDefinition(freeze(changed));});
+assert.equal(ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES.length,14);assert.equal(ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES.length,46);
+pass('synthetic actual authored replacement bytes',()=>assertEnterpriseSuccessorTrackedInput('src/server.js',record,record,authoredBytes,successor));
+pass('synthetic actual authored new boot asset bytes',()=>assertEnterpriseSuccessorTrackedInput('public/city-world-layout.js',record,record,authoredBytes,successor));
+for(const mutate of[
+ x=>{x.status='UNSEALED';},x=>{x.revision='HEAD';},x=>{x.predecessor='c'.repeat(40);},x=>{x.legacyBaseRevision='c'.repeat(40);},
+ x=>{x.stagedFiles=['src/server.js'];},x=>{x.replacements[0].before.blob='c'.repeat(40);},x=>{x.replacements[0].before.sha256='c'.repeat(64);},
+ x=>{x.replacements[0].after.blob=x.replacements[0].before.blob;},x=>{x.replacements[0].after.sha256=x.replacements[0].before.sha256;},
+ x=>{x.replacements[0].after.mode='120000';},x=>{x.replacements[0].file='tools/enterprise-native.js';},x=>{x.replacements.push(x.replacements[0]);},
+ x=>{x.additions=[];},x=>{x.additions.push(x.additions[0]);},x=>{x.additions[0].file='../public/city-world-layout.js';},
+ x=>{x.additions[0].file='public\\city-world-layout.js';},x=>{x.additions[0].file='src/server.js';},
+ x=>{x.additions.push({file:'tools/enterprise-native-continuous-city-inputs.js',...authoredPin});},
+ x=>{x.additions.push({file:'tools/enterprise-native-guard.js',...authoredPin,unknown:true});}
+])reject('successor manifest mutation fails closed',()=>{const changed=clone(successor);mutate(changed);assertEnterpriseSuccessorInputDefinition(freeze(changed));});
+reject('mutable successor metadata',()=>assertEnterpriseSuccessorInputDefinition(clone(successor)));
+for(const [file,current,authored,bytes]of[
+ ['unknown-input.js',record,record,authoredBytes],['src/server.js',{...record,blob:oldServerPin.blob},record,authoredBytes],
+ ['src/server.js',record,{...record,blob:oldServerPin.blob},authoredBytes],['src/server.js',record,record,Buffer.from(authoredBytes+'// unreviewed\n')],
+ ['public/city-world-layout.js',record,record,Buffer.from(authoredBytes+'\n')],['src/server.js',{...record,mode:'100755'},record,authoredBytes],
+ ['src/server.js',{...record,type:'tree'},record,authoredBytes],['src/server.js',record,null,authoredBytes]
+])reject('current/authored runtime source mutation',()=>assertEnterpriseSuccessorTrackedInput(file,current,authored,bytes,successor));
+assert.equal(HISTORICAL_ENTERPRISE_NATIVE_FILES.length,1490,'Historical input inventory remains intact');
+assert.equal(ENTERPRISE_NATIVE_BASE_INPUTS.length,1487,'Historical three staged-file exemptions remain intact');
+assert(!source.includes('SourceBaseline('),'Native capture never projects current runtime bytes to historical code');
+if(ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.status==='UNSEALED')reject('unsealed real successor cannot admit native execution',()=>assertEnterpriseSuccessorInputDefinition());
+else{
+ pass('real successor declaration is sealed',()=>assertEnterpriseSuccessorInputDefinition());
+ for(const row of [...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.replacements.map(row=>({file:row.file,...row.after})),...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.additions]){
+  const raw=fs.readFileSync(new URL('../'+row.file,import.meta.url)),canonical=Buffer.from(raw.toString('utf8').replaceAll('\r\n','\n'));
+  const actual={type:'blob',mode:row.mode,blob:gitBlob(canonical)};
+  pass('actual successor bytes '+row.file,()=>assertEnterpriseSuccessorTrackedInput(row.file,actual,{type:'blob',mode:row.mode,blob:row.blob},canonical));
+ }
+}
 console.log(JSON.stringify({phase:'SOURCE_ONLY_ENTERPRISE_NATIVE_GUARDS',checks:checks.length,syntheticAdmissionFixturesOnly:true,postgresImportsOrConnections:0,nativeExecution:false,sourceCaptureExecuted:false,release:false}));

@@ -95,6 +95,24 @@
 .city-world__atlas-diagram circle.is-selected { stroke: #ffcf77; stroke-width: 4; }
 .city-world__atlas-diagram text { fill: #f0e2be; text-anchor: middle; font: 12px ui-monospace, monospace; cursor: pointer; }
 .city-world__atlas-diagram text:hover { fill: #ffcf77; }
+.city-world__atlas-diagram--connected { background: #233a32; }
+.city-world__atlas-diagram--connected svg { max-height: max(96px, min(320px, calc(var(--city-world-height, 240px) - 56px))); height: auto; }
+.city-world__atlas-region { fill: #273e34; stroke: #59664c; stroke-width: 1; }
+.city-world__atlas-region.is-selected { fill: #344a36; stroke: #d0ae6a; stroke-width: 2; }
+.city-world__atlas-roads { fill: #58624e; pointer-events: none; }
+.city-world__atlas-plots { fill: #a28f6f; cursor: pointer; }
+.city-world__atlas-records { fill: #c6c9ad; pointer-events: none; }
+.city-world__atlas-owned { fill: #b8eb96; stroke: #d7ffc0; stroke-width: 1; pointer-events: none; }
+.city-world__atlas-focused { fill: none; stroke: #ffe09a; stroke-width: 2; pointer-events: none; }
+.city-world__atlas-core { fill: #19312c; stroke: #b09d6c; stroke-width: 1.5; cursor: pointer; }
+.city-world__atlas-core:hover, .city-world__atlas-core.is-here { fill: #375b40; stroke: #d6e3b4; }
+.city-world__atlas-diagram .city-world__atlas-position { fill: #fff7c5; stroke: #142824; stroke-width: 2; pointer-events: none; }
+.city-world__atlas-diagram .city-world__atlas-suburb { fill: #d5d5b5; font-size: 10px; pointer-events: none; }
+.city-world__plot-finder { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin: 10px 0; }
+.city-world__plot-finder label { display: flex; flex-direction: column; gap: 4px; flex: 1 1 120px; min-width: 0; }
+.city-world__plot-finder input, .city-world__plot-finder select { min-height: 44px; min-width: 0; width: 100%; box-sizing: border-box; border: 1px solid #9d8b67; border-radius: 3px; background: #1c302b; color: #eee4cc; padding: 8px; font: inherit; }
+.city-world__plot-finder button { min-height: 44px; }
+.city-world__plot-finder :focus-visible { outline: 2px solid #ffe09a; outline-offset: 2px; }
 .city-world__districts, .city-world__home-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .omerta-city .city-world__district, .omerta-city .city-world__home { text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 4px; min-height: 44px; min-width: 0; overflow-wrap: anywhere; }
 .city-world__district span, .city-world__home span { font-size: 12px; line-height: 1.35; font-weight: normal; }

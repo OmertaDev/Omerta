@@ -1,3 +1,4 @@
+import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
@@ -14,7 +15,7 @@ assert.deepEqual(Object.keys(transfer.currentPins), ['src/server.js', 'src/game.
   'src/secrets.js', 'src/contacts.js', 'src/wire.js']);
 let negatives = 0, hunks = 0;
 for (const file of Object.keys(transfer.currentPins)) {
-  const source = cityGameplaySourceBaseline(file, firstBatchSourceBaseline(file, cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file, 'utf8')):fs.readFileSync(file, 'utf8'))))).replaceAll('\r\n', '\n');
+  const source = cityGameplaySourceBaseline(file, firstBatchSourceBaseline(file, cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,continuousCityHistoricalInput(file, fs.readFileSync(file, 'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file, 'utf8')))))).replaceAll('\r\n', '\n');
   const baseline = git('show', `${transfer.predecessorRevision}:${file}`);
   assert.equal(source, git('show', `${transfer.sourceRevision}:${file}`), 'complete frozen runtime');
   assert.equal(source, git('show', transfer.currentBlobs[file]));

@@ -1713,9 +1713,9 @@ try {
   };
   const explorer = await landActor('Connected Explorer'), agentLandlord = await landActor('Land Agent', 'agent');
   const residentLandlord = await landActor('Land Resident', 'npc'), nextLandlord = await landActor('Street Successor');
-  for (const [owner, street] of [[explorer, 'Amber Row'], [agentLandlord, 'Tern House'], [residentLandlord, 'Cedar Yard']]) {
-    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,corner_at) VALUES($1,$2,$3,$4,now())',
-      [owner.account_id, street, street.toLowerCase(), 'docks']);
+  for (const [owner, street, buildingId] of [[explorer, 'Amber Row', 'docks-0001'], [agentLandlord, 'Tern House', 'docks-0002'], [residentLandlord, 'Cedar Yard', 'docks-0003']]) {
+    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,building_id,corner_at) VALUES($1,$2,$3,$4,$5,now())',
+      [owner.account_id, street, street.toLowerCase(), 'docks', buildingId]);
   }
   const land = await newPage({}, explorer.token), landRequests = [];
   land.on('request', request => landRequests.push({ method: request.method(), path: new URL(request.url()).pathname }));
@@ -1723,7 +1723,8 @@ try {
   await land.locator('#btn-player-view').click(); await waitForCity(land);
   await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes?.length === 3);
   const landHandle = await land.evaluateHandle(() => window.__cityHandles.at(-1)), initialLand = await state(land);
-  assert(initialLand.world.width > 960 && initialLand.world.height === 640, 'Real deed records extend the walkable world beyond the original Docks.');
+  assert(initialLand.connected && initialLand.plotCount === 2500 && initialLand.world.width === 7680 && initialLand.world.height === 4480,
+    'Real deed records occupy the fixed, interconnected city with all permanent plots.');
   assert.deepEqual(new Set(initialLand.homes.map(home => home.owner.kind)), new Set(['player', 'agent', 'npc']));
   assert.equal(new Set(initialLand.homes.map(home => home.key)).size, 3);
   await land.locator('[data-city-world-map]').click();
@@ -1736,14 +1737,15 @@ try {
     && window.__cityHandles.at(-1).handle.getState().pathLength === 0);
   const arrivedHome = await state(land);
   assert(Math.hypot(arrivedHome.player.x - home.entrance.x, arrivedHome.player.y - home.entrance.y) < 20, 'The real waypoint route arrives at the house entrance.');
-  assert(arrivedHome.player.x > 960, 'The player actually walks into the extension.');
+  assert(arrivedHome.player.x < 0 || arrivedHome.player.x > 960 || arrivedHome.player.y < 0 || arrivedHome.player.y > 640,
+    'The player actually walks out of the service core into its fixed residential streets.');
   assert.match(await land.locator('.omerta-city__actor-body').innerText(), /Connected Explorer.*PLAYER steward/s);
   assert.match(await land.locator('.omerta-city__actor-body').innerText(), /illustrative.*does not show where the steward/s);
   assert.equal(await land.locator('[data-city-home-action="hideout"]').count(), 1);
   const ownedControl = await land.locator('[data-city-home-action="hideout"]').elementHandle();
   await land.locator('[data-city-actor-close]').click();
-  await holdKey(land, 'ArrowDown', y => window.__cityHandles.at(-1).handle.getState().player.y > y + 45, arrivedHome.player.y);
-  await holdKey(land, 'ArrowUp', entrance => Math.hypot(window.__cityHandles.at(-1).handle.getState().player.x - entrance.x,
+  await holdKey(land, 'ArrowLeft', x => window.__cityHandles.at(-1).handle.getState().player.x < x - 45, arrivedHome.player.x);
+  await holdKey(land, 'ArrowRight', entrance => Math.hypot(window.__cityHandles.at(-1).handle.getState().player.x - entrance.x,
     window.__cityHandles.at(-1).handle.getState().player.y - entrance.y) < 15, home.entrance);
   await land.keyboard.press('e');
   assert.equal((await state(land)).selectedHome, home.key, 'Keyboard walking and E inspect the actual entrance.');
@@ -1797,7 +1799,9 @@ try {
     await land.locator('#btn-refresh').click();
     await land.waitForFunction(id => window.__cityHandles.at(-1).handle.getState().ready && window.__cityHandles.at(-1).handle.getState().region.id === id, district);
     const regional = await state(land);
-    assert.equal(regional.world.width, 960, 'A new district does not inherit another district’s residential extent.');
+    assert.equal(regional.world.width, 7680, 'Every district retains the same full connected city extent.');
+    assert.equal(regional.world.height, 4480);
+    assert.equal(regional.plotCount, 2500);
     assert.equal(regional.homes.length, 0);
     assert.equal(regional.region.landmark, district === 'brick' ? 'Kiln Square' : 'Bell Gardens');
     const regionalHandle = await land.evaluateHandle(() => window.__cityHandles.at(-1)), roadGoal = { x: 424, y: 536 };

@@ -1,3 +1,4 @@
+import { continuousCityHistoricalInput } from '../../tools/continuous-city-source-compatibility.js';
 import {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';
 // Closed pure-control fixtures. Historical source execution never admits the current release.
 import {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';
@@ -187,7 +188,7 @@ function currentHistoricalApplicationSource(file,input){
 function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
-    const selected = currentHistoricalApplicationSource(file, String(originalRead(path.join(root, file))));
+    const selected = currentHistoricalApplicationSource(file, continuousCityHistoricalInput(file, String(originalRead(path.join(root, file)))));
     checked.add(file);
     return selected;
   }
@@ -412,7 +413,7 @@ function rejectHistoricalApplicationSources() {
     'src/db.js', 'src/deeds.js', 'src/explore.js'];
   let positives = 0, refusals = 0;
   for (const file of files) {
-    const raw = String(originalRead(path.join(root, file))), current = canonical(raw);
+    const raw = continuousCityHistoricalInput(file, String(originalRead(path.join(root, file)))), current = canonical(raw);
     const rootRaw = enterpriseOverRootSourceBaseline(file,raw), rootCurrent = canonical(rootRaw);
     const deedRaw = marketOverDeedSourceBaseline(file, rootRaw), deedCurrent = canonical(deedRaw);
     const witness = assertDeedQuestSourceTransfer(file, deedRaw).baselineText;
@@ -447,7 +448,7 @@ function rejectHistoricalApplicationSources() {
 }
 
 function rejectCityActivityHistoricalSources() {
-  const file = 'src/server.js', unionRaw = String(originalRead(path.join(root, file)));
+  const file = 'src/server.js', unionRaw = continuousCityHistoricalInput(file, String(originalRead(path.join(root, file))));
   const raw = enterpriseOverGuiSourceBaseline(file, unionRaw), current = canonical(raw);
   const combinedProof = qualifyCityActivityMarketSource(file, raw);
   const retained = String(git(['cat-file', 'blob', CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob]));
