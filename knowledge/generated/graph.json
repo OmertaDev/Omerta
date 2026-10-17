@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "da6ccf0b5605c3a0cc9d2ed495c8a2ad0b907af4",
+  "sourceRevision": "416fc09b63f8c46d202d65d8f311f6ba8c692946",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16588,
-    "edges": 66173,
+    "nodes": 16592,
+    "edges": 66185,
     "byNodeType": {
       "Artifact": 6883,
       "Command": 295,
-      "Commit": 4515,
+      "Commit": 4519,
       "Contract": 134,
       "Document": 948,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5470,
-      "CHANGED": 25182,
+      "CHANGED": 25190,
       "CONTAINS": 6904,
       "DECLARES": 295,
       "DEFINED_IN": 1756,
       "DEPENDS_ON": 69,
       "EXECUTES": 1157,
       "HANDLED_BY": 931,
-      "HAS_COMMIT": 4515,
+      "HAS_COMMIT": 4519,
       "IMPLEMENTS": 124,
       "IMPORTS": 7671,
       "INHERITS": 45,
@@ -40597,18 +40597,18 @@
       "extension": ".md",
       "bytes": 60768,
       "lines": 196,
-      "version": "57e230061c59d520",
+      "version": "75704fa0c9d4ff76",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "57e230061c59d520"
+          "version": "75704fa0c9d4ff76"
         }
       ],
-      "lastChangedAt": "2026-10-17T14:30:19.000Z",
+      "lastChangedAt": "2026-10-17T15:00:57.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "da6ccf0b5605c3a0cc9d2ed495c8a2ad0b907af4"
+      "lastChangedCommit": "416fc09b63f8c46d202d65d8f311f6ba8c692946"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -133118,20 +133118,20 @@
       "path": "test/commerce-current-native-guard.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9654,
+      "bytes": 9726,
       "lines": 44,
-      "version": "7f6416a1afadbfba",
+      "version": "59b71be38666d373",
       "text": true,
       "provenance": [
         {
           "file": "test/commerce-current-native-guard.js",
           "line": 1,
-          "version": "7f6416a1afadbfba"
+          "version": "59b71be38666d373"
         }
       ],
-      "lastChangedAt": "2026-10-17T07:02:24.000Z",
+      "lastChangedAt": "2026-10-17T14:47:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "39829ea7d0ff6ec812d6a20440db5dc7aac4b3a0"
+      "lastChangedCommit": "773b9ac62aab8232c2f82c7ee7311e331678e4cd"
     },
     {
       "key": "Artifact:test/commerce-release-phase2-migration-catalog.js",
@@ -153245,18 +153245,18 @@
       "extension": ".js",
       "bytes": 390371,
       "lines": 10540,
-      "version": "d8d91f12bd122ae3",
+      "version": "1f628d85e83ba75e",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-inputs.js",
           "line": 1,
-          "version": "d8d91f12bd122ae3"
+          "version": "1f628d85e83ba75e"
         }
       ],
-      "lastChangedAt": "2026-10-17T13:58:33.000Z",
+      "lastChangedAt": "2026-10-17T14:56:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "094e542cb8e07b955ab025936678080f779785fb"
+      "lastChangedCommit": "1fd3c5a7678afd06321cbfcf74631ce26d30b764"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -157244,18 +157244,18 @@
       "extension": ".js",
       "bytes": 107147,
       "lines": 1341,
-      "version": "8b78f6d1ff8cee74",
+      "version": "ba4330a4266ef9db",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "8b78f6d1ff8cee74"
+          "version": "ba4330a4266ef9db"
         }
       ],
-      "lastChangedAt": "2026-10-17T14:30:19.000Z",
+      "lastChangedAt": "2026-10-17T15:00:57.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "da6ccf0b5605c3a0cc9d2ed495c8a2ad0b907af4"
+      "lastChangedCommit": "416fc09b63f8c46d202d65d8f311f6ba8c692946"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -171388,6 +171388,22 @@
       ]
     },
     {
+      "key": "Commit:1fd3c5a7678afd06321cbfcf74631ce26d30b764",
+      "type": "Commit",
+      "id": "1fd3c5a7678afd06321cbfcf74631ce26d30b764",
+      "label": "test: pin reviewed commerce guard assertion in native inputs",
+      "title": "test: pin reviewed commerce guard assertion in native inputs",
+      "date": "2026-10-17T14:56:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1fd3c5a7678afd06321cbfcf74631ce26d30b764",
+      "provenance": [
+        {
+          "commit": "1fd3c5a7678afd06321cbfcf74631ce26d30b764",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1fd3c5a7678afd06321cbfcf74631ce26d30b764"
+        }
+      ]
+    },
+    {
       "key": "Commit:1fe0d95c34b53a3984ce04fedbe8ce9f3bdb19b8",
       "type": "Commit",
       "id": "1fe0d95c34b53a3984ce04fedbe8ce9f3bdb19b8",
@@ -177772,6 +177788,22 @@
       ]
     },
     {
+      "key": "Commit:3628b7968415b1debd18bcef6c860bd6032d4721",
+      "type": "Commit",
+      "id": "3628b7968415b1debd18bcef6c860bd6032d4721",
+      "label": "Refresh commerce knowledge after the recovery source repairs",
+      "title": "Refresh commerce knowledge after the recovery source repairs",
+      "date": "2026-10-17T14:33:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3628b7968415b1debd18bcef6c860bd6032d4721",
+      "provenance": [
+        {
+          "commit": "3628b7968415b1debd18bcef6c860bd6032d4721",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3628b7968415b1debd18bcef6c860bd6032d4721"
+        }
+      ]
+    },
+    {
       "key": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
       "type": "Commit",
       "id": "362a9bf2b1e24e39633e670408db2f25349d1cc3",
@@ -181304,6 +181336,22 @@
         {
           "commit": "4161bb635d098d2969937016ec1da9f9a04fe8ec",
           "url": "https://github.com/OmertaDev/Omerta/commit/4161bb635d098d2969937016ec1da9f9a04fe8ec"
+        }
+      ]
+    },
+    {
+      "key": "Commit:416fc09b63f8c46d202d65d8f311f6ba8c692946",
+      "type": "Commit",
+      "id": "416fc09b63f8c46d202d65d8f311f6ba8c692946",
+      "label": "test: refresh commerce recovery pins after reviewed guard correction",
+      "title": "test: refresh commerce recovery pins after reviewed guard correction",
+      "date": "2026-10-17T15:00:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/416fc09b63f8c46d202d65d8f311f6ba8c692946",
+      "provenance": [
+        {
+          "commit": "416fc09b63f8c46d202d65d8f311f6ba8c692946",
+          "url": "https://github.com/OmertaDev/Omerta/commit/416fc09b63f8c46d202d65d8f311f6ba8c692946"
         }
       ]
     },
@@ -196648,6 +196696,22 @@
         {
           "commit": "773b2923df0fa9348c98d44e060cfd170bc41a40",
           "url": "https://github.com/OmertaDev/Omerta/commit/773b2923df0fa9348c98d44e060cfd170bc41a40"
+        }
+      ]
+    },
+    {
+      "key": "Commit:773b9ac62aab8232c2f82c7ee7311e331678e4cd",
+      "type": "Commit",
+      "id": "773b9ac62aab8232c2f82c7ee7311e331678e4cd",
+      "label": "test: retain failure closure assertion with native diagnostics",
+      "title": "test: retain failure closure assertion with native diagnostics",
+      "date": "2026-10-17T14:47:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/773b9ac62aab8232c2f82c7ee7311e331678e4cd",
+      "provenance": [
+        {
+          "commit": "773b9ac62aab8232c2f82c7ee7311e331678e4cd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/773b9ac62aab8232c2f82c7ee7311e331678e4cd"
         }
       ]
     },
@@ -246664,12 +246728,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 196,
-      "version": "57e230061c59d520",
+      "version": "75704fa0c9d4ff76",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "57e230061c59d520"
+          "version": "75704fa0c9d4ff76"
         }
       ]
     },
@@ -261593,6 +261657,9 @@
           "commit": "361c3b45cb4c4e758b9ef236c9a0a03be60f1798"
         },
         {
+          "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
+        },
+        {
           "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
         },
         {
@@ -263834,6 +263901,9 @@
           "commit": "361c3b45cb4c4e758b9ef236c9a0a03be60f1798"
         },
         {
+          "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
+        },
+        {
           "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
         },
         {
@@ -266073,6 +266143,9 @@
         },
         {
           "commit": "361c3b45cb4c4e758b9ef236c9a0a03be60f1798"
+        },
+        {
+          "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
         },
         {
           "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
@@ -268944,6 +269017,9 @@
         },
         {
           "commit": "361c3b45cb4c4e758b9ef236c9a0a03be60f1798"
+        },
+        {
+          "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
         },
         {
           "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
@@ -284792,7 +284868,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "da6ccf0b5605c3a0cc9d2ed495c8a2ad0b907af4",
+      "revision": "416fc09b63f8c46d202d65d8f311f6ba8c692946",
       "currentBranch": "codex/commerce-restore-oct17",
       "defaultBranch": "main",
       "visibility": "public",
@@ -323381,12 +323457,12 @@
       "id": "test/commerce-current-native-guard.js",
       "label": "test/commerce-current-native-guard.js",
       "lines": 44,
-      "version": "7f6416a1afadbfba",
+      "version": "59b71be38666d373",
       "provenance": [
         {
           "file": "test/commerce-current-native-guard.js",
           "line": 1,
-          "version": "7f6416a1afadbfba"
+          "version": "59b71be38666d373"
         }
       ]
     },
@@ -405928,6 +406004,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1fd3c5a7678afd06321cbfcf74631ce26d30b764",
+      "to": "Artifact:tools/enterprise-native-inputs.js",
+      "provenance": {
+        "commit": "1fd3c5a7678afd06321cbfcf74631ce26d30b764"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1fe0d95c34b53a3984ce04fedbe8ce9f3bdb19b8",
       "to": "Artifact:AUDIT-the-pen-step-two.md",
       "provenance": {
@@ -421360,6 +421444,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3628b7968415b1debd18bcef6c860bd6032d4721",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3628b7968415b1debd18bcef6c860bd6032d4721",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3628b7968415b1debd18bcef6c860bd6032d4721",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3628b7968415b1debd18bcef6c860bd6032d4721",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -431004,6 +431120,22 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "4161bb635d098d2969937016ec1da9f9a04fe8ec"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:416fc09b63f8c46d202d65d8f311f6ba8c692946",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "416fc09b63f8c46d202d65d8f311f6ba8c692946"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:416fc09b63f8c46d202d65d8f311f6ba8c692946",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "416fc09b63f8c46d202d65d8f311f6ba8c692946"
       }
     },
     {
@@ -471508,6 +471640,14 @@
       "to": "Artifact:tools/enterprise-source-compatibility.js",
       "provenance": {
         "commit": "773b2923df0fa9348c98d44e060cfd170bc41a40"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:773b9ac62aab8232c2f82c7ee7311e331678e4cd",
+      "to": "Artifact:test/commerce-current-native-guard.js",
+      "provenance": {
+        "commit": "773b9ac62aab8232c2f82c7ee7311e331678e4cd"
       }
     },
     {
@@ -691313,6 +691453,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1fd3c5a7678afd06321cbfcf74631ce26d30b764",
+      "provenance": {
+        "commit": "1fd3c5a7678afd06321cbfcf74631ce26d30b764"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1fe0d95c34b53a3984ce04fedbe8ce9f3bdb19b8",
       "provenance": {
         "commit": "1fe0d95c34b53a3984ce04fedbe8ce9f3bdb19b8"
@@ -694505,6 +694653,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3628b7968415b1debd18bcef6c860bd6032d4721",
+      "provenance": {
+        "commit": "3628b7968415b1debd18bcef6c860bd6032d4721"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:362a9bf2b1e24e39633e670408db2f25349d1cc3",
       "provenance": {
         "commit": "362a9bf2b1e24e39633e670408db2f25349d1cc3"
@@ -696268,6 +696424,14 @@
       "to": "Commit:4161bb635d098d2969937016ec1da9f9a04fe8ec",
       "provenance": {
         "commit": "4161bb635d098d2969937016ec1da9f9a04fe8ec"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:416fc09b63f8c46d202d65d8f311f6ba8c692946",
+      "provenance": {
+        "commit": "416fc09b63f8c46d202d65d8f311f6ba8c692946"
       }
     },
     {
@@ -703940,6 +704104,14 @@
       "to": "Commit:773b2923df0fa9348c98d44e060cfd170bc41a40",
       "provenance": {
         "commit": "773b2923df0fa9348c98d44e060cfd170bc41a40"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:773b9ac62aab8232c2f82c7ee7311e331678e4cd",
+      "provenance": {
+        "commit": "773b9ac62aab8232c2f82c7ee7311e331678e4cd"
       }
     },
     {
