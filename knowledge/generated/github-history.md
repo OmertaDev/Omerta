@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `eabda163ae89`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `251cb3fd5ed1`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4416 |
+| Commits in clone | 4426 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-17 — test: pin enterprise recovery to repaired source inputs |
+| Latest commit | 2026-10-17 — Bind enterprise recovery review to integrated GUI source |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3454 |
+| OmertaDev | 3463 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 117 |
+| github-actions[bot] | 118 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,13 +30,13 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 730 | historical |
-| knowledge/generated/graph-summary.md | 730 | historical |
-| knowledge/generated/graph.json | 730 | historical |
-| knowledge/generated/inventory.md | 730 | historical |
+| knowledge/generated/github-history.md | 734 | historical |
+| knowledge/generated/graph-summary.md | 734 | historical |
+| knowledge/generated/graph.json | 734 | historical |
+| knowledge/generated/inventory.md | 734 | historical |
 | [SPEC.md](../../SPEC.md) | 579 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 475 | yes |
+| [public/index.html](../../public/index.html) | 476 | yes |
 | [src/server.js](../../src/server.js) | 441 | yes |
 | [schema.sql](../../schema.sql) | 371 | yes |
 | knowledge/generated/documents.md | 351 | historical |
@@ -55,8 +55,8 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 107 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 105 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 108 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 106 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 103 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 95 | yes |
