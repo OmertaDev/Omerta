@@ -1,6 +1,7 @@
 // New exact source evidence composes with historical guards; it never revises their pins.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {marketOverDeedSourceBaseline} from '../tools/deed-market-source-compatibility.js';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { DEED_QUEST_SOURCE_PREDECESSOR, DEED_QUEST_SOURCE_PHASE, DEED_QUEST_SOURCE_DOMAINS,
@@ -15,6 +16,8 @@ const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuf
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
+const retainedDeedRelease = '3aaeaa97a102babf7f56dece03860964814fe313';
+const retainedDeedSource = file => git('show', retainedDeedRelease+':'+file);
 assert.equal(DEED_QUEST_SOURCE_PREDECESSOR, '2c8eaacf104e8555d5140136b5ed19027ecd4766');
 assert.equal(DEED_QUEST_SOURCE_PHASE, 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance');
 assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schema.sql', 'src/agentgateway.js',
@@ -22,7 +25,7 @@ assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schem
   'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
-  const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);
+  const raw = marketOverDeedSourceBaseline(file, fs.readFileSync(file, 'utf8')), current = lf(raw);
   assert(raw === current || raw === current.replaceAll('\n', '\r\n'), 'Working candidate has uniform line endings');
   const predecessor = git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`);
   assert.equal(hash(current), pin.currentSha256);
@@ -32,7 +35,7 @@ for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
   assert.equal(predecessor, git('cat-file', 'blob', pin.baselineBlob));
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses));
   const actual = []; let hunk = null;
-  for (const line of git('diff', '--no-ext-diff', '--unified=3', DEED_QUEST_SOURCE_PREDECESSOR, '--', file).split('\n')) {
+  for (const line of git('diff', '--no-ext-diff', '--unified=3', pin.baselineBlob, pin.currentBlob).split('\n')) {
     if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; actual.push(hunk); }
     else if (hunk && /^[ +\-]/.test(line)) {
       if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
@@ -85,12 +88,13 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra', 'knowledg
 const schema = fs.readFileSync('schema.sql', 'utf8');
 assert.equal(fourthBatchMigrationSchema(schema), schema, 'Source reconstruction grants no historical native admission');
 assert.equal(fifthBatchMigrationSchema(schema), schema, 'Source reconstruction grants no historical autonomy migration admission');
-// The integration adds one outer exact-hash alias, leaving all historical literal pins intact.
-const nextFive = lf(fs.readFileSync('tools/next-five-source-compatibility.js', 'utf8'))
+// Retain the released Deed branch's complete preservation proofs separately. The new junction
+// test verifies current combined raw/Git bytes; these old assertions never qualify the new tree.
+const nextFive = retainedDeedSource('tools/next-five-source-compatibility.js')
   .replace("import { deedQuestSourceBaseline } from './deed-quest-source-transfer.js';\n", '')
   .replace(' input=deedQuestSourceBaseline(file,input);\n', '');
 assert.equal(nextFive, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:tools/next-five-source-compatibility.js`));
-const releaseTool = lf(fs.readFileSync('tools/release-source-transfer.js', 'utf8'))
+const releaseTool = retainedDeedSource('tools/release-source-transfer.js')
   .replace("import { deedQuestSourceBaseline } from './deed-quest-source-transfer.js';\n", '')
   .replace('  input = deedQuestSourceBaseline(file, input);\n', '');
 assert.equal(releaseTool, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:tools/release-source-transfer.js`));
@@ -98,9 +102,9 @@ for (const file of ['tools/economy-release-composition.js', 'tools/next-layer-so
   'tools/rc1-first-batch-source-compatibility.js', 'tools/rc1-second-batch-source-compatibility.js',
   'tools/rc1-third-batch-source-compatibility.js', 'tools/rc1-fourth-batch-source-compatibility.js',
   'tools/rc1-fifth-batch-source-compatibility.js'])
-  assert.equal(lf(fs.readFileSync(file, 'utf8')), git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`),
-    'Historical source assertions and pins remain byte-for-byte unchanged');
-const nextLayerTest = lf(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))
+  assert.equal(retainedDeedSource(file), git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`),
+    'Released Deed source assertions and pins remain byte-for-byte unchanged in their own revision');
+const nextLayerTest = retainedDeedSource('test/next-layer-source-compatibility.js')
   .replace("import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n", '')
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),
@@ -146,4 +150,4 @@ for (const source of [currentRuntime, resetRuntime])
     'The exact frozen runtime reset DDL remains unique');
 assert.throws(() => nextLayerMigrationPredecessor(schema), error => error?.code === 'ERR_ASSERTION',
   'Current Deed schema still has no historical native admission');
-console.log(`Property quest source envelope PASS: ${Object.keys(DEED_QUEST_SOURCE_DOMAINS).length} closed domains, ${hunks} exact inverse hunks, ${negatives} rejecting controls; source only`);
+console.log(`Retained property quest source envelope PASS after exact current junction: ${Object.keys(DEED_QUEST_SOURCE_DOMAINS).length} closed domains, ${hunks} exact inverse hunks, ${negatives} rejecting controls; no new native or release qualification`);

@@ -24,10 +24,20 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
  'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
- 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
+ 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
 
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
+ const slots=(await c.query('SELECT * FROM production_slot_reservations WHERE (business_id=$1) IS TRUE ORDER BY id',[depotId])).rows;
+ if(slots.length){const {collectProductionSlotIssues}=await import('./productionslots.js');if((await collectProductionSlotIssues(c)).length)fail('slot_history_changed');}
+ for(const row of slots){
+  if(!['offered','active','consumed','released','expired','void'].includes(row.status))fail('slot_history_changed');
+  if(['offered','active'].includes(row.status)){
+   const consent=(await c.query('SELECT receipt FROM production_slot_requests WHERE reservation_id=$1 AND account_id=$2 AND original_character=$3 ORDER BY request_key',[row.id,row.maker_account,row.maker_character])).rows;
+   if(!consent.some(q=>q.receipt?.reservationId===row.id&&q.receipt?.status==='offered'&&q.receipt?.sourceHash===row.source_hash))fail('slot_history_changed');
+   fail('production_slot_obligation');
+  }
+ }
  const commissions=(await c.query('SELECT * FROM commissioned_crafting_contracts WHERE business_id=$1 ORDER BY id',[depotId])).rows;
  if(commissions.length){const {collectCommissionedCraftingIssues}=await import('./commissionedcrafting.js');if((await collectCommissionedCraftingIssues(c)).length)fail('commission_history_changed');}
  for(const row of commissions){

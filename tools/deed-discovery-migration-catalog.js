@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {isDeepStrictEqual} from 'node:util';
 import {DEED_QUEST_SOURCE_DOMAINS, assertDeedQuestSourceTransfer} from './deed-quest-source-transfer.js';
+import {isDeedOverMarketSource, assertDeedOverMarketSourceTransfer} from './deed-market-source-compatibility.js';
 
 export const DEED_MIGRATION_TABLES = Object.freeze(['street_deed_building_assignments',
   'street_deed_discoveries', 'street_deed_discovery_migrations', 'street_deed_primary_claims']);
@@ -115,6 +116,14 @@ export function deedDiscoveryCatalogProjection(baseline, candidate, {profile, se
 }
 
 export function deedDiscoveryMigrationSources(input) {
+  if (isDeedOverMarketSource('schema.sql', input)) {
+    const proof = assertDeedOverMarketSourceTransfer('schema.sql', input);
+    assert.equal(proof.predecessorRevision, '7903d5032c0232fc4c368014dd4129785a1b0786');
+    const current = input.replaceAll('\r\n', '\n'), predecessor = proof.baselineText;
+    assert.equal([...current.matchAll(/^CREATE TABLE IF NOT EXISTS /gm)].length, 546);
+    assert.equal([...predecessor.matchAll(/^CREATE TABLE IF NOT EXISTS /gm)].length, 542);
+    return {current, predecessor, predecessorRevision: proof.predecessorRevision};
+  }
   const proof = assertDeedQuestSourceTransfer('schema.sql', input);
   assert.equal(proof.predecessorRevision, '2c8eaacf104e8555d5140136b5ed19027ecd4766');
   const current = input.replaceAll('\r\n', '\n'), predecessor = proof.baselineText;
@@ -123,6 +132,7 @@ export function deedDiscoveryMigrationSources(input) {
   return {current, predecessor, predecessorRevision: proof.predecessorRevision};
 }
 export function isDeedDiscoveryMigrationSource(input) {
+  if (isDeedOverMarketSource('schema.sql', input)) return true;
   if (typeof input !== 'string') return false;
   const lf = input.replaceAll('\r\n', '\n');
   if (input !== lf && input !== lf.replaceAll('\n', '\r\n')) return false;
@@ -235,7 +245,7 @@ export async function createDeedDiscoveryMigrationCatalog(pool, endpoint, input,
     console.error('Current Deed native catalog mismatch: '+JSON.stringify(delta));throw error;
   }
   const causalRefusals = verifyDeedDiscoveryCatalogCausalNegatives(catalog, {includeNotNull});
-  console.log(`Current Deed native ${profile} catalog PASS: frozen536 plus4 tables/19 columns/8 structural constraints/14 NOT NULL declarations/6 indexes; ${causalRefusals} causal refusals; no inherited release clearance`);
+  console.log(`Current Deed native ${profile} catalog PASS: frozen${[...sources.predecessor.matchAll(/^CREATE TABLE IF NOT EXISTS /gm)].length} plus4 tables/19 columns/8 structural constraints/14 NOT NULL declarations/6 indexes; ${causalRefusals} causal refusals; no inherited release clearance`);
   return Object.freeze({...catalog, predecessorSource:sources.predecessor, freshCatalog,
-    source: {currentSha256:DEED_QUEST_SOURCE_DOMAINS['schema.sql'].currentSha256, predecessorRevision:sources.predecessorRevision}});
+    source: {currentSha256:crypto.createHash('sha256').update(sources.current).digest('hex'), predecessorRevision:sources.predecessorRevision}});
 }

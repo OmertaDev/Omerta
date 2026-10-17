@@ -14,6 +14,7 @@ import { createRequire, registerHooks, syncBuiltinESMExports } from 'node:module
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cityPlaySourceBaseline } from '../../tools/city-play-source-transfer.js';
 import { assertDeedQuestSourceTransfer, DEED_QUEST_SOURCE_DOMAINS } from '../../tools/deed-quest-source-transfer.js';
+import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -112,9 +113,9 @@ function historicalApplicationSource(file, input) {
   assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',
     'Historical application provenance excludes tool and test domains');
   const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];
-  let witness = String(input);
+  let witness = marketOverDeedSourceBaseline(file, String(input));
   if (domain) {
-    const raw = uniformHistoricalInput(file, input);
+    const raw = uniformHistoricalInput(file, witness);
     if (sha256(canonical(raw)) === domain.currentSha256)
       witness = assertDeedQuestSourceTransfer(file, raw).baselineText;
   }
@@ -309,10 +310,11 @@ function rejectHistoricalApplicationSources() {
   let positives = 0, refusals = 0;
   for (const file of files) {
     const raw = String(originalRead(path.join(root, file))), current = canonical(raw);
-    const witness = assertDeedQuestSourceTransfer(file, raw).baselineText;
+    const deedRaw = marketOverDeedSourceBaseline(file, raw), deedCurrent = canonical(deedRaw);
+    const witness = assertDeedQuestSourceTransfer(file, deedRaw).baselineText;
     const expected = blob(file, history), frozen = String(blob(file, release));
     const reject = supplied => { assert.throws(() => historicalApplicationSource(file, supplied)); refusals++; };
-    for (const source of new Set([current, witness, frozen])) {
+    for (const source of new Set([current, deedCurrent, witness, frozen])) {
       for (const supplied of [source, source.replaceAll('\n', '\r\n')]) {
         const selected = historicalApplicationSource(file, supplied);
         assert.equal(sha256(selected), sha256(expected));
@@ -323,9 +325,9 @@ function rejectHistoricalApplicationSources() {
         source.replace(/\S/, '?'), '\ufeff' + source, source.replace('\n', '\r\n'), source.replace('\n', '\r')]) reject(supplied);
     }
     for (const inverse of DEED_QUEST_SOURCE_DOMAINS[file].inverses) {
-      assert(current.includes(inverse.current));
-      reject(current.replace(inverse.current, ''));
-      reject(current.replace(inverse.current, () => inverse.current + inverse.current));
+      assert(deedCurrent.includes(inverse.current));
+      reject(deedCurrent.replace(inverse.current, ''));
+      reject(deedCurrent.replace(inverse.current, () => inverse.current + inverse.current));
     }
   }
   const phase1 = String(originalRead(path.join(root, 'src/content/phase1.js')));

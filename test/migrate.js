@@ -660,6 +660,12 @@ const DISPOSITION = {
   worker_training_courses: 'escrow', // original employer death burns reserve; surviving original employer recovers after apprentice death, without heir training rights
   worker_training_requests: 'ledger', // immutable original-account and actor request acknowledgements grant no fresh training authority
   worker_training_sessions: 'ledger', // original apprentice stat, energy and canonical wage journal history retains source identity
+  cross_dock_links: 'special', // canonical courier terminal/estate recovery retires live link metadata; expired original-party history grants no heir execution authority
+  cross_dock_requests: 'ledger', // original actor consent/replay receipts preserve source identity and grant no new courier or hub authority
+  production_slot_reservations: 'special', // canonical commission refund/estate recovery retires reservations; original maker/customer history cannot authorize heir production
+  production_slot_requests: 'ledger', // immutable original actor request acknowledgements confer no new capacity or crafting authority
+  merchant_return_rights: 'escrow', // prefunded original seller reserve is refunded by canonical seller/buyer estate recovery; heirs receive no return execution authority
+  merchant_return_requests: 'ledger', // original actor return/refund acknowledgements preserve history without new payment authority
   employment_organizations: 'special', // original founder death retires consent; actual Crew roster, leader and Depot checks govern fresh publication
   employment_organization_requests: 'ledger', // original actor request receipts retain historical Crew consent and budgets
   business_partnerships: 'special', // original-party death retires relationship; at-risk capital remains in canonical Depot estate, without a principal guarantee
