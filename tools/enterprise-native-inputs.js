@@ -1,5 +1,5 @@
 // Actual immutable C input-union proposal; no native/final/physical admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="773b9ac62aab8232c2f82c7ee7311e331678e4cd";
+export const ENTERPRISE_NATIVE_BASE_REVISION="181422abe5312e24be5bd76ec56fe87454bda664";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -4734,8 +4734,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "public/index.html",
-    "blob": "4c862682a50c32979d9c49124fd9f2af46409fdb",
-    "sha256": "9eef7cd58e115a195b2c7620eb66d9d329311cc1694db8710a8c52ae9218a45d"
+    "blob": "ab9b7253ece151c7fa13051f484fa20fe00211f1",
+    "sha256": "9b963c0e87676a7464645268cb1c867b02fd0881a2023fc5f4bd9e0c3b733376"
   },
   {
     "file": "public/invite.html",

@@ -46,6 +46,7 @@ try {
     const rules={travelCost:1000};
     const navigationRevision=1; const currentTab='deeds';
     let _cityDeedEntry=null;
+    let acting=false;
     const cityActorScope=()=>{const id=me.id;return()=>me.id===id;};
     let deedPropertyFocus=null;
     let deedPropertyRender=0;
@@ -147,6 +148,17 @@ try {
   await page.evaluate(async () => {fixture.quest=true;await renderDeeds({district:'brick',buildingId:'brick-0001'});});
   await page.locator('#deed-property-claim').waitFor();
   assert.equal(await page.locator('#deed-investigate').count(), 0, 'Verified quest qualification avoids unnecessary energy spend.');
+  const claimsBeforePending = await page.evaluate(() => calls.filter(call => call.method === 'POST' && call.path === '/v1/deeds/claim').length);
+  await page.evaluate(async () => {acting=true;await renderDeeds({district:'brick',buildingId:'brick-0001'});});
+  assert.equal(await page.locator('#deed-property-claim').isDisabled(), true,
+    'A background render cannot publish an enabled claim while the prior action is pending.');
+  await page.locator('#deed-property-claim').evaluate(control => control.click());
+  assert.equal(await page.evaluate(() => calls.filter(call => call.method === 'POST' && call.path === '/v1/deeds/claim').length), claimsBeforePending,
+    'A pending action cannot dispatch a second deed claim.');
+  await page.evaluate(async () => {acting=false;await renderDeeds({district:'brick',buildingId:'brick-0001'});});
+  assert.equal(await page.locator('#deed-property-claim').isEnabled(), true,
+    'The existing completed-action refresh restores the currently earned claim.');
+
   await page.evaluate(async () => {fixture.atlasClaimed=true;await renderDeeds({district:'brick',buildingId:'brick-0001'});});
   assert.equal(await page.locator('#deed-property-claim').count(), 0,
     'A competing claim visible in either read suppresses a stale claim control.');
