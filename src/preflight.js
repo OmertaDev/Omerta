@@ -95,6 +95,8 @@ export const OPERATIONAL_ENV = [
   'RESOURCE_ECONOMY', 'RESOURCE_PAYMENTS_MODE', 'RESOURCE_COMPUTE_ENABLED',
   'RESOURCE_COMPUTE_CATALOG', 'RESOURCE_OPENAI_API_KEY', 'RESOURCE_STRIPE_SECRET_KEY',
   'RESOURCE_STRIPE_WEBHOOK_SECRET', 'RESOURCE_SCARCE_PROVIDER_IDS', 'RESOURCE_COMPUTE_DAILY_SLOTS',
+  // Optional read-only Base observer; this configuration grants no financial or work authority.
+  'BASE_WORK_ESCROW_OBSERVER_CONFIG',
   // Economy intake defaults off; disabling it preserves funded recovery routes.
   'DEPOT_PILOT', 'DELIVERY_CONTRACTS',
   // Inert coordination pilot: disabled by default; optional account cohort only narrows access.
