@@ -1,4 +1,6 @@
 import {nextFiveSourceBaseline} from '../tools/next-five-source-compatibility.js';
+import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
+import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -17,7 +19,7 @@ for (const [profile, files] of Object.entries(COMPOSITION_PROFILES)) {
   for (const [file, pin] of Object.entries(files)) {
     const current = git('show', COMPOSITION_REVISION + ':' + file);
     const prior = git('cat-file', 'blob', pin.baselineBlob);
-    assert.equal(nextFiveSourceBaseline(file, lf(fs.readFileSync(file, 'utf8'))), current, 'Complete actual source retains its reviewed composition');
+    assert.equal(nextFiveSourceBaseline(file, lf(cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file, 'utf8')):fs.readFileSync(file, 'utf8'))))), current, 'Complete actual source retains its reviewed composition');
     const actual = []; let hunk;
     for (const line of git('diff', '--no-ext-diff', '--unified=' + pin.contextLines, pin.baselineBlob, pin.currentBlob).split('\n')) {
       if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; actual.push(hunk); }

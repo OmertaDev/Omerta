@@ -34,7 +34,8 @@ for (const phase of ['queued', 'dispatched', 'revoked', 'default']) {
   const held = new Promise(resolve => { release = resolve; });
   const started = new Promise(resolve => { entered = resolve; });
   const calls = [], view = { open: true };
-  const scope = { token: 'first', projections: { invalidate() {} }, apiNow: async (method, path) => {
+  const scope = { token: 'first', projections: { invalidate() {}, snapshot: () => ({}), current: () => true },
+    cityIdentity: () => 'owner:1:docks', _cityAuthorityRevision: 0, uuid: () => 'fixture-key', recordCityAction() {}, scheduleCityPresence() {}, apiNow: async (method, path) => {
     calls.push({ method, path }); entered();
     if (path === '/held' || phase !== 'default') await held;
     return { code: 200, body: { ok: true } };
@@ -345,8 +346,8 @@ try {
     assert.equal(await page.locator('[data-city-progress]').count(), 1);
   };
   const returnToCity = async page => {
-    await page.locator('#city-session-bar').waitFor({ state: 'visible' });
-    await page.locator('#city-return').click();
+    if (await page.locator('#city-panel-close').isVisible()) await page.locator('#city-panel-close').click();
+    else { await page.locator('#city-session-bar').waitFor({ state: 'visible' }); await page.locator('#city-return').click(); }
     await waitForCity(page);
   };
   const refreshHudFromClient = async page => {
@@ -454,16 +455,26 @@ try {
           left: (bounds.left - camera.worldView.x) * camera.zoom * rect.width / camera.width,
           right: (bounds.right - camera.worldView.x) * camera.zoom * rect.width / camera.width };
       });
+      const originalScroll = hud.scrollTop;
+      const reachable = controls.every(control => {
+        const bounds = control.getBoundingClientRect();
+        if (bounds.top < hudRect.top || bounds.bottom > hudRect.bottom) {
+          if (hud.scrollHeight <= hud.clientHeight || hud.tabIndex !== 0) return false;
+          hud.scrollTop += bounds.top + bounds.height / 2 - hudRect.top - hudRect.height / 2;
+        }
+        const visible = control.getBoundingClientRect(), hit = document.elementFromPoint(visible.left + visible.width / 2, visible.top + visible.height / 2);
+        return hit === control || control.contains(hit);
+      });
+      hud.scrollTop = originalScroll;
       return { hud: hudRect.toJSON(), canvas: rect.toJSON(), camera: scene.camera, player,
         avatar, chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() })),
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
-        visible: controls.every(control => { const b = control.getBoundingClientRect();
-          const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2); return control === hit || control.contains(hit); }),
+        visible: reachable,
         playerVisible: document.elementFromPoint(player.x, player.y) === canvas,
         fields: controls.slice(0, -1).map(control => control.dataset.cityResource),
         readinessCount: document.querySelectorAll('.omerta-city__readiness[role="status"]').length };
     });
-    assert(!layout.overflow && layout.visible && layout.playerVisible, 'Walking HUD and player are visible without covering the canvas: ' + JSON.stringify(layout));
+    assert(!layout.overflow && layout.visible && layout.playerVisible, 'Walking HUD remains reachable through bounded scrolling and keeps the player visible: ' + JSON.stringify(layout));
     assert(layout.hud.bottom <= layout.canvas.top + 1, 'The HUD reserves its own space outside the playable camera.');
     assert(Math.abs(layout.camera.width - layout.canvas.width) <= 1 && Math.abs(layout.camera.height - layout.canvas.height) <= 1,
       'Phaser dimensions match the CSS viewport after compact resizing.');
@@ -487,6 +498,10 @@ try {
     assert.equal(await trigger.getAttribute('aria-expanded'), 'false');
     assert(await trigger.evaluate(node => document.activeElement === node), 'Closing help restores its resource trigger.');
     assert(await page.locator('.omerta-city__resource-help').isHidden());
+    await page.getByRole('button', { name: 'Nerve help', exact: true }).click();
+    const rate = await page.evaluate(() => window.__cityHandles.at(-1).options.rules.pacing.nerveRegenPerMin);
+    assert.match(await page.locator('.omerta-city__resource-help p').textContent(), new RegExp('Base recovery: ' + rate + ' Nerve/min; bonuses may increase this'));
+    await page.keyboard.press('Escape');
   };
   const gameplayRequests = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
@@ -527,10 +542,14 @@ try {
     await toggle.locator('#btn-dashboard-view').click();
     assert.equal(await toggle.locator('#tabbodies > .on').getAttribute('id'), dashboard, 'Dashboard returns to the previous screen.');
     await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
-    await toggle.locator('#map-mode-territory').click(); await assertSwitch(false);
+    const territoryHandles = await toggle.evaluate(() => window.__cityHandles.length);
+    await toggle.locator('#map-mode-territory').click(); await assertSwitch(true);
+    assert.equal((await state(toggle)).externalPanel, true, 'The territory board opens beside the retained player scene.');
+    assert.equal(await toggle.evaluate(() => window.__cityHandles.length), territoryHandles, 'Territory inspection does not replace the scene.');
+    assert.equal(await toggle.locator('#map-territory-board').evaluate(node => node.parentNode.id), 'city-panel-body');
     await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
     await toggle.locator('#btn-dashboard-view').click();
-    assert.equal(await toggle.locator('#map-mode-territory').getAttribute('aria-pressed'), 'true', 'Returning restores the prior territory board.');
+    assert.equal(await toggle.locator('#tabbodies > .on').getAttribute('id'), dashboard, 'Dashboard returns to its previous screen after in-game territory inspection.');
     assert.deepEqual(gameplayRequests(toggleRequests), [], 'View switching never submits gameplay or rewards.');
     if (shots) await toggle.screenshot({ path: path.join(shots, 'player-view-toggle-' + viewport.width + '.png') });
     await toggle.close();
@@ -555,15 +574,19 @@ try {
   };
   const assertCoreTrainingLayout = async page => {
     await assertWorldHud(page);
-    const layout = await page.locator('.omerta-city__training').evaluate(panel => ({
-      panel: panel.getBoundingClientRect().toJSON(), viewport: innerHeight,
-      controls: [...panel.querySelectorAll('[data-city-train], [data-city-crime]'), panel.querySelector('[data-city-training-close]')].map(button => {
+    const layout = await page.locator('.omerta-city__training').evaluate(panel => {
+      const originalScroll = panel.scrollTop, frame = panel.getBoundingClientRect();
+      const controls = [...panel.querySelectorAll('[data-city-train], [data-city-crime]'), panel.querySelector('[data-city-training-close]')].map(button => {
+        const initial = button.getBoundingClientRect();
+        if (initial.top < frame.top || initial.bottom > frame.bottom) panel.scrollTop += initial.top - frame.top;
         const bounds = button.getBoundingClientRect();
         return { rect: bounds.toJSON(), hits: [bounds.top + 3, bounds.bottom - 3].map(y => {
           const hit = document.elementFromPoint(bounds.left + bounds.width / 2, y); return hit === button || button.contains(hit);
         }) };
-      })
-    }));
+      });
+      panel.scrollTop = originalScroll;
+      return { panel: frame.toJSON(), viewport: innerHeight, controls };
+    });
     assert(layout.panel.top >= 0 && layout.panel.bottom <= layout.viewport + 1, 'Core training remains in the visible frame: ' + JSON.stringify(layout));
     for (const control of layout.controls) assert(control.rect.height >= 44 && control.rect.width >= 44 && control.hits.every(Boolean),
       'Training and close controls stay touchable above app chrome: ' + JSON.stringify(layout));
@@ -583,6 +606,22 @@ try {
     for (const bounds of Object.values(avatar)) assert(bounds.top >= -1 && bounds.bottom <= bounds.height + 1 && bounds.left >= -1 && bounds.right <= bounds.width + 1,
       'The complete avatar and name remain inside the smallest active map: ' + JSON.stringify(avatar));
   };
+
+  // A fresh short phone keeps its issued objective above the playable map,
+  // including when optional resize observation is unavailable.
+  const shortEntry = await newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  await shortEntry.context().addInitScript(() => { window.ResizeObserver = undefined; });
+  await openCity(shortEntry);
+  await shortEntry.locator('#intro-walk').click();
+  await assertEntered(shortEntry); await assertWorldHud(shortEntry);
+  const shortGuidance = await shortEntry.evaluate(() => ({
+    guidance: document.querySelector('.omerta-city__next-move').getBoundingClientRect().toJSON(),
+    header: document.querySelector('#top').getBoundingClientRect().toJSON(),
+    canvas: document.querySelector('.omerta-city__canvas').getBoundingClientRect().toJSON()
+  }));
+  assert(shortGuidance.guidance.top >= shortGuidance.header.bottom - 1 && shortGuidance.guidance.bottom <= shortGuidance.canvas.top,
+    'Fresh short-phone entry keeps its issued objective visible above the map: ' + JSON.stringify(shortGuidance));
+  await shortEntry.context().close();
 
   // A first phone visit retains its help, then explicitly enters the existing local scene.
   const entry = await newPage({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
@@ -635,6 +674,17 @@ try {
       { height: 56, text: 'Updated. Your current street view is ready. Check your next move before spending resources.', inert: false }, 'The short-frame fixture reaches the actual bounded toast and retains all its text.');
     await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
     await assertPosition(entry, beforeResize, 'Compact resize retains the player pose');
+    for (const direction of [-1, 1]) {
+      const control = entry.locator('[data-city-zoom="' + direction + '"]');
+      await control.scrollIntoViewIfNeeded();
+      assert(await control.evaluate(button => {
+        const box = button.getBoundingClientRect(), hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+        return box.width >= 44 && box.height >= 44 && (hit === button || button.contains(hit));
+      }), 'Zoom remains reachable with a 44px target at ' + width + '×' + height);
+    }
+    await entry.locator('[data-city-resource=nerve] .omerta-city__resource-label').scrollIntoViewIfNeeded();
+    assert(await entry.locator('.omerta-city__resources--walking').evaluate(resources => Array.from(resources.querySelectorAll('dt, dd')).every(node =>
+      parseFloat(getComputedStyle(node).fontSize) >= (node.tagName === 'DD' ? 13 : 12))), 'Phone resource labels and values remain readable.');
     if (width === 320) {
       const initialHeight = (await state(entry)).camera.height;
       assert(initialHeight < 160, 'Short phone space with tall chrome and a visible toast can shrink below the former minimum: ' + JSON.stringify(await entry.evaluate(() => ({
@@ -664,6 +714,18 @@ try {
       await assertResourceHelp(entry);
       await assertPosition(entry, beforeWarning, 'Live warning wrapping retains the player pose');
       assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'A HUD resize keeps the existing Phaser game.');
+      await entry.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: {
+        id: 'compact-receipt-fixture', state: 'confirmed', label: 'A confirmed neighborhood quest',
+        changes: [{ key: 'cash', label: 'Cash', value: 125 }, { key: 'nerve', label: 'Nerve', value: -4 },
+          { key: 'energy', label: 'Energy', value: -2 }, { key: 'health', label: 'Health', value: 3 }],
+        questCompletion: { id: 'fixture-quest', title: 'A completed neighborhood quest' }
+      } }));
+      await waitForFrames(entry, 3); await assertWorldHud(entry);
+      assert.equal(await entry.locator('[data-city-resource-delta]:visible').count(), 4, 'All four confirmed deltas remain in the compact HUD.');
+      assert.match(await entry.locator('.city-world__gains').textContent(), /Completed: A completed neighborhood quest/);
+      assert.equal(await entry.locator('.city-world__gains').evaluate(node => node.classList.contains('has-motion')), false, 'Reduced motion keeps confirmed feedback static.');
+      await entry.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: null }));
+      await waitForFrames(entry, 2);
     }
     const corePose = (await state(entry)).position, normalCamera = (await state(entry)).camera, beforeCore = entryRequests.length;
     await openCoreTraining(entry); await assertCoreTrainingLayout(entry);
@@ -694,6 +756,8 @@ try {
     assert.equal((await state(entry)).trainingOpen, false, 'Escape closes the dock and restores the canvas.');
     await assertPosition(entry, corePose, 'Closing core training keeps the exploration pose');
     await openFixer(entry); await assertCoreTrainingLayout(entry);
+    assert(await entry.locator('.omerta-city__training').evaluate(panel => Array.from(panel.querySelectorAll('select, .operation-terms, .operation-choice-terms, [data-city-crime]')).every(node =>
+      parseFloat(getComputedStyle(node).fontSize) >= 13)), 'Phone action labels and terms use readable 13px text.');
     await assertPosition(entry, corePose, 'Opening Fixer jobs keeps the same phone pose');
     assert.equal(await entry.locator('[data-city-crime]').count(), 3);
     assert.match(await entry.locator('#city-fixer-terms').textContent(), /Pay is not guaranteed/);
@@ -828,6 +892,38 @@ try {
   await assertPosition(page, controlsPose, 'Find me preserves the player pose');
   await assertEntered(page);
   await assertResourceHelp(page);
+  const initialZoom = (await state(page)).camera;
+  await page.locator('[data-city-zoom="1"]').click();
+  const chosenZoom = (await state(page)).camera;
+  assert(chosenZoom.zoom > initialZoom.zoom && chosenZoom.preference > initialZoom.preference, 'Manual zoom visibly increases the camera scale.');
+  await page.locator('[data-city-recenter]').click();
+  assert.equal((await state(page)).camera.preference, chosenZoom.preference, 'Find me retains the chosen zoom.');
+  await assertPosition(page, controlsPose, 'Zoom preserves player pose');
+  await page.setViewportSize({ width: 900, height: 800 }); await waitForFrames(page, 3);
+  assert.equal((await state(page)).camera.preference, chosenZoom.preference, 'Resize retains the chosen zoom.');
+  await page.setViewportSize({ width: 2560, height: 1440 }); await waitForFrames(page, 3);
+  assert((await state(page)).camera.zoom <= 2 && (await state(page)).camera.width <= 1200, 'Wide viewports retain bounded zoom and the playable map width.');
+  assert.equal((await state(page)).camera.preference, chosenZoom.preference, 'Wide resizing retains the zoom choice.');
+  await page.setViewportSize({ width: 1440, height: 1000 }); await waitForFrames(page, 3);
+  await page.locator('[data-city-zoom="-1"]').click();
+  await page.evaluate(() => {
+    const entry = window.__cityHandles.at(-1);
+    window.__receiptOriginalCharacter = entry.options.character;
+    entry.handle.update({ character: { ...entry.options.character, cash: Number(entry.options.character.cash) + 77 } });
+  });
+  assert.equal(await page.locator('[data-city-resource-delta]:visible').count(), 0, 'A resource poll change does not invent action badges.');
+  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-confirmed-fixture', state: 'confirmed', label: 'Confirmed job', changes: [
+    { key: 'cash', label: 'Cash', value: 35 }, { key: 'nerve', label: 'Nerve', value: -2 }
+  ] } }));
+  assert.equal(await page.locator('[data-city-resource=cash] [data-city-resource-delta]').textContent(), '+$35');
+  assert.equal(await page.locator('[data-city-resource=nerve] [data-city-resource-delta]').textContent(), '−2');
+  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-confirmed-fixture', state: 'confirmed', changes: [{ key: 'cash', value: 999 }] } }));
+  assert.equal(await page.locator('[data-city-resource=cash] [data-city-resource-delta]').textContent(), '+$35', 'A replay cannot replace a confirmed badge.');
+  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-retry-fixture', state: 'error', changes: [{ key: 'cash', value: 999 }] } }));
+  assert.equal(await page.locator('[data-city-resource-delta]:visible').count(), 0, 'Failed receipts clear action badges.');
+  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-retry-fixture', state: 'confirmed', changes: [{ key: 'cash', value: -5 }] } }));
+  assert.equal(await page.locator('[data-city-resource=cash] [data-city-resource-delta]').textContent(), '−$5', 'A successful same-key retry shows the authoritative result.');
+  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ character: window.__receiptOriginalCharacter, resourceReceipt: null }));
   await page.evaluate(() => {
     const entry = window.__cityHandles.at(-1);
     window.__originalObjectives = entry.options.objectives;
@@ -835,6 +931,10 @@ try {
     entry.handle.walkToVenue('workshop');
   });
   await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
+  await page.locator('[data-city-zoom="1"]').click();
+  assert((await state(page)).routeActive && (await state(page)).routeVenueId === 'workshop', 'Zoom retains the active route and destination.');
+  await page.locator('[data-city-recenter]').click();
+  assert((await state(page)).routeActive, 'Find me retains active navigation.');
   await page.locator('[data-city-world-tools]').click();
   assert.equal((await state(page)).routeActive, false, 'Opening tools stops active walking.');
   assert.equal((await state(page)).routeVenueId, 'workshop', 'The inspected map retains its routed destination across canvas blur.');
@@ -977,13 +1077,14 @@ try {
 
   // Selecting an existing district board never presents a second travel transaction.
   await page.locator('#map-mode-territory').click();
-  assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'Territory mode disposes the walking canvas.');
-  assert(await page.evaluate(() => window.__cityHandles.at(-1).destroyed), 'Territory mode destroys the scene handle.');
-  await page.locator('#map-mode-walk').click();
+  assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'Territory inspection retains the walking canvas.');
+  assert(!(await page.evaluate(() => window.__cityHandles.at(-1).destroyed)), 'Territory inspection preserves the scene handle.');
+  assert.equal((await state(page)).externalPanel, true);
+  await page.locator('#city-panel-close').click();
   await waitForCity(page);
 
-  // Contextual docks retain the world; their explicit full-screen secondary controls still
-  // reuse the corresponding gameplay screens and dispose the old scene.
+  // Contextual docks and their full-operation controls reuse the existing gameplay
+  // screens while retaining the same neighborhood and movement position.
   for (const [destination, tab] of Object.entries({
     fixer: 'streets', workshop: 'garage', training: 'life', clubhouse: 'crew', stories: 'desk',
   })) {
@@ -1001,8 +1102,9 @@ try {
       await page.getByRole('button', { name: 'Full Crew · membership & invitations →', exact: true }).click();
     }
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'attached' });
-    assert(await page.evaluate(() => window.__cityHandles.at(-1).destroyed), `${destination} navigation destroys the old scene.`);
-    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'Tab switch removes the previous canvas.');
+    assert(!(await page.evaluate(() => window.__cityHandles.at(-1).destroyed)), `${destination} navigation retains the current scene.`);
+    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'The canonical operation keeps one live canvas.');
+    assert.equal((await state(page)).externalPanel, true, 'The operation panel pauses street input.');
     if (destination === 'fixer') {
       // Complete the first playable loop through the existing authoritative crime control.
       const crimeResponse = page.waitForResponse(response => response.request().method() === 'POST'
@@ -1098,7 +1200,7 @@ try {
       });
       await page.locator('#btn-refresh').click(); await jailedRead;
       await page.waitForSelector('#tab-pen.on');
-      assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'A fresh sentence retains the existing Pen landing.');
+      assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'A fresh sentence opens the existing Pen beside the retained city.');
       const admissionDialog = page.locator('.modal-bg[data-managed-dialog]');
       if (await admissionDialog.count()) {
         assert.equal((await admissionDialog.last().locator('h2').textContent()).trim(), 'YOUR FIRST STRETCH');
@@ -1197,11 +1299,11 @@ try {
   await gym.locator('[data-city-training-close]').click();
   await selectTab(page, 'streets'); await page.unroute('**/v1/train/muscle');
   const checkedMove = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/train/muscle');
-  await page.locator('#operation-feed [data-operation-receipt].operation-receipt--error').filter({ hasText: /train muscle/i }).first().locator('[data-operation-retry]').click();
+  await page.locator('#city-panel-feedback [data-operation-receipt].operation-receipt--error').filter({ hasText: /train muscle/i }).first().locator('[data-operation-retry]').click();
   const checkedReply = await checkedMove;
   assert.equal(checkedReply.status(), 200);
   assert.equal(checkedReply.request().headers()['idempotency-key'], lostKey, 'Global recovery after dock retirement preserves the original request key.');
-  await page.locator('#operation-feed [data-operation-receipt].operation-receipt--success').filter({ hasText: /train muscle/i }).first().waitFor();
+  await page.locator('#city-panel-feedback [data-operation-receipt].operation-receipt--success').filter({ hasText: /train muscle/i }).first().waitFor();
   await returnToCity(page); await openCoreTraining(page);
   await gym.locator('[data-operation-receipt].operation-receipt--success').waitFor({ state: 'attached' });
   await assertCoreStats(page, (await checkedReply.json()).character);
@@ -1231,7 +1333,8 @@ try {
     }
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'visible' });
     await page.waitForFunction(tab => document.querySelector('#tab-' + tab)?.textContent.trim().length > 0, tab);
-    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, tab + ' disposes the exploration renderer.');
+    assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, tab + ' retains the exploration renderer.');
+    assert.equal((await state(page)).externalPanel, true, tab + ' pauses street input behind its panel.');
     await returnToCity(page);
     await assertPosition(page, directoryPose, tab + ' returns to the same City session');
   }
@@ -1246,6 +1349,9 @@ try {
   await page.setViewportSize({ width: 375, height: 812 });
   await dismissCelebration(page);
   await visitQuest(page, 'fixer', requests);
+  assert(await page.locator('.omerta-city__quest-actions').evaluate(actions => Array.from(actions.querySelectorAll('button, [data-city-action-preview], [data-city-action-preview] span')).every(node =>
+    parseFloat(getComputedStyle(node).fontSize) >= 13)), 'Phone quest actions and previews use readable 13px text.');
+  assert.match(await page.locator('[data-city-quest-action]').first().textContent(), /Before you act/);
   for (const height of [500, 320]) {
     await page.keyboard.press('Escape');
     await page.setViewportSize({ width: 375, height });
@@ -1343,7 +1449,9 @@ try {
   await page.locator('.fieldwork-item').filter({ hasText: 'Neighborhood Notebook' }).waitFor({ state: 'visible' });
   await page.evaluate(() => { window.__journalControllerRoot = document.querySelector('.world-fieldwork'); });
   const repeatedJournalRequests = requests.length;
-  await page.locator('#city-journal').click();
+  await page.locator('#city-all-actions').click(); await page.locator('#jump-q').fill('fieldwork');
+  await page.locator('#jump-list [data-jump="fieldwork"]').click();
+  await page.locator('[data-fieldwork-view="mysteries"]').click();
   await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor({ state: 'visible' });
   assert.equal(await page.evaluate(() => window.__journalControllerRoot === document.querySelector('.world-fieldwork')), true,
     'Session Journal navigation selects the existing controller rather than remounting the reader.');

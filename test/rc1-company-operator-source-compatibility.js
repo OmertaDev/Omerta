@@ -1,3 +1,5 @@
+import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
+import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { gameEmploymentSourceBaseline } from '../tools/rc1-game-employment-source-compatibility.js';
 import fs from 'node:fs';
@@ -20,7 +22,7 @@ let wholeFileComparisons = 0, sha256Comparisons = 0, blobComparisons = 0, negati
 const entire = (actual, expected, message) => { assert.equal(actual, expected, message); wholeFileComparisons++; };
 const currentFiles = new Map();
 for (const file of Object.keys(COMPANY_OPERATOR_SOURCE_CURRENT_PINS)) {
-  const current = normalize(gameEmploymentSourceBaseline(file,cityGameplaySourceBaseline(file,fs.readFileSync(file,'utf8')))), baseline = git('show', COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(gameEmploymentSourceBaseline(file,cityGameplaySourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8')))))), baseline = git('show', COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS[file]);
   currentFiles.set(file, current);
   entire(current, git('show', COMPANY_OPERATOR_SOURCE_CURRENT_BLOBS[file]), 'Full working source equals frozen Git blob');
   entire(current, git('show', `${COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION}:${file}`), 'Full current revision source');
@@ -59,7 +61,7 @@ for (const file of Object.keys(COMPANY_OPERATOR_SOURCE_CURRENT_PINS)) {
     assert.notEqual(changed, current); assert.equal(companyOperatorSourceBaseline(file, changed), changed, 'Unknown source must never manufacture predecessor bytes');
     assert.throws(() => assertCompanyOperatorSourceTransfer(file, changed), /source changed/); assert.throws(() => qualifyCompanyOperatorSource(file, changed), /source changed/);
     assert.throws(() => assertCompanyOperatorSourceTransfer(file, changed.replaceAll('\n', '\r\n')), /source changed/);
-    await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : fs.readFileSync(candidate) }), /source changed/);
+    await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) }), /source changed/);
     if (file === 'src/worker.js') assert.throws(() => qualifyIntelSource(file, changed), /source changed/);
     else assert.throws(() => Deed.assertDeedServerCompatibility(changed), /source changed/);
     negatives++;
@@ -81,7 +83,7 @@ for (const name of ['assertGenesisSnapshotServerCompatibility', 'assertGenesisWr
 }
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer, COMPANY_OPERATOR_SOURCE_TRANSFER);
 assert.match(COMPANY_OPERATOR_SOURCE_TRANSFER.scope, /no world-soak, native, financial, deployment or onchain qualification/);
-const actual = await verifyWorldRecoverySources({ sourceRevision: COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION, readFile: file => fs.readFileSync(file) });
-const prior = await verifyWorldRecoverySources({ sourceRevision: COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION, readFile: file => currentFiles.has(file) ? git('show', `${COMPANY_OPERATOR_SOURCE_PREDECESSOR_REVISION}:${file}`) : fs.readFileSync(file) });
+const actual = await verifyWorldRecoverySources({ sourceRevision: COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION, readFile: file => (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file))):fs.readFileSync(file)) });
+const prior = await verifyWorldRecoverySources({ sourceRevision: COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION, readFile: file => currentFiles.has(file) ? git('show', `${COMPANY_OPERATOR_SOURCE_PREDECESSOR_REVISION}:${file}`) : (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file))):fs.readFileSync(file)) });
 assert.deepEqual(actual, prior, 'Historical source qualification remains exactly unchanged after outer reconstruction');
 console.log(`rc1-company-operator-source-compatibility: PASS ${chunks} exact Git hunks; ${wholeFileComparisons} whole-file comparisons (${sha256Comparisons} SHA256 + ${blobComparisons} Git blob + ${wholeFileComparisons - sha256Comparisons - blobComparisons} complete text); ${negatives} unknown/missing/duplicate/reordered/context/hook controls; LF/CRLF; exact full server/worker envelopes; historical scoped parity only`);

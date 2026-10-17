@@ -90,7 +90,21 @@ export const NEXT_LAYER_NATIVE_PROOFS=Object.freeze([
  ["depotacquisition-vaults","DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL","depot_acquisition_runtime_test_"]
 ].map(Object.freeze));
 const INVENTORY=JSON.stringify(NEXT_LAYER_NATIVE_PROOFS);
+export const NEXT_LAYER_DEED_DEPENDENCIES=Object.freeze(['tools/deed-discovery-migration-catalog.js',
+ 'tools/deed-quest-source-transfer.js','src/deedbuildings.js','src/deeddiscovery.js',
+ 'src/deedquesteligibility.js','src/content/property-investigation.js']);
+export function assertNextLayerDeedDependencies(files){for(const file of NEXT_LAYER_DEED_DEPENDENCIES)
+ assert.equal(files.filter(candidate=>candidate===file).length,1,'Current Deed native dependency is captured exactly once: '+file);}
+export const NEXT_LAYER_CITY_DEPENDENCIES=Object.freeze(['src/city-presence.js','src/content/city-rumors.js']);
+export function assertNextLayerCityDependencies(files){for(const file of NEXT_LAYER_CITY_DEPENDENCIES)
+ assert.equal(files.filter(candidate=>candidate===file).length,1,'Current City native dependency is captured exactly once: '+file);}
 export const NEXT_LAYER_NATIVE_FILES=Object.freeze([
+ "tools/deed-discovery-migration-catalog.js",
+ "tools/deed-quest-source-transfer.js",
+ "src/deedbuildings.js",
+ "src/deeddiscovery.js",
+ "src/deedquesteligibility.js",
+ "src/content/property-investigation.js",
  ".github/workflows/ci.yml",
  ".github/workflows/forge.yml",
  ".github/workflows/knowledge-refresh.yml",
@@ -215,6 +229,7 @@ export const NEXT_LAYER_NATIVE_FILES=Object.freeze([
  "src/content/campaign-network.js",
  "src/content/canonical.js",
  "src/content/city-quest-presentation.js",
+ "src/content/city-rumors.js",
  "src/content/city-world-opportunities.js",
  "src/content/company-production-quality.js",
  "src/content/compiler.js",
@@ -740,7 +755,54 @@ export const NEXT_LAYER_NATIVE_FILES=Object.freeze([
  "tools/rc1-strategy-league-source-compatibility.js",
  "tools/rc1-strategy-source-compatibility.js",
  "tools/rc1-third-batch-source-compatibility.js",
- "tools/release-phase2-migration-catalog.js"
+ "tools/release-phase2-migration-catalog.js",
+ "docs/cross-docking-proposal.sql",
+ "docs/cross-docking-security-review.md",
+ "docs/merchant-returns-security-review.md",
+ "docs/production-slot-proposal.sql",
+ "docs/production-slot-security-review.md",
+ "src/crossdocking-contracts.js",
+ "src/crossdocking.js",
+ "src/merchantreturns-contracts.js",
+ "src/merchantreturns-schema.sql",
+ "src/merchantreturns.js",
+ "src/merchantreturnsinvariants.js",
+ "src/productionslots-contracts.js",
+ "src/productionslots.js",
+ "src/routes/crossdocking.js",
+ "src/routes/merchantreturns.js",
+ "src/routes/productionslots.js",
+ "test/crossdocking-actions.js",
+ "test/crossdocking-api.js",
+ "test/crossdocking-boundary.js",
+ "test/crossdocking-estate.js",
+ "test/crossdocking-fixture.js",
+ "test/crossdocking-lifecycle.js",
+ "test/crossdocking-races.js",
+ "test/crossdocking.js",
+ "test/market-operations-director-catalog.js",
+ "test/market-operations-graph-helpers.js",
+ "tools/market-operations-graph-helpers.js",
+ "tools/market-operations-source-compatibility.js",
+ "test/market-operations-source-compatibility.js",
+ "test/market-operations-native-guard.js",
+ "test/market-operations-release-phase2-migration-catalog.js",
+ "test/merchantreturns-api.js",
+ "test/merchantreturns-fixture.js",
+ "test/merchantreturns.js",
+ "test/depotacquisition-production-slots.js",
+ "test/productionslots-api.js",
+ "test/productionslots-boundary.js",
+ "test/productionslots-estate.js",
+ "test/productionslots-fixture.js",
+ "test/productionslots-races.js",
+ "test/productionslots-recovery.js",
+ "test/productionslots.js",
+ "tools/market-operations-native.js",
+ "tools/market-operations-release-phase2-migration-catalog.js",
+ "test/coldstart.js",
+ "tools/deed-market-source-compatibility.js",
+ "test/deed-market-source-compatibility.js"
 ]);
 export function assertNextLayerInventory(rows){assert.equal(JSON.stringify(rows),INVENTORY,'Only the exact ordered18 reviewed proofs are permitted');}
 export function nextLayerNativeEndpoint(value){const u=new URL(value);assert(['postgres:','postgresql:'].includes(u.protocol));assert.equal(u.hostname,'127.0.0.1');assert.equal(u.pathname,'/postgres');assert(!u.search&&!u.hash);const local=u.port==='35449'&&u.username==='pilot_runner'&&!u.password,ci=u.port==='5432'&&u.username==='postgres'&&u.password==='pgcheck';assert(local||ci,'Only owned35449 PG18.4 or closedCI5432 postgres/pgcheck');u.protocol='postgresql:';return{u,local};}
@@ -751,7 +813,7 @@ export function assertNextLayerResults(results,source){assertNextLayerInventory(
 export function assertNextLayerTrackedBytes(actual,canonical){assert(actual===canonical||actual===canonical.replaceAll('\n','\r\n'),'Only exactGit LF or uniformcheckoutCRLF bytes');}
 export function nextLayerChildEnv(environment,key,endpoint){assertNextLayerExecutionEnv(environment);const rows=NEXT_LAYER_NATIVE_PROOFS.filter(r=>r[1]===key);assert(rows.length);const u=new URL(endpoint);assert(rows.some(r=>new RegExp('^/'+r[2]+'[a-f0-9]{12}$').test(u.pathname)));const admin=new URL(u);admin.pathname='/postgres';nextLayerNativeEndpoint(admin.href);const env={...environment,RESOURCE_ECONOMY:'off',SOCIAL_VERIFY_MODE:'off'};for(const k of Object.keys(env))if(k==='DATABASE_URL'||k==='TEST_DATABASE_URL'||k.endsWith('_DATABASE_URL')||k.endsWith('_NATIVE_ADMIN_DATABASE_URL'))delete env[k];u.protocol='postgresql:';env[key]=u.href;return env;}
 const git=(...args)=>execFileSync('git',args,{cwd:ROOT,encoding:'utf8',maxBuffer:16000000});
-function captureSource(){const revision=git('rev-parse','HEAD').trim();assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(git('status','--porcelain','--untracked-files=all').trim(),'','Clean exact committed source required');const files={};for(const file of NEXT_LAYER_NATIVE_FILES){const raw=fs.readFileSync(path.join(ROOT,file)),canonical=git('show',revision+':'+file);assertNextLayerTrackedBytes(raw.toString('utf8'),canonical);files[file]={sha256:sha(raw),gitSha256:sha(canonical),blob:git('rev-parse',revision+':'+file).trim()};}return{revision,files};}
+function captureSource(){assertNextLayerDeedDependencies(NEXT_LAYER_NATIVE_FILES);assertNextLayerCityDependencies(NEXT_LAYER_NATIVE_FILES);const revision=git('rev-parse','HEAD').trim();assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(git('status','--porcelain','--untracked-files=all').trim(),'','Clean exact committed source required');const files={};for(const file of NEXT_LAYER_NATIVE_FILES){const raw=fs.readFileSync(path.join(ROOT,file)),canonical=git('show',revision+':'+file);assertNextLayerTrackedBytes(raw.toString('utf8'),canonical);files[file]={sha256:sha(raw),gitSha256:sha(canonical),blob:git('rev-parse',revision+':'+file).trim()};}return{revision,files};}
 function assertStableSource(source){assert.equal(git('rev-parse','HEAD').trim(),source.revision);assert.equal(git('status','--porcelain','--untracked-files=all').trim(),'');for(const[file,pin]of Object.entries(source.files))assert.equal(sha(fs.readFileSync(path.join(ROOT,file))),pin.sha256,'Source changed during qualification: '+file);}
 async function run(){assertNextLayerMode(process.argv,process.env);assertNextLayerInventory(NEXT_LAYER_NATIVE_PROOFS);const context=nextLayerNativeEndpoint(process.env.NEXT_LAYER_NATIVE_ADMIN_DATABASE_URL),source=captureSource(),folder=path.join(ROOT,'output','next-layer-native-'+source.revision.slice(0,8)+'-'+crypto.randomBytes(4).toString('hex'));fs.mkdirSync(folder,{recursive:true});const results=[],manifest={source,endpoint:{host:context.u.hostname,port:context.u.port,role:context.u.username,database:'postgres'},node:process.version,financialActivation:'off',complete:false,allocations:[],results};const save=()=>fs.writeFileSync(path.join(folder,'results.json'),JSON.stringify(manifest,null,2)+'\n');save();const admin=new pg.Client({connectionString:context.u.href});
  try{await admin.connect();const backend=(await admin.query("SELECT current_user AS role,current_database() AS database,current_setting('server_version') AS version,current_setting('data_directory') AS directory")).rows[0];assertNextLayerBackend(backend,context);manifest.backend=backend;save();for(const[file,key,prefix]of NEXT_LAYER_NATIVE_PROOFS){assertStableSource(source);const database=prefix+crypto.randomBytes(6).toString('hex');assert.match(database,/^[a-z0-9_]{1,63}$/);assert.equal((await admin.query('SELECT datname FROM pg_database WHERE datname=$1',[database])).rows.length,0);await admin.query('CREATE DATABASE '+database);manifest.allocations.push({file,database});save();assert.equal((await admin.query('SELECT pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname=$1',[database])).rows[0].owner,context.u.username);const endpoint=new URL(context.u.href);endpoint.pathname='/'+database;const fresh=new pg.Client({connectionString:endpoint.href});try{await fresh.connect();assert.equal((await fresh.query("SELECT COUNT(*)::int AS n FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p','S','v','m','f')")).rows[0].n,0);assert.equal((await fresh.query('SELECT current_user AS role')).rows[0].role,context.u.username);}finally{await fresh.end();}

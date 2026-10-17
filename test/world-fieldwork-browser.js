@@ -36,7 +36,7 @@ try {
   const players = [];
   app.get('/fieldwork-browser-fixture.js', (_req, reply) => reply.type('application/javascript').send(fs.readFileSync(new URL('../public/world-fieldwork.js', import.meta.url), 'utf8')));
   app.get('/fieldwork-browser-fixture.css', (_req, reply) => reply.type('text/css').send(fs.readFileSync(new URL('../public/world-fieldwork.css', import.meta.url), 'utf8')));
-  app.get('/fieldwork-browser-fixture', (_req, reply) => reply.type('text/html').send(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fieldwork-browser-fixture.css"><style>body{margin:0;padding:16px;background:#282a25}#fieldwork{max-width:1100px;margin:auto}</style></head><body><main id="fieldwork"></main><script src="/fieldwork-browser-fixture.js"></script><script>
+  app.get('/fieldwork-browser-fixture', (_req, reply) => reply.type('text/html').send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fieldwork-browser-fixture.css"><style>body{margin:0;padding:16px;background:#282a25}#fieldwork{max-width:1100px;margin:auto}</style></head><body><main id="fieldwork"></main><script src="/fieldwork-browser-fixture.js"></script><script>
     const token=${JSON.stringify(players[0].token)};
     window.__fieldworkCalls=[]; window.__fieldworkReads=[]; window.__failNextResponse=false; window.__navigate=[];
     let queue=Promise.resolve();
@@ -224,7 +224,10 @@ try {
   assert.deepEqual(await page.evaluate(() => window.__fieldworkCalls), [], 'Explicit section navigation and background refresh add no game mutations.');
   await page.locator('[data-fieldwork-view="recipes"]').click();
   const salvage = page.getByRole('button', { name: 'Salvage junker', exact: true });
+  const salvagePreview = (await salvage.locator('..').locator('.fieldwork-consequence').textContent()).replace(/^Before you act\s*/, '');
+  assert.match(salvagePreview, /Consumes:[\s\S]*Creates:[\s\S]*Cash cost: \$0\.[\s\S]*permanently consumes this exact car/, 'Salvage previews combine the actual recipe and the issued destructive consequence.');
   await salvage.click();
+  assert.equal(await page.locator('.fieldwork-confirm p').textContent(), salvagePreview, 'The confirmation repeats the terms shown before choosing.');
   assert.equal(await page.evaluate(() => window.__fieldworkCalls.length), 0, 'Salvage confirmation is shown before dispatch.');
   assert.equal(await page.evaluate(() => window.__fieldwork.selectView('mysteries')), false, 'Explicit navigation honors the same busy guard as disabled section controls.');
   assert.equal(await page.locator('[data-fieldwork-view="recipes"]').getAttribute('aria-pressed'), 'true');
@@ -237,8 +240,15 @@ try {
   const recipes = await call('GET', '/v1/worldgraph/recipes', players[0]);
   const hardened = recipes.recipes.find(recipe => recipe.id === 'recipe:hardened_steel');
   const hardenedOutput = hardened.outputs[0].templateId;
+  const hardenedPreview = (await page.locator('[data-fieldwork-recipe="recipe:hardened_steel"] .fieldwork-consequence').textContent()).replace(/^Before you act\s*/, '');
+  for (const item of [...hardened.inputs, ...hardened.outputs]) {
+    const label = item.title || String(item.templateId || item.assetType || 'item').replace(/^[^:]+:/, '').replace(/[_-]+/g, ' ');
+    assert(hardenedPreview.includes((item.quantity ?? item.qty).toLocaleString() + '× ' + label), 'Crafting previews use each server-issued material and output quantity: ' + JSON.stringify({ item, hardenedPreview }));
+  }
+  assert(hardenedPreview.includes('Cash cost: $' + hardened.cashCost.toLocaleString() + '.'), 'Crafting previews use the projected cash cost.');
   await page.evaluate(() => { window.__failNextResponse = true; });
   await page.locator('[data-fieldwork-recipe="recipe:hardened_steel"] [data-fieldwork-action]').click();
+  assert.equal(await page.locator('.fieldwork-confirm p').textContent(), hardenedPreview, 'Craft confirmation retains the exact visible recipe terms.');
   await page.locator('[data-fieldwork-confirm]').click();
   await page.locator('[data-fieldwork-retry]').waitFor();
   await page.evaluate(() => window.__fieldwork.selectView('mysteries'));
@@ -352,8 +362,11 @@ try {
 
   const shots = process.env.FIELDWORK_SHOTS || process.env.CITY_SCENE_SHOTS;
   if (shots) { fs.mkdirSync(shots, { recursive: true }); await page.locator('.world-fieldwork').screenshot({ path: path.join(shots, 'fieldwork-desktop.png') }); }
-  await page.setViewportSize({ width: 375, height: 812 });
+  await page.setViewportSize({ width: 320, height: 720 });
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Fieldwork has no phone-width overflow.');
+  assert(await page.locator('.fieldwork-stamp, .fieldwork-dialogue cite, .fieldwork-mast span').evaluateAll(nodes => nodes.every(node => parseFloat(getComputedStyle(node).fontSize) >= 12)), 'Critical fieldwork labels stay at least 12px on a small phone.');
+  assert(await page.locator('.fieldwork-body p, .fieldwork-body button, .fieldwork-blockers, .fieldwork-choices small').evaluateAll(nodes => nodes.every(node => parseFloat(getComputedStyle(node).fontSize) >= 13)), 'Action and body text stay at least 13px.');
+  await page.setViewportSize({ width: 375, height: 812 });
   if (shots) await page.locator('.world-fieldwork').screenshot({ path: path.join(shots, 'fieldwork-mobile.png') });
 
   // An old active instance can be cancelled using its exact issued ID after character replacement.

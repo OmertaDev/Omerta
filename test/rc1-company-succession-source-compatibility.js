@@ -1,3 +1,5 @@
+import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
+import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
@@ -14,7 +16,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(COMPANY_SUCCESSION_SOURCE_CURRENT_PINS)) {
-  const current = normalize(marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, fs.readFileSync(file, 'utf8'))))), baseline = gitText(COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file, 'utf8')):fs.readFileSync(file, 'utf8'))))))), baseline = gitText(COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(companySuccessionSourceBaseline(file, current), baseline);
   assert.equal(companySuccessionSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

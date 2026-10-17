@@ -468,12 +468,23 @@ try {
   };
   const encounter = async (page, id) => {
     await inspect(page, id);
+    const issued = await page.evaluate(id => window.__presenceModel.actors.find(actor => actor.id === id).actions[0], id);
+    assert(issued.topic?.id && issued.topic?.title && issued.topic?.teaser, 'The issued encounter names a specific neighborhood topic.');
+    assert((await page.locator('[data-city-encounter]').textContent()).includes(issued.label));
+    assert((await page.locator('.omerta-city__actor-body').textContent()).includes(issued.topic.teaser));
     const response = page.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/city/encounters/' + id);
     await page.locator('[data-city-encounter]').click();
     const reply = await response; assert.equal(reply.status(), 200, await reply.text());
     const body = await reply.json();
     await page.waitForFunction(() => document.querySelector('.omerta-city__actor-notice')?.textContent.startsWith('Intel recorded:'));
-    return { reply, body };
+    assert.equal(body.intel.tipId, issued.topic.id, 'The confirmed rumor answers the exact issued topic.');
+    const card = page.locator('[data-city-encounter-intel]');
+    assert.equal(await card.getAttribute('data-city-encounter-intel'), body.intel.id);
+    const copy = await card.textContent();
+    for (const text of [body.intel.title, body.intel.description, body.intel.sourceContext, 'Street rumor · unverified']) assert(copy.includes(text), 'The full confirmed rumor is revealed immediately: ' + text);
+    assert.equal(await card.locator('time').getAttribute('datetime'), body.intel.collectedAt);
+    assert.equal(await page.evaluate(() => document.activeElement?.dataset.cityEncounterIntel), body.intel.id, 'Confirmation focuses the revealed card instead of leaving its content below the fold.');
+    return { reply, body, issued };
   };
 
   const { page, context, requests } = await newPage({ width: 1440, height: 1000 });
@@ -526,6 +537,7 @@ try {
   // Fresh confirmed encounters create new cards and advance actual, distinct-source objectives.
   const first = await encounter(page, npc.id);
   assert.equal(first.body.intel.source.id, npc.id);
+  assert((await page.locator('[data-city-encounter-intel]').textContent()).includes('Heard from ' + first.body.intel.source.name));
   assert((await page.locator('.omerta-city__actor-body').textContent()).includes(first.body.objectives.find(objective => objective.status === 'available').title), 'An actual objective unlock is visible beside its encounter receipt.');
   const confirmedDelta = await page.evaluate(() => window.__presenceModel.encounterReceipt.delta);
   assert.equal(typeof confirmedDelta, 'string'); assert(confirmedDelta.length);
@@ -548,6 +560,7 @@ try {
     } else await route.continue();
   });
   await page.locator('[data-city-encounter]').click(); await page.waitForSelector('[data-city-encounter-retry]');
+  assert.equal(await page.locator('[data-city-encounter-intel]').count(), 0, 'An uncertain result cannot reveal an unconfirmed rumor.');
   const otherClientEncounter = async id => {
     const presence = await app.inject({ method: 'GET', url: '/v1/city/presence?limit=40', headers: viewer.headers });
     assert.equal(presence.statusCode, 200, presence.body);
@@ -599,6 +612,8 @@ try {
   assert(retryCompletion.notice?.startsWith('Intel recorded:'), 'The replay boundary follows the scene notice and action cleanup.');
   assert.equal(retryCompletion.revision, await page.evaluate(() => window.__historicalReadRevision), 'An old replay receipt does not invalidate the newer read ticket.');
   assert.deepEqual(retryCompletion.journal, [3, 2, 1], 'Historical receipt retains the exact winning journal after its model effects settle.');
+  assert.equal(await page.locator('[data-city-encounter-intel]').getAttribute('data-city-encounter-intel'), lostBody.intel.id, 'Historical recovery reveals its exact frozen rumor without replacing the newer journal.');
+  assert((await page.locator('[data-city-encounter-intel]').textContent()).includes(lostBody.intel.description));
   assert.equal(retryCompletion.completed, 1);
   await page.evaluate(() => { window.__presenceHistoricalRetry = false; });
   await newReadQueued;
@@ -614,6 +629,10 @@ try {
   assert.equal(await page.evaluate(() => window.__presenceModel.objectives.filter(objective => objective.status === 'completed').length), 2);
   assert.equal((await readIntel()).progress.totalEncounters, 4, 'Same-key replay adds no phantom encounter.');
   const introducedHuman = await encounter(page, human.id);
+  const humanRumor = await page.locator('[data-city-encounter-intel]').textContent();
+  assert(humanRumor.includes('Recorded after meeting ' + hostileName), 'A human is observation provenance, not the author of a fabricated reply.');
+  assert(!humanRumor.includes('Heard from ' + hostileName));
+  assert.equal(await page.locator('[data-city-encounter-intel] img, [data-city-encounter-intel] blockquote').count(), 0);
   assert.equal(introducedHuman.body.encounteredActor.name, hostileName);
   await app.pool.query('UPDATE characters SET name=$2,respect=200000 WHERE id=$1', [human.id, 'Hidden live rename']);
   const readsBeforePrivacy = mutations(requests).length;
@@ -757,6 +776,7 @@ try {
   assert.equal((await readIntel()).progress.totalEncounters, 0, 'A new generation cannot inherit private encounter intel.');
   await page.locator('[data-city-intel-open]').click();
   assert.equal(await page.locator('[data-city-intel]').count(), 0);
+  assert.equal(await page.locator('[data-city-encounter-intel]').count(), 0, 'A successor cannot retain the previous life\'s revealed rumor.');
   await context.close();
 
   for (const viewport of [{ width: 375, height: 812 }, { width: 320, height: 568 }]) {
@@ -870,6 +890,25 @@ try {
   const fallback = await fallbackContext.newPage();
   fallback.on('pageerror', error => errors.push(error.message));
   await fallback.route('**/vendor/phaser.js*', route => route.abort('failed'));
+  await fallback.route(base + '/', async route => {
+    const reply = await route.fetch(), html = await reply.text(), anchor = '  async function mountCityNeighborhood() {';
+    assert.equal(html.split(anchor).length, 2);
+    // Observe an applied board refresh, not a superseded read, without forcing or delaying it.
+    await route.fulfill({ response: reply, body: html.replace(anchor, `
+  const fallbackNeighborhoodMount = mountCityNeighborhood;
+  mountCityNeighborhood = async function (...args) {
+    const notice = document.querySelector('.omerta-city__actor-notice')?.textContent;
+    const observed = !window.__fallbackEncounterRefresh && notice?.startsWith('Intel recorded:')
+      ? window.__fallbackEncounterRefresh = {
+        actorId: document.querySelector('[data-city-actor][aria-expanded="true"]')?.dataset.cityActor,
+        intelId: document.querySelector('[data-city-encounter-intel]')?.dataset.cityEncounterIntel,
+        notice, complete: false } : null;
+    const result = await fallbackNeighborhoodMount.apply(this, args);
+    if (observed) observed.complete = true;
+    return result;
+  }
+` + anchor) });
+  });
   await fallback.goto(base, { waitUntil: 'networkidle' }); await fallback.locator('#btn-player-view').click();
   await fallback.waitForSelector('.omerta-city--unavailable [data-city-actor]');
   const fallbackCalls = []; fallback.on('request', request => fallbackCalls.push({ method: request.method(), path: new URL(request.url()).pathname }));
@@ -881,9 +920,25 @@ try {
   await fallback.setViewportSize({ width: 375, height: 812 });
   assert.deepEqual(mutations(fallbackCalls), []);
   await fallback.locator('[data-city-encounter]').click();
-  await fallback.waitForFunction(() => document.querySelector('.omerta-city__actor-notice')?.textContent.startsWith('Intel recorded:'));
+  await fallback.waitForFunction(() => window.__fallbackEncounterRefresh?.complete);
+  await fallback.waitForSelector('.omerta-city--unavailable [data-city-actor]');
+  const afterFallbackRefresh = await fallback.evaluate(() => ({
+    expected: window.__fallbackEncounterRefresh,
+    open: document.querySelector('.omerta-city__actor-dock')?.hidden === false,
+    actorId: document.querySelector('[data-city-actor][aria-expanded="true"]')?.dataset.cityActor,
+    intelId: document.querySelector('[data-city-encounter-intel]')?.dataset.cityEncounterIntel,
+    notice: document.querySelector('.omerta-city__actor-notice')?.textContent,
+  }));
+  assert(afterFallbackRefresh.expected.actorId && afterFallbackRefresh.expected.intelId, 'The refresh observes the real selected actor and confirmed intel.');
+  assert(afterFallbackRefresh.open, 'The fallback inspector stays open after the post-encounter board refresh.');
+  assert.equal(afterFallbackRefresh.actorId, afterFallbackRefresh.expected.actorId);
+  assert.equal(afterFallbackRefresh.intelId, afterFallbackRefresh.expected.intelId);
+  assert.equal(afterFallbackRefresh.notice, afterFallbackRefresh.expected.notice);
   await fallback.locator('[data-city-actor-close]').click();
-  await fallback.waitForFunction(() => document.activeElement?.hasAttribute('data-city-actor'));
+  await fallback.waitForFunction(id => document.activeElement?.dataset.cityActor === id, afterFallbackRefresh.expected.actorId);
+  await fallback.locator('[data-city-actor="' + afterFallbackRefresh.expected.actorId + '"]').click();
+  assert.equal(await fallback.locator('[data-city-encounter-intel]').getAttribute('data-city-encounter-intel'), afterFallbackRefresh.expected.intelId);
+  await fallback.locator('[data-city-actor-close]').click();
   await fallback.locator('[data-city-intel-open]').click(); assert.equal(await fallback.locator('[data-city-intel]').count(), 1);
   await fallbackContext.close();
 
@@ -903,7 +958,8 @@ try {
   assert.equal(await realm.page.locator('[data-city-intel]').count(), 0);
   assert(!(await realm.page.locator('#resp').textContent()).includes(privateA.body.intel.id));
   const privateReceipts = await realm.page.locator('[data-operation-receipt]').allTextContents();
-  assert(!privateReceipts.some(text => text.includes('Collect intel from ' + privateA.body.encounteredActor.name)));
+  assert(!privateReceipts.some(text => text.includes(privateA.issued.label)));
+  assert.equal(await realm.page.locator('[data-city-encounter-intel]').count(), 0);
   const beforeFormerOwner = realm.requests.length;
   await realm.page.evaluate(() => window.__formerOwnerButton.click()); await frames(realm.page);
   assert.equal(realm.requests.slice(beforeFormerOwner).filter(request => request.path.startsWith('/v1/city/encounters/')).length, 0);
@@ -921,6 +977,52 @@ try {
   await session.page.evaluate(() => window.__expiredEncounter.click()); await frames(session.page);
   assert.equal(session.requests.slice(beforeExpired).filter(request => request.path.startsWith('/v1/city/encounters/')).length, 0);
   await session.context.close();
+
+  // Rumors reveal only confirmed prose; their follow-up controls inspect places.
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 375, height: 812 }, { width: 320, height: 568 }]) {
+    const reader = await player('Rumor Reader ' + viewport.width);
+    const rumorView = await newPage(viewport, { playerToken: reader.token }), p = rumorView.page;
+    await inspect(p, npc.id);
+    assert.equal(await p.locator('[data-city-encounter-intel]').count(), 0, 'Inspecting a topic does not reveal the rumor before a confirmed action.');
+    const revealed = await encounter(p, npc.id), card = p.locator('[data-city-encounter-intel]');
+    assert(await card.evaluate(node => node.scrollWidth <= node.clientWidth + 1), 'The full rumor wraps inside its panel at every tested width.');
+    assert(await card.locator('p,button').evaluateAll(nodes => nodes.every(node => parseFloat(getComputedStyle(node).fontSize) >= 13)), 'Rumor prose and follow-up actions remain readable.');
+    const shots = process.env.CITY_PRESENCE_SHOTS;
+    if (shots && viewport.width === 375) {
+      fs.mkdirSync(shots, { recursive: true });
+      await p.screenshot({ path: path.join(shots, 'rumor-confirmed-375.png') });
+    }
+    const lead = card.locator('[data-city-intel-lead]');
+    await lead.focus(); await frames(p);
+    const geometry = await lead.evaluate(node => { const r = node.getBoundingClientRect(); return { height: r.height, width: r.width,
+      hit: node.contains(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)) }; });
+    assert(geometry.height >= 44 && geometry.width >= 44 && geometry.hit, 'The revealed lead stays focusable and reachable: ' + JSON.stringify(geometry));
+    if (shots && viewport.width === 375) await p.screenshot({ path: path.join(shots, 'rumor-follow-up-375.png') });
+    const beforeLead = mutations(rumorView.requests).length;
+    await lead.click();
+    await p.waitForFunction(() => { const s = window.__presenceHandles.at(-1).handle.getState(); return s.routeVenueId === 'fixer' || s.selectedVenue === 'fixer'; });
+    assert.equal(mutations(rumorView.requests).length, beforeLead, 'Following a local rumor never starts a case or submits a gameplay action.');
+    await p.locator('[data-city-intel-open]').click();
+    const journalCard = p.locator('[data-city-intel]').first();
+    assert((await journalCard.textContent()).includes(revealed.body.intel.description), 'The same complete rumor persists in the journal.');
+    if (shots && viewport.width === 1440) {
+      await journalCard.evaluate(node => { const dock = node.closest('.omerta-city__actor-dock'); dock.scrollTop += node.getBoundingClientRect().top - dock.getBoundingClientRect().top - 8; });
+      await p.screenshot({ path: path.join(shots, 'rumor-journal-desktop.png') });
+    }
+    await app.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [reader.id, 'neon']);
+    await p.locator('#btn-refresh').click();
+    await p.waitForFunction(() => window.__presenceModel.character.loc === 'neon' && window.__presenceHandles.at(-1).handle.getState().ready);
+    assert.equal(await p.locator('[data-city-encounter-intel]').count(), 0, 'Changing district clears the former encounter receipt.');
+    await p.locator('[data-city-intel-open]').click();
+    const distantLead = p.locator('[data-city-intel] [data-city-intel-lead]').first();
+    assert.match(await distantLead.textContent(), /^Travel to .* to follow up$/);
+    const beforeTravel = mutations(rumorView.requests).length;
+    await distantLead.click();
+    await p.waitForFunction(() => { const map = window.__presenceHandles.at(-1).handle.getState().worldUI; return map?.mapView === 'world' && map.districtId === 'docks'; });
+    assert.equal(mutations(rumorView.requests).length, beforeTravel, 'A historical rumor opens its original district overview without submitting travel.');
+    assert.equal((await state(p)).routeVenueId, null, 'A historical Docks rumor does not route to the Neon Fixer.');
+    await rumorView.context.close();
+  }
 
   // Property signs are real directory records, not live character positions.
   const propertyViewer = await player('Property Explorer');

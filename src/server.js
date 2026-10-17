@@ -17,6 +17,7 @@ import crypto from 'node:crypto';
 import { eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
+import { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';
 import { isDbDown, pingDb } from './dbhealth.js';
 import { finalizeHttpIdempotency, readHttpIdempotency } from './http-idempotency.js';
 import { validateDecisionCall, recordDecisionExecution } from './decisionproofs.js';
@@ -936,6 +937,10 @@ export async function buildServer() {
   app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));
   const pool = await makeDb();
   app.decorate('pool', pool);
+  const cityActivity = createCityActivityRegistry();
+  const cityOwnerActivity = createCityActivityRegistry({ ownerOnly: true });
+  const cityActivityRequest = Symbol('cityActivityRequest');
+  const cityActivityReplay = Symbol('cityActivityReplay');
   // `algorithms` is pinned rather than inferred. fast-jwt already derives the allowed set from the key
   // — a string secret admits only HMAC, so the classic "sign HS256 using the RSA public key as the
   // shared secret" confusion has no purchase here. But that safety is a property of the key we happen
@@ -1126,6 +1131,13 @@ export async function buildServer() {
       const limited = await checkRateLimit({ accountId: req.user.sub, agent: true, path: req.routeOptions?.url || req.url, capoRecruits: Number(a.capo_recruits || 0) });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
+    }
+    // Capture before execution so a completed request cannot animate a successor.
+    const activityKey = `${req.method} ${req.routeOptions?.url || ''}`;
+    const activityHit = Object.hasOwn(ACTIVITY_WIRE, activityKey) ? ACTIVITY_WIRE[activityKey] : null;
+    if (activityHit || cityOwnerActivityCategory(activityKey)) {
+      try { req[cityActivityRequest] = await readCityActivityActor(pool, req.user.sub); }
+      catch { /* optional presentation never fails gameplay on a read failure */ }
     }
   };
   // Mod endpoints (§10.3) authenticate with the MOD_KEY header, never a player JWT.
@@ -2326,7 +2338,8 @@ export async function buildServer() {
   registerContent(app, { pool, auth, modAuth });
   const coordination = registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
-  registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });
+  registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()],
+    activityRegistry: cityActivity, ownerActivityRegistry: cityOwnerActivity });
   registerCityHomes(app, { pool, auth });
   registerCityHomeInteriors(app, { pool, auth });
   registerCityEncounters(app, { pool, auth });
@@ -3217,11 +3230,36 @@ export async function buildServer() {
     actorNames.set(accountId, { name, at: Date.now() }); capMap(actorNames);
     return name;
   };
+  app.addHook('onSend', async (req, reply, payload) => {
+    if (reply.statusCode < 200 || reply.statusCode >= 300 || !req.user?.sub || reply.getHeader('x-idempotent-replay')) return payload;
+    const key = `${req.method} ${req.routeOptions?.url || ''}`;
+    if (!Object.hasOwn(ACTIVITY_WIRE, key) && !cityOwnerActivityCategory(key)) return payload;
+    try {
+      // Domain receipts can reproject current private facts without an HTTP
+      // replay header. Trust only the serialized server response, never input.
+      const body = /\bgzip\b/i.test(String(reply.getHeader('content-encoding') || ''))
+        ? zlib.gunzipSync(payload).toString('utf8')
+        : (Buffer.isBuffer(payload) ? payload.toString('utf8') : String(payload));
+      reply[cityActivityReplay] = JSON.parse(body)?.replayed === true;
+    } catch { reply[cityActivityReplay] = true; /* undecodable responses produce no activity */ }
+    return payload;
+  });
   app.addHook('onResponse', async (req, reply) => {
     try {
-      if (reply.statusCode < 200 || reply.statusCode >= 300 || !req.user?.sub) return;
+      if (reply.statusCode < 200 || reply.statusCode >= 300 || !req.user?.sub
+        || reply.getHeader('x-idempotent-replay') || reply[cityActivityReplay]) return;
       const key = `${req.method} ${req.routeOptions?.url || ''}`;
-      const hit = ACTIVITY_WIRE[key];
+      const hit = Object.hasOwn(ACTIVITY_WIRE, key) ? ACTIVITY_WIRE[key] : null;
+      const ownerCategory = hit?.[0] || cityOwnerActivityCategory(key);
+      if (!ownerCategory) return;
+      const before = req[cityActivityRequest];
+      if (before) {
+        try {
+          const after = await readCityActivityActor(pool, req.user.sub);
+          cityOwnerActivity.record(before, after, ownerCategory, req.params?.district, req.headers['idempotency-key']);
+          if (hit) cityActivity.record(before, after, hit[0], req.params?.district);
+        } catch { /* district activity is disposable; keep the existing wire independent */ }
+      }
       if (!hit) return;
       const who = await actorName(req.user.sub);
       const text = typeof hit[1] === 'function' ? hit[1](req) : hit[1];

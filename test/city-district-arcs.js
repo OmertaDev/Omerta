@@ -5,6 +5,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { DISTRICT_STORY_ARCS } from '../src/content/district-story-arcs.js';
 import { CITY_QUEST_PRESENTATIONS } from '../src/content/city-quest-presentation.js';
+import { PROPERTY_QUEST_PRESENTATION } from '../src/content/property-investigation.js';
 import { DISTRICTS, skillOf } from '../src/rules.js';
 
 const postgres = process.argv.includes('--postgres');
@@ -87,8 +88,15 @@ try {
   const catalogue = await success(call(witness, 'GET', '/v1/worldgraph/mysteries'));
   assert(validateCatalogue(catalogue), JSON.stringify(validateCatalogue.errors));
   const city = catalogue.mysteries.filter(entry => entry.cityQuest);
-  assert.equal(city.length, 8);
-  assert.equal(CITY_QUEST_PRESENTATIONS.length, 8);
+  assert.equal(city.length, 9);
+  assert.equal(CITY_QUEST_PRESENTATIONS.length, 9);
+  assert.deepEqual(CITY_QUEST_PRESENTATIONS.find(entry => entry.graphId === 'property-investigation'), PROPERTY_QUEST_PRESENTATION);
+  const property = city.find(entry => entry.graphId === 'property-investigation');
+  for (const field of ['title', 'districtId', 'startVenueId', 'exploreVenueId', 'rewardTitle', 'deathPolicy']) {
+    assert.equal(property[field], PROPERTY_QUEST_PRESENTATION[field], 'The property quest keeps its reviewed City presentation.');
+  }
+  assert.deepEqual(property.actions, [{ id: 'property-investigation:start', label: 'Begin A House With a Past', method: 'POST',
+    path: '/v1/worldgraph/mysteries/property-investigation/start', body: {}, available: true, blockedBy: [] }]);
   assert.deepEqual(DISTRICT_STORY_ARCS.map(story => story.presentation.districtId).sort(), DISTRICTS.map(district => district.id).sort());
   assert.equal(new Set(city.flatMap(entry => entry.actions.map(action => action.id))).size, city.length,
     'Simultaneous City quest offers have distinct issued action IDs.');

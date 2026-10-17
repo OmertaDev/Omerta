@@ -44,6 +44,13 @@
     { x: 832, y: 502, width: 32, height: 34 }
   ]);
   const ACTOR_PAGE_SIZE = 24;
+  const ACTIVITY_AGE = 60000, ACTIVITY_DURATION = 6000, ACTIVITY_MEMORY = 256;
+  const ACTIVITY_KINDS = {
+    work: ['WORK', 0xe8b34b], train: ['TRAINING', 0xb9d99b], trade: ['TRADE', 0xe2c48b],
+    social: ['SOCIAL', 0x9ccfbe], move: ['TRAVEL', 0xa9cae5], fight: ['FIGHT', 0xe5a49a],
+    craft: ['CRAFT', 0xd2bc99], rest: ['REST', 0x9fc7d1], property: ['PROPERTY', 0xcab8df],
+    play: ['PLAY', 0xcbb1db], race: ['RACE', 0x9bbfdc]
+  };
   const REGIONS = {
     docks: { ground: 0x55564d, road: 0x3e4445, water: 0x243b43 },
     brick: { ground: 0x735c4d, road: 0x493b35, water: 0x3e4037, landmark: { name: 'Kiln Square', x: 548, y: 52, width: 80, height: 112 } },
@@ -131,6 +138,10 @@
     let worldUI = null, worldOpening = false, look = 'classic';
     let trackedObjectiveId = null, trackedVenueId = null, venueStateSignature = '';
     let routePreview = [], routePreviewVenue = null;
+    let zoomPreference = 1, resourceReceipt = null;
+    const seenResourceReceipts = new Set();
+    let externalPanel = options.externalPanel === true, activityTimer = null, activitySignature = '', activityHudLayout = '';
+    const activities = new Map(), seenActivities = new Set();
     const lookTints = { classic: 0xffffff, moss: 0x9aad80, wine: 0xba8790, ink: 0x8795ae };
     let player = null, selected = null, pendingVenue = null, pendingHome = null, pendingExit = null, queuedHome = null, queuedVenue = null, path = [];
     let gameKind = '', gameOpening = 0, gameReturn = null, venueOpening = 0;
@@ -155,6 +166,11 @@
     listen(window, 'blur', () => { queuedHome = null; });
     const root = element('section', 'omerta-city');
     root.setAttribute('aria-label', 'Explore your current neighborhood');
+    for (const type of ['click', 'pointerdown', 'keydown']) listen(root, type, event => {
+      if (externalPanel && event.target?.closest('button, a, input, select, textarea, canvas, summary')) {
+        event.preventDefault(); event.stopImmediatePropagation();
+      }
+    }, true);
     const header = element('div', 'omerta-city__header');
     const heading = element('div');
     heading.append(element('div', 'omerta-city__eyebrow', 'The neighborhood'));
@@ -182,14 +198,24 @@
     worldHud.setAttribute('aria-label', 'Walking resources and readiness');
     const worldResources = element('dl', 'omerta-city__resources omerta-city__resources--walking');
     const worldHead = element('div', 'omerta-city__world-head');
-    const worldMapButton = element('button', 'omerta-city__world-map', 'World map');
+    const worldMapButton = element('button', 'omerta-city__world-map', 'Travel');
     worldMapButton.type = 'button'; worldMapButton.setAttribute('data-city-world-map', '');
-    worldMapButton.setAttribute('aria-label', 'Open the connected world map, district routes and street homes');
+    worldMapButton.setAttribute('aria-label', 'Travel: district routes and street homes');
     listen(worldMapButton, 'click', openWorldMap);
     const recenter = element('button', 'omerta-city__recenter', 'Find me');
     recenter.type = 'button'; recenter.setAttribute('data-city-recenter', '');
     recenter.setAttribute('aria-label', 'Center the map on your character');
     listen(recenter, 'click', centerPlayer);
+    const zoomOut = element('button', 'omerta-city__zoom', '−');
+    const zoomIn = element('button', 'omerta-city__zoom', '+');
+    for (const [button, direction, label] of [[zoomOut, -1, 'Zoom out'], [zoomIn, 1, 'Zoom in']]) {
+      button.type = 'button'; button.dataset.cityZoom = String(direction);
+      button.setAttribute('aria-label', label);
+      listen(button, 'click', () => {
+        zoomPreference = Math.max(.65, Math.min(1.6, Math.round((zoomPreference + direction * .15) * 100) / 100));
+        fitCamera();
+      });
+    }
     const resourceHelp = element('div', 'omerta-city__resource-help');
     resourceHelp.hidden = true; resourceHelp.setAttribute('role', 'region');
     resourceHelp.id = 'city-resource-help-' + (++instanceSequence);
@@ -197,7 +223,7 @@
     const helpCopy = element('p');
     const helpAction = element('button'); helpAction.type = 'button';
     const helpClose = element('button', '', 'Close'); helpClose.type = 'button';
-    let helpVenue = null, helpTrigger = null;
+    let helpVenue = null, helpTrigger = null, helpKey = null;
     listen(helpAction, 'click', () => { closeResourceHelp(false); if (helpVenue) showVenue(helpVenue); });
     listen(helpClose, 'click', () => closeResourceHelp(true));
     listen(resourceHelp, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); closeResourceHelp(true); } });
@@ -218,9 +244,11 @@
       listen(explain, 'click', () => showResourceHelp(key, explain));
       term.append(explain);
       const bonus = element('span', 'omerta-city__resource-bonus'); bonus.hidden = true;
-      group.append(term, value, bonus, meter);
+      const delta = element('span', 'omerta-city__resource-delta'); delta.hidden = true;
+      delta.setAttribute('data-city-resource-delta', '');
+      group.append(term, value, bonus, delta, meter);
       (['cash', 'health', 'energy', 'nerve'].includes(key) ? worldResources : resourceGrid).append(group);
-      resourceNodes.set(key, { group, value, meter, bonus });
+      resourceNodes.set(key, { group, value, meter, bonus, delta });
     }
     const progressRow = element('div', 'omerta-city__progress');
     const progressCopy = element('span');
@@ -240,12 +268,17 @@
     journal.setAttribute('data-city-journal', '');
     hud.append(resourceGrid, progressRow);
     const mapTools = element('div', 'omerta-city__map-tools');
-    mapTools.append(recenter, worldMapButton);
-    worldHead.append(worldResources, mapTools);
-    worldHud.append(worldHead, readiness, resourceHelp);
-    const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · marker positions are approximate');
+    mapTools.append(recenter, worldMapButton, zoomOut, zoomIn);
+    worldHead.append(worldResources);
+    worldHud.append(worldHead, readiness, mapTools, resourceHelp);
+    const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · positions and activity paths are approximate');
     presenceCaption.hidden = true;
     worldHud.append(presenceCaption);
+    const activityStatus = element('div', 'omerta-city__activity');
+    activityStatus.dataset.cityActivity = ''; activityStatus.hidden = true;
+    activityStatus.setAttribute('role', 'status'); activityStatus.setAttribute('aria-live', 'polite');
+    activityStatus.setAttribute('aria-atomic', 'true');
+    worldHud.append(activityStatus);
     const nextMove = element('div', 'omerta-city__next-move');
     const nextCopy = element('div');
     nextCopy.setAttribute('role', 'status');
@@ -329,7 +362,7 @@
       dpad.append(button);
       moveButtons.set(direction, button);
       listen(button, 'pointerdown', event => {
-        if (!ready || !game || destroyed) return;
+        if (!ready || !game || destroyed || externalPanel) return;
         event.preventDefault();
         game.canvas.focus({ preventScroll: true });
         hideGameDock(false);
@@ -341,7 +374,7 @@
       });
       for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) listen(button, event, () => stopMovement());
       listen(button, 'keydown', event => {
-        if (!ready || ![' ', 'Enter'].includes(event.key)) return;
+        if (!ready || externalPanel || ![' ', 'Enter'].includes(event.key)) return;
         event.preventDefault();
         if (!event.repeat) { stopMovement(); heldMoves.add(direction); button.classList.add('is-held'); }
       });
@@ -389,7 +422,7 @@
     const intelOpen = element('button', '', 'Street intel & objectives');
     intelOpen.type = 'button'; intelOpen.setAttribute('data-city-intel-open', '');
     presenceHead.append(presenceTitle, intelOpen);
-    const placement = element('p', 'omerta-city__placement', 'District presence · marker positions are approximate, not live walking locations.');
+    const placement = element('p', 'omerta-city__placement', 'District presence · marker positions and activity paths are approximate. Activity shows recently confirmed actions.');
     const actorList = element('div', 'omerta-city__actor-list');
     const actorPager = element('div', 'omerta-city__actor-pager');
     const actorsPrevious = element('button', '', 'Previous people');
@@ -419,6 +452,7 @@
     });
     renderPresence();
     host.replaceChildren(root);
+    acceptResourceReceipt(options.resourceReceipt);
     if (typeof window.OmertaCityWorldUI?.mount === 'function') {
       try {
         worldUI = window.OmertaCityWorldUI.mount(root, { ...worldOptions(), viewport, mapLayer,
@@ -459,7 +493,7 @@
       return { character, district, rules: options.rules, actors: options.actors || [], objectives: options.objectives || [],
         trackedObjectiveId,
         intel: options.intel || [], npcQuests: options.npcQuests || {}, progress: options.progress, reducedMotion,
-        scopeKey: options.worldScopeKey, receipt: options.worldReceipt, recovery: options.worldRecovery === true,
+        scopeKey: options.worldScopeKey, receipt: options.worldReceipt, resourceReceipt, recovery: options.worldRecovery === true,
         social: options.worldSocial, chat: options.worldChat, atlas: options.worldAtlas,
         collection: options.worldCollection, homes: options.worldHomes, onTravel: options.onWorldTravel, trackerVisible: tracked };
     }
@@ -630,7 +664,7 @@
       }
     }
     function openWorldMap(districtId, fallback = true) {
-      if (destroyed || (!fallback && typeof worldUI?.openMapOverview !== 'function')) return false;
+      if (destroyed || externalPanel || (!fallback && typeof worldUI?.openMapOverview !== 'function')) return false;
       pauseRoute(); hideVenue(false); hideActor(false); hideGameDock(false);
       if (typeof worldUI?.openMapOverview === 'function') {
         worldUI.openMapOverview(typeof districtId === 'string' ? districtId : undefined);
@@ -643,7 +677,7 @@
     }
     function walkHome(key) {
       const home = homes.find(item => item.key === key);
-      if (destroyed || !home) return false;
+      if (destroyed || externalPanel || !home) return false;
       if (!ready || !player) {
         if (root.classList.contains('omerta-city--unavailable')) showHome(key);
         else queuedHome = { key, identity: sceneIdentity(), scope: options.worldScopeKey };
@@ -655,21 +689,21 @@
       return true;
     }
     function showHome(key, trigger) {
-      if (destroyed || !homes.some(home => home.key === key)) return;
+      if (destroyed || externalPanel || !homes.some(home => home.key === key)) return;
       worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
       selectedHome = key; selectedExit = null; selectedActor = null; actorView = 'home'; actorOpening++;
       actorReturn = trigger; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
       renderActorDock(); fitWorldFrame(); revealVenue(viewport); actorBody.focus({ preventScroll: true }); syncPointerBounds();
     }
     function walkExit(id, trigger) {
-      const exit = exits.find(item => item.id === id); if (destroyed || !exit) return;
+      const exit = exits.find(item => item.id === id); if (destroyed || externalPanel || !exit) return;
       if (!ready || !player) { showExit(id, trigger); return; }
       worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false); game.canvas.focus({ preventScroll: true });
       if (Math.hypot(player.x - exit.x, player.y - exit.y) < 42) showExit(id, trigger);
       else { pendingExit = id; path = findRoute(player, exit); redrawPath(); revealVenue(viewport); }
     }
     function showExit(id, trigger) {
-      if (destroyed || !exits.some(item => item.id === id)) return;
+      if (destroyed || externalPanel || !exits.some(item => item.id === id)) return;
       worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
       selectedExit = id; selectedHome = null; selectedActor = null; actorView = 'exit'; actorOpening++;
       actorReturn = trigger; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
@@ -737,6 +771,7 @@
       if (!scene || !ready) return;
       const actors = pageActors(), ids = new Set(actors.map(actor => actor.id)), slots = actorSlots(), used = new Set();
       for (const [id, marker] of actorSprites) if (!ids.has(id)) {
+        removeActivity(id);
         marker.sprite.destroy(); marker.name.destroy(); marker.ring.destroy(); actorSprites.delete(id);
       }
       if (!slots.length) return;
@@ -758,11 +793,51 @@
           ring.lineStyle(1, actor.kind === 'agent' ? 0x9ec5ef : actor.kind === 'npc' ? 0xc6b696 : 0xa5d9c6, 0.8).strokeEllipse(0, 0, 28, 10);
           marker = { sprite, name, ring }; actorSprites.set(actor.id, marker);
         }
-        marker.x = position.x; marker.y = position.y; marker.actor = actor;
-        marker.sprite.setPosition(position.x, position.y).setDepth(position.y);
-        marker.name.setPosition(position.x, position.y - 73).setText(actor.kind.toUpperCase()).setDepth(position.y + 1);
-        marker.ring.setPosition(position.x, position.y).setDepth(position.y - 1);
+        if (!marker.actor || marker.actor.generation !== actor.generation || !canWalk(marker.x, marker.y)) {
+          if (marker.actor && marker.actor.generation !== actor.generation) rememberActivity(actor.activity, actor);
+          removeActivity(actor.id);
+          marker.x = position.x; marker.y = position.y;
+        }
+        marker.actor = actor;
+        marker.sprite.setPosition(marker.x, marker.y).setDepth(marker.y);
+        marker.name.setPosition(marker.x, marker.y - 73).setText(actor.kind.toUpperCase()).setDepth(marker.y + 1);
+        marker.ring.setPosition(marker.x, marker.y).setDepth(marker.y - 1);
+        acceptActivity(actor.activity, actor);
       }
+      renderActivityStatus();
+    }
+    function intelLead(entry) {
+      const venue = VENUES.find(venue => venue.id === entry.lead?.venueId);
+      const districtId = entry.lead?.districtId || entry.source?.district;
+      if (!venue || typeof districtId !== 'string' || !Object.hasOwn(REGIONS, districtId)) return null;
+      const districts = [...(options.worldAtlas?.districts || []), ...(options.rules?.districts || [])];
+      const name = districtId === district.id ? district.name : districts.find(place => place.id === districtId)?.name;
+      return { venue, districtId, districtName: name || districtId.charAt(0).toUpperCase() + districtId.slice(1) };
+    }
+    function intelCard(entry, confirmed = false) {
+      const item = element('article', 'omerta-city__intel');
+      if (confirmed) { item.dataset.cityEncounterIntel = String(entry.id || ''); item.tabIndex = -1; }
+      else item.dataset.cityIntel = String(entry.id || '');
+      if (entry.category === 'rumor') item.append(element('small', 'omerta-city__rumor-label', 'Street rumor · unverified'));
+      item.append(element('strong', '', String(entry.title || 'Neighborhood lead')), element('p', '', String(entry.description || '')));
+      if (entry.sourceContext) item.append(element('p', 'omerta-city__intel-context', String(entry.sourceContext)));
+      if (entry.source) {
+        const attribution = entry.attribution === 'resident' && entry.source.kind === 'npc' ? 'Heard from ' : 'Recorded after meeting ';
+        item.append(element('small', '', attribution + actorName(entry.source) + ' · ' + String(entry.source.district || district.id)));
+      }
+      const collectedAt = new Date(entry.collectedAt || '').getTime();
+      if (Number.isFinite(collectedAt)) {
+        const time = element('time', '', 'Recorded ' + new Date(collectedAt).toLocaleString());
+        time.dateTime = new Date(collectedAt).toISOString(); item.append(time);
+      }
+      const destination = intelLead(entry);
+      if (destination && typeof entry.id === 'string') {
+        const lead = element('button', '', destination.districtId === district.id
+          ? String(entry.lead.label || 'Follow this lead at ' + destination.venue.name) : 'Travel to ' + destination.districtName + ' to follow up');
+        lead.type = 'button'; lead.dataset.cityIntelLead = entry.id; item.append(lead);
+        item.append(element('small', '', 'Visit ' + destination.venue.name + ' in ' + destination.districtName + ' to follow up.'));
+      }
+      return item;
     }
     function renderActorDock() {
       if (actorDock.hidden) return;
@@ -773,7 +848,8 @@
       const signature = JSON.stringify([actorView, actor, home, exit, journalEntries, objectives, options.encounterReceipt, options.encounterRecovery, actorNotice, encounterPending]);
       if (signature === actorRenderSignature) return;
       actorRenderSignature = signature;
-      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || document.activeElement.dataset.cityHomeAction || '' : null;
+      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || document.activeElement.dataset.cityHomeAction || document.activeElement.dataset.cityIntelLead || '' : null;
+      const focusedIntel = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounterIntel : null;
       const scroll = actorDock.scrollTop;
       actorBody.replaceChildren();
       if (actorView === 'person') {
@@ -789,11 +865,12 @@
               + (Number.isFinite(observation) ? ' · observed ' + new Date(observation).toLocaleString() : '')
               + '. These are recorded facts, not live tracking.' : 'Meet this person or hear about them to learn their name and other facts.'));
           }
-          actorBody.append(element('p', '', 'Collect a neighborhood clue and advance your intel objectives.'));
           for (const action of actorActions(actor)) {
-            const button = element('button', '', String(action.label || 'Collect intel'));
+            if (action.topic?.teaser) actorBody.append(element('p', 'omerta-city__intel-teaser', String(action.topic.teaser)));
+            const button = element('button', '', String(action.label || 'Review a neighborhood lead'));
             button.type = 'button'; button.dataset.cityEncounter = action.id;
             button.disabled = action.available !== true || encounterPending || options.encounterRecovery === true || typeof options.onEncounter !== 'function';
+            appendActionPreview(button, action);
             actorBody.append(button);
           }
           const nextObjective = objectives.find(objective => objective?.status === 'available');
@@ -812,7 +889,7 @@
           actorBody.append(element('p', 'omerta-city__actor-facts', home.owner ? home.owner.name + ' · ' + home.owner.kind.toUpperCase() + ' steward'
             : home.ownership === 'external' ? 'External deed · no in-city steward published' : home.ownership === 'estate' ? 'Estate street · no living steward published' : 'Steward not published'));
           actorBody.append(element('p', '', 'This is an illustrative home plot for a confirmed street deed. It does not show where the steward is standing.'));
-          if (!ready) actorBody.append(element('p', '', 'Walking is unavailable. You can inspect the street or use World map and the deed board.'));
+          if (!ready) actorBody.append(element('p', '', 'Walking is unavailable. You can inspect the street or use Travel and the deed board.'));
           if (home.mine) {
             actorBody.append(element('p', '', 'This is your street. Your account keeps the deed across character generations.'));
             for (const [kind, label] of [['hideout', 'Your hideout'], ['deeds', 'Your deed board']]) {
@@ -820,17 +897,17 @@
               if (kind === 'hideout' && !worldUI) button.disabled = true;
             }
           }
-        } else actorBody.append(element('p', '', 'This street is outside the current directory window. Open World map to inspect more homes.'));
-        const map = element('button', '', 'World map'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
+        } else actorBody.append(element('p', '', 'This street is outside the current directory window. Open Travel to inspect more homes.'));
+        const map = element('button', '', 'Travel'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
       } else if (actorView === 'exit') {
         actorBody.append(element('h4', '', exit ? 'Route to ' + exit.name : 'District routes'));
         const fare = Number(options.rules?.travelCost);
-        actorBody.append(element('p', '', 'Choose your destination on World map. District travel is an explicit choice'
+        actorBody.append(element('p', '', 'Choose your destination in Travel. District travel is an explicit choice'
           + (Number.isFinite(fare) ? ' with a $' + fare.toLocaleString('en-US') + ' ride fare.' : '; check its current fare before confirming.')));
-        const map = element('button', '', 'Choose a district on World map'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
+        const map = element('button', '', 'Travel: choose a district'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
       } else {
         actorBody.append(element('h4', '', 'Street intel & objectives'));
-        actorBody.append(element('p', '', 'Public world tips collected through confirmed encounters. Objectives advance through later encounters, not by reading this journal.'));
+        actorBody.append(element('p', '', 'Rumors and leads recorded around the neighborhood. Compare sources, then visit the people and places named in your notes.'));
         for (const objective of objectives.filter(Boolean)) {
           const item = element('article', 'omerta-city__objective'); item.dataset.cityObjective = String(objective.id || '');
           item.append(element('strong', '', String(objective.title || 'Objective')), element('span', '', String(objective.status || '')),
@@ -838,17 +915,14 @@
           for (const action of Array.isArray(objective.actions) ? objective.actions : []) if (action && typeof action.id === 'string' && action.method === 'POST') {
             const button = element('button', '', String(action.label || 'Continue'));
             button.type = 'button'; button.dataset.cityIntelAction = action.id;
-            button.disabled = action.available !== true || typeof options.onIntelAction !== 'function'; item.append(button);
+            button.disabled = action.available !== true || typeof options.onIntelAction !== 'function';
+            appendActionPreview(button, action); item.append(button);
           }
           actorBody.append(item);
         }
-        if (!journalEntries.length) actorBody.append(element('p', '', 'No intel collected yet. Inspect a reported person, then explicitly record the encounter.'));
+        if (!journalEntries.length) actorBody.append(element('p', '', 'Your notebook is empty. Inspect someone in the neighborhood and choose a topic to hear about.'));
         for (const entry of Array.isArray(journalEntries) ? journalEntries.filter(Boolean) : []) {
-          const item = element('article', 'omerta-city__intel'); item.dataset.cityIntel = String(entry.id || '');
-          item.append(element('strong', '', String(entry.title || 'World tip')), element('p', '', String(entry.description || '')));
-          if (Number.isInteger(entry.sequence)) item.append(element('small', '', 'Intel #' + entry.sequence));
-          if (entry.source) item.append(element('small', '', 'Source: ' + String(entry.source.name || 'Unnamed person') + ' · ' + String(entry.source.kind || '') + ' · ' + String(entry.source.district || '')));
-          actorBody.append(item);
+          actorBody.append(intelCard(entry));
         }
       }
       const receipt = ['person', 'journal'].includes(actorView) ? options.encounterReceipt : null;
@@ -856,6 +930,7 @@
         const region = element('section', 'omerta-city__encounter-receipt');
         region.setAttribute('data-city-encounter-receipt', ''); region.setAttribute('aria-label', 'Encounter receipt');
         region.append(element('strong', '', String(receipt.label || 'Encounter result')), element('p', '', String(receipt.summary || '')));
+        if (receipt.state === 'success' && receipt.intel && typeof receipt.intel === 'object') region.append(intelCard(receipt.intel, true));
         if (typeof receipt.delta === 'string' && receipt.delta) region.append(element('p', '', receipt.delta));
         else if (Array.isArray(receipt.delta) && receipt.delta.length) region.append(element('p', '', receipt.delta.map(String).join(' · ')));
         if (receipt.recoveryText) region.append(element('p', '', String(receipt.recoveryText)));
@@ -867,10 +942,11 @@
       }
       if (actorNotice) { const notice = element('p', 'omerta-city__actor-notice', actorNotice); notice.setAttribute('role', 'status'); actorBody.append(notice); }
       actorDock.scrollTop = scroll;
-      if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus)) || actorBody).focus({ preventScroll: true });
+      if (focusedIntel) (Array.from(actorBody.querySelectorAll('[data-city-encounter-intel]')).find(item => item.dataset.cityEncounterIntel === focusedIntel) || actorBody).focus({ preventScroll: true });
+      else if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus || button.dataset.cityIntelLead === oldFocus)) || actorBody).focus({ preventScroll: true });
     }
     function showActor(id, trigger) {
-      if (destroyed || !findActor(id)) return;
+      if (destroyed || externalPanel || !findActor(id)) return;
       worldUI?.close(false);
       hideGameDock(false);
       stopMovement(); hideVenue(false); selectedHome = null; selectedExit = null; selectedActor = id; actorView = 'person'; actorOpening++;
@@ -880,7 +956,7 @@
       actorBody.focus({ preventScroll: true }); syncPointerBounds();
     }
     function showIntel() {
-      if (destroyed) return;
+      if (destroyed || externalPanel) return;
       worldUI?.close(false);
       hideGameDock(false);
       stopMovement(); hideVenue(false); selectedHome = null; selectedExit = null; selectedActor = null; actorView = 'journal'; actorOpening++;
@@ -903,6 +979,17 @@
     listen(actorClose, 'click', () => hideActor(true));
     listen(intelOpen, 'click', showIntel);
     listen(actorDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideActor(true); } });
+    listen(actorBody, 'click', event => {
+      const button = event.target.closest('[data-city-intel-lead]'); if (!button || !actorBody.contains(button)) return;
+      const entries = Array.isArray(options.intel) ? options.intel : options.intel?.journal || [];
+      const confirmed = options.encounterReceipt?.state === 'success' ? options.encounterReceipt.intel : null;
+      const entry = [confirmed, ...entries].find(entry => entry && entry.id === button.dataset.cityIntelLead);
+      const destination = entry && intelLead(entry);
+      if (destination) {
+        if (destination.districtId === district.id) walkToVenue(destination.venue.id);
+        else openWorldMap(destination.districtId);
+      }
+    });
     listen(actorBody, 'click', event => {
       const button = event.target.closest('[data-city-home-action]'); if (!button || !actorBody.contains(button)) return;
       if (button.dataset.cityHomeAction === 'map') openWorldMap(selectedExit || district.id);
@@ -930,18 +1017,23 @@
       if (button.dataset.cityIntelAction && typeof options.onIntelAction !== 'function') return;
       const retrying = button.hasAttribute('data-city-encounter-retry');
       if (retrying && (options.encounterRecovery !== true || typeof options.onEncounterRetry !== 'function')) return;
-      const identity = sceneIdentity(), opening = actorOpening; encounterPending = true;
+      const identity = sceneIdentity(), opening = actorOpening; let confirmedIntelId = ''; encounterPending = true;
       actorNotice = retrying ? 'Recovering the previous encounter…' : 'Recording the encounter…'; renderActorDock();
       try {
         const result = retrying ? await options.onEncounterRetry() : button.dataset.cityEncounter
           ? await options.onEncounter(actor.id, action.id) : await options.onIntelAction(button.dataset.cityIntelAction);
+        if (result?.code < 400 && typeof result.body?.intel?.id === 'string') confirmedIntelId = result.body.intel.id;
         if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = options.encounterRecovery === true
           ? 'This encounter is not confirmed. Recover the previous encounter before recording another.' : result?.code >= 400
           ? String(result.body?.message || 'The encounter could not be recorded. Check the current requirements and retry.')
           : result?.body?.intel ? 'Intel recorded: ' + String(result.body.intel.title || 'World tip') : 'Review your journal for the encounter result.';
       } catch {
         if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = 'The encounter result is unavailable. Use the game receipt to recover it safely.';
-      } finally { if (!destroyed && identity === sceneIdentity()) { encounterPending = false; renderActorDock(); fitWorldFrame(); } }
+      } finally { if (!destroyed && identity === sceneIdentity()) {
+        encounterPending = false; renderActorDock(); fitWorldFrame();
+        const revealed = opening === actorOpening && Array.from(actorBody.querySelectorAll('[data-city-encounter-intel]')).find(item => item.dataset.cityEncounterIntel === confirmedIntelId);
+        if (revealed) { revealed.focus({ preventScroll: true }); actorDock.scrollTop += revealed.getBoundingClientRect().top - actorDock.getBoundingClientRect().top - 8; }
+      } }
     });
 
     function listen(target, event, callback, config) {
@@ -955,6 +1047,152 @@
     }
     function format(value) { return value === null ? '—' : value.toLocaleString('en-US', { maximumFractionDigits: 1 }); }
     function setText(node, value) { if (node.textContent !== value) node.textContent = value; }
+    function acceptResourceReceipt(next) {
+      if (!next || next.state !== 'confirmed' || !['string', 'number'].includes(typeof next.id) || !String(next.id)) {
+        resourceReceipt = null; return;
+      }
+      const id = String(next.id);
+      if (String(resourceReceipt?.id) === id || seenResourceReceipts.has(id)) return;
+      seenResourceReceipts.add(id);
+      resourceReceipt = next;
+    }
+    function activityId(event, actor) {
+      return event && ['string', 'number'].includes(typeof event.id) && String(event.id).length > 0 && String(event.id).length <= 200
+        ? JSON.stringify([actor.id, actor.generation, String(event.id)]) : null;
+    }
+    function rememberActivity(event, actor) {
+      const id = activityId(event, actor);
+      if (!id) return;
+      seenActivities.add(id);
+      while (seenActivities.size > ACTIVITY_MEMORY) seenActivities.delete(seenActivities.values().next().value);
+    }
+    function removeActivity(actorId) {
+      const activity = activities.get(actorId);
+      if (!activity) return;
+      activity.badge?.destroy(); activity.ring?.destroy();
+      const sprite = activity.self ? player : actorSprites.get(actorId)?.sprite;
+      sprite?.setAngle(0).setScale(1);
+      activities.delete(actorId);
+    }
+    function renderActivityStatus() {
+      const lines = Array.from(activities.values()).reverse().slice(0, 3).map(activity => ({ id: activity.id,
+        text: (activity.self ? 'You' : actorName(findActor(activity.actorId))) + ' · ' + activity.label }));
+      const signature = JSON.stringify(lines);
+      if (signature === activitySignature) return;
+      activitySignature = signature;
+      activityStatus.replaceChildren(); activityStatus.hidden = !lines.length;
+      if (lines.length) {
+        activityStatus.append(element('strong', 'omerta-city__activity-title', 'Confirmed activity'));
+        for (const line of lines) {
+          const item = element('span', 'omerta-city__activity-line', line.text);
+          item.dataset.cityActivityId = line.id; activityStatus.append(item);
+        }
+      }
+      fitWorldFrame();
+    }
+    function expireActivities() {
+      if (activityTimer) { clearTimeout(activityTimer); activityTimer = null; }
+      const now = Date.now();
+      for (const [id, activity] of activities) if (activity.expiresAt <= now) removeActivity(id);
+      renderActivityStatus();
+      if (activities.size) activityTimer = setTimeout(expireActivities,
+        Math.max(1, Math.min(...Array.from(activities.values(), activity => activity.expiresAt)) - now));
+    }
+    function acceptActivity(event, actor = character) {
+      const self = actor === character, now = Date.now();
+      if (!event || self && (event.state !== 'confirmed' || event.actorId !== character.id
+        || event.generation !== character.generation || event.district !== district.id)
+        || !self && event.state !== undefined && event.state !== 'confirmed') return;
+      const id = activityId(event, actor);
+      const at = typeof event.at === 'number' ? event.at : typeof event.at === 'string' ? Date.parse(event.at) : NaN;
+      if (!id || seenActivities.has(id) || !Number.isFinite(at) || at < now - ACTIVITY_AGE || at > now + 5000) return;
+      const kind = Object.hasOwn(ACTIVITY_KINDS, event.kind) ? event.kind : 'work';
+      const label = typeof event.label === 'string' && event.label.trim() ? event.label.trim().slice(0, 160) : 'Action confirmed';
+      const venue = VENUES.find(venue => venue.id === event.venueId);
+      rememberActivity(event, actor); removeActivity(actor.id);
+      const marker = self ? null : actorSprites.get(actor.id);
+      activities.set(actor.id, { id: String(event.id), actorId: actor.id, generation: actor.generation, self, kind, label,
+        at, startedAt: now, expiresAt: Math.min(now + ACTIVITY_DURATION, at + ACTIVITY_AGE),
+        // These few steps illustrate the public action; they are never a live location claim.
+        path: marker && venue && !reducedMotion ? findRoute(marker, venue).slice(0, 5) : [] });
+      expireActivities();
+    }
+    function clearActivities(nextOptions = {}) {
+      for (const source of [options, nextOptions]) {
+        const owner = source.character || character;
+        rememberActivity(source.activityReceipt, owner);
+        for (const actor of Array.isArray(source.actors) ? source.actors : []) rememberActivity(actor.activity, actor);
+      }
+      for (const id of activities.keys()) removeActivity(id);
+      if (activityTimer) { clearTimeout(activityTimer); activityTimer = null; }
+      renderActivityStatus();
+    }
+    function updateActivities(time, dt, playerMoving) {
+      const now = Date.now();
+      for (const [id, activity] of activities) {
+        const marker = activity.self ? null : actorSprites.get(id), sprite = activity.self ? player : marker?.sprite;
+        if (!sprite || activity.expiresAt <= now || !activity.self && marker.actor.generation !== activity.generation) {
+          removeActivity(id); renderActivityStatus(); continue;
+        }
+        if (marker && activity.path.length && !reducedMotion) {
+          if (id === selectedActor || id === pendingActor) activity.path = [];
+          else {
+            const point = activity.path[0], distance = Math.hypot(point.x - marker.x, point.y - marker.y), step = Math.min(distance, dt * 42);
+            const x = distance ? marker.x + (point.x - marker.x) / distance * step : point.x;
+            const y = distance ? marker.y + (point.y - marker.y) / distance * step : point.y;
+            if (canWalk(x, y)) {
+              if (x !== marker.x) sprite.setFlipX(x < marker.x);
+              marker.x = x; marker.y = y;
+              sprite.setPosition(x, y).setDepth(y); marker.name.setPosition(x, y - 73).setDepth(y + 1);
+              marker.ring.setPosition(x, y).setDepth(y - 1);
+              if (distance <= step + 0.25) activity.path.shift();
+            } else activity.path = [];
+          }
+        }
+        if (!activity.badge) {
+          activity.badge = scene.add.text(0, 0, ACTIVITY_KINDS[activity.kind][0], { fontFamily: 'monospace', fontSize: 10,
+            resolution: 2, color: '#f4e8d2', backgroundColor: '#25382f', padding: { x: 4, y: 3 } }).setOrigin(0.5);
+          activity.ring = scene.add.graphics();
+        }
+        const phase = (now - activity.startedAt) / 180, pulse = reducedMotion ? 0 : Math.sin(phase) * 2;
+        activity.ring.clear().lineStyle(2, ACTIVITY_KINDS[activity.kind][1], .9).strokeEllipse(0, 0, 37 + pulse, 15 + pulse);
+        activity.ring.setPosition(sprite.x, sprite.y + 1).setDepth(sprite.y - 1);
+        let badgeX = sprite.x, badgeY = sprite.y - (activity.self && artState.player !== 'generated' ? 55 : 90);
+        if (externalPanel && activity.self) {
+          // Keep the confirmation beside the avatar in the compact operation view.
+          const view = scene.cameras.main.worldView, marginX = activity.badge.displayWidth / 2 + 6,
+            marginY = activity.badge.displayHeight / 2 + 6;
+          badgeX = Math.max(view.x + marginX, Math.min(view.right - marginX, sprite.x + 64));
+          badgeY = Math.max(view.y + marginY, Math.min(view.bottom - marginY, sprite.y - 42));
+        }
+        activity.badge.setPosition(badgeX, badgeY).setDepth(sprite.y + 3);
+        if (!reducedMotion && !(activity.self && playerMoving)) {
+          const energetic = ['work', 'train', 'fight', 'craft'].includes(activity.kind);
+          sprite.setAngle(energetic ? Math.sin(phase) * 3 : 0).setScale(1, energetic ? 1 + Math.sin(phase * 2) * .025 : 1);
+        } else sprite.setAngle(0);
+      }
+    }
+    function appendActionPreview(button, action) {
+      const label = element('span', '', button.textContent);
+      label.setAttribute('data-city-action-label', '');
+      button.setAttribute('aria-label', label.textContent);
+      button.replaceChildren(label);
+      const preview = element('span', 'omerta-city__action-preview');
+      preview.setAttribute('data-city-action-preview', '');
+      preview.id = 'city-action-preview-' + (++instanceSequence);
+      button.setAttribute('aria-describedby', preview.id);
+      preview.append(element('strong', '', 'Before you act'), element('span', '',
+        typeof action.consequence === 'string' && action.consequence.trim() ? action.consequence : 'No cost or reward estimate is available for this action.'));
+      const blockers = Array.isArray(action.blockedBy) ? action.blockedBy : action.blockedBy ? [action.blockedBy] : [];
+      const reasons = blockers.map(reason => typeof reason === 'string' ? reason : reason?.message || reason?.label || reason?.reason || reason?.code || '').filter(Boolean).join(' · ');
+      if (reasons) preview.append(element('span', '', 'Requires: ' + reasons));
+      button.append(preview);
+    }
+    function nerveRecoveryCopy() {
+      const rate = numeric(options.rules?.pacing?.nerveRegenPerMin);
+      return 'Nerve is used by street jobs and recovers over time up to your normal capacity. '
+        + (rate !== null && rate > 0 ? 'Base recovery: ' + format(rate) + ' Nerve/min; bonuses may increase this.' : 'Check your current Nerve before choosing a job.');
+    }
     function resourceState() {
       const progress = options.progress;
       return {
@@ -985,12 +1223,13 @@
         cash: 'Cash pays for street operations and equipment. Inspect a job before choosing its costs and risks.',
         health: 'Health is your current condition. Low health makes fighting risky. The Life shows your recovery options.',
         energy: 'Energy is spent by training and other operations. The Life shows your current recovery and training options.',
-        nerve: 'Nerve is used by street jobs. Check the job requirements before committing to an operation.',
+        nerve: nerveRecoveryCopy(),
         heat: 'Heat reflects attention on your character. Check the risks and requirements of a job before acting.',
         level: 'Earn respect through confirmed activities to progress. The Life shows your skills and next milestone.'
       };
       helpVenue = VENUES.find(venue => venue.id === (['cash', 'nerve', 'heat'].includes(key) ? 'fixer' : 'training'));
       helpCopy.textContent = notes[key];
+      helpKey = key;
       helpAction.textContent = 'Inspect ' + helpVenue.name;
       helpTrigger?.setAttribute('aria-expanded', 'false');
       helpTrigger = trigger; helpTrigger.setAttribute('aria-expanded', 'true');
@@ -1010,12 +1249,18 @@
         const overcap = value !== null && maximum > 0 && value > maximum;
         nodes.bonus.hidden = !overcap;
         setText(nodes.bonus, overcap ? '+' + format(value - maximum) + ' bonus' : '');
+        const change = (Array.isArray(resourceReceipt?.changes) ? resourceReceipt.changes : []).find(change => change?.key === key && typeof change.value === 'number' && Number.isFinite(change.value) && change.value !== 0);
+        nodes.delta.hidden = !change;
+        setText(nodes.delta, change ? (change.value > 0 ? '+' : '−') + (key === 'cash' ? '$' : '') + format(Math.abs(change.value)) : '');
+        nodes.delta.dataset.direction = (key === 'heat' ? change?.value < 0 : change?.value > 0) ? 'gain' : 'cost';
+        nodes.delta.setAttribute('aria-label', change ? String(change.label || key) + ' ' + (change.value > 0 ? 'increased by ' : 'decreased by ') + format(Math.abs(change.value)) + ', ' + String(resourceReceipt.label || 'confirmed action') : '');
         nodes.value.setAttribute('aria-label', key + ': ' + format(value) + (maximum > 0 ? ' of ' + format(maximum) : '') + (overcap ? ', above normal capacity' : ''));
         nodes.meter.hidden = value === null || maximum === undefined || maximum === null || maximum <= 0;
         if (!nodes.meter.hidden) { nodes.meter.max = maximum; nodes.meter.value = Math.max(0, Math.min(value, maximum)); }
         nodes.group.classList.toggle('is-low', key === 'health' && value !== null && value < 30);
         nodes.group.classList.toggle('is-hot', key === 'heat' && value !== null && value >= 60);
       }
+      if (!resourceHelp.hidden && helpKey === 'nerve') setText(helpCopy, nerveRecoveryCopy());
       const p = resources.progress;
       progressRow.hidden = !p || p.respect === null || p.floor === null || p.next === null || p.level === null || p.next <= p.floor;
       if (!progressRow.hidden) {
@@ -1120,6 +1365,7 @@
       return Array.from(result.values());
     }
     function navigate(tab, context) {
+      if (destroyed || externalPanel) return;
       reportPosition(true);
       const details = context && Object.getPrototypeOf(context) === Object.prototype ? { ...context } : { venueId: context };
       if (typeof options.onNavigate === 'function') options.onNavigate(tab, details);
@@ -1161,9 +1407,7 @@
           button.type = 'button';
           button.dataset.cityQuestAction = action.id;
           button.disabled = action.available === false || options.worldRecovery === true;
-          const blockers = Array.isArray(action.blockedBy) ? action.blockedBy : action.blockedBy ? [action.blockedBy] : [];
-          const blockerText = blockers.map(reason => typeof reason === 'string' ? reason : reason?.message || reason?.label || reason?.reason || reason?.code || '').filter(Boolean).join(' · ');
-          if (button.disabled && blockerText) { button.title = blockerText; button.append(element('small', '', blockerText)); }
+          appendActionPreview(button, action);
           questButtons.append(button);
         }
       }
@@ -1176,6 +1420,24 @@
       for (const button of moveButtons.values()) button.classList.remove('is-held');
       redrawPath();
       updateReadiness();
+    }
+    function closePanels() {
+      stopMovement(); worldUI?.close(false); hideVenue(false); hideActor(false); hideGameDock(false); closeResourceHelp(false);
+    }
+    function syncExternalPanel() {
+      root.classList.toggle('has-external-panel', externalPanel);
+      for (const node of [controls, destinations, nextMove, presence, homeSection, mapTools, resourceHelp]) node.inert = externalPanel;
+      journal.disabled = externalPanel;
+      for (const button of moveButtons.values()) button.disabled = externalPanel || !ready;
+      for (const button of buttons.values()) button.disabled = externalPanel;
+      const toolbar = root.querySelector('.city-world__toolbar'); if (toolbar) toolbar.inert = externalPanel;
+      const tools = document.getElementById('player-view-switch')?.querySelector('[data-city-world-tools]') || root.querySelector('[data-city-world-tools]');
+      if (tools) tools.disabled = externalPanel;
+      if (game?.canvas) {
+        game.canvas.tabIndex = externalPanel ? -1 : 0;
+        game.canvas.setAttribute('aria-disabled', String(externalPanel));
+      }
+      if (externalPanel) { interact.disabled = true; cancel.disabled = true; }
     }
     function pauseRoute() {
       const preview = (path.length ? path : routePreview).map(point => ({ ...point }));
@@ -1227,7 +1489,7 @@
     function showGameDock(kind) {
       if (kind === 'clubhouse') kind = 'crew';
       const render = kind === 'training' ? options.renderTraining : kind === 'fixer' ? options.renderFixer : kind === 'crew' ? options.renderCrew : null;
-      if (destroyed || !ready || typeof render !== 'function') return false;
+      if (destroyed || externalPanel || !ready || typeof render !== 'function') return false;
       worldUI?.close(false);
       stopMovement(); hideActor(false); hideGameDock(false);
       gameReturn = selected?.id || kind; hideVenue(false);
@@ -1260,7 +1522,7 @@
     listen(gameClose, 'click', () => hideGameDock(true));
     listen(gameDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideGameDock(true); } });
     function showVenue(venue) {
-      if (destroyed) return;
+      if (destroyed || externalPanel) return;
       venueOpening++;
       worldUI?.close(false);
       hideGameDock(false);
@@ -1393,13 +1655,14 @@
       return targets[0] || null;
     }
     function inspectNearby() {
+      if (externalPanel) return;
       const target = nearTarget();
       if (target?.actor) showActor(target.actor.id); else if (target?.home) showHome(target.home.key);
       else if (target?.exit) showExit(target.exit.id); else if (target?.venue) showVenue(target.venue);
     }
     function walkToVenue(id) {
       const venue = VENUES.find(venue => venue.id === id);
-      if (!venue || destroyed) return false;
+      if (!venue || destroyed || externalPanel) return false;
       if (root.classList.contains('omerta-city--unavailable')) { showVenue(venue); return true; }
       if (!ready || !player || !game) { queuedVenue = { id, identity: sceneIdentity(), scope: options.worldScopeKey }; return true; }
       worldUI?.close(false);
@@ -1412,7 +1675,7 @@
       return true;
     }
     function centerPlayer() {
-      if (!ready || !game || !player || destroyed) return false;
+      if (!ready || !game || !player || destroyed || externalPanel) return false;
       fitCamera();
       revealVenue(viewport);
       game.canvas.focus({ preventScroll: true });
@@ -1427,15 +1690,15 @@
     function fitWorldFrame() {
       if (destroyed) return;
       const phone = window.innerWidth <= 680;
-      const inspecting = Boolean(!actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());
+      const inspecting = Boolean(externalPanel || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());
       viewport.classList.toggle('is-inspecting', inspecting);
       root.classList.toggle('is-inspecting', inspecting);
-      if (!phone || !inspecting) {
+      if (!externalPanel && (!phone || !inspecting)) {
         worldHud.style.removeProperty('--city-hud-height');
         worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', 'Walking resources and readiness');
       }
-      if (!phone && !document.body.classList.contains('city-player-view')) {
+      if (!externalPanel && !phone && !document.body.classList.contains('city-player-view')) {
         actorDock.style.removeProperty('--city-actor-height');
         gameDock.style.removeProperty('--city-training-height');
         if (canvasHost.style.getPropertyValue('--city-map-height')) {
@@ -1456,16 +1719,30 @@
       const shortFrame = phone && bottom - top < 500;
       root.classList.toggle('is-short-frame', shortFrame);
       controls.style.setProperty('--city-controls-bottom', Math.max(0, window.innerHeight - bottom) + 'px');
-      if (phone && (inspecting || shortFrame)) {
+      const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
+        ? nextMove.getBoundingClientRect().height : 0;
+      if (externalPanel) {
+        worldHud.style.setProperty('--city-hud-height', (phone ? 120 : 160) + 'px');
+        worldHud.tabIndex = 0;
+        worldHud.setAttribute('aria-label', 'Character resources and confirmed activity. Scroll to read all resources, warnings and latest feedback.');
+      } else if (phone && (inspecting || shortFrame)) {
         // Reserve the real map and dock floors before measuring the HUD. Long
         // warnings and confirmed feedback remain available by keyboard scroll.
-        worldHud.style.setProperty('--city-hud-height', Math.max(0, bottom - top - 16 - 96 - (inspecting ? 64 : controls.getBoundingClientRect().height)) + 'px');
+        const loadingWorld = worldUI?.isOpen() && root.querySelector('.city-world__content[aria-busy="true"]');
+        let hudHeight = Math.max(0, bottom - top - 16 - 96 - (loadingWorld ? 120 : inspecting ? 64 : controls.getBoundingClientRect().height));
+        // Keep the issued objective with the map when the resource row still
+        // fits. More severe chrome pressure retains the existing scroll budget.
+        if (guidanceHeight && hudHeight - guidanceHeight >= worldHead.getBoundingClientRect().height) hudHeight -= guidanceHeight;
+        worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
         const overflow = worldHud.scrollHeight > worldHud.clientHeight;
         if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
       }
-      const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
-        ? nextMove.getBoundingClientRect().height : 0;
+      const activityLayout = externalPanel ? [worldHud.clientHeight, worldHud.scrollHeight, activitySignature].join(':') : '';
+      if (activityLayout !== activityHudLayout && externalPanel && activities.size) {
+        worldHud.scrollTop = worldHud.scrollHeight - worldHud.clientHeight;
+      }
+      activityHudLayout = activityLayout;
       const frameAvailable = bottom - top - worldHud.getBoundingClientRect().height - controls.getBoundingClientRect().height - 16;
       const available = frameAvailable - (guidanceHeight + 96 <= frameAvailable ? guidanceHeight : 0);
       if (!actorDock.hidden) actorDock.style.setProperty('--city-actor-height', Math.max(64, Math.min(240, available - 96)) + 'px');
@@ -1474,7 +1751,7 @@
         const panel = worldUI.getState().panel, preferred = ['room', 'map'].includes(panel) ? 360 : 240;
         worldUI.setHeight(Math.max(64, Math.min(preferred, available - 96)));
       }
-      const maximum = phone ? 440 : Math.min(640, canvasHost.clientWidth * 2 / 3);
+      const maximum = externalPanel ? (phone ? 128 : 300) : phone ? 440 : Math.min(640, canvasHost.clientWidth * 2 / 3);
       const panelHeight = (actorDock.hidden ? 0 : actorDock.getBoundingClientRect().height) + (gameDock.hidden ? 0 : gameDock.getBoundingClientRect().height) + (worldUI?.panelHeight() || 0);
       const height = Math.max(96, Math.min(maximum, Math.floor(available - panelHeight)));
       const value = height + 'px';
@@ -1494,10 +1771,16 @@
       const camera = scene.cameras.main;
       // Scale the neighborhood to the usable width; narrow phones retain context
       // without shrinking labels or revealing empty bars around the town art.
-      const zoom = Math.min(size.height / 110, size.width <= 680
+      const automaticZoom = size.width <= 680
         ? Math.max(.65, Math.min(1, size.width / 430))
-        : Math.max(.9, Math.min(1.35, size.width / WORLD.width)));
+        : Math.max(.9, Math.min(1.35, size.width / WORLD.width));
+      const maximumZoom = Math.min(2, size.height / 110);
+      const minimumZoom = Math.min(maximumZoom, Math.max(.35, size.width / world.width, size.height / world.height));
+      const zoom = Math.max(minimumZoom, Math.min(maximumZoom, automaticZoom * zoomPreference));
       camera.setZoom(zoom);
+      zoomOut.disabled = zoomPreference <= .65 || zoom <= minimumZoom + .001;
+      zoomIn.disabled = zoomPreference >= 1.6 || zoom >= maximumZoom - .001;
+      zoomOut.title = zoomIn.title = 'Neighborhood zoom: ' + Math.round(zoom * 100) + '%';
       camera.setBounds(0, 0, world.width, world.height);
       // Retain the avatar and its name above the feet in a short viewport.
       const followOffsetY = Math.max(0, (170 * zoom - size.height) / (2 * zoom));
@@ -1779,7 +2062,8 @@
       const nameCamera = s.cameras.main, nameEvents = s.sys.events;
       function placePlayerName() {
         if (destroyed || !ready || !player || !playerName.scene) return;
-        playerName.setScale(Math.max(1, .9 / nameCamera.zoom));
+        playerName.setScale(Math.min(Math.max(1, 13 / (parseFloat(playerName.style.fontSize) * nameCamera.zoom)),
+          (nameCamera.width - 4) / (playerName.width * nameCamera.zoom)));
         // Followupdate runs after the camera's rendered transform is refreshed,
         // including stationary frames and viewport resizes. Keep the full label.
         const half = playerName.displayWidth / 2, y = nameCamera.y + nameCamera.height / 2;
@@ -1790,11 +2074,12 @@
         // available in the roster, venue buttons and inspector while occluded.
         const bounds = playerName.getBounds(), gap = 2 / nameCamera.zoom;
         const reveal = label => {
+          label.setScale(Math.min(Math.max(1, 12 / (parseFloat(label.style.fontSize) * nameCamera.zoom)),
+            (nameCamera.width - 10) / (label.width * nameCamera.zoom)));
           const npcVenue = label.getData?.('npcVenue'), venueId = label.getData?.('venueId');
           const focusVenue = selected?.id || pendingVenue?.id || nearVenue()?.id;
           if (npcVenue && npcVenue !== focusVenue) { label.setVisible(false); return; }
           if (venueId) {
-            label.setScale(Math.max(1, .9 / nameCamera.zoom));
             const anchor = label.getData('anchorX'), half = label.displayWidth / 2;
             const screenLeft = nameCamera.worldView.x + 5 / nameCamera.zoom;
             const screenRight = nameCamera.worldView.right - 5 / nameCamera.zoom;
@@ -1829,7 +2114,7 @@
       canvas.setAttribute('role', 'img');
       canvas.setAttribute('aria-label', 'Playable neighborhood map. Tap to walk, or focus and use arrow keys or WASD. E or Enter opens a nearby venue. Destination buttons below provide the same access.');
       listen(canvas, 'keydown', event => {
-        if (document.activeElement !== canvas || event.ctrlKey || event.metaKey || event.altKey) return;
+        if (externalPanel || document.activeElement !== canvas || event.ctrlKey || event.metaKey || event.altKey) return;
         const key = event.key.toLowerCase();
         if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(key)) {
           event.preventDefault();
@@ -1845,7 +2130,8 @@
         if (keys.has(key)) { keys.delete(key); event.preventDefault(); }
       });
       listen(canvas, 'blur', event => {
-        if (event.relatedTarget?.closest('[data-city-world-map], [data-city-world-tools], .city-world__dock')) pauseRoute();
+        if (event.relatedTarget?.closest('[data-city-zoom], [data-city-recenter]')) { keys.clear(); heldMoves.clear(); }
+        else if (event.relatedTarget?.closest('[data-city-world-map], [data-city-world-tools], .city-world__dock')) pauseRoute();
         else stopMovement();
       });
       listen(window, 'blur', () => stopMovement());
@@ -1853,6 +2139,7 @@
         if (document.hidden) stopMovement();
       });
       s.input.on('pointerdown', pointer => {
+        if (externalPanel) return;
         const point = s.cameras.main.getWorldPoint(pointer.x, pointer.y);
         worldUI?.close(false);
         hideGameDock(false);
@@ -1897,11 +2184,12 @@
       updateVenueStates();
       syncActorSprites();
       drawHomes();
-      for (const button of moveButtons.values()) button.disabled = false;
+      syncExternalPanel();
       if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
       status.textContent = '';
       fitCamera();
       updateScene(0, 0);
+      fitWorldFrame();
       reportPosition(true);
       const waiting = queuedHome; queuedHome = null;
       if (waiting && waiting.identity === sceneIdentity() && waiting.scope === options.worldScopeKey) walkHome(waiting.key);
@@ -1921,19 +2209,21 @@
       }
       const previousX = player.x, previousY = player.y;
       let dx = 0, dy = 0, moving = false;
-      if (game && document.activeElement === game.canvas) {
+      if (!externalPanel && game && document.activeElement === game.canvas) {
         dx = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'));
         dy = Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w'));
       }
-      dx += Number(heldMoves.has('right')) - Number(heldMoves.has('left'));
-      dy += Number(heldMoves.has('down')) - Number(heldMoves.has('up'));
+      if (!externalPanel) {
+        dx += Number(heldMoves.has('right')) - Number(heldMoves.has('left'));
+        dy += Number(heldMoves.has('down')) - Number(heldMoves.has('up'));
+      }
       if (dx || dy) {
         const length = Math.hypot(dx, dy);
         const stepX = dx / length * SPEED * dt, stepY = dy / length * SPEED * dt;
         if (canWalk(player.x + stepX, player.y)) player.x += stepX;
         if (canWalk(player.x, player.y + stepY)) player.y += stepY;
         moving = true;
-      } else if (path.length) {
+      } else if (!externalPanel && path.length) {
         const point = path[0];
         const distance = Math.hypot(point.x - player.x, point.y - player.y);
         if (distance < SPEED * dt + 0.25) {
@@ -1982,12 +2272,15 @@
         });
       }
       const target = nearTarget(), nearby = target?.venue || target?.actor || target?.home || target?.exit;
-      interact.disabled = !nearby;
+      interact.disabled = externalPanel || !nearby;
       const nearbyName = target?.actor ? actorName(target.actor.actor) : target?.home?.street || target?.exit?.name || target?.venue?.name;
-      setText(interact, target?.actor ? 'Talk to ' + nearbyName : target?.home ? 'Inspect street' : target?.exit ? 'Route to ' + nearbyName
-        : target?.venue ? 'Enter ' + nearbyName : 'Move closer to interact');
-      cancel.disabled = !moving && !path.length && !keys.size && !heldMoves.size;
+      const interactionCopy = target?.actor ? 'Talk to ' + nearbyName : target?.home ? 'Inspect street' : target?.exit ? 'Route to ' + nearbyName
+        : target?.venue ? 'Enter ' + nearbyName : 'Move closer to interact';
+      const controlsChanged = interact.textContent !== interactionCopy || cancel.disabled !== (!moving && !path.length && !keys.size && !heldMoves.size);
+      setText(interact, interactionCopy);
+      cancel.disabled = externalPanel || !moving && !path.length && !keys.size && !heldMoves.size;
       root.classList.toggle('is-walking', !cancel.disabled);
+      if (controlsChanged && !hudObserver) fitWorldFrame();
       for (const [id, marker] of actorSprites) {
         const copy = id === selectedActor || id === target?.actor?.id
           ? actorName(marker.actor).slice(0, 22) + '\n' + marker.actor.kind.toUpperCase() : marker.actor.kind.toUpperCase();
@@ -1996,6 +2289,7 @@
       const nearbyText = nearbyName ? 'Nearby: ' + nearbyName : 'Move near a person or place to interact.';
       if (nearbyCopy.textContent !== nearbyText) nearbyCopy.textContent = nearbyText;
       if (status.textContent) status.textContent = '';
+      updateActivities(time, dt, moving);
       updateReadiness();
       updateVenueStates();
       reportPosition(false);
@@ -2008,7 +2302,13 @@
     function sceneState() {
         const camera = scene && scene.cameras.main;
         return {
-          ready, reducedMotion, art: { ...artState }, facing: playerFacing,
+          ready, reducedMotion, externalPanel, art: { ...artState }, facing: playerFacing,
+          activities: Array.from(activities.values(), activity => ({ id: activity.id, actorId: activity.actorId,
+            generation: activity.generation, self: activity.self, kind: activity.kind, label: activity.label,
+            startedAt: activity.startedAt, expiresAt: activity.expiresAt, pathLength: activity.path.length,
+            rendered: !!activity.badge, moving: !reducedMotion && activity.path.length > 0,
+            badge: activity.badge ? { x: activity.badge.x, y: activity.badge.y,
+              width: activity.badge.displayWidth, height: activity.badge.displayHeight } : null })),
           resources: resourceState(), position: positionState(), selectedVenue: selected?.id || null,
           selectedActor, actorOpening, actorPage,
           trainingOpen: gameKind === 'training', gameDock: gameKind || null, gameOpening, worldUI: worldUI?.getState() || null, look,
@@ -2019,13 +2319,15 @@
           obstacles: obstacles.map(r => ({ ...r })), homes: homeState(), roads: roadState(), exits: exits.map(exit => ({ ...exit })),
           selectedHome, selectedExit, region: { id: district.id, landmark: region.landmark?.name || 'The Waterfront' },
           ambient: scene && ready ? scene.data.get('npcs').filter(n => !n.title).map(n => ({ x: n.sprite.x, y: n.sprite.y })) : [],
-          camera: camera ? { x: camera.worldView.x, y: camera.worldView.y, zoom: camera.zoom, width: camera.width, height: camera.height } : null,
+          camera: camera ? { x: camera.worldView.x, y: camera.worldView.y, zoom: camera.zoom, preference: zoomPreference, width: camera.width, height: camera.height } : null,
           world: { ...world }, pathLength: path.length,
           trackedObjectiveId, questVenueId: questVenueId(), nearbyVenue: nearVenue()?.id || null,
           routeVenueId: pendingVenue?.id || routePreviewVenue || null, route: (path.length ? path : routePreview).map(point => ({ ...point })), routeActive: path.length > 0
         };
       }
 
+    syncExternalPanel();
+    acceptActivity(options.activityReceipt);
     return {
       update: function (nextOptions) {
         if (destroyed || !nextOptions) return;
@@ -2039,6 +2341,9 @@
           options.actors = []; options.intel = []; options.objectives = []; options.encounterReceipt = null; options.encounterRecovery = false;
         }
         if (identity !== sceneIdentity() || worldScopeChanged) {
+          clearActivities(nextOptions);
+          for (const receipt of [resourceReceipt, nextOptions.resourceReceipt]) if (receipt?.id !== undefined) seenResourceReceipts.add(String(receipt.id));
+          resourceReceipt = null;
           trackedObjectiveId = null; trackedVenueId = null;
           hideGameDock(false); hideVenue(false);
           options.worldSocial = null; options.worldChat = null; options.worldReceipt = null; options.worldRecovery = false;
@@ -2053,6 +2358,17 @@
         for (const key of ['onPresencePage', 'onEncounter', 'onIntelAction', 'onEncounterRetry']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
         for (const key of ['venueActions', 'progress', 'npcQuests', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
         for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
+        if ('resourceReceipt' in nextOptions && identity === sceneIdentity() && !worldScopeChanged) acceptResourceReceipt(nextOptions.resourceReceipt);
+        if ('activityReceipt' in nextOptions) {
+          options.activityReceipt = nextOptions.activityReceipt;
+          if (identity === sceneIdentity() && !worldScopeChanged) acceptActivity(nextOptions.activityReceipt);
+        }
+        if ('externalPanel' in nextOptions) {
+          const wasExternal = externalPanel;
+          externalPanel = nextOptions.externalPanel === true;
+          syncExternalPanel();
+          if (externalPanel && !wasExternal) closePanels();
+        }
         region = REGIONS[district.id] || REGIONS.docks;
         walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
         if ('worldHomes' in nextOptions && nextOptions.worldHomes === null) { homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); }
@@ -2062,10 +2378,11 @@
         updateHud();
         if (selected) { renderActions(selected); renderQuest(selected); }
         renderPresence(); renderActorDock(); renderGameDock();
-        worldUI?.update(worldOptions()); fitWorldFrame();
+        worldUI?.update(worldOptions()); syncExternalPanel(); fitWorldFrame();
       },
       destroy: function () {
         if (destroyed) return;
+        clearActivities();
         if (gameKind === 'crew') options.retireCrew?.();
         reportPosition(true);
         destroyed = true; ready = false;
@@ -2090,6 +2407,7 @@
       walkToVenue,
       recenter: centerPlayer,
       cancelNavigation: stopMovement,
+      closePanels,
       walkHome,
       showWorldMap: districtId => openWorldMap(districtId, false)
     };

@@ -129,6 +129,32 @@
   body.city-player-view #grouprail, body.city-player-view #tabs,
   body.city-player-view #tabart, body.city-player-view #bnav { display: none; }
   body.city-player-view #layout { grid-template-columns: minmax(0, 1fr); padding-bottom: 14px; }
+  #city-actions { display: none; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  body.city-player-view #city-actions { display: flex; }
+  #city-actions button, #city-panel button { min-height: 44px; }
+  #city-panel[hidden] { display: none; }
+  #city-panel { min-width: 0; border: 1px solid var(--gold); border-radius: 10px; background: var(--panel); overflow: clip; }
+  #city-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); position: sticky; top: var(--city-chrome-height, 90px); z-index: 3; background: var(--panel); }
+  #city-panel-head h2 { margin: 0; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #city-panel-body, #city-panel-feedback { padding: 12px; min-width: 0; }
+  #city-panel-feedback:empty { display: none; }
+  #city-panel-pending { padding: 8px 12px; color: var(--gold); }
+  #city-panel-body #leftcol, #city-panel-body #wirepanel { display: block; width: 100%; }
+  #city-panel-body .city-account-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  body.city-panel-open #tabbodies { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr); align-items: start; gap: 12px; }
+  body.city-panel-open #introwrap { display: none; }
+  body.city-panel-open #tab-map { min-width: 0; position: sticky; top: var(--city-chrome-height, 90px); }
+  body.city-panel-open #tab-map > .row { display: none; }
+  body.city-panel-open .omerta-city__canvas { height: 300px !important; max-height: 40vh; }
+  @media (max-width: 850px) {
+    body.city-panel-open #tabbodies { grid-template-columns: minmax(0, 1fr); }
+    body.city-panel-open #tab-map { z-index: 2; background: var(--panel); }
+    body.city-panel-open .omerta-city__canvas { height: 104px !important; max-height: 22vh; }
+    body.city-panel-open #tabbodies { gap: 6px; scroll-margin-top: var(--city-chrome-height, 90px); }
+    body.city-panel-open #city-panel { display: flex; flex-direction: column; max-height: max(180px, calc(100dvh - var(--city-chrome-height, 90px) - var(--city-stage-height, 220px) - 12px)); }
+    body.city-panel-open #city-panel-head { flex: none; padding: 4px 8px; position: static; }
+    body.city-panel-open #city-panel-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  }
   .city-first-job { padding: 12px 14px; margin: 10px 0; border: 1px solid #806944; border-radius: 8px; background: #302a20; color: #f4e6c9; font: 14px/1.5 system-ui, sans-serif; }
   .city-first-job p { margin: 6px 0; }
   .city-first-job > b { color: #ecd08b; }
@@ -1065,17 +1091,17 @@
     #coach .operation-readiness, #coach .operation-resources { display: none; }
     #coach .cl { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #coach #coach-go { flex: 0 0 auto; min-height: 36px; margin: 0; }
-    /* No receipt exemption here: the moment a player pulls one job a receipt exists, the history
-       block re-appears (~200px of chrome) and every screen's own content drops below a 568px fold —
-       which is how the 320x568 harness check went red on exactly the player who had done anything.
-       Ordinary receipts still reach the toast; on a short phone the operation wins. An actionable
-       error is different: its recovery control may be the only idempotency-safe way to continue. */
-    #operation-desk .operation-desk__history { display: none; }
-    #operation-desk:has(.operation-receipt--error [data-operation-retry],
-      .operation-receipt--error [data-operation-tab]) .operation-desk__history { display: block; }
     #vitals { min-height: 44px; padding-block: 4px; }
     #tabpanel { padding-top: 8px; }
     #grouprail, #tabs { padding-bottom: 4px; }
+  }
+  @media (max-width: 760px) and (max-height: 850px) {
+    /* After the first action, receipt history adds ~200px above every screen, pushing content
+       below even a 360x780 phone's fold. Ordinary receipts still reach the toast; keep room for
+       the chosen operation and bottom navigation. Preserve actionable error recovery controls. */
+    #operation-desk .operation-desk__history { display: none; }
+    #operation-desk:has(.operation-receipt--error [data-operation-retry],
+      .operation-receipt--error [data-operation-tab]) .operation-desk__history { display: block; }
   }
   /* THE LIVING PLATE — the screen header's ambient clip, dimmed under the same scrim as the still */
   #tabart .tabvid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
@@ -1285,9 +1311,9 @@
   @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
-<link rel="stylesheet" href="/city-scene.css?v=20261015-play-1">
-<link rel="stylesheet" href="/city-world-ui.css?v=20261015-play-1">
-<link rel="stylesheet" href="/world-fieldwork.css?v=20261015-play-1">
+<link rel="stylesheet" href="/city-scene.css?v=20261016-parity-1">
+<link rel="stylesheet" href="/city-world-ui.css?v=20261016-refinements-1">
+<link rel="stylesheet" href="/world-fieldwork.css?v=20261016-refinements-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
 .district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}
@@ -1647,6 +1673,12 @@
            first-visit card counts as the screen's own content (it explains the screen you just
            tapped), while renderers — which rewrite only their #tab-<id> — can never resurrect a
            dismissed card mid-visit. -->
+      <nav id="city-actions" aria-label="In-game actions">
+        <button class="act" id="city-all-actions" type="button">All actions</button>
+        <button class="act" data-city-utility="character" type="button">Character</button>
+        <button class="act" data-city-utility="communications" type="button">Chat</button>
+        <button class="act" data-city-utility="account" type="button">Account &amp; help</button>
+      </nav>
       <div id="tabbodies"><div id="introwrap"></div></div>
     </div>
 
@@ -1816,7 +1848,7 @@
   // screen. Game PROSE (job names, event copy, toasts) stays English this pass — the pack
   // structure makes each further surface a pure dictionary add. Arabic flips the page RTL. ═══
   const I18N = {
-    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'The City', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'The Map', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_desk: 'Content Desk', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', g_desk: 'Desk', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'PLAY AS A GUEST', e_bones: 'ENTER THE CITY →' },
+    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'City events', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'Neighborhood', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_desk: 'Content Desk', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', g_desk: 'Desk', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'PLAY AS A GUEST', e_bones: 'ENTER THE CITY →' },
     es: { name: 'Español', t_start: 'Empieza Aquí', t_profile: 'Mi Perfil', t_streets: 'Las Calles', t_garage: 'El Garaje', t_life: 'La Vida', t_city: 'La Ciudad', t_kitchen: 'La Cocina', t_empire: 'El Imperio', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'El Puerto', t_den: 'El Casino', t_speakeasy: 'El Clandestino', t_boxing: 'Las Peleas', t_races: 'Carreras Callejeras', t_stable: 'El Establo', t_pvp: 'Trabajo Sucio', t_loans: 'El Usurero', t_law: 'La Ley', t_pen: 'La Prisión', t_wire: 'El Cable', t_family: 'La Familia', t_map: 'El Mapa', t_crew: 'La Banda', t_discover: 'Buscar Gente', t_portfolio: 'A Lo Legal', t_estate: 'La Mansión', t_store: 'La Tienda', t_deck: 'La Consola', g_streets: 'Calles', g_earners: 'Negocios', g_vice: 'Vicio', g_blood: 'Sangre', g_family: 'Familia', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeto', k_energy: 'energía', k_nerve: 'nervio', k_health: 'salud', k_heat: 'calor policial', k_stats: 'músculo / astucia / velocidad', k_gun: 'arma', k_ammo: 'munición / cajas', k_cars: 'autos', k_liquid: 'líquido', k_staked: 'en staking', k_intransit: 'en tránsito', b_heal: 'curarse', b_checkin: 'pasar lista', b_refresh: 'actualizar', b_takeme: 'llévame ahí →', b_send: 'enviar', b_burn: 'quemar los papeles', b_wholecity: '+ toda la ciudad…', w_sheet: 'La Ficha', w_lastword: 'Última Palabra', w_panel: 'La Calle', w_feed: 'EN VIVO', w_city: 'CHAT CIUDAD', w_family: 'FAMILIA', w_sayit: 'dilo a la ciudad…', w_famonly: 'solo familia — hablemos de negocios…', w_incity: 'en la ciudad', e_ghost: 'ENTRA COMO FANTASMA', e_bones: 'HAZTE UN NOMBRE →' },
     pt: { name: 'Português', t_start: 'Comece Aqui', t_profile: 'Meu Perfil', t_streets: 'As Ruas', t_garage: 'A Garagem', t_life: 'A Vida', t_city: 'A Cidade', t_kitchen: 'A Cozinha', t_empire: 'O Império', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'O Porto', t_den: 'O Cassino', t_speakeasy: 'O Clandestino', t_boxing: 'As Lutas', t_races: 'Rachas de Rua', t_stable: 'O Estábulo', t_pvp: 'Serviço Sujo', t_loans: 'O Agiota', t_law: 'A Lei', t_pen: 'A Cadeia', t_wire: 'A Escuta', t_family: 'A Família', t_map: 'O Mapa', t_crew: 'O Bando', t_discover: 'Achar Gente', t_portfolio: 'Na Legalidade', t_estate: 'A Mansão', t_store: 'A Loja', t_deck: 'O Console', g_streets: 'Ruas', g_earners: 'Negócios', g_vice: 'Vício', g_blood: 'Sangue', g_family: 'Família', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeito', k_energy: 'energia', k_nerve: 'coragem', k_health: 'saúde', k_heat: 'pressão policial', k_stats: 'músculo / astúcia / velocidade', k_gun: 'arma', k_ammo: 'munição / caixas', k_cars: 'carros', k_liquid: 'líquido', k_staked: 'em staking', k_intransit: 'em trânsito', b_heal: 'curar', b_checkin: 'dar presença', b_refresh: 'atualizar', b_takeme: 'me leva lá →', b_send: 'enviar', b_burn: 'queimar os papéis', b_wholecity: '+ a cidade inteira…', w_sheet: 'A Ficha', w_lastword: 'Última Palavra', w_panel: 'A Rua', w_feed: 'AO VIVO', w_city: 'CHAT CIDADE', w_family: 'FAMÍLIA', w_sayit: 'fala pra cidade…', w_famonly: 'só família — papo de negócios…', w_incity: 'na cidade', e_ghost: 'ENTRE COMO FANTASMA', e_bones: 'FAÇA SEU NOME →' },
     fr: { name: 'Français', t_start: 'Commencer Ici', t_profile: 'Mon Profil', t_streets: 'La Rue', t_garage: 'Le Garage', t_life: 'La Vie', t_city: 'La Ville', t_kitchen: 'La Cuisine', t_empire: "L'Empire", t_scores: 'Les Gros Coups', t_market: 'Marché Noir', t_port: 'Le Port', t_den: 'Le Tripot', t_speakeasy: 'Le Clandestin', t_boxing: 'La Boxe', t_races: 'Courses de Rue', t_stable: "L'Écurie", t_pvp: 'Basses Œuvres', t_loans: "L'Usurier", t_law: 'La Loi', t_pen: 'La Taule', t_wire: 'Les Écoutes', t_family: 'La Famille', t_map: 'La Carte', t_crew: "L'Équipe", t_discover: 'Trouver du Monde', t_portfolio: 'Devenir Clean', t_estate: 'Le Domaine', t_store: 'La Boutique', t_deck: 'La Console', g_streets: 'Rue', g_earners: 'Affaires', g_vice: 'Vice', g_blood: 'Sang', g_family: 'Famille', g_legit: 'Légal', k_bank: 'banque', k_respect: 'respect', k_energy: 'énergie', k_nerve: 'cran', k_health: 'santé', k_heat: 'pression policière', k_stats: 'muscle / ruse / vitesse', k_gun: 'arme', k_ammo: 'munitions / caisses', k_cars: 'voitures', k_liquid: 'liquide', k_staked: 'en staking', k_intransit: 'en transit', b_heal: 'se soigner', b_checkin: 'pointer', b_refresh: 'actualiser', b_takeme: 'emmène-moi →', b_send: 'envoyer', b_burn: 'brûler les papiers', b_wholecity: '+ toute la ville…', w_sheet: 'La Fiche', w_lastword: 'Dernier Mot', w_panel: 'La Rue', w_feed: 'EN DIRECT', w_city: 'CHAT VILLE', w_family: 'FAMILLE', w_sayit: 'dis-le à la ville…', w_famonly: 'famille seulement — parlons affaires…', w_incity: 'en ville', e_ghost: 'ENTRER EN FANTÔME', e_bones: 'FAIS TES PREUVES →' },
@@ -4811,6 +4843,7 @@
   // KEYLESS calls stay parallel — /v1/rules, /v1/city, /v1/online take no lock and needn't wait.
   let _authQueue = Promise.resolve();
   async function api(method, path, body, options = {}) {
+    if (method !== 'GET') options = { ...options, idempotencyKey: options.idempotencyKey || uuid() };
     const authToken = token;
     const valid = () => token === authToken && (!options.isCurrent || options.isCurrent());
     const run = async () => {
@@ -4818,6 +4851,9 @@
       if (!valid()) return neutral;
       if (options.beforeDispatch && !options.beforeDispatch()) return { ignored: true, code: 499, body: {} };
       const result = await apiNow(method, path, body, { ...options, authToken });
+      // Direct API controls (chat, for example) do not refresh the player through
+      // act(). Read the server's scoped owner receipt instead of animating cached me.
+      if (valid() && method !== 'GET' && !options.activityHandled && result.code >= 200 && result.code < 300 && !result.replayed) scheduleCityPresence();
       return valid() ? result : neutral;
     };
     if (method !== 'GET' && !['/v1/screens', '/v1/commands/observations'].includes(path)
@@ -4854,7 +4890,7 @@
     // NOTE: api() no longer writes the "Last Word" viewer — background reads (refresh, tab renders,
     // the 30s poll) all call api() and would clobber it with a GET /v1/me dump after every action.
     // act() writes #resp with the ACTION's result instead, so the viewer shows what you actually did.
-    return { code: r.status, body: j };
+    return { code: r.status, body: j, replayed: r.headers.get('x-idempotent-replay') === 'true' || j?.replayed === true };
   }
   let worldProjection = null, worldSelection = null, worldMysterySelection = null, worldBusy = false, worldRetry = null;
   let worldAccountId = null, worldFeedback = null, worldChoiceConfirmation = null;
@@ -4893,6 +4929,7 @@
       : api('GET', '/v1/commands' + path.slice('/v1/commands'.length), undefined, { isCurrent: ticket.isCurrent }),
     clear: (kind) => {
       if (['session', 'character', 'player'].includes(kind)) {
+        _cityResumeAfterIdentity = kind !== 'session' && cityGameVisible();
         destroyCityScene(); destroyFieldwork(); _citySession = null; _citySceneOptions = null; _cityNpcActions = new Map(); syncCitySessionBar();
       }
       worldChoiceConfirmation?.();
@@ -4919,6 +4956,8 @@
       if (kind === 'player') {
         if (result.code === 404) show('screen-create');
         if (result.code < 400) {
+          const returnToCity = cityGameVisible() || _cityResumeAfterIdentity;
+          _cityResumeAfterIdentity = false;
           const previousGeneration = me?.generation;
           const previousCityIdentity = cityIdentity();
           me = result.body.player?.character || result.body.player;
@@ -4933,8 +4972,9 @@
           if (_cityScene && _citySceneKey === cityIdentity(me)) _cityScene.update({ character: { ...me }, progress: cityProgress() });
           else if (_cityScene || cityChanged) destroyCityScene();
           syncCitySessionBar();
-          if (cityChanged && currentTab === 'map' && _mapMode === 'walk'
-            && $('#screen-main') && !$('#screen-main').classList.contains('hidden')) renderMap();
+          if (cityChanged && returnToCity && _mapMode === 'walk'
+            && $('#screen-main') && !$('#screen-main').classList.contains('hidden')) setTab('map');
+          else syncPlayerView();
           if (previousGeneration != null && me.generation > previousGeneration) backfillFeed();
         }
         return;
@@ -5343,40 +5383,62 @@
   let operationPending = null;
   const operationReceipts = [];
   let _operationResponseCurrent = null;
+  let _cityActivityReceipt = null;
+  function recordCityAction(method, path, result, key, label, current) {
+    if (method === 'GET' || !/^\/v1\//.test(path) || /^\/v1\/(auth|access|admin)(\/|$)/.test(path)
+      || ['/v1/screens', '/v1/commands/observations'].includes(path)
+      || result.code < 200 || result.code >= 300 || result.ignored || result.replayed || !current()) return;
+    const kind = /\/train|\/regimen/.test(path) ? 'train'
+      : /\/heal|\/checkin|\/rest/.test(path) ? 'rest'
+      : /\/travel/.test(path) ? 'move'
+      : /\/attack|\/fight|\/boxing|\/duels/.test(path) ? 'fight'
+      : /\/craft|\/recipes|\/workbench/.test(path) ? 'craft'
+      : /\/deeds|\/home|\/property/.test(path) ? 'property'
+      : /\/chat|\/messages|\/encounters|\/favors|\/social/.test(path) ? 'social'
+      : /\/market|\/trade|\/store|\/buy|\/sell/.test(path) ? 'trade' : 'work';
+    _cityActivityReceipt = { current, receipt: { id: 'owner:' + key, state: 'confirmed', actorId: me.id,
+      generation: me.generation, district: me.loc, kind, label: label || 'Action completed', at: Date.now() } };
+    publishCityWorld();
+  }
   function clearScopedOperations() {
+    if (_cityActivityReceipt && !_cityActivityReceipt.current()) _cityActivityReceipt = null;
     if (_operationResponseCurrent && !_operationResponseCurrent()) {
       $('#resp').textContent = ''; _operationResponseCurrent = null;
     }
     let changed = false;
     for (let i = operationReceipts.length - 1; i >= 0; i--) {
+      // A departed character/district must not revive old feedback on returning.
+      if (operationReceipts[i].resourceCurrent && !operationReceipts[i].resourceCurrent()) operationReceipts[i].resourceCurrent = null;
       if (operationReceipts[i].isCurrent && !operationReceipts[i].isCurrent()) {
         operationReceipts.splice(i, 1); changed = true;
       }
     }
     if (changed) renderOperationFeed();
   }
-  const operationSnapshot = (m) => m ? ({
-    cash: Number(m.cash || 0), bank: Number(m.bank || 0), omr: Number(m.omr || 0),
-    energy: Number(m.energy || 0), nerve: Number(m.nerve || 0), health: Number(m.health || 0),
-    heat: Number(m.heat || 0), respect: Number(m.respect || 0),
+  const operationResources = [
+    ['cash', 'cash'], ['bank', 'bank'], ['omr', '$OMR'], ['energy', 'energy'],
+    ['nerve', 'nerve'], ['health', 'health'], ['heat', 'heat'], ['respect', 'respect'],
+    ['muscle', 'muscle'], ['cunning', 'cunning'], ['speed', 'speed'], ['level', 'level'],
+  ];
+  const operationNumber = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) ? Number(value) : null;
+  const operationSnapshot = m => m?.id && m.generation != null ? ({
+    identity: `${m.id}:${m.generation}`,
+    ...Object.fromEntries(operationResources.map(([key]) => [key, operationNumber(['muscle', 'cunning', 'speed'].includes(key) ? m.stats?.[key] : m[key])])),
   }) : null;
+  function operationChanges(before, after) {
+    if (!before || !after || before.identity !== after.identity) return null;
+    return operationResources.flatMap(([key, label]) => {
+      if (!Number.isFinite(before[key]) || !Number.isFinite(after[key])) return [];
+      const value = after[key] - before[key];
+      return value ? [{ key, label, value, before: before[key], after: after[key] }] : [];
+    });
+  }
   function operationDelta(before, after) {
-    if (!before || !after) return 'Current state could not be refreshed.';
-    const spec = [
-      ['cash', 'cash', (v) => `${v > 0 ? '+' : '−'}$${fmt(Math.abs(v))}`],
-      ['bank', 'bank', (v) => `${v > 0 ? '+' : '−'}$${fmt(Math.abs(v))}`],
-      ['omr', '$OMR', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
-      ['energy', 'energy', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
-      ['nerve', 'nerve', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
-      ['health', 'health', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
-      ['heat', 'heat', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
-      ['respect', 'respect', (v) => `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`],
-    ];
-    const changed = spec.map(([key, label, value]) => {
-      const d = Number(after[key]) - Number(before[key]);
-      return d ? `${label} ${value(d)}` : null;
-    }).filter(Boolean);
-    return changed.length ? changed.slice(0, 5).join(' · ') : 'State confirmed; no tracked resource changed.';
+    const changes = operationChanges(before, after);
+    if (!changes) return 'Current state could not be refreshed.';
+    return changes.length ? 'Balance changes: ' + changes.map(({ key, label, value }) =>
+      `${label} ${value > 0 ? '+' : '−'}${['cash', 'bank'].includes(key) ? '$' : ''}${fmt(Math.abs(value))}`).join(' · ')
+      : 'State confirmed; no tracked resource changed.';
   }
   function operationName(method, path, trigger, supplied) {
     if (supplied) return supplied;
@@ -5483,22 +5545,32 @@
   }
   function renderOperationFeed() {
     const feed = $('#operation-feed');
-    if (!feed) return;
-    feed.innerHTML = operationFeedMarkup();
+    if (feed) feed.innerHTML = operationFeedMarkup();
+    const game = $('#city-panel-feedback');
+    const latest = operationReceipts.find(receipt => !receipt.isCurrent || receipt.isCurrent());
+    if (game) game.innerHTML = latest ? operationReceiptMarkup(latest) : '';
     bindOperationDesk();
   }
   function renderOperationPending() {
     const desk = $('#operation-desk'), line = $('#operation-pending');
-    if (!desk || !line) return;
-    desk.setAttribute('aria-busy', operationPending ? 'true' : 'false');
-    line.textContent = operationPending ? `Working: ${operationPending}…` : '';
-    line.classList.toggle('hidden', !operationPending);
+    for (const host of [desk, $('#city-panel')]) host?.setAttribute('aria-busy', operationPending ? 'true' : 'false');
+    for (const node of [line, $('#city-panel-pending')]) if (node) {
+      node.textContent = operationPending ? `Working: ${operationPending}…` : '';
+      node.classList.toggle('hidden', !operationPending); node.hidden = !operationPending;
+    }
   }
-  function recordOperation({ label, result, before, after, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt, onResult }) {
+  function recordOperation({ label, result, before, after, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt, onResult, resourceCurrent }) {
     const failed = result.code >= 400;
+    const changes = failed ? null : operationChanges(before, after);
+    const questCompletion = !failed && /^\/v1\/worldgraph\/mysteries\/[^/]+\/nodes\/[^/]+\/complete$/.test(path)
+      && result.body?.status === 'completed' && typeof result.body.instanceId === 'string'
+      ? { id: result.body.instanceId, title: 'Investigation complete' } : null;
     const receipt = {
       ...(isCurrent ? { isCurrent } : {}),
       id: ++operationSeq, state: failed ? 'error' : 'success', label,
+      feedbackId: idempotencyKey || operationSeq, resourceCurrent,
+      feedbackState: failed ? 'error' : changes || questCompletion ? 'confirmed' : 'unknown',
+      changes: changes || [], ...(questCompletion ? { questCompletion } : {}),
       summary: describe(result.body, result.code),
       delta: failed ? 'No state change confirmed.' : operationDelta(before, after),
       at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -5543,10 +5615,14 @@
     const label = operationName(method, path, trigger, options.label);
     const idempotencyKey = method === 'GET' ? null : (options.idempotencyKey || uuid());
     const before = operationSnapshot(me);
+    const resourceStamp = projections.snapshot(), resourceKey = cityIdentity(), resourceAuthority = _cityAuthorityRevision;
+    const resourceCurrent = () => !!resourceKey && resourceKey === cityIdentity() && projections.current(resourceStamp)
+      && resourceAuthority === _cityAuthorityRevision && (!options.isCurrent || options.isCurrent());
     const oldHtml = trigger?.innerHTML;
     const oldAriaLabel = trigger?.getAttribute('aria-label');
     acting = true;
     operationPending = label;
+    publishCityWorld();
     document.body.style.cursor = 'progress';
     if (trigger) {
       trigger.setAttribute('aria-busy', 'true');
@@ -5556,7 +5632,7 @@
     renderOperationPending();
     busy.setAttribute('aria-label', 'Working'); busy.classList.add('on');
     try {
-      const r = await api(method, path, body, { idempotencyKey, beforeDispatch: options.beforeDispatch, isCurrent: options.isCurrent });
+      const r = await api(method, path, body, { idempotencyKey, beforeDispatch: options.beforeDispatch, isCurrent: options.isCurrent, activityHandled: true });
       if ((options.beforeDispatch || options.isCurrent) && r.ignored) return r;
       if (typeof options.onResult === 'function') options.onResult(r);
       if (options.isCurrent && !options.isCurrent()) {
@@ -5610,7 +5686,12 @@
       const receipt = recordOperation({ label, result: r, before,
         after: stateRefresh?.code < 400 ? operationSnapshot(me) : null,
         method, path, body, idempotencyKey, beforeDispatch: options.retryBeforeDispatch || options.beforeDispatch,
-        isCurrent: options.isCurrent, onReceipt: options.onReceipt, onResult: options.onResult });
+        isCurrent: options.isCurrent, onReceipt: options.onReceipt, onResult: options.onResult, resourceCurrent });
+      // A confirmed action alone cannot place the actor if the canonical player
+      // refresh failed (travel may already have moved them to another district).
+      if (stateRefresh?.code >= 200 && stateRefresh.code < 300 && !stateRefresh.ignored) {
+        recordCityAction(method, path, r, idempotencyKey, label, resourceCurrent);
+      }
       if (options.onReceipt) options.onReceipt(receipt);
       // …and re-render the BOARD you are looking at, not just the sheet. `refresh()` only redraws the
       // left column, so until now the screen you just acted on kept showing the old state until a WS
@@ -5624,6 +5705,7 @@
     } finally {
       acting = false;
       operationPending = null;
+      publishCityWorld();
       document.body.style.cursor = '';
       if (trigger?.isConnected) {
         trigger.removeAttribute('aria-busy');
@@ -6665,6 +6747,7 @@
     } else {
       setTab(tourReturnTab);
       const fallbackCandidates = [
+        $(`#tab-${tourReturnTab}`),
         ...document.querySelectorAll(`#tab-${tourReturnTab} button:not([disabled]), #tab-${tourReturnTab} [href], #tab-${tourReturnTab} input:not([disabled]), #tab-${tourReturnTab} select:not([disabled])`),
         $(`#tab-control-${tourReturnTab}`),
       ];
@@ -7351,7 +7434,7 @@
        <p>Energy refills at about ${rules?.pacing?.energyRegenPerMin ?? 12} a minute. Leveling up and some Empire assets raise your cap. The harbor fixture's weekly favor refills it instantly.</p>` }),
     nerve: () => ({ title: 'NERVE: street jobs', body:
       `<p>Every job on the Streets costs nerve, which determines how often you can work.</p>
-       <p>Nerve refills at about ${rules?.pacing?.nerveRegenPerMin ?? 6} a minute. Leveling up raises your cap. Once you know the Madame, her weekly favor refills it instantly.</p>` }),
+       <p>Base recovery: ${rules?.pacing?.nerveRegenPerMin ?? 6} nerve/min; bonuses may increase this. Wait for Nerve to recover or choose a job you can afford. Leveling up raises your cap.</p>` }),
     health: () => ({ title: 'HEALTH: recovery', body:
       `<p>Fights, failed raids, and beatings lower your health. Low health leaves you vulnerable.</p>
        <p>The <b>Heal</b> button on your sheet costs cash. Standing with the Doc and the Doctor's Friend skill lower the price. The Doc's weekly favor heals you for free. While in hospital, you recover and rivals cannot attack you.</p>` }),
@@ -7383,7 +7466,7 @@
     streets: ['job', 'crime', 'work', 'first job', 'bank cash'],
     garage: ['car', 'sell car', 'boost car', 'repair car', 'armory', 'craft'],
     life: ['heal', 'health', 'train', 'skills', 'path', 'career'],
-    city: ['travel', 'district', 'prices', 'arbitrage', 'live players'],
+    city: ['city', 'the city', 'events', 'travel', 'district', 'prices', 'arbitrage', 'live players'],
     kitchen: ['cook', 'deal', 'drugs', 'crew wages', 'product'],
     empire: ['business', 'racket', 'collect income', 'front', 'passive income'],
     scores: ['heist', 'big score', 'crew job', 'contract'],
@@ -7400,7 +7483,7 @@
     pen: ['jail', 'lockup', 'break out', 'yard', 'sentence'],
     wire: ['intel', 'wiretap', 'tap rival', 'threats', 'forecast'],
     family: ['organization', 'gang', 'tribute', 'commission', 'war'],
-    map: ['turf', 'territory', 'district control', 'family map', 'walk', 'neighborhood', 'city mode'],
+    map: ['map', 'the map', 'turf', 'territory', 'district control', 'family map', 'walk', 'neighborhood', 'city mode'],
     deeds: ['property', 'street deed', 'auction deed'],
     crew: ['recruit crew', 'crew objective', 'crew room'],
     discover: ['find player', 'find people', 'recruit', 'who is online'],
@@ -7586,7 +7669,7 @@
   const TAB_INTRO = {
     discover: 'Find people to run with: players near your level, who’s looking for a crew, and the newest faces in the city. Flag yourself “looking for a crew” and let someone find YOU. This is the front door — the Wet Work roster only shows the top of the heap.',
     crew: 'Your crew: a 2–' + 4 + ' player pact between solo and a full family. No treasury, no turf — just a private room, each other’s backs, and a rule you don’t raise a hand to your own. Form one, or accept an invite.',
-    map: 'Walk your current neighborhood to find jobs, training, your garage, crew, and stories. Switch to the territory board to see who holds the city. District travel is available from The City.',
+    map: 'Walk your current neighborhood to find jobs, training, your garage, crew, and stories. Switch to the territory board to see who holds the city. Open Travel to visit another district.',
     city: 'The living city: today\'s events, the weather that moves goods prices (the arbitrage map), rival NPC cartels to raid, and the monument the whole server is building. Check the forecast — plan around it.',
     kitchen: 'The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.',
     empire: 'Legit fronts that farm cash while you\'re away. They cost upkeep, rivals can shake them down — and if you\'re killed, your killer can take one. Passive is not the same as safe.',
@@ -7658,12 +7741,91 @@
 
 
   let characterCheckoutOnly = false;
-  function setTab(id, { characterOnly = false } = {}) {
+  let _cityPanel = null;
+  let _cityResumeAfterIdentity = false;
+  const _cityPanelNodes = [];
+  function cityGameVisible() {
+    return _mapMode === 'walk' && !!me?.id && !$('#screen-main').classList.contains('hidden')
+      && (currentTab === 'map' || _cityPanel?.key === cityIdentity());
+  }
+  function restoreCityPanelNodes() {
+    for (const { node, parent, next } of _cityPanelNodes.splice(0).reverse()) {
+      parent.insertBefore(node, next?.parentNode === parent ? next : null);
+    }
+  }
+  function moveToCityPanel(node, host) {
+    if (!node) return;
+    _cityPanelNodes.push({ node, parent: node.parentNode, next: node.nextSibling });
+    host.append(node);
+  }
+  function closeCityPanel() {
+    restoreCityPanelNodes();
+    _cityPanel = null;
+    document.body.classList.remove('city-panel-open');
+    const panel = $('#city-panel');
+    if (panel) panel.hidden = true;
+    _cityScene?.update?.({ externalPanel: false });
+  }
+  function measureCityPanel() {
+    if (!_cityPanel) return;
+    document.body.style.setProperty('--city-chrome-height', Math.ceil($('#top').getBoundingClientRect().height) + 'px');
+    document.body.style.setProperty('--city-stage-height', Math.ceil($('#tab-map').getBoundingClientRect().height) + 'px');
+  }
+  window.addEventListener('resize', measureCityPanel);
+  function syncCityPanel() {
+    if (_cityPanel?.key !== cityIdentity()) closeCityPanel();
+    const opened = !!_cityPanel;
+    document.body.classList.toggle('city-panel-open', opened);
+    let panel = $('#city-panel');
+    if (!panel && opened) {
+      panel = el('<section id="city-panel" role="region" aria-labelledby="city-panel-title"><header id="city-panel-head"><h2 id="city-panel-title"></h2><button class="act" id="city-panel-jump" type="button" aria-label="All in-game actions">Actions</button><button class="act" id="city-panel-close" type="button" aria-label="Back to street">Street</button></header><div id="city-panel-pending" role="status" hidden></div><div id="city-panel-content"><div id="city-panel-body"></div><div id="city-panel-feedback" aria-live="polite"></div></div></section>');
+      $('#tabbodies').append(panel);
+      $('#city-panel-close').onclick = () => { setTab('map'); enterNeighborhood(); };
+      $('#city-panel-jump').onclick = () => openJump();
+      if (typeof ResizeObserver === 'function') {
+        const resize = new ResizeObserver(measureCityPanel);
+        resize.observe($('#top')); resize.observe($('#tab-map'));
+      }
+    }
+    if (panel) panel.hidden = !opened;
+    if (!opened) return;
+    const body = $('#city-panel-body');
+    restoreCityPanelNodes(); body.replaceChildren();
+    const utility = _cityPanel.utility;
+    $('#city-panel-title').textContent = utility
+      ? ({ character: 'Your character', communications: 'The Street · chat & feed', account: 'Account & help', territory: 'Territory board' }[utility])
+      : TABS[currentTab];
+    if (utility === 'account') {
+      const controls = el('<div class="city-account-controls"></div>'); body.append(controls);
+      for (const node of [...$('#top').children]) {
+        if (node.matches('#btn-wallet, #btn-character-nft, #btn-capital, #btn-phone, #btn-alerts, #btn-sfx, #btn-help, #btn-logout, a, .langpick, .langglobe')) moveToCityPanel(node, controls);
+      }
+    } else moveToCityPanel(utility ? $({ character: '#leftcol', communications: '#wirepanel', territory: '#map-territory-board' }[utility]) : $('#tab-' + currentTab), body);
+    if (utility === 'territory' && $('#map-territory-board')) $('#map-territory-board').hidden = false;
+    _cityScene?.update?.({ externalPanel: true });
+    renderOperationFeed(); renderOperationPending();
+    measureCityPanel();
+    const opening = _cityPanel;
+    requestAnimationFrame(() => {
+      if (opening === _cityPanel && window.innerWidth <= 850) $('#tabbodies').scrollIntoView({ block: 'start', behavior: 'instant' });
+    });
+  }
+  function openCityUtility(utility) {
+    if (!cityGameVisible() || !['character', 'communications', 'account', 'territory'].includes(utility)) return;
+    setTab('map', { cityUtility: utility });
+    $('#city-panel-close')?.focus({ preventScroll: true });
+  }
+  $('#city-all-actions').onclick = () => openJump();
+  document.querySelectorAll('[data-city-utility]').forEach(button => { button.onclick = () => openCityUtility(button.dataset.cityUtility); });
+  function setTab(id, { characterOnly = false, dashboard = false, cityUtility = null } = {}) {
     if (!TABS[id]) return;
-    if (id === 'map' && currentTab !== 'map' && _mapMode === 'walk') rememberDashboardView();
+    const inGame = !dashboard && cityGameVisible();
+    if (id === 'map' && currentTab !== 'map' && _mapMode === 'walk' && !inGame) rememberDashboardView();
+    closeCityPanel();
+    if (inGame && (id !== 'map' || cityUtility)) _cityPanel = { key: cityIdentity(), tab: id, utility: cityUtility };
     cancelCityEntry();
     if (id !== 'map') _cityFirstJobEntry = null;
-    if (id !== 'map') destroyCityScene();
+    if (id !== 'map' && !inGame) destroyCityScene();
     if (id !== 'fieldwork') destroyFieldwork();
     characterCheckoutOnly = id === 'portfolio' && characterOnly;
     clearTimeout(_reRenderT);
@@ -7689,11 +7851,14 @@
       // phones: the scrubbing rail centers the screen you just picked (never lose your place)
       if (on && window.innerWidth <= 760) b.scrollIntoView?.({ inline: 'center', block: 'nearest', behavior: REDUCED ? 'auto' : 'smooth' });
     }
-    for (const t of $('#tabbodies').children) {
-      const on = t.id === 'tab-' + id;
+    for (const key of Object.keys(TABS)) {
+      const t = $('#tab-' + key);
+      if (!t) continue;
+      const on = key === id || (inGame && key === 'map');
       t.classList.toggle('on', on);
       if (t.getAttribute('role') === 'tabpanel') t.hidden = !on;
     }
+    syncCityPanel();
     // THE SCREEN PLATE — this screen's own art + its name (see #tabart in the stylesheet).
     // A tab with no plate hides the band rather than showing an empty box.
     const art = $('#tabart');
@@ -8903,13 +9068,34 @@
       objectives: _cityIntel?.key === key ? _cityIntel.objectives : [],
       encounterRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery?.run === 'function',
       encounterReceipt: receipt ? { state: receipt.state, label: receipt.label, summary: receipt.summary, delta: receipt.delta,
+        intel: receipt.state === 'success' ? _cityEncounterReceipt.intel || null : null,
         recoveryLabel: receipt.recovery?.sameKey === true ? receipt.recovery.label : '', recoveryText: receipt.recovery?.text || '' } : null };
   }
   function publishCityPeople() {
-    if (currentTab !== 'map' || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
+    if (!cityGameVisible() || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
     Object.assign(_citySceneOptions, cityPeopleOptions());
     _cityScene?.update?.({ ...cityPeopleOptions(), character: { ...me } });
   }
+  let _cityPresenceRefresh = null, _cityPresenceReading = false, _cityPresenceReadAt = 0;
+  function scheduleCityPresence() {
+    if (_cityPresenceRefresh || !cityGameVisible() || !_cityScene || document.hidden) return;
+    _cityPresenceRefresh = setTimeout(async () => {
+      _cityPresenceRefresh = null;
+      if (_cityPresenceReading || !cityGameVisible() || !_cityScene || document.hidden) return;
+      _cityPresenceReading = true; _cityPresenceReadAt = Date.now();
+      const key = cityIdentity(), stamp = projections.snapshot(), scene = _cityScene;
+      const page = scene.getState?.().actorPage || 0, cursor = _cityPeople?.pages?.[page]?.start;
+      const revision = ++_cityPeopleRevision;
+      const current = () => cityGameVisible() && key === cityIdentity() && projections.current(stamp) && scene === _cityScene;
+      try {
+        const result = await api('GET', '/v1/city/presence' + (cursor ? '?cursor=' + encodeURIComponent(cursor) : ''), undefined, { isCurrent: current });
+        if (current() && revision === _cityPeopleRevision && result.code < 400 && cityBoardCurrent(result.body)) {
+          acceptCityPeoplePage(key, page, cursor, result.body); publishCityPeople();
+        } else if (current() && result.code < 400 && !cityBoardCurrent(result.body)) await refresh();
+      } finally { _cityPresenceReading = false; }
+    }, Math.max(250, 3000 - (Date.now() - _cityPresenceReadAt)));
+  }
+  setInterval(scheduleCityPresence, 15000);
   function acceptCityIntel(board) {
     if (!cityBoardCurrent(board) || !Number.isSafeInteger(board.progress?.totalEncounters) || board.progress.totalEncounters < 0) return false;
     if (_cityIntel?.key === cityIdentity() && _cityIntel.totalEncounters > board.progress.totalEncounters) return false;
@@ -8918,6 +9104,16 @@
     return true;
   }
   function acceptCityPeoplePage(key, pageIndex, cursor, board) {
+    if (!cityBoardCurrent(board) || key !== cityIdentity()) return;
+    const own = board.viewer?.activity;
+    if (own && own.id !== _cityActivityReceipt?.receipt.id
+      && (!_cityActivityReceipt?.current() || Date.parse(own.at) >= (typeof _cityActivityReceipt.receipt.at === 'number'
+        ? _cityActivityReceipt.receipt.at : Date.parse(_cityActivityReceipt.receipt.at)))) {
+      const stamp = projections.snapshot(), authority = _cityAuthorityRevision;
+      _cityActivityReceipt = { current: () => key === cityIdentity() && projections.current(stamp) && authority === _cityAuthorityRevision,
+        receipt: { ...own, state: 'confirmed', actorId: board.viewer.characterId, generation: board.viewer.generation, district: board.viewer.district } };
+      publishCityWorld();
+    }
     const pages = _cityPeople?.key === key ? [...(_cityPeople.pages || [])] : [];
     if (pages[pageIndex] && pages[pageIndex].cursor !== board.nextCursor) pages.length = pageIndex + 1;
     pages[pageIndex] = { start: cursor, actors: board.actors || [], cursor: board.nextCursor, hasMore: board.hasMore === true };
@@ -8947,12 +9143,15 @@
     const ownerCurrent = () => projections.current(stamp) && key === cityIdentity();
     const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
       && scene?.getState?.().selectedActor === actorId && scene.getState().actorOpening === opening;
+    let confirmedIntel = null;
     _cityEncounterPending = true;
     try {
-      const result = await act(action.method, action.path, action.body, { label: 'Collect intel from ' + (actor.name || (actor.kind === 'agent' ? 'an unknown agent' : actor.kind === 'npc' ? 'a resident' : 'an unknown player')),
+      const result = await act(action.method, action.path, action.body, { label: action.label || 'Review a neighborhood lead',
         beforeDispatch, retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
+        onResult: result => { if (ownerCurrent()) confirmedIntel = result.code < 400 && cityBoardCurrent(result.body)
+          && result.body.intel?.source?.id === actorId && typeof result.body.intel.id === 'string' ? result.body.intel : null; },
         onReceipt: receipt => { if (ownerCurrent()) {
-          _cityEncounterReceipt = { key, current: ownerCurrent, receipt }; publishCityPeople();
+          _cityEncounterReceipt = { key, current: ownerCurrent, receipt, intel: receipt.state === 'success' ? confirmedIntel : null }; publishCityPeople();
         } } });
       if (ownerCurrent() && result.code < 400 && cityBoardCurrent(result.body)) {
         if (acceptCityIntel(result.body)) _cityPeopleRevision++;
@@ -8985,8 +9184,7 @@
       territory: _mapMode === 'territory', scroll: window.scrollY };
   }
   function syncPlayerView() {
-    const player = currentTab === 'map' && _mapMode === 'walk' && !!me?.id
-      && !$('#screen-main').classList.contains('hidden');
+    const player = cityGameVisible();
     document.body.classList.toggle('city-player-view', player);
     const refreshButton = $('#btn-refresh');
     if (player && refreshButton.parentNode !== $('#top')) $('#top').append(refreshButton);
@@ -9000,9 +9198,9 @@
   }
   $('#btn-player-view').onclick = event => {
     if (!me?.id || $('#screen-main').classList.contains('hidden') || topModal()) return;
-    if (currentTab !== 'map' || _mapMode !== 'walk') rememberDashboardView();
+    if (!cityGameVisible()) rememberDashboardView();
     _mapMode = 'walk';
-    if (currentTab !== 'map') setTab('map');
+    if (currentTab !== 'map' || _cityPanel) setTab('map');
     syncPlayerView();
     enterNeighborhood(event.currentTarget);
   };
@@ -9011,7 +9209,7 @@
     const previous = _dashboardView?.owner === me?.id && _dashboardView?.generation === me?.generation
       && Object.hasOwn(TABS, _dashboardView.tab) ? _dashboardView : null;
     _mapMode = previous?.tab === 'map' && previous.territory ? 'territory' : 'walk';
-    setTab(previous?.tab || 'start');
+    setTab(previous?.tab || 'start', { dashboard: true });
     if (currentTab === 'map') syncMapMode();
     $('#tab-' + currentTab)?.focus({ preventScroll: true });
     window.scrollTo({ top: previous?.scroll || 0, behavior: 'instant' });
@@ -9072,7 +9270,7 @@
     const train = (rules?.stats || []).filter(s => ['muscle', 'cunning', 'speed'].includes(s)).map((s) =>
       `<button class="act" data-operation-label="train ${s}" aria-describedby="${termsId}" ${compact ? `data-city-train="${s}"` : `data-do="POST /v1/train/${s}"`}${gymBlock ? ` disabled aria-disabled="true" title="${esc(gymBlock)}"` : ''}>${s}${compact ? ` <b>${fmt(me?.stats?.[s])}</b>` : ''}</button>`).join('');
     const terms = compact
-      ? `<div class="d operation-terms" id="${termsId}">${trainEnergy} energy · ${minsTxt(rules?.pacing?.trainCooldownSeconds || 0)} recovery${gymBlock ? ` · <b>${esc(gymBlock)}</b>` : ''}</div>`
+      ? `<div class="d operation-terms" id="${termsId}"><b>Before you act</b> · ${trainEnergy} energy · raises the chosen stat · ${minsTxt(rules?.pacing?.trainCooldownSeconds || 0)} recovery${gymBlock ? ` · <b>${esc(gymBlock)}</b>` : ''}</div>`
       : `<div class="d operation-terms" id="${termsId}" style="margin-bottom:4px"><b>CORE TRAINING</b> · ${trainEnergy} energy per session · raises the chosen stat · shares a ${mins(rules?.pacing?.trainCooldownSeconds || 0)} recovery clock with the Regimen.${gymBlock ? ` <b>BLOCKED:</b> ${esc(gymBlock)}` : ''}</div>`;
     return { train, terms, gymBlock };
   }
@@ -9126,13 +9324,15 @@
     }
   }
   function coreCrimeMarkup(crime, { termsId = `crime-${crime.id}-terms`, compact = false } = {}) {
+    const nerveRate = Number(rules?.pacing?.nerveRegenPerMin);
+    const nerveHelp = `Wait for Nerve to recover or choose a job you can afford.${nerveRate > 0 ? ` Base recovery: ${fmt(nerveRate)} nerve/min; bonuses may increase this.` : ''}`;
     const blocked = Number(me?.jailSeconds || 0) > 0 ? 'No street jobs in lockup.'
       : Number(me?.level || 1) < crime.lvl ? `Requires level ${crime.lvl}. You are level ${me?.level || 1}.`
-      : Number(me?.nerve || 0) < crime.nerve ? `Needs ${crime.nerve} nerve. You have ${fmt(me?.nerve || 0)}.` : '';
+      : Number(me?.nerve || 0) < crime.nerve ? `Needs ${crime.nerve} nerve. You have ${fmt(me?.nerve || 0)}. ${nerveHelp}` : '';
     const approaches = Object.fromEntries((rules?.crimeApproaches || []).map(approach => [approach.id, approach]));
     const quiet = approaches.quiet || {}, loud = approaches.loud || {};
     const terms = `<div id="${termsId}" class="operation-action-terms">
-      <div class="d operation-terms"><b>COST</b> ${crime.nerve} nerve · <b>BASELINE WIN</b> $${fmt(crime.cash[0])}–$${fmt(crime.cash[1])}${compact ? ' (not guaranteed)' : ''} · ${crime.jail ? 'jail on a miss' : 'no jail term'}</div>
+      <div class="d operation-terms"><b>Before you act</b> · <b>COST</b> ${crime.nerve} nerve · <b>BASELINE WIN</b> $${fmt(crime.cash[0])}–$${fmt(crime.cash[1])}${compact ? ' (not guaranteed)' : ''} · ${crime.jail ? 'jail on a miss' : 'no jail term'}</div>
       <${compact ? 'details' : 'div'} class="d operation-choice-terms">${compact ? '<summary>Approaches &amp; outcomes</summary>' : ''}<b>QUIET</b> ${quiet.successMult ? `${Math.round((quiet.successMult - 1) * 100)}% safer, ` : ''}${quiet.heat || 0} added heat${quiet.payMult ? `, ${Math.round((1 - quiet.payMult) * 100)}% smaller win` : ''}${quiet.jailMult ? `, ${Math.round((1 - quiet.jailMult) * 100)}% shorter jail` : ''}
         · <b>STANDARD</b> baseline odds and take
         · <b>LOUD</b> ${loud.payMult ? `${Math.round((loud.payMult - 1) * 100)}% larger win, ` : ''}+${loud.heat || 0} heat${loud.jailMult ? `, ${Math.round((loud.jailMult - 1) * 100)}% longer jail` : ''}
@@ -9242,7 +9442,13 @@
   function cityWorldOptions() {
     const key = cityIdentity(), data = _cityWorldData?.key === key && projections.current(_cityWorldData.stamp) ? _cityWorldData : null;
     const receipt = currentCityWorldOperation()?.receipt || null;
+    const resource = operationReceipts.find(entry => entry.resourceCurrent?.());
     return { worldScopeKey: String(projections.snapshot().epoch) + (_cityAuthorityRevision ? ':' + _cityAuthorityRevision : ''), rules,
+      externalPanel: _cityPanel?.key === key,
+      activityReceipt: _cityActivityReceipt?.current() ? _cityActivityReceipt.receipt : null,
+      resourceReceipt: operationPending ? { id: 'pending', state: 'pending', label: operationPending, changes: [] }
+        : resource ? { id: resource.feedbackId, state: resource.feedbackState, label: resource.label,
+          changes: resource.changes, questCompletion: resource.questCompletion } : null,
       worldSocial: data?.social || null, worldChat: data?.chat || null,
       worldAtlas: data?.atlas || null, worldCollection: data?.collection || null, worldHomes: data?.homesByDistrict?.[me?.loc] || null,
       worldRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery.run === 'function',
@@ -9250,7 +9456,7 @@
         recovery: receipt.recovery ? { sameKey: receipt.recovery.sameKey === true, label: receipt.recovery.label, text: receipt.recovery.text } : null } : null };
   }
   function publishCityWorld() {
-    if (currentTab !== 'map' || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
+    if (!cityGameVisible() || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
     Object.assign(_citySceneOptions, cityWorldOptions());
     _cityScene?.update?.({ ...cityWorldOptions(), character: { ...me } });
   }
@@ -9578,7 +9784,7 @@
     }
     if (!bar) return;
     if (_citySession && _citySession.key !== cityIdentity()) _citySession = null;
-    bar.hidden = !_citySession || currentTab === 'map' || $('#screen-main')?.classList.contains('hidden');
+    bar.hidden = !_citySession || cityGameVisible() || currentTab === 'map' || $('#screen-main')?.classList.contains('hidden');
     if (!bar.hidden) $('#city-session-label').textContent = (CITY_VENUE_NAMES[_citySession.venueId] || 'The neighborhood') + ' · ' + (TABS[currentTab] || '');
   }
   function destroyFieldwork() { _fieldworkEpoch++; _fieldwork?.destroy(); _fieldwork = null; _fieldworkEntryView = 'inventory'; }
@@ -9591,7 +9797,7 @@
     const epoch = ++_fieldworkEpoch, identity = cityIdentity();
     host.innerHTML = '<div class="card" role="status">Opening your inventory and quest journal…</div>';
     try {
-      await loadCityScript('/world-fieldwork.js?v=20261015-play-1', () => !!window.OmertaFieldwork);
+      await loadCityScript('/world-fieldwork.js?v=20261016-refinements-1', () => !!window.OmertaFieldwork);
       if (epoch !== _fieldworkEpoch || currentTab !== 'fieldwork' || identity !== cityIdentity()) return;
       _fieldwork = window.OmertaFieldwork.mount(host, options);
     } catch {
@@ -9607,7 +9813,8 @@
     const entries = (Array.isArray(reply.body?.mysteries) ? reply.body.mysteries : []).filter(entry =>
       (entry.cityQuest === true || entry.graphId === 'neighborhood-initiation')
       && typeof entry.graphId === 'string' && /^[a-z0-9][a-z0-9:_-]{0,127}$/.test(entry.graphId)
-      && (!entry.districtId || entry.districtId === me.loc));
+      && (!entry.districtId || entry.districtId === me.loc
+        || entry.graphId === 'property-investigation' && entry.started === true && entry.status === 'active'));
     function add(graphId, venueId, title, dialogue, entries, started, questOrder) {
       const prefix = '/v1/worldgraph/mysteries/' + encodeURIComponent(graphId) + '/';
       const valid = (entries || []).filter(action => action.method === 'POST' && typeof action.available === 'boolean'
@@ -9618,7 +9825,7 @@
       if (dialogue) quest.dialogue += (quest.dialogue ? '\n\n' : '') + dialogue;
       for (const action of valid) {
         actions.set(venueId + ':' + action.id, action);
-        quest.actions.push({ id: action.id, label: action.label, available: action.available,
+        quest.actions.push({ id: action.id, label: action.label, available: action.available, consequence: action.consequence,
           blockedBy: action.blockedBy || [], started, questOrder, questTitle: title,
           isCancel: action.path === prefix + 'cancel' });
       }
@@ -9658,6 +9865,8 @@
     } finally { _cityQuestPending = false; }
   }
   function destroyCityScene() {
+    closeCityPanel();
+    clearTimeout(_cityPresenceRefresh); _cityPresenceRefresh = null;
     if (_cityEntry && _cityEntry.epoch !== null) cancelCityEntry();
     _citySceneEpoch++;
     if (_cityScene && _citySceneKey) rememberCityPosition(_citySceneKey, _cityScene.getState?.().player
@@ -9684,12 +9893,12 @@
   function loadCityAssets() {
     if (!_citySceneAssets) {
       _citySceneAssets = Promise.allSettled([
-        loadCityScript('/city-scene.js?v=20261015-play-1', () => !!window.OmertaCityScene),
+        loadCityScript('/city-scene.js?v=20261016-parity-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-        loadCityScript('/city-world-ui.js?v=20261015-play-1', () => !!window.OmertaCityWorldUI),
+        loadCityScript('/city-world-ui.js?v=20261016-refinements-1', () => !!window.OmertaCityWorldUI),
         loadCityScript('/city-home-ui.js?v=20261013-ui-1', () => !!window.CityHomeUi),
         loadCityScript('/city-adventure-ui.js?v=20261012-gameplay-1', () => !!window.CityAdventureUi),
-        loadCityScript('/world-fieldwork.js?v=20261015-play-1', () => !!window.OmertaFieldwork),
+        loadCityScript('/world-fieldwork.js?v=20261016-refinements-1', () => !!window.OmertaFieldwork),
       ]).then(([scene, engine, world, home, adventure, fieldwork]) => {
         if (scene.status === 'rejected') throw scene.reason;
         if ([engine,world,home,adventure,fieldwork].some(result => result.status === 'rejected')) _citySceneAssets = null;
@@ -9717,6 +9926,7 @@
       ? { current: cityActorScope(), key: context.streetKey || null, districtId: context.districtId || null } : null;
     if (gym) localStorage.setItem('omerta_sect_streets-train', '1');
     _citySession = { key: cityIdentity(), venueId: context.venueId || _citySession?.venueId || 'directory' };
+    if (tab === 'map' && context.venueId === 'waterfront' && cityGameVisible()) { openCityUtility('territory'); return; }
     if (tab === 'map') _mapMode = context.venueId === 'waterfront' ? 'territory' : 'walk';
     setTab(tab);
     if (deedEntry) _cityDeedEntry = { ...deedEntry, navigation: navigationRevision };
@@ -9733,8 +9943,12 @@
     if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
     const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
     if (key !== cityIdentity()) return;
-    if (_cityScene && _citySceneKey === key) {
-      _cityScene.update?.({ ...options, character: { ...me }, progress: cityProgress() });
+    const unavailable = host.querySelector('.omerta-city--unavailable');
+    // Retry an unavailable renderer only when doing so will not dismiss an active interaction.
+    const interacting = unavailable?.classList.contains('is-inspecting')
+      || unavailable?.querySelector('.omerta-city__interaction:not([hidden])');
+    if (_cityScene && _citySceneKey === key && (!unavailable || interacting)) {
+      _cityScene.update?.({ ...options, ...cityWorldOptions(), character: { ...me }, progress: cityProgress() });
       fulfillCityHomeEntry();
       fulfillCityFirstJobEntry();
       readCityWorld('homes', { districtId: me.loc }).catch(() => {});
@@ -9771,7 +9985,7 @@
     const walk = _mapMode === 'walk';
     const neighborhood = $('#map-neighborhood'), territory = $('#map-territory-board');
     if (!neighborhood || !territory) return;
-    neighborhood.hidden = !walk; territory.hidden = walk;
+    neighborhood.hidden = !walk; territory.hidden = walk && _cityPanel?.utility !== 'territory';
     $('#map-mode-walk').setAttribute('aria-pressed', String(walk));
     $('#map-mode-territory').setAttribute('aria-pressed', String(!walk));
     if (walk) mountCityNeighborhood(); else destroyCityScene();
@@ -9944,6 +10158,7 @@
       <div id="map-territory-board" hidden></div>`;
       $('#map-mode-walk').onclick = event => enterNeighborhood(event.currentTarget);
       $('#map-mode-territory').onclick = () => {
+        if (cityGameVisible()) { openCityUtility('territory'); return; }
         const leavingPlayer = document.body.classList.contains('city-player-view');
         _mapMode = 'territory'; syncMapMode();
         if (leavingPlayer) $('#player-view-switch').scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
@@ -9975,10 +10190,26 @@
   // and build a legend on it. Phase 1 is pure status: the deed is yours forever (survives death, the heir
   // inherits it), and its value is the RECORD of what happened on it. Rent + turf CONTROL are earned
   // in-game (a later phase); this screen is the deed + its legend + the map's build-up. ──
-  async function renderDeeds() {
+  let deedPropertyFocus = null;
+  let deedPropertyRender = 0;
+  let deedPropertyActor = null;
+  const deedPropertyNames = new Map();
+  async function renderDeeds(propertyFocus = deedPropertyFocus) {
+    const actor = me?.id || null;
+    if (actor !== deedPropertyActor) {
+      deedPropertyActor = actor;
+      deedPropertyFocus = propertyFocus = null;
+      deedPropertyNames.clear();
+    }
+    const render = ++deedPropertyRender;
+    if (!actor) return;
+    if (propertyFocus?.district) deedPropertyFocus = propertyFocus;
     const t = $('#tab-deeds');
+    t.querySelectorAll('#deed-investigate, #deed-objective-travel, #deed-property-claim, #deed-property-refresh')
+      .forEach(control => { control.disabled = true; });
     const navigation = navigationRevision, current = cityActorScope();
-    const valid = () => current() && currentTab === 'deeds' && navigation === navigationRevision;
+    const valid = () => current() && currentTab === 'deeds' && navigation === navigationRevision
+      && render === deedPropertyRender && actor === me?.id;
     const reply = await api('GET', '/v1/deeds', undefined, { isCurrent: valid });
     if (!valid() || reply.ignored) return;
     const b = reply.body || {};
@@ -10058,7 +10289,7 @@
             ${vaultChip(s.vault)}
             <button class="act" data-buydeed="${s.sellerId}" data-price="${s.price}">buy it</button></div>`).join(''));
       } else if (m.canBuy) {
-        rows.push(`<div class="d" style="color:var(--dim)">No streets are for sale right now — claim a fresh one below, or wait for a seller.</div>`);
+        rows.push(`<div class="d" style="color:var(--dim)">No streets are for sale right now. Explore a property and earn its deed, or wait for a seller.</div>`);
       }
       if (!rows.length) return '';
       return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">The Market</span>
@@ -10101,8 +10332,14 @@
         <span class="t">${esc(d.name)}</span> <span class="chip">${d.deeds} deed${d.deeds === 1 ? '' : 's'}</span>${deed && deed.district === d.id ? ' <span class="chip good">your street</span>' : ''}
         <div class="d" style="font-size:11px;color:var(--dim);margin-top:2px">${esc(d.perk || '')}</div>
         <div class="d" style="font-size:11px;margin-top:2px">Open: ${(n.open || []).map((x) => esc(x)).join(' · ') || '—'}${(n.coming || []).length ? ` <span style="color:var(--dim)">· opening: ${n.coming.map((x) => esc(x)).join(' · ')}</span>` : ''}</div>
-        ${b.canClaim ? `<button class="act" data-claimdist="${d.id}">claim a street here</button>` : ''}</div>`; }).join('')}</div>`;
+        <button class="act" data-deed-district="${esc(d.id)}">explore properties here</button></div>`; }).join('')}</div>`;
     t.innerHTML = `
+      <div class="card"><span class="t">City properties</span>
+        <div class="d">All 2,500 permanent houses and buildings are discoverable now. Earn a building's deed through a qualifying quest or by following its leads across the city. Each account can claim one new deed in its lifetime. Existing deeds and secondary trades remain available.</div>
+        ${deed?.building ? `<div class="d">Your property: ${esc(deed.building.id)} · ${esc(deed.building.kind.replaceAll('_', ' '))}</div>` : ''}
+        <button class="act" id="deed-atlas-open">explore the property map</button>
+        <button class="act" id="deed-quests-open">quests and inventory</button>
+        <div id="deed-atlas" aria-live="polite"></div></div>
       ${chainCard()}
       ${rewardCard}
       ${upgradeCard}
@@ -10115,9 +10352,9 @@
         <div class="card">${history.length
           ? history.map((h) => `<div class="d" style="margin-top:2px">${evLabel(h.kind)}${h.detail ? ' — ' + esc(h.detail) : ''}</div>`).join('')
           : '<div class="d" style="color:var(--dim)">nothing has happened here yet — play, and the street remembers.</div>'}</div>`
-        : `<div class="card"><span class="t">Own your street</span>
-          <div class="d">Claim a named plot of the world — a Street on the map that's yours. It survives death (the heir inherits it), and everything that happens on it becomes its story. Pick a district below and name it.</div>
-          <div style="margin-top:6px"><input id="deed-name" placeholder="name your street" size="20" maxlength="${b.nameMax || 28}"></div></div>`}
+        : `<div class="card"><span class="t">Earn your property</span>
+          <div class="d">Explore the property map, complete its investigation or a qualifying quest, then name and claim that exact building. Discovering a property does not reserve it: another qualified player can claim it first. Opening the map alone earns no progress.</div>
+          </div>`}
       ${cornerCard(b.corner)}
       ${marketCard(b.market)}
       ${cityBanner}
@@ -10127,12 +10364,108 @@
     // the ranks ladder (a legend of what renown buys) — element reads on `ranks`, always non-empty
     const rankLine = ranks.map((r) => `${esc(r.name)} (${r.min})`).join(' · ');
     t.insertAdjacentHTML('beforeend', `<div class="d" style="font-size:10.5px;color:var(--dim);margin-top:6px">renown ranks: ${rankLine}</div>`);
-    let deedDist = null;
-    t.querySelectorAll('[data-claimdist]').forEach((btn) => btn.onclick = () => {
-      const name = ($('#deed-name') && $('#deed-name').value || '').trim();
-      if (!name) { toast('Name your street first.'); return; }
-      acquireCityDeed('POST', '/v1/deeds/claim', { name, district: btn.dataset.claimdist });
-    });
+    let propertyRead = 0;
+    const openPropertyDistrict = async (district, buildingId = null) => {
+      if (!valid()) return;
+      deedPropertyFocus = { district, buildingId };
+      const host = $('#deed-atlas');
+      const read = ++propertyRead;
+      host.innerHTML = '<p class="d">Reading district properties…</p>';
+      const suffix = '?district=' + encodeURIComponent(district);
+      let atlasResponse, discoveryResponse;
+      try {
+        [atlasResponse, discoveryResponse] = await Promise.all([
+          api('GET', '/v1/deeds/buildings' + suffix), api('GET', '/v1/deeds/discovery' + suffix),
+        ]);
+      } catch {
+        if (host.isConnected && read === propertyRead && valid())
+          host.innerHTML = '<p class="d">Properties could not be loaded. Use explore properties to retry.</p>';
+        return;
+      }
+      if (!host.isConnected || read !== propertyRead || !valid()) return;
+      const failed = [atlasResponse, discoveryResponse].find(r => r.code !== 200);
+      if (failed) { host.textContent = describe(failed.body, failed.code); return; }
+      const atlas = atlasResponse.body, discovery = discoveryResponse.body;
+      const config = discovery.config || discovery, progress = new Map((discovery.buildings || []).map(p => [p.id, p]));
+      const bounds = atlas.districts[0] || { x: 0, y: 0, width: atlas.width, height: atlas.height };
+      host.innerHTML = `<p class="d">${esc(atlas.districts[0]?.name || district)} · ${atlas.buildings.length} permanent properties. Select a building to inspect its claim requirements.</p>
+        <div class="d">Build a property case: inspect the site, trace its registry record, question the witness, then return to secure its title. ${config.stepsRequired} objectives · ${config.energyPerStep} energy each · level ${config.minimumLevel}. Each lead names its required district; map coordinates do not establish your location.</div>
+        ${discovery.primaryClaimed ? `<p class="d">Your account has already used its lifetime discovery claim${discovery.claimedName ? ' for ' + esc(discovery.claimedName) : ''}. Buying or winning existing deeds remains available.</p>` : discovery.questEligible ? '<p class="d">Your completed quest qualifies you to claim an available building in your current district. Select the exact property first.</p>' : ''}
+        ${(discovery.activeInvestigations || []).some(p => p.district !== district && !p.claimed) ? `<p class="d">Cases you are following elsewhere:</p>${discovery.activeInvestigations.filter(p => p.district !== district && !p.claimed).slice(0, 12).map(p => `<button class="act" data-deed-resume="${esc(p.id)}" data-deed-resume-district="${esc(p.district)}">resume ${esc(p.id)} · ${Number(p.steps || 0)}/${config.stepsRequired}</button>`).join('')}` : ''}
+        <div style="overflow:auto"><svg viewBox="${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}" style="max-width:720px;width:100%;background:#111820" role="group" aria-label="${esc(district)} deed properties">
+        ${atlas.districts.map(d => `<rect x="${d.x + 4}" y="${d.y + 4}" width="${d.width - 8}" height="${d.height - 8}" fill="#1c2935" stroke="#597184"/><text x="${d.x + 24}" y="${d.y + 30}" fill="#e5d6aa" font-size="18">${esc(d.name)}</text>`).join('')}
+        ${atlas.buildings.map(p => `<g data-property="${esc(p.id)}" role="button" tabindex="0" aria-label="${esc(p.id + ', ' + p.kind.replaceAll('_', ' ') + (p.street ? ', ' + p.street : ', unclaimed'))}" style="cursor:pointer"><title>${esc(p.id)} · ${esc(p.street || 'unclaimed')}</title><rect x="${p.x}" y="${p.y}" width="${p.width}" height="${p.height}" fill="${p.claimed ? '#dfb976' : progress.get(p.id)?.qualified ? '#81b68c' : '#688493'}" stroke="#111820"/>${p.kind.includes('house') ? `<path d="M${p.x - 1},${p.y} l${p.width / 2 + 1},-4 l${p.width / 2 + 1},4" fill="${p.claimed ? '#b77e4a' : '#495e70'}"/>` : ''}</g>`).join('')}</svg></div><div class="card" id="deed-property-detail" aria-live="polite">Choose a property on this district's map.</div>`;
+      const showProperty = p => {
+        if (actor !== me?.id || render !== deedPropertyRender) return;
+        deedPropertyFocus = { district, buildingId: p.id };
+        const entry = progress.get(p.id), detail = $('#deed-property-detail');
+        if (!entry) { detail.textContent = 'Claim eligibility is unavailable. Reopen this district to retry.'; return; }
+        const objective = entry.objective;
+        const requiredDistrict = entry.qualified ? p.district : objective?.requiredDistrict;
+        const districtName = id => districts.find(d => d.id === id)?.name || id;
+        const away = requiredDistrict && discovery.currentDistrict !== requiredDistrict;
+        const fareKnown = rules?.travelCost != null && Number.isFinite(Number(rules.travelCost));
+        const canTravel = away && fareKnown && districts.some(d => d.id === requiredDistrict);
+        detail.innerHTML = `<span class="t">${esc(p.id)} · ${esc(p.kind.replaceAll('_', ' '))}</span>
+          <div class="d">${p.claimed || entry.claimed ? `Already claimed: ${esc(entry.street || p.street || 'this permanent property')}${p.tokenId ? ' · deed ' + esc(p.tokenId) : ''}.` : `Investigation ${Number(entry.steps || 0)}/${config.stepsRequired}${entry.qualified ? ' · claim earned' : ''}.`}</div>
+          ${!(p.claimed || entry.claimed) && !discovery.primaryClaimed ? `
+            ${entry.legacyReset ? '<p class="d">This property now requires a complete investigation; earlier visits do not replace its evidence.</p>' : ''}
+            ${!entry.qualified && objective ? `<div class="d"><b>${esc(objective.title)}</b> · ${esc(districtName(objective.requiredDistrict))}</div><p class="d">${esc(objective.description)}</p>` : ''}
+            <div class="d">${!discovery.actorEligible ? 'Your current character cannot act right now. Check level, health and lockup status.' : entry.qualified && deed ? 'You already hold a deed; you cannot claim another while holding it.' : away ? 'Travel to ' + esc(districtName(requiredDistrict)) + (entry.qualified ? ' to claim this property.' : ' to follow this lead.') : entry.qualified ? 'Name this property below, then claim its deed.' : objective?.blockedReason === 'energy' ? 'You need ' + config.energyPerStep + ' energy to complete this objective.' : objective?.canAct ? 'Complete the current objective to record its evidence.' : 'This lead is unavailable. Recheck the property for current requirements.'}</div>
+            ${canTravel ? `<button class="act" id="deed-objective-travel">travel to ${esc(districtName(requiredDistrict))} — $${Number(rules.travelCost).toLocaleString()}</button>` : ''}` : ''}
+          ${entry.canInvestigate && objective?.canAct && objective.actionId && !p.claimed && !entry.claimed && !discovery.primaryClaimed ? `<button class="act" id="deed-investigate">${esc(objective.title)}</button>` : ''}
+          ${entry.canClaim && !p.claimed && !entry.claimed && !discovery.primaryClaimed && !deed ? `<label class="d" for="deed-property-name">Property name</label><input id="deed-property-name" placeholder="name your street" size="20" maxlength="${b.nameMax || 28}"><button class="act" id="deed-property-claim">claim this building's deed</button>` : ''}
+          <button class="act" id="deed-property-refresh">recheck property</button>`;
+        const nameInput = $('#deed-property-name');
+        if (nameInput) {
+          nameInput.value = deedPropertyNames.get(p.id) || '';
+          nameInput.oninput = nameInput.onchange = () => {
+            if (actor === me?.id) deedPropertyNames.set(p.id, nameInput.value);
+          };
+        }
+        const investigate = $('#deed-investigate');
+        if (investigate) investigate.onclick = async () => {
+          if (!valid()) return;
+          investigate.disabled = true;
+          try { await act('POST', '/v1/deeds/investigate', { buildingId: p.id, actionId: objective.actionId }, { label: objective.title, beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }
+          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
+        };
+        const travel = $('#deed-objective-travel');
+        if (travel) travel.onclick = async () => {
+          if (!valid()) return;
+          travel.disabled = true;
+          try { await travelTo(requiredDistrict, { beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }
+          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
+        };
+        const claim = $('#deed-property-claim');
+        if (claim) claim.onclick = async () => {
+          if (!valid()) return;
+          const name = $('#deed-property-name').value.trim();
+          if (!name) { toast('Name this property first.'); return; }
+          claim.disabled = true;
+          try {
+            const result = await acquireCityDeed('POST', '/v1/deeds/claim', { name, buildingId: p.id });
+            if (result.code < 400 && actor === me?.id) deedPropertyNames.delete(p.id);
+          }
+          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
+        };
+        $('#deed-property-refresh').onclick = () => openPropertyDistrict(district, p.id);
+      };
+      const inspect = el => {
+        const p = atlas.buildings.find(x => x.id === el?.dataset.property);
+        if (p) showProperty(p);
+      };
+      host.onclick = ev => inspect(ev.target.closest('[data-property]'));
+      host.querySelectorAll('[data-deed-resume]').forEach(button => button.onclick = () =>
+        openPropertyDistrict(button.dataset.deedResumeDistrict, button.dataset.deedResume));
+      host.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { const el = ev.target.closest('[data-property]'); if (el) { ev.preventDefault(); inspect(el); } } };
+      if (buildingId) { const p = atlas.buildings.find(x => x.id === buildingId); if (p) showProperty(p); }
+    };
+    $('#deed-atlas-open').onclick = () => openPropertyDistrict(me.loc);
+    $('#deed-quests-open').onclick = () => navigateFromCity('fieldwork', { venueId: 'directory', initialView: 'mysteries' });
+    t.querySelectorAll('[data-deed-district]').forEach(el => el.onclick = () => openPropertyDistrict(el.dataset.deedDistrict));
+    if (deedPropertyFocus?.district) await openPropertyDistrict(deedPropertyFocus.district, deedPropertyFocus.buildingId);
+    if (!valid()) return;
     { const el = $('#deed-collect'); if (el) el.onclick = () => act('POST', '/v1/deeds/corner').then(() => renderDeeds()); }
     t.querySelectorAll('[data-shake]').forEach((btn) => btn.onclick = () =>
       act('POST', '/v1/deeds/shakedown/' + btn.dataset.shake).then(() => renderDeeds()));
@@ -10177,7 +10510,7 @@
     if (entry?.current() && entry.navigation === navigationRevision && valid()) {
       _cityDeedEntry = null;
       if (!entry.key || deed && String(deed.name).toLowerCase() === entry.key) {
-        const destination = t.querySelector(deed ? '#city-owned-deed' : '#deed-name');
+        const destination = t.querySelector(deed ? '#city-owned-deed' : '#deed-atlas-open');
         destination?.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' });
         destination?.focus({ preventScroll: true });
       }
@@ -15126,6 +15459,7 @@
         try {
           if (ws !== socket || token !== socketToken || projections.snapshot().token !== token) return;
           const ev = JSON.parse(m.data);
+          if (ev.channel === 'activity') scheduleCityPresence();
           if (ev.channel === 'projection') {
             if (ev.changed === true) projections.world(worldSelection, worldMysterySelection);
             return;

@@ -1,3 +1,4 @@
+import {NEXT_LAYER_NATIVE_FILES as combinedFiles} from "../tools/next-layer-native.js";
 import assert from 'node:assert/strict';import {MARKET_OPERATIONS_NATIVE_PROOFS as proofs,MARKET_OPERATIONS_NATIVE_FILES as files,assertMarketOperationsExecutionEnv,assertMarketOperationsInventory,assertMarketOperationsMode,marketOperationsNativeEndpoint,assertMarketOperationsBackend,assertMarketOperationsResults,assertMarketOperationsTrackedBytes,marketOperationsChildEnv}from'../tools/market-operations-native.js';
 let controls=0;const reject=fn=>{assert.throws(fn);controls++;};assert.equal(proofs.length,15);assert.equal(new Set(proofs.map(r=>r[0])).size,15);assert.equal(new Set(files).size,files.length);assert(Object.isFrozen(proofs)&&proofs.every(Object.isFrozen));assertMarketOperationsInventory(proofs);assertMarketOperationsMode(['node','runner'],{});
 for(const v of [[],proofs.slice(1),[...proofs,proofs[0]],[...proofs].reverse()])reject(()=>assertMarketOperationsInventory(v));for(let i=0;i<15;i++)for(let j=0;j<3;j++){const changed=proofs.map(r=>[...r]);changed[i][j]+='_unknown';reject(()=>assertMarketOperationsInventory(changed));}
@@ -24,3 +25,7 @@ assert(files.includes('public/genesis-snapshot-rpc.js'));
 for(const file of ['docs/decision-replay-integration.json','docs/economic-dependency-map-integration.json'])assert(files.includes(file));
 for(const flags of [['--require','unreviewed'],['--import','unreviewed'],['--loader','unreviewed'],['--inspect'],['--input-type=module']])reject(()=>assertMarketOperationsMode(['node','runner'],{},flags));
 console.log('Market operations strict endpoint/inventory/completion guard unit PASS: '+controls+' causal refusals; synthetic completion records confer NO native qualification.');
+
+assert.equal(files.length,704,'Complete current Deed/market dependency union');
+assert.deepEqual([...files].sort(),[...combinedFiles].sort(),'Both native cohorts capture the same complete current dependency set');
+for(const file of ['tools/deed-market-source-compatibility.js','test/deed-market-source-compatibility.js'])assert(files.includes(file));

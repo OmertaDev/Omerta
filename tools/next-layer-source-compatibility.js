@@ -1,4 +1,5 @@
 import {marketOperationsSourceBaseline} from './market-operations-source-compatibility.js';
+import {deedOverMarketSourceBaseline} from './deed-market-source-compatibility.js';
 // Exact next-layer source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -353,4 +354,4 @@ const uniform=function uniformEndings(t){return t===lf(t)||t===lf(t).replaceAll(
 const hash=t=>crypto.createHash('sha256').update(t).digest('hex');
 const blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
 export function assertNextLayerSourceTransfer(file,input){assert(Object.hasOwn(NEXT_LAYER_SOURCE_DOMAINS,file),'Unknown next-layer source domain');assert.equal(typeof input,'string');assert(uniform(input),'Mixed next-layer source endings');const p=NEXT_LAYER_SOURCE_DOMAINS[file],text=lf(input);assert.equal(hash(text),p.currentSha256,'Complete next-layer source drift');assert.equal(blob(text),p.currentBlob);let baselineText=text;for(const h of p.inverses){assert(h.current);assert.equal(baselineText.split(h.current).length,2,'Exact inverse occurs once');baselineText=baselineText.replace(h.current,()=>h.baseline);}assert.equal(hash(baselineText),p.baselineSha256);assert.equal(blob(baselineText),p.baselineBlob);return{baselineText,sourceRevision:NEXT_LAYER_SOURCE_REVISION,predecessorRevision:NEXT_LAYER_SOURCE_PREDECESSOR,phase:NEXT_LAYER_SOURCE_PHASE};}
-export function nextLayerSourceBaseline(file,input){input=marketOperationsSourceBaseline(file,input);if(typeof input!=='string'||!Object.hasOwn(NEXT_LAYER_SOURCE_DOMAINS,file)||!uniform(input))return input;return hash(lf(input))===NEXT_LAYER_SOURCE_DOMAINS[file].currentSha256?assertNextLayerSourceTransfer(file,input).baselineText:input;}
+export function nextLayerSourceBaseline(file,input){input=deedOverMarketSourceBaseline(file,input);input=marketOperationsSourceBaseline(file,input);if(typeof input!=='string'||!Object.hasOwn(NEXT_LAYER_SOURCE_DOMAINS,file)||!uniform(input))return input;return hash(lf(input))===NEXT_LAYER_SOURCE_DOMAINS[file].currentSha256?assertNextLayerSourceTransfer(file,input).baselineText:input;}

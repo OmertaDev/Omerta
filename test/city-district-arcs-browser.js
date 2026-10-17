@@ -165,6 +165,7 @@ try {
   };
   const learn = async (fixture, skillId) => {
     await visit(fixture, 'training'); const before = await pose(fixture);
+    const entry = await fixture.page.evaluateHandle(() => window.__arcHandles.at(-1));
     const previousLayout = await fixture.page.evaluateHandle(() => document.querySelector('#tab-life').firstChild);
     const skillsRead = fixture.page.waitForResponse(reply => reply.request().method() === 'GET'
       && new URL(reply.url()).pathname === '/v1/skills');
@@ -182,8 +183,11 @@ try {
     await activate(fixture, fixture.page.locator(`[data-learn="${skillId}"]`));
     const learned = await response; assert.equal(learned.status(), 200, await learned.text());
     assert.equal((await learned.json()).learned, skillId); assert(learned.request().headers()['idempotency-key']);
-    await fixture.page.locator('#city-return').waitFor({ state: 'visible' });
-    await activate(fixture, fixture.page.locator('#city-return')); await ready(fixture);
+    await fixture.page.locator('#city-panel-close').waitFor({ state: 'visible' });
+    assert.equal((await state(fixture)).externalPanel, true, 'Canonical skill controls pause the retained neighborhood.');
+    await activate(fixture, fixture.page.locator('#city-panel-close')); await ready(fixture);
+    assert.equal((await state(fixture)).externalPanel, false);
+    await sameScenePose(fixture, before, entry); await entry.dispose();
     assert.deepEqual(await pose(fixture), before, 'Canonical skill navigation returns to its saved world pose.');
   };
   const queuedClose = async (fixture, story) => {
@@ -358,7 +362,8 @@ try {
       const ids = await fixture.page.locator('[data-city-quest-action]').evaluateAll(nodes => nodes.map(node => node.dataset.cityQuestAction));
       assert(ids.includes('start') && ids.includes(prefix + 'start'), 'The original introduction and district story coexist at the same actual venue.');
       assert.equal(new Set(ids).size, ids.length);
-      assert.equal(await questButton(fixture, prefix + 'start').textContent(), 'Begin ' + story.presentation.title);
+      assert.equal(await questButton(fixture, prefix + 'start').getAttribute('aria-label'), 'Begin ' + story.presentation.title);
+      assert.match(await questButton(fixture, prefix + 'start').locator('[data-city-action-preview]').textContent(), /Before you act/);
       assert(!ids.some(id => id.startsWith('district-') && !id.startsWith(prefix)), 'Other districts do not appear as physical venue offers.');
       await action(fixture, prefix + 'start', root + '/start');
       const intro = story.package.nodes.find(node => node.id.endsWith('-introduction'));
@@ -383,6 +388,8 @@ try {
       if (index <= 1) await lostReport(fixture, story, reportId, reportPath, templateId, index === 1);
       else await action(fixture, reportId, reportPath);
       assert.equal((await serverBoard(actor, story.package.id)).status, 'completed');
+      await fixture.page.locator('.city-world__completion').waitFor();
+      assert.match(await fixture.page.locator('.city-world__completion').textContent(), /Completed: Investigation complete/);
       const bag = await inventory(actor); assert.equal(bag.currentCharacterItems.filter(item => item.templateId === templateId).length, 1);
       assert.equal((await keepsakes(actor, templateId)).rows.length, 1);
       proof.push({ viewport: viewport.width, graphId: story.package.id, approach, keepsakes: 1, nativeInput: viewport.width <= 680 ? 'touch' : 'mouse' });
