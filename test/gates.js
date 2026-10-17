@@ -4627,6 +4627,13 @@ scopedSocialContext = async function(db) {
     'saleattribution.js:purchaseScopes': 'cache: one active client/item-transaction purchase marker; fresh attribution/campaign/original actors and canonical sale/journal proofs revalidate under SQL locks, durable request/source transitions own replay and finally invalidates the marker',
     'shoppingbasket.js:purchaseScopes': 'cache: one active client/item-transaction basket-line marker; each fresh authored basket/original/listing/completed-sale proof revalidates under SQL locks, conditional settlement owns durable completion and finally invalidates the marker',
     'mobileshops.js:scopes': 'cache: opaque active item-transaction scope bound to one SQL client, canonical Market action and immutable listing source; scopes are deleted on exit, while PostgreSQL actor/listing locks and unique request/journal records retain durable authority',
+    "collateralauction.js:results": "cache: private newly issued or actual loan-recovery receipt witness bound to one client/item transaction; the canonical finalizer rechecks saved requests or private recovery facts, original actors/cash and fresh auction/pledge books, then marks done; PostgreSQL source rows and canonical loan transitions own cross-worker state",
+    "collaterallending.js:finalizations": "cache: private newly issued receipt witness bound to one client/item transaction; finalization re-reads the exact durable request, pledge/debt/holder, original actors/cash and collateral books, then marks done and poisons failure; it is not cross-request authority",
+    "collaterallending.js:terminalFinalizations": "cache: actual repay/collect receipt witness bound to one client/item transaction; finalization rechecks the saved terminal source/receipt, loan holder/status, party balances and pledge books, then marks done and poisons failure; durable terminal rows own cross-worker replay",
+    "loans.js:collateralAuctionRecoveryProofs": "cache: private consume-once token minted only by actual loan recovery leaves, bound to one healthy client/item transaction and active callback; it is consumed once and invalidated/deleted in finally while locked loan/auction rows and canonical refunds own durable state",
+    "loans.js:collateralTerminalProofs": "cache: private consume-once token minted only by actual repay/collect leaves, bound to one healthy client/item transaction and active callback; it is consumed once and invalidated/deleted in finally while locked debt and durable terminal/journal rows own cross-worker state",
+    "productionbooking.js:scopes": "cache: active client/item-transaction and phase-bound booking resource scope for canonical commission/slot/crafting callbacks; resources and completion evidence are re-read and the marker is invalidated/deleted in finally, while durable booking/request/position transitions own replay",
+    "protectioncontracts.js:completions": "cache: one locally issued receipt witness bound to the actual client/item transaction; the game finalizer deletes it before rechecking saved request, original actor, immutable contract/source, cash and canonical coverage proof, poisoning failure; durable request/contract rows own cross-worker state",
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
     'coordination/graph.js:REGISTRIES': 'cache: per-registry-object authenticity marker for locally compiled immutable graph registries; persistent definition hashes bind database state',
@@ -4651,13 +4658,27 @@ scopedSocialContext = async function(db) {
   "commercialcampaigns.js:completions": "601454e9baa8f0db844dfa021f609db49c3997953ceb296cc82d1e5c1575cb09",
   "merchantloyalty.js:purchaseContexts": "8cf4b3e14f7f5f2ef0a798cd1e435bac4fdf50ea96c25a546b30032faf4bf700",
   "saleattribution.js:purchaseScopes": "6fe23fcc2ab1413eac75bf69776a0df1b7a6c7c27213f9758eadbb51839ccd13",
-  "shoppingbasket.js:purchaseScopes": "40a57a58f485354e31d5108252893aa122af6d97c73f3ae688f66f2bd0f903d6"
+  "shoppingbasket.js:purchaseScopes": "40a57a58f485354e31d5108252893aa122af6d97c73f3ae688f66f2bd0f903d6",
+  "collateralauction.js:results": "3ac8c8ecb30b31dbb9d94a1292aa709ec1be0e1f57b7dd3a3ddcaaf187c0d116",
+  "collaterallending.js:finalizations": "020d3da4371dbc944459b902e7a1170a20dc76072e38c77a0fe3f8fe443be996",
+  "collaterallending.js:terminalFinalizations": "020d3da4371dbc944459b902e7a1170a20dc76072e38c77a0fe3f8fe443be996",
+  "loans.js:collateralAuctionRecoveryProofs": "ef3af41fb8335ff6dc8012dd40cef0da0661e7ec123c975d31f86182f2813942",
+  "loans.js:collateralTerminalProofs": "ef3af41fb8335ff6dc8012dd40cef0da0661e7ec123c975d31f86182f2813942",
+  "productionbooking.js:scopes": "c417c790fcaa6e29257f6ebe58ba798a0f53e7d17ef60e8ab846087ec1ae1ea7",
+  "protectioncontracts.js:completions": "2be99b463811db9ce2349ff9ffb5d1670e8df5e81d34565561dd04e4c375ca9f"
 },normalized=source.replaceAll('\r\n','\n');
     return Object.hasOwn(seals,key)&&!normalized.includes('\r')
       &&(source===normalized||source===normalized.replaceAll('\n','\r\n'))
       &&createHash('sha256').update(normalized).digest('hex')===seals[key];
   };
   const completionPostureMutations={
+    "collateralauction.js:results":[["scope.client !== client","false"],["scope.transaction !== I.itemTransactionIdentity(client)","false"],["request.original_character !== scope.actor","false"],["scope.done = true;","scope.done = false;"]],
+    "collaterallending.js:finalizations":[["scope.client !== client","false"],["scope.transaction !== I.itemTransactionIdentity(client)","false"],["request.original_character !== row.borrower_character","false"],["I.assertItemTransactionHealthy(client); scope.done = true;","I.assertItemTransactionHealthy(client); scope.done = false;"]],
+    "collaterallending.js:terminalFinalizations":[["if (scope.done || scope.client !== client || scope.transaction !== I.itemTransactionIdentity(client)) fail('terminal_finalization_scope');","if (scope.done || false || scope.transaction !== I.itemTransactionIdentity(client)) fail('terminal_finalization_scope');"],["terminal.holder_character !== scope.holderId","false"],["loan.status !== scope.kind","false"],["    scope.done = true;\n  } catch","    scope.done = false;\n  } catch"]],
+    "loans.js:collateralAuctionRecoveryProofs":[["state.client !== client","false"],["state.transaction !== itemTransactionIdentity(client)","false"],["state.used = true;","state.used = false;"],["state.active = false; collateralAuctionRecoveryProofs.delete(token);","state.active = true; void token;"]],
+    "loans.js:collateralTerminalProofs":[["proof.client !== client","false"],["proof.transaction !== itemTransactionIdentity(client)","false"],["proof.used = true;","proof.used = false;"],["scope.active = false; collateralTerminalProofs.delete(token);","scope.active = true; void token;"]],
+    "productionbooking.js:scopes":[["!s?.active","false"],["s.transaction!==itemTransactionIdentity(c)","false"],["s.active=false;scopes.delete(c);","s.active=true;void c;"],["await verifyProductionBookingResources(c,s.row,await clock(c));return true;","return true;"]],
+    "protectioncontracts.js:completions":[["proof.client !== c","false"],["proof.transaction !== itemTransactionIdentity(c)","false"],["completions.delete(result);","void result;"],["saved.original_character !== proof.actor","false"]],
     'commercialcampaigns.js:completions':[
       ['proof.client !== c','false'],['proof.transaction !== itemTransactionIdentity(c)','false'],
       ['completions.delete(result);','void result;'],
