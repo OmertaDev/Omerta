@@ -1,0 +1,19 @@
+{
+  "id": "HOSTED-HEALTH-R1",
+  "status": "CORRECTED_IN_DISABLED_SOURCE_PREPARATION_NOT_EXECUTED",
+  "runId": "39003881167",
+  "failedWorkflowCommit": "c98ed5fc750c266a6d35519ef2f60790a1edb61c",
+  "logSHA256": "57dce2687b7f0c5bf36fdff0c1b0468b7a793201e0192a01a819d239b72f9ad2",
+  "actualCause": "GitHub runner2.337.0 checks truthy Config.Healthcheck created by --no-healthcheck/NONE then dereferences absent State.Health.Status; Docker create/start themselves succeeded.",
+  "relevantLogLines": {
+    "dockerCreate": 117,
+    "dockerStart": 119,
+    "runnerInspect": 128,
+    "missingHealthError": 129
+  },
+  "secondaryFailures": "Always steps could not find runtime/candidate/encrypted output because container initialization failed before checkout/install/materializer/observer.",
+  "correction": "Delete only explicit options --no-healthcheck so no healthcheck override is declared; frozen observer still requires absent or NONE config and no recurring health state, followed by unchanged bounded50s startup.",
+  "precondition": "The actual image must have no default recurring healthcheck; frozen serviceFacts will fail closed if a healthcheck/state is observed. This source-only packet does not claim an observed new container.",
+  "RootDisabledJobReported": true,
+  "noNewWorkflowOrBindingAuthority": true
+}

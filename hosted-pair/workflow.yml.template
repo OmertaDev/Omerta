@@ -58,7 +58,6 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
         ports: ['5432:5432']
-        options: --no-healthcheck
     steps:
       - uses: actions/checkout@__CHECKOUT_SHA__
         with:

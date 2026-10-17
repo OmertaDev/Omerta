@@ -1,0 +1,16 @@
+{
+  "phase": "PURE_YAML_AND_EXTRACTED_FROZEN_SERVICE_GUARD_MODELS",
+  "positive": 4,
+  "refused": 4,
+  "oldNoneBranchFailureRetained": true,
+  "actualRunnerTemplateModelNotExecution": true,
+  "fullWorkflowInverse": true,
+  "sourceObserverStartupAndAllOtherBytesExact": true,
+  "actualDocker": 0,
+  "actualPG": 0,
+  "actualNetwork": 0,
+  "materializerImport": false,
+  "guardCapture": false,
+  "capabilityAttempts": 0,
+  "prior14_74AuthorControls": "HISTORICAL_NOT_RERUN"
+}

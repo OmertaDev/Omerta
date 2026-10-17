@@ -33,8 +33,11 @@
   "entry": "materialize-hosted.cjs",
   "entrySHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
   "controls": {
-    "positive": 14,
-    "refusals": 74
+    "focused": {
+      "positive": 4,
+      "refused": 4
+    },
+    "capabilityAttempts": 0
   },
   "capabilityAttempts": {
     "network": 0,
@@ -47,14 +50,34 @@
   },
   "files": [
     {
+      "file": "guard-barrier-inverse.json",
+      "bytes": 556,
+      "sha256": "9bb044b03cd5a6d949e04b7151cf6ed0838c7adf1f8bd403abffc51200b27cbf"
+    },
+    {
       "file": "HANDOFF.md",
       "bytes": 8571,
       "sha256": "6da8ceb4ead8bd4a3b3d0f05bfd42cd14658a7b3d60fe4d8423893e9dfb75571"
     },
     {
-      "file": "guard-barrier-inverse.json",
-      "bytes": 556,
-      "sha256": "9bb044b03cd5a6d949e04b7151cf6ed0838c7adf1f8bd403abffc51200b27cbf"
+      "file": "health-none-controls-results.json",
+      "bytes": 473,
+      "sha256": "5e82da9115bc04facde749622c856423f1f63afd00e9bc2bdd9e5681651084a1"
+    },
+    {
+      "file": "health-none-exact-inverses.json",
+      "bytes": 1506,
+      "sha256": "bbcb828ba804b64061c2b013090d1026a7ed4d4807a6d7279cbcae179c93607d"
+    },
+    {
+      "file": "HEALTH-SUCCESSOR.md",
+      "bytes": 2315,
+      "sha256": "e8848d55f5ffdbcdfd5905c54985492e2d33a4a0181315d01a5c351b1f493878"
+    },
+    {
+      "file": "HOSTED-HEALTH-R1.json",
+      "bytes": 1314,
+      "sha256": "015ff77597549bc69cc58c61b16453e9c69147b7345805899047dc6248769bff"
     },
     {
       "file": "hosted-source-guard.EXECUTABLE.mjs",
@@ -122,14 +145,39 @@
       "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
     },
     {
+      "file": "postimages/.github/workflows/rc1-recovery.yml",
+      "bytes": 6192,
+      "sha256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05"
+    },
+    {
       "file": "prepare-files.cjs",
       "bytes": 5083,
       "sha256": "32612216253d4144abf2d1e8bb9c03f169e35f091162f9981b1a2f00833caf16"
     },
     {
+      "file": "prepare-health-successor.cjs",
+      "bytes": 12416,
+      "sha256": "02c8340b6e572749537e1fcb70d1a2c2ba6fb470b204aaa63e4d589c19afcbda"
+    },
+    {
       "file": "provenance/81ef-retention-workflow.yml",
       "bytes": 3143,
       "sha256": "e62d3a1f3991f225b393fbee13cc68b341fadafd55f20e446353e4434d4cc7c1"
+    },
+    {
+      "file": "provenance/failed-main-job-39003881167.log",
+      "bytes": 28343,
+      "sha256": "57dce2687b7f0c5bf36fdff0c1b0468b7a793201e0192a01a819d239b72f9ad2"
+    },
+    {
+      "file": "provenance/failed-proof-c98-workflow.yml",
+      "bytes": 6226,
+      "sha256": "62303c802c75c2d632c21aee13ca59d733b6b80072a051da34906aee2a851bc5"
+    },
+    {
+      "file": "provenance/failed-proof-staged-source.json",
+      "bytes": 1942,
+      "sha256": "397c1b28067d4ec127c884a2c4b09677d098f9d7ce52a381ff104dc5fdb4e23b"
     },
     {
       "file": "provenance/git-author-manifest.json",
@@ -140,6 +188,11 @@
       "file": "provenance/gui6bc-manifest.json",
       "bytes": 1878,
       "sha256": "6bc7271cd7042ab54a9094a5b9365c4fcb8b1e3ff782be254bcbd9dc252ef1e0"
+    },
+    {
+      "file": "provenance/health-none-parent-manifest.json",
+      "bytes": 9054,
+      "sha256": "3355d6d2942cd726994d649c74c0e4929e31b7aed7b9282b8214c86247ee2fce"
     },
     {
       "file": "provenance/linux-dependencies-manifest.json",
@@ -238,8 +291,8 @@
     },
     {
       "file": "test-materializer.cjs",
-      "bytes": 11511,
-      "sha256": "f8be89062a7ccddf62a758cb4c886693e8f6396210acf113985f657016e78314"
+      "bytes": 11502,
+      "sha256": "44612b1236abb46748624532850648735dffd55d13461f82051997a3fb05634c"
     },
     {
       "file": "tests-results-before-static-workflow-split.json",
@@ -258,8 +311,20 @@
     },
     {
       "file": "workflow.yml.template",
-      "bytes": 6080,
-      "sha256": "bf944655f899dd0f8e4d96530413aaa700316de3607756a756099b259b051e5b"
+      "bytes": 6046,
+      "sha256": "34883fb22213a1f1985e09f3d6df3bad8b501ba80b3ce01014206d2d66ea0a17"
     }
-  ]
+  ],
+  "parentManifestSHA256": "3355d6d2942cd726994d649c74c0e4929e31b7aed7b9282b8214c86247ee2fce",
+  "fix": {
+    "id": "HOSTED-HEALTH-R1",
+    "templateLinesRemoved": 1,
+    "sourceModelExpectationChanges": 1,
+    "controllerAndObserverUnchanged": true,
+    "failedWorkflowCommit": "c98ed5fc750c266a6d35519ef2f60790a1edb61c"
+  },
+  "priorAuthorControlsHistoricalOnly": {
+    "positive": 14,
+    "refusals": 74
+  }
 }

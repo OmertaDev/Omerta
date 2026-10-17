@@ -1,0 +1,31 @@
+{
+  "parentManifestSHA256": "3355d6d2942cd726994d649c74c0e4929e31b7aed7b9282b8214c86247ee2fce",
+  "edits": [
+    {
+      "file": "workflow.yml.template",
+      "beforeSHA256": "bf944655f899dd0f8e4d96530413aaa700316de3607756a756099b259b051e5b",
+      "afterSHA256": "34883fb22213a1f1985e09f3d6df3bad8b501ba80b3ce01014206d2d66ea0a17",
+      "removed": "        options: --no-healthcheck\n",
+      "wholeInverse": true
+    },
+    {
+      "file": "test-materializer.cjs",
+      "beforeSHA256": "f8be89062a7ccddf62a758cb4c886693e8f6396210acf113985f657016e78314",
+      "afterSHA256": "44612b1236abb46748624532850648735dffd55d13461f82051997a3fb05634c",
+      "before": "assert.equal(parsed.jobs['rootd8-bg-pair'].services.postgres.options,'--no-healthcheck');",
+      "after": "assert.equal(parsed.jobs['rootd8-bg-pair'].services.postgres.options,undefined);",
+      "wholeInverse": true
+    },
+    {
+      "file": "postimages/.github/workflows/rc1-recovery.yml",
+      "source": "c98ed5fc750c266a6d35519ef2f60790a1edb61c",
+      "beforeSHA256": "62303c802c75c2d632c21aee13ca59d733b6b80072a051da34906aee2a851bc5",
+      "afterSHA256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05",
+      "removed": "        options: --no-healthcheck\n",
+      "wholeInverse": true
+    }
+  ],
+  "allOtherParentFilesExact": true,
+  "controllerSHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+  "observerSHA256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2"
+}
