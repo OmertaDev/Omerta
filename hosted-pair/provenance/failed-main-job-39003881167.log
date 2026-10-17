@@ -1,0 +1,232 @@
+rootd8-bg-pair	Set up job	﻿2026-10-17T04:49:59.1265557Z Current runner version: '2.337.0'
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1280815Z ##[group]Runner Image Provisioner
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1281319Z Hosted Compute Agent
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1281642Z Version: 20261012.601
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1282080Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1282632Z Build Date: 2026-10-12T17:48:21Z
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1283042Z Worker ID: {de6b09d2-52ad-4105-971b-23bf99792880}
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1283472Z Region: westus2
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1283807Z Cloud: Azure
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1284163Z ##[endgroup]
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1284859Z ##[group]Operating System
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1285244Z Ubuntu
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1285554Z 24.04.5
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1285877Z LTS
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1286204Z ##[endgroup]
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1286517Z ##[group]Runner Image
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1286847Z Image: ubuntu-24.04
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1287237Z Version: 20261012.334.1
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1287849Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1288819Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1289340Z ##[endgroup]
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1290009Z ##[group]GITHUB_TOKEN Permissions
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1291129Z Contents: read
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1291468Z Metadata: read
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1291786Z ##[endgroup]
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1293378Z Secret source: Actions
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1293925Z Cache mode: write
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1294365Z Prepare workflow directory
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1544500Z Prepare all required actions
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.1573319Z Getting action download info
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.4730879Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.5573758Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+rootd8-bg-pair	Set up job	2026-10-17T04:49:59.7657585Z Complete job name: rootd8-bg-pair
+rootd8-bg-pair	Initialize containers	﻿2026-10-17T04:49:59.7975460Z ##[group]Checking docker version
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.7983706Z ##[command]/usr/bin/docker version --format '{{.Server.APIVersion}}'
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8692718Z '1.48'
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8704405Z Docker daemon API version: '1.48'
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8704831Z ##[command]/usr/bin/docker version --format '{{.Client.APIVersion}}'
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8812977Z '1.48'
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8822589Z Docker client API version: '1.48'
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8825880Z ##[endgroup]
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8827082Z ##[group]Clean up resources from previous jobs
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8830386Z ##[command]/usr/bin/docker ps --all --quiet --no-trunc --filter "label=64188e"
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.8928530Z ##[command]/usr/bin/docker network prune --force --filter "label=64188e"
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.9015318Z ##[endgroup]
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.9015605Z ##[group]Create local container network
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.9021451Z ##[command]/usr/bin/docker network create --label 64188e github_network_1b6b420e03d54830a6bbfcbcbd112c56
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.9357707Z eec857e2040bff632eaffbb74e0c02c1b7c082bc21d1c3c7b623a767d93ce3ee
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.9373143Z ##[endgroup]
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.9389797Z ##[group]Starting postgres service container
+rootd8-bg-pair	Initialize containers	2026-10-17T04:49:59.9403965Z ##[command]/usr/bin/docker pull postgres:18.4
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:00.8707566Z 18.4: Pulling from library/postgres
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1191194Z 26c307b5e35a: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1192205Z 5db2b7edf527: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1193056Z 130549402290: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1193666Z 8241f4a14319: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1194275Z a4dcdc0137d7: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1194908Z d1052e262c2e: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1195516Z 39762d0b4bb2: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1196136Z 38639b9be6a6: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1196751Z 4e6c52c74256: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1197361Z f51baa0c6c0d: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1197982Z 88bb22edda9b: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1198892Z f7d54729e84b: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1199519Z f90dd111f2e5: Pulling fs layer
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1200122Z 38639b9be6a6: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1200667Z 4e6c52c74256: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1201192Z f51baa0c6c0d: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1201715Z 88bb22edda9b: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1202239Z f7d54729e84b: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1202883Z f90dd111f2e5: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1203416Z 8241f4a14319: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1203935Z a4dcdc0137d7: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1204492Z d1052e262c2e: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.1205185Z 39762d0b4bb2: Waiting
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.4034693Z 5db2b7edf527: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.4973113Z 130549402290: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.4973911Z 130549402290: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.5507702Z 26c307b5e35a: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.5508285Z 26c307b5e35a: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.6827512Z 8241f4a14319: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.6830550Z 8241f4a14319: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.8431046Z d1052e262c2e: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.8433003Z d1052e262c2e: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.8503207Z a4dcdc0137d7: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.8514634Z a4dcdc0137d7: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.9110376Z 39762d0b4bb2: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:01.9110630Z 39762d0b4bb2: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.0923771Z 38639b9be6a6: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.0924345Z 38639b9be6a6: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.1230749Z 26c307b5e35a: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.1560679Z f51baa0c6c0d: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.1562080Z f51baa0c6c0d: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.3409755Z 88bb22edda9b: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.3417743Z 88bb22edda9b: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.3899588Z f7d54729e84b: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.3899948Z f7d54729e84b: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.5016224Z 4e6c52c74256: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.5016549Z 4e6c52c74256: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.5814413Z f90dd111f2e5: Verifying Checksum
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:02.5814629Z f90dd111f2e5: Download complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:03.3191265Z 5db2b7edf527: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:03.5156566Z 130549402290: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:03.5584948Z 8241f4a14319: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:03.8673157Z a4dcdc0137d7: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:03.9277249Z d1052e262c2e: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:03.9356111Z 39762d0b4bb2: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:03.9417084Z 38639b9be6a6: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0461054Z 4e6c52c74256: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0570021Z f51baa0c6c0d: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0644663Z 88bb22edda9b: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0708959Z f7d54729e84b: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0784877Z f90dd111f2e5: Pull complete
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0813439Z Digest: sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0822706Z Status: Downloaded newer image for postgres:18.4
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0828890Z docker.io/library/postgres:18.4
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.0869655Z ##[command]/usr/bin/docker create --name 2c796d4722e94599bcdae2026ee8f45d_postgres184_8dcaed --label 64188e --network github_network_1b6b420e03d54830a6bbfcbcbd112c56 --network-alias postgres -p 5432:5432 --no-healthcheck -e "POSTGRES_USER=postgres" -e "POSTGRES_PASSWORD=postgres" -e "POSTGRES_DB=postgres" -e GITHUB_ACTIONS=true -e CI=true postgres:18.4
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.1041040Z 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.1057088Z ##[command]/usr/bin/docker start 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2623359Z 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2644977Z ##[command]/usr/bin/docker ps --all --filter id=9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc --filter status=running --no-trunc --format "{{.ID}} {{.Status}}"
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2740115Z 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc Up Less than a second
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2764460Z ##[command]/usr/bin/docker port 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2861785Z 5432/tcp -> 0.0.0.0:5432
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2871273Z 5432/tcp -> [::]:5432
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2903244Z ##[endgroup]
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2910545Z ##[group]Waiting for all services to be ready
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.2919652Z ##[command]/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.3024524Z template parsing error: template: :1:40: executing "" at <.State.Health.Status>: map has no entry for key "Health"
+rootd8-bg-pair	Initialize containers	2026-10-17T04:50:07.3111337Z ##[error]Exit code 1 returned from process: file name '/usr/bin/docker', arguments 'inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc'.
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	﻿2026-10-17T04:50:07.3358726Z ##[group]Run "$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tmp/rc1-retention-tools/hosted-pair/materialize-hosted.cjs verify-runtime "$RUNNER_TEMP/hosted-pair-root-approval.json" "$HOSTED_PAIR_APPROVAL_SHA256"
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3360111Z ^[[36;1m"$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tmp/rc1-retention-tools/hosted-pair/materialize-hosted.cjs verify-runtime "$RUNNER_TEMP/hosted-pair-root-approval.json" "$HOSTED_PAIR_APPROVAL_SHA256"^[[0m
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3548914Z shell: /usr/bin/bash -e {0}
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3549296Z env:
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3549481Z   LEGAL_OPERATOR_NAME: CI Test Operator
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3549743Z   LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3550024Z   PRIVACY_CONTACT_EMAIL: privacy@example.test
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3550268Z   DMCA_AGENT_NAME: CI Test Agent
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3550488Z   DMCA_AGENT_EMAIL: copyright@example.test
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3550760Z   DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3551048Z   DMCA_AGENT_PHONE: +1 202 555 0100
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3551258Z   DMCA_AGENT_REGISTERED: true
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3551535Z   PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3551833Z   CHAIN_ENABLED: off
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3552007Z   RESOURCE_ECONOMY: off
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3552465Z   HOSTED_PAIR_APPROVAL_SHA256: 1980b8d4b5919cd5007905c623c37a61f84b2c7863232b3ccace726ee824ee4a
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3552973Z   HOSTED_PAIR_SERVICE_ID: 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3553326Z ##[endgroup]
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3688049Z /home/runner/work/_temp/1e07a804-dce5-41f5-b125-8ea279a5c3e0.sh: line 1: /home/runner/work/_temp/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node: No such file or directory
+rootd8-bg-pair	Reverify complete approved Node and bundled npm distribution	2026-10-17T04:50:07.3693402Z ##[error]Process completed with exit code 127.
+rootd8-bg-pair	Existing authenticated encryption even after failure	﻿2026-10-17T04:50:07.3762947Z ##[group]Run GITHUB_WORKSPACE="$GITHUB_WORKSPACE/candidate" "$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tools/rc1-ci-retain.mjs
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3763893Z ^[[36;1mGITHUB_WORKSPACE="$GITHUB_WORKSPACE/candidate" "$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tools/rc1-ci-retain.mjs^[[0m
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3828510Z shell: /usr/bin/bash -e {0}
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3828829Z env:
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3829020Z   LEGAL_OPERATOR_NAME: CI Test Operator
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3829300Z   LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3829588Z   PRIVACY_CONTACT_EMAIL: privacy@example.test
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3829833Z   DMCA_AGENT_NAME: CI Test Agent
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3830054Z   DMCA_AGENT_EMAIL: copyright@example.test
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3830315Z   DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3830580Z   DMCA_AGENT_PHONE: +1 202 555 0100
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3830809Z   DMCA_AGENT_REGISTERED: true
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3831112Z   PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3831639Z   CHAIN_ENABLED: off
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3831822Z   RESOURCE_ECONOMY: off
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3834354Z   RC1_EVIDENCE_PUBLIC_KEY: -----BEGIN PUBLIC KEY-----
+rootd8-bg-pair	Existing authenticated encryption even after failure	MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAmQQX77iWORkH9ONYEmh7
+rootd8-bg-pair	Existing authenticated encryption even after failure	PwMuTol8WThuBB/sKxxF39WExYog3E+WdIeCZVKjH8rTMJiV5VXl8BlZZ2ZtqBwp
+rootd8-bg-pair	Existing authenticated encryption even after failure	7NP3mruRizXODVnS9Cs1QRkzLtuS9p0XwbdeHOYk5pihBTGmtcTYPG+Vl+2No6kX
+rootd8-bg-pair	Existing authenticated encryption even after failure	MPBXrQaBwWGM5/eduEkjhOrWdrG1uCX4++1zBv0aFNFMoiYo/m9Wd063o+B6ku4H
+rootd8-bg-pair	Existing authenticated encryption even after failure	p8VkGoZyOzDj6jsiE3w9gASrFcoR4m0OtY8d+9ZzwuERYG1iWp7RvfDRejlqBsty
+rootd8-bg-pair	Existing authenticated encryption even after failure	vZAAoy7EEmK93ldG7uXLvEirmaWn/UunhTebhRUJtPQltZrtooWTM3+/ExJAgeDI
+rootd8-bg-pair	Existing authenticated encryption even after failure	DvHIWOYLD5szBr6GcqUmABZy5txkljqSPxKhWTHyYd8r+seU4/kBPhbQdf9Tlo2+
+rootd8-bg-pair	Existing authenticated encryption even after failure	kOPbVG9IqLhHPsC/1Rocls/9ESIsYNFxN9cjUZUkl3N5SCgqECbDi6y3Z+XCORme
+rootd8-bg-pair	Existing authenticated encryption even after failure	l94BkXgZXgVpL4/bNLyfxjPTMOvW/A5Up+3YQweXS2UPAgMBAAE=
+rootd8-bg-pair	Existing authenticated encryption even after failure	-----END PUBLIC KEY-----
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3836780Z   RC1_CI_POSTGRES: 18.4
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3837054Z   RC1_REPLAY_SOURCE: d8e9f2e1feaf1df1f64584268069ba9917e30849
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3837337Z ##[endgroup]
+rootd8-bg-pair	Existing authenticated encryption even after failure	2026-10-17T04:50:07.3927619Z ##[error]An error occurred trying to start process '/usr/bin/bash' with working directory '/home/runner/work/Omerta/Omerta/candidate'. No such file or directory
+rootd8-bg-pair	Retain authenticated restricted evidence	﻿2026-10-17T04:50:07.4005267Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4005591Z with:
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4005803Z   name: rc1-private-rootd8-bg-sourcepair-39003881167-1
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4006121Z   path: /home/runner/work/_temp/rc1-retention/evidence.rc1enc
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4006371Z   if-no-files-found: error
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4006500Z   retention-days: 30
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4006621Z   compression-level: 6
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4006737Z   overwrite: false
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4006852Z   include-hidden-files: false
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4006981Z env:
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4007092Z   LEGAL_OPERATOR_NAME: CI Test Operator
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4007261Z   LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4007437Z   PRIVACY_CONTACT_EMAIL: privacy@example.test
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4007619Z   DMCA_AGENT_NAME: CI Test Agent
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4007869Z   DMCA_AGENT_EMAIL: copyright@example.test
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4008121Z   DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4008404Z   DMCA_AGENT_PHONE: +1 202 555 0100
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4008595Z   DMCA_AGENT_REGISTERED: true
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4008777Z   PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4008964Z   CHAIN_ENABLED: off
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4009076Z   RESOURCE_ECONOMY: off
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.4009189Z ##[endgroup]
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.5126538Z (node:2303) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.5127180Z (Use `node --trace-deprecation ...` to show where the warning was created)
+rootd8-bg-pair	Retain authenticated restricted evidence	2026-10-17T04:50:07.5145970Z ##[error]No files were found with the provided path: /home/runner/work/_temp/rc1-retention/evidence.rc1enc. No artifacts will be uploaded.
+rootd8-bg-pair	Stop containers	﻿2026-10-17T04:50:07.5279684Z Print service container logs: 2c796d4722e94599bcdae2026ee8f45d_postgres184_8dcaed
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5283268Z ##[command]/usr/bin/docker logs --details 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5395627Z  The files belonging to this database system will be owned by user "postgres".
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5396069Z  This user must also own the server process.
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5396523Z  
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5396999Z  The database cluster will be initialized with locale "en_US.utf8".
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5397424Z  The default database encoding has accordingly been set to "UTF8".
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5397801Z  The default text search configuration will be set to "english".
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5398087Z  
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5398258Z  Data page checksums are enabled.
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5398461Z  
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5398709Z  fixing permissions on existing directory /var/lib/postgresql/18/docker ... ok
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5399045Z  creating subdirectories ... ok
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5399558Z  selecting dynamic shared memory implementation ... posix
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5399869Z  selecting default "max_connections" ... 100
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5400135Z  selecting default "shared_buffers" ... 128MB
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5400374Z  selecting default time zone ... Etc/UTC
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5400608Z  creating configuration files ... ok
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5400830Z  running bootstrap script ... ok
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5409514Z Stop and remove container: 2c796d4722e94599bcdae2026ee8f45d_postgres184_8dcaed
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.5411960Z ##[command]/usr/bin/docker rm --force 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.7691275Z 9067bc8fcba253deec2c6a86919f03cde13b08b35fefd809e4c300748d3197cc
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.7719553Z Remove container network: github_network_1b6b420e03d54830a6bbfcbcbd112c56
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.7721531Z ##[command]/usr/bin/docker network rm github_network_1b6b420e03d54830a6bbfcbcbd112c56
+rootd8-bg-pair	Stop containers	2026-10-17T04:50:07.8649499Z github_network_1b6b420e03d54830a6bbfcbcbd112c56
+rootd8-bg-pair	Complete job	﻿2026-10-17T04:50:07.8708298Z Cleaning up orphan processes
+rootd8-bg-pair	Complete job	2026-10-17T04:50:07.8869006Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
