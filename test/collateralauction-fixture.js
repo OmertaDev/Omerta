@@ -38,7 +38,7 @@ export async function fixture({ nativeOnly = false } = {}) {
   if (nativeOnly) assert.deepEqual(process.argv.slice(2), ['--postgres'], 'Positive cash-loan/custody integration requires the actual native backend');
   const backend = await collateralAuctionBackend();
   Object.assign(process.env, { RESOURCE_ECONOMY: 'off', RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', INVITE_MODE: 'off', DEPOT_PILOT: 'on',
-    LEGAL_PROFILE_DEFER: 'on', JWT_SECRET: 'equipment-collateral-fixture-only', MOD_KEY: 'equipment-collateral-fixture-only', MARKET_SEED: 'equipment-collateral-fixture-only' });
+     JWT_SECRET: 'equipment-collateral-fixture-only', MOD_KEY: 'equipment-collateral-fixture-only', MARKET_SEED: 'equipment-collateral-fixture-only' });
   const { buildServer } = await import('./server-fixture.js');
   const G = await import('../src/game.js'), I = await import('../src/items.js'), Loans = await import('../src/loans.js');
   const C = await import('../src/collaterallending.js'), A = await import('../src/collaterallending-invariants.js');

@@ -3,7 +3,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { prepareCoverageMutualDatabase } from './coverage-mutual-native-env.js';
 const native = await prepareCoverageMutualDatabase({ integration: true });
-Object.assign(process.env, { DEPOT_PILOT: 'on', RATE_LIMIT: 'off', INVITE_MODE: 'off', SOCIAL_VERIFY_MODE: 'off', LEGAL_PROFILE_DEFER: 'on',
+Object.assign(process.env, { DEPOT_PILOT: 'on', RATE_LIMIT: 'off', INVITE_MODE: 'off', SOCIAL_VERIFY_MODE: 'off', 
   RESOURCE_ECONOMY: 'off', JWT_SECRET: 'coverage-mutual-owned-fixture', MOD_KEY: 'coverage-mutual-owned-mod', MARKET_SEED: 'coverage-mutual-owned-seed' });
 const { buildServer } = await import('../src/server.js'), { mutualFixture } = await import('./coverage-mutual-fixture.js');
 const G = await import('../src/game.js'), { runEstate } = await import('../src/social/estate.js');
