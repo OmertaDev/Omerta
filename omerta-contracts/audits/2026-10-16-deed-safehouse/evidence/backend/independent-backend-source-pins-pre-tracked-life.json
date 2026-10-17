@@ -1,0 +1,74 @@
+[
+  {
+    "path": "schema.sql",
+    "sha256": "b34ab7020df0737e1e428cf817b9b168a495de6dd477e0b660930efa55c63bad"
+  },
+  {
+    "path": "src/deedcustody.js",
+    "sha256": "90848e62e729a6f52e174dc4f5608905d7d1bbb6f6368840f441b317600f36eb"
+  },
+  {
+    "path": "src/deedcustodychain.js",
+    "sha256": "0e0ef07d3b2e07979c1c88b20d0d764003b9112ca7c849bf033d4a2d13652117"
+  },
+  {
+    "path": "src/game.js",
+    "sha256": "153d393272d619ef4b7d9806ce922a66461ea536ef86d0b8b04658a1ec554127"
+  },
+  {
+    "path": "src/social/estate.js",
+    "sha256": "dbe361b30a3f2a1e5663474a8cf213687fc8fd98228ceabfb73c1a7e464c2289"
+  },
+  {
+    "path": "src/routes/deeds.js",
+    "sha256": "2a32a0af09f76eca632de4145398eb2aefd7e597d06058c50a1c8aa15fe8a931"
+  },
+  {
+    "path": "src/worker.js",
+    "sha256": "2573071824f71725c2de4fd895403c1d264a4bce8da1ab96e2542404c7cea0b1"
+  },
+  {
+    "path": "src/stockdeliver.js",
+    "sha256": "56be8bd6abf57d246663b2482135e16fbad6982d541bf091512b4687b2e0b958"
+  },
+  {
+    "path": "src/keepertransactions.js",
+    "sha256": "d48a8759f3d5947624a0ac6993a362130fed30460ecbcd62b1549bdcace1ab42"
+  },
+  {
+    "path": "test/deedcustody.js",
+    "sha256": "f15459d791751d862bc1a0ac41722c9b3ea248a5c028c098c9d7526599568f25"
+  },
+  {
+    "path": "test/deedcustodychain.js",
+    "sha256": "0d5ed78b34df4fa39fddc9dca7be7a681426647166090d4b2bfc3487864e48a7"
+  },
+  {
+    "path": "test/deedcustody-estates-chain.js",
+    "sha256": "35f344c84d3a5fcfe0fac189e8874d2b6a89090ff3018259c2593d1909c658df"
+  },
+  {
+    "path": "test/deedcustody-review.js",
+    "sha256": "36459eb25f6dd9ad08d275d1c1736e5756b553783e6025814ffb28fb11f63fe9"
+  },
+  {
+    "path": "test/deedcustody-exit-keeper.js",
+    "sha256": "3ed5a8246979fa223f0cafad736dff11463a01cd66349072b2d842628e848437"
+  },
+  {
+    "path": "test/deedcustody-safe-house.js",
+    "sha256": "5e600c5abe687fb89f9b684bc057fad0625284f1300330006faf0187ef099464"
+  },
+  {
+    "path": "test/deedcustody-postgres.js",
+    "sha256": "03ac4dbdd97c9ee12758ea9131326e6579249e50b32ec33121f7ab4a0f0ea54e"
+  },
+  {
+    "path": "output/deed-custody-review/independent-backend-proof.mjs",
+    "sha256": "11263631d85e9b4678d0808d2af62b458c5519d2f7d3f3f2133b4e8dcab63d86"
+  },
+  {
+    "path": "output/deed-custody-review/independent-action-barrier-proof.mjs",
+    "sha256": "610f67cf450f4599301b5b6ddbd8797242bdf32458415ebd4a79dc96b5e297a2"
+  }
+]

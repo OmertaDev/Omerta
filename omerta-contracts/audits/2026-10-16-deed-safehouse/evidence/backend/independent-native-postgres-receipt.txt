@@ -1,0 +1,9 @@
+Independent native PostgreSQL execution receipt, captured from the completed tool result.
+Command: COORDINATION_TEST_DATABASE_URL=<private loopback port 15459> node test/deedcustody-postgres.js
+Working directory: C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta
+Tool chunk: 4ded86
+Exit code: 0
+Stdout:
+deedcustody-postgres: PASS (atomic rollback, global ordering, exact heirs, raw-journal crash/finality barrier, immutable pending consent, real character-lock serialization)
+
+Source phase: before the additive recordTrackedCharacterDeedDeath helper and its estate caller were introduced. The directly exercised recordCharacterDeedDeath/barrier/journal behavior remained unchanged. Original source hashes are retained in independent-backend-source-pins-pre-tracked-life.json. The final tracked-life helper was separately exercised by independent-tracked-life-retest.log and independent-estate-hook-suite.log.

@@ -1,0 +1,3 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ a stock token's decimals are read off the token, bounded, cached, and never guessed
+✅ stock delivery rail: the deed-required gate, permanent non-expiring allocations, stage→confirm (real flips / comp never), idempotency, the delivered<=allocated wall, the board, the secondary-market exclusion, THE DELIVERY KEEPER (claim-then-send, named skips, retry-on-release), and §10.4-neutrality

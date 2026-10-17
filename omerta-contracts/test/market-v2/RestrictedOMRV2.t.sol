@@ -17,6 +17,10 @@ import {BalanceDelta, toBalanceDelta} from "v4-core/types/BalanceDelta.sol";
 
 /// @dev Transfer probes deliberately expose broad calls to test each token-level role boundary.
 contract RestrictedRoleProbeV2 {
+    function burnFrom(IOmertaRestrictedOMRV2 token, address from, uint256 amount) external {
+        token.burnFrom(from, amount);
+    }
+
     function transfer(IOmertaRestrictedOMRV2 token, address to, uint256 amount) external {
         token.transfer(to, amount);
     }
@@ -43,6 +47,33 @@ contract RestrictedManagerPolicyMockV2 is RestrictedRoleProbeV2 {
 }
 
 contract RestrictedOMRV2Test is Test, IUnlockCallback {
+    function testBurnIsAllowanceConsumingOnlySealedPinnedCustodyAndReducesSupply() public {
+        token.approve(address(custody), 10 ether);
+        vm.expectRevert(RestrictedOMR.UnauthorizedTransfer.selector);
+        custody.burnFrom(token, address(this), 1 ether);
+        _seal();
+        token.approve(address(custody), 10 ether);
+        uint256 supply = token.totalSupply();
+        uint256 walletBefore = token.balanceOf(address(this));
+        custody.burnFrom(token, address(this), 3 ether);
+        assertEq(token.totalSupply(), supply - 3 ether);
+        assertEq(token.balanceOf(address(this)), walletBefore - 3 ether);
+        assertEq(token.allowance(address(this), address(custody)), 7 ether);
+        vm.expectRevert(RestrictedOMR.UnauthorizedTransfer.selector);
+        token.burnFrom(address(this), 1 ether);
+        vm.expectRevert(RestrictedOMR.UnauthorizedTransfer.selector);
+        input.burnFrom(token, address(this), 1 ether);
+        vm.expectRevert(RestrictedOMR.UnauthorizedTransfer.selector);
+        manager.burnFrom(token, address(this), 1 ether);
+        vm.expectRevert();
+        custody.burnFrom(token, address(this), 8 ether);
+        assertEq(token.totalSupply(), supply - 3 ether);
+        vm.etch(address(custody), hex"00");
+        vm.prank(address(custody));
+        vm.expectRevert(RestrictedOMR.UnauthorizedTransfer.selector);
+        token.burnFrom(address(this), 1 ether);
+    }
+
     RestrictedOMR token;
     RestrictedManagerPolicyMockV2 manager;
     RestrictedRoleProbeV2 input;

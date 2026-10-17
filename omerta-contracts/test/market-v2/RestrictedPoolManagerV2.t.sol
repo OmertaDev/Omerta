@@ -17,6 +17,7 @@ import {TransientStateLibrary} from "v4-core/libraries/TransientStateLibrary.sol
 import {BaseTestHooks} from "v4-core/test/BaseTestHooks.sol";
 import {PoolSwapTest} from "v4-core/test/PoolSwapTest.sol";
 import {PoolModifyLiquidityTest} from "v4-core/test/PoolModifyLiquidityTest.sol";
+import {PoolDonateTest} from "v4-core/test/PoolDonateTest.sol";
 import {OmertaRestrictedOMRV2} from "../../src/market-v2/OmertaRestrictedOMRV2.sol";
 import {IOmertaRestrictedOMRV2} from "../../src/market-v2/IOmertaRestrictedOMRV2.sol";
 
@@ -40,6 +41,8 @@ interface OmertaPoolManagerV2 is IPoolManager {
     function totalOwed(Currency currency) external view returns (uint256);
     function sweep(Currency currency, uint8 bucket) external returns (uint256);
     function claim(Currency currency, uint8 bucket, address to) external returns (uint256);
+    function dailyOmrVolume(uint256 utcDay) external view returns (uint256);
+    function volumeTrackingStartDay() external view returns (uint256);
 }
 
 /// @dev A approved zero-fee hook cannot undercut the fee enforced by the manager.
@@ -215,6 +218,7 @@ contract RestrictedPoolManagerV2Test is Test {
     PoolModifyLiquidityTest internal lpRouter;
     RestrictedNettingRouterFixtureV2 internal nettingRouter;
     RestrictedWithdrawalProbeFixtureV2 internal probe;
+    PoolDonateTest internal donateRouter;
     RestrictedZeroFeeHookFixtureV2 internal hook;
     RestrictedZeroFeeHookFixtureV2 internal foreignHook;
     RestrictedZeroFeeHookFixtureV2 internal beforeReturnHook;
@@ -236,6 +240,7 @@ contract RestrictedPoolManagerV2Test is Test {
         lpRouter = new PoolModifyLiquidityTest(manager);
         nettingRouter = new RestrictedNettingRouterFixtureV2(manager);
         probe = new RestrictedWithdrawalProbeFixtureV2(manager);
+        donateRouter = new PoolDonateTest(manager);
 
         hook = _deployHook(0xBEEF, Hooks.AFTER_SWAP_FLAG | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG, manager);
         foreignHook = _deployHook(0xBEF0, Hooks.AFTER_SWAP_FLAG, IPoolManager(address(0xBAD)));
@@ -251,6 +256,7 @@ contract RestrictedPoolManagerV2Test is Test {
         _register(address(lpRouter), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _register(address(nettingRouter), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _register(address(probe), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
+        _register(address(donateRouter), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _register(address(hook), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody);
         _register(address(foreignHook), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody);
         _register(address(beforeReturnHook), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody);
@@ -262,6 +268,7 @@ contract RestrictedPoolManagerV2Test is Test {
         vm.deal(address(this), 1_000_000 ether);
         omr.approve(address(router), type(uint256).max);
         omr.approve(address(lpRouter), type(uint256).max);
+        omr.approve(address(donateRouter), type(uint256).max);
         _addLiquidity(noHookKey, int256(uint256(INITIAL_L)));
         _addLiquidity(hookedKey, int256(uint256(INITIAL_L)));
         vm.deal(address(invariantHandler), 1_000_000 ether);
@@ -318,9 +325,13 @@ contract RestrictedPoolManagerV2Test is Test {
         bool currency0 = exactInput ? !buy : buy;
         Currency currency = currency0 ? eth : token;
         uint256 beforeOwed = revenueManager.totalOwed(currency);
+        uint256 beforeVolume = revenueManager.dailyOmrVolume(block.timestamp / 1 days);
         vm.recordLogs();
         BalanceDelta delta = _swap(key, buy, exactInput ? -int256(1 ether) : int256(1 ether), limit);
         (int128 raw0, int128 raw1) = _rawAmounts();
+        int256 omrRaw = int256(raw1);
+        assertEq(revenueManager.dailyOmrVolume(block.timestamp / 1 days) - beforeVolume,
+            uint256(omrRaw < 0 ? -omrRaw : omrRaw), "volume counts raw filled OMR once before fees");
         int256 raw = currency0 ? int256(raw0) : int256(raw1);
         uint256 fee = uint256(raw < 0 ? -raw : raw) * 500 / 10_000;
         assertGt(fee, 0);
@@ -343,6 +354,33 @@ contract RestrictedPoolManagerV2Test is Test {
     function testNoHookExactInputSellPaysFivePointFivePercent() public { _assertTradeFee(noHookKey, false, true, Q96 * 2); }
     function testNoHookExactOutputBuyPaysFivePointFivePercent() public { _assertTradeFee(noHookKey, true, false, Q96 / 2); }
     function testNoHookExactOutputSellPaysFivePointFivePercent() public { _assertTradeFee(noHookKey, false, false, Q96 * 2); }
+
+    function testVolumeTrackingStartsNextFullDayAndSeparatesUTCdays() public {
+        uint256 today = block.timestamp / 1 days;
+        assertEq(revenueManager.volumeTrackingStartDay(), today + 1);
+        _assertTradeFee(noHookKey, true, true, Q96 / 2);
+        uint256 prior = revenueManager.dailyOmrVolume(today);
+        assertGt(prior, 0);
+        vm.warp((today + 1) * 1 days);
+        assertEq(revenueManager.dailyOmrVolume(today + 1), 0);
+        _assertTradeFee(noHookKey, false, true, Q96 * 2);
+        assertEq(revenueManager.dailyOmrVolume(today), prior);
+        assertGt(revenueManager.dailyOmrVolume(today + 1), 0);
+    }
+
+    function testRevertedSwapDoesNotIncreaseVolume() public {
+        uint256 beforeVolume = revenueManager.dailyOmrVolume(block.timestamp / 1 days);
+        vm.expectRevert();
+        _swap(noHookKey, true, -1 ether, Q96 * 2);
+        assertEq(revenueManager.dailyOmrVolume(block.timestamp / 1 days), beforeVolume);
+    }
+
+    function testDonationsAndDirectTransfersDoNotIncreaseVolume() public {
+        uint256 today = block.timestamp / 1 days;
+        donateRouter.donate{value: 1 ether}(noHookKey, 1 ether, 2 ether, "");
+        omr.transfer(address(manager), 3 ether);
+        assertEq(revenueManager.dailyOmrVolume(today), 0);
+    }
 
     function testZeroFeeHookCannotUndercutBuyOrSellRevenue() public {
         _assertTradeFee(hookedKey, true, true, Q96 / 2);
@@ -394,6 +432,7 @@ contract RestrictedPoolManagerV2Test is Test {
             assertEq(hook.swapCalls(), 0, "callback state rolls back");
             assertEq(revenueManager.totalOwed(eth), 0);
             assertEq(revenueManager.totalOwed(token), 0);
+            assertEq(revenueManager.dailyOmrVolume(block.timestamp / 1 days), 0, "failed hook rolls back volume");
             for (uint8 bucket; bucket < 4; ++bucket) {
                 assertEq(revenueManager.owed(eth, bucket), 0);
                 assertEq(revenueManager.owed(token, bucket), 0);
@@ -437,6 +476,7 @@ contract RestrictedPoolManagerV2Test is Test {
         vm.recordLogs();
         BalanceDelta delta = _swap(noHookKey, true, -1000 ether, Q96 * 999 / 1000);
         (int128 raw0, int128 raw1) = _rawAmounts();
+        assertEq(revenueManager.dailyOmrVolume(block.timestamp / 1 days), uint256(int256(raw1)));
         assertLt(uint256(-int256(raw0)), 1000 ether, "limit causes partial fill");
         uint256 fee = uint256(int256(raw1)) * 500 / 10_000;
         assertEq(revenueManager.totalOwed(token), fee);
@@ -454,6 +494,7 @@ contract RestrictedPoolManagerV2Test is Test {
         assertLe(beforeEth - address(this).balance, 1, "only v4 principal rounding");
         assertEq(revenueManager.totalOwed(eth), 0);
         assertEq(revenueManager.totalOwed(token), 0);
+        assertEq(revenueManager.dailyOmrVolume(block.timestamp / 1 days), 0, "LP principal is not turnover");
         assertEq(manager.getLiquidity(noHookKey.toId()), INITIAL_L, "StateLibrary pool storage remains compatible");
     }
 

@@ -202,6 +202,9 @@ jobs:
       - name: Earned Street Deed investigation and claim in the browser
         run: npm run test:deed-discovery:browser
 
+      - name: Deed equipment and Safe House wallet consent in the browser
+        run: npm run test:deed-custody:browser
+
       - name: Consigliere gateway recovery in the browser
         run: npm run test:gateway:browser
 
@@ -315,6 +318,11 @@ jobs:
         env:
           DEED_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
         run: npm run test:deed-upgrades:postgres
+
+      - name: Deed death custody and safe-exit finality (real PostgreSQL concurrency)
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+        run: npm run test:deed-custody:postgres
 
       - name: City RPG quests and concurrent replay (real PostgreSQL)
         if: '!cancelled()'

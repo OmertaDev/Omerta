@@ -1,0 +1,77 @@
+{
+  "phase": "independent read-only Solidity source review; no activation or deployment clearance",
+  "baseCommit": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "dirty": true,
+  "reviewer": "custody_backend_implementation; did not author Solidity contracts",
+  "createdAt": "2026-10-17T03:25:51.361Z",
+  "files": [
+    {
+      "path": "omerta-contracts/src/CharacterDeedCustody.sol",
+      "sha256": "564d66302db4772064cc97acdece0c4dbef9047196e77e1eff8e9775b83edfa1"
+    },
+    {
+      "path": "omerta-contracts/src/DeedStockAccount.sol",
+      "sha256": "dbfefafad3bdf325f1a44d1c3fe36910ef9ec7efb4e468e6db8694fef3fbd4eb"
+    },
+    {
+      "path": "omerta-contracts/src/StreetDeed.sol",
+      "sha256": "78d7c908b6b4f654e9f4d8357b3321f3e60f80b496fba3b523d483e53a4ab4e3"
+    },
+    {
+      "path": "omerta-contracts/src/DynastyNFT.sol",
+      "sha256": "6b301b79625be04b9ef2cf5c4f4693f79e2839a99fe1a265a9d25e485d551a04"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol",
+      "sha256": "8cd1c5db60078f97be38d8292528cef40457e634dad7bdfd4468c374b87ecee7"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/IOmertaRestrictedOMRV2.sol",
+      "sha256": "216ce375eab9ba903af955fb9d57929bf46ab614649fad9b69f349129e73226c"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol",
+      "sha256": "ad6d4729b5678194c74f8a67ec87dc648817693eee2f8b2ac5261ec16b095b7c"
+    },
+    {
+      "path": "omerta-contracts/test/CharacterDeedCustody.t.sol",
+      "sha256": "affa32f502398be668dc832af0dbdc37297f10d634f3194678d9957fa358ca1f"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/RestrictedOMRV2.t.sol",
+      "sha256": "f0a59ffda96b81454178ecc45f0fa98dab40286ee7b90db97531c59096564dab"
+    },
+    {
+      "path": "omerta-contracts/test/market-v2/RestrictedPoolManagerV2.t.sol",
+      "sha256": "d2037ee18b08aed79f30cc8b467ddcf2b10e59120219204e4987806f29c1a254"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+      "sha256": "50f34ae16a067a41c2c1091445d11d63788e54c717677cb6d6b0e4cdea2ad21d"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol",
+      "sha256": "ef8e2398c78851bd2ec12bc48d923058c557889d5a3d5ee4919c17ff0fb3517e"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/cryptography/SignatureChecker.sol",
+      "sha256": "acc520422fac0a9edb85d7268085a63219a0db9e4406cd155d5c74c94e35f590"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/cryptography/EIP712.sol",
+      "sha256": "2845caaaf70757b6cce612ae4ffbec2c382cb3d1cb9765c98fa649c0f5f1c794"
+    },
+    {
+      "path": "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+      "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8"
+    },
+    {
+      "path": "omerta-contracts/test/vendor/ERC6551Registry.sol",
+      "sha256": "7560cb65b9654e47f51e91103f24bc01f3312f04844d28898c15620a400a9c20"
+    },
+    {
+      "path": "omerta-contracts/foundry.toml",
+      "sha256": "ae6e9a46256baf10127275a1148a154f83b99ff4c8d6eca159c098880c8ae800"
+    }
+  ]
+}

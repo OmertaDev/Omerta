@@ -1,0 +1,19 @@
+Current copy: shared system status, Codex links, staking rules, release labels and inline scripts passed.
+✅ docs test passed — every number in SPEC.md's size table checked against the tree (526 src files / 131229 lines, 758 suites, 547 tables, 945 markdown files), the rules-seam figures are current, the false "re-apply by hand" warning cannot come back, no doc misstates its own size by more than 25%, and all 96 audit reports are indexed as point-in-time with none phantom.
+✓ all 26 ownable contracts hand ownership over in two steps
+✓ the risk register's 7 lever-derived figures match the live levers in both codices
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: CHAIN-DEPLOY.md sends 39 contracts + 1 interface(s) to audit, but the tree holds 42 .sol files — a batch that does not match the tree is a scope somebody has to discover mid-engagement
+    at file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/test/docs.js:1277:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 40,
+  expected: 42,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

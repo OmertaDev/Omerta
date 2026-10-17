@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M1 smoke test passed — auth, character, crimes (both outcomes), train, bank, travel, check-in, gates, ledger invariant, lazy accrual

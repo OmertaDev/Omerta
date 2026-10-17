@@ -1,0 +1,21 @@
+Current copy: shared system status, Codex links, staking rules, release labels and inline scripts passed.
+✅ docs test passed — every number in SPEC.md's size table checked against the tree (526 src files / 131229 lines, 758 suites, 547 tables, 945 markdown files), the rules-seam figures are current, the false "re-apply by hand" warning cannot come back, no doc misstates its own size by more than 25%, and all 96 audit reports are indexed as point-in-time with none phantom.
+✓ all 26 ownable contracts hand ownership over in two steps
+✓ the risk register's 7 lever-derived figures match the live levers in both codices
+✓ no launch-gating doc calls an existing contract unwritten (209 mentions), and the batch matches the tree (41 contracts + 1 interface)
+✓ the audit packet agrees with itself (21 contracts + 3 interfaces, 387/22 tests/suites, measured 2026-08-27)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: the O1 packet's scope table omits CharacterDeedAccount, DeedStockAccount. An auditor scopes from that table, so a contract missing from it is one nobody reviews — and adding it after the engagement means paying to re-audit, which is what "batch, not dribble" exists to prevent
+    at file:///C:/Users/Jorge/.codex/worktrees/deed-death-safehouse/Omerta/test/docs.js:1417:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 2,
+  expected: 0,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

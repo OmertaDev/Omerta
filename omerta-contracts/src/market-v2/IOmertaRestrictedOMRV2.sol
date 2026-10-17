@@ -16,4 +16,6 @@ interface IOmertaRestrictedOMRV2 is IERC20 {
     function isOperator(address operator) external view returns (bool);
     function isRecipient(address recipient) external view returns (bool);
     function registerWallet(address wallet) external;
+    /// @notice Allowance-consuming destruction by a sealed, runtime-pinned protocol custody operator.
+    function burnFrom(address account, uint256 amount) external;
 }

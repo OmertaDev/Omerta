@@ -1,0 +1,14 @@
+
+> omerta-backend@1.5.0 test:deed-custody
+> node test/deedcustody-preflight.js && node test/deedcustody.js && node test/deedcustodychain.js && node test/deedcustody-estates-chain.js && node test/deedcustody-review.js && node test/deedcustody-exit-keeper.js && node test/deedcustody-safe-house.js && node test/deed-custody-ui.js && node test/deedcustody-estate-hook.js
+
+Deed custody preflight: dormant defaults and exact deployment gates pass
+deedcustody: PASS (life identity, ordered kill/estate successors, exact-generation backfill, estate delay, heir death cascade, finality, exit notice/consent, projection replay)
+custody chain adapter: deployment pins, unsafe deposits, ordered A→B→C, nested stock targeting and callback authority passed
+Estate chain integration: chronological mixed deaths, canonical maturity, non-blocking delayed loot, finality, successor stocks and conflicting-event rejection passed.
+deedcustody-review: PASS (101st-life eligibility behind unminted and policy-held dynasties, reproduced legacy action_rebound, refreshed intent retry, exact replay idempotency with real signed journal)
+deedcustody-exit-keeper: PASS (204-row starvation proof, nested real contract revert, valid signed journal send, transient RPC preservation, submitted/mined-reverted live/dead recovery with unchanged notice and locked equipment)
+deedcustody-safe-house: PASS (canonical completed-day quote, exact approval/max burn, real owner EIP712 signatures, UTC rollover/missing history fail closed, finalized coverage, protected heir and post-death purchase exclusion)
+✓ Deed custody UI: inactive gate, dynamic volume price, exact approval and typed request, pending versus confirmed coverage, expiry, UTC rollover, actor and network races.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+deedcustody-estate-hook: PASS (real moderator death/estate skips untracked gas backlog, tracked death and exact heir remain journaled with rail disabled)

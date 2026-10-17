@@ -100,11 +100,25 @@ export async function deedTargetRows(pool) {
   const wallets = (await pool.query(
     'SELECT account_id, wallet_address FROM account_persistent WHERE wallet_address IS NOT NULL')).rows;
   const byWallet = new Map(wallets.map((w) => [String(w.wallet_address).toLowerCase(), w.account_id]));
+  const custodyEnabled = process.env.CHARACTER_DEED_CUSTODY_ENABLED === 'true';
+  const custody = custodyEnabled ? (await pool.query(
+    `SELECT l.life_hash,l.account_id,l.custody_address,l.status,c.alive
+     FROM character_deed_lives l JOIN characters c ON c.id=l.life_id`)).rows : [];
+  const byCustody = new Map(custody.filter(l => l.custody_address && l.status === 'alive' && l.alive)
+    .map(l => [String(l.custody_address).toLowerCase(), l]));
+  const equipment = custodyEnabled ? new Map((await pool.query(
+    'SELECT deed_token_id,life_hash FROM character_deed_equipment WHERE active=true')).rows
+    .map(e => [String(e.deed_token_id), e.life_hash])) : new Map();
   const out = [];
   for (const d of deeds) {
-    const accountId = d.onchain_owner
-      ? (byWallet.get(String(d.onchain_owner).toLowerCase()) || null)  // sold → the buyer (if linked), never the extractor
-      : d.extracted_by_account;                                        // no transfer observed → the extractor
+    const nested = d.onchain_owner ? byCustody.get(String(d.onchain_owner).toLowerCase()) : null;
+    // Pending death loot waits for physical, finalized ownership. Never deliver
+    // the dead owner's new allocation into a successor's still-settling deed.
+    const accountId = nested && equipment.get(String(d.onchain_token_id)) === nested.life_hash
+      ? nested.account_id
+      : d.onchain_owner
+        ? (byWallet.get(String(d.onchain_owner).toLowerCase()) || null)
+        : custodyEnabled ? null : d.extracted_by_account;
     if (accountId) out.push({
       accountId, tokenId: String(d.onchain_token_id), name: d.name,
       at: d.extracted_at ? new Date(d.extracted_at).getTime() : 0,
@@ -124,6 +138,12 @@ export async function resolveTba(tokenId) { return _resolveTba(tokenId); }
 // The pure ERC-6551 registry read: registry.account(impl, salt, chainId, StreetDeed, tokenId). Chain-
 // dormant (null) without CHAIN_RPC_URL + STREET_DEED_ADDRESS + ERC6551_ACCOUNT_IMPL + CHAIN_ID.
 async function resolveTbaOnchain(tokenId) {
+  if (process.env.CHARACTER_DEED_CUSTODY_ENABLED === 'true' || process.env.CHARACTER_DEED_CUSTODY_ADDRESS) {
+    try {
+      const { resolveConstrainedDeedVault } = await import('./deedcustodychain.js');
+      return await resolveConstrainedDeedVault(tokenId);
+    } catch { return null; }
+  }
   const rpc = process.env.CHAIN_RPC_URL;
   const deedAddr = process.env.STREET_DEED_ADDRESS;
   const impl = process.env.ERC6551_ACCOUNT_IMPL;

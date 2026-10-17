@@ -1,0 +1,937 @@
+Compiling 14 files with Solc 0.8.26
+Solc 0.8.26 finished in 83.71s
+Compiler run successful with warnings:
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:181:5:
+    |
+181 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+Warning (2018): Function state mutability can be restricted to view
+  --> test/market-v2/RestrictedPoolManagerV2.t.sol:58:5:
+   |
+58 |     function beforeSwap(address, PoolKey calldata, SwapParams calldata, bytes calldata)
+   |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 9 tests for test/market-v2/RestrictedOMRV2.t.sol:RestrictedSwapRouterV2Test
+[PASS] testCallbacksRejectWrongSenderChangedPayloadReplayAndMissingCall() (gas: 506964)
+[PASS] testForcedBalanceCannotFundNativeInput() (gas: 130189)
+[PASS] testLimitsUseActualFeeAdjustedDeltasAndAllowPartialFills() (gas: 342336)
+[PASS] testNativeBuySettlesActualInputAndRefundsOnlyCallFunding() (gas: 178276)
+[PASS] testNativeReceiveRejectsSenderOtherThanManager() (gas: 16383)
+[PASS] testOmrSellPullsDirectlyToManagerAndTakesNetNativeOutput() (gas: 202255)
+[PASS] testRouterAutomaticallyRegistersDirectEoaPayer() (gas: 202934)
+[PASS] testRouterRejectsUnregisteredContractPayerAndDoesNotEnrollIt() (gas: 226400)
+[PASS] testWrongPoolExpiredDeadlineAndChangedManagerRuntimeFailClosed() (gas: 108327)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 3.30ms (4.14ms CPU time)
+
+Ran 23 tests for test/market-v2/RestrictedOMRV2.t.sol:RestrictedOMRV2Test
+[PASS] testBeforeSealOnlyOwnerCanDistributeItsOwnBalance() (gas: 159524)
+[PASS] testBindingRequiresExactTokenFeePolicyAndRuntimeAndIsOneTime() (gas: 820238)
+[PASS] testBurnIsAllowanceConsumingOnlySealedPinnedCustodyAndReducesSupply() (gas: 538615)
+[PASS] testChangedRuntimeCannotTransferAfterSealing() (gas: 496423)
+[PASS] testConfigurationRequiresOwnerContractAndMatchingRuntime() (gas: 232781)
+[PASS] testContractGenesisTreasuryRuntimeMustRemainPinnedForSeal() (gas: 216877)
+[PASS] testContractHolderEnumerationPinsRevocationAndSealFreeze() (gas: 760622)
+[PASS] testCustodyRoleOnlyMovesItsOwnCustody() (gas: 552865)
+[PASS] testEoaGenesisTreasuryRequiresLiveEmptyCode() (gas: 2176315)
+[PASS] testFixedSupplyMetadataAndZeroOwner() (gas: 112748)
+[PASS] testManagerCanOnlyMoveBalancesFromManager() (gas: 543257)
+[FAIL: vm.getCode: no matching artifact found] testNativeForeignManagerCannotBePrefundedBeforeSeal() (gas: 3955)
+[PASS] testOwnershipRemainsTwoStepAndCannotUnlockSealedTransfers() (gas: 500745)
+[PASS] testPermitAndFiniteInfiniteAllowancesRemainStandard() (gas: 611069)
+[PASS] testReceivingContractHolderHasNoTransferOrOperatorAuthority() (gas: 799246)
+[PASS] testSealChecksLiveContractHolderPin() (gas: 614470)
+[PASS] testSealPreservesImmutableGenesisTreasuryAndRejectsChangedOwner() (gas: 182426)
+[PASS] testSealRejectsAnyInventoryAlreadyDistributedOutsideOwner() (gas: 397453)
+[PASS] testSealRequiresBindingAndLivePinsAndFreezesPolicy() (gas: 397660)
+[PASS] testSelfProvenWalletRegistrationRemainsOpenAfterSealAndLiveCodeRevokesReceipt() (gas: 537353)
+[PASS] testSettlementInputCanOnlyPullIntoBoundManager() (gas: 535129)
+[PASS] testUnregisteredDeployedAndCounterfactualContractRecipientsAreBlocked() (gas: 672353)
+[PASS] testWalletRegistrationRequiresOriginProofOrPinnedInputRouter() (gas: 316924)
+Suite result: FAILED. 22 passed; 1 failed; 0 skipped; finished in 4.27ms (16.16ms CPU time)
+
+Ran 13 tests for test/market-v2/RestrictedMarketIntegrationV2.t.sol:RestrictedMarketIntegrationV2Test
+[PASS] test_actualFeeAdjustedLimitsRevertAtomically() (gas: 744671)
+[PASS] test_firstWalletBuyRegistersOnlyItsAuthenticatedRecipient() (gas: 431385)
+[FAIL: vm.getCode: no matching artifact found] test_foreignManagerAndCounterfactualCannotReceiveRevenueInventory() (gas: 465634)
+[PASS] test_liquidityPrincipalHasNoTradeTax() (gas: 185765)
+[PASS] test_openingBuysReachSixPercentInBothExactModes() (gas: 866355)
+[PASS] test_openingExactOutputCapIncludesManagerBase() (gas: 852670)
+[PASS] test_realPartialFillUsesFilledOutputAndRefundsETH() (gas: 434530)
+[PASS] test_realRouterExactInputBuyCollectsBaseOnly() (gas: 444828)
+[PASS] test_realRouterExactInputSellCollectsBaseAndSeparateSurge() (gas: 505835)
+[PASS] test_realRouterExactOutputBuyAddsBaseToActualInput() (gas: 430086)
+[PASS] test_realRouterExactOutputSellAddsBaseAndSurgeToActualInput() (gas: 532374)
+[PASS] test_restrictedOpeningFeeAboveHalfPercentIsRejected() (gas: 73344)
+[PASS] test_saturatedSellSurgeReachesSixPercentInBothExactModes() (gas: 963697)
+Suite result: FAILED. 12 passed; 1 failed; 0 skipped; finished in 186.12ms (17.90ms CPU time)
+
+Ran 30 tests for test/CharacterDeedCustody.t.sol:CharacterDeedCustodyTest
+[PASS] testFuzz_death_chain_moves_only_to_recorded_successor_preserving_stock(uint8,uint8) (runs: 512, μ: 4500787, ~: 3778105)
+[PASS] test_alternate_registry_salt_account_is_not_canonical() (gas: 179107)
+[PASS] test_canonical_vault_cannot_create_allowances_or_delegate_signatures_even_unequipped() (gas: 265180)
+[PASS] test_contract_owner_signature_and_rejected_exit_receiver_are_atomic() (gas: 1064546)
+[PASS] test_coverage_history_preserves_gaps_and_renewals_and_expiry_boundary() (gas: 494890)
+[PASS] test_death_timestamp_and_sequence_reject_stale_future_and_reordered_transactions() (gas: 435848)
+[PASS] test_equipment_requires_direct_owner_unlock_and_approval() (gas: 441254)
+[PASS] test_equipped_account_has_no_unlock_redeem_approval_or_execute_bypass() (gas: 297868)
+[PASS] test_estate_auto_binds_same_identity_heir_and_releases_only_after_24_hours() (gas: 1015950)
+[PASS] test_estate_rejects_wrong_identity_reused_heir_self_and_replay_without_rewriting_edge() (gas: 1455672)
+[PASS] test_exit_old_future_oversized_and_changed_domain_intents_are_rejected() (gas: 283711)
+[PASS] test_expired_coverage_routes_to_successive_killers_and_does_not_protect_other_dynasty() (gas: 997134)
+[PASS] test_late_purchase_cannot_retroactively_protect_an_unreported_death() (gas: 1019762)
+[PASS] test_life_registry_is_operator_only_unique_and_bound_to_soulbound_owner() (gas: 452299)
+[PASS] test_max_hops_is_bounded_and_long_chain_can_make_finite_partial_progress() (gas: 32136109)
+[PASS] test_native_currency_withdrawal_is_owner_only_and_equipment_locks_it() (gas: 1020464)
+[PASS] test_pending_unminted_killer_can_receive_then_die_and_bind_without_redirecting_to_heir() (gas: 1610380)
+[PASS] test_player_loot_waits_at_immature_estate_then_follows_killed_heir_to_next_killer() (gas: 1956874)
+[PASS] test_prebound_heir_anchors_unminted_parent_and_estate_chain_retains_one_family() (gas: 1936392)
+[PASS] test_protected_heir_death_before_prior_settlement_keeps_same_account_coverage() (gas: 1347663)
+[PASS] test_safe_house_burns_approved_real_OMR_and_covers_whole_vault() (gas: 1024178)
+[PASS] test_safe_house_price_uses_previous_complete_day_with_floor_ceiling_and_no_partial_day() (gas: 87586)
+[PASS] test_safe_house_rejects_UTC_rollover_and_changed_maximum_burn() (gas: 294773)
+[PASS] test_safe_house_signature_nonce_price_day_allowance_and_horizon_are_atomic() (gas: 587999)
+[PASS] test_successive_killers_receive_same_deed_vault_and_heir_never_receives_old_life_loot() (gas: 925563)
+[PASS] test_unequip_requires_operator_owner_signature_freshness_nonce_and_live_life() (gas: 740095)
+[PASS] test_unminted_estate_lineage_enforces_identity_when_bound_in_either_order() (gas: 2473842)
+[PASS] test_unsafe_deposit_still_counts_as_equipped_and_locks_stock() (gas: 602863)
+[PASS] test_vault_withdrawal_reentry_fails_and_no_arbitrary_external_execute_exists() (gas: 956720)
+[PASS] test_zero_killer_requires_heir_and_player_death_is_single_use_ordered_and_acyclic() (gas: 599945)
+Suite result: ok. 30 passed; 0 failed; 0 skipped; finished in 186.83ms (210.10ms CPU time)
+
+Ran 1 test for test/CharacterDeedCustody.t.sol:SafeHouseCoverageInvariantTest
+[PASS] invariant_historical_coverage_matches_linear_model_and_every_period_reduces_supply() (runs: 512, calls: 32768, reverts: 0)
+
+╭--------------------------+----------+-------+---------+----------╮
+| Contract                 | Selector | Calls | Reverts | Discards |
++==================================================================+
+| SafeHouseCoverageHandler | advance  | 10991 | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| SafeHouseCoverageHandler | query    | 10899 | 0       | 0        |
+|--------------------------+----------+-------+---------+----------|
+| SafeHouseCoverageHandler | renew    | 10878 | 0       | 0        |
+╰--------------------------+----------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 13.04s (13.03s CPU time)
+
+Ran 1 test for test/CharacterDeedCustody.t.sol:CharacterDeedCustodyInvariantTest
+[PASS] invariant_deed_stock_lock_and_successor_graph_match_independent_model() (runs: 512, calls: 32768, reverts: 0)
+
+╭-----------------------------+---------------------+-------+---------+----------╮
+| Contract                    | Selector            | Calls | Reverts | Discards |
++================================================================================+
+| CharacterDeedCustodyHandler | advanceTime         | 5481  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | attemptBypass       | 5520  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | attemptUnsignedExit | 5407  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | death               | 5355  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | estate              | 5490  | 0       | 0        |
+|-----------------------------+---------------------+-------+---------+----------|
+| CharacterDeedCustodyHandler | settle              | 5515  | 0       | 0        |
+╰-----------------------------+---------------------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 25.96s (25.95s CPU time)
+
+Ran 33 tests for test/market-v2/RestrictedRevenueBoundariesV2.t.sol:RestrictedRevenueBoundariesV2Test
+[PASS] invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations() (runs: 512, calls: 256000, reverts: 0)
+
+╭-------------------------------------+-----------------+-------+---------+----------╮
+| Contract                            | Selector        | Calls | Reverts | Discards |
++====================================================================================+
+| RestrictedRevenueInvariantHandlerV2 | adjustLiquidity | 85333 | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | forwardRevenue  | 85618 | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | trade           | 85049 | 0       | 0        |
+╰-------------------------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 509186825620869
+  Bound result 2941019354526858800
+  Bound result 62234664712719
+  Bound result 999999000000000601
+  Bound result 4999999000000006047
+  Bound result 999999000000014069
+  Bound result 4999999000000007774
+  Bound result 2355131402669784048
+  Bound result 4999999000000010201
+  Bound result 22704812239939403
+  Bound result 4999999000000003612
+  Bound result 4957167836761232791
+  Bound result 446762073709551596
+  Bound result 999999000750537880
+  Bound result 3999999999996
+  Bound result 158989064367643300
+  Bound result 1000000000002
+  Bound result 172850159046137
+  Bound result 1000000000002
+  Bound result 999999000000113196
+  Bound result 4999999000000008481
+  Bound result 5194553848907
+  Bound result 999999003639400695
+  Bound result 1000000000003
+  Bound result 4999999000000015895
+  Bound result 28407436309197488
+  Bound result 1000000000002
+  Bound result 178748998455540
+  Bound result 4999999000000005675
+  Bound result 999999003540103892
+  Bound result 2263338335442482717
+  Bound result 4999999000000003139
+  Bound result 121070927027991
+  Bound result 3648673380297156095
+  Bound result 3674871055779439
+  Bound result 102482910993996
+  Bound result 340702013548325197
+  Bound result 4999999000000002673
+  Bound result 999999000000000459
+  Bound result 999999000000009919
+  Bound result 585018848971290689
+  Bound result 75796761582883682
+  Bound result 945000000000000000
+  Bound result 999999000000000201
+  Bound result 4999999000000003585
+  Bound result 1280810760651575
+  Bound result 3448819987224761737
+  Bound result 999999000000002204
+  Bound result 999999000000016795
+  Bound result 2542188496497625051
+  Bound result 408657338881563951
+  Bound result 999999012709915628
+  Bound result 999999000000056507
+  Bound result 437820502768729042
+  Bound result 999999000000000757
+  Bound result 83744952585637
+  Bound result 4999999000000009915
+  Bound result 999999000000000051
+  Bound result 4999999000008372189
+  Bound result 999999000000069919
+  Bound result 999999000000000221
+  Bound result 2580245539981735330
+  Bound result 4900008577698314663
+  Bound result 3999999999996
+  Bound result 999999000042852987
+  Bound result 999999001068022175
+  Bound result 999999000000048882
+  Bound result 713563143215909
+  Bound result 3148254448127552231
+  Bound result 999999000000008262
+  Bound result 77684659123595
+  Bound result 4999999000000000021
+  Bound result 4999999000000002748
+  Bound result 1096752199733685878
+  Bound result 4999999000983634250
+  Bound result 63023987038578107
+  Bound result 999999000000000292
+  Bound result 999999095669561098
+  Bound result 4999999000000003079
+  Bound result 1646658926194101758
+  Bound result 4999999000000017300
+  Bound result 4999999000000000006
+  Bound result 4999999000170162559
+  Bound result 23543119925402
+  Bound result 4999999002756979490
+  Bound result 129546129049481
+  Bound result 2075575072770
+  Bound result 999999000000001000
+  Bound result 4999999000000022522
+  Bound result 446762073709551597
+  Bound result 999999000000008262
+  Bound result 6999999999993
+  Bound result 728977506335590448
+  Bound result 999999009242285814
+  Bound result 4999999000000020136
+  Bound result 3794004876843
+  Bound result 1000000000000
+  Bound result 4999999000000021541
+  Bound result 24934093620154
+  Bound result 3247135179188672
+  Bound result 1000000000003
+  Bound result 4999999000000002908
+  Bound result 999999000000031114
+  Bound result 4900008577698314661
+  Bound result 3086723056441
+  Bound result 999999000221814846
+  Bound result 4999999000000000057
+  Bound result 3000024154231005435
+  Bound result 4999999000000108432
+  Bound result 140516137504174931
+  Bound result 1393962939935190894
+  Bound result 4999999000000001553
+  Bound result 4999999003858947846
+  Bound result 1000000000001
+  Bound result 4999999000000019634
+  Bound result 4999999000000019610
+  Bound result 76263295610409032
+  Bound result 735908324943940171
+  Bound result 999999000000098022
+  Bound result 1434088022815651811
+  Bound result 443094685196491533
+  Bound result 4999999000000047486
+  Bound result 4999999000000016462
+  Bound result 1000000000002
+  Bound result 999999000000048881
+  Bound result 4999999103750484122
+  Bound result 999999000113989893
+  Bound result 9007199254740993
+  Bound result 1362387317518782382
+  Bound result 3304203295528789679
+  Bound result 4999999000000004910
+  Bound result 8186399688882133
+  Bound result 1000000000003
+  Bound result 837661129982601410
+  Bound result 4999999000176760769
+  Bound result 4999999000000000843
+  Bound result 152180919400975085
+  Bound result 4999999295968953770
+  Bound result 4999999000000005259
+  Bound result 1000000000000
+  Bound result 446762073709551595
+  Bound result 4999999000000009770
+  Bound result 465067649756676593
+  Bound result 999999000000000018
+  Bound result 999999000000000010
+  Bound result 2006528233428
+  Bound result 28407436309197488
+  Bound result 4436911836510348805
+  Bound result 999999013922381858
+  Bound result 6999999999993
+  Bound result 4999999000000000158
+  Bound result 3257641919419222777
+  Bound result 3620715834202782705
+  Bound result 779049446762827344
+  Bound result 3811592504906099313
+  Bound result 19121055434481
+  Bound result 4999999000000000141
+  Bound result 4999999000000147700
+  Bound result 2542188496497625052
+  Bound result 999999000000048352
+  Bound result 4999999000000000783
+  Bound result 4999999000000004996
+  Bound result 503508150590353963
+  Bound result 272223221479547711
+  Bound result 999999000000014836
+  Bound result 446762073709551597
+  Bound result 1545196317149
+  Bound result 999999000000001646
+  Bound result 999999000000043982
+  Bound result 999999000000006167
+  Bound result 4999999000055651613
+  Bound result 999999000000000013
+  Bound result 2560995058006087018
+  Bound result 4999999000000022515
+  Bound result 999999000000004169
+  Bound result 3205688762541630
+  Bound result 4900008577698314663
+  Bound result 2852397210387846933
+  Bound result 500008999999999991
+  Bound result 19620127409812630
+  Bound result 999999000000207750
+  Bound result 14221779169640969
+  Bound result 999999000000000033
+  Bound result 4999999000000006363
+  Bound result 921674644546134352
+  Bound result 31199285142817
+  Bound result 15620165459234
+  Bound result 4999999002368204960
+  Bound result 999999000000033357
+  Bound result 4999999000000001994
+  Bound result 999999000000122608
+  Bound result 999999190181303381
+  Bound result 1000000000003
+  Bound result 999999000000048882
+  Bound result 93130395069310962
+  Bound result 999999000000001000
+  Bound result 11521730632070272
+  Bound result 999999000000173461
+  Bound result 999999003224082347
+  Bound result 7988142908141
+  Bound result 4999999000000000016
+  Bound result 4999999000000013252
+  Bound result 1469610218849680635
+  Bound result 4999999000018245526
+  Bound result 4999999000000006042
+  Bound result 4999999000000012586
+  Bound result 606873676332608267
+  Bound result 4999999000000046705
+  Bound result 999999000000100001
+  Bound result 2929101710092187753
+  Bound result 4999999002972696582
+  Bound result 999999000001627613
+  Bound result 4999999000000694147
+  Bound result 481988352986352868
+  Bound result 2038428281183831
+  Bound result 999999000000000053
+  Bound result 4999999000000002020
+  Bound result 4999999000000024099
+  Bound result 1000000000000
+  Bound result 8710114495875341
+  Bound result 999999000000000292
+  Bound result 1464308865514754723
+  Bound result 999999000131844524
+  Bound result 4999999000000012902
+  Bound result 14595066534831
+  Bound result 175555815589867288
+  Bound result 4900008577698314661
+  Bound result 999999000152397022
+  Bound result 999999000000000011
+  Bound result 1000000000002
+  Bound result 4999999000000240854
+  Bound result 999999000044950226
+  Bound result 3253556952867256420
+  Bound result 617979350135862094
+  Bound result 999999000045013782
+  Bound result 3716310190631343
+  Bound result 451621557487198141
+  Bound result 999999000000031849
+  Bound result 4999999000000000028
+  Bound result 4999999000000003001
+  Bound result 4999999000567340658
+  Bound result 1000000000000
+  Bound result 2834418297120
+  Bound result 4999999003305412526
+  Bound result 15299995668101089
+  Bound result 999999000000861424
+  Bound result 1492235071881515
+  Bound result 1000000000001
+  Bound result 4999999000000015252
+  Bound result 4999999000109271629
+  Bound result 999999000000000201
+  Bound result 4999999282951650697
+  Bound result 19999999999979999
+  Bound result 996796395816853827
+  Bound result 4999999000000000577
+  Bound result 446762073709551597
+  Bound result 2367071567386511139
+  Bound result 130836531448664363
+  Bound result 4999999007693540560
+  Bound result 999999000000001550
+  Bound result 3724747915989764720
+  Bound result 4999999000000006244
+  Bound result 661592820158959429
+  Bound result 999999000000007652
+  Bound result 999999000000101233
+  Bound result 4999999000719537853
+  Bound result 1392533019389757534
+  Bound result 4999999000000012532
+  Bound result 1431747932878
+  Bound result 4442231333274514329
+  Bound result 999999000000001618
+  Bound result 999999000000000059
+  Bound result 50743724407194396
+  Bound result 14999999999985
+  Bound result 4999999000000073093
+  Bound result 2785043995447391625
+  Bound result 4999999000000000062
+  Bound result 1937952531462249
+  Bound result 23375879530966
+  Bound result 3132872510121261518
+  Bound result 999999000000000007
+  Bound result 38601497395163201
+  Bound result 442031429969244815
+  Bound result 8828609620402598
+  Bound result 135150935126131115
+  Bound result 4999999000000001232
+  Bound result 7849579613568984
+  Bound result 4999999000000000103
+  Bound result 999999000000000005
+  Bound result 4999999000000013304
+  Bound result 999999000000003347
+  Bound result 4999999000000000014
+  Bound result 4999999000000005194
+  Bound result 4999999000000000769
+  Bound result 4999999000028344265
+  Bound result 4366034568480492886
+  Bound result 999999540851779610
+  Bound result 999999000000000145
+  Bound result 999999000000000043
+  Bound result 1000000000000
+  Bound result 76693103449256314
+  Bound result 251172260178625
+  Bound result 175912706965307861
+  Bound result 4999999000000017434
+  Bound result 997121047500517917
+  Bound result 999999000000000012
+  Bound result 1000000000000
+  Bound result 4900008577698314664
+  Bound result 999999000000017774
+  Bound result 999999001852562339
+  Bound result 7290100848409354
+  Bound result 1091587458746294
+  Bound result 999999000000051967
+  Bound result 4999999097825964520
+  Bound result 999999000000001753
+  Bound result 999999004169656896
+  Bound result 731045656648444680
+  Bound result 590598611879872018
+  Bound result 999999000000049838
+  Bound result 931391385007665
+  Bound result 4900008577698314661
+  Bound result 4999999000000007787
+  Bound result 999999000053977452
+  Bound result 4074790184478300538
+  Bound result 3115310583925009635
+  Bound result 1442230430012097602
+  Bound result 999999000000016774
+  Bound result 4999999000000127543
+  Bound result 76715147717087
+  Bound result 1174646670496942452
+  Bound result 482677907591390108
+  Bound result 8999999999991
+  Bound result 2483702445972981984
+  Bound result 999999000000017799
+  Bound result 4999999012522173653
+  Bound result 447798617999105479
+  Bound result 999999000059421990
+  Bound result 3209534056590328928
+  Bound result 4999999000000002208
+  Bound result 4999999000028537585
+  Bound result 4999999000000000019
+  Bound result 999999000000000170
+  Bound result 1000000000000
+  Bound result 999999000000945579
+  Bound result 4999999000021294174
+
+[PASS] testAllValueEntryPointsRejectAnUnapprovedCaller() (gas: 300525)
+[PASS] testAnyoneCanInitializeAnotherPermittedNoHookPool() (gas: 59560)
+[PASS] testApprovedHookAtFiftyBpsKeepsEverySwapModeAtSixPercentMaximum() (gas: 991470)
+[PASS] testApprovedHookOverFiftyBpsRollsBackEverySwapModeAndPayout() (gas: 1253296)
+[PASS] testBothDirectionsPreserveFounderTwoPercentAndHalveOtherBuckets() (gas: 585223)
+[PASS] testClaimAndProtocolFeeWithdrawalCannotOccurDuringUnlock() (gas: 103439)
+[PASS] testClaimReceiptsCannotTransferToAnIndependentPool() (gas: 13212)
+[PASS] testClaimTokenMintAndBurnSettlementStillPaysEveryTradeFee() (gas: 530885)
+[PASS] testDonationsAndDirectTransfersDoNotIncreaseVolume() (gas: 192217)
+[PASS] testFeeRoundingMatchesExistingBasisPointConvention() (gas: 186963)
+[PASS] testFeeSplitAndPermissionlessSweepPayOnlyFixedRecipients() (gas: 418936)
+[PASS] testForeignManagerHookAndCustomBeforeSwapAccountingAreRejected() (gas: 65526)
+[PASS] testFuzzBothDirectionsAndExactModesSettleAndConserveRevenue(uint96,bool,bool) (runs: 512, μ: 322881, ~: 322696)
+Logs:
+  Bound result 1641274706234387472
+
+[PASS] testLiquidityAdditionAndRemovalDoNotAccrueTradeRevenue() (gas: 277841)
+[PASS] testNoHookExactInputBuyPaysFivePointFivePercent() (gas: 323877)
+[PASS] testNoHookExactInputSellPaysFivePointFivePercent() (gas: 324551)
+[PASS] testNoHookExactOutputBuyPaysFivePointFivePercent() (gas: 317244)
+[PASS] testNoHookExactOutputSellPaysFivePointFivePercent() (gas: 330782)
+[PASS] testOnlyRecipientMayRedirectItsOwnTokenBucket() (gas: 344535)
+[PASS] testPartialFillFeesUseExecutedAmount() (gas: 303769)
+[PASS] testPinnedRuntimeChangeRevokesOperatorAndHookAccess() (gas: 106410)
+[PASS] testProtocolAndTradeRevenueRemainSeparateThroughBothCurrencyWithdrawals() (gas: 816679)
+[PASS] testRawDeltaUnderpaymentRollsBackAllModesAndRevenueLiabilities() (gas: 1389259)
+[PASS] testRecipientReentryCannotRepeatPayoutOrEnterSettlement() (gas: 1021340)
+[PASS] testRevenueBucketAndRecipientValidation() (gas: 40994)
+[PASS] testRevertedSwapDoesNotIncreaseVolume() (gas: 80215)
+[PASS] testSyncedTokenWithdrawalIsRejectedUntilNativeResync() (gas: 345369)
+[PASS] testTwoPoolInternalNettingCannotAvoidEitherLegFee() (gas: 496014)
+[PASS] testUnapprovedHookAndForeignCurrenciesAreRejected() (gas: 70067)
+[PASS] testUnsealedOrOtherBoundManagerCannotInitializePools() (gas: 11926886)
+[PASS] testVolumeTrackingStartsNextFullDayAndSeparatesUTCdays() (gas: 600369)
+[PASS] testZeroFeeHookCannotUndercutBuyOrSellRevenue() (gas: 616707)
+Suite result: ok. 33 passed; 0 failed; 0 skipped; finished in 187.85s (188.06s CPU time)
+
+Ran 30 tests for test/market-v2/RestrictedPoolManagerV2.t.sol:RestrictedPoolManagerV2Test
+[PASS] invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations() (runs: 512, calls: 256000, reverts: 0)
+
+╭-------------------------------------+-----------------+-------+---------+----------╮
+| Contract                            | Selector        | Calls | Reverts | Discards |
++====================================================================================+
+| RestrictedRevenueInvariantHandlerV2 | adjustLiquidity | 85333 | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | forwardRevenue  | 85618 | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | trade           | 85049 | 0       | 0        |
+╰-------------------------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 509186825620869
+  Bound result 937906947019975701
+  Bound result 62234664712719
+  Bound result 999999000000000601
+  Bound result 4999999000000005576
+  Bound result 999999000000013673
+  Bound result 4999999000000007506
+  Bound result 2355131402669784048
+  Bound result 4999999000000010338
+  Bound result 22704812239939403
+  Bound result 4999999000000003707
+  Bound result 4957167836761232791
+  Bound result 446762073709551596
+  Bound result 999999000750537880
+  Bound result 3999999999996
+  Bound result 158989064367643300
+  Bound result 1000000000002
+  Bound result 172850159046137
+  Bound result 1000000000002
+  Bound result 999999000000113196
+  Bound result 4999999000000003028
+  Bound result 5194553848907
+  Bound result 999999003639400695
+  Bound result 1000000000003
+  Bound result 4999999000000018845
+  Bound result 4999999000000017045
+  Bound result 28407436309197488
+  Bound result 1000000000002
+  Bound result 178748998455540
+  Bound result 4999999000000005673
+  Bound result 999999003540103892
+  Bound result 2263338335442482717
+  Bound result 4999999000000001205
+  Bound result 121070927027991
+  Bound result 3648673380297156095
+  Bound result 3674871055779439
+  Bound result 102482910993996
+  Bound result 340702013548325197
+  Bound result 4999999000000002673
+  Bound result 999999000000000459
+  Bound result 999999000000009919
+  Bound result 585018848971290689
+  Bound result 75796761582883682
+  Bound result 945000000000000000
+  Bound result 999999000000000201
+  Bound result 4999999000825976288
+  Bound result 1280810760651575
+  Bound result 3448819987224761737
+  Bound result 999999000000002204
+  Bound result 999999000000018985
+  Bound result 2542188496497625052
+  Bound result 408657338881563951
+  Bound result 999999012709915628
+  Bound result 999999000000056507
+  Bound result 437820502768729042
+  Bound result 999999000000000759
+  Bound result 83744952585637
+  Bound result 4999999000000015038
+  Bound result 999999000000000051
+  Bound result 4999999000008372189
+  Bound result 999999000000069919
+  Bound result 999999000000000221
+  Bound result 2580245539981735330
+  Bound result 4900008577698314664
+  Bound result 3999999999996
+  Bound result 999999000042852987
+  Bound result 999999001068022175
+  Bound result 999999000000048882
+  Bound result 713563143215909
+  Bound result 3148254448127552231
+  Bound result 999999000000008824
+  Bound result 77684659123595
+  Bound result 4999999000000000021
+  Bound result 1096752199733685878
+  Bound result 4999999000983634250
+  Bound result 63023987038578107
+  Bound result 999999000000000292
+  Bound result 999999095669561098
+  Bound result 4999999000000003124
+  Bound result 1646658926194101758
+  Bound result 4999999000000018229
+  Bound result 4999999000000000006
+  Bound result 4999999000170162559
+  Bound result 23543119925402
+  Bound result 4999999002756979490
+  Bound result 129546129049481
+  Bound result 2075575072770
+  Bound result 999999000000001000
+  Bound result 4999999000000022522
+  Bound result 446762073709551597
+  Bound result 361045032175805173
+  Bound result 6999999999993
+  Bound result 1079759192933532279
+  Bound result 999999009242285814
+  Bound result 4999999000000019825
+  Bound result 3794004876843
+  Bound result 1000000000000
+  Bound result 4999999000000003292
+  Bound result 24934093620154
+  Bound result 3247135179188672
+  Bound result 1000000000003
+  Bound result 4999999000000001854
+  Bound result 999999000000031114
+  Bound result 4900008577698314661
+  Bound result 3086723056441
+  Bound result 999999000221814846
+  Bound result 4999999000000000057
+  Bound result 3000023154231005432
+  Bound result 4999999000000108432
+  Bound result 140516137504174931
+  Bound result 1393962939935190894
+  Bound result 4999999000000006401
+  Bound result 4999999000000006429
+  Bound result 1000000000001
+  Bound result 4999999000000020239
+  Bound result 4999999000000020301
+  Bound result 76263295610409032
+  Bound result 735908324943940171
+  Bound result 999999000000098022
+  Bound result 1434088022815651811
+  Bound result 443094685196491533
+  Bound result 1999999999997
+  Bound result 4999999000000016938
+  Bound result 1000000000002
+  Bound result 999999000000048881
+  Bound result 4999999103750484122
+  Bound result 999999000113989893
+  Bound result 36028797018963969
+  Bound result 3137947482539969644
+  Bound result 3304203295528789679
+  Bound result 4999999000000001727
+  Bound result 8186399688882133
+  Bound result 1000000000003
+  Bound result 837661129982601410
+  Bound result 4999999000176760769
+  Bound result 4999999000000000784
+  Bound result 2288783801597469805
+  Bound result 4999999295968953770
+  Bound result 4999999000000005170
+  Bound result 1000000000000
+  Bound result 446762073709551595
+  Bound result 4999999000000009698
+  Bound result 161213097882794658
+  Bound result 999999000000000018
+  Bound result 999999000000000010
+  Bound result 2006528233428
+  Bound result 3363245401471014988
+  Bound result 1491251083723202072
+  Bound result 999999013922381858
+  Bound result 6999999999993
+  Bound result 4999999000000000158
+  Bound result 3257641919419222777
+  Bound result 3620715834202782705
+  Bound result 38254083898747125
+  Bound result 75951466548792850
+  Bound result 19121055434481
+  Bound result 4999999000000000141
+  Bound result 4999999000000147700
+  Bound result 999999000000016691
+  Bound result 4999999000000000783
+  Bound result 4999999000000004483
+  Bound result 110380361622557123
+  Bound result 999999000000000141
+  Bound result 999999000000014836
+  Bound result 446762073709551597
+  Bound result 1545196317149
+  Bound result 999999000000001646
+  Bound result 999999000000043982
+  Bound result 999999000000006167
+  Bound result 4999999000055651613
+  Bound result 999999000000000013
+  Bound result 2560995058006087018
+  Bound result 999999000000004169
+  Bound result 3205688762541630
+  Bound result 4900008577698314663
+  Bound result 500008999999999991
+  Bound result 19620127409812630
+  Bound result 999999000000207750
+  Bound result 14221779169640969
+  Bound result 999999000000000033
+  Bound result 4999999000000005564
+  Bound result 4999999001572720045
+  Bound result 921674644546134352
+  Bound result 31199285142817
+  Bound result 15620165459234
+  Bound result 4999999002368204960
+  Bound result 999999000000033357
+  Bound result 4999999000000001994
+  Bound result 999999000000122608
+  Bound result 999999190181303381
+  Bound result 1000000000003
+  Bound result 999999000000048882
+  Bound result 499909768408334823
+  Bound result 999999000000001000
+  Bound result 11521730632070272
+  Bound result 999999000000173461
+  Bound result 999999003224082347
+  Bound result 7988142908141
+  Bound result 4999999000000000016
+  Bound result 4999999000000011894
+  Bound result 1469610218849680635
+  Bound result 4999999000018245526
+  Bound result 4999999000000005950
+  Bound result 4999999000000010763
+  Bound result 392823835803762056
+  Bound result 4999999000000046705
+  Bound result 999999000000100001
+  Bound result 1424099846817730346
+  Bound result 4999999000000022484
+  Bound result 999999000001627613
+  Bound result 4999999000000694147
+  Bound result 481988352986352868
+  Bound result 2038428281183831
+  Bound result 999999000000000053
+  Bound result 4999999000000002020
+  Bound result 4999999000000023721
+  Bound result 1000000000000
+  Bound result 8710114495875341
+  Bound result 999999000000000292
+  Bound result 2312793722686307624
+  Bound result 999999000131844524
+  Bound result 4999999000000012811
+  Bound result 14595066534831
+  Bound result 7134569247168857
+  Bound result 4900008577698314661
+  Bound result 999999000152397022
+  Bound result 999999000000000011
+  Bound result 1000000000002
+  Bound result 4999999000000240854
+  Bound result 999999000044950226
+  Bound result 4589445016162702363
+  Bound result 617979350135862094
+  Bound result 999999000045013782
+  Bound result 3716310190631343
+  Bound result 181785533778956280
+  Bound result 999999000000031849
+  Bound result 4999999000000000028
+  Bound result 4999999000000002543
+  Bound result 4999999000000007104
+  Bound result 1000000000000
+  Bound result 2834418297120
+  Bound result 4999999002042253465
+  Bound result 15299995668101089
+  Bound result 999999000000861424
+  Bound result 1492235071881515
+  Bound result 1000000000001
+  Bound result 4999999000000000029
+  Bound result 4999999000109271629
+  Bound result 999999000000000201
+  Bound result 4999999282951650697
+  Bound result 2378626378204879500
+  Bound result 446762073709551597
+  Bound result 2367071567386511139
+  Bound result 354014835929911069
+  Bound result 4999999007693540560
+  Bound result 999999000000001550
+  Bound result 3115085085367169117
+  Bound result 4999999000000006031
+  Bound result 3502058848663889473
+  Bound result 999999000107477465
+  Bound result 999999000000101233
+  Bound result 4999999000719537853
+  Bound result 1392533019389757534
+  Bound result 4999999000000009330
+  Bound result 1431747932878
+  Bound result 4830574895982302849
+  Bound result 999999000000006127
+  Bound result 999999000000000059
+  Bound result 14999999999985
+  Bound result 4999999000000073093
+  Bound result 2785043995447391625
+  Bound result 4999999000000000062
+  Bound result 1937952531462249
+  Bound result 23375879530966
+  Bound result 880649122098734621
+  Bound result 999999000000000007
+  Bound result 38601497395163201
+  Bound result 3285103018388307904
+  Bound result 8828609620402598
+  Bound result 135150935126131115
+  Bound result 4999999000000000312
+  Bound result 7849579613568984
+  Bound result 4999999000000000103
+  Bound result 999999000000000005
+  Bound result 4999999000000011072
+  Bound result 999999000000000007
+  Bound result 4999999000000000014
+  Bound result 4999999000000002793
+  Bound result 4999999000000000769
+  Bound result 4999999000028344265
+  Bound result 4366034568480492886
+  Bound result 999999540851779610
+  Bound result 999999000000000145
+  Bound result 999999004010789456
+  Bound result 1000000000000
+  Bound result 196600230652029691
+  Bound result 251172260178625
+  Bound result 175912706965307861
+  Bound result 4999999000000017070
+  Bound result 4999999000000001994
+  Bound result 999999000000000012
+  Bound result 1000000000000
+  Bound result 4900008577698314664
+  Bound result 999999000000017774
+  Bound result 999999001852562339
+  Bound result 7290100848409354
+  Bound result 1091587458746294
+  Bound result 999999000000051967
+  Bound result 4999999097825964520
+  Bound result 999999000000001753
+  Bound result 999999000000023572
+  Bound result 246167874230611022
+  Bound result 590598611879872018
+  Bound result 999999000000049838
+  Bound result 931391385007665
+  Bound result 4900008577698314661
+  Bound result 4999999000000004944
+  Bound result 999999000053977452
+  Bound result 4074790184478300538
+  Bound result 3806193316724929274
+  Bound result 1006316555130417075
+  Bound result 999999000000017171
+  Bound result 4999999000000127543
+  Bound result 76715147717087
+  Bound result 1174646670496942452
+  Bound result 482677907591390108
+  Bound result 8999999999991
+  Bound result 2483702445972981984
+  Bound result 999999000000017157
+  Bound result 4999999012522173653
+  Bound result 225273901793409142
+  Bound result 999999000059421990
+  Bound result 3209534056590328928
+  Bound result 4999999001026354288
+  Bound result 4999999000028537585
+  Bound result 4999999000000000019
+  Bound result 999999000000004753
+  Bound result 1000000000000
+  Bound result 999999000000945579
+  Bound result 4999999000021294174
+
+[PASS] testAllValueEntryPointsRejectAnUnapprovedCaller() (gas: 300489)
+[PASS] testAnyoneCanInitializeAnotherPermittedNoHookPool() (gas: 59470)
+[PASS] testApprovedHookAtFiftyBpsKeepsEverySwapModeAtSixPercentMaximum() (gas: 991353)
+[PASS] testApprovedHookOverFiftyBpsRollsBackEverySwapModeAndPayout() (gas: 1253079)
+[PASS] testBothDirectionsPreserveFounderTwoPercentAndHalveOtherBuckets() (gas: 585110)
+[PASS] testClaimAndProtocolFeeWithdrawalCannotOccurDuringUnlock() (gas: 103325)
+[PASS] testClaimReceiptsCannotTransferToAnIndependentPool() (gas: 13105)
+[PASS] testClaimTokenMintAndBurnSettlementStillPaysEveryTradeFee() (gas: 530812)
+[PASS] testDonationsAndDirectTransfersDoNotIncreaseVolume() (gas: 192143)
+[PASS] testFeeRoundingMatchesExistingBasisPointConvention() (gas: 186882)
+[PASS] testFeeSplitAndPermissionlessSweepPayOnlyFixedRecipients() (gas: 418860)
+[PASS] testForeignManagerHookAndCustomBeforeSwapAccountingAreRejected() (gas: 65434)
+[PASS] testFuzzBothDirectionsAndExactModesSettleAndConserveRevenue(uint96,bool,bool) (runs: 512, μ: 322777, ~: 322589)
+Logs:
+  Bound result 1641274706234387472
+
+[PASS] testLiquidityAdditionAndRemovalDoNotAccrueTradeRevenue() (gas: 277716)
+[PASS] testNoHookExactInputBuyPaysFivePointFivePercent() (gas: 323724)
+[PASS] testNoHookExactInputSellPaysFivePointFivePercent() (gas: 324413)
+[PASS] testNoHookExactOutputBuyPaysFivePointFivePercent() (gas: 317156)
+[PASS] testNoHookExactOutputSellPaysFivePointFivePercent() (gas: 330599)
+[PASS] testOnlyRecipientMayRedirectItsOwnTokenBucket() (gas: 344427)
+[PASS] testPartialFillFeesUseExecutedAmount() (gas: 303668)
+[PASS] testPinnedRuntimeChangeRevokesOperatorAndHookAccess() (gas: 106217)
+[PASS] testRevenueBucketAndRecipientValidation() (gas: 40823)
+[PASS] testRevertedSwapDoesNotIncreaseVolume() (gas: 80139)
+[PASS] testSyncedTokenWithdrawalIsRejectedUntilNativeResync() (gas: 345240)
+[PASS] testTwoPoolInternalNettingCannotAvoidEitherLegFee() (gas: 495921)
+[PASS] testUnapprovedHookAndForeignCurrenciesAreRejected() (gas: 69911)
+[PASS] testUnsealedOrOtherBoundManagerCannotInitializePools() (gas: 11926728)
+[PASS] testVolumeTrackingStartsNextFullDayAndSeparatesUTCdays() (gas: 600188)
+[PASS] testZeroFeeHookCannotUndercutBuyOrSellRevenue() (gas: 616510)
+Suite result: ok. 30 passed; 0 failed; 0 skipped; finished in 190.21s (190.41s CPU time)
+
+Ran 8 test suites in 190.22s (417.45s CPU time): 138 tests passed, 2 failed, 0 skipped (140 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/market-v2/RestrictedMarketIntegrationV2.t.sol:RestrictedMarketIntegrationV2Test
+[FAIL: vm.getCode: no matching artifact found] test_foreignManagerAndCounterfactualCannotReceiveRevenueInventory() (gas: 465634)
+
+Encountered 1 failing test in test/market-v2/RestrictedOMRV2.t.sol:RestrictedOMRV2Test
+[FAIL: vm.getCode: no matching artifact found] testNativeForeignManagerCannotBePrefundedBeforeSeal() (gas: 3955)
+
+Encountered a total of 2 failing tests, 138 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 2 failed tests

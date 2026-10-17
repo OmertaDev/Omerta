@@ -1,0 +1,185 @@
+Compiling 2 files with Solc 0.8.26
+Solc 0.8.26 finished in 95.78s
+Compiler run successful!
+
+Ran 1 test for test/CharacterDeedCustody.t.sol:CharacterDeedCustodyTest
+[PASS] test_safe_house_signature_nonce_price_day_allowance_and_horizon_are_atomic() (gas: 587999)
+Traces:
+  [626699] CharacterDeedCustodyTest::test_safe_house_signature_nonce_price_day_allowance_and_horizon_are_atomic()
+    ├─ [0] VM::startPrank(0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7)
+    │   └─ ← [Return]
+    ├─ [9562] StreetDeed.constellation-via-ir::setTransferLock(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], false)
+    │   ├─ emit TransferLockSet(tokenId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], locked: false, by: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7)
+    │   └─ ← [Stop]
+    ├─ [24767] StreetDeed.constellation-via-ir::approve(CharacterDeedCustody.constellation-via-ir: [0x1d1499e622D69689cdf9004d05Ec547d650Ff211], 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76])
+    │   ├─ emit Approval(owner: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, approved: CharacterDeedCustody.constellation-via-ir: [0x1d1499e622D69689cdf9004d05Ec547d650Ff211], tokenId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76])
+    │   └─ ← [Return]
+    ├─ [134100] CharacterDeedCustody.constellation-via-ir::equip(0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76])
+    │   ├─ [807] StreetDeed.constellation-via-ir::ownerOf(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7
+    │   ├─ [72572] ERC6551Registry::createAccount(DeedStockAccount.constellation-via-ir: [0x45C92C2Cd0dF7B2d705EF12CfF77Cb0Bc557Ed22], 0x0000000000000000000000000000000000000000000000000000000000000000, 31337 [3.133e4], StreetDeed.constellation-via-ir: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76])
+    │   │   ├─ [34655] → new <unknown>@0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3
+    │   │   │   └─ ← [Return] 173 bytes of code
+    │   │   ├─ emit ERC6551AccountCreated(account: 0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3, implementation: DeedStockAccount.constellation-via-ir: [0x45C92C2Cd0dF7B2d705EF12CfF77Cb0Bc557Ed22], salt: 0x0000000000000000000000000000000000000000000000000000000000000000, chainId: 31337 [3.133e4], tokenContract: StreetDeed.constellation-via-ir: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], tokenId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76])
+    │   │   └─ ← [Return] 0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3
+    │   ├─ [536] ERC6551Registry::account(DeedStockAccount.constellation-via-ir: [0x45C92C2Cd0dF7B2d705EF12CfF77Cb0Bc557Ed22], 0x0000000000000000000000000000000000000000000000000000000000000000, 31337 [3.133e4], StreetDeed.constellation-via-ir: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] 0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3
+    │   ├─ [40835] StreetDeed.constellation-via-ir::safeTransferFrom(0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636], 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76])
+    │   │   ├─ emit Transfer(from: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, to: CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636], tokenId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76])
+    │   │   ├─ [529] CharacterDeedAccount.constellation-via-ir::onERC721Received(CharacterDeedCustody.constellation-via-ir: [0x1d1499e622D69689cdf9004d05Ec547d650Ff211], 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], 0x)
+    │   │   │   └─ ← [Return] 0x150b7a02
+    │   │   └─ ← [Stop]
+    │   ├─ emit DeedEquipped(deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, wallet: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, vault: 0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3)
+    │   └─ ← [Return]
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return]
+    ├─ [2345] CharacterDeedCustody.constellation-via-ir::deedVault(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   ├─ [536] ERC6551Registry::account(DeedStockAccount.constellation-via-ir: [0x45C92C2Cd0dF7B2d705EF12CfF77Cb0Bc557Ed22], 0x0000000000000000000000000000000000000000000000000000000000000000, 31337 [3.133e4], StreetDeed.constellation-via-ir: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] 0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3
+    │   └─ ← [Return] 0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3
+    ├─ [46465] CustodyStock::mint(0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3, 100000000000000000000 [1e20])
+    │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: 0x0A985bCF1adCff8F9935f6770c114fb8d7A238B3, amount: 100000000000000000000 [1e20])
+    │   └─ ← [Stop]
+    ├─ [3320] CharacterDeedCustody.constellation-via-ir::safeHouseNonce(0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [1386] CharacterDeedCustody.constellation-via-ir::hashSafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 0, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] })) [staticcall]
+    │   └─ ← [Return] 0x99dff53008e41f12d09c7569b5ab77710c0aa2c9bc98556eb7955857c11b8781
+    ├─ [0] VM::sign("<pk>", 0x99dff53008e41f12d09c7569b5ab77710c0aa2c9bc98556eb7955857c11b8781) [staticcall]
+    │   └─ ← [Return] 28, 0xf910d3612eb53f4dde942103624eb621850b0d01fd7febbf6301492126cf22bb, 0x121d7db795dd4699a0f07e3c6841b4b0871c619d51e361eecb3e2d2386fb6643
+    ├─ [0] VM::expectRevert(DC: only operator)
+    │   └─ ← [Return]
+    ├─ [2597] CharacterDeedCustody.constellation-via-ir::prepaySafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 0, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] }), 0xf910d3612eb53f4dde942103624eb621850b0d01fd7febbf6301492126cf22bb121d7db795dd4699a0f07e3c6841b4b0871c619d51e361eecb3e2d2386fb66431c)
+    │   └─ ← [Revert] DC: only operator
+    ├─ [0] VM::prank(operator: [0xbC32b0FCDb9b55F5ECE07BA7F8059bA42D331F4C])
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(DC: owner signature)
+    │   └─ ← [Return]
+    ├─ [11447] CharacterDeedCustody.constellation-via-ir::prepaySafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 0, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] }), 0x626164)
+    │   ├─ [807] StreetDeed.constellation-via-ir::ownerOf(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636]
+    │   └─ ← [Revert] DC: owner signature
+    ├─ [0] VM::prank(0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7)
+    │   └─ ← [Return]
+    ├─ [7272] OmertaRestrictedOMRV2::approve(CharacterDeedCustody.constellation-via-ir: [0x1d1499e622D69689cdf9004d05Ec547d650Ff211], 0)
+    │   ├─ emit Approval(owner: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, spender: CharacterDeedCustody.constellation-via-ir: [0x1d1499e622D69689cdf9004d05Ec547d650Ff211], amount: 0)
+    │   └─ ← [Return] true
+    ├─ [0] VM::prank(operator: [0xbC32b0FCDb9b55F5ECE07BA7F8059bA42D331F4C])
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(custom error 0xf4844814)
+    │   └─ ← [Return]
+    ├─ [123458] CharacterDeedCustody.constellation-via-ir::prepaySafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 0, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] }), 0xf910d3612eb53f4dde942103624eb621850b0d01fd7febbf6301492126cf22bb121d7db795dd4699a0f07e3c6841b4b0871c619d51e361eecb3e2d2386fb66431c)
+    │   ├─ [807] StreetDeed.constellation-via-ir::ownerOf(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636]
+    │   ├─ [3000] PRECOMPILES::ecrecover(0x99dff53008e41f12d09c7569b5ab77710c0aa2c9bc98556eb7955857c11b8781, 28, 112655627738782710600665906662849628250159828011888669622744588523101490193083, 8193737507123516080731166623003527811707235661848011136635183424624492504643) [staticcall]
+    │   │   └─ ← [Return] 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7
+    │   ├─ [2648] OmertaRestrictedOMRV2::policySealed() [staticcall]
+    │   │   └─ ← [Return] true
+    │   ├─ [494] OmertaRestrictedOMRV2::settlementManager() [staticcall]
+    │   │   └─ ← [Return] CustodyVolumeSource: [0xc7183455a4C133Ae270771860664b6B7ec320bB1]
+    │   ├─ [2321] CustodyVolumeSource::volumeTrackingStartDay() [staticcall]
+    │   │   └─ ← [Return] 98
+    │   ├─ [2313] CustodyVolumeSource::dailyOmrVolume(99) [staticcall]
+    │   │   └─ ← [Return] 100000000000000000000000 [1e23]
+    │   ├─ [6207] OmertaRestrictedOMRV2::burnFrom(0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, 5000000000000000000 [5e18])
+    │   │   └─ ← [Revert] ERC20InsufficientAllowance(0x1d1499e622D69689cdf9004d05Ec547d650Ff211, 0, 5000000000000000000 [5e18])
+    │   └─ ← [Revert] ERC20InsufficientAllowance(0x1d1499e622D69689cdf9004d05Ec547d650Ff211, 0, 5000000000000000000 [5e18])
+    ├─ [1320] CharacterDeedCustody.constellation-via-ir::safeHouseNonce(0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return]
+    ├─ [2783] CharacterDeedCustody.constellation-via-ir::safeHouseUntil(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], 1) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7)
+    │   └─ ← [Return]
+    ├─ [2372] OmertaRestrictedOMRV2::approve(CharacterDeedCustody.constellation-via-ir: [0x1d1499e622D69689cdf9004d05Ec547d650Ff211], 115792089237316195423570985008687907853269984665640564039457584007913129639935 [1.157e77])
+    │   ├─ emit Approval(owner: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, spender: CharacterDeedCustody.constellation-via-ir: [0x1d1499e622D69689cdf9004d05Ec547d650Ff211], amount: 115792089237316195423570985008687907853269984665640564039457584007913129639935 [1.157e77])
+    │   └─ ← [Return] true
+    ├─ [0] VM::prank(operator: [0xbC32b0FCDb9b55F5ECE07BA7F8059bA42D331F4C])
+    │   └─ ← [Return]
+    ├─ [138634] CharacterDeedCustody.constellation-via-ir::prepaySafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 0, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] }), 0xf910d3612eb53f4dde942103624eb621850b0d01fd7febbf6301492126cf22bb121d7db795dd4699a0f07e3c6841b4b0871c619d51e361eecb3e2d2386fb66431c)
+    │   ├─ [807] StreetDeed.constellation-via-ir::ownerOf(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636]
+    │   ├─ [3000] PRECOMPILES::ecrecover(0x99dff53008e41f12d09c7569b5ab77710c0aa2c9bc98556eb7955857c11b8781, 28, 112655627738782710600665906662849628250159828011888669622744588523101490193083, 8193737507123516080731166623003527811707235661848011136635183424624492504643) [staticcall]
+    │   │   └─ ← [Return] 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7
+    │   ├─ [2648] OmertaRestrictedOMRV2::policySealed() [staticcall]
+    │   │   └─ ← [Return] true
+    │   ├─ [494] OmertaRestrictedOMRV2::settlementManager() [staticcall]
+    │   │   └─ ← [Return] CustodyVolumeSource: [0xc7183455a4C133Ae270771860664b6B7ec320bB1]
+    │   ├─ [2321] CustodyVolumeSource::volumeTrackingStartDay() [staticcall]
+    │   │   └─ ← [Return] 98
+    │   ├─ [2313] CustodyVolumeSource::dailyOmrVolume(99) [staticcall]
+    │   │   └─ ← [Return] 100000000000000000000000 [1e23]
+    │   ├─ [19451] OmertaRestrictedOMRV2::burnFrom(0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, 5000000000000000000 [5e18])
+    │   │   ├─ emit Transfer(from: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, to: 0x0000000000000000000000000000000000000000, amount: 5000000000000000000 [5e18])
+    │   │   └─ ← [Stop]
+    │   ├─ emit SafeHousePurchased(deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, dynastyId: 1, priceDay: 100, previousDayVolume: 100000000000000000000000 [1e23], burnAmount: 5000000000000000000 [5e18], startsAt: 8640001 [8.64e6], until: 8726401 [8.726e6], nonce: 0)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(operator: [0xbC32b0FCDb9b55F5ECE07BA7F8059bA42D331F4C])
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(DC: safe house nonce)
+    │   └─ ← [Return]
+    ├─ [6094] CharacterDeedCustody.constellation-via-ir::prepaySafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 0, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] }), 0xf910d3612eb53f4dde942103624eb621850b0d01fd7febbf6301492126cf22bb121d7db795dd4699a0f07e3c6841b4b0871c619d51e361eecb3e2d2386fb66431c)
+    │   ├─ [807] StreetDeed.constellation-via-ir::ownerOf(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636]
+    │   └─ ← [Revert] DC: safe house nonce
+    ├─ [1320] CharacterDeedCustody.constellation-via-ir::safeHouseNonce(0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137) [staticcall]
+    │   └─ ← [Return] 1
+    ├─ [1386] CharacterDeedCustody.constellation-via-ir::hashSafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 6, priceDay: 100, maxBurn: 150000000000000000000 [1.5e20], nonce: 1, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] })) [staticcall]
+    │   └─ ← [Return] 0xe0a19f882289254157991c989b0b6ddbee8b967b12f4793879a2b40a9995df87
+    ├─ [0] VM::sign("<pk>", 0xe0a19f882289254157991c989b0b6ddbee8b967b12f4793879a2b40a9995df87) [staticcall]
+    │   └─ ← [Return] 28, 0x9f3422e53f9fd7fdbff2bfc8f11294aab408ee3950ef0065b300942ba7de905f, 0x7eeaf97821fb20d88d0aeaaa028754320eea979d6fe9e28fe07d0d54f499a8a4
+    ├─ [0] VM::prank(operator: [0xbC32b0FCDb9b55F5ECE07BA7F8059bA42D331F4C])
+    │   └─ ← [Return]
+    ├─ [27086] CharacterDeedCustody.constellation-via-ir::prepaySafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 6, priceDay: 100, maxBurn: 150000000000000000000 [1.5e20], nonce: 1, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] }), 0x9f3422e53f9fd7fdbff2bfc8f11294aab408ee3950ef0065b300942ba7de905f7eeaf97821fb20d88d0aeaaa028754320eea979d6fe9e28fe07d0d54f499a8a41c)
+    │   ├─ [807] StreetDeed.constellation-via-ir::ownerOf(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636]
+    │   ├─ [3000] PRECOMPILES::ecrecover(0xe0a19f882289254157991c989b0b6ddbee8b967b12f4793879a2b40a9995df87, 28, 72009859812011839658927591261810550376831407846707463061419496214039619342431, 57406582908262271593985221932947604940276587532759807875394065194305166354596) [staticcall]
+    │   │   └─ ← [Return] 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7
+    │   ├─ [648] OmertaRestrictedOMRV2::policySealed() [staticcall]
+    │   │   └─ ← [Return] true
+    │   ├─ [494] OmertaRestrictedOMRV2::settlementManager() [staticcall]
+    │   │   └─ ← [Return] CustodyVolumeSource: [0xc7183455a4C133Ae270771860664b6B7ec320bB1]
+    │   ├─ [321] CustodyVolumeSource::volumeTrackingStartDay() [staticcall]
+    │   │   └─ ← [Return] 98
+    │   ├─ [313] CustodyVolumeSource::dailyOmrVolume(99) [staticcall]
+    │   │   └─ ← [Return] 100000000000000000000000 [1e23]
+    │   ├─ [5851] OmertaRestrictedOMRV2::burnFrom(0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, 30000000000000000000 [3e19])
+    │   │   ├─ emit Transfer(from: 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7, to: 0x0000000000000000000000000000000000000000, amount: 30000000000000000000 [3e19])
+    │   │   └─ ← [Stop]
+    │   ├─ emit SafeHousePurchased(deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, dynastyId: 1, priceDay: 100, previousDayVolume: 100000000000000000000000 [1e23], burnAmount: 30000000000000000000 [3e19], startsAt: 8640001 [8.64e6], until: 9244801 [9.244e6], nonce: 1)
+    │   └─ ← [Return]
+    ├─ [1320] CharacterDeedCustody.constellation-via-ir::safeHouseNonce(0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137) [staticcall]
+    │   └─ ← [Return] 2
+    ├─ [1386] CharacterDeedCustody.constellation-via-ir::hashSafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 2, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] })) [staticcall]
+    │   └─ ← [Return] 0x1aab6fbfad85d0084a3743cf39f9bdc49f8d591e3bdac784782077f7f8d562ff
+    ├─ [0] VM::sign("<pk>", 0x1aab6fbfad85d0084a3743cf39f9bdc49f8d591e3bdac784782077f7f8d562ff) [staticcall]
+    │   └─ ← [Return] 27, 0xe93a0cd69b6d19a5774e19301996551a86097c1b47a0448b5a12619e3a75a535, 0x1476c620ebf587bc49a1562ea7c8f9b3376501c6b2224ddf92a5920aa351a4cc
+    ├─ [0] VM::prank(operator: [0xbC32b0FCDb9b55F5ECE07BA7F8059bA42D331F4C])
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(DC: prepaid horizon)
+    │   └─ ← [Return]
+    ├─ [16557] CharacterDeedCustody.constellation-via-ir::prepaySafeHouse(SafeHouseRequest({ lifeId: 0xf8fa998f7b96a5becbfcca00b41de10f015fc459535d93940c00c149be988137, deedId: 44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], days_: 1, priceDay: 100, maxBurn: 25000000000000000000 [2.5e19], nonce: 2, issuedAt: 8640000 [8.64e6], deadline: 8640120 [8.64e6] }), 0xe93a0cd69b6d19a5774e19301996551a86097c1b47a0448b5a12619e3a75a5351476c620ebf587bc49a1562ea7c8f9b3376501c6b2224ddf92a5920aa351a4cc1b)
+    │   ├─ [807] StreetDeed.constellation-via-ir::ownerOf(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76]) [staticcall]
+    │   │   └─ ← [Return] CharacterDeedAccount.constellation-via-ir: [0x9914ff9347266f1949C557B717936436402fc636]
+    │   ├─ [3000] PRECOMPILES::ecrecover(0x1aab6fbfad85d0084a3743cf39f9bdc49f8d591e3bdac784782077f7f8d562ff, 27, 105491459456411249459014337321032509034434308666772614767185087686902648513845, 9256112358653528813591069553090858302967816075630050690876627473396021699788) [staticcall]
+    │   │   └─ ← [Return] 0xe05fcC23807536bEe418f142D19fa0d21BB0cfF7
+    │   ├─ [648] OmertaRestrictedOMRV2::policySealed() [staticcall]
+    │   │   └─ ← [Return] true
+    │   ├─ [494] OmertaRestrictedOMRV2::settlementManager() [staticcall]
+    │   │   └─ ← [Return] CustodyVolumeSource: [0xc7183455a4C133Ae270771860664b6B7ec320bB1]
+    │   ├─ [321] CustodyVolumeSource::volumeTrackingStartDay() [staticcall]
+    │   │   └─ ← [Return] 98
+    │   ├─ [313] CustodyVolumeSource::dailyOmrVolume(99) [staticcall]
+    │   │   └─ ← [Return] 100000000000000000000000 [1e23]
+    │   └─ ← [Revert] DC: prepaid horizon
+    ├─ [1156] CharacterDeedCustody.constellation-via-ir::safeHouseUntil(44499143646721578210574548524639767682176038024828197337575619131908719072206 [4.449e76], 1) [staticcall]
+    │   └─ ← [Return] 9244801 [9.244e6]
+    ├─ [0] VM::assertEq(9244801 [9.244e6], 9244801 [9.244e6]) [staticcall]
+    │   └─ ← [Return]
+    └─ ← [Return]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 5.93ms (1.58ms CPU time)
+
+Ran 1 test suite in 20.34ms (5.93ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

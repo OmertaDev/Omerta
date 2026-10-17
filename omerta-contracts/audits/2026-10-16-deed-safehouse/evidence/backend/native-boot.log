@@ -1,0 +1,2 @@
+[db] Postgres ready — column migration ran 4665 ADD COLUMN IF NOT EXISTS statements.
+{"nativeBoot":"PASS","custodyTables":["character_deed_deaths","character_deed_equipment","character_deed_exits","character_deed_lives","character_deed_safe_house","character_deed_safe_house_intents","character_deed_state"],"allCustodyTablesRls":true}

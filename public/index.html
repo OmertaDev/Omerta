@@ -10007,6 +10007,7 @@
   let deedPropertyRender = 0;
   let deedPropertyActor = null;
   const deedPropertyNames = new Map();
+  const deedCustodyPending = new Set();
   async function renderDeeds(propertyFocus = deedPropertyFocus) {
     const actor = me?.id || null;
     if (actor !== deedPropertyActor) {
@@ -10027,6 +10028,30 @@
     if (!valid() || reply.ignored) return;
     const b = reply.body || {};
     const deed = b.deed, districts = b.districts || [], history = b.history || [], ranks = b.ranks || [];
+    const custody = b.custody || {}, equipment = custody.equipment || [];
+    const safeDate = value => {
+      const date = new Date(typeof value === 'number' && value < 1e12 ? value * 1000 : value);
+      return Number.isFinite(date.getTime()) ? date.toLocaleString() : 'confirmation pending';
+    };
+    const custodyCard = `<section class="card" aria-labelledby="deed-custody-title"><h2 id="deed-custody-title">Equipped deeds &amp; Safe House</h2>
+      ${b.custodyEnabled ? `<p class="d">Equipping locks the deed and every asset in its canonical deed wallet. An exposed deed passes to your killer, then each successive killer, even while earlier transfers await settlement. Assets stay locked throughout.</p>
+        <p class="d">Safe House covers the deed and all assets in that wallet. Your character can still be killed; other game assets follow their usual death rules. If protected when you die, the covered property goes to your own heir after a 24-hour estate delay. Death without a player killer also follows the heir rule. Protection never covers an earlier death.</p>
+        <p class="d">The daily burn price uses the previous complete UTC day's OMR trading volume: volume ÷ 20,000, between 1 and 25 OMR per deed per day. Prepay whole days, up to seven days ahead. Purchased time keeps its price; when it expires, the deed is exposed again. OMR is permanently burned, with no refund or yield. Wallet approval alone does not activate protection.</p>
+        <label class="d" for="deed-equip-token">Deed token ID</label> <input id="deed-equip-token" inputmode="numeric" pattern="[0-9]+" placeholder="token ID"> <button class="act" id="deed-equip" type="button">equip deed</button>
+        <div id="deed-custody-status" class="d" role="status" aria-live="polite"></div>
+        ${equipment.map(e => {
+          const tokenId = String(e.deed_token_id), exit = (custody.exits || []).find(x => String(x.deed_token_id) === tokenId);
+          const pending = (custody.safeHouseIntents || []).some(row => String(row.deed_token_id) === tokenId);
+          const confirmed = e.protected === true && e.coverageStatus === 'confirmed' && new Date(e.safeUntil).getTime() > Date.now();
+          return `<div class="card" data-deed-equipment="${esc(tokenId)}"><b>Deed ${esc(tokenId)}</b>
+            <div class="d" data-deed-coverage>${confirmed ? `Safe House confirmed until ${esc(safeDate(e.safeUntil))} (${esc(new Date(e.safeUntil).toISOString())}). All assets in its canonical deed wallet are covered.` : pending || e.coverageStatus === 'pending' ? 'Safe House request pending. This is not confirmed protection.' : e.coverageStatus === 'unavailable' ? 'Protection cannot currently be verified. Refresh before relying on coverage.' : 'Exposed to player-kill loot. No confirmed Safe House coverage.'}</div>
+            ${e.safeUntil && !confirmed ? `<div class="d">Last recorded paid time: ${esc(safeDate(e.safeUntil))}.</div>` : ''}
+            ${custody.safeHouse?.enabled ? `<label class="d" for="deed-safe-days-${esc(tokenId)}">Days to add</label> <select id="deed-safe-days-${esc(tokenId)}" aria-label="Safe House days for deed ${esc(tokenId)}">${[1,2,3,4,5,6,7].map(n => `<option value="${n}">${n} day${n === 1 ? '' : 's'}</option>`).join('')}</select> <button class="act" type="button" data-deed-safe-house="${esc(tokenId)}"${pending ? ' disabled' : ''}>${pending ? 'burn request pending' : 'review burn &amp; protect'}</button>` : '<div class="d">New Safe House purchases are unavailable. Existing confirmed coverage keeps its paid expiry.</div>'}
+            <div class="d">${exit?.status === 'releasing' ? 'Release submitted; assets remain locked until confirmed.' : exit ? `Release notice ends ${esc(safeDate(exit.available_at))}. <button class="act" type="button" data-deed-release="${esc(tokenId)}">sign release</button> <button class="act" type="button" data-deed-cancel="${esc(tokenId)}">cancel notice</button>` : `<button class="act" type="button" data-deed-notice="${esc(tokenId)}">start 24-hour release notice</button>`}</div></div>`;
+        }).join('') || '<p class="d">No deeds equipped by this life.</p>'}
+        <p class="d">Release requires 24 hours' notice. Death before release cancels that notice. A pending release does not unlock assets.</p>
+        ${(custody.estates || []).map(e => `<p class="d">Estate: ${e.status === 'blocked' ? 'heir record needs reconciliation; assets stay locked' : !e.chainReleaseKnown ? 'death recording pending; assets remain locked until confirmed settlement' : e.status === 'available' ? 'estate delay cleared; settlement may still be pending' : `assets locked until ${esc(safeDate(e.availableAt))}`}.</p>`).join('')}`
+        : '<p class="d">Automatic on-chain death transfers and Safe House purchases are not active. No burn or protection can be started here.</p>'}</section>`;
     const upgrades = b.upgrades || {}, rewards = b.rewards || {}, nextUpgrade = upgrades.next;
     const upgradeReasons = {
       no_deed: 'Claim a street first.', not_deed_owner: 'Only the current deed owner can upgrade it.',
@@ -10154,11 +10179,12 @@
         <button class="act" id="deed-quests-open">quests and inventory</button>
         <div id="deed-atlas" aria-live="polite"></div></div>
       ${chainCard()}
+      ${custodyCard}
       ${rewardCard}
       ${upgradeCard}
       ${deed ? `<h2 id="city-owned-deed" tabindex="-1">${esc(deed.name)} <span class="d" style="font-size:12.5px">· ${esc(deed.districtName)} · ${esc(b.rank)}</span></h2>
         <div class="card" style="border-color:var(--gold)"><span class="t">The Deed</span>
-          <div class="d">You hold the deed to <b>${esc(deed.name)}</b>, in ${esc(deed.districtName)}${deed.neighborhood ? ', ' + esc(deed.neighborhood) + (deed.frontier ? ' (the frontier)' : '') : ''}. Your heir inherits it when your street dies.</div>
+          <div class="d">You hold the deed to <b>${esc(deed.name)}</b>, in ${esc(deed.districtName)}${deed.neighborhood ? ', ' + esc(deed.neighborhood) + (deed.frontier ? ' (the frontier)' : '') : ''}. ${b.custodyEnabled ? 'An equipped deed follows its confirmed death and protection rules shown above.' : 'Your heir inherits it when your street dies.'}</div>
           <div class="d" style="margin-top:3px">Legend: <b>${b.renown}</b> renown · <span class="chip good">${esc(b.rank)}</span> ${vaultChip(deed.vault)}</div>
           ${deed.vault && (deed.vault.received || []).length ? `<div class="d" style="margin-top:3px;font-size:11px;color:var(--dim)">Its on-chain vault has received ${deed.vault.received.map((r) => r.units + ' ' + esc(r.ticker)).join(', ')}. That vault is keyed on the street's NAME, so it travels with the deed — sell the street and it goes with it${deed.vault.tba ? ` (<code>${esc(deed.vault.tba)}</code>)` : ''}.</div>` : ''}</div>
         <h2 style="margin-top:12px">The Record <span class="d" style="font-size:11px">(recorded events on this street)</span></h2>
@@ -10279,6 +10305,162 @@
     t.querySelectorAll('[data-deed-district]').forEach(el => el.onclick = () => openPropertyDistrict(el.dataset.deedDistrict));
     if (deedPropertyFocus?.district) await openPropertyDistrict(deedPropertyFocus.district, deedPropertyFocus.buildingId);
     if (!valid()) return;
+    if (b.custodyEnabled) {
+      const custodyDistrict = me.loc;
+      const status = message => { if (valid()) $('#deed-custody-status').textContent = message; };
+      const requireCurrent = () => { if (!valid() || me.loc !== custodyDistrict) throw Error('Your character, district or view changed. Reopen Street Deeds and review again.'); };
+      const walletTypedData = typed => ({ ...typed, types: { ...typed.types, EIP712Domain: [
+        { name: 'name', type: 'string' }, { name: 'version', type: 'string' },
+        { name: 'chainId', type: 'uint256' }, { name: 'verifyingContract', type: 'address' },
+      ] } });
+      const readPlan = async (method, path, body) => {
+        requireCurrent();
+        const response = await api(method, path, body, { isCurrent: valid });
+        requireCurrent();
+        if (response.code !== 200) throw Error(describe(response.body, response.code));
+        if (response.body.ready === false) throw Error(response.body.reason === 'identity_required'
+          ? 'Claim your character identity before equipping a deed.' : response.body.message || 'On-chain preparation is not ready. Refresh before trying again.');
+        return response.body;
+      };
+      const planIdentity = plan => {
+        const contract = plan.custodyAddress || plan.contract;
+        if (!/^0x[0-9a-f]{40}$/i.test(contract || '') || !/^0x[0-9a-f]{40}$/i.test(plan.ownerWallet || '')
+          || !Number.isSafeInteger(plan.chainId) || plan.chainId <= 0) throw Error('The wallet preview is incomplete. No transaction was requested.');
+        return { contract, chainId: '0x' + plan.chainId.toString(16), owner: plan.ownerWallet.toLowerCase() };
+      };
+      const walletOwner = async (provider, identity, connect = false) => {
+        requireCurrent();
+        const [account] = await provider.request({ method: connect ? 'eth_requestAccounts' : 'eth_accounts' });
+        requireCurrent();
+        if (account?.toLowerCase() !== identity.owner) throw Error('Select the wallet that owns this character identity.');
+        if (connect) await switchCharacterChain(provider, identity.chainId);
+        const chain = await provider.request({ method: 'eth_chainId' });
+        requireCurrent();
+        if (BigInt(chain) !== BigInt(identity.chainId)) throw Error('The wallet network changed. Review again.');
+        return account;
+      };
+      const waitReceipt = async (provider, hash) => {
+        if (!/^0x[0-9a-f]{64}$/i.test(hash || '')) throw Error('The wallet submission has an unknown outcome. Check its history before retrying.');
+        for (let attempt = 0; attempt < 90; attempt++) {
+          requireCurrent();
+          const receipt = await provider.request({ method: 'eth_getTransactionReceipt', params: [hash] });
+          if (receipt) {
+            if (BigInt(receipt.status) !== 1n) throw Error('The wallet transaction failed. Protection has not been purchased.');
+            return;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        throw Error('The transaction is still pending. Check your wallet before continuing.');
+      };
+      const custodyAction = async (key, work) => {
+        if (deedCustodyPending.has(actor)) { status('Another deed request is still being reviewed. Finish that request first.'); return; }
+        deedCustodyPending.add(actor);
+        try { requireCurrent(); await work(); }
+        catch (error) { if (valid()) { status(error.message || 'The deed request was cancelled.'); toast(error.message || 'The deed request was cancelled.', true); } }
+        finally { deedCustodyPending.delete(actor); }
+      };
+      $('#deed-equip').onclick = () => custodyAction('equip', async () => {
+        const tokenId = $('#deed-equip-token').value.trim();
+        if (!/^\d+$/.test(tokenId)) throw Error('Enter a deed token ID.');
+        const plan = await readPlan('POST', '/v1/deeds/equip', { tokenId });
+        const identity = planIdentity(plan);
+        const targets = [identity.contract, plan.deedAddress].filter(Boolean).map(address => address.toLowerCase());
+        if (!Array.isArray(plan.steps) || !plan.steps.length || plan.steps.length > 3
+          || plan.steps.some(step => !targets.includes(String(step.to).toLowerCase())
+            || !/^0x[0-9a-f]+$/i.test(step.data || '') || BigInt(step.value || '0') !== 0n)) throw Error('Invalid equipment transaction preview.');
+        if (!await ask('Equip this deed?', `Deed ${tokenId} and all assets in its canonical wallet will be locked. Without confirmed Safe House coverage, a player killer can take them.\n\nNetwork: ${plan.chainId}\nCustody: ${identity.contract}\nWallet: ${plan.ownerWallet}\nWallet gas applies. Releasing requires 24 hours' notice.`, { yes: 'review in wallet', danger: true })) return;
+        requireCurrent();
+        const provider = await pickProvider(); if (!provider) return;
+        const from = await walletOwner(provider, identity, true);
+        for (const step of plan.steps) {
+          await walletOwner(provider, identity);
+          status('Review the equipment step in your wallet. The deed is not equipped until confirmation.');
+          const hash = await provider.request({ method: 'eth_sendTransaction', params: [{ from, to: step.to, data: step.data, value: '0x0', chainId: identity.chainId }] });
+          await waitReceipt(provider, hash);
+        }
+        status('Equipment confirmed on-chain. Refreshing the game record…');
+        if (valid()) await renderDeeds();
+      });
+      t.querySelectorAll('[data-deed-notice], [data-deed-cancel]').forEach(button => button.onclick = () => custodyAction('exit', async () => {
+        const cancel = button.hasAttribute('data-deed-cancel'), tokenId = cancel ? button.dataset.deedCancel : button.dataset.deedNotice;
+        if (!await ask(cancel ? 'Cancel the release notice?' : 'Start a release notice?', cancel ? 'This deed remains equipped and follows its death and Safe House rules.' : 'The deed and wallet assets remain locked during the 24-hour notice. Death before release cancels this notice.', { yes: cancel ? 'keep equipped' : 'start notice' })) return;
+        await readPlan('POST', cancel ? '/v1/deeds/exit/cancel' : '/v1/deeds/exit', { tokenId });
+        if (valid()) await renderDeeds();
+      }));
+      t.querySelectorAll('[data-deed-release]').forEach(button => button.onclick = () => custodyAction('release', async () => {
+        const tokenId = button.dataset.deedRelease;
+        const plan = await readPlan('GET', '/v1/deeds/exit-intent/' + encodeURIComponent(tokenId));
+        const typed = plan.typedData || { domain: plan.domain, primaryType: plan.primaryType, types: plan.types, message: plan.message };
+        const identity = planIdentity({ ...plan, chainId: Number(typed.domain?.chainId), custodyAddress: typed.domain?.verifyingContract });
+        if (typed.primaryType !== 'ExitRequest' || typed.domain?.name !== 'OmertaDeedCustody' || typed.domain?.version !== '1'
+          || String(typed.message?.deedId) !== tokenId || !/^0x[0-9a-f]{64}$/i.test(typed.message?.lifeId || '')
+          || Number(typed.message?.deadline) <= Math.floor(Date.now() / 1000)) throw Error('Invalid or expired release authorization. Refresh and review again.');
+        if (!await ask('Release this deed?', `Release deed ${tokenId} and unlock its wallet after the contract verifies that this life is alive and the notice has cleared.\n\nNetwork: ${plan.chainId}\nCustody: ${identity.contract}`, { yes: 'review signature' })) return;
+        requireCurrent();
+        const provider = await pickProvider(); if (!provider) return;
+        const from = await walletOwner(provider, identity, true);
+        const signature = await provider.request({ method: 'eth_signTypedData_v4', params: [from, JSON.stringify(walletTypedData(typed))] });
+        await walletOwner(provider, identity);
+        await readPlan('POST', '/v1/deeds/exit', { tokenId, userNonce: typed.message.nonce, userIssuedAt: typed.message.issuedAt, userDeadline: typed.message.deadline, userSignature: signature });
+        status('Release requested. Assets stay locked until the on-chain release confirms.');
+      }));
+      t.querySelectorAll('[data-deed-safe-house]').forEach(button => button.onclick = () => custodyAction('safe-house', async () => {
+        const tokenId = button.dataset.deedSafeHouse, days = Number($('#deed-safe-days-' + tokenId).value);
+        if (!Number.isInteger(days) || days < 1 || days > 7) throw Error('Choose one to seven whole days.');
+        const path = '/v1/deeds/safe-house-intent/' + encodeURIComponent(tokenId) + '?days=' + days;
+        const validateQuote = plan => {
+          const identity = planIdentity(plan), typed = plan.typedData, message = typed?.message;
+          const uint = value => /^\d+$/.test(String(value));
+          const now = Math.floor(Date.now() / 1000), today = Math.floor(now / 86400);
+          if (![plan.dailyBurnAtomic, plan.previousDayVolumeAtomic, plan.maxBurnAtomic, plan.priceDay].every(uint)
+            || Number(plan.priceDay) !== today || Number(plan.days) !== days || String(plan.tokenId) !== tokenId
+            || !/^0x[0-9a-f]{40}$/i.test(plan.omrAddress || '') || plan.protects !== 'deed_and_all_assets') throw Error('Safe House quote is unavailable or has expired. Review a fresh quote.');
+          const unit = 10n ** 18n, volume = BigInt(plan.previousDayVolumeAtomic), raw = volume / 20000n;
+          const daily = raw < unit ? unit : raw > 25n * unit ? 25n * unit : raw;
+          if (BigInt(plan.dailyBurnAtomic) !== daily || BigInt(plan.maxBurnAtomic) !== daily * BigInt(days)) throw Error('Safe House price could not be verified.');
+          if (typed?.primaryType !== 'SafeHouseRequest' || typed.domain?.name !== 'OmertaDeedCustody'
+            || typed.domain?.version !== '1' || BigInt(typed.domain?.chainId || 0) !== BigInt(plan.chainId)
+            || typed.domain?.verifyingContract?.toLowerCase() !== identity.contract.toLowerCase()
+            || !/^0x[0-9a-f]{64}$/i.test(plan.lifeHash || plan.lifeId || '')
+            || message?.lifeId?.toLowerCase() !== (plan.lifeHash || plan.lifeId).toLowerCase()
+            || String(message?.deedId) !== tokenId || Number(message?.days_) !== days
+            || String(message?.priceDay) !== String(plan.priceDay) || String(message?.maxBurn) !== String(plan.maxBurnAtomic)
+            || ![message?.nonce, message?.issuedAt, message?.deadline].every(uint)
+            || Number(message.issuedAt) > now + 30 || Number(message.deadline) <= now || Number(message.deadline) > now + 600) throw Error('Invalid Safe House authorization. Request a fresh quote.');
+          const expectedTypes = [['lifeId', 'bytes32'], ['deedId', 'uint256'], ['days_', 'uint256'], ['priceDay', 'uint256'], ['maxBurn', 'uint256'], ['nonce', 'uint256'], ['issuedAt', 'uint256'], ['deadline', 'uint256']];
+          if (JSON.stringify((typed.types?.SafeHouseRequest || []).map(field => [field.name, field.type])) !== JSON.stringify(expectedTypes)
+            || Object.keys(message).sort().join(',') !== expectedTypes.map(field => field[0]).sort().join(',')) throw Error('Unexpected Safe House authorization fields.');
+          const expected = '0x095ea7b3' + identity.contract.slice(2).toLowerCase().padStart(64, '0') + BigInt(plan.maxBurnAtomic).toString(16).padStart(64, '0');
+          if (!Array.isArray(plan.steps) || plan.steps.length !== 1 || plan.steps[0].to?.toLowerCase() !== plan.omrAddress.toLowerCase()
+            || plan.steps[0].data?.toLowerCase() !== expected || BigInt(plan.steps[0].value || '0') !== 0n) throw Error('Safe House approval does not match the exact burn.');
+          return identity;
+        };
+        const formatOmr = value => { const atomic = BigInt(value), fraction = (atomic % 10n ** 18n).toString().padStart(18, '0').replace(/0+$/, ''); return `${atomic / 10n ** 18n}${fraction ? '.' + fraction : ''}`; };
+        const plan = await readPlan('GET', path), identity = validateQuote(plan);
+        const volumeDay = new Date((Number(plan.priceDay) - 1) * 86400000).toISOString().slice(0, 10);
+        const priceDay = new Date(Number(plan.priceDay) * 86400000).toISOString().slice(0, 10);
+        if (!await ask('Burn OMR for Safe House?', `Deed ${tokenId}: add ${days} day${days === 1 ? '' : 's'} of full-wallet protection.\n\nDaily price: ${formatOmr(plan.dailyBurnAtomic)} OMR\nTotal permanent burn: ${formatOmr(plan.maxBurnAtomic)} OMR + wallet gas\nVolume day: ${volumeDay} UTC (${formatOmr(plan.previousDayVolumeAtomic)} OMR traded)\nQuote valid: ${priceDay} UTC only\nNetwork: ${plan.chainId}\nOMR: ${plan.omrAddress}\nCustody: ${identity.contract}\n\nApprove the exact OMR allowance, then sign the burn request. Approval alone does not protect assets. Protection starts only after the burn confirms and never covers an earlier death.`, { yes: 'review in wallet', danger: true })) return;
+        requireCurrent();
+        const provider = await pickProvider(); if (!provider) return;
+        const from = await walletOwner(provider, identity, true);
+        validateQuote(plan);
+        const approval = plan.steps[0];
+        status('Approve the exact OMR allowance in your wallet. This step does not activate protection.');
+        const approvalHash = await provider.request({ method: 'eth_sendTransaction', params: [{ from, to: approval.to, data: approval.data, value: '0x0', chainId: identity.chainId }] });
+        await waitReceipt(provider, approvalHash);
+        const fresh = await readPlan('GET', path); validateQuote(fresh);
+        if (['chainId', 'priceDay', 'maxBurnAtomic', 'dailyBurnAtomic', 'previousDayVolumeAtomic', 'ownerWallet', 'lifeHash', 'lifeId', 'custodyAddress', 'contract', 'omrAddress'].some(key => String(fresh[key]).toLowerCase() !== String(plan[key]).toLowerCase())) throw Error('The quote or character changed. Review the new quote before signing. The OMR allowance alone provides no protection.');
+        await walletOwner(provider, identity);
+        status('Review the exact burn authorization in your wallet. No protection is active yet.');
+        const signature = await provider.request({ method: 'eth_signTypedData_v4', params: [from, JSON.stringify(walletTypedData(fresh.typedData))] });
+        await walletOwner(provider, identity);
+        validateQuote(fresh);
+        const message = fresh.typedData.message;
+        await readPlan('POST', '/v1/deeds/safe-house', { tokenId, days, priceDay: String(message.priceDay), maxBurn: String(message.maxBurn), userNonce: message.nonce, userIssuedAt: message.issuedAt, userDeadline: message.deadline, userSignature: signature });
+        status('Safe House burn requested. Protection is pending until the on-chain burn confirms. Refresh to check confirmed coverage.');
+        button.disabled = true;
+      }));
+    }
     { const el = $('#deed-collect'); if (el) el.onclick = () => act('POST', '/v1/deeds/corner').then(() => renderDeeds()); }
     t.querySelectorAll('[data-shake]').forEach((btn) => btn.onclick = () =>
       act('POST', '/v1/deeds/shakedown/' + btn.dataset.shake).then(() => renderDeeds()));

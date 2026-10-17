@@ -191,7 +191,49 @@ function injectedLiquidityEnvReads(consumerText, callerText) {
   ]) assert.throws(() => injectedLiquidityEnvReads(changedConsumer, changedCaller), undefined, label);
 }
 
-const used = new Set();
+function injectedDeedCustodyEnvReads(consumerText) {
+  const tree = parse(consumerText, { ecmaVersion: 'latest', sourceType: 'module' });
+  const exported = name => tree.body.find(node => node.type === 'ExportNamedDeclaration'
+    && node.declaration?.type === 'FunctionDeclaration' && node.declaration.id.name === name)?.declaration;
+  const config = exported('characterDeedChainConfig');
+  assert(config, 'custody configuration consumer exists');
+  const binding = config.params[0];
+  assert(binding?.type === 'AssignmentPattern' && binding.left.name === 'env'
+    && binding.right.type === 'MemberExpression' && !binding.right.computed
+    && binding.right.object.name === 'process' && binding.right.property.name === 'env',
+  'custody configuration must default to the real process environment');
+  assertEnvNamesUnchanged(tree, new Set(['process']), 'custody process');
+  assertEnvNamesUnchanged(config.body, new Set(['env']), 'custody environment');
+  for (const node of tree.body.filter(node => node.type === 'ImportDeclaration'))
+    assert(!node.specifiers.some(specifier => specifier.local.name === 'process'),
+      'custody must use the global process binding');
+  const caller = exported('prepareCharacterDeedEquipment');
+  assert(caller, 'custody has a production equipment caller');
+  assertEnvNamesUnchanged(caller.body, new Set(['characterDeedChainConfig']), 'custody config caller');
+  let usesDefault = false;
+  walkEnvAst(caller.body, node => {
+    if (node.type === 'CallExpression' && node.callee.type === 'Identifier'
+      && node.callee.name === 'characterDeedChainConfig' && !node.arguments.length) usesDefault = true;
+  });
+  assert(usesDefault, 'production equipment must consume the real default configuration');
+  const reads = new Set();
+  walkEnvAst(config.body, node => {
+    if (node.type === 'MemberExpression' && !node.computed && node.object.name === 'env'
+      && /^[A-Z][A-Z0-9_]*$/.test(node.property.name)) reads.add(node.property.name);
+  });
+  return reads;
+}
+const custodyConsumer = fs.readFileSync('src/deedcustodychain.js', 'utf8');
+for (const [label, change] of [
+  ['non-process custody environment', text => text.replace('env = process.env', 'env = {}')],
+  ['reassigned custody environment', text => text.replace('export function characterDeedChainConfig(env = process.env) {',
+    'export function characterDeedChainConfig(env = process.env) { env = {};')],
+  ['removed production custody caller', text => text.replace(
+    /(export async function prepareCharacterDeedEquipment[\s\S]*?)const config = characterDeedChainConfig\(\);/,
+    '$1const config = {};')],
+]) assert.throws(() => injectedDeedCustodyEnvReads(change(custodyConsumer)), undefined, label);
+
+const used = new Set(injectedDeedCustodyEnvReads(custodyConsumer));
 // preflight.js is the classifier, not a consumer — it only ever reads the `env` object it is
 // handed, and its prose mentions `process.env.X` generically, which the scanner would take literally
 // Walked RECURSIVELY via the shared helper — a flat listing of src/ stops seeing a file the moment

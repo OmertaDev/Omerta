@@ -9247,3 +9247,108 @@ CREATE TABLE IF NOT EXISTS multi_hop_couriers (
 CREATE UNIQUE INDEX IF NOT EXISTS multi_hop_courier_live_item ON multi_hop_couriers(item_id) WHERE status IN ('offered','ready','first_leg','second_leg');
 CREATE TABLE IF NOT EXISTS multi_hop_courier_requests (
  account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),original_character TEXT NOT NULL REFERENCES characters(id),network_id TEXT NOT NULL REFERENCES multi_hop_couriers(id),receipt JSONB NOT NULL,PRIMARY KEY(account_id,request_key));
+
+
+-- Character-life deed custody. This is a projection/outbox, not chain activation.
+-- Death edges retain exact mortal successors; later generations never replace them.
+CREATE TABLE IF NOT EXISTS character_deed_state (
+  id INT PRIMARY KEY CHECK (id = 1),
+  next_death_sequence BIGINT NOT NULL DEFAULT 1 CHECK (next_death_sequence > 0)
+);
+ALTER TABLE character_deed_state ADD COLUMN IF NOT EXISTS last_death_at BIGINT NOT NULL DEFAULT 0;
+INSERT INTO character_deed_state (id,next_death_sequence) VALUES (1,1) ON CONFLICT (id) DO NOTHING;
+CREATE TABLE IF NOT EXISTS character_deed_lives (
+  life_id TEXT PRIMARY KEY,
+  life_hash TEXT NOT NULL UNIQUE,
+  account_id TEXT NOT NULL,
+  generation INT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('alive','dead')),
+  killer_life_id TEXT REFERENCES character_deed_lives(life_id),
+  death_sequence BIGINT UNIQUE,
+  closure_reason TEXT CONSTRAINT character_deed_lives_closure_reason_check
+    CHECK (closure_reason IS NULL OR closure_reason IN ('player_kill','estate_escrow','estate_inheritance')),
+  custody_address TEXT UNIQUE,
+  dynasty_token_id TEXT,
+  registration_ref TEXT,
+  benefit_deed_token_id TEXT,
+  benefits_active_at TIMESTAMPTZ,
+  benefit_corner_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  closed_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS character_deed_lives_account ON character_deed_lives(account_id);
+CREATE TABLE IF NOT EXISTS character_deed_deaths (
+  life_id TEXT PRIMARY KEY REFERENCES character_deed_lives(life_id),
+  death_sequence BIGINT NOT NULL UNIQUE,
+  killer_life_id TEXT REFERENCES character_deed_lives(life_id),
+  status TEXT NOT NULL CHECK (status IN ('pending','confirmed','policy_pending')),
+  chain_death_sequence BIGINT UNIQUE,
+  tx_hash TEXT,
+  confirmation_ref TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  confirmed_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS character_deed_deaths_pending ON character_deed_deaths(status,death_sequence);
+ALTER TABLE character_deed_lives ADD COLUMN IF NOT EXISTS successor_life_id TEXT REFERENCES character_deed_lives(life_id);
+ALTER TABLE character_deed_lives ADD COLUMN IF NOT EXISTS chain_release_at TIMESTAMPTZ;
+ALTER TABLE character_deed_lives ADD COLUMN IF NOT EXISTS heir_life_id TEXT REFERENCES character_deed_lives(life_id);
+ALTER TABLE character_deed_lives ADD COLUMN IF NOT EXISTS death_at BIGINT;
+ALTER TABLE character_deed_deaths ADD COLUMN IF NOT EXISTS successor_life_id TEXT REFERENCES character_deed_lives(life_id);
+ALTER TABLE character_deed_lives DROP CONSTRAINT IF EXISTS character_deed_lives_closure_reason_check;
+ALTER TABLE character_deed_lives ADD CONSTRAINT character_deed_lives_closure_reason_check
+  CHECK (closure_reason IS NULL OR closure_reason IN ('player_kill','estate_escrow','estate_inheritance'));
+CREATE TABLE IF NOT EXISTS character_deed_equipment (
+  deed_token_id TEXT PRIMARY KEY,
+  life_hash TEXT REFERENCES character_deed_lives(life_hash),
+  active BOOLEAN NOT NULL,
+  ref TEXT NOT NULL,
+  tx_hash TEXT NOT NULL,
+  last_block_number BIGINT NOT NULL,
+  last_log_index INT NOT NULL,
+  equipped_at TIMESTAMPTZ,
+  released_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS character_deed_equipment_life ON character_deed_equipment(life_hash,active);
+CREATE TABLE IF NOT EXISTS character_deed_exits (
+  life_id TEXT NOT NULL REFERENCES character_deed_lives(life_id),
+  deed_token_id TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('pending','cancelled','releasing','confirmed')),
+  requested_at TIMESTAMPTZ NOT NULL,
+  available_at TIMESTAMPTZ NOT NULL,
+  user_nonce TEXT,
+  user_issued_at BIGINT,
+  user_deadline BIGINT,
+  user_signature TEXT,
+  tx_hash TEXT,
+  PRIMARY KEY (life_id,deed_token_id)
+);
+CREATE TABLE IF NOT EXISTS character_deed_safe_house (
+  deed_token_id TEXT NOT NULL,
+  dynasty_token_id TEXT NOT NULL,
+  starts_at BIGINT NOT NULL,
+  until_at BIGINT NOT NULL,
+  burn_amount TEXT NOT NULL,
+  price_day BIGINT NOT NULL,
+  previous_day_volume TEXT NOT NULL,
+  ref TEXT PRIMARY KEY,
+  tx_hash TEXT NOT NULL,
+  last_block_number BIGINT NOT NULL,
+  last_log_index INT NOT NULL,
+  CHECK (starts_at < until_at)
+);
+CREATE INDEX IF NOT EXISTS character_deed_safe_house_coverage ON character_deed_safe_house(deed_token_id,dynasty_token_id,until_at);
+CREATE TABLE IF NOT EXISTS character_deed_safe_house_intents (
+  life_id TEXT NOT NULL REFERENCES character_deed_lives(life_id),
+  deed_token_id TEXT NOT NULL,
+  days INT NOT NULL CHECK (days BETWEEN 1 AND 7),
+  price_day BIGINT NOT NULL,
+  max_burn TEXT NOT NULL,
+  user_nonce TEXT NOT NULL,
+  user_issued_at BIGINT NOT NULL,
+  user_deadline BIGINT NOT NULL,
+  user_signature TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('pending','releasing','confirmed','cancelled')),
+  tx_hash TEXT,
+  PRIMARY KEY (life_id,user_nonce)
+);
+-- End character-life deed custody.
