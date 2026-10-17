@@ -4,50 +4,50 @@
 
 ## Census
 
-16,113 nodes and 63,800 edges at `3e825427be7d`.
+16,298 nodes and 64,903 edges at `251cb3fd5ed1`.
 
 ### Nodes
 
 | Type | Count |
 |---|---:|
-| Artifact | 6755 |
-| Command | 290 |
-| Commit | 4306 |
+| Artifact | 6787 |
+| Command | 293 |
+| Commit | 4426 |
 | Contract | 134 |
-| Document | 938 |
+| Document | 939 |
 | Domain | 13 |
 | ExternalDependency | 36 |
 | HistoricalArtifact | 430 |
-| Module | 551 |
+| Module | 557 |
 | PullRequest | 126 |
 | Repository | 1 |
-| Route | 1045 |
+| Route | 1048 |
 | Subsystem | 8 |
-| Table | 551 |
-| TestSuite | 923 |
+| Table | 555 |
+| TestSuite | 939 |
 | Workflow | 6 |
 
 ### Edges
 
 | Type | Count |
 |---|---:|
-| BELONGS_TO | 5347 |
-| CHANGED | 24376 |
-| CONTAINS | 6776 |
-| DECLARES | 290 |
-| DEFINED_IN | 1730 |
+| BELONGS_TO | 5381 |
+| CHANGED | 24874 |
+| CONTAINS | 6808 |
+| DECLARES | 293 |
+| DEFINED_IN | 1737 |
 | DEPENDS_ON | 69 |
-| EXECUTES | 1109 |
-| HANDLED_BY | 926 |
-| HAS_COMMIT | 4306 |
+| EXECUTES | 1126 |
+| HANDLED_BY | 929 |
+| HAS_COMMIT | 4426 |
 | IMPLEMENTS | 124 |
-| IMPORTS | 7104 |
+| IMPORTS | 7307 |
 | INHERITS | 45 |
-| REFERENCES | 3710 |
-| REPRESENTS | 2418 |
-| TESTS | 2302 |
+| REFERENCES | 3814 |
+| REPRESENTS | 2441 |
+| TESTS | 2339 |
 | TRACKS | 126 |
-| USES_TABLE | 3042 |
+| USES_TABLE | 3064 |
 
 ## Provenance contract
 

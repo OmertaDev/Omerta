@@ -27,8 +27,9 @@ export async function commandRequestStart(req, reply) {
 
 export async function commandRequestEnd(req, reply) {
   const trace = req[requestTrace];
+  if (!trace) return;
   // Auth also sends revoked/banned replies directly instead of throwing.
-  if (trace && [401, 403].includes(reply.statusCode) && !trace.denied)
+  if ([401, 403].includes(reply.statusCode) && !trace.denied)
     commandDiagnostic('authorization', { outcome: 'denied' }, trace);
   commandDiagnostic('response', { statusCode: reply.statusCode, elapsedMs: Math.max(0, Math.round(reply.elapsedTime || 0)) }, trace);
 }

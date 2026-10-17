@@ -11,6 +11,7 @@ const main = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</sc
 const extract = (start, end) => main.slice(main.indexOf(start), main.indexOf(end, main.indexOf(start)));
 const cleared = [];
 const context = vm.createContext({ token: 'current', _authQueue: Promise.resolve(),
+  uuid: () => '00000000-0000-4000-8000-000000000001', scheduleCityPresence() {},
   apiNow: async () => ({ code: 200, body: { ok: true } }) });
 vm.runInContext(extract('  function createProjectionRefresh(', '  // End projection refresh coordinator.')
   + '\nthis.create = createProjectionRefresh;', context);

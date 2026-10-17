@@ -12,15 +12,15 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **557** files, **132299** lines (recursive source inventory) |
-| Test suites | **820** files, **183098** lines (recursive source inventory) |
+| Backend modules | **557** files, **132303** lines (recursive source inventory) |
+| Test suites | **820** files, **183218** lines (recursive source inventory) |
 | HTTP routes | **1260** registrations (**1260** unique; 1195 under `/v1`) |
 | Database tables | **555** (`schema.sql`, 9434 lines) |
 | Client | **15486** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11545** lines, **1111** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **952** markdown files, **156103** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Design + audit docs | **952** markdown files, **156139** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **127** checks — **121** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **315,000 lines** of backend code, tests, schema and top-level contracts.

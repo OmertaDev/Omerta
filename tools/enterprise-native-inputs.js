@@ -1,5 +1,5 @@
 // Genuine immutable authored-source proposal; no raw/native admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="48fb09bfb82098523607bee1b7e42bca0ff66e44";
+export const ENTERPRISE_NATIVE_BASE_REVISION="3f6225ecffee0ca14a20371e8ceeb82a728044cc";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -4655,8 +4655,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "public/index.html",
-    "blob": "27e9d3728eff13c104726a670158910d7cb12f7b",
-    "sha256": "702c554c81e00ec053d81a993e4808ae213d948192670a152867864608890771"
+    "blob": "4c862682a50c32979d9c49124fd9f2af46409fdb",
+    "sha256": "9eef7cd58e115a195b2c7620eb66d9d329311cc1694db8710a8c52ae9218a45d"
   },
   {
     "file": "public/invite.html",
@@ -5035,8 +5035,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/command-diagnostics.js",
-    "blob": "1c5e18f9788096fdbdfb3ac6f79c386aca538f7b",
-    "sha256": "f7be24eb60c6a3976ad8e0bbbacf6a935ff08b6508dedd4f570032f59b28cb5c"
+    "blob": "b8c1a37d68f57e2d24ccb82a946d73532455d96b",
+    "sha256": "bcd1125843f95e378fc30b5de673d5e919ac423095ff38385cbcb7d48de8b8e5"
   },
   {
     "file": "src/commercialdisputes.js",
@@ -6650,8 +6650,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/routes/commands.js",
-    "blob": "7229b6de9ef11f69e0a861103d7811b984d64d64",
-    "sha256": "eef5b46e04e02dddd80b52d5466a8a50e618f21626abd9e8955c1a9bca2c4dc4"
+    "blob": "64073121e4ecfc604583911472b73c7adb5282d0",
+    "sha256": "c893c9d0f05a7cce417ada2e6b1c8d4aa9911ff7aa0cc74fe79a31508769e2b4"
   },
   {
     "file": "src/routes/commercialdisputes.js",
@@ -7685,8 +7685,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/depotacquisition-next-five.js",
-    "blob": "909cffc0fbbb6158a7ebd3e2507b55730b68a1a4",
-    "sha256": "41ce18365cceb5f9fcd2c7dbad068cfb2b8d689ee96d59421f5d1a74ce89f3be"
+    "blob": "1a834d51acd871eece1ee4ea7f87ebe99e31725b",
+    "sha256": "8b9baed3c98002807f50933f55a35349359cb1acbabc6f997a9461aefcb1b424"
   },
   {
     "file": "test/depotacquisition-production-slots.js",
@@ -7825,8 +7825,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/gates.js",
-    "blob": "3d296264699b4561a0c4061edb575197831de037",
-    "sha256": "2c11e3ae2d0ae4d46254afd9549849f00588214075cde46887529d9bd71a1b03"
+    "blob": "62da7e1b95bcfda6d532792291273db02b6c803c",
+    "sha256": "46b3f5ab9a7046b5b3d4af126fd1c41e8af8f7b85aa1ed8007285a397cfd7288"
   },
   {
     "file": "test/graph.js",
@@ -7935,8 +7935,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/lib/rc1-historical-source-fixture.js",
-    "blob": "3ccc1df70aa4b585ee7f6ecef5ea7cfa7f5051cd",
-    "sha256": "663dddf6a07faa6b676982ff60f57f7c6cc64c2150f22425adfc6844763cc3c5"
+    "blob": "4eb0767a9633486805d89b09dd65cad64041266c",
+    "sha256": "7980a1acc4380d6a274138b4d88013dfdd58b0672d384f8e1a2e1c643c5d0418"
   },
   {
     "file": "test/lib/rc1-historical-worker-source.js",
@@ -8885,8 +8885,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/enterprise-current-source-data.js",
-    "blob": "0bb20b85ca884fc5c36d4dd848b1f2b045555f0c",
-    "sha256": "635551931394f3c4062ead72df52afdacbd843d850e393f0a9c5db2d4080b8b2"
+    "blob": "950d30da391e47518fdc996a0f8e5a0f1b3a7ec9",
+    "sha256": "b7f397046d209ac44b61203ba0a7993d020c87290be9271d03b2bebdeec9525b"
   },
   {
     "file": "tools/enterprise-current-source-compatibility.js",

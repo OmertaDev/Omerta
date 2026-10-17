@@ -33,8 +33,11 @@ export function register(app, { pool, auth, receiptTrust = null }) {
     operationsEnabled: discoveryEnabled && process.env.COORDINATION_OPERATIONS === 'on', knowledgeEnabled,
     sharingEnabled: knowledgeEnabled && process.env.COORDINATION_KNOWLEDGE_SHARING === 'on',
     accountIds: (process.env.COORDINATION_ACCOUNT_IDS || '').split(',').map((id) => id.trim()).filter(Boolean) });
+  // Complete required diagnostics before later optional activity hooks can
+  // wait for presentation reads. Untraced routes are ignored by this hook.
+  app.addHook('onResponse', commandRequestEnd);
   const options = { preHandler: auth, errorHandler: safeError,
-    onRequest: commandRequestStart, onResponse: commandRequestEnd,
+    onRequest: commandRequestStart,
     preValidation: async (req, reply) => {
       reply.header('cache-control', 'no-store');
       if (Object.entries(req.query || {}).some(([key, value]) => !['operationId', 'mysteryGraphId'].includes(key)

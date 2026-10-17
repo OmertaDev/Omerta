@@ -52,9 +52,33 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.route(base + '/', async route => {
       const reply = await route.fetch(), html = await reply.text(), anchor = '  function cityGameVisible() {';
+      const mismatch = '} else if (current() && result.code < 400 && !cityBoardCurrent(result.body)) await refresh();';
       assert.equal(html.split(anchor).length, 2);
-      await route.fulfill({ response: reply, body: html.replace(anchor,
-        '  window.__dashboardState = () => ({ tab: currentTab, panel: _cityPanel && { ..._cityPanel }, scene: _cityScene?.getState(), alive: !!me?.alive });\n' + anchor) });
+      assert.equal(html.split(mismatch).length, 2);
+      await route.fulfill({ response: reply, body: html.replace(mismatch,
+        mismatch.replace('await refresh();', 'await window.__dashboardPresenceMismatchRefresh();')).replace(anchor,
+        `  window.__dashboardState = () => ({ tab: currentTab, panel: _cityPanel && { ..._cityPanel }, scene: _cityScene?.getState(), alive: !!me?.alive });
+  const dashboardCanonicalRefresh = refresh;
+  window.__dashboardPresenceMismatchCalls = 0;
+  window.__dashboardPresenceMismatchRefresh = () => { window.__dashboardPresenceMismatchCalls++; return dashboardCanonicalRefresh(); };
+  window.__dashboardRefresh = () => refresh();
+  window.__dashboardDeferPlayerRefresh = () => {
+    const original = refresh, queued = _authQueue, requests = [];
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    const settle = async promise => {
+      let timer;
+      try { return await Promise.race([promise, new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Player refresh fixture did not settle.')), 20000);
+      })]); } finally { clearTimeout(timer); }
+    };
+    refresh = () => { const result = gate.then(original); requests.push(result); return result; };
+    return { ready: () => settle(queued), pending: () => requests.length, release() {
+      if (release) { refresh = original; release(); release = null; }
+      return settle(Promise.allSettled(requests));
+    } };
+  };
+` + anchor) });
     });
     await page.goto(base, { waitUntil: 'networkidle' });
     await page.waitForSelector('#screen-main:not(.hidden)');
@@ -222,10 +246,11 @@ try {
   assert.equal(await page.evaluate(() => window.__dashboardHandles.length), handles);
 
   // A direct chat control can finish after an external API has moved the owner.
-  // Hold the authoritative presence reply to inspect the still-stale scene first.
+  // Defer competing player refreshes before the shared API queue, then hold presence.
   await page.waitForFunction(() => window.__dashboardState().scene.activities.length === 0, null, { timeout: 9000 });
   await page.locator('[data-city-utility="communications"]').click();
   await page.locator('#wtab-city').click();
+  await page.evaluate(() => { window.__dashboardRefreshHold = window.__dashboardDeferPlayerRefresh(); });
   let releasePresence, observePresence, travelResponse, presenceTimer;
   const presenceGate = new Promise(resolve => { releasePresence = resolve; });
   const heldPresence = new Promise(resolve => { observePresence = resolve; });
@@ -243,10 +268,15 @@ try {
   await page.route('**/v1/city/presence*', holdNewDistrict);
   await page.route('**/v1/chat', travelBeforeChat);
   try {
+    await page.evaluate(() => window.__dashboardRefreshHold.ready());
+    const mismatchesBeforeTravel = await page.evaluate(() => window.__dashboardPresenceMismatchCalls);
     const sent = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/chat' && response.request().method() === 'POST');
     await page.locator('#chatinput').fill('Local fixture message after an external ride.');
     await page.locator('#chatform [type="submit"]').click();
     assert.equal((await sent).status(), 200); assert.equal(travelResponse.statusCode, 200, travelResponse.body);
+    await page.evaluate(() => { window.__dashboardRefresh(); });
+    assert(await page.evaluate(() => window.__dashboardRefreshHold.pending()) > 0,
+      'The competing player refresh waits outside the authenticated API queue.');
     const board = await Promise.race([heldPresence, new Promise((_, reject) => { presenceTimer = setTimeout(() => reject(new Error('No authoritative presence refresh after direct chat.')), 20000); })]);
     clearTimeout(presenceTimer);
     assert.equal(board.viewer.district, 'neon');
@@ -254,11 +284,14 @@ try {
     assert.equal(stale.scene.region.id, 'docks'); assert.equal(stale.panel.utility, 'communications');
     assert.equal(stale.scene.activities.length, 0, 'A successful direct chat never animates the cached old district while authority is pending.');
     releasePresence();
+    await page.waitForFunction(before => window.__dashboardPresenceMismatchCalls > before, mismatchesBeforeTravel, { timeout: 20000 });
     await page.waitForFunction(() => window.__dashboardState().scene?.ready && window.__dashboardState().scene.region.id === 'neon'
       && window.__dashboardState().panel === null, null, { timeout: 20000 });
     assert.equal((await state(page)).scene.externalPanel, false, 'The authoritative refresh retires the stale operation panel in the new district.');
+    await page.evaluate(() => window.__dashboardRefreshHold.release());
   } finally {
     clearTimeout(presenceTimer); releasePresence();
+    await page.evaluate(() => window.__dashboardRefreshHold.release());
     await page.unroute('**/v1/city/presence*', holdNewDistrict); await page.unroute('**/v1/chat', travelBeforeChat);
   }
   await context.close();

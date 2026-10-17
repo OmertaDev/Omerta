@@ -1,3 +1,4 @@
+import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { businessSeasonSourceBaseline } from '../tools/rc1-business-season-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -17,7 +18,7 @@ const entire=(a,b)=>{assert.equal(a,b);texts++;};
 const files=['src/server.js','src/worker.js','src/invariants.js','src/social/estate.js','src/market.js'];
 assert.deepEqual(Object.keys(O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS),files);
 for(const file of files){
- const current=businessSeasonSourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))),prior=git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=businessSeasonSourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8')))),prior=git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',O.COMMERCIAL_REPUTATION_SOURCE_BASELINE_BLOBS[file]));entire(prior,git('show',`5aadb5267bba9060716ddd82660e59f6aec89ea3:${file}`));
  for(const [text,pins,bs]of [[current,O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS,O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_BLOBS],[prior,O.COMMERCIAL_REPUTATION_SOURCE_BASELINE_PINS,O.COMMERCIAL_REPUTATION_SOURCE_BASELINE_BLOBS]]){assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
  assert.equal(hash(prior),C.COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS[file]);hashes++;assert.equal(blob(prior),C.COMPANY_OPPORTUNITY_SOURCE_CURRENT_BLOBS[file]);blobs++;
@@ -41,5 +42,5 @@ for(const file of files){
 }
 for(const file of ['src/companyopportunities.js','src/game.js','toString']){assert.throws(()=>O.assertCommercialReputationSourceTransfer(file,''));assert.throws(()=>O.qualifyCommercialReputationSource(file,''));}
 assert.deepEqual(WORLD_RECOVERY_REVIEW.commercialReputationSourceReviewTransfer,O.COMMERCIAL_REPUTATION_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOpportunitySourceReviewTransfer,C.COMPANY_OPPORTUNITY_SOURCE_TRANSFER);
-assert.deepEqual(await verifyWorldRecoverySources({sourceRevision:O.COMMERCIAL_REPUTATION_SOURCE_REVIEWED_REVISION,readFile:file=>fs.readFileSync(file)}),await verifyWorldRecoverySources({sourceRevision:O.COMMERCIAL_REPUTATION_SOURCE_REVIEWED_REVISION,readFile:file=>files.includes(file)?git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_PREDECESSOR_REVISION}:${file}`):fs.readFileSync(file)}));
+assert.deepEqual(await verifyWorldRecoverySources({sourceRevision:O.COMMERCIAL_REPUTATION_SOURCE_REVIEWED_REVISION,readFile:file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file))):fs.readFileSync(file))}),await verifyWorldRecoverySources({sourceRevision:O.COMMERCIAL_REPUTATION_SOURCE_REVIEWED_REVISION,readFile:file=>files.includes(file)?git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_PREDECESSOR_REVISION}:${file}`):(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file))):fs.readFileSync(file))}));
 console.log(`rc1-commercial-reputation-source-compatibility: PASS ${hunks} exact Git hunks; ${texts} complete text, ${hashes} SHA256, ${blobs} Git blob comparisons; ${negatives} adversarial controls; CRLF, prior metadata and four unchanged full-file domains; source-only scope`);
