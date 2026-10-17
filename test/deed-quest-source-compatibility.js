@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {marketOverDeedSourceBaseline} from '../tools/deed-market-source-compatibility.js';
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
+import {hasCommerceEnterpriseSource,commerceOverEnterpriseSourceBaseline} from '../tools/commerce-enterprise-source-compatibility.js';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
@@ -27,7 +28,9 @@ assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schem
   'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
-  const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file) ? enterpriseOverRootSourceBaseline(file, fs.readFileSync(file, 'utf8')) : fs.readFileSync(file, 'utf8')))), current = lf(raw);
+  const actualSource = fs.readFileSync(file, 'utf8');
+  const enterprise = hasCommerceEnterpriseSource(file) ? commerceOverEnterpriseSourceBaseline(file, actualSource) : actualSource;
+  const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file) ? enterpriseOverRootSourceBaseline(file, enterprise) : enterprise))), current = lf(raw);
   assert(raw === current || raw === current.replaceAll('\n', '\r\n'), 'Working candidate has uniform line endings');
   const predecessor = git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`);
   assert.equal(hash(current), pin.currentSha256);
