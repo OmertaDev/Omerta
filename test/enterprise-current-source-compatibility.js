@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import {commerceOverEnterpriseSourceBaseline} from '../tools/commerce-enterprise-source-compatibility.js';
+import {hasCommerceCurrentEnterpriseSource,assertCommerceCurrentEnterpriseSourceTransfer,commerceOverCurrentEnterpriseSourceBaseline,COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION,COMMERCE_CURRENT_ENTERPRISE_SOURCE_PREDECESSOR,COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS,COMMERCE_CURRENT_ENTERPRISE_IDENTITY_SOURCES} from '../tools/commerce-current-enterprise-source-compatibility.js';
 import {execFileSync} from 'node:child_process';
 import {ENTERPRISE_CURRENT_SOURCE_REVISION,ENTERPRISE_ROOT_PREDECESSOR,ENTERPRISE_CURRENT_LEGACY_PREDECESSOR,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES,ENTERPRISE_CURRENT_LEGACY6B_DOMAINS,enterpriseOverRootSourceBaseline,enterpriseCurrentHistorical6bSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 assert.deepEqual(process.argv.slice(2),[],'Complete source-only current unit; no native flags');
@@ -10,13 +11,19 @@ const hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto
 let positives=0,refusals=0;const pins={...ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,...ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES};
 assert.equal(Object.keys(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS).length,31);
 for(const[file,p]of Object.entries(pins)){
-  const raw=commerceOverEnterpriseSourceBaseline(file,fs.readFileSync(file,'utf8')),current=git(ENTERPRISE_CURRENT_SOURCE_REVISION,file),root=git(ENTERPRISE_ROOT_PREDECESSOR,file);
+  const actualCurrentRaw=fs.readFileSync(file,'utf8'),raw=commerceOverCurrentEnterpriseSourceBaseline(file,actualCurrentRaw),current=git(ENTERPRISE_CURRENT_SOURCE_REVISION,file),root=git(ENTERPRISE_ROOT_PREDECESSOR,file);
+  const bridge=assertCommerceCurrentEnterpriseSourceTransfer(file,actualCurrentRaw),actualCurrent=git(COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION,file);
+  assert.equal(actualCurrentRaw.replaceAll('\r\n','\n'),actualCurrent,'Current namespace is pinned to genuine authored C bytes');assert.equal(bridge.baselineText,current);assert.equal(bridge.sourceRevision,COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION);assert.equal(bridge.predecessorRevision,ENTERPRISE_CURRENT_SOURCE_REVISION);assert.equal(bridge.modeVerified,false);
+  for(const changed of[actualCurrent+'\n// unknown-current\n',actualCurrent.slice(1),'\ufeff'+actualCurrent,actualCurrent+'\0',actualCurrent.replace('\n','\r\n'),actualCurrent.replace('\n','\r'),Buffer.from(actualCurrent)])assert.throws(()=>assertCommerceCurrentEnterpriseSourceTransfer(file,changed));
   assert.equal(hash(lf(raw)),p.currentSha256,'Actual current input must match the current phase, not merely a Root baseline');assert.equal(blob(lf(raw)),p.currentBlob);assert.equal(lf(raw),current);
   for(const input of [raw,current,current.replaceAll('\n','\r\n'),root]){assert.equal(enterpriseOverRootSourceBaseline(file,input),root);positives++;}
   for(const input of [current+'\n// unknown\n',current.slice(1),'\ufeff'+current,current.replace('\n','\r\n'),current.replace('\n','\r'),Buffer.from(current)]){assert.throws(()=>enterpriseOverRootSourceBaseline(file,input));refusals++;}
   for(const h of p.inverses)for(const input of [current.replace(h.current,''),current.replace(h.current,()=>h.current+h.current)]){assert.throws(()=>enterpriseOverRootSourceBaseline(file,input));refusals++;}
   assert(Object.isFrozen(p)&&Object.isFrozen(p.inverses)&&p.inverses.every(Object.isFrozen));
 }
+assert.equal(COMMERCE_CURRENT_ENTERPRISE_SOURCE_PREDECESSOR,ENTERPRISE_CURRENT_SOURCE_REVISION,'Separate namespace targets the actual active E source');
+assert.deepEqual([...Object.keys(COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS),...Object.keys(COMMERCE_CURRENT_ENTERPRISE_IDENTITY_SOURCES)].sort(),Object.keys(pins).sort(),'Exactly the62 active E inputs');
+for(const file of['__proto__','constructor','toString','../schema.sql','schema.sql.extra']){assert.equal(hasCommerceCurrentEnterpriseSource(file),false);assert.throws(()=>assertCommerceCurrentEnterpriseSourceTransfer(file,'unknown'));}
 for(const[file,p]of Object.entries(ENTERPRISE_CURRENT_LEGACY6B_DOMAINS)){
   const current=git(ENTERPRISE_CURRENT_SOURCE_REVISION,file),root=git(ENTERPRISE_ROOT_PREDECESSOR,file),prior=git(ENTERPRISE_CURRENT_LEGACY_PREDECESSOR,file);
   for(const input of [current,current.replaceAll('\n','\r\n'),root,prior]){assert.equal(enterpriseCurrentHistorical6bSourceBaseline(file,input),prior);positives++;}
