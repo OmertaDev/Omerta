@@ -18,6 +18,7 @@ import { seatedGangs } from './commission.js';
 import { convoyBoard } from './convoy.js';
 import { clueBoard } from './clues.js';
 import { cornerBoard } from './corner.js';
+import { discoveryAvailability } from './deeddiscovery.js';
 import { contactsBoard } from './contacts.js';
 import { favorBoard, favorExactAvailability } from './favors.js';
 import { heistAvailability, heistBoard, heistExactAvailability } from './heists.js';
@@ -142,7 +143,7 @@ const COVERAGE_SYSTEMS = [
   { system: 'landmarks', systemId: 'landmarks', name: 'Landmarks', at: 12, tab: 'city', mode: 'solo', eligibility: 'landmark',
     hook: 'Make an available landmark dedication you can afford.' },
   { system: 'street deeds', systemId: 'street-deeds', name: 'Street Deeds', at: 15, tab: 'deeds', mode: 'solo', eligibility: 'deed',
-    hook: 'Claim an open street or buy one you can afford.' },
+    hook: 'Follow a building’s leads across the city, or claim a property you have earned.' },
   { system: 'vanity', systemId: 'vanity', name: 'Vanity', at: 5, tab: 'profile', mode: 'solo', eligibility: 'vanity',
     hook: 'Buy a name, title, or mark for your profile.' },
   { system: 'the store / pass', systemId: 'store-pass', name: 'The Store and Pass', at: 1, tab: 'store', mode: 'solo', eligibility: 'policy', policy: true,
@@ -502,7 +503,14 @@ export function systemEligibility(entry, ctx) {
       return stop('status');
     }
     case 'landmark': return gate(omr >= ctx.live.landmarkMinDedicate, 'landmark:dedicate');
-    case 'deed': return ctx.owned.deed ? stop('status') : op('deed:claim');
+    case 'deed': {
+      if (ctx.owned.deed) return stop('status');
+      const discovery = ctx.live.deedDiscovery;
+      if (discovery?.canClaim && discovery.buildingId) return op(`deed:claim:${discovery.buildingId}`);
+      if (discovery?.canInvestigate && discovery.buildingId && discovery.actionId)
+        return op(`deed:investigate:${discovery.buildingId}:${discovery.actionId}`);
+      return stop('status');
+    }
     case 'vanity': {
       const paidIdentity = omr >= Math.min(VANITY.NAME_CHANGE_OMR, VANITY.TITLE_OMR);
       const paidPlate = has(ctx.owned.cars) && omr >= VANITY.PLATE_OMR;
@@ -597,6 +605,7 @@ export async function systemCoverage(db, ch, acct = {}, owned = {}, options = {}
     favorExact: live.favorExact || null,
     vouchBoard: live.vouchBoard || { slotsLeft: VOUCH.MAX_OUT, given: [] },
     clueBoard: live.clueBoard || { scroll: null },
+    deedDiscovery: live.deedDiscovery || null,
     worldBoard: live.worldBoard || { npcs: WORLD_NPCS.map((npc) => ({ id: npc.id, coop: !!npc.coop,
       canRaid: ctx.level >= npc.minLvl })) },
     warBoard: live.warBoard || { families: [] },
@@ -761,6 +770,7 @@ async function coverageLiveContext(db, ch, acct, owned, onlineAccounts, needs) {
     tasks.favorExact = () => favorExactAvailability(ch, db, { acct, owned });
   }
   if (wants('clue')) tasks.clue = () => clueBoard(db, ch, acct);
+  if (wants('deed') && !owned.deed) tasks.deedDiscovery = () => discoveryAvailability(ch, db);
   if (wants('family')) {
     tasks.territory = () => territoryExploreBoard(db, ch, owned.gangId);
     tasks.world = () => worldBoard(db, ch, { acct, owned });
@@ -814,6 +824,7 @@ async function coverageLiveContext(db, ch, acct, owned, onlineAccounts, needs) {
     favorExact: loaded.favorExact,
     vouchBoard: loaded.vouches,
     clueBoard: loaded.clue,
+    deedDiscovery: loaded.deedDiscovery,
     worldBoard: loaded.world,
     warBoard: loaded.war,
     territoryBoard: loaded.territory,

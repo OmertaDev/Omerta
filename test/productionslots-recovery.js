@@ -23,7 +23,7 @@ try{
   if(f.native){const after=await canonicalDatabaseSnapshot(pool);assert.deepEqual(after.tables,nativeBefore.tables);assert.deepEqual(after.sequences,nativeBefore.sequences);}
   const released=await invoke('maker','release',ref(r1),'recovery-release');assert.equal(released.status,'released');
   assert.deepEqual(fundedState(await state()),fundedState(before));
-  const afterRelease=await state();assert.deepEqual(await invoke('maker','release',ref(r1),'recovery-release'),released);assert.deepEqual(await state(),afterRelease);
+  const afterRelease=await state();assert.equal(released.replayed,undefined);assert.deepEqual(await invoke('maker','release',ref(r1),'recovery-release'),{...released,replayed:true});assert.deepEqual(await state(),afterRelease);
   if(f.native){
     assert.equal(+new Date(r2.deadline)-+new Date(r2.readyAt),60000,'Keep the genuine original speed-profile sixty-second reservation');
     while(Date.now()<=+new Date(r2.deadline)+30)await new Promise(resolve=>setTimeout(resolve,Math.max(1,Math.min(1000,+new Date(r2.deadline)+31-Date.now()))));

@@ -29,6 +29,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'acorn';
+import { DEED_QUEST_SOURCE_DOMAINS, deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
@@ -206,6 +207,11 @@ const FAMILIES = [
     members: ['jump', 'fire', 'npcHit', 'stealCar', 'stealBoat', 'robTrunk', 'sabotage', 'robBusiness',
       'shakedownBusiness', 'takeoverBusiness', 'standoverSpeakeasy', 'raidRivalRacket', 'ambushConvoy', 'interceptRun'] },
 
+  { name: 'street crime (property investigation)',
+    why: 'Physical property investigations require an exposed living actor, including the title registry and witness visits.',
+    require: ['jailed', 'hospitalized', 'safeHoused', 'witproActive'],
+    members: ['investigateDeed'] },
+
   { name: 'PERSON crime (the mark must be reachable)',
     why: 'jail must never be MORE dangerous than the street — the class AUDIT-full-system-v2/v3 closed on '
        + 'fire/npcHit and v3 then closed on jump. Property crimes are deliberately NOT here: the garage '
@@ -257,7 +263,7 @@ console.log(`✓ ${checked} gate requirements hold across ${FAMILIES.length} fam
 // happened to share the victim helper. The helpers themselves are not verbs and are excluded.
 const STREET_HELPERS = ['assertStreetCrime', 'assertStreetActor'];
 const streetCrimes = [...fns].filter(([k, v]) => !STREET_HELPERS.includes(k) && STREET_HELPERS.some((h) => v.helpers.includes(h))).map(([k]) => k);
-const declaredStreet = new Set(FAMILIES.find((f) => f.name.startsWith('street crime')).members);
+const declaredStreet = new Set(FAMILIES.filter((f) => f.name.startsWith('street crime')).flatMap((f) => f.members));
 const undeclared = streetCrimes.filter((n) => !declaredStreet.has(n));
 assert.equal(undeclared.length, 0,
   `street crime(s) routed through assertStreetCrime/assertStreetActor but absent from the matrix: ${undeclared.join(', ')} — `
@@ -461,6 +467,7 @@ const DISTRICT_WAIVED = {
 const mute = [];
 let districtGates = 0;
 let privateTargetRefusals = 0;
+let propertyAtlasArgumentRefusals = 0;
 for (const f of files) {
   const rel = relPath(process.cwd(), f);
   const src = fs.readFileSync(f, 'utf8');
@@ -475,6 +482,12 @@ for (const f of files) {
       else if (src[i] === ')') { d--; if (!d) { end = i; break; } }
     }
     const args = src.slice(m.index, end);
+    // This exact refusal validates a requested atlas filter, not the player's current location.
+    // Other district refusals in the same module must still supply their actual destination.
+    if (rel === 'src/deeddiscovery.js' && /^new GameError\(\s*'district'\s*,\s*'Choose a district from the property atlas\.'\s*$/.test(args)) {
+      propertyAtlasArgumentRefusals++;
+      continue;
+    }
     // A moved target's current destination is private. Match only this exact refusal, rather
     // than waiving combat location gates, so adding a live district to it fails this guard.
     if (rel === 'src/social/combat.js' && /^new GameError\(\s*'district'\s*,\s*'Your tail lost them — get a fresh fix before firing\.'\s*$/.test(args)) {
@@ -491,10 +504,11 @@ assert(districtGates >= 20,
   `the location-gate scan found only ${districtGates} site(s) — the extractor has stopped seeing the `
   + 'throws it keys on, so this check is passing over code it never read');
 assert.equal(privateTargetRefusals, 1, 'the lost-tail refusal never reveals a current target destination');
+assert.equal(propertyAtlasArgumentRefusals, 1, 'only the exact property atlas filter validation has no travel destination');
 assert.equal(mute.length, 0,
   `location refusal(s) that name the destination in prose but not in DATA, so the client cannot offer\n`
   + `      a one-tap way out (pass it as the third GameError argument: { district: <id> }):\n   - ${mute.join('\n   - ')}`);
-console.log(`✓ all ${districtGates - Object.keys(DISTRICT_WAIVED).length - privateTargetRefusals} public wrong-location refusals carry the `
+console.log(`✓ all ${districtGates - Object.keys(DISTRICT_WAIVED).length - privateTargetRefusals - propertyAtlasArgumentRefusals} public wrong-location refusals carry the `
   + 'destination as data; the lost-tail refusal protects its private destination');
 
 console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the gates its siblings do, '
@@ -2951,8 +2965,15 @@ const SCENERY_WAIVED = {
   assert.equal(wholeExploreFileDigest(Buffer.from('seal\r\nfixture\r\n')),
     'ab40ee53bd51c029356ee1b88f352c14760961e5c81db10cc550902f6aeab4ef',
     'CRLF and LF checkouts normalize to the same reviewed bytes');
-  const wholeExploreFileSealAccepts = (bytes) =>
-    wholeExploreFileDigest(bytes) === REVIEWED_EXPLORE_FILE_SHA256;
+  const wholeExploreFileSealAccepts = (bytes) => {
+    const digest = wholeExploreFileDigest(bytes);
+    if (digest === REVIEWED_EXPLORE_FILE_SHA256) return true;
+    // Admit only the complete reviewed quest candidate's literal bytes, then prove its exact
+    // predecessor still matches the original seal. This grants source reconstruction only.
+    if (digest !== DEED_QUEST_SOURCE_DOMAINS['src/explore.js'].currentSha256) return false;
+    return wholeExploreFileDigest(Buffer.from(deedQuestSourceBaseline('src/explore.js',
+      (Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes)).toString('utf8')))) === REVIEWED_EXPLORE_FILE_SHA256;
+  };
   const normalizedExploreSource = exploreSourceForSeal.replace(/\r\n/g, '\n');
   const reassignment = `
 scopedSocialContext = async function(db) {
@@ -3673,6 +3694,7 @@ scopedSocialContext = async function(db) {
     'test/decisionreplay-fixture.js': 'Import-only closed SELECT-only query fixture for mandatory decision replay observation unit/guard proofs; genuine gameplay source is proved separately by the mandatory integration memory/native suite.',
     'test/economicdependencymap-fixture.js': 'Import-only bounded SELECT-only query fixture for mandatory dependency-map unit/guard proofs; funded canonical sources are separately proved by mandatory integration memory/native tests.',
     'test/commissionedcrafting-fixture.js': 'Import-only actual funded commission/F01/F03 fixture; required commissioned-crafting core/API/integration memory suites and the closed fourteen-proof native runner execute its exported factory.',
+    'test/deed-discovery-fixture.js': 'Import-only earned property fixture; registered City home and deed upgrade suites execute its sole async factory through server-issued objectives and authenticated travel/investigation routes.',
     'test/freightconsolidation-fixture.js': 'Import-only actual funded orders and canonical delivery fixture; required freight core/security/integration memory suites and the closed fourteen-proof native runner execute its exported factory.',
     'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',
     'test/fundedexternalwork-fixture.js': 'Import-only actual F11 gameplay and explicitly simulated external-work fixture; required memory/native lifecycle suite executes it, public finance remains unavailable.',
@@ -3729,6 +3751,44 @@ scopedSocialContext = async function(db) {
       + 'uses. It is the clean-machine check for the published MCP server and belongs to that '
       + 'package\'s own verification, run from omerta-mcp/ after its install.',
   };
+
+  const propertyFixtureFile = 'test/deed-discovery-fixture.js';
+  const propertyFixtureConsumers = ['test/city-homes-api.js', 'test/deed-upgrades.js'];
+  const propertyFixtureAdmission = (source, consumers) => {
+    try {
+      const ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
+      if (ast.body.some(node => !['ImportDeclaration', 'ExportNamedDeclaration'].includes(node.type))) return false;
+      const exports = ast.body.filter(node => node.type === 'ExportNamedDeclaration');
+      if (exports.length !== 1 || exports[0].declaration?.type !== 'FunctionDeclaration'
+          || !exports[0].declaration.async || exports[0].declaration.id?.name !== 'earnBuildingClaim') return false;
+      return propertyFixtureConsumers.every(file => {
+        const consumer = consumers[file];
+        if (!consumer?.registered) return false;
+        const tree = parse(consumer.source, { ecmaVersion: 'latest', sourceType: 'module' });
+        const importsFactory = tree.body.some(node => node.type === 'ImportDeclaration'
+          && node.source.value === './deed-discovery-fixture.js' && node.specifiers.some(specifier =>
+            specifier.type === 'ImportSpecifier' && specifier.imported.name === 'earnBuildingClaim'
+              && specifier.local.name === 'earnBuildingClaim'));
+        return importsFactory && /await\s+earnBuildingClaim\s*\(/.test(consumer.source);
+      });
+    } catch { return false; }
+  };
+  const propertyFixtureSource = fs.readFileSync(path.join(ROOT, propertyFixtureFile), 'utf8');
+  const propertyConsumers = Object.fromEntries(propertyFixtureConsumers.map(file => [file,
+    { source: fs.readFileSync(path.join(ROOT, file), 'utf8'), registered: covered.has(file) }]));
+  assert(propertyFixtureAdmission(propertyFixtureSource, propertyConsumers), 'Import-only property fixture requires its real registered consumers');
+  assert(!propertyFixtureAdmission(propertyFixtureSource + '\nexport async function unusedRunner() {}', propertyConsumers));
+  assert(!propertyFixtureAdmission(propertyFixtureSource + '\nawait Promise.resolve();', propertyConsumers));
+  for (const file of propertyFixtureConsumers) {
+    assert(!propertyFixtureAdmission(propertyFixtureSource, { ...propertyConsumers,
+      [file]: { ...propertyConsumers[file], registered: false } }));
+    assert(!propertyFixtureAdmission(propertyFixtureSource, { ...propertyConsumers,
+      [file]: { ...propertyConsumers[file], source: propertyConsumers[file].source
+        .replace('./deed-discovery-fixture.js', './unknown-fixture.js') } }));
+    assert(!propertyFixtureAdmission(propertyFixtureSource, { ...propertyConsumers,
+      [file]: { ...propertyConsumers[file], source: propertyConsumers[file].source
+        .replace(/await\s+earnBuildingClaim\s*\(/g, 'await unknownFactory(') } }));
+  }
 
   const {AUTONOMY_NATIVE_PROOFS:fixtureNativeProofs}=await import('../tools/company-autonomy-native.js');
   const fixtureConsumers={
@@ -3976,6 +4036,8 @@ scopedSocialContext = async function(db) {
     '        run: node test/wallet-connect-browser.js',
     '      - name: City Mode and RPG desktop/mobile journeys',
     '        run: npm run test:city:browser',
+    '      - name: Earned Street Deed investigation and claim in the browser',
+    '        run: npm run test:deed-discovery:browser',
     '      - name: Consigliere gateway recovery in the browser',
     '        run: npm run test:gateway:browser',
     '      - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)',
@@ -4066,7 +4128,7 @@ scopedSocialContext = async function(db) {
   const expectedNativeCommands = [
     'build:funded-work-artifact', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
     'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:agent-economy-market-operations:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-discovery:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:agent-economy-market-operations:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',

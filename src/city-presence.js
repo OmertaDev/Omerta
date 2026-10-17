@@ -4,26 +4,26 @@ import { GameError } from './game.js';
 import { DISTRICTS, levelOf, jailed, hospitalized } from './rules.js';
 import { recordPlayerIntel, playerIntelMap } from './playerintel.js';
 import { withItemRead, withItemTransaction, withItemMutation, registerItemTransactionUndo } from './items.js';
+import { CITY_RUMOR_TOPICS } from './content/city-rumors.js';
 
 export const CITY_JOURNAL_LIMIT = 32;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const TIPS = Object.freeze([
-  ['public-whereabouts', 'Know your neighborhood', 'The fixer, workshop, training room and newsroom each offer a different way to get ahead. Look for their signs around the neighborhood.'],
-  ['issued-actions', 'Find a fresh face', 'Your next lead opens when you meet someone new. Check the journal to see whose perspective you still need.'],
-  ['shared-gym', 'Training takes patience', 'Muscle, cunning and speed share a recovery clock. Train one, then check back before your next session.'],
-  ['workshop-door', 'Useful connections', 'Visit the workshop for the garage, market and fieldwork. A new lead can take you beyond street jobs.'],
-  ['newsroom-leads', 'Follow the evidence', 'The newsroom investigation advances through choices and gathered evidence. Check your journal for the next lead.'],
-  ['same-key', 'Every angle counts', 'Collect intel from NPCs, agents and players. Compare all three perspectives to finish your neighborhood survey.'],
-]);
 const OBJECTIVES = Object.freeze([
-  ['meet-new-face', 'Meet a different face', 'Record a later public encounter with someone other than your first source.'],
-  ['cross-check', 'Cross-check another perspective', 'After meeting another face, record a later encounter with a different kind of actor than your first source.'],
-  ['three-perspectives', 'Bring three perspectives together', 'After cross-checking, record a later encounter with the remaining actor kind and a different source.'],
+  ['meet-new-face', 'Meet a different face', 'Follow your first lead by comparing neighborhood rumors with someone else.'],
+  ['cross-check', 'Cross-check another perspective', 'Once you have met another face, compare rumors with a different kind of neighbor than your first source.'],
+  ['three-perspectives', 'Bring three perspectives together', 'After cross-checking, compare notes with the remaining kind of neighbor: resident, agent or player.'],
 ]);
 const fail = (code, message) => { throw new GameError(code, message); };
 const districtName = id => DISTRICTS.find(d => d.id === id)?.name || id;
 const viewerOf = row => ({ characterId: row.id, generation: Number(row.generation), district: row.loc });
 const kindOf = row => row.is_npc ? 'npc' : row.agent_flag ? 'agent' : 'player';
+function rumorOf(row) {
+  const topics = CITY_RUMOR_TOPICS[row.loc];
+  // Public topic selection is stable across roster refreshes and encounters. It
+  // depends on no private activity, observer progress or later quest state.
+  const hash = crypto.createHash('sha256').update(JSON.stringify([row.id, Number(row.generation), row.loc])).digest();
+  return topics[hash.readUInt32BE(0) % topics.length];
+}
 function actorOf(row, online, intel) {
   const observed = intel?.observedAt == null ? null : new Date(intel.observedAt);
   const observedAt = observed && Number.isFinite(observed.getTime()) ? observed.toISOString() : null;
@@ -90,7 +90,7 @@ export async function cityIntel(pool, accountId) {
   });
 }
 
-export async function cityPresence(pool, accountId, onlineIds = [], query = {}) {
+export async function cityPresence(pool, accountId, onlineIds = [], query = {}, activityRegistry = null, ownerActivityRegistry = null) {
   if (Object.keys(query).some(k => !['cursor', 'limit'].includes(k))) fail('bad_city_presence', 'Unknown presence filter.');
   const limit = query.limit === undefined ? 24 : Number(query.limit);
   if (!Number.isInteger(limit) || limit < 1 || limit > 40) fail('bad_city_presence', 'Presence limit must be between 1 and 40.');
@@ -118,12 +118,23 @@ export async function cityPresence(pool, accountId, onlineIds = [], query = {}) 
       WHERE c.alive AND c.loc=$1 AND c.account_id<>$2 ORDER BY c.id LIMIT $3`,
         [viewer.district, accountId, limit + 1])).rows;
     const online = new Set(onlineIds), more = rows.length > limit;
-    const actors = rows.slice(0, limit).map(row => ({ ...actorOf(row, online, known.get(row.id)), actions: [{
-      id: 'encounter:' + row.id, label: 'Collect intel', method: 'POST',
-      path: '/v1/city/encounters/' + encodeURIComponent(row.id),
-      body: { ...viewer, targetGeneration: Number(row.generation) }, available: true, blockedBy: [], consequence: '',
-    }] }));
-    return { viewer, district: { id: viewer.district, name: districtName(viewer.district) }, actors,
+    const actors = rows.slice(0, limit).map(row => {
+      const rumor = rumorOf(row);
+      const actor = actorOf(row, online, known.get(row.id));
+      // An unknown face's timing must not link it to the named public wire.
+      const activity = row.is_npc || (actor.name && actor.observedAt && actor.source)
+        ? activityRegistry?.read(row, viewer) : null;
+      return { ...actor, ...(activity ? { activity } : {}), actions: [{
+        id: 'encounter:' + row.id, label: (row.is_npc ? 'Ask about ' : 'Compare rumors about ') + rumor.subject, method: 'POST',
+        topic: { id: rumor.id, title: rumor.title, teaser: rumor.teaser },
+        path: '/v1/city/encounters/' + encodeURIComponent(row.id),
+        body: { ...viewer, targetGeneration: Number(row.generation) }, available: true, blockedBy: [],
+        consequence: 'Adds this unverified rumor and an observation of this person to your private journal.',
+      }] };
+    });
+    const ownerActivity = ownerActivityRegistry?.read(owner, viewer);
+    return { viewer: ownerActivity ? { ...viewer, activity: ownerActivity } : viewer,
+      district: { id: viewer.district, name: districtName(viewer.district) }, actors,
       nextCursor: more ? Buffer.from(JSON.stringify({ ...viewer, after: actors.at(-1).id })).toString('base64url') : null,
       hasMore: more, placement: 'approximate_district', generatedAt: new Date().toISOString() };
   });
@@ -176,9 +187,13 @@ export async function recordCityEncounter(pool, accountId, actorId, body, key) {
           state.crossSequence = sequence; state.crossSourceId = source.id; state.crossKind = source.kind;
         } else if (state.crossSequence && !state.thirdSequence && source.id !== state.firstSourceId
           && source.id !== state.crossSourceId && ![state.firstKind, state.crossKind].includes(source.kind)) state.thirdSequence = sequence;
-        const [tipId, title, description] = TIPS[(sequence - 1) % TIPS.length];
-        const intel = { id: 'city-intel:' + sequence, sequence, kind: source.kind, title, description,
-          tipId, source, collectedAt };
+        const rumor = rumorOf(target);
+        const intel = { id: 'city-intel:' + sequence, sequence, kind: source.kind, title: rumor.title, description: rumor.description,
+          tipId: rumor.id, category: 'rumor', attribution: source.kind === 'npc' ? 'resident' : 'street',
+          sourceContext: source.kind === 'npc'
+            ? 'A resident passes along neighborhood gossip. Follow the lead to check the account.'
+            : 'Public neighborhood gossip, recorded alongside your own observation of this ' + source.kind + '.',
+          lead: { ...rumor.lead }, source, collectedAt };
         const journal = [intel, ...(prior ? clone(parseJson(prior.journal)) : [])].slice(0, CITY_JOURNAL_LIMIT);
         registerItemTransactionUndo(client, () => prior
           ? client.query('UPDATE city_intel_progress SET sequence=$3,journal=$4,objectives=$5 WHERE character_id=$1 AND generation=$2',

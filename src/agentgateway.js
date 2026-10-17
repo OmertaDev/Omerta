@@ -102,6 +102,7 @@ const TAG_DESC = {
   skills: 'The three-branch skill tree.', dynasty: 'Dynastic marriages + the consigliere.',
   landmarks: 'Dedicate a district plaque ($OMR flex).', safehouse: 'Go to ground (survival shield).',
   bodyguard: 'The two-party protection market.',
+  deeds: 'Earn a permanent property through a multi-district investigation or its qualifying story quest; deliberately claim and trade its deed.',
   session: 'Pre-character session probe.', me: 'Your full character sheet.',
   agent: 'Autonomous turn planning: compact state, extraction readiness, EV-ranked loops and guaranteed earned reward claims, wake scheduling, and server-authorized execution.',
   mod: 'Moderator tools (x-mod-key header, not a player token).',
@@ -317,6 +318,30 @@ export const COORDINATION_SCHEMAS = {
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  'GET /v1/deeds/discovery': {
+    operationId: 'getDeedDiscovery',
+    requestParameters: [{ name: 'district', in: 'query', required: false,
+      schema: { type: 'string', enum: ['docks', 'neon', 'foundry', 'brick', 'canal', 'cathedral'] },
+      description: 'Browse one district; defaults to the current character location. Reading this board does not advance discovery.' }],
+    responseSchema: { $ref: '#/components/schemas/DeedDiscovery' },
+  },
+  'POST /v1/deeds/investigate': {
+    operationId: 'investigateDeedBuilding',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['buildingId', 'actionId'], properties: {
+      buildingId: { type: 'string', pattern: '^(docks|neon|foundry|brick|canal|cathedral)-[0-9]{4}$',
+        description: 'Exact available building from discovery. Server checks objective sequence, district, level, current status, energy and lifetime entitlement.' },
+      actionId: { type: 'string', minLength: 1, maxLength: 80,
+        description: 'Copy objective.actionId from the current building projection. The server checks its sequence and required district and records evidence itself.' },
+    } },
+  },
+  'POST /v1/deeds/claim': {
+    operationId: 'claimEarnedDeedBuilding',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['name', 'buildingId'], properties: {
+      name: { type: 'string', minLength: 3, maxLength: 28 },
+      buildingId: { type: 'string', pattern: '^(docks|neon|foundry|brick|canal|cathedral)-[0-9]{4}$',
+        description: 'Exact unclaimed building qualified by this account. Discovery does not reserve it; refresh after a competing claim. Claims do not equip the deed.' },
+    } },
+  },
   ...COMPANY_ECONOMY_CONTRACTS,
   ...EQUIPMENT_ECONOMY_CONTRACTS,
   ...COMPANY_WORKFORCE_CONTRACTS,
@@ -983,6 +1008,32 @@ const OPERATION_CONTRACTS = {
 };
 
 const AGENT_SCHEMAS = {
+  DeedDiscovery: {
+    type: 'object', required: ['config', 'primaryClaimed', 'currentDistrict', 'questEligible', 'actorEligible', 'buildings'],
+    properties: {
+      config: { type: 'object', properties: {
+        minimumLevel: { type: 'integer' }, stepsRequired: { type: 'integer' },
+        cooldownSeconds: { type: 'integer' }, energyPerStep: { type: 'integer' },
+        primaryClaimsPerAccount: { type: 'integer' },
+        policyVersion: { type: 'integer' },
+      } },
+      primaryClaimed: { type: 'boolean', description: 'Permanent lifetime issuance history; selling or losing a deed never resets it.' },
+      claimedName: { type: ['string', 'null'] }, currentDistrict: { type: 'string' },
+      questEligible: { type: 'boolean' }, questSource: { type: ['object', 'null'] },
+      actorEligible: { type: 'boolean' }, reason: { type: ['string', 'null'] },
+      activeInvestigations: { type: 'array', items: { type: 'object', description: 'An already started building case, using the same objective and eligibility fields as buildings; may be in a different property district.' } },
+      buildings: { type: 'array', maxItems: 417, items: { type: 'object', required: ['id', 'district', 'claimed', 'steps', 'qualified', 'canInvestigate', 'canClaim'], properties: {
+        id: { type: 'string' }, district: { type: 'string' }, kind: { type: 'string' },
+        claimed: { type: 'boolean' }, street: { type: ['string', 'null'] }, steps: { type: 'integer', minimum: 0 },
+        qualified: { type: 'boolean' }, source: { type: ['string', 'null'] }, nextInvestigateAt: { type: ['string', 'null'], format: 'date-time' },
+        canInvestigate: { type: 'boolean' }, canClaim: { type: 'boolean' },
+        legacyReset: { type: 'boolean' }, objective: { type: ['object', 'null'], properties: {
+          id: { type: 'string' }, actionId: { type: 'string' }, title: { type: 'string' }, description: { type: 'string' },
+          requiredDistrict: { type: 'string' }, canAct: { type: 'boolean' }, blockedReason: { type: ['string', 'null'] },
+        } },
+      } } },
+    },
+  },
   ...COMPANY_ECONOMY_SCHEMAS,
   ...EQUIPMENT_ECONOMY_SCHEMAS,
   ...COMPANY_WORKFORCE_SCHEMAS,

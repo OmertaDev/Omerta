@@ -609,6 +609,21 @@ assert.equal(coverage.blocked.policy, 1, 'an otherwise executable agent road amb
 const minRacket = RACKETS.filter((racket) => racket.lvl <= 30).sort((a, b) => a.cost - b.cost)[0];
 const minRace = RACES.TIERS.filter((tier) => tier.minLvl <= 30).sort((a, b) => a.fee - b.fee)[0];
 const minRacer = Math.min(...Object.values(STABLE.KINDS).map((kind) => kind.cost));
+// A deed recommendation needs current server qualification or an actual investigation witness.
+for (const witness of [null, { canClaim: false, canInvestigate: false, buildingId: null },
+  { canClaim: false, canInvestigate: true, buildingId: 'brick-0001' },
+  { canClaim: true, canInvestigate: false, buildingId: null }]) {
+  const board = await Explore.systemCoverage(fakeDb(eventsExcept('street deeds')), ch(30), acct(), owned(),
+    { live: { deedDiscovery: witness } });
+  assert.equal(board.next, null, 'Empty ownership or a claim flag without an exact building is insufficient.');
+}
+for (const witness of [{ canInvestigate: true, canClaim: false, buildingId: 'brick-0001', actionId: 'inspect-site' },
+  { canInvestigate: false, canClaim: true, buildingId: 'brick-0001' }]) {
+  const board = await Explore.systemCoverage(fakeDb(eventsExcept('street deeds')), ch(30), acct(), owned(),
+    { live: { deedDiscovery: witness } });
+  assert.equal(board.next?.systemId, 'street-deeds');
+}
+
 const baseReady = () => ({ ch: ch(30), acct: acct(), owned: owned(), options: {} });
 const operationCases = [
   ['streets / crime', 'streets-crime', 'POST /v1/crimes/:id', { ch: ch(30, { nerve: 2 }) }],
@@ -672,7 +687,9 @@ const operationCases = [
     options: { live: { cornerBoard: { tasks: [{ slot: 0, accepted: false, canAccept: true }] } } } }],
   ['landmarks', 'landmarks', 'POST /v1/landmarks/:districtId', { acct: acct({ omr: LANDMARKS.MIN_DEDICATE }),
     options: { live: { landmarkMinDedicate: LANDMARKS.MIN_DEDICATE } } }],
-  ['street deeds', 'street-deeds', 'POST /v1/deeds/claim', {}],
+  ['street deeds', 'street-deeds', 'POST /v1/deeds/investigate', {
+    options: { live: { deedDiscovery: { canInvestigate: true, canClaim: false, buildingId: 'brick-0001', actionId: 'inspect-site' } } },
+  }],
   ['vanity', 'vanity', 'POST /v1/vanity/name', { acct: acct({ omr: VANITY.NAME_CHANGE_OMR }) }],
   ['the store / pass', null, 'policy: never proactive', {}],
   ['growth / social', 'growth-social', 'POST /v1/vouch/:characterId', {

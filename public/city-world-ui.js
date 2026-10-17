@@ -1,7 +1,7 @@
 /* In-world tools use confirmed player data and the host's guarded API callbacks. */
 (function () {
   'use strict';
-  const PANELS = [['map', 'Map'], ['bag', 'Bag'], ['skills', 'Skills'], ['adventures', 'Adventures'], ['room', 'Hideout'], ['style', 'Style'], ['chat', 'Nearby chat']];
+  const PANELS = [['map', 'Maps & travel'], ['bag', 'Bag'], ['skills', 'Skills'], ['adventures', 'Adventures'], ['room', 'Hideout'], ['style', 'Style'], ['chat', 'Nearby chat']];
   const VOICES = {
     fixer: ['THE FIXER', 'Every job carries a risk. Check your nerve before you step out.'],
     training: ['THE TRAINER', 'Pick a skill. Put in the work. Catch your breath between sessions.'],
@@ -36,16 +36,17 @@
     let trackedObjectiveId = '', roomDraft = null, chatUnread = 0;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
-    let scope = identity(), lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
+    let scope = identity();
+    const confirmedReceipts = new Set();
     const toolbar = el('div', 'city-world__toolbar');
     const tools = el('button', 'city-world__tools', 'World tools ▾'); tools.type = 'button'; tools.dataset.cityWorldTools = '';
     const tracker = el('button', 'city-world__tracker'); tracker.type = 'button'; tracker.dataset.cityObjectiveTracker = '';
-    const gains = el('span', 'city-world__gains'); gains.setAttribute('role', 'status'); gains.setAttribute('aria-live', 'polite');
+    const gains = el('span', 'city-world__gains'); gains.setAttribute('role', 'status'); gains.setAttribute('aria-live', 'off'); gains.setAttribute('aria-atomic', 'true');
     const dialogue = el('summary', 'city-world__dialogue'); dialogue.hidden = true;
     const speech = el('details', 'city-world__speech'); speech.hidden = true; speech.append(dialogue);
     toolbar.append(tools, tracker, gains, speech);
     (options.toolbar || root).append(toolbar);
-    if (options.toolsHost) { options.toolsHost.append(tools); tools.textContent = String(options.toolsLabel || 'World tools'); tools.setAttribute('aria-label', 'Open world tools: map, bag, skills, adventures, hideout, style and nearby chat'); }
+    if (options.toolsHost) { options.toolsHost.append(tools); tools.textContent = String(options.toolsLabel || 'World tools'); tools.setAttribute('aria-label', 'Open world tools: maps and travel, bag, skills, adventures, hideout, style and nearby chat'); }
     if (options.trackerHost) options.trackerHost.append(tracker);
     const dock = el('section', 'city-world__dock'); dock.hidden = true; dock.setAttribute('aria-label', 'World tools');
     const bar = el('div', 'city-world__dock-bar');
@@ -817,8 +818,35 @@
       lastChatId = message.id; lastChatAt = at;
       showSpeech(String(message.who || source?.name || self?.name || 'Someone') + (message.kind === 'emote' ? ' · EMOTE' : ' · NEARBY'), String(message.text || ''), performance.now());
     }
+    function clearResourceReceipt() {
+      const visible = gains.childElementCount > 0;
+      gains.replaceChildren(); gains.classList.remove('has-motion'); gains.setAttribute('aria-live', 'off'); delete gains.dataset.receiptId;
+      if (visible) changed();
+    }
+    function renderResourceReceipt(receipt, announce = false) {
+      if (!receipt?.id || receipt.state !== 'confirmed') { clearResourceReceipt(); return; }
+      const id = String(receipt.id);
+      if (announce && confirmedReceipts.has(id)) return;
+      confirmedReceipts.add(id);
+      const parts = [el('strong', '', 'After this move' + (receipt.label ? ' · ' + receipt.label : ''))];
+      for (const change of list(receipt.changes, 16)) {
+        if (typeof change.value !== 'number' || !Number.isFinite(change.value) || change.value === 0) continue;
+        const label = change.key === 'level' && change.value > 0 && Number.isFinite(change.after)
+          ? 'Level ' + change.after + ' reached'
+          : String(change.label || caption(change.key)) + ' ' + (change.value > 0 ? '+' : '') + change.value.toLocaleString('en-US');
+        const favorable = change.key === 'heat' ? change.value < 0 : change.value > 0;
+        const item = el('span', 'city-world__balance-change ' + (favorable ? 'is-gain' : 'is-cost'), label);
+        item.dataset.cityResourceChange = String(change.key || ''); parts.push(item);
+      }
+      if (receipt.questCompletion?.id && receipt.questCompletion?.title) parts.push(el('span', 'city-world__completion', 'Completed: ' + receipt.questCompletion.title));
+      gains.setAttribute('aria-live', announce ? 'polite' : 'off');
+      gains.replaceChildren(...parts); gains.dataset.receiptId = id;
+      gains.classList.toggle('has-motion', announce && options.reducedMotion !== true);
+      if (announce) changed();
+    }
     tools.setAttribute('aria-expanded', 'false');
     renderTracker();
+    renderResourceReceipt(options.resourceReceipt);
     const handle = {
       update(next) {
         if (destroyed || !next) return;
@@ -829,17 +857,11 @@
           selectedDistrict = ''; selectedHome = ''; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; lastFrame = null;
           options.onHomes?.(null);
           options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {};
-          pending = false; trackedObjectiveId = ''; options.trackedObjectiveId = next.trackedObjectiveId || ''; roomDraft = null; chatUnread = 0; gains.textContent = ''; lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
-          lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
+          pending = false; trackedObjectiveId = ''; options.trackedObjectiveId = next.trackedObjectiveId || ''; roomDraft = null; chatUnread = 0; clearResourceReceipt(); lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
+          if (options.resourceReceipt?.state === 'confirmed' && options.resourceReceipt.id) confirmedReceipts.add(String(options.resourceReceipt.id));
+          options.resourceReceipt = null;
         }
-        else {
-          const character = options.character || {}, changes = [];
-          for (const key of ['muscle', 'cunning', 'speed']) { const before = lastCharacter.stats?.[key], after = character.stats?.[key]; if (Number.isFinite(before) && Number.isFinite(after) && after > before) changes.push(caption(key) + ' +' + (after - before)); }
-          for (const key of ['respect', 'cash']) { const before = lastCharacter[key], after = character[key]; if (Number.isFinite(before) && Number.isFinite(after) && after > before) changes.push(caption(key) + ' +' + (after - before)); }
-          if (typeof lastCharacter.level === 'number' && typeof character.level === 'number' && character.level > lastCharacter.level) changes.push('Level ' + character.level + ' reached');
-          if (changes.length) { gains.textContent = changes.join(' · '); gains.dataset.celebrate = String(Date.now()); gains.classList.toggle('has-motion', options.reducedMotion !== true); changed(); }
-          lastCharacter = { ...character, stats: { ...character.stats } };
-        }
+        else if (Object.hasOwn(next, 'resourceReceipt')) renderResourceReceipt(next.resourceReceipt, true);
         if (Object.hasOwn(next, 'social')) {
           if (next.social) { boards.social = next.social; options.onLook?.(socialPreferences().outfit || 'classic'); }
           else { delete boards.social; options.social = null; }

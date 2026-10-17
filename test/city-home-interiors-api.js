@@ -1,6 +1,7 @@
 // Actual private home API and canonical custody/lifecycle; --postgres owns a disposable loopback schema.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { earnBuildingClaim } from './deed-discovery-fixture.js';
 
 const postgres = process.argv.includes('--postgres');
 let app, admin, namespace, createdSchema = false;
@@ -95,7 +96,15 @@ try {
   };
   const owner = await actor('Home Owner'), guest = await actor('Home Guest', true), buyer = await actor('Home Buyer');
   const outsider = await actor('Home Outsider'), maker = await actor('Home Maker');
-  const claim = async (who, name) => ok(await post(who, '/v1/deeds/claim', { name, district: 'foundry' }));
+  let nextProperty = 0;
+  const claim = async (who, name) => {
+    const buildingId = 'foundry-' + String(++nextProperty).padStart(4, '0');
+    await earnBuildingClaim(app, who.headers.authorization.slice(7), buildingId);
+    const result = ok(await post(who, '/v1/deeds/claim', { name, district: 'foundry', buildingId }));
+    const receipt = (await app.pool.query('SELECT source,building_id FROM street_deed_primary_claims WHERE account_id=$1', [who.account])).rows[0];
+    assert.deepEqual(receipt, { source: 'exploration', building_id: buildingId }, 'Home setup uses an earned exact-building claim.');
+    return result;
+  };
   await claim(owner, 'Functional Home'); await claim(maker, 'Working Home');
   const read = async (who = owner, key = 'functional home') => {
     const reply = await get(who, '/v1/city/home/interior?homeKey=' + encodeURIComponent(key)); privateHeaders(reply); return ok(reply);

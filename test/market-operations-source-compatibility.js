@@ -1,6 +1,8 @@
+import {cityActivitySourceBaseline} from '../tools/rc1-city-activity-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {enterpriseSourceBaseline} from '../tools/enterprise-source-compatibility.js';
+import {enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
+import {deedOverMarketSourceBaseline} from '../tools/deed-market-source-compatibility.js';
 import {execFileSync} from 'node:child_process';
 import {MARKET_OPERATIONS_SOURCE_REVISION,MARKET_OPERATIONS_SOURCE_PREDECESSOR,MARKET_OPERATIONS_SOURCE_PHASE,
   MARKET_OPERATIONS_SOURCE_DOMAINS,assertMarketOperationsSourceTransfer,marketOperationsSourceBaseline} from '../tools/market-operations-source-compatibility.js';
@@ -13,7 +15,7 @@ assert.deepEqual(Object.keys(MARKET_OPERATIONS_SOURCE_DOMAINS),["package.json","
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(MARKET_OPERATIONS_SOURCE_DOMAINS)){
   const current=git('show',MARKET_OPERATIONS_SOURCE_REVISION+':'+file),prior=git('show',MARKET_OPERATIONS_SOURCE_PREDECESSOR+':'+file);
-  assert.equal(enterpriseSourceBaseline(file,fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
+  assert.equal(deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')))).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned after the exact Enterprise then Deed junction');
   assert.equal(git('rev-parse',MARKET_OPERATIONS_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);
   assert.equal(git('rev-parse',MARKET_OPERATIONS_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);
   const actual=[];let chunk;
@@ -37,14 +39,14 @@ for(const[file,pin]of Object.entries(MARKET_OPERATIONS_SOURCE_DOMAINS)){
 for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){
   const text='unknown\r\nbytes\n';assert.throws(()=>assertMarketOperationsSourceTransfer(file,text));assert.equal(marketOperationsSourceBaseline(file,text),text);negatives++;
 }
-const file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(enterpriseSourceBaseline(file,fs.readFileSync(file,'utf8')));
+const file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')));
 const prior=JSON.parse(git('show',MARKET_OPERATIONS_SOURCE_PREDECESSOR+':'+file));
 assert.equal(prior.added.length,1332);assert.equal(current.added.length,1402);
 assert.deepEqual(current.added.slice(0,1332),prior.added);assert.deepEqual(current.removed,prior.removed);
 for(const[table,columns]of Object.entries(prior.notNullColumns))assert.deepEqual(current.notNullColumns[table],columns);
 const added=Object.keys(current.notNullColumns).filter(name=>!Object.hasOwn(prior.notNullColumns,name));
 assert.equal(added.length,6);assert.equal(added.reduce((n,name)=>n+current.notNullColumns[name].length,0),66);
-const schema=enterpriseSourceBaseline('schema.sql',fs.readFileSync('schema.sql','utf8'));
+const schema=enterpriseOverRootSourceBaseline('schema.sql',fs.readFileSync('schema.sql','utf8'));
 assert.throws(()=>releasePhase2MigrationPredecessor(schema),'Raw542 source does not enter the old528 native profile');
 assert.throws(()=>nextFiveNativePredecessor(schema),'Source transfer never creates historical native admission');
 console.log(`Market-operations source-only proof PASS:20 full domains/${hunks} immutable inverses/${negatives} refusals; all1332 prior rows preserved plus70/66; native admission remains separate`);

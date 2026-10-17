@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {enterpriseSourceBaseline} from '../tools/enterprise-source-compatibility.js';
+import {enterpriseCurrentHistorical6bSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import crypto from 'node:crypto';
 import {isDeepStrictEqual} from 'node:util';
 import pg from 'pg';
@@ -24,7 +24,7 @@ assert.equal(MARKET_OPERATIONS_ADDITIONS.added.length,70);assert.equal(Object.va
 assert.deepEqual(MARKET_OPERATIONS_NATIVE_ADDITIONS.added,[...NEXT_LAYER_NATIVE_ADDITIONS.added,...MARKET_OPERATIONS_ADDITIONS.added]);
 assert.deepEqual(MARKET_OPERATIONS_NATIVE_ADDITIONS.notNullColumns,{...NEXT_LAYER_NATIVE_ADDITIONS.notNullColumns,...MARKET_OPERATIONS_ADDITIONS.notNullColumns});
 assert.equal(MARKET_OPERATIONS_NATIVE_ADDITIONS.added.length,159);assert.equal(Object.values(MARKET_OPERATIONS_NATIVE_ADDITIONS.notNullColumns).flat().length,144);
-const raw=enterpriseSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8')),catalog=JSON.parse(raw);
+const raw=enterpriseCurrentHistorical6bSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8')),catalog=JSON.parse(raw);
 assert.equal(catalog.added.length,1402);assert.deepEqual(catalog.added.slice(-70),MARKET_OPERATIONS_ADDITIONS.added);
 const withoutSix={...catalog,added:catalog.added.slice(0,-70),notNullColumns:Object.fromEntries(Object.entries(catalog.notNullColumns).filter(([table])=>!MARKET_OPERATIONS_TABLES.includes(table)))};
 const ancestorBytes=(await import('node:child_process')).execFileSync('git',['show','9376c5a4553bc1b95d3e74f9c7f0d88b794933d6:test/lib/phase2-architecture-upgrade-catalog.json']);

@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
 import { PACING } from '../src/rules.js';
+import { earnBuildingClaim } from './deed-discovery-fixture.js';
 
 assert(!process.env.DATABASE_URL, 'World host browser fixtures require disposable pg-mem.');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';
@@ -99,7 +100,7 @@ try {
       await route.fulfill({ response: reply, body: html.replace(anchor,
         '  window.__worldReadScope = () => ({ key: cityIdentity(), epoch: projections.snapshot().epoch, scene: _citySceneEpoch,\n'
         + '    current: !!_cityWorldData && _cityWorldData.key === cityIdentity() && projections.current(_cityWorldData.stamp), tickets: { ..._cityWorldData?.tickets },\n'
-        + '    consent: _cityWorldData?.social?.preferences?.chatEnabled });\n' + anchor) });
+        + '    consent: _cityWorldData?.social?.preferences?.chatEnabled, resourceReceipt: cityWorldOptions().resourceReceipt });\n' + anchor) });
     });
     page.on('pageerror', error => errors.push(error.message));
     const requests = []; page.on('request', request => requests.push({ method: request.method(), path: new URL(request.url()).pathname }));
@@ -245,6 +246,7 @@ try {
       }).reduce((limit, node) => Math.min(limit, node.getBoundingClientRect().top), innerHeight);
       return { canvas: box, engine: { width: canvas.width, height: canvas.height }, avatar,
         header: rect(document.querySelector('#top')), tools: rect(tools), toolsHit: hit(tools), guidance: rect(guidance),
+        viewport: rect(document.querySelector('.omerta-city__viewport')), controls: rect(document.querySelector('.omerta-city__controls')),
         close: close && !close.closest('[hidden]') ? { bounds: rect(close), hit: hit(close) } : null, dock: dock && !dock.hidden ? rect(dock) : null, width: innerWidth, height: innerHeight,
         overflow: document.documentElement.scrollWidth, tint: sprite.tintTopLeft, bottom,
         hud: rect(document.querySelector('.omerta-city__world-hud')), readiness: document.querySelector('.omerta-city__readiness').textContent,
@@ -267,15 +269,17 @@ try {
   const assertPanelLoading = async (page, label) => {
     await page.waitForFunction(label => document.querySelector('.city-world__content').getAttribute('aria-busy') === 'true'
       && document.querySelector('.city-world__dock-bar strong').textContent === label, label);
+    await frames(page);
     const loading = await page.locator('.city-world__dock').evaluate(dock => {
       const title = dock.querySelector('.city-world__dock-bar strong'), content = dock.querySelector('.city-world__content');
       const notice = dock.querySelector('.city-world__notice'), bounds = title.getBoundingClientRect(), box = dock.getBoundingClientRect();
       const hit = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
       return { copy: notice.textContent, busy: content.getAttribute('aria-busy'), outsideBusy: !content.contains(notice),
+        title: bounds.toJSON(), dock: box.toJSON(), hit: hit?.className, viewport: { width: innerWidth, height: innerHeight },
         visible: bounds.height > 0 && bounds.top >= box.top && bounds.bottom <= box.bottom && (hit === title || title.contains(hit)) };
     });
     assert.equal(loading.copy, 'Loading ' + label + '…'); assert.equal(loading.busy, 'true');
-    assert(loading.outsideBusy && loading.visible, 'The sticky loading title is visible and its live notice stays outside the busy content.');
+    assert(loading.outsideBusy && loading.visible, 'The sticky loading title is visible and its live notice stays outside the busy content: ' + JSON.stringify(loading));
     await assertFrame(page);
   };
   const assertPanelReadFeedback = async viewport => {
@@ -339,9 +343,9 @@ try {
           bag.release(); await bag.finished; await settled(bagRead); await clear('Bag'); await assertFrame(page);
         } else {
           await activate(page, scenario === 'map' ? '[data-city-world-panel="map"]' : '[data-city-world-close]');
-          await clear(scenario === 'map' ? 'Map' : 'World tools');
+          await clear(scenario === 'map' ? 'Maps & travel' : 'World tools');
           assert.equal(await page.locator('.city-world__dock').isVisible(), scenario === 'map');
-          first.release(); await first.finished; await settled(firstRead); await clear(scenario === 'map' ? 'Map' : 'World tools');
+          first.release(); await first.finished; await settled(firstRead); await clear(scenario === 'map' ? 'Maps & travel' : 'World tools');
           assert.equal((await state(page)).worldUI.panel, scenario === 'map' ? 'map' : '', 'A retired read cannot reopen or retitle the current panel.');
           assert.equal(await page.locator('.city-world__dock').isVisible(), scenario === 'map');
         }
@@ -455,6 +459,8 @@ try {
   const muscleAfter = (await app.pool.query('SELECT muscle FROM characters WHERE id=$1', [viewer.character.id])).rows[0].muscle;
   assert.equal(Number(muscleAfter), Number(muscleBefore) + trained.body.gain);
   await page.waitForFunction(gain => document.querySelector('.city-world__gains').textContent.includes('muscle +' + gain), trained.body.gain);
+  assert((await page.evaluate(() => window.__worldReadScope().resourceReceipt)).changes.some(change => change.key === 'energy' && change.value < 0),
+    'The confirmed training receipt includes its Energy reduction alongside the stat gain.');
   assert.deepEqual((await state(page)).position, walkingPose);
   await page.locator('[data-city-training-close]').click();
   await panel(page, 'chat'); await page.locator('[data-city-chat-consent]').waitFor();
@@ -656,6 +662,16 @@ try {
   assert.match(await page.locator('.city-world__gains').textContent(), /Level 2 reached/);
   const afterLevel = (await app.inject({ method: 'GET', url: '/v1/projections/player', headers: viewer.headers })).json().player;
   assert.equal(afterLevel.level, 2); assert(afterLevel.respect > beforeLevel.respect);
+  const resourceReceipt = await page.evaluate(() => window.__worldReadScope().resourceReceipt);
+  assert.equal(resourceReceipt.state, 'confirmed');
+  const nerveChange = resourceReceipt.changes.find(change => change.key === 'nerve');
+  assert.equal(nerveChange?.value || 0, afterLevel.nerve - beforeLevel.nerve,
+    'The receipt reports the observed Nerve balance, including the real level-up refill.');
+  assert(resourceReceipt.changes.some(change => change.key === 'level' && change.after === 2));
+  assert(resourceReceipt.changes.every(change => Number.isFinite(change.before) && Number.isFinite(change.after) && change.value === change.after - change.before));
+  await refresh(page);
+  assert.equal((await page.evaluate(() => window.__worldReadScope().resourceReceipt)).id, resourceReceipt.id,
+    'A background balance refresh does not mint another feedback event.');
   await dismissCine(page); await page.locator('[data-city-training-close]').click();
   await page.locator('#toast.show').focus();
   const fullToast = await page.locator('#toast > span:not(.ti)').textContent();
@@ -706,14 +722,19 @@ try {
           const style = getComputedStyle(node), contentHeight = node.getBoundingClientRect().height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
           return contentHeight >= parseFloat(style.lineHeight) * 2 - 1;
         }), 'The wider fallback font wraps the full real readiness warning into at least two lines.');
-        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
-          'Resources and the complete warning are initially visible in the supported CI geometry.');
+        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.resources.bottom <= frameBeforeReading.hud.bottom,
+          'Readable resource labels and values are initially visible in the supported CI geometry: ' + JSON.stringify(frameBeforeReading));
+        assert(frameBeforeReading.warning.height <= frameBeforeReading.hud.height,
+          'The complete wrapped warning fits when reached through the bounded HUD.');
         assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
           'Only the actually overflowing HUD enters keyboard navigation with a scroll label.');
         await hud.focus(); await readHudEnd();
         const feedbackVisible = () => {
-          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), gain = document.querySelector('.city-world__gains').getBoundingClientRect();
-          return gain.top >= hud.top && gain.bottom <= hud.bottom;
+          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect();
+          const lastChange = document.querySelector('.city-world__gains').lastElementChild.getBoundingClientRect();
+          // A multi-resource receipt is taller than the smallest HUD. Native End
+          // reaches its final complete line while earlier content stays scrollable.
+          return lastChange.top >= hud.top && lastChange.bottom <= hud.bottom;
         };
         await page.waitForFunction(feedbackVisible);
         assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
@@ -742,17 +763,23 @@ try {
           return warning.top >= hud.top && warning.bottom <= hud.bottom;
         };
         const warningScrolls = [];
-        for (let step = 0; step < 12 && !await page.evaluate(warningVisible); step++) {
-          const previous = await hud.evaluate(node => node.scrollTop);
-          if (previous <= 0) break;
-          await hud.evaluate(node => {
-            node.__arrowSettled = new Promise(resolve => node.addEventListener('scrollend', resolve, { once: true }));
-          });
-          await page.keyboard.press('ArrowUp');
-          await bounded(hud.evaluate(node => node.__arrowSettled), 'native HUD ArrowUp scroll settlement');
-          const current = await hud.evaluate(node => node.scrollTop);
-          warningScrolls.push({ previous, current });
-          assert(current < previous, 'ArrowUp scrolls the focused HUD toward the readiness warning.');
+        // Native arrow steps can skip the narrow interval where a wrapped warning
+        // fits in this 51px HUD. PageUp supplies the browser's other reading path.
+        for (const key of ['ArrowUp', 'PageUp']) {
+          if (await page.evaluate(warningVisible)) break;
+          if (key === 'PageUp') await readHudEnd();
+          for (let step = 0; step < 12 && !await page.evaluate(warningVisible); step++) {
+            const previous = await hud.evaluate(node => node.scrollTop);
+            if (previous <= 0) break;
+            await hud.evaluate(node => {
+              node.__readingSettled = new Promise(resolve => node.addEventListener('scrollend', resolve, { once: true }));
+            });
+            await page.keyboard.press(key);
+            await bounded(hud.evaluate(node => node.__readingSettled), 'native HUD ' + key + ' scroll settlement');
+            const current = await hud.evaluate(node => node.scrollTop);
+            warningScrolls.push({ key, previous, current });
+            assert(current < previous, key + ' scrolls the focused HUD toward the readiness warning.');
+          }
         }
         assert(await page.evaluate(warningVisible), 'Native keyboard scrolling reveals the complete readiness warning after wrapped feedback: ' + JSON.stringify({
           steps: warningScrolls, layout: await hud.evaluate(node => ({ scroll: node.scrollTop, client: node.clientHeight, height: node.scrollHeight,
@@ -833,8 +860,9 @@ try {
   assert.equal(await page.evaluate(() => window.__toastActions), 1); assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1));
   const tiny = await newPage({ width: 320, height: 568 }, { noResizeObserver: true });
   const tinyStart = tiny.requests.length, tinyInitial = await assertFrame(tiny.page);
+  if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-entry-320.png') });
   assert(tinyInitial.guidance.top >= tinyInitial.header.bottom - 1 && tinyInitial.guidance.bottom <= tinyInitial.canvas.top,
-    'The first short-phone Player entry shows its issued objective with the map.');
+    'The first short-phone Player entry shows its issued objective with the map: ' + JSON.stringify(tinyInitial));
   const tinyControls = await tiny.page.locator('.omerta-city__controls').evaluate(node => ({ bounds: node.getBoundingClientRect().toJSON(),
     usable: [...node.querySelectorAll('button')].filter(button => button.getBoundingClientRect().height).every(button => {
       const box = button.getBoundingClientRect();
@@ -872,7 +900,9 @@ try {
   await fallback.page.locator('[data-destination="training"]').click();
   await fallback.page.locator('[data-city-open]').click();
   await fallback.page.locator('#tab-life.on').waitFor();
-  assert.equal(await fallback.page.locator('[data-city-world-tools]').count(), 0, 'Fallback destination navigation retires its external Tools control.');
+  assert.equal((await state(fallback.page)).externalPanel, true, 'Fallback navigation keeps the scene behind the canonical action panel.');
+  assert.equal(await fallback.page.locator('#city-panel-body #tab-life.on').count(), 1);
+  assert(await fallback.page.locator('[data-city-world-tools]').isDisabled(), 'World tools remain locked while a hosted panel is open.');
   await fallback.context.close(); await page.bringToFront();
   const optional = await newPage({ width: 375, height: 812 }, { moduleFailure: true });
   const optionalPose = (await state(optional.page)).position, optionalAt = optional.requests.length;
@@ -1190,7 +1220,6 @@ try {
     const requestStart = cityRequests.length, name = mapBoard.districts.find(district => district.id === 'cathedral').name;
     const caption = cityPage.locator('.city-world__atlas-diagram text').filter({ hasText: name });
     assert.equal(await caption.count(), 1);
-    await caption.scrollIntoViewIfNeeded();
     await cityPage.evaluate(() => {
       window.__atlasCaptionActivation = null;
       window.__atlasCaptionObserver = event => {
@@ -1401,16 +1430,22 @@ try {
   await cityHandle.dispose();
   console.log('world host: six-district atlas, confirmed one-fare travel, refused/queued cancellation, winning visits and exact-key lost-reply recovery pass');
 
-  // A canonical claim on another district reveals the deed without a ride.
+  // A completed title investigation reveals the deed without an additional ride at claim.
   // The current real successor is the seller; no additional account is created.
+  await app.pool.query('UPDATE characters SET respect=500000,energy=100,cash=cash+2000 WHERE account_id=$1 AND alive',
+    [viewer.character.account_id]);
+  await earnBuildingClaim(app, viewer.token, 'brick-0417');
   const seller = await currentActor(viewer); assert(seller && seller.id !== viewer.character.id);
   const sellerPage = await newPage({ width: 1440, height: 1000 }, { actor: viewer });
-  await enterDeeds(sellerPage.page); await sellerPage.page.locator('#deed-name').waitFor();
+  await enterDeeds(sellerPage.page); await sellerPage.page.locator('#deed-atlas-open').click();
+  await sellerPage.page.locator('[data-property="brick-0417"]').focus();
+  await sellerPage.page.keyboard.press('Enter');
+  await sellerPage.page.locator('#deed-property-name').waitFor();
   const street = 'Connected World Street', key = street.toLowerCase(), propertyDistrict = 'brick';
   const sellerFares = await fares(viewer), sellerLocation = seller.loc, sellerAt = sellerPage.requests.length;
-  await sellerPage.page.locator('#deed-name').fill(street);
+  await sellerPage.page.locator('#deed-property-name').fill(street);
   const claimed = sellerPage.page.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/deeds/claim');
-  await sellerPage.page.locator('[data-claimdist="brick"]').click();
+  await sellerPage.page.locator('#deed-property-claim').click();
   const claimReply = await claimed; assert.equal(claimReply.status(), 200); assert.equal((await claimReply.json()).name, street);
   await sellerPage.page.waitForFunction(({ key, district }) => window.__worldHandles.at(-1)?.handle.getState().worldUI?.mapView === 'world'
     && window.__worldHandles.at(-1).handle.getState().worldUI.districtId === district
@@ -1493,7 +1528,8 @@ try {
   await cityPage.route('**/v1/deeds', holdRetiredDeed);
   try {
     await activate(cityPage.getByRole('button', { name: 'Open Street Deeds →', exact: true })); await bounded(retiredDeedObserved, 'the retired navigation deed GET');
-    await activate(cityPage.locator('#bnav [data-go="streets"]')); releaseRetiredDeed(); await frames(cityPage);
+    await activate(cityPage.locator('#city-all-actions'));
+    await activate(cityPage.locator('#jump-list [data-jump="streets"]')); releaseRetiredDeed(); await frames(cityPage);
     assert.notEqual(await cityPage.evaluate(() => document.activeElement?.id), 'city-owned-deed');
     assert.equal(await cityPage.locator('#tab-streets:not(.hidden)').count(), 1, 'A late deed read cannot override a newer human navigation.');
   } finally { releaseRetiredDeed(); await cityPage.unroute('**/v1/deeds', holdRetiredDeed); }
@@ -1526,6 +1562,7 @@ try {
   await cityPage.route('**/v1/access/logout', holdLogout);
   try {
     await activate(cityPage.getByRole('button', { name: 'Open Street Deeds →', exact: true })); await bounded(privateDeedObserved, 'the old owner\'s held real deed GET');
+    await cityPage.locator('[data-city-utility="account"]').click();
     await cityPage.locator('#btn-logout').click();
     const logout = cityPage.locator('.modal-bg[data-managed-dialog]').last(); await logout.waitFor({ state: 'visible' }); await logout.locator('[data-yes]').click();
     await cityPage.locator('#screen-auth:not(.hidden)').waitFor(); releasePrivateDeed(); await frames(cityPage);

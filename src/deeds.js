@@ -16,6 +16,8 @@ import crypto from 'node:crypto';
 import { GameError, cleanText } from './game.js';
 import { vaultHistoryFor, vaultLiveBalances, deedTargetRows, deliveryKeeperReady } from './stockdeliver.js';
 import { paintedDeedSvg } from './nft-art.js';
+import { buildingForDeed, reserveDeedBuilding, deedBuildingById } from './deedbuildings.js';
+import { discoveryAvailability, prepareDiscoveredDeedClaim, consumeDiscoveredDeedClaim } from './deeddiscovery.js';
 import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedController,
   deedNeighborhoodsOpen, deedNeighborhoodOf, dayOf,
   effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName , coolLeft, coolWait } from './rules.js';
@@ -82,8 +84,11 @@ export async function recordDeedEvent(client, accountId, kind, detail = '') {
 export async function claimDeed(ch, body, client, h) {
   const existing = await loadDeed(client, ch.account_id);
   if (existing) throw new GameError('have_deed', `You already hold the deed to ${existing.name}.`);
-  const district = String(body?.district || '');
+  const selectedBuilding = deedBuildingById(body?.buildingId);
+  const district = String(body?.district || selectedBuilding?.district || '');
   if (!DISTRICTS.find((d) => d.id === district)) throw new GameError('district', 'Pick a district for your street.');
+  if (selectedBuilding && selectedBuilding.district !== district)
+    throw new GameError('building', 'That building belongs to a different district.');
   const name = cleanText(body?.name || '').replace(/\s+/g, ' ').trim().slice(0, DEEDS.NAME_MAX);
   if (name.length < DEEDS.NAME_MIN)
     throw new GameError('name', `Name your street (${DEEDS.NAME_MIN}–${DEEDS.NAME_MAX} characters, no < > " markup).`);
@@ -99,23 +104,32 @@ export async function claimDeed(ch, body, client, h) {
   const nameLc = name.toLowerCase();
   if ((await client.query('SELECT 1 FROM street_deeds WHERE name_lc=$1', [nameLc])).rowCount)
     throw new GameError('taken', 'That street is already on the map. Pick another name.');
+  const eligibility = await prepareDiscoveredDeedClaim(client, ch, body?.buildingId);
   // withCharacter owns the transaction. A shared row lock serializes cross-account creation;
   // checking COUNT before INSERT alone would let concurrent claimants overrun the final slot.
   const supply = await deedSupply(client, { lock: true });
   if (!supply.remaining) throw new GameError('deed_supply_exhausted', 'All 2,500 streets have been issued. Buy an existing deed from another player.');
+  let building;
+  try { building = await reserveDeedBuilding(client, district, name, eligibility.building.id); }
+  catch (err) {
+    if (String(err?.code) === '23505') throw new GameError('taken', 'That street is already on the map. Pick another name.');
+    throw err;
+  }
+  if (!building) throw new GameError('deed_building_claimed', 'That building was just claimed. Investigate another property.');
   try {
     // corner_at starts the corner-take clock at claim (Phase 2 — the owner controls their own corner)
-    await client.query('INSERT INTO street_deeds (account_id, name, name_lc, district, corner_at, home_authority_token) VALUES ($1,$2,$3,$4,now(),$5)',
-      [ch.account_id, name, nameLc, district, crypto.randomUUID()]);
+    await client.query('INSERT INTO street_deeds (account_id, name, name_lc, district, corner_at, home_authority_token, building_id) VALUES ($1,$2,$3,$4,now(),$5,$6)',
+      [ch.account_id, name, nameLc, district, crypto.randomUUID(), building.id]);
   } catch (err) {
     // a concurrent claim of the same name races on the unique index → a clean 400, not a 500
     if (String(err?.code) === '23505') throw new GameError('taken', 'That street was just claimed. Pick another name.');
     throw err;
   }
   await client.query('UPDATE street_deed_supply SET issued=$1 WHERE id=1', [supply.issued + 1]);
+  await consumeDiscoveredDeedClaim(client, ch, name, eligibility);
   await recordDeedEvent(client, ch.account_id, 'claim', `claimed by ${ch.name}`);
   if (h?.track) await h.track(client, ch.account_id, 'deed_claim', { district });
-  return { ok: true, name, district, districtName: districtName(district) };
+  return { ok: true, name, district, districtName: districtName(district), building };
 }
 
 // The board: your deed (or the claim form), its legend + renown/rank, and the districts (with how
@@ -123,6 +137,7 @@ export async function claimDeed(ch, body, client, h) {
 export async function deedBoard(ch, client, h) {
   const deed = await loadDeed(client, ch.account_id);
   const supply = await deedSupply(client);
+  const discovery = await discoveryAvailability(ch, client);
   const acct = (await client.query('SELECT minted, wallet_address FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0] || {};
   const history = deed ? await deedHistory(client, ch.account_id) : [];
   const renown = deedRenown(history);
@@ -198,7 +213,7 @@ export async function deedBoard(ch, client, h) {
   // browses these). One deed per account, so only a deedless account can buy — the "acquire a storied
   // street instead of a fresh block" entry. Two flat queries + a JS join (the /v1/gangs pg-mem posture).
   const forSaleRows = (await client.query(
-    `SELECT d.account_id AS acct, d.name, d.district, d.sale_price, c.id AS seller_id, c.name AS seller
+    `SELECT d.account_id AS acct, d.name, d.district, d.building_id, d.sale_price, c.id AS seller_id, c.name AS seller
        FROM street_deeds d JOIN characters c ON c.account_id = d.account_id AND c.alive AND NOT c.is_npc
        WHERE d.sale_price IS NOT NULL AND d.account_id <> $1 ORDER BY d.sale_price ASC LIMIT 30`, [ch.account_id])).rows;
   // renown per for-sale deed — the whole-table group (the greatStreetsLeaderboard posture; pg-mem can't
@@ -213,6 +228,7 @@ export async function deedBoard(ch, client, h) {
   // can empty it; the live figure is the buy-CONFIRM read (`deedVault`), never this polled board.
   const vaults = await vaultHistoryFor(client, [...forSaleRows.map((r) => r.name), ...(deed ? [deed.name] : [])]);
   const forSale = forSaleRows.map((r) => ({ street: r.name, district: r.district, districtName: districtName(r.district),
+    building: buildingForDeed(r),
     price: Number(r.sale_price), sellerId: r.seller_id, seller: r.seller,
     renown: deedRenown(forHist.get(r.acct) || []), rank: deedRankOf(deedRenown(forHist.get(r.acct) || [])).name,
     vault: vaults.get(r.name) || null,
@@ -238,7 +254,7 @@ export async function deedBoard(ch, client, h) {
   };
   return {
     deed: deed ? { name: deed.name, district: deed.district, districtName: districtName(deed.district),
-      claimedAt: deed.claimed_at, neighborhood: myHood ? myHood.name : null, frontier: myHood ? myHood.frontier : false,
+      claimedAt: deed.claimed_at, building: buildingForDeed(deed), neighborhood: myHood ? myHood.name : null, frontier: myHood ? myHood.frontier : false,
       onChain: !!deed.onchain_token_id, vault: vaults.get(deed.name) || null } : null,
     renown, rank: deedRankOf(renown).name, ranks: DEEDS.RANKS,
     history, corner, market, chain,
@@ -256,7 +272,8 @@ export async function deedBoard(ch, client, h) {
       neighborhoods: districtHoods[d.id] })),
     nameMin: DEEDS.NAME_MIN, nameMax: DEEDS.NAME_MAX,
     supply,
-    canClaim: !deed && supply.remaining > 0,
+    discovery,
+    canClaim: !deed && supply.remaining > 0 && discovery.canClaim,
   };
 }
 
@@ -500,10 +517,11 @@ export async function buyDeed(buyer, seller, client, h) {
 // persists through extraction (re-keyed to `onchain:<token>`) so the plate/page resolve while it's a
 // tradeable NFT. Returns { name, district, renown } or null (burned/re-imported → the NFT no longer exists).
 export async function deedByToken(pool, tokenId) {
-  const d = (await pool.query('SELECT account_id, name, district FROM street_deeds WHERE onchain_token_id=$1', [String(tokenId)])).rows[0];
+  const d = (await pool.query('SELECT account_id, name, district, building_id FROM street_deeds WHERE onchain_token_id=$1', [String(tokenId)])).rows[0];
   if (!d) return null;
   const hist = (await pool.query('SELECT kind, detail, at FROM street_deed_history WHERE account_id=$1 ORDER BY at DESC LIMIT $2', [d.account_id, DEEDS.HISTORY_MAX])).rows;
   return { name: d.name, district: d.district, districtName: districtName(d.district),
+    building: buildingForDeed(d),
     renown: deedRenown(hist), rank: deedRankOf(deedRenown(hist)).name,
     history: hist.map((r) => ({ kind: r.kind, detail: r.detail || '', at: r.at })) };
 }

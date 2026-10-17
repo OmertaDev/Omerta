@@ -4,6 +4,8 @@ import { allocateEpoch, brokerBoard } from '../src/brokers.js';
 import { upgradeWeights } from '../src/deed-upgrades.js';
 import { DEED_UPGRADES, dayOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { ledger as fixtureLedger } from '../src/game.js';
+import { earnBuildingClaim } from './deed-discovery-fixture.js';
 let admin, database;
 if (process.argv.includes('--postgres')) {
  const { Pool } = await import('pg');
@@ -22,7 +24,14 @@ await call('POST','/v1/character',token,{name:'Upgrade Keeper'});
 const ch=(await call('GET','/v1/me',token)).character;
 const aid=(await pool.query('SELECT account_id FROM characters WHERE id=$1',[ch.id])).rows[0].account_id;
 await pool.query('UPDATE account_persistent SET omr=20000 WHERE account_id=$1',[aid]);
-await call('POST','/v1/deeds/claim',token,{name:'Reward Street',district:'neon'});
+const fixtureCash = Math.max(5000, Number(ch.cash));
+await pool.query("UPDATE characters SET respect=100000,loc='neon',cash=$2 WHERE id=$1",[ch.id,fixtureCash]);
+if (fixtureCash !== Number(ch.cash)) await fixtureLedger(pool,{characterId:ch.id,currency:'cash',amount:fixtureCash-Number(ch.cash),reason:'crime:deed-fixture'});
+await earnBuildingClaim(app,token,'neon-0001');
+const earned=await call('POST','/v1/deeds/claim',token,{name:'Reward Street',district:'neon',buildingId:'neon-0001'});
+assert.equal(earned.code,200,JSON.stringify(earned));
+assert.deepEqual((await pool.query('SELECT source,building_id FROM street_deed_primary_claims WHERE account_id=$1',[aid])).rows[0],
+ {source:'exploration',building_id:'neon-0001'},'upgrade fixture earns its primary property');
 const deed=(await pool.query('SELECT name FROM street_deeds WHERE account_id=$1',[aid])).rows[0];
 assert(deed, 'fixture district must create a deed');
 const today=dayOf();
