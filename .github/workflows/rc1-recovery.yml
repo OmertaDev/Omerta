@@ -1,5 +1,5 @@
-name: Exact-source next-five diagnostic
-run-name: Depot acquisition diagnostic at 0b01a6a9
+name: Exact-source depot and fixture diagnostic
+run-name: Depot and fixture diagnostic at 2156c55e
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ permissions:
 
 env:
   RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
-  RC1_REPLAY_SOURCE: '0b01a6a92672f833ce1db32c21e8de4e005f2621'
+  RC1_REPLAY_SOURCE: '2156c55e67d8f8f71e90b350cfbb608b5ba3f7ec'
   CHAIN_ENABLED: 'off'
   RESOURCE_ECONOMY: 'off'
   SOCIAL_VERIFY_MODE: 'off'
@@ -49,16 +49,17 @@ jobs:
       RC1_CI_POSTGRES: ${{ matrix.postgres }}
       RC1_DIAGNOSTIC_OUTPUT: ${{ github.workspace }}/tmp/rc1-depot-next-five-diagnostic
     steps:
-      - name: Check out the exact failed source
+      - name: Check out the exact candidate source
         uses: actions/checkout@v4
         with:
-          ref: '0b01a6a92672f833ce1db32c21e8de4e005f2621'
+          ref: '2156c55e67d8f8f71e90b350cfbb608b5ba3f7ec'
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
       - name: Record diagnostic source and workflow identity
+        id: source_identity
         shell: bash
         run: |
           set -euo pipefail
@@ -75,12 +76,21 @@ jobs:
           assert.equal(sourceRevision, process.env.RC1_REPLAY_SOURCE);
           assert.equal(git('status', '--porcelain', '--untracked-files=all'), '');
           assert(!Object.hasOwn(process.env, 'DATABASE_URL'));
-          const files = Object.fromEntries(['test/depotacquisition-next-five.js', 'tools/next-five-native.js', 'package.json', 'package-lock.json'].map(file => [file, crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')]));
-          const record = { sourceRevision, workflowRevision: process.env.GITHUB_SHA, workflowDefinitionRevision: process.env.GITHUB_WORKFLOW_SHA || null, workflowRef: process.env.GITHUB_WORKFLOW_REF, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, postgresLane: process.env.RC1_CI_POSTGRES, node: process.version, command: 'node test/depotacquisition-next-five.js --postgres', files, claim: 'Single unchanged child diagnostic only; no full fifteen-proof qualification or release clearance.' };
+          const files = Object.fromEntries(['test/depotacquisition-next-five.js', 'tools/next-five-native.js', 'src/routes/commands.js', 'src/command-diagnostics.js', 'test/rc1-observability.js', 'test/rc1-passive-projection.js', 'package.json', 'package-lock.json'].map(file => [file, crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')]));
+          const scripts = JSON.parse(fs.readFileSync('package.json', 'utf8')).scripts;
+          const harnessChildren = scripts['test:rc1:harness'].split(' && ');
+          assert.equal(harnessChildren.length, 90);
+          assert(harnessChildren.every(command => /^node test\/rc1-[a-z0-9-]+\.js$/.test(command)));
+          const fixtureControls = process.env.RC1_CI_POSTGRES === '16' ? [
+            { command: 'npm run test:rc1:observability', scope: 'Default memory and fixture checks; no native database qualification' },
+            { command: 'npm run test:rc1:harness', scope: 'All 90 default memory, fixture, mock, browser, and loopback controls; no native database qualification', children: harnessChildren }
+          ] : [];
+          const record = { sourceRevision, workflowRevision: process.env.GITHUB_SHA, workflowDefinitionRevision: process.env.GITHUB_WORKFLOW_SHA || null, workflowRef: process.env.GITHUB_WORKFLOW_REF, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, postgresLane: process.env.RC1_CI_POSTGRES, node: process.version, command: 'node test/depotacquisition-next-five.js --postgres', fixtureControls, files, claim: 'One unchanged native depot child per PostgreSQL lane, with separate default fixture controls on PostgreSQL 16 only; no full fifteen-proof qualification or release clearance.' };
           fs.writeFileSync(process.env.RC1_DIAGNOSTIC_OUTPUT + '/source.json', JSON.stringify(record, null, 2) + '\n');
           console.log(JSON.stringify(record));
           NODE
       - name: Install the exact source lockfile
+        id: dependencies
         shell: bash
         run: |
           set -euo pipefail
@@ -137,6 +147,51 @@ jobs:
           printf '%s\n' "${statuses[1]}" > "$RC1_DIAGNOSTIC_OUTPUT/log-exit-code.txt"
           if [ "${statuses[0]}" -ne 0 ]; then exit "${statuses[0]}"; fi
           exit "${statuses[1]}"
+      - name: Run the unchanged default observability controls
+        if: ${{ always() && !cancelled() && matrix.postgres == '16' && steps.source_identity.outcome == 'success' && steps.dependencies.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test -z "${DATABASE_URL+x}"
+          unset DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL
+          set +e
+          npm run test:rc1:observability 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/observability.log"
+          statuses=("${PIPESTATUS[@]}")
+          set -e
+          printf '%s\n' "${statuses[0]}" > "$RC1_DIAGNOSTIC_OUTPUT/observability-exit-code.txt"
+          printf '%s\n' "${statuses[1]}" > "$RC1_DIAGNOSTIC_OUTPUT/observability-log-exit-code.txt"
+          if [ "${statuses[0]}" -ne 0 ]; then exit "${statuses[0]}"; fi
+          exit "${statuses[1]}"
+      - name: Install the standard Chromium prerequisite for the full harness
+        id: browser_dependencies
+        if: ${{ always() && !cancelled() && matrix.postgres == '16' && steps.source_identity.outcome == 'success' && steps.dependencies.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test -z "${DATABASE_URL+x}"
+          unset DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL
+          npx playwright-core install --with-deps chromium 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/chromium-install.log"
+      - name: Run all unchanged default RC1 harness controls
+        if: ${{ always() && !cancelled() && matrix.postgres == '16' && steps.source_identity.outcome == 'success' && steps.dependencies.outcome == 'success' && steps.browser_dependencies.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test -z "${DATABASE_URL+x}"
+          unset DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL
+          set +e
+          npm run test:rc1:harness 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/harness.log"
+          statuses=("${PIPESTATUS[@]}")
+          set -e
+          printf '%s\n' "${statuses[0]}" > "$RC1_DIAGNOSTIC_OUTPUT/harness-exit-code.txt"
+          printf '%s\n' "${statuses[1]}" > "$RC1_DIAGNOSTIC_OUTPUT/harness-log-exit-code.txt"
+          if [ "${statuses[0]}" -ne 0 ]; then exit "${statuses[0]}"; fi
+          exit "${statuses[1]}"
       - name: Index diagnostic files after success or failure
         if: always()
         shell: bash
@@ -150,7 +205,7 @@ jobs:
           fs.mkdirSync(folder, { recursive: true, mode: 0o700 });
           const files = fs.readdirSync(folder).sort().filter(name => name !== 'index.json').map(name => ({ name, bytes: fs.statSync(folder + '/' + name).size, sha256: crypto.createHash('sha256').update(fs.readFileSync(folder + '/' + name)).digest('hex') }));
           const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-          const index = { sourceRevision, workflowRevision: process.env.GITHUB_SHA, workflowDefinitionRevision: process.env.GITHUB_WORKFLOW_SHA || null, workflowRef: process.env.GITHUB_WORKFLOW_REF, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, postgresLane: process.env.RC1_CI_POSTGRES, files, claim: 'Diagnostic evidence index; a missing or failed child is not a pass. No full fifteen-proof qualification.' };
+          const index = { sourceRevision, workflowRevision: process.env.GITHUB_SHA, workflowDefinitionRevision: process.env.GITHUB_WORKFLOW_SHA || null, workflowRef: process.env.GITHUB_WORKFLOW_REF, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, postgresLane: process.env.RC1_CI_POSTGRES, files, claim: 'Diagnostic evidence index; native depot and default fixture controls are separate. A missing or failed control is not a pass. No full fifteen-proof qualification.' };
           fs.writeFileSync(folder + '/index.json', JSON.stringify(index, null, 2) + '\n');
           console.log(JSON.stringify(index));
           NODE
@@ -161,7 +216,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rc1-private-next-five-diagnostic-pg${{ matrix.postgres }}-0b01a6a9-${{ github.run_id }}-${{ github.run_attempt }}
+          name: rc1-private-next-five-diagnostic-pg${{ matrix.postgres }}-2156c55e-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
           if-no-files-found: error
           retention-days: 30
