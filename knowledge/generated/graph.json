@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e1448370241fabd0976631b9da3c4e59a4b49097",
+  "sourceRevision": "9664ff11829dd59276f0e60d128d3bf0114a5fcc",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16320,
-    "edges": 64970,
+    "nodes": 16323,
+    "edges": 64981,
     "byNodeType": {
       "Artifact": 6787,
       "Command": 293,
-      "Commit": 4448,
+      "Commit": 4451,
       "Contract": 134,
       "Document": 939,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5381,
-      "CHANGED": 24915,
+      "CHANGED": 24922,
       "CONTAINS": 6808,
       "DECLARES": 293,
       "DEFINED_IN": 1737,
       "DEPENDS_ON": 69,
       "EXECUTES": 1126,
       "HANDLED_BY": 929,
-      "HAS_COMMIT": 4448,
+      "HAS_COMMIT": 4451,
       "IMPLEMENTS": 124,
-      "IMPORTS": 7311,
+      "IMPORTS": 7312,
       "INHERITS": 45,
       "REFERENCES": 3814,
       "REPRESENTS": 2441,
@@ -40480,20 +40480,20 @@
       "path": "docs/rc1-source-pair-additive-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 59888,
+      "bytes": 59930,
       "lines": 191,
-      "version": "c8aba0f1dc7bf86a",
+      "version": "b10099a84c120327",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "c8aba0f1dc7bf86a"
+          "version": "b10099a84c120327"
         }
       ],
-      "lastChangedAt": "2026-10-17T11:37:08.000Z",
+      "lastChangedAt": "2026-10-17T14:08:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e1448370241fabd0976631b9da3c4e59a4b49097"
+      "lastChangedCommit": "9664ff11829dd59276f0e60d128d3bf0114a5fcc"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -146435,20 +146435,20 @@
       "path": "test/rc1-world-checkpoint-series.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11993,
-      "lines": 121,
-      "version": "9bed6d207878b172",
+      "bytes": 12270,
+      "lines": 122,
+      "version": "e527c52273c0f099",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-checkpoint-series.js",
           "line": 1,
-          "version": "9bed6d207878b172"
+          "version": "e527c52273c0f099"
         }
       ],
-      "lastChangedAt": "2026-10-05T01:04:19.000Z",
+      "lastChangedAt": "2026-10-17T14:04:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85f090b8791ad83381aa9b66d62d7cb14f7f7613"
+      "lastChangedCommit": "e1b459b78d1e6dbf50788cf8afbf691298aac5f1"
     },
     {
       "key": "Artifact:test/rc1-world-diagnostics.js",
@@ -155036,18 +155036,18 @@
       "extension": ".js",
       "bytes": 101431,
       "lines": 1287,
-      "version": "c2e717596e89c08c",
+      "version": "39d3ebf0e8e06d93",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "c2e717596e89c08c"
+          "version": "39d3ebf0e8e06d93"
         }
       ],
-      "lastChangedAt": "2026-10-17T11:37:08.000Z",
+      "lastChangedAt": "2026-10-17T14:08:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e1448370241fabd0976631b9da3c4e59a4b49097"
+      "lastChangedCommit": "9664ff11829dd59276f0e60d128d3bf0114a5fcc"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -189986,6 +189986,22 @@
       ]
     },
     {
+      "key": "Commit:6a3124af8cd12688825a1899f5df187760bb057d",
+      "type": "Commit",
+      "id": "6a3124af8cd12688825a1899f5df187760bb057d",
+      "label": "Refresh enterprise knowledge after exact CI capacity source fixes",
+      "title": "Refresh enterprise knowledge after exact CI capacity source fixes",
+      "date": "2026-10-17T11:40:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6a3124af8cd12688825a1899f5df187760bb057d",
+      "provenance": [
+        {
+          "commit": "6a3124af8cd12688825a1899f5df187760bb057d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6a3124af8cd12688825a1899f5df187760bb057d"
+        }
+      ]
+    },
+    {
       "key": "Commit:6a57074f6e629ffc7c8694abf16cc3073a2cb844",
       "type": "Commit",
       "id": "6a57074f6e629ffc7c8694abf16cc3073a2cb844",
@@ -202638,6 +202654,22 @@
         {
           "commit": "96520062c2ea862e25475d56fd173679400b421c",
           "url": "https://github.com/OmertaDev/Omerta/commit/96520062c2ea862e25475d56fd173679400b421c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9664ff11829dd59276f0e60d128d3bf0114a5fcc",
+      "type": "Commit",
+      "id": "9664ff11829dd59276f0e60d128d3bf0114a5fcc",
+      "label": "Bind enterprise recovery metadata to the reviewed test repair",
+      "title": "Bind enterprise recovery metadata to the reviewed test repair",
+      "date": "2026-10-17T14:08:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9664ff11829dd59276f0e60d128d3bf0114a5fcc",
+      "provenance": [
+        {
+          "commit": "9664ff11829dd59276f0e60d128d3bf0114a5fcc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9664ff11829dd59276f0e60d128d3bf0114a5fcc"
         }
       ]
     },
@@ -222782,6 +222814,22 @@
         {
           "commit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
           "url": "https://github.com/OmertaDev/Omerta/commit/e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e1b459b78d1e6dbf50788cf8afbf691298aac5f1",
+      "type": "Commit",
+      "id": "e1b459b78d1e6dbf50788cf8afbf691298aac5f1",
+      "label": "Repair the recovery source test for current enterprise gameplay",
+      "title": "Repair the recovery source test for current enterprise gameplay",
+      "date": "2026-10-17T14:04:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e1b459b78d1e6dbf50788cf8afbf691298aac5f1",
+      "provenance": [
+        {
+          "commit": "e1b459b78d1e6dbf50788cf8afbf691298aac5f1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e1b459b78d1e6dbf50788cf8afbf691298aac5f1"
         }
       ]
     },
@@ -243278,12 +243326,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 191,
-      "version": "c8aba0f1dc7bf86a",
+      "version": "b10099a84c120327",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "c8aba0f1dc7bf86a"
+          "version": "b10099a84c120327"
         }
       ]
     },
@@ -258443,6 +258491,9 @@
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
         },
         {
+          "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
+        },
+        {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
         },
         {
@@ -260669,6 +260720,9 @@
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
         },
         {
+          "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
+        },
+        {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
         },
         {
@@ -262893,6 +262947,9 @@
         },
         {
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
+        },
+        {
+          "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
@@ -265746,6 +265803,9 @@
         },
         {
           "commit": "6a2af13cfdfd940de236e785e295dcee390218f5"
+        },
+        {
+          "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
         },
         {
           "commit": "6ae9b8e9eb158180f3c98cfc4e19a645c4cc9b87"
@@ -280835,7 +280895,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e1448370241fabd0976631b9da3c4e59a4b49097",
+      "revision": "9664ff11829dd59276f0e60d128d3bf0114a5fcc",
       "currentBranch": "codex/economy-enterprise-spaces-oct15",
       "defaultBranch": "main",
       "visibility": "public",
@@ -328024,13 +328084,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-checkpoint-series.js",
       "label": "test/rc1-world-checkpoint-series.js",
-      "lines": 121,
-      "version": "9bed6d207878b172",
+      "lines": 122,
+      "version": "e527c52273c0f099",
       "provenance": [
         {
           "file": "test/rc1-world-checkpoint-series.js",
           "line": 1,
-          "version": "9bed6d207878b172"
+          "version": "e527c52273c0f099"
         }
       ]
     },
@@ -453182,6 +453242,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6a3124af8cd12688825a1899f5df187760bb057d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a3124af8cd12688825a1899f5df187760bb057d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a3124af8cd12688825a1899f5df187760bb057d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6a3124af8cd12688825a1899f5df187760bb057d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6a57074f6e629ffc7c8694abf16cc3073a2cb844",
       "to": "Artifact:test/rc1-car-melt-provenance.js",
       "provenance": {
@@ -483786,6 +483878,22 @@
       "to": "Artifact:tools/pgquery.js",
       "provenance": {
         "commit": "96520062c2ea862e25475d56fd173679400b421c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9664ff11829dd59276f0e60d128d3bf0114a5fcc",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "9664ff11829dd59276f0e60d128d3bf0114a5fcc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9664ff11829dd59276f0e60d128d3bf0114a5fcc",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "9664ff11829dd59276f0e60d128d3bf0114a5fcc"
       }
     },
     {
@@ -553330,6 +553438,14 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "commit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1b459b78d1e6dbf50788cf8afbf691298aac5f1",
+      "to": "Artifact:test/rc1-world-checkpoint-series.js",
+      "provenance": {
+        "commit": "e1b459b78d1e6dbf50788cf8afbf691298aac5f1"
       }
     },
     {
@@ -692319,6 +692435,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6a3124af8cd12688825a1899f5df187760bb057d",
+      "provenance": {
+        "commit": "6a3124af8cd12688825a1899f5df187760bb057d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6a57074f6e629ffc7c8694abf16cc3073a2cb844",
       "provenance": {
         "commit": "6a57074f6e629ffc7c8694abf16cc3073a2cb844"
@@ -698642,6 +698766,14 @@
       "to": "Commit:96520062c2ea862e25475d56fd173679400b421c",
       "provenance": {
         "commit": "96520062c2ea862e25475d56fd173679400b421c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9664ff11829dd59276f0e60d128d3bf0114a5fcc",
+      "provenance": {
+        "commit": "9664ff11829dd59276f0e60d128d3bf0114a5fcc"
       }
     },
     {
@@ -708714,6 +708846,14 @@
       "to": "Commit:e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
       "provenance": {
         "commit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e1b459b78d1e6dbf50788cf8afbf691298aac5f1",
+      "provenance": {
+        "commit": "e1b459b78d1e6dbf50788cf8afbf691298aac5f1"
       }
     },
     {
@@ -766113,34 +766253,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-world-checkpoint-series.js",
-      "to": "Artifact:tools/rc1-native-proof.js",
-      "provenance": {
-        "file": "test/rc1-world-checkpoint-series.js",
-        "line": 4
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-world-checkpoint-series.js",
-      "to": "Artifact:tools/rc1-world-checkpoint-series.js",
-      "provenance": {
-        "file": "test/rc1-world-checkpoint-series.js",
-        "line": 7
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-world-checkpoint-series.js",
-      "to": "Artifact:tools/rc1-world-diagnostics.js",
-      "provenance": {
-        "file": "test/rc1-world-checkpoint-series.js",
-        "line": 5
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-world-checkpoint-series.js",
-      "to": "Artifact:tools/rc1-world-qualification.js",
+      "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-checkpoint-series.js",
         "line": 1
@@ -766149,10 +766262,46 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-world-checkpoint-series.js",
-      "to": "Artifact:tools/rc1-world-qualification.js",
+      "to": "Artifact:tools/rc1-native-proof.js",
+      "provenance": {
+        "file": "test/rc1-world-checkpoint-series.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-checkpoint-series.js",
+      "to": "Artifact:tools/rc1-world-checkpoint-series.js",
+      "provenance": {
+        "file": "test/rc1-world-checkpoint-series.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-checkpoint-series.js",
+      "to": "Artifact:tools/rc1-world-diagnostics.js",
       "provenance": {
         "file": "test/rc1-world-checkpoint-series.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-checkpoint-series.js",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "file": "test/rc1-world-checkpoint-series.js",
+        "line": 2
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-checkpoint-series.js",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "file": "test/rc1-world-checkpoint-series.js",
+        "line": 7
       }
     },
     {
