@@ -1,3 +1,4 @@
+import { baseWorkHistoricalSourceBaseline } from './lib/base-work-source-compatibility.js';
 import {nextFiveSourceBaseline} from '../tools/next-five-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -47,7 +48,7 @@ console.log('FIFTH source transfer PASS: 7 literal domains, '+hunks+' actual Git
 
 // Legacy EOL normalization is intentionally unchanged; substantive full-caller drift must still refuse.
 const worldFiles=['src/server.js','src/worker.js'];
-const worldRead=file=>fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
+const worldRead=file=>baseWorkHistoricalSourceBaseline(file, fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n');
 await verifyWorldRecoverySources({sourceRevision:O.FIFTH_BATCH_SOURCE_REVISION,readFile:worldRead});
 let worldNegatives=0;
 for(const file of worldFiles){const text=worldRead(file),d=O.FIFTH_BATCH_SOURCE_DOMAINS[file];const bads=[text+'\n// unknown substantive change\n',text.slice(1),text.replace(/\S/,'?')];for(const h of d.inverses)bads.push(text.replace(h.current,''),text.replace(h.current,()=>h.current+h.current),text.replace(h.current,()=>h.current.replace(/\S/,'?')));for(const bad of bads){await assert.rejects(()=>verifyWorldRecoverySources({sourceRevision:O.FIFTH_BATCH_SOURCE_REVISION,readFile:f=>f===file?bad:worldRead(f)}),file+' substantive mutation index '+bads.indexOf(bad));worldNegatives++;}}
@@ -64,7 +65,7 @@ assert.equal(scripts['test:company-autonomy'].split(' && ').filter(command=>!com
 assert(scripts['build:funded-work-artifact'].includes('v5.6.1.tar.gz'));
 // Preserve the immutable historical package evidence, including its repaired defect.
 assert(scripts['build:funded-work-artifact'].endsWith('forge build --root omerta-contracts omerta-contracts/src/market-v2/OmertaWorkEscrowV2.sol'));
-const actualScripts=JSON.parse(fs.readFileSync(new URL('../package.json',import.meta.url),'utf8')).scripts;
+const actualScripts=JSON.parse(baseWorkHistoricalSourceBaseline('package.json', fs.readFileSync(new URL('../package.json',import.meta.url),'utf8'))).scripts;
 assert(actualScripts['build:funded-work-artifact'].endsWith('forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol'));
 assert(!actualScripts['build:funded-work-artifact'].includes('omerta-contracts omerta-contracts/'));
 const packageMutations=[

@@ -1,3 +1,4 @@
+import { baseWorkHistoricalSourceBaseline } from './lib/base-work-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
@@ -32,7 +33,7 @@ for(const altered of [homeRaw+'\n// unknown Home suffix\n',homeRaw.replace('regi
 }
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(MARKET_FEED_SOURCE_CURRENT_PINS)) {
-  const current = normalize(strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, fs.readFileSync(file, 'utf8'))))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, baseWorkHistoricalSourceBaseline(file, fs.readFileSync(file, 'utf8')))))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(marketFeedSourceBaseline(file, current), baseline);
   assert.equal(marketFeedSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

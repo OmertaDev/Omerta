@@ -1,3 +1,4 @@
+import { baseWorkHistoricalSourceBaseline } from './lib/base-work-source-compatibility.js';
 import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { BUSINESS_SEASON_SOURCE_TRANSFER } from '../tools/rc1-business-season-source-compatibility.js';
 import { COMMERCIAL_REPUTATION_SOURCE_TRANSFER } from '../tools/rc1-commercial-reputation-source-compatibility.js';
@@ -76,7 +77,7 @@ assert.deepEqual(CITY_ACTIVITY_MARKET_SERVER_INVERSES, CITY_ACTIVITY_SOURCE_INVE
 assert.deepEqual(CITY_ACTIVITY_MARKET_PACKAGE_INVERSES, CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES);
 let jointPositives = 0, jointRefusals = 0;
 for (const [file, pin] of Object.entries(CITY_ACTIVITY_MARKET_SOURCE_DOMAINS)) {
-  const raw = await fs.readFile(file, 'utf8'), current = raw.replaceAll('\r\n', '\n');
+  const raw = await fs.readFile(file, 'utf8').then(raw => baseWorkHistoricalSourceBaseline(file, raw)), current = raw.replaceAll('\r\n', '\n');
   const expected = readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR + ':' + file);
   assert.equal(current, readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_REVISION + ':' + file));
   assert.equal(current, readActivityBlob(pin.currentBlob));
@@ -634,7 +635,7 @@ for (const changed of [
   assert.throws(() => assertCitySourceTransfer('src/operations.js', changed), /source changed/);
 }
 for (const file of ['src/server.js', 'src/economy.js']) {
- const text = playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,await fs.readFile(file, 'utf8')))).replaceAll('\r\n', '\n'));
+ const text = playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,await fs.readFile(file, 'utf8').then(raw => baseWorkHistoricalSourceBaseline(file, raw))))).replaceAll('\r\n', '\n'));
  const proof = assertEconomySourceTransfer(file, text);
  assert(proof.inverseChunks > 0);
  assert.equal(sha256(proof.baselineText), proof.baselineSha256);
@@ -672,14 +673,14 @@ assert.equal(assertDeedServerCompatibility(receiptProof.priorText).actualSha256,
 assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha256, DEED_SERVER_BASELINE_PIN);
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
-const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
+const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
 for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
   for (const changed of [homesServerText.replace(chunk, ''), homesServerText.replace(chunk, chunk + chunk)])
     await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-      readFile: file => file === 'src/server.js' ? changed : fs.readFile(file) }), /source changed/);
+      readFile: file => file === 'src/server.js' ? changed : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) }), /source changed/);
 }
 await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-  readFile: file => file === 'src/server.js' ? homesServerText + '\n// unknown Home envelope change\n' : fs.readFile(file) }), /source changed/);
+  readFile: file => file === 'src/server.js' ? homesServerText + '\n// unknown Home envelope change\n' : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) }), /source changed/);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_LEAGUE_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_LEAGUE_SOURCE_BASE_REVISION);
@@ -689,16 +690,16 @@ assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separat
 // sources back to its unchanged pins, never by trusting a supplied transfer tag.
 let coverageSourceControls = 0;
 for (const file of Object.keys(COVERAGE_SOURCE_CURRENT_PINS).filter(file => Object.hasOwn(source.sourceFiles, file))) {
-  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'))))));
+  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, await fs.readFile(file, 'utf8').then(raw => baseWorkHistoricalSourceBaseline(file, raw))).replaceAll('\r\n', '\n'))))));
   assert.equal(sha256(current), COVERAGE_SOURCE_CURRENT_PINS[file]);
   const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[file]], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
   for (const bytes of [current, prior, current.replaceAll('\n', '\r\n'), prior.replaceAll('\n', '\r\n')])
     assert.deepEqual(await verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate) }), source);
+      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate).then(raw => baseWorkHistoricalSourceBaseline(candidate, raw)) }), source);
   const reject = async bytes => {
     assert.equal(coverageSourceBaseline(file, bytes), bytes, 'Unknown outer source is never rewritten into historical bytes');
     await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate) }), /source changed/); coverageSourceControls++;
+      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate).then(raw => baseWorkHistoricalSourceBaseline(candidate, raw)) }), /source changed/); coverageSourceControls++;
   };
   for (const chunk of COVERAGE_SOURCE_INVERSES[file]) {
     for (const changed of [current.replace(chunk.current, ''), current.replace(chunk.current, chunk.current + chunk.current),
@@ -808,7 +809,7 @@ for (const [file, pin] of Object.entries(GENESIS_SNAPSHOT_MODULE_PINS)) {
   assert.equal(source.sourceFiles[file], pin, 'Actual reviewed genesis module digest must be attested');
   const text = await fs.readFile(file, 'utf8');
   await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-    readFile: async candidate => candidate === file ? text + '\n// unreviewed module drift\n' : fs.readFile(candidate) }), /source changed/);
+    readFile: async candidate => candidate === file ? text + '\n// unreviewed module drift\n' : fs.readFile(candidate).then(raw => baseWorkHistoricalSourceBaseline(candidate, raw)) }), /source changed/);
 }
 for (const [file, before, after] of [
   ['src/routes/genesisauction.js', 'auth ? { preHandler: auth } : {}', 'auth ? { preHandler: null } : {}'],
@@ -817,7 +818,7 @@ for (const [file, before, after] of [
   ['src/genesisrpc.js', 'resolved.request(args, ...rest)', 'resolved.request({ method: "eth_sendRawTransaction" }, ...rest)']]) {
   const text = await fs.readFile(file, 'utf8'); assert(text.includes(before));
   await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-    readFile: async candidate => candidate === file ? text.replace(before, after) : fs.readFile(candidate) }), /source changed/);
+    readFile: async candidate => candidate === file ? text.replace(before, after) : fs.readFile(candidate).then(raw => baseWorkHistoricalSourceBaseline(candidate, raw)) }), /source changed/);
 }
 assert.equal(WORLD_RECOVERY_REVIEW.genesisWrapperSourceTransfer.predecessorServerSha256, HTTP_RECEIPT_SERVER_PIN);
 for (const [before, after] of [['row.response === reservationToken', 'true'],
@@ -830,16 +831,16 @@ const receiptHelper = await fs.readFile('src/http-idempotency.js', 'utf8');
 for (const [before, after] of [['AND response=$6', ''], ['attempt < 3', 'attempt < 30'], ['!isDbDown(error)', 'false']]) {
   assert(receiptHelper.includes(before));
   await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-    readFile: async file => file === 'src/http-idempotency.js' ? receiptHelper.replace(before, after) : fs.readFile(file) }), /source changed/);
+    readFile: async file => file === 'src/http-idempotency.js' ? receiptHelper.replace(before, after) : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) }), /source changed/);
 }
 const carCatalog = await fs.readFile('src/rules.generated.js', 'utf8');
 assert(carCatalog.includes('melt: 28, val: 900'), 'Car value rejection control must modify an actual car catalog row');
 await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-  readFile: async file => file === 'src/rules.generated.js' ? carCatalog.replace('melt: 28, val: 900', 'melt: 28, val: 901') : fs.readFile(file) }), /source changed/);
+  readFile: async file => file === 'src/rules.generated.js' ? carCatalog.replace('melt: 28, val: 900', 'melt: 28, val: 901') : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) }), /source changed/);
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-  readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
+  readFile: async file => (await fs.readFile(file, 'utf8').then(raw => baseWorkHistoricalSourceBaseline(file, raw))).replace(/\r?\n/g, ending) }), source);
 for (const changedFile of ['src/game.js', 'src/server.js']) await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-  readFile: async file => file === changedFile ? Buffer.from('changed source') : fs.readFile(file) }), /source changed/);
+  readFile: async file => file === changedFile ? Buffer.from('changed source') : fs.readFile(file).then(raw => baseWorkHistoricalSourceBaseline(file, raw)) }), /source changed/);
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
 assert.deepEqual(manifest.deadWorldAssertions, WORLD_RECOVERY_REVIEW.assertions);
 const evidence = path => ({ path, sha256: hash(path) }), configurationSha256 = hash('test configuration');
