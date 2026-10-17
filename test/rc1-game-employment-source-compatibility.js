@@ -1,3 +1,7 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
+const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -22,7 +26,7 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 let completeTextComparisons = 0, sha256Comparisons = 0, blobComparisons = 0, negatives = 0, totalHunks = 2;
 const entire = (actual, expected, message) => { assert.equal(actual, expected, message); completeTextComparisons++; };
-const file = 'src/server.js', current = normalize(companyWorkflowSourceBaseline(file,cityGameplaySourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8')))))), baseline = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[file]);
+const file = 'src/server.js', current = normalize(companyWorkflowSourceBaseline(file,cityGameplaySourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))))), baseline = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[file]);
 assert.deepEqual(Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS), [file, 'src/invariants.js', 'src/social/estate.js'], 'Closed authorized source domains, no new worker scope');
 for (const spec of [GAME_EMPLOYMENT_SOURCE_CURRENT_BLOBS[file], `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:${file}`, 'e9d2aa81c4547ec792efa7a75270c8afa98151db:src/server.js', '56ccfe6e03c8a1b161e3203179cc0fa2605a6d39:src/server.js']) entire(current, git('show', spec), 'Complete frozen employment runtime');
 entire(baseline, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:${file}`), 'Complete N01 predecessor');
@@ -67,7 +71,7 @@ for (const changed of changedSources) {
   assert.throws(() => assertGameEmploymentSourceTransfer(file, changed), /source changed/); assert.throws(() => qualifyGameEmploymentSource(file, changed), /source changed/);
   assert.throws(() => assertGameEmploymentSourceTransfer(file, changed.replaceAll('\n', '\r\n')), /source changed/);
   assert.throws(() => Deed.assertDeedServerCompatibility(changed), /source changed/);
-  await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) }), /source changed/);
+  await assert.rejects(() => verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? changed : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,selectFinalServicesEnterpriseTestSource(candidate,String(fs.readFileSync(candidate)))):fs.readFileSync(candidate)) }), /source changed/);
   negatives++;
 }
 for (const unknown of ['src/worker.js', 'src/gameemployment.js', 'toString']) {
@@ -89,11 +93,11 @@ const economy = Deed.assertEconomySourceTransfer(file, current); assert.deepEqua
 assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer, COMPANY_OPERATOR_SOURCE_TRANSFER);
 assert.match(GAME_EMPLOYMENT_SOURCE_TRANSFER.scope, /no worker, world-soak, native, financial, deployment or onchain qualification/);
-const actual = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) });
-const historical = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? baseline : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,String(fs.readFileSync(candidate))):fs.readFileSync(candidate)) });
+const actual = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,selectFinalServicesEnterpriseTestSource(candidate,String(fs.readFileSync(candidate)))):fs.readFileSync(candidate)) });
+const historical = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? baseline : (hasEnterpriseOverRootSource(candidate)?enterpriseOverRootSourceBaseline(candidate,selectFinalServicesEnterpriseTestSource(candidate,String(fs.readFileSync(candidate)))):fs.readFileSync(candidate)) });
 assert.deepEqual(actual, historical, 'Historical qualification parity unchanged');
 for (const sourceFile of ['src/invariants.js', 'src/social/estate.js']) {
-  const source = normalize(companyWorkflowSourceBaseline(sourceFile,cityGameplaySourceBaseline(sourceFile,cityActivitySourceBaseline(sourceFile,(hasEnterpriseOverRootSource(sourceFile)?enterpriseOverRootSourceBaseline(sourceFile,fs.readFileSync(sourceFile,'utf8')):fs.readFileSync(sourceFile,'utf8')))))), prior = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[sourceFile]);
+  const source = normalize(companyWorkflowSourceBaseline(sourceFile,cityGameplaySourceBaseline(sourceFile,cityActivitySourceBaseline(sourceFile,(hasEnterpriseOverRootSource(sourceFile)?enterpriseOverRootSourceBaseline(sourceFile,selectFinalServicesEnterpriseTestSource(sourceFile,fs.readFileSync(sourceFile,'utf8'))):fs.readFileSync(sourceFile,'utf8')))))), prior = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[sourceFile]);
   entire(source, git('show', GAME_EMPLOYMENT_SOURCE_CURRENT_BLOBS[sourceFile])); entire(source, git('show', `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:${sourceFile}`));
   entire(prior, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:${sourceFile}`));
   assert.equal(hash(source), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS[sourceFile]); assert.equal(hash(prior), GAME_EMPLOYMENT_SOURCE_BASELINE_PINS[sourceFile]); sha256Comparisons += 2;

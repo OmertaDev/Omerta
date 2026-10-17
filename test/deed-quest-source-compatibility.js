@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
 // New exact source evidence composes with historical guards; it never revises their pins.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -28,7 +30,7 @@ assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schem
   'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
-  const actualSource = fs.readFileSync(file, 'utf8');
+  const actualSource = selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8'));
   const enterprise = hasCommerceEnterpriseSource(file) ? commerceOverEnterpriseSourceBaseline(file, actualSource) : actualSource;
   const raw = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file) ? enterpriseOverRootSourceBaseline(file, enterprise) : enterprise))), current = lf(raw);
   assert(raw === current || raw === current.replaceAll('\n', '\r\n'), 'Working candidate has uniform line endings');
@@ -308,7 +310,7 @@ for (const {current, baseline} of nextLayerEnterpriseInverses)
     nextLayerEnterpriseCurrent.replace(current, () => current.replace(/\S/, '?')));
 for (const raw of nextLayerEnterpriseRefusals) assert.throws(() => inspectNextLayerEnterpriseReader(raw));
 console.log('Next-layer Enterprise reader inspection PASS: 2 line-ending positives, '+nextLayerEnterpriseRefusals.length+' refusing controls; source text only');
-const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(inspectNextLayerEnterpriseReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))))
+const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(inspectNextLayerEnterpriseReader(selectFinalServicesCommerceTestSource("test/next-layer-source-compatibility.js",fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8')))))
   .replace("import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n", '')
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),
@@ -344,7 +346,7 @@ for (const [current, previous] of nativeInverses) {
 assert.equal(nativeTool,git('show',`${DEED_QUEST_SOURCE_PREDECESSOR}:tools/next-layer-release-phase2-migration-catalog.js`),
   'Removing only the two scoped current-Deed bridges restores every historical native byte and refusal');
 const resetRuntime = git('show', 'b90bd95dee6e0fda851247cc660288f4bbf8fdc0:src/db.js');
-const currentRuntime = lf(fs.readFileSync('src/db.js', 'utf8'));
+const currentRuntime = lf(selectFinalServicesCommerceTestSource("src/db.js",fs.readFileSync('src/db.js', 'utf8')));
 const resetDdl = 'CREATE TABLE IF NOT EXISTS player_reset_migrations (\n    id TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now()\n  )';
 for (const raw of [currentRuntime, currentRuntime.replaceAll('\n', '\r\n')])
   assert.equal(deedQuestSourceBaseline('src/db.js', raw), resetRuntime,

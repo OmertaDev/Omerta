@@ -1,3 +1,7 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
+const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { thirdBatchSourceBaseline } from '../tools/rc1-third-batch-source-compatibility.js';
@@ -16,7 +20,7 @@ let texts=0,hashes=0,blobs=0,hunks=0,negatives=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 const reject=(f,t)=>{assert.throws(()=>O.assertSecondBatchSourceTransfer(f,t));negatives++;entire(O.secondBatchSourceBaseline(f,t),lf(t));};
 for(const [file,d] of Object.entries(O.SECOND_BATCH_SOURCE_DOMAINS)){
- const current=thirdBatchSourceBaseline(file,lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8'))))),prior=git('show',O.SECOND_BATCH_SOURCE_PREDECESSOR+':'+file);
+ const current=thirdBatchSourceBaseline(file,lf(cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8'))))),prior=git('show',O.SECOND_BATCH_SOURCE_PREDECESSOR+':'+file);
  entire(current,git('show',O.SECOND_BATCH_SOURCE_REVISION+':'+file));entire(current,git('cat-file','blob',d.currentBlob));
  assert.equal(hash(current),d.currentSha256);hashes++;assert.equal(blob(current),d.currentBlob);blobs++;
  entire(prior,git('cat-file','blob',d.baselineBlob));assert.equal(hash(prior),d.baselineSha256);hashes++;assert.equal(blob(prior),d.baselineBlob);blobs++;

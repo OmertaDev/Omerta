@@ -1,3 +1,7 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
+const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
@@ -33,7 +37,7 @@ for(const altered of [homeRaw+'\n// unknown Home suffix\n',homeRaw.replace('regi
 }
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(MARKET_FEED_SOURCE_CURRENT_PINS)) {
-  const current = normalize(strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file, 'utf8')):fs.readFileSync(file, 'utf8')))))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8')))))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(marketFeedSourceBaseline(file, current), baseline);
   assert.equal(marketFeedSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

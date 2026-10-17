@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
 // Synthetic catalog controls do not confer native qualification. --postgres compiles real sources.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -11,7 +13,7 @@ import {deedDiscoveryCatalogProjection, deedDiscoveryMigrationSources, isDeedDis
 import {readNextLayerReleasePhase2Metadata, nextLayerMigrationPredecessor, nextLayerLegacySchema} from '../tools/next-layer-release-phase2-migration-catalog.js';
 const rawSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');
 const schema=process.argv.includes('--postgres') || isDeedDiscoveryMigrationSource(rawSchema)
-  ? rawSchema : enterpriseOverRootSourceBaseline('schema.sql',commerceOverEnterpriseSourceBaseline('schema.sql',rawSchema));
+  ? rawSchema : enterpriseOverRootSourceBaseline('schema.sql',commerceOverEnterpriseSourceBaseline('schema.sql',selectFinalServicesCommerceTestSource('schema.sql',rawSchema)));
 const sources=deedDiscoveryMigrationSources(schema);
 assert(isDeedDiscoveryMigrationSource(schema));assert(isDeedDiscoveryMigrationSource(sources.current.replaceAll('\n','\r\n')));
 assert.throws(()=>nextLayerMigrationPredecessor(schema),error=>error?.code==='ERR_ASSERTION','Raw current Deed source never enters the historical next-layer native adapter');

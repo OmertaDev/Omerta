@@ -1,3 +1,7 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+import {hasCommerceEnterpriseSource as hasFinalServicesTestCommerceSource,commerceOverEnterpriseSourceBaseline as finalServicesTestCommerceOverEnterprise} from '../tools/commerce-enterprise-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
+const selectFinalServicesEnterpriseTestSource=(file,input)=>{const commerce=selectFinalServicesCommerceTestSource(file,input);return hasFinalServicesTestCommerceSource(file)?finalServicesTestCommerceOverEnterprise(file,commerce):commerce;};
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { fifthBatchSourceBaseline } from '../tools/rc1-fifth-batch-source-compatibility.js';
@@ -44,7 +48,7 @@ console.log('FOURTH source transfer PASS: 8 literal domains, '+hunks+' actual Gi
 
 // Legacy EOL normalization is intentionally unchanged; substantive full-caller drift must still refuse.
 const worldFiles=['src/server.js','src/worker.js'];
-const worldRead=file=>fifthBatchSourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8')))).replaceAll('\r\n','\n');
+const worldRead=file=>fifthBatchSourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,selectFinalServicesEnterpriseTestSource(file,fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')))).replaceAll('\r\n','\n');
 await verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:worldRead});
 let worldNegatives=0;
 for(const file of worldFiles){const text=worldRead(file),d=O.FOURTH_BATCH_SOURCE_DOMAINS[file];const bads=[text+'\n// unknown substantive change\n',text.slice(1),text.replace(/\S/,'?')];for(const h of d.inverses)bads.push(text.replace(h.current,''),text.replace(h.current,()=>h.current+h.current),text.replace(h.current,()=>h.current.replace(/\S/,'?')));for(const bad of bads){await assert.rejects(()=>verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:f=>f===file?bad:worldRead(f)}),file+' substantive mutation index '+bads.indexOf(bad));worldNegatives++;}}
