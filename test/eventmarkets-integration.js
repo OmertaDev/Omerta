@@ -10,6 +10,31 @@ async function player(label){const p={token:(await ok(null,'POST','/v1/auth/gues
 const ref=r=>({eventId:r.event.eventId,sourceHash:r.event.sourceHash,consent:true}),part=r=>({participationId:r.participant.participationId,sourceHash:r.participant.sourceHash,consent:true}),adref=r=>({campaignId:r.campaignId,sourceHash:r.sourceHash,consent:true});
 const tables=['characters','character_cargo','transactions','market_listings','mobile_shops','mobile_shop_requests','item_instances','operation_escrow','item_events','item_mutation_guards','item_mutation_inputs','item_mutation_outputs','consignments','consignment_requests','sale_attribution_campaigns','sale_attributions','sale_attribution_requests','event_markets','event_market_vendor_consents','event_market_venue_consents','event_market_participants','event_market_requests'];const state=async()=>Object.fromEntries(await Promise.all(tables.map(async t=>[t,(await pool.query('SELECT * FROM '+t)).rows.sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)))])));
 const money=async p=>Number((await pool.query('SELECT cash FROM characters WHERE id=$1',[p.id])).rows[0].cash);async function books(){assert.deepEqual(await E.collectEventMarketIssues(pool),[]);assert.deepEqual(await M.collectMobileShopIssues(pool),[]);assert.deepEqual(await A.collectSaleAttributionIssues(pool),[]);const net=Number((await pool.query("SELECT COALESCE(SUM(amount),0) AS cash FROM transactions WHERE reason IN ('event_market:reserve','event_market:reward','event_market:refund')")).rows[0].cash),escrow=Number((await pool.query(E.eventMarketEscrowQuery)).rows[0].cash);assert.equal(net+escrow,0);const b=await(await import('../src/invariants.js')).runLedgerInvariants(pool,{alert:false});assert(b.ok,JSON.stringify(b.checks.filter(x=>!x.ok)));}
+async function joinWithStockLockProbe(buyer,event,attribution,key){
+ const connect=pool.connect.bind(pool),locks=[];
+ let holder,probe,joined,timer,failure,result,attempt;const shopAttempt=new Promise(resolve=>{attempt=resolve;});
+ try{
+  holder=await connect();probe=await connect();
+  assert.notEqual(holder.processID,probe.processID,'Independent native stock-lock probes');
+  await holder.query('BEGIN');await holder.query('SELECT id FROM mobile_shops WHERE id=$1 FOR UPDATE',[event.event.shopId]);
+  pool.connect=async(...args)=>{if(args.length)return connect(...args);const c=await connect(),query=c.query.bind(c),release=c.release.bind(c);c.query=async(sql,values,...rest)=>{
+   if(sql==='SELECT listing_id,remaining_quantity,status FROM mobile_shops WHERE id=$1 FOR UPDATE'&&values?.[0]===event.event.shopId){locks.push('mobile_shops');attempt();}
+   if(sql==='SELECT qty,status FROM market_listings WHERE id=$1 FOR UPDATE')locks.push('market_listings');
+   return query(sql,values,...rest);
+  };c.release=(...args)=>{c.query=query;c.release=release;return release(...args);};return c;};
+  joined=ok(buyer,'POST','/v1/events/markets/join',{...ref(event),attributionId:attribution.attributionId,attributionHash:attribution.sourceHash},key,true);joined.catch(()=>{});
+  await Promise.race([shopAttempt,joined.then(()=>{throw Error('Join completed before the held shop lock');}),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Join did not reach the held shop lock')),5000);})]);
+  await probe.query('BEGIN');const listing=(await pool.query('SELECT listing_id FROM mobile_shops WHERE id=$1',[event.event.shopId])).rows[0].listing_id;
+  assert.equal((await probe.query('SELECT id FROM market_listings WHERE id=$1 FOR UPDATE NOWAIT',[listing])).rows[0].id,listing,'A join blocked on the shop must not already hold its listing');
+  assert.deepEqual(locks,['mobile_shops'],'Shop is the first stock lock');
+ }catch(e){failure=e;}finally{
+  clearTimeout(timer);pool.connect=connect;
+  for(const c of [probe,holder])if(c){try{await c.query('ROLLBACK');}catch(e){failure??=e;}finally{try{c.release();}catch(e){failure??=e;}}}
+ }
+ try{result=await joined;}catch(e){failure??=e;}if(failure)throw failure;
+ assert.deepEqual(locks,['mobile_shops','market_listings'],'Join resumes in canonical shop/listing order');
+ return result;
+}
 try{
  assert.equal((await call(null,'GET','/v1/events/markets')).statusCode,401);const api=(await app.inject({method:'GET',url:'/openapi.json'})).json();for(const k of Object.keys(contracts)){const[method,url]=k.split(' ');assert(api.paths[url]?.[method.toLowerCase()],k);}
  const host=await player('Host'),availability=await ok(host,'GET','/v1/events/markets/availability');assert.equal(availability.available,native);assert.equal(availability.cryptoAvailable,false);assert.equal(availability.requiresNativeTransactions,true);
@@ -22,7 +47,7 @@ try{
   await ok(vendor,'POST','/v1/goods/buy',{goodId:'gin',qty:3});const shop=await ok(vendor,'POST','/v1/mobile-shops/open',{quantity:3,unitPrice:1000,lifetimeSeconds:1800,consent:true});
   for(let n=0;n<3;n++){const owner={scope:'account',id:vendor.account},key='event-fixture-craft-'+n;await tx(async c=>{await I.grantStack(c,owner,'mat:hardened_steel',1,'standard','explicit event material fixture',key+'-steel');await I.grantStack(c,owner,'mat:salvage_parts',2,'standard','explicit event material fixture',key+'-parts');});const item=(await tx(c=>Craft.craftWorldGraphRecipe(c,{accountId:vendor.account},'recipe:precision_lock_tool',key))).outputs[0].id;const listing=await ok(vendor,'POST','/v1/consignments/create',{itemId:item,hostAccountId:pickup.account,price:101,hostFeeBps:1000,lifetimeSeconds:1800,consent:true}),listref={consignmentId:listing.consignmentId,sourceHash:listing.sourceHash,consent:true};await ok(pickup,'POST','/v1/consignments/accept',listref);const campaign=await ok(vendor,'POST','/v1/sale-attribution/open',{...listref,publisherAccountId:host.account,commissionCash:17,lifetimeSeconds:1800});await ok(host,'POST','/v1/sale-attribution/accept',adref(campaign));campaigns.push({...campaign,itemId:item});}
   campaigns.sort((a,b)=>a.campaignId.localeCompare(b.campaignId));const funding={shopId:shop.shop.shopId,shopHash:shop.shop.sourceHash,campaigns:campaigns.map(c=>({campaignId:c.campaignId,sourceHash:c.sourceHash})),rewardCash:10,lifetimeSeconds:600,consent:true},hostBefore=await money(host),event=await ok(host,'POST','/v1/events/markets/fund',funding,'fund-three',true);assert.equal(event.event.slots,3);assert.equal(hostBefore-await money(host),30);assert.equal((await pool.query('SELECT funded_cash FROM event_markets WHERE id=$1',[event.event.eventId])).rows[0].funded_cash,30);await ok(vendor,'POST','/v1/events/markets/enroll',ref(event),'vendor-consent',true);assert.equal((await pool.query('SELECT state FROM event_markets WHERE id=$1',[event.event.eventId])).rows[0].state,'offered','Vendor cannot activate before original pickup consent');await ok(pickup,'POST','/v1/events/markets/venue',ref(event),'venue-consent',true);await books();
-  let finite;const participants=[];for(let n=0;n<3;n++){const a=await ok(buyers[n],'POST','/v1/sale-attribution/attribute',adref(campaigns[n]));const joined=await ok(buyers[n],'POST','/v1/events/markets/join',{...ref(event),attributionId:a.attributionId,attributionHash:a.sourceHash},'join-'+n,true);participants.push({buyer:buyers[n],attribution:a,joined});assert.equal(await money(buyers[n]),100000,'Joining is not paid attendance');}assert.equal(await money(host),hostBefore-30);await books();
+  let finite;const participants=[];for(let n=0;n<3;n++){const a=await ok(buyers[n],'POST','/v1/sale-attribution/attribute',adref(campaigns[n]));const joined=n===0?await joinWithStockLockProbe(buyers[n],event,a,'join-'+n):await ok(buyers[n],'POST','/v1/events/markets/join',{...ref(event),attributionId:a.attributionId,attributionHash:a.sourceHash},'join-'+n,true);participants.push({buyer:buyers[n],attribution:a,joined});assert.equal(await money(buyers[n]),100000,'Joining is not paid attendance');}assert.equal(await money(host),hostBefore-30);await books();
   const first=participants[0];
   // G phase one commits earned passive accrual even when a later action refuses. Freeze every
   // selected row at actual event ingress after that real phase, never normalize away cash/rows.

@@ -1,5 +1,5 @@
 // Actual immutable C input-union proposal; no native/final/physical admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="5faf78c497d03fc65e7ccc19b2e5d07b2bda70d7";
+export const ENTERPRISE_NATIVE_BASE_REVISION="b29c669852b307b15017d01cc199a8b48aea24bf";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -7902,8 +7902,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/gates.js",
-    "blob": "47d22ce92bdf2270f33ba3866627ec0464fa3091",
-    "sha256": "9c0ec4172288c836f60bc11341e715248c7063f228e1fce2aee5a5464d0b42ae"
+    "blob": "e690f05c014f4e043230838575d4882b94492f3a",
+    "sha256": "afb02140bb8c219e1bc311159b6af370a10197792b7a9f4584dc0be0ad2822c2"
   },
   {
     "file": "test/graph.js",
@@ -9037,8 +9037,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "src/eventmarkets.js",
-    "blob": "0c04bd5df7fbde44cab4a18c37f25c59ce02fb02",
-    "sha256": "c154f5fc04bb20adf223b7201d66282a37b5580b05d841ecb244de633eeefe9a"
+    "blob": "ddc5c8fbc38084a732d8a44b1542cd99c5d5778d",
+    "sha256": "94ca7d9a06043c262519d6f4684c09056f05c1035d2f9896db3e68b436aa8816"
   },
   {
     "file": "src/merchantloyalty-api.js",
@@ -9127,8 +9127,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/commerce-source-compatibility.js",
-    "blob": "3bc82795a84c46db75b7fd8aa1cb8fa8915413b7",
-    "sha256": "8764d5f8a5d473180d83b050b77d68edf29cd1d1c5127fa9b9f4f987082955df"
+    "blob": "22bad9e37c5559253a2ff9d3bcf8f23ed81c7e03",
+    "sha256": "4cdc6734ff24182be698ac6adb5df707009f58213a645e7f15c0678cfbabf59a"
   },
   {
     "file": "test/commercialcampaigns-integration.js",
@@ -9162,8 +9162,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/eventmarkets-integration.js",
-    "blob": "55ef11abee10d262491abbcf60ed41ab82363f46",
-    "sha256": "3f68261b478ab75f4e2c6a459053180d4eddd1d63849ef195d6733e33c1e9716"
+    "blob": "1dbb0a98571ed6987a4b0074753d977bae2f4f77",
+    "sha256": "c10fce20983d37bf97e4ecae6979d0daa6f193bd463ecda91b5fe126093ddbf4"
   },
   {
     "file": "test/eventmarkets-recovery-fixture.js",
@@ -9362,8 +9362,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/commerce-enterprise-source-data.js",
-    "blob": "7c900036361ee63116b41498776a2fc1a18ac9cc",
-    "sha256": "81aa4c69781e6b09adaa4f176d9bd97f5da72b1de56930b86e42df4ba024be31"
+    "blob": "3a763829a0cbb0452d563383b3aefda7cc097928",
+    "sha256": "3553d373dae801abd9e3ede9b870bd766624fcb02cdfb62980396ce81e48108e"
   },
   {
     "file": "tools/commerce-graph-helpers.js",
@@ -9387,8 +9387,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/commerce-source-compatibility.js",
-    "blob": "f79d143f49eb63a301a60f2bb61f867cd5da118b",
-    "sha256": "c1a37eb50e974e88ec187bf9c27fccc288f7e1ae6578b4a00761c99c631257c1"
+    "blob": "930d917335182eca8cd3867f173936c440ce1f7a",
+    "sha256": "9d38b52791e0ee3856b0c924c8ab95930eaab3c91d8c81fea0733ff5007c97bc"
   }
 ].map(Object.freeze));
 export const ENTERPRISE_NATIVE_BINARY_FILES=Object.freeze([

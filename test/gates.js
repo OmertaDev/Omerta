@@ -304,6 +304,10 @@ for(const bad of [
   {...laboratorySources,'invariants.js':laboratorySources['invariants.js'].replace('labIssues.length, 0, 0','labIssues.length, 1, 0')},
 ])assert(!laboratoryOracleAdmission(bad),'Mutation, raw/private DTO exposure, routed alias or monetary-credit drift must reject');
 const COLLECT_EXEMPT = {
+  collectEventMarketIssues: "read-only original event funding, vendor/venue consent, participant, GIN/UID sale and reward history oracle; no player collection, reward payment or mutation authority",
+  collectMerchantLoyaltyIssues: "read-only original merchant program, consumed purchase quote and request/receipt binding oracle; no player collection, discount grant or mutation authority",
+  collectSaleAttributionIssues: "read-only original publisher consent, merchant reserve, paired cash legs and canonical completed-sale witness oracle; no player collection, commission payment or mutation authority",
+  collectShoppingBasketIssues: "read-only original two-line sale, buyer consent and request/settlement receipt binding oracle; no player collection, purchase or mutation authority",
   collectBusinessRelocationIssues: "read-only original relocation source, receipt, travel and paired stock-journal history oracle; no player collection, income or mutation authority",
   collectEquipmentRecoveryIssues: "read-only original craft birth, consumed UID, recovery receipt and material-event provenance oracle; no player collection, item grant or mutation authority",
   collectManufacturingLicenseIssues: "read-only original production, license consent, run and paired royalty-journal accounting oracle; no player collection, royalty payment or mutation authority",
@@ -2171,7 +2175,6 @@ const SCENERY_WAIVED = {
     'races.js:grandPrix':   'a DB row id — the open race the entry posts back to',
     'stable.js:stakes':     'a DB row id — the open stakes race',
     'port.js:boat':         'a boats row id — the vessel is named by its own catalog elsewhere',
-    'defense.js:guard':     'a CHARACTER id — the bodyguard hired, not a catalog rung',
     'population.js:band':   'an internal spawn return, never a player-facing reply',
     'favors.js:good':       'the client resolves it through goodName off the published /v1/rules catalog',
     'game.js:approach':     'published on /v1/rules; the client COMPARES it to pick a phrase, never renders it',
@@ -2305,6 +2308,38 @@ const SCENERY_WAIVED = {
     return ['owner','planner'].includes(key)&&variable==='ch'&&member==='id'
       &&lit==='{relationship:r,governance,team,owner:ch.id===r.owner_character?ch:other,planner:ch.id===r.partner_character?ch:other}';
   };
+  // The campaign stage is a closed discriminator; the courier original is a
+  // private account-ACK capsule. Seal complete validators/callers/return boundaries,
+  // and classify only these exact fields, never a module-wide kind/original waiver.
+  const exactCommerceRecoveryField = (base, source, lit, match) => {
+    const normalized=source.replaceAll('\r\n','\n'),literal=lit.replaceAll('\r\n','\n');
+    if(normalized.includes('\r')||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n')))return false;
+    const fields={
+  "commercialcampaigns.js": {
+    "sha256": "f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c",
+    "key": "kind",
+    "variable": "entry",
+    "member": "kind",
+    "expression": "kind: entry.kind",
+    "literal": "{ ...view(row), supportedStage: open ? row.stage : null, blockedReason, retireActions,\n    recovery: 'Retiring campaign metadata does not refund, cancel or alter independent canonical source obligations.',\n    stages: stages.map(entry => ({ kind: entry.kind, state: entry.state,\n      sourceId: entry.scout_job_id || entry.commission_id || entry.courier_network_id || null,\n      outputItemId: entry.output_item_id || null })) }"
+  },
+  "multihopcourier.js": {
+    "sha256": "dfbca26d67cbeaafd5cc4a69fa9c4b7cf0f819fa7de8d5dcb5423bbe005447e0",
+    "key": "original",
+    "variable": "person",
+    "member": "id",
+    "expression": "original:person.id",
+    "literal": "{original:person.id,account:person.account_id,cash:Number(actual.cash),loc:actual.loc}"
+  }
+};
+    const field=fields[base];
+    if(!field||createHash('sha256').update(normalized).digest('hex')!==field.sha256||source.split(lit).length!==2)return false;
+    const [,key,variable,member]=match;
+    return key===field.key&&variable===field.variable&&member===field.member&&literal===field.literal
+      &&match.index===lit.indexOf(field.expression)&&match[0]===field.expression;
+  };
+  let commerceStageClassified=0,courierOriginalClassified=0;
+
   let logisticsClassified = 0;
   let acquisitionHashClassified = 0;
   let restructuringClassified = 0;
@@ -2334,6 +2369,7 @@ const SCENERY_WAIVED = {
         if (exactRestructuringDiscriminator(base, s, lit, m)) { restructuringClassified++; continue; }
         if (exactConcessionActorCapsule(base, s, lit, m)) { concessionActorClassified++; continue; }
         if(exactAutonomyField(base,s,lit,m)){if(base==='agentoperatingmemory.js')autonomyMemoryClassified++;else autonomyActorClassified++;continue;}
+        if(exactCommerceRecoveryField(base,s,lit,m)){if(base==='commercialcampaigns.js')commerceStageClassified++;else courierOriginalClassified++;continue;}
         // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
           // display name exactly as `kindName: kindName` would, and a matcher that only knows the
           // colon form stops seeing a companion the moment it is written the other legal way — the
@@ -2366,6 +2402,34 @@ const SCENERY_WAIVED = {
   assert.equal(concessionActorClassified, 1, 'Only the private concession actor/receipt persistence capsule is classified.');
   assert.equal(autonomyMemoryClassified,2,'Only two closed production/forecast capture receipt kinds are classified');
   assert.equal(autonomyActorClassified,2,'Only the two private original-owner/planner context fields are classified');
+  assert.equal(commerceStageClassified,1,'Only the exact closed campaign recovery stage discriminator is classified');
+  assert.equal(courierOriginalClassified,1,'Only the exact private courier account-ACK original capsule is classified');
+  for(const base of ['commercialcampaigns.js','multihopcourier.js']){
+    const source=fs.readFileSync('src/'+base,'utf8');
+    const altered=base==='commercialcampaigns.js'?[
+      source.replace('WHERE r.account_id=$1 AND c.id>$2','WHERE c.id>$2'),
+      source.replace('SELECT * FROM commercial_campaign_stages WHERE campaign_id=$1 ORDER BY kind','SELECT * FROM commercial_campaign_stages ORDER BY kind'),
+      source.replace('kind: entry.kind','kind: entry.kind,arbitraryNarrative:entry.kind'),
+      source+'\nexport function unboundNarrative(entry){return {kind: entry.kind};}\n',
+    ]:[
+      source.replace('commercialFresh.set(receipt,','globalThis.publicReceipt=({'),
+      source.replace('expected=proof.expected?.find(person=>person.original===original)','expected=null'),
+      source.replace('Number(ch.cash)!==expected.cash','false'),
+      source.replace('return commercial?await commercialAfter(c,a,k,t,ch.id,acknowledged,commercial,expected,false):acknowledged;','return expected;'),
+      source+'\nexport function unboundNarrative(person){return {original:person.id};}\n',
+    ];
+    for(const mutation of altered){assert.notEqual(mutation,source,'The recovery negative must alter actual source');for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactCommerceRecoveryField(base,source,lit,match))assert(!exactCommerceRecoveryField(base,mutation,lit,match),'Changed membership/validator/private consumer/public boundary cannot inherit classification');}
+    for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactCommerceRecoveryField(base,source,lit,match)){
+      const crlf=source.replaceAll('\r\n','\n').replaceAll('\n','\r\n'),crlfLit=lit.replaceAll('\r\n','\n').replaceAll('\n','\r\n'),crlfMatch=[...rawKeyFields(crlfLit)].find(m=>m[0]===match[0]);
+      assert(exactCommerceRecoveryField(base,crlf,crlfLit,crlfMatch),'Whole CRLF retains this exact field');
+      assert(!exactCommerceRecoveryField('other.js',source,lit,match));
+      for(const changed of [source+'\n',source.replace('\n','\r\n'),source.replace('\n','\r'),'\ufeff'+source])assert(!exactCommerceRecoveryField(base,changed,lit,match));
+      for(const alteredMatch of [Object.assign([...match],{index:match.index+1}),Object.assign([...match.slice(0,1),'other',...match.slice(2)],{index:match.index})])assert(!exactCommerceRecoveryField(base,source,lit,alteredMatch));
+      const publicLiteral=base==='commercialcampaigns.js'?'{kind: entry.kind}':'{original:person.id}';
+      for(const publicMatch of rawKeyFields(publicLiteral))assert(!exactCommerceRecoveryField(base,source,publicLiteral,publicMatch));
+    }
+  }
+
   for(const base of ['agentoperatingmemory.js','managementteams.js']){
     const source=fs.readFileSync('src/'+base,'utf8');
     const changed=base==='agentoperatingmemory.js'?[
@@ -3530,6 +3594,38 @@ scopedSocialContext = async function(db) {
     'src/rwahealthclearance.js|select': "wholeSecond ? date_trunc('second',expr) : expr — both literal",
   };
 
+  // Exactly one sealed create INSERT derives 23 column names from source literals.
+  // Its same columns array derives $1..$23 and selects 23 separately bound values.
+  const exactCommercialInsert = (rel, source, expr) => {
+    const normalized=source.replaceAll('\r\n','\n');
+    return rel==='src/commercialcampaigns.js'&&!normalized.includes('\r')
+      &&(source===normalized||source===normalized.replaceAll('\n','\r\n'))
+      &&createHash('sha256').update(normalized).digest('hex')==='f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c'
+      &&["columns.join(',')","columns.map((_, i) => '$' + (i + 1)).join(',')"].includes(expr);
+  };
+  const commercialInsertSource=fs.readFileSync(path.join(SRC,'commercialcampaigns.js'),'utf8');
+  const commercialInsertExpressions=["columns.join(',')","columns.map((_, i) => '$' + (i + 1)).join(',')"];
+  for(const expr of commercialInsertExpressions){
+    assert(exactCommercialInsert('src/commercialcampaigns.js',commercialInsertSource,expr));
+    assert(exactCommercialInsert('src/commercialcampaigns.js',commercialInsertSource.replaceAll('\r\n','\n').replaceAll('\n','\r\n'),expr));
+    assert(!exactCommercialInsert('src/other.js',commercialInsertSource,expr));
+    for(const changed of [
+      commercialInsertSource.replace("['owner', 'owner_account', 'owner_character']","['owner', request.column, 'owner_character']"),
+      commercialInsertSource.replace("...roleColumns.flatMap(([, account, character]) => [account, character])","...body.columns"),
+      commercialInsertSource.replace("columns.map((_, i) => '$' + (i + 1))","columns.map(column => row[column])"),
+      commercialInsertSource.replace('columns.map(column => row[column])','body.values'),
+      commercialInsertSource.replace('const columns = [','const columns = body.columns || ['),
+      commercialInsertSource.replace('const receipt = { ok: true, campaign: view(row), consentedRole:',"columns.push(body.column);const receipt = { ok: true, campaign: view(row), consentedRole:"),
+      commercialInsertSource+'\n',commercialInsertSource.replace('\n','\r\n'),commercialInsertSource.replace('\n','\r'),'\ufeff'+commercialInsertSource,
+    ]){
+      assert.notEqual(changed,commercialInsertSource,'The SQL negative must alter actual source');
+      assert(!exactCommercialInsert('src/commercialcampaigns.js',changed,expr),'Changed column/role/value/placeholder provenance refuses');
+    }
+  }
+  for(const expr of ['body.column','columns','columns.join(body.separator)',"columns.map(column => row[column]).join(',')",commercialInsertExpressions[0]+';DROP TABLE characters'])
+    assert(!exactCommercialInsert('src/commercialcampaigns.js',commercialInsertSource,expr),'Unknown SQL expression remains unclassified');
+  let exactCommercialInsertCount=0;
+
   const { scanQueryCalls } = await import('../tools/sqlscan.js');
   const { readable } = scanQueryCalls(SRC, { root: fileURLToPath(new URL('../', import.meta.url)) });
   let total = 0, shaped = 0;
@@ -3541,6 +3637,7 @@ scopedSocialContext = async function(db) {
       total++;
       const why = classify(g.src, expr);
       if (why) { shaped++; continue; }
+      if(exactCommercialInsert(g.rel,g.src,expr)){exactCommercialInsertCount++;continue;}
       const key = `${g.rel}|${expr}`;
       if (DECLARED[key]) { usedDecl.add(key); continue; }
       undeclared.push(`${g.where}  \${${expr}}`);
@@ -3556,6 +3653,7 @@ scopedSocialContext = async function(db) {
   assert(shaped > 100, `only ${shaped} of ${total} interpolations matched a safe shape — the shape `
     + 'matcher is broken, and the next reader will be tempted to bulk-declare what it stopped seeing');
 
+  assert.equal(exactCommercialInsertCount,2,'Exactly the sealed commercial create column-list and bound-placeholder expressions are classified');
   assert.deepEqual(undeclared, [], 'interpolated expression(s) reaching SQL text that match no safe '
     + 'shape and carry no declaration. If the value cannot be a user string, declare it in THE '
     + 'INTERPOLATION LEDGER with the property that makes that true; if it can, it is an injection '
@@ -3566,7 +3664,7 @@ scopedSocialContext = async function(db) {
     + 'waiver silently re-covers whatever moves into its place, so remove them:'
     + `\n   - ${stale.join('\n   - ')}`);
 
-  console.log(`  ✓ all ${total} SQL interpolations are shape-safe (${shaped}) or declared `
+  console.log(`  ✓ all ${total} SQL interpolations are shape-safe (${shaped}), exact source-closed (${exactCommercialInsertCount}) or declared `
     + `(${usedDecl.size}) — no user string can reach SQL text`);
 }
 
@@ -4357,6 +4455,10 @@ scopedSocialContext = async function(db) {
     'equipmentrentals.js:deathScopes': 'cache: opaque proof bound to exact active client/transaction identity and prelocked original actor union; canonical SQL locks and fresh original sources provide cross-process authority, not this local marker',
     'social/estate.js:estateResolutionScopes': 'cache: private proof bound to the active actual estate invocation, exact client, transaction and victim; fresh SQL actor locks and death facts remain authoritative, and the proof is deleted at scope exit',
     'items.js:TRANSACTION_IDENTITIES': 'cache: opaque equality identity keyed by one active item transaction object; grants no mutation authority and fresh transactions cannot reuse prior scope identities',
+    'commercialcampaigns.js:completions': 'cache: one receipt completion marker bound to actual client/item-transaction identity; finalizer rechecks durable request, original actor, source/consents and canonical proofs, poisons failure and deletes the marker in finally',
+    'merchantloyalty.js:purchaseContexts': 'cache: one active client/transaction quote marker for the canonical consignment call; fresh authored program/quote/capacity and sale witnesses revalidate under SQL locks, conditional quote/program updates own durable use and finally invalidates the marker',
+    'saleattribution.js:purchaseScopes': 'cache: one active client/item-transaction purchase marker; fresh attribution/campaign/original actors and canonical sale/journal proofs revalidate under SQL locks, durable request/source transitions own replay and finally invalidates the marker',
+    'shoppingbasket.js:purchaseScopes': 'cache: one active client/item-transaction basket-line marker; each fresh authored basket/original/listing/completed-sale proof revalidates under SQL locks, conditional settlement owns durable completion and finally invalidates the marker',
     'mobileshops.js:scopes': 'cache: opaque active item-transaction scope bound to one SQL client, canonical Market action and immutable listing source; scopes are deleted on exit, while PostgreSQL actor/listing locks and unique request/journal records retain durable authority',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
@@ -4375,6 +4477,47 @@ scopedSocialContext = async function(db) {
     'ratelimit.js:buckets': 'shared: N instances = N× every limit, unless REDIS_URL is set',
     'phone.js:lastDmAt': 'shared: the DM flood brake — N instances = N× the allowed rate, and REDIS_URL does NOT cover it',
   };
+  // These exact opaque markers live only inside one action/transaction. Durable
+  // source rows, consent/actor revalidation and conditional SQL own cross-worker state.
+  const exactCommerceCompletionPosture = (key, source) => {
+    const seals={
+  "commercialcampaigns.js:completions": "f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c",
+  "merchantloyalty.js:purchaseContexts": "8cf4b3e14f7f5f2ef0a798cd1e435bac4fdf50ea96c25a546b30032faf4bf700",
+  "saleattribution.js:purchaseScopes": "6fe23fcc2ab1413eac75bf69776a0df1b7a6c7c27213f9758eadbb51839ccd13",
+  "shoppingbasket.js:purchaseScopes": "40a57a58f485354e31d5108252893aa122af6d97c73f3ae688f66f2bd0f903d6"
+},normalized=source.replaceAll('\r\n','\n');
+    return Object.hasOwn(seals,key)&&!normalized.includes('\r')
+      &&(source===normalized||source===normalized.replaceAll('\n','\r\n'))
+      &&createHash('sha256').update(normalized).digest('hex')===seals[key];
+  };
+  const completionPostureMutations={
+    'commercialcampaigns.js:completions':[
+      ['proof.client !== c','false'],['proof.transaction !== itemTransactionIdentity(c)','false'],
+      ['completions.delete(result);','void result;'],
+      ['SELECT * FROM commercial_campaign_requests WHERE account_id=$1 AND key_hash=$2','SELECT * FROM commercial_campaign_requests'],
+    ],
+    'merchantloyalty.js:purchaseContexts':[
+      ['s.client!==c','false'],['s.transaction!==I.itemTransactionIdentity(c)','false'],
+      ['context.active=false','context.active=true'],["q.status!=='quoted'","false"],
+    ],
+    'saleattribution.js:purchaseScopes':[
+      ['scope.c !== c','false'],['scope.transaction !== itemTransactionIdentity(c)','false'],
+      ['scope.active = false','scope.active = true'],["currentSource.row.state !== 'active'","false"],
+    ],
+    'shoppingbasket.js:purchaseScopes':[
+      ['scope.client !== c','false'],['scope.transaction !== I.itemTransactionIdentity(c)','false'],
+      ['scope.active = false','scope.active = true'],["row.status !== 'quoted'","false"],
+    ],
+  };
+  for(const[key,mutations]of Object.entries(completionPostureMutations)){
+    const source=fs.readFileSync(path.join(SRC,key.slice(0,key.indexOf(':'))),'utf8');
+    assert(exactCommerceCompletionPosture(key,source),'Only the exact reviewed marker lifecycle/consumer is classified');
+    assert(exactCommerceCompletionPosture(key,source.replaceAll('\r\n','\n').replaceAll('\n','\r\n')));
+    assert(!exactCommerceCompletionPosture('unknown.js:marker',source));
+    for(const[before,after]of mutations){const changed=source.replace(before,()=>after);assert.notEqual(changed,source,'Posture negative must alter actual source');assert(!exactCommerceCompletionPosture(key,changed),'Changed client/transaction/finally/DB revalidation cannot inherit cache posture');}
+    for(const changed of [source+'\n',source.replace('\n','\r\n'),source.replace('\n','\r'),'\ufeff'+source])assert(!exactCommerceCompletionPosture(key,changed));
+  }
+
   const found = [];
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -4852,10 +4995,39 @@ scopedSocialContext = async function(db) {
     // allowance. Mask only the reviewed error token; all counter names remain.
     return source.replace(original,original.replace("fail('source_used')",'fail()'));
   };
-  const bucketSource = (file, source) => file === 'src/companyworkflows.js'
+  const merchantConsumedConflict=(file,source,handler=gameErrorHandler)=>{
+    const mapping="if (err instanceof G.GameError) return reply.code(400).send({ error: err.code, message: err.message, ...(err.data || {}) });";
+    const original="if((await c.query(\"SELECT id FROM merchant_loyalty_quotes WHERE program_id=$1 AND buyer_character=$2 AND status='consumed' LIMIT 1\",[p.id,buyer])).rows.length)fail('already_used');",normalized=source.replaceAll('\r\n','\n');
+    if(file!=='src/merchantloyalty.js'||source.split(original).length!==2||handler.split(mapping).length!==2)return source;
+    if(normalized.includes('\r')||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n'))
+      ||createHash('sha256').update(normalized).digest('hex')!=='8cf4b3e14f7f5f2ef0a798cd1e435bac4fdf50ea96c25a546b30032faf4bf700')return source;
+    // The consumed(program,buyer) partial unique index is permanent, not a refill.
+    // Mask only this exact error token; variables/SQL columns are never masked.
+    return source.replace(original,original.replace("fail('already_used')",'fail()'));
+  };
+
+  const bucketSource = (file, source) => file === 'src/merchantloyalty.js' ? merchantConsumedConflict(file,source) : file === 'src/companyworkflows.js'
     ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '')
     : ['src/commercialnegotiation.js', 'src/territoryeconomics.js'].includes(file) ? source.replace(/\bfail\('source_used'\)/g, '') : laboratorySourceConflict(file,source);
   const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
+  const merchantBucket=fs.readFileSync('src/merchantloyalty.js','utf8');
+  assert.deepEqual(bucketNames('src/merchantloyalty.js',merchantBucket),[],'Actual permanent consumed-quote conflict is not a rolling bucket');
+  assert.deepEqual(bucketNames('src/merchantloyalty.js',merchantBucket.replaceAll('\r\n','\n').replaceAll('\n','\r\n')),[]);
+  for(const changed of [
+    merchantBucket.replace('[p.id,buyer])).rows.length','[p.id,p.seller_character])).rows.length'),
+    merchantBucket.replace("status='consumed' LIMIT 1","status='quoted' LIMIT 1"),
+    merchantBucket.replace("new GameError('merchant_loyalty', reason)","new GameError('rate_limit', reason)"),
+    merchantBucket+'\nconst already_used=0; const already_at=Date.now();\n',
+    merchantBucket+'\nexport function publicRefill(){return {already_used:1};}\n',
+  ]){assert.notEqual(changed,merchantBucket);assert(bucketNames('src/merchantloyalty.js',changed).includes('already_used'),'Changed identity/status/refill/public source remains unclassified');}
+  for(const handler of [gameErrorHandler.replace('if (err instanceof G.GameError) return reply.code(400)', 'if (err instanceof G.GameError) return reply.code(429)'),gameErrorHandler.replace('if (err instanceof G.GameError) return reply.code(400)', 'if (err instanceof G.GameError) return reply.header("Retry-After",1).code(400)')]){
+    assert.notEqual(handler,gameErrorHandler);assert(merchantConsumedConflict('src/merchantloyalty.js',merchantBucket,handler).includes("fail('already_used')"),'Changed HTTP/refill status cannot inherit permanent-conflict classification');
+  }
+  assert(bucketNames('src/unknown.js',merchantBucket).includes('already_used'));
+  assert(bucketNames('src/merchantloyalty.js',"fail('already_used');").includes('already_used'));
+  assert(bucketNames('src/merchantloyalty.js',"const already_used=0; client.query('SELECT already_used FROM meters');").includes('already_used'),'Real counters and columns remain in the corpus');
+  assert(bucketNames('src/merchantloyalty.js',merchantBucket+'\nconst unknown_used=0;').includes('unknown_used'));
+
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
   assert.deepEqual(bucketNames('src/commercialnegotiation.js', "fail('source_used');"), []);
   assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);

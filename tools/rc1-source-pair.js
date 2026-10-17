@@ -216,11 +216,11 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
 // PREPARATION identity only; future final source must be genuinely reviewed and repinned.
 export const COMMERCE_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "493d48275d95d723062c552acca189855b34b860",
-  "reviewedCandidate": "4e461647da8668a92938d24a94a6186062de794a",
+  "reviewedCandidate": "14b40a5515e51c2bf7ecdee921d9c98646207b6a",
   "predecessorTree": "847ee196bf2f52fc5f762a3a380a9b1056fea21bc93fc8e0251adf22393552ef",
   "predecessorSchema": "9b80153efdeb616208d2d6776a268fc88deb1a6246ad0ddd54844c4c5ef76289",
   "predecessorCatalog": "f45eb6f97c65ee00d3ad97e0c3a50756acbde77558abd1a86220bf9780006a65",
-  "candidateTree": "b56e74dba90923e19d59f27bcb6d129f431e2827a10d42fcf0d760aafbfe549e",
+  "candidateTree": "91c7056ebc8a2e17c384f9fed09689b7a90592210cd296b024ff0f8ba792495a",
   "candidateSchema": "833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335",
   "candidateCatalog": "44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917",
   "constraints": 200,
