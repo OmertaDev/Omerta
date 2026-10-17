@@ -1,3 +1,4 @@
+import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { companyOpportunitySourceBaseline } from '../tools/rc1-company-opportunity-source-compatibility.js';
@@ -23,7 +24,7 @@ let texts=0,hashes=0,blobs=0,negatives=0,hunks=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 assert.deepEqual(Object.keys(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS),['src/server.js','src/worker.js','src/invariants.js','src/social/estate.js','src/market.js']);
 for(const file of Object.keys(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS)) {
- const current=companyOpportunitySourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8')))),prior=git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=companyOpportunitySourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))))),prior=git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${P.BUYER_COOPERATIVE_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',`ac843ad2c444784a78cae377ab3b99aebb9f8a8f:${file}`));
  entire(current,git('show',P.BUYER_COOPERATIVE_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',P.BUYER_COOPERATIVE_SOURCE_BASELINE_BLOBS[file]));
  for(const [text,pins,bs]of [[current,P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS,P.BUYER_COOPERATIVE_SOURCE_CURRENT_BLOBS],[prior,P.BUYER_COOPERATIVE_SOURCE_BASELINE_PINS,P.BUYER_COOPERATIVE_SOURCE_BASELINE_BLOBS]]) {assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
@@ -50,7 +51,7 @@ for(const file of Object.keys(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS)) {
 }
 for(const file of ['src/buyercooperatives.js','src/game.js','toString']){assert.throws(()=>P.assertBuyerCooperativeSourceTransfer(file,''));assert.throws(()=>P.qualifyBuyerCooperativeSource(file,''));}
 assert.deepEqual(WORLD_RECOVERY_REVIEW.buyerCooperativeSourceReviewTransfer,P.BUYER_COOPERATIVE_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer,W.COMPANY_WORKFLOW_SOURCE_TRANSFER);
-const currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):fs.readFileSync(file,'utf8')),priorReader=file=>Object.hasOwn(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS,file)?git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
+const currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String(continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8')))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))),priorReader=file=>Object.hasOwn(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS,file)?git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
 assert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.BUYER_COOPERATIVE_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.BUYER_COOPERATIVE_SOURCE_REVIEWED_REVISION}));
 console.log(`rc1-buyer-cooperative-source-compatibility: PASS ${hunks} exact Git hunks; ${texts} complete text, ${hashes} SHA256, ${blobs} Git blob comparisons; ${negatives} adversarial controls; CRLF, prior metadata, worker cap/cadence/ordering; source-only scope`);
 
