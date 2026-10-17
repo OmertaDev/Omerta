@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b60b6c660a49`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3fa5ade7bd5b`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4296 |
+| Commits in clone | 4298 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-17 — Pin market bootstrap review after browser fixture repair |
+| Latest commit | 2026-10-17 — Merge pull request #279 from OmertaDev/codex/market-release-integration-oct15 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3334 |
+| OmertaDev | 3336 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 117 |
@@ -30,16 +30,16 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 718 | historical |
-| knowledge/generated/graph-summary.md | 718 | historical |
-| knowledge/generated/graph.json | 718 | historical |
-| knowledge/generated/inventory.md | 718 | historical |
+| knowledge/generated/github-history.md | 719 | historical |
+| knowledge/generated/graph-summary.md | 719 | historical |
+| knowledge/generated/graph.json | 719 | historical |
+| knowledge/generated/inventory.md | 719 | historical |
 | [SPEC.md](../../SPEC.md) | 567 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 474 | yes |
 | [src/server.js](../../src/server.js) | 435 | yes |
 | [schema.sql](../../schema.sql) | 366 | yes |
-| knowledge/generated/documents.md | 343 | historical |
+| knowledge/generated/documents.md | 344 | historical |
 | [package.json](../../package.json) | 330 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 254 | historical |
