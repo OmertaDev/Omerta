@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: f4d796e258db8713a91ce48190f9747aa0ea1ea5
+          ref: 19f174540b0b65870800317ed98085ef36696976
           fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
