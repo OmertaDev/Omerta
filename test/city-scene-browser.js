@@ -35,7 +35,7 @@ for (const phase of ['queued', 'dispatched', 'revoked', 'default']) {
   const started = new Promise(resolve => { entered = resolve; });
   const calls = [], view = { open: true };
   const scope = { token: 'first', projections: { invalidate() {}, snapshot: () => ({}), current: () => true },
-    cityIdentity: () => 'owner:1:docks', _cityAuthorityRevision: 0, uuid: () => 'fixture-key', recordCityAction() {}, apiNow: async (method, path) => {
+    cityIdentity: () => 'owner:1:docks', _cityAuthorityRevision: 0, uuid: () => 'fixture-key', recordCityAction() {}, scheduleCityPresence() {}, apiNow: async (method, path) => {
     calls.push({ method, path }); entered();
     if (path === '/held' || phase !== 'default') await held;
     return { code: 200, body: { ok: true } };
