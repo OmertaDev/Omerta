@@ -2308,6 +2308,38 @@ const SCENERY_WAIVED = {
     return ['owner','planner'].includes(key)&&variable==='ch'&&member==='id'
       &&lit==='{relationship:r,governance,team,owner:ch.id===r.owner_character?ch:other,planner:ch.id===r.partner_character?ch:other}';
   };
+  // The campaign stage is a closed discriminator; the courier original is a
+  // private account-ACK capsule. Seal complete validators/callers/return boundaries,
+  // and classify only these exact fields, never a module-wide kind/original waiver.
+  const exactCommerceRecoveryField = (base, source, lit, match) => {
+    const normalized=source.replaceAll('\r\n','\n'),literal=lit.replaceAll('\r\n','\n');
+    if(normalized.includes('\r')||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n')))return false;
+    const fields={
+  "commercialcampaigns.js": {
+    "sha256": "f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c",
+    "key": "kind",
+    "variable": "entry",
+    "member": "kind",
+    "expression": "kind: entry.kind",
+    "literal": "{ ...view(row), supportedStage: open ? row.stage : null, blockedReason, retireActions,\n    recovery: 'Retiring campaign metadata does not refund, cancel or alter independent canonical source obligations.',\n    stages: stages.map(entry => ({ kind: entry.kind, state: entry.state,\n      sourceId: entry.scout_job_id || entry.commission_id || entry.courier_network_id || null,\n      outputItemId: entry.output_item_id || null })) }"
+  },
+  "multihopcourier.js": {
+    "sha256": "dfbca26d67cbeaafd5cc4a69fa9c4b7cf0f819fa7de8d5dcb5423bbe005447e0",
+    "key": "original",
+    "variable": "person",
+    "member": "id",
+    "expression": "original:person.id",
+    "literal": "{original:person.id,account:person.account_id,cash:Number(actual.cash),loc:actual.loc}"
+  }
+};
+    const field=fields[base];
+    if(!field||createHash('sha256').update(normalized).digest('hex')!==field.sha256||source.split(lit).length!==2)return false;
+    const [,key,variable,member]=match;
+    return key===field.key&&variable===field.variable&&member===field.member&&literal===field.literal
+      &&match.index===lit.indexOf(field.expression)&&match[0]===field.expression;
+  };
+  let commerceStageClassified=0,courierOriginalClassified=0;
+
   let logisticsClassified = 0;
   let acquisitionHashClassified = 0;
   let restructuringClassified = 0;
@@ -2337,6 +2369,7 @@ const SCENERY_WAIVED = {
         if (exactRestructuringDiscriminator(base, s, lit, m)) { restructuringClassified++; continue; }
         if (exactConcessionActorCapsule(base, s, lit, m)) { concessionActorClassified++; continue; }
         if(exactAutonomyField(base,s,lit,m)){if(base==='agentoperatingmemory.js')autonomyMemoryClassified++;else autonomyActorClassified++;continue;}
+        if(exactCommerceRecoveryField(base,s,lit,m)){if(base==='commercialcampaigns.js')commerceStageClassified++;else courierOriginalClassified++;continue;}
         // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
           // display name exactly as `kindName: kindName` would, and a matcher that only knows the
           // colon form stops seeing a companion the moment it is written the other legal way — the
@@ -2369,6 +2402,34 @@ const SCENERY_WAIVED = {
   assert.equal(concessionActorClassified, 1, 'Only the private concession actor/receipt persistence capsule is classified.');
   assert.equal(autonomyMemoryClassified,2,'Only two closed production/forecast capture receipt kinds are classified');
   assert.equal(autonomyActorClassified,2,'Only the two private original-owner/planner context fields are classified');
+  assert.equal(commerceStageClassified,1,'Only the exact closed campaign recovery stage discriminator is classified');
+  assert.equal(courierOriginalClassified,1,'Only the exact private courier account-ACK original capsule is classified');
+  for(const base of ['commercialcampaigns.js','multihopcourier.js']){
+    const source=fs.readFileSync('src/'+base,'utf8');
+    const altered=base==='commercialcampaigns.js'?[
+      source.replace('WHERE r.account_id=$1 AND c.id>$2','WHERE c.id>$2'),
+      source.replace('SELECT * FROM commercial_campaign_stages WHERE campaign_id=$1 ORDER BY kind','SELECT * FROM commercial_campaign_stages ORDER BY kind'),
+      source.replace('kind: entry.kind','kind: entry.kind,arbitraryNarrative:entry.kind'),
+      source+'\nexport function unboundNarrative(entry){return {kind: entry.kind};}\n',
+    ]:[
+      source.replace('commercialFresh.set(receipt,','globalThis.publicReceipt=({'),
+      source.replace('expected=proof.expected?.find(person=>person.original===original)','expected=null'),
+      source.replace('Number(ch.cash)!==expected.cash','false'),
+      source.replace('return commercial?await commercialAfter(c,a,k,t,ch.id,acknowledged,commercial,expected,false):acknowledged;','return expected;'),
+      source+'\nexport function unboundNarrative(person){return {original:person.id};}\n',
+    ];
+    for(const mutation of altered){assert.notEqual(mutation,source,'The recovery negative must alter actual source');for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactCommerceRecoveryField(base,source,lit,match))assert(!exactCommerceRecoveryField(base,mutation,lit,match),'Changed membership/validator/private consumer/public boundary cannot inherit classification');}
+    for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactCommerceRecoveryField(base,source,lit,match)){
+      const crlf=source.replaceAll('\r\n','\n').replaceAll('\n','\r\n'),crlfLit=lit.replaceAll('\r\n','\n').replaceAll('\n','\r\n'),crlfMatch=[...rawKeyFields(crlfLit)].find(m=>m[0]===match[0]);
+      assert(exactCommerceRecoveryField(base,crlf,crlfLit,crlfMatch),'Whole CRLF retains this exact field');
+      assert(!exactCommerceRecoveryField('other.js',source,lit,match));
+      for(const changed of [source+'\n',source.replace('\n','\r\n'),source.replace('\n','\r'),'\ufeff'+source])assert(!exactCommerceRecoveryField(base,changed,lit,match));
+      for(const alteredMatch of [Object.assign([...match],{index:match.index+1}),Object.assign([...match.slice(0,1),'other',...match.slice(2)],{index:match.index})])assert(!exactCommerceRecoveryField(base,source,lit,alteredMatch));
+      const publicLiteral=base==='commercialcampaigns.js'?'{kind: entry.kind}':'{original:person.id}';
+      for(const publicMatch of rawKeyFields(publicLiteral))assert(!exactCommerceRecoveryField(base,source,publicLiteral,publicMatch));
+    }
+  }
+
   for(const base of ['agentoperatingmemory.js','managementteams.js']){
     const source=fs.readFileSync('src/'+base,'utf8');
     const changed=base==='agentoperatingmemory.js'?[
