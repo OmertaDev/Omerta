@@ -95,6 +95,7 @@ function permissions(stat,isDirectory){
 function pathInput(value){
   check(typeof value==='string'&&value.length<=4096&&!value.includes('\0')&&path.isAbsolute(value)&&!value.startsWith('\\\\')&&!value.startsWith('//')&&!/^file:/i.test(value),'JOURNAL_ABSOLUTE_LOCAL_PATH_REQUIRED');
   const file=path.normalize(value);check(path.basename(file)!==':memory:'&&path.basename(file)!=='.'&&!/[?#]/.test(file),'JOURNAL_ABSOLUTE_LOCAL_PATH_REQUIRED');
+  if(process.platform==='win32'){check(/^[A-Za-z]:[\\/]/.test(file),'JOURNAL_ABSOLUTE_LOCAL_PATH_REQUIRED');check(!file.slice(2).includes(':'),'JOURNAL_ALTERNATE_STREAM_REFUSED');}
   const parent=path.dirname(file),ancestors=[];let current=parent;
   for(;;){const stat=fs.lstatSync(current,{bigint:true});check(stat.isDirectory()&&!stat.isSymbolicLink(),'JOURNAL_PARENT_SYMLINK_OR_TYPE');ancestors.push({path:current,identity:identity(stat)});const up=path.dirname(current);if(up===current)break;current=up;}
   permissions(fs.lstatSync(parent,{bigint:true}),true);fs.accessSync(parent,fs.constants.R_OK|fs.constants.W_OK|fs.constants.X_OK);return{file,parent,ancestors};
