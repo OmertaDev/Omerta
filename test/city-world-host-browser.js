@@ -51,6 +51,18 @@ try {
       localStorage.setItem('omerta_token', token); localStorage.setItem('omerta_tour2', '1');
       if (noResizeObserver) window.ResizeObserver = undefined;
       window.__worldGames = []; window.__worldHandles = []; window.__worldReads = []; window.__worldReadResults = []; window.__worldNavigations = []; window.__worldUpdates = [];
+      const polls = new Map(); let held = false;
+      window.__worldBackgroundPolls = {
+        register(name, callback, delay) {
+          if (polls.has(name)) throw Error('Duplicate background poll: ' + name);
+          const poll = { delay, deferred: 0, tick() { if (held) { poll.deferred++; return; } return callback(); } };
+          polls.set(name, poll); return setInterval(poll.tick, delay);
+        },
+        hold() { if (held) throw Error('Background polls already held'); held = true; },
+        release() { held = false; },
+        tick(name) { return polls.get(name).tick(); },
+        state() { return { held, polls: [...polls].map(([name, poll]) => ({ name, delay: poll.delay, deferred: poll.deferred })) }; }
+      };
       let engine, module;
       Object.defineProperty(window, 'Phaser', { configurable: true, get: () => engine, set: value => {
         engine = value; value.Game = new Proxy(value.Game, { construct(target, args) {
@@ -97,8 +109,21 @@ try {
     await page.route(base + '/', async route => {
       const reply = await route.fetch(), html = await reply.text(), anchor = '  async function readCityWorld(kind, context = {}) {';
       assert.equal(html.split(anchor).length, 2);
-      await route.fulfill({ response: reply, body: html.replace(anchor,
-        '  window.__worldReadScope = () => ({ key: cityIdentity(), epoch: projections.snapshot().epoch, scene: _citySceneEpoch,\n'
+      // Only the two independent network-poll registrations are held by the Return proof.
+      // Explicit refresh/presence calls, all other timers and the real callbacks stay intact.
+      const newline = html.includes('\r\n') ? '\r\n' : '\n';
+      const refreshPoll = ['  setInterval(() => {', '    if (!me || document.hidden) return;', '    refresh();',
+        '    if (++_tick % BOARD_EVERY === 0) { renderActive(); pollOnline(); }', '  }, 30000);'].join(newline);
+      const presencePoll = '  setInterval(scheduleCityPresence, 15000);';
+      assert.equal(html.split(refreshPoll).length, 2); assert.equal(html.split(presencePoll).length, 2);
+      const observed = html.replace(refreshPoll, refreshPoll.replace('setInterval(', "window.__worldBackgroundPolls.register('refresh', "))
+        .replace(presencePoll, "  window.__worldBackgroundPolls.register('presence', scheduleCityPresence, 15000);");
+      await route.fulfill({ response: reply, body: observed.replace(anchor,
+        '  window.__worldPollIdle = async () => { let queued; do { queued = _authQueue; await queued;\n'
+        + '    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));\n'
+        + '  } while (queued !== _authQueue || _cityPresenceRefresh || _cityPresenceReading || !window.__worldReadResults.every(read => read.settled)); };\n'
+        + '  window.__worldPollVisible = () => !!me && cityGameVisible() && !!_cityScene && !document.hidden;\n'
+        + '  window.__worldReadScope = () => ({ key: cityIdentity(), epoch: projections.snapshot().epoch, scene: _citySceneEpoch,\n'
         + '    current: !!_cityWorldData && _cityWorldData.key === cityIdentity() && projections.current(_cityWorldData.stamp), tickets: { ..._cityWorldData?.tickets },\n'
         + '    consent: _cityWorldData?.social?.preferences?.chatEnabled, resourceReceipt: cityWorldOptions().resourceReceipt });\n' + anchor) });
     });
@@ -150,56 +175,77 @@ try {
       return { scroll: dock.scrollTop, visible: selector?.getBoundingClientRect().height ? (hit(selector) ? selector.options.length : 0) : [...dock.querySelectorAll('[data-city-world-panel]')].filter(hit).length,
         backHit: hit(back), backHeight: back.getBoundingClientRect().height };
     });
-    await page.waitForFunction(() => window.__worldReadResults.every(read => read.settled));
-    const before = await snapshot();
-    if (before.panel === 'room') assert(before.fields.length >= 3, 'The real room supplies unsaved form fields.');
-    for (const keyboard of [false, true]) {
-      const box = await page.locator('.city-world__dock').boundingBox();
-      await page.locator('.city-world__dock').evaluate(node => {
-        node.__toolScrollEnded = false; node.__toolScrollEnd = () => { node.__toolScrollEnded = true; };
-        node.addEventListener('scrollend', node.__toolScrollEnd, { once: true });
-      });
-      try {
-        if (page.viewportSize().width <= 680) {
-          const touch = await page.context().newCDPSession(page), x = box.x + box.width / 2, y = box.y + box.height - 24;
-          try {
-            await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
-            for (const distance of [50, 100, 150, 200, 250]) {
-              await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - distance }] }); await frames(page);
-            }
-          } finally { await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await touch.detach(); }
-        } else { await page.mouse.move(box.x + box.width / 2, box.y + box.height - 24); await page.mouse.wheel(0, 900); }
-        await page.waitForFunction(() => document.querySelector('.city-world__dock').__toolScrollEnded === true);
-      } finally {
-        await page.locator('.city-world__dock').evaluate(node => { node.removeEventListener('scrollend', node.__toolScrollEnd); delete node.__toolScrollEnd; delete node.__toolScrollEnded; });
+    assert(await page.evaluate(() => window.__worldPollVisible()), 'Return measures the visible, live city.');
+    const polling = await page.evaluate(() => window.__worldBackgroundPolls.state());
+    assert.equal(polling.held, false);
+    assert.deepEqual(polling.polls.map(({ name, delay }) => ({ name, delay })),
+      [{ name: 'refresh', delay: 30000 }, { name: 'presence', delay: 15000 }]);
+    await page.evaluate(() => window.__worldBackgroundPolls.hold());
+    try {
+      await bounded(page.evaluate(() => window.__worldPollIdle()), 'already-started background polling');
+      const before = await snapshot();
+      if (before.panel === 'room') assert(before.fields.length >= 3, 'The real room supplies unsaved form fields.');
+      for (const keyboard of [false, true]) {
+        const box = await page.locator('.city-world__dock').boundingBox();
+        await page.locator('.city-world__dock').evaluate(node => {
+          node.__toolScrollEnded = false; node.__toolScrollEnd = () => { node.__toolScrollEnded = true; };
+          node.addEventListener('scrollend', node.__toolScrollEnd, { once: true });
+        });
+        try {
+          if (page.viewportSize().width <= 680) {
+            const touch = await page.context().newCDPSession(page), x = box.x + box.width / 2, y = box.y + box.height - 24;
+            try {
+              await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+              for (const distance of [50, 100, 150, 200, 250]) {
+                await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y - distance }] }); await frames(page);
+              }
+            } finally { await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await touch.detach(); }
+          } else { await page.mouse.move(box.x + box.width / 2, box.y + box.height - 24); await page.mouse.wheel(0, 900); }
+          await page.waitForFunction(() => document.querySelector('.city-world__dock').__toolScrollEnded === true);
+        } finally {
+          await page.locator('.city-world__dock').evaluate(node => { node.removeEventListener('scrollend', node.__toolScrollEnd); delete node.__toolScrollEnd; delete node.__toolScrollEnded; });
+        }
+        await page.waitForFunction(() => {
+          const dock = document.querySelector('.city-world__dock'), box = dock.getBoundingClientRect();
+          return dock.scrollTop > 0 && dock.querySelector('.city-world__tabs').getBoundingClientRect().bottom < box.top;
+        });
+        const scrolled = await choices();
+        assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all seven choices out of view.');
+        assert(scrolled.backHit && scrolled.backHeight >= 44, 'The sticky return control remains reachable: ' + JSON.stringify(scrolled));
+        const at = requests.length, reads = await page.evaluate(() => window.__worldReads.length);
+        const deferred = await page.evaluate(() => {
+          window.__worldBackgroundPolls.tick('presence'); window.__worldBackgroundPolls.tick('refresh');
+          return window.__worldBackgroundPolls.state();
+        });
+        assert(deferred.held && deferred.polls.every(poll => poll.deferred > 0), 'Known periodic ticks overlap Return but remain deferred.');
+        if (keyboard) {
+          await page.keyboard.press('Shift+Tab'); await page.keyboard.press('Shift+Tab');
+          assert(await page.locator('[data-city-world-back]').evaluate(node => document.activeElement === node), 'Native reverse Tab reaches the sticky return button from Map.');
+          const focused = await choices();
+          assert(focused.scroll > 0 && focused.visible === 0 && focused.backHit, 'Keyboard focus alone leaves the choices hidden before Enter: ' + JSON.stringify(focused));
+          await page.keyboard.press('Enter');
+        } else if (page.viewportSize().width <= 680) await page.locator('[data-city-world-back]').tap();
+        else await page.locator('[data-city-world-back]').click();
+        await frames(page);
+        await bounded(page.evaluate(() => window.__worldPollIdle()), 'Return-triggered queued work while periodic polls are held');
+        const returned = await choices();
+        assert.equal(returned.scroll, 0); assert.equal(returned.visible, 7, 'Returning exposes every real panel choice.');
+        assert(await page.evaluate(() => {
+          const select = document.querySelector('[data-city-panel-select]');
+          return document.activeElement === (select?.getBoundingClientRect().height ? select : document.querySelector('[data-city-world-panel="map"]'));
+        }), 'Return focuses the panel choices without selecting another panel.');
+        assert.deepEqual(await snapshot(), before, 'Return retains the actual panel, opening, pose, scene, drafts, receipt and outer scroll.');
+        assert.equal(await page.evaluate(() => window.__worldReads.length), reads, 'Return does not start a world read.');
+        assert.deepEqual(requests.slice(at).filter(request => request.path.startsWith('/v1/')
+          && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'Return sends no game GET or POST.');
       }
-      await page.waitForFunction(() => {
-        const dock = document.querySelector('.city-world__dock'), box = dock.getBoundingClientRect();
-        return dock.scrollTop > 0 && dock.querySelector('.city-world__tabs').getBoundingClientRect().bottom < box.top;
-      });
-      const scrolled = await choices();
-      assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all seven choices out of view.');
-      assert(scrolled.backHit && scrolled.backHeight >= 44, 'The sticky return control remains reachable: ' + JSON.stringify(scrolled));
-      const at = requests.length, reads = await page.evaluate(() => window.__worldReads.length);
-      if (keyboard) {
-        await page.keyboard.press('Shift+Tab'); await page.keyboard.press('Shift+Tab');
-        assert(await page.locator('[data-city-world-back]').evaluate(node => document.activeElement === node), 'Native reverse Tab reaches the sticky return button from Map.');
-        const focused = await choices();
-        assert(focused.scroll > 0 && focused.visible === 0 && focused.backHit, 'Keyboard focus alone leaves the choices hidden before Enter: ' + JSON.stringify(focused));
-        await page.keyboard.press('Enter');
-      } else if (page.viewportSize().width <= 680) await page.locator('[data-city-world-back]').tap();
-      else await page.locator('[data-city-world-back]').click();
-      await frames(page);
-      const returned = await choices();
-      assert.equal(returned.scroll, 0); assert.equal(returned.visible, 7, 'Returning exposes every real panel choice.');
-      assert(await page.evaluate(() => {
-        const select = document.querySelector('[data-city-panel-select]');
-        return document.activeElement === (select?.getBoundingClientRect().height ? select : document.querySelector('[data-city-world-panel="map"]'));
-      }), 'Return focuses the panel choices without selecting another panel.');
-      assert.deepEqual(await snapshot(), before, 'Return retains the actual panel, opening, pose, scene, drafts, receipt and outer scroll.');
-      assert.equal(await page.evaluate(() => window.__worldReads.length), reads, 'Return does not start a world read.');
-      assert.deepEqual(requests.slice(at).filter(request => request.path.startsWith('/v1/')
-        && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'Return sends no game GET or POST.');
+    } finally { await page.evaluate(() => window.__worldBackgroundPolls.release()); }
+    assert.equal(await page.evaluate(() => window.__worldBackgroundPolls.state().held), false, 'Return restores periodic polling.');
+    const restoredAt = requests.length;
+    await page.evaluate(() => { window.__worldBackgroundPolls.tick('presence'); window.__worldBackgroundPolls.tick('refresh'); });
+    await bounded(page.evaluate(() => window.__worldPollIdle()), 'restored background polling');
+    for (const path of ['/v1/city/presence', '/v1/projections/player']) {
+      assert(requests.slice(restoredAt).some(request => request.method === 'GET' && request.path === path), 'Restored polling reaches ' + path);
     }
   };
   const refresh = async page => {
