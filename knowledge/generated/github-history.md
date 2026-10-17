@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `65b8d08e95c1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `eabda163ae89`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4409 |
+| Commits in clone | 4416 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-17 — Pin enterprise recovery relation to repaired GUI predecessor |
+| Latest commit | 2026-10-17 — test: pin enterprise recovery to repaired source inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3447 |
+| OmertaDev | 3454 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 117 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 729 | historical |
-| knowledge/generated/graph-summary.md | 729 | historical |
-| knowledge/generated/graph.json | 729 | historical |
-| knowledge/generated/inventory.md | 729 | historical |
+| knowledge/generated/github-history.md | 730 | historical |
+| knowledge/generated/graph-summary.md | 730 | historical |
+| knowledge/generated/graph.json | 730 | historical |
+| knowledge/generated/inventory.md | 730 | historical |
 | [SPEC.md](../../SPEC.md) | 579 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 475 | yes |
@@ -55,8 +55,8 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 122 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 106 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 104 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 107 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 105 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 103 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 95 | yes |
