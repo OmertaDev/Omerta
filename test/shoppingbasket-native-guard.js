@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import { assertShoppingBasketNativeMode as mode, shoppingBasketNativeEndpoint as endpoint,
+  assertShoppingBasketNativeBackend as backend, assertShoppingBasketNativeBytes as bytes } from './shoppingbasket-native-fixture.js';
+import crypto from 'node:crypto';
+const argv = ['node', 'test/shoppingbasket-native-rollback.js', '--postgres'];
+const env = { RESOURCE_ECONOMY: 'off', CHAIN_ENABLED: 'off', SHOPPING_BASKET_TEST_DATABASE_URL: 'postgresql://pilot_runner@127.0.0.1:35439/shopping_basket_test_0123456789ab' };
+mode(argv, env, []); const context = endpoint(env.SHOPPING_BASKET_TEST_DATABASE_URL);
+const row = { role: 'pilot_runner', owner: 'pilot_runner', database: 'shopping_basket_test_0123456789ab', version: '18.4', directory: 'C:/Users/Jorge/AppData/Local/Temp/omerta-economy-oct15-pg184' };
+backend(row, context); let refused = 0;
+const deny = fn => { assert.throws(fn); refused++; };
+for (const args of [argv.slice(0, 2), [...argv, '--extra'], [argv[0], argv[1], '--memory']]) deny(() => mode(args, env, []));
+for (const key of ['DATABASE_URL', 'database_url', 'TEST_DATABASE_URL', 'NODE_OPTIONS', 'NODE_PATH', 'PGHOST', 'PGPORT', 'PGUSER', 'PGDATABASE', 'PGSERVICE', 'PGOPTIONS', 'OTHER_TEST_DATABASE_URL', 'LEGAL_PROFILE_DEFER']) deny(() => mode(argv, { ...env, [key]: '' }, []));
+for (const exec of [['-r', 'x'], ['--require=x'], ['--import', 'x']]) deny(() => mode(argv, env, exec));
+for (const key of ['RESOURCE_ECONOMY', 'CHAIN_ENABLED']) for (const value of [undefined, 'on']) deny(() => mode(argv, { ...env, [key]: value }, []));
+for (const value of [undefined, '', env.SHOPPING_BASKET_TEST_DATABASE_URL.replace('127.0.0.1', 'localhost'), env.SHOPPING_BASKET_TEST_DATABASE_URL.replace('35439', '35449'), env.SHOPPING_BASKET_TEST_DATABASE_URL.replace('pilot_runner@', 'postgres@'), env.SHOPPING_BASKET_TEST_DATABASE_URL.replace('@', ':password@'), env.SHOPPING_BASKET_TEST_DATABASE_URL + '?sslmode=disable', env.SHOPPING_BASKET_TEST_DATABASE_URL + '#fragment', env.SHOPPING_BASKET_TEST_DATABASE_URL.replace('0123456789ab', '0123456789abc'), env.SHOPPING_BASKET_TEST_DATABASE_URL.replace('shopping_basket_test_', 'merchant_loyalty_test_')]) deny(() => endpoint(value));
+for (const [key, value] of [['owner', 'postgres'], ['role', 'postgres'], ['database', 'other'], ['version', '18.3'], ['directory', 'C:/other']]) deny(() => backend({ ...row, [key]: value }, context));
+deny(() => backend({ ...row, foreign: true }, context));
+const text = 'line one\nline two\n', pin = crypto.createHash('sha256').update(text).digest('hex'); bytes(text, pin); bytes(text.replaceAll('\n', '\r\n'), pin);
+for (const changed of [text + 'x', text.replace('two', 'three'), 'line one\r\nline two\n']) deny(() => bytes(changed, pin));
+console.log(JSON.stringify({ proof: 'N18 closed native admission/source refusals, pure only', refused, postgresConnections: 0 }));

@@ -28,9 +28,9 @@ export const ENTERPRISE_STRUCTURAL_CHECKS=Object.freeze([
     "fn": "collectMobileShopIssues",
     "why": "original listing/sale/return and canonical market journal identities; market cash is reconciled separately",
     "push": "push('mobile shop canonical source/history', mobileShopIssues.length, 0, 0, { issues: mobileShopIssues });",
-    "sha256": "bce9669450f81352bc0ff48286ecfc8f9c87f07d6f98dd44de1be9608229231f",
-    "revision": "5fb8ec516236ceb4456f1f38b0d19ac111c35087",
-    "blob": "9bb06aa8aa86a1b712c7ef95d35c91641a0860da"
+    "sha256": "7489f3710e4dc1e41de1f4d0280a348e47c6fea3036fe6405d7ef5a0af2f922d",
+    "revision": "4f5fde87c29453a71f027fae5f694f44e8677b3d",
+    "blob": "41347b97c38d5aaa4d31a58fbc27d88e81a7d3ae"
   },
   {
     "check": "workshop floor source and allocation history",

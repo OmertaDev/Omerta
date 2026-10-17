@@ -7375,6 +7375,1006 @@
       "table_name": "workshop_floorplans",
       "name": "workshop_floorplans_source_hash_check",
       "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_campaign_requests",
+      "name": "commercial_campaign_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaign_requests",
+      "name": "commercial_campaign_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['create'::text, 'consent'::text, 'withdraw'::text, 'cancel'::text, 'expire'::text, 'scout-fund'::text, 'scout-report'::text, 'manufacture-fund'::text, 'manufacture-accept'::text, 'manufacture-complete'::text, 'guard-hire'::text, 'courier-publish'::text, 'courier-consent'::text, 'courier-dispatch'::text, 'courier-travel'::text, 'courier-handoff'::text, 'courier-arrive'::text]))"
+    },
+    {
+      "table_name": "commercial_campaign_requests",
+      "name": "commercial_campaign_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_campaign_requests",
+      "name": "commercial_campaign_requests_campaign_id_fkey",
+      "definition": "FOREIGN KEY (campaign_id) REFERENCES commercial_campaigns(id)"
+    },
+    {
+      "table_name": "commercial_campaign_requests",
+      "name": "commercial_campaign_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_campaign_requests",
+      "name": "commercial_campaign_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaign_requests",
+      "name": "commercial_campaign_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_account_id_consent_key_hash_fkey",
+      "definition": "FOREIGN KEY (account_id, consent_key_hash) REFERENCES commercial_campaign_requests(account_id, key_hash)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_campaign_id_account_id_key",
+      "definition": "UNIQUE (campaign_id, account_id)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_campaign_id_fkey",
+      "definition": "FOREIGN KEY (campaign_id) REFERENCES commercial_campaigns(id)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_campaign_id_original_character_key",
+      "definition": "UNIQUE (campaign_id, original_character)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_check",
+      "definition": "CHECK (consent_key_hash IS NULL AND consent_terms_hash IS NULL AND consented_at IS NULL AND (state = ANY (ARRAY['invited'::text, 'retired'::text])) OR consent_key_hash IS NOT NULL AND consent_terms_hash IS NOT NULL AND consented_at IS NOT NULL AND (state = ANY (ARRAY['consented'::text, 'active'::text, 'retired'::text])))"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_consent_key_hash_check",
+      "definition": "CHECK (consent_key_hash IS NULL OR char_length(consent_key_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_consent_terms_hash_check",
+      "definition": "CHECK (consent_terms_hash IS NULL OR char_length(consent_terms_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_pkey",
+      "definition": "PRIMARY KEY (campaign_id, role)"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_role_check",
+      "definition": "CHECK (role = ANY (ARRAY['owner'::text, 'scout'::text, 'manufacturer'::text, 'guard'::text, 'first_carrier'::text, 'second_carrier'::text]))"
+    },
+    {
+      "table_name": "commercial_campaign_roles",
+      "name": "commercial_campaign_roles_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['invited'::text, 'consented'::text, 'active'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_campaign_id_fkey",
+      "definition": "FOREIGN KEY (campaign_id) REFERENCES commercial_campaigns(id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_check",
+      "definition": "CHECK (kind = 'scout'::text AND commission_id IS NULL AND output_item_id IS NULL AND courier_network_id IS NULL AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND guard_until IS NULL OR kind = 'manufacture'::text AND scout_job_id IS NULL AND courier_network_id IS NULL AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND guard_until IS NULL OR kind = 'guard'::text AND scout_job_id IS NULL AND commission_id IS NULL AND output_item_id IS NULL AND courier_network_id IS NULL OR kind = 'courier'::text AND scout_job_id IS NULL AND commission_id IS NULL AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND guard_until IS NULL)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_check1",
+      "definition": "CHECK (state <> 'completed'::text OR completed_at IS NOT NULL AND (kind = 'scout'::text AND scout_job_id IS NOT NULL OR kind = 'manufacture'::text AND commission_id IS NOT NULL AND output_item_id IS NOT NULL OR kind = 'guard'::text AND guard_payer_journal IS NOT NULL AND guard_payee_journal IS NOT NULL AND guard_until IS NOT NULL OR kind = 'courier'::text AND courier_network_id IS NOT NULL AND output_item_id IS NOT NULL))"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_commission_id_fkey",
+      "definition": "FOREIGN KEY (commission_id) REFERENCES commissioned_crafting_contracts(id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_commission_id_key",
+      "definition": "UNIQUE (commission_id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_courier_network_id_fkey",
+      "definition": "FOREIGN KEY (courier_network_id) REFERENCES multi_hop_couriers(id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_courier_network_id_key",
+      "definition": "UNIQUE (courier_network_id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_guard_payee_journal_fkey",
+      "definition": "FOREIGN KEY (guard_payee_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_guard_payee_journal_key",
+      "definition": "UNIQUE (guard_payee_journal)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_guard_payer_journal_fkey",
+      "definition": "FOREIGN KEY (guard_payer_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_guard_payer_journal_key",
+      "definition": "UNIQUE (guard_payer_journal)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['scout'::text, 'manufacture'::text, 'guard'::text, 'courier'::text]))"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_output_item_id_fkey",
+      "definition": "FOREIGN KEY (output_item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_pkey",
+      "definition": "PRIMARY KEY (campaign_id, kind)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_scout_job_id_fkey",
+      "definition": "FOREIGN KEY (scout_job_id) REFERENCES intel_forecast_jobs(id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_scout_job_id_key",
+      "definition": "UNIQUE (scout_job_id)"
+    },
+    {
+      "table_name": "commercial_campaign_stages",
+      "name": "commercial_campaign_stages_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['pending'::text, 'prepared'::text, 'funded'::text, 'accepted'::text, 'completed'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_check",
+      "definition": "CHECK (expires_at > created_at)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_check1",
+      "definition": "CHECK (owner_account <> scout_account)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_check2",
+      "definition": "CHECK (owner_character <> scout_character)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_check3",
+      "definition": "CHECK (state = 'offered'::text AND activated_at IS NULL OR state <> 'offered'::text)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_check4",
+      "definition": "CHECK ((state = ANY (ARRAY['offered'::text, 'active'::text])) AND closed_at IS NULL AND closure_reason IS NULL AND closure_original IS NULL OR (state = ANY (ARRAY['completed'::text, 'cancelled'::text, 'expired'::text, 'suspended'::text])) AND closed_at IS NOT NULL AND closure_reason IS NOT NULL AND closure_original IS NOT NULL)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_closure_original_fkey",
+      "definition": "FOREIGN KEY (closure_original) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_closure_reason_check",
+      "definition": "CHECK (closure_reason IS NULL OR (closure_reason = ANY (ARRAY['owner_cancel'::text, 'provider_withdraw'::text, 'source_expiry'::text, 'original_dead'::text, 'estate_scope'::text, 'completed'::text])))"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_first_carrier_account_fkey",
+      "definition": "FOREIGN KEY (first_carrier_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_first_carrier_character_fkey",
+      "definition": "FOREIGN KEY (first_carrier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_guard_account_fkey",
+      "definition": "FOREIGN KEY (guard_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_guard_character_fkey",
+      "definition": "FOREIGN KEY (guard_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_manufacturer_account_fkey",
+      "definition": "FOREIGN KEY (manufacturer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_manufacturer_character_fkey",
+      "definition": "FOREIGN KEY (manufacturer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_owner_account_fkey",
+      "definition": "FOREIGN KEY (owner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_partnership_id_fkey",
+      "definition": "FOREIGN KEY (partnership_id) REFERENCES management_teams(partnership_id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_relationship_hash_check",
+      "definition": "CHECK (char_length(relationship_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_scout_account_fkey",
+      "definition": "FOREIGN KEY (scout_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_scout_character_fkey",
+      "definition": "FOREIGN KEY (scout_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_second_carrier_account_fkey",
+      "definition": "FOREIGN KEY (second_carrier_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_second_carrier_character_fkey",
+      "definition": "FOREIGN KEY (second_carrier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_stage_check",
+      "definition": "CHECK (stage = ANY (ARRAY['scout'::text, 'manufacture'::text, 'guard'::text, 'courier'::text, 'complete'::text]))"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'active'::text, 'completed'::text, 'cancelled'::text, 'expired'::text, 'suspended'::text]))"
+    },
+    {
+      "table_name": "commercial_campaigns",
+      "name": "commercial_campaigns_team_revision_check",
+      "definition": "CHECK (team_revision >= 1 AND team_revision <= 2147483647)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_event_id_attribution_id_key",
+      "definition": "UNIQUE (event_id, attribution_id)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_event_id_buyer_account_key",
+      "definition": "UNIQUE (event_id, buyer_account)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_event_id_fkey",
+      "definition": "FOREIGN KEY (event_id) REFERENCES event_markets(id)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_reward_cash_check",
+      "definition": "CHECK (reward_cash >= 0)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_reward_journal_fkey",
+      "definition": "FOREIGN KEY (reward_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_reward_journal_key",
+      "definition": "UNIQUE (reward_journal)"
+    },
+    {
+      "table_name": "event_market_participants",
+      "name": "event_market_participants_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['joined'::text, 'visited'::text, 'completed'::text, 'left'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "event_market_requests",
+      "name": "event_market_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "event_market_requests",
+      "name": "event_market_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['fund'::text, 'enroll'::text, 'venue'::text, 'withdraw'::text, 'join'::text, 'leave'::text, 'visit'::text, 'finish'::text, 'cancel'::text, 'expire'::text]))"
+    },
+    {
+      "table_name": "event_market_requests",
+      "name": "event_market_requests_event_id_fkey",
+      "definition": "FOREIGN KEY (event_id) REFERENCES event_markets(id)"
+    },
+    {
+      "table_name": "event_market_requests",
+      "name": "event_market_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "event_market_requests",
+      "name": "event_market_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "event_market_vendor_consents",
+      "name": "event_market_vendor_consents_event_id_fkey",
+      "definition": "FOREIGN KEY (event_id) REFERENCES event_markets(id)"
+    },
+    {
+      "table_name": "event_market_vendor_consents",
+      "name": "event_market_vendor_consents_pkey",
+      "definition": "PRIMARY KEY (event_id)"
+    },
+    {
+      "table_name": "event_market_vendor_consents",
+      "name": "event_market_vendor_consents_vendor_account_fkey",
+      "definition": "FOREIGN KEY (vendor_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "event_market_vendor_consents",
+      "name": "event_market_vendor_consents_vendor_character_fkey",
+      "definition": "FOREIGN KEY (vendor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "event_market_venue_consents",
+      "name": "event_market_venue_consents_event_id_fkey",
+      "definition": "FOREIGN KEY (event_id) REFERENCES event_markets(id)"
+    },
+    {
+      "table_name": "event_market_venue_consents",
+      "name": "event_market_venue_consents_pickup_account_fkey",
+      "definition": "FOREIGN KEY (pickup_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "event_market_venue_consents",
+      "name": "event_market_venue_consents_pickup_character_fkey",
+      "definition": "FOREIGN KEY (pickup_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "event_market_venue_consents",
+      "name": "event_market_venue_consents_pkey",
+      "definition": "PRIMARY KEY (event_id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_check",
+      "definition": "CHECK (host_account <> vendor_account AND host_account <> pickup_account AND vendor_account <> pickup_account AND host_character <> vendor_character AND host_character <> pickup_character AND vendor_character <> pickup_character)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_check1",
+      "definition": "CHECK (expires_at > created_at)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_check2",
+      "definition": "CHECK (funded_cash = (reward_cash * slots) AND remaining_cash >= 0 AND paid_cash >= 0 AND refunded_cash >= 0 AND (remaining_cash + paid_cash + refunded_cash) = funded_cash)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_host_account_fkey",
+      "definition": "FOREIGN KEY (host_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_host_character_fkey",
+      "definition": "FOREIGN KEY (host_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_pickup_account_fkey",
+      "definition": "FOREIGN KEY (pickup_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_pickup_character_fkey",
+      "definition": "FOREIGN KEY (pickup_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_refund_journal_fkey",
+      "definition": "FOREIGN KEY (refund_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_refund_journal_key",
+      "definition": "UNIQUE (refund_journal)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_reserve_journal_fkey",
+      "definition": "FOREIGN KEY (reserve_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_reserve_journal_key",
+      "definition": "UNIQUE (reserve_journal)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_reward_cash_check",
+      "definition": "CHECK (reward_cash >= 1 AND reward_cash <= 100000)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_slots_check",
+      "definition": "CHECK (slots >= 1 AND slots <= 3)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'active'::text, 'suspended'::text, 'closed'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_vendor_account_fkey",
+      "definition": "FOREIGN KEY (vendor_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "event_markets",
+      "name": "event_markets_vendor_character_fkey",
+      "definition": "FOREIGN KEY (vendor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_check",
+      "definition": "CHECK (expires_at > observed_at)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_check1",
+      "definition": "CHECK (used_count <= maximum_uses)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_discount_bps_check",
+      "definition": "CHECK (discount_bps >= 1 AND discount_bps <= 2000)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_maximum_discount_check",
+      "definition": "CHECK (maximum_discount >= 1 AND maximum_discount <= 100000)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_maximum_uses_check",
+      "definition": "CHECK (maximum_uses >= 1 AND maximum_uses <= 20)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_required_purchases_check",
+      "definition": "CHECK (required_purchases >= 2 AND required_purchases <= 5)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "merchant_loyalty_programs",
+      "name": "merchant_loyalty_programs_used_count_check",
+      "definition": "CHECK (used_count >= 0 AND used_count <= 20)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_buyer_paid_check",
+      "definition": "CHECK (buyer_paid >= 1 AND buyer_paid <= 1000000)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_check",
+      "definition": "CHECK ((buyer_paid + discount_cash) = gross_price)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_check1",
+      "definition": "CHECK ((seller_paid + host_fee) = buyer_paid)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_check2",
+      "definition": "CHECK (expires_at > observed_at)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_check3",
+      "definition": "CHECK (seller_account <> host_account AND seller_account <> buyer_account AND host_account <> buyer_account)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_check4",
+      "definition": "CHECK (seller_character <> host_character AND seller_character <> buyer_character AND host_character <> buyer_character)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_check5",
+      "definition": "CHECK (status = 'quoted'::text AND sale_witness IS NULL AND sale_receipt IS NULL OR status = 'consumed'::text AND sale_witness IS NOT NULL AND sale_receipt IS NOT NULL)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_consignment_id_fkey",
+      "definition": "FOREIGN KEY (consignment_id) REFERENCES consignments(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_discount_cash_check",
+      "definition": "CHECK (discount_cash >= 1 AND discount_cash <= 100000)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_gross_price_check",
+      "definition": "CHECK (gross_price >= 1 AND gross_price <= 1000000)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_host_account_fkey",
+      "definition": "FOREIGN KEY (host_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_host_character_fkey",
+      "definition": "FOREIGN KEY (host_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_host_fee_check",
+      "definition": "CHECK (host_fee >= 0 AND host_fee <= 200000)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_program_id_fkey",
+      "definition": "FOREIGN KEY (program_id) REFERENCES merchant_loyalty_programs(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_seller_paid_check",
+      "definition": "CHECK (seller_paid >= 0)"
+    },
+    {
+      "table_name": "merchant_loyalty_quotes",
+      "name": "merchant_loyalty_quotes_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['quoted'::text, 'consumed'::text]))"
+    },
+    {
+      "table_name": "merchant_loyalty_requests",
+      "name": "merchant_loyalty_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_requests",
+      "name": "merchant_loyalty_requests_check",
+      "definition": "CHECK (account_ref IS NULL OR account_ref = account_id)"
+    },
+    {
+      "table_name": "merchant_loyalty_requests",
+      "name": "merchant_loyalty_requests_check1",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL OR receipt IS NOT NULL AND account_ref IS NOT NULL AND original_character IS NOT NULL)"
+    },
+    {
+      "table_name": "merchant_loyalty_requests",
+      "name": "merchant_loyalty_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_loyalty_requests",
+      "name": "merchant_loyalty_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "merchant_loyalty_requests",
+      "name": "merchant_loyalty_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_check",
+      "definition": "CHECK (merchant_account <> host_account AND merchant_account <> publisher_account AND host_account <> publisher_account)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_check1",
+      "definition": "CHECK (merchant_character <> host_character AND merchant_character <> publisher_character AND host_character <> publisher_character)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_check2",
+      "definition": "CHECK (commission_cash = (escrow_cash + paid_cash + refunded_cash))"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_check3",
+      "definition": "CHECK ((state = ANY (ARRAY['offered'::text, 'active'::text])) AND escrow_cash = commission_cash AND paid_cash = 0 AND refunded_cash = 0 AND settlement IS NULL OR state = 'paid'::text AND escrow_cash = 0 AND paid_cash = commission_cash AND refunded_cash = 0 AND settlement IS NOT NULL OR (state = ANY (ARRAY['cancelled'::text, 'expired'::text, 'party_dead'::text])) AND escrow_cash = 0 AND paid_cash = 0 AND refunded_cash = commission_cash AND settlement IS NOT NULL)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_check4",
+      "definition": "CHECK ((state <> ALL (ARRAY['active'::text, 'paid'::text])) OR accepted_at IS NOT NULL)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_commission_cash_check",
+      "definition": "CHECK (commission_cash >= 1 AND commission_cash <= 1000000)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_consignment_hash_check",
+      "definition": "CHECK (char_length(consignment_hash) = 64)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_consignment_id_fkey",
+      "definition": "FOREIGN KEY (consignment_id) REFERENCES consignments(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_consignment_id_key",
+      "definition": "UNIQUE (consignment_id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_host_account_fkey",
+      "definition": "FOREIGN KEY (host_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_host_character_fkey",
+      "definition": "FOREIGN KEY (host_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_merchant_account_fkey",
+      "definition": "FOREIGN KEY (merchant_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_merchant_character_fkey",
+      "definition": "FOREIGN KEY (merchant_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_publisher_account_fkey",
+      "definition": "FOREIGN KEY (publisher_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_publisher_character_fkey",
+      "definition": "FOREIGN KEY (publisher_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_reserve_journal_fkey",
+      "definition": "FOREIGN KEY (reserve_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_reserve_journal_key",
+      "definition": "UNIQUE (reserve_journal)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "sale_attribution_campaigns",
+      "name": "sale_attribution_campaigns_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'active'::text, 'paid'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_campaign_ref_fkey",
+      "definition": "FOREIGN KEY (campaign_ref) REFERENCES sale_attribution_campaigns(id)"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND campaign_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND campaign_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "sale_attribution_requests",
+      "name": "sale_attribution_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "sale_attributions",
+      "name": "sale_attributions_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "sale_attributions",
+      "name": "sale_attributions_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "sale_attributions",
+      "name": "sale_attributions_campaign_hash_check",
+      "definition": "CHECK (char_length(campaign_hash) = 64)"
+    },
+    {
+      "table_name": "sale_attributions",
+      "name": "sale_attributions_campaign_id_buyer_account_key",
+      "definition": "UNIQUE (campaign_id, buyer_account)"
+    },
+    {
+      "table_name": "sale_attributions",
+      "name": "sale_attributions_campaign_id_fkey",
+      "definition": "FOREIGN KEY (campaign_id) REFERENCES sale_attribution_campaigns(id)"
+    },
+    {
+      "table_name": "sale_attributions",
+      "name": "sale_attributions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "sale_attributions",
+      "name": "sale_attributions_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_basket_ref_fkey",
+      "definition": "FOREIGN KEY (basket_ref) REFERENCES shopping_baskets(id)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND basket_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND basket_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "shopping_basket_requests",
+      "name": "shopping_basket_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_check",
+      "definition": "CHECK (buyer_account <> host_account AND buyer_character <> host_character)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_check1",
+      "definition": "CHECK (expires_at > observed_at)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_check2",
+      "definition": "CHECK (status = 'completed'::text AND settlement IS NOT NULL OR status <> 'completed'::text AND settlement IS NULL)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_host_account_fkey",
+      "definition": "FOREIGN KEY (host_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_host_character_fkey",
+      "definition": "FOREIGN KEY (host_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['quoted'::text, 'completed'::text, 'cancelled'::text]))"
+    },
+    {
+      "table_name": "shopping_baskets",
+      "name": "shopping_baskets_total_cash_check",
+      "definition": "CHECK (total_cash >= 2 AND total_cash <= 2000000)"
     }
   ],
   "removed": [
@@ -9505,6 +10505,221 @@
       "item_id",
       "receipt",
       "craft_key"
+    ],
+    "sale_attribution_campaigns": [
+      "id",
+      "consignment_id",
+      "consignment_hash",
+      "item_id",
+      "merchant_account",
+      "merchant_character",
+      "host_account",
+      "host_character",
+      "publisher_account",
+      "publisher_character",
+      "commission_cash",
+      "escrow_cash",
+      "paid_cash",
+      "refunded_cash",
+      "expires_at",
+      "source_hash",
+      "reserve_journal",
+      "state"
+    ],
+    "sale_attributions": [
+      "id",
+      "campaign_id",
+      "campaign_hash",
+      "buyer_account",
+      "buyer_character",
+      "created_at",
+      "source_hash"
+    ],
+    "sale_attribution_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id",
+      "request_json"
+    ],
+    "merchant_loyalty_programs": [
+      "id",
+      "seller_account",
+      "seller_character",
+      "required_purchases",
+      "discount_bps",
+      "maximum_discount",
+      "maximum_uses",
+      "used_count",
+      "observed_at",
+      "expires_at",
+      "source_hash",
+      "status"
+    ],
+    "merchant_loyalty_quotes": [
+      "id",
+      "program_id",
+      "program_hash",
+      "consignment_id",
+      "sale_hash",
+      "item_id",
+      "seller_account",
+      "seller_character",
+      "host_account",
+      "host_character",
+      "buyer_account",
+      "buyer_character",
+      "gross_price",
+      "buyer_paid",
+      "host_fee",
+      "seller_paid",
+      "discount_cash",
+      "qualification",
+      "observed_at",
+      "expires_at",
+      "source_hash",
+      "status"
+    ],
+    "merchant_loyalty_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id",
+      "request_json"
+    ],
+    "shopping_baskets": [
+      "id",
+      "buyer_account",
+      "buyer_character",
+      "host_account",
+      "host_character",
+      "lines",
+      "total_cash",
+      "observed_at",
+      "expires_at",
+      "source_hash",
+      "status"
+    ],
+    "shopping_basket_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id",
+      "request_json"
+    ],
+    "event_markets": [
+      "id",
+      "host_account",
+      "host_character",
+      "vendor_account",
+      "vendor_character",
+      "pickup_account",
+      "pickup_character",
+      "shop_id",
+      "shop_hash",
+      "source_json",
+      "source_hash",
+      "district",
+      "reward_cash",
+      "slots",
+      "funded_cash",
+      "remaining_cash",
+      "paid_cash",
+      "refunded_cash",
+      "reserve_journal",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "event_market_vendor_consents": [
+      "event_id",
+      "vendor_account",
+      "vendor_character",
+      "source_hash",
+      "request_hash",
+      "created_at"
+    ],
+    "event_market_venue_consents": [
+      "event_id",
+      "pickup_account",
+      "pickup_character",
+      "source_hash",
+      "request_hash",
+      "created_at"
+    ],
+    "event_market_participants": [
+      "id",
+      "event_id",
+      "buyer_account",
+      "buyer_character",
+      "attribution_id",
+      "attribution_hash",
+      "campaign_id",
+      "campaign_hash",
+      "item_id",
+      "source_hash",
+      "state",
+      "created_at",
+      "reward_cash"
+    ],
+    "event_market_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "action",
+      "original_character",
+      "event_id",
+      "request_json",
+      "receipt",
+      "created_at"
+    ],
+    "commercial_campaigns": [
+      "id",
+      "partnership_id",
+      "relationship_hash",
+      "team_revision",
+      "business_id",
+      "owner_account",
+      "owner_character",
+      "scout_account",
+      "scout_character",
+      "manufacturer_account",
+      "manufacturer_character",
+      "guard_account",
+      "guard_character",
+      "first_carrier_account",
+      "first_carrier_character",
+      "second_carrier_account",
+      "second_carrier_character",
+      "source_hash",
+      "source_json",
+      "state",
+      "stage",
+      "created_at",
+      "expires_at"
+    ],
+    "commercial_campaign_requests": [
+      "account_id",
+      "key_hash",
+      "action",
+      "body_hash",
+      "original_character",
+      "campaign_id",
+      "receipt",
+      "acknowledged_at"
+    ],
+    "commercial_campaign_roles": [
+      "campaign_id",
+      "role",
+      "account_id",
+      "original_character",
+      "state"
+    ],
+    "commercial_campaign_stages": [
+      "campaign_id",
+      "kind",
+      "state",
+      "proof_json"
     ]
   }
 }

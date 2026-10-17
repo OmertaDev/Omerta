@@ -1,3 +1,5 @@
+export const eventMarketCompletionRevision='event_market_v1';
+export const commercialCampaignCompletionRevision = 'commercial_campaign_v1';
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
 import { recordMeeting } from './contacts.js';
@@ -1198,6 +1200,8 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     if (action.ch.alive !== false) await persistCharacter(client, action.ch);
     await persistKitchen(client, action.ch, action.owned);
     await persistAccount(client, accountId, action.acct);
+    await(await import('./eventmarkets.js')).finalizeEventMarketCharacter(client,action.result);
+    await (await import('./commercialcampaigns.js')).finalizeCommercialCampaignCharacter(client, action.result);
     return action;
     } catch (error) { throw deadlockToRetry(error); }
     });
@@ -1488,6 +1492,9 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
       await persistKitchen(client, victim, victimOwned);
     }
     for (const [accId, a] of Object.entries(accts)) await persistAccount(client, accId, a);
+    await(await import('./mobileshops.js')).finalizeEventVisitPair(client,result);
+    await(await import('./eventmarkets.js')).finalizeEventMarketCharacter(client,result);
+    await (await import('./commercialcampaigns.js')).finalizeCommercialCampaignCharacter(client, result);
     return { ch, acct, owned, result };
     } catch (error) { throw deadlockToRetry(error); }
     });

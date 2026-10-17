@@ -99,7 +99,7 @@ export async function retireMobileShopSource(c, listingId, disposition, estateSc
   if (disposition==='estate_scattered' ? !!source : source?.status!==disposition) fail('terminal_source');
   await c.query("UPDATE mobile_shops SET status=$2 WHERE listing_id=$1 AND status='active'",[listingId,disposition]);
 }
-async function execute(c, ch, seller, h, account, terms, keyHash, bodyHash) {
+async function execute(c, ch, seller, h, account, terms, keyHash, bodyHash,eventToken=null) {
   assertItemTransaction(c);
   const old=await replay(c,account,keyHash,bodyHash); if(old)return old;
   if (!ch.alive || ch.is_npc || ch.account_id!==account || (seller && (!seller.alive || seller.is_npc || seller.account_id===account))) fail('original_actor');
@@ -128,6 +128,7 @@ async function execute(c, ch, seller, h, account, terms, keyHash, bodyHash) {
       row=(await c.query('SELECT * FROM mobile_shops WHERE id=$1',[terms.shopId])).rows[0];
       if(!row || row.source_hash!==terms.sourceHash || (terms.action!=='buy' && row.seller_character!==ch.id) || (terms.action==='buy' && row.seller_character!==seller?.id))fail('source_changed');
       if(terms.action==='buy') {
+        await(await Event()).assertEventMarketIngress(c,account,'gin',row.id,eventToken);
         const cargoBefore=Number(h.owned.cargo.gin||0), remainingBefore=Number(row.remaining_quantity);
         const before=(await c.query('SELECT cash FROM characters WHERE id=$1',[seller.id])).rows[0];
         canonical=await M.buyListing(ch,row.listing_id,terms.quantity,c,mh);
@@ -213,3 +214,38 @@ export async function collectMobileShopIssues(c){
   }
   return issues;
 }
+
+// Fixed N19 completion leaves. Opaque roots originate only in the actual two-party G callback.
+export const eventMarketHookRevision='event_market_v1';
+const eventVisitRoots=new WeakMap(),eventVisitProofs=new WeakMap(),eventVisitResults=new WeakMap();
+const Event=()=>import('./eventmarkets.js');
+export async function eventShopReference(c,shopId,digest){assertItemTransaction(c);return eventShopHistoryReference(c,shopId,digest);}
+export async function eventShopHistoryReference(c,shopId,digest){
+  const r=(await c.query('SELECT * FROM mobile_shops WHERE id=$1',[identity(shopId)])).rows[0];
+  if(!r||r.source_hash!==digest||sourceHash(r)!==digest||(await collectMobileShopIssues(c)).some(x=>x.shopId===r.id))fail('event_source');
+  return{shopId:r.id,sourceHash:r.source_hash,listingId:r.listing_id,district:r.district,seller:{accountId:r.seller_account,characterId:r.seller_character},initialQuantity:Number(r.initial_quantity),remainingQuantity:Number(r.remaining_quantity),expiresAt:new Date(r.expires_at).toISOString(),state:r.status};
+}
+export async function assertEventVisitRoot(c,issuer){assertItemTransaction(c);const s=eventVisitRoots.get(issuer);if(!s?.active||s.c!==c||s.transaction!==itemTransactionIdentity(c))fail('event_root');return s;}
+export async function eventShopSaleWitness(c,account,keyHash){
+  const q=(await c.query('SELECT * FROM mobile_shop_requests WHERE account_id=$1 AND key_hash=$2',[account,keyHash])).rows[0],p=q?.receipt;
+  if(!q||p?.action!=='buy'||p.ok!==true||p.quantity!==1||!Array.isArray(q.journal_ids)||q.journal_ids.length!==3||new Set(q.journal_ids).size!==3)fail('event_sale');
+  const r=(await c.query('SELECT * FROM mobile_shops WHERE id=$1',[q.shop_id])).rows[0];if(!r||r.source_hash!==sourceHash(r)||p.shop.shopId!==r.id||p.shop.sourceHash!==r.source_hash||p.shop.listingId!==r.listing_id||p.paid!==Number(r.unit_price)||p.shop.initialQuantity!==Number(r.initial_quantity)||p.shop.unitPrice!==Number(r.unit_price)||p.shop.district!==r.district||p.shop.sellerCharacterId!==r.seller_character||p.shop.good!=='gin'||!integer(p.shop.remainingQuantity,0,Number(r.initial_quantity)-1))fail('event_sale');
+  const buyer=(await c.query('SELECT id,account_id,is_npc FROM characters WHERE id=$1',[q.original_character])).rows[0],seller=(await c.query('SELECT id,account_id,is_npc FROM characters WHERE id=$1',[r.seller_character])).rows[0];if(!buyer||!seller||buyer.is_npc||seller.is_npc||buyer.account_id!==account||seller.account_id!==r.seller_account||buyer.account_id===seller.account_id)fail('event_sale');
+  const take=Math.ceil(p.paid*MARKET.TAKE_BPS/10000),expected=[['market:bid',buyer.id,-p.paid],['market:sale',seller.id,p.paid-take],['market:take',null,-take]],legs=[];
+  for(let i=0;i<3;i++){const x=(await c.query('SELECT * FROM transactions WHERE id=$1',[q.journal_ids[i]])).rows[0],e=expected[i];if(!x||x.reason!==e[0]||(x.character_id??null)!==e[1]||x.currency!=='cash'||Number(x.amount)!==e[2]||x.account_id!==null)fail('event_sale');legs.push(x);}
+  if(q.body_hash!==hash(mobileShopTerms('buy',{shopId:r.id,sourceHash:r.source_hash,quantity:1,consent:true})))fail('event_sale');
+  return{shopId:r.id,sourceHash:r.source_hash,listingId:r.listing_id,keyHash,quantity:1,paid:p.paid,remainingQuantity:p.shop.remainingQuantity,buyer:{accountId:account,characterId:buyer.id},seller:{accountId:r.seller_account,characterId:seller.id},transactionIds:q.journal_ids,observedAt:new Date(Math.max(...legs.map(x=>+new Date(x.at)))).toISOString()};
+}
+export async function assertFreshEventShopSale(c,proof,token){assertItemTransaction(c);const s=eventVisitProofs.get(proof);if(!s||s.used||s.c!==c||s.transaction!==itemTransactionIdentity(c)||s.token!==token)fail('event_sale_proof');await(await Event()).assertEventShopScope(c,token);const w=await eventShopSaleWitness(c,s.account,s.keyHash);if(JSON.stringify(w)!==JSON.stringify(s.witness))fail('event_sale_proof');s.used=true;return w;}
+export async function runEventShopVisit(pool,account,body,key){
+  if(!dbCaps.skipLocked)fail('transactional_backend_required');if(M.mobileShopHookRevision!==MOBILE_SHOPS.hookRevision)fail('canonical_hooks_required');const E=await Event(),d=await withItemRead(pool,c=>E.eventMarketVisitDescriptor(c,account,body,key));if(d.prior)return d.prior;
+  const{character,...receipt}=await G.withTwoCharacters(pool,account,d.sellerCharacter,async(buyer,seller,c,h)=>{
+    const issuer=Object.freeze({}),s={active:true,c,transaction:itemTransactionIdentity(c),account,input:d.input,key,buyer,seller};eventVisitRoots.set(issuer,s);
+    try{const token=await E.beginEventShopVisit(c,issuer),terms=mobileShopTerms('buy',{shopId:d.shopId,sourceHash:d.shopHash,quantity:1,consent:true}),keyHash=hash([account,'event-visit:'+key]),before=Number(h.owned.cargo.gin||0),buyerCash=Number(buyer.cash),sellerCash=Number(seller.cash);
+      const sale=await execute(c,buyer,seller,h,account,terms,keyHash,hash(terms),token);const witness=await eventShopSaleWitness(c,account,keyHash);if(Number(h.owned.cargo.gin||0)!==before+1||Number(buyer.cash)!==buyerCash-sale.paid||Number(seller.cash)!==sellerCash+sale.paid-Math.ceil(sale.paid*MARKET.TAKE_BPS/10000))fail('event_cargo');
+      const proof=Object.freeze({});eventVisitProofs.set(proof,{c,transaction:itemTransactionIdentity(c),token,account,keyHash,witness,used:false});const result=await E.recordEventShopVisit(c,token,proof);eventVisitResults.set(result,{c,transaction:itemTransactionIdentity(c),issuer,token,buyer,seller,cargo:before+1,buyerCash:Number(buyer.cash),sellerCash:Number(seller.cash)});return result;
+    }catch(e){s.active=false;poisonItemTransaction(c,e);throw e;}
+  },{meet:false});return receipt;
+}
+// Ordinary G calls this fixed leaf after both real character/cargo/account ACKs. Unbranded results no-op.
+export async function finalizeEventVisitPair(c,result){const s=eventVisitResults.get(result);if(!s)return;try{assertItemTransaction(c);if(s.c!==c||s.transaction!==itemTransactionIdentity(c))fail('event_completion');await assertEventVisitRoot(c,s.issuer);const cargo=(await c.query("SELECT qty FROM character_cargo WHERE character_id=$1 AND good_id='gin'",[s.buyer.id])).rows[0];for(const[a,cash]of[[s.buyer,s.buyerCash],[s.seller,s.sellerCash]]){const row=(await c.query('SELECT cash,alive,account_id FROM characters WHERE id=$1',[a.id])).rows[0];if(!row?.alive||row.account_id!==a.account_id||Number(row.cash)!==cash)fail('event_completion');}if(Number(cargo?.qty||0)!==s.cargo)fail('event_cargo');await(await Event()).finishEventShopVisit(c,s.token,result);}catch(e){poisonItemTransaction(c,e);throw e;}finally{eventVisitResults.delete(result);const r=eventVisitRoots.get(s.issuer);if(r)r.active=false;}}

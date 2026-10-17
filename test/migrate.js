@@ -727,6 +727,22 @@ const DISPOSITION = {
   delivery_loan_requests: 'ledger', // consent and replay history; canonical loan/commitment estate paths own all value and terminal debt releases the binding
   supply_tenders: 'ledger', // immutable buyer/order/award provenance; escrow remains in canonical market/depot/delivery estate paths, never inherited
   supply_tender_offers: 'ledger', // signed supplier terms and acceptance history retain the original character; no separate escrow or authority passes to an heir
+  sale_attribution_campaigns: 'escrow', // original merchant commission reserve refunds at genuine estate-start before exact cash; no heir campaign authority
+  sale_attributions: 'ledger', // immutable original buyer attribution and canonical sale provenance retain identity; commission backing remains in the original campaign
+  sale_attribution_requests: 'ledger', // original actor/account/body/key ACKs survive without fresh heir sale or commission rights
+  merchant_loyalty_programs: 'metadata', // original seller discount terms hold no cash; fresh action and close require the living original seller
+  merchant_loyalty_quotes: 'metadata', // frozen original buyer/seller/host discount quotes hold no cash; only canonical original-party purchase settles actual price
+  merchant_loyalty_requests: 'ledger', // original quote and sale ACKs remain immutable; canonical consignment and return books retain all custody
+  shopping_baskets: 'metadata', // two-line original buyer quote holds no separate cash or UID escrow; checkout revalidates four living originals
+  shopping_basket_requests: 'ledger', // original buyer and paired canonical sale ACKs survive without fresh heir checkout authority
+  event_markets: 'escrow', // original host funds finite reward reserve; genuine estate refunds own remainder and suspends dead-provider events
+  event_market_vendor_consents: 'ledger', // signed original vendor/source/request lineage remains historical and grants heirs no enrollment or sale authority
+  event_market_venue_consents: 'ledger', // signed original pickup/source/request lineage remains historical and grants heirs no venue or completion authority
+  event_market_participants: 'special', // actual estate marks original pending participation party_dead; earned reward history stays fixed and unearned backing remains host event escrow
+  event_market_requests: 'ledger', // immutable original participant/provider/host ACKs retain source and paid reward provenance without heir claims
+  commercial_campaigns: 'special', // genuine estate retires owner-offered or signed active metadata; original IDs and independent commission/courier recovery remain intact
+  commercial_campaign_roles: 'special', // genuine retirement closes original active role consent without replacing identities; unsigned invitations grant heirs no authority
+  commercial_campaign_requests: 'ledger', // original six-party action and consent ACKs survive metadata retirement; no inherited performance or source authority
 };
 // SCOPE: this guard covers the literal `character_id` column convention (42 tables). Tables that
 // reference a character via a DIFFERENTLY-NAMED column (npc_hits payer/target, searches hunter/target,

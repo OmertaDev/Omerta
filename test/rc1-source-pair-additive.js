@@ -402,8 +402,8 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   for(const[name,fn]of families.slice(1)){A.throws(()=>M[fn](before,after,p,c),e=>e?.code==='ERR_ASSERTION');A.throws(()=>qualify(before,after,{...p,source:M[name].predecessor},c),e=>e?.code==='ERR_ASSERTION');}
   const pairSource=(await F.readFile(new URL('../tools/rc1-source-pair.js',import.meta.url),'utf8')).replaceAll('\r\n','\n');
   const eqStart=pairSource.indexOf('  const equal = (a, b, label, additive = false) => {'),eqEnd=pairSource.indexOf('\n  try {',eqStart);A(eqStart>0&&eqEnd>eqStart);const equalBody=pairSource.slice(eqStart,eqEnd),symbols=families.flat();
-  const buildEqual=(source,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate','ROOT_MARKET_COMBINED_ADDITIVE_PAIR','qualifyRootMarketCombinedAdditiveBootstrap',...symbols,equalBody+'\nreturn equal;')(
-    A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{}, {...p,source},c,M.ROOT_MARKET_COMBINED_ADDITIVE_PAIR,M.qualifyRootMarketCombinedAdditiveBootstrap,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
+  const buildEqual=(source,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate','COMMERCE_ADDITIVE_PAIR','qualifyCommerceAdditiveBootstrap','ROOT_MARKET_COMBINED_ADDITIVE_PAIR','qualifyRootMarketCombinedAdditiveBootstrap',...symbols,equalBody+'\nreturn equal;')(
+    A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{}, {...p,source},c,M.COMMERCE_ADDITIVE_PAIR,M.qualifyCommerceAdditiveBootstrap,M.ROOT_MARKET_COMBINED_ADDITIVE_PAIR,M.qualifyRootMarketCombinedAdditiveBootstrap,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
   let dispatch=0,strict=0;
   for(const[name,fn]of families)for(const label of['upgrade preserves acknowledged state','upgrade replay creates no new effect']){
     const calls=[],equal=buildEqual(M[name].predecessor,true,calls);equal(before,after,label,true);A.deepEqual(calls,[fn]);dispatch++;
@@ -487,8 +487,8 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   for(const[name,fn]of families.slice(1)){A.throws(()=>M[fn](before,after,p,c),e=>e?.code==='ERR_ASSERTION');A.throws(()=>qualify(before,after,{...p,source:M[name].predecessor},c),e=>e?.code==='ERR_ASSERTION');}
   const pairSource=(await F.readFile(new URL('../tools/rc1-source-pair.js',import.meta.url),'utf8')).replaceAll('\r\n','\n');
   const eqStart=pairSource.indexOf('  const equal = (a, b, label, additive = false) => {'),eqEnd=pairSource.indexOf('\n  try {',eqStart);A(eqStart>0&&eqEnd>eqStart);const equalBody=pairSource.slice(eqStart,eqEnd),symbols=families.flat();
-  const buildEqual=(source,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate','ROOT_MARKET_COMBINED_ADDITIVE_PAIR','qualifyRootMarketCombinedAdditiveBootstrap',...symbols,equalBody+'\nreturn equal;')(
-    A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{}, {...p,source},c,M.ROOT_MARKET_COMBINED_ADDITIVE_PAIR,M.qualifyRootMarketCombinedAdditiveBootstrap,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
+  const buildEqual=(source,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate','COMMERCE_ADDITIVE_PAIR','qualifyCommerceAdditiveBootstrap','ROOT_MARKET_COMBINED_ADDITIVE_PAIR','qualifyRootMarketCombinedAdditiveBootstrap',...symbols,equalBody+'\nreturn equal;')(
+    A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{}, {...p,source},c,M.COMMERCE_ADDITIVE_PAIR,M.qualifyCommerceAdditiveBootstrap,M.ROOT_MARKET_COMBINED_ADDITIVE_PAIR,M.qualifyRootMarketCombinedAdditiveBootstrap,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
   let dispatch=0,strict=0;
   for(const[name,fn]of families)for(const label of['upgrade preserves acknowledged state','upgrade replay creates no new effect']){
     const calls=[],equal=buildEqual(M[name].predecessor,true,calls);equal(before,after,label,true);A.deepEqual(calls,[fn]);dispatch++;
@@ -575,8 +575,8 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   for(const[name,fn]of families.slice(1)){A.throws(()=>M[fn](before,after,p,c),e=>e?.code==='ERR_ASSERTION');A.throws(()=>qualify(before,after,{...p,source:M[name].predecessor},c),e=>e?.code==='ERR_ASSERTION');}
   const pairSource=(await F.readFile(new URL('../tools/rc1-source-pair.js',import.meta.url),'utf8')).replaceAll('\r\n','\n');
   const eqStart=pairSource.indexOf('  const equal = (a, b, label, additive = false) => {'),eqEnd=pairSource.indexOf('\n  try {',eqStart);A(eqStart>0&&eqEnd>eqStart);const equalBody=pairSource.slice(eqStart,eqEnd),symbols=families.flat();
-  const buildEqual=(source,spy,calls,current=c)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate',...symbols,equalBody+'\nreturn equal;')(
-    A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{}, {...p,source},current,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
+  const buildEqual=(source,spy,calls,current=c)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate','COMMERCE_ADDITIVE_PAIR','qualifyCommerceAdditiveBootstrap',...symbols,equalBody+'\nreturn equal;')(
+    A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{}, {...p,source},current,M.COMMERCE_ADDITIVE_PAIR,M.qualifyCommerceAdditiveBootstrap,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
   let dispatch=0,strict=0;
   for(const[name,fn]of families.filter(([name])=>name!=='ROOT_MARKET_COMBINED_ADDITIVE_PAIR'))for(const label of['upgrade preserves acknowledged state','upgrade replay creates no new effect']){
     const calls=[],equal=buildEqual(M[name].predecessor,true,calls);equal(before,after,label,true);A.deepEqual(calls,[fn]);dispatch++;
@@ -640,7 +640,7 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   A.equal(families.length,12);A.deepEqual(Object.keys(families),Array.from({length:12},(_,i)=>String(i)));for(const pair of families){A(Array.isArray(pair));A.equal(pair.length,2);A.equal(Object.keys(pair).length,2);A.equal(typeof M[pair[1]],'function');}
   for(const[name,fn]of families.slice(1)){A.throws(()=>M[fn](before,after,p,c),e=>e?.code==='ERR_ASSERTION');if(M[name].predecessor!==pin.predecessor)A.throws(()=>qualify(before,after,{...p,source:M[name].predecessor},c),e=>e?.code==='ERR_ASSERTION');}
   const pairSource=(await F.readFile(new URL('../tools/rc1-source-pair.js',import.meta.url),'utf8')).replaceAll('\r\n','\n'),start=pairSource.indexOf('  const equal = (a, b, label, additive = false) => {'),end=pairSource.indexOf('\n  try {',start);A(start>0&&end>start);
-  const build=(current,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate',...families.flat(),pairSource.slice(start,end)+'\nreturn equal;')(A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{},p,current,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
+  const build=(current,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate','COMMERCE_ADDITIVE_PAIR','qualifyCommerceAdditiveBootstrap',...families.flat(),pairSource.slice(start,end)+'\nreturn equal;')(A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{},p,current,M.COMMERCE_ADDITIVE_PAIR,M.qualifyCommerceAdditiveBootstrap,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
   let dispatch=0,strict=0;
   for(const label of ['upgrade preserves acknowledged state','upgrade replay creates no new effect']){const calls=[];build(c,true,calls)(before,after,label,true);A.deepEqual(calls,['qualifyRootMarketCombinedAdditiveBootstrap']);build(c,false,[])(before,after,label,true);A.throws(()=>build(c,false,[])(before,after,label,false));dispatch++;}
   const bad=structuredClone(c);bad.rootMarketCombinedAdditiveSource.tree='0'.repeat(64);for(const label of ['upgrade preserves acknowledged state','upgrade replay creates no new effect'])A.throws(()=>build(bad,false,[])(before,after,label,true));
@@ -654,4 +654,58 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   for(const file of ['src/customervaults.js','src/crossdocking.js','public/index.html','tools/mobile.js','schema.sql','package.json','.github/workflows/ci.yml','test/lib/phase2-architecture-upgrade-catalog.json'])A.notEqual(M.sourcePairReviewedTreeHash([...records,record(file)]),hash);
   for(const file of ['tools/rc1-source-pair.js','test/rc1-source-pair-additive.js','docs/rc1-source-pair-additive-review.md',...M.ADDITIVE_KNOWLEDGE_OUTPUTS])A.equal(M.sourcePairReviewedTreeHash([...records,record(file)]),hash);
   console.log('rc1-source-pair combined Root+market EMPTY bootstrap PASS: '+negatives+' refusals; '+dispatch+' exact selectors; '+strict+' strict phases;14EMPTY/159structural/144NN; no native, financial or deployment clearance');
+}
+
+{
+  const A=(await import('node:assert/strict')).default,F=await import('node:fs/promises'),{execFileSync}=await import('node:child_process'),{canonicalJson,sha256}=await import('../tools/rc1-native-proof.js');
+  const M=await import('../tools/rc1-source-pair.js'),pin=M.COMMERCE_ADDITIVE_PAIR,qualify=M.qualifyCommerceAdditiveBootstrap;
+  const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:32*1024*1024});
+  const catalog=JSON.parse(git('show',pin.reviewedCandidate+':test/lib/phase2-architecture-upgrade-catalog.json')),old=JSON.parse(git('show',pin.predecessor+':test/lib/phase2-architecture-upgrade-catalog.json'));
+  A.equal(old.added.length,1475);A.equal(catalog.added.length,1675);A.deepEqual(catalog.added.slice(0,1475),old.added);
+  const restored={...catalog,added:catalog.added.slice(0,1475),notNullColumns:{...catalog.notNullColumns}};
+  for(const name of pin.tables){A(!Object.hasOwn(old.notNullColumns,name));delete restored.notNullColumns[name];}A.deepEqual(restored,old,'All old catalog metadata, removed rows, ordered rows and required maps preserved');
+  A.equal(pin.tables.length,17);A.equal(pin.constraints,200);A.equal(pin.notNull,181);
+  const catalogTables=Object.fromEntries(pin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]}]));
+  const p={source:pin.predecessor,commerceAdditiveSource:{}},c={source:pin.reviewedCandidate,commerceAdditiveSource:{catalogTables}};
+  for(const[identity,side]of[[p,'predecessor'],[c,'candidate']]){
+    const revision=side==='predecessor'?pin.predecessor:pin.reviewedCandidate;
+    for(const field of['tree','schema','catalog'])identity.commerceAdditiveSource[field]=pin[side+field[0].toUpperCase()+field.slice(1)];
+    A.equal(M.sourcePairReviewedTreeHash(git('ls-tree','-r','-z',revision).split('\0').filter(Boolean)),pin[side+'Tree']);
+    A.equal(sha256(git('show',revision+':schema.sql')),pin[side+'Schema']);A.equal(sha256(git('show',revision+':test/lib/phase2-architecture-upgrade-catalog.json')),pin[side+'Catalog']);
+  }
+  const oldSchema=git('show',pin.predecessor+':schema.sql'),oldTables=[...oldSchema.replace(/\/\*[\s\S]*?\*\//g,'').replace(/--[^\n]*/g,'').matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-z_][a-z0-9_]*)\s*\(/gi)].map(r=>r[1]).sort();A.equal(oldTables.length,555);A.equal(new Set(oldTables).size,555);
+  const before={tables:Object.fromEntries(oldTables.map(name=>[name,['{"original_ack":true}']])),sequences:[{sequencename:'item_events_sequence_seq',last_value:'10',is_called:true,start_value:'1',increment_by:'1',min_value:'1',max_value:'9223372036854775807',cache_size:'1',cycle:false}]};before.tables.unknown_existing_custody=['{"opaque":1}','{"opaque":2}'];
+  const after=structuredClone(before);for(const name of pin.tables){A(!Object.hasOwn(before.tables,name));after.tables[name]=[];}
+  const result=qualify(before,after,p,c);A.equal(result.relation,'REVIEWED_COMMERCE_SEVENTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');A.deepEqual(result.addedEmptyTables,pin.tables);A(result.predecessorRowsExact&&result.allSequencesExact);A.notEqual(result.beforeNormalizedSha256,result.afterNormalizedSha256);
+  let negatives=0;const reject=mutate=>{const a=structuredClone(before),b=structuredClone(after),previous=structuredClone(p),current=structuredClone(c);mutate(a,b,previous,current);A.throws(()=>qualify(a,b,previous,current),e=>e?.code==='ERR_ASSERTION');negatives++;};
+  for(const name of pin.tables){
+    reject((_a,b)=>{delete b.tables[name];});reject((_a,b)=>{b.tables[name]={};});reject((_a,b)=>{b.tables[name]=['{"not_empty":true}'];});
+    for(let i=0;i<catalogTables[name].constraints.length;i++){
+      for(const field of ['table_name','name','definition','unknown'])reject((_a,_b,_p,c)=>{c.commerceAdditiveSource.catalogTables[name].constraints[i][field]='unknown';});
+      reject((_a,_b,_p,c)=>{c.commerceAdditiveSource.catalogTables[name].constraints.splice(i,1);});reject((_a,_b,_p,c)=>{c.commerceAdditiveSource.catalogTables[name].constraints.push(c.commerceAdditiveSource.catalogTables[name].constraints[i]);});
+    }
+    for(let i=0;i<catalogTables[name].notNullColumns.length;i++)for(const op of ['missing','renamed','duplicated'])reject((_a,_b,_p,c)=>{const cols=c.commerceAdditiveSource.catalogTables[name].notNullColumns;if(op==='missing')cols.splice(i,1);else if(op==='renamed')cols[i]+='_unknown';else cols.push(cols[i]);});
+  }
+  for(const side of ['predecessor','candidate'])for(const field of ['tree','schema','catalog'])reject((_a,_b,p,c)=>{(side==='predecessor'?p:c).commerceAdditiveSource[field]='0'.repeat(64);});
+  reject((_a,_b,p)=>{p.source='0'.repeat(40);});reject((_a,_b,_p,c)=>{c.source='unknown';});reject((_a,_b,_p,c)=>{delete c.commerceAdditiveSource;});reject((_a,_b,_p,c)=>{c.commerceAdditiveSource.catalogTables.unknown={constraints:[],notNullColumns:[]};});reject((_a,b)=>{b.tables.unknown_added=[];});
+  for(const name of Object.keys(before.tables)){reject((_a,b)=>{delete b.tables[name];});reject((_a,b)=>{b.tables[name]=[...b.tables[name],'{"changed":true}'];});}
+  for(const field of Object.keys(before.sequences[0])){reject((_a,b)=>{delete b.sequences[0][field];});reject((_a,b)=>{b.sequences[0][field]='unknown';});}reject((_a,b)=>{b.sequences.push({sequencename:'unknown',last_value:null});});
+  const families=[["COMMERCE_ADDITIVE_PAIR","qualifyCommerceAdditiveBootstrap"],["FIRST_FIVE_ADDITIVE_PAIR","qualifyFirstFiveAdditiveBootstrap"],["SECOND_BATCH_ADDITIVE_PAIR","qualifySecondBatchAdditiveBootstrap"],["THIRD_BATCH_ADDITIVE_PAIR","qualifyThirdBatchAdditiveBootstrap"],["FOURTH_BATCH_ADDITIVE_PAIR","qualifyFourthBatchAdditiveBootstrap"],["COMMERCIAL_MAIN_ADDITIVE_PAIR","qualifyCommercialMainAdditiveBootstrap"],["FIFTH_BATCH_ADDITIVE_PAIR","qualifyFifthBatchAdditiveBootstrap"],["AUTONOMY_MAIN_ADDITIVE_PAIR","qualifyAutonomyMainAdditiveBootstrap"],["ENTERPRISE_ADDITIVE_PAIR","qualifyEnterpriseAdditiveBootstrap"],["ROOT_MARKET_COMBINED_ADDITIVE_PAIR","qualifyRootMarketCombinedAdditiveBootstrap"],["MARKET_OPERATIONS_ADDITIVE_PAIR","qualifyMarketOperationsAdditiveBootstrap"],["NEXT_LAYER_ADDITIVE_PAIR","qualifyNextLayerAdditiveBootstrap"],["NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR","qualifyNextThirtyFirstFiveAdditiveBootstrap"]];
+  A.equal(families.length,13);A.deepEqual(Object.keys(families),Array.from({length:13},(_,i)=>String(i)));for(const pair of families){A(Array.isArray(pair));A.equal(pair.length,2);A.equal(Object.keys(pair).length,2);A.equal(typeof M[pair[1]],'function');}
+  for(const[name,fn]of families.slice(1)){A.throws(()=>M[fn](before,after,p,c),e=>e?.code==='ERR_ASSERTION');if(M[name].predecessor!==pin.predecessor)A.throws(()=>qualify(before,after,{...p,source:M[name].predecessor},c),e=>e?.code==='ERR_ASSERTION');}
+  const pairSource=(await F.readFile(new URL('../tools/rc1-source-pair.js',import.meta.url),'utf8')).replaceAll('\r\n','\n'),start=pairSource.indexOf('  const equal = (a, b, label, additive = false) => {'),end=pairSource.indexOf('\n  try {',start);A(start>0&&end>start);
+  const build=(current,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate',...families.flat(),pairSource.slice(start,end)+'\nreturn equal;')(A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{},p,current,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
+  let dispatch=0,strict=0;
+  for(const label of ['upgrade preserves acknowledged state','upgrade replay creates no new effect']){const calls=[];build(c,true,calls)(before,after,label,true);A.deepEqual(calls,['qualifyCommerceAdditiveBootstrap']);build(c,false,[])(before,after,label,true);A.throws(()=>build(c,false,[])(before,after,label,false));dispatch++;}
+  const bad=structuredClone(c);bad.commerceAdditiveSource.tree='0'.repeat(64);for(const label of ['upgrade preserves acknowledged state','upgrade replay creates no new effect'])A.throws(()=>build(bad,false,[])(before,after,label,true));
+  for(const label of ['rollback preserves acknowledged state','rollback replay creates no new effect','second upgrade preserves acknowledged state']){
+    build(c,false,[])(after,structuredClone(after),label,false);A.throws(()=>build(c,false,[])(before,after,label,true));strict++;
+    for(const name of Object.keys(after.tables)){const changed=structuredClone(after);changed.tables[name]=[...changed.tables[name],'{"phase":true}'];A.throws(()=>build(c,false,[])(after,changed,label,false));strict++;}
+    for(const field of Object.keys(after.sequences[0])){const changed=structuredClone(after);changed.sequences[0][field]='phase';A.throws(()=>build(c,false,[])(after,changed,label,false));strict++;}
+    const unknown=structuredClone(after);unknown.tables.unknown_after_rollback=[];A.throws(()=>build(c,false,[])(after,unknown,label,false));strict++;
+  }
+  const records=['100644 blob '+'1'.repeat(40)+'\tsrc/existing.js'],hash=M.sourcePairReviewedTreeHash(records),record=file=>'100644 blob '+'2'.repeat(40)+'\t'+file;
+  for(const file of ['src/customervaults.js','src/crossdocking.js','public/index.html','tools/mobile.js','schema.sql','package.json','.github/workflows/ci.yml','test/lib/phase2-architecture-upgrade-catalog.json'])A.notEqual(M.sourcePairReviewedTreeHash([...records,record(file)]),hash);
+  for(const file of ['tools/rc1-source-pair.js','test/rc1-source-pair-additive.js','docs/rc1-source-pair-additive-review.md',...M.ADDITIVE_KNOWLEDGE_OUTPUTS])A.equal(M.sourcePairReviewedTreeHash([...records,record(file)]),hash);
+  console.log('rc1-source-pair Commerce EMPTY bootstrap PASS: '+negatives+' refusals; '+dispatch+' exact selectors; '+strict+' strict phases;17EMPTY/200structural/181NN; no native, financial or deployment clearance');
 }

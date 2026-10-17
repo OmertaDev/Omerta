@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import { MERCHANT_LOYALTY_NATIVE_SOURCES, assertMerchantLoyaltyNativeBytes, assertMerchantLoyaltyNativeMode,
+  merchantLoyaltyNativeEndpoint, assertMerchantLoyaltyNativeBackend, assertExactRollback } from './merchantloyalty-native-fixture.js';
+let controls = 0; const reject = fn => { assert.throws(fn); controls++; }, env = { RESOURCE_ECONOMY: 'off', CHAIN_ENABLED: 'off' };
+assertMerchantLoyaltyNativeMode(['node','proof','--postgres'], env);
+for (const argv of [[], ['node','proof'], ['node','proof','--memory'], ['node','proof','--postgres','--partial']]) reject(() => assertMerchantLoyaltyNativeMode(argv, env));
+for (const key of ['DATABASE_URL','database_url','NODE_OPTIONS','node_options','NODE_PATH','RESOURCE_ECONOMY','CHAIN_ENABLED']) reject(() => assertMerchantLoyaltyNativeMode(['node','proof','--postgres'], { ...env, [key]: /ECONOMY|ENABLED/.test(key) ? 'on' : '' }));
+const url = 'postgresql://pilot_runner@127.0.0.1:35439/merchant_loyalty_test_012345abcdef';
+merchantLoyaltyNativeEndpoint(url); merchantLoyaltyNativeEndpoint('postgresql://postgres:pgcheck@127.0.0.1:5432/merchant_loyalty_test_012345abcdef');
+for (const value of [url.replace('127.0.0.1','localhost'), url.replace('35439','35449'), url.replace('pilot_runner@','pilot_runner:x@'), url.replace('merchant_loyalty_test_012345abcdef','postgres'), url + '_extra', url.replace('abcdef','ABCDEF'), url + '?options=x', url + '#x', url.replace('postgresql:','https:')]) reject(() => merchantLoyaltyNativeEndpoint(value));
+const source = 'literal source\nsecond line\n', pin = crypto.createHash('sha256').update(source).digest('hex');
+assertMerchantLoyaltyNativeBytes(source, pin); assertMerchantLoyaltyNativeBytes(source.replaceAll('\n','\r\n'), pin);
+for (const text of [source + '\n', '\ufeff' + source, source.replace('\n','\r\n'), source.replace('literal','altered')]) reject(() => assertMerchantLoyaltyNativeBytes(text, pin));
+assert(Object.isFrozen(MERCHANT_LOYALTY_NATIVE_SOURCES)); assert.equal(Object.keys(MERCHANT_LOYALTY_NATIVE_SOURCES).length, 16);
+const context = merchantLoyaltyNativeEndpoint(url), backend = { role:'pilot_runner', owner:'pilot_runner', database:'merchant_loyalty_test_012345abcdef', version:'18.4', directory:'C:/Users/Jorge/AppData/Local/Temp/omerta-economy-oct15-pg184' };
+assertMerchantLoyaltyNativeBackend(backend, context);
+for (const [key,value] of Object.entries({ role:'postgres',owner:'postgres',database:'unknown',version:'18.3',directory:'C:/unknown',unknown:true })) reject(() => assertMerchantLoyaltyNativeBackend({ ...backend, [key]:value }, context));
+const before = { tables:{ unknown:['original'] }, sequences:[{sequencename:'item_events_sequence_seq',last_value:'7'}] }, after = structuredClone(before), events = [{id:'a',sequence:'8'},{id:'b',sequence:'9'}]; after.sequences[0].last_value='9';
+assertExactRollback(before, before, []); assertExactRollback(before, after, events);
+reject(() => assertExactRollback(before, after, []));
+reject(() => assertExactRollback(before, after, [{id:'a',sequence:'9'},{id:'a',sequence:'9'}]));
+reject(() => assertExactRollback(before, after, [{id:'a',sequence:'9'},{id:'b',sequence:'8'}]));
+reject(() => assertExactRollback(before, { ...after, tables:{unknown:['changed']} }, events));
+reject(() => assertExactRollback(before, { ...after, sequences:[{sequencename:'item_events_sequence_seq',last_value:'10'}] }, events));
+console.log('N17 native phase guard PASS: ' + controls + ' rejecting pure controls; original39-only profile unchanged; no PostgreSQL/gameplay result claimed.');

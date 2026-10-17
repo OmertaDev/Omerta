@@ -1,3 +1,4 @@
+import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
@@ -16,7 +17,7 @@ import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, STRATEGY_LEAGUE_SOURCE_BASELINE_PI
 const normalize = text => text.replaceAll('\r\n', '\n');
 const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
-const homeRaw=companyOperatorSourceBaseline('src/server.js',cityGameplaySourceBaseline('src/server.js',normalize(cityActivitySourceBaseline('src/server.js',(hasEnterpriseOverRootSource('src/server.js')?enterpriseOverRootSourceBaseline('src/server.js',fs.readFileSync('src/server.js','utf8')):fs.readFileSync('src/server.js','utf8'))))));
+const homeRaw=companyOperatorSourceBaseline('src/server.js',cityGameplaySourceBaseline('src/server.js',normalize(cityActivitySourceBaseline('src/server.js',(hasEnterpriseOverRootSource('src/server.js')?enterpriseOverRootSourceBaseline('src/server.js',(hasCommerceCurrentEnterpriseSource('src/server.js')?commerceOverCurrentEnterpriseSourceBaseline('src/server.js',String(fs.readFileSync('src/server.js','utf8'))):fs.readFileSync('src/server.js','utf8'))):fs.readFileSync('src/server.js','utf8'))))));
 const homeProof=assertCityHomesLeagueServerTransfer(homeRaw);
 assert.equal(homeRaw,gitText(CITY_HOMES_LEAGUE_SERVER_BLOB));
 assert.equal(homeProof.baselineText,gitText(CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB));
@@ -35,7 +36,7 @@ for(const altered of [homeRaw+'\n// unknown Home suffix\n',homeRaw.replace('regi
 }
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(STRATEGY_LEAGUE_SOURCE_CURRENT_PINS)) {
-  const current = normalize(cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file, 'utf8')):fs.readFileSync(file, 'utf8'))))), baseline = gitText(STRATEGY_LEAGUE_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, (hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,(hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))):fs.readFileSync(file, 'utf8'))))), baseline = gitText(STRATEGY_LEAGUE_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(strategyLeagueSourceBaseline(file, current), baseline);
   assert.equal(strategyLeagueSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';
