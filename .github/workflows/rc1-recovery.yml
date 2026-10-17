@@ -1,18 +1,13 @@
-name: Exact-source depot and fixture diagnostic
-run-name: Depot and fixture diagnostic at 2156c55e
-
+name: Dashboard browser successor proof
+run-name: Dashboard browser exact candidate
 on:
   workflow_dispatch:
-
 permissions:
   contents: read
-
+concurrency:
+  group: dashboard-parity-browser-${{ github.ref }}
+  cancel-in-progress: false
 env:
-  RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
-  RC1_REPLAY_SOURCE: '2156c55e67d8f8f71e90b350cfbb608b5ba3f7ec'
-  CHAIN_ENABLED: 'off'
-  RESOURCE_ECONOMY: 'off'
-  SOCIAL_VERIFY_MODE: 'off'
   LEGAL_OPERATOR_NAME: CI Test Operator
   LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
   PRIVACY_CONTACT_EMAIL: privacy@example.test
@@ -22,201 +17,64 @@ env:
   DMCA_AGENT_PHONE: '+1 202 555 0100'
   DMCA_AGENT_REGISTERED: 'true'
   PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
-
 jobs:
-  depot-next-five-diagnostic:
-    name: Scoped depot diagnostic (PostgreSQL ${{ matrix.postgres }})
+  browser:
+    name: City + mobile browser journeys
+    # Standalone exact-candidate browser proof; full CI remains a separate required gate.
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        postgres: ['16', '18.4']
-    services:
-      postgres:
-        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: pgcheck
-          POSTGRES_DB: postgres
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd "pg_isready -U postgres -d postgres"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 12
-    env:
-      RC1_CI_POSTGRES: ${{ matrix.postgres }}
-      RC1_DIAGNOSTIC_OUTPUT: ${{ github.workspace }}/tmp/rc1-depot-next-five-diagnostic
+    # Hosted a03 completed setup/early controls in 149s and the full City chain in 770s.
+    # Adding the measured local mobile run (229s) and gateway (8s) projects 19m16s,
+    # leaving only 44s under 20m before hosted runtime variance. Require every client
+    # check on this checkout within a finite 25m hang bound. Neither a prefix result
+    # nor a partial phone run qualifies it; native and fuzz budgets are unchanged.
+    timeout-minutes: 25
     steps:
-      - name: Check out the exact candidate source
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
-          ref: '2156c55e67d8f8f71e90b350cfbb608b5ba3f7ec'
+          ref: f4d796e258db8713a91ce48190f9747aa0ea1ea5
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
-      - name: Record diagnostic source and workflow identity
-        id: source_identity
-        shell: bash
-        run: |
-          set -euo pipefail
-          umask 077
-          test -n "$RC1_EVIDENCE_PUBLIC_KEY"
-          mkdir -p "$RC1_DIAGNOSTIC_OUTPUT"
-          node <<'NODE'
-          const assert = require('node:assert/strict');
-          const fs = require('node:fs');
-          const crypto = require('node:crypto');
-          const { execFileSync } = require('node:child_process');
-          const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
-          const sourceRevision = git('rev-parse', 'HEAD');
-          assert.equal(sourceRevision, process.env.RC1_REPLAY_SOURCE);
-          assert.equal(git('status', '--porcelain', '--untracked-files=all'), '');
-          assert(!Object.hasOwn(process.env, 'DATABASE_URL'));
-          const files = Object.fromEntries(['test/depotacquisition-next-five.js', 'tools/next-five-native.js', 'src/routes/commands.js', 'src/command-diagnostics.js', 'test/rc1-observability.js', 'test/rc1-passive-projection.js', 'package.json', 'package-lock.json'].map(file => [file, crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')]));
-          const scripts = JSON.parse(fs.readFileSync('package.json', 'utf8')).scripts;
-          const harnessChildren = scripts['test:rc1:harness'].split(' && ');
-          assert.equal(harnessChildren.length, 90);
-          assert(harnessChildren.every(command => /^node test\/rc1-[a-z0-9-]+\.js$/.test(command)));
-          const fixtureControls = process.env.RC1_CI_POSTGRES === '16' ? [
-            { command: 'npm run test:rc1:observability', scope: 'Default memory and fixture checks; no native database qualification' },
-            { command: 'npm run test:rc1:harness', scope: 'All 90 default memory, fixture, mock, browser, and loopback controls; no native database qualification', children: harnessChildren }
-          ] : [];
-          const record = { sourceRevision, workflowRevision: process.env.GITHUB_SHA, workflowDefinitionRevision: process.env.GITHUB_WORKFLOW_SHA || null, workflowRef: process.env.GITHUB_WORKFLOW_REF, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, postgresLane: process.env.RC1_CI_POSTGRES, node: process.version, command: 'node test/depotacquisition-next-five.js --postgres', fixtureControls, files, claim: 'One unchanged native depot child per PostgreSQL lane, with separate default fixture controls on PostgreSQL 16 only; no full fifteen-proof qualification or release clearance.' };
-          fs.writeFileSync(process.env.RC1_DIAGNOSTIC_OUTPUT + '/source.json', JSON.stringify(record, null, 2) + '\n');
-          console.log(JSON.stringify(record));
-          NODE
-      - name: Install the exact source lockfile
-        id: dependencies
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm ci 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/npm-ci.log"
-      - name: Allocate one fresh owned diagnostic database
-        shell: bash
-        run: |
-          set -euo pipefail
-          node <<'NODE'
-          const assert = require('node:assert/strict');
-          const fs = require('node:fs');
-          const crypto = require('node:crypto');
-          const { Client } = require('pg');
-          (async () => {
-            const endpoint = new URL('postgresql://postgres:pgcheck@127.0.0.1:5432/postgres');
-            const database = 'depot_acquisition_runtime_test_' + crypto.randomBytes(6).toString('hex');
-            assert.match(database, /^depot_acquisition_runtime_test_[a-f0-9]{12}$/);
-            const admin = new Client({ connectionString: endpoint.href });
-            await admin.connect();
-            let backend;
-            try {
-              backend = (await admin.query("SELECT current_user AS role,current_database() AS database,current_setting('server_version') AS version")).rows[0];
-              assert.equal(backend.role, 'postgres');
-              assert.equal(backend.database, 'postgres');
-              assert.match(backend.version, process.env.RC1_CI_POSTGRES === '16' ? /^16\b/ : /^18\.4\b/);
-              assert.equal((await admin.query('SELECT datname FROM pg_database WHERE datname=$1', [database])).rows.length, 0);
-              await admin.query('CREATE DATABASE ' + database);
-              assert.equal((await admin.query('SELECT pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname=$1', [database])).rows[0].owner, 'postgres');
-            } finally { await admin.end(); }
-            endpoint.pathname = '/' + database;
-            const fresh = new Client({ connectionString: endpoint.href });
-            await fresh.connect();
-            try {
-              assert.equal((await fresh.query("SELECT COUNT(*)::int AS n FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p','S','v','m','f')")).rows[0].n, 0);
-              assert.equal((await fresh.query('SELECT current_user AS role,current_database() AS database')).rows[0].database, database);
-            } finally { await fresh.end(); }
-            fs.appendFileSync(process.env.GITHUB_ENV, 'DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL=' + endpoint.href + '\n');
-            const record = { backend, host: endpoint.hostname, port: endpoint.port, role: endpoint.username, database, fresh: true, lifetime: 'This disposable GitHub job service only' };
-            fs.writeFileSync(process.env.RC1_DIAGNOSTIC_OUTPUT + '/database.json', JSON.stringify(record, null, 2) + '\n');
-            console.log(JSON.stringify(record));
-          })().catch(error => { console.error(error); process.exitCode = 1; });
-          NODE
-      - name: Run the unchanged failing child and preserve its exit
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
-          test -z "$(git status --porcelain --untracked-files=all)"
-          set +e
-          node test/depotacquisition-next-five.js --postgres 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/depotacquisition-next-five.log"
-          statuses=("${PIPESTATUS[@]}")
-          set -e
-          printf '%s\n' "${statuses[0]}" > "$RC1_DIAGNOSTIC_OUTPUT/child-exit-code.txt"
-          printf '%s\n' "${statuses[1]}" > "$RC1_DIAGNOSTIC_OUTPUT/log-exit-code.txt"
-          if [ "${statuses[0]}" -ne 0 ]; then exit "${statuses[0]}"; fi
-          exit "${statuses[1]}"
-      - name: Run the unchanged default observability controls
-        if: ${{ always() && !cancelled() && matrix.postgres == '16' && steps.source_identity.outcome == 'success' && steps.dependencies.outcome == 'success' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
-          test -z "$(git status --porcelain --untracked-files=all)"
-          test -z "${DATABASE_URL+x}"
-          unset DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL
-          set +e
-          npm run test:rc1:observability 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/observability.log"
-          statuses=("${PIPESTATUS[@]}")
-          set -e
-          printf '%s\n' "${statuses[0]}" > "$RC1_DIAGNOSTIC_OUTPUT/observability-exit-code.txt"
-          printf '%s\n' "${statuses[1]}" > "$RC1_DIAGNOSTIC_OUTPUT/observability-log-exit-code.txt"
-          if [ "${statuses[0]}" -ne 0 ]; then exit "${statuses[0]}"; fi
-          exit "${statuses[1]}"
-      - name: Install the standard Chromium prerequisite for the full harness
-        id: browser_dependencies
-        if: ${{ always() && !cancelled() && matrix.postgres == '16' && steps.source_identity.outcome == 'success' && steps.dependencies.outcome == 'success' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
-          test -z "$(git status --porcelain --untracked-files=all)"
-          test -z "${DATABASE_URL+x}"
-          unset DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL
-          npx playwright-core install --with-deps chromium 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/chromium-install.log"
-      - name: Run all unchanged default RC1 harness controls
-        if: ${{ always() && !cancelled() && matrix.postgres == '16' && steps.source_identity.outcome == 'success' && steps.dependencies.outcome == 'success' && steps.browser_dependencies.outcome == 'success' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$RC1_REPLAY_SOURCE"
-          test -z "$(git status --porcelain --untracked-files=all)"
-          test -z "${DATABASE_URL+x}"
-          unset DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL
-          set +e
-          npm run test:rc1:harness 2>&1 | tee "$RC1_DIAGNOSTIC_OUTPUT/harness.log"
-          statuses=("${PIPESTATUS[@]}")
-          set -e
-          printf '%s\n' "${statuses[0]}" > "$RC1_DIAGNOSTIC_OUTPUT/harness-exit-code.txt"
-          printf '%s\n' "${statuses[1]}" > "$RC1_DIAGNOSTIC_OUTPUT/harness-log-exit-code.txt"
-          if [ "${statuses[0]}" -ne 0 ]; then exit "${statuses[0]}"; fi
-          exit "${statuses[1]}"
-      - name: Index diagnostic files after success or failure
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          node <<'NODE'
-          const fs = require('node:fs');
-          const crypto = require('node:crypto');
-          const { execFileSync } = require('node:child_process');
-          const folder = process.env.RC1_DIAGNOSTIC_OUTPUT;
-          fs.mkdirSync(folder, { recursive: true, mode: 0o700 });
-          const files = fs.readdirSync(folder).sort().filter(name => name !== 'index.json').map(name => ({ name, bytes: fs.statSync(folder + '/' + name).size, sha256: crypto.createHash('sha256').update(fs.readFileSync(folder + '/' + name)).digest('hex') }));
-          const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-          const index = { sourceRevision, workflowRevision: process.env.GITHUB_SHA, workflowDefinitionRevision: process.env.GITHUB_WORKFLOW_SHA || null, workflowRef: process.env.GITHUB_WORKFLOW_REF, runId: process.env.GITHUB_RUN_ID, attempt: process.env.GITHUB_RUN_ATTEMPT, postgresLane: process.env.RC1_CI_POSTGRES, files, claim: 'Diagnostic evidence index; native depot and default fixture controls are separate. A missing or failed control is not a pass. No full fifteen-proof qualification.' };
-          fs.writeFileSync(folder + '/index.json', JSON.stringify(index, null, 2) + '\n');
-          console.log(JSON.stringify(index));
-          NODE
-      - name: Encrypt restricted diagnostic evidence
-        if: always()
-        run: node tools/rc1-ci-retain.mjs
-      - name: Retain authenticated encrypted diagnostic evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: rc1-private-next-five-diagnostic-pg${{ matrix.postgres }}-2156c55e-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/rc1-retention/evidence.rc1enc
-          if-no-files-found: error
-          retention-days: 30
+      - run: npm ci
+
+      # THE CLIENT. The suite tests the API; nothing tested the screens. On 2026-07-26 a driven pass
+      # found that a new player's guided onboarding showed NONE of its own content above the fold on
+      # a phone — the three-column grid stacks the ~1000px character sheet above the tab content —
+      # plus a horizontal-overflow bug that had been live for months. Neither was reachable from any
+      # existing check. This runs a real browser at a real phone size over every screen.
+      #
+      # playwright-core downloads nothing on install (a browser per `npm ci` is a heavy tax on a repo
+      # where most work never touches the client), so the browser is fetched here, in the one job
+      # that needs it. The harness FAILS rather than skips when there is no browser — a layout guard
+      # that quietly does nothing still goes green, and everyone assumes the screens were checked.
+      - name: install chromium for the client harness
+        run: npx playwright-core install --with-deps chromium
+
+      - name: Invite gate and Crew invitation controls in the browser
+        run: npm run test:invites:browser
+
+      - name: Discovery-based player intel in the browser
+        run: node test/player-intel-browser.js
+
+      - name: Wallet discovery, cancellation, and signature verification in the browser
+        run: node test/wallet-connect-browser.js
+
+      - name: City Mode and RPG desktop/mobile journeys
+        run: npm run test:city:browser
+
+      - name: Earned Street Deed investigation and claim in the browser
+        run: npm run test:deed-discovery:browser
+
+      - name: Consigliere gateway recovery in the browser
+        run: npm run test:gateway:browser
+
+      - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)
+        env:
+          JWT_SECRET: ci-jwt-secret-not-a-real-one
+          MOD_KEY: ci-mod-key-long-enough-to-pass-preflight
+          MARKET_SEED: ciMarketSeed7Qx2mVb9PwLn4RtY6hJc
+          SOCIAL_VERIFY_MODE: 'off'
+          POPULATION_OFF: 'on'      # residents on the streets roster would vary the screens run to run
+        run: npm run mobile
