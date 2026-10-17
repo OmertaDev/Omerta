@@ -179,8 +179,7 @@ function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
     const raw = originalRead(path.join(root, file));
-    const input = file === 'src/server.js' && (target === 'test/rc1-checkpoint-recovery-review.js'
-      || target === 'test/rc1-lifecycle-applicability.js') ? baseWorkHistoricalSourceBaseline(file, raw) : raw;
+    const input = file === 'src/server.js' && entries.has(target) ? baseWorkHistoricalSourceBaseline(file, raw) : raw;
     const selected = historicalApplicationSource(file, input);
     checked.add(file);
     return selected;
@@ -441,14 +440,14 @@ function rejectHistoricalApplicationSources() {
 
 function rejectCityActivityHistoricalSources() {
   const file = 'src/server.js', raw = String(originalRead(path.join(root, file))), current = canonical(raw);
-  const combinedProof = qualifyCityActivityMarketSource(file, raw);
+  const combinedProof = qualifyCityActivityMarketSource(file, baseWorkHistoricalSourceBaseline(file, raw));
   const retained = String(git(['cat-file', 'blob', CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob]));
   const proof = qualifyCityActivitySource(retained), frozen = String(blob(file, release)), expected = blob(file, history);
   let positives = 0, refusals = 0;
-  const reject = supplied => { assert.throws(() => historicalApplicationSource(file, supplied)); refusals++; };
+  const reject = supplied => { assert.throws(() => historicalApplicationSource(file, baseWorkHistoricalSourceBaseline(file, supplied))); refusals++; };
   for (const source of [current, combinedProof.baselineText, retained, proof.baselineText, frozen]) {
     for (const supplied of [source, source.replaceAll('\n', '\r\n')]) {
-      const selected = historicalApplicationSource(file, supplied);
+      const selected = historicalApplicationSource(file, baseWorkHistoricalSourceBaseline(file, supplied));
       assert.equal(sha256(selected), sha256(expected));
       assert.equal(blobHash(selected), history.get(file));
       positives++;

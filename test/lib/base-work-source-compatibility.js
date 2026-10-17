@@ -1,6 +1,7 @@
 // TEST-only, exact historical comparison. Reconstructed source is never executed.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { walletComputePackageSourceBaseline } from './wallet-compute-package-source-compatibility.js';
 export const BASE_WORK_HISTORICAL_SOURCE = '8fe7faf28007107611bd98f3728d1e00d984e5d4';
 export const BASE_WORK_HISTORICAL_PREDECESSOR = '2b7875977b6285d35abea7e35240b11ed7e2e52d';
 export const BASE_WORK_HISTORICAL_PHASE = 'exact test comparison only; no runtime, native, deployment, financial or source-capture authority';
@@ -75,6 +76,7 @@ export function assertBaseWorkHistoricalSourceTransfer(file, input) {
     sourceMode: pin.sourceMode, baselineMode: pin.baselineMode, inverseChunks: pin.inverses.length, phase: BASE_WORK_HISTORICAL_PHASE};
 }
 export function baseWorkHistoricalSourceBaseline(file, input) {
+  input = walletComputePackageSourceBaseline(file, input);
   if (candidate(file, input) === null) return input;
   const baseline = assertBaseWorkHistoricalSourceTransfer(file, input).baselineText;
   return Buffer.isBuffer(input) ? Buffer.from(baseline, 'utf8') : baseline;

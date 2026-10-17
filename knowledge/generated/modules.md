@@ -22,6 +22,8 @@
 | [src/auth.js](../../src/auth.js) | 355 | platform-core | 2 / 4 | 5 | 6 | 2 |
 | [src/avatar.js](../../src/avatar.js) | 63 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/bank.js](../../src/bank.js) | 526 | platform-core | 3 / 6 | 4 | 14 | 2 |
+| [src/baseworkexecutionadmission.js](../../src/baseworkexecutionadmission.js) | 75 | platform-core | 0 / 1 | 0 | 0 | 1 |
+| [src/baseworkobserver.js](../../src/baseworkobserver.js) | 46 | platform-core | 2 / 2 | 0 | 0 | 1 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
 | [src/bondquoteexpiry.js](../../src/bondquoteexpiry.js) | 100 | platform-core | 1 / 2 | 0 | 3 | 1 |
 | [src/bonds.js](../../src/bonds.js) | 558 | platform-core | 6 / 13 | 9 | 15 | 5 |
@@ -233,9 +235,11 @@
 | [src/freightconsolidation.js](../../src/freightconsolidation.js) | 204 | platform-core | 4 / 3 | 0 | 12 | 1 |
 | [src/fundedexternalwork.js](../../src/fundedexternalwork.js) | 60 | platform-core | 1 / 3 | 0 | 9 | 1 |
 | [src/fundedworkchainobservations.js](../../src/fundedworkchainobservations.js) | 74 | platform-core | 0 / 3 | 0 | 0 | 2 |
-| [src/fundedworkescrowadapter.js](../../src/fundedworkescrowadapter.js) | 85 | platform-core | 3 / 1 | 0 | 5 | 1 |
+| [src/fundedworkescrowadapter.js](../../src/fundedworkescrowadapter.js) | 85 | platform-core | 3 / 6 | 0 | 5 | 4 |
 | [src/fundedworkescrowartifact.js](../../src/fundedworkescrowartifact.js) | 472 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/game.js](../../src/game.js) | 2797 | platform-core | 13 / 472 | 42 | 62 | 160 |
+| [src/fundedworkescrowbaseadapter.js](../../src/fundedworkescrowbaseadapter.js) | 92 | platform-core | 3 / 3 | 0 | 2 | 2 |
+| [src/fundedworkescrowbaseartifact.js](../../src/fundedworkescrowbaseartifact.js) | 472 | platform-core | 0 / 4 | 0 | 0 | 2 |
+| [src/game.js](../../src/game.js) | 2797 | platform-core | 13 / 474 | 42 | 62 | 162 |
 | [src/gameemployment.js](../../src/gameemployment.js) | 185 | platform-core | 2 / 7 | 0 | 8 | 3 |
 | [src/gameemploymentinvariants.js](../../src/gameemploymentinvariants.js) | 15 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/gateway/actions.js](../../src/gateway/actions.js) | 42 | platform-core | 1 / 1 | 0 | 0 | 0 |
@@ -276,7 +280,7 @@
 | [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 13 | 0 | 6 | 9 |
 | [src/itemdurability.js](../../src/itemdurability.js) | 227 | platform-core | 4 / 28 | 0 | 13 | 13 |
 | [src/itemlots.js](../../src/itemlots.js) | 707 | platform-core | 5 / 5 | 0 | 7 | 11 |
-| [src/items.js](../../src/items.js) | 1372 | world-graph | 6 / 170 | 12 | 11 | 92 |
+| [src/items.js](../../src/items.js) | 1372 | world-graph | 6 / 171 | 12 | 11 | 92 |
 | [src/keepertransactions.js](../../src/keepertransactions.js) | 421 | platform-core | 0 / 5 | 0 | 1 | 1 |
 | [src/kitchen.js](../../src/kitchen.js) | 374 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |
@@ -337,7 +341,7 @@
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait-access.js](../../src/portrait-access.js) | 34 | platform-core | 0 / 4 | 0 | 2 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 341 | engagement-growth | 4 / 7 | 0 | 6 | 4 |
-| [src/preflight.js](../../src/preflight.js) | 538 | platform-core | 0 / 8 | 0 | 7 | 4 |
+| [src/preflight.js](../../src/preflight.js) | 540 | platform-core | 0 / 8 | 0 | 7 | 4 |
 | [src/primetime.js](../../src/primetime.js) | 292 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/productionslots-contracts.js](../../src/productionslots-contracts.js) | 7 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/productionslots.js](../../src/productionslots.js) | 32 | platform-core | 6 / 7 | 0 | 11 | 2 |
@@ -368,6 +372,7 @@
 | [src/router.js](../../src/router.js) | 348 | platform-core | 3 / 7 | 1 | 15 | 4 |
 | [src/routes/agentoperatingmemory.js](../../src/routes/agentoperatingmemory.js) | 8 | platform-core | 3 / 3 | 0 | 2 | 2 |
 | [src/routes/atomicbarter.js](../../src/routes/atomicbarter.js) | 13 | platform-core | 2 / 1 | 0 | 1 | 0 |
+| [src/routes/baseworkobservations.js](../../src/routes/baseworkobservations.js) | 69 | platform-core | 1 / 2 | 0 | 3 | 1 |
 | [src/routes/boxing.js](../../src/routes/boxing.js) | 38 | vice-competition | 2 / 1 | 10 | 1 | 0 |
 | [src/routes/businesspartnerships.js](../../src/routes/businesspartnerships.js) | 13 | platform-core | 2 / 2 | 7 | 1 | 1 |
 | [src/routes/businessseasons.js](../../src/routes/businessseasons.js) | 14 | platform-core | 2 / 2 | 6 | 1 | 1 |
@@ -477,7 +482,7 @@
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 7 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 203 | law-intelligence | 4 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3918 | platform-core | 232 / 40 | 446 | 46 | 14 |
+| [src/server.js](../../src/server.js) | 3925 | platform-core | 234 / 40 | 446 | 46 | 14 |
 | [src/servicesubscriptions.js](../../src/servicesubscriptions.js) | 65 | platform-core | 5 / 6 | 0 | 10 | 2 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/skills.js](../../src/skills.js) | 171 | world-progression | 4 / 7 | 5 | 4 | 4 |
@@ -526,7 +531,7 @@
 | [src/watcher.js](../../src/watcher.js) | 512 | chain-economy | 7 / 7 | 0 | 5 | 9 |
 | [src/wire.js](../../src/wire.js) | 479 | law-intelligence | 6 / 7 | 11 | 18 | 2 |
 | [src/worker.js](../../src/worker.js) | 1109 | platform-core | 73 / 12 | 0 | 35 | 11 |
-| [src/workertraining.js](../../src/workertraining.js) | 94 | platform-core | 3 / 11 | 0 | 8 | 6 |
+| [src/workertraining.js](../../src/workertraining.js) | 94 | platform-core | 3 / 13 | 0 | 8 | 8 |
 | [src/world-consequences.js](../../src/world-consequences.js) | 97 | platform-core | 3 / 2 | 0 | 1 | 1 |
 | [src/world-kernel-invariants.js](../../src/world-kernel-invariants.js) | 40 | platform-core | 1 / 16 | 0 | 5 | 13 |
 | [src/world-kernel-query.js](../../src/world-kernel-query.js) | 337 | platform-core | 6 / 8 | 0 | 20 | 5 |
