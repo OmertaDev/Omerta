@@ -1,0 +1,119 @@
+{
+  "phase": "PASS_SCOPED_DISABLED_GUI_REFERENCE_PERMISSIONS_SUCCESSOR_NO_CONFIRMED_FINDINGS",
+  "createdAt": "2026-10-17T05:35:08.022Z",
+  "subject": {
+    "directory": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-reference-permissions-successor-f4d397e8-f582-45b2-a2d3-a02c85ee26b2",
+    "manifest": {
+      "file": "manifest.json",
+      "bytes": 26345,
+      "sha256": "0bc6a13a86ee7f3c48517657cd29f680f24fc65ab5c8431f464be06fce7e4fee"
+    },
+    "controller": {
+      "file": "materialize-hosted.cjs",
+      "bytes": 19004,
+      "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca"
+    },
+    "indexedFiles": 118,
+    "closedFiles": 119,
+    "links": 0
+  },
+  "reviewScope": "Independent read-only native static review of exactly three 21-byte argv insertions and derived metadata/provenance. Reuse prior GUI and upstream reviews by exact byte identity for unchanged scope.",
+  "source": "19f174540b0b65870800317ed98085ef36696976",
+  "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "predecessor": {
+    "manifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
+    "controllerSHA256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5",
+    "indexedFilesRehashed": 71,
+    "closedFiles": 72,
+    "unchangedCommonFiles": 64,
+    "changedCommonFiles": 7,
+    "immutableOriginalsPreserved": true
+  },
+  "reusedReviews": {
+    "priorGuiPeerManifestSHA256": "6299d024302a7016bdd41d4c79d567ba4fda8041f0b2e1d5515cf3d92c1246c2",
+    "priorGuiPeerReceiptSHA256": "6e28491341690730de8be2b72ef85430d0b19f40ccb945caca91c67e2c1961d6",
+    "priorStagingManifestSHA256": "22de559bd400fd7e8ee8f7bec451f7022c2921ceee167b12252fd0d5ee567ac6",
+    "priorStagingReceiptSHA256": "9d53ea17f5a80535edfdf5211d014f3619c9678eda75d8eb532d0789c4732b05",
+    "upstreamCorrectionManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+    "upstreamPeerManifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+    "causeManifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
+    "inheritedRuntimeFailure": "39004762233 remains failed before canonical M6; source correction is not a hosted retest result."
+  },
+  "independentChecks": [
+    "Closed successor inventory: all 118 manifest entries plus manifest; no duplicate/unsafe names or reparse points.",
+    "Original predecessor: all 71 manifest entries plus manifest still exact; 64 files identical in successor, exactly seven expected source/metadata changes.",
+    "Controller, builder, and existing memory mock each add only the one 21-byte '--same-permissions', argument after '--extract',; each whole file reverses byte-for-byte to predecessor.",
+    "All three textual patches exactly match the corresponding original and updated source lines.",
+    "All other controller bytes, four preparation/executable modules, strict 77ac contract, approved dependency/runtime input descriptors, installer, workflow, full npm tree comparator, restrictive evidence umask and encrypted retention remain byte-exact.",
+    "The reference extraction keeps identical archive path, target directory, timeout and buffer bounds. No chmod, mode normalization, comparison omission or waiver added; enclosing private directory logic is unchanged.",
+    "Thirty-seven newly copied provenance files equal their original source files. Six pinned prior/upstream/cause identities and two staging receipt identities verified.",
+    "Only seven expected common manifest fields change; source pair, barrier/module descriptors, contract, installer, workflow, null actual fields and disabled authority remain preserved.",
+    "Author validation descriptors, four syntax results, current mock subject, source-change metadata and historical control attribution agree with the hashed bytes."
+  ],
+  "reviewedAuthorValidation": {
+    "syntaxOnlyFiles": 4,
+    "syntaxAllExitZero": true,
+    "focusedMemoryMock": {
+      "positive": 1,
+      "refusals": 1,
+      "actualTarCalls": 0,
+      "realCapabilityAttempts": {
+        "filesystem": 0,
+        "subprocess": 0,
+        "import": 0
+      }
+    },
+    "harnessReadInFull": true,
+    "independentlyExecuted": false,
+    "priorBroadSuite": {
+      "positive": 22,
+      "refusals": 135,
+      "syntaxFiles": 13,
+      "rerun": false,
+      "remainsHistorical": true
+    },
+    "details": "Reviewed the author harness as source: it reads fixed packet inputs, evaluates controller code in an isolated builtin VM with synthetic authority and denied real capability proxies, then runs the existing updated prepareModel and checks the old expected argv refuses. No target code, author tests or syntax checks were executed by this peer review."
+  },
+  "reviewerDiagnostics": {
+    "firstNativeCheck": {
+      "exitCode": 1,
+      "result": "Reviewer expression-parenthesization error caused false root-reparse assertion before any review output was created. No subject, worktree, or operational mutation occurred.",
+      "retained": "native-static-initial.ps1 and reviewer-run-diagnostics.json"
+    },
+    "correction": "Parenthesized the bitwise attributes comparison as the single Need() condition. Full corrected native check exited 0; supplemental patch/metadata check exited 0.",
+    "finalNativeCheckExitCode": 0,
+    "supplementalCheckExitCode": 0,
+    "sourceFindingsFromHarnessFailure": []
+  },
+  "confirmedNewFindings": [],
+  "recommendation": "No blocking finding within this exact disabled source-only successor delta. Any later operational admission must bind this new manifest/controller, new independent review, final configuration and actual workflow control; prior 79e9/local793516 identity cannot substitute.",
+  "actualApproval": null,
+  "actualRuntime": null,
+  "actualWorkflow": null,
+  "actualService": null,
+  "actualBinding": null,
+  "actualReservation": null,
+  "actualAdmission": null,
+  "actualExecution": null,
+  "actualResult": null,
+  "actualRetention": null,
+  "operationalAuthority": false,
+  "enabled": false,
+  "limitations": [
+    "No tar invocation or archive extraction; no target module execution, application/dependency import, source capture, installer, PostgreSQL, Docker, CIM, network or port observation.",
+    "No Git or worktree access, configuration/repository-variable change, publication, approval, dispatch or runtime retest.",
+    "Underlying authenticated failure archive was not opened, decrypted or extracted. Cause and upstream analysis were reviewed/reused through pinned source evidence.",
+    "The prior staging review applies to its prior immutable bytes; this review does not claim the successor has been staged, committed, or executed.",
+    "Operational Root paired-LIVE and required candidate PR-cohort gates remain external to this source-only review."
+  ],
+  "evidence": [
+    "static-verification.json",
+    "supplemental-verification.json",
+    "subject-inventory.json",
+    "native-static-initial.ps1",
+    "native-static-corrected.ps1",
+    "native-supplemental.ps1",
+    "reviewer-run-diagnostics.json"
+  ]
+}
+

@@ -1,0 +1,155 @@
+--- a/inputs/source-pins.json
++++ b/inputs/source-pins.json
+@@ -3,1 +3,1 @@
+-  "createdAt": "2026-10-17T04:09:28.0286715Z",
++  "createdAt": "2026-10-17T06:37:19.9180929Z",
+@@ -7,1 +7,1 @@
+-      "source": "19f174540b0b65870800317ed98085ef36696976",
++      "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+@@ -8,1 +8,1 @@
+-      "tree": "c04003a12493eea9b725daa016a32159ec5e64b4",
++      "tree": "75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c",
+@@ -44,1 +44,1 @@
+-      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++      "source": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+@@ -45,1 +45,1 @@
+-      "tree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
++      "tree": "67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a",
+@@ -87,1 +87,1 @@
+-    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++    "expectedPredecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+@@ -88,1 +88,1 @@
+-    "candidate": "19f174540b0b65870800317ed98085ef36696976",
++    "candidate": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+@@ -90,1 +90,1 @@
+-    "mergeBase": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++    "mergeBase": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+
+--- a/source-binding.template.json
++++ b/source-binding.template.json
+@@ -29,1 +29,1 @@
+-      "source": "19f174540b0b65870800317ed98085ef36696976",
++      "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+@@ -30,1 +30,1 @@
+-      "tree": "c04003a12493eea9b725daa016a32159ec5e64b4",
++      "tree": "75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c",
+@@ -45,1 +45,1 @@
+-      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++      "source": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+@@ -46,1 +46,1 @@
+-      "tree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
++      "tree": "67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a",
+@@ -62,1 +62,1 @@
+-    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++    "expectedPredecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+@@ -63,1 +63,1 @@
+-    "actualGUIFinal": "19f174540b0b65870800317ed98085ef36696976",
++    "actualGUIFinal": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+
+--- a/inputs/proof-contract.json
++++ b/inputs/proof-contract.json
+@@ -3,1 +3,1 @@
+-  "candidate": "19f174540b0b65870800317ed98085ef36696976",
++  "candidate": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+
+--- a/inputs/hosted-observer-PREPARATION.cjs
++++ b/inputs/hosted-observer-PREPARATION.cjs
+@@ -4,1 +4,1 @@
+-const SOURCE='19f174540b0b65870800317ed98085ef36696976',PRED='d8e9f2e1feaf1df1f64584268069ba9917e30849',CLI_SHA='2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce';
++const SOURCE='4dcec2143edcde69cf9f282846e13be3153b02d0',PRED='5e5abe7f33385951fd3f64ba65c3d0a7548b8861',CLI_SHA='2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce';
+@@ -16,1 +16,1 @@
+-const EXPECTED_SIDES={"candidate":{"source":"19f174540b0b65870800317ed98085ef36696976","tree":"c04003a12493eea9b725daa016a32159ec5e64b4","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}},"predecessor":{"source":"d8e9f2e1feaf1df1f64584268069ba9917e30849","tree":"c9a572fb40d0b89c716919624a1cdd228c0f2a48","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}}};
++const EXPECTED_SIDES={"candidate":{"source":"4dcec2143edcde69cf9f282846e13be3153b02d0","tree":"75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}},"predecessor":{"source":"5e5abe7f33385951fd3f64ba65c3d0a7548b8861","tree":"67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}}};
+@@ -33,1 +33,1 @@
+-function readProof(directory){const entries=fs.readdirSync(directory).sort(),index=JSON.parse(regular(path.join(directory,'sha256-index.json')));assert.equal(entries.length,42);assert.deepEqual(entries,index.map(r=>r.file).concat('sha256-index.json').sort());for(const r of index)assert.equal(sha(regular(path.join(directory,r.file))),r.sha256);const result=JSON.parse(regular(path.join(directory,'result.json'))),database=proof(result,index);const candidate=JSON.parse(regular(path.join(directory,'candidate-source.json'))),predecessor=JSON.parse(regular(path.join(directory,'predecessor-source.json')));assert.equal(candidate.source,SOURCE);assert.equal(candidate.gitTree,'c04003a12493eea9b725daa016a32159ec5e64b4');assert.equal(predecessor.source,PRED);assert.equal(predecessor.gitTree,'c9a572fb40d0b89c716919624a1cdd228c0f2a48');assert.equal(candidate.lockfileSha256,predecessor.lockfileSha256);const schemas=JSON.parse(regular(path.join(directory,'schema-comparison.json')));assert.equal(schemas.candidate.source,SOURCE);assert.equal(schemas.candidate.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');assert.equal(schemas.predecessor.source,PRED);assert.equal(schemas.predecessor.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');const receipts=JSON.parse(regular(path.join(directory,'receipts.json'))),replays=JSON.parse(regular(path.join(directory,'replays.json')));assert.equal(receipts.length,2);assert.equal(replays.length,5);return{result,index,database,indexSHA256:sha(regular(path.join(directory,'sha256-index.json')))};}
++function readProof(directory){const entries=fs.readdirSync(directory).sort(),index=JSON.parse(regular(path.join(directory,'sha256-index.json')));assert.equal(entries.length,42);assert.deepEqual(entries,index.map(r=>r.file).concat('sha256-index.json').sort());for(const r of index)assert.equal(sha(regular(path.join(directory,r.file))),r.sha256);const result=JSON.parse(regular(path.join(directory,'result.json'))),database=proof(result,index);const candidate=JSON.parse(regular(path.join(directory,'candidate-source.json'))),predecessor=JSON.parse(regular(path.join(directory,'predecessor-source.json')));assert.equal(candidate.source,SOURCE);assert.equal(candidate.gitTree,'75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c');assert.equal(predecessor.source,PRED);assert.equal(predecessor.gitTree,'67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a');assert.equal(candidate.lockfileSha256,predecessor.lockfileSha256);const schemas=JSON.parse(regular(path.join(directory,'schema-comparison.json')));assert.equal(schemas.candidate.source,SOURCE);assert.equal(schemas.candidate.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');assert.equal(schemas.predecessor.source,PRED);assert.equal(schemas.predecessor.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');const receipts=JSON.parse(regular(path.join(directory,'receipts.json'))),replays=JSON.parse(regular(path.join(directory,'replays.json')));assert.equal(receipts.length,2);assert.equal(replays.length,5);return{result,index,database,indexSHA256:sha(regular(path.join(directory,'sha256-index.json')))};}
+
+--- a/postimages/hosted-observer.EXECUTABLE.cjs
++++ b/postimages/hosted-observer.EXECUTABLE.cjs
+@@ -4,1 +4,1 @@
+-const SOURCE='19f174540b0b65870800317ed98085ef36696976',PRED='d8e9f2e1feaf1df1f64584268069ba9917e30849',CLI_SHA='2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce';
++const SOURCE='4dcec2143edcde69cf9f282846e13be3153b02d0',PRED='5e5abe7f33385951fd3f64ba65c3d0a7548b8861',CLI_SHA='2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce';
+@@ -16,1 +16,1 @@
+-const EXPECTED_SIDES={"candidate":{"source":"19f174540b0b65870800317ed98085ef36696976","tree":"c04003a12493eea9b725daa016a32159ec5e64b4","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}},"predecessor":{"source":"d8e9f2e1feaf1df1f64584268069ba9917e30849","tree":"c9a572fb40d0b89c716919624a1cdd228c0f2a48","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}}};
++const EXPECTED_SIDES={"candidate":{"source":"4dcec2143edcde69cf9f282846e13be3153b02d0","tree":"75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}},"predecessor":{"source":"5e5abe7f33385951fd3f64ba65c3d0a7548b8861","tree":"67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}}};
+@@ -33,1 +33,1 @@
+-function readProof(directory){const entries=fs.readdirSync(directory).sort(),index=JSON.parse(regular(path.join(directory,'sha256-index.json')));assert.equal(entries.length,42);assert.deepEqual(entries,index.map(r=>r.file).concat('sha256-index.json').sort());for(const r of index)assert.equal(sha(regular(path.join(directory,r.file))),r.sha256);const result=JSON.parse(regular(path.join(directory,'result.json'))),database=proof(result,index);const candidate=JSON.parse(regular(path.join(directory,'candidate-source.json'))),predecessor=JSON.parse(regular(path.join(directory,'predecessor-source.json')));assert.equal(candidate.source,SOURCE);assert.equal(candidate.gitTree,'c04003a12493eea9b725daa016a32159ec5e64b4');assert.equal(predecessor.source,PRED);assert.equal(predecessor.gitTree,'c9a572fb40d0b89c716919624a1cdd228c0f2a48');assert.equal(candidate.lockfileSha256,predecessor.lockfileSha256);const schemas=JSON.parse(regular(path.join(directory,'schema-comparison.json')));assert.equal(schemas.candidate.source,SOURCE);assert.equal(schemas.candidate.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');assert.equal(schemas.predecessor.source,PRED);assert.equal(schemas.predecessor.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');const receipts=JSON.parse(regular(path.join(directory,'receipts.json'))),replays=JSON.parse(regular(path.join(directory,'replays.json')));assert.equal(receipts.length,2);assert.equal(replays.length,5);return{result,index,database,indexSHA256:sha(regular(path.join(directory,'sha256-index.json')))};}
++function readProof(directory){const entries=fs.readdirSync(directory).sort(),index=JSON.parse(regular(path.join(directory,'sha256-index.json')));assert.equal(entries.length,42);assert.deepEqual(entries,index.map(r=>r.file).concat('sha256-index.json').sort());for(const r of index)assert.equal(sha(regular(path.join(directory,r.file))),r.sha256);const result=JSON.parse(regular(path.join(directory,'result.json'))),database=proof(result,index);const candidate=JSON.parse(regular(path.join(directory,'candidate-source.json'))),predecessor=JSON.parse(regular(path.join(directory,'predecessor-source.json')));assert.equal(candidate.source,SOURCE);assert.equal(candidate.gitTree,'75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c');assert.equal(predecessor.source,PRED);assert.equal(predecessor.gitTree,'67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a');assert.equal(candidate.lockfileSha256,predecessor.lockfileSha256);const schemas=JSON.parse(regular(path.join(directory,'schema-comparison.json')));assert.equal(schemas.candidate.source,SOURCE);assert.equal(schemas.candidate.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');assert.equal(schemas.predecessor.source,PRED);assert.equal(schemas.predecessor.schemaSha256,'ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b');const receipts=JSON.parse(regular(path.join(directory,'receipts.json'))),replays=JSON.parse(regular(path.join(directory,'replays.json')));assert.equal(receipts.length,2);assert.equal(replays.length,5);return{result,index,database,indexSHA256:sha(regular(path.join(directory,'sha256-index.json')))};}
+
+--- a/module-barrier-inverses.json
++++ b/module-barrier-inverses.json
+@@ -10,1 +10,1 @@
+-        "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
++        "sha256": "8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3"
+@@ -14,1 +14,1 @@
+-        "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
++        "sha256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef"
+
+--- a/materialize-hosted.cjs
++++ b/materialize-hosted.cjs
+@@ -4,1 +4,1 @@
+-const SOURCE='19f174540b0b65870800317ed98085ef36696976',PRED='d8e9f2e1feaf1df1f64584268069ba9917e30849';
++const SOURCE='4dcec2143edcde69cf9f282846e13be3153b02d0',PRED='5e5abe7f33385951fd3f64ba65c3d0a7548b8861';
+@@ -6,1 +6,1 @@
+-const DEPS_SHA='f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7',CONTRACT_SHA='77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace';
++const DEPS_SHA='f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7',CONTRACT_SHA='c7071e34e0985d8d08e5bacd7a755d4b534027c294d3bb70962ff40eac1ab00d';
+@@ -7,1 +7,1 @@
+-const MODULES=Object.freeze({"observer":{"preparation":"inputs/hosted-observer-PREPARATION.cjs","postimage":"postimages/hosted-observer.EXECUTABLE.cjs","output":"hosted-observer.cjs","before":{"bytes":27019,"sha256":"a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"},"after":{"bytes":26901,"sha256":"f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"},"barrierLiteral":"throw new Error('PREPARATION ONLY: strict GUI controller is disabled pending independent review and bound admission');","barrierOffset":14},"guard":{"preparation":"inputs/hosted-source-guard-PREPARATION.mjs","postimage":"postimages/hosted-source-guard.EXECUTABLE.mjs","output":"hosted-source-guard.mjs","before":{"bytes":36295,"sha256":"f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"},"after":{"bytes":36185,"sha256":"b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0"},"barrierLiteral":"throw new Error('PREPARATION ONLY: independently bind and review a separate executable successor before use');","barrierOffset":0},"adapter":{"preparation":"inputs/strict-source-proof-adapter-PREPARATION.mjs","postimage":"postimages/strict-source-proof-adapter.EXECUTABLE.mjs","output":"strict-source-proof-adapter.mjs","before":{"bytes":8302,"sha256":"7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b"},"after":{"bytes":8199,"sha256":"9b942d5afe7d79aacfab96106884a00e4c5a9d55e4041666bfbcad8aa97a312d"},"barrierLiteral":"throw new Error('PREPARATION ONLY: no executable source/proof integration or admission is authorized');","barrierOffset":0},"proofValidator":{"preparation":"inputs/proof-validator-PREPARATION.mjs","postimage":"postimages/proof-validator.EXECUTABLE.mjs","output":"proof-validator.mjs","before":{"bytes":6995,"sha256":"daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956"},"after":{"bytes":6892,"sha256":"9266bc453bc0863065fd7ff0d2fed9fd85af7c7e96ae2d10b2a8854b874f15e2"},"barrierLiteral":"throw new Error('PREPARATION_ONLY_UNBOUND: hosted proof validator is not executable or an admission.');","barrierOffset":0}});
++const MODULES=Object.freeze({"observer":{"preparation":"inputs/hosted-observer-PREPARATION.cjs","postimage":"postimages/hosted-observer.EXECUTABLE.cjs","output":"hosted-observer.cjs","before":{"bytes":27019,"sha256":"8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3"},"after":{"bytes":26901,"sha256":"6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef"},"barrierLiteral":"throw new Error('PREPARATION ONLY: strict GUI controller is disabled pending independent review and bound admission');","barrierOffset":14},"guard":{"preparation":"inputs/hosted-source-guard-PREPARATION.mjs","postimage":"postimages/hosted-source-guard.EXECUTABLE.mjs","output":"hosted-source-guard.mjs","before":{"bytes":36295,"sha256":"f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"},"after":{"bytes":36185,"sha256":"b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0"},"barrierLiteral":"throw new Error('PREPARATION ONLY: independently bind and review a separate executable successor before use');","barrierOffset":0},"adapter":{"preparation":"inputs/strict-source-proof-adapter-PREPARATION.mjs","postimage":"postimages/strict-source-proof-adapter.EXECUTABLE.mjs","output":"strict-source-proof-adapter.mjs","before":{"bytes":8302,"sha256":"7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b"},"after":{"bytes":8199,"sha256":"9b942d5afe7d79aacfab96106884a00e4c5a9d55e4041666bfbcad8aa97a312d"},"barrierLiteral":"throw new Error('PREPARATION ONLY: no executable source/proof integration or admission is authorized');","barrierOffset":0},"proofValidator":{"preparation":"inputs/proof-validator-PREPARATION.mjs","postimage":"postimages/proof-validator.EXECUTABLE.mjs","output":"proof-validator.mjs","before":{"bytes":6995,"sha256":"daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956"},"after":{"bytes":6892,"sha256":"9266bc453bc0863065fd7ff0d2fed9fd85af7c7e96ae2d10b2a8854b874f15e2"},"barrierLiteral":"throw new Error('PREPARATION_ONLY_UNBOUND: hosted proof validator is not executable or an admission.');","barrierOffset":0}});
+@@ -10,1 +10,1 @@
+-const SIDES=Object.freeze({"candidate":{"source":"19f174540b0b65870800317ed98085ef36696976","tree":"c04003a12493eea9b725daa016a32159ec5e64b4","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}},"predecessor":{"source":"d8e9f2e1feaf1df1f64584268069ba9917e30849","tree":"c9a572fb40d0b89c716919624a1cdd228c0f2a48","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}}});
++const SIDES=Object.freeze({"candidate":{"source":"4dcec2143edcde69cf9f282846e13be3153b02d0","tree":"75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}},"predecessor":{"source":"5e5abe7f33385951fd3f64ba65c3d0a7548b8861","tree":"67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a","expectedSchema":{"blob":"1809d354c1876cdef832792e0047586d209baaae","rawSHA256":"ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b","rawBytes":589940,"mode":"100755"}}});
+
+--- a/root-approval.UNBOUND.json
++++ b/root-approval.UNBOUND.json
+@@ -4,1 +4,1 @@
+-  "source": "19f174540b0b65870800317ed98085ef36696976",
++  "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+@@ -5,1 +5,1 @@
+-  "predecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++  "predecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+@@ -11,1 +11,1 @@
+-  "observerSHA256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c",
++  "observerSHA256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef",
+@@ -21,1 +21,1 @@
+-      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
++      "sha256": "8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3"
+@@ -39,1 +39,1 @@
+-      "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
++      "sha256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef"
+@@ -54,1 +54,1 @@
+-  "proofContractSHA256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace",
++  "proofContractSHA256": "c7071e34e0985d8d08e5bacd7a755d4b534027c294d3bb70962ff40eac1ab00d",
+
+--- a/hosted-binding.UNBOUND.json
++++ b/hosted-binding.UNBOUND.json
+@@ -3,1 +3,1 @@
+-  "source": "19f174540b0b65870800317ed98085ef36696976",
++  "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+@@ -4,1 +4,1 @@
+-  "predecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++  "predecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+
+--- a/workflow-refs.UNBOUND.json
++++ b/workflow-refs.UNBOUND.json
+@@ -4,1 +4,1 @@
+-  "source": "19f174540b0b65870800317ed98085ef36696976",
++  "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+@@ -5,1 +5,1 @@
+-  "predecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
++  "predecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+
+--- a/workflow.yml.template
++++ b/workflow.yml.template
+@@ -38,1 +38,1 @@
+-          ref: 19f174540b0b65870800317ed98085ef36696976
++          ref: 4dcec2143edcde69cf9f282846e13be3153b02d0
+@@ -64,1 +64,1 @@
+-          ref: 19f174540b0b65870800317ed98085ef36696976
++          ref: 4dcec2143edcde69cf9f282846e13be3153b02d0
+@@ -70,1 +70,1 @@
+-          ref: d8e9f2e1feaf1df1f64584268069ba9917e30849
++          ref: 5e5abe7f33385951fd3f64ba65c3d0a7548b8861
+@@ -123,1 +123,1 @@
+-          RC1_REPLAY_SOURCE: 19f174540b0b65870800317ed98085ef36696976
++          RC1_REPLAY_SOURCE: 4dcec2143edcde69cf9f282846e13be3153b02d0

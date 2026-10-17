@@ -1,0 +1,1 @@
+{"phase":"PASS_FOCUSED_DISABLED_G_K_SOURCE_REBIND_STATIC_AND_MEMORY_ONLY","positive":6,"refusals":12,"realTargetCapabilityAttempts":{"filesystem":0,"subprocess":0,"import":0,"dynamicImport":0}}

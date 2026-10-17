@@ -35,7 +35,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@__CHECKOUT_SHA__
         with:
-          ref: 19f174540b0b65870800317ed98085ef36696976
+          ref: 4dcec2143edcde69cf9f282846e13be3153b02d0
           path: candidate
           fetch-depth: 0
           persist-credentials: false
@@ -61,13 +61,13 @@ jobs:
     steps:
       - uses: actions/checkout@__CHECKOUT_SHA__
         with:
-          ref: 19f174540b0b65870800317ed98085ef36696976
+          ref: 4dcec2143edcde69cf9f282846e13be3153b02d0
           path: candidate
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/checkout@__CHECKOUT_SHA__
         with:
-          ref: d8e9f2e1feaf1df1f64584268069ba9917e30849
+          ref: 5e5abe7f33385951fd3f64ba65c3d0a7548b8861
           path: predecessor
           fetch-depth: 0
           persist-credentials: false
@@ -120,7 +120,7 @@ jobs:
         env:
           RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
           RC1_CI_POSTGRES: '18.4'
-          RC1_REPLAY_SOURCE: 19f174540b0b65870800317ed98085ef36696976
+          RC1_REPLAY_SOURCE: 4dcec2143edcde69cf9f282846e13be3153b02d0
         working-directory: candidate
         run: 'GITHUB_WORKSPACE="$GITHUB_WORKSPACE/candidate" "$RUNNER_TEMP/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node" tools/rc1-ci-retain.mjs'
       - name: Retain authenticated restricted evidence

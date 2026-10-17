@@ -7,11 +7,11 @@
       "output": "hosted-observer.cjs",
       "before": {
         "bytes": 27019,
-        "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+        "sha256": "8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3"
       },
       "after": {
         "bytes": 26901,
-        "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+        "sha256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef"
       },
       "barrierLiteral": "throw new Error('PREPARATION ONLY: strict GUI controller is disabled pending independent review and bound admission');",
       "barrierOffset": 14

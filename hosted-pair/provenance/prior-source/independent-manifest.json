@@ -1,0 +1,55 @@
+{
+  "phase": "INDEPENDENT_DISABLED_GUI_REFERENCE_PERMISSIONS_SUCCESSOR_REVIEW",
+  "status": "PASS_SCOPED_NO_CONFIRMED_FINDINGS",
+  "subjectManifestSHA256": "0bc6a13a86ee7f3c48517657cd29f680f24fc65ab5c8431f464be06fce7e4fee",
+  "reviewReceipt": "review-receipt.json",
+  "operationalAuthority": false,
+  "actualApproval": null,
+  "files": [
+    {
+      "file": "native-static-corrected.ps1",
+      "bytes": 10103,
+      "sha256": "42fc94d866a77e11098ea6d4cebf1937e66c402441672c190b17c4b41f9ba823"
+    },
+    {
+      "file": "native-static-initial.ps1",
+      "bytes": 10101,
+      "sha256": "dbcd64f9e7e4fa0070babeb7f83775758ee5e24aef0954119035b81ccf0f44ad"
+    },
+    {
+      "file": "native-supplemental.ps1",
+      "bytes": 5565,
+      "sha256": "dde6e09a8f940b53b27583c6c4fef3487cc3386b50e547cf1bb0bf0366c98ce6"
+    },
+    {
+      "file": "review-receipt.json",
+      "bytes": 7116,
+      "sha256": "a0a9680163717fcb0b7639da07c1cfb8982542d4b02260da53ea3192025db5a7"
+    },
+    {
+      "file": "reviewer-run-diagnostics.json",
+      "bytes": 1699,
+      "sha256": "0a4a5aa8593f01eba8004ed57d4f758c8cb4705f6225e2e85937e02b06af80b2"
+    },
+    {
+      "file": "seal-verification.json",
+      "bytes": 506,
+      "sha256": "4534538aba1d892cd4acfc51b1f97016626efed41211adf819d04783b3f72c98"
+    },
+    {
+      "file": "static-verification.json",
+      "bytes": 23765,
+      "sha256": "d77102b7d8b299b877202b8420667ba473b76dfa9f0d38a562b8d22f59f25a36"
+    },
+    {
+      "file": "subject-inventory.json",
+      "bytes": 19736,
+      "sha256": "4bcfe81d1b00ca1661359142b0f36b0e703d4b4b514ddfba1c135b363bcbe19e"
+    },
+    {
+      "file": "supplemental-verification.json",
+      "bytes": 3421,
+      "sha256": "3ae7879f4efe4bfba808376c803245c88117d7823f0c0ddbd948257b0234f583"
+    }
+  ]
+}

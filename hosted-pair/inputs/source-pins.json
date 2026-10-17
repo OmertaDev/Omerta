@@ -1,11 +1,11 @@
 {
   "phase": "PREPARATION_ONLY_COMMITTED_SOURCE_PINS_NOT_ADMISSION",
-  "createdAt": "2026-10-17T04:09:28.0286715Z",
+  "createdAt": "2026-10-17T06:37:19.9180929Z",
   "profile": "STRICT_GUI_SAME_SCHEMA",
   "sides": {
     "candidate": {
-      "source": "19f174540b0b65870800317ed98085ef36696976",
-      "tree": "c04003a12493eea9b725daa016a32159ec5e64b4",
+      "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+      "tree": "75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c",
       "files": {
         "schema.sql": {
           "blob": "1809d354c1876cdef832792e0047586d209baaae",
@@ -41,8 +41,8 @@
       "observedDeployed": false
     },
     "expectedPredecessor": {
-      "source": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
-      "tree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
+      "source": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+      "tree": "67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a",
       "files": {
         "schema.sql": {
           "blob": "1809d354c1876cdef832792e0047586d209baaae",
@@ -84,10 +84,10 @@
     "appVersionEqual": true
   },
   "ancestry": {
-    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
-    "candidate": "19f174540b0b65870800317ed98085ef36696976",
+    "expectedPredecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+    "candidate": "4dcec2143edcde69cf9f282846e13be3153b02d0",
     "gitMergeBaseIsAncestorExitCode": 0,
-    "mergeBase": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+    "mergeBase": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
     "genuineCommitAncestryVerified": true,
     "replacementObjectsDisabled": true
   },

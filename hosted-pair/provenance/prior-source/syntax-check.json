@@ -1,0 +1,40 @@
+{
+  "phase": "FOCUSED_SUCCESSOR_SYNTAX_ONLY_NO_MODULE_IMPORT",
+  "checkedFiles": 4,
+  "unchangedSourceSyntaxReusedFrom": "provenance/prior-gui/syntax-check.json",
+  "environment": "Cleared except SystemRoot/WINDIR",
+  "rows": [
+    {
+      "file": "materialize-hosted.cjs",
+      "bytes": 19004,
+      "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "build-preparation.cjs",
+      "bytes": 19524,
+      "sha256": "90f4c2eb5b311747bafd11d8bfa7b81578905869d3443688d0c9eea372edec49",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "synthetic-cases.js",
+      "bytes": 21667,
+      "sha256": "fe38ad44adac989f182620c47bd2dafe11cbcf08c0a227e47d21fedcd0fbd7fd",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "reference-permissions-checks.cjs",
+      "bytes": 6298,
+      "sha256": "dea98c209440071bde968f51ceefbb55faa780c087df41c6bcd50179047109d0",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

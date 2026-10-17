@@ -1,0 +1,126 @@
+{
+  "phase": "PASS_READ_ONLY_G_K_CANONICAL_SOURCE_IDENTITIES",
+  "verifiedAt": "2026-10-17T06:37:19.9180929Z",
+  "repository": "C:/Users/Jorge/Documents/Omerta",
+  "candidate": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+  "tree": "75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c",
+  "expectedPredecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+  "predecessorTree": "67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a",
+  "sides": [
+    {
+      "side": "candidate",
+      "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+      "tree": "75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c",
+      "files": [
+        {
+          "file": "schema.sql",
+          "blob": "1809d354c1876cdef832792e0047586d209baaae",
+          "mode": "100755",
+          "bytes": 589940,
+          "sha256": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
+          "observedExactMatch": true
+        },
+        {
+          "file": "package-lock.json",
+          "blob": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+          "mode": "100644",
+          "bytes": 257066,
+          "sha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+          "observedExactMatch": true
+        },
+        {
+          "file": "package.json",
+          "blob": "d72e7efd8a0bca679a19588ab718ce8330633b07",
+          "mode": "100644",
+          "bytes": 55413,
+          "sha256": "a81009962454326c1c276c95101084f1a44c9d1ef3b7b8642f65478f7142ada2",
+          "observedExactMatch": true
+        },
+        {
+          "file": "tools/rc1-source-pair.js",
+          "blob": "fa4edae199c1357fd96df5c34a607e45e24cb0c8",
+          "mode": "100644",
+          "bytes": 96040,
+          "sha256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+          "observedExactMatch": true
+        }
+      ],
+      "appVersion": "1.5.0"
+    },
+    {
+      "side": "expectedPredecessor",
+      "source": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+      "tree": "67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a",
+      "files": [
+        {
+          "file": "schema.sql",
+          "blob": "1809d354c1876cdef832792e0047586d209baaae",
+          "mode": "100755",
+          "bytes": 589940,
+          "sha256": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
+          "observedExactMatch": true
+        },
+        {
+          "file": "package-lock.json",
+          "blob": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+          "mode": "100644",
+          "bytes": 257066,
+          "sha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+          "observedExactMatch": true
+        },
+        {
+          "file": "package.json",
+          "blob": "9f43c08b9da8740a6246cf37711cc723aecaa715",
+          "mode": "100644",
+          "bytes": 55271,
+          "sha256": "d6d83610d52e7f7e4480e157f71ec06ea5c7e7673a1cdada8c749a713d01e3e7",
+          "observedExactMatch": true
+        },
+        {
+          "file": "tools/rc1-source-pair.js",
+          "blob": "fa4edae199c1357fd96df5c34a607e45e24cb0c8",
+          "mode": "100644",
+          "bytes": 96040,
+          "sha256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+          "observedExactMatch": true
+        }
+      ],
+      "appVersion": "1.5.0"
+    }
+  ],
+  "ancestry": {
+    "isAncestorExitCode": 0,
+    "mergeBase": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861"
+  },
+  "allEightPinnedFileObservationsMatchPriorSides": true,
+  "strictSchemaModeBlobBytesSHA256Equal": true,
+  "strictLockModeBlobBytesSHA256Equal": true,
+  "appVersionEqual": true,
+  "canonicalCliEqual": true,
+  "observations": "Recorded from completed read-only binary Git rev-parse, ls-tree, cat-file blob and merge-base commands before packet creation; no working-file substitution.",
+  "gitGlobalAndSystemConfigDisabled": true,
+  "replacementObjectsDisabled": true,
+  "gitOptionalLocksDisabled": true,
+  "readsOnly": true,
+  "gitMutation": false,
+  "sourceCapture": false,
+  "appImport": false,
+  "npmOrTests": false,
+  "databaseOrProofRuntime": false,
+  "parentPacket": {
+    "path": "C:\\Users\\Jorge\\AppData\\Local\\Temp\\omerta-dashboard-strict-gui-reference-permissions-successor-f4d397e8-f582-45b2-a2d3-a02c85ee26b2",
+    "manifestSHA256": "0bc6a13a86ee7f3c48517657cd29f680f24fc65ab5c8431f464be06fce7e4fee",
+    "indexedFiles": 118,
+    "closedFiles": 119,
+    "allHashesVerified": true
+  },
+  "retiredPartialAuthorDraft": {
+    "path": "C:\\Users\\Jorge\\AppData\\Local\\Temp\\omerta-gui-final-source-rebind-preparation-e6af6cef-2835-43b9-999a-242393b86392",
+    "source": "2b10efe7c087e5d048719cd35c1ad0c626760631",
+    "status": "INCOMPLETE_UNSEALED_NOT_REVIEWED",
+    "untouched": true
+  },
+  "actualDeployment": null,
+  "actualRuntime": null,
+  "operationalApproval": null
+}

@@ -1,71 +1,91 @@
 {
-  "phase": "AUTHOR_VALIDATION_DISABLED_GUI_REFERENCE_PERMISSIONS_SUCCESSOR_ONLY",
-  "createdAt": "2026-10-17T05:31:20.6415016Z",
-  "syntaxFiles": 4,
-  "syntaxOnly": true,
+  "phase": "AUTHOR_VALIDATION_DISABLED_G_K_SOURCE_REBIND_ONLY",
+  "createdAt": "2026-10-17T06:42:33.9519250Z",
+  "sourceVerification": {
+    "file": "source-rebind-source-verification.json",
+    "bytes": 4883,
+    "sha256": "d073e703d5673aa8ebe0209950acbf976e048686ff769fb3b3bb2df903f70b08"
+  },
+  "authorRecipe": {
+    "file": "source-rebind-preparation.cjs",
+    "bytes": 9018,
+    "sha256": "74ae6364b328ece2def5651938eb540dea35ad7a3a705e977a58421566344b30"
+  },
+  "recipeRun": {
+    "exitCode": 0,
+    "stdout": {
+      "file": "source-rebind-recipe-run1.stdout.txt",
+      "bytes": 661,
+      "sha256": "c8d2241e4231c873c2b653a3c5f7659dfcc20169103c9eb996596b385c4cc1e8"
+    },
+    "stderr": {
+      "file": "source-rebind-recipe-run1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "inverse": {
+    "file": "source-rebind-inverse.json",
+    "bytes": 31786,
+    "sha256": "a2581164c07f437778b177ac58d47b8a861b47d672bd17186c0391821409de78"
+  },
+  "patch": {
+    "file": "source-rebind.patch",
+    "bytes": 21182,
+    "sha256": "3446f3351f8f1f490a5a4d47e597b65cc916c4c39988e7db6493f59abeb8112f"
+  },
+  "syntaxFiles": 5,
   "syntaxReceipt": {
     "file": "syntax-check.json",
-    "bytes": 1152,
-    "sha256": "68be246a60bf3d4cdda91ae4ac2b1e4fae4b7135b2c78f1db6c25aabb6a8cba5"
-  },
-  "exactInverseReceipt": {
-    "file": "reference-permissions-inverse.json",
-    "bytes": 2113,
-    "sha256": "c649fccbdd40cfdfac557fc65c353f7061aadec28398f3af3d793f75e3c832bf"
+    "bytes": 1348,
+    "sha256": "5fa249446ab8edbe926fd3c8925befcc82939580fe6a1ad361af9bd4348c5563"
   },
   "focused": {
     "harness": {
-      "file": "reference-permissions-checks.cjs",
-      "bytes": 6298,
-      "sha256": "dea98c209440071bde968f51ceefbb55faa780c087df41c6bcd50179047109d0"
-    },
-    "existingCases": {
-      "file": "synthetic-cases.js",
-      "bytes": 21667,
-      "sha256": "fe38ad44adac989f182620c47bd2dafe11cbcf08c0a227e47d21fedcd0fbd7fd"
+      "file": "source-rebind-checks.cjs",
+      "bytes": 11260,
+      "sha256": "010d928c3374074595ce22799d57f7c6e03fa92c4c01e402df87ea18a881b8f4"
     },
     "result": {
-      "file": "reference-permissions-checks.json",
-      "bytes": 1605,
-      "sha256": "3d73754d9ff51092296c19fc4a7b2df7209eb35636854ae4319f73de691e69a8"
+      "file": "source-rebind-checks.json",
+      "bytes": 2743,
+      "sha256": "227fe8d168b3f06aba6bfaf3a44cf4a69734b4fd109a4cbbd1c0b46cb2795a9c"
     },
     "stdout": {
-      "file": "reference-permissions-checks.stdout.txt",
-      "bytes": 157,
-      "sha256": "629c251920d4e6e4690929594e9d88862e03cef5c1c15a48de48eed68482cf6c"
+      "file": "source-rebind-checks-run1.stdout.txt",
+      "bytes": 194,
+      "sha256": "fc241af1acaa36e349b217905410f170db39f7e96e7977214ab26c123f62847f"
     },
     "stderr": {
-      "file": "reference-permissions-checks.stderr.txt",
+      "file": "source-rebind-checks-run1.stderr.txt",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "exitCode": 0,
-    "positive": 1,
-    "refusals": 1,
-    "actualTarCalls": 0,
-    "realCapabilityAttempts": {
+    "positive": 6,
+    "refusals": 12,
+    "realTargetCapabilityAttempts": {
       "filesystem": 0,
       "subprocess": 0,
-      "import": 0
-    },
-    "environment": "Installed Node launched with cleared environment except SystemRoot/WINDIR; target code sees only isolated VM and memory fixtures."
+      "import": 0,
+      "dynamicImport": 0
+    }
   },
   "staticReview": {
     "file": "preparation-review.json",
-    "bytes": 9019,
-    "sha256": "f9c4559cde5d3a0f4a466c7eb7be10d58402c517a82422e75e0fa3cc9c68e8d0"
+    "bytes": 16353,
+    "sha256": "06f6f3cbb292e95ecf1a19d1cbb1053bc8983a6eeb213a6a7e2013940625f0d3"
   },
-  "reusedPriorValidation": {
-    "file": "provenance/prior-gui/validation-receipt.json",
-    "bytes": 2662,
-    "sha256": "bed468ec0da0098f70fe2e971db262fff3f0d957b5707cce71dc699d725eec1c"
+  "priorValidation": {
+    "file": "provenance/prior-source/validation-receipt.json",
+    "bytes": 2433,
+    "sha256": "9b94445eefdd641b17c88dbd651b009694d5209fffe0dcce0029b9de447ae57d"
   },
   "priorBroadSuiteRerun": false,
+  "currentRuntimeClaim": false,
+  "historical19fRunQualifiesG_K": false,
   "operationalApproval": null,
-  "actualRuntime": null,
-  "actualRunnerBinding": null,
-  "runtimeAdmission": null,
-  "sourceReservation": null,
-  "sourcePairResult": null,
-  "independentSuccessorReview": null
+  "independentSuccessorReview": null,
+  "actualExecution": null,
+  "actualResult": null
 }

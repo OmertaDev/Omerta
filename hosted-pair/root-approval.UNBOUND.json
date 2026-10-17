@@ -1,14 +1,14 @@
 {
   "schema": "omerta.gui19f-d8-hosted-materialization.v1",
   "enabled": false,
-  "source": "19f174540b0b65870800317ed98085ef36696976",
-  "predecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+  "predecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
   "scope": "STRICT_GUI19F_D8_NODE_GIT_SCHEMA_LOCK_VERSION_DEPENDENCIES_DRIVER139",
   "materializerSHA256": null,
   "packageManifestSHA256": null,
   "independentReviewSHA256": null,
   "rootConfigReviewSHA256": null,
-  "observerSHA256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c",
+  "observerSHA256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef",
   "observerPeerSHA256": null,
   "observerReviews": {
     "originalDisabledStatic": "f1ec6697e1bfa473d98a06ddd26873ee19ccecf1ca8052fbecc58648895165e1",
@@ -18,7 +18,7 @@
   "modulePreimages": {
     "observer": {
       "bytes": 27019,
-      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+      "sha256": "8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3"
     },
     "guard": {
       "bytes": 36295,
@@ -36,7 +36,7 @@
   "modulePostimages": {
     "observer": {
       "bytes": 26901,
-      "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+      "sha256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef"
     },
     "guard": {
       "bytes": 36185,
@@ -51,7 +51,7 @@
       "sha256": "9266bc453bc0863065fd7ff0d2fed9fd85af7c7e96ae2d10b2a8854b874f15e2"
     }
   },
-  "proofContractSHA256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace",
+  "proofContractSHA256": "c7071e34e0985d8d08e5bacd7a755d4b534027c294d3bb70962ff40eac1ab00d",
   "repository": null,
   "workflowCommit": null,
   "workflowPath": ".github/workflows/rc1-recovery.yml",

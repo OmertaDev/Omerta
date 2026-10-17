@@ -1,13 +1,13 @@
 {
   "phase": "GUI_SOURCE_ONLY_HOSTED_MATERIALIZATION_PREPARATION",
-  "frozenAt": "2026-10-17T05:31:21.0189840Z",
-  "source": "19f174540b0b65870800317ed98085ef36696976",
-  "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
-  "parentManifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
-  "parentPeerManifestSHA256": "6299d024302a7016bdd41d4c79d567ba4fda8041f0b2e1d5515cf3d92c1246c2",
+  "frozenAt": "2026-10-17T06:42:34.6688818Z",
+  "source": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+  "expectedPredecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+  "parentManifestSHA256": "0bc6a13a86ee7f3c48517657cd29f680f24fc65ab5c8431f464be06fce7e4fee",
+  "parentPeerManifestSHA256": "d9ff02cf4ae8014483b1e0f0a246c887fa95304b282fef679e142f754f9b2083",
   "adaptationMapManifestSHA256": "d994357bd6c4dda703fc07876c090acb90c017b15271dbe91657aeb969e60aaf",
   "entry": "materialize-hosted.cjs",
-  "entrySHA256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca",
+  "entrySHA256": "aeda0424637d20f8114252b6cd1be70148dd0aeec56338ef19d3694add052a7d",
   "moduleBarriers": {
     "observer": {
       "preparation": "inputs/hosted-observer-PREPARATION.cjs",
@@ -15,11 +15,11 @@
       "output": "hosted-observer.cjs",
       "before": {
         "bytes": 27019,
-        "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+        "sha256": "8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3"
       },
       "after": {
         "bytes": 26901,
-        "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+        "sha256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef"
       },
       "barrierLiteral": "throw new Error('PREPARATION ONLY: strict GUI controller is disabled pending independent review and bound admission');",
       "barrierOffset": 14
@@ -73,7 +73,7 @@
   "proofContract": {
     "file": "inputs/proof-contract.json",
     "bytes": 1670,
-    "sha256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace"
+    "sha256": "c7071e34e0985d8d08e5bacd7a755d4b534027c294d3bb70962ff40eac1ab00d"
   },
   "installer": {
     "file": "install-approved-runtime.sh",
@@ -83,15 +83,14 @@
   "workflow": {
     "file": "workflow.yml.template",
     "bytes": 6108,
-    "sha256": "adf35f85a053fcb1a72f15361a53d83cca4dafa99f8a1ce74e9434f23da4778b"
+    "sha256": "079ea7ffdc2db7e00390611b081a35cceb36e1e301d4377b64e5687d412919a4"
   },
-  "syntaxFiles": 4,
+  "syntaxFiles": 5,
   "controls": {
-    "positive": 1,
-    "refusals": 1,
-    "realCapabilityAttempts": 0,
-    "actualTarCalls": 0,
-    "scope": "Focused existing memory mock and three exact inverses only"
+    "positive": 6,
+    "refusals": 12,
+    "realTargetCapabilityAttempts": 0,
+    "scope": "G/K pin joins and retired-binding refusals using isolated actual definitions; exact file/barrier inverses"
   },
   "inheritedServiceFailure": "run39003881167 controlc98 pre-checkout; only explicit service options line removed; observed health/readiness guards exact",
   "operationalAuthority": false,
@@ -131,13 +130,13 @@
     },
     {
       "file": "HANDOFF.md",
-      "bytes": 4394,
-      "sha256": "ac5bb189208698bb1bb8e3ef3eb39a6b62cfd7e5fcdc2456b0dc38d010cbe793"
+      "bytes": 4198,
+      "sha256": "76c6ba39d45378cdce48661c5dc4805134b99e0d043da9da61db3664e8bac0d2"
     },
     {
       "file": "hosted-binding.UNBOUND.json",
       "bytes": 840,
-      "sha256": "066dfbad5608afbb183554bcc685524f9812ecc8a3b6b3124d05199ad3943b31"
+      "sha256": "ec7fa478190fe9319fd5fd3c5fd6736fbf533e0206631a68c2a927427bc5fc9d"
     },
     {
       "file": "incoming-verification.json",
@@ -167,7 +166,7 @@
     {
       "file": "inputs/hosted-observer-PREPARATION.cjs",
       "bytes": 27019,
-      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+      "sha256": "8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3"
     },
     {
       "file": "inputs/hosted-source-guard-PREPARATION.mjs",
@@ -192,7 +191,7 @@
     {
       "file": "inputs/proof-contract.json",
       "bytes": 1670,
-      "sha256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace"
+      "sha256": "c7071e34e0985d8d08e5bacd7a755d4b534027c294d3bb70962ff40eac1ab00d"
     },
     {
       "file": "inputs/proof-validator-PREPARATION.mjs",
@@ -207,7 +206,7 @@
     {
       "file": "inputs/source-pins.json",
       "bytes": 5347,
-      "sha256": "2154e64e93b31776c4fff2f417f68e98f54e39bfc795cb7430abbf2fbd00680b"
+      "sha256": "a459a48619a0cfd4ddff439c6b6d7884efd8c98575045e05132e8961cc92f951"
     },
     {
       "file": "inputs/strict-source-proof-adapter-PREPARATION.mjs",
@@ -222,7 +221,7 @@
     {
       "file": "materialize-hosted.cjs",
       "bytes": 19004,
-      "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca"
+      "sha256": "aeda0424637d20f8114252b6cd1be70148dd0aeec56338ef19d3694add052a7d"
     },
     {
       "file": "materializer-parent-to-gui.patch",
@@ -232,12 +231,12 @@
     {
       "file": "module-barrier-inverses.json",
       "bytes": 2772,
-      "sha256": "bdbe02b65f40edbc647f39c61d577858570419da95563f8d65a920c6fdef580f"
+      "sha256": "d16b042422220abfd786536fb31e160a55eb4c9ef21ad7cc42a10cbaa7dd6f30"
     },
     {
       "file": "postimages/hosted-observer.EXECUTABLE.cjs",
       "bytes": 26901,
-      "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+      "sha256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef"
     },
     {
       "file": "postimages/hosted-source-guard.EXECUTABLE.mjs",
@@ -256,8 +255,8 @@
     },
     {
       "file": "preparation-review.json",
-      "bytes": 9019,
-      "sha256": "f9c4559cde5d3a0f4a466c7eb7be10d58402c517a82422e75e0fa3cc9c68e8d0"
+      "bytes": 16353,
+      "sha256": "06f6f3cbb292e95ecf1a19d1cbb1053bc8983a6eeb213a6a7e2013940625f0d3"
     },
     {
       "file": "provenance/adaptation-map-ADAPTATION.md",
@@ -425,6 +424,96 @@
       "sha256": "bed468ec0da0098f70fe2e971db262fff3f0d957b5707cce71dc699d725eec1c"
     },
     {
+      "file": "provenance/prior-source/HANDOFF.md",
+      "bytes": 4394,
+      "sha256": "ac5bb189208698bb1bb8e3ef3eb39a6b62cfd7e5fcdc2456b0dc38d010cbe793"
+    },
+    {
+      "file": "provenance/prior-source/hosted-binding.UNBOUND.json",
+      "bytes": 840,
+      "sha256": "066dfbad5608afbb183554bcc685524f9812ecc8a3b6b3124d05199ad3943b31"
+    },
+    {
+      "file": "provenance/prior-source/independent-manifest.json",
+      "bytes": 1836,
+      "sha256": "d9ff02cf4ae8014483b1e0f0a246c887fa95304b282fef679e142f754f9b2083"
+    },
+    {
+      "file": "provenance/prior-source/independent-review-receipt.json",
+      "bytes": 7116,
+      "sha256": "a0a9680163717fcb0b7639da07c1cfb8982542d4b02260da53ea3192025db5a7"
+    },
+    {
+      "file": "provenance/prior-source/inputs/hosted-observer-PREPARATION.cjs",
+      "bytes": 27019,
+      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+    },
+    {
+      "file": "provenance/prior-source/inputs/proof-contract.json",
+      "bytes": 1670,
+      "sha256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace"
+    },
+    {
+      "file": "provenance/prior-source/inputs/source-pins.json",
+      "bytes": 5347,
+      "sha256": "2154e64e93b31776c4fff2f417f68e98f54e39bfc795cb7430abbf2fbd00680b"
+    },
+    {
+      "file": "provenance/prior-source/manifest.json",
+      "bytes": 26345,
+      "sha256": "0bc6a13a86ee7f3c48517657cd29f680f24fc65ab5c8431f464be06fce7e4fee"
+    },
+    {
+      "file": "provenance/prior-source/materialize-hosted.cjs",
+      "bytes": 19004,
+      "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca"
+    },
+    {
+      "file": "provenance/prior-source/module-barrier-inverses.json",
+      "bytes": 2772,
+      "sha256": "bdbe02b65f40edbc647f39c61d577858570419da95563f8d65a920c6fdef580f"
+    },
+    {
+      "file": "provenance/prior-source/postimages/hosted-observer.EXECUTABLE.cjs",
+      "bytes": 26901,
+      "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+    },
+    {
+      "file": "provenance/prior-source/preparation-review.json",
+      "bytes": 9019,
+      "sha256": "f9c4559cde5d3a0f4a466c7eb7be10d58402c517a82422e75e0fa3cc9c68e8d0"
+    },
+    {
+      "file": "provenance/prior-source/root-approval.UNBOUND.json",
+      "bytes": 2372,
+      "sha256": "9de88e9912a27b3dfaa374b0881de73d762381757c2ee08e6cf4af95141f9764"
+    },
+    {
+      "file": "provenance/prior-source/source-binding.template.json",
+      "bytes": 1945,
+      "sha256": "8523320c6ef6b26ff7998320a6b608866ab23eb93cba56d90e6d5489660c2bde"
+    },
+    {
+      "file": "provenance/prior-source/syntax-check.json",
+      "bytes": 1152,
+      "sha256": "68be246a60bf3d4cdda91ae4ac2b1e4fae4b7135b2c78f1db6c25aabb6a8cba5"
+    },
+    {
+      "file": "provenance/prior-source/validation-receipt.json",
+      "bytes": 2433,
+      "sha256": "9b94445eefdd641b17c88dbd651b009694d5209fffe0dcce0029b9de447ae57d"
+    },
+    {
+      "file": "provenance/prior-source/workflow-refs.UNBOUND.json",
+      "bytes": 318,
+      "sha256": "25a62a40057140d99b9ebe8a3c603090d49146102abd17bff93f94c786673bc7"
+    },
+    {
+      "file": "provenance/prior-source/workflow.yml.template",
+      "bytes": 6108,
+      "sha256": "adf35f85a053fcb1a72f15361a53d83cca4dafa99f8a1ce74e9434f23da4778b"
+    },
+    {
       "file": "provenance/proof-validator-manifest.json",
       "bytes": 976,
       "sha256": "ff8551c21d58186f580a00e4498402c9d50493110ec01396e1045260e25ffa51"
@@ -463,6 +552,16 @@
       "file": "provenance/synthetic-cases-run1.js",
       "bytes": 19760,
       "sha256": "9aa28f154b7ac11f6fa046234736ceb4eecc92fb5545f5ee6a768365e7313968"
+    },
+    {
+      "file": "provenance/unsealed-2b10-author-recipe-seed/source-rebind-checks.cjs",
+      "bytes": 9723,
+      "sha256": "9fdd6c9598376ab1947d3b4285c344e7bf5245ddc0a8645c38aa2d9697574a30"
+    },
+    {
+      "file": "provenance/unsealed-2b10-author-recipe-seed/source-rebind-preparation.cjs",
+      "bytes": 8500,
+      "sha256": "0a69d803348372759caaa528875823b7e9b45f8dfffd904f62b83a04547af017"
     },
     {
       "file": "provenance/upstreamCorrection/baseline/materialize-hosted.cjs",
@@ -632,17 +731,122 @@
     {
       "file": "root-approval.UNBOUND.json",
       "bytes": 2372,
-      "sha256": "9de88e9912a27b3dfaa374b0881de73d762381757c2ee08e6cf4af95141f9764"
+      "sha256": "f4325335f309ea0dcc7463e3767eb98ab0bc56fe2d5b7668250d9c3f08af3483"
     },
     {
       "file": "source-binding.template.json",
       "bytes": 1945,
-      "sha256": "8523320c6ef6b26ff7998320a6b608866ab23eb93cba56d90e6d5489660c2bde"
+      "sha256": "2019900ac9a61fc742689cef2fbf28a6d9aff69179577fc27c2db3d0545b8228"
+    },
+    {
+      "file": "source-rebind-checks-run1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "source-rebind-checks-run1.stdout.txt",
+      "bytes": 194,
+      "sha256": "fc241af1acaa36e349b217905410f170db39f7e96e7977214ab26c123f62847f"
+    },
+    {
+      "file": "source-rebind-checks.cjs",
+      "bytes": 11260,
+      "sha256": "010d928c3374074595ce22799d57f7c6e03fa92c4c01e402df87ea18a881b8f4"
+    },
+    {
+      "file": "source-rebind-checks.json",
+      "bytes": 2743,
+      "sha256": "227fe8d168b3f06aba6bfaf3a44cf4a69734b4fd109a4cbbd1c0b46cb2795a9c"
+    },
+    {
+      "file": "source-rebind-inverse.json",
+      "bytes": 31786,
+      "sha256": "a2581164c07f437778b177ac58d47b8a861b47d672bd17186c0391821409de78"
+    },
+    {
+      "file": "source-rebind-preparation.cjs",
+      "bytes": 9018,
+      "sha256": "74ae6364b328ece2def5651938eb540dea35ad7a3a705e977a58421566344b30"
+    },
+    {
+      "file": "source-rebind-recipe-run1.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "source-rebind-recipe-run1.stdout.txt",
+      "bytes": 661,
+      "sha256": "c8d2241e4231c873c2b653a3c5f7659dfcc20169103c9eb996596b385c4cc1e8"
+    },
+    {
+      "file": "source-rebind-scope.json",
+      "bytes": 23952,
+      "sha256": "0a851df293a0a1f55893786f6d62a5ad9afd822003c2a7f444c94f3a83569103"
+    },
+    {
+      "file": "source-rebind-source-verification.json",
+      "bytes": 4883,
+      "sha256": "d073e703d5673aa8ebe0209950acbf976e048686ff769fb3b3bb2df903f70b08"
+    },
+    {
+      "file": "source-rebind.patch",
+      "bytes": 21182,
+      "sha256": "3446f3351f8f1f490a5a4d47e597b65cc916c4c39988e7db6493f59abeb8112f"
     },
     {
       "file": "syntax-check.json",
-      "bytes": 1152,
-      "sha256": "68be246a60bf3d4cdda91ae4ac2b1e4fae4b7135b2c78f1db6c25aabb6a8cba5"
+      "bytes": 1348,
+      "sha256": "5fa249446ab8edbe926fd3c8925befcc82939580fe6a1ad361af9bd4348c5563"
+    },
+    {
+      "file": "syntax-hosted-observer-PREPARATION.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-hosted-observer-PREPARATION.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-hosted-observer.EXECUTABLE.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-hosted-observer.EXECUTABLE.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-materialize-hosted.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-materialize-hosted.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-source-rebind-checks.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-source-rebind-checks.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-source-rebind-preparation.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "syntax-source-rebind-preparation.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
       "file": "synthetic-cases.js",
@@ -681,8 +885,8 @@
     },
     {
       "file": "validation-receipt.json",
-      "bytes": 2433,
-      "sha256": "9b94445eefdd641b17c88dbd651b009694d5209fffe0dcce0029b9de447ae57d"
+      "bytes": 2946,
+      "sha256": "8fe8dd509ee7e3b8dab72b6705259c868b8c96e741767171a6e1725335e03e3d"
     },
     {
       "file": "workflow-parent-to-gui.patch",
@@ -692,29 +896,38 @@
     {
       "file": "workflow-refs.UNBOUND.json",
       "bytes": 318,
-      "sha256": "25a62a40057140d99b9ebe8a3c603090d49146102abd17bff93f94c786673bc7"
+      "sha256": "a216099f7a5ee47d26cf57db30fd324cd8d2ff4723d194b8c85a125b9f77b796"
     },
     {
       "file": "workflow.yml.template",
       "bytes": 6108,
-      "sha256": "adf35f85a053fcb1a72f15361a53d83cca4dafa99f8a1ce74e9434f23da4778b"
+      "sha256": "079ea7ffdc2db7e00390611b081a35cceb36e1e301d4377b64e5687d412919a4"
     }
   ],
-  "successorKind": "REFERENCE_PERMISSIONS",
-  "finding": "HO-NPM-UMASK-R1",
+  "successorKind": "G_K_SOURCE_REBIND",
   "upstreamCorrectionManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
   "upstreamPeerManifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
   "causeManifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
-  "deltaReceipt": "reference-permissions-inverse.json",
-  "scopeReceipt": "reference-permissions-scope.json",
+  "deltaReceipt": "source-rebind-inverse.json",
+  "scopeReceipt": "source-rebind-scope.json",
   "focusedValidationReceipt": "validation-receipt.json",
   "priorControlsReused": {
-    "manifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
-    "positive": 22,
-    "refusals": 135,
-    "syntaxFiles": 13,
+    "manifestSHA256": "0bc6a13a86ee7f3c48517657cd29f680f24fc65ab5c8431f464be06fce7e4fee",
+    "positive": 1,
+    "refusals": 1,
+    "syntaxFiles": 4,
     "rerun": false,
-    "currentSourceQualifiedByThoseCounts": false
+    "currentSourceQualifiedByThoseCounts": false,
+    "olderBroadSuite": "22 positive / 135 refusals remains historical under original provenance"
   },
-  "actualRuntime": null
+  "actualRuntime": null,
+  "candidateTree": "75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c",
+  "predecessorTree": "67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a",
+  "sourceVerification": {
+    "file": "source-rebind-source-verification.json",
+    "bytes": 4883,
+    "sha256": "d073e703d5673aa8ebe0209950acbf976e048686ff769fb3b3bb2df903f70b08"
+  },
+  "historicalTechnicalIdentifiersRetained": true,
+  "inheritedFinding": "HO-NPM-UMASK-R1"
 }

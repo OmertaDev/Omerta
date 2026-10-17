@@ -1,37 +1,45 @@
 {
-  "phase": "FOCUSED_SUCCESSOR_SYNTAX_ONLY_NO_MODULE_IMPORT",
-  "checkedFiles": 4,
-  "unchangedSourceSyntaxReusedFrom": "provenance/prior-gui/syntax-check.json",
+  "phase": "G_K_SOURCE_REBIND_SYNTAX_ONLY",
+  "checkedFiles": 5,
   "environment": "Cleared except SystemRoot/WINDIR",
+  "targetImports": false,
   "rows": [
+    {
+      "file": "source-rebind-preparation.cjs",
+      "bytes": 9018,
+      "sha256": "74ae6364b328ece2def5651938eb540dea35ad7a3a705e977a58421566344b30",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "file": "source-rebind-checks.cjs",
+      "bytes": 11260,
+      "sha256": "010d928c3374074595ce22799d57f7c6e03fa92c4c01e402df87ea18a881b8f4",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
     {
       "file": "materialize-hosted.cjs",
       "bytes": 19004,
-      "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca",
+      "sha256": "aeda0424637d20f8114252b6cd1be70148dd0aeec56338ef19d3694add052a7d",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
-      "file": "build-preparation.cjs",
-      "bytes": 19524,
-      "sha256": "90f4c2eb5b311747bafd11d8bfa7b81578905869d3443688d0c9eea372edec49",
+      "file": "inputs/hosted-observer-PREPARATION.cjs",
+      "bytes": 27019,
+      "sha256": "8bc20f49759375616603e298f374f6ab55de9025ddb793d3eb672bf54927b2d3",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""
     },
     {
-      "file": "synthetic-cases.js",
-      "bytes": 21667,
-      "sha256": "fe38ad44adac989f182620c47bd2dafe11cbcf08c0a227e47d21fedcd0fbd7fd",
-      "exitCode": 0,
-      "stdout": "",
-      "stderr": ""
-    },
-    {
-      "file": "reference-permissions-checks.cjs",
-      "bytes": 6298,
-      "sha256": "dea98c209440071bde968f51ceefbb55faa780c087df41c6bcd50179047109d0",
+      "file": "postimages/hosted-observer.EXECUTABLE.cjs",
+      "bytes": 26901,
+      "sha256": "6c78b8dfc21b2bdd310b366e7c2c4e50003ae1224b6f3926fdddd61ee613fcef",
       "exitCode": 0,
       "stdout": "",
       "stderr": ""

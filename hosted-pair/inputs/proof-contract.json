@@ -1,6 +1,6 @@
 {
   "phase": "PREPARATION_ONLY_STRICT_SAME_SCHEMA_CONTRACT",
-  "candidate": "19f174540b0b65870800317ed98085ef36696976",
+  "candidate": "4dcec2143edcde69cf9f282846e13be3153b02d0",
   "canonicalCli": {
     "file": "tools/rc1-source-pair.js",
     "blob": "fa4edae199c1357fd96df5c34a607e45e24cb0c8",

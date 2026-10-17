@@ -1,0 +1,65 @@
+{
+  "phase": "PASS_FOCUSED_DISABLED_G_K_SOURCE_REBIND_STATIC_AND_MEMORY_ONLY",
+  "candidate": "4dcec2143edcde69cf9f282846e13be3153b02d0",
+  "tree": "75f9ca3675d2a8ab41a671c2b2201fcbca1fbe5c",
+  "expectedPredecessor": "5e5abe7f33385951fd3f64ba65c3d0a7548b8861",
+  "predecessorTree": "67d5c0af4cba9d5e0fbb0a5016566e0463d82e7a",
+  "retiredCandidate": "19f174540b0b65870800317ed98085ef36696976",
+  "retiredTree": "c04003a12493eea9b725daa016a32159ec5e64b4",
+  "retiredPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "retiredPredecessorTree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
+  "sourceEditWholeInverses": 11,
+  "unchangedParentFileChecks": 103,
+  "positive": 6,
+  "refusals": 12,
+  "cases": {
+    "positive": [
+      "current G K static source and tree joins",
+      "materializer accepts final source synthetic authority",
+      "controller module and contract pins join changed bytes",
+      "observer accepts final source synthetic binding",
+      "observer accepts final source and tree pins",
+      "actual adapter prefix accepts final proof-contract candidate"
+    ],
+    "refusals": [
+      "materializer refuses disabled template",
+      "materializer refuses retired source",
+      "materializer refuses retired predecessor",
+      "observer refuses disabled template",
+      "observer refuses retired source",
+      "observer refuses retired predecessor",
+      "binding refuses retired source",
+      "binding refuses retired tree",
+      "binding refuses retired predecessor",
+      "binding refuses retired predecessor tree",
+      "adapter refuses retired proof-contract candidate",
+      "adapter refuses retired source binding"
+    ]
+  },
+  "realTargetCapabilityAttempts": {
+    "filesystem": 0,
+    "subprocess": 0,
+    "import": 0,
+    "dynamicImport": 0
+  },
+  "actualAdapterPrefixUsed": true,
+  "actualModuleDefinitionsEvaluatedOnly": [
+    "materialize-hosted.cjs",
+    "postimages/hosted-observer.EXECUTABLE.cjs"
+  ],
+  "actualModuleImports": false,
+  "actualTarOrRuntimeObservation": false,
+  "actualSourceCapture": false,
+  "actualApproval": null,
+  "actualExecution": null,
+  "actualResult": null,
+  "priorBroadSuiteRerun": false,
+  "historical19fRunQualifiesNewCandidate": false,
+  "workflowSourceCheckoutsExact": true,
+  "workflowControlCheckoutsRemainGithubSha": true,
+  "limitations": [
+    "Synthetic authority exists only inside the isolated VM and is never written as operational approval.",
+    "No app/dependency imports, tar/install/npm/source capture, service/database/native process, network, workflow, repository or production operation.",
+    "Generic modules and broad prior controls are reused only for byte-identical logic; final source-pair runtime proof remains unperformed."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "omerta.gui19f-d8-hosted-materialization.v1",
+  "enabled": false,
+  "source": "19f174540b0b65870800317ed98085ef36696976",
+  "predecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "scope": "STRICT_GUI19F_D8_NODE_GIT_SCHEMA_LOCK_VERSION_DEPENDENCIES_DRIVER139",
+  "materializerSHA256": null,
+  "packageManifestSHA256": null,
+  "independentReviewSHA256": null,
+  "rootConfigReviewSHA256": null,
+  "observerSHA256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c",
+  "observerPeerSHA256": null,
+  "observerReviews": {
+    "originalDisabledStatic": "f1ec6697e1bfa473d98a06ddd26873ee19ccecf1ca8052fbecc58648895165e1",
+    "startupCorrectionStatic": "7df98531a079d6bb2f36776dfa79b271c760596890a4bb28f8330210eea7d7cf",
+    "correctedSynthetic": "8ba6bc914a08be991d32e5db45f4af22b9cdb0c97d9eded019af6feb561f330f"
+  },
+  "modulePreimages": {
+    "observer": {
+      "bytes": 27019,
+      "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+    },
+    "guard": {
+      "bytes": 36295,
+      "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"
+    },
+    "adapter": {
+      "bytes": 8302,
+      "sha256": "7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b"
+    },
+    "proofValidator": {
+      "bytes": 6995,
+      "sha256": "daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956"
+    }
+  },
+  "modulePostimages": {
+    "observer": {
+      "bytes": 26901,
+      "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+    },
+    "guard": {
+      "bytes": 36185,
+      "sha256": "b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0"
+    },
+    "adapter": {
+      "bytes": 8199,
+      "sha256": "9b942d5afe7d79aacfab96106884a00e4c5a9d55e4041666bfbcad8aa97a312d"
+    },
+    "proofValidator": {
+      "bytes": 6892,
+      "sha256": "9266bc453bc0863065fd7ff0d2fed9fd85af7c7e96ae2d10b2a8854b874f15e2"
+    }
+  },
+  "proofContractSHA256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace",
+  "repository": null,
+  "workflowCommit": null,
+  "workflowPath": ".github/workflows/rc1-recovery.yml",
+  "proofRef": null,
+  "privateWorkflowRef": null,
+  "checkoutActionSHA": null,
+  "uploadActionSHA": null,
+  "actualRunner": null,
+  "actualService": null,
+  "actualBinding": null,
+  "actualResult": null,
+  "actualRetention": null
+}

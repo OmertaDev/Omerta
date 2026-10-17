@@ -1,0 +1,40 @@
+{
+  "enabled": false,
+  "source": "19f174540b0b65870800317ed98085ef36696976",
+  "predecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+  "guiBindingSchemaReviewed": false,
+  "workflowCommit": null,
+  "repository": null,
+  "workflowRef": null,
+  "guardModule": {
+    "path": null,
+    "sha256": null,
+    "bytes": null
+  },
+  "guardBinding": {
+    "path": null,
+    "sha256": null,
+    "bytes": null
+  },
+  "actualServiceIdentity": null,
+  "actualWorkflowContext": null,
+  "actualRuntimeDependencyEvidence": null,
+  "actualAdmission": null,
+  "actualResult": null,
+  "actualRetention": null,
+  "adapterModule": {
+    "path": null,
+    "sha256": null,
+    "bytes": null
+  },
+  "proofModule": {
+    "path": null,
+    "sha256": null,
+    "bytes": null
+  },
+  "proofContract": {
+    "path": null,
+    "sha256": null,
+    "bytes": null
+  }
+}
