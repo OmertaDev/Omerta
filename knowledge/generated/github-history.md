@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6f1c42fd4d8f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fce7735f2821`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4366 |
+| Commits in clone | 4370 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-18 — Refresh measured census for Robinhood payout interfaces |
+| Latest commit | 2026-10-18 — Refresh measured payout test-chain count |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3403 |
+| OmertaDev | 3407 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 118 |
@@ -30,32 +30,32 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 734 | historical |
-| knowledge/generated/graph-summary.md | 734 | historical |
-| knowledge/generated/graph.json | 734 | historical |
-| knowledge/generated/inventory.md | 734 | historical |
-| [SPEC.md](../../SPEC.md) | 572 | yes |
+| knowledge/generated/github-history.md | 735 | historical |
+| knowledge/generated/graph-summary.md | 735 | historical |
+| knowledge/generated/graph.json | 735 | historical |
+| knowledge/generated/inventory.md | 735 | historical |
+| [SPEC.md](../../SPEC.md) | 573 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 476 | yes |
 | [src/server.js](../../src/server.js) | 438 | yes |
 | [schema.sql](../../schema.sql) | 366 | yes |
-| knowledge/generated/documents.md | 350 | historical |
+| knowledge/generated/documents.md | 351 | historical |
 | [package.json](../../package.json) | 339 | yes |
-| knowledge/generated/modules.md | 258 | historical |
+| knowledge/generated/modules.md | 259 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/graph.mmd | 204 | historical |
+| knowledge/generated/graph.mmd | 205 | historical |
 | [src/game.js](../../src/game.js) | 189 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [test/gates.js](../../test/gates.js) | 178 | yes |
 | [src/invariants.js](../../src/invariants.js) | 161 | yes |
-| knowledge/generated/schema.md | 147 | historical |
+| knowledge/generated/schema.md | 148 | historical |
 | [src/worker.js](../../src/worker.js) | 140 | yes |
 | [test/client.js](../../test/client.js) | 135 | yes |
-| knowledge/generated/routes.md | 129 | historical |
+| knowledge/generated/routes.md | 130 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 118 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 104 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 105 | yes |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 99 | yes |
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 97 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
