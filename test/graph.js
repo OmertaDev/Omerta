@@ -16,6 +16,7 @@ import { spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import {ENTERPRISE_STRUCTURAL_CHECKS,ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from '../tools/enterprise-graph-helpers.js';
 import {COMMERCE_STRUCTURAL_CHECKS} from '../tools/commerce-graph-helpers.js';
+import {assertCommerceOwnedSource} from '../tools/commerce-source-compatibility.js';
 import {
   build,
   extractCommercialHelperReconciliations,
@@ -182,14 +183,62 @@ for(const bad of[enterpriseMoney+' ',enterpriseMoney.replace('royaltyNet=receive
 for(const literal of[enterpriseMoneyProfile.import,enterpriseMoneyProfile.call,enterpriseMoneyProfile.push])for(const bad of[enterpriseInvariant.replace(literal,''),enterpriseInvariant+'\n'+literal])assert.deepEqual(extractEnterpriseHelperReconciliations(bad,{[enterpriseMoneyProfile.file]:enterpriseMoney}),[]);
 assert.deepEqual(extractEnterpriseHelperReconciliations(enterpriseInvariant,{[enterpriseMoneyProfile.file]:enterpriseMoney,'src/unknown.js':enterpriseMoney}),[]);
 assert(!inv.mute.includes(enterpriseMoneyProfile.check),'Actual royalty accounting must never be classified as mute provenance');
+// TEST-only historical evidence; the production graph keeps actual current raw source.
+// Existing Commerce owned-source admission validates complete LF/CRLF bytes before
+// the separately reviewed one-context inverse reaches the frozen historical profile.
+const COMMERCE_EVENT_HISTORY_WITNESS=Object.freeze({"file":"src/eventmarkets.js","currentSource":"29598e24bf93813541730aaafb5a556066f7d637","currentSha256":"94ca7d9a06043c262519d6f4684c09056f05c1035d2f9896db3e68b436aa8816","currentBlob":"ddc5c8fbc38084a732d8a44b1542cd99c5d5778d","profileRevision":"4f5fde87c29453a71f027fae5f694f44e8677b3d","profileSha256":"c154f5fc04bb20adf223b7201d66282a37b5580b05d841ecb244de633eeefe9a","profileBlob":"0c04bd5df7fbde44cab4a18c37f25c59ce02fb02","contextLines":3,"current":"    if(r.state!=='active'||!((account===r.vendor_account&&ch.id===r.vendor_character)||(account===r.pickup_account&&ch.id===r.pickup_character)))fail('original_provider');await signedVendor(c,r);await signedVenue(c,r);await suspend(c,r);\n   }else if(action==='join'){\n    if(r.state!=='active'||[r.host_account,r.vendor_account,r.source_json.pickup.accountId].includes(account)||ch.loc!==r.district)fail('participant');await signedVendor(c,r);await signedVenue(c,r);const m=await A(),a=await m.eventMarketAttributionReference(c,input.attributionId,input.attributionHash),slot=r.source_json.campaigns.find(x=>x.campaignId===a.campaignId&&x.campaignHash===a.campaignHash);if(!slot||a.buyer.accountId!==account||a.buyer.characterId!==ch.id)fail('attribution_source');const s=await live(c,r,slot.campaignId);const rows=(await c.query(\"SELECT * FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited','completed') ORDER BY id LIMIT 4\",[r.id])).rows;if(rows.length>=Number(r.slots)||rows.some(x=>x.campaign_id===slot.campaignId))fail('slot_capacity');if((await c.query('SELECT id FROM event_market_participants WHERE event_id=$1 AND buyer_account=$2 LIMIT 1',[r.id,account])).rows.length)fail('participation_immutable');if((await c.query(\"SELECT id FROM event_market_participants WHERE buyer_account=$1 AND state IN ('joined','visited') LIMIT 1\",[account])).rows.length)fail('participant_capacity');\n    // Stock stays canonical N11 inventory. Lock shop before listing, matching canonical mobile admission; never mint extra visits.\n    const shop=(await c.query('SELECT listing_id,remaining_quantity,status FROM mobile_shops WHERE id=$1 FOR UPDATE',[r.shop_id])).rows[0],listing=(await c.query('SELECT qty,status FROM market_listings WHERE id=$1 FOR UPDATE',[r.source_json.listingId])).rows[0];if(!shop||shop.status!=='active'||shop.listing_id!==r.source_json.listingId||listing?.status!=='live'||Number(listing.qty)!==Number(shop.remaining_quantity)||Number(shop.remaining_quantity)<rows.filter(x=>x.state==='joined').length+1)fail('stock_capacity');\n    const at=await clock(c);p={id:crypto.randomUUID(),event_id:r.id,buyer_account:account,buyer_character:ch.id,attribution_id:input.attributionId,attribution_hash:input.attributionHash,campaign_id:slot.campaignId,campaign_hash:slot.campaignHash,item_id:slot.itemId,state:'joined',created_at:at,visit_json:null,completion_json:null,reward_journal:null,reward_cash:0};p.source_hash=participantHash(r,p);registerItemTransactionUndo(c,()=>c.query('DELETE FROM event_market_participants WHERE id=$1',[p.id]));await c.query('INSERT INTO event_market_participants(id,event_id,buyer_account,buyer_character,attribution_id,attribution_hash,campaign_id,campaign_hash,item_id,source_hash,state,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[p.id,r.id,account,ch.id,p.attribution_id,p.attribution_hash,p.campaign_id,p.campaign_hash,p.item_id,p.source_hash,p.state,at]);\n   }else if(action==='cancel'||action==='expire'){\n    if(ch.id!==r.host_character||account!==r.host_account||!['offered','active','suspended'].includes(r.state))fail('original_host');const expired=+await clock(c)>=+new Date(r.expires_at),pending=(await c.query(\"SELECT id FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited') LIMIT 1\",[r.id])).rows.length;if(action==='expire'&&!expired)fail('not_expired');if(action==='cancel'&&pending&&!expired&&r.state!=='suspended'){const originals=(await c.query('SELECT id,alive FROM characters WHERE id IN ($1,$2)',[r.vendor_character,r.source_json.pickup.characterId])).rows;if(originals.length!==2||originals.every(x=>x.alive))fail('reserved_participants');}extra.refundedCash=await refund(c,r,ch,expired?'expired':'closed');\n","baseline":"    if(r.state!=='active'||!((account===r.vendor_account&&ch.id===r.vendor_character)||(account===r.pickup_account&&ch.id===r.pickup_character)))fail('original_provider');await signedVendor(c,r);await signedVenue(c,r);await suspend(c,r);\n   }else if(action==='join'){\n    if(r.state!=='active'||[r.host_account,r.vendor_account,r.source_json.pickup.accountId].includes(account)||ch.loc!==r.district)fail('participant');await signedVendor(c,r);await signedVenue(c,r);const m=await A(),a=await m.eventMarketAttributionReference(c,input.attributionId,input.attributionHash),slot=r.source_json.campaigns.find(x=>x.campaignId===a.campaignId&&x.campaignHash===a.campaignHash);if(!slot||a.buyer.accountId!==account||a.buyer.characterId!==ch.id)fail('attribution_source');const s=await live(c,r,slot.campaignId);const rows=(await c.query(\"SELECT * FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited','completed') ORDER BY id LIMIT 4\",[r.id])).rows;if(rows.length>=Number(r.slots)||rows.some(x=>x.campaign_id===slot.campaignId))fail('slot_capacity');if((await c.query('SELECT id FROM event_market_participants WHERE event_id=$1 AND buyer_account=$2 LIMIT 1',[r.id,account])).rows.length)fail('participation_immutable');if((await c.query(\"SELECT id FROM event_market_participants WHERE buyer_account=$1 AND state IN ('joined','visited') LIMIT 1\",[account])).rows.length)fail('participant_capacity');\n    // Stock stays canonical N11 inventory. Lock its exact metadata/listing after event, never mint extra visits.\n    const listing=(await c.query('SELECT qty,status FROM market_listings WHERE id=$1 FOR UPDATE',[r.source_json.listingId])).rows[0],shop=(await c.query('SELECT listing_id,remaining_quantity,status FROM mobile_shops WHERE id=$1 FOR UPDATE',[r.shop_id])).rows[0];if(!shop||shop.status!=='active'||shop.listing_id!==r.source_json.listingId||listing?.status!=='live'||Number(listing.qty)!==Number(shop.remaining_quantity)||Number(shop.remaining_quantity)<rows.filter(x=>x.state==='joined').length+1)fail('stock_capacity');\n    const at=await clock(c);p={id:crypto.randomUUID(),event_id:r.id,buyer_account:account,buyer_character:ch.id,attribution_id:input.attributionId,attribution_hash:input.attributionHash,campaign_id:slot.campaignId,campaign_hash:slot.campaignHash,item_id:slot.itemId,state:'joined',created_at:at,visit_json:null,completion_json:null,reward_journal:null,reward_cash:0};p.source_hash=participantHash(r,p);registerItemTransactionUndo(c,()=>c.query('DELETE FROM event_market_participants WHERE id=$1',[p.id]));await c.query('INSERT INTO event_market_participants(id,event_id,buyer_account,buyer_character,attribution_id,attribution_hash,campaign_id,campaign_hash,item_id,source_hash,state,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[p.id,r.id,account,ch.id,p.attribution_id,p.attribution_hash,p.campaign_id,p.campaign_hash,p.item_id,p.source_hash,p.state,at]);\n   }else if(action==='cancel'||action==='expire'){\n    if(ch.id!==r.host_character||account!==r.host_account||!['offered','active','suspended'].includes(r.state))fail('original_host');const expired=+await clock(c)>=+new Date(r.expires_at),pending=(await c.query(\"SELECT id FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited') LIMIT 1\",[r.id])).rows.length;if(action==='expire'&&!expired)fail('not_expired');if(action==='cancel'&&pending&&!expired&&r.state!=='suspended'){const originals=(await c.query('SELECT id,alive FROM characters WHERE id IN ($1,$2)',[r.vendor_character,r.source_json.pickup.characterId])).rows;if(originals.length!==2||originals.every(x=>x.alive))fail('reserved_participants');}extra.refundedCash=await refund(c,r,ch,expired?'expired':'closed');\n"});
+function reviewedCommerceEventHistory(profile,input){
+ const witness=COMMERCE_EVENT_HISTORY_WITNESS;
+ assert.equal(profile.file,witness.file,'Only the reviewed event history path');
+ assert.equal(profile.revision,witness.profileRevision,'Exact historical profile revision');
+ assert.equal(profile.sha256,witness.profileSha256,'Exact historical whole source SHA');
+ assert.equal(profile.blob,witness.profileBlob,'Exact historical whole Git blob');
+ const proof=assertCommerceOwnedSource(witness.file,input);
+ assert.equal(proof.sourceRevision,witness.currentSource,'Exact immutable Commerce owned-source witness');
+ assert.equal(proof.phase,"exact Commerce source compatibility only; no native, migration, financial, release or deployment clearance");
+ const current=input.replaceAll('\r\n','\n');
+ const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
+ const blob=text=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(text)+'\0').update(text).digest('hex');
+ assert.equal(hash(current),witness.currentSha256,'Whole actual Commerce event source');
+ assert.equal(blob(current),witness.currentBlob,'Whole actual Commerce event blob');
+ assert.equal(current.split(witness.current).length,2,'Complete unique historical context');
+ const baseline=current.replace(witness.current,()=>witness.baseline);
+ assert.equal(hash(baseline),profile.sha256,'Complete frozen event history source');
+ assert.equal(blob(baseline),profile.blob,'Complete frozen event history blob');
+ return baseline;
+}
 // Original Commerce histories are source-bound; their real cash reserves and
 // delegated consignment payments may not disappear behind a mute classification.
 assert.equal(COMMERCE_STRUCTURAL_CHECKS.length,4);
 for(const p of COMMERCE_STRUCTURAL_CHECKS){
-  const helper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8').replace(/\r\n?/g,'\n');
+  const rawHelper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8');
+  const helper=p.file===COMMERCE_EVENT_HISTORY_WITNESS.file?reviewedCommerceEventHistory(p,rawHelper):rawHelper.replace(/\r\n?/g,'\n');
   assert.equal(crypto.createHash('sha256').update(helper).digest('hex'),p.sha256,'Reviewed Commerce history changed: '+p.file);
   assert.equal(enterpriseInvariant.split('\n').filter(line=>line.trim()===p.push).length,1,'Unknown Commerce history arithmetic/binding');
 }
+// These adversarial reads never change the production graph or current Commerce
+// assertions below. Current-byte mutations must refuse before historical inversion.
+const commerceEventProfile=COMMERCE_STRUCTURAL_CHECKS.find(p=>p.file===COMMERCE_EVENT_HISTORY_WITNESS.file);
+const commerceEventInput=fs.readFileSync(new URL('../'+COMMERCE_EVENT_HISTORY_WITNESS.file,import.meta.url),'utf8');
+const commerceEventLF=commerceEventInput.replaceAll('\r\n','\n');
+const commerceEventHistory=reviewedCommerceEventHistory(commerceEventProfile,commerceEventInput);
+assert.equal(reviewedCommerceEventHistory(commerceEventProfile,commerceEventLF.replaceAll('\n','\r\n')),commerceEventHistory);
+assert(commerceEventLF.includes("'event_market:reserve'"),'Actual reserve accounting anchor required');
+for(const bad of[
+ commerceEventLF+'\n// unknown current source\n',
+ '\ufeff'+commerceEventLF,commerceEventLF+'\0',
+ commerceEventLF.replace('\n','\r'),commerceEventLF.replace('\n','\r\n'),
+ commerceEventLF.replace("'event_market:reserve'","'event_market:unknown'"),
+ commerceEventLF.replace(COMMERCE_EVENT_HISTORY_WITNESS.current,''),
+ commerceEventLF.replace(COMMERCE_EVENT_HISTORY_WITNESS.current,()=>COMMERCE_EVENT_HISTORY_WITNESS.current+'\n'+COMMERCE_EVENT_HISTORY_WITNESS.current),
+ commerceEventHistory,Buffer.from(commerceEventLF),null
+])assert.throws(()=>reviewedCommerceEventHistory(commerceEventProfile,bad),'Unknown, altered accounting, context or historical raw input must refuse');
+for(const changed of[
+ {...commerceEventProfile,file:'src/unknown.js'},
+ {...commerceEventProfile,revision:'0'.repeat(40)},
+ {...commerceEventProfile,sha256:'0'.repeat(64)},
+ {...commerceEventProfile,blob:'0'.repeat(40)}
+])assert.throws(()=>reviewedCommerceEventHistory(changed,commerceEventInput),'Unknown historical profile must refuse');
 for(const [check,prefix,suffixes]of[
  ['sale attribution merchant cash reserve','sale_attribution',['reserve','commission','refund']],
  ['player funded event reserves','event_market',['reserve','reward','refund']],
