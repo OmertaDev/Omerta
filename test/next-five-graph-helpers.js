@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';
+import crypto from 'node:crypto';import vm from 'node:vm';
 import {build,normalizeText,NEXT_FIVE_HELPER_PROFILES as profiles,extractNextFiveHelperReconciliations as extract}from'../tools/graph.js';
 const invariantSource=fs.readFileSync(new URL('../src/invariants.js',import.meta.url),'utf8');const helpers=Object.fromEntries(profiles.map(p=>[p.file,fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8')]));
 const expected=[['consignment sale books','consignment:purchase'],['consignment sale books','consignment:proceeds'],['consignment sale books','consignment:host_fee'],['commissioned crafting canonical sources','commissioned_crafting:reserve'],['commissioned crafting canonical sources','commissioned_crafting:fee'],['commissioned crafting canonical sources','commissioned_crafting:refund'],['picking packing paid custody books','picking_packing:pay'],['picking packing paid custody books','picking_packing:receive']];
@@ -15,4 +16,31 @@ for(const p of profiles){assert(Object.isFrozen(p)&&Object.isFrozen(p.reasons)&&
  absent(invariantSource,{[p.file]:helper+'\n// unknown helper bytes'});absent(invariantSource,{[p.file]:undefined});
 }
 assert.deepEqual(extract(invariantSource,{unknown:'unreviewed helper'}),[]);negatives++;
+
+// Exercise the actual exported extractor with each changed helper admitted under its
+// own TEST-only whole hash. This supplies no production profile or execution authority.
+{
+ const p=profiles.find(p=>p.file==='src/consignments.js'),helper=normalizeText(helpers[p.file]);
+ assert.equal(p.end,'\n\n// N16/N17 proposal: fixed source-bound private contexts, no caller-installed adapters.\n');
+ const actualExtractor='('+extract.toString()+')';
+ const inside=(text,target,replacement)=>{const start=text.indexOf('export async function '+p.fn+'('),end=text.indexOf(p.end,start);assert(start>=0&&end>start);const body=text.slice(start,end);assert.equal(body.split(target).length,2,'Exact unique collector causal target');return text.slice(0,start)+body.replace(target,()=>replacement)+text.slice(end);};
+ const admitted=(text,end=p.end)=>{const testProfiles=Object.freeze(profiles.map(profile=>profile===p?Object.freeze({...profile,end,sha256:crypto.createHash('sha256').update(normalizeText(text)).digest('hex')}):profile));const actual=vm.runInNewContext(actualExtractor,{crypto,normalizeText,NEXT_FIVE_HELPER_PROFILES:testProfiles},{timeout:1000});return actual(invariantSource,{...helpers,[p.file]:text});};
+ const kept=text=>assert.deepEqual(Array.from(admitted(text),term=>[term.check,term.reason]),expected);
+ const refused=text=>{assert.equal(admitted(text).some(term=>term.check===p.check),false);negatives++;};
+ kept(helper);
+ kept(helper.replaceAll('\n','\r\n'));
+ const outside=helper+'\n// Additional query outside the closed collector: '+p.sql+'\n';kept(outside);
+ assert.equal(extract(invariantSource,{...helpers,[p.file]:outside}).some(term=>term.check===p.check),false,'Unknown whole helper bytes never use TEST-only admission');negatives++;
+ refused(inside(helper,'return issues;','await c.query('+JSON.stringify(p.sql)+',[]);return issues;'));
+ const removedQuery=inside(helper,p.sql,p.sql.replace('SELECT id','SELECT removed_id'));
+ refused(removedQuery);refused(removedQuery+'\n// Moved query outside collector: '+p.sql+'\n');
+ const anchorChanges=[['row.host_character','row.owner_character'],['Number(row.price)-fee','Number(row.price)-fee+1'],['-Number(row.price)','-Number(row.price)-1'],["legs[i]?.currency!=='cash'","legs[i]?.currency==='cash'"],['Number(legs[i]?.amount)!==amount','Number(legs[i]?.amount)===amount']];
+ for(const [from,to]of anchorChanges)refused(inside(helper,from,to));
+ const movedAnchor=inside(helper,p.anchors[0],p.anchors[0].replace('row.host_character','row.owner_character'))+'\n// Moved anchor outside collector: '+p.anchors[0]+'\n';refused(movedAnchor);
+ refused(inside(helper,'return issues;','return [];'));
+ refused(helper.replace(p.end,'\n\n// Missing reviewed collector boundary\n'));
+ refused(helper+p.end);
+ for(const end of ['',null,{},'\n// unknown boundary\n']){assert.equal(admitted(helper,end).some(term=>term.check===p.check),false);negatives++;}
+}
+
 console.log('Next-five graph helper proof PASS:8 actual monetary helper-provenance terms; LF/CRLF; '+negatives+' import/call/result/order/duplicate/source/amount/party/reason/unknown causal refusals. Existing direct sum edges remain independently present; this test grants no native/gameplay/financial authority.');
