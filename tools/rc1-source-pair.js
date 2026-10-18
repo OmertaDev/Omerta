@@ -218,11 +218,11 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
 // Candidate revision/reviewed tree stay NULL until genuine final material is reviewed.
 export const FINALSERVICES_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "da5bc87ca9e8e1fefd1e434bbf4dd52b1cf35988",
-  "reviewedCandidate": "1122c61b80ad801248f11751979a7c0e75a5cef0",
+  "reviewedCandidate": "997d4b63d49f911df8c229d6a6a4559070e42ebb",
   "predecessorTree": "997746805a6172eaa79f44047b386e9de8957cf83e123dfcdd69e9d46fcbb072",
   "predecessorSchema": "833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335",
   "predecessorCatalog": "44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917",
-  "candidateTree": "219b82bf08ac69efdff865d06485168fef65cec03dc5e31fb50712794a67a9a3",
+  "candidateTree": "2bb7e2f01a8621669209293cedc849ce5c66f054fbc81dc4e05953811e4eca3c",
   "candidateSchema": "ddd7a304c12997ea32a60ff7a7e0df0fabb172cc0f2fee50e56dbaa89cb0d2a2",
   "candidateCatalog": "7b6bedc109949835c5bb5e0da174b4c579409ab2cd7ec67f62d456367c6a08f0",
   "constraints": 332,
