@@ -1,6 +1,6 @@
 // Source-only preparation. Root must bind actual committed A and the genuine active E source.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
-export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION="c1d8c4ba1d867b740363819b2b0db909b0cef215";
+export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION="c094513fe3f6279784ac0d3d1f276540fc756f3d";
 export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_PREDECESSOR="792466312e55b8baba962a80d4020bf554da47ed";
 export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_PHASE='closed current C to active Enterprise text projection only; no mode, native, migration, financial, deployment or release qualification';
 export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS=freeze({
@@ -238,8 +238,8 @@ export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS=freeze({
     ]
   },
   "tools/graph.js": {
-    "currentSha256": "378d514638f7ea40a0c9b100cf3368ff93114e3c3f721df0307f18d459c0e4ca",
-    "currentBlob": "1cb57e5b8e84fba6399d0dd3ba056ad239347cf0",
+    "currentSha256": "ddde505ea6bff77468e01b276f5a00790cd251d93cff47eadaaee6d80a4cca23",
+    "currentBlob": "799455c419f0205ace208217e3be8be94f572bc9",
     "currentMode": "100644",
     "baselineSha256": "29e2271d83d8cbd5d8c71f0339d06b5c76d7ae7e658b2f417b05f4c382fa2376",
     "baselineBlob": "4c6e61ca17df42a3549411726521b122a94a4180",
@@ -247,8 +247,16 @@ export const COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS=freeze({
     "context": 3,
     "inverses": [
       {
+        "current": "      \"legs[i]?.currency!=='cash'\",\n      \"Number(legs[i]?.amount)!==amount\"\n    ],\n    \"sha256\": \"f69d2a98288c6350930689a0106cd27163268ad88f2f58a400204ea6a7442362\",\n    \"end\": \"\\n\\n// N16/N17 proposal: fixed source-bound private contexts, no caller-installed adapters.\\n\",\n    \"import\": \"import { collectConsignmentIssues } from './consignments.js';\",\n    \"call\": \"const consignmentIssues = await collectConsignmentIssues(pool);\",\n    \"push\": \"push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });\",\n",
+        "baseline": "      \"legs[i]?.currency!=='cash'\",\n      \"Number(legs[i]?.amount)!==amount\"\n    ],\n    \"sha256\": \"a922fc2b2017838aba0fdfc65b20355809673bd5d33a27b6c4b98d1262cf539f\",\n    \"import\": \"import { collectConsignmentIssues } from './consignments.js';\",\n    \"call\": \"const consignmentIssues = await collectConsignmentIssues(pool);\",\n    \"push\": \"push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });\",\n"
+      },
+      {
         "current": "      \"t.character_id!==row.maker_character:t.character_id!==row.customer_character\",\n      \"Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)\"\n    ],\n    \"sha256\": \"f89a0f1ea30c9a1d299d36710e8d3e6b819ebe3449de1e1837be6213251b465c\",\n    \"import\": \"import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';\",\n    \"call\": \"const commissionIssues = await collectCommissionedCraftingIssues(pool);\",\n    \"push\": \"push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });\",\n    \"sql\": \"const transactions=(await c.query(\\\"SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund') ORDER BY id\\\"\",\n    \"extraBindings\": []\n  },\n  {\n",
         "baseline": "      \"t.character_id!==row.maker_character:t.character_id!==row.customer_character\",\n      \"Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)\"\n    ],\n    \"sha256\": \"dddba626ab010885ac02c15252573d914dde368cd90b97171b24216279cf7f24\",\n    \"import\": \"import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';\",\n    \"call\": \"const commissionIssues = await collectCommissionedCraftingIssues(pool);\",\n    \"push\": \"push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });\",\n    \"sql\": \"SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund') ORDER BY id\",\n    \"extraBindings\": []\n  },\n  {\n"
+      },
+      {
+        "current": " const lines=invariants.split('\\n'),terms=[],exact=statement=>lines.flatMap((line,i)=>line.trim()===statement?[i]:[]);\n for(const p of NEXT_FIVE_HELPER_PROFILES){if(typeof helpers[p.file]!=='string')continue;const helper=normalizeText(helpers[p.file]);if(crypto.createHash('sha256').update(helper).digest('hex')!==p.sha256)continue;\n  const imports=exact(p.import),calls=exact(p.call),pushes=exact(p.push);if(imports.length!==1||calls.length!==1||pushes.length!==1||imports[0]>=calls[0]||calls[0]>=pushes[0]||p.extraBindings.some(s=>exact(s).length!==1||exact(s)[0]>=pushes[0]))continue;\n  const start=helper.indexOf('export async function '+p.fn+'(');if(start<0)continue;let end=helper.length;\n  if(p.end!==undefined){if(typeof p.end!=='string'||!p.end.length)continue;end=helper.indexOf(p.end,start);if(end<0||helper.indexOf(p.end)!==end||helper.indexOf(p.end,end+1)!==-1)continue;}\n  const body=helper.slice(start,end),query=body.indexOf(p.sql);if(query<0||body.indexOf(p.sql,query+1)!==-1||!body.includes('return issues;')||p.anchors.some(a=>!body.includes(a)))continue;\n  for(const reason of p.reasons)terms.push({check:p.check,reason,file:p.file,line:helper.slice(0,start+query).split('\\n').length,bindingLine:pushes[0]+1,sourceSha256:p.sha256});\n }return terms;\n}\n",
+        "baseline": " const lines=invariants.split('\\n'),terms=[],exact=statement=>lines.flatMap((line,i)=>line.trim()===statement?[i]:[]);\n for(const p of NEXT_FIVE_HELPER_PROFILES){if(typeof helpers[p.file]!=='string')continue;const helper=normalizeText(helpers[p.file]);if(crypto.createHash('sha256').update(helper).digest('hex')!==p.sha256)continue;\n  const imports=exact(p.import),calls=exact(p.call),pushes=exact(p.push);if(imports.length!==1||calls.length!==1||pushes.length!==1||imports[0]>=calls[0]||calls[0]>=pushes[0]||p.extraBindings.some(s=>exact(s).length!==1||exact(s)[0]>=pushes[0]))continue;\n  const start=helper.indexOf('export async function '+p.fn+'(');if(start<0)continue;const body=helper.slice(start),query=body.indexOf(p.sql);if(query<0||body.indexOf(p.sql,query+1)!==-1||!body.includes('return issues;')||p.anchors.some(a=>!body.includes(a)))continue;\n  for(const reason of p.reasons)terms.push({check:p.check,reason,file:p.file,line:helper.slice(0,start+query).split('\\n').length,bindingLine:pushes[0]+1,sourceSha256:p.sha256});\n }return terms;\n}\n"
       }
     ]
   },
