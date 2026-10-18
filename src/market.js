@@ -1,3 +1,6 @@
+import {recordPerformanceEmploymentFill as performanceEmploymentFill} from './performanceemployment.js';
+export {performanceEmploymentFill};
+import {assertItemTransaction,itemTransactionIdentity} from './items.js';
 // THE BLACK MARKET (design: omerta-market-design.md). P2P trade: cars by AUCTION (one standing
 // bid, min-raise, optional buy-now), trade goods FIXED-PRICE with DISTRICT-PINNED pickup — the
 // buyer stands at the listing's dock with trunk space, so the market creates demand without
@@ -60,10 +63,10 @@ async function paySeller(client, h, sellerId, hammer, { reason = 'market:sale', 
   const net = hammer - take;
   if (inMemoryCh && inMemoryCh.id === sellerId) inMemoryCh.cash = Number(inMemoryCh.cash) + net;
   else await client.query('UPDATE characters SET cash = cash + $2 WHERE id=$1', [sellerId, net]);
-  await h.ledger(client, { characterId: sellerId, currency: 'cash', amount: net, reason });
-  await h.ledger(client, { currency: 'cash', amount: -take, reason: 'market:take' });
+  const payoutTransaction=await h.ledger(client, { characterId: sellerId, currency: 'cash', amount: net, reason });
+  const takeTransaction=await h.ledger(client, { currency: 'cash', amount: -take, reason: 'market:take' });
   await takeHouse(client, taxOverride ?? Math.floor(take / 2));
-  return { net, take };
+  return { net, take, payoutTransaction, takeTransaction };
 }
 
 // ── LIST — escrow the item, pay the fee, put it on the block ──
@@ -254,7 +257,7 @@ export async function fillOrder(ch, listingId, qty, client, h, { commitmentId = 
     - Math.ceil(completed * Number(l.price) * Number(commitment.take_bps) / 10000) : null;
   const previousTake = commitment ? Math.ceil(completed * Number(l.price) * Number(commitment.take_bps) / 10000) : 0;
   const taxOverride = commitment ? Math.floor((previousTake + takeOverride) / 2) - Math.floor(previousTake / 2) : null;
-  const { net, take } = await paySeller(client, h, ch.id, gross, { reason: 'market:fill', inMemoryCh: ch, takeOverride, taxOverride });
+  const { net, take, payoutTransaction, takeTransaction } = await paySeller(client, h, ch.id, gross, { reason: 'market:fill', inMemoryCh: ch, takeOverride, taxOverride });
   await bumpMastery(client, h, ch, 'commerce', 'fill');
   // absolute writes (the pg-mem INT quirk); the row stays live at qty=0 until the buyer claims
   await client.query('UPDATE market_listings SET qty=$2, filled_qty=$3 WHERE id=$1',
@@ -266,6 +269,7 @@ export async function fillOrder(ch, listingId, qty, client, h, { commitmentId = 
   bus.emit('streets', { type: 'market_sale', kind: 'order' });
   // WAVE 80: `earned` is NET of the house take, so a filler reading a $400/unit board and banking
   // $1,176 on three units had no reason for the $24. The gross and the take ride so the line can say.
+  if(commitment)await performanceFillCheck(client,Object.freeze({worker:ch,commitment,order:l,units:n,grossCash:gross,netCash:net,takeCash:take,payoutTransaction,takeTransaction}));
   return { ok: true, delivered: n, earned: net, gross, take, remaining: Number(l.qty) - n, good: l.good_id };
 }
 
@@ -707,3 +711,7 @@ export async function burnBidsAtDeath(client, victimId) {
   }
   return { burned: rows.length };
 }
+
+const performanceFillScopes=new WeakMap();
+async function performanceFillCheck(c,ctx){if(!(await c.query('SELECT assignment_id FROM performance_employment_assignments WHERE commitment_id=$1',[ctx.commitment.id])).rows.length)return null;const token=Object.freeze({}),scope={c,ctx,transaction:itemTransactionIdentity(c),active:true};performanceFillScopes.set(token,scope);try{return await performanceEmploymentFill(c,ctx,token);}finally{scope.active=false;}}
+export function assertPerformanceEmploymentFillScope(c,ctx,token){assertItemTransaction(c);const scope=performanceFillScopes.get(token);if(!scope?.active||scope.c!==c||scope.ctx!==ctx||scope.transaction!==itemTransactionIdentity(c))throw new GameError('performance_employment','canonical_fill_scope');return true;}

@@ -379,6 +379,8 @@
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 18 | 2026-10-16 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/collateralauction.md](../../docs/collateralauction.md) | documentation | 14 | 2026-10-16 |
+| [docs/collaterallending.md](../../docs/collaterallending.md) | documentation | 18 | 2026-10-16 |
 | [docs/commercial-disputes-security-review.md](../../docs/commercial-disputes-security-review.md) | documentation | 52 | 2026-10-13 |
 | [docs/commercial-negotiation-hosted-replay-review.md](../../docs/commercial-negotiation-hosted-replay-review.md) | documentation | 14 | 2026-10-13 |
 | [docs/commercial-negotiation-security-review.md](../../docs/commercial-negotiation-security-review.md) | documentation | 32 | 2026-10-13 |
@@ -468,6 +470,7 @@
 | [docs/core-architecture/review-phase4.md](../../docs/core-architecture/review-phase4.md) | documentation | 92 | 2026-09-17 |
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
 | [docs/courier-continuation-security-review.md](../../docs/courier-continuation-security-review.md) | documentation | 67 | 2026-10-11 |
+| [docs/coverage-mutuals.md](../../docs/coverage-mutuals.md) | documentation | 65 | 2026-10-16 |
 | [docs/crew-logistics-security-review.md](../../docs/crew-logistics-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/cross-docking-security-review.md](../../docs/cross-docking-security-review.md) | documentation | 62 | 2026-10-15 |
 | [docs/customer-bank-vaults-security-review.md](../../docs/customer-bank-vaults-security-review.md) | documentation | 38 | 2026-10-15 |
@@ -538,10 +541,14 @@
 | [docs/multihop-courier-recovery-review.md](../../docs/multihop-courier-recovery-review.md) | documentation | 16 | 2026-10-15 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
+| [docs/performance-employment-integration.md](../../docs/performance-employment-integration.md) | documentation | 16 | 2026-10-16 |
+| [docs/performance-employment-native.md](../../docs/performance-employment-native.md) | documentation | 22 | 2026-10-16 |
 | [docs/PLAYER-FIRST-LAUNCH-STRATEGY.md](../../docs/PLAYER-FIRST-LAUNCH-STRATEGY.md) | documentation | 178 | 2026-10-14 |
 | [docs/pons-launch-strategy-2026-10-14.md](../../docs/pons-launch-strategy-2026-10-14.md) | documentation | 126 | 2026-10-14 |
 | [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
 | [docs/production-slot-security-review.md](../../docs/production-slot-security-review.md) | documentation | 16 | 2026-10-15 |
+| [docs/productionbooking.md](../../docs/productionbooking.md) | documentation | 14 | 2026-10-16 |
+| [docs/protectioncontracts-design.md](../../docs/protectioncontracts-design.md) | design | 26 | 2026-10-16 |
 | [docs/public-market-feed-security-review.md](../../docs/public-market-feed-security-review.md) | documentation | 22 | 2026-10-12 |
 | [docs/rc1-alliance-continuation.md](../../docs/rc1-alliance-continuation.md) | documentation | 56 | 2026-09-21 |
 | [docs/rc1-alliance-world.md](../../docs/rc1-alliance-world.md) | documentation | 60 | 2026-09-21 |
@@ -556,7 +563,7 @@
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 196 | 2026-10-18 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 202 | 2026-10-18 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md](../../docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md) | documentation | 92 | 2026-10-14 |
@@ -706,6 +713,10 @@
 | [docs/supplier-history-security-review.md](../../docs/supplier-history-security-review.md) | documentation | 56 | 2026-10-11 |
 | [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/supply-tender-security-review.md](../../docs/supply-tender-security-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/syndicated-business-loans-scaffold-review.md](../../docs/syndicated-business-loans-scaffold-review.md) | documentation | 28 | 2026-10-16 |
+| [docs/syndicated-business-loans-security-review.md](../../docs/syndicated-business-loans-security-review.md) | documentation | 16 | 2026-10-16 |
+| [docs/syndicated-business-loans.md](../../docs/syndicated-business-loans.md) | documentation | 16 | 2026-10-16 |
+| [docs/syndicated-loans-native.md](../../docs/syndicated-loans-native.md) | documentation | 50 | 2026-10-16 |
 | [docs/territory-economics-integration-design.md](../../docs/territory-economics-integration-design.md) | design | 36 | 2026-10-13 |
 | [docs/territory-economics-observation-review.md](../../docs/territory-economics-observation-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/territory-economics-security-review.md](../../docs/territory-economics-security-review.md) | documentation | 65 | 2026-10-13 |
@@ -731,7 +742,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-17 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-18 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |

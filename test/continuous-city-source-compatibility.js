@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,String(input)):input;
 import { parse as parseCatalogueSource } from 'acorn';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -66,7 +68,7 @@ function verify(file, pin, actual, baseline, qualify, diff) {
 assert.equal(Object.keys(CONTINUOUS_CITY_SOURCE_DOMAINS).length, 16);
 for (const [file, pin] of Object.entries(CONTINUOUS_CITY_SOURCE_DOMAINS)) {
   const current = git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file);
-  assert.equal(lf(fs.readFileSync(file, 'utf8')), current, 'Actual GUI source must remain exactly frozen: ' + file);
+  assert.equal(lf(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8'))), current, 'Actual GUI source must remain exactly frozen: ' + file);
   assert.equal(git('ls-tree', CONTINUOUS_CITY_SOURCE_REVISION, '--', file).split(' ')[0], pin.currentMode);
   const priorTree = git('ls-tree', CONTINUOUS_CITY_SOURCE_PREDECESSOR, '--', file);
   assert.equal(priorTree === '', pin.predecessorAbsent);
@@ -77,15 +79,22 @@ for (const [file, pin] of Object.entries(CONTINUOUS_CITY_SOURCE_DOMAINS)) {
   if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, current)); refusals++; }
 }
 assert.equal(additions, 5);
+// Immutable Commerce fixture witness only; no future S source or native admission.
+const FINAL_SERVICES_COMMERCE_FIXTURE_SOURCE = Object.freeze({revision:'103c8a96bffc7f92e63bb03a9bae7722d69488bd',tree:'c1bd7e5d1316ae2b5b37cfc80cc55320cdf9232c'});
+assert.equal(git('--no-replace-objects','show','-s','--format=%T',FINAL_SERVICES_COMMERCE_FIXTURE_SOURCE.revision).trim(),FINAL_SERVICES_COMMERCE_FIXTURE_SOURCE.tree,'Exact immutable Commerce fixture witness tree');
 assert.equal(Object.keys(CONTINUOUS_CITY_FIXTURE_DOMAINS).length, 36);
 for (const [file, pin] of Object.entries(CONTINUOUS_CITY_FIXTURE_DOMAINS)) {
   assert(file.startsWith('test/'), 'Reader proofs cannot admit production source');
   assert(!Object.hasOwn(CONTINUOUS_CITY_SOURCE_DOMAINS, file), 'GUI and reader domains stay disjoint');
-  const actual = lf(fs.readFileSync(file, 'utf8')), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);
+  const actual = lf(selectFinalServicesCommerceTestSource(file,fs.readFileSync(file, 'utf8'))), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);
   assert.equal(git('ls-files', '--stage', '--', file).split(' ')[0], pin.currentMode);
   assert.equal(git('ls-tree', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file).split(' ')[0], pin.baselineMode);
+  const immutableCurrent = git('--no-replace-objects','show',FINAL_SERVICES_COMMERCE_FIXTURE_SOURCE.revision + ':' + file);
+  assert.equal(git('--no-replace-objects','ls-tree',FINAL_SERVICES_COMMERCE_FIXTURE_SOURCE.revision,'--',file).split(' ')[0],pin.currentMode);
+  assert.equal(hash(immutableCurrent),pin.currentSha256); assert.equal(blob(immutableCurrent),pin.currentBlob);
+  assert.equal(actual,immutableCurrent,'S projection must reconstruct the exact immutable Commerce fixture bytes');
   verify(file, pin, actual, baseline, qualifyContinuousCityFixtureSource,
-    git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));
+    git('--no-replace-objects','diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, FINAL_SERVICES_COMMERCE_FIXTURE_SOURCE.revision, '--', file));
   if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }
 }
 for (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {

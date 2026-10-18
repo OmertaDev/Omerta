@@ -3,6 +3,48 @@
 // default is enforced (seize pocket + in-transit, a beating, the welsher mark). Every value movement
 // is a §10.4-ledgered transfer; only the house vig leaves the economy (a sink → the buyback pool).
 import crypto from 'node:crypto';
+import { assertItemTransaction, assertItemTransactionHealthy, itemTransactionIdentity } from './items.js';
+import { recordCollateralLendingTerminal } from './collaterallending.js';
+import { recoverCollateralAuctionFromLoan } from './collateralauction.js';
+const collateralAuctionRecoveryProofs = new WeakMap();
+export const getCollateralAuctionRecoveryVerifier = () => assertCollateralAuctionRecoveryProof;
+export function assertCollateralAuctionRecoveryProof(client, token) {
+  assertItemTransaction(client); assertItemTransactionHealthy(client);
+  const state = token && collateralAuctionRecoveryProofs.get(token);
+  if (!state?.active || state.used || state.client !== client || state.transaction !== itemTransactionIdentity(client)) throw new GameError('collateral_auction', 'loan_recovery_proof');
+  state.used = true; return state.payload;
+}
+async function recoverActualCollateralAuction(client, payload) {
+  if (!(await client.query('SELECT a.id FROM collateral_auctions a JOIN collateral_auction_agreements g ON g.id=a.agreement_id WHERE g.loan_id=$1', [payload.loanId])).rows.length) return;
+  const token = Object.freeze({}), state = { active: true, used: false, client, transaction: itemTransactionIdentity(client), payload };
+  collateralAuctionRecoveryProofs.set(token, state);
+  try { await recoverCollateralAuctionFromLoan(client, token); if (!state.used) throw new GameError('collateral_auction', 'loan_recovery_proof'); }
+  finally { state.active = false; collateralAuctionRecoveryProofs.delete(token); }
+}
+
+// Only the actual repay/collect leaves below mint this private, consume-once receipt.
+const collateralTerminalProofs = new WeakMap();
+export const getCollateralLendingTerminalVerifier = () => assertCollateralLendingTerminalProof;
+export function assertCollateralLendingTerminalProof(client, token) {
+  assertItemTransaction(client); assertItemTransactionHealthy(client);
+  const proof = token && collateralTerminalProofs.get(token);
+  if (!proof || !proof.active || proof.used || proof.client !== client || proof.transaction !== itemTransactionIdentity(client)) {
+    throw new GameError('collateral_lending', 'terminal_proof');
+  }
+  proof.used = true; return proof.payload;
+}
+async function recordActualCollateralTerminal(client, payload) {
+  // Preserve every ordinary unassociated loan path without manufacturing metadata or authority.
+  if (!(await client.query('SELECT id FROM collateral_lending_pledges WHERE loan_id=$1', [payload.loan.id])).rows.length) return;
+  assertItemTransaction(client); assertItemTransactionHealthy(client);
+  const token = Object.freeze({}), scope = { client, transaction: itemTransactionIdentity(client), payload, active: true, used: false };
+  collateralTerminalProofs.set(token, scope);
+  try { await recordCollateralLendingTerminal(client, token); if (!scope.used) throw new GameError('collateral_lending', 'terminal_proof'); }
+  finally { scope.active = false; collateralTerminalProofs.delete(token); }
+}
+
+import {assertSyndicatedLoanMutation as syndicatedLoanGuard,permitsSyndicatedLoanTake,prepareSyndicatedLoanOffer,finishSyndicatedLoanMutation} from './syndicatedloans.js';
+export {syndicatedLoanGuard};
 import { GameError, ledger, notify, bus, track } from './game.js';
 import { LOAN, loanVig, loanOwed, paperTake, M3, carCollateralValue, levelOf, HONOR , jailed, hospitalized, safeHoused, usd } from './rules.js';
 import { logCarCollect } from './collection.js';
@@ -274,6 +316,7 @@ export async function offerLoan(ch, body, client, h) {
   if (Number(ch.cash) < amount) throw new GameError('cash', 'You can’t front what you don’t have.');
   ch.cash = Number(ch.cash) - amount;
   const id = uid();
+  await prepareSyndicatedLoanOffer(client,ch,id,body);
   await client.query('INSERT INTO loans (id, lender_character, principal, rate, hours, status, offered_to, collateral_min, collateral_omr) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
     [id, ch.id, amount, rate, hours, 'open', offeredTo, collateralMin, collateralOmr]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -amount, reason: 'loan:offer' });
@@ -288,13 +331,14 @@ export async function offerLoan(ch, body, client, h) {
 export async function takeLoan(ch, loanId, carId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No taking a loan from lockup.');
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
+  await syndicatedLoanGuard(client,ch,loanId,'take');
   if (!loan || loan.status !== 'open') throw new GameError('gone', 'That offer is off the table.');
   await assertDeliveryFinanceLoanTake(client, ch, loanId);
   if (loan.lender_character === ch.id) throw new GameError('own', "You can't take your own money.");
   if (loan.offered_to && loan.offered_to !== ch.id) throw new GameError('directed', 'That offer is spoken for — it names another borrower.');
   if (ch.welsher) throw new GameError('welsher', 'Nobody lends to a welsher. Square your name first.');
   const active = Number((await client.query("SELECT COUNT(*) n FROM loans WHERE borrower_character=$1 AND status='active'", [ch.id])).rows[0].n);
-  if (active >= LOAN.MAX_ACTIVE) throw new GameError('maxed', 'Clear the debt you have before taking another.');
+  if (active >= LOAN.MAX_ACTIVE && !await permitsSyndicatedLoanTake(client,ch,loanId)) throw new GameError('maxed', 'Clear the debt you have before taking another.');
   // secured offer: pledge a car worth ≥ collateral_min. Lock it (the market:listed precedent — the
   // row stays for car conservation; melt/fence/repair/list refuse a pledged car until the debt clears).
   let pledgedCar = null;
@@ -335,11 +379,13 @@ export async function takeLoan(ch, loanId, carId, client, h) {
 // POST /v1/loans/:id/cancel — the lender pulls an untaken offer (escrow refunds)
 export async function cancelLoan(ch, loanId, client, h) {
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
+  await syndicatedLoanGuard(client,ch,loanId,'cancel');
   if (!loan || loan.lender_character !== ch.id) throw new GameError('no_loan', 'No such offer of yours.');
   if (loan.status !== 'open') throw new GameError('taken', 'That loan is already out — you can’t pull it.');
   ch.cash = Number(ch.cash) + Number(loan.principal);
   await client.query("UPDATE loans SET status='cancelled' WHERE id=$1", [loanId]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: Number(loan.principal), reason: 'loan:refund' });
+  await finishSyndicatedLoanMutation(client,loanId,'cancel');
   return { ok: true, loanAction: 'cancel_offer', refunded: Number(loan.principal) };
 }
 
@@ -347,6 +393,7 @@ export async function cancelLoan(ch, loanId, client, h) {
 // interest; the lender is credited in-memory (persisted by withTwoCharacters); the vig → the pool.
 export async function repayLoan(ch, lender, loanId, client, h) {
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
+  await syndicatedLoanGuard(client,ch,loanId,'repay');
   if (!loan || loan.status !== 'active') throw new GameError('no_loan', 'No such debt to square.');
   if (loan.borrower_character !== ch.id) throw new GameError('not_yours', 'That debt isn’t yours.');
   if (loan.lender_character !== lender.id) throw new GameError('mismatch', 'The book doesn’t match.');
@@ -368,12 +415,15 @@ export async function repayLoan(ch, lender, loanId, client, h) {
     h.acct.omr = Number(h.acct.omr) + pledgeBack;
     await h.ledger(client, { accountId: ch.account_id, currency: 'omr', amount: pledgeBack, reason: 'loan:pledge:return', counterparty: lender.id });
   }
-  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'loan:repay', counterparty: lender.id });
-  await h.ledger(client, { characterId: lender.id, currency: 'cash', amount: toLender, reason: 'loan:repay', counterparty: ch.id });
+  const collateralPayJournal = await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'loan:repay', counterparty: lender.id });
+  const collateralReceiveJournal = await h.ledger(client, { characterId: lender.id, currency: 'cash', amount: toLender, reason: 'loan:repay', counterparty: ch.id });
   await payVig(client, h.ledger, vig); // step 5: the vig splits — half → the buyback pool, half → the house window
   await h.notify(client, lender.id, 'loan_repaid', { by: ch.name, amount: toLender });
   await h.track(client, ch.account_id, 'loan_repay', { paid: owed, vig });
-  return { ok: true, paid: owed, toLender, vig, pledgeReturned: pledgeBack };
+  const receipt = { ok: true, paid: owed, toLender, vig, pledgeReturned: pledgeBack };
+  await recordActualCollateralTerminal(client, { loan, borrower: ch, holder: lender, kind: 'repaid', paid: owed, received: toLender, vig, payJournal: collateralPayJournal, receiveJournal: collateralReceiveJournal, receipt });
+  await recoverActualCollateralAuction(client, { kind: 'terminal', loanId, actor: ch, other: lender, rentalScope: h.rentalDeathScope, receipt });
+  return receipt;
 }
 
 // POST /v1/loans/:id/collect — two-party: ch=lender (actor), victim=borrower. After due, seize the
@@ -389,6 +439,7 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
   if (safeHoused(ch)) throw new GameError('safe', 'No shaking anyone down while you’re to ground.');
   if (hospitalized(ch)) throw new GameError('hurt', 'You’re in no shape to break legs.');
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
+  await syndicatedLoanGuard(client,ch,loanId,'collect');
   if (!loan || loan.status !== 'active') throw new GameError('no_loan', 'No such debt to collect.');
   if (loan.lender_character !== ch.id) throw new GameError('not_yours', 'That’s not your book.');
   if (loan.borrower_character !== borrower.id) throw new GameError('mismatch', 'The book doesn’t match.');
@@ -409,6 +460,7 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
   await bumpHonor(client, borrower, HONOR.WELSH); // #1: a broken word stains the name (direct SQL — honor isn't positional)
   borrower.wanted_until = new Date(Date.now() + LOAN.WANTED_MS);     // WANTED: omertà stripped + hunted
   await postWantedBounty(client, borrower.id, h);                   // the underworld puts a price on their head
+  let collateralPayJournal = null, collateralReceiveJournal = null;
   if (collected > 0) {
     borrower.cash = Number(borrower.cash) - fromPocket;
     borrower.bank = Number(borrower.bank) - fromTransit;
@@ -417,8 +469,8 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
     borrower.bank_intransit = Math.min(Number(borrower.bank_intransit || 0) - fromTransit, Number(borrower.bank));
     ch.cash = Number(ch.cash) + toLender;
     // one row spans the borrower's cash+bank (check (a) is on cash+bank — the whack:loot precedent)
-    await h.ledger(client, { characterId: borrower.id, currency: 'cash', amount: -collected, reason: 'loan:collect', counterparty: ch.id });
-    await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: toLender, reason: 'loan:collect', counterparty: borrower.id });
+    collateralPayJournal = await h.ledger(client, { characterId: borrower.id, currency: 'cash', amount: -collected, reason: 'loan:collect', counterparty: ch.id });
+    collateralReceiveJournal = await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: toLender, reason: 'loan:collect', counterparty: borrower.id });
     await payVig(client, h.ledger, vig); // step 5: the vig splits — half → the buyback pool, half → the house window
   }
   // step 2: a SECURED default forfeits the collateral — the car changes hands to the lender (a pure
@@ -454,8 +506,12 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
   // permanent welsher brand and the WANTED window. The two CLOCKS are founder levers, so they ship
   // from here rather than being restated client-side (the crewNextCost/hunterSearchMs discipline —
   // a restated lever is wrong for everybody the day it moves).
-  return { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized,
+  await finishSyndicatedLoanMutation(client,loanId,'collect');
+  const receipt = { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized,
     wanted: true, wantedSeconds: Math.round(LOAN.WANTED_MS / 1000), hospSeconds: Math.round(LOAN.COLLECT_HOSP_MS / 1000) };
+  await recordActualCollateralTerminal(client, { loan, borrower, holder: ch, kind: 'collected', paid: collected, received: toLender, vig, payJournal: collateralPayJournal, receiveJournal: collateralReceiveJournal, receipt });
+  await recoverActualCollateralAuction(client, { kind: 'terminal', loanId, actor: ch, other: borrower, rentalScope: h.rentalDeathScope, receipt });
+  return receipt;
 }
 
 // POST /v1/loans/:id/sell — step 3 (the paper market): the current lender puts this ACTIVE loan's
@@ -465,6 +521,7 @@ export async function sellPaper(ch, loanId, body, client, h) {
   const price = Math.floor(Number(body?.price) || 0);
   if (price < LOAN.PAPER_MIN || price > LOAN.PAPER_MAX) throw new GameError('price', `A paper sells for ${usd(LOAN.PAPER_MIN)}–${usd(LOAN.PAPER_MAX)}.`);
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
+  await syndicatedLoanGuard(client,ch,loanId,'sellPaper');
   if (!loan || loan.status !== 'active') throw new GameError('no_loan', 'No such debt to sell.');
   if (loan.lender_character !== ch.id) throw new GameError('not_yours', 'That’s not your book to sell.');
   await client.query('UPDATE loans SET for_sale=$2 WHERE id=$1', [loanId, price]);
@@ -484,6 +541,7 @@ export async function sellPaper(ch, loanId, body, client, h) {
 // POST /v1/loans/:id/unsell — the lender pulls the paper off the market (just clears the flag)
 export async function unsellPaper(ch, loanId, client, h) {
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
+  await syndicatedLoanGuard(client,ch,loanId,'unsellPaper');
   if (!loan || loan.lender_character !== ch.id) throw new GameError('not_yours', 'That’s not your book.');
   if (loan.for_sale == null) throw new GameError('not_listed', 'That paper isn’t on the market.');
   await client.query('UPDATE loans SET for_sale=NULL WHERE id=$1', [loanId]);
@@ -501,6 +559,7 @@ export async function buyPaper(ch, seller, loanId, client, h) {
   // shipped anyway so the whole loan surface reads one way: you don't do business from a bunker.
   if (safeHoused(ch)) throw new GameError('safe', 'Nobody signs paper over to a ghost — surface first.');
   const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [loanId])).rows[0];
+  await syndicatedLoanGuard(client,ch,loanId,'buyPaper');
   if (!loan || loan.status !== 'active' || loan.for_sale == null) throw new GameError('gone', 'That paper is off the market.');
   if (loan.lender_character !== seller.id) throw new GameError('mismatch', 'The book doesn’t match.');
   if (loan.lender_character === ch.id) throw new GameError('own', 'You already hold that paper.');
@@ -520,7 +579,9 @@ export async function buyPaper(ch, seller, loanId, client, h) {
   await h.track(client, ch.account_id, 'loan_paper_buy', { price, take });
   // `toSeller` alone read as the SPEAKEASY buyout ("took over the club — $undefined paid"): the marker
   // names this system, and `owed` is what the buyer actually acquired.
-  return { ok: true, paper: 'bought', price, toSeller, take, owed: loanOwed(loan.principal, loan.rate) };
+  const receipt = { ok: true, paper: 'bought', price, toSeller, take, owed: loanOwed(loan.principal, loan.rate) };
+  await recoverActualCollateralAuction(client, { kind: 'paper', loanId, actor: ch, other: seller, rentalScope: h.rentalDeathScope, receipt });
+  return receipt;
 }
 
 // POST /v1/loans/square — pay to square your name: clears WANTED (calls off the NPC hunters + the pool

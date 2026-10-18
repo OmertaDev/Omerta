@@ -38,9 +38,9 @@ export const ENTERPRISE_STRUCTURAL_CHECKS=Object.freeze([
     "fn": "collectWorkshopFloorIssues",
     "why": "original allocations, slot/source references and acknowledgement history; no cash bucket",
     "push": "push('workshop floor source and allocation history',floorIssues.length,0,0,{issues:floorIssues});",
-    "sha256": "62fb85a7695fde3c0301030357aff8b799d71b35bfe8032df66bb4b75d7a568b",
-    "revision": "5fb8ec516236ceb4456f1f38b0d19ac111c35087",
-    "blob": "3e7cceb82b41484ba54f26b7e1845b899e4d588d"
+    "sha256": "857f1e6425332bacfed91e61861ac3fb3e56f82ad135ca7ba784f0529561b21c",
+    "revision": "84499ed6242ab569667802dacb2d5c17612e3c33",
+    "blob": "1800358bc1fb8d2dbdba15b6b388dfa5205e15a3"
   }
 ].map(Object.freeze));
 export const ENTERPRISE_HELPER_PROFILES=Object.freeze([

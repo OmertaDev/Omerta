@@ -1,3 +1,4 @@
+import { finalServicesOverCommerceSourceBaseline } from '../tools/finalservices-commerce-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { invoiceSourceBaseline } from '../tools/rc1-invoice-source-compatibility.js';
 import fs from 'node:fs';
@@ -9,7 +10,7 @@ import { LOAN_REFUND_METRIC_SOURCE_PINS } from '../tools/rc1-world-economy-metri
 const gitText = blob => execFileSync('git', ['show', blob], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n');
 const actualCurrent = fs.readFileSync('src/loans.js', 'utf8').replaceAll('\r\n', '\n');
 assert.equal(actualCurrent, gitText('HEAD:src/loans.js'));
-const current = invoiceSourceBaseline('src/loans.js', actualCurrent);
+const current = invoiceSourceBaseline('src/loans.js', finalServicesOverCommerceSourceBaseline('src/loans.js', actualCurrent));
 assert.equal(current, gitText(LOAN_CANCEL_MARKER_BLOB), 'runtime source remains byte-identical to the reviewed marker blob');
 const proof = assertLoanCancelMarkerTransfer(current), baseline = gitText(LOAN_CANCEL_BASELINE_BLOB);
 assert.equal(proof.baselineText, baseline, 'one exact return-line inverse reconstructs the complete original source');

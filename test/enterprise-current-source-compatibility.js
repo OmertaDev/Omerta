@@ -1,3 +1,5 @@
+import {hasFinalServicesCommerceSource,finalServicesOverCommerceSourceBaseline} from '../tools/finalservices-commerce-source-compatibility.js';
+const selectFinalServicesCommerceTestSource=(file,input)=>hasFinalServicesCommerceSource(file)?finalServicesOverCommerceSourceBaseline(file,input):input;
 import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import './continuous-city-source-compatibility.js';
 // Current typed source/data proof only. This does not qualify native/migration/gameplay/release execution.
@@ -13,7 +15,7 @@ const hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto
 let positives=0,refusals=0;const pins={...ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,...ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES};
 assert.equal(Object.keys(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS).length,31);
 for(const[file,p]of Object.entries(pins)){
-  const actualCurrentRaw=fs.readFileSync(file,'utf8'),raw=commerceOverCurrentEnterpriseSourceBaseline(file,actualCurrentRaw),current=git(ENTERPRISE_CURRENT_SOURCE_REVISION,file),root=git(ENTERPRISE_ROOT_PREDECESSOR,file);
+  const actualCurrentRaw=selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8')),raw=commerceOverCurrentEnterpriseSourceBaseline(file,actualCurrentRaw),current=git(ENTERPRISE_CURRENT_SOURCE_REVISION,file),root=git(ENTERPRISE_ROOT_PREDECESSOR,file);
   const bridge=assertCommerceCurrentEnterpriseSourceTransfer(file,actualCurrentRaw),actualCurrent=git(COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION,file);
   assert.equal(actualCurrentRaw.replaceAll('\r\n','\n'),actualCurrent,'Current namespace is pinned to genuine authored C bytes');assert.equal(bridge.baselineText,current);assert.equal(bridge.sourceRevision,COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION);assert.equal(bridge.predecessorRevision,ENTERPRISE_CURRENT_SOURCE_REVISION);assert.equal(bridge.modeVerified,false);
   for(const changed of[actualCurrent+'\n// unknown-current\n',actualCurrent.slice(1),'\ufeff'+actualCurrent,actualCurrent+'\0',actualCurrent.replace('\n','\r\n'),actualCurrent.replace('\n','\r'),Buffer.from(actualCurrent)])assert.throws(()=>assertCommerceCurrentEnterpriseSourceTransfer(file,changed));
@@ -41,7 +43,7 @@ import {qualifyCityActivityMarketSource} from '../tools/rc1-city-activity-market
 assert.deepEqual(Object.keys(ENTERPRISE_OVER_GUI_SOURCE_DOMAINS),['src/server.js','package.json']);
 let guiPositives=0,guiRefusals=0;
 for(const[file,p]of Object.entries(ENTERPRISE_OVER_GUI_SOURCE_DOMAINS)){
-  const raw=commerceOverEnterpriseSourceBaseline(file,fs.readFileSync(file,'utf8')),current=git(ENTERPRISE_GUI_SOURCE_REVISION,file),gui=git(ENTERPRISE_GUI_PREDECESSOR,file);
+  const raw=commerceOverEnterpriseSourceBaseline(file,selectFinalServicesCommerceTestSource(file,fs.readFileSync(file,'utf8'))),current=git(ENTERPRISE_GUI_SOURCE_REVISION,file),gui=git(ENTERPRISE_GUI_PREDECESSOR,file);
   assert.equal(lf(raw),current,'Actual union input must match the distinct GUI witness');assert.equal(hash(current),p.currentSha256);assert.equal(blob(current),p.currentBlob);assert.equal(hash(gui),p.baselineSha256);assert.equal(blob(gui),p.baselineBlob);
   for(const input of [raw,current,current.replaceAll('\n','\r\n')]){const selected=enterpriseOverGuiSourceBaseline(file,input);assert.equal(selected,gui);assert.equal(qualifyCityActivityMarketSource(file,selected).baselineText,git('b6be98c7e0233c4b35a74467828e24080b16b0eb',file));assert.equal(hash(input),p.currentRawSha256[input.includes('\r\n')?'crlf':'lf']);guiPositives++;}
   for(const input of [gui,current+'\n// unknown\n',current.slice(1),'\ufeff'+current,current+'\0',current.replace('\n','\r\n'),current.replace('\n','\r'),Buffer.from(current)]){assert.throws(()=>enterpriseOverGuiSourceBaseline(file,input));guiRefusals++;}

@@ -1,0 +1,17 @@
+# Equipment collateral for ordinary cash loans
+
+N23 adds a voluntary precision-tool pledge to an existing directed, cash-funded player loan. The lender uses the ordinary loan offer and reserves their own cash. Only its named original borrower can quote and pledge one existing, healthy standard crafted `item:precision_lock_tool` UID while taking that offer. The ordinary one-active-loan cap, rate, term and cash restrictions remain authoritative. Customer vault principal never becomes operator lending capital.
+
+The actual UID enters existing operation escrow with its original account recorded as depositor. Normal sale, rental, transfer, consumption and a second pledge cannot spend that UID. A quote reserves nothing. Closed authenticated endpoints under `/v1/loans/equipment` expose availability, private history, quote, pledge, repay and release equally to agents and human clients. Source hashes and explicit consent bind the exact offer, originals, birth event and current condition. Idempotent responses retain their original receipt.
+
+Repayment uses the actual ordinary cash-loan leaf and the fresh current claim holder, including a canonical paper buyer or inherited claim holder. A private consume-once proof from the actual repayment or collection leaf binds both exact journals, the original borrower, current holder, transaction and ordinary receipt. Source-pinned metadata and the final persistence check attest that receipt. Status changes, missing loan rows and fabricated contexts do not supply release authority. Collection retains ordinary cash recovery and default consequences; the tool returns only to its original depositor after a genuine terminal cash debt. No lender title or liquidation authority is added.
+
+Borrower death releases to the original account only inside both genuine estate and preactor scopes after the ordinary cash debt resolves and the original character is marked dead. Lender death preserves the pledge while the existing loan estate rules determine the cash claim holder. History preserves actual UID birth, escrow, terminal and release IDs; later legitimate account-title disposal does not invalidate the historical release.
+
+Positive cash/custody mutations require the genuine PostgreSQL backend and exact fixed estate, books, terminal and post-persistence hooks. Portable tests cover quotes, refusals, contracts and funding separation; positive native tests use strict fresh owned databases and actual canonical server/schema hooks. All financial activation and real settlement remain disabled.
+
+## Coordinator integration and N24 boundary
+
+The coordinator owns schema, Loans, G, estate, global books, server/gateway, test wiring and release catalogs. The accompanying OFFREPO source-pinned proposal contains only literal fixed getters and hooks; it does not add injected factories, installers or generic execution callbacks. All prior unbranded game results are no-ops at the new finalizer.
+
+N24 may reference immutable `collateral_lending_pledges.id`, `loan_id`, `item_id`, `source_hash`, original borrower/lender account and character IDs, birth/take/escrow event IDs, and the genuine terminal/release IDs. N23 contains no default auction consent, collateral sale price or proceeds allocation and grants no N24 transfer authority. Any future auction must separately establish original explicit default terms and canonical UID disposal rights; a terminal N23 receipt alone cannot supply them.

@@ -663,7 +663,7 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
   const staleArenaOwnershipPattern = `(${oldArenaModule}.{0,120}arenaBoard|arenaBoard.{0,120}${oldArenaModule})`;
   let staleArenaOwnership = '';
   try {
-    staleArenaOwnership = execFileSync('git', ['grep', '-n', '-I', '-E', staleArenaOwnershipPattern, '--', '.'], {
+    staleArenaOwnership = execFileSync('git', ['grep', '-n', '-I', '-E', staleArenaOwnershipPattern, '--', '.', ':(top,exclude,literal)tools/finalservices-commerce-source-data.js'], {
       encoding: 'utf8',
     });
   } catch (error) {

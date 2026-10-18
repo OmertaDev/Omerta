@@ -14,16 +14,16 @@ import { runLedgerInvariants } from '../src/invariants.js';
 import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
-import { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,
-  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches } from '../tools/commerce-deed-release-phase2-native-catalog.js';
+import { createFinalservicesReleasePhase2MigrationCatalog, readFinalservicesReleasePhase2Metadata,
+  verifyFinalservicesReleasePhase2CausalNegatives, verifyFinalservicesNativeBranches } from '../tools/finalservices-deed-release-phase2-native-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
-const commerceCatalogBlob = execFileSync('git', ['show', 'c43ce4c33c467b7764f4014eda3aaf368a8348ee:test/lib/phase2-architecture-upgrade-catalog.json']);
-assert.equal(createHash('sha256').update(commerceCatalogBlob).digest('hex'), '44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917', 'Reviewed complete Commerce catalog source bytes changed');
+const commerceCatalogBlob = execFileSync('git', ['show', '7bed12f40d4accb6dbab3432ec4cd82b6e04bf3c:test/lib/phase2-architecture-upgrade-catalog.json']);
+assert.equal(createHash('sha256').update(commerceCatalogBlob).digest('hex'), '7b6bedc109949835c5bb5e0da174b4c579409ab2cd7ec67f62d456367c6a08f0', 'Reviewed complete Commerce catalog source bytes changed');
 assert.deepEqual(architectureUpgradeCatalog, JSON.parse(commerceCatalogBlob), 'Current complete Commerce catalog is source-pinned');
-assert.equal(architectureUpgradeCatalog.added.length, 1675);
-assert.equal(Object.keys(architectureUpgradeCatalog.notNullColumns).length, 215);
+assert.equal(architectureUpgradeCatalog.added.length, 2007);
+assert.equal(Object.keys(architectureUpgradeCatalog.notNullColumns).length, 241);
 
 function endpoint() {
   assert(process.argv.length === 3 && ['--definitions', '--lots'].includes(process.argv[2]),
@@ -190,8 +190,8 @@ async function child(url) {
       // Full native next-layer metadata is attested before ordinary lot fixtures run.
       const layerReferenceUrl = new URL(url.toString()); layerReferenceUrl.searchParams.delete('options');
       cityGameplayMigrationEndpoint(layerReferenceUrl.toString());
-      const layerNative = await verifyCommerceNativeBranches(pool, layerReferenceUrl.toString());
-      layerNative.verify(await readCommerceReleasePhase2Metadata(pool));
+      const layerNative = await verifyFinalservicesNativeBranches(pool, layerReferenceUrl.toString());
+      layerNative.verify(await readFinalservicesReleasePhase2Metadata(pool));
       const { runLots } = await import('./phase2-lots.js');
       const fixtureFactory = lotFixtureFactory(pool, url);
       let fixtureCount = 0, completedFixtures = 0;
@@ -231,7 +231,7 @@ async function child(url) {
       const version = Number(settings.server_version_num);
       assert.throws(() => equipmentEconomyMigrationProjection(schema,gameplayMetadata), error => error?.code === 'ERR_ASSERTION',
         'The source-only C2 envelope does not confer historical native admission');
-      const release = await createCommerceReleasePhase2MigrationCatalog(pool,referenceUrl.toString(),schema,
+      const release = await createFinalservicesReleasePhase2MigrationCatalog(pool,referenceUrl.toString(),schema,
         { includeNotNull: true, legacyProfile: 'phase2' });
       const equipment = equipmentEconomyMigrationProjection(release.predecessorSource,gameplayMetadata);
       const cityProjection = gameplayUpgradeProjection(gameplayCatalog,oldConstraints,version);
@@ -245,9 +245,9 @@ async function child(url) {
       verifyPlayerIntelUpgradeCausalNegatives(oldConstraints,normalized,version);
       verifyGameplayUpgradeCausalNegatives(gameplayCatalog,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
       verifyEquipmentEconomyUpgradeCausalNegatives(equipment,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
-      await verifyCommerceReleasePhase2CausalNegatives(pool,release,upgradedConstraints,
+      await verifyFinalservicesReleasePhase2CausalNegatives(pool,release,upgradedConstraints,
         rows => verifyUpgradeConstraintCatalog(oldConstraints,projection.normalize(rows),version));
-      release.verifyMetadata(await readCommerceReleasePhase2Metadata(pool));
+      release.verifyMetadata(await readFinalservicesReleasePhase2Metadata(pool));
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
       console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
       console.log('phase2-postgres: exact account-owned PlayerIntel identity and required columns pass with removal, alteration, renamed binding and unknown-addition negatives');

@@ -60,7 +60,7 @@ async function setCompanySpecializationImpl(client,accountId,body,requestKey,{ow
   if(prior){if(stable(prior.identity)!==stable(terms))fail('request_conflict');return {...prior.receipt,replayed:true};}
   if(terms.allowAgentProduction&&ownerSession!==true)fail('owner_authority');
   return withInfrastructureProductionScope(client,{accountId,businessId:terms.businessId,toolItemId:terms.toolItemId},async()=>{
-  const ch=await actor(client,accountId);await business(client,ch,terms.businessId);
+  const ch=await actor(client,accountId);await business(client,ch,terms.businessId);await(await import('./productionbooking-guards.js')).assertProductionBookingBusinessMutable(client,terms.businessId);
   const old=(await client.query('SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE',[terms.businessId])).rows[0];
   if(Number(old?.revision??0)!==terms.expectedRevision||(old&&(old.account_id!==accountId||old.original_character!==ch.id)))fail('revision');
   await healthy(client,{kind:terms.kind,tool_item_id:terms.toolItemId,business_id:terms.businessId},ch);

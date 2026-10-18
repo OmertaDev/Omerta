@@ -9652,3 +9652,269 @@ CREATE TABLE IF NOT EXISTS commercial_campaign_stages (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS commercial_campaign_output_consumption
  ON commercial_campaign_stages(output_item_id) WHERE kind='manufacture' AND output_item_id IS NOT NULL;
+
+
+CREATE TABLE IF NOT EXISTS performance_employment_contracts (
+ employment_id TEXT PRIMARY KEY REFERENCES game_employment_jobs(id), depot_id TEXT NOT NULL REFERENCES business_depots(id),
+ employer_account TEXT NOT NULL REFERENCES accounts(id), employer_character TEXT NOT NULL REFERENCES characters(id),
+ source_json JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ minimum_units INT NOT NULL CHECK(minimum_units BETWEEN 1 AND 40), bonus_cash INT NOT NULL CHECK(bonus_cash BETWEEN 1 AND 10000),
+ slots INT NOT NULL CHECK(slots BETWEEN 1 AND 5), total_cash INT NOT NULL CHECK(total_cash=slots*bonus_cash),
+ escrow_cash INT NOT NULL CHECK(escrow_cash>=0), paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash>=0),
+ refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0), burned_cash INT NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+ looted_cash INT NOT NULL DEFAULT 0 CHECK(looted_cash>=0), reserve_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ state TEXT NOT NULL CHECK(state IN ('open','closed')), created_at TIMESTAMPTZ NOT NULL,
+ CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash+looted_cash), CHECK(state<>'closed' OR escrow_cash=0));
+CREATE TABLE IF NOT EXISTS performance_employment_assignments (
+ assignment_id TEXT PRIMARY KEY REFERENCES game_employment_assignments(id), employment_id TEXT NOT NULL REFERENCES performance_employment_contracts(employment_id),
+ commitment_id TEXT NOT NULL UNIQUE REFERENCES delivery_commitments(id), worker_account TEXT NOT NULL REFERENCES accounts(id),
+ worker_character TEXT NOT NULL REFERENCES characters(id), source_json JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ delivered_units INT NOT NULL DEFAULT 0 CHECK(delivered_units BETWEEN 0 AND 40), fills JSONB NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('assigned','paid')), bonus_cash INT NOT NULL DEFAULT 0 CHECK(bonus_cash BETWEEN 0 AND 10000),
+ bonus_transaction TEXT UNIQUE REFERENCES transactions(id), wage_transaction TEXT UNIQUE REFERENCES transactions(id),
+ claim_json JSONB, paid_at TIMESTAMPTZ,
+ CHECK((state='paid')=(paid_at IS NOT NULL)), CHECK((bonus_cash>0)=(bonus_transaction IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS performance_employment_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),
+ original_character TEXT NOT NULL REFERENCES characters(id), terms JSONB NOT NULL, receipt JSONB NOT NULL,
+ employment_id TEXT NOT NULL UNIQUE REFERENCES performance_employment_contracts(employment_id),
+ PRIMARY KEY(account_id,request_key));
+
+-- N23 bounded equipment collateral; original ordinary cash-loan effects remain canonical.
+CREATE TABLE IF NOT EXISTS collateral_lending_pledges (
+ id TEXT PRIMARY KEY,loan_id TEXT NOT NULL UNIQUE,item_id TEXT NOT NULL REFERENCES item_instances(id),
+ borrower_account TEXT NOT NULL REFERENCES accounts(id),borrower_character TEXT NOT NULL REFERENCES characters(id),
+ original_lender_account TEXT NOT NULL REFERENCES accounts(id),original_lender_character TEXT NOT NULL REFERENCES characters(id),
+ principal INT NOT NULL CHECK(principal BETWEEN 5000 AND 1000000),rate NUMERIC NOT NULL CHECK(rate>0 AND rate<=0.5),
+ hours INT NOT NULL CHECK(hours BETWEEN 1 AND 72),offered_at TIMESTAMPTZ NOT NULL,due_at TIMESTAMPTZ NOT NULL,
+ birth_event TEXT NOT NULL REFERENCES item_events(id),birth_mutation TEXT NOT NULL,
+ initial_condition INT NOT NULL CHECK(initial_condition BETWEEN 10 AND 100),initial_condition_revision INT NOT NULL CHECK(initial_condition_revision>=0),
+ take_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),escrow_event TEXT NOT NULL UNIQUE REFERENCES item_events(id),
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),created_at TIMESTAMPTZ NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('held','released','estate_released')),released_at TIMESTAMPTZ,
+ release_event TEXT UNIQUE REFERENCES item_events(id),release_kind TEXT CHECK(release_kind IN ('repaid','collected','borrower_estate')),
+ CHECK(borrower_account<>original_lender_account AND borrower_character<>original_lender_character),
+ CHECK(due_at>offered_at),CHECK((state='held' AND released_at IS NULL AND release_event IS NULL AND release_kind IS NULL)
+ OR (state='released' AND released_at IS NOT NULL AND release_event IS NOT NULL AND release_kind IN ('repaid','collected'))
+ OR (state='estate_released' AND released_at IS NOT NULL AND release_event IS NOT NULL AND release_kind='borrower_estate')));
+CREATE UNIQUE INDEX IF NOT EXISTS collateral_lending_one_held_uid ON collateral_lending_pledges(item_id) WHERE state='held';
+CREATE UNIQUE INDEX IF NOT EXISTS collateral_lending_one_held_original ON collateral_lending_pledges(borrower_character) WHERE state='held';
+CREATE TABLE IF NOT EXISTS collateral_lending_requests (
+ account_id TEXT NOT NULL,request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),
+ run_id TEXT NOT NULL UNIQUE,action TEXT NOT NULL CHECK(action IN ('pledge','repay','release')),
+ body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),request_json JSONB NOT NULL,receipt JSONB,
+ account_ref TEXT REFERENCES accounts(id),original_character TEXT REFERENCES characters(id),pledge_id TEXT REFERENCES collateral_lending_pledges(id),
+ PRIMARY KEY(account_id,request_key),CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND pledge_id IS NULL)
+ OR (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND pledge_id IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS collateral_lending_terminals (
+ pledge_id TEXT PRIMARY KEY REFERENCES collateral_lending_pledges(id),loan_id TEXT NOT NULL UNIQUE,
+ borrower_character TEXT NOT NULL REFERENCES characters(id),holder_character TEXT NOT NULL REFERENCES characters(id),
+ holder_account TEXT NOT NULL REFERENCES accounts(id),kind TEXT NOT NULL CHECK(kind IN ('repaid','collected')),
+ paid_cash INT NOT NULL CHECK(paid_cash>=0),received_cash INT NOT NULL CHECK(received_cash>=0),vig_cash INT NOT NULL CHECK(vig_cash>=0),
+ pay_journal TEXT UNIQUE REFERENCES transactions(id),receive_journal TEXT UNIQUE REFERENCES transactions(id),receipt JSONB NOT NULL,
+ mutation_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ created_at TIMESTAMPTZ NOT NULL,CHECK(paid_cash=received_cash+vig_cash),CHECK(borrower_character<>holder_character),
+ CHECK((paid_cash=0 AND pay_journal IS NULL AND receive_journal IS NULL) OR
+ (paid_cash>0 AND pay_journal IS NOT NULL AND receive_journal IS NOT NULL AND pay_journal<>receive_journal)));
+
+CREATE TABLE IF NOT EXISTS collateral_auction_agreements (
+ id TEXT PRIMARY KEY,loan_id TEXT NOT NULL UNIQUE,item_id TEXT NOT NULL REFERENCES item_instances(id),
+ quote_hash TEXT NOT NULL,borrower_account TEXT NOT NULL REFERENCES accounts(id),borrower_character TEXT NOT NULL REFERENCES characters(id),
+ lender_account TEXT NOT NULL REFERENCES accounts(id),lender_character TEXT NOT NULL REFERENCES characters(id),
+ principal INT NOT NULL CHECK(principal BETWEEN 5000 AND 1000000),owed INT NOT NULL CHECK(owed>=principal),
+ reserve_cash INT NOT NULL CHECK(reserve_cash>=owed AND reserve_cash<=2000000),auction_seconds INT NOT NULL CHECK(auction_seconds BETWEEN 60 AND 3600),
+ offered_at TIMESTAMPTZ NOT NULL,prepared_at TIMESTAMPTZ NOT NULL,source_hash TEXT NOT NULL,
+ prepare_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ approved_at TIMESTAMPTZ,approve_key TEXT UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ CHECK(borrower_account<>lender_account AND borrower_character<>lender_character),
+ CHECK((approved_at IS NULL AND approve_key IS NULL) OR (approved_at>=prepared_at AND approve_key IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS collateral_auctions (
+ id TEXT PRIMARY KEY,agreement_id TEXT NOT NULL UNIQUE REFERENCES collateral_auction_agreements(id),
+ pledge_id TEXT NOT NULL UNIQUE REFERENCES collateral_lending_pledges(id),pledge_hash TEXT NOT NULL,
+ opened_at TIMESTAMPTZ NOT NULL,closes_at TIMESTAMPTZ NOT NULL,settle_until TIMESTAMPTZ NOT NULL,opened_by TEXT NOT NULL REFERENCES characters(id),
+ open_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ state TEXT NOT NULL CHECK(state IN ('open','settled','cancelled')),winning_bid TEXT,
+ proceeds_journal TEXT UNIQUE REFERENCES transactions(id),sale_event TEXT UNIQUE REFERENCES item_events(id),
+ release_request TEXT,settled_at TIMESTAMPTZ,closed_at TIMESTAMPTZ,close_reason TEXT,
+ CHECK(closes_at>opened_at AND settle_until>closes_at),CHECK((state='open' AND closed_at IS NULL AND settled_at IS NULL AND winning_bid IS NULL)
+ OR (state='cancelled' AND closed_at IS NOT NULL AND settled_at IS NULL AND winning_bid IS NULL)
+ OR (state='settled' AND closed_at IS NOT NULL AND settled_at IS NOT NULL AND winning_bid IS NOT NULL AND proceeds_journal IS NOT NULL AND sale_event IS NOT NULL AND release_request IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS collateral_auction_bids (
+ id TEXT PRIMARY KEY,auction_id TEXT NOT NULL REFERENCES collateral_auctions(id),agreement_hash TEXT NOT NULL,
+ bidder_account TEXT NOT NULL REFERENCES accounts(id),bidder_character TEXT NOT NULL REFERENCES characters(id),
+ amount INT NOT NULL CHECK(amount BETWEEN 5000 AND 2000000),debit_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ created_at TIMESTAMPTZ NOT NULL,source_hash TEXT NOT NULL,mutation_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ state TEXT NOT NULL CHECK(state IN ('held','spent','refunded')),refund_journal TEXT UNIQUE REFERENCES transactions(id),resolved_at TIMESTAMPTZ,
+ UNIQUE(auction_id,bidder_account),CHECK((state='held' AND refund_journal IS NULL AND resolved_at IS NULL)
+ OR (state='spent' AND refund_journal IS NULL AND resolved_at IS NOT NULL)
+ OR (state='refunded' AND refund_journal IS NOT NULL AND resolved_at IS NOT NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS collateral_auction_one_original_held_bid ON collateral_auction_bids(bidder_character) WHERE state='held';
+CREATE TABLE IF NOT EXISTS collateral_auction_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL,action TEXT NOT NULL,
+ body_hash TEXT NOT NULL,body_json JSONB NOT NULL,run_id TEXT NOT NULL UNIQUE,original_character TEXT NOT NULL REFERENCES characters(id),
+ agreement_id TEXT REFERENCES collateral_auction_agreements(id),auction_id TEXT REFERENCES collateral_auctions(id),receipt JSONB,
+ PRIMARY KEY(account_id,request_key));
+
+
+CREATE TABLE IF NOT EXISTS syndicated_loan_facilities (
+ id TEXT PRIMARY KEY,borrower_account TEXT NOT NULL REFERENCES accounts(id),borrower_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL,terms_hash TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('funding','funded','active','repaid','cancelled','retired')),
+ created_at TIMESTAMPTZ NOT NULL,expires_at TIMESTAMPTZ NOT NULL,CHECK(expires_at>created_at));
+CREATE TABLE IF NOT EXISTS syndicated_loan_legs (
+ facility_id TEXT NOT NULL REFERENCES syndicated_loan_facilities(id),lender_account TEXT NOT NULL REFERENCES accounts(id),lender_character TEXT NOT NULL REFERENCES characters(id),
+ loan_id TEXT NOT NULL UNIQUE,principal INT NOT NULL CHECK(principal>0),funded_at TIMESTAMPTZ NOT NULL,source_hash TEXT NOT NULL,
+ fund_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),canonical_receipt JSONB NOT NULL,
+ PRIMARY KEY(facility_id,lender_account));
+CREATE TABLE IF NOT EXISTS syndicated_loan_members (
+ account_id TEXT PRIMARY KEY REFERENCES accounts(id),character_id TEXT NOT NULL REFERENCES characters(id),facility_id TEXT NOT NULL REFERENCES syndicated_loan_facilities(id));
+CREATE TABLE IF NOT EXISTS syndicated_loan_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL,body_hash TEXT NOT NULL,receipt JSONB NOT NULL,
+ original_character TEXT NOT NULL REFERENCES characters(id),facility_id TEXT NOT NULL REFERENCES syndicated_loan_facilities(id),
+ action TEXT NOT NULL CHECK(action IN ('propose','fund','take','repay','cancel')),request_json JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));
+
+
+CREATE TABLE IF NOT EXISTS production_booking_offers (
+ id TEXT PRIMARY KEY, maker_account TEXT NOT NULL REFERENCES accounts(id), maker_character TEXT NOT NULL REFERENCES characters(id),
+ customer_account TEXT NOT NULL REFERENCES accounts(id), customer_character TEXT NOT NULL REFERENCES characters(id),
+ business_id TEXT NOT NULL REFERENCES business_depots(id), tool_item TEXT NOT NULL REFERENCES item_instances(id),
+ source_json JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), created_at TIMESTAMPTZ NOT NULL,
+ offer_expires_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL,
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), bonus_cash INT NOT NULL CHECK(bonus_cash BETWEEN 1 AND 1000),
+ lifetime_seconds INT NOT NULL CHECK(lifetime_seconds BETWEEN 60 AND 1200),
+ state TEXT NOT NULL CHECK(state IN ('offered','accepted','cancelled','expired')), closed_at TIMESTAMPTZ,
+ CHECK(maker_account<>customer_account AND maker_character<>customer_character));
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_offer ON production_booking_offers(maker_character) WHERE state='offered';
+CREATE TABLE IF NOT EXISTS production_booking_runs (
+ id TEXT PRIMARY KEY REFERENCES production_booking_offers(id), business_id TEXT NOT NULL REFERENCES business_depots(id),
+ maker_account TEXT NOT NULL REFERENCES accounts(id), maker_character TEXT NOT NULL REFERENCES characters(id),
+ customer_account TEXT NOT NULL REFERENCES accounts(id), customer_character TEXT NOT NULL REFERENCES characters(id),
+ tool_item TEXT NOT NULL REFERENCES item_instances(id),
+ commission_id TEXT NOT NULL UNIQUE REFERENCES commissioned_crafting_contracts(id),
+ commission_source_hash TEXT NOT NULL CHECK(char_length(commission_source_hash)=64),
+ reservation_id TEXT NOT NULL UNIQUE REFERENCES production_slot_reservations(id), reservation_source_hash TEXT NOT NULL CHECK(char_length(reservation_source_hash)=64),
+ state TEXT NOT NULL CHECK(state IN ('active','completed','refunded')),
+ bonus_cash INT NOT NULL CHECK(bonus_cash BETWEEN 1 AND 1000), remaining_cash INT NOT NULL CHECK(remaining_cash BETWEEN 0 AND 1000),
+ paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash BETWEEN 0 AND 1000), refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash BETWEEN 0 AND 1000),
+ reserve_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id), release_transaction TEXT UNIQUE REFERENCES transactions(id),
+ accepted_at TIMESTAMPTZ NOT NULL, deadline TIMESTAMPTZ NOT NULL, closed_at TIMESTAMPTZ, outcome JSONB,
+ CHECK(bonus_cash=remaining_cash+paid_cash+refunded_cash),
+ CHECK((state='active' AND remaining_cash=bonus_cash AND release_transaction IS NULL AND closed_at IS NULL AND outcome IS NULL) OR
+       (state<>'active' AND remaining_cash=0 AND release_transaction IS NOT NULL AND closed_at IS NOT NULL AND outcome IS NOT NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_business ON production_booking_runs(business_id) WHERE state='active';
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_tool ON production_booking_runs(tool_item) WHERE state='active';
+CREATE TABLE IF NOT EXISTS production_booking_positions (
+ booking_id TEXT NOT NULL REFERENCES production_booking_runs(id), original_account TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), role TEXT NOT NULL CHECK(role IN ('maker','customer')),
+ state TEXT NOT NULL CHECK(state IN ('held','released')), PRIMARY KEY(booking_id,original_character), UNIQUE(booking_id,role));
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_original ON production_booking_positions(original_character) WHERE state='held';
+CREATE TABLE IF NOT EXISTS production_booking_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL CHECK(action IN ('offer','accept','complete','cancel','expire')),
+ identity JSONB NOT NULL, request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+
+
+-- N25: explicit original-member equipment underwriting mutual reserves.
+
+CREATE TABLE IF NOT EXISTS coverage_mutual_pools (
+ id TEXT PRIMARY KEY, creator_account TEXT NOT NULL REFERENCES accounts(id), creator_character TEXT NOT NULL REFERENCES characters(id),
+ partner_account TEXT NOT NULL REFERENCES accounts(id), partner_character TEXT NOT NULL REFERENCES characters(id),
+ contribution_cash INT NOT NULL CHECK(contribution_cash BETWEEN 1 AND 1000),
+ deductible_cash INT NOT NULL CHECK(deductible_cash BETWEEN 1 AND contribution_cash),
+ creator_policy TEXT NOT NULL REFERENCES equipment_insurance_policies(id), partner_policy TEXT NOT NULL REFERENCES equipment_insurance_policies(id),
+ policy_sources JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ state TEXT NOT NULL CHECK(state IN ('offered','active','closed')), created_at TIMESTAMPTZ NOT NULL,
+ offer_expires_at TIMESTAMPTZ NOT NULL, activated_at TIMESTAMPTZ, closed_at TIMESTAMPTZ, close_reason TEXT,
+ contributed_cash INT NOT NULL CHECK(contributed_cash BETWEEN 1 AND 2000), reserve_cash INT NOT NULL CHECK(reserve_cash BETWEEN 0 AND 2000),
+ paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash BETWEEN 0 AND 2000), refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash BETWEEN 0 AND 2000),
+ closure JSONB, CHECK(creator_account<>partner_account AND creator_character<>partner_character AND creator_policy<>partner_policy),
+ CHECK(contributed_cash=reserve_cash+paid_cash+refunded_cash), CHECK(state<>'closed' OR reserve_cash=0));
+CREATE TABLE IF NOT EXISTS coverage_mutual_positions (
+ pool_id TEXT NOT NULL REFERENCES coverage_mutual_pools(id), original_account TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), contribution_cash INT NOT NULL CHECK(contribution_cash BETWEEN 1 AND 1000),
+ contribution_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), state TEXT NOT NULL CHECK(state IN ('funded','released')),
+ refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash BETWEEN 0 AND contribution_cash), refund_id TEXT UNIQUE REFERENCES transactions(id),
+ PRIMARY KEY(pool_id,original_character));
+CREATE UNIQUE INDEX IF NOT EXISTS coverage_mutual_one_funded_position ON coverage_mutual_positions(original_character) WHERE state='funded';
+CREATE TABLE IF NOT EXISTS coverage_mutual_enrollments (
+ policy_id TEXT PRIMARY KEY REFERENCES equipment_insurance_policies(id), pool_id TEXT NOT NULL REFERENCES coverage_mutual_pools(id),
+ member_account TEXT NOT NULL REFERENCES accounts(id), member_character TEXT NOT NULL REFERENCES characters(id),
+ source JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), enrolled_at TIMESTAMPTZ NOT NULL,
+ UNIQUE(pool_id,member_character));
+CREATE TABLE IF NOT EXISTS coverage_mutual_claims (
+ policy_id TEXT PRIMARY KEY REFERENCES coverage_mutual_enrollments(policy_id), pool_id TEXT NOT NULL REFERENCES coverage_mutual_pools(id),
+ repair_id TEXT NOT NULL UNIQUE REFERENCES equipment_maintenance_repairs(id), wear_event_id TEXT NOT NULL UNIQUE REFERENCES item_durability_uses(event_id),
+ canonical_payout_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), member_account TEXT NOT NULL REFERENCES accounts(id),
+ member_character TEXT NOT NULL REFERENCES characters(id), gross_payout_cash INT NOT NULL CHECK(gross_payout_cash BETWEEN 1 AND 1000),
+ premium_cash INT NOT NULL CHECK(premium_cash BETWEEN 1 AND 1000), deductible_cash INT NOT NULL CHECK(deductible_cash BETWEEN 1 AND 1000),
+ payout_cash INT NOT NULL CHECK(payout_cash BETWEEN 1 AND 1000), payout_id TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ source JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), created_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS coverage_mutual_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL CHECK(action IN ('open','join','claim','close','estate_close')),
+ identity JSONB NOT NULL, request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+
+-- N28 coordinator proposal: typed original carrier reserve and guard consent.
+
+CREATE TABLE IF NOT EXISTS protection_contracts (
+ id TEXT PRIMARY KEY,
+ campaign_id TEXT NOT NULL REFERENCES commercial_campaigns(id),
+ campaign_source_hash TEXT NOT NULL CHECK(char_length(campaign_source_hash)=64),
+ courier_id TEXT NOT NULL REFERENCES multi_hop_couriers(id),
+ courier_source_hash TEXT NOT NULL CHECK(char_length(courier_source_hash)=64),
+ item_id TEXT NOT NULL REFERENCES item_instances(id),
+ leg TEXT NOT NULL CHECK(leg IN ('first_leg','second_leg')),
+ payer_account TEXT NOT NULL REFERENCES accounts(id), payer_character TEXT NOT NULL REFERENCES characters(id),
+ protected_account TEXT NOT NULL REFERENCES accounts(id), protected_character TEXT NOT NULL REFERENCES characters(id),
+ guard_account TEXT NOT NULL REFERENCES accounts(id), guard_character TEXT NOT NULL REFERENCES characters(id),
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), source_snapshot JSONB NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('funded','accepted','blocked','activated','refunded','expired')),
+ price_cash INT NOT NULL CHECK(price_cash BETWEEN 10000 AND 100000),
+ remaining_cash INT NOT NULL CHECK(remaining_cash>=0), paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash>=0),
+ refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+ reserve_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ release_transaction TEXT UNIQUE REFERENCES transactions(id), refund_transaction TEXT UNIQUE REFERENCES transactions(id),
+ guard_payer_journal TEXT UNIQUE REFERENCES transactions(id), guard_payee_journal TEXT UNIQUE REFERENCES transactions(id),
+ coverage_until TIMESTAMPTZ, coverage_proof JSONB,
+ created_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL CHECK(expires_at>created_at),
+ accepted_at TIMESTAMPTZ, activated_at TIMESTAMPTZ, closed_at TIMESTAMPTZ,
+ closure_reason TEXT CHECK(closure_reason IS NULL OR closure_reason IN
+ ('payer_refund','source_expiry','guard_withdraw','guard_death','payer_estate','stale_source','service_purchased')),
+ CHECK(payer_account=protected_account AND payer_character=protected_character),
+ CHECK(payer_account<>guard_account AND payer_character<>guard_character),
+ CHECK(guard_payer_journal IS NULL OR guard_payer_journal<>guard_payee_journal),
+ CHECK(coverage_until IS NULL OR coverage_until>activated_at),
+ CHECK(price_cash=remaining_cash+paid_cash+refunded_cash),
+ CHECK((state IN ('funded','accepted','blocked') AND remaining_cash=price_cash AND paid_cash=0 AND refunded_cash=0
+ AND release_transaction IS NULL AND refund_transaction IS NULL AND guard_payer_journal IS NULL
+ AND guard_payee_journal IS NULL AND coverage_until IS NULL AND coverage_proof IS NULL AND activated_at IS NULL)
+ OR (state='activated' AND remaining_cash=0 AND paid_cash=price_cash AND refunded_cash=0
+ AND release_transaction IS NOT NULL AND refund_transaction IS NULL AND guard_payer_journal IS NOT NULL
+ AND guard_payee_journal IS NOT NULL AND coverage_until IS NOT NULL AND coverage_proof IS NOT NULL
+ AND activated_at IS NOT NULL AND accepted_at IS NOT NULL AND closed_at IS NOT NULL AND closure_reason='service_purchased')
+ OR (state IN ('refunded','expired') AND remaining_cash=0 AND paid_cash=0 AND refunded_cash=price_cash
+ AND release_transaction IS NULL AND refund_transaction IS NOT NULL AND guard_payer_journal IS NULL
+ AND guard_payee_journal IS NULL AND coverage_until IS NULL AND coverage_proof IS NULL
+ AND activated_at IS NULL AND closed_at IS NOT NULL AND closure_reason IS NOT NULL)),
+ CHECK(state<>'funded' OR (accepted_at IS NULL AND closed_at IS NULL AND closure_reason IS NULL)),
+ CHECK(state<>'accepted' OR (accepted_at IS NOT NULL AND closed_at IS NULL AND closure_reason IS NULL)),
+ CHECK(state<>'blocked' OR (closed_at IS NOT NULL AND closure_reason IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS protection_contract_payer_capacity
+ ON protection_contracts(payer_account) WHERE remaining_cash>0;
+CREATE UNIQUE INDEX IF NOT EXISTS protection_contract_guard_capacity
+ ON protection_contracts(guard_account) WHERE state='accepted';
+CREATE TABLE IF NOT EXISTS protection_contract_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),
+ action TEXT NOT NULL CHECK(action IN ('fund','accept','activate','refund','expire','withdraw')),
+ body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64), original_character TEXT NOT NULL REFERENCES characters(id),
+ contract_id TEXT NOT NULL REFERENCES protection_contracts(id), receipt JSONB NOT NULL, acknowledged_at TIMESTAMPTZ NOT NULL,
+ PRIMARY KEY(account_id,key_hash)
+);
+CREATE TABLE IF NOT EXISTS protection_contract_acceptances (
+ contract_id TEXT PRIMARY KEY REFERENCES protection_contracts(id),
+ guard_account TEXT NOT NULL REFERENCES accounts(id), guard_character TEXT NOT NULL REFERENCES characters(id),
+ request_key_hash TEXT NOT NULL CHECK(char_length(request_key_hash)=64),
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), consented_at TIMESTAMPTZ NOT NULL,
+ FOREIGN KEY(guard_account,request_key_hash) REFERENCES protection_contract_requests(account_id,key_hash)
+);
+

@@ -62,7 +62,19 @@ try{
  await ok(supplier,'POST','/v1/goods/buy',{goodId:'gin',qty:2});await ok(supplier,'POST',`/v1/market/${order.id}/fill`,{qty:2});await ok(owner,'POST',`/v1/depot/${id}/orders/${order.id}/receive`,{});
  await ok(owner,'POST','/v1/goods/buy',{goodId:'gin',qty:1});await books();
  const original=(await pool.query('SELECT * FROM business_depots WHERE id=$1',[id])).rows[0],cargo=(await pool.query('SELECT * FROM character_cargo WHERE character_id=$1 ORDER BY good_id',[owner.id])).rows;
- const ready=await plan(owner,id,'docks'),body=ref(ready),block=await pool.connect();let first;
+ // Trace the actual quote/create authority reads only after their operator lock;
+ // obligations' earlier floor read cannot hide an inverted authorities() order.
+ // This proves SQL order, not an actual two-transaction40P01 or a lock on an absent row.
+ const authorityLocks=[];let authorityRead=false,ready;const authorityConnect=pool.connect.bind(pool);
+ pool.connect=(...args)=>{if(args.length)return authorityConnect(...args);return authorityConnect().then(client=>new Proxy(client,{get(target,name){
+  if(name==='query')return async(...queryArgs)=>{const sql=typeof queryArgs[0]==='string'?queryArgs[0]:queryArgs[0]?.text,values=queryArgs[1],result=await target.query(...queryArgs);
+   if(sql==='SELECT * FROM company_operators WHERE depot_id=$1 FOR UPDATE'&&values?.[0]===id)authorityRead=true;
+   if(authorityRead&&values?.[0]===id){if(sql==='SELECT * FROM workshop_floorplans WHERE business_id=$1 FOR UPDATE')authorityLocks.push('workshop_floorplans');if(sql==='SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE'){authorityLocks.push('company_specializations');authorityRead=false;}}
+   return result;};const value=Reflect.get(target,name);return typeof value==='function'?value.bind(target):value;}}));};
+ try{ready=await plan(owner,id,'docks');}finally{pool.connect=authorityConnect;}
+ assert(authorityLocks.length>=2&&authorityLocks.length%2===0,'Actual relocation authority reads were delivered');
+ for(let n=0;n<authorityLocks.length;n+=2)assert.deepEqual(authorityLocks.slice(n,n+2),['workshop_floorplans','company_specializations'],'Relocation follows workshop quality floor-before-specialization order');
+ const body=ref(ready),block=await pool.connect();let first;
  try{
   await block.query('BEGIN');await block.query('SELECT id FROM business_depots WHERE id=$1 FOR UPDATE',[id]);
   first=call(owner,'POST',base+'/execute',body,'actual-pending-execute',true);await waitForLock('business_depots');

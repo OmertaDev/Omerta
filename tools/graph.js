@@ -41,6 +41,7 @@ import fs from 'node:fs';
 import {NEXT_LAYER_HELPER_PROFILES,extractNextLayerHelperReconciliations} from './next-layer-graph-helpers.js';
 import {MARKET_OPERATIONS_HELPER_PROFILES,extractMarketOperationsHelperReconciliations} from './market-operations-graph-helpers.js';
 import {ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from './enterprise-graph-helpers.js';
+import {FINAL_SERVICES_HELPER_PROFILES,extractFinalServicesHelperReconciliations} from './final-services-graph-helpers.js';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -338,7 +339,7 @@ export const NEXT_FIVE_HELPER_PROFILES=Object.freeze([
       "t.character_id!==row.maker_character:t.character_id!==row.customer_character",
       "Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)"
     ],
-    "sha256": "f89a0f1ea30c9a1d299d36710e8d3e6b819ebe3449de1e1837be6213251b465c",
+    "sha256": "5792cd7980d91a3f6df594931085cd304f51386a51f691503151d5307328b8f5",
     "import": "import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';",
     "call": "const commissionIssues = await collectCommissionedCraftingIssues(pool);",
     "push": "push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });",
@@ -687,6 +688,12 @@ export function build() {
   const enterpriseHelpers=Object.fromEntries(ENTERPRISE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
   for(const term of extractEnterpriseHelperReconciliations(inv,enterpriseHelpers)){
     const prov={file:term.file,line:term.line,hash:sha(enterpriseHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
+  }
+
+  const finalServicesHelpers=Object.fromEntries(FINAL_SERVICES_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for(const term of extractFinalServicesHelperReconciliations(inv,finalServicesHelpers)){
+    const prov={file:term.file,line:term.line,hash:sha(finalServicesHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
     node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 

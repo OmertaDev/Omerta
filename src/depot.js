@@ -207,6 +207,7 @@ export async function withdrawDepotStock(ch, id, quantity, client, h) {
 
 export async function closeDepot(ch, id, client, h) {
   mobile(ch); const row = await own(ch, id, client);
+  await(await import('./productionbooking-guards.js')).assertProductionBookingBusinessMutable(client,id);
   if (Number(row.stock) || (await pending(client, id)).length || await warehouseReservedUnits(client, id))
     throw new GameError('depot_obligations', 'Receive pending deliveries, cancel live orders, and sell or withdraw inventory before closing.');
   if (Number(row.treasury)) await releaseCash(ch, row, Number(row.treasury), client, h);

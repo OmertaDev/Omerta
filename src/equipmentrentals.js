@@ -1,8 +1,16 @@
+async function coverageMutualDeathCounterparts(c, id) {
+  return (await import('./coverage-mutual.js')).coverageMutualDeathCounterparts(c, id);
+}
+import {syndicatedLoanScopeSource as syndicatedLoanSource} from './syndicatedloans.js';
+export {syndicatedLoanSource};
+import {assertSyndicatedLoanRootRequest} from './game.js';
 import {merchantReturnCounterparts} from './merchantreturns.js';
 import {multiHopCourierOriginals,multiHopCourierScopeSource,multiHopCourierDeathCounterparts} from './multihopcourier.js';
 import { customerVaultDeathCounterparts } from './customervaults.js';
 import { customerLayawayDeathCounterparts } from './customerlayaway.js';
 import crypto from 'node:crypto';
+import { collateralAuctionCounterparts } from './collateralauction.js';
+export const getCollateralAuctionCounterparts = () => collateralAuctionCounterparts;
 import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
 import { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
@@ -233,13 +241,16 @@ async function prelockCourierAwareSubjects(client,characterIds) {
   for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);
-  // Per subject: existing 54 originals plus at most 3 merchant-return counterparts = 57.
+  // Per subject: 54 originals + 3 merchant-return + 3 signed funded auction + 1 funded mutual = 61.
   for (const subject of subjects) for (const counterpart of await customerLayawayDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await customerVaultDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await multiHopCourierDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await merchantReturnCounterparts(client, subject)) ids.add(counterpart);
   // N07 and N09 reuse existing courier/commission originals; N10 adds at most 3 combined return counterparts.
-  if (ids.size > subjects.length * 57) fail('death_limit');
+  // N24 adds at most three signed, funded auction counterparts per original subject.
+  for (const subject of subjects) for (const counterpart of await collateralAuctionCounterparts(client, subject)) ids.add(counterpart);
+  for (const subject of subjects) for (const counterpart of await coverageMutualDeathCounterparts(client, subject)) ids.add(counterpart);
+  if (ids.size > subjects.length * 61) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -279,11 +290,17 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   for (const counterpart of await customerVaultDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Vault counterpart changed; retry the whole action.');
   }
+  for (const counterpart of await coverageMutualDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Coverage mutual counterpart changed; retry the whole action.');
+  }
   for (const counterpart of await multiHopCourierDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Courier counterpart changed; retry the whole action.');
   }
   for (const counterpart of await merchantReturnCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Merchant-return counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await collateralAuctionCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Collateral auction counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }
@@ -418,3 +435,22 @@ export async function borrowedPrecisionTool(client, { accountId, characterId, lo
 const courierScopes=new WeakMap();
 export async function assertMultiHopCourierScope(client,networkId,accountId,scope,action){assertItemTransaction(client);try{const state=courierScopes.get(scope);if(!state?.active||state.client!==client||state.transaction!==itemTransactionIdentity(client)||state.networkId!==networkId||state.accountId!==accountId||state.action!==action)fail('courier_scope');const source=await multiHopCourierScopeSource(client,networkId,accountId);if(source.sourceHash!==state.sourceHash||source.originals.join('|')!==state.originals.join('|'))fail('courier_source_changed');for(const original of source.originals){await assertEquipmentRentalDeathScope(client,original,state.prelockScope);const row=(await client.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1',[original])).rows[0];if(!row?.alive||row.is_npc||((!['cancel','expire'].includes(state.action)||row.account_id===accountId)&&(await client.query('SELECT status FROM accounts WHERE id=$1',[row.account_id])).rows[0]?.status!=='active'))fail('courier_original');const current=(await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2',[row.account_id])).rows;if(current.length!==1||current[0].id!==original)fail('courier_original');}return state;}catch(e){poisonItemTransaction(client,e);throw e;}}
 export async function withMultiHopCourierActors(client,{networkId,accountId,action},execute){assertItemTransaction(client);try{if(typeof execute!=='function'||!['dispatch','travel','handoff','arrive','cancel','expire','cross_dock_offer','cross_dock_consent'].includes(action))fail('courier_scope');const source=await multiHopCourierOriginals(client,networkId,accountId);if(source.originals.length!==3||new Set(source.originals).size!==3)fail('courier_scope');const prelock=await prelockCourierAwareSubjects(client,source.originals),scope=Object.freeze({}),state={active:true,client,transaction:itemTransactionIdentity(client),networkId,accountId,action,sourceHash:source.sourceHash,originals:source.originals,prelockScope:prelock.scope};courierScopes.set(scope,state);try{await assertMultiHopCourierScope(client,networkId,accountId,scope,action);const result=await execute(scope);await assertMultiHopCourierScope(client,networkId,accountId,scope,action);return result;}finally{state.active=false;}}catch(e){poisonItemTransaction(client,e);throw e;}}
+
+// N22 has its own closed G-root request and source-resolved three-original prelock.
+const syndicatedActorScopes=new WeakMap();
+export async function prelockSyndicatedLoanActors(c,account,action,input,key,rootToken){
+  assertItemTransaction(c);try{
+    await assertSyndicatedLoanRootRequest(c,account,action,input,key,rootToken);const source=await syndicatedLoanSource(c,account,action,input,key);
+    if(source.originals.length!==3||new Set(source.originals).size!==3)fail('syndicated_scope');
+    const prelock=await prelockCourierAwareSubjects(c,source.originals),scope=Object.freeze({});syndicatedActorScopes.set(scope,{client:c,transaction:itemTransactionIdentity(c),account,action,input,key,rootToken,sourceHash:source.sourceHash,originals:source.originals,prelockScope:prelock.scope});
+    await assertSyndicatedLoanActors(c,account,action,input,key,rootToken,scope);return{scope,characters:prelock.characters,source};
+  }catch(error){poisonItemTransaction(c,error);throw error;}
+}
+export async function assertSyndicatedLoanActors(c,account,action,input,key,rootToken,scope){
+  assertItemTransaction(c);try{
+    await assertSyndicatedLoanRootRequest(c,account,action,input,key,rootToken);const s=syndicatedActorScopes.get(scope),source=await syndicatedLoanSource(c,account,action,input,key);
+    if(!s||s.client!==c||s.transaction!==itemTransactionIdentity(c)||s.account!==account||s.action!==action||s.input!==input||s.key!==key||s.rootToken!==rootToken||s.sourceHash!==source.sourceHash||s.originals.join('|')!==source.originals.join('|'))fail('syndicated_scope');
+    for(const original of source.originals){await assertEquipmentRentalDeathScope(c,original,s.prelockScope);const row=(await c.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1',[original])).rows[0],party=source.parties.find(p=>p.id===original);if(!row?.alive||row.is_npc||row.account_id!==party?.account_id)fail('syndicated_original');const current=(await c.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2',[row.account_id])).rows;if(current.length!==1||current[0].id!==original)fail('syndicated_original');if((action!=='cancel'||row.account_id===account)&&(await c.query('SELECT status FROM accounts WHERE id=$1',[row.account_id])).rows[0]?.status!=='active')fail('syndicated_original');}
+    return s;
+  }catch(error){poisonItemTransaction(c,error);throw error;}
+}

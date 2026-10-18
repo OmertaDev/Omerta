@@ -58,47 +58,101 @@ for (const got of readable) {
   stmts.push({ where: got.where, sql: got.sql });
 }
 
-// These four Commerce sites stay counted/listed as UNPREPARED. Whole-source pins close the
-// caller/column authority: a 23-column INSERT with bound values; the forward/undo UPDATE over
-// 11 frozen columns with 13 bound values; and a private reader whose 16 callers use 13 literal
-// SELECT shapes (one two-literal conditional). startsWith('SELECT ') alone is not that proof.
-// Reject source/shape drift before importing db.js; test/gates.js's interpolation ledger remains
-// a separate guard over the unchanged scanner corpus.
-function assertReviewedCommerceQueries(sources, readable, unreadableSites) {
+// Services-only admission for14 counted/listed UNPREPARED sites (Commerce4 +Services10).
+// Closed callers supply literal table/key identifiers; performance undo's UPDATE columns come
+// from the selected canonical DB row, never request keys. Other fragments are frozen columns,
+// a three-member column allow-set or two literal lock suffixes. Private/scoped read dispatches
+// select only fixed literal SELECTs with bound values. These pins do not type-check those queries.
+// Preserve the independent test/gates.js interpolation ledger and unchanged scanner corpus.
+function assertReviewedFinalServicesQueries(sources, readable, unreadableSites) {
   const pins = {
-    'src/commercialcampaigns.js': 'f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c',
-    'src/commercialcampaignruntime.js': '74b5776f868528d0dd1617095613648dc7b4ad9823e6096b944b6101d51f5afb',
+    "src/commercialcampaigns.js": "601454e9baa8f0db844dfa021f609db49c3997953ceb296cc82d1e5c1575cb09",
+    "src/commercialcampaignruntime.js": "74b5776f868528d0dd1617095613648dc7b4ad9823e6096b944b6101d51f5afb",
+    "src/collateralauction.js": "3ac8c8ecb30b31dbb9d94a1292aa709ec1be0e1f57b7dd3a3ddcaaf187c0d116",
+    "src/performanceemployment.js": "b0e7fdbeb0fd518869a04fb66d1f50e652127e7dbd1470a87d86bd2cbbd98328",
+    "src/productionbooking-guards.js": "208db4f24b423545dadd8ed4ffb1f0cafa78cc1c4218f52159c7ec9bf6e6f64b",
+    "src/productionbooking-invariants.js": "02e525e9e6b98a41e702ba402863067d7a2df1f8d63663d0697a7317029908d4"
   };
   if (JSON.stringify(Object.keys(sources).sort()) !== JSON.stringify(Object.keys(pins).sort()))
-    throw new Error('reviewed Commerce source set changed');
+    throw new Error('reviewed Services source set changed');
   for (const [file, hash] of Object.entries(pins)) {
     const source = sources[file];
-    if (typeof source !== 'string') throw new Error('reviewed Commerce source missing: ' + file);
+    if (typeof source !== 'string') throw new Error('reviewed Services source missing: ' + file);
     const canonical = source.replaceAll('\r\n', '\n');
     if (canonical.includes('\r') || (source !== canonical && source !== canonical.replaceAll('\n', '\r\n'))
         || createHash('sha256').update(canonical).digest('hex') !== hash)
-      throw new Error('reviewed Commerce source changed: ' + file);
+      throw new Error('reviewed Services source changed: ' + file);
   }
   const named = row => Object.hasOwn(pins, row.rel);
   const templates = readable.filter(row => named(row) && row.interpolated)
-    .map(row => [row.where, row.sql, row.parts]);
-  if (JSON.stringify(templates) !== JSON.stringify([['src/commercialcampaigns.js:268',
-    'INSERT INTO commercial_campaigns() VALUES()',
-    ["columns.join(',')", "columns.map((_, i) => '$' + (i + 1)).join(',')"]]]))
-    throw new Error('reviewed Commerce INSERT shape changed');
+    .map(row => JSON.stringify([row.where, row.sql, row.parts])).sort();
+  const expectedTemplates = [
+    [
+      "src/collateralauction.js:442",
+      "SELECT a.id FROM collateral_auctions a JOIN collateral_auction_agreements g ON g.id=a.agreement_id\n      LEFT JOIN loans l ON l.id=g.loan_id WHERE (a.state='open' OR a.id IN (SELECT auction_id FROM collateral_auction_bids WHERE state='held')) AND (g.borrower_character=$1 OR l.lender_character=$1\n      OR a.id IN (SELECT auction_id FROM collateral_auction_bids WHERE bidder_character=$1 AND state='held')) ORDER BY a.id LIMIT 2",
+      [
+        "dbCaps.skipLocked ? ' FOR UPDATE OF a' : ' FOR UPDATE'"
+      ]
+    ],
+    [
+      "src/commercialcampaigns.js:268",
+      "INSERT INTO commercial_campaigns() VALUES()",
+      [
+        "columns.join(',')",
+        "columns.map((_, i) => '$' + (i + 1)).join(',')"
+      ]
+    ],
+    [
+      "src/performanceemployment.js:19",
+      "SELECT * FROM  WHERE =$1",
+      [
+        "table",
+        "column"
+      ]
+    ],
+    [
+      "src/performanceemployment.js:19",
+      "DELETE FROM  WHERE =$1",
+      [
+        "table",
+        "column"
+      ]
+    ],
+    [
+      "src/performanceemployment.js:19",
+      "UPDATE  SET  WHERE =$1",
+      [
+        "table",
+        "keys.map((k,i)=>k+'=$'+(i+2)).join(',')",
+        "column"
+      ]
+    ],
+    [
+      "src/productionbooking-guards.js:8",
+      "SELECT id,commission_id,maker_character,customer_character FROM production_booking_runs WHERE =$1 AND state='active' ORDER BY id LIMIT 2",
+      [
+        "column"
+      ]
+    ]
+  ];
+  if (JSON.stringify(templates) !== JSON.stringify(expectedTemplates.map(row => JSON.stringify(row)).sort()))
+    throw new Error('reviewed Services interpolated shapes changed');
   const dynamic = unreadableSites.filter(named).map(row => row.where).sort();
-  if (JSON.stringify(dynamic) !== JSON.stringify(['src/commercialcampaignruntime.js:44',
-    'src/commercialcampaigns.js:426', 'src/commercialcampaigns.js:427']))
-    throw new Error('reviewed Commerce non-literal sites changed');
+  if (JSON.stringify(dynamic) !== JSON.stringify(["src/commercialcampaignruntime.js:44","src/commercialcampaigns.js:426","src/commercialcampaigns.js:427","src/productionbooking-invariants.js:11","src/productionbooking-invariants.js:12","src/productionbooking-invariants.js:13","src/productionbooking-invariants.js:14","src/productionbooking-invariants.js:15"]))
+    throw new Error('reviewed Services non-literal sites changed');
 }
 
 try {
-  assertReviewedCommerceQueries({
+  assertReviewedFinalServicesQueries({
     'src/commercialcampaigns.js': readFileSync(new URL('../src/commercialcampaigns.js', import.meta.url), 'utf8'),
     'src/commercialcampaignruntime.js': readFileSync(new URL('../src/commercialcampaignruntime.js', import.meta.url), 'utf8'),
+    'src/collateralauction.js': readFileSync(new URL('../src/collateralauction.js', import.meta.url), 'utf8'),
+    'src/performanceemployment.js': readFileSync(new URL('../src/performanceemployment.js', import.meta.url), 'utf8'),
+    'src/productionbooking-guards.js': readFileSync(new URL('../src/productionbooking-guards.js', import.meta.url), 'utf8'),
+    'src/productionbooking-invariants.js': readFileSync(new URL('../src/productionbooking-invariants.js', import.meta.url), 'utf8'),
   }, readable, unreadableSites);
 } catch (e) {
-  console.error('pgquery refused reviewed Commerce dispatch: ' + e.message);
+  console.error('pgquery refused reviewed Services dispatch: ' + e.message);
   if (process.env.PGQUERY_LIST) {
     console.error('interpolated (unchecked):'); for (const i of interpolated) console.error('  ' + i.where);
     console.error('non-literal (unchecked):'); for (const u of unreadable) console.error('  ' + u);
@@ -245,12 +299,12 @@ if (failures.length) {
 // identifiers use PostgreSQL format('%I'), and native role-isolation tests verify
 // enforcement. Static lock variants were kept literal instead of consuming room.
 // This ceiling matches the measured set, adding no spare unchecked-query budget.
-// 172 -> 173 / 41 -> 44 (2026-10-18 Commerce integration): exactly the four named sites
-// admitted above. The INSERT and both stage UPDATE calls generate only frozen column names and
-// numbered placeholders with every value bound; the private history dispatcher has only closed
-// literal SELECT callers. Whole-source/shape checks reject drift before database work. These are
-// still unprepared, counted and listed: no new type-resolution claim or spare unchecked budget.
-const CEILING = { interpolated: 173, unreadable: 44 };
+// 173 -> 178 / 44 -> 49 (2026-10-18 Services phase): retain Commerce's four counted sites,
+// plus one two-literal collateral lock suffix, three private performance undo statements,
+// one allow-set booking predicate and five scoped/unscoped literal SELECT pairs. The complete
+// Services source/shape admission above is separate from the historical Commerce profile.
+// All14 stay counted/listed and UNPREPARED. This measured ceiling adds no spare budget.
+const CEILING = { interpolated: 178, unreadable: 49 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);

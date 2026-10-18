@@ -6,6 +6,7 @@
 // it. This proves: the derived set is well-formed (no constraint/multi-column leakage), it's a clean no-op on
 // a fresh DB, and — the actual fix — it RE-ADDS a column an "old" DB is missing. pg-mem, zero infra.
 import assert from 'node:assert';
+import {createHash} from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -743,6 +744,30 @@ const DISPOSITION = {
   commercial_campaigns: 'special', // genuine estate retires owner-offered or signed active metadata; original IDs and independent commission/courier recovery remain intact
   commercial_campaign_roles: 'special', // genuine retirement closes original active role consent without replacing identities; unsigned invitations grant heirs no authority
   commercial_campaign_requests: 'ledger', // original six-party action and consent ACKs survive metadata retirement; no inherited performance or source authority
+  performance_employment_contracts: 'special', // canonical F12 estate resolves the original prefunded bonus reserve
+  performance_employment_assignments: 'metadata', // original worker/commitment source and paid delivery evidence remain historical
+  performance_employment_requests: 'ledger', // original employer/key/funding ACK survives title changes and estate resolution
+  production_booking_offers: 'metadata', // original unfunded offer/consent source remains historical without locking cash, UID or successor production authority
+  production_booking_runs: 'escrow', // actual original bonus reserve is paid or refunded only through canonical commission/estate recovery before death cash
+  production_booking_positions: 'ledger', // original maker/customer held-to-released position and funded booking recovery history survives without inherited authority
+  collateral_lending_pledges: 'special', // original item custody resolves only through genuine loan terminal or original estate scope
+  collateral_lending_requests: 'ledger', // immutable original pledge request acknowledgements
+  collateral_lending_terminals: 'ledger', // original canonical repayment/collection journal provenance
+  collateral_auction_agreements: 'metadata', // original terms signatures hold no cash or item title
+  collateral_auctions: 'special', // canonical funded bid settlement or original estate refund
+  collateral_auction_bids: 'escrow', // actual bidder-held cash is settled or refunded under original scope
+  collateral_auction_requests: 'ledger', // original bidder and lender request acknowledgements
+  coverage_mutual_pools: 'escrow', // original prefunded reserve settles genuine claims and original refunds at estate-start before death cash
+  coverage_mutual_positions: 'ledger', // original contribution/refund journals and released positions survive as immutable recovery history
+  coverage_mutual_enrollments: 'metadata', // original policy/member source enrollment survives with no independent cash or inherited underwriting authority
+  coverage_mutual_claims: 'ledger', // original repair/wear/canonical payout and mutual benefit history remains once-only after estate closure
+  syndicated_loan_facilities: 'metadata', // canonical ordinary loans resolve value; estate retirement retains the original facility source
+  syndicated_loan_legs: 'ledger', // original lender funding journals and loan identities survive metadata retirement
+  syndicated_loan_members: 'metadata', // actual canonical loan estate resolution retires consenting current memberships
+  syndicated_loan_requests: 'ledger', // original account/key/source acknowledgements never become heir spending authority
+  protection_contracts: 'escrow', // original payer reserve refunds before estate cash; accepted guard death only blocks metadata and retains original paid/refunded history
+  protection_contract_requests: 'ledger', // immutable original-character/account/key/source acknowledgements survive estate closure without heir spending or coverage authority
+  protection_contract_acceptances: 'metadata', // signed original guard consent remains historical; estate blocks only the original accepted membership without moving payer or peer cash
 };
 // SCOPE: this guard covers the literal `character_id` column convention (42 tables). Tables that
 // reference a character via a DIFFERENTLY-NAMED column (npc_hits payer/target, searches hunter/target,
@@ -787,6 +812,15 @@ const unclassified = [...charTables].filter((t) => !DISPOSITION[t]);
 assert.equal(unclassified.length, 0, `unclassified character_id table(s) — a dead street would ORPHAN them: ${unclassified.join(', ')}. Wipe in runEstate (add to DISPOSITION 'wiped'/'special') or document as 'escrow'/'ledger'.`);
 const stale = Object.keys(DISPOSITION).filter((t) => !charTables.has(t));
 assert.equal(stale.length, 0, `stale DISPOSITION entr(y/ies) no longer a character_id table: ${stale.join(', ')}`);
+// Booking request ACKs are account-only immutable history, never a character disposition.
+const bookingRequestBody=SCHEMA.match(/CREATE TABLE IF NOT EXISTS production_booking_requests\s*\(([\s\S]*?)\);/i)?.[1];
+assert(bookingRequestBody&&/account_id TEXT NOT NULL REFERENCES accounts\s*\(id\)/i.test(bookingRequestBody),'Booking requests retain the actual original account FK');
+assert(!charTables.has('production_booking_requests'),'Booking ACK history has no character FK or inherited execution authority');
+// Account-scoped ledger disposition: immutable coverage_mutual_requests action/key/identity ACKs
+// survive original-member estate closure without creating a new character or spending authority.
+const mutualRequestBody = SCHEMA.match(/CREATE TABLE IF NOT EXISTS coverage_mutual_requests\s*\(([\s\S]*?)\);/i)?.[1];
+assert(mutualRequestBody && /account_id TEXT NOT NULL REFERENCES accounts\s*\(id\)/i.test(mutualRequestBody), 'Mutual request history retains its actual account FK');
+assert(!charTables.has('coverage_mutual_requests'), 'Account-only mutual ACKs must not become a stale character disposition');
 // (b) every 'wiped'/'special' table actually has a DELETE FROM somewhere in src/ (classification ⇒ code)
 const srcDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src');
 const allSrc = srcText();  // RECURSIVE — a flat listing missed src/social/ and hid the whole estate wipe
@@ -1045,6 +1079,34 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
       : header.match(/=\s*(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/)?.[1] ?? null;
   };
 
+  // The mutual's read-only accounting verifier has one genuine nested journal
+  // binding. Crawl that actual body, never unrelated same-name global helpers.
+  const exactCoverageJournalBinding = (entry, candidate) => {
+    if (entry.file !== 'src/coverage-mutual-invariants.js' || entry.name !== 'coverageMutualAccounting'
+      || candidate.file !== entry.file || candidate.name !== 'journal') return false;
+    assert.equal(candidate.source, entry.source, 'Mutual journal must share its actual lexical source');
+    assert.equal(entry.parameters, 'c');
+    assert.equal(candidate.parameters, 'txId, character, account, amount, reason, poolId');
+    const source = entry.source, code = lexicalMask(source);
+    const caller = [...code.matchAll(/export\s+async\s+function\s+coverageMutualAccounting\(c\)\s*\{/g)];
+    const local = [...code.matchAll(/const\s+journal\s*=\s*\(txId, character, account, amount, reason, poolId\)\s*=>\s*\{/g)];
+    assert.equal(caller.length, 1); assert.equal(local.length, 1);
+    assert.equal(entry.open, caller[0].index + caller[0][0].length - 1);
+    assert.equal(candidate.open, local[0].index + local[0][0].length - 1);
+    const callerEnd = entry.open + functionBlock(source, entry.open, entry.file).length + 1;
+    assert(candidate.open > entry.open && candidate.open < callerEnd, 'Mutual journal must be nested in this actual caller');
+    assert.equal([...code.matchAll(/(?<![.\w$])journal\s*(?:[+*/%&|^-]?=(?!=|>)|\+\+|--)/g)].length, 1,
+      'Mutual journal binding cannot be rebound');
+    assert(!/(?:\[[^;\]]*\bjournal\b[^;\]]*\]|\{[^;}]*\bjournal\b[^;}]*\})\s*=/.test(code),
+      'Mutual journal destructuring cannot replace the binding');
+    assert(!source.includes('\r') || (!/(^|[^\r])\n/.test(source) && !/\r(?!\n)/.test(source)),
+      'Mutual accounting source must use whole LF or whole CRLF');
+    assert.equal(createHash('sha256').update(source.replaceAll('\r\n', '\n')).digest('hex'),
+      'a9f4e974b85c42cecc258ad22429097a4204d5cf19d6cf834c953cfcbd64e1d5',
+      'Mutual journal lexical refinement requires the exact reviewed whole source');
+    return true;
+  };
+
   const crawlDeathSources = (index) => {
     const sources = [], names = new Set(), visited = new Set();
     const queue = [...(index.get('runEstate') || [])];
@@ -1058,7 +1120,7 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
         const candidates = index.get(call[1]) || [];
         const shadowed = entry.parameters === null || (typeof entry.parameters === 'string'
           && new RegExp('\\b' + call[1].replace(/[$]/g, '\\$&') + '\\b').test(entry.parameters));
-        const localBindings = shadowed ? [] : candidates.filter(candidate => candidate.file === entry.file && moduleBinding(candidate));
+        const localBindings = shadowed ? [] : candidates.filter(candidate => candidate.file === entry.file && (moduleBinding(candidate) || exactCoverageJournalBinding(entry, candidate)));
         // A proven module binding wins; unresolved/ambiguous legacy names still
         // traverse every definition, never a handler/table exemption.
         queue.push(...(localBindings.length ? localBindings : candidates));
@@ -1140,6 +1202,43 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     }
     return mutations;
   };
+  // Refine only this unchanged, closed module's rollback helper. The original
+  // mutation scanner still handles every other source and every Phase 1 table.
+  const finitePerformanceMutations = (entry, index) => {
+    if (entry.name !== 'remember' || entry.file !== 'src/performanceemployment.js') return null;
+    const definitions = (index.get('remember') || []).filter(candidate => candidate.file === entry.file);
+    assert.equal(definitions.length, 1, 'N26 rollback helper requires one actual module definition');
+    const definition = definitions[0];
+    assert(moduleBinding(definition), 'N26 rollback helper must retain its unrebound module binding');
+    assert.equal(definition.parameters, 'c,table,column,value', 'N26 rollback parameter scope changed');
+    const uniform = value => {
+      assert(!value.includes('\r') || (!/(^|[^\r])\n/.test(value) && !/\r(?!\n)/.test(value)),
+        'N26 rollback source must use whole LF or whole CRLF');
+      return value.replaceAll('\r\n', '\n');
+    };
+    const source = uniform(definition.source), code = lexicalMask(source), targets = new Set();
+    let calls = 0, declarations = 0;
+    for (const match of code.matchAll(/(?<![.\w$])remember\s*\(/g)) {
+      if (/\bfunction\s*$/.test(code.slice(0, match.index))) { declarations++; continue; }
+      const call = source.slice(match.index).match(/^remember\(\s*c\s*,\s*'([a-z_][a-z0-9_]*)'\s*,\s*'([a-z_][a-z0-9_]*)'\s*,/);
+      assert(call, 'N26 rollback calls require literal original table and column targets');
+      calls++; targets.add(`${call[1]}:${call[2]}`);
+    }
+    const expected = ['game_employment_assignments:id', 'game_employment_jobs:id',
+      'performance_employment_assignments:assignment_id', 'performance_employment_contracts:employment_id'];
+    assert.equal(declarations, 1); assert.equal(calls, 11);
+    assert.deepEqual([...targets].sort(), expected, 'N26 rollback target census changed');
+    assert.equal(createHash('sha256').update(source).digest('hex'),
+      'b0e7fdbeb0fd518869a04fb66d1f50e652127e7dbd1470a87d86bd2cbbd98328',
+      'N26 rollback finite targets require the exact reviewed whole module');
+    assert.equal(uniform(entry.body), uniform(functionBlock(definition.source, definition.open, entry.file)),
+      'N26 rollback body must be the actual indexed helper');
+    const original = mutationsFor(entry.name, entry.body);
+    assert.deepEqual(original.map(({ verb, table }) => `${verb}:${table}`).sort(),
+      ['DELETE_FROM:<dynamic:table>', 'UPDATE:<dynamic:table>'], 'N26 rollback SQL shape changed');
+    return original.flatMap(mutation => expected.map(target => ({ ...mutation, table: target.split(':')[0] })));
+  };
+
   assert.deepEqual(mutationsFor('tripwire', [
     "await client.query('INSERT INTO item_stacks (owner_scope) VALUES ($1)', ['character']);",
     "await client.query('MERGE INTO operation_escrow target USING source ON false WHEN NOT MATCHED THEN INSERT DEFAULT VALUES');",
@@ -1172,7 +1271,7 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     const unknown = localIndex('named', ' return 1; '); unknown.get('advance')[0].file = 'elsewhere.js';
     assert(crawlDeathSources(unknown).names.has('startMystery'), 'Unknown module binding retains full global fallback');
   }
-  const mutations = deathSources.flatMap(({ name, body }) => mutationsFor(name, body));
+  const mutations = deathSources.flatMap(entry => finitePerformanceMutations(entry, functionIndex) ?? mutationsFor(entry.name, entry.body));
   const phase1DeathMutations = mutations
     .filter(({ table }) => tables.has(table) || table.startsWith('<dynamic:'))
     .map(({ handler, verb, table }) => `${handler}:${verb}:${table}`);

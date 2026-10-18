@@ -1297,6 +1297,23 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Retain the server-supplied event and workflow source objects
+        timeout-minutes: 5
+        shell: bash
+        env:
+          EVENT_SOURCE: ${{ github.sha }}
+          WORKFLOW_SOURCE: ${{ github.workflow_sha }}
+        run: |
+          set -euo pipefail
+          for source in "$EVENT_SOURCE" "$WORKFLOW_SOURCE"; do
+            [[ "$source" =~ ^[0-9a-f]{40}$ ]] || { echo 'Missing exact hosted source' >&2; exit 1; }
+            if ! git cat-file -e "$source^{commit}"; then
+              timeout 120s git fetch --no-tags origin "$source"
+            fi
+            git cat-file -e "$source^{commit}"
+          done
+
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
@@ -1318,9 +1335,24 @@ jobs:
         env:
           CHAIN_ENABLED: 'off'
           RESOURCE_ECONOMY: 'off'
+          RESOURCE_COMPUTE: 'off'
           ENTERPRISE_NATIVE_PROFILE: ci
           ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
-        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:postgres
+          SERVICES_ENTERPRISE_EXECUTION_SOURCE: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          SERVICES_ENTERPRISE_POSTGRES: ${{ matrix.postgres }}
+          SERVICES_ENTERPRISE_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: env -u RC1_PG_BIN node tools/services-enterprise-native.js
+
+      - name: Retain current Services enterprise source and all sixteen native receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-enterprise-native-${{ matrix.postgres }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            output/services-enterprise-native-*/
+            output/services-enterprise-source-*.json
+          if-no-files-found: error
+          retention-days: 14
 
   pgcheck_commerce:
     if: ${{ !inputs.tail_only }}
@@ -1380,10 +1412,115 @@ jobs:
           COMMERCE_CURRENT_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
         run: env -u RC1_PG_BIN npm run test:agent-economy-commerce:postgres
 
+  pgcheck_finalservices:
+    if: ${{ !inputs.tail_only }}
+    name: native final services (${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # Unchanged31 leaf210m +parent30m +capture10m +closure5m; setup5m.
+    timeout-minutes: 260
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        # Retain the existing compatibility lane and test the Render version observed
+        # for RC1 (2026-09-21). A PostgreSQL 16 pass alone does not attest PostgreSQL 18.4.
+        # The 16 image is the same verified official digest used by the native pass;
+        # use its canonical registry when the ECR mirror exhausts its data quota.
+        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}
+        env:
+          POSTGRES_PASSWORD: pgcheck
+          POSTGRES_DB: omerta_check
+        ports: ['5432:5432']
+        options: >-
+          --shm-size=256m
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - name: Set owned final-services test PostgreSQL lock capacity for full-schema catalog cleanup
+        timeout-minutes: 3
+        shell: bash
+        env:
+          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          # The context identifies only this matrix job's disposable service container.
+          [[ "$POSTGRES_SERVICE_ID" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }
+          timeout 15s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'
+          timeout 45s docker restart --timeout 30 "$POSTGRES_SERVICE_ID"
+          ready=0
+          deadline=$((SECONDS + 60))
+          while (( SECONDS < deadline )); do
+            if timeout 3s docker exec "$POSTGRES_SERVICE_ID" pg_isready -q -t 1 -U postgres -d postgres; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          [[ "$ready" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }
+          actual="$(timeout 10s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')"
+          [[ "$actual" == 512 ]] || { echo "Unexpected test max_locks_per_transaction: $actual" >&2; exit 1; }
+
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Retain the exact server-supplied workflow source object
+        timeout-minutes: 3
+        shell: bash
+        env:
+          WORKFLOW_SOURCE: ${{ github.workflow_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$WORKFLOW_SOURCE" =~ ^[0-9a-f]{40}$ ]] || { echo 'Missing exact workflow source' >&2; exit 1; }
+          if ! git cat-file -e "$WORKFLOW_SOURCE^{commit}"; then
+            timeout 120s git fetch --no-tags origin "$WORKFLOW_SOURCE"
+          fi
+          git cat-file -e "$WORKFLOW_SOURCE^{commit}"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+      - name: Compile original funded-work escrow artifact
+        run: npm run build:funded-work-artifact
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+
+      - name: Exact hosted source, one capture and complete final-services cohort
+        if: '!cancelled()'
+        env:
+          CHAIN_ENABLED: 'off'
+          RESOURCE_ECONOMY: 'off'
+          FINAL_SERVICES_CURRENT_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
+          S31_EXECUTION_SOURCE: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          S31_POSTGRES: ${{ matrix.postgres }}
+          S31_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: env -u RC1_PG_BIN node tools/finalservices-hosted-native.js --start
+
+      - name: Retain source capsules and every native/closure receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finalservices-${{ matrix.postgres }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            output/finalservices-current-*
+            ${{ runner.temp }}/s31-*.json
+          if-no-files-found: error
+          retention-days: 14
+
   pgcheck:
     if: ${{ always() && !inputs.tail_only }}
     name: real Postgres (${{ matrix.postgres }})
-    needs: [pgcheck_core, pgcheck_economy, pgcheck_enterprise, pgcheck_commerce]
+    needs: [pgcheck_core, pgcheck_economy, pgcheck_enterprise, pgcheck_commerce, pgcheck_finalservices]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     strategy:
@@ -1391,14 +1528,16 @@ jobs:
       matrix:
         postgres: ['16', '18.4']
     steps:
-      - name: Require all four complete native cohorts
+      - name: Require all five complete native cohorts
         env:
           CORE_RESULT: ${{ needs.pgcheck_core.result }}
           ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}
           ENTERPRISE_RESULT: ${{ needs.pgcheck_enterprise.result }}
           COMMERCE_RESULT: ${{ needs.pgcheck_commerce.result }}
+          FINALSERVICES_RESULT: ${{ needs.pgcheck_finalservices.result }}
         run: |
           test "$CORE_RESULT" = success
           test "$ECONOMY_RESULT" = success
           test "$ENTERPRISE_RESULT" = success
           test "$COMMERCE_RESULT" = success
+          test "$FINALSERVICES_RESULT" = success

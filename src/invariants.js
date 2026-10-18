@@ -1,3 +1,4 @@
+import { coverageMutualAccounting } from './coverage-mutual-invariants.js';
 const collectSaleAttributionIssues=async(c)=>(await import('./saleattribution.js')).collectSaleAttributionIssues(c);
 const collectMerchantLoyaltyIssues=async(c)=>(await import('./merchantloyalty.js')).collectMerchantLoyaltyIssues(c);
 const collectShoppingBasketIssues=async(c)=>(await import('./shoppingbasket.js')).collectShoppingBasketIssues(c);
@@ -24,6 +25,8 @@ import { strategyLicenseFaults } from './strategylicenseinvariants.js';
 import { companySuccessionFaults } from './companysuccessioninvariants.js';
 import { strategyLeagueFaults } from './strategyleagueinvariants.js';
 import { employmentCashInvariant } from './gameemploymentinvariants.js';
+import {performanceEmploymentInvariant} from './performanceemployment.js';
+import {collectSyndicatedLoanIssues} from './syndicatedloans.js';
 import { runCompanyWorkflowInvariants } from './companyworkflowinvariants.js';
 import { commercialPremisesInvariant } from './commercialpremisesinvariants.js';
 import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';
@@ -39,6 +42,10 @@ import { collectConsignmentIssues } from './consignments.js';
 const collectMobileShopIssues = async (...args) => (await import('./mobileshops.js')).collectMobileShopIssues(...args);
 import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';
 import { collectPickingPackingIssues } from './pickingpackinginvariants.js';
+import { collectCollateralLendingIssues } from './collaterallending-invariants.js';
+import { collectCollateralAuctionIssues } from './collateralauction-invariants.js';
+export const getCollateralAuctionBookCollector = () => collectCollateralAuctionIssues;
+export const getCollateralLendingBookCollector = () => collectCollateralLendingIssues;
 import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
@@ -78,6 +85,8 @@ const KNOWN_REASONS = {
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:', 'maintenance:pay', 'maintenance:receive',
     'equipment_rental:rent_pay', 'equipment_rental:rent_receive', 'equipment_rental:deposit',
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
+    'coverage_mutual:contribute', 'coverage_mutual:payout', 'coverage_mutual:refund',
+    'protection:reserve', 'protection:release', 'protection:refund',
     'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
@@ -89,6 +98,8 @@ const KNOWN_REASONS = {
     'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
     'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
+    'production_booking:bonus_reserve', 'production_booking:bonus', 'production_booking:bonus_refund',
+    'collateral-auction:bid', 'collateral-auction:proceeds', 'collateral-auction:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
     'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
@@ -158,6 +169,7 @@ const KNOWN_REASONS = {
     // by the per-character check (a) AND its own `favor escrow` identity below.
     'favor:',
     'intel_job:', 'employment:reserve:', 'employment:wage:', 'employment:refund:', 'employment:estate:loot:',
+    'performance_employment:reserve', 'performance_employment:bonus', 'performance_employment:refund', 'performance_employment:estate:loot',
     'commercial_premises:rent:pay', 'commercial_premises:rent:receive',
     'buyer_cooperative:fund', 'buyer_cooperative:refund', 'buyer_cooperative:death_cash', 'buyer_cooperative:loot_cash',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
@@ -720,6 +732,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('logistics coverage bindings', await logisticsCoverageFaults(pool), 0, 0);
   const employment = await employmentCashInvariant(pool);
   push('game employment escrow', employment.actual, employment.expected, 0);
+  const performance=await performanceEmploymentInvariant(pool);
+  push('performance employment funded bonus escrow',performance.actual,performance.expected,0);
+  push('performance employment actual outcome provenance',performance.issues.length,0,0,{issues:performance.issues});
   push('game employment loot ledger', employment.lootedCash, employment.lootedCash - employment.lootDelta, 0);
   const workflows = await runCompanyWorkflowInvariants(pool);
   push('company workflow provenance', workflows.issues.length, 0, 0, { issues: workflows.issues });
@@ -740,6 +755,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('buyer cooperative GIN custody', cooperatives.ginEscrow, cooperativeCapturedGin - cooperativeClaimedGin + cooperativeDeathGin, 0);
   push('buyer cooperative settlement provenance', cooperatives.issues.length, 0, 0, { issues: cooperatives.issues });
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
+  const syndicatedIssues=await collectSyndicatedLoanIssues(pool);
+  push('syndicated loan canonical facility provenance',syndicatedIssues.length,0,0,{issues:syndicatedIssues});
   const equipmentIssues = await collectItemConditionIssues(pool);
   push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });
   const courierReserve = await one(pool, 'SELECT COALESCE(SUM(reserved_cash),0) s FROM multi_hop_couriers');
@@ -758,6 +775,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const rentalIssues = await collectEquipmentRentalIssues(pool);
   push('equipment rental physical title', rentalIssues.length, 0, 0, { issues: rentalIssues });
   push('equipment maintenance transfers', 0, await sum(pool, "currency='cash' AND reason IN ('maintenance:pay','maintenance:receive')"), 0);
+  const mutual = await coverageMutualAccounting(pool);
+  push('coverage mutual original reserves', mutual.reserve, -mutual.ledgerDelta, 0);
+  push('coverage mutual canonical equipment losses', mutual.issues.length, 0, 0, { issues: mutual.issues });
   const equipmentInsuranceEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM equipment_insurance_policies');
   const equipmentInsuranceReserve = -(await sum(pool, "currency='cash' AND reason='equipment_insurance:reserve'"));
   const equipmentInsurancePaid = await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:claim','equipment_insurance:refund')");
@@ -768,6 +788,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
   const barterIssues = await collectAtomicBarterIssues(pool);
   push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
+  const collateralAuctionIssues = await collectCollateralAuctionIssues(pool);
+  push('collateral auction original consents and custody', collateralAuctionIssues.length, 0, 0, { issues: collateralAuctionIssues });
+  const collateralIssues = await collectCollateralLendingIssues(pool);
+  push('equipment collateral canonical loan and custody history', collateralIssues.length, 0, 0, { issues: collateralIssues });
   const relocationIssues=await collectBusinessRelocationIssues(pool);
   push('business relocation history',relocationIssues.length,0,0,{issues:relocationIssues});
   const crossDockIssues = await collectCrossDockIssues(pool);
@@ -808,6 +832,14 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('customer layaway reserved cash', layawayReserve, -layawayNet, 0);
   const layawayIssues = await collectCustomerLayawayIssues(pool);
   push('customer layaway source history', layawayIssues.length, 0, 0);
+  const bookingBooks=await(await import('./productionbooking-invariants.js')).productionBookingAccounting(pool);
+  const bookingNet=await sum(pool,"currency='cash' AND reason IN ('production_booking:bonus_reserve','production_booking:bonus','production_booking:bonus_refund')");
+  push('production booking reserved bonus',bookingBooks.reservedCash,-bookingNet,0);
+  push('production booking canonical history',bookingBooks.issues.length,0,0,{issues:bookingBooks.issues});
+  const protectionBooks = await (await import('./protectioncontracts.js')).protectionContractAccounting(pool);
+  const protectionNet = await sum(pool, "currency='cash' AND reason IN ('protection:reserve','protection:release','protection:refund')");
+  push('protection contracts reserved cash', protectionBooks.reservedCash, -protectionNet, 0);
+  push('protection contracts canonical history', protectionBooks.issues.length, 0, 0, { issues: protectionBooks.issues });
   const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
   const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
   push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);
@@ -1410,7 +1442,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {
     const rows = (await pool.query('SELECT DISTINCT reason FROM transactions WHERE currency=$1', [cur])).rows;
     for (const r of rows)
-      if (!(r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
+      if (!(r.reason.startsWith('protection:') ? cur === 'cash' && ['protection:reserve','protection:release','protection:refund'].includes(r.reason) : r.reason.startsWith('coverage_mutual:') ? cur === 'cash' && ['coverage_mutual:contribute','coverage_mutual:payout','coverage_mutual:refund'].includes(r.reason) : r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 

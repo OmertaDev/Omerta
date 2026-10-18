@@ -1,3 +1,4 @@
+import {retireSyndicatedLoansAtDeath} from '../syndicatedloans.js';
 import {recoverMerchantReturnsAtEstateStart,recoverMerchantReturnsInEstate} from '../merchantreturns.js';
 import {recoverMultiHopCourierAtEstateStart,assertMultiHopCourierEstateCleared} from '../multihopcourier.js';
 import { recoverCustomerVaultsAtEstateStart } from '../customervaults.js';
@@ -46,6 +47,10 @@ import { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';
 import { recoverConsignmentsInEstate } from '../consignments.js';
 import { recoverAtomicBartersInEstate } from '../atomicbarter.js';
 import { recoverPickingPackingInEstate } from '../pickingpacking.js';
+import { recoverCollateralLendingInEstate } from '../collaterallending.js';
+import { recoverCollateralAuctionsAtEstateStart } from '../collateralauction.js';
+export const getCollateralAuctionEstateStart = () => recoverCollateralAuctionsAtEstateStart;
+export const getCollateralLendingEstateRecovery = () => recoverCollateralLendingInEstate;
 import { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';
 import { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
@@ -188,7 +193,15 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  const auctionStart = await recoverCollateralAuctionsAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
+  for (const receipt of auctionStart) for (const actor of new Set([victim, h.actorCh, opts.killerCh].filter(Boolean))) {
+    if (actor.id !== receipt.originalCharacter || !actor.alive) continue;
+    const before = Number(actor.cash); registerItemTransactionUndo(client, () => { actor.cash = before; });
+    actor.cash = before + receipt.refundedCash;
+  }
   await (await import('../commercialcampaigns.js')).recoverCommercialCampaignAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
+  const { recoverCoverageMutualsAtEstateStart } = await import('../coverage-mutual.js');
+  await recoverCoverageMutualsAtEstateStart(client, victim, h, { killerCh: opts.killerCh });
   const courierStart=await recoverMultiHopCourierAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of courierStart)for(const actor of new Set([victim,h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.ownerOriginal||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}
   await assertMultiHopCourierEstateCleared(client,victim.id);
@@ -200,6 +213,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
   const merchantReturnStart = await recoverMerchantReturnsAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of merchantReturnStart){if(receipt.sellerCharacter!==victim.id)throw new Error('Merchant return original seller mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
+  await(await import('../productionbooking-estate.js')).recoverProductionBookingsAtEstateStart(client,victim,h,{killerCh:opts.killerCh});
   // Commission recovery loads after module initialization, using the existing estate scope.
   const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');
   const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
@@ -240,6 +254,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // integer: the row is zeroed below, so flooring the ledger sink destroyed frac(cash+bank) ∈
   // [0,1) unledgered on every death → a slow, permanent §10.4 check-(a) drift (the sub-cent bank
   // interest bug, reintroduced at the estate boundary). Report keeps the whole-dollar figure.
+  await (await import('../protectioncontracts.js')).recoverProtectionContractsAtEstateStart(client,victim,h.rentalDeathScope,estateScope);
   const exactCash = Number(victim.cash) + Number(victim.bank);
   const lostCash = Math.floor(exactCash);
   const report = {
@@ -484,6 +499,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // survives — SIGN-OFF Tier 4, §10.4-neutral); a debt owed BY the dead borrower is uncollectable.
   const ln = await voidLoansAtDeath(client, victim.id, h, opts.killerCh, estateLootRate, heirId);
   if (opts.killerCh && ln.looted) report.loanLoot = ln.looted;
+  await retireSyndicatedLoansAtDeath(client,victim.id,h);
   // THE FAVOR: a dead poster's open escrow is the same loot surface as a market order or a loan
   // offer — a PLAYER fire-kill takes its share, the rest burns (never a loot-proof vault).
   const fv = await voidFavorsAtDeath(client, victim.id, opts.killerCh, estateLootRate);
@@ -523,6 +539,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);
   await recoverPickingPackingInEstate(client, victim, h.rentalDeathScope, estateScope);
+  await recoverCollateralLendingInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   const layawayRecovery=await recoverCustomerLayawayInEstate(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of layawayRecovery)for(const actor of new Set([h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.buyerCharacter||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}
   const merchantReturnRecovery=await recoverMerchantReturnsInEstate(client,victim.id,h.rentalDeathScope,estateScope);

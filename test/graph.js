@@ -17,6 +17,8 @@ import crypto from 'node:crypto';
 import {ENTERPRISE_STRUCTURAL_CHECKS,ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from '../tools/enterprise-graph-helpers.js';
 import {COMMERCE_STRUCTURAL_CHECKS} from '../tools/commerce-graph-helpers.js';
 import {assertCommerceOwnedSource} from '../tools/commerce-source-compatibility.js';
+import {FINAL_SERVICES_COMMERCE_SOURCE_BINDING,hasFinalServicesCommerceSource,assertFinalServicesCommerceSourceTransfer} from '../tools/finalservices-commerce-source-compatibility.js';
+import {FINAL_SERVICES_STRUCTURAL_CHECKS,FINAL_SERVICES_HELPER_PROFILES,extractFinalServicesHelperReconciliations} from '../tools/final-services-graph-helpers.js';
 import {
   build,
   extractCommercialHelperReconciliations,
@@ -42,6 +44,23 @@ const graphPath = fileURLToPath(new URL('../tools/graph.js', import.meta.url));
 assert(isMainModule(new URL('../tools/graph.js', import.meta.url).href, graphPath));
 assert(!isMainModule(import.meta.url, graphPath));
 
+// Full actual S150 raw admission remains separate from the frozen Commerce295 history proof.
+const FINAL_SERVICES_COMMERCE_GRAPH_TARGET=Object.freeze({"predecessor":"da5bc87ca9e8e1fefd1e434bbf4dd52b1cf35988","files":152,"keysetSHA256":"e53603700ecf409cc837061a2f5c18bb0994f953edb3fba0b0f3e4d1e0c6d749","graph":{"file":"test/graph.js","mode":"100644","blob":"1ea4bc49b727e5f143cdff2e85e95588fcbc19f8","sha256":"7e7bf97bafc75dcd91e69afc8e3e26e648b5b1b924f67bbab76686a6c5048faf","bytes":60004},"event":{"file":"src/eventmarkets.js","mode":"100644","blob":"ddc5c8fbc38084a732d8a44b1542cd99c5d5778d","sha256":"94ca7d9a06043c262519d6f4684c09056f05c1035d2f9896db3e68b436aa8816","bytes":44555}});
+function assertFinalServicesCommerceGraphSources(readRaw){
+ const target=FINAL_SERVICES_COMMERCE_GRAPH_TARGET,binding=FINAL_SERVICES_COMMERCE_SOURCE_BINDING;
+ assert.equal(binding.predecessorRevision,target.predecessor,'Only the genuine frozen Commerce target');
+ const files=Object.keys(binding.records).sort();assert.equal(files.length,target.files);assert.equal(crypto.createHash('sha256').update(JSON.stringify(files)).digest('hex'),target.keysetSHA256,'Complete unchanged S150 source scope');
+ const proofs=new Map();for(const file of files){assert(hasFinalServicesCommerceSource(file));const proof=assertFinalServicesCommerceSourceTransfer(file,readRaw(file));assert.equal(proof.phase,'EXACT_FINAL_SERVICES_OVER_COMMERCE_SOURCE_ONLY');assert.equal(proof.sourceOnly,true);assert.equal(proof.nativeAdmission,false);assert.equal(proof.sourceRevision,binding.sourceRevision);assert.equal(proof.predecessorRevision,target.predecessor);proofs.set(file,proof);}
+ for(const pin of[target.graph,target.event]){const proof=proofs.get(pin.file),record=binding.records[pin.file];assert(proof);assert.equal(record.baselineMode,pin.mode);assert.equal(record.baselineBlob,pin.blob);assert.equal(record.baselineSha256,pin.sha256);assert.equal(Buffer.byteLength(proof.baselineText),pin.bytes);assert.equal(crypto.createHash('sha256').update(proof.baselineText).digest('hex'),pin.sha256,'Complete genuine Commerce baseline bytes');assert.equal(crypto.createHash('sha1').update('blob '+Buffer.byteLength(proof.baselineText)+'\0').update(proof.baselineText).digest('hex'),pin.blob,'Complete genuine Commerce Git blob');}
+ return true;
+}
+function reviewedFinalServicesCommerceEventHistory(profile,input){
+ const target=FINAL_SERVICES_COMMERCE_GRAPH_TARGET;assert.equal(profile.file,target.event.file);assert(hasFinalServicesCommerceSource(profile.file));
+ const proof=assertFinalServicesCommerceSourceTransfer(profile.file,input);assert.equal(proof.phase,'EXACT_FINAL_SERVICES_OVER_COMMERCE_SOURCE_ONLY');assert.equal(proof.sourceOnly,true);assert.equal(proof.nativeAdmission,false);assert.equal(proof.predecessorRevision,target.predecessor);assert.equal(proof.sourceRevision,FINAL_SERVICES_COMMERCE_SOURCE_BINDING.sourceRevision);
+ assert.equal(crypto.createHash('sha256').update(proof.baselineText).digest('hex'),target.event.sha256);assert.equal(crypto.createHash('sha1').update('blob '+Buffer.byteLength(proof.baselineText)+'\0').update(proof.baselineText).digest('hex'),target.event.blob);
+ return reviewedCommerceEventHistory(profile,proof.baselineText);
+}
+assertFinalServicesCommerceGraphSources(file=>fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'));
 const g = build();
 const c = census(g);
 
@@ -83,6 +102,7 @@ assert.deepEqual(inv.mute.sort(), [
   'cross docking canonical source and handoff history',
   'delivery finance bindings',
   'desk inventory backed',
+  'equipment collateral canonical loan and custody history',
   'equipment recovery consumed UID and material history',
   'equipment rental physical title',
   'family operation capital',
@@ -96,7 +116,9 @@ assert.deepEqual(inv.mute.sort(), [
   'mobile shop canonical source/history',
   'physical equipment condition provenance',
   'player funded event history',
+  'production booking canonical history',
   'production slot canonical reservation history',
+  'protection contracts canonical history',
   'reason vocabulary',
   'sale attribution completed sale and consent bindings',
   'service subscription repair bindings',
@@ -104,6 +126,7 @@ assert.deepEqual(inv.mute.sort(), [
   'strategy laboratory canonical observations',
   'strategy league bindings',
   'strategy license bindings',
+  'syndicated loan canonical facility provenance',
   'warehouse journal ownership',
   'worker training canonical source',
   'workshop floor source and allocation history',
@@ -120,6 +143,7 @@ for (const [check, reasons] of [
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ...ENTERPRISE_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
   ...COMMERCE_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
+  ...FINAL_SERVICES_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
   ['atomic barter canonical two-item bindings', 'original-party exact two physical-item transfer and replay witnesses; no cash'],
   ['cross docking canonical source and handoff history', 'original courier/hub/item/handoff receipt bindings; canonical courier fees reconcile separately'],
   ['production slot canonical reservation history', 'original commission/profile/window/production receipt bindings; canonical commission fees reconcile separately'],
@@ -183,9 +207,9 @@ for(const bad of[enterpriseMoney+' ',enterpriseMoney.replace('royaltyNet=receive
 for(const literal of[enterpriseMoneyProfile.import,enterpriseMoneyProfile.call,enterpriseMoneyProfile.push])for(const bad of[enterpriseInvariant.replace(literal,''),enterpriseInvariant+'\n'+literal])assert.deepEqual(extractEnterpriseHelperReconciliations(bad,{[enterpriseMoneyProfile.file]:enterpriseMoney}),[]);
 assert.deepEqual(extractEnterpriseHelperReconciliations(enterpriseInvariant,{[enterpriseMoneyProfile.file]:enterpriseMoney,'src/unknown.js':enterpriseMoney}),[]);
 assert(!inv.mute.includes(enterpriseMoneyProfile.check),'Actual royalty accounting must never be classified as mute provenance');
-// TEST-only historical evidence; the production graph keeps actual current raw source.
-// Existing Commerce owned-source admission validates complete LF/CRLF bytes before
-// the separately reviewed one-context inverse reaches the frozen historical profile.
+// TEST-only historical evidence: the production graph keeps current raw sources.
+// S150 first validates all actual current bytes; this separate one-context witness
+// reaches the frozen C4f profile from actual Commerce F without changing either pin.
 const COMMERCE_EVENT_HISTORY_WITNESS=Object.freeze({"file":"src/eventmarkets.js","currentSource":"29598e24bf93813541730aaafb5a556066f7d637","currentSha256":"94ca7d9a06043c262519d6f4684c09056f05c1035d2f9896db3e68b436aa8816","currentBlob":"ddc5c8fbc38084a732d8a44b1542cd99c5d5778d","profileRevision":"4f5fde87c29453a71f027fae5f694f44e8677b3d","profileSha256":"c154f5fc04bb20adf223b7201d66282a37b5580b05d841ecb244de633eeefe9a","profileBlob":"0c04bd5df7fbde44cab4a18c37f25c59ce02fb02","contextLines":3,"current":"    if(r.state!=='active'||!((account===r.vendor_account&&ch.id===r.vendor_character)||(account===r.pickup_account&&ch.id===r.pickup_character)))fail('original_provider');await signedVendor(c,r);await signedVenue(c,r);await suspend(c,r);\n   }else if(action==='join'){\n    if(r.state!=='active'||[r.host_account,r.vendor_account,r.source_json.pickup.accountId].includes(account)||ch.loc!==r.district)fail('participant');await signedVendor(c,r);await signedVenue(c,r);const m=await A(),a=await m.eventMarketAttributionReference(c,input.attributionId,input.attributionHash),slot=r.source_json.campaigns.find(x=>x.campaignId===a.campaignId&&x.campaignHash===a.campaignHash);if(!slot||a.buyer.accountId!==account||a.buyer.characterId!==ch.id)fail('attribution_source');const s=await live(c,r,slot.campaignId);const rows=(await c.query(\"SELECT * FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited','completed') ORDER BY id LIMIT 4\",[r.id])).rows;if(rows.length>=Number(r.slots)||rows.some(x=>x.campaign_id===slot.campaignId))fail('slot_capacity');if((await c.query('SELECT id FROM event_market_participants WHERE event_id=$1 AND buyer_account=$2 LIMIT 1',[r.id,account])).rows.length)fail('participation_immutable');if((await c.query(\"SELECT id FROM event_market_participants WHERE buyer_account=$1 AND state IN ('joined','visited') LIMIT 1\",[account])).rows.length)fail('participant_capacity');\n    // Stock stays canonical N11 inventory. Lock shop before listing, matching canonical mobile admission; never mint extra visits.\n    const shop=(await c.query('SELECT listing_id,remaining_quantity,status FROM mobile_shops WHERE id=$1 FOR UPDATE',[r.shop_id])).rows[0],listing=(await c.query('SELECT qty,status FROM market_listings WHERE id=$1 FOR UPDATE',[r.source_json.listingId])).rows[0];if(!shop||shop.status!=='active'||shop.listing_id!==r.source_json.listingId||listing?.status!=='live'||Number(listing.qty)!==Number(shop.remaining_quantity)||Number(shop.remaining_quantity)<rows.filter(x=>x.state==='joined').length+1)fail('stock_capacity');\n    const at=await clock(c);p={id:crypto.randomUUID(),event_id:r.id,buyer_account:account,buyer_character:ch.id,attribution_id:input.attributionId,attribution_hash:input.attributionHash,campaign_id:slot.campaignId,campaign_hash:slot.campaignHash,item_id:slot.itemId,state:'joined',created_at:at,visit_json:null,completion_json:null,reward_journal:null,reward_cash:0};p.source_hash=participantHash(r,p);registerItemTransactionUndo(c,()=>c.query('DELETE FROM event_market_participants WHERE id=$1',[p.id]));await c.query('INSERT INTO event_market_participants(id,event_id,buyer_account,buyer_character,attribution_id,attribution_hash,campaign_id,campaign_hash,item_id,source_hash,state,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[p.id,r.id,account,ch.id,p.attribution_id,p.attribution_hash,p.campaign_id,p.campaign_hash,p.item_id,p.source_hash,p.state,at]);\n   }else if(action==='cancel'||action==='expire'){\n    if(ch.id!==r.host_character||account!==r.host_account||!['offered','active','suspended'].includes(r.state))fail('original_host');const expired=+await clock(c)>=+new Date(r.expires_at),pending=(await c.query(\"SELECT id FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited') LIMIT 1\",[r.id])).rows.length;if(action==='expire'&&!expired)fail('not_expired');if(action==='cancel'&&pending&&!expired&&r.state!=='suspended'){const originals=(await c.query('SELECT id,alive FROM characters WHERE id IN ($1,$2)',[r.vendor_character,r.source_json.pickup.characterId])).rows;if(originals.length!==2||originals.every(x=>x.alive))fail('reserved_participants');}extra.refundedCash=await refund(c,r,ch,expired?'expired':'closed');\n","baseline":"    if(r.state!=='active'||!((account===r.vendor_account&&ch.id===r.vendor_character)||(account===r.pickup_account&&ch.id===r.pickup_character)))fail('original_provider');await signedVendor(c,r);await signedVenue(c,r);await suspend(c,r);\n   }else if(action==='join'){\n    if(r.state!=='active'||[r.host_account,r.vendor_account,r.source_json.pickup.accountId].includes(account)||ch.loc!==r.district)fail('participant');await signedVendor(c,r);await signedVenue(c,r);const m=await A(),a=await m.eventMarketAttributionReference(c,input.attributionId,input.attributionHash),slot=r.source_json.campaigns.find(x=>x.campaignId===a.campaignId&&x.campaignHash===a.campaignHash);if(!slot||a.buyer.accountId!==account||a.buyer.characterId!==ch.id)fail('attribution_source');const s=await live(c,r,slot.campaignId);const rows=(await c.query(\"SELECT * FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited','completed') ORDER BY id LIMIT 4\",[r.id])).rows;if(rows.length>=Number(r.slots)||rows.some(x=>x.campaign_id===slot.campaignId))fail('slot_capacity');if((await c.query('SELECT id FROM event_market_participants WHERE event_id=$1 AND buyer_account=$2 LIMIT 1',[r.id,account])).rows.length)fail('participation_immutable');if((await c.query(\"SELECT id FROM event_market_participants WHERE buyer_account=$1 AND state IN ('joined','visited') LIMIT 1\",[account])).rows.length)fail('participant_capacity');\n    // Stock stays canonical N11 inventory. Lock its exact metadata/listing after event, never mint extra visits.\n    const listing=(await c.query('SELECT qty,status FROM market_listings WHERE id=$1 FOR UPDATE',[r.source_json.listingId])).rows[0],shop=(await c.query('SELECT listing_id,remaining_quantity,status FROM mobile_shops WHERE id=$1 FOR UPDATE',[r.shop_id])).rows[0];if(!shop||shop.status!=='active'||shop.listing_id!==r.source_json.listingId||listing?.status!=='live'||Number(listing.qty)!==Number(shop.remaining_quantity)||Number(shop.remaining_quantity)<rows.filter(x=>x.state==='joined').length+1)fail('stock_capacity');\n    const at=await clock(c);p={id:crypto.randomUUID(),event_id:r.id,buyer_account:account,buyer_character:ch.id,attribution_id:input.attributionId,attribution_hash:input.attributionHash,campaign_id:slot.campaignId,campaign_hash:slot.campaignHash,item_id:slot.itemId,state:'joined',created_at:at,visit_json:null,completion_json:null,reward_journal:null,reward_cash:0};p.source_hash=participantHash(r,p);registerItemTransactionUndo(c,()=>c.query('DELETE FROM event_market_participants WHERE id=$1',[p.id]));await c.query('INSERT INTO event_market_participants(id,event_id,buyer_account,buyer_character,attribution_id,attribution_hash,campaign_id,campaign_hash,item_id,source_hash,state,created_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[p.id,r.id,account,ch.id,p.attribution_id,p.attribution_hash,p.campaign_id,p.campaign_hash,p.item_id,p.source_hash,p.state,at]);\n   }else if(action==='cancel'||action==='expire'){\n    if(ch.id!==r.host_character||account!==r.host_account||!['offered','active','suspended'].includes(r.state))fail('original_host');const expired=+await clock(c)>=+new Date(r.expires_at),pending=(await c.query(\"SELECT id FROM event_market_participants WHERE event_id=$1 AND state IN ('joined','visited') LIMIT 1\",[r.id])).rows.length;if(action==='expire'&&!expired)fail('not_expired');if(action==='cancel'&&pending&&!expired&&r.state!=='suspended'){const originals=(await c.query('SELECT id,alive FROM characters WHERE id IN ($1,$2)',[r.vendor_character,r.source_json.pickup.characterId])).rows;if(originals.length!==2||originals.every(x=>x.alive))fail('reserved_participants');}extra.refundedCash=await refund(c,r,ch,expired?'expired':'closed');\n"});
 function reviewedCommerceEventHistory(profile,input){
  const witness=COMMERCE_EVENT_HISTORY_WITNESS;
@@ -212,7 +236,7 @@ function reviewedCommerceEventHistory(profile,input){
 assert.equal(COMMERCE_STRUCTURAL_CHECKS.length,4);
 for(const p of COMMERCE_STRUCTURAL_CHECKS){
   const rawHelper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8');
-  const helper=p.file===COMMERCE_EVENT_HISTORY_WITNESS.file?reviewedCommerceEventHistory(p,rawHelper):rawHelper.replace(/\r\n?/g,'\n');
+  const helper=p.file===COMMERCE_EVENT_HISTORY_WITNESS.file?reviewedFinalServicesCommerceEventHistory(p,rawHelper):rawHelper.replace(/\r\n?/g,'\n');
   assert.equal(crypto.createHash('sha256').update(helper).digest('hex'),p.sha256,'Reviewed Commerce history changed: '+p.file);
   assert.equal(enterpriseInvariant.split('\n').filter(line=>line.trim()===p.push).length,1,'Unknown Commerce history arithmetic/binding');
 }
@@ -245,6 +269,24 @@ for(const [check,prefix,suffixes]of[
  ['consignment sale books','consignment',['purchase','proceeds','host_fee']],
 ])for(const suffix of suffixes)assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Commerce cash coverage lost: '+check+'/'+suffix);
 for(const[check,prefix]of[['multi-hop courier custody and fee source','multi_hop_courier'],['commissioned crafting canonical sources','commissioned_crafting']])for(const suffix of['reserve','fee','refund'])assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Reviewed canonical cash/source helper lost: '+check+'/'+suffix);
+// Final-service histories retain genuine cash edges and complete closed-source witnesses.
+assert.equal(FINAL_SERVICES_STRUCTURAL_CHECKS.length,4);
+for(const p of FINAL_SERVICES_STRUCTURAL_CHECKS){
+ const helper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8').replace(/\r\n?/g,'\n');
+ assert.equal(crypto.createHash('sha256').update(helper).digest('hex'),p.sha256,'Reviewed final-service history changed');
+ assert.equal(enterpriseInvariant.split('\n').filter(line=>line.trim()===p.push).length,1,'Unknown final-service history arithmetic/binding');
+}
+assert.equal(FINAL_SERVICES_HELPER_PROFILES.length,5);
+for(const p of FINAL_SERVICES_HELPER_PROFILES){
+ const helper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8'),terms=extractFinalServicesHelperReconciliations(enterpriseInvariant,{[p.file]:helper}).filter(t=>t.check===p.check);
+ assert.deepEqual(terms.map(t=>t.reason),p.terms.map(t=>t[0]),'Current final-service accounting witnesses lost');
+ for(const reason of p.terms.map(t=>t[0]))assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+p.check&&e.to==='Reason:'+reason),'Final-service cash edge lost: '+p.check+'/'+reason);
+}
+for(const[check,prefix,suffixes]of[
+ ['production booking reserved bonus','production_booking',['bonus_reserve','bonus','bonus_refund']],
+ ['protection contracts reserved cash','protection',['reserve','release','refund']],
+ ['loan escrow','loan',['offer','take','refund','death','loot']],
+])for(const suffix of suffixes)assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Dedicated original cash edge lost: '+check+'/'+suffix);
 // Ownership checks structural journal references; warehouse cash still needs its
 // separate literal ledger reconciliation, which must not join the mute list.
 const warehouseAudit = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
