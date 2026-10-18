@@ -96,7 +96,8 @@ for (const file of ['__proto__', 'constructor', 'toString', '../package.json', '
 const COMBINED_NATIVE_REFERENCE = Object.freeze({"revision":"b8b9d514625d9dd9031bcc4dde05c32258c3898a","file":"tools/enterprise-native-inputs.js","mode":"100644","blob":"658d7d9c7df1233276b889b4161ce9eb1886f516","sha256":"e5f6e872591ec45678dbd0bf8305e4773487a38b8fef17baf68efac7baa8d6c7","bytes":390940});
 const LEGACY_NATIVE_REFERENCE = Object.freeze({"revision":"3fd8f15280c5d14b4580d90706df2e93d42437a3","file":"tools/enterprise-native-inputs.js","mode":"100644","blob":"c73580084370d27d4776beb3d301d1c8d6a7514a","sha256":"0b48fd7ba46c4b39f1dec0b61148236fa6f2b174a13518e6ce21d66267075447","bytes":390371});
 const COMBINED_NATIVE_APPEND = Object.freeze({"bytes":569,"sha256":"b5fb5478b4bb4ff1ec574bd70a0adac42521e4a35cc959e0e50e762a384021ea"});
-const COMBINED_NATIVE_SUPPORT_PINS = Object.freeze([{"revision":"024f2da424bc19f9dc0e7fad8be182ae02239890","file":"tools/enterprise-native.js","mode":"100644","blob":"1acd188d7ee9bf3444f23ea51c8c1e42aa9dc50c","sha256":"178d268cdfe525980971a6e881bcde3bdbc0ce6e7e1b489c81759366408ec542","bytes":38912},{"revision":"6301827eb77fa304891e7e9fa2fcd69a89342621","file":"tools/enterprise-native-continuous-city-inputs.js","mode":"100644","blob":"e1b57dc4289462bb1fab7a8ba18f2d4bfbd4d9f6","sha256":"e68690266599639a1ecdba0c44fcafbb8d48934de50bea3a3b5dc6db35d7c0d6","bytes":16048}].map(Object.freeze));
+const COMBINED_NATIVE_SUPPORT_PINS = Object.freeze([{"revision":"4612bc3e288fe815aa1d6cdf833c0e12f9780251","file":"tools/enterprise-native.js","mode":"100644","blob":"bdcab53a8adfe3b530d6114635eac968565ef2cc","sha256":"ca2ee1b1a77ef8cb6511b7a9410e2c94303bae41091b32baf70086ef7b1792f4","bytes":38912},{"revision":"e4db53e2c84c5f69696351d0146366708dad81bf","file":"tools/enterprise-native-continuous-city-inputs.js","mode":"100644","blob":"030fe21949118b019a68e7054aa9f4fa578ee433","sha256":"050e5a60c2639598dd48eea896fe65693559060b271974584783408d6fdf821c","bytes":16048}].map(Object.freeze));
+const COMBINED_NATIVE_AUTHORED_REFERENCE = Object.freeze({"revision":"5edb0a1cae202ba342398b8143e0c89b6c8eeef1","file":"tools/enterprise-native-inputs.js","mode":"100644","blob":"7f49a9899b62dbf6a16a3913c0375aa9364be95d","sha256":"e85ce19b500fc653563344beda0b3c7f7173c41b7d0ef006acead38a64b5d8a3","bytes":407020});
 function catalogueLF(input) {
   assert.equal(typeof input, 'string', 'Catalogue source must be complete text');
   const text = lf(input);
@@ -196,10 +197,22 @@ async function normalizeCombinedCatalogueForLegacyProof(input) {
   assert.equal(normalized, legacy, 'Whole actual catalogue reconstructs the immutable A definition');
   return normalized;
 }
+// The authored catalogue is an immutable earlier seal. Only this TEST proof maps it to the fixed legacy reference.
+// Actual current source capture still reads its complete bytes and requires the current native validator.
+function authoredCombinedCatalogueLegacyProof() {
+  assert.equal(CONTINUOUS_CITY_SOURCE_REVISION, COMBINED_NATIVE_AUTHORED_REFERENCE.revision,
+    'One explicitly pinned authored source catalogue only');
+  const authored = readPinnedCatalogueReference(COMBINED_NATIVE_AUTHORED_REFERENCE);
+  assert.equal(git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + COMBINED_NATIVE_AUTHORED_REFERENCE.file), authored);
+  const reference = readPinnedCatalogueReference(COMBINED_NATIVE_REFERENCE);
+  assert.equal(inspectCombinedCatalogueText(authored, reference).normalizedText, reference,
+    'Whole authored catalogue differs from the fixed reference only in its closed initializer');
+  return readPinnedCatalogueReference(LEGACY_NATIVE_REFERENCE);
+}
 for (const file of ['tools/enterprise-current-source-compatibility.js', 'tools/enterprise-current-source-data.js', 'tools/enterprise-native-inputs.js']) {
   assert.equal(lf(file === 'tools/enterprise-native-inputs.js' ? await normalizeCombinedCatalogueForLegacyProof(fs.readFileSync(file, 'utf8')) : fs.readFileSync(file, 'utf8')),
     file === 'tools/enterprise-native-inputs.js'
-      ? (assert.equal(git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file), readPinnedCatalogueReference(COMBINED_NATIVE_REFERENCE), 'Immutable source catalogue must equal the exact reviewed B definition'), readPinnedCatalogueReference(LEGACY_NATIVE_REFERENCE))
+      ? authoredCombinedCatalogueLegacyProof()
       : git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file), 'Predecessor guard/data is immutable: ' + file);
 }
 console.log(JSON.stringify({ phase: 'CONTINUOUS_CITY_EXACT_SOURCE_ONLY', source: CONTINUOUS_CITY_SOURCE_REVISION,
