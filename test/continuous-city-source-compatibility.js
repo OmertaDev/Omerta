@@ -16,6 +16,71 @@ const git = (...args) => execFileSync('git', ['-c', 'core.safecrlf=false', ...ar
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
+// This local physical-reader hop admits only exact reviewed current UI bytes; frozen GUI/fixture proofs below are unchanged.
+const CURRENT_UI_OVER_GUI59 = Object.freeze({
+  "version": 1,
+  "phase": "EXACT_CURRENT_UI_OVER_FROZEN_GUI59_TEST_SOURCE_ONLY",
+  "file": "public/index.html",
+  "revision": "37b1bc14e5b3e3cd764fb26c93da97031718a5ea",
+  "tree": "b9382da89a7d742f942ac79334394109653517c1",
+  "currentMode": "100644",
+  "currentBlob": "ed2260a1961f4ef40bed0ebbe83e2a02878564ad",
+  "currentSha256": "2b4190b8b67b9b707d1487b6af72dafe03a7a5db05c184c1b079045de2cca1c2",
+  "currentRawSha256": Object.freeze({"lf":"2b4190b8b67b9b707d1487b6af72dafe03a7a5db05c184c1b079045de2cca1c2","crlf":"d8298817181cf253dbd3a26bb581db336d2041da8089b2df1bfcb76226590699"}),
+  "currentBytes": 1468293,
+  "targetRevision": "59dbb6d99312fa44dba1fbec5bdf24948740e0dc",
+  "targetTree": "558374c74221edeb57b9ff0588171a8b16aa1080",
+  "targetMode": "100644",
+  "targetBlob": "6221711be794023ee60c53f2039795d14be7cf65",
+  "targetSha256": "9f8baaf26731853d89fde6015e51f5355f23ef0347fb0a850f3ad4edfa771951",
+  "targetBytes": 1468176,
+  "contextLines": 3,
+  "inverses": Object.freeze([
+    Object.freeze({"current":"    font-size: 16px;\n  }\n  * { box-sizing: border-box; }\n  html { scroll-behavior: auto; }\n  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--serif); line-height: 1.5;\n    -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }\n  /* the room: a faint overhead lamp + street-level vignette (fixed, zero-cost atmosphere) */\n","baseline":"    font-size: 16px;\n  }\n  * { box-sizing: border-box; }\n  html { scroll-behavior: smooth; }\n  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--serif); line-height: 1.5;\n    -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }\n  /* the room: a faint overhead lamp + street-level vignette (fixed, zero-cost atmosphere) */\n"}),
+    Object.freeze({"current":"  function travelTo(district, operationOptions = {}) {\n    const place = (rules?.districts || []).find((d) => (d.id || d) === district);\n    return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}`, ...operationOptions })\n      .then((r) => { if (r.code < 400 && operationOptions.refreshBoard !== false) renderActive({ afterAction: true }); return r; });\n  }\n  function openTravel() {\n    const here = me?.loc;\n","baseline":"  function travelTo(district, operationOptions = {}) {\n    const place = (rules?.districts || []).find((d) => (d.id || d) === district);\n    return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}`, ...operationOptions })\n      .then((r) => { if (r.code < 400) renderActive({ afterAction: true }); return r; });\n  }\n  function openTravel() {\n    const here = me?.loc;\n"}),
+    Object.freeze({"current":"      // which reads as \"the button did nothing\" — a tester reported exactly that. Debounced and\n      // input-safe (renderActive skips while a field has focus), so this costs one board fetch on the\n      // screen already in front of you.\n      if (r.code < 400 && options.refreshBoard !== false) renderActive({ afterAction: true });\n      return r;\n    } finally {\n      acting = false;\n","baseline":"      // which reads as \"the button did nothing\" — a tester reported exactly that. Debounced and\n      // input-safe (renderActive skips while a field has focus), so this costs one board fetch on the\n      // screen already in front of you.\n      if (r.code < 400) renderActive({ afterAction: true });\n      return r;\n    } finally {\n      acting = false;\n"}),
+    Object.freeze({"current":"        if (investigate) investigate.onclick = async () => {\n          if (!valid()) return;\n          investigate.disabled = true;\n          try { await act('POST', '/v1/deeds/investigate', { buildingId: p.id, actionId: objective.actionId }, { label: objective.title, beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current, refreshBoard: false }); }\n          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }\n        };\n        const travel = $('#deed-objective-travel');\n        if (travel) travel.onclick = async () => {\n          if (!valid()) return;\n          travel.disabled = true;\n          try { await travelTo(requiredDistrict, { beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current, refreshBoard: false }); }\n          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }\n        };\n        const claim = $('#deed-property-claim');\n","baseline":"        if (investigate) investigate.onclick = async () => {\n          if (!valid()) return;\n          investigate.disabled = true;\n          try { await act('POST', '/v1/deeds/investigate', { buildingId: p.id, actionId: objective.actionId }, { label: objective.title, beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }\n          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }\n        };\n        const travel = $('#deed-objective-travel');\n        if (travel) travel.onclick = async () => {\n          if (!valid()) return;\n          travel.disabled = true;\n          try { await travelTo(requiredDistrict, { beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }\n          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }\n        };\n        const claim = $('#deed-property-claim');\n"})
+  ])
+});
+function qualifyCurrentUIOverGUI59(file, input, expected, mode, pin = CURRENT_UI_OVER_GUI59) {
+  const keys = (value, names) => {
+    assert(value && typeof value === 'object' && !Array.isArray(value) && Object.isFrozen(value), 'Frozen exact TEST source binding required');
+    assert([Object.prototype, null].includes(Object.getPrototypeOf(value)));
+    assert.deepEqual(Reflect.ownKeys(value).sort(), names.slice().sort());
+    for (const property of Object.values(Object.getOwnPropertyDescriptors(value))) assert(Object.hasOwn(property, 'value'), 'Source binding accessors refuse');
+  };
+  keys(pin, ["version","phase","file","revision","tree","currentMode","currentBlob","currentSha256","currentRawSha256","currentBytes","targetRevision","targetTree","targetMode","targetBlob","targetSha256","targetBytes","contextLines","inverses"]);
+  keys(pin.currentRawSha256, ['lf', 'crlf']);
+  const header = { ...pin }; delete header.inverses;
+  assert.equal(hash(JSON.stringify(header)), '5c19dc8c321234463c037972d64475eefde4078df796b022388ef4d9b2ee9919', 'Exact reviewed current U and frozen GUI59 identities only');
+  assert.equal(file, 'public/index.html'); assert.equal(file, pin.file); assert.equal(mode, pin.currentMode);
+  assert.equal(typeof input, 'string', 'UTF8 physical source String only');
+  assert.equal(Buffer.from(input, 'utf8').toString('utf8'), input, 'Lossless UTF8 source only');
+  assert(!input.includes('\ufeff') && !input.includes('\0'), 'BOM/NUL source refuses');
+  const canonical = input.replaceAll('\r\n', '\n');
+  assert(!canonical.includes('\r') && (input === canonical || input === canonical.replaceAll('\n', '\r\n')), 'Uniform whole LF or CRLF only');
+  assert.equal(hash(input), pin.currentRawSha256[input === canonical ? 'lf' : 'crlf']);
+  assert.equal(hash(canonical), pin.currentSha256); assert.equal(blob(canonical), pin.currentBlob); assert.equal(Buffer.byteLength(canonical), pin.currentBytes);
+  assert.equal(typeof expected, 'string'); assert.equal(hash(expected), pin.targetSha256); assert.equal(blob(expected), pin.targetBlob); assert.equal(Buffer.byteLength(expected), pin.targetBytes);
+  assert(Array.isArray(pin.inverses) && Object.isFrozen(pin.inverses)); assert.equal(pin.inverses.length, 4);
+  assert.deepEqual(Reflect.ownKeys(pin.inverses), Array.from({ length: 4 }, (_, i) => String(i)).concat('length'));
+  const contextSHA256 = ["04beeee8cb46525947c68e1976bd578746867ffaa24d27cb240c1e35babaeba9","de65784029d0343e561a13e74a08439e19801155b72849418f4e01f7b73cfce3","7f8f5a53a1d117f0de72180f848b7e2f54b11b56bc507cfd605f894f810b3893","d62419f4533a35c80115de96f8be3ec2dc20fc958f491090569efe77a8520620"];
+  let restored = canonical, end = -1;
+  for (const [index, inverse] of pin.inverses.entries()) {
+    keys(inverse, ['current', 'baseline']); assert.equal(hash(JSON.stringify(inverse)), contextSHA256[index], 'Exact complete direct Git context3 only');
+    assert.equal(typeof inverse.current, 'string'); assert(inverse.current.length > 0); assert.equal(typeof inverse.baseline, 'string');
+    assert.equal(canonical.split(inverse.current).length, 2); const at = canonical.indexOf(inverse.current); assert(at >= end, 'Ordered nonoverlapping current contexts'); end = at + inverse.current.length;
+    assert.equal(restored.split(inverse.current).length, 2); restored = restored.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(restored), pin.targetSha256); assert.equal(blob(restored), pin.targetBlob); assert.equal(restored, expected, 'Whole actual frozen GUI59 must reconstruct');
+  return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
+}
+assert.equal(git('--no-replace-objects', 'rev-parse', CURRENT_UI_OVER_GUI59.revision + '^{tree}').trim(), CURRENT_UI_OVER_GUI59.tree);
+assert.equal(git('--no-replace-objects', 'ls-tree', CURRENT_UI_OVER_GUI59.revision, '--', CURRENT_UI_OVER_GUI59.file).trim(), '100644 blob ' + CURRENT_UI_OVER_GUI59.currentBlob + '\t' + CURRENT_UI_OVER_GUI59.file);
+assert.equal(hash(git('--no-replace-objects', 'show', CURRENT_UI_OVER_GUI59.revision + ':' + CURRENT_UI_OVER_GUI59.file)), CURRENT_UI_OVER_GUI59.currentSha256);
+assert.equal(git('--no-replace-objects', 'rev-parse', CURRENT_UI_OVER_GUI59.targetRevision + '^{tree}').trim(), CURRENT_UI_OVER_GUI59.targetTree);
+assert.equal(git('--no-replace-objects', 'ls-tree', CURRENT_UI_OVER_GUI59.targetRevision, '--', CURRENT_UI_OVER_GUI59.file).trim(), '100644 blob ' + CURRENT_UI_OVER_GUI59.targetBlob + '\t' + CURRENT_UI_OVER_GUI59.file);
+assert.equal(hash(git('--no-replace-objects', 'show', CURRENT_UI_OVER_GUI59.targetRevision + ':' + CURRENT_UI_OVER_GUI59.file)), CURRENT_UI_OVER_GUI59.targetSha256);
 function hunks(diff) {
   const result = []; let current;
   for (const line of diff.split('\n')) {
@@ -66,7 +131,11 @@ function verify(file, pin, actual, baseline, qualify, diff) {
 assert.equal(Object.keys(CONTINUOUS_CITY_SOURCE_DOMAINS).length, 16);
 for (const [file, pin] of Object.entries(CONTINUOUS_CITY_SOURCE_DOMAINS)) {
   const current = git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file);
-  assert.equal(lf(fs.readFileSync(file, 'utf8')), current, 'Actual GUI source must remain exactly frozen: ' + file);
+  const physical = fs.readFileSync(file, 'utf8');
+  const actualPhysical = file === 'public/index.html'
+    ? qualifyCurrentUIOverGUI59(file, physical, current, git('ls-files', '--stage', '--', file).split(' ')[0]).baselineText
+    : lf(physical);
+  assert.equal(actualPhysical, current, 'Actual GUI source must remain exactly frozen: ' + file);
   assert.equal(git('ls-tree', CONTINUOUS_CITY_SOURCE_REVISION, '--', file).split(' ')[0], pin.currentMode);
   const priorTree = git('ls-tree', CONTINUOUS_CITY_SOURCE_PREDECESSOR, '--', file);
   assert.equal(priorTree === '', pin.predecessorAbsent);
