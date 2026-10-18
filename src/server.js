@@ -128,6 +128,8 @@ import { register as registerAgentOperatingMemory } from './routes/agentoperatin
 import { register as registerFundedExternalWork } from './routes/fundedexternalwork.js';
 import { registerBaseWorkObservations } from './routes/baseworkobservations.js';
 import { createBaseWorkObserver } from './baseworkobserver.js';
+import { registerRobinhoodWorkObservations } from './routes/robinhoodworkobservations.js';
+import { createRobinhoodWorkObserver } from './robinhoodworkobserver.js';
 import { register as registerCompanyRestructuring } from './routes/companyrestructuring.js';
 import { register as registerCompanyAcquisitions } from './companyacquisitions-routes.js';
 import { canonicalDepotAcquisitionRuntime } from './depotacquisitionruntime.js';
@@ -2529,6 +2531,11 @@ export async function buildServer() {
     catch { return null; }
   })();
   registerBaseWorkObservations(app, { pool, auth, observer: createBaseWorkObserver(baseWorkObserverConfig) });
+  const robinhoodWorkObserverConfig = (() => {
+    try { return JSON.parse(process.env.ROBINHOOD_WORK_ESCROW_OBSERVER_CONFIG || 'null'); }
+    catch { return null; }
+  })();
+  registerRobinhoodWorkObservations(app, { pool, auth, observer: createRobinhoodWorkObserver(robinhoodWorkObserverConfig) });
   registerCompanyRestructuring(app, { pool, auth });
   registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });
   registerGameEmployment(app, { pool, auth });
