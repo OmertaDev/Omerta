@@ -1,6 +1,6 @@
 // Frozen whole-file source evidence only; no runtime, native, migration, or release admission.
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
-export const CONTINUOUS_CITY_SOURCE_REVISION = "c475937b0f15a5d102eb1ae845da50b201fea256";
+export const CONTINUOUS_CITY_SOURCE_REVISION = "79833ab983d3475b1318a7cd4de19afb554e7b8b";
 export const CONTINUOUS_CITY_SOURCE_PREDECESSOR = "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6";
 export const CONTINUOUS_CITY_SOURCE_DOMAINS = freeze({
   "package.json": {
@@ -31,12 +31,12 @@ export const CONTINUOUS_CITY_SOURCE_DOMAINS = freeze({
     ]
   },
   "public/city-scene.js": {
-    "currentSha256": "fb49566d170f479404cfc2de445b095678129b324e6193b02194dfdb405f17f3",
-    "currentBlob": "a8ec933e13194e508930612f99ef85b1dd38d281",
+    "currentSha256": "a04cde55e6f520a1b4869048c4aac7d91ebd883dfbd8cf0ba0e1c1686bd6b63d",
+    "currentBlob": "1ddade87513ec471d01a8559f993690a9e942f47",
     "currentMode": "100644",
     "currentRawSha256": {
-      "lf": "fb49566d170f479404cfc2de445b095678129b324e6193b02194dfdb405f17f3",
-      "crlf": "a30f943624279df215775b4752393486f6d507b6cd5a18ccfdde9161e460924a"
+      "lf": "a04cde55e6f520a1b4869048c4aac7d91ebd883dfbd8cf0ba0e1c1686bd6b63d",
+      "crlf": "355ed943b5505671e7b529def87b8c80c9ea3f97fb43c7cc95f53197421376e6"
     },
     "predecessorAbsent": false,
     "baselineSha256": "a6fab5d4faecc0b17b8c80f8a2d75b8bb1006dc65da92c0b0978d4e50cb99f34",
@@ -100,6 +100,10 @@ export const CONTINUOUS_CITY_SOURCE_DOMAINS = freeze({
         "baseline": "        marker.name.setPosition(b.x + b.width / 2, b.y + 112).setText(sign + '\\n' + (home.owner ? home.owner.kind.toUpperCase() : home.ownership.toUpperCase())).setDepth(b.y + 1);\n      }\n    }\n    function openWorldMap(districtId, fallback = true) {\n      if (destroyed || externalPanel || (!fallback && typeof worldUI?.openMapOverview !== 'function')) return false;\n      pauseRoute(); hideVenue(false); hideActor(false); hideGameDock(false);\n"
       },
       {
+        "current": "      actorReturn = trigger || Array.from(actorList.children).find(button => button.dataset.cityActor === id);\n      actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;\n      renderActorDock(); renderPresence(); fitWorldFrame(); revealVenue(viewport);\n      // A short desktop can fit the map and HUD while clipping the taller action\n      // preview. Reveal it inside this dock only when the person is first opened.\n      const action = actorBody.querySelector('[data-city-encounter]');\n      if (action && window.innerWidth > 680) {\n        const bounds = action.getBoundingClientRect(), dock = actorDock.getBoundingClientRect();\n        actorDock.scrollTop += Math.max(0, Math.min(bounds.bottom - dock.bottom + 8, bounds.top - dock.top - 8));\n      }\n      actorBody.focus({ preventScroll: true }); syncPointerBounds();\n    }\n    function showIntel() {\n",
+        "baseline": "      actorReturn = trigger || Array.from(actorList.children).find(button => button.dataset.cityActor === id);\n      actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;\n      renderActorDock(); renderPresence(); fitWorldFrame(); revealVenue(viewport);\n      actorBody.focus({ preventScroll: true }); syncPointerBounds();\n    }\n    function showIntel() {\n"
+      },
+      {
         "current": "    function stopMovement() {\n      routePreview = []; routePreviewVenue = null;\n      queuedVenue = null;\n      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingPlot = null; pendingExit = null; queuedHome = null;\n      for (const button of moveButtons.values()) button.classList.remove('is-held');\n      redrawPath();\n      updateReadiness();\n",
         "baseline": "    function stopMovement() {\n      routePreview = []; routePreviewVenue = null;\n      queuedVenue = null;\n      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; queuedHome = null;\n      for (const button of moveButtons.values()) button.classList.remove('is-held');\n      redrawPath();\n      updateReadiness();\n"
       },
@@ -110,6 +114,14 @@ export const CONTINUOUS_CITY_SOURCE_DOMAINS = freeze({
       {
         "current": "      if (externalPanel) return;\n      const target = nearTarget();\n      if (target?.actor) showActor(target.actor.id); else if (target?.home) showHome(target.home.key);\n      else if (target?.plot) inspectPlot(target.plot); else if (target?.exit) showExit(target.exit.id); else if (target?.venue) showVenue(target.venue);\n    }\n    function walkToVenue(id) {\n      const venue = VENUES.find(venue => venue.id === id);\n",
         "baseline": "      if (externalPanel) return;\n      const target = nearTarget();\n      if (target?.actor) showActor(target.actor.id); else if (target?.home) showHome(target.home.key);\n      else if (target?.exit) showExit(target.exit.id); else if (target?.venue) showVenue(target.venue);\n    }\n    function walkToVenue(id) {\n      const venue = VENUES.find(venue => venue.id === id);\n"
+      },
+      {
+        "current": "      const inspecting = Boolean(externalPanel || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());\n      viewport.classList.toggle('is-inspecting', inspecting);\n      root.classList.toggle('is-inspecting', inspecting);\n      if (!externalPanel && ((!phone && (!document.body.classList.contains('city-player-view') || actorDock.hidden || actorView !== 'person')) || !inspecting)) {\n        worldHud.style.removeProperty('--city-hud-height');\n        worldHud.removeAttribute('tabindex');\n        worldHud.setAttribute('aria-label', 'Walking resources and readiness');\n",
+        "baseline": "      const inspecting = Boolean(externalPanel || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());\n      viewport.classList.toggle('is-inspecting', inspecting);\n      root.classList.toggle('is-inspecting', inspecting);\n      if (!externalPanel && (!phone || !inspecting)) {\n        worldHud.style.removeProperty('--city-hud-height');\n        worldHud.removeAttribute('tabindex');\n        worldHud.setAttribute('aria-label', 'Walking resources and readiness');\n"
+      },
+      {
+        "current": "        const overflow = worldHud.scrollHeight > worldHud.clientHeight;\n        if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');\n        worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');\n      } else if (!phone && !actorDock.hidden && actorView === 'person') {\n        // Confirmed feedback can make the HUD taller than a short desktop's\n        // remaining frame. Keep one complete action preview beside the map.\n        const action = actorBody.querySelector('[data-city-encounter]');\n        const dockFloor = Math.max(64, Math.min(240, Math.ceil(action?.getBoundingClientRect().height || 0) + 16));\n        const hudHeight = Math.max(0, bottom - top - 16 - 96 - controls.getBoundingClientRect().height - dockFloor);\n        worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');\n        const overflow = worldHud.scrollHeight > worldHud.clientHeight;\n        if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');\n        worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');\n      }\n      const activityLayout = externalPanel ? [worldHud.clientHeight, worldHud.scrollHeight, activitySignature].join(':') : '';\n      if (activityLayout !== activityHudLayout && externalPanel && activities.size) {\n",
+        "baseline": "        const overflow = worldHud.scrollHeight > worldHud.clientHeight;\n        if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');\n        worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');\n      }\n      const activityLayout = externalPanel ? [worldHud.clientHeight, worldHud.scrollHeight, activitySignature].join(':') : '';\n      if (activityLayout !== activityHudLayout && externalPanel && activities.size) {\n"
       },
       {
         "current": "    const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitWorldFrame) : null;\n    if (hudObserver) { for (const node of [worldHud, nextMove, controls, actorDock, gameDock]) hudObserver.observe(node); }\n    listen(window, 'resize', fitWorldFrame);\n    function fitPlayerName() {\n      const name = scene.data.get('playerName'), camera = scene.cameras.main;\n      if (!name) return 0;\n      name.setScale(Math.min(Math.max(1, 13 / (parseFloat(name.style.fontSize) * camera.zoom)),\n        (camera.width - 4) / (name.width * camera.zoom)));\n      const halfHeight = name.displayHeight / 2, gap = 2 / camera.zoom;\n      name.y = Math.min(Math.round(player.y - (artState.player === 'generated' ? 72 : 40)),\n        player.getBounds().top - halfHeight - gap);\n      return player.y - name.y + halfHeight + gap;\n    }\n    function fitCamera() {\n      if (!scene || !game || !player) return;\n      const size = dimensions();\n",
@@ -450,12 +462,12 @@ export const CONTINUOUS_CITY_SOURCE_DOMAINS = freeze({
     ]
   },
   "test/city-world-host-browser.js": {
-    "currentSha256": "cd05dbe5249db3e4bcdbb51aca98c4108671262bb7076c4784926175cb4d5f2d",
-    "currentBlob": "b7593e3d1f26151838afaf1aa7f4817ef6dd81d5",
+    "currentSha256": "2305a4a659e4531053525f6e4a7659b9facea5ac7c8d2ed7226dd3672752fabd",
+    "currentBlob": "d246ecfa195f0c26c41c0ed411f7093de23910f5",
     "currentMode": "100644",
     "currentRawSha256": {
-      "lf": "cd05dbe5249db3e4bcdbb51aca98c4108671262bb7076c4784926175cb4d5f2d",
-      "crlf": "028796301bf6fbdc34eda81904afad377655463c7718274db6ce2e15006372cc"
+      "lf": "2305a4a659e4531053525f6e4a7659b9facea5ac7c8d2ed7226dd3672752fabd",
+      "crlf": "e134905d9a9f100cd616fc4b89123637e3ba5a90030797be72d831a0da285a25"
     },
     "predecessorAbsent": false,
     "baselineSha256": "d391ee0f72eed3e14b21c8b2ba7314a74be61646fcd281a24c081eb8ed50b3b5",
@@ -469,6 +481,10 @@ export const CONTINUOUS_CITY_SOURCE_DOMAINS = freeze({
       {
         "current": "    await page.locator('#btn-player-view').click();\n    if (engineFailure) await page.locator('.omerta-city--unavailable').waitFor();\n    else if (!pendingEntry) await page.waitForFunction(() => window.__worldHandles.at(-1)?.handle.getState().ready);\n    if (!moduleFailure) {\n      try { await page.locator('[data-city-world-tools]').waitFor({ state: 'visible' }); }\n      catch (error) { console.error('World tools boot failure:', { errors, sceneHandles: await page.evaluate(() => window.__worldHandles.length) }); throw error; }\n    }\n    return { page, context, requests, releaseArt };\n  };\n  const state = page => page.evaluate(() => window.__worldHandles.at(-1).handle.getState());\n",
         "baseline": "    await page.locator('#btn-player-view').click();\n    if (engineFailure) await page.locator('.omerta-city--unavailable').waitFor();\n    else if (!pendingEntry) await page.waitForFunction(() => window.__worldHandles.at(-1)?.handle.getState().ready);\n    if (!moduleFailure) await page.locator('[data-city-world-tools]').waitFor({ state: 'visible' });\n    return { page, context, requests, releaseArt };\n  };\n  const state = page => page.evaluate(() => window.__worldHandles.at(-1).handle.getState());\n"
+      },
+      {
+        "current": "  assert(Math.hypot(moving.position.x - waypoint.x, moving.position.y - waypoint.y) > 40 && moving.pathLength > 0, 'A waypoint starts real local walking instead of teleporting.');\n  await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0, undefined, { timeout: 15000 });\n  assert.equal((await state(page)).selectedVenue, 'stories');\n  // Capture the published reply before a later frame or host update can clear it.\n  const editorSpeech = await page.waitForFunction(() => {\n    const visible = [...document.querySelectorAll('.city-world__speech,.city-world__dialogue')].filter(node => !node.hidden);\n    return visible.some(node => node.textContent.includes('THE EDITOR')\n      && node.textContent.includes('A clue is a lead. Follow it, then compare what you find.'))\n      ? visible.map(node => node.textContent).join(' ') : false;\n  });\n  assert.match(await editorSpeech.jsonValue(), /A clue is a lead/);\n  await editorSpeech.dispose();\n  assert.deepEqual(mutations(requests.slice(beforeWaypoint)), []);\n  await page.keyboard.press('Escape');\n  let walkingPose = (await state(page)).position;\n",
+        "baseline": "  assert(Math.hypot(moving.position.x - waypoint.x, moving.position.y - waypoint.y) > 40 && moving.pathLength > 0, 'A waypoint starts real local walking instead of teleporting.');\n  await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0, undefined, { timeout: 15000 });\n  assert.equal((await state(page)).selectedVenue, 'stories');\n  await page.waitForFunction(() => [...document.querySelectorAll('.city-world__speech,.city-world__dialogue')]\n    .some(node => !node.hidden && node.textContent.includes('THE EDITOR')));\n  assert.match(await page.locator('.city-world__speech,.city-world__dialogue').allTextContents().then(text => text.join(' ')), /A clue is a lead/);\n  assert.deepEqual(mutations(requests.slice(beforeWaypoint)), []);\n  await page.keyboard.press('Escape');\n  let walkingPose = (await state(page)).position;\n"
       },
       {
         "current": "    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district) VALUES($1,$2,$3,$4)', [account, street, street.toLowerCase(), 'docks']);\n    historicalAccounts.push(account);\n  }\n  // Production migration assigns these identities before read-only directory access.\n  // Late-inserted legacy fixtures need the same permanent assignment before this browser journey.\n  await ensureDeedBuildings(app.pool);\n  const clearHistoricalHomes = async () => { for (const account of historicalAccounts) await app.pool.query('DELETE FROM street_deeds WHERE account_id=$1', [account]); };\n  fixtureCleanup.push(clearHistoricalHomes);\n  await preferences(neighbor, { chatEnabled: false });\n",
