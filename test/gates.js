@@ -3765,6 +3765,30 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/city-activity-browser.js':
+      'Historical evidence for Phaser actor activity cues; the visual-city renderer is no longer loaded by the game interface. Active activity API coverage remains in the release chain.',
+    'test/city-connected-scene-browser.js':
+      'Historical evidence for connected-scene rendering and pointer input; the visual-city scene mount and walking entry points were removed from the shipped interface.',
+    'test/city-dashboard-host-browser.js':
+      'Historical evidence for dashboard controls hosted beside the neighborhood scene; that overlay host and Player/Dashboard switch were removed. Current classic navigation has a browser gate.',
+    'test/city-district-arcs-browser.js':
+      'Historical evidence for district story journeys through Phaser venues and NPC controls; those visual-city entry points were removed. Backend story and quest gates remain active.',
+    'test/city-gameplay-panels-browser.js':
+      'Historical evidence for scene-mounted Home and PvE panels and their authority retirement; the visual-city panel host was removed. Backend Home and PvE coverage remains active.',
+    'test/city-presence-browser.js':
+      'Historical evidence for encounter interactions through rendered city actors; the visual-city presence host was removed. Authoritative presence and encounter API gates remain active.',
+    'test/city-scene-browser.js':
+      'Historical evidence for the walking city mode, scene loading and its view controls; those shipped entry points were removed. The classic interface browser gate covers their absence and normal tabs.',
+    'test/city-world-host-browser.js':
+      'Historical evidence for contextual world tools mounted inside the neighborhood scene; that visual-city host was removed. Ordinary game panels and backend world gates remain active.',
+    'test/city-world-layout-ui-browser.js':
+      'Historical evidence for the shared visual-city layout UI fixture; its runtime asset loads and active scene integration were removed from the game interface. Backend property and world layout coverage remains active.',
+    'test/city-world-ui-browser.js':
+      'Historical evidence for the visual-city world UI component lifecycle; its asset load and scene mounting path were removed from the game interface. Current classic UI and backend world gates remain active.',
+    'test/continuous-city-host-contract.js':
+      'Historical evidence for continuous-city scene host callbacks and receipt refresh boundaries; those host callbacks were removed from the shipped page. Ordinary receipt and native action gates remain active.',
+    'test/property-quest-city-browser.js':
+      'Historical evidence for property quests followed through city NPC controls across districts; those visual-city controls were removed. Backend property quest and ordinary Deeds gates remain active.',
     "test/saleattribution-fixture.js": "Import-only genuine four-original paid consignment attribution fixture; mandatory source/witness/API memory and strict native proofs execute it.",
     "test/saleattribution-native-fixture.js": "Import-only original strict consignment admission wrapper; mandatory native accounting/race/estate proofs execute it.",
     "test/saleattribution-current-native-fixture.js": "Import-only distinct current-source attribution adapter; original native guard remains separate and current full-cohort proofs execute this adapter.",
