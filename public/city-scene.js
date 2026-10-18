@@ -1135,6 +1135,13 @@
       actorReturn = trigger || Array.from(actorList.children).find(button => button.dataset.cityActor === id);
       actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
       renderActorDock(); renderPresence(); fitWorldFrame(); revealVenue(viewport);
+      // A short desktop can fit the map and HUD while clipping the taller action
+      // preview. Reveal it inside this dock only when the person is first opened.
+      const action = actorBody.querySelector('[data-city-encounter]');
+      if (action && window.innerWidth > 680) {
+        const bounds = action.getBoundingClientRect(), dock = actorDock.getBoundingClientRect();
+        actorDock.scrollTop += Math.max(0, Math.min(bounds.bottom - dock.bottom + 8, bounds.top - dock.top - 8));
+      }
       actorBody.focus({ preventScroll: true }); syncPointerBounds();
     }
     function showIntel() {
@@ -1880,7 +1887,7 @@
       const inspecting = Boolean(externalPanel || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());
       viewport.classList.toggle('is-inspecting', inspecting);
       root.classList.toggle('is-inspecting', inspecting);
-      if (!externalPanel && (!phone || !inspecting)) {
+      if (!externalPanel && ((!phone && (!document.body.classList.contains('city-player-view') || actorDock.hidden || actorView !== 'person')) || !inspecting)) {
         worldHud.style.removeProperty('--city-hud-height');
         worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', 'Walking resources and readiness');
@@ -1920,6 +1927,16 @@
         // Keep the issued objective with the map when the resource row still
         // fits. More severe chrome pressure retains the existing scroll budget.
         if (guidanceHeight && hudHeight - guidanceHeight >= worldHead.getBoundingClientRect().height) hudHeight -= guidanceHeight;
+        worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
+        const overflow = worldHud.scrollHeight > worldHud.clientHeight;
+        if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
+        worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
+      } else if (!phone && !actorDock.hidden && actorView === 'person') {
+        // Confirmed feedback can make the HUD taller than a short desktop's
+        // remaining frame. Keep one complete action preview beside the map.
+        const action = actorBody.querySelector('[data-city-encounter]');
+        const dockFloor = Math.max(64, Math.min(240, Math.ceil(action?.getBoundingClientRect().height || 0) + 16));
+        const hudHeight = Math.max(0, bottom - top - 16 - 96 - controls.getBoundingClientRect().height - dockFloor);
         worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
         const overflow = worldHud.scrollHeight > worldHud.clientHeight;
         if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');

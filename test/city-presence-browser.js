@@ -45,10 +45,10 @@ try {
   await app.listen({ host: '127.0.0.1', port: 0 });
   const base = 'http://127.0.0.1:' + app.server.address().port;
   browser = await chromium.launch({ executablePath, headless: true });
-  const newPage = async (viewport, { noResizeObserver = false, capturePlayer = false, playerToken = viewer.token } = {}) => {
+  const newPage = async (viewport, { noResizeObserver = false, capturePlayer = false, playerToken = viewer.token, initialPosition = null } = {}) => {
     const context = await browser.newContext({ viewport, serviceWorkers: 'block', isMobile: viewport.width <= 680, hasTouch: viewport.width <= 680 });
     if (noResizeObserver) await context.addInitScript(() => { window.ResizeObserver = undefined; });
-    await context.addInitScript(token => {
+    await context.addInitScript(({ token, initialPosition }) => {
       localStorage.setItem('omerta_token', token); localStorage.setItem('omerta_tour2', '1');
       window.__presenceGames = []; let engine;
       Object.defineProperty(window, 'Phaser', { configurable: true, get: () => engine, set: value => {
@@ -75,6 +75,7 @@ try {
           ? { ...options, onEncounterRetry: observeRetry(options.onEncounterRetry) } : options;
         api = { ...value, mount(...args) {
           args[1] = observeOptions(args[1]);
+          if (initialPosition) args[1] = { ...args[1], position: initialPosition };
           const handle = value.mount(...args), record = { handle, destroyed: false, character: { ...args[1].character }, retry: args[1].onEncounterRetry };
           window.__presenceHandles.push(record);
           window.__presenceModel = { ...args[1] };
@@ -82,7 +83,7 @@ try {
             destroy() { record.destroyed = true; return handle.destroy(); } };
         } };
       } });
-    }, playerToken);
+    }, { token: playerToken, initialPosition });
     const page = await context.newPage(); await page.bringToFront();
     page.on('pageerror', error => errors.push(error.message));
     const playerReply = capturePlayer ? page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/projections/player' && reply.status() === 200) : null;
@@ -433,19 +434,31 @@ try {
     if (await page.locator('.omerta-city__actor-dock:not([hidden])').count()) await page.locator('[data-city-actor-close]').click();
     if (await page.locator('.omerta-city__interaction:not([hidden])').count()) await page.locator('[data-city-close]').click();
     await assertCrowdedPlayerName(page);
+    assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles, 'The original phone keeps the same scene through the crowded-name checks.');
+    // The connected city's eastern edge is several districts away. Start a
+    // separate real scene near the Docks' western world boundary through the
+    // supported initial-position option, then reach that boundary by walking.
+    const world = (await state(page)).world;
+    const boundary = await newPage({ width: 1440, height: 1400 }, {
+      initialPosition: { x: world.x + 96, y: 256, facing: 'left' }
+    });
+    page = boundary.page;
+    const boundaryHandles = await page.evaluate(() => window.__presenceHandles.length);
+    assert.equal((await state(page)).position.x, world.x + 96, 'The real scene accepts the walkable western-margin starting position.');
     await page.locator('.omerta-city__canvas canvas').focus();
-    await page.keyboard.down('ArrowRight');
+    await page.keyboard.down('ArrowLeft');
     try {
       await page.waitForFunction(() => {
         const current = window.__presenceHandles.at(-1).handle.getState();
-        return current.position.x >= current.world.width - 64;
+        return current.position.x <= current.world.x + 32;
       }, undefined, { timeout: 5000 });
-    } finally { await page.keyboard.up('ArrowRight'); }
+    } finally { await page.keyboard.up('ArrowLeft'); }
     const edge = (await state(page)).position;
     await page.setViewportSize({ width: 375, height: 812 });
     await page.locator('#btn-player-view').click(); await inspect(page, actorId); await assertDockFrame(page);
-    assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
+    assert.equal(await page.evaluate(() => window.__presenceHandles.length), boundaryHandles);
     assert.deepEqual((await state(page)).position, edge, 'Phone inspection keeps the real edge arrival pose.');
+    assert(Math.abs((await state(page)).camera.x - world.x) <= 1, 'The camera is clamped at the actual continuous-world western boundary.');
     const samples = await page.evaluate(() => new Promise((resolve, reject) => {
       const values = [], next = () => {
         try {
@@ -465,6 +478,8 @@ try {
       assert(sample.left >= -1 && sample.right <= sample.width + 1,
         'The complete maximum-length player name stays in the rendered viewport at the reachable world edge: ' + JSON.stringify(sample));
     }
+    assert.deepEqual(mutations(boundary.requests), [], 'Initial-position restoration, boundary walking and inspection submit no gameplay.');
+    await boundary.context.close();
   };
   const encounter = async (page, id) => {
     await inspect(page, id);
@@ -691,6 +706,42 @@ try {
   await inspect(noObserver.page, npc.id); await assertDockFrame(noObserver.page);
   assert.deepEqual((await state(noObserver.page)).position, noObserverPose);
   assert.deepEqual(mutations(noObserver.requests), []);
+  // Confirmed feedback must leave a whole action target even without observers.
+  // This isolated page keeps its own receipt throughout the open/close comparison.
+  const feedbackPage = noObserver.page;
+  await feedbackPage.locator('[data-city-actor-close]').click();
+  await feedbackPage.setViewportSize({ width: 1366, height: 500 });
+  await feedbackPage.evaluate(() => window.__presenceHandles.at(-1).handle.update({ resourceReceipt: {
+    id: 'short-desktop-encounter-feedback', state: 'confirmed', label: 'Confirmed neighborhood action',
+    changes: [{ key: 'cash', label: 'Cash', value: 125 }, { key: 'nerve', label: 'Nerve', value: -4 },
+      { key: 'energy', label: 'Energy', value: -2 }, { key: 'health', label: 'Health', value: 3 }],
+    questCompletion: { id: 'short-desktop-encounter', title: 'A completed neighborhood lead' }
+  } }));
+  await frames(feedbackPage);
+  const feedbackClosed = await feedbackPage.locator('.omerta-city__canvas canvas').boundingBox();
+  const feedbackFit = await feedbackPage.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height'));
+  await inspect(feedbackPage, npc.id); await assertDockFrame(feedbackPage);
+  const actionFit = await feedbackPage.locator('[data-city-encounter]').evaluate(node => {
+    const button = node.getBoundingClientRect(), panel = node.closest('.omerta-city__actor-dock'), dock = panel.getBoundingClientRect();
+    return { button: button.toJSON(), dock: dock.toJSON(), scroll: panel.scrollTop,
+      hits: [button.top + 3, button.top + button.height / 2, button.bottom - 3].map(y => {
+        const hit = document.elementFromPoint(button.left + button.width / 2, y); return hit === node || node.contains(hit);
+      }) };
+  });
+  assert(actionFit.scroll > 0 && actionFit.button.top >= actionFit.dock.top && actionFit.button.bottom <= actionFit.dock.bottom
+    && actionFit.hits.every(Boolean), 'The whole encounter action is exposed inside the short dock under confirmed feedback: ' + JSON.stringify(actionFit));
+  const readerScroll = await feedbackPage.locator('.omerta-city__actor-dock').evaluate(node => { node.scrollTop += 20; return node.scrollTop; });
+  await feedbackPage.evaluate(() => window.dispatchEvent(new Event('resize'))); await frames(feedbackPage);
+  assert.equal(await feedbackPage.locator('.omerta-city__actor-dock').evaluate(node => node.scrollTop), readerScroll, 'Later fitting preserves the reader\'s dock scroll.');
+  await feedbackPage.locator('[data-city-actor-close]').click(); await frames(feedbackPage);
+  assert.equal(await feedbackPage.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height')), feedbackFit);
+  const feedbackRestored = await feedbackPage.locator('.omerta-city__canvas canvas').boundingBox();
+  assert(Math.abs(feedbackRestored.width - feedbackClosed.width) <= 1 && Math.abs(feedbackRestored.height - feedbackClosed.height) <= 1,
+    'Closing restores the same confirmed-feedback map dimensions.');
+  assert.equal(await feedbackPage.locator('.omerta-city__world-hud').evaluate(node => node.style.getPropertyValue('--city-hud-height')), '');
+  assert.deepEqual((await state(feedbackPage)).position, noObserverPose);
+  assert.deepEqual(mutations(noObserver.requests), [], 'Confirmed-feedback layout and reading controls submit no gameplay.');
+  console.log('Short desktop encounter feedback:', JSON.stringify(actionFit));
   await noObserver.context.close();
   await page.bringToFront();
   assert.equal(await page.locator('[data-city-intel]').count(), 7);
@@ -1026,15 +1077,18 @@ try {
 
   // Property signs are real directory records, not live character positions.
   const propertyViewer = await player('Property Explorer');
-  for (const [owner, street] of [[propertyViewer, 'Reader Home'], [human, 'Legacy <b> Lane'], [agent, 'Agent Stead'], [npc, 'Resident Row']]) {
-    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,corner_at) VALUES($1,$2,$3,$4,now())',
-      [owner.account_id, street, street.toLowerCase(), 'docks']);
+  for (const [owner, street, buildingId] of [[propertyViewer, 'Reader Home', 'docks-0001'], [human, 'Legacy <b> Lane', 'docks-0002'],
+    [agent, 'Agent Stead', 'docks-0003'], [npc, 'Resident Row', 'docks-0004']]) {
+    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,building_id,corner_at) VALUES($1,$2,$3,$4,$5,now())',
+      [owner.account_id, street, street.toLowerCase(), 'docks', buildingId]);
   }
   await app.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [agent.id, 'brick']);
   for (const viewport of [{ width: 1366, height: 768 }, { width: 375, height: 812 }]) {
     const property = await newPage(viewport, { playerToken: propertyViewer.token }), p = property.page;
     await p.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().homes?.length === 4);
     const homes = (await state(p)).homes, record = await p.evaluateHandle(() => window.__presenceHandles.at(-1));
+    assert.deepEqual(new Set(homes.map(home => home.buildingId)), new Set(['docks-0001', 'docks-0002', 'docks-0003', 'docks-0004']),
+      'Every physical property uses its confirmed permanent atlas plot.');
     const agentHome = homes.find(home => home.key === 'agent stead');
     assert.equal(agentHome.owner.kind, 'agent');
     assert.deepEqual(Object.keys(agentHome.owner).sort(), ['kind', 'name'], 'Property facts expose no steward position or private account identifier.');
