@@ -30,6 +30,7 @@ for (const row of CLASSIC_INTERFACE_OVER_F92.files) {
   const target = git('--no-replace-objects', 'show', CLASSIC_INTERFACE_OVER_F92.targetRevision + ':' + file);
   assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.revision, '--', file).trim(), row.mode + ' blob ' + row.currentBlob + '\t' + file);
   assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file).trim(), row.mode + ' blob ' + row.targetBlob + '\t' + file);
+  assert.equal(git('--no-replace-objects', 'ls-tree', 'HEAD', '--', file).trim(), row.mode + ' blob ' + row.currentBlob + '\t' + file, 'Actual committed source retains its authored mode and blob');
   assert.equal(git('--no-replace-objects', 'show', 'HEAD:' + file), current, 'Actual committed source remains the authored classic-interface input');
   assert.equal(hash(current), row.currentSha256); assert.equal(hash(target), row.targetSha256);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
@@ -63,6 +64,17 @@ for (const file of ['__proto__', 'constructor', 'toString', '../package.json', '
 for (const mutate of [pin => { pin.status = 'UNSEALED'; }, pin => { pin.revision = pin.targetRevision; }, pin => { pin.files[0].currentBlob = '0'.repeat(40); }, pin => { pin.files.pop(); }, pin => { pin.files[0].inverses.push(pin.files[0].inverses[0]); }]) {
   const pin = JSON.parse(JSON.stringify(CLASSIC_INTERFACE_OVER_F92)); mutate(pin); freezeClassicProbe(pin);
   assert.throws(() => qualifyClassicInterfaceSource('package.json', fs.readFileSync('package.json', 'utf8'), pin)); classicRefusals++;
+}
+// A frozen array with inherited toJSON must not hide alternate rows from the binding checksum.
+{
+  const forged = JSON.parse(JSON.stringify(CLASSIC_INTERFACE_OVER_F92)), row = forged.files[0];
+  const unreviewed = 'unreviewed classic interface source\n', target = git('--no-replace-objects', 'show', forged.targetRevision + ':' + row.file);
+  Object.assign(row, { currentBlob: blob(unreviewed), currentSha256: hash(unreviewed), currentRawSha256: { lf: hash(unreviewed), crlf: hash(unreviewed.replaceAll('\n', '\r\n')) }, currentBytes: Buffer.byteLength(unreviewed), inverses: [{ current: unreviewed, baseline: target }] });
+  const prototype = Object.create(Array.prototype);
+  Object.defineProperty(prototype, 'toJSON', { value: () => CLASSIC_INTERFACE_OVER_F92.files });
+  Object.freeze(prototype); Object.setPrototypeOf(forged.files, prototype); freezeClassicProbe(forged);
+  assert.equal(JSON.stringify(forged), JSON.stringify(CLASSIC_INTERFACE_OVER_F92), 'Forged serialization reproduces the exact binding checksum');
+  assert.throws(() => qualifyClassicInterfaceSource(row.file, unreviewed, forged)); classicRefusals++;
 }
 console.log(JSON.stringify({ phase: 'CLASSIC_INTERFACE_EXACT_SOURCE_ONLY', source: CLASSIC_INTERFACE_OVER_F92.revision, target: CLASSIC_INTERFACE_OVER_F92.targetRevision, files: 4, positives: classicPositives, refusals: classicRefusals, native: false, runtime: false }));
 // This local physical-reader hop admits only exact reviewed current UI bytes; frozen GUI/fixture proofs below are unchanged.

@@ -40,20 +40,51 @@ try {
     await page.locator('#btn-create').click();
     await page.locator('#screen-main:not(.hidden)').waitFor();
     await page.locator('#tour-next').click();
-    assert.match(await page.locator('#tour-next').innerText(), /MEET THE FIXER/);
+    assert.match(await page.locator('#tour-next').innerText(), /START YOUR FIRST JOB/);
+    const jobRequests = [];
+    const observeJobs = request => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/v1/crimes/')) jobRequests.push(request);
+    };
+    page.on('request', observeJobs);
     await page.locator('#tour-next').click();
     await page.locator('#welcome.hidden').waitFor({ state: 'attached' });
-    const enterFixer = page.getByRole('button', { name: 'Open The Fixer →', exact: true });
-    await enterFixer.waitFor({ state: 'visible' });
-    await enterFixer.click();
-    const crime = page.locator('[data-city-approach="standard"]');
+    await page.locator('#tab-streets.on').waitFor({ state: 'visible' });
+    assert.equal(await page.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected'), 'true');
+    assert.equal(await page.locator('#player-view-switch, #city-actions, #city-panel, #city-scene-host').count(), 0,
+      'onboarding uses the classic interface');
+    const crime = page.locator('#tab-streets [data-do^="POST /v1/crimes/"][data-operation-label$=": standard"]:not([disabled])').first();
     await crime.waitFor({ state: 'visible' });
+    const crimeLabel = await crime.getAttribute('data-operation-label');
+    const crimeCommand = await crime.getAttribute('data-do');
+    assert.equal(jobRequests.length, 0, 'arriving on Streets must not submit a job');
     const firstResponse = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
     await crime.click(); const first = await firstResponse;
     assert.equal(first.status(), 200, await first.text());
+    assert.equal(first.request().postDataJSON()?.approach, 'standard', 'the selected approach is submitted');
     const firstActionMs = Date.now() - started;
+    // Capture success while its toast is shown; small phones retain history outside the visible fold.
+    const toast = await page.waitForFunction(command => {
+      if (!document.querySelector('#resp')?.textContent.startsWith(command + '\n')) return false;
+      const notice = document.querySelector('#toast.show:not(.bad)[role="status"]');
+      if (!notice || notice.inert) return false;
+      const box = notice.getBoundingClientRect(), style = getComputedStyle(notice);
+      const text = notice.querySelector('span:not(.ti)')?.textContent?.trim();
+      return text && Number(style.opacity) > 0 && style.visibility !== 'hidden'
+        && box.width > 0 && box.height > 0 && box.bottom > 0 && box.top < innerHeight ? text : false;
+    }, crimeCommand, { timeout: 5000 });
+    const firstToast = await toast.jsonValue(); await toast.dispose();
     // The response can precede the client's queued refresh/result UI on slower hosts.
     await page.locator('#operation-desk[aria-busy="false"]').waitFor({ state: 'attached' });
+    const firstReceipt = page.locator('#operation-feed > .operation-receipt--success');
+    await firstReceipt.waitFor({ state: 'attached' });
+    assert.equal(await firstReceipt.locator('.operation-receipt__head b').textContent(), crimeLabel,
+      'the ordinary operation receipt identifies the selected street job');
+    const firstSummary = (await firstReceipt.locator('.operation-receipt__summary').textContent()).trim();
+    assert(firstSummary, 'the first job retains its result');
+    assert.equal(firstToast, firstSummary, 'the visible success toast matches the retained job receipt');
+    assert((await firstReceipt.locator('.operation-receipt__delta').textContent()).trim(), 'the first job retains resource changes');
+    assert.equal(jobRequests.length, 1, 'one explicit job selection makes exactly one request');
+    page.off('request', observeJobs);
     await page.locator('.vignette').waitFor({ state: 'hidden' });
     for (let dialogs = 0; dialogs < 4; dialogs++) {
       const closeResult = page.locator('.modal-bg[data-managed-dialog]:visible').last().locator('[data-x], [data-tipok]');
@@ -62,7 +93,6 @@ try {
     }
     assert.equal(await page.locator('.modal-bg[data-managed-dialog]:visible').count(), 0,
       'all first-action result/onboarding dialogs must have a real dismissal control');
-    if (await page.locator('body.city-player-view').count()) await page.locator('#btn-dashboard-view').click();
     await page.locator('#bnav [data-go="family"]').click();
     await page.locator('#tabs [data-tab="world"]').click();
     await page.locator('#tab-world .world-summary').waitFor();
@@ -90,7 +120,6 @@ try {
     if (overflow) findings.push(`${viewport.width}: Command Center page overflows horizontally`);
     await page.screenshot({ path: path.join(directory, `command-center-${viewport.width}.png`), fullPage: true });
     await page.reload({ waitUntil: 'networkidle' });
-    if (await page.locator('body.city-player-view').count()) await page.locator('#btn-dashboard-view').click();
     await page.locator('#bnav [data-go="family"]').click();
     await page.locator('#tabs [data-tab="world"]').click();
     await page.locator('#tab-world .world-summary').waitFor();

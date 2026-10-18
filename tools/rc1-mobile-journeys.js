@@ -68,7 +68,6 @@ try {
       return layout;
     };
     const openTab = async (tabId) => {
-      if (await page.locator('body.city-player-view').count()) await page.locator('#btn-dashboard-view').click();
       const destination = { world: 'family', garage: 'streets' }[tabId];
       assert(destination, 'The mobile journey uses a known bottom-navigation destination');
       await page.locator(`#bnav [data-go="${destination}"]`).click();
@@ -130,7 +129,7 @@ try {
       await page.locator('#btn-create').click();
       await page.waitForSelector('#welcome:not(.hidden)');
       await page.locator('#tour-next').click();
-      assert.match(await page.locator('#tour-next').innerText(), /MEET THE FIXER/);
+      assert.match(await page.locator('#tour-next').innerText(), /START YOUR FIRST JOB/);
       await page.locator('#tour-next').click();
       await page.waitForSelector('#welcome.hidden', { state: 'attached' });
       await openWorld();

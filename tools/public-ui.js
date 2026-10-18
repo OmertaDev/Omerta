@@ -450,11 +450,12 @@ try {
   await mobile.click('#btn-create');
   await mobile.waitForSelector('#screen-main:not(.hidden)');
   if (await mobile.locator('#welcome:not(.hidden)').count()) await mobile.click('#tour-skip');
-  await mobile.waitForSelector('.omerta-city__viewport');
-  check(await mobile.locator('#btn-player-view').getAttribute('aria-pressed') === 'true',
-    'The first-job welcome opens the neighborhood.');
-  await mobile.locator('#btn-dashboard-view').click();
-  await mobile.locator('#tabs [data-tab="streets"]').evaluate(button => button.click());
+  await mobile.waitForSelector('#tab-streets.on [data-do^="POST /v1/crimes/"]:not([disabled])');
+  check(await mobile.locator('#tab-streets.on').isVisible()
+      && await mobile.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected') === 'true',
+    'The first-job welcome opens Streets with an available job.');
+  check(await mobile.locator('#player-view-switch, #city-actions, #city-panel, #city-scene-host').count() === 0,
+    'The first-job welcome must use the classic interface.');
   const operationDesk = await mobile.evaluate(() => {
     const desk = document.querySelector('#operation-desk');
     const primary = desk?.querySelector('[data-operation-primary]');
