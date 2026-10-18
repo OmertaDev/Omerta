@@ -45,7 +45,7 @@ assert(isMainModule(new URL('../tools/graph.js', import.meta.url).href, graphPat
 assert(!isMainModule(import.meta.url, graphPath));
 
 // Full actual S150 raw admission remains separate from the frozen Commerce295 history proof.
-const FINAL_SERVICES_COMMERCE_GRAPH_TARGET=Object.freeze({"predecessor":"51d9ff8384fb3f769fadc33d4e696ffd2eb14b2b","files":150,"keysetSHA256":"fe8a16906fd5437cf717d26d9f072ffde162e8e8c33b0c62429637fe50b66bd5","graph":{"file":"test/graph.js","mode":"100644","blob":"1ea4bc49b727e5f143cdff2e85e95588fcbc19f8","sha256":"7e7bf97bafc75dcd91e69afc8e3e26e648b5b1b924f67bbab76686a6c5048faf","bytes":60004},"event":{"file":"src/eventmarkets.js","mode":"100644","blob":"ddc5c8fbc38084a732d8a44b1542cd99c5d5778d","sha256":"94ca7d9a06043c262519d6f4684c09056f05c1035d2f9896db3e68b436aa8816","bytes":44555}});
+const FINAL_SERVICES_COMMERCE_GRAPH_TARGET=Object.freeze({"predecessor":"da5bc87ca9e8e1fefd1e434bbf4dd52b1cf35988","files":150,"keysetSHA256":"fe8a16906fd5437cf717d26d9f072ffde162e8e8c33b0c62429637fe50b66bd5","graph":{"file":"test/graph.js","mode":"100644","blob":"1ea4bc49b727e5f143cdff2e85e95588fcbc19f8","sha256":"7e7bf97bafc75dcd91e69afc8e3e26e648b5b1b924f67bbab76686a6c5048faf","bytes":60004},"event":{"file":"src/eventmarkets.js","mode":"100644","blob":"ddc5c8fbc38084a732d8a44b1542cd99c5d5778d","sha256":"94ca7d9a06043c262519d6f4684c09056f05c1035d2f9896db3e68b436aa8816","bytes":44555}});
 function assertFinalServicesCommerceGraphSources(readRaw){
  const target=FINAL_SERVICES_COMMERCE_GRAPH_TARGET,binding=FINAL_SERVICES_COMMERCE_SOURCE_BINDING;
  assert.equal(binding.predecessorRevision,target.predecessor,'Only the genuine frozen Commerce target');
