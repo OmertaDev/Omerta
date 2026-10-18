@@ -1297,6 +1297,23 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Retain the server-supplied event and workflow source objects
+        timeout-minutes: 5
+        shell: bash
+        env:
+          EVENT_SOURCE: ${{ github.sha }}
+          WORKFLOW_SOURCE: ${{ github.workflow_sha }}
+        run: |
+          set -euo pipefail
+          for source in "$EVENT_SOURCE" "$WORKFLOW_SOURCE"; do
+            [[ "$source" =~ ^[0-9a-f]{40}$ ]] || { echo 'Missing exact hosted source' >&2; exit 1; }
+            if ! git cat-file -e "$source^{commit}"; then
+              timeout 120s git fetch --no-tags origin "$source"
+            fi
+            git cat-file -e "$source^{commit}"
+          done
+
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
@@ -1318,9 +1335,24 @@ jobs:
         env:
           CHAIN_ENABLED: 'off'
           RESOURCE_ECONOMY: 'off'
+          RESOURCE_COMPUTE: 'off'
           ENTERPRISE_NATIVE_PROFILE: ci
           ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
-        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:postgres
+          SERVICES_ENTERPRISE_EXECUTION_SOURCE: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          SERVICES_ENTERPRISE_POSTGRES: ${{ matrix.postgres }}
+          SERVICES_ENTERPRISE_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: env -u RC1_PG_BIN node tools/services-enterprise-native.js
+
+      - name: Retain current Services enterprise source and all sixteen native receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: services-enterprise-native-${{ matrix.postgres }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            output/services-enterprise-native-*/
+            output/services-enterprise-source-*.json
+          if-no-files-found: error
+          retention-days: 14
 
   pgcheck_commerce:
     if: ${{ !inputs.tail_only }}
