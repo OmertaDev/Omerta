@@ -15,7 +15,7 @@ export async function fixture(api=false){
   const ref=q=>({bookingId:q.offer?.bookingId??q.bookingId,sourceHash:q.offer?.sourceHash??q.sourceHash,consent:true});
   const accept=q=>({...ref(q),feeCash:100,bonusCash:10});
   const invoke=(action,a,b,key='booking-test-'+(++n),agentCredential=false)=>f.tx(c=>B[action+'ProductionBooking'](c,a,b,key,{agentCredential}));
-  const snapshot=async()=>{const s=await f.state();for(const t of ['production_booking_offers','production_booking_runs','production_booking_positions','production_booking_requests'])s[t]=(await f.pool.query('SELECT * FROM '+t)).rows.sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));return s;};
+  const snapshot=async(queryable=f.pool)=>{const s=await f.state(queryable);for(const t of ['production_booking_offers','production_booking_runs','production_booking_positions','production_booking_requests'])s[t]=(await queryable.query('SELECT * FROM '+t)).rows.sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));return s;};
   const books=async()=>{assert.deepEqual((await productionBookingAccounting(f.pool)).issues,[]);const b=await runLedgerInvariants(f.pool,{alert:false});assert.deepEqual(b.checks.filter(x=>!x.ok),[]);return b.checks.length;};
   return{...f,B,tool,terms,ref,accept,invoke,snapshot,books};
 }
