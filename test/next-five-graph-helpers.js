@@ -20,7 +20,7 @@ assert.deepEqual(extract(invariantSource,{unknown:'unreviewed helper'}),[]);nega
 // Exercise the actual exported extractor with each changed helper admitted under its
 // own TEST-only whole hash. This supplies no production profile or execution authority.
 {
- const p=profiles.find(p=>p.file==='src/consignments.js'),helper=helpers[p.file];
+ const p=profiles.find(p=>p.file==='src/consignments.js'),helper=normalizeText(helpers[p.file]);
  assert.equal(p.end,'\n\n// N16/N17 proposal: fixed source-bound private contexts, no caller-installed adapters.\n');
  const actualExtractor='('+extract.toString()+')';
  const inside=(text,target,replacement)=>{const start=text.indexOf('export async function '+p.fn+'('),end=text.indexOf(p.end,start);assert(start>=0&&end>start);const body=text.slice(start,end);assert.equal(body.split(target).length,2,'Exact unique collector causal target');return text.slice(0,start)+body.replace(target,()=>replacement)+text.slice(end);};
@@ -28,6 +28,7 @@ assert.deepEqual(extract(invariantSource,{unknown:'unreviewed helper'}),[]);nega
  const kept=text=>assert.deepEqual(Array.from(admitted(text),term=>[term.check,term.reason]),expected);
  const refused=text=>{assert.equal(admitted(text).some(term=>term.check===p.check),false);negatives++;};
  kept(helper);
+ kept(helper.replaceAll('\n','\r\n'));
  const outside=helper+'\n// Additional query outside the closed collector: '+p.sql+'\n';kept(outside);
  assert.equal(extract(invariantSource,{...helpers,[p.file]:outside}).some(term=>term.check===p.check),false,'Unknown whole helper bytes never use TEST-only admission');negatives++;
  refused(inside(helper,'return issues;','await c.query('+JSON.stringify(p.sql)+',[]);return issues;'));
