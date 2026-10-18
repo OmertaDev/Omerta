@@ -717,7 +717,7 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   const M=await import('../tools/rc1-source-pair.js'),pin=M.FINALSERVICES_ADDITIVE_PAIR;
   const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{encoding:'utf8',maxBuffer:32*1024*1024});
   const catalogText=await F.readFile(new URL('lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8'),catalog=JSON.parse(catalogText),old=JSON.parse(git('show',pin.predecessor+':test/lib/phase2-architecture-upgrade-catalog.json'));
-  A.equal(pin.predecessor,'a7319058183ff6420745be685cf39e39cc091a7e');A.equal(pin.tables.length,26);A.equal(pin.constraints,332);A.equal(pin.notNull,283);
+  A.equal(pin.predecessor,'f200d4d3d81dd64999f91bb30a74929452d8b341');A.equal(pin.tables.length,26);A.equal(pin.constraints,332);A.equal(pin.notNull,283);
   A.equal(sha256(catalogText),pin.candidateCatalog);A.equal(old.added.length,1675);A.equal(catalog.added.length,2007);A.deepEqual(catalog.added.slice(0,1675),old.added);
   const restored={...catalog,added:catalog.added.slice(0,1675),notNullColumns:{...catalog.notNullColumns}};
   for(const name of pin.tables){A(!Object.hasOwn(old.notNullColumns,name));delete restored.notNullColumns[name];}A.deepEqual(restored,old,'Every prior/unknown catalog field, ordered row and map remains exact');
