@@ -123,6 +123,7 @@ try {
       // Approximate UUID slots are not reserved near the phone camera. Use an
       // actual larger map and its real walking path before the phone tap proof.
       console.log('Phone actor navigation setup:', JSON.stringify({ viewport, ...view }));
+      console.log('Phone marker navigation branch:', JSON.stringify({ outcome: 'entered', viewport, actorPage: view.current.actorPage }));
       const handles = await page.evaluate(() => window.__presenceHandles.length), initial = view.current.position;
       if (await page.locator('.omerta-city__actor-dock:not([hidden])').count()) await page.locator('[data-city-actor-close]').click();
       await page.setViewportSize({ width: 1440, height: 1400 });
@@ -155,10 +156,39 @@ try {
         x: (actor.x - wide.current.camera.x) * wide.current.camera.zoom,
         y: (actor.y - 15 - wide.current.camera.y) * wide.current.camera.zoom } });
       assert((await state(page)).pathLength > 0, 'The real marker tap starts a walking path rather than relocating the player.');
+      const markerArrivalStarted = Date.now();
+      const markerArrivalDiagnostic = async outcome => {
+        try {
+          const actual = await page.evaluate(id => {
+            const current = window.__presenceHandles.at(-1).handle.getState();
+            const canvas = document.querySelector('.omerta-city__canvas canvas');
+            const game = window.__presenceGames.findLast(item => item.canvas === canvas && item.scene?.getScenes(true).length);
+            const live = game?.scene.getScenes(true)[0], pointer = live?.input.activePointer;
+            return { ready: current.ready, externalPanel: current.externalPanel, crossingPending: current.crossingPending,
+              selectedActor: current.selectedActor, actorOpening: current.actorOpening, actorPage: current.actorPage,
+              pathLength: current.pathLength, route: current.route.slice(0, 64), routeVenueId: current.routeVenueId,
+              position: current.position, camera: current.camera, expectedMarker: current.actorMarkers.find(item => item.id === id),
+              actorMarkers: current.actorMarkers.slice(0, 24), canvas: canvas.getBoundingClientRect().toJSON(), scroll: { x: scrollX, y: scrollY },
+              visibility: document.visibilityState, documentFocus: document.hasFocus(), activeElement: document.activeElement?.tagName,
+              game: game ? { isRunning: game.isRunning, loopFps: game.loop.actualFps, loopDelta: game.loop.delta, frame: game.loop.frame,
+                sceneActive: live.sys.isActive(), scenePaused: live.sys.isPaused() } : null,
+              pointer: pointer ? { x: pointer.x, y: pointer.y, worldX: pointer.worldX, worldY: pointer.worldY, isDown: pointer.isDown } : null };
+          }, actor.id);
+          console.log('Phone marker arrival diagnostic:', JSON.stringify({ outcome, viewport, expected: actor,
+            originalWideFrame: wide, elapsedMS: Date.now() - markerArrivalStarted, actual }));
+        } catch (diagnosticError) { console.log('Phone marker diagnostic unavailable:', diagnosticError.message); }
+      };
+      await markerArrivalDiagnostic('started');
+      try {
       await page.waitForFunction(id => {
         const current = window.__presenceHandles.at(-1).handle.getState();
         return current.selectedActor === id && current.pathLength === 0;
       }, actor.id, { timeout: 15000 });
+      } catch (error) {
+        await markerArrivalDiagnostic('failure');
+        throw error;
+      }
+      await markerArrivalDiagnostic('success');
       const arrival = (await state(page)).position;
       assert(Math.hypot(arrival.x - actor.x, arrival.y - actor.y) < 42, 'The actual path arrives beside the inspected actor.');
       assert.notDeepEqual(arrival, initial);
@@ -167,6 +197,9 @@ try {
       view = await markerFrame(page);
       assert.deepEqual(view.current.position, arrival, 'Restoring the phone preserves the actual arrival pose.');
       assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles, 'The same scene survives the navigation setup.');
+    } else {
+      console.log('Phone marker navigation branch:', JSON.stringify({ outcome: 'skipped', viewport, actorPage: view.current.actorPage,
+        position: view.current.position, camera: view.current.camera, visible: visibleMarker(view), box: view.box }));
     }
     assert.equal(await page.locator('.omerta-city__actor-dock:not([hidden])').count(), 0,
       'Both phone tap proofs start with the inspector closed.');

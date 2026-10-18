@@ -1592,6 +1592,32 @@ try {
 
   // Selecting the actual owned home is only a presentation hint. An explicit
   // confirmed ride precedes the fresh directory read and real entrance walk.
+  // Diagnostic-only passive observations: no route, handler, timer or UI replacement.
+  await cityPage.evaluate(() => {
+    const trace = { started: performance.now(), frames: 0, samples: [], events: [], stopped: false }, stops = [];
+    const active = () => ({ tag: document.activeElement?.tagName, id: document.activeElement?.id });
+    const sample = (now) => {
+      const record = window.__worldHandles.at(-1), state = record?.handle.getState(), game = window.__worldGames.at(-1);
+      return { at: now, frames: trace.frames, destroyed: record?.destroyed, ready: state?.ready, region: state?.region,
+        position: state?.position, pathLength: state?.pathLength, routeActive: state?.routeActive, route: state?.route?.slice(0, 64),
+        selectedHome: state?.selectedHome, selectedVenue: state?.selectedVenue, gameDock: state?.gameDock,
+        homes: state?.homes.slice(0, 32).map(home => ({ key: home.key, entrance: home.entrance })), scope: window.__worldReadScope?.(),
+        visibility: document.visibilityState, focused: document.hasFocus(), active: active(),
+        busy: !!document.querySelector('#busy.on'), game: { booted: game?.isBooted, running: game?.isRunning,
+          actualFps: game?.loop?.actualFps, delta: game?.loop?.delta, targetFps: game?.loop?.targetFps } };
+    };
+    const listen = (target, kind) => { const handler = event => { if (trace.events.length < 16) trace.events.push({ at: performance.now(),
+      kind, target: event.target?.id || event.target?.tagName || 'window', active: active(), visibility: document.visibilityState }); };
+      target.addEventListener(kind, handler, true); stops.push(() => target.removeEventListener(kind, handler, true)); };
+    for (const kind of ['blur', 'focus']) listen(window, kind); listen(document, 'visibilitychange');
+    let last = -Infinity, raf;
+    const step = now => { if (trace.stopped) return; trace.frames++; if (now - last >= 250 && trace.samples.length < 80) { trace.samples.push(sample(now)); last = now; }
+      raf = requestAnimationFrame(step); }; raf = requestAnimationFrame(step);
+    trace.finish = () => { if (!trace.stopped) { trace.stopped = true; cancelAnimationFrame(raf); stops.forEach(stop => stop()); }
+      return { ...trace, finish: undefined, final: sample(performance.now()), handles: window.__worldHandles.slice(-8).map(row => ({ destroyed: row.destroyed,
+        ready: row.handle.getState().ready })) }; };
+    window.__homeArrivalTrace = trace;
+  });
   const beforeHomeRide = await currentActor(neighbor), homeFares = await fares(neighbor);
   const homeRide = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/travel/brick');
   confirmation = await travelPrompt(propertyDistrict); await activate(confirmation.locator('[data-yes]'));
@@ -1602,8 +1628,19 @@ try {
   const homeMoving = await state(cityPage), homePlot = homeMoving.homes.find(home => home.key === key);
   assert(Math.hypot(homeMoving.position.x - homePlot.entrance.x, homeMoving.position.y - homePlot.entrance.y) > 40,
     'A confirmed ride followed by the real home entry starts walking instead of teleporting to the property.');
+  const homeArrivalStarted = Date.now();
+  try {
   await cityPage.waitForFunction(key => window.__worldHandles.at(-1).handle.getState().selectedHome === key
     && window.__worldHandles.at(-1).handle.getState().pathLength === 0, key, { timeout: 15000 });
+    try { console.log('Home arrival passive diagnostic:', JSON.stringify({ outcome: 'success', elapsedMS: Date.now() - homeArrivalStarted,
+      initial: homeMoving, plot: homePlot, trace: await cityPage.evaluate(() => window.__homeArrivalTrace.finish()) })); }
+    catch (diagnosticError) { console.log('Home arrival diagnostic unavailable:', diagnosticError.message); }
+  } catch (error) {
+    try { console.error('Home arrival passive diagnostic:', JSON.stringify({ outcome: 'failure', elapsedMS: Date.now() - homeArrivalStarted,
+      initial: homeMoving, plot: homePlot, trace: await cityPage.evaluate(() => window.__homeArrivalTrace.finish()) })); }
+    catch (diagnosticError) { console.error('Home arrival diagnostic unavailable:', diagnosticError.message); }
+    throw error;
+  } finally { await cityPage.evaluate(() => window.__homeArrivalTrace?.finish()).catch(() => {}); }
   const homeArrived = await state(cityPage);
   assert.equal(homeArrived.homes.filter(home => home.key === key).length, 1);
   assert(Math.hypot(homeArrived.position.x - homePlot.entrance.x, homeArrived.position.y - homePlot.entrance.y) < 42);
