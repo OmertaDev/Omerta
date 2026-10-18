@@ -6,9 +6,20 @@ import {execFileSync,spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_BINARY_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from './enterprise-native-inputs.js';
 import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS} from './enterprise-native-continuous-city-inputs.js';
+import {ENTERPRISE_NATIVE_X_AUTH_INPUTS} from './enterprise-native-x-auth-inputs.js';
 
 const SUCCESSOR_DATA='tools/enterprise-native-continuous-city-inputs.js';
 const SUCCESSOR_PREDECESSOR='792f1da708375fc28fca6fe9c4fb9c2c7c756ee6';
+const AUTH_SUCCESSOR_DATA='tools/enterprise-native-x-auth-inputs.js';
+const AUTH_SUCCESSOR_REVISION='c0f6219bd981961513ce0251cf2121407677771a';
+const AUTH_SUCCESSOR_PREDECESSOR='59dbb6d99312fa44dba1fbec5bdf24948740e0dc';
+export const ENTERPRISE_NATIVE_AUTH_REPLACEMENT_FILES=Object.freeze([
+ 'public/index.html','public/invite.html','src/agentgateway.js','src/auth.js','src/legal.js','src/server.js',
+ 'test/auth-fixture.js','test/continuous-city-source-compatibility.js','test/gates.js','test/server-fixture.js',
+ 'tools/continuous-city-source-compatibility.js',
+]);
+export const ENTERPRISE_NATIVE_AUTH_REMOVAL_FILES=Object.freeze(['src/age.js']);
+export const ENTERPRISE_NATIVE_AUTH_ADDITIONAL_FILES=Object.freeze(['tools/x-auth-source-compatibility.js']);
 // Closed GUI and bridge import/read closure; historical boot assets and inputs remain intact.
 export const ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES=Object.freeze([
  'package.json',
@@ -74,7 +85,7 @@ export const ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES=Object.freeze([
  'tools/genesis-auction-preflight.js',
  'tools/market-v2-deployment-plan.js',
 ]);
-export const ENTERPRISE_NATIVE_FILES=Object.freeze([...HISTORICAL_ENTERPRISE_NATIVE_FILES,...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.additions.map(row=>row.file),SUCCESSOR_DATA]);
+export const ENTERPRISE_NATIVE_FILES=Object.freeze([...HISTORICAL_ENTERPRISE_NATIVE_FILES.filter(file=>!ENTERPRISE_NATIVE_AUTH_REMOVAL_FILES.includes(file)),...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.additions.map(row=>row.file),SUCCESSOR_DATA,...ENTERPRISE_NATIVE_AUTH_ADDITIONAL_FILES,AUTH_SUCCESSOR_DATA]);
 const ROOT=fileURLToPath(new URL('../',import.meta.url));
 export const ENTERPRISE_NATIVE_PROOFS=Object.freeze([
  ['workshopfloor','WORKSHOP_FLOOR_TEST_DATABASE_URL','workshop_floor_test_',35439,300000],
@@ -96,8 +107,8 @@ export const ENTERPRISE_NATIVE_PROOFS=Object.freeze([
 ].map(row=>Object.freeze(row)));
 const INVENTORY=JSON.stringify(ENTERPRISE_NATIVE_PROOFS);
 const STAGED=Object.freeze(['tools/enterprise-native.js','test/enterprise-native-guard.js','tools/enterprise-native-inputs.js']);
-// Preserve the historical metadata exemptions; only the separate successor manifest is added.
-const SUCCESSOR_STAGED=Object.freeze([...STAGED,SUCCESSOR_DATA]);
+// Preserve both historical catalogues; only the separate auth manifest is added.
+const SUCCESSOR_STAGED=Object.freeze([...STAGED,SUCCESSOR_DATA,AUTH_SUCCESSOR_DATA]);
 const ADMINS=Object.freeze({35439:'postgresql://pilot_runner@127.0.0.1:35439/postgres',35449:'postgresql://pilot_runner@127.0.0.1:35449/postgres',5432:'postgresql://postgres:pgcheck@127.0.0.1:5432/postgres'});
 const DIRECTORIES=Object.freeze({35439:'c:/users/jorge/appdata/local/temp/omerta-economy-oct15-pg184',35449:'c:/users/jorge/appdata/local/temp/omerta-employment-pg184-proof'});
 const LEGAL=Object.freeze({LEGAL_OPERATOR_NAME:'CI Test Operator',LEGAL_POSTAL_ADDRESS:'123 Fixture Street, Test City',PRIVACY_CONTACT_EMAIL:'privacy@example.test',DMCA_AGENT_NAME:'CI Test Agent',DMCA_AGENT_EMAIL:'copyright@example.test',DMCA_AGENT_ADDRESS:'123 Fixture Street, Test City',DMCA_AGENT_PHONE:'+1 202 555 0100',DMCA_AGENT_REGISTERED:'true',PAYMENT_REFUND_POLICY:'Test fixture policy; not a production policy.'});
@@ -157,23 +168,63 @@ export function assertEnterpriseSuccessorTrackedInput(file,current,authored,cano
  assert.equal(authored.blob,pin.blob,'Pin must name the actual committed authored source: '+file);
  assert.equal(current.blob,pin.blob,'Actual runtime input changed after authored seal: '+file);assert.equal(sha(canonical),pin.sha256,'Actual runtime bytes changed after authored seal: '+file);
 }
+function effectivePredecessorPin(file){
+ return ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.replacements.find(row=>row.file===file)?.after||ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.additions.find(row=>row.file===file)||ENTERPRISE_NATIVE_BASE_INPUTS.find(row=>row.file===file);
+}
+export function assertEnterpriseAuthInputDefinition(manifest=ENTERPRISE_NATIVE_X_AUTH_INPUTS){
+ assert.equal(manifest.status,'SEALED','Auth native successor must be committed and sealed');
+ assert(Object.isFrozen(manifest)&&Object.isFrozen(manifest.replacements)&&Object.isFrozen(manifest.removals)&&Object.isFrozen(manifest.additions));
+ assert.deepEqual(Object.keys(manifest).sort(),['status','revision','predecessor','catalogRevision','legacyBaseRevision','replacements','removals','additions'].sort());
+ assert.equal(manifest.revision,AUTH_SUCCESSOR_REVISION);assert.equal(manifest.predecessor,AUTH_SUCCESSOR_PREDECESSOR);
+ assert.equal(manifest.catalogRevision,ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.revision);assert.equal(manifest.legacyBaseRevision,ENTERPRISE_NATIVE_BASE_REVISION);
+ const pin=value=>{assert(Object.isFrozen(value));assert.deepEqual(Object.keys(value).sort(),['blob','sha256','mode'].sort());assert.match(value.blob,/^[a-f0-9]{40}$/);assert.match(value.sha256,/^[a-f0-9]{64}$/);assert.equal(value.mode,'100644','Auth delta never changes executable or link modes');};
+ const before=row=>{pin(row.before);const old=effectivePredecessorPin(row.file);assert(old,'Auth delta requires an existing effective predecessor pin');assert.equal(row.before.blob,old.blob,'Effective predecessor blob remains immutable');assert.equal(row.before.sha256,old.sha256,'Effective predecessor SHA256 remains immutable');if(old.mode)assert.equal(row.before.mode,old.mode);};
+ for(const row of manifest.replacements){assert(Object.isFrozen(row));assert.deepEqual(Object.keys(row).sort(),['file','before','after'].sort());before(row);pin(row.after);assert.notEqual(row.before.blob,row.after.blob);assert.notEqual(row.before.sha256,row.after.sha256);}
+ for(const row of manifest.removals){assert(Object.isFrozen(row));assert.deepEqual(Object.keys(row).sort(),['file','before'].sort());before(row);}
+ for(const row of manifest.additions){assert(Object.isFrozen(row));assert.deepEqual(Object.keys(row).sort(),['file','blob','sha256','mode'].sort());pin(Object.freeze({blob:row.blob,sha256:row.sha256,mode:row.mode}));assert(!effectivePredecessorPin(row.file)&&!HISTORICAL_ENTERPRISE_NATIVE_FILES.includes(row.file)&&row.file!==SUCCESSOR_DATA&&row.file!==AUTH_SUCCESSOR_DATA,'Only the new captured auth helper may be added');}
+ assert.deepEqual(manifest.replacements.map(row=>row.file).sort(),[...ENTERPRISE_NATIVE_AUTH_REPLACEMENT_FILES],'Exactly the eleven auth replacements are admitted');
+ assert.deepEqual(manifest.removals.map(row=>row.file).sort(),[...ENTERPRISE_NATIVE_AUTH_REMOVAL_FILES],'Only the retired age module may be removed');
+ assert.deepEqual(manifest.additions.map(row=>row.file).sort(),[...ENTERPRISE_NATIVE_AUTH_ADDITIONAL_FILES],'Only the new source-proof import is added');
+}
+function assertAuthPin(file,current,authored,canonical,pin){
+ assert(Buffer.isBuffer(canonical));assert(current&&authored&&current.type==='blob'&&authored.type==='blob','Regular committed auth input required: '+file);
+ assert.equal(current.mode,pin.mode,'Auth current input mode drift: '+file);assert.equal(authored.mode,pin.mode,'Auth authored input mode drift: '+file);
+ assert.equal(current.blob,pin.blob,'Auth current input blob drift: '+file);assert.equal(authored.blob,pin.blob,'Auth authored input blob drift: '+file);
+ assert.equal(sha(canonical),pin.sha256,'Auth committed input bytes drift: '+file);
+ assert.equal(crypto.createHash('sha1').update(Buffer.from('blob '+canonical.length+'\0')).update(canonical).digest('hex'),pin.blob,'Auth committed Git bytes drift: '+file);
+}
+export function assertEnterpriseAuthTrackedInput(file,current,authored,canonical,manifest=ENTERPRISE_NATIVE_X_AUTH_INPUTS){
+ assert(!manifest.removals.some(row=>row.file===file),'Removed auth module cannot be captured');
+ const pin=manifest.replacements.find(row=>row.file===file)?.after||manifest.additions.find(row=>row.file===file);
+ if(pin)assertAuthPin(file,current,authored,canonical,pin);else assertEnterpriseSuccessorTrackedInput(file,current,authored,canonical);
+}
+export function assertEnterpriseAuthRemoval(file,predecessor,canonical,authored,current,physicalExists,manifest=ENTERPRISE_NATIVE_X_AUTH_INPUTS){
+ const row=manifest.removals.find(row=>row.file===file);assert(row,'No undeclared native input removal');
+ assertAuthPin(file,predecessor,predecessor,canonical,row.before);
+ assert.equal(authored,undefined,'Removed auth module must be absent from authored source');assert.equal(current,undefined,'Removed auth module must stay absent from current source');
+ assert.equal(physicalExists,false,'Removed auth module must be physically absent, including ignored links');
+}
 export function assertEnterpriseDirectoryEntries(directory,entries){const row=ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS.find(r=>r.directory===directory);assert(row,'Only the two source-defined boot directory scans');const extensions=directory==='public/art'?['.jpg','.jpeg','.png','.webp','.woff2','.mp4','.m4a']:['.mp4','.m4a'];assert(Array.isArray(entries));for(const name of entries)assert(typeof name==='string'&&name&&!name.includes('/')&&!name.includes('\\')&&name!=='.'&&name!=='..');const eligible=entries.filter(name=>extensions.includes(name.slice(name.lastIndexOf('.')).toLowerCase())).sort();assert.deepEqual(eligible,row.eligibleNames,'Unseen/removed/ignored eligible boot input; no finite-inventory fallback');return eligible;}
 function inspectDirectories(){return ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS.map(r=>({directory:r.directory,eligibleNames:assertEnterpriseDirectoryEntries(r.directory,fs.readdirSync(path.join(ROOT,r.directory)))}));}
 function tree(revision){return git('ls-tree','-r','-z',revision).toString().split('\0').filter(Boolean).map(line=>{const i=line.indexOf('\t'),[mode,type,blob]=line.slice(0,i).split(' ');return{file:line.slice(i+1),mode,type,blob,line};});}
 export function captureEnterpriseSource(){
- assertEnterpriseInputDefinition();assertEnterpriseSuccessorInputDefinition();const successor=ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS,revision=textGit('rev-parse','HEAD');assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(textGit('status','--porcelain','--untracked-files=all'),'','Clean exact committed source required');
+ assertEnterpriseInputDefinition();assertEnterpriseSuccessorInputDefinition();assertEnterpriseAuthInputDefinition();const successor=ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS,authSuccessor=ENTERPRISE_NATIVE_X_AUTH_INPUTS,revision=textGit('rev-parse','HEAD');assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(textGit('status','--porcelain','--untracked-files=all'),'','Clean exact committed source required');
  git('merge-base','--is-ancestor',ENTERPRISE_NATIVE_BASE_REVISION,successor.predecessor);git('merge-base','--is-ancestor',successor.predecessor,successor.revision);git('merge-base','--is-ancestor',successor.revision,revision);
- const records=tree(revision),current=new Map(records.map(r=>[r.file,r])),base=new Map(tree(ENTERPRISE_NATIVE_BASE_REVISION).map(r=>[r.file,r])),authored=new Map(tree(successor.revision).map(r=>[r.file,r])),pins=new Map(ENTERPRISE_NATIVE_BASE_INPUTS.map(r=>[r.file,r])),binary=new Set(ENTERPRISE_NATIVE_BINARY_FILES),files={};
+ git('merge-base','--is-ancestor',successor.revision,authSuccessor.predecessor);git('merge-base','--is-ancestor',authSuccessor.predecessor,authSuccessor.revision);git('merge-base','--is-ancestor',authSuccessor.revision,revision);
+ const records=tree(revision),current=new Map(records.map(r=>[r.file,r])),base=new Map(tree(ENTERPRISE_NATIVE_BASE_REVISION).map(r=>[r.file,r])),oldAuthored=new Map(tree(successor.revision).map(r=>[r.file,r])),predecessor=new Map(tree(authSuccessor.predecessor).map(r=>[r.file,r])),authored=new Map(tree(authSuccessor.revision).map(r=>[r.file,r])),pins=new Map(ENTERPRISE_NATIVE_BASE_INPUTS.map(r=>[r.file,r])),binary=new Set(ENTERPRISE_NATIVE_BINARY_FILES),files={};
+ for(const row of [...authSuccessor.replacements,...authSuccessor.removals]){const canonical=git('show',authSuccessor.predecessor+':'+row.file),prior=predecessor.get(row.file);assertEnterpriseSuccessorTrackedInput(row.file,prior,oldAuthored.get(row.file),canonical);assertAuthPin(row.file,prior,prior,canonical,row.before);}
+ for(const row of authSuccessor.removals)assertEnterpriseAuthRemoval(row.file,predecessor.get(row.file),git('show',authSuccessor.predecessor+':'+row.file),authored.get(row.file),current.get(row.file),fs.lstatSync(path.join(ROOT,row.file),{throwIfNoEntry:false})!==undefined);
+ for(const row of authSuccessor.additions)assert.equal(predecessor.get(row.file),undefined,'New auth helper must be absent from predecessor');
  assert.equal(new Set(ENTERPRISE_NATIVE_FILES).size,ENTERPRISE_NATIVE_FILES.length,'Complete successor input inventory has no duplicates');
  for(const f of ENTERPRISE_NATIVE_FILES){
   const tracked=current.get(f);assert(tracked&&tracked.type==='blob'&&['100644','100755'].includes(tracked.mode),'Regular committed file required: '+f);const file=path.join(ROOT,f),stat=fs.lstatSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());const raw=fs.readFileSync(file),canonical=git('show',revision+':'+f);assert.equal(stat.size,raw.length,'Stable actual boot stat size');assertEnterpriseNativeTrackedBytes(raw,canonical,binary.has(f));
   if(!SUCCESSOR_STAGED.includes(f)){
    const pin=pins.get(f),old=base.get(f);if(pin){assert(old&&old.type==='blob');assert.equal(old.blob,pin.blob,f);assert.equal(old.mode,tracked.mode,f);assert.equal(sha(git('show',ENTERPRISE_NATIVE_BASE_REVISION+':'+f)),pin.sha256,f);}
-   assertEnterpriseSuccessorTrackedInput(f,tracked,authored.get(f),canonical,successor);
+   assertEnterpriseAuthTrackedInput(f,tracked,authored.get(f),canonical,authSuccessor);
   }
   files[f]={sha256:sha(raw),gitSha256:sha(canonical),blob:tracked.blob,binary:binary.has(f),bytes:raw.length};
  }
- const result={revision,baseRevision:ENTERPRISE_NATIVE_BASE_REVISION,authoredRevision:successor.revision,predecessorRevision:successor.predecessor,fullGitTreeSha256:sha(JSON.stringify(records.map(r=>r.line).sort())),stagedFiles:[...SUCCESSOR_STAGED],historicalStagedFiles:[...STAGED],successorReplacements:successor.replacements.map(row=>row.file),successorAdditions:successor.additions.map(row=>row.file),directoryMemberships:inspectDirectories(),directoryPredicateSource:{file:'src/server.js',...files['src/server.js']},files};assertStable(result);return result;
+ const result={revision,baseRevision:ENTERPRISE_NATIVE_BASE_REVISION,authoredRevision:authSuccessor.revision,predecessorRevision:authSuccessor.predecessor,previousAuthoredRevision:successor.revision,fullGitTreeSha256:sha(JSON.stringify(records.map(r=>r.line).sort())),stagedFiles:[...SUCCESSOR_STAGED],historicalStagedFiles:[...STAGED],successorReplacements:successor.replacements.map(row=>row.file),successorAdditions:successor.additions.map(row=>row.file),authReplacements:authSuccessor.replacements.map(row=>row.file),authRemovals:authSuccessor.removals.map(row=>row.file),authAdditions:authSuccessor.additions.map(row=>row.file),directoryMemberships:inspectDirectories(),directoryPredicateSource:{file:'src/server.js',...files['src/server.js']},files};assertStable(result);return result;
 }
 function assertStable(source){assert.equal(textGit('rev-parse','HEAD'),source.revision);assert.equal(textGit('status','--porcelain','--untracked-files=all'),'');for(const[f,p]of Object.entries(source.files)){const file=path.join(ROOT,f),stat=fs.lstatSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());assert.equal(stat.size,p.bytes,'Actual boot stat size changed: '+f);assert.equal(sha(fs.readFileSync(file)),p.sha256,'Input changed during qualification: '+f);}assert.deepEqual(inspectDirectories(),source.directoryMemberships);}
 export function assertEnterpriseBackend(row,profile,port){assert(profile==='local'||profile==='ci');assert.deepEqual(Object.keys(row).sort(),['role','database','version','directory'].sort());assert.equal(row.role,profile==='local'?'pilot_runner':'postgres');assert.equal(row.database,'postgres');assert.equal(typeof row.directory,'string');assert(row.directory.length);if(profile==='local'){assert(port===35439||port===35449);assert.match(row.version,/^18\.4\b/);assert.equal(row.directory.replaceAll('\\','/').toLowerCase(),DIRECTORIES[port]);}else{assert.equal(port,5432);assert.match(row.version,/^(?:16\b|18\.4\b)/);}}

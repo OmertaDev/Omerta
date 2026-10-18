@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {ENTERPRISE_NATIVE_AUTH_REPLACEMENT_FILES,ENTERPRISE_NATIVE_AUTH_REMOVAL_FILES,ENTERPRISE_NATIVE_AUTH_ADDITIONAL_FILES,assertEnterpriseAuthInputDefinition,assertEnterpriseAuthTrackedInput,assertEnterpriseAuthRemoval} from '../tools/enterprise-native.js';
+import {ENTERPRISE_NATIVE_X_AUTH_INPUTS} from '../tools/enterprise-native-x-auth-inputs.js';
 import {ENTERPRISE_NATIVE_PROOFS,ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES,ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES,assertEnterpriseInventory,assertEnterpriseNativeMode,assertEnterpriseNativeTrackedBytes,assertEnterpriseInputDefinition,assertEnterpriseSuccessorInputDefinition,assertEnterpriseSuccessorTrackedInput,assertEnterpriseDirectoryEntries,assertEnterpriseBackend,enterpriseChildEnv,assertEnterpriseResults,assertEnterpriseCleanup} from '../tools/enterprise-native.js';
 import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from '../tools/enterprise-native-inputs.js';
 import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS} from '../tools/enterprise-native-continuous-city-inputs.js';
@@ -69,8 +72,46 @@ else{
  pass('real successor declaration is sealed',()=>assertEnterpriseSuccessorInputDefinition());
  for(const row of [...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.replacements.map(row=>({file:row.file,...row.after})),...ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS.additions]){
   const raw=fs.readFileSync(new URL('../'+row.file,import.meta.url)),canonical=Buffer.from(raw.toString('utf8').replaceAll('\r\n','\n'));
-  const actual={type:'blob',mode:row.mode,blob:gitBlob(canonical)};
-  pass('actual successor bytes '+row.file,()=>assertEnterpriseSuccessorTrackedInput(row.file,actual,{type:'blob',mode:row.mode,blob:row.blob},canonical));
+  const pin=ENTERPRISE_NATIVE_X_AUTH_INPUTS.replacements.find(item=>item.file===row.file)?.after||row;
+  const actual={type:'blob',mode:pin.mode,blob:gitBlob(canonical)};
+  pass('actual successor bytes '+row.file,()=>{assertEnterpriseNativeTrackedBytes(raw,canonical,false);assertEnterpriseAuthTrackedInput(row.file,actual,{type:'blob',mode:pin.mode,blob:pin.blob},canonical);});
  }
 }
+pass('real auth successor preserves the effective historical catalogue',()=>assertEnterpriseAuthInputDefinition());
+assert.equal(ENTERPRISE_NATIVE_AUTH_REPLACEMENT_FILES.length,11);assert.deepEqual(ENTERPRISE_NATIVE_AUTH_REMOVAL_FILES,['src/age.js']);assert.deepEqual(ENTERPRISE_NATIVE_AUTH_ADDITIONAL_FILES,['tools/x-auth-source-compatibility.js']);
+assert(!ENTERPRISE_NATIVE_FILES.includes('src/age.js'));assert(ENTERPRISE_NATIVE_FILES.includes('tools/x-auth-source-compatibility.js'));assert(ENTERPRISE_NATIVE_FILES.includes('tools/enterprise-native-x-auth-inputs.js'));assert.equal(new Set(ENTERPRISE_NATIVE_FILES).size,ENTERPRISE_NATIVE_FILES.length);
+for(const field of ['replacements','removals','additions'])for(const row of ENTERPRISE_NATIVE_X_AUTH_INPUTS[field])reject('auth successor refuses omitted '+row.file,()=>{const changed=clone(ENTERPRISE_NATIVE_X_AUTH_INPUTS);changed[field]=changed[field].filter(item=>item.file!==row.file);assertEnterpriseAuthInputDefinition(freeze(changed));});
+for(const mutate of [
+ x=>{x.status='UNSEALED';},x=>{x.revision='d'.repeat(40);},x=>{x.predecessor='d'.repeat(40);},x=>{x.catalogRevision='d'.repeat(40);},x=>{x.legacyBaseRevision='d'.repeat(40);},
+ x=>{x.stagedFiles=['src/server.js'];},x=>{x.replacements[0].before.blob='d'.repeat(40);},x=>{x.replacements[0].before.sha256='d'.repeat(64);},
+ x=>{x.replacements[0].after.mode='100755';},x=>{x.replacements[0].before.mode='120000';},x=>{x.replacements[0].after.blob=x.replacements[0].before.blob;},
+ x=>{x.replacements[0].file='tools/enterprise-native.js';},x=>{x.replacements.push(x.replacements[0]);},x=>{x.removals.push(x.removals[0]);},
+ x=>{x.removals[0].file='src/auth.js';},x=>{x.removals[0].before.blob='d'.repeat(40);},x=>{x.removals[0].before.mode='100755';},
+ x=>{x.additions.push(x.additions[0]);},x=>{x.additions[0].file='src/server.js';},x=>{x.additions[0].file='tools/enterprise-native-x-auth-inputs.js';},
+ x=>{x.additions[0].mode='120000';},x=>{x.additions[0].file='../tools/x-auth-source-compatibility.js';},
+])reject('auth delta mutation fails closed',()=>{const changed=clone(ENTERPRISE_NATIVE_X_AUTH_INPUTS);mutate(changed);assertEnterpriseAuthInputDefinition(freeze(changed));});
+reject('mutable auth successor metadata',()=>assertEnterpriseAuthInputDefinition(clone(ENTERPRISE_NATIVE_X_AUTH_INPUTS)));
+for(const row of [...ENTERPRISE_NATIVE_X_AUTH_INPUTS.replacements.map(row=>({file:row.file,...row.after})),...ENTERPRISE_NATIVE_X_AUTH_INPUTS.additions]){
+ const raw=fs.readFileSync(new URL('../'+row.file,import.meta.url)),canonical=Buffer.from(raw.toString('utf8').replaceAll('\r\n','\n')),record={type:'blob',mode:row.mode,blob:row.blob};
+ pass('actual auth successor bytes '+row.file,()=>{assertEnterpriseNativeTrackedBytes(raw,canonical,false);assertEnterpriseAuthTrackedInput(row.file,record,record,canonical);});
+ reject('auth canonical byte drift '+row.file,()=>assertEnterpriseAuthTrackedInput(row.file,record,record,Buffer.concat([canonical,Buffer.from('// drift\n')])));
+ reject('auth authored blob drift '+row.file,()=>assertEnterpriseAuthTrackedInput(row.file,record,{...record,blob:'d'.repeat(40)},canonical));
+ reject('auth current blob drift '+row.file,()=>assertEnterpriseAuthTrackedInput(row.file,{...record,blob:'d'.repeat(40)},record,canonical));
+ reject('auth current mode drift '+row.file,()=>assertEnterpriseAuthTrackedInput(row.file,{...record,mode:'100755'},record,canonical));
+ reject('auth authored mode drift '+row.file,()=>assertEnterpriseAuthTrackedInput(row.file,record,{...record,mode:'100755'},canonical));
+ reject('auth link mode drift '+row.file,()=>assertEnterpriseAuthTrackedInput(row.file,{...record,mode:'120000'},record,canonical));
+ reject('auth mixed committed bytes '+row.file,()=>assertEnterpriseAuthTrackedInput(row.file,record,record,Buffer.from(canonical.toString().replace('\n','\r\n'))));
+}
+const removed=ENTERPRISE_NATIVE_X_AUTH_INPUTS.removals[0],removedBytes=execFileSync('git',['cat-file','blob',removed.before.blob],{cwd:new URL('../',import.meta.url)}),removedRecord={type:'blob',mode:removed.before.mode,blob:removed.before.blob};
+pass('retired age input requires exact prior evidence and actual absence',()=>{assert(!fs.lstatSync(new URL('../'+removed.file,import.meta.url),{throwIfNoEntry:false}));assertEnterpriseAuthRemoval(removed.file,removedRecord,removedBytes,undefined,undefined,false);});
+reject('removed module cannot return to captured inputs',()=>assertEnterpriseAuthTrackedInput(removed.file,removedRecord,removedRecord,removedBytes));
+for(const [file,prior,bytes,authored,current,exists] of [
+ ['src/auth.js',removedRecord,removedBytes,undefined,undefined,false],
+ [removed.file,{...removedRecord,blob:'d'.repeat(40)},removedBytes,undefined,undefined,false],
+ [removed.file,{...removedRecord,mode:'100755'},removedBytes,undefined,undefined,false],
+ [removed.file,removedRecord,Buffer.from('drift'),undefined,undefined,false],
+ [removed.file,removedRecord,removedBytes,removedRecord,undefined,false],
+ [removed.file,removedRecord,removedBytes,undefined,removedRecord,false],
+ [removed.file,removedRecord,removedBytes,undefined,undefined,true],
+])reject('undeclared or incomplete removal refuses native capture',()=>assertEnterpriseAuthRemoval(file,prior,bytes,authored,current,exists));
 console.log(JSON.stringify({phase:'SOURCE_ONLY_ENTERPRISE_NATIVE_GUARDS',checks:checks.length,syntheticAdmissionFixturesOnly:true,postgresImportsOrConnections:0,nativeExecution:false,sourceCaptureExecuted:false,release:false}));
