@@ -1,3 +1,4 @@
+import './robinhood-work-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';

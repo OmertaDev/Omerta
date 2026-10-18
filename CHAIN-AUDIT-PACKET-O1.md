@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory refreshed 2026-10-15; historical baseline measured 2026-09-14.** This supersedes
+> **LIVE PACKET — source inventory refreshed 2026-10-18; historical baseline measured 2026-09-14.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -53,14 +53,14 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 58 contracts + 12 interfaces, current owned source inventory
+## 1. SCOPE — 59 contracts + 12 interfaces, current owned source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-owned `omerta-contracts/src` modules — 70 Solidity files, 58 contracts and 12 interfaces.
+owned `omerta-contracts/src` modules — 71 Solidity files, 59 contracts and 12 interfaces.
 The additional 35 vendored Solidity files are included through the complete pinned
 [dependency manifest](omerta-contracts/src/genesis-auction/vendor/SOURCE-MANIFEST.json),
-including its declared local CCA patch. Together these identify all 105 source files; libraries
+including its declared local CCA patch. Together these identify all 106 source files; libraries
 and data types in that closure are source-review dependencies, not independently deployable contracts.
 This is the complete source inventory, not a claim that one review package clears every component.
 The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market/`;
@@ -146,6 +146,8 @@ retain their original scopes and conclusions.
 | 69 | `OmertaWorkEscrowV2` | immutable original-party ETH/native issuer USDC work escrow candidate: funded reserve, acceptance, allocation, payee settlement and unused original-funder recovery; no admin, redirect, upgrade or sweep. Public financial activation remains OFF | `test/market-v2/WorkEscrowV2.t.sol` |
 
 | 70 | `OmertaWorkEscrowBase` | immutable Base-only ETH/canonical USDC work escrow candidate: original-funder reserve, acceptance, explicit allocation, payee settlement and unused original-funder recovery; chain/token binding and deployment have separate review gates. Public financial activation remains OFF | `test/market-v2/OmertaWorkEscrowBase.t.sol` |
+
+| 71 | `OmertaWorkEscrowRobinhood` | Robinhood Chain 4663 canonical USDG-only work escrow candidate: exact original-customer funding, immutable payee and terms, voluntary outcome allocation, payee-only settlement and original-funder recovery of unallocated reserves. Separate chain deployment and funding gates apply; public financial activation remains OFF | `test/OmertaWorkEscrowRobinhood.t.sol` |
 
 The Base entry records source scope only; it does not extend the original escrow's test evidence or establish a deployed, funded payout service.
 
