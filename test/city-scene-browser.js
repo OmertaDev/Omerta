@@ -950,17 +950,33 @@ try {
     entry.handle.update({ character: { ...entry.options.character, cash: Number(entry.options.character.cash) + 77 } });
   });
   assert.equal(await page.locator('[data-city-resource-delta]:visible').count(), 0, 'A resource poll change does not invent action badges.');
-  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-confirmed-fixture', state: 'confirmed', label: 'Confirmed job', changes: [
-    { key: 'cash', label: 'Cash', value: 35 }, { key: 'nerve', label: 'Nerve', value: -2 }
-  ] } }));
-  assert.equal(await page.locator('[data-city-resource=cash] [data-city-resource-delta]').textContent(), '+$35');
-  assert.equal(await page.locator('[data-city-resource=nerve] [data-city-resource-delta]').textContent(), '−2');
-  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-confirmed-fixture', state: 'confirmed', changes: [{ key: 'cash', value: 999 }] } }));
-  assert.equal(await page.locator('[data-city-resource=cash] [data-city-resource-delta]').textContent(), '+$35', 'A replay cannot replace a confirmed badge.');
-  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-retry-fixture', state: 'error', changes: [{ key: 'cash', value: 999 }] } }));
-  assert.equal(await page.locator('[data-city-resource-delta]:visible').count(), 0, 'Failed receipts clear action badges.');
-  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ resourceReceipt: { id: 'scene-retry-fixture', state: 'confirmed', changes: [{ key: 'cash', value: -5 }] } }));
-  assert.equal(await page.locator('[data-city-resource=cash] [data-city-resource-delta]').textContent(), '−$5', 'A successful same-key retry shows the authoritative result.');
+  const receiptSnapshots = await page.evaluate(() => {
+    const handle = window.__cityHandles.at(-1).handle;
+    const snapshot = () => ({
+      cash: document.querySelector('[data-city-resource=cash] [data-city-resource-delta]').textContent,
+      nerve: document.querySelector('[data-city-resource=nerve] [data-city-resource-delta]').textContent,
+      visibleDeltas: Array.from(document.querySelectorAll('[data-city-resource-delta]')).filter(node => {
+        const bounds = node.getBoundingClientRect(), style = getComputedStyle(node);
+        return style.visibility !== 'hidden' && style.visibility !== 'collapse' && bounds.width > 0 && bounds.height > 0;
+      }).length,
+    });
+    // Keep the synchronous fixture sequence together; authoritative refreshes can clear badges.
+    handle.update({ resourceReceipt: { id: 'scene-confirmed-fixture', state: 'confirmed', label: 'Confirmed job', changes: [
+      { key: 'cash', label: 'Cash', value: 35 }, { key: 'nerve', label: 'Nerve', value: -2 }
+    ] } });
+    const confirmed = snapshot();
+    handle.update({ resourceReceipt: { id: 'scene-confirmed-fixture', state: 'confirmed', changes: [{ key: 'cash', value: 999 }] } });
+    const replayed = snapshot();
+    handle.update({ resourceReceipt: { id: 'scene-retry-fixture', state: 'error', changes: [{ key: 'cash', value: 999 }] } });
+    const failed = snapshot();
+    handle.update({ resourceReceipt: { id: 'scene-retry-fixture', state: 'confirmed', changes: [{ key: 'cash', value: -5 }] } });
+    return { confirmed, replayed, failed, retried: snapshot() };
+  });
+  assert.equal(receiptSnapshots.confirmed.cash, '+$35');
+  assert.equal(receiptSnapshots.confirmed.nerve, '−2');
+  assert.equal(receiptSnapshots.replayed.cash, '+$35', 'A replay cannot replace a confirmed badge.');
+  assert.equal(receiptSnapshots.failed.visibleDeltas, 0, 'Failed receipts clear action badges.');
+  assert.equal(receiptSnapshots.retried.cash, '−$5', 'A successful same-key retry shows the authoritative result.');
   await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ character: window.__receiptOriginalCharacter, resourceReceipt: null }));
   await page.evaluate(() => {
     const entry = window.__cityHandles.at(-1);
@@ -1554,6 +1570,7 @@ try {
   await mobile.locator('[data-city-close]').tap();
   assert.equal(await mobile.locator('.omerta-city__interaction').isVisible(), false, 'Touch users can close venue details.');
   if (shots) await mobile.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-mobile.png'), style: sceneShotStyle });
+  await mobile.context().close();
 
   // An image outage retains local exploration and the existing gameplay destinations.
   const missingArt = await newPage();
@@ -1573,6 +1590,7 @@ try {
   await missingArt.locator('.omerta-city__destination[data-destination="stories"]').click();
   await missingArt.locator('[data-city-open]').click();
   await missingArt.waitForSelector('#tab-desk.on', { state: 'attached' });
+  await missingArt.context().close();
 
   // A slow asset response must not resurrect a scene after the player has left Map.
   const delayed = await newPage();
@@ -1596,6 +1614,7 @@ try {
   assert.equal(await delayed.locator('.omerta-city__canvas canvas').count(), 0, 'Delayed engine cannot mount onto an abandoned Map tab.');
   assert(await delayed.evaluate(() => window.__cityHandles.every(entry => entry.destroyed)), 'No live renderer handle survives a delayed tab departure.');
   assert.notEqual(await delayed.evaluate(() => document.activeElement?.tagName), 'CANVAS', 'A departed entry intent cannot steal focus.');
+  await delayed.context().close();
 
   // Later modal focus and authoritative identity changes cancel pending entry before readiness.
   for (const reason of ['modal', 'identity', 'wheel', 'keyboard', 'touch', 'blur', 'hidden']) {
@@ -1701,6 +1720,7 @@ try {
   for (const tab of tabs) assert(fallbackTabs.includes(tab), 'Missing scene module retains gameplay destination ' + tab);
   await missingScene.locator('[data-city-jump="streets"]').first().click();
   await missingScene.waitForSelector('#tab-streets.on', { state: 'attached' });
+  await missingScene.context().close();
 
   // Missing Phaser retains the renderer's accessible destinations.
   const missingEngine = await newPage();
@@ -1737,6 +1757,7 @@ try {
   await selectTab(missingEngine, 'map');
   await waitForCity(missingEngine);
   assert.equal(await missingEngine.locator('.omerta-city__canvas canvas').count(), 1, 'Returning after an engine load failure retries the engine successfully.');
+  await missingEngine.context().close();
 
   // Confirmed directory rows create physical plots; the server still owns travel and deeds.
   const landActor = async (name, kind = 'player') => {
@@ -1771,8 +1792,19 @@ try {
   await land.locator('[data-city-world-close]').click();
   const home = (await state(land)).homes.find(home => home.key === 'amber row');
   await land.locator('[data-city-home="amber row"]').click();
-  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().selectedHome === 'amber row'
-    && window.__cityHandles.at(-1).handle.getState().pathLength === 0);
+  try {
+    await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().selectedHome === 'amber row'
+      && window.__cityHandles.at(-1).handle.getState().pathLength === 0);
+  } catch (error) {
+    const diagnostic = await land.evaluate(() => {
+      const current = window.__cityHandles.at(-1)?.handle.getState();
+      return { position: current?.position, pathLength: current?.pathLength, routeActive: current?.routeActive,
+        selectedHome: current?.selectedHome, focused: document.hasFocus(), visibility: document.visibilityState,
+        active: document.activeElement?.tagName, fps: window.__cityGames.at(-1)?.loop?.actualFps };
+    }).catch(() => ({ unavailable: true }));
+    console.error('City home arrival diagnostic:', JSON.stringify(diagnostic));
+    throw error;
+  }
   const arrivedHome = await state(land);
   assert(Math.hypot(arrivedHome.player.x - home.entrance.x, arrivedHome.player.y - home.entrance.y) < 20, 'The real waypoint route arrives at the house entrance.');
   assert(arrivedHome.player.x < 0 || arrivedHome.player.x > 960 || arrivedHome.player.y < 0 || arrivedHome.player.y > 640,

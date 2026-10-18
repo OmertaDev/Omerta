@@ -18,6 +18,7 @@ import assert from 'node:assert';
 import { readFileSync, readdirSync } from 'node:fs';
 import zlib from 'node:zlib';
 import { createHash, randomUUID } from 'node:crypto';
+import { parse as parseRouteSource } from 'acorn';
 import { buildServer } from './server-fixture.js';
 
 const app = await buildServer();
@@ -164,13 +165,14 @@ const stripCode = (s) => s
   .replace(/'(?:\\.|[^'\\])*'/g, "''")
   .replace(/"(?:\\.|[^"\\])*"/g, '""');
 
-function boundNames(src) {
+function boundNames(src, source) {
   const b = new Set();
   const param = (list, into) => { for (const p of list.split(',')) {
     const n = p.replace(/[{}[\]]/g, ' ').trim().split(/[:=]/)[0].trim().replace(/^\.\.\./, '');
     if (/^[A-Za-z_$][\w$]*$/.test(n)) into.add(n); } };
-  for (const m of src.matchAll(/^import\s+(?:\*\s+as\s+)?([A-Za-z_$][\w$]*)\s+from/gm)) b.add(m[1]);
-  for (const m of src.matchAll(/^import\s*\{([\s\S]*?)\}\s*from/gm)) param(m[1], b);
+  for (const node of parseRouteSource(source, { ecmaVersion: 'latest', sourceType: 'module' }).body) {
+    if (node.type === 'ImportDeclaration') for (const specifier of node.specifiers) b.add(specifier.local.name);
+  }
   for (const m of src.matchAll(/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)/g)) b.add(m[1]);
   for (const m of src.matchAll(/\bfunction\s+([A-Za-z_$][\w$]*)/g)) b.add(m[1]);
   for (const m of src.matchAll(/(?:const|let|var|function\s*\w*)\s*[({[]([^)}\]]*)[)}\]]/g)) param(m[1], b);
@@ -183,8 +185,9 @@ function boundNames(src) {
 
 const unbound = [];
 for (const f of readdirSync(new URL('../src/routes', import.meta.url)).filter((n) => n.endsWith('.js')).sort()) {
-  const src = stripCode(readFileSync(new URL(`../src/routes/${f}`, import.meta.url), 'utf8'));
-  const bound = boundNames(src);
+  const source = readFileSync(new URL(`../src/routes/${f}`, import.meta.url), 'utf8');
+  const src = stripCode(source);
+  const bound = boundNames(src, source);
   const free = new Set();
   for (const m of src.matchAll(/(?:^|[^\w$.\'"`])([A-Za-z_$][\w$]*)\s*(?=[.([])/g))
     if (!bound.has(m[1]) && !GLOBALS.has(m[1])) free.add(m[1]);
