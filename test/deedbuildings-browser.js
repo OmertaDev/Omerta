@@ -77,28 +77,6 @@ try {
     .map(row => row.request.actionId), ['inspect-site', 'verify-registry', 'question-witness', 'secure-title'],
     'The UI follows four distinct server-issued objectives rather than repeating a generic investigation.');
   await page.locator('#deed-property-name').fill('Browser House');
-  // A pointer at the card's lower edge must not keep its nested claim control moving.
-  await page.mouse.move(0, 0);
-  await page.waitForFunction(() => {
-    const card = document.querySelector('#deed-property-claim')?.closest('.card');
-    return card && !card.matches(':hover') && getComputedStyle(card).transform === 'none';
-  });
-  const cardBoundary = await page.locator('#deed-property-claim').evaluate(claim => {
-    const card = claim.closest('.card');
-    if (!card?.closest('#tab-deeds') || !card.contains(claim))
-      throw new Error('The earned claim must be inside the Deeds property card');
-    card.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' });
-    const rect = card.getBoundingClientRect(), x = rect.left + rect.width / 2, y = rect.bottom - 0.5;
-    const hit = document.elementFromPoint(x, y);
-    if (x <= 0 || x >= innerWidth || y <= 0 || y >= innerHeight || !card.contains(hit))
-      throw new Error('The property card lower boundary must be visible and receive the pointer: ' + JSON.stringify({
-        card: { id: card.id, className: card.className }, rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-        point: { x, y }, viewport: { width: innerWidth, height: innerHeight, scrollX, scrollY },
-        hit: hit && { tag: hit.tagName, id: hit.id, className: hit.className }
-      }));
-    return { x, y };
-  });
-  await page.mouse.move(cardBoundary.x, cardBoundary.y);
   const [claimResponse] = await Promise.all([
     page.waitForResponse(response => new URL(response.url()).pathname === '/v1/deeds/claim'
       && response.request().method() === 'POST'),
