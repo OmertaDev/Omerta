@@ -112,7 +112,7 @@ function tracked(source,file){const rows=git('ls-tree','-z',source,'--',file).to
 function assertServicesAuthority(context,capture){
  assert(contexts.has(context),'Only actual loaded enterprise-job context');assert.equal(capture.source,context.source);assert.equal(capture.tree,context.tree);
  const profile=readServicesEnterpriseProfile(fs.readFileSync(path.join(ROOT,'tools/rc1-source-pair.js'),'utf8').replaceAll('\r\n','\n'));
- const binding=FINAL_SERVICES_COMMERCE_SOURCE_BINDING;assert.equal(binding.predecessorRevision,profile.predecessor);assert.equal(Object.keys(binding.records).length,150);
+ const binding=FINAL_SERVICES_COMMERCE_SOURCE_BINDING;assert.equal(binding.predecessorRevision,profile.predecessor);assert.equal(Object.keys(binding.records).length,152);
  assert.notEqual(profile.predecessor,context.source);for(const source of [profile.predecessor,profile.reviewedCandidate,binding.sourceRevision])git('merge-base','--is-ancestor',source,context.source);
  assert.equal(sourcePairReviewedTreeHash(records(context.source)),profile.candidateTree,'Current complete reviewed source identity, not table count');
  assert.equal(sourcePairReviewedTreeHash(records(profile.reviewedCandidate)),profile.candidateTree,'Genuine reviewed source ancestor');
