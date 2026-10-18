@@ -1,8 +1,8 @@
 // Frozen actual Robinhood Chain USDG source artifact; deployment and financial activation are unverified.
 export const ROBINHOOD_WORK_ESCROW_COMPILER=Object.freeze({"version":"0.8.26+commit.8a97fa7a","optimizerRuns":800,"viaIR":true,"evmVersion":"cancun"});
-export const ROBINHOOD_WORK_ESCROW_RUNTIME_KECCAK='0xce350a53764ecdaa04ba7d16301e9560efb29f3c5759c012fd8efdf96161e4b3';
-export const ROBINHOOD_WORK_ESCROW_CREATION_KECCAK='0x792bb1de1fe463b295aedd546d98eef1e773c76625a4e664c34d4ebb6f6a42c0';
-export const ROBINHOOD_WORK_ESCROW_SOURCE_SHA256='4129a37557fd54d5e675d1069f154e6147459fb85efcc0636a3315a558f70f2a';
+export const ROBINHOOD_WORK_ESCROW_RUNTIME_KECCAK='0xa1a1602cd3cb07add2c95db81f61bea9eda0f53cd1b9248767296aa986bbb965';
+export const ROBINHOOD_WORK_ESCROW_CREATION_KECCAK='0x75bda77fc156aa2ccd473f049d0402ab50f877f89716ce4291a59c7a9620bcd3';
+export const ROBINHOOD_WORK_ESCROW_SOURCE_SHA256='931b10fbe6e2da1494d47818828a3591d77d1401391ecc1356c6b35a2a19f246';
 export const ROBINHOOD_WORK_ESCROW_ABI=Object.freeze([
   {
     "type": "constructor",
