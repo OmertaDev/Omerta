@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory refreshed 2026-10-15; historical baseline measured 2026-09-14.** This supersedes
+> **LIVE PACKET — source inventory refreshed 2026-10-18; historical baseline measured 2026-09-14.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -60,7 +60,7 @@ sent, because a contract added afterwards means paying to re-audit. The set belo
 owned `omerta-contracts/src` modules — 71 Solidity files, 59 contracts and 12 interfaces.
 The additional 35 vendored Solidity files are included through the complete pinned
 [dependency manifest](omerta-contracts/src/genesis-auction/vendor/SOURCE-MANIFEST.json),
-including its declared local CCA patch. Together these identify all 105 source files; libraries
+including its declared local CCA patch. Together these identify all 106 source files; libraries
 and data types in that closure are source-review dependencies, not independently deployable contracts.
 This is the complete source inventory, not a claim that one review package clears every component.
 The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market/`;
