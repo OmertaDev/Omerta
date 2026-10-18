@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import path from 'node:path';
 import {execFileSync} from 'node:child_process';
-import {ENTERPRISE_NATIVE_AUTH_REPLACEMENT_FILES,ENTERPRISE_NATIVE_AUTH_REMOVAL_FILES,ENTERPRISE_NATIVE_AUTH_ADDITIONAL_FILES,assertEnterpriseAuthInputDefinition,assertEnterpriseAuthTrackedInput,assertEnterpriseAuthRemoval} from '../tools/enterprise-native.js';
+import {ENTERPRISE_NATIVE_AUTH_REPLACEMENT_FILES,ENTERPRISE_NATIVE_AUTH_REMOVAL_FILES,ENTERPRISE_NATIVE_AUTH_ADDITIONAL_FILES,assertEnterpriseAuthInputDefinition,assertEnterpriseAuthTrackedInput,assertEnterpriseAuthRemoval,assertEnterpriseAuthAbsentFiles} from '../tools/enterprise-native.js';
 import {ENTERPRISE_NATIVE_X_AUTH_INPUTS} from '../tools/enterprise-native-x-auth-inputs.js';
 import {ENTERPRISE_NATIVE_PROOFS,ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_SUCCESSOR_REPLACEMENT_FILES,ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES,assertEnterpriseInventory,assertEnterpriseNativeMode,assertEnterpriseNativeTrackedBytes,assertEnterpriseInputDefinition,assertEnterpriseSuccessorInputDefinition,assertEnterpriseSuccessorTrackedInput,assertEnterpriseDirectoryEntries,assertEnterpriseBackend,enterpriseChildEnv,assertEnterpriseResults,assertEnterpriseCleanup} from '../tools/enterprise-native.js';
 import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS} from '../tools/enterprise-native-inputs.js';
@@ -114,4 +115,20 @@ for(const [file,prior,bytes,authored,current,exists] of [
  [removed.file,removedRecord,removedBytes,undefined,removedRecord,false],
  [removed.file,removedRecord,removedBytes,undefined,undefined,true],
 ])reject('undeclared or incomplete removal refuses native capture',()=>assertEnterpriseAuthRemoval(file,prior,bytes,authored,current,exists));
+const stabilitySource=source.slice(source.indexOf('function assertStable(source){'),source.indexOf('export function assertEnterpriseBackend'));
+assert(stabilitySource.includes('assertEnterpriseAuthAbsentFiles();'),'Every stability check rechecks the fixed removed-path set');
+const removedPath=new URL('../'+removed.file,import.meta.url);
+fs.mkdirSync(new URL('../tmp/',import.meta.url),{recursive:true});
+const removalScratch=fs.mkdtempSync(new URL('../tmp/rc1-native-auth-removal-',import.meta.url)),ignoreFile=path.join(removalScratch,'ignore');
+fs.writeFileSync(ignoreFile,'/src/age.js\n');
+const assertIgnored=()=>assert.equal(execFileSync('git',['-c','core.excludesFile='+ignoreFile,'status','--porcelain','--untracked-files=all','--',removed.file],{cwd:new URL('../',import.meta.url),encoding:'utf8'}),'','The recreated path is ignored by Git');
+try{
+ let created=false;
+ try{fs.writeFileSync(removedPath,'// recreated ignored age module\n',{flag:'wx'});created=true;assertIgnored();reject('stable capture rejects a recreated ignored age file',()=>assertEnterpriseAuthAbsentFiles());}
+ finally{if(created)fs.unlinkSync(removedPath);}
+ let linked=false;
+ try{fs.symlinkSync(path.join(removalScratch,'missing-target'),removedPath,process.platform==='win32'?'junction':'file');linked=true;assert.equal(fs.existsSync(removedPath),false,'A broken link escapes existsSync');assert(fs.lstatSync(removedPath).isSymbolicLink());assertIgnored();reject('stable capture rejects a recreated ignored broken age link',()=>assertEnterpriseAuthAbsentFiles());}
+ finally{if(linked){if(process.platform==='win32')fs.rmdirSync(removedPath);else fs.unlinkSync(removedPath);}}
+ pass('stable capture accepts only continued physical absence',()=>assertEnterpriseAuthAbsentFiles());
+}finally{fs.unlinkSync(ignoreFile);fs.rmdirSync(removalScratch);}
 console.log(JSON.stringify({phase:'SOURCE_ONLY_ENTERPRISE_NATIVE_GUARDS',checks:checks.length,syntheticAdmissionFixturesOnly:true,postgresImportsOrConnections:0,nativeExecution:false,sourceCaptureExecuted:false,release:false}));
