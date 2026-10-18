@@ -1,6 +1,7 @@
 // Exact source-only historical fixture bridge. Never used for runtime/native admission.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { xAuthSourceBaseline } from './x-auth-source-compatibility.js';
 import { CONTINUOUS_CITY_SOURCE_REVISION, CONTINUOUS_CITY_SOURCE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_DOMAINS } from './continuous-city-source-data.js';
 import { CONTINUOUS_CITY_FIXTURE_DOMAINS } from './continuous-city-fixture-source-data.js';
 export { CONTINUOUS_CITY_SOURCE_REVISION, CONTINUOUS_CITY_SOURCE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_DOMAINS, CONTINUOUS_CITY_FIXTURE_DOMAINS };
@@ -43,7 +44,7 @@ export function continuousCityHistoricalInput(file, input) {
   if (!Object.hasOwn(domains, file)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text, 'utf8').equals(input), 'Continuous city physical input must be lossless UTF-8');
-  const proof = prove(file, text, domains);
+  const proof = prove(file, xAuthSourceBaseline(file, text), domains);
   assert(!proof.predecessorAbsent, 'New continuous city source has no historical fixture: ' + file);
   return buffer ? Buffer.from(proof.baselineText) : proof.baselineText;
 }
