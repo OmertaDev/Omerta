@@ -1951,6 +1951,16 @@
     const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitWorldFrame) : null;
     if (hudObserver) { for (const node of [worldHud, nextMove, controls, actorDock, gameDock]) hudObserver.observe(node); }
     listen(window, 'resize', fitWorldFrame);
+    function fitPlayerName() {
+      const name = scene.data.get('playerName'), camera = scene.cameras.main;
+      if (!name) return 0;
+      name.setScale(Math.min(Math.max(1, 13 / (parseFloat(name.style.fontSize) * camera.zoom)),
+        (camera.width - 4) / (name.width * camera.zoom)));
+      const halfHeight = name.displayHeight / 2, gap = 2 / camera.zoom;
+      name.y = Math.min(Math.round(player.y - (artState.player === 'generated' ? 72 : 40)),
+        player.getBounds().top - halfHeight - gap);
+      return player.y - name.y + halfHeight + gap;
+    }
     function fitCamera() {
       if (!scene || !game || !player) return;
       const size = dimensions();
@@ -1969,8 +1979,8 @@
       zoomIn.disabled = zoomPreference >= 1.6 || zoom >= maximumZoom - .001;
       zoomOut.title = zoomIn.title = 'Neighborhood zoom: ' + Math.round(zoom * 100) + '%';
       camera.setBounds(world.x || 0, world.y || 0, world.width, world.height);
-      // Retain the avatar and its name above the feet in a short viewport.
-      const followOffsetY = Math.max(0, (170 * zoom - size.height) / (2 * zoom));
+      // Reserve the measured label and sprite extent, including legible text at low zoom.
+      const followOffsetY = Math.max(0, fitPlayerName() - size.height / (2 * zoom));
       camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
       camera.centerOn(player.x, player.y - followOffsetY);
       syncPointerBounds();
@@ -2249,8 +2259,7 @@
       const nameCamera = s.cameras.main, nameEvents = s.sys.events;
       function placePlayerName() {
         if (destroyed || !ready || !player || !playerName.scene) return;
-        playerName.setScale(Math.min(Math.max(1, 13 / (parseFloat(playerName.style.fontSize) * nameCamera.zoom)),
-          (nameCamera.width - 4) / (playerName.width * nameCamera.zoom)));
+        fitPlayerName();
         // Followupdate runs after the camera's rendered transform is refreshed,
         // including stationary frames and viewport resizes. Keep the full label.
         const half = playerName.displayWidth / 2, y = nameCamera.y + nameCamera.height / 2;

@@ -480,10 +480,13 @@ try {
       'Phaser dimensions match the CSS viewport after compact resizing.');
     assert(layout.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= layout.canvas.height + 1 && bounds.left >= -1 && bounds.right <= layout.canvas.width + 1),
       'The complete avatar and name remain inside the playable camera: ' + JSON.stringify(layout));
+    assert(layout.avatar[1].bottom <= layout.avatar[0].top - 1.5,
+      'The measured name label keeps a visible gap above the avatar: ' + JSON.stringify(layout.avatar));
     assert.deepEqual(layout.fields, ['cash', 'health', 'energy', 'nerve']);
     assert.equal(layout.readinessCount, 1, 'Readiness is a single live region.');
     assert.equal(await page.locator('.omerta-city__readiness').getAttribute('aria-atomic'), 'true');
     for (const field of ['cash', 'health', 'energy', 'nerve', 'heat', 'level']) assert.equal(await page.locator(`[data-city-resource="${field}"]`).count(), 1, field + ' has one projection-backed value.');
+    return layout;
   };
   const assertResourceHelp = async page => {
     const trigger = page.getByRole('button', { name: 'Energy help', exact: true });
@@ -692,6 +695,41 @@ try {
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(),
         chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() }))
       }))));
+      // Exercise taller font metrics deterministically, independent of the host's monospace font.
+      const namePadding = await entry.evaluate(() => {
+        const canvas = document.querySelector('.omerta-city__canvas canvas');
+        const game = window.__cityGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length);
+        const name = game.scene.getScenes(true)[0].data.get('playerName'), padding = { ...name.padding };
+        name.setPadding(padding.left, padding.top + 6, padding.right, padding.bottom + 6);
+        window.dispatchEvent(new Event('resize'));
+        return padding;
+      });
+      await waitForFrames(entry, 3);
+      const headroomSamples = [];
+      for (const direction of [0, -1, 1]) {
+        if (direction) {
+          const control = entry.locator('[data-city-zoom="' + direction + '"]');
+          for (let steps = 0; steps < 10 && await control.isEnabled(); steps++) {
+            await control.click(); await waitForFrames(entry, 2);
+          }
+          assert(await control.isDisabled(), 'The tiny-frame regression reaches the zoom limit.');
+        }
+        const measured = await assertWorldHud(entry);
+        assert.equal(measured.camera.height, 96, 'Measured name fitting is exercised at the minimum playable height.');
+        headroomSamples.push({ zoom: measured.camera.zoom, canvas: measured.canvas.height,
+          nameTop: measured.avatar[1].top, nameBottom: measured.avatar[1].bottom,
+          spriteTop: measured.avatar[0].top, spriteBottom: measured.avatar[0].bottom });
+      }
+      assert(headroomSamples[1].zoom < headroomSamples[0].zoom && headroomSamples[2].zoom > headroomSamples[0].zoom);
+      console.log('Tiny-frame measured name headroom:', JSON.stringify(headroomSamples));
+      await entry.evaluate(padding => {
+        const canvas = document.querySelector('.omerta-city__canvas canvas');
+        const game = window.__cityGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length);
+        game.scene.getScenes(true)[0].data.get('playerName').setPadding(padding);
+        window.dispatchEvent(new Event('resize'));
+      }, namePadding);
+      await waitForFrames(entry, 3); await assertWorldHud(entry);
+      await assertPosition(entry, beforeResize, 'Measured name fitting and zoom retain the player pose');
       const beforeWarning = (await state(entry)).position;
       await app.pool.query('UPDATE characters SET cash=2223,health=100,safe_until=$2 WHERE id=$1', [characterId, new Date(Date.now() + 60000)]);
       const warningReply = entry.waitForResponse(async response => {
