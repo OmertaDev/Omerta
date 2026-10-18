@@ -494,9 +494,15 @@ try {
   assert(Math.hypot(moving.position.x - waypoint.x, moving.position.y - waypoint.y) > 40 && moving.pathLength > 0, 'A waypoint starts real local walking instead of teleporting.');
   await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0, undefined, { timeout: 15000 });
   assert.equal((await state(page)).selectedVenue, 'stories');
-  await page.waitForFunction(() => [...document.querySelectorAll('.city-world__speech,.city-world__dialogue')]
-    .some(node => !node.hidden && node.textContent.includes('THE EDITOR')));
-  assert.match(await page.locator('.city-world__speech,.city-world__dialogue').allTextContents().then(text => text.join(' ')), /A clue is a lead/);
+  // Capture the published reply before a later frame or host update can clear it.
+  const editorSpeech = await page.waitForFunction(() => {
+    const visible = [...document.querySelectorAll('.city-world__speech,.city-world__dialogue')].filter(node => !node.hidden);
+    return visible.some(node => node.textContent.includes('THE EDITOR')
+      && node.textContent.includes('A clue is a lead. Follow it, then compare what you find.'))
+      ? visible.map(node => node.textContent).join(' ') : false;
+  });
+  assert.match(await editorSpeech.jsonValue(), /A clue is a lead/);
+  await editorSpeech.dispose();
   assert.deepEqual(mutations(requests.slice(beforeWaypoint)), []);
   await page.keyboard.press('Escape');
   let walkingPose = (await state(page)).position;

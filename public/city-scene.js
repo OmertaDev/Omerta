@@ -1135,6 +1135,13 @@
       actorReturn = trigger || Array.from(actorList.children).find(button => button.dataset.cityActor === id);
       actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
       renderActorDock(); renderPresence(); fitWorldFrame(); revealVenue(viewport);
+      // A short desktop can fit the map and HUD while clipping the taller action
+      // preview. Reveal it inside this dock only when the person is first opened.
+      const action = actorBody.querySelector('[data-city-encounter]');
+      if (action && window.innerWidth > 680) {
+        const bounds = action.getBoundingClientRect(), dock = actorDock.getBoundingClientRect();
+        actorDock.scrollTop += Math.max(0, Math.min(bounds.bottom - dock.bottom + 8, bounds.top - dock.top - 8));
+      }
       actorBody.focus({ preventScroll: true }); syncPointerBounds();
     }
     function showIntel() {
@@ -1880,7 +1887,7 @@
       const inspecting = Boolean(externalPanel || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen());
       viewport.classList.toggle('is-inspecting', inspecting);
       root.classList.toggle('is-inspecting', inspecting);
-      if (!externalPanel && (!phone || !inspecting)) {
+      if (!externalPanel && ((!phone && (!document.body.classList.contains('city-player-view') || actorDock.hidden || actorView !== 'person')) || !inspecting)) {
         worldHud.style.removeProperty('--city-hud-height');
         worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', 'Walking resources and readiness');
@@ -1924,6 +1931,16 @@
         const overflow = worldHud.scrollHeight > worldHud.clientHeight;
         if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
+      } else if (!phone && !actorDock.hidden && actorView === 'person') {
+        // Confirmed feedback can make the HUD taller than a short desktop's
+        // remaining frame. Keep one complete action preview beside the map.
+        const action = actorBody.querySelector('[data-city-encounter]');
+        const dockFloor = Math.max(64, Math.min(240, Math.ceil(action?.getBoundingClientRect().height || 0) + 16));
+        const hudHeight = Math.max(0, bottom - top - 16 - 96 - controls.getBoundingClientRect().height - dockFloor);
+        worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
+        const overflow = worldHud.scrollHeight > worldHud.clientHeight;
+        if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
+        worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
       }
       const activityLayout = externalPanel ? [worldHud.clientHeight, worldHud.scrollHeight, activitySignature].join(':') : '';
       if (activityLayout !== activityHudLayout && externalPanel && activities.size) {
@@ -1951,6 +1968,16 @@
     const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitWorldFrame) : null;
     if (hudObserver) { for (const node of [worldHud, nextMove, controls, actorDock, gameDock]) hudObserver.observe(node); }
     listen(window, 'resize', fitWorldFrame);
+    function fitPlayerName() {
+      const name = scene.data.get('playerName'), camera = scene.cameras.main;
+      if (!name) return 0;
+      name.setScale(Math.min(Math.max(1, 13 / (parseFloat(name.style.fontSize) * camera.zoom)),
+        (camera.width - 4) / (name.width * camera.zoom)));
+      const halfHeight = name.displayHeight / 2, gap = 2 / camera.zoom;
+      name.y = Math.min(Math.round(player.y - (artState.player === 'generated' ? 72 : 40)),
+        player.getBounds().top - halfHeight - gap);
+      return player.y - name.y + halfHeight + gap;
+    }
     function fitCamera() {
       if (!scene || !game || !player) return;
       const size = dimensions();
@@ -1969,8 +1996,8 @@
       zoomIn.disabled = zoomPreference >= 1.6 || zoom >= maximumZoom - .001;
       zoomOut.title = zoomIn.title = 'Neighborhood zoom: ' + Math.round(zoom * 100) + '%';
       camera.setBounds(world.x || 0, world.y || 0, world.width, world.height);
-      // Retain the avatar and its name above the feet in a short viewport.
-      const followOffsetY = Math.max(0, (170 * zoom - size.height) / (2 * zoom));
+      // Reserve the measured label and sprite extent, including legible text at low zoom.
+      const followOffsetY = Math.max(0, fitPlayerName() - size.height / (2 * zoom));
       camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
       camera.centerOn(player.x, player.y - followOffsetY);
       syncPointerBounds();
@@ -2249,8 +2276,7 @@
       const nameCamera = s.cameras.main, nameEvents = s.sys.events;
       function placePlayerName() {
         if (destroyed || !ready || !player || !playerName.scene) return;
-        playerName.setScale(Math.min(Math.max(1, 13 / (parseFloat(playerName.style.fontSize) * nameCamera.zoom)),
-          (nameCamera.width - 4) / (playerName.width * nameCamera.zoom)));
+        fitPlayerName();
         // Followupdate runs after the camera's rendered transform is refreshed,
         // including stationary frames and viewport resizes. Keep the full label.
         const half = playerName.displayWidth / 2, y = nameCamera.y + nameCamera.height / 2;
