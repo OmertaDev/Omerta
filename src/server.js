@@ -1535,7 +1535,8 @@ export async function buildServer() {
         'SELECT status, token_version FROM accounts WHERE id=$1', [accountId])).rows[0];
       const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);
       if (!a || a.status === 'banned' || revoked) accountId = null;
-    }    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });
+    }
+    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });
     // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,
     // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the
     // attacker's account (the victim's browser never carries the attacker's cookie). Path-scoped +
