@@ -630,6 +630,7 @@
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |
 | [docs/release/readiness-work/world-turf-terminal-observer.md](../../docs/release/readiness-work/world-turf-terminal-observer.md) | documentation | 82 | 2026-09-21 |
 | [docs/resource-economy-security-review.md](../../docs/resource-economy-security-review.md) | documentation | 118 | 2026-10-08 |
+| [docs/robinhood-work-payouts.md](../../docs/robinhood-work-payouts.md) | documentation | 37 | 2026-10-18 |
 | [docs/second-batch-source-compatibility-proposal-review.md](../../docs/second-batch-source-compatibility-proposal-review.md) | documentation | 18 | 2026-10-13 |
 | [docs/service-subscriptions-integration-review.md](../../docs/service-subscriptions-integration-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/service-subscriptions-review.md](../../docs/service-subscriptions-review.md) | documentation | 20 | 2026-10-13 |
@@ -716,7 +717,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-17 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-18 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -794,5 +795,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-17 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-18 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
