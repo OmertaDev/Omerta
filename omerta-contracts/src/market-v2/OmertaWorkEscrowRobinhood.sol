@@ -56,8 +56,10 @@ contract OmertaWorkEscrowRobinhood is ReentrancyGuard {
         usedWork[source] = true;
         _works[id] = Work(msg.sender, payee, asset, deadline, amount, workHash, bytes32(0), State.Funded);
         uint256 beforeBalance = IERC20(USDG).balanceOf(address(this));
+        uint256 beforeFunderBalance = IERC20(USDG).balanceOf(msg.sender);
         IERC20(USDG).safeTransferFrom(msg.sender, address(this), amount);
-        if (IERC20(USDG).balanceOf(address(this)) != beforeBalance + amount) revert TransferFailed();
+        if (IERC20(USDG).balanceOf(address(this)) != beforeBalance + amount
+            || IERC20(USDG).balanceOf(msg.sender) + amount != beforeFunderBalance) revert TransferFailed();
         liability[USDG] += amount;
         emit Funded(id, msg.sender, payee, asset, amount, workHash, deadline, nonce);
     }

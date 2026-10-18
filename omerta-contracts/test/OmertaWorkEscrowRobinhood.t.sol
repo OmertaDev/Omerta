@@ -231,6 +231,26 @@ contract OmertaWorkEscrowRobinhoodTest is Test {
         assertUnused(1, WORK); assertEq(token.balanceOf(FUNDER), 1000e6);
         assertEq(token.balanceOf(address(escrow)), 0); assertEq(token.totalSupply(), 1000e6);
     }
+    function testIncomingExtraDebitRollsBackAndPreservesRetryIdentity() public {
+        uint64 deadline = uint64(vm.getBlockTimestamp() + 120);
+        uint256 allowance = token.allowance(FUNDER, address(escrow));
+        bytes32 id = keccak256(abi.encode(uint256(4663), address(escrow), FUNDER, uint256(1)));
+        token.setFee(2);
+        vm.prank(FUNDER); vm.expectRevert(OmertaWorkEscrowRobinhood.TransferFailed.selector);
+        escrow.fund(1, PAYEE, USDG, 100, WORK, deadline);
+        assertUnused(1, WORK);
+        assertEq(uint256(escrow.work(id).state), uint256(OmertaWorkEscrowRobinhood.State.Empty));
+        assertEq(token.balanceOf(FUNDER), 1000e6); assertEq(token.balanceOf(address(escrow)), 0);
+        assertEq(token.balanceOf(PAYEE), 0); assertEq(token.totalSupply(), 1000e6);
+        assertEq(token.allowance(FUNDER, address(escrow)), allowance);
+        token.setFee(0);
+        vm.prank(FUNDER); assertEq(escrow.fund(1, PAYEE, USDG, 100, WORK, deadline), id);
+        assertTrue(escrow.usedNonce(FUNDER, 1)); assertTrue(escrow.usedWork(keccak256(abi.encode(FUNDER, WORK))));
+        assertEq(uint256(escrow.work(id).state), uint256(OmertaWorkEscrowRobinhood.State.Funded));
+        assertEq(escrow.liability(USDG), 100); assertEq(token.balanceOf(address(escrow)), 100);
+        assertEq(token.balanceOf(FUNDER), 1000e6 - 100); assertEq(token.totalSupply(), 1000e6);
+        assertEq(token.allowance(FUNDER, address(escrow)), allowance - 100);
+    }
     function testOutgoingShortRecipientPreservesAllocatedClaim() public {
         bytes32 id = allocated(100); token.setFee(1);
         vm.prank(PAYEE); vm.expectRevert(OmertaWorkEscrowRobinhood.TransferFailed.selector); escrow.settle(id);
