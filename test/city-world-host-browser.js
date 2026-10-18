@@ -936,15 +936,47 @@ try {
   await tiny.page.locator('[data-city-world-tools]').tap(); await frames(tiny.page);
   assert.equal((await state(tiny.page)).worldUI.panel, 'map', 'The visible 44px Tools control opens with an actual phone tap.');
   if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-map-320.png') });
-  const beforeTap = await state(tiny.page), tapCanvas = await tiny.page.locator('.omerta-city__canvas canvas').boundingBox();
-  // The Editor's enlarged target sits to the right of this doorway; use clear street.
-  const tapGoal = { x: beforeTap.position.x - 48, y: beforeTap.position.y };
+  // Public actor slots vary with their IDs; choose street outside the actual padded targets.
+  const { beforeTap, tapCanvas, tapGoal, actorGeometryKnown, tapCandidates } = await tiny.page.evaluate(() => {
+    const beforeTap = window.__worldHandles.at(-1).handle.getState();
+    const canvas = document.querySelector('.omerta-city__canvas canvas'), tapCanvas = canvas.getBoundingClientRect().toJSON();
+    const game = window.__worldGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length);
+    const scene = game.scene.getScenes(true)[0], camera = scene.cameras.main;
+    const actorSprites = beforeTap.actorMarkers.map(marker => scene.children.list.filter(sprite => sprite.type === 'Sprite'
+      && sprite.x === marker.x && sprite.y === marker.y && /^city-(?:art-)?(?:worker|fixer|neighbor)$/.test(sprite.texture?.key || '')));
+    const actorGeometryKnown = actorSprites.every(sprites => sprites.length === 1);
+    const targets = [...actorSprites.flat(), ...scene.data.get('npcs').filter(npc => npc.venue).map(npc => npc.sprite)].map(sprite => {
+      const bounds = sprite.getBounds(), extra = Math.max(8, (44 / camera.zoom - bounds.width) / 2);
+      return { left: bounds.left - extra - 2, right: bounds.right + extra + 2, top: bounds.top - 8, bottom: bounds.bottom + 12 };
+    });
+    const layout = window.CityWorldLayout, origin = beforeTap.world.origin || { x: 0, y: 0 };
+    const tapCandidates = [48, 112, 176].map(offset => {
+      const point = { x: beforeTap.position.x - offset, y: beforeTap.position.y }, reasons = [];
+      const screen = { x: (point.x - beforeTap.camera.x) * beforeTap.camera.zoom, y: (point.y - beforeTap.camera.y) * beforeTap.camera.zoom };
+      if (screen.x < 2 || screen.x > tapCanvas.width - 2 || screen.y < 2 || screen.y > tapCanvas.height - 2) reasons.push('outside canvas');
+      if (targets.some(bounds => point.x >= bounds.left && point.x <= bounds.right && point.y >= bounds.top && point.y <= bounds.bottom)) reasons.push('person target');
+      if (beforeTap.destinations.some(venue => Math.hypot(point.x - venue.x, point.y - venue.y) < 37)) reasons.push('venue target');
+      if (beforeTap.homes.some(home => point.x >= home.building.x - 2 && point.x <= home.building.x + home.building.width + 2
+        && point.y >= home.building.y - 14 && point.y <= home.entrance.y + 16)) reasons.push('home target');
+      if (beforeTap.exits.some(exit => Math.hypot(point.x - exit.x, point.y - exit.y) < 32)) reasons.push('exit target');
+      if (beforeTap.obstacles.some(bounds => point.x + 7 > bounds.x && point.x - 7 < bounds.x + bounds.width
+        && point.y + 7 > bounds.y && point.y - 7 < bounds.y + bounds.height)
+        || layout && !layout.isWalkable({ x: point.x + origin.x, y: point.y + origin.y })) reasons.push('not walkable');
+      return { point, reasons };
+    });
+    const tapGoal = actorGeometryKnown ? tapCandidates.find(candidate => candidate.reasons.length === 0)?.point || null : null;
+    return { beforeTap, tapCanvas, tapGoal, actorGeometryKnown, tapCandidates };
+  });
+  assert(actorGeometryKnown, 'Every reported public actor has known sprite geometry before choosing a ground touch.');
+  assert(tapGoal, 'A nearby visible street point is clear of padded interaction targets: ' + JSON.stringify({ actors: beforeTap.actorMarkers, candidates: tapCandidates }));
   await tiny.page.touchscreen.tap(tapCanvas.x + (tapGoal.x - beforeTap.camera.x) * beforeTap.camera.zoom,
     tapCanvas.y + (tapGoal.y - beforeTap.camera.y) * beforeTap.camera.zoom);
   await tiny.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0);
   const tapped = await state(tiny.page);
   assert.equal(tapped.worldUI.panel, ''); assert(Math.hypot(tapped.position.x - tapGoal.x, tapped.position.y - tapGoal.y) <= 12,
     'A real canvas touch keeps its world point when closing/resizing the tools panel: ' + JSON.stringify({ before: beforeTap.position, goal: tapGoal, actual: tapped.position }));
+  assert.deepEqual({ actor: tapped.selectedActor, venue: tapped.selectedVenue, home: tapped.selectedHome, exit: tapped.selectedExit },
+    { actor: null, venue: null, home: null, exit: null }, 'The ground touch does not select a person or destination.');
   await assertFrame(tiny.page);
   assert.deepEqual(mutations(tiny.requests.slice(tinyStart)), [], 'Touching tools and walking send no gameplay action.');
   await tiny.context.close(); await page.bringToFront();
