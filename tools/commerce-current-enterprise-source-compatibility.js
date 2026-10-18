@@ -21,7 +21,7 @@ export function assertCommerceCurrentEnterpriseSourceTransfer(file,input){
 export function commerceOverCurrentEnterpriseSourceBaseline(file,input){return assertCommerceCurrentEnterpriseSourceTransfer(file,classicInterfaceHistoricalInput(file,input)).baselineText;}
 
 // A finite physical-reader adapter for the classic interface restoration. Historical C/E and GUI maps above remain strict and unchanged.
-const CLASSIC_INTERFACE_FILES = Object.freeze(['package.json', 'public/index.html', 'test/commerce-source-compatibility.js', 'test/enterprise-current-source-compatibility.js']);
+const CLASSIC_INTERFACE_FILES = Object.freeze(['package.json', 'public/index.html', 'test/commerce-source-compatibility.js', 'test/enterprise-current-source-compatibility.js', 'test/gates.js']);
 const classicSourceFreeze = value => {
   if (value && typeof value === 'object') { Object.values(value).forEach(classicSourceFreeze); Object.freeze(value); }
   return value;
@@ -31,8 +31,8 @@ export const CLASSIC_INTERFACE_OVER_F92 = classicSourceFreeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_CLASSIC_INTERFACE_OVER_F92_TEST_SOURCE_ONLY",
-  "revision": "71615921a2e2c2f465584f478988a5e4e82e5ca8",
-  "tree": "edeb9c5fe3bac041eb65e54ef944b9cae9f6138d",
+  "revision": "3728eea961331843c649051b505606c3ace73dcd",
+  "tree": "1ba4fcb6c1226a04e2e57095b128618e7588481a",
   "targetRevision": "92e9e3428721c89a878041a57b75448d5f492dc6",
   "targetTree": "94724ada1a712d92e4d845fab2ea8e597277ca34",
   "contextLines": 3,
@@ -276,10 +276,30 @@ export const CLASSIC_INTERFACE_OVER_F92 = classicSourceFreeze({
           "baseline": "let positives=0,refusals=0;const pins={...ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,...ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES};\nassert.equal(Object.keys(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS).length,31);\nfor(const[file,p]of Object.entries(pins)){\n  const actualCurrentRaw=fs.readFileSync(file,'utf8'),raw=commerceOverCurrentEnterpriseSourceBaseline(file,actualCurrentRaw),current=git(ENTERPRISE_CURRENT_SOURCE_REVISION,file),root=git(ENTERPRISE_ROOT_PREDECESSOR,file);\n  const bridge=assertCommerceCurrentEnterpriseSourceTransfer(file,actualCurrentRaw),actualCurrent=git(COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION,file);\n  assert.equal(actualCurrentRaw.replaceAll('\\r\\n','\\n'),actualCurrent,'Current namespace is pinned to genuine authored C bytes');assert.equal(bridge.baselineText,current);assert.equal(bridge.sourceRevision,COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION);assert.equal(bridge.predecessorRevision,ENTERPRISE_CURRENT_SOURCE_REVISION);assert.equal(bridge.modeVerified,false);\n  for(const changed of[actualCurrent+'\\n// unknown-current\\n',actualCurrent.slice(1),'\\ufeff'+actualCurrent,actualCurrent+'\\0',actualCurrent.replace('\\n','\\r\\n'),actualCurrent.replace('\\n','\\r'),Buffer.from(actualCurrent)])assert.throws(()=>assertCommerceCurrentEnterpriseSourceTransfer(file,changed));\n"
         }
       ]
+    },
+    {
+      "file": "test/gates.js",
+      "mode": "100644",
+      "currentBlob": "b2e33b6999335cfc6a356f509406dab9ddc32cfe",
+      "currentSha256": "b14af64742c604d9ff19c08dacee0955dc60abc482ef1ec9347dc1cb5e861b0a",
+      "currentRawSha256": {
+        "lf": "b14af64742c604d9ff19c08dacee0955dc60abc482ef1ec9347dc1cb5e861b0a",
+        "crlf": "6234d54ec9e1c178b53d314d8ed477abd7680672de9319831489f671bb2b8809"
+      },
+      "currentBytes": 454899,
+      "targetBlob": "9473879edc2899c704157fa7fd1e2f2982a9edaf",
+      "targetSha256": "e5454cd2717678dbf8889551adeee59256b428ebd6df1479d986b1cea544cb57",
+      "targetBytes": 452033,
+      "inverses": [
+        {
+          "current": "  // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,\n  // not a category — \"it fails in CI\" is a description of the symptom and would waive a real break.\n  const DECLARED = {\n    'test/city-activity-browser.js':\n      'Historical evidence for Phaser actor activity cues; the visual-city renderer is no longer loaded by the game interface. Active activity API coverage remains in the release chain.',\n    'test/city-connected-scene-browser.js':\n      'Historical evidence for connected-scene rendering and pointer input; the visual-city scene mount and walking entry points were removed from the shipped interface.',\n    'test/city-dashboard-host-browser.js':\n      'Historical evidence for dashboard controls hosted beside the neighborhood scene; that overlay host and Player/Dashboard switch were removed. Current classic navigation has a browser gate.',\n    'test/city-district-arcs-browser.js':\n      'Historical evidence for district story journeys through Phaser venues and NPC controls; those visual-city entry points were removed. Backend story and quest gates remain active.',\n    'test/city-gameplay-panels-browser.js':\n      'Historical evidence for scene-mounted Home and PvE panels and their authority retirement; the visual-city panel host was removed. Backend Home and PvE coverage remains active.',\n    'test/city-presence-browser.js':\n      'Historical evidence for encounter interactions through rendered city actors; the visual-city presence host was removed. Authoritative presence and encounter API gates remain active.',\n    'test/city-scene-browser.js':\n      'Historical evidence for the walking city mode, scene loading and its view controls; those shipped entry points were removed. The classic interface browser gate covers their absence and normal tabs.',\n    'test/city-world-host-browser.js':\n      'Historical evidence for contextual world tools mounted inside the neighborhood scene; that visual-city host was removed. Ordinary game panels and backend world gates remain active.',\n    'test/city-world-layout-ui-browser.js':\n      'Historical evidence for the shared visual-city layout UI fixture; its runtime asset loads and active scene integration were removed from the game interface. Backend property and world layout coverage remains active.',\n    'test/city-world-ui-browser.js':\n      'Historical evidence for the visual-city world UI component lifecycle; its asset load and scene mounting path were removed from the game interface. Current classic UI and backend world gates remain active.',\n    'test/continuous-city-host-contract.js':\n      'Historical evidence for continuous-city scene host callbacks and receipt refresh boundaries; those host callbacks were removed from the shipped page. Ordinary receipt and native action gates remain active.',\n    'test/property-quest-city-browser.js':\n      'Historical evidence for property quests followed through city NPC controls across districts; those visual-city controls were removed. Backend property quest and ordinary Deeds gates remain active.',\n    \"test/saleattribution-fixture.js\": \"Import-only genuine four-original paid consignment attribution fixture; mandatory source/witness/API memory and strict native proofs execute it.\",\n    \"test/saleattribution-native-fixture.js\": \"Import-only original strict consignment admission wrapper; mandatory native accounting/race/estate proofs execute it.\",\n    \"test/saleattribution-current-native-fixture.js\": \"Import-only distinct current-source attribution adapter; original native guard remains separate and current full-cohort proofs execute this adapter.\",\n",
+          "baseline": "  // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,\n  // not a category — \"it fails in CI\" is a description of the symptom and would waive a real break.\n  const DECLARED = {\n    \"test/saleattribution-fixture.js\": \"Import-only genuine four-original paid consignment attribution fixture; mandatory source/witness/API memory and strict native proofs execute it.\",\n    \"test/saleattribution-native-fixture.js\": \"Import-only original strict consignment admission wrapper; mandatory native accounting/race/estate proofs execute it.\",\n    \"test/saleattribution-current-native-fixture.js\": \"Import-only distinct current-source attribution adapter; original native guard remains separate and current full-cohort proofs execute this adapter.\",\n"
+        }
+      ]
     }
   ]
 });
-export const CLASSIC_INTERFACE_OVER_F92_SHA256 = "70842c14dd3fb774a5c56f095814cd5b97869dab6cc79096705469ccaa68c5da";
+export const CLASSIC_INTERFACE_OVER_F92_SHA256 = "82eea612cc266647395e371d09a2f03957035ad79b78b26db484d601ab40b86f";
 // END CURRENT CLASSIC INTERFACE BINDING
 function classicSourceKeys(value, names) {
   assert(value && typeof value === 'object' && !Array.isArray(value) && Object.isFrozen(value), 'Frozen finite source binding required');

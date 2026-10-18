@@ -19,7 +19,7 @@ const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLengt
 const lf = text => text.replaceAll('\r\n', '\n');
 // Bind only the restored interface and its two changed physical readers before replaying the frozen proofs below.
 assert.equal(CLASSIC_INTERFACE_OVER_F92.status, 'SEALED', 'Classic interface source preparation is not a qualified revision');
-assert.deepEqual(CLASSIC_INTERFACE_OVER_F92.files.map(row => row.file), ['package.json', 'public/index.html', 'test/commerce-source-compatibility.js', 'test/enterprise-current-source-compatibility.js']);
+assert.deepEqual(CLASSIC_INTERFACE_OVER_F92.files.map(row => row.file), ['package.json', 'public/index.html', 'test/commerce-source-compatibility.js', 'test/enterprise-current-source-compatibility.js', 'test/gates.js']);
 for (const [revision, tree] of [[CLASSIC_INTERFACE_OVER_F92.revision, CLASSIC_INTERFACE_OVER_F92.tree], [CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.targetTree]])
   assert.equal(git('--no-replace-objects', 'rev-parse', revision + '^{tree}').trim(), tree);
 git('merge-base', '--is-ancestor', CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.revision);
@@ -76,7 +76,7 @@ for (const mutate of [pin => { pin.status = 'UNSEALED'; }, pin => { pin.revision
   assert.equal(JSON.stringify(forged), JSON.stringify(CLASSIC_INTERFACE_OVER_F92), 'Forged serialization reproduces the exact binding checksum');
   assert.throws(() => qualifyClassicInterfaceSource(row.file, unreviewed, forged)); classicRefusals++;
 }
-console.log(JSON.stringify({ phase: 'CLASSIC_INTERFACE_EXACT_SOURCE_ONLY', source: CLASSIC_INTERFACE_OVER_F92.revision, target: CLASSIC_INTERFACE_OVER_F92.targetRevision, files: 4, positives: classicPositives, refusals: classicRefusals, native: false, runtime: false }));
+console.log(JSON.stringify({ phase: 'CLASSIC_INTERFACE_EXACT_SOURCE_ONLY', source: CLASSIC_INTERFACE_OVER_F92.revision, target: CLASSIC_INTERFACE_OVER_F92.targetRevision, files: 5, positives: classicPositives, refusals: classicRefusals, native: false, runtime: false }));
 // This local physical-reader hop admits only exact reviewed current UI bytes; frozen GUI/fixture proofs below are unchanged.
 const CURRENT_UI_OVER_GUI59 = Object.freeze({
   "version": 1,
