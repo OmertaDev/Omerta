@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fce7735f2821`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0e53af3912a0`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4370 |
+| Commits in clone | 4372 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-18 — Refresh measured payout test-chain count |
+| Latest commit | 2026-10-18 — Reconcile current Robinhood review inventory total |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3407 |
+| OmertaDev | 3409 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 118 |
@@ -30,16 +30,16 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 735 | historical |
-| knowledge/generated/graph-summary.md | 735 | historical |
-| knowledge/generated/graph.json | 735 | historical |
-| knowledge/generated/inventory.md | 735 | historical |
+| knowledge/generated/github-history.md | 736 | historical |
+| knowledge/generated/graph-summary.md | 736 | historical |
+| knowledge/generated/graph.json | 736 | historical |
+| knowledge/generated/inventory.md | 736 | historical |
 | [SPEC.md](../../SPEC.md) | 573 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 476 | yes |
 | [src/server.js](../../src/server.js) | 438 | yes |
 | [schema.sql](../../schema.sql) | 366 | yes |
-| knowledge/generated/documents.md | 351 | historical |
+| knowledge/generated/documents.md | 352 | historical |
 | [package.json](../../package.json) | 339 | yes |
 | knowledge/generated/modules.md | 259 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |

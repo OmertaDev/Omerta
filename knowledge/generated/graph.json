@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "fce7735f28213e75196bf99509d816100abfb60d",
+  "sourceRevision": "0e53af3912a06a4125157bb3eabd062d26ef8b8e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16144,
-    "edges": 64039,
+    "nodes": 16146,
+    "edges": 64047,
     "byNodeType": {
       "Artifact": 6740,
       "Command": 291,
-      "Commit": 4370,
+      "Commit": 4372,
       "Contract": 136,
       "Document": 934,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5343,
-      "CHANGED": 24700,
+      "CHANGED": 24706,
       "CONTAINS": 6761,
       "DECLARES": 291,
       "DEFINED_IN": 1727,
       "DEPENDS_ON": 69,
       "EXECUTES": 1108,
       "HANDLED_BY": 926,
-      "HAS_COMMIT": 4370,
+      "HAS_COMMIT": 4372,
       "IMPLEMENTS": 124,
       "IMPORTS": 7069,
       "INHERITS": 45,
@@ -30891,18 +30891,18 @@
       "extension": ".md",
       "bytes": 41291,
       "lines": 448,
-      "version": "7b217ee4172c6f1d",
+      "version": "0a62fae1b8976233",
       "text": true,
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET-O1.md",
           "line": 1,
-          "version": "7b217ee4172c6f1d"
+          "version": "0a62fae1b8976233"
         }
       ],
-      "lastChangedAt": "2026-10-18T01:35:59.000Z",
+      "lastChangedAt": "2026-10-18T01:41:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d054b4080fbe930f04e1935a811741c4887544de"
+      "lastChangedCommit": "0e53af3912a06a4125157bb3eabd062d26ef8b8e"
     },
     {
       "key": "Artifact:CHAIN-AUDIT-PACKET.md",
@@ -159055,6 +159055,22 @@
       ]
     },
     {
+      "key": "Commit:00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "type": "Commit",
+      "id": "00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "label": "Regenerate knowledge for reviewed Robinhood payout component",
+      "title": "Regenerate knowledge for reviewed Robinhood payout component",
+      "date": "2026-10-18T01:40:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "provenance": [
+        {
+          "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/00a73952195c9358166ad4d9d46e52c3dbff655c"
+        }
+      ]
+    },
+    {
       "key": "Commit:00a8dd0c6350a5164d3a74184808802c4963b8c7",
       "type": "Commit",
       "id": "00a8dd0c6350a5164d3a74184808802c4963b8c7",
@@ -162603,6 +162619,22 @@
         {
           "commit": "0e495189416f510b84277b5887d06640750446e5",
           "url": "https://github.com/OmertaDev/Omerta/commit/0e495189416f510b84277b5887d06640750446e5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0e53af3912a06a4125157bb3eabd062d26ef8b8e",
+      "type": "Commit",
+      "id": "0e53af3912a06a4125157bb3eabd062d26ef8b8e",
+      "label": "Reconcile current Robinhood review inventory total",
+      "title": "Reconcile current Robinhood review inventory total",
+      "date": "2026-10-18T01:41:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0e53af3912a06a4125157bb3eabd062d26ef8b8e",
+      "provenance": [
+        {
+          "commit": "0e53af3912a06a4125157bb3eabd062d26ef8b8e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0e53af3912a06a4125157bb3eabd062d26ef8b8e"
         }
       ]
     },
@@ -237149,12 +237181,12 @@
       "label": "CHAIN-AUDIT-PACKET-O1.md",
       "documentType": "documentation",
       "lines": 448,
-      "version": "7b217ee4172c6f1d",
+      "version": "0a62fae1b8976233",
       "provenance": [
         {
           "file": "CHAIN-AUDIT-PACKET-O1.md",
           "line": 1,
-          "version": "7b217ee4172c6f1d"
+          "version": "0a62fae1b8976233"
         }
       ]
     },
@@ -254013,6 +254045,9 @@
       "path": "knowledge/generated/documents.md",
       "provenance": [
         {
+          "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+        },
+        {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
         },
         {
@@ -255074,6 +255109,9 @@
       "label": "knowledge/generated/github-history.md",
       "path": "knowledge/generated/github-history.md",
       "provenance": [
+        {
+          "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+        },
         {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
         },
@@ -257289,6 +257327,9 @@
       "path": "knowledge/generated/graph-summary.md",
       "provenance": [
         {
+          "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+        },
+        {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
         },
         {
@@ -259502,6 +259543,9 @@
       "label": "knowledge/generated/graph.json",
       "path": "knowledge/generated/graph.json",
       "provenance": [
+        {
+          "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+        },
         {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
         },
@@ -262340,6 +262384,9 @@
       "label": "knowledge/generated/inventory.md",
       "path": "knowledge/generated/inventory.md",
       "provenance": [
+        {
+          "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+        },
         {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
         },
@@ -278163,7 +278210,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "fce7735f28213e75196bf99509d816100abfb60d",
+      "revision": "0e53af3912a06a4125157bb3eabd062d26ef8b8e",
       "currentBranch": "codex/robinhood-usdg-payouts-oct17",
       "defaultBranch": "main",
       "visibility": "public",
@@ -375356,6 +375403,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:00a8dd0c6350a5164d3a74184808802c4963b8c7",
       "to": "Artifact:test/franchiselicenses.js",
       "provenance": {
@@ -382656,6 +382743,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "0e495189416f510b84277b5887d06640750446e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e53af3912a06a4125157bb3eabd062d26ef8b8e",
+      "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
+      "provenance": {
+        "commit": "0e53af3912a06a4125157bb3eabd062d26ef8b8e"
       }
     },
     {
@@ -671386,6 +671481,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:00a73952195c9358166ad4d9d46e52c3dbff655c",
+      "provenance": {
+        "commit": "00a73952195c9358166ad4d9d46e52c3dbff655c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:00a8dd0c6350a5164d3a74184808802c4963b8c7",
       "provenance": {
         "commit": "00a8dd0c6350a5164d3a74184808802c4963b8c7"
@@ -673157,6 +673260,14 @@
       "to": "Commit:0e495189416f510b84277b5887d06640750446e5",
       "provenance": {
         "commit": "0e495189416f510b84277b5887d06640750446e5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:0e53af3912a06a4125157bb3eabd062d26ef8b8e",
+      "provenance": {
+        "commit": "0e53af3912a06a4125157bb3eabd062d26ef8b8e"
       }
     },
     {
