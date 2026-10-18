@@ -26,6 +26,8 @@
 //   createdb omerta_query
 //   DATABASE_URL=postgres://localhost/omerta_query node tools/pgquery.js
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { scanQueryCalls } from './sqlscan.js';
 
@@ -54,6 +56,54 @@ for (const got of readable) {
   if (got.interpolated) { interpolated.push({ where: got.where, sql: got.sql }); continue; }
   if (!DML.test(got.sql)) { skipped.push(got.where); continue; }
   stmts.push({ where: got.where, sql: got.sql });
+}
+
+// These four Commerce sites stay counted/listed as UNPREPARED. Whole-source pins close the
+// caller/column authority: a 23-column INSERT with bound values; the forward/undo UPDATE over
+// 11 frozen columns with 13 bound values; and a private reader whose 16 callers use 13 literal
+// SELECT shapes (one two-literal conditional). startsWith('SELECT ') alone is not that proof.
+// Reject source/shape drift before importing db.js; test/gates.js's interpolation ledger remains
+// a separate guard over the unchanged scanner corpus.
+function assertReviewedCommerceQueries(sources, readable, unreadableSites) {
+  const pins = {
+    'src/commercialcampaigns.js': 'f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c',
+    'src/commercialcampaignruntime.js': '74b5776f868528d0dd1617095613648dc7b4ad9823e6096b944b6101d51f5afb',
+  };
+  if (JSON.stringify(Object.keys(sources).sort()) !== JSON.stringify(Object.keys(pins).sort()))
+    throw new Error('reviewed Commerce source set changed');
+  for (const [file, hash] of Object.entries(pins)) {
+    const source = sources[file];
+    if (typeof source !== 'string') throw new Error('reviewed Commerce source missing: ' + file);
+    const canonical = source.replaceAll('\r\n', '\n');
+    if (canonical.includes('\r') || (source !== canonical && source !== canonical.replaceAll('\n', '\r\n'))
+        || createHash('sha256').update(canonical).digest('hex') !== hash)
+      throw new Error('reviewed Commerce source changed: ' + file);
+  }
+  const named = row => Object.hasOwn(pins, row.rel);
+  const templates = readable.filter(row => named(row) && row.interpolated)
+    .map(row => [row.where, row.sql, row.parts]);
+  if (JSON.stringify(templates) !== JSON.stringify([['src/commercialcampaigns.js:268',
+    'INSERT INTO commercial_campaigns() VALUES()',
+    ["columns.join(',')", "columns.map((_, i) => '$' + (i + 1)).join(',')"]]]))
+    throw new Error('reviewed Commerce INSERT shape changed');
+  const dynamic = unreadableSites.filter(named).map(row => row.where).sort();
+  if (JSON.stringify(dynamic) !== JSON.stringify(['src/commercialcampaignruntime.js:44',
+    'src/commercialcampaigns.js:426', 'src/commercialcampaigns.js:427']))
+    throw new Error('reviewed Commerce non-literal sites changed');
+}
+
+try {
+  assertReviewedCommerceQueries({
+    'src/commercialcampaigns.js': readFileSync(new URL('../src/commercialcampaigns.js', import.meta.url), 'utf8'),
+    'src/commercialcampaignruntime.js': readFileSync(new URL('../src/commercialcampaignruntime.js', import.meta.url), 'utf8'),
+  }, readable, unreadableSites);
+} catch (e) {
+  console.error('pgquery refused reviewed Commerce dispatch: ' + e.message);
+  if (process.env.PGQUERY_LIST) {
+    console.error('interpolated (unchecked):'); for (const i of interpolated) console.error('  ' + i.where);
+    console.error('non-literal (unchecked):'); for (const u of unreadable) console.error('  ' + u);
+  }
+  process.exit(1);
 }
 
 // ── 2. PREPARE ───────────────────────────────────────────────────────────────────────────────────
@@ -195,7 +245,12 @@ if (failures.length) {
 // identifiers use PostgreSQL format('%I'), and native role-isolation tests verify
 // enforcement. Static lock variants were kept literal instead of consuming room.
 // This ceiling matches the measured set, adding no spare unchecked-query budget.
-const CEILING = { interpolated: 172, unreadable: 41 };
+// 172 -> 173 / 41 -> 44 (2026-10-18 Commerce integration): exactly the four named sites
+// admitted above. The INSERT and both stage UPDATE calls generate only frozen column names and
+// numbered placeholders with every value bound; the private history dispatcher has only closed
+// literal SELECT callers. Whole-source/shape checks reject drift before database work. These are
+// still unprepared, counted and listed: no new type-resolution claim or spare unchecked budget.
+const CEILING = { interpolated: 173, unreadable: 44 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);
