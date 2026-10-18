@@ -217,12 +217,12 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
 // Independent final-services namespace: only source/schema/catalog evidence is known.
 // Candidate revision/reviewed tree stay NULL until genuine final material is reviewed.
 export const FINALSERVICES_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "f200d4d3d81dd64999f91bb30a74929452d8b341",
-  "reviewedCandidate": "91300d7de2da4474b2cf6fd04c8daa9a3609b307",
-  "predecessorTree": "1a1731c61a16fc74a955b8c8d50389633ef6f980004e370524193adc3c2c34ee",
+  "predecessor": "da5bc87ca9e8e1fefd1e434bbf4dd52b1cf35988",
+  "reviewedCandidate": "1122c61b80ad801248f11751979a7c0e75a5cef0",
+  "predecessorTree": "997746805a6172eaa79f44047b386e9de8957cf83e123dfcdd69e9d46fcbb072",
   "predecessorSchema": "833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335",
   "predecessorCatalog": "44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917",
-  "candidateTree": "ffb205f42cb7bcaf125f26096e807ef2bbce52581bdd0ef682249f50caaf7e83",
+  "candidateTree": "219b82bf08ac69efdff865d06485168fef65cec03dc5e31fb50712794a67a9a3",
   "candidateSchema": "ddd7a304c12997ea32a60ff7a7e0df0fabb172cc0f2fee50e56dbaa89cb0d2a2",
   "candidateCatalog": "7b6bedc109949835c5bb5e0da174b4c579409ab2cd7ec67f62d456367c6a08f0",
   "constraints": 332,
