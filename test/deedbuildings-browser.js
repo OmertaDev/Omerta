@@ -77,9 +77,11 @@ try {
     .map(row => row.request.actionId), ['inspect-site', 'verify-registry', 'question-witness', 'secure-title'],
     'The UI follows four distinct server-issued objectives rather than repeating a generic investigation.');
   await page.locator('#deed-property-name').fill('Browser House');
-  const claimResponse = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/deeds/claim'
-    && response.request().method() === 'POST');
-  await page.locator('#deed-property-claim').click();
+  const [claimResponse] = await Promise.all([
+    page.waitForResponse(response => new URL(response.url()).pathname === '/v1/deeds/claim'
+      && response.request().method() === 'POST'),
+    page.locator('#deed-property-claim').click({ delay: 450 }),
+  ]);
   assert.equal((await claimResponse).status(), 200, 'The earned claim reaches the real server.');
   assert.equal((await app.pool.query('SELECT name FROM street_deeds WHERE account_id=$1 AND building_id=$2',
     [accountId, 'docks-0001'])).rows[0]?.name, 'Browser House');

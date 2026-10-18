@@ -5317,7 +5317,7 @@
   function travelTo(district, operationOptions = {}) {
     const place = (rules?.districts || []).find((d) => (d.id || d) === district);
     return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}`, ...operationOptions })
-      .then((r) => { if (r.code < 400) renderActive({ afterAction: true }); return r; });
+      .then((r) => { if (r.code < 400 && operationOptions.refreshBoard !== false) renderActive({ afterAction: true }); return r; });
   }
   function openTravel() {
     const here = me?.loc;
@@ -5700,7 +5700,7 @@
       // which reads as "the button did nothing" — a tester reported exactly that. Debounced and
       // input-safe (renderActive skips while a field has focus), so this costs one board fetch on the
       // screen already in front of you.
-      if (r.code < 400) renderActive({ afterAction: true });
+      if (r.code < 400 && options.refreshBoard !== false) renderActive({ afterAction: true });
       return r;
     } finally {
       acting = false;
@@ -10460,14 +10460,14 @@
         if (investigate) investigate.onclick = async () => {
           if (!valid()) return;
           investigate.disabled = true;
-          try { await act('POST', '/v1/deeds/investigate', { buildingId: p.id, actionId: objective.actionId }, { label: objective.title, beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }
+          try { await act('POST', '/v1/deeds/investigate', { buildingId: p.id, actionId: objective.actionId }, { label: objective.title, beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current, refreshBoard: false }); }
           finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
         };
         const travel = $('#deed-objective-travel');
         if (travel) travel.onclick = async () => {
           if (!valid()) return;
           travel.disabled = true;
-          try { await travelTo(requiredDistrict, { beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }
+          try { await travelTo(requiredDistrict, { beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current, refreshBoard: false }); }
           finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
         };
         const claim = $('#deed-property-claim');
