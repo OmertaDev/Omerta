@@ -53,7 +53,6 @@ for (const code of ['40P01', '23505', '55P03'])
   app.post(`/v1/__contention_${code}`, async () => { const e = new Error('boom'); e.code = code; throw e; });
 app.post('/v1/__genuine_bug', async () => { throw new Error('a real null-dereference'); });
 const pool = app.pool;
-const ageCookie = (await app.inject({ method: 'POST', url: '/v1/age-check', payload: { birthDate: '1990-01-01' } })).headers['set-cookie'].split(';')[0];
 const modH = { 'x-mod-key': 'test-mod-key' };
 const call = async (method, url, { token, body, headers } = {}) => {
   const res = await app.inject({ method, url, payload: headers?.['content-type'] === 'application/json' && body === undefined ? undefined : adultAuthFixture(method, url, body),
@@ -983,14 +982,14 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     let r = await call('POST', '/v1/auth/x/start', { body: {} });
     let state = new URL(r.body.url).searchParams.get('state');
     let cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
+      headers: { cookie: `omerta_oauth=${state}` } });
     assert(cb.headers.location.includes('#token='), 'a real exchange lands a signed session token');
     const xToken = decodeURIComponent(cb.headers.location.split('#token=')[1]);
     const sess = await call('GET', '/v1/session', { token: xToken });
     assert.equal(sess.body.provider, 'x', 'the minted session is the X identity');
     // REPLAY the same callback → the state was consumed (single-use, DELETE-returning)
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
+      headers: { cookie: `omerta_oauth=${state}` } });
     assert(cb.headers.location.includes('#autherr=oauth_state'), 'a replayed callback finds no state');
     // (2) the guest UPGRADE: an authed start claims-in-place; the same X id can never claim twice
     const claimer = await mk('Claim Kid');
@@ -998,7 +997,7 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     r = await call('POST', '/v1/auth/x/start', { token: claimer.token, body: {} });
     state = new URL(r.body.url).searchParams.get('state');
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
+      headers: { cookie: `omerta_oauth=${state}` } });
     assert(cb.headers.location.includes('#claimed=x'), 'the guest is upgraded in place');
     assert.equal((await call('GET', '/v1/session', { token: claimer.token })).body.provider, 'x',
       'same account row, now an X identity');
@@ -1006,14 +1005,14 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     r = await call('POST', '/v1/auth/x/start', { token: rival.token, body: {} });
     state = new URL(r.body.url).searchParams.get('state');
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
+      headers: { cookie: `omerta_oauth=${state}` } });
     assert(cb.headers.location.includes('#autherr=linked_elsewhere'), 'one X account, one street — the collision is clean');
     // (3) a transient X failure during the exchange is a clean retryable x_busy, never a 500
     xmock.token = () => jres(500, {});
     r = await call('POST', '/v1/auth/x/start', { body: {} });
     state = new URL(r.body.url).searchParams.get('state');
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
+      headers: { cookie: `omerta_oauth=${state}` } });
     assert(cb.headers.location.includes('#autherr=x_busy'), 'an X outage mid-exchange reads as busy, not broken');
     // (4) verifyPostUp semantics: transient ≠ definitive (an outage must NEVER read as "post gone")
     process.env.SOCIAL_VERIFY_MODE = 'live';

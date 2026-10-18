@@ -43,7 +43,7 @@ const PUBLIC_PATHS = new Set([
   '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',
   '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',
   '/v1/auth/guest', '/v1/auth/x', '/v1/auth/privy',
-  '/v1/access/redeem', '/v1/access/logout', '/v1/age-check', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',
+  '/v1/access/redeem', '/v1/access/logout', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',
 ]);
 
 // Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).
@@ -404,15 +404,7 @@ const OPERATION_CONTRACTS = {
     requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {
       inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },
       bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },
-      birthDate: { type: 'string', format: 'date', description: 'Human/operator-supplied date for first account creation; omitted with a valid age-check cookie or existing bootstrap recovery. Never infer a date.' },
     } },
-  },
-  'POST /v1/age-check': {
-    operationId: 'checkAgeEligibility',
-    requestSchema: { type: 'object', required: ['birthDate'], properties: {
-      birthDate: { type: 'string', format: 'date', description: 'Complete birth date, processed transiently and never saved in account records.' },
-    } },
-    extraResponses: { 403: { description: 'Account creation is unavailable; use the privacy contact for help.' } },
   },
   'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },
   'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },

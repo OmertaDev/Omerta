@@ -155,6 +155,9 @@ when unconfigured — sign-in buttons hide, social claims fail-closed — so set
       `https://www.omerta.fun/v1/auth/x/callback` (App settings → User authentication → Callback URI).
       Scopes needed: `users.read tweet.read`. Type of app: Web App. A mismatched callback = every
       sign-in fails at X's door.
+      If `PUBLIC_URL` uses `https://omerta.fun`, also register
+      `https://omerta.fun/v1/auth/x/callback`. Registering only the `www` callback does not cover
+      the apex URL, even when the site redirects between them.
 
 **Social verification (First-Week follow + Spread-the-Word post checks, `SOCIAL_VERIFY_MODE=live`):**
 - [ ] `X_BEARER_TOKEN` — the app's Bearer Token (app-only auth; reads tweets + follow lists).

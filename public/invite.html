@@ -55,32 +55,7 @@
   </main>
   <footer><span>LOYALTY IS EARNED. ENTRY IS INVITED.</span><span>OMERTÀ · LAUNCH ACCESS</span></footer>
   <noscript><p style="padding:24px">Enable JavaScript to redeem your invitation or sign in.</p></noscript>
-  <dialog id="age-dialog" aria-labelledby="age-title"><h2 id="age-title">Your birth date</h2><p>Enter your complete birth date to continue. We check it without saving it.</p><form id="age-form"><label for="age-date">Birth date</label><input id="age-date" type="date" required><button type="submit">Continue</button><button type="button" id="age-cancel">Cancel</button></form><p id="age-status" role="alert"></p><p><a href="/privacy">Privacy policy and help</a></p></dialog>
   <script>
-    let ageChecked = 0;
-    async function verifyAge() {
-      if (ageChecked > Date.now()) return;
-      if (sessionStorage.getItem('omerta_age_blocked')) throw new Error('Account creation is unavailable. See /privacy for help.');
-      await new Promise((resolve, reject) => {
-        const dialog = document.querySelector('#age-dialog');
-        const finish = (error) => { dialog.close(); error ? reject(error) : resolve(); };
-        document.querySelector('#age-cancel').onclick = () => finish(new Error('Birth date check cancelled.'));
-        dialog.oncancel = (event) => { event.preventDefault(); finish(new Error('Birth date check cancelled.')); };
-        document.querySelector('#age-form').onsubmit = async (event) => {
-          event.preventDefault();
-          const input = document.querySelector('#age-date');
-          const birthDate = input.value; input.value = '';
-          const response = await fetch('/v1/age-check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ birthDate }) });
-          const result = await response.json();
-          if (response.ok) { ageChecked = Date.now() + 14 * 60 * 1000; finish(); }
-          else {
-            document.querySelector('#age-status').textContent = result.message || 'Please try again.';
-            if (result.error === 'age_ineligible') { sessionStorage.setItem('omerta_age_blocked', '1'); document.querySelector('#age-form').hidden = true; }
-          }
-        };
-        dialog.showModal();
-      });
-    }
     const status = document.querySelector('#gate-status');
     const codeInput = document.querySelector('#invite-code');
     const pendingKey = 'omerta_launch_pending';
@@ -119,7 +94,6 @@
       message('Checking your invitation…');
       try {
         const inviteCode = codeInput.value.trim();
-        await verifyAge();
         let operation = pending();
         if (!operation || operation.inviteCode !== inviteCode) {
           operation = { inviteCode, bootstrapSecret: secret() };
@@ -131,7 +105,7 @@
     };
     document.querySelector('#return-x').onclick = async () => {
       const button = document.querySelector('#return-x'); button.disabled = true; message('Connecting to X…');
-      try { await verifyAge(); location.assign((await request('/v1/auth/x/start', {})).url); }
+      try { location.assign((await request('/v1/auth/x/start', {})).url); }
       catch (error) { message(error.message, true); button.disabled = false; }
     };
     document.querySelector('#token-form').onsubmit = async (event) => {
@@ -139,7 +113,7 @@
       try {
         let token = document.querySelector('#account-token').value.trim();
         const provider = document.querySelector('#token-kind').value;
-        if (provider !== 'omerta') { await verifyAge(); token = (await request('/v1/auth/' + provider, { token })).token; }
+        if (provider !== 'omerta') token = (await request('/v1/auth/' + provider, { token })).token;
         await request('/v1/access/session', {}, token); await enter(token);
       }
       catch (error) { message(error.message, true); }

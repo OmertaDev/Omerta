@@ -12,7 +12,6 @@ import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import websocket from '@fastify/websocket';
 import crypto from 'node:crypto';
-import { eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';
@@ -1462,26 +1461,14 @@ export async function buildServer() {
     return { ok: true };
   });
 
-  app.post('/v1/age-check', async (req, reply) => {
-    reply.header('Cache-Control', 'no-store');
-    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);
-    const cookie = app.jwt.sign({ purpose: 'age-check', eligible }, { expiresIn: '15m' });
-    reply.header('Set-Cookie', ageCookie(cookie));
-    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });
-    return { ok: true };
-  });
   const guestLogin = async (req) => {
-    // Recovery authority does not override a known-ineligible browser or an
-    // explicitly supplied birth date. Existing eligible recovery needs no DOB.
-    if (ageStatus(app, req) === false || req.body?.birthDate !== undefined) requireAge(app, req);
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
         Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
       const { accountId, tokenVersion } = await A.accountForGuestBootstrap(
-        pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode, () => requireAge(app, req),
+        pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode,
       );
       return { token: await signFor(accountId, {}, '30d', tokenVersion) };
     }
-    requireAge(app, req);
     const id = await A.createGuestAccount(pool, req.ip || '0.0.0.0', req.body?.inviteCode);
     return { token: await signFor(id, {}, '30d', 0) };
   };
@@ -1509,7 +1496,6 @@ export async function buildServer() {
   app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>
     A.acknowledgeGuestBootstrap(pool, req.user.sub));
   const providerLogin = (verify) => async (req) => {
-    requireAge(app, req);
     const identity = await verify(req.body?.token);
     // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per
     // new account, gate held even under a concurrent same-identity race (no separate pre-consume).
@@ -1549,9 +1535,7 @@ export async function buildServer() {
         'SELECT status, token_version FROM accounts WHERE id=$1', [accountId])).rows[0];
       const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);
       if (!a || a.status === 'banned' || revoked) accountId = null;
-    }
-    if (!accountId) requireAge(app, req);
-    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });
+    }    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });
     // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,
     // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the
     // attacker's account (the victim's browser never carries the attacker's cookie). Path-scoped +
@@ -1568,13 +1552,12 @@ export async function buildServer() {
       if (!req.query?.state || cookieVal(req, 'omerta_oauth') !== req.query.state) {
         return reply.redirect('/#autherr=oauth_session'); // no matching browser binding → refuse (CSRF guard)
       }
-      const r = await A.xOAuthCallback(pool, { code: req.query?.code, state: req.query?.state });
+      const r = await A.xOAuthCallback(pool, { code: req.query?.code, state: req.query?.state, error: req.query?.error });
       if (r.purpose === 'upgrade' && r.accountId) {
         await A.upgradeAccount(pool, r.accountId, r.identity);
         return reply.redirect('/#claimed=x');
       }
       // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races
-      requireAge(app, req);
       const { accountId } = await A.accountForIdentity(pool, r.identity, req.ip || '0.0.0.0', r.invite);
       const token = await signFor(accountId);
       const claims = app.jwt.verify(token);

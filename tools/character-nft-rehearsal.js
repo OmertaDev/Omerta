@@ -129,7 +129,7 @@ try {
     const inviteCode = generateInviteCode();
     await app.pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [inviteCode]);
     const token = ok(await api('POST', '/v1/access/redeem', null,
-      { inviteCode, birthDate: '1990-01-01', bootstrapSecret: randomBytes(32).toString('base64url') })).token;
+      { inviteCode, bootstrapSecret: randomBytes(32).toString('base64url') })).token;
     ok(await api('POST', '/v1/character', token, { name }));
     const challenge = ok(await api('POST', '/v1/wallet/challenge', token, {}));
     ok(await api('POST', '/v1/wallet/verify', token, { address: wallet.account.address,

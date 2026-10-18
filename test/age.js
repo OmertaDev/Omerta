@@ -1,55 +1,52 @@
 import assert from 'node:assert/strict';
-import { eligibleBirthDate } from '../src/age.js';
 import { buildServer } from '../src/server.js';
 
-const now = new Date('2026-10-08T12:00:00Z');
-assert.equal(eligibleBirthDate('2013-10-08', now), true);
-assert.equal(eligibleBirthDate('2013-10-09', now), false);
-assert.throws(() => eligibleBirthDate('2013-02-30', now));
-assert.throws(() => eligibleBirthDate('2027-01-01', now));
+const config = { INVITE_MODE: 'off', RATE_LIMIT: 'off', X_CLIENT_ID: 'no-age-test-client',
+  PUBLIC_URL: 'https://omerta.example', X_TRUST_USER_TOKEN: 'on' };
+const previous = Object.fromEntries(Object.keys(config).map((key) => [key, process.env[key]]));
+Object.assign(process.env, config);
 const app = await buildServer();
+const oldFetch = global.fetch;
 try {
-  const count = async () => Number((await app.pool.query('SELECT count(*) AS n FROM accounts')).rows[0].n);
-  const before = await count();
-  for (const birthDate of [undefined, '2020-01-01']) {
-    const response = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: birthDate ? { birthDate } : {} });
-    assert.ok(response.statusCode >= 400);
-  }
-  let fetched = false;
-  const oldFetch = global.fetch;
-  global.fetch = async () => { fetched = true; throw new Error('must not reach provider'); };
-  try {
-    const response = await app.inject({ method: 'POST', url: '/v1/auth/privy', payload: { token: 'hostile', birthDate: '2020-01-01' } });
-    assert.equal(response.json().error, 'age_ineligible');
-    assert.equal(fetched, false);
-  } finally { global.fetch = oldFetch; }
-  assert.equal(await count(), before, 'denied ages create no account or account IP');
-  const denied = await app.inject({ method: 'POST', url: '/v1/age-check', payload: { birthDate: '2020-01-01' } });
-  assert.equal(denied.statusCode, 403);
-  const blockedCookie = denied.headers['set-cookie'].split(';')[0];
-  const retry = await app.inject({ method: 'POST', url: '/v1/age-check', headers: { cookie: blockedCookie }, payload: { birthDate: '1990-01-01' } });
-  assert.equal(retry.statusCode, 403, 'denial cannot be corrected immediately using the same browser cookie');
-  const approved = await app.inject({ method: 'POST', url: '/v1/age-check', payload: { birthDate: '1990-01-01' } });
-  assert.equal(approved.statusCode, 200);
-  const token = approved.headers['set-cookie'].split(';')[0].slice('omerta_age='.length);
-  assert.equal(app.jwt.verify(token).purpose, 'age-check');
-  assert.equal(JSON.stringify(app.jwt.verify(token)).includes('1990'), false);
-  const explicitChild = await app.inject({ method: 'POST', url: '/v1/auth/guest',
-    headers: { cookie: approved.headers['set-cookie'].split(';')[0] }, payload: { birthDate: '2020-01-01' } });
-  assert.equal(explicitChild.json().error, 'age_ineligible', 'earlier eligibility cannot override an explicit child birth date');
-  assert.equal(await count(), before);
-  const created = await app.inject({ method: 'POST', url: '/v1/auth/guest', headers: { cookie: approved.headers['set-cookie'].split(';')[0] }, payload: {} });
-  assert.equal(created.statusCode, 200, 'eligible cookie admits account creation');
-  const secret = Buffer.alloc(32, 7).toString('base64url');
-  const first = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { bootstrapSecret: secret, birthDate: '1990-01-01' } });
-  assert.equal(first.statusCode, 200);
-  const recovered = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { bootstrapSecret: secret } });
-  assert.equal(recovered.statusCode, 200, 'existing bootstrap recovery does not require birth date again');
+  // Old browser eligibility cookies must no longer block sign-in or account recovery.
+  const oldCookie = `omerta_age=${app.jwt.sign({ purpose: 'age-check', eligible: false })}`;
+  const guest = await app.inject({ method: 'POST', url: '/v1/auth/guest', headers: { cookie: oldCookie }, payload: {} });
+  assert.equal(guest.statusCode, 200, guest.body);
+  assert(guest.json().token, 'guest creation needs no personal age information');
+  const bootstrapSecret = Buffer.alloc(32, 7).toString('base64url');
+  const first = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { bootstrapSecret } });
+  const recovered = await app.inject({ method: 'POST', url: '/v1/auth/guest', headers: { cookie: oldCookie }, payload: { bootstrapSecret } });
+  assert.equal(first.statusCode, 200, first.body);
+  assert.equal(recovered.statusCode, 200, recovered.body);
   assert.equal(app.jwt.verify(first.json().token).sub, app.jwt.verify(recovered.json().token).sub);
-  const blockedRecovery = await app.inject({ method: 'POST', url: '/v1/auth/guest',
-    headers: { cookie: blockedCookie }, payload: { bootstrapSecret: secret } });
-  assert.equal(blockedRecovery.json().error, 'age_ineligible', 'recovery does not bypass known-ineligible browser status');
-  const ageBearer = await app.inject({ url: '/v1/session', headers: { authorization: `Bearer ${token}` } });
-  assert.ok(ageBearer.statusCode >= 400, 'age eligibility token cannot authorize a player session');
-  console.log('Age gate: boundary, invalid dates, creation rejection, provider isolation, cookie denial and DOB minimization passed.');
-} finally { await app.close(); }
+
+  global.fetch = async (url) => {
+    if (String(url).includes('/oauth2/token')) return { ok: true, status: 200, json: async () => ({ access_token: 'test-x-token' }) };
+    assert.equal(String(url), 'https://api.x.com/2/users/me');
+    return { ok: true, status: 200, json: async () => ({ data: { id: 'no-age-x-user' } }) };
+  };
+  const provider = await app.inject({ method: 'POST', url: '/v1/auth/x', payload: { token: 'test-x-token' } });
+  assert.equal(provider.statusCode, 200, provider.body);
+  const started = await app.inject({ method: 'POST', url: '/v1/auth/x/start', headers: { cookie: oldCookie }, payload: {} });
+  assert.equal(started.statusCode, 200, started.body);
+  const state = new URL(started.json().url).searchParams.get('state');
+  const callback = await app.inject({ url: `/v1/auth/x/callback?code=test-code&state=${state}`,
+    headers: { cookie: `omerta_oauth=${state}; ${oldCookie}` } });
+  assert.equal(callback.statusCode, 302, callback.body);
+  assert.match(callback.headers.location, /^\/#token=/, 'X sign-in completes without an age check');
+
+  const contract = (await app.inject('/openapi.json')).json();
+  assert.equal(contract.paths['/v1/age-check'], undefined, 'the API no longer publishes age collection');
+  assert(!JSON.stringify(contract).includes('birthDate'), 'signup schemas do not ask agents for birth dates');
+  assert.equal((await app.inject({ method: 'POST', url: '/v1/age-check', payload: {} })).statusCode, 404);
+  const page = await app.inject('/');
+  assert(!page.body.includes('type="date"'), 'signup does not contain a birth-date input');
+  assert(!page.body.includes('verifyAge'), 'signup has no age-check prerequisite');
+  console.log('PASS: guest creation, recovery, X provider/OAuth sign-in and API discovery need no age or birth date.');
+} finally {
+  global.fetch = oldFetch;
+  await app.close();
+  for (const [key, value] of Object.entries(previous)) {
+    if (value === undefined) delete process.env[key]; else process.env[key] = value;
+  }
+}

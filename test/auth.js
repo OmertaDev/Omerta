@@ -299,6 +299,31 @@ const pool = await makeDb();
 
   // a callback presenting a state that was never issued → clean GameError (not a crash)
   await assert.rejects(() => xOAuthCallback(pool, { code: 'x', state: 'never-issued' }), (e) => e.code && typeof e.code === 'string', 'an unknown state is a clean typed error, never a 500');
+  for (const [error, expected] of [['access_denied', 'oauth_denied'], ['server_error', 'oauth_authorize']]) {
+    const denied = await xOAuthStart(pool);
+    await assert.rejects(() => xOAuthCallback(pool, { state: denied.state, error }),
+      (e) => e.code === expected, 'X authorization failures retain their actual cause');
+    await assert.rejects(() => xOAuthCallback(pool, { state: denied.state, code: 'replay' }),
+      (e) => e.code === 'oauth_state', 'a denied authorization also consumes its state');
+  }
+
+  const app = await buildServer();
+  try {
+    const start = await app.inject({ method: 'POST', url: '/v1/auth/x/start', payload: {} });
+    assert.equal(start.statusCode, 200, 'X start needs no age or birth date');
+    const state = new URL(start.json().url).searchParams.get('state');
+    const cookie = `omerta_oauth=${state}`;
+    const denied = `/v1/auth/x/callback?error=access_denied&state=${state}`;
+    const unbound = await app.inject({ method: 'GET', url: denied });
+    assert.equal(unbound.headers.location, '/#autherr=oauth_session', 'denials still require the browser binding');
+    assert.equal((await app.pool.query('SELECT 1 FROM oauth_states WHERE state=$1', [state])).rowCount, 1,
+      'a foreign browser cannot consume the pending sign-in');
+    const bound = await app.inject({ method: 'GET', url: denied, headers: { cookie } });
+    assert.equal(bound.headers.location, '/#autherr=oauth_denied', 'the callback reports cancellation without exposing provider text');
+    assert.match(String(bound.headers['set-cookie']), /omerta_oauth=;.*Max-Age=0/, 'the browser binding is cleared');
+    const replay = await app.inject({ method: 'GET', url: denied, headers: { cookie } });
+    assert.equal(replay.headers.location, '/#autherr=oauth_state', 'cancelled callbacks cannot be replayed');
+  } finally { await app.close(); }
   delete process.env.X_CLIENT_ID; delete process.env.PUBLIC_URL;
   console.log('✅ X OAuth2/PKCE: dormant without config, state persists on start, an unknown state fails clean');
 }

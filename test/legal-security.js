@@ -41,7 +41,7 @@ try {
     assert(page.body.includes('href="/privacy"'), 'legal navigation is available');
   }
   const privacy = (await app.inject('/privacy')).body;
-  for (const description of ['IP addresses', 'Wallet addresses', 'Messages', 'Push endpoints', 'Delegated-agent', 'seven days', 'thirty days', 'not stored']) assert(privacy.includes(description));
+  for (const description of ['IP addresses', 'Wallet addresses', 'Messages', 'Push endpoints', 'Delegated-agent', 'seven days', 'thirty days', 'do not ask for your age or date of birth']) assert(privacy.includes(description));
   delete process.env.DMCA_AGENT_REGISTERED;
   assert.equal((await app.inject('/dmca')).statusCode, 503, 'unverified registration is not presented as registered');
   process.env.DMCA_AGENT_REGISTERED = 'true';
@@ -59,7 +59,7 @@ try {
   for (const payload of [{ event: 'start' }, { event: 'answer', question: PATH_QUIZ_QUESTIONS[0].id, option: PATH_QUIZ_QUESTIONS[0].options[0].id, step: 1 }, { event: 'share', path: 'gun', channel: 'clipboard' }]) {
     assert.equal((await app.inject({ method: 'POST', url: '/v1/path-quiz', payload })).statusCode, 200);
   }
-  const guest = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { birthDate: '1990-01-01' } });
+  const guest = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: {} });
   const headers = { authorization: `Bearer ${guest.json().token}` };
   assert.equal((await app.inject({ method: 'POST', url: '/v1/screens', headers, payload: { screens: ['profile', 'wire'] } })).json().counted, 0);
   assert.equal((await app.inject({ method: 'POST', url: '/v1/broadcast/shared', headers, payload: { kind: 'win' } })).statusCode, 200);

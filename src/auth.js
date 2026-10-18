@@ -205,7 +205,7 @@ async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {
   }
 }
 
-export async function accountForGuestBootstrap(pool, recoverySecret, ip, invite, beforeCreate = () => {}) {
+export async function accountForGuestBootstrap(pool, recoverySecret, ip, invite) {
   if (typeof recoverySecret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(recoverySecret)) {
     throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
   }
@@ -220,8 +220,6 @@ export async function accountForGuestBootstrap(pool, recoverySecret, ip, invite,
   return withGuestBootstrapLock(recoveryHash, async () => {
     const existing = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip);
     if (existing) return existing;
-
-    await beforeCreate();
 
     const id = crypto.randomUUID();
     const tokenVersion = 0;
@@ -328,13 +326,15 @@ export async function xOAuthStart(pool, { accountId = null, invite = null } = {}
 }
 
 // Returns { purpose, accountId, invite, identity } — the route decides upgrade vs login + signs.
-export async function xOAuthCallback(pool, { code, state }) {
+export async function xOAuthCallback(pool, { code, state, error }) {
   if (!xOAuthConfigured()) throw new GameError('oauth_unconfigured', 'Not configured.');
   // single-use: DELETE-returning claims the state atomically (a replayed callback finds nothing)
   const st = (await pool.query(
     'DELETE FROM oauth_states WHERE state=$1 AND created_at > $2 RETURNING verifier, purpose, account_id, invite',
-    [String(code ? state : ''), new Date(Date.now() - 15 * 60000)])).rows[0];
+    [String(code || error ? state : ''), new Date(Date.now() - 15 * 60000)])).rows[0];
   if (!st) throw new GameError('oauth_state', 'Sign-in expired or already used — try again.');
+  if (error) throw new GameError(error === 'access_denied' ? 'oauth_denied' : 'oauth_authorize',
+    error === 'access_denied' ? 'X sign-in was cancelled.' : 'X could not authorize the app — try again.');
   const form = new URLSearchParams({
     grant_type: 'authorization_code', code: String(code),
     client_id: process.env.X_CLIENT_ID, redirect_uri: xRedirectUri(), code_verifier: st.verifier,

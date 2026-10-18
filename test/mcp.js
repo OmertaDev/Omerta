@@ -104,6 +104,11 @@ async function mcpProcess(base, sessionFile) {
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' })}\n`);
   return {
     serverInfo: init.result.serverInfo,
+    async listTools() {
+      const reply = await request('tools/list', {});
+      if (reply.error) throw new Error(JSON.stringify(reply.error));
+      return reply.result.tools;
+    },
     async call(name, args = {}) {
       const reply = await request('tools/call', { name, arguments: args });
       if (reply.error) throw new Error(JSON.stringify(reply.error));
@@ -125,7 +130,11 @@ try {
   mcp = await mcpProcess(api.base, sessionFile);
   assert.equal(mcp.serverInfo.version, '1.3.0',
     'the MCP handshake version stays aligned with the published package version');
+  const startTool = (await mcp.listTools()).find((tool) => tool.name === 'omerta_start');
+  assert.equal(startTool.inputSchema.properties.birthDate, undefined, 'MCP signup does not request a birth date');
   const started = await mcp.call('omerta_start');
+  assert.deepEqual(api.requests.find((request) => request.path === '/v1/auth/guest').body, {},
+    'MCP signup sends no age or birth-date field');
   assert.match(started.next, /No character/i,
     'an auth-only start directs the agent to finish character creation before requesting a turn');
   await mcp.call('omerta_request', { method: 'POST', path: '/v1/action', operationId: 'bodyless-1' });
