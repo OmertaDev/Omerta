@@ -2026,7 +2026,7 @@
               scene = this;
               try { createScene(this); } catch (error) { unavailable(); }
             },
-            update: function (time, delta) { if (ready && !destroyed) updateScene(time, delta); }
+            update: function (time, delta) { if (ready && !destroyed) updateScene(time, delta, game.loop.rawDelta); }
           }
         });
         if (ready) fitCamera();
@@ -2416,8 +2416,7 @@
       if (waitingVenue && waitingVenue.identity === sceneIdentity() && waitingVenue.scope === options.worldScopeKey) walkToVenue(waitingVenue.id);
     }
 
-    function updateScene(time, delta) {
-      const dt = Math.min(delta / 1000, 0.05);
+    function stepPlayer(dt) {
       for (const key of permeableHomes) {
         const home = homes.find(item => item.key === key), b = home?.building;
         if (!b || !(player.x + PLAYER_RADIUS > b.x && player.x - PLAYER_RADIUS < b.x + b.width
@@ -2426,8 +2425,7 @@
           obstacles = baseObstacles().concat(homes.filter(home => !permeableHomes.has(home.key)).map(home => ({ ...home.building })));
         }
       }
-      const previousX = player.x, previousY = player.y;
-      let dx = 0, dy = 0, moving = false;
+      let dx = 0, dy = 0;
       if (!externalPanel && !crossingPending && game && document.activeElement === game.canvas) {
         dx = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'));
         dy = Number(keys.has('arrowdown') || keys.has('s')) - Number(keys.has('arrowup') || keys.has('w'));
@@ -2441,7 +2439,6 @@
         const stepX = dx / length * SPEED * dt, stepY = dy / length * SPEED * dt;
         advanceTo(player.x + stepX, player.y);
         if (!crossingPending) advanceTo(player.x, player.y + stepY);
-        moving = true;
       } else if (!externalPanel && !crossingPending && path.length) {
         const point = path[0];
         const distance = Math.hypot(point.x - player.x, point.y - player.y);
@@ -2455,10 +2452,26 @@
           const nextY = player.y + (point.y - player.y) / distance * SPEED * dt;
           if (!advanceTo(nextX, nextY) && !crossingPending) stopMovement();
         }
-        moving = true;
       }
+    }
+
+    function advanceMovement(delta) {
+      // Catch up only this frame, in the same small collision-checked steps.
+      // A long interruption cannot queue unbounded movement for later frames.
+      let remaining = Math.min(Number.isFinite(delta) ? Math.max(0, delta) : 0, 1000) / 1000;
+      while (remaining > 0) {
+        const dt = Math.min(remaining, 0.05);
+        stepPlayer(dt);
+        remaining -= dt;
+      }
+    }
+
+    function updateScene(time, delta, playerDelta = 0) {
+      const dt = Math.min(delta / 1000, 0.05);
+      const previousX = player.x, previousY = player.y;
+      advanceMovement(playerDelta);
       const movedX = player.x - previousX, movedY = player.y - previousY;
-      moving = Math.hypot(movedX, movedY) > 0.01;
+      const moving = Math.hypot(movedX, movedY) > 0.01;
       if (moving) {
         crossingMessage = '';
         if (Math.abs(movedX) > Math.abs(movedY)) playerFacing = movedX < 0 ? 'left' : 'right';

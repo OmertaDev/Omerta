@@ -24,6 +24,183 @@ assert(homeRoute.slice(1).every((point, index) => Math.abs(point.x - homeRoute[i
 const gardenRoute = geometry.route({ x: 430, y: 366 }, { x: 560, y: 592 }, { width: 960, height: 640 }, [], 620);
 assert(gardenRoute.at(-1).y > 540, 'A regional land route no longer stops at the Docks waterfront boundary.');
 assert.equal(geometry.traversable(1080, 224), false, 'The default zero-home Docks bounds remain intact.');
+// The shipped player movement consumes unsmoothed frame time without changing ambient time.
+const movementStart = sceneSource.indexOf('    function stepPlayer(');
+const movementEnd = sceneSource.indexOf('    function updateScene(', movementStart);
+assert(movementStart > 0 && movementEnd > movementStart, 'The exercised production movement must exist.');
+const movementSource = sceneSource.slice(movementStart, movementEnd);
+const stopStart = sceneSource.indexOf('    function stopMovement(');
+const stopEnd = sceneSource.indexOf('    function closePanels(', stopStart);
+const pauseStart = sceneSource.indexOf('    function pauseRoute(');
+const pauseEnd = sceneSource.indexOf('    function positionState(', pauseStart);
+const blurStart = sceneSource.indexOf("      listen(canvas, 'blur'");
+const blurEnd = sceneSource.indexOf("      s.input.on('pointerdown'", blurStart);
+assert(stopStart > 0 && stopEnd > stopStart && pauseStart > 0 && pauseEnd > pauseStart && blurStart > 0 && blurEnd > blurStart);
+const movementClockResults = [];
+function movementFixture({ position = { x: 0, y: 0 }, route = [{ x: 10000, y: 0 }], key = null, blocked = false, cross = false } = {}) {
+  const canvas = {}, window = {}, document = { activeElement: canvas, hidden: false }, calls = [], arrivals = [], handlers = new Map();
+  const scope = { Math, Number, SPEED: Number(/const SPEED = ([0-9]+);/.exec(sceneSource)[1]), player: { ...position },
+    game: { canvas }, canvas, window, document, keys: new Set(key ? [key] : []), heldMoves: new Set(),
+    path: route.map(point => ({ ...point })), pendingHome: 'fixture-home', pendingVenue: null, pendingActor: null,
+    pendingPlot: null, pendingExit: null, queuedHome: null, queuedVenue: null, routePreview: [], routePreviewVenue: null,
+    crossingPending: false, externalPanel: false, permeableHomes: new Set(), homes: [], obstacles: [],
+    moveButtons: new Map(), baseObstacles: () => [], redrawPath() {}, updateReadiness() {},
+    listen(target, event, callback) { if (!handlers.has(target)) handlers.set(target, new Map()); handlers.get(target).set(event, callback); },
+    advanceTo(x, y) {
+      assert(Math.hypot(x - scope.player.x, y - scope.player.y) <= scope.SPEED * 0.05 + 0.250001, 'Every actual spatial check remains a small step.');
+      calls.push({ x, y });
+      if (cross) { scope.crossingPending = true; return false; }
+      if (blocked) return false;
+      scope.player.x = x; scope.player.y = y; return true;
+    },
+  };
+  for (const name of ['showHome', 'showActor', 'inspectPlot', 'showExit', 'showVenue']) scope[name] = target => { arrivals.push({ name, target }); scope.stopMovement(); };
+  vm.runInNewContext(sceneSource.slice(stopStart, stopEnd) + sceneSource.slice(pauseStart, pauseEnd) + movementSource
+    + '\nthis.stopMovement = stopMovement; this.advanceMovement = advanceMovement;\n' + sceneSource.slice(blurStart, blurEnd), scope);
+  return { scope, calls, arrivals, event(target, name, event = {}) { handlers.get(scope[target]).get(name)(event); } };
+}
+for (const fps of [60, 10, 7, 5]) {
+  const f = movementFixture();
+  for (let frame = 0; frame < fps; frame++) f.scope.advanceMovement(1000 / fps);
+  assert(Math.abs(f.scope.player.x - 176) < 1e-8, 'One second at' + fps + 'FPS retains the real176px/s speed.');
+  assert.equal(f.scope.player.y, 0); assert.equal(f.arrivals.length, 0);
+  movementClockResults.push({ fps, straightPixelsAfterOneSecond: f.scope.player.x });
+}
+const actualArrivalRoute = [{ x: 430, y: 388 }, { x: 468, y: 388 }, { x: 372, y: 388 }, { x: 372, y: 1748 }, { x: 420, y: 1748 }];
+for (const fps of [60, 10, 7, 5]) {
+  const f = movementFixture({ position: { x: 430, y: 371.28 }, route: actualArrivalRoute });
+  let elapsed = 0;
+  while (!f.arrivals.length && elapsed < 15000) { f.scope.advanceMovement(1000 / fps); elapsed += 1000 / fps; }
+  assert.equal(f.arrivals.length, 1, 'The actual retained home route arrives inside the original15s at' + fps + 'FPS.');
+  assert.equal(f.arrivals[0].name, 'showHome'); assert.equal(f.scope.player.x, 420); assert.equal(f.scope.player.y, 1748);
+  assert.equal(f.scope.path.length, 0);
+  let visited = -1, previous = { x: 430, y: 371.28 };
+  for (const point of actualArrivalRoute) {
+    visited = f.calls.findIndex((step, index) => index > visited && Math.abs(step.x - point.x) < 1e-8 && Math.abs(step.y - point.y) < 1e-8);
+    assert(visited >= 0, 'Every real route corner is visited in order rather than skipped.');
+  }
+  for (const step of f.calls) {
+    assert(Math.abs(step.x - previous.x) < 1e-8 || Math.abs(step.y - previous.y) < 1e-8, 'Existing cardinal route segments do not cut a corner.');
+    previous = step;
+  }
+  movementClockResults.push({ fps, actualHomeRouteArrivalMS: elapsed });
+}
+{
+  const f = movementFixture(); f.scope.advanceMovement(10000);
+  assert.equal(f.calls.length, 20, 'A long interruption is bounded to20 original-size spatial checks.');
+  assert(Math.abs(f.scope.player.x - 176) < 1e-8); f.scope.advanceMovement(0);
+  assert(Math.abs(f.scope.player.x - 176) < 1e-8, 'No elapsed backlog spills into a later zero-time frame.');
+  f.scope.advanceMovement(50); assert(Math.abs(f.scope.player.x - 184.8) < 1e-8);
+}
+for (const delta of [0, -1, NaN, Infinity, undefined, '200']) {
+  const f = movementFixture(); f.scope.advanceMovement(delta); assert.equal(f.calls.length, 0);
+}
+for (const state of ['externalPanel', 'crossingPending']) {
+  const f = movementFixture(); f.scope[state] = true; f.scope.advanceMovement(1000); assert.equal(f.calls.length, 0);
+  f.scope[state] = false; f.scope.advanceMovement(50); assert(Math.abs(f.scope.player.x - 8.8) < 1e-8, 'A pending gate cannot bank elapsed time.');
+}
+{
+  const f = movementFixture({ blocked: true }); f.scope.advanceMovement(1000);
+  assert.equal(f.calls.length, 1); assert.equal(f.scope.path.length, 0); assert.equal(f.arrivals.length, 0);
+}
+{
+  const f = movementFixture({ cross: true }); f.scope.advanceMovement(1000);
+  assert.equal(f.calls.length, 1); assert.equal(f.scope.crossingPending, true); assert.equal(f.arrivals.length, 0);
+}
+for (const kind of ['window-blur', 'hidden', 'canvas-blur', 'dock-pause']) {
+  const f = movementFixture({ key: 'd' }); f.scope.heldMoves.add('right');
+  if (kind === 'hidden') { f.scope.document.hidden = true; f.event('document', 'visibilitychange'); }
+  else if (kind === 'window-blur') f.event('window', 'blur');
+  else f.event('canvas', 'blur', { relatedTarget: { closest: selector => kind === 'dock-pause' && selector.includes('city-world__dock') } });
+  f.scope.advanceMovement(10000); assert.equal(f.calls.length, 0, kind + ' clears real player intent before any catch-up.');
+  assert.equal(f.scope.keys.size, 0); assert.equal(f.scope.heldMoves.size, 0); assert.equal(f.scope.path.length, 0);
+  if (kind === 'dock-pause') assert.equal(f.scope.routePreview.length, 1, 'Existing preview may survive without resuming movement.');
+}
+{
+  const updateStart = sceneSource.indexOf('            update: function (time, delta)');
+  const updateEnd = sceneSource.indexOf('\n          }', updateStart);
+  assert(updateStart > 0 && updateEnd > updateStart);
+  const forwarded = [], scope = { ready: true, destroyed: false, game: { loop: { rawDelta: 200 } },
+    updateScene: (...args) => forwarded.push(args) };
+  vm.runInNewContext('this.update = ({' + sceneSource.slice(updateStart, updateEnd) + '}).update;', scope);
+  scope.update(1000, 1000 / 60); assert.equal(forwarded[0][1], 1000 / 60); assert.equal(forwarded[0][2], 200);
+  scope.ready = false; scope.update(1200, 1000 / 60); scope.ready = true; scope.destroyed = true; scope.update(1400, 1000 / 60);
+  assert.equal(forwarded.length, 1, 'Unready or retired scenes cannot advance movement.');
+}
+
+// Exercise the actual callback-to-updateScene seam, including the unchanged ambient clock.
+const fullMovementParts = [
+  ['  function traversable(', '  function route('],
+  ['    function advanceTo(', '    async function requestCrossing('],
+  ['    function updateScene(', '    function sceneState('],
+].map(([start, end]) => {
+  const from = sceneSource.indexOf(start), to = sceneSource.indexOf(end, from);
+  assert(from > 0 && to > from); return sceneSource.slice(from, to);
+});
+const fullMovementSource = fullMovementParts.join('\n') + movementSource
+  + sceneSource.slice(stopStart, stopEnd);
+const frameUpdateStart = sceneSource.indexOf('            update: function (time, delta)');
+const frameUpdateEnd = sceneSource.indexOf('\n          }', frameUpdateStart);
+assert(frameUpdateStart > 0 && frameUpdateEnd > frameUpdateStart);
+function movementFrameFixture({ obstacles = [], crossing = false } = {}) {
+  const canvas = {}, seen = { ambient: [], steps: 0, crossings: 0, arrivals: 0 };
+  const node = () => ({ textContent: '', disabled: false, setPosition() { return this; }, setDepth() { return this; } });
+  const player = { x: 100, y: 100, setPosition(x, y) { this.x = x; this.y = y; return this; },
+    setFlipX() { return this; }, setScale() { return this; }, setDepth() { return this; } };
+  const scope = { Math, Number, Set, Map, WORLD: { width: 20000, height: 20000 }, PLAYER_RADIUS: 7,
+    SPEED: Number(/const SPEED = ([0-9]+);/.exec(sceneSource)[1]), player, playerFacing: 'down',
+    scene: { data: { get: name => name === 'npcs' ? [] : node() } }, document: { activeElement: canvas },
+    game: { canvas, loop: { rawDelta: 0 } }, ready: true, destroyed: false, externalPanel: false,
+    crossingPending: false, crossingMessage: '', district: { id: 'same' },
+    layout: crossing ? { regionAt: point => ({ id: point.x >= 120 ? 'other' : 'same' }) } : null,
+    globalPoint: point => point, keys: new Set(), heldMoves: new Set(), path: [{ x: 10000, y: 100 }],
+    pendingHome: 'home', pendingActor: null, pendingVenue: null, pendingExit: null, pendingPlot: null,
+    permeableHomes: new Set(), homes: [], obstacles: obstacles.map(row => ({ ...row })),
+    world: { width: 20000, height: 20000 }, walkBottom: 20000, routePreview: [], routePreviewVenue: null,
+    queuedVenue: null, queuedHome: null, moveButtons: new Map(), baseObstacles: () => [], redrawPath() {}, updateReadiness() {},
+    artState: { player: 'fallback' }, reducedMotion: true, nearTarget: () => null, interact: node(), cancel: node(),
+    setText(target, text) { target.textContent = text; }, root: { classList: { toggle() {} } }, hudObserver: {},
+    actorSprites: new Map(), nearbyCopy: node(), status: node(), worldUI: null,
+    updateActivities(...args) { seen.ambient.push(args); }, updateVenueStates() {}, reportPosition() {}, drawConnectedCity() {},
+    requestCrossing() { seen.crossings++; scope.crossingPending = true; scope.stopMovement(); },
+  };
+  scope.canWalk = (x, y) => scope.traversable(x, y, scope.world, scope.obstacles, scope.walkBottom);
+  for (const name of ['showHome', 'showActor', 'showVenue', 'showExit', 'inspectPlot']) scope[name] = () => { seen.arrivals++; scope.stopMovement(); };
+  scope.countStep = dt => { assert(dt > 0 && dt <= 0.05); seen.steps++; };
+  vm.runInNewContext(fullMovementSource + '\nthis.updateScene = updateScene; this.traversable = traversable;'
+    + 'this.stopMovement = stopMovement; this.originalPlayerStep = stepPlayer;'
+    + 'stepPlayer = function(dt) { globalThis.countStep(dt); return originalPlayerStep(dt); };'
+    + 'this.frame = ({' + sceneSource.slice(frameUpdateStart, frameUpdateEnd) + '}).update;', scope);
+  return { scope, seen, frame(raw, smooth = 1000 / 60) { scope.game.loop.rawDelta = raw; scope.frame(1000, smooth); } };
+}
+for (const fps of [60, 10, 7, 5]) {
+  const f = movementFrameFixture(); for (let frame = 0; frame < fps; frame++) f.frame(1000 / fps);
+  assert(Math.abs(f.scope.player.x - 276) < 1e-8, 'The real updateScene seam uses raw player time at' + fps + 'FPS.');
+  assert(f.seen.ambient.every(row => Math.abs(row[1] - 1 / 60) < 1e-12), 'Ambient actors retain the original smoothed dt.');
+  movementClockResults.push({ fps, fullUpdatePlayerPixels: f.scope.player.x - 100, ambientSeconds: f.seen.ambient[0][1] });
+}
+{
+  const f = movementFrameFixture(); f.scope.game.loop.rawDelta = 1000; f.scope.updateScene(0, 0);
+  assert.equal(f.scope.player.x, 100); assert.equal(f.seen.steps, 0, 'The create-time zero update cannot spend existing raw frame time.');
+}
+for (const raw of [undefined, null, NaN, Infinity, -Infinity, -1, 0, '200', {}, []]) {
+  const f = movementFrameFixture(); f.frame(raw); assert.equal(f.scope.player.x, 100); assert.equal(f.seen.steps, 0);
+}
+{
+  const f = movementFrameFixture(); f.frame(86400000); assert.equal(f.seen.steps, 20); assert(Math.abs(f.scope.player.x - 276) < 1e-8);
+  f.frame(0); assert.equal(f.seen.steps, 20); f.frame(50); assert(Math.abs(f.scope.player.x - 284.8) < 1e-8);
+}
+{
+  const f = movementFrameFixture({ obstacles: [{ x: 140, y: 80, width: 10, height: 40 }] }); f.frame(1000);
+  assert(f.scope.player.x <= 133, 'The unchanged real traversable/advanceTo functions cannot tunnel through a wall.');
+  assert.equal(f.scope.path.length, 0); assert.equal(f.seen.arrivals, 0);
+}
+{
+  const f = movementFrameFixture({ crossing: true }); f.frame(1000);
+  assert.equal(f.seen.crossings, 1); assert(f.scope.player.x < 120); assert.equal(f.scope.crossingPending, true);
+  assert.equal(f.scope.path.length, 0); assert.equal(f.seen.arrivals, 0, 'The real region handoff cannot move again or invent an arrival.');
+}
+
 const mountSource = clientSource.slice(clientSource.indexOf('  async function mountCityNeighborhood()'), clientSource.indexOf('  function syncMapMode()'));
 // The view predicate is checked only before an authenticated queued call dispatches.
 // Closing a dock after dispatch must retain the actual reply; token changes retain
