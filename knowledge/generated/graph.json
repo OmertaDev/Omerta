@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "dcaaf88cb4521e4e6caacc799950832b481a911c",
+  "sourceRevision": "ba56260ea8592be6cab1a9a45ea42b4f816ab498",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16375,
-    "edges": 65330,
+    "nodes": 16377,
+    "edges": 65340,
     "byNodeType": {
       "Artifact": 6798,
       "Command": 294,
-      "Commit": 4487,
+      "Commit": 4489,
       "Contract": 134,
       "Document": 939,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5391,
-      "CHANGED": 25082,
+      "CHANGED": 25090,
       "CONTAINS": 6819,
       "DECLARES": 294,
       "DEFINED_IN": 1736,
       "DEPENDS_ON": 69,
       "EXECUTES": 1131,
       "HANDLED_BY": 929,
-      "HAS_COMMIT": 4487,
+      "HAS_COMMIT": 4489,
       "IMPLEMENTS": 124,
       "IMPORTS": 7434,
       "INHERITS": 45,
@@ -136752,20 +136752,20 @@
       "path": "test/enterprise-native-guard.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23888,
-      "lines": 118,
-      "version": "03c507f4b6e97294",
+      "bytes": 25781,
+      "lines": 135,
+      "version": "eb36dfb65f561aaa",
       "text": true,
       "provenance": [
         {
           "file": "test/enterprise-native-guard.js",
           "line": 1,
-          "version": "03c507f4b6e97294"
+          "version": "eb36dfb65f561aaa"
         }
       ],
-      "lastChangedAt": "2026-10-18T22:40:50.000Z",
+      "lastChangedAt": "2026-10-18T22:51:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dcaaf88cb4521e4e6caacc799950832b481a911c"
+      "lastChangedCommit": "ba56260ea8592be6cab1a9a45ea42b4f816ab498"
     },
     {
       "key": "Artifact:test/enterprise-release-phase2-migration-catalog.js",
@@ -151288,20 +151288,20 @@
       "path": "tools/enterprise-native.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 38760,
-      "lines": 251,
-      "version": "8e8c879fbf9b7684",
+      "bytes": 39040,
+      "lines": 254,
+      "version": "f078cd43049db36b",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native.js",
           "line": 1,
-          "version": "8e8c879fbf9b7684"
+          "version": "f078cd43049db36b"
         }
       ],
-      "lastChangedAt": "2026-10-18T22:40:50.000Z",
+      "lastChangedAt": "2026-10-18T22:51:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dcaaf88cb4521e4e6caacc799950832b481a911c"
+      "lastChangedCommit": "ba56260ea8592be6cab1a9a45ea42b4f816ab498"
     },
     {
       "key": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
@@ -197692,6 +197692,22 @@
       ]
     },
     {
+      "key": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "type": "Commit",
+      "id": "8296a17a4783bb67e361906c265095c29650ff87",
+      "label": "Refresh knowledge for verified X auth release inputs",
+      "title": "Refresh knowledge for verified X auth release inputs",
+      "date": "2026-10-18T22:49:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8296a17a4783bb67e361906c265095c29650ff87",
+      "provenance": [
+        {
+          "commit": "8296a17a4783bb67e361906c265095c29650ff87",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8296a17a4783bb67e361906c265095c29650ff87"
+        }
+      ]
+    },
+    {
       "key": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
       "type": "Commit",
       "id": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
@@ -213512,6 +213528,22 @@
         {
           "commit": "ba4f7cbd27c502640dd7484309620fc52b0f05db",
           "url": "https://github.com/OmertaDev/Omerta/commit/ba4f7cbd27c502640dd7484309620fc52b0f05db"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ba56260ea8592be6cab1a9a45ea42b4f816ab498",
+      "type": "Commit",
+      "id": "ba56260ea8592be6cab1a9a45ea42b4f816ab498",
+      "label": "Require continued absence of retired age module during native proofs",
+      "title": "Require continued absence of retired age module during native proofs",
+      "date": "2026-10-18T22:51:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ba56260ea8592be6cab1a9a45ea42b4f816ab498",
+      "provenance": [
+        {
+          "commit": "ba56260ea8592be6cab1a9a45ea42b4f816ab498",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ba56260ea8592be6cab1a9a45ea42b4f816ab498"
         }
       ]
     },
@@ -250778,7 +250810,7 @@
         },
         {
           "file": "test/enterprise-native-guard.js",
-          "line": 33
+          "line": 34
         },
         {
           "file": "test/enterprise-release-phase2-migration-catalog.js",
@@ -251334,7 +251366,7 @@
         },
         {
           "file": "tools/enterprise-native.js",
-          "line": 241
+          "line": 244
         },
         {
           "file": "tools/enterprise-release-phase2-migration-catalog.js",
@@ -259604,6 +259636,9 @@
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
+          "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+        },
+        {
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
@@ -261863,6 +261898,9 @@
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
+          "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+        },
+        {
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
@@ -264120,6 +264158,9 @@
         },
         {
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
+        },
+        {
+          "commit": "8296a17a4783bb67e361906c265095c29650ff87"
         },
         {
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
@@ -267014,6 +267055,9 @@
           "commit": "826999b6284ec2be200c4cb05e61536142ef486c"
         },
         {
+          "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+        },
+        {
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
@@ -268430,6 +268474,9 @@
           "commit": "81583e991da50050e65c67b80120a1b2406a804f"
         },
         {
+          "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+        },
+        {
           "commit": "83479446113cc3acffef1ee857a5d8d8e9fdc52c"
         },
         {
@@ -269046,6 +269093,9 @@
         },
         {
           "commit": "764eaa4112d85d92fa6e4c3780cbab941f5b12d3"
+        },
+        {
+          "commit": "8296a17a4783bb67e361906c265095c29650ff87"
         },
         {
           "commit": "84e663d5fc740cc380ba0e6152af0b1fca5f52fd"
@@ -281891,7 +281941,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "dcaaf88cb4521e4e6caacc799950832b481a911c",
+      "revision": "ba56260ea8592be6cab1a9a45ea42b4f816ab498",
       "currentBranch": "codex/fix-x-auth-live",
       "defaultBranch": "main",
       "visibility": "public",
@@ -322906,13 +322956,13 @@
       "type": "TestSuite",
       "id": "test/enterprise-native-guard.js",
       "label": "test/enterprise-native-guard.js",
-      "lines": 118,
-      "version": "03c507f4b6e97294",
+      "lines": 135,
+      "version": "eb36dfb65f561aaa",
       "provenance": [
         {
           "file": "test/enterprise-native-guard.js",
           "line": 1,
-          "version": "03c507f4b6e97294"
+          "version": "eb36dfb65f561aaa"
         }
       ]
     },
@@ -473643,6 +473693,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -525063,6 +525161,22 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "commit": "ba4f7cbd27c502640dd7484309620fc52b0f05db"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ba56260ea8592be6cab1a9a45ea42b4f816ab498",
+      "to": "Artifact:test/enterprise-native-guard.js",
+      "provenance": {
+        "commit": "ba56260ea8592be6cab1a9a45ea42b4f816ab498"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ba56260ea8592be6cab1a9a45ea42b4f816ab498",
+      "to": "Artifact:tools/enterprise-native.js",
+      "provenance": {
+        "commit": "ba56260ea8592be6cab1a9a45ea42b4f816ab498"
       }
     },
     {
@@ -698716,6 +698830,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8296a17a4783bb67e361906c265095c29650ff87",
+      "provenance": {
+        "commit": "8296a17a4783bb67e361906c265095c29650ff87"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:82c86b16e2b84c029e6b934f8628ab9d5479aeeb",
       "provenance": {
         "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
@@ -706623,6 +706745,14 @@
       "to": "Commit:ba4f7cbd27c502640dd7484309620fc52b0f05db",
       "provenance": {
         "commit": "ba4f7cbd27c502640dd7484309620fc52b0f05db"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ba56260ea8592be6cab1a9a45ea42b4f816ab498",
+      "provenance": {
+        "commit": "ba56260ea8592be6cab1a9a45ea42b4f816ab498"
       }
     },
     {
@@ -749548,7 +749678,7 @@
       "to": "Artifact:tools/enterprise-native-continuous-city-inputs.js",
       "provenance": {
         "file": "test/enterprise-native-guard.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -749557,13 +749687,22 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "test/enterprise-native-guard.js",
-        "line": 8
+        "line": 9
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:test/enterprise-native-guard.js",
       "to": "Artifact:tools/enterprise-native-x-auth-inputs.js",
+      "provenance": {
+        "file": "test/enterprise-native-guard.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/enterprise-native-guard.js",
+      "to": "Artifact:tools/enterprise-native.js",
       "provenance": {
         "file": "test/enterprise-native-guard.js",
         "line": 6
@@ -749575,16 +749714,7 @@
       "to": "Artifact:tools/enterprise-native.js",
       "provenance": {
         "file": "test/enterprise-native-guard.js",
-        "line": 5
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/enterprise-native-guard.js",
-      "to": "Artifact:tools/enterprise-native.js",
-      "provenance": {
-        "file": "test/enterprise-native-guard.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -749593,7 +749723,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/enterprise-native-guard.js",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -778051,7 +778181,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/enterprise-native.js",
-        "line": 241
+        "line": 244
       }
     },
     {
