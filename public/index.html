@@ -114,51 +114,6 @@
   #top .sub { color: var(--faint); font-size: 12.5px; letter-spacing: .4px; }
   #whoami { margin-left: auto; color: var(--dim); font-size: 13.5px; }
   #whoami b { color: var(--ink); }
-  #player-view-switch { display: inline-flex; flex: 0 0 auto; gap: 4px; padding: 3px;
-    border: 1px solid var(--gold); border-radius: var(--r-md); background: var(--panel2); }
-  #top #player-view-switch button { min-height: 44px; padding: 8px 10px; font-size: 12px; }
-  #top #player-view-switch.has-world-tools button { padding-inline: 6px; font-size: 11px; }
-  #top #btn-player-view[aria-busy="true"] { padding-inline-end: 10px !important; }
-  #top #player-view-switch.has-world-tools #btn-player-view[aria-busy="true"] { padding-inline-end: 6px !important; }
-  #top #btn-player-view[aria-busy="true"]::after { display: none; }
-  #player-view-switch button[aria-pressed="true"] { background: var(--neon); color: #17130b; border-color: var(--neon); }
-  body.city-player-view #top { position: sticky; top: 0; }
-  body.city-player-view #top > :not(h1):not(#whoami):not(#player-view-switch):not(#btn-refresh),
-  body.city-player-view #coachwrap, body.city-player-view #vitals,
-  body.city-player-view #leftcol, body.city-player-view #wirepanel,
-  body.city-player-view #grouprail, body.city-player-view #tabs,
-  body.city-player-view #tabart, body.city-player-view #bnav { display: none; }
-  body.city-player-view #layout { grid-template-columns: minmax(0, 1fr); padding-bottom: 14px; }
-  #city-actions { display: none; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-  body.city-player-view #city-actions { display: flex; }
-  #city-actions button, #city-panel button { min-height: 44px; }
-  #city-panel[hidden] { display: none; }
-  #city-panel { min-width: 0; border: 1px solid var(--gold); border-radius: 10px; background: var(--panel); overflow: clip; }
-  #city-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); position: sticky; top: var(--city-chrome-height, 90px); z-index: 3; background: var(--panel); }
-  #city-panel-head h2 { margin: 0; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #city-panel-body, #city-panel-feedback { padding: 12px; min-width: 0; }
-  #city-panel-feedback:empty { display: none; }
-  #city-panel-pending { padding: 8px 12px; color: var(--gold); }
-  #city-panel-body #leftcol, #city-panel-body #wirepanel { display: block; width: 100%; }
-  #city-panel-body .city-account-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-  body.city-panel-open #tabbodies { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 1fr); align-items: start; gap: 12px; }
-  body.city-panel-open #introwrap { display: none; }
-  body.city-panel-open #tab-map { min-width: 0; position: sticky; top: var(--city-chrome-height, 90px); }
-  body.city-panel-open #tab-map > .row { display: none; }
-  body.city-panel-open .omerta-city__canvas { height: 300px !important; max-height: 40vh; }
-  @media (max-width: 850px) {
-    body.city-panel-open #tabbodies { grid-template-columns: minmax(0, 1fr); }
-    body.city-panel-open #tab-map { z-index: 2; background: var(--panel); }
-    body.city-panel-open .omerta-city__canvas { height: 104px !important; max-height: 22vh; }
-    body.city-panel-open #tabbodies { gap: 6px; scroll-margin-top: var(--city-chrome-height, 90px); }
-    body.city-panel-open #city-panel { display: flex; flex-direction: column; max-height: max(180px, calc(100dvh - var(--city-chrome-height, 90px) - var(--city-stage-height, 220px) - 12px)); }
-    body.city-panel-open #city-panel-head { flex: none; padding: 4px 8px; position: static; }
-    body.city-panel-open #city-panel-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
-  }
-  .city-first-job { padding: 12px 14px; margin: 10px 0; border: 1px solid #806944; border-radius: 8px; background: #302a20; color: #f4e6c9; font: 14px/1.5 system-ui, sans-serif; }
-  .city-first-job p { margin: 6px 0; }
-  .city-first-job > b { color: #ecd08b; }
-
   /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */
   #vitals { display: none; }
   /* an unbroken run of characters (the Collection's ◇◇◇ tracker) is a word to the layout engine, and one
@@ -525,9 +480,6 @@
     opacity: 0; transform: translate(-50%, 14px) scale(.97); pointer-events: none;
     transition: opacity .22s var(--ease), transform .22s var(--ease); }
   #toast.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
-  body.city-player-view #toast { max-height: 56px; padding: 4px 10px; overflow-y: auto; align-items: flex-start; overscroll-behavior: contain; }
-  body.city-player-view #toast > span:not(.ti) { min-width: 0; flex: 1; overflow-wrap: anywhere; }
-  body.city-player-view #toast:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   #toast.bad { border-color: var(--blood); box-shadow: var(--shadow-pop), 0 0 24px rgba(192,57,43,.18); }
   #toast .ti { flex: 0 0 auto; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%;
     font-size: 11px; color: #14120a; background: var(--neon); font-family: var(--mono); }
@@ -1312,8 +1264,6 @@
   @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
-<link rel="stylesheet" href="/city-scene.css?v=20261017-continuous-1">
-<link rel="stylesheet" href="/city-world-ui.css?v=20261017-continuous-1">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261016-refinements-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
@@ -1622,10 +1572,6 @@
 <main id="screen-main" class="hidden">
   <div id="top">
     <h1>OMERTÀ</h1><span class="sub">the city breathes</span>
-    <div id="player-view-switch" role="group" aria-label="Game view">
-      <button class="act" id="btn-player-view" type="button" aria-pressed="false" aria-controls="tab-map">Player view</button>
-      <button class="act" id="btn-dashboard-view" type="button" aria-pressed="true">Dashboard</button>
-    </div>
     <span id="whoami"></span>
     <button class="act" id="btn-wallet" type="button" aria-label="Open wallet and character checkout">Connect wallet</button>
     <button class="act" id="btn-character-nft" type="button" aria-label="Mint your character NFT">Mint your character NFT</button>
@@ -1674,12 +1620,6 @@
            first-visit card counts as the screen's own content (it explains the screen you just
            tapped), while renderers — which rewrite only their #tab-<id> — can never resurrect a
            dismissed card mid-visit. -->
-      <nav id="city-actions" aria-label="In-game actions">
-        <button class="act" id="city-all-actions" type="button">All actions</button>
-        <button class="act" data-city-utility="character" type="button">Character</button>
-        <button class="act" data-city-utility="communications" type="button">Chat</button>
-        <button class="act" data-city-utility="account" type="button">Account &amp; help</button>
-      </nav>
       <div id="tabbodies"><div id="introwrap"></div></div>
     </div>
 
@@ -1849,7 +1789,7 @@
   // screen. Game PROSE (job names, event copy, toasts) stays English this pass — the pack
   // structure makes each further surface a pure dictionary add. Arabic flips the page RTL. ═══
   const I18N = {
-    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'City events', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'Neighborhood', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_desk: 'Content Desk', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', g_desk: 'Desk', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'PLAY AS A GUEST', e_bones: 'ENTER THE CITY →' },
+    en: { name: 'English', t_start: 'Start Here', t_profile: 'My Profile', t_streets: 'Streets', t_garage: 'The Garage', t_life: 'The Life', t_city: 'City events', t_kitchen: 'The Kitchen', t_empire: 'The Empire', t_scores: 'Big Scores', t_market: 'Black Market', t_port: 'The Port', t_den: 'The Den', t_speakeasy: 'The Speakeasy', t_boxing: 'The Fights', t_races: 'Street Races', t_stable: 'The Stable', t_pvp: 'Wet Work', t_loans: 'The Shylock', t_law: 'The Law', t_pen: 'The Pen', t_wire: 'The Wire', t_family: 'The Family', t_map: 'The Map', t_deeds: 'Street Deeds', t_crew: 'The Crew', t_discover: 'Find People', t_portfolio: 'Going Legit', t_estate: 'The Estate', t_store: 'The Store', t_desk: 'Content Desk', t_deck: 'The Console', g_streets: 'Streets', g_earners: 'Earners', g_vice: 'Vice', g_blood: 'Blood', g_family: 'Family', g_legit: 'Legit', g_desk: 'Desk', k_bank: 'bank', k_respect: 'respect', k_energy: 'energy', k_nerve: 'nerve', k_health: 'health', k_heat: 'heat', k_stats: 'muscle / cunning / speed', k_gun: 'gun', k_ammo: 'ammo / crates', k_cars: 'cars', k_liquid: 'liquid', k_staked: 'staked', k_intransit: 'in transit', b_heal: 'heal', b_checkin: 'check in', b_refresh: 'refresh', b_takeme: 'take me there →', b_send: 'send', b_burn: 'burn the papers', b_wholecity: '+ the whole city…', w_sheet: 'The Sheet', w_lastword: 'Last Word', w_panel: 'The Street', w_feed: 'LIVE FEED', w_city: 'CITY CHAT', w_family: 'FAMILY', w_sayit: 'say it to the city…', w_famonly: 'family only — talk business…', w_incity: 'in the city', e_ghost: 'PLAY AS A GUEST', e_bones: 'ENTER THE CITY →' },
     es: { name: 'Español', t_start: 'Empieza Aquí', t_profile: 'Mi Perfil', t_streets: 'Las Calles', t_garage: 'El Garaje', t_life: 'La Vida', t_city: 'La Ciudad', t_kitchen: 'La Cocina', t_empire: 'El Imperio', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'El Puerto', t_den: 'El Casino', t_speakeasy: 'El Clandestino', t_boxing: 'Las Peleas', t_races: 'Carreras Callejeras', t_stable: 'El Establo', t_pvp: 'Trabajo Sucio', t_loans: 'El Usurero', t_law: 'La Ley', t_pen: 'La Prisión', t_wire: 'El Cable', t_family: 'La Familia', t_map: 'El Mapa', t_crew: 'La Banda', t_discover: 'Buscar Gente', t_portfolio: 'A Lo Legal', t_estate: 'La Mansión', t_store: 'La Tienda', t_deck: 'La Consola', g_streets: 'Calles', g_earners: 'Negocios', g_vice: 'Vicio', g_blood: 'Sangre', g_family: 'Familia', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeto', k_energy: 'energía', k_nerve: 'nervio', k_health: 'salud', k_heat: 'calor policial', k_stats: 'músculo / astucia / velocidad', k_gun: 'arma', k_ammo: 'munición / cajas', k_cars: 'autos', k_liquid: 'líquido', k_staked: 'en staking', k_intransit: 'en tránsito', b_heal: 'curarse', b_checkin: 'pasar lista', b_refresh: 'actualizar', b_takeme: 'llévame ahí →', b_send: 'enviar', b_burn: 'quemar los papeles', b_wholecity: '+ toda la ciudad…', w_sheet: 'La Ficha', w_lastword: 'Última Palabra', w_panel: 'La Calle', w_feed: 'EN VIVO', w_city: 'CHAT CIUDAD', w_family: 'FAMILIA', w_sayit: 'dilo a la ciudad…', w_famonly: 'solo familia — hablemos de negocios…', w_incity: 'en la ciudad', e_ghost: 'ENTRA COMO FANTASMA', e_bones: 'HAZTE UN NOMBRE →' },
     pt: { name: 'Português', t_start: 'Comece Aqui', t_profile: 'Meu Perfil', t_streets: 'As Ruas', t_garage: 'A Garagem', t_life: 'A Vida', t_city: 'A Cidade', t_kitchen: 'A Cozinha', t_empire: 'O Império', t_scores: 'Grandes Golpes', t_market: 'Mercado Negro', t_port: 'O Porto', t_den: 'O Cassino', t_speakeasy: 'O Clandestino', t_boxing: 'As Lutas', t_races: 'Rachas de Rua', t_stable: 'O Estábulo', t_pvp: 'Serviço Sujo', t_loans: 'O Agiota', t_law: 'A Lei', t_pen: 'A Cadeia', t_wire: 'A Escuta', t_family: 'A Família', t_map: 'O Mapa', t_crew: 'O Bando', t_discover: 'Achar Gente', t_portfolio: 'Na Legalidade', t_estate: 'A Mansão', t_store: 'A Loja', t_deck: 'O Console', g_streets: 'Ruas', g_earners: 'Negócios', g_vice: 'Vício', g_blood: 'Sangue', g_family: 'Família', g_legit: 'Legal', k_bank: 'banco', k_respect: 'respeito', k_energy: 'energia', k_nerve: 'coragem', k_health: 'saúde', k_heat: 'pressão policial', k_stats: 'músculo / astúcia / velocidade', k_gun: 'arma', k_ammo: 'munição / caixas', k_cars: 'carros', k_liquid: 'líquido', k_staked: 'em staking', k_intransit: 'em trânsito', b_heal: 'curar', b_checkin: 'dar presença', b_refresh: 'atualizar', b_takeme: 'me leva lá →', b_send: 'enviar', b_burn: 'queimar os papéis', b_wholecity: '+ a cidade inteira…', w_sheet: 'A Ficha', w_lastword: 'Última Palavra', w_panel: 'A Rua', w_feed: 'AO VIVO', w_city: 'CHAT CIDADE', w_family: 'FAMÍLIA', w_sayit: 'fala pra cidade…', w_famonly: 'só família — papo de negócios…', w_incity: 'na cidade', e_ghost: 'ENTRE COMO FANTASMA', e_bones: 'FAÇA SEU NOME →' },
     fr: { name: 'Français', t_start: 'Commencer Ici', t_profile: 'Mon Profil', t_streets: 'La Rue', t_garage: 'Le Garage', t_life: 'La Vie', t_city: 'La Ville', t_kitchen: 'La Cuisine', t_empire: "L'Empire", t_scores: 'Les Gros Coups', t_market: 'Marché Noir', t_port: 'Le Port', t_den: 'Le Tripot', t_speakeasy: 'Le Clandestin', t_boxing: 'La Boxe', t_races: 'Courses de Rue', t_stable: "L'Écurie", t_pvp: 'Basses Œuvres', t_loans: "L'Usurier", t_law: 'La Loi', t_pen: 'La Taule', t_wire: 'Les Écoutes', t_family: 'La Famille', t_map: 'La Carte', t_crew: "L'Équipe", t_discover: 'Trouver du Monde', t_portfolio: 'Devenir Clean', t_estate: 'Le Domaine', t_store: 'La Boutique', t_deck: 'La Console', g_streets: 'Rue', g_earners: 'Affaires', g_vice: 'Vice', g_blood: 'Sang', g_family: 'Famille', g_legit: 'Légal', k_bank: 'banque', k_respect: 'respect', k_energy: 'énergie', k_nerve: 'cran', k_health: 'santé', k_heat: 'pression policière', k_stats: 'muscle / ruse / vitesse', k_gun: 'arme', k_ammo: 'munitions / caisses', k_cars: 'voitures', k_liquid: 'liquide', k_staked: 'en staking', k_intransit: 'en transit', b_heal: 'se soigner', b_checkin: 'pointer', b_refresh: 'actualiser', b_takeme: 'emmène-moi →', b_send: 'envoyer', b_burn: 'brûler les papiers', b_wholecity: '+ toute la ville…', w_sheet: 'La Fiche', w_lastword: 'Dernier Mot', w_panel: 'La Rue', w_feed: 'EN DIRECT', w_city: 'CHAT VILLE', w_family: 'FAMILLE', w_sayit: 'dis-le à la ville…', w_famonly: 'famille seulement — parlons affaires…', w_incity: 'en ville', e_ghost: 'ENTRER EN FANTÔME', e_bones: 'FAIS TES PREUVES →' },
@@ -4852,9 +4792,6 @@
       if (!valid()) return neutral;
       if (options.beforeDispatch && !options.beforeDispatch()) return { ignored: true, code: 499, body: {} };
       const result = await apiNow(method, path, body, { ...options, authToken });
-      // Direct API controls (chat, for example) do not refresh the player through
-      // act(). Read the server's scoped owner receipt instead of animating cached me.
-      if (valid() && method !== 'GET' && !options.activityHandled && result.code >= 200 && result.code < 300 && !result.replayed) scheduleCityPresence();
       return valid() ? result : neutral;
     };
     if (method !== 'GET' && !['/v1/screens', '/v1/commands/observations'].includes(path)
@@ -4929,10 +4866,7 @@
       ? api('GET', '/v1/projections/player', undefined, { isCurrent: ticket.isCurrent })
       : api('GET', '/v1/commands' + path.slice('/v1/commands'.length), undefined, { isCurrent: ticket.isCurrent }),
     clear: (kind) => {
-      if (['session', 'character', 'player'].includes(kind)) {
-        _cityResumeAfterIdentity = kind !== 'session' && cityGameVisible();
-        destroyCityScene(); destroyFieldwork(); _citySession = null; _citySceneOptions = null; _cityNpcActions = new Map(); syncCitySessionBar();
-      }
+      if (['session', 'character', 'player'].includes(kind)) destroyFieldwork();
       worldChoiceConfirmation?.();
       worldProjection = null; worldFeedback = null;
       worldStatus = 'Refreshing your street…';
@@ -4957,10 +4891,7 @@
       if (kind === 'player') {
         if (result.code === 404) show('screen-create');
         if (result.code < 400) {
-          const returnToCity = cityGameVisible() || _cityResumeAfterIdentity;
-          _cityResumeAfterIdentity = false;
           const previousGeneration = me?.generation;
-          const previousCityIdentity = cityIdentity();
           me = result.body.player?.character || result.body.player;
           clearScopedOperations();
           if (worldRetry && worldRetry.characterId !== me.id) {
@@ -4968,14 +4899,6 @@
             try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
           }
           if (rules) { try { renderSheet(); applyTabVisibility(); } catch (error) { console.error('projection render failed', error); } }
-          const cityChanged = previousCityIdentity !== cityIdentity(me)
-            || (_citySceneOptions && cityIdentity(_citySceneOptions.character) !== cityIdentity(me));
-          if (_cityScene && _citySceneKey === cityIdentity(me)) _cityScene.update({ character: { ...me }, progress: cityProgress() });
-          else if (_cityScene || cityChanged) destroyCityScene();
-          syncCitySessionBar();
-          if (cityChanged && returnToCity && _mapMode === 'walk'
-            && $('#screen-main') && !$('#screen-main').classList.contains('hidden')) setTab('map');
-          else syncPlayerView();
           if (previousGeneration != null && me.generation > previousGeneration) backfillFeed();
         }
         return;
@@ -5279,20 +5202,7 @@
     t.inert = false;
     t.setAttribute('role', bad ? 'alert' : 'status');
     t.setAttribute('aria-live', bad ? 'assertive' : 'polite');
-    t.tabIndex = document.body.classList.contains('city-player-view') ? 0 : -1;
-    t.onfocus = event => {
-      if (!document.body.classList.contains('city-player-view')) return;
-      clearTimeout(t._h);
-      if (!t.contains(event.relatedTarget)) t._return = event.relatedTarget;
-    };
-    t.onblur = event => {
-      if (!action && document.body.classList.contains('city-player-view') && !t.contains(event.relatedTarget) && t.classList.contains('show'))
-        t._h = setTimeout(dismissToast, 3400);
-    };
-    t.onkeydown = event => {
-      if (!document.body.classList.contains('city-player-view') || event.key !== 'Escape') return;
-      event.preventDefault(); event.stopPropagation(); dismissToast();
-    };
+    t.tabIndex = -1;
     t.innerHTML = '';
     const ic = document.createElement('span'); ic.className = 'ti'; ic.textContent = bad ? '✕' : '✓';
     const tx = document.createElement('span'); tx.textContent = msg;
@@ -5384,25 +5294,7 @@
   let operationPending = null;
   const operationReceipts = [];
   let _operationResponseCurrent = null;
-  let _cityActivityReceipt = null;
-  function recordCityAction(method, path, result, key, label, current) {
-    if (method === 'GET' || !/^\/v1\//.test(path) || /^\/v1\/(auth|access|admin)(\/|$)/.test(path)
-      || ['/v1/screens', '/v1/commands/observations'].includes(path)
-      || result.code < 200 || result.code >= 300 || result.ignored || result.replayed || !current()) return;
-    const kind = /\/train|\/regimen/.test(path) ? 'train'
-      : /\/heal|\/checkin|\/rest/.test(path) ? 'rest'
-      : /\/travel/.test(path) ? 'move'
-      : /\/attack|\/fight|\/boxing|\/duels/.test(path) ? 'fight'
-      : /\/craft|\/recipes|\/workbench/.test(path) ? 'craft'
-      : /\/deeds|\/home|\/property/.test(path) ? 'property'
-      : /\/chat|\/messages|\/encounters|\/favors|\/social/.test(path) ? 'social'
-      : /\/market|\/trade|\/store|\/buy|\/sell/.test(path) ? 'trade' : 'work';
-    _cityActivityReceipt = { current, receipt: { id: 'owner:' + key, state: 'confirmed', actorId: me.id,
-      generation: me.generation, district: me.loc, kind, label: label || 'Action completed', at: Date.now() } };
-    publishCityWorld();
-  }
   function clearScopedOperations() {
-    if (_cityActivityReceipt && !_cityActivityReceipt.current()) _cityActivityReceipt = null;
     if (_operationResponseCurrent && !_operationResponseCurrent()) {
       $('#resp').textContent = ''; _operationResponseCurrent = null;
     }
@@ -5547,17 +5439,14 @@
   function renderOperationFeed() {
     const feed = $('#operation-feed');
     if (feed) feed.innerHTML = operationFeedMarkup();
-    const game = $('#city-panel-feedback');
-    const latest = operationReceipts.find(receipt => !receipt.isCurrent || receipt.isCurrent());
-    if (game) game.innerHTML = latest ? operationReceiptMarkup(latest) : '';
     bindOperationDesk();
   }
   function renderOperationPending() {
     const desk = $('#operation-desk'), line = $('#operation-pending');
-    for (const host of [desk, $('#city-panel')]) host?.setAttribute('aria-busy', operationPending ? 'true' : 'false');
-    for (const node of [line, $('#city-panel-pending')]) if (node) {
-      node.textContent = operationPending ? `Working: ${operationPending}…` : '';
-      node.classList.toggle('hidden', !operationPending); node.hidden = !operationPending;
+    desk?.setAttribute('aria-busy', operationPending ? 'true' : 'false');
+    if (line) {
+      line.textContent = operationPending ? `Working: ${operationPending}…` : '';
+      line.classList.toggle('hidden', !operationPending); line.hidden = !operationPending;
     }
   }
   function recordOperation({ label, result, before, after, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt, onResult, resourceCurrent }) {
@@ -5616,14 +5505,13 @@
     const label = operationName(method, path, trigger, options.label);
     const idempotencyKey = method === 'GET' ? null : (options.idempotencyKey || uuid());
     const before = operationSnapshot(me);
-    const resourceStamp = projections.snapshot(), resourceKey = cityIdentity(), resourceAuthority = _cityAuthorityRevision;
+    const resourceStamp = projections.snapshot(), resourceKey = cityIdentity();
     const resourceCurrent = () => !!resourceKey && resourceKey === cityIdentity() && projections.current(resourceStamp)
-      && resourceAuthority === _cityAuthorityRevision && (!options.isCurrent || options.isCurrent());
+      && (!options.isCurrent || options.isCurrent());
     const oldHtml = trigger?.innerHTML;
     const oldAriaLabel = trigger?.getAttribute('aria-label');
     acting = true;
     operationPending = label;
-    publishCityWorld();
     document.body.style.cursor = 'progress';
     if (trigger) {
       trigger.setAttribute('aria-busy', 'true');
@@ -5688,11 +5576,6 @@
         after: stateRefresh?.code < 400 ? operationSnapshot(me) : null,
         method, path, body, idempotencyKey, beforeDispatch: options.retryBeforeDispatch || options.beforeDispatch,
         isCurrent: options.isCurrent, onReceipt: options.onReceipt, onResult: options.onResult, resourceCurrent });
-      // A confirmed action alone cannot place the actor if the canonical player
-      // refresh failed (travel may already have moved them to another district).
-      if (stateRefresh?.code >= 200 && stateRefresh.code < 300 && !stateRefresh.ignored) {
-        recordCityAction(method, path, r, idempotencyKey, label, resourceCurrent);
-      }
       if (options.onReceipt) options.onReceipt(receipt);
       // …and re-render the BOARD you are looking at, not just the sheet. `refresh()` only redraws the
       // left column, so until now the screen you just acted on kept showing the old state until a WS
@@ -5706,7 +5589,6 @@
     } finally {
       acting = false;
       operationPending = null;
-      publishCityWorld();
       document.body.style.cursor = '';
       if (trigger?.isConnected) {
         trigger.removeAttribute('aria-busy');
@@ -6230,10 +6112,9 @@
     landingMenu.querySelector('summary').focus();
   });
   function show(id) {
-    if (id !== 'screen-main') { destroyCityScene(); destroyFieldwork(); _citySession = null; clearCityPeople(); clearScopedOperations(); syncCitySessionBar(); }
+    if (id !== 'screen-main') { destroyFieldwork(); clearScopedOperations(); }
     for (const s of ['screen-auth', 'screen-create', 'screen-main', 'screen-down']) $('#' + s).classList.add('hidden');
     $('#' + id).classList.remove('hidden');
-    syncPlayerView();
     if (id === 'screen-auth') { mountHeroMotion(); deferLandingArt(); }
   }
   // Atmosphere is optional: a deliberate Play starts the transfer; Pause stops the motion.
@@ -6714,8 +6595,8 @@
     { art: 'hero-poster-640.webp', title: 'WELCOME TO THE CITY', body:
       `<p>You start in the Docks. Jobs earn cash and respect, and other players can become allies or enemies.</p>
        <p>Meet your neighbors, choose a job, and follow the stories that open around you.</p>` },
-    { art: 'city-neighborhood-v2.png', title: 'YOUR FIRST MOVE', action: 'first_job', body:
-      `<p><b style="color:var(--neon)">Meet The Fixer in your neighborhood.</b> Pick a street job, compare its approaches, then read what changed.</p>
+    { art: 'interior-streets.jpg', title: 'YOUR FIRST MOVE', action: 'first_job', body:
+      `<p><b style="color:var(--neon)">Open Streets to choose your first job.</b> Pick a street job, compare its approaches, then read what changed.</p>
        <p class="dim">Jobs spend <b>nerve</b>, which refills over time. Check the cost and possible outcome before choosing. After your first move, open your journal for a story.</p>` },
   ];
   let tourAt = 0, tourReplay = false, tourReturnTab = 'streets', tourReplayOpener = null;
@@ -6728,7 +6609,7 @@
     $('#tour-back').style.visibility = tourAt ? 'visible' : 'hidden';
     $('#tour-skip').textContent = tourReplay ? 'close' : 'skip';
     $('#tour-skip').style.display = last && !tourReplay ? 'none' : '';
-    $('#tour-next').textContent = s.action === 'first_job' ? 'MEET THE FIXER →' : 'next →';
+    $('#tour-next').textContent = s.action === 'first_job' ? 'START YOUR FIRST JOB →' : 'next →';
   }
   function openTour() {
     tourReplay = !!localStorage.getItem('omerta_tour2');
@@ -6744,7 +6625,7 @@
     $('#welcome').classList.add('hidden');
     syncStaticModal($('#welcome'));
     if (play || !tourReplay) {
-      beginCityFirstJob();
+      setTab('streets');
     } else {
       setTab(tourReturnTab);
       const fallbackCandidates = [
@@ -7484,7 +7365,7 @@
     pen: ['jail', 'lockup', 'break out', 'yard', 'sentence'],
     wire: ['intel', 'wiretap', 'tap rival', 'threats', 'forecast'],
     family: ['organization', 'gang', 'tribute', 'commission', 'war'],
-    map: ['map', 'the map', 'turf', 'territory', 'district control', 'family map', 'walk', 'neighborhood', 'city mode'],
+    map: ['map', 'the map', 'turf', 'territory', 'district control', 'family map'],
     deeds: ['property', 'street deed', 'auction deed'],
     crew: ['recruit crew', 'crew objective', 'crew room'],
     discover: ['find player', 'find people', 'recruit', 'who is online'],
@@ -7670,7 +7551,7 @@
   const TAB_INTRO = {
     discover: 'Find people to run with: players near your level, who’s looking for a crew, and the newest faces in the city. Flag yourself “looking for a crew” and let someone find YOU. This is the front door — the Wet Work roster only shows the top of the heap.',
     crew: 'Your crew: a 2–' + 4 + ' player pact between solo and a full family. No treasury, no turf — just a private room, each other’s backs, and a rule you don’t raise a hand to your own. Form one, or accept an invite.',
-    map: 'Walk your current neighborhood to find jobs, training, your garage, crew, and stories. Switch to the territory board to see who holds the city. Open Travel to visit another district.',
+    map: 'See who holds the city: family territory, contested ground, and occupied districts. Fight for turf from The Family tab, or visit City events to travel to another district.',
     city: 'The living city: today\'s events, the weather that moves goods prices (the arbitrage map), rival NPC cartels to raid, and the monument the whole server is building. Check the forecast — plan around it.',
     kitchen: 'The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.',
     empire: 'Legit fronts that farm cash while you\'re away. They cost upkeep, rivals can shake them down — and if you\'re killed, your killer can take one. Passive is not the same as safe.',
@@ -7700,11 +7581,8 @@
     if (!it || localStorage.getItem('omerta_seen_' + id)) { w.innerHTML = ''; return; }
     w.innerHTML = `<div class="intro-card"><img alt="" src="/art/${TAB_ART[id] || 'interior-streets'}.jpg">
       <div style="flex:1;min-width:180px"><span class="t2">FIRST TIME HERE</span><p>${it}</p></div>
-      ${id === 'map' ? '<button class="act" id="intro-walk">Enter neighborhood →</button>' : ''}
       <button class="act" id="intro-got">got it</button></div>`;
     w.querySelector('#intro-got').onclick = () => { localStorage.setItem('omerta_seen_' + id, '1'); w.innerHTML = ''; };
-    const walk = w.querySelector('#intro-walk');
-    if (walk) walk.onclick = event => enterNeighborhood(event.currentTarget);
   }
   // ── THE SPOTLIGHT — "take me there" should land on the CONTROL, not just the right screen.
   // Per-tab: the one control a coached newcomer is most likely being sent to. A missing selector
@@ -7742,91 +7620,8 @@
 
 
   let characterCheckoutOnly = false;
-  let _cityPanel = null;
-  let _cityResumeAfterIdentity = false;
-  const _cityPanelNodes = [];
-  function cityGameVisible() {
-    return _mapMode === 'walk' && !!me?.id && !$('#screen-main').classList.contains('hidden')
-      && (currentTab === 'map' || _cityPanel?.key === cityIdentity());
-  }
-  function restoreCityPanelNodes() {
-    for (const { node, parent, next } of _cityPanelNodes.splice(0).reverse()) {
-      parent.insertBefore(node, next?.parentNode === parent ? next : null);
-    }
-  }
-  function moveToCityPanel(node, host) {
-    if (!node) return;
-    _cityPanelNodes.push({ node, parent: node.parentNode, next: node.nextSibling });
-    host.append(node);
-  }
-  function closeCityPanel() {
-    restoreCityPanelNodes();
-    _cityPanel = null;
-    document.body.classList.remove('city-panel-open');
-    const panel = $('#city-panel');
-    if (panel) panel.hidden = true;
-    _cityScene?.update?.({ externalPanel: false });
-  }
-  function measureCityPanel() {
-    if (!_cityPanel) return;
-    document.body.style.setProperty('--city-chrome-height', Math.ceil($('#top').getBoundingClientRect().height) + 'px');
-    document.body.style.setProperty('--city-stage-height', Math.ceil($('#tab-map').getBoundingClientRect().height) + 'px');
-  }
-  window.addEventListener('resize', measureCityPanel);
-  function syncCityPanel() {
-    if (_cityPanel?.key !== cityIdentity()) closeCityPanel();
-    const opened = !!_cityPanel;
-    document.body.classList.toggle('city-panel-open', opened);
-    let panel = $('#city-panel');
-    if (!panel && opened) {
-      panel = el('<section id="city-panel" role="region" aria-labelledby="city-panel-title"><header id="city-panel-head"><h2 id="city-panel-title"></h2><button class="act" id="city-panel-jump" type="button" aria-label="All in-game actions">Actions</button><button class="act" id="city-panel-close" type="button" aria-label="Back to street">Street</button></header><div id="city-panel-pending" role="status" hidden></div><div id="city-panel-content"><div id="city-panel-body"></div><div id="city-panel-feedback" aria-live="polite"></div></div></section>');
-      $('#tabbodies').append(panel);
-      $('#city-panel-close').onclick = () => { setTab('map'); enterNeighborhood(); };
-      $('#city-panel-jump').onclick = () => openJump();
-      if (typeof ResizeObserver === 'function') {
-        const resize = new ResizeObserver(measureCityPanel);
-        resize.observe($('#top')); resize.observe($('#tab-map'));
-      }
-    }
-    if (panel) panel.hidden = !opened;
-    if (!opened) return;
-    const body = $('#city-panel-body');
-    restoreCityPanelNodes(); body.replaceChildren();
-    const utility = _cityPanel.utility;
-    $('#city-panel-title').textContent = utility
-      ? ({ character: 'Your character', communications: 'The Street · chat & feed', account: 'Account & help', territory: 'Territory board' }[utility])
-      : TABS[currentTab];
-    if (utility === 'account') {
-      const controls = el('<div class="city-account-controls"></div>'); body.append(controls);
-      for (const node of [...$('#top').children]) {
-        if (node.matches('#btn-wallet, #btn-character-nft, #btn-capital, #btn-phone, #btn-alerts, #btn-sfx, #btn-help, #btn-logout, a, .langpick, .langglobe')) moveToCityPanel(node, controls);
-      }
-    } else moveToCityPanel(utility ? $({ character: '#leftcol', communications: '#wirepanel', territory: '#map-territory-board' }[utility]) : $('#tab-' + currentTab), body);
-    if (utility === 'territory' && $('#map-territory-board')) $('#map-territory-board').hidden = false;
-    _cityScene?.update?.({ externalPanel: true });
-    renderOperationFeed(); renderOperationPending();
-    measureCityPanel();
-    const opening = _cityPanel;
-    requestAnimationFrame(() => {
-      if (opening === _cityPanel && window.innerWidth <= 850) $('#tabbodies').scrollIntoView({ block: 'start', behavior: 'instant' });
-    });
-  }
-  function openCityUtility(utility) {
-    if (!cityGameVisible() || !['character', 'communications', 'account', 'territory'].includes(utility)) return;
-    setTab('map', { cityUtility: utility });
-    $('#city-panel-close')?.focus({ preventScroll: true });
-  }
-  $('#city-all-actions').onclick = () => openJump();
-  document.querySelectorAll('[data-city-utility]').forEach(button => { button.onclick = () => openCityUtility(button.dataset.cityUtility); });
-  function setTab(id, { characterOnly = false, dashboard = false, cityUtility = null } = {}) {
+  function setTab(id, { characterOnly = false } = {}) {
     if (!TABS[id]) return;
-    const inGame = !dashboard && cityGameVisible();
-    if (id === 'map' && currentTab !== 'map' && _mapMode === 'walk' && !inGame) rememberDashboardView();
-    closeCityPanel();
-    if (inGame && (id !== 'map' || cityUtility)) _cityPanel = { key: cityIdentity(), tab: id, utility: cityUtility };
-    cancelCityEntry();
-    if (id !== 'map') _cityFirstJobEntry = null;
-    if (id !== 'map' && !inGame) destroyCityScene();
     if (id !== 'fieldwork') destroyFieldwork();
     characterCheckoutOnly = id === 'portfolio' && characterOnly;
     clearTimeout(_reRenderT);
@@ -7837,8 +7632,6 @@
     rememberTab(id);
     noteScreen(id);
     currentTab = id;
-    syncPlayerView();
-    syncCitySessionBar();
     activeGroup = groupOf(id);
     lastTabIn[activeGroup] = id;
     applyTabVisibility(); // the sub-row follows the group (a coach jump lands with the right rail lit)
@@ -7855,11 +7648,10 @@
     for (const key of Object.keys(TABS)) {
       const t = $('#tab-' + key);
       if (!t) continue;
-      const on = key === id || (inGame && key === 'map');
+      const on = key === id;
       t.classList.toggle('on', on);
       if (t.getAttribute('role') === 'tabpanel') t.hidden = !on;
     }
-    syncCityPanel();
     // THE SCREEN PLATE — this screen's own art + its name (see #tabart in the stylesheet).
     // A tab with no plate hides the band rather than showing an empty box.
     const art = $('#tabart');
@@ -9038,231 +8830,13 @@
   const MAP_STATE = { // tile accent + label per control state
     mine: ['var(--neon)', 'YOURS'], held: ['var(--gold)', 'HELD'], contested: ['#e0a800', 'CONTESTED'],
     occupied: ['var(--bad)', 'OCCUPIED'], open: ['var(--line)', 'UP FOR GRABS'] };
-  let _cityScene = null, _citySceneKey = null, _citySceneEpoch = 0, _citySceneAssets = null;
-  let _mapMode = 'walk', _mapReadRevision = 0, _citySceneOptions = null;
-  let _citySession = null, _cityQuestPending = false, _cityNpcActions = new Map(), _cityQuestReceipt = null;
-  let _cityEntry = null;
-  let _cityTrainingReceipt = null;
-  let _cityFixerReceipt = null;
-  let _cityWorldData = null, _cityWorldReceipt = null, _cityWorldPending = false;
-  let _cityHomeEntry = null, _cityDeedEntry = null;
-  let _cityCrewState = null;
-  let _cityAuthorityRevision = 0;
-  function retireCityCrew(epoch = null) { if (epoch !== null && _cityCrewState?.epoch !== epoch) return; _cityCrewState?.controller?.destroy(); _cityCrewState = null; }
-  let _cityPeople = null, _cityIntel = null, _cityPeopleRevision = 0, _cityEncounterPending = false, _cityEncounterReceipt = null;
-  function clearCityPeople() { retireCityCrew(); _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityTrainingReceipt = null; _cityFixerReceipt = null; _cityQuestReceipt = null; _cityWorldData = null; _cityWorldReceipt = null; _cityHomeEntry = null; _cityDeedEntry = null; _cityPeopleRevision++; }
-  function cityBoardCurrent(board) {
-    return board?.viewer?.characterId === me?.id && board.viewer.generation === me?.generation
-      && board.viewer.district === me?.loc;
-  }
-  function invalidateCityAuthority() {
-    _cityAuthorityRevision++; clearCityPeople(); _cityNpcActions = new Map();
-    if (_citySceneOptions) _citySceneOptions.npcQuests = {};
-    _cityScene?.update?.({ ...cityWorldOptions(), npcQuests: {}, actors: [], intel: [], objectives: [] });
-  }
-  function cityPeopleOptions() {
-    const key = cityIdentity();
-    const receipt = _cityEncounterReceipt?.key === key && _cityEncounterReceipt.current() ? _cityEncounterReceipt.receipt : null;
-    return { actors: _cityPeople?.key === key ? _cityPeople.actors : [],
-      hasMore: _cityPeople?.key === key && _cityPeople.hasMore,
-      intel: _cityIntel?.key === key ? _cityIntel.journal : [],
-      objectives: _cityIntel?.key === key ? _cityIntel.objectives : [],
-      encounterRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery?.run === 'function',
-      encounterReceipt: receipt ? { state: receipt.state, label: receipt.label, summary: receipt.summary, delta: receipt.delta,
-        intel: receipt.state === 'success' ? _cityEncounterReceipt.intel || null : null,
-        recoveryLabel: receipt.recovery?.sameKey === true ? receipt.recovery.label : '', recoveryText: receipt.recovery?.text || '' } : null };
-  }
-  function publishCityPeople() {
-    if (!cityGameVisible() || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
-    Object.assign(_citySceneOptions, cityPeopleOptions());
-    _cityScene?.update?.({ ...cityPeopleOptions(), character: { ...me } });
-  }
-  let _cityPresenceRefresh = null, _cityPresenceReading = false, _cityPresenceReadAt = 0;
-  function scheduleCityPresence() {
-    if (_cityPresenceRefresh || !cityGameVisible() || !_cityScene || document.hidden) return;
-    _cityPresenceRefresh = setTimeout(async () => {
-      _cityPresenceRefresh = null;
-      if (_cityPresenceReading || !cityGameVisible() || !_cityScene || document.hidden) return;
-      _cityPresenceReading = true; _cityPresenceReadAt = Date.now();
-      const key = cityIdentity(), stamp = projections.snapshot(), scene = _cityScene;
-      const page = scene.getState?.().actorPage || 0, cursor = _cityPeople?.pages?.[page]?.start;
-      const revision = ++_cityPeopleRevision;
-      const current = () => cityGameVisible() && key === cityIdentity() && projections.current(stamp) && scene === _cityScene;
-      try {
-        const result = await api('GET', '/v1/city/presence' + (cursor ? '?cursor=' + encodeURIComponent(cursor) : ''), undefined, { isCurrent: current });
-        if (current() && revision === _cityPeopleRevision && result.code < 400 && cityBoardCurrent(result.body)) {
-          acceptCityPeoplePage(key, page, cursor, result.body); publishCityPeople();
-        } else if (current() && result.code < 400 && !cityBoardCurrent(result.body)) await refresh();
-      } finally { _cityPresenceReading = false; }
-    }, Math.max(250, 3000 - (Date.now() - _cityPresenceReadAt)));
-  }
-  setInterval(scheduleCityPresence, 15000);
-  function acceptCityIntel(board) {
-    if (!cityBoardCurrent(board) || !Number.isSafeInteger(board.progress?.totalEncounters) || board.progress.totalEncounters < 0) return false;
-    if (_cityIntel?.key === cityIdentity() && _cityIntel.totalEncounters > board.progress.totalEncounters) return false;
-    _cityIntel = { key: cityIdentity(), journal: Array.isArray(board.journal) ? board.journal : [],
-      objectives: Array.isArray(board.objectives) ? board.objectives : [], totalEncounters: board.progress.totalEncounters };
-    return true;
-  }
-  function acceptCityPeoplePage(key, pageIndex, cursor, board) {
-    if (!cityBoardCurrent(board) || key !== cityIdentity()) return;
-    const own = board.viewer?.activity;
-    if (own && own.id !== _cityActivityReceipt?.receipt.id
-      && (!_cityActivityReceipt?.current() || Date.parse(own.at) >= (typeof _cityActivityReceipt.receipt.at === 'number'
-        ? _cityActivityReceipt.receipt.at : Date.parse(_cityActivityReceipt.receipt.at)))) {
-      const stamp = projections.snapshot(), authority = _cityAuthorityRevision;
-      _cityActivityReceipt = { current: () => key === cityIdentity() && projections.current(stamp) && authority === _cityAuthorityRevision,
-        receipt: { ...own, state: 'confirmed', actorId: board.viewer.characterId, generation: board.viewer.generation, district: board.viewer.district } };
-      publishCityWorld();
-    }
-    const pages = _cityPeople?.key === key ? [...(_cityPeople.pages || [])] : [];
-    if (pages[pageIndex] && pages[pageIndex].cursor !== board.nextCursor) pages.length = pageIndex + 1;
-    pages[pageIndex] = { start: cursor, actors: board.actors || [], cursor: board.nextCursor, hasMore: board.hasMore === true };
-    const actors = new Map();
-    for (const page of pages) for (const actor of page?.actors || []) actors.set(actor.id, actor);
-    const last = pages.at(-1);
-    _cityPeople = { key, pages, actors: [...actors.values()], cursor: last?.cursor, hasMore: last?.hasMore === true };
-  }
-  async function loadCityPeoplePage() {
-    if (!_cityPeople?.hasMore || !_cityPeople.cursor || _cityPeople.key !== cityIdentity()) return;
-    const stamp = projections.snapshot(), key = cityIdentity(), revision = ++_cityPeopleRevision;
-    const cursor = _cityPeople.cursor, pageIndex = _cityPeople.pages?.length || 0;
-    const result = await api('GET', '/v1/city/presence?cursor=' + encodeURIComponent(cursor), undefined,
-      { isCurrent: () => projections.current(stamp) && key === cityIdentity() && currentTab === 'map' });
-    if (result.code >= 400 || revision !== _cityPeopleRevision || !cityBoardCurrent(result.body)) return result;
-    acceptCityPeoplePage(key, pageIndex, cursor, result.body);
-    publishCityPeople();
-    return result;
-  }
-  async function performCityEncounter(actorId, actionId) {
-    const actor = _cityPeople?.key === cityIdentity() ? _cityPeople.actors.find(actor => actor.id === actorId) : null;
-    const action = actor?.actions?.find(action => action.id === actionId);
-    if (!action?.available || _cityEncounterPending || cityPeopleOptions().encounterRecovery || currentTab !== 'map' || _mapMode !== 'walk'
-      || action.method !== 'POST' || action.path !== '/v1/city/encounters/' + encodeURIComponent(actorId)
-      || !cityBoardCurrent({ viewer: action.body })) return { code: 409, body: { error: 'city_actor_unavailable' } };
-    const scene = _cityScene, opening = scene?.getState?.().actorOpening, key = cityIdentity(), stamp = projections.snapshot();
-    const ownerCurrent = () => projections.current(stamp) && key === cityIdentity();
-    const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
-      && scene?.getState?.().selectedActor === actorId && scene.getState().actorOpening === opening;
-    let confirmedIntel = null;
-    _cityEncounterPending = true;
-    try {
-      const result = await act(action.method, action.path, action.body, { label: action.label || 'Review a neighborhood lead',
-        beforeDispatch, retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
-        onResult: result => { if (ownerCurrent()) confirmedIntel = result.code < 400 && cityBoardCurrent(result.body)
-          && result.body.intel?.source?.id === actorId && typeof result.body.intel.id === 'string' ? result.body.intel : null; },
-        onReceipt: receipt => { if (ownerCurrent()) {
-          _cityEncounterReceipt = { key, current: ownerCurrent, receipt, intel: receipt.state === 'success' ? confirmedIntel : null }; publishCityPeople();
-        } } });
-      if (ownerCurrent() && result.code < 400 && cityBoardCurrent(result.body)) {
-        if (acceptCityIntel(result.body)) _cityPeopleRevision++;
-        publishCityPeople();
-      }
-      return result;
-    } finally { _cityEncounterPending = false; }
-  }
-  async function retryCityEncounter() {
-    const pending = _cityEncounterReceipt;
-    if (_cityEncounterPending || pending?.key !== cityIdentity() || !pending.current()
-      || pending.receipt.recovery?.sameKey !== true || !pending.receipt.recovery.run) {
-      return { code: 499, ignored: true, body: {} };
-    }
-    _cityEncounterPending = true;
-    try {
-      const result = await pending.receipt.recovery.run();
-      if (pending.current() && result.code < 400 && cityBoardCurrent(result.body)) {
-        if (acceptCityIntel(result.body)) _cityPeopleRevision++;
-        publishCityPeople();
-      }
-      return result;
-    } finally { _cityEncounterPending = false; }
-  }
-  function performCityIntelAction() { return { code: 409, body: { error: 'city_objective_progresses_by_encounters' } }; }
-  let _dashboardView = null;
-  const _playerRefreshHome = { parent: $('#btn-refresh').parentNode, next: $('#btn-refresh').nextSibling };
-  function rememberDashboardView() {
-    _dashboardView = { owner: me?.id, generation: me?.generation, tab: currentTab,
-      territory: _mapMode === 'territory', scroll: window.scrollY };
-  }
-  function syncPlayerView() {
-    const player = cityGameVisible();
-    document.body.classList.toggle('city-player-view', player);
-    const refreshButton = $('#btn-refresh');
-    if (player && refreshButton.parentNode !== $('#top')) $('#top').append(refreshButton);
-    else if (!player && refreshButton.parentNode !== _playerRefreshHome.parent) {
-      _playerRefreshHome.parent.insertBefore(refreshButton,
-        _playerRefreshHome.next?.parentNode === _playerRefreshHome.parent ? _playerRefreshHome.next : null);
-    }
-    $('#btn-player-view').setAttribute('aria-pressed', String(player));
-    $('#btn-dashboard-view').setAttribute('aria-pressed', String(!player));
-    $('#btn-player-view').disabled = !me?.id;
-  }
-  $('#btn-player-view').onclick = event => {
-    if (!me?.id || $('#screen-main').classList.contains('hidden') || topModal()) return;
-    if (!cityGameVisible()) rememberDashboardView();
-    _mapMode = 'walk';
-    if (currentTab !== 'map' || _cityPanel) setTab('map');
-    syncPlayerView();
-    enterNeighborhood(event.currentTarget);
-  };
-  $('#btn-dashboard-view').onclick = () => {
-    if (!document.body.classList.contains('city-player-view') || topModal()) return;
-    const previous = _dashboardView?.owner === me?.id && _dashboardView?.generation === me?.generation
-      && Object.hasOwn(TABS, _dashboardView.tab) ? _dashboardView : null;
-    _mapMode = previous?.tab === 'map' && previous.territory ? 'territory' : 'walk';
-    setTab(previous?.tab || 'start', { dashboard: true });
-    if (currentTab === 'map') syncMapMode();
-    $('#tab-' + currentTab)?.focus({ preventScroll: true });
-    window.scrollTo({ top: previous?.scroll || 0, behavior: 'instant' });
-  };
+  let _mapReadRevision = 0;
+
   let _fieldwork = null, _fieldworkEpoch = 0, _fieldworkEntryView = 'inventory';
-  let _cityFirstJobEntry = null;
-  const _cityFirstJobGuides = new Map();
-  function cityFirstJobKey() { return me?.id ? `omerta_first_job:${me.id}:${me.generation}` : ''; }
-  function cityFirstJobActive() {
-    const key = cityFirstJobKey();
-    if (!key) return false;
-    if (_cityFirstJobGuides.has(key)) return _cityFirstJobGuides.get(key);
-    try { return localStorage.getItem(key) === 'active'; } catch { return false; }
-  }
-  function setCityFirstJobActive(active) {
-    const key = cityFirstJobKey();
-    if (!key) return;
-    _cityFirstJobGuides.set(key, active);
-    try { if (active) localStorage.setItem(key, 'active'); else localStorage.removeItem(key); } catch { /* The guide also works for this session. */ }
-  }
-  function beginCityFirstJob() {
-    setCityFirstJobActive(true);
-    _cityFirstJobEntry = cityFirstJobKey();
-    _mapMode = 'walk'; setTab('map');
-    fulfillCityFirstJobEntry();
-  }
-  function fulfillCityFirstJobEntry() {
-    if (!_cityFirstJobEntry || _cityFirstJobEntry !== cityFirstJobKey() || currentTab !== 'map' || _mapMode !== 'walk') return;
-    if (_cityScene?.walkToVenue?.('fixer') === true) _cityFirstJobEntry = null;
-  }
-  const CITY_VENUE_TABS = {
-    fixer: ['streets', 'scores', 'pvp', 'law', 'pen', 'wire'],
-    workshop: ['garage', 'market', 'kitchen', 'empire', 'fieldwork'],
-    training: ['life', 'streets', 'boxing', 'races', 'stable'],
-    clubhouse: ['crew', 'family', 'world', 'discover', 'deeds', 'loans', 'speakeasy', 'den'],
-    stories: ['desk', 'start', 'profile', 'portfolio', 'estate', 'store'],
-    waterfront: ['city', 'port', 'map'], directory: ['start', 'fieldwork', 'deck'],
-  };
-  const CITY_VENUE_NAMES = { fixer: 'The Fixer', workshop: 'The Workshop', training: 'The Training Room',
-    clubhouse: 'The Clubhouse', stories: 'The Newsroom', waterfront: 'The Waterfront', directory: 'City Directory' };
-  function cityVenueActions() {
-    return Object.fromEntries(Object.entries(CITY_VENUE_TABS).map(([venue, tabs]) => [venue,
-      tabs.map(tab => ({ tab, label: venue === 'training' && tab === 'streets' ? 'Train at the gym' : TABS[tab],
-        detail: venue === 'training' && tab === 'streets' ? 'Core stats · disciplines · regimen' : (TAB_SEARCH[tab] || []).slice(0, 3).join(' · ') }))]));
-  }
+
   function cityIdentity(character = me) { return character?.id && character?.loc
     ? `${character.id}:${character.generation}:${character.loc}` : ''; }
-  function cityProgress() {
-    const divisor = Number(rules?.pacing?.levelDivisor), level = Number(me?.level || 1);
-    return divisor > 0 ? { respect: Number(me.respect), floor: divisor * (level - 1) ** 2,
-      next: divisor * level ** 2, level } : null;
-  }
+
   function coreTrainingMarkup({ termsId = 'streets-gym-terms', compact = false } = {}) {
     const gymCd = Number(me?.trainSeconds || 0), trainEnergy = Number(rules?.pacing?.trainEnergy || 10);
     const gymBlock = Number(me?.jailSeconds || 0) > 0 ? 'No gym in lockup.'
@@ -9275,55 +8849,7 @@
       : `<div class="d operation-terms" id="${termsId}" style="margin-bottom:4px"><b>CORE TRAINING</b> · ${trainEnergy} energy per session · raises the chosen stat · shares a ${mins(rules?.pacing?.trainCooldownSeconds || 0)} recovery clock with the Regimen.${gymBlock ? ` <b>BLOCKED:</b> ${esc(gymBlock)}` : ''}</div>`;
     return { train, terms, gymBlock };
   }
-  function renderCityTraining(host, key, epoch) {
-    const ownerCurrent = () => key === cityIdentity() && epoch === _citySceneEpoch && _citySceneKey === key
-      && _cityScene && currentTab === 'map' && _mapMode === 'walk' && !$('#screen-main')?.classList.contains('hidden');
-    const active = button => ownerCurrent() && host.isConnected && !host.closest('.omerta-city__training')?.hidden
-      && (!button || button.isConnected && host.contains(button));
-    const model = coreTrainingMarkup({ termsId: 'city-gym-terms', compact: true });
-    const receipt = _cityTrainingReceipt?.key === key && projections.current(_cityTrainingReceipt.stamp) ? _cityTrainingReceipt.receipt : null;
-    const readableReceipt = receipt && { ...receipt, recovery: receipt.recovery ? { ...receipt.recovery, run: null, tab: null } : null };
-    const html = `${readableReceipt ? `<div tabindex="-1" data-city-training-result role="region" aria-label="Training result">${operationReceiptMarkup(readableReceipt)}
-        ${receipt.recovery?.sameKey === true && receipt.recovery?.run ? `<button class="act" data-city-training-retry>${esc(receipt.recovery.label || 'Check the move')}</button>` : ''}</div>` : ''}
-      ${model.terms}<div class="omerta-city__training-stats">${model.train || '<span role="status">Core training is unavailable. Refresh to check your session.</span>'}</div>
-      <button class="act omerta-city__training-full" data-city-training-full>Full gym &amp; regimen →</button>`;
-    if (host.dataset.trainingContent !== html) {
-      const focused = host.contains(document.activeElement), stat = document.activeElement?.dataset.cityTrain;
-      host.innerHTML = html; host.dataset.trainingContent = html;
-      if (focused) {
-        const same = stat && host.querySelector(`[data-city-train="${stat}"]`);
-        (same && !same.disabled ? same : host.querySelector('[data-city-training-result]') || host).focus({ preventScroll: true });
-      }
-    }
-    host.querySelectorAll('[data-city-train]').forEach(button => {
-      button.disabled = !!model.gymBlock || host.dataset.trainingPending === '1' || receipt?.recovery?.sameKey === true;
-      button.onclick = event => { event.stopPropagation(); run(button, button.dataset.cityTrain); };
-    });
-    const retry = host.querySelector('[data-city-training-retry]');
-    if (retry) { retry.disabled = host.dataset.trainingPending === '1'; retry.onclick = () => run(retry, null); }
-    host.querySelector('[data-city-training-full]').onclick = event => {
-      if (active(event.currentTarget)) navigateFromCity('streets', { venueId: 'training' });
-    };
-    async function run(button, stat) {
-      if (!active(button) || button.disabled || host.dataset.trainingPending === '1') return;
-      if (stat && (!['muscle', 'cunning', 'speed'].includes(stat) || !(rules?.stats || []).includes(stat) || coreTrainingMarkup().gymBlock)) return;
-      if (!stat && (receipt?.recovery?.sameKey !== true || !receipt?.recovery?.run)) return;
-      host.dataset.trainingPending = '1';
-      const stamp = projections.snapshot();
-      const retryCurrent = () => projections.current(stamp) && key === cityIdentity();
-      const opening = host.dataset.trainingOpening;
-      _cityScene.update({});
-      try {
-        if (stat) await act('POST', '/v1/train/' + stat, {}, { label: 'train ' + stat,
-          beforeDispatch: () => retryCurrent() && active() && host.dataset.trainingOpening === opening, retryBeforeDispatch: retryCurrent, isCurrent: retryCurrent,
-          onReceipt: receipt => { if (retryCurrent()) { _cityTrainingReceipt = { key, stamp, receipt }; if (_citySceneKey === key) _cityScene?.update?.({}); } } });
-        else await receipt.recovery.run();
-      } finally {
-        delete host.dataset.trainingPending;
-        if (ownerCurrent()) _cityScene.update({ character: { ...me }, progress: cityProgress() });
-      }
-    }
-  }
+
   function coreCrimeMarkup(crime, { termsId = `crime-${crime.id}-terms`, compact = false } = {}) {
     const nerveRate = Number(rules?.pacing?.nerveRegenPerMin);
     const nerveHelp = `Wait for Nerve to recover or choose a job you can afford.${nerveRate > 0 ? ` Base recovery: ${fmt(nerveRate)} nerve/min; bonuses may increase this.` : ''}`;
@@ -9345,481 +8871,30 @@
         : `data-do="POST /v1/crimes/${crime.id}" data-body='{"approach":"${approach}"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled="true" title="${esc(blocked || 'Refresh to load job terms.')}"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');
     return { terms, choices, blocked };
   }
-  function renderCityFixer(host, key, epoch) {
-    const ownerCurrent = () => key === cityIdentity() && epoch === _citySceneEpoch && _citySceneKey === key
-      && _cityScene && currentTab === 'map' && _mapMode === 'walk' && !$('#screen-main')?.classList.contains('hidden');
-    const active = control => ownerCurrent() && host.isConnected && !host.closest('.omerta-city__gameplay')?.hidden
-      && host.closest('.omerta-city__gameplay')?.dataset.cityGameplay === 'fixer' && (!control || control.isConnected && host.contains(control));
-    const crimes = (rules?.crimes || []).filter(crime => /^[a-z0-9_]+$/.test(crime.id)).sort((a, b) => a.lvl - b.lvl);
-    const guided = cityFirstJobActive();
-    const eligible = crimes.filter(crime => crime.lvl <= Number(me?.level || 1));
-    const crime = crimes.find(crime => crime.id === host.dataset.fixerCrime)
-      || (guided ? eligible[0] : eligible.at(-1)) || crimes[0];
-    if (crime) host.dataset.fixerCrime = crime.id;
-    const model = crime ? coreCrimeMarkup(crime, { termsId: 'city-fixer-terms', compact: true }) : null;
-    const receipt = _cityFixerReceipt?.key === key && projections.current(_cityFixerReceipt.stamp) ? _cityFixerReceipt.receipt : null;
-    const recovery = receipt?.recovery?.sameKey === true && typeof receipt.recovery.run === 'function';
-    const readableReceipt = receipt && { ...receipt, recovery: receipt.recovery ? { ...receipt.recovery, run: null, tab: null } : null };
-    const html = `${guided ? '<aside class="city-first-job" aria-label="Your first job"><b>Your first move</b><p>1. Meet The Fixer ✓ · 2. Choose an approach · 3. Read your result</p><p>Start with this job. Review the nerve cost and possible outcomes, then choose how to approach it.</p></aside>' : ''}
-      ${readableReceipt ? `<div tabindex="-1" data-city-fixer-result role="region" aria-label="Job result">${operationReceiptMarkup(readableReceipt)}
-        ${recovery ? `<button class="act" data-city-fixer-retry>${esc(receipt.recovery.label)}</button>` : ''}
-        ${receipt.state === 'success' ? '<div class="city-first-job"><b>Your move is recorded.</b><p>Review the changes above. Your journal has people to meet, clues to follow, and choices that shape your story.</p><button class="act" data-city-fixer-story>Find a story →</button></div>' : ''}</div>` : ''}
-      <label class="d" for="city-fixer-job">Street job</label><select id="city-fixer-job" data-city-crime-select>${crimes.map(entry =>
-      `<option value="${entry.id}"${entry.id === crime?.id ? ' selected' : ''}>${esc(entry.name)} · level ${entry.lvl}</option>`).join('')}</select>
-      ${model ? `${model.terms}<div class="omerta-city__training-stats">${model.choices}</div>` : '<p role="status">Job terms are unavailable. Refresh to check your session.</p>'}
-      <button class="act omerta-city__training-full" data-city-fixer-full>All street jobs &amp; hustle →</button>`;
-    if (host.dataset.fixerContent !== html) {
-      const focused = host.contains(document.activeElement), approach = document.activeElement?.dataset.cityApproach;
-      const choosing = document.activeElement?.hasAttribute('data-city-crime-select');
-      host.innerHTML = html; host.dataset.fixerContent = html;
-      if (focused) (choosing ? host.querySelector('[data-city-crime-select]') : host.querySelector(`[data-city-approach="${approach}"]:not(:disabled)`)
-        || host.querySelector('[data-city-fixer-result]') || host).focus({ preventScroll: true });
-    }
-    host.querySelector('[data-city-crime-select]').onchange = event => {
-      if (!active(event.currentTarget)) return;
-      host.dataset.fixerCrime = event.currentTarget.value; _cityScene.update({});
-    };
-    host.querySelectorAll('[data-city-crime]').forEach(button => {
-      button.disabled = !!model?.blocked || recovery || host.dataset.fixerPending === '1';
-      button.onclick = event => { event.stopPropagation(); run(button, button.dataset.cityApproach); };
-    });
-    const retry = host.querySelector('[data-city-fixer-retry]');
-    if (retry) { retry.disabled = host.dataset.fixerPending === '1'; retry.onclick = () => run(retry, null); }
-    const story = host.querySelector('[data-city-fixer-story]');
-    if (story) story.onclick = event => { if (active(event.currentTarget)) navigateFromCity('fieldwork', { venueId: 'fixer', initialView: 'mysteries' }); };
-    host.querySelector('[data-city-fixer-full]').onclick = event => { if (active(event.currentTarget)) navigateFromCity('streets', { venueId: 'fixer' }); };
-    async function run(button, approach) {
-      if (!active(button) || button.disabled || host.dataset.fixerPending === '1') return;
-      if (approach && (!crime || !['quiet', 'standard', 'loud'].includes(approach) || !(rules?.crimeApproaches || []).some(entry => entry.id === approach) || coreCrimeMarkup(crime).blocked)) return;
-      if (!approach && !recovery) return;
-      host.dataset.fixerPending = '1';
-      const stamp = projections.snapshot(), opening = host.dataset.fixerOpening;
-      const retryCurrent = () => projections.current(stamp) && key === cityIdentity();
-      _cityScene.update({});
-      try {
-        if (approach) await act('POST', '/v1/crimes/' + encodeURIComponent(crime.id), { approach }, { label: crime.name + ': ' + approach,
-          beforeDispatch: () => retryCurrent() && active() && host.dataset.fixerOpening === opening && host.dataset.fixerCrime === crime.id, retryBeforeDispatch: retryCurrent, isCurrent: retryCurrent,
-          onReceipt: receipt => { if (retryCurrent()) { _cityFixerReceipt = { key, stamp, receipt }; if (receipt.state === 'success') setCityFirstJobActive(false); if (_citySceneKey === key) _cityScene?.update?.({}); } } });
-        else await receipt.recovery.run();
-      } finally {
-        delete host.dataset.fixerPending;
-        if (ownerCurrent()) _cityScene.update({ character: { ...me }, progress: cityProgress() });
-      }
-    }
-  }
-  function currentCityWorldOperation() {
-    return [_cityWorldReceipt, _cityQuestReceipt].filter(entry => entry?.key === cityIdentity() && entry.current())
-      .sort((a,b) => b.receipt.id - a.receipt.id)[0] || null;
-  }
-  function renderCityCrew(host, key, epoch) {
-    const opening = host.dataset.crewOpening;
-    const authorityRevision = _cityAuthorityRevision;
-    const ownerCurrent = () => key === cityIdentity() && authorityRevision === _cityAuthorityRevision;
-    const active = () => ownerCurrent() && epoch === _citySceneEpoch && !!_cityScene && currentTab === 'map' && _mapMode === 'walk'
-      && host.isConnected && host.dataset.crewOpening === opening && host.closest('.omerta-city__gameplay')?.dataset.cityGameplay === 'crew'
-      && !host.closest('.omerta-city__gameplay')?.hidden;
-    const signature = JSON.stringify([me?.id,me?.generation,me?.loc,me?.respect,me?.energy,me?.nerve]);
-    if (_cityCrewState?.host === host && _cityCrewState.opening === opening) {
-      if (_cityCrewState.signature !== signature) { _cityCrewState.signature = signature; _cityCrewState.controller.update({ character: { ...me } }); }
-      return;
-    }
-    retireCityCrew();
-    if (!window.OmertaFieldwork || !active()) { host.textContent = 'Crew missions could not load. Close and reopen to try again.'; return; }
-    const wrapper = document.createElement('section'), board = document.createElement('div'), full = document.createElement('button');
-    wrapper.dataset.cityCrewBoard = ''; full.type = 'button'; full.className = 'act'; full.textContent = 'Full Crew · membership & invitations →';
-    full.onclick = () => { if (active()) navigateFromCity('crew', { venueId: 'clubhouse' }); };
-    wrapper.append(full,board); host.replaceChildren(wrapper);
-    const controller = window.OmertaFieldwork.mount(board, { initialView: 'operations', character: { ...me }, isActive: active,
-      confirm: ask, onNavigate: navigateFromCity, refresh: () => ownerCurrent() ? refresh() : Promise.resolve({ ignored: true, code: 499, body: {} }),
-      api: async (method,path,body) => { const result=await api(method,path,body,{ isCurrent: active });
-        if(active())requestAnimationFrame(()=>{if(active())_cityScene?.update?.({});});return result; },
-      act: (method,path,body,dispatch = {}) => act(method,path,body,{ ...dispatch,
-        beforeDispatch: () => active() && !cityWorldOptions().worldRecovery,
-        retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
-        onReceipt: receipt => { if (ownerCurrent()) { _cityWorldReceipt = { key, current: ownerCurrent, crew: true, receipt }; publishCityWorld(); } } }),
-    });
-    _cityCrewState = { host,opening,signature,controller,epoch };
-  }
-  function cityWorldOptions() {
-    const key = cityIdentity(), data = _cityWorldData?.key === key && projections.current(_cityWorldData.stamp) ? _cityWorldData : null;
-    const receipt = currentCityWorldOperation()?.receipt || null;
-    const resource = operationReceipts.find(entry => entry.resourceCurrent?.());
-    return { worldScopeKey: String(projections.snapshot().epoch) + (_cityAuthorityRevision ? ':' + _cityAuthorityRevision : ''), rules,
-      externalPanel: _cityPanel?.key === key,
-      activityReceipt: _cityActivityReceipt?.current() ? _cityActivityReceipt.receipt : null,
-      resourceReceipt: operationPending ? { id: 'pending', state: 'pending', label: operationPending, changes: [] }
-        : resource ? { id: resource.feedbackId, state: resource.feedbackState, label: resource.label,
-          changes: resource.changes, questCompletion: resource.questCompletion } : null,
-      worldSocial: data?.social || null, worldChat: data?.chat || null,
-      worldAtlas: data?.atlas || null, worldCollection: data?.collection || null, worldHomes: data?.homesByDistrict?.[me?.loc] || null,
-      worldRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery.run === 'function',
-      worldReceipt: receipt ? { state: receipt.state, label: receipt.label, summary: receipt.summary, delta: receipt.delta,
-        recovery: receipt.recovery ? { sameKey: receipt.recovery.sameKey === true, label: receipt.recovery.label, text: receipt.recovery.text } : null } : null };
-  }
-  function publishCityWorld() {
-    if (!cityGameVisible() || !_citySceneOptions || cityIdentity(_citySceneOptions.character) !== cityIdentity()) return;
-    Object.assign(_citySceneOptions, cityWorldOptions());
-    _cityScene?.update?.({ ...cityWorldOptions(), character: { ...me } });
-  }
-  async function readCityWorld(kind, context = {}) {
-    if (!['inventory', 'social', 'chat', 'atlas', 'collection', 'homes', 'home-list', 'home-interior', 'home-invitations', 'home-recovery', 'home-history', 'encounters', 'opportunities', 'opportunity-detail'].includes(kind) || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk') return { ignored: true, code: 499, body: {} };
-    const stamp = projections.snapshot(), key = cityIdentity(), scene = _cityScene;
-    const current = () => projections.current(stamp) && key === cityIdentity() && scene === _cityScene
-      && currentTab === 'map' && _mapMode === 'walk' && (!context.isCurrent || context.isCurrent());
-    if (!_cityWorldData || _cityWorldData.key !== key || !projections.current(_cityWorldData.stamp)) _cityWorldData = { key, stamp, tickets: {} };
-    const lane = kind === 'homes' ? 'homes:' + String(context.districtId || me.loc) + (context.cursor ? ':page' : ':first') : kind;
-    const cache = _cityWorldData, ticket = (cache.tickets[lane] || 0) + 1; cache.tickets[lane] = ticket;
-    const socialAtDispatch = cache.social, socialTicketAtDispatch = cache.tickets.social || 0;
-    let chatQuery, homesQuery;
-    if (kind === 'opportunity-detail' && [context.npcId,context.graphRef].some(value => typeof value !== 'string' || !/^[!-~]{1,200}$/.test(value)))
-      return { code: 422, body: { error: 'city_opportunity_query' } };
-    if (kind === 'home-interior' && (typeof context.homeKey !== 'string' || context.homeKey.length < 1 || context.homeKey.length > 128 || /[\x00-\x1f\x7f]/.test(context.homeKey)))
-      return { code: 422, body: { error: 'city_home_query' } };
-    if (kind === 'homes') {
-      const district = String(context.districtId || me.loc);
-      if (!(rules?.districts || []).some(d => (d.id || d) === district)
-        || context.cursor != null && (typeof context.cursor !== 'string' || context.cursor.length > 128))
-        return { code: 422, body: { error: 'city_homes_query' } };
-      homesQuery = new URLSearchParams({ district });
-      if (context.cursor) homesQuery.set('after', context.cursor);
-    }
-    if (kind === 'chat') {
-      const social = cache.social;
-      if (!cityBoardCurrent(social) || social.preferences?.chatEnabled !== true || social.chat?.available !== true) return { code: 409, body: { error: 'city_chat_opt_in_required' } };
-      chatQuery = new URLSearchParams({ characterId: me.id, generation: String(me.generation), district: me.loc });
-      const expected = '/v1/city/nearby-chat?' + chatQuery;
-      if (social.chat.readPath !== expected) return { code: 409, body: { error: 'city_chat_unavailable' } };
-    }
-    const result = kind === 'inventory' ? await api('GET', '/v1/worldgraph/inventory', undefined, { isCurrent: current })
-      : kind === 'social' ? await api('GET', '/v1/city/social', undefined, { isCurrent: current })
-      : kind === 'atlas' ? await api('GET', '/v1/map', undefined, { isCurrent: current })
-      : kind === 'collection' ? await api('GET', '/v1/collection', undefined, { isCurrent: current })
-      : kind === 'homes' ? await api('GET', '/v1/city/homes?' + homesQuery, undefined, { isCurrent: current })
-      : kind === 'home-list' ? await api('GET', '/v1/city/homes?' + new URLSearchParams({ district: me.loc }), undefined, { isCurrent: current })
-      : kind === 'home-interior' ? await api('GET', '/v1/city/home/interior?' + new URLSearchParams({ homeKey: context.homeKey }), undefined, { isCurrent: current })
-      : kind === 'home-invitations' ? await api('GET', '/v1/city/home/invitations', undefined, { isCurrent: current })
-      : kind === 'home-recovery' ? await api('GET', '/v1/city/home/recovery', undefined, { isCurrent: current })
-      : kind === 'home-history' ? await api('GET', '/v1/city/home/activity-history', undefined, { isCurrent: current })
-      : kind === 'encounters' ? await api('GET', '/v1/city/encounters', undefined, { isCurrent: current })
-      : kind === 'opportunities' ? await api('GET', '/v1/city/opportunities', undefined, { isCurrent: current })
-      : kind === 'opportunity-detail' ? await api('GET', `/v1/city/opportunities/${encodeURIComponent(context.npcId)}/${encodeURIComponent(context.graphRef)}`, undefined, { isCurrent: current })
-      : await api('GET', '/v1/city/nearby-chat?' + chatQuery, undefined, { isCurrent: current });
-    if (!current() || cache !== _cityWorldData || cache.tickets[lane] !== ticket) return { ignored: true, code: 499, body: {} };
-    if (result.code === 401 || (result.code === 403 && result.body?.error === 'banned')) {
-      projections.setSession(null); token = null; localStorage.removeItem('omerta_token');
-      if (ws) { ws.close(); ws = null; }
-      show('screen-auth');
-      return result;
-    }
-    if (result.code === 409 && ['city_social_identity_changed','home_identity_changed','encounter_identity_changed','city_opportunity_identity_changed'].includes(result.body?.error)
-      || result.code < 400 && ['social', 'chat', 'homes', 'home-list', 'home-interior', 'home-invitations', 'home-recovery', 'home-history', 'encounters', 'opportunities', 'opportunity-detail'].includes(kind) && !cityBoardCurrent(result.body)) {
-      invalidateCityAuthority();
-      delete cache.homes; delete cache.homesByDistrict;
-      delete cache.social; delete cache.chat;
-      for (const homeKind of ['home-list','home-interior','home-invitations','home-recovery','home-history']) delete cache[homeKind];
-      for (const adventureKind of ['encounters','opportunities','opportunity-detail']) delete cache[adventureKind];
-      _cityWorldReceipt = null;
-      cache.tickets.social = (cache.tickets.social || 0) + 1; cache.tickets.chat = (cache.tickets.chat || 0) + 1;
-      publishCityWorld();
-      await refresh();
-      return result.code < 400 ? { ignored: true, code: 499, body: {} } : result;
-    }
-    if (kind === 'chat' && result.code === 403 && result.body?.error === 'city_chat_opt_in_required') {
-      if (cache.social !== socialAtDispatch || cache.tickets.social !== socialTicketAtDispatch) return { ignored: true, code: 499, body: {} };
-      delete cache.chat; cache.tickets.chat++;
-      delete cache.social; cache.tickets.social = (cache.tickets.social || 0) + 1;
-      publishCityWorld();
-      await readCityWorld('social', context);
-      return result;
-    }
-    if (kind === 'chat' && result.code < 400 && (!cityBoardCurrent(cache.social) || cache.social.preferences?.chatEnabled !== true)) return { ignored: true, code: 499, body: {} };
-    if (kind === 'homes' && result.code < 400 && result.body?.districtId !== homesQuery.get('district'))
-      return { ignored: true, code: 499, body: {} };
-    if (kind === 'home-interior' && result.code < 400 && result.body?.home?.key !== context.homeKey)
-      return { ignored: true, code: 499, body: {} };
-    if (kind === 'opportunity-detail' && result.code < 400 && (result.body?.npc?.id !== context.npcId || result.body?.graph?.id !== context.graphRef))
-      return { ignored: true, code: 499, body: {} };
-    if (result.code < 400 && (['inventory', 'atlas', 'collection'].includes(kind) || cityBoardCurrent(result.body))) {
-      cache[kind] = result.body;
-      if (kind === 'homes' && !context.cursor) {
-        cache.homesByDistrict ||= Object.create(null);
-        cache.homesByDistrict[result.body.districtId] = result.body;
-      }
-      if (kind === 'social' && result.body.preferences?.chatEnabled === false) { delete cache.chat; cache.tickets.chat = (cache.tickets.chat || 0) + 1; }
-      publishCityWorld();
-      if (kind === 'homes' || kind === 'atlas') fulfillCityHomeEntry();
-    }
-    return result;
-  }
-  function dispatchCityIssuedAction(path, body, options) {
-    const home = /^\/v1\/city\/home\/(activate|layout|visitors\/(invite|accept|revoke|leave)|storage\/(store|retrieve|recover)|workbench\/craft|activity\/(open|join|answer|close|leave))$/.exec(path);
-    if (home) switch (home[1]) {
-      case 'activate': return act('POST','/v1/city/home/activate',body,options);
-      case 'layout': return act('POST','/v1/city/home/layout',body,options);
-      case 'visitors/invite': return act('POST','/v1/city/home/visitors/invite',body,options);
-      case 'visitors/accept': return act('POST','/v1/city/home/visitors/accept',body,options);
-      case 'visitors/revoke': return act('POST','/v1/city/home/visitors/revoke',body,options);
-      case 'visitors/leave': return act('POST','/v1/city/home/visitors/leave',body,options);
-      case 'storage/store': return act('POST','/v1/city/home/storage/store',body,options);
-      case 'storage/retrieve': return act('POST','/v1/city/home/storage/retrieve',body,options);
-      case 'storage/recover': return act('POST','/v1/city/home/storage/recover',body,options);
-      case 'workbench/craft': return act('POST','/v1/city/home/workbench/craft',body,options);
-      case 'activity/open': return act('POST','/v1/city/home/activity/open',body,options);
-      case 'activity/join': return act('POST','/v1/city/home/activity/join',body,options);
-      case 'activity/answer': return act('POST','/v1/city/home/activity/answer',body,options);
-      case 'activity/close': return act('POST','/v1/city/home/activity/close',body,options);
-      case 'activity/leave': return act('POST','/v1/city/home/activity/leave',body,options);
-    }
-    if (path === '/v1/city/encounters/start') return act('POST', '/v1/city/encounters/start', body, options);
-    const turn = /^\/v1\/city\/encounters\/([^/]+)\/turn$/.exec(path);
-    if (turn) return act('POST', `/v1/city/encounters/${turn[1]}/turn`, body, options);
-    const opportunity = /^\/v1\/city\/opportunities\/([^/]+)\/([^/]+)\/(start|explore|cancel|nodes\/[^/]+\/complete|choices\/[^/]+)$/.exec(path);
-    if (opportunity) {
-      if(opportunity[3]==='start')return act('POST',`/v1/city/opportunities/${opportunity[1]}/${opportunity[2]}/start`,body,options);
-      if(opportunity[3]==='explore')return act('POST',`/v1/city/opportunities/${opportunity[1]}/${opportunity[2]}/explore`,body,options);
-      if(opportunity[3]==='cancel')return act('POST',`/v1/city/opportunities/${opportunity[1]}/${opportunity[2]}/cancel`,body,options);
-      const complete=/^nodes\/([^/]+)\/complete$/.exec(opportunity[3]);
-      if(complete)return act('POST',`/v1/city/opportunities/${opportunity[1]}/${opportunity[2]}/nodes/${complete[1]}/complete`,body,options);
-      const choice=/^choices\/([^/]+)$/.exec(opportunity[3]);
-      if(choice)return act('POST',`/v1/city/opportunities/${opportunity[1]}/${opportunity[2]}/choices/${choice[1]}`,body,options);
-    }
-    return Promise.resolve({ ignored: true, code: 499, body: {} });
-  }
-  async function performCityWorld(kind, payload, context = {}) {
-    if (_cityWorldPending || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk' || cityWorldOptions().worldRecovery
-      || !payload || typeof payload !== 'object' || Array.isArray(payload)) return { code: 409, body: { error: 'city_world_unavailable' } };
-    const key = cityIdentity(), stamp = projections.snapshot(), scene = _cityScene, authorityRevision = _cityAuthorityRevision;
-    const ownerCurrent = () => projections.current(stamp) && key === cityIdentity() && authorityRevision === _cityAuthorityRevision;
-    const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
-      && (!context.isCurrent || context.isCurrent()) && (!context.beforeDispatch || context.beforeDispatch());
-    let body, label, homePath;
-    if (kind === 'equip') {
-      if (Object.keys(payload).some(field => field !== 'id') || payload.id !== null && (typeof payload.id !== 'string' || !(me.guns || []).includes(payload.id))) return { code: 409, body: { error: 'city_equipment_unavailable' } };
-      body = {}; label = payload.id === null ? 'Put away your weapon' : 'Equip ' + payload.id;
-    } else if (kind === 'adventure-action') {
-      if (Object.keys(payload).some(field => !['id','path','body'].includes(field)) || typeof payload.id !== 'string' || typeof payload.path !== 'string'
-        || !payload.body || typeof payload.body !== 'object' || Array.isArray(payload.body)) return { code: 422, body: { error: 'bad_adventure_action' } };
-      const cache = _cityWorldData?.key === key && projections.current(_cityWorldData.stamp) ? _cityWorldData : null;
-      const encounter = cache?.encounters, detail = cache?.['opportunity-detail'];
-      const actions = [...(encounter?.active?.actions || []), ...(encounter?.scenarios || []).map(row => row.action),
-        ...(detail?.actions || []), ...(detail?.nodes || []).flatMap(row => row.actions || [])];
-      const issued = actions.find(action => action?.id === payload.id && action.path === payload.path
-        && JSON.stringify(action.body) === JSON.stringify(payload.body));
-      if (!issued?.available || issued.method !== 'POST' || !cityBoardCurrent({ viewer: issued.body })
-        || !/^\/v1\/city\/(encounters\/(start|[^/]+\/turn)|opportunities\/[^/]+\/[^/]+\/(start|explore|cancel|nodes\/[^/]+\/complete|choices\/[^/]+))$/.test(issued.path))
-        return { code: 409, body: { error: 'city_adventure_refresh_required' } };
-      body = { ...issued.body }; label = issued.label; homePath = issued.path;
-      if (issued.consequence && !await ask(label, issued.consequence, { yes: 'Confirm' })) return { ignored: true, code: 499, body: {} };
-      if (!beforeDispatch()) return { ignored: true, code: 499, body: {} };
-    } else if (kind === 'home-action') {
-      if (Object.keys(payload).some(field => !['id','path','body','fields'].includes(field)) || typeof payload.id !== 'string' || typeof payload.path !== 'string'
-        || !payload.body || typeof payload.body!=='object' || Array.isArray(payload.body)
-        || !payload.fields || typeof payload.fields !== 'object' || Array.isArray(payload.fields)) return { code: 422, body: { error: 'bad_home_action' } };
-      const cache = _cityWorldData?.key === key && projections.current(_cityWorldData.stamp) ? _cityWorldData : null;
-      const room = cache?.['home-interior'], invitations = cache?.['home-invitations'], recovery = cache?.['home-recovery'];
-      const issued = [room?.actions || [], (room?.visitors || []).map(entry => entry.action),
-        (room?.activity?.catalog || []).map(entry => entry.action), room?.activity?.active?.actions || [],
-        (room?.activity?.active?.cells || []).map(entry => entry.action),
-        (room?.storage?.items || []).map(entry => entry.action), (room?.storage?.availableItems || []).map(entry => entry.action),
-        (room?.workbench?.recipes || []).map(entry => entry.action), (invitations?.invitations || []).map(entry => entry.action),
-        (invitations?.permissions || []).map(entry => entry.action), (recovery?.items || []).map(entry => entry.action)].flat().find(action => action?.id === payload.id
-          && action.path===payload.path && JSON.stringify(action.body)===JSON.stringify(payload.body));
-      if (!issued?.available || issued.method !== 'POST' || !cityBoardCurrent({ viewer: issued.body })
-        || !/^\/v1\/city\/home\/(activate|layout|visitors\/(invite|accept|revoke|leave)|storage\/(store|retrieve|recover)|workbench\/craft|activity\/(open|join|answer|close|leave))$/.test(issued.path)
-        || Object.keys(payload.fields).some(field => !(issued.inputFields || []).includes(field))) return { code: 409, body: { error: 'city_home_refresh_required' } };
-      body = { ...issued.body, ...payload.fields }; label = issued.label; homePath = issued.path;
-    } else {
-      const social = _cityWorldData?.key === key && projections.current(_cityWorldData.stamp) ? _cityWorldData.social : null;
-      if (!cityBoardCurrent(social)) return { code: 409, body: { error: 'city_world_refresh_required' } };
-      const ids = { outfit: 'outfit:' + payload.outfit, 'chat-consent': payload.enabled === true ? 'chat:enable' : payload.enabled === false ? 'chat:disable' : '',
-        room: 'room:save', 'send-chat': 'chat:send', emote: 'emote:' + payload.emoteId };
-      const fields = { outfit: ['outfit'], 'chat-consent': ['enabled'], room: ['furniture'], 'send-chat': ['text'], emote: ['emoteId'] };
-      if (!fields[kind] || Object.keys(payload).some(field => !fields[kind].includes(field))) return { code: 409, body: { error: 'city_world_unavailable' } };
-      const action = (social.actions || []).find(action => action.id === ids[kind]);
-      const expectedPath = ['send-chat', 'emote'].includes(kind) ? '/v1/city/nearby-chat' : '/v1/city/social/preferences';
-      if (!action?.available || action.method !== 'POST' || action.path !== expectedPath || !cityBoardCurrent({ viewer: action.body })) return { code: 409, body: { error: 'city_world_unavailable' } };
-      body = { ...action.body }; label = action.label;
-      if (kind === 'room') {
-        if (!action.inputFields?.includes('room') || !Array.isArray(payload.furniture) || payload.furniture.length > 12) return { code: 409, body: { error: 'bad_city_room' } };
-        const occupied = new Set();
-        for (const item of payload.furniture) {
-          if (!item || Object.keys(item).some(field => !['id', 'x', 'y', 'rotation'].includes(field)) || !(social.furniture || []).some(entry => entry.id === item.id)
-            || !Number.isInteger(item.x) || item.x < 0 || item.x > 5 || !Number.isInteger(item.y) || item.y < 0 || item.y > 5
-            || item.rotation !== undefined && ![0, 1, 2, 3].includes(item.rotation) || occupied.has(item.x + ':' + item.y)) return { code: 409, body: { error: 'bad_city_room' } };
-          occupied.add(item.x + ':' + item.y);
-        }
-        body.room = { furniture: payload.furniture.map(item => ({ ...item })) };
-      }
-      if (kind === 'send-chat') {
-        if (!action.inputFields?.includes('text') || typeof payload.text !== 'string' || !payload.text.trim() || payload.text.length > 240) return { code: 409, body: { error: 'bad_city_chat' } };
-        body.text = payload.text;
-      }
-    }
-    _cityWorldPending = true;
-    try {
-      const dispatchOptions = { label, beforeDispatch, retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
-        onResult: result => { if (ownerCurrent()) {
-          if(typeof context.onResult==='function')context.onResult(result);
-          if(result.code === 409&&['home_identity_changed','encounter_identity_changed','city_opportunity_identity_changed'].includes(result.body?.error)) invalidateCityAuthority();
-        } },
-        onReceipt: receipt => { if (ownerCurrent()) { _cityWorldReceipt = { key, current: ownerCurrent, kind, homeKey: body.homeKey,
-          adventureRead: kind === 'adventure-action' ? homePath.startsWith('/v1/city/encounters/') ? 'encounters' : 'opportunities' : null, receipt }; publishCityWorld(); } } };
-      const result = kind === 'equip' ? payload.id === null ? await act('POST', '/v1/armory/unequip', body, dispatchOptions)
-        : await act('POST', `/v1/armory/gun/${encodeURIComponent(payload.id)}/equip`, body, dispatchOptions)
-        : ['home-action','adventure-action'].includes(kind) ? await dispatchCityIssuedAction(homePath, body, dispatchOptions)
-        : ['send-chat', 'emote'].includes(kind) ? await act('POST', '/v1/city/nearby-chat', body, dispatchOptions)
-        : await act('POST', '/v1/city/social/preferences', body, dispatchOptions);
-      if (ownerCurrent() && result.code < 400) {
-        // A replay is a historical receipt. Only a fresh GET can replace the
-        // current preferences or messages, including a committed closed panel.
-        if (kind === 'home-action' && body.homeKey) await readCityWorld('home-interior', { homeKey: body.homeKey });
-        else if (kind === 'adventure-action') await readCityWorld(homePath.startsWith('/v1/city/encounters/') ? 'encounters' : 'opportunities');
-        else if (kind !== 'home-action') await readCityWorld(kind === 'equip' ? 'inventory' : 'social');
-        if (ownerCurrent() && ['send-chat', 'emote'].includes(kind)) await readCityWorld('chat');
-      }
-      return result;
-    } finally { _cityWorldPending = false; }
-  }
+
   function cityActorScope() {
     const stamp = projections.snapshot(), id = me?.id, generation = me?.generation;
     return () => !!id && projections.current(stamp) && me?.id === id && me?.generation === generation;
   }
-  function queueCityHomeEntry({ overview = false, key = null, districtId = null, current }) {
-    _cityHomeEntry = { overview, key, districtId, current, navigation: navigationRevision, deadline: Date.now() + 15000 };
-    fulfillCityHomeEntry();
-  }
-  function fulfillCityHomeEntry() {
-    const entry = _cityHomeEntry;
-    if (!entry) return;
-    if (!entry.current() || Date.now() > entry.deadline || entry.navigation !== navigationRevision
-      || currentTab !== 'map' || _mapMode !== 'walk') { _cityHomeEntry = null; return; }
-    if (!_cityScene) return;
-    if (entry.overview) {
-      const deed = cityWorldOptions().worldAtlas?.deed;
-      if (!deed || entry.key && String(deed.name).toLowerCase() !== entry.key) return;
-      if (_cityScene.showWorldMap?.(deed.district) === true) _cityHomeEntry = null;
-      return;
-    }
-    const homes = cityWorldOptions().worldHomes;
-    if (me.loc !== entry.districtId || !cityBoardCurrent(homes) || homes.districtId !== me.loc
-      || homes.myHome?.key !== entry.key || homes.myHome.mine !== true) return;
-    if (_cityScene.walkHome?.(entry.key) === true) _cityHomeEntry = null;
-  }
-  async function travelFromCity(district, context = {}) {
-    const place = (rules?.districts || []).find(d => (d.id || d) === district);
-    if (!place || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk' || acting
-      || _cityWorldPending || cityWorldOptions().worldRecovery) return { code: 409, body: { error: 'city_travel_unavailable' } };
-    const current = cityActorScope(), scene = _cityScene, location = me.loc;
-    const fare = Number(rules?.travelCost), navigation = navigationRevision;
-    const worldPosition = cityWorldArrival(district, context.worldPosition);
-    const beforeDispatch = () => current() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
-      && navigation === navigationRevision && me.loc === location && Number(rules?.travelCost) === fare
-      && (!context.isCurrent || context.isCurrent()) && (!context.beforeDispatch || context.beforeDispatch());
-    if (!beforeDispatch()) return { ignored: true, code: 499, body: {} };
-    if (!Number.isFinite(fare) || fare < 0) return { code: 409, body: { error: 'city_travel_fare_unavailable' } };
-    if (district === me.loc) return { code: 400, body: { error: 'there', message: 'You are already here.' } };
-    if (Number(me.jailSeconds) > 0) return { code: 400, body: { error: 'jailed', message: 'No travel from lockup.' } };
-    if (Number(me.cash) < fare) return { code: 400, body: { error: 'cash', message: 'You cannot cover the ride fare.' } };
-    const confirmed = await ask('Travel to ' + (place.name || district) + '?',
-      'A ride costs $' + fmt(fare) + '. Your district changes only when the server confirms the move.',
-      { yes: 'Travel — $' + fmt(fare), no: 'Stay here' });
-    if (!confirmed || !beforeDispatch()) return { ignored: true, code: 499, body: {} };
-    _cityWorldPending = true;
-    try {
-      const result = await travelTo(district, { beforeDispatch, retryBeforeDispatch: current, isCurrent: current,
-        onReceipt: receipt => {
-          if (current()) {
-            _cityWorldReceipt = { key: cityIdentity(), current, travelDistrict: district, homeKey: context.homeKey || null, worldPosition, receipt };
-            // The authoritative refresh precedes this receipt; retain the seam pose before the next scene mounts.
-            if (receipt.state === 'success' && me.loc === district) rememberCityArrival(district, worldPosition);
-            publishCityWorld();
-          }
-        } });
-      if (current() && result.code < 400 && me.loc === district) {
-        if (context.homeKey) queueCityHomeEntry({ overview: false, key: context.homeKey, districtId: district, current });
-        if (_cityScene && currentTab === 'map' && _mapMode === 'walk') await readCityWorld('collection');
-      }
-      return result;
-    } finally { _cityWorldPending = false; }
-  }
+
   function acquireCityDeed(method, path, body) {
     const current = cityActorScope(), navigation = navigationRevision;
     return act(method, path, body, { beforeDispatch: () => current() && currentTab === 'deeds' && navigation === navigationRevision,
-      retryBeforeDispatch: current, isCurrent: current,
-      onReceipt: receipt => {
-        if (receipt.state !== 'success' || !current() || currentTab !== 'deeds' || navigation !== navigationRevision) return;
-        navigateFromCity('map', { venueId: 'clubhouse' });
-        queueCityHomeEntry({ overview: true, current });
-      } });
+      retryBeforeDispatch: current, isCurrent: current });
   }
-  async function retryCityWorld() {
-    const pending = currentCityWorldOperation();
-    if (_cityWorldPending || pending?.key !== cityIdentity() || !pending.current() || pending.receipt.recovery?.sameKey !== true || !pending.receipt.recovery.run) return { ignored: true, code: 499, body: {} };
-    _cityWorldPending = true;
-    try {
-      const result = await pending.receipt.recovery.run();
-      if (pending.current() && result.code < 400 && pending.travelDistrict) {
-        if (pending.homeKey && me.loc === pending.travelDistrict) queueCityHomeEntry({ overview: false, key: pending.homeKey, districtId: pending.travelDistrict, current: pending.current });
-        if (_cityScene && currentTab === 'map' && _mapMode === 'walk') await readCityWorld('collection');
-      } else if (pending.current() && result.code < 400 && (pending.quest === true || pending.crew === true)) {
-        if (currentTab === 'map' && _mapMode === 'walk') await renderMap();
-      } else if (pending.current() && result.code < 400 && pending.kind === 'home-action') {
-        await readCityWorld(pending.homeKey ? 'home-interior' : 'home-recovery', pending.homeKey ? { homeKey: pending.homeKey } : {});
-      } else if (pending.current() && result.code < 400 && pending.kind === 'adventure-action') {
-        await readCityWorld(pending.adventureRead);
-      } else if (pending.current() && result.code < 400) {
-        await readCityWorld(pending.kind === 'equip' ? 'inventory' : 'social');
-        if (pending.current() && ['send-chat', 'emote'].includes(pending.kind)) await readCityWorld('chat');
-      }
-      return result;
-    } finally { _cityWorldPending = false; }
-  }
-  function rememberCityPosition(key, position) {
-    if (!key || !position || !Number.isFinite(position.x) || !Number.isFinite(position.y)) return;
-    try { sessionStorage.setItem('omerta_city_pose:' + key, JSON.stringify(position)); } catch { /* cosmetic state is optional */ }
-  }
-  function cityWorldArrival(district, position) {
-    const layout = window.CityWorldLayout;
-    if (!position || !Number.isFinite(position.x) || !Number.isFinite(position.y)
-      || !layout?.getDistrict(district) || layout.regionAt(position)?.id !== district || !layout.isWalkable(position)) return null;
-    let facing = 'down';
-    if (['up', 'down', 'left', 'right'].includes(position.facing)) facing = position.facing;
-    return { x: position.x, y: position.y, facing };
-  }
-  function rememberCityArrival(district, position) {
-    const valid = cityWorldArrival(district, position), origin = window.CityWorldLayout?.getDistrict(district)?.origin;
-    if (!valid || !origin || !me?.id || me.loc !== district) return;
-    // A recovered reply can arrive after refresh already mounted this district at its old pose.
-    if (_citySceneKey === cityIdentity()) destroyCityScene();
-    rememberCityPosition(cityIdentity(), { x: valid.x - origin.x, y: valid.y - origin.y, facing: valid.facing });
-  }
-  function savedCityPosition(key) {
-    try { return JSON.parse(sessionStorage.getItem('omerta_city_pose:' + key) || 'null'); } catch { return null; }
-  }
-  function syncCitySessionBar() {
-    let bar = $('#city-session-bar');
-    if (!bar && $('#tabbodies')) {
-      bar = el('<nav id="city-session-bar" class="city-session-bar" aria-label="Neighborhood session" hidden><button type="button" id="city-return">← Return to neighborhood</button><span id="city-session-label"></span><button type="button" id="city-journal">Quest journal</button></nav>');
-      $('#tabbodies').before(bar);
-      $('#city-return').onclick = () => { _mapMode = 'walk'; setTab('map'); enterNeighborhood(); };
-      $('#city-journal').onclick = () => navigateFromCity('fieldwork', { venueId: 'directory', initialView: 'mysteries' });
-    }
-    if (!bar) return;
-    if (_citySession && _citySession.key !== cityIdentity()) _citySession = null;
-    bar.hidden = !_citySession || cityGameVisible() || currentTab === 'map' || $('#screen-main')?.classList.contains('hidden');
-    if (!bar.hidden) $('#city-session-label').textContent = (CITY_VENUE_NAMES[_citySession.venueId] || 'The neighborhood') + ' · ' + (TABS[currentTab] || '');
-  }
+
   function destroyFieldwork() { _fieldworkEpoch++; _fieldwork?.destroy(); _fieldwork = null; _fieldworkEntryView = 'inventory'; }
+
   async function renderFieldwork() {
     const host = $('#tab-fieldwork');
     if (!host || currentTab !== 'fieldwork') return;
-    const options = { api, act, refresh, confirm: ask, character: { ...me }, onNavigate: navigateFromCity, initialView: _fieldworkEntryView,
+    const options = { api, act, refresh, confirm: ask, character: { ...me }, onNavigate: navigateGameTab, initialView: _fieldworkEntryView,
       isActive: () => currentTab === 'fieldwork' && !$('#screen-main').classList.contains('hidden') };
     if (_fieldwork) { _fieldwork.update(options); return; }
     const epoch = ++_fieldworkEpoch, identity = cityIdentity();
     host.innerHTML = '<div class="card" role="status">Opening your inventory and quest journal…</div>';
     try {
-      await loadCityScript('/world-fieldwork.js?v=20261016-refinements-1', () => !!window.OmertaFieldwork);
+      await loadGameScript('/world-fieldwork.js?v=20261016-refinements-1', () => !!window.OmertaFieldwork);
       if (epoch !== _fieldworkEpoch || currentTab !== 'fieldwork' || identity !== cityIdentity()) return;
       _fieldwork = window.OmertaFieldwork.mount(host, options);
     } catch {
@@ -9828,333 +8903,43 @@
       $('#fieldwork-retry').onclick = renderFieldwork;
     }
   }
-  async function cityQuestProjection(stamp = projections.snapshot()) {
-    const reply = await api('GET', '/v1/worldgraph/mysteries', undefined, { isCurrent: () => projections.current(stamp) });
-    const quests = {}, actions = new Map();
-    if (reply.code !== 200 || reply.ignored || !projections.current(stamp)) return { quests, actions };
-    const entries = (Array.isArray(reply.body?.mysteries) ? reply.body.mysteries : []).filter(entry =>
-      (entry.cityQuest === true || entry.graphId === 'neighborhood-initiation')
-      && typeof entry.graphId === 'string' && /^[a-z0-9][a-z0-9:_-]{0,127}$/.test(entry.graphId)
-      && (!entry.districtId || entry.districtId === me.loc
-        || entry.graphId === 'property-investigation' && entry.started === true && entry.status === 'active'));
-    function add(graphId, venueId, title, dialogue, entries, started, questOrder) {
-      const prefix = '/v1/worldgraph/mysteries/' + encodeURIComponent(graphId) + '/';
-      const valid = (entries || []).filter(action => action.method === 'POST' && typeof action.available === 'boolean'
-        && typeof action.id === 'string' && typeof action.path === 'string' && action.path.startsWith(prefix)
-        && /^(?:start|cancel|explore|nodes\/[^/?#]+\/complete|choices\/[^/?#]+)$/.test(action.path.slice(prefix.length)));
-      if (!valid.length) return;
-      const quest = quests[venueId] || (quests[venueId] = { title, dialogue: '', actions: [] });
-      if (dialogue) quest.dialogue += (quest.dialogue ? '\n\n' : '') + dialogue;
-      for (const action of valid) {
-        actions.set(venueId + ':' + action.id, action);
-        quest.actions.push({ id: action.id, label: action.label, available: action.available, consequence: action.consequence,
-          blockedBy: action.blockedBy || [], started, questOrder, questTitle: title,
-          isCancel: action.path === prefix + 'cancel' });
-      }
-    }
-    for (const [questOrder, entry] of entries.entries()) {
-      if (!entry.started) add(entry.graphId, entry.startVenueId || 'fixer', entry.title, entry.description, entry.uiActions ?? entry.actions, false, questOrder);
-      else if (entry.status === 'active') {
-        const detail = await api('GET', '/v1/worldgraph/mysteries/' + encodeURIComponent(entry.graphId), undefined, { isCurrent: () => projections.current(stamp) });
-        if (detail.code !== 200 || detail.ignored || !projections.current(stamp) || detail.body?.graph?.id !== entry.graphId) continue;
-        for (const action of detail.body?.uiActions ?? detail.body?.actions ?? []) if (action.venueId) {
-          add(entry.graphId, action.venueId, entry.title, 'Follow the available lead to continue your investigation.', [action], true, questOrder);
-        }
-        for (const node of detail.body?.nodes || []) if (node.venueId && node.status !== 'excluded' && (!node.districtId || node.districtId === me.loc)) {
-          add(entry.graphId, node.venueId, node.title, node.dialogue || node.description, node.uiActions ?? node.actions, true, questOrder);
-        }
-      }
-    }
-    return { quests, actions };
-  }
-  async function performCityQuest(venueId, actionId, context = {}) {
-    const action = _cityNpcActions.get(venueId + ':' + actionId), identity = cityIdentity();
-    if (!action?.available || _cityQuestPending || cityWorldOptions().worldRecovery || currentTab !== 'map') return;
-    const scene = _cityScene, authorityRevision = _cityAuthorityRevision;
-    const ownerCurrent = () => identity === cityIdentity() && authorityRevision === _cityAuthorityRevision;
-    const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
-      && (typeof context.beforeDispatch !== 'function' || context.beforeDispatch());
-    if (!beforeDispatch()) return;
-    _cityQuestPending = true;
-    try {
-      if (action.consequence && !await ask(action.label, action.consequence, { yes: 'Confirm', danger: action.id === 'cancel' })) return;
-      if (!beforeDispatch()) return;
-      await act(action.method, action.path, action.body || {}, {
-        label: action.label, beforeDispatch, retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
-        onReceipt: receipt => { if (ownerCurrent()) { _cityQuestReceipt = { key: identity, current: ownerCurrent, quest: true, receipt }; publishCityWorld(); } },
-      });
-      if (currentTab === 'map' && identity === cityIdentity()) await renderMap();
-    } finally { _cityQuestPending = false; }
-  }
-  function destroyCityScene() {
-    closeCityPanel();
-    clearTimeout(_cityPresenceRefresh); _cityPresenceRefresh = null;
-    if (_cityEntry && _cityEntry.epoch !== null) cancelCityEntry();
-    _citySceneEpoch++;
-    if (_cityScene && _citySceneKey) rememberCityPosition(_citySceneKey, _cityScene.getState?.().player
-      ? { ..._cityScene.getState().player, facing: _cityScene.getState().facing } : null);
-    _cityScene?.destroy();
-    _cityScene = null; _citySceneKey = null;
-  }
-  function loadCityScript(src, ready) {
+
+  function loadGameScript(src, ready) {
     if (ready()) return Promise.resolve();
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      const timeout = setTimeout(() => finish(new Error('Scene loading timed out')), 12000);
+      const timeout = setTimeout(() => finish(new Error('Module loading timed out')), 12000);
       function finish(error) {
         clearTimeout(timeout);
         script.onload = script.onerror = null;
         if (error) { script.remove(); reject(error); } else resolve();
       }
       script.src = src; script.async = true;
-      script.onload = () => finish(ready() ? null : new Error('Scene asset unavailable'));
-      script.onerror = () => finish(new Error('Scene asset unavailable'));
+      script.onload = () => finish(ready() ? null : new Error('Module unavailable'));
+      script.onerror = () => finish(new Error('Module unavailable'));
       document.head.append(script);
     });
   }
-  function loadCityAssets() {
-    if (!_citySceneAssets) {
-      _citySceneAssets = Promise.allSettled([
-        loadCityScript('/city-scene.js?v=20261017-continuous-1', () => !!window.OmertaCityScene),
-        loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-        loadCityScript('/city-world-ui.js?v=20261017-continuous-1', () => !!window.OmertaCityWorldUI),
-        loadCityScript('/city-home-ui.js?v=20261013-ui-1', () => !!window.CityHomeUi),
-        loadCityScript('/city-adventure-ui.js?v=20261012-gameplay-1', () => !!window.CityAdventureUi),
-        loadCityScript('/world-fieldwork.js?v=20261016-refinements-1', () => !!window.OmertaFieldwork),
-        loadCityScript('/city-world-layout.js?v=20261017-continuous-1', () => !!window.CityWorldLayout),
-      ]).then(([scene, engine, world, home, adventure, fieldwork, layout]) => {
-        if (scene.status === 'rejected') throw scene.reason;
-        if (layout.status === 'rejected') throw layout.reason;
-        if ([engine,world,home,adventure,fieldwork].some(result => result.status === 'rejected')) _citySceneAssets = null;
-        // The scene module also provides accessible destinations when the engine cannot load.
-        return window.OmertaCityScene;
-      }).catch((error) => { _citySceneAssets = null; throw error; });
-    }
-    return _citySceneAssets;
-  }
-  function citySceneFallback(message) {
-    return `<div class="card"><p class="d" role="status">${esc(message)}</p>
-      ${Object.entries(CITY_VENUE_TABS).map(([venue, tabs]) => `<details class="city-fallback-place"${venue === 'fixer' ? ' open' : ''}>
-        <summary>${esc(CITY_VENUE_NAMES[venue])}</summary><div class="row" style="flex-wrap:wrap">${tabs.map(tab =>
-          `<button class="act" data-city-jump="${tab}" data-city-place="${venue}">${esc(TABS[tab])}</button>`).join('')}</div></details>`).join('')}</div>`;
-  }
-  function navigateFromCity(tab, context = {}) {
+
+  function navigateGameTab(tab, context = {}) {
     if (!Object.hasOwn(TABS, tab)) return;
     if (tab === 'fieldwork') {
       _fieldworkEntryView = ['inventory', 'recipes', 'mysteries', 'operations'].includes(context.initialView)
         ? context.initialView : 'inventory';
       _fieldwork?.selectView(_fieldworkEntryView);
     }
-    const gym = context.venueId === 'training' && tab === 'streets';
-    const deedEntry = tab === 'deeds' && context.focus === 'owned-deed'
-      ? { current: cityActorScope(), key: context.streetKey || null, districtId: context.districtId || null } : null;
-    if (gym) localStorage.setItem('omerta_sect_streets-train', '1');
-    _citySession = { key: cityIdentity(), venueId: context.venueId || _citySession?.venueId || 'directory' };
-    if (tab === 'map' && context.venueId === 'waterfront' && cityGameVisible()) { openCityUtility('territory'); return; }
-    if (tab === 'map') _mapMode = context.venueId === 'waterfront' ? 'territory' : 'walk';
     setTab(tab);
-    if (deedEntry) _cityDeedEntry = { ...deedEntry, navigation: navigationRevision };
-    if (gym) spotlight('#streets-gym-terms');
     $('#tab-' + tab)?.focus({ preventScroll: true });
   }
-  function bindCityFallback(host) {
-    host.querySelectorAll('[data-city-jump]').forEach((button) => {
-      button.onclick = () => navigateFromCity(button.dataset.cityJump, { venueId: button.dataset.cityPlace });
-    });
-  }
-  function inspectCityPlot({ buildingId, districtId } = {}) {
-    const plot = window.CityWorldLayout?.getPlot(buildingId);
-    if (!_cityScene || currentTab !== 'map' || _mapMode !== 'walk' || !me?.id
-      || !plot || plot.districtId !== districtId) return false;
-    if (deedPropertyActor !== me.id) { deedPropertyActor = me.id; deedPropertyNames.clear(); }
-    deedPropertyFocus = { district: districtId, buildingId: plot.id };
-    navigateFromCity('deeds', { venueId: 'clubhouse' });
-    return true;
-  }
-  async function mountCityNeighborhood() {
-    const host = $('#city-scene-host'), options = _citySceneOptions;
-    if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
-    const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
-    if (key !== cityIdentity()) return;
-    const unavailable = host.querySelector('.omerta-city--unavailable');
-    // Retry an unavailable renderer only when doing so will not dismiss an active interaction.
-    const interacting = unavailable?.classList.contains('is-inspecting')
-      || unavailable?.querySelector('.omerta-city__interaction:not([hidden])');
-    if (_cityScene && _citySceneKey === key && (!unavailable || interacting)) {
-      _cityScene.update?.({ ...options, ...cityWorldOptions(), character: { ...me }, progress: cityProgress() });
-      fulfillCityHomeEntry();
-      fulfillCityFirstJobEntry();
-      readCityWorld('homes', { districtId: me.loc }).catch(() => {});
-      return;
-    }
-    destroyCityScene();
-    const epoch = _citySceneEpoch;
-    host.innerHTML = citySceneFallback('Opening your neighborhood… You can also choose a place below.');
-    bindCityFallback(host);
-    try {
-      const scene = await loadCityAssets();
-      if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
-        || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
-      _cityScene = scene.mount(host, { ...options, ...cityWorldOptions(), character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
-        position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED,
-        onPresencePage: loadCityPeoplePage, onEncounter: performCityEncounter, onIntelAction: performCityIntelAction,
-        onEncounterRetry: retryCityEncounter, renderTraining: body => renderCityTraining(body, key, epoch),
-        renderFixer: body => renderCityFixer(body, key, epoch), renderCrew: body => renderCityCrew(body,key,epoch), retireCrew: () => retireCityCrew(epoch),
-        onWorldRead: readCityWorld, onWorldAction: performCityWorld, onWorldRetry: retryCityWorld, onWorldTravel: travelFromCity,
-        onPlotInspect: plot => key === cityIdentity() && epoch === _citySceneEpoch ? inspectCityPlot(plot) : false });
-      _citySceneKey = key;
-      fulfillCityHomeEntry();
-      fulfillCityFirstJobEntry();
-      readCityWorld('homes', { districtId: me.loc }).catch(() => {});
-    } catch {
-      if (epoch !== _citySceneEpoch || currentTab !== 'map' || !host.isConnected) return;
-      host.innerHTML = citySceneFallback('The neighborhood could not open. Your game actions are still available.')
-        + '<button class="act" id="city-scene-retry">Try the neighborhood again</button>';
-      bindCityFallback(host);
-      $('#city-scene-retry').onclick = () => mountCityNeighborhood();
-    }
-  }
-  function syncMapMode() {
-    syncPlayerView();
-    const walk = _mapMode === 'walk';
-    const neighborhood = $('#map-neighborhood'), territory = $('#map-territory-board');
-    if (!neighborhood || !territory) return;
-    neighborhood.hidden = !walk; territory.hidden = walk && _cityPanel?.utility !== 'territory';
-    $('#map-mode-walk').setAttribute('aria-pressed', String(walk));
-    $('#map-mode-territory').setAttribute('aria-pressed', String(!walk));
-    if (walk) mountCityNeighborhood(); else destroyCityScene();
-  }
-  function cancelCityEntry() {
-    const intent = _cityEntry;
-    if (!intent) return;
-    _cityEntry = null;
-    clearTimeout(intent.timer);
-    document.removeEventListener('focusin', intent.onFocus);
-    document.removeEventListener('pointerdown', intent.onPointer, true);
-    document.removeEventListener('keydown', intent.onKey);
-    document.removeEventListener('wheel', intent.onScroll, true);
-    document.removeEventListener('touchmove', intent.onScroll, true);
-    document.removeEventListener('visibilitychange', intent.onVisibility);
-    window.removeEventListener('blur', intent.onScroll);
-    if (intent.label !== null && intent.trigger.isConnected) {
-      intent.trigger.textContent = intent.label;
-      intent.trigger.removeAttribute('aria-busy');
-    }
-  }
-  function revealCityEntry(target, focus = true) {
-    const height = window.innerHeight;
-    let top = 0, bottom = height;
-    for (const id of ['top', 'vitals', 'bnav', 'toast']) {
-      const chrome = $('#' + id);
-      const style = chrome && getComputedStyle(chrome);
-      if (!chrome || !['fixed', 'sticky'].includes(style.position)
-        || (id === 'toast' && !chrome.classList.contains('show'))) continue;
-      const bounds = chrome.getBoundingClientRect();
-      if (!bounds.height || bounds.bottom <= 0 || bounds.top >= height) continue;
-      if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
-      else {
-        const pinnedTop = parseFloat(style.top);
-        top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinnedTop) ? pinnedTop + bounds.height : bounds.bottom);
-      }
-    }
-    target.style.scrollMarginTop = (top + 8) + 'px';
-    target.style.scrollMarginBottom = (height - bottom + 8) + 'px';
-    target.scrollIntoView({ block: 'center', behavior: 'instant' });
-    const guidance = target.matches('.omerta-city__viewport') && document.body.classList.contains('city-player-view')
-      ? target.parentElement.querySelector('.omerta-city__next-move:not([hidden])') : null;
-    if (guidance) {
-      const bounds = guidance.getBoundingClientRect(), frame = target.getBoundingClientRect();
-      if (frame.bottom - bounds.top <= bottom - top - 16 && bounds.top < top + 8) {
-        window.scrollBy({ top: bounds.top - top - 8, behavior: 'instant' });
-      }
-    }
-    if (focus) { if (!target.hasAttribute('tabindex')) target.tabIndex = -1; target.focus({ preventScroll: true }); }
-  }
-  function enterNeighborhood(trigger = $('#map-mode-walk')) {
-    if (currentTab !== 'map' || !me?.id || $('#screen-main').classList.contains('hidden') || topModal()
-      || (trigger && (!trigger.isConnected || trigger.closest('.hidden, [hidden]')))) return;
-    cancelCityEntry();
-    const intent = { trigger, focus: document.activeElement, identity: cityIdentity(), navigation: navigationRevision,
-      stamp: projections.snapshot(), epoch: null, deadline: performance.now() + 15000, timer: null, loading: null,
-      label: trigger?.matches('button') ? trigger.textContent : null };
-    _cityEntry = intent;
-    intent.onFocus = event => { if (event.target !== intent.focus) cancelCityEntry(); };
-    intent.onPointer = event => { if (event.target !== intent.trigger) cancelCityEntry(); };
-    intent.onKey = event => {
-      if (['Escape', 'PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(event.key)) cancelCityEntry();
-    };
-    intent.onScroll = () => cancelCityEntry();
-    intent.onVisibility = () => { if (document.hidden) cancelCityEntry(); };
-    document.addEventListener('focusin', intent.onFocus);
-    document.addEventListener('pointerdown', intent.onPointer, true);
-    document.addEventListener('keydown', intent.onKey);
-    document.addEventListener('wheel', intent.onScroll, { capture: true, passive: true });
-    document.addEventListener('touchmove', intent.onScroll, { capture: true, passive: true });
-    document.addEventListener('visibilitychange', intent.onVisibility);
-    window.addEventListener('blur', intent.onScroll);
-    if (intent.label !== null) { if (trigger.id !== 'btn-player-view') trigger.textContent = 'Opening neighborhood…'; trigger.setAttribute('aria-busy', 'true'); }
-    _mapMode = 'walk';
-    syncMapMode();
-    function check() {
-      if (_cityEntry !== intent) return;
-      if (currentTab !== 'map' || _mapMode !== 'walk' || $('#screen-main').classList.contains('hidden') || document.hidden
-        || topModal() || !projections.current(intent.stamp) || intent.identity !== cityIdentity()
-        || intent.navigation !== navigationRevision || (trigger && !trigger.isConnected)
-        || (intent.epoch !== null && intent.epoch !== _citySceneEpoch)) { cancelCityEntry(); return; }
-      const host = $('#city-scene-host');
-      if (_cityScene && _citySceneKey === intent.identity && intent.epoch === null) intent.epoch = _citySceneEpoch;
-      const canvas = host?.querySelector('.omerta-city__canvas canvas');
-      const ready = _cityScene?.getState?.().ready && _citySceneKey === intent.identity;
-      const failed = host?.querySelector('.omerta-city--unavailable, #city-scene-retry');
-      if (ready || failed || performance.now() >= intent.deadline) {
-        const target = ready && canvas ? canvas : host?.querySelector('#city-scene-retry')
-          || host?.querySelector('[data-destination]') || host?.querySelector('[data-city-jump]') || host?.querySelector('[role="status"]');
-        cancelCityEntry();
-        if (ready) host?.querySelector('.omerta-city__interaction:not([hidden]) [data-city-close]')?.click();
-        if (target?.isConnected) {
-          revealCityEntry(ready && canvas ? canvas.closest('.omerta-city__viewport') : target, false);
-          if (!target.hasAttribute('tabindex')) target.tabIndex = -1;
-          target.focus({ preventScroll: true });
-        }
-        return;
-      }
-      const status = host?.querySelector('.omerta-city__status') || host?.querySelector('[role="status"]');
-      if (status && intent.loading !== status) { intent.loading = status; revealCityEntry(status, false); }
-      intent.timer = setTimeout(check, 100);
-    }
-    check();
-  }
+
   async function renderMap() {
     const t = $('#tab-map');
     const revision = ++_mapReadRevision, navigation = navigationRevision;
     const stamp = projections.snapshot(), identity = cityIdentity();
-    if (!_cityWorldData || _cityWorldData.key !== identity || !projections.current(_cityWorldData.stamp))
-      _cityWorldData = { key: identity, stamp, tickets: {} };
-    const atlasCache = _cityWorldData, atlasTicket = (atlasCache.tickets.atlas || 0) + 1;
-    atlasCache.tickets.atlas = atlasTicket;
-    const questPromise = cityQuestProjection(stamp).catch(() => ({ quests: {}, actions: new Map() }));
-    const peopleRevision = ++_cityPeopleRevision;
-    const actorPage = _cityPeople?.key === identity ? _cityScene?.getState?.().actorPage || 0 : 0;
-    const peoplePage = Math.min(actorPage, Math.max(0, (_cityPeople?.pages?.length || 1) - 1));
-    const peopleCursor = _cityPeople?.key === identity ? _cityPeople.pages?.[peoplePage]?.start : null;
     const reply = await api('GET', '/v1/map', undefined, { isCurrent: () => projections.current(stamp) && identity === cityIdentity() });
-    const peopleReply = await api('GET', peopleCursor ? '/v1/city/presence?cursor=' + encodeURIComponent(peopleCursor) : '/v1/city/presence',
-      undefined, { isCurrent: () => projections.current(stamp) && identity === cityIdentity() });
-    const intelReply = await api('GET', '/v1/city/intel', undefined,
-      { isCurrent: () => projections.current(stamp) && identity === cityIdentity() });
-    const people = peopleReply.body || {}, intel = intelReply.body || {};
-    const quest = await questPromise;
     if (currentTab !== 'map' || revision !== _mapReadRevision || navigation !== navigationRevision
       || !projections.current(stamp) || identity !== cityIdentity()) return;
-    if (peopleRevision === _cityPeopleRevision) {
-      if (peopleReply.code < 400 && cityBoardCurrent(people)) {
-        acceptCityPeoplePage(identity, peoplePage, peopleCursor, people);
-      } else _cityPeople = null;
-      if (intelReply.code < 400) acceptCityIntel(intel);
-    }
     const b = reply.body || {};
-    if (reply.code < 400 && atlasCache === _cityWorldData && atlasCache.tickets.atlas === atlasTicket)
-      atlasCache.atlas = b;
     const districts = b.districts || [], powers = b.powers || [], season = b.season || {}, mine = b.mine || {};
     const seasonBanner = season.reckoning
       ? `<div class="card" style="border-color:#e0a800;background:linear-gradient(180deg,rgba(224,168,0,.08),transparent)"><span class="t">⚔ THE RECKONING</span> <span class="d">— the last week. Turf is cheap to challenge and contests settle fast — whatever you hold when the books close is what the city remembers.</span></div>`
@@ -10183,41 +8968,13 @@
     const powerBoard = powers.length ? `<div class="card" style="margin-top:8px"><span class="t">Who holds the city</span>
       ${powers.map((p, i) => `<div class="d" style="margin-top:3px">${i + 1}. <b style="color:${p.mine ? 'var(--neon)' : 'inherit'}">${esc(p.tag || p.name)}</b> — ${p.districts} district${p.districts === 1 ? '' : 's'} <span class="chip">$${fmt(p.treasury)} treasury</span></div>`).join('')}</div>`
       : `<div class="card" style="margin-top:8px"><span class="t">Who holds the city</span> <div class="d" style="color:var(--dim);margin-top:3px">No family holds any core district yet — five are still occupied by NPC cartels. Free one through the World raid loop and plant your flag.</div></div>`;
-    if (!t.querySelector('#map-neighborhood')) {
-      t.innerHTML = `<div class="row" aria-label="City view" style="gap:8px;flex-wrap:wrap;margin-bottom:12px">
-        <button class="act" id="map-mode-walk" aria-pressed="true">Walk the neighborhood</button>
-        <button class="act" id="map-mode-territory" aria-pressed="false">Territory board</button>
-        <button class="act" id="city-travel-open">Travel to another district →</button>
-      </div><div id="map-neighborhood"><div id="city-scene-host"></div></div>
-      <div id="map-territory-board" hidden></div>`;
-      $('#map-mode-walk').onclick = event => enterNeighborhood(event.currentTarget);
-      $('#map-mode-territory').onclick = () => {
-        if (cityGameVisible()) { openCityUtility('territory'); return; }
-        const leavingPlayer = document.body.classList.contains('city-player-view');
-        _mapMode = 'territory'; syncMapMode();
-        if (leavingPlayer) $('#player-view-switch').scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
-      };
-      $('#city-travel-open').onclick = () => setTab('city');
-    }
+    t.innerHTML = '<div id="map-territory-board"></div>';
     $('#map-territory-board').innerHTML = reply.code >= 400
       ? '<div class="card"><p class="d" role="status">The territory board is temporarily unavailable. Try Refresh.</p></div>'
       : `${seasonBanner}
       <div class="grid" style="margin-top:8px">${tiles}</div>
       ${powerBoard}
       <div class="d" style="font-size:11px;color:var(--dim);margin-top:8px">Fight for turf from <b>The Family</b> tab — seize, declare a watch, or stake a sealed bid on contested ground.</div>`;
-    if (me?.loc) {
-      const district = districts.find((d) => d.id === me.loc)
-        || { id: me.loc, name: me.loc.replace(/[-_]/g, ' '), state: null };
-      _cityNpcActions = quest.actions;
-      _citySceneOptions = { district, character: { ...me }, progress: cityProgress(),
-        venueActions: cityVenueActions(), npcQuests: quest.quests, ...cityPeopleOptions() };
-    } else {
-      _citySceneOptions = null;
-      destroyCityScene();
-      $('#city-scene-host').innerHTML = citySceneFallback('Create or restore your character to explore the neighborhood.');
-      bindCityFallback($('#city-scene-host'));
-    }
-    syncMapMode();
   }
 
   // ── STREET DEEDS — the map as property (the Monopoly layer). Claim a named, mapped plot of the world
@@ -10496,7 +9253,7 @@
       if (buildingId) { const p = atlas.buildings.find(x => x.id === buildingId); if (p) showProperty(p); }
     };
     $('#deed-atlas-open').onclick = () => openPropertyDistrict(me.loc);
-    $('#deed-quests-open').onclick = () => navigateFromCity('fieldwork', { venueId: 'directory', initialView: 'mysteries' });
+    $('#deed-quests-open').onclick = () => navigateGameTab('fieldwork', { initialView: 'mysteries' });
     t.querySelectorAll('[data-deed-district]').forEach(el => el.onclick = () => openPropertyDistrict(el.dataset.deedDistrict));
     if (deedPropertyFocus?.district) await openPropertyDistrict(deedPropertyFocus.district, deedPropertyFocus.buildingId);
     if (!valid()) return;
@@ -10540,15 +9297,6 @@
       const lb = (await api('GET', '/v1/leaderboard/streets')).body || {};
       $('#streets-lb').innerHTML = `<div class="grid" style="margin-top:4px">${(lb.streets || []).map((s) => `
         <div class="card"><span class="t">#${s.pos} ${esc(s.name)}</span><div class="d">${esc(s.steward)} · ${esc(s.districtName)} · ${esc(s.rank)} · ${s.renown} renown</div></div>`).join('') || '<span class="d">no storied streets yet</span>'}</div>`; }; }
-    const entry = _cityDeedEntry;
-    if (entry?.current() && entry.navigation === navigationRevision && valid()) {
-      _cityDeedEntry = null;
-      if (!entry.key || deed && String(deed.name).toLowerCase() === entry.key) {
-        const destination = t.querySelector(deed ? '#city-owned-deed' : '#deed-atlas-open');
-        destination?.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' });
-        destination?.focus({ preventScroll: true });
-      }
-    }
 
   }
 
@@ -11715,9 +10463,6 @@
     const spreadPct = cheap && rich ? Math.round((rich[1] / cheap[1] - 1) * 100) : 0;
     const tkb = c.tickerBallot;
     t.innerHTML = `
-      <div class="card"><span class="t">Your neighborhood</span>
-        <p class="d">Explore the streets around you and find your next move.</p>
-        <button class="act" id="city-walk-open">Walk this district →</button></div>
       ${shp.material ? `<div class="card"><span class="t" style="color:var(--neon)">📦 THE SHIPMENT — ${esc(shp.material)}</span>
         <div class="d">It lands at <b>${esc(shp.districtName || shp.district || '')}</b> today. First come — the whole city shares
           ${shp.cityCap} crates a day and nobody takes more than ${shp.perPlayer}. It's the one thing money can't just buy:
@@ -11874,7 +10619,6 @@
       if (fb) fb.onclick = async (e) => { e.preventDefault();
         const r = (await api('GET', '/v1/leaderboard/family-build')).body?.families || [];
         t.querySelector('#builder-lb').innerHTML = `<div class="grid" style="margin-top:4px">${r.map((k) => `<div class="card"><span class="t">#${k.pos} [${esc(k.tag)}] ${esc(k.name)}</span><div class="d">$${fmt(k.built)} for the city</div></div>`).join('') || '<span class="d">no families ranked yet</span>'}</div>`; }; }
-    $('#city-walk-open').onclick = () => { _mapMode = 'walk'; setTab('map'); enterNeighborhood(); };
     t.querySelectorAll('[data-raid]').forEach((b) => b.onclick = () => act('POST', `/v1/world/${b.dataset.raid}/raid`, {}).then(() => renderCity()));
     t.querySelectorAll('[data-familyraid]').forEach((b) => b.onclick = () => act('POST', `/v1/npcfamily/${b.dataset.familyraid}/raid`, {}).then(() => renderCity()));
     const fwlb = $('#fw-lb'); if (fwlb) fwlb.onclick = async (e) => { e.preventDefault();
@@ -15493,7 +14237,6 @@
         try {
           if (ws !== socket || token !== socketToken || projections.snapshot().token !== token) return;
           const ev = JSON.parse(m.data);
-          if (ev.channel === 'activity') scheduleCityPresence();
           if (ev.channel === 'projection') {
             if (ev.changed === true) projections.world(worldSelection, worldMysterySelection);
             return;

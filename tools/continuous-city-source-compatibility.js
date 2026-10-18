@@ -1,6 +1,7 @@
 // Exact source-only historical fixture bridge. Never used for runtime/native admission.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { classicInterfaceHistoricalInput } from './commerce-current-enterprise-source-compatibility.js';
 import { CONTINUOUS_CITY_SOURCE_REVISION, CONTINUOUS_CITY_SOURCE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_DOMAINS } from './continuous-city-source-data.js';
 import { CONTINUOUS_CITY_FIXTURE_DOMAINS } from './continuous-city-fixture-source-data.js';
 export { CONTINUOUS_CITY_SOURCE_REVISION, CONTINUOUS_CITY_SOURCE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_DOMAINS, CONTINUOUS_CITY_FIXTURE_DOMAINS };
@@ -39,6 +40,7 @@ export function qualifyContinuousCitySource(file, input) { return prove(file, in
 export function qualifyContinuousCityFixtureSource(file, input) { return prove(file, input, CONTINUOUS_CITY_FIXTURE_DOMAINS); }
 // Apply only at explicitly adapted physical fixture reads. Unknown paths stay raw for their existing guards.
 export function continuousCityHistoricalInput(file, input) {
+  input = classicInterfaceHistoricalInput(file, input);
   const domains = Object.hasOwn(CONTINUOUS_CITY_FIXTURE_DOMAINS, file) ? CONTINUOUS_CITY_FIXTURE_DOMAINS : CONTINUOUS_CITY_SOURCE_DOMAINS;
   if (!Object.hasOwn(domains, file)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

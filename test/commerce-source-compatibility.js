@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {classicInterfaceHistoricalInput} from '../tools/commerce-current-enterprise-source-compatibility.js';
 import {COMMERCE_ENTERPRISE_SOURCE_REVISION,COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR,COMMERCE_ENTERPRISE_SOURCE_DOMAINS,COMMERCE_ENTERPRISE_IDENTITY_SOURCES,COMMERCE_ENTERPRISE_OWNED_CURRENT_SOURCES,assertCommerceEnterpriseSourceTransfer,assertCommerceEnterpriseOwnedSource} from '../tools/commerce-enterprise-source-compatibility.js';
 import {COMMERCE_ENTERPRISE_CALLER_WIRING_REVISION} from '../tools/commerce-enterprise-source-data.js';
 import {fileURLToPath} from 'node:url';
@@ -44,7 +45,7 @@ console.log(JSON.stringify({phase:'PASS_SCOPED_COMMERCE_SOURCE_TRANSFER_ONLY',so
  const actualRecord=(revision,file)=>{const value=git('ls-tree',revision,'--',file).trim(),m=value.match(/^(100644|100755) blob ([a-f0-9]{40})\t/);assert(m,'Actual committed regular file only: '+file);return{mode:m[1],blob:m[2]};};
  let currentDomains=0,currentIdentities=0,currentOwned=0,currentRefusals=0;
  for(const [kind,records]of [['domain',COMMERCE_ENTERPRISE_SOURCE_DOMAINS],['identity',COMMERCE_ENTERPRISE_IDENTITY_SOURCES]])for(const[file,p]of Object.entries(records)){
-  const raw=fs.readFileSync(path.join(root,file),'utf8'),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file),baseline=git('show',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR+':'+file);
+  const raw=classicInterfaceHistoricalInput(file,fs.readFileSync(path.join(root,file),'utf8')),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file),baseline=git('show',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR+':'+file);
   assert(raw===current||raw===current.replaceAll('\n','\r\n'),'Actual complete current C source required: '+file);
   assert.equal(sha(current),p.currentSha256);assert.equal(currentBlob(current),p.currentBlob);assert.equal(actualRecord(COMMERCE_ENTERPRISE_SOURCE_REVISION,file).mode,p.currentMode);
   assert.equal(sha(baseline),p.baselineSha256);assert.equal(currentBlob(baseline),p.baselineBlob);assert.equal(actualRecord(COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR,file).mode,p.baselineMode);
@@ -54,7 +55,7 @@ console.log(JSON.stringify({phase:'PASS_SCOPED_COMMERCE_SOURCE_TRANSFER_ONLY',so
   assert(Object.isFrozen(p));if(kind==='domain')currentDomains++;else{assert.equal(current,baseline);currentIdentities++;}
  }
  for(const[file,p]of Object.entries(COMMERCE_ENTERPRISE_OWNED_CURRENT_SOURCES)){
-  const raw=fs.readFileSync(path.join(root,file),'utf8'),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file);assert.equal(git('ls-tree',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR,'--',file),'','Actual E absence, never a fabricated empty baseline');
+  const raw=classicInterfaceHistoricalInput(file,fs.readFileSync(path.join(root,file),'utf8')),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file);assert.equal(git('ls-tree',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR,'--',file),'','Actual E absence, never a fabricated empty baseline');
   assert(raw===current||raw===current.replaceAll('\n','\r\n'));assert.equal(sha(current),p.currentSha256);assert.equal(actualRecord(COMMERCE_ENTERPRISE_SOURCE_REVISION,file).mode,p.currentMode);
   for(const input of [raw,current,current.replaceAll('\n','\r\n')])assert.equal(assertCommerceEnterpriseOwnedSource(file,input).sourceRevision,COMMERCE_ENTERPRISE_SOURCE_REVISION);
   assert.throws(()=>assertCommerceEnterpriseOwnedSource(file,current+'x'));assert.throws(()=>assertCommerceEnterpriseSourceTransfer(file,current));currentRefusals+=2;assert(Object.isFrozen(p));currentOwned++;

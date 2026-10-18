@@ -11,11 +11,60 @@ import { CONTINUOUS_CITY_SOURCE_REVISION, CONTINUOUS_CITY_SOURCE_PREDECESSOR, CO
   continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import { CONTINUOUS_CITY_FIXTURE_PREDECESSOR } from '../tools/continuous-city-fixture-source-data.js';
 import { hasEnterpriseOverRootSource, enterpriseOverRootSourceBaseline } from '../tools/enterprise-current-source-compatibility.js';
+import { CLASSIC_INTERFACE_OVER_F92, classicInterfaceHistoricalInput, qualifyClassicInterfaceSource } from '../tools/commerce-current-enterprise-source-compatibility.js';
 assert.deepEqual(process.argv.slice(2), [], 'Source-only proof has no native or retained modes');
 const git = (...args) => execFileSync('git', ['-c', 'core.safecrlf=false', ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
+// Bind only the restored interface and its two changed physical readers before replaying the frozen proofs below.
+assert.equal(CLASSIC_INTERFACE_OVER_F92.status, 'SEALED', 'Classic interface source preparation is not a qualified revision');
+assert.deepEqual(CLASSIC_INTERFACE_OVER_F92.files.map(row => row.file), ['package.json', 'public/index.html', 'test/commerce-source-compatibility.js', 'test/enterprise-current-source-compatibility.js']);
+for (const [revision, tree] of [[CLASSIC_INTERFACE_OVER_F92.revision, CLASSIC_INTERFACE_OVER_F92.tree], [CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.targetTree]])
+  assert.equal(git('--no-replace-objects', 'rev-parse', revision + '^{tree}').trim(), tree);
+git('merge-base', '--is-ancestor', CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.revision);
+let classicPositives = 0, classicRefusals = 0;
+const freezeClassicProbe = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freezeClassicProbe); Object.freeze(value); } return value; };
+for (const row of CLASSIC_INTERFACE_OVER_F92.files) {
+  const file = row.file, current = git('--no-replace-objects', 'show', CLASSIC_INTERFACE_OVER_F92.revision + ':' + file);
+  const target = git('--no-replace-objects', 'show', CLASSIC_INTERFACE_OVER_F92.targetRevision + ':' + file);
+  assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.revision, '--', file).trim(), row.mode + ' blob ' + row.currentBlob + '\t' + file);
+  assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file).trim(), row.mode + ' blob ' + row.targetBlob + '\t' + file);
+  assert.equal(git('--no-replace-objects', 'show', 'HEAD:' + file), current, 'Actual committed source remains the authored classic-interface input');
+  assert.equal(hash(current), row.currentSha256); assert.equal(hash(target), row.targetSha256);
+  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  const physical = fs.readFileSync(file, 'utf8'); assert.equal(lf(physical), current);
+  assert.deepEqual(row.inverses, hunks(git('diff', '--no-ext-diff', '--unified=3', CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)));
+  for (const input of [physical, current, current.replaceAll('\n', '\r\n')]) {
+    const proof = qualifyClassicInterfaceSource(file, input);
+    assert.equal(proof.baselineText, target); assert.equal(proof.sourceOnly, true); assert.equal(proof.native, false); assert.equal(proof.runtime, false);
+    assert.equal(classicInterfaceHistoricalInput(file, input), target); classicPositives++;
+  }
+  assert.deepEqual(classicInterfaceHistoricalInput(file, Buffer.from(current)), Buffer.from(target)); classicPositives++;
+  for (const input of [target, target.replaceAll('\n', '\r\n')]) {
+    assert.equal(classicInterfaceHistoricalInput(file, input), input, 'Only the exact existing F92 historical input remains an identity');
+    assert.throws(() => qualifyClassicInterfaceSource(file, input)); classicRefusals++;
+  }
+  for (const input of [current + '\n// unknown\n', current.slice(1), '\ufeff' + current, current + '\0', current.replace('\n', '\r\n'), current.replace('\n', '\r'), null]) {
+    assert.throws(() => qualifyClassicInterfaceSource(file, input)); classicRefusals++;
+    let normalized, refused = false;
+    try { normalized = classicInterfaceHistoricalInput(file, input); } catch (error) { assert.equal(error.code, 'ERR_ASSERTION'); refused = true; }
+    if (!refused) assert.equal(normalized, input, 'Unknown bytes never acquire a historical inverse');
+  }
+  assert.throws(() => qualifyClassicInterfaceSource(file, Buffer.from(current))); classicRefusals++;
+  assert.throws(() => classicInterfaceHistoricalInput(file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /lossless UTF-8/); classicRefusals++;
+  for (const inverse of row.inverses) for (const input of [current.replace(inverse.current, ''), current.replace(inverse.current, () => inverse.current + inverse.current), current.replace(inverse.current, () => inverse.baseline)]) {
+    assert.throws(() => qualifyClassicInterfaceSource(file, input)); classicRefusals++;
+  }
+}
+for (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/server.js', 'test/client.js']) {
+  assert.throws(() => qualifyClassicInterfaceSource(file, 'unknown')); assert.equal(classicInterfaceHistoricalInput(file, 'unknown'), 'unknown'); classicRefusals++;
+}
+for (const mutate of [pin => { pin.status = 'UNSEALED'; }, pin => { pin.revision = pin.targetRevision; }, pin => { pin.files[0].currentBlob = '0'.repeat(40); }, pin => { pin.files.pop(); }, pin => { pin.files[0].inverses.push(pin.files[0].inverses[0]); }]) {
+  const pin = JSON.parse(JSON.stringify(CLASSIC_INTERFACE_OVER_F92)); mutate(pin); freezeClassicProbe(pin);
+  assert.throws(() => qualifyClassicInterfaceSource('package.json', fs.readFileSync('package.json', 'utf8'), pin)); classicRefusals++;
+}
+console.log(JSON.stringify({ phase: 'CLASSIC_INTERFACE_EXACT_SOURCE_ONLY', source: CLASSIC_INTERFACE_OVER_F92.revision, target: CLASSIC_INTERFACE_OVER_F92.targetRevision, files: 4, positives: classicPositives, refusals: classicRefusals, native: false, runtime: false }));
 // This local physical-reader hop admits only exact reviewed current UI bytes; frozen GUI/fixture proofs below are unchanged.
 const CURRENT_UI_OVER_GUI59 = Object.freeze({
   "version": 1,
@@ -221,7 +270,7 @@ function qualifyCurrentSceneOverGUI59(file, input, expected, mode, pin = CURRENT
 }
 for (const [file, pin] of Object.entries(CONTINUOUS_CITY_SOURCE_DOMAINS)) {
   const current = git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file);
-  const physical = fs.readFileSync(file, 'utf8');
+  const physical = classicInterfaceHistoricalInput(file, fs.readFileSync(file, 'utf8'));
   const actualPhysical = file === 'public/index.html'
     ? qualifyCurrentUIOverGUI59(file, physical, current, git('ls-files', '--stage', '--', file).split(' ')[0]).baselineText
     : file === 'test/city-world-host-browser.js'
@@ -244,11 +293,13 @@ assert.equal(Object.keys(CONTINUOUS_CITY_FIXTURE_DOMAINS).length, 36);
 for (const [file, pin] of Object.entries(CONTINUOUS_CITY_FIXTURE_DOMAINS)) {
   assert(file.startsWith('test/'), 'Reader proofs cannot admit production source');
   assert(!Object.hasOwn(CONTINUOUS_CITY_SOURCE_DOMAINS, file), 'GUI and reader domains stay disjoint');
-  const actual = lf(fs.readFileSync(file, 'utf8')), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);
+  const actual = lf(classicInterfaceHistoricalInput(file, fs.readFileSync(file, 'utf8'))), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);
   assert.equal(git('ls-files', '--stage', '--', file).split(' ')[0], pin.currentMode);
   assert.equal(git('ls-tree', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file).split(' ')[0], pin.baselineMode);
   verify(file, pin, actual, baseline, qualifyContinuousCityFixtureSource,
-    git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));
+    file === 'test/enterprise-current-source-compatibility.js'
+      ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)
+      : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));
   if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }
 }
 for (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {
