@@ -57,6 +57,7 @@ if (sha(coordinator) === currentCoordinatorSha) {
 const predecessorApiQueueSha = '61ffdfc08a79dca5491f95abf333f1fc9c9d125f344206a5233063ecaddeeba7';
 const currentApiQueueSha = '0a1714c6aa971e3d16365f390eb03005a820dc19312c8f904c87a7471e2e22fd';
 const cityActivityApiQueueSha = '490beb898976f6e3d94b2adea953b916fa5e9ac0ee1c35fd5fc0cebae9dbcf73';
+const classicApiQueueSha = '49ce4b2026c6c277aff5cf9f62ad67c6ba19f650245ea7d683f1f673101866ca';
 const cityActivityKey = `    if (method !== 'GET') options = { ...options, idempotencyKey: options.idempotencyKey || uuid() };
 `;
 const cityActivityPresence = `      // Direct API controls (chat, for example) do not refresh the player through
@@ -76,9 +77,22 @@ function removeBeforeDispatchGuard(text) {
   assert.equal(text.split(beforeDispatchGuard).length, 2, 'The reviewed dispatch guard has one exact inverse');
   return text.replace(beforeDispatchGuard, '');
 }
+function removeClassicIdempotencyKey(text) {
+  assert.equal(text.split(cityActivityKey).length, 2, 'The retained classic idempotency key has one exact inverse');
+  return text.replace(cityActivityKey, '');
+}
+function reviewedClassicApiQueue(text) {
+  const digest = sha(text);
+  assert.equal(digest, classicApiQueueSha, 'Only the exact reviewed classic API queue is accepted');
+  const previous = removeClassicIdempotencyKey(text);
+  assert.equal(sha(previous), currentApiQueueSha, 'The complete pre-key queue must reconstruct exactly');
+  assert.equal(sha(removeBeforeDispatchGuard(previous)), predecessorApiQueueSha, 'The original queue must reconstruct exactly');
+  return digest;
+}
 function reviewedApiQueue(text) {
   const digest = sha(text);
   if (digest === predecessorApiQueueSha) return digest;
+  if (digest === classicApiQueueSha) return reviewedClassicApiQueue(text);
   if (digest === cityActivityApiQueueSha) {
     const previous = removeCityActivity(text);
     assert.equal(sha(previous), currentApiQueueSha, 'The complete pre-activity queue must reconstruct exactly');
@@ -91,7 +105,8 @@ function reviewedApiQueue(text) {
 }
 const apiQueueSource = source.slice(source.indexOf('  async function api(method,'), source.indexOf('  async function apiNow('));
 const extractedApiQueue = extract('  async function api(method,', '  async function apiNow(', reviewedApiQueue(apiQueueSource));
-const apiQueue = sha(extractedApiQueue) === cityActivityApiQueueSha ? removeCityActivity(extractedApiQueue) : extractedApiQueue;
+const apiQueue = sha(extractedApiQueue) === cityActivityApiQueueSha ? removeCityActivity(extractedApiQueue)
+  : sha(extractedApiQueue) === classicApiQueueSha ? removeClassicIdempotencyKey(extractedApiQueue) : extractedApiQueue;
 // The inverse below is only for historical guard and tamper controls. Current
 // queue probes and the browser board execute the actual extracted source with
 // presentation dependencies stubbed; City/economic qualification is not inherited.
@@ -118,6 +133,24 @@ if (sha(extractedApiQueue) === cityActivityApiQueueSha) {
     assert.throws(() => reviewedApiQueue(tampered), /exact reviewed API queue successor/);
   }
   assert.throws(() => reviewedApiQueue(extractedApiQueue + '\n'), /exact reviewed API queue successor/);
+}
+if (sha(extractedApiQueue) === classicApiQueueSha) {
+  assert.equal(reviewedApiQueue(apiQueue), currentApiQueueSha);
+  const duplicate = extractedApiQueue.replace(cityActivityKey, cityActivityKey.repeat(2));
+  assert.notEqual(duplicate, extractedApiQueue);
+  assert.throws(() => removeClassicIdempotencyKey(duplicate), /one exact inverse/);
+  // Key loss remains valid historical input, but cannot pass as the current classic queue.
+  for (const tampered of [duplicate, apiQueue,
+    extractedApiQueue.replace('options.idempotencyKey || uuid()', 'uuid()'),
+    extractedApiQueue.replace("method !== 'GET'", "method === 'GET'"),
+    extractedApiQueue.replace('!options.beforeDispatch()', 'options.beforeDispatch()'),
+    extractedApiQueue.replace('token === authToken', 'token !== authToken'),
+    extractedApiQueue.replace('return valid() ? result : neutral;', 'return result;'),
+    extractedApiQueue.replace("projections.invalidate('world')", "projections.invalidate('player')"),
+    extractedApiQueue + '\n']) {
+    assert.notEqual(tampered, extractedApiQueue);
+    assert.throws(() => reviewedClassicApiQueue(tampered), /exact reviewed classic API queue/);
+  }
 }
 // The only successor addition is an opt-in check before apiNow. The world-board
 // reads below do not opt in and keep the exact predecessor queue/token behavior.
@@ -170,12 +203,30 @@ if (sha(apiQueue) === currentApiQueueSha) {
   assert.equal(lateQueued.posts, 1, 'Moving the hook after apiNow cannot cancel a queued dispatch');
   assert.equal(lateQueued.reply.code, 499);
 }
-if (sha(extractedApiQueue) === cityActivityApiQueueSha) {
+if ([cityActivityApiQueueSha, classicApiQueueSha].includes(sha(extractedApiQueue))) {
   for (const phase of ['queued', 'dispatched', 'revoked', 'owner-revoked', 'default']) {
     const { reply, posts } = await probeApiQueue(extractedApiQueue, phase);
     assert.equal(reply.code, ['queued', 'revoked', 'owner-revoked'].includes(phase) ? 499 : 200, 'Current queue: ' + phase);
     assert.equal(posts, phase === 'queued' ? 0 : 1, 'Current queue transport count: ' + phase);
   }
+}
+if (sha(extractedApiQueue) === classicApiQueueSha) {
+  let generated = 0;
+  const calls = [], scope = { token: 'classic-session', uuid: () => 'generated-' + ++generated,
+    projections: { invalidate() {} }, apiNow: async (method, path, body, options) => {
+      calls.push({ method, key: options.idempotencyKey, authToken: options.authToken });
+      return { code: 200, body: { ok: true } };
+    } };
+  vm.runInNewContext('let _authQueue = Promise.resolve();\n' + extractedApiQueue + '\nthis.call = api;', scope);
+  await scope.call('POST', '/controlled-action', {}, { idempotencyKey: 'retained-receipt' });
+  await scope.call('POST', '/controlled-action', {});
+  await scope.call('GET', '/controlled-read');
+  assert.equal(generated, 1, 'Only a mutation without a supplied receipt generates a key');
+  assert.deepEqual(calls, [
+    { method: 'POST', key: 'retained-receipt', authToken: 'classic-session' },
+    { method: 'POST', key: 'generated-1', authToken: 'classic-session' },
+    { method: 'GET', key: undefined, authToken: 'classic-session' },
+  ], 'The actual classic queue preserves supplied keys, creates missing mutation keys and leaves reads keyless');
 }
 const command = executionId => ({ commandId: 'craft', commandType: 'recipe.craft', label: 'Craft key', parameters: {},
   availability: 'AVAILABLE', confirmation: { required: false }, executionIdentity: { executionId } });
