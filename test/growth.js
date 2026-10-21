@@ -300,7 +300,7 @@ assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0
   assert.equal(r.code, 400); assert.equal(r.body.error, 'nut');
 
   // COLD: men who downed tools three days ago have already gone — they walk for nothing, which is
-  // the exit a broke player needs. It is not a dodge: reaching it costs three days of sales.
+  // the exit a broke player needs. The final hand's capped tab follows any future rehire.
   await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '4 days' WHERE id='${chef.id}'`);
   assert.equal((await meOf(chef.token)).crewCold, true, 'downed tools');
   const rowsBefore = Number((await pool.query(
@@ -313,15 +313,34 @@ assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0
     `SELECT COUNT(*) n FROM transactions WHERE character_id='${chef.id}'`)).rows[0].n), rowsBefore,
     'a cold walk-off moves NO value — not one ledger row (the BUSINESS_SHUTTER_BPS=0 argument)');
   m = await meOf(chef.token);
-  assert.equal(m.crewWageOwed, 0, 'with nobody left there is no nut');
+  assert.equal(m.crewWageOwed, 0, 'with nobody left there is no active nut');
   assert.equal(m.crewCold, false, 'and nothing cold to thaw');
   assert.equal(m.crewColdSeconds, null, 'the countdown is gone with them');
+  const deferredTab = M4.CREW_WAGE_PER_HR * M4.CREW_WAGE_CAP_MS / 3600000;
+  assert.equal(m.crewNextCost, M4.CREW_COST_STEP + deferredTab,
+    'the next-hire quote includes the final hand\'s capped tab');
+  assert.notEqual((await pool.query(`SELECT crew_paid_at FROM characters WHERE id='${chef.id}'`)).rows[0].crew_paid_at, null,
+    'the deferred tab survives persistence at 1 → 0');
   r = await call('DELETE', '/v1/kitchen/crew', { token: chef.token });
   assert.equal(r.code, 400); assert.equal(r.body.error, 'none', 'and you cannot fire nobody');
-  // the buy-in is forfeit — coming back costs the step price again, from the bottom
+  await seedCh(chef.id, `cash=${M4.CREW_COST_STEP}`);
+  r = await call('POST', '/v1/kitchen/crew/hire', { token: chef.token });
+  assert.equal(r.code, 400); assert.equal(r.body.error, 'cash', 'the first-step buy-in cannot erase the old tab');
+  m = await meOf(chef.token);
+  assert.equal(m.crew, 0); assert.equal(m.cash, M4.CREW_COST_STEP);
+  assert.equal(m.crewNextCost, M4.CREW_COST_STEP + deferredTab, 'a refused rehire preserves the full quote');
+
+  // the buy-in is forfeit, and coming back also squares the old capped tab
   await seedCh(chef.id, 'cash=2000000');
+  const cashBeforeRehire = (await meOf(chef.token)).cash;
   r = await call('POST', '/v1/kitchen/crew/hire', { token: chef.token });
   assert.equal(r.body.cost, 50000, 'a rehire starts at the first step — what you sank is gone');
+  assert.equal(r.body.settled, deferredTab, 'the final hand\'s old tab is settled on rehire');
+  assert.equal((await meOf(chef.token)).cash, cashBeforeRehire - M4.CREW_COST_STEP - deferredTab,
+    'rehire deducts both the old tab and the new buy-in');
+  assert.equal(Number((await pool.query(
+    `SELECT COUNT(*) n FROM transactions WHERE character_id='${chef.id}'`)).rows[0].n), rowsBefore + 2,
+    'rehire records the deferred wages and the new buy-in');
 }
 
 // ══ THE KITCHEN → Tier 4: lab modules, cutting agents, the kingpin legend ══

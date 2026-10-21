@@ -11,7 +11,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          assetEnergyCap, effStat, assetsValue, cargoCapacity, tradeRankIdx,
          gangLevelOf, roleMultOf, weekOf, familyTaskOf, M3, M4,
          gunsValue, fleetValue, racketsValue, hitmanRankOf, sealOf, SKILLS, skillOf, UNDERWORLD, leadTaskOf, ONBOARD_TASKS,
-         crewWageOwed, crewCold, LAW, rapStageOf, bribeCostOf, retainerActive, witproActive,
+         crewWageOwed, crewRehireDebt, crewCold, LAW, rapStageOf, bribeCostOf, retainerActive, witproActive,
          cityHourOf, cityLawEventOf, estateTierOf, foundationOf, campaignOf, honorTierOf,
          SOLDIERS, soldierFxOf, CLUES, clueStepOf, rollClueTier, kingpinRankOf, tycoonRankOf, racketIncomeLeveled, empireTitles, launderRankOf, frontTitles, statesmanRankOf, seasonModOf, PACING,
          ACTIVITY, carCollateralValue, carOf, MASTERY, masteryLvlOf, masteryRankOf, masteryXpFor, pathFx, pathXpMult,
@@ -2100,7 +2100,8 @@ export function view(ch, acct = {}, owned = {}) {
     // at all. Two restatements of one rule, which is how they come to disagree (the jailed/penSafe
     // collapse); and a hardcoded price behind a missing field is the guessed number wearing a hat
     // (the ALCHEMIST_ASSET_DECIMALS fallback RT#6 deleted). One field, computed where it is charged.
-    crewNextCost: Number(ch.crew || 0) >= M4.CREW_MAX ? null : M4.CREW_COST_STEP * (Number(ch.crew || 0) + 1),
+    crewNextCost: Number(ch.crew || 0) >= M4.CREW_MAX ? null
+      : M4.CREW_COST_STEP * (Number(ch.crew || 0) + 1) + crewRehireDebt(ch),
     crewColdSeconds: Number(ch.crew || 0) > 0 && ch.crew_paid_at
       ? Math.max(0, Math.ceil((new Date(ch.crew_paid_at).getTime() + M4.CREW_WAGE_COLD_MS - Date.now()) / 1000)) : null,
     makings: owned.makings || {},

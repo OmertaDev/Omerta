@@ -2174,6 +2174,9 @@ CREATE INDEX IF NOT EXISTS ix_char_account ON characters (account_id);
 CREATE INDEX IF NOT EXISTS ix_gang_members_gang ON gang_members (gang_id);
 CREATE INDEX IF NOT EXISTS ix_listings_created ON listings (created_at);
 CREATE INDEX IF NOT EXISTS ix_tx_currency_reason ON transactions (currency, reason);
+-- Lineage cutover reconciliation reads only the current/previous UTC day after its first full pass.
+-- Keep the time key behind the two exact filters so restarts do not revisit the lifetime ledger.
+CREATE INDEX IF NOT EXISTS ix_tx_currency_reason_at ON transactions (currency, reason, at);
 CREATE INDEX IF NOT EXISTS ix_tx_character ON transactions (character_id);
 CREATE INDEX IF NOT EXISTS ix_rng_action ON rng_audit (action);
 -- (red-team R16) funnelStats filters telemetry by event ('broadcast_share'/'first_week_step'); without

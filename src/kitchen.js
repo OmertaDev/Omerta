@@ -5,7 +5,7 @@ import { GameError, bumpFamilyTask, skillMult, trunkCap, bumpMastery, masteryFx 
 import {
   DRUGS, KITCHENS, TRADE_RANKS, CONSTANTS, M4, COMMISSION, SKILLS, KITCHEN,
   drugOf, kitchenOf, tradeRankIdx, cityEventOf, dayOf,
-  makingsPriceOf, demandOf, effStat, crewWageOwed, crewCold, HONOR,
+  makingsPriceOf, demandOf, effStat, crewWageOwed, crewRehireDebt, crewCold, HONOR,
   labModuleCost, kingpinRankOf, seasonModOf, pathFx, pathAdd , jailed, safeHoused, usd, art,
   REGIMEN, disciplineLvlOf, PACING } from './rules.js';
 import { activeDecree } from './commission.js';
@@ -205,23 +205,24 @@ export async function hireCrew(ch, client, h) {
   if (crew >= M4.CREW_MAX) throw new GameError('max', 'Five corners is all one person can keep honest.');
   const cost = M4.CREW_COST_STEP * (crew + 1);
   const now = Date.now();
-  const owed = crewWageOwed(ch, now);
+  const owed = crewWageOwed(ch, now) + crewRehireDebt(ch, now);
+  const liabilityCrew = crew > 0 ? crew : 1;
   const total = cost + owed;
   if (Number(ch.cash) < total) throw new GameError('cash', owed > 0
     ? `The next hand wants ${usd(cost)} up front, and the existing crew is owed ${usd(owed)}.`
     : `The next crew member wants ${usd(cost)} up front.`);
   if (owed > 0) {
     ch.cash = Number(ch.cash) - owed;
-    ch.crew_paid_at = crewPaidThrough(ch, crew, owed, now);
+    ch.crew_paid_at = crewPaidThrough(ch, liabilityCrew, owed, now);
     await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'crew:wages' });
   }
   // A whole-dollar settlement can leave a sub-dollar remainder. Carry its worker-time across the
   // new headcount so hiring cannot erase it or charge the new hand for the old crew's full shift.
-  const residualMs = crew > 0 && ch.crew_paid_at
+  const residualMs = ch.crew_paid_at
     ? Math.max(0, now - new Date(ch.crew_paid_at).getTime()) : 0;
   ch.cash = Number(ch.cash) - cost;
   ch.crew = crew + 1;
-  ch.crew_paid_at = new Date(now - Math.ceil(residualMs * crew / ch.crew));
+  ch.crew_paid_at = new Date(now - Math.ceil(residualMs * liabilityCrew / ch.crew));
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -cost, reason: 'crew:hire' });
   return { ok: true, crew: ch.crew, cost, settled: owed };
 }
@@ -252,12 +253,10 @@ export async function payCrewWages(ch, client, h) {
 // TOOLS (cold — the nut unpaid past CREW_WAGE_COLD_MS) can be let go for nothing, because men who
 // stopped working for you three days ago have already gone.
 //
-// That is also what closes the obvious dodge, and it closes it on the ECONOMICS rather than with a
-// special rule. `crewWageOwed` is crew × elapsed and is never stored, so shedding heads retroactively
-// shrinks the nut — run five for a week, lay off four, pay a fifth. But the free door is only open
-// once you have gone cold, which costs three days of sales, and one hand moves ~60 units/hr at 0.8×
-// base: even on the cheapest line that is ~$311k of product forgone against ~$86k of wages dodged.
-// Nobody takes that trade. A warm crew's only exit is through the till.
+// A cold walk-off is still free at the door. If the final hand leaves, their capped unpaid tab stays
+// on the clock and must be settled before anyone can be hired again, so cycling 1 → 0 → 1 cannot
+// replace $57,600 of wages with the $50,000 first-step buy-in. A warm crew's only exit is through the
+// till, as before.
 //
 // §10.4: the settle-first path is the EXISTING `crew:wages` sink; a cold walk-off moves no value at
 // all (no ledger row) — the BUSINESS_SHUTTER_BPS=0 argument. The buy-in is forfeit: coming back
@@ -278,7 +277,7 @@ export async function layOffCrew(ch, client, h) {
   ch.crew = crew - 1;
   // The departing hand's share leaves with them; everyone still on the corner keeps the same age.
   // In particular, a cold layoff cannot reset the survivors and then rehire around their debt.
-  ch.crew_paid_at = ch.crew > 0 ? paidAt : null;
+  ch.crew_paid_at = ch.crew > 0 || cold ? paidAt : null;
   return { ok: true, crew: ch.crew, settled: cold ? 0 : owed, walked: cold };
 }
 

@@ -579,22 +579,35 @@ export async function migrateSchemaUnderLock(
   return { migration, stamp, rls };
 }
 
-// One-time lineage repair for installs that upgrade after a character already claimed and died on
+// Repeatable lineage repair for installs that upgrade after a character already claimed and died on
 // the deployment day. The old estate removed character-scoped progress before account/day latches
-// existed, but ledger/activity rows and dead character mirrors remain durable evidence. Recover the
-// paid rights before serving requests so an existing heir cannot replay cash, energy, or $OMR.
+// existed, but ledger/activity rows and dead character mirrors remain durable evidence. The marker
+// records the first repair; it must not skip later reconciliation because an old process can settle
+// one final request during a rolling deploy after the new API's startup snapshot. The worker's later
+// startup then closes that cutover seam before normal background work resumes.
 export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now() / 86400000)) {
   await q.query('BEGIN');
   try {
     const migrationId = 'account-daily-lineage-2026-10-21';
-    if ((await q.query('SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount) {
-      await q.query('COMMIT');
-      return { applied: false };
-    }
+    const alreadyApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
+    const from = new Date(today * 86400000), until = new Date((today + 1) * 86400000);
+    // A transaction's `now()` is its transaction-start time, so include the prior UTC day on repeat
+    // passes. That covers a request which straddles midnight or began before the first repair's
+    // snapshot but committed after it, while keeping every later restart bounded to two days.
+    const checkinFrom = new Date((today - 1) * 86400000);
+    const checkins = (await q.query(
+      `SELECT t.at, c.account_id, c.checkin_day, c.streak
+         FROM transactions t JOIN characters c ON c.id=t.character_id
+        WHERE t.reason='checkin' AND t.currency='cash' AND t.amount>0
+          ${alreadyApplied ? 'AND t.at >= $1 AND t.at < $2' : ''}`,
+      alreadyApplied ? [checkinFrom, until] : [])).rows;
 
     // Dead characters retain their check-in mirror. Carry the newest lineage state forward even if
-    // death happened before this build introduced account_persistent.checkin_day/checkin_streak.
-    const mirrors = (await q.query(
+    // death happened before this build introduced account_persistent.checkin_day/checkin_streak. The
+    // first application inspects every mirror. Repeat passes inspect only characters proved relevant
+    // by a recent durable payout, avoiding a full characters scan on every API/worker restart.
+    const mirrors = alreadyApplied ? checkins : (await q.query(
       'SELECT account_id, checkin_day, streak FROM characters WHERE checkin_day > 0')).rows;
     const newest = new Map();
     for (const row of mirrors) {
@@ -611,9 +624,6 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
 
     // Ledger rows reconstruct every historical check-in day. Distinct account/day count repairs the
     // lifetime referral gate without preserving any old duplicate-claim inflation.
-    const checkins = (await q.query(
-      `SELECT t.at, c.account_id FROM transactions t JOIN characters c ON c.id=t.character_id
-        WHERE t.reason='checkin' AND t.currency='cash' AND t.amount>0`)).rows;
     const checkinDays = new Map();
     for (const row of checkins) {
       const day = Math.floor(new Date(row.at).getTime() / 86400000);
@@ -623,12 +633,14 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
     }
     for (const [accountId, days] of checkinDays) {
       for (const day of days) await takeAccountDailyClaim(q, accountId, day, 'checkin', 'claim');
-      await q.query(
-        'UPDATE account_persistent SET checkins_lifetime=GREATEST(checkins_lifetime,$2) WHERE account_id=$1',
-        [accountId, days.size]);
+      // The old revision increments the durable account counter in the same transaction as its
+      // ledger row. Only the first application needs to reconstruct lifetime history; subsequent
+      // cutover passes preserve that exact durable value and add the missing day latch/state.
+      if (!alreadyApplied) await q.query(
+          'UPDATE account_persistent SET checkins_lifetime=GREATEST(checkins_lifetime,$2) WHERE account_id=$1',
+          [accountId, days.size]);
     }
 
-    const from = new Date(today * 86400000), until = new Date((today + 1) * 86400000);
     const paid = (await q.query(
       `SELECT t.id, t.reason, c.account_id FROM transactions t JOIN characters c ON c.id=t.character_id
         WHERE t.at >= $1 AND t.at < $2 AND t.amount>0 AND t.currency='cash'
@@ -675,7 +687,12 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
     for (const [accountId, kinds] of cornerKinds) {
       const restored = new Set();
       for (const kind of kinds) {
-        if (await takeBoundedAccountDailyClaim(q, accountId, today, 'corner', kind, 5)) restored.add(kind);
+        const inserted = await takeBoundedAccountDailyClaim(q, accountId, today, 'corner', kind, 5);
+        const exists = inserted || (await q.query(
+          `SELECT 1 FROM account_daily_claims
+            WHERE account_id=$1 AND day=$2 AND scope='corner' AND claim_id=$3`,
+          [accountId, today, kind])).rowCount > 0;
+        if (exists) restored.add(kind);
       }
       restoredCornerKinds.set(accountId, restored);
     }
@@ -704,9 +721,9 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
     for (const row of yardtales)
       await takeAccountDailyClaim(q, row.account_id, today, 'pen', 'talk');
 
-    await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [migrationId]);
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
     await q.query('COMMIT');
-    return { applied: true };
+    return { applied: !alreadyApplied };
   } catch (error) {
     await q.query('ROLLBACK').catch(() => {});
     throw error;

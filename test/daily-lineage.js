@@ -19,6 +19,19 @@ process.env.RATE_LIMIT = 'off';
 process.env.JWT_SECRET = 'daily-lineage-test-secret';
 process.env.MOD_KEY = 'daily-lineage-mod-key';
 process.env.MARKET_SEED = 'daily-lineage-market-seed-1-20261021';
+process.env.NODE_ENV = 'test';
+if (lineageDatabaseUrl) Object.assign(process.env, {
+  LEGAL_OPERATOR_NAME: 'Daily lineage test operator',
+  LEGAL_POSTAL_ADDRESS: '1 Fixture Street',
+  PRIVACY_CONTACT_EMAIL: 'privacy@example.test',
+  DMCA_AGENT_NAME: 'Fixture agent',
+  DMCA_AGENT_EMAIL: 'copyright@example.test',
+  DMCA_AGENT_ADDRESS: '1 Fixture Street',
+  DMCA_AGENT_PHONE: '+1 202 555 0100',
+  DMCA_AGENT_REGISTERED: 'true',
+  PAYMENT_REFUND_POLICY: 'Isolated test fixture; no payments.',
+  SOCIAL_VERIFY_MODE: 'off',
+});
 
 const realNow = Date.now;
 Date.now = () => Date.parse('2026-10-21T12:00:00Z');
@@ -31,6 +44,14 @@ const { migrateEconomyDailyClaims } = await import('../src/db.js');
 const app = await buildServer();
 const pool = app.pool;
 const today = dayOf();
+if (lineageDatabaseUrl) {
+  const index = (await pool.query(
+    "SELECT indexdef FROM pg_indexes WHERE schemaname=current_schema() AND indexname='ix_tx_currency_reason_at'"
+  )).rows[0];
+  assert(index, 'native schema installs the bounded cutover reconciliation index');
+  assert.match(index.indexdef, /\(currency, reason, at\)$/,
+    'the native cutover index puts time behind both exact ledger filters');
+}
 
 const call = async (method, url, { token, body, mod = false } = {}) => {
   const res = await app.inject({ method, url, payload: body, headers: {
@@ -158,6 +179,64 @@ try {
       WHERE account_id=$1 AND day=$2 AND scope='daily-envelope' AND claim_id='all'`,
   [duplicateLegacy.accountId, today])).rows[0].n), 1,
   'three recovered base payouts close the full envelope before serving the heir');
+
+  // A rolling deploy can take its first snapshot while one old API request is still in flight. The
+  // old revision may then pay and erase character-scoped progress before its container exits. A
+  // later process startup must reconcile durable evidence even though the first-run marker exists.
+  const lateLegacy = await create('Late Rolling Claim');
+  const lateLegacyHeir = 'late-rolling-claim-heir';
+  await pool.query('UPDATE characters SET alive=false, checkin_day=$2, streak=7 WHERE id=$1',
+    [lateLegacy.id, today]);
+  await pool.query(
+    `UPDATE account_persistent
+        SET checkins_lifetime=checkins_lifetime+1, checkin_day=0, checkin_streak=0
+      WHERE account_id=$1`, [lateLegacy.accountId]);
+  await pool.query(
+    `INSERT INTO characters (id, account_id, name, generation, alive, season)
+     VALUES ($1,$2,'Late Rolling Claim',2,true,$3)`,
+  [lateLegacyHeir, lateLegacy.accountId, Math.floor(today / 28)]);
+  await pool.query(
+    `INSERT INTO transactions (id, at, character_id, currency, amount, reason)
+     VALUES ('late-rolling-daily',$1,$2,'cash',200,$3)`,
+  [paidAt, lateLegacy.id, `daily:${jobs[0].id}`]);
+  await pool.query(
+    `INSERT INTO transactions (id, at, character_id, currency, amount, reason)
+     VALUES ('late-rolling-checkin',$1,$2,'cash',350,'checkin')`,
+  [paidAt, lateLegacy.id]);
+  await pool.query(
+    `INSERT INTO transactions (id, at, character_id, currency, amount, reason)
+     VALUES ('late-rolling-corner',$1,$2,'cash',400,'corner:job')`,
+  [paidAt, lateLegacy.id]);
+  await pool.query(
+    `INSERT INTO telemetry (id, at, account_id, event, props)
+     VALUES ('late-rolling-corner-telemetry',$1,$2,'corner',$3)`,
+  [paidAt, lateLegacy.accountId, JSON.stringify({ kind: upgradedCornerTask.kind, district: 'docks' })]);
+  assert.deepEqual(await claimsOf(lateLegacy.accountId), [],
+    'the simulated old revision leaves no account latch after its post-snapshot death');
+  assert.deepEqual(await migrateEconomyDailyClaims(pool, today), { applied: false },
+    'an existing marker records history but does not suppress cutover reconciliation');
+  assert.deepEqual(await claimsOf(lateLegacy.accountId), [
+    'checkin:claim', `corner:${upgradedCornerTask.kind}`, `daily:${jobs[0].id}`,
+  ].sort(), 'the next process startup recovers claims settled after the first snapshot');
+  assert.deepEqual((await pool.query(
+    `SELECT checkin_day, checkin_streak, checkins_lifetime
+       FROM account_persistent WHERE account_id=$1`, [lateLegacy.accountId])).rows[0], {
+    checkin_day: today, checkin_streak: 7, checkins_lifetime: 1,
+  }, 'bounded cutover reconciliation restores exact check-in day/streak and preserves lifetime');
+  assert.equal((await call('POST', '/v1/checkin', { token: lateLegacy.token })).body.error, 'done',
+    'the heir cannot replay a check-in settled after the first snapshot');
+  await setCounters(lateLegacyHeir, completedCounters);
+  assert.equal((await call('POST', `/v1/daily/${jobs[0].id}/claim`, {
+    token: lateLegacy.token,
+  })).body.error, 'claimed', 'the heir cannot replay a post-snapshot legacy payout');
+  const upgradedClaimsBeforeRepeat = await claimsOf(upgraded.accountId);
+  const lateClaimsBeforeRepeat = await claimsOf(lateLegacy.accountId);
+  assert.deepEqual(await migrateEconomyDailyClaims(pool, today), { applied: false });
+  assert.deepEqual(await claimsOf(upgraded.accountId), upgradedClaimsBeforeRepeat,
+    'repeat reconciliation does not allocate a second slot for an already-latched corner claim');
+  assert.deepEqual(await claimsOf(lateLegacy.accountId), lateClaimsBeforeRepeat,
+    'repeat reconciliation is idempotent for late rolling-deploy evidence');
+
   await setCounters(duplicateHeir, completedCounters);
   const duplicateBefore = {
     character: (await pool.query('SELECT cash, energy FROM characters WHERE id=$1', [duplicateHeir])).rows[0],

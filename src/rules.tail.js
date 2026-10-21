@@ -759,6 +759,13 @@ export const crewWageOwed = (ch, now = Date.now()) => {
   const elapsed = Math.min(now - new Date(ch.crew_paid_at).getTime(), M4.CREW_WAGE_CAP_MS);
   return Math.floor(crew * M4.CREW_WAGE_PER_HR * Math.max(0, elapsed) / 3600000);
 };
+// A cold final hand may walk without an immediate charge, but their capped tab follows the next hire.
+// Warm final layoffs clear crew_paid_at after settling, so a zero-head clock is unambiguously deferred debt.
+export const crewRehireDebt = (ch, now = Date.now()) => {
+  if (Number(ch.crew || 0) !== 0 || !ch.crew_paid_at) return 0;
+  const elapsed = Math.min(now - new Date(ch.crew_paid_at).getTime(), M4.CREW_WAGE_CAP_MS);
+  return Math.floor(M4.CREW_WAGE_PER_HR * Math.max(0, elapsed) / 3600000);
+};
 export const crewCold = (ch, now = Date.now()) =>
   Number(ch.crew || 0) > 0 && !!ch.crew_paid_at && now - new Date(ch.crew_paid_at).getTime() >= M4.CREW_WAGE_COLD_MS;
 

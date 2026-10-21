@@ -5,7 +5,7 @@ delete process.env.DATABASE_URL;
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { accrue } from '../src/accrual.js';
-import { BUSINESSES, CONSTANTS, DRUGS, M4, crewCold, crewWageOwed } from '../src/rules.js';
+import { BUSINESSES, CONSTANTS, DRUGS, M4, crewCold, crewRehireDebt, crewWageOwed } from '../src/rules.js';
 import { upkeepBps, isCold, payBusinessUpkeep } from '../src/business.js';
 import { hireCrew, layOffCrew, payCrewWages } from '../src/kitchen.js';
 import { withCharacter } from '../src/game.js';
@@ -163,6 +163,33 @@ try {
   assert.equal(revolving.crew, 2);
   assert.equal(revolving.cash, 0);
   assert.equal(crewCold(revolving, mutationNow), false);
+
+  const finalHand = { id: 'final-cold-owner', crew: 1, cash: 1, crew_paid_at: coldClock };
+  const finalDebt = crewWageOwed(finalHand, mutationNow);
+  const finalLedgerStart = records.length;
+  const finalLayoff = await layOffCrew(finalHand, {}, helpers);
+  assert.deepEqual(finalLayoff, { ok: true, crew: 0, settled: 0, walked: true });
+  assert.equal(finalHand.cash, 1, 'the cold final hand can leave without an immediate charge');
+  assert.equal(+finalHand.crew_paid_at, +coldClock, 'the final hand leaves their capped tab behind');
+  assert.equal(crewRehireDebt(finalHand, mutationNow), finalDebt);
+  assert.equal(records.length, finalLedgerStart, 'the cold final layoff moves no value');
+
+  const firstStep = M4.CREW_COST_STEP;
+  finalHand.cash = firstStep;
+  await assert.rejects(hireCrew(finalHand, {}, helpers), (error) => error.code === 'cash');
+  assert.equal(finalHand.crew, 0);
+  assert.equal(finalHand.cash, firstStep);
+  assert.equal(+finalHand.crew_paid_at, +coldClock, 'an unfunded rehire cannot erase the deferred tab');
+
+  finalHand.cash = firstStep + finalDebt;
+  const finalRehire = await hireCrew(finalHand, {}, helpers);
+  assert.equal(finalRehire.settled, finalDebt, 'rehiring after 1 → 0 settles the final hand\'s tab');
+  assert.equal(finalHand.crew, 1);
+  assert.equal(finalHand.cash, 0);
+  assert.equal(crewRehireDebt(finalHand, mutationNow), 0);
+  assert.equal(crewWageOwed(finalHand, mutationNow), 0);
+  assert.deepEqual(records.slice(finalLedgerStart).map((row) => [row.reason, row.amount]),
+    [['crew:wages', -finalDebt], ['crew:hire', -firstStep]]);
 } finally { Date.now = realNow; }
 
 // Verify fractional work survives the actual withCharacter persistence path.
