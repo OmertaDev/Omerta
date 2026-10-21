@@ -12,10 +12,29 @@ import { BOXING, UNDERWORLD, boxerRankOf, boxerLegendOf, npcBoxerOf, levelOf, pa
 
 const injured = (f) => f.injured_until && new Date(f.injured_until) > new Date();
 const onCooldown = (f) => coolLeft(f.exhib_at);
+const requireRested = (f) => {
+  const left = onCooldown(f);
+  if (left) throw new GameError('cooldown', `${f.name} needs ${coolWait(left)} to rest before another fight.`,
+    { cooldownSeconds: left });
+};
 const booked = (f) => f.booked_until && new Date(f.booked_until) > new Date(); // (step three) on a MAIN EVENT card
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
 const form = (f) => Number(f.power) + Number(f.chin) + Number(f.speed);
 const secsTo = (t) => (t && new Date(t) > new Date()) ? Math.ceil((new Date(t).getTime() - Date.now()) / 1000) : 0;
+const unavailableCalloutReason = (f) => {
+  if (!f || !f.alive) return 'gone';
+  if (injured(f)) return 'injured';
+  if (booked(f)) return 'booked';
+  if (onCooldown(f)) return 'resting';
+  return null;
+};
+async function requireNotCalloutReserved(client, ...fighters) {
+  const title = (await client.query('SELECT holder_fighter, callout_fighter, callout_deadline FROM boxing_title WHERE id=1')).rows[0];
+  const reserved = title?.callout_fighter && fighters.find((f) =>
+    f?.id === title.callout_fighter || f?.id === title.holder_fighter);
+  if (reserved) throw new GameError('callout_reserved', `${reserved.name} is committed to a pending title callout.`,
+    { calloutSeconds: secsTo(title.callout_deadline) });
+}
 // the betting window; MAIN_EVENT_MS env is TEST-ONLY (the SEARCH_MS/CONVOY_MS precedent — never in production)
 const mainEventMs = () => Number(process.env.MAIN_EVENT_MS) || BOXING.MAIN_EVENT_MS;
 const calloutMs = () => Number(process.env.CALLOUT_MS) || BOXING.CALLOUT_MS; // the champ's accept window (TEST-ONLY env)
@@ -33,11 +52,12 @@ async function applyBeltResult(client, winnerF, winnerChar, loserF) {
   const title = (await client.query('SELECT * FROM boxing_title WHERE id=1 FOR UPDATE')).rows[0];
   if (!title) return { belt: false, defended: false };
   if (title.holder_fighter === winnerF.id) { // the champ defended
-    await client.query('UPDATE boxing_title SET defenses=$1, last_defense=now() WHERE id=1', [Number(title.defenses) + 1]);
+    await client.query('UPDATE boxing_title SET defenses=$1, last_defense=now(), callout_fighter=NULL, callout_char=NULL, callout_deadline=NULL WHERE id=1',
+      [Number(title.defenses) + 1]);
     return { belt: false, defended: true };
   }
   if (title.holder_fighter == null || title.holder_fighter === loserF.id) { // vacant / beat the champ
-    await client.query('UPDATE boxing_title SET holder_fighter=$1, holder_char=$2, holder_name=$3, since=now(), defenses=0, last_defense=now() WHERE id=1',
+    await client.query('UPDATE boxing_title SET holder_fighter=$1, holder_char=$2, holder_name=$3, since=now(), defenses=0, last_defense=now(), callout_fighter=NULL, callout_char=NULL, callout_deadline=NULL WHERE id=1',
       [winnerF.id, winnerChar, winnerF.name]);
     return { belt: true, defended: false };
   }
@@ -68,9 +88,10 @@ export async function enforceBeltDefense(pool) {
     const t = (await client.query('SELECT * FROM boxing_title WHERE id=1 AND holder_fighter IS NOT NULL FOR UPDATE')).rows[0];
     if (!t) { await client.query('ROLLBACK'); return {}; }
     // (1) a DUCKED callout — the champ ignored a mandatory challenge past the deadline → forfeit to the challenger
-    if (t.callout_fighter && t.callout_deadline && Date.now() > new Date(t.callout_deadline).getTime()) {
+    if (t.callout_fighter && t.callout_deadline && Date.now() >= new Date(t.callout_deadline).getTime()) {
       const chal = (await client.query('SELECT f.*, c.alive FROM fighters f LEFT JOIN characters c ON c.id=f.character_id WHERE f.id=$1', [t.callout_fighter])).rows[0];
-      if (chal && chal.alive) { // crown the challenger — you can't duck the #1 contender
+      const unavailable = unavailableCalloutReason(chal);
+      if (!unavailable) { // crown an available challenger — you can't duck the #1 contender
         await client.query('UPDATE boxing_title SET holder_fighter=$1, holder_char=$2, holder_name=$3, since=now(), defenses=0, last_defense=now(), callout_fighter=NULL, callout_char=NULL, callout_deadline=NULL WHERE id=1',
           [chal.id, chal.character_id, chal.name]);
         if (t.holder_char) await notify(client, t.holder_char, 'belt_ducked', { challenger: chal.name });
@@ -79,7 +100,11 @@ export async function enforceBeltDefense(pool) {
         await client.query('COMMIT');
         return { ducked: true, champion: t.holder_name, newChampion: chal.name };
       }
-      await client.query('UPDATE boxing_title SET callout_fighter=NULL, callout_char=NULL, callout_deadline=NULL WHERE id=1'); // challenger gone — clear the stale callout
+      // The challenger cannot manufacture an impossible acceptance and collect the belt by forfeit.
+      // This also safely clears callouts created before challenger reservation shipped.
+      await client.query('UPDATE boxing_title SET callout_fighter=NULL, callout_char=NULL, callout_deadline=NULL WHERE id=1');
+      await client.query('COMMIT');
+      return { voided: true, challenger: chal?.name || null, reason: unavailable };
     }
     // (2) the mandatory-defense clock — an inactive champ forfeits the belt to vacancy
     const clock = t.last_defense || t.since;
@@ -116,7 +141,7 @@ export async function callOutChamp(ch, fighterId, client, h) {
   // asserting a safety precondition its own named sibling violates is what licenses the next edit.
   //
   // So take the order rather than reason about it: read the title UNLOCKED to learn who the champ is
-  // and therefore who the contender is, lock the caller's fighter, THEN lock the singleton and
+  // and therefore who the contender is, lock both title fighters in sorted order, THEN lock the singleton and
   // re-verify nothing shifted (the acceptCallout/executeHeist TOCTOU pattern).
   const t0 = (await client.query('SELECT * FROM boxing_title WHERE id=1')).rows[0];
   if (!t0 || !t0.holder_fighter) throw new GameError('no_champ', 'There is no champion to call out.');
@@ -127,7 +152,11 @@ export async function callOutChamp(ch, fighterId, client, h) {
     'SELECT f.*, c.is_npc FROM fighters f JOIN characters c ON c.id=f.character_id AND c.alive')).rows;
   const top = contenderOf(rows, t0.holder_fighter);
   if (!top || top.character_id !== ch.id || top.id !== String(fighterId)) throw new GameError('not_contender', 'Only the #1 contender can call out the champ.');
-  const f = (await client.query('SELECT * FROM fighters WHERE id=$1 FOR UPDATE', [top.id])).rows[0];
+  const [first, second] = [top.id, t0.holder_fighter].sort();
+  await client.query('SELECT 1 FROM fighters WHERE id=$1 FOR UPDATE', [first]);
+  await client.query('SELECT 1 FROM fighters WHERE id=$1 FOR UPDATE', [second]);
+  const f = (await client.query('SELECT * FROM fighters WHERE id=$1', [top.id])).rows[0];
+  const champF = (await client.query('SELECT * FROM fighters WHERE id=$1', [t0.holder_fighter])).rows[0];
   const title = (await client.query('SELECT * FROM boxing_title WHERE id=1 FOR UPDATE')).rows[0];
   // re-verify under the lock: the belt may have changed hands (which changes WHO the contender is —
   // contenderOf excludes the champ's own fighter) or someone else may have called the champ out first
@@ -136,8 +165,16 @@ export async function callOutChamp(ch, fighterId, client, h) {
   if (title.callout_fighter) throw new GameError('callout_exists', "The champ's already been called out.");
   if (title.holder_fighter !== t0.holder_fighter)
     throw new GameError('contention', 'The belt changed hands under you — try again.');
+  if (!champF || champF.character_id !== title.holder_char)
+    throw new GameError('contention', 'The champion changed under you — try again.');
   if (injured(f)) throw new GameError('injured', 'Your fighter is laid up — heal before you call anybody out.');
   if (booked(f)) throw new GameError('booked', 'Your fighter is already on a card.');
+  requireRested(f);
+  if (injured(champF)) throw new GameError('champ_unavailable', 'The champion is laid up and cannot accept a callout.');
+  if (booked(champF)) throw new GameError('champ_unavailable', 'The champion is already committed to another card.');
+  const champRest = onCooldown(champF);
+  if (champRest) throw new GameError('champ_unavailable', `The champion needs ${coolWait(champRest)} to rest before a callout.`,
+    { cooldownSeconds: champRest });
   const deadline = new Date(Date.now() + calloutMs());
   await client.query('UPDATE boxing_title SET callout_fighter=$1, callout_char=$2, callout_deadline=$3 WHERE id=1', [f.id, ch.id, deadline]);
   await h.notify(client, title.holder_char, 'boxing_callout', { by: ch.name, challenger: f.name, champion: title.holder_name, acceptWithinSeconds: Math.ceil(calloutMs() / 1000) });
@@ -168,6 +205,8 @@ export async function acceptCallout(ch, client, h) {
   if (title.holder_char !== ch.id) throw new GameError('not_champ', 'Only the champion can accept the challenge.');
   if (title.holder_fighter !== t0.holder_fighter || title.callout_fighter !== t0.callout_fighter)
     throw new GameError('contention', 'The card shifted under you — try again.'); // fighters changed; the locked pair is stale
+  if (title.callout_deadline && Date.now() >= new Date(title.callout_deadline).getTime())
+    throw new GameError('callout_expired', 'The callout window has closed; the belt worker decides the result.');
   const champF = (await client.query('SELECT * FROM fighters WHERE id=$1', [title.holder_fighter])).rows[0];
   const chalF = (await client.query('SELECT * FROM fighters WHERE id=$1', [title.callout_fighter])).rows[0];
   if (!champF || champF.character_id !== ch.id) throw new GameError('no_fighter', 'You no longer hold the belt.');
@@ -176,7 +215,13 @@ export async function acceptCallout(ch, client, h) {
     throw new GameError('gone', 'The challenger is no longer in the game.');
   }
   if (injured(champF)) throw new GameError('injured', 'Your fighter is laid up — heal before defending.');
-  if (booked(champF) || booked(chalF)) throw new GameError('booked', 'A fighter is already on a card.');
+  if (injured(chalF)) throw new GameError('challenger_unavailable', 'The challenger is laid up; their callout cannot cost you the belt.');
+  if (booked(champF)) throw new GameError('booked', 'Your fighter is already on a card.');
+  if (booked(chalF)) throw new GameError('challenger_unavailable', 'The challenger booked another card; their callout cannot cost you the belt.');
+  requireRested(champF);
+  const challengerRest = onCooldown(chalF);
+  if (challengerRest) throw new GameError('challenger_unavailable', `The challenger needs ${coolWait(challengerRest)} to rest; their callout cannot cost you the belt.`,
+    { cooldownSeconds: challengerRest });
   const id = crypto.randomUUID();
   const resolvesAt = new Date(Date.now() + mainEventMs());
   await client.query(
@@ -266,6 +311,7 @@ export async function exhibitionBout(ch, fighterId, tierId, client, h) {
   const tier = npcBoxerOf(tierId);
   if (!tier) throw new GameError('bad_tier', 'No such exhibition card.');
   const f = await myFighter(client, ch, fighterId);
+  await requireNotCalloutReserved(client, f);
   if (injured(f)) throw new GameError('injured', 'Your fighter is laid up — let them heal.');
   if (booked(f)) throw new GameError('booked', "That fighter is booked on a main event card.");
   const fCool = onCooldown(f);
@@ -326,6 +372,7 @@ export async function fightBout(ch, opponent, body, client, h) {
   const of = (await client.query('SELECT * FROM fighters WHERE id=$1', [body?.theirFighter])).rows[0];
   if (!f || f.character_id !== ch.id) throw new GameError('no_fighter', 'Pick one of your own fighters.');
   if (!of || of.character_id !== opponent.id) throw new GameError('no_opponent', "That fighter isn't in their stable.");
+  await requireNotCalloutReserved(client, f, of);
   const limit = of.bout_limit != null ? Math.floor(Number(of.bout_limit)) : 0;
   if (!(limit > 0)) throw new GameError('not_listed', "Their fighter isn't taking bouts.");
   if (amt > limit) throw new GameError('limit', `Their fighter takes bouts up to ${usd(limit)}.`);
@@ -333,6 +380,8 @@ export async function fightBout(ch, opponent, body, client, h) {
   if (injured(of)) throw new GameError('injured_them', 'Their fighter is laid up right now.');
   if (booked(f)) throw new GameError('booked_self', 'Your fighter is booked on a main event card.');
   if (booked(of)) throw new GameError('booked_them', 'Their fighter is booked on a main event card.');
+  requireRested(f);
+  requireRested(of);
   if (Number(ch.cash) < amt) throw new GameError('cash', 'Not that much in pocket for the purse.');
   if (Number(opponent.cash) < amt) throw new GameError('their_cash', "They can't cover the purse right now.");
   let mine, theirs;
@@ -344,6 +393,8 @@ export async function fightBout(ch, opponent, body, client, h) {
   const rake = Math.ceil(pot * BOXING.RAKE_BPS / 10000);
   const winner = win ? ch : opponent, loser = win ? opponent : ch;
   const winnerF = win ? f : of, loserF = win ? of : f;
+  const restsUntil = new Date(Date.now() + BOXING.BOUT_CD_MS);
+  await client.query('UPDATE fighters SET exhib_at=$2 WHERE id IN ($1,$3)', [f.id, restsUntil, of.id]);
   loser.cash = Number(loser.cash) - amt;
   winner.cash = Number(winner.cash) + amt - rake; // their own stake never left; net +stake − rake (casino:pvp accounting)
   await h.ledger(client, { characterId: loser.id, currency: 'cash', amount: -amt, reason: 'boxing:bout', counterparty: winner.id });
@@ -370,6 +421,7 @@ export async function fightBout(ch, opponent, body, client, h) {
   await h.track(client, ch.account_id, 'boxing_bout', { amt, win, belt: beltWon });
   return { ok: true, win, purse: amt, rake, net: win ? amt - rake : -amt, belt: beltWon && winner.id === ch.id, defended: defended && winner.id === ch.id,
     you: { name: f.name, score: mine }, them: { name: of.name, score: theirs },
+    restSeconds: Math.ceil(BOXING.BOUT_CD_MS / 1000),
     yourFighter: win ? `${Number(f.wins) + 1}-${f.losses}` : `${f.wins}-${Number(f.losses) + 1}` };
 }
 
@@ -395,11 +447,14 @@ export async function announceMainEvent(ch, opponent, body, client, h) {
   const of = (await client.query('SELECT * FROM fighters WHERE id=$1', [body?.theirFighter])).rows[0];
   if (!f || f.character_id !== ch.id) throw new GameError('no_fighter', 'Pick one of your own fighters.');
   if (!of || of.character_id !== opponent.id) throw new GameError('no_opponent', "That fighter isn't in their stable.");
+  await requireNotCalloutReserved(client, f, of);
   if (of.bout_limit == null) throw new GameError('not_listed', "Their fighter isn't taking bouts.");
   if (injured(f)) throw new GameError('injured_self', 'Your fighter is laid up — let them heal.');
   if (injured(of)) throw new GameError('injured_them', 'Their fighter is laid up right now.');
   if (booked(f)) throw new GameError('booked_self', 'Your fighter is already on a card.');
   if (booked(of)) throw new GameError('booked_them', 'Their fighter is already on a card.');
+  requireRested(f);
+  requireRested(of);
   const id = crypto.randomUUID();
   const resolvesAt = new Date(Date.now() + mainEventMs());
   await client.query(
@@ -499,6 +554,12 @@ export async function resolveMainEvent(client, boutId) {
   do { sa = baseA + rand(0, BOXING.VARIANCE); sb = baseB + rand(0, BOXING.VARIANCE); } while (sa === sb);
   const aWon = sa > sb;
   const winF = aWon ? fa : fb, loseF = aWon ? fb : fa, winnerChar = aWon ? bout.a_char : bout.b_char;
+  const restStarts = Date.now();
+  for (const fighter of [fa, fb]) {
+    const restsUntil = new Date(Math.max(restStarts + BOXING.BOUT_CD_MS,
+      new Date(fighter.exhib_at || 0).getTime()));
+    await client.query('UPDATE fighters SET exhib_at=$2 WHERE id=$1', [fighter.id, restsUntil]);
+  }
   await client.query('UPDATE fighters SET wins=$2, booked_until=NULL WHERE id=$1', [winF.id, Number(winF.wins) + 1]);
   await client.query('UPDATE fighters SET losses=$2, booked_until=NULL, injured_until=$3 WHERE id=$1',
     [loseF.id, Number(loseF.losses) + 1, new Date(Date.now() + BOXING.INJURY_MS)]);

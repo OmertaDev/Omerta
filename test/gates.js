@@ -3010,6 +3010,10 @@ const SCENERY_WAIVED = {
   // are unchanged; its independent AST seal above still holds. Recomputed separately with
   // PowerShell SHA256.HashData and Node crypto after reviewing that complete diff.
   const REVIEWED_EXPLORE_FILE_SHA256 = '797a2b76833968049f21c78dffa02b9b60b3eb975a8e3c8bc1ab5228985f8f88';
+  // 2026-10-21 economy review: the successor only imports the shared cooldown helper and makes the
+  // always-available crime recommendation honor the same persisted street-action deadline as the
+  // action route. The reviewed ANY/SOME query boundary and its independent AST seal are unchanged.
+  const REVIEWED_ECONOMY_EXPLORE_FILE_SHA256 = '27af4bee3ac1194d8f5874215472e44e60c2c37c3685aa4cc1cd5a8cd29a5e8f';
   const normalizeCrlfBytes = (value) => {
     const bytes = Buffer.isBuffer(value) ? value : Buffer.from(value);
     const normalized = Buffer.allocUnsafe(bytes.length);
@@ -3032,6 +3036,7 @@ const SCENERY_WAIVED = {
   const wholeExploreFileSealAccepts = (bytes) => {
     const digest = wholeExploreFileDigest(bytes);
     if (digest === REVIEWED_EXPLORE_FILE_SHA256) return true;
+    if (digest === REVIEWED_ECONOMY_EXPLORE_FILE_SHA256) return true;
     // Admit only the complete reviewed quest candidate's literal bytes, then prove its exact
     // predecessor still matches the original seal. This grants source reconstruction only.
     if (digest !== DEED_QUEST_SOURCE_DOMAINS['src/explore.js'].currentSha256) return false;

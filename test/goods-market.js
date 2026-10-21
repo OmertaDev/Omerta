@@ -13,8 +13,9 @@ let now = Date.parse('2026-10-09T10:13:00Z');
 Date.now = () => now;
 
 const { buildServer } = await import('./server-fixture.js');
-const { priceBlock, CONSTANTS } = await import('../src/rules.js');
+const { priceBlock, CONSTANTS, DISTRICTS, GOODS } = await import('../src/rules.js');
 const { consumeGoodsLiquidity, goodsLiquidityBoard } = await import('../src/goodsmarket.js');
+const { goodsBuyQuote, goodsSellQuote } = await import('../src/goodsquote.js');
 const app = await buildServer();
 const pool = app.pool;
 const block = priceBlock();
@@ -77,30 +78,81 @@ const sizedPlans = (turn) => {
 try {
   const first = await create('Finite Freight');
   const second = await create('Shared Freight');
-  const board = (await ok('GET', '/v1/market/prices')).liquidity;
+  const priceBoard = await ok('GET', '/v1/market/prices');
+  const board = priceBoard.liquidity;
   assert.equal(board.stockPerBlock, 500);
   assert.equal(board.demandPerBlock, 500);
+  assert.equal(board.dailyLotUnits, 10, 'the public board defines one meaningful freight lot');
   assert.equal(board.refreshAt, new Date((block + 1) * 4 * 3600 * 1000).toISOString());
   assert.deepEqual(board.districts[source][good], { stock: 500, buying: 500 });
+  assert.equal(priceBoard.goodsBuy[source][good], goodsBuyQuote(good, source, 1, {}, block).unit,
+    'the public ask uses settlement quote semantics');
+  assert.equal(priceBoard.goodsSell[source][good], goodsSellQuote(good, source, 1, {}, {}, block).unit,
+    'the public bid uses settlement quote semantics');
+  assert(priceBoard.goodsSell[source][good] < priceBoard.goodsBuy[source][good],
+    'the public board does not advertise a crossed same-shop book');
+  const quotedEdge = (await ok('GET', '/v1/opportunities', first.token)).niches.arbitrage[0];
+  assert(quotedEdge, 'the player-facing opportunity board publishes a freight edge');
+  assert.equal(quotedEdge.buyPrice,
+    goodsBuyQuote(quotedEdge.good, quotedEdge.buyIn, 1, {}, block).unit,
+    'opportunity buy units use the settlement quote');
+  assert.equal(quotedEdge.sellPrice,
+    goodsSellQuote(quotedEdge.good, quotedEdge.sellIn, 1, {}, {}, block).unit,
+    'opportunity sell units use the settlement quote');
 
-  // The reported 430-unit run still earns a real geographic spread once. Its second
-  // full load fails against the shared source inventory instead of minting cash again.
+  // The 430-unit run still earns a real geographic spread once after the NPC
+  // resale basis closes local round trips. Its second full load fails against
+  // the shared source inventory instead of minting cash again.
   const before = await stateOf(first);
   const bought = await ok('POST', '/v1/goods/buy', first.token, { goodId: good, qty: 430 });
   await ok('POST', `/v1/travel/${destination}`, first.token);
   const sold = await ok('POST', '/v1/goods/sell', first.token, { goodId: good, qty: 430 });
   await ok('POST', `/v1/travel/${source}`, first.token);
   const profit = sold.earned - bought.spent - 2 * CONSTANTS.TRAVEL_COST;
-  assert(profit > bought.spent, 'fixture reproduces the reported 100%+ freight margin');
+  assert(profit > 0, 'fixture retains a profitable geographic freight route');
+  assert(profit < bought.spent, 'resale basis removes the former 100%+ extraction margin');
   assert.equal((await stateOf(first)).cash, before.cash + profit);
   assert.deepEqual((await stateOf(first)).cargo, []);
+  assert.equal(Number((await pool.query(
+    "SELECT xp FROM masteries WHERE character_id=$1 AND track_id='commerce'", [first.id])).rows[0].xp), 86,
+  'a 430-unit NPC sale awards 43 ten-unit lots, rather than one request');
+  assert.equal(JSON.parse((await pool.query(
+    'SELECT counters FROM daily_progress WHERE character_id=$1', [first.id])).rows[0].counters).goods, 86,
+  'daily progress follows the 86 ten-unit lots actually moved, rather than two requests');
   assert.deepEqual(await liquidity(source), { stock: 70, buying: 500 });
   assert.deepEqual(await liquidity(destination), { stock: 500, buying: 70 });
   await rejectedTrade(first, 'buy', 430, 'goods_stock', 70);
+  await pool.query("UPDATE characters SET path='gun' WHERE id=$1", [first.id]);
+  const personalizedBoard = await ok('GET', '/v1/opportunities', first.token);
+  for (const edge of personalizedBoard.niches.arbitrage) {
+    assert.equal(edge.buyPrice,
+      goodsBuyQuote(edge.good, edge.buyIn, 1, {}, edge.priceBlock).unit,
+      'player-facing opportunity procurement uses the actor settlement quote');
+    assert.equal(edge.sellPrice,
+      goodsSellQuote(edge.good, edge.sellIn, 1, {}, { path: 'gun' }, edge.priceBlock).unit,
+      'player-facing opportunity liquidation includes the actor path modifier');
+  }
+  assert(personalizedBoard.niches.arbitrage.some((edge) => edge.sellPrice !==
+    goodsSellQuote(edge.good, edge.sellIn, 1, {}, {}, edge.priceBlock).unit),
+  'the fixture proves the personalized board differs from a neutral quote');
   const limitedTurn = await ok('GET', '/v1/agent/turn', first.token);
   const limitedPlan = sizedPlans(limitedTurn).find((p) => p.id === `arbitrage:${good}:${source}:${destination}`);
   assert.equal(limitedPlan?.quantity, 70, 'agent sizes the next load to the final 70 stock and demand');
   assert.deepEqual(limitedTurn.opportunities.niches.arbitrage.find((e) => e.good === good)?.stock, 70);
+  for (const plan of limitedTurn.plans.filter((candidate) => candidate.kind === 'arbitrage')) {
+    const edge = limitedTurn.opportunities.niches.arbitrage.find((candidate) =>
+      plan.id === `arbitrage:${candidate.good}:${candidate.buyIn}:${candidate.sellIn}`);
+    const buy = goodsBuyQuote(edge.good, edge.buyIn, plan.quantity, {}, edge.priceBlock);
+    const sell = goodsSellQuote(edge.good, edge.sellIn, plan.quantity, {}, { path: 'gun' }, edge.priceBlock);
+    const travel = (limitedTurn.state.identity.district === edge.buyIn ? 0 : CONSTANTS.TRAVEL_COST)
+      + (edge.buyIn === edge.sellIn ? 0 : CONSTANTS.TRAVEL_COST);
+    const exactProfit = sell.net - buy.total - travel;
+    assert.equal(plan.buyPrice, buy.unit, 'agent procurement price uses the actor settlement quote');
+    assert.equal(plan.sellPrice, sell.unit, 'agent liquidation price includes the actor path modifier');
+    assert.equal(plan.ev.cash, exactProfit, 'agent profit matches exact executable settlement and travel');
+    assert(exactProfit >= 25, 'agent never recommends a route below its published profit floor');
+    assert.match(plan.ev.basis, /path/, 'agent discloses the personalized modifier basis');
+  }
 
   // A second account sees the same remaining stock. Smaller purchases may consume
   // exactly what is left; neither a refused purchase nor an opposite sale refills it.
@@ -192,6 +244,25 @@ try {
   }
   assert.deepEqual((await goodsLiquidityBoard(pool, block + 1)).districts.cathedral.gin, { stock: 200, buying: 200 });
 
+  // One-unit request spam moves real goods and pays the spread. Daily and mastery progress follow
+  // the volume itself, so splitting the same freight cannot manufacture extra progress.
+  const splitter = await create('Tiny Freight');
+  for (let i = 0; i < 9; i++) {
+    await ok('POST', '/v1/goods/buy', splitter.token, { goodId: 'shine', qty: 1 });
+    await ok('POST', '/v1/goods/sell', splitter.token, { goodId: 'shine', qty: 1 });
+  }
+  assert.equal(JSON.parse((await pool.query(
+    'SELECT counters FROM daily_progress WHERE character_id=$1', [splitter.id])).rows[0].counters).goods, 1.8,
+  'nine one-unit round trips record exactly 18/10 lots of freight volume');
+  assert.equal(Number((await pool.query(
+    "SELECT xp FROM masteries WHERE character_id=$1 AND track_id='commerce'", [splitter.id])).rows[0].xp), 1.8,
+  'nine one-unit sales award exactly their fractional freight XP');
+  await ok('POST', '/v1/goods/buy', splitter.token, { goodId: 'shine', qty: 10 });
+  await ok('POST', '/v1/goods/sell', splitter.token, { goodId: 'shine', qty: 10 });
+  assert.equal(JSON.parse((await pool.query(
+    'SELECT counters FROM daily_progress WHERE character_id=$1', [splitter.id])).rows[0].counters).goods, 3.8,
+  'a starter-trunk buy and sale add exactly two daily freight lots');
+
   // Supply exhaustion must block procurement without hiding buyers for cargo that
   // is already owned. Retain a liquidation action even when every supplier is empty.
   const remaining = await goodsLiquidityBoard(pool, block + 1);
@@ -200,13 +271,13 @@ try {
       await consumeGoodsLiquidity(pool, good, district, 'buy', goods[good].stock, block + 1);
     }
   }
+  await pool.query('INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,$2,$3)', [first.id, good, 3]);
   const emptySupply = await ok('GET', '/v1/opportunities', first.token);
   const liquidationEdge = emptySupply.niches.arbitrage.find((e) => e.good === good);
   assert(liquidationEdge && liquidationEdge.stock === 0 && liquidationEdge.buying >= 3,
     'exhausted supply retains an available buyer for held freight');
   assert.equal(emptySupply.best?.kind, 'arbitrage', 'other supplied goods still offer a profitable recommendation');
   assert(!emptySupply.best.endpoint.startsWith(`buy ${good} `), 'best opportunity never recommends zero-stock procurement');
-  await pool.query('INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,$2,$3)', [first.id, good, 3]);
   await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [first.id, liquidationEdge.sellIn]);
   const liquidationTurn = await ok('GET', '/v1/agent/turn', first.token);
   const liquidationPlan = liquidationTurn.plans.find((p) => p.id.startsWith(`arbitrage:${good}:`));
@@ -221,6 +292,44 @@ try {
     { turnId: liquidationTurn.turnId, actionId: liquidationAction.id });
   assert.deepEqual((await stateOf(first)).cargo, [], 'held freight can actually liquidate after all suppliers run dry');
   assert.equal((await liquidity(liquidationEdge.sellIn)).stock, 0, 'liquidation cannot reopen exhausted stock');
+
+  // Zero-stock, unheld goods cannot crowd stocked routes out of the top-eight board. Exhausting
+  // eight more goods leaves only ice supplied; a cargo-less actor must still see that live route.
+  for (const exhausted of GOODS.slice(0, 8)) {
+    const live = await goodsLiquidityBoard(pool, block + 1);
+    for (const district of DISTRICTS) {
+      const stock = live.districts[district.id][exhausted.id].stock;
+      if (stock > 0) await consumeGoodsLiquidity(pool, exhausted.id, district.id, 'buy', stock, block + 1);
+    }
+  }
+  const procurementActor = await create('Remaining Freight Buyer');
+  const procurementBoard = await ok('GET', '/v1/opportunities', procurementActor.token);
+  assert(procurementBoard.niches.arbitrage.length > 0, 'live supply still produces a procurement route');
+  assert(procurementBoard.niches.arbitrage.every((edge) => edge.stock > 0),
+    'unheld exhausted goods cannot occupy procurement display slots');
+  assert(procurementBoard.niches.arbitrage.some((edge) => edge.good === 'ice'),
+    'the final supplied good remains visible after nine other goods exhaust');
+
+  // The public opportunity route loads the same turf ownership used by settlement. Holding every
+  // district makes both sides of every published edge exercise that modifier, independent of which
+  // deterministic district wins today's cheapest/richest search.
+  const turfOwner = await create('Freight Turf Owner');
+  await pool.query("INSERT INTO gangs (id,name,tag,treasury) VALUES ('goods-quote-gang','Freight Union','FQU',0)");
+  await pool.query("INSERT INTO gang_members (gang_id,character_id,role) VALUES ('goods-quote-gang',$1,'boss')", [turfOwner.id]);
+  await pool.query("UPDATE districts SET npc_holder=NULL, holder_gang='goods-quote-gang'");
+  await pool.query("UPDATE characters SET path='gun' WHERE id=$1", [turfOwner.id]);
+  const held = DISTRICTS.map((district) => district.id);
+  const turfBoard = await ok('GET', '/v1/opportunities', turfOwner.token);
+  for (const edge of turfBoard.niches.arbitrage) {
+    assert.equal(edge.buyPrice, goodsBuyQuote(edge.good, edge.buyIn, 1, { held }, edge.priceBlock).unit,
+      'player-facing opportunity procurement includes the actor turf discount');
+    assert.equal(edge.sellPrice,
+      goodsSellQuote(edge.good, edge.sellIn, 1, { held }, { path: 'gun' }, edge.priceBlock).unit,
+      'player-facing opportunity liquidation includes turf and path modifiers');
+  }
+  assert(turfBoard.niches.arbitrage.some((edge) => edge.buyPrice !==
+    goodsBuyQuote(edge.good, edge.buyIn, 1, {}, edge.priceBlock).unit),
+  'the fixture proves the actor turf discount changes the published opportunity');
   console.log('goods-market: finite shared freight stock/demand, atomic failures, concurrent fills, durable reads, block refresh and exhausted-supply liquidation passed');
 } finally {
   Date.now = realNow;

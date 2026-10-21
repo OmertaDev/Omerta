@@ -1942,6 +1942,7 @@ export async function buildServer() {
       energyRegenPerMin: PACING.ENERGY_REGEN_PER_MIN, nerveRegenPerMin: PACING.NERVE_REGEN_PER_MIN,
       trainEnergy: PACING.TRAIN_ENERGY,
       trainCooldownSeconds: Math.round(PACING.TRAIN_CD_MS / 1000),
+      streetActionCooldownSeconds: Math.round(PACING.STREET_ACTION_CD_MS / 1000),
       missionCooldownSeconds: Math.round(PACING.MISSION_CD_MS / 1000),
       // respect(L) = levelDivisor × (L−1)² — published so the client can draw a progress bar
       respectFormula: 'levelDivisor * (level - 1)^2',
@@ -2767,8 +2768,16 @@ export async function buildServer() {
   app.post('/v1/contracts/:targetId/:kind/cancel', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => S.cancelBounty(ch, req.params.targetId, req.params.kind, client, h)));
   app.get('/v1/opportunities', { preHandler: auth }, async (req) => {
-    const ch = (await pool.query('SELECT id, loc FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0] || null;
-    return opportunityBoard(pool, ch);
+    // Preserve the pre-character board used by newly authenticated agents; there are no actor
+    // modifiers to load until a living street exists.
+    const live = await pool.query('SELECT 1 FROM characters WHERE account_id=$1 AND alive', [req.user.sub]);
+    if (!live.rowCount) return opportunityBoard(pool, null, {});
+    // Capture actor modifiers with the same accrued character view used by settlement, then release
+    // the character connection before aggregating the wider economy boards.
+    const observed = await G.readCharacter(pool, req.user.sub, (ch, client, h) => ({
+      opportunityContext: { ch, owned: h.owned },
+    }));
+    return opportunityBoard(pool, observed.opportunityContext.ch, observed.opportunityContext.owned);
   });
   // One cadence-efficient observation for autonomous players: compact state + coach + live economy +
   // executable method/path/body actions. readCharacter supplies the same lazy-accrued truth as /v1/me.

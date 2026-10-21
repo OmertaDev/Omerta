@@ -10,9 +10,10 @@ import { planCommittedCargo } from './courierjobs.js';
 import { chooseStorefrontPurchase } from './storefrontfulfillment.js';
 import { depotState, depotPilotEnabled, DEPOT } from './depot.js';
 import { deliveryBoard, deliveryIntakeEnabled, DELIVERY } from './delivery.js';
-import { BLACK_MARKET, BUSINESSES, CONSTANTS, CRIMES, M3, PACING, drugOf, goodPriceOf, kitchenOf, levelOf, jailed, safeHoused } from './rules.js';
+import { BLACK_MARKET, BUSINESSES, CONSTANTS, CRIMES, M3, PACING, drugOf, goodPriceOf, kitchenOf, levelOf, jailed, safeHoused, coolLeft, priceBlock } from './rules.js';
 import { view } from './game.js';
 import { opportunityBoard } from './opportunities.js';
+import { goodsBuyQuote, goodsSellQuote } from './goodsquote.js';
 import { chainConfig } from './chain.js';
 import { businessesOf, upkeepPerHr } from './business.js';
 import { territoryOf } from './territory.js';
@@ -109,12 +110,15 @@ function crimePlan(ch, owned) {
   // remains a server-side roll; the descriptor publishes a range, never promises an outcome.
   const best = eligible.sort((a, b) =>
     (((b.cash[0] + b.cash[1]) / 2) * b.base) - (((a.cash[0] + a.cash[1]) / 2) * a.base))[0];
-  if (best) return crimeDescriptor(best, { executable: true });
+  const streetBlocked = coolLeft(ch.street_action_at) > 0
+    ? [{ code: 'street_cooldown', availableAt: new Date(ch.street_action_at).toISOString() }] : [];
+  if (best) return crimeDescriptor(best, { executable: !streetBlocked.length,
+    ...(streetBlocked.length ? { blockedBy: streetBlocked } : {}) });
   const earliest = unlocked.sort((a, b) => a.nerve - b.nerve)[0];
   const regenPerMinute = PACING.NERVE_REGEN_PER_MIN * ((owned.held || []).includes('cathedral') ? 2 : 1);
   const waitMs = Math.ceil(Math.max(0, earliest.nerve - Number(ch.nerve)) / regenPerMinute * 60000);
   return crimeDescriptor(earliest, { executable: false,
-    blockedBy: [{ code: 'nerve', current: Number(ch.nerve), required: earliest.nerve,
+    blockedBy: [...streetBlocked, { code: 'nerve', current: Number(ch.nerve), required: earliest.nerve,
       availableAt: new Date(Date.now() + waitMs).toISOString() }] });
 }
 
@@ -135,16 +139,6 @@ function marketActions(ch, owned, opportunities) {
     });
 }
 
-function buyCost(unit, qty) {
-  const subtotal = unit * qty;
-  return subtotal + Math.ceil(subtotal * 0.01) * 2;
-}
-
-function sellNet(unit, qty) {
-  const gross = unit * qty;
-  return gross - Math.ceil(gross * 0.01) * 2;
-}
-
 function arbitragePlans(ch, sheet, owned, niches) {
   if (jailed(ch)) return { plans: [], actions: [] };
   const usedCargo = Object.values(owned.cargo || {}).reduce((sum, qty) => sum + Number(qty || 0), 0);
@@ -152,19 +146,21 @@ function arbitragePlans(ch, sheet, owned, niches) {
   const plans = [];
   const actions = [];
   for (const edge of niches || []) {
+    const block = Number.isSafeInteger(Number(edge.priceBlock)) ? Number(edge.priceBlock) : priceBlock();
     const held = Math.min(Number(owned.cargo?.[edge.good] || 0), edge.buying);
     const id = `arbitrage:${edge.good}:${edge.buyIn}:${edge.sellIn}`;
     if (held > 0) {
       const atSeller = ch.loc === edge.sellIn;
       const travel = atSeller ? 0 : CONSTANTS.TRAVEL_COST;
-      const proceeds = sellNet(edge.sellPrice, held);
+      const sell = goodsSellQuote(edge.good, edge.sellIn, held, owned, ch, block);
+      const proceeds = sell.net;
       const estimate = valuation({ cash: proceeds - travel, inventory: -held * goodPriceOf(edge.good, ch.loc), confidence: 0.75,
         basis: 'Expected liquidation proceeds after the 2% sell take and travel, less current district value of held cargo; acquisition cost is already sunk and unavailable.' });
       const nextActionId = `${id}:${atSeller ? 'sell' : 'travel-sell'}`;
       plans.push({
         id, kind: 'arbitrage', label: `${edge.name}: ${edge.buyIn} to ${edge.sellIn}`,
         ...estimate, quantity: held, buyIn: edge.buyIn, buyPrice: edge.buyPrice,
-        sellIn: edge.sellIn, sellPrice: edge.sellPrice,
+        sellIn: edge.sellIn, sellPrice: sell.unit,
         status: atSeller ? 'sell' : 'travel_to_sell', nextActionId, refreshAfterStep: true,
         route: [
           { kind: 'travel', district: edge.buyIn }, { kind: 'buy', good: edge.good, quantity: held },
@@ -187,21 +183,24 @@ function arbitragePlans(ch, sheet, owned, niches) {
     const preBuyTravel = ch.loc === edge.buyIn ? 0 : CONSTANTS.TRAVEL_COST;
     const sellTravel = edge.buyIn === edge.sellIn ? 0 : CONSTANTS.TRAVEL_COST;
     const spendable = Number(ch.cash) - POLICY.cashReserve - preBuyTravel - sellTravel;
-    let quantity = Math.min(capacity, edge.stock, edge.buying, Math.floor(spendable / Math.max(1, edge.buyPrice * 1.02)));
-    while (quantity > 0 && buyCost(edge.buyPrice, quantity) > spendable) quantity--;
+    const buyUnit = goodsBuyQuote(edge.good, edge.buyIn, 1, owned, block).unit;
+    let quantity = Math.min(capacity, edge.stock, edge.buying, Math.floor(spendable / Math.max(1, buyUnit * 1.02)));
+    while (quantity > 0 && goodsBuyQuote(edge.good, edge.buyIn, quantity, owned, block).total > spendable) quantity--;
     if (quantity <= 0) continue;
-    const acquisition = buyCost(edge.buyPrice, quantity);
-    const proceeds = sellNet(edge.sellPrice, quantity);
+    const buy = goodsBuyQuote(edge.good, edge.buyIn, quantity, owned, block);
+    const sell = goodsSellQuote(edge.good, edge.sellIn, quantity, owned, ch, block);
+    const acquisition = buy.total;
+    const proceeds = sell.net;
     const profit = proceeds - acquisition - preBuyTravel - sellTravel;
     if (profit < POLICY.minArbitrageProfit) continue;
     const estimate = valuation({ cash: profit, confidence: 0.8,
-      basis: 'Deterministic district prices after 2% buy/sell takes and required travel; excludes personal turf, path, event, and season modifiers.' });
+      basis: 'Exact current-block settlement quotes after both 2% takes and required travel, including personal turf, path, city-event, and season modifiers.' });
     const atSupplier = ch.loc === edge.buyIn;
     const nextActionId = `${id}:${atSupplier ? 'buy' : 'travel-buy'}`;
     plans.push({
       id, kind: 'arbitrage', label: `${edge.name}: ${edge.buyIn} to ${edge.sellIn}`,
-      ...estimate, quantity, buyIn: edge.buyIn, buyPrice: edge.buyPrice,
-      sellIn: edge.sellIn, sellPrice: edge.sellPrice,
+      ...estimate, quantity, buyIn: edge.buyIn, buyPrice: buy.unit,
+      sellIn: edge.sellIn, sellPrice: sell.unit,
       status: atSupplier ? 'buy' : 'travel_to_buy', nextActionId, refreshAfterStep: true,
       route: [
         { kind: 'travel', district: edge.buyIn }, { kind: 'buy', good: edge.good, quantity },
@@ -555,7 +554,7 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   // GET Agent Turn may receive a pool, but locked action authorization receives one transaction
   // client. Keep the shared implementation valid for the stricter context: one loader at a time on
   // the same authoritative snapshot, with no out-of-band pool connections.
-  const opportunities = await opportunityBoard(db, ch);
+  const opportunities = await opportunityBoard(db, ch, owned);
   const convoyBoardState = await convoyBoard(db, ch.id);
   const loanBoardState = await loanBoard(db, ch);
   const crewBoardState = await crewBoard(ch, db);
@@ -669,7 +668,7 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
   const blockedActions = [...kitchen.blockedActions, ...convoy.blockedActions, ...loans.blockedActions,
     ...organization.blockedActions, crime]
     .filter((action) => action && !action.executable);
-  const futureClocks = [ch.jail_until, ch.hosp_until, ch.shoot_cd_until, ch.train_at, ch.mission_at]
+  const futureClocks = [ch.jail_until, ch.hosp_until, ch.shoot_cd_until, ch.train_at, ch.mission_at, ch.street_action_at]
     .filter((v) => v && new Date(v).getTime() > Date.now())
     .map((v) => new Date(v).getTime());
   const blockedClocks = blockedActions.flatMap((action) => action.blockedBy || [])

@@ -112,6 +112,11 @@ CREATE TABLE IF NOT EXISTS account_persistent (
   -- payout failure never mis-advances the track (the stake-pool "pending, no forfeit" precedent).
   pass_owed NUMERIC NOT NULL DEFAULT 0
 );
+-- CHECK-IN LINEAGE GATE: the account survives death, so the once-per-day claim and its streak
+-- must live here too. Character columns remain as a display/backward-compatibility mirror.
+-- Kept as ALTERs so the gate lands on existing databases where CREATE TABLE IF NOT EXISTS is a no-op.
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS checkin_day INT NOT NULL DEFAULT 0;
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS checkin_streak INT NOT NULL DEFAULT 0;
 CREATE TABLE IF NOT EXISTS characters (
   id TEXT PRIMARY KEY,
   account_id TEXT NOT NULL,
@@ -219,6 +224,8 @@ CREATE TABLE IF NOT EXISTS characters (
   shank_at TIMESTAMPTZ,                            -- THE PEN: per-attacker shank cooldown (SIGN-OFF Tier 3) — direct-SQL, outside persistCharacter
   train_at TIMESTAMPTZ,                            -- PACING: per-session gym cooldown — direct-SQL, outside persistCharacter
   mission_at TIMESTAMPTZ,                          -- PACING: cooldown between mission claims (stops the ladder cascading) — direct-SQL
+  street_action_at TIMESTAMPTZ,                    -- PACING: shared crime/deal cooldown — direct-SQL mutex, persisted across requests
+  crew_sale_credit_ms BIGINT NOT NULL DEFAULT 0,   -- fractional worker-ms carried between lazy accrual windows
   welsher BOOLEAN NOT NULL DEFAULT false,          -- LOAN SHARKING: defaulted on a debt — can't borrow again (dies with the street)
   wanted_until TIMESTAMPTZ,                         -- LOAN step 4: WANTED — a defaulter under active pursuit (omertà stripped + NPC hunters + a pool bounty) until it lapses or they square up
   envelope_until TIMESTAMPTZ,                       -- THE ENVELOPE: standing graft to the cops — investigation meter builds slower while current (a $OMR sink)
@@ -619,6 +626,24 @@ CREATE TABLE IF NOT EXISTS daily_progress (
   counters TEXT NOT NULL DEFAULT '{}',
   claimed TEXT NOT NULL DEFAULT '[]',
   PRIMARY KEY (character_id, day)
+);
+-- Cash/token daily rewards survive a character only as ledgered value, so their replay latch must
+-- survive too. `scope` separates boards and `claim_id` preserves each board's existing semantics.
+CREATE TABLE IF NOT EXISTS account_daily_claims (
+  account_id TEXT NOT NULL,
+  day INT NOT NULL,
+  scope TEXT NOT NULL,
+  claim_id TEXT NOT NULL,
+  slot INT,
+  claimed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (account_id, day, scope, claim_id)
+);
+CREATE INDEX IF NOT EXISTS ix_account_daily_claims_day ON account_daily_claims(day);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_account_daily_claim_slot
+  ON account_daily_claims(account_id, day, scope, slot);
+CREATE TABLE IF NOT EXISTS economy_migrations (
+  id TEXT PRIMARY KEY,
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE TABLE IF NOT EXISTS referrals (
   recruit_account TEXT PRIMARY KEY,

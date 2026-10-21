@@ -12,6 +12,7 @@ import { SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS, CONSTANTS, DISTRICTS, HUSTL
 import { socialRewardsLive } from '../src/growth.js';
 import { accrue } from '../src/accrual.js';
 import { sweepGrandReferrals, gainRespect } from '../src/game.js';
+import { GOODS_MARKET } from '../src/goodsmarket.js';
 
 // The City Standing / recruiters boards are CACHED in production (standing.js — they were the most
 // expensive polled reads in the game). This suite reads boards it has just written, so it pins the
@@ -26,7 +27,8 @@ const call = async (method, url, { token, body, headers } = {}) => {
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (token) => (await call('GET', '/v1/me', { token })).body.character;
-const seedCh = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
+// Statistical samples model separate ready windows; pacing has its own route regressions.
+const seedCh = (id, cols) => pool.query(`UPDATE characters SET street_action_at=NULL, ${cols} WHERE id='${id}'`);
 const mk = async (name, referralCode) => {
   const { body: { token } } = await call('POST', '/v1/auth/guest');
   await call('POST', '/v1/character', { token, body: { name, referralCode } });
@@ -983,13 +985,13 @@ assert.equal(await coachOf(), 'The corner has an envelope for you', 'an open cor
 // board has to know about, or the coach spends the rest of the day leading at work the server will
 // not pay: the CORNER.MAX_DAY allowance, and one envelope per KIND of work. A rung that never
 // clears must never sit above rungs that do — the tail's own rule, and the corner sits at its head.
-for (let i = 0; i < CORNER.MAX_DAY; i++) {                       // slots 90+ map to no real task, so
-  await pool.query(`INSERT INTO corner_jobs (character_id, day, district, slot, baseline, claimed)   -- only the ALLOWANCE can be
-    VALUES ('${rook.id}', ${cday}, 'canal', ${90 + i}, '{}', true)`);                              // what refuses the claim
-}
+const rookAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [rook.id])).rows[0].account_id;
+for (let i = 0; i < CORNER.MAX_DAY; i++)
+  await pool.query(`INSERT INTO account_daily_claims (account_id, day, scope, claim_id)
+    VALUES ($1,$2,'corner',$3)`, [rookAccount, cday, `cap-${i}`]);
 assert.equal(await coachOf(), 'The trainers have work for you',
   'the day\'s allowance is spent, so the open envelope is dead weight — the corner goes quiet and the next LIVE rung leads');
-await pool.query(`DELETE FROM corner_jobs WHERE character_id='${rook.id}' AND day=${cday} AND district='canal'`);
+await pool.query("DELETE FROM account_daily_claims WHERE account_id=$1 AND day=$2 AND scope='corner'", [rookAccount, cday]);
 assert.equal(await coachOf(), 'The corner has an envelope for you', 'allowance back, envelope live again');
 // …and the OTHER gate: one envelope per KIND of work per day. Find a pair across the entire daily
 // draw: pigeonhole guarantees a repeated kind somewhere, not a twin for the specific docks slot 0.
@@ -1817,9 +1819,16 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
     await seedCh(hus.id, 'cash=100000');
     const g0 = (await pool.query(`SELECT counters FROM daily_progress WHERE character_id='${hus.id}' AND day=$1`, [dayOf()])).rows[0];
     const before = g0 ? Number(JSON.parse(g0.counters).goods || 0) : 0;
-    assert.equal((await call('POST', '/v1/goods/buy', { token: hus.token, body: { goodId: 'gin', qty: 1 } })).code, 200, 'bought a unit');
+    const freight = await call('POST', '/v1/goods/buy', { token: hus.token,
+      body: { goodId: 'gin', qty: GOODS_MARKET.DAILY_LOT_UNITS } });
+    assert.equal(freight.code, 200, 'bought a freight lot');
     const g1 = (await pool.query(`SELECT counters FROM daily_progress WHERE character_id='${hus.id}' AND day=$1`, [dayOf()])).rows[0];
-    assert.equal(Number(JSON.parse(g1.counters).goods || 0), before + 1, 'a goods BUY counts toward the daily goods contract (the promised "buy or sell")');
+    assert.equal(Number(JSON.parse(g1.counters).goods || 0),
+      before + freight.body.qty / GOODS_MARKET.DAILY_LOT_UNITS,
+      'daily freight progress follows settled quantity rather than request count');
+    assert.equal((await call('POST', '/v1/goods/sell', { token: hus.token,
+      body: { goodId: 'gin', qty: freight.body.qty } })).code, 200,
+      'the fixture clears its trunk before the hustle draw');
   }
   // (2) THE HUSTLE — the daily three-stop chain: deterministic, location-gated, legwork-verified
   const b0 = (await call('GET', '/v1/hustle', { token: hus.token })).body;
@@ -1849,7 +1858,8 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
   const elsewhere = DISTRICTS.map((d) => d.id).find((d) => d !== b1.district);
   await seedCh(hus.id, `loc='${elsewhere}'`);
   if (/job/.test(b1.legwork)) { for (let i = 0; i < 20; i++) { await seedCh(hus.id, 'nerve=100'); if ((await call('POST', '/v1/crimes/pick', { token: hus.token })).body.success) break; } }
-  else if (/goods/.test(b1.legwork)) await call('POST', '/v1/goods/buy', { token: hus.token, body: { goodId: 'gin', qty: 1 } });
+  else if (/goods/.test(b1.legwork)) await call('POST', '/v1/goods/buy', { token: hus.token,
+    body: { goodId: 'gin', qty: GOODS_MARKET.DAILY_LOT_UNITS } });
   else { await pool.query(`UPDATE characters SET train_at=NULL WHERE id='${hus.id}'`); await call('POST', '/v1/train/muscle', { token: hus.token }); }
   assert.equal((await call('POST', '/v1/hustle/advance', { token: hus.token })).body.error, 'district',
     'the work counts, but the CHECK-IN is still location-gated — you have to bring it to the stop');
@@ -1940,10 +1950,10 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
   assert.equal(r.body.claimedToday, 1, 'one claimed today');
   // MAX_DAY is the HARD faucet bound — seed the rest of the allowance as claimed rows elsewhere,
   // then a further claim (work done and all) is refused 'capped'
-  const pad = DISTRICTS.map((d) => d.id).filter((d) => d !== pick.district);
+  const cwAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [cw.id])).rows[0].account_id;
   for (let i = 0; i < CORNER.MAX_DAY - 1; i++)
-    await pool.query(`INSERT INTO corner_jobs (character_id, day, district, slot, baseline, claimed)
-      VALUES ($1,$2,$3,$4,'{}',true)`, [cw.id, day, pad[i % pad.length], 90 + i]);
+    await pool.query(`INSERT INTO account_daily_claims (account_id, day, scope, claim_id)
+      VALUES ($1,$2,'corner',$3)`, [cwAccount, day, `cap-${i}`]);
   const slot2 = [0, 1, 2].find((s) => s !== pick.slot);
   await call('POST', `/v1/corner/${slot2}/accept`, { token: cw.token });
   { // hand the second job its delta so ONLY the cap can refuse it
@@ -2031,6 +2041,9 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
       }
       // roll the clock + clear the day's claims so the next step is a genuinely different day
       await pool.query('DELETE FROM corner_jobs WHERE character_id=$1', [ch.id]);
+      await pool.query(`DELETE FROM account_daily_claims
+        WHERE account_id=(SELECT account_id FROM characters WHERE id=$1) AND day=$2 AND scope='corner'`,
+      [ch.id, day]);
       await pool.query('UPDATE corner_chains SET last_day = last_day - 1 WHERE character_id=$1', [ch.id]);
     }
   }

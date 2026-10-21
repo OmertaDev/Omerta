@@ -255,7 +255,7 @@ export async function fillOrder(ch, listingId, qty, client, h, { commitmentId = 
   const previousTake = commitment ? Math.ceil(completed * Number(l.price) * Number(commitment.take_bps) / 10000) : 0;
   const taxOverride = commitment ? Math.floor((previousTake + takeOverride) / 2) - Math.floor(previousTake / 2) : null;
   const { net, take } = await paySeller(client, h, ch.id, gross, { reason: 'market:fill', inMemoryCh: ch, takeOverride, taxOverride });
-  await bumpMastery(client, h, ch, 'commerce', 'fill');
+  await bumpMastery(client, h, ch, 'commerce', 'fill', { units: n });
   // absolute writes (the pg-mem INT quirk); the row stays live at qty=0 until the buyer claims
   await client.query('UPDATE market_listings SET qty=$2, filled_qty=$3 WHERE id=$1',
     [listingId, Number(l.qty) - n, Number(l.filled_qty) + n]);

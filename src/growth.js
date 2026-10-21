@@ -8,6 +8,8 @@ import {
   hash01, hitmanRankOf, honorTierOf, jailed, IDENTITY } from './rules.js';
 import { verifySocial, verifyPostUp, socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
 import { spendOmr } from './vanity.js';
+import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
+  takeBoundedAccountDailyClaim } from './accountdaily.js';
 
 
 // ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──
@@ -219,14 +221,17 @@ export async function getDaily(pool, characterId, day = dayOf()) {
   const jobs = dailyJobsOf(day);
   const row = (await pool.query('SELECT * FROM daily_progress WHERE character_id=$1 AND day=$2', [characterId, day])).rows[0];
   const counters = row ? JSON.parse(row.counters) : {};
-  const claimed = row ? JSON.parse(row.claimed) : [];
+  const localClaimed = row ? JSON.parse(row.claimed) : [];
+  const accountId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [characterId])).rows[0]?.account_id;
+  const accountRows = accountId ? await accountDailyClaimRows(pool, accountId, day, 'daily') : [];
+  const claimed = resolvedBoundedClaimIds(jobs.map((job) => job.id), localClaimed, accountRows);
   // A drawn contract this player structurally cannot finish says so on its own card, from the SAME
   // helper the coach's count subtracts by — so the board and the coach can never disagree about
   // which of the three are live (the extortFront one-core lesson). One extra query on a board read,
   // not on loadOwned's hot path.
   const gangId = (await pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [characterId])).rows[0]?.gang_id || null;
   return { day, jobs: jobs.map((j) => ({ id: j.id, name: j.name, kind: j.k, goal: j.n,
-    progress: Math.min(counters[j.k] || 0, j.n), claimed: claimed.includes(j.id),
+    progress: Math.min(counters[j.k] || 0, j.n), claimed: claimed.has(j.id),
     ...dailyGuidanceFor(j), blocked: dailyBlockedFor(j, { gangId }) })) };
 }
 
@@ -236,11 +241,26 @@ export async function claimDaily(ch, jobId, client, h) {
   if (!job) throw new GameError('bad_job', "That contract isn't on today's board.");
   const row = (await client.query('SELECT * FROM daily_progress WHERE character_id=$1 AND day=$2 FOR UPDATE', [ch.id, day])).rows[0];
   const counters = row ? JSON.parse(row.counters) : {};
-  const claimed = row ? JSON.parse(row.claimed) : [];
-  if (claimed.includes(jobId)) throw new GameError('claimed', 'Already paid out.');
+  const localClaimed = row ? JSON.parse(row.claimed) : [];
+  const boardIds = dailyJobsOf(day).map((daily) => daily.id);
+  // Bridge any character-only claims left by an older process before evaluating the account cap.
+  // This keeps a mixed-version request from paying a fourth base reward after death even when the
+  // one-time boot repair ran before the old process wrote its final claim.
+  for (const paidId of localClaimed)
+    await takeBoundedAccountDailyClaim(client, h.accountId, day, 'daily', paidId, boardIds.length);
+  const accountRows = await accountDailyClaimRows(client, h.accountId, day, 'daily');
+  let claimed = resolvedBoundedClaimIds(boardIds, localClaimed, accountRows);
+  if (claimed.has(jobId)) throw new GameError('claimed', 'Already paid out.');
   if ((counters[job.k] || 0) < job.n) throw new GameError('unfinished', "Contract's not finished yet.");
-  claimed.push(jobId);
-  const all = dailyJobsOf(day).every((j) => claimed.includes(j.id));
+  if (!await takeBoundedAccountDailyClaim(client, h.accountId, day, 'daily', jobId, dailyJobsOf(day).length))
+    throw new GameError('claimed', 'Already paid out.');
+  const rowsAfter = await accountDailyClaimRows(client, h.accountId, day, 'daily');
+  claimed = resolvedBoundedClaimIds(boardIds, localClaimed, rowsAfter);
+  // The full-envelope reward is its own account/day right. Occupied slots, rather than current
+  // identifiers, define completion across a same-day board deployment; the latch makes the bonus
+  // exactly once even if multiple requests observe the third slot together.
+  const all = rowsAfter.length >= dailyJobsOf(day).length
+    && await takeAccountDailyClaim(client, h.accountId, day, 'daily-envelope', 'all');
   const lvl = levelOf(Number(ch.respect));
   const payout = 200 * lvl + (all ? 500 * lvl : 0);
   const rep = 5 * lvl + (all ? 15 * lvl : 0);
@@ -257,8 +277,12 @@ export async function claimDaily(ch, jobId, client, h) {
       await h.ledger(client, { accountId: h.accountId, currency: 'omr', amount: omrBonus, reason: 'daily:all' });
     }
   }
-  if (row) await client.query('UPDATE daily_progress SET claimed=$3 WHERE character_id=$1 AND day=$2', [ch.id, day, JSON.stringify(claimed)]);
-  else await client.query('INSERT INTO daily_progress (character_id, day, counters, claimed) VALUES ($1,$2,$3,$4)', [ch.id, day, '{}', JSON.stringify(claimed)]);
+  // Store only claims this character actually collected. Rotated account slots are mapped to
+  // current cards for presentation, but persisting those synthetic ids would count one slot twice
+  // when the next request unions local history with the canonical account rows.
+  const storedClaims = [...new Set([...localClaimed, jobId])];
+  if (row) await client.query('UPDATE daily_progress SET claimed=$3 WHERE character_id=$1 AND day=$2', [ch.id, day, JSON.stringify(storedClaims)]);
+  else await client.query('INSERT INTO daily_progress (character_id, day, counters, claimed) VALUES ($1,$2,$3,$4)', [ch.id, day, '{}', JSON.stringify(storedClaims)]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: payout, reason: `daily:${jobId}` });
   // FOUND BY PLAYING: this reply carried payout/rep/all/omrBonus and the line read "done." — on the
   // most-repeated reward button in the game, over $60,200 and 1,505 respect. The half that matters
@@ -274,7 +298,7 @@ export async function claimDaily(ch, jobId, client, h) {
   //   `omrBonus` rides as what LANDED, never the constant: a dry fund pays nothing and a line
   // claiming 0.5 would be a wrong number where a silent one would do.
   const board = dailyJobsOf(day);
-  const unclaimed = board.filter((j) => !claimed.includes(j.id));
+  const unclaimed = board.filter((j) => !claimed.has(j.id));
   const outOfReach = unclaimed.some((j) => !!dailyBlockedFor(j, { gangId: h.owned.gangId }));
   return { ok: true, payout, rep, all, omrBonus,
     ...(all ? { energyRefilled: true } : {}),

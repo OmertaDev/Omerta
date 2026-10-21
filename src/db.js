@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { migrateCityHomeStorage } from './city-home-migration.js';
 import { enforceDatabaseRls } from './db-rls.js';
+import { takeAccountDailyClaim, takeBoundedAccountDailyClaim } from './accountdaily.js';
 
 // What the live driver can actually do, decided ONCE at makeDb (a driver property, not a per-call
 // one). Deliberately NOT a runtime probe: in real Postgres a failed statement aborts the ENCLOSING
@@ -568,6 +569,7 @@ export async function migrateSchemaUnderLock(
   await migrateTask5BallotV2(boot, { compatibility });
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
+  await migrateEconomyDailyClaims(boot);
   await resetStartingLevels(boot);
   await boot.query('BEGIN');
   try { await ensureDeedBuildings(boot); await boot.query('COMMIT'); }
@@ -575,6 +577,140 @@ export async function migrateSchemaUnderLock(
   const rls = await enforceDatabaseRls(boot, { compatibility });
   const stamp = await stampSchema(boot);
   return { migration, stamp, rls };
+}
+
+// One-time lineage repair for installs that upgrade after a character already claimed and died on
+// the deployment day. The old estate removed character-scoped progress before account/day latches
+// existed, but ledger/activity rows and dead character mirrors remain durable evidence. Recover the
+// paid rights before serving requests so an existing heir cannot replay cash, energy, or $OMR.
+export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now() / 86400000)) {
+  await q.query('BEGIN');
+  try {
+    const migrationId = 'account-daily-lineage-2026-10-21';
+    if ((await q.query('SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount) {
+      await q.query('COMMIT');
+      return { applied: false };
+    }
+
+    // Dead characters retain their check-in mirror. Carry the newest lineage state forward even if
+    // death happened before this build introduced account_persistent.checkin_day/checkin_streak.
+    const mirrors = (await q.query(
+      'SELECT account_id, checkin_day, streak FROM characters WHERE checkin_day > 0')).rows;
+    const newest = new Map();
+    for (const row of mirrors) {
+      const prior = newest.get(row.account_id);
+      const day = Number(row.checkin_day) || 0, streak = Number(row.streak) || 0;
+      if (!prior || day > prior.day || (day === prior.day && streak > prior.streak))
+        newest.set(row.account_id, { day, streak });
+    }
+    for (const [accountId, state] of newest) await q.query(
+      `UPDATE account_persistent SET
+         checkin_streak=CASE WHEN checkin_day<$2 THEN $3 WHEN checkin_day=$2 THEN GREATEST(checkin_streak,$3) ELSE checkin_streak END,
+         checkin_day=GREATEST(checkin_day,$2)
+       WHERE account_id=$1`, [accountId, state.day, state.streak]);
+
+    // Ledger rows reconstruct every historical check-in day. Distinct account/day count repairs the
+    // lifetime referral gate without preserving any old duplicate-claim inflation.
+    const checkins = (await q.query(
+      `SELECT t.at, c.account_id FROM transactions t JOIN characters c ON c.id=t.character_id
+        WHERE t.reason='checkin' AND t.currency='cash' AND t.amount>0`)).rows;
+    const checkinDays = new Map();
+    for (const row of checkins) {
+      const day = Math.floor(new Date(row.at).getTime() / 86400000);
+      if (!Number.isFinite(day)) continue;
+      const days = checkinDays.get(row.account_id) || new Set();
+      days.add(day); checkinDays.set(row.account_id, days);
+    }
+    for (const [accountId, days] of checkinDays) {
+      for (const day of days) await takeAccountDailyClaim(q, accountId, day, 'checkin', 'claim');
+      await q.query(
+        'UPDATE account_persistent SET checkins_lifetime=GREATEST(checkins_lifetime,$2) WHERE account_id=$1',
+        [accountId, days.size]);
+    }
+
+    const from = new Date(today * 86400000), until = new Date((today + 1) * 86400000);
+    const paid = (await q.query(
+      `SELECT t.id, t.reason, c.account_id FROM transactions t JOIN characters c ON c.id=t.character_id
+        WHERE t.at >= $1 AND t.at < $2 AND t.amount>0 AND t.currency='cash'
+          AND (t.reason LIKE 'daily:%' OR t.reason='corner:job' OR t.reason='hustle:payoff')
+        ORDER BY t.at, t.id`,
+      [from, until])).rows;
+    // Restore semantic Daily ids first, then use anonymous slots for excess rows with the same id.
+    // A pre-latch death replay can leave A,A,B in the ledger. Collapsing both A rows onto one PK
+    // would record only two paid rights and let the heir collect C as a fourth base reward. Exact-
+    // first preserves the board identity when possible; each remaining positive ledger row still
+    // consumes one of the three durable slots, up to the hard cap.
+    const dailyExactByAccount = new Map(), dailyDuplicates = [];
+    for (const row of paid) {
+      if (!row.reason.startsWith('daily:')) continue;
+      const claimId = row.reason.slice('daily:'.length);
+      if (claimId === 'all') continue;
+      const exact = dailyExactByAccount.get(row.account_id) || new Map();
+      if (exact.has(claimId)) dailyDuplicates.push(row);
+      else exact.set(claimId, row);
+      dailyExactByAccount.set(row.account_id, exact);
+    }
+    for (const [accountId, claims] of dailyExactByAccount)
+      for (const claimId of claims.keys())
+        await takeBoundedAccountDailyClaim(q, accountId, today, 'daily', claimId, 3);
+    for (const row of dailyDuplicates)
+      await takeBoundedAccountDailyClaim(q, row.account_id, today, 'daily', `legacy:${row.id}`, 3);
+
+    // Successful corner claims also leave telemetry with the real work kind. Restore those exact
+    // identities first so an heir cannot repeat the same kind after upgrading. Older installs that
+    // lack telemetry still receive anonymous slots below, preserving the aggregate daily ceiling.
+    const cornerKinds = new Map();
+    const cornerEvents = (await q.query(
+      `SELECT account_id, props FROM telemetry
+        WHERE at >= $1 AND at < $2 AND event='corner' AND account_id IS NOT NULL`,
+      [from, until])).rows;
+    for (const row of cornerEvents) {
+      let props;
+      try { props = JSON.parse(row.props || '{}'); } catch { props = {}; }
+      if (typeof props.kind !== 'string' || !props.kind) continue;
+      const kinds = cornerKinds.get(row.account_id) || new Set();
+      kinds.add(props.kind); cornerKinds.set(row.account_id, kinds);
+    }
+    const restoredCornerKinds = new Map();
+    for (const [accountId, kinds] of cornerKinds) {
+      const restored = new Set();
+      for (const kind of kinds) {
+        if (await takeBoundedAccountDailyClaim(q, accountId, today, 'corner', kind, 5)) restored.add(kind);
+      }
+      restoredCornerKinds.set(accountId, restored);
+    }
+    for (const row of paid) {
+      if (row.reason === 'corner:job') {
+        // Each exact telemetry kind already consumes the slot for one paid row. Use anonymous slots
+        // only for any remaining ledger evidence whose identity predates telemetry.
+        const restored = restoredCornerKinds.get(row.account_id);
+        if (restored?.size) restored.delete(restored.values().next().value);
+        else await takeBoundedAccountDailyClaim(q, row.account_id, today, 'corner', `legacy:${row.id}`, 5);
+      } else if (row.reason === 'hustle:payoff') {
+        await takeAccountDailyClaim(q, row.account_id, today, 'hustle', 'payoff');
+      }
+    }
+    // Three paid base slots imply the old board reached its full envelope. Persist that right even
+    // when the event fund was dry and therefore left no `daily:all` OMR ledger row.
+    const dailySlots = (await q.query(
+      `SELECT account_id FROM account_daily_claims WHERE day=$1 AND scope='daily'`, [today])).rows;
+    const dailyCounts = new Map();
+    for (const row of dailySlots)
+      dailyCounts.set(row.account_id, Number(dailyCounts.get(row.account_id) || 0) + 1);
+    for (const [accountId, count] of dailyCounts)
+      if (count >= 3) await takeAccountDailyClaim(q, accountId, today, 'daily-envelope', 'all');
+    const yardtales = (await q.query(
+      "SELECT account_id FROM activity_log WHERE day=$1 AND tag='yardtale' AND n>0", [today])).rows;
+    for (const row of yardtales)
+      await takeAccountDailyClaim(q, row.account_id, today, 'pen', 'talk');
+
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [migrationId]);
+    await q.query('COMMIT');
+    return { applied: true };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
 }
 
 // Owner-requested October 14 reset; the October 6 marker remains historical.
@@ -997,6 +1133,7 @@ export async function makeDb() {
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
+  await migrateEconomyDailyClaims(pool);
   await pool.query('BEGIN');
   try { await ensureDeedBuildings(pool); await pool.query('COMMIT'); }
   catch (error) { await pool.query('ROLLBACK'); throw error; }
