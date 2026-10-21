@@ -596,12 +596,15 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
     // passes. That covers a request which straddles midnight or began before the first repair's
     // snapshot but committed after it, while keeping every later restart bounded to two days.
     const checkinFrom = new Date((today - 1) * 86400000);
-    const checkins = (await q.query(
+    const checkins = alreadyApplied ? (await q.query(
       `SELECT t.at, c.account_id, c.checkin_day, c.streak
          FROM transactions t JOIN characters c ON c.id=t.character_id
         WHERE t.reason='checkin' AND t.currency='cash' AND t.amount>0
-          ${alreadyApplied ? 'AND t.at >= $1 AND t.at < $2' : ''}`,
-      alreadyApplied ? [checkinFrom, until] : [])).rows;
+          AND t.at >= $1 AND t.at < $2`,
+      [checkinFrom, until])).rows : (await q.query(
+      `SELECT t.at, c.account_id, c.checkin_day, c.streak
+         FROM transactions t JOIN characters c ON c.id=t.character_id
+        WHERE t.reason='checkin' AND t.currency='cash' AND t.amount>0`)).rows;
 
     // Dead characters retain their check-in mirror. Carry the newest lineage state forward even if
     // death happened before this build introduced account_persistent.checkin_day/checkin_streak. The
