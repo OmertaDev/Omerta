@@ -33,6 +33,7 @@ jobs:
       - run: npm ci
       - name: In-memory exploit and pacing regressions
         run: >-
+          node test/economy-hardening-source-compatibility.js &&
           node test/economy-invariant-hardening.js &&
           node test/checkin-lineage.js &&
           node test/daily-lineage.js &&

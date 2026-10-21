@@ -22,6 +22,7 @@ import { CITY_ACTIVITY_SOURCE_INVERSES, CITY_ACTIVITY_SOURCE_TRANSFER, cityActiv
   qualifyCityActivitySource } from '../../tools/rc1-city-activity-source-compatibility.js';
 import { qualifyCityActivityMarketSource } from '../../tools/rc1-city-activity-market-source-compatibility.js';
 import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';
+import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -296,12 +297,12 @@ async function rejectCurrentNpcRules() {
   const { assertNpcBoatSources } = await import('../../tools/rc1-npc-boat-journal.js');
   const { assertNpcMarketSources } = await import('../../tools/rc1-npc-market-order-journal.js');
   const files = ['src/rules.tail.js', 'src/rules.generated.js'];
-  const base = new Map(files.map(file => [file, String(blob(file, history))]));
+  const base = new Map([...files, 'src/population.js'].map(file => [file, String(blob(file, history))]));
   let refusals = 0;
   try {
     for (const file of files) {
       const current = String(blob(file, release));
-      assert.equal(canonical(originalRead(path.join(root, file))), current);
+      assert.equal(canonical(economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file))))), current);
       for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed rule source\n']) {
         fs.readFileSync = (candidate, options) => {
           const name = relative(candidate);
@@ -535,7 +536,7 @@ if (cold) {
       return { ...result, source: historical(file) };
     }
     if (file?.startsWith('tools/') && /\.[cm]?js$/.test(file)) {
-      const raw = originalRead(path.join(root, file)), selected = composedHistoricalHelperSource(file, raw);
+      const raw = economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file)))), selected = composedHistoricalHelperSource(file, raw);
       if (selected) return { ...nextLoad(url, context), source: selected };
       assert.equal(sha256(canonical(raw)), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
     }
