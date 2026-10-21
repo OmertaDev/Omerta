@@ -307,7 +307,7 @@ const t0 = Date.now();
 // memory, so anything keyed to the body is cleared when the id changes. Without this a dead hunter's heir
 // never re-attempts the gun buy and every later fire refuses `gun` (a refuter's find over step two: part of
 // "their heirs could not re-arm" was the harness never trying).
-const me = async (p) => { const r = await call('GET', '/v1/me', p.token); const c = r.body?.character; if (c) { if (p.id && c.id !== p.id) { p.st.gun = false; p.st.btk = null; p.st.mark = null; p.st.markSrc = null; } p.loc = c.loc; p.id = c.id; } return c; };
+const me = async (p) => { const r = await call('GET', '/v1/me', p.token); const c = r.body?.character; if (c) { if (p.id && c.id !== p.id) { p.st.gun = false; p.st.btk = null; p.st.mark = null; p.st.markSrc = null; p.st.offered = false; } p.loc = c.loc; p.id = c.id; } return c; };
 const goTo = async (p, d) => { if (p.loc === d) return true; const r = note(p, await call('POST', `/v1/travel/${d}`, p.token)); if (r.code === 200) p.loc = d; return r.code === 200; };
 const bestCrime = (c) => { const lvl = levelOf(Number(c.respect)); const ok = CRIMES.filter((x) => x.lvl <= lvl && x.nerve <= c.nerve); return ok.length ? ok[ok.length - 1] : null; };
 const crime = async (p, c) => { const x = bestCrime(c); if (!x) return null; return note(p, await call('POST', `/v1/crimes/${x.id}`, p.token, {})); };
@@ -320,9 +320,25 @@ const roster = async (p) => ((await call('GET', '/v1/streets', p.token)).body?.s
 const hireGuard = async (p, c) => {
   if (c.guardedBy) return;
   const guards = (await roster(p)).filter((m) => !m.npc && m.id !== p.id && m.guardPrice && !m.jailed && !m.hospitalized).sort((a, b) => a.guardPrice - b.guardPrice);
-  const g = guards[0]; if (!g || c.cash < g.guardPrice * 2) return;
-  const r = note(p, await call('POST', `/v1/bodyguard/hire/${g.id}`, p.token));
-  if (r.code === 200) { def.guardHires++; def.guardCash += Number(r.body?.price || g.guardPrice); }
+  for (const g of guards) {
+    if (c.cash < g.guardPrice * 2) continue;
+    const r = note(p, await call('POST', `/v1/bodyguard/hire/${g.id}`, p.token));
+    if (r.code === 200) { def.guardHires++; def.guardCash += Number(r.body?.price || g.guardPrice); return; }
+    // Notebook sightings are intentionally stale. A dead, hospitalized, or withdrawn guard can
+    // remain on the roster, so a buyer tries the next advertised line instead of getting pinned to
+    // the first stale card for the rest of the month.
+    if (!['no_target', 'unavailable', 'not_offering'].includes(r.body?.error)) return;
+  }
+};
+// A bodyguard listing is visible only to people who have met the seller. Model the seller doing the
+// legitimate marketing work: after listing, introduce themselves to every nearby face. Meetings are
+// mutual, so each prospective principal records the offered price without bypassing player-intel.
+const advertiseGuard = async (p) => {
+  const offered = note(p, await call('POST', '/v1/bodyguard/offer', p.token, { price: M3.BODYGUARD_MIN_PRICE }));
+  if (offered.code !== 200) return;
+  p.st.offered = true;
+  for (const face of (await roster(p)).filter((m) => m.nearby && m.id !== p.id))
+    note(p, await call('POST', `/v1/streets/${face.id}/meet`, p.token));
 };
 // SHELTER: go to ground AFTER acting in the first round of the day — a safehouse blocks collection,
 // banking and offence (the signed "shield, not bunker" rule), so the prey collects, banks, then hides
@@ -702,7 +718,7 @@ for (let day = 1; day <= DAYS; day++) {
       try {
         const prey = DEFENDED && PREY.has(p.strat);
         if (prey) { await retaliate(p, c); await hireContractor(p, c); if (p.strat === 'landlord') await family(p, c); await hireGuard(p, c); }
-        if (DEFENDED && (p.strat === 'grinder' || p.strat === 'turtle') && !p.st.offered) { const g = note(p, await call('POST', '/v1/bodyguard/offer', p.token, { price: M3.BODYGUARD_MIN_PRICE })); if (g.code === 200) p.st.offered = true; }
+        if (DEFENDED && (p.strat === 'grinder' || p.strat === 'turtle') && !p.st.offered) await advertiseGuard(p);
         await STRAT[p.strat](p, c);
         // a seat holding the gun does not go to ground — the safehouse blocks offence (the signed P1.3
         // rule), so shelter and hunt are exclusive; the turtle policy buys its own stays
