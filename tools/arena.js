@@ -43,6 +43,7 @@
 process.env.MOD_KEY = process.env.MOD_KEY || 'arena-mod-key';
 process.env.MARKET_SEED = process.env.MARKET_SEED || 'arena-harness-seed-000000000000';
 process.env.SOCIAL_VERIFY_MODE = 'off';
+process.env.INVITE_MODE = 'off';
 process.env.RATE_LIMIT = 'off';          // a real DATABASE_URL ARMS the limiter (ratelimit.js) — this is a stress run, not a throttle test
 // A real DATABASE_URL makes preflight treat this as PRODUCTION (isHardened), so JWT_SECRET must be
 // stated and the TEST_ONLY pins (SEASON_MOD/SEASON_PHASE) refuse the boot. The season twist is
@@ -71,6 +72,7 @@ import { GUNS, GOODS, BUSINESSES, RACKETS, CRIMES, DISTRICTS, EXCHANGE, LOAN, CA
 
 const DAYS = Number(process.env.ARENA_DAYS || 30);
 const ROUNDS = Number(process.env.ARENA_ROUNDS || 3);
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 assert(Number.isInteger(DAYS) && DAYS > 0 && Number.isInteger(ROUNDS) && ROUNDS > 0, `ARENA_DAYS/ARENA_ROUNDS must be positive integers (got ${DAYS}/${ROUNDS})`);
 const DEFENDED = process.env.ARENA_DEFENDED !== 'off';
 // STEP THREE — THE ADAPTIVE HUNTERS. Two knobs, both defaulting to the new posture, both reversible so
@@ -240,11 +242,17 @@ const players = [];
 let i = 0;
 for (const [strat, n] of Object.entries(CAST)) {
   for (let k = 0; k < n; k++, i++) {
-    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    const guest = await call('POST', '/v1/auth/guest', null, { birthDate: SYNTHETIC_ADULT_BIRTH_DATE });
+    assert.equal(guest.code, 200, `guest ${i} created: ${JSON.stringify(guest.body)}`);
+    const token = guest.body.token;
+    assert.equal(typeof token, 'string', `guest ${i} returned a bearer token`);
     const name = `${strat[0].toUpperCase()}${strat.slice(1)} ${k}${i}`;
-    await call('POST', '/v1/character', token, { name });
-    const me = (await call('GET', '/v1/me', token)).body.character;
-    if (!me) continue;
+    const created = await call('POST', '/v1/character', token, { name });
+    assert.equal(created.code, 200, `character ${i} created: ${JSON.stringify(created.body)}`);
+    const read = await call('GET', '/v1/me', token);
+    assert.equal(read.code, 200, `character ${i} read: ${JSON.stringify(read.body)}`);
+    const me = read.body.character;
+    assert(me, `character ${i} is readable after creation`);
     players.push({ token, id: me.id, acct: null, name, strat, k, loc: me.loc, st: {} });
   }
 }
