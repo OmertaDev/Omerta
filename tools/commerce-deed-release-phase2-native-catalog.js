@@ -824,7 +824,7 @@ const COMMERCE_DEED_PROTECTED={"src/city-home-migration.js":"0d9609c6d5fcff0aa2e
 const commerceDeedFields=['relations','columns','constraints','indexes'];
 const commerceDeedUniform=input=>{assert.equal(typeof input,'string');const lf=input.replaceAll('\r\n','\n');assert(!lf.includes('\r')&&(input===lf||input===lf.replaceAll('\n','\r\n')),'Only whole LF or uniform CRLF current source');return lf;};
 const commerceDeedUndo=(text,inverses)=>{for(const h of inverses){assert.equal(text.split(h.current).length-1,1,'Unique exact current Commerce/Deed inverse');text=text.replace(h.current,()=>h.baseline);}return text;};
-function assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entries(COMMERCE_DEED_PROTECTED))assert.equal(hash(commerceDeedUniform(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'))),pin,'Whole protected original module: '+file);}
+function assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entries(COMMERCE_DEED_PROTECTED)){const text=commerceDeedUniform(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'));assert.equal(hash(deedQuestSourceBaseline(file,text)),pin,'Whole protected original module: '+file);}}
 export function commerceCurrentDeedSources(input){
  assertCommerceDeedProtectedSources();const current=sourcePin(COMMERCE_DEED_CURRENT_SOURCE),text=commerceDeedUniform(input),old=commerceMigrationSources();assert.equal(text,current,'Only complete actual52c572 source');assert.equal(Buffer.byteLength(current),COMMERCE_DEED_CURRENT_SOURCE.bytes);assert.equal((current.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,572);
  const predecessor=commerceDeedUndo(current,COMMERCE_DEED_SCHEMA_INVERSES);assert.equal(predecessor,old.current,'Whole572 reconstructs independently pinned568');

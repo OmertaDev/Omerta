@@ -53,8 +53,11 @@ for (const file of files) {
 // Source-only adapters added after the authored gameplay revision. Their exact
 // postimages reconstruct that revision before any older frozen reader executes.
 const bindingFiles = Object.freeze([
-  'test/continuous-city-source-compatibility.js', 'test/lib/rc1-historical-source-fixture.js',
-  'tools/commerce-current-enterprise-source-compatibility.js', 'tools/deed-quest-source-transfer.js',
+  'test/commerce-release-phase2-migration-catalog.js',
+  'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
+  'test/lib/rc1-historical-source-fixture.js',
+  'tools/commerce-current-enterprise-source-compatibility.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
+  'tools/deed-quest-source-transfer.js', 'tools/enterprise-deed-release-phase2-migration-catalog.js',
   'tools/player-intel-source-compatibility.js', 'tools/rc1-company-operator-source-compatibility.js',
   'tools/rc1-deed-source-compatibility.js', 'tools/rc1-invoice-source-compatibility.js',
   'tools/rc1-world-qualification.js',
