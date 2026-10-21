@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const revision = 'eca7beb313c84a32786188a9c303a80a84ac7485';
+const revision = '49fc993ce705751d02eb6ac3e6329cce5f4e1fab';
 const predecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,

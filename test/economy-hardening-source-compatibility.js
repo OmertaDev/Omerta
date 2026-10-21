@@ -9,7 +9,7 @@ import {
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer, economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
-const expectedRevision = 'eca7beb313c84a32786188a9c303a80a84ac7485';
+const expectedRevision = '49fc993ce705751d02eb6ac3e6329cce5f4e1fab';
 const expectedPredecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
 const files = [
   'public/index.html', 'schema.sql', 'src/accrual.js', 'src/boxing.js', 'src/db.js', 'src/economy.js', 'src/explore.js', 'src/game.js',
