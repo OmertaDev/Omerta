@@ -496,6 +496,13 @@ const STRAT = {
       mark = marks[p.k % Math.min(marks.length, CAST.hunter)];
     }
     if (!mark) return;
+    // A nearby stranger is intentionally anonymous on the streets board until an introduction.
+    // The player-intel gate was added after this harness, so walking straight from that board row
+    // into a search only measures `unknown_player`. Meet the mark first, as a player must.
+    if (mark.nearby && mark.name === null) {
+      const intro = note(p, await call('POST', `/v1/streets/${mark.id}/meet`, p.token));
+      if (intro.code !== 200) return;
+    }
     const r = note(p, await call('POST', `/v1/streets/${mark.id}/search`, p.token));
     if (r.code === 200) { (p.strat === 'adaptive' ? ah : ev).search++; p.st.mark = mark.id; p.st.markSrc = src; }
   },
@@ -702,6 +709,10 @@ for (let day = 1; day <= DAYS; day++) {
         if (prey && !(p.strat === 'adaptive' && (p.st.policy === 'turtle' || p.st.policy === 'hunter'))) await shelter(p, c);
       } catch (e) { (refused[p.strat] ||= {})[`THREW:${e.message}`] = 1 + ((refused[p.strat] || {})[`THREW:${e.message}`] || 0); }
     }
+    const unknownHunterTargets = Object.values(hunterRef).reduce((n, codes) =>
+      n + (codes.unknown_player || []).reduce((sum, count) => sum + count, 0), 0);
+    assert.equal(unknownHunterTargets, 0,
+      'arena hunter reached search with an anonymous mark — introduce nearby strangers before measuring the kill economy');
     if (WARP === 'round') await warpRound();
   }
   // The hunters' pockets at each third's close: the number that separates "deterred" from "broke".
