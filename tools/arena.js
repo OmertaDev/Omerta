@@ -655,8 +655,15 @@ const STRAT = {
       p.st.lastWorth = worth;
       const tried = ADAPTIVE_POLICIES.filter((x) => bandit[x]?.n);
       let next = p.st.policy;
-      if (grnd() < EPSILON || tried.length < ADAPTIVE_POLICIES.length) next = pick(ADAPTIVE_POLICIES.filter((x) => !bandit[x]?.n).concat(tried.length === ADAPTIVE_POLICIES.length ? ADAPTIVE_POLICIES : []));
-      else next = tried.sort((a, b) => bandit[b].sum / bandit[b].n - bandit[a].sum / bandit[a].n)[0];
+      // A search takes a full game day before the shot is ready. Keep a seat on the hunter policy
+      // while that search is outstanding; switching at the next day boundary used to cancel every
+      // exploratory search just as it matured, so the bandit measured search fees but never the
+      // kill outcome that determines the policy's return.
+      const huntInProgress = p.st.policy === 'hunter' && p.st.mark;
+      if (!huntInProgress) {
+        if (grnd() < EPSILON || tried.length < ADAPTIVE_POLICIES.length) next = pick(ADAPTIVE_POLICIES.filter((x) => !bandit[x]?.n).concat(tried.length === ADAPTIVE_POLICIES.length ? ADAPTIVE_POLICIES : []));
+        else next = tried.sort((a, b) => bandit[b].sum / bandit[b].n - bandit[a].sum / bandit[a].n)[0];
+      }
       if (next !== p.st.policy) {
         def.adaptiveSwitches++;
         // Dropping the gun CALLS OFF the search: the row lives until fire/call-off/estate, so a seat that
