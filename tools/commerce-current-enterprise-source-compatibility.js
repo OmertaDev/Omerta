@@ -1,3 +1,5 @@
+import {rebuildInterfaceHistoricalInput} from './classic-interface-source-compatibility.js';
+export {REBUILD_INTERFACE_SOURCE,qualifyRebuildInterfaceSource} from './classic-interface-source-compatibility.js';
 // Separate current-E text namespace. Historical C-to-E helpers and maps stay independent.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -357,6 +359,7 @@ export function qualifyClassicInterfaceSource(file, input, pin = CLASSIC_INTERFA
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function classicInterfaceHistoricalInput(file, input) {
+  input = rebuildInterfaceHistoricalInput(file, input);
   if (!CLASSIC_INTERFACE_FILES.includes(file)) return input;
   classicSourceBinding(CLASSIC_INTERFACE_OVER_F92);
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

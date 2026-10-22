@@ -4,7 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {execFileSync,spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_BINARY_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS,ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS} from './enterprise-native-inputs.js';
+import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_BINARY_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS,ENTERPRISE_NATIVE_RELEASE_INPUTS} from './enterprise-native-inputs.js';
 import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS as CURRENT_GUI_INPUTS} from './enterprise-native-continuous-city-inputs.js';
 
 const SUCCESSOR_DATA='tools/enterprise-native-continuous-city-inputs.js';
@@ -74,7 +74,7 @@ export const ENTERPRISE_NATIVE_SUCCESSOR_ADDITIONAL_FILES=Object.freeze([
  'tools/genesis-auction-preflight.js',
  'tools/market-v2-deployment-plan.js',
 ]);
-export const ENTERPRISE_NATIVE_FILES=Object.freeze([...HISTORICAL_ENTERPRISE_NATIVE_FILES,...ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.additions.map(row=>row.file)]);
+export const ENTERPRISE_NATIVE_FILES=Object.freeze([...HISTORICAL_ENTERPRISE_NATIVE_FILES,...ENTERPRISE_NATIVE_RELEASE_INPUTS.additions.map(row=>row.file)]);
 const ROOT=fileURLToPath(new URL('../',import.meta.url));
 export const ENTERPRISE_NATIVE_PROOFS=Object.freeze([
  ['workshopfloor','WORKSHOP_FLOOR_TEST_DATABASE_URL','workshop_floor_test_',35439,300000],
@@ -168,7 +168,7 @@ const CURRENT_GUI_SOURCE="59dbb6d99312fa44dba1fbec5bdf24948740e0dc",CURRENT_GUI_
 const CURRENT_GUI_MANIFEST_SHA256="5d3c8f292d7dd378b2e469a431042fd90671fceea3d5b487ce5454a094d80d2b",HISTORICAL_GUI_MANIFEST_SHA256="8d03b203ce29c4804ed9891a47573e473094132837ba842cb64d84df5eb3b640";
 const HISTORICAL_GUI_ADDITION_ROWS=Object.freeze([{"file":"test/city-scene-browser.js","blob":"125c73599c7cfdcf623a8d74d459c8248a9ca2bd","sha256":"77e9868adea7ae0dec43a73f5459e30581142ee0f426101140c7cfff17e77ead","mode":"100644"},{"file":"tools/continuous-city-source-data.js","blob":"8cb2b4bb9c551d22a0498becbeb09ad04b3e2215","sha256":"4eefab655e96384b83571dd9c13bd26fba28d6eabd2029b8e827ecd0c4044f71","mode":"100644"},{"file":"test/city-world-host-browser.js","blob":"d246ecfa195f0c26c41c0ed411f7093de23910f5","sha256":"2305a4a659e4531053525f6e4a7659b9facea5ac7c8d2ed7226dd3672752fabd","mode":"100644"}].map(Object.freeze));
 const ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS=restoreHistoricalGUIWitness(CURRENT_GUI_INPUTS);
-export function assertEnterpriseCombinedInputDefinition(manifest=ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS){
+export function assertEnterpriseCombinedInputDefinition(manifest=ENTERPRISE_NATIVE_RELEASE_INPUTS){
  assert.equal(manifest?.status,'SEALED','Combined native inputs remain UNSEALED until Root compiles actual authored source');
  assertEnterpriseInputDefinition();assert(Object.isFrozen(manifest)&&Object.isFrozen(manifest.replacements)&&Object.isFrozen(manifest.additions));assert.deepEqual(Object.keys(manifest).sort(),['version','status','revision','commerceSource','commerceDefinitionSHA256','guiSource','guiWitnessSHA256','replacements','additions'].sort());
  assert.equal(manifest.version,1);assert.match(manifest.revision,/^[a-f0-9]{40}$/);assert.equal(manifest.commerceSource,COMMERCE_SOURCE);assert.equal(manifest.commerceDefinitionSHA256,COMMERCE_DEFINITION_SHA256);assert.equal(manifest.guiSource,CURRENT_GUI_SOURCE);assert.equal(manifest.guiWitnessSHA256,CURRENT_GUI_WITNESS_PIN.sha256);
@@ -179,7 +179,7 @@ export function assertEnterpriseCombinedInputDefinition(manifest=ENTERPRISE_NATI
  assert.deepEqual(manifest.additions.find(row=>row.file===SUCCESSOR_DATA),CURRENT_GUI_WITNESS_PIN,'Original GUI witness is ordinary fixed captured input');
  return manifest;
 }
-export function assertEnterpriseCombinedTrackedInput(file,current,authored,canonical,manifest=ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS){
+export function assertEnterpriseCombinedTrackedInput(file,current,authored,canonical,manifest=ENTERPRISE_NATIVE_RELEASE_INPUTS){
  const pin=manifest.replacements.find(row=>row.file===file)?.after||manifest.additions.find(row=>row.file===file)||ENTERPRISE_NATIVE_BASE_INPUTS.find(row=>row.file===file);assert(pin,'No undeclared combined input: '+file);assert(Buffer.isBuffer(canonical));assert(current&&authored&&current.type==='blob'&&authored.type==='blob'&&['100644','100755'].includes(current.mode),'Regular actual combined source required');assert.equal(current.mode,authored.mode,'Combined authored mode drift');if(pin.mode)assert.equal(current.mode,pin.mode);assert.equal(authored.blob,pin.blob,'Pin must name actual combined authored Git');assert.equal(current.blob,pin.blob,'Combined runtime source changed after seal');assert.equal(sha(canonical),pin.sha256,'Actual combined bytes changed after seal');
 }
 function restoreHistoricalGUIWitness(current){

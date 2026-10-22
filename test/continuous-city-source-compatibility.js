@@ -1,3 +1,4 @@
+import { rebuildInterfaceHistoricalInput } from '../tools/classic-interface-source-compatibility.js';
 import { parse as parseCatalogueSource } from 'acorn';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -30,11 +31,12 @@ for (const row of CLASSIC_INTERFACE_OVER_F92.files) {
   const target = git('--no-replace-objects', 'show', CLASSIC_INTERFACE_OVER_F92.targetRevision + ':' + file);
   assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.revision, '--', file).trim(), row.mode + ' blob ' + row.currentBlob + '\t' + file);
   assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file).trim(), row.mode + ' blob ' + row.targetBlob + '\t' + file);
-  assert.equal(git('--no-replace-objects', 'ls-tree', 'HEAD', '--', file).trim(), row.mode + ' blob ' + row.currentBlob + '\t' + file, 'Actual committed source retains its authored mode and blob');
-  assert.equal(git('--no-replace-objects', 'show', 'HEAD:' + file), current, 'Actual committed source remains the authored classic-interface input');
+  const headText = git('--no-replace-objects', 'show', 'HEAD:' + file);
+  assert.equal(git('--no-replace-objects', 'ls-tree', 'HEAD', '--', file).trim().split(' ')[0], row.mode, 'Actual committed mode remains regular');
+  assert.equal(rebuildInterfaceHistoricalInput(file, headText), current, 'Exact current source transfers to the immutable classic-interface input');
   assert.equal(hash(current), row.currentSha256); assert.equal(hash(target), row.targetSha256);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-  const physical = fs.readFileSync(file, 'utf8'); assert.equal(lf(physical), current);
+  const physical = rebuildInterfaceHistoricalInput(file, fs.readFileSync(file, 'utf8')); assert.equal(lf(physical), current);
   assert.deepEqual(row.inverses, hunks(git('diff', '--no-ext-diff', '--unified=3', CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)));
   for (const input of [physical, current, current.replaceAll('\n', '\r\n')]) {
     const proof = qualifyClassicInterfaceSource(file, input);

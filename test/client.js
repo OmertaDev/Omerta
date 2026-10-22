@@ -116,6 +116,7 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     const observed = await vm.runInNewContext(`(async () => {
       let acting = false, activatedControl = null, operationPending = null, _operationResponseCurrent = null;
       let me = { id: 'owner', generation: 1, loc: 'docks' };
+      const currentTab = 'streets';
       const noop = () => {}, node = { textContent: '' };
       const operationName = () => 'Confirmed action', uuid = () => 'one-action', operationSnapshot = value => ({ ...value });
       const cityIdentity = () => [me.id, me.generation, me.loc].join(':');
