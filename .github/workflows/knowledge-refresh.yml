@@ -1,79 +1,57 @@
 name: knowledge refresh
 
-# WHY THIS EXISTS.
-#
-# `tools/knowledge-test.js` byte-compares the checked-in artifacts under knowledge/generated/
-# against a fresh render, and those artifacts are REVISION-STAMPED: graph.json records the
-# `sourceRevision` and carries the git lineage as ~1,200 first-class Commit nodes. So whichever
-# branch last regenerated is frozen into the file, and the check cannot be simultaneously green
-# on a feature branch and on main. Every merge landed red on main until somebody remembered to
-# push a graph refresh directly onto main — which is exactly the "merge → red → refresh → green"
-# habit visible across ~20 recent main runs.
-#
-# That is worse than a missing gate. Ground rule 8 of this project: "a red CI that nobody reads
-# is worse than no CI, because it manufactures confidence." A structural red on main trains
-# people to scroll past red on main, which is the precise failure that produced the 2026-07-30
-# outage (pgcheck caught a total outage on the exact commit that introduced it; seven more
-# commits were pushed on top because only the pg-mem result was read).
-#
-# So the refresh is automated instead of remembered.
-#
-# SELF-TERMINATING, by the knowledge plane's own provenance rule: this job's commit touches only
-# knowledge/generated/*, and `sourceRevisionForSnapshot` reports the PARENT of a generated-only
-# commit. The next render therefore produces identical bytes and commits nothing. A GITHUB_TOKEN
-# push also does not trigger workflows, so the loop cannot start in the first place.
-#
-# WHAT LANDS ON MAIN IS WHAT CI TESTED. ci.yml performs the identical regeneration on `push: main`
-# and commits it LOCALLY (it never pushes), so the bytes this job pushes are the bytes the suites
-# ran against — the render is deterministic at a given revision. A GITHUB_TOKEN push does not
-# trigger workflows, so the resulting commit gets no ci run of its own; it does not need one, since
-# its tree is the tested one.
-#
-# NO paths-ignore, deliberately: a merge that touches only markdown still adds commits, and
-# commits are nodes in this graph.
-
+# Temporary repair runner. The released source stays pinned to the approved PR.
+# The helper workflow commit is never pushed to the release branch.
 on:
-  push:
-    branches: [main]
   workflow_dispatch: {}
 
 concurrency:
-  group: knowledge-refresh-main
-  cancel-in-progress: true
+  group: knowledge-repair-433391e
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
   refresh:
-    name: regenerate knowledge/generated on main
+    name: verify and publish generated knowledge for 433391e
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      # Full history: the graph inventories the whole lineage, and a shallow clone
-      # cannot resolve the recorded source revision (same reason ci.yml does this).
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
+          ref: '433391eff5389bc3f40470a32d401d1a159768e2'
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: '22'
           cache: npm
-
+      - run: git switch -C study/infamous-gangsters-rebuild 433391eff5389bc3f40470a32d401d1a159768e2
       - run: npm ci
-
       - run: npm run knowledge
-
-      - name: commit if the artifacts moved
+      - name: Verify exact generated blobs and complete tree
         run: |
-          set -euo pipefail
-          if git diff --quiet -- knowledge/generated; then
-            echo "knowledge/generated is already current for $(git rev-parse --short HEAD) — nothing to do"
-            exit 0
-          fi
-          git config user.name  "github-actions[bot]"
+          git add -- knowledge/generated
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const expected = [{"path":"knowledge/generated/documents.md","bytes":114149,"sha":"e195ac4a5f76046172ae2bf8e345ae5967966f2e"},{"path":"knowledge/generated/github-history.md","bytes":23666,"sha":"633b243d398d682569b2f1fec71904bd1116110d"},{"path":"knowledge/generated/graph-summary.md","bytes":1406,"sha":"d984b174e8d78c8ab8cf7cd46c757f8800e0acac"},{"path":"knowledge/generated/graph.json","bytes":28208887,"sha":"6160c1ffeaf8045748ad65b43a40ae31282b98de"},{"path":"knowledge/generated/graph.mmd","bytes":4981,"sha":"5e20ceff5a31a8500845857ca4be01afc5dfc6fb"},{"path":"knowledge/generated/inventory.md","bytes":8857,"sha":"08af7e77327ceeb9591e8b22ffb0bda6afa73476"},{"path":"knowledge/generated/modules.md","bytes":60479,"sha":"8017daf0f4592a6fad6bbaf218efaf1669df2691"},{"path":"knowledge/generated/routes.md","bytes":159620,"sha":"6aefe932ca58ffb8e0f3e388ce745e1460fff7a3"}];
+          const git = (...args) => execFileSync('git', args, {encoding:'utf8'}).trim();
+          assert.equal(git('rev-parse','HEAD'), '433391eff5389bc3f40470a32d401d1a159768e2');
+          const graph = JSON.parse(fs.readFileSync('knowledge/generated/graph.json','utf8'));
+          assert.equal(graph.sourceRevision, '433391eff5389bc3f40470a32d401d1a159768e2');
+          assert.equal(graph.worktreeDirty, false);
+          for (const f of expected) assert.equal(git('hash-object',f.path), f.sha, f.path);
+          assert.deepEqual(git('diff','--cached','--name-only').split('\n').sort(), expected.map(f=>f.path).sort());
+          assert.equal(git('diff','--name-only'), '');
+          assert.equal(git('write-tree'), 'fefe9397b48e746551aa12214357a9dc64f52902');
+          assert.equal(git('ls-remote','--heads','origin','refs/heads/study/infamous-gangsters-rebuild').split(/\s/)[0], '433391eff5389bc3f40470a32d401d1a159768e2');
+          console.log('Exact generated files and complete release tree verified');
+          JS
+      - name: Publish generated-only commit to approved branch
+        run: |
+          git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add knowledge/generated
-          git commit -m "chore(knowledge): refresh generated artifacts for $(git rev-parse --short HEAD)"
-          git push origin HEAD:main
+          git commit -m "chore(knowledge): refresh generated artifacts for release source 433391e"
+          git push origin HEAD:refs/heads/study/infamous-gangsters-rebuild
