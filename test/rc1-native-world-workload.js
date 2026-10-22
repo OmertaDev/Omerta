@@ -1038,7 +1038,8 @@ try {
           if (own.character.level >= COHORT_POLICY_CONTRACT.veteranLevel) continue;
           pending++;
           const eligible = publicCrimes.filter(c => c.lvl <= own.character.level).sort((a, b) => b.lvl - a.lvl || a.id.localeCompare(b.id));
-          const chosen = own.character.jailSeconds > 0 || own.character.nerve < eligible[0].nerve ? null : eligible[0];
+          const chosen = own.character.jailSeconds > 0 || own.character.streetActionSeconds > 0
+            || own.character.nerve < eligible[0].nerve ? null : eligible[0];
           const crime = await actors.decide('cohort-warmup.public-crime', { accountId: actor.accountId, attempt: state.attempts, logicalAt: at },
             { character: own.character, publicCrimes }, () => chosen || null);
           assert.deepEqual(crime, chosen || null, 'Warmup choice differs from own public eligibility');
@@ -1050,7 +1051,8 @@ try {
             cohortWarmup[response.success ? 'successes' : 'losses']++;
           } else {
             const nerveWait = Math.ceil(Math.max(0, eligible[0].nerve - own.character.nerve) / regenPerMinute * 60000);
-            waitMs = Math.min(waitMs, Math.max(1000, own.character.jailSeconds * 1000, nerveWait));
+            const streetWait = Math.ceil(Math.max(0, own.character.streetActionSeconds) * 1000);
+            waitMs = Math.min(waitMs, Math.max(1000, own.character.jailSeconds * 1000, nerveWait, streetWait));
           }
         }
         if (!pending) break;
