@@ -18,7 +18,10 @@ export function commerceNativeInvocation(argv,env,execArgv){
   else for(const port of[35439,35449])commerceCurrentEndpoint(env['COMMERCE_CURRENT_NATIVE_'+String(port).slice(-2)+'_ADMIN_DATABASE_URL'],port,null,true);
   const cases=profile==='ci'?COMMERCE_CURRENT_CI_CASES:COMMERCE_CURRENT_LOCAL_CASES;
   assert.equal(cases.length,profile==='ci'?33:35);
-  assert(cases.every(c=>[240000,300000].includes(c.timeoutMs)),'Original per-leaf caps only');
+  const rollover=cases.filter(c=>c.timeoutMs===660000);
+  assert.equal(rollover.length,1,'One price-block rollover allowance only');
+  assert.equal(rollover[0].file,'test/commercialcampaigns-integration.js');
+  assert(cases.every(c=>[240000,300000].includes(c.timeoutMs)||c===rollover[0]),'Original caps plus the one bounded rollover leaf only');
   const leafCapsMs=cases.reduce((n,c)=>n+c.timeoutMs,0),parentOverheadMs=1800000,captureCapMs=600000,parentClosureMarginMs=300000;
   return{mode,profile,allowed,cases,leafCapsMs,parentOverheadMs,captureCapMs,parentClosureMarginMs,parentCapMs:leafCapsMs+parentOverheadMs+parentClosureMarginMs,driverCapMs:leafCapsMs+parentOverheadMs+captureCapMs+parentClosureMarginMs};
 }
