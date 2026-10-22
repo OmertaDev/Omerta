@@ -9,7 +9,7 @@ import {
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer, economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
-const expectedRevision = '298491fa6dd83d0d418f7615a59279259d7eff13';
+const expectedRevision = '71cb10a08d47794f0ce6c2e1a283822ea66f00d8';
 const expectedPredecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
 const files = [
   '.github/workflows/ci.yml',
