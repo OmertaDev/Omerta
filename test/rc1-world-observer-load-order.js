@@ -39,19 +39,32 @@ for (const sourceCase of ['release-c2', 'release-c2-crlf', 'unknown-release-c2',
     import {registerHooks} from 'node:module';
     import {historicalWorkerDatabaseSource} from './test/lib/rc1-historical-worker-source.js';
     import {assertDeedQuestSourceTransfer} from './tools/deed-quest-source-transfer.js';
+    import {economyHardeningSourceBaseline} from './tools/economy-hardening-source-transfer.js';
     import {createWorkerSchedule,installWorkerInstrumentation,makeWorkerDatabase} from './tools/rc1-native-worker.js';
     const sourceCase=${JSON.stringify(sourceCase)};
     const target=new URL('./src/db.js','file://'+process.cwd().replaceAll('\\\\','/')+'/').href;
     const release=historicalWorkerDatabaseSource('release-c2');
     const actualRelease=fs.readFileSync('./src/db.js','utf8');
-    assert.equal(assertDeedQuestSourceTransfer('src/db.js',actualRelease).baselineText,release,
-      'Exact property quest source reconstructs the pinned C2 fixture only as a provenance witness');
     const liveRelease=actualRelease.replaceAll('\\r\\n','\\n');
+    const propertyQuestRelease=economyHardeningSourceBaseline('src/db.js',actualRelease);
+    assert.equal(assertDeedQuestSourceTransfer('src/db.js',propertyQuestRelease).baselineText,release,
+      'Exact property quest source reconstructs the pinned C2 fixture only as a provenance witness');
+    if(sourceCase==='release-c2') for(const tampered of [
+      '// unsupported database source prefix\\n'+liveRelease,
+      liveRelease+'\\n// unsupported database source suffix\\n',
+      liveRelease.replace('migrateEconomyDailyClaims','migrateEconomyDailyClaim_'),
+    ]) {
+      assert.equal(economyHardeningSourceBaseline('src/db.js',tampered),tampered,
+        'Unknown whole-source mutation must not receive the economy-hardening baseline');
+      assert.throws(()=>assertDeedQuestSourceTransfer('src/db.js',
+        economyHardeningSourceBaseline('src/db.js',tampered)),/Complete property quest current source drift/);
+    }
     let supplied=sourceCase.includes('live-release')?liveRelease:release;
     if(sourceCase.endsWith('-crlf')) supplied=supplied.replaceAll('\\n','\\r\\n');
     if(sourceCase.startsWith('unknown')) supplied+='\\n// unsupported database source change\\n';
     if(sourceCase==='unknown-live-release')
-      assert.throws(()=>assertDeedQuestSourceTransfer('src/db.js',supplied),/Complete property quest current source drift/);
+      assert.throws(()=>assertDeedQuestSourceTransfer('src/db.js',
+        economyHardeningSourceBaseline('src/db.js',supplied)),/Complete property quest current source drift/);
     const fixture=registerHooks({load(url,context,nextLoad){const result=nextLoad(url,context);return url===target?{...result,source:supplied}:result;}});
     const controller=createWorkerSchedule({start:0,setClock(){}});
     const seam=installWorkerInstrumentation(controller,{namespace:'rc1_worker_release_rejection'});
@@ -63,4 +76,4 @@ for (const sourceCase of ['release-c2', 'release-c2-crlf', 'unknown-release-c2',
     } finally {seam.restore();fixture.deregister();await controller.close();}
   `], { stdio: 'pipe', env: { ...process.env, DATABASE_URL: 'postgres://postgres@127.0.0.1:1/no_database' } });
 }
-console.log('PASS: observer-first historical instrumentation rejects exact release C2 and raw property quest LF/CRLF/tampering before any pool or transformation');
+console.log('PASS: observer-first historical instrumentation composes exact hardening/property-quest provenance and rejects release sources or tampering before any pool or transformation');
