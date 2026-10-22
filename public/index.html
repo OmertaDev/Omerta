@@ -1730,8 +1730,14 @@
 <div id="toast" role="status" aria-live="polite" aria-atomic="true" inert></div>
 <div id="brag" class="hidden"></div>
 
+<script src="/player-experience.js"></script>
 <script>
 (() => {
+  // Optional guidance must not stop core play if its separate script cannot load.
+  const PX = window.PlayerExperience || {
+    nextUnlock:()=>null, recovery:()=>[], waiting:()=>({clocks:[],destinations:[]}), production:()=>null,
+    source:()=>'Report source unavailable. Refresh before use.', roleLabel:role=>role, blockerLabel:()=>'not ready',
+  };
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => [...document.querySelectorAll(s)];
   // Static overlays predate the Promise-based dialog helper. Give them the same baseline contract:
@@ -8379,6 +8385,7 @@
     const rivalOpts = rivals.length
       ? rivals.map((x) => `<option value="${x.id}">[${esc(x.tag)}] ${esc(x.name)} — ${x.members} made</option>`).join('')
       : '';
+    const production = PX.production(g.territory || []);
     t.innerHTML = `
       <h2>[${esc(g.tag)}] ${esc(g.name)}${g.seal ? ` <span class="chip">${g.seal}</span>` : ''}${g.foundation ? ` <span class="chip good">${g.foundation}</span>` : ''} — you are ${me.gang.role}</h2>
       ${heroBand([
@@ -8409,6 +8416,10 @@
       <div class="d" style="color:var(--dim);margin-top:6px">Posts require level ${rost.minLevel}. Once assigned, a member cannot move posts for ${mins(rost.reassignSeconds)}. If your Enforcer is killed, appoint another eligible member.</div>`)}
 
       <h2 style="margin-top:12px">Territory Operations</h2>
+      ${production && (g.territory || []).length ? `<section class="card" aria-label="Family production summary"><span class="t">Keep the Family supplied</span>
+        <div class="d">Active listed income: $${fmt(production.activeIncomePerHr)}/hr. Total upkeep: $${fmt(production.upkeepPerHr)}/hr.</div>
+        <div class="d">Pending income: $${fmt(production.pending)}. Upkeep owed: $${fmt(production.upkeepOwed)}. ${production.cold} operation${production.cold===1?'':'s'} stopped.</div>
+        <div class="d">${production.cold ? 'Pay upkeep to restart cold operations. ' : ''}Rates can change with raids and other effects. ${boss ? 'Use the collection and upkeep controls below.' : 'Ask a boss or underboss to collect income and pay upkeep.'}</div></section>` : ''}
       ${g.empire ? `<div class="card" style="border-color:var(--neon)"><span class="t">🏙️ ${g.empire.rank}</span> <span class="d">$${fmt(g.empire.earned)} lifetime territory income — <a href="#" id="terr-lb">the Empire board →</a></span>${g.syndicate ? `<div style="margin-top:4px">🃏 <b>${esc(g.syndicate.name)}</b> <span class="d">— ${g.syndicate.count} ${esc(g.syndicate.kind)} operations. Specialization pays in prestige.</span></div>` : ''}</div>` : ''}
       ${(g.territory || []).length ? `<div class="grid">${g.territory.map((op) => `
         <div class="card"><span class="t">${op.district}: ${esc(op.name || op.tier)}</span>${op.raidRisk ? ' <span class="chip bad">FEDS WATCHING</span>' : ''}${op.fortitude ? ` <span class="chip">🛡️ ${op.fortitude}/${op.fortMax}</span>` : ''}${op.specialist ? ` <span class="chip good">specialist +${op.specFortBonus}🛡️</span>` : ''}${op.ghostSeconds > 0 ? ' <span class="chip">👻 ghosted</span>' : ''}
@@ -9800,7 +9811,17 @@
     // who-sent-you input to its button — the focus guard doesn't cover that instant, and the
     // rebuilt card would wipe the half-typed name. Carry the draft across the rebuild.
     const refDraft = t.querySelector('#ref-claim-name')?.value || '';
+    const nextCrime = PX.nextUnlock(me, rules?.crimes || []);
+    const recovery = PX.recovery(me);
+    const waiting = PX.waiting(me);
     t.innerHTML = `
+      ${recovery.length ? `<section class="card" aria-label="Recovery options"><span class="t">Return to play</span>
+        ${recovery.map(step=>`<div class="row"><span>${esc(step.label)} · ${mins(step.seconds)}</span><button class="act" data-go-tab="${step.tab}">Review options</button></div>`).join('')}</section>` : ''}
+      ${nextCrime ? `<p class="d">Next crime unlock at level ${nextCrime.level}: ${nextCrime.names.map(esc).join(', ')}. <button class="act" data-go-tab="streets">Work toward this unlock</button></p>` : ''}
+      ${waiting.clocks.length ? `<details class="card"><summary>While you wait</summary>
+        <p class="d">${waiting.clocks.map(c=>`${esc(c.label)}: ${mins(c.seconds)}`).join(' · ')}</p>
+        <p class="d">These screens have other options to review. Each action checks your current resources and status.</p>
+        ${waiting.destinations.map(d=>`<button class="act" data-go-tab="${d.tab}">${esc(d.label)}</button>`).join('')}</details>` : ''}
       ${ob.referral?.canClaim ? `<div class="card" style="margin-top:10px;border-color:var(--neon)"><span class="t">📣 DID SOMEONE SEND YOU?</span>
         <div class="d">If a player told you about OMERTÀ, name them — they get credit as you come up (it costs you nothing). ${Math.max(1, Math.round((ob.referral.windowSeconds || 0) / 3600))}h left to set it.</div>
         <div class="row" style="margin-top:6px"><input id="ref-claim-name" placeholder="their street name" value="${esc(refDraft)}" style="max-width:220px">
@@ -9853,7 +9874,7 @@
       ${next ? `<div class="coachbox"><div class="cl">▸ DO THIS NEXT: ${esc(next.name)}</div><div class="ch">${next.ready ? 'The reward\'s waiting — claim it below.' : esc(next.desc)}</div>
         ${next.ready ? `<button class="act prime" data-obclaim="${next.id}" style="padding:5px 12px;font-size:12.5px">claim ${reward(next.reward)}</button>` : `<button class="act" data-obgo="${next.id}" style="padding:5px 12px;font-size:12.5px">${(go[next.id] || [, 'go do it'])[1]} →</button>`}</div>` : ''}
       <div class="d" style="color:var(--dim);font-size:13.5px;margin-bottom:6px">Work down the list. Green means the reward is waiting — claim it. Grey means do the thing first; tap it to jump there.</div>
-      <div class="grid">${(ob.tasks || []).map((x) => `
+      <div class="grid">${[...(ob.tasks || [])].sort((a,b)=>Number(!b.claimed && b.ready && !b.social)-Number(!a.claimed && a.ready && !a.social)).map((x) => `
         <div class="card" ${!x.claimed && x.ready ? 'style="border-color:var(--neon)"' : ''}>
           <span class="t">${x.claimed ? '✓ ' : ''}${esc(x.name)}</span>
           ${x.claimed ? '<span class="chip good">claimed</span>' : x.ready ? '<span class="chip good">reward ready</span>' : ''}
@@ -11182,7 +11203,8 @@
           <div class="d">${s.loc ? `last seen in ${esc(s.loc)}` : 'whereabouts unknown'}${s.observedAt ? ` · ${esc(new Date(s.observedAt).toLocaleString())}` : ''}${s.source === 'gossip' ? ` · heard from ${esc(s.sourceName || 'a contact')}` : ''}${s.guardPrice != null ? ` · guards for ${fmt(s.guardPrice)}` : ''}</div>
           ${s.nearby ? `<button class="act" data-meet="${s.id}">talk again</button>` : ''}
           ${dmBtn(s.id)}
-          ${s.jailed ? `<button class="act prime" data-pbust="${s.id}" title="spring them from lockup — a success frees them and PAYS you (more time left = bigger reward, worse odds; the sweet spot is near the end of a stretch). A miss puts YOU inside for a few minutes.">bust them out</button>` : ''}
+          <button class="act" data-rescuequote="${s.id}">Check rescue options</button>
+          <div class="d" data-rescue-result="${s.id}" role="status"></div>
           <button class="act" data-jump="${s.id}" data-intent="rob"${noBody || ' title="you\'re there for the wallet — a bigger cut, but nobody\'s impressed"'}>roll them</button>
           <button class="act prime" data-jump="${s.id}" data-intent="standard"${noBody}>jump</button>
           <button class="act risk" data-jump="${s.id}" data-intent="message"${noBody || ' title="you\'re there to be SEEN — big respect + a real beating, but you\'re not there to rob them, it costs half again the energy, and it draws the Law"'}>send a message</button>
@@ -11258,8 +11280,22 @@
     wireStory(t); // the rivals board's "the story" dossiers
     // the §7.8 bust — until now this verb lived ONLY in the raw deck, so the daily "bust a player
     // out of lockup" contract pointed at a control that did not exist
-    t.querySelectorAll('[data-pbust]').forEach((b) => b.onclick = () =>
-      act('POST', `/v1/streets/${b.dataset.pbust}/bust`, {}).then(() => renderPvp()));
+    t.querySelectorAll('[data-rescuequote]').forEach((b) => b.onclick = async () => {
+      const id=b.dataset.rescuequote;
+      const result=t.querySelector(`[data-rescue-result="${id}"]`);
+      b.disabled=true; result.textContent='Checking rescue options…';
+      try {
+        const reply=await api('GET',`/v1/streets/${id}/rescue-quote`);
+        if (reply.code>=400) { result.textContent=reply.body?.message || 'Cannot get a rescue quote. Try again.'; return; }
+        const quote=reply.body;
+        if (!quote.jailed) { result.textContent='This player is not in jail. No rescue is needed.'; return; }
+        result.innerHTML=`${Math.round(quote.chance*100)}% success; reward about $${fmt(quote.reward)}. A failed attempt puts you in jail for ${mins(quote.failureJailSeconds)} and uses one attempt. The server checks status and values again when you act.
+          ${quote.canAttempt ? '<button class="act prime" data-rescue-attempt>Attempt rescue</button>' : `<span>${(quote.blockers || []).map(code=>esc(PX.blockerLabel(code))).join(', ')}.</span>`}`;
+        const attempt=result.querySelector('[data-rescue-attempt]');
+        if (attempt) attempt.onclick=()=>{ attempt.disabled=true; act('POST',`/v1/streets/${id}/bust`,{}).then(()=>renderPvp()); };
+      } catch { result.textContent='Cannot get a rescue quote. Try again.'; }
+      finally { b.disabled=false; }
+    });
     t.querySelectorAll('[data-search]').forEach((b) => b.onclick = async () => {
       const r = await act('POST', `/v1/streets/${b.dataset.search}/search`, {});
       if (r.code < 400 && r.body.placedAt)
@@ -11444,7 +11480,7 @@
           money: ${i.wealth}<br>
           rackets: ${i.ops.businesses} front(s) · ${i.ops.rackets} racket(s) · ${i.ops.territory} turf op(s)${i.ops.family ? ' · <b>' + i.ops.family + '</b>' : ' · unaffiliated'}
         </div>
-        <div class="d" style="font-size:11px;margin-top:4px">wire runs ${mins(i.expiresSeconds)}</div>
+        <div class="d" style="font-size:11px;margin-top:4px">${esc(PX.source('tap',i.expiresSeconds))} Wire expires ${mins(i.expiresSeconds)}.</div>
       </div>`).join('');
     // your standing informants — the TRUE read (pierces a mark's disinformation) + who they're hunting
     const informants = (W.informants || []).map((i) => `
@@ -11456,7 +11492,7 @@
           rackets: ${i.ops.businesses} front(s) · ${i.ops.rackets} racket(s) · ${i.ops.territory} turf op(s)${i.ops.family ? ' · <b>' + i.ops.family + '</b>' : ''}<br>
           hunting ${i.huntingAnyone} mark(s) right now
         </div>
-        <div class="d" style="font-size:11px;margin-top:4px">retainer runs ${mins(i.paidSeconds)} · a human source can't be fed lies</div>
+        <div class="d" style="font-size:11px;margin-top:4px">${esc(PX.source('informant',i.paidSeconds))} Retainer expires ${mins(i.paidSeconds)}.</div>
       </div>`).join('');
     // SOMEONE IS SQUEEZING YOU — this was the TENTH section, buried under a subscribe
     // card. It is a countdown with your money on it; it leads.
@@ -11714,6 +11750,9 @@
           ${c.run ? `<span class="chip warn" title="only ${c.runCap} will ever exist — melting one takes it out of the world for good">${esc(c.runName)} · ${c.serial}/${c.runCap}</span>` : ''}
           ${c.plate ? `<span class="chip">[${c.plate}]</span>` : ''}${c.listed ? '<span class="chip cold">ON THE BLOCK</span>' : ''}${c.pledged ? '<span class="chip cold">PLEDGED</span>' : ''}
           <div class="d">damage ${c.dmg}%</div>
+          ${c.choices ? `<dl class="d"><dt>Fence</dt><dd>$${fmt(c.choices.fence.net)} after fees and tax. Removes the car.</dd>
+            <dt>Melt</dt><dd>${fmt(c.choices.melt.personal)} rounds for you${c.choices.melt.family ? `; ${fmt(c.choices.melt.family)} rounds and $${fmt(c.choices.melt.treasury)} for your Family` : ''}. Removes the car${c.run ? ' and permanently reduces this limited run' : ''}.</dd>
+            <dt>Repair</dt><dd>${c.choices.repair ? `$${fmt(c.choices.repair.cost)}, ${Math.round(c.choices.repair.chance*100)}% success. You pay even if repair fails.` : 'No repair needed.'}</dd></dl>` : ''}
           ${c.listed || c.pledged ? '' : `<button class="act" data-cardo="repair:${c.id}" title="a repair can botch on badly-damaged iron — you pay either way">repair${c.dmg > 50 ? ' ⚠' : ''}</button>
           <button class="act" data-cardo="fence:${c.id}">fence</button>
           <button class="act" data-cardo="melt:${c.id}">melt</button>`}</div>`).join('')}</div>`
@@ -11784,8 +11823,11 @@
       act('POST', `/v1/items/${b.dataset.useitem}/use`, {}).then(() => renderGarage()));
     { const ca = t.querySelector('#craft-ammo'); if (ca) ca.onclick = () =>
       act('POST', '/v1/workshop/ammo', {}).then(() => renderGarage()); }
-    t.querySelectorAll('[data-cardo]').forEach((b) => b.onclick = () => {
+    t.querySelectorAll('[data-cardo]').forEach((b) => b.onclick = async () => {
       const [what, id] = b.dataset.cardo.split(':');
+      const car = (me.cars || []).find(c=>c.id===id);
+      if ((what==='melt' || what==='fence') && !await ask(`${what==='melt'?'Melt':'Fence'} this car?`,
+        `This removes the car from your garage.${car?.run && what==='melt' ? ' Melting permanently reduces the limited run.' : ''} Values are checked again when you act.`, { yes:what==='melt'?'Melt car':'Fence car', no:'Keep car', danger:true })) return;
       act('POST', `/v1/garage/${id}/${what}`, {}).then(() => renderGarage());
     });
     t.querySelectorAll('[data-rup]').forEach((b) => b.onclick = () => {
@@ -12371,12 +12413,12 @@
           <button class="act" data-do="POST /v1/heists/fence"${groundOff('The fence')}>fence it</button></div>` : ''}</div>` : ''}
       ${my ? `
         <div class="card" style="border-color:var(--neon)">${aart('heist', (hb.jobs || []).find((jj) => jj.name === my.name)?.id)}<span class="t">${esc(my.name)}</span> <span class="chip">${my.leader ? 'YOUR JOB' : 'crewed up'}</span>${my.fenced ? ' <span class="chip" style="color:var(--warn)">🔥 HOT</span>' : ''}
-          <div class="d">crew: ${my.crew.map((c) => `${esc(c.name)} (${c.role})${c.cased ? ' ✓cased' : ''}${c.hired ? ' 🤝hired' : ''}`).join(', ')}${my.crewNeeded > 0 ? ` · ${my.crewNeeded} seat${my.crewNeeded > 1 ? 's' : ''} open` : ' · READY'}</div>
+          <div class="d">crew: ${my.crew.map((c) => `${esc(c.name)} (${esc(c.role)})${c.cased ? ' ✓cased' : ''}${c.hired ? ' hired' : ''}${c.blockers?.length ? `: ${c.blockers.map(code=>esc(PX.blockerLabel(code))).join(', ')}` : ''}`).join('; ')}${my.expired ? ' · PLAN EXPIRED: leave and start again' : my.crewNeeded > 0 ? ` · ${my.crewNeeded} seat${my.crewNeeded > 1 ? 's' : ''} open` : my.crewReady ? ' · READY' : ' · Waiting for crew recovery'}</div>
           ${my.leader && my.canHire ? `<div class="d" style="font-size:12px;color:var(--dim)">no crew? hire a hand — $${fmt(my.fillFee)} up front. A hand fills a seat but takes a cut and earns you nothing extra.</div>
             <select data-hirerole="${my.id}">${(my.rolesOpen || []).map((ro) => `<option>${ro}</option>`).join('')}</select>
             <button class="act" data-hireheist="${my.id}">🤝 hire a hand ($${fmt(my.fillFee)})</button>` : ''}
           <button class="act" data-heistdo="case:${my.id}">case the joint (${hb.caseEnergy} energy — raises the odds)</button>
-          ${my.leader ? `<button class="act" data-heistdo="execute:${my.id}" ${my.crewNeeded > 0 ? 'disabled' : ''}>EXECUTE</button>
+          ${my.leader ? `<button class="act" data-heistdo="execute:${my.id}" ${my.crewReady ? '' : 'disabled'}>EXECUTE</button>
             <button class="act" data-heistdo="leave:${my.id}">disband</button>` : `<button class="act" data-heistdo="leave:${my.id}">walk away</button>`}
           <button class="act" data-heistdo="rat:${my.id}" style="opacity:.55">…talk to the badges</button></div>` : `
         <div class="d" style="color:var(--dim);font-size:13.5px;margin-bottom:4px">plan one (you front the stake) or crew up off the board:</div>
@@ -12394,15 +12436,16 @@
         <label id="hj-fencelbl" style="font-size:12.5px;color:var(--dim)"><input type="checkbox" id="hj-fence"> 🔥 take it HOT (fence later — a gamble, loot-able)</label>
         <button class="act" id="hj-plan">plan it</button>
         <div class="d" style="font-size:11.5px;margin-top:2px">🏆 <a href="#" id="hj-lb">the most notorious crews →</a></div>`}
-      ${(hb.open || []).length ? `<div class="grid" style="margin-top:6px">${hb.open.map((o) => { const lvlOk = (me?.level || 0) >= o.lvl;
+      ${(hb.open || []).length ? `<div class="grid" style="margin-top:6px">${[...hb.open].sort((a,b)=>Number(b.canJoin)-Number(a.canJoin)||a.crewNeeded-b.crewNeeded).map((o) => { const lvlOk = (me?.level || 0) >= o.lvl;
         // Same wall as the picker above, on the other way in: joinHeist enforces the job's level, so a
         // rookie who reads "lvl 4+" on somebody's open job and presses crew up gets refused. State it
         // as a wall, not as trivia.
         return `<div class="card">${aart('heist', (hb.jobs || []).find((jj) => jj.name === o.name)?.id)}<span class="t">${esc(o.name)}</span>
-          <div class="d">${o.leader}'s job · ${o.crew} in, ${o.crewNeeded} needed · lvl ${o.lvl}+</div>
+          <div class="d">${esc(o.leader)}'s job · ${o.crew} in, ${o.crewNeeded} needed · lvl ${o.lvl}+</div>
+          ${o.recommendedRole && o.canJoin ? `<div class="d">Suggested role from your stats: ${esc(PX.roleLabel(o.recommendedRole,hb.roleStats || {}))}. You can choose another role.</div>` : ''}
           ${!my && o.rolesOpen.length ? (!lvlOk ? `<span class="chip">🔒 you need level ${o.lvl}</span>`
             : o.canJoin === false ? '<span class="chip">not available to your street</span>'
-              : `<select data-joinrole="${o.id}">${o.rolesOpen.map((ro) => `<option>${ro}</option>`).join('')}</select>
+              : `<select aria-label="Role for ${esc(o.name)}" data-joinrole="${o.id}">${o.rolesOpen.map((ro) => `<option value="${esc(ro)}"${ro===o.recommendedRole?' selected':''}>${esc(PX.roleLabel(ro,hb.roleStats || {}))}</option>`).join('')}</select>
           <button class="act" data-joinheist="${o.id}">crew up</button>`) : ''}</div>`; }).join('')}</div>` : ''}
 
       <h2 style="margin-top:12px">Smuggling Convoys</h2>

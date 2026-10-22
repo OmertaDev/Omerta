@@ -1397,6 +1397,16 @@ assert.equal(journalFixture.statusCode, 200, 'The client mirror reads a genuinel
 // real one, and the list must COVER them — an unlisted param route fails the run rather than being
 // counted as unverifiable, the same rule check 1b applies to runtime-built paths.
 const PARAM_FIXTURES = new Map([
+  ['/v1/streets/:p/rescue-quote', async () => {
+    const t = (await inject('POST', '/v1/auth/guest')).body.token;
+    await inject('POST', '/v1/character', t, { name: 'Rescue Mirror ' + Math.random().toString(36).slice(2, 7) });
+    const target = (await inject('GET', '/v1/me', t)).body.character.id;
+    await app.pool.query("UPDATE characters SET jail_until=now()+interval '10 minutes' WHERE id=$1", [target]);
+    await app.pool.query(`INSERT INTO player_intel(owner_account,target_character,facts,source,observed_at,learned_at)
+      SELECT account_id,$2,$3::jsonb,'encounter',now(),now() FROM characters WHERE id=$1`,
+      [charId,target,JSON.stringify({name:'Rescue Mirror'})]);
+    return target;
+  }],
   ['/v1/gangs/:p', async () => (await inject('POST', '/v1/gangs', token,
     { name: 'Mirror Family ' + Math.random().toString(36).slice(2, 6), tag: 'MR' + Math.floor(Math.random() * 90 + 10) })).body?.gangId],
   ['/v1/feud/:p', async () => charId],
@@ -2060,7 +2070,7 @@ const listMissing = [], listEmpty = [], listUngated = [];
 //   attribute" is rendering semantics this guard deliberately does not model); it needs eyes, or a
 //   behavioural probe that presses each control against a seeded mark and compares.
 const GATE_FIELDS = new Set(['minLvl', 'minLevel', 'locked', 'canRaid', 'eligible', 'unlocked',
-  'canAccept', 'canAmbush', 'canClaim', 'canJoin', 'canPost', 'canRun', 'jailed', 'hospitalized']);
+  'canAccept', 'canAmbush', 'canClaim', 'canJoin', 'canPost', 'canRun', 'canAttempt', 'jailed', 'hospitalized']);
 // …and the waiver, because those last two are not gates the way the others are. `minLvl` gates ANY
 // control on the row; `jailed`/`hospitalized` gate only controls that REACH THE PERSON. A picker
 // that merely NAMES somebody is not reaching them, and gating it would hide a legitimate move — the
