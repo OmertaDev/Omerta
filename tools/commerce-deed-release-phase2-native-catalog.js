@@ -13,6 +13,8 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import pg from 'pg';
 import {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';
+import {assertEconomyHardeningSourceTransfer, economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';
+import {columnMigrations} from '../src/db.js';
 import {migrateCityHomeStorage} from '../src/city-home-migration.js';
 import {deedDiscoveryCatalogProjection,verifyDeedDiscoveryCatalogCausalNegatives,DEED_MIGRATION_TABLES} from './deed-discovery-migration-catalog.js';
 
@@ -555,6 +557,9 @@ async function createHistoricalCommerceReleasePhase2MigrationCatalog(pool, endpo
 export async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, rows, verifyRows) {
   let negatives = 0;
   const rejected = (fn, message) => { assert.throws(fn, error => error?.code === 'ERR_ASSERTION', message); negatives++; };
+  const hardeningAdded=catalog.hardeningCatalog?.added;
+  const hardeningIdentities=Object.fromEntries(commerceDeedFields.map(field=>[field,new Set(
+    (hardeningAdded?.[field]??[]).map(row=>economyHardeningIdentity(field,row)))]));
   const sources = commerceMigrationSources();
   assert.equal(commerceMigrationPredecessor(sources.current.replaceAll('\n', '\r\n')), sources.predecessor);
   for (const altered of [sources.current + '\n', sources.current.replace('\n', '\r\n'), sources.predecessor,
@@ -579,7 +584,8 @@ export async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, 
       && row.column_name === column.column_name ? { ...row, ordinal: row.ordinal + 1 } : row) };
     rejected(() => catalog.verifyMetadata(changed), 'Every independently derived predecessor ordinal rejects drift');
   }
-  for (const row of rows.filter(row => tables.has(row.table_name)||layerTables.has(row.table_name))) {
+  for (const row of rows.filter(row => tables.has(row.table_name)||layerTables.has(row.table_name)
+    ||hardeningIdentities.constraints.has(key(row)))) {
     const index = rows.findIndex(candidate => key(candidate) === key(row));
     for (const change of [(copy) => copy.splice(index, 1), (copy) => copy.push({ ...row }),
       (copy) => { copy[index].definition += ' altered'; }, (copy) => { copy[index].name += '__unknown'; }]) {
@@ -587,14 +593,16 @@ export async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, 
       rejected(() => verifyRows(copy), 'Each added constraint removal/duplicate/alteration/rename fails the original composed oracle');
     }
   }
-  for (const table_name of [...COMMERCE_RELEASE_PHASE2_TABLES,...COMMERCE_NATIVE_TABLES,'notifications','unreviewed_release_table'])
+  for (const table_name of [...COMMERCE_RELEASE_PHASE2_TABLES,...COMMERCE_NATIVE_TABLES,...ECONOMY_HARDENING_TABLES,
+    'notifications','transactions','unreviewed_release_table'])
     rejected(() => verifyRows([...rows,{ table_name,name:'unreviewed_release_constraint',definition:'CHECK (true)' }]), 'Unknown constraint addition is rejected');
   for (const field of ['relations','columns','constraints','indexes']) {
     const original = catalog.reference[field];
     for (let index = 0; index < original.length; index++) {
       const row = original[index];
       const isAdded = tables.has(row.table_name ?? row.name) || layerTables.has(row.table_name ?? row.name) || (row.table_name ?? row.name) === 'player_reset_migrations'
-        || field === 'indexes' && ADDED_INDEX_KEYS.includes(key(row));
+        || field === 'indexes' && ADDED_INDEX_KEYS.includes(key(row))
+        || hardeningIdentities[field].has(economyHardeningIdentity(field,row));
       // Full attestation covers all objects. Exercise every added row and one prior witness per class.
       if (!isAdded && index !== 0) continue;
       const missing = { ...catalog.reference, [field]: [...original] }; missing[field].splice(index, 1);
@@ -825,11 +833,237 @@ const commerceDeedFields=['relations','columns','constraints','indexes'];
 const commerceDeedUniform=input=>{assert.equal(typeof input,'string');const lf=input.replaceAll('\r\n','\n');assert(!lf.includes('\r')&&(input===lf||input===lf.replaceAll('\n','\r\n')),'Only whole LF or uniform CRLF current source');return lf;};
 const commerceDeedUndo=(text,inverses)=>{for(const h of inverses){assert.equal(text.split(h.current).length-1,1,'Unique exact current Commerce/Deed inverse');text=text.replace(h.current,()=>h.baseline);}return text;};
 function assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entries(COMMERCE_DEED_PROTECTED)){const text=commerceDeedUniform(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'));assert.equal(hash(deedQuestSourceBaseline(file,text)),pin,'Whole protected original module: '+file);}}
+
+const ECONOMY_HARDENING_TABLES=Object.freeze(['account_daily_claims','economy_migrations']);
+const ECONOMY_HARDENING_EXISTING_COLUMNS=Object.freeze([
+  'account_persistent.checkin_day','account_persistent.checkin_streak',
+  'characters.street_action_at','characters.crew_sale_credit_ms',
+]);
+const economyHardeningDerivedColumns=new Set(['characters.street_action_at','characters.crew_sale_credit_ms']);
+const economyHardeningIdentity=(field,row)=>field==='relations'?row.name
+  :field==='columns'?`${row.table_name}.${row.column_name}`:key(row);
+const economyHardeningOrdinals=freeze({
+  fresh:{checkinDay:42,checkinStreak:43,streetAction:74,crewSaleCredit:75},
+  phase2:{checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},
+  director:{checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},
+});
+const economyHardeningColumn=(table_name,column_name,ordinal,type,default_expression,not_null,collated=false)=>({
+  table_name,column_name,ordinal,type,typmod:-1,default_expression,not_null,identity:'',generated:'',
+  collation_schema:collated?'pg_catalog':null,collation_name:collated?'default':null,
+});
+const economyHardeningConstraint=(table_name,name,type,definition,columns)=>({
+  table_name,name,type,validated:true,deferrable:false,deferred:false,definition,match_type:' ',update_action:' ',
+  delete_action:' ',referenced_schema:null,referenced_table:null,columns,referenced_columns:[],
+});
+const economyHardeningIndex=(table_name,name,definition,unique,primary)=>({
+  table_name,name,definition,unique,primary,valid:true,ready:true,live:true,nulls_not_distinct:false,predicate:null,
+});
+const economyHardeningCompareText=(a,b)=>a<b?-1:a>b?1:0;
+const economyHardeningOrder=(field,rows)=>rows.sort((a,b)=>field==='relations'
+  ?economyHardeningCompareText(a.name,b.name)
+  :field==='columns'
+    ?economyHardeningCompareText(a.table_name,b.table_name)||a.ordinal-b.ordinal
+    :economyHardeningCompareText(a.table_name,b.table_name)||economyHardeningCompareText(a.name,b.name));
+
+// These are complete pg_catalog row shapes, derived independently from the reviewed hardening DDL.
+// No field is copied from the database being qualified.
+function economyHardeningAddedRows(profile,serverVersionNum){
+  const ordinal=economyHardeningOrdinals[profile];assert(ordinal,'Closed hardening ordinal profile');
+  const relations=[
+    {name:'account_daily_claims',kind:'r',persistence:'p'},
+    {name:'economy_migrations',kind:'r',persistence:'p'},
+  ];
+  const columns=[
+    economyHardeningColumn('account_daily_claims','account_id',1,'text',null,true,true),
+    economyHardeningColumn('account_daily_claims','day',2,'integer',null,true),
+    economyHardeningColumn('account_daily_claims','scope',3,'text',null,true,true),
+    economyHardeningColumn('account_daily_claims','claim_id',4,'text',null,true,true),
+    economyHardeningColumn('account_daily_claims','slot',5,'integer',null,false),
+    economyHardeningColumn('account_daily_claims','claimed_at',6,'timestamp with time zone','now()',true),
+    economyHardeningColumn('account_persistent','checkin_day',ordinal.checkinDay,'integer','0',true),
+    economyHardeningColumn('account_persistent','checkin_streak',ordinal.checkinStreak,'integer','0',true),
+    economyHardeningColumn('characters','street_action_at',ordinal.streetAction,'timestamp with time zone',null,false),
+    economyHardeningColumn('characters','crew_sale_credit_ms',ordinal.crewSaleCredit,'bigint','0',true),
+    economyHardeningColumn('economy_migrations','id',1,'text',null,true,true),
+    economyHardeningColumn('economy_migrations','applied_at',2,'timestamp with time zone','now()',true),
+  ];
+  const constraints=[
+    economyHardeningConstraint('account_daily_claims','account_daily_claims_pkey','p',
+      'PRIMARY KEY (account_id, day, scope, claim_id)',['account_id','day','scope','claim_id']),
+    economyHardeningConstraint('economy_migrations','economy_migrations_pkey','p','PRIMARY KEY (id)',['id']),
+  ];
+  if(serverVersionNum>=180000)constraints.push(
+    economyHardeningConstraint('account_daily_claims','account_daily_claims_account_id_not_null','n','NOT NULL account_id',['account_id']),
+    economyHardeningConstraint('account_daily_claims','account_daily_claims_claim_id_not_null','n','NOT NULL claim_id',['claim_id']),
+    economyHardeningConstraint('account_daily_claims','account_daily_claims_claimed_at_not_null','n','NOT NULL claimed_at',['claimed_at']),
+    economyHardeningConstraint('account_daily_claims','account_daily_claims_day_not_null','n','NOT NULL day',['day']),
+    economyHardeningConstraint('account_daily_claims','account_daily_claims_scope_not_null','n','NOT NULL scope',['scope']),
+    economyHardeningConstraint('account_persistent','account_persistent_checkin_day_not_null','n','NOT NULL checkin_day',['checkin_day']),
+    economyHardeningConstraint('account_persistent','account_persistent_checkin_streak_not_null','n','NOT NULL checkin_streak',['checkin_streak']),
+    economyHardeningConstraint('characters','characters_crew_sale_credit_ms_not_null','n','NOT NULL crew_sale_credit_ms',['crew_sale_credit_ms']),
+    economyHardeningConstraint('economy_migrations','economy_migrations_applied_at_not_null','n','NOT NULL applied_at',['applied_at']),
+    economyHardeningConstraint('economy_migrations','economy_migrations_id_not_null','n','NOT NULL id',['id']));
+  const indexes=[
+    economyHardeningIndex('account_daily_claims','account_daily_claims_pkey',
+      'CREATE UNIQUE INDEX account_daily_claims_pkey ON $self.account_daily_claims USING btree (account_id, day, scope, claim_id)',true,true),
+    economyHardeningIndex('account_daily_claims','ix_account_daily_claims_day',
+      'CREATE INDEX ix_account_daily_claims_day ON $self.account_daily_claims USING btree (day)',false,false),
+    economyHardeningIndex('account_daily_claims','ux_account_daily_claim_slot',
+      'CREATE UNIQUE INDEX ux_account_daily_claim_slot ON $self.account_daily_claims USING btree (account_id, day, scope, slot)',true,false),
+    economyHardeningIndex('economy_migrations','economy_migrations_pkey',
+      'CREATE UNIQUE INDEX economy_migrations_pkey ON $self.economy_migrations USING btree (id)',true,true),
+    economyHardeningIndex('transactions','ix_tx_currency_reason_at',
+      'CREATE INDEX ix_tx_currency_reason_at ON $self.transactions USING btree (currency, reason, at)',false,false),
+  ];
+  const added={relations,columns,constraints,indexes};
+  for(const field of commerceDeedFields)economyHardeningOrder(field,added[field]);
+  return freeze(added);
+}
+
+function economyHardeningColumnMigrations(source){
+  const text=commerceDeedUniform(source),proof=assertEconomyHardeningSourceTransfer('schema.sql',text);
+  assert.equal(economyHardeningSourceBaseline('schema.sql',text),proof.baselineText,'One closed hardening source projection');
+  const statements=columnMigrations(text).filter(statement=>{
+    const match=statement.match(/^ALTER TABLE ([A-Za-z_][A-Za-z0-9_]*) ADD COLUMN IF NOT EXISTS ([A-Za-z_][A-Za-z0-9_]*) /);
+    return match&&economyHardeningDerivedColumns.has(`${match[1]}.${match[2]}`);
+  });
+  const identities=statements.map(statement=>{
+    const match=statement.match(/^ALTER TABLE ([A-Za-z_][A-Za-z0-9_]*) ADD COLUMN IF NOT EXISTS ([A-Za-z_][A-Za-z0-9_]*) /);
+    return `${match[1]}.${match[2]}`;
+  }).sort();
+  assert.deepEqual(identities,[...economyHardeningDerivedColumns].sort(),'Exact two CREATE-derived hardening column migrations');
+  return statements;
+}
+
+function economyHardeningCatalogProjection(baseline,candidate,{profile,serverVersionNum,includeNotNull}){
+  assert(['fresh','phase2','director'].includes(profile),'Closed economy-hardening native profile required');
+  assert.equal(typeof includeNotNull,'boolean');
+  assert(serverVersionNum>=160000&&serverVersionNum<170000||serverVersionNum>=180000&&serverVersionNum<190000,
+    'Only PostgreSQL16/18 hardening catalog forms are admitted');
+  const prior=freeze(structuredClone(baseline)),added=economyHardeningAddedRows(profile,serverVersionNum);
+  const original=Object.fromEntries(commerceDeedFields.map(field=>[field,
+    new Map(prior[field].map(row=>[economyHardeningIdentity(field,row),row]))]));
+  for(const field of commerceDeedFields){
+    assert(Array.isArray(prior[field])&&Array.isArray(candidate[field]));
+    assert.equal(original[field].size,prior[field].length,'Unique predecessor hardening '+field);
+  }
+  const expected=structuredClone(prior),shifted=[];
+  if(profile==='fresh'){
+    expected.columns=expected.columns.map(row=>{
+      const start=row.table_name==='account_persistent'?42:row.table_name==='characters'?74:null;
+      if(start===null||row.ordinal<start)return row;
+      shifted.push([`${row.table_name}.${row.column_name}`,row.ordinal,row.ordinal+2]);return {...row,ordinal:row.ordinal+2};
+    });
+    assert.equal(shifted.filter(([name])=>name.startsWith('account_persistent.')).length,43,
+      'Exactly 43 account-persistent predecessor ordinals shift');
+    assert.equal(shifted.filter(([name])=>name.startsWith('characters.')).length,43,
+      'Exactly 43 character predecessor ordinals shift');
+  }else{
+    expected.columns=expected.columns.map(row=>{
+      const name=`${row.table_name}.${row.column_name}`;
+      if(name!=='account_persistent.reward_wallet_since_day')return row;
+      assert.equal(row.ordinal,84,'Exact upgrade reward-wallet predecessor ordinal');
+      shifted.push([name,84,86]);return {...row,ordinal:86};
+    });
+    assert.deepEqual(shifted,[['account_persistent.reward_wallet_since_day',84,86]],
+      'Only the exact later upgrade account column shifts');
+    assert.equal(Math.max(...prior.columns.filter(row=>row.table_name==='characters').map(row=>row.ordinal)),116,
+      'Exact upgrade character predecessor tail');
+  }
+  for(const field of commerceDeedFields){expected[field].push(...structuredClone(added[field]));economyHardeningOrder(field,expected[field]);}
+  freeze(expected);
+  const canonical=Object.fromEntries(commerceDeedFields.map(field=>[field,
+    new Map(expected[field].map(row=>[economyHardeningIdentity(field,row),row]))]));
+  for(const field of commerceDeedFields){
+    assert.equal(canonical[field].size,expected[field].length,'Unique independent hardening '+field);
+    assert.equal(expected[field].length,prior[field].length+added[field].length,'Exact independent hardening '+field+' count');
+  }
+  const verifyMetadata=metadata=>{
+    for(const field of commerceDeedFields){
+      const rows=metadata[field];assert(Array.isArray(rows));assert.equal(rows.length,expected[field].length,'Complete hardening '+field+' count');
+      if(rows!==expected[field])assert(isDeepStrictEqual(rows,expected[field]),'Complete hardening '+field+': exact ordered rows and every field');
+    }
+  };
+  verifyMetadata(candidate);
+  const projectMetadata=metadata=>{verifyMetadata(metadata);return prior;};
+  const expectedRows=added.constraints.filter(row=>includeNotNull||row.type!=='n')
+    .map(({table_name,name,definition})=>({table_name,name,definition}));
+  const constraintKeys=new Set(expectedRows.map(key));
+  const projectConstraints=rows=>{
+    same(rows.filter(row=>constraintKeys.has(key(row))),expectedRows,'Every hardening constraint rechecked before projection');
+    return rows.filter(row=>!constraintKeys.has(key(row)));
+  };
+  return Object.freeze({verifyMetadata,projectMetadata,projectConstraints,added,reference:expected,
+    baselineReference:prior,profile,sourceOnly:false,
+    phase:'exact economy-hardening native catalog delta only; no historical, financial, activation or deployment clearance'});
+}
+
+export function verifyEconomyHardeningCatalogCausalNegatives(catalog,{includeNotNull}){
+  assert.equal(typeof includeNotNull,'boolean');const original=catalog.reference;let refusals=0;
+  assert(Object.isFrozen(original)&&commerceDeedFields.every(field=>Object.isFrozen(original[field])));
+  const altered=value=>typeof value==='boolean'?!value:typeof value==='number'?value+1
+    :Array.isArray(value)?[...value,'__unreviewed__']:value===null?'__unreviewed__':value+'__unreviewed__';
+  const rejectBoth=changed=>{
+    assert.throws(()=>catalog.verifyMetadata(changed),error=>error?.code==='ERR_ASSERTION');refusals++;
+    assert.throws(()=>catalog.projectMetadata(changed),error=>error?.code==='ERR_ASSERTION');refusals++;
+  };
+  catalog.verifyMetadata(structuredClone(original));catalog.projectMetadata(structuredClone(original));
+  for(const field of commerceDeedFields)for(const row of catalog.added[field]){
+    const identity=economyHardeningIdentity(field,row),index=original[field].findIndex(value=>economyHardeningIdentity(field,value)===identity);
+    assert(index>=0,'Hardening causal target exists: '+identity);
+    rejectBoth({...original,[field]:original[field].filter((_,position)=>position!==index)});
+    for(const property of Object.keys(row)){
+      rejectBoth({...original,[field]:original[field].map((value,position)=>position===index?{...value,[property]:altered(value[property])}:value)});
+      const missing={...original[field][index]};delete missing[property];
+      rejectBoth({...original,[field]:original[field].map((value,position)=>position===index?missing:value)});
+    }
+    rejectBoth({...original,[field]:[...original[field],{...original[field][index]}]});
+    const identityProperty=field==='columns'?'column_name':'name';
+    rejectBoth({...original,[field]:original[field].map((value,position)=>position===index
+      ?{...value,[identityProperty]:value[identityProperty]+'__unknown__'}:value)});
+  }
+  const rows=original.constraints.filter(row=>includeNotNull||row.type!=='n')
+    .map(({table_name,name,definition})=>({table_name,name,definition}));
+  catalog.projectConstraints(rows);
+  for(const target of catalog.added.constraints.filter(row=>includeNotNull||row.type!=='n')){
+    const index=rows.findIndex(row=>key(row)===key(target));assert(index>=0,'Hardening projected constraint causal target exists');
+    for(const change of[
+      copy=>copy.splice(index,1),copy=>{copy[index].definition+='__changed__';},
+      copy=>copy.push({...copy[index]}),copy=>{copy[index].name+='__unknown__';},
+    ]){const changed=rows.map(row=>({...row}));change(changed);
+      assert.throws(()=>catalog.projectConstraints(changed),error=>error?.code==='ERR_ASSERTION');refusals++;}
+  }
+  return refusals;
+}
+
+async function verifyEconomyHardeningWrongIndexDdl(pool,catalog){
+  const client=await pool.connect();let transaction=false;
+  try{
+    catalog.verifyMetadata(await readCommerceReleasePhase2Metadata(client));
+    await client.query('BEGIN');transaction=true;
+    try{
+      await client.query('DROP INDEX ix_tx_currency_reason_at');
+      await client.query('CREATE INDEX ix_tx_currency_reason_at ON transactions(character_id)');
+      const changed=await readCommerceReleasePhase2Metadata(client),wrong=changed.indexes.find(row=>key(row)==='transactions.ix_tx_currency_reason_at');
+      assert.equal(wrong.definition,'CREATE INDEX ix_tx_currency_reason_at ON $self.transactions USING btree (character_id)',
+        'Native reread exposes the exact same-name/wrong-column hardening exploit');
+      assert.throws(()=>catalog.verifyMetadata(changed),error=>error?.code==='ERR_ASSERTION',
+        'Exact hardening catalog rejects same-name/wrong-column CREATE INDEX IF NOT EXISTS bypass');
+    }finally{await client.query('ROLLBACK');transaction=false;}
+    catalog.verifyMetadata(await readCommerceReleasePhase2Metadata(client));
+    return 1;
+  }finally{
+    if(transaction)await client.query('ROLLBACK').catch(()=>{});
+    client.release();
+  }
+}
+
 export function commerceCurrentDeedSources(input){
- assertCommerceDeedProtectedSources();const current=sourcePin(COMMERCE_DEED_CURRENT_SOURCE),text=commerceDeedUniform(input),old=commerceMigrationSources();assert.equal(text,current,'Only complete actual52c572 source');assert.equal(Buffer.byteLength(current),COMMERCE_DEED_CURRENT_SOURCE.bytes);assert.equal((current.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,572);
+ assertCommerceDeedProtectedSources();const current=sourcePin(COMMERCE_DEED_CURRENT_SOURCE),text=commerceDeedUniform(input),old=commerceMigrationSources(),projected=economyHardeningSourceBaseline('schema.sql',text);assert.equal(projected,current,'Only complete actual52c572 source or its exact hardening successor');assert.equal(Buffer.byteLength(current),COMMERCE_DEED_CURRENT_SOURCE.bytes);assert.equal((current.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,572);
+ const hardening=text===current?null:text;if(hardening){const proof=assertEconomyHardeningSourceTransfer('schema.sql',hardening);assert.equal(proof.baselineText,current);assert.equal((hardening.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,574);economyHardeningColumnMigrations(hardening);}
  const predecessor=commerceDeedUndo(current,COMMERCE_DEED_SCHEMA_INVERSES);assert.equal(predecessor,old.current,'Whole572 reconstructs independently pinned568');
  const premain=commerceDeedUndo(current,COMMERCE_DEED_C2_INVERSES);assert.equal(hash(premain),COMMERCE_DEED_PREMAIN_SOURCE.sha256);assert.equal(Buffer.byteLength(premain),COMMERCE_DEED_PREMAIN_SOURCE.bytes);assert.equal((premain.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,565);assert.equal(commerceDeedUndo(premain,COMMERCE_DEED_PREMAIN_INVERSES),old.predecessor,'Whole565 reconstructs independently pinned561');
- return Object.freeze({current,premain,predecessor,premainPredecessor:old.predecessor});
+ return Object.freeze({current,premain,predecessor,premainPredecessor:old.predecessor,candidate:hardening??current,hardening});
 }
 
 async function assertCommerceDeedCaller(pool,endpoint,profile,includeNotNull){
@@ -838,29 +1072,62 @@ async function assertCommerceDeedCaller(pool,endpoint,profile,includeNotNull){
  const settings=(await pool.query("SELECT current_schema() AS schema,current_database() AS database,current_user AS role,current_setting('server_version_num') AS version,current_setting('server_version') AS server_version,(SELECT pg_get_userbyid(nspowner) FROM pg_namespace WHERE nspname=current_schema()) AS schema_owner,(SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname=current_database()) AS database_owner")).rows[0];assert.equal(settings.role,address.username);assert.equal('/'+settings.database,address.pathname);assert.equal(settings.database_owner,settings.role);assert.match(settings.server_version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);const version=Number(settings.version);assert(version>=160000&&version<170000||version>=180000&&version<190000);
  const main=String(process.argv[1]).replaceAll('\\','/'),focused=main.endsWith('/test/enterprise-release-phase2-migration-catalog.js')&&process.argv.length===3&&process.argv[2]==='--postgres'&&/^\/enterprise_native_catalog_test_[a-f0-9]{12}$/.test(address.pathname);
  if(focused){assert.equal(profile,'fresh');assert.equal(settings.schema,'public');}
- else {assert.equal(settings.schema_owner,settings.role);assert(['/omerta_check','/omerta_query'].includes(address.pathname));if(profile==='director'){assert(main.endsWith('/test/director-migration.js'));assert.match(settings.schema,/^director_migration_[a-f0-9]{16}$/);assert.equal(includeNotNull,false);}else{assert(main.endsWith('/test/phase2-postgres.js')&&process.argv[2]===(profile==='fresh'?'--lots':'--definitions'));assert.match(settings.schema,/^p2_definitions_[a-f0-9]{32}$/);assert.equal(process.env.P2_TEST_SCHEMA,settings.schema);assert.equal(process.env.P2_TEST_CHILD,profile==='fresh'?'lots':'upgrade');assert.equal(includeNotNull,true);}}
+ else {assert.equal(settings.schema_owner,settings.role);assert(['/omerta_check','/omerta_query'].includes(address.pathname));if(profile==='director'){assert(main.endsWith('/test/director-migration.js'));assert.match(settings.schema,/^director_migration_[a-f0-9]{16}$/);assert.equal(includeNotNull,false);}else{assert(main.endsWith('/test/phase2-postgres.js')&&process.argv[2]===(profile==='fresh'?'--lots':'--definitions'));assert.match(settings.schema,/^p2_definitions_[a-f0-9]{32}$/);assert.equal(process.env.P2_TEST_SCHEMA,settings.schema);assert.equal(process.env.P2_TEST_CHILD,profile==='fresh'?'lots-catalog':'upgrade');assert.equal(includeNotNull,true);}}
  return{address,version};
 }
 
-async function compileCommerceDeedCatalog(pool,endpoint,input,{profile,includeNotNull}){
+async function compileCommerceDeedCatalog(pool,endpoint,input,{profile,includeNotNull,precompiledBaseline,precompiledBaselineSource}={}){
  const all=commerceCurrentDeedSources(sourcePin(COMMERCE_DEED_CURRENT_SOURCE)),text=commerceDeedUniform(input);assert(text===all.current||text===all.premain,'Only whole actual572 or source-derived565');const predecessor=text===all.current?all.predecessor:all.premainPredecessor;
  const {address,version}=await assertCommerceDeedCaller(pool,endpoint,profile,includeNotNull),options={profile,includeNotNull,serverVersionNum:version},compile=source=>compileReference(pool,address,source,{currentDeedHomeMigration:true});
- const baseline=freeze(await compile(predecessor)),fresh=freeze(await compile(text)),freshCatalog=deedDiscoveryCatalogProjection(baseline,fresh,{...options,profile:'fresh'});let catalog=freshCatalog;
+ assert.equal(precompiledBaseline===undefined,precompiledBaselineSource===undefined,'Precompiled baseline metadata/source are an exact pair');
+ let baseline;
+ if(precompiledBaseline!==undefined){
+  assert.equal(precompiledBaselineSource,predecessor,'Precompiled native baseline belongs to this exact predecessor source');
+  baseline=freeze(structuredClone(precompiledBaseline));
+  for(const field of commerceDeedFields)same(baseline[field],precompiledBaseline[field],'Reused independently compiled predecessor '+field+' remains exact');
+ }else baseline=freeze(await compile(predecessor));
+ const fresh=freeze(await compile(text)),freshCatalog=deedDiscoveryCatalogProjection(baseline,fresh,{...options,profile:'fresh'});let catalog=freshCatalog;
  if(profile!=='fresh'){const legacy=commerceLegacySchema(profile),before=freeze(await compile(legacy+'\n'+predecessor)),upgraded=freeze(await compile(legacy+'\n'+text));catalog=deedDiscoveryCatalogProjection(before,upgraded,options);const replay=freeze(await compile(legacy+'\n'+text+'\n'+text));catalog.verifyMetadata(replay);const names=new Set(DEED_MIGRATION_TABLES);for(const field of commerceDeedFields)same(upgraded[field].filter(r=>names.has(r.table_name??r.name)),fresh[field].filter(r=>names.has(r.table_name??r.name)),'Every fresh/upgraded Deed '+field+' remains exact');}
  const causal=verifyDeedDiscoveryCatalogCausalNegatives(catalog,{includeNotNull});return Object.freeze({...catalog,freshCatalog,baselineReference:baseline,freshReference:fresh,causal,currentSource:text,predecessorSource:predecessor,source:COMMERCE_DEED_CURRENT_SOURCE});
 }
+
 export async function createCommerceReleasePhase2MigrationCatalog(pool,endpoint,input,{includeNotNull,legacyProfile}={}){
- assert(['phase2','director'].includes(legacyProfile));assert.equal(typeof includeNotNull,'boolean');const sources=commerceCurrentDeedSources(input),deed=await compileCommerceDeedCatalog(pool,endpoint,sources.current,{profile:legacyProfile,includeNotNull});
- const historical=await createHistoricalCommerceReleasePhase2MigrationCatalog(pool,endpoint,sources.predecessor,{includeNotNull,legacyProfile,projectCurrentMetadata:deed.projectMetadata});
+ assert(['phase2','director'].includes(legacyProfile));assert.equal(typeof includeNotNull,'boolean');const sources=commerceCurrentDeedSources(input),deed=await compileCommerceDeedCatalog(pool,endpoint,sources.current,{profile:legacyProfile,includeNotNull}),serverVersionNum=Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version),live=sources.hardening?freeze(await readCommerceReleasePhase2Metadata(pool)):null;let hardening=live?economyHardeningCatalogProjection(deed.reference,live,{profile:legacyProfile,includeNotNull,serverVersionNum}):null;
+ if(hardening){const causal=verifyEconomyHardeningCatalogCausalNegatives(hardening,{includeNotNull})
+   +await verifyEconomyHardeningWrongIndexDdl(pool,hardening);hardening=Object.freeze({...hardening,causal});}
+ const projectHardening=metadata=>hardening?hardening.projectMetadata(metadata):metadata,
+   projectHardeningConstraints=rows=>hardening?hardening.projectConstraints(rows):rows;
+ const historical=await createHistoricalCommerceReleasePhase2MigrationCatalog(pool,endpoint,sources.predecessor,
+   {includeNotNull,legacyProfile,projectCurrentMetadata:metadata=>deed.projectMetadata(projectHardening(metadata))});
  for(const field of commerceDeedFields)same(deed.projectMetadata(deed.reference)[field],historical.reference[field],'Complete upgraded572→568 '+field+' before seven-C2 projection');
- const verifyMetadata=metadata=>historical.verifyMetadata(deed.projectMetadata(metadata)),normalize=rows=>historical.normalize(deed.projectConstraints(rows));
- return Object.freeze({...historical,reference:deed.reference,verifyMetadata,normalize,deedCatalog:deed,historicalCatalog:historical,currentSource:COMMERCE_DEED_CURRENT_SOURCE,currentPremainSource:sources.premain,phase:'current572/565 full native Deed+original Commerce factory; no release or activation clearance'});
+ if(hardening)for(const field of commerceDeedFields)same(hardening.projectMetadata(hardening.reference)[field],deed.reference[field],'Complete hardening574→572 '+field+' before Deed/Commerce projection');
+ const verifyMetadata=metadata=>historical.verifyMetadata(deed.projectMetadata(projectHardening(metadata))),
+   normalize=rows=>historical.normalize(deed.projectConstraints(projectHardeningConstraints(rows)));
+ return Object.freeze({...historical,reference:hardening?.reference??deed.reference,verifyMetadata,normalize,deedCatalog:deed,
+   hardeningCatalog:hardening,historicalCatalog:historical,currentSource:COMMERCE_DEED_CURRENT_SOURCE,currentPremainSource:sources.premain,
+   phase:(hardening?'current574 hardening + ':'')+'current572/565 full native Deed+original Commerce factory; no release or activation clearance'});
 }
-async function composeCommerceDeedNativeBranches(pool,endpoint){
- const sources=commerceCurrentDeedSources(sourcePin(COMMERCE_DEED_CURRENT_SOURCE)),settings=(await pool.query("SELECT current_setting('server_version') AS version")).rows[0],historical=await verifyCommerceNativeBranchMetadata(pool,endpoint,settings),current=await compileCommerceDeedCatalog(pool,endpoint,sources.current,{profile:'fresh',includeNotNull:true}),premain=await compileCommerceDeedCatalog(pool,endpoint,sources.premain,{profile:'fresh',includeNotNull:true});
- historical.verify(current.projectMetadata(current.reference));for(const field of commerceDeedFields)same(premain.projectMetadata(premain.reference)[field],historical.iv[field],'Complete565→561 original '+field);
- const version=Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version);for(const catalog of[current,premain])for(const includeNotNull of[true,false]){const p=deedDiscoveryCatalogProjection(catalog.baselineReference,catalog.freshReference,{profile:'fresh',includeNotNull,serverVersionNum:version}),rows=catalog.reference.constraints.filter(r=>includeNotNull||r.type!=='n').map(({table_name,name,definition})=>({table_name,name,definition}));p.projectConstraints(rows);}
- const verify=metadata=>historical.verify(current.projectMetadata(metadata));return Object.freeze({...historical,current:current.reference,iv:premain.reference,historical,deedCurrent:current,deedPremain:premain,verify,causal:historical.causal+current.causal+premain.causal,phase:'572/565 full four-family native observation composed with exact568/561/487/480; no populated/release clearance'});
+async function composeCommerceDeedNativeBranches(pool,endpoint,input){
+ const sources=commerceCurrentDeedSources(input),settings=(await pool.query("SELECT current_setting('server_version') AS version")).rows[0],historical=await verifyCommerceNativeBranchMetadata(pool,endpoint,settings),historicalSources=commerceNativeBranchSources();
+ assert.equal(sources.predecessor,historicalSources.current,'Exact568 Deed predecessor is the independently compiled historical current source');
+ assert.equal(sources.premainPredecessor,historicalSources.iv,'Exact561 Deed predecessor is the independently compiled historical IV source');
+ const current=await compileCommerceDeedCatalog(pool,endpoint,sources.current,{profile:'fresh',includeNotNull:true,
+   precompiledBaseline:historical.current,precompiledBaselineSource:historicalSources.current}),
+  premain=await compileCommerceDeedCatalog(pool,endpoint,sources.premain,{profile:'fresh',includeNotNull:true,
+    precompiledBaseline:historical.iv,precompiledBaselineSource:historicalSources.iv}),
+  version=Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version),
+  live=sources.hardening?freeze(await readCommerceReleasePhase2Metadata(pool)):null;
+ let hardening=live?economyHardeningCatalogProjection(current.reference,live,{profile:'fresh',includeNotNull:true,serverVersionNum:version}):null;
+ if(hardening){const causal=verifyEconomyHardeningCatalogCausalNegatives(hardening,{includeNotNull:true})
+   +await verifyEconomyHardeningWrongIndexDdl(pool,hardening);hardening=Object.freeze({...hardening,causal});}
+ historical.verify(current.projectMetadata(current.reference));for(const field of commerceDeedFields){
+  same(current.baselineReference[field],historical.current[field],'Complete reused568 predecessor '+field);
+  same(premain.baselineReference[field],historical.iv[field],'Complete reused561 predecessor '+field);
+  same(premain.projectMetadata(premain.reference)[field],historical.iv[field],'Complete565→561 original '+field);
+ }
+ if(hardening)for(const field of commerceDeedFields)same(hardening.projectMetadata(hardening.reference)[field],current.reference[field],'Complete hardening574→572 fresh '+field);
+ for(const catalog of[current,premain])for(const includeNotNull of[true,false]){const p=deedDiscoveryCatalogProjection(catalog.baselineReference,catalog.freshReference,{profile:'fresh',includeNotNull,serverVersionNum:version}),rows=catalog.reference.constraints.filter(r=>includeNotNull||r.type!=='n').map(({table_name,name,definition})=>({table_name,name,definition}));p.projectConstraints(rows);}
+ const verify=metadata=>historical.verify(current.projectMetadata(hardening?hardening.projectMetadata(metadata):metadata));return Object.freeze({...historical,current:hardening?.reference??current.reference,iv:premain.reference,historical,deedCurrent:current,deedPremain:premain,hardeningCurrent:hardening,verify,causal:historical.causal+current.causal+premain.causal+(hardening?.causal??0),phase:(hardening?'574 hardening + ':'')+'572/565 full four-family native observation composed with exact568/561/487/480; no populated/release clearance'});
 }
-export async function verifyCommerceNativeBranches(pool,endpoint){await assertCommerceDeedCaller(pool,endpoint,'fresh',true);return composeCommerceDeedNativeBranches(pool,endpoint);}
-export async function verifyCommerceEnterpriseSlotBranches(pool,endpoint,input){assert.equal(arguments.length,3);await assertCommerceEnterpriseSlot(pool,endpoint,input);return composeCommerceDeedNativeBranches(pool,endpoint);}
+export async function verifyCommerceNativeBranches(pool,endpoint){await assertCommerceDeedCaller(pool,endpoint,'fresh',true);const input=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');return composeCommerceDeedNativeBranches(pool,endpoint,input);}
+export async function verifyCommerceEnterpriseSlotBranches(pool,endpoint,input){assert.equal(arguments.length,3);await assertCommerceEnterpriseSlot(pool,endpoint,input);return composeCommerceDeedNativeBranches(pool,endpoint,input);}
