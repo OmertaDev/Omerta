@@ -89,15 +89,41 @@ async function actors(fresh = false) {
   });
   return { owner, scout, maker, guard, first, second, businessId, relationship: await relation(owner, scout, depotId) };
 }
+const forecastLeadMs = INTEL_FORECAST.minLeadMs + 30000;
+const forecastBlock = value => Math.floor(value / INTEL_FORECAST.blockMs);
+function forecastTarget(observed, applicationNow) {
+  const target = Math.max(observed, applicationNow) + forecastLeadMs;
+  return forecastBlock(observed) === forecastBlock(applicationNow)
+    && forecastBlock(observed) === forecastBlock(target)
+    && target - applicationNow >= INTEL_FORECAST.minLeadMs
+    && target - applicationNow <= INTEL_FORECAST.maxLeadMs ? target : null;
+}
+{
+  const boundary = INTEL_FORECAST.blockMs * 1000;
+  assert.equal(forecastTarget(boundary - forecastLeadMs - 1, boundary - forecastLeadMs - 1), boundary - 1);
+  assert.equal(forecastTarget(boundary - forecastLeadMs, boundary - forecastLeadMs), null);
+  assert.equal(forecastTarget(boundary - 1, boundary - 1), null);
+  assert.equal(forecastTarget(boundary, boundary), boundary + forecastLeadMs);
+  assert.equal(forecastTarget(boundary - 1, boundary), null, 'DB and application clocks must agree on the active block.');
+}
+async function genuineForecastTarget() {
+  const started = process.hrtime.bigint(), waitLimitMs = forecastLeadMs + 10000;
+  for (;;) {
+    const observed = +new Date((await pool.query('SELECT clock_timestamp() AS observed')).rows[0].observed);
+    const target = forecastTarget(observed, Date.now());
+    if (target !== null) return new Date(target).toISOString();
+    const elapsedMs = Number(process.hrtime.bigint() - started) / 1e6;
+    assert(elapsedMs <= waitLimitMs, 'Actual forecast intake could not enter one genuine price block.');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+}
 async function body(a, lifetimeSeconds = 600) {
-  const observed = +new Date((await pool.query('SELECT clock_timestamp() AS observed')).rows[0].observed);
-  const lead = INTEL_FORECAST.minLeadMs + 30000;
-  assert(Math.floor(observed / INTEL_FORECAST.blockMs) === Math.floor((observed + lead) / INTEL_FORECAST.blockMs), 'Actual forecast intake requires one genuine price block.');
+  const scoutTargetAt = await genuineForecastTarget();
   return { partnershipId: a.relationship.id, relationshipHash: a.relationship.termsHash, teamRevision: 1,
     businessId: a.businessId, manufacturerAccountId: a.maker.account, guardAccountId: a.guard.account,
     firstCarrierAccountId: a.first.account, secondCarrierAccountId: a.second.account,
     origin: 'foundry', handoff: 'docks', destination: 'neon', scoutFeeCash: 50, minimumStock: 1,
-    scoutTargetAt: new Date(observed + lead).toISOString(), manufacturingFeeCash: 100,
+    scoutTargetAt, manufacturingFeeCash: 100,
     guardPriceCash: 10000, firstFeeCash: 30, secondFeeCash: 40, lifetimeSeconds, consent: true };
 }
 async function start(a, lifetimeSeconds = 600) {
