@@ -46,18 +46,32 @@ for (let i = 0; i < 5000 && (!goodSalt || !coldSalt); i++) {
 assert(goodSalt && coldSalt, 'mined a solvable and a timed-out salt');
 
 const digger = await mk('Shovels McGee');
-await pool.query(`UPDATE characters SET energy=200, nerve=50 WHERE id='${digger.id}'`);
+// Crime success is deliberately live RNG, while this suite needs to reach the clue gate itself.
+// Reset the test-only action clock between synthetic attempts and pin only this request's rolls;
+// the dedicated cooldown suite owns the real 30-second pacing proof.
+const pullSuccessfulCrime = async () => {
+  await pool.query(
+    `UPDATE characters SET energy=200, nerve=50, jail_until=NULL, street_action_at=NULL WHERE id='${digger.id}'`);
+  const random = Math.random;
+  try {
+    Math.random = () => 0.2;
+    const res = await call('POST', '/v1/crimes/pick', { token: digger.token, body: {} });
+    assert.equal(res.code, 200, 'the synthetic clue job reaches the crime path');
+    assert.equal(res.body.success, true, 'the synthetic clue job succeeds');
+    return res;
+  } finally {
+    Math.random = random;
+  }
+};
 
 // ── the drop: a successful crime hands a scroll (forced), once — the second job doesn't stack ──
-let r = await call('POST', '/v1/crimes/pick', { token: digger.token, body: {} });
-let tries = 0;
-while ((!r.body.clue || !r.body.success) && tries++ < 20) { // 'pick' is 90%+ — retry the rare fail
-  await pool.query(`UPDATE characters SET nerve=50 WHERE id='${digger.id}'`);
-  r = await call('POST', '/v1/crimes/pick', { token: digger.token, body: {} });
-}
+let r = await pullSuccessfulCrime();
 assert(r.body.clue && r.body.clue.riddle, 'the job dropped a scroll (forced)');
-r = await call('POST', '/v1/crimes/pick', { token: digger.token, body: {} });
-assert(!r.body.clue, 'one hunt at a time — no second scroll while one is held');
+r = await pullSuccessfulCrime();
+assert.equal(r.body.clue, null, 'one hunt at a time — no second scroll while one is held');
+assert.equal(Number((await pool.query(
+  `SELECT COUNT(*) n FROM clue_scrolls WHERE character_id='${digger.id}'`)).rows[0].n), 1,
+  'the held-scroll guard leaves exactly one hunt');
 
 // pin the mined solvable hunt on the row (3 steps, all answerable now)
 await pool.query(`UPDATE clue_scrolls SET salt='${goodSalt}', step=1, steps=3 WHERE character_id='${digger.id}'`);
@@ -113,35 +127,25 @@ assert.equal(r.body.caskets, 1, 'the lifetime legend banks');
 assert.equal((await call('GET', '/v1/clues', { token: digger.token })).body.scroll, null, 'the scroll is spent');
 r = await call('POST', '/v1/clues/dig', { token: digger.token, body: {} });
 assert.equal(r.body.error, 'no_scroll', 'no scroll, no dig');
-await pool.query(`UPDATE characters SET nerve=50 WHERE id='${digger.id}'`);
-r = await call('POST', '/v1/crimes/pick', { token: digger.token, body: {} });
-assert(!r.body.clue, 'the 8h post-casket cooldown keeps the streets quiet');
+r = await pullSuccessfulCrime();
+assert.equal(r.body.clue, null, 'the 8h post-casket cooldown keeps the streets quiet');
+const postCasket = (await pool.query(
+  'SELECT clue_at FROM characters WHERE id=$1', [digger.id])).rows[0];
+assert(new Date(postCasket.clue_at) > new Date(), 'the post-casket clue cooldown itself is active');
+assert.equal(Number((await pool.query(
+  'SELECT COUNT(*) n FROM clue_scrolls WHERE character_id=$1', [digger.id])).rows[0].n), 0,
+  'the post-casket guard creates no scroll');
 
 // ── the leaderboard ──
 r = await call('GET', '/v1/leaderboard/clues', { token: digger.token });
 assert.equal(r.body.diggers[0].name, 'Shovels McGee', 'the digger leads');
 assert.equal(r.body.diggers[0].caskets, 1, 'with one casket');
 
-// A crime only drops a scroll when it SUCCEEDS, and a bust also puts the digger in lockup — so
-// "pull jobs until one lands" has to clear the cell as well as the nerve, or every retry after the
-// first bust is refused and the loop spins to its bound. CLUE_DROP_P=1 makes the drop certain on a
-// success, so this converges quickly; the bound is only there so a real regression fails loudly
-// instead of hanging.
-const pullUntilScroll = async () => {
-  let res = null;
-  for (let i = 0; i < 40; i++) {
-    await pool.query(`UPDATE characters SET nerve=50, energy=200, jail_until=NULL WHERE id='${digger.id}'`);
-    res = await call('POST', '/v1/crimes/pick', { token: digger.token, body: {} });
-    if (res.body.success && res.body.clue) return res;
-  }
-  assert.fail('no scroll dropped in 40 successful-or-busted jobs with CLUE_DROP_P=1 — the drop hook is broken');
-  return res;
-};
-
 // ═══ TIER-4: trail tiers, the puzzle kind, casket band scaling, relics ═══
 // clear the cooldown, force a fresh scroll, then pin it to the MASTER tier
 await pool.query(`UPDATE characters SET clue_at=NULL WHERE id='${digger.id}'`);
-r = await pullUntilScroll();
+r = await pullSuccessfulCrime();
+assert(r.body.clue, 'the successful job drops a fresh scroll');
 assert(r.body.clue && r.body.clue.tier, 'the drop carries a trail tier');
 // pin a MASTER 1-step solvable hunt (goodSalt step 1 answers now)
 await pool.query(`UPDATE clue_scrolls SET salt='${goodSalt}', step=1, steps=1, tier='master' WHERE character_id='${digger.id}'`);
@@ -174,7 +178,7 @@ process.env.CLUE_RELIC_P = '';
 
 // ── DEATH: the scroll dies with the street; the legend survives to the heir ──
 await pool.query(`UPDATE characters SET clue_at=NULL WHERE id='${digger.id}'`);
-r = await pullUntilScroll();
+r = await pullSuccessfulCrime();
 assert(r.body.clue, 'a fresh scroll for the death test');
 await app.inject({ method: 'POST', url: '/v1/mod/kill', headers: { 'x-mod-key': 'test-mod-key' }, payload: { characterId: digger.id } });
 assert.equal((await pool.query(`SELECT 1 FROM clue_scrolls WHERE character_id='${digger.id}'`)).rows.length, 0,
