@@ -9,9 +9,10 @@ import {
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer, economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
-const expectedRevision = '49fc993ce705751d02eb6ac3e6329cce5f4e1fab';
+const expectedRevision = '298491fa6dd83d0d418f7615a59279259d7eff13';
 const expectedPredecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
 const files = [
+  '.github/workflows/ci.yml',
   'public/index.html', 'schema.sql', 'src/accrual.js', 'src/boxing.js', 'src/db.js', 'src/economy.js', 'src/explore.js', 'src/game.js',
   'src/goodsquote.js', 'src/invariants.js', 'src/kitchen.js', 'src/market.js', 'src/rules.tail.js', 'src/server.js',
   'src/pen.js', 'src/population.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',

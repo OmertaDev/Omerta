@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const revision = '49fc993ce705751d02eb6ac3e6329cce5f4e1fab';
+const revision = '298491fa6dd83d0d418f7615a59279259d7eff13';
 const predecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
@@ -18,6 +18,7 @@ execFileSync('git', ['merge-base', '--is-ancestor', predecessor, revision]);
 // Closed physical-source readers reached by the current Commerce and RC1 chains.
 // Other candidate files are tested as current gameplay and are not historical source namespaces.
 const files = Object.freeze([
+  '.github/workflows/ci.yml',
   'public/index.html', 'schema.sql', 'src/accrual.js', 'src/boxing.js', 'src/db.js', 'src/economy.js', 'src/explore.js', 'src/game.js',
   'src/goodsquote.js', 'src/invariants.js', 'src/kitchen.js', 'src/market.js', 'src/rules.tail.js', 'src/server.js',
   'src/pen.js', 'src/population.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',
