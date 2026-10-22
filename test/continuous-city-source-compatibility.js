@@ -401,13 +401,46 @@ function assertCurrentCatalogueSupport(pin) {
   assert(directory.isDirectory() && !directory.isSymbolicLink(), 'Pinned support directory must be ordinary and not redirected');
   assert(physical.isFile() && !physical.isSymbolicLink(), 'Pinned support must be an ordinary non-symlink file');
   readPinnedCatalogueReference(pin);
-  const text = catalogueLF(fs.readFileSync(pin.file, 'utf8'));
-  assert.equal(git('ls-files', '--stage', '--', pin.file), pin.mode + ' ' + pin.blob + ' 0\t' + pin.file + '\n');
+  const actual = catalogueLF(fs.readFileSync(pin.file, 'utf8'));
+  assert.equal(git('ls-files', '--stage', '--', pin.file), pin.mode + ' ' + blob(actual) + ' 0\t' + pin.file + '\n', 'Actual support index/body must remain exact');
+  const text = rebuildInterfaceHistoricalInput(pin.file, actual);
   assert.equal(Buffer.byteLength(text), pin.bytes); assert.equal(hash(text), pin.sha256); assert.equal(blob(text), pin.blob);
 }
+// The successor appendix is a separate closed literal. This never admits runtime bytes.
+function separateReleaseCatalogue(input) {
+  const text = catalogueLF(input), marker = '\n// BEGIN CURRENT RELEASE INPUTS\n';
+  const at = text.indexOf(marker);
+  if (at < 0) return {text, release: null};
+  assert.equal(text.indexOf(marker, at + marker.length), -1, 'Exactly one current release appendix');
+  const suffix = text.slice(at), prefix = text.slice(0, at);
+  const pending = marker + "// Source must be committed before the separate current release can be sealed.\nexport const ENTERPRISE_NATIVE_RELEASE_INPUTS=Object.freeze({...ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS,status:'UNSEALED',revision:null});\n// END CURRENT RELEASE INPUTS\n";
+  if (suffix === pending) return {text: prefix, release: null};
+  const statements = parseCatalogueSource(suffix, {ecmaVersion:'latest', sourceType:'module'}).body;
+  assert.equal(statements.length, 2, 'Only the exact freezer and one closed release export');
+  const exported = statements[1];
+  assert(exported.type === 'ExportNamedDeclaration' && exported.declaration?.kind === 'const' && exported.declaration.declarations.length === 1);
+  const declaration = exported.declaration.declarations[0], call = declaration.init;
+  assert(declaration.id.type === 'Identifier' && declaration.id.name === 'ENTERPRISE_NATIVE_RELEASE_INPUTS');
+  assert(call.type === 'CallExpression' && !call.optional && call.callee.type === 'Identifier' && call.callee.name === 'freezeRelease' && call.arguments.length === 1);
+  const argument = call.arguments[0];
+  const scaffold = marker + "// Separately compiled actual current source; historical Commerce/GUI manifest remains immutable.\nconst freezeRelease=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freezeRelease);Object.freeze(value);}return value;};\nexport const ENTERPRISE_NATIVE_RELEASE_INPUTS=freezeRelease(";
+  assert.equal(suffix, scaffold + suffix.slice(argument.start, argument.end) + ');\n// END CURRENT RELEASE INPUTS\n', 'No executable or unreviewed appendix suffix');
+  return {text: prefix, release: decodeCombinedCatalogueLiteral(argument)};
+}
+// The separate appendix cannot introduce executable suffixes or alternative initializers.
+{
+  const original = readPinnedCatalogueReference(COMBINED_NATIVE_AUTHORED_REFERENCE);
+  const prefix = '\n// BEGIN CURRENT RELEASE INPUTS\n// Separately compiled actual current source; historical Commerce/GUI manifest remains immutable.\nconst freezeRelease=value=>{if(value&&typeof value===\'object\'){Object.values(value).forEach(freezeRelease);Object.freeze(value);}return value;};\nexport const ENTERPRISE_NATIVE_RELEASE_INPUTS=freezeRelease(';
+  const suffix = ');\n// END CURRENT RELEASE INPUTS\n', exact = original + prefix + '{"status":"SEALED"}' + suffix;
+  assert.equal(separateReleaseCatalogue(exact).text, original);
+  assert.deepEqual(separateReleaseCatalogue(exact).release, {status:'SEALED'});
+  for (const mutated of [exact + 'process.exit(0);\n', exact.replace('Object.freeze(value)', 'eval(value)'), exact.replace('{"status":"SEALED"}', '(globalThis.injected = true)'), exact.replace('{"status":"SEALED"}', '{["status"]:"SEALED"}'), exact + prefix + '{}' + suffix]) {
+    assert.throws(() => separateReleaseCatalogue(mutated)); refusals++;
+  }
+}
 async function normalizeCombinedCatalogueForLegacyProof(input) {
-  const reference = readPinnedCatalogueReference(COMBINED_NATIVE_REFERENCE);
-  const inspected = inspectCombinedCatalogueText(input, reference), current = catalogueLF(input);
+  const reference = readPinnedCatalogueReference(COMBINED_NATIVE_REFERENCE), separated = separateReleaseCatalogue(input);
+  const inspected = inspectCombinedCatalogueText(separated.text, reference), current = catalogueLF(input);
   assert.equal(git('ls-files', '--stage', '--', COMBINED_NATIVE_REFERENCE.file),
     '100644 ' + blob(current) + ' 0\t' + COMBINED_NATIVE_REFERENCE.file + '\n', 'Regular exact current catalogue index/body required');
   if (inspected.manifest.status === 'SEALED') {
@@ -416,6 +449,7 @@ async function normalizeCombinedCatalogueForLegacyProof(input) {
       fileURLToPath(new URL('../tools/enterprise-native.js', import.meta.url)).toLowerCase(), 'Pure validator import cannot invoke the native CLI');
     const {assertEnterpriseCombinedInputDefinition} = await import('../tools/enterprise-native.js');
     assertEnterpriseCombinedInputDefinition(inspected.manifest);
+    if (separated.release) assertEnterpriseCombinedInputDefinition(separated.release);
   }
   const legacy = readPinnedCatalogueReference(LEGACY_NATIVE_REFERENCE), append = reference.slice(legacy.length);
   assert.equal(reference.slice(0, legacy.length), legacy);
