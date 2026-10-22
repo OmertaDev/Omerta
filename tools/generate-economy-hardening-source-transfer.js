@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const revision = '71cb10a08d47794f0ce6c2e1a283822ea66f00d8';
+const revision = '913731168052c928bae5451f56f4c15007eda89e';
 const predecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
@@ -22,7 +22,8 @@ const files = Object.freeze([
   'public/index.html', 'schema.sql', 'src/accrual.js', 'src/boxing.js', 'src/db.js', 'src/economy.js', 'src/explore.js', 'src/game.js',
   'src/goodsquote.js', 'src/invariants.js', 'src/kitchen.js', 'src/market.js', 'src/rules.tail.js', 'src/server.js',
   'src/pen.js', 'src/population.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',
-  'test/gates.js', 'test/growth.js', 'tools/arena.js',
+  'test/gates.js', 'test/growth.js', 'test/phase2-postgres.js',
+  'tools/arena.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
 ]);
 
 const domains = {};

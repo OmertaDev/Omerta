@@ -9,14 +9,15 @@ import {
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer, economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
-const expectedRevision = '71cb10a08d47794f0ce6c2e1a283822ea66f00d8';
+const expectedRevision = '913731168052c928bae5451f56f4c15007eda89e';
 const expectedPredecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
 const files = [
   '.github/workflows/ci.yml',
   'public/index.html', 'schema.sql', 'src/accrual.js', 'src/boxing.js', 'src/db.js', 'src/economy.js', 'src/explore.js', 'src/game.js',
   'src/goodsquote.js', 'src/invariants.js', 'src/kitchen.js', 'src/market.js', 'src/rules.tail.js', 'src/server.js',
   'src/pen.js', 'src/population.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',
-  'test/gates.js', 'test/growth.js', 'tools/arena.js',
+  'test/gates.js', 'test/growth.js', 'test/phase2-postgres.js',
+  'tools/arena.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
 ];
 const bindingFiles = [
   'test/commerce-release-phase2-migration-catalog.js',
@@ -61,7 +62,10 @@ let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
-  assert.equal(lf(fs.readFileSync(file, 'utf8')), current, `Physical source must equal the authored candidate: ${file}`);
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const authored = bindingFiles.includes(file)
+    ? assertEconomyHardeningBindingTransfer(file, physical).baselineText : physical;
+  assert.equal(authored, current, `Physical source must reconstruct the authored candidate: ${file}`);
   assert.deepEqual(Object.keys(pin).sort(), ['mode', 'currentSha256', 'currentBlob', 'baselineSha256', 'baselineBlob', 'contextLines', 'inverses'].sort());
   assert.equal(pin.contextLines, 3); assert(Object.isFrozen(pin)); assert(Object.isFrozen(pin.inverses));
   assert(pin.inverses.length > 0 && pin.inverses.every(Object.isFrozen));
@@ -77,6 +81,11 @@ for (const file of files) {
   assert.equal(economyHardeningSourceBaseline(file, current), baseline);
   assert.equal(economyHardeningSourceBaseline(file, current.replaceAll('\n', '\r\n')), baseline);
   assert.equal(economyHardeningSourceBaseline(file, baseline), baseline);
+  if (bindingFiles.includes(file)) {
+    assert.equal(economyHardeningSourceBaseline(file, physical), baseline);
+    assert.equal(economyHardeningSourceBaseline(file, physical.replaceAll('\n', '\r\n')), baseline);
+    positives += 2;
+  }
   for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0', Buffer.from(current)]) {
     assert.throws(() => assertEconomyHardeningSourceTransfer(file, changed));
     assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
@@ -86,6 +95,7 @@ for (const file of files) {
 for (const file of bindingFiles) {
   const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], current = lf(fs.readFileSync(file, 'utf8'));
   const baseline = git('show', `${expectedRevision}:${file}`);
+  const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
   assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
@@ -94,8 +104,8 @@ for (const file of bindingFiles) {
   assert.deepEqual(pin.inverses, inverseHunks(file, expectedRevision, null));
   const transfer = assertEconomyHardeningBindingTransfer(file, current);
   assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
-  assert.equal(economyHardeningSourceBaseline(file, current), baseline);
-  assert.equal(economyHardeningSourceBaseline(file, current.replaceAll('\n', '\r\n')), baseline);
+  assert.equal(economyHardeningSourceBaseline(file, current), historical);
+  assert.equal(economyHardeningSourceBaseline(file, current.replaceAll('\n', '\r\n')), historical);
   for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0', Buffer.from(current)]) {
     assert.throws(() => assertEconomyHardeningBindingTransfer(file, changed));
     assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
