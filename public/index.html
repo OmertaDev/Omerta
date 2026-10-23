@@ -2452,6 +2452,7 @@
   // drawn UI icons (the sprite in <body>) — nav chrome only; toasts/options stay text (textContent)
   const ic = (n) => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   let me = null, rules = null, ws = null, session = null;
+  let streetActionReadyAt = 0;
   // THE BROADCAST — frictionless referral attribution: a shared link (/u/<name>?ref=<name>) drops
   // ?ref, we stash it, and character creation auto-fills it as the referralCode (no code to type).
   try { const _r = new URLSearchParams(location.search).get('ref'); if (_r) localStorage.setItem('omerta_ref', _r.slice(0, 40)); } catch {}
@@ -4899,6 +4900,7 @@
         if (result.code < 400) {
           const previousGeneration = me?.generation;
           me = result.body.player?.character || result.body.player;
+          observeStreetActionClock();
           clearScopedOperations();
           if (worldRetry && worldRetry.characterId !== me.id) {
             worldRetry = null; worldBusy = false;
@@ -8215,6 +8217,14 @@
     // reading THE PAYROLL's countdown on a live probe; the same string rode every h+m countdown
     : s > 3600 ? (() => { let h = Math.floor(s / 3600), m = Math.ceil((s % 3600) / 60); if (m === 60) { h += 1; m = 0; } return h + 'h' + (m ? m + 'm' : ''); })() : Math.ceil(s / 60) + 'm';
   const mins = (s) => cd(s, '0:00');
+  // Bind the duration to the latest sheet observation, so repainting a tab cannot restart the clock.
+  function observeStreetActionClock() {
+    streetActionReadyAt = Date.now() + Math.max(0, Number(me?.streetActionSeconds) || 0) * 1000;
+  }
+  const streetActionLeft = () => Math.max(0, Math.ceil((streetActionReadyAt - Date.now()) / 1000));
+  const streetActionOff = () => streetActionLeft() > 0 ? ' disabled aria-disabled="true"' : '';
+  const streetActionClock = () => streetActionLeft() > 0
+    ? `<div class="d" role="status">The street is cooling down. Crimes and deals reopen in <span class="cdt" data-until="${streetActionReadyAt}" data-ready="0:00"></span>.</div>` : '';
   // TO GROUND — the signed D2 rule ("a shield, not a bunker"): while you're in a safehouse the game
   // freezes every verb that turns something you already own into money in your pocket. Played it:
   // the Empire read "$120,017 READY TO COLLECT · collect before the pad or a raid eats it" over a
@@ -8305,14 +8315,15 @@
         <span class="d" style="color:var(--dim);font-size:12.5px">1 crate packs 20 units — crates: ${fmt(me.cb)}</span>`}
 
       <h2 style="margin-top:12px">The Corner <span class="d" style="font-size:11px">(demand at ${me.loc})</span></h2>
+      ${streetActionClock()}
       ${(me.stash || []).length ? `<div class="grid">${me.stash.map((s) => `
         <div class="card"><span class="t">${drugName(s.drug)}</span>
           <div class="d">${s.qty} units · quality ${s.quality} · demand here ×${demandHere[s.drug] ?? '?'}</div>
           <input data-deal="${s.drug}" placeholder="qty" size="5">
           <div class="verbrow">
-            <button class="act" style="opacity:.8" data-dealgo="${s.drug}" data-play="careful" title="work your regulars — half the heat, but it takes patience (double nerve)">quiet</button>
-            <button class="act prime" data-dealgo="${s.drug}" data-play="standard">deal</button>
-            <button class="act risk" data-dealgo="${s.drug}" data-play="flood" title="move weight — half the nerve, but DOUBLE the heat (and churn burns your name)">move weight</button>
+            <button class="act" style="opacity:.8" data-dealgo="${s.drug}" data-play="careful" title="work your regulars — half the heat, but it takes patience (double nerve)"${streetActionOff()}>quiet</button>
+            <button class="act prime" data-dealgo="${s.drug}" data-play="standard"${streetActionOff()}>deal</button>
+            <button class="act risk" data-dealgo="${s.drug}" data-play="flood" title="move weight — half the nerve, but DOUBLE the heat (and churn burns your name)"${streetActionOff()}>move weight</button>
           </div>
           <button class="act" data-cut="${s.drug}" title="stretch the line — more units, weaker product">cut it ($${fmt(rules?.kitchen?.cut?.cost || 8000)})</button></div>`).join('')}</div>`
         : '<span class="d" style="color:var(--dim)">the stash is empty — cook something</span>'}
@@ -8707,7 +8718,7 @@
     // lever. Uses the frictionless referral share link (/u/<name>?ref=<name>) the funnel already runs on.
     const bo = b.bringOne || {};
     const bringOneCard = `<div class="card" style="margin-top:6px;border-color:var(--gold)"><span class="t" style="color:var(--gold)">Bring one in</span> <span class="d" style="font-size:11px">— the crew's first-blood bonus</span>
-      <div class="d" style="margin-top:4px">Get a real friend into the city and run with them. When they get established${bo.RECRUIT_CASH ? ` — level 8, 40 jobs, three days checked in, $25k to their name — <b>you both collect</b>: <span class="chip good">$${fmt(bo.RECRUITER_CASH)}</span> to you, <span class="chip good">$${fmt(bo.RECRUIT_CASH)}</span> to them` : ''}.</div>
+      <div class="d" style="margin-top:4px">Get a real friend into the city and run with them. When they make their character permanent and get established${bo.RECRUIT_CASH ? ` — level 8, 40 jobs, three days checked in, $25k to their name — <b>you both collect</b>: <span class="chip good">$${fmt(bo.RECRUITER_CASH)}</span> to you, <span class="chip good">$${fmt(bo.RECRUIT_CASH)}</span> to them` : ''}.</div>
       <div class="row" style="margin-top:6px">
         <button class="act" id="bring-one-x" style="border-color:var(--gold)">📣 send them the invite ↗</button>
         <button class="act" id="bring-one-copy">copy your link</button></div>
@@ -8876,6 +8887,7 @@
     const nerveHelp = `Wait for Nerve to recover or choose a job you can afford.${nerveRate > 0 ? ` Base recovery: ${fmt(nerveRate)} nerve/min; bonuses may increase this.` : ''}`;
     const blocked = Number(me?.jailSeconds || 0) > 0 ? 'No street jobs in lockup.'
       : PlayerExperience.access(me, crime.lvl) ? PlayerExperience.access(me, crime.lvl)
+      : streetActionLeft() > 0 ? `The street is cooling down for ${minsTxt(streetActionLeft())}.`
       : Number(me?.nerve || 0) < crime.nerve ? `Needs ${crime.nerve} nerve. You have ${fmt(me?.nerve || 0)}. ${nerveHelp}` : '';
     const approaches = Object.fromEntries((rules?.crimeApproaches || []).map(approach => [approach.id, approach]));
     const quiet = approaches.quiet || {}, loud = approaches.loud || {};
@@ -9465,7 +9477,8 @@
     const board = (await api('GET', '/v1/market')).body || {};
     const prices = (await api('GET', '/v1/market/prices')).body || {};
     if (!current()) return;
-    const here = prices.goods?.[me.loc] || {};
+    const hereAsk = (prices.goodsBuy || prices.goods)?.[me.loc] || {};
+    const hereBid = (prices.goodsSell || prices.goods)?.[me.loc] || {};
     const allListings = board.listings || [];
     const listings = PlayerExperience.marketListings(allListings, filters);
     const carCard = (l) => `
@@ -9480,7 +9493,7 @@
     const goodCard = (l) => `
       <div class="card">${ico('good', l.good)}<span class="t">${esc(goodName(l.good))} × ${fmt(l.qty)}</span>
         ${l.seller === me.name ? '<span class="chip">yours</span>' : ''}
-        <div class="d">$${fmt(l.unitPrice)}/unit at ${esc(l.district)} (spot here: $${fmt(here[l.good] ?? '?')}) · ${esc(l.seller)} · ${mins(l.expiresSeconds)} left</div>
+        <div class="d">$${fmt(l.unitPrice)}/unit at ${esc(l.district)} (shop here asks $${fmt(hereAsk[l.good] ?? '?')} · buys at $${fmt(hereBid[l.good] ?? '?')}) · ${esc(l.seller)} · ${mins(l.expiresSeconds)} left</div>
         ${l.seller !== me.name ? `${l.district === me.loc ? `<label>Buy quantity <input data-gqty="${l.id}" inputmode="numeric" size="6" aria-describedby="quote-${l.id}"></label>
           <button class="act" data-gbuy="${l.id}" disabled>buy</button><p class="d" id="quote-${l.id}" aria-live="polite">Enter a quantity for the total.</p>` : `<span class="chip cold">stand at ${esc(l.district)} to buy</span>`}`
         : `<button class="act" data-cancel="${l.id}">pull it</button>`}</div>`;
@@ -9515,14 +9528,14 @@
 
       <h2 style="margin-top:12px">Move Goods <span class="d" style="font-size:11px">(pinned to ${me.loc} — buyers come to you)</span></h2>
       ${myCargo.length ? `
-        <select id="mk-good">${myCargo.map(([id, q]) => `<option value="${id}">${esc(goodName(id))} (${q} in trunk, spot $${fmt(here[id] ?? '?')})</option>`).join('')}</select>
+        <select id="mk-good">${myCargo.map(([id, q]) => `<option value="${id}">${esc(goodName(id))} (${q} in trunk, shop bid $${fmt(hereBid[id] ?? '?')})</option>`).join('')}</select>
         <input id="mk-gqty" placeholder="qty" size="6">
         <input id="mk-gprice" placeholder="$/unit" size="8">
         <button class="act" id="mk-listgood">list it</button>`
         : '<span class="d" style="color:var(--dim)">the trunk is empty — buy goods on the Streets first</span>'}
 
       <h2 style="margin-top:12px">Post a Buy Order <span class="d" style="font-size:11px">(escrows cash — sellers deliver to ${me.loc})</span></h2>
-      <select id="mk-ogood">${(rules?.goods || []).map((g) => `<option value="${g.id}">${esc(g.name)} (spot $${fmt(here[g.id] ?? '?')})</option>`).join('')}</select>
+      <select id="mk-ogood">${(rules?.goods || []).map((g) => `<option value="${g.id}">${esc(g.name)} (ask $${fmt(hereAsk[g.id] ?? '?')} · bid $${fmt(hereBid[g.id] ?? '?')})</option>`).join('')}</select>
       <input id="mk-oqty" placeholder="qty" size="6">
       <input id="mk-oprice" placeholder="$/unit" size="8">
       <button class="act" id="mk-order">post it</button>`;
@@ -9764,7 +9777,7 @@
       if (!me.missionSeconds) ready.push(['start', 'a family job is waiting']);
       if (!me.trainSeconds) ready.push(['streets', 'the gym is open']);
       if (!me.gtaSeconds) ready.push(['garage', 'the boost window is open']);
-      if (me.nerve >= (me.maxNerve || 1)) ready.push(['streets', 'full nerve — jobs are burning']);
+      if (!streetActionLeft() && me.nerve >= (me.maxNerve || 1)) ready.push(['streets', 'full nerve — jobs are burning']);
       if (me.energy >= (me.maxEnergy || 1) * 0.75) ready.push(['streets', 'a full tank going unspent']);
     }
     const nem = pp.nemesis;
@@ -10224,7 +10237,8 @@
     // `.then((r) => r.body)` slot loader passed the guard VACUOUSLY — planted mutations survived).
     const blk = (await api('GET', '/v1/block')).body || {};
     const prices = blk.prices || {};
-    const spot = prices.goods?.[me?.loc] || {};
+    const buySpot = (prices.goodsBuy || prices.goods)?.[me?.loc] || {};
+    const sellSpot = (prices.goodsSell || prices.goods)?.[me?.loc] || {};
     const daily = blk.daily || {};
     const sq = blk.soldiers || {};
     const gym = blk.regimen || {};
@@ -10292,16 +10306,18 @@
     // This is the on-ramp for the Black Market goods trade AND smuggling convoys (both need a stocked trunk).
     const cargo = me?.cargo || {};
     // THE FREIGHT GAME (task #309, founder: trade goods as a core theme). Every good card carries
-    // its own arbitrage read — where it's cheapest, where it's richest, the spread — computed from
-    // the SERVER's own per-district price board (the Trade Winds derivation, per GOOD instead of
-    // per district; nothing re-derives game math, it just sorts what /v1/market/prices returned).
-    const allPrices = prices.goods || {};
+    // its own arbitrage read — lowest NPC ASK versus highest NPC BID — computed from the server's
+    // quote maps. The reference-price map is retained only as a fallback for an older server.
+    const allBuyPrices = prices.goodsBuy || prices.goods || {};
+    const allSellPrices = prices.goodsSell || prices.goods || {};
     const goodIntel = (id) => {
-      const rows = Object.entries(allPrices).map(([d, m]) => [d, Number(m?.[id])]).filter(([, p]) => p > 0);
-      if (rows.length < 2) return null;
-      rows.sort((a, b) => a[1] - b[1]);
-      const lo = rows.find(([d]) => (prices.liquidity?.districts[d]?.[id]?.stock ?? 1) > 0);
-      const hi = [...rows].reverse().find(([d]) => (prices.liquidity?.districts[d]?.[id]?.buying ?? 1) > 0);
+      const asks = Object.entries(allBuyPrices).map(([d, m]) => [d, Number(m?.[id])]).filter(([, p]) => p > 0)
+        .sort((a, b) => a[1] - b[1]);
+      const bids = Object.entries(allSellPrices).map(([d, m]) => [d, Number(m?.[id])]).filter(([, p]) => p > 0)
+        .sort((a, b) => b[1] - a[1]);
+      if (!asks.length || !bids.length) return null;
+      const lo = asks.find(([d]) => (prices.liquidity?.districts[d]?.[id]?.stock ?? 1) > 0);
+      const hi = bids.find(([d]) => (prices.liquidity?.districts[d]?.[id]?.buying ?? 1) > 0);
       if (!lo || !hi || hi[1] <= lo[1]) return null;
       return { lo, hi, pct: Math.round((hi[1] / lo[1] - 1) * 100) };
     };
@@ -10309,15 +10325,15 @@
     const bestPlay = (rules?.goods || []).map((g) => ({ g, i: goodIntel(g.id) }))
       .filter((x) => x.i).sort((a, b) => b.i.pct - a.i.pct)[0];
     const goodsCards = (rules?.goods || []).map((g) => {
-      const price = spot[g.id], held = cargo[g.id] || 0;
+      const buyPrice = buySpot[g.id], sellPrice = sellSpot[g.id], held = cargo[g.id] || 0;
       const available = prices.liquidity?.districts[me?.loc]?.[g.id];
       const i = goodIntel(g.id);
       const here = me?.loc;
       const flag = i && here === i.lo[0] ? '<span class="chip good">CHEAPEST HERE — buy</span>'
         : i && here === i.hi[0] ? '<span class="chip" style="border-color:var(--gold,#c9a227);color:var(--gold,#c9a227)">RICHEST HERE — sell</span>' : '';
       return `<div class="card"><img class="ico wide" loading="lazy" alt="" src="/v1/art/good/${g.id}"><span class="t">${esc(g.name)}</span> ${flag}
-        <div class="d">spot here: <b>$${price != null ? fmt(price) : '—'}</b> · in trunk: ${held}</div>
-        ${available ? `<div class="d">shop stock: <b>${available.stock}</b> · buying: <b>${available.buying}</b></div>` : ''}
+        <div class="d">shop asks: <b>$${buyPrice != null ? fmt(buyPrice) : '—'}</b> · buys at: <b>$${sellPrice != null ? fmt(sellPrice) : '—'}</b> · in trunk: ${held}</div>
+        ${available ? `<div class="d">shop stock: ${available.stock} · buying: ${available.buying}</div>` : ''}
         ${i ? `<div class="d" style="font-size:11.5px;color:var(--dim)">cheapest: ${i.lo[0]} $${fmt(i.lo[1])} · richest: ${i.hi[0]} $${fmt(i.hi[1])} · <b>+${i.pct}%</b> spread</div>` : ''}
         <input data-gd="${g.id}" placeholder="qty" size="5">
         <button class="act" data-gdbuy="${g.id}"${available?.stock === 0 ? ' disabled' : ''}>buy</button>
@@ -10431,6 +10447,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
       </div>` : ''}
       ${tradeStrip}
       <h2 style="margin-top:14px">Crimes <span class="d" style="color:var(--dim);font-size:12.5px">— your best jobs at level ${lvl}</span></h2>
+      ${streetActionClock()}
       <div class="grid">${crimes || restCrimes && '<span class="d" style="color:var(--dim)">no jobs at your level yet — open the full book below</span>' || ''}</div>
       ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class="grid">${restCrimes}</div>`) : ''}
       ${pathBlock}

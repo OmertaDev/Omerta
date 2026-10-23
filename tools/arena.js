@@ -43,6 +43,7 @@
 process.env.MOD_KEY = process.env.MOD_KEY || 'arena-mod-key';
 process.env.MARKET_SEED = process.env.MARKET_SEED || 'arena-harness-seed-000000000000';
 process.env.SOCIAL_VERIFY_MODE = 'off';
+process.env.INVITE_MODE = 'off';
 process.env.RATE_LIMIT = 'off';          // a real DATABASE_URL ARMS the limiter (ratelimit.js) — this is a stress run, not a throttle test
 // A real DATABASE_URL makes preflight treat this as PRODUCTION (isHardened), so JWT_SECRET must be
 // stated and the TEST_ONLY pins (SEASON_MOD/SEASON_PHASE) refuse the boot. The season twist is
@@ -71,6 +72,7 @@ import { GUNS, GOODS, BUSINESSES, RACKETS, CRIMES, DISTRICTS, EXCHANGE, LOAN, CA
 
 const DAYS = Number(process.env.ARENA_DAYS || 30);
 const ROUNDS = Number(process.env.ARENA_ROUNDS || 3);
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 assert(Number.isInteger(DAYS) && DAYS > 0 && Number.isInteger(ROUNDS) && ROUNDS > 0, `ARENA_DAYS/ARENA_ROUNDS must be positive integers (got ${DAYS}/${ROUNDS})`);
 const DEFENDED = process.env.ARENA_DEFENDED !== 'off';
 // STEP THREE — THE ADAPTIVE HUNTERS. Two knobs, both defaulting to the new posture, both reversible so
@@ -240,11 +242,17 @@ const players = [];
 let i = 0;
 for (const [strat, n] of Object.entries(CAST)) {
   for (let k = 0; k < n; k++, i++) {
-    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    const guest = await call('POST', '/v1/auth/guest', null, { birthDate: SYNTHETIC_ADULT_BIRTH_DATE });
+    assert.equal(guest.code, 200, `guest ${i} created: ${JSON.stringify(guest.body)}`);
+    const token = guest.body.token;
+    assert.equal(typeof token, 'string', `guest ${i} returned a bearer token`);
     const name = `${strat[0].toUpperCase()}${strat.slice(1)} ${k}${i}`;
-    await call('POST', '/v1/character', token, { name });
-    const me = (await call('GET', '/v1/me', token)).body.character;
-    if (!me) continue;
+    const created = await call('POST', '/v1/character', token, { name });
+    assert.equal(created.code, 200, `character ${i} created: ${JSON.stringify(created.body)}`);
+    const read = await call('GET', '/v1/me', token);
+    assert.equal(read.code, 200, `character ${i} read: ${JSON.stringify(read.body)}`);
+    const me = read.body.character;
+    assert(me, `character ${i} is readable after creation`);
     players.push({ token, id: me.id, acct: null, name, strat, k, loc: me.loc, st: {} });
   }
 }
@@ -299,7 +307,7 @@ const t0 = Date.now();
 // memory, so anything keyed to the body is cleared when the id changes. Without this a dead hunter's heir
 // never re-attempts the gun buy and every later fire refuses `gun` (a refuter's find over step two: part of
 // "their heirs could not re-arm" was the harness never trying).
-const me = async (p) => { const r = await call('GET', '/v1/me', p.token); const c = r.body?.character; if (c) { if (p.id && c.id !== p.id) { p.st.gun = false; p.st.btk = null; p.st.mark = null; p.st.markSrc = null; } p.loc = c.loc; p.id = c.id; } return c; };
+const me = async (p) => { const r = await call('GET', '/v1/me', p.token); const c = r.body?.character; if (c) { if (p.id && c.id !== p.id) { p.st.gun = false; p.st.btk = null; p.st.mark = null; p.st.markSrc = null; p.st.offered = false; } p.loc = c.loc; p.id = c.id; } return c; };
 const goTo = async (p, d) => { if (p.loc === d) return true; const r = note(p, await call('POST', `/v1/travel/${d}`, p.token)); if (r.code === 200) p.loc = d; return r.code === 200; };
 const bestCrime = (c) => { const lvl = levelOf(Number(c.respect)); const ok = CRIMES.filter((x) => x.lvl <= lvl && x.nerve <= c.nerve); return ok.length ? ok[ok.length - 1] : null; };
 const crime = async (p, c) => { const x = bestCrime(c); if (!x) return null; return note(p, await call('POST', `/v1/crimes/${x.id}`, p.token, {})); };
@@ -312,9 +320,25 @@ const roster = async (p) => ((await call('GET', '/v1/streets', p.token)).body?.s
 const hireGuard = async (p, c) => {
   if (c.guardedBy) return;
   const guards = (await roster(p)).filter((m) => !m.npc && m.id !== p.id && m.guardPrice && !m.jailed && !m.hospitalized).sort((a, b) => a.guardPrice - b.guardPrice);
-  const g = guards[0]; if (!g || c.cash < g.guardPrice * 2) return;
-  const r = note(p, await call('POST', `/v1/bodyguard/hire/${g.id}`, p.token));
-  if (r.code === 200) { def.guardHires++; def.guardCash += Number(r.body?.price || g.guardPrice); }
+  for (const g of guards) {
+    if (c.cash < g.guardPrice * 2) continue;
+    const r = note(p, await call('POST', `/v1/bodyguard/hire/${g.id}`, p.token));
+    if (r.code === 200) { def.guardHires++; def.guardCash += Number(r.body?.price || g.guardPrice); return; }
+    // Notebook sightings are intentionally stale. A dead, hospitalized, or withdrawn guard can
+    // remain on the roster, so a buyer tries the next advertised line instead of getting pinned to
+    // the first stale card for the rest of the month.
+    if (!['no_target', 'unavailable', 'not_offering'].includes(r.body?.error)) return;
+  }
+};
+// A bodyguard listing is visible only to people who have met the seller. Model the seller doing the
+// legitimate marketing work: after listing, introduce themselves to every nearby face. Meetings are
+// mutual, so each prospective principal records the offered price without bypassing player-intel.
+const advertiseGuard = async (p) => {
+  const offered = note(p, await call('POST', '/v1/bodyguard/offer', p.token, { price: M3.BODYGUARD_MIN_PRICE }));
+  if (offered.code !== 200) return;
+  p.st.offered = true;
+  for (const face of (await roster(p)).filter((m) => m.nearby && m.id !== p.id))
+    note(p, await call('POST', `/v1/streets/${face.id}/meet`, p.token));
 };
 // SHELTER: go to ground AFTER acting in the first round of the day — a safehouse blocks collection,
 // banking and offence (the signed "shield, not bunker" rule), so the prey collects, banks, then hides
@@ -488,6 +512,13 @@ const STRAT = {
       mark = marks[p.k % Math.min(marks.length, CAST.hunter)];
     }
     if (!mark) return;
+    // A nearby stranger is intentionally anonymous on the streets board until an introduction.
+    // The player-intel gate was added after this harness, so walking straight from that board row
+    // into a search only measures `unknown_player`. Meet the mark first, as a player must.
+    if (mark.nearby && mark.name === null) {
+      const intro = note(p, await call('POST', `/v1/streets/${mark.id}/meet`, p.token));
+      if (intro.code !== 200) return;
+    }
     const r = note(p, await call('POST', `/v1/streets/${mark.id}/search`, p.token));
     if (r.code === 200) { (p.strat === 'adaptive' ? ah : ev).search++; p.st.mark = mark.id; p.st.markSrc = src; }
   },
@@ -624,8 +655,15 @@ const STRAT = {
       p.st.lastWorth = worth;
       const tried = ADAPTIVE_POLICIES.filter((x) => bandit[x]?.n);
       let next = p.st.policy;
-      if (grnd() < EPSILON || tried.length < ADAPTIVE_POLICIES.length) next = pick(ADAPTIVE_POLICIES.filter((x) => !bandit[x]?.n).concat(tried.length === ADAPTIVE_POLICIES.length ? ADAPTIVE_POLICIES : []));
-      else next = tried.sort((a, b) => bandit[b].sum / bandit[b].n - bandit[a].sum / bandit[a].n)[0];
+      // A search takes a full game day before the shot is ready. Keep a seat on the hunter policy
+      // while that search is outstanding; switching at the next day boundary used to cancel every
+      // exploratory search just as it matured, so the bandit measured search fees but never the
+      // kill outcome that determines the policy's return.
+      const huntInProgress = p.st.policy === 'hunter' && p.st.mark;
+      if (!huntInProgress) {
+        if (grnd() < EPSILON || tried.length < ADAPTIVE_POLICIES.length) next = pick(ADAPTIVE_POLICIES.filter((x) => !bandit[x]?.n).concat(tried.length === ADAPTIVE_POLICIES.length ? ADAPTIVE_POLICIES : []));
+        else next = tried.sort((a, b) => bandit[b].sum / bandit[b].n - bandit[a].sum / bandit[a].n)[0];
+      }
       if (next !== p.st.policy) {
         def.adaptiveSwitches++;
         // Dropping the gun CALLS OFF the search: the row lives until fire/call-off/estate, so a seat that
@@ -687,13 +725,17 @@ for (let day = 1; day <= DAYS; day++) {
       try {
         const prey = DEFENDED && PREY.has(p.strat);
         if (prey) { await retaliate(p, c); await hireContractor(p, c); if (p.strat === 'landlord') await family(p, c); await hireGuard(p, c); }
-        if (DEFENDED && (p.strat === 'grinder' || p.strat === 'turtle') && !p.st.offered) { const g = note(p, await call('POST', '/v1/bodyguard/offer', p.token, { price: M3.BODYGUARD_MIN_PRICE })); if (g.code === 200) p.st.offered = true; }
+        if (DEFENDED && (p.strat === 'grinder' || p.strat === 'turtle') && !p.st.offered) await advertiseGuard(p);
         await STRAT[p.strat](p, c);
         // a seat holding the gun does not go to ground — the safehouse blocks offence (the signed P1.3
         // rule), so shelter and hunt are exclusive; the turtle policy buys its own stays
         if (prey && !(p.strat === 'adaptive' && (p.st.policy === 'turtle' || p.st.policy === 'hunter'))) await shelter(p, c);
       } catch (e) { (refused[p.strat] ||= {})[`THREW:${e.message}`] = 1 + ((refused[p.strat] || {})[`THREW:${e.message}`] || 0); }
     }
+    const unknownHunterTargets = Object.values(hunterRef).reduce((n, codes) =>
+      n + (codes.unknown_player || []).reduce((sum, count) => sum + count, 0), 0);
+    assert.equal(unknownHunterTargets, 0,
+      'arena hunter reached search with an anonymous mark — introduce nearby strangers before measuring the kill economy');
     if (WARP === 'round') await warpRound();
   }
   // The hunters' pockets at each third's close: the number that separates "deterred" from "broke".

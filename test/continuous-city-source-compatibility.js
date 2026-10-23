@@ -13,6 +13,8 @@ import { CONTINUOUS_CITY_SOURCE_REVISION, CONTINUOUS_CITY_SOURCE_PREDECESSOR, CO
 import { CONTINUOUS_CITY_FIXTURE_PREDECESSOR } from '../tools/continuous-city-fixture-source-data.js';
 import { hasEnterpriseOverRootSource, enterpriseOverRootSourceBaseline } from '../tools/enterprise-current-source-compatibility.js';
 import { CLASSIC_INTERFACE_OVER_F92, classicInterfaceHistoricalInput, qualifyClassicInterfaceSource } from '../tools/commerce-current-enterprise-source-compatibility.js';
+import { ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_BINDING_DOMAINS,
+  economyHardeningSourceBaseline } from '../tools/economy-hardening-source-transfer.js';
 assert.deepEqual(process.argv.slice(2), [], 'Source-only proof has no native or retained modes');
 const git = (...args) => execFileSync('git', ['-c', 'core.safecrlf=false', ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -33,13 +35,15 @@ for (const row of CLASSIC_INTERFACE_OVER_F92.files) {
   assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file).trim(), row.mode + ' blob ' + row.targetBlob + '\t' + file);
   const headText = git('--no-replace-objects', 'show', 'HEAD:' + file);
   assert.equal(git('--no-replace-objects', 'ls-tree', 'HEAD', '--', file).trim().split(' ')[0], row.mode, 'Actual committed mode remains regular');
-  assert.equal(rebuildInterfaceHistoricalInput(file, headText), current, 'Exact current source transfers to the immutable classic-interface input');
+  assert.equal(rebuildInterfaceHistoricalInput(file, economyHardeningSourceBaseline(file, headText)), current,
+    'Only the exact economy-hardening successor reconstructs the authored classic-interface input');
   assert.equal(hash(current), row.currentSha256); assert.equal(hash(target), row.targetSha256);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-  const physical = rebuildInterfaceHistoricalInput(file, fs.readFileSync(file, 'utf8')); assert.equal(lf(physical), current);
+  const physical = fs.readFileSync(file, 'utf8');
+  assert.equal(lf(rebuildInterfaceHistoricalInput(file, economyHardeningSourceBaseline(file, physical))), current);
   assert.deepEqual(row.inverses, hunks(git('diff', '--no-ext-diff', '--unified=3', CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)));
   for (const input of [physical, current, current.replaceAll('\n', '\r\n')]) {
-    const proof = qualifyClassicInterfaceSource(file, input);
+    const proof = qualifyClassicInterfaceSource(file, rebuildInterfaceHistoricalInput(file, economyHardeningSourceBaseline(file, input)));
     assert.equal(proof.baselineText, target); assert.equal(proof.sourceOnly, true); assert.equal(proof.native, false); assert.equal(proof.runtime, false);
     assert.equal(classicInterfaceHistoricalInput(file, input), target); classicPositives++;
   }
@@ -312,12 +316,12 @@ for (const [file, pin] of Object.entries(CONTINUOUS_CITY_FIXTURE_DOMAINS)) {
   assert.equal(git('ls-tree', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file).split(' ')[0], pin.baselineMode);
   verify(file, pin, actual, baseline, qualifyContinuousCityFixtureSource,
     file === 'test/lib/rc1-historical-source-fixture.js'
-      // The physical helper has a separate whole-file successor proof above.
-      // Frozen inverse contexts must still be compared with its immutable classic body.
       ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)
       : file === 'test/enterprise-current-source-compatibility.js'
         ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)
-        : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));
+        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)
+          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)
+          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));
   if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }
 }
 for (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {

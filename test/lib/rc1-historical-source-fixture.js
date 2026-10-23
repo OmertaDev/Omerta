@@ -1,6 +1,7 @@
 import { continuousCityHistoricalInput } from '../../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../../tools/commerce-current-enterprise-source-compatibility.js";
 import {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';
+import {ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS} from '../../tools/enterprise-native-inputs.js';
 // Closed pure-control fixtures. Historical source execution never admits the current release.
 import {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';
 import { economyReleaseSource } from '../../tools/economy-release-composition.js';
@@ -22,6 +23,7 @@ import { CITY_ACTIVITY_SOURCE_INVERSES, CITY_ACTIVITY_SOURCE_TRANSFER, cityActiv
   qualifyCityActivitySource } from '../../tools/rc1-city-activity-source-compatibility.js';
 import { qualifyCityActivityMarketSource } from '../../tools/rc1-city-activity-market-source-compatibility.js';
 import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';
+import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -35,6 +37,10 @@ const composedHistoricalHelperPins = Object.freeze({
   "tools/rc1-first-batch-source-compatibility.js": Object.freeze({"sha256":"41ca8a1a01a1d1d456d0f19643e8634bdf5d6169b4d9acd91e391ca714c7b258","blob":"562619d11db7f42397d577fc247695dc6b12b2e3"}),
   "tools/rc1-second-batch-source-compatibility.js": Object.freeze({"sha256":"e8a81539af29d3f1c7662141bb32c61b211881ee954f900bf7bb03e173d5d2f8","blob":"8fda1bc4a43c0ce906a3e0b48986963e9eaba026"}),
   "tools/rc1-third-batch-source-compatibility.js": Object.freeze({"sha256":"a2040f0c71187914b91c10826a026ba6ba2cc669bbe10d07b554966ce6daad47","blob":"e46e3056591d37bf611727f834f06a4f603764e8"}),
+  "tools/rc1-npc-cargo-journal.js": Object.freeze({"sha256":"ce0dd00630210515d296bc84ee312676457c3515b61165879cb933a55079ab1d","blob":"2b1f83248ef425929901a8e6676a42d356cd1895"}),
+  "tools/rc1-player-car-provenance.js": Object.freeze({"sha256":"e2a7e46c8f24c61a4d207d321fa3c1d37cfc70cc87e689a461e6e3b03894c688","blob":"2f0c03cb6a0482633517ade3c3e2abce179abb54"}),
+  "tools/rc1-world-market-resources.js": Object.freeze({"sha256":"6e5162c7be310d06f5104ae2b53ea68b4362e68ce493290a8bf674296b21f5f0","blob":"81813d6fc2b93bc3aa5a04fb9c9235083f8793b4"}),
+  "tools/rc1-world-resource-observer.js": Object.freeze({"sha256":"b67ace079ce4b80b22bccef872f9def19db13ef46af891cae8742c5aa1ef655c","blob":"6bf84e1e9b16ae1ed6ca9799f56d999e06e40246"}),
   "tools/release-source-transfer.js": Object.freeze({"sha256":"7024f1267fc392189111beb9cf1fa328490f81ae227fd7fe17fc2c030f3facef","blob":"7a74deb2e809c3ab2c70a962f1efc4f2c0547a29"}),
 });
 // The already-admitted qualification tool keeps its exact b12 evaluated body.
@@ -61,6 +67,12 @@ const cityActivityWorldHelper = Object.freeze({
     ],
   ].map(pair => Object.freeze(pair))),
 });
+const enterpriseCombinedHistoricalFiles = Object.freeze([
+  'src/accrual.js', 'src/boxing.js', 'src/business.js', 'src/cityhomes.js', 'src/corner.js',
+  'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js', 'src/growth.js', 'src/hustle.js',
+  'src/kitchen.js', 'src/opportunities.js', 'src/pen.js', 'src/population.js', 'src/races.js',
+  'src/rules.tail.js', 'src/stable.js', 'src/streets.js',
+]);
 const npcEntries = new Set([
   'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',
   'test/rc1-world-car-melt-witness.js', 'test/rc1-npc-car-acquisition.js',
@@ -126,6 +138,30 @@ function uniformHistoricalInput(file, input) {
     'Reviewed tool source must have uniform line endings: ' + file);
   return raw;
 }
+function enterpriseCombinedHistoricalInput(file, input, expected) {
+  const raw = uniformHistoricalInput(file, input), current = canonical(raw);
+  if (!enterpriseCombinedHistoricalFiles.includes(file)) return raw;
+  const rows = ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.replacements.filter(candidate => candidate.file === file);
+  assert.equal(rows.length, 1, 'Unique combined enterprise historical input required: ' + file);
+  const [row] = rows;
+  assert.equal(row.before.sha256, sha256(expected), 'Combined enterprise predecessor differs from frozen release: ' + file);
+  assert.equal(row.before.blob, blobHash(expected), 'Combined enterprise predecessor blob differs from frozen release: ' + file);
+  const digest = sha256(current);
+  if (digest === row.before.sha256) {
+    assert.equal(blobHash(Buffer.from(current)), row.before.blob, 'Combined enterprise predecessor Git blob changed: ' + file);
+    return raw;
+  }
+  if (digest !== row.after.sha256) return raw;
+  assert.equal(blobHash(Buffer.from(current)), row.after.blob, 'Combined enterprise current Git blob changed: ' + file);
+  assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision}:${file}`])).trim(), row.after.blob,
+    'Combined enterprise revision/blob binding changed: ' + file);
+  const authored = git(['cat-file', 'blob', row.after.blob]);
+  assert.equal(canonical(authored), String(authored), 'Combined enterprise current bytes must be LF: ' + file);
+  assert.equal(sha256(authored), row.after.sha256, 'Combined enterprise current source changed: ' + file);
+  assert.equal(blobHash(authored), row.after.blob, 'Combined enterprise current Git object changed: ' + file);
+  assert.equal(String(authored), current, 'Combined enterprise current bytes differ from authored revision: ' + file);
+  return String(expected);
+}
 function composedHistoricalHelperSource(file, input) {
   const raw = uniformHistoricalInput(file, input), pin = composedHistoricalHelperPins[file];
   const current = canonical(raw);
@@ -147,7 +183,8 @@ function composedHistoricalHelperSource(file, input) {
 function cityActivityWorldHelperSource(file, input) {
   const spec = cityActivityWorldHelper;
   assert.equal(file, spec.file, 'City activity qualification helper domain changed');
-  const current = canonical(uniformHistoricalInput(file, input)), frozen = blob(file, release);
+  const current = canonical(economyHardeningSourceBaseline(file, uniformHistoricalInput(file, input)));
+  const frozen = blob(file, release);
   assert.equal(release.get(file), spec.predecessorBlob, 'Frozen qualification helper blob changed');
   assert.equal(sha256(frozen), spec.predecessorSha256, 'Frozen qualification helper source changed');
   assert.equal(String(frozen), String(git(['cat-file', 'blob', spec.predecessorRevision + ':' + file])),
@@ -168,7 +205,8 @@ function historicalApplicationSource(file, input) {
   assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',
     'Historical application provenance excludes tool and test domains');
   const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];
-  let witness = marketOverDeedSourceBaseline(file, cityActivitySourceBaseline(file, String(input)));
+  let witness = marketOverDeedSourceBaseline(file,
+    cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(input))));
   if (domain) {
     const raw = uniformHistoricalInput(file, witness);
     if (sha256(canonical(raw)) === domain.currentSha256)
@@ -177,6 +215,7 @@ function historicalApplicationSource(file, input) {
   // Exact outer provenance comes first; only independently pinned historical bodies execute.
   let reviewed = economyReleaseSource('main', file, cityPlaySourceBaseline(file, witness));
   if (sha256(canonical(reviewed)) !== sha256(expected)) reviewed = fourthBatchSourceBaseline(file, reviewed);
+  reviewed = enterpriseCombinedHistoricalInput(file, reviewed, expected);
   assert.equal(sha256(canonical(reviewed)), sha256(expected), 'Current release input changed outside historical fixture: ' + file);
   assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);
   return blob(file, history);
@@ -299,12 +338,12 @@ async function rejectCurrentNpcRules() {
   const { assertNpcBoatSources } = await import('../../tools/rc1-npc-boat-journal.js');
   const { assertNpcMarketSources } = await import('../../tools/rc1-npc-market-order-journal.js');
   const files = ['src/rules.tail.js', 'src/rules.generated.js'];
-  const base = new Map(files.map(file => [file, String(blob(file, history))]));
+  const base = new Map([...files, 'src/population.js'].map(file => [file, String(blob(file, history))]));
   let refusals = 0;
   try {
     for (const file of files) {
       const current = String(blob(file, release));
-      assert.equal(canonical(originalRead(path.join(root, file))), current);
+      assert.equal(canonical(economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file))))), current);
       for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed rule source\n']) {
         fs.readFileSync = (candidate, options) => {
           const name = relative(candidate);
@@ -374,7 +413,9 @@ function rejectComposedHistoricalHelperSources() {
 
 function rejectCityActivityWorldHelperSources() {
   const spec = cityActivityWorldHelper, raw = String(originalRead(path.join(root, spec.file)));
-  const current = canonical(raw), frozen = blob(spec.file, release);
+  const current = canonical(raw);
+  const reviewed = canonical(economyHardeningSourceBaseline(spec.file, raw));
+  const frozen = blob(spec.file, release);
   let positives = 0, refusals = 0;
   for (const supplied of [current, current.replaceAll('\n', '\r\n')]) {
     const selected = composedHistoricalHelperSource(spec.file, supplied);
@@ -393,9 +434,9 @@ function rejectCityActivityWorldHelperSources() {
       source.replace(/\S/, '?'), '\ufeff' + source, source.replace('\n', '\r\n'), source.replace('\n', '\r')]) reject(supplied);
   }
   for (const [chunk] of spec.inverses) {
-    assert.equal(current.split(chunk).length, 2);
-    reject(current.replace(chunk, ''));
-    reject(current.replace(chunk, () => chunk + chunk));
+    assert.equal(reviewed.split(chunk).length, 2);
+    reject(reviewed.replace(chunk, ''));
+    reject(reviewed.replace(chunk, () => chunk + chunk));
   }
   for (const [before, after] of [
     ['version: 34', 'version: 35'],
@@ -403,8 +444,8 @@ function rejectCityActivityWorldHelperSources() {
     ['cityActivitySourceBaseline(file, String(await readFile(file)))', 'String(await readFile(file))'],
     ['assert.equal(sha256(text), expected', 'assert.equal(sha256(text), sha256(text)'],
   ]) {
-    assert(current.includes(before), 'Semantic control must change actual current helper');
-    reject(current.replace(before, after));
+    assert(reviewed.includes(before), 'Semantic control must change the reviewed current helper');
+    reject(reviewed.replace(before, after));
   }
   for (const file of ['tools/unreviewed-helper.js', 'src/server.js', 'test/rc1-lifecycle-applicability.js']) {
     assert.throws(() => cityActivityWorldHelperSource(file, raw), /domain changed/);
@@ -443,6 +484,49 @@ function rejectHistoricalApplicationSources() {
       reject(deedCurrent.replace(inverse.current, () => inverse.current + inverse.current));
     }
   }
+  const admittedCombinedFiles = ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.replacements
+    .filter(row => release.get(row.file) === row.before.blob && (row.file.startsWith('src/') || row.file.startsWith('data/') || row.file === 'schema.sql'))
+    .map(row => row.file).sort();
+  assert.deepEqual(admittedCombinedFiles, [...enterpriseCombinedHistoricalFiles].sort(),
+    'Combined enterprise historical namespace changed');
+  const combinedCurrents = new Map();
+  for (const combinedFile of enterpriseCombinedHistoricalFiles) {
+    const combinedRow = ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.replacements.find(row => row.file === combinedFile);
+    const physicalCurrent = canonical(continuousCityHistoricalInput(combinedFile,
+      String(originalRead(path.join(root, combinedFile)))));
+    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));
+    const combinedFrozen = String(blob(combinedFile, release));
+    const combinedExpected = blob(combinedFile, history);
+    combinedCurrents.set(combinedFile, combinedCurrent);
+    assert.equal(sha256(combinedCurrent), combinedRow.after.sha256, 'Combined enterprise current source changed: ' + combinedFile);
+    assert.equal(blobHash(Buffer.from(combinedCurrent)), combinedRow.after.blob, 'Combined enterprise current blob changed: ' + combinedFile);
+    assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision}:${combinedFile}`])).trim(), combinedRow.after.blob,
+      'Combined enterprise current revision/blob binding changed: ' + combinedFile);
+    assert.equal(sha256(combinedFrozen), combinedRow.before.sha256, 'Combined enterprise predecessor source changed: ' + combinedFile);
+    assert.equal(blobHash(Buffer.from(combinedFrozen)), combinedRow.before.blob, 'Combined enterprise predecessor blob changed: ' + combinedFile);
+    const physicalPin = sha256(physicalCurrent) === combinedRow.after.sha256 ? combinedRow.after
+      : sha256(physicalCurrent) === combinedRow.before.sha256 ? combinedRow.before : null;
+    assert(physicalPin, 'Physical source did not compose to an exact combined enterprise layer: ' + combinedFile);
+    assert.equal(blobHash(Buffer.from(physicalCurrent)), physicalPin.blob,
+      'Physical source combined enterprise blob changed: ' + combinedFile);
+    const rejectCombined = supplied => {
+      assert.throws(() => currentHistoricalApplicationSource(combinedFile, supplied));
+      refusals++;
+    };
+    for (const source of new Set([combinedCurrent, physicalCurrent, combinedFrozen])) {
+      for (const supplied of [source, source.replaceAll('\n', '\r\n')]) {
+        const selected = currentHistoricalApplicationSource(combinedFile, supplied);
+        assert.equal(sha256(selected), sha256(combinedExpected));
+        assert.equal(blobHash(selected), history.get(combinedFile));
+        positives++;
+      }
+      for (const supplied of ['\n// unreviewed prefix\n' + source, source + '\n// unreviewed suffix\n',
+        source.replace(/\S/, '?'), '\ufeff' + source, source + '\0', source.replace('\n', '\r\n'), source.replace('\n', '\r')]) rejectCombined(supplied);
+    }
+  }
+  assert.throws(() => currentHistoricalApplicationSource('src/accrual.js', combinedCurrents.get('src/business.js')));
+  assert.throws(() => currentHistoricalApplicationSource('src/business.js', combinedCurrents.get('src/accrual.js')));
+  refusals += 2;
   const phase1 = String(originalRead(path.join(root, 'src/content/phase1.js')));
   const unsupported = 'src/content/city-quest-presentation.js';
   const unsupportedRaw = canonical(originalRead(path.join(root, unsupported)));
@@ -540,7 +624,7 @@ if (cold) {
       return { ...result, source: historical(file) };
     }
     if (file?.startsWith('tools/') && /\.[cm]?js$/.test(file)) {
-      const raw = originalRead(path.join(root, file)), selected = composedHistoricalHelperSource(file, raw);
+      const raw = economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file)))), selected = composedHistoricalHelperSource(file, raw);
       if (selected) return { ...nextLoad(url, context), source: selected };
       assert.equal(sha256(canonical(raw)), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
     }

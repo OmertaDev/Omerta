@@ -490,7 +490,7 @@ assert.equal(Object.hasOwn(jailedFavorBoard.open[0], 'posterHere'), false,
 const emptyCornerDb = {
   async query(sql) {
     if (/FROM corner_jobs/i.test(sql) || /FROM corner_chains/i.test(sql)
-        || /FROM daily_progress/i.test(sql)) return { rows: [] };
+        || /FROM daily_progress/i.test(sql) || /FROM account_daily_claims/i.test(sql)) return { rows: [] };
     throw new Error(`unexpected corner-gate query: ${sql}`);
   },
 };
@@ -502,7 +502,8 @@ const fullCornerDb = {
     if (/FROM corner_jobs/i.test(sql)) return { rows: Array.from({ length: CORNER.MAX_DAY }, (_, index) => ({
       district: 'canal', slot: 90 + index, claimed: true, baseline: '{}',
     })) };
-    if (/FROM corner_chains/i.test(sql) || /FROM daily_progress/i.test(sql)) return { rows: [] };
+    if (/FROM corner_chains/i.test(sql) || /FROM daily_progress/i.test(sql)
+        || /FROM account_daily_claims/i.test(sql)) return { rows: [] };
     throw new Error(`unexpected full-corner query: ${sql}`);
   },
 };

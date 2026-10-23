@@ -11,8 +11,9 @@
 //
 // This does. Each scenario points concurrent writers at a SINGLE row and asserts the correctness
 // property pg-mem is blind to: an idempotency key executes once, one escrow is claimed by exactly
-// one winner, a symmetric AB-BA transfer conserves value with no 500, and a two-party transfer's
-// house take is exact. Every scenario ends with the §10.4 sweep and the pg_stat_database deadlock
+// one winner, a take-vs-cancel cross-route race has one terminal outcome, a symmetric AB-BA transfer
+// conserves value with no 500, and a two-party transfer's house take is exact. Every scenario ends
+// with the §10.4 sweep and the pg_stat_database deadlock
 // counter — a lock-order bug is retried into invisibility for players, so it is read straight from
 // Postgres.
 //
@@ -203,6 +204,48 @@ const dl0 = await deadlocks();
   await assertNoNewDrift(drift, 'S4');
 }
 
+// ── S5 — TWO ROUTES, ONE ESCROW TERMINAL ─────────────────────────────────────────────────────────
+// The taker and lender touch the same OPEN loan through different endpoints. Whichever row lock wins
+// owns the only terminal transition: either principal reaches the borrower, or it returns to the
+// lender. The losing route must observe the committed status and cannot emit a second escrow outflow.
+{
+  console.log('S5 — loan take vs cancel: one terminal transition and one escrow outflow');
+  const lender = await mk('RaceLender');
+  const borrower = await mk('RaceBorrower');
+  await seed(lender.id, 'cash=1000000');
+  const borrowerBefore = await rawCash(borrower.id);
+  const offer = await hit('POST', '/v1/loans', {
+    token: lender.token, body: { amount: 100000, rate: 0.2, hours: 24 },
+  });
+  ok(offer.code === 200, 'the cross-route offer posted');
+  const drift = await driftOf();
+  const [take, cancel] = await Promise.all([
+    hit('POST', `/v1/loans/${offer.body.id}/take`, { token: borrower.token }),
+    hit('POST', `/v1/loans/${offer.body.id}/cancel`, { token: lender.token }),
+  ]);
+  ok([take, cancel].filter((r) => r.code === 200).length === 1,
+    `exactly one route committed (take ${take.code}, cancel ${cancel.code})`);
+  ok(take.code < 500 && cancel.code < 500, 'the losing route returned a defined non-5xx outcome');
+  const loan = (await pool.query('SELECT status FROM loans WHERE id=$1', [offer.body.id])).rows[0];
+  ok(['active', 'cancelled'].includes(loan?.status), `loan reached one terminal race state (${loan?.status})`);
+  const out = (await pool.query(
+    `SELECT reason, COUNT(*)::int n, COALESCE(SUM(amount),0) s FROM transactions
+       WHERE (reason='loan:take' AND character_id=$1) OR (reason='loan:refund' AND character_id=$2)
+       GROUP BY reason`,
+    [borrower.id, lender.id],
+  )).rows;
+  ok(out.reduce((n, row) => n + Number(row.n), 0) === 1, 'exactly one take/refund escrow outflow was ledgered');
+  ok(out.reduce((n, row) => n + Number(row.s), 0) === 100000, 'the sole escrow outflow was exactly the principal');
+  if (loan?.status === 'active') {
+    ok(await rawCash(lender.id) === 900000, 'take winner left lender principal in the loan');
+    ok(await rawCash(borrower.id) === borrowerBefore + 100000, 'take winner paid the borrower once');
+  } else {
+    ok(await rawCash(lender.id) === 1000000, 'cancel winner refunded the lender once');
+    ok(await rawCash(borrower.id) === borrowerBefore, 'cancel winner paid the borrower nothing');
+  }
+  await assertNoNewDrift(drift, 'S5');
+}
+
 // ── the deadlock counter, read from Postgres ────────────────────────────────────────────────────
 const dl = await deadlocks() - dl0;
 console.log(`\nreal deadlocks during the run (pg_stat_database): ${dl}`);
@@ -213,6 +256,6 @@ if (dl > 0) console.log(`  NOTE: ${dl} deadlock(s) occurred and were absorbed by
 
 console.log('');
 if (fails.length) { console.error(`❌ concurrency harness: ${fails.length} failure(s)\n   ${fails.join('\n   ')}`); await app.close(); process.exit(1); }
-console.log('✅ concurrency harness passed — idempotency exactly-once, single-winner escrow, AB-BA absorbed, exact house take, §10.4 conserved throughout');
+console.log('✅ concurrency harness passed — idempotency exactly-once, single-winner and cross-route escrow, AB-BA absorbed, exact house take, §10.4 conserved throughout');
 await app.close();
 process.exit(0);

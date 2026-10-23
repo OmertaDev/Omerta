@@ -137,7 +137,7 @@ try {
         const watched = new Proxy(client, { get(target, property) {
           if (property === 'query') return async (sql, params) => {
             const result = await target.query(sql, params);
-            if (String(sql).startsWith('UPDATE businesses SET upkeep_at=now()')) {
+            if (String(sql).startsWith('UPDATE businesses SET upkeep_at=$2 WHERE id=$1')) {
               assert.equal(result.rowCount, 1); evidence.clockWrites++;
             }
             if (String(sql).startsWith('INSERT INTO transactions') && params?.includes('business:upkeep')) {

@@ -89,15 +89,47 @@ async function actors(fresh = false) {
   });
   return { owner, scout, maker, guard, first, second, businessId, relationship: await relation(owner, scout, depotId) };
 }
+const forecastConsumptionMarginMs = 60000;
+const forecastLeadMs = INTEL_FORECAST.minLeadMs + forecastConsumptionMarginMs;
+const forecastBlock = value => Math.floor(value / INTEL_FORECAST.blockMs);
+const forecastTargetUsable = (target, applicationNow) => forecastBlock(target) === forecastBlock(applicationNow)
+  && target - applicationNow >= INTEL_FORECAST.minLeadMs
+  && target - applicationNow <= INTEL_FORECAST.maxLeadMs;
+function forecastTarget(observed, applicationNow) {
+  const target = Math.max(observed, applicationNow) + forecastLeadMs;
+  return forecastBlock(observed) === forecastBlock(applicationNow)
+    && forecastBlock(observed) === forecastBlock(target)
+    && forecastTargetUsable(target, applicationNow) ? target : null;
+}
+{
+  const boundary = INTEL_FORECAST.blockMs * 1000;
+  const safeAt = boundary - forecastLeadMs - 1, safeTarget = forecastTarget(safeAt, safeAt);
+  assert.equal(safeTarget, boundary - 1);
+  assert.equal(forecastTargetUsable(safeTarget, safeAt + forecastConsumptionMarginMs), true);
+  assert.equal(forecastTargetUsable(safeTarget, safeAt + forecastConsumptionMarginMs + 1), false);
+  assert.equal(forecastTarget(boundary - forecastLeadMs, boundary - forecastLeadMs), null);
+  assert.equal(forecastTarget(boundary - 1, boundary - 1), null);
+  assert.equal(forecastTarget(boundary, boundary), boundary + forecastLeadMs);
+  assert.equal(forecastTarget(boundary - 1, boundary), null, 'DB and application clocks must agree on the active block.');
+}
+async function genuineForecastTarget() {
+  const started = process.hrtime.bigint(), waitLimitMs = forecastLeadMs + 10000;
+  for (;;) {
+    const observed = +new Date((await pool.query('SELECT clock_timestamp() AS observed')).rows[0].observed);
+    const target = forecastTarget(observed, Date.now());
+    if (target !== null) return new Date(target).toISOString();
+    const elapsedMs = Number(process.hrtime.bigint() - started) / 1e6;
+    assert(elapsedMs <= waitLimitMs, 'Actual forecast intake could not enter one genuine price block.');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+}
 async function body(a, lifetimeSeconds = 600) {
-  const observed = +new Date((await pool.query('SELECT clock_timestamp() AS observed')).rows[0].observed);
-  const lead = INTEL_FORECAST.minLeadMs + 30000;
-  assert(Math.floor(observed / INTEL_FORECAST.blockMs) === Math.floor((observed + lead) / INTEL_FORECAST.blockMs), 'Actual forecast intake requires one genuine price block.');
+  const scoutTargetAt = await genuineForecastTarget();
   return { partnershipId: a.relationship.id, relationshipHash: a.relationship.termsHash, teamRevision: 1,
     businessId: a.businessId, manufacturerAccountId: a.maker.account, guardAccountId: a.guard.account,
     firstCarrierAccountId: a.first.account, secondCarrierAccountId: a.second.account,
     origin: 'foundry', handoff: 'docks', destination: 'neon', scoutFeeCash: 50, minimumStock: 1,
-    scoutTargetAt: new Date(observed + lead).toISOString(), manufacturingFeeCash: 100,
+    scoutTargetAt, manufacturingFeeCash: 100,
     guardPriceCash: 10000, firstFeeCash: 30, secondFeeCash: 40, lifetimeSeconds, consent: true };
 }
 async function start(a, lifetimeSeconds = 600) {
@@ -105,9 +137,9 @@ async function start(a, lifetimeSeconds = 600) {
   for (const who of [a.scout, a.maker, a.guard, a.first, a.second]) await invoke(who, 'consent', ref(proposal));
   return proposal;
 }
-async function throughManufacture(a, campaign) {
+async function throughManufacture(a, campaign, scoutFunded = false) {
   const r = ref(campaign);
-  await invoke(a.owner, 'scout-fund', r);
+  if (!scoutFunded) await invoke(a.owner, 'scout-fund', r);
   const report = await invoke(a.scout, 'scout-report', { ...r, predictsAvailable: true });
   assert.equal(report.source.paidFeeCash, 50);
   assert(Number.isSafeInteger(report.source.observedStock));
@@ -260,11 +292,12 @@ try {
   assert.deepEqual((await f.call(f.stranger, 'GET', '/v1/company/commercial-campaigns')).body.campaigns, []);
   assert.equal((await f.call(f.owner, 'GET', '/v1/company/commercial-campaigns?authority=owner')).code, 400);
   const a = await actors(), campaign = await start(a), r = ref(campaign);
+  await invoke(a.owner, 'scout-fund', r);
   await unchanged('wrong-stage-guard', transport => invoke(a.owner, 'guard-hire', r, undefined, transport));
   await unchanged('foreign-source-capability', () => tx(c => Commission.consumeCommercialCommission(c, { commissionId: 'forged' })));
   await unchanged('foreign-courier-capability', () => tx(c => Courier.consumeCommercialCourier(c, { networkId: 'forged' })));
   await unchanged('foreign-guard-capability', () => tx(c => Defense.consumeCommercialGuard(c, { guard: a.guard.id })));
-  await throughManufacture(a, campaign);
+  await throughManufacture(a, campaign, true);
   await unchanged('wrong-manufacturer-original', transport => invoke(a.scout, 'manufacture-complete', r, undefined, transport));
   const produced = await lateFailure(a, 'manufacture-complete', campaign, a.maker, 8);
   const output = produced.source.outputItemId;

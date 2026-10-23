@@ -18,7 +18,10 @@ export function commerceNativeInvocation(argv,env,execArgv){
   else for(const port of[35439,35449])commerceCurrentEndpoint(env['COMMERCE_CURRENT_NATIVE_'+String(port).slice(-2)+'_ADMIN_DATABASE_URL'],port,null,true);
   const cases=profile==='ci'?COMMERCE_CURRENT_CI_CASES:COMMERCE_CURRENT_LOCAL_CASES;
   assert.equal(cases.length,profile==='ci'?33:35);
-  assert(cases.every(c=>[240000,300000].includes(c.timeoutMs)),'Original per-leaf caps only');
+  const rollover=cases.filter(c=>c.timeoutMs===720000);
+  assert.equal(rollover.length,1,'One price-block rollover allowance only');
+  assert.equal(rollover[0].file,'test/commercialcampaigns-integration.js');
+  assert(cases.every(c=>[240000,300000].includes(c.timeoutMs)||c===rollover[0]),'Original caps plus the one bounded rollover leaf only');
   const leafCapsMs=cases.reduce((n,c)=>n+c.timeoutMs,0),parentOverheadMs=1800000,captureCapMs=600000,parentClosureMarginMs=300000;
   return{mode,profile,allowed,cases,leafCapsMs,parentOverheadMs,captureCapMs,parentClosureMarginMs,parentCapMs:leafCapsMs+parentOverheadMs+parentClosureMarginMs,driverCapMs:leafCapsMs+parentOverheadMs+captureCapMs+parentClosureMarginMs};
 }
@@ -72,7 +75,7 @@ export async function runCommerceNative(){
   const stat=fs.lstatSync(outputRoot);assert(stat.isDirectory()&&!stat.isSymbolicLink());
   const id=source.slice(0,8)+'-'+crypto.randomBytes(6).toString('hex'),manifest=path.join(outputRoot,'commerce-current-source-'+id+'.json'),output=path.join(outputRoot,'commerce-current-native-'+id),journal=path.join(outputRoot,'commerce-current-native-driver-'+id+'.json');
   for(const file of[manifest,output,journal])assert(!fs.existsSync(file),'Never overwrite a proof phase');
-  const report={phase:'CURRENT_COMMERCE_FULL_COHORT_DRIVER',source,profile:spec.profile,cases:spec.cases.length,budget:{leafCapsMs:spec.leafCapsMs,parentOverheadMs:spec.parentOverheadMs,captureCapMs:spec.captureCapMs,parentClosureMarginMs:spec.parentClosureMarginMs,driverCapMs:spec.driverCapMs,provenance:'NEW finite wrapper bounds; unchanged leaf caps plus declared30-minute parent overhead,10-minute source capture and5-minute parent closure margin; not historical measured duration'},manifest,output,children:[],complete:false,leaseReleased:false,startedAt:new Date().toISOString(),financialOFF:true};
+  const report={phase:'CURRENT_COMMERCE_FULL_COHORT_DRIVER',source,profile:spec.profile,cases:spec.cases.length,budget:{leafCapsMs:spec.leafCapsMs,parentOverheadMs:spec.parentOverheadMs,captureCapMs:spec.captureCapMs,parentClosureMarginMs:spec.parentClosureMarginMs,driverCapMs:spec.driverCapMs,provenance:'NEW finite wrapper bounds; reviewed campaign leaf retains original300s work plus bounded370s rollover helper and50s child/closure envelope; declared30-minute parent overhead,10-minute source capture and5-minute parent closure margin; not historical measured duration'},manifest,output,children:[],complete:false,leaseReleased:false,startedAt:new Date().toISOString(),financialOFF:true};
   fs.writeFileSync(journal,JSON.stringify(report,null,2)+'\n',{flag:'wx'});
   const save=()=>fs.writeFileSync(journal,JSON.stringify(report,null,2)+'\n');
   const sha=b=>crypto.createHash('sha256').update(b).digest('hex');

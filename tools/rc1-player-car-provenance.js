@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { carOf, trimOf, rollRarity } from '../src/rules.js';
+import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
 import { CAR_MELT_SOURCE_PINS, carMeltQueryShapes } from './rc1-car-melt-provenance.js';
 import { createNpcMarketOrderCommitObserver } from './rc1-npc-market-order-journal.js';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
@@ -15,10 +16,14 @@ export const PLAYER_CAR_SQL = Object.freeze({
 export const PLAYER_CAR_SOURCE_PINS = Object.freeze({ 'src/economy.js': CAR_MELT_SOURCE_PINS['src/economy.js'] });
 export const PLAYER_CAR_COLLECTION_PIN = '6251b95099c557b73d9c1d893e50ff14c0b6b7af575d605c005325c99164e054';
 let sites;
-export function assertPlayerCarSources() {
+export function assertPlayerCarSources(input = fs.readFileSync(new URL('../src/economy.js', import.meta.url), 'utf8')) {
   carMeltQueryShapes();
-  const source = fs.readFileSync(new URL('../src/economy.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
-  assert.equal(sha256(source), PLAYER_CAR_SOURCE_PINS['src/economy.js']);
+  assert.equal(typeof input, 'string', 'Player car source must be text');
+  const source = input.replaceAll('\r\n', '\n');
+  assert(!source.includes('\r') && (input === source || input === source.replaceAll('\n', '\r\n')),
+    'Player car source must use LF or uniform CRLF');
+  const reviewed = playerIntelSourceBaseline('src/economy.js', source);
+  assert.equal(sha256(reviewed), PLAYER_CAR_SOURCE_PINS['src/economy.js'], 'Player car provenance source changed');
   assert.equal(sha256(fs.readFileSync(new URL('../src/collection.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n')), PLAYER_CAR_COLLECTION_PIN);
   const line = needle => { assert.equal(source.split(needle).length, 2); return source.slice(0, source.indexOf(needle)).split('\n').length; };
   sites = { car: line(PLAYER_CAR_SQL.car), rarity: line("await h.rngLog(client, ch.id, 'rarity:car', rrRoll, rarity);"),

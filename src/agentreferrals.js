@@ -30,13 +30,22 @@ export async function claimQualifiedAgentReferral(client, {
   recruitAccountId,
   campaignId = 'organic',
   reviewHold = false,
+  releaseReviewHold = false,
 }) {
   const existing = (await client.query(
-    'SELECT amount, state, hold_reason FROM agent_referral_claims WHERE recruit_account=$1 AND milestone=$2',
+    'SELECT amount, state, hold_reason FROM agent_referral_claims WHERE recruit_account=$1 AND milestone=$2 FOR UPDATE',
     [recruitAccountId, AGENT_QUALIFIED_MILESTONE],
   )).rows[0];
   if (existing) {
-    return { amount: 0, state: existing.state, holdReason: existing.hold_reason || null, duplicate: true };
+    if (releaseReviewHold && existing.state === 'held' && existing.hold_reason === 'review_same_ip') {
+      await client.query(
+        `DELETE FROM agent_referral_claims
+          WHERE recruit_account=$1 AND milestone=$2 AND state='held' AND hold_reason='review_same_ip'`,
+        [recruitAccountId, AGENT_QUALIFIED_MILESTONE],
+      );
+    } else {
+      return { amount: 0, state: existing.state, holdReason: existing.hold_reason || null, duplicate: true };
+    }
   }
 
   if (reviewHold) {
