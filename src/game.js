@@ -31,6 +31,7 @@ import { speakeasyOwnedOf } from './speakeasy.js';
 import { fightersOf } from './boxing.js';
 import { withItemTransaction, assertItemTransactionHealthy } from './items.js';
 import { prelockEquipmentRentalDeathActors } from './equipmentrentals.js';
+import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
 
 const uid = () => crypto.randomUUID();
 import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assign a fresh player their first rival
@@ -326,7 +327,7 @@ export async function loadOwned(client, ch) {
       FROM referrals rf JOIN characters rc ON rc.account_id = rf.recruit_account AND rc.alive
       JOIN account_persistent rap ON rap.account_id = rf.recruit_account
       WHERE rf.recruiter_account = $2 AND rf.qualified_at IS NOT NULL
-        AND NOT rap.agent_flag AND NOT rap.npc_flag
+        AND NOT rap.agent_flag AND NOT rap.npc_flag AND rap.referral_same_ip_hold IS NOT TRUE
     -- THE WORK BOARD (omerta-early-game-design.md F1). The coach's guiding rungs are a chain of
     -- ONE-TIME milestones, so a player who follows it clears the last one around level 22 and the
     -- coach falls to four generic nudges — at exactly the level the content thins out too. These
@@ -1263,7 +1264,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     // load, any DB error — the outer catch would surface a non-2xx AFTER the action already
     // committed, and the idempotency hook would release the key → a retry re-executes the action
     // (double-spend). It's idempotent (ref_paid-guarded, re-checks every gate), so swallow failures.
-    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag) {
+    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag && acct.referral_same_ip_hold !== true) {
       try { await maybeSparkReferral(pool, accountId); }
       catch (e) { console.error('referral spark (post-commit, non-fatal)', e?.code || e); }
       try { await maybeQualifyReferral(pool, accountId); }
@@ -1568,7 +1569,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     } catch (error) { throw deadlockToRetry(error); }
     });
     // Same ownership boundary as withCharacter: post-commit hooks acquire their own connections.
-    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag) {
+    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag && acct.referral_same_ip_hold !== true) {
       try { await maybeSparkReferral(pool, accountId); } catch (e) { console.error('referral spark (post-commit, non-fatal)', e?.code || e); }
       // post-commit + non-fatal: a throw here (a 40P01 on the char/street_tax locks under load, any
       // DB error) after the two-party action already COMMITTED would surface a non-2xx → idempotency
@@ -2572,17 +2573,30 @@ export async function travel(ch, district, client, h) {
   return { ok: true, loc: district, cost: CONSTANTS.TRAVEL_COST };
 }
 
+const referralOriginIp = (value) => {
+  const normalized = normalizeClientIp(value);
+  return normalized && normalized !== '0.0.0.0' && normalized !== '::' ? normalized : null;
+};
+const sameReferralOrigin = (rows) => {
+  if (rows.length !== 2) return false;
+  if (!rows.every((row) => normalizeClientIpAuthority(row.created_ip_authority))) return false;
+  const left = referralOriginIp(rows[0].created_ip), right = referralOriginIp(rows[1].created_ip);
+  return !!left && left === right;
+};
+
 // ── §7.13 REFERRAL QUALIFICATION ──
 // Runs in its own transaction after any action by a referred, unpaid account.
-// All four gates required (level 8, 40 jobs, 3 check-ins, $25k net worth), once
+// All five gates required (a paid permanent character, level 8, 40 jobs, 3 check-ins,
+// $25k net worth), once
 // ever. Pays recruiter + recruit atomically, bumps milestones and the recruiter
 // gang's weekly `recruit` progress, notifies both. Agent recruits remain excluded. Agent recruiters
-// use a stronger minted-human gate and a separate campaign/epoch budget; they never inherit human
+// use a separate campaign/epoch budget; they never inherit human
 // milestone, drive-multiplier, spark, or downline cash. Same-IP agent claims are held before value moves.
 export async function maybeQualifyReferral(pool, recruitAccountId) {
   // cheap unlocked pre-check to avoid opening a transaction for the common no-op
-  const pre = (await pool.query('SELECT referred_by, ref_paid, agent_flag FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
-  if (!pre || !pre.referred_by || pre.ref_paid || pre.agent_flag) return null;
+  const pre = (await pool.query('SELECT referred_by, ref_paid, agent_flag, npc_flag, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
+  if (!pre || !pre.referred_by || pre.ref_paid || pre.agent_flag || pre.npc_flag
+    || pre.referral_same_ip_hold === true) return null;
   const recruiterAccountId = pre.referred_by;
   if (recruiterAccountId === recruitAccountId) return null; // never self-refer (defense-in-depth)
 
@@ -2611,27 +2625,57 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     const acct = lockedA[recruitAccountId], recruiterAcct = lockedA[recruiterAccountId];
     // re-validate every gate under the locks (state may have changed since the pre-check)
     if (!recruit || !recruiter || !acct || !recruiterAcct) { await client.query('ROLLBACK'); return null; }
-    if (acct.referred_by !== recruiterAccountId || acct.ref_paid || acct.agent_flag) { await client.query('ROLLBACK'); return null; }
+    if (acct.referred_by !== recruiterAccountId || acct.ref_paid || acct.agent_flag || acct.npc_flag
+      || recruiterAcct.npc_flag || acct.referral_same_ip_hold === true) { await client.query('ROLLBACK'); return null; }
     const agentRecruiter = !!recruiterAcct.agent_flag;
 
-    // the four gates, all required
+    // the permanent-character gate plus the four play gates, all required
     const owned = await loadOwned(client, recruit);
     const netWorth = Number(recruit.cash) + Number(recruit.bank) + assetsValue(owned.assets)
       + gunsValue(owned.guns) + fleetValue(owned.cars) + racketsValue(owned.rackets);
-    const qualified = levelOf(Number(recruit.respect)) >= M4.REF_GATES.level
+    const qualified = !!acct.minted
+      && levelOf(Number(recruit.respect)) >= M4.REF_GATES.level
       && Number(recruit.lc_crime) >= M4.REF_GATES.jobs
       && Number(acct.checkins_lifetime) >= M4.REF_GATES.checkins
-      && netWorth >= M4.REF_GATES.netWorth
-      // The agent profile adds the Capo identity-cost gate; a non-agent recruit is not enough by
-      // itself. Human recruiters keep the existing four-gate profile unchanged.
-      && (!agentRecruiter || !!acct.minted);
+      && netWorth >= M4.REF_GATES.netWorth;
     if (!qualified) { await client.query('ROLLBACK'); return null; }
 
     const ips = (await client.query(
-      'SELECT id, created_ip FROM accounts WHERE id IN ($1,$2)',
+      'SELECT id, created_ip, created_ip_authority FROM accounts WHERE id IN ($1,$2)',
       [recruitAccountId, recruiterAccountId],
     )).rows;
-    const sameIp = ips.length === 2 && ips[0].created_ip && ips[0].created_ip === ips[1].created_ip;
+    const sameIp = sameReferralOrigin(ips);
+
+    // A same-origin pair is not merely flagged: it is held before every referral-derived benefit.
+    // Otherwise
+    // one browser can mint unlimited identities, rotate around per-character action cooldowns, and
+    // turn both referral legs into an unbounded cash faucet. A dedicated hold closes every present
+    // and future value path without falsifying the paid latches. FALSE is an explicit shared-household
+    // clearance. Agent recruiters additionally retain a zero-value campaign claim for review.
+    if (sameIp && acct.referral_same_ip_hold !== false) {
+      let heldAgentClaim = null;
+      if (agentRecruiter) {
+        heldAgentClaim = await claimQualifiedAgentReferral(client, {
+          recruiterAccountId,
+          recruitAccountId,
+          reviewHold: true,
+        });
+      }
+      await track(client, recruitAccountId, 'referral_same_ip_flag', {
+        recruiter: recruiterAccountId, qualified: true, blocked: true,
+        ...(agentRecruiter ? { recruiterProfile: 'agent', claimState: heldAgentClaim.state } : {}),
+      });
+      await client.query(
+        'UPDATE account_persistent SET referral_same_ip_hold=true WHERE account_id=$1',
+        [recruitAccountId],
+      );
+      await client.query('COMMIT');
+      return {
+        qualified: false,
+        blocked: 'same_ip',
+        ...(agentRecruiter ? { recruiterProfile: 'agent', agentClaimState: heldAgentClaim.state } : {}),
+      };
+    }
 
     // THE $OMR IS RETIRED (founder-directed 2026-07-31: "no longer promise to give away $OMR").
     // What a referral pays now is cash + THE CREW BONUS — a respect multiplier that scales with how
@@ -2650,7 +2694,7 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
       agentClaim = await claimQualifiedAgentReferral(client, {
         recruiterAccountId,
         recruitAccountId,
-        reviewHold: !!sameIp,
+        releaseReviewHold: sameIp && acct.referral_same_ip_hold === false,
       });
       recruiterCash = Number(agentClaim.amount || 0);
     } else {
@@ -2691,8 +2735,8 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     // crew earns both a bonus (rewarding the recruiter who brought a friend AND ran with them).
     // crew_members is account-keyed; a plain read — no FOR UPDATE (a leaf in this transaction, so no
     // lock-order concern). Bounded: gated behind the entire qualification wall, so it inherits every
-    // anti-Sybil property (once ever, L8/40 jobs/3 check-ins/$25k; agent recruiters additionally
-    // require a minted non-agent recruit). IN($1,$2) not
+    // anti-Sybil property (once ever, paid permanent character, L8/40 jobs/3 check-ins/$25k).
+    // IN($1,$2) not
     // ANY(array) — pg-mem returns zero rows for ANY-of-array (the same-IP flag lesson below).
     let bringOne = false;
     const crews = (await client.query('SELECT account_id, crew_id FROM crew_members WHERE account_id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
@@ -2720,7 +2764,8 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     const rGang = (await client.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [recruiter.id])).rows[0];
     if (rGang?.gang_id) await bumpFamilyTask(client, { owned: { gangId: rGang.gang_id } }, 'recruit', 1);
 
-    // §10.3 — same-IP recruiter/recruit pairs auto-flag for review
+    // §10.3 — explicitly cleared same-origin pairs retain an audit event. Every uncleared pair
+    // returned through the no-value path above.
     // IN ($1,$2) not ANY($1)-of-array: node-postgres serializes a JS array for ANY, but pg-mem returns
     // ZERO rows for it — so the ANY form made this flag silently untestable (and never exercised). IN is
     // identical in production and pg-mem-portable. The self-referral guard above ensures the two ids differ.
@@ -2759,8 +2804,9 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
 // which stays on the full gate), ONCE ever (ref_spark), agent-excluded, same sorted two-party lock
 // as maybeQualifyReferral so the two can't deadlock. Called post-commit, non-fatal (swallowed).
 export async function maybeSparkReferral(pool, recruitAccountId) {
-  const pre = (await pool.query('SELECT referred_by, ref_spark, ref_paid, agent_flag FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
-  if (!pre || !pre.referred_by || pre.ref_spark || pre.ref_paid || pre.agent_flag) return null;
+  const pre = (await pool.query('SELECT referred_by, ref_spark, ref_paid, agent_flag, npc_flag, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
+  if (!pre || !pre.referred_by || pre.ref_spark || pre.ref_paid || pre.agent_flag || pre.npc_flag
+    || pre.referral_same_ip_hold === true) return null;
   const recruiterAccountId = pre.referred_by;
   if (recruiterAccountId === recruitAccountId) return null;
   const client = await pool.connect();
@@ -2785,15 +2831,24 @@ export async function maybeSparkReferral(pool, recruitAccountId) {
     const recruit = lockedC[recruitId], recruiter = lockedC[recruiterId];
     const acct = lockedA[recruitAccountId], recruiterAcct = lockedA[recruiterAccountId];
     if (!recruit || !recruiter || !acct || !recruiterAcct) { await client.query('ROLLBACK'); return null; }
-    if (acct.referred_by !== recruiterAccountId || acct.ref_spark || acct.ref_paid || acct.agent_flag || recruiterAcct.agent_flag) { await client.query('ROLLBACK'); return null; }
-    // the early gate — real playtime, well short of full qualification (keeps it Sybil-bounded)
-    if (!(levelOf(Number(recruit.respect)) >= M4.REF_SPARK.level && Number(recruit.lc_crime) >= M4.REF_SPARK.jobs)) { await client.query('ROLLBACK'); return null; }
-    // §10.3 — same-IP recruiter/recruit pairs auto-flag for review (parity with maybeQualifyReferral).
-    // The spark is the CHEAPEST referral cash faucet (no check-in/net-worth floor), so a same-machine ring
-    // must produce the same mod-review signal the expensive qualify path already emits (red-team R28 MED).
-    const sparkIps = (await client.query('SELECT id, created_ip FROM accounts WHERE id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
-    if (sparkIps.length === 2 && sparkIps[0].created_ip && sparkIps[0].created_ip === sparkIps[1].created_ip)
-      await track(client, recruitAccountId, 'referral_same_ip_flag', { recruiter: recruiterAccountId, spark: true });
+    if (acct.referred_by !== recruiterAccountId || acct.ref_spark || acct.ref_paid || acct.agent_flag || acct.npc_flag
+      || recruiterAcct.agent_flag || recruiterAcct.npc_flag || acct.referral_same_ip_hold === true) { await client.query('ROLLBACK'); return null; }
+    // The paid permanent-character gate makes each attributed identity costly before either referral
+    // cash leg can open. The remaining play gates keep the spark tied to actual progression.
+    if (!(acct.minted && levelOf(Number(recruit.respect)) >= M4.REF_SPARK.level
+      && Number(recruit.lc_crime) >= M4.REF_SPARK.jobs)) { await client.query('ROLLBACK'); return null; }
+    // A same-origin human pair is held before value moves. The dedicated state makes repeated and
+    // concurrent retries no-ops without claiming a payout happened. FALSE is a manual clearance.
+    const sparkIps = (await client.query('SELECT id, created_ip, created_ip_authority FROM accounts WHERE id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
+    const sameIp = sameReferralOrigin(sparkIps);
+    if (sameIp && acct.referral_same_ip_hold !== false) {
+      await track(client, recruitAccountId, 'referral_same_ip_flag', {
+        recruiter: recruiterAccountId, spark: true, blocked: true,
+      });
+      await client.query('UPDATE account_persistent SET referral_same_ip_hold=true WHERE account_id=$1', [recruitAccountId]);
+      await client.query('COMMIT');
+      return { sparked: false, blocked: 'same_ip' };
+    }
     const mult = await referralPushMult(client); // recruitment-drive CASH multiplier (1 when no push)
     const recruitCash = Math.round(M4.REF_SPARK.recruitCash * mult), recruiterCash = Math.round(M4.REF_SPARK.recruiterCash * mult);
     recruit.cash = Number(recruit.cash) + recruitCash;
@@ -2838,16 +2893,17 @@ export async function startReferralPush(pool, hours, mult) {
 // anti-MLM line (a referral bonus, not a revenue-share pyramid). CASH ONLY, capped at DEPTH 2 (no
 // third level), agents excluded at EVERY level, once ever per R2 (ref_l2_paid). Keyed on R2's full
 // qualification (so it fires inside the same post-commit block that just set R2.ref_paid — the hook
-// stops firing for R2 once paid). Its OWN transaction; locks A's char then the two accounts sorted
+// stops firing for R2 once paid). Its OWN transaction; locks A's char then the three accounts sorted
 // (characters → accounts, the qualify path's order); the flag flip is an atomic claim (no double-pay).
 export async function maybeGrandReferral(pool, r2AccountId) {
-  const r2 = (await pool.query('SELECT referred_by, ref_paid, ref_l2_paid, agent_flag FROM account_persistent WHERE account_id=$1', [r2AccountId])).rows[0];
-  if (!r2 || !r2.ref_paid || r2.ref_l2_paid || r2.agent_flag || !r2.referred_by) return null; // only a QUALIFIED, non-agent recruit; once ever
+  const r2 = (await pool.query('SELECT referred_by, ref_paid, ref_l2_paid, agent_flag, npc_flag, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [r2AccountId])).rows[0];
+  if (!r2 || !r2.ref_paid || r2.ref_l2_paid || r2.agent_flag || r2.npc_flag
+    || r2.referral_same_ip_hold === true || !r2.referred_by) return null; // only an eligible QUALIFIED, non-agent recruit; once ever
   const rAccountId = r2.referred_by; // the direct recruiter (the "parent")
-  const r = (await pool.query('SELECT referred_by, agent_flag, ref_paid FROM account_persistent WHERE account_id=$1', [rAccountId])).rows[0];
+  const r = (await pool.query('SELECT referred_by, agent_flag, npc_flag, ref_paid, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [rAccountId])).rows[0];
   // the middle link (R) must exist, be human, themselves have a referrer, AND be a QUALIFIED recruit
   // (audit: every level of the tree must be a real made man — a dead-signup middle link earns nobody)
-  if (!r || r.agent_flag || !r.referred_by || !r.ref_paid) return null;
+  if (!r || r.agent_flag || r.npc_flag || r.referral_same_ip_hold === true || !r.referred_by || !r.ref_paid) return null;
   const aAccountId = r.referred_by; // the grandrecruiter — the one we pay
   if (aAccountId === r2AccountId || aAccountId === rAccountId) return null; // distinct chain (defense-in-depth vs a cycle)
   const client = await pool.connect();
@@ -2857,12 +2913,17 @@ export async function maybeGrandReferral(pool, r2AccountId) {
     if (!aChar) { await client.query('ROLLBACK'); return null; } // grandrecruiter has no living street — nobody to pay
     await client.query('SELECT id FROM characters WHERE id=$1 FOR UPDATE', [aChar.id]); // lock the payee char (characters first)
     const lockedA = {}; // accounts sorted — the global lock order
-    for (const id of [aAccountId, r2AccountId].sort())
-      lockedA[id] = (await client.query('SELECT agent_flag, ref_paid, ref_l2_paid, referred_by FROM account_persistent WHERE account_id=$1 FOR UPDATE', [id])).rows[0];
-    const A = lockedA[aAccountId], R2 = lockedA[r2AccountId];
-    if (!A || !R2 || A.agent_flag) { await client.query('ROLLBACK'); return null; }
-    if (!R2.ref_paid || R2.ref_l2_paid || R2.agent_flag || R2.referred_by !== rAccountId) { await client.query('ROLLBACK'); return null; } // re-verify under lock
-    const claim = await client.query('UPDATE account_persistent SET ref_l2_paid=true WHERE account_id=$1 AND ref_paid AND NOT ref_l2_paid', [r2AccountId]);
+    for (const id of [aAccountId, rAccountId, r2AccountId].sort())
+      lockedA[id] = (await client.query('SELECT agent_flag, npc_flag, ref_paid, ref_l2_paid, referred_by, referral_same_ip_hold FROM account_persistent WHERE account_id=$1 FOR UPDATE', [id])).rows[0];
+    const A = lockedA[aAccountId], R = lockedA[rAccountId], R2 = lockedA[r2AccountId];
+    if (!A || !R2 || A.agent_flag || A.npc_flag) { await client.query('ROLLBACK'); return null; }
+    if (!R || !R.ref_paid || R.agent_flag || R.npc_flag || R.referral_same_ip_hold === true || R.referred_by !== aAccountId
+      || !R2.ref_paid || R2.ref_l2_paid || R2.agent_flag || R2.npc_flag || R2.referral_same_ip_hold === true
+      || R2.referred_by !== rAccountId) { await client.query('ROLLBACK'); return null; } // re-verify the whole chain under lock
+    const claim = await client.query(
+      'UPDATE account_persistent SET ref_l2_paid=true WHERE account_id=$1 AND ref_paid AND NOT ref_l2_paid AND referral_same_ip_hold IS NOT TRUE',
+      [r2AccountId],
+    );
     if (claim.rowCount !== 1) { await client.query('ROLLBACK'); return null; } // a concurrent run already paid it
     const mult = await referralPushMult(client);
     const bonus = Math.round(M4.REF_TIER2_CASH * mult);
@@ -2889,8 +2950,10 @@ export async function sweepGrandReferrals(pool) {
   const cand = (await pool.query(
     `SELECT r2.account_id AS r2 FROM account_persistent r2
        JOIN account_persistent r ON r.account_id = r2.referred_by
-      WHERE r2.ref_paid AND NOT r2.ref_l2_paid AND NOT r2.agent_flag AND r2.referred_by IS NOT NULL
-        AND r.ref_paid AND NOT r.agent_flag AND r.referred_by IS NOT NULL
+      WHERE r2.ref_paid AND NOT r2.ref_l2_paid AND NOT r2.agent_flag AND NOT r2.npc_flag AND r2.referred_by IS NOT NULL
+        AND r2.referral_same_ip_hold IS NOT TRUE
+        AND r.ref_paid AND NOT r.agent_flag AND NOT r.npc_flag AND r.referred_by IS NOT NULL
+        AND r.referral_same_ip_hold IS NOT TRUE
       LIMIT 1000`)).rows;
   let paid = 0;
   for (const { r2 } of cand) {

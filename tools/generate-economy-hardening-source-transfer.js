@@ -55,7 +55,7 @@ for (const file of files) {
 // Source-only adapters added after the authored gameplay revision. Their exact
 // postimages reconstruct that revision before any older frozen reader executes.
 const bindingFiles = Object.freeze([
-  'src/db.js',
+  'package.json', 'public/index.html', 'schema.sql', 'src/db.js', 'src/game.js', 'src/rules.tail.js', 'src/server.js', 'test/growth.js',
   'test/commerce-release-phase2-migration-catalog.js',
   'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
   'test/lib/rc1-historical-source-fixture.js',

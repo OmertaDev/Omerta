@@ -20,7 +20,7 @@ const files = [
   'tools/arena.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
 ];
 const bindingFiles = [
-  'src/db.js',
+  'package.json', 'public/index.html', 'schema.sql', 'src/db.js', 'src/game.js', 'src/rules.tail.js', 'src/server.js', 'test/growth.js',
   'test/commerce-release-phase2-migration-catalog.js',
   'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
   'test/lib/rc1-historical-source-fixture.js',

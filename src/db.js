@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { migrateCityHomeStorage } from './city-home-migration.js';
 import { enforceDatabaseRls } from './db-rls.js';
 import { takeAccountDailyClaim, takeBoundedAccountDailyClaim } from './accountdaily.js';
+import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
 
 // What the live driver can actually do, decided ONCE at makeDb (a driver property, not a per-call
 // one). Deliberately NOT a runtime probe: in real Postgres a failed statement aborts the ENCLOSING
@@ -570,6 +571,7 @@ export async function migrateSchemaUnderLock(
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
   await migrateEconomyDailyClaims(boot);
+  await migrateReferralOriginHolds(boot);
   await resetStartingLevels(boot);
   await boot.query('BEGIN');
   try { await ensureDeedBuildings(boot); await boot.query('COMMIT'); }
@@ -727,6 +729,63 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
     await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
     await q.query('COMMIT');
     return { applied: !alreadyApplied };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Repeatable referral-origin repair. `created_ip` is immutable signup provenance; canonicalizing it
+// closes IPv4-mapped/IPv6 spelling bypasses before matching. TRUE is a durable hold, FALSE is an
+// explicit shared-household clearance, and NULL remains eligible unless a normalized match is found.
+// Re-running on every API/worker boot closes the rolling-deploy seam without touching paid history.
+export async function migrateReferralOriginHolds(q) {
+  await q.query('BEGIN');
+  try {
+    const migrationId = 'referral-origin-hold-2026-10-23';
+    const alreadyApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
+    const accounts = (await q.query(
+      'SELECT id, created_ip, last_ip FROM accounts WHERE created_ip IS NOT NULL OR last_ip IS NOT NULL')).rows;
+    let normalized = 0;
+    for (const row of accounts) {
+      const createdIp = normalizeClientIp(row.created_ip), lastIp = normalizeClientIp(row.last_ip);
+      const nextCreated = createdIp || row.created_ip, nextLast = lastIp || row.last_ip;
+      if (nextCreated === row.created_ip && nextLast === row.last_ip) continue;
+      await q.query('UPDATE accounts SET created_ip=$2, last_ip=$3 WHERE id=$1',
+        [row.id, nextCreated, nextLast]);
+      normalized++;
+    }
+
+    const edges = (await q.query(
+      `SELECT recruit.account_id AS recruit_account, recruit.referral_same_ip_hold,
+              recruit.agent_flag AS recruit_agent, recruit.npc_flag AS recruit_npc,
+              recruiter.agent_flag AS recruiter_agent, recruiter.npc_flag AS recruiter_npc,
+              recruit_account.created_ip AS recruit_ip,
+              recruit_account.created_ip_authority AS recruit_ip_authority,
+              recruiter_account.created_ip AS recruiter_ip,
+              recruiter_account.created_ip_authority AS recruiter_ip_authority
+         FROM account_persistent recruit
+         JOIN account_persistent recruiter ON recruiter.account_id=recruit.referred_by
+         JOIN accounts recruit_account ON recruit_account.id=recruit.account_id
+         JOIN accounts recruiter_account ON recruiter_account.id=recruiter.account_id
+        WHERE recruit.referred_by IS NOT NULL`)).rows;
+    let held = 0;
+    for (const edge of edges) {
+      if (edge.referral_same_ip_hold !== null && edge.referral_same_ip_hold !== undefined) continue;
+      if (edge.recruit_agent || edge.recruiter_agent || edge.recruit_npc || edge.recruiter_npc) continue;
+      if (!normalizeClientIpAuthority(edge.recruit_ip_authority)
+        || !normalizeClientIpAuthority(edge.recruiter_ip_authority)) continue;
+      const recruitIp = normalizeClientIp(edge.recruit_ip), recruiterIp = normalizeClientIp(edge.recruiter_ip);
+      if (!recruitIp || recruitIp === '0.0.0.0' || recruitIp === '::' || recruitIp !== recruiterIp) continue;
+      const update = await q.query(
+        'UPDATE account_persistent SET referral_same_ip_hold=true WHERE account_id=$1 AND referral_same_ip_hold IS NULL',
+        [edge.recruit_account]);
+      held += update.rowCount;
+    }
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
+    await q.query('COMMIT');
+    return { applied: !alreadyApplied, normalized, held };
   } catch (error) {
     await q.query('ROLLBACK').catch(() => {});
     throw error;
@@ -1154,6 +1213,7 @@ export async function makeDb() {
   const pool = new Pool();
   await pool.query(SCHEMA);
   await migrateEconomyDailyClaims(pool);
+  await migrateReferralOriginHolds(pool);
   await pool.query('BEGIN');
   try { await ensureDeedBuildings(pool); await pool.query('COMMIT'); }
   catch (error) { await pool.query('ROLLBACK'); throw error; }

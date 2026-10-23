@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   auth_subject TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'active',
   created_ip TEXT, last_ip TEXT,
+  -- Immutable signup provenance. NULL means legacy/untrusted and must never drive an automatic hold.
+  created_ip_authority TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (auth_provider, auth_subject)   -- one account per real identity (audit: no dup-identity race)
 );
@@ -42,6 +44,9 @@ CREATE TABLE IF NOT EXISTS account_persistent (
   referred_by TEXT, ref_paid BOOLEAN NOT NULL DEFAULT false,
   ref_spark BOOLEAN NOT NULL DEFAULT false,  -- the stepped EARLY referral payout fired (before full qualification)
   ref_l2_paid BOOLEAN NOT NULL DEFAULT false,  -- the tier-2 "family tree" finder's fee (to the grandrecruiter) fired for THIS account's qualification
+  -- NULL = unreviewed/no shared-origin signal, TRUE = held from every referral value path,
+  -- FALSE = an explicit shared-household clearance. Never overload the paid latches with review state.
+  referral_same_ip_hold BOOLEAN,
   agent_flag BOOLEAN NOT NULL DEFAULT false,
   -- THE POPULATION: an NPC resident's account. The agent_flag TWIN — the account-level exclusion hook
   -- for the human-only surfaces (the Street Wage above all: a resident drawing emission would be theft

@@ -29,10 +29,15 @@ const call = async (method, url, { token, body, headers } = {}) => {
 const meOf = async (token) => (await call('GET', '/v1/me', { token })).body.character;
 // Statistical samples model separate ready windows; pacing has its own route regressions.
 const seedCh = (id, cols) => pool.query(`UPDATE characters SET street_action_at=NULL, ${cols} WHERE id='${id}'`);
+let fixtureIp = 0;
 const mk = async (name, referralCode) => {
   const { body: { token } } = await call('POST', '/v1/auth/guest');
   await call('POST', '/v1/character', { token, body: { name, referralCode } });
-  return { token, id: (await meOf(token)).id };
+  const id = (await meOf(token)).id;
+  const accountId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+  const ip = `2001:db8::${(++fixtureIp).toString(16)}`;
+  await pool.query('UPDATE accounts SET created_ip=$2, last_ip=$2 WHERE id=$1', [accountId, ip]);
+  return { token, id, accountId };
 };
 
 // ── the chef: level 11, bankrolled ──
@@ -1144,6 +1149,7 @@ assert.deepEqual(afterScreens, beforeScreens, 'screen posts create no reporter, 
 // engagement (level 3 + 10 jobs), long before full qualification. Fast feedback for the referrer. ──
 const sponsor = await mk('Sponsor Sal');
 const rookie = await mk('Green Recruit', 'Sponsor Sal');
+await pool.query('UPDATE account_persistent SET minted=true WHERE account_id=$1', [rookie.accountId]);
 const sponsorBefore = (await meOf(sponsor.token)).cash;
 await seedCh(rookie.id, 'respect=160, lc_crime=9, nerve=50, energy=200'); // L5, 9 jobs — one shy of the spark gate
 for (let i = 0; i < 20; i++) { await seedCh(rookie.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: rookie.token }); if (r.body.success) break; }
@@ -1152,22 +1158,46 @@ assert.equal(spSponsor.cash, sponsorBefore + 2500, 'the sponsor gets the early s
 assert.equal(spSponsor.omr, 0, 'the spark is cash only (no $OMR until the full gate)');
 assert.equal(spSponsor.recruits, 0, 'the spark does not advance the recruiter ladder (that is full qualification)');
 assert.equal((await pool.query(`SELECT ref_spark FROM account_persistent WHERE account_id=(SELECT account_id FROM characters WHERE id='${rookie.id}')`)).rows[0].ref_spark, true, 'ref_spark latched');
-// red-team R28: the spark (the cheapest referral cash faucet) must flag a same-IP pair for mod review,
-// at parity with the qualify path — both test accounts share 127.0.0.1, so the flag must have fired.
-{
-  const sf = (await pool.query(`SELECT props FROM telemetry WHERE event='referral_same_ip_flag' AND account_id=(SELECT account_id FROM characters WHERE id='${rookie.id}')`)).rows[0];
-  const sp = sf && (typeof sf.props === 'string' ? JSON.parse(sf.props) : sf.props);
-  assert(sp && sp.spark === true, 'a same-IP spark pair is flagged for review (parity with qualify)');
-}
+assert.equal(Number((await pool.query(
+  "SELECT COUNT(*) n FROM telemetry WHERE event='referral_same_ip_flag' AND account_id=$1",
+  [rookie.accountId],
+)).rows[0].n), 0, 'a distinct-origin permanent recruit reaches the paid spark path without a false flag');
 await call('POST', '/v1/crimes/pick', { token: rookie.token }); // once ever
 assert.equal((await meOf(sponsor.token)).cash, sponsorBefore + 2500, 'the spark fires once, not per-action');
+
+// Legacy accounts have no trustworthy creation-IP authority. Even when their stored IP strings
+// happen to match, the runtime must not invent a same-household hold or suppress earned value.
+const legacySponsor = await mk('Legacy Sponsor Lee');
+const legacyRecruit = await mk('Legacy Recruit Rae', 'Legacy Sponsor Lee');
+await pool.query(
+  `UPDATE accounts SET created_ip='198.51.100.77', created_ip_authority=NULL WHERE id IN ($1,$2)`,
+  [legacySponsor.accountId, legacyRecruit.accountId],
+);
+await pool.query('UPDATE account_persistent SET minted=true WHERE account_id=$1', [legacyRecruit.accountId]);
+await seedCh(legacyRecruit.id, 'respect=160, lc_crime=9, nerve=50, energy=200');
+const legacySponsorBefore = (await meOf(legacySponsor.token)).cash;
+for (let i = 0; i < 20; i++) {
+  await seedCh(legacyRecruit.id, 'nerve=50, energy=200, jail_until=NULL');
+  r = await call('POST', '/v1/crimes/pick', { token: legacyRecruit.token });
+  if (r.body.success) break;
+}
+assert.equal((await meOf(legacySponsor.token)).cash, legacySponsorBefore + 2500,
+  'an equal untrusted legacy IP does not suppress the normal spark');
+assert.equal((await pool.query(
+  'SELECT referral_same_ip_hold FROM account_persistent WHERE account_id=$1',
+  [legacyRecruit.accountId],
+)).rows[0].referral_same_ip_hold, null, 'an equal untrusted legacy IP remains unclassified');
+assert.equal(Number((await pool.query(
+  "SELECT COUNT(*) n FROM telemetry WHERE event='referral_same_ip_flag' AND account_id=$1",
+  [legacyRecruit.accountId],
+)).rows[0].n), 0, 'an equal untrusted legacy IP is never flagged as authoritative');
 
 // ── referrals (§7.13): all four gates, atomic payout, milestone, exclusions ──
 const mentor = await mk('Mentor Max');
 const recruit = await mk('Fresh Blood', 'Mentor Max');
 assert(Number((await pool.query('SELECT COUNT(*) n FROM referrals')).rows[0].n) >= 1, 'referral graph row written');
 await seedCh(recruit.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${recruit.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${recruit.id}')`);
 const mentorCashBefore = (await meOf(mentor.token)).cash;
 for (let i = 0; i < 20; i++) { // the 40th CLEAN job crosses the last gate — retry the odd fumble
   await seedCh(recruit.id, 'nerve=50, energy=200, jail_until=NULL');
@@ -1234,7 +1264,7 @@ await call('POST', '/v1/crimes/pick', { token: recruit.token });
 assert.equal((await meOf(mentor.token)).recruits, 1, 'qualification fires once');
 // agent-flagged recruits never pay out
 const bot = await mk('Bot Barlow', 'Mentor Max');
-await pool.query(`UPDATE account_persistent SET agent_flag=true, checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${bot.id}')`);
+await pool.query(`UPDATE account_persistent SET agent_flag=true, minted=true, checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${bot.id}')`);
 await seedCh(bot.id, 'respect=1000, lc_crime=40, cash=30000, nerve=50, energy=200');
 await call('POST', '/v1/crimes/pick', { token: bot.token });
 assert.equal((await meOf(mentor.token)).recruits, 1, 'agent recruits are excluded from referral payouts');
@@ -1299,7 +1329,7 @@ assert(drive.active && drive.mult === 2 && drive.seconds > 0, 'the drive is live
 const dMentor = await mk('Drive Dana');
 const dRecruit = await mk('Doubled Danny', 'Drive Dana');
 await seedCh(dRecruit.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${dRecruit.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${dRecruit.id}')`);
 const dMentorBefore = (await meOf(dMentor.token)).cash;
 for (let i = 0; i < 20; i++) { await seedCh(dRecruit.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: dRecruit.token }); if (r.body.success) break; }
 const dMentorMe = await meOf(dMentor.token);
@@ -1314,11 +1344,11 @@ const mMike = await mk('Middle Mike', 'Grand Tony');     // R — brought in by 
 const bBenny = await mk('Bottom Benny', 'Middle Mike');  // R2 — brought in by R
 // the middle link must ITSELF qualify (audit: every level of the tree is a real made man) — qualify Mike first
 await seedCh(mMike.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${mMike.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${mMike.id}')`);
 for (let i = 0; i < 20; i++) { await seedCh(mMike.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: mMike.token }); if (r.body.success) break; }
 assert.equal((await pool.query(`SELECT ref_paid FROM account_persistent WHERE account_id=(SELECT account_id FROM characters WHERE id='${mMike.id}')`)).rows[0].ref_paid, true, 'the middle link qualified');
 await seedCh(bBenny.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${bBenny.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${bBenny.id}')`);
 const tonyMe0 = await meOf(gTony.token); // captured AFTER Mike's qualification already paid Tony
 const tonyBefore = tonyMe0.cash, tonyOmrBefore = tonyMe0.omr;
 for (let i = 0; i < 20; i++) { await seedCh(bBenny.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: bBenny.token }); if (r.body.success) break; }
@@ -1340,7 +1370,7 @@ const boCrewId = 'crew-bringone-test';
 await pool.query(`INSERT INTO crews (id, name, leader_account) VALUES ('${boCrewId}', 'The Test Crew', '${await acctOf(boBoss.id)}')`);
 await pool.query(`INSERT INTO crew_members (crew_id, account_id, name) VALUES ('${boCrewId}', '${await acctOf(boBoss.id)}', 'Crew Boss Vito'), ('${boCrewId}', '${await acctOf(boFriend.id)}', 'Crew Friend Sal')`);
 await seedCh(boFriend.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id='${await acctOf(boFriend.id)}'`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id='${await acctOf(boFriend.id)}'`);
 for (let i = 0; i < 20; i++) { await seedCh(boFriend.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: boFriend.token }); if (r.body.success) break; }
 assert.equal((await pool.query(`SELECT ref_paid FROM account_persistent WHERE account_id='${await acctOf(boFriend.id)}'`)).rows[0].ref_paid, true, 'the crewmate recruit qualified');
 const boRecruitRow = (await pool.query(`SELECT amount FROM transactions WHERE character_id='${boFriend.id}' AND reason='crew:bringone'`)).rows[0];
@@ -1353,7 +1383,7 @@ assert.equal(Number(boBossRow.amount), 15000, 'the recruiter side is BRING_ONE.R
 const soloBoss = await mk('Solo Boss Nick');
 const soloFriend = await mk('Solo Friend Ray', 'Solo Boss Nick');
 await seedCh(soloFriend.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id='${await acctOf(soloFriend.id)}'`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id='${await acctOf(soloFriend.id)}'`);
 for (let i = 0; i < 20; i++) { await seedCh(soloFriend.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: soloFriend.token }); if (r.body.success) break; }
 assert.equal((await pool.query(`SELECT ref_paid FROM account_persistent WHERE account_id='${await acctOf(soloFriend.id)}'`)).rows[0].ref_paid, true, 'the solo recruit still qualified (the referral pays regardless)');
 assert.equal((await pool.query(`SELECT COUNT(*) n FROM transactions WHERE character_id='${soloFriend.id}' AND reason='crew:bringone'`)).rows[0].n, '0', 'NO Bring One bonus without a shared crew — the crew bonus is the crew-run reward, not the referral');
@@ -1621,7 +1651,7 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     };
     const { preflight: pf0 } = await import('../src/preflight.js');
     assert(pf0({ ...socialPreflightLegalFixture, NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
-      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'off', TRUST_PROXY: 'on' })
+      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'off', RENDER: 'true', TRUST_PROXY: 'on' })
       .warnings.some((w) => /PUBLIC_URL/.test(w) && /referral link/.test(w)),
     'and with neither set, preflight warns that shares point at somebody else\'s domain');
 
@@ -1629,7 +1659,7 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     // running server down to fix a dormant faucet — strictly worse than the dormant faucet)
     const { preflight } = await import('../src/preflight.js');
     const pf = preflight({ ...socialPreflightLegalFixture, NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
-      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'live', TRUST_PROXY: 'on' });
+      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'live', RENDER: 'true', TRUST_PROXY: 'on' });
     assert.deepEqual(pf.errors, [], 'live-without-tokens must NOT be fatal');
     assert(pf.warnings.some((w) => /X_BEARER_TOKEN/.test(w) && /pays nobody/.test(w)),
       'but it must warn, naming the exact variable and the consequence');
@@ -1740,9 +1770,9 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
   const gAl = await mk('Grand Al');                  // A — grandrecruiter (root)
   const mMoe = await mk('Middle Moe', 'Grand Al');   // R — brought in by A
   const bBo = await mk('Bottom Bo', 'Middle Moe');   // R2 — brought in by R
-  const qualify = async (c) => { // drive a recruit through the 4 gates (level/jobs/checkins/cash)
+  const qualify = async (c) => { // drive a recruit through the permanent-character + play gates
     await seedCh(c.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-    await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${c.id}')`);
+    await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${c.id}')`);
     for (let i = 0; i < 20; i++) { await seedCh(c.id, 'nerve=50, energy=200, jail_until=NULL'); const rr = await call('POST', '/v1/crimes/pick', { token: c.token }); if (rr.body.success) break; }
   };
   await qualify(mMoe);

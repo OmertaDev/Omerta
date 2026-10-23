@@ -46,7 +46,7 @@ try {
   assert.equal((await app.inject('/dmca')).statusCode, 503, 'unverified registration is not presented as registered');
   process.env.DMCA_AGENT_REGISTERED = 'true';
   const production = { ...profile, NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough',
-    MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', MOD_KEY: 'another-real-secret-value-here', SOCIAL_VERIFY_MODE: 'live', TRUST_PROXY: 'on' };
+    MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', MOD_KEY: 'another-real-secret-value-here', SOCIAL_VERIFY_MODE: 'live', RENDER: 'true', TRUST_PROXY: 'on' };
   assert.deepEqual(preflight(production).errors, [], 'complete legal profile permits otherwise valid production config');
   for (const key of Object.keys(profile)) {
     const missing = { ...production }; delete missing[key];

@@ -2264,8 +2264,9 @@ sometimes $OMR (a legal source, one time for each account), and titles.
 bonus. **The Daily Score** (`/v1/heist`) is the best repeatable income at a low level (8-hour cooldown). **Check
 in** each day for a streak bonus.
 
-**Referrals** (section 7.13): your referral code is your character **name**. A recruit qualifies after 4
-conditions (L8, 40 jobs, 3 check-ins, $25k net worth). Milestones pay the recruiter cash and titles.
+**Referrals** (section 7.13): your referral code is your character **name**. A recruit qualifies after making
+their character permanent and meeting the play conditions (L8, 40 jobs, 3 check-ins, $25k net worth).
+Same-origin human referrals do not receive referral value. Milestones pay eligible recruiters cash and titles.
 - **The crew bonus** increases all **respect** you earn based on each qualified recruit's current level: a recruit at
   level 5 is worth +5%, at level 10 +10%, at level 15 +15%, and so on in steps. It applies to every
   respect you earn, anywhere in the game. It is **live**: recomputed from your crew's current levels,

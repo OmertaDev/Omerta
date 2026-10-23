@@ -42,7 +42,7 @@ copy, its anchor asserted before the result was believed).
 | 8 | **WS reconnect backoff + jitter** — the fixed 4s retry re-dialed every open tab in step after a restart (a synchronized thundering herd at launch scale). Now 2s·1.6ⁿ capped 30s, ±30% jitter, reset on a successful open so a blip still reconnects fast. | `public/index.html` (wsRetryMs) | `test/client.js` — tripwire: no fixed-delay `setTimeout(connectWs, N)`, pow+jitter present, onopen resets |
 | 9 | **Selective telemetry retention** — `telemetry` had NO retention (unbounded growth on the chattiest table). A blanket sweep would have been a silent §10.4 drift: `event='death'` telemetry is a LEDGER INPUT (invariants.js car-conservation sums every death's fleet size LIFETIME). So: a keep-list (`death` + 4 funnel analytics) and a 180d window — comfortably past every windowed reader (engagement 30d, capo 14d, dispatch 30d, /v1/online 15m). | `src/worker.js` (sweepTelemetry + TELEMETRY_KEEP_EVENTS, wired into the tick) | `test/hardening.js` — old noise pruned, old death SURVIVES, new noise survives |
 | 10 | **Single-instance constraint written into the IaC** — the api service carries a "⚠ RUN EXACTLY ONE INSTANCE" block naming WHY (in-process bus, wsClients, in-memory rate buckets, metrics ring) and what scaling out would actually take (REDIS_URL + cross-process fanout); scale the DATABASE instead (the measured dial: +50%/doubling vs +2%). | `render.yaml` | doc-level (the constraint is prose in the blueprint the operator reads) |
-| 11 | **TRUST_PROXY hop count** — `'on'`→1 (plain Render); a NUMBER (e.g. `2`) for a CDN-fronted deploy. With Cloudflare in front at trustProxy:1, every per-IP throttle reads Cloudflare's egress IPs as the clients and collapses onto ~a dozen shared addresses. Required for §8d below to be safe to execute. | `src/server.js:~195` | parse + DEPLOY §8d states the required value |
+| 11 | **Protected proxy client address** — `TRUST_PROXY=on` enables Render's protected `CF-Connecting-IP` resolver while Fastify proxy trust stays off. Render overwrites that header; missing or invalid data falls back to a shared socket bucket and receives no durable authority for economy holds. | `src/client-ip.js`, `src/server.js` | resolver + spoofing/fallback tests; DEPLOY §8d states the required value |
 
 **Operational runbooks added to DEPLOY.md** (each closes a GAP/PARTIAL that was a missing
 *decision*, not missing code):
@@ -58,7 +58,7 @@ copy, its anchor asserted before the result was believed).
   render.yaml 16-day drift incident: the file must match the dashboard, both ways).
 - **§8d Cloudflare front** — the one-move that closes CDN + Edge Caching + volumetric DDoS +
   managed WAF at once: cache `/art/*`, `/v1/art/*`, `/v1/avatar/*`; BYPASS everything else
-  under `/v1`; WS passes; **TRUST_PROXY=2**; verify via the IPs on `/v1/mod/actions`. Documented
+  under `/v1`; WS passes; **TRUST_PROXY=on**; verify via the IPs on `/v1/mod/actions`. Documented
   as a runbook rather than executed because it is a DNS/account action only the founder can take.
 - **§8e Disaster recovery** — JWT_SECRET/MARKET_SEED/MOD_KEY into the founder's password manager
   (the Render dashboard is currently the ONLY copy — an account-level disaster loses them and a
@@ -82,9 +82,9 @@ trail is docs/AUDITS.md (85+ reports) and the cited files.
 | Rate Limiting | ✅ | Token buckets per class (human 1/s burst 5, agent 1/3s, swaps 6/min; per-IP auth + keyless-GET denylist-default) — src/ratelimit.js, server.js:718-753 |
 | Caching | ✅ | TTL caches on every hot keyless surface (/health 2s + single-flight — measured 200 concurrent → 2 queries; /v1/online 15s; skyline/ticker 30s; PNG by content hash) |
 | Load Balancing | — | One instance by design; the measured dial is DB CPU. Constraint now WRITTEN into render.yaml (▲10) |
-| Reverse Proxies | ✅ | Render edge terminates TLS; app is proxy-aware with trustProxy=1 never trust-all (blue-team H3) |
+| Reverse Proxies | ✅ | Render edge terminates TLS; Fastify proxy trust stays off and the app narrowly accepts Render's overwritten `CF-Connecting-IP` when `TRUST_PROXY=on` (blue-team H3) |
 | API Gateways | — | The Fastify process IS the gateway: auth tiers, throttles, idempotency, auto-derived OpenAPI |
-| CDN | ◐▲§8d | No CDN today; the Cloudflare one-move is now a written runbook incl. the TRUST_PROXY=2 requirement (▲11) that makes it safe |
+| CDN | ◐▲§8d | No CDN today; the Cloudflare one-move is now a written runbook incl. the `TRUST_PROXY=on` requirement (▲11) that makes it safe |
 | Edge Caching | ◐▲§8d | The code already preserves edge-cacheability (keyless /v1/city pinned by test); §8d is the activation step |
 | Cache Invalidation | ✅ | Every cache short-TTL or content-hash-keyed; nothing caches authed state |
 | DDoS Protection | ◐▲§8d | App-layer flood control thorough (adversarially driven); volumetric layer = the §8d move |
@@ -186,7 +186,7 @@ trail is docs/AUDITS.md (85+ reports) and the cited files.
 | Rolling Deployments | ✅ | Health-gated cutover + old/new coexistence proven by the additive-only discipline and pgcheck §7b |
 | Rollbacks | ◐→✅ ▲6,§8c | Chain kill-switches were documented; the APP rollback runbook now exists (§8c) and the schema_meta guard makes a rollback visible to the code itself |
 | Autoscaling | — | Doubling API CPU buys +2%; the binding resource is the DB. Autoscaling the wrong tier is not a control |
-| Horizontal Scaling | ◐▲10,11 | Worker replicas SAFE by construction (advisory locks everywhere metered); the api's single-instance constraint is now stated in the IaC, and TRUST_PROXY hops make a fronted deploy correct |
+| Horizontal Scaling | ◐▲10,11 | Worker replicas SAFE by construction (advisory locks everywhere metered); the api's single-instance constraint is now stated in the IaC, and the protected client-address resolver makes a fronted deploy correct |
 | Vertical Scaling | ✅ | The dial is measured and written into the IaC (API +2%/doubling vs DB +50%) |
 | Multi-Region | — | Single region, ~1,000-player launch cohort; no requirement it would serve |
 | Cold Starts / Serverless | — /✅ | Paid always-on plan chosen explicitly; health-gated traffic swap; no serverless components |

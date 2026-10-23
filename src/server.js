@@ -12,6 +12,7 @@ import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import websocket from '@fastify/websocket';
 import crypto from 'node:crypto';
+import { clientIpContextForRequest } from './client-ip.js';
 import { eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
@@ -363,16 +364,12 @@ export async function buildServer() {
     throw new Error(`Refusing to boot — deploy preflight failed:\n  - ${preflightErrors.join('\n  - ')}`);
   for (const w of preflightWarnings) console.warn(`⚠️  preflight: ${w}`);
 
-  // trustProxy (AUDIT-full-system-v2 H): OFF by default (raw socket IP — X-Forwarded-For is spoofable
-  // when NOT behind a trusted proxy). An operator deploying behind a load balancer sets TRUST_PROXY=on
-  // so req.ip reflects the real client — else the per-IP auth throttle (E-M1) collapses to one global
-  // bucket at the proxy's IP. No behaviour change in the alpha (rate limits are off there anyway).
-  // BLUE-TEAM H3: trust ONE proxy hop (Render's load balancer), not ALL (`true`). With trust-all,
-  // req.ip is the LEFTMOST X-Forwarded-For value — client-supplied — so an attacker rotating that
-  // header lands every request in a fresh bucket, defeating BOTH unauthenticated throttles (the
-  // guest-mint Sybil limiter and the public-route DoS limiter). A hop count of 1 takes the address
-  // the LB actually connected from (the appended real client), ignoring a spoofed leftmost entry.
-  // (If Render is ever >1 hop, this degrades to a shared-bucket — safe — never to spoofable.)
+  // Keep Fastify's global proxy trust OFF. Its numeric trust mode does not select Render's documented
+  // client address in this version, and global proxy trust also changes host/protocol authority. Render
+  // overwrites CF-Connecting-IP with the client address, so TRUST_PROXY=on enables a
+  // narrow request.clientIp resolver for the security/economy consumers that need it. Invalid or missing
+  // forwarding data falls back to the raw socket address for a safe shared throttle bucket, but receives
+  // no durable signup authority and therefore cannot trigger an automatic same-origin economy hold.
   // forceCloseConnections MUST be an explicit false (bulletproof pass, 2026-08-21). Fastify 5.10's
   // default resolves to 'idle', and its close path only honors 'idle' when a custom serverFactory
   // exists — without one, truthy 'idle' falls into the closeAllConnections() branch and DESTROYS
@@ -380,13 +377,17 @@ export async function buildServer() {
   // socket cut and app.close() resolved in 0ms. With false, close() waits for in-flight requests;
   // the drain (main block below) reaps idle keep-alives itself so close is never held hostage by an
   // idle browser's 72s keep-alive socket. tools/chaos.js scenario 6 drives the whole sequence.
-  // (bulletproof audit) TRUST_PROXY also accepts a HOP COUNT ("2"), because a CDN in front changes the
-  // chain: client → Cloudflare → Render LB → app is TWO trusted hops, and trustProxy:1 there reads
-  // Cloudflare's egress IP as the client — every per-IP throttle collapses onto ~a dozen CF addresses.
-  // "on" stays 1 (the plain Render deploy); a number is the explicit hop count for a fronted deploy.
-  const tp = process.env.TRUST_PROXY === 'on' ? 1 : (Number(process.env.TRUST_PROXY) > 0 ? Number(process.env.TRUST_PROXY) : false);
-  const app = Fastify({ logger: false, trustProxy: tp,
+  const trustRenderProxy = process.env.TRUST_PROXY === 'on';
+  const isRender = process.env.RENDER === 'true';
+  const app = Fastify({ logger: false, trustProxy: false,
     forceCloseConnections: false });
+  app.decorateRequest('clientIp', null);
+  app.decorateRequest('clientIpAuthority', null);
+  app.addHook('onRequest', async (req) => {
+    const clientIp = clientIpContextForRequest(req, { trustRenderProxy, isRender });
+    req.clientIp = clientIp.ip;
+    req.clientIpAuthority = clientIp.authority;
+  });
   Push.initPush();   // WEB PUSH — arm VAPID signing if VAPID_* is configured; dormant otherwise.
 
   // BLUE-TEAM H2: a security-header baseline on every response (only /admin had any). Set defensively
@@ -1149,7 +1150,7 @@ export async function buildServer() {
     // mistyped automation or a probe from hammering the mod surface. A separate `mod:` bucket namespace so
     // it never contends with player auth. Generous burst — the /admin dashboard fans out ~6 GETs a refresh.
     if (rateLimitsEnabled()) {
-      const limited = await checkAuthRateLimit({ ip: 'mod:' + req.ip });
+      const limited = await checkAuthRateLimit({ ip: 'mod:' + req.clientIp });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }
@@ -1161,7 +1162,7 @@ export async function buildServer() {
     // must never block the action a real operator is running.
     if (req.method !== 'GET' && req.method !== 'HEAD')
       pool.query('INSERT INTO mod_actions (id, ip, method, path) VALUES ($1,$2,$3,$4)',
-        [uid(), req.ip, req.method, req.routeOptions?.url || req.url])
+        [uid(), req.clientIp, req.method, req.routeOptions?.url || req.url])
         .catch((e) => console.error('mod_actions audit write failed (non-fatal)', e?.message));
   };
   // Moderator uploads can have a larger parser budget (the drop dataset is
@@ -1249,7 +1250,7 @@ export async function buildServer() {
     // E-M1: auth endpoints are excluded from the account-keyed limiter above (they're unauthenticated),
     // so throttle them per-IP — bounds guest-mint Sybil floods + X/Privy auth-fetch amplification.
     if (rateLimitsEnabled() && req.method === 'POST' && (req.url.startsWith('/v1/auth') || req.url.startsWith('/v1/access'))) {
-      const limited = await checkAuthRateLimit({ ip: req.ip });
+      const limited = await checkAuthRateLimit({ ip: req.clientIp });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }
@@ -1260,7 +1261,7 @@ export async function buildServer() {
     // every DB-heavy board) are covered below by the BLUE-TEAM H4 default-throttle, not by name.
     if (rateLimitsEnabled() && (req.method === 'GET' || req.method === 'HEAD')
       && (req.url.startsWith('/card/') || req.url.startsWith('/u/') || req.url.startsWith('/beef/') || req.url.startsWith('/deed/'))) {
-      const limited = await checkPublicRateLimit({ ip: req.ip });
+      const limited = await checkPublicRateLimit({ ip: req.clientIp });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }
@@ -1281,7 +1282,7 @@ export async function buildServer() {
       try { await req.jwtVerify(); } catch { authed = false; }
       const limited = authed
         ? await checkReadLimit({ accountId: req.user.sub })
-        : await checkPublicRateLimit({ ip: req.ip });
+        : await checkPublicRateLimit({ ip: req.clientIp });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
       if (!authed) return; // keyless GET: throttled, but no account context for anything below
@@ -1413,7 +1414,7 @@ export async function buildServer() {
   const validPathSession = (value) => typeof value === 'string' && /^[a-z0-9_-]{8,64}$/i.test(value);
   const publicPathQuizRateLimit = async function publicPathQuizRateLimit(req, reply) {
     if (!rateLimitsEnabled()) return;
-    const limited = await checkPublicRateLimit({ ip: req.ip });
+    const limited = await checkPublicRateLimit({ ip: req.clientIp });
     if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
       .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
   };
@@ -1482,12 +1483,13 @@ export async function buildServer() {
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
         Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
       const { accountId, tokenVersion } = await A.accountForGuestBootstrap(
-        pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode, () => requireAge(app, req),
+        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode, () => requireAge(app, req),
+        req.clientIpAuthority,
       );
       return { token: await signFor(accountId, {}, '30d', tokenVersion) };
     }
     requireAge(app, req);
-    const id = await A.createGuestAccount(pool, req.ip || '0.0.0.0', req.body?.inviteCode);
+    const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);
     return { token: await signFor(id, {}, '30d', 0) };
   };
   app.post('/v1/auth/guest', guestLogin);
@@ -1518,7 +1520,9 @@ export async function buildServer() {
     const identity = await verify(req.body?.token);
     // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per
     // new account, gate held even under a concurrent same-identity race (no separate pre-consume).
-    const { accountId, created } = await A.accountForIdentity(pool, identity, req.ip || '0.0.0.0', req.body?.inviteCode);
+    const { accountId, created } = await A.accountForIdentity(
+      pool, identity, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,
+    );
     return { token: await signFor(accountId, {}, '30d', created ? 0 : undefined), created };
   };
   app.post('/v1/auth/x', providerLogin(A.verifyX));
@@ -1580,7 +1584,9 @@ export async function buildServer() {
       }
       // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races
       requireAge(app, req);
-      const { accountId } = await A.accountForIdentity(pool, r.identity, req.ip || '0.0.0.0', r.invite);
+      const { accountId } = await A.accountForIdentity(
+        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,
+      );
       const token = await signFor(accountId);
       const claims = app.jwt.verify(token);
       reply.header('Set-Cookie', [reply.getHeader('Set-Cookie'), accessCookie(accountId, claims.tv)]);
@@ -1674,9 +1680,9 @@ export async function buildServer() {
         // attribution to a shift key. The response says whether it landed, so the client can tell
         // the player instead of silently dropping their referrer (the growth-funnel leak).
         const code = String(req.body.referralCode);
-        let rec = await client.query('SELECT account_id FROM characters WHERE name=$1 AND alive AND account_id<>$2 LIMIT 1', [code, req.user.sub]);
+        let rec = await client.query('SELECT account_id FROM characters WHERE name=$1 AND alive AND NOT is_npc AND account_id<>$2 LIMIT 1', [code, req.user.sub]);
         if (!rec.rows.length)
-          rec = await client.query('SELECT account_id FROM characters WHERE LOWER(name)=LOWER($1) AND alive AND account_id<>$2 LIMIT 1', [code, req.user.sub]);
+          rec = await client.query('SELECT account_id FROM characters WHERE LOWER(name)=LOWER($1) AND alive AND NOT is_npc AND account_id<>$2 LIMIT 1', [code, req.user.sub]);
         if (rec.rows.length) {
           await client.query('UPDATE account_persistent SET referred_by=$1 WHERE account_id=$2 AND referred_by IS NULL', [rec.rows[0].account_id, req.user.sub]);
           const already = await client.query('SELECT 1 FROM referrals WHERE recruit_account=$1', [req.user.sub]);

@@ -706,6 +706,8 @@ export const M4 = {
   // The constants are gone rather than zeroed so nothing can quietly re-enable them; the milestone
   // ladder's `omr` field is still in RECRUIT_MILESTONES because that table is MACHINE-OWNED
   // (ground rule #2) — game.js simply stops reading it.)
+  // The recruit must also hold a paid permanent character. That identity-cost gate is enforced from
+  // account_persistent.minted in game.js; these are the remaining numeric progression thresholds.
   REF_GATES: { level: 8, jobs: 40, checkins: 3, netWorth: 25000 },
   // ── THE CREW BONUS (founder-directed 2026-07-31) ───────────────────────────────────────────────
   // What replaces the $OMR. Every QUALIFIED recruit makes their recruiter earn respect faster, and
@@ -729,7 +731,8 @@ export const M4 = {
     MAX_BONUS: 1.0,   // hard ceiling on the SUM across every recruit (+100% at most, i.e. x2)
   },
   // STEPPED PAYOUT — "the spark": a small, EARLY cash payout the moment a recruit shows real early
-  // engagement (level 3 + 10 jobs), so the referrer gets fast feedback long before the full
+  // engagement after making their character permanent (level 3 + 10 jobs), so the referrer gets
+  // fast feedback long before the full
   // qualification (L8/40 jobs/3 check-ins/$25k). Cash only (never $OMR — that stays on the full
   // gate), excluded from the AGENT recruiter profile, ONCE ever. Agents start at the separately
   // budgeted full qualification milestone; weak early feedback is deliberately human-profile only.
@@ -5471,12 +5474,13 @@ export const CREW = {
   // ── BRING ONE (the first-crewmate incentive; founder-directed retention/funnel drop) ───────────
   // The friction the ROLODEX/discovery layer can't fix alone: founding a crew and getting a REAL
   // friend to actually PLAY has no concrete payoff — the crew is all status/coordination. So a
-  // referral who QUALIFIES (the audited §7.13 anti-Sybil wall — L8/40 jobs/3 check-ins/$25k, once
-  // ever) AND runs in their recruiter's crew earns the recruit-side bonus. A human recruiter also
+  // referral who QUALIFIES (the audited §7.13 anti-Sybil wall — paid permanent character plus
+  // L8/40 jobs/3 check-ins/$25k, once ever) AND runs in their recruiter's crew earns the recruit-side
+  // bonus. A human recruiter also
   // earns the recruiter-side bonus; an agent recruiter does not, because the explicit acquisition
   // budget is their only cash leg. It is a bounded cash FAUCET that inherits every anti-Sybil property of
-  // the qualification wall (an alt farm can't earn it any faster than a real recruit who levelled to
-  // 8, pulled 40 jobs and banked $25k), on top of the crew co-membership check — so it rewards the
+  // the qualification wall (free guest identities cannot open it), on top of the crew co-membership
+  // check — so it rewards the
   // recruiter who both brought a friend AND ran with them. v24: social rewards are cash, never $OMR.
   BRING_ONE: { RECRUITER_CASH: 15000, RECRUIT_CASH: 7500 },
 };

@@ -356,12 +356,25 @@ export async function funnelStats(pool) {
   const accounts = await one('SELECT COUNT(*) n FROM account_persistent WHERE NOT npc_flag');
   const referral = {
     accounts,
-    referred: await one('SELECT COUNT(*) n FROM account_persistent WHERE referred_by IS NOT NULL'), // came in on a code
-    sparked: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_spark'),               // hit the early gate
-    qualified: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_paid'),               // hit the full gate (paid out)
-    recruiters: await one('SELECT COUNT(*) n FROM account_persistent WHERE recruits > 0'),          // brought at least one made man in
-    totalRecruits: await one('SELECT COALESCE(SUM(recruits),0) n FROM account_persistent'),         // qualified recruits, all-time
-    reReferred: await one('SELECT COUNT(*) n FROM account_persistent WHERE referred_by IS NOT NULL AND recruits > 0'), // a recruit who then recruited (viral depth)
+    referred: await one('SELECT COUNT(*) n FROM account_persistent WHERE referred_by IS NOT NULL AND NOT npc_flag'), // came in on a code
+    held: await one('SELECT COUNT(*) n FROM account_persistent WHERE referral_same_ip_hold IS TRUE AND NOT npc_flag'), // shared-origin edges held from value
+    sparked: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_spark AND referral_same_ip_hold IS NOT TRUE AND NOT npc_flag'), // eligible early gate
+    qualified: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_paid AND referral_same_ip_hold IS NOT TRUE AND NOT npc_flag'), // eligible full gate
+    recruiters: await one(`SELECT COUNT(DISTINCT r.recruiter_account) n FROM referrals r
+      JOIN account_persistent a ON a.account_id=r.recruit_account
+      JOIN account_persistent recruiter ON recruiter.account_id=r.recruiter_account
+      WHERE r.qualified_at IS NOT NULL AND a.referral_same_ip_hold IS NOT TRUE
+        AND NOT a.npc_flag AND NOT recruiter.npc_flag`),
+    totalRecruits: await one(`SELECT COUNT(*) n FROM referrals r
+      JOIN account_persistent a ON a.account_id=r.recruit_account
+      WHERE r.qualified_at IS NOT NULL AND a.referral_same_ip_hold IS NOT TRUE AND NOT a.npc_flag`),
+    reReferred: await one(`SELECT COUNT(DISTINCT r.recruiter_account) n FROM referrals r
+      JOIN account_persistent a ON a.account_id=r.recruit_account
+      JOIN account_persistent recruiter ON recruiter.account_id=r.recruiter_account
+      WHERE r.qualified_at IS NOT NULL AND a.referral_same_ip_hold IS NOT TRUE
+        AND recruiter.referred_by IS NOT NULL
+        AND recruiter.referral_same_ip_hold IS NOT TRUE
+        AND NOT a.npc_flag AND NOT recruiter.npc_flag`), // an eligible recruit who then recruited (viral depth)
     // THE LATE CLAIM — attribution recovered after creation (word-of-mouth recruits who typed the
     // name from Start Here). High numbers here mean the create-screen field is being missed.
     lateClaims: await one("SELECT COUNT(*) n FROM telemetry WHERE event='referral_claim_late'"),
@@ -543,13 +556,15 @@ export async function myProfile(ch, client, h) {
 
   // ── the crew you brought in (§7.13) ──
   const refs = (await client.query(
-    'SELECT recruit_account, qualified_at FROM referrals WHERE recruiter_account=$1', [h.accountId])).rows;
+    `SELECT r.recruit_account, r.qualified_at, a.referral_same_ip_hold
+       FROM referrals r JOIN account_persistent a ON a.account_id=r.recruit_account
+      WHERE r.recruiter_account=$1`, [h.accountId])).rows;
   const chRows = refs.length ? (await client.query(
     `SELECT c.id, c.account_id, c.name, c.respect, c.alive
        FROM characters c JOIN referrals r ON r.recruit_account = c.account_id
       WHERE r.recruiter_account = $1`, [h.accountId])).rows : [];
   const sparkRows = refs.length ? (await client.query(
-    `SELECT a.account_id, a.ref_spark
+    `SELECT a.account_id, a.ref_spark, a.referral_same_ip_hold
        FROM account_persistent a JOIN referrals r ON r.recruit_account = a.account_id
       WHERE r.recruiter_account = $1`, [h.accountId])).rows : [];
   const charToAcct = new Map(); // any generation — the payment counterparty was whoever lived then
@@ -559,7 +574,8 @@ export async function myProfile(ch, client, h) {
     const cur = display.get(c.account_id);
     if (!cur || (c.alive && !cur.alive)) display.set(c.account_id, c);
   }
-  const sparked = new Map(sparkRows.map((r) => [r.account_id, !!r.ref_spark]));
+  const sparked = new Map(sparkRows.map((r) => [r.account_id,
+    !!r.ref_spark && r.referral_same_ip_hold !== true]));
 
   // ── the take — LEDGER-EXACT recruiting income (see the attribution note above) ──
   const cashRows = (await client.query(
@@ -589,14 +605,17 @@ export async function myProfile(ch, client, h) {
   // helper the live multiplier uses), so the number shown here is the number being applied.
   const crewBonus = referralXpBonus(refs.map((r) => {
     const d = display.get(r.recruit_account);
-    return d?.alive && r.qualified_at ? levelOf(Number(d.respect)) : 0;
+    return d?.alive && r.qualified_at && r.referral_same_ip_hold !== true
+      ? levelOf(Number(d.respect)) : 0;
   }));
 
   const recruits = refs.map((r) => {
     const d = display.get(r.recruit_account);
     return { name: d?.name || 'a lost soul', level: d ? levelOf(Number(d.respect)) : 0,
       alive: !!d?.alive, sparked: sparked.get(r.recruit_account) || false,
-      qualified: !!r.qualified_at, earnedCash: perRecruitCash.get(r.recruit_account) || 0 };
+      held: r.referral_same_ip_hold === true,
+      qualified: !!r.qualified_at && r.referral_same_ip_hold !== true,
+      earnedCash: perRecruitCash.get(r.recruit_account) || 0 };
   }).sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (b.earnedCash - a.earnedCash) || (b.level - a.level));
 
   // FLAT on purpose — the client's mirror guard (test/client.js check 4) verifies one level of
@@ -619,7 +638,7 @@ export async function myProfile(ch, client, h) {
     recruitsLifetime: Number(acct.recruits || 0),
     recruitsTotal: refs.length,
     recruitsSparked: [...sparked.values()].filter(Boolean).length,
-    recruitsQualified: refs.filter((r) => r.qualified_at).length,
+    recruitsQualified: refs.filter((r) => r.qualified_at && r.referral_same_ip_hold !== true).length,
     earnedCash, earnedOmr, crewBonus, crewBonusPct: Math.round(crewBonus * 100),
     recruits,
   };
@@ -766,10 +785,10 @@ export async function claimReferral(ch, code, client, h) {
   if (name.toLowerCase() === String(ch.name).toLowerCase())
     throw new GameError('self', "You can't have sent yourself.");
   let rec = (await client.query(
-    'SELECT account_id, name FROM characters WHERE name=$1 AND alive AND account_id<>$2 LIMIT 1',
+    'SELECT account_id, name FROM characters WHERE name=$1 AND alive AND NOT is_npc AND account_id<>$2 LIMIT 1',
     [name, h.accountId])).rows[0];
   if (!rec) rec = (await client.query(
-    'SELECT account_id, name FROM characters WHERE LOWER(name)=LOWER($1) AND alive AND account_id<>$2 LIMIT 1',
+    'SELECT account_id, name FROM characters WHERE LOWER(name)=LOWER($1) AND alive AND NOT is_npc AND account_id<>$2 LIMIT 1',
     [name, h.accountId])).rows[0];
   if (!rec) throw new GameError('unknown_code', `Nobody on the streets goes by "${name}". Check the spelling with them.`);
   // atomic — the IS NULL guard means a concurrent claim can't double-set; referred_by is NOT in
@@ -969,10 +988,28 @@ export async function sweepCapoLicense(pool) {
   if (!agents.length) return { updated: 0 };
   const aidList = agents.map((a) => a.account_id);
   const inA = aidList.map((_, i) => `$${i + 1}`).join(',');
-  // every minted HUMAN recruit of any agent (minted is the load-bearing gate — see the header)
+  // Every minted HUMAN recruit of any agent. The origin screen runs here, before full referral
+  // qualification can install its durable hold, so an agent cannot unlock perks with same-origin alts.
   const recruits = (await pool.query(
-    `SELECT account_id, referred_by FROM account_persistent
-      WHERE referred_by IN (${inA}) AND NOT agent_flag AND minted`, aidList)).rows;
+    `SELECT a.account_id, a.referred_by FROM account_persistent a
+       JOIN accounts recruit_origin ON recruit_origin.id=a.account_id
+       JOIN accounts recruiter_origin ON recruiter_origin.id=a.referred_by
+       LEFT JOIN agent_referral_claims held
+         ON held.recruit_account=a.account_id AND held.milestone='qualified_activation'
+        AND held.state='held' AND held.hold_reason='review_same_ip'
+      WHERE a.referred_by IN (${inA}) AND NOT a.agent_flag AND NOT a.npc_flag AND a.minted
+        AND a.referral_same_ip_hold IS NOT TRUE AND held.recruit_account IS NULL
+        AND (
+          a.referral_same_ip_hold IS FALSE
+          OR recruit_origin.created_ip_authority IS NULL
+          OR recruiter_origin.created_ip_authority IS NULL
+          OR recruit_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+          OR recruiter_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+          OR recruit_origin.created_ip IS NULL OR recruiter_origin.created_ip IS NULL
+          OR recruit_origin.created_ip IN ('0.0.0.0','::')
+          OR recruiter_origin.created_ip IN ('0.0.0.0','::')
+          OR recruit_origin.created_ip <> recruiter_origin.created_ip
+        )`, aidList)).rows;
   let counts = new Map(aidList.map((id) => [id, 0]));
   if (recruits.length) {
     const rids = recruits.map((r) => r.account_id);
