@@ -41,6 +41,8 @@ import {
   assertEconomyHardeningCommerceAdmissionTransfer,
   economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
+import { ECONOMY_READINESS_MERGE_SOURCE, economyHardeningMergeHistoricalInput,
+  qualifyEconomyHardeningSuccessorSource } from '../tools/economy-readiness-merge-source-compatibility.js';
 
 const expectedRevision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
 const expectedPredecessor = '9f39df80598d38507c9f6b4ea2414312eb8e7700';
@@ -231,10 +233,26 @@ assert.deepEqual(Object.keys(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS), comm
 assert(Object.isFrozen(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
+const hardeningSuccessor = ECONOMY_READINESS_MERGE_SOURCE.hardeningSuccessor;
+assert.equal(git('rev-parse', `${hardeningSuccessor.revision}^{tree}`).trim(), hardeningSuccessor.tree);
+assert.equal(git('rev-parse', `${hardeningSuccessor.targetRevision}^{tree}`).trim(), hardeningSuccessor.targetTree);
+assert.deepEqual(hardeningSuccessor.inverses, inverseHunks(hardeningSuccessor.file,
+  hardeningSuccessor.targetRevision, hardeningSuccessor.revision));
+const hardeningSuccessorCurrent = git('show', `${hardeningSuccessor.revision}:${hardeningSuccessor.file}`);
+const hardeningSuccessorTarget = git('show', `${hardeningSuccessor.targetRevision}:${hardeningSuccessor.file}`);
+for (const input of [hardeningSuccessorCurrent, hardeningSuccessorCurrent.replaceAll('\n', '\r\n')]) {
+  assert.equal(qualifyEconomyHardeningSuccessorSource(hardeningSuccessor.file, input).baselineText,
+    hardeningSuccessorTarget); positives++;
+}
+for (const input of [hardeningSuccessorCurrent + '\n', hardeningSuccessorCurrent.slice(1),
+  '\ufeff' + hardeningSuccessorCurrent, hardeningSuccessorCurrent + '\0',
+  hardeningSuccessorCurrent.replace('\n', '\r'), Buffer.from(hardeningSuccessorCurrent), null]) {
+  assert.throws(() => qualifyEconomyHardeningSuccessorSource(hardeningSuccessor.file, input)); refusals++;
+}
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = lf(economyHardeningMergeHistoricalInput(file, fs.readFileSync(file, 'utf8')));
   const campaignExpirySealed = campaignExpiryFiles.includes(file)
     ? assertEconomyHardeningCampaignExpiryTransfer(file, physical).baselineText : physical;
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
@@ -747,7 +765,7 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyHardeningCommerceAdmissionTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 237, 'positive control count drifted');
-assert.equal(refusals, 765, 'refusal control count drifted');
+assert.equal(positives, 239, 'positive control count drifted');
+assert.equal(refusals, 772, 'refusal control count drifted');
 assert.equal(hunks, 332, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);

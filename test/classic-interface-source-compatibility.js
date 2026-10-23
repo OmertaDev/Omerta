@@ -10,7 +10,8 @@ import {ECONOMY_HARDENING_BINDING_DOMAINS,ECONOMY_HARDENING_BINDING_SUCCESSOR_RE
  economyHardeningSourceBaseline} from '../tools/economy-hardening-source-transfer.js';
 import {ACTION_READINESS_SOURCE,qualifyActionReadinessSource,actionReadinessHistoricalInput} from '../tools/action-readiness-source-compatibility.js';
 import {ECONOMY_READINESS_MERGE_SOURCE,qualifyEconomyReadinessMergeSource,
- economyReadinessMergeHistoricalInput} from '../tools/economy-readiness-merge-source-compatibility.js';
+ economyReadinessMergeHistoricalInput,qualifyEconomyHardeningMergeSource,
+ economyHardeningMergeHistoricalInput} from '../tools/economy-readiness-merge-source-compatibility.js';
 assert.equal(typeof source.qualifyRebuildInterfaceSource, 'function', 'Exact rebuilt-interface transfer must exist');
 const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{encoding:'utf8',maxBuffer:32*1024*1024});
 const pin=source.REBUILD_INTERFACE_SOURCE,sha=s=>crypto.createHash('sha256').update(s).digest('hex');
@@ -126,6 +127,7 @@ for(const [revision,tree]of [[bridge.revision,bridge.tree],[bridge.targetRevisio
 git('merge-base','--is-ancestor',bridge.targetRevision,bridge.revision);
 git('merge-base','--is-ancestor',bridge.revision,'HEAD');
 const bridgeCurrent=git('show',bridge.revision+':'+bridgeRow.file),bridgeTarget=git('show',bridge.targetRevision+':'+bridgeRow.file);
+const hardeningBridgeTarget=git('show',bridge.hardeningTargetRevision+':'+bridgeRow.file);
 assert.deepEqual(bridgeRow.inverses,inverseHunks(git('diff','--no-ext-diff','--unified=3',bridge.targetRevision,bridge.revision,'--',bridgeRow.file)));
 for(const input of [bridgeCurrent,bridgeCurrent.replaceAll('\n','\r\n')]){
  const proof=qualifyEconomyReadinessMergeSource(bridgeRow.file,input);
@@ -137,6 +139,22 @@ for(const inverse of bridgeRow.inverses)for(const input of [bridgeCurrent.replac
  bridgeCurrent.replace(inverse.current,()=>inverse.current+inverse.current),bridgeCurrent.replace(inverse.current,()=>inverse.baseline)])
  assert.throws(()=>qualifyEconomyReadinessMergeSource(bridgeRow.file,input));
 assert.equal(economyReadinessMergeHistoricalInput(bridgeRow.file,bridgeTarget),bridgeTarget);
+assert.equal(git('rev-parse',bridge.hardeningTargetRevision+'^{tree}').trim(),bridge.hardeningTargetTree);
+assert.deepEqual(bridgeRow.hardeningInverses,inverseHunks(git('diff','--no-ext-diff','--unified=3',
+ bridge.hardeningTargetRevision,bridge.revision,'--',bridgeRow.file)));
+for(const input of [bridgeCurrent,bridgeCurrent.replaceAll('\n','\r\n')]){
+ const proof=qualifyEconomyHardeningMergeSource(bridgeRow.file,input);
+ assert.equal(proof.baselineText,hardeningBridgeTarget);assert.equal(proof.targetRevision,bridge.hardeningTargetRevision);
+ assert.equal(economyHardeningMergeHistoricalInput(bridgeRow.file,input),hardeningBridgeTarget);
+}
+for(const input of [bridgeCurrent+'\n',bridgeCurrent.slice(1),'\ufeff'+bridgeCurrent,bridgeCurrent+'\0',bridgeCurrent.replace('\n','\r'),Buffer.from(bridgeCurrent),null])
+ assert.throws(()=>qualifyEconomyHardeningMergeSource(bridgeRow.file,input));
+for(const inverse of bridgeRow.hardeningInverses)for(const input of [bridgeCurrent.replace(inverse.current,''),
+ bridgeCurrent.replace(inverse.current,()=>inverse.current+inverse.current),bridgeCurrent.replace(inverse.current,()=>inverse.baseline)])
+ assert.throws(()=>qualifyEconomyHardeningMergeSource(bridgeRow.file,input));
+assert.equal(economyHardeningMergeHistoricalInput(bridgeRow.file,hardeningBridgeTarget),hardeningBridgeTarget);
+assert.throws(()=>qualifyEconomyHardeningMergeSource(bridgeRow.file,bridgeCurrent,Object.freeze({...bridge})));
 assert.throws(()=>qualifyEconomyReadinessMergeSource(bridgeRow.file,bridgeCurrent,Object.freeze({...bridge})));
 console.log(JSON.stringify({phase:bridge.phase,source:bridge.revision,predecessor:bridge.targetRevision,
- inverses:bridgeRow.inverses.length,native:false,runtime:false}));
+ inverses:bridgeRow.inverses.length,hardeningParent:bridge.hardeningTargetRevision,
+ hardeningInverses:bridgeRow.hardeningInverses.length,native:false,runtime:false}));
