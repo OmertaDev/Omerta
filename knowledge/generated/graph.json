@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2a4c6be86dd13908a2466c14b52707911309428f",
+  "sourceRevision": "c89b8256a4076d231b78f0bcbbce0a2a3415d501",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16877,
-    "edges": 67511,
+    "nodes": 16882,
+    "edges": 67528,
     "byNodeType": {
       "Artifact": 6928,
       "Command": 295,
-      "Commit": 4720,
+      "Commit": 4725,
       "Contract": 134,
       "Document": 951,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5514,
-      "CHANGED": 25814,
+      "CHANGED": 25826,
       "CONTAINS": 6949,
       "DECLARES": 295,
       "DEFINED_IN": 1760,
       "DEPENDS_ON": 69,
       "EXECUTES": 1157,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4720,
+      "HAS_COMMIT": 4725,
       "IMPLEMENTS": 124,
       "IMPORTS": 7967,
       "INHERITS": 45,
@@ -138017,20 +138017,20 @@
       "path": "test/economy-hardening-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13399,
-      "lines": 189,
-      "version": "fda9bedc3cc73db8",
+      "bytes": 17985,
+      "lines": 252,
+      "version": "452f80f8574a43f9",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "fda9bedc3cc73db8"
+          "version": "452f80f8574a43f9"
         }
       ],
-      "lastChangedAt": "2026-10-23T10:03:13.000Z",
+      "lastChangedAt": "2026-10-23T11:42:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9d411a75deacc25e76bced570be72209c2bc981f"
+      "lastChangedCommit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
     },
     {
       "key": "Artifact:test/economy-invariant-hardening.js",
@@ -153335,20 +153335,20 @@
       "path": "tools/commerce-deed-release-phase2-native-catalog.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 475466,
-      "lines": 1134,
-      "version": "824ee43f3a464857",
+      "bytes": 476450,
+      "lines": 1146,
+      "version": "13299590cc05f73e",
       "text": true,
       "provenance": [
         {
           "file": "tools/commerce-deed-release-phase2-native-catalog.js",
           "line": 1,
-          "version": "824ee43f3a464857"
+          "version": "13299590cc05f73e"
         }
       ],
-      "lastChangedAt": "2026-10-22T14:10:35.000Z",
+      "lastChangedAt": "2026-10-23T11:38:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "913731168052c928bae5451f56f4c15007eda89e"
+      "lastChangedCommit": "a2779ea0f3fd7591209fa49a0711af72a12cba8f"
     },
     {
       "key": "Artifact:tools/commerce-enterprise-source-compatibility.js",
@@ -154071,20 +154071,20 @@
       "path": "tools/economy-hardening-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 734780,
-      "lines": 1650,
-      "version": "ebdd3dc2b4b2f06f",
+      "bytes": 745162,
+      "lines": 1709,
+      "version": "ebbba68bc18fb7a7",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-hardening-source-transfer.js",
           "line": 1,
-          "version": "ebdd3dc2b4b2f06f"
+          "version": "ebbba68bc18fb7a7"
         }
       ],
-      "lastChangedAt": "2026-10-23T10:03:13.000Z",
+      "lastChangedAt": "2026-10-23T11:42:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9d411a75deacc25e76bced570be72209c2bc981f"
+      "lastChangedCommit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
     },
     {
       "key": "Artifact:tools/economy-pilot.js",
@@ -154462,20 +154462,20 @@
       "path": "tools/generate-economy-hardening-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 17182,
-      "lines": 248,
-      "version": "ac105f054b7c2b2f",
+      "bytes": 22475,
+      "lines": 318,
+      "version": "bdf2f1771cb677ce",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-economy-hardening-source-transfer.js",
           "line": 1,
-          "version": "ac105f054b7c2b2f"
+          "version": "bdf2f1771cb677ce"
         }
       ],
-      "lastChangedAt": "2026-10-23T10:03:13.000Z",
+      "lastChangedAt": "2026-10-23T11:42:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9d411a75deacc25e76bced570be72209c2bc981f"
+      "lastChangedCommit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
     },
     {
       "key": "Artifact:tools/genesis-auction-deployment-plan.js",
@@ -155612,20 +155612,20 @@
       "path": "tools/pgcheck.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 142225,
-      "lines": 2185,
-      "version": "073d0f500fecbdd4",
+      "bytes": 142794,
+      "lines": 2198,
+      "version": "25b72f039c530a5b",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck.js",
           "line": 1,
-          "version": "073d0f500fecbdd4"
+          "version": "25b72f039c530a5b"
         }
       ],
-      "lastChangedAt": "2026-10-14T23:10:58.000Z",
+      "lastChangedAt": "2026-10-23T12:00:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d443d9ac882929dd8f670d6ef18c0feaa1e23f8f"
+      "lastChangedCommit": "c89b8256a4076d231b78f0bcbbce0a2a3415d501"
     },
     {
       "key": "Artifact:tools/pgquery.js",
@@ -163779,6 +163779,22 @@
         {
           "commit": "019bcd66d09179554aeaadee3b2265cbaa8135bb",
           "url": "https://github.com/OmertaDev/Omerta/commit/019bcd66d09179554aeaadee3b2265cbaa8135bb"
+        }
+      ]
+    },
+    {
+      "key": "Commit:01b4312f1b2a96594f09fd98b89d7b0675ceff70",
+      "type": "Commit",
+      "id": "01b4312f1b2a96594f09fd98b89d7b0675ceff70",
+      "label": "Stabilize boxing deadlock qualification",
+      "title": "Stabilize boxing deadlock qualification",
+      "date": "2026-10-23T11:49:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/01b4312f1b2a96594f09fd98b89d7b0675ceff70",
+      "provenance": [
+        {
+          "commit": "01b4312f1b2a96594f09fd98b89d7b0675ceff70",
+          "url": "https://github.com/OmertaDev/Omerta/commit/01b4312f1b2a96594f09fd98b89d7b0675ceff70"
         }
       ]
     },
@@ -191943,6 +191959,22 @@
       ]
     },
     {
+      "key": "Commit:6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "type": "Commit",
+      "id": "6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "label": "Seal native qualification repair source",
+      "title": "Seal native qualification repair source",
+      "date": "2026-10-23T11:42:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "provenance": [
+        {
+          "commit": "6104fbab13dd642958a4082bc319bf680a37fc4f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6104fbab13dd642958a4082bc319bf680a37fc4f"
+        }
+      ]
+    },
+    {
       "key": "Commit:6105d103ec4055e57cda066a314b9358d7a3c805",
       "type": "Commit",
       "id": "6105d103ec4055e57cda066a314b9358d7a3c805",
@@ -205879,6 +205911,22 @@
       ]
     },
     {
+      "key": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "type": "Commit",
+      "id": "8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "label": "Refresh knowledge graph after economy reseal",
+      "title": "Refresh knowledge graph after economy reseal",
+      "date": "2026-10-23T10:15:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "provenance": [
+        {
+          "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8e9b7408faceb6d6d69badff386c15e92cd02f69"
+        }
+      ]
+    },
+    {
       "key": "Commit:8eac2f0739b879106c79a5c6e1df6872459b6deb",
       "type": "Commit",
       "id": "8eac2f0739b879106c79a5c6e1df6872459b6deb",
@@ -212131,6 +212179,22 @@
         {
           "commit": "a26c623302ad6e61d969f09d8a3f4279e33a486b",
           "url": "https://github.com/OmertaDev/Omerta/commit/a26c623302ad6e61d969f09d8a3f4279e33a486b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a2779ea0f3fd7591209fa49a0711af72a12cba8f",
+      "type": "Commit",
+      "id": "a2779ea0f3fd7591209fa49a0711af72a12cba8f",
+      "label": "Fix native economy hardening qualification",
+      "title": "Fix native economy hardening qualification",
+      "date": "2026-10-23T11:38:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a2779ea0f3fd7591209fa49a0711af72a12cba8f",
+      "provenance": [
+        {
+          "commit": "a2779ea0f3fd7591209fa49a0711af72a12cba8f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a2779ea0f3fd7591209fa49a0711af72a12cba8f"
         }
       ]
     },
@@ -222915,6 +222979,22 @@
         {
           "commit": "c89872b85ffb204b05c3b57eb438b3bf3ccf6f01",
           "url": "https://github.com/OmertaDev/Omerta/commit/c89872b85ffb204b05c3b57eb438b3bf3ccf6f01"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+      "type": "Commit",
+      "id": "c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+      "label": "Clarify deterministic deadlock qualification",
+      "title": "Clarify deterministic deadlock qualification",
+      "date": "2026-10-23T12:00:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+      "provenance": [
+        {
+          "commit": "c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c89b8256a4076d231b78f0bcbbce0a2a3415d501"
         }
       ]
     },
@@ -258481,7 +258561,7 @@
         },
         {
           "file": "tools/pgcheck.js",
-          "line": 2055
+          "line": 2068
         },
         {
           "file": "tools/player-intel-native.js",
@@ -266854,6 +266934,9 @@
           "commit": "8df39320aa525e396e28ecd11d6846a14f803ccd"
         },
         {
+          "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
+        },
+        {
           "commit": "8f166d8faa81299ea3b76caa4d78b287a37a7b11"
         },
         {
@@ -269188,6 +269271,9 @@
           "commit": "8df39320aa525e396e28ecd11d6846a14f803ccd"
         },
         {
+          "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
+        },
+        {
           "commit": "8f166d8faa81299ea3b76caa4d78b287a37a7b11"
         },
         {
@@ -271520,6 +271606,9 @@
         },
         {
           "commit": "8df39320aa525e396e28ecd11d6846a14f803ccd"
+        },
+        {
+          "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
         },
         {
           "commit": "8f166d8faa81299ea3b76caa4d78b287a37a7b11"
@@ -274502,6 +274591,9 @@
         },
         {
           "commit": "8df39320aa525e396e28ecd11d6846a14f803ccd"
+        },
+        {
+          "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
         },
         {
           "commit": "8f166d8faa81299ea3b76caa4d78b287a37a7b11"
@@ -289741,7 +289833,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2a4c6be86dd13908a2466c14b52707911309428f",
+      "revision": "c89b8256a4076d231b78f0bcbbce0a2a3415d501",
       "currentBranch": "codex/economy-prod-hardening-integrated-20261023",
       "defaultBranch": "main",
       "visibility": "public",
@@ -331428,13 +331520,13 @@
       "type": "TestSuite",
       "id": "test/economy-hardening-source-compatibility.js",
       "label": "test/economy-hardening-source-compatibility.js",
-      "lines": 189,
-      "version": "fda9bedc3cc73db8",
+      "lines": 252,
+      "version": "452f80f8574a43f9",
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "fda9bedc3cc73db8"
+          "version": "452f80f8574a43f9"
         }
       ]
     },
@@ -391319,6 +391411,14 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "019bcd66d09179554aeaadee3b2265cbaa8135bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:01b4312f1b2a96594f09fd98b89d7b0675ceff70",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "01b4312f1b2a96594f09fd98b89d7b0675ceff70"
       }
     },
     {
@@ -458763,6 +458863,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "to": "Artifact:test/economy-hardening-source-compatibility.js",
+      "provenance": {
+        "commit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "to": "Artifact:tools/economy-hardening-source-transfer.js",
+      "provenance": {
+        "commit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "to": "Artifact:tools/generate-economy-hardening-source-transfer.js",
+      "provenance": {
+        "commit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6105d103ec4055e57cda066a314b9358d7a3c805",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -494699,6 +494831,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8eac2f0739b879106c79a5c6e1df6872459b6deb",
       "to": "Artifact:src/equipmentmaintenance.js",
       "provenance": {
@@ -509999,6 +510163,22 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "commit": "a26c623302ad6e61d969f09d8a3f4279e33a486b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a2779ea0f3fd7591209fa49a0711af72a12cba8f",
+      "to": "Artifact:tools/commerce-deed-release-phase2-native-catalog.js",
+      "provenance": {
+        "commit": "a2779ea0f3fd7591209fa49a0711af72a12cba8f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a2779ea0f3fd7591209fa49a0711af72a12cba8f",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "a2779ea0f3fd7591209fa49a0711af72a12cba8f"
       }
     },
     {
@@ -551967,6 +552147,14 @@
       "to": "Artifact:test/strategylaboratories.js",
       "provenance": {
         "commit": "c89872b85ffb204b05c3b57eb438b3bf3ccf6f01"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+      "to": "Artifact:tools/pgcheck.js",
+      "provenance": {
+        "commit": "c89b8256a4076d231b78f0bcbbce0a2a3415d501"
       }
     },
     {
@@ -698329,6 +698517,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:01b4312f1b2a96594f09fd98b89d7b0675ceff70",
+      "provenance": {
+        "commit": "01b4312f1b2a96594f09fd98b89d7b0675ceff70"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:01c0e18f5336602e74bfa639244a82cc82ee39a9",
       "provenance": {
         "commit": "01c0e18f5336602e74bfa639244a82cc82ee39a9"
@@ -712409,6 +712605,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6104fbab13dd642958a4082bc319bf680a37fc4f",
+      "provenance": {
+        "commit": "6104fbab13dd642958a4082bc319bf680a37fc4f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6105d103ec4055e57cda066a314b9358d7a3c805",
       "provenance": {
         "commit": "6105d103ec4055e57cda066a314b9358d7a3c805"
@@ -719377,6 +719581,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
+      "provenance": {
+        "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8eac2f0739b879106c79a5c6e1df6872459b6deb",
       "provenance": {
         "commit": "8eac2f0739b879106c79a5c6e1df6872459b6deb"
@@ -722500,6 +722712,14 @@
       "to": "Commit:a26c623302ad6e61d969f09d8a3f4279e33a486b",
       "provenance": {
         "commit": "a26c623302ad6e61d969f09d8a3f4279e33a486b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a2779ea0f3fd7591209fa49a0711af72a12cba8f",
+      "provenance": {
+        "commit": "a2779ea0f3fd7591209fa49a0711af72a12cba8f"
       }
     },
     {
@@ -727892,6 +728112,14 @@
       "to": "Commit:c89872b85ffb204b05c3b57eb438b3bf3ccf6f01",
       "provenance": {
         "commit": "c89872b85ffb204b05c3b57eb438b3bf3ccf6f01"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+      "provenance": {
+        "commit": "c89b8256a4076d231b78f0bcbbce0a2a3415d501"
       }
     },
     {
@@ -803753,7 +803981,7 @@
       "to": "Artifact:src/auth.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2010
+        "line": 2023
       }
     },
     {
@@ -803789,7 +804017,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2056
+        "line": 2069
       }
     },
     {
@@ -803816,7 +804044,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1749
+        "line": 1751
       }
     },
     {
@@ -803852,7 +804080,7 @@
       "to": "Artifact:src/invites.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2009
+        "line": 2022
       }
     },
     {
@@ -803879,7 +804107,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2058
+        "line": 2071
       }
     },
     {
@@ -803897,7 +804125,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 1750
+        "line": 1752
       }
     },
     {
@@ -803915,7 +804143,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2057
+        "line": 2070
       }
     },
     {
@@ -803996,7 +804224,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/pgcheck.js",
-        "line": 2055
+        "line": 2068
       }
     },
     {
