@@ -1,7 +1,7 @@
 // M4 — growth systems: paths, the Daily Score, missions, daily contracts, and
 // the First Week (GRASSROOTS). Every formula cites spec §5.1/§7.3–7.4 / v24.
 import { GameError, cleanText, assignedSoldier, soldierResult, bumpMastery, masteryFx, gainRespect } from './game.js';
-import { soldierFxOf, SOLDIERS, PATH_SWITCH_CD_MS, referralXpBonus, CAPO, capoPerksOf, usd , coolLeft, coolWait } from './rules.js';
+import { soldierFxOf, SOLDIERS, PATH_SWITCH_CD_MS, referralXpBonus, CAPO, capoPerksOf, effectiveCapoRecruits, usd , coolLeft, coolWait } from './rules.js';
 import {
   PATHS, MISSIONS, ONBOARD_TASKS, CAREER, CONSTANTS, M4, M8, SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS,
   levelOf, dayOf, dailyJobsOf, dailyGuidanceFor, dailyBlockedFor, effStat, gunObjOf, assetEnergyCap, recruitRankOf, PACING,
@@ -11,6 +11,7 @@ import { verifySocial, verifyPostUp, normalizeSocialPostProof, requireLinkedXIde
 import { spendOmr } from './vanity.js';
 import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
   takeBoundedAccountDailyClaim } from './accountdaily.js';
+import { dbCaps } from './db.js';
 
 
 // ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──
@@ -1017,83 +1018,128 @@ export async function sweepSocialClaims(pool) {
 // bound), RETAINED (telemetry inside CAPO.RETAIN_DAYS — still playing), and LEVELLED (a living
 // street ≥ CAPO.MIN_LVL — genuinely played). The count lands on account_persistent.capo_recruits
 // (direct SQL, off persistAccount's positional list — clobber-safe) and is read per-request by the
-// throttle + the wire board. Flat queries + JS joins throughout (pg-mem: no correlated subqueries,
-// no = ANY($1) — the /v1/gangs posture); the recruit fan-out uses dynamic IN lists.
-export async function sweepCapoLicense(pool) {
-  // Capture the initial high-water mark, then keyset through every agent below it. A fixed LIMIT
-  // without an ORDER BY permanently starved agents outside whichever 500 rows the planner returned.
-  // The bound prevents a moving high tail from extending one worker tick indefinitely.
-  const upper = (await pool.query(
-    'SELECT account_id FROM account_persistent WHERE agent_flag ORDER BY account_id DESC LIMIT 1')).rows[0]?.account_id;
-  if (!upper) return { updated: 0 };
-  let updated = 0;
-  let after = null;
-  while (true) {
-    const agents = (await pool.query(
-      `SELECT account_id, capo_recruits FROM account_persistent
-        WHERE agent_flag AND account_id <= $1${after === null ? '' : ' AND account_id > $2'}
-        ORDER BY account_id LIMIT 500`, after === null ? [upper] : [upper, after])).rows;
-    if (!agents.length) break;
-    const aidList = agents.map((a) => a.account_id);
-    const inA = aidList.map((_, i) => `$${i + 1}`).join(',');
-    // Every minted HUMAN recruit of any agent. The origin screen runs here, before full referral
-    // qualification can install its durable hold, so an agent cannot unlock perks with same-origin alts.
-    const recruits = (await pool.query(
-      `SELECT a.account_id, a.referred_by FROM account_persistent a
-         JOIN accounts recruit_origin ON recruit_origin.id=a.account_id
-         JOIN accounts recruiter_origin ON recruiter_origin.id=a.referred_by
-         LEFT JOIN agent_referral_claims held
-           ON held.recruit_account=a.account_id AND held.milestone='qualified_activation'
-          AND held.state='held' AND held.hold_reason='review_same_ip'
-        WHERE a.referred_by IN (${inA}) AND NOT a.agent_flag AND NOT a.npc_flag AND a.minted
-          AND a.referral_same_ip_hold IS NOT TRUE AND held.recruit_account IS NULL
-          AND (
-            a.referral_same_ip_hold IS FALSE
-            OR recruit_origin.created_ip_authority IS NULL
-            OR recruiter_origin.created_ip_authority IS NULL
-            OR recruit_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
-            OR recruiter_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
-            OR recruit_origin.created_ip IS NULL OR recruiter_origin.created_ip IS NULL
-            OR recruit_origin.created_ip IN ('0.0.0.0','::')
-            OR recruiter_origin.created_ip IN ('0.0.0.0','::')
-            OR recruit_origin.created_ip <> recruiter_origin.created_ip
-          )`, aidList)).rows;
-    const counts = new Map(aidList.map((id) => [id, 0]));
-    if (recruits.length) {
-      const rids = recruits.map((r) => r.account_id);
-      const inR = rids.map((_, i) => `$${i + 1}`).join(',');
-      // LEVELLED: a living street at ≥ MIN_LVL (respect threshold computed here, the levelOf inverse)
-      const thr = PACING.LEVEL_DIVISOR * (CAPO.MIN_LVL - 1) ** 2;
-      const levelled = new Set((await pool.query(
-        `SELECT DISTINCT account_id FROM characters WHERE account_id IN (${inR}) AND alive AND respect >= ${Number(thr)}`,
-        rids)).rows.map((r) => r.account_id));
-      // RETAINED: any telemetry inside the window (the push-skip / active15m signal, at days scale)
-      const retained = new Set((await pool.query(
-        `SELECT DISTINCT account_id FROM telemetry WHERE account_id IN (${inR})
-           AND at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days'`, rids)).rows.map((r) => r.account_id));
-      for (const r of recruits)
-        if (levelled.has(r.account_id) && retained.has(r.account_id))
-          counts.set(r.referred_by, counts.get(r.referred_by) + 1);
-    }
-    for (const a of agents) {
-      const n = counts.get(a.account_id);
-      if (n !== Number(a.capo_recruits)) {
-        await pool.query('UPDATE account_persistent SET capo_recruits=$1 WHERE account_id=$2', [n, a.account_id]);
-        updated++;
-      }
-    }
-    after = agents[agents.length - 1].account_id;
-    if (agents.length < 500) break;
+// throttle + the wire board. PostgreSQL uses indexed EXISTS probes so repeated telemetry cannot fan
+// out the aggregate; pg-mem's compatibility branch uses equivalent joins for local tests.
+const CAPO_SWEEP_PAGE_SIZE = 500;
+const CAPO_SWEEP_PAGE_BUDGET = 4;
+const boundedSweepOption = (value, fallback, maximum) => {
+  const n = Math.floor(Number(value));
+  return Number.isFinite(n) && n > 0 ? Math.min(n, maximum) : fallback;
+};
+
+async function sweepCapoPage(client, pageSize) {
+  await client.query(
+    "INSERT INTO worker_sweep_cursors (sweep_key) VALUES ('capo-license') ON CONFLICT DO NOTHING");
+  const state = (await client.query(
+    "SELECT after_key, upper_key FROM worker_sweep_cursors WHERE sweep_key='capo-license' FOR UPDATE")).rows[0];
+  let after = state.after_key;
+  let upper = state.upper_key;
+  if (upper === null) {
+    upper = (await client.query(
+      'SELECT account_id FROM account_persistent WHERE agent_flag ORDER BY account_id DESC LIMIT 1')).rows[0]?.account_id || null;
+    after = null;
   }
-  return { updated };
+  if (upper === null) return { updated: 0, processed: 0, hasMore: false, nextCursor: null, wrapped: false };
+
+  // One look-ahead row proves whether this page finishes the captured population without a separate
+  // count. Rows inserted after `upper`, or behind the committed cursor, wait for the next cycle.
+  const candidates = (await client.query(
+    `SELECT account_id, capo_recruits FROM account_persistent
+      WHERE agent_flag AND account_id <= $1${after === null ? '' : ' AND account_id > $2'}
+      ORDER BY account_id LIMIT ${pageSize + 1}${dbCaps.skipLocked ? ' FOR UPDATE SKIP LOCKED' : ''}`,
+    after === null ? [upper] : [upper, after])).rows;
+  if (!candidates.length) {
+    await client.query(
+      "UPDATE worker_sweep_cursors SET after_key=NULL, upper_key=NULL, updated_at=now() WHERE sweep_key='capo-license'");
+    return { updated: 0, processed: 0, hasMore: false, nextCursor: null, wrapped: true };
+  }
+
+  const agents = candidates.slice(0, pageSize);
+  const aidList = agents.map((a) => a.account_id);
+  const inA = aidList.map((_, i) => `$${i + 1}`).join(',');
+  // Every minted HUMAN recruit of these agents. Aggregate inside PostgreSQL so a recruiter with more
+  // than 65,535 recruits cannot create an oversized bind list or an unbounded JS/query loop. The
+  // result remains capped at one row per agent page entry. The origin screen runs before full referral
+  // qualification can install its durable hold, so same-origin alts cannot unlock perks.
+  const thr = PACING.LEVEL_DIVISOR * (CAPO.MIN_LVL - 1) ** 2;
+  const qualificationJoins = dbCaps.skipLocked ? '' : `
+       JOIN characters ch ON ch.account_id=a.account_id AND ch.alive AND ch.respect >= ${Number(thr)}
+       JOIN telemetry recent ON recent.account_id=a.account_id
+        AND recent.at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days'`;
+  const qualificationExists = dbCaps.skipLocked ? `
+        AND EXISTS (SELECT 1 FROM characters ch
+          WHERE ch.account_id=a.account_id AND ch.alive AND ch.respect >= ${Number(thr)})
+        AND EXISTS (SELECT 1 FROM telemetry recent
+          WHERE recent.account_id=a.account_id
+            AND recent.at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days')` : '';
+  const qualified = (await client.query(
+    `SELECT a.referred_by, COUNT(DISTINCT a.account_id) AS n FROM account_persistent a
+       JOIN accounts recruit_origin ON recruit_origin.id=a.account_id
+       JOIN accounts recruiter_origin ON recruiter_origin.id=a.referred_by${qualificationJoins}
+       LEFT JOIN agent_referral_claims held
+         ON held.recruit_account=a.account_id AND held.milestone='qualified_activation'
+        AND held.state='held' AND held.hold_reason='review_same_ip'
+      WHERE a.referred_by IN (${inA}) AND NOT a.agent_flag AND NOT a.npc_flag AND a.minted
+        AND a.referral_same_ip_hold IS NOT TRUE AND held.recruit_account IS NULL
+        AND (
+          a.referral_same_ip_hold IS FALSE
+          OR recruit_origin.created_ip_authority IS NULL
+          OR recruiter_origin.created_ip_authority IS NULL
+          OR recruit_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+          OR recruiter_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+          OR recruit_origin.created_ip IS NULL OR recruiter_origin.created_ip IS NULL
+          OR recruit_origin.created_ip IN ('0.0.0.0','::')
+          OR recruiter_origin.created_ip IN ('0.0.0.0','::')
+          OR recruit_origin.created_ip <> recruiter_origin.created_ip
+        )${qualificationExists}
+      GROUP BY a.referred_by`, aidList)).rows;
+  const counts = new Map(aidList.map((id) => [id, 0]));
+  for (const row of qualified) counts.set(row.referred_by, Number(row.n));
+
+  let updated = 0;
+  for (const a of agents) {
+    const n = counts.get(a.account_id);
+    await client.query(
+      'UPDATE account_persistent SET capo_recruits=$1, capo_recruits_at=now() WHERE account_id=$2',
+      [n, a.account_id]);
+    if (n !== Number(a.capo_recruits)) updated++;
+  }
+  const hasMore = candidates.length > pageSize;
+  const nextCursor = hasMore ? agents.at(-1).account_id : null;
+  await client.query(
+    "UPDATE worker_sweep_cursors SET after_key=$1, upper_key=$2, updated_at=now() WHERE sweep_key='capo-license'",
+    [nextCursor, hasMore ? upper : null]);
+  return { updated, processed: agents.length, hasMore, nextCursor, wrapped: !hasMore };
+}
+
+export async function sweepCapoLicense(pool, options = {}) {
+  const pageSize = boundedSweepOption(options.pageSize, CAPO_SWEEP_PAGE_SIZE, CAPO_SWEEP_PAGE_SIZE);
+  const pageBudget = boundedSweepOption(options.pageBudget, CAPO_SWEEP_PAGE_BUDGET, CAPO_SWEEP_PAGE_BUDGET);
+  let updated = 0, processed = 0, pages = 0, last = null;
+  for (; pages < pageBudget; pages++) {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      last = await sweepCapoPage(client, pageSize);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw error;
+    } finally { client.release?.(); }
+    updated += last.updated;
+    processed += last.processed;
+    if (!last.hasMore) { pages++; break; }
+  }
+  return { updated, processed, pages, hasMore: !!last?.hasMore,
+    nextCursor: last?.nextCursor || null, wrapped: !!last?.wrapped };
 }
 
 // The license board (GET /v1/capo, authed): your count, tier, perks, and exactly what counts —
 // a claim an agent can act on has to disclose its own terms (the terms-ride-with-the-price rule).
 export async function capoBoard(pool, accountId) {
   const ap = (await pool.query(
-    'SELECT agent_flag, capo_recruits FROM account_persistent WHERE account_id=$1', [accountId])).rows[0] || {};
-  const n = Number(ap.capo_recruits || 0);
+    'SELECT agent_flag, capo_recruits, capo_recruits_at FROM account_persistent WHERE account_id=$1', [accountId])).rows[0] || {};
+  const n = effectiveCapoRecruits(ap.capo_recruits, ap.capo_recruits_at);
   const perks = capoPerksOf(n);
   const next = CAPO.TIERS.find((t) => t.n > n) || null;
   const budget = (await pool.query(

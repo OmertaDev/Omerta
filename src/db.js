@@ -8,6 +8,7 @@ import { migrateCityHomeStorage } from './city-home-migration.js';
 import { enforceDatabaseRls } from './db-rls.js';
 import { takeAccountDailyClaim, takeBoundedAccountDailyClaim } from './accountdaily.js';
 import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
+import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
 
 // What the live driver can actually do, decided ONCE at makeDb (a driver property, not a per-call
 // one). Deliberately NOT a runtime probe: in real Postgres a failed statement aborts the ENCLOSING
@@ -571,6 +572,7 @@ export async function migrateSchemaUnderLock(
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
   await migrateEconomyDailyClaims(boot);
+  await migrateSocialProofReceipts(boot);
   await migrateReferralOriginHolds(boot);
   await resetStartingLevels(boot);
   await boot.query('BEGIN');
@@ -729,6 +731,50 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
     await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
     await q.query('COMMIT');
     return { applied: !alreadyApplied };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Backfill the permanent provider/id latch for payouts made before that latch shipped. The marker
+// records the first repair, but every boot repeats the bounded scan: an old API process can finish a
+// payout while a replacement process is starting during a rolling deploy. Paid evidence uses the
+// predecessor's accepted post-id shapes so every X-verified payout is retained; arbitrary trust prose
+// without an id is ignored. New submissions use the stricter host-bound parser in verify.js.
+export async function migrateSocialProofReceipts(q) {
+  await q.query('BEGIN');
+  try {
+    const migrationId = 'social-proof-receipts-2026-10-23';
+    const alreadyApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
+    const claimRows = (await q.query(
+      'SELECT DISTINCT proof FROM social_claims WHERE paid AND proof IS NOT NULL')).rows;
+    // Paid rows are intentionally swept after seven days, but their same-transaction social_task
+    // telemetry survives for 180 days. The first upgrade consumes that retained payout evidence too;
+    // later boots need only the cutover window because the durable receipts now cover older proofs.
+    const telemetryRows = alreadyApplied ? (await q.query(
+      "SELECT props FROM telemetry WHERE event='social_task' AND at >= $1",
+      [new Date(Date.now() - 2 * 86400000)])).rows : (await q.query(
+      "SELECT props FROM telemetry WHERE event='social_task'")).rows;
+    const receiptAccounts = new Set();
+    const proofs = claimRows.map((row) => row.proof);
+    for (const row of telemetryRows) {
+      let props;
+      try { props = JSON.parse(row.props || '{}'); } catch { props = {}; }
+      proofs.push(props.proof);
+    }
+    for (const proof of proofs) {
+      const normalized = normalizeLegacyPaidSocialPostProof(proof);
+      if (normalized)
+        receiptAccounts.add(`social-proof:${normalized.provider}:${normalized.id}`);
+    }
+    let inserted = 0;
+    for (const accountId of receiptAccounts)
+      if (await takeAccountDailyClaim(q, accountId, 0, 'social-proof', 'used')) inserted++;
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
+    await q.query('COMMIT');
+    return { applied: !alreadyApplied, scanned: proofs.length, canonical: receiptAccounts.size, inserted };
   } catch (error) {
     await q.query('ROLLBACK').catch(() => {});
     throw error;
@@ -1213,6 +1259,7 @@ export async function makeDb() {
   const pool = new Pool();
   await pool.query(SCHEMA);
   await migrateEconomyDailyClaims(pool);
+  await migrateSocialProofReceipts(pool);
   await migrateReferralOriginHolds(pool);
   await pool.query('BEGIN');
   try { await ensureDeedBuildings(pool); await pool.query('COMMIT'); }

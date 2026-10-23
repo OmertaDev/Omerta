@@ -1596,6 +1596,64 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
       body: { proof: 'https://twitter.com/lou/statuses/12345678901234?ref=replay' } })).body.error, 'proof_used',
     'one normalized tweet cannot pay a second account');
 
+    // Upgrade repair: payouts made before the global receipt existed must remain spent. Include all
+    // canonical shapes plus an old telemetry payout whose seven-day social_claim row was swept.
+    const legacy = await mk('Legacy Proof Lee');
+    const legacyDay = dayOf() - 10;
+    await pool.query("DELETE FROM economy_migrations WHERE id='social-proof-receipts-2026-10-23'");
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, paid, proof) VALUES
+        ($1,$2,'sw_post',true,'https://x.com/legacy/status/00012345678901238?utm=old'),
+        ($1,$3,'sw_invite',true,'https://twitter.com/legacy/statuses/12345678901239#old'),
+        ($1,$4,'sw_boost',true,'00012345678901240'),
+        ($1,$5,'sw_post',true,'https://example.com/legacy/status/12345678901242'),
+        ($1,$6,'sw_post',true,'foostatus/00012345678901245trailing'),
+        ($1,$7,'sw_post',true,'legacy trust attestation')`,
+      [legacy.accountId, legacyDay, legacyDay - 1, legacyDay - 2, legacyDay - 3, legacyDay - 4,
+        legacyDay - 5]);
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props) VALUES
+        ('legacy-social-proof-history',$1,$2,'social_task',$3)`,
+      [new Date(Date.now() - 30 * 86400000), legacy.accountId,
+        JSON.stringify({ task: 'sw_post', proof: 'https://mobile.twitter.com/legacy/status/00012345678901241' })]);
+    const { migrateSocialProofReceipts } = await import('../src/db.js');
+    const repaired = await migrateSocialProofReceipts(pool);
+    assert(repaired.inserted >= 5, 'upgrade repair creates permanent receipts for retained paid X proofs');
+    for (const id of ['12345678901238', '12345678901239', '12345678901240', '12345678901241',
+      '12345678901242', '12345678901245'])
+      assert.equal(Number((await pool.query(
+        `SELECT COUNT(*) n FROM account_daily_claims
+          WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+        [`social-proof:x:${id}`])).rows[0].n), 1, `historical proof ${id} is permanently spent`);
+    assert.equal(Number((await pool.query(
+      `SELECT COUNT(*) n FROM account_daily_claims WHERE account_id=$1`,
+      ['social-proof:x:legacy trust attestation'])).rows[0].n), 0,
+    'legacy trust prose without a predecessor-recognized post id does not become an X receipt');
+    // The marker must not skip a payout committed by the retiring API during a rolling deploy.
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, paid, proof)
+       VALUES ($1,$2,'sw_invite',true,'https://x.com/legacy/status/00012345678901243')`,
+      [legacy.accountId, legacyDay - 6]);
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 1,
+      'a repeat boot repairs a paid row that arrived after the first migration snapshot');
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 0,
+      'reapplying the historical receipt repair after cutover is idempotent');
+
+    const legacyReuser = await mk('Legacy Proof Reuser');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='778' WHERE id=$1", [legacyReuser.accountId]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,
+      body: { proof: 'https://twitter.com/replay/statuses/12345678901238?s=20' } })).body.error, 'proof_used',
+    'a pre-upgrade paid proof cannot register or pay again through a URL alias');
+    assert.equal((await call('POST', '/v1/social/sw_invite/claim', { token: legacyReuser.token,
+      body: { proof: 'https://x.com/replay/status/12345678901242' } })).body.error, 'proof_used',
+    'a host alias accepted and X-verified by the predecessor cannot replay through canonical x.com');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,
+      body: { proof: 'https://example.com/replay/status/12345678901244' } })).body.error, 'need_proof',
+    'a lookalike host is not accepted as an X post proof');
+    assert.equal(Number((await pool.query(
+      'SELECT COUNT(*) n FROM social_claims WHERE account_id=$1', [legacyReuser.accountId])).rows[0].n), 0,
+    'rejected historical aliases and lookalike hosts leave no pending claim');
+
     // The receipt uses fixed epoch day=0, so midnight cannot refresh a tweet. The URL and bare id
     // normalize to the same proof across both task and day boundaries.
     const reuser = await mk('Proof Reuser');

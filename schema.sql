@@ -1998,6 +1998,16 @@ CREATE TABLE IF NOT EXISTS worker_heartbeat (
   CONSTRAINT worker_heartbeat_one CHECK (id = 1)
 );
 INSERT INTO worker_heartbeat (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+-- Bounded worker scans keep their high-water mark and last committed page here. The cursor advances
+-- in the same transaction as a page's effects, so a restart repeats at most one rolled-back page and
+-- a continuously growing tail cannot prevent the scan from wrapping to the beginning.
+CREATE TABLE IF NOT EXISTS worker_sweep_cursors (
+  sweep_key TEXT PRIMARY KEY,
+  after_key TEXT,
+  upper_key TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT worker_sweep_cursor_pair CHECK ((after_key IS NULL) = (upper_key IS NULL))
+);
 -- BLUE-TEAM M2: an accountability log for the mod perimeter. Every god-mode MUTATION (ban, mod-kill,
 -- confiscate, mint-invites, fund-reserve, revoke, comp/QA grants) authenticated by the MOD_KEY writes a
 -- row here. A leaked or misused MOD_KEY was otherwise unlogged — this is the who/what/when a post-incident
@@ -2176,6 +2186,17 @@ CREATE INDEX IF NOT EXISTS ix_char_respect ON characters (respect);
 -- also serves the estate/chain paths that read a bloodline's DEAD rows (`ORDER BY alive DESC`) and the
 -- `account_id IN (…)` batch reads. Coverage across 78 sites beats 0.03ms on one of them.
 CREATE INDEX IF NOT EXISTS ix_char_account ON characters (account_id);
+-- The Capo worker walks only agent accounts, then qualifies their direct recruits. These indexes keep
+-- each bounded cursor page proportional to that page instead of rescanning the full account/telemetry
+-- estate as the population grows.
+CREATE INDEX IF NOT EXISTS ix_account_persistent_agent_cursor
+  ON account_persistent (account_id) WHERE agent_flag;
+CREATE INDEX IF NOT EXISTS ix_account_persistent_recruit_candidates
+  ON account_persistent (referred_by, account_id)
+  WHERE referred_by IS NOT NULL AND minted AND NOT agent_flag AND NOT npc_flag;
+CREATE INDEX IF NOT EXISTS ix_char_alive_account_respect
+  ON characters (account_id, respect) WHERE alive;
+CREATE INDEX IF NOT EXISTS ix_telemetry_account_at ON telemetry (account_id, at);
 CREATE INDEX IF NOT EXISTS ix_gang_members_gang ON gang_members (gang_id);
 CREATE INDEX IF NOT EXISTS ix_listings_created ON listings (created_at);
 CREATE INDEX IF NOT EXISTS ix_tx_currency_reason ON transactions (currency, reason);
@@ -3712,6 +3733,10 @@ CREATE TABLE IF NOT EXISTS email_confirm_sent (
 );
 -- THE CAPO'S LICENSE: worker-computed count of an agent's minted+retained+levelled human recruits
 ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS capo_recruits INT NOT NULL DEFAULT 0;
+-- Capo perks are valid only while the bounded worker scan has refreshed this account. A null/expired
+-- stamp fails closed to zero perks, so an account cannot preserve a stale tier by keeping its hot row
+-- locked whenever the sweep passes it.
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS capo_recruits_at TIMESTAMPTZ;
 
 -- ── THE TICKER BALLOT (the Stock Machine, Phase A — chain-dormant) ──────────────────────────────
 -- The Commission's daily stock vote: one ballot per seated family per day (the commission_votes

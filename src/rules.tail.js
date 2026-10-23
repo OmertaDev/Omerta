@@ -5784,12 +5784,22 @@ export const nftDecode = (tokenId) => {
 export const CAPO = {
   RETAIN_DAYS: 14,     // a recruit counts only while they've played inside this window
   MIN_LVL: 8,          // ...and their street has genuinely levelled (the REF_GATES.level twin)
+  SWEEP_FRESH_MS: 48 * 3600000, // 2,000 agents/hour gives the 50k-player target a 25h cycle + outage margin
+  SWEEP_CLOCK_SKEW_MS: 5 * 60000, // DB/app hosts may differ slightly; future stamps beyond this fail closed
   TIERS: [             // sequential by qualifying recruits; rate = actions/second for the agent bucket
     { n: 1, name: 'Street Captain', rate: 1 / 2.5, tapBonus: 0 },
     { n: 3, name: 'Capo',           rate: 1 / 2,   tapBonus: 1 },
     { n: 5, name: 'The Underboss',  rate: 1 / 1.5, tapBonus: 2 },
   ],
 };
+// A skipped/hung worker row must fail closed instead of preserving a stale rate/tap privilege forever.
+export function effectiveCapoRecruits(count, sweptAt, now = Date.now()) {
+  const n = Math.max(0, Math.floor(Number(count) || 0));
+  const at = new Date(sweptAt).getTime();
+  const age = Number(now) - at;
+  return Number.isFinite(at) && Number.isFinite(age)
+    && age >= -CAPO.SWEEP_CLOCK_SKEW_MS && age <= CAPO.SWEEP_FRESH_MS ? n : 0;
+}
 // The perk reader — null rate means "no license, use the base agent cadence". Monotone by
 // construction (TIERS is ascending), so more real recruits never reads as fewer perks.
 export function capoPerksOf(count) {

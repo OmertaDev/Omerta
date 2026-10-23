@@ -4,6 +4,8 @@
 //   'live'  — real API checks; requires the provider credentials below
 // Production MUST run 'live': the X follow check via the OAuth'd relationship lookup.
 import { GameError } from './game.js';
+import { normalizeSocialPostProof } from './socialproof.js';
+export { normalizeSocialPostProof } from './socialproof.js';
 
 // ── X-API bulletproofing (the X-integrations hardening pass) ──
 // Every outbound call is TIME-BOXED: these verifications run inside a withCharacter txn holding
@@ -161,19 +163,6 @@ export async function verifySocial(taskId, acct) {
     throw new GameError('verify_failed', 'Follow not found.');
   }
   throw new GameError('bad_task', 'Unknown social task.');
-}
-
-// Canonical proof identity for the paid X-post faucet. URLs and bare tweet ids collapse to the
-// provider/id tuple used by the database replay latch, so changing x.com → twitter.com, adding a
-// query string, or submitting the bare id cannot turn one post into several economic proofs.
-export function normalizeSocialPostProof(proof) {
-  const raw = String(proof || '').trim();
-  const pathId = raw.match(/(?:^|\/)status(?:es)?\/(\d{8,25})(?=$|[/?#])/i)?.[1];
-  const bareId = /^\d{8,25}$/.test(raw) ? raw : null;
-  const id = pathId || bareId;
-  if (!id) return null;
-  const canonicalId = BigInt(id).toString();
-  return canonicalId === '0' ? null : { provider: 'x', id: canonicalId };
 }
 
 // Paid live post verification is identity-bound. Keeping this check in the verifier as well as the
