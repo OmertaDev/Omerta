@@ -13,7 +13,8 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import pg from 'pg';
 import {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';
-import {assertEconomyHardeningSourceTransfer, economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';
+import {ECONOMY_HARDENING_SOURCE_DOMAINS,ECONOMY_HARDENING_SOURCE_REVISION,
+  economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';
 import {columnMigrations} from '../src/db.js';
 import {migrateCityHomeStorage} from '../src/city-home-migration.js';
 import {deedDiscoveryCatalogProjection,verifyDeedDiscoveryCatalogCausalNegatives,DEED_MIGRATION_TABLES} from './deed-discovery-migration-catalog.js';
@@ -859,8 +860,8 @@ const economyHardeningConstraint=(table_name,name,type,definition,columns)=>({
   table_name,name,type,validated:true,deferrable:false,deferred:false,definition,match_type:' ',update_action:' ',
   delete_action:' ',referenced_schema:null,referenced_table:null,columns,referenced_columns:[],
 });
-const economyHardeningIndex=(table_name,name,definition,unique,primary)=>({
-  table_name,name,definition,unique,primary,valid:true,ready:true,live:true,nulls_not_distinct:false,predicate:null,
+const economyHardeningIndex=(table_name,name,definition,unique,primary,predicate=null)=>({
+  table_name,name,definition,unique,primary,valid:true,ready:true,live:true,nulls_not_distinct:false,predicate,
 });
 const economyHardeningCompareText=(a,b)=>a<b?-1:a>b?1:0;
 const economyHardeningOrder=(field,rows)=>rows.sort((a,b)=>field==='relations'
@@ -926,9 +927,62 @@ function economyHardeningAddedRows(profile,serverVersionNum){
   return freeze(added);
 }
 
+const economyRepairCapoOrdinal=freeze({fresh:82,phase2:86,director:86});
+
+// The bounded-sweep repair is a second closed catalog delta. It is deliberately independent of the
+// live catalog so a same-name table, column, constraint, or index cannot satisfy the oracle by name.
+function economyRepairAddedRows(profile,serverVersionNum){
+  const capoOrdinal=economyRepairCapoOrdinal[profile];assert(capoOrdinal,'Closed economy-repair ordinal profile');
+  const relations=[{name:'worker_sweep_cursors',kind:'r',persistence:'p'}];
+  const columns=[
+    economyHardeningColumn('account_persistent','capo_recruits_at',capoOrdinal,'timestamp with time zone',null,false),
+    economyHardeningColumn('worker_sweep_cursors','sweep_key',1,'text',null,true,true),
+    economyHardeningColumn('worker_sweep_cursors','after_key',2,'text',null,false,true),
+    economyHardeningColumn('worker_sweep_cursors','upper_key',3,'text',null,false,true),
+    economyHardeningColumn('worker_sweep_cursors','updated_at',4,'timestamp with time zone','now()',true),
+  ];
+  const constraints=[
+    economyHardeningConstraint('worker_sweep_cursors','worker_sweep_cursor_pair','c',
+      'CHECK ((after_key IS NULL) = (upper_key IS NULL))',['after_key','upper_key']),
+    economyHardeningConstraint('worker_sweep_cursors','worker_sweep_cursors_pkey','p',
+      'PRIMARY KEY (sweep_key)',['sweep_key']),
+  ];
+  if(serverVersionNum>=180000)constraints.push(
+    economyHardeningConstraint('worker_sweep_cursors','worker_sweep_cursors_sweep_key_not_null','n',
+      'NOT NULL sweep_key',['sweep_key']),
+    economyHardeningConstraint('worker_sweep_cursors','worker_sweep_cursors_updated_at_not_null','n',
+      'NOT NULL updated_at',['updated_at']));
+  const indexes=[
+    economyHardeningIndex('account_persistent','ix_account_persistent_agent_cursor',
+      'CREATE INDEX ix_account_persistent_agent_cursor ON $self.account_persistent USING btree (account_id) WHERE agent_flag',false,false,
+      'agent_flag'),
+    economyHardeningIndex('account_persistent','ix_account_persistent_recruit_candidates',
+      'CREATE INDEX ix_account_persistent_recruit_candidates ON $self.account_persistent USING btree (referred_by, account_id) WHERE ((referred_by IS NOT NULL) AND minted AND (NOT agent_flag) AND (NOT npc_flag))',false,false,
+      '((referred_by IS NOT NULL) AND minted AND (NOT agent_flag) AND (NOT npc_flag))'),
+    economyHardeningIndex('characters','ix_char_alive_account_respect',
+      'CREATE INDEX ix_char_alive_account_respect ON $self.characters USING btree (account_id, respect) WHERE alive',false,false,'alive'),
+    economyHardeningIndex('telemetry','ix_telemetry_account_at',
+      'CREATE INDEX ix_telemetry_account_at ON $self.telemetry USING btree (account_id, at)',false,false),
+    economyHardeningIndex('worker_sweep_cursors','worker_sweep_cursors_pkey',
+      'CREATE UNIQUE INDEX worker_sweep_cursors_pkey ON $self.worker_sweep_cursors USING btree (sweep_key)',true,true),
+  ];
+  const added={relations,columns,constraints,indexes};
+  for(const field of commerceDeedFields)economyHardeningOrder(field,added[field]);
+  return freeze(added);
+}
+
+function economyHardeningPinnedSource(){
+  const pin=ECONOMY_HARDENING_SOURCE_DOMAINS['schema.sql'];
+  const text=sourcePin({revision:ECONOMY_HARDENING_SOURCE_REVISION,file:'schema.sql',blob:pin.currentBlob,sha256:pin.currentSha256});
+  assert.equal(economyHardeningSourceBaseline('schema.sql',text),sourcePin(COMMERCE_DEED_CURRENT_SOURCE),
+    'Pinned574 composes through the complete hardening source transfer');
+  assert.equal((text.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,574);
+  return text;
+}
+
 function economyHardeningColumnMigrations(source){
-  const text=commerceDeedUniform(source),proof=assertEconomyHardeningSourceTransfer('schema.sql',text);
-  assert.equal(economyHardeningSourceBaseline('schema.sql',text),proof.baselineText,'One closed hardening source projection');
+  const text=commerceDeedUniform(source);
+  assert.equal(text,economyHardeningPinnedSource(),'Exact pinned574 source supplies hardening column migrations');
   const statements=columnMigrations(text).filter(statement=>{
     const match=statement.match(/^ALTER TABLE ([A-Za-z_][A-Za-z0-9_]*) ADD COLUMN IF NOT EXISTS ([A-Za-z_][A-Za-z0-9_]*) /);
     return match&&economyHardeningDerivedColumns.has(`${match[1]}.${match[2]}`);
@@ -1010,6 +1064,68 @@ function economyHardeningCatalogProjection(baseline,candidate,{profile,serverVer
     phase:'exact economy-hardening native catalog delta only; no historical, financial, activation or deployment clearance'});
 }
 
+function economyRepairCatalogProjection(baseline,candidate,{profile,serverVersionNum,includeNotNull}){
+  assert(['fresh','phase2','director'].includes(profile),'Closed economy-repair native profile required');
+  assert.equal(typeof includeNotNull,'boolean');
+  assert(serverVersionNum>=160000&&serverVersionNum<170000||serverVersionNum>=180000&&serverVersionNum<190000,
+    'Only PostgreSQL16/18 economy-repair catalog forms are admitted');
+  const prior=freeze(structuredClone(baseline)),added=economyRepairAddedRows(profile,serverVersionNum);
+  const original=Object.fromEntries(commerceDeedFields.map(field=>[field,
+    new Map(prior[field].map(row=>[economyHardeningIdentity(field,row),row]))]));
+  for(const field of commerceDeedFields){
+    assert(Array.isArray(prior[field])&&Array.isArray(candidate[field]));
+    assert.equal(original[field].size,prior[field].length,'Unique predecessor economy-repair '+field);
+  }
+  const expected=structuredClone(prior),shifted=[];
+  if(profile==='fresh'){
+    expected.columns=expected.columns.map(row=>{
+      if(row.table_name!=='account_persistent'||row.ordinal<82)return row;
+      shifted.push([row.column_name,row.ordinal,row.ordinal+1]);return {...row,ordinal:row.ordinal+1};
+    });
+    assert.deepEqual(shifted.map(([name])=>name),[
+      'drop_free_mint','provenance','provenance_pick','stake_lock_until','stake_lock_mult','reward_wallet_since_day',
+    ],'Exactly six later fresh account-persistent ordinals shift for the Capo freshness stamp');
+  }else{
+    expected.columns=expected.columns.map(row=>{
+      const name=`${row.table_name}.${row.column_name}`;
+      if(!['account_persistent.reward_wallet_since_day','account_persistent.referral_same_ip_hold'].includes(name))return row;
+      const ordinal=name.endsWith('.reward_wallet_since_day')?86:87;
+      assert.equal(row.ordinal,ordinal,'Exact upgrade repair predecessor ordinal: '+name);
+      shifted.push([name,ordinal,ordinal+1]);return {...row,ordinal:ordinal+1};
+    });
+    assert.deepEqual(shifted,[
+      ['account_persistent.reward_wallet_since_day',86,87],
+      ['account_persistent.referral_same_ip_hold',87,88],
+    ],'Only the exact two later upgrade account columns shift for the Capo freshness stamp');
+  }
+  for(const field of commerceDeedFields){expected[field].push(...structuredClone(added[field]));economyHardeningOrder(field,expected[field]);}
+  freeze(expected);
+  const canonical=Object.fromEntries(commerceDeedFields.map(field=>[field,
+    new Map(expected[field].map(row=>[economyHardeningIdentity(field,row),row]))]));
+  for(const field of commerceDeedFields){
+    assert.equal(canonical[field].size,expected[field].length,'Unique independent economy-repair '+field);
+    assert.equal(expected[field].length,prior[field].length+added[field].length,'Exact independent economy-repair '+field+' count');
+  }
+  const verifyMetadata=metadata=>{
+    for(const field of commerceDeedFields){
+      const rows=metadata[field];assert(Array.isArray(rows));assert.equal(rows.length,expected[field].length,'Complete economy-repair '+field+' count');
+      if(rows!==expected[field])assert(isDeepStrictEqual(rows,expected[field]),'Complete economy-repair '+field+': exact ordered rows and every field');
+    }
+  };
+  verifyMetadata(candidate);
+  const projectMetadata=metadata=>{verifyMetadata(metadata);return prior;};
+  const expectedRows=added.constraints.filter(row=>includeNotNull||row.type!=='n')
+    .map(({table_name,name,definition})=>({table_name,name,definition}));
+  const constraintKeys=new Set(expectedRows.map(key));
+  const projectConstraints=rows=>{
+    same(rows.filter(row=>constraintKeys.has(key(row))),expectedRows,'Every economy-repair constraint rechecked before projection');
+    return rows.filter(row=>!constraintKeys.has(key(row)));
+  };
+  return Object.freeze({verifyMetadata,projectMetadata,projectConstraints,added,reference:expected,
+    baselineReference:prior,profile,sourceOnly:false,
+    phase:'exact bounded-worker economy-repair native catalog delta only; no historical, financial, activation or deployment clearance'});
+}
+
 export function verifyEconomyHardeningCatalogCausalNegatives(catalog,{includeNotNull}){
   assert.equal(typeof includeNotNull,'boolean');const original=catalog.reference;let refusals=0;
   assert(Object.isFrozen(original)&&commerceDeedFields.every(field=>Object.isFrozen(original[field])));
@@ -1048,34 +1164,67 @@ export function verifyEconomyHardeningCatalogCausalNegatives(catalog,{includeNot
   return refusals;
 }
 
-async function verifyEconomyHardeningWrongIndexDdl(pool,catalog){
+export function verifyEconomyRepairCatalogCausalNegatives(catalog,{includeNotNull}){
+  return verifyEconomyHardeningCatalogCausalNegatives(catalog,{includeNotNull});
+}
+
+async function verifyEconomyWrongIndexDdl(pool,catalog,cases,layer){
   const client=await pool.connect();let transaction=false;
   try{
     catalog.verifyMetadata(await readCommerceReleasePhase2Metadata(client));
-    await client.query('BEGIN');transaction=true;
-    try{
-      await client.query('DROP INDEX ix_tx_currency_reason_at');
-      await client.query('CREATE INDEX ix_tx_currency_reason_at ON transactions(character_id)');
-      const changed=await readCommerceReleasePhase2Metadata(client),wrong=changed.indexes.find(row=>key(row)==='transactions.ix_tx_currency_reason_at');
-      assert.equal(wrong.definition,'CREATE INDEX ix_tx_currency_reason_at ON $self.transactions USING btree (character_id)',
-        'Native reread exposes the exact same-name/wrong-column hardening exploit');
-      assert.throws(()=>catalog.verifyMetadata(changed),error=>error?.code==='ERR_ASSERTION',
-        'Exact hardening catalog rejects same-name/wrong-column CREATE INDEX IF NOT EXISTS bypass');
-    }finally{await client.query('ROLLBACK');transaction=false;}
-    catalog.verifyMetadata(await readCommerceReleasePhase2Metadata(client));
-    return 1;
+    for(const test of cases){
+      await client.query('BEGIN');transaction=true;
+      try{
+        await client.query(`DROP INDEX ${test.name}`);
+        await client.query(test.wrongDdl);
+        const changed=await readCommerceReleasePhase2Metadata(client),wrong=changed.indexes.find(row=>key(row)===test.identity);
+        assert.deepEqual({definition:wrong?.definition,predicate:wrong?.predicate},test.wrong,
+          'Native reread exposes exact same-name/wrong-definition '+layer+' exploit: '+test.identity);
+        assert.throws(()=>catalog.verifyMetadata(changed),error=>error?.code==='ERR_ASSERTION',
+          'Exact '+layer+' catalog rejects same-name/wrong-definition CREATE INDEX IF NOT EXISTS bypass: '+test.identity);
+      }finally{await client.query('ROLLBACK');transaction=false;}
+      catalog.verifyMetadata(await readCommerceReleasePhase2Metadata(client));
+    }
+    return cases.length;
   }finally{
     if(transaction)await client.query('ROLLBACK').catch(()=>{});
     client.release();
   }
 }
 
+async function verifyEconomyHardeningWrongIndexDdl(pool,catalog){
+  return verifyEconomyWrongIndexDdl(pool,catalog,[{
+    identity:'transactions.ix_tx_currency_reason_at',name:'ix_tx_currency_reason_at',
+    wrongDdl:'CREATE INDEX ix_tx_currency_reason_at ON transactions(character_id)',
+    wrong:{definition:'CREATE INDEX ix_tx_currency_reason_at ON $self.transactions USING btree (character_id)',predicate:null},
+  }],'economy-hardening');
+}
+
+async function verifyEconomyRepairWrongIndexDdl(pool,catalog){
+  return verifyEconomyWrongIndexDdl(pool,catalog,[
+    {identity:'account_persistent.ix_account_persistent_agent_cursor',name:'ix_account_persistent_agent_cursor',
+      wrongDdl:'CREATE INDEX ix_account_persistent_agent_cursor ON account_persistent(account_id)',
+      wrong:{definition:'CREATE INDEX ix_account_persistent_agent_cursor ON $self.account_persistent USING btree (account_id)',predicate:null}},
+    {identity:'account_persistent.ix_account_persistent_recruit_candidates',name:'ix_account_persistent_recruit_candidates',
+      wrongDdl:'CREATE INDEX ix_account_persistent_recruit_candidates ON account_persistent(referred_by,account_id)',
+      wrong:{definition:'CREATE INDEX ix_account_persistent_recruit_candidates ON $self.account_persistent USING btree (referred_by, account_id)',predicate:null}},
+    {identity:'characters.ix_char_alive_account_respect',name:'ix_char_alive_account_respect',
+      wrongDdl:'CREATE INDEX ix_char_alive_account_respect ON characters(account_id,respect)',
+      wrong:{definition:'CREATE INDEX ix_char_alive_account_respect ON $self.characters USING btree (account_id, respect)',predicate:null}},
+    {identity:'telemetry.ix_telemetry_account_at',name:'ix_telemetry_account_at',
+      wrongDdl:'CREATE INDEX ix_telemetry_account_at ON telemetry(account_id)',
+      wrong:{definition:'CREATE INDEX ix_telemetry_account_at ON $self.telemetry USING btree (account_id)',predicate:null}},
+  ],'economy-repair');
+}
+
 export function commerceCurrentDeedSources(input){
- assertCommerceDeedProtectedSources();const current=sourcePin(COMMERCE_DEED_CURRENT_SOURCE),text=commerceDeedUniform(input),old=commerceMigrationSources(),projected=economyHardeningSourceBaseline('schema.sql',text);assert.equal(projected,current,'Only complete actual52c572 source or its exact hardening successor');assert.equal(Buffer.byteLength(current),COMMERCE_DEED_CURRENT_SOURCE.bytes);assert.equal((current.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,572);
- const hardening=text===current?null:text;if(hardening){const proof=assertEconomyHardeningSourceTransfer('schema.sql',hardening);assert.equal(proof.baselineText,current);assert.equal((hardening.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,574);economyHardeningColumnMigrations(hardening);}
+ assertCommerceDeedProtectedSources();const current=sourcePin(COMMERCE_DEED_CURRENT_SOURCE),text=commerceDeedUniform(input),old=commerceMigrationSources(),projected=economyHardeningSourceBaseline('schema.sql',text);assert.equal(projected,current,'Only complete actual52c572 source or its exact composed hardening successors');assert.equal(Buffer.byteLength(current),COMMERCE_DEED_CURRENT_SOURCE.bytes);assert.equal((current.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,572);
+ const pinnedHardening=economyHardeningPinnedSource(),hardening=text===current?null:pinnedHardening,repair=text===current||text===pinnedHardening?null:text;
+ if(hardening)economyHardeningColumnMigrations(hardening);
+ if(repair)assert.equal((repair.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,575,'Complete bounded-worker repair has exactly575 authored tables');
  const predecessor=commerceDeedUndo(current,COMMERCE_DEED_SCHEMA_INVERSES);assert.equal(predecessor,old.current,'Whole572 reconstructs independently pinned568');
  const premain=commerceDeedUndo(current,COMMERCE_DEED_C2_INVERSES);assert.equal(hash(premain),COMMERCE_DEED_PREMAIN_SOURCE.sha256);assert.equal(Buffer.byteLength(premain),COMMERCE_DEED_PREMAIN_SOURCE.bytes);assert.equal((premain.match(/^CREATE TABLE IF NOT EXISTS /gm)||[]).length,565);assert.equal(commerceDeedUndo(premain,COMMERCE_DEED_PREMAIN_INVERSES),old.predecessor,'Whole565 reconstructs independently pinned561');
- return Object.freeze({current,premain,predecessor,premainPredecessor:old.predecessor,candidate:hardening??current,hardening});
+ return Object.freeze({current,premain,predecessor,premainPredecessor:old.predecessor,candidate:repair??hardening??current,hardening,repair});
 }
 
 async function assertCommerceDeedCaller(pool,endpoint,profile,includeNotNull){
@@ -1103,21 +1252,39 @@ async function compileCommerceDeedCatalog(pool,endpoint,input,{profile,includeNo
  const causal=verifyDeedDiscoveryCatalogCausalNegatives(catalog,{includeNotNull});return Object.freeze({...catalog,freshCatalog,baselineReference:baseline,freshReference:fresh,causal,currentSource:text,predecessorSource:predecessor,source:COMMERCE_DEED_CURRENT_SOURCE});
 }
 
+async function compileEconomyHardeningReference(pool,endpoint,source,profile){
+ const address=new URL(endpoint),derived=profile==='fresh'?'':economyHardeningColumnMigrations(source).map(statement=>statement+';').join('\n'),
+   input=profile==='fresh'?source:`${commerceLegacySchema(profile)}\n${source}\n${derived}`;
+ return freeze(await compileReference(pool,address,input,{currentDeedHomeMigration:true}));
+}
+
 export async function createCommerceReleasePhase2MigrationCatalog(pool,endpoint,input,{includeNotNull,legacyProfile}={}){
- assert(['phase2','director'].includes(legacyProfile));assert.equal(typeof includeNotNull,'boolean');const sources=commerceCurrentDeedSources(input),deed=await compileCommerceDeedCatalog(pool,endpoint,sources.current,{profile:legacyProfile,includeNotNull}),serverVersionNum=Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version),live=sources.hardening?freeze(await readCommerceReleasePhase2Metadata(pool)):null;let hardening=live?economyHardeningCatalogProjection(deed.reference,live,{profile:legacyProfile,includeNotNull,serverVersionNum}):null;
- if(hardening){const causal=verifyEconomyHardeningCatalogCausalNegatives(hardening,{includeNotNull})
-   +await verifyEconomyHardeningWrongIndexDdl(pool,hardening);hardening=Object.freeze({...hardening,causal});}
- const projectHardening=metadata=>hardening?hardening.projectMetadata(metadata):metadata,
-   projectHardeningConstraints=rows=>hardening?hardening.projectConstraints(rows):rows;
+ assert(['phase2','director'].includes(legacyProfile));assert.equal(typeof includeNotNull,'boolean');
+ const sources=commerceCurrentDeedSources(input),deed=await compileCommerceDeedCatalog(pool,endpoint,sources.current,
+   {profile:legacyProfile,includeNotNull}),serverVersionNum=Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version),
+   options={profile:legacyProfile,includeNotNull,serverVersionNum},live=sources.hardening?freeze(await readCommerceReleasePhase2Metadata(pool)):null,
+   hardeningReference=sources.hardening?await compileEconomyHardeningReference(pool,endpoint,sources.hardening,legacyProfile):null;
+ let hardening=hardeningReference?economyHardeningCatalogProjection(deed.reference,hardeningReference,options):null,
+   repair=sources.repair?economyRepairCatalogProjection(hardening.reference,live,options):null;
+ if(hardening&&!repair)hardening.verifyMetadata(live);
+ if(hardening){const verifier=repair??hardening,causal=verifyEconomyHardeningCatalogCausalNegatives(hardening,{includeNotNull})
+   +await verifyEconomyHardeningWrongIndexDdl(pool,verifier);hardening=Object.freeze({...hardening,causal});}
+ if(repair){const causal=verifyEconomyRepairCatalogCausalNegatives(repair,{includeNotNull})
+   +await verifyEconomyRepairWrongIndexDdl(pool,repair);repair=Object.freeze({...repair,causal});}
+ const projectRepair=metadata=>repair?repair.projectMetadata(metadata):metadata,
+   projectRepairConstraints=rows=>repair?repair.projectConstraints(rows):rows,
+   projectHardening=metadata=>hardening?hardening.projectMetadata(projectRepair(metadata)):metadata,
+   projectHardeningConstraints=rows=>hardening?hardening.projectConstraints(projectRepairConstraints(rows)):rows;
  const historical=await createHistoricalCommerceReleasePhase2MigrationCatalog(pool,endpoint,sources.predecessor,
    {includeNotNull,legacyProfile,projectCurrentMetadata:metadata=>deed.projectMetadata(projectHardening(metadata))});
  for(const field of commerceDeedFields)same(deed.projectMetadata(deed.reference)[field],historical.reference[field],'Complete upgraded572→568 '+field+' before seven-C2 projection');
  if(hardening)for(const field of commerceDeedFields)same(hardening.projectMetadata(hardening.reference)[field],deed.reference[field],'Complete hardening574→572 '+field+' before Deed/Commerce projection');
+ if(repair)for(const field of commerceDeedFields)same(repair.projectMetadata(repair.reference)[field],hardening.reference[field],'Complete repair575→574 '+field+' before hardening projection');
  const verifyMetadata=metadata=>historical.verifyMetadata(deed.projectMetadata(projectHardening(metadata))),
    normalize=rows=>historical.normalize(deed.projectConstraints(projectHardeningConstraints(rows)));
- return Object.freeze({...historical,reference:hardening?.reference??deed.reference,verifyMetadata,normalize,deedCatalog:deed,
-   hardeningCatalog:hardening,historicalCatalog:historical,currentSource:COMMERCE_DEED_CURRENT_SOURCE,currentPremainSource:sources.premain,
-   phase:(hardening?'current574 hardening + ':'')+'current572/565 full native Deed+original Commerce factory; no release or activation clearance'});
+ return Object.freeze({...historical,reference:repair?.reference??hardening?.reference??deed.reference,verifyMetadata,normalize,deedCatalog:deed,
+   hardeningCatalog:hardening,repairCatalog:repair,historicalCatalog:historical,currentSource:COMMERCE_DEED_CURRENT_SOURCE,currentPremainSource:sources.premain,
+   phase:(repair?'current575 bounded-worker repair + ':'')+(hardening?'current574 hardening + ':'')+'current572/565 full native Deed+original Commerce factory; no release or activation clearance'});
 }
 async function composeCommerceDeedNativeBranches(pool,endpoint,input){
  const sources=commerceCurrentDeedSources(input),settings=(await pool.query("SELECT current_setting('server_version') AS version")).rows[0],historical=await verifyCommerceNativeBranchMetadata(pool,endpoint,settings),historicalSources=commerceNativeBranchSources();
@@ -1127,19 +1294,27 @@ async function composeCommerceDeedNativeBranches(pool,endpoint,input){
    precompiledBaseline:historical.current,precompiledBaselineSource:historicalSources.current}),
   premain=await compileCommerceDeedCatalog(pool,endpoint,sources.premain,{profile:'fresh',includeNotNull:true,
     precompiledBaseline:historical.iv,precompiledBaselineSource:historicalSources.iv}),
-  version=Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version),
-  live=sources.hardening?freeze(await readCommerceReleasePhase2Metadata(pool)):null;
- let hardening=live?economyHardeningCatalogProjection(current.reference,live,{profile:'fresh',includeNotNull:true,serverVersionNum:version}):null;
- if(hardening){const causal=verifyEconomyHardeningCatalogCausalNegatives(hardening,{includeNotNull:true})
-   +await verifyEconomyHardeningWrongIndexDdl(pool,hardening);hardening=Object.freeze({...hardening,causal});}
+   version=Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version),
+   options={profile:'fresh',includeNotNull:true,serverVersionNum:version},
+   live=sources.hardening?freeze(await readCommerceReleasePhase2Metadata(pool)):null,
+   hardeningReference=sources.hardening?await compileEconomyHardeningReference(pool,endpoint,sources.hardening,'fresh'):null;
+ let hardening=hardeningReference?economyHardeningCatalogProjection(current.reference,hardeningReference,options):null,
+   repair=sources.repair?economyRepairCatalogProjection(hardening.reference,live,options):null;
+ if(hardening&&!repair)hardening.verifyMetadata(live);
+ if(hardening){const verifier=repair??hardening,causal=verifyEconomyHardeningCatalogCausalNegatives(hardening,{includeNotNull:true})
+   +await verifyEconomyHardeningWrongIndexDdl(pool,verifier);hardening=Object.freeze({...hardening,causal});}
+ if(repair){const causal=verifyEconomyRepairCatalogCausalNegatives(repair,{includeNotNull:true})
+   +await verifyEconomyRepairWrongIndexDdl(pool,repair);repair=Object.freeze({...repair,causal});}
  historical.verify(current.projectMetadata(current.reference));for(const field of commerceDeedFields){
   same(current.baselineReference[field],historical.current[field],'Complete reused568 predecessor '+field);
   same(premain.baselineReference[field],historical.iv[field],'Complete reused561 predecessor '+field);
   same(premain.projectMetadata(premain.reference)[field],historical.iv[field],'Complete565→561 original '+field);
  }
  if(hardening)for(const field of commerceDeedFields)same(hardening.projectMetadata(hardening.reference)[field],current.reference[field],'Complete hardening574→572 fresh '+field);
+ if(repair)for(const field of commerceDeedFields)same(repair.projectMetadata(repair.reference)[field],hardening.reference[field],'Complete repair575→574 fresh '+field);
  for(const catalog of[current,premain])for(const includeNotNull of[true,false]){const p=deedDiscoveryCatalogProjection(catalog.baselineReference,catalog.freshReference,{profile:'fresh',includeNotNull,serverVersionNum:version}),rows=catalog.reference.constraints.filter(r=>includeNotNull||r.type!=='n').map(({table_name,name,definition})=>({table_name,name,definition}));p.projectConstraints(rows);}
- const verify=metadata=>historical.verify(current.projectMetadata(hardening?hardening.projectMetadata(metadata):metadata));return Object.freeze({...historical,current:hardening?.reference??current.reference,iv:premain.reference,historical,deedCurrent:current,deedPremain:premain,hardeningCurrent:hardening,verify,causal:historical.causal+current.causal+premain.causal+(hardening?.causal??0),phase:(hardening?'574 hardening + ':'')+'572/565 full four-family native observation composed with exact568/561/487/480; no populated/release clearance'});
+ const verify=metadata=>historical.verify(current.projectMetadata(hardening?hardening.projectMetadata(repair?repair.projectMetadata(metadata):metadata):metadata));
+ return Object.freeze({...historical,current:repair?.reference??hardening?.reference??current.reference,iv:premain.reference,historical,deedCurrent:current,deedPremain:premain,hardeningCurrent:hardening,repairCurrent:repair,verify,causal:historical.causal+current.causal+premain.causal+(hardening?.causal??0)+(repair?.causal??0),phase:(repair?'575 bounded-worker repair + ':'')+(hardening?'574 hardening + ':'')+'572/565 full four-family native observation composed with exact568/561/487/480; no populated/release clearance'});
 }
 export async function verifyCommerceNativeBranches(pool,endpoint){await assertCommerceDeedCaller(pool,endpoint,'fresh',true);const input=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');return composeCommerceDeedNativeBranches(pool,endpoint,input);}
 export async function verifyCommerceEnterpriseSlotBranches(pool,endpoint,input){assert.equal(arguments.length,3);await assertCommerceEnterpriseSlot(pool,endpoint,input);return composeCommerceDeedNativeBranches(pool,endpoint,input);}

@@ -1076,6 +1076,7 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
   const ROOT = fileURLToPath(new URL('..', import.meta.url));
   const oldDb = `pgcheck_old_${process.pid}`;
   const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${oldDb}$1`);
+  const before = process.env.DATABASE_URL;
   let ok = true; let err = ''; let added = 0;
   try {
     const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
@@ -1096,7 +1097,6 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
     await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`);
     await pool.query(`CREATE DATABASE ${oldDb}`);
     // now boot the current build against it, exactly as a deploy would
-    const before = process.env.DATABASE_URL;
     process.env.DATABASE_URL = swap(before);
     // the database as it stood at the first commit — applied raw, so it is genuinely the OLD shape
     // and not something the current build has already had a chance to fix
@@ -1136,8 +1136,8 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
       err = `${mistyped.length} column(s) carry a different TYPE on the upgraded database than a fresh one: ${mistyped.slice(0, 6).join(', ')}`;
     }
     await p3.end();
-    process.env.DATABASE_URL = before;
   } catch (e) { ok = false; err = e.message; }
+  finally { process.env.DATABASE_URL = before; }
   try { await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`); } catch { /* best effort */ }
   check(ok, `the current build boots against the ORIGINAL schema (${added} columns present after migration)`, err);
 }

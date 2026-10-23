@@ -2189,6 +2189,10 @@ CREATE INDEX IF NOT EXISTS ix_char_account ON characters (account_id);
 -- The Capo worker walks only agent accounts, then qualifies their direct recruits. These indexes keep
 -- each bounded cursor page proportional to that page instead of rescanning the full account/telemetry
 -- estate as the population grows.
+-- These predicate columns were added after the original schema. They must land before PostgreSQL parses
+-- the partial index during an in-place upgrade; the derived column pass runs only after schema.sql.
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS minted BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS npc_flag BOOLEAN NOT NULL DEFAULT false;
 CREATE INDEX IF NOT EXISTS ix_account_persistent_agent_cursor
   ON account_persistent (account_id) WHERE agent_flag;
 CREATE INDEX IF NOT EXISTS ix_account_persistent_recruit_candidates
