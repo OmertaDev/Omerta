@@ -1280,8 +1280,8 @@ export const ECONOMY_HARDENING_BINDING_DOMAINS = {
   },
   "test/lib/rc1-historical-source-fixture.js": {
     "mode": "100644",
-    "currentSha256": "b40e53ba4a53833fa4404635b3440cc6e52b34ec93f6994444747ad5d9bb66ad",
-    "currentBlob": "2fcc013df1feb5a050dd317f3f61c54d754451b1",
+    "currentSha256": "9b12b8769b20ba35018ef61d52d763e7d2f6e0c9104afd93ac83b748484e76ca",
+    "currentBlob": "cab15dd8fe1e37803986146d9418283d7ae985f3",
     "baselineSha256": "88a22a821f4eb26048cdeabd66de4e5bb5c3b3ade42c57d2772bf3f7032e7914",
     "baselineBlob": "a0f31929074f7c6c95208885edce99f3c8a1cdc3",
     "contextLines": 3,
@@ -1289,6 +1289,10 @@ export const ECONOMY_HARDENING_BINDING_DOMAINS = {
       {
         "current": "import { continuousCityHistoricalInput } from '../../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';\nimport {ENTERPRISE_NATIVE_RELEASE_INPUTS} from '../../tools/enterprise-native-inputs.js';\n// Closed pure-control fixtures. Historical source execution never admits the current release.\nimport {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';\nimport { economyReleaseSource } from '../../tools/economy-release-composition.js';\n",
         "baseline": "import { continuousCityHistoricalInput } from '../../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';\nimport {ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS} from '../../tools/enterprise-native-inputs.js';\n// Closed pure-control fixtures. Historical source execution never admits the current release.\nimport {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';\nimport { economyReleaseSource } from '../../tools/economy-release-composition.js';\n"
+      },
+      {
+        "current": "  ].map(pair => Object.freeze(pair))),\n});\nconst enterpriseCombinedHistoricalFiles = Object.freeze([\n  'src/accrual.js', 'src/agentreferrals.js', 'src/auth.js', 'src/boxing.js', 'src/business.js',\n  'src/cityhomes.js', 'src/corner.js', 'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js',\n  'src/growth.js', 'src/heists.js', 'src/hustle.js', 'src/kitchen.js', 'src/opportunities.js',\n  'src/pen.js', 'src/population.js', 'src/races.js', 'src/routes/gateway.js', 'src/routes/rwa.js',\n  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js',\n]);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n",
+        "baseline": "  ].map(pair => Object.freeze(pair))),\n});\nconst enterpriseCombinedHistoricalFiles = Object.freeze([\n  'src/accrual.js', 'src/boxing.js', 'src/business.js', 'src/cityhomes.js', 'src/corner.js',\n  'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js', 'src/growth.js', 'src/hustle.js',\n  'src/kitchen.js', 'src/opportunities.js', 'src/pen.js', 'src/population.js', 'src/races.js',\n  'src/rules.tail.js', 'src/stable.js', 'src/streets.js',\n]);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n"
       },
       {
         "current": "function enterpriseCombinedHistoricalInput(file, input, expected) {\n  const raw = uniformHistoricalInput(file, input), current = canonical(raw);\n  if (!enterpriseCombinedHistoricalFiles.includes(file)) return raw;\n  const rows = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.filter(candidate => candidate.file === file);\n  assert.equal(rows.length, 1, 'Unique combined enterprise historical input required: ' + file);\n  const [row] = rows;\n  assert.equal(row.before.sha256, sha256(expected), 'Combined enterprise predecessor differs from frozen release: ' + file);\n",

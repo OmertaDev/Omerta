@@ -68,10 +68,11 @@ const cityActivityWorldHelper = Object.freeze({
   ].map(pair => Object.freeze(pair))),
 });
 const enterpriseCombinedHistoricalFiles = Object.freeze([
-  'src/accrual.js', 'src/boxing.js', 'src/business.js', 'src/cityhomes.js', 'src/corner.js',
-  'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js', 'src/growth.js', 'src/hustle.js',
-  'src/kitchen.js', 'src/opportunities.js', 'src/pen.js', 'src/population.js', 'src/races.js',
-  'src/rules.tail.js', 'src/stable.js', 'src/streets.js',
+  'src/accrual.js', 'src/agentreferrals.js', 'src/auth.js', 'src/boxing.js', 'src/business.js',
+  'src/cityhomes.js', 'src/corner.js', 'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js',
+  'src/growth.js', 'src/heists.js', 'src/hustle.js', 'src/kitchen.js', 'src/opportunities.js',
+  'src/pen.js', 'src/population.js', 'src/races.js', 'src/routes/gateway.js', 'src/routes/rwa.js',
+  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js',
 ]);
 const npcEntries = new Set([
   'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',
