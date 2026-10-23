@@ -9,6 +9,8 @@ import {ECONOMY_HARDENING_BINDING_DOMAINS,ECONOMY_HARDENING_BINDING_SUCCESSOR_RE
  ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE,ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS,
  economyHardeningSourceBaseline} from '../tools/economy-hardening-source-transfer.js';
 import {ACTION_READINESS_SOURCE,qualifyActionReadinessSource,actionReadinessHistoricalInput} from '../tools/action-readiness-source-compatibility.js';
+import {ECONOMY_READINESS_MERGE_SOURCE,qualifyEconomyReadinessMergeSource,
+ economyReadinessMergeHistoricalInput} from '../tools/economy-readiness-merge-source-compatibility.js';
 assert.equal(typeof source.qualifyRebuildInterfaceSource, 'function', 'Exact rebuilt-interface transfer must exist');
 const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{encoding:'utf8',maxBuffer:32*1024*1024});
 const pin=source.REBUILD_INTERFACE_SOURCE,sha=s=>crypto.createHash('sha256').update(s).digest('hex');
@@ -43,8 +45,10 @@ for(const row of pin.files){
  const current=git('show',pin.revision+':'+row.file),target=git('show',pin.targetRevision+':'+row.file);
  assert.equal(git('ls-tree',pin.revision,'--',row.file).trim(),row.mode+' blob '+row.currentBlob+'\t'+row.file);
  assert.equal(git('ls-tree',pin.targetRevision,'--',row.file).trim(),row.mode+' blob '+row.targetBlob+'\t'+row.file);
- const committedInput=actionReadinessHistoricalInput(row.file,git('show','HEAD:'+row.file));
- const physicalInput=actionReadinessHistoricalInput(row.file,fs.readFileSync(row.file,'utf8'));
+ const committedInput=actionReadinessHistoricalInput(row.file,
+   economyReadinessMergeHistoricalInput(row.file,git('show','HEAD:'+row.file)));
+ const physicalInput=actionReadinessHistoricalInput(row.file,
+   economyReadinessMergeHistoricalInput(row.file,fs.readFileSync(row.file,'utf8')));
  assert.equal(economyHardeningSourceBaseline(row.file,committedInput),current,'Current committed source transfers exactly to the frozen rebuilt interface');
  assert.equal(economyHardeningSourceBaseline(row.file,physicalInput).replaceAll('\r\n','\n'),current,'Physical authored source transfers exactly to the frozen rebuilt interface');
  for(const input of [current,current.replaceAll('\n','\r\n')]){assert.equal(source.qualifyRebuildInterfaceSource(row.file,input).baselineText,target);assert.equal(source.classicInterfaceHistoricalInput(row.file,input),source.classicInterfaceHistoricalInput(row.file,target));positives++;}
@@ -81,9 +85,10 @@ for(const row of successor.files){
  const current=git('show',successor.revision+':'+row.file),target=git('show',successor.targetRevision+':'+row.file);
  for(const [revision,expectedBlob]of [[successor.revision,row.currentBlob],[successor.targetRevision,row.targetBlob]])
   assert.equal(git('ls-tree',revision,'--',row.file).trim(),row.mode+' blob '+expectedBlob+'\t'+row.file);
- const physical=fs.readFileSync(row.file,'utf8'),stat=fs.lstatSync(row.file);
+ const committed=economyReadinessMergeHistoricalInput(row.file,git('show','HEAD:'+row.file));
+ const physical=economyReadinessMergeHistoricalInput(row.file,fs.readFileSync(row.file,'utf8')),stat=fs.lstatSync(row.file);
  assert(stat.isFile()&&!stat.isSymbolicLink(),'Physical successor source is a regular file');
- assert.equal(git('show','HEAD:'+row.file),current,'Current committed successor source remains exact');
+ assert.equal(committed,current,'Current committed successor source remains exact after the sealed merge bridge');
  assert(physical===current||physical===current.replaceAll('\n','\r\n'),'Physical successor source remains exact');
  assert.deepEqual(row.inverses,inverseHunks(git('diff','--no-ext-diff','--unified=3',successor.targetRevision,successor.revision,'--',row.file)));
  for(const input of [physical,current,current.replaceAll('\n','\r\n')]){
@@ -113,3 +118,25 @@ for(const file of ['../public/index.html','__proto__','constructor','unknown']){
 }
 console.log(JSON.stringify({phase:'EXACT_ACTION_READINESS_SOURCE_ONLY',source:successor.revision,predecessor:successor.targetRevision,
  positives:successorPositives,refusals:successorRefusals,native:false,runtime:false}));
+
+// The merge bridge is independently exact and applies only to the combined public index source.
+const bridge=ECONOMY_READINESS_MERGE_SOURCE,bridgeRow=bridge.files[0];
+for(const [revision,tree]of [[bridge.revision,bridge.tree],[bridge.targetRevision,bridge.targetTree]])
+ assert.equal(git('rev-parse',revision+'^{tree}').trim(),tree);
+git('merge-base','--is-ancestor',bridge.targetRevision,bridge.revision);
+git('merge-base','--is-ancestor',bridge.revision,'HEAD');
+const bridgeCurrent=git('show',bridge.revision+':'+bridgeRow.file),bridgeTarget=git('show',bridge.targetRevision+':'+bridgeRow.file);
+assert.deepEqual(bridgeRow.inverses,inverseHunks(git('diff','--no-ext-diff','--unified=3',bridge.targetRevision,bridge.revision,'--',bridgeRow.file)));
+for(const input of [bridgeCurrent,bridgeCurrent.replaceAll('\n','\r\n')]){
+ const proof=qualifyEconomyReadinessMergeSource(bridgeRow.file,input);
+ assert.equal(proof.baselineText,bridgeTarget);assert.equal(proof.sourceRevision,bridge.revision);
+}
+for(const input of [bridgeCurrent+'\n',bridgeCurrent.slice(1),'\ufeff'+bridgeCurrent,bridgeCurrent+'\0',bridgeCurrent.replace('\n','\r'),Buffer.from(bridgeCurrent),null])
+ assert.throws(()=>qualifyEconomyReadinessMergeSource(bridgeRow.file,input));
+for(const inverse of bridgeRow.inverses)for(const input of [bridgeCurrent.replace(inverse.current,''),
+ bridgeCurrent.replace(inverse.current,()=>inverse.current+inverse.current),bridgeCurrent.replace(inverse.current,()=>inverse.baseline)])
+ assert.throws(()=>qualifyEconomyReadinessMergeSource(bridgeRow.file,input));
+assert.equal(economyReadinessMergeHistoricalInput(bridgeRow.file,bridgeTarget),bridgeTarget);
+assert.throws(()=>qualifyEconomyReadinessMergeSource(bridgeRow.file,bridgeCurrent,Object.freeze({...bridge})));
+console.log(JSON.stringify({phase:bridge.phase,source:bridge.revision,predecessor:bridge.targetRevision,
+ inverses:bridgeRow.inverses.length,native:false,runtime:false}));
