@@ -2074,10 +2074,36 @@ export const ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS = {
     ]
   }
 };
+export const ECONOMY_HARDENING_GROWTH_DETERMINISM_REVISION = "42f04cb6c34215563a1d97be6c8483ab06c02cf3";
+export const ECONOMY_HARDENING_GROWTH_DETERMINISM_TREE = "43c3cf5a4a752e04e6cb86b90fe3cecbd08c5e6a";
+export const ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR = "582211926fc8ba4632f080d9cf5752efe4643462";
+export const ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR_TREE = "6b91d8c81d65b4c6cc88a4df1699b2c9ae71cc8a";
+export const ECONOMY_HARDENING_GROWTH_DETERMINISM_PHASE = 'exact-economy-growth-determinism-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS = {
+  "test/growth.js": {
+    "mode": "100644",
+    "currentSha256": "a3c3c2eb325be734d09d084f49eb86ab185a541c4f14a20501219b243fcf112a",
+    "currentBlob": "6f3ca48cc18e896f71d8b656f2bc5651044bc0dc",
+    "baselineSha256": "554e057f022f1d7e405baaf59dcce138a33a0da09eb19f0210c439a3bdb3d89c",
+    "baselineBlob": "143103a4649a06e3f08437f5e50f0b042290d8ce",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "\n// ── D14 — stats matter more to the crime roll (SIGNED, option A) ──\n// Two streets, same LEVEL and same mid-base crime, differing ONLY in cunning: the high-cunning one\n// must land materially more jobs. Walk the same evenly spaced roll grid for every build instead of\n// sampling Math.random: a rare adverse sample used to fail this release gate even though the exact\n// chance gap was intact. The paired grid proves the whole probability boundary deterministically.\n// It also proves the design guarantee: MUSCLE does nothing for crime.\n{\n  const CRIME = 'poker'; // base 0.46, lvl 11\n  const N = 300;\n  const respect11 = PACING.LEVEL_DIVISOR * (11 - 1) ** 2;\n  const runs = async (tok, id, cols) => {\n    let wins = 0;\n    const random = Math.random;\n    try {\n      for (let i = 0; i < N; i++) {\n        // Every random read in one attempt sees this value; the first read is the success roll. Using\n        // the same midpoint grid for every build makes the comparison exact while keeping the real\n        // HTTP, transaction, stat, rank and approach path under test.\n        const roll = (i + 0.5) / N;\n        Math.random = () => roll;\n        // refill nerve + freeze the clock each attempt so no accrual or nerve wall interferes\n        await seedCh(id, `${cols}, respect=${respect11}, nerve=50, jail_until=NULL, last_accrued_at=now()`);\n        const r = await call('POST', `/v1/crimes/${CRIME}`, { token: tok });\n        if (r.body.success) wins++;\n      }\n    } finally {\n      Math.random = random;\n    }\n    return wins;\n  };\n",
+        "baseline": "\n// ── D14 — stats matter more to the crime roll (SIGNED, option A) ──\n// Two streets, same LEVEL and same mid-base crime, differing ONLY in cunning: the high-cunning one\n// must land materially more jobs. Sampled (the roll is Math.random), but the +24-point spread over\n// 300 attempts separates ~90 vs ~175 successes — never overlaps, so it is not flaky. Also proves the\n// design guarantee: MUSCLE does nothing for crime (a muscle build ≈ a min build).\n{\n  const CRIME = 'poker'; // base 0.46, lvl 11\n  const N = 300;\n  const respect11 = PACING.LEVEL_DIVISOR * (11 - 1) ** 2;\n  const runs = async (tok, id, cols) => {\n    let wins = 0;\n    for (let i = 0; i < N; i++) {\n      // refill nerve + freeze the clock each attempt so no accrual or nerve wall interferes\n      await seedCh(id, `${cols}, respect=${respect11}, nerve=50, jail_until=NULL, last_accrued_at=now()`);\n      const r = await call('POST', `/v1/crimes/${CRIME}`, { token: tok });\n      if (r.body.success) wins++;\n    }\n    return wins;\n  };\n"
+      },
+      {
+        "current": "  assert(hiWins > loWins + 40,\n    `D14: the high-cunning build lands materially more jobs (${hiWins}/${N} vs ${loWins}/${N}) — stats now MOVE the roll`);\n  // MUSCLE stays out of crime (the PvP axis): two builds with IDENTICAL cunning/speed differing ONLY\n  // in muscle must cross exactly the same paired probability boundary.\n  const musHi = await mk('Bruiser Bo'), musLo = await mk('Scrawny Sid');\n  const musHiWins = await runs(musHi.token, musHi.id, 'cunning=3, speed=3, muscle=25');\n  const musLoWins = await runs(musLo.token, musLo.id, 'cunning=3, speed=3, muscle=3');\n  assert.equal(musHiWins, musLoWins,\n    `D14: MUSCLE is inert for crime — same cunning/speed → same success (${musHiWins}/${N} vs ${musLoWins}/${N})`);\n}\n\n\n",
+        "baseline": "  assert(hiWins > loWins + 40,\n    `D14: the high-cunning build lands materially more jobs (${hiWins}/${N} vs ${loWins}/${N}) — stats now MOVE the roll`);\n  // MUSCLE stays out of crime (the PvP axis): two builds with IDENTICAL cunning/speed differing ONLY\n  // in muscle must succeed EQUALLY (within sampling noise). If muscle ever leaks into the crime roll,\n  // the maxed-muscle build pulls ahead and this separation blows past the noise band.\n  // The band is 50, sized off the sampling variance: two EQUAL Binomial(300, ~0.4) have a difference\n  // stddev of ~12, so 35 was only ~2.9σ and flaked ~0.4% of runs (a 42-diff tail was hit in a full-suite\n  // run); 50 is ~4σ (robust) yet well under a REAL 22-point-stat leak, which — at cunning's measured rate\n  // — would separate ~+85 (see the assert above), so it still catches any muscle bleed.\n  const musHi = await mk('Bruiser Bo'), musLo = await mk('Scrawny Sid');\n  const musHiWins = await runs(musHi.token, musHi.id, 'cunning=3, speed=3, muscle=25');\n  const musLoWins = await runs(musLo.token, musLo.id, 'cunning=3, speed=3, muscle=3');\n  assert(Math.abs(musHiWins - musLoWins) < 50,\n    `D14: MUSCLE is inert for crime — same cunning/speed → same success (${musHiWins}/${N} vs ${musLoWins}/${N}, within noise)`);\n}\n\n\n"
+      }
+    ]
+  }
+};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), ...Object.values(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), ...Object.values(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS),
+  ...Object.values(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
@@ -2089,6 +2115,7 @@ Object.freeze(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS);
 const lf = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -2261,9 +2288,35 @@ export function assertEconomyHardeningPhase2TimeoutTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_PHASE2_TIMEOUT_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningGrowthDeterminismTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS, file),
+    'Unknown economy-hardening growth determinism domain');
+  assert(uniform(input), 'Uniform whole economy-hardening growth determinism LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening growth determinism source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening growth determinism blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1,
+      'Missing or duplicate economy-hardening growth determinism inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256,
+    'Complete economy-hardening growth determinism predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob,
+    'Complete economy-hardening growth determinism predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256,
+    sourceRevision: ECONOMY_HARDENING_GROWTH_DETERMINISM_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR,
+    inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_GROWTH_DETERMINISM_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningGrowthDeterminismTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningPhase2TimeoutTransfer(file, text).baselineText;
