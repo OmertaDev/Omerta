@@ -1566,14 +1566,52 @@ export const ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS = {
     ]
   }
 };
+export const ECONOMY_HARDENING_REPAIR_REVISION = "a2779ea0f3fd7591209fa49a0711af72a12cba8f";
+export const ECONOMY_HARDENING_REPAIR_TREE = "e9fac3e6fa1bd582d08551e55faf73d998e7a6cd";
+export const ECONOMY_HARDENING_REPAIR_PREDECESSOR = "8e9b7408faceb6d6d69badff386c15e92cd02f69";
+export const ECONOMY_HARDENING_REPAIR_PREDECESSOR_TREE = "880f124eab908eddae4b2e30406a7e491649cb2e";
+export const ECONOMY_HARDENING_REPAIR_PHASE = 'exact-native-qualification-repair-source-transfer-only; no native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_REPAIR_DOMAINS = {
+  "tools/commerce-deed-release-phase2-native-catalog.js": {
+    "mode": "100644",
+    "currentSha256": "13299590cc05f73ec2075310615b1707ba02296841201a89584f39bdac20844f",
+    "currentBlob": "2ef1055a32995520d77300d73458f70ee897e2cc",
+    "baselineSha256": "824ee43f3a4648577a80d7f4db537db3f420615adfa6af2335e6598d6b407d36",
+    "baselineBlob": "ca681bd72a48e12fcf574c3a8f0982642b4293b5",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "\nconst ECONOMY_HARDENING_TABLES=Object.freeze(['account_daily_claims','economy_migrations']);\nconst ECONOMY_HARDENING_EXISTING_COLUMNS=Object.freeze([\n  'accounts.created_ip_authority','account_persistent.referral_same_ip_hold',\n  'account_persistent.checkin_day','account_persistent.checkin_streak',\n  'characters.street_action_at','characters.crew_sale_credit_ms',\n]);\nconst economyHardeningDerivedColumns=new Set([\n  'accounts.created_ip_authority','account_persistent.referral_same_ip_hold',\n  'characters.street_action_at','characters.crew_sale_credit_ms',\n]);\nconst economyHardeningIdentity=(field,row)=>field==='relations'?row.name\n  :field==='columns'?`${row.table_name}.${row.column_name}`:key(row);\nconst economyHardeningOrdinals=freeze({\n  fresh:{createdIpAuthority:7,referralSameIpHold:16,checkinDay:43,checkinStreak:44,streetAction:74,crewSaleCredit:75},\n  phase2:{createdIpAuthority:13,referralSameIpHold:87,checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},\n  director:{createdIpAuthority:13,referralSameIpHold:87,checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},\n});\nconst economyHardeningColumn=(table_name,column_name,ordinal,type,default_expression,not_null,collated=false)=>({\n  table_name,column_name,ordinal,type,typmod:-1,default_expression,not_null,identity:'',generated:'',\n",
+        "baseline": "\nconst ECONOMY_HARDENING_TABLES=Object.freeze(['account_daily_claims','economy_migrations']);\nconst ECONOMY_HARDENING_EXISTING_COLUMNS=Object.freeze([\n  'account_persistent.checkin_day','account_persistent.checkin_streak',\n  'characters.street_action_at','characters.crew_sale_credit_ms',\n]);\nconst economyHardeningDerivedColumns=new Set(['characters.street_action_at','characters.crew_sale_credit_ms']);\nconst economyHardeningIdentity=(field,row)=>field==='relations'?row.name\n  :field==='columns'?`${row.table_name}.${row.column_name}`:key(row);\nconst economyHardeningOrdinals=freeze({\n  fresh:{checkinDay:42,checkinStreak:43,streetAction:74,crewSaleCredit:75},\n  phase2:{checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},\n  director:{checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},\n});\nconst economyHardeningColumn=(table_name,column_name,ordinal,type,default_expression,not_null,collated=false)=>({\n  table_name,column_name,ordinal,type,typmod:-1,default_expression,not_null,identity:'',generated:'',\n"
+      },
+      {
+        "current": "    {name:'economy_migrations',kind:'r',persistence:'p'},\n  ];\n  const columns=[\n    economyHardeningColumn('accounts','created_ip_authority',ordinal.createdIpAuthority,'text',null,false,true),\n    economyHardeningColumn('account_daily_claims','account_id',1,'text',null,true,true),\n    economyHardeningColumn('account_daily_claims','day',2,'integer',null,true),\n    economyHardeningColumn('account_daily_claims','scope',3,'text',null,true,true),\n",
+        "baseline": "    {name:'economy_migrations',kind:'r',persistence:'p'},\n  ];\n  const columns=[\n    economyHardeningColumn('account_daily_claims','account_id',1,'text',null,true,true),\n    economyHardeningColumn('account_daily_claims','day',2,'integer',null,true),\n    economyHardeningColumn('account_daily_claims','scope',3,'text',null,true,true),\n"
+      },
+      {
+        "current": "    economyHardeningColumn('account_daily_claims','claimed_at',6,'timestamp with time zone','now()',true),\n    economyHardeningColumn('account_persistent','checkin_day',ordinal.checkinDay,'integer','0',true),\n    economyHardeningColumn('account_persistent','checkin_streak',ordinal.checkinStreak,'integer','0',true),\n    economyHardeningColumn('account_persistent','referral_same_ip_hold',ordinal.referralSameIpHold,'boolean',null,false),\n    economyHardeningColumn('characters','street_action_at',ordinal.streetAction,'timestamp with time zone',null,false),\n    economyHardeningColumn('characters','crew_sale_credit_ms',ordinal.crewSaleCredit,'bigint','0',true),\n    economyHardeningColumn('economy_migrations','id',1,'text',null,true,true),\n",
+        "baseline": "    economyHardeningColumn('account_daily_claims','claimed_at',6,'timestamp with time zone','now()',true),\n    economyHardeningColumn('account_persistent','checkin_day',ordinal.checkinDay,'integer','0',true),\n    economyHardeningColumn('account_persistent','checkin_streak',ordinal.checkinStreak,'integer','0',true),\n    economyHardeningColumn('characters','street_action_at',ordinal.streetAction,'timestamp with time zone',null,false),\n    economyHardeningColumn('characters','crew_sale_credit_ms',ordinal.crewSaleCredit,'bigint','0',true),\n    economyHardeningColumn('economy_migrations','id',1,'text',null,true,true),\n"
+      },
+      {
+        "current": "    const match=statement.match(/^ALTER TABLE ([A-Za-z_][A-Za-z0-9_]*) ADD COLUMN IF NOT EXISTS ([A-Za-z_][A-Za-z0-9_]*) /);\n    return `${match[1]}.${match[2]}`;\n  }).sort();\n  assert.deepEqual(identities,[...economyHardeningDerivedColumns].sort(),'Exact four CREATE-derived hardening column migrations');\n  return statements;\n}\n\n",
+        "baseline": "    const match=statement.match(/^ALTER TABLE ([A-Za-z_][A-Za-z0-9_]*) ADD COLUMN IF NOT EXISTS ([A-Za-z_][A-Za-z0-9_]*) /);\n    return `${match[1]}.${match[2]}`;\n  }).sort();\n  assert.deepEqual(identities,[...economyHardeningDerivedColumns].sort(),'Exact two CREATE-derived hardening column migrations');\n  return statements;\n}\n\n"
+      },
+      {
+        "current": "  const expected=structuredClone(prior),shifted=[];\n  if(profile==='fresh'){\n    expected.columns=expected.columns.map(row=>{\n      const shift=row.table_name==='accounts'&&row.ordinal>=7?1\n        :row.table_name==='account_persistent'?(row.ordinal>=42?3:row.ordinal>=16?1:0)\n          :row.table_name==='characters'&&row.ordinal>=74?2:0;\n      if(!shift)return row;\n      shifted.push([`${row.table_name}.${row.column_name}`,row.ordinal,row.ordinal+shift]);return {...row,ordinal:row.ordinal+shift};\n    });\n    assert.equal(shifted.filter(([name])=>name.startsWith('accounts.')).length,6,\n      'Exactly six account predecessor ordinals shift');\n    assert.equal(shifted.filter(([name,,next])=>name.startsWith('account_persistent.')&&next).length,69,\n      'Exactly 69 account-persistent predecessor ordinals shift');\n    assert.equal(shifted.filter(([name,prior,next])=>name.startsWith('account_persistent.')&&next-prior===3).length,43,\n      'Exactly 43 later account-persistent predecessor ordinals shift three places');\n    assert.equal(shifted.filter(([name])=>name.startsWith('characters.')).length,43,\n      'Exactly 43 character predecessor ordinals shift');\n  }else{\n",
+        "baseline": "  const expected=structuredClone(prior),shifted=[];\n  if(profile==='fresh'){\n    expected.columns=expected.columns.map(row=>{\n      const start=row.table_name==='account_persistent'?42:row.table_name==='characters'?74:null;\n      if(start===null||row.ordinal<start)return row;\n      shifted.push([`${row.table_name}.${row.column_name}`,row.ordinal,row.ordinal+2]);return {...row,ordinal:row.ordinal+2};\n    });\n    assert.equal(shifted.filter(([name])=>name.startsWith('account_persistent.')).length,43,\n      'Exactly 43 account-persistent predecessor ordinals shift');\n    assert.equal(shifted.filter(([name])=>name.startsWith('characters.')).length,43,\n      'Exactly 43 character predecessor ordinals shift');\n  }else{\n"
+      }
+    ]
+  }
+};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
 Object.freeze(ECONOMY_HARDENING_SOURCE_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_BINDING_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_REPAIR_DOMAINS);
 const lf = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -1633,9 +1671,30 @@ export function assertEconomyHardeningBindingSuccessorTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningRepairTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_REPAIR_DOMAINS, file), 'Unknown economy-hardening qualification repair domain');
+  assert(uniform(input), 'Uniform whole economy-hardening qualification repair LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_REPAIR_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening qualification repair source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening qualification repair blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1, 'Missing or duplicate economy-hardening qualification repair inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256, 'Complete economy-hardening qualification repair predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob, 'Complete economy-hardening qualification repair predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256, sourceRevision: ECONOMY_HARDENING_REPAIR_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_REPAIR_PREDECESSOR, inverseChunks: pin.inverses.length,
+    phase: ECONOMY_HARDENING_REPAIR_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_REPAIR_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_REPAIR_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningRepairTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningBindingSuccessorTransfer(file, text).baselineText;

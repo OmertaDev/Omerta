@@ -11,6 +11,10 @@ const bindingRevision = 'c94bb20cf84de303a34730f4723cff17192d6923';
 const bindingRevisionTree = 'e0f65c75eab02d2cbdc69d1da13047217d6651ce';
 const bindingSuccessorRevision = '66b4c6008e6b9c192ae20006c59bc591be82a27a';
 const bindingSuccessorTree = '38d87c3be5fdd4890ab5a9cdc7309a4332b50a14';
+const repairRevision = 'a2779ea0f3fd7591209fa49a0711af72a12cba8f';
+const repairRevisionTree = 'e9fac3e6fa1bd582d08551e55faf73d998e7a6cd';
+const repairPredecessor = '8e9b7408faceb6d6d69badff386c15e92cd02f69';
+const repairPredecessorTree = '880f124eab908eddae4b2e30406a7e491649cb2e';
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -21,11 +25,17 @@ assert.equal(process.argv[2], '--write', 'Use --write only for the fixed reviewe
 execFileSync('git', ['merge-base', '--is-ancestor', predecessor, revision]);
 execFileSync('git', ['merge-base', '--is-ancestor', revision, bindingRevision]);
 execFileSync('git', ['merge-base', '--is-ancestor', bindingRevision, bindingSuccessorRevision]);
-execFileSync('git', ['merge-base', '--is-ancestor', bindingSuccessorRevision, 'HEAD']);
+execFileSync('git', ['merge-base', '--is-ancestor', bindingSuccessorRevision, repairPredecessor]);
+execFileSync('git', ['merge-base', '--is-ancestor', repairPredecessor, repairRevision]);
+execFileSync('git', ['merge-base', '--is-ancestor', repairRevision, 'HEAD']);
 assert.equal(git('rev-parse', `${bindingRevision}^{tree}`).trim(), bindingRevisionTree,
   'Frozen economy binding revision tree changed');
 assert.equal(git('rev-parse', `${bindingSuccessorRevision}^{tree}`).trim(), bindingSuccessorTree,
   'Frozen economy binding successor revision tree changed');
+assert.equal(git('rev-parse', `${repairRevision}^{tree}`).trim(), repairRevisionTree,
+  'Frozen economy qualification repair revision tree changed');
+assert.equal(git('rev-parse', `${repairPredecessor}^{tree}`).trim(), repairPredecessorTree,
+  'Frozen economy qualification repair predecessor tree changed');
 // Closed physical-source readers reached by the current Commerce and RC1 chains.
 // Other candidate files are tested as current gameplay and are not historical source namespaces.
 const files = Object.freeze([
@@ -142,6 +152,38 @@ for (const file of bindingFiles.filter(file => !bindingSuccessorFiles.includes(f
     `Unsealed physical binding successor requires its own reviewed outer hop: ${file}`);
 }
 
+// Native qualification repairs made after the complete candidate are a final exact
+// outer hop. They reconstruct the pre-repair candidate before the authored envelope.
+const repairFiles = Object.freeze(['tools/commerce-deed-release-phase2-native-catalog.js']);
+const repairDomains = {};
+for (const file of repairFiles) {
+  const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);
+  const reviewed = git('show', `${repairRevision}:${file}`), baseline = git('show', `${repairPredecessor}:${file}`);
+  assert(raw === current || raw === current.replaceAll('\n', '\r\n'), `Mixed qualification repair line endings: ${file}`);
+  assert.equal(current, reviewed, `Qualification repair physical source differs from the reviewed commit: ${file}`);
+  assert.notEqual(current, baseline, `Qualification repair postimage has no change: ${file}`);
+  const inverses = []; let hunk = null;
+  for (const line of git('diff', '--no-ext-diff', '--unified=3', repairPredecessor, repairRevision, '--', file).split('\n')) {
+    if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; inverses.push(hunk); }
+    else if (hunk && /^[ +\-]/.test(line)) {
+      if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
+      if (line[0] !== '+') hunk.baseline += line.slice(1) + '\n';
+    }
+  }
+  let reconstructed = current;
+  for (const inverse of inverses) {
+    assert(inverse.current.length, `Empty qualification repair inverse context: ${file}`);
+    assert.equal(reconstructed.split(inverse.current).length - 1, 1, `Qualification repair inverse context must occur once: ${file}`);
+    reconstructed = reconstructed.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(reconstructed, baseline, `Complete qualification repair predecessor reconstruction: ${file}`);
+  repairDomains[file] = {
+    mode: git('ls-tree', repairRevision, '--', file).trim().split(/\s+/)[0],
+    currentSha256: hash(current), currentBlob: blob(current), baselineSha256: hash(baseline), baselineBlob: blob(baseline),
+    contextLines: 3, inverses,
+  };
+}
+
 const revisionTree = git('rev-parse', `${revision}^{tree}`).trim();
 const predecessorTree = git('rev-parse', `${predecessor}^{tree}`).trim();
 const output = `// Generated exact source-only envelope for the economy-hardening candidate. Never imported by game runtime.
@@ -161,14 +203,21 @@ export const ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR = ${JSON.stringify(
 export const ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE = ${JSON.stringify(bindingRevisionTree)};
 export const ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE = 'exact-authored-binding-successor-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance';
 export const ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS = ${JSON.stringify(bindingSuccessorDomains, null, 2)};
+export const ECONOMY_HARDENING_REPAIR_REVISION = ${JSON.stringify(repairRevision)};
+export const ECONOMY_HARDENING_REPAIR_TREE = ${JSON.stringify(repairRevisionTree)};
+export const ECONOMY_HARDENING_REPAIR_PREDECESSOR = ${JSON.stringify(repairPredecessor)};
+export const ECONOMY_HARDENING_REPAIR_PREDECESSOR_TREE = ${JSON.stringify(repairPredecessorTree)};
+export const ECONOMY_HARDENING_REPAIR_PHASE = 'exact-native-qualification-repair-source-transfer-only; no native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_REPAIR_DOMAINS = ${JSON.stringify(repairDomains, null, 2)};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
 Object.freeze(ECONOMY_HARDENING_SOURCE_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_BINDING_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_REPAIR_DOMAINS);
 const lf = text => text.replaceAll('\\r\\n', '\\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\\0').update(text).digest('hex');
@@ -228,9 +277,30 @@ export function assertEconomyHardeningBindingSuccessorTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningRepairTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_REPAIR_DOMAINS, file), 'Unknown economy-hardening qualification repair domain');
+  assert(uniform(input), 'Uniform whole economy-hardening qualification repair LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_REPAIR_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening qualification repair source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening qualification repair blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1, 'Missing or duplicate economy-hardening qualification repair inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256, 'Complete economy-hardening qualification repair predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob, 'Complete economy-hardening qualification repair predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256, sourceRevision: ECONOMY_HARDENING_REPAIR_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_REPAIR_PREDECESSOR, inverseChunks: pin.inverses.length,
+    phase: ECONOMY_HARDENING_REPAIR_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_REPAIR_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_REPAIR_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningRepairTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningBindingSuccessorTransfer(file, text).baselineText;
@@ -244,4 +314,4 @@ export function economyHardeningSourceBaseline(file, input) {
 }
 `;
 fs.writeFileSync(new URL('./economy-hardening-source-transfer.js', import.meta.url), output);
-console.log(`Generated ${files.length} authored, ${bindingFiles.length} binding, and ${bindingSuccessorFiles.length} successor source domains; historical pins remain unchanged.`);
+console.log(`Generated ${files.length} authored, ${bindingFiles.length} binding, ${bindingSuccessorFiles.length} successor, and ${repairFiles.length} repair source domains; historical pins remain unchanged.`);

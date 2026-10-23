@@ -9,8 +9,12 @@ import {
   ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION, ECONOMY_HARDENING_BINDING_SUCCESSOR_TREE,
   ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR, ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE,
   ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS,
+  ECONOMY_HARDENING_REPAIR_REVISION, ECONOMY_HARDENING_REPAIR_TREE,
+  ECONOMY_HARDENING_REPAIR_PREDECESSOR, ECONOMY_HARDENING_REPAIR_PREDECESSOR_TREE,
+  ECONOMY_HARDENING_REPAIR_PHASE, ECONOMY_HARDENING_REPAIR_DOMAINS,
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer,
-  assertEconomyHardeningBindingSuccessorTransfer, economyHardeningSourceBaseline,
+  assertEconomyHardeningBindingSuccessorTransfer, assertEconomyHardeningRepairTransfer,
+  economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
 const expectedRevision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
@@ -37,6 +41,7 @@ const bindingFiles = [
   'package.json', 'test/lib/rc1-historical-source-fixture.js',
 ];
 const successorFiles = ['test/lib/rc1-historical-source-fixture.js'];
+const repairFiles = ['tools/commerce-deed-release-phase2-native-catalog.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -71,20 +76,35 @@ assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION}^{
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR}^{tree}`).trim(),
   ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, /exact-authored-binding-successor-source-transfer-only/);
+assert.equal(ECONOMY_HARDENING_REPAIR_REVISION, 'a2779ea0f3fd7591209fa49a0711af72a12cba8f');
+assert.equal(ECONOMY_HARDENING_REPAIR_PREDECESSOR, '8e9b7408faceb6d6d69badff386c15e92cd02f69');
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,
+  ECONOMY_HARDENING_REPAIR_PREDECESSOR]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_REPAIR_PREDECESSOR,
+  ECONOMY_HARDENING_REPAIR_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_REPAIR_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_REPAIR_REVISION}^{tree}`).trim(), ECONOMY_HARDENING_REPAIR_TREE);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}^{tree}`).trim(),
+  ECONOMY_HARDENING_REPAIR_PREDECESSOR_TREE);
+assert.match(ECONOMY_HARDENING_REPAIR_PHASE, /exact-native-qualification-repair-source-transfer-only/);
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_SOURCE_DOMAINS), files);
 assert(Object.isFrozen(ECONOMY_HARDENING_SOURCE_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_DOMAINS), bindingFiles);
 assert(Object.isFrozen(ECONOMY_HARDENING_BINDING_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), successorFiles);
 assert(Object.isFrozen(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS));
+assert.deepEqual(Object.keys(ECONOMY_HARDENING_REPAIR_DOMAINS), repairFiles);
+assert(Object.isFrozen(ECONOMY_HARDENING_REPAIR_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
   const physical = lf(fs.readFileSync(file, 'utf8'));
+  const repairedAuthored = repairFiles.includes(file)
+    ? assertEconomyHardeningRepairTransfer(file, physical).baselineText : physical;
   const successorAuthored = successorFiles.includes(file)
-    ? assertEconomyHardeningBindingSuccessorTransfer(file, physical).baselineText : physical;
+    ? assertEconomyHardeningBindingSuccessorTransfer(file, repairedAuthored).baselineText : repairedAuthored;
   const authored = bindingFiles.includes(file)
     ? assertEconomyHardeningBindingTransfer(file, successorAuthored).baselineText : successorAuthored;
   assert.equal(authored, current, `Physical source must reconstruct the authored candidate: ${file}`);
@@ -103,7 +123,7 @@ for (const file of files) {
   assert.equal(economyHardeningSourceBaseline(file, current), baseline);
   assert.equal(economyHardeningSourceBaseline(file, current.replaceAll('\n', '\r\n')), baseline);
   assert.equal(economyHardeningSourceBaseline(file, baseline), baseline);
-  if (bindingFiles.includes(file)) {
+  if (bindingFiles.includes(file) || repairFiles.includes(file)) {
     assert.equal(economyHardeningSourceBaseline(file, physical), baseline);
     assert.equal(economyHardeningSourceBaseline(file, physical.replaceAll('\n', '\r\n')), baseline);
     positives += 2;
@@ -113,6 +133,48 @@ for (const file of files) {
     assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
   }
   positives += 3; hunks += pin.inverses.length;
+}
+for (const file of repairFiles) {
+  const pin = ECONOMY_HARDENING_REPAIR_DOMAINS[file];
+  const current = git('show', `${ECONOMY_HARDENING_REPAIR_REVISION}:${file}`);
+  const baseline = git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`);
+  const historical = git('show', `${expectedPredecessor}:${file}`);
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  assert.equal(physical, current, 'Physical qualification repair source must remain exact: ' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(),
+    ['mode', 'currentSha256', 'currentBlob', 'baselineSha256', 'baselineBlob', 'contextLines', 'inverses'].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_REPAIR_REVISION}:${file}`).trim(), pin.currentBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`).trim(), pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_HARDENING_REPAIR_REVISION, '--', file).trim().split(/\s+/)[0], pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_HARDENING_REPAIR_PREDECESSOR,
+    ECONOMY_HARDENING_REPAIR_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomyHardeningRepairTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.sourceRevision, ECONOMY_HARDENING_REPAIR_REVISION);
+    assert.equal(transfer.predecessorRevision, ECONOMY_HARDENING_REPAIR_PREDECESSOR);
+    assert.equal(economyHardeningSourceBaseline(file, input), historical); positives++;
+  }
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) {
+    assert.throws(() => assertEconomyHardeningRepairTransfer(file, changed));
+    assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+  }
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1, 'Unique complete qualification repair inverse required: ' + file);
+    for (const changed of [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current),
+      current.replace(inverse.current, () => inverse.baseline),
+      current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+      assert.throws(() => assertEconomyHardeningRepairTransfer(file, changed));
+      assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
 }
 for (const file of bindingFiles) {
   const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], physical = lf(fs.readFileSync(file, 'utf8'));
@@ -183,6 +245,7 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   const text = 'unknown\r\nbytes\n';
   assert.throws(() => assertEconomyHardeningSourceTransfer(file, text));
   assert.throws(() => assertEconomyHardeningBindingSuccessorTransfer(file, text));
+  assert.throws(() => assertEconomyHardeningRepairTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
