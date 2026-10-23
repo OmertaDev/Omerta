@@ -1529,12 +1529,51 @@ export const ECONOMY_HARDENING_BINDING_DOMAINS = {
     ]
   }
 };
-for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS)]) {
+export const ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION = "66b4c6008e6b9c192ae20006c59bc591be82a27a";
+export const ECONOMY_HARDENING_BINDING_SUCCESSOR_TREE = "38d87c3be5fdd4890ab5a9cdc7309a4332b50a14";
+export const ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR = "c94bb20cf84de303a34730f4723cff17192d6923";
+export const ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE = "e0f65c75eab02d2cbdc69d1da13047217d6651ce";
+export const ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE = 'exact-authored-binding-successor-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance';
+export const ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS = {
+  "test/lib/rc1-historical-source-fixture.js": {
+    "mode": "100644",
+    "currentSha256": "b3164b9d85e56a7da1b909b8678ea83262b144e210a425a2aedb8a5b2e0d7570",
+    "currentBlob": "a4bece17954393263f183e99deca72b094940739",
+    "baselineSha256": "5769344ae250ddb58a9958649ead3c1bbb4f44b4ca1b1229f1b2542332108afa",
+    "baselineBlob": "6e1aff084003895f9c96f14f465d1a5413743ff6",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "]);\nconst entries = new Set([...npcEntries, 'test/rc1-lifecycle-applicability.js',\n  'test/rc1-checkpoint-recovery-review.js', 'test/rc1-world-backlog-review.js']);\nconst currentMarketEntry = 'test/rc1-world-market-resources.js';\nconst currentMarketApplication = Object.freeze({\n  file: 'src/goodsmarket.js', revision: '0e5785f9d9ea1d1162abc3fd6c27f59f6a0ea341',\n  blob: '1565fb9c55fb37b0a58ff441e052587f9ade42ed',\n  sha256: '53ae926ed2ac223ee65bc1383f7156801cf1cbab4204814cb16441059f4f3345',\n});\nconst currentMarketHelper = Object.freeze({\n  file: 'tools/rc1-world-market-resources.js', revision: '0e5785f9d9ea1d1162abc3fd6c27f59f6a0ea341',\n  blob: '81813d6fc2b93bc3aa5a04fb9c9235083f8793b4',\n  sha256: '6e5162c7be310d06f5104ae2b53ea68b4362e68ce493290a8bf674296b21f5f0',\n});\nconst currentHelperProfiles = Object.freeze({\n  [currentMarketEntry]: currentMarketHelper,\n  'test/rc1-player-car-provenance.js': Object.freeze({\n    file: 'tools/rc1-player-car-provenance.js', revision: '0e5785f9d9ea1d1162abc3fd6c27f59f6a0ea341',\n    blob: '2f0c03cb6a0482633517ade3c3e2abce179abb54',\n    sha256: 'e2a7e46c8f24c61a4d207d321fa3c1d37cfc70cc87e689a461e6e3b03894c688',\n  }),\n});\nconst root = fileURLToPath(new URL('../../', import.meta.url));\nconst helperPath = fileURLToPath(import.meta.url);\nconst childFlag = '--rc1-historical-source-fixture';\n",
+        "baseline": "]);\nconst entries = new Set([...npcEntries, 'test/rc1-lifecycle-applicability.js',\n  'test/rc1-checkpoint-recovery-review.js', 'test/rc1-world-backlog-review.js']);\nconst root = fileURLToPath(new URL('../../', import.meta.url));\nconst helperPath = fileURLToPath(import.meta.url);\nconst childFlag = '--rc1-historical-source-fixture';\n"
+      },
+      {
+        "current": "  }\n  return content.get(id);\n}\nfunction pinnedCurrentMarketApplication(file) {\n  if (target !== currentMarketEntry || file !== currentMarketApplication.file) return null;\n  const spec = currentMarketApplication;\n  assert.equal(String(git(['rev-parse', `${spec.revision}:${file}`])).trim(), spec.blob,\n    'Current market fixture application binding changed');\n  const bytes = git(['cat-file', 'blob', spec.blob]);\n  assert.equal(blobHash(bytes), spec.blob, 'Current market fixture application Git blob changed');\n  assert.equal(sha256(bytes), spec.sha256, 'Current market fixture application source changed');\n  return bytes;\n}\nfunction uniformHistoricalInput(file, input) {\n  const raw = String(input);\n  assert(!/\\r(?!\\n)/.test(raw) && (!raw.includes('\\r\\n') || !/(?<!\\r)\\n/.test(raw)),\n",
+        "baseline": "  }\n  return content.get(id);\n}\nfunction uniformHistoricalInput(file, input) {\n  const raw = String(input);\n  assert(!/\\r(?!\\n)/.test(raw) && (!raw.includes('\\r\\n') || !/(?<!\\r)\\n/.test(raw)),\n"
+      },
+      {
+        "current": "\nfunction historical(file) {\n  loadInventories();\n  const currentMarket = pinnedCurrentMarketApplication(file);\n  if (currentMarket) return currentMarket;\n  if (!checked.has(file)) {\n    const actualCurrentRaw = String(originalRead(path.join(root, file)));\n    const selected = currentHistoricalApplicationSource(file, hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : continuousCityHistoricalInput(file, actualCurrentRaw));\n",
+        "baseline": "\nfunction historical(file) {\n  loadInventories();\n  if (!checked.has(file)) {\n    const actualCurrentRaw = String(originalRead(path.join(root, file)));\n    const selected = currentHistoricalApplicationSource(file, hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : continuousCityHistoricalInput(file, actualCurrentRaw));\n"
+      },
+      {
+        "current": "    for (const name of ['Pool', 'Client']) assert.equal(namespace[name], pg[name], 'Cached named pg export bypassed the historical guard');\n    await import(pathToFileURL(path.join(root, target)).href + '?rc1HistoricalBody=' + HISTORICAL_SOURCE_FIXTURE_REVISION);\n    assert.deepEqual(attempts, { database: 0, network: 0 }, 'Pure historical control attempted database or network access');\n    const currentProfile = currentHelperProfiles[target];\n    const profile = target === currentMarketEntry\n      ? 'exact fe4 application inputs plus pinned current goodsmarket; pinned economy-market helper'\n      : currentProfile ? 'exact fe4 application inputs; pinned ' + currentProfile.file\n        : 'exact fe4 application inputs; b12 tools';\n    const qualification = currentProfile ? 'no native/deployed qualification' : 'no current native or financial qualification';\n    console.log('PASS_HISTORICAL_FIXTURE: ' + target + '; ' + profile + '; database/network attempts=0/0; ' + qualification);\n  } finally {\n    fs.readFileSync = originalRead;\n    fs.promises.readFile = originalPromiseRead;\n",
+        "baseline": "    for (const name of ['Pool', 'Client']) assert.equal(namespace[name], pg[name], 'Cached named pg export bypassed the historical guard');\n    await import(pathToFileURL(path.join(root, target)).href + '?rc1HistoricalBody=' + HISTORICAL_SOURCE_FIXTURE_REVISION);\n    assert.deepEqual(attempts, { database: 0, network: 0 }, 'Pure historical control attempted database or network access');\n    console.log('PASS_HISTORICAL_FIXTURE: ' + target + '; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification');\n  } finally {\n    fs.readFileSync = originalRead;\n    fs.promises.readFile = originalPromiseRead;\n"
+      },
+      {
+        "current": "      return { ...result, source: historical(file) };\n    }\n    if (file?.startsWith('tools/') && /\\.[cm]?js$/.test(file)) {\n      const profile = currentHelperProfiles[target];\n      if (profile?.file === file) {\n        const spec = profile, pin = composedHistoricalHelperPins[file];\n        assert.deepEqual({ blob: spec.blob, sha256: spec.sha256 }, pin, 'Current fixture helper composition pin changed');\n        assert.equal(String(git(['rev-parse', `${spec.revision}:${file}`])).trim(), spec.blob,\n          'Current fixture helper revision binding changed');\n        const source = git(['cat-file', 'blob', spec.blob]);\n        assert.equal(blobHash(source), spec.blob, 'Current fixture helper Git blob changed');\n        assert.equal(sha256(source), spec.sha256, 'Current fixture helper source changed');\n        return { ...nextLoad(url, context), source };\n      }\n      const raw = economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file)))), selected = composedHistoricalHelperSource(file, raw);\n      if (selected) return { ...nextLoad(url, context), source: selected };\n      const frozen = blob(file, release), reviewed = canonical(raw);\n      assert.equal(sha256(reviewed), sha256(frozen), 'Reviewed tool implementation changed: ' + file);\n      assert.equal(reviewed, String(frozen), 'Reviewed tool bytes changed: ' + file);\n      return { ...nextLoad(url, context), source: frozen };\n    }\n    return nextLoad(url, context);\n  } });\n",
+        "baseline": "      return { ...result, source: historical(file) };\n    }\n    if (file?.startsWith('tools/') && /\\.[cm]?js$/.test(file)) {\n      const raw = economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file)))), selected = composedHistoricalHelperSource(file, raw);\n      if (selected) return { ...nextLoad(url, context), source: selected };\n      assert.equal(sha256(canonical(raw)), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);\n    }\n    return nextLoad(url, context);\n  } });\n"
+      }
+    ]
+  }
+};
+for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
+  ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
 Object.freeze(ECONOMY_HARDENING_SOURCE_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_BINDING_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS);
 const lf = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -1575,9 +1614,31 @@ export function assertEconomyHardeningBindingTransfer(file, input) {
   return { file, baselineText, postimageSha256: pin.currentSha256, predecessorRevision: ECONOMY_HARDENING_SOURCE_REVISION,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_SOURCE_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningBindingSuccessorTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS, file), 'Unknown economy-hardening binding successor domain');
+  assert(uniform(input), 'Uniform whole economy-hardening binding successor LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening binding successor source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening binding successor blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1, 'Missing or duplicate economy-hardening binding successor inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256, 'Complete economy-hardening binding successor predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob, 'Complete economy-hardening binding successor predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256,
+    sourceRevision: ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,
+    inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningBindingSuccessorTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_BINDING_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningBindingTransfer(file, text).baselineText;

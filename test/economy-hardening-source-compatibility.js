@@ -6,7 +6,11 @@ import {
   ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_SOURCE_TREE,
   ECONOMY_HARDENING_SOURCE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_PREDECESSOR_TREE,
   ECONOMY_HARDENING_SOURCE_PHASE, ECONOMY_HARDENING_SOURCE_DOMAINS, ECONOMY_HARDENING_BINDING_DOMAINS,
-  assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer, economyHardeningSourceBaseline,
+  ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION, ECONOMY_HARDENING_BINDING_SUCCESSOR_TREE,
+  ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR, ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE,
+  ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS,
+  assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer,
+  assertEconomyHardeningBindingSuccessorTransfer, economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
 const expectedRevision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
@@ -32,6 +36,7 @@ const files = [
 const bindingFiles = [
   'package.json', 'test/lib/rc1-historical-source-fixture.js',
 ];
+const successorFiles = ['test/lib/rc1-historical-source-fixture.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -56,18 +61,32 @@ execFileSync('git', ['merge-base', '--is-ancestor', expectedPredecessor, expecte
 assert.equal(git('rev-parse', `${expectedRevision}^{tree}`).trim(), ECONOMY_HARDENING_SOURCE_TREE);
 assert.equal(git('rev-parse', `${expectedPredecessor}^{tree}`).trim(), ECONOMY_HARDENING_SOURCE_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_SOURCE_PHASE, /exact-source-transfer-only/);
+assert.equal(ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION, '66b4c6008e6b9c192ae20006c59bc591be82a27a');
+assert.equal(ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR, 'c94bb20cf84de303a34730f4723cff17192d6923');
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,
+  ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION}^{tree}`).trim(),
+  ECONOMY_HARDENING_BINDING_SUCCESSOR_TREE);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR}^{tree}`).trim(),
+  ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE);
+assert.match(ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, /exact-authored-binding-successor-source-transfer-only/);
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_SOURCE_DOMAINS), files);
 assert(Object.isFrozen(ECONOMY_HARDENING_SOURCE_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_DOMAINS), bindingFiles);
 assert(Object.isFrozen(ECONOMY_HARDENING_BINDING_DOMAINS));
+assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), successorFiles);
+assert(Object.isFrozen(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
   const physical = lf(fs.readFileSync(file, 'utf8'));
+  const successorAuthored = successorFiles.includes(file)
+    ? assertEconomyHardeningBindingSuccessorTransfer(file, physical).baselineText : physical;
   const authored = bindingFiles.includes(file)
-    ? assertEconomyHardeningBindingTransfer(file, physical).baselineText : physical;
+    ? assertEconomyHardeningBindingTransfer(file, successorAuthored).baselineText : successorAuthored;
   assert.equal(authored, current, `Physical source must reconstruct the authored candidate: ${file}`);
   assert.deepEqual(Object.keys(pin).sort(), ['mode', 'currentSha256', 'currentBlob', 'baselineSha256', 'baselineBlob', 'contextLines', 'inverses'].sort());
   assert.equal(pin.contextLines, 3); assert(Object.isFrozen(pin)); assert(Object.isFrozen(pin.inverses));
@@ -96,7 +115,9 @@ for (const file of files) {
   positives += 3; hunks += pin.inverses.length;
 }
 for (const file of bindingFiles) {
-  const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], current = lf(fs.readFileSync(file, 'utf8'));
+  const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], physical = lf(fs.readFileSync(file, 'utf8'));
+  const current = successorFiles.includes(file)
+    ? assertEconomyHardeningBindingSuccessorTransfer(file, physical).baselineText : physical;
   const baseline = git('show', `${expectedRevision}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
@@ -104,7 +125,9 @@ for (const file of bindingFiles) {
   assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
   assert.equal(git('rev-parse', `${expectedRevision}:${file}`).trim(), pin.baselineBlob);
   assert.equal(git('ls-tree', expectedRevision, '--', file).trim().split(/\s+/)[0], pin.mode);
-  assert.deepEqual(pin.inverses, inverseHunks(file, expectedRevision, null));
+  const bindingTip = successorFiles.includes(file)
+    ? ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR : null;
+  assert.deepEqual(pin.inverses, inverseHunks(file, expectedRevision, bindingTip));
   const transfer = assertEconomyHardeningBindingTransfer(file, current);
   assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
   assert.equal(economyHardeningSourceBaseline(file, current), historical);
@@ -115,9 +138,51 @@ for (const file of bindingFiles) {
   }
   positives += 2; hunks += pin.inverses.length;
 }
+for (const file of successorFiles) {
+  const pin = ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS[file];
+  const current = git('show', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION}:${file}`);
+  const baseline = git('show', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR}:${file}`);
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  assert.equal(physical, current, 'Physical successor source must remain exact: ' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(),
+    ['mode', 'currentSha256', 'currentBlob', 'baselineSha256', 'baselineBlob', 'contextLines', 'inverses'].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION}:${file}`).trim(), pin.currentBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR}:${file}`).trim(), pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION, '--', file).trim().split(/\s+/)[0], pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,
+    ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomyHardeningBindingSuccessorTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.sourceRevision, ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION);
+    assert.equal(transfer.predecessorRevision, ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR);
+    positives++;
+  }
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) {
+    assert.throws(() => assertEconomyHardeningBindingSuccessorTransfer(file, changed));
+    assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+  }
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1, 'Unique complete successor inverse required: ' + file);
+    for (const changed of [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current),
+      current.replace(inverse.current, () => inverse.baseline),
+      current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+      assert.throws(() => assertEconomyHardeningBindingSuccessorTransfer(file, changed));
+      assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
+}
 for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   const text = 'unknown\r\nbytes\n';
   assert.throws(() => assertEconomyHardeningSourceTransfer(file, text));
+  assert.throws(() => assertEconomyHardeningBindingSuccessorTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);

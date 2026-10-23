@@ -4,7 +4,10 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import * as source from '../tools/commerce-current-enterprise-source-compatibility.js';
-import {ECONOMY_HARDENING_BINDING_DOMAINS,economyHardeningSourceBaseline} from '../tools/economy-hardening-source-transfer.js';
+import {ECONOMY_HARDENING_BINDING_DOMAINS,ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,
+ ECONOMY_HARDENING_BINDING_SUCCESSOR_TREE,ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,
+ ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE,ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS,
+ economyHardeningSourceBaseline} from '../tools/economy-hardening-source-transfer.js';
 assert.equal(typeof source.qualifyRebuildInterfaceSource, 'function', 'Exact rebuilt-interface transfer must exist');
 const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{encoding:'utf8',maxBuffer:32*1024*1024});
 const pin=source.REBUILD_INTERFACE_SOURCE,sha=s=>crypto.createHash('sha256').update(s).digest('hex');
@@ -18,6 +21,22 @@ git('merge-base','--is-ancestor',pin.revision,packageBindingRevision);
 git('merge-base','--is-ancestor',packageBindingRevision,'HEAD');
 const packageBinding=ECONOMY_HARDENING_BINDING_DOMAINS['package.json'];
 assert.equal(git('ls-tree',packageBindingRevision,'--','package.json').trim(),'100644 blob '+packageBinding.currentBlob+'\tpackage.json');
+const fixtureFile='test/lib/rc1-historical-source-fixture.js';
+assert.equal(ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,'66b4c6008e6b9c192ae20006c59bc591be82a27a');
+assert.equal(ECONOMY_HARDENING_BINDING_SUCCESSOR_TREE,'38d87c3be5fdd4890ab5a9cdc7309a4332b50a14');
+assert.equal(ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,'c94bb20cf84de303a34730f4723cff17192d6923');
+assert.equal(ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE,'e0f65c75eab02d2cbdc69d1da13047217d6651ce');
+assert.equal(git('rev-parse',ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION+'^{tree}').trim(),ECONOMY_HARDENING_BINDING_SUCCESSOR_TREE);
+assert.equal(git('rev-parse',ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR+'^{tree}').trim(),ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE);
+git('merge-base','--is-ancestor',ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION);
+git('merge-base','--is-ancestor',packageBindingRevision,ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION);
+git('merge-base','--is-ancestor',ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,'HEAD');
+const fixtureSuccessor=ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS[fixtureFile];
+assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS),[fixtureFile]);
+assert.equal(git('ls-tree',ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,'--',fixtureFile).trim(),fixtureSuccessor.mode+' blob '+fixtureSuccessor.currentBlob+'\t'+fixtureFile);
+assert.equal(git('ls-tree',ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR,'--',fixtureFile).trim(),fixtureSuccessor.mode+' blob '+fixtureSuccessor.baselineBlob+'\t'+fixtureFile);
+assert.equal(sha(git('show',ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION+':'+fixtureFile)),fixtureSuccessor.currentSha256);
+assert.equal(sha(git('show',ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR+':'+fixtureFile)),fixtureSuccessor.baselineSha256);
 let positives=0,refusals=0;
 for(const row of pin.files){
  const current=git('show',pin.revision+':'+row.file),target=git('show',pin.targetRevision+':'+row.file);
