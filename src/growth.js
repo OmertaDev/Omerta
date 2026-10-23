@@ -6,7 +6,8 @@ import {
   PATHS, MISSIONS, ONBOARD_TASKS, CAREER, CONSTANTS, M4, M8, SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS,
   levelOf, dayOf, dailyJobsOf, dailyGuidanceFor, dailyBlockedFor, effStat, gunObjOf, assetEnergyCap, recruitRankOf, PACING,
   hash01, hitmanRankOf, honorTierOf, jailed, IDENTITY } from './rules.js';
-import { verifySocial, verifyPostUp, socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
+import { verifySocial, verifyPostUp, normalizeSocialPostProof, requireLinkedXIdentity,
+  socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
 import { spendOmr } from './vanity.js';
 import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
   takeBoundedAccountDailyClaim } from './accountdaily.js';
@@ -880,6 +881,25 @@ export function socialRewardsLive() {
 // PENDING_TTL (48h) lapses (which also retires any pre-maturity historical rows cleanly).
 const socialMatureMs = () => Number(process.env.SOCIAL_MATURE_MS ?? 4 * 3600000);
 const SOCIAL_PENDING_TTL = 48 * 3600000;
+const SOCIAL_PROOF_SCOPE = 'social-proof';
+const SOCIAL_PROOF_CLAIM = 'used';
+const SOCIAL_PROOF_EPOCH = 0;
+
+// account_daily_claims already provides a transactionally unique account/day receipt. Paid social
+// proofs use an impossible-for-real-accounts namespace (real account ids are UUIDs) as the account
+// key and fixed epoch day=0, which turns its primary key into one permanent global receipt per
+// normalized provider proof. A tweet can fund at most one game reward across all days.
+// The row is taken only after X verifies ownership, so another player cannot grief-lock a tweet by
+// merely registering its URL. Keeping the receipt in the payout transaction also means any later
+// ledger/persist failure rolls it back with the reward.
+const socialProofReceiptAccount = ({ provider, id }) => `social-proof:${provider}:${id}`;
+async function socialProofWasUsed(client, normalized) {
+  if (!normalized) return false;
+  return (await client.query(
+    `SELECT 1 FROM account_daily_claims
+      WHERE account_id=$1 AND day=$2 AND scope=$3 AND claim_id=$4`,
+    [socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH, SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM])).rowCount > 0;
+}
 
 export async function socialBoard(pool, accountId, ch) {
   const day = dayOf();
@@ -913,6 +933,7 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   if (!t) throw new GameError('bad_task', 'Not a word-of-mouth task.');
   const day = dayOf();
   const mature = socialMatureMs();
+  const live = (process.env.SOCIAL_VERIFY_MODE || 'off') === 'live';
   // withCharacter row-locks the character (one living character per account), so an account's
   // claims serialize — the SELECT-then-INSERT/UPDATE can't double-pay; the PK is the backstop.
   // (1) a live registration in the window? pay it if matured, else report the clock
@@ -928,9 +949,17 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     // live mode: the post must STILL be up AND (for an X-linked account) come from THEIR handle —
     // pass ctx so verifyPostUp's D2 author-binding activates on the real claim path (was dead code:
     // it only fired via a direct unit call). Trust mode short-circuits before touching ctx.
-    if ((process.env.SOCIAL_VERIFY_MODE || 'off') === 'live')
+    const normalized = live ? normalizeSocialPostProof(pend.proof ?? proof) : null;
+    if (live && await socialProofWasUsed(client, normalized))
+      throw new GameError('proof_used', 'That X post has already earned a social reward.');
+    if (live)
       await throttleXCheck(client, h.accountId, 'post', h.pool);    // the retry loop, not the happy path
     await verifyPostUp(pend.proof ?? proof, { client, accountId: h.accountId });
+    // Reserve only after the linked author has been verified. The synthetic receipt's database PK
+    // is the cross-account/cross-task race winner; exactly one concurrent claimant can proceed.
+    if (live && !await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
+      SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM))
+      throw new GameError('proof_used', 'That X post has already earned a social reward.');
     await client.query('UPDATE social_claims SET paid=true WHERE account_id=$1 AND day=$2 AND task_id=$3',
       [h.accountId, pend.day, taskId]);
     const paidIds = (await client.query(
@@ -949,6 +978,14 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   // activity feed (innerHTML), where the mod key lives in sessionStorage → unescaped markup was a
   // mod-side stored XSS → root escalation. Strip < > " ` at the source like every other display field.
   const cleanProof = cleanText(proof).slice(0, 300);
+  if (live) {
+    await requireLinkedXIdentity({ client, accountId: h.accountId });
+    const normalized = normalizeSocialPostProof(cleanProof);
+    if (!normalized)
+      throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
+    if (await socialProofWasUsed(client, normalized))
+      throw new GameError('proof_used', 'That X post has already earned a social reward.');
+  }
   await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof) VALUES ($1,$2,$3,false,$4)',
     [h.accountId, day, taskId, cleanProof || null]);
   await h.track(client, h.accountId, 'social_post', { task: taskId, proof: cleanProof });

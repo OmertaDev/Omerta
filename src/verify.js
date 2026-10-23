@@ -163,6 +163,32 @@ export async function verifySocial(taskId, acct) {
   throw new GameError('bad_task', 'Unknown social task.');
 }
 
+// Canonical proof identity for the paid X-post faucet. URLs and bare tweet ids collapse to the
+// provider/id tuple used by the database replay latch, so changing x.com → twitter.com, adding a
+// query string, or submitting the bare id cannot turn one post into several economic proofs.
+export function normalizeSocialPostProof(proof) {
+  const raw = String(proof || '').trim();
+  const pathId = raw.match(/(?:^|\/)status(?:es)?\/(\d{8,25})(?=$|[/?#])/i)?.[1];
+  const bareId = /^\d{8,25}$/.test(raw) ? raw : null;
+  const id = pathId || bareId;
+  if (!id) return null;
+  const canonicalId = BigInt(id).toString();
+  return canonicalId === '0' ? null : { provider: 'x', id: canonicalId };
+}
+
+// Paid live post verification is identity-bound. Keeping this check in the verifier as well as the
+// registration path makes every present and future payout caller fail closed for guests, Privy, or
+// a missing subject instead of falling back to a plain "tweet exists" check.
+export async function requireLinkedXIdentity(ctx = {}) {
+  if (!ctx.client || !ctx.accountId)
+    throw new GameError('verify_provider', 'Link and sign in with X before claiming a social reward.');
+  const acc = (await ctx.client.query(
+    'SELECT auth_provider, auth_subject FROM accounts WHERE id=$1', [ctx.accountId])).rows[0];
+  if (!acc || acc.auth_provider !== 'x' || !acc.auth_subject)
+    throw new GameError('verify_provider', 'Link and sign in with X before claiming a social reward.');
+  return String(acc.auth_subject);
+}
+
 // THE 4-HOUR STAND (founder-directed anti-abuse for Spread-the-Word): when a matured share is
 // claimed, live mode re-checks that the registered post STILL EXISTS on X — post-and-delete pays
 // nothing. Trust mode skips the API check but the 4h clock itself is enforced in growth.js either
@@ -171,25 +197,17 @@ export async function verifyPostUp(proof, ctx = {}) {
   const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
   if (mode !== 'live') return true;
   if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
-  const s = String(proof || '');
-  const id = s.match(/status(?:es)?\/(\d{8,25})/)?.[1] || s.match(/^(\d{8,25})$/)?.[1];
-  if (!id) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
-  // (D2) for an X-linked account we KNOW the player's X id, so bind the post to THEM — upgrades
-  // "a post with this id exists" to "THIS player's post exists", blocking a payout for registering
-  // a celebrity's (or anyone's) permanent tweet. Guest/Privy accounts keep the plain existence check.
-  let wantAuthor = null;
-  if (ctx.client && ctx.accountId) {
-    const acc = (await ctx.client.query('SELECT auth_provider, auth_subject FROM accounts WHERE id=$1', [ctx.accountId])).rows[0];
-    if (acc && acc.auth_provider === 'x' && acc.auth_subject) wantAuthor = String(acc.auth_subject);
-  }
-  const url = `https://api.x.com/2/tweets/${id}` + (wantAuthor ? '?tweet.fields=author_id' : '');
+  const normalized = normalizeSocialPostProof(proof);
+  if (!normalized) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
+  const wantAuthor = await requireLinkedXIdentity(ctx);
+  const url = `https://api.x.com/2/tweets/${normalized.id}?tweet.fields=author_id`;
   // xfetch maps 429/5xx/network/timeout to 'verify_busy' BEFORE we get here — so the post_gone
   // below is only ever a DEFINITIVE answer (X responded and the tweet isn't there), never an
   // outage misread as a deleted post that would scare a legit sharer.
   const res = await xfetch(url, { headers: { authorization: `Bearer ${process.env.X_BEARER_TOKEN}` } });
   const j = await res.json().catch(() => ({}));
   if (!res.ok || !j.data || j.errors) throw new GameError('post_gone', 'That post is gone — it has to stand to pay.');
-  if (wantAuthor && String(j.data.author_id || '') !== wantAuthor)
+  if (String(j.data.author_id || '') !== wantAuthor)
     throw new GameError('not_your_post', "That post has to come from your linked X account to pay.");
   return true;
 }

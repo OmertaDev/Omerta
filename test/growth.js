@@ -1546,15 +1546,33 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
 // Stub the X API so the check is deterministic (no network). ──
 {
   process.env.SOCIAL_VERIFY_MODE = 'live'; process.env.X_BEARER_TOKEN = 'test-bearer';
+  process.env.X_CHECK_CD_MS = '0';
   const realFetch = global.fetch;
   let stubAuthor = '777';
-  global.fetch = async () => ({ status: 200, ok: true, json: async () => ({ data: { id: '12345678901234', author_id: stubAuthor } }) });
+  global.fetch = async (url) => ({ status: 200, ok: true, json: async () => ({
+    data: { id: String(url).match(/\/tweets\/(\d+)/)?.[1], author_id: stubAuthor },
+  }) });
   try {
+    // Live payouts must be attributable to an X identity. A valid tweet URL is still worthless for
+    // guest and Privy accounts, and refusal creates neither a pending claim nor a ledger row.
+    for (const [name, provider, subject] of [
+      ['Guest Proof Gus', 'guest', null], ['Privy Proof Pia', 'privy', 'did:privy:proof-pia'],
+    ]) {
+      const player = await mk(name);
+      if (provider !== 'guest') await pool.query(
+        'UPDATE accounts SET auth_provider=$2, auth_subject=$3 WHERE id=$1', [player.accountId, provider, subject]);
+      const refused = await call('POST', '/v1/social/sw_post/claim', {
+        token: player.token, body: { proof: 'https://x.com/omerta/status/11111111111111' },
+      });
+      assert.equal(refused.body.error, 'verify_provider', `${provider} social cash requires a linked X identity`);
+      assert.equal(Number((await pool.query(
+        'SELECT COUNT(*) n FROM social_claims WHERE account_id=$1', [player.accountId])).rows[0].n), 0,
+      'a refused identity leaves no pending proof');
+    }
     // H1: a share registered with NO proof can NEVER pay in live mode (the exact production break — the
     // old client posted an empty body, so verifyPostUp(null) threw need_proof and nobody was ever paid).
     const noProof = await mk('No-Proof Ned');
-    await call('POST', '/v1/social/sw_post/claim', { token: noProof.token }); // register, no proof (the old client)
-    await matureSw(noProof.id, 'sw_post');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='776' WHERE id=$1", [noProof.accountId]);
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: noProof.token })).body.error, 'need_proof',
       'live mode: a proof-less share can never pay — the client now sends the post link');
     // H2: an X-linked account whose post comes from THEIR handle pays (author-binding satisfied on the real path)
@@ -1566,17 +1584,80 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     await matureSw(linked.id, 'sw_post');
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.cash, SOCIAL_TASKS.CASH,
       'live mode: a matured post from the linked X account pays (H2 author-binding wired through the claim path)');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.error, 'claimed',
+      'the linked author is paid only once for the task');
+
+    // The proof receipt is provider/id based, not URL-string or account based. Model an X identity
+    // moving to a new game account: the same tweet stays spent under a twitter.com/statuses alias.
+    await pool.query("UPDATE accounts SET auth_provider='guest', auth_subject=id WHERE id=$1", [linkedAcct]);
+    const successor = await mk('Proof Successor');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='777' WHERE id=$1", [successor.accountId]);
+    assert.equal((await call('POST', '/v1/social/sw_invite/claim', { token: successor.token,
+      body: { proof: 'https://twitter.com/lou/statuses/12345678901234?ref=replay' } })).body.error, 'proof_used',
+    'one normalized tweet cannot pay a second account');
+
+    // The receipt uses fixed epoch day=0, so midnight cannot refresh a tweet. The URL and bare id
+    // normalize to the same proof across both task and day boundaries.
+    const reuser = await mk('Proof Reuser');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='889' WHERE id=$1", [reuser.accountId]);
+    stubAuthor = '889';
+    await call('POST', '/v1/social/sw_post/claim', { token: reuser.token,
+      body: { proof: 'https://x.com/reuser/status/12345678901236?s=20' } });
+    await matureSw(reuser.id, 'sw_post');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: reuser.token })).body.cash, SOCIAL_TASKS.CASH);
+    const realNow = Date.now;
+    Date.now = () => realNow() + 86400000;
+    try {
+      assert.equal((await call('POST', '/v1/social/sw_boost/claim', { token: reuser.token,
+        body: { proof: '00012345678901236' } })).body.error, 'proof_used',
+      'one tweet can fund at most one reward ever, including a leading-zero alias on the next UTC day');
+    } finally { Date.now = realNow; }
+
     // H2: registering someone ELSE's tweet (a different author_id) pays NOTHING
     const faker = await mk('Faker Frank');
     const fakerAcct = (await pool.query(`SELECT account_id a FROM characters WHERE id='${faker.id}'`)).rows[0].a;
     await pool.query(`UPDATE accounts SET auth_provider='x', auth_subject='888' WHERE id='${fakerAcct}'`);
     stubAuthor = '999'; // the post is NOT Frank's
-    await call('POST', '/v1/social/sw_post/claim', { token: faker.token, body: { proof: 'https://x.com/celeb/status/12345678901234' } });
+    await call('POST', '/v1/social/sw_post/claim', { token: faker.token, body: { proof: 'https://x.com/celeb/status/12345678901235' } });
     await matureSw(faker.id, 'sw_post');
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: faker.token })).body.error, 'not_your_post',
       "live mode binds the post to the player's linked X account (registering a celebrity's tweet earns nothing)");
+
+    // pg-mem does not serialize SELECT FOR UPDATE, so two task routes for one linked account reach
+    // the global receipt concurrently. Its PK must elect exactly one payout and keep cash ledger-exact.
+    // Native Postgres additionally serializes this same-account case; duplicate linked X identities
+    // across accounts are independently impossible under accounts(auth_provider,auth_subject) UNIQUE.
+    const race = await mk('Proof Race Rita');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='990' WHERE id=$1", [race.accountId]);
+    const raceProof = '12345678901237';
+    stubAuthor = '990';
+    const raceCashBefore = Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [race.id])).rows[0].cash);
+    await call('POST', '/v1/social/sw_post/claim', { token: race.token,
+      body: { proof: `https://x.com/race/status/${raceProof}` } });
+    await call('POST', '/v1/social/sw_invite/claim', { token: race.token,
+      body: { proof: `https://twitter.com/race/statuses/${raceProof}?s=20` } });
+    await matureSw(race.id, 'sw_post'); await matureSw(race.id, 'sw_invite');
+    const raced = await Promise.all([
+      call('POST', '/v1/social/sw_post/claim', { token: race.token }),
+      call('POST', '/v1/social/sw_invite/claim', { token: race.token }),
+    ]);
+    assert.equal(raced.filter((x) => x.code === 200).length, 1, JSON.stringify(raced));
+    assert.equal(raced.filter((x) => x.body.error === 'proof_used').length, 1, JSON.stringify(raced));
+    const raceBook = (await pool.query(
+      `SELECT COUNT(*)::int n, COALESCE(SUM(amount),0) amount FROM transactions
+        WHERE character_id=$1 AND currency='cash' AND reason LIKE 'social:%'`, [race.id])).rows[0];
+    assert.deepEqual([Number(raceBook.n), Number(raceBook.amount)], [1, SOCIAL_TASKS.CASH],
+      'concurrent duplicate proof creates exactly one social ledger row');
+    assert.equal(Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [race.id])).rows[0].cash),
+      raceCashBefore + SOCIAL_TASKS.CASH, 'concurrent duplicate proof moves cash by exactly its one ledger row');
+    assert.equal(Number((await pool.query(
+      `SELECT COUNT(*) n FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      [`social-proof:x:${raceProof}`])).rows[0].n), 1,
+    'the permanent synthetic proof namespace contains exactly one receipt');
   } finally {
-    global.fetch = realFetch; delete process.env.X_BEARER_TOKEN; process.env.SOCIAL_VERIFY_MODE = 'trust';
+    global.fetch = realFetch; delete process.env.X_BEARER_TOKEN; delete process.env.X_CHECK_CD_MS;
+    process.env.SOCIAL_VERIFY_MODE = 'trust';
   }
 }
 

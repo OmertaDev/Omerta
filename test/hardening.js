@@ -1021,14 +1021,15 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     const { verifyPostUp, verifySocial } = await import('../src/verify.js');
     const postUrl = 'https://x.com/who/status/12345678901234';
     const errOf = async (fn) => { try { await fn(); return null; } catch (e) { return e.code; } };
-    xmock.tweet = () => jres(429, {});
-    assert.equal(await errOf(() => verifyPostUp(postUrl)), 'verify_busy', 'a rate limit is BUSY — the registration stands');
-    xmock.tweet = () => { throw new Error('network down'); };
-    assert.equal(await errOf(() => verifyPostUp(postUrl)), 'verify_busy', 'a network failure is BUSY too');
-    xmock.tweet = () => jres(200, { errors: [{ title: 'Not Found' }] });
-    assert.equal(await errOf(() => verifyPostUp(postUrl)), 'post_gone', 'a DEFINITIVE not-found is post_gone');
-    // author binding: the upgraded account (X id 888) can only be paid for ITS OWN post
     const boundAcct = (await pool.query("SELECT id FROM accounts WHERE auth_provider='x' AND auth_subject='888'")).rows[0];
+    const boundCtx = { client: pool, accountId: boundAcct.id };
+    xmock.tweet = () => jres(429, {});
+    assert.equal(await errOf(() => verifyPostUp(postUrl, boundCtx)), 'verify_busy', 'a rate limit is BUSY — the registration stands');
+    xmock.tweet = () => { throw new Error('network down'); };
+    assert.equal(await errOf(() => verifyPostUp(postUrl, boundCtx)), 'verify_busy', 'a network failure is BUSY too');
+    xmock.tweet = () => jres(200, { errors: [{ title: 'Not Found' }] });
+    assert.equal(await errOf(() => verifyPostUp(postUrl, boundCtx)), 'post_gone', 'a DEFINITIVE not-found is post_gone');
+    // author binding: the upgraded account (X id 888) can only be paid for ITS OWN post
     xmock.tweet = () => jres(200, { data: { id: '12345678901234', author_id: '999' } });
     assert.equal(await errOf(() => verifyPostUp(postUrl, { client: pool, accountId: boundAcct.id })),
       'not_your_post', "someone else's tweet doesn't pay an X-linked account");
