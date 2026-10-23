@@ -1555,7 +1555,7 @@ function pausePlayerRefundBeforeSend(funderId) {
     async reached(requestSettled) {
       const deadline = Date.now() + 5000;
       while (reachedPid === null && Date.now() < deadline && !requestSettled()) await new Promise((r) => setTimeout(r, 25));
-      if (!Number.isInteger(reachedPid) || reachedPid < 1) throw new Error('bounty player never reached the exact paused refund boundary');
+      if (!Number.isInteger(reachedPid) || reachedPid < 1) throw new Error('player never reached the exact paused refund boundary');
       return reachedPid;
     },
     resume,
@@ -1572,7 +1572,7 @@ async function waitForHolderBlockedByPlayer(holderPid, playerPid, queryText) {
     if (rows.length === 1) return;
     await new Promise((r) => setTimeout(r, 25));
   }
-  throw new Error(`bounty holder PID ${holderPid} never blocked behind paused player PID ${playerPid}`);
+  throw new Error(`fixture holder PID ${holderPid} never blocked behind paused player PID ${playerPid}`);
 }
 const waitForPlayerRefundBlockedBy = async ({ holderPid, startedAfter, requestSettled, label }) => {
   const deadline = Date.now() + 5000;
@@ -1743,7 +1743,9 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 // about a live bettor and wrong about the estate path, the same "right about itself, wrong about its
 // sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net — driven in §9g
 // through the one route that reaches it (the mod-kill), because "same shape, same remedy" is a claim
-// about the code, and only a drive turns it into a fact.
+// about the code, and only a drive turns it into a fact. The harness pauses the estate immediately
+// before its bettor refund, establishes the holder's reverse wait, then releases the fresh production
+// query into the complete cycle so the intended detector chooses the estate as the victim.
 console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { runLedgerInvariants } = await import('../src/invariants.js');
@@ -1877,9 +1879,7 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 // dying principal's character row, runs the estate, and maps 40P01 through deadlockToRetry.
 //
 // Driven by HOLDING the bettor's row, never by racing a real resolve — a race depends on two backends
-// overlapping inside a millisecond-wide window, and timing luck reads exactly like a proof. The
-// player is given the full second before the holder closes the cycle, so Postgres aborts the PLAYER
-// (whoever started waiting first) and the victim is deterministic.
+// overlapping inside a millisecond-wide window, and timing luck reads exactly like a proof.
 console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { runLedgerInvariants } = await import('../src/invariants.js');
