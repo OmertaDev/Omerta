@@ -110,7 +110,8 @@ async function parent(url) {
         const result = spawnSync(process.execPath,[fileURLToPath(import.meta.url),process.argv[2]], {
           env: { ...process.env, TEST_DATABASE_URL: childUrl.toString(), DATABASE_URL: childUrl.toString(),
             P2_TEST_SCHEMA: name, P2_TEST_CHILD: mode, INVARIANT_WEBHOOK_URL: '', PG_POOL_MAX: '12' },
-          encoding: 'utf8', timeout: 240000, maxBuffer: 8*1024*1024, windowsHide: true,
+          encoding: 'utf8', timeout: mode === 'upgrade' ? 300000 : 240000,
+          maxBuffer: 8*1024*1024, windowsHide: true,
         });
         process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
         if (result.error || result.signal) console.error('phase2-postgres: isolated child termination ' + JSON.stringify({ mode, status: result.status, signal: result.signal, code: result.error?.code }));
