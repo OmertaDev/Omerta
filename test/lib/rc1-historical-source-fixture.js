@@ -85,6 +85,25 @@ const npcEntries = new Set([
 ]);
 const entries = new Set([...npcEntries, 'test/rc1-lifecycle-applicability.js',
   'test/rc1-checkpoint-recovery-review.js', 'test/rc1-world-backlog-review.js']);
+const currentMarketEntry = 'test/rc1-world-market-resources.js';
+const currentMarketApplication = Object.freeze({
+  file: 'src/goodsmarket.js', revision: '0e5785f9d9ea1d1162abc3fd6c27f59f6a0ea341',
+  blob: '1565fb9c55fb37b0a58ff441e052587f9ade42ed',
+  sha256: '53ae926ed2ac223ee65bc1383f7156801cf1cbab4204814cb16441059f4f3345',
+});
+const currentMarketHelper = Object.freeze({
+  file: 'tools/rc1-world-market-resources.js', revision: '0e5785f9d9ea1d1162abc3fd6c27f59f6a0ea341',
+  blob: '81813d6fc2b93bc3aa5a04fb9c9235083f8793b4',
+  sha256: '6e5162c7be310d06f5104ae2b53ea68b4362e68ce493290a8bf674296b21f5f0',
+});
+const currentHelperProfiles = Object.freeze({
+  [currentMarketEntry]: currentMarketHelper,
+  'test/rc1-player-car-provenance.js': Object.freeze({
+    file: 'tools/rc1-player-car-provenance.js', revision: '0e5785f9d9ea1d1162abc3fd6c27f59f6a0ea341',
+    blob: '2f0c03cb6a0482633517ade3c3e2abce179abb54',
+    sha256: 'e2a7e46c8f24c61a4d207d321fa3c1d37cfc70cc87e689a461e6e3b03894c688',
+  }),
+});
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const helperPath = fileURLToPath(import.meta.url);
 const childFlag = '--rc1-historical-source-fixture';
@@ -132,6 +151,16 @@ function blob(file, sources) {
     content.set(id, bytes);
   }
   return content.get(id);
+}
+function pinnedCurrentMarketApplication(file) {
+  if (target !== currentMarketEntry || file !== currentMarketApplication.file) return null;
+  const spec = currentMarketApplication;
+  assert.equal(String(git(['rev-parse', `${spec.revision}:${file}`])).trim(), spec.blob,
+    'Current market fixture application binding changed');
+  const bytes = git(['cat-file', 'blob', spec.blob]);
+  assert.equal(blobHash(bytes), spec.blob, 'Current market fixture application Git blob changed');
+  assert.equal(sha256(bytes), spec.sha256, 'Current market fixture application source changed');
+  return bytes;
 }
 function uniformHistoricalInput(file, input) {
   const raw = String(input);
@@ -232,6 +261,8 @@ function currentHistoricalApplicationSource(file,input){
 
 function historical(file) {
   loadInventories();
+  const currentMarket = pinnedCurrentMarketApplication(file);
+  if (currentMarket) return currentMarket;
   if (!checked.has(file)) {
     const actualCurrentRaw = String(originalRead(path.join(root, file)));
     const selected = currentHistoricalApplicationSource(file, hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentRaw) : continuousCityHistoricalInput(file, actualCurrentRaw));
@@ -320,7 +351,13 @@ export async function executeHistoricalSourceFixture() {
     for (const name of ['Pool', 'Client']) assert.equal(namespace[name], pg[name], 'Cached named pg export bypassed the historical guard');
     await import(pathToFileURL(path.join(root, target)).href + '?rc1HistoricalBody=' + HISTORICAL_SOURCE_FIXTURE_REVISION);
     assert.deepEqual(attempts, { database: 0, network: 0 }, 'Pure historical control attempted database or network access');
-    console.log('PASS_HISTORICAL_FIXTURE: ' + target + '; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification');
+    const currentProfile = currentHelperProfiles[target];
+    const profile = target === currentMarketEntry
+      ? 'exact fe4 application inputs plus pinned current goodsmarket; pinned economy-market helper'
+      : currentProfile ? 'exact fe4 application inputs; pinned ' + currentProfile.file
+        : 'exact fe4 application inputs; b12 tools';
+    const qualification = currentProfile ? 'no native/deployed qualification' : 'no current native or financial qualification';
+    console.log('PASS_HISTORICAL_FIXTURE: ' + target + '; ' + profile + '; database/network attempts=0/0; ' + qualification);
   } finally {
     fs.readFileSync = originalRead;
     fs.promises.readFile = originalPromiseRead;
@@ -627,9 +664,23 @@ if (cold) {
       return { ...result, source: historical(file) };
     }
     if (file?.startsWith('tools/') && /\.[cm]?js$/.test(file)) {
+      const profile = currentHelperProfiles[target];
+      if (profile?.file === file) {
+        const spec = profile, pin = composedHistoricalHelperPins[file];
+        assert.deepEqual({ blob: spec.blob, sha256: spec.sha256 }, pin, 'Current fixture helper composition pin changed');
+        assert.equal(String(git(['rev-parse', `${spec.revision}:${file}`])).trim(), spec.blob,
+          'Current fixture helper revision binding changed');
+        const source = git(['cat-file', 'blob', spec.blob]);
+        assert.equal(blobHash(source), spec.blob, 'Current fixture helper Git blob changed');
+        assert.equal(sha256(source), spec.sha256, 'Current fixture helper source changed');
+        return { ...nextLoad(url, context), source };
+      }
       const raw = economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file)))), selected = composedHistoricalHelperSource(file, raw);
       if (selected) return { ...nextLoad(url, context), source: selected };
-      assert.equal(sha256(canonical(raw)), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
+      const frozen = blob(file, release), reviewed = canonical(raw);
+      assert.equal(sha256(reviewed), sha256(frozen), 'Reviewed tool implementation changed: ' + file);
+      assert.equal(reviewed, String(frozen), 'Reviewed tool bytes changed: ' + file);
+      return { ...nextLoad(url, context), source: frozen };
     }
     return nextLoad(url, context);
   } });
