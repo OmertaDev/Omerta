@@ -2156,11 +2156,37 @@ export const ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS = {
     ]
   }
 };
+export const ECONOMY_HARDENING_COMMERCE_ADMISSION_REVISION = "8b4a40ef54b7fd8734d7e91ab01da12bccee5146";
+export const ECONOMY_HARDENING_COMMERCE_ADMISSION_TREE = "fc6043f86c2f31091a7677717356b8e1932e1252";
+export const ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR = "6c2a948d40494b6cd5ea890b989880539c9e08a6";
+export const ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR_TREE = "e2f36ffce35628c6951e3c7ac61cc841d3d4bda8";
+export const ECONOMY_HARDENING_COMMERCE_ADMISSION_PHASE = 'exact-economy-commerce-admission-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS = {
+  "tools/commerce-source-compatibility.js": {
+    "mode": "100644",
+    "currentSha256": "8aad0d3ed017d56a99b295647bc3de2f03e12ddcedcdd0836a798d92d104e83c",
+    "currentBlob": "362e18d42874f6b8272d6a3c378a5a587a3a8f37",
+    "baselineSha256": "9d38b52791e0ee3856b0c924c8ab95930eaab3c91d8c81fea0733ff5007c97bc",
+    "baselineBlob": "930d917335182eca8cd3867f173936c440ce1f7a",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "// Template only. Literal placeholders intentionally refuse import; no native or release authority.\nimport assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport {economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';\nexport const COMMERCE_SOURCE_REVISION=\"da2d9bb64c5fb2fd3409a64d2b0e277421ce281c\";\nexport const COMMERCE_SOURCE_PREDECESSOR=\"dadcfde398c44d7634d709354aabde1d67b724e5\";\nexport const COMMERCE_OWNED_CURRENT_SOURCE_REVISION=\"29598e24bf93813541730aaafb5a556066f7d637\";\n",
+        "baseline": "// Template only. Literal placeholders intentionally refuse import; no native or release authority.\nimport assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nexport const COMMERCE_SOURCE_REVISION=\"da2d9bb64c5fb2fd3409a64d2b0e277421ce281c\";\nexport const COMMERCE_SOURCE_PREDECESSOR=\"dadcfde398c44d7634d709354aabde1d67b724e5\";\nexport const COMMERCE_OWNED_CURRENT_SOURCE_REVISION=\"29598e24bf93813541730aaafb5a556066f7d637\";\n"
+      },
+      {
+        "current": "const blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\\0').update(t).digest('hex');\nfunction exactCurrent(input,p){assert.equal(typeof input,'string');assert(uniform(input),'Mixed or bare-CR Commerce source endings');const text=lf(input);assert.equal(hash(text),p.currentSha256,'Complete Commerce source drift');assert.equal(blob(text),p.currentBlob,'Complete Commerce Git blob drift');return text;}\nexport function assertCommerceSourceTransfer(file,input){assert(Object.hasOwn(COMMERCE_SOURCE_DOMAINS,file),'Unknown Commerce source domain');const p=COMMERCE_SOURCE_DOMAINS[file],text=exactCurrent(input,p);let baselineText=text;for(const h of p.inverses){assert(h.current);assert.equal(baselineText.split(h.current).length,2,'Exact Commerce inverse occurs once');baselineText=baselineText.replace(h.current,()=>h.baseline);}assert.equal(hash(baselineText),p.baselineSha256,'Complete Commerce baseline drift');assert.equal(blob(baselineText),p.baselineBlob,'Complete Commerce baseline Git blob drift');return{baselineText,sourceRevision:COMMERCE_SOURCE_REVISION,predecessorRevision:COMMERCE_SOURCE_PREDECESSOR,phase:COMMERCE_SOURCE_PHASE};}\nexport function assertCommerceOwnedSource(file,input){assert(Object.hasOwn(COMMERCE_OWNED_CURRENT_SOURCES,file),'Unknown Commerce owned current source');assert.equal(typeof input,'string');exactCurrent(economyHardeningSourceBaseline(file,input),COMMERCE_OWNED_CURRENT_SOURCES[file]);return{sourceRevision:COMMERCE_OWNED_CURRENT_SOURCE_REVISION,phase:COMMERCE_SOURCE_PHASE};}\nexport function commerceSourceBaseline(file,input){if(!Object.hasOwn(COMMERCE_SOURCE_DOMAINS,file)||typeof input!=='string')return input;assert(uniform(input),'Mixed or bare-CR Commerce source endings');return hash(lf(input))===COMMERCE_SOURCE_DOMAINS[file].currentSha256?assertCommerceSourceTransfer(file,input).baselineText:input;}\n",
+        "baseline": "const blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\\0').update(t).digest('hex');\nfunction exactCurrent(input,p){assert.equal(typeof input,'string');assert(uniform(input),'Mixed or bare-CR Commerce source endings');const text=lf(input);assert.equal(hash(text),p.currentSha256,'Complete Commerce source drift');assert.equal(blob(text),p.currentBlob,'Complete Commerce Git blob drift');return text;}\nexport function assertCommerceSourceTransfer(file,input){assert(Object.hasOwn(COMMERCE_SOURCE_DOMAINS,file),'Unknown Commerce source domain');const p=COMMERCE_SOURCE_DOMAINS[file],text=exactCurrent(input,p);let baselineText=text;for(const h of p.inverses){assert(h.current);assert.equal(baselineText.split(h.current).length,2,'Exact Commerce inverse occurs once');baselineText=baselineText.replace(h.current,()=>h.baseline);}assert.equal(hash(baselineText),p.baselineSha256,'Complete Commerce baseline drift');assert.equal(blob(baselineText),p.baselineBlob,'Complete Commerce baseline Git blob drift');return{baselineText,sourceRevision:COMMERCE_SOURCE_REVISION,predecessorRevision:COMMERCE_SOURCE_PREDECESSOR,phase:COMMERCE_SOURCE_PHASE};}\nexport function assertCommerceOwnedSource(file,input){assert(Object.hasOwn(COMMERCE_OWNED_CURRENT_SOURCES,file),'Unknown Commerce owned current source');exactCurrent(input,COMMERCE_OWNED_CURRENT_SOURCES[file]);return{sourceRevision:COMMERCE_OWNED_CURRENT_SOURCE_REVISION,phase:COMMERCE_SOURCE_PHASE};}\nexport function commerceSourceBaseline(file,input){if(!Object.hasOwn(COMMERCE_SOURCE_DOMAINS,file)||typeof input!=='string')return input;assert(uniform(input),'Mixed or bare-CR Commerce source endings');return hash(lf(input))===COMMERCE_SOURCE_DOMAINS[file].currentSha256?assertCommerceSourceTransfer(file,input).baselineText:input;}\n"
+      }
+    ]
+  }
+};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), ...Object.values(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS), ...Object.values(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS), ...Object.values(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS),
+  ...Object.values(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
@@ -2174,6 +2200,7 @@ Object.freeze(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS);
 const lf = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -2392,9 +2419,35 @@ export function assertEconomyHardeningCampaignExpiryTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningCommerceAdmissionTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS, file),
+    'Unknown economy-hardening commerce admission domain');
+  assert(uniform(input), 'Uniform whole economy-hardening commerce admission LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening commerce admission source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening commerce admission blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1,
+      'Missing or duplicate economy-hardening commerce admission inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256,
+    'Complete economy-hardening commerce admission predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob,
+    'Complete economy-hardening commerce admission predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256,
+    sourceRevision: ECONOMY_HARDENING_COMMERCE_ADMISSION_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR,
+    inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_COMMERCE_ADMISSION_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningCommerceAdmissionTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningCampaignExpiryTransfer(file, text).baselineText;
