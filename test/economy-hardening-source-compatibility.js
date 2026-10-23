@@ -21,10 +21,13 @@ import {
   ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION, ECONOMY_HARDENING_DIRECTOR_FIXTURE_TREE,
   ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR_TREE,
   ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE, ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS,
+  ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION, ECONOMY_HARDENING_PHASE2_TIMEOUT_TREE,
+  ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR, ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR_TREE,
+  ECONOMY_HARDENING_PHASE2_TIMEOUT_PHASE, ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS,
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer,
   assertEconomyHardeningBindingSuccessorTransfer, assertEconomyHardeningRepairTransfer,
   assertEconomyHardeningRepairSuccessorTransfer, assertEconomyHardeningReleaseRepairTransfer,
-  assertEconomyHardeningDirectorFixtureTransfer,
+  assertEconomyHardeningDirectorFixtureTransfer, assertEconomyHardeningPhase2TimeoutTransfer,
   economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
@@ -68,6 +71,7 @@ const releaseRepairFiles = [
   'tools/pgcheck.js',
 ];
 const directorFixtureFiles = ['test/director-migration.js'];
+const phase2TimeoutFiles = ['test/phase2-postgres.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -142,12 +146,23 @@ assert.equal(ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION, '5b3935106be36705186be
 assert.equal(ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR, 'ee8518fc930515b3d2d19a50f236107ae34cb956');
 execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR,
   ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION]);
-execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION, 'HEAD']);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION,
+  ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR]);
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION}^{tree}`).trim(),
   ECONOMY_HARDENING_DIRECTOR_FIXTURE_TREE);
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR}^{tree}`).trim(),
   ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE, /exact-economy-director-fixture-source-transfer-only/);
+assert.equal(ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION, '363a0b6b772111e6e07d05ea8bd55147a3f37528');
+assert.equal(ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR, '34cd8d8d49d2e0aba0f587995f9d7e2a6508cf27');
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR,
+  ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION}^{tree}`).trim(),
+  ECONOMY_HARDENING_PHASE2_TIMEOUT_TREE);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR}^{tree}`).trim(),
+  ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR_TREE);
+assert.match(ECONOMY_HARDENING_PHASE2_TIMEOUT_PHASE, /exact-economy-phase2-upgrade-timeout-source-transfer-only/);
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_SOURCE_DOMAINS), files);
 assert(Object.isFrozen(ECONOMY_HARDENING_SOURCE_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_DOMAINS), bindingFiles);
@@ -162,14 +177,18 @@ assert.deepEqual(Object.keys(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS), releaseR
 assert(Object.isFrozen(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), directorFixtureFiles);
 assert(Object.isFrozen(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS));
+assert.deepEqual(Object.keys(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS), phase2TimeoutFiles);
+assert(Object.isFrozen(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
   const physical = lf(fs.readFileSync(file, 'utf8'));
+  const phase2TimeoutSealed = phase2TimeoutFiles.includes(file)
+    ? assertEconomyHardeningPhase2TimeoutTransfer(file, physical).baselineText : physical;
   const releaseRepaired = releaseRepairFiles.includes(file)
-    ? assertEconomyHardeningReleaseRepairTransfer(file, physical).baselineText : physical;
+    ? assertEconomyHardeningReleaseRepairTransfer(file, phase2TimeoutSealed).baselineText : phase2TimeoutSealed;
   const repairSuccessorAuthored = repairSuccessorFiles.includes(file)
     ? assertEconomyHardeningRepairSuccessorTransfer(file, releaseRepaired).baselineText : releaseRepaired;
   const repairedAuthored = repairFiles.includes(file)
@@ -194,7 +213,7 @@ for (const file of files) {
   assert.equal(economyHardeningSourceBaseline(file, current), baseline);
   assert.equal(economyHardeningSourceBaseline(file, current.replaceAll('\n', '\r\n')), baseline);
   assert.equal(economyHardeningSourceBaseline(file, baseline), baseline);
-  if (bindingFiles.includes(file) || repairFiles.includes(file)) {
+  if (bindingFiles.includes(file) || repairFiles.includes(file) || phase2TimeoutFiles.includes(file)) {
     assert.equal(economyHardeningSourceBaseline(file, physical), baseline);
     assert.equal(economyHardeningSourceBaseline(file, physical.replaceAll('\n', '\r\n')), baseline);
     positives += 2;
@@ -406,6 +425,51 @@ for (const file of directorFixtureFiles) {
     hunks++;
   }
 }
+for (const file of phase2TimeoutFiles) {
+  const pin = ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS[file];
+  const current = git('show', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION}:${file}`);
+  const baseline = git('show', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR}:${file}`);
+  const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  assert.equal(physical, current, 'Physical Phase 2 timeout source must remain exact: ' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(),
+    ['mode', 'currentSha256', 'currentBlob', 'baselineSha256', 'baselineBlob', 'contextLines', 'inverses'].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION}:${file}`).trim(), pin.currentBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR}:${file}`).trim(), pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION, '--', file).trim().split(/\s+/)[0], pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR,
+    ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomyHardeningPhase2TimeoutTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.sourceRevision, ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION);
+    assert.equal(transfer.predecessorRevision, ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR);
+    assert.equal(economyHardeningSourceBaseline(file, input), historical); positives++;
+  }
+  assert.equal(economyHardeningSourceBaseline(file, baseline), historical); positives++;
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) {
+    assert.throws(() => assertEconomyHardeningPhase2TimeoutTransfer(file, changed));
+    assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+  }
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1,
+      'Unique complete Phase 2 timeout inverse required: ' + file);
+    const changedInputs = [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current)];
+    if (pin.inverses.length > 1) changedInputs.push(current.replace(inverse.current, () => inverse.baseline));
+    changedInputs.push(current.replace(inverse.current, () => inverse.current.replace(/\S/, '?')));
+    for (const changed of changedInputs) {
+      assert.throws(() => assertEconomyHardeningPhase2TimeoutTransfer(file, changed));
+      assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
+}
 for (const file of bindingFiles) {
   const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], physical = lf(fs.readFileSync(file, 'utf8'));
   const current = successorFiles.includes(file)
@@ -479,9 +543,10 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyHardeningRepairSuccessorTransfer(file, text));
   assert.throws(() => assertEconomyHardeningReleaseRepairTransfer(file, text));
   assert.throws(() => assertEconomyHardeningDirectorFixtureTransfer(file, text));
+  assert.throws(() => assertEconomyHardeningPhase2TimeoutTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 217, 'positive control count drifted');
-assert.equal(refusals, 679, 'refusal control count drifted');
-assert.equal(hunks, 322, 'inverse-hunk control count drifted');
+assert.equal(positives, 222, 'positive control count drifted');
+assert.equal(refusals, 690, 'refusal control count drifted');
+assert.equal(hunks, 323, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);

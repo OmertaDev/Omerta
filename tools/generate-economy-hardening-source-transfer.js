@@ -27,6 +27,10 @@ const directorFixtureRevision = '5b3935106be36705186be940f61b50e334fd98ba';
 const directorFixtureRevisionTree = 'a47cd6c1d2e8f70ba6822b8dbf6b93f36941d73d';
 const directorFixturePredecessor = 'ee8518fc930515b3d2d19a50f236107ae34cb956';
 const directorFixturePredecessorTree = 'b3e9dc7c9f30c82cbac6030c9c96b134a3ac2e3b';
+const phase2TimeoutRevision = '363a0b6b772111e6e07d05ea8bd55147a3f37528';
+const phase2TimeoutRevisionTree = 'e1b87d1c63ae423e7664e313db6436bc93410831';
+const phase2TimeoutPredecessor = '34cd8d8d49d2e0aba0f587995f9d7e2a6508cf27';
+const phase2TimeoutPredecessorTree = 'dc6184dc54aba8d77b43b5e6b19f1fff1d0bef8a';
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -45,7 +49,9 @@ execFileSync('git', ['merge-base', '--is-ancestor', repairSuccessorRevision, rel
 execFileSync('git', ['merge-base', '--is-ancestor', releaseRepairPredecessor, releaseRepairRevision]);
 execFileSync('git', ['merge-base', '--is-ancestor', releaseRepairRevision, directorFixturePredecessor]);
 execFileSync('git', ['merge-base', '--is-ancestor', directorFixturePredecessor, directorFixtureRevision]);
-execFileSync('git', ['merge-base', '--is-ancestor', directorFixtureRevision, 'HEAD']);
+execFileSync('git', ['merge-base', '--is-ancestor', directorFixtureRevision, phase2TimeoutPredecessor]);
+execFileSync('git', ['merge-base', '--is-ancestor', phase2TimeoutPredecessor, phase2TimeoutRevision]);
+execFileSync('git', ['merge-base', '--is-ancestor', phase2TimeoutRevision, 'HEAD']);
 assert.equal(git('rev-parse', `${bindingRevision}^{tree}`).trim(), bindingRevisionTree,
   'Frozen economy binding revision tree changed');
 assert.equal(git('rev-parse', `${bindingSuccessorRevision}^{tree}`).trim(), bindingSuccessorTree,
@@ -66,6 +72,10 @@ assert.equal(git('rev-parse', `${directorFixtureRevision}^{tree}`).trim(), direc
   'Frozen economy director fixture revision tree changed');
 assert.equal(git('rev-parse', `${directorFixturePredecessor}^{tree}`).trim(), directorFixturePredecessorTree,
   'Frozen economy director fixture predecessor tree changed');
+assert.equal(git('rev-parse', `${phase2TimeoutRevision}^{tree}`).trim(), phase2TimeoutRevisionTree,
+  'Frozen economy Phase 2 timeout revision tree changed');
+assert.equal(git('rev-parse', `${phase2TimeoutPredecessor}^{tree}`).trim(), phase2TimeoutPredecessorTree,
+  'Frozen economy Phase 2 timeout predecessor tree changed');
 // Closed physical-source readers reached by the current Commerce and RC1 chains.
 // Other candidate files are tested as current gameplay and are not historical source namespaces.
 const files = Object.freeze([
@@ -308,6 +318,43 @@ for (const file of directorFixtureFiles) {
   };
 }
 
+// The measured Phase 2 upgrade timeout is the newest source hop. It reconstructs
+// the prior sealed tree before any frozen economy source reader runs.
+const phase2TimeoutFiles = Object.freeze(['test/phase2-postgres.js']);
+assert.deepEqual(git('diff', '--name-only', phase2TimeoutPredecessor, phase2TimeoutRevision).trim().split('\n'),
+  phase2TimeoutFiles, 'Phase 2 timeout revision changed outside its closed source domain');
+const phase2TimeoutDomains = {};
+for (const file of phase2TimeoutFiles) {
+  const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);
+  const reviewed = git('show', `${phase2TimeoutRevision}:${file}`);
+  const baseline = git('show', `${phase2TimeoutPredecessor}:${file}`);
+  assert(raw === current || raw === current.replaceAll('\n', '\r\n'), `Mixed Phase 2 timeout line endings: ${file}`);
+  assert.equal(current, reviewed, `Phase 2 timeout physical source differs from the reviewed commit: ${file}`);
+  assert.notEqual(current, baseline, `Phase 2 timeout postimage has no change: ${file}`);
+  const inverses = []; let hunk = null;
+  for (const line of git('diff', '--no-ext-diff', '--unified=3', phase2TimeoutPredecessor,
+    phase2TimeoutRevision, '--', file).split('\n')) {
+    if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; inverses.push(hunk); }
+    else if (hunk && /^[ +\-]/.test(line)) {
+      if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
+      if (line[0] !== '+') hunk.baseline += line.slice(1) + '\n';
+    }
+  }
+  let reconstructed = current;
+  for (const inverse of inverses) {
+    assert(inverse.current.length, `Empty Phase 2 timeout inverse context: ${file}`);
+    assert.equal(reconstructed.split(inverse.current).length - 1, 1,
+      `Phase 2 timeout inverse context must occur once: ${file}`);
+    reconstructed = reconstructed.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(reconstructed, baseline, `Complete Phase 2 timeout predecessor reconstruction: ${file}`);
+  phase2TimeoutDomains[file] = {
+    mode: git('ls-tree', phase2TimeoutRevision, '--', file).trim().split(/\s+/)[0],
+    currentSha256: hash(current), currentBlob: blob(current), baselineSha256: hash(baseline), baselineBlob: blob(baseline),
+    contextLines: 3, inverses,
+  };
+}
+
 // Later economy correctness repairs are a distinct outer hop so every earlier
 // authored, binding and repair pin remains immutable. A newly added source has
 // no historical predecessor and is attested without inventing predecessor text.
@@ -414,10 +461,16 @@ export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR = ${JSON.stringify(d
 export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR_TREE = ${JSON.stringify(directorFixturePredecessorTree)};
 export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE = 'exact-economy-director-fixture-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
 export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS = ${JSON.stringify(directorFixtureDomains, null, 2)};
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION = ${JSON.stringify(phase2TimeoutRevision)};
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_TREE = ${JSON.stringify(phase2TimeoutRevisionTree)};
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR = ${JSON.stringify(phase2TimeoutPredecessor)};
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR_TREE = ${JSON.stringify(phase2TimeoutPredecessorTree)};
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_PHASE = 'exact-economy-phase2-upgrade-timeout-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS = ${JSON.stringify(phase2TimeoutDomains, null, 2)};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), ...Object.values(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
@@ -428,6 +481,7 @@ Object.freeze(ECONOMY_HARDENING_REPAIR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS);
 const lf = text => text.replaceAll('\\r\\n', '\\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\\0').update(text).digest('hex');
@@ -578,9 +632,34 @@ export function assertEconomyHardeningDirectorFixtureTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningPhase2TimeoutTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS, file), 'Unknown economy-hardening Phase 2 timeout domain');
+  assert(uniform(input), 'Uniform whole economy-hardening Phase 2 timeout LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening Phase 2 timeout source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening Phase 2 timeout blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1,
+      'Missing or duplicate economy-hardening Phase 2 timeout inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256,
+    'Complete economy-hardening Phase 2 timeout predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob,
+    'Complete economy-hardening Phase 2 timeout predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256,
+    sourceRevision: ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR,
+    inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_PHASE2_TIMEOUT_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningPhase2TimeoutTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningDirectorFixtureTransfer(file, text).baselineText;
@@ -608,4 +687,4 @@ export function economyHardeningSourceBaseline(file, input) {
 }
 `;
 fs.writeFileSync(new URL('./economy-hardening-source-transfer.js', import.meta.url), output);
-console.log(`Generated ${files.length} authored, ${bindingFiles.length} binding, ${bindingSuccessorFiles.length} binding successor, ${repairFiles.length} repair, ${repairSuccessorFiles.length} repair successor, ${releaseRepairFiles.length} release repair, and ${directorFixtureFiles.length} director fixture source domains; historical pins remain unchanged.`);
+console.log(`Generated ${files.length} authored, ${bindingFiles.length} binding, ${bindingSuccessorFiles.length} binding successor, ${repairFiles.length} repair, ${repairSuccessorFiles.length} repair successor, ${releaseRepairFiles.length} release repair, ${directorFixtureFiles.length} director fixture, and ${phase2TimeoutFiles.length} Phase 2 timeout source domains; historical pins remain unchanged.`);

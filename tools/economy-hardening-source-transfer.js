@@ -2053,10 +2053,31 @@ export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS = {
     ]
   }
 };
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION = "363a0b6b772111e6e07d05ea8bd55147a3f37528";
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_TREE = "e1b87d1c63ae423e7664e313db6436bc93410831";
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR = "34cd8d8d49d2e0aba0f587995f9d7e2a6508cf27";
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR_TREE = "dc6184dc54aba8d77b43b5e6b19f1fff1d0bef8a";
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_PHASE = 'exact-economy-phase2-upgrade-timeout-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS = {
+  "test/phase2-postgres.js": {
+    "mode": "100644",
+    "currentSha256": "c35bbd2556e3e43d97ad402c0e1e1068d5e1864ac2022244a9d1aaa2153b128e",
+    "currentBlob": "7013ea922213bec0f9dafad06ab198af0d5849c2",
+    "baselineSha256": "ccad77e47eec6de7b5b5d54c9b66ee6d1b3b7ce8484856fccaaaa245dcb68698",
+    "baselineBlob": "e7247eb8edbc56193b325494f22b37306ac2f5ae",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "        const result = spawnSync(process.execPath,[fileURLToPath(import.meta.url),process.argv[2]], {\n          env: { ...process.env, TEST_DATABASE_URL: childUrl.toString(), DATABASE_URL: childUrl.toString(),\n            P2_TEST_SCHEMA: name, P2_TEST_CHILD: mode, INVARIANT_WEBHOOK_URL: '', PG_POOL_MAX: '12' },\n          encoding: 'utf8', timeout: mode === 'upgrade' ? 300000 : 240000,\n          maxBuffer: 8*1024*1024, windowsHide: true,\n        });\n        process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');\n        if (result.error || result.signal) console.error('phase2-postgres: isolated child termination ' + JSON.stringify({ mode, status: result.status, signal: result.signal, code: result.error?.code }));\n",
+        "baseline": "        const result = spawnSync(process.execPath,[fileURLToPath(import.meta.url),process.argv[2]], {\n          env: { ...process.env, TEST_DATABASE_URL: childUrl.toString(), DATABASE_URL: childUrl.toString(),\n            P2_TEST_SCHEMA: name, P2_TEST_CHILD: mode, INVARIANT_WEBHOOK_URL: '', PG_POOL_MAX: '12' },\n          encoding: 'utf8', timeout: 240000, maxBuffer: 8*1024*1024, windowsHide: true,\n        });\n        process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');\n        if (result.error || result.signal) console.error('phase2-postgres: isolated child termination ' + JSON.stringify({ mode, status: result.status, signal: result.signal, code: result.error?.code }));\n"
+      }
+    ]
+  }
+};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), ...Object.values(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
@@ -2067,6 +2088,7 @@ Object.freeze(ECONOMY_HARDENING_REPAIR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS);
 const lf = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -2217,9 +2239,34 @@ export function assertEconomyHardeningDirectorFixtureTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningPhase2TimeoutTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS, file), 'Unknown economy-hardening Phase 2 timeout domain');
+  assert(uniform(input), 'Uniform whole economy-hardening Phase 2 timeout LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening Phase 2 timeout source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening Phase 2 timeout blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1,
+      'Missing or duplicate economy-hardening Phase 2 timeout inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256,
+    'Complete economy-hardening Phase 2 timeout predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob,
+    'Complete economy-hardening Phase 2 timeout predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256,
+    sourceRevision: ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR,
+    inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_PHASE2_TIMEOUT_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningPhase2TimeoutTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningDirectorFixtureTransfer(file, text).baselineText;
