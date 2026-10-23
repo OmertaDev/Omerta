@@ -20,6 +20,7 @@ const files = [
   'tools/arena.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
   'test/commerce-release-phase2-migration-catalog.js',
   'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
+  'test/lib/rc1-historical-source-fixture.js',
   'tools/commerce-current-enterprise-source-compatibility.js',
   'tools/deed-quest-source-transfer.js', 'tools/enterprise-deed-release-phase2-migration-catalog.js',
   'tools/player-intel-source-compatibility.js', 'tools/rc1-company-operator-source-compatibility.js',
