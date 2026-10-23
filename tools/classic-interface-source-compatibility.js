@@ -1,6 +1,7 @@
 // Exact successor source proof only. Native capture always checks actual runtime bytes.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import {actionReadinessHistoricalInput} from './action-readiness-source-compatibility.js';
 import {REBUILD_INTERFACE_SOURCE,REBUILD_INTERFACE_SOURCE_SHA256} from './classic-interface-source-data.js';
 export {REBUILD_INTERFACE_SOURCE};
 const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
@@ -18,6 +19,7 @@ export function qualifyRebuildInterfaceSource(file,input,pin=REBUILD_INTERFACE_S
  return Object.freeze({baselineText:restored,sourceRevision:pin.revision,targetRevision:pin.targetRevision,sourceOnly:true,native:false,runtime:false});
 }
 export function rebuildInterfaceHistoricalInput(file,input){
+ input=actionReadinessHistoricalInput(file,input);
  const row=REBUILD_INTERFACE_SOURCE.files.find(r=>r.file===file);if(!row)return input;
  const buffer=Buffer.isBuffer(input),text=buffer?input.toString('utf8'):input;
  if(buffer)assert(Buffer.from(text).equals(input),'lossless UTF-8 physical source only');
