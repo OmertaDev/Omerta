@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2e2722db7c46`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1c12e2cec2c8`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4765 |
+| Commits in clone | 4783 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-23 — test(release): align enterprise authored revision |
+| Latest commit | 2026-10-23 — test(release): seal integrated source histories |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3799 |
+| OmertaDev | 3816 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 121 |
+| github-actions[bot] | 122 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,13 +30,13 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 786 | historical |
-| knowledge/generated/graph-summary.md | 786 | historical |
-| knowledge/generated/graph.json | 786 | historical |
-| knowledge/generated/inventory.md | 786 | historical |
+| knowledge/generated/github-history.md | 790 | historical |
+| knowledge/generated/graph-summary.md | 790 | historical |
+| knowledge/generated/graph.json | 790 | historical |
+| knowledge/generated/inventory.md | 790 | historical |
 | [SPEC.md](../../SPEC.md) | 596 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 486 | yes |
+| [public/index.html](../../public/index.html) | 487 | yes |
 | [src/server.js](../../src/server.js) | 447 | yes |
 | [schema.sql](../../schema.sql) | 377 | yes |
 | knowledge/generated/documents.md | 357 | historical |
@@ -66,9 +66,9 @@
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 83 | yes |
 | [test/hardening.js](../../test/hardening.js) | 71 | yes |
+| [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 68 | yes |
 | [src/preflight.js](../../src/preflight.js) | 68 | yes |
 | [test/director-migration.js](../../test/director-migration.js) | 66 | yes |
-| [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 63 | yes |
 | [tools/sim.js](../../tools/sim.js) | 62 | yes |
 
 ## Pull requests
