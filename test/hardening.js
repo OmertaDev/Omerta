@@ -80,13 +80,16 @@ assert.equal(r.code, 200, 'boss heist');
 r = await call('POST', '/v1/heist', { token: rival.token });
 assert.equal(r.code, 200, 'rival heist');
 
-// crimes until the boss holds crates (cb faucet) — high-tier jobs pay the war chest
-for (let i = 0; i < 60; i++) {
-  await seedCh(boss.id, 'nerve=60, energy=200, jail_until=NULL, health=100');
-  await call('POST', '/v1/crimes/fixfight', { token: boss.token });
-  const m = await meOf(boss.token);
-  if (m.cash > 150000 && m.cb >= 4) break;
-}
+// A deterministic genuine crime earns crates (cb faucet) and the war chest. Reset the shared
+// street clock explicitly: retry fixtures must not turn the first random roll into the only roll.
+const savedRandom = Math.random;
+try {
+  Math.random = () => 0;
+  await seedCh(boss.id, 'nerve=60, energy=200, jail_until=NULL, health=100, street_action_at=NULL');
+  const crime = await call('POST', '/v1/crimes/fixfight', { token: boss.token });
+  assert.equal(crime.code, 200, 'fixfight resolves through the actual route');
+  assert.equal(crime.body.success, true, 'the pinned crime roll earns the hardening bankroll and crates');
+} finally { Math.random = savedRandom; }
 let m = await meOf(boss.token);
 assert(m.cash > 60000 && m.cb >= 1, `earned a bankroll organically (cash ${m.cash}, cb ${m.cb})`);
 
