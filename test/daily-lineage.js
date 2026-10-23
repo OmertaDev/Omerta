@@ -97,12 +97,14 @@ try {
     `INSERT INTO characters (id, account_id, name, generation, alive, season)
      VALUES ($1,$2,'Pre Upgrade Line',2,true,$3)`, [upgradedHeir, upgraded.accountId, Math.floor(today / 28)]);
   await pool.query(
-    'UPDATE account_persistent SET checkin_day=0, checkin_streak=0, checkins_lifetime=0, omr=3 WHERE account_id=$1',
+    'UPDATE account_persistent SET checkin_day=0, checkin_streak=0, checkins_lifetime=3, omr=3 WHERE account_id=$1',
     [upgraded.accountId]);
   const paidAt = new Date(today * 86400000 + 12 * 3600000);
   const upgradedCornerTask = cornerTasksOf('docks', today)[0];
   const legacyLedger = [
     ['upgrade-checkin', 'checkin', 350],
+    ['upgrade-checkin-replay-1', 'checkin', 350],
+    ['upgrade-checkin-replay-2', 'checkin', 350],
     ...jobs.map((job, i) => [`upgrade-daily-${i}`, `daily:${job.id}`, 200]),
     ['upgrade-corner', 'corner:job', 400],
     ['upgrade-hustle', 'hustle:payoff', 600],
@@ -141,8 +143,11 @@ try {
     [upgraded.accountId])).rows[0];
   assert.equal(Number(upgradedAccount.checkin_day), today);
   assert.equal(Number(upgradedAccount.checkin_streak), 6);
-  assert.equal(Number(upgradedAccount.checkins_lifetime), 1);
+  assert.equal(Number(upgradedAccount.checkins_lifetime), 1,
+    'first cutover replaces replay-inflated lifetime progress with distinct paid check-in days');
   assert.equal(Number(upgradedAccount.omr), 3, 'migration moves no value');
+  assert.equal((await claimsOf(upgraded.accountId)).filter((id) => id === 'checkin:claim').length, 1,
+    'same-day legacy check-in replays restore one durable account/day latch');
   assert.equal((await call('POST', '/v1/checkin', { token: upgraded.token })).body.error, 'done');
   await setCounters(upgradedHeir, completedCounters);
   for (const job of jobs)

@@ -816,6 +816,20 @@ export const ECONOMY_HARDENING_SOURCE_DOMAINS = {
   }
 };
 export const ECONOMY_HARDENING_BINDING_DOMAINS = {
+  "src/db.js": {
+    "mode": "100644",
+    "currentSha256": "a72075b73d184bca7023f210b95c990b19b92224a132ae2fd13cfcd9a168b48b",
+    "currentBlob": "d058bbcc06b91926cf29541f3941f036ce4ab638",
+    "baselineSha256": "a549864cfd44143f614c727c9e9d575cbcbe2b6c58dfdd6cb8493b6480975b2d",
+    "baselineBlob": "660e09180244fb724c84f6b23e715b48b0224fb1",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "      // ledger row. Only the first application needs to reconstruct lifetime history; subsequent\n      // cutover passes preserve that exact durable value and add the missing day latch/state.\n      if (!alreadyApplied) await q.query(\n          'UPDATE account_persistent SET checkins_lifetime=$2 WHERE account_id=$1',\n          [accountId, days.size]);\n    }\n\n",
+        "baseline": "      // ledger row. Only the first application needs to reconstruct lifetime history; subsequent\n      // cutover passes preserve that exact durable value and add the missing day latch/state.\n      if (!alreadyApplied) await q.query(\n          'UPDATE account_persistent SET checkins_lifetime=GREATEST(checkins_lifetime,$2) WHERE account_id=$1',\n          [accountId, days.size]);\n    }\n\n"
+      }
+    ]
+  },
   "test/commerce-release-phase2-migration-catalog.js": {
     "mode": "100644",
     "currentSha256": "51fde122f1e68852e56fb70664ca52a52026e711d7c893c30b51ab0456371ee7",

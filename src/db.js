@@ -640,7 +640,7 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
       // ledger row. Only the first application needs to reconstruct lifetime history; subsequent
       // cutover passes preserve that exact durable value and add the missing day latch/state.
       if (!alreadyApplied) await q.query(
-          'UPDATE account_persistent SET checkins_lifetime=GREATEST(checkins_lifetime,$2) WHERE account_id=$1',
+          'UPDATE account_persistent SET checkins_lifetime=$2 WHERE account_id=$1',
           [accountId, days.size]);
     }
 
