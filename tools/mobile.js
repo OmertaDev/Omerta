@@ -46,6 +46,9 @@ const VIEWPORTS = [
 ];
 const MIN_TAP = 44;          // px. Primary navigation is touched constantly; enforce the full floor.
 const SHOTS = process.env.MOBILE_SHOTS || '';   // set a directory to keep screenshots for eyeballing
+const unexpectedConsoleError = (message, intentionalOffline) => message.type() === 'error'
+  && !/status of 4\d\d/.test(message.text())
+  && !(intentionalOffline && message.text() === 'Failed to load resource: net::ERR_INTERNET_DISCONNECTED');
 
 async function clickTab(page, id) {
   await page.click(`#tabs [data-tab="${id}"]`);
@@ -160,7 +163,7 @@ const MEASURE = (minTap) => {
 
   // PRIMARY navigation only: the group rail, the screen tabs, the thumb bar. Not every control.
   const smallNav = [];
-  for (const el of document.querySelectorAll('#grouprail button, #tabs button, #bnav button')) {
+  for (const el of document.querySelectorAll('#grouprail button, #tabs button, #bnav button, #action-readiness button')) {
     const r = el.getBoundingClientRect();
     if (r.height === 0 && r.width === 0) continue;              // hidden tabs of other groups
     if (r.height < minTap) smallNav.push({ h: Math.round(r.height),
@@ -172,7 +175,7 @@ const MEASURE = (minTap) => {
   const bodyTop = bodies ? Math.round(bodies.getBoundingClientRect().top) : null;
 
   const chrome = [];
-  for (const sel of ['#top', '#coachwrap', '#vitals', '#tabpanel', '#grouprail', '#tabs', '#tabart', '#introwrap']) {
+  for (const sel of ['#top', '#coachwrap', '#status-strips', '#vitals', '#action-readiness', '#tabpanel', '#grouprail', '#tabs', '#tabart', '#introwrap']) {
     const el = document.querySelector(sel);
     if (!el) { chrome.push(sel + ':missing'); continue; }
     const cs = getComputedStyle(el);
@@ -212,6 +215,114 @@ const check = async (page, screen, vp, { contentMustShow = false } = {}) => {
   return m;
 };
 
+async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
+  const strip = page.locator('#action-readiness');
+  await strip.waitFor({ state: 'visible', timeout: 5000 });
+  const entries = await strip.locator('[data-readiness-tab]').evaluateAll(buttons => buttons.map(button => ({
+    tab: button.dataset.readinessTab,
+    name: (button.getAttribute('aria-label') || button.textContent || '').trim(),
+    state: button.querySelector('.readiness-state')?.textContent?.trim() || '',
+  })));
+  if (!isDeepStrictEqual(entries.map(entry => entry.tab), ['garage', 'streets', 'scores', 'start'])
+    || entries.some(entry => !entry.name || !entry.state)) {
+    fail('(readiness)', vp, `four named navigation entries must show their current state — ${JSON.stringify(entries)}`);
+    return;
+  }
+  const mutations = [];
+  const observeMutations = request => {
+    if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/v1/'))
+      mutations.push(new URL(request.url()).pathname);
+  };
+  page.on('request', observeMutations);
+  try {
+    for (const { tab } of entries) {
+      await strip.locator(`[data-readiness-tab="${tab}"]`).click();
+      await page.waitForSelector(`#tab-${tab}.on`, { state: 'visible', timeout: 10000 });
+      if (tab === 'garage') await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+      const layout = await strip.evaluate(nav => {
+        const box = nav.getBoundingClientRect();
+        return { visible: box.width > 0 && box.height > 0 && box.top >= -1 && box.bottom <= innerHeight + 1,
+          left: box.left, right: box.right, viewport: document.documentElement.clientWidth,
+          clipped: nav.scrollWidth > nav.clientWidth + 1, overflow: getComputedStyle(nav).overflowX,
+          entries: nav.querySelectorAll('[data-readiness-tab]').length };
+      });
+      if (!layout.visible || layout.entries !== 4 || layout.left < -1 || layout.right > layout.viewport + 1
+        || (layout.clipped && !['auto', 'scroll'].includes(layout.overflow)))
+        fail('(readiness)', vp, `strip must remain visible and contain any horizontal scrolling on ${tab} — ${JSON.stringify(layout)}`);
+      await check(page, `readiness-${tab}`, vp);
+    }
+    if (vp.w === 360) {
+      const garage = strip.locator('[data-readiness-tab="garage"]');
+      await garage.focus(); await garage.press('Enter');
+      await page.waitForFunction(() => document.activeElement === document.querySelector('#tab-garage'), null, { timeout: 5000 });
+      await page.waitForLoadState('networkidle');
+
+      // A response already on its way must not restore current clocks after losing connectivity.
+      let releaseProjection, capturedProjection;
+      const released = new Promise(resolve => { releaseProjection = resolve; });
+      const captured = new Promise(resolve => { capturedProjection = resolve; });
+      const delayedProjection = async route => {
+        const response = await route.fetch(); capturedProjection();
+        await released; await route.fulfill({ response });
+      };
+      await page.route('**/v1/projections/player', delayedProjection, { times: 1 });
+      try {
+        const delivered = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player');
+        await page.locator('#btn-refresh').evaluate(button => button.click());
+        await captured;
+        // Only Chromium's exact resource-disconnected notice is expected during this fault window.
+        setIntentionalOffline(true);
+        await page.context().setOffline(true);
+        await page.waitForFunction(() => [...document.querySelectorAll('#action-readiness .readiness-state')]
+          .every(state => state.textContent === 'Refresh'), null, { timeout: 5000 });
+        releaseProjection(); await delivered;
+        await page.waitForTimeout(200);
+        const offline = await strip.locator('.readiness-state').allTextContents();
+        if (offline.length !== 4 || offline.some(state => state !== 'Refresh'))
+          fail('(readiness offline)', vp, `a delayed snapshot restored current clocks while offline — ${JSON.stringify(offline)}`);
+      } finally {
+        releaseProjection();
+        await page.unroute('**/v1/projections/player', delayedProjection);
+        await page.context().setOffline(false);
+      }
+      await page.waitForFunction(() => {
+        const states = [...document.querySelectorAll('#action-readiness .readiness-state')];
+        return states.length === 4 && states.every(state => state.textContent && state.textContent !== 'Refresh');
+      }, null, { timeout: 10000 });
+      // Drain failed/queued resource loads after the restored snapshot before closing the window.
+      await page.waitForLoadState('networkidle', { timeout: 10000 });
+      setIntentionalOffline(false);
+
+      // The same mounted controls must also work in the desktop layout.
+      const desktop = { w: 1280, h: 900 };
+      try {
+        await page.setViewportSize({ width: desktop.w, height: desktop.h });
+        await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+        const layout = await strip.evaluate(nav => ({
+          buttons: [...nav.querySelectorAll('[data-readiness-tab]')].filter(button => {
+            const box = button.getBoundingClientRect();
+            return box.width > 0 && box.height > 0 && box.left >= -1 && box.right <= innerWidth + 1
+              && box.top >= -1 && box.bottom <= innerHeight + 1;
+          }).length,
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          vitalsHidden: getComputedStyle(document.querySelector('#vitals')).display === 'none',
+        }));
+        if (layout.buttons !== 4 || layout.overflow > 1 || !layout.vitalsHidden)
+          fail('(readiness desktop)', desktop, `all four sticky controls must fit with desktop vitals hidden — ${JSON.stringify(layout)}`);
+        if (SHOTS) await page.screenshot({ path: path.join(SHOTS, 'readiness-desktop.png') });
+      } finally {
+        await page.setViewportSize({ width: vp.w, height: vp.h });
+        await page.evaluate(() => window.scrollTo(0, 0));
+      }
+    }
+  } finally {
+    setIntentionalOffline(false);
+    page.off('request', observeMutations);
+  }
+  if (mutations.length)
+    fail('(readiness)', vp, `navigation submitted action requests: ${mutations.join(', ')}`);
+}
+
 for (const vp of VIEWPORTS) {
   const browser = await chromium.launch({ executablePath: exe });
   const ctx = await browser.newContext({
@@ -223,10 +334,11 @@ for (const vp of VIEWPORTS) {
       '(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
   });
   const pageErrors = [];
+  let intentionalOffline = false;
   ctx.on('weberror', (e) => pageErrors.push(e.error().message));
   const page = await ctx.newPage();
   // A 4xx from the API is normal here (/v1/me before a character exists); a JS error is not.
-  page.on('console', (m) => { if (m.type() === 'error' && !/status of 4\d\d/.test(m.text())) pageErrors.push(m.text()); });
+  page.on('console', (m) => { if (unexpectedConsoleError(m, intentionalOffline)) pageErrors.push(m.text()); });
 
   const walked = [];   // check G: real navigation must not restore retired screen tracking
   const screenRequests = [];
@@ -454,6 +566,8 @@ for (const vp of VIEWPORTS) {
   }
 
   if (firstJobHandoff) {
+  // The shared clocks remain reachable outside Home; selecting one only opens its screen.
+  await checkReadinessNavigation(page, vp, value => { intentionalOffline = value; });
   // open the whole city and walk every screen in every group
   if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
   await page.waitForTimeout(400);
