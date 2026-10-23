@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "8800c0dd6b4abc5996b3d05ceef00191bf0c3184",
+  "sourceRevision": "9c8b224f663a3a8e678f3c662f592fbcc963d236",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16915,
-    "edges": 67659,
+    "nodes": 16919,
+    "edges": 67674,
     "byNodeType": {
       "Artifact": 6929,
       "Command": 295,
-      "Commit": 4755,
+      "Commit": 4759,
       "Contract": 134,
       "Document": 951,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5515,
-      "CHANGED": 25913,
+      "CHANGED": 25924,
       "CONTAINS": 6950,
       "DECLARES": 295,
       "DEFINED_IN": 1761,
       "DEPENDS_ON": 69,
       "EXECUTES": 1157,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4755,
+      "HAS_COMMIT": 4759,
       "IMPLEMENTS": 124,
       "IMPORTS": 7973,
       "INHERITS": 45,
@@ -119755,20 +119755,20 @@
       "path": "src/commercialcampaigns.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 61843,
-      "lines": 833,
-      "version": "f2826c3c58539ae7",
+      "bytes": 62510,
+      "lines": 841,
+      "version": "aa9f3b47f939f6a2",
       "text": true,
       "provenance": [
         {
           "file": "src/commercialcampaigns.js",
           "line": 1,
-          "version": "f2826c3c58539ae7"
+          "version": "aa9f3b47f939f6a2"
         }
       ],
-      "lastChangedAt": "2026-10-16T11:45:48.000Z",
+      "lastChangedAt": "2026-10-23T20:45:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c33009f6cb77c2bbd535cdf356749cb0e3449d62"
+      "lastChangedCommit": "38e3212ae4a58f888c5c484f8624159ce4f50eab"
     },
     {
       "key": "Artifact:src/commercialdisputes.js",
@@ -133716,20 +133716,20 @@
       "path": "test/commercialcampaigns-integration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 35616,
-      "lines": 440,
-      "version": "706da88337f81467",
+      "bytes": 39478,
+      "lines": 497,
+      "version": "dc5c9c94d06f83df",
       "text": true,
       "provenance": [
         {
           "file": "test/commercialcampaigns-integration.js",
           "line": 1,
-          "version": "706da88337f81467"
+          "version": "dc5c9c94d06f83df"
         }
       ],
-      "lastChangedAt": "2026-10-22T00:23:36.000Z",
+      "lastChangedAt": "2026-10-23T20:45:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "71cb10a08d47794f0ce6c2e1a283822ea66f00d8"
+      "lastChangedCommit": "38e3212ae4a58f888c5c484f8624159ce4f50eab"
     },
     {
       "key": "Artifact:test/commercialcampaigns-metadata-native.js",
@@ -138040,20 +138040,20 @@
       "path": "test/economy-hardening-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 45689,
-      "lines": 623,
-      "version": "e6c930bfa6b259b8",
+      "bytes": 50992,
+      "lines": 691,
+      "version": "9ebfb12c95daf192",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "e6c930bfa6b259b8"
+          "version": "9ebfb12c95daf192"
         }
       ],
-      "lastChangedAt": "2026-10-23T19:43:47.000Z",
+      "lastChangedAt": "2026-10-23T20:51:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "67a8b4d431e0604645228d6b50d71b798924faa4"
+      "lastChangedCommit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
     },
     {
       "key": "Artifact:test/economy-invariant-hardening.js",
@@ -138224,20 +138224,20 @@
       "path": "test/enterprise-native-guard.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 28364,
+      "bytes": 28393,
       "lines": 120,
-      "version": "efd4dd8f9db7ec31",
+      "version": "98af9d5c83fadb26",
       "text": true,
       "provenance": [
         {
           "file": "test/enterprise-native-guard.js",
           "line": 1,
-          "version": "efd4dd8f9db7ec31"
+          "version": "98af9d5c83fadb26"
         }
       ],
-      "lastChangedAt": "2026-10-23T19:43:47.000Z",
+      "lastChangedAt": "2026-10-23T20:51:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "67a8b4d431e0604645228d6b50d71b798924faa4"
+      "lastChangedCommit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
     },
     {
       "key": "Artifact:test/enterprise-release-phase2-migration-catalog.js",
@@ -140248,20 +140248,20 @@
       "path": "test/hardening.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 142032,
-      "lines": 1846,
-      "version": "7e8b5bd6a8faf98c",
+      "bytes": 142354,
+      "lines": 1849,
+      "version": "22e4e75855ca0670",
       "text": true,
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "7e8b5bd6a8faf98c"
+          "version": "22e4e75855ca0670"
         }
       ],
-      "lastChangedAt": "2026-10-23T12:50:19.000Z",
+      "lastChangedAt": "2026-10-23T20:45:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1ed93d679943e082e6053ef188f2822ccbc382f6"
+      "lastChangedCommit": "38e3212ae4a58f888c5c484f8624159ce4f50eab"
     },
     {
       "key": "Artifact:test/heists.js",
@@ -154094,20 +154094,20 @@
       "path": "tools/economy-hardening-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 928248,
-      "lines": 2348,
-      "version": "22eda3696770473a",
+      "bytes": 943435,
+      "lines": 2432,
+      "version": "5d181a255f67cc15",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-hardening-source-transfer.js",
           "line": 1,
-          "version": "22eda3696770473a"
+          "version": "5d181a255f67cc15"
         }
       ],
-      "lastChangedAt": "2026-10-23T19:43:47.000Z",
+      "lastChangedAt": "2026-10-23T20:51:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "67a8b4d431e0604645228d6b50d71b798924faa4"
+      "lastChangedCommit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
     },
     {
       "key": "Artifact:tools/economy-pilot.js",
@@ -154278,20 +154278,20 @@
       "path": "tools/enterprise-native-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 449715,
+      "bytes": 450042,
       "lines": 10549,
-      "version": "3540c4a2372338d3",
+      "version": "1d9ce8d448ef400a",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-inputs.js",
           "line": 1,
-          "version": "3540c4a2372338d3"
+          "version": "1d9ce8d448ef400a"
         }
       ],
-      "lastChangedAt": "2026-10-23T19:45:10.000Z",
+      "lastChangedAt": "2026-10-23T20:54:43.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8800c0dd6b4abc5996b3d05ceef00191bf0c3184"
+      "lastChangedCommit": "9c8b224f663a3a8e678f3c662f592fbcc963d236"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -180334,6 +180334,22 @@
       ]
     },
     {
+      "key": "Commit:38e3212ae4a58f888c5c484f8624159ce4f50eab",
+      "type": "Commit",
+      "id": "38e3212ae4a58f888c5c484f8624159ce4f50eab",
+      "label": "fix(economy): close campaign expiry race",
+      "title": "fix(economy): close campaign expiry race",
+      "date": "2026-10-23T20:45:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/38e3212ae4a58f888c5c484f8624159ce4f50eab",
+      "provenance": [
+        {
+          "commit": "38e3212ae4a58f888c5c484f8624159ce4f50eab",
+          "url": "https://github.com/OmertaDev/Omerta/commit/38e3212ae4a58f888c5c484f8624159ce4f50eab"
+        }
+      ]
+    },
+    {
       "key": "Commit:38ede51b08b009c43b285161807fa60cff1c7c5c",
       "type": "Commit",
       "id": "38ede51b08b009c43b285161807fa60cff1c7c5c",
@@ -187626,6 +187642,22 @@
         {
           "commit": "505bb8b009c56ff98ee4803a90cda7fe80e568af",
           "url": "https://github.com/OmertaDev/Omerta/commit/505bb8b009c56ff98ee4803a90cda7fe80e568af"
+        }
+      ]
+    },
+    {
+      "key": "Commit:506deba9ae3ca99a60699df67c0ffde15f3344be",
+      "type": "Commit",
+      "id": "506deba9ae3ca99a60699df67c0ffde15f3344be",
+      "label": "test(economy): seal campaign expiry fix",
+      "title": "test(economy): seal campaign expiry fix",
+      "date": "2026-10-23T20:51:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/506deba9ae3ca99a60699df67c0ffde15f3344be",
+      "provenance": [
+        {
+          "commit": "506deba9ae3ca99a60699df67c0ffde15f3344be",
+          "url": "https://github.com/OmertaDev/Omerta/commit/506deba9ae3ca99a60699df67c0ffde15f3344be"
         }
       ]
     },
@@ -198266,6 +198298,22 @@
         {
           "commit": "73e9518810bc7c110aae6a2a5e7ecb2e38b5e06c",
           "url": "https://github.com/OmertaDev/Omerta/commit/73e9518810bc7c110aae6a2a5e7ecb2e38b5e06c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "type": "Commit",
+      "id": "73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "label": "chore(knowledge): refresh deterministic growth seal",
+      "title": "chore(knowledge): refresh deterministic growth seal",
+      "date": "2026-10-23T19:52:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "provenance": [
+        {
+          "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121",
+          "url": "https://github.com/OmertaDev/Omerta/commit/73e9fe6c1cedd44885656d54bd88e67459b81121"
         }
       ]
     },
@@ -210650,6 +210698,22 @@
         {
           "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
           "url": "https://github.com/OmertaDev/Omerta/commit/9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9c8b224f663a3a8e678f3c662f592fbcc963d236",
+      "type": "Commit",
+      "id": "9c8b224f663a3a8e678f3c662f592fbcc963d236",
+      "label": "test(release): reseal enterprise native inputs",
+      "title": "test(release): reseal enterprise native inputs",
+      "date": "2026-10-23T20:54:43.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9c8b224f663a3a8e678f3c662f592fbcc963d236",
+      "provenance": [
+        {
+          "commit": "9c8b224f663a3a8e678f3c662f592fbcc963d236",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9c8b224f663a3a8e678f3c662f592fbcc963d236"
         }
       ]
     },
@@ -257336,7 +257400,7 @@
       "provenance": [
         {
           "file": "test/hardening.js",
-          "line": 405
+          "line": 408
         },
         {
           "file": "test/legal-security.js",
@@ -267191,6 +267255,9 @@
           "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
         },
         {
+          "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
+        },
+        {
           "commit": "7431f5dfaa606d38e437d6e58a5a07d70a6146e0"
         },
         {
@@ -269549,6 +269616,9 @@
           "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
         },
         {
+          "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
+        },
+        {
           "commit": "7431f5dfaa606d38e437d6e58a5a07d70a6146e0"
         },
         {
@@ -271905,6 +271975,9 @@
         },
         {
           "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+        },
+        {
+          "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
         },
         {
           "commit": "7431f5dfaa606d38e437d6e58a5a07d70a6146e0"
@@ -274917,6 +274990,9 @@
         },
         {
           "commit": "7388d145da0d05bdea13725bac08b806456fd6b6"
+        },
+        {
+          "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
         },
         {
           "commit": "7431f5dfaa606d38e437d6e58a5a07d70a6146e0"
@@ -279629,13 +279705,13 @@
       "type": "Module",
       "id": "src/commercialcampaigns.js",
       "label": "src/commercialcampaigns.js",
-      "lines": 833,
-      "version": "f2826c3c58539ae7",
+      "lines": 841,
+      "version": "aa9f3b47f939f6a2",
       "provenance": [
         {
           "file": "src/commercialcampaigns.js",
           "line": 1,
-          "version": "f2826c3c58539ae7"
+          "version": "aa9f3b47f939f6a2"
         }
       ]
     },
@@ -290459,7 +290535,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "8800c0dd6b4abc5996b3d05ceef00191bf0c3184",
+      "revision": "9c8b224f663a3a8e678f3c662f592fbcc963d236",
       "currentBranch": "codex/economy-prod-hardening-integrated-20261023",
       "defaultBranch": "main",
       "visibility": "public",
@@ -329344,13 +329420,13 @@
       "type": "TestSuite",
       "id": "test/commercialcampaigns-integration.js",
       "label": "test/commercialcampaigns-integration.js",
-      "lines": 440,
-      "version": "706da88337f81467",
+      "lines": 497,
+      "version": "dc5c9c94d06f83df",
       "provenance": [
         {
           "file": "test/commercialcampaigns-integration.js",
           "line": 1,
-          "version": "706da88337f81467"
+          "version": "dc5c9c94d06f83df"
         }
       ]
     },
@@ -332164,13 +332240,13 @@
       "type": "TestSuite",
       "id": "test/economy-hardening-source-compatibility.js",
       "label": "test/economy-hardening-source-compatibility.js",
-      "lines": 623,
-      "version": "e6c930bfa6b259b8",
+      "lines": 691,
+      "version": "9ebfb12c95daf192",
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "e6c930bfa6b259b8"
+          "version": "9ebfb12c95daf192"
         }
       ]
     },
@@ -332285,12 +332361,12 @@
       "id": "test/enterprise-native-guard.js",
       "label": "test/enterprise-native-guard.js",
       "lines": 120,
-      "version": "efd4dd8f9db7ec31",
+      "version": "98af9d5c83fadb26",
       "provenance": [
         {
           "file": "test/enterprise-native-guard.js",
           "line": 1,
-          "version": "efd4dd8f9db7ec31"
+          "version": "98af9d5c83fadb26"
         }
       ]
     },
@@ -333454,13 +333530,13 @@
       "type": "TestSuite",
       "id": "test/hardening.js",
       "label": "test/hardening.js",
-      "lines": 1846,
-      "version": "7e8b5bd6a8faf98c",
+      "lines": 1849,
+      "version": "22e4e75855ca0670",
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "7e8b5bd6a8faf98c"
+          "version": "22e4e75855ca0670"
         }
       ]
     },
@@ -430492,6 +430568,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:38e3212ae4a58f888c5c484f8624159ce4f50eab",
+      "to": "Artifact:src/commercialcampaigns.js",
+      "provenance": {
+        "commit": "38e3212ae4a58f888c5c484f8624159ce4f50eab"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:38e3212ae4a58f888c5c484f8624159ce4f50eab",
+      "to": "Artifact:test/commercialcampaigns-integration.js",
+      "provenance": {
+        "commit": "38e3212ae4a58f888c5c484f8624159ce4f50eab"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:38e3212ae4a58f888c5c484f8624159ce4f50eab",
+      "to": "Artifact:test/hardening.js",
+      "provenance": {
+        "commit": "38e3212ae4a58f888c5c484f8624159ce4f50eab"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:38ede51b08b009c43b285161807fa60cff1c7c5c",
       "to": "Artifact:tools/economy-release-composition.js",
       "provenance": {
@@ -447840,6 +447940,30 @@
       "to": "Artifact:tools/mobile.js",
       "provenance": {
         "commit": "505bb8b009c56ff98ee4803a90cda7fe80e568af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:506deba9ae3ca99a60699df67c0ffde15f3344be",
+      "to": "Artifact:test/economy-hardening-source-compatibility.js",
+      "provenance": {
+        "commit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:506deba9ae3ca99a60699df67c0ffde15f3344be",
+      "to": "Artifact:test/enterprise-native-guard.js",
+      "provenance": {
+        "commit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:506deba9ae3ca99a60699df67c0ffde15f3344be",
+      "to": "Artifact:tools/economy-hardening-source-transfer.js",
+      "provenance": {
+        "commit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
       }
     },
     {
@@ -475424,6 +475548,38 @@
       "to": "Artifact:tools/market-operations-source-compatibility.js",
       "provenance": {
         "commit": "73e9518810bc7c110aae6a2a5e7ecb2e38b5e06c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
       }
     },
     {
@@ -505880,6 +506036,14 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c8b224f663a3a8e678f3c662f592fbcc963d236",
+      "to": "Artifact:tools/enterprise-native-inputs.js",
+      "provenance": {
+        "commit": "9c8b224f663a3a8e678f3c662f592fbcc963d236"
       }
     },
     {
@@ -708148,6 +708312,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:38e3212ae4a58f888c5c484f8624159ce4f50eab",
+      "provenance": {
+        "commit": "38e3212ae4a58f888c5c484f8624159ce4f50eab"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:38ede51b08b009c43b285161807fa60cff1c7c5c",
       "provenance": {
         "commit": "38ede51b08b009c43b285161807fa60cff1c7c5c"
@@ -711791,6 +711963,14 @@
       "to": "Commit:505bb8b009c56ff98ee4803a90cda7fe80e568af",
       "provenance": {
         "commit": "505bb8b009c56ff98ee4803a90cda7fe80e568af"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:506deba9ae3ca99a60699df67c0ffde15f3344be",
+      "provenance": {
+        "commit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
       }
     },
     {
@@ -717111,6 +717291,14 @@
       "to": "Commit:73e9518810bc7c110aae6a2a5e7ecb2e38b5e06c",
       "provenance": {
         "commit": "73e9518810bc7c110aae6a2a5e7ecb2e38b5e06c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:73e9fe6c1cedd44885656d54bd88e67459b81121",
+      "provenance": {
+        "commit": "73e9fe6c1cedd44885656d54bd88e67459b81121"
       }
     },
     {
@@ -723303,6 +723491,14 @@
       "to": "Commit:9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496",
       "provenance": {
         "commit": "9c7f8d5fc209c4cd2a4cafcbc47fc025cb3e6496"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9c8b224f663a3a8e678f3c662f592fbcc963d236",
+      "provenance": {
+        "commit": "9c8b224f663a3a8e678f3c662f592fbcc963d236"
       }
     },
     {
@@ -741589,7 +741785,7 @@
       "to": "Artifact:src/commissionedcrafting.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 783
+        "line": 791
       }
     },
     {
@@ -741607,7 +741803,7 @@
       "to": "Artifact:src/equipmentrentals.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 809
+        "line": 817
       }
     },
     {
@@ -741643,7 +741839,7 @@
       "to": "Artifact:src/multihopcourier.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 729
+        "line": 737
       }
     },
     {
@@ -741652,7 +741848,7 @@
       "to": "Artifact:src/multihopcourier.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 765
+        "line": 773
       }
     },
     {
@@ -741661,7 +741857,7 @@
       "to": "Artifact:src/multihopcourier.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 774
+        "line": 782
       }
     },
     {
@@ -741670,7 +741866,7 @@
       "to": "Artifact:src/multihopcourier.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 783
+        "line": 791
       }
     },
     {
@@ -741679,7 +741875,7 @@
       "to": "Artifact:src/social/defense.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 597
+        "line": 605
       }
     },
     {
@@ -741688,7 +741884,7 @@
       "to": "Artifact:src/social/defense.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 622
+        "line": 630
       }
     },
     {
@@ -741697,7 +741893,7 @@
       "to": "Artifact:src/social/defense.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 784
+        "line": 792
       }
     },
     {
@@ -741706,7 +741902,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 808
+        "line": 816
       }
     },
     {
@@ -777265,7 +777461,7 @@
       "to": "Artifact:src/contacts.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 804
+        "line": 807
       }
     },
     {
@@ -777274,7 +777470,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1740
+        "line": 1743
       }
     },
     {
@@ -777283,7 +777479,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1143
+        "line": 1146
       }
     },
     {
@@ -777292,7 +777488,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1332
+        "line": 1335
       }
     },
     {
@@ -777310,7 +777506,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1541
+        "line": 1544
       }
     },
     {
@@ -777319,7 +777515,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1790
+        "line": 1793
       }
     },
     {
@@ -777355,7 +777551,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 308
+        "line": 311
       }
     },
     {
@@ -777364,7 +777560,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 493
+        "line": 496
       }
     },
     {
@@ -777373,7 +777569,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1719
+        "line": 1722
       }
     },
     {
@@ -777382,7 +777578,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1789
+        "line": 1792
       }
     },
     {
@@ -777391,7 +777587,7 @@
       "to": "Artifact:src/verify.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1021
+        "line": 1024
       }
     },
     {
@@ -777400,7 +777596,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1754
+        "line": 1757
       }
     },
     {
@@ -777436,7 +777632,7 @@
       "to": "ExternalDependency:/vendor/walletconnect.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 405
+        "line": 408
       }
     },
     {
@@ -879532,7 +879728,7 @@
       "to": "Artifact:src/contacts.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 804
+        "line": 807
       }
     },
     {
@@ -879541,7 +879737,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1740
+        "line": 1743
       }
     },
     {
@@ -879550,7 +879746,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1143
+        "line": 1146
       }
     },
     {
@@ -879559,7 +879755,7 @@
       "to": "Artifact:src/dbhealth.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1332
+        "line": 1335
       }
     },
     {
@@ -879577,7 +879773,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1541
+        "line": 1544
       }
     },
     {
@@ -879586,7 +879782,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1790
+        "line": 1793
       }
     },
     {
@@ -879622,7 +879818,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 308
+        "line": 311
       }
     },
     {
@@ -879631,7 +879827,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 493
+        "line": 496
       }
     },
     {
@@ -879640,7 +879836,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1719
+        "line": 1722
       }
     },
     {
@@ -879649,7 +879845,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1789
+        "line": 1792
       }
     },
     {
@@ -879658,7 +879854,7 @@
       "to": "Artifact:src/verify.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1021
+        "line": 1024
       }
     },
     {
@@ -879667,7 +879863,7 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1754
+        "line": 1757
       }
     },
     {
@@ -894913,7 +895109,7 @@
       "to": "Table:multi_hop_courier_requests",
       "provenance": {
         "file": "src/commercialcampaigns.js",
-        "line": 705
+        "line": 713
       }
     },
     {

@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8800c0dd6b4a`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9c8b224f663a`.
 
 ## Repository
 
@@ -9,7 +9,7 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4755 |
+| Commits in clone | 4759 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
@@ -19,7 +19,7 @@
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3789 |
+| OmertaDev | 3793 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 121 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 783 | historical |
-| knowledge/generated/graph-summary.md | 783 | historical |
-| knowledge/generated/graph.json | 783 | historical |
-| knowledge/generated/inventory.md | 783 | historical |
+| knowledge/generated/github-history.md | 784 | historical |
+| knowledge/generated/graph-summary.md | 784 | historical |
+| knowledge/generated/graph.json | 784 | historical |
+| knowledge/generated/inventory.md | 784 | historical |
 | [SPEC.md](../../SPEC.md) | 596 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 486 | yes |
@@ -65,11 +65,11 @@
 | [test/growth.js](../../test/growth.js) | 89 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 83 | yes |
-| [test/hardening.js](../../test/hardening.js) | 70 | yes |
+| [test/hardening.js](../../test/hardening.js) | 71 | yes |
 | [src/preflight.js](../../src/preflight.js) | 68 | yes |
 | [test/director-migration.js](../../test/director-migration.js) | 66 | yes |
 | [tools/sim.js](../../tools/sim.js) | 62 | yes |
-| [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 60 | yes |
+| [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 61 | yes |
 
 ## Pull requests
 

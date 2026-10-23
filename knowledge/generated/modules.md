@@ -76,7 +76,7 @@
 | [src/commercialcampaignruntime.js](../../src/commercialcampaignruntime.js) | 205 | platform-core | 0 / 5 | 0 | 14 | 3 |
 | [src/commercialcampaigns-contracts.js](../../src/commercialcampaigns-contracts.js) | 240 | platform-core | 2 / 5 | 0 | 3 | 1 |
 | [src/commercialcampaigns-schema.js](../../src/commercialcampaigns-schema.js) | 83 | platform-core | 0 / 0 | 0 | 13 | 0 |
-| [src/commercialcampaigns.js](../../src/commercialcampaigns.js) | 833 | platform-core | 10 / 7 | 0 | 15 | 3 |
+| [src/commercialcampaigns.js](../../src/commercialcampaigns.js) | 841 | platform-core | 10 / 7 | 0 | 15 | 3 |
 | [src/commercialdisputes.js](../../src/commercialdisputes.js) | 56 | platform-core | 6 / 9 | 0 | 11 | 2 |
 | [src/commercialnegotiation.js](../../src/commercialnegotiation.js) | 76 | platform-core | 3 / 2 | 4 | 7 | 1 |
 | [src/commercialpremises.js](../../src/commercialpremises.js) | 269 | platform-core | 3 / 11 | 0 | 10 | 6 |
