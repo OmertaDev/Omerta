@@ -1,7 +1,7 @@
 import { continuousCityHistoricalInput } from '../../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../../tools/commerce-current-enterprise-source-compatibility.js";
 import {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';
-import {ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS} from '../../tools/enterprise-native-inputs.js';
+import {ENTERPRISE_NATIVE_RELEASE_INPUTS} from '../../tools/enterprise-native-inputs.js';
 // Closed pure-control fixtures. Historical source execution never admits the current release.
 import {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';
 import { economyReleaseSource } from '../../tools/economy-release-composition.js';
@@ -141,7 +141,7 @@ function uniformHistoricalInput(file, input) {
 function enterpriseCombinedHistoricalInput(file, input, expected) {
   const raw = uniformHistoricalInput(file, input), current = canonical(raw);
   if (!enterpriseCombinedHistoricalFiles.includes(file)) return raw;
-  const rows = ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.replacements.filter(candidate => candidate.file === file);
+  const rows = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.filter(candidate => candidate.file === file);
   assert.equal(rows.length, 1, 'Unique combined enterprise historical input required: ' + file);
   const [row] = rows;
   assert.equal(row.before.sha256, sha256(expected), 'Combined enterprise predecessor differs from frozen release: ' + file);
@@ -153,7 +153,7 @@ function enterpriseCombinedHistoricalInput(file, input, expected) {
   }
   if (digest !== row.after.sha256) return raw;
   assert.equal(blobHash(Buffer.from(current)), row.after.blob, 'Combined enterprise current Git blob changed: ' + file);
-  assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision}:${file}`])).trim(), row.after.blob,
+  assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_RELEASE_INPUTS.revision}:${file}`])).trim(), row.after.blob,
     'Combined enterprise revision/blob binding changed: ' + file);
   const authored = git(['cat-file', 'blob', row.after.blob]);
   assert.equal(canonical(authored), String(authored), 'Combined enterprise current bytes must be LF: ' + file);
@@ -484,14 +484,14 @@ function rejectHistoricalApplicationSources() {
       reject(deedCurrent.replace(inverse.current, () => inverse.current + inverse.current));
     }
   }
-  const admittedCombinedFiles = ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.replacements
+  const admittedCombinedFiles = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements
     .filter(row => release.get(row.file) === row.before.blob && (row.file.startsWith('src/') || row.file.startsWith('data/') || row.file === 'schema.sql'))
     .map(row => row.file).sort();
   assert.deepEqual(admittedCombinedFiles, [...enterpriseCombinedHistoricalFiles].sort(),
     'Combined enterprise historical namespace changed');
   const combinedCurrents = new Map();
   for (const combinedFile of enterpriseCombinedHistoricalFiles) {
-    const combinedRow = ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.replacements.find(row => row.file === combinedFile);
+    const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);
     const physicalCurrent = canonical(continuousCityHistoricalInput(combinedFile,
       String(originalRead(path.join(root, combinedFile)))));
     const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));
@@ -500,7 +500,7 @@ function rejectHistoricalApplicationSources() {
     combinedCurrents.set(combinedFile, combinedCurrent);
     assert.equal(sha256(combinedCurrent), combinedRow.after.sha256, 'Combined enterprise current source changed: ' + combinedFile);
     assert.equal(blobHash(Buffer.from(combinedCurrent)), combinedRow.after.blob, 'Combined enterprise current blob changed: ' + combinedFile);
-    assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision}:${combinedFile}`])).trim(), combinedRow.after.blob,
+    assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_RELEASE_INPUTS.revision}:${combinedFile}`])).trim(), combinedRow.after.blob,
       'Combined enterprise current revision/blob binding changed: ' + combinedFile);
     assert.equal(sha256(combinedFrozen), combinedRow.before.sha256, 'Combined enterprise predecessor source changed: ' + combinedFile);
     assert.equal(blobHash(Buffer.from(combinedFrozen)), combinedRow.before.blob, 'Combined enterprise predecessor blob changed: ' + combinedFile);

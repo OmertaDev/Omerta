@@ -5,8 +5,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const revision = '913731168052c928bae5451f56f4c15007eda89e';
-const predecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
+const revision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
+const predecessor = '9f39df80598d38507c9f6b4ea2414312eb8e7700';
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -24,6 +24,13 @@ const files = Object.freeze([
   'src/pen.js', 'src/population.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',
   'test/gates.js', 'test/growth.js', 'test/phase2-postgres.js',
   'tools/arena.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
+  'test/commerce-release-phase2-migration-catalog.js',
+  'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
+  'tools/commerce-current-enterprise-source-compatibility.js',
+  'tools/deed-quest-source-transfer.js', 'tools/enterprise-deed-release-phase2-migration-catalog.js',
+  'tools/player-intel-source-compatibility.js', 'tools/rc1-company-operator-source-compatibility.js',
+  'tools/rc1-deed-source-compatibility.js', 'tools/rc1-invoice-source-compatibility.js',
+  'tools/rc1-world-qualification.js',
 ]);
 
 const domains = {};
@@ -55,15 +62,7 @@ for (const file of files) {
 // Source-only adapters added after the authored gameplay revision. Their exact
 // postimages reconstruct that revision before any older frozen reader executes.
 const bindingFiles = Object.freeze([
-  'package.json', 'public/index.html', 'schema.sql', 'src/db.js', 'src/game.js', 'src/rules.tail.js', 'src/server.js', 'test/growth.js',
-  'test/commerce-release-phase2-migration-catalog.js',
-  'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
-  'test/lib/rc1-historical-source-fixture.js',
-  'tools/commerce-current-enterprise-source-compatibility.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
-  'tools/deed-quest-source-transfer.js', 'tools/enterprise-deed-release-phase2-migration-catalog.js',
-  'tools/player-intel-source-compatibility.js', 'tools/rc1-company-operator-source-compatibility.js',
-  'tools/rc1-deed-source-compatibility.js', 'tools/rc1-invoice-source-compatibility.js',
-  'tools/rc1-world-qualification.js',
+  'package.json', 'test/lib/rc1-historical-source-fixture.js',
 ]);
 const bindingDomains = {};
 for (const file of bindingFiles) {

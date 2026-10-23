@@ -9,8 +9,8 @@ import {
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer, economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
-const expectedRevision = '913731168052c928bae5451f56f4c15007eda89e';
-const expectedPredecessor = '048d92fcbffea75da161f4ac65f0076f5a4e3e70';
+const expectedRevision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
+const expectedPredecessor = '9f39df80598d38507c9f6b4ea2414312eb8e7700';
 const files = [
   '.github/workflows/ci.yml',
   'public/index.html', 'schema.sql', 'src/accrual.js', 'src/boxing.js', 'src/db.js', 'src/economy.js', 'src/explore.js', 'src/game.js',
@@ -18,17 +18,16 @@ const files = [
   'src/pen.js', 'src/population.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',
   'test/gates.js', 'test/growth.js', 'test/phase2-postgres.js',
   'tools/arena.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
-];
-const bindingFiles = [
-  'package.json', 'public/index.html', 'schema.sql', 'src/db.js', 'src/game.js', 'src/rules.tail.js', 'src/server.js', 'test/growth.js',
   'test/commerce-release-phase2-migration-catalog.js',
   'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
-  'test/lib/rc1-historical-source-fixture.js',
-  'tools/commerce-current-enterprise-source-compatibility.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
+  'tools/commerce-current-enterprise-source-compatibility.js',
   'tools/deed-quest-source-transfer.js', 'tools/enterprise-deed-release-phase2-migration-catalog.js',
   'tools/player-intel-source-compatibility.js', 'tools/rc1-company-operator-source-compatibility.js',
   'tools/rc1-deed-source-compatibility.js', 'tools/rc1-invoice-source-compatibility.js',
   'tools/rc1-world-qualification.js',
+];
+const bindingFiles = [
+  'package.json', 'test/lib/rc1-historical-source-fixture.js',
 ];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
