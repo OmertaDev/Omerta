@@ -46,6 +46,9 @@ const VIEWPORTS = [
 ];
 const MIN_TAP = 44;          // px. Primary navigation is touched constantly; enforce the full floor.
 const SHOTS = process.env.MOBILE_SHOTS || '';   // set a directory to keep screenshots for eyeballing
+const unexpectedConsoleError = (message, intentionalOffline) => message.type() === 'error'
+  && !/status of 4\d\d/.test(message.text())
+  && !(intentionalOffline && message.text() === 'Failed to load resource: net::ERR_INTERNET_DISCONNECTED');
 
 async function clickTab(page, id) {
   await page.click(`#tabs [data-tab="${id}"]`);
@@ -212,7 +215,7 @@ const check = async (page, screen, vp, { contentMustShow = false } = {}) => {
   return m;
 };
 
-async function checkReadinessNavigation(page, vp) {
+async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
   const strip = page.locator('#action-readiness');
   await strip.waitFor({ state: 'visible', timeout: 5000 });
   const entries = await strip.locator('[data-readiness-tab]').evaluateAll(buttons => buttons.map(button => ({
@@ -267,6 +270,8 @@ async function checkReadinessNavigation(page, vp) {
         const delivered = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player');
         await page.locator('#btn-refresh').evaluate(button => button.click());
         await captured;
+        // Only Chromium's exact resource-disconnected notice is expected during this fault window.
+        setIntentionalOffline(true);
         await page.context().setOffline(true);
         await page.waitForFunction(() => [...document.querySelectorAll('#action-readiness .readiness-state')]
           .every(state => state.textContent === 'Refresh'), null, { timeout: 5000 });
@@ -284,6 +289,9 @@ async function checkReadinessNavigation(page, vp) {
         const states = [...document.querySelectorAll('#action-readiness .readiness-state')];
         return states.length === 4 && states.every(state => state.textContent && state.textContent !== 'Refresh');
       }, null, { timeout: 10000 });
+      // Drain failed/queued resource loads after the restored snapshot before closing the window.
+      await page.waitForLoadState('networkidle', { timeout: 10000 });
+      setIntentionalOffline(false);
 
       // The same mounted controls must also work in the desktop layout.
       const desktop = { w: 1280, h: 900 };
@@ -308,6 +316,7 @@ async function checkReadinessNavigation(page, vp) {
       }
     }
   } finally {
+    setIntentionalOffline(false);
     page.off('request', observeMutations);
   }
   if (mutations.length)
@@ -325,10 +334,11 @@ for (const vp of VIEWPORTS) {
       '(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
   });
   const pageErrors = [];
+  let intentionalOffline = false;
   ctx.on('weberror', (e) => pageErrors.push(e.error().message));
   const page = await ctx.newPage();
   // A 4xx from the API is normal here (/v1/me before a character exists); a JS error is not.
-  page.on('console', (m) => { if (m.type() === 'error' && !/status of 4\d\d/.test(m.text())) pageErrors.push(m.text()); });
+  page.on('console', (m) => { if (unexpectedConsoleError(m, intentionalOffline)) pageErrors.push(m.text()); });
 
   const walked = [];   // check G: real navigation must not restore retired screen tracking
   const screenRequests = [];
@@ -557,7 +567,7 @@ for (const vp of VIEWPORTS) {
 
   if (firstJobHandoff) {
   // The shared clocks remain reachable outside Home; selecting one only opens its screen.
-  await checkReadinessNavigation(page, vp);
+  await checkReadinessNavigation(page, vp, value => { intentionalOffline = value; });
   // open the whole city and walk every screen in every group
   if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
   await page.waitForTimeout(400);
