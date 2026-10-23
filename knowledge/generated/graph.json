@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+  "sourceRevision": "baf2483052484296d0af4a68bc5309fe12771260",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16882,
-    "edges": 67528,
+    "nodes": 16884,
+    "edges": 67535,
     "byNodeType": {
       "Artifact": 6928,
       "Command": 295,
-      "Commit": 4725,
+      "Commit": 4727,
       "Contract": 134,
       "Document": 951,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5514,
-      "CHANGED": 25826,
+      "CHANGED": 25831,
       "CONTAINS": 6949,
       "DECLARES": 295,
       "DEFINED_IN": 1760,
       "DEPENDS_ON": 69,
       "EXECUTES": 1157,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4725,
+      "HAS_COMMIT": 4727,
       "IMPLEMENTS": 124,
       "IMPORTS": 7967,
       "INHERITS": 45,
@@ -154257,18 +154257,18 @@
       "extension": ".js",
       "bytes": 448590,
       "lines": 10549,
-      "version": "c1a3da095eaf68d1",
+      "version": "02e8cc4044ffca5d",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-inputs.js",
           "line": 1,
-          "version": "c1a3da095eaf68d1"
+          "version": "02e8cc4044ffca5d"
         }
       ],
-      "lastChangedAt": "2026-10-23T10:09:10.000Z",
+      "lastChangedAt": "2026-10-23T12:10:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2a4c6be86dd13908a2466c14b52707911309428f"
+      "lastChangedCommit": "baf2483052484296d0af4a68bc5309fe12771260"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -219367,6 +219367,22 @@
       ]
     },
     {
+      "key": "Commit:baf2483052484296d0af4a68bc5309fe12771260",
+      "type": "Commit",
+      "id": "baf2483052484296d0af4a68bc5309fe12771260",
+      "label": "Reseal enterprise qualification inputs",
+      "title": "Reseal enterprise qualification inputs",
+      "date": "2026-10-23T12:10:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/baf2483052484296d0af4a68bc5309fe12771260",
+      "provenance": [
+        {
+          "commit": "baf2483052484296d0af4a68bc5309fe12771260",
+          "url": "https://github.com/OmertaDev/Omerta/commit/baf2483052484296d0af4a68bc5309fe12771260"
+        }
+      ]
+    },
+    {
       "key": "Commit:baf261b63ed6006cfe5544ed80d21400fa28f5e4",
       "type": "Commit",
       "id": "baf261b63ed6006cfe5544ed80d21400fa28f5e4",
@@ -234019,6 +234035,22 @@
         {
           "commit": "f0bd88ff7d0a52266b11117b3aa09a4e9f4839e5",
           "url": "https://github.com/OmertaDev/Omerta/commit/f0bd88ff7d0a52266b11117b3aa09a4e9f4839e5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "type": "Commit",
+      "id": "f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "label": "Refresh knowledge for economy qualification repairs",
+      "title": "Refresh knowledge for economy qualification repairs",
+      "date": "2026-10-23T12:04:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "provenance": [
+        {
+          "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f0cf49533bf8132cc6173fdbb9fca33a44618e76"
         }
       ]
     },
@@ -267741,6 +267773,9 @@
           "commit": "f0af97fef55614bb333dd30e32c7b1a791cd812f"
         },
         {
+          "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
+        },
+        {
           "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
         },
         {
@@ -270078,6 +270113,9 @@
           "commit": "f0af97fef55614bb333dd30e32c7b1a791cd812f"
         },
         {
+          "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
+        },
+        {
           "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
         },
         {
@@ -272413,6 +272451,9 @@
         },
         {
           "commit": "f0af97fef55614bb333dd30e32c7b1a791cd812f"
+        },
+        {
+          "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
         },
         {
           "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
@@ -275398,6 +275439,9 @@
         },
         {
           "commit": "f0af97fef55614bb333dd30e32c7b1a791cd812f"
+        },
+        {
+          "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
         },
         {
           "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
@@ -289833,7 +289877,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c89b8256a4076d231b78f0bcbbce0a2a3415d501",
+      "revision": "baf2483052484296d0af4a68bc5309fe12771260",
       "currentBranch": "codex/economy-prod-hardening-integrated-20261023",
       "defaultBranch": "main",
       "visibility": "public",
@@ -540815,6 +540859,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:baf2483052484296d0af4a68bc5309fe12771260",
+      "to": "Artifact:tools/enterprise-native-inputs.js",
+      "provenance": {
+        "commit": "baf2483052484296d0af4a68bc5309fe12771260"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:baf261b63ed6006cfe5544ed80d21400fa28f5e4",
       "to": "Artifact:test/city-world-host-browser.js",
       "provenance": {
@@ -581939,6 +581991,38 @@
       "to": "Artifact:src/companyrestructuring.js",
       "provenance": {
         "commit": "f0bd88ff7d0a52266b11117b3aa09a4e9f4839e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
       }
     },
     {
@@ -726309,6 +726393,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:baf2483052484296d0af4a68bc5309fe12771260",
+      "provenance": {
+        "commit": "baf2483052484296d0af4a68bc5309fe12771260"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:baf261b63ed6006cfe5544ed80d21400fa28f5e4",
       "provenance": {
         "commit": "baf261b63ed6006cfe5544ed80d21400fa28f5e4"
@@ -733632,6 +733724,14 @@
       "to": "Commit:f0bd88ff7d0a52266b11117b3aa09a4e9f4839e5",
       "provenance": {
         "commit": "f0bd88ff7d0a52266b11117b3aa09a4e9f4839e5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f0cf49533bf8132cc6173fdbb9fca33a44618e76",
+      "provenance": {
+        "commit": "f0cf49533bf8132cc6173fdbb9fca33a44618e76"
       }
     },
     {
