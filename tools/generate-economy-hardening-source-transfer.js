@@ -11,8 +11,8 @@ const bindingRevision = 'c94bb20cf84de303a34730f4723cff17192d6923';
 const bindingRevisionTree = 'e0f65c75eab02d2cbdc69d1da13047217d6651ce';
 const bindingSuccessorRevision = '66b4c6008e6b9c192ae20006c59bc591be82a27a';
 const bindingSuccessorTree = '38d87c3be5fdd4890ab5a9cdc7309a4332b50a14';
-const repairRevision = 'a2779ea0f3fd7591209fa49a0711af72a12cba8f';
-const repairRevisionTree = 'e9fac3e6fa1bd582d08551e55faf73d998e7a6cd';
+const repairRevision = 'a477313e15ae0eaaa5fd120a9375ac92bf369128';
+const repairRevisionTree = '861f98b3fd695c34d462886cea03f3503541b70b';
 const repairPredecessor = '8e9b7408faceb6d6d69badff386c15e92cd02f69';
 const repairPredecessorTree = '880f124eab908eddae4b2e30406a7e491649cb2e';
 const lf = text => text.replaceAll('\r\n', '\n');
@@ -152,9 +152,13 @@ for (const file of bindingFiles.filter(file => !bindingSuccessorFiles.includes(f
     `Unsealed physical binding successor requires its own reviewed outer hop: ${file}`);
 }
 
-// Native qualification repairs made after the complete candidate are a final exact
+// Economy qualification repairs made after the complete candidate are a final exact
 // outer hop. They reconstruct the pre-repair candidate before the authored envelope.
-const repairFiles = Object.freeze(['tools/commerce-deed-release-phase2-native-catalog.js']);
+const repairFiles = Object.freeze([
+  'tools/commerce-deed-release-phase2-native-catalog.js',
+  'src/game.js', 'src/growth.js', 'src/verify.js',
+  'test/growth.js', 'test/hardening.js', 'test/sweeps.js',
+]);
 const repairDomains = {};
 for (const file of repairFiles) {
   const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);
@@ -207,7 +211,7 @@ export const ECONOMY_HARDENING_REPAIR_REVISION = ${JSON.stringify(repairRevision
 export const ECONOMY_HARDENING_REPAIR_TREE = ${JSON.stringify(repairRevisionTree)};
 export const ECONOMY_HARDENING_REPAIR_PREDECESSOR = ${JSON.stringify(repairPredecessor)};
 export const ECONOMY_HARDENING_REPAIR_PREDECESSOR_TREE = ${JSON.stringify(repairPredecessorTree)};
-export const ECONOMY_HARDENING_REPAIR_PHASE = 'exact-native-qualification-repair-source-transfer-only; no native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_REPAIR_PHASE = 'exact-economy-qualification-repair-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
 export const ECONOMY_HARDENING_REPAIR_DOMAINS = ${JSON.stringify(repairDomains, null, 2)};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS)]) {

@@ -41,7 +41,11 @@ const bindingFiles = [
   'package.json', 'test/lib/rc1-historical-source-fixture.js',
 ];
 const successorFiles = ['test/lib/rc1-historical-source-fixture.js'];
-const repairFiles = ['tools/commerce-deed-release-phase2-native-catalog.js'];
+const repairFiles = [
+  'tools/commerce-deed-release-phase2-native-catalog.js',
+  'src/game.js', 'src/growth.js', 'src/verify.js',
+  'test/growth.js', 'test/hardening.js', 'test/sweeps.js',
+];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -76,7 +80,7 @@ assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION}^{
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR}^{tree}`).trim(),
   ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_BINDING_SUCCESSOR_PHASE, /exact-authored-binding-successor-source-transfer-only/);
-assert.equal(ECONOMY_HARDENING_REPAIR_REVISION, 'a2779ea0f3fd7591209fa49a0711af72a12cba8f');
+assert.equal(ECONOMY_HARDENING_REPAIR_REVISION, 'a477313e15ae0eaaa5fd120a9375ac92bf369128');
 assert.equal(ECONOMY_HARDENING_REPAIR_PREDECESSOR, '8e9b7408faceb6d6d69badff386c15e92cd02f69');
 execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,
   ECONOMY_HARDENING_REPAIR_PREDECESSOR]);
@@ -86,7 +90,7 @@ execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_REPAIR_REV
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_REPAIR_REVISION}^{tree}`).trim(), ECONOMY_HARDENING_REPAIR_TREE);
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}^{tree}`).trim(),
   ECONOMY_HARDENING_REPAIR_PREDECESSOR_TREE);
-assert.match(ECONOMY_HARDENING_REPAIR_PHASE, /exact-native-qualification-repair-source-transfer-only/);
+assert.match(ECONOMY_HARDENING_REPAIR_PHASE, /exact-economy-qualification-repair-source-transfer-only/);
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_SOURCE_DOMAINS), files);
 assert(Object.isFrozen(ECONOMY_HARDENING_SOURCE_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_DOMAINS), bindingFiles);
@@ -138,7 +142,7 @@ for (const file of repairFiles) {
   const pin = ECONOMY_HARDENING_REPAIR_DOMAINS[file];
   const current = git('show', `${ECONOMY_HARDENING_REPAIR_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`);
-  const historical = git('show', `${expectedPredecessor}:${file}`);
+  const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
   const physical = lf(fs.readFileSync(file, 'utf8'));
   assert.equal(physical, current, 'Physical qualification repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
@@ -159,6 +163,7 @@ for (const file of repairFiles) {
     assert.equal(transfer.predecessorRevision, ECONOMY_HARDENING_REPAIR_PREDECESSOR);
     assert.equal(economyHardeningSourceBaseline(file, input), historical); positives++;
   }
+  assert.equal(economyHardeningSourceBaseline(file, baseline), historical); positives++;
   for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
     current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) {
     assert.throws(() => assertEconomyHardeningRepairTransfer(file, changed));
@@ -166,10 +171,13 @@ for (const file of repairFiles) {
   }
   for (const inverse of pin.inverses) {
     assert.equal(current.split(inverse.current).length - 1, 1, 'Unique complete qualification repair inverse required: ' + file);
-    for (const changed of [current.replace(inverse.current, ''),
-      current.replace(inverse.current, () => inverse.current + inverse.current),
-      current.replace(inverse.current, () => inverse.baseline),
-      current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+    const changedInputs = [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current)];
+    // With a one-hunk repair, applying that hunk's baseline is the exact known predecessor. The
+    // permissive composer must continue through older layers instead of treating it as source drift.
+    if (pin.inverses.length > 1) changedInputs.push(current.replace(inverse.current, () => inverse.baseline));
+    changedInputs.push(current.replace(inverse.current, () => inverse.current.replace(/\S/, '?')));
+    for (const changed of changedInputs) {
       assert.throws(() => assertEconomyHardeningRepairTransfer(file, changed));
       assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
     }
@@ -248,4 +256,7 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyHardeningRepairTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
+assert.equal(positives, 176, 'positive control count drifted');
+assert.equal(refusals, 410, 'refusal control count drifted');
+assert.equal(hunks, 282, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
