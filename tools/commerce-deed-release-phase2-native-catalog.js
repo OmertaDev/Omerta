@@ -836,16 +836,20 @@ function assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entri
 
 const ECONOMY_HARDENING_TABLES=Object.freeze(['account_daily_claims','economy_migrations']);
 const ECONOMY_HARDENING_EXISTING_COLUMNS=Object.freeze([
+  'accounts.created_ip_authority','account_persistent.referral_same_ip_hold',
   'account_persistent.checkin_day','account_persistent.checkin_streak',
   'characters.street_action_at','characters.crew_sale_credit_ms',
 ]);
-const economyHardeningDerivedColumns=new Set(['characters.street_action_at','characters.crew_sale_credit_ms']);
+const economyHardeningDerivedColumns=new Set([
+  'accounts.created_ip_authority','account_persistent.referral_same_ip_hold',
+  'characters.street_action_at','characters.crew_sale_credit_ms',
+]);
 const economyHardeningIdentity=(field,row)=>field==='relations'?row.name
   :field==='columns'?`${row.table_name}.${row.column_name}`:key(row);
 const economyHardeningOrdinals=freeze({
-  fresh:{checkinDay:42,checkinStreak:43,streetAction:74,crewSaleCredit:75},
-  phase2:{checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},
-  director:{checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},
+  fresh:{createdIpAuthority:7,referralSameIpHold:16,checkinDay:43,checkinStreak:44,streetAction:74,crewSaleCredit:75},
+  phase2:{createdIpAuthority:13,referralSameIpHold:87,checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},
+  director:{createdIpAuthority:13,referralSameIpHold:87,checkinDay:84,checkinStreak:85,streetAction:117,crewSaleCredit:118},
 });
 const economyHardeningColumn=(table_name,column_name,ordinal,type,default_expression,not_null,collated=false)=>({
   table_name,column_name,ordinal,type,typmod:-1,default_expression,not_null,identity:'',generated:'',
@@ -874,6 +878,7 @@ function economyHardeningAddedRows(profile,serverVersionNum){
     {name:'economy_migrations',kind:'r',persistence:'p'},
   ];
   const columns=[
+    economyHardeningColumn('accounts','created_ip_authority',ordinal.createdIpAuthority,'text',null,false,true),
     economyHardeningColumn('account_daily_claims','account_id',1,'text',null,true,true),
     economyHardeningColumn('account_daily_claims','day',2,'integer',null,true),
     economyHardeningColumn('account_daily_claims','scope',3,'text',null,true,true),
@@ -882,6 +887,7 @@ function economyHardeningAddedRows(profile,serverVersionNum){
     economyHardeningColumn('account_daily_claims','claimed_at',6,'timestamp with time zone','now()',true),
     economyHardeningColumn('account_persistent','checkin_day',ordinal.checkinDay,'integer','0',true),
     economyHardeningColumn('account_persistent','checkin_streak',ordinal.checkinStreak,'integer','0',true),
+    economyHardeningColumn('account_persistent','referral_same_ip_hold',ordinal.referralSameIpHold,'boolean',null,false),
     economyHardeningColumn('characters','street_action_at',ordinal.streetAction,'timestamp with time zone',null,false),
     economyHardeningColumn('characters','crew_sale_credit_ms',ordinal.crewSaleCredit,'bigint','0',true),
     economyHardeningColumn('economy_migrations','id',1,'text',null,true,true),
@@ -931,7 +937,7 @@ function economyHardeningColumnMigrations(source){
     const match=statement.match(/^ALTER TABLE ([A-Za-z_][A-Za-z0-9_]*) ADD COLUMN IF NOT EXISTS ([A-Za-z_][A-Za-z0-9_]*) /);
     return `${match[1]}.${match[2]}`;
   }).sort();
-  assert.deepEqual(identities,[...economyHardeningDerivedColumns].sort(),'Exact two CREATE-derived hardening column migrations');
+  assert.deepEqual(identities,[...economyHardeningDerivedColumns].sort(),'Exact four CREATE-derived hardening column migrations');
   return statements;
 }
 
@@ -950,12 +956,18 @@ function economyHardeningCatalogProjection(baseline,candidate,{profile,serverVer
   const expected=structuredClone(prior),shifted=[];
   if(profile==='fresh'){
     expected.columns=expected.columns.map(row=>{
-      const start=row.table_name==='account_persistent'?42:row.table_name==='characters'?74:null;
-      if(start===null||row.ordinal<start)return row;
-      shifted.push([`${row.table_name}.${row.column_name}`,row.ordinal,row.ordinal+2]);return {...row,ordinal:row.ordinal+2};
+      const shift=row.table_name==='accounts'&&row.ordinal>=7?1
+        :row.table_name==='account_persistent'?(row.ordinal>=42?3:row.ordinal>=16?1:0)
+          :row.table_name==='characters'&&row.ordinal>=74?2:0;
+      if(!shift)return row;
+      shifted.push([`${row.table_name}.${row.column_name}`,row.ordinal,row.ordinal+shift]);return {...row,ordinal:row.ordinal+shift};
     });
-    assert.equal(shifted.filter(([name])=>name.startsWith('account_persistent.')).length,43,
-      'Exactly 43 account-persistent predecessor ordinals shift');
+    assert.equal(shifted.filter(([name])=>name.startsWith('accounts.')).length,6,
+      'Exactly six account predecessor ordinals shift');
+    assert.equal(shifted.filter(([name,,next])=>name.startsWith('account_persistent.')&&next).length,69,
+      'Exactly 69 account-persistent predecessor ordinals shift');
+    assert.equal(shifted.filter(([name,prior,next])=>name.startsWith('account_persistent.')&&next-prior===3).length,43,
+      'Exactly 43 later account-persistent predecessor ordinals shift three places');
     assert.equal(shifted.filter(([name])=>name.startsWith('characters.')).length,43,
       'Exactly 43 character predecessor ordinals shift');
   }else{

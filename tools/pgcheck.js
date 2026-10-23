@@ -2105,7 +2105,7 @@ console.log('\n9h. POST-COMMIT HOOKS release their transaction connection');
         [actor.id, M4.REF_GATES.netWorth, M4.REF_GATES.jobs]);
       await pool.query("UPDATE characters SET last_accrued_at=now()+interval '1 day' WHERE id=$1", [parent.id]);
       await pool.query('UPDATE account_persistent SET referred_by=$2, ref_paid=true WHERE account_id=$1', [parent.account, grand.account]);
-      await pool.query('UPDATE account_persistent SET referred_by=$2, checkins_lifetime=$3 WHERE account_id=$1',
+      await pool.query('UPDATE account_persistent SET referred_by=$2, checkins_lifetime=$3, referral_same_ip_hold=false WHERE account_id=$1',
         [actor.account, parent.account, M4.REF_GATES.checkins]);
       await pool.query('INSERT INTO referrals(recruit_account,recruiter_account) VALUES($1,$2)', [actor.account, parent.account]);
       const invoke = (fn) => pair
