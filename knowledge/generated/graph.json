@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "9c8b224f663a3a8e678f3c662f592fbcc963d236",
+  "sourceRevision": "04d6cf227615b48d6c2a382c059f94acea46942c",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16919,
-    "edges": 67674,
+    "nodes": 16923,
+    "edges": 67689,
     "byNodeType": {
       "Artifact": 6929,
       "Command": 295,
-      "Commit": 4759,
+      "Commit": 4763,
       "Contract": 134,
       "Document": 951,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5515,
-      "CHANGED": 25924,
+      "CHANGED": 25934,
       "CONTAINS": 6950,
       "DECLARES": 295,
       "DEFINED_IN": 1761,
       "DEPENDS_ON": 69,
       "EXECUTES": 1157,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4759,
+      "HAS_COMMIT": 4763,
       "IMPLEMENTS": 124,
-      "IMPORTS": 7973,
+      "IMPORTS": 7974,
       "INHERITS": 45,
       "REFERENCES": 3837,
       "REPRESENTS": 2560,
@@ -138040,20 +138040,20 @@
       "path": "test/economy-hardening-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 50992,
-      "lines": 691,
-      "version": "9ebfb12c95daf192",
+      "bytes": 55794,
+      "lines": 754,
+      "version": "15897af3316e5732",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "9ebfb12c95daf192"
+          "version": "15897af3316e5732"
         }
       ],
-      "lastChangedAt": "2026-10-23T20:51:40.000Z",
+      "lastChangedAt": "2026-10-23T21:24:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
+      "lastChangedCommit": "efd043bdcffb395a5b109bc712a96db822d17c67"
     },
     {
       "key": "Artifact:test/economy-invariant-hardening.js",
@@ -138224,20 +138224,20 @@
       "path": "test/enterprise-native-guard.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 28393,
+      "bytes": 28434,
       "lines": 120,
-      "version": "98af9d5c83fadb26",
+      "version": "b9675d656d2d3fb3",
       "text": true,
       "provenance": [
         {
           "file": "test/enterprise-native-guard.js",
           "line": 1,
-          "version": "98af9d5c83fadb26"
+          "version": "b9675d656d2d3fb3"
         }
       ],
-      "lastChangedAt": "2026-10-23T20:51:40.000Z",
+      "lastChangedAt": "2026-10-23T21:26:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
+      "lastChangedCommit": "04d6cf227615b48d6c2a382c059f94acea46942c"
     },
     {
       "key": "Artifact:test/enterprise-release-phase2-migration-catalog.js",
@@ -153519,20 +153519,20 @@
       "path": "tools/commerce-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 405865,
-      "lines": 671,
-      "version": "9d38b52791e0ee38",
+      "bytes": 406025,
+      "lines": 672,
+      "version": "8aad0d3ed017d56a",
       "text": true,
       "provenance": [
         {
           "file": "tools/commerce-source-compatibility.js",
           "line": 1,
-          "version": "9d38b52791e0ee38"
+          "version": "8aad0d3ed017d56a"
         }
       ],
-      "lastChangedAt": "2026-10-17T10:26:45.000Z",
+      "lastChangedAt": "2026-10-23T21:21:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "97455ac743b93a280efe35262eb52c865222e6ae"
+      "lastChangedCommit": "8b4a40ef54b7fd8734d7e91ab01da12bccee5146"
     },
     {
       "key": "Artifact:tools/company-autonomy-native.js",
@@ -154094,20 +154094,20 @@
       "path": "tools/economy-hardening-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 943435,
-      "lines": 2432,
-      "version": "5d181a255f67cc15",
+      "bytes": 951324,
+      "lines": 2485,
+      "version": "6afdeaff24d68504",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-hardening-source-transfer.js",
           "line": 1,
-          "version": "5d181a255f67cc15"
+          "version": "6afdeaff24d68504"
         }
       ],
-      "lastChangedAt": "2026-10-23T20:51:40.000Z",
+      "lastChangedAt": "2026-10-23T21:24:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "506deba9ae3ca99a60699df67c0ffde15f3344be"
+      "lastChangedCommit": "efd043bdcffb395a5b109bc712a96db822d17c67"
     },
     {
       "key": "Artifact:tools/economy-pilot.js",
@@ -154278,20 +154278,20 @@
       "path": "tools/enterprise-native-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 450042,
+      "bytes": 450381,
       "lines": 10549,
-      "version": "1d9ce8d448ef400a",
+      "version": "02f79323d5b26d99",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-inputs.js",
           "line": 1,
-          "version": "1d9ce8d448ef400a"
+          "version": "02f79323d5b26d99"
         }
       ],
-      "lastChangedAt": "2026-10-23T20:54:43.000Z",
+      "lastChangedAt": "2026-10-23T21:26:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c8b224f663a3a8e678f3c662f592fbcc963d236"
+      "lastChangedCommit": "04d6cf227615b48d6c2a382c059f94acea46942c"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -164746,6 +164746,22 @@
         {
           "commit": "04bc7216a933c5ffe68b865b5dafac3416d7f146",
           "url": "https://github.com/OmertaDev/Omerta/commit/04bc7216a933c5ffe68b865b5dafac3416d7f146"
+        }
+      ]
+    },
+    {
+      "key": "Commit:04d6cf227615b48d6c2a382c059f94acea46942c",
+      "type": "Commit",
+      "id": "04d6cf227615b48d6c2a382c059f94acea46942c",
+      "label": "test(release): reseal commerce admission inputs",
+      "title": "test(release): reseal commerce admission inputs",
+      "date": "2026-10-23T21:26:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/04d6cf227615b48d6c2a382c059f94acea46942c",
+      "provenance": [
+        {
+          "commit": "04d6cf227615b48d6c2a382c059f94acea46942c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/04d6cf227615b48d6c2a382c059f94acea46942c"
         }
       ]
     },
@@ -195806,6 +195822,22 @@
       ]
     },
     {
+      "key": "Commit:6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "type": "Commit",
+      "id": "6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "label": "chore(knowledge): refresh campaign expiry seal",
+      "title": "chore(knowledge): refresh campaign expiry seal",
+      "date": "2026-10-23T21:02:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "provenance": [
+        {
+          "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6c2a948d40494b6cd5ea890b989880539c9e08a6"
+        }
+      ]
+    },
+    {
       "key": "Commit:6c49c51cb927297d6d28f649a570035d32afec67",
       "type": "Commit",
       "id": "6c49c51cb927297d6d28f649a570035d32afec67",
@@ -205338,6 +205370,22 @@
         {
           "commit": "8b3d30e4f799ee7c10a4cafcd3382ff161d1f8d1",
           "url": "https://github.com/OmertaDev/Omerta/commit/8b3d30e4f799ee7c10a4cafcd3382ff161d1f8d1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8b4a40ef54b7fd8734d7e91ab01da12bccee5146",
+      "type": "Commit",
+      "id": "8b4a40ef54b7fd8734d7e91ab01da12bccee5146",
+      "label": "fix(release): admit sealed campaign source",
+      "title": "fix(release): admit sealed campaign source",
+      "date": "2026-10-23T21:21:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8b4a40ef54b7fd8734d7e91ab01da12bccee5146",
+      "provenance": [
+        {
+          "commit": "8b4a40ef54b7fd8734d7e91ab01da12bccee5146",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8b4a40ef54b7fd8734d7e91ab01da12bccee5146"
         }
       ]
     },
@@ -234222,6 +234270,22 @@
       ]
     },
     {
+      "key": "Commit:efd043bdcffb395a5b109bc712a96db822d17c67",
+      "type": "Commit",
+      "id": "efd043bdcffb395a5b109bc712a96db822d17c67",
+      "label": "test(economy): seal commerce admission fix",
+      "title": "test(economy): seal commerce admission fix",
+      "date": "2026-10-23T21:24:06.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/efd043bdcffb395a5b109bc712a96db822d17c67",
+      "provenance": [
+        {
+          "commit": "efd043bdcffb395a5b109bc712a96db822d17c67",
+          "url": "https://github.com/OmertaDev/Omerta/commit/efd043bdcffb395a5b109bc712a96db822d17c67"
+        }
+      ]
+    },
+    {
       "key": "Commit:eff753bba0b09a741409a066da7b643bc42f8838",
       "type": "Commit",
       "id": "eff753bba0b09a741409a066da7b643bc42f8838",
@@ -259028,7 +259092,7 @@
         },
         {
           "file": "tools/commerce-source-compatibility.js",
-          "line": 531
+          "line": 532
         },
         {
           "file": "tools/company-autonomy-native.js",
@@ -267180,6 +267244,9 @@
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
         },
         {
+          "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+        },
+        {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
         },
         {
@@ -269541,6 +269608,9 @@
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
         },
         {
+          "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+        },
+        {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
         },
         {
@@ -271900,6 +271970,9 @@
         },
         {
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
+        },
+        {
+          "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
         },
         {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
@@ -274917,6 +274990,9 @@
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
         },
         {
+          "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+        },
+        {
           "commit": "6c59995e7b8af1dea38ef846751a1e072dacbba8"
         },
         {
@@ -276577,6 +276653,9 @@
         },
         {
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
+        },
+        {
+          "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
         },
         {
           "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
@@ -290535,7 +290614,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "9c8b224f663a3a8e678f3c662f592fbcc963d236",
+      "revision": "04d6cf227615b48d6c2a382c059f94acea46942c",
       "currentBranch": "codex/economy-prod-hardening-integrated-20261023",
       "defaultBranch": "main",
       "visibility": "public",
@@ -332240,13 +332319,13 @@
       "type": "TestSuite",
       "id": "test/economy-hardening-source-compatibility.js",
       "label": "test/economy-hardening-source-compatibility.js",
-      "lines": 691,
-      "version": "9ebfb12c95daf192",
+      "lines": 754,
+      "version": "15897af3316e5732",
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "9ebfb12c95daf192"
+          "version": "15897af3316e5732"
         }
       ]
     },
@@ -332361,12 +332440,12 @@
       "id": "test/enterprise-native-guard.js",
       "label": "test/enterprise-native-guard.js",
       "lines": 120,
-      "version": "98af9d5c83fadb26",
+      "version": "b9675d656d2d3fb3",
       "provenance": [
         {
           "file": "test/enterprise-native-guard.js",
           "line": 1,
-          "version": "98af9d5c83fadb26"
+          "version": "b9675d656d2d3fb3"
         }
       ]
     },
@@ -393604,6 +393683,22 @@
       "to": "Artifact:test/rc1-browser-controls.js",
       "provenance": {
         "commit": "04bc7216a933c5ffe68b865b5dafac3416d7f146"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:04d6cf227615b48d6c2a382c059f94acea46942c",
+      "to": "Artifact:test/enterprise-native-guard.js",
+      "provenance": {
+        "commit": "04d6cf227615b48d6c2a382c059f94acea46942c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:04d6cf227615b48d6c2a382c059f94acea46942c",
+      "to": "Artifact:tools/enterprise-native-inputs.js",
+      "provenance": {
+        "commit": "04d6cf227615b48d6c2a382c059f94acea46942c"
       }
     },
     {
@@ -470040,6 +470135,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6c49c51cb927297d6d28f649a570035d32afec67",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -493012,6 +493147,14 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "8b3d30e4f799ee7c10a4cafcd3382ff161d1f8d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b4a40ef54b7fd8734d7e91ab01da12bccee5146",
+      "to": "Artifact:tools/commerce-source-compatibility.js",
+      "provenance": {
+        "commit": "8b4a40ef54b7fd8734d7e91ab01da12bccee5146"
       }
     },
     {
@@ -582996,6 +583139,22 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "efcb97fc4940e5f536ae744fdee5695b18d37a6d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:efd043bdcffb395a5b109bc712a96db822d17c67",
+      "to": "Artifact:test/economy-hardening-source-compatibility.js",
+      "provenance": {
+        "commit": "efd043bdcffb395a5b109bc712a96db822d17c67"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:efd043bdcffb395a5b109bc712a96db822d17c67",
+      "to": "Artifact:tools/economy-hardening-source-transfer.js",
+      "provenance": {
+        "commit": "efd043bdcffb395a5b109bc712a96db822d17c67"
       }
     },
     {
@@ -700520,6 +700679,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:04d6cf227615b48d6c2a382c059f94acea46942c",
+      "provenance": {
+        "commit": "04d6cf227615b48d6c2a382c059f94acea46942c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:04ea65108a4e38fb6a9bb67b2975f5aedff8ddb1",
       "provenance": {
         "commit": "04ea65108a4e38fb6a9bb67b2975f5aedff8ddb1"
@@ -716048,6 +716215,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6c2a948d40494b6cd5ea890b989880539c9e08a6",
+      "provenance": {
+        "commit": "6c2a948d40494b6cd5ea890b989880539c9e08a6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6c49c51cb927297d6d28f649a570035d32afec67",
       "provenance": {
         "commit": "6c49c51cb927297d6d28f649a570035d32afec67"
@@ -720811,6 +720986,14 @@
       "to": "Commit:8b3d30e4f799ee7c10a4cafcd3382ff161d1f8d1",
       "provenance": {
         "commit": "8b3d30e4f799ee7c10a4cafcd3382ff161d1f8d1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8b4a40ef54b7fd8734d7e91ab01da12bccee5146",
+      "provenance": {
+        "commit": "8b4a40ef54b7fd8734d7e91ab01da12bccee5146"
       }
     },
     {
@@ -735251,6 +735434,14 @@
       "to": "Commit:efcc7a1d735a11796d56ca767dd68e3ea7907479",
       "provenance": {
         "commit": "efcc7a1d735a11796d56ca767dd68e3ea7907479"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:efd043bdcffb395a5b109bc712a96db822d17c67",
+      "provenance": {
+        "commit": "efd043bdcffb395a5b109bc712a96db822d17c67"
       }
     },
     {
@@ -802877,7 +803068,7 @@
       "to": "Artifact:tools/commerce-current-native-data.js",
       "provenance": {
         "file": "tools/commerce-source-compatibility.js",
-        "line": 451
+        "line": 452
       }
     },
     {
@@ -802886,7 +803077,7 @@
       "to": "Artifact:tools/commerce-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/commerce-source-compatibility.js",
-        "line": 531
+        "line": 532
       }
     },
     {
@@ -802895,7 +803086,16 @@
       "to": "Artifact:tools/commerce-release-phase2-native-catalog.js",
       "provenance": {
         "file": "tools/commerce-source-compatibility.js",
-        "line": 531
+        "line": 532
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/commerce-source-compatibility.js",
+      "to": "Artifact:tools/economy-hardening-source-transfer.js",
+      "provenance": {
+        "file": "tools/commerce-source-compatibility.js",
+        "line": 4
       }
     },
     {
@@ -802904,7 +803104,7 @@
       "to": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/commerce-source-compatibility.js",
-        "line": 531
+        "line": 532
       }
     },
     {
@@ -802913,7 +803113,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/commerce-source-compatibility.js",
-        "line": 531
+        "line": 532
       }
     },
     {
