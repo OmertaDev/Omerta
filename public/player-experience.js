@@ -73,6 +73,25 @@
         number(me.safeSeconds)>0 && { label:'Review your safehouse before returning to the street', tab:'pvp', seconds:number(me.safeSeconds) },
       ].filter(Boolean);
     },
+    actionReadiness(me, snapshotAt, now = Date.now()) {
+      if (typeof me?.id !== 'string' || !me.id.trim()) return [];
+      const value = v => typeof v === 'number' || (typeof v === 'string' && v.trim() !== '') ? known(v) : null;
+      const snapshot = value(snapshotAt), current = value(now);
+      const age = snapshot === null || current === null ? null : current - snapshot;
+      const fresh = age !== null && age >= -1000 && age <= 60000;
+      const elapsed = fresh ? Math.max(0, age) / 1000 : 0;
+      return [['gtaSeconds','Car theft','garage'],['trainSeconds','Training','streets'],
+        ['heistSeconds','Heists','scores'],['missionSeconds','Missions','start']].map(([key,label,tab]) => {
+        const item = { label, tab, seconds:null, state:'refresh' };
+        if (!fresh) return item;
+        if (value(me.jailSeconds) > 0) return { ...item, state:'blocked', message:'In jail' };
+        const duration = value(me[key]);
+        if (duration === null) return item;
+        const seconds = Math.max(0, Math.ceil(duration - elapsed));
+        // A clock clearing locally needs a new server snapshot; zero in that snapshot only invites review.
+        return { ...item, seconds, state:duration === 0 ? 'review' : seconds > 0 ? 'waiting' : 'refresh' };
+      });
+    },
     waiting(me) {
       const clocks = [['gtaSeconds','Car theft'],['heistSeconds','Heists'],['trainSeconds','Training'],['missionSeconds','Missions']]
         .filter(([key])=>number(me[key])>0).map(([key,label])=>({label,seconds:number(me[key])}));
