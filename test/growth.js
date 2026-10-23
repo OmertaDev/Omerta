@@ -112,20 +112,31 @@ assert(Number(dealLedger.rows[0].n) >= 1, 'deal ledgered');
 
 // ── D14 — stats matter more to the crime roll (SIGNED, option A) ──
 // Two streets, same LEVEL and same mid-base crime, differing ONLY in cunning: the high-cunning one
-// must land materially more jobs. Sampled (the roll is Math.random), but the +24-point spread over
-// 300 attempts separates ~90 vs ~175 successes — never overlaps, so it is not flaky. Also proves the
-// design guarantee: MUSCLE does nothing for crime (a muscle build ≈ a min build).
+// must land materially more jobs. Walk the same evenly spaced roll grid for every build instead of
+// sampling Math.random: a rare adverse sample used to fail this release gate even though the exact
+// chance gap was intact. The paired grid proves the whole probability boundary deterministically.
+// It also proves the design guarantee: MUSCLE does nothing for crime.
 {
   const CRIME = 'poker'; // base 0.46, lvl 11
   const N = 300;
   const respect11 = PACING.LEVEL_DIVISOR * (11 - 1) ** 2;
   const runs = async (tok, id, cols) => {
     let wins = 0;
-    for (let i = 0; i < N; i++) {
-      // refill nerve + freeze the clock each attempt so no accrual or nerve wall interferes
-      await seedCh(id, `${cols}, respect=${respect11}, nerve=50, jail_until=NULL, last_accrued_at=now()`);
-      const r = await call('POST', `/v1/crimes/${CRIME}`, { token: tok });
-      if (r.body.success) wins++;
+    const random = Math.random;
+    try {
+      for (let i = 0; i < N; i++) {
+        // Every random read in one attempt sees this value; the first read is the success roll. Using
+        // the same midpoint grid for every build makes the comparison exact while keeping the real
+        // HTTP, transaction, stat, rank and approach path under test.
+        const roll = (i + 0.5) / N;
+        Math.random = () => roll;
+        // refill nerve + freeze the clock each attempt so no accrual or nerve wall interferes
+        await seedCh(id, `${cols}, respect=${respect11}, nerve=50, jail_until=NULL, last_accrued_at=now()`);
+        const r = await call('POST', `/v1/crimes/${CRIME}`, { token: tok });
+        if (r.body.success) wins++;
+      }
+    } finally {
+      Math.random = random;
     }
     return wins;
   };
@@ -136,17 +147,12 @@ assert(Number(dealLedger.rows[0].n) >= 1, 'deal ledgered');
   assert(hiWins > loWins + 40,
     `D14: the high-cunning build lands materially more jobs (${hiWins}/${N} vs ${loWins}/${N}) — stats now MOVE the roll`);
   // MUSCLE stays out of crime (the PvP axis): two builds with IDENTICAL cunning/speed differing ONLY
-  // in muscle must succeed EQUALLY (within sampling noise). If muscle ever leaks into the crime roll,
-  // the maxed-muscle build pulls ahead and this separation blows past the noise band.
-  // The band is 50, sized off the sampling variance: two EQUAL Binomial(300, ~0.4) have a difference
-  // stddev of ~12, so 35 was only ~2.9σ and flaked ~0.4% of runs (a 42-diff tail was hit in a full-suite
-  // run); 50 is ~4σ (robust) yet well under a REAL 22-point-stat leak, which — at cunning's measured rate
-  // — would separate ~+85 (see the assert above), so it still catches any muscle bleed.
+  // in muscle must cross exactly the same paired probability boundary.
   const musHi = await mk('Bruiser Bo'), musLo = await mk('Scrawny Sid');
   const musHiWins = await runs(musHi.token, musHi.id, 'cunning=3, speed=3, muscle=25');
   const musLoWins = await runs(musLo.token, musLo.id, 'cunning=3, speed=3, muscle=3');
-  assert(Math.abs(musHiWins - musLoWins) < 50,
-    `D14: MUSCLE is inert for crime — same cunning/speed → same success (${musHiWins}/${N} vs ${musLoWins}/${N}, within noise)`);
+  assert.equal(musHiWins, musLoWins,
+    `D14: MUSCLE is inert for crime — same cunning/speed → same success (${musHiWins}/${N} vs ${musLoWins}/${N})`);
 }
 
 
