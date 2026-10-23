@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import assert from 'node:assert/strict';
 import { carMelt, CONSTANTS } from '../src/rules.js';
 import { CAR_MELT_SOURCE_PINS, carMeltQueryShapes, verifyFamilyCarMelt } from '../tools/rc1-car-melt-provenance.js';

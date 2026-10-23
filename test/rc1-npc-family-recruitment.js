@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import assert from 'node:assert/strict';
 import { reconcileNpcFamilyRecruitment } from '../tools/rc1-npc-family-recruitment.js';
 import { WORLD_RESOURCE_TABLES } from '../tools/rc1-world-resource-observer.js';

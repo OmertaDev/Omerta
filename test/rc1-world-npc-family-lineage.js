@@ -1,3 +1,10 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+// Only the no-argument adapter control uses frozen inputs. Retained evidence keeps its existing source guards.
+if (!isHistoricalSourceFixture() && process.argv.length === 2) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import { NPC_FAMILY_CREW_SOURCE_REVIEW_TRANSFER, NPC_FAMILY_SOURCE_PINS } from '../tools/rc1-npc-family-provenance.js';
 import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -58,7 +65,7 @@ for (const formatterThrows of [false, true]) {
   }
 }
 
-const directory = process.argv[2]; let nativeCases = 0, negativeControls = 0;
+const directory = isHistoricalSourceFixture() ? undefined : process.argv[2]; let nativeCases = 0, negativeControls = 0;
 if (directory) {
   const run = JSON.parse(await fs.readFile(path.join(directory, 'run.json'), 'utf8'));
   await verifyArtifactIndex(directory, run);

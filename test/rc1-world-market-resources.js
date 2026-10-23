@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import assert from 'node:assert/strict';
 import { reconcileMarketResources, reconcileMarketResourceChanges, MARKET_RESOURCE_SOURCE_TRANSFER } from '../tools/rc1-world-market-resources.js';
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
