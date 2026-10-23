@@ -255,7 +255,7 @@
 | [src/fundedworkchainobservations.js](../../src/fundedworkchainobservations.js) | 74 | platform-core | 0 / 3 | 0 | 0 | 2 |
 | [src/fundedworkescrowadapter.js](../../src/fundedworkescrowadapter.js) | 85 | platform-core | 3 / 1 | 0 | 5 | 1 |
 | [src/fundedworkescrowartifact.js](../../src/fundedworkescrowartifact.js) | 472 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/game.js](../../src/game.js) | 2970 | platform-core | 20 / 517 | 42 | 63 | 183 |
+| [src/game.js](../../src/game.js) | 2976 | platform-core | 20 / 517 | 42 | 63 | 183 |
 | [src/gameemployment.js](../../src/gameemployment.js) | 185 | platform-core | 2 / 7 | 0 | 8 | 3 |
 | [src/gameemploymentinvariants.js](../../src/gameemploymentinvariants.js) | 15 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/gateway/actions.js](../../src/gateway/actions.js) | 42 | platform-core | 1 / 1 | 0 | 0 | 0 |
@@ -274,7 +274,7 @@
 | [src/genesisrpc.js](../../src/genesisrpc.js) | 10 | platform-core | 1 / 3 | 0 | 0 | 1 |
 | [src/goodsmarket.js](../../src/goodsmarket.js) | 98 | platform-core | 2 / 13 | 0 | 3 | 5 |
 | [src/goodsquote.js](../../src/goodsquote.js) | 56 | platform-core | 1 / 13 | 0 | 0 | 5 |
-| [src/growth.js](../../src/growth.js) | 1105 | engagement-growth | 4 / 19 | 16 | 17 | 8 |
+| [src/growth.js](../../src/growth.js) | 1155 | engagement-growth | 3 / 19 | 16 | 18 | 8 |
 | [src/heist-readiness.js](../../src/heist-readiness.js) | 16 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/heists.js](../../src/heists.js) | 590 | social-combat | 4 / 9 | 10 | 10 | 3 |
 | [src/home.js](../../src/home.js) | 55 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
@@ -561,7 +561,7 @@
 | [src/underworld.js](../../src/underworld.js) | 223 | world-progression | 2 / 3 | 7 | 10 | 0 |
 | [src/v4oraclekeeper.js](../../src/v4oraclekeeper.js) | 536 | platform-core | 1 / 1 | 0 | 2 | 0 |
 | [src/vanity.js](../../src/vanity.js) | 164 | engagement-growth | 2 / 21 | 8 | 9 | 0 |
-| [src/verify.js](../../src/verify.js) | 196 | platform-core | 1 / 3 | 0 | 5 | 1 |
+| [src/verify.js](../../src/verify.js) | 214 | platform-core | 1 / 3 | 0 | 5 | 1 |
 | [src/vig.js](../../src/vig.js) | 399 | economy-ledger | 3 / 20 | 6 | 11 | 14 |
 | [src/vouch.js](../../src/vouch.js) | 127 | social-combat | 2 / 5 | 4 | 6 | 2 |
 | [src/walletforge.js](../../src/walletforge.js) | 206 | chain-economy | 3 / 2 | 2 | 6 | 1 |
