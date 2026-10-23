@@ -23,6 +23,10 @@ const releaseRepairRevision = 'ca63f69180ae63f3aa91d2994f5ca8a09dcfec0f';
 const releaseRepairRevisionTree = '0838a860f1b5daccb87092f22fc6e01442a81038';
 const releaseRepairPredecessor = 'aa4f7afb9bcc8fc31a84e1eb7bb1ac8fdde44d03';
 const releaseRepairPredecessorTree = '750e5b9c18df1b7f61b4bfaf865de8ff2ec52e25';
+const directorFixtureRevision = '5b3935106be36705186be940f61b50e334fd98ba';
+const directorFixtureRevisionTree = 'a47cd6c1d2e8f70ba6822b8dbf6b93f36941d73d';
+const directorFixturePredecessor = 'ee8518fc930515b3d2d19a50f236107ae34cb956';
+const directorFixturePredecessorTree = 'b3e9dc7c9f30c82cbac6030c9c96b134a3ac2e3b';
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -39,7 +43,9 @@ execFileSync('git', ['merge-base', '--is-ancestor', repairRevision, repairSucces
 execFileSync('git', ['merge-base', '--is-ancestor', repairSuccessorPredecessor, repairSuccessorRevision]);
 execFileSync('git', ['merge-base', '--is-ancestor', repairSuccessorRevision, releaseRepairPredecessor]);
 execFileSync('git', ['merge-base', '--is-ancestor', releaseRepairPredecessor, releaseRepairRevision]);
-execFileSync('git', ['merge-base', '--is-ancestor', releaseRepairRevision, 'HEAD']);
+execFileSync('git', ['merge-base', '--is-ancestor', releaseRepairRevision, directorFixturePredecessor]);
+execFileSync('git', ['merge-base', '--is-ancestor', directorFixturePredecessor, directorFixtureRevision]);
+execFileSync('git', ['merge-base', '--is-ancestor', directorFixtureRevision, 'HEAD']);
 assert.equal(git('rev-parse', `${bindingRevision}^{tree}`).trim(), bindingRevisionTree,
   'Frozen economy binding revision tree changed');
 assert.equal(git('rev-parse', `${bindingSuccessorRevision}^{tree}`).trim(), bindingSuccessorTree,
@@ -56,6 +62,10 @@ assert.equal(git('rev-parse', `${releaseRepairRevision}^{tree}`).trim(), release
   'Frozen economy release repair revision tree changed');
 assert.equal(git('rev-parse', `${releaseRepairPredecessor}^{tree}`).trim(), releaseRepairPredecessorTree,
   'Frozen economy release repair predecessor tree changed');
+assert.equal(git('rev-parse', `${directorFixtureRevision}^{tree}`).trim(), directorFixtureRevisionTree,
+  'Frozen economy director fixture revision tree changed');
+assert.equal(git('rev-parse', `${directorFixturePredecessor}^{tree}`).trim(), directorFixturePredecessorTree,
+  'Frozen economy director fixture predecessor tree changed');
 // Closed physical-source readers reached by the current Commerce and RC1 chains.
 // Other candidate files are tested as current gameplay and are not historical source namespaces.
 const files = Object.freeze([
@@ -261,6 +271,43 @@ const releaseRepairBaseline = (file, input) => {
   return baseline;
 };
 
+// The current runtime compatibility fixture is a distinct newest source hop.
+// It reconstructs the prior sealed tree before any frozen Commerce reader runs.
+const directorFixtureFiles = Object.freeze(['test/director-migration.js']);
+assert.deepEqual(git('diff', '--name-only', directorFixturePredecessor, directorFixtureRevision).trim().split('\n'),
+  directorFixtureFiles, 'Director fixture revision changed outside its closed source domain');
+const directorFixtureDomains = {};
+for (const file of directorFixtureFiles) {
+  const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);
+  const reviewed = git('show', `${directorFixtureRevision}:${file}`);
+  const baseline = git('show', `${directorFixturePredecessor}:${file}`);
+  assert(raw === current || raw === current.replaceAll('\n', '\r\n'), `Mixed director fixture line endings: ${file}`);
+  assert.equal(current, reviewed, `Director fixture physical source differs from the reviewed commit: ${file}`);
+  assert.notEqual(current, baseline, `Director fixture postimage has no change: ${file}`);
+  const inverses = []; let hunk = null;
+  for (const line of git('diff', '--no-ext-diff', '--unified=3', directorFixturePredecessor,
+    directorFixtureRevision, '--', file).split('\n')) {
+    if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; inverses.push(hunk); }
+    else if (hunk && /^[ +\-]/.test(line)) {
+      if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
+      if (line[0] !== '+') hunk.baseline += line.slice(1) + '\n';
+    }
+  }
+  let reconstructed = current;
+  for (const inverse of inverses) {
+    assert(inverse.current.length, `Empty director fixture inverse context: ${file}`);
+    assert.equal(reconstructed.split(inverse.current).length - 1, 1,
+      `Director fixture inverse context must occur once: ${file}`);
+    reconstructed = reconstructed.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(reconstructed, baseline, `Complete director fixture predecessor reconstruction: ${file}`);
+  directorFixtureDomains[file] = {
+    mode: git('ls-tree', directorFixtureRevision, '--', file).trim().split(/\s+/)[0],
+    currentSha256: hash(current), currentBlob: blob(current), baselineSha256: hash(baseline), baselineBlob: blob(baseline),
+    contextLines: 3, inverses,
+  };
+}
+
 // Later economy correctness repairs are a distinct outer hop so every earlier
 // authored, binding and repair pin remains immutable. A newly added source has
 // no historical predecessor and is attested without inventing predecessor text.
@@ -361,9 +408,16 @@ export const ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR = ${JSON.stringify(rel
 export const ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR_TREE = ${JSON.stringify(releaseRepairPredecessorTree)};
 export const ECONOMY_HARDENING_RELEASE_REPAIR_PHASE = 'exact-economy-release-repair-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
 export const ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS = ${JSON.stringify(releaseRepairDomains, null, 2)};
+export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION = ${JSON.stringify(directorFixtureRevision)};
+export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_TREE = ${JSON.stringify(directorFixtureRevisionTree)};
+export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR = ${JSON.stringify(directorFixturePredecessor)};
+export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR_TREE = ${JSON.stringify(directorFixturePredecessorTree)};
+export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE = 'exact-economy-director-fixture-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS = ${JSON.stringify(directorFixtureDomains, null, 2)};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS),
+  ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
@@ -373,6 +427,7 @@ Object.freeze(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_REPAIR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS);
 const lf = text => text.replaceAll('\\r\\n', '\\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\\0').update(text).digest('hex');
@@ -501,9 +556,34 @@ export function assertEconomyHardeningReleaseRepairTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_RELEASE_REPAIR_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningDirectorFixtureTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS, file), 'Unknown economy-hardening director fixture domain');
+  assert(uniform(input), 'Uniform whole economy-hardening director fixture LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening director fixture source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening director fixture blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1,
+      'Missing or duplicate economy-hardening director fixture inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256,
+    'Complete economy-hardening director fixture predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob,
+    'Complete economy-hardening director fixture predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256,
+    sourceRevision: ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR,
+    inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningDirectorFixtureTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningReleaseRepairTransfer(file, text).baselineText;
@@ -528,4 +608,4 @@ export function economyHardeningSourceBaseline(file, input) {
 }
 `;
 fs.writeFileSync(new URL('./economy-hardening-source-transfer.js', import.meta.url), output);
-console.log(`Generated ${files.length} authored, ${bindingFiles.length} binding, ${bindingSuccessorFiles.length} binding successor, ${repairFiles.length} repair, ${repairSuccessorFiles.length} repair successor, and ${releaseRepairFiles.length} release repair source domains; historical pins remain unchanged.`);
+console.log(`Generated ${files.length} authored, ${bindingFiles.length} binding, ${bindingSuccessorFiles.length} binding successor, ${repairFiles.length} repair, ${repairSuccessorFiles.length} repair successor, ${releaseRepairFiles.length} release repair, and ${directorFixtureFiles.length} director fixture source domains; historical pins remain unchanged.`);

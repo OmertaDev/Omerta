@@ -18,9 +18,13 @@ import {
   ECONOMY_HARDENING_RELEASE_REPAIR_REVISION, ECONOMY_HARDENING_RELEASE_REPAIR_TREE,
   ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR, ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR_TREE,
   ECONOMY_HARDENING_RELEASE_REPAIR_PHASE, ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS,
+  ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION, ECONOMY_HARDENING_DIRECTOR_FIXTURE_TREE,
+  ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR_TREE,
+  ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE, ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS,
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer,
   assertEconomyHardeningBindingSuccessorTransfer, assertEconomyHardeningRepairTransfer,
   assertEconomyHardeningRepairSuccessorTransfer, assertEconomyHardeningReleaseRepairTransfer,
+  assertEconomyHardeningDirectorFixtureTransfer,
   economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
@@ -63,6 +67,7 @@ const releaseRepairFiles = [
   'tools/commerce-deed-release-phase2-native-catalog.js',
   'tools/pgcheck.js',
 ];
+const directorFixtureFiles = ['test/director-migration.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -126,12 +131,23 @@ execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_REPAIR_SUC
   ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR]);
 execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR,
   ECONOMY_HARDENING_RELEASE_REPAIR_REVISION]);
-execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_RELEASE_REPAIR_REVISION, 'HEAD']);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_RELEASE_REPAIR_REVISION,
+  ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR]);
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_RELEASE_REPAIR_REVISION}^{tree}`).trim(),
   ECONOMY_HARDENING_RELEASE_REPAIR_TREE);
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR}^{tree}`).trim(),
   ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_RELEASE_REPAIR_PHASE, /exact-economy-release-repair-source-transfer-only/);
+assert.equal(ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION, '5b3935106be36705186be940f61b50e334fd98ba');
+assert.equal(ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR, 'ee8518fc930515b3d2d19a50f236107ae34cb956');
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR,
+  ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION}^{tree}`).trim(),
+  ECONOMY_HARDENING_DIRECTOR_FIXTURE_TREE);
+assert.equal(git('rev-parse', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR}^{tree}`).trim(),
+  ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR_TREE);
+assert.match(ECONOMY_HARDENING_DIRECTOR_FIXTURE_PHASE, /exact-economy-director-fixture-source-transfer-only/);
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_SOURCE_DOMAINS), files);
 assert(Object.isFrozen(ECONOMY_HARDENING_SOURCE_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_DOMAINS), bindingFiles);
@@ -144,6 +160,8 @@ assert.deepEqual(Object.keys(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), repair
 assert(Object.isFrozen(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS), releaseRepairFiles);
 assert(Object.isFrozen(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS));
+assert.deepEqual(Object.keys(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), directorFixtureFiles);
+assert(Object.isFrozen(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
@@ -344,6 +362,50 @@ for (const file of releaseRepairFiles) {
     hunks++;
   }
 }
+for (const file of directorFixtureFiles) {
+  const pin = ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS[file];
+  const current = git('show', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION}:${file}`);
+  const baseline = git('show', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR}:${file}`);
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  assert.equal(physical, current, 'Physical director fixture source must remain exact: ' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(),
+    ['mode', 'currentSha256', 'currentBlob', 'baselineSha256', 'baselineBlob', 'contextLines', 'inverses'].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION}:${file}`).trim(), pin.currentBlob);
+  assert.equal(git('rev-parse', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR}:${file}`).trim(), pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION, '--', file).trim().split(/\s+/)[0], pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR,
+    ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomyHardeningDirectorFixtureTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.sourceRevision, ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION);
+    assert.equal(transfer.predecessorRevision, ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR);
+    assert.equal(economyHardeningSourceBaseline(file, input), baseline); positives++;
+  }
+  assert.equal(economyHardeningSourceBaseline(file, baseline), baseline); positives++;
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) {
+    assert.throws(() => assertEconomyHardeningDirectorFixtureTransfer(file, changed));
+    assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+  }
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1,
+      'Unique complete director fixture inverse required: ' + file);
+    const changedInputs = [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current)];
+    if (pin.inverses.length > 1) changedInputs.push(current.replace(inverse.current, () => inverse.baseline));
+    changedInputs.push(current.replace(inverse.current, () => inverse.current.replace(/\S/, '?')));
+    for (const changed of changedInputs) {
+      assert.throws(() => assertEconomyHardeningDirectorFixtureTransfer(file, changed));
+      assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
+}
 for (const file of bindingFiles) {
   const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], physical = lf(fs.readFileSync(file, 'utf8'));
   const current = successorFiles.includes(file)
@@ -416,9 +478,10 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyHardeningRepairTransfer(file, text));
   assert.throws(() => assertEconomyHardeningRepairSuccessorTransfer(file, text));
   assert.throws(() => assertEconomyHardeningReleaseRepairTransfer(file, text));
+  assert.throws(() => assertEconomyHardeningDirectorFixtureTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 214, 'positive control count drifted');
-assert.equal(refusals, 655, 'refusal control count drifted');
-assert.equal(hunks, 318, 'inverse-hunk control count drifted');
+assert.equal(positives, 217, 'positive control count drifted');
+assert.equal(refusals, 679, 'refusal control count drifted');
+assert.equal(hunks, 322, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
