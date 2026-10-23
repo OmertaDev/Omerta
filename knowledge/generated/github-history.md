@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1e29d5ac5127`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8800c0dd6b4a`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4751 |
+| Commits in clone | 4755 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-23 — test(release): pin director migration input |
+| Latest commit | 2026-10-23 — test(release): reseal enterprise native inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3785 |
+| OmertaDev | 3789 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 121 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 782 | historical |
-| knowledge/generated/graph-summary.md | 782 | historical |
-| knowledge/generated/graph.json | 782 | historical |
-| knowledge/generated/inventory.md | 782 | historical |
+| knowledge/generated/github-history.md | 783 | historical |
+| knowledge/generated/graph-summary.md | 783 | historical |
+| knowledge/generated/graph.json | 783 | historical |
+| knowledge/generated/inventory.md | 783 | historical |
 | [SPEC.md](../../SPEC.md) | 596 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 486 | yes |
@@ -62,14 +62,14 @@
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 94 | yes |
 | [test/migrate.js](../../test/migrate.js) | 90 | yes |
-| [test/growth.js](../../test/growth.js) | 88 | yes |
+| [test/growth.js](../../test/growth.js) | 89 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 83 | yes |
 | [test/hardening.js](../../test/hardening.js) | 70 | yes |
 | [src/preflight.js](../../src/preflight.js) | 68 | yes |
 | [test/director-migration.js](../../test/director-migration.js) | 66 | yes |
 | [tools/sim.js](../../tools/sim.js) | 62 | yes |
-| [src/growth.js](../../src/growth.js) | 60 | yes |
+| [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 60 | yes |
 
 ## Pull requests
 
