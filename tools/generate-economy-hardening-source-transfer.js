@@ -19,10 +19,11 @@ execFileSync('git', ['merge-base', '--is-ancestor', predecessor, revision]);
 // Other candidate files are tested as current gameplay and are not historical source namespaces.
 const files = Object.freeze([
   '.github/workflows/ci.yml',
-  'public/index.html', 'schema.sql', 'src/accrual.js', 'src/boxing.js', 'src/db.js', 'src/economy.js', 'src/explore.js', 'src/game.js',
-  'src/goodsquote.js', 'src/invariants.js', 'src/kitchen.js', 'src/market.js', 'src/rules.tail.js', 'src/server.js',
-  'src/pen.js', 'src/population.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',
-  'test/gates.js', 'test/growth.js', 'test/phase2-postgres.js',
+  'public/index.html', 'schema.sql', 'src/accrual.js', 'src/agentreferrals.js', 'src/auth.js', 'src/boxing.js', 'src/db.js',
+  'src/economy.js', 'src/explore.js', 'src/game.js', 'src/goodsquote.js', 'src/invariants.js', 'src/kitchen.js', 'src/market.js',
+  'src/routes/gateway.js', 'src/routes/rwa.js', 'src/rules.tail.js', 'src/server.js',
+  'src/pen.js', 'src/population.js', 'src/preflight.js', 'src/races.js', 'src/social/estate.js', 'src/stable.js',
+  'test/gates.js', 'test/growth.js', 'test/phase2-postgres.js', 'test/rc1-native-world-workload.js',
   'tools/arena.js', 'tools/commerce-deed-release-phase2-native-catalog.js',
   'test/commerce-release-phase2-migration-catalog.js',
   'test/continuous-city-source-compatibility.js', 'test/enterprise-release-phase2-migration-catalog.js',
@@ -31,7 +32,8 @@ const files = Object.freeze([
   'tools/deed-quest-source-transfer.js', 'tools/enterprise-deed-release-phase2-migration-catalog.js',
   'tools/player-intel-source-compatibility.js', 'tools/rc1-company-operator-source-compatibility.js',
   'tools/rc1-deed-source-compatibility.js', 'tools/rc1-invoice-source-compatibility.js',
-  'tools/rc1-world-qualification.js',
+  'tools/rc1-npc-cargo-journal.js', 'tools/rc1-player-car-provenance.js',
+  'tools/rc1-world-market-resources.js', 'tools/rc1-world-qualification.js', 'tools/rc1-world-resource-observer.js',
 ]);
 
 const domains = {};

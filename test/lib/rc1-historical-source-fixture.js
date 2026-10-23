@@ -71,7 +71,7 @@ const enterpriseCombinedHistoricalFiles = Object.freeze([
   'src/accrual.js', 'src/agentreferrals.js', 'src/auth.js', 'src/boxing.js', 'src/business.js',
   'src/cityhomes.js', 'src/corner.js', 'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js',
   'src/growth.js', 'src/heists.js', 'src/hustle.js', 'src/kitchen.js', 'src/opportunities.js',
-  'src/pen.js', 'src/population.js', 'src/races.js', 'src/routes/gateway.js', 'src/routes/rwa.js',
+  'src/pen.js', 'src/population.js', 'src/races.js', 'src/routes/rwa.js',
   'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js',
 ]);
 const npcEntries = new Set([
@@ -487,7 +487,8 @@ function rejectHistoricalApplicationSources() {
     }
   }
   const admittedCombinedFiles = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements
-    .filter(row => release.get(row.file) === row.before.blob && (row.file.startsWith('src/') || row.file.startsWith('data/') || row.file === 'schema.sql'))
+    .filter(row => release.has(row.file) && history.has(row.file) && release.get(row.file) === row.before.blob
+      && (row.file.startsWith('src/') || row.file.startsWith('data/') || row.file === 'schema.sql'))
     .map(row => row.file).sort();
   assert.deepEqual(admittedCombinedFiles, [...enterpriseCombinedHistoricalFiles].sort(),
     'Combined enterprise historical namespace changed');
