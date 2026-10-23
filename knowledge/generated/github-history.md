@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d522c78522b2`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2f6112e1adf8`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4738 |
+| Commits in clone | 4744 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-23 — chore(release): reseal enterprise economy inputs |
+| Latest commit | 2026-10-23 — test(release): reseal enterprise native inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3772 |
+| OmertaDev | 3778 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 121 |
@@ -30,28 +30,28 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 779 | historical |
-| knowledge/generated/graph-summary.md | 779 | historical |
-| knowledge/generated/graph.json | 779 | historical |
-| knowledge/generated/inventory.md | 779 | historical |
+| knowledge/generated/github-history.md | 780 | historical |
+| knowledge/generated/graph-summary.md | 780 | historical |
+| knowledge/generated/graph.json | 780 | historical |
+| knowledge/generated/inventory.md | 780 | historical |
 | [SPEC.md](../../SPEC.md) | 596 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 486 | yes |
 | [src/server.js](../../src/server.js) | 447 | yes |
-| [schema.sql](../../schema.sql) | 376 | yes |
+| [schema.sql](../../schema.sql) | 377 | yes |
 | knowledge/generated/documents.md | 357 | historical |
 | [package.json](../../package.json) | 342 | yes |
-| knowledge/generated/modules.md | 268 | historical |
+| knowledge/generated/modules.md | 269 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/graph.mmd | 214 | historical |
+| knowledge/generated/graph.mmd | 215 | historical |
 | [test/gates.js](../../test/gates.js) | 198 | yes |
 | [src/game.js](../../src/game.js) | 195 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/invariants.js](../../src/invariants.js) | 170 | yes |
-| knowledge/generated/schema.md | 153 | historical |
+| knowledge/generated/schema.md | 154 | historical |
 | [src/worker.js](../../src/worker.js) | 140 | yes |
 | [test/client.js](../../test/client.js) | 139 | yes |
-| knowledge/generated/routes.md | 135 | historical |
+| knowledge/generated/routes.md | 136 | historical |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 130 | yes |
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 127 | yes |
@@ -67,7 +67,7 @@
 | [docs/WIKI.md](../../docs/WIKI.md) | 83 | yes |
 | [test/hardening.js](../../test/hardening.js) | 70 | yes |
 | [src/preflight.js](../../src/preflight.js) | 68 | yes |
-| [test/director-migration.js](../../test/director-migration.js) | 65 | yes |
+| [test/director-migration.js](../../test/director-migration.js) | 66 | yes |
 | [tools/sim.js](../../tools/sim.js) | 62 | yes |
 | [src/growth.js](../../src/growth.js) | 60 | yes |
 
