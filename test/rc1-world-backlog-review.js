@@ -23,7 +23,15 @@ if (!isHistoricalSourceFixture()) {
     for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed C2 backlog source\n']) {
       let reads = 0;
       fs.readFileSync = function (candidate, options) {
-        if (String(candidate) !== target) return read.call(this, candidate, options);
+        if (String(candidate) !== target) {
+          // Isolate this historical C2 refusal from later changes in other source domains.
+          // Every other guarded input comes from the same immutable revision under review.
+          const controlled = Object.keys(BACKLOG_SOURCE_PINS).find(name =>
+            String(candidate) === new URL('../' + name, import.meta.url).href);
+          if (controlled) return execFileSync('git', ['show', `${revision}:${controlled}`],
+            { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
+          return read.call(this, candidate, options);
+        }
         assert.equal(options, 'utf8'); reads++; return supplied;
       };
       assert.throws(() => reviewWorldBacklog({ tables: {} }, { sourceRevision: revision }),

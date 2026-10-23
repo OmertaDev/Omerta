@@ -12,6 +12,7 @@ import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
 import { requireKnownPlayer } from '../playerintel.js';
+import { rescueQuote } from '../rescue-quote.js';
 import { settleFirstBlood } from '../firstblood.js';   // THE AHA MOMENT — settle the scripted first rival
 import { alertMentor } from '../mentor.js';
 import { logCarCollect } from '../collection.js';
@@ -786,8 +787,8 @@ export async function bust(ch, victim, client, h) {
   // (red-team F5)
   if (hospitalized(ch)) throw new GameError('hosp', "You're in no shape to spring anybody — see the Doc.");
   if (safeHoused(ch)) throw new GameError('safe', "You're supposed to be off the street. Come out first.");
-  const remaining = victim.jail_until ? Math.max(0, (new Date(victim.jail_until) - Date.now()) / 1000) : 0;
-  if (remaining <= 0) throw new GameError('free', 'They already walked.');
+  const preview = rescueQuote(ch, victim);
+  if (!preview.jailed) throw new GameError('free', 'They already walked.');
   // D15 — the rolling-24h attempt bucket (the safehouse-cap shape): charged BEFORE the roll, win or
   // lose, so a failed try is not a free retry and camping the jailbirds has a hard daily ceiling.
   // Direct SQL under the held char lock (the columns are off the positional persist — clobber-safe).
@@ -806,12 +807,10 @@ export async function bust(ch, victim, client, h) {
     await client.query('UPDATE characters SET bust_used=$2, bust_at=now() WHERE id=$1', [ch.id, used + 1]);
     ch.bust_used = used + 1; ch.bust_at = new Date();
   }
-  const ev = cityEventOf(dayOf());
-  const chance = Math.max(0.10, Math.min(0.90, 0.7 - remaining / 400 + (Number(ch.busts) || 0) * 0.03 + (ev.bustAdd || 0)));
+  const { chance, reward } = preview;
   const roll = Math.random();
   await h.rngLog(client, ch.id, `bust:${victim.id}`, roll, roll < chance ? 'success' : 'fail');
   if (roll < chance) {
-    const reward = Math.floor(500 + remaining * 15); // §7.8 faucet
     ch.cash = Number(ch.cash) + reward;
     gainRespect(h, ch, 3);
     ch.busts = (Number(ch.busts) || 0) + 1;

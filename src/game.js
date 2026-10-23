@@ -2,6 +2,7 @@ export const eventMarketCompletionRevision='event_market_v1';
 export const commercialCampaignCompletionRevision = 'commercial_campaign_v1';
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
+import { carChoiceQuote } from './car-choices.js';
 import { recordMeeting } from './contacts.js';
 import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
 import { claimQualifiedAgentReferral } from './agentreferrals.js';
@@ -17,7 +18,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          ACTIVITY, carCollateralValue, carOf, MASTERY, masteryLvlOf, masteryRankOf, masteryXpFor, pathFx, pathXpMult,
          REGIMEN, disciplineLvlOf, energyCapOf, nerveCapOf, BUSINESSES, WIRE, RIVALS, CORNER, cornerTasksOf,
          KITCHENS, labModuleCost, recyclesToDesk, DESK_RECYCLE_REASON, isMade, madeSeconds,
-         MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, STAKE_LOCKS, stakeLockActive, effectiveStake,
+         MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake,
          ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused, hospitalized,
          STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs , coolLeft, coolWait } from './rules.js';
 import { dbCaps } from './db.js';
@@ -1994,7 +1995,11 @@ export function view(ch, acct = {}, owned = {}) {
     statesman: { statecraft: Number(acct?.statecraft || 0), rank: statesmanRankOf(acct?.statecraft).name },
     // `value` is the SAME damage-adjusted book figure loans.js checks a pledge against, so the
     // client's collateral picker and the server's floor can never disagree about what a car is worth.
-    cars: (owned.cars || []).map((c) => ({ id: c.id, model: c.model_id, trim: c.trim_id, dmg: c.dmg, plate: c.plate || null, listed: !!c.listed, pledged: !!c.pledged, tune: Number(c.tune || 0), raceLimit: c.race_limit != null ? Math.floor(Number(c.race_limit)) : null, value: carCollateralValue(c.model_id, c.trim_id, c.dmg), rarity: String(c.rarity || 'common'), run: c.run_id || null, runName: c.run_id ? (runOf(c.run_id)?.name || c.run_id) : null, serial: c.serial != null ? Number(c.serial) : null, runCap: c.run_id ? (runOf(c.run_id)?.cap || null) : null })),
+    cars: (owned.cars || []).map((c) => ({ id: c.id, model: c.model_id, trim: c.trim_id, dmg: c.dmg, plate: c.plate || null, listed: !!c.listed, pledged: !!c.pledged, tune: Number(c.tune || 0), raceLimit: c.race_limit != null ? Math.floor(Number(c.race_limit)) : null, value: carCollateralValue(c.model_id, c.trim_id, c.dmg), rarity: String(c.rarity || 'common'), run: c.run_id || null, runName: c.run_id ? (runOf(c.run_id)?.name || c.run_id) : null, serial: c.serial != null ? Number(c.serial) : null, runCap: c.run_id ? (runOf(c.run_id)?.cap || null) : null,
+      choices: c.listed || c.pledged ? null : carChoiceQuote(c, {
+        yieldMultipliers: [skillMult({ owned }, 'fence_network', SKILLS.FX.FENCE_MULT), skillMult({ owned }, 'kingpin', SKILLS.FX.KINGPIN_MULT), ladderFenceMult(acct)],
+        fenceMult: cityEventOf(dayOf()).fenceMult || 1, inFamily: !!owned.gangId,
+      }) })),
     // v3 step 7: extracted cars are NOT in `cars` (loadOwned filters them so they are inert) — the
     // sheet still names them, because a player who paid to take one on-chain should see it.
     // THE SHIPMENT (scarcity §3) — the contested material you're holding, and the pieces it bought

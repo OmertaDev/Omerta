@@ -21,6 +21,7 @@ import { HEIST_JOBS, HEIST_ROLES, heistJobOf, HEIST_PLAN_TTL_MS, HEIST_RAT_BPS, 
          CONSTANTS, M4, levelOf, jailed, hospitalized, safeHoused, usd, businessOf , coolLeft, coolWait } from './rules.js';
 import { accrued, decayedScrutiny, npcPendingScale } from './business.js';
 import { dbCaps } from './db.js';
+import { heistMemberReadiness, recommendHeistRole } from './heist-readiness.js';
 
 const uid = () => crypto.randomUUID();
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -433,13 +434,13 @@ export async function heistBoard(pool, characterId) {
   const rolesOf = {};
   for (const r of memberRows) (rolesOf[r.heist_id] = rolesOf[r.heist_id] || []).push(r.role);
   const mine = (await pool.query(
-    `SELECT ch.id, ch.job, ch.leader_character FROM crew_heists ch
+    `SELECT ch.id, ch.job, ch.leader_character, ch.created_at FROM crew_heists ch
        JOIN crew_heist_members m ON m.heist_id = ch.id
       WHERE m.character_id=$1 AND ch.status='planning'`, [characterId])).rows[0] || null;
   let my = null;
   if (mine) {
     const crew = (await pool.query(
-      'SELECT c.name, m.role, m.cased, m.hired FROM crew_heist_members m JOIN characters c ON c.id = m.character_id WHERE m.heist_id=$1', [mine.id])).rows;
+      'SELECT c.name, c.alive, c.jail_until, c.hosp_until, c.safe_until, c.heist_at, m.role, m.cased, m.hired FROM crew_heist_members m JOIN characters c ON c.id = m.character_id WHERE m.heist_id=$1', [mine.id])).rows;
     const j = heistJobOf(mine.job);
     const row = (await pool.query('SELECT fenced FROM crew_heists WHERE id=$1', [mine.id])).rows[0];
     const isLeader = mine.leader_character === characterId;
@@ -447,13 +448,16 @@ export async function heistBoard(pool, characterId) {
     // THE HIRED HAND: the leader can fill an open seat with an NPC body (a hand takes a cut but earns
     // you nothing extra), capped at HEIST_FILL_MAX so the marquee jobs stay multiplayer.
     my = { id: mine.id, job: mine.job, name: j.name, leader: isLeader, fenced: !!row?.fenced,
-      crew: crew.map((c) => ({ name: c.name, role: c.role, cased: !!c.cased, hired: !!c.hired })), crewNeeded: j.crew - crew.length,
+      crew: crew.map((c) => ({ name: c.name, role: c.role, cased: !!c.cased, hired: !!c.hired, ...heistMemberReadiness(c) })), crewNeeded: j.crew - crew.length,
+      expired: stale(mine),
+      crewReady: !stale(mine)
+        && crew.length === j.crew && crew.every(c => heistMemberReadiness(c).ready),
       canHire: isLeader && crew.length < j.crew && hiredNow < HEIST_FILL_MAX, fillFee: HEIST_FILL_FEE, fillMax: HEIST_FILL_MAX,
       rolesOpen: j.roles.filter((x) => !crew.map((c) => c.role).includes(x)) };
   }
   // Tier-4: the actor's hot loot + lifetime notoriety (account-level, survives death)
   const meRow = (await pool.query(
-    `SELECT c.heist_loot, c.respect, c.jail_until, c.hosp_until, c.safe_until, c.heist_at,
+    `SELECT c.heist_loot, c.respect, c.muscle, c.cunning, c.speed, c.jail_until, c.hosp_until, c.safe_until, c.heist_at,
             ap.heists_pulled
        FROM characters c JOIN account_persistent ap ON ap.account_id=c.account_id WHERE c.id=$1`, [characterId])).rows[0] || {};
   const pulled = Number(meRow.heists_pulled || 0);
@@ -466,6 +470,7 @@ export async function heistBoard(pool, characterId) {
       const rolesOpen = j.roles.filter((x) => !taken.includes(x));
       return { id: r.id, job: r.job, name: j.name, leader: r.leader,
         crew: taken.length, crewNeeded: j.crew - taken.length, rolesOpen, lvl: j.lvl, stake: j.stake,
+        recommendedRole: recommendHeistRole(rolesOpen, HEIST_ROLES, meRow),
         // Personalized board authority without exposing the mark's owner: joinHeist applies the same
         // actor, notoriety, seat, and own-front gates under lock. Explore consumes only this boolean.
         canJoin: actorOpen && actorLevel >= j.lvl && (!j.minPulled || pulled >= j.minPulled)

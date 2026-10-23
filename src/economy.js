@@ -3,6 +3,7 @@
 // row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.
 import crypto from 'node:crypto';
 import { goodsBuyQuote } from './goodsquote.js';
+import { carChoiceQuote } from './car-choices.js';
 import { consumeGoodsLiquidity } from './goodsmarket.js';
 import { logCollect } from './collection.js';
 import { registerItemTransactionUndo } from './items.js';
@@ -246,12 +247,12 @@ export async function meltCar(ch, carId, client, h) {
   // FENCE NETWORK (skills): the operator's contacts pay better — a new modifier, sign-off lever
   // THE LADDER (D8=D) composes onto the existing skill chain as one more multiplicative term —
   // the one economic edge on the ladder, and it is on an ACTIVE loop (you have to boost the car).
-  const yieldRounds = Math.floor(carMelt(car.model_id, car.trim_id, car.dmg)
-    * skillMult(h, 'fence_network', SKILLS.FX.FENCE_MULT) * skillMult(h, 'kingpin', SKILLS.FX.KINGPIN_MULT)
-    * ladderFenceMult(h.acct));
+  const quote = carChoiceQuote(car, { yieldMultipliers: [skillMult(h, 'fence_network', SKILLS.FX.FENCE_MULT),
+    skillMult(h, 'kingpin', SKILLS.FX.KINGPIN_MULT), ladderFenceMult(h.acct)], inFamily: !!h.owned.gangId });
+  const yieldRounds = quote.melt.total;
   // §7.5: in a family, 25% of the rounds tithe to the armory and the treasury is
   // credited $30/round — atomically, in this same transaction.
-  const tithe = h.owned.gangId ? Math.floor(yieldRounds * CONSTANTS.MELT_TITHE) : 0;
+  const tithe = quote.melt.family;
   const keep = yieldRounds - tithe;
   ch.ammo = Number(ch.ammo || 0) + keep;
   // LIMITED RUNS — DESTRUCTION IS NEWS (scarcity §4c). The counter never decrements, so melting a
@@ -280,10 +281,8 @@ export async function meltCar(ch, carId, client, h) {
 export async function repairCar(ch, carId, client, h) {
   const car = findCar(h, carId);
   if ((car.dmg || 0) <= 0) throw new GameError('clean', 'Not a scratch on it.');
-  const model = carOf(car.model_id);
-  const cost = Math.max(50, Math.floor((car.dmg / 100) * carVal(car.model_id, car.trim_id) * 0.2));
+  const { cost, chance } = carChoiceQuote(car).repair;
   if (Number(ch.cash) < cost) throw new GameError('cash', `The shop wants ${usd(cost)}.`);
-  const chance = Math.max(0.05, ((model?.rare ? 50 : 100) - car.dmg) / 100); // rare iron repairs badly
   const roll = Math.random();
   ch.cash = Number(ch.cash) - cost;
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -cost, reason: 'repair' });
@@ -299,11 +298,10 @@ export async function repairCar(ch, carId, client, h) {
 export async function fenceCar(ch, carId, client, h) {
   const car = findCar(h, carId);
   // FENCE NETWORK (skills): +8% on the gross — a new modifier, sign-off lever
-  const gross = Math.floor(carVal(car.model_id, car.trim_id) * 0.5 * (1 - (car.dmg || 0) / 100) * (cityEventOf(dayOf()).fenceMult || 1)
-    * skillMult(h, 'fence_network', SKILLS.FX.FENCE_MULT) * skillMult(h, 'kingpin', SKILLS.FX.KINGPIN_MULT)
-    * ladderFenceMult(h.acct));   // THE LADDER (D8=D) — the top rung's edge, on the same chain
-  const fee = Math.ceil(gross * 0.01), tax = Math.ceil(gross * 0.01);
-  const net = gross - fee - tax;
+  const { gross, tax, net } = carChoiceQuote(car, {
+    yieldMultipliers: [skillMult(h, 'fence_network', SKILLS.FX.FENCE_MULT), skillMult(h, 'kingpin', SKILLS.FX.KINGPIN_MULT), ladderFenceMult(h.acct)],
+    fenceMult: cityEventOf(dayOf()).fenceMult || 1,
+  }).fence;
   ch.cash = Number(ch.cash) + net;
   await removeCar(client, h, carId);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: net, reason: 'fence' });

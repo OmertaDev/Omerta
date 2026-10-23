@@ -12,6 +12,7 @@ import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import websocket from '@fastify/websocket';
 import crypto from 'node:crypto';
+import { rescueQuote } from './rescue-quote.js';
 import { eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
@@ -667,6 +668,7 @@ export async function buildServer() {
       .header('cache-control', 'no-store').send(code);
   };
   app.get('/genesis-deploy-client.js', reviewedModule('genesis-deploy-client.js'));
+  app.get('/player-experience.js', reviewedModule('player-experience.js'));
   app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));
   app.get('/genesis-deploy-artifact.js', reviewedModule('genesis-deploy-artifact.js'));
   app.get('/genesis-deploy-vendor/sha3.js', reviewedModule('genesis-deploy-vendor/sha3.js'));
@@ -2723,6 +2725,15 @@ export async function buildServer() {
   // ── M3: the streets (§5.2) ──
   app.get('/v1/streets', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => PlayerIntel.playerIntelBoard(client, ch)));
+  // Targeted, authenticated quote. The same identity gate as the rescue action applies before
+  // looking up prison status; this is not a global prisoner directory or an automatic rescue.
+  app.get('/v1/streets/:targetId/rescue-quote', { preHandler: auth }, async (req) =>
+    G.readCharacter(pool, req.user.sub, async (ch, client) => {
+      await PlayerIntel.requireKnownPlayer(client, ch, req.params.targetId);
+      const target = (await client.query('SELECT alive, jail_until FROM characters WHERE id=$1', [req.params.targetId])).rows[0];
+      if (!target) throw new G.GameError('no_target', 'That player is gone.');
+      return rescueQuote(ch, target);
+    }));
   app.post('/v1/streets/:targetId/meet', { preHandler: auth }, async (req) =>
     G.withTwoCharacters(pool, req.user.sub, req.params.targetId, PlayerIntel.meetPlayer, { requireKnown: true }));
   app.post('/v1/intel/share/:recipientId', { preHandler: auth }, async (req) =>

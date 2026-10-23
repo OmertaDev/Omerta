@@ -1730,8 +1730,14 @@
 <div id="toast" role="status" aria-live="polite" aria-atomic="true" inert></div>
 <div id="brag" class="hidden"></div>
 
+<script src="/player-experience.js"></script>
 <script>
 (() => {
+  // Optional guidance must not stop core play if its separate script cannot load.
+  const PX = window.PlayerExperience || {
+    nextUnlock:()=>null, recovery:()=>[], waiting:()=>({clocks:[],destinations:[]}), production:()=>null,
+    source:()=>'Report source unavailable. Refresh before use.', roleLabel:role=>role, blockerLabel:()=>'not ready',
+  };
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => [...document.querySelectorAll(s)];
   // Static overlays predate the Promise-based dialog helper. Give them the same baseline contract:
@@ -5225,6 +5231,10 @@
   // THE TRAVEL PICKER — reachable from anywhere, because "where can I even move?" turned out to be
   // the question the 25-screen nav answered worst. Used by the masthead location and by any refusal
   // that names a district.
+  function decisionCard(title, lines) {
+    return `<section class="card decision-guide"><h3>${esc(title)}</h3>${lines.map(line=>`<p class="d">${esc(line)}</p>`).join('')}</section>`;
+  }
+  const guideMoney = value => value == null ? 'unknown' : '$' + fmt(value);
   function travelTo(district, operationOptions = {}) {
     const place = (rules?.districts || []).find((d) => (d.id || d) === district);
     return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}`, ...operationOptions })
@@ -5234,13 +5244,16 @@
     const here = me?.loc;
     const ds = (rules?.districts || []).map((d) => (typeof d === 'string' ? { id: d, name: d } : d));
     if (!ds.length) return toast('the map has not loaded yet — give it a second', true);
-    sheetModal('Where to?', `<p class="dim">A ride costs $${fmt(rules?.travelCost ?? 0)}. You are at
-      <b>${esc(ds.find((d) => d.id === here)?.name || here || '—')}</b>.</p>
-      <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:10px">${ds.map((d) => d.id === here
-        ? `<button class="act" disabled style="opacity:.45">${esc(d.name)} — you are here</button>`
-        : `<button class="act" data-go-district="${esc(d.id)}">${esc(d.name)}</button>`).join('')}</div>`);
-    document.querySelectorAll('[data-go-district]').forEach((b) => {
-      b.onclick = () => { document.querySelector('.modal-bg:not(.hidden) [data-x]')?.click(); travelTo(b.dataset.goDistrict); };
+    const actor = `${me?.id}:${me?.generation}`;
+    sheetModal('Where to?', `<p class="dim">Travel moves you immediately. Review the fare and your pocket cash before departure.</p>
+      <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:10px">${ds.map(d=>{
+        const q=PlayerExperience.travel(me,rules?.travelCost,d.id);
+        return `<div><button class="act" data-go-district="${esc(d.id)}"${q.ready?'':' disabled'}>${esc(d.name)}</button>
+          <p class="d">Fare ${guideMoney(q.cost)} · after ${guideMoney(q.after)}${q.reason?' · '+esc(q.reason):''}</p></div>`;
+      }).join('')}</div>`);
+    document.querySelectorAll('[data-go-district]').forEach(b=>b.onclick=()=>{
+      if(actor!==`${me?.id}:${me?.generation}` || !PlayerExperience.travel(me,rules?.travelCost,b.dataset.goDistrict).ready) return;
+      document.querySelector('.modal-bg:not(.hidden) [data-x]')?.click(); travelTo(b.dataset.goDistrict);
     });
   }
   // SHARE-A-WIN: turn a notable highlight into a one-tap brag on X carrying your referral code (your
@@ -5302,7 +5315,7 @@
     for (let i = operationReceipts.length - 1; i >= 0; i--) {
       // A departed character/district must not revive old feedback on returning.
       if (operationReceipts[i].resourceCurrent && !operationReceipts[i].resourceCurrent()) operationReceipts[i].resourceCurrent = null;
-      if (operationReceipts[i].isCurrent && !operationReceipts[i].isCurrent()) {
+      if ((operationReceipts[i].actor && operationReceipts[i].actor !== `${me?.id}:${me?.generation}`) || (operationReceipts[i].isCurrent && !operationReceipts[i].isCurrent())) {
         operationReceipts.splice(i, 1); changed = true;
       }
     }
@@ -5422,15 +5435,16 @@
     </article>`;
   }
   function operationFeedMarkup() {
-    const visible = operationReceipts.filter(receipt => !receipt.isCurrent || receipt.isCurrent());
+    const visible = operationReceipts.filter(receipt => receipt.actor === `${me?.id}:${me?.generation}` && (!receipt.isCurrent || receipt.isCurrent()));
     if (!visible.length) return '<p class="operation-feed__empty">No moves recorded this session.</p>';
-    const [latest, ...older] = visible;
-    return operationReceiptMarkup(latest) + (older.length ? `<details class="operation-feed__earlier">
+    const local = PlayerExperience.activityReceipts(visible, `${me?.id}:${me?.generation}`, currentTab);
+    const latest = local[0] || visible[0], older = visible.filter(r=>r!==latest);
+    return (local.length ? '<p class="d">This activity</p>' : '') + operationReceiptMarkup(latest) + (older.length ? `<details class="operation-feed__earlier">
       <summary>Earlier this session (${older.length})</summary>${older.map(operationReceiptMarkup).join('')}</details>` : '');
   }
   function bindOperationDesk() {
     document.querySelectorAll('[data-operation-retry]').forEach((button) => {
-      button.onclick = () => operationReceipts.find((r) => String(r.id) === button.dataset.operationRetry)?.recovery?.run?.();
+      button.onclick = () => { const r = operationReceipts.find(r=>String(r.id)===button.dataset.operationRetry); if(r?.actor === `${me?.id}:${me?.generation}` && (!r.isCurrent || r.isCurrent())) r.recovery?.run?.(); };
     });
     document.querySelectorAll('[data-operation-tab]').forEach((button) => {
       button.onclick = () => { setTab(button.dataset.operationTab); spotlight(SPOT[button.dataset.operationTab]); };
@@ -5449,7 +5463,7 @@
       line.classList.toggle('hidden', !operationPending); line.hidden = !operationPending;
     }
   }
-  function recordOperation({ label, result, before, after, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt, onResult, resourceCurrent }) {
+  function recordOperation({ actor, tab, label, result, before, after, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt, onResult, resourceCurrent }) {
     const failed = result.code >= 400;
     const changes = failed ? null : operationChanges(before, after);
     const questCompletion = !failed && /^\/v1\/worldgraph\/mysteries\/[^/]+\/nodes\/[^/]+\/complete$/.test(path)
@@ -5457,7 +5471,7 @@
       ? { id: result.body.instanceId, title: 'Investigation complete' } : null;
     const receipt = {
       ...(isCurrent ? { isCurrent } : {}),
-      id: ++operationSeq, state: failed ? 'error' : 'success', label,
+      actor, tab, id: ++operationSeq, state: failed ? 'error' : 'success', label,
       feedbackId: idempotencyKey || operationSeq, resourceCurrent,
       feedbackState: failed ? 'error' : changes || questCompletion ? 'confirmed' : 'unknown',
       changes: changes || [], ...(questCompletion ? { questCompletion } : {}),
@@ -5504,6 +5518,8 @@
     activatedControl = null;
     const label = operationName(method, path, trigger, options.label);
     const idempotencyKey = method === 'GET' ? null : (options.idempotencyKey || uuid());
+    const actor = `${me?.id}:${me?.generation}`, tab = currentTab;
+    const actorCurrent = () => actor === `${me?.id}:${me?.generation}`;
     const before = operationSnapshot(me);
     const resourceStamp = projections.snapshot(), resourceKey = cityIdentity();
     const resourceCurrent = () => !!resourceKey && resourceKey === cityIdentity() && projections.current(resourceStamp)
@@ -5521,17 +5537,17 @@
     renderOperationPending();
     busy.setAttribute('aria-label', 'Working'); busy.classList.add('on');
     try {
-      const r = await api(method, path, body, { idempotencyKey, beforeDispatch: options.beforeDispatch, isCurrent: options.isCurrent, activityHandled: true });
-      if ((options.beforeDispatch || options.isCurrent) && r.ignored) return r;
+      const r = await api(method, path, body, { idempotencyKey, beforeDispatch: () => actorCurrent() && (!options.beforeDispatch || options.beforeDispatch()), isCurrent: () => actorCurrent() && (!options.isCurrent || options.isCurrent()), activityHandled: true });
+      if (!actorCurrent() || r.ignored) { $('#resp').textContent = ''; return { ...r, ignored:true }; }
       if (typeof options.onResult === 'function') options.onResult(r);
-      if (options.isCurrent && !options.isCurrent()) {
+      if (!actorCurrent() || (options.isCurrent && !options.isCurrent())) {
         $('#resp').textContent = ''; await refresh();
         return { ignored: true, code: 499, body: {} };
       }
       // the "Last Word" viewer shows the ACTION result (written here, before refresh's GET /v1/me
       // would otherwise overwrite it — the raw JSON for the deck / power users; the toast is the human read).
       $('#resp').textContent = `${method} ${path}\n` + JSON.stringify(r.body, null, 2);
-      _operationResponseCurrent = options.isCurrent || null;
+      _operationResponseCurrent = () => actorCurrent() && (!options.isCurrent || options.isCurrent());
       // a location refusal comes back naming the district (GameError data) — offer the ride rather
       // than leaving the player to find the travel control on one screen out of 25
       const goHere = r.code >= 400 && r.body?.error === 'district' && r.body?.district;
@@ -5568,11 +5584,11 @@
         const bt = bragText(r.body); if (bt) { haptic('big'); showBrag(bt); }
       } else if (r.code >= 400) { shake(); sfx('bad'); }
       const stateRefresh = await refresh();
-      if (options.isCurrent && !options.isCurrent()) {
+      if (!actorCurrent() || (options.isCurrent && !options.isCurrent())) {
         $('#resp').textContent = '';
         return { ignored: true, code: 499, body: {} };
       }
-      const receipt = recordOperation({ label, result: r, before,
+      const receipt = recordOperation({ label, result: r, before, actor, tab,
         after: stateRefresh?.code < 400 ? operationSnapshot(me) : null,
         method, path, body, idempotencyKey, beforeDispatch: options.retryBeforeDispatch || options.beforeDispatch,
         isCurrent: options.isCurrent, onReceipt: options.onReceipt, onResult: options.onResult, resourceCurrent });
@@ -8379,6 +8395,7 @@
     const rivalOpts = rivals.length
       ? rivals.map((x) => `<option value="${x.id}">[${esc(x.tag)}] ${esc(x.name)} — ${x.members} made</option>`).join('')
       : '';
+    const production = PX.production(g.territory || []);
     t.innerHTML = `
       <h2>[${esc(g.tag)}] ${esc(g.name)}${g.seal ? ` <span class="chip">${g.seal}</span>` : ''}${g.foundation ? ` <span class="chip good">${g.foundation}</span>` : ''} — you are ${me.gang.role}</h2>
       ${heroBand([
@@ -8409,6 +8426,10 @@
       <div class="d" style="color:var(--dim);margin-top:6px">Posts require level ${rost.minLevel}. Once assigned, a member cannot move posts for ${mins(rost.reassignSeconds)}. If your Enforcer is killed, appoint another eligible member.</div>`)}
 
       <h2 style="margin-top:12px">Territory Operations</h2>
+      ${production && (g.territory || []).length ? `<section class="card" aria-label="Family production summary"><span class="t">Keep the Family supplied</span>
+        <div class="d">Active listed income: $${fmt(production.activeIncomePerHr)}/hr. Total upkeep: $${fmt(production.upkeepPerHr)}/hr.</div>
+        <div class="d">Pending income: $${fmt(production.pending)}. Upkeep owed: $${fmt(production.upkeepOwed)}. ${production.cold} operation${production.cold===1?'':'s'} stopped.</div>
+        <div class="d">${production.cold ? 'Pay upkeep to restart cold operations. ' : ''}Rates can change with raids and other effects. ${boss ? 'Use the collection and upkeep controls below.' : 'Ask a boss or underboss to collect income and pay upkeep.'}</div></section>` : ''}
       ${g.empire ? `<div class="card" style="border-color:var(--neon)"><span class="t">🏙️ ${g.empire.rank}</span> <span class="d">$${fmt(g.empire.earned)} lifetime territory income — <a href="#" id="terr-lb">the Empire board →</a></span>${g.syndicate ? `<div style="margin-top:4px">🃏 <b>${esc(g.syndicate.name)}</b> <span class="d">— ${g.syndicate.count} ${esc(g.syndicate.kind)} operations. Specialization pays in prestige.</span></div>` : ''}</div>` : ''}
       ${(g.territory || []).length ? `<div class="grid">${g.territory.map((op) => `
         <div class="card"><span class="t">${op.district}: ${esc(op.name || op.tier)}</span>${op.raidRisk ? ' <span class="chip bad">FEDS WATCHING</span>' : ''}${op.fortitude ? ` <span class="chip">🛡️ ${op.fortitude}/${op.fortMax}</span>` : ''}${op.specialist ? ` <span class="chip good">specialist +${op.specFortBonus}🛡️</span>` : ''}${op.ghostSeconds > 0 ? ' <span class="chip">👻 ghosted</span>' : ''}
@@ -8854,7 +8875,7 @@
     const nerveRate = Number(rules?.pacing?.nerveRegenPerMin);
     const nerveHelp = `Wait for Nerve to recover or choose a job you can afford.${nerveRate > 0 ? ` Base recovery: ${fmt(nerveRate)} nerve/min; bonuses may increase this.` : ''}`;
     const blocked = Number(me?.jailSeconds || 0) > 0 ? 'No street jobs in lockup.'
-      : Number(me?.level || 1) < crime.lvl ? `Requires level ${crime.lvl}. You are level ${me?.level || 1}.`
+      : PlayerExperience.access(me, crime.lvl) ? PlayerExperience.access(me, crime.lvl)
       : Number(me?.nerve || 0) < crime.nerve ? `Needs ${crime.nerve} nerve. You have ${fmt(me?.nerve || 0)}. ${nerveHelp}` : '';
     const approaches = Object.fromEntries((rules?.crimeApproaches || []).map(approach => [approach.id, approach]));
     const quiet = approaches.quiet || {}, loud = approaches.loud || {};
@@ -9373,7 +9394,7 @@
 
       ${!dm.inCrew && crews.length ? `<div class="card" style="margin-top:8px;border-color:var(--gold)"><span class="t" style="color:var(--gold)">Crews recruiting — near you</span>
         <span class="d" style="font-size:11px">open crews looking for members</span>
-        <div class="grid" style="margin-top:6px">${crews.map((c) => `<div class="card"><span class="t">${esc(c.name)}</span> <span class="chip">${c.members}/${dm.crewMax || 4}</span>${c.maxLevel != null ? ` <span class="chip">lvl ${c.minLevel === c.maxLevel ? c.minLevel : c.minLevel + '–' + c.maxLevel}</span>` : ''}
+        <div class="grid" style="margin-top:6px">${crews.map((c) => `<div class="card"><span class="t">${esc(c.name)}</span> <span class="chip">${c.members}/${dm.crewMax ?? '?'}</span><p class="d">${PlayerExperience.crew(c,dm.crewMax).open ?? 'Unknown'} open places. Purpose not published. Ask to join sends a request; it does not join the crew.</p>${c.maxLevel != null ? ` <span class="chip">lvl ${c.minLevel === c.maxLevel ? c.minLevel : c.minLevel + '–' + c.maxLevel}</span>` : ''}
           <div class="row"><button class="act" data-ask="${c.id}" style="border-color:var(--gold)">ask to join</button></div></div>`).join('')}</div></div>` : ''}
 
       ${looking.length ? `<div class="card" style="margin-top:8px;border-color:var(--neon)"><span class="t" style="color:var(--neon)">Looking for a crew — near you</span>
@@ -9435,17 +9456,22 @@
   }
 
   // ── BLACK MARKET: the board (auctions / goods / buy orders) + your sell side ──
-  async function renderMarket() {
-    const t = $('#tab-market');
+  async function renderMarket(filters = renderMarket.filters || {}) {
+    renderMarket.filters = filters;
+    const t = $('#tab-market'), revision = renderMarket.revision = (renderMarket.revision || 0) + 1;
     await refresh();
+    const actor = `${me?.id}:${me?.generation}`;
+    const current = () => actor === `${me?.id}:${me?.generation}` && revision === renderMarket.revision;
     const board = (await api('GET', '/v1/market')).body || {};
     const prices = (await api('GET', '/v1/market/prices')).body || {};
+    if (!current()) return;
     const here = prices.goods?.[me.loc] || {};
-    const listings = board.listings || [];
+    const allListings = board.listings || [];
+    const listings = PlayerExperience.marketListings(allListings, filters);
     const carCard = (l) => `
-      <div class="card">${ico('car', l.car?.model)}<span class="t">${l.car ? `${l.car.model}${l.car.trim ? ' · ' + l.car.trim : ''}` : 'iron'}</span>
+      <div class="card">${ico('car', l.car?.model)}<span class="t">${l.car ? `${esc(l.car.model)}${l.car.trim ? ' · ' + esc(l.car.trim) : ''}` : 'iron'}</span>
         ${l.seller === me.name ? '<span class="chip">yours</span>' : ''}
-        <div class="d">${l.car?.plate ? `[${l.car.plate}] · ` : ''}dmg ${l.car?.dmg ?? '?'}% · seller ${l.seller}</div>
+        <div class="d">${l.car?.plate ? `[${esc(l.car.plate)}] · ` : ''}dmg ${l.car?.dmg ?? '?'}% · seller ${esc(l.seller)}</div>
         <div class="d">bid ${l.bid != null ? '$' + fmt(l.bid) : 'none'} (floor $${fmt(l.minBid)})${l.buyNow ? ` · buy-now $${fmt(l.buyNow)}` : ''}${l.reserveMet === false ? ' · reserve NOT met' : ''} · ${mins(l.expiresSeconds)} left</div>
         ${l.seller !== me.name ? `<input data-bid="${l.id}" placeholder="bid" size="9">
           <button class="act" data-bidgo="${l.id}">bid</button>
@@ -9454,25 +9480,29 @@
     const goodCard = (l) => `
       <div class="card">${ico('good', l.good)}<span class="t">${esc(goodName(l.good))} × ${fmt(l.qty)}</span>
         ${l.seller === me.name ? '<span class="chip">yours</span>' : ''}
-        <div class="d">$${fmt(l.unitPrice)}/unit at ${l.district} (spot here: $${fmt(here[l.good] ?? '?')}) · ${l.seller} · ${mins(l.expiresSeconds)} left</div>
-        ${l.seller !== me.name ? `${l.district === me.loc ? `<input data-gqty="${l.id}" placeholder="qty" size="6">
-          <button class="act" data-gbuy="${l.id}">buy</button>` : `<span class="chip cold">stand at ${l.district} to buy</span>`}`
+        <div class="d">$${fmt(l.unitPrice)}/unit at ${esc(l.district)} (spot here: $${fmt(here[l.good] ?? '?')}) · ${esc(l.seller)} · ${mins(l.expiresSeconds)} left</div>
+        ${l.seller !== me.name ? `${l.district === me.loc ? `<label>Buy quantity <input data-gqty="${l.id}" inputmode="numeric" size="6" aria-describedby="quote-${l.id}"></label>
+          <button class="act" data-gbuy="${l.id}" disabled>buy</button><p class="d" id="quote-${l.id}" aria-live="polite">Enter a quantity for the total.</p>` : `<span class="chip cold">stand at ${esc(l.district)} to buy</span>`}`
         : `<button class="act" data-cancel="${l.id}">pull it</button>`}</div>`;
     const orderCard = (l) => `
       <div class="card">${ico('good', l.good)}<span class="t">WTB ${esc(goodName(l.good))} × ${fmt(l.wanted)}</span>
         ${l.seller === me.name ? '<span class="chip">yours</span>' : ''}
-        <div class="d">pays $${fmt(l.unitPrice)}/unit at ${l.district} · ${l.seller} · ${mins(l.expiresSeconds)} left</div>
-        ${l.seller !== me.name ? `${l.district === me.loc ? `<input data-fqty="${l.id}" placeholder="qty" size="6">
-          <button class="act" data-fill="${l.id}">fill from trunk</button>` : `<span class="chip cold">deliver at ${l.district}</span>`}`
+        <div class="d">pays $${fmt(l.unitPrice)}/unit at ${esc(l.district)} · ${esc(l.seller)} · ${mins(l.expiresSeconds)} left</div>
+        ${l.seller !== me.name ? `${l.district === me.loc ? `<label>Sell quantity <input data-fqty="${l.id}" inputmode="numeric" size="6" aria-describedby="quote-${l.id}"></label>
+          <button class="act" data-fill="${l.id}" disabled>fill from trunk</button><p class="d" id="quote-${l.id}" aria-live="polite">Enter a quantity for the proceeds.</p>` : `<span class="chip cold">deliver at ${esc(l.district)}</span>`}`
         : `<button class="act" data-claim="${l.id}">claim delivered</button> <button class="act" data-cancel="${l.id}">pull it</button>`}</div>`;
     const myCars = (me.cars || []).filter((c) => !c.listed && !c.pledged);
     const myCargo = Object.entries(me.cargo || {}).filter(([, q]) => q > 0);
     t.innerHTML = `
-      ${!listings.length ? coachCard('Trade with other players', 'Auction cars or buy and sell goods at a fixed price. Pick up goods at the seller\'s dock. There are no listings right now; post one below or check back.') : ''}
+      ${!allListings.length ? coachCard('Trade with other players', 'Auction cars or buy and sell goods at a fixed price. Pick up goods at the seller\'s dock. There are no listings right now; post one below or check back.') : ''}
+      <div class="row" style="flex-wrap:wrap"><label>Direction <select id="market-direction"><option value="all">All listings</option><option value="buy">Buy</option><option value="sell">Sell to orders</option></select></label>
+        <label>Kind <select id="market-kind"><option value="all">All kinds</option><option value="good">Goods</option><option value="order">Buy orders</option><option value="car">Cars</option></select></label>
+        <label>District <select id="market-district"><option value="">All districts</option>${[...new Set(allListings.map(l=>l.district).filter(Boolean))].map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('')}</select></label>
+        <label>Sort <select id="market-sort"><option value="price">Unit price: low first</option><option value="expiry">Expires first</option></select></label></div>
       <h2>The Board <span class="d" style="font-size:11px">(take ${(board.levers?.takeBps ?? 200) / 100}% · list fee ${(board.levers?.listFeeBps ?? 100) / 100}% · max ${board.levers?.maxListings} listings)</span></h2>
       ${listings.length ? `<div class="grid">${listings.map((l) =>
         l.kind === 'car' ? carCard(l) : l.kind === 'good' ? goodCard(l) : orderCard(l)).join('')}</div>`
-        : '<span class="d" style="color:var(--dim)">the board is bare — list something</span>'}
+        : '<span class="d" style="color:var(--dim)">No listings match these filters.</span>'}
 
       <h2 style="margin-top:14px">Put Iron on the Block</h2>
       ${myCars.length ? `
@@ -9496,15 +9526,27 @@
       <input id="mk-oqty" placeholder="qty" size="6">
       <input id="mk-oprice" placeholder="$/unit" size="8">
       <button class="act" id="mk-order">post it</button>`;
-    const rerender = () => renderMarket();
-    t.querySelectorAll('[data-bidgo]').forEach((b) => b.onclick = () =>
-      act('POST', `/v1/market/${b.dataset.bidgo}/bid`, { amount: Number(t.querySelector(`[data-bid="${b.dataset.bidgo}"]`).value) }).then(rerender));
-    t.querySelectorAll('[data-buynow]').forEach((b) => b.onclick = () =>
-      act('POST', `/v1/market/${b.dataset.buynow}/buy`, {}).then(rerender));
-    t.querySelectorAll('[data-gbuy]').forEach((b) => b.onclick = () =>
-      act('POST', `/v1/market/${b.dataset.gbuy}/buy`, { qty: Number(t.querySelector(`[data-gqty="${b.dataset.gbuy}"]`).value) || 1 }).then(rerender));
-    t.querySelectorAll('[data-fill]').forEach((b) => b.onclick = () =>
-      act('POST', `/v1/market/${b.dataset.fill}/fill`, { qty: Number(t.querySelector(`[data-fqty="${b.dataset.fill}"]`).value) || 1 }).then(rerender));
+    const rerender = () => { if(current()) return renderMarket(filters); };
+    for(const field of ['direction','kind','district','sort']) {
+      const select=t.querySelector('#market-'+field); select.value=filters[field] || (field==='sort'?'price':field==='district'?'':'all');
+      select.onchange=()=>{ if(current()) renderMarket({...filters,[field]:select.value}); };
+    }
+    t.querySelectorAll('[data-bidgo]').forEach(b=>b.onclick=()=>{if(current()) act('POST', `/v1/market/${b.dataset.bidgo}/bid`, {amount:Number(t.querySelector(`[data-bid="${b.dataset.bidgo}"]`).value)}).then(rerender);});
+    t.querySelectorAll('[data-buynow]').forEach(b=>b.onclick=()=>{if(current()) act('POST', `/v1/market/${b.dataset.buynow}/buy`, {}).then(rerender);});
+    for(const l of listings.filter(l=>l.kind==='good'||l.kind==='order')) {
+      const sell=l.kind==='order', input=t.querySelector(`[data-${sell?'fqty':'gqty'}="${l.id}"]`), button=t.querySelector(`[data-${sell?'fill':'gbuy'}="${l.id}"]`);
+      if(!input || !button) continue;
+      const quote=()=>PlayerExperience.marketQuote(l,input.value,me,board.levers);
+      const update=()=>{const q=quote();button.disabled=!q.ready; t.querySelector(`#quote-${l.id}`).textContent=!q.ready?q.reason:sell
+        ? `Sell ${q.qty}. Gross ${guideMoney(q.gross)}. Fee ${guideMoney(q.fee)}. Proceeds ${guideMoney(q.net)}. Pocket after ${guideMoney(q.after)}. Server rechecks settlement.`
+        : `Buy ${q.qty}. Total debit ${guideMoney(q.debit)}. Pocket after ${guideMoney(q.after)}. Server rechecks settlement.`;};
+      input.oninput=update;update();
+      button.onclick=()=>{if(!current())return;const q=quote();update();if(!q.ready)return;
+        const options={beforeDispatch:()=>current()&&quote().ready,retryBeforeDispatch:()=>actor===`${me?.id}:${me?.generation}`};
+        if(sell) act('POST', `/v1/market/${l.id}/fill`, {qty:q.qty}, options).then(rerender);
+        else act('POST', `/v1/market/${l.id}/buy`, {qty:q.qty}, options).then(rerender);
+      };
+    }
     t.querySelectorAll('[data-claim]').forEach((b) => b.onclick = () =>
       act('POST', `/v1/market/${b.dataset.claim}/claim`, {}).then(rerender));
     t.querySelectorAll('[data-cancel]').forEach((b) => b.onclick = () =>
@@ -9800,7 +9842,17 @@
     // who-sent-you input to its button — the focus guard doesn't cover that instant, and the
     // rebuilt card would wipe the half-typed name. Carry the draft across the rebuild.
     const refDraft = t.querySelector('#ref-claim-name')?.value || '';
+    const nextCrime = PX.nextUnlock(me, rules?.crimes || []);
+    const recovery = PX.recovery(me);
+    const waiting = PX.waiting(me);
     t.innerHTML = `
+      ${recovery.length ? `<section class="card" aria-label="Recovery options"><span class="t">Return to play</span>
+        ${recovery.map(step=>`<div class="row"><span>${esc(step.label)} · ${mins(step.seconds)}</span><button class="act" data-go-tab="${step.tab}">Review options</button></div>`).join('')}</section>` : ''}
+      ${nextCrime ? `<p class="d">Next crime unlock at level ${nextCrime.level}: ${nextCrime.names.map(esc).join(', ')}. <button class="act" data-go-tab="streets">Work toward this unlock</button></p>` : ''}
+      ${waiting.clocks.length ? `<details class="card"><summary>While you wait</summary>
+        <p class="d">${waiting.clocks.map(c=>`${esc(c.label)}: ${mins(c.seconds)}`).join(' · ')}</p>
+        <p class="d">These screens have other options to review. Each action checks your current resources and status.</p>
+        ${waiting.destinations.map(d=>`<button class="act" data-go-tab="${d.tab}">${esc(d.label)}</button>`).join('')}</details>` : ''}
       ${ob.referral?.canClaim ? `<div class="card" style="margin-top:10px;border-color:var(--neon)"><span class="t">📣 DID SOMEONE SEND YOU?</span>
         <div class="d">If a player told you about OMERTÀ, name them — they get credit as you come up (it costs you nothing). ${Math.max(1, Math.round((ob.referral.windowSeconds || 0) / 3600))}h left to set it.</div>
         <div class="row" style="margin-top:6px"><input id="ref-claim-name" placeholder="their street name" value="${esc(refDraft)}" style="max-width:220px">
@@ -9853,7 +9905,7 @@
       ${next ? `<div class="coachbox"><div class="cl">▸ DO THIS NEXT: ${esc(next.name)}</div><div class="ch">${next.ready ? 'The reward\'s waiting — claim it below.' : esc(next.desc)}</div>
         ${next.ready ? `<button class="act prime" data-obclaim="${next.id}" style="padding:5px 12px;font-size:12.5px">claim ${reward(next.reward)}</button>` : `<button class="act" data-obgo="${next.id}" style="padding:5px 12px;font-size:12.5px">${(go[next.id] || [, 'go do it'])[1]} →</button>`}</div>` : ''}
       <div class="d" style="color:var(--dim);font-size:13.5px;margin-bottom:6px">Work down the list. Green means the reward is waiting — claim it. Grey means do the thing first; tap it to jump there.</div>
-      <div class="grid">${(ob.tasks || []).map((x) => `
+      <div class="grid">${[...(ob.tasks || [])].sort((a,b)=>Number(!b.claimed && b.ready && !b.social)-Number(!a.claimed && a.ready && !a.social)).map((x) => `
         <div class="card" ${!x.claimed && x.ready ? 'style="border-color:var(--neon)"' : ''}>
           <span class="t">${x.claimed ? '✓ ' : ''}${esc(x.name)}</span>
           ${x.claimed ? '<span class="chip good">claimed</span>' : x.ready ? '<span class="chip good">reward ready</span>' : ''}
@@ -10073,6 +10125,12 @@
     const famLine = p.family ? `${p.family.role === 'boss' ? 'Runs' : 'Runs with'} ${esc(p.family.name)} [${esc(p.family.tag)}].` : 'Answers to nobody.';
     const blurb = `Generation ${p.generation} of ${art(esc(p.dynasty || p.name))} line. ${p.days < 1 ? 'Stepped off the bus today' : `${p.days} day${p.days === 1 ? '' : 's'} in the city`}, level ${p.level}${p.kills ? `, ${p.kills} ${p.kills === 1 ? 'body' : 'bodies'} on the account` : ''}. ${famLine} ${p.honorTier}.${p.recruitsTotal ? ` Brought ${p.recruitsTotal} soul${p.recruitsTotal === 1 ? '' : 's'} to the city.` : ''}`;
     t.innerHTML = `
+      ${decisionCard('Death and inheritance', [
+        'Lost: pocket cash, bank cash, character assets, cargo and most street progress. Cleared bank cash is protected from the killer’s cut, but does not survive death.',
+        'Kept at account level: the bloodline, prestige and mastery legend. Account gear can be looted. Extracted on-chain gear is outside game loot.',
+        'Conditional: liquid and unbonding $OMR can be reduced by loot and death duty. Staked balances and surviving rewards remain on the account. Some skills can be remembered under the current prestige rules.',
+        'Review your estate and current server rules before an irreversible decision. The extraction rail remains gated.'
+      ])}
       <div class="msp-banner">★ <b>${esc(p.name)}</b> is in your extended network</div>
       <div class="msp-cols">
       <div>
@@ -10332,6 +10390,7 @@
     // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you
     // left it. One glance = act; the depth is a click away, not a scroll away.
     t.innerHTML = `
+${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}
       <div class="card" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
         <span class="t" style="margin-right:2px">The Bank</span>
         <label class="visually-hidden" for="bank-amt">Bank amount</label><input id="bank-amt" inputmode="numeric" placeholder="amount" size="9">
@@ -11036,6 +11095,7 @@
     const onMe = board.filter((c) => c.target.id === me.id);
     const others = board.filter((c) => c.target.id !== me.id);
     t.innerHTML = `
+      ${decisionCard('Your preparation', [...PlayerExperience.defence(me), `Health: ${me.health ?? 'unknown'}.`, ...PlayerExperience.recovery(me).map(r=>`${r.label}: ${minsTxt(r.seconds)}.`), 'These are your own facts. They do not predict the target or guarantee an outcome.'])}
       ${onMe.length ? `<div class="card threat" style="border-color:var(--blood);margin-bottom:12px">
         <span class="t" style="color:var(--bad)">⚠ THERE IS PAPER OUT ON YOU</span>
         ${onMe.map((c) => `<div class="row" style="margin-top:5px">
@@ -11182,7 +11242,8 @@
           <div class="d">${s.loc ? `last seen in ${esc(s.loc)}` : 'whereabouts unknown'}${s.observedAt ? ` · ${esc(new Date(s.observedAt).toLocaleString())}` : ''}${s.source === 'gossip' ? ` · heard from ${esc(s.sourceName || 'a contact')}` : ''}${s.guardPrice != null ? ` · guards for ${fmt(s.guardPrice)}` : ''}</div>
           ${s.nearby ? `<button class="act" data-meet="${s.id}">talk again</button>` : ''}
           ${dmBtn(s.id)}
-          ${s.jailed ? `<button class="act prime" data-pbust="${s.id}" title="spring them from lockup — a success frees them and PAYS you (more time left = bigger reward, worse odds; the sweet spot is near the end of a stretch). A miss puts YOU inside for a few minutes.">bust them out</button>` : ''}
+          <button class="act" data-rescuequote="${s.id}">Check rescue options</button>
+          <div class="d" data-rescue-result="${s.id}" role="status"></div>
           <button class="act" data-jump="${s.id}" data-intent="rob"${noBody || ' title="you\'re there for the wallet — a bigger cut, but nobody\'s impressed"'}>roll them</button>
           <button class="act prime" data-jump="${s.id}" data-intent="standard"${noBody}>jump</button>
           <button class="act risk" data-jump="${s.id}" data-intent="message"${noBody || ' title="you\'re there to be SEEN — big respect + a real beating, but you\'re not there to rob them, it costs half again the energy, and it draws the Law"'}>send a message</button>
@@ -11258,8 +11319,22 @@
     wireStory(t); // the rivals board's "the story" dossiers
     // the §7.8 bust — until now this verb lived ONLY in the raw deck, so the daily "bust a player
     // out of lockup" contract pointed at a control that did not exist
-    t.querySelectorAll('[data-pbust]').forEach((b) => b.onclick = () =>
-      act('POST', `/v1/streets/${b.dataset.pbust}/bust`, {}).then(() => renderPvp()));
+    t.querySelectorAll('[data-rescuequote]').forEach((b) => b.onclick = async () => {
+      const id=b.dataset.rescuequote;
+      const result=t.querySelector(`[data-rescue-result="${id}"]`);
+      b.disabled=true; result.textContent='Checking rescue options…';
+      try {
+        const reply=await api('GET',`/v1/streets/${id}/rescue-quote`);
+        if (reply.code>=400) { result.textContent=reply.body?.message || 'Cannot get a rescue quote. Try again.'; return; }
+        const quote=reply.body;
+        if (!quote.jailed) { result.textContent='This player is not in jail. No rescue is needed.'; return; }
+        result.innerHTML=`${Math.round(quote.chance*100)}% success; reward about $${fmt(quote.reward)}. A failed attempt puts you in jail for ${mins(quote.failureJailSeconds)} and uses one attempt. The server checks status and values again when you act.
+          ${quote.canAttempt ? '<button class="act prime" data-rescue-attempt>Attempt rescue</button>' : `<span>${(quote.blockers || []).map(code=>esc(PX.blockerLabel(code))).join(', ')}.</span>`}`;
+        const attempt=result.querySelector('[data-rescue-attempt]');
+        if (attempt) attempt.onclick=()=>{ attempt.disabled=true; act('POST',`/v1/streets/${id}/bust`,{}).then(()=>renderPvp()); };
+      } catch { result.textContent='Cannot get a rescue quote. Try again.'; }
+      finally { b.disabled=false; }
+    });
     t.querySelectorAll('[data-search]').forEach((b) => b.onclick = async () => {
       const r = await act('POST', `/v1/streets/${b.dataset.search}/search`, {});
       if (r.code < 400 && r.body.placedAt)
@@ -11444,7 +11519,7 @@
           money: ${i.wealth}<br>
           rackets: ${i.ops.businesses} front(s) · ${i.ops.rackets} racket(s) · ${i.ops.territory} turf op(s)${i.ops.family ? ' · <b>' + i.ops.family + '</b>' : ' · unaffiliated'}
         </div>
-        <div class="d" style="font-size:11px;margin-top:4px">wire runs ${mins(i.expiresSeconds)}</div>
+        <div class="d" style="font-size:11px;margin-top:4px">${esc(PX.source('tap',i.expiresSeconds))} Wire expires ${mins(i.expiresSeconds)}.</div>
       </div>`).join('');
     // your standing informants — the TRUE read (pierces a mark's disinformation) + who they're hunting
     const informants = (W.informants || []).map((i) => `
@@ -11456,7 +11531,7 @@
           rackets: ${i.ops.businesses} front(s) · ${i.ops.rackets} racket(s) · ${i.ops.territory} turf op(s)${i.ops.family ? ' · <b>' + i.ops.family + '</b>' : ''}<br>
           hunting ${i.huntingAnyone} mark(s) right now
         </div>
-        <div class="d" style="font-size:11px;margin-top:4px">retainer runs ${mins(i.paidSeconds)} · a human source can't be fed lies</div>
+        <div class="d" style="font-size:11px;margin-top:4px">${esc(PX.source('informant',i.paidSeconds))} Retainer expires ${mins(i.paidSeconds)}.</div>
       </div>`).join('');
     // SOMEONE IS SQUEEZING YOU — this was the TENTH section, buried under a subscribe
     // card. It is a countdown with your money on it; it leads.
@@ -11714,6 +11789,9 @@
           ${c.run ? `<span class="chip warn" title="only ${c.runCap} will ever exist — melting one takes it out of the world for good">${esc(c.runName)} · ${c.serial}/${c.runCap}</span>` : ''}
           ${c.plate ? `<span class="chip">[${c.plate}]</span>` : ''}${c.listed ? '<span class="chip cold">ON THE BLOCK</span>' : ''}${c.pledged ? '<span class="chip cold">PLEDGED</span>' : ''}
           <div class="d">damage ${c.dmg}%</div>
+          ${c.choices ? `<dl class="d"><dt>Fence</dt><dd>$${fmt(c.choices.fence.net)} after fees and tax. Removes the car.</dd>
+            <dt>Melt</dt><dd>${fmt(c.choices.melt.personal)} rounds for you${c.choices.melt.family ? `; ${fmt(c.choices.melt.family)} rounds and $${fmt(c.choices.melt.treasury)} for your Family` : ''}. Removes the car${c.run ? ' and permanently reduces this limited run' : ''}.</dd>
+            <dt>Repair</dt><dd>${c.choices.repair ? `$${fmt(c.choices.repair.cost)}, ${Math.round(c.choices.repair.chance*100)}% success. You pay even if repair fails.` : 'No repair needed.'}</dd></dl>` : ''}
           ${c.listed || c.pledged ? '' : `<button class="act" data-cardo="repair:${c.id}" title="a repair can botch on badly-damaged iron — you pay either way">repair${c.dmg > 50 ? ' ⚠' : ''}</button>
           <button class="act" data-cardo="fence:${c.id}">fence</button>
           <button class="act" data-cardo="melt:${c.id}">melt</button>`}</div>`).join('')}</div>`
@@ -11784,8 +11862,11 @@
       act('POST', `/v1/items/${b.dataset.useitem}/use`, {}).then(() => renderGarage()));
     { const ca = t.querySelector('#craft-ammo'); if (ca) ca.onclick = () =>
       act('POST', '/v1/workshop/ammo', {}).then(() => renderGarage()); }
-    t.querySelectorAll('[data-cardo]').forEach((b) => b.onclick = () => {
+    t.querySelectorAll('[data-cardo]').forEach((b) => b.onclick = async () => {
       const [what, id] = b.dataset.cardo.split(':');
+      const car = (me.cars || []).find(c=>c.id===id);
+      if ((what==='melt' || what==='fence') && !await ask(`${what==='melt'?'Melt':'Fence'} this car?`,
+        `This removes the car from your garage.${car?.run && what==='melt' ? ' Melting permanently reduces the limited run.' : ''} Values are checked again when you act.`, { yes:what==='melt'?'Melt car':'Fence car', no:'Keep car', danger:true })) return;
       act('POST', `/v1/garage/${id}/${what}`, {}).then(() => renderGarage());
     });
     t.querySelectorAll('[data-rup]').forEach((b) => b.onclick = () => {
@@ -12371,12 +12452,12 @@
           <button class="act" data-do="POST /v1/heists/fence"${groundOff('The fence')}>fence it</button></div>` : ''}</div>` : ''}
       ${my ? `
         <div class="card" style="border-color:var(--neon)">${aart('heist', (hb.jobs || []).find((jj) => jj.name === my.name)?.id)}<span class="t">${esc(my.name)}</span> <span class="chip">${my.leader ? 'YOUR JOB' : 'crewed up'}</span>${my.fenced ? ' <span class="chip" style="color:var(--warn)">🔥 HOT</span>' : ''}
-          <div class="d">crew: ${my.crew.map((c) => `${esc(c.name)} (${c.role})${c.cased ? ' ✓cased' : ''}${c.hired ? ' 🤝hired' : ''}`).join(', ')}${my.crewNeeded > 0 ? ` · ${my.crewNeeded} seat${my.crewNeeded > 1 ? 's' : ''} open` : ' · READY'}</div>
+          <div class="d">crew: ${my.crew.map((c) => `${esc(c.name)} (${esc(c.role)})${c.cased ? ' ✓cased' : ''}${c.hired ? ' hired' : ''}${c.blockers?.length ? `: ${c.blockers.map(code=>esc(PX.blockerLabel(code))).join(', ')}` : ''}`).join('; ')}${my.expired ? ' · PLAN EXPIRED: leave and start again' : my.crewNeeded > 0 ? ` · ${my.crewNeeded} seat${my.crewNeeded > 1 ? 's' : ''} open` : my.crewReady ? ' · READY' : ' · Waiting for crew recovery'}</div>
           ${my.leader && my.canHire ? `<div class="d" style="font-size:12px;color:var(--dim)">no crew? hire a hand — $${fmt(my.fillFee)} up front. A hand fills a seat but takes a cut and earns you nothing extra.</div>
             <select data-hirerole="${my.id}">${(my.rolesOpen || []).map((ro) => `<option>${ro}</option>`).join('')}</select>
             <button class="act" data-hireheist="${my.id}">🤝 hire a hand ($${fmt(my.fillFee)})</button>` : ''}
           <button class="act" data-heistdo="case:${my.id}">case the joint (${hb.caseEnergy} energy — raises the odds)</button>
-          ${my.leader ? `<button class="act" data-heistdo="execute:${my.id}" ${my.crewNeeded > 0 ? 'disabled' : ''}>EXECUTE</button>
+          ${my.leader ? `<button class="act" data-heistdo="execute:${my.id}" ${my.crewReady ? '' : 'disabled'}>EXECUTE</button>
             <button class="act" data-heistdo="leave:${my.id}">disband</button>` : `<button class="act" data-heistdo="leave:${my.id}">walk away</button>`}
           <button class="act" data-heistdo="rat:${my.id}" style="opacity:.55">…talk to the badges</button></div>` : `
         <div class="d" style="color:var(--dim);font-size:13.5px;margin-bottom:4px">plan one (you front the stake) or crew up off the board:</div>
@@ -12394,15 +12475,16 @@
         <label id="hj-fencelbl" style="font-size:12.5px;color:var(--dim)"><input type="checkbox" id="hj-fence"> 🔥 take it HOT (fence later — a gamble, loot-able)</label>
         <button class="act" id="hj-plan">plan it</button>
         <div class="d" style="font-size:11.5px;margin-top:2px">🏆 <a href="#" id="hj-lb">the most notorious crews →</a></div>`}
-      ${(hb.open || []).length ? `<div class="grid" style="margin-top:6px">${hb.open.map((o) => { const lvlOk = (me?.level || 0) >= o.lvl;
+      ${(hb.open || []).length ? `<div class="grid" style="margin-top:6px">${[...hb.open].sort((a,b)=>Number(b.canJoin)-Number(a.canJoin)||a.crewNeeded-b.crewNeeded).map((o) => { const lvlOk = (me?.level || 0) >= o.lvl;
         // Same wall as the picker above, on the other way in: joinHeist enforces the job's level, so a
         // rookie who reads "lvl 4+" on somebody's open job and presses crew up gets refused. State it
         // as a wall, not as trivia.
         return `<div class="card">${aart('heist', (hb.jobs || []).find((jj) => jj.name === o.name)?.id)}<span class="t">${esc(o.name)}</span>
-          <div class="d">${o.leader}'s job · ${o.crew} in, ${o.crewNeeded} needed · lvl ${o.lvl}+</div>
+          <div class="d">${esc(o.leader)}'s job · ${o.crew} in, ${o.crewNeeded} needed · lvl ${o.lvl}+</div>
+          ${o.recommendedRole && o.canJoin ? `<div class="d">Suggested role from your stats: ${esc(PX.roleLabel(o.recommendedRole,hb.roleStats || {}))}. You can choose another role.</div>` : ''}
           ${!my && o.rolesOpen.length ? (!lvlOk ? `<span class="chip">🔒 you need level ${o.lvl}</span>`
             : o.canJoin === false ? '<span class="chip">not available to your street</span>'
-              : `<select data-joinrole="${o.id}">${o.rolesOpen.map((ro) => `<option>${ro}</option>`).join('')}</select>
+              : `<select aria-label="Role for ${esc(o.name)}" data-joinrole="${o.id}">${o.rolesOpen.map((ro) => `<option value="${esc(ro)}"${ro===o.recommendedRole?' selected':''}>${esc(PX.roleLabel(ro,hb.roleStats || {}))}</option>`).join('')}</select>
           <button class="act" data-joinheist="${o.id}">crew up</button>`) : ''}</div>`; }).join('')}</div>` : ''}
 
       <h2 style="margin-top:12px">Smuggling Convoys</h2>
@@ -13318,6 +13400,7 @@
     const branches = {};
     for (const s of (sk.tree || [])) (branches[s.branch] = branches[s.branch] || []).push(s);
     t.innerHTML = `
+      <details class="card"><summary>Progress across activities</summary>${(ms.tracks || []).map(track=>{const guide=PlayerExperience.progress([track])[0];return `<p class="d">${esc(track.name || 'Trade')}: ${esc(track.xp ?? 'unknown')} XP · ${track.nextAt === null ? 'level cap' : guide.remaining === null ? 'next threshold unknown' : guide.remaining+' XP to next level'} <button class="act" data-guide-tab="${esc(guide.tab)}">Open activity</button></p>`;}).join('') || '<p>Progress is unavailable. Refresh this screen.</p>'}</details>
       <h2>Your Name on the Street <span class="chip ${honClass}">honor ${hon.value > 0 ? '+' : ''}${hon.value} — ${hon.tier}</span></h2>
       <div class="d" style="font-size:11px;margin:-4px 0 8px;color:var(--dim)">Deeds move it: keep your word, save a guard, avenge blood → a <b>Man of Honor</b> (laying low costs less, the street trusts you).
         Welsh on a debt, rat, break an oath → a <b>Mad Dog</b> (no guard steps in front of you, no family swears a pact with you).</div>
@@ -13506,6 +13589,7 @@
     { const b = $('#van-name-go'); if (b) b.onclick = () => act('POST', '/v1/vanity/name', { name: $('#van-name').value.trim() }).then(() => renderLife()); }
     { const b = $('#van-title-go'); if (b) b.onclick = () => act('POST', '/v1/vanity/title', { title: $('#van-title').value.trim() }).then(() => renderLife()); }
     { const b = $('#van-plate-go'); if (b) b.onclick = () => act('POST', `/v1/vanity/plate/${$('#van-car').value}`, { plate: $('#van-plate').value.trim() }).then(() => renderLife()); }
+    t.querySelectorAll('[data-guide-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.guideTab));
   }
 
   // ── THE PEN: dead time made a place (jailed only) ──

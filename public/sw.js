@@ -33,7 +33,7 @@ self.addEventListener('fetch', (event) => {
 
   const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
   if (isNav || url.pathname === '/omerta-ui.css'
-    || ['/city-scene.js', '/city-scene.css', '/world-fieldwork.js', '/world-fieldwork.css', '/vendor/phaser.js'].includes(url.pathname)) {
+    || ['/player-experience.js', '/city-scene.js', '/city-scene.css', '/world-fieldwork.js', '/world-fieldwork.css', '/vendor/phaser.js'].includes(url.pathname)) {
     // NETWORK-FIRST: a Codex visit belongs to its own URL, never the root game's offline slot.
     // Only a root navigation (including a referral query) may fall back to the canonical root shell.
     event.respondWith(

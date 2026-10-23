@@ -1,3 +1,4 @@
+import * as releaseInputs from '../tools/enterprise-native-inputs.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -9,6 +10,8 @@ import {ENTERPRISE_NATIVE_PROOFS,ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_SUCCE
 import {ENTERPRISE_NATIVE_BASE_REVISION as COMMERCE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_BASE_INPUTS as COMMERCE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_FILES as COMMERCE_NATIVE_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS,ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS} from '../tools/enterprise-native-inputs.js';
 import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS} from '../tools/enterprise-native-continuous-city-inputs.js';
 
+assert(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS, 'Distinct current release manifest is required');
+assert.notEqual(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS, releaseInputs.ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS, 'Historical manifest is never relabelled');
 // Historical predicate controls use one exact immutable E definition; never current admission.
 const historicalGit=(...args)=>execFileSync('git',['--no-optional-locks','--no-replace-objects',...args],{cwd:fileURLToPath(new URL('../',import.meta.url)),maxBuffer:8*1024*1024,windowsHide:true});
 const historicalDigest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
@@ -95,7 +98,8 @@ else{
 }
 
 // Combined definitions are pure source controls; actual generated source remains unknown.
-if(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.status==='UNSEALED'){reject('actual combined native definition remains unsealed',()=>assertEnterpriseCombinedInputDefinition());assert.equal(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision,null);}else pass('actual compiled combined declaration is sealed',()=>assertEnterpriseCombinedInputDefinition());
+if(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.status==='UNSEALED'){reject('actual combined native definition remains unsealed',()=>assertEnterpriseCombinedInputDefinition());assert.equal(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision,null);}else pass('historical compiled combined declaration is sealed',()=>assertEnterpriseCombinedInputDefinition(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS));
+if(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.status==='UNSEALED')reject('current release stays closed before actual source seal',()=>assertEnterpriseCombinedInputDefinition());else pass('distinct exact current release declaration is sealed',()=>assertEnterpriseCombinedInputDefinition());
 assert.equal(COMMERCE_NATIVE_FILES.length,1569);assert.equal(COMMERCE_NATIVE_BASE_INPUTS.length,1566);assert.equal(COMMERCE_NATIVE_BASE_REVISION,"181422abe5312e24be5bd76ec56fe87454bda664");
 const combined=freeze({...clone(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS),status:'SEALED',revision:'d'.repeat(40),guiSource:"59dbb6d99312fa44dba1fbec5bdf24948740e0dc",guiWitnessSHA256:"804f29d96f31767fb3447dc61ed01ca243d9770357923ded125493bb19e71f58",replacements:[{file:'src/server.js',before:{blob:COMMERCE_NATIVE_BASE_INPUTS.find(r=>r.file==='src/server.js').blob,sha256:COMMERCE_NATIVE_BASE_INPUTS.find(r=>r.file==='src/server.js').sha256},after:{...authoredPin}}],additions:[{"file":"tools/enterprise-native-continuous-city-inputs.js","mode":"100644","blob":"1af546bd54ac00f7dbc5db4d2c6e77ddefe1cf95","sha256":"804f29d96f31767fb3447dc61ed01ca243d9770357923ded125493bb19e71f58"}]});
 pass('synthetic combined definition preserves original C prefix and ordinary GUI witness',()=>assertEnterpriseCombinedInputDefinition(combined));

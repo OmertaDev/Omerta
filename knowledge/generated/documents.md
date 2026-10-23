@@ -536,8 +536,10 @@
 | [docs/multi-hop-courier-security-review.md](../../docs/multi-hop-courier-security-review.md) | documentation | 45 | 2026-10-15 |
 | [docs/multihop-courier-owner-estate-review.md](../../docs/multihop-courier-owner-estate-review.md) | documentation | 16 | 2026-10-15 |
 | [docs/multihop-courier-recovery-review.md](../../docs/multihop-courier-recovery-review.md) | documentation | 16 | 2026-10-15 |
+| [docs/next-ten-decisions.md](../../docs/next-ten-decisions.md) | documentation | 23 | 2026-10-22 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
+| [docs/player-experience-insights.md](../../docs/player-experience-insights.md) | documentation | 29 | 2026-10-22 |
 | [docs/PLAYER-FIRST-LAUNCH-STRATEGY.md](../../docs/PLAYER-FIRST-LAUNCH-STRATEGY.md) | documentation | 178 | 2026-10-14 |
 | [docs/pons-launch-strategy-2026-10-14.md](../../docs/pons-launch-strategy-2026-10-14.md) | documentation | 126 | 2026-10-14 |
 | [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
@@ -680,6 +682,7 @@
 | [docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md](../../docs/superpowers/plans/2026-09-04-world-graph-phase-2a-implementation.md) | documentation | 1011 | 2026-09-14 |
 | [docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md](../../docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md) | documentation | 388 | 2026-09-07 |
 | [docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-transition-addendum.md](../../docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-transition-addendum.md) | documentation | 122 | 2026-09-07 |
+| [docs/superpowers/plans/2026-10-22-player-experience-insights.md](../../docs/superpowers/plans/2026-10-22-player-experience-insights.md) | documentation | 28 | 2026-10-22 |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-24 |
 | [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | 2026-09-25 |
 | [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 878 | 2026-10-06 |
@@ -731,7 +734,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-17 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-22 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -809,5 +812,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-18 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-22 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

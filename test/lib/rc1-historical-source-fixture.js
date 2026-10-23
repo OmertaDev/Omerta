@@ -66,6 +66,9 @@ const npcEntries = new Set([
   'test/rc1-world-car-melt-witness.js', 'test/rc1-npc-car-acquisition.js',
   'test/rc1-npc-boat-journal.js', 'test/rc1-npc-market-order-journal.js',
   'test/rc1-npc-provenance-composition.js',
+  'test/rc1-world-npc-family-lineage.js',
+  'test/rc1-player-car-provenance.js', 'test/rc1-npc-family-recruitment.js',
+  'test/rc1-world-lifecycle-resources.js', 'test/rc1-world-market-resources.js',
 ]);
 const entries = new Set([...npcEntries, 'test/rc1-lifecycle-applicability.js',
   'test/rc1-checkpoint-recovery-review.js', 'test/rc1-world-backlog-review.js']);
@@ -320,8 +323,10 @@ async function rejectCurrentNpcRules() {
   assert.throws(() => runHistoricalSourceFixture(new URL('../rc1-native-world-workload.js', import.meta.url)), /Unsupported historical fixture entry/);
   const prior = process.argv;
   try {
-    process.argv = [process.execPath, path.join(root, 'test/rc1-npc-retirement-journal.js'), '--retained=forbidden'];
-    assert.throws(() => runHistoricalSourceFixture(pathToFileURL(process.argv[1])), /forbids native, retained or other arguments/);
+    for (const entry of entries) {
+      process.argv = [process.execPath, path.join(root, entry), '--retained=forbidden'];
+      assert.throws(() => runHistoricalSourceFixture(pathToFileURL(process.argv[1])), /forbids native, retained or other arguments/);
+    }
   } finally { process.argv = prior; }
   console.log(`PASS_HISTORICAL_RULE_GUARDS: ${refusals} independent C2 LF/CRLF/tamper refusals across both files; native/argument rejection`);
 }
