@@ -116,6 +116,14 @@
   #whoami b { color: var(--ink); }
   /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */
   #vitals { display: none; }
+  #status-strips { position: sticky; top: 0; z-index: 11; background: var(--panel); }
+  #action-readiness { display: flex; gap: 6px; max-width: 100%; overflow-x: auto;
+    padding: 4px 12px; border-bottom: 1px solid var(--line); scrollbar-width: thin; }
+  #action-readiness button { flex: 0 0 auto; min-height: 44px; min-width: 96px; margin: 0;
+    padding: 4px 10px; display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  #action-readiness .readiness-state { color: var(--dim); font-variant-numeric: tabular-nums; }
+  #action-readiness [data-state="waiting"] .readiness-state { color: var(--warn, #e8a54b); }
+  #action-readiness [data-state="blocked"] .readiness-state { color: var(--bad); }
   /* an unbroken run of characters (the Collection's ◇◇◇ tracker) is a word to the layout engine, and one
      long enough to out-measure the viewport makes the WHOLE PAGE scroll sideways. Cards wrap anywhere. */
   /* break-word, NOT anywhere: `anywhere` also shrinks min-content, which collapses flex columns and
@@ -939,7 +947,7 @@
       padding: 7px 12px; margin: 0; border-bottom: 1px solid var(--line);
       background: color-mix(in srgb, var(--panel) 92%, transparent);
       -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-      position: sticky; top: 0; z-index: 11; font-size: 13px; }
+      font-size: 13px; }
     #vitals .v-cash { color: var(--neon); font-size: 16px; letter-spacing: .5px; }
     #vitals .v-i { color: var(--faint); font-size: 11px; letter-spacing: .5px; }
     #vitals .v-i b { color: var(--ink); font-weight: normal; font-size: 15px; margin-right: 2px; letter-spacing: 0; }
@@ -1590,7 +1598,10 @@
   <!-- the coach + a compact vitals strip live ABOVE the layout: on a phone the sheet is a long column,
        so the one line telling you what to do next must not be buried inside it. -->
   <div id="coachwrap"></div>
-  <div id="vitals"></div>
+  <div id="status-strips">
+    <div id="vitals"></div>
+    <nav id="action-readiness" class="hidden" aria-label="Activity timers and options"></nav>
+  </div>
   <div id="layout">
 
     <div id="leftcol">
@@ -2452,6 +2463,7 @@
   // drawn UI icons (the sprite in <body>) — nav chrome only; toasts/options stay text (textContent)
   const ic = (n) => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   let me = null, rules = null, ws = null, session = null;
+  let readinessSnapshotAt = null;
   // THE BROADCAST — frictionless referral attribution: a shared link (/u/<name>?ref=<name>) drops
   // ?ref, we stash it, and character creation auto-fills it as the referralCode (no code to type).
   try { const _r = new URLSearchParams(location.search).get('ref'); if (_r) localStorage.setItem('omerta_ref', _r.slice(0, 40)); } catch {}
@@ -4872,6 +4884,11 @@
       ? api('GET', '/v1/projections/player', undefined, { isCurrent: ticket.isCurrent })
       : api('GET', '/v1/commands' + path.slice('/v1/commands'.length), undefined, { isCurrent: ticket.isCurrent }),
     clear: (kind) => {
+      if (['session', 'character', 'player'].includes(kind)) {
+        readinessSnapshotAt = null;
+        $('#action-readiness')?.replaceChildren();
+        $('#action-readiness')?.classList.add('hidden');
+      }
       if (['session', 'character', 'player'].includes(kind)) destroyFieldwork();
       worldChoiceConfirmation?.();
       worldProjection = null; worldFeedback = null;
@@ -4899,6 +4916,7 @@
         if (result.code < 400) {
           const previousGeneration = me?.generation;
           me = result.body.player?.character || result.body.player;
+          readinessSnapshotAt = Date.now();
           clearScopedOperations();
           if (worldRetry && worldRetry.characterId !== me.id) {
             worldRetry = null; worldBusy = false;
@@ -4906,6 +4924,9 @@
           }
           if (rules) { try { renderSheet(); applyTabVisibility(); } catch (error) { console.error('projection render failed', error); } }
           if (previousGeneration != null && me.generation > previousGeneration) backfillFeed();
+        } else {
+          readinessSnapshotAt = null;
+          renderActionReadiness();
         }
         return;
       }
@@ -6967,8 +6988,11 @@
   }, 30000);
   document.addEventListener('visibilitychange', () => {
     document.body.classList.toggle('paused', document.hidden); // stop the ambient loops off-screen (battery)
+    renderActionReadiness();
     if (!document.hidden && me) { refresh(); renderActive(); }
   });
+  window.addEventListener('offline', () => { readinessSnapshotAt = null; renderActionReadiness(); });
+  window.addEventListener('online', () => { if (token && me) refresh(); });
 
   // recent history into the wire so a fresh page isn't blind to what happened while away
   async function backfillFeed() {
@@ -7033,8 +7057,38 @@
       if (p < 1) requestAnimationFrame(step); else el.textContent = '$' + fmt(to); };
     requestAnimationFrame(step);
   }
+  function renderActionReadiness() {
+    const host = $('#action-readiness');
+    if (!host) return;
+    const items = PX.actionReadiness?.(me, navigator.onLine === false ? null : readinessSnapshotAt) || [];
+    host.classList.toggle('hidden', !items.length);
+    if (!items.length) { host.replaceChildren(); return; }
+    // Keep the buttons mounted while their clocks tick so keyboard focus survives refreshes.
+    if (!host.childElementCount) {
+      host.innerHTML = items.map((item) => `<button type="button" class="act" data-readiness-tab="${esc(item.tab)}">
+        <span>${esc(item.label)}</span><span class="readiness-state"></span></button>`).join('');
+      host.querySelectorAll('[data-readiness-tab]').forEach((button) => {
+        button.onclick = () => {
+          setTab(button.dataset.readinessTab);
+          if (button.dataset.state === 'refresh') refresh();
+        };
+      });
+    }
+    for (const item of items) {
+      const button = host.querySelector(`[data-readiness-tab="${item.tab}"]`);
+      if (!button) continue;
+      button.dataset.state = item.state;
+      button.querySelector('.readiness-state').textContent = item.state === 'waiting' ? minsTxt(item.seconds)
+        : item.state === 'blocked' ? item.message : item.state === 'review' ? 'Review' : 'Refresh';
+      button.title = item.state === 'waiting' ? `${item.label}: ${minsTxt(item.seconds)} remaining. Open the activity to review requirements.`
+        : item.state === 'blocked' ? `${item.label}: ${item.message}. Open the activity to review options.`
+        : item.state === 'review' ? `${item.label}: review your options. Resources and other requirements still apply.`
+        : `${item.label}: refresh to check your current options.`;
+    }
+  }
   function renderSheet() {
     if (!me) return;
+    renderActionReadiness();
     // (C5) the FAMILY chat room only works in a family — hide the tab for the family-less (was a
     // silent dead-end: clicking it 400'd no_gang into a blank pane). Fall back to the live feed.
     const fam = $('#wtab-family');
@@ -7702,7 +7756,7 @@
     // run it button"). Only when the rail itself was what had focus, so a mouse click never steals
     // focus and a mid-typing re-render is untouched (renderActive already guards fields).
     const ae = document.activeElement;
-    if (ae && (ae.dataset?.tab || ae.dataset?.group || ae.dataset?.go)) {
+    if (ae && (ae.dataset?.tab || ae.dataset?.group || ae.dataset?.go || ae.dataset?.readinessTab)) {
       // The selected tabpanel announces the destination and puts the next Tab on its first control.
       $('#tab-' + id)?.focus({ preventScroll: true });
     }
@@ -14273,6 +14327,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
 
   // ── the cooldown ticker: every [data-until] element live-counts down to READY ──
   function tickCooldowns() {
+    renderActionReadiness();
     const now = Date.now();
     let crossed = false;
     for (const n of $$('[data-until]')) {
