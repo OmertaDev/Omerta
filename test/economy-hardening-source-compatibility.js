@@ -27,11 +27,14 @@ import {
   ECONOMY_HARDENING_GROWTH_DETERMINISM_REVISION, ECONOMY_HARDENING_GROWTH_DETERMINISM_TREE,
   ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR, ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR_TREE,
   ECONOMY_HARDENING_GROWTH_DETERMINISM_PHASE, ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS,
+  ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION, ECONOMY_HARDENING_CAMPAIGN_EXPIRY_TREE,
+  ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR, ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR_TREE,
+  ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PHASE, ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS,
   assertEconomyHardeningSourceTransfer, assertEconomyHardeningBindingTransfer,
   assertEconomyHardeningBindingSuccessorTransfer, assertEconomyHardeningRepairTransfer,
   assertEconomyHardeningRepairSuccessorTransfer, assertEconomyHardeningReleaseRepairTransfer,
   assertEconomyHardeningDirectorFixtureTransfer, assertEconomyHardeningPhase2TimeoutTransfer,
-  assertEconomyHardeningGrowthDeterminismTransfer,
+  assertEconomyHardeningGrowthDeterminismTransfer, assertEconomyHardeningCampaignExpiryTransfer,
   economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
 
@@ -77,6 +80,7 @@ const releaseRepairFiles = [
 const directorFixtureFiles = ['test/director-migration.js'];
 const phase2TimeoutFiles = ['test/phase2-postgres.js'];
 const growthDeterminismFiles = ['test/growth.js'];
+const campaignExpiryFiles = ['src/commercialcampaigns.js', 'test/commercialcampaigns-integration.js', 'test/hardening.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -178,6 +182,16 @@ assert.equal(git('rev-parse', `${ECONOMY_HARDENING_GROWTH_DETERMINISM_REVISION}^
 assert.equal(git('rev-parse', `${ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR}^{tree}`).trim(),
   ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_GROWTH_DETERMINISM_PHASE, /exact-economy-growth-determinism-source-transfer-only/);
+assert.equal(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION, '38e3212ae4a58f888c5c484f8624159ce4f50eab');
+assert.equal(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR, '73e9fe6c1cedd44885656d54bd88e67459b81121');
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR,
+  ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION + '^{tree}').trim(),
+  ECONOMY_HARDENING_CAMPAIGN_EXPIRY_TREE);
+assert.equal(git('rev-parse', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR + '^{tree}').trim(),
+  ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR_TREE);
+assert.match(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PHASE, /exact-economy-campaign-expiry-source-transfer-only/);
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_SOURCE_DOMAINS), files);
 assert(Object.isFrozen(ECONOMY_HARDENING_SOURCE_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_DOMAINS), bindingFiles);
@@ -196,14 +210,18 @@ assert.deepEqual(Object.keys(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS), phase2Ti
 assert(Object.isFrozen(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS), growthDeterminismFiles);
 assert(Object.isFrozen(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS));
+assert.deepEqual(Object.keys(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS), campaignExpiryFiles);
+assert(Object.isFrozen(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
   const physical = lf(fs.readFileSync(file, 'utf8'));
+  const campaignExpirySealed = campaignExpiryFiles.includes(file)
+    ? assertEconomyHardeningCampaignExpiryTransfer(file, physical).baselineText : physical;
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
-    ? assertEconomyHardeningGrowthDeterminismTransfer(file, physical).baselineText : physical;
+    ? assertEconomyHardeningGrowthDeterminismTransfer(file, campaignExpirySealed).baselineText : campaignExpirySealed;
   const phase2TimeoutSealed = phase2TimeoutFiles.includes(file)
     ? assertEconomyHardeningPhase2TimeoutTransfer(file, growthDeterminismSealed).baselineText : growthDeterminismSealed;
   const releaseRepaired = releaseRepairFiles.includes(file)
@@ -249,8 +267,10 @@ for (const file of repairFiles) {
   const baseline = git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
   const outerPhysical = lf(fs.readFileSync(file, 'utf8'));
+  const campaignExpirySealed = campaignExpiryFiles.includes(file)
+    ? assertEconomyHardeningCampaignExpiryTransfer(file, outerPhysical).baselineText : outerPhysical;
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
-    ? assertEconomyHardeningGrowthDeterminismTransfer(file, outerPhysical).baselineText : outerPhysical;
+    ? assertEconomyHardeningGrowthDeterminismTransfer(file, campaignExpirySealed).baselineText : campaignExpirySealed;
   const releaseRepaired = releaseRepairFiles.includes(file)
     ? assertEconomyHardeningReleaseRepairTransfer(file, growthDeterminismSealed).baselineText : growthDeterminismSealed;
   const physical = repairSuccessorFiles.includes(file)
@@ -539,6 +559,53 @@ for (const file of growthDeterminismFiles) {
     hunks++;
   }
 }
+for (const file of campaignExpiryFiles) {
+  const pin = ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS[file];
+  const current = git('show', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION + ':' + file);
+  const baseline = git('show', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR + ':' + file);
+  const historical = files.includes(file) ? git('show', expectedPredecessor + ':' + file)
+    : repairFiles.includes(file) ? git('show', ECONOMY_HARDENING_REPAIR_PREDECESSOR + ':' + file) : baseline;
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  assert.equal(physical, current, 'Physical campaign expiry source must remain exact: ' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(),
+    ['mode', 'currentSha256', 'currentBlob', 'baselineSha256', 'baselineBlob', 'contextLines', 'inverses'].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(git('rev-parse', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION + ':' + file).trim(), pin.currentBlob);
+  assert.equal(git('rev-parse', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR + ':' + file).trim(), pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION, '--', file).trim().split(/\s+/)[0],
+    pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR,
+    ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomyHardeningCampaignExpiryTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.sourceRevision, ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION);
+    assert.equal(transfer.predecessorRevision, ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR);
+    assert.equal(economyHardeningSourceBaseline(file, input), historical); positives++;
+  }
+  assert.equal(economyHardeningSourceBaseline(file, baseline), historical); positives++;
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) {
+    assert.throws(() => assertEconomyHardeningCampaignExpiryTransfer(file, changed));
+    assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+  }
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1,
+      'Unique complete campaign expiry inverse required: ' + file);
+    const changedInputs = [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current)];
+    if (pin.inverses.length > 1) changedInputs.push(current.replace(inverse.current, () => inverse.baseline));
+    changedInputs.push(current.replace(inverse.current, () => inverse.current.replace(/\S/, '?')));
+    for (const changed of changedInputs) {
+      assert.throws(() => assertEconomyHardeningCampaignExpiryTransfer(file, changed));
+      assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
+}
 for (const file of bindingFiles) {
   const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], physical = lf(fs.readFileSync(file, 'utf8'));
   const current = successorFiles.includes(file)
@@ -614,9 +681,10 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyHardeningDirectorFixtureTransfer(file, text));
   assert.throws(() => assertEconomyHardeningPhase2TimeoutTransfer(file, text));
   assert.throws(() => assertEconomyHardeningGrowthDeterminismTransfer(file, text));
+  assert.throws(() => assertEconomyHardeningCampaignExpiryTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 225, 'positive control count drifted');
-assert.equal(refusals, 706, 'refusal control count drifted');
-assert.equal(hunks, 325, 'inverse-hunk control count drifted');
+assert.equal(positives, 234, 'positive control count drifted');
+assert.equal(refusals, 749, 'refusal control count drifted');
+assert.equal(hunks, 330, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);

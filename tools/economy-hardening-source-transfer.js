@@ -2099,11 +2099,68 @@ export const ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS = {
     ]
   }
 };
+export const ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION = "38e3212ae4a58f888c5c484f8624159ce4f50eab";
+export const ECONOMY_HARDENING_CAMPAIGN_EXPIRY_TREE = "1a25a36980aada19af2df556cea9ffde99c27c0f";
+export const ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR = "73e9fe6c1cedd44885656d54bd88e67459b81121";
+export const ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR_TREE = "ce82c8c1f70fb54ca81c67889cdcb82bb0a4f477";
+export const ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PHASE = 'exact-economy-campaign-expiry-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
+export const ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS = {
+  "src/commercialcampaigns.js": {
+    "mode": "100644",
+    "currentSha256": "aa9f3b47f939f6a2df00d923fd3eaede4bdad19fb7a3e20c92e3257ea13373ab",
+    "currentBlob": "f3dac628afca15251465e8cce5e77a52e895ccf5",
+    "baselineSha256": "f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c",
+    "baselineBlob": "dede492346c39d1146a7ca8e7f927f878a3cf91e",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "        [account, hash([account, canonicalKey])])).rows.length) fail('commission_request_conflict');\n      let canonical;\n      if (phase === 'fund') {\n        const remaining = Math.floor((+new Date(row.expires_at) - +await clock(c)) / 1000);\n        // The canonical source takes its own later database clock. Reserve one whole second in the\n        // supplied lifetime so subsecond acquisition latency cannot create a source whose expiry\n        // extends beyond the immutable campaign envelope.\n        const seconds = remaining - 1;\n        if (seconds < 60) fail('commission_window');\n        canonical = await Commission.fundCommission(c, account, { businessId: row.business_id,\n          feeCash: original.manufacturingFeeCash, lifetimeSeconds: seconds, consent: true }, canonicalKey);\n",
+        "baseline": "        [account, hash([account, canonicalKey])])).rows.length) fail('commission_request_conflict');\n      let canonical;\n      if (phase === 'fund') {\n        const seconds = Math.floor((+new Date(row.expires_at) - +await clock(c)) / 1000);\n        if (seconds < 60) fail('commission_window');\n        canonical = await Commission.fundCommission(c, account, { businessId: row.business_id,\n          feeCash: original.manufacturingFeeCash, lifetimeSeconds: seconds, consent: true }, canonicalKey);\n"
+      },
+      {
+        "current": "          : await Commission.completeCommission(c, account, sourceTerms, canonicalKey, context);\n      }\n      const source = (await c.query('SELECT * FROM commissioned_crafting_contracts WHERE id=$1', [canonical.commissionId])).rows[0];\n      // The canonical source owns its clock, so the reserved second is a success-path margin rather\n      // than an assumption. Any longer lock/query pause fails the whole transaction closed, and old\n      // overlong sources cannot advance on accept/complete.\n      if (!source || +new Date(source.expires_at) > +new Date(row.expires_at)) fail('commission_source');\n      // Read the actual canonical source now; its private brand is consumed only\n      // after this campaign request has also been durably acknowledged.\n      const actual = await Commission.inspectCommercialCommission(c, canonical);\n",
+        "baseline": "          : await Commission.completeCommission(c, account, sourceTerms, canonicalKey, context);\n      }\n      const source = (await c.query('SELECT * FROM commissioned_crafting_contracts WHERE id=$1', [canonical.commissionId])).rows[0];\n      // Read the actual canonical source now; its private brand is consumed only\n      // after this campaign request has also been durably acknowledged.\n      const actual = await Commission.inspectCommercialCommission(c, canonical);\n"
+      }
+    ]
+  },
+  "test/commercialcampaigns-integration.js": {
+    "mode": "100644",
+    "currentSha256": "dc5c9c94d06f83dfd89affe1fbeefbec89598fc30c78e78ce7f7cb8c7ca87145",
+    "currentBlob": "e6b22df1ee9757660ae76c6b715dd22790e2d023",
+    "baselineSha256": "706da88337f814672d6a19d6f38a3b009530e8c695c00f0e660aed7768cc44dd",
+    "baselineBlob": "dab3d31219c6f5cbdc1b22e76f3d364b4e7b28e5",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "  for (const who of [a.scout, a.maker, a.guard, a.first, a.second]) await invoke(who, 'consent', ref(proposal));\n  return proposal;\n}\nasync function throughManufacture(a, campaign, scoutFunded = false, fundTransport = pool) {\n  const r = ref(campaign);\n  if (!scoutFunded) await invoke(a.owner, 'scout-fund', r);\n  const report = await invoke(a.scout, 'scout-report', { ...r, predictsAvailable: true });\n  assert.equal(report.source.paidFeeCash, 50);\n  assert(Number.isSafeInteger(report.source.observedStock));\n  await invoke(a.owner, 'manufacture-fund', r, 'commercial-native-' + (++serial), fundTransport);\n  await invoke(a.maker, 'manufacture-accept', r);\n}\n\n// Force the canonical commission's independent clock past the fractional remainder used by the\n// campaign lifetime derivation. Without a reserved second, the source expires after its immutable\n// campaign envelope even though both integer lifetime checks pass.\nfunction commissionDeadlineBoundaryPool(campaign, overrunMs = 50) {\n  assert(Number.isSafeInteger(overrunMs) && overrunMs > 0);\n  let armed = false, sourceObserved = null, delayed = false, delayMs = null;\n  const clockSql = 'SELECT clock_timestamp() AS observed';\n  const transport = new Proxy(pool, { get(target, key) {\n    if (key === 'connect') return async () => {\n      const c = await target.connect();\n      return new Proxy(c, { get(client, name) {\n        if (name === 'query') return async (...args) => {\n          const sql = args[0];\n          if (armed && sourceObserved && !delayed && sql === clockSql) {\n            const remainingMs = +new Date(campaign.campaign.expiresAt) - +sourceObserved;\n            const fractionalMs = ((remainingMs % 1000) + 1000) % 1000;\n            delayMs = fractionalMs + overrunMs;\n            await new Promise(resolve => setTimeout(resolve, delayMs));\n            delayed = true;\n          }\n          const result = await client.query(...args);\n          if (typeof sql === 'string' && sql.startsWith('SELECT key_hash FROM commissioned_crafting_requests'))\n            armed = true;\n          else if (armed && !sourceObserved && sql === clockSql)\n            sourceObserved = new Date(result.rows[0].observed);\n          return result;\n        };\n        const value = client[name]; return typeof value === 'function' ? value.bind(client) : value;\n      } });\n    };\n    const value = target[key]; return typeof value === 'function' ? value.bind(target) : value;\n  } });\n  return { transport, witnessed: () => armed && !!sourceObserved && delayed, delayMs: () => delayMs };\n}\nfunction faultPool(action, who, onFault, onRoot = null) {\n  let acknowledged = false, injected = false, captured = false;\n  const transport = new Proxy(pool, { get(target, key) {\n",
+        "baseline": "  for (const who of [a.scout, a.maker, a.guard, a.first, a.second]) await invoke(who, 'consent', ref(proposal));\n  return proposal;\n}\nasync function throughManufacture(a, campaign, scoutFunded = false) {\n  const r = ref(campaign);\n  if (!scoutFunded) await invoke(a.owner, 'scout-fund', r);\n  const report = await invoke(a.scout, 'scout-report', { ...r, predictsAvailable: true });\n  assert.equal(report.source.paidFeeCash, 50);\n  assert(Number.isSafeInteger(report.source.observedStock));\n  await invoke(a.owner, 'manufacture-fund', r);\n  await invoke(a.maker, 'manufacture-accept', r);\n}\nfunction faultPool(action, who, onFault, onRoot = null) {\n  let acknowledged = false, injected = false, captured = false;\n  const transport = new Proxy(pool, { get(target, key) {\n"
+      },
+      {
+        "current": "  await unchanged('foreign-source-capability', () => tx(c => Commission.consumeCommercialCommission(c, { commissionId: 'forged' })));\n  await unchanged('foreign-courier-capability', () => tx(c => Courier.consumeCommercialCourier(c, { networkId: 'forged' })));\n  await unchanged('foreign-guard-capability', () => tx(c => Defense.consumeCommercialGuard(c, { guard: a.guard.id })));\n  const report = await invoke(a.scout, 'scout-report', { ...r, predictsAvailable: true });\n  assert.equal(report.source.paidFeeCash, 50);\n  assert(Number.isSafeInteger(report.source.observedStock));\n  const overlongBoundary = commissionDeadlineBoundaryPool(campaign, 1100);\n  const beforeOverlong = await snapshot('commission-deadline-overlong-before');\n  await assert.rejects(invoke(a.owner, 'manufacture-fund', r, 'commission-deadline-overlong', overlongBoundary.transport),\n    /commission_source/);\n  assert(overlongBoundary.witnessed(), 'overlong canonical commission clock crossed the reserved second');\n  const afterOverlong = await snapshot('commission-deadline-overlong-after');\n  assert.deepEqual(afterOverlong.tables, beforeOverlong.tables,\n    'an overlong canonical commission source rolls back every economic row');\n  console.log('PASS overlong canonical commission deadline fails closed and rolls back every economic row.');\n  const commissionBoundary = commissionDeadlineBoundaryPool(campaign);\n  await invoke(a.owner, 'manufacture-fund', r, 'commission-deadline-bounded', commissionBoundary.transport);\n  await invoke(a.maker, 'manufacture-accept', r);\n  assert(commissionBoundary.witnessed(), 'canonical commission clock crossed the campaign fractional boundary');\n  const boundaryStage = (await pool.query(\n    \"SELECT commission_id FROM commercial_campaign_stages WHERE campaign_id=$1 AND kind='manufacture'\", [r.campaignId])).rows[0];\n  const boundaryCommission = (await pool.query(\n    'SELECT expires_at FROM commissioned_crafting_contracts WHERE id=$1', [boundaryStage.commission_id])).rows[0];\n  assert(+new Date(boundaryCommission.expires_at) <= +new Date(campaign.campaign.expiresAt),\n    `canonical commission deadline escaped campaign envelope after ${commissionBoundary.delayMs()}ms boundary delay`);\n  console.log('PASS canonical commission reserves one acquisition second and stays inside the campaign deadline.');\n  await unchanged('wrong-manufacturer-original', transport => invoke(a.scout, 'manufacture-complete', r, undefined, transport));\n  const produced = await lateFailure(a, 'manufacture-complete', campaign, a.maker, 8);\n  const output = produced.source.outputItemId;\n",
+        "baseline": "  await unchanged('foreign-source-capability', () => tx(c => Commission.consumeCommercialCommission(c, { commissionId: 'forged' })));\n  await unchanged('foreign-courier-capability', () => tx(c => Courier.consumeCommercialCourier(c, { networkId: 'forged' })));\n  await unchanged('foreign-guard-capability', () => tx(c => Defense.consumeCommercialGuard(c, { guard: a.guard.id })));\n  await throughManufacture(a, campaign, true);\n  await unchanged('wrong-manufacturer-original', transport => invoke(a.scout, 'manufacture-complete', r, undefined, transport));\n  const produced = await lateFailure(a, 'manufacture-complete', campaign, a.maker, 8);\n  const output = produced.source.outputItemId;\n"
+      }
+    ]
+  },
+  "test/hardening.js": {
+    "mode": "100644",
+    "currentSha256": "22e4e75855ca0670a1879f2a6792eda32571f7fd69e626107665b91beba2a80c",
+    "currentBlob": "c7400e6dd3ce938bcbc8dd931f68a5c0c4bc8e5e",
+    "baselineSha256": "7e8b5bd6a8faf98cad500dc235cd436403b2a4df8cd7e2441a6d9b8750cfe920",
+    "baselineBlob": "9f8a5d0160f0a2d0940a94edb4d386a3e7fa54ae",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "r = await call('POST', '/v1/heist', { token: rival.token });\nassert.equal(r.code, 200, 'rival heist');\n\n// A deterministic genuine crime earns crates (cb faucet) and the war chest. Reset the shared\n// street clock explicitly: retry fixtures must not turn the first random roll into the only roll.\nconst savedRandom = Math.random;\ntry {\n  Math.random = () => 0;\n  await seedCh(boss.id, 'nerve=60, energy=200, jail_until=NULL, health=100, street_action_at=NULL');\n  const crime = await call('POST', '/v1/crimes/fixfight', { token: boss.token });\n  assert.equal(crime.code, 200, 'fixfight resolves through the actual route');\n  assert.equal(crime.body.success, true, 'the pinned crime roll earns the hardening bankroll and crates');\n} finally { Math.random = savedRandom; }\nlet m = await meOf(boss.token);\nassert(m.cash > 60000 && m.cb >= 1, `earned a bankroll organically (cash ${m.cash}, cb ${m.cb})`);\n\n",
+        "baseline": "r = await call('POST', '/v1/heist', { token: rival.token });\nassert.equal(r.code, 200, 'rival heist');\n\n// crimes until the boss holds crates (cb faucet) — high-tier jobs pay the war chest\nfor (let i = 0; i < 60; i++) {\n  await seedCh(boss.id, 'nerve=60, energy=200, jail_until=NULL, health=100');\n  await call('POST', '/v1/crimes/fixfight', { token: boss.token });\n  const m = await meOf(boss.token);\n  if (m.cash > 150000 && m.cb >= 4) break;\n}\nlet m = await meOf(boss.token);\nassert(m.cash > 60000 && m.cb >= 1, `earned a bankroll organically (cash ${m.cash}, cb ${m.cb})`);\n\n"
+      }
+    ]
+  }
+};
 for (const pin of [...Object.values(ECONOMY_HARDENING_SOURCE_DOMAINS), ...Object.values(ECONOMY_HARDENING_BINDING_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_REPAIR_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_REPAIR_SUCCESSOR_DOMAINS), ...Object.values(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS),
   ...Object.values(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS), ...Object.values(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS),
-  ...Object.values(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS)]) {
+  ...Object.values(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS), ...Object.values(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS)]) {
   for (const inverse of pin.inverses) Object.freeze(inverse);
   Object.freeze(pin.inverses); Object.freeze(pin);
 }
@@ -2116,6 +2173,7 @@ Object.freeze(ECONOMY_HARDENING_RELEASE_REPAIR_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_PHASE2_TIMEOUT_DOMAINS);
 Object.freeze(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS);
+Object.freeze(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS);
 const lf = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -2311,9 +2369,35 @@ export function assertEconomyHardeningGrowthDeterminismTransfer(file, input) {
     predecessorRevision: ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR,
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_GROWTH_DETERMINISM_PHASE, sourceOnly: true };
 }
+export function assertEconomyHardeningCampaignExpiryTransfer(file, input) {
+  assert(Object.hasOwn(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS, file),
+    'Unknown economy-hardening campaign expiry domain');
+  assert(uniform(input), 'Uniform whole economy-hardening campaign expiry LF/CRLF source text required');
+  const pin = ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS[file], text = lf(input);
+  assert.equal(hash(text), pin.currentSha256, 'Complete economy-hardening campaign expiry source drift: ' + file);
+  assert.equal(blob(text), pin.currentBlob, 'Complete economy-hardening campaign expiry blob drift: ' + file);
+  let baselineText = text;
+  for (const inverse of pin.inverses) {
+    assert(inverse.current.length);
+    assert.equal(baselineText.split(inverse.current).length - 1, 1,
+      'Missing or duplicate economy-hardening campaign expiry inverse: ' + file);
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  assert.equal(hash(baselineText), pin.baselineSha256,
+    'Complete economy-hardening campaign expiry predecessor source mismatch: ' + file);
+  assert.equal(blob(baselineText), pin.baselineBlob,
+    'Complete economy-hardening campaign expiry predecessor blob mismatch: ' + file);
+  return { file, baselineText, postimageSha256: pin.currentSha256,
+    sourceRevision: ECONOMY_HARDENING_CAMPAIGN_EXPIRY_REVISION,
+    predecessorRevision: ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR,
+    inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PHASE, sourceOnly: true };
+}
 export function economyHardeningSourceBaseline(file, input) {
   if (!uniform(input)) return input;
   let text = input;
+  if (Object.hasOwn(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS, file)
+      && hash(lf(text)) === ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS[file].currentSha256)
+    text = assertEconomyHardeningCampaignExpiryTransfer(file, text).baselineText;
   if (Object.hasOwn(ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS, file)
       && hash(lf(text)) === ECONOMY_HARDENING_GROWTH_DETERMINISM_DOMAINS[file].currentSha256)
     text = assertEconomyHardeningGrowthDeterminismTransfer(file, text).baselineText;
