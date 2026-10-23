@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e3ee78433fbe67430037e7f3bf9b101d7762cf26",
+  "sourceRevision": "2a4c6be86dd13908a2466c14b52707911309428f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16873,
-    "edges": 67496,
+    "nodes": 16877,
+    "edges": 67511,
     "byNodeType": {
       "Artifact": 6928,
       "Command": 295,
-      "Commit": 4716,
+      "Commit": 4720,
       "Contract": 134,
       "Document": 951,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5514,
-      "CHANGED": 25803,
+      "CHANGED": 25814,
       "CONTAINS": 6949,
       "DECLARES": 295,
       "DEFINED_IN": 1760,
       "DEPENDS_ON": 69,
       "EXECUTES": 1157,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4716,
+      "HAS_COMMIT": 4720,
       "IMPLEMENTS": 124,
       "IMPORTS": 7967,
       "INHERITS": 45,
@@ -133394,20 +133394,20 @@
       "path": "test/classic-interface-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3802,
-      "lines": 37,
-      "version": "b1831622e0473b5a",
+      "bytes": 5903,
+      "lines": 56,
+      "version": "35168469d434eec1",
       "text": true,
       "provenance": [
         {
           "file": "test/classic-interface-source-compatibility.js",
           "line": 1,
-          "version": "b1831622e0473b5a"
+          "version": "35168469d434eec1"
         }
       ],
-      "lastChangedAt": "2026-10-23T08:48:59.000Z",
+      "lastChangedAt": "2026-10-23T10:03:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a8178716f80c9eec41cf309134116222888a0ca5"
+      "lastChangedCommit": "9d411a75deacc25e76bced570be72209c2bc981f"
     },
     {
       "key": "Artifact:test/client-ip.js",
@@ -138017,20 +138017,20 @@
       "path": "test/economy-hardening-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8509,
-      "lines": 124,
-      "version": "40dc46257a252398",
+      "bytes": 13399,
+      "lines": 189,
+      "version": "fda9bedc3cc73db8",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "40dc46257a252398"
+          "version": "fda9bedc3cc73db8"
         }
       ],
-      "lastChangedAt": "2026-10-23T03:33:03.000Z",
+      "lastChangedAt": "2026-10-23T10:03:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85122662b6eaa76b9e8e20baeb4176139b34e428"
+      "lastChangedCommit": "9d411a75deacc25e76bced570be72209c2bc981f"
     },
     {
       "key": "Artifact:test/economy-invariant-hardening.js",
@@ -141237,20 +141237,20 @@
       "path": "test/lib/rc1-historical-source-fixture.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 41564,
-      "lines": 640,
-      "version": "5769344ae250ddb5",
+      "bytes": 44640,
+      "lines": 691,
+      "version": "b3164b9d85e56a7d",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
           "line": 1,
-          "version": "5769344ae250ddb5"
+          "version": "b3164b9d85e56a7d"
         }
       ],
-      "lastChangedAt": "2026-10-23T03:33:03.000Z",
+      "lastChangedAt": "2026-10-23T09:50:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85122662b6eaa76b9e8e20baeb4176139b34e428"
+      "lastChangedCommit": "66b4c6008e6b9c192ae20006c59bc591be82a27a"
     },
     {
       "key": "Artifact:test/lib/rc1-historical-worker-source.js",
@@ -148735,20 +148735,20 @@
       "path": "test/rc1-world-lifecycle-resources.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 28077,
-      "lines": 292,
-      "version": "5c5187050cc718de",
+      "bytes": 28534,
+      "lines": 296,
+      "version": "a129ab6ef5bbf39c",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-lifecycle-resources.js",
           "line": 1,
-          "version": "5c5187050cc718de"
+          "version": "a129ab6ef5bbf39c"
         }
       ],
-      "lastChangedAt": "2026-10-23T00:00:55.000Z",
+      "lastChangedAt": "2026-10-23T09:50:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f56c89407f88e1ee1c0b73f8772d2d407bdb5de1"
+      "lastChangedCommit": "66b4c6008e6b9c192ae20006c59bc591be82a27a"
     },
     {
       "key": "Artifact:test/rc1-world-market-resources.js",
@@ -154071,20 +154071,20 @@
       "path": "tools/economy-hardening-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 724006,
-      "lines": 1589,
-      "version": "79cef0b061c8962d",
+      "bytes": 734780,
+      "lines": 1650,
+      "version": "ebdd3dc2b4b2f06f",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-hardening-source-transfer.js",
           "line": 1,
-          "version": "79cef0b061c8962d"
+          "version": "ebdd3dc2b4b2f06f"
         }
       ],
-      "lastChangedAt": "2026-10-23T03:33:03.000Z",
+      "lastChangedAt": "2026-10-23T10:03:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85122662b6eaa76b9e8e20baeb4176139b34e428"
+      "lastChangedCommit": "9d411a75deacc25e76bced570be72209c2bc981f"
     },
     {
       "key": "Artifact:tools/economy-pilot.js",
@@ -154257,18 +154257,18 @@
       "extension": ".js",
       "bytes": 448590,
       "lines": 10549,
-      "version": "05cd3c52190a1018",
+      "version": "c1a3da095eaf68d1",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-inputs.js",
           "line": 1,
-          "version": "05cd3c52190a1018"
+          "version": "c1a3da095eaf68d1"
         }
       ],
-      "lastChangedAt": "2026-10-23T08:49:37.000Z",
+      "lastChangedAt": "2026-10-23T10:09:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e3ee78433fbe67430037e7f3bf9b101d7762cf26"
+      "lastChangedCommit": "2a4c6be86dd13908a2466c14b52707911309428f"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -154462,20 +154462,20 @@
       "path": "tools/generate-economy-hardening-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 11233,
-      "lines": 170,
-      "version": "0b0908a20ca33597",
+      "bytes": 17182,
+      "lines": 248,
+      "version": "ac105f054b7c2b2f",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-economy-hardening-source-transfer.js",
           "line": 1,
-          "version": "0b0908a20ca33597"
+          "version": "ac105f054b7c2b2f"
         }
       ],
-      "lastChangedAt": "2026-10-23T03:33:03.000Z",
+      "lastChangedAt": "2026-10-23T10:03:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "85122662b6eaa76b9e8e20baeb4176139b34e428"
+      "lastChangedCommit": "9d411a75deacc25e76bced570be72209c2bc981f"
     },
     {
       "key": "Artifact:tools/genesis-auction-deployment-plan.js",
@@ -175735,6 +175735,22 @@
       ]
     },
     {
+      "key": "Commit:2a4c6be86dd13908a2466c14b52707911309428f",
+      "type": "Commit",
+      "id": "2a4c6be86dd13908a2466c14b52707911309428f",
+      "label": "Reseal release source after historical fixture fix",
+      "title": "Reseal release source after historical fixture fix",
+      "date": "2026-10-23T10:09:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2a4c6be86dd13908a2466c14b52707911309428f",
+      "provenance": [
+        {
+          "commit": "2a4c6be86dd13908a2466c14b52707911309428f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2a4c6be86dd13908a2466c14b52707911309428f"
+        }
+      ]
+    },
+    {
       "key": "Commit:2a4d811758aba930d6366748fc115641d91d6afa",
       "type": "Commit",
       "id": "2a4d811758aba930d6366748fc115641d91d6afa",
@@ -193927,6 +193943,22 @@
       ]
     },
     {
+      "key": "Commit:66b4c6008e6b9c192ae20006c59bc591be82a27a",
+      "type": "Commit",
+      "id": "66b4c6008e6b9c192ae20006c59bc591be82a27a",
+      "label": "Execute verified historical fixture sources",
+      "title": "Execute verified historical fixture sources",
+      "date": "2026-10-23T09:50:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/66b4c6008e6b9c192ae20006c59bc591be82a27a",
+      "provenance": [
+        {
+          "commit": "66b4c6008e6b9c192ae20006c59bc591be82a27a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/66b4c6008e6b9c192ae20006c59bc591be82a27a"
+        }
+      ]
+    },
+    {
       "key": "Commit:66c316f8018fda49874d7bb4ea9b74775258c4ca",
       "type": "Commit",
       "id": "66c316f8018fda49874d7bb4ea9b74775258c4ca",
@@ -210423,6 +210455,22 @@
       ]
     },
     {
+      "key": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
+      "type": "Commit",
+      "id": "9d411a75deacc25e76bced570be72209c2bc981f",
+      "label": "Bind historical fixture successor source",
+      "title": "Bind historical fixture successor source",
+      "date": "2026-10-23T10:03:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9d411a75deacc25e76bced570be72209c2bc981f",
+      "provenance": [
+        {
+          "commit": "9d411a75deacc25e76bced570be72209c2bc981f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9d411a75deacc25e76bced570be72209c2bc981f"
+        }
+      ]
+    },
+    {
       "key": "Commit:9d4ba6881f0f50f9d7c3da8eb0952b246ad06425",
       "type": "Commit",
       "id": "9d4ba6881f0f50f9d7c3da8eb0952b246ad06425",
@@ -223075,6 +223123,22 @@
         {
           "commit": "c92d5d401f140890f91be6e58b993109082f65a8",
           "url": "https://github.com/OmertaDev/Omerta/commit/c92d5d401f140890f91be6e58b993109082f65a8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c94bb20cf84de303a34730f4723cff17192d6923",
+      "type": "Commit",
+      "id": "c94bb20cf84de303a34730f4723cff17192d6923",
+      "label": "Regenerate release knowledge after proof fix",
+      "title": "Regenerate release knowledge after proof fix",
+      "date": "2026-10-23T08:54:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c94bb20cf84de303a34730f4723cff17192d6923",
+      "provenance": [
+        {
+          "commit": "c94bb20cf84de303a34730f4723cff17192d6923",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c94bb20cf84de303a34730f4723cff17192d6923"
         }
       ]
     },
@@ -257905,7 +257969,7 @@
         },
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
-          "line": 318
+          "line": 349
         },
         {
           "file": "test/liquidityindexer.js",
@@ -267294,6 +267358,9 @@
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
+          "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
+        },
+        {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
         },
         {
@@ -269625,6 +269692,9 @@
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
+          "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
+        },
+        {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
         },
         {
@@ -271954,6 +272024,9 @@
         },
         {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
+        },
+        {
+          "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
         },
         {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
@@ -274933,6 +275006,9 @@
         },
         {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
+        },
+        {
+          "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
         },
         {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
@@ -289665,7 +289741,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e3ee78433fbe67430037e7f3bf9b101d7762cf26",
+      "revision": "2a4c6be86dd13908a2466c14b52707911309428f",
       "currentBranch": "codex/economy-prod-hardening-integrated-20261023",
       "defaultBranch": "main",
       "visibility": "public",
@@ -328337,13 +328413,13 @@
       "type": "TestSuite",
       "id": "test/classic-interface-source-compatibility.js",
       "label": "test/classic-interface-source-compatibility.js",
-      "lines": 37,
-      "version": "b1831622e0473b5a",
+      "lines": 56,
+      "version": "35168469d434eec1",
       "provenance": [
         {
           "file": "test/classic-interface-source-compatibility.js",
           "line": 1,
-          "version": "b1831622e0473b5a"
+          "version": "35168469d434eec1"
         }
       ]
     },
@@ -331352,13 +331428,13 @@
       "type": "TestSuite",
       "id": "test/economy-hardening-source-compatibility.js",
       "label": "test/economy-hardening-source-compatibility.js",
-      "lines": 124,
-      "version": "40dc46257a252398",
+      "lines": 189,
+      "version": "fda9bedc3cc73db8",
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "40dc46257a252398"
+          "version": "fda9bedc3cc73db8"
         }
       ]
     },
@@ -333287,13 +333363,13 @@
       "type": "TestSuite",
       "id": "test/lib/rc1-historical-source-fixture.js",
       "label": "test/lib/rc1-historical-source-fixture.js",
-      "lines": 640,
-      "version": "5769344ae250ddb5",
+      "lines": 691,
+      "version": "b3164b9d85e56a7d",
       "provenance": [
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
           "line": 1,
-          "version": "5769344ae250ddb5"
+          "version": "b3164b9d85e56a7d"
         }
       ]
     },
@@ -338177,13 +338253,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-lifecycle-resources.js",
       "label": "test/rc1-world-lifecycle-resources.js",
-      "lines": 292,
-      "version": "5c5187050cc718de",
+      "lines": 296,
+      "version": "a129ab6ef5bbf39c",
       "provenance": [
         {
           "file": "test/rc1-world-lifecycle-resources.js",
           "line": 1,
-          "version": "5c5187050cc718de"
+          "version": "a129ab6ef5bbf39c"
         }
       ]
     },
@@ -419879,6 +419955,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2a4c6be86dd13908a2466c14b52707911309428f",
+      "to": "Artifact:tools/enterprise-native-inputs.js",
+      "provenance": {
+        "commit": "2a4c6be86dd13908a2466c14b52707911309428f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2a4d811758aba930d6366748fc115641d91d6afa",
       "to": "Artifact:test/company-autonomy-contracts.js",
       "provenance": {
@@ -465543,6 +465627,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:66b4c6008e6b9c192ae20006c59bc591be82a27a",
+      "to": "Artifact:test/lib/rc1-historical-source-fixture.js",
+      "provenance": {
+        "commit": "66b4c6008e6b9c192ae20006c59bc591be82a27a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:66b4c6008e6b9c192ae20006c59bc591be82a27a",
+      "to": "Artifact:test/rc1-world-lifecycle-resources.js",
+      "provenance": {
+        "commit": "66b4c6008e6b9c192ae20006c59bc591be82a27a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:66c316f8018fda49874d7bb4ea9b74775258c4ca",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -504875,6 +504975,38 @@
       "to": "Artifact:CHAIN-AUDIT-PACKET-O1.md",
       "provenance": {
         "commit": "9d0cf6fabc2ac47179a4c48860cdcc111ed41aad"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
+      "to": "Artifact:test/classic-interface-source-compatibility.js",
+      "provenance": {
+        "commit": "9d411a75deacc25e76bced570be72209c2bc981f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
+      "to": "Artifact:test/economy-hardening-source-compatibility.js",
+      "provenance": {
+        "commit": "9d411a75deacc25e76bced570be72209c2bc981f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
+      "to": "Artifact:tools/economy-hardening-source-transfer.js",
+      "provenance": {
+        "commit": "9d411a75deacc25e76bced570be72209c2bc981f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
+      "to": "Artifact:tools/generate-economy-hardening-source-transfer.js",
+      "provenance": {
+        "commit": "9d411a75deacc25e76bced570be72209c2bc981f"
       }
     },
     {
@@ -551987,6 +552119,38 @@
       "to": "Artifact:test/servicesubscriptions.js",
       "provenance": {
         "commit": "c8fc9d2c91463f80b53e2bd633b582ad4e57f38e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c94bb20cf84de303a34730f4723cff17192d6923",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c94bb20cf84de303a34730f4723cff17192d6923",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c94bb20cf84de303a34730f4723cff17192d6923",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c94bb20cf84de303a34730f4723cff17192d6923",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
       }
     },
     {
@@ -704141,6 +704305,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2a4c6be86dd13908a2466c14b52707911309428f",
+      "provenance": {
+        "commit": "2a4c6be86dd13908a2466c14b52707911309428f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2a4d811758aba930d6366748fc115641d91d6afa",
       "provenance": {
         "commit": "2a4d811758aba930d6366748fc115641d91d6afa"
@@ -713237,6 +713409,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:66b4c6008e6b9c192ae20006c59bc591be82a27a",
+      "provenance": {
+        "commit": "66b4c6008e6b9c192ae20006c59bc591be82a27a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:66c316f8018fda49874d7bb4ea9b74775258c4ca",
       "provenance": {
         "commit": "66c316f8018fda49874d7bb4ea9b74775258c4ca"
@@ -721485,6 +721665,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
+      "provenance": {
+        "commit": "9d411a75deacc25e76bced570be72209c2bc981f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9d4ba6881f0f50f9d7c3da8eb0952b246ad06425",
       "provenance": {
         "commit": "9d4ba6881f0f50f9d7c3da8eb0952b246ad06425"
@@ -727808,6 +727996,14 @@
       "to": "Commit:c92d5d401f140890f91be6e58b993109082f65a8",
       "provenance": {
         "commit": "c92d5d401f140890f91be6e58b993109082f65a8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c94bb20cf84de303a34730f4723cff17192d6923",
+      "provenance": {
+        "commit": "c94bb20cf84de303a34730f4723cff17192d6923"
       }
     },
     {
@@ -761919,15 +762115,6 @@
     },
     {
       "type": "IMPORTS",
-      "from": "Artifact:test/classic-interface-source-compatibility.js",
-      "to": "Artifact:tools/economy-hardening-source-transfer.js",
-      "provenance": {
-        "file": "test/classic-interface-source-compatibility.js",
-        "line": 7
-      }
-    },
-    {
-      "type": "IMPORTS",
       "from": "Artifact:test/client-ip.js",
       "to": "Artifact:src/auth.js",
       "provenance": {
@@ -777151,7 +777338,7 @@
       "to": "Artifact:tools/rc1-npc-boat-journal.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 340
+        "line": 377
       }
     },
     {
@@ -777160,7 +777347,7 @@
       "to": "Artifact:tools/rc1-npc-car-acquisition.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 339
+        "line": 376
       }
     },
     {
@@ -777169,7 +777356,7 @@
       "to": "Artifact:tools/rc1-npc-market-order-journal.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 341
+        "line": 378
       }
     },
     {
@@ -777178,7 +777365,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 318
+        "line": 349
       }
     },
     {
@@ -792749,6 +792936,15 @@
       "provenance": {
         "file": "test/rc1-world-lifecycle-resources.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-lifecycle-resources.js",
+      "to": "Artifact:tools/rc1-world-market-resources.js",
+      "provenance": {
+        "file": "test/rc1-world-lifecycle-resources.js",
+        "line": 18
       }
     },
     {
