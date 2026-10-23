@@ -1280,8 +1280,8 @@ export const ECONOMY_HARDENING_BINDING_DOMAINS = {
   },
   "test/lib/rc1-historical-source-fixture.js": {
     "mode": "100644",
-    "currentSha256": "9b12b8769b20ba35018ef61d52d763e7d2f6e0c9104afd93ac83b748484e76ca",
-    "currentBlob": "cab15dd8fe1e37803986146d9418283d7ae985f3",
+    "currentSha256": "98c3eed09f3ed7f18baf65e023c1bbbdb7e5fab19140ec7337deb23937fd3301",
+    "currentBlob": "74b0362138ebcfa8a025027ab78eee9245d83443",
     "baselineSha256": "88a22a821f4eb26048cdeabd66de4e5bb5c3b3ade42c57d2772bf3f7032e7914",
     "baselineBlob": "a0f31929074f7c6c95208885edce99f3c8a1cdc3",
     "contextLines": 3,
@@ -1301,6 +1301,10 @@ export const ECONOMY_HARDENING_BINDING_DOMAINS = {
       {
         "current": "  }\n  if (digest !== row.after.sha256) return raw;\n  assert.equal(blobHash(Buffer.from(current)), row.after.blob, 'Combined enterprise current Git blob changed: ' + file);\n  assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_RELEASE_INPUTS.revision}:${file}`])).trim(), row.after.blob,\n    'Combined enterprise revision/blob binding changed: ' + file);\n  const authored = git(['cat-file', 'blob', row.after.blob]);\n  assert.equal(canonical(authored), String(authored), 'Combined enterprise current bytes must be LF: ' + file);\n",
         "baseline": "  }\n  if (digest !== row.after.sha256) return raw;\n  assert.equal(blobHash(Buffer.from(current)), row.after.blob, 'Combined enterprise current Git blob changed: ' + file);\n  assert.equal(String(git(['rev-parse', `${ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.revision}:${file}`])).trim(), row.after.blob,\n    'Combined enterprise revision/blob binding changed: ' + file);\n  const authored = git(['cat-file', 'blob', row.after.blob]);\n  assert.equal(canonical(authored), String(authored), 'Combined enterprise current bytes must be LF: ' + file);\n"
+      },
+      {
+        "current": "  assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',\n    'Historical application provenance excludes tool and test domains');\n  const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];\n  const combined = enterpriseCombinedHistoricalInput(file, input, expected);\n  let witness = marketOverDeedSourceBaseline(file,\n    cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(combined))));\n  if (domain) {\n    const raw = uniformHistoricalInput(file, witness);\n    if (sha256(canonical(raw)) === domain.currentSha256)\n",
+        "baseline": "  assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',\n    'Historical application provenance excludes tool and test domains');\n  const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];\n  let witness = marketOverDeedSourceBaseline(file,\n    cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(input))));\n  if (domain) {\n    const raw = uniformHistoricalInput(file, witness);\n    if (sha256(canonical(raw)) === domain.currentSha256)\n"
       },
       {
         "current": "      reject(deedCurrent.replace(inverse.current, () => inverse.current + inverse.current));\n    }\n  }\n  const admittedCombinedFiles = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements\n    .filter(row => release.get(row.file) === row.before.blob && (row.file.startsWith('src/') || row.file.startsWith('data/') || row.file === 'schema.sql'))\n    .map(row => row.file).sort();\n  assert.deepEqual(admittedCombinedFiles, [...enterpriseCombinedHistoricalFiles].sort(),\n    'Combined enterprise historical namespace changed');\n  const combinedCurrents = new Map();\n  for (const combinedFile of enterpriseCombinedHistoricalFiles) {\n    const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);\n    const physicalCurrent = canonical(continuousCityHistoricalInput(combinedFile,\n      String(originalRead(path.join(root, combinedFile)))));\n    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));\n",

@@ -206,8 +206,9 @@ function historicalApplicationSource(file, input) {
   assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',
     'Historical application provenance excludes tool and test domains');
   const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];
+  const combined = enterpriseCombinedHistoricalInput(file, input, expected);
   let witness = marketOverDeedSourceBaseline(file,
-    cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(input))));
+    cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(combined))));
   if (domain) {
     const raw = uniformHistoricalInput(file, witness);
     if (sha256(canonical(raw)) === domain.currentSha256)
