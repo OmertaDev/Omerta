@@ -1934,37 +1934,50 @@ console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
   });
 
   const holderB = await pool.connect();
-  let raced3 = null, holderTook3 = null;
+  let inflightB = null, requestOutcomeB = null, holderTook3 = null, holderResult3 = null;
+  let fixtureErrorB = null, raced3 = null;
+  let holderPidB = null, waiterPidB = null;
+  let refundBoundaryB = null;
   try {
     await holderB.query('BEGIN');
+    // Match the deterministic scheduler in §9e/§9f: only the artificial holder defers its
+    // detector. The production estate keeps its real deadlock/lock/statement timeout settings.
+    await holderB.query("SET LOCAL deadlock_timeout = '1min'");
     // exactly what resolveMainEvent does FIRST: a bettor's character row, sorted with the principals.
     await holderB.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bettor.id]);
-    // the estate takes the dying promoter's row, then the bout row, then blocks refunding the bettor.
-    const inflightB = modKill();
-    // WAIT FOR THE BLOCK, NEVER FOR A CLOCK. A fixed sleep here is wrong in BOTH directions: too short and the
-    // estate has not reached the bettor row yet (the holder then blocks on the bout until lock_timeout, a
-    // 55P03 the vacuity guard below correctly refuses); too long and the estate's own deadlock_timeout has
-    // already fired with NO cycle to find — Postgres checks ONCE per waiter, so when the holder closes the
-    // cycle afterwards it is the HOLDER's timer that detects it and the HOLDER that is aborted, the estate
-    // sails through with a 200, and this section measures the wrong victim (measured: a 1500ms sleep did
-    // exactly that). So poll pg_stat_activity for the estate's backend WAITING on a characters row, and close
-    // the cycle the moment it is — its timer then fires ~1s later with the cycle present, before the
-    // holder's does, and the victim is deterministic.
-    let blocked = false;
-    for (let i = 0; i < 100 && !blocked; i++) {
-      const { rows } = await pool.query(
-        `SELECT 1 FROM pg_stat_activity WHERE wait_event_type='Lock' AND query ILIKE '%UPDATE characters%'
-           AND pid <> pg_backend_pid() LIMIT 1`);
-      blocked = rows.length > 0;
-      if (!blocked) await new Promise((r) => setTimeout(r, 50));
-    }
-    check(blocked, 'the estate genuinely blocked on the held bettor row', 'it never waited — nothing here can prove a cycle');
-    // close the cycle: we hold the bettor and now want the bout row the estate is holding.
-    holderTook3 = holderB.query('SELECT 1 FROM boxing_bouts WHERE id=$1 FOR UPDATE', [boutId])
-      .then(() => null, (e) => e);
-    raced3 = await inflightB;
-    await holderTook3;
-  } finally { await holderB.query('ROLLBACK').catch(() => {}); holderB.release(); }
+    const identityB = (await holderB.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPidB = Number(identityB.pid);
+    // Pause the estate immediately before its real bettor refund. It already owns the bout here, so
+    // establish the holder's reverse wait first and then release this fresh production query into a
+    // complete cycle. This avoids the one-shot detector race that made the holder lose and the estate
+    // correctly commit 200 on busy hosts.
+    refundBoundaryB = pausePlayerRefundBeforeSend(bettor.id);
+    let requestSettledB = false;
+    inflightB = observePromiseOutcome(modKill(), () => { requestSettledB = true; });
+    waiterPidB = await refundBoundaryB.reached(() => requestSettledB);
+    check(Number.isInteger(waiterPidB) && waiterPidB > 0,
+      'the estate reached the exact held-bettor refund boundary');
+    const boutSql = 'SELECT 1 FROM boxing_bouts WHERE id=$1 FOR UPDATE';
+    holderTook3 = holderB.query(boutSql, [boutId])
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    await waitForHolderBlockedByPlayer(holderPidB, waiterPidB, boutSql);
+    refundBoundaryB.resume();
+    [requestOutcomeB, holderResult3] = await Promise.all([inflightB, holderTook3]);
+  } catch (error) {
+    fixtureErrorB = error;
+  } finally {
+    refundBoundaryB?.restore();
+    if (!holderTook3) await holderB.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflightB, holderTook3].filter(Boolean));
+    if (inflightB && !requestOutcomeB) requestOutcomeB = await inflightB;
+    await holderB.query('ROLLBACK').catch(() => {});
+    holderB.release();
+  }
+  raced3 = valueAfterCleanup(requestOutcomeB, fixtureErrorB);
+
+  check(holderResult3?.ok === true, 'the boxing fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPidB}, waiter PID ${waiterPidB}, holder error ${holderResult3?.error?.code || holderResult3?.error?.message || 'unknown'}`);
 
   check(raced3.code !== 500, 'the mod-kill is NOT told the server broke',
     `got ${raced3.code} ${raced3.body?.error || ''} — "${raced3.body?.message || ''}"`);
