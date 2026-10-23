@@ -2950,15 +2950,21 @@ export async function maybeGrandReferral(pool, r2AccountId) {
 // the $5k finder's fee was lost forever. This sweep finds every qualified recruit whose whole 2-level
 // chain is qualified but ref_l2_paid is still unset, and retries maybeGrandReferral — which pays A the
 // moment A next has a living heir, idempotently (the latch + the re-verified gates under lock). The
-// candidate set is small (only ref_paid && !ref_l2_paid recruits with a qualified middle link).
+// Candidate rows are prefiltered to chains payable now, so the bounded deterministic batch drains
+// successes instead of repeatedly spending its LIMIT on grandrecruiters with no living character.
 export async function sweepGrandReferrals(pool) {
   const cand = (await pool.query(
-    `SELECT r2.account_id AS r2 FROM account_persistent r2
+    `SELECT DISTINCT r2.account_id AS r2 FROM account_persistent r2
        JOIN account_persistent r ON r.account_id = r2.referred_by
+       JOIN account_persistent a ON a.account_id = r.referred_by
+       JOIN characters payee ON payee.account_id = a.account_id AND payee.alive
       WHERE r2.ref_paid AND NOT r2.ref_l2_paid AND NOT r2.agent_flag AND NOT r2.npc_flag AND r2.referred_by IS NOT NULL
         AND r2.referral_same_ip_hold IS NOT TRUE
         AND r.ref_paid AND NOT r.agent_flag AND NOT r.npc_flag AND r.referred_by IS NOT NULL
         AND r.referral_same_ip_hold IS NOT TRUE
+        AND NOT a.agent_flag AND NOT a.npc_flag
+        AND r2.account_id <> r.account_id AND r2.account_id <> a.account_id AND r.account_id <> a.account_id
+      ORDER BY r2.account_id
       LIMIT 1000`)).rows;
   let paid = 0;
   for (const { r2 } of cand) {

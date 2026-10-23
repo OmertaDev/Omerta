@@ -1020,57 +1020,70 @@ export async function sweepSocialClaims(pool) {
 // throttle + the wire board. Flat queries + JS joins throughout (pg-mem: no correlated subqueries,
 // no = ANY($1) — the /v1/gangs posture); the recruit fan-out uses dynamic IN lists.
 export async function sweepCapoLicense(pool) {
-  const agents = (await pool.query(
-    'SELECT account_id, capo_recruits FROM account_persistent WHERE agent_flag LIMIT 500')).rows;
-  if (!agents.length) return { updated: 0 };
-  const aidList = agents.map((a) => a.account_id);
-  const inA = aidList.map((_, i) => `$${i + 1}`).join(',');
-  // Every minted HUMAN recruit of any agent. The origin screen runs here, before full referral
-  // qualification can install its durable hold, so an agent cannot unlock perks with same-origin alts.
-  const recruits = (await pool.query(
-    `SELECT a.account_id, a.referred_by FROM account_persistent a
-       JOIN accounts recruit_origin ON recruit_origin.id=a.account_id
-       JOIN accounts recruiter_origin ON recruiter_origin.id=a.referred_by
-       LEFT JOIN agent_referral_claims held
-         ON held.recruit_account=a.account_id AND held.milestone='qualified_activation'
-        AND held.state='held' AND held.hold_reason='review_same_ip'
-      WHERE a.referred_by IN (${inA}) AND NOT a.agent_flag AND NOT a.npc_flag AND a.minted
-        AND a.referral_same_ip_hold IS NOT TRUE AND held.recruit_account IS NULL
-        AND (
-          a.referral_same_ip_hold IS FALSE
-          OR recruit_origin.created_ip_authority IS NULL
-          OR recruiter_origin.created_ip_authority IS NULL
-          OR recruit_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
-          OR recruiter_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
-          OR recruit_origin.created_ip IS NULL OR recruiter_origin.created_ip IS NULL
-          OR recruit_origin.created_ip IN ('0.0.0.0','::')
-          OR recruiter_origin.created_ip IN ('0.0.0.0','::')
-          OR recruit_origin.created_ip <> recruiter_origin.created_ip
-        )`, aidList)).rows;
-  let counts = new Map(aidList.map((id) => [id, 0]));
-  if (recruits.length) {
-    const rids = recruits.map((r) => r.account_id);
-    const inR = rids.map((_, i) => `$${i + 1}`).join(',');
-    // LEVELLED: a living street at ≥ MIN_LVL (respect threshold computed here, the levelOf inverse)
-    const thr = PACING.LEVEL_DIVISOR * (CAPO.MIN_LVL - 1) ** 2;
-    const levelled = new Set((await pool.query(
-      `SELECT DISTINCT account_id FROM characters WHERE account_id IN (${inR}) AND alive AND respect >= ${Number(thr)}`,
-      rids)).rows.map((r) => r.account_id));
-    // RETAINED: any telemetry inside the window (the push-skip / active15m signal, at days scale)
-    const retained = new Set((await pool.query(
-      `SELECT DISTINCT account_id FROM telemetry WHERE account_id IN (${inR})
-         AND at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days'`, rids)).rows.map((r) => r.account_id));
-    for (const r of recruits)
-      if (levelled.has(r.account_id) && retained.has(r.account_id))
-        counts.set(r.referred_by, counts.get(r.referred_by) + 1);
-  }
+  // Capture the initial high-water mark, then keyset through every agent below it. A fixed LIMIT
+  // without an ORDER BY permanently starved agents outside whichever 500 rows the planner returned.
+  // The bound prevents a moving high tail from extending one worker tick indefinitely.
+  const upper = (await pool.query(
+    'SELECT account_id FROM account_persistent WHERE agent_flag ORDER BY account_id DESC LIMIT 1')).rows[0]?.account_id;
+  if (!upper) return { updated: 0 };
   let updated = 0;
-  for (const a of agents) {
-    const n = counts.get(a.account_id);
-    if (n !== Number(a.capo_recruits)) {
-      await pool.query('UPDATE account_persistent SET capo_recruits=$1 WHERE account_id=$2', [n, a.account_id]);
-      updated++;
+  let after = null;
+  while (true) {
+    const agents = (await pool.query(
+      `SELECT account_id, capo_recruits FROM account_persistent
+        WHERE agent_flag AND account_id <= $1${after === null ? '' : ' AND account_id > $2'}
+        ORDER BY account_id LIMIT 500`, after === null ? [upper] : [upper, after])).rows;
+    if (!agents.length) break;
+    const aidList = agents.map((a) => a.account_id);
+    const inA = aidList.map((_, i) => `$${i + 1}`).join(',');
+    // Every minted HUMAN recruit of any agent. The origin screen runs here, before full referral
+    // qualification can install its durable hold, so an agent cannot unlock perks with same-origin alts.
+    const recruits = (await pool.query(
+      `SELECT a.account_id, a.referred_by FROM account_persistent a
+         JOIN accounts recruit_origin ON recruit_origin.id=a.account_id
+         JOIN accounts recruiter_origin ON recruiter_origin.id=a.referred_by
+         LEFT JOIN agent_referral_claims held
+           ON held.recruit_account=a.account_id AND held.milestone='qualified_activation'
+          AND held.state='held' AND held.hold_reason='review_same_ip'
+        WHERE a.referred_by IN (${inA}) AND NOT a.agent_flag AND NOT a.npc_flag AND a.minted
+          AND a.referral_same_ip_hold IS NOT TRUE AND held.recruit_account IS NULL
+          AND (
+            a.referral_same_ip_hold IS FALSE
+            OR recruit_origin.created_ip_authority IS NULL
+            OR recruiter_origin.created_ip_authority IS NULL
+            OR recruit_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+            OR recruiter_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+            OR recruit_origin.created_ip IS NULL OR recruiter_origin.created_ip IS NULL
+            OR recruit_origin.created_ip IN ('0.0.0.0','::')
+            OR recruiter_origin.created_ip IN ('0.0.0.0','::')
+            OR recruit_origin.created_ip <> recruiter_origin.created_ip
+          )`, aidList)).rows;
+    const counts = new Map(aidList.map((id) => [id, 0]));
+    if (recruits.length) {
+      const rids = recruits.map((r) => r.account_id);
+      const inR = rids.map((_, i) => `$${i + 1}`).join(',');
+      // LEVELLED: a living street at ≥ MIN_LVL (respect threshold computed here, the levelOf inverse)
+      const thr = PACING.LEVEL_DIVISOR * (CAPO.MIN_LVL - 1) ** 2;
+      const levelled = new Set((await pool.query(
+        `SELECT DISTINCT account_id FROM characters WHERE account_id IN (${inR}) AND alive AND respect >= ${Number(thr)}`,
+        rids)).rows.map((r) => r.account_id));
+      // RETAINED: any telemetry inside the window (the push-skip / active15m signal, at days scale)
+      const retained = new Set((await pool.query(
+        `SELECT DISTINCT account_id FROM telemetry WHERE account_id IN (${inR})
+           AND at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days'`, rids)).rows.map((r) => r.account_id));
+      for (const r of recruits)
+        if (levelled.has(r.account_id) && retained.has(r.account_id))
+          counts.set(r.referred_by, counts.get(r.referred_by) + 1);
     }
+    for (const a of agents) {
+      const n = counts.get(a.account_id);
+      if (n !== Number(a.capo_recruits)) {
+        await pool.query('UPDATE account_persistent SET capo_recruits=$1 WHERE account_id=$2', [n, a.account_id]);
+        updated++;
+      }
+    }
+    after = agents[agents.length - 1].account_id;
+    if (agents.length < 500) break;
   }
   return { updated };
 }

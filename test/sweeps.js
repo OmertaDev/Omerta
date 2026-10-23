@@ -19,14 +19,14 @@
 import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { buildServer } from './server-fixture.js';
-import { RIVALS } from '../src/rules.js';
+import { M4, RIVALS } from '../src/rules.js';
 
 // every sweep the worker actually calls, with the module it lives in. Kept in step with
 // src/worker.js's imports — a new sweep added there without a line here is the gap this file exists
 // to close, and `test/docs.js`/the reader could later assert the two lists agree.
 import { sweepDiplomacy } from '../src/diplomacy.js';
 import { sweepRivals } from '../src/rivals.js';
-import { sweepSocialClaims } from '../src/growth.js';
+import { sweepCapoLicense, sweepSocialClaims } from '../src/growth.js';
 import { sweepGrandReferrals } from '../src/game.js';
 import { sweepStaleRaids, sweepUprisings } from '../src/world.js';
 import { sweepUncreditedFees } from '../src/fees.js';
@@ -82,6 +82,7 @@ const ALL_SWEEPS = [
   ['sweepDiplomacy', () => sweepDiplomacy(pool)],
   ['sweepRivals', () => sweepRivals(pool)],
   ['sweepSocialClaims', () => sweepSocialClaims(pool)],
+  ['sweepCapoLicense', () => sweepCapoLicense(pool)],
   ['sweepGrandReferrals', () => sweepGrandReferrals(pool)],
   ['sweepStaleRaids', () => sweepStaleRaids(pool)],
   ['sweepUprisings', () => sweepUprisings(pool)],
@@ -225,6 +226,75 @@ console.log(`✅ all ${ALL_SWEEPS.length} worker sweeps run clean on an empty DB
   assert.equal(Number((await pool.query("SELECT mint_credits FROM account_persistent WHERE account_id=$1", [acct])).rows[0].mint_credits), after, 'idempotent at the money layer');
   await noDrift('after a store reconcile');
   console.log('✅ sweepUncreditedStore grants a parked package exactly once; a re-run grants nothing');
+}
+
+// (8) sweepCapoLicense — every initial agent is visited even when the population crosses a page.
+{
+  const values = [], params = [];
+  for (let i = 0; i < 501; i++) {
+    const n = params.length;
+    values.push(`($${n + 1},true,$${n + 2})`);
+    params.push(`sweep-capo-${String(i).padStart(4, '0')}`, 1);
+  }
+  await pool.query(
+    `INSERT INTO account_persistent (account_id, agent_flag, capo_recruits) VALUES ${values.join(',')}`,
+    params,
+  );
+  const first = await sweepCapoLicense(pool);
+  assert.equal(first.updated, 501, 'the sweep clears every stale agent across the 500-row boundary');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM account_persistent WHERE account_id LIKE 'sweep-capo-%' AND capo_recruits=0",
+  )).rows[0].n), 501, 'all 501 agents were recomputed');
+  assert.equal((await sweepCapoLicense(pool)).updated, 0, 'the complete paged sweep is idempotent');
+  console.log('✅ sweepCapoLicense keyset-pages all 501 agents and a re-run updates zero');
+}
+
+// (9) sweepGrandReferrals — blocked rows cannot consume the bounded retry budget ahead of a payee.
+{
+  await pool.query(
+    `INSERT INTO account_persistent (account_id, ref_paid, referred_by) VALUES
+       ('sweep-grand-blocked-a',true,NULL),
+       ('sweep-grand-blocked-r',true,'sweep-grand-blocked-a'),
+       ('sweep-grand-valid-a',true,NULL),
+       ('sweep-grand-valid-r',true,'sweep-grand-valid-a'),
+       ('sweep-grand-r2-1000',true,'sweep-grand-valid-r')`,
+  );
+  const values = [], params = [];
+  for (let i = 0; i < 1000; i++) {
+    const n = params.length;
+    values.push(`($${n + 1},true,$${n + 2})`);
+    params.push(`sweep-grand-r2-${String(i).padStart(4, '0')}`, 'sweep-grand-blocked-r');
+  }
+  await pool.query(
+    `INSERT INTO account_persistent (account_id, ref_paid, referred_by) VALUES ${values.join(',')}`,
+    params,
+  );
+  await pool.query(
+    `INSERT INTO characters (id, account_id, name, season, cash)
+       VALUES ('sweep-grand-valid-char','sweep-grand-valid-a','Sweep Grand Payee',1,500)`,
+  );
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM account_persistent WHERE account_id LIKE 'sweep-grand-r2-%' AND ref_paid AND NOT ref_l2_paid",
+  )).rows[0].n), 1001, 'the retry set contains 1,000 blocked rows followed by the formerly omitted payee');
+  const first = await sweepGrandReferrals(pool);
+  assert.deepEqual(first, { candidates: 1, paid: 1 }, 'prefiltering spends the bounded budget only on the eligible payee');
+  const ledger = (await pool.query(
+    "SELECT COUNT(*) n, COALESCE(SUM(amount),0) amount FROM transactions WHERE character_id='sweep-grand-valid-char' AND reason='referral:tier2'",
+  )).rows[0];
+  assert.equal(Number(ledger.n), 1, 'the eligible chain writes exactly one tier-2 ledger row');
+  assert.equal(Number(ledger.amount), M4.REF_TIER2_CASH, 'the one ledger row carries the complete tier-2 payment');
+  assert.equal(Number((await pool.query(
+    "SELECT cash FROM characters WHERE id='sweep-grand-valid-char'",
+  )).rows[0].cash), 500 + M4.REF_TIER2_CASH, 'the eligible grandrecruiter receives exactly one payment');
+  assert.equal((await pool.query(
+    "SELECT ref_l2_paid FROM account_persistent WHERE account_id='sweep-grand-r2-1000'",
+  )).rows[0].ref_l2_paid, true, 'the formerly starved candidate is latched paid');
+  assert.deepEqual(await sweepGrandReferrals(pool), { candidates: 0, paid: 0 }, 'the referral sweep rerun pays zero');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM transactions WHERE character_id='sweep-grand-valid-char' AND reason='referral:tier2'",
+  )).rows[0].n), 1, 'the rerun cannot duplicate the ledger row');
+  await noDrift('after the bounded grand-referral reconcile');
+  console.log('✅ sweepGrandReferrals skips 1,000 blocked candidates, pays the eligible 1,001st once, and reruns at zero');
 }
 
 console.log('✅ worker-sweep suite passed');
