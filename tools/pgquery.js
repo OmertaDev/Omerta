@@ -66,7 +66,7 @@ for (const got of readable) {
 // a separate guard over the unchanged scanner corpus.
 function assertReviewedCommerceQueries(sources, readable, unreadableSites) {
   const pins = {
-    'src/commercialcampaigns.js': 'f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c',
+    'src/commercialcampaigns.js': 'aa9f3b47f939f6a2df00d923fd3eaede4bdad19fb7a3e20c92e3257ea13373ab',
     'src/commercialcampaignruntime.js': '74b5776f868528d0dd1617095613648dc7b4ad9823e6096b944b6101d51f5afb',
   };
   if (JSON.stringify(Object.keys(sources).sort()) !== JSON.stringify(Object.keys(pins).sort()))
