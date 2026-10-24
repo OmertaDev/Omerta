@@ -113,8 +113,8 @@ collapses a pacing timer server-wide; `TRAIN_CD_MS`/`MISSION_CD_MS` in particula
 - [ ] `MOD_KEY=<secret>` — gates the mod tools + the `/admin` ops dashboard (timing-safe compared). Without
       it the mod surface is disabled.
 - [ ] `RATE_LIMIT=on` — token buckets (auto-on in prod anyway; set explicitly to be sure).
-- [ ] `TRUST_PROXY=on` — **only if** behind a load balancer / reverse proxy, so per-IP throttles key on the
-      real client IP (`X-Forwarded-For`), not the proxy. Leave OFF if the app is internet-facing directly.
+- [ ] `TRUST_PROXY=on` — **only on Render**, whose Cloudflare edge protects `CF-Connecting-IP`; Omerta uses
+      that scalar for per-client throttles and signup provenance. Leave OFF for a direct internet-facing app.
 - [ ] `PG_POOL_MAX` — `render.yaml` declares **40** (api) / 20 (worker); the code default is 20, and
       at ~30 concurrent players the 20-pool COLLAPSES (queueing on `connectionTimeout` → 503s read as an
       outage — measured 2026-08-11: 30 vs 284 req/s). Keep it declared; scale the DATABASE plan first.
@@ -526,9 +526,9 @@ record) buys four of the classic production layers in one step, with two rules:
   cache rule to BYPASS everything else under `/v1/*` — every other board is per-player or
   fast-moving, and an edge-cached `/v1/me` would hand one player another's sheet. WebSockets
   (`/v1/ws`) pass through on all plans.
-- **Set `TRUST_PROXY=2`** (the env now takes a hop count): the chain becomes client → Cloudflare →
-  Render LB → app, and the default `on` (=1 hop) would read Cloudflare's egress IP as the client —
-  every per-IP throttle collapses onto ~a dozen shared addresses. Verify after flipping: the IPs in
+- **Keep `TRUST_PROXY=on`**: Render's Cloudflare edge overwrites `CF-Connecting-IP` with the client
+  address. Omerta reads only that protected scalar rather than the appendable `X-Forwarded-For` chain or
+  globally trusting forwarded host/protocol fields. Verify after flipping: the IPs in
   `/v1/mod/actions` (mod audit log) should be real client addresses, not `104.x`/`172.6x` Cloudflare
   ranges.
 

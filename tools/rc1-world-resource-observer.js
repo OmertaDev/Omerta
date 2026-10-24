@@ -21,7 +21,7 @@ export const WORLD_RESOURCE_TABLES = Object.freeze([
   'rwa_dividend_pool', 'rwa_family_dividend_pool', 'family_yield_pool', 'exchange_pool', 'desk_inventory', 'loans', 'auctions', 'auction_consignments',
   'item_stacks', 'item_instances', 'item_lots', 'item_events', 'item_mutation_inputs', 'item_mutation_outputs', 'item_mutation_guards',
   'operation_escrow', 'world_operation_capital', 'world_operation_events', 'world_operation_commitments',
-  'cars', 'boats', 'character_cargo', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
+  'cars', 'boats', 'character_cargo', 'goods_market_liquidity', 'account_gear', 'market_listings', 'listings', 'bounties', 'commission_proposals', 'favors',
   'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries',
   'stakes_races', 'stakes_entries', 'districts', 'district_bids', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials',
   'campaign_progress', 'drop_allocations', 'chain_reserve', 'vouchers', 'rng_audit', 'telemetry', 'season_records', 'season_recaps', 'notifications',
@@ -800,6 +800,11 @@ export function reconcileWorldResources(before, after, { identity = null, includ
   const remainingCargo = state => rows(state, 'character_cargo').filter(row => !retirement?.cargoKeys.has(tuple(row.character_id, row.good_id)) && !npcCargo.cargoKeys.has(tuple(row.character_id, row.good_id)) && !marketResources.cargoKeys.has(tuple(row.character_id, row.good_id)));
   if (json(remainingCargo(before)) !== json(remainingCargo(after)))
     unsupported.push({ kind: 'observed-table-change', table: 'character_cargo', detail: 'Cargo movement outside exact resident purchase remains unclassified' });
+  const remainingGoodsLiquidity = state => rows(state, 'goods_market_liquidity')
+    .filter(row => !npcCargo.liquidityKeys.has(tuple(row.good_id, row.district))
+      && !marketResources.liquidityKeys.has(tuple(row.good_id, row.district)));
+  if (json(remainingGoodsLiquidity(before)) !== json(remainingGoodsLiquidity(after)))
+    unsupported.push({ kind: 'observed-table-change', table: 'goods_market_liquidity', detail: 'Shared goods liquidity movement outside exact resident purchase remains unclassified' });
   const observedOnly = ['account_gear', 'exchange_pool', 'bounties', 'commission_proposals', 'favors',
     'loan_house', 'convoy_insurance', 'poker_tournaments', 'poker_entries', 'grand_prix', 'grand_prix_entries', 'stakes_races',
     'stakes_entries', 'shipment_days', 'shipment_takes', 'bespoke_pieces', 'bespoke_serials', 'campaign_progress',

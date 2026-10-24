@@ -320,7 +320,7 @@
 | [content/README.md](../../content/README.md) | documentation | 282 | 2026-09-25 |
 | [CREDIT_CHECKPOINT.md](../../CREDIT_CHECKPOINT.md) | documentation | 88 | 2026-09-24 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
-| [DEPLOY.md](../../DEPLOY.md) | operations | 578 | 2026-10-12 |
+| [DEPLOY.md](../../DEPLOY.md) | operations | 578 | 2026-10-23 |
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
@@ -358,7 +358,7 @@
 | [docs/aggression-public-attemptability-review.md](../../docs/aggression-public-attemptability-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
-| [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
+| [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-10-23 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
 | [docs/business-partnerships-security-review.md](../../docs/business-partnerships-security-review.md) | documentation | 36 | 2026-10-13 |
 | [docs/business-relocation-design.md](../../docs/business-relocation-design.md) | design | 129 | 2026-10-15 |
@@ -713,7 +713,7 @@
 | [docs/territory-economics-observation-review.md](../../docs/territory-economics-observation-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/territory-economics-security-review.md](../../docs/territory-economics-security-review.md) | documentation | 65 | 2026-10-13 |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2744 | 2026-10-16 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2745 | 2026-10-23 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
 | [docs/workshop-floor-integration.md](../../docs/workshop-floor-integration.md) | documentation | 22 | 2026-10-15 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
@@ -734,7 +734,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-22 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-23 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -812,5 +812,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-22 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-24 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

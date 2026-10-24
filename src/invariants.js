@@ -16,8 +16,8 @@ import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';
 import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
 // §10.4 — the nightly ledger-invariant job. Value transfers, it is never minted:
 // every bucket of value must reconcile against the enumerated faucet/sink reasons
-// in the transactions ledger. Any drift beyond $1 (or one unit) — or any ledger
-// row with a reason outside the known vocabulary — is an alert.
+// in the transactions ledger. Any reported drift — or any ledger row with a reason
+// outside the known vocabulary — is an alert unless that check documents a tolerance.
 import crypto from 'node:crypto';
 import { logisticsCoverageFaults } from './logisticscoverageinvariants.js';
 import { strategyLicenseFaults } from './strategylicenseinvariants.js';
@@ -55,10 +55,11 @@ import {
   PHASE1_HARDENING_RECIPE_ID,
 } from './content/phase1-policy.js';
 
-// The complete reason vocabulary, by currency. A row whose reason matches no
-// prefix here is an unenumerated faucet/sink — the loudest possible §10.4 alarm.
+// The complete reason vocabulary, by currency. Entries ending in `:` name an open
+// namespace; other entries match only themselves. A row outside those boundaries is
+// an unenumerated faucet/sink — the loudest possible §10.4 alarm.
 const KNOWN_REASONS = {
-  cash: ['crime:', 'racket:income', 'racket:upgrade', 'bank:interest', 'bank:', 'heal', 'checkin', 'travel', 'heist',
+  cash: ['crime:', 'racket:income', 'racket:upgrade', 'bank:interest', 'bank:', 'heal', 'checkin', 'travel', 'heist', 'heist:',
     'coordination:capital:deposit', 'coordination:capital:refund', 'coordination:capital:spend', 'coordination:capital:forfeit',
     // `racket:retire:` is the walk-away refund (economy.js `retireRacket`, the `business:shutter` twin). It
     // ships behind RACKET_RETIRE_BPS 0 and so has never written a row — but the day that lever is raised the
@@ -67,14 +68,14 @@ const KNOWN_REASONS = {
     // Kept as its own entry rather than collapsing the four into a blanket `racket:` — the individual
     // entries are what make an unexpected `racket:*` loud.
     'melt:tithe', 'fence', 'repair', 'craft:', 'goods:', 'racket:buy:', 'racket:retire:', 'asset:', 'swap:', 'gun:buy:',
-    'ammo:buy', 'gang:found', 'gang:tribute', 'gang:war', 'gang:dissolved', 'turf:seize:', 'turf:claim', 'jump:',
+    'ammo:buy', 'gang:found', 'gang:tribute', 'gang:war', 'gang:dissolved', 'turf:seize:', 'turf:claim', 'turf:claim:', 'jump:',
     'bounty:', 'bust:reward', 'whack:chop', 'whack:loot', 'death:', 'exchange:', 'crew:sales', 'deal:', 'makings:',
     'lab:', 'crew:hire', 'crew:wages', 'crew:objective', 'crew:bringone', 'laylow', 'kitchen:', 'mission:', 'daily:', 'onboard:', 'social:', 'referral:', 'firstblood:', 'mod:confiscate', 'npchit:', 'safehouse',
     // TOKENOMICS v2 — THE EXCHANGE: the one-way window's cash side. An honest FAUCET, bounded by
     // the pool and proven a redistribution by `exchange pool backed` (paid <= funded) in exchange.js.
     // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.
     'window:',
-    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'coverage:reserve:', 'coverage:premium:', 'coverage:claim:', 'coverage:refund:', 'strategy:buy:', 'strategy:sell:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
+    'gang:contract', 'gang:contract:', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'coverage:reserve:', 'coverage:premium:', 'coverage:claim:', 'coverage:refund:', 'strategy:buy:', 'strategy:sell:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:', 'maintenance:pay', 'maintenance:receive',
     'equipment_rental:rent_pay', 'equipment_rental:rent_receive', 'equipment_rental:deposit',
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
@@ -165,7 +166,7 @@ const KNOWN_REASONS = {
     // (`commission:forfeit`) — reconciled by the treasury check (b) + the commission-escrow check
     'commission:'],
   omr: ['swap:', 'stake:reward', 'gear:mint:', 'vest:', 'lab:', 'cleanpapers', 'path:', 'mission:',
-    'daily:all', 'referral:', 'family:weekly', 'gang:dissolved', 'withdraw:omr', 'vanity:', 'intel:', 'respec',
+    'daily:all', 'referral:', 'family:weekly', 'gang:dissolved', 'withdraw:omr', 'vanity:', 'intel:', 'respec', 'respec:skills',
     'gang:tribute', 'whack:loot', 'plex:', 'prize:omr', 'law:jury', 'law:envelope', 'foundation:', 'rwa:', 'estate:', 'auction:', 'dividend:', 'emission:', 'tax:', 'megaproject:', 'kitchen:', 'bond:', 'business:spec', 'death:duty',
     // Drop 5 (B — $OMR-collateralized loans): loan:pledge (borrower → escrow), loan:pledge:return
     // (escrow → borrower on repay/void), loan:seize:omr (escrow → lender on default/forfeit) and
@@ -188,8 +189,11 @@ const KNOWN_REASONS = {
     'drop:'],
   cb: ['crime:', 'craft:', 'gun:buy:', 'jump:', 'death:', 'exchange:', 'onboard:', 'cook:'],
   gin: ['buyer_cooperative:claim', 'buyer_cooperative:death_gin'],
-  ammo: ['melt', 'melt:tithe', 'craft:ammo', 'ammo:buy', 'jump', 'fire', 'death:', 'exchange:', 'gang:dissolved', 'convoy:', 'world:', 'port:', 'contract:', 'family:'],
+  ammo: ['melt', 'melt:tithe', 'craft:ammo', 'ammo:buy', 'jump', 'jump:', 'fire', 'death:', 'exchange:', 'gang:dissolved', 'convoy:', 'world:', 'port:', 'contract:', 'family:'],
 };
+const knownReasonMatches = (reason, namespace) => namespace.endsWith(':')
+  ? reason.startsWith(namespace)
+  : reason === namespace;
 
 // The $OMR burn/sink predicate, generated from the single source in rules.js (economy v3 step 2).
 // Trailing '%' = a LIKE prefix, otherwise an exact reason — mechanically identical to the string
@@ -230,9 +234,12 @@ export async function runLedgerInvariants(pool, { alert = true, activationPolicy
 
 async function collectLedgerChecks(pool, activationPolicy) {
   const checks = [];
-  const push = (name, lhs, rhs, tolerance = 1, extra = {}) =>
-    checks.push({ name, lhs: Math.round(lhs * 1e6) / 1e6, rhs: Math.round(rhs * 1e6) / 1e6,
-      drift: Math.round((lhs - rhs) * 1e6) / 1e6, ok: Math.abs(lhs - rhs) <= tolerance, ...extra });
+  const push = (name, lhs, rhs, tolerance = 0, extra = {}) => {
+    const roundedLhs = Math.round(lhs * 1e6) / 1e6;
+    const roundedRhs = Math.round(rhs * 1e6) / 1e6;
+    const drift = Math.round((lhs - rhs) * 1e6) / 1e6;
+    checks.push({ name, lhs: roundedLhs, rhs: roundedRhs, drift, ok: Math.abs(drift) <= tolerance, ...extra });
+  };
 
   // (a) CHARACTER CASH: every character starts with an unledgered $500; everything
   // after that has a row. Dead rows are zeroed and their estate burn is ledgered.
@@ -1410,7 +1417,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {
     const rows = (await pool.query('SELECT DISTINCT reason FROM transactions WHERE currency=$1', [cur])).rows;
     for (const r of rows)
-      if (!(r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
+      if (!(r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => knownReasonMatches(r.reason, p)))) unknown.push(`${cur}:${r.reason}`);
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 

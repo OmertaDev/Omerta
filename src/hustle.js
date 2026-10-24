@@ -7,9 +7,11 @@
 // knowable and the copy does not claim it is; the routing comes from the three check-ins),
 // and the payoff is a bounded once-a-day cash faucet (`hustle:payoff` — the clue-casket posture:
 // petty by design, the movement is the product). §10.4: `hustle:` joins the cash vocabulary; the
-// payoff is character_id'd so the per-character cash check reconciles. Dies with the street.
+// payoff is character_id'd so the per-character cash check reconciles. Work dies with the street;
+// the account/day paid latch survives so an heir cannot draw a second payoff.
 import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed, districtName } from './rules.js';
-import { GameError } from './game.js';
+import { GameError, dailyCounterAdvanced } from './game.js';
+import { accountDailyClaims, takeAccountDailyClaim } from './accountdaily.js';
 
 
 async function countersOf(client, chId, day) {
@@ -40,14 +42,15 @@ function stepOf(h, row) {
 function legworkSatisfied(h, row, counters) {
   const base = JSON.parse(row?.baseline || '{}');
   const need = h.leg.kind;
-  return Number(counters[need] || 0) > Number(base[need] || 0);
+  return dailyCounterAdvanced(counters[need], base[need]);
 }
 
 // ── the board: today's chain + where you are on it ──
 export async function hustleBoard(ch, client) {
   const day = dayOf();
   const h = hustleOf(ch.id, day);
-  const row = await rowOf(client, ch.id, day);
+  const paid = (await accountDailyClaims(client, ch.account_id, day, 'hustle')).has('payoff');
+  const row = paid ? { step: 3 } : await rowOf(client, ch.id, day);
   const cur = stepOf(h, row);
   // only the legwork stop carries the second gate — every other stop needs no extra read on what is
   // a polled screen (the poll-cost discipline)
@@ -74,6 +77,8 @@ export async function hustleBoard(ch, client) {
 export async function advanceHustle(ch, client, h2) {
   if (jailed(ch)) throw new GameError('jailed', 'No working the streets from lockup.');
   const day = dayOf();
+  if ((await accountDailyClaims(client, ch.account_id, day, 'hustle')).has('payoff'))
+    throw new GameError('done', 'Today\'s hustle is done — fresh work tomorrow.');
   const h = hustleOf(ch.id, day);
   const row = await rowOf(client, ch.id, day);
   const cur = stepOf(h, row);
@@ -91,6 +96,8 @@ export async function advanceHustle(ch, client, h2) {
   else await client.query('INSERT INTO hustles (character_id, day, step, baseline) VALUES ($1,$2,$3,$4)', [ch.id, day, next, baseline]);
   let pay = 0;
   if (next === 3) {
+    if (!await takeAccountDailyClaim(client, ch.account_id, day, 'hustle', 'payoff'))
+      throw new GameError('done', 'Today\'s hustle is done — fresh work tomorrow.');
     pay = hustlePay(levelOf(Number(ch.respect)));
     ch.cash = Number(ch.cash) + pay;
     await h2.ledger(client, { characterId: ch.id, currency: 'cash', amount: pay, reason: 'hustle:payoff' });

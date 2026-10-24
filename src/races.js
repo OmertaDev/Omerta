@@ -163,6 +163,9 @@ export async function raceChallenge(ch, opponent, body, client, h) {
   const now = new Date();
   const rideCool = coolLeft(ch.race_at, now.getTime());
   if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
+  const opponentRideCool = coolLeft(opponent.race_at, now.getTime());
+  if (opponentRideCool) throw new GameError('cooldown', `Their ride needs ${coolWait(opponentRideCool)} to cool down before another run.`,
+    { cooldownSeconds: opponentRideCool });
   // lock the two car rows in sorted id order (leaf ordering; the char rows are already locked)
   const [first, second] = [String(body?.myCar || ''), String(body?.theirCar || '')].sort();
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [first]);
@@ -240,6 +243,9 @@ export async function pinkSlipRace(ch, opponent, body, client, h) {
   const now = new Date();
   const rideCool = coolLeft(ch.race_at, now.getTime());
   if (rideCool) throw new GameError('cooldown', `Your ride needs ${coolWait(rideCool)} to cool down before the next run.`, { cooldownSeconds: rideCool });
+  const opponentRideCool = coolLeft(opponent.race_at, now.getTime());
+  if (opponentRideCool) throw new GameError('cooldown', `Their ride needs ${coolWait(opponentRideCool)} to cool down before another run.`,
+    { cooldownSeconds: opponentRideCool });
   const [first, second] = [String(body?.myCar || ''), String(body?.theirCar || '')].sort();
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [first]);
   await client.query('SELECT 1 FROM cars WHERE id=$1 FOR UPDATE', [second]);

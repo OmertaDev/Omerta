@@ -5,6 +5,9 @@ export const GOODS_MARKET = {
   STOCK_PER_BLOCK: 500,
   DEMAND_PER_BLOCK: 500,
   BLOCK_MS: 4 * 3600 * 1000,
+  // One fresh-street trunk is a daily-contract "lot". Smaller requests accrue fractional progress,
+  // making daily progress depend on total freight moved rather than how a player partitions calls.
+  DAILY_LOT_UNITS: 10,
 };
 
 const remaining = (row) => ({
@@ -23,6 +26,7 @@ export async function goodsLiquidityBoard(client, block = priceBlock()) {
   return {
     stockPerBlock: GOODS_MARKET.STOCK_PER_BLOCK,
     demandPerBlock: GOODS_MARKET.DEMAND_PER_BLOCK,
+    dailyLotUnits: GOODS_MARKET.DAILY_LOT_UNITS,
     refreshAt: new Date((block + 1) * GOODS_MARKET.BLOCK_MS).toISOString(),
     districts: Object.fromEntries(DISTRICTS.map((district) => [district.id,
       Object.fromEntries(GOODS.map((good) => [good.id, remaining(buckets.get(`${district.id}:${good.id}`))])),

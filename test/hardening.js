@@ -80,13 +80,16 @@ assert.equal(r.code, 200, 'boss heist');
 r = await call('POST', '/v1/heist', { token: rival.token });
 assert.equal(r.code, 200, 'rival heist');
 
-// crimes until the boss holds crates (cb faucet) — high-tier jobs pay the war chest
-for (let i = 0; i < 60; i++) {
-  await seedCh(boss.id, 'nerve=60, energy=200, jail_until=NULL, health=100');
-  await call('POST', '/v1/crimes/fixfight', { token: boss.token });
-  const m = await meOf(boss.token);
-  if (m.cash > 150000 && m.cb >= 4) break;
-}
+// A deterministic genuine crime earns crates (cb faucet) and the war chest. Reset the shared
+// street clock explicitly: retry fixtures must not turn the first random roll into the only roll.
+const savedRandom = Math.random;
+try {
+  Math.random = () => 0;
+  await seedCh(boss.id, 'nerve=60, energy=200, jail_until=NULL, health=100, street_action_at=NULL');
+  const crime = await call('POST', '/v1/crimes/fixfight', { token: boss.token });
+  assert.equal(crime.code, 200, 'fixfight resolves through the actual route');
+  assert.equal(crime.body.success, true, 'the pinned crime roll earns the hardening bankroll and crates');
+} finally { Math.random = savedRandom; }
 let m = await meOf(boss.token);
 assert(m.cash > 60000 && m.cb >= 1, `earned a bankroll organically (cash ${m.cash}, cb ${m.cb})`);
 
@@ -1021,14 +1024,15 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     const { verifyPostUp, verifySocial } = await import('../src/verify.js');
     const postUrl = 'https://x.com/who/status/12345678901234';
     const errOf = async (fn) => { try { await fn(); return null; } catch (e) { return e.code; } };
-    xmock.tweet = () => jres(429, {});
-    assert.equal(await errOf(() => verifyPostUp(postUrl)), 'verify_busy', 'a rate limit is BUSY — the registration stands');
-    xmock.tweet = () => { throw new Error('network down'); };
-    assert.equal(await errOf(() => verifyPostUp(postUrl)), 'verify_busy', 'a network failure is BUSY too');
-    xmock.tweet = () => jres(200, { errors: [{ title: 'Not Found' }] });
-    assert.equal(await errOf(() => verifyPostUp(postUrl)), 'post_gone', 'a DEFINITIVE not-found is post_gone');
-    // author binding: the upgraded account (X id 888) can only be paid for ITS OWN post
     const boundAcct = (await pool.query("SELECT id FROM accounts WHERE auth_provider='x' AND auth_subject='888'")).rows[0];
+    const boundCtx = { client: pool, accountId: boundAcct.id };
+    xmock.tweet = () => jres(429, {});
+    assert.equal(await errOf(() => verifyPostUp(postUrl, boundCtx)), 'verify_busy', 'a rate limit is BUSY — the registration stands');
+    xmock.tweet = () => { throw new Error('network down'); };
+    assert.equal(await errOf(() => verifyPostUp(postUrl, boundCtx)), 'verify_busy', 'a network failure is BUSY too');
+    xmock.tweet = () => jres(200, { errors: [{ title: 'Not Found' }] });
+    assert.equal(await errOf(() => verifyPostUp(postUrl, boundCtx)), 'post_gone', 'a DEFINITIVE not-found is post_gone');
+    // author binding: the upgraded account (X id 888) can only be paid for ITS OWN post
     xmock.tweet = () => jres(200, { data: { id: '12345678901234', author_id: '999' } });
     assert.equal(await errOf(() => verifyPostUp(postUrl, { client: pool, accountId: boundAcct.id })),
       'not_your_post', "someone else's tweet doesn't pay an X-linked account");

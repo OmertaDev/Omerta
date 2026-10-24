@@ -559,7 +559,11 @@ async function runManufacture(pool, account, action, body, key, context) {
         [account, hash([account, canonicalKey])])).rows.length) fail('commission_request_conflict');
       let canonical;
       if (phase === 'fund') {
-        const seconds = Math.floor((+new Date(row.expires_at) - +await clock(c)) / 1000);
+        const remaining = Math.floor((+new Date(row.expires_at) - +await clock(c)) / 1000);
+        // The canonical source takes its own later database clock. Reserve one whole second in the
+        // supplied lifetime so subsecond acquisition latency cannot create a source whose expiry
+        // extends beyond the immutable campaign envelope.
+        const seconds = remaining - 1;
         if (seconds < 60) fail('commission_window');
         canonical = await Commission.fundCommission(c, account, { businessId: row.business_id,
           feeCash: original.manufacturingFeeCash, lifetimeSeconds: seconds, consent: true }, canonicalKey);
@@ -574,6 +578,10 @@ async function runManufacture(pool, account, action, body, key, context) {
           : await Commission.completeCommission(c, account, sourceTerms, canonicalKey, context);
       }
       const source = (await c.query('SELECT * FROM commissioned_crafting_contracts WHERE id=$1', [canonical.commissionId])).rows[0];
+      // The canonical source owns its clock, so the reserved second is a success-path margin rather
+      // than an assumption. Any longer lock/query pause fails the whole transaction closed, and old
+      // overlong sources cannot advance on accept/complete.
+      if (!source || +new Date(source.expires_at) > +new Date(row.expires_at)) fail('commission_source');
       // Read the actual canonical source now; its private brand is consumed only
       // after this campaign request has also been durably acknowledged.
       const actual = await Commission.inspectCommercialCommission(c, canonical);

@@ -157,8 +157,10 @@ assert.notEqual(MASTERY.XP.crime, 1,
 const before = await gainsFor(pool, sal.aid, today, today);
 let pulled = 0;
 for (let i = 0; i < 30 && pulled === 0; i++) {
-  await pool.query(`UPDATE characters SET nerve=100 WHERE id='${sal.id}'`);
-  if ((await call('POST', '/v1/crimes/pick', { token: sal.token })).body.success) pulled++;
+  await pool.query(`UPDATE characters SET nerve=100, jail_until=NULL, street_action_at=NULL WHERE id='${sal.id}'`);
+  const cr = await call('POST', '/v1/crimes/pick', { token: sal.token });
+  assert.notEqual(cr.body?.error, 'cooldown', 'Sal reaches the crime roll on every retry');
+  if (cr.body.success) pulled++;
 }
 assert.equal(pulled, 1, 'a job landed, so the recorder ran');
 const after = await gainsFor(pool, sal.aid, today, today);
@@ -173,8 +175,10 @@ assert.equal(Object.keys(await gainsFor(pool, nico.aid, today, today)).length, 0
   'precondition: Nico has no activity row at all, so his first job must INSERT');
 let nicoPulled = 0;
 for (let i = 0; i < 30 && nicoPulled === 0; i++) {
-  await pool.query(`UPDATE characters SET nerve=100 WHERE id='${nico.id}'`);
-  if ((await call('POST', '/v1/crimes/pick', { token: nico.token })).body.success) nicoPulled++;
+  await pool.query(`UPDATE characters SET nerve=100, jail_until=NULL, street_action_at=NULL WHERE id='${nico.id}'`);
+  const cr = await call('POST', '/v1/crimes/pick', { token: nico.token });
+  assert.notEqual(cr.body?.error, 'cooldown', 'Nico reaches the crime roll on every retry');
+  if (cr.body.success) nicoPulled++;
 }
 assert.equal(nicoPulled, 1, 'a job landed for Nico too');
 assert.equal((await gainsFor(pool, nico.aid, today, today)).crime, 1,

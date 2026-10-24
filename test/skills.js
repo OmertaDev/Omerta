@@ -106,7 +106,7 @@ const { CRIMES, cityEventOf, dayOf, rankIdxOf, levelOf } = await import('../src/
 const c0 = CRIMES.find((c) => c.id === 'torch'); // base 0.4 — fails often; jail 22s
 let jailedS = 0, tries = 0;
 while (!jailedS && tries++ < 200) {
-  await seedCh(wil.id, 'jail_until=NULL, energy=200, nerve=20');
+  await seedCh(wil.id, 'jail_until=NULL, energy=200, nerve=20, street_action_at=NULL');
   const cr = await call('POST', `/v1/crimes/${c0.id}`, { token: wil.token });
   if (cr.body.success === false && cr.body.jailSeconds > 0) jailedS = cr.body.jailSeconds;
 }

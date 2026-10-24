@@ -1076,6 +1076,7 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
   const ROOT = fileURLToPath(new URL('..', import.meta.url));
   const oldDb = `pgcheck_old_${process.pid}`;
   const swap = (u) => u.replace(/\/[^/?]+(\?|$)/, `/${oldDb}$1`);
+  const before = process.env.DATABASE_URL;
   let ok = true; let err = ''; let added = 0;
   try {
     const shas = execSync('git log --format=%H -- schema.sql', { cwd: ROOT }).toString().trim().split('\n');
@@ -1096,7 +1097,6 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
     await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`);
     await pool.query(`CREATE DATABASE ${oldDb}`);
     // now boot the current build against it, exactly as a deploy would
-    const before = process.env.DATABASE_URL;
     process.env.DATABASE_URL = swap(before);
     // the database as it stood at the first commit — applied raw, so it is genuinely the OLD shape
     // and not something the current build has already had a chance to fix
@@ -1136,8 +1136,8 @@ console.log('\n7b. THE BUILD BOOTS AGAINST A DATABASE OLDER THAN ITSELF');
       err = `${mistyped.length} column(s) carry a different TYPE on the upgraded database than a fresh one: ${mistyped.slice(0, 6).join(', ')}`;
     }
     await p3.end();
-    process.env.DATABASE_URL = before;
   } catch (e) { ok = false; err = e.message; }
+  finally { process.env.DATABASE_URL = before; }
   try { await pool.query(`DROP DATABASE IF EXISTS ${oldDb}`); } catch { /* best effort */ }
   check(ok, `the current build boots against the ORIGINAL schema (${added} columns present after migration)`, err);
 }
@@ -1555,7 +1555,7 @@ function pausePlayerRefundBeforeSend(funderId) {
     async reached(requestSettled) {
       const deadline = Date.now() + 5000;
       while (reachedPid === null && Date.now() < deadline && !requestSettled()) await new Promise((r) => setTimeout(r, 25));
-      if (!Number.isInteger(reachedPid) || reachedPid < 1) throw new Error('bounty player never reached the exact paused refund boundary');
+      if (!Number.isInteger(reachedPid) || reachedPid < 1) throw new Error('player never reached the exact paused refund boundary');
       return reachedPid;
     },
     resume,
@@ -1572,7 +1572,7 @@ async function waitForHolderBlockedByPlayer(holderPid, playerPid, queryText) {
     if (rows.length === 1) return;
     await new Promise((r) => setTimeout(r, 25));
   }
-  throw new Error(`bounty holder PID ${holderPid} never blocked behind paused player PID ${playerPid}`);
+  throw new Error(`fixture holder PID ${holderPid} never blocked behind paused player PID ${playerPid}`);
 }
 const waitForPlayerRefundBlockedBy = async ({ holderPid, startedAfter, requestSettled, label }) => {
   const deadline = Date.now() + 5000;
@@ -1743,7 +1743,9 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 // about a live bettor and wrong about the estate path, the same "right about itself, wrong about its
 // sibling" shape as refundPot/sweepExpiredBounties. Same remedy, same double net — driven in §9g
 // through the one route that reaches it (the mod-kill), because "same shape, same remedy" is a claim
-// about the code, and only a drive turns it into a fact.
+// about the code, and only a drive turns it into a fact. The harness pauses the estate immediately
+// before its bettor refund, establishes the holder's reverse wait, then releases the fresh production
+// query into the complete cycle so the intended detector chooses the estate as the victim.
 console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { runLedgerInvariants } = await import('../src/invariants.js');
@@ -1877,9 +1879,7 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
 // dying principal's character row, runs the estate, and maps 40P01 through deadlockToRetry.
 //
 // Driven by HOLDING the bettor's row, never by racing a real resolve — a race depends on two backends
-// overlapping inside a millisecond-wide window, and timing luck reads exactly like a proof. The
-// player is given the full second before the holder closes the cycle, so Postgres aborts the PLAYER
-// (whoever started waiting first) and the victim is deterministic.
+// overlapping inside a millisecond-wide window, and timing luck reads exactly like a proof.
 console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
 {
   const { runLedgerInvariants } = await import('../src/invariants.js');
@@ -1934,37 +1934,50 @@ console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
   });
 
   const holderB = await pool.connect();
-  let raced3 = null, holderTook3 = null;
+  let inflightB = null, requestOutcomeB = null, holderTook3 = null, holderResult3 = null;
+  let fixtureErrorB = null, raced3 = null;
+  let holderPidB = null, waiterPidB = null;
+  let refundBoundaryB = null;
   try {
     await holderB.query('BEGIN');
+    // Match the deterministic scheduler in §9e/§9f: only the artificial holder defers its
+    // detector. The production estate keeps its real deadlock/lock/statement timeout settings.
+    await holderB.query("SET LOCAL deadlock_timeout = '1min'");
     // exactly what resolveMainEvent does FIRST: a bettor's character row, sorted with the principals.
     await holderB.query('SELECT 1 FROM characters WHERE id=$1 FOR UPDATE', [bettor.id]);
-    // the estate takes the dying promoter's row, then the bout row, then blocks refunding the bettor.
-    const inflightB = modKill();
-    // WAIT FOR THE BLOCK, NEVER FOR A CLOCK. A fixed sleep here is wrong in BOTH directions: too short and the
-    // estate has not reached the bettor row yet (the holder then blocks on the bout until lock_timeout, a
-    // 55P03 the vacuity guard below correctly refuses); too long and the estate's own deadlock_timeout has
-    // already fired with NO cycle to find — Postgres checks ONCE per waiter, so when the holder closes the
-    // cycle afterwards it is the HOLDER's timer that detects it and the HOLDER that is aborted, the estate
-    // sails through with a 200, and this section measures the wrong victim (measured: a 1500ms sleep did
-    // exactly that). So poll pg_stat_activity for the estate's backend WAITING on a characters row, and close
-    // the cycle the moment it is — its timer then fires ~1s later with the cycle present, before the
-    // holder's does, and the victim is deterministic.
-    let blocked = false;
-    for (let i = 0; i < 100 && !blocked; i++) {
-      const { rows } = await pool.query(
-        `SELECT 1 FROM pg_stat_activity WHERE wait_event_type='Lock' AND query ILIKE '%UPDATE characters%'
-           AND pid <> pg_backend_pid() LIMIT 1`);
-      blocked = rows.length > 0;
-      if (!blocked) await new Promise((r) => setTimeout(r, 50));
-    }
-    check(blocked, 'the estate genuinely blocked on the held bettor row', 'it never waited — nothing here can prove a cycle');
-    // close the cycle: we hold the bettor and now want the bout row the estate is holding.
-    holderTook3 = holderB.query('SELECT 1 FROM boxing_bouts WHERE id=$1 FOR UPDATE', [boutId])
-      .then(() => null, (e) => e);
-    raced3 = await inflightB;
-    await holderTook3;
-  } finally { await holderB.query('ROLLBACK').catch(() => {}); holderB.release(); }
+    const identityB = (await holderB.query(
+      'SELECT pg_backend_pid() AS pid, clock_timestamp() AS started_after')).rows[0];
+    holderPidB = Number(identityB.pid);
+    // Pause the estate immediately before its real bettor refund. It already owns the bout here, so
+    // establish the holder's reverse wait first and then release this fresh production query into a
+    // complete cycle. This avoids the one-shot detector race that made the holder lose and the estate
+    // correctly commit 200 on busy hosts.
+    refundBoundaryB = pausePlayerRefundBeforeSend(bettor.id);
+    let requestSettledB = false;
+    inflightB = observePromiseOutcome(modKill(), () => { requestSettledB = true; });
+    waiterPidB = await refundBoundaryB.reached(() => requestSettledB);
+    check(Number.isInteger(waiterPidB) && waiterPidB > 0,
+      'the estate reached the exact held-bettor refund boundary');
+    const boutSql = 'SELECT 1 FROM boxing_bouts WHERE id=$1 FOR UPDATE';
+    holderTook3 = holderB.query(boutSql, [boutId])
+      .then(() => ({ ok: true }), (error) => ({ ok: false, error }));
+    await waitForHolderBlockedByPlayer(holderPidB, waiterPidB, boutSql);
+    refundBoundaryB.resume();
+    [requestOutcomeB, holderResult3] = await Promise.all([inflightB, holderTook3]);
+  } catch (error) {
+    fixtureErrorB = error;
+  } finally {
+    refundBoundaryB?.restore();
+    if (!holderTook3) await holderB.query('ROLLBACK').catch(() => {});
+    await Promise.allSettled([inflightB, holderTook3].filter(Boolean));
+    if (inflightB && !requestOutcomeB) requestOutcomeB = await inflightB;
+    await holderB.query('ROLLBACK').catch(() => {});
+    holderB.release();
+  }
+  raced3 = valueAfterCleanup(requestOutcomeB, fixtureErrorB);
+
+  check(holderResult3?.ok === true, 'the boxing fixture holder was NOT the deadlock victim',
+    `holder PID ${holderPidB}, waiter PID ${waiterPidB}, holder error ${holderResult3?.error?.code || holderResult3?.error?.message || 'unknown'}`);
 
   check(raced3.code !== 500, 'the mod-kill is NOT told the server broke',
     `got ${raced3.code} ${raced3.body?.error || ''} — "${raced3.body?.message || ''}"`);
@@ -2105,7 +2118,7 @@ console.log('\n9h. POST-COMMIT HOOKS release their transaction connection');
         [actor.id, M4.REF_GATES.netWorth, M4.REF_GATES.jobs]);
       await pool.query("UPDATE characters SET last_accrued_at=now()+interval '1 day' WHERE id=$1", [parent.id]);
       await pool.query('UPDATE account_persistent SET referred_by=$2, ref_paid=true WHERE account_id=$1', [parent.account, grand.account]);
-      await pool.query('UPDATE account_persistent SET referred_by=$2, checkins_lifetime=$3 WHERE account_id=$1',
+      await pool.query('UPDATE account_persistent SET referred_by=$2, checkins_lifetime=$3, minted=true, referral_same_ip_hold=false WHERE account_id=$1',
         [actor.account, parent.account, M4.REF_GATES.checkins]);
       await pool.query('INSERT INTO referrals(recruit_account,recruiter_account) VALUES($1,$2)', [actor.account, parent.account]);
       const invoke = (fn) => pair

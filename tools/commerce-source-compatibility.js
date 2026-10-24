@@ -1,6 +1,7 @@
 // Template only. Literal placeholders intentionally refuse import; no native or release authority.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import {economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';
 export const COMMERCE_SOURCE_REVISION="da2d9bb64c5fb2fd3409a64d2b0e277421ce281c";
 export const COMMERCE_SOURCE_PREDECESSOR="dadcfde398c44d7634d709354aabde1d67b724e5";
 export const COMMERCE_OWNED_CURRENT_SOURCE_REVISION="29598e24bf93813541730aaafb5a556066f7d637";
@@ -666,5 +667,5 @@ const hash=t=>crypto.createHash('sha256').update(t).digest('hex');
 const blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
 function exactCurrent(input,p){assert.equal(typeof input,'string');assert(uniform(input),'Mixed or bare-CR Commerce source endings');const text=lf(input);assert.equal(hash(text),p.currentSha256,'Complete Commerce source drift');assert.equal(blob(text),p.currentBlob,'Complete Commerce Git blob drift');return text;}
 export function assertCommerceSourceTransfer(file,input){assert(Object.hasOwn(COMMERCE_SOURCE_DOMAINS,file),'Unknown Commerce source domain');const p=COMMERCE_SOURCE_DOMAINS[file],text=exactCurrent(input,p);let baselineText=text;for(const h of p.inverses){assert(h.current);assert.equal(baselineText.split(h.current).length,2,'Exact Commerce inverse occurs once');baselineText=baselineText.replace(h.current,()=>h.baseline);}assert.equal(hash(baselineText),p.baselineSha256,'Complete Commerce baseline drift');assert.equal(blob(baselineText),p.baselineBlob,'Complete Commerce baseline Git blob drift');return{baselineText,sourceRevision:COMMERCE_SOURCE_REVISION,predecessorRevision:COMMERCE_SOURCE_PREDECESSOR,phase:COMMERCE_SOURCE_PHASE};}
-export function assertCommerceOwnedSource(file,input){assert(Object.hasOwn(COMMERCE_OWNED_CURRENT_SOURCES,file),'Unknown Commerce owned current source');exactCurrent(input,COMMERCE_OWNED_CURRENT_SOURCES[file]);return{sourceRevision:COMMERCE_OWNED_CURRENT_SOURCE_REVISION,phase:COMMERCE_SOURCE_PHASE};}
+export function assertCommerceOwnedSource(file,input){assert(Object.hasOwn(COMMERCE_OWNED_CURRENT_SOURCES,file),'Unknown Commerce owned current source');assert.equal(typeof input,'string');exactCurrent(economyHardeningSourceBaseline(file,input),COMMERCE_OWNED_CURRENT_SOURCES[file]);return{sourceRevision:COMMERCE_OWNED_CURRENT_SOURCE_REVISION,phase:COMMERCE_SOURCE_PHASE};}
 export function commerceSourceBaseline(file,input){if(!Object.hasOwn(COMMERCE_SOURCE_DOMAINS,file)||typeof input!=='string')return input;assert(uniform(input),'Mixed or bare-CR Commerce source endings');return hash(lf(input))===COMMERCE_SOURCE_DOMAINS[file].currentSha256?assertCommerceSourceTransfer(file,input).baselineText:input;}

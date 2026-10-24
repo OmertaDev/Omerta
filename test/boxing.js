@@ -78,6 +78,7 @@ assert.equal(await boxingWins(aa.aid), 1, 'the exhibition win banked a career wi
 assert.equal((await call('POST', '/v1/boxing/exhibition', { token: aa.token, body: { fighter: bull, tier: tier.id } })).body.error, 'cooldown', 'a fighter rests between exhibitions');
 
 // ── LIST + PvP FIGHT (belt) ──
+await pool.query('UPDATE fighters SET exhib_at=NULL WHERE id=$1', [bull]); // rest elapsed before the PvP fixture
 assert.equal((await call('POST', '/v1/boxing/list', { token: bb.token, body: { fighter: palooka, stake: 100 } })).body.error, 'stake', 'below the minimum stake');
 await call('POST', '/v1/boxing/list', { token: bb.token, body: { fighter: palooka, stake: 50000 } });
 assert.equal((await call('POST', `/v1/boxing/fight/${bb.id}`, { token: lowbie.token, body: { myFighter: bull, theirFighter: palooka, stake: 10000 } })).body.error, 'no_fighter', "you can't fight with someone else's fighter");
@@ -204,6 +205,7 @@ const ee = await mk('Doomed Don'); await seed(ee.id, `respect=${lvlRespect(12)}`
 const chump = (await call('POST', '/v1/boxing/recruit', { token: ee.token, body: { name: 'Chump' } })).body.id;
 await pool.query(`UPDATE fighters SET power=10,chin=10,speed=10 WHERE id='${chump}'`);
 await call('POST', '/v1/boxing/list', { token: ee.token, body: { fighter: chump, stake: 50000 } });
+  await pool.query('UPDATE fighters SET exhib_at=NULL WHERE id=$1', [goliath]); // rest elapsed between booked cards
 const bout2 = (await call('POST', `/v1/boxing/announce/${ee.id}`, { token: cc.token, body: { myFighter: goliath, theirFighter: chump } })).body.bout;
 await call('POST', `/v1/boxing/bout/${bout2}/bet`, { token: bet1.token, body: { fighter: goliath, amount: 15000 } });
 const bet1Pre = (await meOf(bet1.token)).cash;
@@ -231,6 +233,7 @@ await pool.query(`UPDATE npc_standing SET standing=90, touched_at=now() WHERE ch
 const t3 = await call('POST', '/v1/boxing/train', { token: aa.token, body: { fighter: sugar.id, stat: 'power' } });
 assert.equal(t3.body.value, 13, 'tier 3 builds +2 a session (11 → 13)');
 // (B) BELT DEFENSE — The Bull holds the belt; a win while champ is a DEFENSE (reign++); an inactive champ is STRIPPED
+await pool.query('UPDATE fighters SET exhib_at=NULL WHERE id IN ($1,$2)', [bull, palooka]); // rest elapsed before defending
 await pool.query(`UPDATE fighters SET injured_until=NULL WHERE id='${palooka}'`); // heal for a rematch
 await call('POST', '/v1/boxing/list', { token: bb.token, body: { fighter: palooka, stake: 50000 } });
 await seed(aa.id, `energy=200`); await grantCash(aa.id, 100000); await grantCash(bb.id, 100000);
@@ -259,13 +262,51 @@ await pool.query(`UPDATE boxing_title SET holder_fighter='${bull}', holder_char=
 // The Bull (aa) holds the belt; Goliath (cc, 1 win from the step-three main event) is the #1 contender.
 assert.equal((await call('POST', `/v1/boxing/callout/${bull}`, { token: aa.token })).body.error, 'self', "the champ can't call themselves out");
 assert.equal((await call('POST', `/v1/boxing/callout/${palooka}`, { token: bb.token })).body.error, 'not_contender', 'only the #1 contender can call out the champ');
+assert.equal((await call('POST', `/v1/boxing/callout/${goliath}`, { token: cc.token })).body.error, 'champ_unavailable',
+  'a challenger cannot open a callout while the champion is still resting');
+await pool.query(`UPDATE fighters SET exhib_at=NULL, injured_until=NULL, booked_until=NULL WHERE id='${bull}'`);
 const co = await call('POST', `/v1/boxing/callout/${goliath}`, { token: cc.token });
 assert.equal(co.code, 200, 'the #1 contender calls out the champ'); assert.equal(co.body.champion, 'The Bull', 'the callout names the champ');
 assert.equal((await call('POST', `/v1/boxing/callout/${goliath}`, { token: cc.token })).body.error, 'callout_exists', 'one callout at a time');
 let champB = (await call('GET', '/v1/boxing', { token: aa.token })).body.champion;
 assert(champB.callout && champB.callout.challenger === 'Goliath' && champB.callout.deadlineSeconds > 0, 'the board shows the pending callout + the accept clock');
+// The challenger is reserved through the deadline. They cannot create their own rest/injury conflict
+// near expiry, then collect the belt because the champion was unable to accept.
+await pool.query(`UPDATE boxing_title SET callout_deadline = now() + interval '1 second' WHERE id=1`);
+const calloutRecord = Number((await pool.query(`SELECT wins FROM fighters WHERE id='${goliath}'`)).rows[0].wins);
+assert.equal((await call('POST', '/v1/boxing/exhibition', { token: cc.token, body: { fighter: goliath, tier: BOXING.NPC_TIERS[0].id } })).body.error,
+  'callout_reserved', 'the challenger cannot take an exhibition near the callout deadline');
+assert.equal((await call('POST', `/v1/boxing/fight/${cc.id}`, { token: aa.token, body: { myFighter: bull, theirFighter: goliath, stake: 10000 } })).body.error,
+  'callout_reserved', 'the challenger cannot enter PvP as the passive fighter near the deadline');
+const titleBeforeBlockedChamp = (await pool.query('SELECT holder_fighter, callout_fighter, callout_deadline, defenses FROM boxing_title WHERE id=1')).rows[0];
+assert.equal((await call('POST', '/v1/boxing/exhibition', { token: aa.token, body: { fighter: bull, tier: BOXING.NPC_TIERS[0].id } })).body.error,
+  'callout_reserved', 'the champion cannot enter an exhibition during a pending callout');
+assert.equal((await call('POST', `/v1/boxing/fight/${bb.id}`, { token: aa.token, body: { myFighter: bull, theirFighter: palooka, stake: 10000 } })).body.error,
+  'callout_reserved', 'the champion cannot mutate the belt in direct PvP during a pending callout');
+assert.equal((await call('POST', `/v1/boxing/announce/${bb.id}`, { token: aa.token, body: { myFighter: bull, theirFighter: palooka } })).body.error,
+  'callout_reserved', 'the champion cannot book another main event during a pending callout');
+assert.deepEqual((await pool.query('SELECT holder_fighter, callout_fighter, callout_deadline, defenses FROM boxing_title WHERE id=1')).rows[0],
+  titleBeforeBlockedChamp, 'blocked champion fights leave the belt and pending callout unchanged');
+assert.equal(Number((await pool.query(`SELECT wins FROM fighters WHERE id='${goliath}'`)).rows[0].wins), calloutRecord,
+  'refused callout-window fights award no record');
+// Legacy/injected unavailability is explicit on acceptance and voids at expiry without punishing the champ.
+await pool.query(`UPDATE fighters SET injured_until = now() + interval '2 hours' WHERE id='${goliath}'`);
+assert.equal((await call('POST', '/v1/boxing/callout/accept', { token: aa.token })).body.error, 'challenger_unavailable',
+  'an injured challenger cannot force the champion into an impossible acceptance');
+await pool.query(`UPDATE boxing_title SET callout_deadline = now() - interval '1 hour' WHERE id=1`);
+const voided = await enforceBeltDefense(pool);
+assert.equal(voided.voided, true, 'an unavailable challenger voids their expired callout');
+assert.equal(voided.reason, 'injured', 'the worker records why the challenger forfeited the callout');
+assert.equal((await pool.query('SELECT holder_fighter FROM boxing_title WHERE id=1')).rows[0].holder_fighter, bull,
+  'challenger-caused unavailability does not cost the champion the belt');
+assert.equal((await pool.query('SELECT callout_fighter FROM boxing_title WHERE id=1')).rows[0].callout_fighter, null,
+  'the unavailable callout is cleared');
+await pool.query(`UPDATE fighters SET injured_until=NULL, exhib_at=NULL WHERE id='${goliath}'`);
+await call('POST', `/v1/boxing/callout/${goliath}`, { token: cc.token });
 // (A) DUCK IT — the champ ignores the mandatory challenge past the deadline → the belt forfeits to the challenger
 await pool.query(`UPDATE boxing_title SET callout_deadline = now() - interval '1 hour' WHERE id=1`);
+assert.equal((await call('POST', '/v1/boxing/callout/accept', { token: aa.token })).body.error, 'callout_expired',
+  'the champion cannot accept after the deadline and race the enforcement worker');
 const duck = await enforceBeltDefense(pool);
 assert.equal(duck.ducked, true, 'a ducked callout forfeits the belt');
 assert.equal(duck.newChampion, 'Goliath', 'the challenger is crowned — you can\'t duck the #1 contender');
@@ -273,6 +314,7 @@ assert.equal((await pool.query('SELECT holder_char FROM boxing_title WHERE id=1'
 // (B) ACCEPT IT — re-crown The Bull, call out again, the champ accepts → a TITLE main event is booked
 await pool.query(`UPDATE boxing_title SET holder_fighter='${bull}', holder_char='${aa.id}', holder_name='The Bull', since=now(), last_defense=now(), defenses=0, callout_fighter=NULL, callout_char=NULL, callout_deadline=NULL WHERE id=1`);
 await pool.query(`UPDATE fighters SET injured_until=NULL, booked_until=NULL WHERE id='${goliath}'`); // Goliath ready to challenge
+await pool.query('UPDATE fighters SET exhib_at=NULL WHERE id IN ($1,$2)', [bull, goliath]); // both rested before accepting
 await call('POST', `/v1/boxing/callout/${goliath}`, { token: cc.token });
 assert.equal((await call('POST', '/v1/boxing/callout/accept', { token: cc.token })).body.error, 'not_champ', 'only the champion can accept');
 const acc = await call('POST', '/v1/boxing/callout/accept', { token: aa.token });

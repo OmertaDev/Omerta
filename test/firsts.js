@@ -107,10 +107,14 @@ assert.equal(await ledgerRows(), before, 'the latch + the collection crossing mo
 const capXp = masteryXpFor(MASTERY.MAX_LVL);
 await pool.query(`INSERT INTO masteries (character_id, track_id, xp) VALUES ('${ace.id}','larceny',${capXp - 1})`);
 await pool.query(`UPDATE characters SET nerve=10, energy=100 WHERE id='${ace.id}'`);
-for (let i = 0; i < 12 && !(await pool.query("SELECT 1 FROM firsts WHERE first_id='mastery:larceny'")).rows[0]; i++) {
-  await call('POST', '/v1/crimes/pick', { token: ace.token });
-  await pool.query(`UPDATE characters SET nerve=10 WHERE id='${ace.id}'`);
+let pulled = false;
+for (let i = 0; i < 12 && !pulled; i++) {
+  await pool.query(`UPDATE characters SET nerve=10, jail_until=NULL, street_action_at=NULL WHERE id='${ace.id}'`);
+  const cr = await call('POST', '/v1/crimes/pick', { token: ace.token });
+  assert.notEqual(cr.body?.error, 'cooldown', 'the mastery retry reaches the crime roll');
+  if (cr.body?.success) pulled = true;
 }
+assert.ok(pulled, 'a real crime success crosses the mastery cap');
 const mrow = (await pool.query("SELECT account_id FROM firsts WHERE first_id='mastery:larceny'")).rows[0];
 assert(mrow && mrow.account_id === ace.aid, 'taking a trade to the cap through real play claims its first');
 

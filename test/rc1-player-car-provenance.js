@@ -5,10 +5,22 @@ if (!isHistoricalSourceFixture()) {
 }
 
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { carMelt, CONSTANTS } from '../src/rules.js';
 import { CAR_MELT_SOURCE_PINS, carMeltQueryShapes, verifyFamilyCarMelt } from '../tools/rc1-car-melt-provenance.js';
 import { PLAYER_CAR_SQL, PLAYER_CAR_SOURCE_PINS, assertPlayerCarSources, verifyPlayerCarAcquisition } from '../tools/rc1-player-car-provenance.js';
-const shapes = carMeltQueryShapes(), sites = assertPlayerCarSources(), at = Date.parse('2026-09-20T12:00:00Z');
+const source = fs.readFileSync(new URL('../src/economy.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+const shapes = carMeltQueryShapes(), sites = assertPlayerCarSources(source), at = Date.parse('2026-09-20T12:00:00Z');
+const sourceLine = needle => source.slice(0, source.indexOf(needle)).split('\n').length;
+assert.deepEqual(sites, { car: sourceLine(PLAYER_CAR_SQL.car),
+  rarity: sourceLine("await h.rngLog(client, ch.id, 'rarity:car', rrRoll, rarity);"),
+  grant: sourceLine("await h.rngLog(client, ch.id, 'gta', roll, 'success');") });
+assert.deepEqual(assertPlayerCarSources(source.replaceAll('\n', '\r\n')), sites);
+let sourceControls = 0;
+for (const changed of ['\n// unreviewed prefix\n' + source, source + '\n// unreviewed suffix\n', source.replace(/\S/, '?'),
+  '\ufeff' + source, source + '\0', source.replace('\n', '\r\n'), source.replace('\n', '\r')]) {
+  assert.throws(() => assertPlayerCarSources(changed)); sourceControls++;
+}
 const ch = { id: 'person', account_id: 'account', is_npc: false, alive: true, ammo: 10 };
 const acct = { account_id: 'account', staked: '0', made_until: null, stake_lock_until: null, stake_lock_mult: 1 };
 const car = { id: 'car', character_id: ch.id, model_id: 'junker', trim_id: 'stock', dmg: 20, rarity: 'common',
@@ -112,4 +124,5 @@ for (const edit of [
   x => x.after.tables.cars.push(car),
   x => x.trace.queries.splice(-1, 0, query('UPDATE gangs SET weekly_progress=1', [], 'UPDATE', 1)),
 ]) rejects('melt', edit);
-console.log(JSON.stringify({ status: 'PASS', positiveCases: 3, rejectOrUnsupportedControls: controls, nativeProof: false }));
+console.log(JSON.stringify({ status: 'PASS', positiveCases: 3, rejectOrUnsupportedControls: controls,
+  sourceMutationControls: sourceControls, nativeProof: false }));

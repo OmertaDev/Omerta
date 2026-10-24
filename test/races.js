@@ -127,6 +127,9 @@ await pool.query(`UPDATE characters SET respect=250, speed=5 WHERE id='${rkRacer
 await seedCash(rkRacer.id, 200000);
 await mkCar(rkRacer.id, 'junker', 'stock', 0);
 const rkCar = (await pool.query(`SELECT id FROM cars WHERE character_id='${rkRacer.id}'`)).rows[0].id;
+  assert.equal((await call('POST', `/v1/races/challenge/${champ.id}`, { token: rkRacer.token, body: { myCar: rkCar, theirCar: champCar, wager: 20000 } })).body.error,
+    'cooldown', 'a resting listed winner refuses another challenger');
+  await pool.query('UPDATE characters SET race_at=NULL WHERE id=$1', [champ.id]); // rest elapsed before testing the rookie-credit floor
 const rr = await call('POST', `/v1/races/challenge/${champ.id}`, { token: rkRacer.token, body: { myCar: rkCar, theirCar: champCar, wager: 20000 } });
 assert.equal(rr.body.win, false, 'the rookie loses to the strong owner');
 assert.equal(await wheelWins(), winsBefore, 'a win over a sub-level-floor loser earns NO WHEEL credit (F-MED1 anti-Sybil)');

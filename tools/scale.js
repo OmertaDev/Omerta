@@ -35,6 +35,7 @@
 process.env.MOD_KEY = process.env.MOD_KEY || 'scale-mod-key';
 process.env.MARKET_SEED = process.env.MARKET_SEED || 'scale-harness-seed-000000000000';
 process.env.SOCIAL_VERIFY_MODE = 'off';
+process.env.INVITE_MODE = 'off';
 // A scripted town issues requests far faster than the human it is standing in for, and the §10.2
 // bucket is sized for a human. Setting DATABASE_URL turns the limiter ON (ratelimit.js reads it as
 // "this is a real deployment"), so without this a real-Postgres run measures the LIMITER instead of
@@ -101,11 +102,15 @@ const NAMES = ['Vito', 'Sal', 'Nico', 'Rocco', 'Enzo', 'Gino', 'Bruno', 'Carmine
 
 const players = [];
 for (let i = 0; i < PLAYERS; i++) {
-  const { body: { token } } = await call('POST', '/v1/auth/guest', null, { birthDate: SYNTHETIC_ADULT_BIRTH_DATE });
+  const guest = await call('POST', '/v1/auth/guest', null, { birthDate: SYNTHETIC_ADULT_BIRTH_DATE });
+  assert.equal(guest.code, 200, `guest ${i} created: ${JSON.stringify(guest.body)}`);
+  const token = guest.body.token;
+  assert.equal(typeof token, 'string', `guest ${i} returned a bearer token`);
   const name = `${NAMES[i % NAMES.length]} Scale${i}`;
-  await call('POST', '/v1/character', token, { name });
+  const created = await call('POST', '/v1/character', token, { name });
+  assert.equal(created.code, 200, `character ${i} created: ${JSON.stringify(created.body)}`);
   const me = (await call('GET', '/v1/me', token)).body.character;
-  if (!me) continue;
+  assert(me, `character ${i} is readable after creation`);
   players.push({ token, id: me.id, name, loc: me.loc, kind: ARCHETYPES[i % ARCHETYPES.length] });
 }
 assert(players.length >= PLAYERS * 0.9, `only ${players.length}/${PLAYERS} characters were created`);
