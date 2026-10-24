@@ -43,6 +43,12 @@ import {
 } from '../tools/economy-hardening-source-transfer.js';
 import { ECONOMY_READINESS_MERGE_SOURCE, economyHardeningMergeHistoricalInput,
   qualifyEconomyHardeningSuccessorSource } from '../tools/economy-readiness-merge-source-compatibility.js';
+import {
+  ECONOMY_RELEASE_TAIL_REVISION, ECONOMY_RELEASE_TAIL_TREE,
+  ECONOMY_RELEASE_TAIL_PREDECESSOR, ECONOMY_RELEASE_TAIL_PREDECESSOR_TREE,
+  ECONOMY_RELEASE_TAIL_PHASE, ECONOMY_RELEASE_TAIL_DOMAINS,
+  assertEconomyReleaseTailTransfer,
+} from '../tools/economy-release-tail-source-transfer.js';
 
 const expectedRevision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
 const expectedPredecessor = '9f39df80598d38507c9f6b4ea2414312eb8e7700';
@@ -88,6 +94,7 @@ const phase2TimeoutFiles = ['test/phase2-postgres.js'];
 const growthDeterminismFiles = ['test/growth.js'];
 const campaignExpiryFiles = ['src/commercialcampaigns.js', 'test/commercialcampaigns-integration.js', 'test/hardening.js'];
 const commerceAdmissionFiles = ['tools/commerce-source-compatibility.js'];
+const releaseTailFiles = ['src/growth.js', 'test/gates.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -209,6 +216,15 @@ assert.equal(git('rev-parse', ECONOMY_HARDENING_COMMERCE_ADMISSION_REVISION + '^
 assert.equal(git('rev-parse', ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR + '^{tree}').trim(),
   ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_COMMERCE_ADMISSION_PHASE, /exact-economy-commerce-admission-source-transfer-only/);
+assert.equal(ECONOMY_RELEASE_TAIL_REVISION, '3b1c6704a5f5c7d9348c8f59399c8fc133640a09');
+assert.equal(ECONOMY_RELEASE_TAIL_PREDECESSOR, 'f8de8b7ad0ec4ede750f6f94012494b1a9cdb1d5');
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_RELEASE_TAIL_PREDECESSOR,
+  ECONOMY_RELEASE_TAIL_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_RELEASE_TAIL_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', ECONOMY_RELEASE_TAIL_REVISION + '^{tree}').trim(), ECONOMY_RELEASE_TAIL_TREE);
+assert.equal(git('rev-parse', ECONOMY_RELEASE_TAIL_PREDECESSOR + '^{tree}').trim(),
+  ECONOMY_RELEASE_TAIL_PREDECESSOR_TREE);
+assert.match(ECONOMY_RELEASE_TAIL_PHASE, /exact-economy-release-tail-source-transfer-only/);
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_SOURCE_DOMAINS), files);
 assert(Object.isFrozen(ECONOMY_HARDENING_SOURCE_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_BINDING_DOMAINS), bindingFiles);
@@ -231,8 +247,53 @@ assert.deepEqual(Object.keys(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS), campaig
 assert(Object.isFrozen(ECONOMY_HARDENING_CAMPAIGN_EXPIRY_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS), commerceAdmissionFiles);
 assert(Object.isFrozen(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS));
+assert.deepEqual(Object.keys(ECONOMY_RELEASE_TAIL_DOMAINS), releaseTailFiles);
+assert(Object.isFrozen(ECONOMY_RELEASE_TAIL_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
+for (const file of releaseTailFiles) {
+  const pin = ECONOMY_RELEASE_TAIL_DOMAINS[file];
+  const current = git('show', ECONOMY_RELEASE_TAIL_REVISION + ':' + file);
+  const baseline = git('show', ECONOMY_RELEASE_TAIL_PREDECESSOR + ':' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(), [
+    'mode', 'currentSha256', 'currentBlob', 'currentBytes', 'baselineSha256', 'baselineBlob',
+    'baselineBytes', 'contextLines', 'inverses',
+  ].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(Buffer.byteLength(current), pin.currentBytes);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(Buffer.byteLength(baseline), pin.baselineBytes);
+  assert.equal(git('rev-parse', ECONOMY_RELEASE_TAIL_REVISION + ':' + file).trim(), pin.currentBlob);
+  assert.equal(git('rev-parse', ECONOMY_RELEASE_TAIL_PREDECESSOR + ':' + file).trim(), pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_RELEASE_TAIL_REVISION, '--', file).trim().split(/\s+/)[0], pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_RELEASE_TAIL_PREDECESSOR,
+    ECONOMY_RELEASE_TAIL_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomyReleaseTailTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.runtime, false); assert.equal(transfer.native, false);
+    assert.equal(economyHardeningSourceBaseline(file, input),
+      economyHardeningSourceBaseline(file, baseline)); positives++;
+  }
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) {
+    assert.throws(() => assertEconomyReleaseTailTransfer(file, changed));
+    assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+  }
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1,
+      'Unique complete economy release-tail inverse required: ' + file);
+    for (const changed of [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current),
+      current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+      assert.throws(() => assertEconomyReleaseTailTransfer(file, changed));
+      assert.equal(economyHardeningSourceBaseline(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
+}
 const hardeningSuccessor = ECONOMY_READINESS_MERGE_SOURCE.hardeningSuccessor;
 assert.equal(git('rev-parse', `${hardeningSuccessor.revision}^{tree}`).trim(), hardeningSuccessor.tree);
 assert.equal(git('rev-parse', `${hardeningSuccessor.targetRevision}^{tree}`).trim(), hardeningSuccessor.targetTree);
@@ -252,7 +313,10 @@ for (const input of [hardeningSuccessorCurrent + '\n', hardeningSuccessorCurrent
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
-  const physical = lf(economyHardeningMergeHistoricalInput(file, fs.readFileSync(file, 'utf8')));
+  const rawPhysical = fs.readFileSync(file, 'utf8');
+  const tailPhysical = releaseTailFiles.includes(file)
+    ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical;
+  const physical = lf(economyHardeningMergeHistoricalInput(file, tailPhysical));
   const campaignExpirySealed = campaignExpiryFiles.includes(file)
     ? assertEconomyHardeningCampaignExpiryTransfer(file, physical).baselineText : physical;
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
@@ -301,7 +365,9 @@ for (const file of repairFiles) {
   const current = git('show', `${ECONOMY_HARDENING_REPAIR_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
-  const outerPhysical = lf(fs.readFileSync(file, 'utf8'));
+  const rawPhysical = fs.readFileSync(file, 'utf8');
+  const outerPhysical = lf(releaseTailFiles.includes(file)
+    ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical);
   const campaignExpirySealed = campaignExpiryFiles.includes(file)
     ? assertEconomyHardeningCampaignExpiryTransfer(file, outerPhysical).baselineText : outerPhysical;
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
@@ -360,7 +426,9 @@ for (const file of repairSuccessorFiles) {
   const historical = predecessorAbsent ? current
     : files.includes(file) ? git('show', `${expectedPredecessor}:${file}`)
       : repairFiles.includes(file) ? git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`) : baseline;
-  const outerPhysical = lf(fs.readFileSync(file, 'utf8'));
+  const rawPhysical = fs.readFileSync(file, 'utf8');
+  const outerPhysical = lf(releaseTailFiles.includes(file)
+    ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical);
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
     ? assertEconomyHardeningGrowthDeterminismTransfer(file, outerPhysical).baselineText : outerPhysical;
   const physical = releaseRepairFiles.includes(file)
@@ -763,9 +831,10 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyHardeningGrowthDeterminismTransfer(file, text));
   assert.throws(() => assertEconomyHardeningCampaignExpiryTransfer(file, text));
   assert.throws(() => assertEconomyHardeningCommerceAdmissionTransfer(file, text));
+  assert.throws(() => assertEconomyReleaseTailTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 239, 'positive control count drifted');
-assert.equal(refusals, 772, 'refusal control count drifted');
-assert.equal(hunks, 332, 'inverse-hunk control count drifted');
+assert.equal(positives, 243, 'positive control count drifted');
+assert.equal(refusals, 809, 'refusal control count drifted');
+assert.equal(hunks, 339, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
