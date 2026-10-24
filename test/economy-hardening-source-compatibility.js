@@ -96,6 +96,7 @@ const campaignExpiryFiles = ['src/commercialcampaigns.js', 'test/commercialcampa
 const commerceAdmissionFiles = ['tools/commerce-source-compatibility.js'];
 const releaseTailFiles = [
   'src/growth.js', 'test/gates.js', 'test/lib/rc1-historical-source-fixture.js', 'tools/pgquery.js',
+  'src/managementteamautonomy.js', 'test/managementteams-retry-integration.js',
 ];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
@@ -218,7 +219,7 @@ assert.equal(git('rev-parse', ECONOMY_HARDENING_COMMERCE_ADMISSION_REVISION + '^
 assert.equal(git('rev-parse', ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR + '^{tree}').trim(),
   ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_COMMERCE_ADMISSION_PHASE, /exact-economy-commerce-admission-source-transfer-only/);
-assert.equal(ECONOMY_RELEASE_TAIL_REVISION, 'e7eb07002b3e0fe228c08dc3a0629cf8dfa9fcef');
+assert.equal(ECONOMY_RELEASE_TAIL_REVISION, 'c15cbf7f61362e66b551de2729fe5b4e9313e829');
 assert.equal(ECONOMY_RELEASE_TAIL_PREDECESSOR, 'f8de8b7ad0ec4ede750f6f94012494b1a9cdb1d5');
 execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_RELEASE_TAIL_PREDECESSOR,
   ECONOMY_RELEASE_TAIL_REVISION]);
@@ -840,7 +841,7 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyReleaseTailTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 247, 'positive control count drifted');
-assert.equal(refusals, 834, 'refusal control count drifted');
-assert.equal(hunks, 342, 'inverse-hunk control count drifted');
+assert.equal(positives, 251, 'positive control count drifted');
+assert.equal(refusals, 856, 'refusal control count drifted');
+assert.equal(hunks, 344, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
