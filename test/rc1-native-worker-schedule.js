@@ -83,6 +83,7 @@ for (const sourceCase of ['current', 'prior', 'crlf', 'unknown-current', 'unknow
     import { COVERAGE_SOURCE_CURRENT_PINS } from './tools/rc1-logistics-coverage-source-compatibility.js';
     import { historicalWorkerDatabaseSource } from './test/lib/rc1-historical-worker-source.js';
     import { assertDeedQuestSourceTransfer } from './tools/deed-quest-source-transfer.js';
+    import { economyHardeningSourceBaseline } from './tools/economy-hardening-source-transfer.js';
     import { createWorkerSchedule, installWorkerInstrumentation, WORKER_SOURCE_PINS } from './tools/rc1-native-worker.js';
     import { sha256 } from './tools/rc1-native-proof.js';
     const sourceCase = ${JSON.stringify(sourceCase)};
@@ -91,16 +92,28 @@ for (const sourceCase of ['current', 'prior', 'crlf', 'unknown-current', 'unknow
     const prior = historicalWorkerDatabaseSource('prior');
     const release = historicalWorkerDatabaseSource('release-c2');
     const actualRelease = fs.readFileSync('./src/db.js', 'utf8');
-    assert.equal(assertDeedQuestSourceTransfer('src/db.js', actualRelease).baselineText, release,
-      'Exact property quest source reconstructs the independently pinned C2 fixture only as a provenance witness');
     const liveRelease = actualRelease.replaceAll('\\r\\n', '\\n');
+    const propertyQuestRelease = economyHardeningSourceBaseline('src/db.js', actualRelease);
+    assert.equal(assertDeedQuestSourceTransfer('src/db.js', propertyQuestRelease).baselineText, release,
+      'Exact property quest source reconstructs the independently pinned C2 fixture only as a provenance witness');
+    if (sourceCase === 'current') for (const tampered of [
+      '// unsupported database source prefix\\n' + liveRelease,
+      liveRelease + '\\n// unsupported database source suffix\\n',
+      liveRelease.replace('migrateEconomyDailyClaims', 'migrateEconomyDailyClaim_'),
+    ]) {
+      assert.equal(economyHardeningSourceBaseline('src/db.js', tampered), tampered,
+        'Unknown whole-source mutation must not receive the economy-hardening baseline');
+      assert.throws(() => assertDeedQuestSourceTransfer('src/db.js',
+        economyHardeningSourceBaseline('src/db.js', tampered)), /Complete property quest current source drift/);
+    }
     assert.throws(() => historicalWorkerDatabaseSource('unknown'), /Unknown historical worker source fixture/);
     let supplied = sourceCase.includes('live-release') ? liveRelease
       : sourceCase.includes('release-c2') ? release : sourceCase.includes('prior') ? prior : current;
     if (sourceCase === 'crlf' || sourceCase.endsWith('-crlf')) supplied = supplied.replaceAll('\\n', '\\r\\n');
     if (sourceCase.startsWith('unknown')) supplied += '\\n// unsupported database source change\\n';
     if (sourceCase === 'unknown-live-release')
-      assert.throws(() => assertDeedQuestSourceTransfer('src/db.js', supplied), /Complete property quest current source drift/);
+      assert.throws(() => assertDeedQuestSourceTransfer('src/db.js',
+        economyHardeningSourceBaseline('src/db.js', supplied)), /Complete property quest current source drift/);
     const fixture = registerHooks({ load(url, context, nextLoad) {
       const result = nextLoad(url, context); return url === target ? { ...result, source: supplied } : result;
     } });
@@ -123,7 +136,7 @@ for (const sourceCase of ['current', 'prior', 'crlf', 'unknown-current', 'unknow
     } finally { seam.restore(); fixture.deregister(); await controller.close(); }
   `], { stdio: 'pipe' });
 }
-console.log('PASS: historical loader current/prior/CRLF fixtures preserve raw source; unknown edits, release C2 and raw property quest LF/CRLF/tampering reject without pools or transformations');
+console.log('PASS: historical loader current/prior/CRLF fixtures preserve raw source; exact hardening/property-quest provenance composes while unknown edits and release sources reject without pools or transformations');
 
 // A non-UTC boot phase must survive preparation. Alignment neither invents an
 // hourly tick at boot nor skips five-minute work or same-time seasonal callbacks.

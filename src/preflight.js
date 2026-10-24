@@ -103,7 +103,7 @@ export const OPERATIONAL_ENV = [
   'WORLD_GRAPH_KERNEL', 'COORDINATION_OPERATIONS', 'CORE_PROGRESSION',
   'LIVING_WORLD_DIRECTOR', 'DIRECTOR_ACCOUNT_IDS',
   // infrastructure
-  'DATABASE_URL', 'NODE_ENV', 'PORT', 'PG_POOL_MAX', 'REDIS_URL', 'TRUST_PROXY', 'PUBLIC_URL',
+  'DATABASE_URL', 'NODE_ENV', 'PORT', 'PG_POOL_MAX', 'REDIS_URL', 'RENDER', 'TRUST_PROXY', 'PUBLIC_URL',
   // Postgres safety valves (db.js). Operational, not gameplay: they bound how long anything may hold
   // a connection or wait on a row so one stuck query cannot freeze a player. Sane defaults ship; these
   // exist to tune them per host, never to disable them.
@@ -445,7 +445,13 @@ export function preflight(env = process.env) {
   if (env.CITY_WIRE_WEBHOOK_URL && env.CITY_WIRE_WEBHOOK_URL === env.INVARIANT_WEBHOOK_URL)
     errors.push('CITY_WIRE_WEBHOOK_URL and INVARIANT_WEBHOOK_URL point at the SAME channel — public city '
       + 'drama would bury the private §10.4/backup/oracle alarms. Use two distinct webhooks.');
-  if (!env.TRUST_PROXY && env.RATE_LIMIT !== 'off')
+  if (env.TRUST_PROXY && !['on', 'off'].includes(env.TRUST_PROXY))
+    errors.push("TRUST_PROXY must be 'on' on Render or 'off' without its protected edge; numeric hop counts and arbitrary proxy modes are refused.");
+  if (env.RENDER === 'true' && env.TRUST_PROXY !== 'on')
+    errors.push("RENDER=true requires TRUST_PROXY='on' so client identity comes from Render's protected CF-Connecting-IP header.");
+  if (env.RENDER !== 'true' && env.TRUST_PROXY === 'on')
+    errors.push("TRUST_PROXY='on' requires RENDER=true; outside Render, callers can supply CF-Connecting-IP themselves.");
+  if (env.RENDER !== 'true' && (!env.TRUST_PROXY || env.TRUST_PROXY === 'off') && env.RATE_LIMIT !== 'off')
     warnings.push('TRUST_PROXY is off: behind a load balancer every request looks like one IP, so the per-IP auth throttle collapses to a single shared bucket.');
   if (!env.MOD_KEY || (env.MOD_KEY || '').length < 24)
     warnings.push('MOD_KEY is short — it is the only credential on the mod perimeter (ban, mod-kill, confiscate, comp grants). Use a long random secret.');

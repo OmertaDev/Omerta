@@ -13,6 +13,7 @@ import { runEstate, claimBounty, npcHit } from './social.js';
 import { isWanted } from './social/shared.js';
 import { bumpHonor } from './honor.js';
 import { HONOR , jailed, hospitalized } from './rules.js';
+import { accountDailyClaims, takeAccountDailyClaim } from './accountdaily.js';
 
 const uid = () => crypto.randomUUID();
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -22,7 +23,7 @@ const insideOnly = (ch) => {
 };
 // today's yard incident (seed-drawn, town-wide). PEN_YARD_EVENT is a TEST-ONLY override (the
 // SEARCH_MS / LAW_BUST_P precedent) — never set in production.
-const activeYardEvent = () => process.env.PEN_YARD_EVENT ? yardEventById(process.env.PEN_YARD_EVENT) : yardEventOf(dayOf());
+const activeYardEvent = (day = dayOf()) => process.env.PEN_YARD_EVENT ? yardEventById(process.env.PEN_YARD_EVENT) : yardEventOf(day);
 
 // how many of a contraband item an inmate is holding
 async function contrabandOf(client, chId) {
@@ -74,7 +75,9 @@ async function factionCover(client, target) {
 
 // GET /v1/pen — the yard (runs under withCharacter so it reads inside the caller's txn)
 export async function penBoard(ch, client, h) {
+  const day = dayOf();
   const held = await contrabandOf(client, ch.id);
+  const accountTalked = (await accountDailyClaims(client, ch.account_id, day, 'pen')).has('talk');
   // The roster carries the state that decides whether a shank is even LEGAL — protection bought from
   // the yard boss, and segregation in the hole. Without it the board offered a shank against marks
   // the server was always going to refuse, so most attempts failed on a gate nobody could see. This
@@ -90,7 +93,7 @@ export async function penBoard(ch, client, h) {
       inHole: !!(r.hole_until && new Date(r.hole_until) > new Date()),
       // your own crew — the yard omertà gate, which the client could not otherwise derive by name alone
       crew: !!(ch.pen_faction && r.pen_faction === ch.pen_faction) }));
-  const ev = activeYardEvent();
+  const ev = activeYardEvent(day);
   // step five — YOUR crew: your faction, the cover it gives you, and whether you're the shot-caller
   const myCover = jailed(ch) ? await factionCover(client, ch) : { cover: 0, mates: 0, shotCaller: false };
   return {
@@ -116,8 +119,9 @@ export async function penBoard(ch, client, h) {
       blocked: !!ev.shankBlock, fugitiveHours: Math.round(PEN.FUGITIVE_MS / 3600000) },
     // step six — THE YARD LIVES: today's character + the in-sentence activities
     yardLife: {
-      character: (() => { const c = yardCharacterOf(dayOf()); return { name: c.name, line: c.line, effect: c.effect }; })(),
-      talked: !!(await client.query('SELECT 1 FROM pen_talks WHERE character_id=$1 AND day=$2', [ch.id, dayOf()])).rows[0],
+      character: (() => { const c = yardCharacterOf(day); return { name: c.name, line: c.line, effect: c.effect }; })(),
+      talked: accountTalked
+        || !!(await client.query('SELECT 1 FROM pen_talks WHERE character_id=$1 AND day=$2', [ch.id, day])).rows[0],
       workoutDisciplines: PEN.YARD_DISCIPLINES,
       cardsEnergy: PEN.CARDS_ENERGY,
     },
@@ -175,6 +179,8 @@ export async function yardTalk(ch, client, h) {
   const day = dayOf();
   const taken = await client.query('INSERT INTO pen_talks (character_id, day) VALUES ($1,$2) ON CONFLICT DO NOTHING', [ch.id, day]);
   if (!taken.rowCount) throw new GameError('talked', 'You already had that conversation today.');
+  if (!await takeAccountDailyClaim(client, ch.account_id, day, 'pen', 'talk'))
+    throw new GameError('talked', 'Your bloodline already had that conversation today.');
   const c = yardCharacterOf(day);
   const out = { ok: true, npc: c.name, line: c.line, effect: c.effect };
   if (c.effect === 'wisdom') {

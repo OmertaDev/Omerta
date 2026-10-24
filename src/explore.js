@@ -10,7 +10,7 @@ import {
   FAMILY_WAR, GOODS, KITCHENS, LANDMARKS, LAW, LOAN, M3, MADE, MEGAPROJECT, PORT, RACKETS,
   RARITY, RACES, SECRETS, SKILLS, SPEAKEASY, STABLE, UNDERWORLD, VANITY, VOUCH, WIRE,
   WORLD, WORLD_NPCS, bribeCostOf, hospitalized, inHole, intelCost, isMade, jailed, levelOf,
-  opSlotsOf, penSafe, rarityIdx, safeHoused, weekOf, witproActive,
+  opSlotsOf, penSafe, rarityIdx, safeHoused, weekOf, witproActive, coolLeft,
 } from './rules.js';
 import { npcTier, trunkCap } from './game.js';
 import { dbCaps } from './db.js';
@@ -208,7 +208,7 @@ export function systemEligibility(entry, ctx) {
   const online = onlineRows(ctx);
   switch (entry.eligibility) {
     case 'always': {
-      if (jailed(ctx.ch)) return stop('status');
+      if (jailed(ctx.ch) || coolLeft(ctx.ch.street_action_at) > 0) return stop('status');
       const crime = CRIMES.find((candidate) => candidate.lvl <= ctx.level && num(ctx.ch.nerve) >= candidate.nerve);
       return crime ? op(`crime:${crime.id}`) : stop('resource');
     }

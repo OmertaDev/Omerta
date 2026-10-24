@@ -6462,7 +6462,8 @@ assert.match(String(describeFn(dep.body, 200)), /transit/i,
       `WAVE 59: the collect read "pulled 5 units at q1.1" — the same sentence for every line. ` +
       `Got: ${JSON.stringify(col.line)}`);
 
-    await app.pool.query('UPDATE characters SET nerve=999, heat=0 WHERE id=$1', [id59]);
+    // Independent receipt examples take place after the previous street action has cooled.
+    await app.pool.query("UPDATE characters SET nerve=999, heat=0, street_action_at=now()-interval '1 second' WHERE id=$1", [id59]);
     const deal = await drive59('/v1/kitchen/deal', `deal ${d.id}`, { drugId: d.id, qty: 3 });
     assert.equal(deal.r.body.name, d.name,
       `WAVE 59: the corner deal must NAME what moved. Got: ${JSON.stringify(deal.r.body.name)}`);
@@ -7818,7 +7819,7 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   // deterministic assertion resting on the crime roll is the recorded flake class, and a refused
   // claim is skipped in silence and reads on the summary line as covered.
   for (let i = 0; i < 12; i++) {
-    await app.pool.query('UPDATE characters SET jail_until=NULL, nerve=100, energy=500 WHERE id=$1', [id74]);
+    await app.pool.query("UPDATE characters SET jail_until=NULL, nerve=100, energy=500, street_action_at=now()-interval '1 second' WHERE id=$1", [id74]);
     await inject('POST', '/v1/crimes/pick', t74, { approach: 'standard' });
     if (Number((await app.pool.query('SELECT lc_crime FROM characters WHERE id=$1', [id74])).rows[0].lc_crime) >= 1) break;
   }

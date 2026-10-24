@@ -86,8 +86,11 @@ const mk = async (name) => {
 const a = await mk('Engage Ann');
 const b = await mk('Engage Bob');
 // A real action, through the public API, so the event is written the way the game writes it.
-await call('POST', '/v1/crimes/pick', { token: a.token });
-await app.inject({ method: 'POST', url: '/v1/crimes/pick', headers: { authorization: `Bearer ${a.token}` } });
+const firstCrime = await call('POST', '/v1/crimes/pick', { token: a.token });
+assert.notEqual(firstCrime.body?.error, 'cooldown', 'the first engagement action reaches the crime roll');
+await pool.query('UPDATE characters SET jail_until=NULL, street_action_at=NULL WHERE id=$1', [a.id]);
+const secondCrime = await call('POST', '/v1/crimes/pick', { token: a.token });
+assert.notEqual(secondCrime.body?.error, 'cooldown', 'the second engagement action reaches the crime roll');
 
 const pathPost = async (payload) => {
   const response = await app.inject({ method: 'POST', url: '/v1/path-quiz',

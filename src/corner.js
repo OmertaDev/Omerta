@@ -8,9 +8,11 @@
 // ACCEPT at the district snapshots the daily counters (the hustle baseline rule — a morning's
 // stockpiled jobs can't pre-pay a task); do the work; CLAIM at the district pays CORNER.CASH
 // (`corner:job`, a small character_id'd §10.4 faucet) + CORNER.RESPECT (the XP — respect IS
-// levels). Bounded HARD by CORNER.MAX_DAY claims per street per day across all districts.
-import { GameError, gainRespect } from './game.js';
+// levels). Bounded HARD by CORNER.MAX_DAY claims per account per day across all districts; the
+// account latch survives an estate while the accepted work remains street-local.
+import { GameError, dailyCounterAdvanced, gainRespect } from './game.js';
 import { CORNER, DISTRICTS, cornerTasksOf, dayOf , jailed, districtName } from './rules.js';
+import { accountDailyClaims, takeBoundedAccountDailyClaim } from './accountdaily.js';
 
 
 async function countersOf(client, chId, day) {
@@ -25,9 +27,12 @@ export async function cornerBoard(ch, client) {
   const jobs = (await client.query(
     'SELECT district, slot, claimed, baseline FROM corner_jobs WHERE character_id=$1 AND day=$2', [ch.id, day])).rows;
   const here = new Map(jobs.filter((j) => j.district === ch.loc).map((j) => [Number(j.slot), j]));
-  const claimedToday = jobs.filter((j) => j.claimed).length;
-  const claimedKinds = new Set(jobs.filter((j) => j.claimed).map((job) =>
-    cornerTasksOf(job.district, day).find((task) => task.slot === Number(job.slot))?.kind).filter(Boolean));
+  const claimedKinds = await accountDailyClaims(client, ch.account_id, day, 'corner');
+  for (const job of jobs.filter((j) => j.claimed)) {
+    const kind = cornerTasksOf(job.district, day).find((task) => task.slot === Number(job.slot))?.kind;
+    if (kind) claimedKinds.add(kind); // pre-account-latch rows remain authoritative until estate migration
+  }
+  const claimedToday = claimedKinds.size;
   const counters = await countersOf(client, ch.id, day);
   const chain = (await client.query(
     'SELECT step, last_day FROM corner_chains WHERE character_id=$1 AND district=$2', [ch.id, ch.loc])).rows[0];
@@ -38,7 +43,7 @@ export async function cornerBoard(ch, client) {
     tasks: tasks.map((t) => {
       const job = here.get(t.slot);
       const accepted = !!job;
-      const claimed = !!job?.claimed;
+      const claimed = !!job?.claimed || claimedKinds.has(t.kind);
       const actorOpen = !jailed(ch);
       const claimOpen = actorOpen && claimedToday < CORNER.MAX_DAY && !claimedKinds.has(t.kind);
       let baseline = {};
@@ -47,9 +52,9 @@ export async function cornerBoard(ch, client) {
         ...t, accepted, claimed,
         // Accept snapshots work even after today's payout allowance is spent; claim is where the
         // mutation enforces the allowance, one-kind rule, and counter delta.
-        canAccept: !accepted && actorOpen,
+        canAccept: !accepted && actorOpen && !claimedKinds.has(t.kind),
         canClaim: accepted && !claimed && claimOpen
-          && Number(counters[t.kind] || 0) > Number(baseline[t.kind] || 0),
+          && dailyCounterAdvanced(counters[t.kind], baseline[t.kind]),
       };
     }),
     // THE CHAIN — the block's standing job here. `advancedToday` is why a second envelope in the
@@ -100,6 +105,8 @@ export async function acceptCorner(ch, slot, client, h) {
   const tasks = cornerTasksOf(ch.loc, day);
   const t = tasks.find((x) => x.slot === Number(slot));
   if (!t) throw new GameError('bad_slot', "No such job on this corner today.");
+  if ((await accountDailyClaims(client, ch.account_id, day, 'corner')).has(t.kind))
+    throw new GameError('done_kind', 'The corner already paid you for that kind of work today — different job, different envelope.');
   const counters = await countersOf(client, ch.id, day);
   const ins = await client.query(
     `INSERT INTO corner_jobs (character_id, day, district, slot, baseline)
@@ -123,20 +130,34 @@ export async function claimCorner(ch, slot, client, h) {
   if (job.claimed) throw new GameError('claimed', 'That envelope is already in your pocket.');
   const claimedRows = (await client.query(
     'SELECT district, slot FROM corner_jobs WHERE character_id=$1 AND day=$2 AND claimed', [ch.id, day])).rows;
-  const claimedToday = claimedRows.length;
+  const claimedKinds = await accountDailyClaims(client, ch.account_id, day, 'corner');
+  for (const claimed of claimedRows) {
+    const kind = cornerTasksOf(claimed.district, day).find((x) => x.slot === Number(claimed.slot))?.kind;
+    if (kind) claimedKinds.add(kind);
+  }
+  const claimedToday = claimedKinds.size;
   if (claimedToday >= CORNER.MAX_DAY)
     throw new GameError('capped', `The corner pays ${CORNER.MAX_DAY} envelopes a day — fresh work tomorrow.`);
   // (AUDIT-street-life, Lens D LOW-1) one envelope per KIND of work per day: the same kind sits in
   // several districts' pools and every accepted slot snapshots the SAME shared daily counter, so
   // without this five same-kind slots were all satisfied by ONE action ($2k for one jump). The
   // corner pays for work, not for walking the map — a second same-kind envelope needs tomorrow's draw.
-  if (claimedRows.some((j) =>
-    (cornerTasksOf(j.district, day).find((x) => x.slot === Number(j.slot)) || {}).kind === t.kind))
+  if (claimedKinds.has(t.kind))
     throw new GameError('done_kind', 'The corner already paid you for that kind of work today — different job, different envelope.');
   const counters = await countersOf(client, ch.id, day);
   const base = JSON.parse(job.baseline || '{}');
-  if (Number(counters[t.kind] || 0) <= Number(base[t.kind] || 0))
+  if (!dailyCounterAdvanced(counters[t.kind], base[t.kind]))
     throw new GameError('not_done', `The work comes first — ${t.how}.`);
+  if (!await takeBoundedAccountDailyClaim(client, ch.account_id, day, 'corner', t.kind, CORNER.MAX_DAY)) {
+    // Another request may have taken the final slot after the snapshot above. Re-read the durable
+    // account/day set so the loser reports the actual same-kind or board-wide refusal.
+    const claimsAfterRace = await accountDailyClaims(client, ch.account_id, day, 'corner');
+    const capped = claimsAfterRace.size >= CORNER.MAX_DAY;
+    throw new GameError(capped ? 'capped' : 'done_kind',
+      capped
+        ? `The corner pays ${CORNER.MAX_DAY} envelopes a day — fresh work tomorrow.`
+        : 'The corner already paid you for that kind of work today — different job, different envelope.');
+  }
   await client.query(
     'UPDATE corner_jobs SET claimed=true WHERE character_id=$1 AND day=$2 AND district=$3 AND slot=$4',
     [ch.id, day, ch.loc, t.slot]);

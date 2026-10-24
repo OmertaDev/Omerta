@@ -8,7 +8,7 @@
 // goes silent, and the worker sweeps expired rows. The layered intel economy: the SUB warns you (a
 // hunter COUNT), a TAP identifies whether a SPECIFIC rival is hunting you, the peek names funders.
 import { GameError, notify, ledger } from './game.js';
-import { WIRE, wireActive, wireTierOf, wireSubTier, disinfoActive, spyRankOf, spyPerksOf, intelCost, rapStageOf, cityForecast, levelOf, dayOf, hash01, RIVALS, capoPerksOf } from './rules.js';
+import { WIRE, wireActive, wireTierOf, wireSubTier, disinfoActive, spyRankOf, spyPerksOf, intelCost, rapStageOf, cityForecast, levelOf, dayOf, hash01, RIVALS, capoPerksOf, effectiveCapoRecruits } from './rules.js';
 import { spendOmr } from './vanity.js';
 import { recordContact } from './contacts.js';
 import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
@@ -83,7 +83,9 @@ export async function placeTap(ch, targetId, client, h) {
   if (!t) throw new GameError('gone', 'No such mark on the street.');
   const ops = await spyOps(client, ch.account_id);            // step four: your spymaster tradecraft
   // THE CAPO'S LICENSE: an agent's minted+retained recruits add standing-wire slots (capability perk)
-  const capo = Number((await client.query('SELECT capo_recruits FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0]?.capo_recruits || 0);
+  const capoRow = (await client.query(
+    'SELECT capo_recruits, capo_recruits_at FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0] || {};
+  const capo = effectiveCapoRecruits(capoRow.capo_recruits, capoRow.capo_recruits_at);
   const cap = WIRE.TAP_MAX + spyPerksOf(ops).tapBonus + capoPerksOf(capo).tapBonus; // rank + license both widen the board
   const active = (await client.query(
     'SELECT target_character FROM wiretaps WHERE watcher_character=$1 AND expires_at > now()', [ch.id])).rows.map((r) => r.target_character);
@@ -320,9 +322,10 @@ export async function wireBoard(ch, client, h) {
     `SELECT COUNT(*) n FROM wiretaps w JOIN characters c ON c.id = w.watcher_character AND c.alive
        WHERE w.target_character=$1 AND w.expires_at > now()`, [ch.id])).rows[0].n);
   // THE SPYMASTER — your lifetime intel ops + rank (account-level, survives death) + step-four TRADECRAFT
-  const apRow = (await client.query('SELECT intel_ops, capo_recruits FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0] || {};
+  const apRow = (await client.query(
+    'SELECT intel_ops, capo_recruits, capo_recruits_at FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0] || {};
   const ops = Number(apRow.intel_ops || 0);
-  const capoPerk = capoPerksOf(Number(apRow.capo_recruits || 0));
+  const capoPerk = capoPerksOf(effectiveCapoRecruits(apRow.capo_recruits, apRow.capo_recruits_at));
   const perks = spyPerksOf(ops);
   const disinfo = disinfoActive(ch);
   // STEP FIVE — the subscription TIER + the STANDING WATCHES (auto-renewed taps)

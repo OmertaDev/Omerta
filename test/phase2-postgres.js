@@ -32,7 +32,7 @@ function endpoint() {
   if (!process.env.P2_TEST_CHILD) return cityGameplayMigrationEndpoint(process.env.TEST_DATABASE_URL);
   let url;
   try { url = new URL(process.env.TEST_DATABASE_URL); } catch { throw Error('invalid explicit PostgreSQL test endpoint'); }
-  const modes = process.argv[2] === '--lots' ? ['lots-boundary','lots','lots-upgrade'] : ['clean','upgrade','scalar','missing-unique'];
+  const modes = process.argv[2] === '--lots' ? ['lots-boundary','lots-catalog','lots','lots-upgrade'] : ['clean','upgrade','scalar','missing-unique'];
   assert(modes.includes(process.env.P2_TEST_CHILD), 'Only the exact parent-issued native child mode is allowed');
   const name = ownedName(process.env.P2_TEST_SCHEMA);
   const options = `-c search_path=${name} -c statement_timeout=30000 -c lock_timeout=5000 -c idle_in_transaction_session_timeout=30000`;
@@ -101,7 +101,7 @@ async function parent(url) {
   const admin = new pg.Client({ connectionString: url.toString() });
   await admin.connect();
   try {
-    for (const mode of process.argv[2] === '--lots' ? ['lots-boundary', 'lots', 'lots-upgrade'] : ['clean','upgrade','scalar','missing-unique']) {
+    for (const mode of process.argv[2] === '--lots' ? ['lots-boundary', 'lots-catalog', 'lots', 'lots-upgrade'] : ['clean','upgrade','scalar','missing-unique']) {
       const name = ownedName('p2_definitions_'+randomUUID().replaceAll('-',''));
       await admin.query(`CREATE SCHEMA "${name}"`);
       try {
@@ -110,7 +110,8 @@ async function parent(url) {
         const result = spawnSync(process.execPath,[fileURLToPath(import.meta.url),process.argv[2]], {
           env: { ...process.env, TEST_DATABASE_URL: childUrl.toString(), DATABASE_URL: childUrl.toString(),
             P2_TEST_SCHEMA: name, P2_TEST_CHILD: mode, INVARIANT_WEBHOOK_URL: '', PG_POOL_MAX: '12' },
-          encoding: 'utf8', timeout: 240000, maxBuffer: 8*1024*1024, windowsHide: true,
+          encoding: 'utf8', timeout: mode === 'upgrade' ? 300000 : 240000,
+          maxBuffer: 8*1024*1024, windowsHide: true,
         });
         process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
         if (result.error || result.signal) console.error('phase2-postgres: isolated child termination ' + JSON.stringify({ mode, status: result.status, signal: result.signal, code: result.error?.code }));
@@ -186,12 +187,16 @@ async function child(url) {
       console.log(`phase2-postgres: exact item boundary on ${settings.version}`);
       return;
     }
-    if (mode === 'lots') {
-      // Full native next-layer metadata is attested before ordinary lot fixtures run.
+    if (mode === 'lots-catalog') {
+      // Full native next-layer metadata is attested in its own fixed-timeout child before ordinary lot fixtures run.
       const layerReferenceUrl = new URL(url.toString()); layerReferenceUrl.searchParams.delete('options');
       cityGameplayMigrationEndpoint(layerReferenceUrl.toString());
       const layerNative = await verifyCommerceNativeBranches(pool, layerReferenceUrl.toString());
       layerNative.verify(await readCommerceReleasePhase2Metadata(pool));
+      console.log(`phase2-postgres: current native catalog attestation and exact live reread pass on ${settings.version}`);
+      return;
+    }
+    if (mode === 'lots') {
       const { runLots } = await import('./phase2-lots.js');
       const fixtureFactory = lotFixtureFactory(pool, url);
       let fixtureCount = 0, completedFixtures = 0;

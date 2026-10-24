@@ -61,7 +61,7 @@ export function register(app, { pool, auth, coordination, context: contextOverri
   };
   const gatewayAuth = respond(async (req, reply) => {
     if (rateLimitsEnabled()) {
-      const limited = await checkAuthRateLimit({ ip: 'gateway:' + req.ip });
+      const limited = await checkAuthRateLimit({ ip: 'gateway:' + req.clientIp });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter).send({ error: 'rate_limited' });
     }
     req.gatewayPrincipal = await security.authenticate(req.headers.authorization,

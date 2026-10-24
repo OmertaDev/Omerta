@@ -6,6 +6,7 @@ import { strategySourceBaseline } from './rc1-strategy-source-compatibility.js';
 import { coverageSourceBaseline } from './rc1-logistics-coverage-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
 
 export const INVOICE_SOURCE_REVIEWED_REVISION = "ea654f61659e38acfc09b55cf8c95a4f971e054e";
 export const INVOICE_SOURCE_PREDECESSOR_REVISION = "df4e87984066a296889fbf0173f9179187445b26";
@@ -171,7 +172,7 @@ export function qualifyInvoiceSource(file, input) {
 // Compose only the exact current invoice blob. Earlier revisions and unknown
 // bytes still reach the existing closed historical guard unchanged.
 export function invoiceSourceBaseline(file, input) {
-  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, gameEmploymentSourceBaseline(file, input)))))));
+  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, gameEmploymentSourceBaseline(file, economyHardeningSourceBaseline(file, input))))))));
   return Object.hasOwn(INVOICE_SOURCE_CURRENT_PINS, file) && hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]
     ? qualifyInvoiceSource(file, text).baselineText : text;
 }

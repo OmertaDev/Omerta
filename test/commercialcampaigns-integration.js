@@ -89,15 +89,47 @@ async function actors(fresh = false) {
   });
   return { owner, scout, maker, guard, first, second, businessId, relationship: await relation(owner, scout, depotId) };
 }
+const forecastConsumptionMarginMs = 60000;
+const forecastLeadMs = INTEL_FORECAST.minLeadMs + forecastConsumptionMarginMs;
+const forecastBlock = value => Math.floor(value / INTEL_FORECAST.blockMs);
+const forecastTargetUsable = (target, applicationNow) => forecastBlock(target) === forecastBlock(applicationNow)
+  && target - applicationNow >= INTEL_FORECAST.minLeadMs
+  && target - applicationNow <= INTEL_FORECAST.maxLeadMs;
+function forecastTarget(observed, applicationNow) {
+  const target = Math.max(observed, applicationNow) + forecastLeadMs;
+  return forecastBlock(observed) === forecastBlock(applicationNow)
+    && forecastBlock(observed) === forecastBlock(target)
+    && forecastTargetUsable(target, applicationNow) ? target : null;
+}
+{
+  const boundary = INTEL_FORECAST.blockMs * 1000;
+  const safeAt = boundary - forecastLeadMs - 1, safeTarget = forecastTarget(safeAt, safeAt);
+  assert.equal(safeTarget, boundary - 1);
+  assert.equal(forecastTargetUsable(safeTarget, safeAt + forecastConsumptionMarginMs), true);
+  assert.equal(forecastTargetUsable(safeTarget, safeAt + forecastConsumptionMarginMs + 1), false);
+  assert.equal(forecastTarget(boundary - forecastLeadMs, boundary - forecastLeadMs), null);
+  assert.equal(forecastTarget(boundary - 1, boundary - 1), null);
+  assert.equal(forecastTarget(boundary, boundary), boundary + forecastLeadMs);
+  assert.equal(forecastTarget(boundary - 1, boundary), null, 'DB and application clocks must agree on the active block.');
+}
+async function genuineForecastTarget() {
+  const started = process.hrtime.bigint(), waitLimitMs = forecastLeadMs + 10000;
+  for (;;) {
+    const observed = +new Date((await pool.query('SELECT clock_timestamp() AS observed')).rows[0].observed);
+    const target = forecastTarget(observed, Date.now());
+    if (target !== null) return new Date(target).toISOString();
+    const elapsedMs = Number(process.hrtime.bigint() - started) / 1e6;
+    assert(elapsedMs <= waitLimitMs, 'Actual forecast intake could not enter one genuine price block.');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+}
 async function body(a, lifetimeSeconds = 600) {
-  const observed = +new Date((await pool.query('SELECT clock_timestamp() AS observed')).rows[0].observed);
-  const lead = INTEL_FORECAST.minLeadMs + 30000;
-  assert(Math.floor(observed / INTEL_FORECAST.blockMs) === Math.floor((observed + lead) / INTEL_FORECAST.blockMs), 'Actual forecast intake requires one genuine price block.');
+  const scoutTargetAt = await genuineForecastTarget();
   return { partnershipId: a.relationship.id, relationshipHash: a.relationship.termsHash, teamRevision: 1,
     businessId: a.businessId, manufacturerAccountId: a.maker.account, guardAccountId: a.guard.account,
     firstCarrierAccountId: a.first.account, secondCarrierAccountId: a.second.account,
     origin: 'foundry', handoff: 'docks', destination: 'neon', scoutFeeCash: 50, minimumStock: 1,
-    scoutTargetAt: new Date(observed + lead).toISOString(), manufacturingFeeCash: 100,
+    scoutTargetAt, manufacturingFeeCash: 100,
     guardPriceCash: 10000, firstFeeCash: 30, secondFeeCash: 40, lifetimeSeconds, consent: true };
 }
 async function start(a, lifetimeSeconds = 600) {
@@ -105,14 +137,49 @@ async function start(a, lifetimeSeconds = 600) {
   for (const who of [a.scout, a.maker, a.guard, a.first, a.second]) await invoke(who, 'consent', ref(proposal));
   return proposal;
 }
-async function throughManufacture(a, campaign) {
+async function throughManufacture(a, campaign, scoutFunded = false, fundTransport = pool) {
   const r = ref(campaign);
-  await invoke(a.owner, 'scout-fund', r);
+  if (!scoutFunded) await invoke(a.owner, 'scout-fund', r);
   const report = await invoke(a.scout, 'scout-report', { ...r, predictsAvailable: true });
   assert.equal(report.source.paidFeeCash, 50);
   assert(Number.isSafeInteger(report.source.observedStock));
-  await invoke(a.owner, 'manufacture-fund', r);
+  await invoke(a.owner, 'manufacture-fund', r, 'commercial-native-' + (++serial), fundTransport);
   await invoke(a.maker, 'manufacture-accept', r);
+}
+
+// Force the canonical commission's independent clock past the fractional remainder used by the
+// campaign lifetime derivation. Without a reserved second, the source expires after its immutable
+// campaign envelope even though both integer lifetime checks pass.
+function commissionDeadlineBoundaryPool(campaign, overrunMs = 50) {
+  assert(Number.isSafeInteger(overrunMs) && overrunMs > 0);
+  let armed = false, sourceObserved = null, delayed = false, delayMs = null;
+  const clockSql = 'SELECT clock_timestamp() AS observed';
+  const transport = new Proxy(pool, { get(target, key) {
+    if (key === 'connect') return async () => {
+      const c = await target.connect();
+      return new Proxy(c, { get(client, name) {
+        if (name === 'query') return async (...args) => {
+          const sql = args[0];
+          if (armed && sourceObserved && !delayed && sql === clockSql) {
+            const remainingMs = +new Date(campaign.campaign.expiresAt) - +sourceObserved;
+            const fractionalMs = ((remainingMs % 1000) + 1000) % 1000;
+            delayMs = fractionalMs + overrunMs;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            delayed = true;
+          }
+          const result = await client.query(...args);
+          if (typeof sql === 'string' && sql.startsWith('SELECT key_hash FROM commissioned_crafting_requests'))
+            armed = true;
+          else if (armed && !sourceObserved && sql === clockSql)
+            sourceObserved = new Date(result.rows[0].observed);
+          return result;
+        };
+        const value = client[name]; return typeof value === 'function' ? value.bind(client) : value;
+      } });
+    };
+    const value = target[key]; return typeof value === 'function' ? value.bind(target) : value;
+  } });
+  return { transport, witnessed: () => armed && !!sourceObserved && delayed, delayMs: () => delayMs };
 }
 function faultPool(action, who, onFault, onRoot = null) {
   let acknowledged = false, injected = false, captured = false;
@@ -260,11 +327,34 @@ try {
   assert.deepEqual((await f.call(f.stranger, 'GET', '/v1/company/commercial-campaigns')).body.campaigns, []);
   assert.equal((await f.call(f.owner, 'GET', '/v1/company/commercial-campaigns?authority=owner')).code, 400);
   const a = await actors(), campaign = await start(a), r = ref(campaign);
+  await invoke(a.owner, 'scout-fund', r);
   await unchanged('wrong-stage-guard', transport => invoke(a.owner, 'guard-hire', r, undefined, transport));
   await unchanged('foreign-source-capability', () => tx(c => Commission.consumeCommercialCommission(c, { commissionId: 'forged' })));
   await unchanged('foreign-courier-capability', () => tx(c => Courier.consumeCommercialCourier(c, { networkId: 'forged' })));
   await unchanged('foreign-guard-capability', () => tx(c => Defense.consumeCommercialGuard(c, { guard: a.guard.id })));
-  await throughManufacture(a, campaign);
+  const report = await invoke(a.scout, 'scout-report', { ...r, predictsAvailable: true });
+  assert.equal(report.source.paidFeeCash, 50);
+  assert(Number.isSafeInteger(report.source.observedStock));
+  const overlongBoundary = commissionDeadlineBoundaryPool(campaign, 1100);
+  const beforeOverlong = await snapshot('commission-deadline-overlong-before');
+  await assert.rejects(invoke(a.owner, 'manufacture-fund', r, 'commission-deadline-overlong', overlongBoundary.transport),
+    /commission_source/);
+  assert(overlongBoundary.witnessed(), 'overlong canonical commission clock crossed the reserved second');
+  const afterOverlong = await snapshot('commission-deadline-overlong-after');
+  assert.deepEqual(afterOverlong.tables, beforeOverlong.tables,
+    'an overlong canonical commission source rolls back every economic row');
+  console.log('PASS overlong canonical commission deadline fails closed and rolls back every economic row.');
+  const commissionBoundary = commissionDeadlineBoundaryPool(campaign);
+  await invoke(a.owner, 'manufacture-fund', r, 'commission-deadline-bounded', commissionBoundary.transport);
+  await invoke(a.maker, 'manufacture-accept', r);
+  assert(commissionBoundary.witnessed(), 'canonical commission clock crossed the campaign fractional boundary');
+  const boundaryStage = (await pool.query(
+    "SELECT commission_id FROM commercial_campaign_stages WHERE campaign_id=$1 AND kind='manufacture'", [r.campaignId])).rows[0];
+  const boundaryCommission = (await pool.query(
+    'SELECT expires_at FROM commissioned_crafting_contracts WHERE id=$1', [boundaryStage.commission_id])).rows[0];
+  assert(+new Date(boundaryCommission.expires_at) <= +new Date(campaign.campaign.expiresAt),
+    `canonical commission deadline escaped campaign envelope after ${commissionBoundary.delayMs()}ms boundary delay`);
+  console.log('PASS canonical commission reserves one acquisition second and stays inside the campaign deadline.');
   await unchanged('wrong-manufacturer-original', transport => invoke(a.scout, 'manufacture-complete', r, undefined, transport));
   const produced = await lateFailure(a, 'manufacture-complete', campaign, a.maker, 8);
   const output = produced.source.outputItemId;

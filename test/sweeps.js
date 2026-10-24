@@ -19,14 +19,14 @@
 import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { buildServer } from './server-fixture.js';
-import { RIVALS } from '../src/rules.js';
+import { M4, RIVALS } from '../src/rules.js';
 
 // every sweep the worker actually calls, with the module it lives in. Kept in step with
 // src/worker.js's imports — a new sweep added there without a line here is the gap this file exists
 // to close, and `test/docs.js`/the reader could later assert the two lists agree.
 import { sweepDiplomacy } from '../src/diplomacy.js';
 import { sweepRivals } from '../src/rivals.js';
-import { sweepSocialClaims } from '../src/growth.js';
+import { capoBoard, sweepCapoLicense, sweepSocialClaims } from '../src/growth.js';
 import { sweepGrandReferrals } from '../src/game.js';
 import { sweepStaleRaids, sweepUprisings } from '../src/world.js';
 import { sweepUncreditedFees } from '../src/fees.js';
@@ -82,6 +82,7 @@ const ALL_SWEEPS = [
   ['sweepDiplomacy', () => sweepDiplomacy(pool)],
   ['sweepRivals', () => sweepRivals(pool)],
   ['sweepSocialClaims', () => sweepSocialClaims(pool)],
+  ['sweepCapoLicense', () => sweepCapoLicense(pool)],
   ['sweepGrandReferrals', () => sweepGrandReferrals(pool)],
   ['sweepStaleRaids', () => sweepStaleRaids(pool)],
   ['sweepUprisings', () => sweepUprisings(pool)],
@@ -225,6 +226,212 @@ console.log(`✅ all ${ALL_SWEEPS.length} worker sweeps run clean on an empty DB
   assert.equal(Number((await pool.query("SELECT mint_credits FROM account_persistent WHERE account_id=$1", [acct])).rows[0].mint_credits), after, 'idempotent at the money layer');
   await noDrift('after a store reconcile');
   console.log('✅ sweepUncreditedStore grants a parked package exactly once; a re-run grants nothing');
+}
+
+// (8) sweepCapoLicense — bounded pages persist their high-water cursor and eventually wrap.
+{
+  await pool.query('UPDATE account_persistent SET agent_flag=false');
+  const values = [], params = [];
+  for (let i = 0; i < 5; i++) {
+    const n = params.length;
+    values.push(`($${n + 1},true,$${n + 2})`);
+    params.push(`sweep-capo-${String(i).padStart(4, '0')}`, 1);
+  }
+  await pool.query(
+    `INSERT INTO account_persistent (account_id, agent_flag, capo_recruits) VALUES ${values.join(',')}`,
+    params,
+  );
+  const first = await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 });
+  assert.deepEqual({ updated: first.updated, processed: first.processed, pages: first.pages, hasMore: first.hasMore },
+    { updated: 2, processed: 2, pages: 1, hasMore: true }, 'one invocation obeys its page budget');
+  const saved = (await pool.query(
+    "SELECT after_key, upper_key FROM worker_sweep_cursors WHERE sweep_key='capo-license'")).rows[0];
+  assert.equal(saved.after_key, 'sweep-capo-0001', 'the committed cursor identifies the last processed agent');
+  assert.equal(saved.upper_key, 'sweep-capo-0004', 'the cycle keeps its captured high-water mark');
+  await pool.query(
+    `INSERT INTO account_persistent (account_id,agent_flag,capo_recruits) VALUES
+       ('sweep-capo-0000a',true,1),('sweep-capo-9999',true,1)`);
+  assert.equal((await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 })).updated, 2,
+    'a new process resumes after the persisted cursor');
+  const finish = await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 });
+  assert.deepEqual({ updated: finish.updated, processed: finish.processed, hasMore: finish.hasMore, wrapped: finish.wrapped },
+    { updated: 1, processed: 1, hasMore: false, wrapped: true }, 'the captured cycle finishes and wraps');
+  assert.equal(Number((await pool.query(
+    "SELECT capo_recruits FROM account_persistent WHERE account_id='sweep-capo-9999'"
+  )).rows[0].capo_recruits), 1, 'an agent beyond the high-water mark waits for the next cycle');
+  assert.equal(Number((await pool.query(
+    "SELECT capo_recruits FROM account_persistent WHERE account_id='sweep-capo-0000a'"
+  )).rows[0].capo_recruits), 1, 'an insert behind the committed cursor also waits for the next cycle');
+  await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 });
+  await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 });
+  await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 });
+  await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 });
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM account_persistent WHERE account_id LIKE 'sweep-capo-%' AND capo_recruits=0",
+  )).rows[0].n), 7, 'the next bounded cycle reaches inserts above and behind the old cursor');
+
+  // Recruit fan-out is aggregated inside the database. The query binds only the bounded agent page,
+  // so even more than PostgreSQL's 65k parameter ceiling of recruits cannot overflow a bind list.
+  await pool.query('UPDATE account_persistent SET agent_flag=false');
+  const captain = await mk('Capo Chunk Captain');
+  const captainAccount = await acctOf(captain.id);
+  await pool.query('UPDATE account_persistent SET agent_flag=true, capo_recruits=99 WHERE account_id=$1', [captainAccount]);
+  for (let i = 0; i < 5; i++) {
+    const recruit = await mk(`Capo Chunk Recruit ${i}`);
+    const recruitAccount = await acctOf(recruit.id);
+    await pool.query(
+      'UPDATE account_persistent SET minted=true,referred_by=$2,referral_same_ip_hold=false WHERE account_id=$1',
+      [recruitAccount, captainAccount]);
+    await pool.query('UPDATE characters SET respect=1000000000 WHERE id=$1', [recruit.id]);
+    await pool.query("INSERT INTO telemetry (id,account_id,event) VALUES ($1,$2,'capo_chunk')",
+      [crypto.randomUUID(), recruitAccount]);
+  }
+  let maxParams = 0;
+  const measuredPool = { connect: async () => {
+    const client = await pool.connect();
+    return { query: (sql, params = []) => { maxParams = Math.max(maxParams, params.length); return client.query(sql, params); },
+      release: () => client.release() };
+  } };
+  const aggregated = await sweepCapoLicense(measuredPool, { pageSize: 1, pageBudget: 1 });
+  assert.equal(aggregated.updated, 1);
+  assert(maxParams <= 2, 'qualification never binds the unbounded recruit fan-out');
+  assert.equal(Number((await pool.query(
+    'SELECT capo_recruits FROM account_persistent WHERE account_id=$1', [captainAccount])).rows[0].capo_recruits), 5,
+  'database aggregation counts every qualified recruit exactly');
+  await pool.query(
+    "UPDATE account_persistent SET capo_recruits=5,capo_recruits_at=now()-interval '49 hours' WHERE account_id=$1",
+    [captainAccount]);
+  const staleBoard = await capoBoard(pool, captainAccount);
+  assert.deepEqual({ recruits: staleBoard.recruits, tier: staleBoard.tier, actionsPerSec: staleBoard.actionsPerSec },
+    { recruits: 0, tier: null, actionsPerSec: null }, 'an expired worker stamp fails closed to zero Capo privilege');
+
+  if (process.env.DATABASE_URL) {
+    // Native PostgreSQL only: pg-mem parses transaction control but does not roll DML back. Inject a
+    // failure after the first effect and prove PostgreSQL restores both the page and cursor atomically.
+    await pool.query('UPDATE account_persistent SET agent_flag=false');
+    await pool.query("DELETE FROM worker_sweep_cursors WHERE sweep_key='capo-license'");
+    await pool.query(
+      `INSERT INTO account_persistent (account_id,agent_flag,capo_recruits) VALUES
+         ('sweep-capo-crash-0',true,1),('sweep-capo-crash-1',true,1)`);
+    let injected = false;
+    const failingPool = { connect: async () => {
+      const client = await pool.connect();
+      return { query: async (sql, params = []) => {
+        const result = await client.query(sql, params);
+        if (!injected && /^UPDATE account_persistent SET capo_recruits=/i.test(String(sql))) {
+          injected = true;
+          throw new Error('injected capo page crash');
+        }
+        return result;
+      }, release: () => client.release() };
+    } };
+    await assert.rejects(() => sweepCapoLicense(failingPool, { pageSize: 2, pageBudget: 1 }),
+      /injected capo page crash/);
+    assert.equal(Number((await pool.query(
+      "SELECT COUNT(*) n FROM account_persistent WHERE account_id LIKE 'sweep-capo-crash-%' AND capo_recruits=1"
+    )).rows[0].n), 2, 'a failed page leaves every count unchanged');
+    assert.equal(Number((await pool.query(
+      "SELECT COUNT(*) n FROM worker_sweep_cursors WHERE sweep_key='capo-license'"
+    )).rows[0].n), 0, 'a failed first page does not advance or create its cursor');
+    assert.equal((await sweepCapoLicense(pool, { pageSize: 2, pageBudget: 1 })).updated, 2,
+      'the rolled-back page is retried in full');
+  }
+
+  // Overlapping worker processes serialize on the persisted state row. Each committed page owns a
+  // distinct cursor range; the final page still wraps normally.
+  await pool.query('UPDATE account_persistent SET agent_flag=false');
+  await pool.query("DELETE FROM worker_sweep_cursors WHERE sweep_key='capo-license'");
+  await pool.query(
+    `INSERT INTO account_persistent (account_id,agent_flag,capo_recruits) VALUES
+       ('sweep-capo-race-0',true,1),('sweep-capo-race-1',true,1),('sweep-capo-race-2',true,1)`);
+  // pg-mem parses FOR UPDATE but does not implement its blocking semantics. The native PostgreSQL
+  // leg runs the calls concurrently; the in-memory leg still proves the same continuation serially.
+  const raceCalls = [
+    () => sweepCapoLicense(pool, { pageSize: 1, pageBudget: 1 }),
+    () => sweepCapoLicense(pool, { pageSize: 1, pageBudget: 1 }),
+  ];
+  const raced = process.env.DATABASE_URL
+    ? await Promise.all(raceCalls.map((callSweep) => callSweep()))
+    : [await raceCalls[0](), await raceCalls[1]()];
+  assert.equal(raced.reduce((sum, result) => sum + result.updated, 0), 2,
+    'overlapping invocations commit two distinct pages');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM account_persistent WHERE account_id LIKE 'sweep-capo-race-%' AND capo_recruits=0"
+  )).rows[0].n), 2, 'the cursor lock prevents duplicate page work');
+  const raceFinish = await sweepCapoLicense(pool, { pageSize: 1, pageBudget: 1 });
+  assert.deepEqual({ updated: raceFinish.updated, hasMore: raceFinish.hasMore, wrapped: raceFinish.wrapped },
+    { updated: 1, hasMore: false, wrapped: true }, 'the remaining raced page completes and wraps');
+
+  if (process.env.DATABASE_URL) {
+    // Native PostgreSQL only: SKIP LOCKED is a production capability pg-mem cannot model. A hot middle
+    // account cannot pin later agents; after its lock clears it is picked up in the next cycle.
+    await pool.query('UPDATE account_persistent SET agent_flag=false');
+    await pool.query("DELETE FROM worker_sweep_cursors WHERE sweep_key='capo-license'");
+    await pool.query(
+      `INSERT INTO account_persistent (account_id,agent_flag,capo_recruits) VALUES
+         ('sweep-capo-hot-0',true,1),('sweep-capo-hot-1',true,1),('sweep-capo-hot-2',true,1)`);
+    const locker = await pool.connect();
+    await locker.query('BEGIN');
+    await locker.query("SELECT 1 FROM account_persistent WHERE account_id='sweep-capo-hot-1' FOR UPDATE");
+    try {
+      const skipped = await sweepCapoLicense(pool, { pageSize: 3, pageBudget: 1 });
+      assert.equal(skipped.updated, 2, 'a locked middle agent does not block later rows');
+      assert.equal(Number((await pool.query(
+        "SELECT capo_recruits FROM account_persistent WHERE account_id='sweep-capo-hot-1'"
+      )).rows[0].capo_recruits), 1, 'the locked agent remains pending without blocking the cycle');
+    } finally { await locker.query('ROLLBACK'); locker.release(); }
+    assert.equal((await sweepCapoLicense(pool, { pageSize: 3, pageBudget: 1 })).updated, 1,
+      'the skipped agent retries after its lock clears');
+  }
+  console.log('✅ sweepCapoLicense bounds work, persists/resumes/wraps its cursor, and aggregates recruit qualification');
+}
+
+// (9) sweepGrandReferrals — blocked rows cannot consume the bounded retry budget ahead of a payee.
+{
+  await pool.query(
+    `INSERT INTO account_persistent (account_id, ref_paid, referred_by) VALUES
+       ('sweep-grand-blocked-a',true,NULL),
+       ('sweep-grand-blocked-r',true,'sweep-grand-blocked-a'),
+       ('sweep-grand-valid-a',true,NULL),
+       ('sweep-grand-valid-r',true,'sweep-grand-valid-a'),
+       ('sweep-grand-r2-1000',true,'sweep-grand-valid-r')`,
+  );
+  const values = [], params = [];
+  for (let i = 0; i < 1000; i++) {
+    const n = params.length;
+    values.push(`($${n + 1},true,$${n + 2})`);
+    params.push(`sweep-grand-r2-${String(i).padStart(4, '0')}`, 'sweep-grand-blocked-r');
+  }
+  await pool.query(
+    `INSERT INTO account_persistent (account_id, ref_paid, referred_by) VALUES ${values.join(',')}`,
+    params,
+  );
+  await pool.query(
+    `INSERT INTO characters (id, account_id, name, season, cash)
+       VALUES ('sweep-grand-valid-char','sweep-grand-valid-a','Sweep Grand Payee',1,500)`,
+  );
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM account_persistent WHERE account_id LIKE 'sweep-grand-r2-%' AND ref_paid AND NOT ref_l2_paid",
+  )).rows[0].n), 1001, 'the retry set contains 1,000 blocked rows followed by the formerly omitted payee');
+  const first = await sweepGrandReferrals(pool);
+  assert.deepEqual(first, { candidates: 1, paid: 1 }, 'prefiltering spends the bounded budget only on the eligible payee');
+  const ledger = (await pool.query(
+    "SELECT COUNT(*) n, COALESCE(SUM(amount),0) amount FROM transactions WHERE character_id='sweep-grand-valid-char' AND reason='referral:tier2'",
+  )).rows[0];
+  assert.equal(Number(ledger.n), 1, 'the eligible chain writes exactly one tier-2 ledger row');
+  assert.equal(Number(ledger.amount), M4.REF_TIER2_CASH, 'the one ledger row carries the complete tier-2 payment');
+  assert.equal(Number((await pool.query(
+    "SELECT cash FROM characters WHERE id='sweep-grand-valid-char'",
+  )).rows[0].cash), 500 + M4.REF_TIER2_CASH, 'the eligible grandrecruiter receives exactly one payment');
+  assert.equal((await pool.query(
+    "SELECT ref_l2_paid FROM account_persistent WHERE account_id='sweep-grand-r2-1000'",
+  )).rows[0].ref_l2_paid, true, 'the formerly starved candidate is latched paid');
+  assert.deepEqual(await sweepGrandReferrals(pool), { candidates: 0, paid: 0 }, 'the referral sweep rerun pays zero');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM transactions WHERE character_id='sweep-grand-valid-char' AND reason='referral:tier2'",
+  )).rows[0].n), 1, 'the rerun cannot duplicate the ledger row');
+  await noDrift('after the bounded grand-referral reconcile');
+  console.log('✅ sweepGrandReferrals skips 1,000 blocked candidates, pays the eligible 1,001st once, and reruns at zero');
 }
 
 console.log('✅ worker-sweep suite passed');

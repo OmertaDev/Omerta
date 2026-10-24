@@ -116,6 +116,7 @@ const runtDog = (await call('POST', '/v1/stable/buy', { token: runt.token, body:
 await pool.query(`UPDATE racers SET speed=6, stamina=6, heart=6 WHERE id='${runtDog}'`);
 await call('POST', `/v1/stable/list/${runtDog}`, { token: runt.token, body: { limit: 50000 } });
 const winsBeforeRunt = await racerWins(aa.aid);
+  await pool.query('UPDATE racers SET circuit_at=NULL WHERE id=$1', [ghost]); // rest elapsed before the next matchup
 const runtMatch = await call('POST', `/v1/stable/match/${runt.id}`, { token: aa.token, body: { myRacer: ghost, theirRacer: runtDog, stake: 10000 } });
 assert.equal(runtMatch.body.win, true, 'the maxed dog beats the runt (a lock)');
 assert.equal(await racerWins(aa.aid), winsBeforeRunt, 'NO career win banked — the loser was below the LEGEND floor');

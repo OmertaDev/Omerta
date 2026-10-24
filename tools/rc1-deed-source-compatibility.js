@@ -11,6 +11,7 @@ import { cityGameplaySourceBaseline, qualifyCityGameplaySource } from './rc1-cit
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { assertEconomyHardeningSourceTransfer, economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
 import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, assertCompanyOperatorSourceTransfer, companyOperatorSourceBaseline } from './rc1-company-operator-source-compatibility.js';
 import { GAME_EMPLOYMENT_SOURCE_CURRENT_PINS, assertGameEmploymentSourceTransfer } from './rc1-game-employment-source-compatibility.js';
 import { COMPANY_WORKFLOW_SOURCE_CURRENT_PINS, assertCompanyWorkflowSourceTransfer } from './rc1-company-workflow-source-compatibility.js';
@@ -203,6 +204,13 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  const hardenedText = economyHardeningSourceBaseline(file, text);
+  if (hardenedText !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertEconomyHardeningSourceTransfer(file, text);
+    const predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')),
+      inverseChunks: (predecessor.inverseChunks || 0) + transfer.inverseChunks, economyHardeningSourceTransfer: transfer };
+  }
   const outer = firstBatchSourceBaseline(file, text);
   if (outer !== text.replaceAll('\r\n', '\n')) {
     const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
@@ -1604,6 +1612,13 @@ const deedUpgradeLiteral = '\n// Permanent deed-bound bonuses; gameplay and fund
 // Compatibility proves the complete frozen source survives exactly two known
 // additions. Current witnesses still attest the actual complete-file digest.
 export function assertCarMeltRulesCompatibility(text) {
+  const hardenedText = economyHardeningSourceBaseline('src/rules.tail.js', text);
+  if (hardenedText !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertEconomyHardeningSourceTransfer('src/rules.tail.js', text);
+    const predecessor = assertCarMeltRulesCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')),
+      inverseChunks: (predecessor.inverseChunks || 0) + transfer.inverseChunks, economyHardeningSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   if (actualSha256 === CAR_MELT_BASELINE_RULES_PIN) return { actualSha256, baselineSha256: actualSha256, baselineText: text };
   assert.equal(actualSha256, DEED_RULES_CURRENT_PIN, 'Car melt provenance source changed: src/rules.tail.js');
@@ -1950,6 +1965,13 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+  const hardenedText = economyHardeningSourceBaseline(file, text);
+  if (hardenedText !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertEconomyHardeningSourceTransfer(file, text);
+    const predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')),
+      inverseChunks: (predecessor.inverseChunks || 0) + transfer.inverseChunks, economyHardeningSourceTransfer: transfer };
+  }
   const operator = operatorEnvelope(file, text, prior => assertEconomySourceTransfer(file, prior));
   if (operator) return operator;
   if (file === 'src/server.js' && hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN) {

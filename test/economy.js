@@ -402,7 +402,8 @@ assert.equal((await meOf(token)).bankInTransit, 0, 'cleared after the window —
 const { body: { token: t2 } } = await call('POST', '/v1/auth/guest');
 await call('POST', '/v1/character', { token: t2, body: { name: 'Cleanbook' } });
 const c2 = (await meOf(t2)).id;
-const seed2 = (cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${c2}'`);
+// These independent economy samples compress the wait between street attempts.
+const seed2 = (cols) => pool.query(`UPDATE characters SET street_action_at=NULL, ${cols} WHERE id='${c2}'`);
 // grind cash + contraband via crimes at the docks (never touches cash directly)
 for (let i = 0; i < 60; i++) {
   await seed2("nerve=50, energy=200, jail_until=NULL, loc='docks'");
@@ -1188,7 +1189,7 @@ await pool.query(`UPDATE account_persistent SET agent_flag=false WHERE account_i
 
   const pullUntilWin = async () => {
     for (let i = 0; i < 60; i++) {
-      await seed('nerve=200, jail_until=NULL');
+      await seed('street_action_at=NULL, nerve=200, jail_until=NULL');
       const rr = await call('POST', '/v1/crimes/customs', { token, body: { approach: 'standard' } });
       assert.equal(rr.code, 200, `the job resolves (${JSON.stringify(rr.body)})`);
       if (rr.body.success) return rr.body;
@@ -1251,7 +1252,7 @@ await pool.query(`UPDATE account_persistent SET agent_flag=false WHERE account_i
   assert.equal(inOrder.length, 8, 'eight marks stand in the district');
   await seed("cash=0, jail_until=NULL, hosp_until=NULL, nerve=200, energy=200, muscle=5, cunning=5, speed=5, loc='cathedral', respect=3610");
   for (let i = 0; i < 90; i++) {
-    await seed('nerve=200, jail_until=NULL, hosp_until=NULL');
+    await seed('street_action_at=NULL, nerve=200, jail_until=NULL, hosp_until=NULL');
     const rr = await call('POST', '/v1/crimes/torch', { token, body: { approach: 'standard' } });
     assert.equal(rr.code, 200, `the job resolves (${JSON.stringify(rr.body)})`);
   }

@@ -1,8 +1,9 @@
-// THE OPPORTUNITY BOARD — the agent-liquidity feature. One keyless read that aggregates every open
+// THE OPPORTUNITY BOARD — the agent-liquidity feature. One authenticated read that aggregates every open
 // economic action AND every standing skill-loop with computed EV/risk signals, so an agent polls
 // ONE endpoint instead of modelling a dozen boards. Pure aggregation over existing reads +
 // deterministic price math — read-only, moves no value, ZERO §10.4 surface. See AGENTS.md.
-import { GOODS, DISTRICTS, goodPriceOf, priceBlock } from './rules.js';
+import { GOODS, DISTRICTS, priceBlock } from './rules.js';
+import { goodsBuyQuote, goodsSellQuote } from './goodsquote.js';
 import { goodsLiquidityBoard } from './goodsmarket.js';
 import { listContracts } from './social.js';
 import { loanBoard } from './loans.js';
@@ -12,33 +13,46 @@ import { exchangeBoard } from './exchange.js';
 
 // The standing skill-loops (the "agent niches") — how an agent makes money by playing well, each
 // with a live, computable signal. This is the sanctioned agent income: SKILL, not faucets.
-function arbitrage(blk, liquidity, limit = 8) {
+function arbitrage(blk, liquidity, ch = {}, owned = {}, limit = 8) {
   // Trade-goods prices are a DETERMINISTIC hash of (good, district, day) — so cross-district
   // arbitrage is a solved optimization, not a guess. For each good, find the cheapest buy district
   // and the richest sell district TODAY; rank by spread. The single highest-signal agent niche.
   const rows = [];
   for (const g of GOODS) {
     let lo = null, hi = null, cheapest = null;
+    const held = Number(owned.cargo?.[g.id] || 0) > 0;
     for (const d of DISTRICTS) {
-      const price = goodPriceOf(g.id, d.id, blk);
+      const price = goodsBuyQuote(g.id, d.id, 1, owned, blk).unit;
+      const sellPrice = goodsSellQuote(g.id, d.id, 1, owned, ch, blk).unit;
       const available = liquidity.districts[d.id][g.id];
       if (!cheapest || price < cheapest.price) cheapest = { district: d.id, price, stock: available.stock };
       if (available.stock > 0 && (!lo || price < lo.price)) lo = { district: d.id, price, stock: available.stock };
-      if (available.buying > 0 && (!hi || price > hi.price)) hi = { district: d.id, price, buying: available.buying };
+      if (available.buying > 0 && (!hi || sellPrice > hi.price)) hi = { district: d.id, price: sellPrice, buying: available.buying };
     }
     // Held freight can still be sold when every supplier is empty. A zero-stock edge
     // retains its buyer, while procurement plans remain capped at zero.
-    lo ||= cheapest;
+    if (!lo && held) lo = cheapest;
     if (!lo || !hi) continue;
     const spread = hi.price - lo.price;
-    rows.push({ good: g.id, name: g.name, buyIn: lo.district, buyPrice: lo.price,
+    rows.push({ good: g.id, name: g.name, priceBlock: blk, buyIn: lo.district, buyPrice: lo.price,
       sellIn: hi.district, sellPrice: hi.price, stock: lo.stock, buying: hi.buying,
       refreshAt: liquidity.refreshAt, spread, spreadPct: Math.round((spread / lo.price) * 1000) / 10 });
   }
-  return rows.sort((a, b) => b.spread - a.spread).slice(0, limit);
+  const ranked = rows.sort((a, b) => b.spread - a.spread);
+  // Exhausted liquidation-only rows must not crowd live procurement out of the display cut.
+  // Select the strongest stocked routes first, then append every held good independently.
+  const selected = ranked.filter((row) => row.stock > 0).slice(0, limit);
+  // A held good remains actionable even when its personalized spread falls below the display cut,
+  // or every supplier is empty. Otherwise an agent can own freight the board gives it no route to
+  // liquidate. Zero-stock rows can be sold but are excluded from the procurement recommendation.
+  for (const row of ranked) {
+    if (Number(owned.cargo?.[row.good] || 0) > 0 && !selected.some((edge) => edge.good === row.good))
+      selected.push(row);
+  }
+  return selected;
 }
 
-export async function opportunityBoard(pool, ch) {
+export async function opportunityBoard(pool, ch, owned = {}) {
   const blk = priceBlock();
   const goodsLiquidity = await goodsLiquidityBoard(pool, blk);
   // the redemption window replaced the AMM (tokenomics v2 step 2) — read the live till, not a
@@ -105,7 +119,7 @@ export async function opportunityBoard(pool, ch) {
 
   // 5. NICHES — the standing skill-loops with live signals (the sanctioned agent income).
   const niches = {
-    arbitrage: arbitrage(blk, goodsLiquidity),
+    arbitrage: arbitrage(blk, goodsLiquidity, ch || {}, owned),
     // (red-team C1, tokenomics v2) This used to advertise `POST /v1/swap` and publish an AMM spot
     // price. Cash → $OMR is gone and so is the AMM, so every clause of that was false — and this
     // board is the surface AGENTS.md tells agents to poll, so a wrong entry here is not a stale

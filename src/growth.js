@@ -1,13 +1,17 @@
 // M4 — growth systems: paths, the Daily Score, missions, daily contracts, and
 // the First Week (GRASSROOTS). Every formula cites spec §5.1/§7.3–7.4 / v24.
 import { GameError, cleanText, assignedSoldier, soldierResult, bumpMastery, masteryFx, gainRespect } from './game.js';
-import { soldierFxOf, SOLDIERS, PATH_SWITCH_CD_MS, referralXpBonus, CAPO, capoPerksOf, usd , coolLeft, coolWait } from './rules.js';
+import { soldierFxOf, SOLDIERS, PATH_SWITCH_CD_MS, referralXpBonus, CAPO, capoPerksOf, effectiveCapoRecruits, usd , coolLeft, coolWait } from './rules.js';
 import {
   PATHS, MISSIONS, ONBOARD_TASKS, CAREER, CONSTANTS, M4, M8, SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS,
   levelOf, dayOf, dailyJobsOf, dailyGuidanceFor, dailyBlockedFor, effStat, gunObjOf, assetEnergyCap, recruitRankOf, PACING,
   hash01, hitmanRankOf, honorTierOf, jailed, IDENTITY } from './rules.js';
-import { verifySocial, verifyPostUp, socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
+import { verifySocial, verifyPostUp, normalizeSocialPostProof, requireLinkedXIdentity,
+  socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
 import { spendOmr } from './vanity.js';
+import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
+  takeBoundedAccountDailyClaim } from './accountdaily.js';
+import { dbCaps } from './db.js';
 
 
 // ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──
@@ -219,14 +223,17 @@ export async function getDaily(pool, characterId, day = dayOf()) {
   const jobs = dailyJobsOf(day);
   const row = (await pool.query('SELECT * FROM daily_progress WHERE character_id=$1 AND day=$2', [characterId, day])).rows[0];
   const counters = row ? JSON.parse(row.counters) : {};
-  const claimed = row ? JSON.parse(row.claimed) : [];
+  const localClaimed = row ? JSON.parse(row.claimed) : [];
+  const accountId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [characterId])).rows[0]?.account_id;
+  const accountRows = accountId ? await accountDailyClaimRows(pool, accountId, day, 'daily') : [];
+  const claimed = resolvedBoundedClaimIds(jobs.map((job) => job.id), localClaimed, accountRows);
   // A drawn contract this player structurally cannot finish says so on its own card, from the SAME
   // helper the coach's count subtracts by — so the board and the coach can never disagree about
   // which of the three are live (the extortFront one-core lesson). One extra query on a board read,
   // not on loadOwned's hot path.
   const gangId = (await pool.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [characterId])).rows[0]?.gang_id || null;
   return { day, jobs: jobs.map((j) => ({ id: j.id, name: j.name, kind: j.k, goal: j.n,
-    progress: Math.min(counters[j.k] || 0, j.n), claimed: claimed.includes(j.id),
+    progress: Math.min(counters[j.k] || 0, j.n), claimed: claimed.has(j.id),
     ...dailyGuidanceFor(j), blocked: dailyBlockedFor(j, { gangId }) })) };
 }
 
@@ -236,11 +243,26 @@ export async function claimDaily(ch, jobId, client, h) {
   if (!job) throw new GameError('bad_job', "That contract isn't on today's board.");
   const row = (await client.query('SELECT * FROM daily_progress WHERE character_id=$1 AND day=$2 FOR UPDATE', [ch.id, day])).rows[0];
   const counters = row ? JSON.parse(row.counters) : {};
-  const claimed = row ? JSON.parse(row.claimed) : [];
-  if (claimed.includes(jobId)) throw new GameError('claimed', 'Already paid out.');
+  const localClaimed = row ? JSON.parse(row.claimed) : [];
+  const boardIds = dailyJobsOf(day).map((daily) => daily.id);
+  // Bridge any character-only claims left by an older process before evaluating the account cap.
+  // This keeps a mixed-version request from paying a fourth base reward after death even when the
+  // one-time boot repair ran before the old process wrote its final claim.
+  for (const paidId of localClaimed)
+    await takeBoundedAccountDailyClaim(client, h.accountId, day, 'daily', paidId, boardIds.length);
+  const accountRows = await accountDailyClaimRows(client, h.accountId, day, 'daily');
+  let claimed = resolvedBoundedClaimIds(boardIds, localClaimed, accountRows);
+  if (claimed.has(jobId)) throw new GameError('claimed', 'Already paid out.');
   if ((counters[job.k] || 0) < job.n) throw new GameError('unfinished', "Contract's not finished yet.");
-  claimed.push(jobId);
-  const all = dailyJobsOf(day).every((j) => claimed.includes(j.id));
+  if (!await takeBoundedAccountDailyClaim(client, h.accountId, day, 'daily', jobId, dailyJobsOf(day).length))
+    throw new GameError('claimed', 'Already paid out.');
+  const rowsAfter = await accountDailyClaimRows(client, h.accountId, day, 'daily');
+  claimed = resolvedBoundedClaimIds(boardIds, localClaimed, rowsAfter);
+  // The full-envelope reward is its own account/day right. Occupied slots, rather than current
+  // identifiers, define completion across a same-day board deployment; the latch makes the bonus
+  // exactly once even if multiple requests observe the third slot together.
+  const all = rowsAfter.length >= dailyJobsOf(day).length
+    && await takeAccountDailyClaim(client, h.accountId, day, 'daily-envelope', 'all');
   const lvl = levelOf(Number(ch.respect));
   const payout = 200 * lvl + (all ? 500 * lvl : 0);
   const rep = 5 * lvl + (all ? 15 * lvl : 0);
@@ -257,8 +279,12 @@ export async function claimDaily(ch, jobId, client, h) {
       await h.ledger(client, { accountId: h.accountId, currency: 'omr', amount: omrBonus, reason: 'daily:all' });
     }
   }
-  if (row) await client.query('UPDATE daily_progress SET claimed=$3 WHERE character_id=$1 AND day=$2', [ch.id, day, JSON.stringify(claimed)]);
-  else await client.query('INSERT INTO daily_progress (character_id, day, counters, claimed) VALUES ($1,$2,$3,$4)', [ch.id, day, '{}', JSON.stringify(claimed)]);
+  // Store only claims this character actually collected. Rotated account slots are mapped to
+  // current cards for presentation, but persisting those synthetic ids would count one slot twice
+  // when the next request unions local history with the canonical account rows.
+  const storedClaims = [...new Set([...localClaimed, jobId])];
+  if (row) await client.query('UPDATE daily_progress SET claimed=$3 WHERE character_id=$1 AND day=$2', [ch.id, day, JSON.stringify(storedClaims)]);
+  else await client.query('INSERT INTO daily_progress (character_id, day, counters, claimed) VALUES ($1,$2,$3,$4)', [ch.id, day, '{}', JSON.stringify(storedClaims)]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: payout, reason: `daily:${jobId}` });
   // FOUND BY PLAYING: this reply carried payout/rep/all/omrBonus and the line read "done." — on the
   // most-repeated reward button in the game, over $60,200 and 1,505 respect. The half that matters
@@ -274,7 +300,7 @@ export async function claimDaily(ch, jobId, client, h) {
   //   `omrBonus` rides as what LANDED, never the constant: a dry fund pays nothing and a line
   // claiming 0.5 would be a wrong number where a silent one would do.
   const board = dailyJobsOf(day);
-  const unclaimed = board.filter((j) => !claimed.includes(j.id));
+  const unclaimed = board.filter((j) => !claimed.has(j.id));
   const outOfReach = unclaimed.some((j) => !!dailyBlockedFor(j, { gangId: h.owned.gangId }));
   return { ok: true, payout, rep, all, omrBonus,
     ...(all ? { energyRefilled: true } : {}),
@@ -332,12 +358,25 @@ export async function funnelStats(pool) {
   const accounts = await one('SELECT COUNT(*) n FROM account_persistent WHERE NOT npc_flag');
   const referral = {
     accounts,
-    referred: await one('SELECT COUNT(*) n FROM account_persistent WHERE referred_by IS NOT NULL'), // came in on a code
-    sparked: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_spark'),               // hit the early gate
-    qualified: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_paid'),               // hit the full gate (paid out)
-    recruiters: await one('SELECT COUNT(*) n FROM account_persistent WHERE recruits > 0'),          // brought at least one made man in
-    totalRecruits: await one('SELECT COALESCE(SUM(recruits),0) n FROM account_persistent'),         // qualified recruits, all-time
-    reReferred: await one('SELECT COUNT(*) n FROM account_persistent WHERE referred_by IS NOT NULL AND recruits > 0'), // a recruit who then recruited (viral depth)
+    referred: await one('SELECT COUNT(*) n FROM account_persistent WHERE referred_by IS NOT NULL AND NOT npc_flag'), // came in on a code
+    held: await one('SELECT COUNT(*) n FROM account_persistent WHERE referral_same_ip_hold IS TRUE AND NOT npc_flag'), // shared-origin edges held from value
+    sparked: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_spark AND referral_same_ip_hold IS NOT TRUE AND NOT npc_flag'), // eligible early gate
+    qualified: await one('SELECT COUNT(*) n FROM account_persistent WHERE ref_paid AND referral_same_ip_hold IS NOT TRUE AND NOT npc_flag'), // eligible full gate
+    recruiters: await one(`SELECT COUNT(DISTINCT r.recruiter_account) n FROM referrals r
+      JOIN account_persistent a ON a.account_id=r.recruit_account
+      JOIN account_persistent recruiter ON recruiter.account_id=r.recruiter_account
+      WHERE r.qualified_at IS NOT NULL AND a.referral_same_ip_hold IS NOT TRUE
+        AND NOT a.npc_flag AND NOT recruiter.npc_flag`),
+    totalRecruits: await one(`SELECT COUNT(*) n FROM referrals r
+      JOIN account_persistent a ON a.account_id=r.recruit_account
+      WHERE r.qualified_at IS NOT NULL AND a.referral_same_ip_hold IS NOT TRUE AND NOT a.npc_flag`),
+    reReferred: await one(`SELECT COUNT(DISTINCT r.recruiter_account) n FROM referrals r
+      JOIN account_persistent a ON a.account_id=r.recruit_account
+      JOIN account_persistent recruiter ON recruiter.account_id=r.recruiter_account
+      WHERE r.qualified_at IS NOT NULL AND a.referral_same_ip_hold IS NOT TRUE
+        AND recruiter.referred_by IS NOT NULL
+        AND recruiter.referral_same_ip_hold IS NOT TRUE
+        AND NOT a.npc_flag AND NOT recruiter.npc_flag`), // an eligible recruit who then recruited (viral depth)
     // THE LATE CLAIM — attribution recovered after creation (word-of-mouth recruits who typed the
     // name from Start Here). High numbers here mean the create-screen field is being missed.
     lateClaims: await one("SELECT COUNT(*) n FROM telemetry WHERE event='referral_claim_late'"),
@@ -519,13 +558,15 @@ export async function myProfile(ch, client, h) {
 
   // ── the crew you brought in (§7.13) ──
   const refs = (await client.query(
-    'SELECT recruit_account, qualified_at FROM referrals WHERE recruiter_account=$1', [h.accountId])).rows;
+    `SELECT r.recruit_account, r.qualified_at, a.referral_same_ip_hold
+       FROM referrals r JOIN account_persistent a ON a.account_id=r.recruit_account
+      WHERE r.recruiter_account=$1`, [h.accountId])).rows;
   const chRows = refs.length ? (await client.query(
     `SELECT c.id, c.account_id, c.name, c.respect, c.alive
        FROM characters c JOIN referrals r ON r.recruit_account = c.account_id
       WHERE r.recruiter_account = $1`, [h.accountId])).rows : [];
   const sparkRows = refs.length ? (await client.query(
-    `SELECT a.account_id, a.ref_spark
+    `SELECT a.account_id, a.ref_spark, a.referral_same_ip_hold
        FROM account_persistent a JOIN referrals r ON r.recruit_account = a.account_id
       WHERE r.recruiter_account = $1`, [h.accountId])).rows : [];
   const charToAcct = new Map(); // any generation — the payment counterparty was whoever lived then
@@ -535,7 +576,8 @@ export async function myProfile(ch, client, h) {
     const cur = display.get(c.account_id);
     if (!cur || (c.alive && !cur.alive)) display.set(c.account_id, c);
   }
-  const sparked = new Map(sparkRows.map((r) => [r.account_id, !!r.ref_spark]));
+  const sparked = new Map(sparkRows.map((r) => [r.account_id,
+    !!r.ref_spark && r.referral_same_ip_hold !== true]));
 
   // ── the take — LEDGER-EXACT recruiting income (see the attribution note above) ──
   const cashRows = (await client.query(
@@ -565,14 +607,17 @@ export async function myProfile(ch, client, h) {
   // helper the live multiplier uses), so the number shown here is the number being applied.
   const crewBonus = referralXpBonus(refs.map((r) => {
     const d = display.get(r.recruit_account);
-    return d?.alive && r.qualified_at ? levelOf(Number(d.respect)) : 0;
+    return d?.alive && r.qualified_at && r.referral_same_ip_hold !== true
+      ? levelOf(Number(d.respect)) : 0;
   }));
 
   const recruits = refs.map((r) => {
     const d = display.get(r.recruit_account);
     return { name: d?.name || 'a lost soul', level: d ? levelOf(Number(d.respect)) : 0,
       alive: !!d?.alive, sparked: sparked.get(r.recruit_account) || false,
-      qualified: !!r.qualified_at, earnedCash: perRecruitCash.get(r.recruit_account) || 0 };
+      held: r.referral_same_ip_hold === true,
+      qualified: !!r.qualified_at && r.referral_same_ip_hold !== true,
+      earnedCash: perRecruitCash.get(r.recruit_account) || 0 };
   }).sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (b.earnedCash - a.earnedCash) || (b.level - a.level));
 
   // FLAT on purpose — the client's mirror guard (test/client.js check 4) verifies one level of
@@ -595,7 +640,7 @@ export async function myProfile(ch, client, h) {
     recruitsLifetime: Number(acct.recruits || 0),
     recruitsTotal: refs.length,
     recruitsSparked: [...sparked.values()].filter(Boolean).length,
-    recruitsQualified: refs.filter((r) => r.qualified_at).length,
+    recruitsQualified: refs.filter((r) => r.qualified_at && r.referral_same_ip_hold !== true).length,
     earnedCash, earnedOmr, crewBonus, crewBonusPct: Math.round(crewBonus * 100),
     recruits,
   };
@@ -742,10 +787,10 @@ export async function claimReferral(ch, code, client, h) {
   if (name.toLowerCase() === String(ch.name).toLowerCase())
     throw new GameError('self', "You can't have sent yourself.");
   let rec = (await client.query(
-    'SELECT account_id, name FROM characters WHERE name=$1 AND alive AND account_id<>$2 LIMIT 1',
+    'SELECT account_id, name FROM characters WHERE name=$1 AND alive AND NOT is_npc AND account_id<>$2 LIMIT 1',
     [name, h.accountId])).rows[0];
   if (!rec) rec = (await client.query(
-    'SELECT account_id, name FROM characters WHERE LOWER(name)=LOWER($1) AND alive AND account_id<>$2 LIMIT 1',
+    'SELECT account_id, name FROM characters WHERE LOWER(name)=LOWER($1) AND alive AND NOT is_npc AND account_id<>$2 LIMIT 1',
     [name, h.accountId])).rows[0];
   if (!rec) throw new GameError('unknown_code', `Nobody on the streets goes by "${name}". Check the spelling with them.`);
   // atomic — the IS NULL guard means a concurrent claim can't double-set; referred_by is NOT in
@@ -837,6 +882,25 @@ export function socialRewardsLive() {
 // PENDING_TTL (48h) lapses (which also retires any pre-maturity historical rows cleanly).
 const socialMatureMs = () => Number(process.env.SOCIAL_MATURE_MS ?? 4 * 3600000);
 const SOCIAL_PENDING_TTL = 48 * 3600000;
+const SOCIAL_PROOF_SCOPE = 'social-proof';
+const SOCIAL_PROOF_CLAIM = 'used';
+const SOCIAL_PROOF_EPOCH = 0;
+
+// account_daily_claims already provides a transactionally unique account/day receipt. Paid social
+// proofs use an impossible-for-real-accounts namespace (real account ids are UUIDs) as the account
+// key and fixed epoch day=0, which turns its primary key into one permanent global receipt per
+// normalized provider proof. A tweet can fund at most one game reward across all days.
+// The row is taken only after X verifies ownership, so another player cannot grief-lock a tweet by
+// merely registering its URL. Keeping the receipt in the payout transaction also means any later
+// ledger/persist failure rolls it back with the reward.
+const socialProofReceiptAccount = ({ provider, id }) => `social-proof:${provider}:${id}`;
+async function socialProofWasUsed(client, normalized) {
+  if (!normalized) return false;
+  return (await client.query(
+    `SELECT 1 FROM account_daily_claims
+      WHERE account_id=$1 AND day=$2 AND scope=$3 AND claim_id=$4`,
+    [socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH, SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM])).rowCount > 0;
+}
 
 export async function socialBoard(pool, accountId, ch) {
   const day = dayOf();
@@ -870,6 +934,7 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   if (!t) throw new GameError('bad_task', 'Not a word-of-mouth task.');
   const day = dayOf();
   const mature = socialMatureMs();
+  const live = (process.env.SOCIAL_VERIFY_MODE || 'off') === 'live';
   // withCharacter row-locks the character (one living character per account), so an account's
   // claims serialize — the SELECT-then-INSERT/UPDATE can't double-pay; the PK is the backstop.
   // (1) a live registration in the window? pay it if matured, else report the clock
@@ -885,9 +950,17 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     // live mode: the post must STILL be up AND (for an X-linked account) come from THEIR handle —
     // pass ctx so verifyPostUp's D2 author-binding activates on the real claim path (was dead code:
     // it only fired via a direct unit call). Trust mode short-circuits before touching ctx.
-    if ((process.env.SOCIAL_VERIFY_MODE || 'off') === 'live')
+    const normalized = live ? normalizeSocialPostProof(pend.proof ?? proof) : null;
+    if (live && await socialProofWasUsed(client, normalized))
+      throw new GameError('proof_used', 'That X post has already earned a social reward.');
+    if (live)
       await throttleXCheck(client, h.accountId, 'post', h.pool);    // the retry loop, not the happy path
     await verifyPostUp(pend.proof ?? proof, { client, accountId: h.accountId });
+    // Reserve only after the linked author has been verified. The synthetic receipt's database PK
+    // is the cross-account/cross-task race winner; exactly one concurrent claimant can proceed.
+    if (live && !await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
+      SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM))
+      throw new GameError('proof_used', 'That X post has already earned a social reward.');
     await client.query('UPDATE social_claims SET paid=true WHERE account_id=$1 AND day=$2 AND task_id=$3',
       [h.accountId, pend.day, taskId]);
     const paidIds = (await client.query(
@@ -906,6 +979,14 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   // activity feed (innerHTML), where the mod key lives in sessionStorage → unescaped markup was a
   // mod-side stored XSS → root escalation. Strip < > " ` at the source like every other display field.
   const cleanProof = cleanText(proof).slice(0, 300);
+  if (live) {
+    await requireLinkedXIdentity({ client, accountId: h.accountId });
+    const normalized = normalizeSocialPostProof(cleanProof);
+    if (!normalized)
+      throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
+    if (await socialProofWasUsed(client, normalized))
+      throw new GameError('proof_used', 'That X post has already earned a social reward.');
+  }
   await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof) VALUES ($1,$2,$3,false,$4)',
     [h.accountId, day, taskId, cleanProof || null]);
   await h.track(client, h.accountId, 'social_post', { task: taskId, proof: cleanProof });
@@ -937,52 +1018,128 @@ export async function sweepSocialClaims(pool) {
 // bound), RETAINED (telemetry inside CAPO.RETAIN_DAYS — still playing), and LEVELLED (a living
 // street ≥ CAPO.MIN_LVL — genuinely played). The count lands on account_persistent.capo_recruits
 // (direct SQL, off persistAccount's positional list — clobber-safe) and is read per-request by the
-// throttle + the wire board. Flat queries + JS joins throughout (pg-mem: no correlated subqueries,
-// no = ANY($1) — the /v1/gangs posture); the recruit fan-out uses dynamic IN lists.
-export async function sweepCapoLicense(pool) {
-  const agents = (await pool.query(
-    'SELECT account_id, capo_recruits FROM account_persistent WHERE agent_flag LIMIT 500')).rows;
-  if (!agents.length) return { updated: 0 };
+// throttle + the wire board. PostgreSQL uses indexed EXISTS probes so repeated telemetry cannot fan
+// out the aggregate; pg-mem's compatibility branch uses equivalent joins for local tests.
+const CAPO_SWEEP_PAGE_SIZE = 500;
+const CAPO_SWEEP_PAGE_BUDGET = 4;
+const boundedSweepOption = (value, fallback, maximum) => {
+  const n = Math.floor(Number(value));
+  return Number.isFinite(n) && n > 0 ? Math.min(n, maximum) : fallback;
+};
+
+async function sweepCapoPage(client, pageSize) {
+  await client.query(
+    "INSERT INTO worker_sweep_cursors (sweep_key) VALUES ('capo-license') ON CONFLICT DO NOTHING");
+  const state = (await client.query(
+    "SELECT after_key, upper_key FROM worker_sweep_cursors WHERE sweep_key='capo-license' FOR UPDATE")).rows[0];
+  let after = state.after_key;
+  let upper = state.upper_key;
+  if (upper === null) {
+    upper = (await client.query(
+      'SELECT account_id FROM account_persistent WHERE agent_flag ORDER BY account_id DESC LIMIT 1')).rows[0]?.account_id || null;
+    after = null;
+  }
+  if (upper === null) return { updated: 0, processed: 0, hasMore: false, nextCursor: null, wrapped: false };
+
+  // One look-ahead row proves whether this page finishes the captured population without a separate
+  // count. Rows inserted after `upper`, or behind the committed cursor, wait for the next cycle.
+  const candidates = (await client.query(
+    `SELECT account_id, capo_recruits FROM account_persistent
+      WHERE agent_flag AND account_id <= $1${after === null ? '' : ' AND account_id > $2'}
+      ORDER BY account_id LIMIT ${pageSize + 1}${dbCaps.skipLocked ? ' FOR UPDATE SKIP LOCKED' : ''}`,
+    after === null ? [upper] : [upper, after])).rows;
+  if (!candidates.length) {
+    await client.query(
+      "UPDATE worker_sweep_cursors SET after_key=NULL, upper_key=NULL, updated_at=now() WHERE sweep_key='capo-license'");
+    return { updated: 0, processed: 0, hasMore: false, nextCursor: null, wrapped: true };
+  }
+
+  const agents = candidates.slice(0, pageSize);
   const aidList = agents.map((a) => a.account_id);
   const inA = aidList.map((_, i) => `$${i + 1}`).join(',');
-  // every minted HUMAN recruit of any agent (minted is the load-bearing gate — see the header)
-  const recruits = (await pool.query(
-    `SELECT account_id, referred_by FROM account_persistent
-      WHERE referred_by IN (${inA}) AND NOT agent_flag AND minted`, aidList)).rows;
-  let counts = new Map(aidList.map((id) => [id, 0]));
-  if (recruits.length) {
-    const rids = recruits.map((r) => r.account_id);
-    const inR = rids.map((_, i) => `$${i + 1}`).join(',');
-    // LEVELLED: a living street at ≥ MIN_LVL (respect threshold computed here, the levelOf inverse)
-    const thr = PACING.LEVEL_DIVISOR * (CAPO.MIN_LVL - 1) ** 2;
-    const levelled = new Set((await pool.query(
-      `SELECT DISTINCT account_id FROM characters WHERE account_id IN (${inR}) AND alive AND respect >= ${Number(thr)}`,
-      rids)).rows.map((r) => r.account_id));
-    // RETAINED: any telemetry inside the window (the push-skip / active15m signal, at days scale)
-    const retained = new Set((await pool.query(
-      `SELECT DISTINCT account_id FROM telemetry WHERE account_id IN (${inR})
-         AND at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days'`, rids)).rows.map((r) => r.account_id));
-    for (const r of recruits)
-      if (levelled.has(r.account_id) && retained.has(r.account_id))
-        counts.set(r.referred_by, counts.get(r.referred_by) + 1);
-  }
+  // Every minted HUMAN recruit of these agents. Aggregate inside PostgreSQL so a recruiter with more
+  // than 65,535 recruits cannot create an oversized bind list or an unbounded JS/query loop. The
+  // result remains capped at one row per agent page entry. The origin screen runs before full referral
+  // qualification can install its durable hold, so same-origin alts cannot unlock perks.
+  const thr = PACING.LEVEL_DIVISOR * (CAPO.MIN_LVL - 1) ** 2;
+  const qualificationJoins = dbCaps.skipLocked ? '' : `
+       JOIN characters ch ON ch.account_id=a.account_id AND ch.alive AND ch.respect >= ${Number(thr)}
+       JOIN telemetry recent ON recent.account_id=a.account_id
+        AND recent.at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days'`;
+  const qualificationExists = dbCaps.skipLocked ? `
+        AND EXISTS (SELECT 1 FROM characters ch
+          WHERE ch.account_id=a.account_id AND ch.alive AND ch.respect >= ${Number(thr)})
+        AND EXISTS (SELECT 1 FROM telemetry recent
+          WHERE recent.account_id=a.account_id
+            AND recent.at > now() - interval '${Number(CAPO.RETAIN_DAYS)} days')` : '';
+  const qualified = (await client.query(
+    `SELECT a.referred_by, COUNT(DISTINCT a.account_id) AS n FROM account_persistent a
+       JOIN accounts recruit_origin ON recruit_origin.id=a.account_id
+       JOIN accounts recruiter_origin ON recruiter_origin.id=a.referred_by${qualificationJoins}
+       LEFT JOIN agent_referral_claims held
+         ON held.recruit_account=a.account_id AND held.milestone='qualified_activation'
+        AND held.state='held' AND held.hold_reason='review_same_ip'
+      WHERE a.referred_by IN (${inA}) AND NOT a.agent_flag AND NOT a.npc_flag AND a.minted
+        AND a.referral_same_ip_hold IS NOT TRUE AND held.recruit_account IS NULL
+        AND (
+          a.referral_same_ip_hold IS FALSE
+          OR recruit_origin.created_ip_authority IS NULL
+          OR recruiter_origin.created_ip_authority IS NULL
+          OR recruit_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+          OR recruiter_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+          OR recruit_origin.created_ip IS NULL OR recruiter_origin.created_ip IS NULL
+          OR recruit_origin.created_ip IN ('0.0.0.0','::')
+          OR recruiter_origin.created_ip IN ('0.0.0.0','::')
+          OR recruit_origin.created_ip <> recruiter_origin.created_ip
+        )${qualificationExists}
+      GROUP BY a.referred_by`, aidList)).rows;
+  const counts = new Map(aidList.map((id) => [id, 0]));
+  for (const row of qualified) counts.set(row.referred_by, Number(row.n));
+
   let updated = 0;
   for (const a of agents) {
     const n = counts.get(a.account_id);
-    if (n !== Number(a.capo_recruits)) {
-      await pool.query('UPDATE account_persistent SET capo_recruits=$1 WHERE account_id=$2', [n, a.account_id]);
-      updated++;
-    }
+    await client.query(
+      'UPDATE account_persistent SET capo_recruits=$1, capo_recruits_at=now() WHERE account_id=$2',
+      [n, a.account_id]);
+    if (n !== Number(a.capo_recruits)) updated++;
   }
-  return { updated };
+  const hasMore = candidates.length > pageSize;
+  const nextCursor = hasMore ? agents.at(-1).account_id : null;
+  await client.query(
+    "UPDATE worker_sweep_cursors SET after_key=$1, upper_key=$2, updated_at=now() WHERE sweep_key='capo-license'",
+    [nextCursor, hasMore ? upper : null]);
+  return { updated, processed: agents.length, hasMore, nextCursor, wrapped: !hasMore };
+}
+
+export async function sweepCapoLicense(pool, options = {}) {
+  const pageSize = boundedSweepOption(options.pageSize, CAPO_SWEEP_PAGE_SIZE, CAPO_SWEEP_PAGE_SIZE);
+  const pageBudget = boundedSweepOption(options.pageBudget, CAPO_SWEEP_PAGE_BUDGET, CAPO_SWEEP_PAGE_BUDGET);
+  let updated = 0, processed = 0, pages = 0, last = null;
+  for (; pages < pageBudget; pages++) {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      last = await sweepCapoPage(client, pageSize);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw error;
+    } finally { client.release(); }
+    updated += last.updated;
+    processed += last.processed;
+    if (!last.hasMore) { pages++; break; }
+  }
+  return { updated, processed, pages, hasMore: !!last?.hasMore,
+    nextCursor: last?.nextCursor || null, wrapped: !!last?.wrapped };
 }
 
 // The license board (GET /v1/capo, authed): your count, tier, perks, and exactly what counts —
 // a claim an agent can act on has to disclose its own terms (the terms-ride-with-the-price rule).
 export async function capoBoard(pool, accountId) {
   const ap = (await pool.query(
-    'SELECT agent_flag, capo_recruits FROM account_persistent WHERE account_id=$1', [accountId])).rows[0] || {};
-  const n = Number(ap.capo_recruits || 0);
+    'SELECT agent_flag, capo_recruits, capo_recruits_at FROM account_persistent WHERE account_id=$1', [accountId])).rows[0] || {};
+  const n = effectiveCapoRecruits(ap.capo_recruits, ap.capo_recruits_at);
   const perks = capoPerksOf(n);
   const next = CAPO.TIERS.find((t) => t.n > n) || null;
   const budget = (await pool.query(

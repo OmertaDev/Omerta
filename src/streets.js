@@ -26,6 +26,7 @@ import * as Soldiers from './soldiers.js';
 import * as Clues from './clues.js';
 import { priceBlock, DISTRICTS, GOODS, DRUGS, goodPriceOf, demandOf, makingsPriceOf } from './rules.js';
 import { goodsLiquidityBoard } from './goodsmarket.js';
+import { goodsBuyQuote, goodsSellQuote } from './goodsquote.js';
 
 // The price board, in ONE place. `/v1/market/prices` built this inline in its route; with a second
 // caller that becomes two implementations of one board, which is how the two ends of a mirror come to
@@ -33,8 +34,16 @@ import { goodsLiquidityBoard } from './goodsmarket.js';
 export const marketPrices = async (client, block = priceBlock()) => ({
   block,
   liquidity: await goodsLiquidityBoard(client, block),
+  // Keep the original reference map for API compatibility and publish the NPC's actual neutral
+  // bid/ask beside it. The former one-price board made the UI advertise reference-price resale
+  // after the shop spread changed. Action receipts may still improve/worsen these neutral units
+  // through the actor's turf and Path; both sides charge their separately-rounded 2% cash take.
   goods: Object.fromEntries(DISTRICTS.map((d) =>
     [d.id, Object.fromEntries(GOODS.map((g) => [g.id, goodPriceOf(g.id, d.id, block)]))])),
+  goodsBuy: Object.fromEntries(DISTRICTS.map((d) =>
+    [d.id, Object.fromEntries(GOODS.map((g) => [g.id, goodsBuyQuote(g.id, d.id, 1, {}, block).unit]))])),
+  goodsSell: Object.fromEntries(DISTRICTS.map((d) =>
+    [d.id, Object.fromEntries(GOODS.map((g) => [g.id, goodsSellQuote(g.id, d.id, 1, {}, {}, block).unit]))])),
   demand: Object.fromEntries(DISTRICTS.map((d) =>
     [d.id, Object.fromEntries(DRUGS.map((dr) => [dr.id, Math.round(demandOf(dr.id, d.id, block) * 100) / 100]))])),
   makings: Object.fromEntries(DRUGS.map((dr) => [dr.id, makingsPriceOf(dr.id, block)])),
