@@ -291,7 +291,7 @@
 | [src/intelforecastinvariants.js](../../src/intelforecastinvariants.js) | 65 | platform-core | 1 / 1 | 0 | 2 | 0 |
 | [src/intelforecastjobs.js](../../src/intelforecastjobs.js) | 171 | platform-core | 4 / 6 | 5 | 2 | 2 |
 | [src/intelforecasts.js](../../src/intelforecasts.js) | 86 | platform-core | 1 / 14 | 0 | 1 | 6 |
-| [src/invariants.js](../../src/invariants.js) | 1808 | economy-ledger | 51 / 223 | 1 | 75 | 210 |
+| [src/invariants.js](../../src/invariants.js) | 1808 | economy-ledger | 51 / 224 | 1 | 75 | 210 |
 | [src/invites.js](../../src/invites.js) | 45 | platform-core | 1 / 8 | 2 | 3 | 2 |
 | [src/item-lock-trace.js](../../src/item-lock-trace.js) | 59 | platform-core | 1 / 6 | 0 | 0 | 4 |
 | [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 13 | 0 | 6 | 9 |
