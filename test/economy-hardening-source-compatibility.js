@@ -94,7 +94,7 @@ const phase2TimeoutFiles = ['test/phase2-postgres.js'];
 const growthDeterminismFiles = ['test/growth.js'];
 const campaignExpiryFiles = ['src/commercialcampaigns.js', 'test/commercialcampaigns-integration.js', 'test/hardening.js'];
 const commerceAdmissionFiles = ['tools/commerce-source-compatibility.js'];
-const releaseTailFiles = ['src/growth.js', 'test/gates.js'];
+const releaseTailFiles = ['src/growth.js', 'test/gates.js', 'tools/pgquery.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
@@ -216,7 +216,7 @@ assert.equal(git('rev-parse', ECONOMY_HARDENING_COMMERCE_ADMISSION_REVISION + '^
 assert.equal(git('rev-parse', ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR + '^{tree}').trim(),
   ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR_TREE);
 assert.match(ECONOMY_HARDENING_COMMERCE_ADMISSION_PHASE, /exact-economy-commerce-admission-source-transfer-only/);
-assert.equal(ECONOMY_RELEASE_TAIL_REVISION, '3b1c6704a5f5c7d9348c8f59399c8fc133640a09');
+assert.equal(ECONOMY_RELEASE_TAIL_REVISION, '0d993ee68e107cdf44df5add0ab29b5b8a1527d5');
 assert.equal(ECONOMY_RELEASE_TAIL_PREDECESSOR, 'f8de8b7ad0ec4ede750f6f94012494b1a9cdb1d5');
 execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_RELEASE_TAIL_PREDECESSOR,
   ECONOMY_RELEASE_TAIL_REVISION]);
@@ -834,7 +834,7 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyReleaseTailTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 243, 'positive control count drifted');
-assert.equal(refusals, 809, 'refusal control count drifted');
-assert.equal(hunks, 339, 'inverse-hunk control count drifted');
+assert.equal(positives, 245, 'positive control count drifted');
+assert.equal(refusals, 820, 'refusal control count drifted');
+assert.equal(hunks, 340, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);

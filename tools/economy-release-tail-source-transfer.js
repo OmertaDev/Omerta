@@ -1,5 +1,5 @@
-// Exact source-only tail for the post-seal Capo connection-release repair.
-// This proves the one-line child revision without changing any earlier source evidence.
+// Exact source-only tail for the post-seal Capo release and SQL-source-pin repairs.
+// It reconstructs the reviewed pre-tail candidate without inheriting runtime clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
@@ -21,8 +21,8 @@ const normalize = (input) => {
   return text;
 };
 
-export const ECONOMY_RELEASE_TAIL_REVISION = '3b1c6704a5f5c7d9348c8f59399c8fc133640a09';
-export const ECONOMY_RELEASE_TAIL_TREE = 'ea2e212a53122b7ab164bfdb44703a2f303dddb4';
+export const ECONOMY_RELEASE_TAIL_REVISION = '0d993ee68e107cdf44df5add0ab29b5b8a1527d5';
+export const ECONOMY_RELEASE_TAIL_TREE = '65d0d465b69b34ebd2f3d65da5792c83b9cedc9f';
 export const ECONOMY_RELEASE_TAIL_PREDECESSOR = 'f8de8b7ad0ec4ede750f6f94012494b1a9cdb1d5';
 export const ECONOMY_RELEASE_TAIL_PREDECESSOR_TREE = 'e7d0258572f42959687c5e7ffb24446c43eccda6';
 export const ECONOMY_RELEASE_TAIL_PHASE =
@@ -77,6 +77,22 @@ export const ECONOMY_RELEASE_TAIL_DOMAINS = freeze({
       {
         "current": "  assert(bucketNames('src/merchantloyalty.js',\"const already_used=0; client.query('SELECT already_used FROM meters');\").includes('already_used'),'Real counters and columns remain in the corpus');\n  assert(bucketNames('src/merchantloyalty.js',merchantBucket+'\\nconst unknown_used=0;').includes('unknown_used'));\n\n  const socialProofBucket=fs.readFileSync('src/growth.js','utf8');\n  assert(!bucketNames('src/growth.js',socialProofBucket).includes('proof_used'),\n    'Only the three exact permanent social-proof receipt conflicts are classified');\n  assert(!bucketNames('src/growth.js',socialProofBucket.replaceAll('\\r\\n','\\n').replaceAll('\\n','\\r\\n')).includes('proof_used'));\n  for(const changed of [\n    socialProofBucket.replace(\"SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM\", \"'other-scope', SOCIAL_PROOF_CLAIM\"),\n    socialProofBucket.replace('socialProofWasUsed(client, normalized)', 'false'),\n    socialProofBucket+'\\nconst proof_used=0; const proof_at=Date.now();\\n',\n  ]){assert.notEqual(changed,socialProofBucket);assert(bucketNames('src/growth.js',changed).includes('proof_used'),\n    'Changed social receipt identity/read/refill source remains unclassified');}\n  assert(bucketNames('src/unknown.js',socialProofBucket).includes('proof_used'));\n  assert(bucketNames('src/growth.js',\"throw new GameError('proof_used', 'other');\").includes('proof_used'));\n  assert(bucketNames('src/growth.js',socialProofBucket+'\\nclient.query(\\'SELECT proof_used FROM meters\\');').includes('proof_used'),\n    'Actual proof counters cannot hide behind the immutable receipt conflict');\n\n  assert.deepEqual(bucketNames('src/companyworkflows.js', \"fail('source_used'); fail('proof_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', \"fail('source_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);\n",
         "baseline": "  assert(bucketNames('src/merchantloyalty.js',\"const already_used=0; client.query('SELECT already_used FROM meters');\").includes('already_used'),'Real counters and columns remain in the corpus');\n  assert(bucketNames('src/merchantloyalty.js',merchantBucket+'\\nconst unknown_used=0;').includes('unknown_used'));\n\n  assert.deepEqual(bucketNames('src/companyworkflows.js', \"fail('source_used'); fail('proof_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', \"fail('source_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);\n"
+      }
+    ]
+  },
+  "tools/pgquery.js": {
+    "mode": "100644",
+    "currentSha256": "91ee0cc750d081ac530374310926ae356c801e8c8c854cd14e7a2e3ded58f3bf",
+    "currentBlob": "e561c463b27fd8c447c64ea306deaba97697f00c",
+    "currentBytes": 20651,
+    "baselineSha256": "bef8b095d7d3939f860cdc0c1c47cce03a959883d5c357bc432cbc2a5eefeeea",
+    "baselineBlob": "6f5f348115123e15f3cc3d18d0bb12334045ad10",
+    "baselineBytes": 20651,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "// a separate guard over the unchanged scanner corpus.\nfunction assertReviewedCommerceQueries(sources, readable, unreadableSites) {\n  const pins = {\n    'src/commercialcampaigns.js': 'aa9f3b47f939f6a2df00d923fd3eaede4bdad19fb7a3e20c92e3257ea13373ab',\n    'src/commercialcampaignruntime.js': '74b5776f868528d0dd1617095613648dc7b4ad9823e6096b944b6101d51f5afb',\n  };\n  if (JSON.stringify(Object.keys(sources).sort()) !== JSON.stringify(Object.keys(pins).sort()))\n",
+        "baseline": "// a separate guard over the unchanged scanner corpus.\nfunction assertReviewedCommerceQueries(sources, readable, unreadableSites) {\n  const pins = {\n    'src/commercialcampaigns.js': 'f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c',\n    'src/commercialcampaignruntime.js': '74b5776f868528d0dd1617095613648dc7b4ad9823e6096b944b6101d51f5afb',\n  };\n  if (JSON.stringify(Object.keys(sources).sort()) !== JSON.stringify(Object.keys(pins).sort()))\n"
       }
     ]
   }
