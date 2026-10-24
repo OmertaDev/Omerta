@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a371fb31138f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5071b4d23af1`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4790 |
+| Commits in clone | 4794 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-24 — test(release): reseal enterprise economy inputs |
+| Latest commit | 2026-10-24 — test(release): reseal SQL pin repair inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3823 |
+| OmertaDev | 3827 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 122 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 792 | historical |
-| knowledge/generated/graph-summary.md | 792 | historical |
-| knowledge/generated/graph.json | 792 | historical |
-| knowledge/generated/inventory.md | 792 | historical |
+| knowledge/generated/github-history.md | 793 | historical |
+| knowledge/generated/graph-summary.md | 793 | historical |
+| knowledge/generated/graph.json | 793 | historical |
+| knowledge/generated/inventory.md | 793 | historical |
 | [SPEC.md](../../SPEC.md) | 596 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 487 | yes |
@@ -66,7 +66,7 @@
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 83 | yes |
 | [test/hardening.js](../../test/hardening.js) | 71 | yes |
-| [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 69 | yes |
+| [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 70 | yes |
 | [src/preflight.js](../../src/preflight.js) | 68 | yes |
 | [test/director-migration.js](../../test/director-migration.js) | 66 | yes |
 | [tools/sim.js](../../tools/sim.js) | 62 | yes |
