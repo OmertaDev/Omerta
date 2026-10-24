@@ -72,7 +72,8 @@ const enterpriseCombinedHistoricalFiles = Object.freeze([
   'src/cityhomes.js', 'src/corner.js', 'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js',
   'src/growth.js', 'src/heists.js', 'src/hustle.js', 'src/kitchen.js', 'src/opportunities.js',
   'src/pen.js', 'src/population.js', 'src/races.js', 'src/routes/rwa.js',
-  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js',
+  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js', 'src/verify.js',
+  'src/wire.js',
 ]);
 const npcEntries = new Set([
   'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',
@@ -532,8 +533,11 @@ function rejectHistoricalApplicationSources() {
   const combinedCurrents = new Map();
   for (const combinedFile of enterpriseCombinedHistoricalFiles) {
     const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);
-    const physicalCurrent = canonical(continuousCityHistoricalInput(combinedFile,
-      String(originalRead(path.join(root, combinedFile)))));
+    const physicalRaw = canonical(originalRead(path.join(root, combinedFile)));
+    const physicalDigest = sha256(physicalRaw);
+    const physicalCurrent = physicalDigest === combinedRow.after.sha256 || physicalDigest === combinedRow.before.sha256
+      ? physicalRaw
+      : canonical(continuousCityHistoricalInput(combinedFile, physicalRaw));
     const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));
     const combinedFrozen = String(blob(combinedFile, release));
     const combinedExpected = blob(combinedFile, history);
