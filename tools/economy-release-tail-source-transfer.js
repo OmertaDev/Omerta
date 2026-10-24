@@ -1,4 +1,4 @@
-// Exact source-only tail for the post-seal Capo release and SQL-source-pin repairs.
+// Exact source-only tail for the post-seal Capo, SQL-source-pin, and historical-fixture repairs.
 // It reconstructs the reviewed pre-tail candidate without inheriting runtime clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -21,8 +21,8 @@ const normalize = (input) => {
   return text;
 };
 
-export const ECONOMY_RELEASE_TAIL_REVISION = '0d993ee68e107cdf44df5add0ab29b5b8a1527d5';
-export const ECONOMY_RELEASE_TAIL_TREE = '65d0d465b69b34ebd2f3d65da5792c83b9cedc9f';
+export const ECONOMY_RELEASE_TAIL_REVISION = 'e7eb07002b3e0fe228c08dc3a0629cf8dfa9fcef';
+export const ECONOMY_RELEASE_TAIL_TREE = 'd01fa423d71d4cfb82928cf08aaa24f1c4d42d5f';
 export const ECONOMY_RELEASE_TAIL_PREDECESSOR = 'f8de8b7ad0ec4ede750f6f94012494b1a9cdb1d5';
 export const ECONOMY_RELEASE_TAIL_PREDECESSOR_TREE = 'e7d0258572f42959687c5e7ffb24446c43eccda6';
 export const ECONOMY_RELEASE_TAIL_PHASE =
@@ -77,6 +77,26 @@ export const ECONOMY_RELEASE_TAIL_DOMAINS = freeze({
       {
         "current": "  assert(bucketNames('src/merchantloyalty.js',\"const already_used=0; client.query('SELECT already_used FROM meters');\").includes('already_used'),'Real counters and columns remain in the corpus');\n  assert(bucketNames('src/merchantloyalty.js',merchantBucket+'\\nconst unknown_used=0;').includes('unknown_used'));\n\n  const socialProofBucket=fs.readFileSync('src/growth.js','utf8');\n  assert(!bucketNames('src/growth.js',socialProofBucket).includes('proof_used'),\n    'Only the three exact permanent social-proof receipt conflicts are classified');\n  assert(!bucketNames('src/growth.js',socialProofBucket.replaceAll('\\r\\n','\\n').replaceAll('\\n','\\r\\n')).includes('proof_used'));\n  for(const changed of [\n    socialProofBucket.replace(\"SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM\", \"'other-scope', SOCIAL_PROOF_CLAIM\"),\n    socialProofBucket.replace('socialProofWasUsed(client, normalized)', 'false'),\n    socialProofBucket+'\\nconst proof_used=0; const proof_at=Date.now();\\n',\n  ]){assert.notEqual(changed,socialProofBucket);assert(bucketNames('src/growth.js',changed).includes('proof_used'),\n    'Changed social receipt identity/read/refill source remains unclassified');}\n  assert(bucketNames('src/unknown.js',socialProofBucket).includes('proof_used'));\n  assert(bucketNames('src/growth.js',\"throw new GameError('proof_used', 'other');\").includes('proof_used'));\n  assert(bucketNames('src/growth.js',socialProofBucket+'\\nclient.query(\\'SELECT proof_used FROM meters\\');').includes('proof_used'),\n    'Actual proof counters cannot hide behind the immutable receipt conflict');\n\n  assert.deepEqual(bucketNames('src/companyworkflows.js', \"fail('source_used'); fail('proof_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', \"fail('source_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);\n",
         "baseline": "  assert(bucketNames('src/merchantloyalty.js',\"const already_used=0; client.query('SELECT already_used FROM meters');\").includes('already_used'),'Real counters and columns remain in the corpus');\n  assert(bucketNames('src/merchantloyalty.js',merchantBucket+'\\nconst unknown_used=0;').includes('unknown_used'));\n\n  assert.deepEqual(bucketNames('src/companyworkflows.js', \"fail('source_used'); fail('proof_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', \"fail('source_used');\"), []);\n  assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);\n"
+      }
+    ]
+  },
+  "test/lib/rc1-historical-source-fixture.js": {
+    "mode": "100644",
+    "currentSha256": "cf908ead1783070271e6071ee5420959d557161c31ee91977f3dcc40be250083",
+    "currentBlob": "c5e37721bfa33ab6f85e7b570e7d987793f936de",
+    "currentBytes": 44876,
+    "baselineSha256": "b3164b9d85e56a7da1b909b8678ea83262b144e210a425a2aedb8a5b2e0d7570",
+    "baselineBlob": "a4bece17954393263f183e99deca72b094940739",
+    "baselineBytes": 44640,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "  'src/cityhomes.js', 'src/corner.js', 'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js',\n  'src/growth.js', 'src/heists.js', 'src/hustle.js', 'src/kitchen.js', 'src/opportunities.js',\n  'src/pen.js', 'src/population.js', 'src/races.js', 'src/routes/rwa.js',\n  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js', 'src/verify.js',\n  'src/wire.js',\n]);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n",
+        "baseline": "  'src/cityhomes.js', 'src/corner.js', 'src/economy.js', 'src/goodsmarket.js', 'src/goodsquote.js',\n  'src/growth.js', 'src/heists.js', 'src/hustle.js', 'src/kitchen.js', 'src/opportunities.js',\n  'src/pen.js', 'src/population.js', 'src/races.js', 'src/routes/rwa.js',\n  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js',\n]);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n"
+      },
+      {
+        "current": "  const combinedCurrents = new Map();\n  for (const combinedFile of enterpriseCombinedHistoricalFiles) {\n    const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);\n    const physicalRaw = canonical(originalRead(path.join(root, combinedFile)));\n    const physicalDigest = sha256(physicalRaw);\n    const physicalCurrent = physicalDigest === combinedRow.after.sha256 || physicalDigest === combinedRow.before.sha256\n      ? physicalRaw\n      : canonical(continuousCityHistoricalInput(combinedFile, physicalRaw));\n    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));\n    const combinedFrozen = String(blob(combinedFile, release));\n    const combinedExpected = blob(combinedFile, history);\n",
+        "baseline": "  const combinedCurrents = new Map();\n  for (const combinedFile of enterpriseCombinedHistoricalFiles) {\n    const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);\n    const physicalCurrent = canonical(continuousCityHistoricalInput(combinedFile,\n      String(originalRead(path.join(root, combinedFile)))));\n    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));\n    const combinedFrozen = String(blob(combinedFile, release));\n    const combinedExpected = blob(combinedFile, history);\n"
       }
     ]
   },
