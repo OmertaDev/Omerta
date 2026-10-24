@@ -2316,7 +2316,7 @@ const SCENERY_WAIVED = {
     if(normalized.includes('\r')||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n')))return false;
     const fields={
   "commercialcampaigns.js": {
-    "sha256": "f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c",
+    "sha256": "aa9f3b47f939f6a2df00d923fd3eaede4bdad19fb7a3e20c92e3257ea13373ab",
     "key": "kind",
     "variable": "entry",
     "member": "kind",
@@ -3581,6 +3581,9 @@ scopedSocialContext = async function(db) {
     "src/coordination/knowledge.js|keys.join(',')": 'insert helper row keys are fixed source-owned object properties; values including player-authored text are separately bound, and rebuild rows come only from those same fixed event schemas',
     'src/coordination/knowledge.js|key': "insert undo predicate is only the literal 'id' or 'claim_id', chosen by own-property presence",
     'src/coordination/knowledge.js|MAX_EVIDENCE + 1': 'module-private constant MAX_EVIDENCE=256 plus one overflow sentinel; neither term comes from the request or mutable state',
+    'src/growth.js|pageSize + 1': 'boundedSweepOption returns a positive integer capped at the module-private 500-row maximum; only the LIMIT number enters SQL text',
+    'src/growth.js|qualificationJoins': 'boot-established dbCaps selects either an empty string or one fixed JOIN fragment; every identity remains a bound parameter',
+    'src/growth.js|qualificationExists': 'boot-established dbCaps selects either an empty string or one fixed EXISTS fragment; every identity remains a bound parameter',
 
     // LOCALLY-BUILT PAGINATION FRAGMENTS. Each is a template containing only $n placeholders; the
     // cursor VALUES are validated in pageOptions and pushed as bound parameters, never spliced.
@@ -3605,7 +3608,7 @@ scopedSocialContext = async function(db) {
     const normalized=source.replaceAll('\r\n','\n');
     return rel==='src/commercialcampaigns.js'&&!normalized.includes('\r')
       &&(source===normalized||source===normalized.replaceAll('\n','\r\n'))
-      &&createHash('sha256').update(normalized).digest('hex')==='f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c'
+      &&createHash('sha256').update(normalized).digest('hex')==='aa9f3b47f939f6a2df00d923fd3eaede4bdad19fb7a3e20c92e3257ea13373ab'
       &&["columns.join(',')","columns.map((_, i) => '$' + (i + 1)).join(',')"].includes(expr);
   };
   const commercialInsertSource=fs.readFileSync(path.join(SRC,'commercialcampaigns.js'),'utf8');
@@ -4510,7 +4513,7 @@ scopedSocialContext = async function(db) {
   // source rows, consent/actor revalidation and conditional SQL own cross-worker state.
   const exactCommerceCompletionPosture = (key, source) => {
     const seals={
-  "commercialcampaigns.js:completions": "f2826c3c58539ae7c160c8302545d367e9d883e6ebf0e74a0f64957f0775511c",
+  "commercialcampaigns.js:completions": "aa9f3b47f939f6a2df00d923fd3eaede4bdad19fb7a3e20c92e3257ea13373ab",
   "merchantloyalty.js:purchaseContexts": "8cf4b3e14f7f5f2ef0a798cd1e435bac4fdf50ea96c25a546b30032faf4bf700",
   "saleattribution.js:purchaseScopes": "6fe23fcc2ab1413eac75bf69776a0df1b7a6c7c27213f9758eadbb51839ccd13",
   "shoppingbasket.js:purchaseScopes": "40a57a58f485354e31d5108252893aa122af6d97c73f3ae688f66f2bd0f903d6"
@@ -5034,8 +5037,19 @@ scopedSocialContext = async function(db) {
     // Mask only this exact error token; variables/SQL columns are never masked.
     return source.replace(original,original.replace("fail('already_used')",'fail()'));
   };
+  const socialProofConsumedConflict=(file,source)=>{
+    const original="new GameError('proof_used', 'That X post has already earned a social reward.')";
+    const normalized=source.replaceAll('\r\n','\n');
+    if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\r')
+      ||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n'))
+      ||createHash('sha256').update(normalized).digest('hex')!=='8c1de1178b3d8a600298e0a6346ac09973b752fb90b82ffab30105d6eab7093a')return source;
+    // These three refusals read the permanent provider/post receipt, not a refillable allowance.
+    // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.
+    return source.replaceAll(original,original.replace("'proof_used'","'proof'"));
+  };
 
-  const bucketSource = (file, source) => file === 'src/merchantloyalty.js' ? merchantConsumedConflict(file,source) : file === 'src/companyworkflows.js'
+  const bucketSource = (file, source) => file === 'src/merchantloyalty.js' ? merchantConsumedConflict(file,source) : file === 'src/growth.js'
+    ? socialProofConsumedConflict(file,source) : file === 'src/companyworkflows.js'
     ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '')
     : ['src/commercialnegotiation.js', 'src/territoryeconomics.js'].includes(file) ? source.replace(/\bfail\('source_used'\)/g, '') : laboratorySourceConflict(file,source);
   const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
@@ -5056,6 +5070,21 @@ scopedSocialContext = async function(db) {
   assert(bucketNames('src/merchantloyalty.js',"fail('already_used');").includes('already_used'));
   assert(bucketNames('src/merchantloyalty.js',"const already_used=0; client.query('SELECT already_used FROM meters');").includes('already_used'),'Real counters and columns remain in the corpus');
   assert(bucketNames('src/merchantloyalty.js',merchantBucket+'\nconst unknown_used=0;').includes('unknown_used'));
+
+  const socialProofBucket=fs.readFileSync('src/growth.js','utf8');
+  assert(!bucketNames('src/growth.js',socialProofBucket).includes('proof_used'),
+    'Only the three exact permanent social-proof receipt conflicts are classified');
+  assert(!bucketNames('src/growth.js',socialProofBucket.replaceAll('\r\n','\n').replaceAll('\n','\r\n')).includes('proof_used'));
+  for(const changed of [
+    socialProofBucket.replace("SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM", "'other-scope', SOCIAL_PROOF_CLAIM"),
+    socialProofBucket.replace('socialProofWasUsed(client, normalized)', 'false'),
+    socialProofBucket+'\nconst proof_used=0; const proof_at=Date.now();\n',
+  ]){assert.notEqual(changed,socialProofBucket);assert(bucketNames('src/growth.js',changed).includes('proof_used'),
+    'Changed social receipt identity/read/refill source remains unclassified');}
+  assert(bucketNames('src/unknown.js',socialProofBucket).includes('proof_used'));
+  assert(bucketNames('src/growth.js',"throw new GameError('proof_used', 'other');").includes('proof_used'));
+  assert(bucketNames('src/growth.js',socialProofBucket+'\nclient.query(\'SELECT proof_used FROM meters\');').includes('proof_used'),
+    'Actual proof counters cannot hide behind the immutable receipt conflict');
 
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
   assert.deepEqual(bucketNames('src/commercialnegotiation.js', "fail('source_used');"), []);
