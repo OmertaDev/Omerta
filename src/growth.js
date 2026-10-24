@@ -1125,7 +1125,7 @@ export async function sweepCapoLicense(pool, options = {}) {
     } catch (error) {
       await client.query('ROLLBACK').catch(() => {});
       throw error;
-    } finally { client.release?.(); }
+    } finally { client.release(); }
     updated += last.updated;
     processed += last.processed;
     if (!last.hasMore) { pages++; break; }
