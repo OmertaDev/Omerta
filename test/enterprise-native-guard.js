@@ -102,10 +102,10 @@ if(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS.status==='UNSEALED'){reject('actual com
 if(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.status==='UNSEALED')reject('current release stays closed before actual source seal',()=>assertEnterpriseCombinedInputDefinition());else pass('distinct exact current release declaration is sealed',()=>assertEnterpriseCombinedInputDefinition());
 assert.equal(COMMERCE_NATIVE_FILES.length,1569);assert.equal(COMMERCE_NATIVE_BASE_INPUTS.length,1566);assert.equal(COMMERCE_NATIVE_BASE_REVISION,"181422abe5312e24be5bd76ec56fe87454bda664");
 assert.equal(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.length,82);
-assert.equal(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.additions.length,73);
-assert.equal(ENTERPRISE_NATIVE_FILES.length,1642);
+assert.equal(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.additions.length,74);
+assert.equal(ENTERPRISE_NATIVE_FILES.length,1643);
 for(const file of ['src/commercialcampaigns.js','src/verify.js','src/wire.js','test/director-migration.js','tools/commerce-source-compatibility.js'])assert(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.some(row=>row.file===file));
-for(const file of ['src/client-ip.js','test/client-ip.js','src/socialproof.js','tools/economy-hardening-source-transfer.js'])assert(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.additions.some(row=>row.file===file));
+for(const file of ['src/client-ip.js','test/client-ip.js','src/socialproof.js','tools/economy-hardening-source-transfer.js','tools/economy-release-tail-source-transfer.js'])assert(releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS.additions.some(row=>row.file===file));
 const combined=freeze({...clone(ENTERPRISE_NATIVE_COMMERCE_GUI_INPUTS),status:'SEALED',revision:'d'.repeat(40),guiSource:"59dbb6d99312fa44dba1fbec5bdf24948740e0dc",guiWitnessSHA256:"804f29d96f31767fb3447dc61ed01ca243d9770357923ded125493bb19e71f58",replacements:[{file:'src/server.js',before:{blob:COMMERCE_NATIVE_BASE_INPUTS.find(r=>r.file==='src/server.js').blob,sha256:COMMERCE_NATIVE_BASE_INPUTS.find(r=>r.file==='src/server.js').sha256},after:{...authoredPin}}],additions:[{"file":"tools/enterprise-native-continuous-city-inputs.js","mode":"100644","blob":"1af546bd54ac00f7dbc5db4d2c6e77ddefe1cf95","sha256":"804f29d96f31767fb3447dc61ed01ca243d9770357923ded125493bb19e71f58"}]});
 pass('synthetic combined definition preserves original C prefix and ordinary GUI witness',()=>assertEnterpriseCombinedInputDefinition(combined));
 pass('synthetic combined actual replacement pin',()=>assertEnterpriseCombinedTrackedInput('src/server.js',record,record,authoredBytes,combined));
