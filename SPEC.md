@@ -12,10 +12,10 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **583** files, **136750** lines (recursive source inventory) |
+| Backend modules | **584** files, **136750** lines (recursive source inventory) |
 | Test suites | **899** files, **192888** lines (recursive source inventory) |
 | HTTP routes | **1309** registrations (**1309** unique; 1242 under `/v1`) |
-| Database tables | **574** (`schema.sql`, 9679 lines) |
+| Database tables | **575** (`schema.sql`, 9679 lines) |
 | Client | **14369** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11545** lines, **1111** declared top-level Foundry test functions; the release gate re-measures the passing suite |
@@ -23,7 +23,7 @@ Census refreshed from the current repository; these counts do not identify a dep
 | Design + audit docs | **964** markdown files, **157407** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
-Roughly **315,000 lines** of backend code, tests, schema and top-level contracts.
+Roughly **351,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 
