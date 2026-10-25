@@ -36,10 +36,10 @@ liquidity or gameplay-economic configuration is changed.
 
 The repair checkpoint is c1720a694799e743c6f70bc3069dba2bbecae08e.
 Its separate three-file historical reader record preserves the original eight-file
-UX envelope. The native input declaration binds authored source
-d4df955c844967985bc93184b95f6f4ba195b6fb and is committed at
-c5e803b08d2e69322f34b38ea1c8f211faaf419a: 1,683 ordinary inputs,
-19 replacements and 44 additions. The original 16 workloads and limits remain.
+UX envelope. Additional exact Enterprise/Commerce schema-reader adaptations are
+recorded at 8c72bd62a63c63b4d5f58a58cd813368b3a1fd18. The native input declaration
+binds that authored source: 1,683 ordinary inputs, 20 replacements and 44 additions.
+The original 16 workloads and limits remain.
 
 Static PostgreSQL preparation passed with 7,384 statements and 173 interpolated
 queries, retaining the original ceiling. Physical hashes and strict admission
