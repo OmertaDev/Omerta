@@ -70,19 +70,7 @@ const readerEdits = {
   'test/commerce-release-phase2-migration-catalog.js': [
     ["import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';\n", ''],
     ["commerceDefaultSchema(uxHistoricalInput('schema.sql',uniformRead('../schema.sql')))", "commerceDefaultSchema(uniformRead('../schema.sql'))"],
-    [String.raw`// Only the exact Enterprise historical-reader integration is reversed before original whole-file pins.
-const uxEnterpriseReaderEdits = [
-  ["import {execFileSync} from 'node:child_process';\nimport {uxHistoricalInput} from '../tools/ux-source-compatibility.js';\n\n", "import {execFileSync} from 'node:child_process';\n\n"],
-  ["const dispatchSchema=uxHistoricalInput('schema.sql',fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8'));", "const dispatchSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');"],
-  ["const actualSchema=uxHistoricalInput('schema.sql',fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8'));", "const actualSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');"],
-];
-function uxEnterpriseReaderInput(file,input){
-  if(file!=='test/enterprise-release-phase2-migration-catalog.js'||!uxEnterpriseReaderEdits.every(([current])=>input.includes(current)))return input;
-  for(const[current,baseline]of uxEnterpriseReaderEdits){assert.equal(input.split(current).length,2,'Unique exact Enterprise reader edit');input=input.replace(current,()=>baseline);}
-  return input;
-}
-`, ''],
-    ["function commerceDefaultFingerprint(file,input,expected){input=uxHistoricalInput(file,input);input=uxEnterpriseReaderInput(file,input);", "function commerceDefaultFingerprint(file,input,expected){"],
+    ["function commerceDefaultFingerprint(file,input,expected){input=uxHistoricalInput(file,input);", "function commerceDefaultFingerprint(file,input,expected){"],
   ],
   'test/enterprise-release-phase2-migration-catalog.js': [
     ["import {execFileSync} from 'node:child_process';\nimport {uxHistoricalInput} from '../tools/ux-source-compatibility.js';\n\n", "import {execFileSync} from 'node:child_process';\n\n"],
@@ -97,3 +85,4 @@ for (const [file, edits] of Object.entries(readerEdits)) {
 }
 console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor: pin.targetRevision, files: pin.files.length, inverseHunks: inverseCount, positives, refusals, readerOnlyEdits: Object.values(readerEdits).reduce((total, edits) => total + edits.length, 0), runtime: false, native: false }));
 await import('./lib/ux-native-reader-source-compatibility.js');
+await import('./lib/ux-enterprise-reader-source-compatibility.js');
