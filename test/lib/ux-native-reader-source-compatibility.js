@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { UX_NATIVE_READER_SOURCE as pin, UX_NATIVE_READER_SOURCE_FILES, qualifyUxNativeReaderSource, uxNativeReaderHistoricalInput } from '../../tools/ux-native-reader-source-compatibility.js';
 import { qualifyUxSource } from '../../tools/ux-source-compatibility.js';
-const AUTHORED_NATIVE_READER_FIX = 'UNSEALED';
+const AUTHORED_NATIVE_READER_FIX = 'c1720a694799e743c6f70bc3069dba2bbecae08e';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 assert.equal(pin.status, 'SEALED'); assert.equal(pin.revision, AUTHORED_NATIVE_READER_FIX);
