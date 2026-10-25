@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import {isDeepStrictEqual} from 'node:util';
 import {execFileSync} from 'node:child_process';
+import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';
 
 assert.equal(process.execArgv.length,0,'Only the bare Node test entrypoint is admitted');
 const native=process.argv.length===3&&process.argv[2]==='--postgres';
@@ -29,7 +30,7 @@ const uniform=text=>{const normalized=lf(text);return !normalized.includes('\r')
 const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
 const frozenText=(relative,expected)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};
 // Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.
-const dispatchSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchSchema));
+const dispatchSchema=uxHistoricalInput('schema.sql',fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8'));assert(uniform(dispatchSchema));
 const commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa21bcfe2f3bc163b26f08eea4c6f0dac97c';
 const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';
 if(commerceDeedCurrent){
@@ -115,7 +116,7 @@ assert.equal(Buffer.byteLength(append),6522);assert.equal(append.split('\n').len
 assert.equal(sources.predecessor,old.predecessor+append);
 for(const input of[sources.current,sources.current.replaceAll('\n','\r\n')])assert.equal(enterpriseMigrationPredecessor(input),sources.predecessor);
 for(const input of[sources.predecessor,sources.predecessor.replaceAll('\n','\r\n')])assert.equal(enterpriseNativeHistoricalPredecessor(input),prior.marketOperationsNativeHistoricalPredecessor(old.predecessor));
-const actualSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(actualSchema));const currentDeed=enterprise.enterpriseCurrentDeedSources(actualSchema);assert.equal(currentDeed.predecessor,sources.current);assert.throws(()=>historicalEnterprise.enterpriseMigrationPredecessor(actualSchema),error=>error?.code==='ERR_ASSERTION','Raw555 never gains historical551 admission');
+const actualSchema=uxHistoricalInput('schema.sql',fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8'));assert(uniform(actualSchema));const currentDeed=enterprise.enterpriseCurrentDeedSources(actualSchema);assert.equal(currentDeed.predecessor,sources.current);assert.throws(()=>historicalEnterprise.enterpriseMigrationPredecessor(actualSchema),error=>error?.code==='ERR_ASSERTION','Raw555 never gains historical551 admission');
 const currentDeedBranches=enterprise.enterpriseCurrentDeedNativeSources();assert.equal(lf(actualSchema),currentDeedBranches.current);assert.equal(hash(currentDeedBranches.premain),'5cba5f46e5b29c9a4e46e8172ef4d025db388f468f0d3789a0ae359c4812b480');
 assert.deepEqual(ENTERPRISE_TABLES,['workshop_floorplans','workshop_floor_requests','manufacturing_licenses','manufacturing_license_requests','mobile_shops','mobile_shop_requests','business_relocation_plans','business_relocation_requests','equipment_recovery_requests']);
 assert.deepEqual(ENTERPRISE_NATIVE_TABLES,[...prior.MARKET_OPERATIONS_NATIVE_TABLES,...ENTERPRISE_TABLES]);assert.equal(ENTERPRISE_NATIVE_TABLES.length,23);
