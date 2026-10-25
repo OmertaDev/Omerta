@@ -27,6 +27,10 @@ liquidity or gameplay-economic configuration is changed.
 - Browser coverage includes all150 improvements plus the current main navigation,
   Fieldwork, desktop/mobile, private synchronization and successor boundaries.
 - CI retains the existing release gates and adds UX browser and PostgreSQL proofs.
+- The separate source qualification reconstructs all eight guarded files to the
+  exact main predecessor: 53 Git inverse hunks, 32 positive and 314 refusal probes.
+  Independent review and 12 additional tamper probes passed; older pins are retained.
+  This source proof grants no runtime, native, contract or deployment clearance.
 
 ## Deployment status
 
@@ -34,6 +38,8 @@ Prepared for production deployment. Render requires an explicit workspace choice
 because its connected session has no selected workspace. No deploy has been
 triggered by this preparation. The public baseline at https://www.omerta.fun/health
 returned200 with db up; the new /ux-feedback.js asset was not yet present.
+The authored UX checkpoint is 940df6a1efbe4ddcd8301cd138d5643dbe48a0bc.
+The complete CI run remains a release requirement before production deployment.
 
 After workspace confirmation, record the exact published commit and both API/worker
 deploy IDs, wait for live status, then verify health, static modules and API auth.

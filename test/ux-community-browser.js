@@ -119,7 +119,17 @@ try {
  await page.locator('[data-community-refresh]').click(); await page.locator(`[data-community-consent="${portraitId}"]`).waitFor({ state: 'attached' });
  for (const d of await page.locator(`[data-community-consent="${portraitId}"]`).locator('xpath=ancestor::details').all()) if (!await d.evaluate((n) => n.open)) await d.locator(':scope > summary').click();
  const consentResponse = page.waitForResponse((r) => r.url().endsWith(route) && r.request().method() === 'POST'); await page.locator(`[data-community-consent="${portraitId}"]`).click(); assert.equal((await consentResponse).status(), 200); await ready(page);
- await bossPage.locator('[data-community-refresh]').click(); await bossPage.waitForFunction(() => !document.querySelector('[data-community-download]')?.disabled);
+ const verifiedPortrait = bossPage.waitForResponse((r) => r.url().endsWith(route) && r.request().method() === 'GET');
+ await bossPage.locator('[data-community-refresh]').evaluate((button) => button.addEventListener('click', () => {
+  // A base-screen repaint can remove this panel while its real refresh is in flight.
+  // Absence must never count as an enabled portrait or as settled consent rendering.
+  button.closest('[data-community-host]').remove(); requestAnimationFrame(() => communityUnderTest.render());
+ }, { once: true }));
+ await bossPage.locator('[data-community-refresh]').click();
+ const verified = (await (await verifiedPortrait).json()).entries.find((e) => e.id === portraitId);
+ assert.equal(verified.participants.filter((p) => p.status === 'accepted' && p.characterId).length, 2, 'the actual crew read verifies both explicit current consents');
+ await bossPortrait.locator('[data-community-download]:enabled').waitFor({ state: 'attached' });
+ await bossPage.waitForFunction((id) => document.querySelector(`[data-community-download="${id}"]`)?.closest('.ux-community-portrait')?.querySelectorAll('img').length === 2, portraitId);
  assert.equal(await bossPortrait.locator('img').count(), 2, 'only explicit accepted avatars appear');
  const downloaded = bossPage.waitForEvent('download'); await bossPortrait.locator('[data-community-download]').click(); const download = await downloaded;
  const portraitPath = path.join(artifacts, download.suggestedFilename()); await download.saveAs(portraitPath); assert.match(fs.readFileSync(portraitPath, 'utf8'), /The canal evening together/);
