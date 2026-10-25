@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a6c1353dc084e12c02c1c4f8e46037a8392bf892",
+  "sourceRevision": "f552a254b56485a43ebddb36f60775883fb0f5ff",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16932,
-    "edges": 67586,
+    "nodes": 16939,
+    "edges": 67618,
     "byNodeType": {
-      "Artifact": 6992,
+      "Artifact": 6995,
       "Command": 299,
-      "Commit": 4675,
+      "Commit": 4678,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -60,24 +60,24 @@
       "Route": 1052,
       "Subsystem": 8,
       "Table": 579,
-      "TestSuite": 1037,
+      "TestSuite": 1038,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5573,
-      "CHANGED": 25708,
-      "CONTAINS": 7013,
+      "BELONGS_TO": 5576,
+      "CHANGED": 25723,
+      "CONTAINS": 7016,
       "DECLARES": 299,
       "DEFINED_IN": 1765,
       "DEPENDS_ON": 69,
       "EXECUTES": 1184,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4675,
+      "HAS_COMMIT": 4678,
       "IMPLEMENTS": 124,
-      "IMPORTS": 7966,
+      "IMPORTS": 7972,
       "INHERITS": 45,
-      "REFERENCES": 3866,
-      "REPRESENTS": 2586,
+      "REFERENCES": 3867,
+      "REPRESENTS": 2587,
       "TESTS": 2443,
       "TRACKS": 126,
       "USES_TABLE": 3211
@@ -56948,20 +56948,20 @@
       "path": "docs/ux-production-release-2026-10-25.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3822,
-      "lines": 63,
-      "version": "48cb23c07d2207ee",
+      "bytes": 3936,
+      "lines": 66,
+      "version": "cd82e2ec43dd6635",
       "text": true,
       "provenance": [
         {
           "file": "docs/ux-production-release-2026-10-25.md",
           "line": 1,
-          "version": "48cb23c07d2207ee"
+          "version": "cd82e2ec43dd6635"
         }
       ],
-      "lastChangedAt": "2026-10-25T23:26:00.000Z",
+      "lastChangedAt": "2026-10-25T23:43:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a6c1353dc084e12c02c1c4f8e46037a8392bf892"
+      "lastChangedCommit": "f552a254b56485a43ebddb36f60775883fb0f5ff"
     },
     {
       "key": "Artifact:docs/ux-source-qualification.md",
@@ -56971,20 +56971,20 @@
       "path": "docs/ux-source-qualification.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3918,
-      "lines": 16,
-      "version": "568783243f989f12",
+      "bytes": 4544,
+      "lines": 18,
+      "version": "6aff257d1db4e7a4",
       "text": true,
       "provenance": [
         {
           "file": "docs/ux-source-qualification.md",
           "line": 1,
-          "version": "568783243f989f12"
+          "version": "6aff257d1db4e7a4"
         }
       ],
-      "lastChangedAt": "2026-10-25T23:23:15.000Z",
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8c72bd62a63c63b4d5f58a58cd813368b3a1fd18"
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
     },
     {
       "key": "Artifact:docs/warehouse-leases-security-review.md",
@@ -118768,18 +118768,18 @@
       "extension": ".md",
       "bytes": 57077,
       "lines": 760,
-      "version": "9ad6146015d7f20b",
+      "version": "6bd3505dff81dba2",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "9ad6146015d7f20b"
+          "version": "6bd3505dff81dba2"
         }
       ],
-      "lastChangedAt": "2026-10-25T22:35:05.000Z",
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c1720a694799e743c6f70bc3069dba2bbecae08e"
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
     },
     {
       "key": "Artifact:src/access.js",
@@ -134360,20 +134360,20 @@
       "path": "test/commerce-release-phase2-migration-catalog.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 43197,
-      "lines": 48,
-      "version": "62b74f8dc19a162d",
+      "bytes": 42001,
+      "lines": 37,
+      "version": "bfe24e172b3b3e05",
       "text": true,
       "provenance": [
         {
           "file": "test/commerce-release-phase2-migration-catalog.js",
           "line": 1,
-          "version": "62b74f8dc19a162d"
+          "version": "bfe24e172b3b3e05"
         }
       ],
-      "lastChangedAt": "2026-10-25T23:23:15.000Z",
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8c72bd62a63c63b4d5f58a58cd813368b3a1fd18"
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
     },
     {
       "key": "Artifact:test/commerce-source-compatibility.js",
@@ -141987,6 +141987,29 @@
       "lastChangedAt": "2026-08-24T18:49:55.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "dee7593a66b955d677656afab4516cb68edb918d"
+    },
+    {
+      "key": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "type": "Artifact",
+      "id": "test/lib/ux-enterprise-reader-source-compatibility.js",
+      "label": "ux-enterprise-reader-source-compatibility.js",
+      "path": "test/lib/ux-enterprise-reader-source-compatibility.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 5758,
+      "lines": 55,
+      "version": "21cd221841fc04b2",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
+          "line": 1,
+          "version": "21cd221841fc04b2"
+        }
+      ],
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
     },
     {
       "key": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
@@ -152622,20 +152645,20 @@
       "path": "test/ux-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9933,
-      "lines": 100,
-      "version": "4249aa9bbd5e6630",
+      "bytes": 8781,
+      "lines": 89,
+      "version": "40b580bfd0fcfd78",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-source-compatibility.js",
           "line": 1,
-          "version": "4249aa9bbd5e6630"
+          "version": "40b580bfd0fcfd78"
         }
       ],
-      "lastChangedAt": "2026-10-25T23:23:15.000Z",
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8c72bd62a63c63b4d5f58a58cd813368b3a1fd18"
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
     },
     {
       "key": "Artifact:test/ux-story-browser.js",
@@ -155543,20 +155566,20 @@
       "path": "tools/enterprise-native-ux-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 400359,
-      "lines": 10683,
-      "version": "d435004433328acc",
+      "bytes": 401823,
+      "lines": 10719,
+      "version": "90a8545dbd5e9143",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "d435004433328acc"
+          "version": "90a8545dbd5e9143"
         }
       ],
-      "lastChangedAt": "2026-10-25T23:26:00.000Z",
+      "lastChangedAt": "2026-10-25T23:43:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a6c1353dc084e12c02c1c4f8e46037a8392bf892"
+      "lastChangedCommit": "f552a254b56485a43ebddb36f60775883fb0f5ff"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -160547,6 +160570,52 @@
       "lastChangedCommit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
     },
     {
+      "key": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
+      "type": "Artifact",
+      "id": "tools/ux-enterprise-reader-source-compatibility.js",
+      "label": "ux-enterprise-reader-source-compatibility.js",
+      "path": "tools/ux-enterprise-reader-source-compatibility.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 4234,
+      "lines": 49,
+      "version": "a9025425d551a073",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-enterprise-reader-source-compatibility.js",
+          "line": 1,
+          "version": "a9025425d551a073"
+        }
+      ],
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+    },
+    {
+      "key": "Artifact:tools/ux-enterprise-reader-source-data.js",
+      "type": "Artifact",
+      "id": "tools/ux-enterprise-reader-source-data.js",
+      "label": "ux-enterprise-reader-source-data.js",
+      "path": "tools/ux-enterprise-reader-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 7161,
+      "lines": 45,
+      "version": "9c5432436b09d0be",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-enterprise-reader-source-data.js",
+          "line": 1,
+          "version": "9c5432436b09d0be"
+        }
+      ],
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+    },
+    {
       "key": "Artifact:tools/ux-native-reader-source-compatibility.js",
       "type": "Artifact",
       "id": "tools/ux-native-reader-source-compatibility.js",
@@ -160646,20 +160715,20 @@
       "path": "tools/ux-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 4103,
-      "lines": 51,
-      "version": "715cba03980a0d77",
+      "bytes": 4261,
+      "lines": 53,
+      "version": "fa795b446c081c9f",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-source-compatibility.js",
           "line": 1,
-          "version": "715cba03980a0d77"
+          "version": "fa795b446c081c9f"
         }
       ],
-      "lastChangedAt": "2026-10-25T22:35:05.000Z",
+      "lastChangedAt": "2026-10-25T23:41:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c1720a694799e743c6f70bc3069dba2bbecae08e"
+      "lastChangedCommit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
     },
     {
       "key": "Artifact:tools/ux-source-data.js",
@@ -187211,6 +187280,22 @@
       ]
     },
     {
+      "key": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "type": "Commit",
+      "id": "4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "label": "fix(ux): normalize Enterprise source at the shared historical boundary",
+      "title": "fix(ux): normalize Enterprise source at the shared historical boundary",
+      "date": "2026-10-25T23:41:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "provenance": [
+        {
+          "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+        }
+      ]
+    },
+    {
       "key": "Commit:4b42ea80f88c2fa1b4c0bbe925f6ba25ed935338",
       "type": "Commit",
       "id": "4b42ea80f88c2fa1b4c0bbe925f6ba25ed935338",
@@ -201047,6 +201132,22 @@
         {
           "commit": "798bce268d76d092c511cde02f900505d75b7555",
           "url": "https://github.com/OmertaDev/Omerta/commit/798bce268d76d092c511cde02f900505d75b7555"
+        }
+      ]
+    },
+    {
+      "key": "Commit:79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "type": "Commit",
+      "id": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "label": "chore(knowledge): refresh Enterprise reader qualification artifacts",
+      "title": "chore(knowledge): refresh Enterprise reader qualification artifacts",
+      "date": "2026-10-25T23:30:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "provenance": [
+        {
+          "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+          "url": "https://github.com/OmertaDev/Omerta/commit/79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
         }
       ]
     },
@@ -236283,6 +236384,22 @@
       ]
     },
     {
+      "key": "Commit:f552a254b56485a43ebddb36f60775883fb0f5ff",
+      "type": "Commit",
+      "id": "f552a254b56485a43ebddb36f60775883fb0f5ff",
+      "label": "test(ux): seal shared Enterprise reader source inputs",
+      "title": "test(ux): seal shared Enterprise reader source inputs",
+      "date": "2026-10-25T23:43:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f552a254b56485a43ebddb36f60775883fb0f5ff",
+      "provenance": [
+        {
+          "commit": "f552a254b56485a43ebddb36f60775883fb0f5ff",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f552a254b56485a43ebddb36f60775883fb0f5ff"
+        }
+      ]
+    },
+    {
       "key": "Commit:f5547c4d236dc27b09c385b2171e3771b54e7239",
       "type": "Commit",
       "id": "f5547c4d236dc27b09c385b2171e3771b54e7239",
@@ -254326,13 +254443,13 @@
       "id": "docs/ux-production-release-2026-10-25.md",
       "label": "docs/ux-production-release-2026-10-25.md",
       "documentType": "documentation",
-      "lines": 63,
-      "version": "48cb23c07d2207ee",
+      "lines": 66,
+      "version": "cd82e2ec43dd6635",
       "provenance": [
         {
           "file": "docs/ux-production-release-2026-10-25.md",
           "line": 1,
-          "version": "48cb23c07d2207ee"
+          "version": "cd82e2ec43dd6635"
         }
       ]
     },
@@ -254342,13 +254459,13 @@
       "id": "docs/ux-source-qualification.md",
       "label": "docs/ux-source-qualification.md",
       "documentType": "documentation",
-      "lines": 16,
-      "version": "568783243f989f12",
+      "lines": 18,
+      "version": "6aff257d1db4e7a4",
       "provenance": [
         {
           "file": "docs/ux-source-qualification.md",
           "line": 1,
-          "version": "568783243f989f12"
+          "version": "6aff257d1db4e7a4"
         }
       ]
     },
@@ -257063,12 +257180,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "9ad6146015d7f20b",
+      "version": "6bd3505dff81dba2",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "9ad6146015d7f20b"
+          "version": "6bd3505dff81dba2"
         }
       ]
     },
@@ -267609,6 +267726,9 @@
           "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
         },
         {
+          "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -269937,6 +270057,9 @@
           "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
         },
         {
+          "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
+        },
+        {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
@@ -272263,6 +272386,9 @@
         },
         {
           "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+        },
+        {
+          "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -275233,6 +275359,9 @@
         },
         {
           "commit": "792f1da708375fc28fca6fe9c4fb9c2c7c756ee6"
+        },
+        {
+          "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
@@ -290706,12 +290835,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a6c1353dc084e12c02c1c4f8e46037a8392bf892",
+      "revision": "f552a254b56485a43ebddb36f60775883fb0f5ff",
       "currentBranch": "codex/ux-production-release",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6992,
+      "currentArtifactCount": 6995,
       "provenance": [
         {
           "file": "README.md",
@@ -329573,13 +329702,13 @@
       "type": "TestSuite",
       "id": "test/commerce-release-phase2-migration-catalog.js",
       "label": "test/commerce-release-phase2-migration-catalog.js",
-      "lines": 48,
-      "version": "62b74f8dc19a162d",
+      "lines": 37,
+      "version": "bfe24e172b3b3e05",
       "provenance": [
         {
           "file": "test/commerce-release-phase2-migration-catalog.js",
           "line": 1,
-          "version": "62b74f8dc19a162d"
+          "version": "bfe24e172b3b3e05"
         }
       ]
     },
@@ -334380,6 +334509,21 @@
           "file": "test/lib/srcfiles.js",
           "line": 1,
           "version": "d57b797127522458"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "type": "TestSuite",
+      "id": "test/lib/ux-enterprise-reader-source-compatibility.js",
+      "label": "test/lib/ux-enterprise-reader-source-compatibility.js",
+      "lines": 55,
+      "version": "21cd221841fc04b2",
+      "provenance": [
+        {
+          "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
+          "line": 1,
+          "version": "21cd221841fc04b2"
         }
       ]
     },
@@ -341318,13 +341462,13 @@
       "type": "TestSuite",
       "id": "test/ux-source-compatibility.js",
       "label": "test/ux-source-compatibility.js",
-      "lines": 100,
-      "version": "4249aa9bbd5e6630",
+      "lines": 89,
+      "version": "40b580bfd0fcfd78",
       "provenance": [
         {
           "file": "test/ux-source-compatibility.js",
           "line": 1,
-          "version": "4249aa9bbd5e6630"
+          "version": "40b580bfd0fcfd78"
         }
       ]
     },
@@ -375451,6 +375595,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -382700,6 +382853,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/stock-e2e.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-enterprise-reader-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-enterprise-reader-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-enterprise-reader-source-data.js",
         "line": 1
       }
     },
@@ -445635,6 +445806,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:docs/ux-source-qualification.md",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:test/commerce-release-phase2-migration-catalog.js",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:test/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:tools/ux-enterprise-reader-source-data.js",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "to": "Artifact:tools/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4b42ea80f88c2fa1b4c0bbe925f6ba25ed935338",
       "to": "Artifact:src/auth.js",
       "provenance": {
@@ -482359,6 +482602,38 @@
       "to": "Artifact:test/economicdependencymap-integration.js",
       "provenance": {
         "commit": "798bce268d76d092c511cde02f900505d75b7555"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
       }
     },
     {
@@ -589555,6 +589830,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f552a254b56485a43ebddb36f60775883fb0f5ff",
+      "to": "Artifact:docs/ux-production-release-2026-10-25.md",
+      "provenance": {
+        "commit": "f552a254b56485a43ebddb36f60775883fb0f5ff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f552a254b56485a43ebddb36f60775883fb0f5ff",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "f552a254b56485a43ebddb36f60775883fb0f5ff"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f5547c4d236dc27b09c385b2171e3771b54e7239",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -633564,6 +633855,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "test/lib/ux-native-reader-source-compatibility.js",
@@ -640812,6 +641112,24 @@
       "to": "Artifact:tools/stock-e2e.js",
       "provenance": {
         "file": "tools/stock-e2e.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "file": "tools/ux-enterprise-reader-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-enterprise-reader-source-data.js",
+      "provenance": {
+        "file": "tools/ux-enterprise-reader-source-data.js",
         "line": 1
       }
     },
@@ -711189,6 +711507,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4b328d3d8af08d769a4f4670eca5eca15d0bb622",
+      "provenance": {
+        "commit": "4b328d3d8af08d769a4f4670eca5eca15d0bb622"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4b42ea80f88c2fa1b4c0bbe925f6ba25ed935338",
       "provenance": {
         "commit": "4b42ea80f88c2fa1b4c0bbe925f6ba25ed935338"
@@ -718104,6 +718430,14 @@
       "to": "Commit:798bce268d76d092c511cde02f900505d75b7555",
       "provenance": {
         "commit": "798bce268d76d092c511cde02f900505d75b7555"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58",
+      "provenance": {
+        "commit": "79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58"
       }
     },
     {
@@ -735720,6 +736054,14 @@
       "to": "Commit:f528739f70ee0678a1e0bc83a99fc9f16c80a370",
       "provenance": {
         "commit": "f528739f70ee0678a1e0bc83a99fc9f16c80a370"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f552a254b56485a43ebddb36f60775883fb0f5ff",
+      "provenance": {
+        "commit": "f552a254b56485a43ebddb36f60775883fb0f5ff"
       }
     },
     {
@@ -778819,6 +779161,33 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "to": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "to": "Artifact:tools/ux-native-reader-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "to": "Artifact:tools/ux-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
       "to": "Artifact:tools/ux-native-reader-source-compatibility.js",
       "provenance": {
@@ -799241,10 +799610,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/ux-source-compatibility.js",
+      "to": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "file": "test/ux-source-compatibility.js",
+        "line": 88
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-source-compatibility.js",
       "to": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 99
+        "line": 87
       }
     },
     {
@@ -809482,6 +809860,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
+      "to": "Artifact:tools/ux-enterprise-reader-source-data.js",
+      "provenance": {
+        "file": "tools/ux-enterprise-reader-source-compatibility.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/ux-native-reader-source-compatibility.js",
       "to": "Artifact:tools/ux-native-reader-source-data.js",
       "provenance": {
@@ -809559,6 +809946,15 @@
       "provenance": {
         "file": "tools/ux-release-phase2-native-catalog.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/ux-source-compatibility.js",
+      "to": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "file": "tools/ux-source-compatibility.js",
+        "line": 6
       }
     },
     {
@@ -837743,6 +838139,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/ux-source-qualification.md",
+      "to": "Artifact:tools/ux-enterprise-reader-source-data.js",
+      "provenance": {
+        "file": "docs/ux-source-qualification.md",
+        "line": 13
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/ux-source-qualification.md",
       "to": "Artifact:tools/ux-native-reader-source-data.js",
       "provenance": {
         "file": "docs/ux-source-qualification.md",
@@ -863873,6 +864278,15 @@
       "to": "Artifact:test/lib/srcfiles.js",
       "provenance": {
         "file": "test/lib/srcfiles.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "to": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/ux-enterprise-reader-source-compatibility.js",
         "line": 1
       }
     },
