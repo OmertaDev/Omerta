@@ -15,7 +15,7 @@ import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,
-  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches } from '../tools/commerce-deed-release-phase2-native-catalog.js';
+  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches } from '../tools/ux-release-phase2-native-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));

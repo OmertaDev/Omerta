@@ -6,7 +6,7 @@ const TYPES = ['mastery_up', 'protege_milestone', 'protege_graduated', 'mentor_a
 export async function circleHighlights(client, ch) {
   const rows = (await client.query(
     `SELECT id, type, payload, created_at FROM notifications
-      WHERE character_id=$1 AND type IN (${TYPES.map((_, i) => `$${i + 2}`).join(',')})
+      WHERE character_id=$1 AND type IN ($2,$3,$4,$5,$6)
       ORDER BY created_at DESC LIMIT 20`, [ch.id, ...TYPES])).rows;
   const highlights = rows.flatMap((row) => {
     let p;

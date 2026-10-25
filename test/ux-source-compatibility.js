@@ -67,10 +67,16 @@ const readerEdits = {
     ["const physical=uxHistoricalInput(row.file,fs.readFileSync(row.file,'utf8')),stat=fs.lstatSync(row.file);", "const physical=fs.readFileSync(row.file,'utf8'),stat=fs.lstatSync(row.file);"],
     ["assert.equal(uxHistoricalInput(row.file,git('show','HEAD:'+row.file)),current,'Current committed successor source remains exact');", "assert.equal(git('show','HEAD:'+row.file),current,'Current committed successor source remains exact');"],
   ],
+  'test/commerce-release-phase2-migration-catalog.js': [
+    ["import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';\n", ''],
+    ["commerceDefaultSchema(uxHistoricalInput('schema.sql',uniformRead('../schema.sql')))", "commerceDefaultSchema(uniformRead('../schema.sql'))"],
+    ["function commerceDefaultFingerprint(file,input,expected){input=uxHistoricalInput(file,input);", "function commerceDefaultFingerprint(file,input,expected){"],
+  ],
 };
 for (const [file, edits] of Object.entries(readerEdits)) {
   let restored = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   for (const [current, baseline] of edits) { assert.equal(restored.split(current).length, 2, 'Unique reader-only integration edit: ' + file); restored = restored.replace(current, () => baseline); }
   assert.equal(restored, git('show', pin.targetRevision + ':' + file), 'Every prior binding, assertion and refusal is preserved verbatim: ' + file);
 }
-console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor: pin.targetRevision, files: pin.files.length, inverseHunks: inverseCount, positives, refusals, readerOnlyEdits: 5, runtime: false, native: false }));
+console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor: pin.targetRevision, files: pin.files.length, inverseHunks: inverseCount, positives, refusals, readerOnlyEdits: Object.values(readerEdits).reduce((total, edits) => total + edits.length, 0), runtime: false, native: false }));
+await import('./lib/ux-native-reader-source-compatibility.js');

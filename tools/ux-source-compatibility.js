@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { UX_SOURCE, UX_SOURCE_SHA256 } from './ux-source-data.js';
+import { uxNativeReaderHistoricalInput } from './ux-native-reader-source-compatibility.js';
 export { UX_SOURCE };
 export const UX_SOURCE_FILES = Object.freeze(['.github/workflows/ci.yml', 'package.json', 'public/index.html', 'schema.sql', 'src/economy.js', 'src/server.js', 'test/gates.js', 'test/migrate.js']);
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -39,6 +40,7 @@ export function qualifyUxSource(file, input, pin = UX_SOURCE) {
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function uxHistoricalInput(file, input) {
+  input = uxNativeReaderHistoricalInput(file, input);
   const row = UX_SOURCE.files.find(record => record.file === file); if (!row) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text).equals(input), 'lossless UTF-8 physical source only');
