@@ -94,11 +94,30 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     [503, false, {}, false],
   ]) {
     const observed = await vm.runInNewContext(`(async () => {
+      let token = 'fixture-token', me = { id: 'fixture-character' }, uxReadSequence = 0;
+      const session = { accountId: 'fixture-account' }, currentTab = 'streets', uxCall = () => {};
       ${html.slice(apiStart, apiEnd)}
       const result = await apiNow('POST', '/v1/commands/execute', {}, { idempotencyKey: 'one-command' });
       return result.replayed;
     })()`, { fetch: async () => ({ status, headers: { get: () => headerReplay ? 'true' : null }, json: async () => body }) });
     assert.equal(observed, expected, 'Both replay signals survive the API bridge.');
+  }
+}
+
+// A successful mutation keeps its ordinary receipt even if refresh fails.
+// Private presentation autosync must not clear a live game board or cancel a player read.
+{
+  const start = html.indexOf('  async function api('), end = html.indexOf('  async function apiNow(', start);
+  assert(start >= 0 && end > start);
+  for (const [method, path, expected] of [['PUT', '/v1/ux/workspace', []], ['POST', '/v1/crimes/shoplift', ['player', 'world']]]) {
+    const observed = await vm.runInNewContext(`(async () => {
+      const token = 'fixture-token', invalidated = [], projections = { invalidate: kind => invalidated.push(kind) };
+      let _authQueue = Promise.resolve(); const uuid = () => 'fixture-key', apiNow = async () => ({code:200,body:{}});
+      ${html.slice(start, end)}
+      await api(${JSON.stringify(method)}, ${JSON.stringify(path)}, {});
+      return invalidated;
+    })()`);
+    assert.deepEqual(Array.from(observed), expected, 'Game mutations still invalidate both projections; private presentation sync preserves them.');
   }
 }
 
@@ -114,9 +133,9 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     [200, false, '/v1/train/muscle', true],
   ]) {
     const observed = await vm.runInNewContext(`(async () => {
-      let acting = false, activatedControl = null, operationPending = null, _operationResponseCurrent = null;
+      let acting = false, activatedControl = null, operationPending = null, operationPhase = '', _operationResponseCurrent = null;
       let me = { id: 'owner', generation: 1, loc: 'docks' };
-      const currentTab = 'streets';
+      const currentTab = 'streets', feedbackUX = null;
       const noop = () => {}, node = { textContent: '' };
       const operationName = () => 'Confirmed action', uuid = () => 'one-action', operationSnapshot = value => ({ ...value });
       const cityIdentity = () => [me.id, me.generation, me.loc].join(':');
@@ -155,6 +174,7 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
   assert(start >= 0 && end > start && receiptEnd > receiptStart);
   const feedback = vm.runInNewContext(`(() => {
     const fmt = value => String(value), describe = () => 'confirmed', renderOperationFeed = () => {};
+    const session = { accountId: 'fixture-account' }, feedbackUX = null, uxCall = () => {};
     const operationRecovery = () => null, operationReceipts = []; let operationSeq = 0, _operationResponseCurrent = null, _cityActivityReceipt = null;
     ${html.slice(clearStart, start)}
     ${html.slice(start, end)}
@@ -377,6 +397,10 @@ const admin = decomment(readFileSync(new URL('../public/admin.html', import.meta
       catch (e) { assert.fail(`${path}: the <script> has a SYNTAX ERROR — the whole page is DEAD in a browser: ${e.message}`); }
     }
   }
+  for (const name of ['feedback','progression','social','navigation','workspace','world','tactics','investigation','coordination','feel','tools','identity','story','community']) {
+    const path = 'public/ux-' + name + '.js';
+    new vm.Script(readFileSync(new URL('../' + path, import.meta.url), 'utf8'), { filename: path });
+  }
   assert(checked >= 2, `expected to parse-check both client scripts (console + admin), only checked ${checked} — a real script block was skipped`);
 }
 
@@ -459,6 +483,9 @@ for (const m of html.matchAll(/\b(?:api|act)\(\s*'(GET|POST|PUT|DELETE)'\s*,\s*/
 // holding during an incident — a dead button there is discovered at the worst possible moment. It
 // calls through its own j(method, path) helper, so it needs its own extraction or it goes unchecked.
 for (const m of admin.matchAll(/\bj\(\s*'(GET|POST|PUT|DELETE)'\s*,\s*/g)) addCall(admin, m, '/admin');
+
+// UX dynamic choices have dedicated API/browser proofs; retain their finite mounted contracts.
+for (const [method,path] of [["GET","/v1/ux/workspace"],["PUT","/v1/ux/workspace"],["GET","/v1/ux/tactics"],["GET","/v1/ux/coordination"],["POST","/v1/ux/coordination"],["GET","/v1/ux/investigations"],["GET","/v1/ux/investigations/:p"],["GET","/v1/ux/investigations/:p/nodes/:p/hints/:p"],["GET","/v1/ux/investigation-items"],["GET","/v1/ux/story"],["GET","/v1/ux/story/:p"],["GET","/v1/ux/community"],["POST","/v1/ux/community"],["GET","/v1/ux/community/operations/:p/playback"],["GET","/v1/ux/community/portraits/:p"],["GET","/v1/ux/mentor-subjects"],["POST","/v1/ux/mentor-subjects"]]) addRef(method,path,'UX route contract');
 
 assert.equal(unreadable, 0, `${unreadable} api()/act() call site(s) name their path in a way this ` +
   `cannot read, so those routes go UNCHECKED while the run still passes — extend pathsInArg()`);
@@ -594,6 +621,7 @@ const NOT_API = new Set([
   'view',       // Content Desk's local cases/workshop/exchange/archive selection
   'initialView', // in-world Fieldwork renderer bootstrap; never sent in an API body
   'themeMode',   // WalletConnect SDK modal appearance; never sent to the game API
+  'celebration', // Browser feedback preference; never a gameplay request field
 ]);
 // `field: 'value'` (deck bodies, JS objects) and `"field":"value"` (data-body attributes).
 // A TERNARY's colon looks exactly like a key's: `alt: guest ? null : 'everywhere'` contains the

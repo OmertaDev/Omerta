@@ -165,6 +165,7 @@
 
     function draw() {
       if (destroyed) return;
+      document.dispatchEvent(new CustomEvent('omerta:fieldwork-before-render', { detail: { root, view, characterId } }));
       actions.clear(); actionSequence = 0;
       const pane = panes[view], label = VIEWS.find(([key]) => key === view)[1];
       const content = view === 'recipes' ? recipesView() : view === 'mysteries' ? mysteriesView() : view === 'operations' ? operationsView() : inventoryView();
@@ -198,6 +199,7 @@
         const card = [...root.querySelectorAll('[data-fieldwork-node]')].find(node => node.dataset.fieldworkNode === event.currentTarget.dataset.fieldworkLead);
         if (card) { card.tabIndex = -1; card.scrollIntoView({ block: 'center', behavior: 'instant' }); card.focus({ preventScroll: true }); }
       });
+      document.dispatchEvent(new CustomEvent('omerta:fieldwork-rendered', { detail: { root, view, boards, mysteryDetail, operationDetail, roleDetail, loading, busy, characterId } }));
     }
 
     function selectView(nextView) {
@@ -382,6 +384,14 @@
       }
     }
 
+    const navigateFieldwork = event => {
+      if (!active() || busy || !event.detail || !VIEWS.some(([id]) => id === event.detail.view)) return;
+      view = event.detail.view;
+      if (typeof event.detail.graphId === 'string') selectedMystery = event.detail.graphId;
+      if (typeof event.detail.operationId === 'string') selectedOperation = event.detail.operationId;
+      load([view]);
+    };
+    document.addEventListener('omerta:fieldwork-navigate', navigateFieldwork);
     draw(); load();
     return {
       selectView,
@@ -398,7 +408,7 @@
         }
         if (!busy && !loading && !recoveryRequired) load();
       },
-      destroy() { destroyed = true; revision++; cancelConfirmation?.(); actions.clear(); root.remove(); },
+      destroy() { destroyed = true; revision++; cancelConfirmation?.(); actions.clear(); document.removeEventListener('omerta:fieldwork-navigate', navigateFieldwork); root.remove(); },
     };
   }
 

@@ -1,0 +1,45 @@
+/* Existing noir tokens, with outcome and progress taking precedence over decoration. */
+.ux-receipt { padding:12px 16px; }
+#operation-latest:empty { display:none; }
+.ux-receipt-details { margin-top:10px;font-size:12px; }
+.ux-receipt-details > summary { min-height:32px;display:flex;align-items:center;color:var(--dim);cursor:pointer; }
+.ux-receipt-details > summary:focus-visible { outline:2px solid var(--neon);outline-offset:3px; }
+.ux-receipt-outcome { font:600 21px/1.2 var(--display);color:var(--ok);margin:8px 0;letter-spacing:.02em; }
+.operation-receipt--error .ux-receipt-outcome,.operation-receipt--setback .ux-receipt-outcome { color:var(--bad); }
+.ux-changes { display:flex;gap:6px 14px;flex-wrap:wrap;margin:9px 0;font:12px/1.5 var(--mono); }
+.ux-change { color:var(--dim); }.ux-change b { color:var(--ink); }
+.ux-receipt-trade { display:flex;flex-wrap:wrap;gap:4px 12px;font:12px/1.5 var(--mono);margin:5px 0; }
+.ux-receipt-trade b { color:var(--neon); }.ux-receipt-trade span,.ux-receipt-books { color:var(--dim);font-size:12px; }
+.ux-receipt-flavour { color:var(--dim);font-style:italic;font-size:13px;margin:8px 0; }
+.ux-milestone { padding:8px 0;margin:8px 0;color:var(--neon);border-top:1px solid var(--line);font:600 14px/1.5 var(--mono); }
+.ux-next { margin-top:9px;max-width:100%;white-space:normal;text-align:left; }
+.ux-operation-history { margin-top:14px;border-top:1px solid var(--line); }
+.ux-operation-history > summary { cursor:pointer;min-height:44px;display:flex;align-items:center;font:12px/1.5 var(--mono);color:var(--dim); }
+.ux-operation-history[open] > summary { color:var(--neon); }
+.ux-feedback-settings { width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 40px);overflow:auto;padding:24px;background:var(--panel);color:var(--ink);border:1px solid var(--line2);border-radius:var(--r-lg);box-shadow:var(--shadow-pop); }
+.ux-feedback-settings::backdrop { background:rgba(0,0,0,.75); }
+.ux-settings-head { display:flex;align-items:flex-start;justify-content:space-between;gap:16px; }
+.ux-settings-head h2 { margin:0;font:600 23px/1.2 var(--display);color:var(--neon); }
+.ux-feedback-settings label { display:block;margin:22px 0;font:14px/1.5 var(--mono); }
+.ux-feedback-settings input[type=range],.ux-feedback-settings select { display:block;width:100%;margin-top:10px;min-height:44px;accent-color:var(--neon); }
+.ux-feedback-settings input[type=checkbox] { width:20px;height:20px;vertical-align:middle;accent-color:var(--neon);margin-right:8px; }
+.ux-feedback-settings output { float:right;color:var(--neon); }
+.ux-feedback-settings :focus-visible { outline:2px solid var(--neon);outline-offset:4px; }
+.ux-reward-transfer { position:fixed;pointer-events:none;z-index:1500;color:var(--neon);font:600 18px/1 var(--mono);text-shadow:0 1px 8px #000; }
+.ux-resource-changed { color:var(--neon)!important; }
+body[data-celebration=quiet] .floatval,body[data-celebration=quiet] #flashwrap,body[data-celebration=quiet] .vignette { display:none!important; }
+body[data-celebration=brief] .vignette { display:none!important; }
+body[data-celebration=quiet] .tick-up,body[data-celebration=quiet] .tick-down,body[data-celebration=quiet] .lvlup { animation:none!important; }
+@media(min-width:1100px) {
+  #operation-desk:has(#operation-latest:not(:empty)) { display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0 12px; }
+  #operation-desk:has(#operation-latest:not(:empty)) #coach { grid-column:1;grid-row:1;grid-template-columns:minmax(0,1fr);margin-bottom:0; }
+  #operation-desk:has(#operation-latest:not(:empty)) #coach .cplan { grid-column:1;grid-row:auto;border:0;padding-left:0;margin-top:9px; }
+  #operation-desk:has(#operation-latest:not(:empty)) #coach .cplan:not(.open) .cstep { display:none; }
+  #operation-desk:has(#operation-latest:not(:empty)) #coach .cpt { cursor:pointer; }
+  #operation-desk:has(#operation-latest:not(:empty)) #coach .cpt i { display:inline; }
+  #operation-latest { min-width:0;grid-column:2;grid-row:1;background:var(--panel); }
+  #operation-desk > .operation-pending,#operation-desk > .ux-operation-history { grid-column:1 / -1; }
+  #operation-latest .ux-receipt { height:100%;box-sizing:border-box; }
+}
+@media(max-width:760px) { .ux-receipt-outcome { font-size:19px; }.ux-feedback-button { min-height:36px; }.ux-feedback-settings { padding:18px; } }
+@media(prefers-reduced-motion:reduce) { .ux-reward-transfer { display:none; }.ux-resource-changed { transition:none; } }

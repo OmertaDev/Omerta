@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const context = { window: {} };
+vm.runInNewContext(fs.readFileSync('public/ux-identity.js', 'utf8'), context);
+const model = context.window.OmertaIdentityModel;
+assert.match(model.wardrobeSvg({ coat: 'wine', hat: 'fedora' }), /#713d43/);
+assert.ok(!model.wardrobeSvg({ coat: '"><script>alert(1)</script>', hat: '<script>' }).includes('<script>'));
+assert.match(model.vehicleSvg('boat'), /Illustrated vessel/);
+const contacts = model.knownContacts({ bonds: [{ id: 'a', name: 'A' }], guarding: [{ id: 'a', name: 'A' }], spouse: { street: { id: 'b', name: 'B' } }, nemesis: { street: { name: 'Unknown' } } });
+assert.equal(contacts.length, 2); assert.equal(contacts[1].id, 'b');
+const earned = model.trophies({ trades: [{ id: 'wheels', name: 'Wheels', lvl: 1 }, { id: 'larceny', name: 'Larceny', lvl: 2, rank: 'Apprentice' }] }, { seasons: { recaps: [{ season: 1, title: 'A real season' }] }, collection: { categories: [{ id: 'empty', name: 'Empty', have: 0, total: 0 }, { id: 'cars', name: 'Cars', have: 2, total: 2 }] } });
+assert.deepEqual(Array.from(earned, item => item.id), ['trade:larceny', 'season:1', 'collection:cars']);
+console.log('Identity models passed: actual earned eligibility, authorized contact deduplication, and bounded cosmetic SVG inputs.');

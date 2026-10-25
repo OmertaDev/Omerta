@@ -352,24 +352,33 @@ export async function craftAmmo(ch, client, h) {
   return { ok: true, op: 'ammo', rolled: 30, ammo: Number(ch.ammo), cost: 400, crates: 1 };
 }
 
-export function useItem(ch, itemId, client, h) {
+export function itemEffectPreview(ch, itemId, owned) {
   const c = CONSUMABLES.find((x) => x.id === itemId);
   if (!c) throw new GameError('bad_item', 'No such item.');
-  if ((h.owned.items[itemId] || 0) <= 0) throw new GameError('none', "You don't have that.");
+  if ((owned.items[itemId] || 0) <= 0) throw new GameError('none', "You don't have that.");
   const lvl = levelOf(Number(ch.respect));
-  const maxEnergy = 50 + 2 * lvl + h.owned.assets.reduce((a, id) => a + (ASSETS.find((x) => x.id === id)?.energyCap || 0), 0);
+  const maxEnergy = 50 + 2 * lvl + owned.assets.reduce((a, id) => a + (ASSETS.find((x) => x.id === id)?.energyCap || 0), 0);
   const maxNerve = 10 + lvl;
   const fx = c.fx || {};
-  if (fx.hp) ch.health = Math.min(100, Number(ch.health) + fx.hp);
-  if (fx.en) ch.energy = Math.min(maxEnergy, Number(ch.energy) + fx.en);
-  if (fx.nv) ch.nerve = Math.min(maxNerve, Number(ch.nerve) + fx.nv);
-  if (fx.cool) ch.heat = Math.max(0, Number(ch.heat || 0) - fx.cool);
-  if (fx.jail0) ch.jail_until = null;
+  const next = { health: ch.health, energy: ch.energy, nerve: ch.nerve, heat: ch.heat, jail_until: ch.jail_until };
+  if (fx.hp) next.health = Math.min(100, Number(ch.health) + fx.hp);
+  if (fx.en) next.energy = Math.min(maxEnergy, Number(ch.energy) + fx.en);
+  if (fx.nv) next.nerve = Math.min(maxNerve, Number(ch.nerve) + fx.nv);
+  if (fx.cool) next.heat = Math.max(0, Number(ch.heat || 0) - fx.cool);
+  if (fx.jail0) next.jail_until = null;
+  return { item: itemId, name: c.name, effect: c.effect, held: Number(owned.items[itemId]), next,
+    deltas: Object.fromEntries(['health', 'energy', 'nerve', 'heat'].map(key => [key, Number(next[key] || 0) - Number(ch[key] || 0)])),
+    clearsLockup: !!fx.jail0 && !!ch.jail_until, caps: { energy: maxEnergy, nerve: maxNerve, health: 100 } };
+}
+
+export function useItem(ch, itemId, client, h) {
+  const preview = itemEffectPreview(ch, itemId, h.owned);
+  Object.assign(ch, preview.next);
   const have = h.owned.items[itemId] - 1;
   h.owned.items[itemId] = have;
   return (async () => {
     await setItem(client, ch.id, itemId, have);
-    return { ok: true, used: itemId, effect: c.effect };
+    return { ok: true, used: itemId, effect: preview.effect };
   })();
 }
 

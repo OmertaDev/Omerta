@@ -1,0 +1,83 @@
+// Private-room UI backed by real disposable account, fleet, lineage and workspace projections.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { chromium } from 'playwright-core';
+import { buildServer } from './server-fixture.js';
+import { masteryXpFor } from '../src/rules.js';
+assert(!process.env.DATABASE_URL, 'Identity browser proof requires disposable pg-mem.');
+process.env.MOD_KEY = 'ux-identity-disposable'; process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';
+const executablePath = process.env.CHROMIUM_PATH || ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', '/usr/bin/chromium', '/usr/bin/google-chrome'].find(p => fs.existsSync(p));
+assert(executablePath, 'Set CHROMIUM_PATH to Chromium.');
+const app = await buildServer(), pool = app.pool, errors = [], artifacts = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-ux-identity-')); let browser;
+const call = async (method, url, token, payload, headers = {}) => {
+  const r = await app.inject({ method, url, payload, headers: { ...(token ? { authorization: 'Bearer ' + token } : {}), ...headers } });
+  assert.equal(r.statusCode, 200, `${method} ${url}: ${r.body}`); return r.json();
+};
+const create = async name => { const { token } = await call('POST', '/v1/auth/guest'); await call('POST', '/v1/character', token, { name }); return { token, account: app.jwt.verify(token).sub, me: (await call('GET', '/v1/me', token)).character }; };
+const reveal = async (page, key) => { const node = page.locator(`[data-identity-section="${key}"]`); if (!await node.evaluate(n => n.open)) await node.locator(':scope>summary').click(); return node; };
+try {
+  const alice = await create('Identity Room Reader'), bob = await create('Identity Contact');
+  await pool.query('UPDATE characters SET respect=5000,cash=100000,loc=$2 WHERE id=$1', [alice.me.id, 'docks']);
+  await pool.query("INSERT INTO masteries(character_id,track_id,xp) VALUES ($1,'larceny',$2)", [alice.me.id, masteryXpFor(2)]);
+  await pool.query("INSERT INTO cars(id,character_id,model_id,trim_id,dmg) VALUES ('identity-car',$1,'muscle','stock',17)", [alice.me.id]);
+  await pool.query("INSERT INTO boats(id,character_id,kind) VALUES ('identity-boat',$1,'cutter')", [alice.me.id]);
+  await pool.query("INSERT INTO contacts(owner_account,contact_account,how,jobs) VALUES ($1,$2,'met',1)", [alice.account, bob.account]);
+  alice.me = (await call('GET', '/v1/me', alice.token)).character;
+  await app.listen({ host: '127.0.0.1', port: 0 }); const base = 'http://127.0.0.1:' + app.server.address().port;
+  browser = await chromium.launch({ executablePath, headless: true });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1050 }, reducedMotion: 'reduce' }), page = await context.newPage();
+  page.on('pageerror', e => errors.push(e.message));
+  await page.route('**/__identity_harness', route => route.fulfill({ contentType: 'text/html', body: '<style>body{background:#111;color:#ddd;--ink:#ddd;--dim:#aaa;--neon:#d5b877;--line:#444;--line2:#666;--display:Georgia;--mono:monospace;--panel:#191919}#tab-profile{max-width:780px;margin:auto}section{min-width:0}button{padding:10px}</style><main id="tab-profile"></main><main id="tab-life"></main><main id="tab-garage"></main><main id="tab-port"></main><main id="tab-fieldwork"><div class="world-fieldwork"></div></main>' }));
+  await page.goto(base + '/__identity_harness'); await page.addStyleTag({ path: path.resolve('public/ux-identity.css') });
+  for (const module of ['workspace', 'identity']) await page.addScriptTag({ path: path.resolve(`public/ux-${module}.js`) });
+  await page.evaluate(({ alice }) => {
+    window.identityState = { me: alice.me, currentTab: 'profile', session: { accountId: alice.account } }; window.identityToken = alice.token; window.identityMutations = [];
+    const request = async (method, url, payload) => {
+      if (method !== 'GET') identityMutations.push(url);
+      const response = await fetch(url, { method, headers: { authorization: 'Bearer ' + identityToken, ...(payload ? { 'content-type': 'application/json' } : {}) }, ...(payload ? { body: JSON.stringify(payload) } : {}) });
+      const body = await response.json();
+      if (response.ok && method === 'GET') window.identityModule?.observe(url, body);
+      return { code: response.status, body };
+    };
+    window.identityWorkspace = createOmertaWorkspace({ getState: () => identityState, read: url => request('GET', url), write: (url, payload) => request('PUT', url, payload), onHydrate: () => window.identityModule?.reloadWorkspace() });
+    window.identityModule = createOmertaIdentity({ getState: () => identityState, workspace: identityWorkspace, read: url => request('GET', url), notify() {} });
+    identityModule.render();
+  }, { alice });
+  await page.evaluate(() => identityWorkspace.hydrate());
+  await page.locator('[data-identity-load]').click(); await page.locator('[data-identity-load]:not([disabled])').waitFor();
+  const office = await reveal(page, 'office'); await office.locator('[data-office-add]').selectOption('plant');
+  await page.locator('[data-office-position="plant"]').selectOption('0');
+  assert.equal(await page.locator('.ux-office-prop').first().getAttribute('data-office-prop'), 'plant');
+  const trophy = await reveal(page, 'trophies'); await trophy.locator('[data-trophy="trade:larceny"]').check(); assert.match(await trophy.locator('.ux-trophy-shelf').innerText(), /Larceny/);
+  const wardrobe = await reveal(page, 'wardrobe'); await wardrobe.locator('[data-identity-setting="coat"]').selectOption('wine'); await wardrobe.locator('[data-identity-setting="hat"]').selectOption('fedora');
+  assert.match(await wardrobe.locator('svg').innerHTML(), /#713d43/);
+  const fleet = await reveal(page, 'fleet'); assert.match(await fleet.innerText(), /Damage 17%/); assert.equal(await fleet.locator('article').count(), 2);
+  const nickname = fleet.locator('[data-identity-form="nickname:identity-car"]'); await nickname.locator('[name="nickname"]').fill('The Quiet Arrival'); await nickname.locator('button').click();
+  assert.match(await fleet.locator('article').first().innerText(), /The Quiet Arrival.*Official record:/s);
+  const chapter = await reveal(page, 'chapter'); await chapter.locator('[name="title"]').fill('A Window Above the Docks'); await chapter.locator('[name="code"]').fill('Listen before accusing. <img src=x onerror=alert(1)>'); await chapter.locator('[name="showCode"]').check(); await chapter.locator('button').click();
+  assert.match(await chapter.locator('.ux-chapter-cover').innerText(), /A Window Above/); assert.equal(await chapter.locator('.ux-chapter-cover img').count(), 0, 'private prose is rendered as text');
+  const contacts = await reveal(page, 'contacts'); const note = contacts.locator(`[data-identity-form="contact:${bob.me.id}"]`); await note.locator('[name="nickname"]').fill('The Reader'); await note.locator('[name="note"]').fill('Met through the docks.'); await note.locator('button').click();
+  const letters = await reveal(page, 'letters'); await letters.locator('[name="letter"]').fill('Keep the notebook. The correction matters.'); await letters.locator('button').click(); assert.match(await letters.innerText(), /Sealed for your successor/); assert.equal(await letters.locator('.ux-heir-letters blockquote').count(), 0);
+  await page.evaluate(async () => { await identityWorkspace.flush(); });
+  const saved = await call('GET', '/v1/ux/workspace', alice.token); assert.equal(saved.values.identity.room[0], 'plant'); assert.equal(saved.values.identity.nicknames['identity-car'], 'The Quiet Arrival'); assert.equal(saved.values.identity.contacts[bob.me.id].nickname, 'The Reader');
+  assert.deepEqual(await page.evaluate(() => identityMutations.filter(url => url !== '/v1/ux/workspace')), [], 'personal expression submits no game actions');
+  await page.evaluate(() => { identityState.currentTab = 'fieldwork'; identityModule.render(); }); assert.match(await page.locator('[data-identity-code]').innerText(), /Listen before accusing/);
+  await page.evaluate(() => { identityState.currentTab = 'profile'; identityModule.render(); });
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'private room fits mobile');
+  await office.scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(artifacts, 'identity-mobile.png') });
+  // The actual estate creates the successor and writes the actual ancestral record.
+  await call('POST', '/v1/mod/kill', null, { characterId: alice.me.id }, { 'x-mod-key': 'ux-identity-disposable' });
+  const heir = (await call('GET', '/v1/me', alice.token)).character; assert.notEqual(heir.id, alice.me.id);
+  await page.evaluate(me => { identityState.me = me; identityModule.render(); }, heir);
+  await page.locator('[data-identity-load]').click(); await page.locator('[data-identity-load]:not([disabled])').waitFor();
+  const inherited = await reveal(page, 'letters'); await inherited.locator('.ux-heir-letters summary').click(); assert.match(await inherited.locator('blockquote').innerText(), /Keep the notebook/);
+  const lineage = await reveal(page, 'lineage'); assert.match(await lineage.innerText(), /Identity Room Reader/); assert.ok(await lineage.locator('.ux-ancestral-hall>li').count() >= 2);
+  const heirTrophies = await reveal(page, 'trophies'); assert.equal(await heirTrophies.locator('[data-trophy="trade:larceny"]:checked').count(), 0, 'lost character-specific eligibility does not fabricate an inherited trophy');
+  await page.evaluate(async person => { identityState.me = person.me; identityState.session.accountId = person.account; identityToken = person.token; identityModule.render(); await identityWorkspace.hydrate(); identityModule.render(); }, bob);
+  assert.doesNotMatch(await page.locator('.ux-identity').innerText(), /Window Above|Quiet Arrival|Keep the notebook/);
+  assert.equal((await call('GET', '/v1/ux/workspace', bob.token)).values.identity, undefined, 'private identity data stays on its owner account');
+  assert.deepEqual(errors, []); console.log('Identity browser proof passed: all111–120, actual fleet/trophy/cast records, private sync, successor letter delivery, real ancestral hall, mobile and account isolation. Screenshots: ' + artifacts);
+} finally { await browser?.close(); await app.close(); }

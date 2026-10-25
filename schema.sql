@@ -9652,3 +9652,56 @@ CREATE TABLE IF NOT EXISTS commercial_campaign_stages (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS commercial_campaign_output_consumption
  ON commercial_campaign_stages(output_item_id) WHERE kind='manufacture' AND output_item_id IS NOT NULL;
+
+-- Account-owned presentation and crew planning. These records grant no game authority.
+CREATE TABLE IF NOT EXISTS ux_workspaces (
+  account_id TEXT PRIMARY KEY,
+  revision INTEGER NOT NULL DEFAULT 0,
+  payload TEXT NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS ux_crew_notes (
+  id TEXT PRIMARY KEY,
+  crew_id TEXT NOT NULL,
+  author_account TEXT NOT NULL,
+  author_name TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  operation_id TEXT NOT NULL DEFAULT '',
+  data_json TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ix_ux_crew_notes ON ux_crew_notes(crew_id,created_at);
+CREATE TABLE IF NOT EXISTS ux_crew_signals (
+  crew_id TEXT NOT NULL,
+  subject_id TEXT NOT NULL,
+  account_id TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  member_since TIMESTAMPTZ NOT NULL,
+  data_json TEXT NOT NULL,
+  expires_at TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY(crew_id,subject_id,account_id,kind)
+);
+CREATE INDEX IF NOT EXISTS ix_ux_crew_signals ON ux_crew_signals(crew_id,updated_at);
+
+-- Player-authored Crew conversations, consented cosmetics and mentor subjects.
+CREATE TABLE IF NOT EXISTS ux_community_entries (
+ id TEXT PRIMARY KEY, crew_id TEXT NOT NULL, author_account TEXT NOT NULL, author_name TEXT NOT NULL,
+ member_since TIMESTAMPTZ NOT NULL, kind TEXT NOT NULL, anchor_kind TEXT NOT NULL DEFAULT '', anchor_id TEXT NOT NULL DEFAULT '',
+ payload TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'open', created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS ix_ux_community_entries ON ux_community_entries(crew_id,created_at);
+CREATE TABLE IF NOT EXISTS ux_community_documents (
+ crew_id TEXT NOT NULL, kind TEXT NOT NULL, revision INT NOT NULL DEFAULT 1, payload TEXT NOT NULL,
+ updated_by TEXT NOT NULL, author_name TEXT NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), PRIMARY KEY(crew_id,kind)
+);
+CREATE TABLE IF NOT EXISTS ux_community_portrait_consents (
+ portrait_id TEXT NOT NULL, account_id TEXT NOT NULL, member_since TIMESTAMPTZ NOT NULL,
+ character_id TEXT NOT NULL, name TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+ PRIMARY KEY(portrait_id,account_id)
+);
+CREATE TABLE IF NOT EXISTS ux_mentor_subjects (
+ account_id TEXT PRIMARY KEY, specialties TEXT NOT NULL, help_subject TEXT NOT NULL DEFAULT '', published_until TIMESTAMPTZ NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
