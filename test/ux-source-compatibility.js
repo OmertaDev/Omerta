@@ -139,7 +139,7 @@ await import('./lib/ux-director-reader-source-compatibility.js');
 {
   const next = UX_SUITES_GATE_SOURCE, file = UX_SUITES_GATE_FILE;
   assert.equal(next.status, 'SEALED');
-  assert.equal(next.revision, 'SUITES_GATE_AUTHORED_REVISION_TO_STAMP_AFTER_CHECKPOINT');
+  assert.equal(next.revision, 'e3fac975f358543c57dda5109dddcf585602e56d');
   assert.equal(next.targetRevision, '9b20b7d48cfc2969b0c79b9317deee1d4f422e97');
   assert.deepEqual(next.files.map(row => row.file), [file]);
   for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
