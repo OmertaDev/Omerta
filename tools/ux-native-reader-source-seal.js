@@ -1,0 +1,44 @@
+// Authors a finite source-only record from one real immutable fix commit. Never a native capture.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { UX_NATIVE_READER_SOURCE_FILES } from './ux-native-reader-source-compatibility.js';
+assert.equal(process.argv.length, 3, 'Pass the full authored fix commit');
+const revision = process.argv[2], targetRevision = 'a93245c8eb798dd3760720b65e61c300cb0fceed';
+assert.match(revision, /^[a-f0-9]{40}$/); assert.notEqual(revision, targetRevision);
+const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
+git('merge-base', '--is-ancestor', targetRevision, revision);
+const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+const blob = value => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(value) + '\0').update(value).digest('hex');
+function source(rev, file) {
+  const line = git('ls-tree', rev, '--', file).trim(), match = /^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/.exec(line); assert(match && match[3] === file);
+  const text = git('show', rev + ':' + file); assert(!/[\r\ufeff\0]/.test(text), 'Canonical LF UTF-8 source only'); assert.equal(blob(text), match[2]);
+  return { text, mode: match[1], blob: match[2] };
+}
+function inverseHunks(diff) {
+  const rows = []; let hunk;
+  for (const line of diff.split('\n')) {
+    if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; rows.push(hunk); }
+    else if (hunk && /^[ +\-]/.test(line)) { if (line[0] !== '-') hunk.current += line.slice(1) + '\n'; if (line[0] !== '+') hunk.baseline += line.slice(1) + '\n'; }
+    else assert(!line.startsWith('\\ No newline'), 'Complete newline-terminated sources only');
+  }
+  return rows;
+}
+const files = UX_NATIVE_READER_SOURCE_FILES.map(file => {
+  const current = source(revision, file), target = source(targetRevision, file);
+  assert.notEqual(current.text, target.text, 'Every declared reader source must actually change');
+  const inverses = inverseHunks(git('diff', '--no-ext-diff', '--unified=3', targetRevision, revision, '--', file));
+  let restored = current.text, end = -1;
+  for (const inverse of inverses) { assert(inverse.current.length); assert.equal(current.text.split(inverse.current).length, 2); const at = current.text.indexOf(inverse.current); assert(at >= end); end = at + inverse.current.length; assert.equal(restored.split(inverse.current).length, 2); restored = restored.replace(inverse.current, () => inverse.baseline); }
+  assert.equal(restored, target.text);
+  return { file, mode: current.mode, targetMode: target.mode, currentBlob: current.blob, currentSha256: sha(current.text), currentRawSha256: { lf: sha(current.text), crlf: sha(current.text.replaceAll('\n', '\r\n')) }, currentBytes: Buffer.byteLength(current.text), targetBlob: target.blob, targetSha256: sha(target.text), targetBytes: Buffer.byteLength(target.text), inverses };
+});
+const pin = { version: 1, status: 'SEALED', phase: 'EXACT_UX_NATIVE_READER_SOURCE_ONLY', revision, tree: git('rev-parse', revision + '^{tree}').trim(), targetRevision, targetTree: git('rev-parse', targetRevision + '^{tree}').trim(), contextLines: 3, files };
+const freeze = "const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };\n";
+const proofPath = new URL('../test/lib/ux-native-reader-source-compatibility.js', import.meta.url), proof = fs.readFileSync(proofPath, 'utf8');
+const unsealedProofPin = "const AUTHORED_NATIVE_READER_FIX = 'UNSEALED';", sealedProofPin = "const AUTHORED_NATIVE_READER_FIX = '" + revision + "';";
+assert(proof.includes(unsealedProofPin) || proof.includes(sealedProofPin), 'Independent source proof is already pinned to a different fix');
+fs.writeFileSync(new URL('./ux-native-reader-source-data.js', import.meta.url), '// Exact immutable native-reader successor. Source-only; no native or runtime admission.\n' + freeze + 'export const UX_NATIVE_READER_SOURCE = freeze(' + JSON.stringify(pin, null, 2) + ');\nexport const UX_NATIVE_READER_SOURCE_SHA256 = ' + JSON.stringify(sha(JSON.stringify(pin))) + ';\n');
+if (proof.includes(unsealedProofPin)) fs.writeFileSync(proofPath, proof.replace(unsealedProofPin, sealedProofPin));
+console.log(JSON.stringify({ sourceOnly: true, revision, predecessor: targetRevision, files: files.length, inverseHunks: files.reduce((total, row) => total + row.inverses.length, 0), native: false, runtime: false }));

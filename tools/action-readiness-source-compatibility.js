@@ -1,6 +1,7 @@
 // Exact successor source transfer only. Runtime and native qualification use actual current bytes.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import {uxHistoricalInput} from './ux-source-compatibility.js';
 import {ACTION_READINESS_SOURCE,ACTION_READINESS_SOURCE_SHA256} from './action-readiness-source-data.js';
 export {ACTION_READINESS_SOURCE};
 const files=Object.freeze(['public/index.html','public/player-experience.js','test/player-experience-client.js','tools/mobile.js']);
@@ -33,6 +34,7 @@ export function qualifyActionReadinessSource(file,input,pin=ACTION_READINESS_SOU
   sourceOnly:true,native:false,runtime:false});
 }
 export function actionReadinessHistoricalInput(file,input){
+ input=uxHistoricalInput(file,input);
  // Only index.html crosses an existing historical reader; other successor files stay current.
  if(file!=='public/index.html')return input;
  const buffer=Buffer.isBuffer(input),text=buffer?input.toString('utf8'):input;

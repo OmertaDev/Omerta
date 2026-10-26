@@ -1292,6 +1292,19 @@
 @media(max-width:640px){.district-atlas{margin:40px 0}.district-atlas .atlas-grid{grid-template-columns:1fr}.district-atlas article{min-height:300px}.district-atlas .atlas-footer{display:block}.district-atlas .atlas-footer span{display:block;margin-bottom:12px}}
 @media(prefers-reduced-motion:reduce){.district-atlas img{transition:none}.district-atlas article:hover img{transform:none}}
 </style>
+<link rel="stylesheet" href="/ux-feedback.css?v=20261024">
+<link rel="stylesheet" href="/ux-progression.css?v=20261024">
+<link rel="stylesheet" href="/ux-social.css?v=20261024">
+<link rel="stylesheet" href="/ux-navigation.css?v=20261024">
+<link rel="stylesheet" href="/ux-world.css?v=20261024-2">
+<link rel="stylesheet" href="/ux-feel.css?v=20261025-1">
+<link rel="stylesheet" href="/ux-tools.css?v=20261025-1">
+<link rel="stylesheet" href="/ux-identity.css?v=20261025-1">
+<link rel="stylesheet" href="/ux-story.css?v=20261025-1">
+<link rel="stylesheet" href="/ux-community.css?v=20261025-1">
+<link rel="stylesheet" href="/ux-tactics.css?v=20261024-2">
+<link rel="stylesheet" href="/ux-investigation.css?v=20261024-2">
+<link rel="stylesheet" href="/ux-coordination.css?v=20261024-2">
 </head>
 <body>
 <svg style="display:none" aria-hidden="true"><defs>
@@ -1742,6 +1755,20 @@
 <div id="brag" class="hidden"></div>
 
 <script src="/player-experience.js"></script>
+<script src="/ux-feedback.js?v=20261024"></script>
+<script src="/ux-progression.js?v=20261024"></script>
+<script src="/ux-social.js?v=20261024"></script>
+<script src="/ux-navigation.js?v=20261024"></script>
+<script src="/ux-workspace.js?v=20261024-2"></script>
+<script src="/ux-world.js?v=20261024-2"></script>
+<script src="/ux-feel.js?v=20261025-1"></script>
+<script src="/ux-tools.js?v=20261025-1"></script>
+<script src="/ux-identity.js?v=20261025-1"></script>
+<script src="/ux-story.js?v=20261025-1"></script>
+<script src="/ux-community.js?v=20261025-1"></script>
+<script src="/ux-tactics.js?v=20261024-2"></script>
+<script src="/ux-investigation.js?v=20261024-2"></script>
+<script src="/ux-coordination.js?v=20261024-2"></script>
 <script>
 (() => {
   // Optional guidance must not stop core play if its separate script cannot load.
@@ -1916,7 +1943,8 @@
     while (liveCards.length > 5) { const old = liveCards.shift(); if (old.isConnected) old.replaceWith(old._still); }
   }, { passive: true });
   const HAPTIC = { tap: 8, success: [12, 30, 14], error: [40, 60, 40], big: [18, 40, 18, 40, 70] };
-  const haptic = (kind) => { if (REDUCED) return; try { navigator.vibrate?.(HAPTIC[kind] || 8); } catch {} };
+  const feedbackPreferences = () => window.createOmertaFeedback?.preferences() || { volume: 70, ambience: true, haptics: true, celebration: 'full' };
+  const haptic = (kind) => { if (REDUCED || !feedbackPreferences().haptics) return; try { navigator.vibrate?.(HAPTIC[kind] || 8); } catch {} };
   // ── THE SOUNDTRACK (task #307, founder: "addition of sounds when playing and when clicking …
   // addictive tones … fit the mafia theme"). WebAudio-SYNTHESIZED — zero assets, zero deps,
   // license-free, so the single-file console stays self-contained. The context is created lazily
@@ -1934,7 +1962,7 @@
           const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
           ctx = new AC();
           const comp = ctx.createDynamicsCompressor();
-          master = ctx.createGain(); master.gain.value = 0.28;
+          master = ctx.createGain(); master.gain.value = 0.28 * feedbackPreferences().volume / 100;
           master.connect(comp); comp.connect(ctx.destination);
         }
         if (ctx.state === 'suspended') ctx.resume();
@@ -1985,8 +2013,8 @@
     const BUZZ = { ok: [12], cash: [12, 40, 12], jail: [70, 50, 70], ring: [30, 80, 30] };
     const play = (name) => {
       if (!enabled() || !SOUNDS[name]) return;
-      try { if (BUZZ[name]) navigator.vibrate?.(BUZZ[name]); } catch { /* not supported */ }
-      try { if (!ensure()) return; SOUNDS[name](ctx.currentTime); } catch { /* silence, never an error */ }
+      try { if (!REDUCED && feedbackPreferences().haptics && BUZZ[name]) navigator.vibrate?.(BUZZ[name]); } catch { /* not supported */ }
+      try { if (!ensure()) return; master.gain.value = 0.28 * feedbackPreferences().volume / 100; SOUNDS[name](ctx.currentTime); } catch { /* silence, never an error */ }
     };
     return { play, enabled, toggle() { localStorage.setItem('omerta_sfx', enabled() ? 'off' : 'on'); return enabled(); } };
   })();
@@ -1998,28 +2026,43 @@
     const TAB_BED = { den: 'bed-den', speakeasy: 'bed-speakeasy', port: 'bed-docks', law: 'bed-law', pen: 'bed-pen', portfolio: 'bed-legit' };
     const GROUP_BED = { streets: 'bed-streets', earners: 'bed-streets', city: 'bed-streets', start: 'bed-streets',
       vice: 'bed-den', blood: 'bed-law', family: 'bed-family', legit: 'bed-legit' };
-    let cur = null, curKey = null, wantKey = null, gestured = false, fadeT = null;
+    let cur = null, curKey = null, wantKey = null, gestured = false, customBed = null;
+    const bedFades = new Map(), retiringBeds = new Set();
     const VOL = 0.11;
-    const fadeTo = (a, target, ms, done) => { clearInterval(fadeT); const step = (target - a.volume) / (ms / 60);
-      fadeT = setInterval(() => { try { a.volume = Math.max(0, Math.min(1, a.volume + step)); } catch {}
-        if ((step > 0 && a.volume >= target) || (step < 0 && a.volume <= Math.max(0, target))) { clearInterval(fadeT); done?.(); } }, 60); };
-    const stop = () => { if (cur) { const dying = cur; fadeTo(dying, 0, 900, () => { dying.pause(); dying.src = ''; }); cur = null; curKey = null; } };
+    const fadeTo = (a, target, ms, done) => {
+      clearInterval(bedFades.get(a)); bedFades.delete(a);
+      if (Math.abs(target - a.volume) < 0.001) { a.volume = target; done?.(); return; }
+      const step = (target - a.volume) / Math.max(1, ms / 60);
+      const timer = setInterval(() => {
+        try { a.volume = Math.max(0, Math.min(1, a.volume + step)); } catch {}
+        if ((step > 0 && a.volume >= target) || (step < 0 && a.volume <= target)) {
+          clearInterval(timer); bedFades.delete(a); a.volume = target; done?.();
+        }
+      }, 60); bedFades.set(a, timer);
+    };
+    const stop = () => { if (cur) { const dying = cur; retiringBeds.add(dying); fadeTo(dying, 0, 500, () => { dying.pause(); dying.src = ''; retiringBeds.delete(dying); }); cur = null; curKey = null; } };
     const start = (key) => {
       const a = new Audio(`/art/hype/${key}.m4a`);
       a.loop = true; a.preload = 'auto'; a.volume = 0;
       const p = a.play?.();
-      p?.then?.(() => fadeTo(a, VOL, 1400))?.catch?.(() => { /* pre-gesture — retried on the next pointerdown */ });
+      p?.then?.(() => { if (cur === a) fadeTo(a, VOL * (customBed?.volume ?? 100) / 100, 500); })?.catch?.(() => { /* pre-gesture — retried on the next pointerdown */ });
       cur = a; curKey = key;
     };
     const sync = () => {
-      const ok = SFX.enabled() && !navigator.connection?.saveData && !document.hidden && gestured;
-      const key = ok && wantKey && MOTION.beds.has(wantKey) ? wantKey : null;
-      if (key === curKey) { if (cur && cur.paused && key) cur.play?.()?.catch?.(() => {}); return; }
+      const ok = SFX.enabled() && feedbackPreferences().ambience && !navigator.connection?.saveData && !document.hidden && gestured;
+      const wanted = customBed?.key || wantKey;
+      const key = ok && wanted && MOTION.beds.has(wanted) ? wanted : null;
+      if (key === curKey) { if (cur && cur.paused && key) cur.play?.()?.catch?.(() => {}); if (cur) fadeTo(cur, VOL * (customBed?.volume ?? 100) / 100, 200); return; }
       stop(); if (key) start(key);
     };
     document.addEventListener('pointerdown', () => { if (!gestured) { gestured = true; sync(); } }, { capture: true, passive: true });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) cur?.pause(); else sync(); });
-    return { set(tabId, grp) { wantKey = TAB_BED[tabId] || GROUP_BED[grp] || null; sync(); }, sync };
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { cur?.pause(); for (const bed of retiringBeds) bed.pause(); } else sync(); });
+    return { set(tabId, grp) { wantKey = TAB_BED[tabId] || GROUP_BED[grp] || null; sync(); }, sync,
+      soundscape(settings = {}) {
+        if (settings.enabled && !MOTION.beds.has(settings.key)) return false;
+        customBed = settings.enabled ? { key: settings.key, volume: Math.max(0, Math.min(100, Number(settings.volume) || 0)) } : null;
+        sync(); return true;
+      } };
   })();
   const sfx = (n) => SFX.play(n);
   // every button press gets the felt-damped click (pointerdown so it lands on the GESTURE — which
@@ -2059,6 +2102,7 @@
   // the whole frame takes the hit. Violence and busts only: shaking the screen for a
   // PAYOUT reads as an error, which is the opposite of what a payday should feel like.
   function shake() {
+    if (feedbackPreferences().celebration === 'quiet') return;
     if (REDUCED) return;
     document.body.classList.remove('shaking');
     void document.body.offsetWidth;              // reflow, or a second shake in a row never plays
@@ -2068,6 +2112,7 @@
   // one frame of colour across everything — a muzzle flash, a flashbulb, a payday
   let flashEl = null;
   function flash(colour) {
+    if (feedbackPreferences().celebration !== 'full') return;
     if (REDUCED) return;
     if (!flashEl) { flashEl = document.createElement('div'); flashEl.id = 'flashwrap'; document.body.appendChild(flashEl); }
     flashEl.style.background = colour;
@@ -2076,6 +2121,7 @@
   // a number that rises off the thing that produced it. Anchored to the element the
   // player just touched, so the payoff appears where their attention already is.
   function floatVal(text, good = true, anchor = null) {
+    if (feedbackPreferences().celebration === 'quiet') return;
     if (REDUCED || !text) return;
     // the rect is captured at PRESS time (lastPressRect): by the time a result lands the
     // handler has usually re-rendered the tab, so the button that was touched no longer exists.
@@ -2384,6 +2430,7 @@
   // One dispatcher, keyed on shapes only these results carry — so a reveal can never fire on
   // an unrelated response, and a new head-to-head gets its lanes for free.
   function revealFor(body) {
+    if (feedbackPreferences().celebration !== 'full') return;
     if (!body || REDUCED) return;
     if (body.game === 'dice' && body.rolls) return revealRoll(body.rolls, body.point, body.win);
     if (body.game === 'blackjack' && body.done) return revealCards(body);
@@ -2428,6 +2475,7 @@
   }
 
   function playCine(spec) {
+    if (feedbackPreferences().celebration !== 'full') return;
     sfx('win');
     if (!spec) return;
     if (spec.fx === 'violent') { shake(); flash('radial-gradient(60% 50% at 50% 45%, rgba(192,57,43,.5), transparent)'); haptic('big'); }
@@ -2463,6 +2511,15 @@
   // drawn UI icons (the sprite in <body>) — nav chrome only; toasts/options stay text (textContent)
   const ic = (n) => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   let me = null, rules = null, ws = null, session = null;
+  let feedbackUX = null;
+  const uxModules = [];
+  // Optional presentation modules never grant actions or replace server decisions.
+  function uxCall(method, ...args) {
+    for (const module of uxModules) {
+      try { Promise.resolve(module[method]?.(...args)).catch(error => console.warn(`UI ${method} unavailable`, error)); }
+      catch (error) { console.warn(`UI ${method} unavailable`, error); }
+    }
+  }
   let readinessSnapshotAt = null;
   // THE BROADCAST — frictionless referral attribution: a shared link (/u/<name>?ref=<name>) drops
   // ?ref, we stash it, and character creation auto-fills it as the referralCode (no code to type).
@@ -4800,7 +4857,7 @@
   //
   // Queueing here instead costs nothing (the total wait is identical) and holds no connections.
   // KEYLESS calls stay parallel — /v1/rules, /v1/city, /v1/online take no lock and needn't wait.
-  let _authQueue = Promise.resolve();
+  let _authQueue = Promise.resolve(), uxReadSequence = 0;
   async function api(method, path, body, options = {}) {
     if (method !== 'GET') options = { ...options, idempotencyKey: options.idempotencyKey || uuid() };
     const authToken = token;
@@ -4812,7 +4869,7 @@
       const result = await apiNow(method, path, body, { ...options, authToken });
       return valid() ? result : neutral;
     };
-    if (method !== 'GET' && !['/v1/screens', '/v1/commands/observations'].includes(path)
+    if (method !== 'GET' && !['/v1/screens', '/v1/commands/observations', '/v1/ux/workspace'].includes(path)
       && !path.startsWith('/v1/auth/') && !path.startsWith('/v1/access/')) {
       projections.invalidate('player'); projections.invalidate('world');
     }
@@ -4823,30 +4880,33 @@
     return mine;
   }
   async function apiNow(method, path, body, options = {}) {
-    // content-type only when a body rides along — Fastify 400s an empty JSON-typed body.
-    // a fresh Idempotency-Key on every mutation lets the server dedup a retried write (belt to the
-    // in-flight lock's braces — a network layer that re-sends the request won't double-spend).
-    const mutating = method !== 'GET';
-    let r;
+    const requestedToken = token, requestedCharacter = me?.id || '';
+    const readContext = method === 'GET' ? { id: ++uxReadSequence, path, tab: currentTab, accountId: session?.accountId || '', characterId: requestedCharacter } : null;
+    if (readContext) uxCall('readStarted', readContext);
+    const current = () => requestedToken === token && !(method === 'GET' && requestedCharacter && requestedCharacter !== (me?.id || '')) && (!options.isCurrent || options.isCurrent());
+    let readStatus = 503;
     try {
-      r = await fetch(path, { method,
-        headers: { ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
-          ...(mutating ? { 'Idempotency-Key': options.idempotencyKey || uuid() } : {}),
-          ...(options.authToken ? { authorization: 'Bearer ' + options.authToken } : {}) },
-        body: body === undefined ? undefined : JSON.stringify(body) });
-    } catch {
-      // The request never REACHED a server — the box is down, the deploy is restarting, the phone lost
-      // signal. fetch REJECTS here rather than returning a response, and act() has no catch, so this
-      // used to escape as an unhandled rejection: the button simply did nothing, no toast, no clue.
-      // Hand back a synthetic 503 so every existing `code >= 400` branch behaves and the player is told.
-      // (503 ≠ the server's own `db_down`: that one means the server answered and its database is gone.)
-      return { code: 503, body: { error: 'offline' } };
+      // Keep the existing dispatch credential and protected request key; a queued read cannot
+      // observe a different account, character, or invalidated projection ticket.
+      let response;
+      try {
+        response = await fetch(path, { method,
+          headers: { ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
+            ...(method !== 'GET' ? { 'Idempotency-Key': options.idempotencyKey || uuid() } : {}),
+            ...(options.authToken ? { authorization: 'Bearer ' + options.authToken } : {}) },
+          body: body === undefined ? undefined : JSON.stringify(body) });
+      } catch { return { code: 503, body: { error: 'offline' } }; }
+      readStatus = response.status;
+      let parsed;
+      try { parsed = await response.json(); }
+      catch { readStatus = response.status >= 400 ? response.status : 502; return { code: readStatus, body: { error: 'response_unreadable' } }; }
+      if (!current()) { readStatus = 499; return { ignored: true, code: 499, body: { error: 'session_changed' } }; }
+      if (method === 'GET' && response.status < 400) uxCall('observe', path, parsed);
+      // Background reads never replace the action's Last Word response.
+      return { code: response.status, body: parsed, replayed: response.headers.get('x-idempotent-replay') === 'true' || parsed?.replayed === true };
+    } finally {
+      if (readContext) uxCall('readFinished', { ...readContext, code: current() ? readStatus : 499 });
     }
-    let j = null; try { j = await r.json(); } catch { j = { raw: await r.text?.() }; }
-    // NOTE: api() no longer writes the "Last Word" viewer — background reads (refresh, tab renders,
-    // the 30s poll) all call api() and would clobber it with a GET /v1/me dump after every action.
-    // act() writes #resp with the ACTION's result instead, so the viewer shows what you actually did.
-    return { code: r.status, body: j, replayed: r.headers.get('x-idempotent-replay') === 'true' || j?.replayed === true };
   }
   let worldProjection = null, worldSelection = null, worldMysterySelection = null, worldBusy = false, worldRetry = null;
   let worldAccountId = null, worldFeedback = null, worldChoiceConfirmation = null;
@@ -4916,6 +4976,9 @@
         if (result.code < 400) {
           const previousGeneration = me?.generation;
           me = result.body.player?.character || result.body.player;
+          // Optional UX observers consume the same verified character after the existing
+          // projection ticket and generation guards accepted it; no second player read.
+          uxCall('observe', '/v1/me', { character: me });
           readinessSnapshotAt = Date.now();
           clearScopedOperations();
           if (worldRetry && worldRetry.characterId !== me.id) {
@@ -4923,6 +4986,7 @@
             try { sessionStorage.removeItem('omerta_world_pending'); } catch { /* storage unavailable */ }
           }
           if (rules) { try { renderSheet(); applyTabVisibility(); } catch (error) { console.error('projection render failed', error); } }
+          uxCall('render'); renderOperationFeed();
           if (previousGeneration != null && me.generation > previousGeneration) backfillFeed();
         } else {
           readinessSnapshotAt = null;
@@ -5325,7 +5389,7 @@
   // tracked resource changes, and a concrete way out when the city refuses the move. Receipts stay in
   // memory for this session only. Exact balances are not copied into browser storage.
   let operationSeq = 0;
-  let operationPending = null;
+  let operationPending = null, operationPhase = "";
   const operationReceipts = [];
   let _operationResponseCurrent = null;
   function clearScopedOperations() {
@@ -5350,6 +5414,10 @@
   const operationNumber = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) ? Number(value) : null;
   const operationSnapshot = m => m?.id && m.generation != null ? ({
     identity: `${m.id}:${m.generation}`,
+    id: m.id, accountId: session?.accountId, generation: m.generation, name: m.name,
+    loc: m.loc, honor: m.honor, title: m.title, prestige: m.prestige, path: m.path,
+    trades: JSON.parse(JSON.stringify(m.trades || [])), skills: JSON.parse(JSON.stringify(m.skills || [])),
+    coach: m.coach ? { ...m.coach } : null,
     ...Object.fromEntries(operationResources.map(([key]) => [key, operationNumber(['muscle', 'cunning', 'speed'].includes(key) ? m.stats?.[key] : m[key])])),
   }) : null;
   function operationChanges(before, after) {
@@ -5444,6 +5512,8 @@
     return { text: 'Review the stated terms, adjust the move, and try again.' };
   }
   function operationReceiptMarkup(receipt) {
+    const enhanced = feedbackUX?.receiptMarkup(receipt);
+    if (enhanced) return enhanced;
     const recovery = receipt.recovery;
     return `<article class="operation-receipt operation-receipt--${receipt.state}" data-operation-receipt="${receipt.id}">
       <div class="operation-receipt__head"><span class="operation-receipt__mark" aria-hidden="true">${receipt.state === 'success' ? '✓' : '!'}</span>
@@ -5472,6 +5542,8 @@
     });
   }
   function renderOperationFeed() {
+    const latest = $('#operation-latest'), current = operationReceipts.find(receipt => receipt.actor === `${me?.id}:${me?.generation}` && (!receipt.isCurrent || receipt.isCurrent()));
+    if (latest) latest.innerHTML = current ? operationReceiptMarkup(current) : '';
     const feed = $('#operation-feed');
     if (feed) feed.innerHTML = operationFeedMarkup();
     bindOperationDesk();
@@ -5480,7 +5552,7 @@
     const desk = $('#operation-desk'), line = $('#operation-pending');
     desk?.setAttribute('aria-busy', operationPending ? 'true' : 'false');
     if (line) {
-      line.textContent = operationPending ? `Working: ${operationPending}…` : '';
+      line.textContent = operationPending ? `${operationPhase || "Sending move"}: ${operationPending}…` : '';
       line.classList.toggle('hidden', !operationPending); line.hidden = !operationPending;
     }
   }
@@ -5499,12 +5571,14 @@
       summary: describe(result.body, result.code),
       delta: failed ? 'No state change confirmed.' : operationDelta(before, after),
       at: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      atIso: new Date().toISOString(),
+      atIso: new Date().toISOString(), method, path,
     };
     if (failed) receipt.recovery = operationRecovery(result, { label, method, path, body, idempotencyKey, beforeDispatch, isCurrent, onReceipt, onResult });
+    feedbackUX?.enrich(receipt, before, after, result);
     operationReceipts.unshift(receipt);
     operationReceipts.splice(6);
     renderOperationFeed();
+    uxCall('recordOperation', receipt, before, after, result);
     return receipt;
   }
   // one money move at a time — a global in-flight lock is the double-tap guard (buttons re-render
@@ -5515,6 +5589,7 @@
   // job's OWN scene plate on every pull — tap to dismiss, absent entirely under reduced-motion
   // (the toast still lands, so nothing is lost).
   function playVignette({ art, stamp, sub, good }) {
+    if (feedbackPreferences().celebration !== 'full') return;
     if (REDUCED) return;
     document.querySelector('.vignette')?.remove();
     // when the scene plate has a motion clip, the vignette PLAYS it (the still is the poster, so a
@@ -5548,7 +5623,7 @@
     const oldHtml = trigger?.innerHTML;
     const oldAriaLabel = trigger?.getAttribute('aria-label');
     acting = true;
-    operationPending = label;
+    operationPending = label; operationPhase = 'Sending move';
     document.body.style.cursor = 'progress';
     if (trigger) {
       trigger.setAttribute('aria-busy', 'true');
@@ -5559,6 +5634,7 @@
     busy.setAttribute('aria-label', 'Working'); busy.classList.add('on');
     try {
       const r = await api(method, path, body, { idempotencyKey, beforeDispatch: () => actorCurrent() && (!options.beforeDispatch || options.beforeDispatch()), isCurrent: () => actorCurrent() && (!options.isCurrent || options.isCurrent()), activityHandled: true });
+      operationPhase = r.code < 400 ? 'Move recorded · updating your sheet' : 'Checking current state'; renderOperationPending();
       if (!actorCurrent() || r.ignored) { $('#resp').textContent = ''; return { ...r, ignored:true }; }
       if (typeof options.onResult === 'function') options.onResult(r);
       if (!actorCurrent() || (options.isCurrent && !options.isCurrent())) {
@@ -5598,7 +5674,7 @@
           } else {
             // no cinematic: still let a gain LAND somewhere, rather than only in a corner toast
             const d = Number(r.body?.earned ?? r.body?.payout ?? r.body?.take ?? r.body?.won ?? 0);
-            if (d > 0) floatVal(`+$${fmt(d)}`, true, lastPressed);
+            if (d > 0 && !feedbackUX) floatVal(`+${fmt(d)}`, true, lastPressed);
           }
         }
         if (!spec) sfx('ok'); // the cinematic carries its own sting; everything else confirms softly
@@ -5625,7 +5701,7 @@
       return r;
     } finally {
       acting = false;
-      operationPending = null;
+      operationPending = null; operationPhase = "";
       document.body.style.cursor = '';
       if (trigger?.isConnected) {
         trigger.removeAttribute('aria-busy');
@@ -6622,7 +6698,7 @@
     // "/" opens the jump — but never steal the key from a field the player is typing in
     if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
     const t = e.target; if (t && (/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName) || t.isContentEditable)) return;
-    if (document.querySelector('.modal-bg:not(.hidden)')) return; // an open dialog keeps its keys
+    if (document.querySelector('.modal-bg:not(.hidden),dialog[open]')) return; // an open dialog keeps its keys
     e.preventDefault(); openJump();
   });
   // ── THE TOUR — the illustrated multi-step welcome. Content matches the glossary/codex register
@@ -7050,7 +7126,7 @@
   }
   // a smooth count-up for a changing money figure — the pocket fills, it doesn't just blink
   function countUp(el, from, to, ms = 650) {
-    if (REDUCED || from === undefined || from === to || !el) { if (el) el.textContent = '$' + fmt(to); return; }
+    if (REDUCED || feedbackPreferences().celebration === 'quiet' || from === undefined || from === to || !el) { if (el) el.textContent = '$' + fmt(to); return; }
     const start = performance.now(), diff = to - from;
     const step = (now) => { const p = Math.min(1, (now - start) / ms), e = 1 - Math.pow(1 - p, 3);
       el.textContent = '$' + fmt(Math.round(from + diff * e));
@@ -7162,6 +7238,7 @@
           ${planRows ? `<div class="cplan"><button class="cpt" id="cplan-tg">UP NEXT:<i>+${planRows ? plan.slice(1, 5).length : 0} more ▾</i></button>${planRows}</div>` : ''}
         </div>
         <div id="operation-pending" class="operation-pending${operationPending ? '' : ' hidden'}" role="status" aria-live="polite">${operationPending ? `Working: ${esc(operationPending)}…` : ''}</div>
+        <div id="operation-latest" aria-live="polite"></div>
         <div class="operation-desk__history"><div class="operation-desk__history-title">RECENT OPERATIONS · THIS SESSION</div>
           <div id="operation-feed" role="log" aria-live="polite" aria-relevant="additions text">${operationFeedMarkup()}</div></div>
       </section>`;
@@ -7749,7 +7826,12 @@
       if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
     }
     renderIntro(id);   // the one-time "first time here" banner (outside the tab body — re-render-proof)
-    RENDERERS[id]?.();
+    const renderRoot = $('#tab-' + id);
+    uxCall('beforeRender', renderRoot);
+    const screenRendered = Promise.resolve(RENDERERS[id]?.()).then(() => {
+      if (currentTab !== id) return;
+      uxCall('afterRender', renderRoot); uxCall('render');
+    }).catch(error => console.warn('Screen refresh unavailable', error));
     // KEYBOARD: PICKING A SCREEN PUTS YOU ON IT. Tab order is DOM order, and the sheet's ~40
     // controls sit before the tab panel — so a player who reached a screen from the keyboard then
     // had to tab back through the whole left column to touch anything on it ("tab tab tab to the
@@ -7760,6 +7842,7 @@
       // The selected tabpanel announces the destination and puts the next Tab on its first control.
       $('#tab-' + id)?.focus({ preventScroll: true });
     }
+    return screenRendered;
   }
   // re-render the OPEN tab (debounced) when live state changes — so a board a player is staring at
   // (contracts, nightlife, the market) doesn't go stale under a WS event or the 30s poll.
@@ -7770,7 +7853,7 @@
     clearTimeout(_reRenderT);
     _reRenderT = setTimeout(() => {
       const ae = document.activeElement;
-      if (document.querySelector('.modal-bg:not(.hidden)')) return;
+      if (document.querySelector('.modal-bg:not(.hidden),dialog[open]')) return;
       if (ae && (/^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName) || ae.isContentEditable)) return;
       // Background updates wait for the reader. A completed action must refresh costs and outcomes,
       // even while its button keeps focus; later background signals cannot cancel that obligation.
@@ -7778,7 +7861,11 @@
       const restorePanel = _reRenderAfterAction && ae?.closest?.('#tab-' + currentTab);
       _reRenderNeeded = false; _reRenderAfterAction = false;
       try {
+        const renderRoot = $('#tab-' + currentTab), renderedTab = currentTab;
+        uxCall('beforeRender', renderRoot);
         Promise.resolve(RENDERERS[currentTab]?.()).then(() => {
+          if (currentTab !== renderedTab) return;
+          uxCall('afterRender', renderRoot); uxCall('render');
           if (restorePanel?.isConnected && !ae.isConnected && document.activeElement === document.body)
             restorePanel.focus({ preventScroll: true });
         }).catch(() => { /* the next refresh may recover a transient board failure */ });
@@ -8998,12 +9085,15 @@
 
   function navigateGameTab(tab, context = {}) {
     if (!Object.hasOwn(TABS, tab)) return;
+    const gym = tab === 'streets' && (context.venueId === 'training' || context.section === 'streets-train');
+    if (gym) localStorage.setItem('omerta_sect_streets-train', '1');
     if (tab === 'fieldwork') {
       _fieldworkEntryView = ['inventory', 'recipes', 'mysteries', 'operations'].includes(context.initialView)
         ? context.initialView : 'inventory';
       _fieldwork?.selectView(_fieldworkEntryView);
     }
-    setTab(tab);
+    const rendered = setTab(tab);
+    if (gym) Promise.resolve(rendered).then(() => { if (currentTab === tab) spotlight('[data-sect="streets-train"]'); });
     $('#tab-' + tab)?.focus({ preventScroll: true });
   }
 
@@ -14396,6 +14486,25 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
     } catch { /* headless */ }
   }
 
+  const uxContext = {
+    getState: () => ({ me: me ? { ...me, accountId: session?.accountId || me.id } : null, rules, currentTab, session, tabs: TABS,
+      venues: Object.entries(TABS).map(([tab, name]) => ({ id: tab, name, tab })) }),
+    read: api.bind(null, 'GET'), navigate: setTab, notify: toast, action: act,
+    getOrigin: () => lastPressRect, syncAudio: () => AMBIENT.sync(), celebrate: playCine,
+    getSoundscapes: () => [...MOTION.beds], setSoundscape: settings => AMBIENT.soundscape(settings),
+  };
+  const workspaceUX = window.createOmertaWorkspace?.({ ...uxContext, write: api.bind(null, 'PUT'),
+    onHydrate: () => { uxCall('reloadWorkspace'); document.dispatchEvent(new CustomEvent('omerta:workspace-hydrated')); uxCall('render'); } });
+  uxContext.workspace = workspaceUX;
+  if (workspaceUX) uxModules.push(workspaceUX);
+  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,
+    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,
+    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaCommunity, window.createOmertaWorld]) {
+    if (!factory) continue;
+    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }
+    catch (error) { console.warn('UI enhancement unavailable', error); }
+  }
+  uxCall('render');
   applyI18n();
   mountLangPicker('#top');           // the console picker (persists; reload re-renders everything)
   mountLangPicker('#screen-auth .lfoot'); // the landing picker for first-time visitors

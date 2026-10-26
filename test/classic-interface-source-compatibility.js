@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';
 import {execFileSync} from 'node:child_process';
 import * as source from '../tools/commerce-current-enterprise-source-compatibility.js';
 import {ACTION_READINESS_SOURCE,qualifyActionReadinessSource,actionReadinessHistoricalInput} from '../tools/action-readiness-source-compatibility.js';
@@ -52,9 +53,9 @@ for(const row of successor.files){
  const current=git('show',successor.revision+':'+row.file),target=git('show',successor.targetRevision+':'+row.file);
  for(const [revision,expectedBlob]of [[successor.revision,row.currentBlob],[successor.targetRevision,row.targetBlob]])
   assert.equal(git('ls-tree',revision,'--',row.file).trim(),row.mode+' blob '+expectedBlob+'\t'+row.file);
- const physical=fs.readFileSync(row.file,'utf8'),stat=fs.lstatSync(row.file);
+ const physical=uxHistoricalInput(row.file,fs.readFileSync(row.file,'utf8')),stat=fs.lstatSync(row.file);
  assert(stat.isFile()&&!stat.isSymbolicLink(),'Physical successor source is a regular file');
- assert.equal(git('show','HEAD:'+row.file),current,'Current committed successor source remains exact');
+ assert.equal(uxHistoricalInput(row.file,git('show','HEAD:'+row.file)),current,'Current committed successor source remains exact');
  assert(physical===current||physical===current.replaceAll('\n','\r\n'),'Physical successor source remains exact');
  assert.deepEqual(row.inverses,inverseHunks(git('diff','--no-ext-diff','--unified=3',successor.targetRevision,successor.revision,'--',row.file)));
  for(const input of [physical,current,current.replaceAll('\n','\r\n')]){

@@ -13,6 +13,7 @@
 //     one persistent public-safe activity source), enriched with the actor's CURRENT living name. The
 //     info-economy rule holds by construction: a kill is already public to both parties + the streets feed.
 import { playerIntelMap } from './playerintel.js';
+import { circleHighlights } from './circle-highlights.js';
 
 // ── resolve the set of ACCOUNT ids in your circle → { account: relation }. Crew mates, your mentor, your
 // protégés, your spouse. A handful of cheap keyed reads; the sets can overlap (a crewmate who's also your
@@ -41,7 +42,7 @@ export async function circleAccounts(client, meAccount) {
 export async function circleBoard(client, ch, online) {
   const me = ch.account_id;
   const rel = await circleAccounts(client, me);
-  if (!rel.size) return { people: [], feed: [], empty: true };
+  if (!rel.size) return { people: [], feed: [], highlights: await circleHighlights(client, ch), empty: true };
   const intel = await playerIntelMap(client, me);
   const accts = [...rel.keys()];
   // pg-mem returns zero rows for `= ANY($1::text[])` (the MY PROFILE lesson) — build a parameterized IN list.
@@ -87,5 +88,5 @@ export async function circleBoard(client, ch, online) {
       other: killerIn ? k.victim_name : (k.killer_name || 'someone'),
     };
   });
-  return { people, feed };
+  return { people, feed, highlights: await circleHighlights(client, ch) };
 }

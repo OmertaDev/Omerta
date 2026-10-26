@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';
 assert.equal(process.execArgv.length,0);assert.equal(process.argv.length,2,'No native/default/filtered mode in this source-only proposal');
 for(const k of Object.keys(process.env))assert(!/DATABASE_URL$|^PG|^RC1|^P2_TEST|^ENTERPRISE_NATIVE_/i.test(k)&&!['NODE_OPTIONS','NODE_PATH','NODE_PG_FORCE_NATIVE','LEGAL_PROFILE_DEFER','GENESIS_AUCTION_MANIFEST_PATH','GENESIS_AUCTION_MANIFEST_SHA256'].includes(k.toUpperCase()),'Ambient backend/loader refused: '+k);
 const subject=await import('../tools/commerce-release-phase2-migration-catalog.js');
@@ -17,12 +18,12 @@ function commerceSourceGitPin(pin){assert.equal(execFileSync('git',['ls-tree',pi
 function commerceExactInverse(input,inverses){let text=input;for(const h of inverses){assert(h.current&&typeof h.baseline==='string');assert.equal(text.split(h.current).length,2,'One complete inverse context');text=text.replace(h.current,()=>h.baseline);}return text;}
 function commerceReadDeedLiteralData(input){const text=commercePinnedText(input,commerceDeedDataPin),literal=(prefix,suffix)=>{assert.equal(text.split(prefix).length,2);const line=text.split(prefix)[1].split('\n')[0];assert(line.endsWith(suffix));return JSON.parse(line.slice(0,-suffix.length));};const source=literal('export const COMMERCE_DEED_CURRENT_SOURCE=Object.freeze(',');'),inverses=literal('const COMMERCE_DEED_SCHEMA_INVERSES=',';'),protectedPins=literal('const COMMERCE_DEED_PROTECTED=',';');assert.equal(source.file,'schema.sql');assert.equal(source.sha256,commerceSchemaPin.sha256);assert.equal(source.blob,commerceSchemaPin.blob);assert.equal(source.bytes,commerceSchemaPin.bytes);assert.equal(inverses.length,2);assert.equal(Object.keys(protectedPins).length,8);return{source,inverses,protectedPins};}
 function commerceDefaultSchema(input){const text=commercePinnedText(input,commerceSchemaPin);assert.equal((text.match(/^CREATE TABLE IF NOT EXISTS \w+/gm)||[]).length,572);const historical=commerceExactInverse(text,commerceDeedData.inverses);return commercePinnedText(historical,subject.COMMERCE_RELEASE_PHASE2_SOURCE);}
-function commerceDefaultFingerprint(file,input,expected){if(hash(input)===expected)return input;assert(Object.hasOwn(commerceFingerprintSources,file),'Unknown changed historical reader');const row=commerceFingerprintSources[file];assert.equal(row.baseline.sha256,expected,'Original expected fingerprint retained');const current=commercePinnedText(input,row.current);commerceSourceGitPin(row.current);commerceSourceGitPin(row.baseline);return commercePinnedText(commerceExactInverse(current,row.inverses),row.baseline);}
+function commerceDefaultFingerprint(file,input,expected){input=uxHistoricalInput(file,input);if(hash(input)===expected)return input;assert(Object.hasOwn(commerceFingerprintSources,file),'Unknown changed historical reader');const row=commerceFingerprintSources[file];assert.equal(row.baseline.sha256,expected,'Original expected fingerprint retained');const current=commercePinnedText(input,row.current);commerceSourceGitPin(row.current);commerceSourceGitPin(row.baseline);return commercePinnedText(commerceExactInverse(current,row.inverses),row.baseline);}
 commerceSourceGitPin(commerceDeedDataPin);commerceSourceGitPin(commerceSchemaPin);
 // Native source is inert, whole-pinned JSON literal DATA here; it is never imported or evaluated.
 const commerceDeedData=commerceReadDeedLiteralData(uniformRead('../'+commerceDeedDataPin.file));
 for(const[file,pin]of Object.entries(commerceDeedData.protectedPins))assert.equal(hash(uniformRead('../'+file)),pin,'Exact protected native/source helper text');
-const branches=subject.commerceNativeBranchSources(),current=commerceDefaultSchema(uniformRead('../schema.sql'));
+const branches=subject.commerceNativeBranchSources(),current=commerceDefaultSchema(uxHistoricalInput('schema.sql',uniformRead('../schema.sql')));
 assert.equal(current,branches.current);assert.deepEqual(Object.keys(branches),['current','iv','main','common']);
 for(const [key,count]of [['current',568],['iv',561],['main',487],['common',480]])assert.equal((branches[key].match(/^CREATE TABLE IF NOT EXISTS \w+/gm)||[]).length,count);
 for(const input of [current,current.replaceAll('\n','\r\n')])assert.equal(subject.commerceMigrationPredecessor(input),branches.iv);

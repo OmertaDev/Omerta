@@ -4001,12 +4001,13 @@ scopedSocialContext = async function(db) {
   }
   const headers = [...jobsText.matchAll(/^ {2}([A-Za-z0-9_-]+):\s*$/gm)];
   const jobNames = headers.map((m) => m[1]);
-  assert.deepEqual(jobNames, ['suites', 'browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck_enterprise', 'pgcheck_commerce', 'pgcheck'],
-    '.github/workflows/ci.yml must retain exactly suites, browser, four isolated native cohorts and their required aggregate');
+  assert.deepEqual(jobNames, ['suites', 'browser', 'ux_browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck_enterprise', 'pgcheck_commerce', 'pgcheck'],
+    '.github/workflows/ci.yml must retain suites, both browser jobs, four isolated native cohorts and their required aggregate');
   const jobs = new Map(headers.map((header, i) => [header[1], jobsText.slice(
     header.index, i + 1 < headers.length ? headers[i + 1].index : jobsText.length)]));
   const suites = jobs.get('suites');
   const browser = jobs.get('browser');
+  const uxBrowser = jobs.get('ux_browser');
   const coreNative = jobs.get('pgcheck_core');
   const economyNative = jobs.get('pgcheck_economy');
   const nativeGate = jobs.get('pgcheck');
@@ -4017,6 +4018,12 @@ scopedSocialContext = async function(db) {
   assert.equal(nativeShape(nativeGate), "  pgcheck:\n    if: ${{ always() && !inputs.tail_only }}\n    name: real Postgres (${{ matrix.postgres }})\n    needs: [pgcheck_core, pgcheck_economy, pgcheck_enterprise, pgcheck_commerce]\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    steps:\n      - name: Require all four complete native cohorts\n        env:\n          CORE_RESULT: ${{ needs.pgcheck_core.result }}\n          ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}\n          ENTERPRISE_RESULT: ${{ needs.pgcheck_enterprise.result }}\n          COMMERCE_RESULT: ${{ needs.pgcheck_commerce.result }}\n        run: |\n          test \"$CORE_RESULT\" = success\n          test \"$ECONOMY_RESULT\" = success\n          test \"$ENTERPRISE_RESULT\" = success\n          test \"$COMMERCE_RESULT\" = success", 'Required native identities must fail closed on failure, cancellation or a skipped cohort');
   const splitNative = block => { const pieces = block.replaceAll('\r\n', '\n').split(/(?=^      - (?:uses:|run:|name:))/m); return { header: pieces.shift(), steps: pieces }; };
   const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative), enterpriseParts = splitNative(enterpriseNative);
+  const expectedUxNativeStep = "      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)\n        env:\n          UX_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n        run: npm run test:ux:postgres";
+  const uxNativeParts = coreParts.steps.filter(part => part.includes('      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)'));
+  assert.equal(uxNativeParts.length, 1, 'Exactly one complete UX native metadata and RLS proof is required');
+  assert.equal(nativeShape(uxNativeParts[0]), nativeShape(expectedUxNativeStep), 'UX native proof keeps its disposable endpoint, complete command and unconditional execution');
+  for (const changed of [expectedUxNativeStep.replace('test:ux:postgres', 'test:ux:postgres -- --partial'), expectedUxNativeStep.replace('        env:', '        if: false\n        env:'), expectedUxNativeStep.replace('        env:', '        continue-on-error: true\n        env:')])
+    assert.notEqual(nativeShape(changed), nativeShape(expectedUxNativeStep), 'Partial or skipped UX native proofs must reject');
   const expectedOwnedLockSetup = "      - name: Set owned test PostgreSQL lock capacity for populated migrations\n        timeout-minutes: 3\n        shell: bash\n        env:\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\n        run: |\n          set -euo pipefail\n          # The context identifies only this matrix job's disposable service container.\n          [[ \"$POSTGRES_SERVICE_ID\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\n          timeout 15s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\n          timeout 45s docker restart --timeout 30 \"$POSTGRES_SERVICE_ID\"\n          ready=0\n          deadline=$((SECONDS + 60))\n          while (( SECONDS < deadline )); do\n            if timeout 3s docker exec \"$POSTGRES_SERVICE_ID\" pg_isready -q -t 1 -U postgres -d postgres; then\n              ready=1\n              break\n            fi\n            sleep 1\n          done\n          [[ \"$ready\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\n          actual=\"$(timeout 10s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\"\n          [[ \"$actual\" == 512 ]] || { echo \"Unexpected test max_locks_per_transaction: $actual\" >&2; exit 1; }\n\n";
   const assertOwnedLockSetup = block => {
     const parts=splitNative(block), found=parts.steps.filter(part=>part.includes('      - name: Set owned test PostgreSQL lock capacity for populated migrations'));
@@ -4100,15 +4107,40 @@ scopedSocialContext = async function(db) {
 
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
-  assert.deepEqual(timeouts(suites), [120],
-    'the `suites` job must retain exactly one finite 120-minute HANG bound after the observed75m commercial timeout');
-  for(const invalid of ['0','60','75','90','121','${{ inputs.suites_timeout }}','unbounded']) {
-    assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: '+invalid)),[120]),'Unknown suites wall bound must reject');
+  assert.deepEqual(timeouts(suites), [150],
+    'the `suites` job must retain exactly one finite 150-minute HANG bound after the observed120m full-lifecycle timeout');
+  for(const invalid of ['0','60','75','90','120','121','151','${{ inputs.suites_timeout }}','unbounded']) {
+    assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 150','timeout-minutes: '+invalid)),[150]),'Unknown suites wall bound must reject');
   }
-  assert.throws(() => assert.deepEqual(timeouts(suites.replace(/^    timeout-minutes: 120\r?\n/m,'')),[120]),'Missing suites wall bound must reject');
-  assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: 120\n    timeout-minutes: 120')),[120]),'Duplicate suites wall bound must reject');
+  assert.throws(() => assert.deepEqual(timeouts(suites.replace(/^    timeout-minutes: 150\r?\n/m,'')),[150]),'Missing suites wall bound must reject');
+  assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 150','timeout-minutes: 150\n    timeout-minutes: 150')),[150]),'Duplicate suites wall bound must reject');
   assert.deepEqual(timeouts(browser), [25],
     'the `browser` job must have exactly one 25-minute HANG bound');
+  assert.deepEqual(timeouts(uxBrowser), [20], 'The additional complete UX browser job has its own finite 20-minute bound');
+  const expectedUxBrowser = [
+    '  ux_browser:',
+    '    name: UX desktop and mobile regression',
+    '    needs: suites',
+    '    runs-on: ubuntu-latest',
+    '    timeout-minutes: 20',
+    '    steps:',
+    '      - uses: actions/checkout@v7',
+    '        with:',
+    '          fetch-depth: 0',
+    '      - uses: actions/setup-node@v7',
+    '        with:',
+    "          node-version: '22'",
+    '          cache: npm',
+    '      - run: npm ci',
+    '      - run: npx playwright-core install --with-deps chromium',
+    '      - name: All 150 UX improvements and account boundaries',
+    '        run: |',
+    '          export CHROMIUM_PATH="$(node --input-type=module -e \'import { chromium } from "playwright-core"; process.stdout.write(chromium.executablePath());\')"',
+    '          npm run test:ux:browser',
+  ].join('\n');
+  assert.equal(nativeShape(uxBrowser), expectedUxBrowser, 'UX browser proof must retain complete coverage, dependency, fresh Chromium and unconditional execution');
+  for (const changed of [expectedUxBrowser.replace('    needs: suites', '    needs: suites\n    if: false'), expectedUxBrowser.replace('    steps:', '    continue-on-error: true\n    steps:'), expectedUxBrowser.replace('npm run test:ux:browser', 'npm run test:ux:browser -- --partial'), expectedUxBrowser.replace('timeout-minutes: 20', 'timeout-minutes: 0')])
+    assert.notEqual(nativeShape(changed), expectedUxBrowser, 'Skipped, partial or unbounded UX browser jobs must reject');
   assert.deepEqual(timeouts(pgcheck), [120],
     'the complete native core cohort must retain exactly one finite 120-minute HANG bound after its observed90-minute timeout');
   for (const invalid of ['0', '45', '60', '75', '90', '${{ inputs.native_timeout }}', 'unbounded']) {
@@ -4250,7 +4282,7 @@ scopedSocialContext = async function(db) {
   const expectedNativeCommands = [
     'build:funded-work-artifact', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
     'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',
-    'pgquery', 'test:goods-market:postgres', 'test:deed-discovery:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:agent-economy-market-operations:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-discovery:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:ux:postgres', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:agent-economy-market-operations:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',

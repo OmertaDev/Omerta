@@ -58,6 +58,12 @@ const predecessorApiQueueSha = '61ffdfc08a79dca5491f95abf333f1fc9c9d125f344206a5
 const currentApiQueueSha = '0a1714c6aa971e3d16365f390eb03005a820dc19312c8f904c87a7471e2e22fd';
 const cityActivityApiQueueSha = '490beb898976f6e3d94b2adea953b916fa5e9ac0ee1c35fd5fc0cebae9dbcf73';
 const classicApiQueueSha = '49ce4b2026c6c277aff5cf9f62ad67c6ba19f650245ea7d683f1f673101866ca';
+const uxApiQueueSha = 'cea97ea66a2c269be072117b0a0a0de8946c83f91eb2af124eeb0a2b859bd839';
+const uxWorkspaceExemption = ", '/v1/ux/workspace'";
+function removeUxWorkspaceExemption(text) {
+  assert.equal(text.split(uxWorkspaceExemption).length, 2, 'The reviewed private workspace exemption has one exact inverse');
+  return text.replace(uxWorkspaceExemption, '');
+}
 const cityActivityKey = `    if (method !== 'GET') options = { ...options, idempotencyKey: options.idempotencyKey || uuid() };
 `;
 const cityActivityPresence = `      // Direct API controls (chat, for example) do not refresh the player through
@@ -89,8 +95,16 @@ function reviewedClassicApiQueue(text) {
   assert.equal(sha(removeBeforeDispatchGuard(previous)), predecessorApiQueueSha, 'The original queue must reconstruct exactly');
   return digest;
 }
+function reviewedUxApiQueue(text) {
+  const digest = sha(text);
+  assert.equal(digest, uxApiQueueSha, 'Only the exact reviewed UX API queue is accepted');
+  const previous = removeUxWorkspaceExemption(text);
+  assert.equal(reviewedClassicApiQueue(previous), classicApiQueueSha, 'The complete classic queue reconstructs exactly');
+  return digest;
+}
 function reviewedApiQueue(text) {
   const digest = sha(text);
+  if (digest === uxApiQueueSha) return reviewedUxApiQueue(text);
   if (digest === predecessorApiQueueSha) return digest;
   if (digest === classicApiQueueSha) return reviewedClassicApiQueue(text);
   if (digest === cityActivityApiQueueSha) {
@@ -105,8 +119,9 @@ function reviewedApiQueue(text) {
 }
 const apiQueueSource = source.slice(source.indexOf('  async function api(method,'), source.indexOf('  async function apiNow('));
 const extractedApiQueue = extract('  async function api(method,', '  async function apiNow(', reviewedApiQueue(apiQueueSource));
+const classicQueueForGuards = sha(extractedApiQueue) === uxApiQueueSha ? removeUxWorkspaceExemption(extractedApiQueue) : extractedApiQueue;
 const apiQueue = sha(extractedApiQueue) === cityActivityApiQueueSha ? removeCityActivity(extractedApiQueue)
-  : sha(extractedApiQueue) === classicApiQueueSha ? removeClassicIdempotencyKey(extractedApiQueue) : extractedApiQueue;
+  : sha(classicQueueForGuards) === classicApiQueueSha ? removeClassicIdempotencyKey(classicQueueForGuards) : extractedApiQueue;
 // The inverse below is only for historical guard and tamper controls. Current
 // queue probes and the browser board execute the actual extracted source with
 // presentation dependencies stubbed; City/economic qualification is not inherited.
@@ -134,7 +149,8 @@ if (sha(extractedApiQueue) === cityActivityApiQueueSha) {
   }
   assert.throws(() => reviewedApiQueue(extractedApiQueue + '\n'), /exact reviewed API queue successor/);
 }
-if (sha(extractedApiQueue) === classicApiQueueSha) {
+if (sha(classicQueueForGuards) === classicApiQueueSha) {
+  const extractedApiQueue = classicQueueForGuards;
   assert.equal(reviewedApiQueue(apiQueue), currentApiQueueSha);
   const duplicate = extractedApiQueue.replace(cityActivityKey, cityActivityKey.repeat(2));
   assert.notEqual(duplicate, extractedApiQueue);
@@ -150,6 +166,24 @@ if (sha(extractedApiQueue) === classicApiQueueSha) {
     extractedApiQueue + '\n']) {
     assert.notEqual(tampered, extractedApiQueue);
     assert.throws(() => reviewedClassicApiQueue(tampered), /exact reviewed classic API queue/);
+  }
+}
+if (sha(extractedApiQueue) === uxApiQueueSha) {
+  assert.equal(reviewedApiQueue(extractedApiQueue), uxApiQueueSha);
+  assert.equal(sha(removeUxWorkspaceExemption(extractedApiQueue)), classicApiQueueSha);
+  const duplicate = extractedApiQueue.replace(uxWorkspaceExemption, uxWorkspaceExemption.repeat(2));
+  assert.throws(() => removeUxWorkspaceExemption(duplicate), /one exact inverse/);
+  for (const tampered of [duplicate, classicQueueForGuards,
+    extractedApiQueue.replace("'/v1/ux/workspace'", "'/v1/ux/'"),
+    extractedApiQueue.replace("'/v1/ux/workspace'", "'/controlled-action'"),
+    extractedApiQueue.replace("method !== 'GET'", "method === 'GET'"),
+    extractedApiQueue.replace('!options.beforeDispatch()', 'options.beforeDispatch()'),
+    extractedApiQueue.replace('token === authToken', 'token !== authToken'),
+    extractedApiQueue.replace('return valid() ? result : neutral;', 'return result;'),
+    extractedApiQueue.replace("projections.invalidate('world')", "projections.invalidate('player')"),
+    extractedApiQueue + '\n']) {
+    assert.notEqual(tampered, extractedApiQueue);
+    assert.throws(() => reviewedUxApiQueue(tampered), /exact reviewed UX API queue/);
   }
 }
 // The only successor addition is an opt-in check before apiNow. The world-board
@@ -203,14 +237,14 @@ if (sha(apiQueue) === currentApiQueueSha) {
   assert.equal(lateQueued.posts, 1, 'Moving the hook after apiNow cannot cancel a queued dispatch');
   assert.equal(lateQueued.reply.code, 499);
 }
-if ([cityActivityApiQueueSha, classicApiQueueSha].includes(sha(extractedApiQueue))) {
+if ([cityActivityApiQueueSha, classicApiQueueSha, uxApiQueueSha].includes(sha(extractedApiQueue))) {
   for (const phase of ['queued', 'dispatched', 'revoked', 'owner-revoked', 'default']) {
     const { reply, posts } = await probeApiQueue(extractedApiQueue, phase);
     assert.equal(reply.code, ['queued', 'revoked', 'owner-revoked'].includes(phase) ? 499 : 200, 'Current queue: ' + phase);
     assert.equal(posts, phase === 'queued' ? 0 : 1, 'Current queue transport count: ' + phase);
   }
 }
-if (sha(extractedApiQueue) === classicApiQueueSha) {
+if ([classicApiQueueSha, uxApiQueueSha].includes(sha(extractedApiQueue))) {
   let generated = 0;
   const calls = [], scope = { token: 'classic-session', uuid: () => 'generated-' + ++generated,
     projections: { invalidate() {} }, apiNow: async (method, path, body, options) => {
@@ -227,6 +261,23 @@ if (sha(extractedApiQueue) === classicApiQueueSha) {
     { method: 'POST', key: 'generated-1', authToken: 'classic-session' },
     { method: 'GET', key: undefined, authToken: 'classic-session' },
   ], 'The actual classic queue preserves supplied keys, creates missing mutation keys and leaves reads keyless');
+}
+if (sha(extractedApiQueue) === uxApiQueueSha) {
+  const invalidated = [], calls = [];
+  const scope = { token: 'ux-session', uuid: () => assert.fail('Explicit receipts must be retained'), scheduleCityPresence() {},
+    projections: { invalidate: kind => invalidated.push(kind) }, apiNow: async (method, path, body, options) => {
+      calls.push({ method, path, key: options.idempotencyKey, authToken: options.authToken });
+      return { code: 200, body: { ok: true } };
+    } };
+  vm.runInNewContext('let _authQueue = Promise.resolve();\n' + extractedApiQueue + '\nthis.call = api;', scope);
+  await scope.call('PUT', '/v1/ux/workspace', { preferences: {} }, { idempotencyKey: 'private-receipt' });
+  assert.deepEqual(invalidated, [], 'Private workspace synchronization invalidates neither game projection');
+  await scope.call('POST', '/controlled-action', {}, { idempotencyKey: 'game-receipt' });
+  assert.deepEqual(invalidated, ['player', 'world'], 'Ordinary game mutations still invalidate both projections');
+  assert.deepEqual(calls, [
+    { method: 'PUT', path: '/v1/ux/workspace', key: 'private-receipt', authToken: 'ux-session' },
+    { method: 'POST', path: '/controlled-action', key: 'game-receipt', authToken: 'ux-session' },
+  ], 'The actual UX queue dispatches both authenticated requests with their original receipts');
 }
 const command = executionId => ({ commandId: 'craft', commandType: 'recipe.craft', label: 'Craft key', parameters: {},
   availability: 'AVAILABLE', confirmation: { required: false }, executionIdentity: { executionId } });

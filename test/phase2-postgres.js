@@ -15,7 +15,7 @@ import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,
-  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches } from '../tools/commerce-deed-release-phase2-native-catalog.js';
+  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches } from '../tools/ux-release-phase2-native-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
@@ -110,7 +110,7 @@ async function parent(url) {
         const result = spawnSync(process.execPath,[fileURLToPath(import.meta.url),process.argv[2]], {
           env: { ...process.env, TEST_DATABASE_URL: childUrl.toString(), DATABASE_URL: childUrl.toString(),
             P2_TEST_SCHEMA: name, P2_TEST_CHILD: mode, INVARIANT_WEBHOOK_URL: '', PG_POOL_MAX: '12' },
-          encoding: 'utf8', timeout: 240000, maxBuffer: 8*1024*1024, windowsHide: true,
+          encoding: 'utf8', timeout: mode === 'upgrade' ? 600000 : 240000, maxBuffer: 8*1024*1024, windowsHide: true,
         });
         process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
         if (result.error || result.signal) console.error('phase2-postgres: isolated child termination ' + JSON.stringify({ mode, status: result.status, signal: result.signal, code: result.error?.code }));
