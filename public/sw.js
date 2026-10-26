@@ -5,7 +5,7 @@
    (you always get the latest client online; cached pages are only offline fallbacks). The shared stylesheet
    also follows the network so installed players receive visual fixes. Icons and art are cache-first.
    The API (/v1/*, the websocket) is NEVER cached. */
-const CACHE = 'omerta-shell-v4';
+const CACHE = 'omerta-shell-v7';
 // Never precache the private console: cache.addAll ignores its no-store response header.
 const SHELL = ['/omerta-ui.css', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
 const cacheable = (res) => res && res.status === 200 && !res.redirected
@@ -33,6 +33,7 @@ self.addEventListener('fetch', (event) => {
 
   const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
   if (isNav || url.pathname === '/omerta-ui.css'
+    || /^\/ux-(?:feedback|progression|social|navigation|workspace|world|tactics|investigation|coordination|feel|tools|identity|story|community)\.(?:js|css)$/.test(url.pathname)
     || ['/player-experience.js', '/city-scene.js', '/city-scene.css', '/world-fieldwork.js', '/world-fieldwork.css', '/vendor/phaser.js'].includes(url.pathname)) {
     // NETWORK-FIRST: a Codex visit belongs to its own URL, never the root game's offline slot.
     // Only a root navigation (including a referral query) may fall back to the canonical root shell.

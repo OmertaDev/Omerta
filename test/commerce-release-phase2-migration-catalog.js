@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';
 assert.equal(process.execArgv.length,0);assert.equal(process.argv.length,2,'No native/default/filtered mode in this source-only proposal');
 for(const k of Object.keys(process.env))assert(!/DATABASE_URL$|^PG|^RC1|^P2_TEST|^ENTERPRISE_NATIVE_/i.test(k)&&!['NODE_OPTIONS','NODE_PATH','NODE_PG_FORCE_NATIVE','LEGAL_PROFILE_DEFER','GENESIS_AUCTION_MANIFEST_PATH','GENESIS_AUCTION_MANIFEST_SHA256'].includes(k.toUpperCase()),'Ambient backend/loader refused: '+k);
 const subject=await import('../tools/commerce-release-phase2-migration-catalog.js');

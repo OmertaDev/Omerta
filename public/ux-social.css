@@ -1,0 +1,32 @@
+.ux-social-card { margin-top: 12px; padding: 16px; }
+.ux-social-card h3 { margin: 4px 0 8px; font-family: var(--serif, Georgia, serif); color: var(--gold); font-size: 20px; }
+.ux-social-card h4 { margin: 12px 0 8px; font-size: 13px; }
+.ux-social-card p { margin: 8px 0; line-height: 1.5; color: var(--fg); font-size: 13px; }
+.ux-social-eyebrow { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+.ux-contribution strong { color: var(--neon); }
+.ux-contributors { display: grid; gap: 10px; margin-top: 12px; }
+.ux-contributors > div { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 12px; }
+.ux-contributors progress { grid-column: 1 / -1; width: 100%; height: 5px; accent-color: var(--gold); }
+.ux-highlight-list { list-style: none; margin: 8px 0; padding: 0; }
+.ux-highlight-list > li { padding: 10px 0; border-bottom: 1px solid var(--border, #30241c); font-size: 13px; line-height: 1.5; }
+.ux-highlight-list small, .ux-feed-preferences small { color: var(--dim); font-size: 11px; }
+.ux-note-preview { margin-top: 8px; font-size: 12px; }
+.ux-note-preview summary { cursor: pointer; color: var(--gold); padding: 5px 0; }
+.ux-share-milestone { padding: 8px 0; border-top: 1px solid var(--border, #30241c); }
+.ux-mentor-timeline { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); margin: 0; padding: 0; gap: 8px; }
+.ux-mentor-timeline li { display: grid; grid-template-columns: auto 1fr; gap: 4px 8px; border-top: 2px solid var(--border, #453326); padding: 10px 4px; color: var(--dim); }
+.ux-mentor-timeline li.reached { border-color: var(--neon); color: var(--fg); }
+.ux-mentor-timeline li.reached > span { color: var(--neon); }
+.ux-mentor-timeline b { font-size: 12px; }
+.ux-mentor-timeline small { grid-column: 2; font-size: 10px; }
+.ux-paper-growth { margin: 10px 0; padding: 10px; border-left: 2px solid var(--gold); font-size: 12px; background: rgba(212, 175, 55, .04); }
+.ux-paper-growth ul, .ux-session-milestones { padding-left: 18px; margin: 8px 0; line-height: 1.6; }
+.ux-feed-preferences { margin: 6px 0 10px; font-size: 11px; }
+.ux-feed-preferences summary { cursor: pointer; color: var(--gold); padding: 6px 0; }
+.ux-feed-preferences > label { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+.ux-feed-preferences select { min-width: 0; max-width: 100%; }
+.ux-feed-preferences fieldset { display: flex; flex-wrap: wrap; gap: 6px 12px; border: 1px solid var(--border, #453326); padding: 8px; margin-bottom: 8px; }
+.ux-feed-preferences fieldset label { display: inline-flex; align-items: center; gap: 4px; }
+.ux-feed-hidden { display: none !important; }
+#feed > .ev.me:not(.ux-feed-hidden), #feed > .ev.urgent { display: block !important; }
+@media (max-width: 600px) { .ux-social-card { padding: 12px; } .ux-social-card .row { flex-wrap: wrap; } .ux-social-card .act { min-height: 40px; } }

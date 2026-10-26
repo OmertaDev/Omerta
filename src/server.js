@@ -215,6 +215,12 @@ import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './rout
 import { register as registerGateway } from './routes/gateway.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
+import { register as registerUxWorkspace } from './ux-workspace.js';
+import { register as registerUxStory } from './ux-story.js';
+import { register as registerUxCommunity } from './ux-community.js';
+import { register as registerUxCoordination } from './ux-coordination.js';
+import { register as registerUxInvestigation } from './ux-investigation.js';
+import { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';
 import * as Duels from './duels.js';
 import * as Clues from './clues.js';
 import * as Estate from './estate.js';
@@ -637,6 +643,15 @@ export async function buildServer() {
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
     ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],
     ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],
+    ['ux-feedback.js', 'application/javascript'], ['ux-feedback.css', 'text/css'],
+    ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],
+    ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],
+    ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],
+    ...['feel', 'tools', 'identity', 'story', 'community'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
+    ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],
+    ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],
+    ['ux-investigation.js', 'application/javascript'], ['ux-investigation.css', 'text/css'],
+    ['ux-coordination.js', 'application/javascript'], ['ux-coordination.css', 'text/css'],
     ['vendor/phaser.js', 'application/javascript'], ['vendor/phaser.js.LICENSE.txt', 'text/plain'],
   ]) {
     let asset = null;
@@ -1717,7 +1732,7 @@ export async function buildServer() {
     const a = (await pool.query('SELECT minted, mint_credits, respawn_tokens, wallet_address, agent_flag FROM account_persistent WHERE account_id=$1', [req.user.sub])).rows[0] || {};
     const acct = (await pool.query('SELECT auth_provider FROM accounts WHERE id=$1', [req.user.sub])).rows[0] || {};
     const ch = (await pool.query('SELECT id, name, generation FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0] || null;
-    return { authed: true, hasCharacter: !!ch, character: ch ? { id: ch.id, name: ch.name, generation: ch.generation } : null,
+    return { authed: true, accountId: req.user.sub, hasCharacter: !!ch, character: ch ? { id: ch.id, name: ch.name, generation: ch.generation } : null,
       // the client's claim-your-account card keys on this: a guest can upgrade to X/Privy in place
       provider: acct.auth_provider || 'guest',
       minted: !!a.minted, mintCredits: Number(a.mint_credits || 0), respawnTokens: Number(a.respawn_tokens || 0),
@@ -1727,7 +1742,7 @@ export async function buildServer() {
 
   // ── M1 actions (crimes/gym/doc/checkin/bank/travel) ──
   app.post('/v1/crimes/:id', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.doCrime(ch, req.params.id, client, h, req.body?.approach)));
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach)));
   app.post('/v1/train/:stat', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => G.train(ch, req.params.stat, client, h)));
   // THE REGIMEN — the expanded gym: five disciplines on the SAME train_at clock + NPC trainer drills
@@ -2342,6 +2357,12 @@ export async function buildServer() {
   registerContent(app, { pool, auth, modAuth });
   const coordination = registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
+  registerUxWorkspace(app, { pool, auth });
+  registerUxStory(app, { pool, auth });
+  registerUxCommunity(app, { pool, auth });
+  registerUxCoordination(app, { pool, auth });
+  registerUxInvestigation(app, { pool, auth });
+  registerTacticsRoutes(app, { pool, auth, readCharacter: G.readCharacter });
   registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()],
     activityRegistry: cityActivity, ownerActivityRegistry: cityOwnerActivity });
   registerCityHomes(app, { pool, auth });

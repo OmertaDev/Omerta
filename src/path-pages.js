@@ -317,7 +317,10 @@ ${sessionScript()}
   var data=JSON.parse(document.getElementById('path-result-data').textContent);var secondary=new URLSearchParams(location.search).get('secondary');var box=document.querySelector('[data-secondary]');
   if(secondary&&secondary!==data.id&&data.pathNames[secondary]){box.querySelector('[data-secondary-name]').textContent=data.pathNames[secondary];box.dataset.visible='true'}
   pathTrack({event:'result_view',path:data.id,secondary:secondary&&data.pathNames[secondary]?secondary:null,source:'result'}).catch(function(){});
-  document.querySelectorAll('[data-path-cta]').forEach(function(link){link.addEventListener('click',function(){pathTrack({event:'cta_click',path:data.id,cta:link.dataset.pathCta,source:'result'}).catch(function(){})})});
+  document.querySelectorAll('[data-path-cta]').forEach(function(link){link.addEventListener('click',function(){
+    if(link.dataset.pathCta==='play'){try{sessionStorage.setItem('omerta_path_interest',JSON.stringify({path:data.id,at:Date.now()}))}catch(_){}}
+    pathTrack({event:'cta_click',path:data.id,cta:link.dataset.pathCta,source:'result'}).catch(function(){})
+  })});
   var share=document.querySelector('[data-share-result]');share.addEventListener('click',function(){
     var payload={title:document.title,text:data.shareLine,url:data.canonical};var done;
     if(navigator.share)done=navigator.share(payload);else done=navigator.clipboard.writeText(data.shareLine+' '+data.canonical).then(function(){share.textContent='Result link copied'});

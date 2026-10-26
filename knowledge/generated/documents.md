@@ -712,6 +712,11 @@
 | [docs/territory-economics-integration-design.md](../../docs/territory-economics-integration-design.md) | design | 36 | 2026-10-13 |
 | [docs/territory-economics-observation-review.md](../../docs/territory-economics-observation-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/territory-economics-security-review.md](../../docs/territory-economics-security-review.md) | documentation | 65 | 2026-10-13 |
+| [docs/ux-101-150-implementation.md](../../docs/ux-101-150-implementation.md) | documentation | 100 | uncommitted |
+| [docs/ux-50-implementation.md](../../docs/ux-50-implementation.md) | documentation | 77 | uncommitted |
+| [docs/ux-51-100-implementation.md](../../docs/ux-51-100-implementation.md) | documentation | 89 | uncommitted |
+| [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 75 | uncommitted |
+| [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 20 | uncommitted |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2745 | 2026-10-23 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |

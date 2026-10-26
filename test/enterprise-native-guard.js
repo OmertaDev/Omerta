@@ -1,4 +1,5 @@
 import * as releaseInputs from '../tools/enterprise-native-inputs.js';
+import {assertEnterpriseUxNativeGuards} from './lib/enterprise-ux-native-guard.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -116,4 +117,5 @@ reject('unknown combined input refuses',()=>assertEnterpriseCombinedTrackedInput
 reject('historical predicate cannot silently use C basis',()=>historicalDefinition(ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS,Object.freeze({baseRevision:COMMERCE_NATIVE_BASE_REVISION,baseInputs:COMMERCE_NATIVE_BASE_INPUTS,files:COMMERCE_NATIVE_FILES})));
 const captureSource=source.slice(source.indexOf('export function captureEnterpriseSource(){'),source.indexOf('function assertStable('));assert(captureSource.indexOf('assertEnterpriseCombinedInputDefinition()')<captureSource.indexOf("textGit('rev-parse'"));assert(!captureSource.includes('assertEnterpriseSuccessorInputDefinition'));assert(captureSource.includes('if(!STAGED.includes(f))'));assert(!captureSource.includes('SUCCESSOR_STAGED.includes'));assert(source.includes('const SUCCESSOR_STAGED=STAGED;'));assert(!captureSource.includes('SourceBaseline('));
 
+assertEnterpriseUxNativeGuards(ENTERPRISE_NATIVE_FILES,releaseInputs.ENTERPRISE_NATIVE_RELEASE_INPUTS);
 console.log(JSON.stringify({phase:'SOURCE_ONLY_ENTERPRISE_NATIVE_GUARDS',checks:checks.length,syntheticAdmissionFixturesOnly:true,postgresImportsOrConnections:0,nativeExecution:false,sourceCaptureExecuted:false,release:false}));

@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';
 import {execFileSync} from 'node:child_process';
 import * as source from '../tools/commerce-current-enterprise-source-compatibility.js';
 import {ECONOMY_HARDENING_BINDING_DOMAINS,ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION,
