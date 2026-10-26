@@ -65,7 +65,7 @@ console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor
 {
   const next = UX_PHASE2_UPGRADE_BOUND_SOURCE, file = UX_PHASE2_UPGRADE_BOUND_FILE;
   assert.equal(next.status, 'SEALED');
-  assert.equal(next.revision, 'PHASE2_UPGRADE_BOUND_AUTHORED_REVISION_TO_STAMP_AFTER_CHECKPOINT');
+  assert.equal(next.revision, '2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca');
   assert.equal(next.targetRevision, 'ae8f8688960d5165b94a5de1c29d6306ad9f0c9c');
   assert.deepEqual(next.files.map(row => row.file), [file]);
   for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
