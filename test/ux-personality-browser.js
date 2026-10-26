@@ -164,9 +164,11 @@ try {
   await disclosure(mobileIdentity.locator('[data-identity-section="wardrobe"]')); assert.equal(await mobileIdentity.locator('[data-identity-setting="hat"]').inputValue(), 'fedora');
   await disclosure(mobileIdentity.locator('[data-identity-section="fleet"]')); assert.match(await mobileIdentity.locator('.ux-identity-gallery').innerText(), /The Quiet Reader/);
   await noOverflow(mobile, 'mobile private office'); await mobile.screenshot({ path: path.join(artifacts, 'personality-office-mobile.png'), fullPage: false });
+  await mobile.locator('#ux-screen-tools > summary').click();
   await mobile.locator('[data-tools-open]').click(); const mobileDesk = mobile.locator('dialog.ux-tools-dialog[open]'); await mobileDesk.locator('[data-tools-view="builds"]').click(); await mobileDesk.getByText('The Patient Reader', { exact: true }).waitFor();
   const rect = await mobileDesk.boundingBox(); assert.ok(rect.x >= 0 && rect.x + rect.width <= 391); await noOverflow(mobile, 'mobile working desk');
   await mobile.screenshot({ path: path.join(artifacts, 'personality-desk-mobile.png'), fullPage: false }); await mobileDesk.locator('[data-tools-close]').click();
+  await mobile.locator('.ux-screen-tools-close').click();
   await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view="mysteries"]').click(); await mobile.locator('[data-fieldwork-mystery="property-investigation"]').click();
   const mobileStory = mobile.locator('[data-ux-story="case"]'); await mobileStory.locator('.story-cold-open').waitFor(); await disclosure(mobileStory.locator('[data-story-section="documents"]'));
   assert.match(await mobileStory.innerText(), /My private cross-reference/, 'fresh-device story highlights hydrate beside the revealed passage');

@@ -109,6 +109,14 @@ try {
   await noOverflow(page, 'desktop action page');
   await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: path.join(artifacts, 'ux-action-desktop.png'), fullPage: false });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('#operation-latest .ux-receipt-details > summary').click();
+  await page.locator('#operation-latest .ux-receipt-trade').waitFor();
+  assert.match(await page.locator('#operation-latest .ux-receipt-trade').innerText(), /Larceny.*XP/, 'Expanding the compact mobile reward restores its verified trade XP.');
+  await page.locator('#operation-latest .ux-changes').waitFor();
+  assert.ok(await page.locator('#operation-latest .operation-receipt__delta').innerText(), 'The expanded mobile receipt retains its confirmed resource delta.');
+  await page.locator('#operation-latest .ux-receipt-details > summary').click();
+  await page.setViewportSize({ width: 1440, height: 1050 });
   await page.locator('[data-feedback-settings]').click();
   await page.locator('#ux-effects-volume').fill('25'); await page.locator('#ux-celebration').selectOption('quiet');
   assert.equal(await page.locator('body').getAttribute('data-celebration'), 'quiet');

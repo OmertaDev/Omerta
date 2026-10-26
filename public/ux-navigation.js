@@ -173,7 +173,7 @@
       // controls and their containing region stable until the renderer actually replaces them.
       if (mobilePocket?.pocket.isConnected && mobilePocket.pocket.parentElement === panel && panel === activePanel()
         && window.matchMedia('(max-width: 760px)').matches
-        && mobilePocket.entries.every(entry => entry.node.parentElement === mobilePocket.pocket)
+        && mobilePocket.entries.every(entry => entry.node.parentElement === mobilePocket.context)
         && mobilePocket.pocket.querySelector('.act.prime:not([disabled])')) return;
       restorePocket();
       if (!panel || !window.matchMedia('(max-width: 760px)').matches || panel !== activePanel()) return;
@@ -186,9 +186,10 @@
       const heading = document.createElement('div'); heading.className = 'ux-action-pocket-title';
       heading.textContent = primary.closest('.card')?.querySelector('.t,b')?.textContent.trim() || primary.dataset.operationLabel || 'Current job';
       pocket.append(heading);
-      const entries = [terms, row].map((node) => { const placeholder = document.createComment('original action position'); node.before(placeholder); pocket.append(node); return { node, placeholder }; });
+      const context = document.createElement('div'); context.className = 'card ux-action-context'; pocket.append(context);
+      const entries = [terms, row].map((node) => { const placeholder = document.createComment('original action position'); node.before(placeholder); context.append(node); return { node, placeholder }; });
       // Keep the first activity first in document and keyboard order while its controls float.
-      panel.prepend(pocket); mobilePocket = { pocket, entries };
+      panel.prepend(pocket); mobilePocket = { pocket, context, entries };
       document.body.classList.add('ux-has-action-pocket');
     }
     function resourceIcons() {

@@ -1,5 +1,6 @@
 .ux-navigation{border-block:1px solid var(--line,#39362e);padding:9px 0;margin:10px 0;color:var(--ink,#eee8db)}
 .ux-screen-tools>summary,.ux-screen-tools-close{display:none}.ux-screen-tools-body{min-width:0}
+.ux-action-pocket>.ux-action-context{margin:0;padding:0;min-width:0;border:0;background:none;box-shadow:none;transform:none;transition:none}
 .ux-kicker{font:700 10px/1.4 var(--mono,monospace);letter-spacing:.12em;color:var(--dim,#b6b1a4)}
 .ux-shortcuts{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.ux-shortcut[aria-current=page]{border-color:var(--gold,#c7af79);color:var(--gold,#c7af79)}
 .ux-shortcuts .act{font-size:11px;min-height:36px}.ux-pin{border-style:dashed!important}.ux-search{margin-left:auto}.ux-search kbd{font:inherit;color:var(--dim,#b6b1a4);margin-left:8px}

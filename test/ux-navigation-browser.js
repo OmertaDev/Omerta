@@ -20,7 +20,7 @@ const fixture = `<!doctype html><html><head><meta charset="utf-8"><meta name="vi
 window.appState={me:{accountId:'one',id:'character',name:'Test',trainSeconds:1,streetActionSeconds:30,gtaSeconds:80,heistSeconds:120},rules:{},currentTab:'streets'};
 window.notices=[];window.actions=0;window.jumpCount=0;window.audioSyncs=0;document.getElementById('btn-jump').onclick=()=>jumpCount++;
 window.feedback=createOmertaFeedback({getState:()=>appState,notify:message=>notices.push(message),syncAudio:()=>audioSyncs++});feedback.render();
-window.jobMarkup=()=>'<div class="card"><b>Sample job</b><div id="job-terms" class="operation-action-terms">COST 2 nerve · PAY from current rules · RISK jail</div><div class="verbrow"><button class="act prime" data-do="POST /v1/crimes/example" aria-describedby="job-terms">do it</button></div></div><label>Quantity <input id="quantity" type="number" value="1"></label><input id="provider-token" value="initial"><details id="expanded"><summary>Read the board</summary>Details</details><button disabled title="Requires level 5. You are level 1.">Locked</button>';
+window.jobMarkup=()=>'<div class="card"><b>Sample job</b><div id="job-terms" class="operation-action-terms">COST 2 nerve · PAY from current rules · RISK jail<div class="operation-choice-terms">QUIET safer · STANDARD baseline · LOUD more heat</div></div><div class="verbrow"><button class="act prime" data-do="POST /v1/crimes/example" aria-describedby="job-terms">do it</button></div></div><label>Quantity <input id="quantity" type="number" value="1"></label><input id="provider-token" value="initial"><details id="expanded"><summary>Read the board</summary>Details</details><button disabled title="Requires level 5. You are level 1.">Locked</button>';
 window.fillPanel=()=>{document.getElementById('tab-streets').innerHTML=jobMarkup();document.querySelector('[data-do]').onclick=()=>actions++};fillPanel();
 window.initialTabsMarkup=document.getElementById('tabs').innerHTML;
 if(new URLSearchParams(location.search).has('delayed-tabs')){localStorage.setItem('omerta_ux_navigation:one',JSON.stringify({favorites:['streets'],resume:null}));document.getElementById('tabs').replaceChildren()}
@@ -170,6 +170,7 @@ try {
   await page.locator('#mobile-order-competitor').evaluate(node => node.remove());
   assert.equal(await page.locator('[data-do]').count(), 1, 'There is one actionable copy.');
   assert.equal(await page.locator('#ux-action-pocket #job-terms').count(), 1, 'Actual cost terms travel with the control.');
+  assert.match(await page.locator('#ux-action-pocket [data-do]').evaluate(node => node.closest('.card')?.querySelector('.operation-choice-terms')?.textContent || ''), /QUIET.*STANDARD.*LOUD/, 'The original action retains its card context and approach terms while floating.');
   assert.equal(await page.locator('#ux-action-pocket .ux-action-pocket-title').innerText(), 'Sample job', 'The reachable control identifies its job while the player scrolls.');
   await page.locator('#ux-action-pocket [data-do]').click();
   assert.equal(await page.evaluate(() => actions), 1);
