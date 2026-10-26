@@ -4,15 +4,15 @@
 
 ## Census
 
-17,192 nodes and 68,855 edges at `776859204659`.
+17,201 nodes and 68,910 edges at `568baea6c51a`.
 
 ### Nodes
 
 | Type | Count |
 |---|---:|
-| Artifact | 7033 |
+| Artifact | 7034 |
 | Command | 300 |
-| Commit | 4869 |
+| Commit | 4876 |
 | Contract | 134 |
 | Document | 956 |
 | Domain | 13 |
@@ -24,30 +24,30 @@
 | Route | 1052 |
 | Subsystem | 8 |
 | Table | 582 |
-| TestSuite | 1053 |
+| TestSuite | 1054 |
 | Workflow | 7 |
 
 ### Edges
 
 | Type | Count |
 |---|---:|
-| BELONGS_TO | 5614 |
-| CHANGED | 26387 |
-| CONTAINS | 7054 |
+| BELONGS_TO | 5615 |
+| CHANGED | 26423 |
+| CONTAINS | 7055 |
 | DECLARES | 300 |
 | DEFINED_IN | 1768 |
 | DEPENDS_ON | 69 |
 | EXECUTES | 1186 |
 | HANDLED_BY | 933 |
-| HAS_COMMIT | 4869 |
+| HAS_COMMIT | 4876 |
 | IMPLEMENTS | 124 |
-| IMPORTS | 8196 |
+| IMPORTS | 8200 |
 | INHERITS | 45 |
 | REFERENCES | 3871 |
-| REPRESENTS | 2607 |
-| TESTS | 2481 |
+| REPRESENTS | 2608 |
+| TESTS | 2485 |
 | TRACKS | 126 |
-| USES_TABLE | 3225 |
+| USES_TABLE | 3226 |
 
 ## Provenance contract
 

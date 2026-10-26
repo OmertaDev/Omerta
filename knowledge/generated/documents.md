@@ -312,7 +312,7 @@
 | [AUDIT-world-occupation.md](../../AUDIT-world-occupation.md) | audit | 71 | 2026-07-21 |
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
-| [BALANCE.md](../../BALANCE.md) | documentation | 6860 | 2026-09-25 |
+| [BALANCE.md](../../BALANCE.md) | documentation | 6869 | 2026-10-26 |
 | [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 442 | 2026-10-14 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-25 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-06 |
@@ -715,10 +715,10 @@
 | [docs/ux-101-150-implementation.md](../../docs/ux-101-150-implementation.md) | documentation | 100 | 2026-10-25 |
 | [docs/ux-50-implementation.md](../../docs/ux-50-implementation.md) | documentation | 77 | 2026-10-25 |
 | [docs/ux-51-100-implementation.md](../../docs/ux-51-100-implementation.md) | documentation | 89 | 2026-10-25 |
-| [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 75 | 2026-10-26 |
+| [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 83 | 2026-10-26 |
 | [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 20 | 2026-10-26 |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2745 | 2026-10-23 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2745 | 2026-10-26 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
 | [docs/workshop-floor-integration.md](../../docs/workshop-floor-integration.md) | documentation | 22 | 2026-10-15 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
