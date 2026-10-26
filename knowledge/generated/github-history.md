@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4b75dbd66ffe`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c0f667c6c151`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4711 |
+| Commits in clone | 4713 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-26 — Merge pull request #307 from OmertaDev/codex/ux-production-release |
+| Latest commit | 2026-10-26 — Add token sale and Deed mint preview with landing header banner |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3744 |
+| OmertaDev | 3745 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 122 |
+| github-actions[bot] | 123 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,14 +30,14 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 781 | historical |
-| knowledge/generated/graph-summary.md | 781 | historical |
-| knowledge/generated/graph.json | 781 | historical |
-| knowledge/generated/inventory.md | 781 | historical |
+| knowledge/generated/github-history.md | 782 | historical |
+| knowledge/generated/graph-summary.md | 782 | historical |
+| knowledge/generated/graph.json | 782 | historical |
+| knowledge/generated/inventory.md | 782 | historical |
 | [SPEC.md](../../SPEC.md) | 598 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 486 | yes |
-| [src/server.js](../../src/server.js) | 445 | yes |
+| [public/index.html](../../public/index.html) | 487 | yes |
+| [src/server.js](../../src/server.js) | 446 | yes |
 | [schema.sql](../../schema.sql) | 373 | yes |
 | knowledge/generated/documents.md | 360 | historical |
 | [package.json](../../package.json) | 341 | yes |

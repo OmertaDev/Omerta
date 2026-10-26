@@ -4,15 +4,15 @@
 
 ## Census
 
-16,985 nodes and 67,843 edges at `4b75dbd66ffe`.
+16,990 nodes and 67,861 edges at `c0f667c6c151`.
 
 ### Nodes
 
 | Type | Count |
 |---|---:|
-| Artifact | 7006 |
+| Artifact | 7007 |
 | Command | 299 |
-| Commit | 4711 |
+| Commit | 4713 |
 | Contract | 134 |
 | Document | 956 |
 | Domain | 13 |
@@ -21,7 +21,7 @@
 | Module | 587 |
 | PullRequest | 126 |
 | Repository | 1 |
-| Route | 1052 |
+| Route | 1054 |
 | Subsystem | 8 |
 | Table | 579 |
 | TestSuite | 1040 |
@@ -31,15 +31,15 @@
 
 | Type | Count |
 |---|---:|
-| BELONGS_TO | 5587 |
-| CHANGED | 25863 |
-| CONTAINS | 7027 |
+| BELONGS_TO | 5590 |
+| CHANGED | 25872 |
+| CONTAINS | 7028 |
 | DECLARES | 299 |
-| DEFINED_IN | 1765 |
+| DEFINED_IN | 1767 |
 | DEPENDS_ON | 69 |
 | EXECUTES | 1184 |
-| HANDLED_BY | 933 |
-| HAS_COMMIT | 4711 |
+| HANDLED_BY | 934 |
+| HAS_COMMIT | 4713 |
 | IMPLEMENTS | 124 |
 | IMPORTS | 7995 |
 | INHERITS | 45 |
