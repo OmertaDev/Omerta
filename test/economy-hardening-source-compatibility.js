@@ -49,6 +49,7 @@ import {
   ECONOMY_RELEASE_TAIL_PHASE, ECONOMY_RELEASE_TAIL_DOMAINS,
   assertEconomyReleaseTailTransfer,
 } from '../tools/economy-release-tail-source-transfer.js';
+import { economyUxMergeCandidateHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 
 const expectedRevision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
 const expectedPredecessor = '9f39df80598d38507c9f6b4ea2414312eb8e7700';
@@ -369,8 +370,9 @@ for (const file of repairFiles) {
   const baseline = git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
   const rawPhysical = fs.readFileSync(file, 'utf8');
+  const mergeQualified = lf(economyUxMergeCandidateHistoricalInput(file, rawPhysical));
   const outerPhysical = lf(releaseTailFiles.includes(file)
-    ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical);
+    ? assertEconomyReleaseTailTransfer(file, mergeQualified).baselineText : mergeQualified);
   const campaignExpirySealed = campaignExpiryFiles.includes(file)
     ? assertEconomyHardeningCampaignExpiryTransfer(file, outerPhysical).baselineText : outerPhysical;
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
