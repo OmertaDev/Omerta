@@ -215,7 +215,7 @@ me = await meOf(chef.token);
 const stashBefore = me.stash.find((s) => s.drug === 'vim')?.qty || 0;
 assert(stashBefore > 0, 'product on the shelf for the crew');
 const cashBefore = me.cash;
-await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', heat=0");
+await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', crew_paid_at = now() - interval '30 minutes', heat=0");
 // A READ shows the accrued result truthfully but persists nothing (withCharacterRead — reads stopped
 // taking the write lock). Any WRITE banks it. Assert both: the projection, then the ledgered fact.
 me = await meOf(chef.token);
@@ -231,7 +231,9 @@ assert(Number(crewLedger.rows[0].n) >= 1, 'crew sales ledgered');
 // ── RECURRING SINKS: crew wages ("the nut") — pay them or the corner goes quiet ──
 me = await meOf(chef.token);
 assert.equal(me.crewWagePerHr, 2 * 1200, 'the view shows the nut: 2 crew × $1,200/hr');
-assert.equal(me.crewCold, false, 'a freshly-hired crew is working'); assert.equal(me.crewWageOwed, 0, 'and the nut is square (hire stamped the clock)');
+assert.equal(me.crewCold, false, 'a freshly-hired crew is working');
+assert(Math.abs(me.crewWageOwed - 2 * 1200 * 0.5) <= 10,
+  'the same simulated half-hour that moved product also accrues the crew wage');
 // 5 hours on the payroll → owed ≈ 2 × $1,200 × 5; paying is a ledgered sink that resets the clock
 await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '5 hours' WHERE id='${chef.id}'`);
 me = await meOf(chef.token);
@@ -261,7 +263,7 @@ assert.equal((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty |
 await seedCh(chef.id, 'cash=2000000');
 await call('POST', '/v1/kitchen/crew/wages', { token: chef.token });
 assert.equal((await meOf(chef.token)).crewCold, false, 'the nut squared → the crew is back');
-await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', heat=0");
+await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', crew_paid_at = now() - interval '30 minutes', heat=0");
 assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0) < coldStash, 'and they move product again');
 
 // ── THE DOOR OUT OF THE NUT (the pad/shutter precedent) ──────────────────────────────────────

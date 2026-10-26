@@ -574,6 +574,7 @@ export async function migrateSchemaUnderLock(
   await migrateEconomyDailyClaims(boot);
   await migrateSocialProofReceipts(boot);
   await migrateReferralOriginHolds(boot);
+  await migrateCrewWageClocks(boot);
   await resetStartingLevels(boot);
   await boot.query('BEGIN');
   try { await ensureDeedBuildings(boot); await boot.query('COMMIT'); }
@@ -839,6 +840,26 @@ export async function migrateReferralOriginHolds(q) {
     await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
     await q.query('COMMIT');
     return { applied: !alreadyApplied, normalized, held };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Player-favourable repair for crews hired before the wage clock existed. A positive crew with no
+// clock otherwise sells forever while crewWageOwed remains zero. Stamp the first trustworthy clock
+// at startup rather than inventing retroactive debt. Repeat on every boot so a drained predecessor's
+// final full-row write cannot leave the null-clock faucet open after the cutover.
+export async function migrateCrewWageClocks(q, now = new Date()) {
+  await q.query('BEGIN');
+  try {
+    const stamped = await q.query(
+      `UPDATE characters SET crew_paid_at=$1, crew_sale_credit_ms=0
+       WHERE alive=true AND crew>0 AND crew_paid_at IS NULL`, [now]);
+    await q.query(
+      "INSERT INTO economy_migrations (id) VALUES ('crew-wage-clock-backfill-2026-10-26') ON CONFLICT DO NOTHING");
+    await q.query('COMMIT');
+    return { stamped: stamped.rowCount };
   } catch (error) {
     await q.query('ROLLBACK').catch(() => {});
     throw error;
@@ -1268,6 +1289,7 @@ export async function makeDb() {
   await migrateEconomyDailyClaims(pool);
   await migrateSocialProofReceipts(pool);
   await migrateReferralOriginHolds(pool);
+  await migrateCrewWageClocks(pool);
   await pool.query('BEGIN');
   try { await ensureDeedBuildings(pool); await pool.query('COMMIT'); }
   catch (error) { await pool.query('ROLLBACK'); throw error; }

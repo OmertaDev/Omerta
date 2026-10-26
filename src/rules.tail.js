@@ -770,8 +770,11 @@ export const crewRehireDebt = (ch, now = Date.now()) => {
   const elapsed = Math.min(now - new Date(ch.crew_paid_at).getTime(), M4.CREW_WAGE_CAP_MS);
   return Math.floor(M4.CREW_WAGE_PER_HR * Math.max(0, elapsed) / 3600000);
 };
-export const crewCold = (ch, now = Date.now()) =>
-  Number(ch.crew || 0) > 0 && !!ch.crew_paid_at && now - new Date(ch.crew_paid_at).getTime() >= M4.CREW_WAGE_COLD_MS;
+export const crewCold = (ch, now = Date.now()) => {
+  if (Number(ch.crew || 0) <= 0) return false;
+  const paidAt = ch.crew_paid_at ? new Date(ch.crew_paid_at).getTime() : Number.NaN;
+  return !Number.isFinite(paidAt) || now - paidAt >= M4.CREW_WAGE_COLD_MS;
+};
 
 // ═══ THE KITCHEN → Tier 4 (omerta-tier2-deepening-design.md) ═══
 // Orthogonal depth on the M4 drug loop: LAB MODULES (a purity/yield/stealth upgrade axis, cash+$OMR

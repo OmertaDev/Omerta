@@ -56,11 +56,13 @@ jobs:
           createdb omerta_cooldown_test
           createdb checkin_lineage_test
           createdb daily_lineage_test
+          createdb crew_wage_migration_test
       - name: PostgreSQL cooldown and lineage races
         env:
           COOLDOWN_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:55442/omerta_cooldown_test
           CHECKIN_LINEAGE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:55442/checkin_lineage_test
           DAILY_LINEAGE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:55442/daily_lineage_test
+          CREW_WAGE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:55442/crew_wage_migration_test
           LEGAL_OPERATOR_NAME: CI Test Operator
           LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
           PRIVACY_CONTACT_EMAIL: privacy@example.test
@@ -77,3 +79,4 @@ jobs:
           node test/action-cooldowns.js --postgres
           node test/checkin-lineage.js --postgres
           node test/daily-lineage.js --postgres
+          node test/crew-wage-postgres.js

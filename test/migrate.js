@@ -508,8 +508,10 @@ await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
     .slice(0, targeted)
     .findLastIndex((sql) => /^ALTER TABLE .* ADD COLUMN IF NOT EXISTS /i.test(sql));
   const stamp = statements.findIndex((sql) => sql.includes('SELECT app_version FROM schema_meta'));
-  assert(lastGeneric >= 0 && targeted > lastGeneric && h2Targeted > targeted && stamp > h2Targeted,
-    'generic columns, Task 5 authority, and H2 authority run before the schema stamp');
+  const crewClock = statements.findIndex((sql) => sql.includes('crew_paid_at=$1'));
+  assert(lastGeneric >= 0 && targeted > lastGeneric && h2Targeted > targeted
+    && crewClock > h2Targeted && stamp > crewClock,
+  'generic columns, Task 5 authority, H2 authority, and crew clock repair run before the schema stamp');
   await bootPool.end();
 }
 
@@ -531,6 +533,23 @@ assert.equal((await pool.query(
 true, 'the upgrade marks an existing pending social row for the bounded predecessor bridge');
 // idempotent: running again is still a clean no-op
 assert.equal((await migrateColumns(pool, SCHEMA)).failed, 0, 're-running the migration is idempotent');
+
+// Legacy crews predate crew_paid_at. Give them a fresh clock without retroactive debt or work, and
+// repeat the scan on every startup so a predecessor's final persist cannot leave a free crew behind.
+await pool.query(
+  "INSERT INTO characters (id,account_id,name,season,crew,crew_paid_at,crew_sale_credit_ms) VALUES ('legacy-crew','legacy-account','Legacy Crew',1,2,NULL,59000)");
+const crewClockAt = new Date('2026-10-26T20:00:00.000Z');
+const crewClockFirst = await dbModule.migrateCrewWageClocks(pool, crewClockAt);
+assert.equal(crewClockFirst.stamped, 1, 'one legacy paid crew receives a player-favourable fresh clock');
+const repairedCrew = (await pool.query(
+  "SELECT crew_paid_at,crew_sale_credit_ms FROM characters WHERE id='legacy-crew'")).rows[0];
+assert.equal(+new Date(repairedCrew.crew_paid_at), +crewClockAt);
+assert.equal(Number(repairedCrew.crew_sale_credit_ms), 0, 'pre-clock fractional work is discarded');
+assert.equal((await dbModule.migrateCrewWageClocks(pool, new Date(+crewClockAt + 60000))).stamped, 0,
+  'the repeatable repair never advances an existing wage clock');
+assert.equal(Number((await pool.query(
+  "SELECT COUNT(*) n FROM economy_migrations WHERE id='crew-wage-clock-backfill-2026-10-26'")).rows[0].n),
+1, 'the repair records one durable rollout marker');
 
 // ── 4. MED-2 completeness guard: every `character_id` table has a KNOWN death disposition ──
 // The schema has zero FKs — referential integrity on death is 100% the runEstate wipe loop (+ custom

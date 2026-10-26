@@ -62,7 +62,45 @@ const unpaid = fixture({ credit: minute - 1000 });
 unpaid.ch.crew_paid_at = new Date(0);
 assert.equal(advance(unpaid, [minute]).units, 0);
 assert.equal(unpaid.ch.crew_sale_credit_ms, 0, 'cold crew cannot bank work');
+const clockless = fixture({ credit: minute - 1000 });
+clockless.ch.crew_paid_at = null;
+assert.equal(crewCold(clockless.ch, start + minute), true, 'a paid crew without a wage clock fails closed');
+assert.equal(crewWageOwed(clockless.ch, start + minute), 0, 'clock repair never invents retroactive debt');
+assert.equal(advance(clockless, [minute]).units, 0, 'a missing wage clock cannot power free sales');
+assert.equal(clockless.ch.crew_sale_credit_ms, 0, 'a missing clock cannot retain fractional work');
+const freshlyStamped = fixture();
+freshlyStamped.ch.last_accrued_at = new Date(start - day);
+freshlyStamped.ch.crew_paid_at = new Date(start);
+accrue(freshlyStamped.ch, null, freshlyStamped.ctx, new Date(start + minute));
+assert.equal(freshlyStamped.ch._crewSale?.units, 1,
+  'stamping a legacy crew starts work at the new clock instead of awarding the old offline gap');
 assert.equal(advance(fixture(), [day]).units, CONSTANTS.OFFLINE_CAP_MS / minute);
+
+// Returning at or after the cold boundary settles the bounded shift earned before tools went down.
+// A later touch earns nothing, and cutting the final eligible shift at the boundary is partition-safe.
+for (const returnAt of [M4.CREW_WAGE_COLD_MS, M4.CREW_WAGE_COLD_MS + day]) {
+  const returning = fixture();
+  accrue(returning.ch, null, returning.ctx, new Date(start + returnAt));
+  assert.equal(returning.ch._crewSale?.units, CONSTANTS.OFFLINE_CAP_MS / minute,
+    'a cold return keeps the pre-cold offline shift');
+  delete returning.ch._crewSale;
+  accrue(returning.ch, null, returning.ctx, new Date(start + returnAt + minute));
+  assert.equal(returning.ch._crewSale?.units || 0, 0, 'a post-cold touch adds no crew work');
+  assert.equal(returning.ch.crew_sale_credit_ms, 0, 'cold crews retain no fractional work');
+}
+const finalShiftStart = start + M4.CREW_WAGE_COLD_MS - minute;
+const boundaryOnce = fixture(), boundarySplit = fixture();
+boundaryOnce.ch.last_accrued_at = new Date(finalShiftStart);
+boundarySplit.ch.last_accrued_at = new Date(finalShiftStart);
+accrue(boundaryOnce.ch, null, boundaryOnce.ctx, new Date(start + M4.CREW_WAGE_COLD_MS + minute));
+accrue(boundarySplit.ch, null, boundarySplit.ctx, new Date(start + M4.CREW_WAGE_COLD_MS));
+const firstHalfUnits = boundarySplit.ch._crewSale?.units || 0;
+delete boundarySplit.ch._crewSale;
+accrue(boundarySplit.ch, null, boundarySplit.ctx, new Date(start + M4.CREW_WAGE_COLD_MS + minute));
+assert.equal(firstHalfUnits + (boundarySplit.ch._crewSale?.units || 0), boundaryOnce.ch._crewSale?.units,
+  'splitting the final minute through the cold boundary cannot change earned units');
+assert.equal(boundaryOnce.ch._crewSale?.units, 1, 'only the pre-cold minute is eligible');
+assert.equal(boundarySplit.ch.crew_sale_credit_ms, boundaryOnce.ch.crew_sale_credit_ms);
 
 const realNow = Date.now;
 let paymentNow = start;
@@ -209,8 +247,9 @@ try {
   const sheet = await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${token}` } });
   const id = sheet.json().character.id;
   const accountId = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+  const warmWall = Date.now();
   await app.pool.query('UPDATE characters SET crew=1,crew_paid_at=$2,crew_sale_credit_ms=59000,last_accrued_at=$3 WHERE id=$1',
-    [id, new Date(), new Date(Date.now() - 1100)]);
+    [id, new Date(warmWall - 5000), new Date(warmWall - 1500)]);
   await app.pool.query('INSERT INTO stash (character_id,drug_id,qty,quality) VALUES ($1,$2,3,1)', [id, drug.id]);
   await withCharacter(app.pool, accountId, async () => ({ ok: true }));
   const row = (await app.pool.query('SELECT crew_sale_credit_ms FROM characters WHERE id=$1', [id])).rows[0];
@@ -219,9 +258,12 @@ try {
 
   // Drive the real accrual/persistence seam at the wage cap. Even frequent touches cannot sell a
   // single unit after the liability stops growing.
+  const coldPaidAt = new Date(Date.now() - M4.CREW_WAGE_CAP_MS - 2000);
+  const coldAt = new Date(+coldPaidAt + M4.CREW_WAGE_COLD_MS);
+  const postColdAccrualAt = new Date(+coldAt + 500);
   await app.pool.query(
     'UPDATE characters SET crew=1,crew_paid_at=$2,crew_sale_credit_ms=59000,last_accrued_at=$3 WHERE id=$1',
-    [id, new Date(Date.now() - M4.CREW_WAGE_CAP_MS), new Date(Date.now() - 1100)]);
+    [id, coldPaidAt, postColdAccrualAt]);
   await withCharacter(app.pool, accountId, async () => ({ ok: true }));
   assert.equal(Number((await app.pool.query(
     'SELECT qty FROM stash WHERE character_id=$1 AND drug_id=$2', [id, drug.id])).rows[0].qty), 2,
