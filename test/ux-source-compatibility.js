@@ -92,7 +92,7 @@ await import('./lib/ux-director-reader-source-compatibility.js');
 {
   const next = UX_WORKFLOW_BOUND_SOURCE, file = UX_WORKFLOW_BOUND_FILE;
   assert.equal(next.status, 'SEALED');
-  assert.equal(next.revision, 'WORKFLOW_AUTHORED_REVISION_TO_STAMP_AFTER_CHECKPOINT');
+  assert.equal(next.revision, 'e4fd869c2adeb2ad2cc5a2d741a5851965b88422');
   assert.equal(next.targetRevision, 'c727d652c11780c699164bca321c872abdb8852a');
   assert.deepEqual(next.files.map(row => row.file), [file]);
   for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);

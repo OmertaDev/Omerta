@@ -81,7 +81,7 @@ export function uxWorkflowBoundHistoricalInput(file, input) {
   if (file !== UX_WORKFLOW_BOUND_FILE) return input;
   const row = UX_WORKFLOW_BOUND_SOURCE.files?.[0]; if (!row) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only');
+  if (buffer) assert(Buffer.from(text).equals(input), 'lossless UTF-8 physical source only');
   if (typeof text !== 'string' || sha(text.replaceAll('\r\n', '\n')) !== row.currentSha256) return input;
   const restored = qualifyUxWorkflowBoundSource(file, text).baselineText;
   return buffer ? Buffer.from(restored) : restored;
