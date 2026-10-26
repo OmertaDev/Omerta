@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {ECONOMY_READINESS_MERGE_SOURCE,ECONOMY_READINESS_MERGE_SOURCE_SHA256} from './economy-readiness-merge-source-data.js';
+import {economyUxMergeCandidateHistoricalInput} from './economy-ux-merge-source-compatibility.js';
 
 export {ECONOMY_READINESS_MERGE_SOURCE};
 const sha=text=>crypto.createHash('sha256').update(text).digest('hex');
@@ -34,6 +35,7 @@ export function qualifyEconomyReadinessMergeSource(file,input,pin=ECONOMY_READIN
 }
 
 export function economyReadinessMergeHistoricalInput(file,input){
+  input=economyUxMergeCandidateHistoricalInput(file,input);
   if(file!=='public/index.html')return input;
   const buffer=Buffer.isBuffer(input),text=buffer?input.toString('utf8'):input;
   if(buffer)assert(Buffer.from(text).equals(input),'lossless UTF-8 physical source only');
@@ -64,6 +66,7 @@ export function qualifyEconomyHardeningMergeSource(file,input,pin=ECONOMY_READIN
 }
 
 export function economyHardeningMergeHistoricalInput(file,input){
+  input=economyUxMergeCandidateHistoricalInput(file,input);
   const buffer=Buffer.isBuffer(input),text=buffer?input.toString('utf8'):input;
   if(buffer)assert(Buffer.from(text).equals(input),'lossless UTF-8 physical source only');
   if(typeof text!=='string')return input;

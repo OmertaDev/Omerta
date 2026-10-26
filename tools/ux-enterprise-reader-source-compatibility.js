@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { UX_ENTERPRISE_READER_SOURCE, UX_ENTERPRISE_READER_SOURCE_SHA256 } from './ux-enterprise-reader-source-data.js';
+import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 export { UX_ENTERPRISE_READER_SOURCE };
 export const UX_ENTERPRISE_READER_SOURCE_FILES = Object.freeze(['test/enterprise-release-phase2-migration-catalog.js']);
 const sha = input => crypto.createHash('sha256').update(input).digest('hex');
@@ -39,6 +40,7 @@ export function qualifyUxEnterpriseReaderSource(file, input, pin = UX_ENTERPRISE
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function uxEnterpriseReaderHistoricalInput(file, input) {
+  input = economyUxMergeMainHistoricalInput(file, input);
   const row = UX_ENTERPRISE_READER_SOURCE.files.find(record => record.file === file); if (!row) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only');

@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { UX_NATIVE_READER_SOURCE as pin, UX_NATIVE_READER_SOURCE_FILES, qualifyUxNativeReaderSource, uxNativeReaderHistoricalInput, UX_PHASE2_UPGRADE_BOUND_SOURCE, UX_PHASE2_UPGRADE_BOUND_FILE, qualifyUxPhase2UpgradeBoundSource, uxPhase2UpgradeBoundHistoricalInput } from '../../tools/ux-native-reader-source-compatibility.js';
 import { qualifyUxSource, uxHistoricalInput } from '../../tools/ux-source-compatibility.js';
+import { ECONOMY_UX_MERGE_SOURCE, economyUxMergeMainHistoricalInput } from '../../tools/economy-ux-merge-source-compatibility.js';
 const AUTHORED_NATIVE_READER_FIX = 'c1720a694799e743c6f70bc3069dba2bbecae08e';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -23,11 +24,17 @@ const hunks = diff => {
 };
 // This is only the historical reader's qualified view; raw HEAD is independently pinned below.
 function qualifiedNativeReaderHeadEntry(file) {
-  const raw = git('show', 'HEAD:' + file), entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const raw = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const mergeQualified = economyUxMergeMainHistoricalInput(file, raw);
+  if (mergeQualified !== raw) {
+    const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === file); assert(mergeRow);
+    assert.equal(entry, mergeRow.mode + ' blob ' + mergeRow.currentBlob + '\t' + file, 'Raw integrated HEAD mode/blob must qualify before parent normalization');
+    assert.equal(sha(mergeQualified), mergeRow.main.sha256); entry = mergeRow.main.mode + ' blob ' + mergeRow.main.blob + '\t' + file;
+  }
   const qualified = uxPhase2UpgradeBoundHistoricalInput(file, raw);
-  if (qualified === raw) return entry;
+  if (qualified === mergeQualified) return entry;
   const row = UX_PHASE2_UPGRADE_BOUND_SOURCE.files[0];
-  assert.equal(file, row.file); assert.equal(entry, row.mode + ' blob ' + row.currentBlob + '\t' + file, 'Raw new HEAD mode/blob must qualify before any historical entry normalization');
+  assert.equal(file, row.file); assert.equal(entry, row.mode + ' blob ' + row.currentBlob + '\t' + file, 'Parent-normalized HEAD mode/blob must qualify before historical entry normalization');
   assert.equal(sha(qualified), row.targetSha256);
   return row.targetMode + ' blob ' + row.targetBlob + '\t' + file;
 }
@@ -70,8 +77,8 @@ console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor
   assert.deepEqual(next.files.map(row => row.file), [file]);
   for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
   git('merge-base', '--is-ancestor', next.targetRevision, next.revision); git('merge-base', '--is-ancestor', next.revision, 'HEAD');
-  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file), physical = fs.readFileSync(file, 'utf8');
-  assert.equal(git('show', 'HEAD:' + file), current, 'Raw actual HEAD retains the complete new authored Phase2 file');
+  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file), physical = economyUxMergeMainHistoricalInput(file, fs.readFileSync(file, 'utf8'));
+  assert.equal(economyUxMergeMainHistoricalInput(file, git('show', 'HEAD:' + file)), current, 'Parent-qualified actual HEAD retains the complete new authored Phase2 file');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Raw physical Phase2 file is whole LF/CRLF authored source');
   assert(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink());
   for (const [revision, mode, expected] of [[next.revision, row.mode, row.currentBlob], [next.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', file).trim(), mode + ' blob ' + expected + '\t' + file);
@@ -108,6 +115,7 @@ console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor
   for (const unknown of ['../test/phase2-postgres.js', '__proto__', 'schema.sql']) { assert.throws(() => qualifyUxPhase2UpgradeBoundSource(unknown, current)); assert.equal(uxPhase2UpgradeBoundHistoricalInput(unknown, current), current); refusals++; }
   for (const input of [prior, current + '\n// unknown future source\n', current.slice(1)]) assert.equal(uxPhase2UpgradeBoundHistoricalInput(file, input), input);
   let conserved = fs.readFileSync('tools/ux-native-reader-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+  conserved = conserved.replace("import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\n", '');
   conserved = conserved.replace("import { UX_PHASE2_UPGRADE_BOUND_SOURCE, UX_PHASE2_UPGRADE_BOUND_SOURCE_SHA256 } from './ux-phase2-upgrade-bound-source-data.js';\n", '');
   const begin = conserved.indexOf('export { UX_PHASE2_UPGRADE_BOUND_SOURCE };'), finish = conserved.indexOf('export function uxNativeReaderHistoricalInput(file, input) {', begin);
   assert(begin >= 0 && finish > begin); conserved = conserved.slice(0, begin) + conserved.slice(finish);
