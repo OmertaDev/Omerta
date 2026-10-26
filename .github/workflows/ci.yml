@@ -58,7 +58,7 @@ jobs:
     # commercial memory proofs; all commands below remain required. Give the
     # expanded lifecycle a finite120m hang bound; this is not a measured duration.
     # Browser and native PostgreSQL bounds and all proof assertions are unchanged.
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       # The knowledge-plane gate inventories the full Git lineage (800+ commits) and
       # compares generated artifacts at their recorded source revision. A shallow

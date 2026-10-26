@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
+import { types as utilTypes } from 'node:util';
+const nativeArraySpecies = Object.freeze(Object.getOwnPropertyDescriptor(Array, Symbol.species));
 
 export async function assertUxNativeDirectorGuards() {
  const source = fs.readFileSync('tools/ux-release-phase2-native-catalog.js', 'utf8');
@@ -11,7 +13,7 @@ export async function assertUxNativeDirectorGuards() {
  const declarations = ['UX_NATIVE_TABLES', 'names', 'tableOf', 'uxRows', 'freeze'].map(name => {
   const node = nodes.find(node => node?.type === 'VariableDeclaration' && node.declarations.some(row => row.id.name === name)); assert(node); return source.slice(node.start, node.end);
  }).join('\n');
- const { projection, tables } = new Function('assert', declarations + '\n' + functionText('uxNativeProjection') + '\nreturn { projection: uxNativeProjection, tables: UX_NATIVE_TABLES };')(assert);
+ const { projection, tables } = new Function('assert', 'utilTypes', 'nativeArraySpecies', declarations + '\n' + functionText('uxNativeProjection') + '\nreturn { projection: uxNativeProjection, tables: UX_NATIVE_TABLES };')(assert, utilTypes, nativeArraySpecies);
  const directorSchema = 'director_migration_' + 'a'.repeat(16), phase2Schema = 'p2_definitions_' + 'b'.repeat(32);
  const local = 'postgresql://pilot_runner@127.0.0.1:35439/omerta_check';
  const ci = 'postgresql://postgres:pgcheck@127.0.0.1:5432/omerta_check';
@@ -71,6 +73,7 @@ export async function assertUxNativeDirectorGuards() {
  assert.throws(() => guarded.projectMetadata(metadata)); refusals++;
  console.log(JSON.stringify({ phase: 'UX_NATIVE_DIRECTOR_PROFILE_GUARDS', nativeExecution: false, postgresImportsOrConnections: 0, refusals, exactExistingCallerProfiles: ['phase2', 'fresh', 'director'], fullMetadataNotNullChecksRetained: true, priorNativeResultsTransferred: false }));
  await assertUxNativeAttestationGuards();
+ await assertUxFrozenProjectionGuards();
 }
 
 async function assertUxNativeAttestationGuards() {
@@ -111,9 +114,9 @@ async function assertUxNativeAttestationGuards() {
  const declarations = ['UX_NATIVE_TABLES', 'names', 'tableOf', 'uxRows', 'freeze'].map(name => {
   const node = syntax(current).find(node => node?.type === 'VariableDeclaration' && node.declarations.some(row => row.id.name === name)); assert(node); return current.slice(node.start, node.end);
  }).join('\n');
- const create = (source, probe) => new Function('assert', 'original', 'catalogQueries', 'catalogFields', declarations + '\n' +
+ const create = (source, probe) => new Function('assert', 'original', 'catalogQueries', 'catalogFields', 'utilTypes', 'nativeArraySpecies', declarations + '\n' +
   ['uxNativeProjection', 'assertUxNativeSecurity', 'projectedCaller'].map(name => text(source, name)).join('\n') +
-  '\nreturn { caller: projectedCaller, security: assertUxNativeSecurity, tables: UX_NATIVE_TABLES };')(assert, { readCommerceReleasePhase2Metadata: async pool => { if (probe) await probe(pool); return reader(pool); } }, queries, full);
+  '\nreturn { caller: projectedCaller, security: assertUxNativeSecurity, tables: UX_NATIVE_TABLES };')(assert, { readCommerceReleasePhase2Metadata: async pool => { if (probe) await probe(pool); return reader(pool); } }, queries, full, utilTypes, nativeArraySpecies);
  const actual = create(current), tables = actual.tables, names = new Set(tables), schema = 'p2_definitions_' + 'b'.repeat(32);
  const ux = {
   relations: tables.map(name => ({ name, kind: 'r' })),
@@ -186,4 +189,100 @@ async function assertUxNativeAttestationGuards() {
  }).caller(probed.pool, ux);
  assert.equal(probed.state.calls.filter(call => call.sql === queries[4]).length, 1, 'The complete original index SQL remains unfiltered');
  console.log(JSON.stringify({ phase: 'UX_PRIVATE_THREE_QUERY_ATTESTATION_GUARDS', nativeExecution: false, postgresImportsOrConnections: 0, refusals, acceptedPhysicalEndings: ['LF', 'CRLF'], rejectedMixedAndBareCr: 2, initialQueriesBeforeAndAfter: 7, subsequentReadQueriesBeforeAndAfter: 15, fixtureReturnedMetadataRowsBefore: counts[0], fixtureReturnedMetadataRowsAfter: counts[1], fixtureReturnedMetadataRowsAfterCrlf: counts[2], fullIndexContextAndNativeQueriesUnchanged: true, validCatalogPredicateScopeOnly: true, performanceSecondsClaim: false, priorNativeResultsTransferred: false }));
+}
+
+async function assertUxFrozenProjectionGuards() {
+ const baseline = 'c727d652c11780c699164bca321c872abdb8852a', helper = 'tools/ux-release-phase2-native-catalog.js';
+ const source=fs.readFileSync(helper,'utf8').replaceAll('\r\n','\n');
+ const before=execFileSync('git',['--no-replace-objects','show',baseline+':'+helper],{encoding:'utf8',windowsHide:true,maxBuffer:4*1024*1024});
+ const syntax=text=>parse(text,{ecmaVersion:'latest',sourceType:'module'}).body.map(node=>node.type==='ExportNamedDeclaration'?node.declaration:node);
+ const originalNode=syntax(before).find(node=>node?.type==='FunctionDeclaration'&&node.id.name==='uxNativeProjection');
+ const currentNode=syntax(source).find(node=>node?.type==='FunctionDeclaration'&&node.id.name==='uxNativeProjection');
+ assert(originalNode && currentNode);
+ const original=before.slice(originalNode.start,originalNode.end), proposed=source.slice(currentNode.start,currentNode.end);
+ assert.equal(proposed.slice(proposed.indexOf('  const constraints =')),original.slice(original.indexOf('  const constraints =')),'Original constraint projection remains byte-identical');
+ const declarations=['UX_NATIVE_TABLES','names','fields','tableOf','uxRows','freeze'].map(name=>{
+  const node=syntax(source).find(node=>node?.type==='VariableDeclaration'&&node.declarations.some(row=>row.id.name===name));assert(node);return source.slice(node.start,node.end);
+ });
+ // names and fields share one declaration in actual source.
+ const environment=[...new Set(declarations)].join('\n');
+ const nativeArraySpecies=Object.freeze(Object.getOwnPropertyDescriptor(Array,Symbol.species));
+ const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
+ const factories=[original,proposed].map(text=>(reference,checks=[])=>{
+  const observed=Object.assign((...args)=>assert(...args),assert);
+  observed.deepEqual=(actual,expected,message)=>{if(message?.startsWith('Exact independently compiled UX '))checks.push(message);return assert.deepEqual(actual,expected,message);};
+  return new Function('assert','utilTypes','nativeArraySpecies',environment+'\n'+text+'\nreturn uxNativeProjection;')(observed,utilTypes,nativeArraySpecies)(reference);
+ });
+ const tables=['ux_community_documents','ux_community_entries','ux_community_portrait_consents','ux_crew_notes','ux_crew_signals','ux_mentor_subjects','ux_workspaces'];
+ const fields=['relations','columns','constraints','indexes'];
+ const ux=freeze({relations:tables.map(name=>({name,kind:'r',persistence:'p'})),columns:tables.flatMap(table_name=>Array.from({length:8},(_,index)=>({table_name,column_name:'column_'+index,ordinal:index+1,type:'text',not_null:true}))),constraints:tables.flatMap(table_name=>Array.from({length:9},(_,index)=>({table_name,name:table_name+'_constraint_'+index,type:index?'n':'p',definition:index?'NOT NULL column_'+index:'PRIMARY KEY (column_0)',columns:['column_'+index],referenced_columns:[]}))),indexes:tables.map(table_name=>({table_name,name:table_name+'_pkey',definition:'CREATE UNIQUE INDEX '+table_name+'_pkey ON $self.'+table_name+' (column_0)',unique:true}))});
+ const make=(counts=[3,4,5,3])=>Object.fromEntries(fields.map((field,at)=>{
+  const baseline=Array.from({length:counts[at]},(_,index)=>field==='relations'
+   ?{name:'base_'+index,kind:'r',persistence:'p'}
+   :{table_name:'base_'+index,name:'base_'+index+'_'+field,type:'text',definition:'native baseline '+index});
+  return [field,[...baseline,...structuredClone(ux[field])]];
+ }));
+ let guards=0;
+ const equalRun=(build,inspect=()=>{})=>{
+  const results=[];
+  for(let index=0;index<2;index++){
+   const checks=[],fixture=build(index),projection=factories[index](fixture.reference||ux,checks);
+   results.push(inspect(projection,fixture,checks,index));
+  }
+  assert.deepEqual(results[1],results[0]);guards++;
+ };
+ equalRun(()=>({metadata:make()}),(projection,fixture)=>projection.projectMetadata(fixture.metadata));
+ equalRun(()=>({metadata:freeze(make())}),(projection,fixture,checks,index)=>{
+  const first=projection.projectMetadata(fixture.metadata),second=projection.projectMetadata(fixture.metadata);
+  assert.equal(checks.length,index?4:8);for(const field of fields){assert.notEqual(first[field],second[field]);first[field].push({poison:true});first[field].length=0;}
+  return projection.projectMetadata(fixture.metadata);
+ });
+ for(const field of fields)equalRun(()=>({metadata:make()}),(projection,fixture)=>{
+  projection.projectMetadata(fixture.metadata);const row=fixture.metadata[field].find(row=>(row.name||row.table_name).startsWith('ux_'));
+  // relation identity differs from other row identities.
+  const selected=fixture.metadata[field].find(row=>tables.includes(field==='relations'?row.name:row.table_name));
+  selected[field==='relations'?'kind':field==='columns'?'type':field==='constraints'?'definition':'unique']='changed';
+  assert.throws(()=>projection.projectMetadata(fixture.metadata));return 'refused';
+ });
+ for(const field of fields)equalRun(()=>({metadata:freeze(make())}),(projection,fixture)=>{
+  projection.projectMetadata(fixture.metadata);const changed={...fixture.metadata,[field]:fixture.metadata[field].slice()};
+  const at=changed[field].findIndex(row=>tables.includes(field==='relations'?row.name:row.table_name));changed[field].splice(at,1);
+  assert.throws(()=>projection.projectMetadata(changed));return 'refused';
+ });
+ equalRun(()=>{const metadata=make(),events=[];const target=metadata.columns;metadata.columns=new Proxy(target,{get(object,key,receiver){events.push(String(key));return Reflect.get(object,key,receiver);}});return{metadata,events};},(projection,fixture)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);return fixture.events;});
+ equalRun(()=>{const metadata=make(),events=[];const at=metadata.constraints.findIndex(row=>tables.includes(row.table_name));metadata.constraints[at]=new Proxy(metadata.constraints[at],{get(object,key,receiver){events.push(String(key));return Reflect.get(object,key,receiver);}});return{metadata,events};},(projection,fixture)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);return fixture.events;});
+ equalRun(()=>{const metadata=make(),events=[];const target=freeze(metadata.columns);metadata.columns=new Proxy(target,{get(object,key,receiver){events.push(String(key));return Reflect.get(object,key,receiver);}});return{metadata,events};},(projection,fixture)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);return fixture.events;});
+ equalRun(()=>{const metadata=make(),events=[];const at=metadata.constraints.findIndex(row=>tables.includes(row.table_name));const target=freeze(metadata.constraints[at]);metadata.constraints[at]=new Proxy(target,{get(object,key,receiver){events.push(String(key));return Reflect.get(object,key,receiver);}});Object.freeze(metadata.constraints);return{metadata,events};},(projection,fixture)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);return fixture.events;});
+ equalRun(()=>{const metadata=make(),events=[];for(const field of fields){const rows=freeze(metadata[field]);Object.defineProperty(metadata,field,{get(){events.push(field);return rows;},enumerable:true});}return{metadata,events};},(projection,fixture)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);assert.deepEqual(fixture.events,[...fields,...fields,...fields,...fields]);return fixture.events;});
+ equalRun(()=>{const metadata=make(),events=[],valid=freeze(metadata.relations),other=[{name:'other',kind:'r'}];let reads=0;Object.defineProperty(metadata,'relations',{get(){events.push(++reads);return reads===1?valid:other;}});return{metadata,events};},(projection,fixture)=>({result:projection.projectMetadata(fixture.metadata),events:fixture.events}));
+ equalRun(()=>{const metadata=make(),events=[];const row=metadata.columns.find(row=>tables.includes(row.table_name));const identity=row.table_name;Object.defineProperty(row,'table_name',{get(){events.push('identity');return identity;},enumerable:true});Object.freeze(row);Object.freeze(metadata.columns);return{metadata,events};},(projection,fixture,checks,index)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);assert.equal(checks.filter(item=>item.endsWith(' columns')).length,2);return fixture.events;});
+ equalRun(()=>{const metadata=make(),reference=structuredClone(ux),at=metadata.columns.findIndex(row=>tables.includes(row.table_name));const nested={value:1};metadata.columns[at]={...metadata.columns[at],nested};reference.columns[0]={...reference.columns[0],nested:{value:1}};Object.freeze(metadata.columns[at]);Object.freeze(metadata.columns);return{metadata,reference,nested};},(projection,fixture)=>{projection.projectMetadata(fixture.metadata);fixture.nested.value=2;assert.throws(()=>projection.projectMetadata(fixture.metadata));return 'refused';});
+ for(const extra of [()=>new Date(1),()=>new Map([['key',1]]),()=>new Set([1]),()=>new RegExp('x'),()=>new WeakMap(),()=>new WeakSet(),()=>Promise.resolve(1),()=>new Uint8Array(0),()=>new DataView(new ArrayBuffer(1)),()=>Object(1),()=>new WeakRef({}),()=>{const map=new Map();Object.setPrototypeOf(map,Object.prototype);return map;}]){
+  equalRun(()=>{const metadata=make();metadata.columns[0].extra=extra();freeze(metadata);return{metadata};},(projection,fixture,checks)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);assert.equal(checks.filter(item=>item.endsWith(' columns')).length,2);return 'not cached';});
+ }
+ equalRun(()=>{const metadata=make();const row=metadata.columns[0];delete row.table_name;Object.setPrototypeOf(row,{table_name:'base_0'});freeze(metadata);return{metadata};},(projection,fixture,checks)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);assert.equal(checks.filter(item=>item.endsWith(' columns')).length,2);return 'not cached';});
+ equalRun(()=>{const metadata=make();metadata.columns=freeze(metadata.relations);return{metadata};},(projection,fixture)=>{assert.throws(()=>projection.projectMetadata(fixture.metadata));return 'alias refused';});
+ equalRun(()=>{const metadata=make();delete metadata.columns[0];freeze(metadata);return{metadata};},(projection,fixture,checks)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);assert.equal(checks.filter(item=>item.endsWith(' columns')).length,2);return 'sparse fallback';});
+ equalRun(()=>{const metadata=make(),events=[];metadata.columns[0].extra={get hidden(){events.push('unexpected getter');return 1;}};Object.freeze(metadata.columns[0].extra);Object.freeze(metadata.columns[0]);Object.freeze(metadata.columns);return{metadata,events};},(projection,fixture,checks)=>{projection.projectMetadata(fixture.metadata);projection.projectMetadata(fixture.metadata);assert.equal(checks.filter(item=>item.endsWith(' columns')).length,2);assert.deepEqual(fixture.events,[]);return 'nested accessor not invoked';});
+ equalRun(()=>{const metadata=freeze(make());return{metadata};},(projection,fixture)=>{projection.projectMetadata(fixture.metadata);const prior=Object.getOwnPropertyDescriptor(Array.prototype,'filter');let calls=0;Object.defineProperty(Array.prototype,'filter',{...prior,value:function(callback,thisArg){calls++;return prior.value.call(this,callback,thisArg);}});try{projection.projectMetadata(fixture.metadata);assert.equal(calls,8);}finally{Object.defineProperty(Array.prototype,'filter',prior);}return 'changed intrinsic falls back';});
+ for(const includeNotNull of [true,false])equalRun(()=>({rows:ux.constraints.filter(row=>includeNotNull||row.type!=='n').map(({table_name,name,definition})=>({table_name,name,definition}))}),(projection,fixture)=>projection.projectConstraints(fixture.rows,includeNotNull));
+ for(const timing of ['before construction','after caching'])for(const kind of ['getter','proxy getter','data descriptor']){
+  const results=[];
+  for(let implementation=0;implementation<2;implementation++){
+   const metadata=freeze(make()),checks=[];let calls=0,projection;
+   const descriptor=kind==='data descriptor'?{value:Array,writable:true,enumerable:false,configurable:true}
+    :{...nativeArraySpecies,get:kind==='getter'?function(){calls++;return Array;}:new Proxy(nativeArraySpecies.get,{apply(target,thisArg,args){calls++;return Reflect.apply(target,thisArg,args);}})};
+   if(timing==='after caching'){projection=factories[implementation](ux,checks);projection.projectMetadata(metadata);}
+   Object.defineProperty(Array,Symbol.species,descriptor);
+   try{
+    if(!projection)projection=factories[implementation](ux,checks);
+    const first=projection.projectMetadata(metadata);
+    if(timing==='before construction')projection.projectMetadata(metadata);
+    assert.equal(checks.length,8,'Changed species must use all original field checks');
+    results.push({first,calls});
+   }finally{Object.defineProperty(Array,Symbol.species,nativeArraySpecies);}
+  }
+  assert.deepEqual(results[1],results[0]);guards++;
+ }
+ console.log(JSON.stringify({phase:'UX_FROZEN_PROJECTION_CACHE_GUARDS',baseline,comparisons:guards,oldAndNewBehaviorsMatch:true,twoPhaseRereads:true,freshOutputSlices:true,mutableInputsFullyChecked:true,changedSpeciesBeforeAndAfterCachingRefused:true,nativeExecution:false,postgresImportsOrConnections:0,priorNativeResultsTransferred:false}));
 }

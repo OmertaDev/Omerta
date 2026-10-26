@@ -6,7 +6,7 @@ import { parse } from 'acorn';
 import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-ux-inputs.js';
 export { ENTERPRISE_NATIVE_UX_INPUTS };
 export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-ux-inputs.js';
-export const ENTERPRISE_UX_SUPPORT = Object.freeze(['tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js']);
+export const ENTERPRISE_UX_SUPPORT = Object.freeze(['tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js', 'tools/ux-workflow-bound-source-seal.js']);
 export const ENTERPRISE_UX_ASSETS = Object.freeze(['feedback', 'progression', 'social', 'navigation', 'workspace', 'world', 'tactics', 'investigation', 'coordination', 'feel', 'tools', 'identity', 'story', 'community'].flatMap(name => ['public/ux-' + name + '.js', ...(name === 'workspace' ? [] : ['public/ux-' + name + '.css'])]));
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const blob = bytes => crypto.createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex');
