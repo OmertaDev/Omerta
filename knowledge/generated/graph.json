@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+  "sourceRevision": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16962,
-    "edges": 67751,
+    "nodes": 16965,
+    "edges": 67762,
     "byNodeType": {
       "Artifact": 7000,
       "Command": 299,
-      "Commit": 4694,
+      "Commit": 4697,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5581,
-      "CHANGED": 25808,
+      "CHANGED": 25816,
       "CONTAINS": 7021,
       "DECLARES": 299,
       "DEFINED_IN": 1765,
       "DEPENDS_ON": 69,
       "EXECUTES": 1184,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4694,
+      "HAS_COMMIT": 4697,
       "IMPLEMENTS": 124,
       "IMPORTS": 7987,
       "INHERITS": 45,
@@ -152369,20 +152369,20 @@
       "path": "test/ux-expanded-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 22024,
-      "lines": 206,
-      "version": "50b86f95a178c8c3",
+      "bytes": 22478,
+      "lines": 213,
+      "version": "70ad64f35e8c8f6f",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-expanded-browser.js",
           "line": 1,
-          "version": "50b86f95a178c8c3"
+          "version": "70ad64f35e8c8f6f"
         }
       ],
-      "lastChangedAt": "2026-10-26T00:21:33.000Z",
+      "lastChangedAt": "2026-10-26T09:47:52.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0e8b0d447f7d536731aa7fb7bdb3f0382a3c8aa6"
+      "lastChangedCommit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
     },
     {
       "key": "Artifact:test/ux-experience-browser.js",
@@ -152714,20 +152714,20 @@
       "path": "test/ux-story-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18192,
-      "lines": 153,
-      "version": "e5b7db14be427ca1",
+      "bytes": 18646,
+      "lines": 160,
+      "version": "b0afc27073460454",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "e5b7db14be427ca1"
+          "version": "b0afc27073460454"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T09:47:52.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
     },
     {
       "key": "Artifact:test/ux-story.js",
@@ -155614,18 +155614,18 @@
       "extension": ".js",
       "bytes": 405316,
       "lines": 10809,
-      "version": "1f9fabdcb6bb5aa8",
+      "version": "7951ec039b5143de",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "1f9fabdcb6bb5aa8"
+          "version": "7951ec039b5143de"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:33:03.000Z",
+      "lastChangedAt": "2026-10-26T09:49:10.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c070404ee1e3b6f5bd22e5aa31e1096f08169388"
+      "lastChangedCommit": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -166287,6 +166287,22 @@
         {
           "commit": "045bd0ee8294489aba44f4f25980016f4f777295",
           "url": "https://github.com/OmertaDev/Omerta/commit/045bd0ee8294489aba44f4f25980016f4f777295"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0463b86ea6d239a31db7b8d3b98deda969a3014c",
+      "type": "Commit",
+      "id": "0463b86ea6d239a31db7b8d3b98deda969a3014c",
+      "label": "test(ux): exercise compact screen tools in mobile fixtures",
+      "title": "test(ux): exercise compact screen tools in mobile fixtures",
+      "date": "2026-10-26T09:47:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0463b86ea6d239a31db7b8d3b98deda969a3014c",
+      "provenance": [
+        {
+          "commit": "0463b86ea6d239a31db7b8d3b98deda969a3014c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0463b86ea6d239a31db7b8d3b98deda969a3014c"
         }
       ]
     },
@@ -195427,6 +195443,22 @@
       ]
     },
     {
+      "key": "Commit:6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "type": "Commit",
+      "id": "6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "label": "chore(knowledge): refresh mobile-qualified UX release artifacts",
+      "title": "chore(knowledge): refresh mobile-qualified UX release artifacts",
+      "date": "2026-10-26T08:38:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "provenance": [
+        {
+          "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6673701e771ee1db0fb9d20c30155c6004e0348c"
+        }
+      ]
+    },
+    {
       "key": "Commit:6677bb84c2a4f07bca27e1c06e5ee635161dc3ff",
       "type": "Commit",
       "id": "6677bb84c2a4f07bca27e1c06e5ee635161dc3ff",
@@ -197711,6 +197743,22 @@
         {
           "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2",
           "url": "https://github.com/OmertaDev/Omerta/commit/6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+      "type": "Commit",
+      "id": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+      "label": "test(ux): seal mobile fixture release inputs",
+      "title": "test(ux): seal mobile fixture release inputs",
+      "date": "2026-10-26T09:49:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+      "provenance": [
+        {
+          "commit": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6e9015ab4cc5eb6372a68070341c0f4e5abc67d0"
         }
       ]
     },
@@ -267941,6 +267989,9 @@
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
         },
         {
+          "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
+        },
+        {
           "commit": "66e93ed0652af748239a6ec05a0989d0ee020c60"
         },
         {
@@ -270284,6 +270335,9 @@
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
         },
         {
+          "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
+        },
+        {
           "commit": "66e93ed0652af748239a6ec05a0989d0ee020c60"
         },
         {
@@ -272625,6 +272679,9 @@
         },
         {
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+        },
+        {
+          "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
         },
         {
           "commit": "66e93ed0652af748239a6ec05a0989d0ee020c60"
@@ -275613,6 +275670,9 @@
         },
         {
           "commit": "661a14645aa937ab6c8ccbb2a1169b523340d863"
+        },
+        {
+          "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
         },
         {
           "commit": "66e93ed0652af748239a6ec05a0989d0ee020c60"
@@ -291284,7 +291344,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+      "revision": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
       "currentBranch": "codex/ux-production-release",
       "defaultBranch": "main",
       "visibility": "public",
@@ -341731,13 +341791,13 @@
       "type": "TestSuite",
       "id": "test/ux-expanded-browser.js",
       "label": "test/ux-expanded-browser.js",
-      "lines": 206,
-      "version": "50b86f95a178c8c3",
+      "lines": 213,
+      "version": "70ad64f35e8c8f6f",
       "provenance": [
         {
           "file": "test/ux-expanded-browser.js",
           "line": 1,
-          "version": "50b86f95a178c8c3"
+          "version": "70ad64f35e8c8f6f"
         }
       ]
     },
@@ -341956,13 +342016,13 @@
       "type": "TestSuite",
       "id": "test/ux-story-browser.js",
       "label": "test/ux-story-browser.js",
-      "lines": 153,
-      "version": "e5b7db14be427ca1",
+      "lines": 160,
+      "version": "b0afc27073460454",
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "e5b7db14be427ca1"
+          "version": "b0afc27073460454"
         }
       ]
     },
@@ -395174,6 +395234,30 @@
       "to": "Artifact:docs/commercial-reputation-integration-review.md",
       "provenance": {
         "commit": "045bd0ee8294489aba44f4f25980016f4f777295"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0463b86ea6d239a31db7b8d3b98deda969a3014c",
+      "to": "Artifact:test/ux-expanded-browser.js",
+      "provenance": {
+        "commit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0463b86ea6d239a31db7b8d3b98deda969a3014c",
+      "to": "Artifact:test/ux-story-browser.js",
+      "provenance": {
+        "commit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0463b86ea6d239a31db7b8d3b98deda969a3014c",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
       }
     },
     {
@@ -467946,6 +468030,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6677bb84c2a4f07bca27e1c06e5ee635161dc3ff",
       "to": "Artifact:test/graph.js",
       "provenance": {
@@ -472158,6 +472274,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0"
       }
     },
     {
@@ -702204,6 +702328,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0463b86ea6d239a31db7b8d3b98deda969a3014c",
+      "provenance": {
+        "commit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0481fe0119b6584e3395cfe1799521aaa703c8c0",
       "provenance": {
         "commit": "0481fe0119b6584e3395cfe1799521aaa703c8c0"
@@ -716772,6 +716904,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6673701e771ee1db0fb9d20c30155c6004e0348c",
+      "provenance": {
+        "commit": "6673701e771ee1db0fb9d20c30155c6004e0348c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6677bb84c2a4f07bca27e1c06e5ee635161dc3ff",
       "provenance": {
         "commit": "6677bb84c2a4f07bca27e1c06e5ee635161dc3ff"
@@ -717911,6 +718051,14 @@
       "to": "Commit:6e7ea76791d620e9878af6e707ef08ca2a0b8be2",
       "provenance": {
         "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+      "provenance": {
+        "commit": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0"
       }
     },
     {
