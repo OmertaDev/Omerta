@@ -4107,13 +4107,13 @@ scopedSocialContext = async function(db) {
 
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
-  assert.deepEqual(timeouts(suites), [120],
-    'the `suites` job must retain exactly one finite 120-minute HANG bound after the observed75m commercial timeout');
-  for(const invalid of ['0','60','75','90','121','${{ inputs.suites_timeout }}','unbounded']) {
-    assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: '+invalid)),[120]),'Unknown suites wall bound must reject');
+  assert.deepEqual(timeouts(suites), [150],
+    'the `suites` job must retain exactly one finite 150-minute HANG bound after the observed120m full-lifecycle timeout');
+  for(const invalid of ['0','60','75','90','120','121','151','${{ inputs.suites_timeout }}','unbounded']) {
+    assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 150','timeout-minutes: '+invalid)),[150]),'Unknown suites wall bound must reject');
   }
-  assert.throws(() => assert.deepEqual(timeouts(suites.replace(/^    timeout-minutes: 120\r?\n/m,'')),[120]),'Missing suites wall bound must reject');
-  assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: 120\n    timeout-minutes: 120')),[120]),'Duplicate suites wall bound must reject');
+  assert.throws(() => assert.deepEqual(timeouts(suites.replace(/^    timeout-minutes: 150\r?\n/m,'')),[150]),'Missing suites wall bound must reject');
+  assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 150','timeout-minutes: 150\n    timeout-minutes: 150')),[150]),'Duplicate suites wall bound must reject');
   assert.deepEqual(timeouts(browser), [25],
     'the `browser` job must have exactly one 25-minute HANG bound');
   assert.deepEqual(timeouts(uxBrowser), [20], 'The additional complete UX browser job has its own finite 20-minute bound');
