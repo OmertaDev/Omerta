@@ -2,6 +2,7 @@
 // It reconstructs the reviewed pre-tail candidate without inheriting runtime clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { economyUxMergeCandidateHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 
 const freeze = (value) => {
   if (value && typeof value === 'object') {
@@ -152,7 +153,7 @@ export const ECONOMY_RELEASE_TAIL_DOMAINS = freeze({
 
 export function assertEconomyReleaseTailTransfer(file, input) {
   assert(Object.hasOwn(ECONOMY_RELEASE_TAIL_DOMAINS, file), 'Unknown economy release-tail source domain');
-  const pin = ECONOMY_RELEASE_TAIL_DOMAINS[file], current = normalize(input);
+  const pin = ECONOMY_RELEASE_TAIL_DOMAINS[file], current = normalize(economyUxMergeCandidateHistoricalInput(file, input));
   assert.equal(sha256(current), pin.currentSha256, 'Complete economy release-tail source drift: ' + file);
   assert.equal(blob(current), pin.currentBlob, 'Complete economy release-tail blob drift: ' + file);
   assert.equal(Buffer.byteLength(current), pin.currentBytes);
