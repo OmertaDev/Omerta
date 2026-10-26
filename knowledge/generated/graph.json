@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "568baea6c51ab9321ca8f8aa40defd689d0d2aaf",
-  "worktreeDirty": true,
+  "sourceRevision": "650804450a3b13f795113da38da7bc5f369d3a48",
+  "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17201,
-    "edges": 68910,
+    "nodes": 17205,
+    "edges": 68929,
     "byNodeType": {
       "Artifact": 7034,
       "Command": 300,
-      "Commit": 4876,
+      "Commit": 4880,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5615,
-      "CHANGED": 26423,
+      "CHANGED": 26438,
       "CONTAINS": 7055,
       "DECLARES": 300,
       "DEFINED_IN": 1768,
       "DEPENDS_ON": 69,
       "EXECUTES": 1186,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4876,
+      "HAS_COMMIT": 4880,
       "IMPLEMENTS": 124,
       "IMPORTS": 8200,
       "INHERITS": 45,
@@ -141973,20 +141973,20 @@
       "path": "test/lib/enterprise-ux-native-guard.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6407,
-      "lines": 52,
-      "version": "dd4f45a1fe387a00",
+      "bytes": 12757,
+      "lines": 90,
+      "version": "8ce41fc91fba59e2",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "dd4f45a1fe387a00"
+          "version": "8ce41fc91fba59e2"
         }
       ],
-      "lastChangedAt": "2026-10-26T19:37:58.000Z",
+      "lastChangedAt": "2026-10-26T22:24:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "87733b1db373eef4e6d85be1124051d06dcbd729"
+      "lastChangedCommit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
     },
     {
       "key": "Artifact:test/lib/equipment-economy-migration-catalog.js",
@@ -156026,20 +156026,20 @@
       "path": "tools/economy-ux-merge-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 1051503,
-      "lines": 2581,
-      "version": "aa92ca00ec16536c",
+      "bytes": 1075714,
+      "lines": 2593,
+      "version": "937f109101c9d581",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-ux-merge-source-data.js",
           "line": 1,
-          "version": "aa92ca00ec16536c"
+          "version": "937f109101c9d581"
         }
       ],
-      "lastChangedAt": "2026-10-26T21:44:12.000Z",
+      "lastChangedAt": "2026-10-26T22:25:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5ad686c6ce96d9755f5c02045e995b7c55ef6b06"
+      "lastChangedCommit": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4"
     },
     {
       "key": "Artifact:tools/enterprise-current-source-compatibility.js",
@@ -156187,20 +156187,20 @@
       "path": "tools/enterprise-native-ux-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 443762,
-      "lines": 11862,
-      "version": "ece865683016e63b",
+      "bytes": 445510,
+      "lines": 11909,
+      "version": "efc1da1bc6367cd7",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "ece865683016e63b"
+          "version": "efc1da1bc6367cd7"
         }
       ],
-      "lastChangedAt": "2026-10-26T21:53:03.000Z",
+      "lastChangedAt": "2026-10-26T22:38:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "568baea6c51ab9321ca8f8aa40defd689d0d2aaf"
+      "lastChangedCommit": "650804450a3b13f795113da38da7bc5f369d3a48"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -156210,20 +156210,20 @@
       "path": "tools/enterprise-native-ux-seal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 3243,
-      "lines": 27,
-      "version": "897fe5f5709c707b",
+      "bytes": 3639,
+      "lines": 28,
+      "version": "68019afc0554efaa",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-seal.js",
           "line": 1,
-          "version": "897fe5f5709c707b"
+          "version": "68019afc0554efaa"
         }
       ],
-      "lastChangedAt": "2026-10-26T19:37:58.000Z",
+      "lastChangedAt": "2026-10-26T22:24:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "87733b1db373eef4e6d85be1124051d06dcbd729"
+      "lastChangedCommit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux.js",
@@ -156233,20 +156233,20 @@
       "path": "tools/enterprise-native-ux.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 8737,
-      "lines": 74,
-      "version": "8e01ae3e782750bb",
+      "bytes": 11998,
+      "lines": 97,
+      "version": "5ed80399661e1289",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux.js",
           "line": 1,
-          "version": "8e01ae3e782750bb"
+          "version": "5ed80399661e1289"
         }
       ],
-      "lastChangedAt": "2026-10-26T15:23:21.000Z",
+      "lastChangedAt": "2026-10-26T22:24:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      "lastChangedCommit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -156256,20 +156256,20 @@
       "path": "tools/enterprise-native.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 46130,
-      "lines": 257,
-      "version": "02b0e47c724d350b",
+      "bytes": 46240,
+      "lines": 258,
+      "version": "12b218541f988366",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native.js",
           "line": 1,
-          "version": "02b0e47c724d350b"
+          "version": "12b218541f988366"
         }
       ],
-      "lastChangedAt": "2026-10-26T19:37:58.000Z",
+      "lastChangedAt": "2026-10-26T22:24:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "87733b1db373eef4e6d85be1124051d06dcbd729"
+      "lastChangedCommit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
     },
     {
       "key": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
@@ -156488,18 +156488,18 @@
       "extension": ".js",
       "bytes": 6484,
       "lines": 132,
-      "version": "30d6fdd3c90d9e5c",
+      "version": "4a84aa05fbfc59ae",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-economy-ux-merge-source-data.js",
           "line": 1,
-          "version": "30d6fdd3c90d9e5c"
+          "version": "4a84aa05fbfc59ae"
         }
       ],
-      "lastChangedAt": "2026-10-26T21:44:12.000Z",
+      "lastChangedAt": "2026-10-26T22:25:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5ad686c6ce96d9755f5c02045e995b7c55ef6b06"
+      "lastChangedCommit": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4"
     },
     {
       "key": "Artifact:tools/genesis-auction-deployment-plan.js",
@@ -196894,6 +196894,22 @@
       ]
     },
     {
+      "key": "Commit:650804450a3b13f795113da38da7bc5f369d3a48",
+      "type": "Commit",
+      "id": "650804450a3b13f795113da38da7bc5f369d3a48",
+      "label": "test: reseal enterprise native ux inputs",
+      "title": "test: reseal enterprise native ux inputs",
+      "date": "2026-10-26T22:38:49.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/650804450a3b13f795113da38da7bc5f369d3a48",
+      "provenance": [
+        {
+          "commit": "650804450a3b13f795113da38da7bc5f369d3a48",
+          "url": "https://github.com/OmertaDev/Omerta/commit/650804450a3b13f795113da38da7bc5f369d3a48"
+        }
+      ]
+    },
+    {
       "key": "Commit:650ecfcbb93a37a0076718cbcf9e2d99db02d806",
       "type": "Commit",
       "id": "650ecfcbb93a37a0076718cbcf9e2d99db02d806",
@@ -212974,6 +212990,22 @@
       ]
     },
     {
+      "key": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "type": "Commit",
+      "id": "987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "label": "docs: rebuild knowledge for economy hardening seal",
+      "title": "docs: rebuild knowledge for economy hardening seal",
+      "date": "2026-10-26T22:01:49.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "provenance": [
+        {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af",
+          "url": "https://github.com/OmertaDev/Omerta/commit/987d5db9d0ab1f6beca9643356129b4c5a8049af"
+        }
+      ]
+    },
+    {
       "key": "Commit:9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
       "type": "Commit",
       "id": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
@@ -216174,6 +216206,22 @@
       ]
     },
     {
+      "key": "Commit:a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
+      "type": "Commit",
+      "id": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
+      "label": "test: reseal economy ux merge source",
+      "title": "test: reseal economy ux merge source",
+      "date": "2026-10-26T22:25:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
+      "provenance": [
+        {
+          "commit": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4"
+        }
+      ]
+    },
+    {
       "key": "Commit:a2cbd620698c18df40873716ff5230cef6b1eba0",
       "type": "Commit",
       "id": "a2cbd620698c18df40873716ff5230cef6b1eba0",
@@ -218442,6 +218490,22 @@
         {
           "commit": "aa6aa66d11dd867ce365f62817987628047b5f2d",
           "url": "https://github.com/OmertaDev/Omerta/commit/aa6aa66d11dd867ce365f62817987628047b5f2d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "type": "Commit",
+      "id": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "label": "test: model legacy additions in native seal",
+      "title": "test: model legacy additions in native seal",
+      "date": "2026-10-26T22:24:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "provenance": [
+        {
+          "commit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
         }
       ]
     },
@@ -261944,7 +262008,7 @@
         },
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
-          "line": 5
+          "line": 6
         },
         {
           "file": "test/lib/ux-native-director-guard.js",
@@ -263528,19 +263592,19 @@
         },
         {
           "file": "tools/economy-ux-merge-source-data.js",
-          "line": 1760
+          "line": 1768
         },
         {
           "file": "tools/economy-ux-merge-source-data.js",
-          "line": 1761
+          "line": 1769
         },
         {
           "file": "tools/economy-ux-merge-source-data.js",
-          "line": 1797
+          "line": 1805
         },
         {
           "file": "tools/economy-ux-merge-source-data.js",
-          "line": 1798
+          "line": 1806
         },
         {
           "file": "tools/enterprise-deed-release-phase2-migration-catalog.js",
@@ -263548,7 +263612,7 @@
         },
         {
           "file": "tools/enterprise-native.js",
-          "line": 247
+          "line": 248
         },
         {
           "file": "tools/enterprise-release-phase2-migration-catalog.js",
@@ -270263,6 +270327,9 @@
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
         },
         {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+        },
+        {
           "commit": "98d09a2808d0ff006e77a2d9c4eefb1491fde2c3"
         },
         {
@@ -272223,6 +272290,9 @@
         },
         {
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
+        },
+        {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
         },
         {
           "commit": "98d09a2808d0ff006e77a2d9c4eefb1491fde2c3"
@@ -274667,6 +274737,9 @@
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
         },
         {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+        },
+        {
           "commit": "98d09a2808d0ff006e77a2d9c4eefb1491fde2c3"
         },
         {
@@ -277109,6 +277182,9 @@
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
         },
         {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+        },
+        {
           "commit": "98d09a2808d0ff006e77a2d9c4eefb1491fde2c3"
         },
         {
@@ -278418,6 +278494,9 @@
         },
         {
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
+        },
+        {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
         },
         {
           "commit": "98f993407c7dc6005869a4b15d2f21004c0e553f"
@@ -280217,6 +280296,9 @@
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
         },
         {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+        },
+        {
           "commit": "98d09a2808d0ff006e77a2d9c4eefb1491fde2c3"
         },
         {
@@ -281627,6 +281709,9 @@
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
         },
         {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+        },
+        {
           "commit": "98f993407c7dc6005869a4b15d2f21004c0e553f"
         },
         {
@@ -282675,6 +282760,9 @@
         },
         {
           "commit": "987c95606fbc5334881c494bdcc2738d871c50a4"
+        },
+        {
+          "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
         },
         {
           "commit": "99c70b8cdd53a690bc043592fbff54702b076994"
@@ -295580,11 +295668,11 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "568baea6c51ab9321ca8f8aa40defd689d0d2aaf",
+      "revision": "650804450a3b13f795113da38da7bc5f369d3a48",
       "currentBranch": "codex/economy-ux-integrated-20261026",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": true,
+      "worktreeDirty": false,
       "currentArtifactCount": 7034,
       "provenance": [
         {
@@ -339241,13 +339329,13 @@
       "type": "TestSuite",
       "id": "test/lib/enterprise-ux-native-guard.js",
       "label": "test/lib/enterprise-ux-native-guard.js",
-      "lines": 52,
-      "version": "dd4f45a1fe387a00",
+      "lines": 90,
+      "version": "8ce41fc91fba59e2",
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "dd4f45a1fe387a00"
+          "version": "8ce41fc91fba59e2"
         }
       ]
     },
@@ -473555,6 +473643,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:650804450a3b13f795113da38da7bc5f369d3a48",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "650804450a3b13f795113da38da7bc5f369d3a48"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:650ecfcbb93a37a0076718cbcf9e2d99db02d806",
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
@@ -512331,6 +512427,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
       "to": "Artifact:test/rc1-alliance-response-barrier.js",
       "provenance": {
@@ -520523,6 +520683,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
+      "to": "Artifact:tools/economy-ux-merge-source-data.js",
+      "provenance": {
+        "commit": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
+      "to": "Artifact:tools/generate-economy-ux-merge-source-data.js",
+      "provenance": {
+        "commit": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a2cbd620698c18df40873716ff5230cef6b1eba0",
       "to": "Artifact:src/territoryeconomics.js",
       "provenance": {
@@ -524887,6 +525063,38 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "aa6aa66d11dd867ce365f62817987628047b5f2d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "to": "Artifact:test/lib/enterprise-ux-native-guard.js",
+      "provenance": {
+        "commit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "to": "Artifact:tools/enterprise-native-ux-seal.js",
+      "provenance": {
+        "commit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "commit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "to": "Artifact:tools/enterprise-native.js",
+      "provenance": {
+        "commit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
       }
     },
     {
@@ -727269,6 +727477,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:650804450a3b13f795113da38da7bc5f369d3a48",
+      "provenance": {
+        "commit": "650804450a3b13f795113da38da7bc5f369d3a48"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:650ecfcbb93a37a0076718cbcf9e2d99db02d806",
       "provenance": {
         "commit": "650ecfcbb93a37a0076718cbcf9e2d99db02d806"
@@ -735309,6 +735525,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:987d5db9d0ab1f6beca9643356129b4c5a8049af",
+      "provenance": {
+        "commit": "987d5db9d0ab1f6beca9643356129b4c5a8049af"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9886cc523114e3d0443dbe0dde62f0cd3fdee74b",
       "provenance": {
         "commit": "9886cc523114e3d0443dbe0dde62f0cd3fdee74b"
@@ -736909,6 +737133,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
+      "provenance": {
+        "commit": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a2cbd620698c18df40873716ff5230cef6b1eba0",
       "provenance": {
         "commit": "a2cbd620698c18df40873716ff5230cef6b1eba0"
@@ -738040,6 +738272,14 @@
       "to": "Commit:aa6aa66d11dd867ce365f62817987628047b5f2d",
       "provenance": {
         "commit": "aa6aa66d11dd867ce365f62817987628047b5f2d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:aa734ab1b0d6be32880ad03f2bd9b12973d13fae",
+      "provenance": {
+        "commit": "aa734ab1b0d6be32880ad03f2bd9b12973d13fae"
       }
     },
     {
@@ -792195,7 +792435,7 @@
       "to": "Artifact:test/lib/ux-native-director-guard.js",
       "provenance": {
         "file": "test/lib/enterprise-ux-native-guard.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -792204,7 +792444,7 @@
       "to": "Artifact:tools/enterprise-native-ux.js",
       "provenance": {
         "file": "test/lib/enterprise-ux-native-guard.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -792213,7 +792453,7 @@
       "to": "ExternalDependency:acorn",
       "provenance": {
         "file": "test/lib/enterprise-ux-native-guard.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -818799,33 +819039,6 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2260
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/economy-ux-merge-source-data.js",
-      "to": "Artifact:src/preflight.js",
-      "provenance": {
-        "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2264
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/economy-ux-merge-source-data.js",
-      "to": "Artifact:src/preflight.js",
-      "provenance": {
-        "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2265
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/economy-ux-merge-source-data.js",
-      "to": "Artifact:src/preflight.js",
-      "provenance": {
-        "file": "tools/economy-ux-merge-source-data.js",
         "line": 2268
       }
     },
@@ -818835,7 +819048,34 @@
       "to": "Artifact:src/preflight.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2269
+        "line": 2272
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-ux-merge-source-data.js",
+      "to": "Artifact:src/preflight.js",
+      "provenance": {
+        "file": "tools/economy-ux-merge-source-data.js",
+        "line": 2273
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-ux-merge-source-data.js",
+      "to": "Artifact:src/preflight.js",
+      "provenance": {
+        "file": "tools/economy-ux-merge-source-data.js",
+        "line": 2276
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-ux-merge-source-data.js",
+      "to": "Artifact:src/preflight.js",
+      "provenance": {
+        "file": "tools/economy-ux-merge-source-data.js",
+        "line": 2277
       }
     },
     {
@@ -818844,7 +819084,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2123
+        "line": 2131
       }
     },
     {
@@ -818853,7 +819093,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2124
+        "line": 2132
       }
     },
     {
@@ -818862,7 +819102,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2180
+        "line": 2188
       }
     },
     {
@@ -818871,7 +819111,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2181
+        "line": 2189
       }
     },
     {
@@ -818880,7 +819120,7 @@
       "to": "Artifact:tools/commerce-current-native-data.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2083
+        "line": 2091
       }
     },
     {
@@ -818889,7 +819129,7 @@
       "to": "Artifact:tools/commerce-current-native-data.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2084
+        "line": 2092
       }
     },
     {
@@ -818898,7 +819138,7 @@
       "to": "Artifact:tools/commerce-deed-release-phase2-native-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -818907,7 +819147,7 @@
       "to": "Artifact:tools/commerce-deed-release-phase2-native-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -818916,7 +819156,7 @@
       "to": "Artifact:tools/commerce-deed-release-phase2-native-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2002
+        "line": 2010
       }
     },
     {
@@ -818925,7 +819165,7 @@
       "to": "Artifact:tools/commerce-deed-release-phase2-native-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2003
+        "line": 2011
       }
     },
     {
@@ -818934,7 +819174,7 @@
       "to": "Artifact:tools/commerce-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1747
+        "line": 1755
       }
     },
     {
@@ -818943,7 +819183,7 @@
       "to": "Artifact:tools/commerce-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1748
+        "line": 1756
       }
     },
     {
@@ -818952,7 +819192,7 @@
       "to": "Artifact:tools/commerce-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -818961,7 +819201,7 @@
       "to": "Artifact:tools/commerce-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -818970,7 +819210,7 @@
       "to": "Artifact:tools/commerce-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2002
+        "line": 2010
       }
     },
     {
@@ -818979,7 +819219,7 @@
       "to": "Artifact:tools/commerce-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2003
+        "line": 2011
       }
     },
     {
@@ -818988,7 +819228,7 @@
       "to": "Artifact:tools/enterprise-deed-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -818997,7 +819237,7 @@
       "to": "Artifact:tools/enterprise-deed-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -819006,7 +819246,7 @@
       "to": "Artifact:tools/enterprise-deed-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2006
+        "line": 2014
       }
     },
     {
@@ -819015,7 +819255,7 @@
       "to": "Artifact:tools/enterprise-deed-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2007
+        "line": 2015
       }
     },
     {
@@ -819024,7 +819264,7 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1948
+        "line": 1956
       }
     },
     {
@@ -819033,7 +819273,7 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1949
+        "line": 1957
       }
     },
     {
@@ -819042,7 +819282,7 @@
       "to": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -819051,7 +819291,7 @@
       "to": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -819060,7 +819300,7 @@
       "to": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2002
+        "line": 2010
       }
     },
     {
@@ -819069,7 +819309,7 @@
       "to": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2003
+        "line": 2011
       }
     },
     {
@@ -819078,7 +819318,7 @@
       "to": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2006
+        "line": 2014
       }
     },
     {
@@ -819087,7 +819327,7 @@
       "to": "Artifact:tools/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 2007
+        "line": 2015
       }
     },
     {
@@ -819096,7 +819336,7 @@
       "to": "Artifact:tools/market-operations-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -819105,7 +819345,7 @@
       "to": "Artifact:tools/market-operations-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -819114,7 +819354,7 @@
       "to": "Artifact:tools/next-five-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -819123,7 +819363,7 @@
       "to": "Artifact:tools/next-five-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -819132,7 +819372,7 @@
       "to": "Artifact:tools/next-layer-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -819141,7 +819381,7 @@
       "to": "Artifact:tools/next-layer-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -819150,7 +819390,7 @@
       "to": "Artifact:tools/ux-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1650
+        "line": 1658
       }
     },
     {
@@ -819159,7 +819399,7 @@
       "to": "Artifact:tools/ux-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1651
+        "line": 1659
       }
     },
     {
@@ -819186,7 +819426,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1760
+        "line": 1768
       }
     },
     {
@@ -819195,7 +819435,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1761
+        "line": 1769
       }
     },
     {
@@ -819204,7 +819444,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1797
+        "line": 1805
       }
     },
     {
@@ -819213,7 +819453,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/economy-ux-merge-source-data.js",
-        "line": 1798
+        "line": 1806
       }
     },
     {
@@ -819411,7 +819651,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/enterprise-native.js",
-        "line": 247
+        "line": 248
       }
     },
     {
