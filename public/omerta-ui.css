@@ -209,6 +209,25 @@ body.public-page {
 .public-page :where(main, aside, article, section),
 .public-page #wrap > * { min-width: 0; }
 
+.public-sale-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 20px;
+  min-height: 48px;
+  padding: 10px max(16px, calc((100vw - 1120px) / 2));
+  border-bottom: 1px solid var(--om-color-gold-700);
+  background: var(--om-color-ink-750);
+  color: var(--om-action-primary);
+  font: 500 12px/1.5 var(--om-font-data);
+  letter-spacing: .05em;
+  text-decoration: none;
+}
+.public-sale-banner strong { color: var(--om-text-primary); font-weight: 600; }
+.public-sale-banner:hover { background: var(--om-surface-raised); text-decoration: none; }
+.public-sale-banner:focus-visible { outline: 2px solid var(--om-action-primary-hover); outline-offset: -4px; }
+
 .public-nav {
   position: sticky;
   top: 0;

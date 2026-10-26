@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0909">
+<title>$OMR token sale &amp; Street Deeds | OMERTÀ</title>
+<meta name="description" content="Follow the opening $OMR auction and explore OMERTÀ Street Deeds. View auction progress, collectible artwork and upcoming NFT mint details.">
+<meta property="og:title" content="$OMR token sale &amp; Street Deeds | OMERTÀ">
+<meta property="og:description" content="The first move. Follow the $OMR auction and explore Street Deeds from six districts of the city.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
+<style>
+  body { font-size: var(--om-type-public); line-height: 1.6; }
+  a { color: var(--om-action-primary); }
+  h1, h2, h3, p { margin-top: 0; }
+  .sale-shell { width: min(1160px, calc(100% - 48px)); margin: 0 auto; padding: 48px 0 40px; }
+  .sale-sections { display: flex; flex-wrap: wrap; gap: 8px 32px; padding-bottom: 16px; border-bottom: 1px solid var(--om-border-subtle); }
+  .sale-sections a { display: inline-flex; align-items: center; min-height: 44px; color: var(--om-text-secondary); font: 500 13px/1.4 var(--om-font-data); text-underline-offset: 6px; }
+  .sale-sections a:hover { color: var(--om-action-primary); }
+  #token-auction, #deeds { scroll-margin-top: 88px; }
+  .sale-kicker, .sale-label, .sale-status, .sale-foot, .sale-step__number { font-family: var(--om-font-data); }
+  .sale-kicker { margin-bottom: 20px; color: var(--om-action-primary); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+  .sale-hero { position: relative; isolation: isolate; display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(28px, 5vw, 64px); align-items: center; padding: 56px 0 64px; }
+  .sale-hero::before { content: ""; position: absolute; z-index: -1; inset: -48px -24px 0; background: linear-gradient(90deg, var(--om-surface-canvas), transparent 60%), linear-gradient(0deg, var(--om-surface-canvas), transparent 70%), url('/art/hero-poster-960.webp') center / cover; opacity: .16; pointer-events: none; }
+  .sale-title { margin-bottom: 24px; color: var(--om-text-primary); font: 600 clamp(60px, 7.6vw, 100px)/.96 var(--om-font-display); letter-spacing: .025em; }
+  .sale-title span { color: var(--om-action-primary); }
+  .sale-lede { max-width: 37ch; margin-bottom: 24px; color: var(--om-text-secondary); font-size: 18px; }
+  .sale-text-link { display: inline-flex; align-items: center; min-height: 44px; gap: 12px; text-underline-offset: 5px; }
+  .sale-panel { min-width: 0; border: 1px solid var(--om-border-strong); border-top: 3px solid var(--om-action-primary); background: var(--om-surface-sunken); padding: clamp(20px, 3vw, 36px); box-shadow: var(--om-shadow-raised); }
+  .sale-panel__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--om-border-subtle); }
+  .sale-panel h2 { margin: 0; font: 600 26px/1.2 var(--om-font-display); letter-spacing: .05em; }
+  .sale-status { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border: 1px solid var(--om-border-strong); color: var(--om-action-primary); font-size: 12px; }
+  .sale-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .sale-status[data-status="live"] { color: var(--om-status-success); }
+  .sale-status[data-status="failed"], .sale-status[data-status="unavailable"] { color: var(--om-status-danger); }
+  .sale-progress-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 28px 0 12px; }
+  .sale-label { margin: 0; color: var(--om-text-secondary); font-size: 12px; letter-spacing: .06em; }
+  .sale-percent { color: var(--om-action-primary); font: 600 26px/1 var(--om-font-data); }
+  .sale-progress { height: 14px; overflow: hidden; background: var(--om-surface-raised); border: 1px solid var(--om-border-strong); }
+  .sale-progress__fill { display: block; width: 0; height: 100%; background: var(--om-action-primary); transition: width 350ms ease-out; }
+  .sale-progress-note { margin: 10px 0 24px; color: var(--om-text-secondary); font-size: 14px; }
+  .sale-metrics { display: grid; grid-template-columns: 1fr 1fr; margin: 0; border-top: 1px solid var(--om-border-subtle); }
+  .sale-metrics > div { min-width: 0; padding: 18px 0; border-bottom: 1px solid var(--om-border-subtle); }
+  .sale-metrics > div:nth-child(odd) { padding-right: 16px; }
+  .sale-metrics dt { color: var(--om-text-secondary); font-size: 14px; }
+  .sale-metrics dd { margin: 6px 0 0; color: var(--om-text-primary); font: 500 16px/1.5 var(--om-font-data); overflow-wrap: anywhere; }
+  .sale-action { display: flex; justify-content: center; align-items: center; min-height: 48px; width: 100%; margin-top: 24px; padding: 12px 20px; border: 1px solid var(--om-action-primary); border-radius: var(--om-radius-sm); background: var(--om-action-primary); color: var(--om-surface-canvas); font: 600 14px/1.4 var(--om-font-data); text-align: center; text-decoration: none; }
+  .sale-action:disabled { border-color: var(--om-border-strong); background: var(--om-surface-raised); color: var(--om-text-secondary); cursor: not-allowed; }
+  a.sale-action:hover { background: var(--om-action-primary-hover); text-decoration: none; }
+  .sale-action[hidden] { display: none; }
+  .sale-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .sale-message { min-height: 44px; margin: 12px 0 0; color: var(--om-text-secondary); font-size: 13px; text-align: center; }
+  .sale-guide { padding: 36px 0; border-top: 1px solid var(--om-border-strong); }
+  .sale-section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; }
+  .sale-section-head h2, .sale-faq h2 { margin: 0; font: 600 28px/1.2 var(--om-font-display); letter-spacing: .04em; }
+  .sale-section-head p { margin: 0; color: var(--om-text-secondary); font-size: 14px; }
+  .sale-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; list-style: none; margin: 0; padding: 0; }
+  .sale-step__number { display: block; margin-bottom: 12px; color: var(--om-action-primary); font-size: 12px; letter-spacing: .14em; }
+  .sale-steps h3 { margin-bottom: 8px; font-size: 18px; font-weight: 500; }
+  .sale-steps p { margin: 0; color: var(--om-text-secondary); font-size: 15px; }
+  .sale-faq { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; padding: 36px 0; border-top: 1px solid var(--om-border-subtle); }
+  .sale-faq details { border-bottom: 1px solid var(--om-border-subtle); }
+  .sale-faq summary { min-height: 48px; padding: 12px 0; color: var(--om-text-primary); cursor: pointer; }
+  .sale-faq details p { max-width: 65ch; margin: 0 0 18px; color: var(--om-text-secondary); font-size: 15px; }
+  .sale-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding-top: 20px; border-top: 1px solid var(--om-border-strong); color: var(--om-text-secondary); font-size: 12px; }
+  .sale-foot a { display: inline-flex; align-items: center; min-height: 44px; }
+  .deed-mint { display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: clamp(28px, 5vw, 64px); padding: 56px 0; border-top: 1px solid var(--om-border-strong); }
+  .deed-preview { min-width: 0; }
+  .deed-card { max-width: 440px; margin: 0 auto; padding: 16px; border: 1px solid var(--om-border-strong); background: var(--om-surface-raised); box-shadow: var(--om-shadow-raised); }
+  .deed-card__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 4px 4px 16px; color: var(--om-action-primary); font: 500 11px/1.5 var(--om-font-data); letter-spacing: .12em; }
+  .deed-card__head strong { color: var(--om-text-primary); font: 600 25px/1 var(--om-font-display); letter-spacing: .16em; }
+  .deed-card__art { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+  .deed-card figcaption { padding: 20px 4px 4px; }
+  .deed-card__district { display: block; margin-bottom: 6px; color: var(--om-text-primary); font: 600 30px/1.1 var(--om-font-display); letter-spacing: .06em; }
+  .deed-card__caption { margin: 0; color: var(--om-text-secondary); font: 12px/1.5 var(--om-font-data); }
+  .deed-districts { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; max-width: 440px; margin: 16px auto 0; }
+  .deed-districts button { min-width: 0; min-height: 48px; padding: 3px; border: 1px solid var(--om-border-strong); border-radius: var(--om-radius-sm); background: var(--om-surface-panel); cursor: pointer; }
+  .deed-districts button[aria-pressed="true"] { border: 2px solid var(--om-action-primary); padding: 2px; }
+  .deed-districts button:hover { border-color: var(--om-action-primary-hover); }
+  .deed-districts img { display: block; width: 100%; height: 44px; object-fit: cover; }
+  .deed-preview-note { max-width: 440px; margin: 12px auto 0; color: var(--om-text-secondary); font-size: 13px; text-align: center; }
+  .deed-heading { margin: 0 0 16px; color: var(--om-text-primary); font: 600 clamp(38px, 4vw, 54px)/1.05 var(--om-font-display); letter-spacing: .03em; }
+  .deed-description { margin-bottom: 20px; color: var(--om-text-secondary); font-size: 17px; }
+  .deed-heading-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+  .deed-heading-row .sale-kicker { margin: 0; }
+  .deed-count { color: var(--om-text-primary); font: 500 22px/1.3 var(--om-font-data); white-space: nowrap; }
+  .deed-count span { color: var(--om-text-secondary); }
+  .deed-count-note { font-size: 13px; }
+  .deed-discover { display: block; margin-top: 12px; min-height: 44px; padding: 10px; text-align: center; font-size: 14px; text-underline-offset: 5px; }
+  :focus-visible { outline: 2px solid var(--om-action-primary-hover); outline-offset: 4px; }
+  @media (max-width: 800px) {
+    .sale-shell { padding-top: 16px; }
+    .sale-hero { grid-template-columns: 1fr; gap: 32px; padding: 32px 0 40px; }
+    .sale-title { font-size: clamp(58px, 11vw, 86px); }
+    .sale-lede { max-width: 52ch; }
+    .sale-steps { gap: 24px; }
+    .sale-faq { grid-template-columns: 1fr; gap: 20px; }
+    .deed-mint { grid-template-columns: 1fr; gap: 32px; padding: 40px 0; }
+    .deed-preview { max-width: 440px; width: 100%; margin-inline: auto; }
+  }
+  @media (max-width: 540px) {
+    .sale-shell { width: calc(100% - 32px); }
+    .sale-hero::before { inset-inline: -16px; }
+    .sale-title { font-size: clamp(54px, 15vw, 76px); }
+    .sale-lede { font-size: 17px; }
+    .sale-panel { padding: 20px; }
+    .sale-steps { grid-template-columns: 1fr; }
+    .sale-steps li { padding-left: 36px; position: relative; }
+    .sale-step__number { position: absolute; left: 0; top: 5px; }
+    .sale-progress-head { align-items: center; }
+  }
+  @media (max-width: 380px) { .deed-districts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (prefers-reduced-motion: reduce) { .sale-progress__fill { transition: none; } }
+</style>
+</head>
+<body class="public-page">
+<a class="skip-link" href="#sale-main">Skip to token sale</a>
+<nav class="public-nav" aria-label="Primary">
+  <a class="public-nav__brand" href="/">OMERTÀ</a>
+  <details class="public-nav__menu"><summary>Explore</summary><div class="public-nav__menu-list">
+    <a href="/">The city</a><a href="/wiki">The Codex</a><a href="/arena">The Arena</a><a href="/sale" aria-current="page">Token sale</a><a href="/play">Connect an AI</a>
+  </div></details>
+  <div class="public-nav__links">
+    <a href="/wiki">Codex</a><a href="/arena">Arena</a><a href="/sale" aria-current="page">Token sale</a><a href="/play">Agent setup</a><a class="public-nav__cta" href="/">Enter</a>
+  </div>
+</nav>
+<main class="sale-shell" id="sale-main" tabindex="-1">
+  <nav class="sale-sections" aria-label="Sale sections"><a href="#token-auction">$OMR auction</a><a href="#deeds">Street Deeds <span aria-hidden="true">&nbsp;↘</span></a></nav>
+  <section class="sale-hero" id="token-auction" aria-labelledby="sale-title">
+    <div>
+      <p class="sale-kicker">OMERTÀ · $OMR token sale</p>
+      <h1 class="sale-title" id="sale-title">THE FIRST<br><span>MOVE.</span></h1>
+      <p class="sale-lede">A city that never forgets. A currency that keeps it moving. Follow the opening $OMR auction here.</p>
+      <a class="sale-text-link" href="/#omr-economy">Get to know $OMR <span aria-hidden="true">↗</span></a>
+    </div>
+    <section class="sale-panel" aria-labelledby="auction-title">
+      <div class="sale-panel__head">
+        <h2 id="auction-title">THE OPENING AUCTION</h2>
+        <span class="sale-status" id="auction-status" data-status="pending">Coming soon</span>
+      </div>
+      <div class="sale-progress-head">
+        <p class="sale-label" id="auction-progress-label">Auction allocation cleared</p>
+        <span class="sale-percent" id="auction-percent">—%</span>
+      </div>
+      <div class="sale-progress" id="auction-progress" role="progressbar" aria-labelledby="auction-progress-label" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Auction progress will be available at launch.">
+        <span class="sale-progress__fill" id="auction-progress-fill"></span>
+      </div>
+      <p class="sale-progress-note" id="auction-progress-note">Auction progress will appear here at launch.</p>
+      <dl class="sale-metrics">
+        <div><dt>$OMR cleared</dt><dd id="auction-cleared">— OMR</dd></div>
+        <div><dt>Auction allocation</dt><dd id="auction-allocation">— OMR</dd></div>
+        <div><dt>ETH cleared</dt><dd id="auction-raised">— ETH</dd></div>
+        <div><dt>Bidding closes</dt><dd id="auction-ends">To be announced</dd></div>
+      </dl>
+      <button class="sale-action" id="auction-pending" type="button" disabled>Auction coming soon</button>
+      <a class="sale-action" id="auction-link" hidden target="_blank" rel="noopener noreferrer">Open auction <span class="sale-sr-only">(opens in a new tab)</span></a>
+      <p class="sale-message" id="auction-message" role="status">Launch details and bidding will be available here when the auction is connected.</p>
+      <noscript><p class="sale-progress-note">Enable JavaScript to see auction updates when they become available.</p></noscript>
+    </section>
+  </section>
+  <section class="sale-guide" aria-labelledby="sale-guide-title">
+    <div class="sale-section-head">
+      <h2 id="sale-guide-title">HOW TO MAKE YOUR MOVE</h2>
+      <p>Your route into the opening auction.</p>
+    </div>
+    <ol class="sale-steps">
+      <li><span class="sale-step__number" aria-hidden="true">01</span><h3>Read the terms</h3><p>Review the allocation, bidding window and auction rules once launch details are published.</p></li>
+      <li><span class="sale-step__number" aria-hidden="true">02</span><h3>Enter the auction</h3><p>When bidding opens, follow the auction link to connect your wallet and review your bid.</p></li>
+      <li><span class="sale-step__number" aria-hidden="true">03</span><h3>Follow the settlement</h3><p>Check the auction outcome and follow its instructions for claiming tokens or refunds.</p></li>
+    </ol>
+  </section>
+  <section class="deed-mint" id="deeds" aria-labelledby="deed-title">
+    <div class="deed-preview">
+      <figure class="deed-card">
+        <div class="deed-card__head"><strong>OMERTÀ</strong><span>STREET DEED</span></div>
+        <img class="deed-card__art" id="deed-art" src="/art/nft/deed-docks.jpg" width="1024" height="768" alt="Street Deed district artwork: warehouses and boats in the misty Docks." loading="lazy" decoding="async">
+        <figcaption><span class="deed-card__district" id="deed-district">THE DOCKS</span><p class="deed-card__caption">District artwork · Collection preview</p></figcaption>
+      </figure>
+      <div class="deed-districts" role="group" aria-label="Preview district artwork">
+        <button type="button" data-deed-district="docks" aria-label="Preview The Docks" aria-pressed="true"><img src="/art/nft/deed-docks.jpg" width="1024" height="768" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" data-deed-district="neon" aria-label="Preview Neon Mile" aria-pressed="false"><img src="/art/nft/deed-neon.jpg" width="1024" height="768" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" data-deed-district="foundry" aria-label="Preview The Foundry" aria-pressed="false"><img src="/art/nft/deed-foundry.jpg" width="1024" height="768" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" data-deed-district="brick" aria-label="Preview Brick Yards" aria-pressed="false"><img src="/art/nft/deed-brick.jpg" width="1024" height="768" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" data-deed-district="canal" aria-label="Preview Canal Row" aria-pressed="false"><img src="/art/nft/deed-canal.jpg" width="1024" height="768" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" data-deed-district="cathedral" aria-label="Preview Cathedral Hill" aria-pressed="false"><img src="/art/nft/deed-cathedral.jpg" width="1024" height="768" alt="" loading="lazy" decoding="async"></button>
+      </div>
+      <p class="deed-preview-note">Six districts. Explore the artwork. Your deed has its own identity.</p>
+    </div>
+    <div>
+      <div class="deed-heading-row"><p class="sale-kicker">The Street Deed collection</p><span class="sale-status" id="deed-status" data-status="pending">Coming soon</span></div>
+      <h2 class="deed-heading" id="deed-title">A PIECE OF THE CITY.<br>A NAME ON THE RECORD.</h2>
+      <p class="deed-description">2,500 permanent Street Deed identities across six districts. Discover a deed in the city, then mint an eligible deed you own as an on-chain collectible.</p>
+      <div class="sale-progress-head">
+        <p class="sale-label" id="deed-progress-label">Unique Deeds minted</p>
+        <div class="deed-count"><b id="deed-minted">—</b><span> / 2,500</span></div>
+      </div>
+      <div class="sale-progress" id="deed-progress" role="progressbar" aria-labelledby="deed-progress-label" aria-valuemin="0" aria-valuemax="2500" aria-valuetext="Deed mint figures will be available when connected."><span class="sale-progress__fill" id="deed-progress-fill"></span></div>
+      <p class="sale-progress-note deed-count-note" id="deed-progress-note">Mint figures will appear here when connected.</p>
+      <dl class="sale-metrics">
+        <div><dt>Mint cost</dt><dd id="deed-cost">To be announced</dd></div>
+        <div><dt>Mint opens</dt><dd id="deed-opens">To be announced</dd></div>
+        <div><dt>Collection</dt><dd>Street Deeds · ERC-721</dd></div>
+        <div><dt>Eligibility</dt><dd>Own an eligible deed</dd></div>
+      </dl>
+      <button class="sale-action" id="deed-pending" type="button" disabled>Deed mint coming soon</button>
+      <a class="sale-action" id="deed-link" hidden target="_blank" rel="noopener noreferrer">Open Deed mint <span class="sale-sr-only">(opens in a new tab)</span></a>
+      <p class="sale-message" id="deed-message" role="status">Mint availability, cost and wallet steps will appear here when connected.</p>
+      <a class="deed-discover" href="/">Discover your deed in the city <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+  <section class="sale-faq" aria-labelledby="sale-faq-title">
+    <h2 id="sale-faq-title">BEFORE THE OPENING</h2>
+    <div>
+      <details><summary>What is $OMR?</summary><p>$OMR is OMERTÀ’s game token. Explore the <a href="/#omr-economy">$OMR economy</a> to see how it fits into the city.</p></details>
+      <details><summary>When does the token sale open?</summary><p>Check the auction panel above for the current status, published timing and bidding link. If it says “Coming soon,” launch details are still to be announced here.</p></details>
+      <details><summary>What does the progress bar show?</summary><p>It tracks the share of the auction allocation cleared, using the latest available auction checkpoint. Cleared amounts remain subject to the auction’s final outcome and settlement.</p></details>
+      <details><summary>How do Street Deeds work?</summary><p>Street Deeds are discovered through gameplay or earned through eligible quests. NFT minting requires a deed you own, an eligible account and a linked wallet. Review the requirements in the city before minting.</p></details>
+    </div>
+  </section>
+  <footer class="sale-foot"><span>OMERTÀ · The city keeps its own books.</span><a href="/">Enter the city <span aria-hidden="true">&nbsp;↗</span></a></footer>
+</main>
+<script>
+(() => {
+  'use strict';
+  const byId = (id) => document.getElementById(id);
+  const number = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+  const states = {
+    pending: ['Coming soon', 'Auction coming soon', 'Launch details and bidding will be available here when the auction is connected.'],
+    scheduled: ['Opening soon', 'Bidding not open yet', 'Review the auction terms before bidding opens.'],
+    live: ['Bidding open', 'Auction link coming soon', 'Review the auction rules and each transaction before placing a bid.'],
+    ended: ['Bidding closed', 'Bidding closed', 'Bidding has ended. Follow the auction for its final outcome and settlement.'],
+    settled: ['Settled', 'Auction settled', 'The auction has settled. Follow the auction for claim instructions.'],
+    failed: ['Not graduated', 'Bidding closed', 'The auction did not graduate. Follow the auction for refund instructions.'],
+    unavailable: ['Status unavailable', 'Auction unavailable', 'Auction data is unavailable. Check back for an updated status.'],
+  };
+  const amount = (value) => {
+    if (typeof value !== 'number' && typeof value !== 'string') return null;
+    if (typeof value === 'string' && !/^\d+(\.\d+)?$/.test(value)) return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+  };
+  // Future auction adapter calls update with one complete, current checkpoint.
+  // Amounts are in display units (OMR/ETH), never raw contract integers.
+  // clearedOmr = totalCleared; allocationOmr = totalSupply; raisedEth = currencyRaised.
+  function updateAuction(snapshot = {}) {
+    const data = snapshot && typeof snapshot === 'object' ? snapshot : {};
+    const state = Object.hasOwn(states, data.status) ? data.status : 'unavailable';
+    const [label, button, message] = states[state];
+    const cleared = amount(data.clearedOmr), allocation = amount(data.allocationOmr), raised = amount(data.raisedEth);
+    const hasProgress = cleared !== null && allocation !== null && allocation > 0 && cleared <= allocation;
+    const percent = hasProgress ? cleared / allocation * 100 : null;
+    const progress = byId('auction-progress');
+    byId('auction-status').textContent = label;
+    byId('auction-status').dataset.status = state;
+    byId('auction-percent').textContent = percent === null ? '—%' : `${number.format(percent)}%`;
+    byId('auction-progress-fill').style.width = `${percent ?? 0}%`;
+    progress.removeAttribute('aria-valuenow');
+    if (percent !== null) progress.setAttribute('aria-valuenow', String(percent));
+    const note = percent === null
+      ? (state === 'pending' ? 'Auction progress will appear here at launch.' : 'Auction progress is currently unavailable.')
+      : `${number.format(cleared)} of ${number.format(allocation)} OMR cleared${state === 'settled' ? '.' : ' · subject to final settlement.'}`;
+    progress.setAttribute('aria-valuetext', note);
+    byId('auction-progress-note').textContent = note;
+    byId('auction-cleared').textContent = cleared === null ? '— OMR' : `${number.format(cleared)} OMR`;
+    byId('auction-allocation').textContent = allocation === null ? '— OMR' : `${number.format(allocation)} OMR`;
+    byId('auction-raised').textContent = raised === null ? '— ETH' : `${number.format(raised)} ETH`;
+    const end = typeof data.endsAt === 'string' ? new Date(data.endsAt) : null;
+    byId('auction-ends').textContent = end && Number.isFinite(end.getTime())
+      ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }).format(end)
+      : 'To be announced';
+    let auctionUrl = null;
+    try { const url = new URL(data.auctionUrl); if (url.protocol === 'https:' && !url.username && !url.password) auctionUrl = url.href; } catch { /* Not linked yet. */ }
+    const link = byId('auction-link');
+    const linked = !!auctionUrl && ['scheduled', 'live', 'ended', 'settled', 'failed'].includes(state);
+    link.hidden = !linked;
+    link.removeAttribute('href');
+    if (linked) link.href = auctionUrl;
+    byId('auction-pending').hidden = linked;
+    byId('auction-pending').textContent = button;
+    byId('auction-message').textContent = message;
+  }
+  const districts = {
+    docks: ['THE DOCKS', 'warehouses and boats in the misty Docks'],
+    neon: ['NEON MILE', 'the illuminated streets of Neon Mile'],
+    foundry: ['THE FOUNDRY', 'the industrial streets of The Foundry'],
+    brick: ['BRICK YARDS', 'the brick buildings of Brick Yards'],
+    canal: ['CANAL ROW', 'the waterfront buildings of Canal Row'],
+    cathedral: ['CATHEDRAL HILL', 'the cathedral and streets of Cathedral Hill'],
+  };
+  const districtButtons = [...document.querySelectorAll('[data-deed-district]')];
+  for (const button of districtButtons) button.addEventListener('click', () => {
+    const district = button.dataset.deedDistrict;
+    const [name, description] = districts[district];
+    byId('deed-art').src = `/art/nft/deed-${district}.jpg`;
+    byId('deed-art').alt = `Street Deed district artwork: ${description}.`;
+    byId('deed-district').textContent = name;
+    for (const choice of districtButtons) choice.setAttribute('aria-pressed', String(choice === button));
+  });
+  const deedStates = {
+    pending: ['Coming soon', 'Deed mint coming soon', 'Mint availability, cost and wallet steps will appear here when connected.'],
+    scheduled: ['Opening soon', 'Deed mint not open yet', 'Review deed eligibility and published mint terms before minting opens.'],
+    live: ['Mint open', 'Mint link coming soon', 'Minting requires a deed you own and an eligible account. Review the mint terms before connecting your wallet.'],
+    closed: ['Mint closed', 'Deed mint closed', 'Deed minting is currently closed. Check back for availability.'],
+    unavailable: ['Status unavailable', 'Deed mint unavailable', 'Deed mint data is unavailable. Check back for updated figures and availability.'],
+  };
+  // Future deed adapter supplies unique identities ever minted, not NFT transfer or
+  // extraction-event counts: redeeming and re-extracting do not create a new identity.
+  // mintCostEth is in display units; opensAt is an ISO timestamp; mintUrl is the mint UI.
+  function updateDeeds(snapshot = {}) {
+    const data = snapshot && typeof snapshot === 'object' ? snapshot : {};
+    const state = Object.hasOwn(deedStates, data.status) ? data.status : 'unavailable';
+    const [label, button, message] = deedStates[state];
+    const count = amount(data.mintedIdentities);
+    const minted = Number.isInteger(count) && count <= 2500 ? count : null;
+    const cost = amount(data.mintCostEth);
+    byId('deed-status').textContent = label;
+    byId('deed-status').dataset.status = state;
+    byId('deed-minted').textContent = minted === null ? '—' : number.format(minted);
+    const progress = byId('deed-progress');
+    progress.removeAttribute('aria-valuenow');
+    if (minted !== null) progress.setAttribute('aria-valuenow', String(minted));
+    byId('deed-progress-fill').style.width = `${minted === null ? 0 : minted / 2500 * 100}%`;
+    const note = minted === null ? 'Mint figures will appear here when connected.' : `${number.format(minted)} of 2,500 unique Deed identities minted. Each Deed is counted once.`;
+    progress.setAttribute('aria-valuetext', note);
+    byId('deed-progress-note').textContent = note;
+    byId('deed-cost').textContent = cost === null ? 'To be announced' : `${number.format(cost)} ETH + network fees`;
+    const opens = typeof data.opensAt === 'string' ? new Date(data.opensAt) : null;
+    byId('deed-opens').textContent = opens && Number.isFinite(opens.getTime())
+      ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }).format(opens)
+      : 'To be announced';
+    let mintUrl = null;
+    try { const url = new URL(data.mintUrl); if (url.protocol === 'https:' && !url.username && !url.password) mintUrl = url.href; } catch { /* Not linked yet. */ }
+    const link = byId('deed-link');
+    const linked = !!mintUrl && state === 'live';
+    link.hidden = !linked;
+    link.removeAttribute('href');
+    if (linked) link.href = mintUrl;
+    byId('deed-pending').hidden = linked;
+    byId('deed-pending').textContent = button;
+    byId('deed-message').textContent = message;
+  }
+  window.OmertaSale = Object.freeze({ updateAuction, updateDeeds });
+  updateAuction({ status: 'pending' });
+  updateDeeds({ status: 'pending' });
+})();
+</script>
+</body>
+</html>

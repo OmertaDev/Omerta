@@ -606,6 +606,10 @@ export async function buildServer() {
   let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';
   try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }
   app.get('/play', servePage(playHtml));
+  // Public token sale; auction figures remain unavailable until the auction is connected.
+  let saleHtml = '<!doctype html><title>$OMR token sale | OMERTÀ</title><p>Token sale page unavailable.</p>';
+  try { saleHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sale.html'), 'utf8'); } catch { /* headless */ }
+  app.get('/sale', servePage(saleHtml));
   for (const [url, kind] of Object.entries({ '/privacy': 'privacy', '/terms': 'terms', '/dmca': 'dmca', '/resources': 'resources' })) {
     app.get(url, async (req, reply) => {
       const page = legalPage(kind);
@@ -725,6 +729,11 @@ export async function buildServer() {
       if (type) ART_FILES.set(name, { body: readFileSync(join(artDir, name)), type });
     }
   } catch { /* no art shipped — the flat fills stand in */ }
+  // Public district previews; commissioned NFT plates are not part of this allowlist.
+  for (const district of ['docks', 'neon', 'foundry', 'brick', 'canal', 'cathedral']) {
+    const name = `nft/deed-${district}.jpg`;
+    try { ART_FILES.set(name, { body: readFileSync(join(artDir, name)), type: 'image/jpeg' }); } catch { /* optional preview */ }
+  }
   // THE MOTION LIBRARY — the generated ambient clips (public/art/hype/*.mp4 + the root hype cuts).
   // Same boot-time ALLOWLIST discipline (a request is only ever a Map lookup — no traversal surface by
   // construction), but videos are ~40MB total so they are NOT loaded into RAM: the Map stores the
@@ -768,6 +777,11 @@ export async function buildServer() {
     return reply.code(404).send({ error: 'not_found' });
   });
   app.get('/art/hype/:file', async (req, reply) => sendVideo('hype/' + req.params.file, req, reply));
+  app.get('/art/nft/:file', async (req, reply) => {
+    const hit = ART_FILES.get('nft/' + req.params.file);
+    if (!hit) return reply.code(404).send({ error: 'not_found' });
+    return reply.type(hit.type).header('cache-control', 'public, max-age=604800').send(hit.body);
+  });
   // THE MOTION MANIFEST — the client asks which plates have a living clip (and which ambient beds
   // shipped) instead of hardcoding a list that would drift from the directory. Derived from the SAME
   // boot allowlist the serving route reads, so manifest and server can never disagree.
