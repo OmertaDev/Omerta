@@ -18,7 +18,7 @@ const submit = async (page, type, values) => {
   const f = page.locator(`#ux-coordination form[data-coord-form="${type}"]`), details = f.locator('..');
   if (!await details.evaluate((node) => node.open)) await details.locator(':scope > summary').click();
   for (const [name, value] of Object.entries(values)) { const field = f.locator(`[name="${name}"]`); if (await field.evaluate((n) => n.tagName === 'SELECT')) await field.selectOption(String(value)); else await field.fill(String(value)); }
-  const response = page.waitForResponse((r) => r.url().endsWith('/v1/ux/coordination') && r.request().method() === 'POST');
+  const response = page.waitForResponse((r) => r.url().endsWith('/v1/ux/crew-workspace') && r.request().method() === 'POST');
   await f.locator('button[type=submit]').click(); const reply = await response; assert.equal(reply.status(), 200, await reply.text()); await ready(page);
 };
 try {
@@ -59,7 +59,7 @@ try {
   const bossPage = await authenticate(boss);
   const bossPoll = bossPage.locator('.ux-coord-note').filter({ has: bossPage.locator('h4', { hasText: 'Choose our approach' }) });
   await bossPoll.locator('[data-option="0"]').click(); await ready(bossPage);
-  const snapshot = await api('GET', '/v1/ux/coordination', mate.token);
+  const snapshot = await api('GET', '/v1/ux/crew-workspace', mate.token);
   assert.deepEqual(snapshot.notes.find((n) => n.kind === 'poll').votes, [1, 1], 'votes persist across independent browser sessions');
   const inLocal = (offset) => { const date = new Date(Date.now() + offset * 3600000); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`; };
   await submit(page, 'availability', { title: 'Meet at the canal', slot0: inLocal(2), slot1: inLocal(3) });
@@ -71,8 +71,8 @@ try {
   await helpForm.locator('[name="nextStep"]').fill('Open Quest Journal and review the driver role.');
   await helpForm.locator('[name="details"]').focus();
   await helpForm.locator('[name="details"]').evaluate((field) => field.setSelectionRange(4, 12));
-  const incoming = await api('POST', '/v1/ux/coordination', boss.token, { type: 'plan', title: 'Teammate update while drafting', nextStep: 'Review the shared board.' });
-  await page.evaluate((board) => coordinationUnderTest.observe('/v1/ux/coordination', board), incoming);
+  const incoming = await api('POST', '/v1/ux/crew-workspace', boss.token, { type: 'plan', title: 'Teammate update while drafting', nextStep: 'Review the shared board.' });
+  await page.evaluate((board) => coordinationUnderTest.observe('/v1/ux/crew-workspace', board), incoming);
   await page.locator('.ux-coord-note h4').filter({ hasText: 'Teammate update while drafting' }).waitFor();
   assert.equal(await helpForm.locator('[name="title"]').inputValue(), 'Need another driver');
   assert.equal(await helpForm.locator('[name="details"]').inputValue(), 'The shared board shows an open driver position.');

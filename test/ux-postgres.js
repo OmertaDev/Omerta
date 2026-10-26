@@ -18,7 +18,7 @@ try {
   process.env.JWT_SECRET = 'ux-native-disposable-fixture'; process.env.MOD_KEY = 'ux-native-disposable-mod-fixture'; process.env.MARKET_SEED = 'uxNativeFixture7Qx2mVb9PwLn4RtY6hJc'; process.env.SOCIAL_VERIFY_MODE = 'off';
   Object.assign(process.env, { LEGAL_OPERATOR_NAME: 'CI Test Operator', LEGAL_POSTAL_ADDRESS: '123 Fixture Street, Test City', PRIVACY_CONTACT_EMAIL: 'privacy@example.test', DMCA_AGENT_NAME: 'CI Test Agent', DMCA_AGENT_EMAIL: 'copyright@example.test', DMCA_AGENT_ADDRESS: '123 Fixture Street, Test City', DMCA_AGENT_PHONE: '+1 202 555 0100', DMCA_AGENT_REGISTERED: 'true', PAYMENT_REFUND_POLICY: 'Test fixture policy; not a production policy.' });
   const { buildServer } = await import('./server-fixture.js'); app = await buildServer(); const pool = app.pool;
-  for (const url of ['/v1/ux/workspace', '/v1/ux/coordination', '/v1/ux/community', '/v1/ux/story']) assert(app.hasRoute({ method: 'GET', url }), `${url} must be registered by the actual release server.`);
+  for (const url of ['/v1/ux/workspace', '/v1/ux/crew-workspace', '/v1/ux/community', '/v1/ux/story']) assert(app.hasRoute({ method: 'GET', url }), `${url} must be registered by the actual release server.`);
   const call = async (method, url, player, payload, status = 200) => {
     const response = await app.inject({ method, url, payload, headers: { ...(player ? { authorization: 'Bearer ' + player.token } : {}), ...(!['GET', 'HEAD'].includes(method) ? { 'idempotency-key': randomUUID() } : {}) } });
     assert.equal(response.statusCode, status, `${method} ${url}: ${response.body}`); return response.json();
@@ -40,16 +40,16 @@ try {
   const races = await Promise.all(['sage', 'slate'].map(accent => app.inject({ method: 'PUT', url: '/v1/ux/workspace', headers: { authorization: 'Bearer ' + leader.token, 'idempotency-key': randomUUID() }, payload: { revision: 1, changes: { feel: { accent } } } })));
   assert.deepEqual(races.map(response => response.statusCode).sort(), [200, 409], 'real concurrent workspace CAS has one winner and one explicit conflict');
   const saved = await call('GET', '/v1/ux/workspace', leader); assert.equal(saved.revision, 2); assert.equal(saved.values.identity.nicknames.car, 'Native private name');
-  const plan = await call('POST', '/v1/ux/coordination', leader, { type: 'plan', title: 'Native private Crew plan', nextStep: 'Read the shared board.' });
+  const plan = await call('POST', '/v1/ux/crew-workspace', leader, { type: 'plan', title: 'Native private Crew plan', nextStep: 'Read the shared board.' });
   const noteId = plan.notes.find(note => note.data.title === 'Native private Crew plan').id;
-  assert.ok((await call('GET', '/v1/ux/coordination', mate)).notes.some(note => note.id === noteId));
-  assert.ok(!(await call('GET', '/v1/ux/coordination', other)).notes.some(note => note.id === noteId));
-  await call('POST', '/v1/ux/coordination', other, { type: 'close', noteId }, 400);
+  assert.ok((await call('GET', '/v1/ux/crew-workspace', mate)).notes.some(note => note.id === noteId));
+  assert.ok(!(await call('GET', '/v1/ux/crew-workspace', other)).notes.some(note => note.id === noteId));
+  await call('POST', '/v1/ux/crew-workspace', other, { type: 'close', noteId }, 400);
   await call('POST', '/v1/ux/community', leader, { type: 'thread', title: 'Native marked spoiler', body: 'A consciously shared clue.', spoiler: true, anchorKind: 'question' });
   assert.ok((await call('GET', '/v1/ux/community', mate)).entries.some(entry => entry.data.title === 'Native marked spoiler'));
   assert.ok(!(await call('GET', '/v1/ux/community', other)).entries.some(entry => entry.data.title === 'Native marked spoiler'));
   await pool.query('DELETE FROM crew_members WHERE account_id=$1', [mate.account]);
-  assert.equal((await call('GET', '/v1/ux/coordination', mate, undefined, 400)).error, 'no_crew');
+  assert.equal((await call('GET', '/v1/ux/crew-workspace', mate, undefined, 400)).error, 'no_crew');
   assert.equal((await call('GET', '/v1/ux/community', mate, undefined, 400)).error, 'no_crew');
   assert.deepEqual(await gameplay(), before, 'private workspace and Crew planning writes do not change gameplay balances or stats');
   await call('POST', '/v1/worldgraph/mysteries/neighborhood-initiation/start', leader, {});

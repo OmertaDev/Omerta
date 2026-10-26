@@ -37,7 +37,7 @@ try {
  await pool.query("INSERT INTO world_operations(id,graph_id,graph_version,operation_node_id,crew_id,opened_by_account_id,created_at) VALUES ('culture-op','belladonna-demo',1,'operation:belladonna-lockbox','culture-crew',$1,$2)", [boss.ch.account_id, new Date(Date.now() - 30000)]);
  await pool.query("INSERT INTO world_operation_roles(operation_id,role_id,account_id,character_id,assigned_at) VALUES ('culture-op','investigator',$1,$2,$5),('culture-op','driver',$3,$4,$5)", [boss.ch.account_id, boss.ch.id, mate.ch.account_id, mate.ch.id, new Date(Date.now() - 20000)]);
  for (const [node, role, p, age] of [['operation:belladonna-investigate', 'investigator', boss, 15000], ['operation:belladonna-drive', 'driver', mate, 10000]]) await pool.query("INSERT INTO world_operation_contributions(operation_id,node_id,role_id,account_id,character_id,contributed_at) VALUES ('culture-op',$1,$2,$3,$4,$5)", [node, role, p.ch.account_id, p.ch.id, new Date(Date.now() - age)]);
- const plan = (await api('POST', '/v1/ux/coordination', boss.token, { type: 'plan', title: 'Our driver plan', nextStep: 'Review the driver step together.' })).notes.find((n) => n.kind === 'plan');
+ const plan = (await api('POST', '/v1/ux/crew-workspace', boss.token, { type: 'plan', title: 'Our driver plan', nextStep: 'Review the driver step together.' })).notes.find((n) => n.kind === 'plan');
  const tx = Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n);
  await app.listen({ port: 0, host: '127.0.0.1' }); const base = `http://127.0.0.1:${app.server.address().port}`;
  browser = await chromium.launch({ executablePath, headless: true });

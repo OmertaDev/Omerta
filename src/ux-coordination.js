@@ -205,11 +205,11 @@ export async function writeCoordination(pool, accountId, input, commandKey) {
 }
 
 export function register(app, { pool, auth }) {
-  app.get('/v1/ux/coordination', { preHandler: auth }, async (req, reply) => {
+  app.get('/v1/ux/crew-workspace', { preHandler: auth }, async (req, reply) => {
     reply.header('cache-control', 'no-store'); if (Object.keys(req.query || {}).length) fail();
     return coordinationBoard(pool, req.user.sub);
   });
-  app.post('/v1/ux/coordination', { preHandler: auth, preValidation: async (req) => validateCoordinationInput(req.body) }, async (req, reply) => {
+  app.post('/v1/ux/crew-workspace', { preHandler: auth, preValidation: async (req) => validateCoordinationInput(req.body) }, async (req, reply) => {
     reply.header('cache-control', 'no-store'); if (Object.keys(req.query || {}).length) fail();
     return writeCoordination(pool, req.user.sub, req.body, req.headers['idempotency-key']);
   });

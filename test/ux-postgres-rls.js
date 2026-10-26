@@ -35,8 +35,8 @@ try {
  const before = await snapshot();
  await call('GET', route, null, undefined, 401);
  await call('PUT', '/v1/ux/workspace', leader, { revision: 0, changes: { identity: { room: ['lamp'] } } });
- await call('POST', '/v1/ux/coordination', leader, { type: 'plan', title: 'Native security plan', nextStep: 'Read the shared terms.' });
- await call('POST', '/v1/ux/coordination', mate, { type: 'presence', message: 'Available by choice', minutes: 10 });
+ await call('POST', '/v1/ux/crew-workspace', leader, { type: 'plan', title: 'Native security plan', nextStep: 'Read the shared terms.' });
+ await call('POST', '/v1/ux/crew-workspace', mate, { type: 'presence', message: 'Available by choice', minutes: 10 });
  await call('POST', '/v1/ux/mentor-subjects', mate, { specialties: [], helpSubject: 'Reading a shared plan', publish: true });
  const manual = (body, revision) => ({ type: 'manual', revision, sections: [{ heading: 'Crew advice', body, spoiler: false }] });
  await call('POST', route, leader, manual('Initial advice', 0));

@@ -96,10 +96,10 @@ try {
   assert.match(await page.locator('#ux-coordination').innerText(), /Expanded Planning Crew/);
   const planForm = page.locator('#ux-coordination form[data-coord-form="plan"]'); await disclosure(planForm.locator('..'));
   await planForm.locator('[name="title"]').fill('Expanded integration plan'); await planForm.locator('[name="nextStep"]').fill('Review the journal together.');
-  const planResponse = page.waitForResponse(reply => reply.url().endsWith('/v1/ux/coordination') && reply.request().method() === 'POST');
+  const planResponse = page.waitForResponse(reply => reply.url().endsWith('/v1/ux/crew-workspace') && reply.request().method() === 'POST');
   await planForm.locator('button[type="submit"]').click(); assert.equal((await planResponse).status(), 200);
   await page.locator('.ux-coord-note h4').filter({ hasText: 'Expanded integration plan' }).waitFor();
-  assert.equal((await api('GET', '/v1/ux/coordination', mate.token)).notes.some(note => note.data.title === 'Expanded integration plan'), true, 'the actual teammate sees the saved planning note');
+  assert.equal((await api('GET', '/v1/ux/crew-workspace', mate.token)).notes.some(note => note.data.title === 'Expanded integration plan'), true, 'the actual teammate sees the saved planning note');
 
   await jump(page, 'start'); await page.locator('#tab-start .ux-world-panel').waitFor();
   await jump(page, 'city'); await page.locator('#tab-city .ux-turf-sign').filter({ hasText: 'EXPD' }).waitFor();

@@ -3,7 +3,7 @@
   'use strict';
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const words = (v) => String(v || '').replace(/[_:-]+/g, ' ');
-  const path = '/v1/ux/coordination';
+  const path = '/v1/ux/crew-workspace';
   window.createOmertaCoordination = ({ getState, read, navigate, notify, action }) => {
     let account = '', board = null, loadedAt = 0, loading = false, busy = false, scope = 'crew', pendingFrame = false, unavailable = '';
     const drafts = new Map();

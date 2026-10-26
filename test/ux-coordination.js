@@ -4,7 +4,7 @@ import { register } from '../src/ux-coordination.js';
 
 if (process.env.DATABASE_URL) throw new Error('Crew planning tests require disposable pg-mem.');
 const app = await buildServer(), pool = app.pool;
-if (!app.hasRoute({ method: 'POST', url: '/v1/ux/coordination' })) register(app, { pool, auth: async (req) => { await req.jwtVerify(); } });
+if (!app.hasRoute({ method: 'POST', url: '/v1/ux/crew-workspace' })) register(app, { pool, auth: async (req) => { await req.jwtVerify(); } });
 const call = async (method, url, token, body, key) => {
   const reply = await app.inject({ method, url, headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(key ? { 'idempotency-key': key } : {}) }, payload: body });
   return { code: reply.statusCode, body: reply.json() };
@@ -14,9 +14,14 @@ const create = async (name) => {
   assert.equal((await call('POST', '/v1/character', token, { name })).code, 200);
   const ch = (await pool.query('SELECT * FROM characters WHERE name=$1', [name])).rows[0]; return { token, ch };
 };
-const route = '/v1/ux/coordination';
+const route = '/v1/ux/crew-workspace';
 try {
   const leader = await create('Planner Boss'), mate = await create('Planner Mate'), stranger = await create('Planner Stranger');
+  for (const method of ['GET', 'POST']) {
+    assert.equal(app.hasRoute({ method, url: route }), true, `${method} crew workspace is registered`);
+    assert.equal(app.hasRoute({ method, url: '/v1/ux/coordination' }), false, 'Retired UX URI has no alias');
+    assert.equal((await call(method, '/v1/ux/coordination', leader.token, method === 'POST' ? { type: 'readiness', value: 'ready' } : undefined)).code, 404);
+  }
   const joined = new Date(Date.now() - 3600000);
   await pool.query("INSERT INTO crews(id,name,leader_account) VALUES ('ux-plan-crew','Planning Crew',$1),('ux-plan-other','Other Crew',$2)", [leader.ch.account_id, stranger.ch.account_id]);
   await pool.query("INSERT INTO crew_members(crew_id,account_id,name,joined_at) VALUES ('ux-plan-crew',$1,$2,$5),('ux-plan-crew',$3,$4,$5)", [leader.ch.account_id, leader.ch.name, mate.ch.account_id, mate.ch.name, joined]);
@@ -26,6 +31,7 @@ try {
   const txBefore = Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n);
   const balances = (await pool.query('SELECT id,cash,bank FROM characters ORDER BY id')).rows;
   assert.equal((await call('GET', route)).code, 401);
+  assert.equal((await call('POST', route, undefined, { type: 'readiness', value: 'ready' })).code, 401);
   assert.equal((await call('GET', route, stranger.token)).body.error, 'no_crew');
   let current = await call('GET', route, mate.token);
   assert.equal(current.code, 200);

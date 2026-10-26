@@ -20,7 +20,7 @@ try {
  const tx = Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n), chats = Number((await pool.query('SELECT COUNT(*) n FROM chat_messages')).rows[0].n);
  assert.equal((await call('GET', route)).code, 401);
  assert.equal((await call('POST', route, null, { type: 'emote', emote: 'hat' })).code, 401);
- const plan = ok(await call('POST', '/v1/ux/coordination', mate.token, { type: 'plan', title: 'Shared driver plan', nextStep: 'Review the public driver step.' })).notes.find((n) => n.kind === 'plan');
+ const plan = ok(await call('POST', '/v1/ux/crew-workspace', mate.token, { type: 'plan', title: 'Shared driver plan', nextStep: 'Review the public driver step.' })).notes.find((n) => n.kind === 'plan');
  let board = ok(await post(mate, { type: 'thread', title: 'Driver planning conversation', body: 'Which approach should we take?', spoiler: false, anchorKind: 'plan', anchorId: plan.id, steps: ['Check the common costs', 'Meet in Canal Row'] }));
  const thread = board.entries.find((e) => e.kind === 'thread');
  board = ok(await post(boss, { type: 'reply', threadId: thread.id, body: 'I can review those costs.', spoiler: false, stepId: 'step-1' }));

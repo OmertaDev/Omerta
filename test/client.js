@@ -485,7 +485,7 @@ for (const m of html.matchAll(/\b(?:api|act)\(\s*'(GET|POST|PUT|DELETE)'\s*,\s*/
 for (const m of admin.matchAll(/\bj\(\s*'(GET|POST|PUT|DELETE)'\s*,\s*/g)) addCall(admin, m, '/admin');
 
 // UX dynamic choices have dedicated API/browser proofs; retain their finite mounted contracts.
-for (const [method,path] of [["GET","/v1/ux/workspace"],["PUT","/v1/ux/workspace"],["GET","/v1/ux/tactics"],["GET","/v1/ux/coordination"],["POST","/v1/ux/coordination"],["GET","/v1/ux/investigations"],["GET","/v1/ux/investigations/:p"],["GET","/v1/ux/investigations/:p/nodes/:p/hints/:p"],["GET","/v1/ux/investigation-items"],["GET","/v1/ux/story"],["GET","/v1/ux/story/:p"],["GET","/v1/ux/community"],["POST","/v1/ux/community"],["GET","/v1/ux/community/operations/:p/playback"],["GET","/v1/ux/community/portraits/:p"],["GET","/v1/ux/mentor-subjects"],["POST","/v1/ux/mentor-subjects"]]) addRef(method,path,'UX route contract');
+for (const [method,path] of [["GET","/v1/ux/workspace"],["PUT","/v1/ux/workspace"],["GET","/v1/ux/tactics"],["GET","/v1/ux/crew-workspace"],["POST","/v1/ux/crew-workspace"],["GET","/v1/ux/investigations"],["GET","/v1/ux/investigations/:p"],["GET","/v1/ux/investigations/:p/nodes/:p/hints/:p"],["GET","/v1/ux/investigation-items"],["GET","/v1/ux/story"],["GET","/v1/ux/story/:p"],["GET","/v1/ux/community"],["POST","/v1/ux/community"],["GET","/v1/ux/community/operations/:p/playback"],["GET","/v1/ux/community/portraits/:p"],["GET","/v1/ux/mentor-subjects"],["POST","/v1/ux/mentor-subjects"]]) addRef(method,path,'UX route contract');
 
 assert.equal(unreadable, 0, `${unreadable} api()/act() call site(s) name their path in a way this ` +
   `cannot read, so those routes go UNCHECKED while the run still passes — extend pathsInArg()`);
