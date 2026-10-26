@@ -65,7 +65,18 @@ async function assertNativeCaller(pool, endpoint, profile, includeNotNull) {
 async function projectedCaller(pool, ux) {
   const projection = uxNativeProjection(ux);
   const context = (await pool.query(catalogQueries[0])).rows[0];
-  const verify = async () => { projection.projectMetadata(await original.readCommerceReleasePhase2Metadata(pool)); await assertUxNativeSecurity(pool); };
+  const attestationQueries = new Map(catalogQueries.slice(1, 4).map((sql, index) => {
+    const where = 'WHERE n.nspname=current_schema()';
+    assert.equal(sql.split(where).length, 2, 'Only the unique immutable catalog namespace predicate');
+    return [sql, sql.replace(where, where + ' AND ' + (index === 0 ? 'c' : 't') + '.relname IN ($1,$2,$3,$4,$5,$6,$7)')];
+  }));
+  const attestation = { query: (sql, values) => {
+    const narrowed = attestationQueries.get(sql);
+    if (!narrowed) return pool.query(sql, values);
+    assert.equal(values, undefined, 'The original closed catalog reads have no caller bindings');
+    return pool.query(narrowed, UX_NATIVE_TABLES);
+  } };
+  const verify = async () => { projection.projectMetadata(await original.readCommerceReleasePhase2Metadata(attestation)); await assertUxNativeSecurity(pool); };
   await verify();
   return { query: async (sql, values) => {
     if (sql === catalogQueries[0]) await verify();
