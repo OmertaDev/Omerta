@@ -41,7 +41,7 @@ try {
  const tx = Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n);
  await app.listen({ port: 0, host: '127.0.0.1' }); const base = `http://127.0.0.1:${app.server.address().port}`;
  browser = await chromium.launch({ executablePath, headless: true });
- const authenticate = async (player) => {
+ const authenticate = async (player, noCrew = false) => {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 1050 }, reducedMotion: 'reduce', acceptDownloads: true });
   await ctx.addInitScript((token) => { localStorage.setItem('omerta_token', token); localStorage.setItem('omerta_welcomed', '1'); localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_alltabs', '1'); }, player.token);
   await ctx.addInitScript(() => { Object.defineProperty(window, 'createOmertaCommunity', { configurable: true, set(factory) { Object.defineProperty(window, 'createOmertaCommunity', { configurable: true, value: (context) => {
@@ -55,8 +55,19 @@ try {
   const page = await ctx.newPage(); page.on('pageerror', (e) => errors.push(e.message)); page.on('console', (m) => { if (m.type() === 'warning' && /UI .*unavailable/.test(m.text())) errors.push(m.text()); });
   await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
   await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((n) => n.classList.add('hidden')));
-  await openTab(page, 'crew'); await page.locator('#crew-room').waitFor(); await page.locator('#ux-community h3').waitFor(); return page;
+  await openTab(page, 'crew'); if (noCrew) await page.locator('#ux-community [data-community-empty]').waitFor(); else await page.locator('#crew-room').waitFor(); await page.locator('#ux-community h3').waitFor(); return page;
  };
+ const newcomer = await create('Culture Newcomer'), newcomerPage = await authenticate(newcomer, true);
+ const newcomerRead = newcomerPage.waitForResponse((r) => r.url().endsWith(route) && r.request().method() === 'GET'); await newcomerPage.locator('[data-community-refresh]').click();
+ const newcomerResponse = await newcomerRead; assert.equal(newcomerResponse.status(), 200); assert.equal((await newcomerResponse.json()).available, false);
+ await newcomerPage.locator('#ux-community [data-community-empty]').waitFor(); assert.equal(await newcomerPage.locator('#ux-community form').count(), 0, 'a fresh no-Crew player gets a usable join state without posting controls');
+ await newcomerPage.locator('#crew-form').waitFor();
+ await pool.query("INSERT INTO crew_members(crew_id,account_id,name,joined_at) VALUES ('culture-other',$1,$2,$3)", [newcomer.ch.account_id, newcomer.ch.name, new Date()]);
+ const newcomerCrew = await api('GET', '/v1/crew', newcomer.token);
+ await newcomerPage.evaluate(async (body) => { communityUnderTest.observe('/v1/crew', body); await communityUnderTest.render(); }, newcomerCrew);
+ await newcomerPage.locator('#ux-community form[data-community-form=thread]').waitFor({ state: 'attached' });
+ assert.match(await newcomerPage.locator('#ux-community').innerText(), /Other Circle/);
+ assert.equal(await newcomerPage.locator('#crew-form').count(), 1, 'a fresh authorized community board can mount against the settled join layout while the base room awaits its next refresh');
  const page = await authenticate(mate), bossPage = await authenticate(boss);
  let result = await submit(page, 'thread', { anchor: `plan|${plan.id}`, title: 'Driver timing', body: 'The plan mentions a brass key.', steps: 'Check the shared costs\nCompare timing', spoiler: true });
  const threadId = result.entries.find((e) => e.data.title === 'Driver timing').id;
@@ -176,8 +187,33 @@ try {
  assert.equal(successorDownloads, 0, 'a delayed predecessor portrait response never downloads after succession');
  await openTab(page, 'discover'); await page.locator('#ux-community-mentors').waitFor();
  assert.ok(!(await page.locator('#ux-community-mentors').textContent()).includes(predecessor.name), 'old mentor observations cannot reintroduce the predecessor identity');
+ // An actual old member read may finish after departure or a subsequent Crew boundary.
+ await openTab(page, 'crew'); await page.locator('#ux-community form[data-community-form=thread]').waitFor({ state: 'attached' });
+ const departedBoard = await api('GET', route, mate.token);
+ await page.evaluate((path) => { communityHeldReads = []; communityHoldPaths = [path]; }, route);
+ await page.locator('[data-community-refresh]').click(); await page.waitForFunction(() => communityHeldPending === 1);
+ await pool.query('DELETE FROM crew_members WHERE account_id=$1', [mate.ch.account_id]);
+ const noCrewBoard = await api('GET', route, mate.token); assert.equal(noCrewBoard.available, false);
+ await page.evaluate((body) => communityUnderTest.observe('/v1/ux/community', body), noCrewBoard);
+ await page.locator('#ux-community [data-community-empty]').waitFor(); assert.equal(await page.locator('#ux-community form').count(), 0);
+ assert.ok(!(await page.locator('#ux-community').textContent()).includes('Driver timing'), 'departure clears cached Crew conversations immediately');
+ await page.evaluate((body) => { communityUnderTest.observe('/v1/ux/community', body); communityHeldReads.forEach((entry) => entry.release()); }, departedBoard);
+ await page.waitForFunction(() => communityHeldPending === 0); await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
+ await page.locator('#ux-community [data-community-empty]').waitFor(); assert.equal(await page.locator('#ux-community form').count(), 0, 'a delayed actual member response cannot restore the old Crew');
+ await pool.query("INSERT INTO crew_members(crew_id,account_id,name,joined_at) VALUES ('culture-other',$1,$2,$3)", [mate.ch.account_id, 'Culture Successor', new Date()]);
+ const otherCrew = await api('GET', '/v1/crew', mate.token);
+ await page.evaluate(async (body) => { communityUnderTest.observe('/v1/crew', body); await communityUnderTest.render(); }, otherCrew);
+ await page.locator('#ux-community form[data-community-form=thread]').waitFor({ state: 'attached' }); assert.match(await page.locator('#ux-community').innerText(), /Other Circle/);
+ await page.evaluate((body) => communityUnderTest.observe('/v1/ux/community', body), departedBoard);
+ assert.ok(!(await page.locator('#ux-community').textContent()).includes('Driver timing'), 'a prior Crew observation cannot cross the new Crew fence');
+ await pool.query("UPDATE crew_members SET crew_id='culture-crew',joined_at=$2 WHERE account_id=$1", [mate.ch.account_id, new Date()]);
+ const rejoinedCrew = await api('GET', '/v1/crew', mate.token);
+ await page.evaluate(async (body) => { communityUnderTest.observe('/v1/crew', body); await communityUnderTest.render(); }, rejoinedCrew);
+ await page.locator('#ux-community form[data-community-form=thread]').waitFor({ state: 'attached' });
+ await page.evaluate((body) => communityUnderTest.observe('/v1/ux/community', body), departedBoard);
+ assert.ok(!(await page.locator('#ux-community').textContent()).includes('Driver timing'), 'server-time ordering rejects the old prejoin board even after rejoining the same Crew');
  assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM chat_messages')).rows[0].n), 0, 'all messages were deliberate community posts, with no automatic chat sends');
  assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n), tx, 'community UI controls move no funds');
  assert.deepEqual(errors, []);
- console.log(`ux-community-browser: PASS (all10 real forms, step comments, spoiler choice, document conflict/draft/focus, public pins, consented avatar download, crest permission, timeline, mentor topics, mobile/account/successor boundary and delayed real responses); artifacts ${artifacts}`);
+ console.log(`ux-community-browser: PASS (all10 real forms, step comments, spoiler choice, document conflict/draft/focus, public pins, consented avatar download, crest permission, timeline, mentor topics, mobile/account/successor boundary, no-Crew empty state, departure/rejoin and delayed real responses); artifacts ${artifacts}`);
 } finally { await browser?.close(); await app.close(); }

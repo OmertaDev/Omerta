@@ -5,12 +5,27 @@
   const words = (v) => String(v || '').replace(/[_:-]+/g, ' ');
   const path = '/v1/ux/crew-workspace';
   window.createOmertaCoordination = ({ getState, read, navigate, notify, action }) => {
-    let account = '', board = null, loadedAt = 0, loading = false, busy = false, scope = 'crew', pendingFrame = false, unavailable = '';
+    let account = '', character = '', epoch = 0, crewId, observedAt = 0, observeAllowed = true, board = null, loadedAt = 0, loading = false, busy = false, scope = 'crew', pendingFrame = false, unavailable = '';
     const drafts = new Map();
     const localTime = (v) => new Date(v).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
-    const key = () => String(getState().me?.accountId || getState().me?.id || '');
-    const reset = () => { const next = key(); if (next !== account) { account = next; board = null; loadedAt = 0; scope = 'crew'; unavailable = ''; drafts.clear(); document.getElementById('ux-coordination')?.remove(); } };
-    const draftKey = (type, name, subject = scope) => `${account}:${type === 'presence' ? 'crew' : subject}:${type}:${name}`;
+    const key = () => String(getState().session?.accountId || getState().me?.accountId || getState().me?.id || '');
+    const actor = () => String(getState().me?.id || '');
+    const context = () => ({ account, character, epoch });
+    const current = (requested) => requested.account === key() && requested.character === actor() && requested.epoch === epoch;
+    const reset = () => { const next = key(), nextActor = actor(); if (next !== account || nextActor !== character) { account = next; character = nextActor; epoch++; crewId = undefined; observedAt = 0; observeAllowed = true; board = null; loading = busy = false; loadedAt = 0; scope = 'crew'; unavailable = ''; drafts.clear(); document.getElementById('ux-coordination')?.remove(); } };
+    const schedule = () => { if (['crew', 'fieldwork'].includes(getState().currentTab) && !pendingFrame) { pendingFrame = true; requestAnimationFrame(() => { pendingFrame = false; render(); }); } };
+    const accept = (body, freshRead = false) => {
+      const at = Date.parse(body?.serverTime) || 0;
+      if (at < observedAt) return false;
+      if (body?.available === false && body.reason === 'no_crew' && body.crew === null) {
+        epoch++; crewId = null; observedAt = at; observeAllowed = false; board = null; loadedAt = Date.now(); loading = busy = false; scope = 'crew'; unavailable = body.message || 'Join a crew to use its planning room.'; schedule(); return true;
+      }
+      if (!body?.crew || !body.members?.some((member) => member.mine && member.characterId === character)) return false;
+      if (observedAt && (!freshRead && at === observedAt || !observeAllowed && at <= observedAt)) return false;
+      if (!freshRead && (!observeAllowed || crewId !== undefined && crewId !== body.crew.id)) return false;
+      crewId = body.crew.id; observedAt = at; observeAllowed = true; board = body; loadedAt = Date.now(); unavailable = ''; return true;
+    };
+    const draftKey = (type, name, subject = scope) => `${account}:${crewId || 'none'}:${type === 'presence' ? 'crew' : subject}:${type}:${name}`;
     const rememberDraft = (event) => {
       const field = event.target, form = field.closest?.('#ux-coordination form[data-coord-form]');
       if (!form || !field.name || !field.matches('input,select,textarea')) return;
@@ -64,15 +79,15 @@
       if (!['crew', 'fieldwork'].includes(getState().currentTab) || !account) return;
       const host = document.getElementById(`tab-${getState().currentTab}`); if (!host) return;
       // refresh() also calls optional renderers while the Crew renderer is still loading.
-      // Wait for its real room so a just-opened planning form cannot be replaced underneath a player.
-      if (getState().currentTab === 'crew' && !host.querySelector('#crew-room')) return;
+      // Wait for either settled Crew layout, including the first-player join/form view.
+      if (getState().currentTab === 'crew' && !host.querySelector('#crew-room,#crew-form')) return;
       let root = document.getElementById('ux-coordination');
       if (!root || !host.contains(root)) { root?.remove(); root = document.createElement('section'); root.id = 'ux-coordination'; root.className = 'card ux-coordination'; host.append(root); }
       const focused = root.contains(document.activeElement) && document.activeElement.closest('form[data-coord-form]') ? {
         type: document.activeElement.closest('form[data-coord-form]').dataset.coordForm, name: document.activeElement.name,
         start: document.activeElement.selectionStart, end: document.activeElement.selectionEnd,
       } : null;
-      if (!board) { root.innerHTML = `<h3>Crew planning room</h3><p>${esc(unavailable || 'Opening the shared planning room…')}</p>${unavailable ? '<button class="act" type="button" data-coord-retry>Refresh planning room</button>' : ''}`; root.querySelector('[data-coord-retry]')?.addEventListener('click', () => { loadedAt = 0; render(); }); return; }
+      if (!board) { root._markup = ""; root.innerHTML = `<h3>Crew planning room</h3><p>${esc(unavailable || 'Opening the shared planning room…')}</p>${unavailable && crewId === null ? '<button class="act" type="button" data-coord-join>Find a crew</button> ' : ''}${unavailable ? '<button class="act" type="button" data-coord-retry>Refresh planning room</button>' : ''}`; root.querySelector('[data-coord-join]')?.addEventListener('click', () => navigate('crew')); root.querySelector('[data-coord-retry]')?.addEventListener('click', () => { loadedAt = 0; render(); }); return; }
       if (scope !== 'crew' && !board.operations.some((o) => o.id === scope)) scope = 'crew';
       const entries = board.notes.filter((n) => scope === 'crew' ? !n.operationId : n.operationId === scope);
       const markup = `<header><span class="ux-kicker">${esc(board.crew.name)} · deliberately shared</span><h3>Crew planning room</h3><p>Plans, check-ins, and intentions. The game's issued controls decide all permissions and outcomes.</p></header>${scopeSelect()}${row('Roleboard and the next step', operationPanel())}<div class="ux-coord-grid">${memberSignals()}</div><div class="ux-coord-composers">${composers()}</div><div class="ux-coord-notes">${entries.map(noteMarkup).join('') || '<p>No entries for this plan yet. Start with a plan or an actionable help request.</p>'}</div><button type="button" class="act" data-coord-retry>Refresh planning room</button>`;
@@ -95,15 +110,15 @@
     }
     async function submit(body, button, submittedDrafts = []) {
       if (busy) return; busy = true; if (button) button.disabled = true;
-      const currentAccount = account;
+      const requested = context();
       try {
         const reply = await action('POST', path, body, { label: 'Update crew planning' });
-        if (reply?.code >= 200 && reply.code < 300 && reply.body?.crew && currentAccount === key()) {
+        if (reply?.code >= 200 && reply.code < 300 && current(requested) && accept(reply.body, true)) {
           for (const [fieldKey, value] of submittedDrafts) if (drafts.get(fieldKey) === value) drafts.delete(fieldKey);
-          board = reply.body; loadedAt = Date.now(); notify('The shared planning room is updated.');
+          notify('The shared planning room is updated.');
         }
-      } catch { notify('The planning update could not be confirmed. Refresh the room before trying again.', true); }
-      finally { busy = false; if (button?.isConnected) button.disabled = false; paint(); }
+      } catch { if (current(requested)) notify('The planning update could not be confirmed. Refresh the room before trying again.', true); }
+      finally { if (current(requested)) { busy = false; if (button?.isConnected) button.disabled = false; paint(); } }
     }
     function bind(root) {
       root.querySelector('[data-coord-scope]').onchange = (e) => { scope = e.target.value; root._markup = ''; paint(); };
@@ -131,23 +146,22 @@
       }; });
     }
     async function render() {
-      reset(); if (!account || !['crew', 'fieldwork'].includes(getState().currentTab)) return;
+      reset(); if (!account || !character || !['crew', 'fieldwork'].includes(getState().currentTab)) return;
       if (!loading && ((!board && !loadedAt) || Date.now() - loadedAt > 30000)) {
-        loading = true; const requested = account, tab = getState().currentTab;
-        try { const reply = await read(path); if (requested !== key()) return; loadedAt = Date.now(); if (reply?.code >= 200 && reply.code < 300) { board = reply.body; unavailable = ''; } else unavailable = reply?.body?.message || 'Join a crew to use the shared planning room.'; }
-        catch { unavailable = 'The planning room could not load. Try refreshing it.'; loadedAt = Date.now(); }
-        finally { loading = false; }
-        if (requested !== key() || tab !== getState().currentTab) return;
+        loading = true; const requested = context(), tab = getState().currentTab;
+        try { const reply = await read(path); if (!current(requested)) return; loadedAt = Date.now(); if (reply?.code >= 200 && reply.code < 300) accept(reply.body, true); else unavailable = reply?.body?.message || 'Join a crew to use the shared planning room.'; }
+        catch { if (current(requested)) { unavailable = 'The planning room could not load. Try refreshing it.'; loadedAt = Date.now(); } }
+        finally { if (current(requested)) loading = false; }
+        if (!current(requested) || tab !== getState().currentTab) return;
       }
       paint();
     }
     function observe(url, body) {
       reset();
-      if (url === path && body?.crew) { board = body; loadedAt = Date.now(); unavailable = ''; }
-      if ((url === path || String(url).startsWith('/v1/worldgraph/')) && ['crew', 'fieldwork'].includes(getState().currentTab) && !pendingFrame) {
-        pendingFrame = true; requestAnimationFrame(() => { pendingFrame = false; render(); });
-      }
-      if (url === '/v1/crew' && board && body?.crew?.id !== board.crew.id) { board = null; loadedAt = 0; }
+      if (!account || !character) return;
+      if (url === path) accept(body);
+      if (url === '/v1/crew' && crewId !== (body?.crew?.id || null)) { epoch++; crewId = body?.crew?.id || null; observeAllowed = false; board = null; loading = busy = false; loadedAt = 0; unavailable = ''; }
+      if (url === path || url === '/v1/crew' || String(url).startsWith('/v1/worldgraph/')) schedule();
     }
     return { render, observe, recordOperation(receipt, _before, _after, result) { if (result?.code >= 200 && result.code < 300 && String(receipt?.path).startsWith('/v1/worldgraph/')) { loadedAt = 0; render(); } } };
   };

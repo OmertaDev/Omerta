@@ -49,8 +49,19 @@ try {
   assert.ok((await call('GET', '/v1/ux/community', mate)).entries.some(entry => entry.data.title === 'Native marked spoiler'));
   assert.ok(!(await call('GET', '/v1/ux/community', other)).entries.some(entry => entry.data.title === 'Native marked spoiler'));
   await pool.query('DELETE FROM crew_members WHERE account_id=$1', [mate.account]);
-  assert.equal((await call('GET', '/v1/ux/crew-workspace', mate, undefined, 400)).error, 'no_crew');
-  assert.equal((await call('GET', '/v1/ux/community', mate, undefined, 400)).error, 'no_crew');
+  for (const [url, fields, payload] of [
+    ['/v1/ux/crew-workspace', ['members', 'notes', 'operations', 'signals'], { type: 'readiness', value: 'ready' }],
+    ['/v1/ux/community', ['members', 'entries', 'destinations', 'officialFacts'], { type: 'emote', emote: 'hat' }],
+  ]) {
+    const unavailable = await call('GET', url, mate);
+    assert.equal(unavailable.available, false); assert.equal(unavailable.reason, 'no_crew'); assert.equal(unavailable.crew, null);
+    for (const field of fields) assert.deepEqual(unavailable[field], [], `former members receive no ${field}`);
+    if (url === '/v1/ux/community') {
+      assert.deepEqual(unavailable.documents, {}); assert.deepEqual(unavailable.emotes, {});
+      assert.deepEqual(unavailable.anchors, { operations: [], plans: [] }); assert.deepEqual(unavailable.crestOptions, { shapes: [], symbols: [] });
+    }
+    assert.equal((await call('POST', url, mate, payload, 400)).error, 'no_crew', 'metadata writes still require current membership');
+  }
   assert.deepEqual(await gameplay(), before, 'private workspace and Crew planning writes do not change gameplay balances or stats');
   await call('POST', '/v1/worldgraph/mysteries/neighborhood-initiation/start', leader, {});
   const story = await call('GET', '/v1/ux/story/neighborhood-initiation', leader);

@@ -12,7 +12,7 @@
   return `<svg class="ux-community-crest" viewBox="0 0 160 180" role="img" aria-label="Cosmetic crew crest"><path d="${shapes[d?.shape] || shapes.shield}" fill="${primary}" stroke="${secondary}" stroke-width="4"/><text x="80" y="100" text-anchor="middle" font-size="66" fill="${secondary}">${symbols[d?.symbol] || symbols.key}</text><text x="80" y="174" text-anchor="middle" font-size="10" fill="currentColor">${esc(d?.motto || '')}</text></svg>`;
  };
  window.createOmertaCommunity = ({ getState, read, navigate, notify, action, workspace }) => {
-  let account = '', character = '', epoch = 0, board = null, mentors = null, loading = false, mentorLoading = false, loaded = 0, mentorLoaded = 0, busy = false, queued = false, manualRows = 1;
+  let account = '', character = '', epoch = 0, crewId, observedAt = 0, observeAllowed = true, unavailable = false, board = null, mentors = null, loading = false, mentorLoading = false, loaded = 0, mentorLoaded = 0, busy = false, queued = false, manualRows = 1;
   let error = '', preview = null, playback = null, playIndex = 0, playTimer = null;
   const drafts = new Map(), bases = new Map(), disclosures = new Map();
   let lastFocus = null;
@@ -21,7 +21,25 @@
   const context = () => ({ account, character, epoch });
   const current = (requested) => requested.account === currentAccount() && requested.character === currentCharacter() && requested.epoch === epoch;
   const stop = () => { if (playTimer) clearInterval(playTimer); playTimer = null; };
-  const reset = () => { const next = currentAccount(), actor = currentCharacter(); if (next !== account || actor !== character) { stop(); account = next; character = actor; epoch++; board = null; mentors = null; loading = mentorLoading = busy = queued = false; loaded = 0; mentorLoaded = 0; error = ''; preview = null; playback = null; playIndex = 0; manualRows = 1; lastFocus = null; drafts.clear(); bases.clear(); disclosures.clear(); document.querySelectorAll('[data-community-host]').forEach((n) => n.remove()); } };
+  const reset = () => { const next = currentAccount(), actor = currentCharacter(); if (next !== account || actor !== character) { stop(); account = next; character = actor; epoch++; crewId = undefined; observedAt = 0; observeAllowed = true; unavailable = false; board = null; mentors = null; loading = mentorLoading = busy = queued = false; loaded = 0; mentorLoaded = 0; error = ''; preview = null; playback = null; playIndex = 0; manualRows = 1; lastFocus = null; drafts.clear(); bases.clear(); disclosures.clear(); document.querySelectorAll('[data-community-host]').forEach((n) => n.remove()); } };
+  const schedulePaint = () => { if (!queued) { const requested = context(); queued = true; requestAnimationFrame(() => { if (current(requested)) { queued = false; paint(); } }); } };
+  const clearCrew = () => {
+   stop(); board = null; loading = mentorLoading = busy = queued = false; loaded = 0; preview = playback = null; playIndex = 0; manualRows = 1;
+   if (lastFocus?.panel !== 'ux-community-mentors') lastFocus = null;
+   for (const key of drafts.keys()) if (!key.startsWith('mentor:')) drafts.delete(key);
+   bases.clear(); for (const key of disclosures.keys()) if (!key.startsWith('ux-community-mentors:')) disclosures.delete(key);
+   document.getElementById('ux-community')?.remove(); document.getElementById('ux-community-pins')?.remove();
+  };
+  const acceptBoard = (body, freshRead = false) => {
+   const at = Date.parse(body?.serverTime) || 0; if (at < observedAt) return false;
+   if (body?.available === false && body.reason === 'no_crew' && body.crew === null) {
+    epoch++; clearCrew(); crewId = null; observedAt = at; observeAllowed = false; unavailable = true; loaded = Date.now(); error = body.message || 'Join a crew to share its community record.'; schedulePaint(); return true;
+   }
+   if (!body?.crew || !body.members?.some((m) => m.mine && m.characterId === character)) return false;
+   if (!freshRead && (!observeAllowed || crewId !== undefined && crewId !== body.crew.id || observedAt && at === observedAt)) return false;
+   if (crewId !== undefined && crewId !== body.crew.id) { epoch++; clearCrew(); }
+   crewId = body.crew.id; observedAt = at; observeAllowed = true; unavailable = false; board = body; loaded = Date.now(); error = ''; schedulePaint(); return true;
+  };
   const prefs = () => workspace?.get('community', { revealed: [] }) || { revealed: [] };
   const formKey = (f) => `${f.dataset.communityForm}:${f.dataset.subject || ''}`;
   const disclosureKey = (d) => { const f = d.querySelector(':scope > form[data-community-form]'); return f ? `form:${formKey(f)}` : d.dataset.communitySpoiler ? `spoiler:${d.dataset.communitySpoiler}` : `section:${d.querySelector(':scope > summary')?.textContent}`; };
@@ -115,7 +133,8 @@
    reset(); const tab = getState().currentTab, parent = document.getElementById(`tab-${tab}`); if (!parent || !account || !character) return;
    let root;
    if (tab === 'discover' && mentors && parent.querySelector('#lfg-toggle')) root = mount('ux-community-mentors', parent, mentorMarkup());
-   else if (['crew', 'fieldwork'].includes(tab) && board && (tab !== 'crew' || parent.querySelector('#crew-room'))) root = mount('ux-community', parent, crewMarkup());
+   else if (['crew', 'fieldwork', 'map'].includes(tab) && unavailable) root = mount(tab === 'map' ? 'ux-community-pins' : 'ux-community', parent, `<h3 data-community-empty>Join a crew to share its community record</h3><p>${esc(error)}</p><button type="button" class="act" data-community-refresh>Refresh crew status</button>`);
+   else if (['crew', 'fieldwork'].includes(tab) && board && (tab !== 'crew' || parent.querySelector('#crew-room,#crew-form'))) root = mount('ux-community', parent, crewMarkup());
    else if (tab === 'map' && board) root = mount('ux-community-pins', parent, `<h3>The crew's public planning pins</h3>${pinsMarkup()}<p>Player planning marks · public district destinations, never live player locations.</p>`);
    if (root) { bind(root); document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed')); }
   }
@@ -125,7 +144,7 @@
     const r = await action('POST', target, body, { label: target === mentorRoute ? 'Publish chosen help subjects' : 'Update crew community' });
     if (!current(requested)) return;
     if (r?.code >= 200 && r.code < 300) {
-     if (target === mentorRoute) { mentors = r.body; mentorLoaded = Date.now(); } else { board = r.body; loaded = Date.now(); }
+     if (target === mentorRoute) { mentors = r.body; mentorLoaded = Date.now(); } else acceptBoard(r.body, true);
      for (const [key, value] of draftSnapshot) if (drafts.get(key) === value) drafts.delete(key);
      bases.delete(formId); if (body.type === 'crest') preview = null; notify(target === mentorRoute ? 'Your chosen help subjects are updated.' : 'The crew community record is updated.');
     } else if (r?.body?.error === 'community_conflict') notify('A crewmate updated this document. Your draft is preserved; refresh and compare before saving.', true);
@@ -177,16 +196,16 @@
     mentorLoading = true; try { const r = await read(mentorRoute); if (current(requested) && r?.code === 200) { mentors = r.body; mentorLoaded = Date.now(); } } finally { if (current(requested)) mentorLoading = false; }
    }
    if (['crew', 'fieldwork', 'map'].includes(tab) && !loading && (!board && !loaded || Date.now() - loaded > 30000)) {
-    loading = true; try { const r = await read(route); if (current(requested)) { loaded = Date.now(); if (r?.code === 200) { board = r.body; error = ''; } else error = r?.body?.message || 'Join a crew to share its community record.'; } } finally { if (current(requested)) loading = false; }
+    loading = true; try { const r = await read(route); if (current(requested)) { loaded = Date.now(); if (r?.code === 200) acceptBoard(r.body, true); else error = r?.body?.message || 'Join a crew to share its community record.'; } } finally { if (current(requested)) loading = false; }
    }
    if (current(requested) && getState().currentTab === tab) paint();
   }
   function observe(path, body) {
    reset(); if (!account || !character) return;
-   if (path === route && body?.crew && body.members?.some((m) => m.mine && m.characterId === character)) { board = body; loaded = Date.now(); }
+   if (path === route) acceptBoard(body);
    if (path === mentorRoute && body?.me?.characterId === character) { mentors = body; mentorLoaded = Date.now(); }
-   if (path === '/v1/crew' && board && body?.crew?.id !== board.crew.id) { board = null; loaded = 0; document.getElementById('ux-community')?.remove(); }
-   if ([route, mentorRoute].includes(path) && !queued) { const requested = context(); queued = true; requestAnimationFrame(() => { if (current(requested)) { queued = false; paint(); } }); }
+   if (path === '/v1/crew' && Object.hasOwn(body || {}, 'crew') && (body.crew?.id || null) !== crewId) { epoch++; clearCrew(); crewId = body.crew?.id || null; observeAllowed = false; unavailable = crewId === null; error = unavailable ? 'Join a crew to share its community record.' : ''; if (unavailable) loaded = Date.now(); schedulePaint(); }
+   if ([route, mentorRoute].includes(path)) schedulePaint();
   }
   return { render, observe, recordOperation(receipt, _before, _after, result) { reset(); if (result?.code >= 200 && result.code < 300 && String(receipt.path).startsWith('/v1/worldgraph/')) { loaded = 0; } }, destroy() { epoch++; stop(); document.removeEventListener('input', remember); document.removeEventListener('change', remember); document.removeEventListener('toggle', rememberDisclosure, true); document.removeEventListener('click', rememberDisclosureIntent, true); document.removeEventListener('focusin', rememberFocus); } };
  };

@@ -142,7 +142,15 @@ async function writeDocument(client, ctx, kind, rev, data) {
  if (row) await client.query('UPDATE ux_community_documents SET revision=revision+1,payload=$3,updated_by=$4,author_name=$5,updated_at=$6 WHERE crew_id=$1 AND kind=$2', [ctx.crew.id, kind, JSON.stringify(data), ctx.accountId, ctx.actor.name, new Date()]);
  else await client.query('INSERT INTO ux_community_documents(crew_id,kind,payload,updated_by,author_name) VALUES ($1,$2,$3,$4,$5)', [ctx.crew.id, kind, JSON.stringify(data), ctx.accountId, ctx.actor.name]);
 }
-export const communityBoard = (pool, accountId) => withCoordinationCrew(pool, accountId, board);
+export async function communityBoard(pool, accountId) {
+ try { return await withCoordinationCrew(pool, accountId, board); }
+ catch (error) {
+  if (!(error instanceof GameError) || error.code !== 'no_crew') throw error;
+  return { available: false, reason: 'no_crew', message: 'Join a crew to share its community record.', crew: null,
+   serverTime: new Date().toISOString(), entries: [], documents: {}, members: [], anchors: { operations: [], plans: [] },
+   destinations: [], emotes: {}, crestOptions: { shapes: [], symbols: [] }, officialFacts: [] };
+ }
+}
 export async function writeCommunity(pool, accountId, input, commandKey) {
  validateCommunityInput(input);
  if (commandKey !== undefined && (typeof commandKey !== 'string' || !/^[!-~]{1,200}$/.test(commandKey))) fail();

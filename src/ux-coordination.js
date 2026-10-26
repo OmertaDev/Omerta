@@ -150,7 +150,14 @@ async function setSignal(client, ctx, subjectId, kind, data, expiresAt = null) {
   [ctx.crew.id, subjectId, ctx.accountId, kind, ctx.since, JSON.stringify(data), expiresAt, new Date()]);
 }
 
-export const coordinationBoard = (pool, accountId) => withCrew(pool, accountId, board);
+export async function coordinationBoard(pool, accountId) {
+  try { return await withCrew(pool, accountId, board); }
+  catch (error) {
+    if (!(error instanceof GameError) || error.code !== 'no_crew') throw error;
+    return { available: false, reason: 'no_crew', message: error.message, crew: null,
+      serverTime: new Date().toISOString(), members: [], notes: [], operations: [], signals: [] };
+  }
+}
 export async function writeCoordination(pool, accountId, input, commandKey) {
   validateCoordinationInput(input);
   if (commandKey !== undefined && (typeof commandKey !== 'string' || !/^[!-~]{1,200}$/.test(commandKey))) fail();

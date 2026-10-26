@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { buildServer } from './server-fixture.js';
 import { MENTOR } from '../src/rules.js';
 import { avatarSvg } from '../src/avatar.js';
+import { GameError } from '../src/game.js';
+import { communityBoard } from '../src/ux-community.js';
 
 if (process.env.DATABASE_URL) throw new Error('Community checks require disposable pg-mem.');
 const app = await buildServer(), pool = app.pool, route = '/v1/ux/community';
@@ -11,6 +13,19 @@ const post = (player, body) => call('POST', route, player.token, body);
 const ok = (r) => { assert.equal(r.code, 200, JSON.stringify(r.body)); return r.body; };
 try {
  const boss = await create('Community Boss'), mate = await create('Community Mate'), outside = await create('Community Outside');
+ const empty = ok(await call('GET', route, boss.token));
+ assert.equal(empty.available, false); assert.equal(empty.reason, 'no_crew'); assert.equal(empty.crew, null);
+ assert.ok(Number.isFinite(Date.parse(empty.serverTime))); assert.match(empty.message, /Join a crew/);
+ assert.deepEqual({ entries: empty.entries, documents: empty.documents, members: empty.members, anchors: empty.anchors, destinations: empty.destinations, emotes: empty.emotes, crestOptions: empty.crestOptions, officialFacts: empty.officialFacts },
+  { entries: [], documents: {}, members: [], anchors: { operations: [], plans: [] }, destinations: [], emotes: {}, crestOptions: { shapes: [], symbols: [] }, officialFacts: [] });
+ const noCrewWrite = await post(boss, { type: 'emote', emote: 'hat' }); assert.equal(noCrewWrite.code, 400); assert.equal(noCrewWrite.body.error, 'no_crew');
+ const queries = [], client = await pool.connect();
+ try {
+  const projection = await communityBoard({ connect: async () => ({ query: (sql, values) => { queries.push(String(sql)); return client.query(sql, values); }, release() {} }) }, boss.ch.account_id);
+  assert.equal(projection.available, false);
+ } finally { client.release(); }
+ assert.deepEqual(queries.map((sql) => sql.trim()), ['BEGIN', 'SELECT crew_id FROM crew_members WHERE account_id=$1', 'ROLLBACK'], 'no-Crew GET stops at the membership lookup with no private rows, actor update, or writes');
+ for (const failure of [new GameError('crew_changed', 'Changed crew'), Object.assign(new Error('Database unavailable'), { code: 'no_crew' })]) await assert.rejects(communityBoard({ connect: async () => { throw failure; } }, boss.ch.account_id), (error) => error === failure, 'only exact GameError no_crew becomes an empty projection');
  const joined = new Date(Date.now() - 3600000);
  await pool.query("INSERT INTO crews(id,name,leader_account) VALUES ('community-crew','The Community',$1),('community-other','The Others',$2)", [boss.ch.account_id, outside.ch.account_id]);
  await pool.query("INSERT INTO crew_members(crew_id,account_id,name,joined_at) VALUES ('community-crew',$1,$2,$5),('community-crew',$3,$4,$5),('community-other',$6,$7,$5)", [boss.ch.account_id, boss.ch.name, mate.ch.account_id, mate.ch.name, joined, outside.ch.account_id, outside.ch.name]);
@@ -123,5 +138,5 @@ try {
  assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n), tx, 'community writes move no currency');
  assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM chat_messages')).rows[0].n), chats, 'community features send no automatic messages');
  assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM world_operation_roles WHERE operation_id='community-op'")).rows[0].n), 2, 'community features grant no roles');
- console.log('ux-community: PASS (threads/emotes/topics/comments/manual/pins/spoilers/real consent/crest authority/recorded playback, strict privacy, epochs, TTL, no value or role changes)');
+ console.log('ux-community: PASS (safe no-Crew GET with no private queries/writes, unchanged POST/auth/errors, threads/emotes/topics/comments/manual/pins/spoilers/real consent/crest authority/recorded playback, strict privacy, epochs, TTL, no value or role changes)');
 } finally { await app.close(); }

@@ -12,7 +12,7 @@ const app = await buildServer(), pool = app.pool, errors = [], artifacts = fs.mk
 let browser;
 const api = async (method, url, token, body) => { const r = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body }); assert.equal(r.statusCode, 200, `${method} ${url}: ${r.body}`); return r.json(); };
 const create = async (name) => { const { token } = await api('POST', '/v1/auth/guest'); await api('POST', '/v1/character', token, { name }); return { token, ch: (await pool.query('SELECT * FROM characters WHERE name=$1', [name])).rows[0] }; };
-const openCrew = async (page) => { await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('crew'); await page.locator('#jump-list [data-jump="crew"]').click(); await page.locator('#crew-room').waitFor(); await page.locator('#ux-coordination [data-coord-scope]').waitFor(); };
+const openCrew = async (page, member = true) => { await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('crew'); await page.locator('#jump-list [data-jump="crew"]').click(); await page.locator(member ? '#crew-room' : '#crew-form').waitFor(); await page.locator(member ? '#ux-coordination [data-coord-scope]' : '#ux-coordination [data-coord-join]').waitFor(); };
 const ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));
 const submit = async (page, type, values) => {
   const f = page.locator(`#ux-coordination form[data-coord-form="${type}"]`), details = f.locator('..');
@@ -22,7 +22,7 @@ const submit = async (page, type, values) => {
   await f.locator('button[type=submit]').click(); const reply = await response; assert.equal(reply.status(), 200, await reply.text()); await ready(page);
 };
 try {
-  const boss = await create('Crew UI Boss'), mate = await create('Crew UI Mate');
+  const boss = await create('Crew UI Boss'), mate = await create('Crew UI Mate'), newcomer = await create('Crew UI Newcomer');
   const joined = new Date(Date.now() - 3600000);
   await pool.query("INSERT INTO crews(id,name,leader_account) VALUES ('ux-ui-crew','Canal Planners',$1)", [boss.ch.account_id]);
   await pool.query("INSERT INTO crew_members(crew_id,account_id,name,joined_at) VALUES ('ux-ui-crew',$1,$2,$5),('ux-ui-crew',$3,$4,$5)", [boss.ch.account_id, boss.ch.name, mate.ch.account_id, mate.ch.name, joined]);
@@ -32,17 +32,21 @@ try {
   const ledgerBefore = Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n);
   await app.listen({ port: 0, host: '127.0.0.1' }); const base = `http://127.0.0.1:${app.server.address().port}`;
   browser = await chromium.launch({ executablePath, headless: true });
-  const authenticate = async (player) => {
+  const authenticate = async (player, member = true) => {
     const ctx = await browser.newContext({ viewport: { width: 1440, height: 1050 }, reducedMotion: 'reduce' });
     await ctx.addInitScript((token) => { localStorage.setItem('omerta_token', token); localStorage.setItem('omerta_welcomed', '1'); localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_alltabs', '1'); }, player.token);
     await ctx.addInitScript(() => {
       Object.defineProperty(window, 'createOmertaCoordination', { configurable: true, set(factory) {
-        Object.defineProperty(window, 'createOmertaCoordination', { configurable: true, value: (...args) => { const module = factory(...args); window.coordinationUnderTest = module; return module; } });
+        Object.defineProperty(window, 'createOmertaCoordination', { configurable: true, value: (...args) => {
+          const context = args[0]; window.coordinationContextUnderTest = context; window.coordinationReadsPending = 0;
+          const module = factory({ ...context, read: async (...request) => { coordinationReadsPending++; try { const reply = await context.read(...request); window.coordinationLastRead = { code: reply?.code, crew: reply?.body?.crew?.id, reason: reply?.body?.reason, members: reply?.body?.members, serverTime: reply?.body?.serverTime }; return reply; } finally { coordinationReadsPending--; } } });
+          window.coordinationUnderTest = module; return module;
+        } });
       } });
     });
     const page = await ctx.newPage(); page.on('pageerror', (e) => errors.push(e.message)); page.on('console', (m) => { if (m.type() === 'warning' && /UI .*unavailable/.test(m.text())) errors.push(m.text()); });
     await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
-    await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((n) => n.classList.add('hidden'))); await openCrew(page); return page;
+    await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((n) => n.classList.add('hidden'))); await openCrew(page, member); return page;
   };
   const page = await authenticate(mate);
   assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM chat_messages')).rows[0].n), 0, 'opening the room sends no messages');
@@ -71,7 +75,8 @@ try {
   await helpForm.locator('[name="nextStep"]').fill('Open Quest Journal and review the driver role.');
   await helpForm.locator('[name="details"]').focus();
   await helpForm.locator('[name="details"]').evaluate((field) => field.setSelectionRange(4, 12));
-  const incoming = await api('POST', '/v1/ux/crew-workspace', boss.token, { type: 'plan', title: 'Teammate update while drafting', nextStep: 'Review the shared board.' });
+  await api('POST', '/v1/ux/crew-workspace', boss.token, { type: 'plan', title: 'Teammate update while drafting', nextStep: 'Review the shared board.' });
+  const incoming = await api('GET', '/v1/ux/crew-workspace', mate.token);
   await page.evaluate((board) => coordinationUnderTest.observe('/v1/ux/crew-workspace', board), incoming);
   await page.locator('.ux-coord-note h4').filter({ hasText: 'Teammate update while drafting' }).waitFor();
   assert.equal(await helpForm.locator('[name="title"]').inputValue(), 'Need another driver');
@@ -102,6 +107,47 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2));
   await page.screenshot({ path: path.join(artifacts, 'ux-coordination-mobile.png') });
+  let releaseHeld, reportHeld, heldBody, holdNext = true;
+  const held = new Promise((resolve) => { reportHeld = resolve; }), release = new Promise((resolve) => { releaseHeld = resolve; });
+  await page.route('**/v1/ux/crew-workspace', async (request) => {
+    if (!holdNext || request.request().method() !== 'GET') return request.continue();
+    holdNext = false; const response = await request.fetch(); heldBody = await response.json(); reportHeld();
+    await release; await request.fulfill({ response, json: heldBody });
+  });
+  try {
+    await page.locator('#ux-coordination > [data-coord-retry]').click(); await held;
+    assert.equal(heldBody.crew.id, 'ux-ui-crew'); assert(heldBody.notes.length > 0, 'a real prior-Crew response is pending');
+    await pool.query('DELETE FROM crew_members WHERE account_id=$1', [mate.ch.account_id]);
+    const unavailable = await api('GET', '/v1/ux/crew-workspace', mate.token);
+    assert.equal(unavailable.available, false); assert.equal(unavailable.reason, 'no_crew');
+    await page.evaluate((value) => coordinationUnderTest.observe('/v1/ux/crew-workspace', value), unavailable);
+    await page.locator('#ux-coordination [data-coord-join]').waitFor();
+    assert.match(await page.locator('#ux-coordination').innerText(), /Join a crew/);
+    assert.equal(await page.locator('#ux-coordination form').count(), 0);
+    const completed = page.waitForResponse((response) => response.url().endsWith('/v1/ux/crew-workspace') && response.request().method() === 'GET');
+    releaseHeld(); await completed;
+    await page.waitForFunction(() => coordinationReadsPending === 0);
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await page.evaluate((value) => coordinationUnderTest.observe('/v1/ux/crew-workspace', value), heldBody);
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    assert.equal(await page.locator('#ux-coordination [data-coord-join]').count(), 1, JSON.stringify(await page.evaluate(() => ({ tab: coordinationContextUnderTest.getState().currentTab, character: coordinationContextUnderTest.getState().me?.id, content: document.getElementById('ux-coordination')?.textContent?.slice(0, 400) }))));
+    assert.equal(await page.locator('#ux-coordination form').count(), 0, 'late GET and observe replies cannot restore prior-Crew forms');
+    assert.doesNotMatch(await page.locator('#ux-coordination').innerText(), /Canal evening plan|Operation debrief/);
+    await pool.query("INSERT INTO crew_members(crew_id,account_id,name,joined_at) VALUES ('ux-ui-crew',$1,$2,$3)", [mate.ch.account_id, mate.ch.name, new Date()]);
+    const rejoined = await api('GET', '/v1/crew', mate.token);
+    assert.equal(rejoined.crew.id, 'ux-ui-crew');
+    await page.evaluate(async (value) => { coordinationUnderTest.observe('/v1/crew', value); await coordinationUnderTest.render(); }, rejoined);
+    await page.waitForFunction(() => coordinationReadsPending === 0);
+    try { await page.locator('#ux-coordination [data-coord-scope]').waitFor({ timeout: 5000 }); }
+    catch (failure) { throw new Error(JSON.stringify(await page.evaluate(() => ({ tab: coordinationContextUnderTest.getState().currentTab, character: coordinationContextUnderTest.getState().me?.id, lastRead: coordinationLastRead, pending: coordinationReadsPending, content: document.getElementById('ux-coordination')?.textContent?.slice(0, 500) }))), { cause: failure }); }
+    await page.evaluate((value) => coordinationUnderTest.observe('/v1/ux/crew-workspace', value), heldBody);
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    assert.equal(await page.locator('#ux-coordination .ux-coord-note').count(), 0, 'fresh rejoin loads its new membership epoch and refuses an older same-Crew snapshot');
+  } finally { releaseHeld(); await page.unroute('**/v1/ux/crew-workspace'); }
+  const freshPage = await authenticate(newcomer, false);
+  assert.match(await freshPage.locator('#ux-coordination').innerText(), /Join a crew/);
+  assert.equal(await freshPage.locator('#ux-coordination form').count(), 0, 'a fresh player sees only the honest join-Crew empty state');
+  assert.deepEqual(await freshPage.evaluate(() => ({ code: coordinationLastRead.code, reason: coordinationLastRead.reason })), { code: 200, reason: 'no_crew' });
   assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n), ledgerBefore, 'metadata controls and deliberate chat do not move funds');
   assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM world_operation_roles WHERE operation_id='ux-ui-operation'")).rows[0].n), 1, 'planning controls grant no actual role');
   assert.deepEqual(errors, []);

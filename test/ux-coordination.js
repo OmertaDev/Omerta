@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { buildServer } from './server-fixture.js';
-import { register } from '../src/ux-coordination.js';
+import { register, coordinationBoard } from '../src/ux-coordination.js';
+import { GameError } from '../src/game.js';
 
 if (process.env.DATABASE_URL) throw new Error('Crew planning tests require disposable pg-mem.');
 const app = await buildServer(), pool = app.pool;
@@ -32,7 +33,30 @@ try {
   const balances = (await pool.query('SELECT id,cash,bank FROM characters ORDER BY id')).rows;
   assert.equal((await call('GET', route)).code, 401);
   assert.equal((await call('POST', route, undefined, { type: 'readiness', value: 'ready' })).code, 401);
-  assert.equal((await call('GET', route, stranger.token)).body.error, 'no_crew');
+  const queries = [], connect = pool.connect;
+  let absent;
+  pool.connect = async (...args) => {
+    const client = await connect.apply(pool, args);
+    return new Proxy(client, { get(target, name) {
+      if (name === 'query') return (sql, ...values) => { queries.push(String(sql)); return target.query(sql, ...values); };
+      const value = Reflect.get(target, name); return typeof value === 'function' ? value.bind(target) : value;
+    } });
+  };
+  try { absent = await call('GET', route, stranger.token); }
+  finally { pool.connect = connect; }
+  assert.equal(absent.code, 200);
+  assert.equal(absent.body.available, false); assert.equal(absent.body.reason, 'no_crew'); assert.equal(absent.body.crew, null);
+  assert.match(absent.body.message, /Join a crew/); assert(Number.isFinite(Date.parse(absent.body.serverTime)));
+  for (const field of ['members', 'notes', 'operations', 'signals']) assert.deepEqual(absent.body[field], []);
+  assert(queries.some((sql) => /SELECT crew_id FROM crew_members/.test(sql)), 'the membership check actually executes');
+  assert.deepEqual(queries.filter((sql) => /\b(?:ux_crew_notes|ux_crew_signals|world_operations|characters|crews)\b/i.test(sql)), [], 'no private rows are read without membership');
+  assert.deepEqual(queries.filter((sql) => /\b(?:INSERT|UPDATE|DELETE)\b/i.test(sql)), [], 'the unavailable read performs no writes');
+  const deniedWrite = await call('POST', route, stranger.token, { type: 'readiness', value: 'ready' });
+  assert.equal(deniedWrite.code, 400); assert.equal(deniedWrite.body.error, 'no_crew');
+  for (const failure of [new GameError('crew_changed', 'Current crew changed.'), new Error('Unexpected query failure')]) {
+    const failingPool = { connect: async () => ({ query: async (sql) => { if (/SELECT crew_id/.test(sql)) throw failure; return { rows: [] }; }, release() {} }) };
+    await assert.rejects(() => coordinationBoard(failingPool, 'unavailable-test'), (error) => error === failure, 'all other errors remain refusals');
+  }
   let current = await call('GET', route, mate.token);
   assert.equal(current.code, 200);
   assert.equal(current.body.operations[0].roles.find((r) => r.roleId === 'investigator').filled, true);
