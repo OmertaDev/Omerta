@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 
 // Update sourceRevision only after the bridge implementation is committed. The merge and both
 // reviewed parents are immutable anchors; this generator never discovers or trusts moving refs.
-const sourceRevision = '5edb326fe8a77523359780c322f323d23464861e';
+const sourceRevision = '87733b1db373eef4e6d85be1124051d06dcbd729';
 const mergeRevision = '3f8c9a910e0097cb0ff93063693944a414204258';
 const candidateParentRevision = 'bfb23d1bba7f503f36498c4d82de78aa73256386';
 const mainParentRevision = '442409ae3f70677c0bd475d99f018bec29849e5b';
@@ -18,6 +18,8 @@ const files = Object.freeze([
   'src/server.js',
   'tools/economy-hardening-source-transfer.js',
   'tools/economy-readiness-merge-source-compatibility.js',
+  'tools/enterprise-native.js',
+  'tools/enterprise-native-ux-seal.js',
   'test/classic-interface-source-compatibility.js',
   'test/client.js',
   'test/commerce-release-phase2-migration-catalog.js',
@@ -25,6 +27,7 @@ const files = Object.freeze([
   'test/enterprise-native-guard.js',
   'test/enterprise-release-phase2-migration-catalog.js',
   'test/gates.js',
+  'test/lib/enterprise-ux-native-guard.js',
   'test/phase2-postgres.js',
 ]);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {

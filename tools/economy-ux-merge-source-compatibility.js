@@ -13,6 +13,8 @@ export const ECONOMY_UX_MERGE_FILES = Object.freeze([
   'src/server.js',
   'tools/economy-hardening-source-transfer.js',
   'tools/economy-readiness-merge-source-compatibility.js',
+  'tools/enterprise-native.js',
+  'tools/enterprise-native-ux-seal.js',
   'test/classic-interface-source-compatibility.js',
   'test/client.js',
   'test/commerce-release-phase2-migration-catalog.js',
@@ -20,6 +22,7 @@ export const ECONOMY_UX_MERGE_FILES = Object.freeze([
   'test/enterprise-native-guard.js',
   'test/enterprise-release-phase2-migration-catalog.js',
   'test/gates.js',
+  'test/lib/enterprise-ux-native-guard.js',
   'test/phase2-postgres.js',
 ]);
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
