@@ -41,16 +41,25 @@ function collectCatalogQueries(node) {
 collectCatalogQueries(parse(original.readCommerceReleasePhase2Metadata.toString(), { ecmaVersion: 'latest' }));
 assert.equal(catalogQueries.length, 5); assert.equal(new Set(catalogQueries).size, 5);
 const catalogFields = new Map(catalogQueries.slice(1).map((sql, index) => [sql, ['relations', 'constraints', 'columns', 'indexes'][index]]));
-async function assertNativeCaller(pool, endpoint) {
+async function assertNativeCaller(pool, endpoint, profile, includeNotNull) {
   const address = new URL(endpoint), local = ['35439', '35449'].includes(address.port) && address.username === 'pilot_runner' && !address.password,
     ci = address.port === '5432' && address.username === 'postgres' && address.password === 'pgcheck';
   assert(['postgres:', 'postgresql:'].includes(address.protocol) && address.hostname === '127.0.0.1' && !address.search && !address.hash && (local || ci));
   assert(['/omerta_check', '/omerta_query'].includes(address.pathname));
   const main = String(process.argv[1]).replaceAll('\\', '/');
-  assert(main.endsWith('/test/phase2-postgres.js')); assert(['--definitions', '--lots'].includes(process.argv[2]));
-  assert.equal(process.env.P2_TEST_CHILD, process.argv[2] === '--definitions' ? 'upgrade' : 'lots');
   const settings = (await pool.query('SELECT current_schema() AS schema,current_database() AS database,current_user AS role')).rows[0];
-  assert.match(settings.schema, /^p2_definitions_[a-f0-9]{32}$/); assert.equal(settings.schema, process.env.P2_TEST_SCHEMA);
+  if (main.endsWith('/test/director-migration.js')) {
+    assert.equal(process.argv.length, 2); assert.equal(profile, 'director'); assert.equal(includeNotNull, false);
+    const configured = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
+    assert(configured, 'The original explicit Director fixture endpoint is required');
+    assert.equal(new URL(configured).href, address.href, 'Director uses its original selected fixture endpoint');
+    assert.match(settings.schema, /^director_migration_[a-f0-9]{16}$/);
+  } else {
+    assert(main.endsWith('/test/phase2-postgres.js')); assert(['phase2', 'fresh'].includes(profile)); assert.equal(includeNotNull, true);
+    assert.equal(process.argv[2], profile === 'phase2' ? '--definitions' : '--lots');
+    assert.equal(process.env.P2_TEST_CHILD, profile === 'phase2' ? 'upgrade' : 'lots');
+    assert.match(settings.schema, /^p2_definitions_[a-f0-9]{32}$/); assert.equal(settings.schema, process.env.P2_TEST_SCHEMA);
+  }
   assert.equal(settings.role, address.username); assert.equal('/' + settings.database, address.pathname);
 }
 async function projectedCaller(pool, ux) {
@@ -118,9 +127,11 @@ export function uxNativeProjection(reference) {
     for (const field of fields) assert.deepEqual(uxRows(metadata, field), reference[field], 'Exact independently compiled UX ' + field);
     return Object.fromEntries(fields.map(field => [field, metadata[field].filter(row => !names.has(tableOf(field, row)))]));
   };
-  const expectedConstraints = reference.constraints.map(({ table_name, name, definition }) => ({ table_name, name, definition }));
-  const projectConstraints = rows => {
-    assert.deepEqual(rows.filter(row => names.has(row.table_name)), expectedConstraints, 'Every UX primary key and native NOT NULL constraint remains exact');
+  const constraints = includeNotNull => reference.constraints.filter(row => includeNotNull || row.type !== 'n')
+    .map(({ table_name, name, definition }) => ({ table_name, name, definition }));
+  const projectConstraints = (rows, includeNotNull = true) => {
+    assert.equal(typeof includeNotNull, 'boolean');
+    assert.deepEqual(rows.filter(row => names.has(row.table_name)), constraints(includeNotNull), 'Every UX constraint required by the original native profile remains exact');
     return rows.filter(row => !names.has(row.table_name));
   };
   return Object.freeze({ projectMetadata, projectConstraints });
@@ -149,17 +160,17 @@ function extendCatalog(prior, ux, branches = false) {
   }
   const common = { ...prior, reference, verifyMetadata, uxReference: ux, uxSource: UX_SOURCE.revision, uxCausal: causal };
   if (branches) return Object.freeze({ ...common, current: reference, verify: verifyMetadata });
-  return Object.freeze({ ...common, normalize: rows => prior.normalize(projection.projectConstraints(rows)) });
+  return Object.freeze({ ...common, normalize: rows => prior.normalize(projection.projectConstraints(rows, prior.includeNotNull)) });
 }
 export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {
   const predecessor = qualifyUxSource('schema.sql', input).baselineText;
-  await assertNativeCaller(pool, endpoint);
+  await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);
   const ux = await compileUxReference(pool, endpoint);
   const prior = await original.createCommerceReleasePhase2MigrationCatalog(await projectedCaller(pool, ux), endpoint, predecessor, options);
   return extendCatalog(prior, ux);
 }
 export async function verifyCommerceNativeBranches(pool, endpoint) {
-  await assertNativeCaller(pool, endpoint);
+  await assertNativeCaller(pool, endpoint, 'fresh', true);
   const ux = await compileUxReference(pool, endpoint);
   const prior = await original.verifyCommerceNativeBranches(await projectedCaller(pool, ux), endpoint);
   return extendCatalog(prior, ux, true);
