@@ -7,7 +7,7 @@ import { UX_DIRECTOR_READER_SOURCE as pin, UX_DIRECTOR_READER_SOURCE_FILES, qual
 import { qualifyUxSource } from '../../tools/ux-source-compatibility.js';
 import { qualifyUxNativeReaderSource } from '../../tools/ux-native-reader-source-compatibility.js';
 import { qualifyUxEnterpriseReaderSource } from '../../tools/ux-enterprise-reader-source-compatibility.js';
-const AUTHORED_DIRECTOR_READER_FIX = 'UNSEALED';
+const AUTHORED_DIRECTOR_READER_FIX = 'c6dd6c9730c9111a7af5bb47ce290f605d08269c';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 assert.equal(pin.status, 'SEALED'); assert.equal(pin.revision, AUTHORED_DIRECTOR_READER_FIX);
