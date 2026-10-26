@@ -14,7 +14,11 @@ const actor = 'situation-command-owner', stranger = 'situation-command-outsider'
 const discovery = createCoordinationService({ pool, registry: content.coordinationRegistry,
   enabled: true, knowledgeEnabled: true, sharingEnabled: true, prerequisitesEnabled: true });
 const graph = coordinationGraphs(content.coordinationRegistry)[0];
-const state = { revision: 1, expiresAt: new Date(Date.now() + 120000).toISOString(), visible: true };
+// Boards expire at ten-minute boundaries. Keep this fixture inside a bucket,
+// ahead of database-created rows, so stale-state checks cannot race wall time.
+const realNow = Date.now, commandBucketMs = 10 * 60 * 1000;
+const testNow = (Math.floor(realNow() / commandBucketMs) + 1) * commandBucketMs + commandBucketMs / 2;
+const state = { revision: 1, expiresAt: new Date(testNow + 120000).toISOString(), visible: true };
 let dispatches = 0, planned = 0;
 const director = {
   async planSnapshot(client, accountId, { expectedCharacterId, asOf }) {
@@ -51,6 +55,7 @@ const director = {
 const engine = (adapter = director) => createPlayerCommandEngine({ pool, content, director: adapter,
   enabled: true, knowledgeEnabled: true, sharingEnabled: true });
 try {
+  Date.now = () => testNow;
   await addPlayer(pool, actor); await addPlayer(pool, stranger);
   const disabled = await engine(null).snapshot(actor);
   assert(!Object.hasOwn(disabled, 'situations'));
@@ -105,4 +110,4 @@ try {
   await assert.rejects(() => executeIssued(service, actor, current), { code: 'command_unavailable' });
   assert.equal(dispatches, 1); assert(planned > 0);
   console.log('director-commands: shared knowledge snapshot, authorized cards, opaque issuance, delegated discovery, stale/forged/expired denial, durable replay and succession PASS');
-} finally { await database.cleanup(pool); }
+} finally { Date.now = realNow; await database.cleanup(pool); }
