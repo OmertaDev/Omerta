@@ -729,11 +729,6 @@ export async function buildServer() {
       if (type) ART_FILES.set(name, { body: readFileSync(join(artDir, name)), type });
     }
   } catch { /* no art shipped — the flat fills stand in */ }
-  // Public district previews; commissioned NFT plates are not part of this allowlist.
-  for (const district of ['docks', 'neon', 'foundry', 'brick', 'canal', 'cathedral']) {
-    const name = `nft/deed-${district}.jpg`;
-    try { ART_FILES.set(name, { body: readFileSync(join(artDir, name)), type: 'image/jpeg' }); } catch { /* optional preview */ }
-  }
   // THE MOTION LIBRARY — the generated ambient clips (public/art/hype/*.mp4 + the root hype cuts).
   // Same boot-time ALLOWLIST discipline (a request is only ever a Map lookup — no traversal surface by
   // construction), but videos are ~40MB total so they are NOT loaded into RAM: the Map stores the
@@ -750,6 +745,11 @@ export async function buildServer() {
     for (const name of readdirSync(hypeDir))
       if (mediaType(name)) ART_VIDEOS.set('hype/' + name, { path: join(hypeDir, name), size: statSync(join(hypeDir, name)).size, type: mediaType(name) });
   } catch { /* no motion shipped — the still plates stand in */ }
+  // Public district previews; commissioned NFT plates are not part of this allowlist.
+  for (const district of ['docks', 'neon', 'foundry', 'brick', 'canal', 'cathedral']) {
+    const name = `nft/deed-${district}.jpg`;
+    try { ART_FILES.set(name, { body: readFileSync(join(artDir, name)), type: 'image/jpeg' }); } catch { /* optional preview */ }
+  }
   // RANGE support is not optional for <video>: Chromium's media stack refuses a source it cannot seek
   // (a chunked stream with no Content-Length/Accept-Ranges fires the element's error event and the
   // client's fail-safe removes the clip) — found live by the motion probe, not by reading specs.
