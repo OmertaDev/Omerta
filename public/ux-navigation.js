@@ -64,7 +64,17 @@
       let strip = $('#ux-navigation');
       const tabs = $('#tabs');
       if (!tabs) return null;
-      if (!strip) { strip = document.createElement('nav'); strip.id = 'ux-navigation'; strip.className = 'ux-navigation'; strip.setAttribute('aria-label', 'Your shortcuts'); tabs.before(strip); }
+      let tools = $('#ux-screen-tools');
+      if (!tools) {
+        tools = document.createElement('details'); tools.id = 'ux-screen-tools'; tools.className = 'ux-screen-tools';
+        tools.innerHTML = '<summary>Screen tools</summary><div class="ux-screen-tools-body"><button class="act ux-screen-tools-close" type="button">Close screen tools</button></div>';
+        const mobile = matchMedia('(max-width:760px)'); tools.open = !mobile.matches;
+        mobile.addEventListener('change', () => { tools.open = !mobile.matches; });
+        tools.querySelector('.ux-screen-tools-close').onclick = () => { tools.open = false; tools.querySelector(':scope > summary').focus(); };
+        tools.addEventListener('keydown', event => { if (event.key === 'Escape' && mobile.matches) { tools.open = false; tools.querySelector(':scope > summary').focus(); } });
+        tabs.before(tools);
+      }
+      if (!strip) { strip = document.createElement('nav'); strip.id = 'ux-navigation'; strip.className = 'ux-navigation'; strip.setAttribute('aria-label', 'Your shortcuts'); tools.querySelector('.ux-screen-tools-body').append(strip); }
       return strip;
     }
     function renderStrip() {
@@ -177,7 +187,8 @@
       heading.textContent = primary.closest('.card')?.querySelector('.t,b')?.textContent.trim() || primary.dataset.operationLabel || 'Current job';
       pocket.append(heading);
       const entries = [terms, row].map((node) => { const placeholder = document.createComment('original action position'); node.before(placeholder); pocket.append(node); return { node, placeholder }; });
-      panel.append(pocket); mobilePocket = { pocket, entries };
+      // Keep the first activity first in document and keyboard order while its controls float.
+      panel.prepend(pocket); mobilePocket = { pocket, entries };
       document.body.classList.add('ux-has-action-pocket');
     }
     function resourceIcons() {

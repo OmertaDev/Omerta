@@ -1,4 +1,5 @@
 .ux-navigation{border-block:1px solid var(--line,#39362e);padding:9px 0;margin:10px 0;color:var(--ink,#eee8db)}
+.ux-screen-tools>summary,.ux-screen-tools-close{display:none}.ux-screen-tools-body{min-width:0}
 .ux-kicker{font:700 10px/1.4 var(--mono,monospace);letter-spacing:.12em;color:var(--dim,#b6b1a4)}
 .ux-shortcuts{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.ux-shortcut[aria-current=page]{border-color:var(--gold,#c7af79);color:var(--gold,#c7af79)}
 .ux-shortcuts .act{font-size:11px;min-height:36px}.ux-pin{border-style:dashed!important}.ux-search{margin-left:auto}.ux-search kbd{font:inherit;color:var(--dim,#b6b1a4);margin-left:8px}
@@ -16,5 +17,13 @@
 .ux-navigation button:focus-visible,.ux-context-rules summary:focus-visible,.ux-landing-details summary:focus-visible,.ux-practice summary:focus-visible,.ux-practice button:focus-visible,.ux-interest-tour button:focus-visible{outline:2px solid var(--gold,#c7af79);outline-offset:3px}
 @media(max-width:760px){.ux-shortcuts .act{min-height:40px}.ux-search{margin-left:0}.ux-search kbd{display:none}.ux-readiness .ux-kicker{width:100%}.ux-readiness small{width:100%}.ux-clock{flex:1;justify-content:space-between}.ux-action-pocket{position:fixed;z-index:14;bottom:calc(62px + env(safe-area-inset-bottom));left:8px;right:8px;max-height:28vh;overflow:auto;padding:10px 12px;background:rgba(15,17,15,.98);border:1px solid var(--gold,#c7af79);box-shadow:0 -6px 24px #0009}.ux-action-pocket .operation-action-terms{font-size:11px}.ux-action-pocket .operation-choice-terms{font-size:10.5px;line-height:1.45}.ux-action-pocket .verbrow{margin-top:6px;display:flex;gap:6px}.ux-action-pocket .act{min-height:44px;flex:1}.ux-has-action-pocket #tabbodies{padding-bottom:160px}.ux-interest-tour{padding:14px}.ux-navigation{margin-top:4px}}
 @media(prefers-reduced-motion:reduce){.ux-clock--ready{animation:none;outline:1px solid var(--gold,#c7af79)}}
+@media(max-width:760px){
+  /* Keep header actions reachable in one scrollable row, leaving the selected operation in view. */
+  #top{flex-wrap:nowrap;overflow-x:auto;max-width:100%;box-sizing:border-box;scrollbar-width:thin}#top>*{flex-shrink:0}#top #whoami{margin-left:0;white-space:nowrap}
+  .ux-screen-tools{margin:0 0 8px}.ux-screen-tools>summary{display:list-item;min-height:44px;align-content:center;cursor:pointer;color:var(--neon);font:12px/1.5 var(--mono);padding:10px 0;box-sizing:border-box}
+  .ux-screen-tools>summary:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  .ux-screen-tools-close{display:block;min-height:44px;margin-left:auto}
+  .ux-screen-tools[open]>.ux-screen-tools-body{position:fixed;z-index:40;inset:68px 8px calc(112px + env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain;padding:12px;background:var(--panel,#151512);border:1px solid var(--line2,#72644b);box-shadow:0 12px 40px #000b}
+}
 body[data-celebration=quiet] .ux-clock--ready{animation:none;outline:1px solid var(--gold,#c7af79)}
 @media(forced-colors:active){.ux-clock,.ux-practice,.ux-context-rules,.ux-action-pocket{border-color:CanvasText}.ux-text-button{color:LinkText}.ux-shortcut[aria-current=page]{outline:1px solid Highlight}}

@@ -14,7 +14,7 @@ export async function assertUxNativeDirectorGuards() {
  const directorSchema = 'director_migration_' + 'a'.repeat(16), phase2Schema = 'p2_definitions_' + 'b'.repeat(32);
  const local = 'postgresql://pilot_runner@127.0.0.1:35439/omerta_check';
  const ci = 'postgresql://postgres:pgcheck@127.0.0.1:5432/omerta_check';
- const director = () => ({ argv: ['node', '/workspace/test/director-migration.js'], env: { COORDINATION_TEST_DATABASE_URL: local }, endpoint: local, profile: 'director', includeNotNull: false, settings: { schema: directorSchema, database: 'omerta_check', role: 'pilot_runner' } });
+ const director = () => ({ argv: ['node', '/workspace/test/director-migration.js', '--postgres'], env: { COORDINATION_TEST_DATABASE_URL: local }, endpoint: local, profile: 'director', includeNotNull: false, settings: { schema: directorSchema, database: 'omerta_check', role: 'pilot_runner' } });
  const invoke = async fixture => {
   const check = new Function('assert', 'process', 'return (' + functionText('assertNativeCaller') + ')')(assert, { argv: fixture.argv, env: fixture.env });
   await check({ query: async sql => { assert.equal(sql, 'SELECT current_schema() AS schema,current_database() AS database,current_user AS role'); return { rows: [fixture.settings] }; } }, fixture.endpoint, fixture.profile, fixture.includeNotNull);
@@ -28,6 +28,7 @@ export async function assertUxNativeDirectorGuards() {
  let refusals = 0;
  const reject = async run => { await assert.rejects(run, error => error?.code === 'ERR_ASSERTION'); refusals++; };
  for (const mutate of [
+  fixture => fixture.argv.pop(), fixture => fixture.argv[2] = '--other', fixture => fixture.argv.push('--postgres'),
   fixture => fixture.argv.push('--extra'), fixture => fixture.argv[1] = '/workspace/test/unknown.js',
   fixture => fixture.profile = 'phase2', fixture => fixture.profile = 'fresh', fixture => fixture.includeNotNull = true,
   fixture => delete fixture.env.COORDINATION_TEST_DATABASE_URL,

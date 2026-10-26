@@ -42,4 +42,13 @@ body[data-celebration=quiet] .tick-up,body[data-celebration=quiet] .tick-down,bo
   #operation-latest .ux-receipt { height:100%;box-sizing:border-box; }
 }
 @media(max-width:760px) { .ux-receipt-outcome { font-size:19px; }.ux-feedback-button { min-height:36px; }.ux-feedback-settings { padding:18px; } }
+@media(max-width:760px) and (max-height:850px){
+  /* The latest reward stays visible; its full receipt remains one disclosure away. */
+  #operation-latest .ux-receipt{padding:5px 8px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
+  #operation-latest .ux-receipt>.operation-receipt__head,#operation-latest .ux-receipt>.ux-changes,#operation-latest .ux-receipt>.ux-receipt-trade{display:none}
+  #operation-latest .ux-receipt-outcome{font-size:15px;margin:3px 0;flex:1;min-width:0}
+  #operation-latest .ux-receipt-details{margin:0;flex:0 0 auto;max-width:100%}#operation-latest .ux-receipt-details>summary{min-height:44px;font-size:11px}
+  #operation-latest .ux-receipt-details[open]{flex-basis:100%}
+  #operation-latest .ux-next{margin:0;min-height:44px}#operation-latest .ux-milestone{margin:0;padding:4px 0}
+}
 @media(prefers-reduced-motion:reduce) { .ux-reward-transfer { display:none; }.ux-resource-changed { transition:none; } }

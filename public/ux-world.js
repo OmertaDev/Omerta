@@ -55,7 +55,8 @@
       if (!toolbar) {
         toolbar = document.createElement('section'); toolbar.id = 'ux-workspace-toolbar'; toolbar.className = 'ux-workspace-toolbar'; toolbar.setAttribute('aria-label', 'Reading and workspace preferences');
         toolbar.innerHTML = '<div class="ux-workspace-controls"><label>Reading <select data-ux-density aria-label="Reading density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option><option value="large">Large text</option></select></label><button class="act" type="button" data-ux-focus aria-pressed="false">Focus on this operation</button><details><summary>Arrange workspace panels</summary><p>Drag a panel handle, or use its up/down controls. Gameplay controls keep their original handlers.</p><div id="ux-panel-order"></div></details></div><div id="ux-focus-vitals" role="status"></div><div id="ux-workspace-status" role="status" aria-live="polite"></div>';
-        tabs.before(toolbar);
+        const screenTools = document.querySelector('#ux-screen-tools .ux-screen-tools-body');
+        if (screenTools) screenTools.append(toolbar); else tabs.before(toolbar);
         toolbar.querySelector('[data-ux-density]').onchange = event => saveLayout({ density: event.target.value });
         toolbar.querySelector('[data-ux-focus]').onclick = () => saveLayout({ focus: !layout().focus });
       }

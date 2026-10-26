@@ -140,11 +140,34 @@ try {
   assert.equal(await page.locator('[data-ux-tour-go]').getAttribute('data-ux-tour-go'), 'law');
 
   await page.evaluate(() => { appState.currentTab='streets'; navigation.afterRender(); window.originalAction=document.querySelector('[data-do]'); });
+  await page.evaluate(() => {
+    const competitor = document.createElement('div'); competitor.id = 'mobile-order-competitor'; competitor.className = 'card';
+    competitor.innerHTML = '<b>Another job</b><div class="verbrow"><button class="act" data-do="POST /v1/crimes/another">Another job</button></div>';
+    document.getElementById('tab-streets').append(competitor);
+  });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator('#ux-action-pocket').waitFor();
+  const screenTools = page.locator('#ux-screen-tools'), toolsSummary = screenTools.locator(':scope > summary');
+  assert.equal(await screenTools.evaluate(node => node.open), false, 'Mobile screen tools start collapsed so the operation keeps its place.');
+  await toolsSummary.click(); await page.locator('[data-ux-pin]').waitFor();
+  const toolsBox = await page.locator('.ux-screen-tools-body').evaluate(node => {
+    const box = node.getBoundingClientRect();
+    return { top: box.top, bottom: box.bottom, height: innerHeight, overflow: getComputedStyle(node).overflowY };
+  });
+  assert.ok(toolsBox.top >= 0 && toolsBox.bottom < toolsBox.height && toolsBox.overflow === 'auto', 'Expanded tools fit the phone and scroll within their drawer.');
+  await page.locator('.ux-screen-tools-close').click();
+  assert.equal(await screenTools.evaluate(node => node.open), false);
+  assert.equal(await toolsSummary.evaluate(node => node === document.activeElement), true, 'Touch close returns keyboard focus to the disclosure.');
+  await toolsSummary.press('Enter'); assert.equal(await screenTools.evaluate(node => node.open), true);
+  await page.locator('[data-ux-pin]').focus(); await page.keyboard.press('Escape');
+  assert.equal(await screenTools.evaluate(node => node.open), false);
+  assert.equal(await toolsSummary.evaluate(node => node === document.activeElement), true, 'Escape closes the mobile drawer and restores its focus.');
   await page.evaluate(() => { window.originalPocket = document.getElementById('ux-action-pocket'); navigation.afterRender(); navigation.afterRender(); });
   assert.equal(await page.evaluate(() => document.getElementById('ux-action-pocket') === originalPocket), true, 'Repeated enhancement passes keep the live region and its controls stable.');
   assert.equal(await page.evaluate(() => document.querySelector('#ux-action-pocket [data-do]') === originalAction), true, 'Mobile keeps the original action node and listener.');
+  assert.equal(await page.evaluate(() => document.querySelector('#tab-streets [data-do]') === originalAction), true, 'Floating the first activity preserves its document and keyboard order.');
+  assert.equal(await page.evaluate(() => document.querySelectorAll('#tab-streets [data-do]')[1] === document.querySelector('#mobile-order-competitor [data-do]')), true, 'A later job cannot replace the first choice while its real controls move into the pocket.');
+  await page.locator('#mobile-order-competitor').evaluate(node => node.remove());
   assert.equal(await page.locator('[data-do]').count(), 1, 'There is one actionable copy.');
   assert.equal(await page.locator('#ux-action-pocket #job-terms').count(), 1, 'Actual cost terms travel with the control.');
   assert.equal(await page.locator('#ux-action-pocket .ux-action-pocket-title').innerText(), 'Sample job', 'The reachable control identifies its job while the player scrolls.');

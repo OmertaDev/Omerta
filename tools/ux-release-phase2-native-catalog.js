@@ -49,7 +49,7 @@ async function assertNativeCaller(pool, endpoint, profile, includeNotNull) {
   const main = String(process.argv[1]).replaceAll('\\', '/');
   const settings = (await pool.query('SELECT current_schema() AS schema,current_database() AS database,current_user AS role')).rows[0];
   if (main.endsWith('/test/director-migration.js')) {
-    assert.equal(process.argv.length, 2); assert.equal(profile, 'director'); assert.equal(includeNotNull, false);
+    assert.equal(process.argv.length, 3); assert.equal(process.argv[2], '--postgres'); assert.equal(profile, 'director'); assert.equal(includeNotNull, false);
     const configured = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
     assert(configured, 'The original explicit Director fixture endpoint is required');
     assert.equal(new URL(configured).href, address.href, 'Director uses its original selected fixture endpoint');

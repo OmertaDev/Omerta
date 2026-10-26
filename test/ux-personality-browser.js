@@ -52,7 +52,14 @@ try {
     page.on('console', message => { if (['warning', 'error'].includes(message.type()) && /UI .*unavailable|UI enhancement unavailable|renderSheet failed/.test(message.text())) errors.push(message.text()); });
     await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));
-    await page.locator('select[data-ux-density]').waitFor(); return page;
+    if (mobile) await page.locator('#ux-screen-tools > summary').click();
+    await page.locator('select[data-ux-density]').waitFor();
+    if (mobile) {
+      await page.locator('.ux-screen-tools-close').click();
+      assert.equal(await page.locator('#ux-screen-tools').evaluate(node => node.open), false);
+      assert.equal(await page.evaluate(() => document.activeElement === document.querySelector('#ux-screen-tools > summary')), true, 'closing mobile screen tools returns focus to its disclosure');
+    }
+    return page;
   };
   const page = await open(alice), writes = [], reads = new Set();
   page.on('request', request => { if (!request.url().startsWith(base + '/v1/')) return; const url = new URL(request.url()); if (request.method() === 'GET') reads.add(url.pathname); else if (url.pathname !== '/v1/ux/workspace') writes.push(url.pathname); });

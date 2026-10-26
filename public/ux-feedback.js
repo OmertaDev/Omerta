@@ -49,11 +49,11 @@
       <div class="operation-receipt__head"><b>${escape(receipt.label)}</b><time datetime="${escape(receipt.atIso)}">${escape(receipt.at)}</time></div>
       <div class="ux-receipt-outcome">${escape(hero)}</div>
       ${tone !== 'success' ? `<div class="operation-receipt__summary">${escape(receipt.summary)}</div>` : ''}
-      ${facts.verified ? `<div class="ux-changes">${changes}</div>${trades}` : `<div class="d">${escape(receipt.delta)}</div>`}
+      ${facts.verified ? `<div class="ux-changes">${changes}</div>${trades}` : ''}
+      ${tone !== 'success' ? `<div class="operation-receipt__delta">${escape(receipt.delta)}</div>` : ''}
       ${facts.milestones.length ? `<div class="ux-milestone">${facts.milestones.map(item => escape(item.label)).join(' · ')}</div>` : ''}
       ${recovery ? `<div class="operation-receipt__recovery"><span>${escape(recovery.text)}</span>${recovery.run ? `<button class="act" data-operation-retry="${receipt.id}">${escape(recovery.label || 'try again')}</button>` : ''}${recovery.tab ? `<button class="act" data-operation-tab="${escape(recovery.tab)}">${escape(recovery.label || 'show me')}</button>` : ''}</div>` : ''}
-      ${receipt.next && tone === 'success' ? `<button class="act ux-next" data-operation-tab="${escape(receipt.next.tab)}">${escape(receipt.next.label)} →</button>` : ''}
-      ${tone === 'success' ? `<details class="ux-receipt-details"><summary>Full result and ledger</summary><div class="operation-receipt__summary">${escape(receipt.summary)}</div>${receipt.flavour ? `<p class="ux-receipt-flavour">${escape(receipt.flavour)}</p>` : ''}${receipt.cashBreakdown ? `<div class="ux-receipt-books">${escape(receipt.cashBreakdown)}</div>` : ''}</details>` : ''}
+      ${tone === 'success' ? `<details class="ux-receipt-details"><summary>Full result and ledger</summary><div class="operation-receipt__summary">${escape(receipt.summary)}</div><div class="operation-receipt__delta">${escape(receipt.delta)}</div>${receipt.flavour ? `<p class="ux-receipt-flavour">${escape(receipt.flavour)}</p>` : ''}${receipt.cashBreakdown ? `<div class="ux-receipt-books">${escape(receipt.cashBreakdown)}</div>` : ''}${receipt.next ? `<button class="act ux-next" data-operation-tab="${escape(receipt.next.tab)}">${escape(receipt.next.label)} →</button>` : ''}</details>` : ''}
     </article>`;
   }
   function create({ getState, navigate, notify, getOrigin, syncAudio, celebrate }) {
