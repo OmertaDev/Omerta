@@ -22,8 +22,8 @@ liquidity or gameplay-economic configuration is changed.
   private metadata, exact-character avatar consent and unchanged gameplay state.
 - Actual RLS: all seven populated UX tables deny SELECT/INSERT/UPDATE/DELETE to an
   explicitly granted NOSUPERUSER/NOBYPASSRLS role, while owner APIs remain usable.
-- Tactics projections use the actual current model: no invented street-job cooldown;
-  two consecutive real crime API actions match the current published quote.
+- The tactics proof in this section belongs only to the historical c624 candidate
+  and is superseded by the integrated economy-hardening note below.
 - Browser coverage includes all150 improvements plus the current main navigation,
   Fieldwork, desktop/mobile, private synchronization and successor boundaries.
 - CI retains the existing release gates and adds UX browser and PostgreSQL proofs.
@@ -31,6 +31,14 @@ liquidity or gameplay-economic configuration is changed.
   exact main predecessor: 53 Git inverse hunks, 32 positive and 314 refusal probes.
   Independent review and 12 additional tamper probes passed; older pins are retained.
   This source proof grants no runtime, native, contract or deployment clearance.
+
+## Integrated economy hardening
+
+Commit a6248ef475ab7fea693fee16611d99a2223abf0b introduced the authoritative
+shared street-action clock after this historical UX candidate. Current release
+evidence must show tactics exposing that clock and a second independent crime
+request inside its window being rejected without another reward. The c624 native
+proof above does not transfer to that later runtime behavior.
 
 ## Release harness qualification
 

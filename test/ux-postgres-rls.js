@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import pg from 'pg';
+import { PACING } from '../src/rules.js';
 
 const configured = process.env.UX_TEST_DATABASE_URL;
 assert(configured, 'Set UX_TEST_DATABASE_URL to the disposable loopback PostgreSQL test cluster.');
@@ -101,22 +102,23 @@ try {
  assert.equal((await call('POST', route, mate, { type: 'consent', portraitId: portrait.id, accept: true }, 400)).error, 'community_unavailable');
  assert.equal((await call('GET', `${route}/portraits/${portrait.id}`, leader, undefined, 400)).error, 'community_portrait_consent');
  console.log('Native UX Community: concurrent manual/crest revisions have one winner, leader/current-membership gates hold, and avatar consent belongs to the exact character and membership epoch; no metadata value or role movement.');
- // The newer core has no shared street clock. Exercise the actual projection and two actual
- // recorded crime actions; keep the existing odds and resource rules and control only the die.
- assert.equal((await pool.query("SELECT COUNT(*) n FROM information_schema.columns WHERE table_schema='public' AND table_name='characters' AND column_name='street_action_at'")).rows[0].n, '0');
+ // Exercise the actual projection and two actual recorded crime requests; keep the existing
+ // odds and resource rules and control only the die. The second request must hit the shared clock.
+ assert.equal((await pool.query("SELECT COUNT(*) n FROM information_schema.columns WHERE table_schema='public' AND table_name='characters' AND column_name='street_action_at'")).rows[0].n, '1');
  await pool.query('UPDATE characters SET cunning=1000,speed=1000,nerve=100,respect=10000 WHERE id=$1', [leader.ch.id]);
  const tactics = (await call('GET', '/v1/ux/tactics', leader)).tactics;
- for (const job of tactics.jobs) for (const quote of [...job.actual, ...job.proposed]) { assert.equal(Object.hasOwn(quote, 'cooldown'), false); assert.ok(quote.blockers.every(text => !/street clock/i.test(text))); assert.ok(Number.isFinite(quote.probability)); assert.ok(Number.isFinite(quote.jailSeconds)); }
+ for (const job of tactics.jobs) for (const quote of [...job.actual, ...job.proposed]) { assert.equal(quote.cooldown.group, 'street'); assert.equal(quote.cooldown.seconds, PACING.STREET_ACTION_CD_MS / 1000); assert.ok(quote.blockers.every(text => !/street clock/i.test(text))); assert.ok(Number.isFinite(quote.probability)); assert.ok(Number.isFinite(quote.jailSeconds)); }
  const move = tactics.jobs.flatMap(job => job.actual).find(quote => quote.approach === 'standard' && quote.blockers.length === 0);
  assert.ok(move, 'The actual tactics API must issue an eligible crime.');
  const random = Math.random;
  try {
   Math.random = () => 0.05;
-  const first = await call('POST', move.path, leader, move.body), second = await call('POST', move.path, leader, move.body);
-  assert.equal(first.success, true); assert.equal(second.success, true, 'Consecutive current-core jobs succeed without an invented shared cooldown.');
+  const first = await call('POST', move.path, leader, move.body), second = await call('POST', move.path, leader, move.body, 400);
+  assert.equal(first.success, true); assert.equal(second.error, 'cooldown', 'The shared street clock rejects a second independent request.');
+  assert.ok(second.cooldownSeconds > 0 && second.cooldownSeconds <= PACING.STREET_ACTION_CD_MS / 1000);
   assert.equal(first.decisionContext.probability, move.probability);
  } finally { Math.random = random; }
- console.log('Native UX Tactics: actual API quotes have finite odds/jail fields and no invented street clock; two consecutive recorded crime actions follow the unchanged live rules.');
+ console.log('Native UX Tactics: actual API quotes expose the shared street clock with finite odds/jail fields; a second recorded crime request is rejected as anti-spam.');
 } finally {
  await app?.close();
  if (app?.pool && !app.pool.ended) await app.pool.end();
