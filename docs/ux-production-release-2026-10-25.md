@@ -40,9 +40,13 @@ UX envelope. The shared Enterprise reader mapping restores immutable
 79b1c6dbfaa4f7046ae8e62da32d4e3a2d312c58 source to c6247976 exactly.
 All 36 source consumers and seven catalog tests passed with that mapping.
 The native input declaration binds authored source
-4b328d3d8af08d769a4f4670eca5eca15d0bb622: 1,686 ordinary inputs,
+0e8b0d447f7d536731aa7fb7bdb3f0382a3c8aa6: 1,686 ordinary inputs,
 20 replacements and 47 additions.
 The original 16 workloads and limits remain.
+Crew planning uses the distinct `/v1/ux/crew-workspace` GET/POST namespace;
+the original core coordination API and its route contract remain intact.
+Separate UX API/browser/PostgreSQL tests are qualified by their CI checkout and
+jobs rather than being described as part of the native 16-workload input scope.
 
 Static PostgreSQL preparation passed with 7,384 statements and 173 interpolated
 queries, retaining the original ceiling. Physical hashes and strict admission
