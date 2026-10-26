@@ -716,7 +716,7 @@
 | [docs/ux-50-implementation.md](../../docs/ux-50-implementation.md) | documentation | 77 | 2026-10-25 |
 | [docs/ux-51-100-implementation.md](../../docs/ux-51-100-implementation.md) | documentation | 89 | 2026-10-25 |
 | [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 75 | 2026-10-26 |
-| [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 18 | 2026-10-25 |
+| [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 20 | 2026-10-26 |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2744 | 2026-10-16 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
@@ -817,5 +817,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-25 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-26 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
