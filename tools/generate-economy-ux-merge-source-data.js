@@ -5,20 +5,24 @@ import { execFileSync } from 'node:child_process';
 
 // Update sourceRevision only after the bridge implementation is committed. The merge and both
 // reviewed parents are immutable anchors; this generator never discovers or trusts moving refs.
-const sourceRevision = 'f2d64d40ef7be101fda1664b872b71346bba2a96';
+const sourceRevision = 'a1d54cbc5d397fe1df315289e81173eee07c2758';
 const mergeRevision = '3f8c9a910e0097cb0ff93063693944a414204258';
 const candidateParentRevision = 'bfb23d1bba7f503f36498c4d82de78aa73256386';
 const mainParentRevision = '442409ae3f70677c0bd475d99f018bec29849e5b';
 const files = Object.freeze([
   '.github/workflows/ci.yml',
+  '.github/workflows/economy-hardening.yml',
   'package.json',
   'public/index.html',
   'schema.sql',
+  'src/actioncooldown.js',
   'src/db.js',
   'src/economy.js',
   'src/game.js',
   'src/growth.js',
+  'src/kitchen.js',
   'src/payroll.js',
+  'src/rules.tail.js',
   'src/server.js',
   'src/socialproof.js',
   'src/ux-tactics.js',
@@ -28,20 +32,25 @@ const files = Object.freeze([
   'tools/economy-release-tail-source-transfer.js',
   'tools/enterprise-native.js',
   'tools/enterprise-native-ux-seal.js',
+  'tools/sim.js',
+  'test/action-cooldowns.js',
   'test/agent-referral-cash.js',
   'test/classic-interface-source-compatibility.js',
   'test/client.js',
   'test/commerce-release-phase2-migration-catalog.js',
   'test/director-migration.js',
+  'test/economy-balance.js',
   'test/economy-hardening-source-compatibility.js',
   'test/enterprise-native-guard.js',
   'test/enterprise-release-phase2-migration-catalog.js',
   'test/gates.js',
   'test/growth.js',
+  'test/levers.js',
   'test/lib/enterprise-ux-native-guard.js',
   'test/migrate.js',
   'test/payroll.js',
   'test/phase2-postgres.js',
+  'test/ux-postgres-rls.js',
   'test/ux-tactics-browser.js',
   'test/ux-tactics.js',
 ]);
