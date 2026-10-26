@@ -1,7 +1,6 @@
 // Exact current UX extension. Original Commerce/Deed native sources and assertions remain intact.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { types as utilTypes } from 'node:util';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
@@ -12,7 +11,6 @@ export * from './commerce-deed-release-phase2-native-catalog.js';
 
 export const UX_NATIVE_TABLES = Object.freeze(['ux_community_documents', 'ux_community_entries', 'ux_community_portrait_consents', 'ux_crew_notes', 'ux_crew_signals', 'ux_mentor_subjects', 'ux_workspaces']);
 const names = new Set(UX_NATIVE_TABLES), fields = ['relations', 'columns', 'constraints', 'indexes'];
-const nativeArraySpecies = Object.freeze(Object.getOwnPropertyDescriptor(Array, Symbol.species));
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
 const currentSchema = git('show', UX_SOURCE.revision + ':schema.sql');
 const predecessorSchema = qualifyUxSource('schema.sql', currentSchema).baselineText;
@@ -67,18 +65,7 @@ async function assertNativeCaller(pool, endpoint, profile, includeNotNull) {
 async function projectedCaller(pool, ux) {
   const projection = uxNativeProjection(ux);
   const context = (await pool.query(catalogQueries[0])).rows[0];
-  const attestationQueries = new Map(catalogQueries.slice(1, 4).map((sql, index) => {
-    const where = 'WHERE n.nspname=current_schema()';
-    assert.equal(sql.split(where).length, 2, 'Only the unique immutable catalog namespace predicate');
-    return [sql, sql.replace(where, where + ' AND ' + (index === 0 ? 'c' : 't') + '.relname IN ($1,$2,$3,$4,$5,$6,$7)')];
-  }));
-  const attestation = { query: (sql, values) => {
-    const narrowed = attestationQueries.get(sql);
-    if (!narrowed) return pool.query(sql, values);
-    assert.equal(values, undefined, 'The original closed catalog reads have no caller bindings');
-    return pool.query(narrowed, UX_NATIVE_TABLES);
-  } };
-  const verify = async () => { projection.projectMetadata(await original.readCommerceReleasePhase2Metadata(attestation)); await assertUxNativeSecurity(pool); };
+  const verify = async () => { projection.projectMetadata(await original.readCommerceReleasePhase2Metadata(pool)); await assertUxNativeSecurity(pool); };
   await verify();
   return { query: async (sql, values) => {
     if (sql === catalogQueries[0]) await verify();
@@ -136,78 +123,9 @@ async function compileUxReference(pool, endpoint) {
 export function uxNativeProjection(reference) {
   reference = freeze(structuredClone(reference));
   assert.deepEqual(reference.relations.map(row => row.name), UX_NATIVE_TABLES);
-  const caches = new Map();
-  for (const field of fields) caches.set(field, new WeakMap());
-  const filter = Object.getOwnPropertyDescriptor(Array.prototype, 'filter')?.value;
-  const slice = Object.getOwnPropertyDescriptor(Array.prototype, 'slice')?.value;
-  const nativeMethods = typeof filter === 'function' && typeof slice === 'function' && !utilTypes.isProxy(filter) && !utilTypes.isProxy(slice)
-    && Function.prototype.toString.call(filter) === 'function filter() { [native code] }'
-    && Function.prototype.toString.call(slice) === 'function slice() { [native code] }';
-  const nativeSpecies = typeof nativeArraySpecies?.get === 'function' && !utilTypes.isProxy(nativeArraySpecies.get)
-    && Function.prototype.toString.call(nativeArraySpecies.get) === 'function get [Symbol.species]() { [native code] }'
-    && nativeArraySpecies.set === undefined && nativeArraySpecies.enumerable === false && nativeArraySpecies.configurable === true;
-  const sameSpecies = () => {
-    const descriptor = Object.getOwnPropertyDescriptor(Array, Symbol.species);
-    return nativeSpecies && descriptor?.get === nativeArraySpecies.get && descriptor.set === undefined
-      && descriptor.enumerable === false && descriptor.configurable === true;
-  };
-  const plainIntrinsics = () => nativeMethods
-    && sameSpecies()
-    && Object.getOwnPropertyDescriptor(Array.prototype, 'filter')?.value === filter
-    && Object.getOwnPropertyDescriptor(Array.prototype, 'slice')?.value === slice
-    && Object.getPrototypeOf(Array.prototype) === Object.prototype && Object.getPrototypeOf(Object.prototype) === null
-    && !Object.hasOwn(Array.prototype, Symbol.toStringTag) && !Object.hasOwn(Object.prototype, Symbol.toStringTag)
-    && Object.getOwnPropertyDescriptor(Array.prototype, 'constructor')?.value === Array
-    && Object.getOwnPropertyDescriptor(Object.prototype, 'constructor')?.value === Object;
-  const frozenData = (value, seen = new Set()) => {
-    if (value === null || ['undefined', 'string', 'number', 'boolean', 'bigint'].includes(typeof value)) return true;
-    if (typeof value !== 'object' || utilTypes.isProxy(value) || !Object.isFrozen(value)) return false;
-    const prototype = Object.getPrototypeOf(value);
-    if (Array.isArray(value)) {
-      if (prototype !== Array.prototype) return false;
-      for (let index = 0; index < value.length; index++) if (!Object.hasOwn(value, index)) return false;
-    } else if (prototype !== Object.prototype && prototype !== null) return false;
-    if (seen.has(value)) return true;
-    seen.add(value);
-    return Reflect.ownKeys(value).every(key => {
-      const descriptor = Object.getOwnPropertyDescriptor(value, key);
-      return typeof key === 'string' && Object.hasOwn(descriptor, 'value') && frozenData(descriptor.value, seen);
-    });
-  };
-  const remember = (field, rows) => {
-    if (!plainIntrinsics() || !Array.isArray(rows) || utilTypes.isProxy(rows) || !Object.isFrozen(rows)) return;
-    const key = field === 'relations' ? 'name' : 'table_name';
-    for (let index = 0; index < rows.length; index++) {
-      const item = Object.getOwnPropertyDescriptor(rows, String(index));
-      if (!item || !Object.hasOwn(item, 'value')) return;
-      const row = item.value;
-      if (!row || typeof row !== 'object' || utilTypes.isProxy(row) || Array.isArray(row)) return;
-      const identity = Object.getOwnPropertyDescriptor(row, key);
-      if (!identity || !Object.hasOwn(identity, 'value') || typeof identity.value !== 'string') return;
-    }
-    if (!frozenData(rows)) return;
-    try {
-      // Cloning restores native internal-slot kinds even when their prototype was changed.
-      // Unsupported clone kinds and cyclic/non-data graphs take the original path.
-      if (!frozenData(freeze(structuredClone(rows)))) return;
-    } catch { return; }
-    caches.get(field).set(rows, { rows: null });
-  };
-  const cached = (field, rows) => plainIntrinsics() ? caches.get(field).get(rows) : undefined;
   const projectMetadata = metadata => {
-    for (const field of fields) {
-      const rows = metadata[field];
-      if (!cached(field, rows)) {
-        assert.deepEqual(rows.filter(row => names.has(tableOf(field, row))), reference[field], 'Exact independently compiled UX ' + field);
-        remember(field, rows);
-      }
-    }
-    return Object.fromEntries(fields.map(field => {
-      const rows = metadata[field], entry = cached(field, rows);
-      if (!entry) return [field, rows.filter(row => !names.has(tableOf(field, row)))];
-      if (!entry.rows) entry.rows = Object.freeze(rows.filter(row => !names.has(tableOf(field, row))));
-      return [field, entry.rows.slice()];
-    }));
+    for (const field of fields) assert.deepEqual(uxRows(metadata, field), reference[field], 'Exact independently compiled UX ' + field);
+    return Object.fromEntries(fields.map(field => [field, metadata[field].filter(row => !names.has(tableOf(field, row)))]));
   };
   const constraints = includeNotNull => reference.constraints.filter(row => includeNotNull || row.type !== 'n')
     .map(({ table_name, name, definition }) => ({ table_name, name, definition }));
