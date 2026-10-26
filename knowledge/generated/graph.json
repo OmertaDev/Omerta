@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+  "sourceRevision": "623034f0e78053c3dbc69d23d1514efcbef765a9",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16965,
-    "edges": 67762,
+    "nodes": 16983,
+    "edges": 67837,
     "byNodeType": {
-      "Artifact": 7000,
+      "Artifact": 7006,
       "Command": 299,
-      "Commit": 4697,
+      "Commit": 4709,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -64,17 +64,17 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5581,
-      "CHANGED": 25816,
-      "CONTAINS": 7021,
+      "BELONGS_TO": 5587,
+      "CHANGED": 25859,
+      "CONTAINS": 7027,
       "DECLARES": 299,
       "DEFINED_IN": 1765,
       "DEPENDS_ON": 69,
       "EXECUTES": 1184,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4697,
+      "HAS_COMMIT": 4709,
       "IMPLEMENTS": 124,
-      "IMPORTS": 7987,
+      "IMPORTS": 7995,
       "INHERITS": 45,
       "REFERENCES": 3869,
       "REPRESENTS": 2589,
@@ -7753,18 +7753,18 @@
       "extension": ".yml",
       "bytes": 71308,
       "lines": 1430,
-      "version": "9047ad1d20147696",
+      "version": "b8b29988097753b8",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "9047ad1d20147696"
+          "version": "b8b29988097753b8"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T14:17:57.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -140317,20 +140317,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 457708,
+      "bytes": 457725,
       "lines": 5169,
-      "version": "20a17b79adf48b91",
+      "version": "a541717ec9b9665e",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "20a17b79adf48b91"
+          "version": "a541717ec9b9665e"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T15:23:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "e3fac975f358543c57dda5109dddcf585602e56d"
     },
     {
       "key": "Artifact:test/gateway-api.js",
@@ -142053,9 +142053,9 @@
           "version": "f99522c5ef4439a2"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:26:36.000Z",
+      "lastChangedAt": "2026-10-26T14:57:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
+      "lastChangedCommit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
     },
     {
       "key": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
@@ -142065,20 +142065,20 @@
       "path": "test/lib/ux-native-reader-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 5540,
-      "lines": 53,
-      "version": "0c304e9eadfe22bb",
+      "bytes": 12945,
+      "lines": 118,
+      "version": "c0781863a1b9ac06",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/ux-native-reader-source-compatibility.js",
           "line": 1,
-          "version": "0c304e9eadfe22bb"
+          "version": "c0781863a1b9ac06"
         }
       ],
-      "lastChangedAt": "2026-10-25T22:37:19.000Z",
+      "lastChangedAt": "2026-10-26T15:03:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc603242fedfc4ad8007533ebf93aac9ef83f336"
+      "lastChangedCommit": "4b749bd9d346ee6febbf30c057116f55cda6b53a"
     },
     {
       "key": "Artifact:test/lib/ux-personal-fixture.js",
@@ -144641,20 +144641,20 @@
       "path": "test/phase2-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 89169,
+      "bytes": 89199,
       "lines": 973,
-      "version": "5303524eb71d9b89",
+      "version": "631ba1633d6b6ddc",
       "text": true,
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "5303524eb71d9b89"
+          "version": "631ba1633d6b6ddc"
         }
       ],
-      "lastChangedAt": "2026-10-25T22:35:05.000Z",
+      "lastChangedAt": "2026-10-26T14:57:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c1720a694799e743c6f70bc3069dba2bbecae08e"
+      "lastChangedCommit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
     },
     {
       "key": "Artifact:test/phase2-review-regressions.js",
@@ -152691,20 +152691,20 @@
       "path": "test/ux-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8847,
-      "lines": 90,
-      "version": "d35eed51fc7c607c",
+      "bytes": 21455,
+      "lines": 188,
+      "version": "47f05f12c22d9530",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-source-compatibility.js",
           "line": 1,
-          "version": "d35eed51fc7c607c"
+          "version": "47f05f12c22d9530"
         }
       ],
-      "lastChangedAt": "2026-10-26T03:44:42.000Z",
+      "lastChangedAt": "2026-10-26T15:34:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6dd6c9730c9111a7af5bb47ce290f605d08269c"
+      "lastChangedCommit": "7e88bbcfd7d58351689e5edcde7ec05861cf177e"
     },
     {
       "key": "Artifact:test/ux-story-browser.js",
@@ -155612,20 +155612,20 @@
       "path": "tools/enterprise-native-ux-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 405316,
-      "lines": 10809,
-      "version": "7951ec039b5143de",
+      "bytes": 408136,
+      "lines": 10881,
+      "version": "a3a4f22c49aa054c",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "7951ec039b5143de"
+          "version": "a3a4f22c49aa054c"
         }
       ],
-      "lastChangedAt": "2026-10-26T09:49:10.000Z",
+      "lastChangedAt": "2026-10-26T15:37:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0"
+      "lastChangedCommit": "623034f0e78053c3dbc69d23d1514efcbef765a9"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -155658,20 +155658,20 @@
       "path": "tools/enterprise-native-ux.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 8608,
+      "bytes": 8737,
       "lines": 74,
-      "version": "a115373ad78bd4a5",
+      "version": "8e01ae3e782750bb",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux.js",
           "line": 1,
-          "version": "a115373ad78bd4a5"
+          "version": "8e01ae3e782750bb"
         }
       ],
-      "lastChangedAt": "2026-10-26T03:44:42.000Z",
+      "lastChangedAt": "2026-10-26T15:23:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6dd6c9730c9111a7af5bb47ce290f605d08269c"
+      "lastChangedCommit": "e3fac975f358543c57dda5109dddcf585602e56d"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -160623,20 +160623,20 @@
       "path": "tools/ux-director-reader-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 4397,
-      "lines": 50,
-      "version": "b1ccd7f3792a769c",
+      "bytes": 9933,
+      "lines": 97,
+      "version": "391778caacdc3b0b",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-director-reader-source-compatibility.js",
           "line": 1,
-          "version": "b1ccd7f3792a769c"
+          "version": "391778caacdc3b0b"
         }
       ],
-      "lastChangedAt": "2026-10-26T03:44:42.000Z",
+      "lastChangedAt": "2026-10-26T15:23:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6dd6c9730c9111a7af5bb47ce290f605d08269c"
+      "lastChangedCommit": "e3fac975f358543c57dda5109dddcf585602e56d"
     },
     {
       "key": "Artifact:tools/ux-director-reader-source-data.js",
@@ -160738,20 +160738,20 @@
       "path": "tools/ux-native-reader-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 4049,
-      "lines": 47,
-      "version": "dba5535e588957b0",
+      "bytes": 8435,
+      "lines": 93,
+      "version": "daf283647ad93776",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-native-reader-source-compatibility.js",
           "line": 1,
-          "version": "dba5535e588957b0"
+          "version": "daf283647ad93776"
         }
       ],
-      "lastChangedAt": "2026-10-25T22:35:05.000Z",
+      "lastChangedAt": "2026-10-26T14:57:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c1720a694799e743c6f70bc3069dba2bbecae08e"
+      "lastChangedCommit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
     },
     {
       "key": "Artifact:tools/ux-native-reader-source-data.js",
@@ -160800,6 +160800,52 @@
       "lastChangedCommit": "c1720a694799e743c6f70bc3069dba2bbecae08e"
     },
     {
+      "key": "Artifact:tools/ux-phase2-upgrade-bound-source-data.js",
+      "type": "Artifact",
+      "id": "tools/ux-phase2-upgrade-bound-source-data.js",
+      "label": "ux-phase2-upgrade-bound-source-data.js",
+      "path": "tools/ux-phase2-upgrade-bound-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 3043,
+      "lines": 37,
+      "version": "57b85ff188a214b9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-phase2-upgrade-bound-source-data.js",
+          "line": 1,
+          "version": "57b85ff188a214b9"
+        }
+      ],
+      "lastChangedAt": "2026-10-26T15:03:54.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4b749bd9d346ee6febbf30c057116f55cda6b53a"
+    },
+    {
+      "key": "Artifact:tools/ux-phase2-upgrade-bound-source-seal.js",
+      "type": "Artifact",
+      "id": "tools/ux-phase2-upgrade-bound-source-seal.js",
+      "label": "ux-phase2-upgrade-bound-source-seal.js",
+      "path": "tools/ux-phase2-upgrade-bound-source-seal.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 3914,
+      "lines": 29,
+      "version": "bef26cdeb315ebc4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-phase2-upgrade-bound-source-seal.js",
+          "line": 1,
+          "version": "bef26cdeb315ebc4"
+        }
+      ],
+      "lastChangedAt": "2026-10-26T14:57:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+    },
+    {
       "key": "Artifact:tools/ux-release-phase2-native-catalog.js",
       "type": "Artifact",
       "id": "tools/ux-release-phase2-native-catalog.js",
@@ -160818,9 +160864,9 @@
           "version": "8560708c6794a156"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:26:36.000Z",
+      "lastChangedAt": "2026-10-26T14:57:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
+      "lastChangedCommit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
     },
     {
       "key": "Artifact:tools/ux-source-compatibility.js",
@@ -160830,20 +160876,20 @@
       "path": "tools/ux-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 4413,
-      "lines": 55,
-      "version": "4d0a63b0490f84ef",
+      "bytes": 8554,
+      "lines": 101,
+      "version": "6f1925f426a7943f",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-source-compatibility.js",
           "line": 1,
-          "version": "4d0a63b0490f84ef"
+          "version": "6f1925f426a7943f"
         }
       ],
-      "lastChangedAt": "2026-10-26T03:44:42.000Z",
+      "lastChangedAt": "2026-10-26T14:25:37.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6dd6c9730c9111a7af5bb47ce290f605d08269c"
+      "lastChangedCommit": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7"
     },
     {
       "key": "Artifact:tools/ux-source-data.js",
@@ -160890,6 +160936,98 @@
       "lastChangedAt": "2026-10-25T20:53:46.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "8b42ea9924c8c14f8c153683b24e9b9be791fe9e"
+    },
+    {
+      "key": "Artifact:tools/ux-suites-gate-source-data.js",
+      "type": "Artifact",
+      "id": "tools/ux-suites-gate-source-data.js",
+      "label": "ux-suites-gate-source-data.js",
+      "path": "tools/ux-suites-gate-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 3840,
+      "lines": 37,
+      "version": "bff4d1f1d14470b7",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-suites-gate-source-data.js",
+          "line": 1,
+          "version": "bff4d1f1d14470b7"
+        }
+      ],
+      "lastChangedAt": "2026-10-26T15:34:47.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "7e88bbcfd7d58351689e5edcde7ec05861cf177e"
+    },
+    {
+      "key": "Artifact:tools/ux-suites-gate-source-seal.js",
+      "type": "Artifact",
+      "id": "tools/ux-suites-gate-source-seal.js",
+      "label": "ux-suites-gate-source-seal.js",
+      "path": "tools/ux-suites-gate-source-seal.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5137,
+      "lines": 29,
+      "version": "ac93c7c18d228c8b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-suites-gate-source-seal.js",
+          "line": 1,
+          "version": "ac93c7c18d228c8b"
+        }
+      ],
+      "lastChangedAt": "2026-10-26T15:23:21.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e3fac975f358543c57dda5109dddcf585602e56d"
+    },
+    {
+      "key": "Artifact:tools/ux-workflow-bound-source-data.js",
+      "type": "Artifact",
+      "id": "tools/ux-workflow-bound-source-data.js",
+      "label": "ux-workflow-bound-source-data.js",
+      "path": "tools/ux-workflow-bound-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 2466,
+      "lines": 37,
+      "version": "e0f61887e0da4e8c",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-workflow-bound-source-data.js",
+          "line": 1,
+          "version": "e0f61887e0da4e8c"
+        }
+      ],
+      "lastChangedAt": "2026-10-26T14:25:37.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7"
+    },
+    {
+      "key": "Artifact:tools/ux-workflow-bound-source-seal.js",
+      "type": "Artifact",
+      "id": "tools/ux-workflow-bound-source-seal.js",
+      "label": "ux-workflow-bound-source-seal.js",
+      "path": "tools/ux-workflow-bound-source-seal.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 3739,
+      "lines": 29,
+      "version": "4c03928f43ee9d9a",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-workflow-bound-source-seal.js",
+          "line": 1,
+          "version": "4c03928f43ee9d9a"
+        }
+      ],
+      "lastChangedAt": "2026-10-26T14:17:57.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
     },
     {
       "key": "Artifact:tools/validate-fee-splits.js",
@@ -178243,6 +178381,22 @@
       ]
     },
     {
+      "key": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "type": "Commit",
+      "id": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "label": "test(ux): allow exhaustive upgrade proof to complete",
+      "title": "test(ux): allow exhaustive upgrade proof to complete",
+      "date": "2026-10-26T14:57:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "provenance": [
+        {
+          "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+        }
+      ]
+    },
+    {
       "key": "Commit:2ced14c11913bb82a4753fd5004979293bfd5eb2",
       "type": "Commit",
       "id": "2ced14c11913bb82a4753fd5004979293bfd5eb2",
@@ -187555,6 +187709,22 @@
       ]
     },
     {
+      "key": "Commit:4b749bd9d346ee6febbf30c057116f55cda6b53a",
+      "type": "Commit",
+      "id": "4b749bd9d346ee6febbf30c057116f55cda6b53a",
+      "label": "fix(test): seal upgrade-only Phase2 source hang bound",
+      "title": "fix(test): seal upgrade-only Phase2 source hang bound",
+      "date": "2026-10-26T15:03:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4b749bd9d346ee6febbf30c057116f55cda6b53a",
+      "provenance": [
+        {
+          "commit": "4b749bd9d346ee6febbf30c057116f55cda6b53a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4b749bd9d346ee6febbf30c057116f55cda6b53a"
+        }
+      ]
+    },
+    {
       "key": "Commit:4b7802bb7d3f9bc6266b9c9a5b3814349b697334",
       "type": "Commit",
       "id": "4b7802bb7d3f9bc6266b9c9a5b3814349b697334",
@@ -193919,6 +194089,22 @@
         {
           "commit": "621f2ce7214a6c59349b030a38bc20241d81b95f",
           "url": "https://github.com/OmertaDev/Omerta/commit/621f2ce7214a6c59349b030a38bc20241d81b95f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:623034f0e78053c3dbc69d23d1514efcbef765a9",
+      "type": "Commit",
+      "id": "623034f0e78053c3dbc69d23d1514efcbef765a9",
+      "label": "Seal final UX native inputs after runtime gate qualification",
+      "title": "Seal final UX native inputs after runtime gate qualification",
+      "date": "2026-10-26T15:37:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/623034f0e78053c3dbc69d23d1514efcbef765a9",
+      "provenance": [
+        {
+          "commit": "623034f0e78053c3dbc69d23d1514efcbef765a9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/623034f0e78053c3dbc69d23d1514efcbef765a9"
         }
       ]
     },
@@ -202931,6 +203117,22 @@
       ]
     },
     {
+      "key": "Commit:7e88bbcfd7d58351689e5edcde7ec05861cf177e",
+      "type": "Commit",
+      "id": "7e88bbcfd7d58351689e5edcde7ec05861cf177e",
+      "label": "fix(test): seal suites gate150 source successor",
+      "title": "fix(test): seal suites gate150 source successor",
+      "date": "2026-10-26T15:34:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7e88bbcfd7d58351689e5edcde7ec05861cf177e",
+      "provenance": [
+        {
+          "commit": "7e88bbcfd7d58351689e5edcde7ec05861cf177e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7e88bbcfd7d58351689e5edcde7ec05861cf177e"
+        }
+      ]
+    },
+    {
       "key": "Commit:7e96981ce947d117e86c6d8e3a966ef5a9065595",
       "type": "Commit",
       "id": "7e96981ce947d117e86c6d8e3a966ef5a9065595",
@@ -211315,6 +211517,22 @@
       ]
     },
     {
+      "key": "Commit:9b20b7d48cfc2969b0c79b9317deee1d4f422e97",
+      "type": "Commit",
+      "id": "9b20b7d48cfc2969b0c79b9317deee1d4f422e97",
+      "label": "test(ux): seal bounded exhaustive upgrade inputs",
+      "title": "test(ux): seal bounded exhaustive upgrade inputs",
+      "date": "2026-10-26T15:06:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9b20b7d48cfc2969b0c79b9317deee1d4f422e97",
+      "provenance": [
+        {
+          "commit": "9b20b7d48cfc2969b0c79b9317deee1d4f422e97",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9b20b7d48cfc2969b0c79b9317deee1d4f422e97"
+        }
+      ]
+    },
+    {
       "key": "Commit:9b3b5db9c56fe959d125717426d5c47a16907bd7",
       "type": "Commit",
       "id": "9b3b5db9c56fe959d125717426d5c47a16907bd7",
@@ -216847,6 +217065,22 @@
         {
           "commit": "ae4211a3316541b344b743182a2da3489f08b5fa",
           "url": "https://github.com/OmertaDev/Omerta/commit/ae4211a3316541b344b743182a2da3489f08b5fa"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ae8f8688960d5165b94a5de1c29d6306ad9f0c9c",
+      "type": "Commit",
+      "id": "ae8f8688960d5165b94a5de1c29d6306ad9f0c9c",
+      "label": "test(ux): seal immutable catalog and bounded CI inputs",
+      "title": "test(ux): seal immutable catalog and bounded CI inputs",
+      "date": "2026-10-26T14:30:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ae8f8688960d5165b94a5de1c29d6306ad9f0c9c",
+      "provenance": [
+        {
+          "commit": "ae8f8688960d5165b94a5de1c29d6306ad9f0c9c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ae8f8688960d5165b94a5de1c29d6306ad9f0c9c"
         }
       ]
     },
@@ -224003,6 +224237,22 @@
       ]
     },
     {
+      "key": "Commit:c727d652c11780c699164bca321c872abdb8852a",
+      "type": "Commit",
+      "id": "c727d652c11780c699164bca321c872abdb8852a",
+      "label": "Seal current UX native inputs after catalog scoping",
+      "title": "Seal current UX native inputs after catalog scoping",
+      "date": "2026-10-26T11:39:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c727d652c11780c699164bca321c872abdb8852a",
+      "provenance": [
+        {
+          "commit": "c727d652c11780c699164bca321c872abdb8852a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c727d652c11780c699164bca321c872abdb8852a"
+        }
+      ]
+    },
+    {
       "key": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
       "type": "Commit",
       "id": "c72c7f6a0f19552b4b25622516eb074cb638bcb1",
@@ -224655,6 +224905,22 @@
         {
           "commit": "c9b2aa1d388f7574a85cccb7b7d1481b3b837fed",
           "url": "https://github.com/OmertaDev/Omerta/commit/c9b2aa1d388f7574a85cccb7b7d1481b3b837fed"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "type": "Commit",
+      "id": "c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "label": "chore(knowledge): refresh mobile fixture release artifacts",
+      "title": "chore(knowledge): refresh mobile fixture release artifacts",
+      "date": "2026-10-26T09:54:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "provenance": [
+        {
+          "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c9c3ae5e414138206b2aaa4a243a222b781f674c"
         }
       ]
     },
@@ -231987,6 +232253,22 @@
       ]
     },
     {
+      "key": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "type": "Commit",
+      "id": "e3fac975f358543c57dda5109dddcf585602e56d",
+      "label": "test(ux): require the bounded complete CI lifecycle",
+      "title": "test(ux): require the bounded complete CI lifecycle",
+      "date": "2026-10-26T15:23:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e3fac975f358543c57dda5109dddcf585602e56d",
+      "provenance": [
+        {
+          "commit": "e3fac975f358543c57dda5109dddcf585602e56d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e3fac975f358543c57dda5109dddcf585602e56d"
+        }
+      ]
+    },
+    {
       "key": "Commit:e404de3d4de133009da8670480110d9b488edb02",
       "type": "Commit",
       "id": "e404de3d4de133009da8670480110d9b488edb02",
@@ -232291,6 +232573,22 @@
       ]
     },
     {
+      "key": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "type": "Commit",
+      "id": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "label": "test(ux): reuse immutable projections and bound full release CI",
+      "title": "test(ux): reuse immutable projections and bound full release CI",
+      "date": "2026-10-26T14:17:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "provenance": [
+        {
+          "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+        }
+      ]
+    },
+    {
       "key": "Commit:e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
       "type": "Commit",
       "id": "e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
@@ -232575,6 +232873,22 @@
         {
           "commit": "e61115cb986ba6d82560db7eeb4b1df761321360",
           "url": "https://github.com/OmertaDev/Omerta/commit/e61115cb986ba6d82560db7eeb4b1df761321360"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+      "type": "Commit",
+      "id": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+      "label": "fix(ci): seal finite workflow parent bound source envelope",
+      "title": "fix(ci): seal finite workflow parent bound source envelope",
+      "date": "2026-10-26T14:25:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+      "provenance": [
+        {
+          "commit": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e62c8f016024501af7a2a87e028cdc2a9d2a0be7"
         }
       ]
     },
@@ -237503,6 +237817,22 @@
         {
           "commit": "f6f45aec3f028a5a8e053f2878ed3143f2be3f88",
           "url": "https://github.com/OmertaDev/Omerta/commit/f6f45aec3f028a5a8e053f2878ed3143f2be3f88"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f6ff825f65f8dc686f24ad16629b733eca604996",
+      "type": "Commit",
+      "id": "f6ff825f65f8dc686f24ad16629b733eca604996",
+      "label": "Reduce redundant UX catalog reads in native fixtures",
+      "title": "Reduce redundant UX catalog reads in native fixtures",
+      "date": "2026-10-26T11:38:18.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f6ff825f65f8dc686f24ad16629b733eca604996",
+      "provenance": [
+        {
+          "commit": "f6ff825f65f8dc686f24ad16629b733eca604996",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f6ff825f65f8dc686f24ad16629b733eca604996"
         }
       ]
     },
@@ -268886,6 +269216,9 @@
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
+          "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
+        },
+        {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
         },
         {
@@ -271232,6 +271565,9 @@
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
         },
         {
+          "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
+        },
+        {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
         },
         {
@@ -273576,6 +273912,9 @@
         },
         {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
+        },
+        {
+          "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
         },
         {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
@@ -276567,6 +276906,9 @@
         },
         {
           "commit": "c8d8fdb693bb62b559f1e40382b0d09ebceabad1"
+        },
+        {
+          "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
         },
         {
           "commit": "c9ce41006bc728155f3262cd3fb6b86c8480428e"
@@ -291344,12 +291686,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6e9015ab4cc5eb6372a68070341c0f4e5abc67d0",
+      "revision": "623034f0e78053c3dbc69d23d1514efcbef765a9",
       "currentBranch": "codex/ux-production-release",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7000,
+      "currentArtifactCount": 7006,
       "provenance": [
         {
           "file": "README.md",
@@ -333947,12 +334289,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 5169,
-      "version": "20a17b79adf48b91",
+      "version": "a541717ec9b9665e",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "20a17b79adf48b91"
+          "version": "a541717ec9b9665e"
         }
       ]
     },
@@ -335071,13 +335413,13 @@
       "type": "TestSuite",
       "id": "test/lib/ux-native-reader-source-compatibility.js",
       "label": "test/lib/ux-native-reader-source-compatibility.js",
-      "lines": 53,
-      "version": "0c304e9eadfe22bb",
+      "lines": 118,
+      "version": "c0781863a1b9ac06",
       "provenance": [
         {
           "file": "test/lib/ux-native-reader-source-compatibility.js",
           "line": 1,
-          "version": "0c304e9eadfe22bb"
+          "version": "c0781863a1b9ac06"
         }
       ]
     },
@@ -336752,12 +337094,12 @@
       "id": "test/phase2-postgres.js",
       "label": "test/phase2-postgres.js",
       "lines": 973,
-      "version": "5303524eb71d9b89",
+      "version": "631ba1633d6b6ddc",
       "provenance": [
         {
           "file": "test/phase2-postgres.js",
           "line": 1,
-          "version": "5303524eb71d9b89"
+          "version": "631ba1633d6b6ddc"
         }
       ]
     },
@@ -342001,13 +342343,13 @@
       "type": "TestSuite",
       "id": "test/ux-source-compatibility.js",
       "label": "test/ux-source-compatibility.js",
-      "lines": 90,
-      "version": "d35eed51fc7c607c",
+      "lines": 188,
+      "version": "47f05f12c22d9530",
       "provenance": [
         {
           "file": "test/ux-source-compatibility.js",
           "line": 1,
-          "version": "d35eed51fc7c607c"
+          "version": "47f05f12c22d9530"
         }
       ]
     },
@@ -342737,12 +343079,12 @@
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
       "lines": 1430,
-      "version": "9047ad1d20147696",
+      "version": "b8b29988097753b8",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "9047ad1d20147696"
+          "version": "b8b29988097753b8"
         }
       ]
     },
@@ -383487,6 +383829,24 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-phase2-upgrade-bound-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-phase2-upgrade-bound-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-phase2-upgrade-bound-source-seal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-phase2-upgrade-bound-source-seal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/ux-release-phase2-native-catalog.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -383518,6 +383878,42 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/ux-source-seal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-suites-gate-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-suites-gate-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-suites-gate-source-seal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-suites-gate-source-seal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-workflow-bound-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-workflow-bound-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-workflow-bound-source-seal.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-workflow-bound-source-seal.js",
         "line": 1
       }
     },
@@ -424790,6 +425186,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:test/lib/ux-native-director-guard.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:test/phase2-postgres.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:tools/ux-native-reader-source-compatibility.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:tools/ux-phase2-upgrade-bound-source-data.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:tools/ux-phase2-upgrade-bound-source-seal.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "to": "Artifact:tools/ux-release-phase2-native-catalog.js",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2ced14c11913bb82a4753fd5004979293bfd5eb2",
       "to": "Artifact:AUDIT-red-team-four.md",
       "provenance": {
@@ -446726,6 +447194,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4b749bd9d346ee6febbf30c057116f55cda6b53a",
+      "to": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
+      "provenance": {
+        "commit": "4b749bd9d346ee6febbf30c057116f55cda6b53a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4b749bd9d346ee6febbf30c057116f55cda6b53a",
+      "to": "Artifact:tools/ux-phase2-upgrade-bound-source-data.js",
+      "provenance": {
+        "commit": "4b749bd9d346ee6febbf30c057116f55cda6b53a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4b7802bb7d3f9bc6266b9c9a5b3814349b697334",
       "to": "Artifact:tools/rc1-source-pair.js",
       "provenance": {
@@ -461850,6 +462334,14 @@
       "to": "Artifact:test/equipmentmaintenance.js",
       "provenance": {
         "commit": "621f2ce7214a6c59349b030a38bc20241d81b95f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:623034f0e78053c3dbc69d23d1514efcbef765a9",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "623034f0e78053c3dbc69d23d1514efcbef765a9"
       }
     },
     {
@@ -487062,6 +487554,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7e88bbcfd7d58351689e5edcde7ec05861cf177e",
+      "to": "Artifact:test/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "7e88bbcfd7d58351689e5edcde7ec05861cf177e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7e88bbcfd7d58351689e5edcde7ec05861cf177e",
+      "to": "Artifact:tools/ux-suites-gate-source-data.js",
+      "provenance": {
+        "commit": "7e88bbcfd7d58351689e5edcde7ec05861cf177e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7e96981ce947d117e86c6d8e3a966ef5a9065595",
       "to": "Artifact:test/next-five-graph-helpers.js",
       "provenance": {
@@ -506190,6 +506698,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9b20b7d48cfc2969b0c79b9317deee1d4f422e97",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "9b20b7d48cfc2969b0c79b9317deee1d4f422e97"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9b3b5db9c56fe959d125717426d5c47a16907bd7",
       "to": "Artifact:test/rc1-worker-restart-equivalence.js",
       "provenance": {
@@ -518938,6 +519454,14 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "ae4211a3316541b344b743182a2da3489f08b5fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ae8f8688960d5165b94a5de1c29d6306ad9f0c9c",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "ae8f8688960d5165b94a5de1c29d6306ad9f0c9c"
       }
     },
     {
@@ -553574,6 +554098,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c727d652c11780c699164bca321c872abdb8852a",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "c727d652c11780c699164bca321c872abdb8852a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
       "to": "Artifact:.gitattributes",
       "provenance": {
@@ -555002,6 +555534,38 @@
       "to": "Artifact:tools/rc1-ci-envelope.js",
       "provenance": {
         "commit": "c9b2aa1d388f7574a85cccb7b7d1481b3b837fed"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
       }
     },
     {
@@ -575862,6 +576426,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "to": "Artifact:test/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "to": "Artifact:tools/ux-director-reader-source-compatibility.js",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "to": "Artifact:tools/ux-suites-gate-source-data.js",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "to": "Artifact:tools/ux-suites-gate-source-seal.js",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e404de3d4de133009da8670480110d9b488edb02",
       "to": "Artifact:test/continuous-city-source-compatibility.js",
       "provenance": {
@@ -578150,6 +578770,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:test/lib/ux-native-director-guard.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:test/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:tools/ux-release-phase2-native-catalog.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:tools/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:tools/ux-workflow-bound-source-data.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "to": "Artifact:tools/ux-workflow-bound-source-seal.js",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
       "to": "Artifact:omerta-contracts/test/SettlementGasPoolInvariant.t.sol",
       "provenance": {
@@ -578698,6 +579390,30 @@
       "to": "Artifact:test/commercialpremises.js",
       "provenance": {
         "commit": "e61115cb986ba6d82560db7eeb4b1df761321360"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+      "to": "Artifact:test/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+      "to": "Artifact:tools/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+      "to": "Artifact:tools/ux-workflow-bound-source-data.js",
+      "provenance": {
+        "commit": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7"
       }
     },
     {
@@ -592970,6 +593686,30 @@
       "to": "Artifact:package.json",
       "provenance": {
         "commit": "f6f45aec3f028a5a8e053f2878ed3143f2be3f88"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6ff825f65f8dc686f24ad16629b733eca604996",
+      "to": "Artifact:test/lib/ux-native-director-guard.js",
+      "provenance": {
+        "commit": "f6ff825f65f8dc686f24ad16629b733eca604996"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6ff825f65f8dc686f24ad16629b733eca604996",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "f6ff825f65f8dc686f24ad16629b733eca604996"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f6ff825f65f8dc686f24ad16629b733eca604996",
+      "to": "Artifact:tools/ux-release-phase2-native-catalog.js",
+      "provenance": {
+        "commit": "f6ff825f65f8dc686f24ad16629b733eca604996"
       }
     },
     {
@@ -642536,6 +643276,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-phase2-upgrade-bound-source-data.js",
+      "provenance": {
+        "file": "tools/ux-phase2-upgrade-bound-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-phase2-upgrade-bound-source-seal.js",
+      "provenance": {
+        "file": "tools/ux-phase2-upgrade-bound-source-seal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/ux-release-phase2-native-catalog.js",
       "provenance": {
         "file": "tools/ux-release-phase2-native-catalog.js",
@@ -642566,6 +643324,42 @@
       "to": "Artifact:tools/ux-source-seal.js",
       "provenance": {
         "file": "tools/ux-source-seal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-suites-gate-source-data.js",
+      "provenance": {
+        "file": "tools/ux-suites-gate-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-suites-gate-source-seal.js",
+      "provenance": {
+        "file": "tools/ux-suites-gate-source-seal.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-workflow-bound-source-data.js",
+      "provenance": {
+        "file": "tools/ux-workflow-bound-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-workflow-bound-source-seal.js",
+      "provenance": {
+        "file": "tools/ux-workflow-bound-source-seal.js",
         "line": 1
       }
     },
@@ -708304,6 +709098,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca",
+      "provenance": {
+        "commit": "2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2ced14c11913bb82a4753fd5004979293bfd5eb2",
       "provenance": {
         "commit": "2ced14c11913bb82a4753fd5004979293bfd5eb2"
@@ -712960,6 +713762,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4b749bd9d346ee6febbf30c057116f55cda6b53a",
+      "provenance": {
+        "commit": "4b749bd9d346ee6febbf30c057116f55cda6b53a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4b7802bb7d3f9bc6266b9c9a5b3814349b697334",
       "provenance": {
         "commit": "4b7802bb7d3f9bc6266b9c9a5b3814349b697334"
@@ -716139,6 +716949,14 @@
       "to": "Commit:621f2ce7214a6c59349b030a38bc20241d81b95f",
       "provenance": {
         "commit": "621f2ce7214a6c59349b030a38bc20241d81b95f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:623034f0e78053c3dbc69d23d1514efcbef765a9",
+      "provenance": {
+        "commit": "623034f0e78053c3dbc69d23d1514efcbef765a9"
       }
     },
     {
@@ -720648,6 +721466,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7e88bbcfd7d58351689e5edcde7ec05861cf177e",
+      "provenance": {
+        "commit": "7e88bbcfd7d58351689e5edcde7ec05861cf177e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7e96981ce947d117e86c6d8e3a966ef5a9065595",
       "provenance": {
         "commit": "7e96981ce947d117e86c6d8e3a966ef5a9065595"
@@ -724840,6 +725666,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9b20b7d48cfc2969b0c79b9317deee1d4f422e97",
+      "provenance": {
+        "commit": "9b20b7d48cfc2969b0c79b9317deee1d4f422e97"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9b3b5db9c56fe959d125717426d5c47a16907bd7",
       "provenance": {
         "commit": "9b3b5db9c56fe959d125717426d5c47a16907bd7"
@@ -727603,6 +728437,14 @@
       "to": "Commit:ae4211a3316541b344b743182a2da3489f08b5fa",
       "provenance": {
         "commit": "ae4211a3316541b344b743182a2da3489f08b5fa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ae8f8688960d5165b94a5de1c29d6306ad9f0c9c",
+      "provenance": {
+        "commit": "ae8f8688960d5165b94a5de1c29d6306ad9f0c9c"
       }
     },
     {
@@ -731184,6 +732026,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c727d652c11780c699164bca321c872abdb8852a",
+      "provenance": {
+        "commit": "c727d652c11780c699164bca321c872abdb8852a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c72c7f6a0f19552b4b25622516eb074cb638bcb1",
       "provenance": {
         "commit": "c72c7f6a0f19552b4b25622516eb074cb638bcb1"
@@ -731507,6 +732357,14 @@
       "to": "Commit:c9b2aa1d388f7574a85cccb7b7d1481b3b837fed",
       "provenance": {
         "commit": "c9b2aa1d388f7574a85cccb7b7d1481b3b837fed"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c9c3ae5e414138206b2aaa4a243a222b781f674c",
+      "provenance": {
+        "commit": "c9c3ae5e414138206b2aaa4a243a222b781f674c"
       }
     },
     {
@@ -735176,6 +736034,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e3fac975f358543c57dda5109dddcf585602e56d",
+      "provenance": {
+        "commit": "e3fac975f358543c57dda5109dddcf585602e56d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e404de3d4de133009da8670480110d9b488edb02",
       "provenance": {
         "commit": "e404de3d4de133009da8670480110d9b488edb02"
@@ -735328,6 +736194,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e4fd869c2adeb2ad2cc5a2d741a5851965b88422",
+      "provenance": {
+        "commit": "e4fd869c2adeb2ad2cc5a2d741a5851965b88422"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e512592f37f15bbf2319213c3bd1fe3c18d0c75d",
       "provenance": {
         "commit": "e512592f37f15bbf2319213c3bd1fe3c18d0c75d"
@@ -735467,6 +736341,14 @@
       "to": "Commit:e61115cb986ba6d82560db7eeb4b1df761321360",
       "provenance": {
         "commit": "e61115cb986ba6d82560db7eeb4b1df761321360"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e62c8f016024501af7a2a87e028cdc2a9d2a0be7",
+      "provenance": {
+        "commit": "e62c8f016024501af7a2a87e028cdc2a9d2a0be7"
       }
     },
     {
@@ -737931,6 +738813,14 @@
       "to": "Commit:f6f45aec3f028a5a8e053f2878ed3143f2be3f88",
       "provenance": {
         "commit": "f6f45aec3f028a5a8e053f2878ed3143f2be3f88"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f6ff825f65f8dc686f24ad16629b733eca604996",
+      "provenance": {
+        "commit": "f6ff825f65f8dc686f24ad16629b733eca604996"
       }
     },
     {
@@ -801219,7 +802109,7 @@
       "to": "Artifact:test/lib/ux-director-reader-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 89
+        "line": 90
       }
     },
     {
@@ -801228,7 +802118,7 @@
       "to": "Artifact:test/lib/ux-enterprise-reader-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 88
+        "line": 89
       }
     },
     {
@@ -801237,7 +802127,7 @@
       "to": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 87
+        "line": 88
       }
     },
     {
@@ -801246,7 +802136,7 @@
       "to": "Artifact:test/ux-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 62
+        "line": 63
       }
     },
     {
@@ -801255,7 +802145,7 @@
       "to": "Artifact:tools/action-readiness-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -801264,7 +802154,16 @@
       "to": "Artifact:tools/classic-interface-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 8
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-source-compatibility.js",
+      "to": "Artifact:tools/ux-director-reader-source-compatibility.js",
+      "provenance": {
+        "file": "test/ux-source-compatibility.js",
+        "line": 7
       }
     },
     {
@@ -801282,7 +802181,7 @@
       "to": "Artifact:tools/ux-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 66
+        "line": 67
       }
     },
     {
@@ -801291,7 +802190,7 @@
       "to": "Artifact:tools/ux-source-compatibility.js",
       "provenance": {
         "file": "test/ux-source-compatibility.js",
-        "line": 71
+        "line": 72
       }
     },
     {
@@ -811484,6 +812383,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/ux-director-reader-source-compatibility.js",
+      "to": "Artifact:tools/ux-source-data.js",
+      "provenance": {
+        "file": "tools/ux-director-reader-source-compatibility.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/ux-director-reader-source-compatibility.js",
+      "to": "Artifact:tools/ux-suites-gate-source-data.js",
+      "provenance": {
+        "file": "tools/ux-director-reader-source-compatibility.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/ux-director-reader-source-data.js",
       "to": "ExternalDependency:pg",
       "provenance": {
@@ -811529,6 +812446,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/ux-native-reader-source-compatibility.js",
+      "to": "Artifact:tools/ux-phase2-upgrade-bound-source-data.js",
+      "provenance": {
+        "file": "tools/ux-native-reader-source-compatibility.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/ux-native-reader-source-data.js",
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
@@ -811551,6 +812477,15 @@
       "to": "Artifact:tools/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-native-reader-source-seal.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/ux-phase2-upgrade-bound-source-seal.js",
+      "to": "Artifact:tools/ux-native-reader-source-data.js",
+      "provenance": {
+        "file": "tools/ux-phase2-upgrade-bound-source-seal.js",
         "line": 6
       }
     },
@@ -811605,7 +812540,7 @@
       "to": "Artifact:tools/ux-director-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -811614,7 +812549,7 @@
       "to": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -811623,7 +812558,7 @@
       "to": "Artifact:tools/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -811637,10 +812572,37 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/ux-source-compatibility.js",
+      "to": "Artifact:tools/ux-workflow-bound-source-data.js",
+      "provenance": {
+        "file": "tools/ux-source-compatibility.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/ux-source-seal.js",
       "to": "Artifact:tools/ux-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-seal.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/ux-suites-gate-source-seal.js",
+      "to": "Artifact:tools/ux-source-data.js",
+      "provenance": {
+        "file": "tools/ux-suites-gate-source-seal.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/ux-workflow-bound-source-seal.js",
+      "to": "Artifact:tools/ux-source-data.js",
+      "provenance": {
+        "file": "tools/ux-workflow-bound-source-seal.js",
         "line": 6
       }
     },
