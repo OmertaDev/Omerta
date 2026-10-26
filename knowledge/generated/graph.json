@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2aa1bc706279061a67ab6801899b723a2d050aaa",
+  "sourceRevision": "c070404ee1e3b6f5bd22e5aa31e1096f08169388",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16958,
-    "edges": 67725,
+    "nodes": 16962,
+    "edges": 67751,
     "byNodeType": {
       "Artifact": 7000,
       "Command": 299,
-      "Commit": 4690,
+      "Commit": 4694,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5581,
-      "CHANGED": 25786,
+      "CHANGED": 25808,
       "CONTAINS": 7021,
       "DECLARES": 299,
       "DEFINED_IN": 1765,
       "DEPENDS_ON": 69,
       "EXECUTES": 1184,
       "HANDLED_BY": 933,
-      "HAS_COMMIT": 4690,
+      "HAS_COMMIT": 4694,
       "IMPLEMENTS": 124,
       "IMPORTS": 7987,
       "INHERITS": 45,
@@ -117892,20 +117892,20 @@
       "path": "public/ux-feedback.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 4453,
-      "lines": 46,
-      "version": "af1304410a2bd1f4",
+      "bytes": 5445,
+      "lines": 56,
+      "version": "b0616ac5b7a652b7",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-feedback.css",
           "line": 1,
-          "version": "af1304410a2bd1f4"
+          "version": "b0616ac5b7a652b7"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:31:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
     },
     {
       "key": "Artifact:public/ux-feedback.js",
@@ -117915,20 +117915,20 @@
       "path": "public/ux-feedback.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 13215,
+      "bytes": 13315,
       "lines": 160,
-      "version": "840f8866e51a7a56",
+      "version": "002d872bc67a440a",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-feedback.js",
           "line": 1,
-          "version": "840f8866e51a7a56"
+          "version": "002d872bc67a440a"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:26:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
     },
     {
       "key": "Artifact:public/ux-feel.css",
@@ -118076,20 +118076,20 @@
       "path": "public/ux-navigation.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 5994,
-      "lines": 21,
-      "version": "854a2e55f536252b",
+      "bytes": 7185,
+      "lines": 31,
+      "version": "b47aa884a0bc7d55",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-navigation.css",
           "line": 1,
-          "version": "854a2e55f536252b"
+          "version": "b47aa884a0bc7d55"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:31:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
     },
     {
       "key": "Artifact:public/ux-navigation.js",
@@ -118099,20 +118099,20 @@
       "path": "public/ux-navigation.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 28658,
-      "lines": 328,
-      "version": "e52d7133f1511e92",
+      "bytes": 29818,
+      "lines": 340,
+      "version": "f0a6d8103c77fceb",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-navigation.js",
           "line": 1,
-          "version": "e52d7133f1511e92"
+          "version": "f0a6d8103c77fceb"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:31:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
     },
     {
       "key": "Artifact:public/ux-progression.css",
@@ -118398,20 +118398,20 @@
       "path": "public/ux-world.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 23806,
-      "lines": 221,
-      "version": "cec54be7662f6057",
+      "bytes": 23951,
+      "lines": 222,
+      "version": "fd3b021e1c8a0e8e",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-world.js",
           "line": 1,
-          "version": "cec54be7662f6057"
+          "version": "fd3b021e1c8a0e8e"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:26:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
     },
     {
       "key": "Artifact:public/vendor/phaser.js",
@@ -142042,20 +142042,20 @@
       "path": "test/lib/ux-native-director-guard.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7471,
-      "lines": 72,
-      "version": "81ac548822bff753",
+      "bytes": 7602,
+      "lines": 73,
+      "version": "f99522c5ef4439a2",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/ux-native-director-guard.js",
           "line": 1,
-          "version": "81ac548822bff753"
+          "version": "f99522c5ef4439a2"
         }
       ],
-      "lastChangedAt": "2026-10-26T03:44:42.000Z",
+      "lastChangedAt": "2026-10-26T08:26:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6dd6c9730c9111a7af5bb47ce290f605d08269c"
+      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
     },
     {
       "key": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
@@ -152392,20 +152392,20 @@
       "path": "test/ux-experience-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11410,
-      "lines": 150,
-      "version": "332b2e5f1a7d91ea",
+      "bytes": 12162,
+      "lines": 158,
+      "version": "f25c7830366c9c94",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "332b2e5f1a7d91ea"
+          "version": "f25c7830366c9c94"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:31:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
     },
     {
       "key": "Artifact:test/ux-feedback.js",
@@ -152553,20 +152553,20 @@
       "path": "test/ux-navigation-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 16940,
-      "lines": 186,
-      "version": "8254b34bf235a6c5",
+      "bytes": 19651,
+      "lines": 210,
+      "version": "1ba15c34023f7c8b",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-navigation-browser.js",
           "line": 1,
-          "version": "8254b34bf235a6c5"
+          "version": "1ba15c34023f7c8b"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:31:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
     },
     {
       "key": "Artifact:test/ux-personality-browser.js",
@@ -152576,20 +152576,20 @@
       "path": "test/ux-personality-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23710,
-      "lines": 180,
-      "version": "f1fc12f5d3b4338d",
+      "bytes": 24284,
+      "lines": 189,
+      "version": "83a1d8852c119164",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "f1fc12f5d3b4338d"
+          "version": "83a1d8852c119164"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-26T08:31:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
     },
     {
       "key": "Artifact:test/ux-postgres-rls.js",
@@ -155614,18 +155614,18 @@
       "extension": ".js",
       "bytes": 405316,
       "lines": 10809,
-      "version": "8b7695cc709ed79d",
+      "version": "1f9fabdcb6bb5aa8",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "8b7695cc709ed79d"
+          "version": "1f9fabdcb6bb5aa8"
         }
       ],
-      "lastChangedAt": "2026-10-26T04:04:16.000Z",
+      "lastChangedAt": "2026-10-26T08:33:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2aa1bc706279061a67ab6801899b723a2d050aaa"
+      "lastChangedCommit": "c070404ee1e3b6f5bd22e5aa31e1096f08169388"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -160807,20 +160807,20 @@
       "path": "tools/ux-release-phase2-native-catalog.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 13676,
+      "bytes": 13721,
       "lines": 178,
-      "version": "ec633c7d027c8ead",
+      "version": "8560708c6794a156",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-release-phase2-native-catalog.js",
           "line": 1,
-          "version": "ec633c7d027c8ead"
+          "version": "8560708c6794a156"
         }
       ],
-      "lastChangedAt": "2026-10-26T03:44:42.000Z",
+      "lastChangedAt": "2026-10-26T08:26:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c6dd6c9730c9111a7af5bb47ce290f605d08269c"
+      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
     },
     {
       "key": "Artifact:tools/ux-source-compatibility.js",
@@ -191379,6 +191379,22 @@
       ]
     },
     {
+      "key": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "type": "Commit",
+      "id": "59b2204739c36e417fc6a60dbc49187030004bb1",
+      "label": "fix(ux): retain mobile action context and expanded rewards",
+      "title": "fix(ux): retain mobile action context and expanded rewards",
+      "date": "2026-10-26T08:31:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/59b2204739c36e417fc6a60dbc49187030004bb1",
+      "provenance": [
+        {
+          "commit": "59b2204739c36e417fc6a60dbc49187030004bb1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/59b2204739c36e417fc6a60dbc49187030004bb1"
+        }
+      ]
+    },
+    {
       "key": "Commit:59bf143d07cc10bb716e045640d322ed79791117",
       "type": "Commit",
       "id": "59bf143d07cc10bb716e045640d322ed79791117",
@@ -209747,6 +209763,22 @@
       ]
     },
     {
+      "key": "Commit:96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "type": "Commit",
+      "id": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "label": "chore(knowledge): refresh qualified UX release artifacts",
+      "title": "chore(knowledge): refresh qualified UX release artifacts",
+      "date": "2026-10-26T04:10:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "provenance": [
+        {
+          "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+          "url": "https://github.com/OmertaDev/Omerta/commit/96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+        }
+      ]
+    },
+    {
       "key": "Commit:96b7fc437a4231d5be75fdc0763f72e3b1d254bb",
       "type": "Commit",
       "id": "96b7fc437a4231d5be75fdc0763f72e3b1d254bb",
@@ -210367,6 +210399,22 @@
         {
           "commit": "983e441e9b31bbcc16eeb212b335449374bc7e2b",
           "url": "https://github.com/OmertaDev/Omerta/commit/983e441e9b31bbcc16eeb212b335449374bc7e2b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "type": "Commit",
+      "id": "9842799c7a6471dd429c9140406642882437c9f4",
+      "label": "fix(ux): preserve mobile content and native Director invocation",
+      "title": "fix(ux): preserve mobile content and native Director invocation",
+      "date": "2026-10-26T08:26:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9842799c7a6471dd429c9140406642882437c9f4",
+      "provenance": [
+        {
+          "commit": "9842799c7a6471dd429c9140406642882437c9f4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9842799c7a6471dd429c9140406642882437c9f4"
         }
       ]
     },
@@ -222239,6 +222287,22 @@
         {
           "commit": "c06bee8795a815f75a0128e636ee234118d4c409",
           "url": "https://github.com/OmertaDev/Omerta/commit/c06bee8795a815f75a0128e636ee234118d4c409"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+      "type": "Commit",
+      "id": "c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+      "label": "test(ux): seal final mobile and Director release inputs",
+      "title": "test(ux): seal final mobile and Director release inputs",
+      "date": "2026-10-26T08:33:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+      "provenance": [
+        {
+          "commit": "c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c070404ee1e3b6f5bd22e5aa31e1096f08169388"
         }
       ]
     },
@@ -266422,6 +266486,9 @@
           "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
         },
         {
+          "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+        },
+        {
           "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
         },
         {
@@ -268304,6 +268371,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
         },
         {
           "commit": "96b7fc437a4231d5be75fdc0763f72e3b1d254bb"
@@ -270646,6 +270716,9 @@
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
+          "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+        },
+        {
           "commit": "96b7fc437a4231d5be75fdc0763f72e3b1d254bb"
         },
         {
@@ -272984,6 +273057,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
         },
         {
           "commit": "96b7fc437a4231d5be75fdc0763f72e3b1d254bb"
@@ -275969,6 +276045,9 @@
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
+        },
+        {
+          "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
         },
         {
           "commit": "96b7fc437a4231d5be75fdc0763f72e3b1d254bb"
@@ -291205,7 +291284,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2aa1bc706279061a67ab6801899b723a2d050aaa",
+      "revision": "c070404ee1e3b6f5bd22e5aa31e1096f08169388",
       "currentBranch": "codex/ux-production-release",
       "defaultBranch": "main",
       "visibility": "public",
@@ -334917,13 +334996,13 @@
       "type": "TestSuite",
       "id": "test/lib/ux-native-director-guard.js",
       "label": "test/lib/ux-native-director-guard.js",
-      "lines": 72,
-      "version": "81ac548822bff753",
+      "lines": 73,
+      "version": "f99522c5ef4439a2",
       "provenance": [
         {
           "file": "test/lib/ux-native-director-guard.js",
           "line": 1,
-          "version": "81ac548822bff753"
+          "version": "f99522c5ef4439a2"
         }
       ]
     },
@@ -341667,13 +341746,13 @@
       "type": "TestSuite",
       "id": "test/ux-experience-browser.js",
       "label": "test/ux-experience-browser.js",
-      "lines": 150,
-      "version": "332b2e5f1a7d91ea",
+      "lines": 158,
+      "version": "f25c7830366c9c94",
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "332b2e5f1a7d91ea"
+          "version": "f25c7830366c9c94"
         }
       ]
     },
@@ -341772,13 +341851,13 @@
       "type": "TestSuite",
       "id": "test/ux-navigation-browser.js",
       "label": "test/ux-navigation-browser.js",
-      "lines": 186,
-      "version": "8254b34bf235a6c5",
+      "lines": 210,
+      "version": "1ba15c34023f7c8b",
       "provenance": [
         {
           "file": "test/ux-navigation-browser.js",
           "line": 1,
-          "version": "8254b34bf235a6c5"
+          "version": "1ba15c34023f7c8b"
         }
       ]
     },
@@ -341787,13 +341866,13 @@
       "type": "TestSuite",
       "id": "test/ux-personality-browser.js",
       "label": "test/ux-personality-browser.js",
-      "lines": 180,
-      "version": "f1fc12f5d3b4338d",
+      "lines": 189,
+      "version": "83a1d8852c119164",
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "f1fc12f5d3b4338d"
+          "version": "83a1d8852c119164"
         }
       ]
     },
@@ -457411,6 +457490,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "to": "Artifact:public/ux-feedback.css",
+      "provenance": {
+        "commit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "to": "Artifact:public/ux-navigation.css",
+      "provenance": {
+        "commit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "to": "Artifact:public/ux-navigation.js",
+      "provenance": {
+        "commit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "to": "Artifact:test/ux-experience-browser.js",
+      "provenance": {
+        "commit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "to": "Artifact:test/ux-navigation-browser.js",
+      "provenance": {
+        "commit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "to": "Artifact:test/ux-personality-browser.js",
+      "provenance": {
+        "commit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:59bf143d07cc10bb716e045640d322ed79791117",
       "to": "Artifact:test/rc1-family-cash-ammo-native.js",
       "provenance": {
@@ -502163,6 +502290,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:96b7fc437a4231d5be75fdc0763f72e3b1d254bb",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -503711,6 +503878,86 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "commit": "983e441e9b31bbcc16eeb212b335449374bc7e2b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:public/ux-feedback.css",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:public/ux-feedback.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:public/ux-navigation.css",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:public/ux-navigation.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:public/ux-world.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:test/lib/ux-native-director-guard.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:test/ux-navigation-browser.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:test/ux-personality-browser.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "to": "Artifact:tools/ux-release-phase2-native-catalog.js",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
       }
     },
     {
@@ -549375,6 +549622,14 @@
       "to": "Artifact:docs/company-succession-security-review.md",
       "provenance": {
         "commit": "c06bee8795a815f75a0128e636ee234118d4c409"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "c070404ee1e3b6f5bd22e5aa31e1096f08169388"
       }
     },
     {
@@ -714493,6 +714748,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:59b2204739c36e417fc6a60dbc49187030004bb1",
+      "provenance": {
+        "commit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:59bf143d07cc10bb716e045640d322ed79791117",
       "provenance": {
         "commit": "59bf143d07cc10bb716e045640d322ed79791117"
@@ -723677,6 +723940,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97",
+      "provenance": {
+        "commit": "96b7d837c4d9aae358f0012cf3b0ecc1bccd5a97"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:96b7fc437a4231d5be75fdc0763f72e3b1d254bb",
       "provenance": {
         "commit": "96b7fc437a4231d5be75fdc0763f72e3b1d254bb"
@@ -723984,6 +724255,14 @@
       "to": "Commit:983e441e9b31bbcc16eeb212b335449374bc7e2b",
       "provenance": {
         "commit": "983e441e9b31bbcc16eeb212b335449374bc7e2b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9842799c7a6471dd429c9140406642882437c9f4",
+      "provenance": {
+        "commit": "9842799c7a6471dd429c9140406642882437c9f4"
       }
     },
     {
@@ -729920,6 +730199,14 @@
       "to": "Commit:c06bee8795a815f75a0128e636ee234118d4c409",
       "provenance": {
         "commit": "c06bee8795a815f75a0128e636ee234118d4c409"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c070404ee1e3b6f5bd22e5aa31e1096f08169388",
+      "provenance": {
+        "commit": "c070404ee1e3b6f5bd22e5aa31e1096f08169388"
       }
     },
     {
