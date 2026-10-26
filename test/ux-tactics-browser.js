@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
-import { PORT } from '../src/rules.js';
+import { PORT, PACING } from '../src/rules.js';
 
 assert(!process.env.DATABASE_URL, 'Tactics browser checks use the disposable in-memory database.');
 const executablePath = process.env.CHROMIUM_PATH || [
@@ -73,7 +73,12 @@ try {
   await table.locator('[data-tactics-add]').first().click();
   await table.locator('[data-tactics-add-choice]').click();
   assert.equal(await table.locator('.ux-tactics-plan>li').count(), 2);
-  assert.equal(await table.locator('.ux-tactics-conflicts').count(), 0, 'The current game has no crime cooldown; two affordable jobs acquire no invented clock conflict.');
+  assert.match(await table.locator('.ux-tactics-conflicts').last().innerText(), /street clock/,
+    'two consecutive crime quotes expose the shared street-action clock');
+  await table.locator('[data-tactics-wait="1"]').fill(String(PACING.STREET_ACTION_CD_MS / 1000));
+  await table.locator('[data-tactics-wait="1"]').press('Tab');
+  assert.equal(await table.locator('.ux-tactics-conflicts').count(), 0,
+    'waiting the authoritative street duration makes the second crime schedulable');
   await table.locator('[data-tactics-remove="1"]').click(); await table.locator('[data-tactics-remove="0"]').click();
   await table.locator('[data-tactics-field="plan-choice"]').selectOption('train:muscle'); await table.locator('[data-tactics-add-choice]').click();
   await table.locator('[data-tactics-field="plan-choice"]').selectOption('train:muscle'); await table.locator('[data-tactics-add-choice]').click();

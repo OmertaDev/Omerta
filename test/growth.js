@@ -11,7 +11,7 @@ import { buildServer } from './server-fixture.js';
 import { SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS, CONSTANTS, DISTRICTS, HUSTLE, CORNER, cornerTasksOf, dayOf, M4, levelOf, PACING, MASTERY, masteryXpFor, CRIMES, MISSIONS, M8 } from '../src/rules.js';
 import { socialRewardsLive } from '../src/growth.js';
 import { accrue } from '../src/accrual.js';
-import { sweepGrandReferrals, gainRespect } from '../src/game.js';
+import { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';
 import { GOODS_MARKET } from '../src/goodsmarket.js';
 
 // The City Standing / recruiters boards are CACHED in production (standing.js — they were the most
@@ -236,6 +236,8 @@ assert.equal(me.crewCold, false, 'a freshly-hired crew is working'); assert.equa
 await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '5 hours' WHERE id='${chef.id}'`);
 me = await meOf(chef.token);
 assert(Math.abs(me.crewWageOwed - 2 * 1200 * 5) <= 2 * 1200, `5h of wages owed (~$${2 * 1200 * 5}, got $${me.crewWageOwed})`);
+assert.equal(me.crewNextCost, M4.CREW_COST_STEP * 3 + me.crewWageOwed,
+  'the next-hire quote includes the active crew tab the hire till settles');
 await seedCh(chef.id, 'cash=500000');
 const cashPreNut = (await meOf(chef.token)).cash;
 r = await call('POST', '/v1/kitchen/crew/wages', { token: chef.token });
@@ -1171,8 +1173,8 @@ assert.equal(Number((await pool.query(
 await call('POST', '/v1/crimes/pick', { token: rookie.token }); // once ever
 assert.equal((await meOf(sponsor.token)).cash, sponsorBefore + 2500, 'the spark fires once, not per-action');
 
-// Legacy accounts have no trustworthy creation-IP authority. Even when their stored IP strings
-// happen to match, the runtime must not invent a same-household hold or suppress earned value.
+// Legacy accounts have no trustworthy creation-IP authority. Their stored strings cannot prove
+// either sameness or difference, so unpaid edges stay quarantined until trusted provenance exists.
 const legacySponsor = await mk('Legacy Sponsor Lee');
 const legacyRecruit = await mk('Legacy Recruit Rae', 'Legacy Sponsor Lee');
 await pool.query(
@@ -1187,8 +1189,11 @@ for (let i = 0; i < 20; i++) {
   r = await call('POST', '/v1/crimes/pick', { token: legacyRecruit.token });
   if (r.body.success) break;
 }
-assert.equal((await meOf(legacySponsor.token)).cash, legacySponsorBefore + 2500,
-  'an equal untrusted legacy IP does not suppress the normal spark');
+assert.equal((await meOf(legacySponsor.token)).cash, legacySponsorBefore,
+  'an untrusted legacy edge cannot open the spark faucet');
+assert.equal((await pool.query(
+  'SELECT ref_spark FROM account_persistent WHERE account_id=$1', [legacyRecruit.accountId])).rows[0].ref_spark,
+false, 'the quarantine does not consume the unpaid edge latch');
 assert.equal((await pool.query(
   'SELECT referral_same_ip_hold FROM account_persistent WHERE account_id=$1',
   [legacyRecruit.accountId],
@@ -1196,7 +1201,14 @@ assert.equal((await pool.query(
 assert.equal(Number((await pool.query(
   "SELECT COUNT(*) n FROM telemetry WHERE event='referral_same_ip_flag' AND account_id=$1",
   [legacyRecruit.accountId],
-)).rows[0].n), 0, 'an equal untrusted legacy IP is never flagged as authoritative');
+)).rows[0].n), 0, 'an untrusted legacy IP is never misreported as an authoritative same-origin match');
+await pool.query(
+  `UPDATE accounts SET created_ip_authority='direct_socket_v1', created_ip=CASE WHEN id=$1 THEN '198.51.100.77' ELSE '203.0.113.77' END
+    WHERE id IN ($1,$2)`, [legacySponsor.accountId, legacyRecruit.accountId]);
+assert.deepEqual(await maybeSparkReferral(pool, legacyRecruit.accountId), { sparked: true },
+  'explicit trusted, distinct signup provenance releases the still-unpaid edge');
+assert.equal((await meOf(legacySponsor.token)).cash, legacySponsorBefore + 2500,
+  'the released edge pays exactly once');
 
 // ── referrals (§7.13): all four gates, atomic payout, milestone, exclusions ──
 const mentor = await mk('Mentor Max');
@@ -1559,6 +1571,72 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     data: { id: String(url).match(/\/tweets\/(\d+)/)?.[1], author_id: stubAuthor },
   }) });
   try {
+    // Rolling upgrade: rows registered by the predecessor inherit the schema default TRUE and may
+    // finish only inside their original 48h window, using the predecessor's proof/provider rules.
+    const bridgedGuest = await mk('Bridged Guest Bea');
+    const bridgedCash = Number((await meOf(bridgedGuest.token)).cash);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222221')`,
+      [bridgedGuest.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    const bridged = await call('POST', '/v1/social/sw_post/claim', { token: bridgedGuest.token });
+    assert.equal(bridged.body.cash, SOCIAL_TASKS.CASH,
+      'a predecessor-valid pending guest proof can mature during the bounded bridge');
+    assert.equal(Number((await meOf(bridgedGuest.token)).cash), bridgedCash + SOCIAL_TASKS.CASH);
+
+    const invalidLegacy = await mk('Invalid Legacy Ivy');
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'legacy trust attestation')`,
+      [invalidLegacy.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: invalidLegacy.token })).body.error,
+      'need_proof', 'the bridge still denies proof the predecessor could not resolve to a post id');
+
+    const boundLegacy = await mk('Bound Legacy Ben');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='782' WHERE id=$1", [boundLegacy.accountId]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222222')`,
+      [boundLegacy.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    stubAuthor = 'not-782';
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: boundLegacy.token })).body.error,
+      'not_your_post', 'a predecessor row from an X-linked account remains author-bound');
+
+    const strictPending = await mk('Strict Pending Sid');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='783' WHERE id=$1", [strictPending.accountId]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof, legacy_proof_bridge)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/new/status/22222222222223',false)`,
+      [strictPending.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    stubAuthor = '783';
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: strictPending.token })).body.error,
+      'need_proof', 'the permissive parser is unavailable to new-format pending rows');
+
+    const expiredLegacy = await mk('Expired Legacy Eve');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='784' WHERE id=$1", [expiredLegacy.accountId]);
+    const expiredCash = Number((await meOf(expiredLegacy.token)).cash);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222224')`,
+      [expiredLegacy.accountId, dayOf() - 3, new Date(Date.now() - 49 * 3600000)]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: expiredLegacy.token,
+      body: { proof: 'https://example.com/legacy/status/22222222222224' } })).body.error,
+    'need_proof', 'the bridge expires with the existing 48-hour pending window');
+    assert.equal(Number((await meOf(expiredLegacy.token)).cash), expiredCash, 'an expired bridge row pays nothing');
+
+    const sunsetLegacy = await mk('Sunset Legacy Sam');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='785' WHERE id=$1", [sunsetLegacy.accountId]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222225')`,
+      [sunsetLegacy.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    const sunset = await pool.query(
+      "UPDATE economy_migrations SET applied_at=$1 WHERE id='social-pending-proof-bridge-2026-10-26'",
+      [new Date(Date.now() - 49 * 3600000)]);
+    assert.equal(sunset.rowCount, 1, 'boot installed the durable social bridge cutover marker');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: sunsetLegacy.token })).body.error,
+      'need_proof', 'the global 48-hour cutover sunsets the permissive verifier for otherwise-fresh legacy rows');
+
     // Live payouts must be attributable to an X identity. A valid tweet URL is still worthless for
     // guest and Privy accounts, and refusal creates neither a pending claim nor a ledger row.
     for (const [name, provider, subject] of [
@@ -1587,6 +1665,10 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     await pool.query(`UPDATE accounts SET auth_provider='x', auth_subject='777' WHERE id='${linkedAcct}'`);
     stubAuthor = '777';
     await call('POST', '/v1/social/sw_post/claim', { token: linked.token, body: { proof: 'https://x.com/lou/status/12345678901234' } });
+    assert.equal((await pool.query(
+      'SELECT legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [linked.accountId, 'sw_post'])).rows[0].legacy_proof_bridge, false,
+    'the current registration path explicitly opts out of the rolling bridge');
     await matureSw(linked.id, 'sw_post');
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.cash, SOCIAL_TASKS.CASH,
       'live mode: a matured post from the linked X account pays (H2 author-binding wired through the claim path)');

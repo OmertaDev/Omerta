@@ -4,8 +4,8 @@
 //   'live'  — real API checks; requires the provider credentials below
 // Production MUST run 'live': the X follow check via the OAuth'd relationship lookup.
 import { GameError } from './game.js';
-import { normalizeSocialPostProof } from './socialproof.js';
-export { normalizeSocialPostProof } from './socialproof.js';
+import { normalizeSocialPostProof, normalizeLegacySocialPostProof } from './socialproof.js';
+export { normalizeSocialPostProof, normalizeLegacySocialPostProof } from './socialproof.js';
 
 // ── X-API bulletproofing (the X-integrations hardening pass) ──
 // Every outbound call is TIME-BOXED: these verifications run inside a withCharacter txn holding
@@ -182,21 +182,43 @@ export async function requireLinkedXIdentity(ctx = {}) {
 // claimed, live mode re-checks that the registered post STILL EXISTS on X — post-and-delete pays
 // nothing. Trust mode skips the API check but the 4h clock itself is enforced in growth.js either
 // way (deleting early still forfeits under live; under trust the time cost alone deters churn).
-export async function verifyPostUp(proof, ctx = {}) {
-  const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
-  if (mode !== 'live') return true;
-  if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
-  const normalized = normalizeSocialPostProof(proof);
-  if (!normalized) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
-  const wantAuthor = await requireLinkedXIdentity(ctx);
-  const url = `https://api.x.com/2/tweets/${normalized.id}?tweet.fields=author_id`;
+async function verifyNormalizedPostUp(normalized, ctx, requireLinkedIdentity) {
+  let wantAuthor = null;
+  if (requireLinkedIdentity) wantAuthor = await requireLinkedXIdentity(ctx);
+  else if (ctx.client && ctx.accountId) {
+    const acc = (await ctx.client.query(
+      'SELECT auth_provider, auth_subject FROM accounts WHERE id=$1', [ctx.accountId])).rows[0];
+    if (acc?.auth_provider === 'x' && acc.auth_subject) wantAuthor = String(acc.auth_subject);
+  }
+  const url = `https://api.x.com/2/tweets/${normalized.id}${wantAuthor ? '?tweet.fields=author_id' : ''}`;
   // xfetch maps 429/5xx/network/timeout to 'verify_busy' BEFORE we get here — so the post_gone
   // below is only ever a DEFINITIVE answer (X responded and the tweet isn't there), never an
   // outage misread as a deleted post that would scare a legit sharer.
   const res = await xfetch(url, { headers: { authorization: `Bearer ${process.env.X_BEARER_TOKEN}` } });
   const j = await res.json().catch(() => ({}));
   if (!res.ok || !j.data || j.errors) throw new GameError('post_gone', 'That post is gone — it has to stand to pay.');
-  if (String(j.data.author_id || '') !== wantAuthor)
+  if (wantAuthor && String(j.data.author_id || '') !== wantAuthor)
     throw new GameError('not_your_post', "That post has to come from your linked X account to pay.");
   return true;
+}
+
+export async function verifyPostUp(proof, ctx = {}) {
+  const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
+  if (mode !== 'live') return true;
+  if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
+  const normalized = normalizeSocialPostProof(proof);
+  if (!normalized) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
+  return verifyNormalizedPostUp(normalized, ctx, true);
+}
+
+// Rolling-upgrade bridge only: predecessor registrations used a permissive id extractor and did
+// not require an X-linked account. The row-level legacy marker and ordinary 48h pending TTL bound
+// this verifier; current registrations never call it.
+export async function verifyLegacyPostUp(proof, ctx = {}) {
+  const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
+  if (mode !== 'live') return true;
+  if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
+  const normalized = normalizeLegacySocialPostProof(proof);
+  if (!normalized) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
+  return verifyNormalizedPostUp(normalized, ctx, false);
 }

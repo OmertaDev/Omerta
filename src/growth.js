@@ -6,7 +6,8 @@ import {
   PATHS, MISSIONS, ONBOARD_TASKS, CAREER, CONSTANTS, M4, M8, SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS,
   levelOf, dayOf, dailyJobsOf, dailyGuidanceFor, dailyBlockedFor, effStat, gunObjOf, assetEnergyCap, recruitRankOf, PACING,
   hash01, hitmanRankOf, honorTierOf, jailed, IDENTITY } from './rules.js';
-import { verifySocial, verifyPostUp, normalizeSocialPostProof, requireLinkedXIdentity,
+import { verifySocial, verifyPostUp, verifyLegacyPostUp, normalizeSocialPostProof,
+  normalizeLegacySocialPostProof, requireLinkedXIdentity,
   socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
 import { spendOmr } from './vanity.js';
 import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
@@ -882,6 +883,7 @@ export function socialRewardsLive() {
 // PENDING_TTL (48h) lapses (which also retires any pre-maturity historical rows cleanly).
 const socialMatureMs = () => Number(process.env.SOCIAL_MATURE_MS ?? 4 * 3600000);
 const SOCIAL_PENDING_TTL = 48 * 3600000;
+const SOCIAL_LEGACY_BRIDGE_MIGRATION = 'social-pending-proof-bridge-2026-10-26';
 const SOCIAL_PROOF_SCOPE = 'social-proof';
 const SOCIAL_PROOF_CLAIM = 'used';
 const SOCIAL_PROOF_EPOCH = 0;
@@ -900,6 +902,12 @@ async function socialProofWasUsed(client, normalized) {
     `SELECT 1 FROM account_daily_claims
       WHERE account_id=$1 AND day=$2 AND scope=$3 AND claim_id=$4`,
     [socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH, SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM])).rowCount > 0;
+}
+
+async function socialLegacyProofBridgeOpen(client) {
+  const marker = (await client.query(
+    'SELECT applied_at FROM economy_migrations WHERE id=$1', [SOCIAL_LEGACY_BRIDGE_MIGRATION])).rows[0];
+  return !!marker && Date.now() < new Date(marker.applied_at).getTime() + SOCIAL_PENDING_TTL;
 }
 
 export async function socialBoard(pool, accountId, ch) {
@@ -939,7 +947,7 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   // claims serialize — the SELECT-then-INSERT/UPDATE can't double-pay; the PK is the backstop.
   // (1) a live registration in the window? pay it if matured, else report the clock
   const pend = (await client.query(
-    'SELECT day, posted_at, proof FROM social_claims WHERE account_id=$1 AND task_id=$2 AND NOT paid AND posted_at > $3 ORDER BY posted_at DESC LIMIT 1',
+    'SELECT day, posted_at, proof, legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2 AND NOT paid AND posted_at > $3 ORDER BY posted_at DESC LIMIT 1',
     [h.accountId, taskId, new Date(Date.now() - SOCIAL_PENDING_TTL)])).rows[0];
   if (pend) {
     const age = Date.now() - new Date(pend.posted_at).getTime();
@@ -950,12 +958,17 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     // live mode: the post must STILL be up AND (for an X-linked account) come from THEIR handle —
     // pass ctx so verifyPostUp's D2 author-binding activates on the real claim path (was dead code:
     // it only fired via a direct unit call). Trust mode short-circuits before touching ctx.
-    const normalized = live ? normalizeSocialPostProof(pend.proof ?? proof) : null;
+    const legacyBridge = live && pend.legacy_proof_bridge === true
+      && await socialLegacyProofBridgeOpen(client);
+    const normalized = live
+      ? (legacyBridge ? normalizeLegacySocialPostProof(pend.proof ?? proof) : normalizeSocialPostProof(pend.proof ?? proof))
+      : null;
     if (live && await socialProofWasUsed(client, normalized))
       throw new GameError('proof_used', 'That X post has already earned a social reward.');
     if (live)
       await throttleXCheck(client, h.accountId, 'post', h.pool);    // the retry loop, not the happy path
-    await verifyPostUp(pend.proof ?? proof, { client, accountId: h.accountId });
+    await (legacyBridge ? verifyLegacyPostUp : verifyPostUp)(pend.proof ?? proof,
+      { client, accountId: h.accountId });
     // Reserve only after the linked author has been verified. The synthetic receipt's database PK
     // is the cross-account/cross-task race winner; exactly one concurrent claimant can proceed.
     if (live && !await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
@@ -987,7 +1000,7 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     if (await socialProofWasUsed(client, normalized))
       throw new GameError('proof_used', 'That X post has already earned a social reward.');
   }
-  await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof) VALUES ($1,$2,$3,false,$4)',
+  await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof, legacy_proof_bridge) VALUES ($1,$2,$3,false,$4,false)',
     [h.accountId, day, taskId, cleanProof || null]);
   await h.track(client, h.accountId, 'social_post', { task: taskId, proof: cleanProof });
   return { ok: true, kind: 'social', task: taskId, pending: true, registered: true,
@@ -1082,15 +1095,16 @@ async function sweepCapoPage(client, pageSize) {
       WHERE a.referred_by IN (${inA}) AND NOT a.agent_flag AND NOT a.npc_flag AND a.minted
         AND a.referral_same_ip_hold IS NOT TRUE AND held.recruit_account IS NULL
         AND (
-          a.referral_same_ip_hold IS FALSE
-          OR recruit_origin.created_ip_authority IS NULL
-          OR recruiter_origin.created_ip_authority IS NULL
-          OR recruit_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
-          OR recruiter_origin.created_ip_authority NOT IN ('render_cf_connecting_ip_v1','direct_socket_v1')
-          OR recruit_origin.created_ip IS NULL OR recruiter_origin.created_ip IS NULL
-          OR recruit_origin.created_ip IN ('0.0.0.0','::')
-          OR recruiter_origin.created_ip IN ('0.0.0.0','::')
-          OR recruit_origin.created_ip <> recruiter_origin.created_ip
+          a.ref_paid
+          OR a.referral_same_ip_hold IS FALSE
+          OR (
+            recruit_origin.created_ip_authority IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+            AND recruiter_origin.created_ip_authority IN ('render_cf_connecting_ip_v1','direct_socket_v1')
+            AND recruit_origin.created_ip IS NOT NULL AND recruiter_origin.created_ip IS NOT NULL
+            AND recruit_origin.created_ip NOT IN ('0.0.0.0','::')
+            AND recruiter_origin.created_ip NOT IN ('0.0.0.0','::')
+            AND recruit_origin.created_ip <> recruiter_origin.created_ip
+          )
         )${qualificationExists}
       GROUP BY a.referred_by`, aidList)).rows;
   const counts = new Map(aidList.map((id) => [id, 0]));

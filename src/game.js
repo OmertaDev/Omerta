@@ -1900,6 +1900,7 @@ function coachLadder(ch, acct, owned) {
 }
 
 export function view(ch, acct = {}, owned = {}) {
+  const now = Date.now();
   const lvl = levelOf(Number(ch.respect));
   const assets = owned.assets || [];
   const gear = owned.gear || [];
@@ -2098,7 +2099,7 @@ export function view(ch, acct = {}, owned = {}) {
     // THE NUT, MADE LEGIBLE (the pad precedent, same defect class): a hand costs a flat wage on the
     // wall clock but only EARNS while there is stash to move, so the terms have to ride with the
     // price — the per-head rate, the countdown to downed tools, and the door out.
-    crewWageOwed: crewWageOwed(ch), crewWagePerHr: Number(ch.crew || 0) * M4.CREW_WAGE_PER_HR, crewCold: crewCold(ch),
+    crewWageOwed: crewWageOwed(ch, now), crewWagePerHr: Number(ch.crew || 0) * M4.CREW_WAGE_PER_HR, crewCold: crewCold(ch, now),
     crewWagePerHead: M4.CREW_WAGE_PER_HR, crewMax: M4.CREW_MAX, crewCostStep: M4.CREW_COST_STEP,
     // WHAT THE NEXT HAND COSTS, from the side that charges it. The hire price CLIMBS with headcount,
     // and the board published only the STEP — so the console restated the ladder (`step × (crew+1)`)
@@ -2107,9 +2108,9 @@ export function view(ch, acct = {}, owned = {}) {
     // collapse); and a hardcoded price behind a missing field is the guessed number wearing a hat
     // (the ALCHEMIST_ASSET_DECIMALS fallback RT#6 deleted). One field, computed where it is charged.
     crewNextCost: Number(ch.crew || 0) >= M4.CREW_MAX ? null
-      : M4.CREW_COST_STEP * (Number(ch.crew || 0) + 1) + crewRehireDebt(ch),
+      : M4.CREW_COST_STEP * (Number(ch.crew || 0) + 1) + crewWageOwed(ch, now) + crewRehireDebt(ch, now),
     crewColdSeconds: Number(ch.crew || 0) > 0 && ch.crew_paid_at
-      ? Math.max(0, Math.ceil((new Date(ch.crew_paid_at).getTime() + M4.CREW_WAGE_COLD_MS - Date.now()) / 1000)) : null,
+      ? Math.max(0, Math.ceil((new Date(ch.crew_paid_at).getTime() + M4.CREW_WAGE_COLD_MS - now) / 1000)) : null,
     makings: owned.makings || {},
     stash: (owned.stash || []).filter((s) => Number(s.qty) > 0)
       .map((s) => ({ drug: s.drug_id, qty: Number(s.qty), quality: Math.round(Number(s.quality) * 100) / 100 })),
@@ -2582,11 +2583,13 @@ const referralOriginIp = (value) => {
   const normalized = normalizeClientIp(value);
   return normalized && normalized !== '0.0.0.0' && normalized !== '::' ? normalized : null;
 };
-const sameReferralOrigin = (rows) => {
-  if (rows.length !== 2) return false;
-  if (!rows.every((row) => normalizeClientIpAuthority(row.created_ip_authority))) return false;
+const referralOriginState = (rows) => {
+  if (rows.length !== 2) return { trusted: false, same: false };
+  if (!rows.every((row) => normalizeClientIpAuthority(row.created_ip_authority)))
+    return { trusted: false, same: false };
   const left = referralOriginIp(rows[0].created_ip), right = referralOriginIp(rows[1].created_ip);
-  return !!left && left === right;
+  if (!left || !right) return { trusted: false, same: false };
+  return { trusted: true, same: left === right };
 };
 
 // ── §7.13 REFERRAL QUALIFICATION ──
@@ -2649,7 +2652,15 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
       'SELECT id, created_ip, created_ip_authority FROM accounts WHERE id IN ($1,$2)',
       [recruitAccountId, recruiterAccountId],
     )).rows;
-    const sameIp = sameReferralOrigin(ips);
+    const origin = referralOriginState(ips);
+    // Legacy rows without authoritative signup provenance are not evidence of distinct people.
+    // Keep every paid latch untouched and retryable; payout can proceed once both stored origins
+    // carry an accepted authority, or support records an explicit reviewed clearance (FALSE).
+    if (!origin.trusted && acct.referral_same_ip_hold !== false) {
+      await client.query('ROLLBACK');
+      return { qualified: false, blocked: 'origin_unverified' };
+    }
+    const sameIp = origin.same;
 
     // A same-origin pair is not merely flagged: it is held before every referral-derived benefit.
     // Otherwise
@@ -2845,7 +2856,12 @@ export async function maybeSparkReferral(pool, recruitAccountId) {
     // A same-origin human pair is held before value moves. The dedicated state makes repeated and
     // concurrent retries no-ops without claiming a payout happened. FALSE is a manual clearance.
     const sparkIps = (await client.query('SELECT id, created_ip, created_ip_authority FROM accounts WHERE id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
-    const sameIp = sameReferralOrigin(sparkIps);
+    const origin = referralOriginState(sparkIps);
+    if (!origin.trusted && acct.referral_same_ip_hold !== false) {
+      await client.query('ROLLBACK');
+      return { sparked: false, blocked: 'origin_unverified' };
+    }
+    const sameIp = origin.same;
     if (sameIp && acct.referral_same_ip_hold !== false) {
       await track(client, recruitAccountId, 'referral_same_ip_flag', {
         recruiter: recruiterAccountId, spark: true, blocked: true,

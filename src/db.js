@@ -745,6 +745,11 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
 export async function migrateSocialProofReceipts(q) {
   await q.query('BEGIN');
   try {
+    // One global sunset bounds the permissive predecessor verifier even if an old API process keeps
+    // inserting omitted-column rows during a rolling deploy. DO NOTHING preserves the first cutover
+    // timestamp forever; after 48h every row uses the strict current verifier regardless of its flag.
+    await q.query(
+      "INSERT INTO economy_migrations (id) VALUES ('social-pending-proof-bridge-2026-10-26') ON CONFLICT DO NOTHING");
     const migrationId = 'social-proof-receipts-2026-10-23';
     const alreadyApplied = (await q.query(
       'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
@@ -783,8 +788,10 @@ export async function migrateSocialProofReceipts(q) {
 
 // Repeatable referral-origin repair. `created_ip` is immutable signup provenance; canonicalizing it
 // closes IPv4-mapped/IPv6 spelling bypasses before matching. TRUE is a durable hold, FALSE is an
-// explicit shared-household clearance, and NULL remains eligible unless a normalized match is found.
-// Re-running on every API/worker boot closes the rolling-deploy seam without touching paid history.
+// explicit reviewed clearance, and NULL remains unclassified. Runtime payout gates deny an
+// unclassified edge until both origins have trusted authority; explicit FALSE remains the support
+// override for legacy/shared-household cases. Re-running on every API/worker boot closes the rolling-
+// deploy seam without touching paid history.
 export async function migrateReferralOriginHolds(q) {
   await q.query('BEGIN');
   try {

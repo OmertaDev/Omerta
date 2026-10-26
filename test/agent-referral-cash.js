@@ -126,8 +126,9 @@ try {
   0, 'a held human edge cannot later unlock agent rate or wire perks');
 
   // Startup reconciliation canonicalizes stored spellings but only trusted signup provenance may
-  // install a hold. Legacy/untrusted rows stay unclassified. An explicit FALSE survives every repeat
-  // pass so support can clear a verified shared household.
+  // install a same-origin hold. Legacy/untrusted rows stay unclassified and unpaid (fail closed)
+  // until trusted provenance or an explicit review clearance is supplied. FALSE survives every
+  // repeat pass so support can clear a verified shared household.
   const untrustedSponsor = await mk('Untrusted Sponsor');
   const untrustedRecruit = await mk('Untrusted Recruit', 'Untrusted Sponsor');
   await pool.query(
@@ -144,6 +145,27 @@ try {
     'SELECT referral_same_ip_hold FROM account_persistent WHERE account_id=$1',
     [untrustedRecruit.accountId],
   )).rows[0].referral_same_ip_hold, null, 'untrusted legacy provenance cannot create an automatic hold');
+  await pool.query(
+    'UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=$1',
+    [untrustedRecruit.accountId],
+  );
+  await pool.query('UPDATE characters SET respect=1000, lc_crime=40, cash=30000 WHERE id=$1', [untrustedRecruit.id]);
+  assert.deepEqual(await maybeSparkReferral(pool, untrustedRecruit.accountId),
+    { sparked: false, blocked: 'origin_unverified' }, 'untrusted provenance denies the early payout');
+  assert.deepEqual(await maybeQualifyReferral(pool, untrustedRecruit.accountId),
+    { qualified: false, blocked: 'origin_unverified' }, 'untrusted provenance denies the full payout');
+  assert.deepEqual((await pool.query(
+    'SELECT ref_spark, ref_paid, referral_same_ip_hold FROM account_persistent WHERE account_id=$1',
+    [untrustedRecruit.accountId])).rows[0],
+  { ref_spark: false, ref_paid: false, referral_same_ip_hold: null },
+  'provenance quarantine moves no value and consumes no one-time latch');
+  await pool.query('UPDATE account_persistent SET referral_same_ip_hold=false WHERE account_id=$1',
+    [untrustedRecruit.accountId]);
+  assert.deepEqual(await maybeSparkReferral(pool, untrustedRecruit.accountId), { sparked: true },
+    'an explicit review clearance releases an untrusted edge for the spark path');
+  assert.deepEqual(await maybeQualifyReferral(pool, untrustedRecruit.accountId),
+    { qualified: true, bringOne: false },
+  'the same explicit clearance remains eligible at full qualification');
   assert.deepEqual(
     (await pool.query(
       `SELECT a.created_ip, p.referral_same_ip_hold FROM accounts a
@@ -155,6 +177,19 @@ try {
   assert.equal((await pool.query(
     'SELECT referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [legacyRecruit.accountId])).rows[0].referral_same_ip_hold,
   false, 'manual shared-household clearance survives repeat reconciliation');
+
+  const paidHistorySponsor = await mk('Paid History Sponsor');
+  const paidHistoryRecruit = await mk('Paid History Recruit', 'Paid History Sponsor');
+  await pool.query('UPDATE accounts SET created_ip_authority=NULL WHERE id IN ($1,$2)',
+    [paidHistorySponsor.accountId, paidHistoryRecruit.accountId]);
+  await pool.query('UPDATE account_persistent SET ref_paid=true WHERE account_id=$1', [paidHistoryRecruit.accountId]);
+  await pool.query('UPDATE referrals SET qualified_at=now() WHERE recruit_account=$1', [paidHistoryRecruit.accountId]);
+  await migrateReferralOriginHolds(pool);
+  assert.deepEqual((await pool.query(
+    'SELECT ref_paid, referral_same_ip_hold FROM account_persistent WHERE account_id=$1',
+    [paidHistoryRecruit.accountId])).rows[0],
+  { ref_paid: true, referral_same_ip_hold: null },
+  'the provenance repair leaves paid historical eligibility and its latch untouched');
 
   // A historical edge that is later held cannot feed either the live respect multiplier or the
   // profile's qualified totals, even if older code already stamped ref_paid/qualified_at.
@@ -232,12 +267,36 @@ try {
     [capoOriginAgent.accountId],
   )).rows[0].capo_recruits), 2, 'a trusted distinct-origin human recruit earns Capo credit');
 
+  const untrustedCapo = await seedCapoRecruit('Capo Untrusted Origin', '203.0.113.73');
+  await pool.query('UPDATE accounts SET created_ip_authority=NULL WHERE id=$1', [untrustedCapo.accountId]);
+  await sweepCapoLicense(pool);
+  assert.equal(Number((await pool.query(
+    'SELECT capo_recruits FROM account_persistent WHERE account_id=$1',
+    [capoOriginAgent.accountId],
+  )).rows[0].capo_recruits), 2, 'an untrusted legacy edge cannot unlock Capo value');
+
+  const paidLegacyCapo = await seedCapoRecruit('Capo Paid Legacy', '203.0.113.74');
+  await pool.query('UPDATE accounts SET created_ip_authority=NULL WHERE id=$1', [paidLegacyCapo.accountId]);
+  await pool.query('UPDATE account_persistent SET ref_paid=true WHERE account_id=$1', [paidLegacyCapo.accountId]);
+  await sweepCapoLicense(pool);
+  assert.equal(Number((await pool.query(
+    'SELECT capo_recruits FROM account_persistent WHERE account_id=$1',
+    [capoOriginAgent.accountId],
+  )).rows[0].capo_recruits), 3, 'paid legacy history keeps its existing Capo eligibility');
+
+  await pool.query("UPDATE accounts SET created_ip_authority='direct_socket_v1' WHERE id=$1", [untrustedCapo.accountId]);
+  await sweepCapoLicense(pool);
+  assert.equal(Number((await pool.query(
+    'SELECT capo_recruits FROM account_persistent WHERE account_id=$1',
+    [capoOriginAgent.accountId],
+  )).rows[0].capo_recruits), 4, 'trusted distinct provenance releases Capo credit');
+
   await seedCapoRecruit('Capo NPC Recruit', '203.0.113.72', { npc: true });
   await sweepCapoLicense(pool);
   assert.equal(Number((await pool.query(
     'SELECT capo_recruits FROM account_persistent WHERE account_id=$1',
     [capoOriginAgent.accountId],
-  )).rows[0].capo_recruits), 2, 'a minted, levelled, retained NPC never earns Capo credit');
+  )).rows[0].capo_recruits), 4, 'a minted, levelled, retained NPC never earns Capo credit');
 
   const recruiter = await mk('Agent Recruiter');
   await pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [recruiter.accountId]);

@@ -712,6 +712,10 @@ CREATE TABLE IF NOT EXISTS social_claims (
   posted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   paid BOOLEAN NOT NULL DEFAULT false,
   proof TEXT,
+  -- Rolling-upgrade bridge. Existing rows and inserts from a predecessor process inherit TRUE;
+  -- current registrations explicitly write FALSE. A durable cutover marker globally sunsets the
+  -- permissive verifier after 48h; the ordinary row TTL independently bounds each pending claim.
+  legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true,
   PRIMARY KEY (account_id, day, task_id)
 );
 CREATE TABLE IF NOT EXISTS telemetry (

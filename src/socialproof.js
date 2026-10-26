@@ -27,9 +27,9 @@ export function normalizeSocialPostProof(proof) {
 }
 
 // The predecessor accepted any string containing /status(es)/<id>, then fetched that exact id from
-// X and author-bound it before paying. Historical evidence must retain those already-paid aliases
-// or the same verified post can replay after upgrade. Never use this permissive parser on new input.
-export function normalizeLegacyPaidSocialPostProof(proof) {
+// X (and author-bound it when the account was linked). Historical evidence must retain those aliases
+// for paid receipts and the bounded pending-claim upgrade bridge. Never use this parser on new input.
+export function normalizeLegacySocialPostProof(proof) {
   const raw = String(proof || '');
   // Keep this byte-for-byte equivalent to the predecessor's extraction rules. A historical proof
   // can look malformed by today's standard and still have fetched and author-verified this X id.
@@ -37,3 +37,5 @@ export function normalizeLegacyPaidSocialPostProof(proof) {
   const bareId = raw.match(/^(\d{8,25})$/)?.[1];
   return normalizeId(pathId || bareId);
 }
+
+export const normalizeLegacyPaidSocialPostProof = normalizeLegacySocialPostProof;
