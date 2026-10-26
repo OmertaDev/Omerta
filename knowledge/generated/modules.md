@@ -253,7 +253,7 @@
 | [src/fundedworkchainobservations.js](../../src/fundedworkchainobservations.js) | 74 | platform-core | 0 / 3 | 0 | 0 | 2 |
 | [src/fundedworkescrowadapter.js](../../src/fundedworkescrowadapter.js) | 85 | platform-core | 3 / 1 | 0 | 5 | 1 |
 | [src/fundedworkescrowartifact.js](../../src/fundedworkescrowartifact.js) | 472 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/game.js](../../src/game.js) | 2809 | platform-core | 17 / 517 | 42 | 62 | 179 |
+| [src/game.js](../../src/game.js) | 2809 | platform-core | 17 / 519 | 42 | 62 | 181 |
 | [src/gameemployment.js](../../src/gameemployment.js) | 185 | platform-core | 2 / 7 | 0 | 8 | 3 |
 | [src/gameemploymentinvariants.js](../../src/gameemploymentinvariants.js) | 15 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/gateway/actions.js](../../src/gateway/actions.js) | 42 | platform-core | 1 / 1 | 0 | 0 | 0 |
@@ -557,8 +557,8 @@
 | [src/tokenhealth.js](../../src/tokenhealth.js) | 257 | economy-ledger | 2 / 2 | 1 | 10 | 1 |
 | [src/treasury.js](../../src/treasury.js) | 729 | economy-ledger | 4 / 14 | 8 | 12 | 7 |
 | [src/underworld.js](../../src/underworld.js) | 223 | world-progression | 2 / 3 | 7 | 10 | 0 |
-| [src/ux-community.js](../../src/ux-community.js) | 246 | platform-core | 4 / 1 | 0 | 12 | 0 |
-| [src/ux-coordination.js](../../src/ux-coordination.js) | 217 | platform-core | 3 / 3 | 0 | 7 | 1 |
+| [src/ux-community.js](../../src/ux-community.js) | 254 | platform-core | 4 / 2 | 0 | 12 | 1 |
+| [src/ux-coordination.js](../../src/ux-coordination.js) | 224 | platform-core | 3 / 3 | 0 | 7 | 1 |
 | [src/ux-investigation.js](../../src/ux-investigation.js) | 108 | platform-core | 4 / 3 | 0 | 6 | 1 |
 | [src/ux-story.js](../../src/ux-story.js) | 94 | platform-core | 5 / 2 | 0 | 0 | 1 |
 | [src/ux-tactics.js](../../src/ux-tactics.js) | 192 | platform-core | 6 / 2 | 0 | 3 | 1 |
