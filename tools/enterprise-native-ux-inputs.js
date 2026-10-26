@@ -1,10 +1,10 @@
 // Actual-current native input admission only; prior native results do not transfer.
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
-  "version": 1,
+  "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "5ad686c6ce96d9755f5c02045e995b7c55ef6b06",
+  "authoredRevision": "a2c5b2bdd976ed2598ab4e572c6f6242babb1ef4",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -8192,8 +8192,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/enterprise-native.js",
       "mode": "100644",
-      "blob": "e9107cffba3bb528ab8a402d35ca4db350da32c2",
-      "sha256": "02b0e47c724d350bbb3bd5349d513e69ae77211556c8c48d88ce2be6c4069eed"
+      "blob": "5eb580ee6c27e3b1d9938b4829f97da1221dcca2",
+      "sha256": "12b218541f988366ae91c570ec4a05bf18e5a717d9afcda7e8bc1f825e7888d4"
     },
     {
       "file": "tools/enterprise-release-phase2-migration-catalog.js",
@@ -10076,8 +10076,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "a98f45e3f12bf63c7028d270af185a3e6b3d8529",
-      "sha256": "dd4f45a1fe387a00169a53d45aabe45fb5dedaf0ef8f38052fc372c808ec0be3"
+      "blob": "5a9bb8a0dc907c2e7c49ff60223efbfa2e1aa04e",
+      "sha256": "8ce41fc91fba59e2b9eed6d1584956f47bf0297e0bde0c9784de680429710ed5"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -10142,20 +10142,20 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economy-ux-merge-source-data.js",
       "mode": "100644",
-      "blob": "819d984e464744af8da945da726904483b010278",
-      "sha256": "aa92ca00ec16536c42ec7de0fa72d114cdc5f78318f6f89d28b120e0344c97f7"
+      "blob": "d7b8212b4b5e4ded775ab0b1c2a8aff83f457818",
+      "sha256": "937f109101c9d581ea42aa63d875433ddc79ae7bfd5cca1ed9a76dd743cbb9e4"
     },
     {
       "file": "tools/enterprise-native-ux-seal.js",
       "mode": "100644",
-      "blob": "9e9cd62378b7d848560cc6580f0a5d06b91ac71f",
-      "sha256": "897fe5f5709c707b251f0ca1d5c95c3d3c8d5740499c078e944c9641efe67bef"
+      "blob": "5bdf43a3c48e98557ac6eb49487b56e20130ce2b",
+      "sha256": "68019afc0554efaa273c9a008d06dd353b670d88adb6d45fc79c90ed611295c4"
     },
     {
       "file": "tools/enterprise-native-ux.js",
       "mode": "100644",
-      "blob": "f8512cea87eeeb72b11c107a3f44ab522b78e0d9",
-      "sha256": "8e01ae3e782750bb5cc890cf6487c5e8fe61f5458f1a9d755413285df536ca8a"
+      "blob": "1e17c04ef26c3556307e262a524b466576f6f69c",
+      "sha256": "5ed80399661e12894de824dc2a8b2a8a7ecea37db1776d5f6dda3e027ca9b89f"
     },
     {
       "file": "tools/ux-director-reader-source-compatibility.js",
@@ -11046,8 +11046,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "tools/enterprise-native.js",
         "mode": "100644",
-        "blob": "e9107cffba3bb528ab8a402d35ca4db350da32c2",
-        "sha256": "02b0e47c724d350bbb3bd5349d513e69ae77211556c8c48d88ce2be6c4069eed"
+        "blob": "5eb580ee6c27e3b1d9938b4829f97da1221dcca2",
+        "sha256": "12b218541f988366ae91c570ec4a05bf18e5a717d9afcda7e8bc1f825e7888d4"
       }
     },
     {
@@ -11471,6 +11471,53 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       }
     }
   ],
+  "legacyAdditionReplacements": [
+    {
+      "file": "src/socialproof.js",
+      "before": {
+        "file": "src/socialproof.js",
+        "mode": "100644",
+        "blob": "1b537b131ed700f8955ad688deed8cd9c33d6a93",
+        "sha256": "829a8f7711f322ce4c113842ce2e39fbfa3e7ef0dbd383ae189a5788b6e796a2"
+      },
+      "after": {
+        "file": "src/socialproof.js",
+        "mode": "100644",
+        "blob": "68b926c37bd5f3910e1263f9560853b2c46aff25",
+        "sha256": "4a69ccf61251c04252a7e8d08a28966dc6ef6849a32c4301489b9d23405900ed"
+      }
+    },
+    {
+      "file": "tools/economy-hardening-source-transfer.js",
+      "before": {
+        "file": "tools/economy-hardening-source-transfer.js",
+        "mode": "100644",
+        "blob": "69f75de585b29e7c7b6917253f53542e77338b23",
+        "sha256": "7921e352f0b5aea1076683deadca13ec51b1b5faefd07ddc1b376fa0de7ef024"
+      },
+      "after": {
+        "file": "tools/economy-hardening-source-transfer.js",
+        "mode": "100644",
+        "blob": "77838935c5759cb54e40ab486b9b1d49b32bb205",
+        "sha256": "c6d7a5cb10040a9eee0aae0c36a894b611cd5029b65f56354ea5e402674204f1"
+      }
+    },
+    {
+      "file": "tools/economy-release-tail-source-transfer.js",
+      "before": {
+        "file": "tools/economy-release-tail-source-transfer.js",
+        "mode": "100644",
+        "blob": "756c2a975d906b40c4deca1798ddd85ce1a7bd7c",
+        "sha256": "0b4f1d2faf05db27b7cdf7ae1a940a39cf02d310f883dbd28854e3a54a643837"
+      },
+      "after": {
+        "file": "tools/economy-release-tail-source-transfer.js",
+        "mode": "100644",
+        "blob": "6c6c4bad6bc7498c6dd27c3f257dd9cd8b5473e4",
+        "sha256": "4014d53989e98f079ef0043cecbfc2088b733447d893b3432933e4e81f48f181"
+      }
+    }
+  ],
   "additions": [
     {
       "file": "public/ux-community.css",
@@ -11679,8 +11726,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "a98f45e3f12bf63c7028d270af185a3e6b3d8529",
-      "sha256": "dd4f45a1fe387a00169a53d45aabe45fb5dedaf0ef8f38052fc372c808ec0be3"
+      "blob": "5a9bb8a0dc907c2e7c49ff60223efbfa2e1aa04e",
+      "sha256": "8ce41fc91fba59e2b9eed6d1584956f47bf0297e0bde0c9784de680429710ed5"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -11745,20 +11792,20 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economy-ux-merge-source-data.js",
       "mode": "100644",
-      "blob": "819d984e464744af8da945da726904483b010278",
-      "sha256": "aa92ca00ec16536c42ec7de0fa72d114cdc5f78318f6f89d28b120e0344c97f7"
+      "blob": "d7b8212b4b5e4ded775ab0b1c2a8aff83f457818",
+      "sha256": "937f109101c9d581ea42aa63d875433ddc79ae7bfd5cca1ed9a76dd743cbb9e4"
     },
     {
       "file": "tools/enterprise-native-ux-seal.js",
       "mode": "100644",
-      "blob": "9e9cd62378b7d848560cc6580f0a5d06b91ac71f",
-      "sha256": "897fe5f5709c707b251f0ca1d5c95c3d3c8d5740499c078e944c9641efe67bef"
+      "blob": "5bdf43a3c48e98557ac6eb49487b56e20130ce2b",
+      "sha256": "68019afc0554efaa273c9a008d06dd353b670d88adb6d45fc79c90ed611295c4"
     },
     {
       "file": "tools/enterprise-native-ux.js",
       "mode": "100644",
-      "blob": "f8512cea87eeeb72b11c107a3f44ab522b78e0d9",
-      "sha256": "8e01ae3e782750bb5cc890cf6487c5e8fe61f5458f1a9d755413285df536ca8a"
+      "blob": "1e17c04ef26c3556307e262a524b466576f6f69c",
+      "sha256": "5ed80399661e12894de824dc2a8b2a8a7ecea37db1776d5f6dda3e027ca9b89f"
     },
     {
       "file": "tools/ux-director-reader-source-compatibility.js",
@@ -11858,4 +11905,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "641df7c4d54ce5b21052bfd3f500d25ee6781c466eee3f7379591d136a9011f9";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "ed33a6f40684cec8017c6f39bb37aa4b4363e32004bbeda8e4b181c2a2431cfc";
