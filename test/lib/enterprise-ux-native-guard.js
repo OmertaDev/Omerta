@@ -46,5 +46,6 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  assert(capture.includes('assertEnterpriseUxTrackedInput(f,tracked,authored.get(f),canonical,ux)'));
  assert(!/HistoricalInput|SourceBaseline|qualifyUxSource/.test(capture), 'Native capture never reconstructs a historical source');
  assert(capture.includes('f===ENTERPRISE_UX_METADATA') && !capture.includes("f!=='tools/enterprise-native-inputs.js'"), 'Exactly the new self-reference is unpinnable; old metadata is pinned');
+ assert(capture.includes("if(!before){const legacyPin=successor.replacements.find") && capture.includes('A predecessor-absent legacy addition cannot masquerade as a UX replacement'), 'UX integration explicitly admits only legacy-sealed files absent from its older predecessor');
  console.log(JSON.stringify({ phase: 'CURRENT_UX_NATIVE_ADMISSION_GUARDS', status: pin.status, refusals: negatives, unchangedWorkloadCases: 16, originalGuardsUnchanged: true, nativeExecution: false, priorResultsTransferred: false }));
 }
