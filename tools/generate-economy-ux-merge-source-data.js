@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 
 // Update sourceRevision only after the bridge implementation is committed. The merge and both
 // reviewed parents are immutable anchors; this generator never discovers or trusts moving refs.
-const sourceRevision = 'c16a43b0b951b8c7f37aa5a66109785f271e1888';
+const sourceRevision = 'aa734ab1b0d6be32880ad03f2bd9b12973d13fae';
 const mergeRevision = '3f8c9a910e0097cb0ff93063693944a414204258';
 const candidateParentRevision = 'bfb23d1bba7f503f36498c4d82de78aa73256386';
 const mainParentRevision = '442409ae3f70677c0bd475d99f018bec29849e5b';
