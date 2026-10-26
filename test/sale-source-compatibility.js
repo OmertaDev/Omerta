@@ -57,7 +57,7 @@ for (const row of pin.files) {
   const unknown = current + '\n// unrelated future mutation\n';
   assert.equal(uxHistoricalInput(row.file, unknown), unknown, 'Unknown bytes do not get an older inverse');
   assert.throws(() => qualifySaleSource(row.file, current, Object.freeze({ ...pin }))); refusals++;
-  assert.throws(() => saleHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([255])])), /Lossless/); refusals++;
+  assert.throws(() => saleHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([255])])), /lossless/); refusals++;
   assert.equal(sha(current), row.currentSha256);
 }
 for (const file of ['../src/server.js', '__proto__', 'constructor', 'public/sale.html', 'src/unknown.js']) {
