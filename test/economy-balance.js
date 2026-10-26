@@ -110,6 +110,13 @@ try {
     assert.equal(result.paid, hourly * cap / 3600000);
     assert.equal(old.rows ? isCold(old.rows[0]) : crewCold(old.ch), false);
   }
+  assert.equal(M4.CREW_WAGE_COLD_MS, M4.CREW_WAGE_CAP_MS,
+    'crew sales stop exactly when the bounded wage liability stops growing');
+  const cappedCrew = { crew: 1, crew_paid_at: new Date(paymentNow - M4.CREW_WAGE_CAP_MS) };
+  assert.equal(crewCold({ ...cappedCrew, crew_paid_at: new Date(+cappedCrew.crew_paid_at + 1) }, paymentNow), false,
+    'the crew remains working through the final billed millisecond');
+  assert.equal(crewCold(cappedCrew, paymentNow), true,
+    'touching the game cannot collect crew sales during an unwaged grace window');
 } finally { Date.now = realNow; }
 
 // Changing headcount must never reset liabilities already earned by the existing crew.
@@ -209,6 +216,19 @@ try {
   const row = (await app.pool.query('SELECT crew_sale_credit_ms FROM characters WHERE id=$1', [id])).rows[0];
   assert(Number(row.crew_sale_credit_ms) >= 100 && Number(row.crew_sale_credit_ms) < 10000);
   assert.equal(Number((await app.pool.query('SELECT qty FROM stash WHERE character_id=$1 AND drug_id=$2', [id, drug.id])).rows[0].qty), 2);
+
+  // Drive the real accrual/persistence seam at the wage cap. Even frequent touches cannot sell a
+  // single unit after the liability stops growing.
+  await app.pool.query(
+    'UPDATE characters SET crew=1,crew_paid_at=$2,crew_sale_credit_ms=59000,last_accrued_at=$3 WHERE id=$1',
+    [id, new Date(Date.now() - M4.CREW_WAGE_CAP_MS), new Date(Date.now() - 1100)]);
+  await withCharacter(app.pool, accountId, async () => ({ ok: true }));
+  assert.equal(Number((await app.pool.query(
+    'SELECT qty FROM stash WHERE character_id=$1 AND drug_id=$2', [id, drug.id])).rows[0].qty), 2,
+  'the real accrual path moves no stash once wages are capped');
+  assert.equal(Number((await app.pool.query(
+    'SELECT crew_sale_credit_ms FROM characters WHERE id=$1', [id])).rows[0].crew_sale_credit_ms), 0,
+  'cold accrual cannot bank fractional work for a later payout');
 } finally { await app.close(); }
 
 console.log('Economy pacing: crew partition, paid-through cadence, and persistence passed.');

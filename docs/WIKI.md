@@ -500,7 +500,7 @@ levels; the top levels cost $OMR) → **cook a batch** (`/kitchen/cook`) → **c
   Dealing also uses energy.
 - **Crew** (`/kitchen/crew/hire`, up to 5) sell your cheapest drugs while you are offline. But each crew
   member costs **$1,200 each hour in wages** (also called "the nut," `/kitchen/crew/wages`) whether the
-  stash moves or not. If you do not pay for 3 days, the crew becomes **cold** and stops selling.
+  stash moves or not. If you do not pay for 2 days, the crew becomes **cold** and stops selling.
   **Keep them stocked and check in often.** Offline sales are capped at 8 hours' worth however long you
   are away, but the nut keeps running for up to two days — so a crew you visit three times a day earns
   about 3.6× its wages even on the cheapest line, a crew you see once a day barely clears it, and a crew

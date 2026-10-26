@@ -211,14 +211,14 @@ export async function verifyPostUp(proof, ctx = {}) {
   return verifyNormalizedPostUp(normalized, ctx, true);
 }
 
-// Rolling-upgrade bridge only: predecessor registrations used a permissive id extractor and did
-// not require an X-linked account. The row-level legacy marker and ordinary 48h pending TTL bound
-// this verifier; current registrations never call it.
+// Rolling-upgrade bridge only: predecessor registrations used a permissive id extractor. Preserve
+// that exact parser for its bounded pending rows, but require the same linked-X author binding as a
+// current claim so a guest cannot cash somebody else's public post during the cutover window.
 export async function verifyLegacyPostUp(proof, ctx = {}) {
   const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
   if (mode !== 'live') return true;
   if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
   const normalized = normalizeLegacySocialPostProof(proof);
   if (!normalized) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
-  return verifyNormalizedPostUp(normalized, ctx, false);
+  return verifyNormalizedPostUp(normalized, ctx, true);
 }

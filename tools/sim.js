@@ -950,16 +950,16 @@ phase('P9.20c the nut — crew wages against crew earnings, by cadence');
   note('crew', 'what one hand moves while stocked', `$${fmt(Math.round(perHr(cheapest)))}/hr on ${cheapest.name} (the cheapest line)`,
     `${(perHr(cheapest) / wage).toFixed(1)}:1 against the wage, rising to ${(perHr(DRUGS[DRUGS.length - 1]) / wage).toFixed(0)}:1 on ${DRUGS[DRUGS.length - 1].name} — a STOCKED crew is never the problem`);
   // the cadence table: this is what the tester was feeling
-  for (const [label, gapH] of [['every 8h (three check-ins)', 8], ['daily', 24], ['every 3 days (the cold line)', 72]]) {
+  for (const [label, gapH] of [['every 8h (three check-ins)', 8], ['daily', 24], ['every 2 days (the cold line)', 48]]) {
     const soldH = Math.min(gapH, salesCapH);      // sales are capped at the offline window
     const earn = soldH * perHr(cheapest), owe = gapH * wage;
     note('crew', `1 hand, ${label}`, `${earn > owe ? '+' : ''}$${fmt(Math.round(earn - owe))}/cycle`,
       `banks ${soldH}h of sales ($${fmt(Math.round(earn))}) against ${gapH}h of wages ($${fmt(Math.round(owe))}) = ${(earn / owe).toFixed(2)}:1 on the cheapest line`);
   }
   note('crew', 'the asymmetry', `sales cap ${salesCapH}h — the nut runs to ${nutCapH}h`,
-    `${(nutCapH / salesCapH).toFixed(0)}x, sharper than the business pad's 7x. It is the same deliberate fiction (the corner holds a shift's take, the envelope runs a week) and the same defect it had: the game never SAID so. It does now — the rate, the countdown and the door out all ride with the price`);
+    `${(nutCapH / salesCapH).toFixed(0)}x: the corner holds a shift's take while the bounded wage envelope runs two days. The game states the rate, countdown and door out with the price`);
   note('crew', 'VERDICT', 'attendance, not a trap — once the terms are visible',
-    `a stocked, thrice-daily crew runs ${((Math.min(8, salesCapH) * 3 * perHr(cheapest)) / (24 * wage)).toFixed(1)}:1 even on ${cheapest.name}; a daily one is ${((salesCapH * perHr(cheapest)) / (24 * wage)).toFixed(2)}:1 and an absent one bleeds. The levers are CREW_WAGE_PER_HR, CREW_WAGE_CAP_MS (the week the nut runs to) and OFFLINE_CAP_MS (the shift the corner holds) — BALANCE.md`);
+    `a stocked, thrice-daily crew runs ${((Math.min(8, salesCapH) * 3 * perHr(cheapest)) / (24 * wage)).toFixed(1)}:1 even on ${cheapest.name}; a daily one is ${((salesCapH * perHr(cheapest)) / (24 * wage)).toFixed(2)}:1 and an absent one bleeds. The levers are CREW_WAGE_PER_HR, CREW_WAGE_CAP_MS (the two-day nut) and OFFLINE_CAP_MS (the shift the corner holds) — BALANCE.md`);
 }
 
 // ════════ P9.21 THE POPULATION — the npc:seed faucet, measured analytically ════════

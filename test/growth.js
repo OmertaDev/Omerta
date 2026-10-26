@@ -246,7 +246,7 @@ assert.equal((await meOf(chef.token)).cash, cashPreNut - r.body.paid, 'the nut l
 assert.equal(Number((await pool.query(`SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE reason='crew:wages' AND character_id='${chef.id}'`)).rows[0].s),
   -r.body.paid, 'crew:wages is a ledgered §10.4 cash sink');
 assert.equal((await meOf(chef.token)).crewWageOwed, 0, 'paying squared the nut');
-// COLD: an unpaid crew (past the 3-day window) DOWNS TOOLS — accrual stops their offline sales.
+// COLD: an unpaid crew at the 2-day wage cap DOWNS TOOLS — accrual stops their offline sales.
 // Make them cold FIRST, then stock the shelf (a cold crew won't touch it — a warm 2-crew would
 // eat the restock as fast as it's cooked). Stash isn't a §10.4 currency, so a direct seed is fine.
 await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '4 days' WHERE id='${chef.id}'`);
@@ -272,16 +272,16 @@ assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0
   let m = await meOf(chef.token);
   assert.equal(m.crewWagePerHead, 1200, 'the sheet states the per-head rate BEFORE you hire');
   assert.equal(m.crewMax, 5, 'and how many hands you may keep');
-  assert(m.crewColdSeconds > 0 && m.crewColdSeconds <= 3 * 24 * 3600,
+  assert(m.crewColdSeconds > 0 && m.crewColdSeconds <= 2 * 24 * 3600,
     `a countdown to downed tools (got ${m.crewColdSeconds})`);
   const rules = (await call('GET', '/v1/rules')).body;
   assert.equal(rules.crew.wagePerHr, 1200, 'the public catalog carries the wage');
-  assert.equal(rules.crew.coldHours, 72, 'and the cold window');
+  assert.equal(rules.crew.coldHours, 48, 'and the cold window closes when capped wages stop accruing');
   // D7=C (founder, 2026-08-02): 168h → 48h. Stated precisely, because C SOFTENS the crossover rather
   // than removing it — only raising OFFLINE_CAP_MS would do that, and that number governs every
   // offline faucet in the game. What the cap buys is that the loss STOPS GROWING: a hand still earns
   // at most 8h of sales however long you are away, but now owes at most 48h of wage instead of 168h,
-  // so three days away goes 0.40:1 → 0.60:1 and a week away no longer gets any worse than three days.
+  // so two days away bottoms out at 0.60:1 and a longer absence cannot grow either side of the tab.
   // Absence has a floor. Read off the constant so the published figure and the clock cannot drift.
   assert.equal(rules.crew.wageCapHours, M4.CREW_WAGE_CAP_MS / 3600000, 'and how long the nut runs');
 
@@ -312,7 +312,7 @@ assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0
   r = await call('DELETE', '/v1/kitchen/crew', { token: chef.token });
   assert.equal(r.code, 400); assert.equal(r.body.error, 'nut');
 
-  // COLD: men who downed tools three days ago have already gone — they walk for nothing, which is
+  // COLD: men who downed tools at the two-day cap have already gone — they walk for nothing, which is
   // the exit a broke player needs. The final hand's capped tab follows any future rehire.
   await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '4 days' WHERE id='${chef.id}'`);
   assert.equal((await meOf(chef.token)).crewCold, true, 'downed tools');
@@ -1571,17 +1571,23 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     data: { id: String(url).match(/\/tweets\/(\d+)/)?.[1], author_id: stubAuthor },
   }) });
   try {
-    // Rolling upgrade: rows registered by the predecessor inherit the schema default TRUE and may
-    // finish only inside their original 48h window, using the predecessor's proof/provider rules.
+    // Rolling upgrade: predecessor rows retain their permissive proof parser inside the bounded
+    // 48h window, but payout now requires linked-X ownership like every current claim.
     const bridgedGuest = await mk('Bridged Guest Bea');
     const bridgedCash = Number((await meOf(bridgedGuest.token)).cash);
     await pool.query(
       `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
        VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222221')`,
       [bridgedGuest.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: bridgedGuest.token })).body.error,
+      'verify_provider', 'a predecessor-valid pending guest cannot cash somebody else\'s public post');
+    assert.equal(Number((await meOf(bridgedGuest.token)).cash), bridgedCash,
+      'the refused legacy guest proof moves no cash');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='781' WHERE id=$1", [bridgedGuest.accountId]);
+    stubAuthor = '781';
     const bridged = await call('POST', '/v1/social/sw_post/claim', { token: bridgedGuest.token });
     assert.equal(bridged.body.cash, SOCIAL_TASKS.CASH,
-      'a predecessor-valid pending guest proof can mature during the bounded bridge');
+      'the bounded predecessor parser remains available after linked-X ownership is proved');
     assert.equal(Number((await meOf(bridgedGuest.token)).cash), bridgedCash + SOCIAL_TASKS.CASH);
 
     const invalidLegacy = await mk('Invalid Legacy Ivy');

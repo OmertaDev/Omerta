@@ -677,8 +677,9 @@ export const M4 = {
   },
   // RECURRING SINKS — crew wages ("the nut"): each corner man draws CREW_WAGE_PER_HR whether the
   // stash moves or not (you pay them to stand the corner). Wages accrue on their own clock up to
-  // CREW_WAGE_CAP_MS; unpaid past CREW_WAGE_COLD_MS (3d) the crew DOWNS TOOLS (accrual stops their
-  // offline sales) until the nut is paid.
+  // CREW_WAGE_CAP_MS; once that same bounded liability is reached the crew DOWNS TOOLS (accrual stops
+  // their offline sales) until the nut is paid. Keeping the two clocks equal prevents a player from
+  // collecting sales after wages have stopped accruing by touching the game throughout a longer grace.
   //
   // D7=C (founder, 2026-08-02): the cap was 7d against an 8h offline sales window — a 21× asymmetry,
   // sharper than the pad's, so three days away cost 0.40:1. Capping the WAGE CLOCK at 2d was chosen
@@ -686,7 +687,7 @@ export const M4 = {
   // faucet in the game, so moving it is a whole-economy decision; this one is kitchen-local and
   // changes nothing else. An attentive owner is unaffected — they were never near the cap.
   // BALANCE.md § THE NUT.
-  CREW_WAGE_PER_HR: 1200, CREW_WAGE_CAP_MS: 2*24*3600*1000, CREW_WAGE_COLD_MS: 3*24*3600*1000,
+  CREW_WAGE_PER_HR: 1200, CREW_WAGE_CAP_MS: 2*24*3600*1000, CREW_WAGE_COLD_MS: 2*24*3600*1000,
   LAYLOW_CASH: 5000, LAYLOW_ENERGY: 25, LAYLOW_COOL: 25,
   CLEANPAPERS_OMR: 60,
   HEIST_CD_MS: 8*3600*1000,

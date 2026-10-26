@@ -251,7 +251,7 @@ export async function payCrewWages(ch, client, h) {
 //
 // The rule is one line: a WORKING crew must be squared up before anyone walks; a crew that DOWNED
 // TOOLS (cold — the nut unpaid past CREW_WAGE_COLD_MS) can be let go for nothing, because men who
-// stopped working for you three days ago have already gone.
+// stopped working at the two-day wage cap have already gone.
 //
 // A cold walk-off is still free at the door. If the final hand leaves, their capped unpaid tab stays
 // on the clock and must be settled before anyone can be hired again, so cycling 1 → 0 → 1 cannot

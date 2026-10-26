@@ -3945,7 +3945,7 @@ for (const [m, url0, payload] of ACTIONS) {
   const hire = said.get('/v1/kitchen/crew/hire');
   assert(hire && /nut/i.test(hire) && /\/hr/.test(hire),
     'hiring a corner man must name the NUT it starts — the wage runs whether the stash moves or ' +
-    `not, and three days unpaid they down tools: ${JSON.stringify(hire)}`);
+    `not, and two days unpaid they down tools: ${JSON.stringify(hire)}`);
   const mod = said.get('/v1/kitchen/module/purity');
   assert(mod && /cook quality/i.test(mod),
     `a lab module must say what it buys, not just what it cost: ${JSON.stringify(mod)}`);
