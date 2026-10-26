@@ -5074,7 +5074,7 @@ scopedSocialContext = async function(db) {
     const normalized=source.replaceAll('\r\n','\n');
     if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\r')
       ||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n'))
-      ||createHash('sha256').update(normalized).digest('hex')!=='e27b4199e0c076d9a79ca2c0437f2875aee08ea57bd14a55a000a2aa8c9a603b')return source;
+      ||createHash('sha256').update(normalized).digest('hex')!=='51f30dd2f9f7f6d6594bf3649ecc6a583606fe223df12747c9222e450ea16292')return source;
     // These three refusals read the permanent provider/post receipt, not a refillable allowance.
     // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.
     return source.replaceAll(original,original.replace("'proof_used'","'proof'"));

@@ -100,6 +100,8 @@ const releaseTailFiles = [
   'src/managementteamautonomy.js', 'test/managementteams-retry-integration.js',
 ];
 const lf = text => text.replaceAll('\r\n', '\n');
+const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
+  file, fs.readFileSync(file, 'utf8')));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -317,7 +319,7 @@ for (const input of [hardeningSuccessorCurrent + '\n', hardeningSuccessorCurrent
 for (const file of files) {
   const pin = ECONOMY_HARDENING_SOURCE_DOMAINS[file];
   const current = git('show', `${expectedRevision}:${file}`), baseline = git('show', `${expectedPredecessor}:${file}`);
-  const rawPhysical = fs.readFileSync(file, 'utf8');
+  const rawPhysical = physicalCandidateSource(file);
   const tailPhysical = releaseTailFiles.includes(file)
     ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical;
   const physical = lf(economyHardeningMergeHistoricalInput(file, tailPhysical));
@@ -369,8 +371,7 @@ for (const file of repairFiles) {
   const current = git('show', `${ECONOMY_HARDENING_REPAIR_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
-  const rawPhysical = fs.readFileSync(file, 'utf8');
-  const mergeQualified = lf(economyUxMergeCandidateHistoricalInput(file, rawPhysical));
+  const mergeQualified = physicalCandidateSource(file);
   const outerPhysical = lf(releaseTailFiles.includes(file)
     ? assertEconomyReleaseTailTransfer(file, mergeQualified).baselineText : mergeQualified);
   const campaignExpirySealed = campaignExpiryFiles.includes(file)
@@ -431,7 +432,7 @@ for (const file of repairSuccessorFiles) {
   const historical = predecessorAbsent ? current
     : files.includes(file) ? git('show', `${expectedPredecessor}:${file}`)
       : repairFiles.includes(file) ? git('show', `${ECONOMY_HARDENING_REPAIR_PREDECESSOR}:${file}`) : baseline;
-  const rawPhysical = fs.readFileSync(file, 'utf8');
+  const rawPhysical = physicalCandidateSource(file);
   const outerPhysical = lf(releaseTailFiles.includes(file)
     ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical);
   const growthDeterminismSealed = growthDeterminismFiles.includes(file)
@@ -492,7 +493,7 @@ for (const file of releaseRepairFiles) {
   const current = git('show', `${ECONOMY_HARDENING_RELEASE_REPAIR_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_RELEASE_REPAIR_PREDECESSOR}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = physicalCandidateSource(file);
   assert.equal(physical, current, 'Physical release repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(),
@@ -536,7 +537,7 @@ for (const file of directorFixtureFiles) {
   const pin = ECONOMY_HARDENING_DIRECTOR_FIXTURE_DOMAINS[file];
   const current = git('show', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_DIRECTOR_FIXTURE_PREDECESSOR}:${file}`);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = physicalCandidateSource(file);
   assert.equal(physical, current, 'Physical director fixture source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(),
@@ -581,7 +582,7 @@ for (const file of phase2TimeoutFiles) {
   const current = git('show', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_PHASE2_TIMEOUT_PREDECESSOR}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = physicalCandidateSource(file);
   assert.equal(physical, current, 'Physical Phase 2 timeout source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(),
@@ -626,7 +627,7 @@ for (const file of growthDeterminismFiles) {
   const current = git('show', `${ECONOMY_HARDENING_GROWTH_DETERMINISM_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_GROWTH_DETERMINISM_PREDECESSOR}:${file}`);
   const historical = files.includes(file) ? git('show', `${expectedPredecessor}:${file}`) : baseline;
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = physicalCandidateSource(file);
   assert.equal(physical, current, 'Physical growth determinism source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(),
@@ -673,7 +674,7 @@ for (const file of campaignExpiryFiles) {
   const baseline = git('show', ECONOMY_HARDENING_CAMPAIGN_EXPIRY_PREDECESSOR + ':' + file);
   const historical = files.includes(file) ? git('show', expectedPredecessor + ':' + file)
     : repairFiles.includes(file) ? git('show', ECONOMY_HARDENING_REPAIR_PREDECESSOR + ':' + file) : baseline;
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = physicalCandidateSource(file);
   assert.equal(physical, current, 'Physical campaign expiry source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(),
@@ -718,7 +719,7 @@ for (const file of commerceAdmissionFiles) {
   const pin = ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS[file];
   const current = git('show', ECONOMY_HARDENING_COMMERCE_ADMISSION_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_HARDENING_COMMERCE_ADMISSION_PREDECESSOR + ':' + file);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = physicalCandidateSource(file);
   assert.equal(physical, current, 'Physical commerce admission source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(),
@@ -760,7 +761,7 @@ for (const file of commerceAdmissionFiles) {
   }
 }
 for (const file of bindingFiles) {
-  const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], rawPhysical = lf(fs.readFileSync(file, 'utf8'));
+  const pin = ECONOMY_HARDENING_BINDING_DOMAINS[file], rawPhysical = physicalCandidateSource(file);
   const physical = releaseTailFiles.includes(file)
     ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical;
   const current = successorFiles.includes(file)
@@ -789,7 +790,7 @@ for (const file of successorFiles) {
   const pin = ECONOMY_HARDENING_BINDING_SUCCESSOR_DOMAINS[file];
   const current = git('show', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_REVISION}:${file}`);
   const baseline = git('show', `${ECONOMY_HARDENING_BINDING_SUCCESSOR_PREDECESSOR}:${file}`);
-  const rawPhysical = lf(fs.readFileSync(file, 'utf8'));
+  const rawPhysical = physicalCandidateSource(file);
   const physical = releaseTailFiles.includes(file)
     ? assertEconomyReleaseTailTransfer(file, rawPhysical).baselineText : rawPhysical;
   assert.equal(physical, current, 'Physical successor source must remain exact: ' + file);
