@@ -1,23 +1,61 @@
 // Source/control proofs only; no PostgreSQL imports, connections, or native-result transfer.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
 import { assertUxNativeDirectorGuards } from './ux-native-director-guard.js';
 await assertUxNativeDirectorGuards();
-import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_UX_METADATA, ENTERPRISE_UX_SUPPORT, ENTERPRISE_UX_ASSETS, assertEnterpriseUxInputDefinition, assertEnterpriseUxTrackedInput, assertEnterpriseUxMetadataBytes, enterpriseUxMetadataBytes, enterpriseUxClosure, enterpriseUxImports } from '../../tools/enterprise-native-ux.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_UX_METADATA, ENTERPRISE_UX_SUPPORT, ENTERPRISE_UX_ASSETS, assertEnterpriseUxInputDefinition, assertEnterpriseUxTrackedInput, assertEnterpriseUxMetadataBytes, assertEnterpriseUxReplacementPlan, enterpriseUxReplacementPlan, enterpriseUxMetadataBytes, enterpriseUxClosure, enterpriseUxImports } from '../../tools/enterprise-native-ux.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
+const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
 export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  let negatives = 0;
  const reject = run => { assert.throws(run); negatives++; };
  const pin = ENTERPRISE_NATIVE_UX_INPUTS;
+ const fixturePin = (file, blobDigit, shaDigit, mode = '100644') => Object.freeze({ file, mode, blob: blobDigit.repeat(40), sha256: shaDigit.repeat(64) });
+ const fixtureFiles = ['src/present-changed.js', 'src/present-unchanged.js', 'src/absent-changed.js', 'src/absent-unchanged.js'];
+ const presentBefore = fixturePin(fixtureFiles[0], '1', '2'), presentAfter = fixturePin(fixtureFiles[0], '3', '4'), presentSame = fixturePin(fixtureFiles[1], '5', '6');
+ const absentBefore = fixturePin(fixtureFiles[2], '7', '8'), absentAfter = fixturePin(fixtureFiles[2], '9', 'a'), absentSame = fixturePin(fixtureFiles[3], 'b', 'c'), alternateLegacy = fixturePin(fixtureFiles[0], 'd', 'e');
+ const fixtureLegacy = Object.freeze({ additions: Object.freeze([alternateLegacy, absentBefore, absentSame]) }), fixtureCurrent = Object.freeze([presentAfter, presentSame, absentAfter, absentSame]);
+ const fixturePredecessors = new Map([[fixtureFiles[0], presentBefore], [fixtureFiles[1], presentSame]]), fixturePredecessor = file => fixturePredecessors.get(file) || null;
+ const fixturePlan = enterpriseUxReplacementPlan(fixtureFiles, fixtureLegacy, fixtureCurrent, fixturePredecessor);
+ assert.deepEqual(fixturePlan.replacements, [Object.freeze({ file: fixtureFiles[0], before: presentBefore, after: presentAfter })]);
+ assert.deepEqual(fixturePlan.legacyAdditionReplacements, [Object.freeze({ file: fixtureFiles[2], before: absentBefore, after: absentAfter })]);
+ assert.equal(fixturePlan.replacements[0].before, presentBefore, 'A real predecessor wins over a legacy-addition pin for the same file');
+ const fixtureDeclaration = Object.freeze({ replacements: fixturePlan.replacements, legacyAdditionReplacements: fixturePlan.legacyAdditionReplacements });
+ assertEnterpriseUxReplacementPlan(fixtureFiles, fixtureLegacy, fixtureCurrent, fixturePredecessor, fixtureDeclaration);
+ for (const declaration of [
+  { replacements: [], legacyAdditionReplacements: fixturePlan.legacyAdditionReplacements },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [] },
+  { replacements: [...fixturePlan.replacements, ...fixturePlan.legacyAdditionReplacements], legacyAdditionReplacements: [] },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [...fixturePlan.legacyAdditionReplacements, fixturePlan.legacyAdditionReplacements[0]] },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [{ ...fixturePlan.legacyAdditionReplacements[0], before: fixturePin(fixtureFiles[2], '0', '8') }] },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [{ ...fixturePlan.legacyAdditionReplacements[0], before: fixturePin(fixtureFiles[2], '7', '0') }] },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [{ ...fixturePlan.legacyAdditionReplacements[0], before: fixturePin(fixtureFiles[2], '7', '8', '100755') }] },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [{ ...fixturePlan.legacyAdditionReplacements[0], file: fixtureFiles[3] }] },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [{ ...fixturePlan.legacyAdditionReplacements[0], after: fixturePin(fixtureFiles[2], '0', 'a') }] },
+  { replacements: fixturePlan.replacements, legacyAdditionReplacements: [...fixturePlan.legacyAdditionReplacements, { file: fixtureFiles[3], before: absentSame, after: absentSame }] }
+ ]) reject(() => assertEnterpriseUxReplacementPlan(fixtureFiles, fixtureLegacy, fixtureCurrent, fixturePredecessor, declaration));
+ reject(() => enterpriseUxReplacementPlan(fixtureFiles, Object.freeze({ additions: Object.freeze([alternateLegacy, absentSame]) }), fixtureCurrent, fixturePredecessor));
+ reject(() => enterpriseUxReplacementPlan(fixtureFiles, fixtureLegacy, fixtureCurrent, file => file === fixtureFiles[1] ? null : fixturePredecessor(file)));
+ reject(() => enterpriseUxReplacementPlan(['../outside.js'], Object.freeze({ additions: Object.freeze([fixturePin('../outside.js', '1', '2')]) }), Object.freeze([fixturePin('../outside.js', '3', '4')]), () => null));
+ reject(() => enterpriseUxReplacementPlan(fixtureFiles, fixtureLegacy, fixtureCurrent, () => undefined));
  if (pin.status === 'UNSEALED') reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy));
  else {
   assert.equal(assertEnterpriseUxInputDefinition(legacyFiles, legacy), pin);
-  for (const mutate of [p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
+  for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
+  assert.equal(pin.files.length, 1707); assert.equal(pin.replacements.length, 81); assert.equal(pin.legacyAdditionReplacements.length, 3); assert.equal(pin.additions.length, 64);
+  const requiredLegacyReplacements = ['src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
+  assert.deepEqual(pin.legacyAdditionReplacements.map(row => row.file), requiredLegacyReplacements);
+  const tree = revision => new Map(git('ls-tree', '-r', '-z', revision).toString().split('\0').filter(Boolean).map(line => { const index = line.indexOf('\t'), [mode, type, blob] = line.slice(0, index).split(' '); return [line.slice(index + 1), { mode, type, blob }]; }));
+  const predecessor = tree(pin.predecessorRevision), legacyTree = tree(pin.legacyRevision), legacyAdditions = new Map(legacy.additions.map(row => [row.file, row]));
+  const predecessorPin = (file, after) => { const before = predecessor.get(file); if (before) return Object.freeze({ file, mode: before.mode, blob: before.blob, sha256: before.blob === after.blob ? after.sha256 : digest(git('show', pin.predecessorRevision + ':' + file)) }); const legacyPin = legacyAdditions.get(file), actual = legacyTree.get(file); assert(legacyPin && actual?.type === 'blob'); assert.equal(actual.mode, legacyPin.mode); assert.equal(actual.blob, legacyPin.blob); assert.equal(digest(git('show', pin.legacyRevision + ':' + file)), legacyPin.sha256); return null; };
+  assertEnterpriseUxReplacementPlan(legacyFiles, legacy, pin.files, predecessorPin, pin);
+  for (const file of requiredLegacyReplacements) { const row = pin.legacyAdditionReplacements.find(entry => entry.file === file), before = legacyAdditions.get(file), after = pin.files.find(entry => entry.file === file); assert.equal(git('ls-tree', pin.predecessorRevision, '--', file).length, 0); assert.deepEqual(row.before, before); assert.deepEqual(row.after, after); }
   const first = pin.files[0], canonical = git('show', pin.authoredRevision + ':' + first.file), record = { type: 'blob', mode: first.mode, blob: first.blob };
   assertEnterpriseUxTrackedInput(first.file, record, record, canonical);
   for (const [current, authored, bytes] of [[{ ...record, blob: '0'.repeat(40) }, record, canonical], [record, { ...record, blob: '1'.repeat(40) }, canonical], [{ ...record, mode: '120000' }, record, canonical], [record, record, Buffer.concat([canonical, Buffer.from('\n')])], [record, record, canonical.subarray(1)], [record, record, canonical.toString('utf8')]]) reject(() => assertEnterpriseUxTrackedInput(first.file, current, authored, bytes));
@@ -46,6 +84,6 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  assert(capture.includes('assertEnterpriseUxTrackedInput(f,tracked,authored.get(f),canonical,ux)'));
  assert(!/HistoricalInput|SourceBaseline|qualifyUxSource/.test(capture), 'Native capture never reconstructs a historical source');
  assert(capture.includes('f===ENTERPRISE_UX_METADATA') && !capture.includes("f!=='tools/enterprise-native-inputs.js'"), 'Exactly the new self-reference is unpinnable; old metadata is pinned');
- assert(capture.includes("if(!before){const legacyPin=successor.replacements.find") && capture.includes('A predecessor-absent legacy addition cannot masquerade as a UX replacement'), 'UX integration explicitly admits only legacy-sealed files absent from its older predecessor');
+ assert(capture.includes('assertEnterpriseUxReplacementPlan(ENTERPRISE_NATIVE_FILES,successor,ux.files,predecessorPin,ux)') && capture.includes('uxLegacyAdditionReplacements:replacementPlan.legacyAdditionReplacements.map'), 'UX integration recomputes and records both complete replacement categories');
  console.log(JSON.stringify({ phase: 'CURRENT_UX_NATIVE_ADMISSION_GUARDS', status: pin.status, refusals: negatives, unchangedWorkloadCases: 16, originalGuardsUnchanged: true, nativeExecution: false, priorResultsTransferred: false }));
 }
