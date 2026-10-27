@@ -39,6 +39,25 @@ export async function takeAccountDailyClaim(client, accountId, day, scope, claim
   return inserted.rowCount === 1;
 }
 
+// Reserve a bounded set of synthetic/account claim keys in one canonical PK order. Maintenance
+// writers use this for batches that can overlap during a rolling deploy; the shared ordering removes
+// inverse-key deadlocks, while one INSERT keeps a large repair page below the query-count budget.
+export async function takeAccountDailyClaims(client, accountIds, day, scope, claimId) {
+  const ordered = [...new Set(accountIds)].sort();
+  if (!ordered.length) return 0;
+  if (ordered.length > 1000) throw new RangeError('Account daily claim batch exceeds 1000 rows');
+  const params = [], values = [];
+  for (const accountId of ordered) {
+    const offset = params.length;
+    params.push(accountId, day, scope, claimId);
+    values.push(`($${offset + 1},$${offset + 2},$${offset + 3},$${offset + 4})`);
+  }
+  const inserted = await client.query(
+    `INSERT INTO account_daily_claims (account_id, day, scope, claim_id)
+     VALUES ${values.join(',')} ON CONFLICT DO NOTHING`, params);
+  return inserted.rowCount || 0;
+}
+
 // Allocate one of a fixed number of account/day slots while recording the semantic claim id. The
 // unique slot index enforces aggregate caps in the database itself, including in pg-mem where
 // SELECT FOR UPDATE does not serialize concurrent requests. Different claim ids cannot race past

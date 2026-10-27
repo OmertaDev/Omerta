@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { migrateCityHomeStorage } from './city-home-migration.js';
 import { enforceDatabaseRls } from './db-rls.js';
-import { takeAccountDailyClaim, takeBoundedAccountDailyClaim } from './accountdaily.js';
+import { takeAccountDailyClaim, takeAccountDailyClaims, takeBoundedAccountDailyClaim } from './accountdaily.js';
 import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
 import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
 
@@ -572,7 +572,7 @@ export async function migrateSchemaUnderLock(
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
   await migrateEconomyDailyClaims(boot);
-  await migrateSocialProofReceipts(boot);
+  await migrateSocialProofReceipts(boot, { timestampText: compatibility === 'postgres' });
   await migrateReferralOriginHolds(boot);
   await migrateCrewWageClocks(boot);
   await resetStartingLevels(boot);
@@ -738,62 +738,151 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
   }
 }
 
-// Backfill the permanent provider/id latch for payouts made before that latch shipped. The marker
-// records the first repair, but every boot repeats the bounded scan: an old API process can finish a
-// payout while a replacement process is starting during a rolling deploy. Paid evidence uses the
-// predecessor's accepted post-id shapes so every X-verified payout is retained; arbitrary trust prose
-// without an id is ignored. New submissions use the stricter host-bound parser in verify.js.
-export async function migrateSocialProofReceipts(q) {
+// Backfill the permanent provider/id latch for payouts made before that latch shipped. Large installs
+// can retain millions of payout telemetry rows, so each page is its own committed transaction with a
+// durable keyset cursor. A restart repeats at most one page; no boot materializes the retained history
+// or risks losing all progress to one statement timeout. Once the full pass is marked, later boots use
+// the same pager for current paid rows plus the two-day rolling-deploy telemetry tail.
+const SOCIAL_RECEIPT_MIGRATION_ID = 'social-proof-receipts-2026-10-23';
+const SOCIAL_RECEIPT_RETENTION_ID = 'social-proof-receipt-retention-2026-10-27';
+const SOCIAL_RECEIPT_PROGRESS_ID = 'social-proof-receipt-retention-progress-2026-10-27';
+const SOCIAL_RECEIPT_CURSOR_PREFIX = `${SOCIAL_RECEIPT_PROGRESS_ID}:cursor:`;
+const SOCIAL_RECEIPT_EPOCH = '1970-01-01T00:00:00.000Z';
+
+const encodeSocialReceiptCursor = state => Buffer.from(JSON.stringify(state)).toString('base64url');
+const decodeSocialReceiptCursor = id => {
+  if (!id.startsWith(SOCIAL_RECEIPT_CURSOR_PREFIX)) throw new Error('Invalid social receipt cursor');
+  let state;
+  try { state = JSON.parse(Buffer.from(id.slice(SOCIAL_RECEIPT_CURSOR_PREFIX.length), 'base64url').toString()); }
+  catch { throw new Error('Invalid social receipt cursor'); }
+  if (!['full', 'tail'].includes(state?.mode) || !['claims', 'telemetry'].includes(state?.stage))
+    throw new Error('Invalid social receipt cursor');
+  return state;
+};
+const socialReceiptAccount = proof => {
+  const normalized = normalizeLegacyPaidSocialPostProof(proof);
+  return normalized ? `social-proof:${normalized.provider}:${normalized.id}` : null;
+};
+
+async function migrateSocialProofReceiptPage(q, { batchSize, timestampText }) {
   await q.query('BEGIN');
   try {
     // One global sunset bounds the permissive predecessor verifier even if an old API process keeps
-    // inserting omitted-column rows during a rolling deploy. DO NOTHING preserves the first cutover
-    // timestamp forever; after 48h every row uses the strict current verifier regardless of its flag.
+    // inserting omitted-column rows during a rolling deploy. DO NOTHING preserves the first cutover.
     await q.query(
       "INSERT INTO economy_migrations (id) VALUES ('social-pending-proof-bridge-2026-10-26') ON CONFLICT DO NOTHING");
-    const migrationId = 'social-proof-receipts-2026-10-23';
-    const alreadyApplied = (await q.query(
-      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
-    // R4 repeated only a two-day telemetry tail after this marker existed. Paid claim rows live for
-    // seven days, so a predecessor payout followed by a delayed restart could be swept before the
-    // tail saw it. R5 consumes the full retained telemetry history once; the receipt-aware sweep in
-    // growth.js closes the deletion side of the gap for every later payout.
-    const retentionRepairId = 'social-proof-receipt-retention-2026-10-27';
-    const retentionRepairApplied = (await q.query(
-      'SELECT 1 FROM economy_migrations WHERE id=$1', [retentionRepairId])).rowCount > 0;
-    const claimRows = (await q.query(
-      'SELECT DISTINCT proof FROM social_claims WHERE paid AND proof IS NOT NULL')).rows;
-    // Paid rows are intentionally swept after seven days, but their same-transaction social_task
-    // telemetry survives for 180 days. The first upgrade consumes that retained payout evidence too;
-    // later boots need only the cutover window because the durable receipts now cover older proofs.
-    const telemetryRows = alreadyApplied && retentionRepairApplied ? (await q.query(
-      "SELECT props FROM telemetry WHERE event='social_task' AND at >= $1",
-      [new Date(Date.now() - 2 * 86400000)])).rows : (await q.query(
-      "SELECT props FROM telemetry WHERE event='social_task'")).rows;
-    const receiptAccounts = new Set();
-    const proofs = claimRows.map((row) => row.proof);
-    for (const row of telemetryRows) {
-      let props;
-      try { props = JSON.parse(row.props || '{}'); } catch { props = {}; }
-      proofs.push(props.proof);
+    const migrationApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [SOCIAL_RECEIPT_MIGRATION_ID])).rowCount > 0;
+    const retentionApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [SOCIAL_RECEIPT_RETENTION_ID])).rowCount > 0;
+    const fullApplied = migrationApplied && retentionApplied;
+    await q.query(
+      'INSERT INTO economy_migrations (id, applied_at) VALUES ($1,clock_timestamp()) ON CONFLICT DO NOTHING',
+      [SOCIAL_RECEIPT_PROGRESS_ID]);
+    const progress = (await q.query(
+      `SELECT ${timestampText ? 'applied_at::text' : 'applied_at'} AS cutoff_at
+         FROM economy_migrations WHERE id=$1 FOR UPDATE`,
+      [SOCIAL_RECEIPT_PROGRESS_ID])).rows[0];
+    const cursorRows = (await q.query(
+      'SELECT id FROM economy_migrations WHERE id LIKE $1 ORDER BY id FOR UPDATE',
+      [`${SOCIAL_RECEIPT_CURSOR_PREFIX}%`])).rows;
+    if (cursorRows.length > 1) throw new Error('Multiple social receipt migration cursors');
+    let cursorId = cursorRows[0]?.id;
+    let state = cursorId ? decodeSocialReceiptCursor(cursorId) : {
+      mode: fullApplied ? 'tail' : 'full', stage: 'claims', postedAt: SOCIAL_RECEIPT_EPOCH,
+      accountId: '', day: -2147483648, taskId: '',
+    };
+    if (!cursorId) {
+      cursorId = `${SOCIAL_RECEIPT_CURSOR_PREFIX}${encodeSocialReceiptCursor(state)}`;
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [cursorId]);
     }
-    for (const proof of proofs) {
-      const normalized = normalizeLegacyPaidSocialPostProof(proof);
-      if (normalized)
-        receiptAccounts.add(`social-proof:${normalized.provider}:${normalized.id}`);
+    const cutoff = timestampText ? progress.cutoff_at : new Date(progress.cutoff_at);
+    let rows, proofs;
+    if (state.stage === 'claims') {
+      const cursorPostedAt = timestampText ? state.postedAt : new Date(state.postedAt);
+      rows = (await q.query(
+        `SELECT account_id, day, task_id, proof,
+                ${timestampText ? 'posted_at::text' : 'posted_at'} AS cursor_posted_at
+           FROM social_claims
+          WHERE paid AND proof IS NOT NULL AND posted_at <= $1
+            AND (posted_at > $2 OR (posted_at=$2 AND account_id > $3)
+              OR (posted_at=$2 AND account_id=$3 AND day > $4)
+              OR (posted_at=$2 AND account_id=$3 AND day=$4 AND task_id > $5))
+          ORDER BY posted_at, account_id, day, task_id LIMIT $6`,
+        [cutoff, cursorPostedAt, state.accountId, state.day, state.taskId, batchSize])).rows;
+      proofs = rows.map(row => row.proof);
+    } else {
+      const lower = state.mode === 'tail'
+        ? (timestampText ? cutoff : new Date(cutoff.getTime() - 2 * 86400000)) : new Date(0);
+      const cursorAt = timestampText ? state.at : new Date(state.at);
+      rows = (await q.query(
+        `SELECT id, props, ${timestampText ? 'at::text' : 'at'} AS cursor_at FROM telemetry
+          WHERE event='social_task'
+            AND at >= ${state.mode === 'tail' && timestampText ? "$1::timestamptz - interval '2 days'" : '$1'}
+            AND at <= $2
+            AND (at > $3 OR (at=$3 AND id > $4))
+          ORDER BY at, id LIMIT $5`,
+        [lower, cutoff, cursorAt, state.id, batchSize])).rows;
+      proofs = rows.map((row) => {
+        try { return JSON.parse(row.props || '{}').proof; } catch { return null; }
+      });
     }
-    let inserted = 0;
-    for (const accountId of receiptAccounts)
-      if (await takeAccountDailyClaim(q, accountId, 0, 'social-proof', 'used')) inserted++;
-    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
-    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING',
-      [retentionRepairId]);
+    const receiptAccounts = proofs.map(socialReceiptAccount).filter(Boolean);
+    const canonical = new Set(receiptAccounts).size;
+    const inserted = await takeAccountDailyClaims(q, receiptAccounts, 0, 'social-proof', 'used');
+    if (rows.length === batchSize) {
+      const last = rows.at(-1);
+      state = state.stage === 'claims'
+        ? { ...state,
+            postedAt: timestampText ? last.cursor_posted_at : new Date(last.cursor_posted_at).toISOString(),
+            accountId: last.account_id, day: Number(last.day), taskId: last.task_id }
+        : { ...state, at: timestampText ? last.cursor_at : new Date(last.cursor_at).toISOString(), id: last.id };
+      const nextCursorId = `${SOCIAL_RECEIPT_CURSOR_PREFIX}${encodeSocialReceiptCursor(state)}`;
+      await q.query('DELETE FROM economy_migrations WHERE id=$1', [cursorId]);
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [nextCursorId]);
+      await q.query('COMMIT');
+      return { complete: false, applied: false, scanned: rows.length, canonical, inserted };
+    }
+    if (state.stage === 'claims') {
+      state = { mode: state.mode, stage: 'telemetry', at: SOCIAL_RECEIPT_EPOCH, id: '' };
+      const nextCursorId = `${SOCIAL_RECEIPT_CURSOR_PREFIX}${encodeSocialReceiptCursor(state)}`;
+      await q.query('DELETE FROM economy_migrations WHERE id=$1', [cursorId]);
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [nextCursorId]);
+      await q.query('COMMIT');
+      return { complete: false, applied: false, scanned: rows.length, canonical, inserted };
+    }
+    const applied = state.mode === 'full';
+    if (applied) {
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING',
+        [SOCIAL_RECEIPT_MIGRATION_ID]);
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING',
+        [SOCIAL_RECEIPT_RETENTION_ID]);
+    }
+    await q.query('DELETE FROM economy_migrations WHERE id=$1', [cursorId]);
+    await q.query('DELETE FROM economy_migrations WHERE id=$1', [SOCIAL_RECEIPT_PROGRESS_ID]);
     await q.query('COMMIT');
-    return { applied: !alreadyApplied, scanned: proofs.length, canonical: receiptAccounts.size, inserted };
+    return { complete: true, applied, scanned: rows.length, canonical, inserted };
   } catch (error) {
     await q.query('ROLLBACK').catch(() => {});
     throw error;
   }
+}
+
+export async function migrateSocialProofReceipts(q, options = {}) {
+  const wantedBatchSize = Number(options.batchSize ?? 1000);
+  const wantedBatches = Number(options.maxBatches ?? Number.MAX_SAFE_INTEGER);
+  const batchSize = Number.isSafeInteger(wantedBatchSize) && wantedBatchSize > 0
+    ? Math.min(wantedBatchSize, 1000) : 1000;
+  const maxBatches = Number.isSafeInteger(wantedBatches) && wantedBatches > 0
+    ? wantedBatches : Number.MAX_SAFE_INTEGER;
+  const timestampText = options.timestampText ?? dbCaps.timestampText;
+  const total = { applied: false, complete: false, batches: 0, scanned: 0, canonical: 0, inserted: 0 };
+  while (!total.complete && total.batches < maxBatches) {
+    const page = await migrateSocialProofReceiptPage(q, { batchSize, timestampText });
+    total.applied ||= page.applied; total.complete = page.complete; total.batches++;
+    total.scanned += page.scanned; total.canonical += page.canonical; total.inserted += page.inserted;
+  }
+  return total;
 }
 
 // Repeatable referral-origin repair. `created_ip` is immutable signup provenance; canonicalizing it

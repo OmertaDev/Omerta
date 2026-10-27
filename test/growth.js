@@ -1683,6 +1683,41 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.error, 'claimed',
       'the linked author is paid only once for the task');
 
+    // The 48h housekeeping sweep can race the external X check. If it deletes the pending row while
+    // verification is in flight, the conditional paid transition must lose and roll the receipt back;
+    // otherwise cash would move with no paid row and the task could be registered and paid again.
+    const lapsing = await mk('Lapsing Proof Lila');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='786' WHERE id=$1", [lapsing.accountId]);
+    const lapsingProof = '12345678901247';
+    stubAuthor = '786';
+    await call('POST', '/v1/social/sw_post/claim', { token: lapsing.token,
+      body: { proof: `https://x.com/lila/status/${lapsingProof}` } });
+    await matureSw(lapsing.id, 'sw_post');
+    const lapsingCash = Number((await meOf(lapsing.token)).cash);
+    const ordinaryFetch = global.fetch;
+    let enterCheck, releaseCheck;
+    const checking = new Promise(resolve => { enterCheck = resolve; });
+    const checked = new Promise(resolve => { releaseCheck = resolve; });
+    global.fetch = async (url) => { enterCheck(); await checked; return ordinaryFetch(url); };
+    try {
+      const settling = call('POST', '/v1/social/sw_post/claim', { token: lapsing.token });
+      await checking;
+      assert.equal((await pool.query(
+        'DELETE FROM social_claims WHERE account_id=$1 AND task_id=$2',
+        [lapsing.accountId, 'sw_post'])).rowCount, 1, 'the sweep wins while verification is in flight');
+      releaseCheck();
+      assert.equal((await settling).body.error, 'claim_lapsed',
+        'a lost pending-row transition cannot continue into a payout');
+    } finally { releaseCheck?.(); global.fetch = ordinaryFetch; }
+    assert.equal(Number((await meOf(lapsing.token)).cash), lapsingCash, 'the lost transition moves no cash');
+    const lapsedReceiptCount = (await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      [`social-proof:x:${lapsingProof}`])).rowCount;
+    const { dbCaps } = await import('../src/db.js');
+    assert.equal(lapsedReceiptCount, dbCaps.skipLocked ? 0 : 1,
+      'PostgreSQL rolls the failed receipt back; pg-mem may conservatively retain it, but neither pays cash');
+
     // The proof receipt is provider/id based, not URL-string or account based. Model an X identity
     // moving to a new game account: the same tweet stays spent under a twitter.com/statuses alias.
     await pool.query("UPDATE accounts SET auth_provider='guest', auth_subject=id WHERE id=$1", [linkedAcct]);
@@ -1760,6 +1795,61 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     'the delayed predecessor proof is permanently spent');
     assert.equal((await migrateSocialProofReceipts(pool)).inserted, 0,
       'the retention catch-up marker and receipt are idempotent');
+
+    // The retained-history repair is keyset-paged and commits its cursor after every bounded page.
+    // Force multiple pages (including same-timestamp ids, a duplicate alias and malformed JSON), then
+    // resume one page per invocation as a process restart would.
+    const pageAt = new Date(Date.now() - 12 * 86400000);
+    const pageProofs = [
+      ['receipt-page-a', 'https://x.com/legacy/status/12345678930001'],
+      ['receipt-page-b', 'https://twitter.com/legacy/statuses/12345678930002'],
+      ['receipt-page-c', '00012345678930003'],
+      ['receipt-page-d', 'https://x.com/alias/status/12345678930001'],
+    ];
+    for (const [id, pageProof] of pageProofs)
+      await pool.query(
+        `INSERT INTO telemetry (id, at, account_id, event, props)
+         VALUES ($1,$2,$3,'social_task',$4)`,
+        [id, pageAt, legacy.accountId, JSON.stringify({ task: 'sw_post', proof: pageProof })]);
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props)
+       VALUES ('receipt-page-malformed',$1,$2,'social_task','{')`, [pageAt, legacy.accountId]);
+    await pool.query(
+      `DELETE FROM economy_migrations
+        WHERE id IN ('social-proof-receipts-2026-10-23','social-proof-receipt-retention-2026-10-27')
+           OR id LIKE 'social-proof-receipt-retention-progress-2026-10-27%'`);
+    let pagedCalls = 0, pagedInserted = 0, pageResult;
+    do {
+      pageResult = await migrateSocialProofReceipts(pool, { batchSize: 2, maxBatches: 1 });
+      pagedCalls++; pagedInserted += pageResult.inserted;
+      if (!pageResult.complete)
+        assert.equal((await pool.query(
+          "SELECT 1 FROM economy_migrations WHERE id='social-proof-receipt-retention-2026-10-27'"
+        )).rowCount, 0, 'final marker stays absent while a durable page cursor remains');
+      assert(pagedCalls < 500, 'bounded receipt migration must make forward progress');
+    } while (!pageResult.complete);
+    assert(pagedCalls > 3, 'the repair resumed across multiple committed pages');
+    assert(pagedInserted >= 3, 'all unique canonical page proofs were retained');
+    for (const id of ['12345678930001', '12345678930002', '12345678930003'])
+      assert.equal((await pool.query(
+        `SELECT 1 FROM account_daily_claims
+          WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+        [`social-proof:x:${id}`])).rowCount, 1, `paged proof ${id} survived cursor boundaries`);
+    assert.equal((await pool.query(
+      "SELECT 1 FROM economy_migrations WHERE id LIKE 'social-proof-receipt-retention-progress-2026-10-27%'"
+    )).rowCount, 0, 'completion removes transient cursor rows');
+
+    const postCutoffProof = 'https://x.com/legacy/status/12345678930004';
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props)
+       VALUES ('receipt-page-post-cutoff',now(),$1,'social_task',$2)`,
+      [legacy.accountId, JSON.stringify({ task: 'sw_post', proof: postCutoffProof })]);
+    assert((await migrateSocialProofReceipts(pool, { batchSize: 2 })).inserted >= 1,
+      'the bounded two-day repeat pass catches evidence committed after the full-pass cutoff');
+    assert.equal((await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id='social-proof:x:12345678930004' AND day=0
+          AND scope='social-proof' AND claim_id='used'`)).rowCount, 1);
 
     const legacyReuser = await mk('Legacy Proof Reuser');
     await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='778' WHERE id=$1", [legacyReuser.accountId]);
