@@ -224,8 +224,9 @@ body.public-page {
   letter-spacing: .05em;
   text-decoration: none;
 }
-.public-sale-banner strong { color: var(--om-text-primary); font-weight: 600; }
+.public-sale-banner strong { padding: 6px 12px; border-radius: var(--om-radius-sm); background: var(--om-action-primary); color: var(--om-surface-canvas); font-weight: 700; }
 .public-sale-banner:hover { background: var(--om-surface-raised); text-decoration: none; }
+.public-sale-banner:hover strong { background: var(--om-action-primary-hover); }
 .public-sale-banner:focus-visible { outline: 2px solid var(--om-action-primary-hover); outline-offset: -4px; }
 
 .public-nav {
