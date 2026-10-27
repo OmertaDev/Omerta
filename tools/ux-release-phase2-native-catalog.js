@@ -6,11 +6,26 @@ import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
 import pg from 'pg';
 import * as original from './commerce-deed-release-phase2-native-catalog.js';
+import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
+import { economyUxMergeCandidateHistoricalInput,
+  economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 import { UX_SOURCE, qualifyUxSource } from './ux-source-compatibility.js';
 export * from './commerce-deed-release-phase2-native-catalog.js';
 
 export const UX_NATIVE_TABLES = Object.freeze(['ux_community_documents', 'ux_community_entries', 'ux_community_portrait_consents', 'ux_crew_notes', 'ux_crew_signals', 'ux_mentor_subjects', 'ux_workspaces']);
 const names = new Set(UX_NATIVE_TABLES), fields = ['relations', 'columns', 'constraints', 'indexes'];
+const socialBridgeTable = 'social_claims', socialBridgeColumn = 'legacy_proof_bridge',
+  socialBridgeConstraint = 'social_claims_legacy_proof_bridge_not_null';
+const socialBridgeDdl = `CREATE TABLE social_claims (
+  account_id TEXT NOT NULL,
+  day INT NOT NULL,
+  task_id TEXT NOT NULL,
+  posted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  paid BOOLEAN NOT NULL DEFAULT false,
+  proof TEXT,
+  legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true,
+  PRIMARY KEY (account_id, day, task_id)
+);`;
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
 const currentSchema = git('show', UX_SOURCE.revision + ':schema.sql');
 const predecessorSchema = qualifyUxSource('schema.sql', currentSchema).baselineText;
@@ -20,13 +35,37 @@ assert.deepEqual([...uxDdl.matchAll(/^CREATE TABLE IF NOT EXISTS (\w+) /gm)].map
 assert(!/\b(?:ALTER|DROP|INSERT|UPDATE|DELETE|TRUNCATE)\b/i.test(uxDdl), 'Only the seven inert table/index definitions');
 const tableOf = (field, row) => field === 'relations' ? row.name : row.table_name;
 const uxRows = (metadata, field) => metadata[field].filter(row => names.has(tableOf(field, row)));
+const isSocialBridgeRow = (field, row) => field === 'columns'
+  ? row.table_name === socialBridgeTable && row.column_name === socialBridgeColumn
+  : field === 'constraints' && row.table_name === socialBridgeTable && row.name === socialBridgeConstraint;
+const socialBridgeRows = (metadata, field) => metadata[field].filter(row => isSocialBridgeRow(field, row));
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
-// Keep the original engine's exact predecessor order; no collation normalization is introduced.
-const merge = (base, ux) => freeze(Object.fromEntries(fields.map(field => [field, [...base[field], ...ux[field]]])));
+// Keep the original engine's exact predecessor order; insert the existing-table bridge at its exact
+// catalog anchors, then retain the reviewed UX append order. No collation normalization is introduced.
+const merge = (base, socialBridge, ux) => {
+  const merged = Object.fromEntries(fields.map(field => [field, [...base[field]]]));
+  assert.equal(socialBridge.columns.length, 1); assert(socialBridge.constraints.length <= 1);
+  const columnAt = merged.columns.findIndex(row => row.table_name === socialBridgeTable && row.column_name === 'proof');
+  assert(columnAt >= 0 && merged.columns[columnAt].ordinal === 6, 'Social bridge follows the exact predecessor proof column');
+  merged.columns.splice(columnAt + 1, 0, ...socialBridge.columns);
+  if (socialBridge.constraints.length) {
+    const constraintAt = merged.constraints.findIndex(row => row.table_name === socialBridgeTable && row.name === 'social_claims_paid_not_null');
+    assert(constraintAt >= 0, 'PostgreSQL 18 social bridge constraint precedes the exact paid anchor');
+    merged.constraints.splice(constraintAt, 0, ...socialBridge.constraints);
+  }
+  for (const field of fields) merged[field].push(...ux[field]);
+  return freeze(merged);
+};
 
 // The unchanged historical constructor also reads its caller's catalog internally. Only its four
 // exact, immutable catalog SELECTs get the validated UX projection; all other queries stay real.
-assert.equal(fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n'),
+const commerceDeedHelper = 'tools/commerce-deed-release-phase2-native-catalog.js';
+const commerceDeedRaw = fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8');
+const commerceDeedCandidate = economyUxMergeCandidateHistoricalInput(commerceDeedHelper, commerceDeedRaw);
+const commerceDeedMain = economyUxMergeMainHistoricalInput(commerceDeedHelper, commerceDeedRaw);
+assert.equal(economyHardeningSourceBaseline(commerceDeedHelper, commerceDeedCandidate), commerceDeedMain,
+  'Integrated economy and UX helper parents must share the exact predecessor');
+assert.equal(commerceDeedMain,
   git('show', UX_SOURCE.revision + ':tools/commerce-deed-release-phase2-native-catalog.js'), 'Whole original native helper remains unchanged');
 const catalogQueries = [];
 function collectCatalogQueries(node) {
@@ -57,19 +96,20 @@ async function assertNativeCaller(pool, endpoint, profile, includeNotNull) {
   } else {
     assert(main.endsWith('/test/phase2-postgres.js')); assert(['phase2', 'fresh'].includes(profile)); assert.equal(includeNotNull, true);
     assert.equal(process.argv[2], profile === 'phase2' ? '--definitions' : '--lots');
-    assert.equal(process.env.P2_TEST_CHILD, profile === 'phase2' ? 'upgrade' : 'lots');
+    assert.equal(process.env.P2_TEST_CHILD, profile === 'phase2' ? 'upgrade' : 'lots-catalog');
     assert.match(settings.schema, /^p2_definitions_[a-f0-9]{32}$/); assert.equal(settings.schema, process.env.P2_TEST_SCHEMA);
   }
   assert.equal(settings.role, address.username); assert.equal('/' + settings.database, address.pathname);
 }
-async function projectedCaller(pool, ux) {
-  const projection = uxNativeProjection(ux);
+async function projectedCaller(pool, ux, socialBridge) {
+  const uxProjection = uxNativeProjection(ux), socialBridgeProjection = socialLegacyBridgeProjection(socialBridge);
+  const projectMetadata = metadata => socialBridgeProjection.projectMetadata(uxProjection.projectMetadata(metadata));
   const context = (await pool.query(catalogQueries[0])).rows[0];
-  const verify = async () => { projection.projectMetadata(await original.readCommerceReleasePhase2Metadata(pool)); await assertUxNativeSecurity(pool); };
+  const verify = async () => { projectMetadata(await original.readCommerceReleasePhase2Metadata(pool)); await assertUxNativeSecurity(pool); };
   await verify();
-  return { query: async (sql, values) => {
-    if (sql === catalogQueries[0]) await verify();
-    const result = await pool.query(sql, values), field = catalogFields.get(sql);
+  const wrap = (queryable, guarded) => ({ query: async (sql, values) => {
+    if (guarded && sql === catalogQueries[0]) await verify();
+    const result = await queryable.query(sql, values), field = catalogFields.get(sql);
     if (!field) return result;
     let selected = result.rows.filter(row => names.has(tableOf(field, row)));
     if (field === 'indexes') selected = selected.map(row => {
@@ -77,9 +117,15 @@ async function projectedCaller(pool, ux) {
       return { ...row, definition: row.definition.replace(prefix, ' ON $self.') };
     });
     assert.deepEqual(selected, ux[field], 'Every fresh projected SQL result retains the complete UX ' + field);
-    await assertUxNativeSecurity(pool);
-    return { ...result, rows: result.rows.filter(row => !names.has(tableOf(field, row))) };
-  }, connect: pool.connect.bind(pool) };
+    assert.deepEqual(socialBridgeRows({ [field]: result.rows }, field), socialBridge[field],
+      'Every fresh projected SQL result retains the exact social bridge ' + field);
+    if (guarded) await assertUxNativeSecurity(pool);
+    return { ...result, rows: result.rows.filter(row => !names.has(tableOf(field, row)) && !isSocialBridgeRow(field, row)) };
+  } });
+  return { ...wrap(pool, true), connect: async () => {
+    const client = await pool.connect();
+    return { ...wrap(client, false), release: client.release.bind(client) };
+  } };
 }
 
 export async function assertUxNativeSecurity(pool) {
@@ -96,7 +142,7 @@ export async function readCommerceReleasePhase2Metadata(pool) {
   const metadata = await original.readCommerceReleasePhase2Metadata(pool);
   await assertUxNativeSecurity(pool); return metadata;
 }
-async function compileUxReference(pool, endpoint) {
+async function compileCurrentExtensionReference(pool, endpoint) {
   const schema = 'release_phase2_ref_' + crypto.randomBytes(8).toString('hex');
   assert.match(schema, /^release_phase2_ref_[a-f0-9]{16}$/);
   let created = false, client;
@@ -108,10 +154,27 @@ async function compileUxReference(pool, endpoint) {
     const settings = (await client.query('SELECT current_schema() AS schema,current_database() AS database,current_user AS role')).rows[0];
     const parent = (await pool.query('SELECT current_database() AS database,current_user AS role')).rows[0];
     assert.equal(settings.schema, schema); assert.equal(settings.database, parent.database); assert.equal(settings.role, parent.role);
-    await client.query(uxDdl);
+    await client.query(socialBridgeDdl + '\n' + uxDdl);
     const reference = await original.readCommerceReleasePhase2Metadata(client);
-    assert.deepEqual(reference.relations.map(row => row.name), UX_NATIVE_TABLES, 'Independent immutable DDL creates exactly the seven UX tables');
-    return freeze(reference);
+    assert.deepEqual(reference.relations.map(row => row.name), [socialBridgeTable, ...UX_NATIVE_TABLES],
+      'Independent immutable DDL creates exactly the social bridge fixture and seven UX tables');
+    const ux = Object.fromEntries(fields.map(field => [field, uxRows(reference, field)]));
+    assert.deepEqual(ux.relations.map(row => row.name), UX_NATIVE_TABLES, 'Independent immutable DDL creates exactly the seven UX tables');
+    const socialBridge = Object.fromEntries(fields.map(field => [field, socialBridgeRows(reference, field)]));
+    assert.deepEqual(socialBridge.columns, [{ table_name: socialBridgeTable, column_name: socialBridgeColumn,
+      ordinal: 7, type: 'boolean', typmod: -1, default_expression: 'true', not_null: true,
+      identity: '', generated: '', collation_schema: null, collation_name: null }],
+    'Independent immutable DDL creates the one exact social bridge column');
+    const version = Number((await client.query("SELECT current_setting('server_version_num') AS version")).rows[0].version);
+    assert.equal(socialBridge.constraints.length, version >= 180000 ? 1 : 0,
+      'Only PostgreSQL 18 exposes the exact social bridge NOT NULL constraint row');
+    if (version >= 180000) assert.deepEqual(socialBridge.constraints, [{ table_name: socialBridgeTable,
+      name: socialBridgeConstraint, type: 'n', validated: true, deferrable: false, deferred: false,
+      definition: 'NOT NULL legacy_proof_bridge', match_type: ' ', update_action: ' ', delete_action: ' ',
+      referenced_schema: null, referenced_table: null, columns: [socialBridgeColumn], referenced_columns: [] }],
+    'PostgreSQL 18 exposes the exact generated social bridge NOT NULL catalog row');
+    assert.equal(socialBridge.relations.length + socialBridge.indexes.length, 0, 'The social bridge adds no relation or index');
+    return freeze({ ux, socialBridge });
   } finally {
     await client?.end();
     if (created) {
@@ -136,42 +199,82 @@ export function uxNativeProjection(reference) {
   };
   return Object.freeze({ projectMetadata, projectConstraints });
 }
-function extendCatalog(prior, ux, branches = false) {
-  const projection = uxNativeProjection(ux), base = branches ? prior.current : prior.reference, reference = merge(base, ux);
-  const verifyMetadata = metadata => (branches ? prior.verify : prior.verifyMetadata)(projection.projectMetadata(metadata));
+function socialLegacyBridgeProjection(reference) {
+  reference = freeze(structuredClone(reference));
+  assert.equal(reference.columns.length, 1); assert.equal(reference.relations.length + reference.indexes.length, 0);
+  const projectMetadata = metadata => {
+    for (const field of fields) assert.deepEqual(socialBridgeRows(metadata, field), reference[field],
+      'Exact independently compiled social bridge ' + field);
+    return Object.fromEntries(fields.map(field => [field, metadata[field].filter(row => !isSocialBridgeRow(field, row))]));
+  };
+  const constraints = includeNotNull => includeNotNull ? reference.constraints.map(
+    ({ table_name, name, definition }) => ({ table_name, name, definition })) : [];
+  const projectConstraints = (rows, includeNotNull = true) => {
+    assert.equal(typeof includeNotNull, 'boolean');
+    assert.deepEqual(rows.filter(row => row.table_name === socialBridgeTable && row.name === socialBridgeConstraint),
+      constraints(includeNotNull), 'The exact social bridge constraint remains exact for the original native profile');
+    return rows.filter(row => !(row.table_name === socialBridgeTable && row.name === socialBridgeConstraint));
+  };
+  return Object.freeze({ projectMetadata, projectConstraints });
+}
+function extendCatalog(prior, ux, socialBridge, branches = false) {
+  const uxProjection = uxNativeProjection(ux), socialBridgeProjection = socialLegacyBridgeProjection(socialBridge),
+    projectMetadata = metadata => socialBridgeProjection.projectMetadata(uxProjection.projectMetadata(metadata)),
+    base = branches ? prior.current : prior.reference, reference = merge(base, socialBridge, ux);
+  const verifyMetadata = metadata => (branches ? prior.verify : prior.verifyMetadata)(projectMetadata(metadata));
   verifyMetadata(reference);
-  let causal = 0;
+  const causal = { socialBridge: 0, ux: 0 };
   assert.throws(() => { reference.columns.push({}); }, TypeError);
-  assert.throws(() => { ux.columns[0].type = 'tampered'; }, TypeError);
-  const retained = structuredClone(ux), independent = uxNativeProjection(retained);
-  retained.columns[0].type = 'tampered';
-  assert.throws(() => independent.projectMetadata(merge(base, retained)), error => error?.code === 'ERR_ASSERTION'); causal++;
+  for (const [label, extension, makeProjection] of [
+    ['socialBridge', socialBridge, socialLegacyBridgeProjection], ['ux', ux, uxNativeProjection],
+  ]) {
+    assert.throws(() => { extension.columns[0].type = 'tampered'; }, TypeError);
+    const retained = structuredClone(extension), independent = makeProjection(retained);
+    retained.columns[0].type = 'tampered';
+    const integrated = label === 'socialBridge' ? merge(base, retained, ux) : merge(base, socialBridge, retained);
+    assert.throws(() => independent.projectMetadata(integrated), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
+  }
   verifyMetadata(reference);
-  for (const field of fields) for (const row of ux[field]) {
-    const at = reference[field].findIndex(candidate => candidate === row);
-    const missing = { ...reference, [field]: [...reference[field]] }; missing[field].splice(at, 1);
-    assert.throws(() => projection.projectMetadata(missing), error => error?.code === 'ERR_ASSERTION'); causal++;
-    const duplicate = { ...reference, [field]: [...reference[field], { ...row }] }; assert.throws(() => projection.projectMetadata(duplicate), error => error?.code === 'ERR_ASSERTION'); causal++;
-    for (const key of Object.keys(row)) {
-      const changed = { ...reference, [field]: [...reference[field]] }, value = row[key];
-      changed[field][at] = { ...row, [key]: typeof value === 'boolean' ? !value : typeof value === 'number' ? value + 1 : Array.isArray(value) ? [...value, 'unknown'] : value === null ? 'unknown' : value + '__unknown' };
-      assert.throws(() => projection.projectMetadata(changed), error => error?.code === 'ERR_ASSERTION'); causal++;
+  for (const [label, extension] of [['socialBridge', socialBridge], ['ux', ux]]) {
+    for (const field of fields) for (const row of extension[field]) {
+      const at = reference[field].findIndex(candidate => candidate === row);
+      const missing = { ...reference, [field]: [...reference[field]] }; missing[field].splice(at, 1);
+      assert.throws(() => verifyMetadata(missing), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
+      const duplicate = { ...reference, [field]: [...reference[field], { ...row }] };
+      assert.throws(() => verifyMetadata(duplicate), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
+      for (const key of Object.keys(row)) {
+        const changed = { ...reference, [field]: [...reference[field]] }, value = row[key];
+        changed[field][at] = { ...row, [key]: typeof value === 'boolean' ? !value : typeof value === 'number' ? value + 1 : Array.isArray(value) ? [...value, 'unknown'] : value === null ? 'unknown' : value + '__unknown' };
+        assert.throws(() => verifyMetadata(changed), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
+      }
     }
   }
-  const common = { ...prior, reference, verifyMetadata, uxReference: ux, uxSource: UX_SOURCE.revision, uxCausal: causal };
+  const common = { ...prior, reference, verifyMetadata, socialBridgeReference: socialBridge,
+    socialBridgeCausal: causal.socialBridge, uxReference: ux, uxSource: UX_SOURCE.revision, uxCausal: causal.ux };
   if (branches) return Object.freeze({ ...common, current: reference, verify: verifyMetadata });
-  return Object.freeze({ ...common, normalize: rows => prior.normalize(projection.projectConstraints(rows, prior.includeNotNull)) });
+  return Object.freeze({ ...common, normalize: rows => prior.normalize(socialBridgeProjection.projectConstraints(
+    uxProjection.projectConstraints(rows, prior.includeNotNull), prior.includeNotNull)) });
+}
+function integratedSchemaSources(input) {
+  const candidate = economyUxMergeCandidateHistoricalInput('schema.sql', input);
+  const predecessor = qualifyUxSource('schema.sql', economyUxMergeMainHistoricalInput('schema.sql', input)).baselineText;
+  assert.equal(economyHardeningSourceBaseline('schema.sql', candidate), predecessor,
+    'Integrated economy and UX source parents must share the exact predecessor');
+  return Object.freeze({ candidate, predecessor });
 }
 export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {
-  const predecessor = qualifyUxSource('schema.sql', input).baselineText;
+  const { candidate } = integratedSchemaSources(input);
   await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);
-  const ux = await compileUxReference(pool, endpoint);
-  const prior = await original.createCommerceReleasePhase2MigrationCatalog(await projectedCaller(pool, ux), endpoint, predecessor, options);
-  return extendCatalog(prior, ux);
+  const { ux, socialBridge } = await compileCurrentExtensionReference(pool, endpoint);
+  const prior = await original.createCommerceReleasePhase2MigrationCatalog(
+    await projectedCaller(pool, ux, socialBridge), endpoint, candidate, options);
+  return extendCatalog(prior, ux, socialBridge);
 }
 export async function verifyCommerceNativeBranches(pool, endpoint) {
   await assertNativeCaller(pool, endpoint, 'fresh', true);
-  const ux = await compileUxReference(pool, endpoint);
-  const prior = await original.verifyCommerceNativeBranches(await projectedCaller(pool, ux), endpoint);
-  return extendCatalog(prior, ux, true);
+  const { candidate } = integratedSchemaSources(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+  const { ux, socialBridge } = await compileCurrentExtensionReference(pool, endpoint);
+  const prior = await original.verifyCommerceNativeBranches(
+    await projectedCaller(pool, ux, socialBridge), endpoint, candidate);
+  return extendCatalog(prior, ux, socialBridge, true);
 }
