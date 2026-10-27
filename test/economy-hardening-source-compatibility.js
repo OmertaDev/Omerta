@@ -53,6 +53,12 @@ import { ECONOMY_UX_MERGE_SOURCE,
   economyUxMergeCandidateHistoricalInput,
   economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import {
+  ECONOMY_BANK_INTEREST_HARDENING_REVISION, ECONOMY_BANK_INTEREST_HARDENING_TREE,
+  ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR, ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR_TREE,
+  ECONOMY_BANK_INTEREST_HARDENING_PHASE, ECONOMY_BANK_INTEREST_HARDENING_DOMAINS,
+  assertEconomyBankInterestHardeningSourceTransfer, economyBankInterestHardeningHistoricalInput,
+} from '../tools/economy-bank-interest-source-transfer.js';
+import {
   ECONOMY_SOCIAL_PROOF_CUTOVER_REVISION, ECONOMY_SOCIAL_PROOF_CUTOVER_TREE,
   ECONOMY_SOCIAL_PROOF_CUTOVER_PREDECESSOR, ECONOMY_SOCIAL_PROOF_CUTOVER_PREDECESSOR_TREE,
   ECONOMY_SOCIAL_PROOF_CUTOVER_PHASE, ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS,
@@ -119,6 +125,7 @@ const releaseTailFiles = [
   'src/growth.js', 'test/gates.js', 'test/lib/rc1-historical-source-fixture.js', 'tools/pgquery.js',
   'src/managementteamautonomy.js', 'test/managementteams-retry-integration.js',
 ];
+const bankInterestHardeningFiles = ['src/accrual.js', 'test/economy-balance.js'];
 const socialProofCutoverFiles = [
   '.github/workflows/economy-hardening.yml',
   'BALANCE.md',
@@ -311,6 +318,92 @@ assert.deepEqual(Object.keys(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS), comm
 assert(Object.isFrozen(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_RELEASE_TAIL_DOMAINS), releaseTailFiles);
 assert(Object.isFrozen(ECONOMY_RELEASE_TAIL_DOMAINS));
+assert.equal(ECONOMY_BANK_INTEREST_HARDENING_REVISION, '9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a');
+assert.equal(ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR, 'b933d6e2cf86e3b756e092496e41d3c848eea3cb');
+assert.equal(git('rev-parse', ECONOMY_BANK_INTEREST_HARDENING_REVISION + '^').trim(),
+  ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR,
+  ECONOMY_BANK_INTEREST_HARDENING_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_BANK_INTEREST_HARDENING_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', ECONOMY_BANK_INTEREST_HARDENING_REVISION + '^{tree}').trim(),
+  ECONOMY_BANK_INTEREST_HARDENING_TREE);
+assert.equal(git('rev-parse', ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR + '^{tree}').trim(),
+  ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR_TREE);
+assert.match(ECONOMY_BANK_INTEREST_HARDENING_PHASE,
+  /exact-bank-interest-request-frequency-hardening-source-transfer-only/);
+assert.deepEqual(Object.keys(ECONOMY_BANK_INTEREST_HARDENING_DOMAINS), bankInterestHardeningFiles);
+assert(Object.isFrozen(ECONOMY_BANK_INTEREST_HARDENING_DOMAINS));
+
+let positives = 0, refusals = 0, hunks = 0;
+for (const file of bankInterestHardeningFiles) {
+  const pin = ECONOMY_BANK_INTEREST_HARDENING_DOMAINS[file];
+  const current = git('show', ECONOMY_BANK_INTEREST_HARDENING_REVISION + ':' + file);
+  const baseline = git('show', ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR + ':' + file);
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  assert.equal(physical, current, 'Physical bank-interest hardening source must remain exact: ' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(), [
+    'mode', 'currentSha256', 'currentBlob', 'currentBytes', 'baselineSha256', 'baselineBlob',
+    'baselineBytes', 'contextLines', 'inverses',
+  ].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(Buffer.byteLength(current), pin.currentBytes);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(Buffer.byteLength(baseline), pin.baselineBytes);
+  assert.equal(git('rev-parse', ECONOMY_BANK_INTEREST_HARDENING_REVISION + ':' + file).trim(),
+    pin.currentBlob);
+  assert.equal(git('rev-parse', ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR + ':' + file).trim(),
+    pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_BANK_INTEREST_HARDENING_REVISION, '--', file).trim().split(/\s+/)[0],
+    pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR,
+    ECONOMY_BANK_INTEREST_HARDENING_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomyBankInterestHardeningSourceTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.runtime, false); assert.equal(transfer.native, false);
+    assert.equal(economyBankInterestHardeningHistoricalInput(file, input), baseline);
+    assert.equal(economyUxMergeCandidateHistoricalInput(file, input),
+      economyUxMergeCandidateHistoricalInput(file, baseline));
+    assert.equal(economyUxMergeMainHistoricalInput(file, input),
+      economyUxMergeMainHistoricalInput(file, baseline));
+    positives += 4;
+  }
+  const currentBuffer = Buffer.from(current), baselineBuffer = Buffer.from(baseline);
+  assert.deepEqual(economyBankInterestHardeningHistoricalInput(file, currentBuffer), baselineBuffer);
+  assert.deepEqual(economyUxMergeCandidateHistoricalInput(file, currentBuffer),
+    economyUxMergeCandidateHistoricalInput(file, baselineBuffer));
+  assert.deepEqual(economyUxMergeMainHistoricalInput(file, currentBuffer),
+    economyUxMergeMainHistoricalInput(file, baselineBuffer));
+  positives += 3;
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), null]) {
+    assert.throws(() => assertEconomyBankInterestHardeningSourceTransfer(file, changed));
+    assert.equal(economyBankInterestHardeningHistoricalInput(file, changed), changed); refusals++;
+  }
+  const invalidUtf8 = Buffer.from([0xc3, 0x28]);
+  assert.throws(() => assertEconomyBankInterestHardeningSourceTransfer(file, invalidUtf8));
+  assert.throws(() => economyBankInterestHardeningHistoricalInput(file, invalidUtf8)); refusals++;
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1,
+      'Unique complete bank-interest hardening inverse required: ' + file);
+    for (const changed of [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current),
+      current.replace(inverse.current, () => inverse.baseline),
+      current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+      assert.throws(() => assertEconomyBankInterestHardeningSourceTransfer(file, changed));
+      assert.equal(economyBankInterestHardeningHistoricalInput(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
+}
+for (const file of ['__proto__', 'constructor', 'toString', 'src/unknown.js']) {
+  const text = 'unknown\r\nbytes\n', invalidUtf8 = Buffer.from([0xc3, 0x28]);
+  assert.throws(() => assertEconomyBankInterestHardeningSourceTransfer(file, text));
+  assert.equal(economyBankInterestHardeningHistoricalInput(file, text), text);
+  assert.strictEqual(economyBankInterestHardeningHistoricalInput(file, invalidUtf8), invalidUtf8); refusals++;
+}
 assert.equal(ECONOMY_SOCIAL_PROOF_CUTOVER_REVISION, '3d1e7efade73521910494dcfdb66590e70b95140');
 assert.equal(ECONOMY_SOCIAL_PROOF_CUTOVER_PREDECESSOR, '62bee23255516ba3e5b05a6b27e8a0475e3a7895');
 assert.equal(git('rev-parse', ECONOMY_SOCIAL_PROOF_CUTOVER_REVISION + '^').trim(),
@@ -327,7 +420,6 @@ assert.match(ECONOMY_SOCIAL_PROOF_CUTOVER_PHASE,
 assert.deepEqual(Object.keys(ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS), socialProofCutoverFiles);
 assert(Object.isFrozen(ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS));
 
-let positives = 0, refusals = 0, hunks = 0;
 for (const file of socialProofCutoverFiles) {
   const pin = ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_PROOF_CUTOVER_REVISION + ':' + file);
@@ -1145,7 +1237,7 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyReleaseTailTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 623, 'positive control count drifted');
-assert.equal(refusals, 1501, 'refusal control count drifted');
-assert.equal(hunks, 433, 'inverse-hunk control count drifted');
+assert.equal(positives, 645, 'positive control count drifted');
+assert.equal(refusals, 1533, 'refusal control count drifted');
+assert.equal(hunks, 436, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
