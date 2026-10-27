@@ -4,8 +4,8 @@ export const SALE_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_SALE_PAGE_SOURCE_ONLY",
-  "revision": "6f6f80e70bd880594ca63c54c7a2654a03277919",
-  "tree": "93b056dea86071335361816d68c9393808804ed1",
+  "revision": "5991f507ef9d0d10bb87657e357b8bfd9213fa59",
+  "tree": "e130741911c95fb9a275c911b8adb230d92ccabd",
   "targetRevision": "bb55398ccc135228353e890648bda18222e76a35",
   "targetTree": "85bbefdde7d91237537c7f1c356643236788dc7d",
   "contextLines": 3,
@@ -80,7 +80,40 @@ export const SALE_SOURCE = freeze({
           "baseline": "    return reply.code(404).send({ error: 'not_found' });\n  });\n  app.get('/art/hype/:file', async (req, reply) => sendVideo('hype/' + req.params.file, req, reply));\n  // THE MOTION MANIFEST — the client asks which plates have a living clip (and which ambient beds\n  // shipped) instead of hardcoding a list that would drift from the directory. Derived from the SAME\n  // boot allowlist the serving route reads, so manifest and server can never disagree.\n"
         }
       ]
+    },
+    {
+      "file": "test/director-migration.js",
+      "mode": "100644",
+      "targetMode": "100644",
+      "currentBlob": "d614abcc16118a444e3d6835c6bd72fa9256bf69",
+      "currentSha256": "b250fe40588ac1c6e6fc3bec727694c526af71654410974ebe728bbd5b65cc36",
+      "currentRawSha256": {
+        "lf": "b250fe40588ac1c6e6fc3bec727694c526af71654410974ebe728bbd5b65cc36",
+        "crlf": "67b3f3be92cd779f0f404067bcd513fb944c9d25544caf320461229e0867d73c"
+      },
+      "currentBytes": 72089,
+      "targetBlob": "ed498b8ad69f1862dc5e58f8baf54780ab105ac2",
+      "targetSha256": "f047805b1cc69b1a91f3b87cbbdcf3af561869f981a5570eba6c7afda60ef45a",
+      "targetBytes": 71903,
+      "inverses": [
+        {
+          "current": "import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,\n  verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES } from '../tools/ux-release-phase2-native-catalog.js';\nimport { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\nimport { boostCar } from '../src/economy.js';\n",
+          "baseline": "import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,\n  verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES } from '../tools/ux-release-phase2-native-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\nimport { boostCar } from '../src/economy.js';\n"
+        },
+        {
+          "current": "  const serverVersion = Number((await pool.query(\"SELECT current_setting('server_version_num') AS version\")).rows[0].version);\n  dbCaps.skipLocked = true;\n  await pool.query(execFileSync('git', ['show', `${BASELINE}:schema.sql`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));\n  const exactBaselineMetadata = await readHistoricalCommerceReleasePhase2Metadata(pool);\n  // Current gameplay populates the historical fixture before migration, so give that temporary\n  // population schema only the newer read/persist surfaces it uses. We then copy all common-table\n  // data into a newly applied exact baseline schema; this avoids dropped-column attnum holes and\n",
+          "baseline": "  const serverVersion = Number((await pool.query(\"SELECT current_setting('server_version_num') AS version\")).rows[0].version);\n  dbCaps.skipLocked = true;\n  await pool.query(execFileSync('git', ['show', `${BASELINE}:schema.sql`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));\n  const exactBaselineMetadata = await readCommerceReleasePhase2Metadata(pool);\n  // Current gameplay populates the historical fixture before migration, so give that temporary\n  // population schema only the newer read/persist surfaces it uses. We then copy all common-table\n  // data into a newly applied exact baseline schema; this avoids dropped-column attnum holes and\n"
+        },
+        {
+          "current": "    for (const constraint of foreignKeys) await clone.query(`ALTER TABLE ${quote(namespace)}.${quote(constraint.table_name)}\n      ALTER CONSTRAINT ${quote(constraint.name)} ${constraint.deferrable\n        ? `DEFERRABLE INITIALLY ${constraint.deferred ? 'DEFERRED' : 'IMMEDIATE'}` : 'NOT DEFERRABLE'}`);\n    assert.deepEqual(await readHistoricalCommerceReleasePhase2Metadata(clone), exactBaselineMetadata,\n      'Temporary FK deferral restores the exact baseline physical catalog before commit');\n    await clone.query('COMMIT');\n  } catch (error) { await clone.query('ROLLBACK'); throw error; }\n",
+          "baseline": "    for (const constraint of foreignKeys) await clone.query(`ALTER TABLE ${quote(namespace)}.${quote(constraint.table_name)}\n      ALTER CONSTRAINT ${quote(constraint.name)} ${constraint.deferrable\n        ? `DEFERRABLE INITIALLY ${constraint.deferred ? 'DEFERRED' : 'IMMEDIATE'}` : 'NOT DEFERRABLE'}`);\n    assert.deepEqual(await readCommerceReleasePhase2Metadata(clone), exactBaselineMetadata,\n      'Temporary FK deferral restores the exact baseline physical catalog before commit');\n    await clone.query('COMMIT');\n  } catch (error) { await clone.query('ROLLBACK'); throw error; }\n"
+        },
+        {
+          "current": "    ORDER BY table_name,column_name`)).rows, [], 'Temporary current-runtime compatibility columns are absent from the predecessor');\n  assert.equal((await pool.query(\"SELECT to_regclass(current_schema()||'.account_daily_claims') AS relation\")).rows[0].relation,\n    null, 'Temporary current-runtime compatibility table is absent from the predecessor');\n  assert.deepEqual(await readHistoricalCommerceReleasePhase2Metadata(pool), exactBaselineMetadata,\n    'Fresh migration target has the exact baseline physical relations, columns/ordinals, constraints and indexes');\n  assert.deepEqual(await capture(canonicalTables), populatedCanonicalRows,\n    'Fresh exact baseline target preserves every populated canonical row and receipt');\n",
+          "baseline": "    ORDER BY table_name,column_name`)).rows, [], 'Temporary current-runtime compatibility columns are absent from the predecessor');\n  assert.equal((await pool.query(\"SELECT to_regclass(current_schema()||'.account_daily_claims') AS relation\")).rows[0].relation,\n    null, 'Temporary current-runtime compatibility table is absent from the predecessor');\n  assert.deepEqual(await readCommerceReleasePhase2Metadata(pool), exactBaselineMetadata,\n    'Fresh migration target has the exact baseline physical relations, columns/ordinals, constraints and indexes');\n  assert.deepEqual(await capture(canonicalTables), populatedCanonicalRows,\n    'Fresh exact baseline target preserves every populated canonical row and receipt');\n"
+        }
+      ]
     }
   ]
 });
-export const SALE_SOURCE_SHA256 = "c76a88cd394fdb1723d595b3287f604591f9f6c9e8897f9c28968c2992b5f3d4";
+export const SALE_SOURCE_SHA256 = "ef2c273cf1d372ec272db401656881f344a8fede941481501eb5038a663dd682";
