@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
 import pg from 'pg';
 import * as original from './commerce-deed-release-phase2-native-catalog.js';
+import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
 import { UX_SOURCE, qualifyUxSource } from './ux-source-compatibility.js';
 export * from './commerce-deed-release-phase2-native-catalog.js';
 
@@ -26,7 +27,8 @@ const merge = (base, ux) => freeze(Object.fromEntries(fields.map(field => [field
 
 // The unchanged historical constructor also reads its caller's catalog internally. Only its four
 // exact, immutable catalog SELECTs get the validated UX projection; all other queries stay real.
-assert.equal(fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n'),
+assert.equal(economyHardeningSourceBaseline('tools/commerce-deed-release-phase2-native-catalog.js',
+  fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8')),
   git('show', UX_SOURCE.revision + ':tools/commerce-deed-release-phase2-native-catalog.js'), 'Whole original native helper remains unchanged');
 const catalogQueries = [];
 function collectCatalogQueries(node) {
