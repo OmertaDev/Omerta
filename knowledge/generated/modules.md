@@ -517,7 +517,7 @@
 | [src/saleattribution.js](../../src/saleattribution.js) | 380 | platform-core | 6 / 7 | 0 | 7 | 2 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 7 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 203 | law-intelligence | 4 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3994 | platform-core | 251 / 45 | 448 | 46 | 19 |
+| [src/server.js](../../src/server.js) | 4008 | platform-core | 251 / 45 | 450 | 46 | 19 |
 | [src/servicesubscriptions.js](../../src/servicesubscriptions.js) | 65 | platform-core | 5 / 6 | 0 | 10 | 2 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/shoppingbasket-api.js](../../src/shoppingbasket-api.js) | 13 | platform-core | 3 / 1 | 0 | 2 | 0 |
