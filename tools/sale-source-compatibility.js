@@ -44,7 +44,7 @@ export function qualifySaleSource(file, input, pin = SALE_SOURCE) {
 export function saleHistoricalInput(file, input) {
   const row = SALE_SOURCE.files.find(record => record.file === file); if (!row) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'lossless UTF-8 physical source only');
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (typeof text !== 'string' || sha(text.replaceAll('\r\n', '\n')) !== row.currentSha256) return input;
   const restored = qualifySaleSource(file, text).baselineText;
   return buffer ? Buffer.from(restored) : restored;
