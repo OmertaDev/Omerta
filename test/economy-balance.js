@@ -32,6 +32,29 @@ function advance(f, steps) {
   return { units, proceeds, credit: Number(f.ch.crew_sale_credit_ms) };
 }
 
+function bankAdvance(bank, steps) {
+  const ch = { respect: 0, energy: 0, nerve: 0, health: 100, cash: 0, bank, heat: 0, crew: 0,
+    last_accrued_at: new Date(start), bank_credit_ms: 0, racket_credit_ms: 0 };
+  let elapsed = 0;
+  for (const ms of steps) {
+    elapsed += ms;
+    accrue(ch, null, { preview: true, stash: [], rackets: [], assets: [], held: [] }, new Date(start + elapsed));
+  }
+  return { bank: Number(ch.bank), credit: Number(ch.bank_credit_ms) };
+}
+
+// Bank returns depend on elapsed eligible time, never request count. An empty daily bucket makes a
+// two-hour real window exactly one eligible hour; one settlement and 7,200 one-second touches must
+// therefore agree below, through, and above the whale taper.
+for (const principal of [1_000_000, 9_990_000, 30_000_000]) {
+  const once = bankAdvance(principal, [2 * 3600000]);
+  const split = bankAdvance(principal, Array(7200).fill(1000));
+  assert.equal(split.credit, once.credit, `bank credit is partition-invariant at $${principal}`);
+  assert(Math.abs(split.bank - once.bank) < 0.001,
+    `splitting bank accrual cannot change its return at $${principal}: ${split.bank} vs ${once.bank}`);
+  assert(split.bank <= once.bank + 0.001, `splitting bank accrual cannot create a request-frequency bonus at $${principal}`);
+}
+
 assert.deepEqual(advance(fixture(), Array(60).fill(1000)), advance(fixture(), [minute]),
   'splitting one minute into requests cannot create extra work');
 let seed = 0x21c001d;
