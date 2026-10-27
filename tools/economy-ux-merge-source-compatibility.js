@@ -23,6 +23,7 @@ export const ECONOMY_UX_MERGE_FILES = Object.freeze([
   'src/socialproof.js',
   'src/ux-tactics.js',
   'src/verify.js',
+  'tools/commerce-deed-release-phase2-native-catalog.js',
   'tools/economy-hardening-source-transfer.js',
   'tools/economy-readiness-merge-source-compatibility.js',
   'tools/economy-release-tail-source-transfer.js',

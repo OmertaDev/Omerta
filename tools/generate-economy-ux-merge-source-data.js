@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 
 // Update sourceRevision only after the bridge implementation is committed. The merge and both
 // reviewed parents are immutable anchors; this generator never discovers or trusts moving refs.
-const sourceRevision = '38dfa088abf83dce56a76ad1eb1193303198b699';
+const sourceRevision = 'c93ea3b116f3c12e33397272dda3c357a4802183';
 const mergeRevision = '3f8c9a910e0097cb0ff93063693944a414204258';
 const candidateParentRevision = 'bfb23d1bba7f503f36498c4d82de78aa73256386';
 const mainParentRevision = '442409ae3f70677c0bd475d99f018bec29849e5b';
@@ -28,6 +28,7 @@ const files = Object.freeze([
   'src/socialproof.js',
   'src/ux-tactics.js',
   'src/verify.js',
+  'tools/commerce-deed-release-phase2-native-catalog.js',
   'tools/economy-hardening-source-transfer.js',
   'tools/economy-readiness-merge-source-compatibility.js',
   'tools/economy-release-tail-source-transfer.js',
