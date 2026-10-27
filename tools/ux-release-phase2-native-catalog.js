@@ -7,6 +7,7 @@ import { parse } from 'acorn';
 import pg from 'pg';
 import * as original from './commerce-deed-release-phase2-native-catalog.js';
 import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
+import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 import { UX_SOURCE, qualifyUxSource } from './ux-source-compatibility.js';
 export * from './commerce-deed-release-phase2-native-catalog.js';
 
@@ -165,7 +166,7 @@ function extendCatalog(prior, ux, branches = false) {
   return Object.freeze({ ...common, normalize: rows => prior.normalize(projection.projectConstraints(rows, prior.includeNotNull)) });
 }
 export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {
-  const predecessor = qualifyUxSource('schema.sql', input).baselineText;
+  const predecessor = qualifyUxSource('schema.sql', economyUxMergeMainHistoricalInput('schema.sql', input)).baselineText;
   await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);
   const ux = await compileUxReference(pool, endpoint);
   const prior = await original.createCommerceReleasePhase2MigrationCatalog(await projectedCaller(pool, ux), endpoint, predecessor, options);
