@@ -677,8 +677,9 @@ export const M4 = {
   },
   // RECURRING SINKS — crew wages ("the nut"): each corner man draws CREW_WAGE_PER_HR whether the
   // stash moves or not (you pay them to stand the corner). Wages accrue on their own clock up to
-  // CREW_WAGE_CAP_MS; unpaid past CREW_WAGE_COLD_MS (3d) the crew DOWNS TOOLS (accrual stops their
-  // offline sales) until the nut is paid.
+  // CREW_WAGE_CAP_MS; once that same bounded liability is reached the crew DOWNS TOOLS (accrual stops
+  // their offline sales) until the nut is paid. Keeping the two clocks equal prevents a player from
+  // collecting sales after wages have stopped accruing by touching the game throughout a longer grace.
   //
   // D7=C (founder, 2026-08-02): the cap was 7d against an 8h offline sales window — a 21× asymmetry,
   // sharper than the pad's, so three days away cost 0.40:1. Capping the WAGE CLOCK at 2d was chosen
@@ -686,7 +687,7 @@ export const M4 = {
   // faucet in the game, so moving it is a whole-economy decision; this one is kitchen-local and
   // changes nothing else. An attentive owner is unaffected — they were never near the cap.
   // BALANCE.md § THE NUT.
-  CREW_WAGE_PER_HR: 1200, CREW_WAGE_CAP_MS: 2*24*3600*1000, CREW_WAGE_COLD_MS: 3*24*3600*1000,
+  CREW_WAGE_PER_HR: 1200, CREW_WAGE_CAP_MS: 2*24*3600*1000, CREW_WAGE_COLD_MS: 2*24*3600*1000,
   LAYLOW_CASH: 5000, LAYLOW_ENERGY: 25, LAYLOW_COOL: 25,
   CLEANPAPERS_OMR: 60,
   HEIST_CD_MS: 8*3600*1000,
@@ -706,6 +707,8 @@ export const M4 = {
   // The constants are gone rather than zeroed so nothing can quietly re-enable them; the milestone
   // ladder's `omr` field is still in RECRUIT_MILESTONES because that table is MACHINE-OWNED
   // (ground rule #2) — game.js simply stops reading it.)
+  // The recruit must also hold a paid permanent character. That identity-cost gate is enforced from
+  // account_persistent.minted in game.js; these are the remaining numeric progression thresholds.
   REF_GATES: { level: 8, jobs: 40, checkins: 3, netWorth: 25000 },
   // ── THE CREW BONUS (founder-directed 2026-07-31) ───────────────────────────────────────────────
   // What replaces the $OMR. Every QUALIFIED recruit makes their recruiter earn respect faster, and
@@ -729,7 +732,8 @@ export const M4 = {
     MAX_BONUS: 1.0,   // hard ceiling on the SUM across every recruit (+100% at most, i.e. x2)
   },
   // STEPPED PAYOUT — "the spark": a small, EARLY cash payout the moment a recruit shows real early
-  // engagement (level 3 + 10 jobs), so the referrer gets fast feedback long before the full
+  // engagement after making their character permanent (level 3 + 10 jobs), so the referrer gets
+  // fast feedback long before the full
   // qualification (L8/40 jobs/3 check-ins/$25k). Cash only (never $OMR — that stays on the full
   // gate), excluded from the AGENT recruiter profile, ONCE ever. Agents start at the separately
   // budgeted full qualification milestone; weak early feedback is deliberately human-profile only.
@@ -759,8 +763,18 @@ export const crewWageOwed = (ch, now = Date.now()) => {
   const elapsed = Math.min(now - new Date(ch.crew_paid_at).getTime(), M4.CREW_WAGE_CAP_MS);
   return Math.floor(crew * M4.CREW_WAGE_PER_HR * Math.max(0, elapsed) / 3600000);
 };
-export const crewCold = (ch, now = Date.now()) =>
-  Number(ch.crew || 0) > 0 && !!ch.crew_paid_at && now - new Date(ch.crew_paid_at).getTime() >= M4.CREW_WAGE_COLD_MS;
+// A cold final hand may walk without an immediate charge, but their capped tab follows the next hire.
+// Warm final layoffs clear crew_paid_at after settling, so a zero-head clock is unambiguously deferred debt.
+export const crewRehireDebt = (ch, now = Date.now()) => {
+  if (Number(ch.crew || 0) !== 0 || !ch.crew_paid_at) return 0;
+  const elapsed = Math.min(now - new Date(ch.crew_paid_at).getTime(), M4.CREW_WAGE_CAP_MS);
+  return Math.floor(M4.CREW_WAGE_PER_HR * Math.max(0, elapsed) / 3600000);
+};
+export const crewCold = (ch, now = Date.now()) => {
+  if (Number(ch.crew || 0) <= 0) return false;
+  const paidAt = ch.crew_paid_at ? new Date(ch.crew_paid_at).getTime() : Number.NaN;
+  return !Number.isFinite(paidAt) || now - paidAt >= M4.CREW_WAGE_COLD_MS;
+};
 
 // ═══ THE KITCHEN → Tier 4 (omerta-tier2-deepening-design.md) ═══
 // Orthogonal depth on the M4 drug loop: LAB MODULES (a purity/yield/stealth upgrade axis, cash+$OMR
@@ -1196,6 +1210,8 @@ export const PACING = {
   ENERGY_REGEN_PER_MIN: 12,
   ENERGY_REGEN_RANK_BONUS: 4,   // Runner+ bump (was +20 on top of 40)
   NERVE_REGEN_PER_MIN: 6,
+  // Burst protection survives refills and applies across crime/deal variants.
+  STREET_ACTION_CD_MS: 30 * 1000,
 
   // (3) MISSIONS are a STORY LADDER, not the levelling curve. A cooldown between claims stops the
   // whole chain being cascaded in one sitting (28 × 4h ≈ 5 days minimum to walk it), and the respect
@@ -2971,6 +2987,7 @@ export const BOXING = {
   // ── STEP TWO ──
   STABLE_MAX: 3,             // fighters a manager can run at once (the stable)
   EXHIBITION_CD_MS: 6*3600*1000, // 6h per-fighter cooldown on NPC exhibition bouts
+  BOUT_CD_MS: 5 * 60 * 1000, // both fighters rest after every PvP bout
   // NPC exhibition opponents — a bounded PvE purse so a solo manager can build a record + earn (the fee
   // is a cash SINK win or lose; the purse a cash FAUCET only on a win → net-positive only vs a beatable
   // NPC). Bounded by the cooldown + the fee + needing the FORM to win. New faucet — sim + sign-off.
@@ -3037,6 +3054,7 @@ export const STABLE = {
   VARIANCE: 22,                       // rng added to each racer's form — enough for upsets
   INJURY_MS: 4 * 3600 * 1000,         // a lost race lays the animal up 4h
   CIRCUIT_CD_MS: 6 * 3600 * 1000,     // per-racer cooldown on the PvE circuit
+  MATCH_CD_MS: 5 * 60 * 1000,         // both racers rest after every PvP match
   LEGEND_MIN_LVL: 10,                 // a PvP match-race win only banks the owner LEGEND (racer_wins) vs a loser at/above this level (anti-Sybil — the RACES.WHEEL_MIN_LVL/npcHit-rookie-floor precedent; a status board can't be farmed against fresh alts). Sign-off lever.
   // the two kinds — a dog is the cheap early animal, a horse the prestige investment (pricier, rolls a
   // touch higher, races a richer circuit). statMin/statMax are the roll range at purchase.
@@ -4945,9 +4963,10 @@ export const MASTERY = {
   // couple of dedicated days, L50 in RuneScape-99 territory. Founder levers.
   XP_DIVISOR: 15,
   MAX_LVL: 50,
-  // XP per action, keyed by the bumpMastery action tag (the bumpStanding shape — flat awards; the
-  // action's own resource cost is the throttle). Sized ~proportional to that cost so no track is
-  // the one true farm: crime ~3/2 nerve, deal ~4/1 nerve+goods, a kill is rare and expensive.
+  // XP per award unit, keyed by the bumpMastery action tag. Most verbs award once per resolved
+  // action; quantity-bearing commerce uses XP_UNITS below so splitting the same freight into many
+  // requests cannot multiply progression. Sized ~proportional to cost so no track is the one true
+  // farm: crime ~3/2 nerve, deal ~4/1 nerve+goods, a kill is rare and expensive.
   // RETUNED at the step-2 gate (the BALANCE flag): once milestone perks exist, XP/hr is a power
   // number — the analytic pace check found the den 4-40x faster than larceny (1 nerve/play, and the
   // Madame comps even that) while the cooldown-gated tracks starved (scores L25 measured ~4,700h).
@@ -4957,16 +4976,20 @@ export const MASTERY = {
     crime: 3,                  // per SUCCESSFUL §7.2 job (nerve-throttled, the core grind ~180xp/hr)
     jump: 4, shakedown: 6, standover: 10,        // muscle — contest WINS only
     fire: 25, shank: 20, duel: 10,               // wetwork — a kill is rare, gated, expensive
-    cook: 12, deal: 6,                           // chemistry — batches are slow clocks
+    cook: 12, deal: 6,                           // chemistry — batches are slow clocks; deals scale by units
     boost: 5, race: 15,                          // wheels — races ride a 2h cooldown
     port: 20, piracy: 25,                        // seamanship — a run is a long clock + supply-capped
     dice: 1, blackjack: 1, numbers: 1, trackbet: 1, // gambling — per resolved play AT A REAL STAKE (below)
-    sell: 2, fill: 3,                            // commerce — per goods sale / market fill
+    sell: 2, fill: 3,                            // commerce — per freight lot sold / market lot filled
     score: 25, heist: 60,                        // scores — 8h/daily cooldown ops
     bout: 25, exhibition: 20,                    // fists — 6h exhibition cd, bouts need a willing rival
     cards: 4, yardtale: 10,                      // PEN step six — cards with the crew / a yard war story
     primetime: 6,                                // PRIME TIME HAPPY HOUR (honor night) — a round with the crew schools the card sense (gambling)
   },
+  // Quantity represented by one XP award for partitionable value moves. Ten units is the fresh
+  // street's whole trunk, preserving the existing reward for a normal starter run while making
+  // 500 units moved once exactly equal 500 one-unit requests. Call sites pass their settled units.
+  XP_UNITS: { deal: 10, sell: 10, fill: 10 },
   // The den floor: a play below this stake schools nothing — without it a min-bet ($100) spammer
   // with the Madame's comped seat farms The Gambler at the rate limit for ~free; at $1,000+ the
   // house edge makes the fast track genuinely expensive (the "no free farm loop" rule, priced).
@@ -5455,12 +5478,13 @@ export const CREW = {
   // ── BRING ONE (the first-crewmate incentive; founder-directed retention/funnel drop) ───────────
   // The friction the ROLODEX/discovery layer can't fix alone: founding a crew and getting a REAL
   // friend to actually PLAY has no concrete payoff — the crew is all status/coordination. So a
-  // referral who QUALIFIES (the audited §7.13 anti-Sybil wall — L8/40 jobs/3 check-ins/$25k, once
-  // ever) AND runs in their recruiter's crew earns the recruit-side bonus. A human recruiter also
+  // referral who QUALIFIES (the audited §7.13 anti-Sybil wall — paid permanent character plus
+  // L8/40 jobs/3 check-ins/$25k, once ever) AND runs in their recruiter's crew earns the recruit-side
+  // bonus. A human recruiter also
   // earns the recruiter-side bonus; an agent recruiter does not, because the explicit acquisition
   // budget is their only cash leg. It is a bounded cash FAUCET that inherits every anti-Sybil property of
-  // the qualification wall (an alt farm can't earn it any faster than a real recruit who levelled to
-  // 8, pulled 40 jobs and banked $25k), on top of the crew co-membership check — so it rewards the
+  // the qualification wall (free guest identities cannot open it), on top of the crew co-membership
+  // check — so it rewards the
   // recruiter who both brought a friend AND ran with them. v24: social rewards are cash, never $OMR.
   BRING_ONE: { RECRUITER_CASH: 15000, RECRUIT_CASH: 7500 },
 };
@@ -5764,12 +5788,22 @@ export const nftDecode = (tokenId) => {
 export const CAPO = {
   RETAIN_DAYS: 14,     // a recruit counts only while they've played inside this window
   MIN_LVL: 8,          // ...and their street has genuinely levelled (the REF_GATES.level twin)
+  SWEEP_FRESH_MS: 48 * 3600000, // 2,000 agents/hour gives the 50k-player target a 25h cycle + outage margin
+  SWEEP_CLOCK_SKEW_MS: 5 * 60000, // DB/app hosts may differ slightly; future stamps beyond this fail closed
   TIERS: [             // sequential by qualifying recruits; rate = actions/second for the agent bucket
     { n: 1, name: 'Street Captain', rate: 1 / 2.5, tapBonus: 0 },
     { n: 3, name: 'Capo',           rate: 1 / 2,   tapBonus: 1 },
     { n: 5, name: 'The Underboss',  rate: 1 / 1.5, tapBonus: 2 },
   ],
 };
+// A skipped/hung worker row must fail closed instead of preserving a stale rate/tap privilege forever.
+export function effectiveCapoRecruits(count, sweptAt, now = Date.now()) {
+  const n = Math.max(0, Math.floor(Number(count) || 0));
+  const at = new Date(sweptAt).getTime();
+  const age = Number(now) - at;
+  return Number.isFinite(at) && Number.isFinite(age)
+    && age >= -CAPO.SWEEP_CLOCK_SKEW_MS && age <= CAPO.SWEEP_FRESH_MS ? n : 0;
+}
 // The perk reader — null rate means "no license, use the base agent cadence". Monotone by
 // construction (TIERS is ascending), so more real recruits never reads as fewer perks.
 export function capoPerksOf(count) {

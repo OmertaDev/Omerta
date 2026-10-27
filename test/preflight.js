@@ -252,6 +252,7 @@ const GOOD = {
   MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge',
   MOD_KEY: 'another-real-secret-value-here',
   SOCIAL_VERIFY_MODE: 'live',
+  RENDER: 'true',
   TRUST_PROXY: 'on',
 };
 assert.deepEqual(preflight(GOOD).errors, [], 'a correctly configured production server boots clean');
@@ -407,8 +408,16 @@ assert.deepEqual(warn.errors, [], 'warnings never block a boot');
 assert(warn.warnings.some((w) => /trust/.test(w)), 'trust mode is called out');
 assert(warn.warnings.some((w) => /URLs/.test(w)), 'tokens-in-URLs is called out');
 assert(warn.warnings.some((w) => /MOD_KEY is short/.test(w)), 'a weak mod key is called out');
-assert(preflight({ ...GOOD, TRUST_PROXY: undefined }).warnings.some((w) => /shared bucket/.test(w)),
-  'the collapsed per-IP throttle behind a proxy is called out');
+assert(preflight({ ...GOOD, TRUST_PROXY: undefined }).errors.some((e) => /RENDER=true requires/.test(e)),
+  'Render refuses to boot without protected client-address trust');
+assert(preflight({ ...GOOD, TRUST_PROXY: 'off' }).errors.some((e) => /RENDER=true requires/.test(e)),
+  "Render refuses to boot when protected client-address trust is explicitly off");
+assert(preflight({ ...GOOD, TRUST_PROXY: '2' }).errors.some((e) => /numeric hop counts/.test(e)),
+  'obsolete numeric proxy trust is rejected instead of silently falling back to the shared socket bucket');
+assert(preflight({ ...GOOD, RENDER: undefined, TRUST_PROXY: 'on' }).errors.some((e) => /requires RENDER=true/.test(e)),
+  'protected Render headers cannot be trusted on a caller-facing self-hosted server');
+assert(preflight({ ...GOOD, RENDER: undefined, TRUST_PROXY: 'off' }).warnings.some((w) => /shared bucket/.test(w)),
+  'a direct self-hosted deployment may disable proxy trust and retains the operational warning');
 
 // THE TWO-RAILS GUARD, and the asymmetry that IS the rule. A fee payable two ways is always priced
 // by the CHEAPER rail, so two rails must agree or the cheap one simply is the price. The MINT has

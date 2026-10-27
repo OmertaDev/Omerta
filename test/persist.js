@@ -35,8 +35,8 @@ for (const [label, cols] of [['ACCOUNT', AC], ['CHARACTER', CC]]) {
 }
 // The counts are pinned so a column cannot be DROPPED from a list without a deliberate edit here —
 // a dropped column is not an error anywhere else, it is a field that silently stops persisting.
-assert.equal(CC.length, 66, 'CHARACTER_PERSIST_COLUMNS holds the 66 columns the positional statement carried');
-assert.equal(AC.length, 18, 'ACCOUNT_PERSIST_COLUMNS holds the 18 columns the positional statement carried');
+assert.equal(CC.length, 67, 'CHARACTER_PERSIST_COLUMNS holds the original columns plus crew work carry');
+assert.equal(AC.length, 20, 'ACCOUNT_PERSIST_COLUMNS includes account-level check-in day and streak mirrors');
 
 // (2) every listed column exists on the live schema (SELECT … LIMIT 0 is a parse + resolve, no rows)
 for (const [table, cols] of [['characters', CC], ['account_persistent', AC]]) {

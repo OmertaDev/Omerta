@@ -46,7 +46,7 @@ assert.equal(rules.mastery.xp.crime, MASTERY.XP.crime, 'the XP awards are knowab
 // ── the funnel fires on a pulled job (larceny) — and the legend mirrors it exactly ──
 let jobs = 0;
 for (let i = 0; i < 40 && jobs === 0; i++) {
-  await seedCh(gus.id, 'nerve=100');
+  await seedCh(gus.id, 'nerve=100, street_action_at=NULL');
   if ((await call('POST', '/v1/crimes/pick', { token: gus.token })).body.success) jobs++;
 }
 assert(jobs > 0, 'at least one clean job landed');
@@ -70,7 +70,7 @@ const l2at = masteryXpFor(2);
 await pool.query(`UPDATE masteries SET xp=$1 WHERE character_id='${gus.id}' AND track_id='larceny'`, [l2at - 1]);
 jobs = 0;
 for (let i = 0; i < 40 && jobs === 0; i++) {
-  await seedCh(gus.id, 'nerve=100');
+  await seedCh(gus.id, 'nerve=100, street_action_at=NULL');
   if ((await call('POST', '/v1/crimes/pick', { token: gus.token })).body.success) jobs++;
 }
 assert(jobs > 0, 'a second clean job landed');
@@ -258,7 +258,7 @@ r = await call('POST', '/v1/path', { token: kim.token, body: { path: 'kitchen' }
 assert.equal(r.code, 200, 'the career is declared ($10k first pick)');
 jobs = 0;
 for (let i = 0; i < 40 && jobs === 0; i++) {
-  await seedCh(kim.id, 'nerve=100, jail_until=NULL');
+  await seedCh(kim.id, 'nerve=100, jail_until=NULL, street_action_at=NULL');
   if ((await call('POST', '/v1/crimes/pick', { token: kim.token })).body.success) jobs++;
 }
 assert(jobs > 0, 'a clean job landed on the path');
@@ -317,7 +317,7 @@ const ula = await mk('Use-Train Ula');
 const cunOf = async (id) => Number((await pool.query(`SELECT cunning c FROM characters WHERE id='${id}'`)).rows[0].c);
 const pullClean = async (who) => { // one clean job (larceny — stat: cunning), retried past busts
   for (let i = 0; i < 60; i++) {
-    await seedCh(who.id, 'nerve=100, jail_until=NULL');
+    await seedCh(who.id, 'nerve=100, jail_until=NULL, street_action_at=NULL');
     const res = await call('POST', '/v1/crimes/pick', { token: who.token });
     if (res.body.success) return res.body;
   }

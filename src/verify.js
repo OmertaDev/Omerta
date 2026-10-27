@@ -4,6 +4,8 @@
 //   'live'  — real API checks; requires the provider credentials below
 // Production MUST run 'live': the X follow check via the OAuth'd relationship lookup.
 import { GameError } from './game.js';
+import { normalizeSocialPostProof, normalizeLegacySocialPostProof } from './socialproof.js';
+export { normalizeSocialPostProof, normalizeLegacySocialPostProof } from './socialproof.js';
 
 // ── X-API bulletproofing (the X-integrations hardening pass) ──
 // Every outbound call is TIME-BOXED: these verifications run inside a withCharacter txn holding
@@ -163,26 +165,32 @@ export async function verifySocial(taskId, acct) {
   throw new GameError('bad_task', 'Unknown social task.');
 }
 
+// Paid live post verification is identity-bound. Keeping this check in the verifier as well as the
+// registration path makes every present and future payout caller fail closed for guests, Privy, or
+// a missing subject instead of falling back to a plain "tweet exists" check.
+export async function requireLinkedXIdentity(ctx = {}) {
+  if (!ctx.client || !ctx.accountId)
+    throw new GameError('verify_provider', 'Link and sign in with X before claiming a social reward.');
+  const acc = (await ctx.client.query(
+    'SELECT auth_provider, auth_subject FROM accounts WHERE id=$1', [ctx.accountId])).rows[0];
+  if (!acc || acc.auth_provider !== 'x' || !acc.auth_subject)
+    throw new GameError('verify_provider', 'Link and sign in with X before claiming a social reward.');
+  return String(acc.auth_subject);
+}
+
 // THE 4-HOUR STAND (founder-directed anti-abuse for Spread-the-Word): when a matured share is
 // claimed, live mode re-checks that the registered post STILL EXISTS on X — post-and-delete pays
 // nothing. Trust mode skips the API check but the 4h clock itself is enforced in growth.js either
 // way (deleting early still forfeits under live; under trust the time cost alone deters churn).
-export async function verifyPostUp(proof, ctx = {}) {
-  const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
-  if (mode !== 'live') return true;
-  if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
-  const s = String(proof || '');
-  const id = s.match(/status(?:es)?\/(\d{8,25})/)?.[1] || s.match(/^(\d{8,25})$/)?.[1];
-  if (!id) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
-  // (D2) for an X-linked account we KNOW the player's X id, so bind the post to THEM — upgrades
-  // "a post with this id exists" to "THIS player's post exists", blocking a payout for registering
-  // a celebrity's (or anyone's) permanent tweet. Guest/Privy accounts keep the plain existence check.
+async function verifyNormalizedPostUp(normalized, ctx, requireLinkedIdentity) {
   let wantAuthor = null;
-  if (ctx.client && ctx.accountId) {
-    const acc = (await ctx.client.query('SELECT auth_provider, auth_subject FROM accounts WHERE id=$1', [ctx.accountId])).rows[0];
-    if (acc && acc.auth_provider === 'x' && acc.auth_subject) wantAuthor = String(acc.auth_subject);
+  if (requireLinkedIdentity) wantAuthor = await requireLinkedXIdentity(ctx);
+  else if (ctx.client && ctx.accountId) {
+    const acc = (await ctx.client.query(
+      'SELECT auth_provider, auth_subject FROM accounts WHERE id=$1', [ctx.accountId])).rows[0];
+    if (acc?.auth_provider === 'x' && acc.auth_subject) wantAuthor = String(acc.auth_subject);
   }
-  const url = `https://api.x.com/2/tweets/${id}` + (wantAuthor ? '?tweet.fields=author_id' : '');
+  const url = `https://api.x.com/2/tweets/${normalized.id}${wantAuthor ? '?tweet.fields=author_id' : ''}`;
   // xfetch maps 429/5xx/network/timeout to 'verify_busy' BEFORE we get here — so the post_gone
   // below is only ever a DEFINITIVE answer (X responded and the tweet isn't there), never an
   // outage misread as a deleted post that would scare a legit sharer.
@@ -192,4 +200,25 @@ export async function verifyPostUp(proof, ctx = {}) {
   if (wantAuthor && String(j.data.author_id || '') !== wantAuthor)
     throw new GameError('not_your_post', "That post has to come from your linked X account to pay.");
   return true;
+}
+
+export async function verifyPostUp(proof, ctx = {}) {
+  const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
+  if (mode !== 'live') return true;
+  if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
+  const normalized = normalizeSocialPostProof(proof);
+  if (!normalized) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
+  return verifyNormalizedPostUp(normalized, ctx, true);
+}
+
+// Rolling-upgrade bridge only: predecessor registrations used a permissive id extractor. Preserve
+// that exact parser for its bounded pending rows, but require the same linked-X author binding as a
+// current claim so a guest cannot cash somebody else's public post during the cutover window.
+export async function verifyLegacyPostUp(proof, ctx = {}) {
+  const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
+  if (mode !== 'live') return true;
+  if (!process.env.X_BEARER_TOKEN) throw new GameError('verify_unavailable', 'X verification not configured.');
+  const normalized = normalizeLegacySocialPostProof(proof);
+  if (!normalized) throw new GameError('need_proof', 'Register the share with a link to your post so it can be verified.');
+  return verifyNormalizedPostUp(normalized, ctx, true);
 }

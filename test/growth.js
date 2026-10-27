@@ -11,7 +11,8 @@ import { buildServer } from './server-fixture.js';
 import { SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS, CONSTANTS, DISTRICTS, HUSTLE, CORNER, cornerTasksOf, dayOf, M4, levelOf, PACING, MASTERY, masteryXpFor, CRIMES, MISSIONS, M8 } from '../src/rules.js';
 import { socialRewardsLive } from '../src/growth.js';
 import { accrue } from '../src/accrual.js';
-import { sweepGrandReferrals, gainRespect } from '../src/game.js';
+import { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';
+import { GOODS_MARKET } from '../src/goodsmarket.js';
 
 // The City Standing / recruiters boards are CACHED in production (standing.js — they were the most
 // expensive polled reads in the game). This suite reads boards it has just written, so it pins the
@@ -26,11 +27,17 @@ const call = async (method, url, { token, body, headers } = {}) => {
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (token) => (await call('GET', '/v1/me', { token })).body.character;
-const seedCh = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
+// Statistical samples model separate ready windows; pacing has its own route regressions.
+const seedCh = (id, cols) => pool.query(`UPDATE characters SET street_action_at=NULL, ${cols} WHERE id='${id}'`);
+let fixtureIp = 0;
 const mk = async (name, referralCode) => {
   const { body: { token } } = await call('POST', '/v1/auth/guest');
   await call('POST', '/v1/character', { token, body: { name, referralCode } });
-  return { token, id: (await meOf(token)).id };
+  const id = (await meOf(token)).id;
+  const accountId = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [id])).rows[0].account_id;
+  const ip = `2001:db8::${(++fixtureIp).toString(16)}`;
+  await pool.query('UPDATE accounts SET created_ip=$2, last_ip=$2 WHERE id=$1', [accountId, ip]);
+  return { token, id, accountId };
 };
 
 // ── the chef: level 11, bankrolled ──
@@ -105,20 +112,31 @@ assert(Number(dealLedger.rows[0].n) >= 1, 'deal ledgered');
 
 // ── D14 — stats matter more to the crime roll (SIGNED, option A) ──
 // Two streets, same LEVEL and same mid-base crime, differing ONLY in cunning: the high-cunning one
-// must land materially more jobs. Sampled (the roll is Math.random), but the +24-point spread over
-// 300 attempts separates ~90 vs ~175 successes — never overlaps, so it is not flaky. Also proves the
-// design guarantee: MUSCLE does nothing for crime (a muscle build ≈ a min build).
+// must land materially more jobs. Walk the same evenly spaced roll grid for every build instead of
+// sampling Math.random: a rare adverse sample used to fail this release gate even though the exact
+// chance gap was intact. The paired grid proves the whole probability boundary deterministically.
+// It also proves the design guarantee: MUSCLE does nothing for crime.
 {
   const CRIME = 'poker'; // base 0.46, lvl 11
   const N = 300;
   const respect11 = PACING.LEVEL_DIVISOR * (11 - 1) ** 2;
   const runs = async (tok, id, cols) => {
     let wins = 0;
-    for (let i = 0; i < N; i++) {
-      // refill nerve + freeze the clock each attempt so no accrual or nerve wall interferes
-      await seedCh(id, `${cols}, respect=${respect11}, nerve=50, jail_until=NULL, last_accrued_at=now()`);
-      const r = await call('POST', `/v1/crimes/${CRIME}`, { token: tok });
-      if (r.body.success) wins++;
+    const random = Math.random;
+    try {
+      for (let i = 0; i < N; i++) {
+        // Every random read in one attempt sees this value; the first read is the success roll. Using
+        // the same midpoint grid for every build makes the comparison exact while keeping the real
+        // HTTP, transaction, stat, rank and approach path under test.
+        const roll = (i + 0.5) / N;
+        Math.random = () => roll;
+        // refill nerve + freeze the clock each attempt so no accrual or nerve wall interferes
+        await seedCh(id, `${cols}, respect=${respect11}, nerve=50, jail_until=NULL, last_accrued_at=now()`);
+        const r = await call('POST', `/v1/crimes/${CRIME}`, { token: tok });
+        if (r.body.success) wins++;
+      }
+    } finally {
+      Math.random = random;
     }
     return wins;
   };
@@ -129,17 +147,12 @@ assert(Number(dealLedger.rows[0].n) >= 1, 'deal ledgered');
   assert(hiWins > loWins + 40,
     `D14: the high-cunning build lands materially more jobs (${hiWins}/${N} vs ${loWins}/${N}) — stats now MOVE the roll`);
   // MUSCLE stays out of crime (the PvP axis): two builds with IDENTICAL cunning/speed differing ONLY
-  // in muscle must succeed EQUALLY (within sampling noise). If muscle ever leaks into the crime roll,
-  // the maxed-muscle build pulls ahead and this separation blows past the noise band.
-  // The band is 50, sized off the sampling variance: two EQUAL Binomial(300, ~0.4) have a difference
-  // stddev of ~12, so 35 was only ~2.9σ and flaked ~0.4% of runs (a 42-diff tail was hit in a full-suite
-  // run); 50 is ~4σ (robust) yet well under a REAL 22-point-stat leak, which — at cunning's measured rate
-  // — would separate ~+85 (see the assert above), so it still catches any muscle bleed.
+  // in muscle must cross exactly the same paired probability boundary.
   const musHi = await mk('Bruiser Bo'), musLo = await mk('Scrawny Sid');
   const musHiWins = await runs(musHi.token, musHi.id, 'cunning=3, speed=3, muscle=25');
   const musLoWins = await runs(musLo.token, musLo.id, 'cunning=3, speed=3, muscle=3');
-  assert(Math.abs(musHiWins - musLoWins) < 50,
-    `D14: MUSCLE is inert for crime — same cunning/speed → same success (${musHiWins}/${N} vs ${musLoWins}/${N}, within noise)`);
+  assert.equal(musHiWins, musLoWins,
+    `D14: MUSCLE is inert for crime — same cunning/speed → same success (${musHiWins}/${N} vs ${musLoWins}/${N})`);
 }
 
 
@@ -202,7 +215,7 @@ me = await meOf(chef.token);
 const stashBefore = me.stash.find((s) => s.drug === 'vim')?.qty || 0;
 assert(stashBefore > 0, 'product on the shelf for the crew');
 const cashBefore = me.cash;
-await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', heat=0");
+await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', crew_paid_at = now() - interval '30 minutes', heat=0");
 // A READ shows the accrued result truthfully but persists nothing (withCharacterRead — reads stopped
 // taking the write lock). Any WRITE banks it. Assert both: the projection, then the ledgered fact.
 me = await meOf(chef.token);
@@ -218,11 +231,15 @@ assert(Number(crewLedger.rows[0].n) >= 1, 'crew sales ledgered');
 // ── RECURRING SINKS: crew wages ("the nut") — pay them or the corner goes quiet ──
 me = await meOf(chef.token);
 assert.equal(me.crewWagePerHr, 2 * 1200, 'the view shows the nut: 2 crew × $1,200/hr');
-assert.equal(me.crewCold, false, 'a freshly-hired crew is working'); assert.equal(me.crewWageOwed, 0, 'and the nut is square (hire stamped the clock)');
+assert.equal(me.crewCold, false, 'a freshly-hired crew is working');
+assert(Math.abs(me.crewWageOwed - 2 * 1200 * 0.5) <= 10,
+  'the same simulated half-hour that moved product also accrues the crew wage');
 // 5 hours on the payroll → owed ≈ 2 × $1,200 × 5; paying is a ledgered sink that resets the clock
 await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '5 hours' WHERE id='${chef.id}'`);
 me = await meOf(chef.token);
 assert(Math.abs(me.crewWageOwed - 2 * 1200 * 5) <= 2 * 1200, `5h of wages owed (~$${2 * 1200 * 5}, got $${me.crewWageOwed})`);
+assert.equal(me.crewNextCost, M4.CREW_COST_STEP * 3 + me.crewWageOwed,
+  'the next-hire quote includes the active crew tab the hire till settles');
 await seedCh(chef.id, 'cash=500000');
 const cashPreNut = (await meOf(chef.token)).cash;
 r = await call('POST', '/v1/kitchen/crew/wages', { token: chef.token });
@@ -231,7 +248,7 @@ assert.equal((await meOf(chef.token)).cash, cashPreNut - r.body.paid, 'the nut l
 assert.equal(Number((await pool.query(`SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE reason='crew:wages' AND character_id='${chef.id}'`)).rows[0].s),
   -r.body.paid, 'crew:wages is a ledgered §10.4 cash sink');
 assert.equal((await meOf(chef.token)).crewWageOwed, 0, 'paying squared the nut');
-// COLD: an unpaid crew (past the 3-day window) DOWNS TOOLS — accrual stops their offline sales.
+// COLD: an unpaid crew at the 2-day wage cap DOWNS TOOLS — accrual stops their offline sales.
 // Make them cold FIRST, then stock the shelf (a cold crew won't touch it — a warm 2-crew would
 // eat the restock as fast as it's cooked). Stash isn't a §10.4 currency, so a direct seed is fine.
 await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '4 days' WHERE id='${chef.id}'`);
@@ -246,7 +263,7 @@ assert.equal((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty |
 await seedCh(chef.id, 'cash=2000000');
 await call('POST', '/v1/kitchen/crew/wages', { token: chef.token });
 assert.equal((await meOf(chef.token)).crewCold, false, 'the nut squared → the crew is back');
-await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', heat=0");
+await seedCh(chef.id, "last_accrued_at = now() - interval '30 minutes', crew_paid_at = now() - interval '30 minutes', heat=0");
 assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0) < coldStash, 'and they move product again');
 
 // ── THE DOOR OUT OF THE NUT (the pad/shutter precedent) ──────────────────────────────────────
@@ -257,16 +274,16 @@ assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0
   let m = await meOf(chef.token);
   assert.equal(m.crewWagePerHead, 1200, 'the sheet states the per-head rate BEFORE you hire');
   assert.equal(m.crewMax, 5, 'and how many hands you may keep');
-  assert(m.crewColdSeconds > 0 && m.crewColdSeconds <= 3 * 24 * 3600,
+  assert(m.crewColdSeconds > 0 && m.crewColdSeconds <= 2 * 24 * 3600,
     `a countdown to downed tools (got ${m.crewColdSeconds})`);
   const rules = (await call('GET', '/v1/rules')).body;
   assert.equal(rules.crew.wagePerHr, 1200, 'the public catalog carries the wage');
-  assert.equal(rules.crew.coldHours, 72, 'and the cold window');
+  assert.equal(rules.crew.coldHours, 48, 'and the cold window closes when capped wages stop accruing');
   // D7=C (founder, 2026-08-02): 168h → 48h. Stated precisely, because C SOFTENS the crossover rather
   // than removing it — only raising OFFLINE_CAP_MS would do that, and that number governs every
   // offline faucet in the game. What the cap buys is that the loss STOPS GROWING: a hand still earns
   // at most 8h of sales however long you are away, but now owes at most 48h of wage instead of 168h,
-  // so three days away goes 0.40:1 → 0.60:1 and a week away no longer gets any worse than three days.
+  // so two days away bottoms out at 0.60:1 and a longer absence cannot grow either side of the tab.
   // Absence has a floor. Read off the constant so the published figure and the clock cannot drift.
   assert.equal(rules.crew.wageCapHours, M4.CREW_WAGE_CAP_MS / 3600000, 'and how long the nut runs');
 
@@ -297,8 +314,8 @@ assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0
   r = await call('DELETE', '/v1/kitchen/crew', { token: chef.token });
   assert.equal(r.code, 400); assert.equal(r.body.error, 'nut');
 
-  // COLD: men who downed tools three days ago have already gone — they walk for nothing, which is
-  // the exit a broke player needs. It is not a dodge: reaching it costs three days of sales.
+  // COLD: men who downed tools at the two-day cap have already gone — they walk for nothing, which is
+  // the exit a broke player needs. The final hand's capped tab follows any future rehire.
   await pool.query(`UPDATE characters SET crew_paid_at = now() - interval '4 days' WHERE id='${chef.id}'`);
   assert.equal((await meOf(chef.token)).crewCold, true, 'downed tools');
   const rowsBefore = Number((await pool.query(
@@ -311,15 +328,34 @@ assert((((await meOf(chef.token)).stash.find((s) => s.drug === 'vim')?.qty) || 0
     `SELECT COUNT(*) n FROM transactions WHERE character_id='${chef.id}'`)).rows[0].n), rowsBefore,
     'a cold walk-off moves NO value — not one ledger row (the BUSINESS_SHUTTER_BPS=0 argument)');
   m = await meOf(chef.token);
-  assert.equal(m.crewWageOwed, 0, 'with nobody left there is no nut');
+  assert.equal(m.crewWageOwed, 0, 'with nobody left there is no active nut');
   assert.equal(m.crewCold, false, 'and nothing cold to thaw');
   assert.equal(m.crewColdSeconds, null, 'the countdown is gone with them');
+  const deferredTab = M4.CREW_WAGE_PER_HR * M4.CREW_WAGE_CAP_MS / 3600000;
+  assert.equal(m.crewNextCost, M4.CREW_COST_STEP + deferredTab,
+    'the next-hire quote includes the final hand\'s capped tab');
+  assert.notEqual((await pool.query(`SELECT crew_paid_at FROM characters WHERE id='${chef.id}'`)).rows[0].crew_paid_at, null,
+    'the deferred tab survives persistence at 1 → 0');
   r = await call('DELETE', '/v1/kitchen/crew', { token: chef.token });
   assert.equal(r.code, 400); assert.equal(r.body.error, 'none', 'and you cannot fire nobody');
-  // the buy-in is forfeit — coming back costs the step price again, from the bottom
+  await seedCh(chef.id, `cash=${M4.CREW_COST_STEP}`);
+  r = await call('POST', '/v1/kitchen/crew/hire', { token: chef.token });
+  assert.equal(r.code, 400); assert.equal(r.body.error, 'cash', 'the first-step buy-in cannot erase the old tab');
+  m = await meOf(chef.token);
+  assert.equal(m.crew, 0); assert.equal(m.cash, M4.CREW_COST_STEP);
+  assert.equal(m.crewNextCost, M4.CREW_COST_STEP + deferredTab, 'a refused rehire preserves the full quote');
+
+  // the buy-in is forfeit, and coming back also squares the old capped tab
   await seedCh(chef.id, 'cash=2000000');
+  const cashBeforeRehire = (await meOf(chef.token)).cash;
   r = await call('POST', '/v1/kitchen/crew/hire', { token: chef.token });
   assert.equal(r.body.cost, 50000, 'a rehire starts at the first step — what you sank is gone');
+  assert.equal(r.body.settled, deferredTab, 'the final hand\'s old tab is settled on rehire');
+  assert.equal((await meOf(chef.token)).cash, cashBeforeRehire - M4.CREW_COST_STEP - deferredTab,
+    'rehire deducts both the old tab and the new buy-in');
+  assert.equal(Number((await pool.query(
+    `SELECT COUNT(*) n FROM transactions WHERE character_id='${chef.id}'`)).rows[0].n), rowsBefore + 2,
+    'rehire records the deferred wages and the new buy-in');
 }
 
 // ══ THE KITCHEN → Tier 4: lab modules, cutting agents, the kingpin legend ══
@@ -983,13 +1019,13 @@ assert.equal(await coachOf(), 'The corner has an envelope for you', 'an open cor
 // board has to know about, or the coach spends the rest of the day leading at work the server will
 // not pay: the CORNER.MAX_DAY allowance, and one envelope per KIND of work. A rung that never
 // clears must never sit above rungs that do — the tail's own rule, and the corner sits at its head.
-for (let i = 0; i < CORNER.MAX_DAY; i++) {                       // slots 90+ map to no real task, so
-  await pool.query(`INSERT INTO corner_jobs (character_id, day, district, slot, baseline, claimed)   -- only the ALLOWANCE can be
-    VALUES ('${rook.id}', ${cday}, 'canal', ${90 + i}, '{}', true)`);                              // what refuses the claim
-}
+const rookAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [rook.id])).rows[0].account_id;
+for (let i = 0; i < CORNER.MAX_DAY; i++)
+  await pool.query(`INSERT INTO account_daily_claims (account_id, day, scope, claim_id)
+    VALUES ($1,$2,'corner',$3)`, [rookAccount, cday, `cap-${i}`]);
 assert.equal(await coachOf(), 'The trainers have work for you',
   'the day\'s allowance is spent, so the open envelope is dead weight — the corner goes quiet and the next LIVE rung leads');
-await pool.query(`DELETE FROM corner_jobs WHERE character_id='${rook.id}' AND day=${cday} AND district='canal'`);
+await pool.query("DELETE FROM account_daily_claims WHERE account_id=$1 AND day=$2 AND scope='corner'", [rookAccount, cday]);
 assert.equal(await coachOf(), 'The corner has an envelope for you', 'allowance back, envelope live again');
 // …and the OTHER gate: one envelope per KIND of work per day. Find a pair across the entire daily
 // draw: pigeonhole guarantees a repeated kind somewhere, not a twin for the specific docks slot 0.
@@ -1123,6 +1159,7 @@ assert.deepEqual(afterScreens, beforeScreens, 'screen posts create no reporter, 
 // engagement (level 3 + 10 jobs), long before full qualification. Fast feedback for the referrer. ──
 const sponsor = await mk('Sponsor Sal');
 const rookie = await mk('Green Recruit', 'Sponsor Sal');
+await pool.query('UPDATE account_persistent SET minted=true WHERE account_id=$1', [rookie.accountId]);
 const sponsorBefore = (await meOf(sponsor.token)).cash;
 await seedCh(rookie.id, 'respect=160, lc_crime=9, nerve=50, energy=200'); // L5, 9 jobs — one shy of the spark gate
 for (let i = 0; i < 20; i++) { await seedCh(rookie.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: rookie.token }); if (r.body.success) break; }
@@ -1131,22 +1168,56 @@ assert.equal(spSponsor.cash, sponsorBefore + 2500, 'the sponsor gets the early s
 assert.equal(spSponsor.omr, 0, 'the spark is cash only (no $OMR until the full gate)');
 assert.equal(spSponsor.recruits, 0, 'the spark does not advance the recruiter ladder (that is full qualification)');
 assert.equal((await pool.query(`SELECT ref_spark FROM account_persistent WHERE account_id=(SELECT account_id FROM characters WHERE id='${rookie.id}')`)).rows[0].ref_spark, true, 'ref_spark latched');
-// red-team R28: the spark (the cheapest referral cash faucet) must flag a same-IP pair for mod review,
-// at parity with the qualify path — both test accounts share 127.0.0.1, so the flag must have fired.
-{
-  const sf = (await pool.query(`SELECT props FROM telemetry WHERE event='referral_same_ip_flag' AND account_id=(SELECT account_id FROM characters WHERE id='${rookie.id}')`)).rows[0];
-  const sp = sf && (typeof sf.props === 'string' ? JSON.parse(sf.props) : sf.props);
-  assert(sp && sp.spark === true, 'a same-IP spark pair is flagged for review (parity with qualify)');
-}
+assert.equal(Number((await pool.query(
+  "SELECT COUNT(*) n FROM telemetry WHERE event='referral_same_ip_flag' AND account_id=$1",
+  [rookie.accountId],
+)).rows[0].n), 0, 'a distinct-origin permanent recruit reaches the paid spark path without a false flag');
 await call('POST', '/v1/crimes/pick', { token: rookie.token }); // once ever
 assert.equal((await meOf(sponsor.token)).cash, sponsorBefore + 2500, 'the spark fires once, not per-action');
+
+// Legacy accounts have no trustworthy creation-IP authority. Their stored strings cannot prove
+// either sameness or difference, so unpaid edges stay quarantined until trusted provenance exists.
+const legacySponsor = await mk('Legacy Sponsor Lee');
+const legacyRecruit = await mk('Legacy Recruit Rae', 'Legacy Sponsor Lee');
+await pool.query(
+  `UPDATE accounts SET created_ip='198.51.100.77', created_ip_authority=NULL WHERE id IN ($1,$2)`,
+  [legacySponsor.accountId, legacyRecruit.accountId],
+);
+await pool.query('UPDATE account_persistent SET minted=true WHERE account_id=$1', [legacyRecruit.accountId]);
+await seedCh(legacyRecruit.id, 'respect=160, lc_crime=9, nerve=50, energy=200');
+const legacySponsorBefore = (await meOf(legacySponsor.token)).cash;
+for (let i = 0; i < 20; i++) {
+  await seedCh(legacyRecruit.id, 'nerve=50, energy=200, jail_until=NULL');
+  r = await call('POST', '/v1/crimes/pick', { token: legacyRecruit.token });
+  if (r.body.success) break;
+}
+assert.equal((await meOf(legacySponsor.token)).cash, legacySponsorBefore,
+  'an untrusted legacy edge cannot open the spark faucet');
+assert.equal((await pool.query(
+  'SELECT ref_spark FROM account_persistent WHERE account_id=$1', [legacyRecruit.accountId])).rows[0].ref_spark,
+false, 'the quarantine does not consume the unpaid edge latch');
+assert.equal((await pool.query(
+  'SELECT referral_same_ip_hold FROM account_persistent WHERE account_id=$1',
+  [legacyRecruit.accountId],
+)).rows[0].referral_same_ip_hold, null, 'an equal untrusted legacy IP remains unclassified');
+assert.equal(Number((await pool.query(
+  "SELECT COUNT(*) n FROM telemetry WHERE event='referral_same_ip_flag' AND account_id=$1",
+  [legacyRecruit.accountId],
+)).rows[0].n), 0, 'an untrusted legacy IP is never misreported as an authoritative same-origin match');
+await pool.query(
+  `UPDATE accounts SET created_ip_authority='direct_socket_v1', created_ip=CASE WHEN id=$1 THEN '198.51.100.77' ELSE '203.0.113.77' END
+    WHERE id IN ($1,$2)`, [legacySponsor.accountId, legacyRecruit.accountId]);
+assert.deepEqual(await maybeSparkReferral(pool, legacyRecruit.accountId), { sparked: true },
+  'explicit trusted, distinct signup provenance releases the still-unpaid edge');
+assert.equal((await meOf(legacySponsor.token)).cash, legacySponsorBefore + 2500,
+  'the released edge pays exactly once');
 
 // ── referrals (§7.13): all four gates, atomic payout, milestone, exclusions ──
 const mentor = await mk('Mentor Max');
 const recruit = await mk('Fresh Blood', 'Mentor Max');
 assert(Number((await pool.query('SELECT COUNT(*) n FROM referrals')).rows[0].n) >= 1, 'referral graph row written');
 await seedCh(recruit.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${recruit.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${recruit.id}')`);
 const mentorCashBefore = (await meOf(mentor.token)).cash;
 for (let i = 0; i < 20; i++) { // the 40th CLEAN job crosses the last gate — retry the odd fumble
   await seedCh(recruit.id, 'nerve=50, energy=200, jail_until=NULL');
@@ -1213,7 +1284,7 @@ await call('POST', '/v1/crimes/pick', { token: recruit.token });
 assert.equal((await meOf(mentor.token)).recruits, 1, 'qualification fires once');
 // agent-flagged recruits never pay out
 const bot = await mk('Bot Barlow', 'Mentor Max');
-await pool.query(`UPDATE account_persistent SET agent_flag=true, checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${bot.id}')`);
+await pool.query(`UPDATE account_persistent SET agent_flag=true, minted=true, checkins_lifetime=3 WHERE account_id = (SELECT account_id FROM characters WHERE id='${bot.id}')`);
 await seedCh(bot.id, 'respect=1000, lc_crime=40, cash=30000, nerve=50, energy=200');
 await call('POST', '/v1/crimes/pick', { token: bot.token });
 assert.equal((await meOf(mentor.token)).recruits, 1, 'agent recruits are excluded from referral payouts');
@@ -1278,7 +1349,7 @@ assert(drive.active && drive.mult === 2 && drive.seconds > 0, 'the drive is live
 const dMentor = await mk('Drive Dana');
 const dRecruit = await mk('Doubled Danny', 'Drive Dana');
 await seedCh(dRecruit.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${dRecruit.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${dRecruit.id}')`);
 const dMentorBefore = (await meOf(dMentor.token)).cash;
 for (let i = 0; i < 20; i++) { await seedCh(dRecruit.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: dRecruit.token }); if (r.body.success) break; }
 const dMentorMe = await meOf(dMentor.token);
@@ -1293,11 +1364,11 @@ const mMike = await mk('Middle Mike', 'Grand Tony');     // R — brought in by 
 const bBenny = await mk('Bottom Benny', 'Middle Mike');  // R2 — brought in by R
 // the middle link must ITSELF qualify (audit: every level of the tree is a real made man) — qualify Mike first
 await seedCh(mMike.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${mMike.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${mMike.id}')`);
 for (let i = 0; i < 20; i++) { await seedCh(mMike.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: mMike.token }); if (r.body.success) break; }
 assert.equal((await pool.query(`SELECT ref_paid FROM account_persistent WHERE account_id=(SELECT account_id FROM characters WHERE id='${mMike.id}')`)).rows[0].ref_paid, true, 'the middle link qualified');
 await seedCh(bBenny.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${bBenny.id}')`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${bBenny.id}')`);
 const tonyMe0 = await meOf(gTony.token); // captured AFTER Mike's qualification already paid Tony
 const tonyBefore = tonyMe0.cash, tonyOmrBefore = tonyMe0.omr;
 for (let i = 0; i < 20; i++) { await seedCh(bBenny.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: bBenny.token }); if (r.body.success) break; }
@@ -1319,7 +1390,7 @@ const boCrewId = 'crew-bringone-test';
 await pool.query(`INSERT INTO crews (id, name, leader_account) VALUES ('${boCrewId}', 'The Test Crew', '${await acctOf(boBoss.id)}')`);
 await pool.query(`INSERT INTO crew_members (crew_id, account_id, name) VALUES ('${boCrewId}', '${await acctOf(boBoss.id)}', 'Crew Boss Vito'), ('${boCrewId}', '${await acctOf(boFriend.id)}', 'Crew Friend Sal')`);
 await seedCh(boFriend.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id='${await acctOf(boFriend.id)}'`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id='${await acctOf(boFriend.id)}'`);
 for (let i = 0; i < 20; i++) { await seedCh(boFriend.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: boFriend.token }); if (r.body.success) break; }
 assert.equal((await pool.query(`SELECT ref_paid FROM account_persistent WHERE account_id='${await acctOf(boFriend.id)}'`)).rows[0].ref_paid, true, 'the crewmate recruit qualified');
 const boRecruitRow = (await pool.query(`SELECT amount FROM transactions WHERE character_id='${boFriend.id}' AND reason='crew:bringone'`)).rows[0];
@@ -1332,7 +1403,7 @@ assert.equal(Number(boBossRow.amount), 15000, 'the recruiter side is BRING_ONE.R
 const soloBoss = await mk('Solo Boss Nick');
 const soloFriend = await mk('Solo Friend Ray', 'Solo Boss Nick');
 await seedCh(soloFriend.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id='${await acctOf(soloFriend.id)}'`);
+await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id='${await acctOf(soloFriend.id)}'`);
 for (let i = 0; i < 20; i++) { await seedCh(soloFriend.id, 'nerve=50, energy=200, jail_until=NULL'); r = await call('POST', '/v1/crimes/pick', { token: soloFriend.token }); if (r.body.success) break; }
 assert.equal((await pool.query(`SELECT ref_paid FROM account_persistent WHERE account_id='${await acctOf(soloFriend.id)}'`)).rows[0].ref_paid, true, 'the solo recruit still qualified (the referral pays regardless)');
 assert.equal((await pool.query(`SELECT COUNT(*) n FROM transactions WHERE character_id='${soloFriend.id}' AND reason='crew:bringone'`)).rows[0].n, '0', 'NO Bring One bonus without a shared crew — the crew bonus is the crew-run reward, not the referral');
@@ -1495,15 +1566,105 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
 // Stub the X API so the check is deterministic (no network). ──
 {
   process.env.SOCIAL_VERIFY_MODE = 'live'; process.env.X_BEARER_TOKEN = 'test-bearer';
+  process.env.X_CHECK_CD_MS = '0';
   const realFetch = global.fetch;
   let stubAuthor = '777';
-  global.fetch = async () => ({ status: 200, ok: true, json: async () => ({ data: { id: '12345678901234', author_id: stubAuthor } }) });
+  global.fetch = async (url) => ({ status: 200, ok: true, json: async () => ({
+    data: { id: String(url).match(/\/tweets\/(\d+)/)?.[1], author_id: stubAuthor },
+  }) });
   try {
+    // Rolling upgrade: predecessor rows retain their permissive proof parser inside the bounded
+    // 48h window, but payout now requires linked-X ownership like every current claim.
+    const bridgedGuest = await mk('Bridged Guest Bea');
+    const bridgedCash = Number((await meOf(bridgedGuest.token)).cash);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222221')`,
+      [bridgedGuest.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: bridgedGuest.token })).body.error,
+      'verify_provider', 'a predecessor-valid pending guest cannot cash somebody else\'s public post');
+    assert.equal(Number((await meOf(bridgedGuest.token)).cash), bridgedCash,
+      'the refused legacy guest proof moves no cash');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='781' WHERE id=$1", [bridgedGuest.accountId]);
+    stubAuthor = '781';
+    const bridged = await call('POST', '/v1/social/sw_post/claim', { token: bridgedGuest.token });
+    assert.equal(bridged.body.cash, SOCIAL_TASKS.CASH,
+      'the bounded predecessor parser remains available after linked-X ownership is proved');
+    assert.equal(Number((await meOf(bridgedGuest.token)).cash), bridgedCash + SOCIAL_TASKS.CASH);
+
+    const invalidLegacy = await mk('Invalid Legacy Ivy');
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'legacy trust attestation')`,
+      [invalidLegacy.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: invalidLegacy.token })).body.error,
+      'need_proof', 'the bridge still denies proof the predecessor could not resolve to a post id');
+
+    const boundLegacy = await mk('Bound Legacy Ben');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='782' WHERE id=$1", [boundLegacy.accountId]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222222')`,
+      [boundLegacy.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    stubAuthor = 'not-782';
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: boundLegacy.token })).body.error,
+      'not_your_post', 'a predecessor row from an X-linked account remains author-bound');
+
+    const strictPending = await mk('Strict Pending Sid');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='783' WHERE id=$1", [strictPending.accountId]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof, legacy_proof_bridge)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/new/status/22222222222223',false)`,
+      [strictPending.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    stubAuthor = '783';
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: strictPending.token })).body.error,
+      'need_proof', 'the permissive parser is unavailable to new-format pending rows');
+
+    const expiredLegacy = await mk('Expired Legacy Eve');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='784' WHERE id=$1", [expiredLegacy.accountId]);
+    const expiredCash = Number((await meOf(expiredLegacy.token)).cash);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222224')`,
+      [expiredLegacy.accountId, dayOf() - 3, new Date(Date.now() - 49 * 3600000)]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: expiredLegacy.token,
+      body: { proof: 'https://example.com/legacy/status/22222222222224' } })).body.error,
+    'need_proof', 'the bridge expires with the existing 48-hour pending window');
+    assert.equal(Number((await meOf(expiredLegacy.token)).cash), expiredCash, 'an expired bridge row pays nothing');
+
+    const sunsetLegacy = await mk('Sunset Legacy Sam');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='785' WHERE id=$1", [sunsetLegacy.accountId]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,false,'https://example.com/legacy/status/22222222222225')`,
+      [sunsetLegacy.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    const sunset = await pool.query(
+      "UPDATE economy_migrations SET applied_at=$1 WHERE id='social-pending-proof-bridge-2026-10-26'",
+      [new Date(Date.now() - 49 * 3600000)]);
+    assert.equal(sunset.rowCount, 1, 'boot installed the durable social bridge cutover marker');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: sunsetLegacy.token })).body.error,
+      'need_proof', 'the global 48-hour cutover sunsets the permissive verifier for otherwise-fresh legacy rows');
+
+    // Live payouts must be attributable to an X identity. A valid tweet URL is still worthless for
+    // guest and Privy accounts, and refusal creates neither a pending claim nor a ledger row.
+    for (const [name, provider, subject] of [
+      ['Guest Proof Gus', 'guest', null], ['Privy Proof Pia', 'privy', 'did:privy:proof-pia'],
+    ]) {
+      const player = await mk(name);
+      if (provider !== 'guest') await pool.query(
+        'UPDATE accounts SET auth_provider=$2, auth_subject=$3 WHERE id=$1', [player.accountId, provider, subject]);
+      const refused = await call('POST', '/v1/social/sw_post/claim', {
+        token: player.token, body: { proof: 'https://x.com/omerta/status/11111111111111' },
+      });
+      assert.equal(refused.body.error, 'verify_provider', `${provider} social cash requires a linked X identity`);
+      assert.equal(Number((await pool.query(
+        'SELECT COUNT(*) n FROM social_claims WHERE account_id=$1', [player.accountId])).rows[0].n), 0,
+      'a refused identity leaves no pending proof');
+    }
     // H1: a share registered with NO proof can NEVER pay in live mode (the exact production break — the
     // old client posted an empty body, so verifyPostUp(null) threw need_proof and nobody was ever paid).
     const noProof = await mk('No-Proof Ned');
-    await call('POST', '/v1/social/sw_post/claim', { token: noProof.token }); // register, no proof (the old client)
-    await matureSw(noProof.id, 'sw_post');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='776' WHERE id=$1", [noProof.accountId]);
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: noProof.token })).body.error, 'need_proof',
       'live mode: a proof-less share can never pay — the client now sends the post link');
     // H2: an X-linked account whose post comes from THEIR handle pays (author-binding satisfied on the real path)
@@ -1512,20 +1673,145 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     await pool.query(`UPDATE accounts SET auth_provider='x', auth_subject='777' WHERE id='${linkedAcct}'`);
     stubAuthor = '777';
     await call('POST', '/v1/social/sw_post/claim', { token: linked.token, body: { proof: 'https://x.com/lou/status/12345678901234' } });
+    assert.equal((await pool.query(
+      'SELECT legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [linked.accountId, 'sw_post'])).rows[0].legacy_proof_bridge, false,
+    'the current registration path explicitly opts out of the rolling bridge');
     await matureSw(linked.id, 'sw_post');
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.cash, SOCIAL_TASKS.CASH,
       'live mode: a matured post from the linked X account pays (H2 author-binding wired through the claim path)');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.error, 'claimed',
+      'the linked author is paid only once for the task');
+
+    // The proof receipt is provider/id based, not URL-string or account based. Model an X identity
+    // moving to a new game account: the same tweet stays spent under a twitter.com/statuses alias.
+    await pool.query("UPDATE accounts SET auth_provider='guest', auth_subject=id WHERE id=$1", [linkedAcct]);
+    const successor = await mk('Proof Successor');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='777' WHERE id=$1", [successor.accountId]);
+    assert.equal((await call('POST', '/v1/social/sw_invite/claim', { token: successor.token,
+      body: { proof: 'https://twitter.com/lou/statuses/12345678901234?ref=replay' } })).body.error, 'proof_used',
+    'one normalized tweet cannot pay a second account');
+
+    // Upgrade repair: payouts made before the global receipt existed must remain spent. Include all
+    // canonical shapes plus an old telemetry payout whose seven-day social_claim row was swept.
+    const legacy = await mk('Legacy Proof Lee');
+    const legacyDay = dayOf() - 10;
+    await pool.query("DELETE FROM economy_migrations WHERE id='social-proof-receipts-2026-10-23'");
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, paid, proof) VALUES
+        ($1,$2,'sw_post',true,'https://x.com/legacy/status/00012345678901238?utm=old'),
+        ($1,$3,'sw_invite',true,'https://twitter.com/legacy/statuses/12345678901239#old'),
+        ($1,$4,'sw_boost',true,'00012345678901240'),
+        ($1,$5,'sw_post',true,'https://example.com/legacy/status/12345678901242'),
+        ($1,$6,'sw_post',true,'foostatus/00012345678901245trailing'),
+        ($1,$7,'sw_post',true,'legacy trust attestation')`,
+      [legacy.accountId, legacyDay, legacyDay - 1, legacyDay - 2, legacyDay - 3, legacyDay - 4,
+        legacyDay - 5]);
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props) VALUES
+        ('legacy-social-proof-history',$1,$2,'social_task',$3)`,
+      [new Date(Date.now() - 30 * 86400000), legacy.accountId,
+        JSON.stringify({ task: 'sw_post', proof: 'https://mobile.twitter.com/legacy/status/00012345678901241' })]);
+    const { migrateSocialProofReceipts } = await import('../src/db.js');
+    const repaired = await migrateSocialProofReceipts(pool);
+    assert(repaired.inserted >= 5, 'upgrade repair creates permanent receipts for retained paid X proofs');
+    for (const id of ['12345678901238', '12345678901239', '12345678901240', '12345678901241',
+      '12345678901242', '12345678901245'])
+      assert.equal(Number((await pool.query(
+        `SELECT COUNT(*) n FROM account_daily_claims
+          WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+        [`social-proof:x:${id}`])).rows[0].n), 1, `historical proof ${id} is permanently spent`);
+    assert.equal(Number((await pool.query(
+      `SELECT COUNT(*) n FROM account_daily_claims WHERE account_id=$1`,
+      ['social-proof:x:legacy trust attestation'])).rows[0].n), 0,
+    'legacy trust prose without a predecessor-recognized post id does not become an X receipt');
+    // The marker must not skip a payout committed by the retiring API during a rolling deploy.
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, paid, proof)
+       VALUES ($1,$2,'sw_invite',true,'https://x.com/legacy/status/00012345678901243')`,
+      [legacy.accountId, legacyDay - 6]);
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 1,
+      'a repeat boot repairs a paid row that arrived after the first migration snapshot');
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 0,
+      'reapplying the historical receipt repair after cutover is idempotent');
+
+    const legacyReuser = await mk('Legacy Proof Reuser');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='778' WHERE id=$1", [legacyReuser.accountId]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,
+      body: { proof: 'https://twitter.com/replay/statuses/12345678901238?s=20' } })).body.error, 'proof_used',
+    'a pre-upgrade paid proof cannot register or pay again through a URL alias');
+    assert.equal((await call('POST', '/v1/social/sw_invite/claim', { token: legacyReuser.token,
+      body: { proof: 'https://x.com/replay/status/12345678901242' } })).body.error, 'proof_used',
+    'a host alias accepted and X-verified by the predecessor cannot replay through canonical x.com');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,
+      body: { proof: 'https://example.com/replay/status/12345678901244' } })).body.error, 'need_proof',
+    'a lookalike host is not accepted as an X post proof');
+    assert.equal(Number((await pool.query(
+      'SELECT COUNT(*) n FROM social_claims WHERE account_id=$1', [legacyReuser.accountId])).rows[0].n), 0,
+    'rejected historical aliases and lookalike hosts leave no pending claim');
+
+    // The receipt uses fixed epoch day=0, so midnight cannot refresh a tweet. The URL and bare id
+    // normalize to the same proof across both task and day boundaries.
+    const reuser = await mk('Proof Reuser');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='889' WHERE id=$1", [reuser.accountId]);
+    stubAuthor = '889';
+    await call('POST', '/v1/social/sw_post/claim', { token: reuser.token,
+      body: { proof: 'https://x.com/reuser/status/12345678901236?s=20' } });
+    await matureSw(reuser.id, 'sw_post');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: reuser.token })).body.cash, SOCIAL_TASKS.CASH);
+    const realNow = Date.now;
+    Date.now = () => realNow() + 86400000;
+    try {
+      assert.equal((await call('POST', '/v1/social/sw_boost/claim', { token: reuser.token,
+        body: { proof: '00012345678901236' } })).body.error, 'proof_used',
+      'one tweet can fund at most one reward ever, including a leading-zero alias on the next UTC day');
+    } finally { Date.now = realNow; }
+
     // H2: registering someone ELSE's tweet (a different author_id) pays NOTHING
     const faker = await mk('Faker Frank');
     const fakerAcct = (await pool.query(`SELECT account_id a FROM characters WHERE id='${faker.id}'`)).rows[0].a;
     await pool.query(`UPDATE accounts SET auth_provider='x', auth_subject='888' WHERE id='${fakerAcct}'`);
     stubAuthor = '999'; // the post is NOT Frank's
-    await call('POST', '/v1/social/sw_post/claim', { token: faker.token, body: { proof: 'https://x.com/celeb/status/12345678901234' } });
+    await call('POST', '/v1/social/sw_post/claim', { token: faker.token, body: { proof: 'https://x.com/celeb/status/12345678901235' } });
     await matureSw(faker.id, 'sw_post');
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: faker.token })).body.error, 'not_your_post',
       "live mode binds the post to the player's linked X account (registering a celebrity's tweet earns nothing)");
+
+    // pg-mem does not serialize SELECT FOR UPDATE, so two task routes for one linked account reach
+    // the global receipt concurrently. Its PK must elect exactly one payout and keep cash ledger-exact.
+    // Native Postgres additionally serializes this same-account case; duplicate linked X identities
+    // across accounts are independently impossible under accounts(auth_provider,auth_subject) UNIQUE.
+    const race = await mk('Proof Race Rita');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='990' WHERE id=$1", [race.accountId]);
+    const raceProof = '12345678901237';
+    stubAuthor = '990';
+    const raceCashBefore = Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [race.id])).rows[0].cash);
+    await call('POST', '/v1/social/sw_post/claim', { token: race.token,
+      body: { proof: `https://x.com/race/status/${raceProof}` } });
+    await call('POST', '/v1/social/sw_invite/claim', { token: race.token,
+      body: { proof: `https://twitter.com/race/statuses/${raceProof}?s=20` } });
+    await matureSw(race.id, 'sw_post'); await matureSw(race.id, 'sw_invite');
+    const raced = await Promise.all([
+      call('POST', '/v1/social/sw_post/claim', { token: race.token }),
+      call('POST', '/v1/social/sw_invite/claim', { token: race.token }),
+    ]);
+    assert.equal(raced.filter((x) => x.code === 200).length, 1, JSON.stringify(raced));
+    assert.equal(raced.filter((x) => x.body.error === 'proof_used').length, 1, JSON.stringify(raced));
+    const raceBook = (await pool.query(
+      `SELECT COUNT(*)::int n, COALESCE(SUM(amount),0) amount FROM transactions
+        WHERE character_id=$1 AND currency='cash' AND reason LIKE 'social:%'`, [race.id])).rows[0];
+    assert.deepEqual([Number(raceBook.n), Number(raceBook.amount)], [1, SOCIAL_TASKS.CASH],
+      'concurrent duplicate proof creates exactly one social ledger row');
+    assert.equal(Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [race.id])).rows[0].cash),
+      raceCashBefore + SOCIAL_TASKS.CASH, 'concurrent duplicate proof moves cash by exactly its one ledger row');
+    assert.equal(Number((await pool.query(
+      `SELECT COUNT(*) n FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      [`social-proof:x:${raceProof}`])).rows[0].n), 1,
+    'the permanent synthetic proof namespace contains exactly one receipt');
   } finally {
-    global.fetch = realFetch; delete process.env.X_BEARER_TOKEN; process.env.SOCIAL_VERIFY_MODE = 'trust';
+    global.fetch = realFetch; delete process.env.X_BEARER_TOKEN; delete process.env.X_CHECK_CD_MS;
+    process.env.SOCIAL_VERIFY_MODE = 'trust';
   }
 }
 
@@ -1600,7 +1886,7 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     };
     const { preflight: pf0 } = await import('../src/preflight.js');
     assert(pf0({ ...socialPreflightLegalFixture, NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
-      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'off', TRUST_PROXY: 'on' })
+      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'off', RENDER: 'true', TRUST_PROXY: 'on' })
       .warnings.some((w) => /PUBLIC_URL/.test(w) && /referral link/.test(w)),
     'and with neither set, preflight warns that shares point at somebody else\'s domain');
 
@@ -1608,7 +1894,7 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     // running server down to fix a dormant faucet — strictly worse than the dormant faucet)
     const { preflight } = await import('../src/preflight.js');
     const pf = preflight({ ...socialPreflightLegalFixture, NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
-      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'live', TRUST_PROXY: 'on' });
+      MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'live', RENDER: 'true', TRUST_PROXY: 'on' });
     assert.deepEqual(pf.errors, [], 'live-without-tokens must NOT be fatal');
     assert(pf.warnings.some((w) => /X_BEARER_TOKEN/.test(w) && /pays nobody/.test(w)),
       'but it must warn, naming the exact variable and the consequence');
@@ -1719,9 +2005,9 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
   const gAl = await mk('Grand Al');                  // A — grandrecruiter (root)
   const mMoe = await mk('Middle Moe', 'Grand Al');   // R — brought in by A
   const bBo = await mk('Bottom Bo', 'Middle Moe');   // R2 — brought in by R
-  const qualify = async (c) => { // drive a recruit through the 4 gates (level/jobs/checkins/cash)
+  const qualify = async (c) => { // drive a recruit through the permanent-character + play gates
     await seedCh(c.id, 'respect=1000, lc_crime=39, cash=30000, nerve=50, energy=200');
-    await pool.query(`UPDATE account_persistent SET checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${c.id}')`);
+    await pool.query(`UPDATE account_persistent SET minted=true, checkins_lifetime=3 WHERE account_id=(SELECT account_id FROM characters WHERE id='${c.id}')`);
     for (let i = 0; i < 20; i++) { await seedCh(c.id, 'nerve=50, energy=200, jail_until=NULL'); const rr = await call('POST', '/v1/crimes/pick', { token: c.token }); if (rr.body.success) break; }
   };
   await qualify(mMoe);
@@ -1817,9 +2103,16 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
     await seedCh(hus.id, 'cash=100000');
     const g0 = (await pool.query(`SELECT counters FROM daily_progress WHERE character_id='${hus.id}' AND day=$1`, [dayOf()])).rows[0];
     const before = g0 ? Number(JSON.parse(g0.counters).goods || 0) : 0;
-    assert.equal((await call('POST', '/v1/goods/buy', { token: hus.token, body: { goodId: 'gin', qty: 1 } })).code, 200, 'bought a unit');
+    const freight = await call('POST', '/v1/goods/buy', { token: hus.token,
+      body: { goodId: 'gin', qty: GOODS_MARKET.DAILY_LOT_UNITS } });
+    assert.equal(freight.code, 200, 'bought a freight lot');
     const g1 = (await pool.query(`SELECT counters FROM daily_progress WHERE character_id='${hus.id}' AND day=$1`, [dayOf()])).rows[0];
-    assert.equal(Number(JSON.parse(g1.counters).goods || 0), before + 1, 'a goods BUY counts toward the daily goods contract (the promised "buy or sell")');
+    assert.equal(Number(JSON.parse(g1.counters).goods || 0),
+      before + freight.body.qty / GOODS_MARKET.DAILY_LOT_UNITS,
+      'daily freight progress follows settled quantity rather than request count');
+    assert.equal((await call('POST', '/v1/goods/sell', { token: hus.token,
+      body: { goodId: 'gin', qty: freight.body.qty } })).code, 200,
+      'the fixture clears its trunk before the hustle draw');
   }
   // (2) THE HUSTLE — the daily three-stop chain: deterministic, location-gated, legwork-verified
   const b0 = (await call('GET', '/v1/hustle', { token: hus.token })).body;
@@ -1849,7 +2142,8 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
   const elsewhere = DISTRICTS.map((d) => d.id).find((d) => d !== b1.district);
   await seedCh(hus.id, `loc='${elsewhere}'`);
   if (/job/.test(b1.legwork)) { for (let i = 0; i < 20; i++) { await seedCh(hus.id, 'nerve=100'); if ((await call('POST', '/v1/crimes/pick', { token: hus.token })).body.success) break; } }
-  else if (/goods/.test(b1.legwork)) await call('POST', '/v1/goods/buy', { token: hus.token, body: { goodId: 'gin', qty: 1 } });
+  else if (/goods/.test(b1.legwork)) await call('POST', '/v1/goods/buy', { token: hus.token,
+    body: { goodId: 'gin', qty: GOODS_MARKET.DAILY_LOT_UNITS } });
   else { await pool.query(`UPDATE characters SET train_at=NULL WHERE id='${hus.id}'`); await call('POST', '/v1/train/muscle', { token: hus.token }); }
   assert.equal((await call('POST', '/v1/hustle/advance', { token: hus.token })).body.error, 'district',
     'the work counts, but the CHECK-IN is still location-gated — you have to bring it to the stop');
@@ -1940,10 +2234,10 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
   assert.equal(r.body.claimedToday, 1, 'one claimed today');
   // MAX_DAY is the HARD faucet bound — seed the rest of the allowance as claimed rows elsewhere,
   // then a further claim (work done and all) is refused 'capped'
-  const pad = DISTRICTS.map((d) => d.id).filter((d) => d !== pick.district);
+  const cwAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [cw.id])).rows[0].account_id;
   for (let i = 0; i < CORNER.MAX_DAY - 1; i++)
-    await pool.query(`INSERT INTO corner_jobs (character_id, day, district, slot, baseline, claimed)
-      VALUES ($1,$2,$3,$4,'{}',true)`, [cw.id, day, pad[i % pad.length], 90 + i]);
+    await pool.query(`INSERT INTO account_daily_claims (account_id, day, scope, claim_id)
+      VALUES ($1,$2,'corner',$3)`, [cwAccount, day, `cap-${i}`]);
   const slot2 = [0, 1, 2].find((s) => s !== pick.slot);
   await call('POST', `/v1/corner/${slot2}/accept`, { token: cw.token });
   { // hand the second job its delta so ONLY the cap can refuse it
@@ -2031,6 +2325,9 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
       }
       // roll the clock + clear the day's claims so the next step is a genuinely different day
       await pool.query('DELETE FROM corner_jobs WHERE character_id=$1', [ch.id]);
+      await pool.query(`DELETE FROM account_daily_claims
+        WHERE account_id=(SELECT account_id FROM characters WHERE id=$1) AND day=$2 AND scope='corner'`,
+      [ch.id, day]);
       await pool.query('UPDATE corner_chains SET last_day = last_day - 1 WHERE character_id=$1', [ch.id]);
     }
   }

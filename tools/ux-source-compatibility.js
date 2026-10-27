@@ -7,6 +7,7 @@ import { UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_SOURCE_SHA256 } from './ux-
 import { uxNativeReaderHistoricalInput } from './ux-native-reader-source-compatibility.js';
 import { uxEnterpriseReaderHistoricalInput } from './ux-enterprise-reader-source-compatibility.js';
 import { uxDirectorReaderHistoricalInput } from './ux-director-reader-source-compatibility.js';
+import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 export { UX_SOURCE };
 export const UX_SOURCE_FILES = Object.freeze(['.github/workflows/ci.yml', 'package.json', 'public/index.html', 'schema.sql', 'src/economy.js', 'src/server.js', 'test/gates.js', 'test/migrate.js']);
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -79,6 +80,7 @@ export function qualifyUxWorkflowBoundSource(file, input, pin = UX_WORKFLOW_BOUN
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function uxWorkflowBoundHistoricalInput(file, input) {
+  input = economyUxMergeMainHistoricalInput(file, input);
   if (file !== UX_WORKFLOW_BOUND_FILE) return input;
   const row = UX_WORKFLOW_BOUND_SOURCE.files?.[0]; if (!row) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

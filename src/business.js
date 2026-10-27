@@ -267,16 +267,20 @@ export async function collectBusiness(ch, client, h) {
 // the row, so a caller that reads isCold(r) immediately afterwards sees the squared clock.
 async function settlePad(ch, rows, client, h, limits = null) {
   let paid = 0; const settled = []; let stillOwed = 0;
+  const now = Date.now();
   for (const r of rows) {
-    const owed = upkeepOwed(r, rows.length); // L1b: the pad rate scales with the empire's front count
+    const owed = upkeepOwed(r, rows.length, now); // L1b: the pad rate scales with the empire's front count
     if (owed <= 0) continue;
     if (Number(ch.cash) >= owed) {
       if (limits && (paid + owed > limits.maxCash || Number(ch.cash) - owed < limits.minimumReserve))
         throw new GameError('business_budget', 'Refresh the business upkeep quote before spending beyond its bound.');
       ch.cash = Number(ch.cash) - owed;
       paid += owed;
-      await client.query('UPDATE businesses SET upkeep_at=now() WHERE id=$1', [r.id]);
-      r.upkeep_at = new Date();
+      const elapsed = Math.min(Math.max(0, now - new Date(r.upkeep_at).getTime()), CONSTANTS.BUSINESS_UPKEEP_CAP_MS);
+      const rate = businessTierOf(r.kind, r.tier).incomePerHr * upkeepBps(rows.length) / 10000;
+      const paidThrough = new Date(Math.min(now, now - elapsed + Math.floor(owed * 3600000 / rate)));
+      await client.query('UPDATE businesses SET upkeep_at=$2 WHERE id=$1', [r.id, paidThrough]);
+      r.upkeep_at = paidThrough;
       await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'business:upkeep' });
       settled.push({ kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, paid: owed });
     } else stillOwed += owed; // couldn't cover this one — it stays owed (and cold if past the window)

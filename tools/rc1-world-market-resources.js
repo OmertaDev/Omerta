@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import { invoiceSourceBaseline } from './rc1-invoice-source-compatibility.js';
 import { readFileSync } from 'node:fs';
 import { isDeepStrictEqual as equal } from 'node:util';
-import { BLACK_MARKET, GOODS } from '../src/rules.js';
+import { BLACK_MARKET, GOODS, priceBlock } from '../src/rules.js';
+import { GOODS_MARKET } from '../src/goodsmarket.js';
 import { exactSum, negate, sha256 } from './rc1-resource-journal.js';
 import { actorValueHash } from './rc1-native-actor-replay.js';
 import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION,
@@ -15,6 +16,7 @@ const amount = n => exactSum([n]);
 const integer = n => { const text = amount(n); assert(/^\d+$/.test(text)); const v = BigInt(text); assert(v <= BigInt(Number.MAX_SAFE_INTEGER)); return v; };
 const omit = (row, fields) => Object.fromEntries(Object.entries(row).filter(([field]) => !fields.includes(field)));
 const cargoKey = (owner, good) => JSON.stringify([owner, good]);
+const liquidityKey = (good, district) => JSON.stringify([good, district]);
 const marketRoute = path => path === '/v1/goods/buy' || /^\/v1\/market(?:\/order|\/[^/]+\/(?:buy|fill|claim|cancel))?$/.test(path);
 const stateHash = ({ boundary, ...state }) => sha256(state);
 export const MARKET_RESOURCE_SOURCE_PINS = Object.freeze({
@@ -25,7 +27,8 @@ export const MARKET_RESOURCE_SOURCE_PINS = Object.freeze({
 export const MARKET_RESOURCE_SOURCE_TRANSFER = Object.freeze({
   sourceRevision: GOODS_SOURCE_REVIEWED_REVISION, predecessorRevision: GOODS_SOURCE_PREDECESSOR_REVISION,
   predecessorPins: Object.fromEntries(['src/economy.js', 'src/goodsquote.js'].map(file => [file, GOODS_SOURCE_PREDECESSOR_PINS[file]])),
-  scope: 'Only unchanged, observed committed cash/cargo/tax and personal market custody equations transfer. This does not qualify goods buy/sell availability, reachability, bucket/counter accounting, quote eligibility or new goods authority.' });
+  scope: 'Only unchanged, observed committed cash/cargo/tax and personal market custody equations transfer. Current-source goods buys additionally bind exact shared buy-counter deltas; sell counters, availability, reachability, quote eligibility and new goods authority remain unqualified.' });
+const GOODS_MARKET_CURRENT_PIN = '53ae926ed2ac223ee65bc1383f7156801cf1cbab4204814cb16441059f4f3345';
 const sourcePins = MARKET_RESOURCE_SOURCE_PINS;
 let sourcesChecked = false;
 function commands(before, after, identity, evidence) {
@@ -58,7 +61,7 @@ function commands(before, after, identity, evidence) {
 }
 
 export function reconcileMarketResources(before, after, { identity = null, receipts = [], quiescentGroupEvidence = null } = {}) {
-  const result = { usedReceipts: new Set(), listingIds: new Set(), cargoKeys: new Set(), checks: [], movements: [] };
+  const result = { usedReceipts: new Set(), listingIds: new Set(), cargoKeys: new Set(), liquidityKeys: new Set(), checks: [], movements: [] };
   const selected = commands(before, after, identity, quiescentGroupEvidence); if (!selected.length) return result;
   // These equations cover personal orders only. Depot custody and committed
   // delivery fees have separate proofs and cannot inherit historical RC1 evidence.
@@ -73,11 +76,18 @@ export function reconcileMarketResources(before, after, { identity = null, recei
       assert.equal(sha256(text), pin, 'Market resource source changed: ' + file);
       if (Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file)) assertGoodsSourceTransfer(file, text);
     }
+    const goodsMarketSource = readFileSync(new URL('../src/goodsmarket.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    assert.equal(sha256(goodsMarketSource), GOODS_MARKET_CURRENT_PIN, 'Goods liquidity source changed');
     sourcesChecked = true;
   }
   const old = new Map(rows(before, 'market_listings').map(row => [row.id, row])), final = new Map(rows(after, 'market_listings').map(row => [row.id, row]));
-  const cargoDelta = new Map(), owners = new Set(); let tax = 0n;
+  const cargoDelta = new Map(), liquidityDelta = new Map(), owners = new Set(); let tax = 0n;
   const cargo = (owner, good, change) => { const key = cargoKey(owner, good); cargoDelta.set(key, (cargoDelta.get(key) || 0n) + change); };
+  const consumeBuyLiquidity = (good, district, quantity, logicalAt) => {
+    const block = priceBlock(logicalAt), key = liquidityKey(good, district), prior = liquidityDelta.get(key);
+    assert(Number.isSafeInteger(block) && block >= 0 && (!prior || prior.block === block), 'Market buy liquidity spans ambiguous price blocks');
+    liquidityDelta.set(key, { good, district, block, quantity: (prior?.quantity || 0) + quantity });
+  };
   const use = (reason, owner, expected) => {
     const matches = receipts.filter(row => !result.usedReceipts.has(row.id) && row.currency === 'cash' && row.reason === reason
       && row.character_id === owner && row.account_id === null && row.counterparty === null && amount(row.amount) === String(expected)).sort((a, b) => a.id.localeCompare(b.id));
@@ -109,6 +119,7 @@ export function reconcileMarketResources(before, after, { identity = null, recei
       const paidTax = (spent + 101n) / 102n, cost = spent - paidTax * 2n;
       assert(qty > 0n && cost > 0n && cost % qty === 0n && (cost + 99n) / 100n === paidTax);
       const receipt = use('goods:buy:' + good, owner, -spent); cargo(owner, good, qty); owners.add(owner); tax += paidTax;
+      consumeBuyLiquidity(good, person.loc, Number(qty), logicalAt);
       add({ kind: 'goods-purchase', owner, goodId: good, quantity: String(qty), spent: String(spent), cashDestroyed: String(spent - paidTax), cashToStreetTax: String(paidTax), receiptIds: [receipt.id] }, command); continue;
     }
     if (request.path === '/v1/market') {
@@ -172,6 +183,31 @@ export function reconcileMarketResources(before, after, { identity = null, recei
     };
     assert.equal(quantity(after) - quantity(before), expected, 'Market cargo contribution does not match aggregate endpoints'); result.cargoKeys.add(key);
   }
+  if (liquidityDelta.size) {
+    assert(Array.isArray(before.tables.goods_market_liquidity) && Array.isArray(after.tables.goods_market_liquidity),
+      'Market buy liquidity instrumentation is missing');
+    for (const [key, expected] of liquidityDelta) {
+      const matches = state => rows(state, 'goods_market_liquidity').filter(row => liquidityKey(row.good_id, row.district) === key);
+      const prior = matches(before), final = matches(after);
+      assert(prior.length <= 1, 'Market buy prior liquidity bucket duplicated');
+      assert.equal(final.length, 1, 'Market buy liquidity bucket missing/duplicated');
+      const old = prior[0];
+      if (old) {
+        assert([old.price_block, old.bought, old.sold].every(value => Number.isSafeInteger(Number(value)) && Number(value) >= 0),
+          'Market buy prior liquidity is invalid');
+        assert(Number(old.price_block) <= expected.block, 'Market buy used an expired quote after a newer liquidity block');
+      }
+      const sameBlock = old && Number(old.price_block) === expected.block;
+      const next = { good_id: expected.good, district: expected.district, price_block: expected.block,
+        bought: (sameBlock ? Number(old.bought) : 0) + expected.quantity, sold: sameBlock ? Number(old.sold) : 0 };
+      assert(next.bought <= GOODS_MARKET.STOCK_PER_BLOCK, 'Market buy exceeded shared shop stock');
+      assert.deepEqual(final[0], next, 'Market buy liquidity quantity/block differs');
+      result.liquidityKeys.add(key);
+    }
+    const unclaimed = state => rows(state, 'goods_market_liquidity')
+      .filter(row => !result.liquidityKeys.has(liquidityKey(row.good_id, row.district)));
+    assert.deepEqual(unclaimed(after), unclaimed(before), 'Market buy changed another liquidity bucket');
+  }
   for (const owner of owners) {
     const a = rows(before, 'characters').find(row => row.id === owner), b = rows(after, 'characters').find(row => row.id === owner);
     for (const field of ['bank', 'bank_intransit']) assert.equal(amount(a[field] || 0), amount(b[field] || 0));
@@ -186,7 +222,8 @@ export function reconcileMarketResources(before, after, { identity = null, recei
   result.checks.push({ kind: 'market-custody-equations', resource: 'cash-and-goods', drift: '0', authority: [
     ...[...result.usedReceipts].map(id => ({ table: 'transactions', id })), ...[...result.listingIds].map(id => ({ table: 'market_listings', id }))],
     listingIds: [...result.listingIds], cargoKeys: [...result.cargoKeys], streetTaxIncrease: String(tax), internalCommitOrder: false,
-    qualificationScope: MARKET_RESOURCE_SOURCE_TRANSFER.scope, goodsLiquidityQualified: false, quoteEligibilityQualified: false });
+    qualificationScope: MARKET_RESOURCE_SOURCE_TRANSFER.scope,
+    goodsLiquidityQualified: result.liquidityKeys.size ? 'current-buy-counter-only' : false, quoteEligibilityQualified: false });
   return result;
 }
 

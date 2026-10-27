@@ -178,7 +178,7 @@ export function registerRwa(app, { pool, auth, modAuth, withCharacter, reviewerR
     });
     if (!configured.enabled) return reply.code(503).send({ error: 'rwa_reviewer_disabled' });
     if (rateLimitsEnabled()) {
-      const limited = await checkAuthRateLimit({ ip: `rwa-reviewer-auth:${req.method}:${req.ip}` });
+      const limited = await checkAuthRateLimit({ ip: `rwa-reviewer-auth:${req.method}:${req.clientIp}` });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }

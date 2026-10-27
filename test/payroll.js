@@ -10,7 +10,7 @@
 import assert from 'node:assert';
 import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
-import { ESTATE } from '../src/rules.js';
+import { ESTATE, M4 } from '../src/rules.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -110,6 +110,24 @@ await pool.query("INSERT INTO territory_rackets (district_id, owner_gang, tier, 
   await board(t); await board(t);
   assert.equal(await txnCount(), tx0, 'reading the payroll writes zero transactions rows');
   assert.equal(await cashDrift(), d0, 'the payroll board is §10.4-neutral (drift delta unchanged)');
+}
+
+// A cold final hand can leave without an immediate charge, but the capped tab survives at zero
+// headcount and is settled by the next hire. Payroll must keep that liability visible even though
+// the ordinary wages route correctly refuses when nobody is currently employed.
+{
+  await pool.query("UPDATE characters SET crew=0, crew_paid_at=now() - interval '4 days' WHERE id=$1", [cid.id]);
+  const b = await board(t), crew = b.items.find((i) => i.id === 'crew');
+  const deferred = M4.CREW_WAGE_PER_HR * M4.CREW_WAGE_CAP_MS / 3600000;
+  assert.equal(crew.owed, deferred, 'the zero-head deferred tab remains on the unified payroll');
+  assert.equal(crew.perHr, 0, 'no new wages accrue after the final hand leaves');
+  assert.equal(crew.canPay, false, 'the wages endpoint is not offered with an empty roster');
+  assert.equal(crew.pay, 'POST /v1/kitchen/crew/hire', 'the row points at the action that settles deferred debt');
+  assert.equal(b.owedCash, b.items.filter((i) => i.currency === 'cash').reduce((sum, item) => sum + item.owed, 0),
+    'the deferred tab participates in payroll cash totals alongside the fronts');
+  const me = (await call('GET', '/v1/me', { token: t })).body.character;
+  assert.equal(me.crewNextCost, M4.CREW_COST_STEP + deferred,
+    'payroll debt and the authoritative next-hire quote agree at zero headcount');
 }
 
 console.log('payroll: THE PAYROLL ok — one page, one vocabulary, every row agreeing with its own tab to the dollar, the real till flipping the row, and a §10.4-free read.');

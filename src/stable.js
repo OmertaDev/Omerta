@@ -166,6 +166,12 @@ export async function matchRace(ch, opponent, body, client, h) {
   if (amt > limit) throw new GameError('limit', `Their racer takes matches up to ${usd(limit)}.`);
   if (injured(r)) throw new GameError('injured_self', 'Your racer is laid up — let them heal.');
   if (injured(or)) throw new GameError('injured_them', 'Their racer is laid up right now.');
+  const myRest = onCooldown(r);
+  if (myRest) throw new GameError('cooldown', `${r.name} needs ${coolWait(myRest)} to rest before another race.`,
+    { cooldownSeconds: myRest });
+  const theirRest = onCooldown(or);
+  if (theirRest) throw new GameError('cooldown', `${or.name} needs ${coolWait(theirRest)} to rest before another race.`,
+    { cooldownSeconds: theirRest });
   if (Number(ch.cash) < amt) throw new GameError('cash', 'Not that much in pocket for the wager.');
   if (Number(opponent.cash) < amt) throw new GameError('their_cash', "They can't cover the wager right now.");
   let mine, theirs;
@@ -175,6 +181,8 @@ export async function matchRace(ch, opponent, body, client, h) {
   const rake = Math.ceil(pot * STABLE.RAKE_BPS / 10000);
   const winner = win ? ch : opponent, loser = win ? opponent : ch;
   const winnerR = win ? r : or, loserR = win ? or : r;
+  const restsUntil = new Date(Date.now() + STABLE.MATCH_CD_MS);
+  await client.query('UPDATE racers SET circuit_at=$2 WHERE id IN ($1,$3)', [r.id, restsUntil, or.id]);
   loser.cash = Number(loser.cash) - amt;
   winner.cash = Number(winner.cash) + amt - rake; // their own stake never left; net +stake − rake (casino:pvp accounting)
   await h.ledger(client, { characterId: loser.id, currency: 'cash', amount: -amt, reason: 'stable:race', counterparty: winner.id });
@@ -194,6 +202,7 @@ export async function matchRace(ch, opponent, body, client, h) {
     you: { name: r.name, score: mine }, them: { name: or.name, score: theirs },
     // a lost match lays YOUR racer up — the term the reply withheld (wave 75)
     injuredSeconds: win ? 0 : Math.ceil(STABLE.INJURY_MS / 1000),
+      circuitCdSeconds: Math.ceil(STABLE.MATCH_CD_MS / 1000),
     yourRacer: win ? `${Number(r.wins) + 1}-${r.losses}` : `${r.wins}-${Number(r.losses) + 1}` };
 }
 

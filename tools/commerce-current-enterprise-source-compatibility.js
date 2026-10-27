@@ -3,6 +3,7 @@ export {REBUILD_INTERFACE_SOURCE,qualifyRebuildInterfaceSource} from './classic-
 // Separate current-E text namespace. Historical C-to-E helpers and maps stay independent.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
 import {COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION,COMMERCE_CURRENT_ENTERPRISE_SOURCE_PREDECESSOR,COMMERCE_CURRENT_ENTERPRISE_SOURCE_PHASE,COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS,COMMERCE_CURRENT_ENTERPRISE_IDENTITY_SOURCES} from './commerce-current-enterprise-source-data.js';
 export {COMMERCE_CURRENT_ENTERPRISE_SOURCE_REVISION,COMMERCE_CURRENT_ENTERPRISE_SOURCE_PREDECESSOR,COMMERCE_CURRENT_ENTERPRISE_SOURCE_PHASE,COMMERCE_CURRENT_ENTERPRISE_SOURCE_DOMAINS,COMMERCE_CURRENT_ENTERPRISE_IDENTITY_SOURCES};
 const hash=text=>crypto.createHash('sha256').update(text).digest('hex'),blob=text=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(text)+'\0').update(text).digest('hex');
@@ -359,6 +360,10 @@ export function qualifyClassicInterfaceSource(file, input, pin = CLASSIC_INTERFA
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function classicInterfaceHistoricalInput(file, input) {
+  const economyBuffer = Buffer.isBuffer(input), economyText = economyBuffer ? input.toString('utf8') : input;
+  if (economyBuffer) assert(Buffer.from(economyText, 'utf8').equals(input), 'Classic interface physical input must be lossless UTF-8');
+  const economyBaseline = economyHardeningSourceBaseline(file, economyText);
+  if (economyBaseline !== economyText) input = economyBuffer ? Buffer.from(economyBaseline) : economyBaseline;
   input = rebuildInterfaceHistoricalInput(file, input);
   if (!CLASSIC_INTERFACE_FILES.includes(file)) return input;
   classicSourceBinding(CLASSIC_INTERFACE_OVER_F92);

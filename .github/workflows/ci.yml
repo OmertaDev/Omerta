@@ -1351,9 +1351,9 @@ jobs:
     if: ${{ !inputs.tail_only }}
     name: native commerce (${{ matrix.postgres }})
     runs-on: ubuntu-latest
-    # Original33 leaf caps164m +30m parent overhead +10m capture +5m closure.
-    # New220m finite job bound also leaves11m setup margin; not a measured runtime.
-    timeout-minutes: 220
+    # Current33 leaf caps171m +30m parent overhead +10m capture +5m closure.
+    # New226m finite job bound also leaves10m setup margin; not a measured runtime.
+    timeout-minutes: 226
     strategy:
       fail-fast: false
       matrix:

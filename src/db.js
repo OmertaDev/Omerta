@@ -6,6 +6,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { migrateCityHomeStorage } from './city-home-migration.js';
 import { enforceDatabaseRls } from './db-rls.js';
+import { takeAccountDailyClaim, takeBoundedAccountDailyClaim } from './accountdaily.js';
+import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
+import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
 
 // What the live driver can actually do, decided ONCE at makeDb (a driver property, not a per-call
 // one). Deliberately NOT a runtime probe: in real Postgres a failed statement aborts the ENCLOSING
@@ -568,6 +571,10 @@ export async function migrateSchemaUnderLock(
   await migrateTask5BallotV2(boot, { compatibility });
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
+  await migrateEconomyDailyClaims(boot);
+  await migrateSocialProofReceipts(boot);
+  await migrateReferralOriginHolds(boot);
+  await migrateCrewWageClocks(boot);
   await resetStartingLevels(boot);
   await boot.query('BEGIN');
   try { await ensureDeedBuildings(boot); await boot.query('COMMIT'); }
@@ -575,6 +582,288 @@ export async function migrateSchemaUnderLock(
   const rls = await enforceDatabaseRls(boot, { compatibility });
   const stamp = await stampSchema(boot);
   return { migration, stamp, rls };
+}
+
+// Repeatable lineage repair for installs that upgrade after a character already claimed and died on
+// the deployment day. The old estate removed character-scoped progress before account/day latches
+// existed, but ledger/activity rows and dead character mirrors remain durable evidence. The marker
+// records the first repair; it must not skip later reconciliation because an old process can settle
+// one final request during a rolling deploy after the new API's startup snapshot. The worker's later
+// startup then closes that cutover seam before normal background work resumes.
+export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now() / 86400000)) {
+  await q.query('BEGIN');
+  try {
+    const migrationId = 'account-daily-lineage-2026-10-21';
+    const alreadyApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
+    const from = new Date(today * 86400000), until = new Date((today + 1) * 86400000);
+    // A transaction's `now()` is its transaction-start time, so include the prior UTC day on repeat
+    // passes. That covers a request which straddles midnight or began before the first repair's
+    // snapshot but committed after it, while keeping every later restart bounded to two days.
+    const checkinFrom = new Date((today - 1) * 86400000);
+    const checkins = alreadyApplied ? (await q.query(
+      `SELECT t.at, c.account_id, c.checkin_day, c.streak
+         FROM transactions t JOIN characters c ON c.id=t.character_id
+        WHERE t.reason='checkin' AND t.currency='cash' AND t.amount>0
+          AND t.at >= $1 AND t.at < $2`,
+      [checkinFrom, until])).rows : (await q.query(
+      `SELECT t.at, c.account_id, c.checkin_day, c.streak
+         FROM transactions t JOIN characters c ON c.id=t.character_id
+        WHERE t.reason='checkin' AND t.currency='cash' AND t.amount>0`)).rows;
+
+    // Dead characters retain their check-in mirror. Carry the newest lineage state forward even if
+    // death happened before this build introduced account_persistent.checkin_day/checkin_streak. The
+    // first application inspects every mirror. Repeat passes inspect only characters proved relevant
+    // by a recent durable payout, avoiding a full characters scan on every API/worker restart.
+    const mirrors = alreadyApplied ? checkins : (await q.query(
+      'SELECT account_id, checkin_day, streak FROM characters WHERE checkin_day > 0')).rows;
+    const newest = new Map();
+    for (const row of mirrors) {
+      const prior = newest.get(row.account_id);
+      const day = Number(row.checkin_day) || 0, streak = Number(row.streak) || 0;
+      if (!prior || day > prior.day || (day === prior.day && streak > prior.streak))
+        newest.set(row.account_id, { day, streak });
+    }
+    for (const [accountId, state] of newest) await q.query(
+      `UPDATE account_persistent SET
+         checkin_streak=CASE WHEN checkin_day<$2 THEN $3 WHEN checkin_day=$2 THEN GREATEST(checkin_streak,$3) ELSE checkin_streak END,
+         checkin_day=GREATEST(checkin_day,$2)
+       WHERE account_id=$1`, [accountId, state.day, state.streak]);
+
+    // Ledger rows reconstruct every historical check-in day. Distinct account/day count repairs the
+    // lifetime referral gate without preserving any old duplicate-claim inflation.
+    const checkinDays = new Map();
+    for (const row of checkins) {
+      const day = Math.floor(new Date(row.at).getTime() / 86400000);
+      if (!Number.isFinite(day)) continue;
+      const days = checkinDays.get(row.account_id) || new Set();
+      days.add(day); checkinDays.set(row.account_id, days);
+    }
+    for (const [accountId, days] of checkinDays) {
+      for (const day of days) await takeAccountDailyClaim(q, accountId, day, 'checkin', 'claim');
+      // The old revision increments the durable account counter in the same transaction as its
+      // ledger row. Only the first application needs to reconstruct lifetime history; subsequent
+      // cutover passes preserve that exact durable value and add the missing day latch/state.
+      if (!alreadyApplied) await q.query(
+          'UPDATE account_persistent SET checkins_lifetime=$2 WHERE account_id=$1',
+          [accountId, days.size]);
+    }
+
+    const paid = (await q.query(
+      `SELECT t.id, t.reason, c.account_id FROM transactions t JOIN characters c ON c.id=t.character_id
+        WHERE t.at >= $1 AND t.at < $2 AND t.amount>0 AND t.currency='cash'
+          AND (t.reason LIKE 'daily:%' OR t.reason='corner:job' OR t.reason='hustle:payoff')
+        ORDER BY t.at, t.id`,
+      [from, until])).rows;
+    // Restore semantic Daily ids first, then use anonymous slots for excess rows with the same id.
+    // A pre-latch death replay can leave A,A,B in the ledger. Collapsing both A rows onto one PK
+    // would record only two paid rights and let the heir collect C as a fourth base reward. Exact-
+    // first preserves the board identity when possible; each remaining positive ledger row still
+    // consumes one of the three durable slots, up to the hard cap.
+    const dailyExactByAccount = new Map(), dailyDuplicates = [];
+    for (const row of paid) {
+      if (!row.reason.startsWith('daily:')) continue;
+      const claimId = row.reason.slice('daily:'.length);
+      if (claimId === 'all') continue;
+      const exact = dailyExactByAccount.get(row.account_id) || new Map();
+      if (exact.has(claimId)) dailyDuplicates.push(row);
+      else exact.set(claimId, row);
+      dailyExactByAccount.set(row.account_id, exact);
+    }
+    for (const [accountId, claims] of dailyExactByAccount)
+      for (const claimId of claims.keys())
+        await takeBoundedAccountDailyClaim(q, accountId, today, 'daily', claimId, 3);
+    for (const row of dailyDuplicates)
+      await takeBoundedAccountDailyClaim(q, row.account_id, today, 'daily', `legacy:${row.id}`, 3);
+
+    // Successful corner claims also leave telemetry with the real work kind. Restore those exact
+    // identities first so an heir cannot repeat the same kind after upgrading. Older installs that
+    // lack telemetry still receive anonymous slots below, preserving the aggregate daily ceiling.
+    const cornerKinds = new Map();
+    const cornerEvents = (await q.query(
+      `SELECT account_id, props FROM telemetry
+        WHERE at >= $1 AND at < $2 AND event='corner' AND account_id IS NOT NULL`,
+      [from, until])).rows;
+    for (const row of cornerEvents) {
+      let props;
+      try { props = JSON.parse(row.props || '{}'); } catch { props = {}; }
+      if (typeof props.kind !== 'string' || !props.kind) continue;
+      const kinds = cornerKinds.get(row.account_id) || new Set();
+      kinds.add(props.kind); cornerKinds.set(row.account_id, kinds);
+    }
+    const restoredCornerKinds = new Map();
+    for (const [accountId, kinds] of cornerKinds) {
+      const restored = new Set();
+      for (const kind of kinds) {
+        const inserted = await takeBoundedAccountDailyClaim(q, accountId, today, 'corner', kind, 5);
+        const exists = inserted || (await q.query(
+          `SELECT 1 FROM account_daily_claims
+            WHERE account_id=$1 AND day=$2 AND scope='corner' AND claim_id=$3`,
+          [accountId, today, kind])).rowCount > 0;
+        if (exists) restored.add(kind);
+      }
+      restoredCornerKinds.set(accountId, restored);
+    }
+    for (const row of paid) {
+      if (row.reason === 'corner:job') {
+        // Each exact telemetry kind already consumes the slot for one paid row. Use anonymous slots
+        // only for any remaining ledger evidence whose identity predates telemetry.
+        const restored = restoredCornerKinds.get(row.account_id);
+        if (restored?.size) restored.delete(restored.values().next().value);
+        else await takeBoundedAccountDailyClaim(q, row.account_id, today, 'corner', `legacy:${row.id}`, 5);
+      } else if (row.reason === 'hustle:payoff') {
+        await takeAccountDailyClaim(q, row.account_id, today, 'hustle', 'payoff');
+      }
+    }
+    // Three paid base slots imply the old board reached its full envelope. Persist that right even
+    // when the event fund was dry and therefore left no `daily:all` OMR ledger row.
+    const dailySlots = (await q.query(
+      `SELECT account_id FROM account_daily_claims WHERE day=$1 AND scope='daily'`, [today])).rows;
+    const dailyCounts = new Map();
+    for (const row of dailySlots)
+      dailyCounts.set(row.account_id, Number(dailyCounts.get(row.account_id) || 0) + 1);
+    for (const [accountId, count] of dailyCounts)
+      if (count >= 3) await takeAccountDailyClaim(q, accountId, today, 'daily-envelope', 'all');
+    const yardtales = (await q.query(
+      "SELECT account_id FROM activity_log WHERE day=$1 AND tag='yardtale' AND n>0", [today])).rows;
+    for (const row of yardtales)
+      await takeAccountDailyClaim(q, row.account_id, today, 'pen', 'talk');
+
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
+    await q.query('COMMIT');
+    return { applied: !alreadyApplied };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Backfill the permanent provider/id latch for payouts made before that latch shipped. The marker
+// records the first repair, but every boot repeats the bounded scan: an old API process can finish a
+// payout while a replacement process is starting during a rolling deploy. Paid evidence uses the
+// predecessor's accepted post-id shapes so every X-verified payout is retained; arbitrary trust prose
+// without an id is ignored. New submissions use the stricter host-bound parser in verify.js.
+export async function migrateSocialProofReceipts(q) {
+  await q.query('BEGIN');
+  try {
+    // One global sunset bounds the permissive predecessor verifier even if an old API process keeps
+    // inserting omitted-column rows during a rolling deploy. DO NOTHING preserves the first cutover
+    // timestamp forever; after 48h every row uses the strict current verifier regardless of its flag.
+    await q.query(
+      "INSERT INTO economy_migrations (id) VALUES ('social-pending-proof-bridge-2026-10-26') ON CONFLICT DO NOTHING");
+    const migrationId = 'social-proof-receipts-2026-10-23';
+    const alreadyApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
+    const claimRows = (await q.query(
+      'SELECT DISTINCT proof FROM social_claims WHERE paid AND proof IS NOT NULL')).rows;
+    // Paid rows are intentionally swept after seven days, but their same-transaction social_task
+    // telemetry survives for 180 days. The first upgrade consumes that retained payout evidence too;
+    // later boots need only the cutover window because the durable receipts now cover older proofs.
+    const telemetryRows = alreadyApplied ? (await q.query(
+      "SELECT props FROM telemetry WHERE event='social_task' AND at >= $1",
+      [new Date(Date.now() - 2 * 86400000)])).rows : (await q.query(
+      "SELECT props FROM telemetry WHERE event='social_task'")).rows;
+    const receiptAccounts = new Set();
+    const proofs = claimRows.map((row) => row.proof);
+    for (const row of telemetryRows) {
+      let props;
+      try { props = JSON.parse(row.props || '{}'); } catch { props = {}; }
+      proofs.push(props.proof);
+    }
+    for (const proof of proofs) {
+      const normalized = normalizeLegacyPaidSocialPostProof(proof);
+      if (normalized)
+        receiptAccounts.add(`social-proof:${normalized.provider}:${normalized.id}`);
+    }
+    let inserted = 0;
+    for (const accountId of receiptAccounts)
+      if (await takeAccountDailyClaim(q, accountId, 0, 'social-proof', 'used')) inserted++;
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
+    await q.query('COMMIT');
+    return { applied: !alreadyApplied, scanned: proofs.length, canonical: receiptAccounts.size, inserted };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Repeatable referral-origin repair. `created_ip` is immutable signup provenance; canonicalizing it
+// closes IPv4-mapped/IPv6 spelling bypasses before matching. TRUE is a durable hold, FALSE is an
+// explicit reviewed clearance, and NULL remains unclassified. Runtime payout gates deny an
+// unclassified edge until both origins have trusted authority; explicit FALSE remains the support
+// override for legacy/shared-household cases. Re-running on every API/worker boot closes the rolling-
+// deploy seam without touching paid history.
+export async function migrateReferralOriginHolds(q) {
+  await q.query('BEGIN');
+  try {
+    const migrationId = 'referral-origin-hold-2026-10-23';
+    const alreadyApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
+    const accounts = (await q.query(
+      'SELECT id, created_ip, last_ip FROM accounts WHERE created_ip IS NOT NULL OR last_ip IS NOT NULL')).rows;
+    let normalized = 0;
+    for (const row of accounts) {
+      const createdIp = normalizeClientIp(row.created_ip), lastIp = normalizeClientIp(row.last_ip);
+      const nextCreated = createdIp || row.created_ip, nextLast = lastIp || row.last_ip;
+      if (nextCreated === row.created_ip && nextLast === row.last_ip) continue;
+      await q.query('UPDATE accounts SET created_ip=$2, last_ip=$3 WHERE id=$1',
+        [row.id, nextCreated, nextLast]);
+      normalized++;
+    }
+
+    const edges = (await q.query(
+      `SELECT recruit.account_id AS recruit_account, recruit.referral_same_ip_hold,
+              recruit.agent_flag AS recruit_agent, recruit.npc_flag AS recruit_npc,
+              recruiter.agent_flag AS recruiter_agent, recruiter.npc_flag AS recruiter_npc,
+              recruit_account.created_ip AS recruit_ip,
+              recruit_account.created_ip_authority AS recruit_ip_authority,
+              recruiter_account.created_ip AS recruiter_ip,
+              recruiter_account.created_ip_authority AS recruiter_ip_authority
+         FROM account_persistent recruit
+         JOIN account_persistent recruiter ON recruiter.account_id=recruit.referred_by
+         JOIN accounts recruit_account ON recruit_account.id=recruit.account_id
+         JOIN accounts recruiter_account ON recruiter_account.id=recruiter.account_id
+        WHERE recruit.referred_by IS NOT NULL`)).rows;
+    let held = 0;
+    for (const edge of edges) {
+      if (edge.referral_same_ip_hold !== null && edge.referral_same_ip_hold !== undefined) continue;
+      if (edge.recruit_agent || edge.recruiter_agent || edge.recruit_npc || edge.recruiter_npc) continue;
+      if (!normalizeClientIpAuthority(edge.recruit_ip_authority)
+        || !normalizeClientIpAuthority(edge.recruiter_ip_authority)) continue;
+      const recruitIp = normalizeClientIp(edge.recruit_ip), recruiterIp = normalizeClientIp(edge.recruiter_ip);
+      if (!recruitIp || recruitIp === '0.0.0.0' || recruitIp === '::' || recruitIp !== recruiterIp) continue;
+      const update = await q.query(
+        'UPDATE account_persistent SET referral_same_ip_hold=true WHERE account_id=$1 AND referral_same_ip_hold IS NULL',
+        [edge.recruit_account]);
+      held += update.rowCount;
+    }
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
+    await q.query('COMMIT');
+    return { applied: !alreadyApplied, normalized, held };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+// Player-favourable repair for crews hired before the wage clock existed. A positive crew with no
+// clock otherwise sells forever while crewWageOwed remains zero. Stamp the first trustworthy clock
+// at startup rather than inventing retroactive debt. Repeat on every boot so a drained predecessor's
+// final full-row write cannot leave the null-clock faucet open after the cutover.
+export async function migrateCrewWageClocks(q, now = new Date()) {
+  await q.query('BEGIN');
+  try {
+    const stamped = await q.query(
+      `UPDATE characters SET crew_paid_at=$1, crew_sale_credit_ms=0
+       WHERE alive=true AND crew>0 AND crew_paid_at IS NULL`, [now]);
+    await q.query(
+      "INSERT INTO economy_migrations (id) VALUES ('crew-wage-clock-backfill-2026-10-26') ON CONFLICT DO NOTHING");
+    await q.query('COMMIT');
+    return { stamped: stamped.rowCount };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
 }
 
 // Owner-requested October 14 reset; the October 6 marker remains historical.
@@ -997,6 +1286,10 @@ export async function makeDb() {
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
   await pool.query(SCHEMA);
+  await migrateEconomyDailyClaims(pool);
+  await migrateSocialProofReceipts(pool);
+  await migrateReferralOriginHolds(pool);
+  await migrateCrewWageClocks(pool);
   await pool.query('BEGIN');
   try { await ensureDeedBuildings(pool); await pool.query('COMMIT'); }
   catch (error) { await pool.query('ROLLBACK'); throw error; }

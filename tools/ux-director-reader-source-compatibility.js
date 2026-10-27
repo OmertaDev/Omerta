@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import { UX_DIRECTOR_READER_SOURCE, UX_DIRECTOR_READER_SOURCE_SHA256 } from './ux-director-reader-source-data.js';
 import { UX_SOURCE } from './ux-source-data.js';
 import { UX_SUITES_GATE_SOURCE, UX_SUITES_GATE_SOURCE_SHA256 } from './ux-suites-gate-source-data.js';
+import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 export { UX_DIRECTOR_READER_SOURCE };
 export const UX_DIRECTOR_READER_SOURCE_FILES = Object.freeze(['test/director-migration.js']);
 const sha = input => crypto.createHash('sha256').update(input).digest('hex');
@@ -77,6 +78,7 @@ export function qualifyUxSuitesGateSource(file, input, pin = UX_SUITES_GATE_SOUR
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function uxSuitesGateHistoricalInput(file, input) {
+  input = economyUxMergeMainHistoricalInput(file, input);
   if (file !== UX_SUITES_GATE_FILE) return input;
   const row = UX_SUITES_GATE_SOURCE.files?.[0]; if (!row) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

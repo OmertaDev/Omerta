@@ -11,7 +11,7 @@ process.env.CLUE_DROP_P = '0';
 const character = () => ({ id: 'tactics-character', account_id: 'tactics-account', name: 'Decision Reader', generation: 1,
   respect: 1960, muscle: 10, cunning: 8, speed: 7, cash: 500000, bank: 0, health: 72.5, energy: 40, nerve: 40,
   heat: 12, lc_crime: 0, trade_rep: 0, cb: 0, loc: 'docks', path: 'kitchen', last_accrued_at: new Date(),
-  train_at: null, heist_at: null, hosp_until: null, jail_until: null });
+  train_at: null, heist_at: null, street_action_at: null, hosp_until: null, jail_until: null });
 const handle = () => ({ acct: { prestige: 0, omr: 0, staked: 0, unbonding: 0, kills: 0, smuggled: 0 },
   owned: { assets: [], gear: ['lockpick', 'blade'], gearOnchain: [], skills: new Set(['pack_mule', 'getaway']), npc: {}, disciplines: {},
     mastery: { larceny: 0 }, makings: {}, items: { espresso: 2, flaskitem: 1, getaway: 1 }, held: ['brick', 'canal'], deedPerk: ['brick'],
@@ -45,8 +45,13 @@ try {
   const overlappingTurf = handle(); overlappingTurf.owned.deedPerk = [];
   assert.equal(baseline.probability, quoteCrime(character(), overlappingTurf, crime, 'standard').probability, 'Family and controlled-corner turf never double-count the same perk.');
   const blocked = character(); blocked.nerve = 0; blocked.jail_until = new Date(Date.now() + 30000);
-  assert.equal(quoteCrime(blocked, handle(), crime, 'quiet').blockers.length, 2);
-  assert.equal(Object.hasOwn(baseline, 'cooldown'), false, 'Current doCrime has no shared street cooldown, so its quote grants none.');
+  blocked.street_action_at = new Date(Date.now() + PACING.STREET_ACTION_CD_MS);
+  const blockedQuote = quoteCrime(blocked, handle(), crime, 'quiet');
+  assert.equal(blockedQuote.blockers.length, 3);
+  assert(blockedQuote.blockers.some(text => /street clock/i.test(text)), 'the live shared street blocker is visible');
+  assert.equal(baseline.cooldown.group, 'street');
+  assert.equal(baseline.cooldown.seconds, PACING.STREET_ACTION_CD_MS / 1000,
+    'crime planning uses the same shared cooldown duration as the mutation');
   const invalidBuild = previewSkillAllocation(character(), handle(), ['getaway', 'made_man']);
   assert(invalidBuild.conflicts.some(c => c.includes('requires')));
   assert(invalidBuild.conflicts.some(c => c.includes('point')));
@@ -90,7 +95,10 @@ try {
   assert.equal(result.tactics.jobs[0].actual.length, 3);
   const finite = (value) => { if (typeof value === 'number') assert(Number.isFinite(value), 'Every numeric projection field must be finite.'); else if (value && typeof value === 'object') Object.values(value).forEach(finite); };
   finite(result);
-  for (const job of result.tactics.jobs) for (const quote of [...job.actual, ...job.proposed]) { assert.equal(Object.hasOwn(quote, 'cooldown'), false); assert.ok(quote.blockers.every(text => !/street clock/i.test(text))); }
+  for (const job of result.tactics.jobs) for (const quote of [...job.actual, ...job.proposed]) {
+    assert.equal(quote.cooldown.group, 'street');
+    assert.equal(quote.cooldown.seconds, PACING.STREET_ACTION_CD_MS / 1000);
+  }
   assert.equal(result.tactics.loadout.proposedStats.speed - result.tactics.loadout.actualStats.speed, -MARKET.find(g => g.id === 'blade').boost);
   assert.equal(result.tactics.skills.hypothetical, true);
   assert.deepEqual(projectedCharacter, beforeCharacter); assert.deepEqual(projectedHandle.owned, beforeOwned);
@@ -147,7 +155,12 @@ try {
   assert.equal(analyzePlan([{ id: 'a', wait: 0 }, { id: 'a', wait: 30 }], [move], { energy: 10, nerve: 10, cash: 0 }, now)[1].conflicts.length, 0);
   assert.equal(analyzePlan([{ id: 'removed', wait: 0 }], [], {}, now)[0].conflicts.length, 1);
   const repeatedCrime = analyzePlan([{ id: baseline.id, wait: 0 }, { id: baseline.id, wait: 0 }], [baseline], { energy: 100, nerve: 100, cash: 10000 }, now);
-  assert.ok(repeatedCrime.every(entry => entry.conflicts.length === 0), 'The real crime quote does not invent a clock conflict between affordable consecutive jobs.');
+  assert.equal(repeatedCrime[0].conflicts.length, 0);
+  assert(repeatedCrime[1].conflicts.some(text => text.startsWith('street clock')),
+    'the planner refuses an impossible back-to-back crime on the shared street clock');
+  assert.equal(analyzePlan([{ id: baseline.id, wait: 0 }, { id: baseline.id, wait: PACING.STREET_ACTION_CD_MS / 1000 }],
+    [baseline], { energy: 100, nerve: 100, cash: 10000 }, now)[1].conflicts.length, 0,
+  'waiting out the shared street cooldown makes the second crime schedulable');
   assert(interdictChance(PORT.ROUTES[0], { speed: 0 }, true, 15) <= interdictChance(PORT.ROUTES[0], { speed: 0 }, false, 15));
   let calls = 0; Math.random = () => calls++ === 0 ? 0.99999 : 0.5;
   const contextual = await crimeWithDecisionContext(character(), crime.id, actionClient, handle(), 'standard');

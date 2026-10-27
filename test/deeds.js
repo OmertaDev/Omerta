@@ -20,6 +20,7 @@ import { DEEDS, deedRankOf, deedRenown, deedNeighborhoodsOpen,
          OPERATIONS, opSlotsOf, RACKETS, ASSETS, PACING } from '../src/rules.js';
 import { deedChainConfig, DEED_VOUCHER_TYPES, deedTokenId, markDeedExtracted, reimportDeed,
          sweepDeedReimports } from '../src/chain.js';
+import { GOODS_RESALE_BPS } from '../src/goodsquote.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -302,8 +303,8 @@ delete process.env.DEEDS_SHAKE_P;
   // preflight refuses it the moment a real DATABASE_URL makes the box read as production (verified).
   const evT = cityEventOf(dayOf()).tradeMult || 1, seasonT = seasonModOf().tradeSellMult || 1;
   const sellA = await call('POST', '/v1/goods/sell', { token: a.token, body: { goodId: gid, qty: 1 } });
-  assert.equal(sellA.body.unit, Math.round(base * 1.05 * evT * seasonT),
-    'the controller sells at the held-district 1.05 (deed corners count at the sell till too)');
+  assert.equal(sellA.body.unit, Math.round(base * GOODS_RESALE_BPS / 10000 * 1.05 * evT * seasonT),
+    'the controller gets the held-district 1.05 on the hardened resale bid (deed corners count at the sell till too)');
   // (2) NEVER STACKS — put `a` in a family that HOLDS neon: the price must be UNCHANGED (OR, not ×²).
   await pool.query("INSERT INTO gangs (id, name, tag) VALUES ('g2c','The 2C Family','2CF')");
   await pool.query("INSERT INTO gang_members (gang_id, character_id, role) VALUES ('g2c',$1,'boss')", [a.id]);

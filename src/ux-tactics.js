@@ -51,13 +51,17 @@ export function quoteCrime(ch, h, crime, approach, second = null) {
     * (h.owned.skills?.has('getaway') ? SKILLS.FX.JAIL_MULT : 1) * masteryFx(h, 'larceny') * pathFx(ch, 'jailStint')
     * (second?.trait === 'wheelman' ? Math.max(0, 1 - soldierFxOf(second)) : 1));
   const blockers = [];
+  const streetSeconds = coolLeft(ch.street_action_at);
   if (jailed(ch)) blockers.push('In lockup.');
   if (lvl < crime.lvl) blockers.push(`Requires level ${crime.lvl}.`);
   if (amount(ch.nerve) < crime.nerve) blockers.push(`Requires ${crime.nerve} nerve.`);
+  if (streetSeconds) blockers.push('Street clock active.');
   return {
     id: `${crime.id}:${ap.id}`, crimeId: crime.id, name: crime.name, approach: ap.id, approachName: ap.name,
     path: `/v1/crimes/${crime.id}`, body: { approach: ap.id }, tab: 'streets', minLevel: crime.lvl,
     cost: { nerve: crime.nerve, energy: 0, cash: 0 }, probability: Math.max(0, threshold), threshold,
+    cooldown: { group: 'street', seconds: PACING.STREET_ACTION_CD_MS / 1000,
+      readyAt: Date.now() + streetSeconds * 1000 },
     cashRange: { min: netTake(crime.cash[0]), upperBound: netTake(crime.cash[1]), conditional: 'Only on success; upper bound, not a guaranteed reward.' },
     heat: Math.min(100, amount(ch.heat) + ap.heat) - amount(ch.heat), jailSeconds, blockers,
     formula: { source: 'src/game.js · doCrime', inputs: { base: crime.base, cunning: stats.cunning, speed: stats.speed, gang, turf, rank: rankBonus, successMult: ap.successMult },

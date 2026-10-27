@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import {isDeepStrictEqual} from 'node:util';
 import {execFileSync} from 'node:child_process';
-import {uxHistoricalInput} from '../tools/ux-source-compatibility.js';
+import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';
 
 assert.equal(process.execArgv.length,0,'Only the bare Node test entrypoint is admitted');
 const native=process.argv.length===3&&process.argv[2]==='--postgres';
@@ -28,15 +28,16 @@ if(native){
 const lf=text=>text.replaceAll('\r\n','\n');
 const uniform=text=>{const normalized=lf(text);return !normalized.includes('\r')&&(text===normalized||text===normalized.replaceAll('\n','\r\n'));};
 const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
-const frozenText=(relative,expected)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};
+const frozenText=(relative,expected,file)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=file?deedQuestSourceBaseline(file,lf(raw)):lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};
 // Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.
-const dispatchSchema=uxHistoricalInput('schema.sql',fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8'));assert(uniform(dispatchSchema));
+const dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchRaw));
+const dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);
 const commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa21bcfe2f3bc163b26f08eea4c6f0dac97c';
 const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';
 if(commerceDeedCurrent){
-  frozenText('../tools/commerce-deed-release-phase2-native-catalog.js','dc84df23e59ad3282fc16c556943150be1e9fcc219facd2e94b83f6b2c817f4b');
+  frozenText('../tools/commerce-deed-release-phase2-native-catalog.js','dc84df23e59ad3282fc16c556943150be1e9fcc219facd2e94b83f6b2c817f4b','tools/commerce-deed-release-phase2-native-catalog.js');
   frozenText('../tools/commerce-release-phase2-native-catalog.js','be4307efac154a7e5f0c17c6bb020a7dc6ae96d053bfe2163e944a694d6db637');
-  frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e');
+  frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e','tools/enterprise-deed-release-phase2-migration-catalog.js');
   const compiler=await import('../tools/commerce-deed-release-phase2-native-catalog.js'),commerce=await import('../tools/commerce-release-phase2-migration-catalog.js'),historical=await import('../tools/enterprise-release-phase2-migration-catalog.js');
   const sources=compiler.commerceCurrentDeedSources(dispatchSchema),old=commerce.commerceNativeBranchSources(),catalog=JSON.parse(frozenText('./lib/phase2-architecture-upgrade-catalog.json','44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917')),expected=commerce.commerceCatalogExpectedData();
   assert.deepEqual(catalog,expected);assert.equal(catalog.added.length,1675);assert.equal(Object.keys(catalog.notNullColumns).length,215);assert.equal(catalog.removed.length,3);assert.equal(sources.predecessor,old.current);assert.equal(sources.premainPredecessor,old.iv);
@@ -95,7 +96,7 @@ if(commerceDeedCurrent){
 }else{
 frozenText('../tools/enterprise-release-phase2-migration-catalog.js','fc35f2b8770f3c7bd77347478c55eb944935fed019d40a43b101c70e5bc82570');
 frozenText('../tools/market-operations-release-phase2-migration-catalog.js','689d63b4273296c247fb130566a96d9c1beb049c8b0bde3169b988f66074acf1');
-frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e');
+frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e','tools/enterprise-deed-release-phase2-migration-catalog.js');
 // All endpoint/environment/preload admission above precedes these helper imports, including their pg dependency.
 const historicalEnterprise=await import('../tools/enterprise-release-phase2-migration-catalog.js');
 const enterprise=await import('../tools/enterprise-deed-release-phase2-migration-catalog.js');
@@ -116,7 +117,7 @@ assert.equal(Buffer.byteLength(append),6522);assert.equal(append.split('\n').len
 assert.equal(sources.predecessor,old.predecessor+append);
 for(const input of[sources.current,sources.current.replaceAll('\n','\r\n')])assert.equal(enterpriseMigrationPredecessor(input),sources.predecessor);
 for(const input of[sources.predecessor,sources.predecessor.replaceAll('\n','\r\n')])assert.equal(enterpriseNativeHistoricalPredecessor(input),prior.marketOperationsNativeHistoricalPredecessor(old.predecessor));
-const actualSchema=uxHistoricalInput('schema.sql',fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8'));assert(uniform(actualSchema));const currentDeed=enterprise.enterpriseCurrentDeedSources(actualSchema);assert.equal(currentDeed.predecessor,sources.current);assert.throws(()=>historicalEnterprise.enterpriseMigrationPredecessor(actualSchema),error=>error?.code==='ERR_ASSERTION','Raw555 never gains historical551 admission');
+const actualSchema=deedQuestSourceBaseline('schema.sql',fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8'));assert(uniform(actualSchema));const currentDeed=enterprise.enterpriseCurrentDeedSources(actualSchema);assert.equal(currentDeed.predecessor,sources.current);assert.throws(()=>historicalEnterprise.enterpriseMigrationPredecessor(actualSchema),error=>error?.code==='ERR_ASSERTION','Raw555 never gains historical551 admission');
 const currentDeedBranches=enterprise.enterpriseCurrentDeedNativeSources();assert.equal(lf(actualSchema),currentDeedBranches.current);assert.equal(hash(currentDeedBranches.premain),'5cba5f46e5b29c9a4e46e8172ef4d025db388f468f0d3789a0ae359c4812b480');
 assert.deepEqual(ENTERPRISE_TABLES,['workshop_floorplans','workshop_floor_requests','manufacturing_licenses','manufacturing_license_requests','mobile_shops','mobile_shop_requests','business_relocation_plans','business_relocation_requests','equipment_recovery_requests']);
 assert.deepEqual(ENTERPRISE_NATIVE_TABLES,[...prior.MARKET_OPERATIONS_NATIVE_TABLES,...ENTERPRISE_TABLES]);assert.equal(ENTERPRISE_NATIVE_TABLES.length,23);

@@ -18,7 +18,7 @@ import { markExternalWorkRecoveryAtDeath } from '../fundedexternalwork.js';
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bus, ledger, notify, npcTier, bumpStanding } from '../game.js';
 import { rememberedSkills } from '../skills.js';
-import { M3, LOAN, levelOf, dayOf, VENDETTA, feudTierOf, UNDERWORLD, LAW, MASTERY, estateTierOf, HONOR, seasonModOf } from '../rules.js';
+import { M3, LOAN, levelOf, dayOf, VENDETTA, feudTierOf, UNDERWORLD, LAW, MASTERY, estateTierOf, HONOR, seasonModOf, cornerTasksOf, CORNER } from '../rules.js';
 import { abandonRaidsAtDeath } from '../world.js';
 import { voidListingsAtDeath, burnBidsAtDeath } from '../market.js';
 import { closeWarehouseClaimsAtDeath } from '../warehouseleases.js';
@@ -76,6 +76,7 @@ import { claimBounty, postBounty, refundPot } from './contracts.js';
 import { bodyguardAbsorbs } from './defense.js';
 import { removeMember } from './gangs.js';
 import { now, uid } from './shared.js';
+import { takeAccountDailyClaim, takeBoundedAccountDailyClaim } from '../accountdaily.js';
 
 // Every fixture the victim was a REAL friend of (effective standing ≥ GRUDGE_MIN) docks the
 // killer GRUDGE_LOSS — whacking a connected man burns your own bridges. Shared by the player
@@ -211,6 +212,47 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   }
   await closeWarehouseClaimsAtDeath(client, victim.id);
   const acct = h.victimAcct;
+  const claimDay = dayOf();
+  // CHECK-IN LINEAGE GATE: lazily carry a pre-migration character's latest claim into the
+  // account before creating its heir. Without this bridge an old live street could die before its
+  // next check-in and reset the once-per-day cash/energy claim on the fresh character row.
+  const victimCheckinDay = Number(victim.checkin_day) || 0;
+  const accountCheckinDay = Number(acct.checkin_day) || 0;
+  if (victimCheckinDay > accountCheckinDay) {
+    acct.checkin_day = victimCheckinDay;
+    acct.checkin_streak = Number(victim.streak) || 0;
+  } else if (victimCheckinDay === accountCheckinDay) {
+    acct.checkin_streak = Math.max(Number(acct.checkin_streak) || 0, Number(victim.streak) || 0);
+  }
+  if (Math.max(victimCheckinDay, accountCheckinDay) === claimDay)
+    await takeAccountDailyClaim(client, victim.account_id, claimDay, 'checkin', 'claim');
+  // Pre-account-latch installs may already have paid today's character-scoped boards. Preserve those
+  // exact claims before the estate wipe so deployment followed by death cannot reopen a faucet.
+  const legacyDaily = (await client.query(
+    'SELECT claimed FROM daily_progress WHERE character_id=$1 AND day=$2', [victim.id, claimDay])).rows[0];
+  if (legacyDaily) {
+    let claimed = [];
+    try { claimed = JSON.parse(legacyDaily.claimed || '[]'); } catch { claimed = []; }
+    for (const id of claimed)
+      await takeBoundedAccountDailyClaim(client, victim.account_id, claimDay, 'daily', String(id), 3);
+    if (claimed.length >= 3)
+      await takeAccountDailyClaim(client, victim.account_id, claimDay, 'daily-envelope', 'all');
+  }
+  const legacyCorners = (await client.query(
+    'SELECT district, slot FROM corner_jobs WHERE character_id=$1 AND day=$2 AND claimed',
+    [victim.id, claimDay])).rows;
+  for (const row of legacyCorners) {
+    const kind = cornerTasksOf(row.district, claimDay).find((task) => task.slot === Number(row.slot))?.kind;
+    if (kind) await takeBoundedAccountDailyClaim(client, victim.account_id, claimDay, 'corner', kind, CORNER.MAX_DAY);
+  }
+  const legacyHustle = (await client.query(
+    'SELECT 1 FROM hustles WHERE character_id=$1 AND day=$2 AND step>=3', [victim.id, claimDay])).rowCount;
+  if (legacyHustle)
+    await takeAccountDailyClaim(client, victim.account_id, claimDay, 'hustle', 'payoff');
+  const legacyPenTalk = (await client.query(
+    'SELECT 1 FROM pen_talks WHERE character_id=$1 AND day=$2', [victim.id, claimDay])).rowCount;
+  if (legacyPenTalk)
+    await takeAccountDailyClaim(client, victim.account_id, claimDay, 'pen', 'talk');
   const lvl = levelOf(Number(victim.respect));
   const legacy = Math.floor(lvl / 2);
   const priorPrestige = Number(acct.prestige);  // muscle memory reads the bloodline's ACCUMULATED prestige (pre-death) — a fresh line's skills still fully die

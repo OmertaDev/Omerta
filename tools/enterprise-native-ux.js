@@ -24,6 +24,28 @@ export function assertEnterpriseUxMetadataBytes(bytes, declaration = ENTERPRISE_
 const fields = (value, keys) => assert.deepEqual(Object.keys(value).sort(), keys.slice().sort(), 'Closed native UX record');
 const canonicalPath = value => typeof value === 'string' && !value.includes('\\') && !value.includes(':') && !value.includes('\0') && !path.posix.isAbsolute(value) && value.split('/').every(piece => piece && !['.', '..', '.git'].includes(piece));
 function pin(row) { assert(row && Object.isFrozen(row)); fields(row, ['file', 'mode', 'blob', 'sha256']); assert(canonicalPath(row.file)); assert(['100644', '100755'].includes(row.mode)); assert.match(row.blob, /^[a-f0-9]{40}$/); assert.match(row.sha256, /^[a-f0-9]{64}$/); }
+const changedPin = (before, after) => before.mode !== after.mode || before.blob !== after.blob || before.sha256 !== after.sha256;
+const replacement = (file, before, after) => Object.freeze({ file, before, after });
+export function enterpriseUxReplacementPlan(legacyFiles, legacy, files, predecessorPin) {
+ assert(Array.isArray(legacyFiles) && new Set(legacyFiles).size === legacyFiles.length); assert(legacy && Array.isArray(legacy.additions)); assert(Array.isArray(files) && files.length >= legacyFiles.length); assert.equal(typeof predecessorPin, 'function');
+ const legacyAdditions = new Map(); for (const row of legacy.additions) { pin(row); assert(legacyFiles.includes(row.file), 'Legacy addition remains in the native inventory: ' + row.file); assert(!legacyAdditions.has(row.file), 'Duplicate legacy addition: ' + row.file); legacyAdditions.set(row.file, row); }
+ const current = files.slice(0, legacyFiles.length); assert.deepEqual(current.map(row => row.file), legacyFiles, 'Complete original ordered native inventory retained');
+ const replacements = [], legacyAdditionReplacements = [];
+ for (const after of current) {
+  pin(after); const before = predecessorPin(after.file, after); assert(before === null || before && Object.isFrozen(before), 'Predecessor pin callback returns a frozen pin or null');
+  if (before !== null) { pin(before); assert.equal(before.file, after.file); if (changedPin(before, after)) replacements.push(replacement(after.file, before, after)); continue; }
+  const legacyBefore = legacyAdditions.get(after.file); assert(legacyBefore, 'Only a sealed legacy addition may be absent from the UX predecessor: ' + after.file);
+  if (changedPin(legacyBefore, after)) legacyAdditionReplacements.push(replacement(after.file, legacyBefore, after));
+ }
+ return Object.freeze({ replacements: Object.freeze(replacements), legacyAdditionReplacements: Object.freeze(legacyAdditionReplacements) });
+}
+export function assertEnterpriseUxReplacementPlan(legacyFiles, legacy, files, predecessorPin, declaration) {
+ assert(declaration && Array.isArray(declaration.replacements) && Array.isArray(declaration.legacyAdditionReplacements));
+ const plan = enterpriseUxReplacementPlan(legacyFiles, legacy, files, predecessorPin);
+ assert.deepEqual(declaration.replacements, plan.replacements, 'Complete predecessor-based UX replacement plan');
+ assert.deepEqual(declaration.legacyAdditionReplacements, plan.legacyAdditionReplacements, 'Complete legacy-addition UX replacement plan');
+ return plan;
+}
 export function enterpriseUxImports(file, source) {
  const result = new Set(), ast = parse(source, { ecmaVersion: 'latest', sourceType: 'module', allowHashBang: true });
  const add = value => { if (typeof value !== 'string' || !value.startsWith('.')) return; const target = path.posix.normalize(path.posix.join(path.posix.dirname(file), value)); assert(canonicalPath(target), 'Relative native import stays in repository'); result.add(target); };
@@ -54,18 +76,19 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
  assert.equal(declaration, ENTERPRISE_NATIVE_UX_INPUTS, 'Only the actual frozen current-native declaration');
  assert.equal(declaration.status, 'SEALED', 'Current UX native inputs remain UNSEALED; no prior native results transfer');
  assert.equal(digest(JSON.stringify(declaration)), ENTERPRISE_NATIVE_UX_INPUTS_SHA256, 'Whole current-native declaration changed');
- fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'files', 'replacements', 'additions']);
- assert.equal(declaration.version, 1); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS');
+ fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
+ assert.equal(declaration.version, 2); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS');
  assert.equal(declaration.predecessorRevision, 'c6247976ff71e8d4c103ebd1498c2d373217d077'); assert.equal(declaration.uxRevision, '940df6a1efbe4ddcd8301cd138d5643dbe48a0bc'); assert.match(declaration.authoredRevision, /^[a-f0-9]{40}$/);
  assert.equal(declaration.legacyRevision, legacy.revision); assert.equal(declaration.legacyDefinitionSha256, digest(JSON.stringify(legacy))); assert.equal(declaration.legacyInventorySha256, digest(JSON.stringify(legacyFiles)));
- assert(Object.isFrozen(declaration) && Object.isFrozen(declaration.files) && Object.isFrozen(declaration.replacements) && Object.isFrozen(declaration.additions));
+ assert(Object.isFrozen(declaration) && Object.isFrozen(declaration.files) && Object.isFrozen(declaration.replacements) && Object.isFrozen(declaration.legacyAdditionReplacements) && Object.isFrozen(declaration.additions));
  assert.equal(new Set(declaration.files.map(row => row.file)).size, declaration.files.length);
  assert.deepEqual(declaration.files.slice(0, legacyFiles.length).map(row => row.file), legacyFiles, 'Complete original ordered native inventory retained');
  const current = new Map(); for (const row of declaration.files) { pin(row); assert.notEqual(row.file, ENTERPRISE_UX_METADATA, 'Only unavoidable manifest self-reference is separately captured'); current.set(row.file, row); }
  const extra = declaration.files.slice(legacyFiles.length); assert.deepEqual(extra.map(row => row.file), extra.map(row => row.file).sort()); assert.deepEqual(declaration.additions, extra);
  for (const file of [...ENTERPRISE_UX_SUPPORT, ...ENTERPRISE_UX_ASSETS]) assert(current.has(file), 'Required actual UX/native support file: ' + file);
- const seen = new Set();
- for (const row of declaration.replacements) { assert(row && Object.isFrozen(row)); fields(row, ['file', 'before', 'after']); assert(legacyFiles.includes(row.file) && !seen.has(row.file)); seen.add(row.file); pin(row.before); pin(row.after); assert.equal(row.before.file, row.file); assert.equal(row.after.file, row.file); assert.deepEqual(row.after, current.get(row.file)); assert.notEqual(row.before.blob, row.after.blob); }
+ const seen = new Set(), order = new Map(legacyFiles.map((file, index) => [file, index]));
+ const transitions = (rows, legacyAddition) => { let prior = -1; for (const row of rows) { assert(row && Object.isFrozen(row)); fields(row, ['file', 'before', 'after']); assert(legacyFiles.includes(row.file) && !seen.has(row.file)); seen.add(row.file); assert(order.get(row.file) > prior, 'Native replacements remain in inventory order'); prior = order.get(row.file); pin(row.before); pin(row.after); assert.equal(row.before.file, row.file); assert.equal(row.after.file, row.file); assert.deepEqual(row.after, current.get(row.file)); assert(changedPin(row.before, row.after), 'Replacement must change the exact baseline pin'); if (legacyAddition) { const baseline = legacy.additions.find(entry => entry.file === row.file); assert(baseline, 'Legacy-addition replacement requires its sealed legacy pin'); assert.deepEqual(row.before, baseline, 'Legacy-addition replacement starts at the exact sealed legacy pin'); } } };
+ transitions(declaration.replacements, false); transitions(declaration.legacyAdditionReplacements, true);
  return declaration;
 }
 export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, declaration = ENTERPRISE_NATIVE_UX_INPUTS) {

@@ -54,6 +54,16 @@ const newChar = async (name) => {
 };
 // state warps (never value)
 const warp = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
+// Crimes and deals share a durable burst clock in production. Each synthetic action below
+// represents the next elapsed time step, so move only that character's persisted deadline one
+// full street-action interval behind the harness clock before issuing the public API request.
+const streetCall = async (id, method, url, options) => {
+  const elapsed = await pool.query(
+    'UPDATE characters SET street_action_at=$2 WHERE id=$1',
+    [id, new Date(Date.now() - PACING.STREET_ACTION_CD_MS)]);
+  assert.equal(elapsed.rowCount, 1, `street-action time step: missing character ${id}`);
+  return call(method, url, options);
+};
 // The named simulation targets have been introduced; identity gossip moves no value or phone numbers.
 const knowMark = async (observerId, targetId) => recordPlayerIntel(pool,
   (await pool.query('SELECT account_id FROM characters WHERE id=$1', [observerId])).rows[0].account_id,
@@ -86,7 +96,7 @@ for (const t of crimeTiers) {
   const N = 40;
   for (let i = 0; i < N; i++) {
     await warp(g.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-    const r = await call('POST', `/v1/crimes/${t.id}`, { token: g.token });
+    const r = await streetCall(g.id, 'POST', `/v1/crimes/${t.id}`, { token: g.token });
     if (r.body.success) { earned += r.body.take || 0; wins++; }
     else if (r.body.jailSeconds > 0) jails++;
   }
@@ -104,7 +114,7 @@ let cash = (await meOf(g.token)).cash;
 let guard = 0;
 while (cash < 1_600_000 && guard++ < 600) {
   await warp(g.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-  const r = await call('POST', '/v1/crimes/depository', { token: g.token });
+  const r = await streetCall(g.id, 'POST', '/v1/crimes/depository', { token: g.token });
   if (r.body.success) cash += r.body.take || 0;
 }
 cash = (await meOf(g.token)).cash;
@@ -158,7 +168,7 @@ await warp(k.id, `respect=${lvlRespect(12)}`);
 guard = 0; cash = 0;
 while (cash < 25000 && guard++ < 300) {
   await warp(k.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-  const rr = await call('POST', '/v1/crimes/poker', { token: k.token });
+  const rr = await streetCall(k.id, 'POST', '/v1/crimes/poker', { token: k.token });
   if (rr.body.success) cash += rr.body.take || 0;
 }
 const lab = await call('POST', '/v1/kitchen/lab/upgrade', { token: k.token }); // the bathtub
@@ -175,7 +185,7 @@ for (let d = 0; d < 3; d++) {
   await warp(k.id, "nerve=50, energy=200, heat=0, jail_until=NULL");
   const me1 = await meOf(k.token);
   const stashQty = (me1.stash.find((s) => s.drug === 'vim') || { qty: 0 }).qty;
-  if (stashQty > 0) await call('POST', '/v1/kitchen/deal', { token: k.token, body: { drugId: 'vim', qty: stashQty } });
+  if (stashQty > 0) await streetCall(k.id, 'POST', '/v1/kitchen/deal', { token: k.token, body: { drugId: 'vim', qty: stashQty } });
   dealNet += (await meOf(k.token)).cash - pre; dealDays++;
 }
 note('kitchen', 'vim cook+deal net', dealDays ? `$${fmt(dealNet / dealDays)}/cycle` : 'blocked', `${dealDays} cycles (entry-tier; scales with lab/rank)`);
@@ -188,7 +198,7 @@ await warp(hunter.id, `respect=${lvlRespect(30)}, muscle=60, cunning=40, speed=4
 guard = 0;
 while (((await meOf(hunter.token)).cash < 120000 || (await meOf(hunter.token)).cb < 6) && guard++ < 300) {
   await warp(hunter.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-  await call('POST', '/v1/crimes/payroll', { token: hunter.token });
+  await streetCall(hunter.id, 'POST', '/v1/crimes/payroll', { token: hunter.token });
 }
 const gun = GUNS.find((x) => x.id === 'argument') || GUNS[GUNS.length - 1]; // fp 18, $18k, 3 crates
 r = await call('POST', `/v1/armory/gun/${gun.id}/buy`, { token: hunter.token });
@@ -209,7 +219,7 @@ await warp(mark.id, `respect=${lvlRespect(12)}, muscle=5, speed=5`);
 guard = 0;
 while ((await meOf(mark.token)).cash < 40000 && guard++ < 200) {
   await warp(mark.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-  await call('POST', '/v1/crimes/poker', { token: mark.token });
+  await streetCall(mark.id, 'POST', '/v1/crimes/poker', { token: mark.token });
 }
 const markLive = await meOf(mark.token);
 const markPocket = markLive.cash;
@@ -224,7 +234,7 @@ while (!killed && attempts++ < 8) {
     const a = await call('POST', '/v1/armory/ammo', { token: hunter.token });
     if (a.code !== 200) { // out of cash — earn more, honestly
       await warp(hunter.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-      await call('POST', '/v1/crimes/payroll', { token: hunter.token });
+      await streetCall(hunter.id, 'POST', '/v1/crimes/payroll', { token: hunter.token });
     }
   }
   await warp(hunter.id, "energy=200, jail_until=NULL, shoot_cd_until=NULL, heat=0, loc='docks'");
@@ -256,7 +266,7 @@ await warp(mark2.id, `respect=${lvlRespect(12)}, muscle=5, speed=5`);
 guard = 0;
 while ((await meOf(mark2.token)).cash < 40000 && guard++ < 200) {
   await warp(mark2.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-  await call('POST', '/v1/crimes/poker', { token: mark2.token });
+  await streetCall(mark2.id, 'POST', '/v1/crimes/poker', { token: mark2.token });
 }
 const m2cash = (await meOf(mark2.token)).cash;
 await call('POST', '/v1/bank/deposit', { token: mark2.token, body: { amount: m2cash } }); // all of it, in transit
@@ -268,7 +278,7 @@ while (!killed2 && tries2++ < 8) {
   guard = 0;
   while ((await meOf(hunter.token)).ammo < volley2 && guard++ < 300) {
     const a = await call('POST', '/v1/armory/ammo', { token: hunter.token });
-    if (a.code !== 200) { await warp(hunter.id, "nerve=50, energy=200, jail_until=NULL, heat=0"); await call('POST', '/v1/crimes/payroll', { token: hunter.token }); }
+    if (a.code !== 200) { await warp(hunter.id, "nerve=50, energy=200, jail_until=NULL, heat=0"); await streetCall(hunter.id, 'POST', '/v1/crimes/payroll', { token: hunter.token }); }
   }
   await warp(hunter.id, "energy=200, jail_until=NULL, shoot_cd_until=NULL, heat=0, loc='docks'");
   await warp(mark2.id, "hosp_until=NULL, jail_until=NULL, loc='docks'");
@@ -423,7 +433,7 @@ for (let i = 0; i < 30; i++) {
   let refill = 0;
   while (gm.cash < 12000 && refill++ < 40) {
     await warp(g.id, "nerve=50, energy=200, jail_until=NULL, heat=0");
-    await call('POST', '/v1/crimes/depository', { token: g.token });
+    await streetCall(g.id, 'POST', '/v1/crimes/depository', { token: g.token });
     gm = await meOf(g.token);
   }
   if (gm.cash < 12000) break;
@@ -940,16 +950,16 @@ phase('P9.20c the nut — crew wages against crew earnings, by cadence');
   note('crew', 'what one hand moves while stocked', `$${fmt(Math.round(perHr(cheapest)))}/hr on ${cheapest.name} (the cheapest line)`,
     `${(perHr(cheapest) / wage).toFixed(1)}:1 against the wage, rising to ${(perHr(DRUGS[DRUGS.length - 1]) / wage).toFixed(0)}:1 on ${DRUGS[DRUGS.length - 1].name} — a STOCKED crew is never the problem`);
   // the cadence table: this is what the tester was feeling
-  for (const [label, gapH] of [['every 8h (three check-ins)', 8], ['daily', 24], ['every 3 days (the cold line)', 72]]) {
+  for (const [label, gapH] of [['every 8h (three check-ins)', 8], ['daily', 24], ['every 2 days (the cold line)', 48]]) {
     const soldH = Math.min(gapH, salesCapH);      // sales are capped at the offline window
     const earn = soldH * perHr(cheapest), owe = gapH * wage;
     note('crew', `1 hand, ${label}`, `${earn > owe ? '+' : ''}$${fmt(Math.round(earn - owe))}/cycle`,
       `banks ${soldH}h of sales ($${fmt(Math.round(earn))}) against ${gapH}h of wages ($${fmt(Math.round(owe))}) = ${(earn / owe).toFixed(2)}:1 on the cheapest line`);
   }
   note('crew', 'the asymmetry', `sales cap ${salesCapH}h — the nut runs to ${nutCapH}h`,
-    `${(nutCapH / salesCapH).toFixed(0)}x, sharper than the business pad's 7x. It is the same deliberate fiction (the corner holds a shift's take, the envelope runs a week) and the same defect it had: the game never SAID so. It does now — the rate, the countdown and the door out all ride with the price`);
+    `${(nutCapH / salesCapH).toFixed(0)}x: the corner holds a shift's take while the bounded wage envelope runs two days. The game states the rate, countdown and door out with the price`);
   note('crew', 'VERDICT', 'attendance, not a trap — once the terms are visible',
-    `a stocked, thrice-daily crew runs ${((Math.min(8, salesCapH) * 3 * perHr(cheapest)) / (24 * wage)).toFixed(1)}:1 even on ${cheapest.name}; a daily one is ${((salesCapH * perHr(cheapest)) / (24 * wage)).toFixed(2)}:1 and an absent one bleeds. The levers are CREW_WAGE_PER_HR, CREW_WAGE_CAP_MS (the week the nut runs to) and OFFLINE_CAP_MS (the shift the corner holds) — BALANCE.md`);
+    `a stocked, thrice-daily crew runs ${((Math.min(8, salesCapH) * 3 * perHr(cheapest)) / (24 * wage)).toFixed(1)}:1 even on ${cheapest.name}; a daily one is ${((salesCapH * perHr(cheapest)) / (24 * wage)).toFixed(2)}:1 and an absent one bleeds. The levers are CREW_WAGE_PER_HR, CREW_WAGE_CAP_MS (the two-day nut) and OFFLINE_CAP_MS (the shift the corner holds) — BALANCE.md`);
 }
 
 // ════════ P9.21 THE POPULATION — the npc:seed faucet, measured analytically ════════

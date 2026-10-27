@@ -341,6 +341,7 @@ for (const need of [
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS wire_tier INT NOT NULL DEFAULT 0',
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS contraband NUMERIC NOT NULL DEFAULT 0',
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS heat_exposure NUMERIC NOT NULL DEFAULT 0',
+  'ALTER TABLE social_claims ADD COLUMN IF NOT EXISTS legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true',
   'ALTER TABLE commission_votes ADD COLUMN IF NOT EXISTS standing',
   'ALTER TABLE gang_members ADD COLUMN IF NOT EXISTS joined_at',
   "ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'",
@@ -507,8 +508,10 @@ await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
     .slice(0, targeted)
     .findLastIndex((sql) => /^ALTER TABLE .* ADD COLUMN IF NOT EXISTS /i.test(sql));
   const stamp = statements.findIndex((sql) => sql.includes('SELECT app_version FROM schema_meta'));
-  assert(lastGeneric >= 0 && targeted > lastGeneric && h2Targeted > targeted && stamp > h2Targeted,
-    'generic columns, Task 5 authority, and H2 authority run before the schema stamp');
+  const crewClock = statements.findIndex((sql) => sql.includes('crew_paid_at=$1'));
+  assert(lastGeneric >= 0 && targeted > lastGeneric && h2Targeted > targeted
+    && crewClock > h2Targeted && stamp > crewClock,
+  'generic columns, Task 5 authority, H2 authority, and crew clock repair run before the schema stamp');
   await bootPool.end();
 }
 
@@ -516,14 +519,37 @@ await dbModule.migrateTask5BallotV2(pool, { compatibility: 'pg-mem' });
 const has = async (t, c) => { try { await pool.query(`SELECT ${c} FROM ${t} LIMIT 0`); return true; } catch { return false; } };
 await pool.query('ALTER TABLE track_bets DROP COLUMN odds');       // simulate an in-place upgrade gap
 await pool.query('ALTER TABLE characters DROP COLUMN wire_tier');
+await pool.query('ALTER TABLE social_claims DROP COLUMN legacy_proof_bridge');
+await pool.query("INSERT INTO social_claims (account_id,day,task_id,paid,proof) VALUES ('pre-cutover',1,'sw_post',false,'legacy')");
 assert.equal(await has('track_bets', 'odds'), false, 'the "old" DB is missing odds');
 assert.equal(await has('characters', 'wire_tier'), false, 'the "old" DB is missing wire_tier');
+assert.equal(await has('social_claims', 'legacy_proof_bridge'), false, 'the old DB is missing the bridge marker');
 const fixed = await migrateColumns(pool, SCHEMA);
 assert.equal(fixed.failed, 0, 're-migration adds the missing columns without error');
 assert.equal(await has('track_bets', 'odds'), true, 'odds is restored by the migration');
 assert.equal(await has('characters', 'wire_tier'), true, 'wire_tier is restored by the migration');
+assert.equal((await pool.query(
+  "SELECT legacy_proof_bridge FROM social_claims WHERE account_id='pre-cutover'")).rows[0].legacy_proof_bridge,
+true, 'the upgrade marks an existing pending social row for the bounded predecessor bridge');
 // idempotent: running again is still a clean no-op
 assert.equal((await migrateColumns(pool, SCHEMA)).failed, 0, 're-running the migration is idempotent');
+
+// Legacy crews predate crew_paid_at. Give them a fresh clock without retroactive debt or work, and
+// repeat the scan on every startup so a predecessor's final persist cannot leave a free crew behind.
+await pool.query(
+  "INSERT INTO characters (id,account_id,name,season,crew,crew_paid_at,crew_sale_credit_ms) VALUES ('legacy-crew','legacy-account','Legacy Crew',1,2,NULL,59000)");
+const crewClockAt = new Date('2026-10-26T20:00:00.000Z');
+const crewClockFirst = await dbModule.migrateCrewWageClocks(pool, crewClockAt);
+assert.equal(crewClockFirst.stamped, 1, 'one legacy paid crew receives a player-favourable fresh clock');
+const repairedCrew = (await pool.query(
+  "SELECT crew_paid_at,crew_sale_credit_ms FROM characters WHERE id='legacy-crew'")).rows[0];
+assert.equal(+new Date(repairedCrew.crew_paid_at), +crewClockAt);
+assert.equal(Number(repairedCrew.crew_sale_credit_ms), 0, 'pre-clock fractional work is discarded');
+assert.equal((await dbModule.migrateCrewWageClocks(pool, new Date(+crewClockAt + 60000))).stamped, 0,
+  'the repeatable repair never advances an existing wage clock');
+assert.equal(Number((await pool.query(
+  "SELECT COUNT(*) n FROM economy_migrations WHERE id='crew-wage-clock-backfill-2026-10-26'")).rows[0].n),
+1, 'the repair records one durable rollout marker');
 
 // ── 4. MED-2 completeness guard: every `character_id` table has a KNOWN death disposition ──
 // The schema has zero FKs — referential integrity on death is 100% the runEstate wipe loop (+ custom

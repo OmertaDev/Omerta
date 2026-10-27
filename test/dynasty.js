@@ -210,7 +210,7 @@ let a, b;
   process.env.SOLDIER_DEATH_P = '0';
   let got = null;
   for (let i = 0; i < 80 && !got; i++) {
-    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL WHERE id='${s.id}'`);
+    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL, street_action_at=NULL WHERE id='${s.id}'`);
     // an interleaved bust injures the second (death pinned OFF) and an injured soldier sits out —
     // patch him up between tries so the success-assist is always observable (anti-flake)
     await pool.query(`UPDATE soldiers SET injured_until=NULL WHERE id='${soldierId}'`);
@@ -241,7 +241,7 @@ let a, b;
   process.env.SOLDIER_DEATH_P = '1';
   let died = false;
   for (let i = 0; i < 80 && !died; i++) {
-    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL WHERE id='${s.id}'`);
+    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL, street_action_at=NULL WHERE id='${s.id}'`);
     // keep the second FIT going into each try (a prior bust's injury would bench him and the
     // death roll would never fire — the same anti-flake as the success farm)
     await pool.query(`UPDATE soldiers SET injured_until=NULL WHERE id='${soldierId}' AND alive`);

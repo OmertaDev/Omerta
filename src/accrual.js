@@ -2,7 +2,7 @@
 // BEFORE any ⏱ action. M1: regen + bank interest. M2: racket/asset income,
 // staking rewards, heat decay. M4: crew sales and Bureau raids.
 import { CONSTANTS, LAW, levelOf, rankIdxOf, cityEventOf, dayOf,
-         assetIncome, assetEnergyCap, drugOf, crewCold, envelopeActive, foundationBleedMult , seasonModOf, KITCHEN, PACING, pathFx, racketIncomeLeveled,
+         assetIncome, assetEnergyCap, drugOf, crewCold, envelopeActive, foundationBleedMult , seasonModOf, KITCHEN, M4, PACING, pathFx, racketIncomeLeveled,
          energyCapOf, nerveCapOf, ladderFx } from './rules.js';
 
 
@@ -109,10 +109,23 @@ export function accrue(ch, acct = null, ctx = {}, now = new Date()) {
   const cappedMin = capped / 60000;
   const crew = Number(ch.crew || 0);
   const stashTotal = stash.reduce((a, s) => a + Number(s.qty), 0);
-  // recurring sinks: an unpaid crew (the nut past the cold window) DOWNS TOOLS — no offline sales
-  // until the wages are covered. The stash just sits (nothing minted, nothing lost but the sales).
-  if (crew > 0 && stashTotal > 0 && !crewCold(ch)) {
-    let toSell = Math.min(stashTotal, Math.max(1, Math.round(crew * cappedMin)));
+  // recurring sinks: work only accrues before the nut's cold deadline. Clip the elapsed interval at
+  // that deadline instead of deciding from the return-time state: a crew returning cold must still
+  // receive the bounded shift it earned before downing tools, while no post-deadline touch can add work.
+  const nowMs = +now, lastMs = +last;
+  const rawPaidAtMs = ch.crew_paid_at ? +new Date(ch.crew_paid_at) : Number.NaN;
+  const paidAtMs = Number.isFinite(rawPaidAtMs) ? rawPaidAtMs : null;
+  const coldAtMs = paidAtMs == null ? null : paidAtMs + M4.CREW_WAGE_COLD_MS;
+  const crewEligibleMs = paidAtMs == null ? 0 : Math.min(capped,
+    Math.max(0, Math.min(nowMs, coldAtMs) - Math.max(lastMs, paidAtMs)));
+  const crewIsCold = crewCold(ch, nowMs);
+  if (crew > 0 && stashTotal > 0 && crewEligibleMs > 0) {
+    // Carry fractional worker-time across touches. Rounding each short window up let callers mint
+    // one sale per request; worker-ms make the result depend only on elapsed time.
+    const workMs = Number(ch.crew_sale_credit_ms || 0) + crew * crewEligibleMs;
+    const availableUnits = Math.floor(workMs / 60000);
+    let toSell = Math.min(stashTotal, availableUnits);
+    ch.crew_sale_credit_ms = availableUnits >= stashTotal || crewIsCold ? 0 : workMs % 60000;
     let proceeds = 0, moved = 0, heatAdd = 0;
     const byPrice = [...stash].sort((a, b) => (drugOf(a.drug_id)?.base || 0) - (drugOf(b.drug_id)?.base || 0));
     for (const s of byPrice) {
@@ -129,7 +142,7 @@ export function accrue(ch, acct = null, ctx = {}, now = new Date()) {
     ch.trade_rep = Number(ch.trade_rep || 0) + proceeds;
     ch.heat = Number(ch.heat) + heatAdd;
     ch._crewSale = { units: moved, proceeds };            // caller ledgers the faucet
-  }
+  } else ch.crew_sale_credit_ms = 0;
 
   // §7.1 RAID — sustained heat past 60 draws the Bureau: one roll per accrued
   // window with P = 1 − (1−p)^minutes, p = (heat−60)/2000 per minute.

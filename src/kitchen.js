@@ -5,13 +5,20 @@ import { GameError, bumpFamilyTask, skillMult, trunkCap, bumpMastery, masteryFx 
 import {
   DRUGS, KITCHENS, TRADE_RANKS, CONSTANTS, M4, COMMISSION, SKILLS, KITCHEN,
   drugOf, kitchenOf, tradeRankIdx, cityEventOf, dayOf,
-  makingsPriceOf, demandOf, effStat, crewWageOwed, crewCold, HONOR,
+  makingsPriceOf, demandOf, effStat, crewWageOwed, crewRehireDebt, crewCold, HONOR,
   labModuleCost, kingpinRankOf, seasonModOf, pathFx, pathAdd , jailed, safeHoused, usd, art,
-  REGIMEN, disciplineLvlOf } from './rules.js';
+  REGIMEN, disciplineLvlOf, PACING } from './rules.js';
 import { activeDecree } from './commission.js';
 import { logCollect } from './collection.js';
+import { consumeStreetActionCooldown } from './actioncooldown.js';
 
 const uid = () => crypto.randomUUID();
+
+const crewPaidThrough = (ch, crew, owed, now) => {
+  const elapsed = Math.min(Math.max(0, now - new Date(ch.crew_paid_at).getTime()), M4.CREW_WAGE_CAP_MS);
+  const paidMs = Math.floor(owed * 3600000 / (crew * M4.CREW_WAGE_PER_HR));
+  return new Date(Math.min(now, now - elapsed + paidMs));
+};
 
 async function takeHouse(client, tax) {
   if (tax > 0) await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]);
@@ -151,6 +158,7 @@ export async function deal(ch, drugId, qty, client, h, play) {
   // (the signed pacing wall untouched); energy is regen, so zero §10.4 surface.
   if (Number(ch.energy) < M4.DEAL_ENERGY)
     throw new GameError('energy', `Working the corner takes ${M4.DEAL_ENERGY} energy — it comes back on its own.`);
+  await consumeStreetActionCooldown(ch, client);
   const ev = cityEventOf(dayOf());
   // sim-audit KITCHEN ON-RAMP: rank-0 dealers earn the CORNER PREMIUM on gross (+50%) — small
   // quantities move at street prices, so the first risky loop beats petty crime. Phases out
@@ -184,9 +192,9 @@ export async function deal(ch, drugId, qty, client, h, play) {
   await takeHouse(client, tax);
   await h.track(client, ch.account_id, 'deal', { drug: drugId, units: n, heat: Math.round(heatGain * 10) / 10 });
   await h.bumpDaily(client, ch.id, 'deal');
-  await bumpMastery(client, h, ch, 'chemistry', 'deal'); // THE TRADES — moving product works the same craft
+  await bumpMastery(client, h, ch, 'chemistry', 'deal', { units: n }); // THE TRADES — moving product works the same craft
   return { ok: true, op: 'deal', drug: drugId, name: d.name, units: n, earned: net, heat: Math.round(heatGain * 10) / 10,
-    play: pl.id, nerve: nerveCost,
+    play: pl.id, nerve: nerveCost, cooldownMs: PACING.STREET_ACTION_CD_MS,
     cornerPremium: cornerPremium > 0,
     tradeRank: tradeRankIdx(Number(ch.trade_rep)) };
 }
@@ -196,14 +204,27 @@ export async function hireCrew(ch, client, h) {
   const crew = Number(ch.crew || 0);
   if (crew >= M4.CREW_MAX) throw new GameError('max', 'Five corners is all one person can keep honest.');
   const cost = M4.CREW_COST_STEP * (crew + 1);
-  if (Number(ch.cash) < cost) throw new GameError('cash', `The next crew member wants ${usd(cost)} up front.`);
+  const now = Date.now();
+  const owed = crewWageOwed(ch, now) + crewRehireDebt(ch, now);
+  const liabilityCrew = crew > 0 ? crew : 1;
+  const total = cost + owed;
+  if (Number(ch.cash) < total) throw new GameError('cash', owed > 0
+    ? `The next hand wants ${usd(cost)} up front, and the existing crew is owed ${usd(owed)}.`
+    : `The next crew member wants ${usd(cost)} up front.`);
+  if (owed > 0) {
+    ch.cash = Number(ch.cash) - owed;
+    ch.crew_paid_at = crewPaidThrough(ch, liabilityCrew, owed, now);
+    await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'crew:wages' });
+  }
+  // A whole-dollar settlement can leave a sub-dollar remainder. Carry its worker-time across the
+  // new headcount so hiring cannot erase it or charge the new hand for the old crew's full shift.
+  const residualMs = ch.crew_paid_at
+    ? Math.max(0, now - new Date(ch.crew_paid_at).getTime()) : 0;
   ch.cash = Number(ch.cash) - cost;
   ch.crew = crew + 1;
-  // start (or reset) the wage clock on a hire — a fresh mouth doesn't retroactively raise the nut
-  // owed on the old crew; the up-front $50k×N covers the buy-in, wages start ticking now.
-  ch.crew_paid_at = new Date();
+  ch.crew_paid_at = new Date(now - Math.ceil(residualMs * liabilityCrew / ch.crew));
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -cost, reason: 'crew:hire' });
-  return { ok: true, crew: ch.crew, cost };
+  return { ok: true, crew: ch.crew, cost, settled: owed };
 }
 
 // PAY THE NUT (recurring sinks) — cover the crew's wages, a §10.4 cash SINK `crew:wages` that
@@ -212,11 +233,12 @@ export async function hireCrew(ch, client, h) {
 export async function payCrewWages(ch, client, h) {
   const crew = Number(ch.crew || 0);
   if (crew <= 0) throw new GameError('none', 'You run no crew — no nut to cover.');
-  const owed = crewWageOwed(ch);
+  const now = Date.now();
+  const owed = crewWageOwed(ch, now);
   if (owed <= 0) return { ok: true, paid: 0, message: 'The nut is covered.' };
   if (Number(ch.cash) < owed) throw new GameError('cash', `The nut runs ${usd(owed)} — the corner's short, and so are you.`);
   ch.cash = Number(ch.cash) - owed;
-  ch.crew_paid_at = new Date();
+  ch.crew_paid_at = crewPaidThrough(ch, crew, owed, now);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'crew:wages' });
   return { ok: true, paid: owed, crew };
 }
@@ -229,14 +251,12 @@ export async function payCrewWages(ch, client, h) {
 //
 // The rule is one line: a WORKING crew must be squared up before anyone walks; a crew that DOWNED
 // TOOLS (cold — the nut unpaid past CREW_WAGE_COLD_MS) can be let go for nothing, because men who
-// stopped working for you three days ago have already gone.
+// stopped working at the two-day wage cap have already gone.
 //
-// That is also what closes the obvious dodge, and it closes it on the ECONOMICS rather than with a
-// special rule. `crewWageOwed` is crew × elapsed and is never stored, so shedding heads retroactively
-// shrinks the nut — run five for a week, lay off four, pay a fifth. But the free door is only open
-// once you have gone cold, which costs three days of sales, and one hand moves ~60 units/hr at 0.8×
-// base: even on the cheapest line that is ~$311k of product forgone against ~$86k of wages dodged.
-// Nobody takes that trade. A warm crew's only exit is through the till.
+// A cold walk-off is still free at the door. If the final hand leaves, their capped unpaid tab stays
+// on the clock and must be settled before anyone can be hired again, so cycling 1 → 0 → 1 cannot
+// replace $57,600 of wages with the $50,000 first-step buy-in. A warm crew's only exit is through the
+// till, as before.
 //
 // §10.4: the settle-first path is the EXISTING `crew:wages` sink; a cold walk-off moves no value at
 // all (no ledger row) — the BUSINESS_SHUTTER_BPS=0 argument. The buy-in is forfeit: coming back
@@ -244,17 +264,20 @@ export async function payCrewWages(ch, client, h) {
 export async function layOffCrew(ch, client, h) {
   const crew = Number(ch.crew || 0);
   if (crew <= 0) throw new GameError('none', 'You run no crew.');
-  const cold = crewCold(ch);
-  const owed = crewWageOwed(ch);
+  const now = Date.now();
+  const cold = crewCold(ch, now);
+  const owed = crewWageOwed(ch, now);
   if (!cold && owed > 0) {
     if (Number(ch.cash) < owed) throw new GameError('nut', `Square the nut first — ${usd(owed)} for the time they worked.`);
     ch.cash = Number(ch.cash) - owed;
+    ch.crew_paid_at = crewPaidThrough(ch, crew, owed, now);
     await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'crew:wages' });
   }
+  const paidAt = ch.crew_paid_at;
   ch.crew = crew - 1;
-  // the clock restarts for whoever is left (they were just paid, or they had already walked); with
-  // nobody left the marker is cleared so a future hire starts its wages from that hire.
-  ch.crew_paid_at = ch.crew > 0 ? new Date() : null;
+  // The departing hand's share leaves with them; everyone still on the corner keeps the same age.
+  // In particular, a cold layoff cannot reset the survivors and then rehire around their debt.
+  ch.crew_paid_at = ch.crew > 0 || cold ? paidAt : null;
   return { ok: true, crew: ch.crew, settled: cold ? 0 : owed, walked: cold };
 }
 

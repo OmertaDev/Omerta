@@ -12,17 +12,19 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          assetEnergyCap, effStat, assetsValue, cargoCapacity, tradeRankIdx,
          gangLevelOf, roleMultOf, weekOf, familyTaskOf, M3, M4,
          gunsValue, fleetValue, racketsValue, hitmanRankOf, sealOf, SKILLS, skillOf, UNDERWORLD, leadTaskOf, ONBOARD_TASKS,
-         crewWageOwed, crewCold, LAW, rapStageOf, bribeCostOf, retainerActive, witproActive,
+         crewWageOwed, crewRehireDebt, crewCold, LAW, rapStageOf, bribeCostOf, retainerActive, witproActive,
          cityHourOf, cityLawEventOf, estateTierOf, foundationOf, campaignOf, honorTierOf,
          SOLDIERS, soldierFxOf, CLUES, clueStepOf, rollClueTier, kingpinRankOf, tycoonRankOf, racketIncomeLeveled, empireTitles, launderRankOf, frontTitles, statesmanRankOf, seasonModOf, PACING,
          ACTIVITY, carCollateralValue, carOf, MASTERY, masteryLvlOf, masteryRankOf, masteryXpFor, pathFx, pathXpMult,
          REGIMEN, disciplineLvlOf, energyCapOf, nerveCapOf, BUSINESSES, WIRE, RIVALS, CORNER, cornerTasksOf,
          KITCHENS, labModuleCost, recyclesToDesk, DESK_RECYCLE_REASON, isMade, madeSeconds,
          MADE_LADDER, madeRungIdx, madeRungOf, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake,
-         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused, hospitalized,
+         ASSETS, OPERATIONS, opSlotsOf, nextOpSlotLevel, MISSIONS, dailyJobsOf, dailyGuidanceFor, dailyLiveFor, jailed, safeHoused, hospitalized,
          STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs , coolLeft, coolWait } from './rules.js';
 import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
+import { consumeStreetActionCooldown } from './actioncooldown.js';
+import { resolvedBoundedClaimIds, takeAccountDailyClaim } from './accountdaily.js';
 import { logCollect } from './collection.js';
 import { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';
 import { businessesOf } from './business.js';
@@ -30,6 +32,7 @@ import { speakeasyOwnedOf } from './speakeasy.js';
 import { fightersOf } from './boxing.js';
 import { withItemTransaction, assertItemTransactionHealthy } from './items.js';
 import { prelockEquipmentRentalDeathActors } from './equipmentrentals.js';
+import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
 
 const uid = () => crypto.randomUUID();
 import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assign a fresh player their first rival
@@ -325,7 +328,7 @@ export async function loadOwned(client, ch) {
       FROM referrals rf JOIN characters rc ON rc.account_id = rf.recruit_account AND rc.alive
       JOIN account_persistent rap ON rap.account_id = rf.recruit_account
       WHERE rf.recruiter_account = $2 AND rf.qualified_at IS NOT NULL
-        AND NOT rap.agent_flag AND NOT rap.npc_flag
+        AND NOT rap.agent_flag AND NOT rap.npc_flag AND rap.referral_same_ip_hold IS NOT TRUE
     -- THE WORK BOARD (omerta-early-game-design.md F1). The coach's guiding rungs are a chain of
     -- ONE-TIME milestones, so a player who follows it clears the last one around level 22 and the
     -- coach falls to four generic nudges — at exactly the level the content thins out too. These
@@ -339,6 +342,10 @@ export async function loadOwned(client, ch) {
     UNION ALL SELECT 'hustle', NULL::text, NULL::text, step::numeric, NULL::numeric, NULL::timestamptz FROM hustles WHERE character_id=$1 AND day=$3
     UNION ALL SELECT 'corner', district, NULL::text, slot::numeric, CASE WHEN claimed THEN 1 ELSE 0 END::numeric, NULL::timestamptz FROM corner_jobs WHERE character_id=$1 AND day=$3
     UNION ALL SELECT 'drill', npc, NULL::text, NULL::numeric, NULL::numeric, NULL::timestamptz FROM npc_drills WHERE character_id=$1 AND day=$3
+    -- Positive-value daily boards are account-capped across heirs. Fold their latches into the same
+    -- coach snapshot so a fresh character is never pointed at a claim the mutation will refuse.
+    UNION ALL SELECT 'aday', scope, claim_id, slot::numeric, NULL::numeric, NULL::timestamptz
+      FROM account_daily_claims WHERE account_id=$2 AND day=$3
     -- THE CREW id, folded in here rather than its own round trip. account_id is TEXT (→ $2, like gear/
     -- est), so this branch is type-safe (the uuid=text outage class). Its only consumers are the crew
     -- non-aggression gate + the board, both reading h.owned.crewId; a scalar, so it fits the shape.
@@ -382,6 +389,12 @@ export async function loadOwned(client, ch) {
   const rival = of('rival', (r) => ({ who: r.k, at: r.ts }));
   const rvback = of('rvback', (r) => ({ who: r.k, at: r.ts }));
   const refx = of('refx', (r) => ({ respect: Number(r.n) }));
+  const accountDay = of('aday', (r) => ({ scope: r.k, claimId: r.k2, slot: n(r.n) })).rows;
+  const accountDailyRows = accountDay.filter((r) => r.scope === 'daily')
+    .map((r) => ({ claim_id: r.claimId, slot: r.slot }));
+  const accountCornerClaimed = new Set(accountDay.filter((r) => r.scope === 'corner').map((r) => r.claimId));
+  const accountHustlePaid = accountDay.some((r) => r.scope === 'hustle' && r.claimId === 'payoff');
+  const accountCheckinClaimed = accountDay.some((r) => r.scope === 'checkin' && r.claimId === 'claim');
   // THE WORK BOARD — today's repeatable work, folded into ONE shape the coach reads. Deliberately
   // COUNTS and FLAGS rather than the boards themselves: a rung only has to know there is unclaimed
   // work and what it pays, and re-deriving each system's full board here would put five modules'
@@ -392,9 +405,14 @@ export async function loadOwned(client, ch) {
     // STRUCTURALLY cannot clear (dailyBlockedFor), and doing that exactly needs to know WHICH of
     // the three are already done — a player who paid tribute and then left the family would
     // otherwise be double-counted against themselves.
-    dailyClaimedIds: (() => { try { return JSON.parse(grp.get('daily')?.[0]?.k2 || '[]'); } catch { return []; } })(),
+    dailyClaimedIds: (() => {
+      let local = [];
+      try { local = JSON.parse(grp.get('daily')?.[0]?.k2 || '[]'); } catch { local = []; }
+      return [...resolvedBoundedClaimIds(dailyJobsOf(today).map((job) => job.id), local, accountDailyRows)];
+    })(),
     dailyCounters: (() => { try { return JSON.parse(grp.get('daily')?.[0]?.k || '{}'); } catch { return {}; } })(),
-    hustleStep: grp.get('hustle')?.[0] ? Number(grp.get('hustle')[0].n) : null, // null = not started today
+    hustleStep: accountHustlePaid ? 3
+      : (grp.get('hustle')?.[0] ? Number(grp.get('hustle')[0].n) : null), // null = not started today
     // (red-team F2) OPEN is not the same as CLAIMABLE. `claimCorner` refuses on two counts, and a
     // rung that points at work the server will not pay is worse than no rung at all — it sits at the
     // head of the tail and masks every live rung under it for the rest of the day. Restated here
@@ -404,8 +422,8 @@ export async function loadOwned(client, ch) {
       const rows = of('corner', (r) => ({ district: r.k, slot: Number(r.n), claimed: Number(r.n2) === 1 })).rows;
       const kindOf = (c) => (cornerTasksOf(c.district, today).find((t) => t.slot === c.slot) || {}).kind;
       const done = rows.filter((c) => c.claimed);
-      if (done.length >= CORNER.MAX_DAY) return [];            // the day's allowance is spent
-      const doneKinds = new Set(done.map(kindOf).filter(Boolean)); // one envelope per KIND of work
+      const doneKinds = new Set([...done.map(kindOf).filter(Boolean), ...accountCornerClaimed]);
+      if (doneKinds.size >= CORNER.MAX_DAY) return [];          // the account's allowance is spent
       return rows.filter((c) => !c.claimed && !doneKinds.has(kindOf(c)));
     })(),
     drillsTaken: (grp.get('drill') || []).length,
@@ -500,6 +518,7 @@ export async function loadOwned(client, ch) {
       .map((r) => [r.npc_id, decayedGrudges(Number(r.count), r.since)])
       .filter(([, c]) => c > 0)),
     work, // THE WORK BOARD — today's unclaimed repeatable work, for the coach's never-empty tail
+    checkinClaimed: accountCheckinClaimed, // account/day uniqueness is authoritative under concurrent heirs
     estate: est.rows[0] || null, // account-level compound (survives death) — a summary; the board is the full view
     deed: deed.rows[0] || null,  // account-level street deed (survives death) — a summary; /v1/deeds is the full view
     // STREET WAR step two — fresh malice in the last 48h that you have NOT answered. Counted per
@@ -675,18 +694,30 @@ export function masteryFx(h, trackId) {
   return i < 0 ? 1 : p.fx[i];
 }
 
-export async function bumpMastery(client, h, ch, trackId, action) {
+const roundMasteryXp = (n) => Math.round(Number(n) * 1e6) / 1e6;
+
+// Quantity-bearing value moves use a declared economic unit, rather than the number of HTTP calls.
+// Rounding every cumulative write to NUMERIC's useful precision also makes repeated fractional
+// awards exactly partition-independent in the JS mirror (500 × 0.2 is stored as exactly 100).
+export function masteryXpAward(ch, trackId, action, units = 1) {
+  const perAward = Number(MASTERY.XP_UNITS?.[action] || 1);
+  const settledUnits = perAward === 1 ? 1 : Math.max(0, Number(units) || 0);
+  return roundMasteryXp(Number(MASTERY.XP[action] || 0) * pathXpMult(ch, trackId)
+    * settledUnits / perAward);
+}
+
+export async function bumpMastery(client, h, ch, trackId, action, { units = 1 } = {}) {
   const track = MASTERY.TRACKS.find((t) => t.id === trackId);
   // PATHS v2 — a home trade schools ×1.5, a rival ×0.6 (fractional XP is fine: NUMERIC column,
   // and rounding would erase the rival penalty on 1-XP actions or zero them out entirely)
-  const xp = Number(MASTERY.XP[action] || 0) * pathXpMult(ch, trackId);
+  const xp = masteryXpAward(ch, trackId, action, units);
   if (!track || !(xp > 0)) return null;   // defensive — a bad tag must never fail the action
   const cur = h?.owned?.mastery
     ? Number(h.owned.mastery[trackId] || 0)
     : Number((await client.query('SELECT xp FROM masteries WHERE character_id=$1 AND track_id=$2',
         [ch.id, trackId])).rows[0]?.xp || 0);
   const before = masteryLvlOf(cur);
-  const next = cur + xp;
+  const next = roundMasteryXp(cur + xp);
   const upd = await client.query('UPDATE masteries SET xp=$3 WHERE character_id=$1 AND track_id=$2',
     [ch.id, trackId, next]);
   if (!upd.rowCount) {
@@ -734,8 +765,10 @@ export async function bumpMastery(client, h, ch, trackId, action) {
     }
   }
   // STEP FOUR — STATS BY USE (founder-signed: "yes, tightly capped"). Working the trade exercises
-  // its stat: a small roll per XP-paying action, on the GYM'S OWN diminishing factor, metered by a
-  // hard rolling daily bucket. Actor path (h) ONLY — headless callers (duel opponents, heist crew)
+  // its stat: ordinary verbs retain one roll per action. Quantity-scaled moves roll once per whole
+  // XP crossed, using the mastery total as the fractional carry, so splitting units cannot create
+  // more roll opportunities. Both use the GYM'S OWN diminishing factor and rolling daily bucket.
+  // Actor path (h) ONLY — headless callers (duel opponents, heist crew)
   // hold locked rows and write specific columns absolutely; a stat bump there would never persist,
   // so the drip is honestly skipped rather than silently lost.
   let statGain = 0;
@@ -744,25 +777,30 @@ export async function bumpMastery(client, h, ch, trackId, action) {
     const refill = ch.statuse_at
       ? (now - new Date(ch.statuse_at).getTime()) / 86400000 * MASTERY.STAT_USE.CAP_DAY
       : MASTERY.STAT_USE.CAP_DAY;
-    const used = Math.max(0, Number(ch.statuse_used || 0) - Math.max(0, refill));
+    let used = Math.max(0, Number(ch.statuse_used || 0) - Math.max(0, refill));
+    const quantityScaled = Object.hasOwn(MASTERY.XP_UNITS || {}, action);
+    const rolls = quantityScaled
+      ? Math.max(0, Math.floor(next + 1e-9) - Math.floor(cur + 1e-9))
+      : 1;
     // charge only if the FULL unit fits (the D3 wash-gate form) — a strict `used < CAP` would pass
     // at 3−ε moments after the third gain, leaking a CAP+1 burst
-    if (used + 1 <= MASTERY.STAT_USE.CAP_DAY) {
+    for (let i = 0; i < rolls && used + 1 <= MASTERY.STAT_USE.CAP_DAY; i++) {
       // TEST-ONLY roll knob (the LAW_BUST_P precedent — never set in production); read per-call
       const dim = MASTERY.STAT_USE.GYM_DIM / (MASTERY.STAT_USE.GYM_DIM + Number(ch[track.stat] || 0));
       const p = process.env.STAT_USE_P != null
         ? Number(process.env.STAT_USE_P)
-        : Math.min(0.5, MASTERY.STAT_USE.P_PER_XP * xp * dim);
+        : Math.min(0.5, MASTERY.STAT_USE.P_PER_XP * (quantityScaled ? 1 : xp) * dim);
       const roll = Math.random();
       await rngLog(client, ch.id, `statuse:${trackId}`, roll,
         `${roll < p ? `+1 ${track.stat}` : 'no gain'} (P ${p.toFixed(3)}, ${track.stat} ${ch[track.stat]})`);
       if (roll < p) {
-        statGain = 1;
+        statGain++;
         ch[track.stat] = Number(ch[track.stat]) + 1; // persisted positionally by the caller (the train() shape)
         // charge the bucket — direct SQL under the held char lock (the port_used pattern) + ch mirror
         await client.query('UPDATE characters SET statuse_used=$2, statuse_at=$3 WHERE id=$1',
           [ch.id, used + 1, new Date(now)]);
-        ch.statuse_used = used + 1; ch.statuse_at = new Date(now);
+        used += 1;
+        ch.statuse_used = used; ch.statuse_at = new Date(now);
         await notify(client, ch.id, 'stat_use', { track: trackId, name: track.name, stat: track.stat, value: ch[track.stat] });
       }
     }
@@ -994,13 +1032,26 @@ export async function track(client, accountId, event, props = {}) {
 }
 
 // §7.4 daily-contract counters (drawn jobs claim against these in growth.js)
-export async function bumpDaily(client, characterId, kind) {
+export async function bumpDaily(client, characterId, kind, amount = 1) {
   const day = dayOf();
   const row = (await client.query('SELECT * FROM daily_progress WHERE character_id=$1 AND day=$2 FOR UPDATE', [characterId, day])).rows[0];
   const counters = row ? JSON.parse(row.counters) : {};
-  counters[kind] = (counters[kind] || 0) + 1;
+  // Most daily signals are indivisible actions. Freight is different: buy/sell accepts an arbitrary
+  // quantity, so counting requests lets the same load earn more progress when split across calls.
+  // Callers may therefore pass economic progress directly; fixed precision keeps bulk and split
+  // settlement exactly equivalent in the JSON counter (for example 500 units = 500 x one unit).
+  const delta = Number(amount);
+  if (!(delta > 0) || !Number.isFinite(delta)) return;
+  counters[kind] = Math.round((Number(counters[kind] || 0) + delta) * 1e6) / 1e6;
   if (row) await client.query('UPDATE daily_progress SET counters=$3 WHERE character_id=$1 AND day=$2', [characterId, day, JSON.stringify(counters)]);
   else await client.query('INSERT INTO daily_progress (character_id, day, counters) VALUES ($1,$2,$3)', [characterId, day, JSON.stringify(counters)]);
+}
+
+// Baseline-gated work (Corner/Hustle) needs one complete action unit after acceptance. This is
+// equivalent to `current > baseline` for ordinary integer counters, while fractional freight carry
+// must cross a whole published lot before a one-unit request can unlock a cash payoff.
+export function dailyCounterAdvanced(current, baseline = 0) {
+  return Number(current || 0) - Number(baseline || 0) >= 1 - 1e-9;
 }
 
 // Load-and-lock the living character + its account, accrue both, hand to fn, persist.
@@ -1214,7 +1265,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     // load, any DB error — the outer catch would surface a non-2xx AFTER the action already
     // committed, and the idempotency hook would release the key → a retry re-executes the action
     // (double-spend). It's idempotent (ref_paid-guarded, re-checks every gate), so swallow failures.
-    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag) {
+    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag && acct.referral_same_ip_hold !== true) {
       try { await maybeSparkReferral(pool, accountId); }
       catch (e) { console.error('referral spark (post-commit, non-fatal)', e?.code || e); }
       try { await maybeQualifyReferral(pool, accountId); }
@@ -1365,7 +1416,7 @@ export async function readCharacter(pool, accountId, fn) {
 // as the positional order was so a diff against the old statement reads column-for-column.
 export const ACCOUNT_PERSIST_COLUMNS = [
   ['omr'], ['staked'], ['rewards'], ['prestige'], ['deaths'],
-  ['recruits'], ['checkins_lifetime'], ['ref_paid'], ['onboard'], ['wallet_address'],
+  ['recruits'], ['checkins_lifetime'], ['checkin_day', 0], ['checkin_streak', 0], ['ref_paid'], ['onboard'], ['wallet_address'],
   ['minted', false], ['mint_credits', 0], ['respawn_tokens', 0], ['hitman_rep', 0], ['kills', 0],
   ['unbonding', 0], ['unbond_at', null], ['rat', false],
 ];
@@ -1382,24 +1433,43 @@ export const CHARACTER_PERSIST_COLUMNS = [
   ['world_raid_at', null], ['pen_safe_until', null], ['hole_until', null], ['welsher', false], ['wanted_until', null],
   ['rwa_used', 0], ['rwa_at', null], ['envelope_until', null], ['wire_until', null], ['poker_limit', null],
   ['safehouse_used', 0], ['safehouse_at', null], ['refill_used', 0], ['refill_at', null], ['family_raid_at', null],
-  ['shipment', 0],
+  ['shipment', 0], ['crew_sale_credit_ms', 0],
 ];
 // The account fields runEstate assigns in memory (prestige, deaths, and the L2a death duty's two
 // $OMR columns). The two headless estate persists write EXACTLY this subset through
 // persistAccountFields, so a field runEstate starts mutating tomorrow is added HERE once, not
 // remembered at two call sites — and test/persist.js scans runEstate for `acct.X =` and fails if
 // an assigned field is missing from this list.
-export const ESTATE_ACCOUNT_FIELDS = ['prestige', 'deaths', 'omr', 'unbonding'];
+export const ESTATE_ACCOUNT_FIELDS = [
+  'prestige', 'deaths', 'omr', 'unbonding', 'checkin_day', 'checkin_streak',
+];
 
 // `col=$2, col=$3, …` — $1 is always the row key. A generated fragment is not preparable by
 // tools/pgquery.js (counted under its ceiling, reason recorded there) and is classified by THE
 // INTERPOLATION LEDGER as an ALL_CAPS module constant / a declared column-list fragment: every
 // column name comes from the exported lists above, never from a request.
 const setClauseOf = (cols) => cols.map(([c], i) => `${c}=$${i + 2}`).join(', ');
+// Account check-in fields are monotonic by claim day. Real Postgres serializes wrapper actions on
+// the account row, while the supported pg-mem runtime does not implement row-lock isolation. A
+// concurrent estate must therefore be unable to overwrite a just-committed claim with its stale
+// account snapshot. Streak may legitimately fall after missed days, so it follows the newer day;
+// within one day the larger mirror wins. Lifetime claims can only increase.
+const accountSetClauseOf = (cols) => {
+  const at = (name) => cols.findIndex(([c]) => c === name) + 2;
+  const dayAt = at('checkin_day');
+  return cols.map(([c], i) => {
+    const p = `$${i + 2}`;
+    if (c === 'checkins_lifetime') return `${c}=GREATEST(${c},${p})`;
+    if (c === 'checkin_day') return `${c}=GREATEST(${c},${p})`;
+    if (c === 'checkin_streak' && dayAt >= 2)
+      return `${c}=CASE WHEN $${dayAt}>checkin_day THEN ${p} WHEN $${dayAt}=checkin_day THEN GREATEST(${c},${p}) ELSE ${c} END`;
+    return `${c}=${p}`;
+  }).join(', ');
+};
 // A one-element entry binds the raw value (an undefined stays undefined, exactly as the positional
 // list did); a two-element entry applies its default — 0/false/null, never undefined.
 const valuesOf = (cols, row) => cols.map(([c, d]) => (d === undefined ? row[c] : (row[c] ?? d)));
-const ACCOUNT_SET = setClauseOf(ACCOUNT_PERSIST_COLUMNS);
+const ACCOUNT_SET = accountSetClauseOf(ACCOUNT_PERSIST_COLUMNS);
 const CHARACTER_SET = setClauseOf(CHARACTER_PERSIST_COLUMNS);
 
 async function persistAccount(client, accountId, a) {
@@ -1417,7 +1487,7 @@ export async function persistAccountFields(client, accountId, a, fields) {
     return entry;
   });
   if (!cols.length) return;
-  const set = setClauseOf(cols);
+  const set = accountSetClauseOf(cols);
   await client.query(`UPDATE account_persistent SET ${set} WHERE account_id=$1`,
     [accountId, ...valuesOf(cols, a)]);
 }
@@ -1500,7 +1570,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     } catch (error) { throw deadlockToRetry(error); }
     });
     // Same ownership boundary as withCharacter: post-commit hooks acquire their own connections.
-    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag) {
+    if (acct.referred_by && !acct.ref_paid && !acct.agent_flag && acct.referral_same_ip_hold !== true) {
       try { await maybeSparkReferral(pool, accountId); } catch (e) { console.error('referral spark (post-commit, non-fatal)', e?.code || e); }
       // post-commit + non-fatal: a throw here (a 40P01 on the char/street_tax locks under load, any
       // DB error) after the two-party action already COMMITTED would surface a non-2xx → idempotency
@@ -1830,10 +1900,13 @@ function coachLadder(ch, acct, owned) {
 }
 
 export function view(ch, acct = {}, owned = {}) {
+  const now = Date.now();
   const lvl = levelOf(Number(ch.respect));
   const assets = owned.assets || [];
   const gear = owned.gear || [];
   const eff = (s) => effStat(ch[s], s, assets, gear);
+  const checkinState = checkinStateOf(ch, acct);
+  const checkinQuote = checkinQuoteOf(ch, acct, dayOf(), !!owned.checkinClaimed);
   return { id: ch.id, name: ch.name, generation: ch.generation, level: lvl,
     respect: Number(ch.respect), energy: Math.floor(Number(ch.energy)), nerve: Math.floor(Number(ch.nerve)),
     health: Math.floor(Number(ch.health)), cash: Math.floor(Number(ch.cash)), bank: Math.floor(Number(ch.bank)),
@@ -1909,14 +1982,14 @@ export function view(ch, acct = {}, owned = {}) {
       sworn: v.sworn, expiresSeconds: Math.max(0, Math.ceil((new Date(v.expires_at) - Date.now()) / 1000)) })),
     guardedBy: (ch.guarded_by && ch.guarded_until && new Date(ch.guarded_until) > new Date()) ? ch.guarded_by : null,
     guardSeconds: (ch.guarded_by && ch.guarded_until) ? Math.max(0, Math.ceil((new Date(ch.guarded_until) - Date.now()) / 1000)) : 0,
-    loc: ch.loc, path: ch.path, title: ch.title, bio: ch.bio || null, streak: ch.streak,
+    loc: ch.loc, path: ch.path, title: ch.title, bio: ch.bio || null, streak: checkinState.streak,
     // THE SHEET'S TWO CHROME BUTTONS, quoted before the press. Both sat in the always-visible row
     // beside the money figure saying only "heal" and "check in" — a price with the purchase left
     // off, and a ladder invisible until after the money landed. Neither figure is derivable
     // client-side (the bill stacks five modifiers, the ladder is level-scaled), and both are read
     // out of the SAME function the till charges from, so the button and the till cannot disagree.
     healCost: healCostOf(ch, owned) || null,   // null when there is nothing to patch up
-    checkin: checkinQuoteOf(ch),
+    checkin: checkinQuote,
     // THE REGIMEN — stamina/composure raise the caps; one helper pair, so view/coach/accrual agree
     maxEnergy: energyCapOf(lvl, assetEnergyCap(assets), owned.disciplines, ladderFx(acct, 'energy')),
     maxNerve: nerveCapOf(lvl, owned.disciplines, ladderFx(acct, 'nerve')),
@@ -2026,7 +2099,7 @@ export function view(ch, acct = {}, owned = {}) {
     // THE NUT, MADE LEGIBLE (the pad precedent, same defect class): a hand costs a flat wage on the
     // wall clock but only EARNS while there is stash to move, so the terms have to ride with the
     // price — the per-head rate, the countdown to downed tools, and the door out.
-    crewWageOwed: crewWageOwed(ch), crewWagePerHr: Number(ch.crew || 0) * M4.CREW_WAGE_PER_HR, crewCold: crewCold(ch),
+    crewWageOwed: crewWageOwed(ch, now), crewWagePerHr: Number(ch.crew || 0) * M4.CREW_WAGE_PER_HR, crewCold: crewCold(ch, now),
     crewWagePerHead: M4.CREW_WAGE_PER_HR, crewMax: M4.CREW_MAX, crewCostStep: M4.CREW_COST_STEP,
     // WHAT THE NEXT HAND COSTS, from the side that charges it. The hire price CLIMBS with headcount,
     // and the board published only the STEP — so the console restated the ladder (`step × (crew+1)`)
@@ -2034,9 +2107,10 @@ export function view(ch, acct = {}, owned = {}) {
     // at all. Two restatements of one rule, which is how they come to disagree (the jailed/penSafe
     // collapse); and a hardcoded price behind a missing field is the guessed number wearing a hat
     // (the ALCHEMIST_ASSET_DECIMALS fallback RT#6 deleted). One field, computed where it is charged.
-    crewNextCost: Number(ch.crew || 0) >= M4.CREW_MAX ? null : M4.CREW_COST_STEP * (Number(ch.crew || 0) + 1),
+    crewNextCost: Number(ch.crew || 0) >= M4.CREW_MAX ? null
+      : M4.CREW_COST_STEP * (Number(ch.crew || 0) + 1) + crewWageOwed(ch, now) + crewRehireDebt(ch, now),
     crewColdSeconds: Number(ch.crew || 0) > 0 && ch.crew_paid_at
-      ? Math.max(0, Math.ceil((new Date(ch.crew_paid_at).getTime() + M4.CREW_WAGE_COLD_MS - Date.now()) / 1000)) : null,
+      ? Math.max(0, Math.ceil((new Date(ch.crew_paid_at).getTime() + M4.CREW_WAGE_COLD_MS - now) / 1000)) : null,
     makings: owned.makings || {},
     stash: (owned.stash || []).filter((s) => Number(s.qty) > 0)
       .map((s) => ({ drug: s.drug_id, qty: Number(s.qty), quality: Math.round(Number(s.quality) * 100) / 100 })),
@@ -2072,6 +2146,7 @@ export function view(ch, acct = {}, owned = {}) {
     // surfacing a bare `cooldown` error when a player hits the gym or the family's next job.
     trainSeconds: ch.train_at ? Math.max(0, Math.ceil((new Date(ch.train_at) - Date.now()) / 1000)) : 0,
     missionSeconds: ch.mission_at ? Math.max(0, Math.ceil((new Date(ch.mission_at) - Date.now()) / 1000)) : 0,
+    streetActionSeconds: coolLeft(ch.street_action_at),
     prestige: Number(acct.prestige || 0), recruits: Number(acct.recruits || 0),
     // THE ESTATE — your compound at a glance (GET /v1/estate is the full house). Account-level status,
     // survives death (the heir inherits it). Null until you buy your first place.
@@ -2137,13 +2212,14 @@ async function takeFromMark(client, h, ch, markRow, take) {
 }
 
 // ── §7.2 CRIME ──
-export function doCrime(ch, crimeId, client, h, approach) {
+export async function doCrime(ch, crimeId, client, h, approach) {
   const c = CRIMES.find((x) => x.id === crimeId);
   if (!c) throw new GameError('bad_crime', 'No such job.');
   const lvl = levelOf(Number(ch.respect));
   if (jailed(ch)) throw new GameError('jailed', 'You are in lockup.');
   if (lvl < c.lvl) throw new GameError('level', `That job needs level ${c.lvl}.`);
   if (Number(ch.nerve) < c.nerve) throw new GameError('nerve', `Takes ${c.nerve} nerve.`);
+  await consumeStreetActionCooldown(ch, client);
   // D6a — THE APPROACH: the per-job risk/reward choice. An unknown/omitted approach falls back to
   // 'standard' (the signed baseline, byte-identical to the old single-click behaviour). Cash EV is
   // held ~flat by payMult ≈ 1/successMult, so the §7.2 cash faucet is untouched; the choice moves the
@@ -2288,6 +2364,7 @@ export function doCrime(ch, crimeId, client, h, approach) {
         }
       } catch { /* the trail is a bonus, never a blocker */ }
       return { ok: true, success: true, approach: ap.id, take, rep, crates, makingsDrop, clue,
+        cooldownMs: PACING.STREET_ACTION_CD_MS,
         victim: mark, markTook: funded, soldier: soldier ? { ...soldier, cut: soldierCut } : null };
     }
     // GETAWAY (skills): the wheelman's stints run shorter — a new modifier, sign-off lever.
@@ -2303,7 +2380,8 @@ export function doCrime(ch, crimeId, client, h, approach) {
     await h.track(client, ch.account_id, 'crime_attempt', { id: c.id, success: false });
     // the bust is the RISKY outcome — the second can get hurt, or worse
     const soldier = second ? await soldierResult(client, h, ch, second, { success: false, cause: 'busted on a job' }) : null;
-    return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier };
+    return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier,
+      cooldownMs: PACING.STREET_ACTION_CD_MS };
   })();
 }
 
@@ -2375,15 +2453,29 @@ export async function heal(ch, client, h) {
 // ONE implementation for the quote and the till — `checkin` runs on this too, so what the sheet
 // promises is by construction what the till pays. Neither figure is derivable client-side: the
 // ladder is level-scaled and the streak rule lives here.
-export function checkinQuoteOf(ch, today = dayOf()) {
+function checkinStateOf(ch, acct = {}) {
+  const characterDay = Number(ch.checkin_day) || 0;
+  const accountDay = Number(acct.checkin_day) || 0;
+  if (characterDay > accountDay) return { day: characterDay, streak: Number(ch.streak) || 0 };
+  if (accountDay > characterDay) return { day: accountDay, streak: Number(acct.checkin_streak) || 0 };
+  return { day: accountDay,
+    streak: Math.max(Number(ch.streak) || 0, Number(acct.checkin_streak) || 0) };
+}
+
+export function checkinQuoteOf(ch, acct = {}, today = dayOf(), claimedToday = false) {
+  // Preserve the pre-lineage helper shape used by offline observers: (character, today).
+  if (typeof acct === 'number') { today = acct; acct = {}; }
   const lvl = levelOf(Number(ch.respect));
   const payAt = (s) => 250 * lvl + 100 * lvl * Math.min(s, 7);
-  const cur = Number(ch.streak) || 0;
-  const done = ch.checkin_day === today;
+  const state = checkinStateOf(ch, acct);
+  const cur = state.streak;
+  // A future persisted day can appear briefly when app instances straddle UTC midnight or clocks
+  // skew. Treat it as already claimed; moving the day backward would let D/D+1 requests ping-pong.
+  const done = state.day >= today || claimedToday;
   // what a press TODAY would make the streak — the rule is kinder than a player will assume (a miss
   // HALVES it, it never zeroes it), so `lapsed` rides only when a gap has actually cost days and the
   // sheet can say so before the press instead of leaving them to think the game ate the run.
-  const streak = done ? cur : (ch.checkin_day === today - 1 ? cur + 1 : Math.max(1, Math.floor(cur / 2)));
+  const streak = done ? cur : (state.day === today - 1 ? cur + 1 : Math.max(1, Math.floor(cur / 2)));
   return { done, streak,
     pay: done ? null : payAt(streak),
     // the hook stands all day: even once today is claimed, this is what coming back tomorrow pays
@@ -2392,11 +2484,19 @@ export function checkinQuoteOf(ch, today = dayOf()) {
 }
 export async function checkin(ch, client, h) {
   const today = dayOf();
-  if (ch.checkin_day === today) throw new GameError('done', 'Already checked in today.');
-  const q = checkinQuoteOf(ch, today);
-  const was = Number(ch.streak) || 0;
+  const q = checkinQuoteOf(ch, h.acct, today, !!h.owned?.checkinClaimed);
+  if (q.done) throw new GameError('done', 'Already checked in today.');
+  // The unique latch is the concurrency boundary shared by Postgres and the zero-infrastructure
+  // pg-mem runtime. Take it before any cash/energy/ledger mutation, so parallel requests and an
+  // estate interleave can produce at most one paid right for this account/day.
+  if (!await takeAccountDailyClaim(client, ch.account_id, today, 'checkin', 'claim'))
+    throw new GameError('done', 'Already checked in today.');
+  if (h.owned) h.owned.checkinClaimed = true;
+  const was = checkinStateOf(ch, h.acct).streak;
   ch.streak = q.streak; // miss halves, never zero — the rule lives in the quote, so both agree
   ch.checkin_day = today;
+  h.acct.checkin_streak = q.streak;
+  h.acct.checkin_day = today;
   const pay = q.pay;
   ch.cash = Number(ch.cash) + pay;
   const energyBefore = Number(ch.energy);
@@ -2479,17 +2579,32 @@ export async function travel(ch, district, client, h) {
   return { ok: true, loc: district, cost: CONSTANTS.TRAVEL_COST };
 }
 
+const referralOriginIp = (value) => {
+  const normalized = normalizeClientIp(value);
+  return normalized && normalized !== '0.0.0.0' && normalized !== '::' ? normalized : null;
+};
+const referralOriginState = (rows) => {
+  if (rows.length !== 2) return { trusted: false, same: false };
+  if (!rows.every((row) => normalizeClientIpAuthority(row.created_ip_authority)))
+    return { trusted: false, same: false };
+  const left = referralOriginIp(rows[0].created_ip), right = referralOriginIp(rows[1].created_ip);
+  if (!left || !right) return { trusted: false, same: false };
+  return { trusted: true, same: left === right };
+};
+
 // ── §7.13 REFERRAL QUALIFICATION ──
 // Runs in its own transaction after any action by a referred, unpaid account.
-// All four gates required (level 8, 40 jobs, 3 check-ins, $25k net worth), once
+// All five gates required (a paid permanent character, level 8, 40 jobs, 3 check-ins,
+// $25k net worth), once
 // ever. Pays recruiter + recruit atomically, bumps milestones and the recruiter
 // gang's weekly `recruit` progress, notifies both. Agent recruits remain excluded. Agent recruiters
-// use a stronger minted-human gate and a separate campaign/epoch budget; they never inherit human
+// use a separate campaign/epoch budget; they never inherit human
 // milestone, drive-multiplier, spark, or downline cash. Same-IP agent claims are held before value moves.
 export async function maybeQualifyReferral(pool, recruitAccountId) {
   // cheap unlocked pre-check to avoid opening a transaction for the common no-op
-  const pre = (await pool.query('SELECT referred_by, ref_paid, agent_flag FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
-  if (!pre || !pre.referred_by || pre.ref_paid || pre.agent_flag) return null;
+  const pre = (await pool.query('SELECT referred_by, ref_paid, agent_flag, npc_flag, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
+  if (!pre || !pre.referred_by || pre.ref_paid || pre.agent_flag || pre.npc_flag
+    || pre.referral_same_ip_hold === true) return null;
   const recruiterAccountId = pre.referred_by;
   if (recruiterAccountId === recruitAccountId) return null; // never self-refer (defense-in-depth)
 
@@ -2518,27 +2633,65 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     const acct = lockedA[recruitAccountId], recruiterAcct = lockedA[recruiterAccountId];
     // re-validate every gate under the locks (state may have changed since the pre-check)
     if (!recruit || !recruiter || !acct || !recruiterAcct) { await client.query('ROLLBACK'); return null; }
-    if (acct.referred_by !== recruiterAccountId || acct.ref_paid || acct.agent_flag) { await client.query('ROLLBACK'); return null; }
+    if (acct.referred_by !== recruiterAccountId || acct.ref_paid || acct.agent_flag || acct.npc_flag
+      || recruiterAcct.npc_flag || acct.referral_same_ip_hold === true) { await client.query('ROLLBACK'); return null; }
     const agentRecruiter = !!recruiterAcct.agent_flag;
 
-    // the four gates, all required
+    // the permanent-character gate plus the four play gates, all required
     const owned = await loadOwned(client, recruit);
     const netWorth = Number(recruit.cash) + Number(recruit.bank) + assetsValue(owned.assets)
       + gunsValue(owned.guns) + fleetValue(owned.cars) + racketsValue(owned.rackets);
-    const qualified = levelOf(Number(recruit.respect)) >= M4.REF_GATES.level
+    const qualified = !!acct.minted
+      && levelOf(Number(recruit.respect)) >= M4.REF_GATES.level
       && Number(recruit.lc_crime) >= M4.REF_GATES.jobs
       && Number(acct.checkins_lifetime) >= M4.REF_GATES.checkins
-      && netWorth >= M4.REF_GATES.netWorth
-      // The agent profile adds the Capo identity-cost gate; a non-agent recruit is not enough by
-      // itself. Human recruiters keep the existing four-gate profile unchanged.
-      && (!agentRecruiter || !!acct.minted);
+      && netWorth >= M4.REF_GATES.netWorth;
     if (!qualified) { await client.query('ROLLBACK'); return null; }
 
     const ips = (await client.query(
-      'SELECT id, created_ip FROM accounts WHERE id IN ($1,$2)',
+      'SELECT id, created_ip, created_ip_authority FROM accounts WHERE id IN ($1,$2)',
       [recruitAccountId, recruiterAccountId],
     )).rows;
-    const sameIp = ips.length === 2 && ips[0].created_ip && ips[0].created_ip === ips[1].created_ip;
+    const origin = referralOriginState(ips);
+    // Legacy rows without authoritative signup provenance are not evidence of distinct people.
+    // Keep every paid latch untouched and retryable; payout can proceed once both stored origins
+    // carry an accepted authority, or support records an explicit reviewed clearance (FALSE).
+    if (!origin.trusted && acct.referral_same_ip_hold !== false) {
+      await client.query('ROLLBACK');
+      return { qualified: false, blocked: 'origin_unverified' };
+    }
+    const sameIp = origin.same;
+
+    // A same-origin pair is not merely flagged: it is held before every referral-derived benefit.
+    // Otherwise
+    // one browser can mint unlimited identities, rotate around per-character action cooldowns, and
+    // turn both referral legs into an unbounded cash faucet. A dedicated hold closes every present
+    // and future value path without falsifying the paid latches. FALSE is an explicit shared-household
+    // clearance. Agent recruiters additionally retain a zero-value campaign claim for review.
+    if (sameIp && acct.referral_same_ip_hold !== false) {
+      let heldAgentClaim = null;
+      if (agentRecruiter) {
+        heldAgentClaim = await claimQualifiedAgentReferral(client, {
+          recruiterAccountId,
+          recruitAccountId,
+          reviewHold: true,
+        });
+      }
+      await track(client, recruitAccountId, 'referral_same_ip_flag', {
+        recruiter: recruiterAccountId, qualified: true, blocked: true,
+        ...(agentRecruiter ? { recruiterProfile: 'agent', claimState: heldAgentClaim.state } : {}),
+      });
+      await client.query(
+        'UPDATE account_persistent SET referral_same_ip_hold=true WHERE account_id=$1',
+        [recruitAccountId],
+      );
+      await client.query('COMMIT');
+      return {
+        qualified: false,
+        blocked: 'same_ip',
+        ...(agentRecruiter ? { recruiterProfile: 'agent', agentClaimState: heldAgentClaim.state } : {}),
+      };
+    }
 
     // THE $OMR IS RETIRED (founder-directed 2026-07-31: "no longer promise to give away $OMR").
     // What a referral pays now is cash + THE CREW BONUS — a respect multiplier that scales with how
@@ -2557,7 +2710,7 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
       agentClaim = await claimQualifiedAgentReferral(client, {
         recruiterAccountId,
         recruitAccountId,
-        reviewHold: !!sameIp,
+        releaseReviewHold: sameIp && acct.referral_same_ip_hold === false,
       });
       recruiterCash = Number(agentClaim.amount || 0);
     } else {
@@ -2598,8 +2751,8 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     // crew earns both a bonus (rewarding the recruiter who brought a friend AND ran with them).
     // crew_members is account-keyed; a plain read — no FOR UPDATE (a leaf in this transaction, so no
     // lock-order concern). Bounded: gated behind the entire qualification wall, so it inherits every
-    // anti-Sybil property (once ever, L8/40 jobs/3 check-ins/$25k; agent recruiters additionally
-    // require a minted non-agent recruit). IN($1,$2) not
+    // anti-Sybil property (once ever, paid permanent character, L8/40 jobs/3 check-ins/$25k).
+    // IN($1,$2) not
     // ANY(array) — pg-mem returns zero rows for ANY-of-array (the same-IP flag lesson below).
     let bringOne = false;
     const crews = (await client.query('SELECT account_id, crew_id FROM crew_members WHERE account_id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
@@ -2627,7 +2780,8 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
     const rGang = (await client.query('SELECT gang_id FROM gang_members WHERE character_id=$1', [recruiter.id])).rows[0];
     if (rGang?.gang_id) await bumpFamilyTask(client, { owned: { gangId: rGang.gang_id } }, 'recruit', 1);
 
-    // §10.3 — same-IP recruiter/recruit pairs auto-flag for review
+    // §10.3 — explicitly cleared same-origin pairs retain an audit event. Every uncleared pair
+    // returned through the no-value path above.
     // IN ($1,$2) not ANY($1)-of-array: node-postgres serializes a JS array for ANY, but pg-mem returns
     // ZERO rows for it — so the ANY form made this flag silently untestable (and never exercised). IN is
     // identical in production and pg-mem-portable. The self-referral guard above ensures the two ids differ.
@@ -2666,8 +2820,9 @@ export async function maybeQualifyReferral(pool, recruitAccountId) {
 // which stays on the full gate), ONCE ever (ref_spark), agent-excluded, same sorted two-party lock
 // as maybeQualifyReferral so the two can't deadlock. Called post-commit, non-fatal (swallowed).
 export async function maybeSparkReferral(pool, recruitAccountId) {
-  const pre = (await pool.query('SELECT referred_by, ref_spark, ref_paid, agent_flag FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
-  if (!pre || !pre.referred_by || pre.ref_spark || pre.ref_paid || pre.agent_flag) return null;
+  const pre = (await pool.query('SELECT referred_by, ref_spark, ref_paid, agent_flag, npc_flag, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [recruitAccountId])).rows[0];
+  if (!pre || !pre.referred_by || pre.ref_spark || pre.ref_paid || pre.agent_flag || pre.npc_flag
+    || pre.referral_same_ip_hold === true) return null;
   const recruiterAccountId = pre.referred_by;
   if (recruiterAccountId === recruitAccountId) return null;
   const client = await pool.connect();
@@ -2692,15 +2847,29 @@ export async function maybeSparkReferral(pool, recruitAccountId) {
     const recruit = lockedC[recruitId], recruiter = lockedC[recruiterId];
     const acct = lockedA[recruitAccountId], recruiterAcct = lockedA[recruiterAccountId];
     if (!recruit || !recruiter || !acct || !recruiterAcct) { await client.query('ROLLBACK'); return null; }
-    if (acct.referred_by !== recruiterAccountId || acct.ref_spark || acct.ref_paid || acct.agent_flag || recruiterAcct.agent_flag) { await client.query('ROLLBACK'); return null; }
-    // the early gate — real playtime, well short of full qualification (keeps it Sybil-bounded)
-    if (!(levelOf(Number(recruit.respect)) >= M4.REF_SPARK.level && Number(recruit.lc_crime) >= M4.REF_SPARK.jobs)) { await client.query('ROLLBACK'); return null; }
-    // §10.3 — same-IP recruiter/recruit pairs auto-flag for review (parity with maybeQualifyReferral).
-    // The spark is the CHEAPEST referral cash faucet (no check-in/net-worth floor), so a same-machine ring
-    // must produce the same mod-review signal the expensive qualify path already emits (red-team R28 MED).
-    const sparkIps = (await client.query('SELECT id, created_ip FROM accounts WHERE id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
-    if (sparkIps.length === 2 && sparkIps[0].created_ip && sparkIps[0].created_ip === sparkIps[1].created_ip)
-      await track(client, recruitAccountId, 'referral_same_ip_flag', { recruiter: recruiterAccountId, spark: true });
+    if (acct.referred_by !== recruiterAccountId || acct.ref_spark || acct.ref_paid || acct.agent_flag || acct.npc_flag
+      || recruiterAcct.agent_flag || recruiterAcct.npc_flag || acct.referral_same_ip_hold === true) { await client.query('ROLLBACK'); return null; }
+    // The paid permanent-character gate makes each attributed identity costly before either referral
+    // cash leg can open. The remaining play gates keep the spark tied to actual progression.
+    if (!(acct.minted && levelOf(Number(recruit.respect)) >= M4.REF_SPARK.level
+      && Number(recruit.lc_crime) >= M4.REF_SPARK.jobs)) { await client.query('ROLLBACK'); return null; }
+    // A same-origin human pair is held before value moves. The dedicated state makes repeated and
+    // concurrent retries no-ops without claiming a payout happened. FALSE is a manual clearance.
+    const sparkIps = (await client.query('SELECT id, created_ip, created_ip_authority FROM accounts WHERE id IN ($1,$2)', [recruitAccountId, recruiterAccountId])).rows;
+    const origin = referralOriginState(sparkIps);
+    if (!origin.trusted && acct.referral_same_ip_hold !== false) {
+      await client.query('ROLLBACK');
+      return { sparked: false, blocked: 'origin_unverified' };
+    }
+    const sameIp = origin.same;
+    if (sameIp && acct.referral_same_ip_hold !== false) {
+      await track(client, recruitAccountId, 'referral_same_ip_flag', {
+        recruiter: recruiterAccountId, spark: true, blocked: true,
+      });
+      await client.query('UPDATE account_persistent SET referral_same_ip_hold=true WHERE account_id=$1', [recruitAccountId]);
+      await client.query('COMMIT');
+      return { sparked: false, blocked: 'same_ip' };
+    }
     const mult = await referralPushMult(client); // recruitment-drive CASH multiplier (1 when no push)
     const recruitCash = Math.round(M4.REF_SPARK.recruitCash * mult), recruiterCash = Math.round(M4.REF_SPARK.recruiterCash * mult);
     recruit.cash = Number(recruit.cash) + recruitCash;
@@ -2745,16 +2914,17 @@ export async function startReferralPush(pool, hours, mult) {
 // anti-MLM line (a referral bonus, not a revenue-share pyramid). CASH ONLY, capped at DEPTH 2 (no
 // third level), agents excluded at EVERY level, once ever per R2 (ref_l2_paid). Keyed on R2's full
 // qualification (so it fires inside the same post-commit block that just set R2.ref_paid — the hook
-// stops firing for R2 once paid). Its OWN transaction; locks A's char then the two accounts sorted
+// stops firing for R2 once paid). Its OWN transaction; locks A's char then the three accounts sorted
 // (characters → accounts, the qualify path's order); the flag flip is an atomic claim (no double-pay).
 export async function maybeGrandReferral(pool, r2AccountId) {
-  const r2 = (await pool.query('SELECT referred_by, ref_paid, ref_l2_paid, agent_flag FROM account_persistent WHERE account_id=$1', [r2AccountId])).rows[0];
-  if (!r2 || !r2.ref_paid || r2.ref_l2_paid || r2.agent_flag || !r2.referred_by) return null; // only a QUALIFIED, non-agent recruit; once ever
+  const r2 = (await pool.query('SELECT referred_by, ref_paid, ref_l2_paid, agent_flag, npc_flag, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [r2AccountId])).rows[0];
+  if (!r2 || !r2.ref_paid || r2.ref_l2_paid || r2.agent_flag || r2.npc_flag
+    || r2.referral_same_ip_hold === true || !r2.referred_by) return null; // only an eligible QUALIFIED, non-agent recruit; once ever
   const rAccountId = r2.referred_by; // the direct recruiter (the "parent")
-  const r = (await pool.query('SELECT referred_by, agent_flag, ref_paid FROM account_persistent WHERE account_id=$1', [rAccountId])).rows[0];
+  const r = (await pool.query('SELECT referred_by, agent_flag, npc_flag, ref_paid, referral_same_ip_hold FROM account_persistent WHERE account_id=$1', [rAccountId])).rows[0];
   // the middle link (R) must exist, be human, themselves have a referrer, AND be a QUALIFIED recruit
   // (audit: every level of the tree must be a real made man — a dead-signup middle link earns nobody)
-  if (!r || r.agent_flag || !r.referred_by || !r.ref_paid) return null;
+  if (!r || r.agent_flag || r.npc_flag || r.referral_same_ip_hold === true || !r.referred_by || !r.ref_paid) return null;
   const aAccountId = r.referred_by; // the grandrecruiter — the one we pay
   if (aAccountId === r2AccountId || aAccountId === rAccountId) return null; // distinct chain (defense-in-depth vs a cycle)
   const client = await pool.connect();
@@ -2764,12 +2934,17 @@ export async function maybeGrandReferral(pool, r2AccountId) {
     if (!aChar) { await client.query('ROLLBACK'); return null; } // grandrecruiter has no living street — nobody to pay
     await client.query('SELECT id FROM characters WHERE id=$1 FOR UPDATE', [aChar.id]); // lock the payee char (characters first)
     const lockedA = {}; // accounts sorted — the global lock order
-    for (const id of [aAccountId, r2AccountId].sort())
-      lockedA[id] = (await client.query('SELECT agent_flag, ref_paid, ref_l2_paid, referred_by FROM account_persistent WHERE account_id=$1 FOR UPDATE', [id])).rows[0];
-    const A = lockedA[aAccountId], R2 = lockedA[r2AccountId];
-    if (!A || !R2 || A.agent_flag) { await client.query('ROLLBACK'); return null; }
-    if (!R2.ref_paid || R2.ref_l2_paid || R2.agent_flag || R2.referred_by !== rAccountId) { await client.query('ROLLBACK'); return null; } // re-verify under lock
-    const claim = await client.query('UPDATE account_persistent SET ref_l2_paid=true WHERE account_id=$1 AND ref_paid AND NOT ref_l2_paid', [r2AccountId]);
+    for (const id of [aAccountId, rAccountId, r2AccountId].sort())
+      lockedA[id] = (await client.query('SELECT agent_flag, npc_flag, ref_paid, ref_l2_paid, referred_by, referral_same_ip_hold FROM account_persistent WHERE account_id=$1 FOR UPDATE', [id])).rows[0];
+    const A = lockedA[aAccountId], R = lockedA[rAccountId], R2 = lockedA[r2AccountId];
+    if (!A || !R2 || A.agent_flag || A.npc_flag) { await client.query('ROLLBACK'); return null; }
+    if (!R || !R.ref_paid || R.agent_flag || R.npc_flag || R.referral_same_ip_hold === true || R.referred_by !== aAccountId
+      || !R2.ref_paid || R2.ref_l2_paid || R2.agent_flag || R2.npc_flag || R2.referral_same_ip_hold === true
+      || R2.referred_by !== rAccountId) { await client.query('ROLLBACK'); return null; } // re-verify the whole chain under lock
+    const claim = await client.query(
+      'UPDATE account_persistent SET ref_l2_paid=true WHERE account_id=$1 AND ref_paid AND NOT ref_l2_paid AND referral_same_ip_hold IS NOT TRUE',
+      [r2AccountId],
+    );
     if (claim.rowCount !== 1) { await client.query('ROLLBACK'); return null; } // a concurrent run already paid it
     const mult = await referralPushMult(client);
     const bonus = Math.round(M4.REF_TIER2_CASH * mult);
@@ -2791,13 +2966,21 @@ export async function maybeGrandReferral(pool, r2AccountId) {
 // the $5k finder's fee was lost forever. This sweep finds every qualified recruit whose whole 2-level
 // chain is qualified but ref_l2_paid is still unset, and retries maybeGrandReferral — which pays A the
 // moment A next has a living heir, idempotently (the latch + the re-verified gates under lock). The
-// candidate set is small (only ref_paid && !ref_l2_paid recruits with a qualified middle link).
+// Candidate rows are prefiltered to chains payable now, so the bounded deterministic batch drains
+// successes instead of repeatedly spending its LIMIT on grandrecruiters with no living character.
 export async function sweepGrandReferrals(pool) {
   const cand = (await pool.query(
-    `SELECT r2.account_id AS r2 FROM account_persistent r2
+    `SELECT DISTINCT r2.account_id AS r2 FROM account_persistent r2
        JOIN account_persistent r ON r.account_id = r2.referred_by
-      WHERE r2.ref_paid AND NOT r2.ref_l2_paid AND NOT r2.agent_flag AND r2.referred_by IS NOT NULL
-        AND r.ref_paid AND NOT r.agent_flag AND r.referred_by IS NOT NULL
+       JOIN account_persistent a ON a.account_id = r.referred_by
+       JOIN characters payee ON payee.account_id = a.account_id AND payee.alive
+      WHERE r2.ref_paid AND NOT r2.ref_l2_paid AND NOT r2.agent_flag AND NOT r2.npc_flag AND r2.referred_by IS NOT NULL
+        AND r2.referral_same_ip_hold IS NOT TRUE
+        AND r.ref_paid AND NOT r.agent_flag AND NOT r.npc_flag AND r.referred_by IS NOT NULL
+        AND r.referral_same_ip_hold IS NOT TRUE
+        AND NOT a.agent_flag AND NOT a.npc_flag
+        AND r2.account_id <> r.account_id AND r2.account_id <> a.account_id AND r.account_id <> a.account_id
+      ORDER BY r2.account_id
       LIMIT 1000`)).rows;
   let paid = 0;
   for (const { r2 } of cand) {

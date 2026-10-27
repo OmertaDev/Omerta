@@ -43,6 +43,7 @@ const output = `// Generated exact source-only envelope for earned property ques
 // Historical pins and native migration admission remain unchanged; unknown bytes pass through.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
 export const DEED_QUEST_SOURCE_PREDECESSOR = ${JSON.stringify(predecessor)};
 export const DEED_QUEST_SOURCE_PHASE = 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance';
 export const DEED_QUEST_SOURCE_DOMAINS = ${JSON.stringify(domains, null, 2)};
@@ -73,6 +74,7 @@ export function assertDeedQuestSourceTransfer(file, input) {
     inverseChunks: pin.inverses.length, phase: DEED_QUEST_SOURCE_PHASE, sourceOnly: true };
 }
 export function deedQuestSourceBaseline(file, input) {
+  input = economyHardeningSourceBaseline(file, input);
   if (!Object.hasOwn(DEED_QUEST_SOURCE_DOMAINS, file) || typeof input !== 'string' || !uniform(input)) return input;
   return hash(lf(input)) === DEED_QUEST_SOURCE_DOMAINS[file].currentSha256
     ? assertDeedQuestSourceTransfer(file, input).baselineText : input;

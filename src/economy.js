@@ -2,21 +2,18 @@
 // Every formula cites spec §7 / prototype v24. Actions receive the locked character
 // row (ch), the txn client, and the helper bag h = {ledger, rngLog, events, acct, owned}.
 import crypto from 'node:crypto';
-import { goodsBuyQuote } from './goodsquote.js';
+import { goodsBuyQuote, goodsSellQuote } from './goodsquote.js';
 import { carChoiceQuote } from './car-choices.js';
-import { consumeGoodsLiquidity } from './goodsmarket.js';
+import { GOODS_MARKET, consumeGoodsLiquidity } from './goodsmarket.js';
 import { logCollect } from './collection.js';
 import { registerItemTransactionUndo } from './items.js';
 // (tokenomics v2 step 2) the early-exit surcharge + toll split now live only on the WITHDRAWAL
 // boundary in chain.js — the AMM sell that used to carry them here is retired with the pool.
 import { GameError, bumpFamilyTask, skillMult, trunkCap, npcMult, bumpStanding, bumpMastery, bus, notify } from './game.js';
-import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, goodPriceOf, priceBlock, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, seasonModOf, pathFx, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';
+import { CONSUMABLES, RACKETS, ASSETS, GOODS, GUNS, VESTS, CONSTANTS, SKILLS, UNDERWORLD, LIMITED_RUNS, runOf, limitedRunP, levelOf, cityEventOf, dayOf, carOf, carVal, carMelt, rollCar, rollTrim, effStat, cargoCapacity, priceBlock, gearOf, gunObjOf, RACKET_EMPIRE, racketUpgradeCost, racketIncomeLeveled, tycoonRankOf, rollRarity, ladderFx, ladderFenceMult, STAKE_LOCKS, stakeLockActive, effectiveStake, OPERATIONS, opSlotsOf, nextOpSlotLevel, jailed, usd, art , coolLeft, coolWait } from './rules.js';
 
 const uid = () => crypto.randomUUID();
 const cargoCount = (cargo) => Object.values(cargo).reduce((a, n) => a + (n || 0), 0);
-// Family turf (§5.4): holding the district you're standing in gets better prices both ways.
-const turfMult = (held, loc, side) => (held.includes(loc) ? (side === 'buy' ? 0.95 : 1.05) : 1);
-
 // The 1% street tax on every house-take feeds the 12h buyback (spec §7.12).
 // The 1% dev fee is an off-ledger cut. Neither touches a character's cash ledger,
 // so the per-character invariant (Σ cash rows == cash+bank change) stays exact.
@@ -401,10 +398,9 @@ export async function buyGood(ch, goodId, qty, client, h) {
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -(cost + fee + tax), reason: `goods:buy:${goodId}` });
   await takeHouse(client, tax);
   await logCollect(client, ch.account_id, 'goods', goodId); // THE COLLECTION
-  // the daily 'goods' contract + the hustle legwork both promise "buy OR sell" — only the sell
-  // side counted (the dice-counter class from the daily pool), so a buy-only day couldn't complete
-  // either. The bump costs the buyer the 2% take either way; the contract payout is unchanged.
-  await h.bumpDaily(client, ch.id, 'goods');
+  // Daily progress follows settled freight volume, not request count. One fresh-street trunk is one
+  // lot; partial loads carry fractionally, so ten one-unit buys and one ten-unit buy are identical.
+  await h.bumpDaily(client, ch.id, 'goods', n / GOODS_MARKET.DAILY_LOT_UNITS);
   // WAVE 59 — ten goods lines and one sentence: "bought 2 at $190 a unit" named nothing, so the
   // cheapest crate and the dearest read identically but for the figure. The id is enough here — the
   // client resolves it through goodName off the published /v1/rules catalog.
@@ -418,11 +414,10 @@ export async function sellGood(ch, goodId, qty, client, h) {
   const n = Math.min(Math.max(1, Math.floor(Number(qty) || 0)), have);
   if (n <= 0) throw new GameError('none', 'Nothing of that in the trunk.');
   const block = priceBlock();
-  const ev = cityEventOf(dayOf());
-  // SEASONAL MODIFIER (slate #6): THE GOLD RUSH lifts every sale (composes like the city event)
-  const unit = Math.round(goodPriceOf(goodId, ch.loc, block) * turfMult([...(h.owned.held || []), ...(h.owned.deedPerk || [])], ch.loc, 'sell') * (ev.tradeMult || 1) * pathFx(ch, 'goodsSell') * (seasonModOf().tradeSellMult || 1)); // PATHS v2 — ledger keeps 1.05; the Gun sells at 0.95 (the soldier's-no-merchant handicap); deed corners count (2C)
-  const gross = unit * n, fee = Math.ceil(gross * 0.01), tax = Math.ceil(gross * 0.01);
-  const net = gross - fee - tax;
+  // A structural NPC bid/ask spread keeps same-shop round trips negative even
+  // when turf, Payday, Path and season modifiers compose. Geographic spreads
+  // remain the skill edge; the exact quote helper is also used by agent plans.
+  const { unit, gross, fee, tax, net } = goodsSellQuote(goodId, ch.loc, n, h.owned, ch, block);
   const liquidity = await consumeGoodsLiquidity(client, goodId, ch.loc, 'sell', n, block);
   ch.cash = Number(ch.cash) + net;
   const left = have - n;
@@ -430,8 +425,8 @@ export async function sellGood(ch, goodId, qty, client, h) {
   await setCargo(client, ch.id, goodId, left);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: net, reason: `goods:sell:${goodId}` });
   await takeHouse(client, tax);
-  await h.bumpDaily(client, ch.id, 'goods');
-  await bumpMastery(client, h, ch, 'commerce', 'sell'); // THE TRADES — goods moved at a margin is commerce
+  await h.bumpDaily(client, ch.id, 'goods', n / GOODS_MARKET.DAILY_LOT_UNITS);
+  await bumpMastery(client, h, ch, 'commerce', 'sell', { units: n }); // THE TRADES — XP follows freight, not request count
   return { ok: true, good: goodId, unit, qty: n, earned: net, liquidity };
 }
 

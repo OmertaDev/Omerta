@@ -500,7 +500,7 @@ levels; the top levels cost $OMR) → **cook a batch** (`/kitchen/cook`) → **c
   Dealing also uses energy.
 - **Crew** (`/kitchen/crew/hire`, up to 5) sell your cheapest drugs while you are offline. But each crew
   member costs **$1,200 each hour in wages** (also called "the nut," `/kitchen/crew/wages`) whether the
-  stash moves or not. If you do not pay for 3 days, the crew becomes **cold** and stops selling.
+  stash moves or not. If you do not pay for 2 days, the crew becomes **cold** and stops selling.
   **Keep them stocked and check in often.** Offline sales are capped at 8 hours' worth however long you
   are away, but the nut keeps running for up to two days — so a crew you visit three times a day earns
   about 3.6× its wages even on the cheapest line, a crew you see once a day barely clears it, and a crew
@@ -2264,8 +2264,9 @@ sometimes $OMR (a legal source, one time for each account), and titles.
 bonus. **The Daily Score** (`/v1/heist`) is the best repeatable income at a low level (8-hour cooldown). **Check
 in** each day for a streak bonus.
 
-**Referrals** (section 7.13): your referral code is your character **name**. A recruit qualifies after 4
-conditions (L8, 40 jobs, 3 check-ins, $25k net worth). Milestones pay the recruiter cash and titles.
+**Referrals** (section 7.13): your referral code is your character **name**. A recruit qualifies after making
+their character permanent and meeting the play conditions (L8, 40 jobs, 3 check-ins, $25k net worth).
+Same-origin human referrals do not receive referral value. Milestones pay eligible recruiters cash and titles.
 - **The crew bonus** increases all **respect** you earn based on each qualified recruit's current level: a recruit at
   level 5 is worth +5%, at level 10 +10%, at level 15 +15%, and so on in steps. It applies to every
   respect you earn, anywhere in the game. It is **live**: recomputed from your crew's current levels,

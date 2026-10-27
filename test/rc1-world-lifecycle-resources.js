@@ -15,6 +15,10 @@ import { createNativeQuiescentGroupObserver } from '../tools/rc1-native-quiescen
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { sha256 } from '../tools/rc1-resource-journal.js';
 import { QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
+import { MARKET_RESOURCE_SOURCE_TRANSFER } from '../tools/rc1-world-market-resources.js';
+assert.equal(MARKET_RESOURCE_SOURCE_TRANSFER.scope,
+  'Only unchanged, observed committed cash/cargo/tax and personal market custody equations transfer. This does not qualify goods buy/sell availability, reachability, bucket/counter accounting, quote eligibility or new goods authority.',
+  'Historical fixture must execute the exact frozen market resource helper');
 assert.equal(MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER.predecessorSha256, MARKET_EXPIRY_SOURCE_PINS['src/game.js']);
 assert.equal(MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
 assert.match(MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER.scope, /separate current-source native proofs/);

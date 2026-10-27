@@ -28,8 +28,9 @@ const address = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_
 assert(address, 'An explicit isolated PostgreSQL database URL is required');
 const endpoint = cityGameplayMigrationEndpoint(address);
 const namespace = `director_migration_${crypto.randomBytes(8).toString('hex')}`;
+const populationNamespace = `${namespace}_population`;
 const admin = new pg.Pool({ connectionString: endpoint.toString() });
-let pool, created = false;
+let pool, created = false, populationCreated = false;
 const marketOperationsInventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
 const marketOperationsCatalogBlob = execFileSync('git', ['show', 'c43ce4c33c467b7764f4014eda3aaf368a8348ee:test/lib/phase2-architecture-upgrade-catalog.json']);
 assert.equal(crypto.createHash('sha256').update(marketOperationsCatalogBlob).digest('hex'), '44246d5b00b1a1bd7189211be6d9c36cc8680365fb0b9207394a5246f8ca7917', 'Reviewed complete Commerce catalog bytes changed');
@@ -258,6 +259,20 @@ try {
   const serverVersion = Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version);
   dbCaps.skipLocked = true;
   await pool.query(execFileSync('git', ['show', `${BASELINE}:schema.sql`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
+  const exactBaselineMetadata = await readCommerceReleasePhase2Metadata(pool);
+  // Current gameplay populates the historical fixture before migration, so give that temporary
+  // population schema only the newer read/persist surfaces it uses. We then copy all common-table
+  // data into a newly applied exact baseline schema; this avoids dropped-column attnum holes and
+  // keeps the predecessor catalog/ordinals genuine for the migration proof below.
+  await pool.query('ALTER TABLE account_persistent ADD COLUMN referral_same_ip_hold BOOLEAN');
+  await pool.query('ALTER TABLE account_persistent ADD COLUMN checkin_day INT NOT NULL DEFAULT 0');
+  await pool.query('ALTER TABLE account_persistent ADD COLUMN checkin_streak INT NOT NULL DEFAULT 0');
+  await pool.query(`CREATE TABLE account_daily_claims (
+    account_id TEXT NOT NULL, day INT NOT NULL, scope TEXT NOT NULL, claim_id TEXT NOT NULL,
+    slot INT, claimed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (account_id, day, scope, claim_id)
+  )`);
+  await pool.query('ALTER TABLE characters ADD COLUMN crew_sale_credit_ms BIGINT NOT NULL DEFAULT 0');
   assert.equal((await pool.query("SELECT table_name FROM information_schema.tables WHERE table_schema=current_schema() AND table_name LIKE 'director_%'")).rows.length, 0);
   const account = 'director-migration-owner';
   await addPlayer(pool, account); await addPlayer(pool, 'director-migration-neighbor');
@@ -299,6 +314,92 @@ try {
     'world_operation_roles', 'world_operation_commitments', 'world_operation_events', 'player_command_boards'];
   const capture = async (tables) => Object.fromEntries(await Promise.all(tables.map(async (table) => [table,
     (await pool.query(`SELECT * FROM ${table}`)).rows.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))])));
+  const populatedCanonicalRows = await capture(canonicalTables);
+  await admin.query(`ALTER SCHEMA ${namespace} RENAME TO ${populationNamespace}`);
+  created = false; populationCreated = true;
+  await admin.query(`CREATE SCHEMA ${namespace}`); created = true;
+  await pool.query(execFileSync('git', ['show', `${BASELINE}:schema.sql`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
+  const baselineTables = (await pool.query(`SELECT table_name FROM information_schema.tables
+    WHERE table_schema=current_schema() AND table_type='BASE TABLE' ORDER BY table_name`)).rows.map(row => row.table_name);
+  const quote = value => { assert.match(value, /^[a-z_][a-z0-9_]*$/); return `"${value}"`; };
+  const foreignKeys = exactBaselineMetadata.constraints.filter(constraint => constraint.type === 'f');
+  const pending = new Map(baselineTables.map(table => [table, new Set()]));
+  for (const constraint of foreignKeys) if (constraint.referenced_schema === '$self'
+    && constraint.referenced_table !== constraint.table_name)
+    pending.get(constraint.table_name).add(constraint.referenced_table);
+  const copyOrder = [];
+  while (pending.size) {
+    const ready = [...pending].filter(([,parents]) => [...parents].every(parent => !pending.has(parent)))
+      .map(([table]) => table).sort();
+    assert(ready.length, 'Exact baseline foreign-key graph must permit owner-only data restoration');
+    for (const table of ready) { pending.delete(table); copyOrder.push(table); }
+  }
+  const clone = await pool.connect();
+  await clone.query('BEGIN');
+  try {
+    for (const constraint of foreignKeys) await clone.query(`ALTER TABLE ${quote(namespace)}.${quote(constraint.table_name)}
+      ALTER CONSTRAINT ${quote(constraint.name)} DEFERRABLE INITIALLY DEFERRED`);
+    await clone.query('SET CONSTRAINTS ALL DEFERRED');
+    // RESTRICT actions execute immediately even on a deferred FK; clear children first, then copy parents first.
+    for (const table of [...copyOrder].reverse()) await clone.query(`DELETE FROM ${quote(namespace)}.${quote(table)}`);
+    for (const table of copyOrder) {
+      const columns = (await clone.query(`SELECT column_name FROM information_schema.columns
+        WHERE table_schema=$1 AND table_name=$2 ORDER BY ordinal_position`, [namespace, table])).rows.map(row => row.column_name);
+      const list = columns.map(quote).join(',');
+      await clone.query(`INSERT INTO ${quote(namespace)}.${quote(table)} (${list})
+        SELECT ${list} FROM ${quote(populationNamespace)}.${quote(table)}`);
+    }
+    const sequences = (await clone.query(`SELECT t.relname::text AS table_name,a.attname::text AS column_name,
+      s.relname::text AS sequence_name,p.seqstart::text AS start,p.seqincrement::text AS increment
+      FROM pg_class s JOIN pg_namespace sn ON sn.oid=s.relnamespace JOIN pg_sequence p ON p.seqrelid=s.oid
+      JOIN pg_depend d ON d.objid=s.oid AND d.classid='pg_class'::regclass
+        AND d.refclassid='pg_class'::regclass AND d.deptype IN ('a','i')
+      JOIN pg_class t ON t.oid=d.refobjid JOIN pg_namespace tn ON tn.oid=t.relnamespace
+      JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=d.refobjsubid
+      WHERE sn.nspname=$1 AND tn.nspname=$1 AND s.relkind='S' ORDER BY t.relname,a.attname`, [namespace])).rows;
+    assert.deepEqual(sequences.map(({table_name,column_name,sequence_name}) => ({table_name,column_name,sequence_name})), [
+      { table_name: 'content_activation_events', column_name: 'id', sequence_name: 'content_activation_events_id_seq' },
+      { table_name: 'item_events', column_name: 'sequence', sequence_name: 'item_events_sequence_seq' },
+      { table_name: 'street_deed_history', column_name: 'id', sequence_name: 'street_deed_history_id_seq' },
+    ], 'Exact baseline owned sequence bindings are closed');
+    for (const sequence of sequences) {
+      const relation = `${quote(namespace)}.${quote(sequence.sequence_name)}`,
+        sourceRelation = `${quote(populationNamespace)}.${quote(sequence.sequence_name)}`;
+      const maximum = (await clone.query(`SELECT MAX(${quote(sequence.column_name)})::text AS value
+        FROM ${quote(namespace)}.${quote(sequence.table_name)}`)).rows[0].value;
+      const sourceState = (await clone.query(`SELECT last_value::text,is_called FROM ${sourceRelation}`)).rows[0];
+      const last = BigInt(sourceState.last_value), increment = BigInt(sequence.increment);
+      assert(increment > 0n, 'Baseline BIGSERIAL sequences must increase');
+      const next = sourceState.is_called ? last + increment : last;
+      if (maximum !== null) assert(next > BigInt(maximum), 'Population sequence state must advance beyond copied values');
+      await clone.query('SELECT setval($1::regclass,$2::bigint,$3)', [relation, sourceState.last_value, sourceState.is_called]);
+      assert.equal(BigInt((await clone.query('SELECT nextval($1::regclass)::text AS value', [relation])).rows[0].value), next,
+        'Copied sequence state emits its exact collision-safe next value');
+      await clone.query('SELECT setval($1::regclass,$2::bigint,$3)', [relation, sourceState.last_value, sourceState.is_called]);
+      assert.deepEqual((await clone.query(`SELECT last_value::text,is_called FROM ${relation}`)).rows[0],
+        sourceState, 'Sequence probe restores the exact population last-value/called state, including gaps');
+    }
+    await clone.query('SET CONSTRAINTS ALL IMMEDIATE');
+    for (const constraint of foreignKeys) await clone.query(`ALTER TABLE ${quote(namespace)}.${quote(constraint.table_name)}
+      ALTER CONSTRAINT ${quote(constraint.name)} ${constraint.deferrable
+        ? `DEFERRABLE INITIALLY ${constraint.deferred ? 'DEFERRED' : 'IMMEDIATE'}` : 'NOT DEFERRABLE'}`);
+    assert.deepEqual(await readCommerceReleasePhase2Metadata(clone), exactBaselineMetadata,
+      'Temporary FK deferral restores the exact baseline physical catalog before commit');
+    await clone.query('COMMIT');
+  } catch (error) { await clone.query('ROLLBACK'); throw error; }
+  finally { clone.release(); }
+  await admin.query(`DROP SCHEMA ${populationNamespace} CASCADE`); populationCreated = false;
+  assert.deepEqual((await pool.query(`SELECT table_name,column_name FROM information_schema.columns
+    WHERE table_schema=current_schema() AND (table_name,column_name) IN
+      (('account_persistent','referral_same_ip_hold'),('account_persistent','checkin_day'),
+       ('account_persistent','checkin_streak'),('characters','crew_sale_credit_ms'))
+    ORDER BY table_name,column_name`)).rows, [], 'Temporary current-runtime compatibility columns are absent from the predecessor');
+  assert.equal((await pool.query("SELECT to_regclass(current_schema()||'.account_daily_claims') AS relation")).rows[0].relation,
+    null, 'Temporary current-runtime compatibility table is absent from the predecessor');
+  assert.deepEqual(await readCommerceReleasePhase2Metadata(pool), exactBaselineMetadata,
+    'Fresh migration target has the exact baseline physical relations, columns/ordinals, constraints and indexes');
+  assert.deepEqual(await capture(canonicalTables), populatedCanonicalRows,
+    'Fresh exact baseline target preserves every populated canonical row and receipt');
   const constraints = async () => (await pool.query(`SELECT t.relname::text AS table_name,c.conname::text AS name,
     pg_get_constraintdef(c.oid,true) AS definition FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid
     JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname=current_schema() AND c.contype<>'n'
@@ -737,5 +838,6 @@ try {
 } finally {
   if (pool) await pool.end();
   if (created) await admin.query(`DROP SCHEMA ${namespace} CASCADE`);
+  if (populationCreated) await admin.query(`DROP SCHEMA ${populationNamespace} CASCADE`);
   await admin.end();
 }

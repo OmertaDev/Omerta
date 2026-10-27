@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { UX_NATIVE_READER_SOURCE, UX_NATIVE_READER_SOURCE_SHA256 } from './ux-native-reader-source-data.js';
 import { UX_PHASE2_UPGRADE_BOUND_SOURCE, UX_PHASE2_UPGRADE_BOUND_SOURCE_SHA256 } from './ux-phase2-upgrade-bound-source-data.js';
+import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 export { UX_NATIVE_READER_SOURCE };
 export const UX_NATIVE_READER_SOURCE_FILES = Object.freeze(['test/phase2-postgres.js', 'tools/enterprise-native.js', 'test/enterprise-native-guard.js']);
 const sha = input => crypto.createHash('sha256').update(input).digest('hex');
@@ -73,6 +74,7 @@ export function qualifyUxPhase2UpgradeBoundSource(file, input, pin = UX_PHASE2_U
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function uxPhase2UpgradeBoundHistoricalInput(file, input) {
+  input = economyUxMergeMainHistoricalInput(file, input);
   if (file !== UX_PHASE2_UPGRADE_BOUND_FILE) return input;
   const row = UX_PHASE2_UPGRADE_BOUND_SOURCE.files?.[0]; if (!row) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

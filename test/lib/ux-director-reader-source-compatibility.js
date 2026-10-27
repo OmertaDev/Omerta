@@ -7,6 +7,7 @@ import { UX_DIRECTOR_READER_SOURCE as pin, UX_DIRECTOR_READER_SOURCE_FILES, qual
 import { qualifyUxSource } from '../../tools/ux-source-compatibility.js';
 import { qualifyUxNativeReaderSource } from '../../tools/ux-native-reader-source-compatibility.js';
 import { qualifyUxEnterpriseReaderSource } from '../../tools/ux-enterprise-reader-source-compatibility.js';
+import { ECONOMY_UX_MERGE_SOURCE, economyUxMergeMainHistoricalInput } from '../../tools/economy-ux-merge-source-compatibility.js';
 const AUTHORED_DIRECTOR_READER_FIX = 'c6dd6c9730c9111a7af5bb47ce290f605d08269c';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -25,14 +26,15 @@ const hunks = diff => {
 };
 let positives = 0, refusals = 0, inverseHunks = 0;
 for (const row of pin.files) {
-  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = fs.readFileSync(row.file, 'utf8'), stat = fs.lstatSync(row.file);
+  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = economyUxMergeMainHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')), stat = fs.lstatSync(row.file);
   assert.equal(target, git('show', 'c6247976ff71e8d4c103ebd1498c2d373217d077:' + row.file), 'Complete original Director assertions and test body remain exact');
   const originalImport = "from '../tools/commerce-deed-release-phase2-native-catalog.js';", currentImport = "from '../tools/ux-release-phase2-native-catalog.js';";
   assert.equal(target.split(originalImport).length, 2);
   assert.equal(current, target.replace(originalImport, currentImport), 'Only the one exact Director import changes');
   assert.equal(row.mode, row.targetMode); assert.equal(row.inverses.length, 1);
-  assert(stat.isFile() && !stat.isSymbolicLink()); assert.equal(git('show', 'HEAD:' + row.file), current, 'Actual committed Director reader source remains authored source');
-  assert.equal(git('ls-tree', 'HEAD', '--', row.file).trim(), row.mode + ' blob ' + row.currentBlob + '\t' + row.file, 'Actual committed reader mode and blob remain exact');
+  const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === row.file); assert(mergeRow);
+  assert(stat.isFile() && !stat.isSymbolicLink()); assert.equal(economyUxMergeMainHistoricalInput(row.file, git('show', 'HEAD:' + row.file)), current, 'Parent-qualified committed Director reader source remains authored source');
+  assert.equal(mergeRow.main.mode + ' blob ' + mergeRow.main.blob + '\t' + row.file, row.mode + ' blob ' + row.currentBlob + '\t' + row.file, 'Parent-qualified reader mode and blob remain exact');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'));
   for (const [revision, mode, expected] of [[pin.revision, row.mode, row.currentBlob], [pin.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', row.file).trim(), mode + ' blob ' + expected + '\t' + row.file);
   assert.deepEqual(row.inverses, hunks(git('diff', '--no-ext-diff', '--unified=3', pin.targetRevision, pin.revision, '--', row.file)), 'Exact actual Git inverse hunks only');

@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   auth_subject TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'active',
   created_ip TEXT, last_ip TEXT,
+  -- Immutable signup provenance. NULL means legacy/untrusted and must never drive an automatic hold.
+  created_ip_authority TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (auth_provider, auth_subject)   -- one account per real identity (audit: no dup-identity race)
 );
@@ -42,6 +44,9 @@ CREATE TABLE IF NOT EXISTS account_persistent (
   referred_by TEXT, ref_paid BOOLEAN NOT NULL DEFAULT false,
   ref_spark BOOLEAN NOT NULL DEFAULT false,  -- the stepped EARLY referral payout fired (before full qualification)
   ref_l2_paid BOOLEAN NOT NULL DEFAULT false,  -- the tier-2 "family tree" finder's fee (to the grandrecruiter) fired for THIS account's qualification
+  -- NULL = unreviewed/no shared-origin signal, TRUE = held from every referral value path,
+  -- FALSE = an explicit shared-household clearance. Never overload the paid latches with review state.
+  referral_same_ip_hold BOOLEAN,
   agent_flag BOOLEAN NOT NULL DEFAULT false,
   -- THE POPULATION: an NPC resident's account. The agent_flag TWIN — the account-level exclusion hook
   -- for the human-only surfaces (the Street Wage above all: a resident drawing emission would be theft
@@ -112,6 +117,11 @@ CREATE TABLE IF NOT EXISTS account_persistent (
   -- payout failure never mis-advances the track (the stake-pool "pending, no forfeit" precedent).
   pass_owed NUMERIC NOT NULL DEFAULT 0
 );
+-- CHECK-IN LINEAGE GATE: the account survives death, so the once-per-day claim and its streak
+-- must live here too. Character columns remain as a display/backward-compatibility mirror.
+-- Kept as ALTERs so the gate lands on existing databases where CREATE TABLE IF NOT EXISTS is a no-op.
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS checkin_day INT NOT NULL DEFAULT 0;
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS checkin_streak INT NOT NULL DEFAULT 0;
 CREATE TABLE IF NOT EXISTS characters (
   id TEXT PRIMARY KEY,
   account_id TEXT NOT NULL,
@@ -219,6 +229,8 @@ CREATE TABLE IF NOT EXISTS characters (
   shank_at TIMESTAMPTZ,                            -- THE PEN: per-attacker shank cooldown (SIGN-OFF Tier 3) — direct-SQL, outside persistCharacter
   train_at TIMESTAMPTZ,                            -- PACING: per-session gym cooldown — direct-SQL, outside persistCharacter
   mission_at TIMESTAMPTZ,                          -- PACING: cooldown between mission claims (stops the ladder cascading) — direct-SQL
+  street_action_at TIMESTAMPTZ,                    -- PACING: shared crime/deal cooldown — direct-SQL mutex, persisted across requests
+  crew_sale_credit_ms BIGINT NOT NULL DEFAULT 0,   -- fractional worker-ms carried between lazy accrual windows
   welsher BOOLEAN NOT NULL DEFAULT false,          -- LOAN SHARKING: defaulted on a debt — can't borrow again (dies with the street)
   wanted_until TIMESTAMPTZ,                         -- LOAN step 4: WANTED — a defaulter under active pursuit (omertà stripped + NPC hunters + a pool bounty) until it lapses or they square up
   envelope_until TIMESTAMPTZ,                       -- THE ENVELOPE: standing graft to the cops — investigation meter builds slower while current (a $OMR sink)
@@ -620,6 +632,24 @@ CREATE TABLE IF NOT EXISTS daily_progress (
   claimed TEXT NOT NULL DEFAULT '[]',
   PRIMARY KEY (character_id, day)
 );
+-- Cash/token daily rewards survive a character only as ledgered value, so their replay latch must
+-- survive too. `scope` separates boards and `claim_id` preserves each board's existing semantics.
+CREATE TABLE IF NOT EXISTS account_daily_claims (
+  account_id TEXT NOT NULL,
+  day INT NOT NULL,
+  scope TEXT NOT NULL,
+  claim_id TEXT NOT NULL,
+  slot INT,
+  claimed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (account_id, day, scope, claim_id)
+);
+CREATE INDEX IF NOT EXISTS ix_account_daily_claims_day ON account_daily_claims(day);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_account_daily_claim_slot
+  ON account_daily_claims(account_id, day, scope, slot);
+CREATE TABLE IF NOT EXISTS economy_migrations (
+  id TEXT PRIMARY KEY,
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 CREATE TABLE IF NOT EXISTS referrals (
   recruit_account TEXT PRIMARY KEY,
   recruiter_account TEXT NOT NULL,
@@ -682,6 +712,10 @@ CREATE TABLE IF NOT EXISTS social_claims (
   posted_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   paid BOOLEAN NOT NULL DEFAULT false,
   proof TEXT,
+  -- Rolling-upgrade bridge. Existing rows and inserts from a predecessor process inherit TRUE;
+  -- current registrations explicitly write FALSE. A durable cutover marker globally sunsets the
+  -- permissive verifier after 48h; the ordinary row TTL independently bounds each pending claim.
+  legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true,
   PRIMARY KEY (account_id, day, task_id)
 );
 CREATE TABLE IF NOT EXISTS telemetry (
@@ -1968,6 +2002,16 @@ CREATE TABLE IF NOT EXISTS worker_heartbeat (
   CONSTRAINT worker_heartbeat_one CHECK (id = 1)
 );
 INSERT INTO worker_heartbeat (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+-- Bounded worker scans keep their high-water mark and last committed page here. The cursor advances
+-- in the same transaction as a page's effects, so a restart repeats at most one rolled-back page and
+-- a continuously growing tail cannot prevent the scan from wrapping to the beginning.
+CREATE TABLE IF NOT EXISTS worker_sweep_cursors (
+  sweep_key TEXT PRIMARY KEY,
+  after_key TEXT,
+  upper_key TEXT,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT worker_sweep_cursor_pair CHECK ((after_key IS NULL) = (upper_key IS NULL))
+);
 -- BLUE-TEAM M2: an accountability log for the mod perimeter. Every god-mode MUTATION (ban, mod-kill,
 -- confiscate, mint-invites, fund-reserve, revoke, comp/QA grants) authenticated by the MOD_KEY writes a
 -- row here. A leaked or misused MOD_KEY was otherwise unlogged — this is the who/what/when a post-incident
@@ -2146,9 +2190,27 @@ CREATE INDEX IF NOT EXISTS ix_char_respect ON characters (respect);
 -- also serves the estate/chain paths that read a bloodline's DEAD rows (`ORDER BY alive DESC`) and the
 -- `account_id IN (…)` batch reads. Coverage across 78 sites beats 0.03ms on one of them.
 CREATE INDEX IF NOT EXISTS ix_char_account ON characters (account_id);
+-- The Capo worker walks only agent accounts, then qualifies their direct recruits. These indexes keep
+-- each bounded cursor page proportional to that page instead of rescanning the full account/telemetry
+-- estate as the population grows.
+-- These predicate columns were added after the original schema. They must land before PostgreSQL parses
+-- the partial index during an in-place upgrade; the derived column pass runs only after schema.sql.
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS minted BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS npc_flag BOOLEAN NOT NULL DEFAULT false;
+CREATE INDEX IF NOT EXISTS ix_account_persistent_agent_cursor
+  ON account_persistent (account_id) WHERE agent_flag;
+CREATE INDEX IF NOT EXISTS ix_account_persistent_recruit_candidates
+  ON account_persistent (referred_by, account_id)
+  WHERE referred_by IS NOT NULL AND minted AND NOT agent_flag AND NOT npc_flag;
+CREATE INDEX IF NOT EXISTS ix_char_alive_account_respect
+  ON characters (account_id, respect) WHERE alive;
+CREATE INDEX IF NOT EXISTS ix_telemetry_account_at ON telemetry (account_id, at);
 CREATE INDEX IF NOT EXISTS ix_gang_members_gang ON gang_members (gang_id);
 CREATE INDEX IF NOT EXISTS ix_listings_created ON listings (created_at);
 CREATE INDEX IF NOT EXISTS ix_tx_currency_reason ON transactions (currency, reason);
+-- Lineage cutover reconciliation reads only the current/previous UTC day after its first full pass.
+-- Keep the time key behind the two exact filters so restarts do not revisit the lifetime ledger.
+CREATE INDEX IF NOT EXISTS ix_tx_currency_reason_at ON transactions (currency, reason, at);
 CREATE INDEX IF NOT EXISTS ix_tx_character ON transactions (character_id);
 CREATE INDEX IF NOT EXISTS ix_rng_action ON rng_audit (action);
 -- (red-team R16) funnelStats filters telemetry by event ('broadcast_share'/'first_week_step'); without
@@ -3679,6 +3741,10 @@ CREATE TABLE IF NOT EXISTS email_confirm_sent (
 );
 -- THE CAPO'S LICENSE: worker-computed count of an agent's minted+retained+levelled human recruits
 ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS capo_recruits INT NOT NULL DEFAULT 0;
+-- Capo perks are valid only while the bounded worker scan has refreshed this account. A null/expired
+-- stamp fails closed to zero perks, so an account cannot preserve a stale tier by keeping its hot row
+-- locked whenever the sweep passes it.
+ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS capo_recruits_at TIMESTAMPTZ;
 
 -- ── THE TICKER BALLOT (the Stock Machine, Phase A — chain-dormant) ──────────────────────────────
 -- The Commission's daily stock vote: one ballot per seated family per day (the commission_votes

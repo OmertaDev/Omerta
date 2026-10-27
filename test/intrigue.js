@@ -208,8 +208,9 @@ let spy, mark, secretId;
   // crime (farm one success)
   let pulled = false;
   for (let i = 0; i < 40 && !pulled; i++) {
-    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL WHERE id='${c.id}'`);
+    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL, street_action_at=NULL WHERE id='${c.id}'`);
     const cr = await call('POST', '/v1/crimes/pick', { token: c.token });
+    assert.notEqual(cr.body?.error, 'cooldown', 'the crime fixture starts each retry ready');
     if (cr.body?.success) pulled = true;
   }
   assert.ok(pulled, 'a job lands');
@@ -229,11 +230,14 @@ let spy, mark, secretId;
   assert.ok(catOf('goods').have >= 1, 'the traded good is collected');
   // idempotent: pulling the same job again doesn't double-count
   const crimesHave = catOf('crimes').have;
+  let pulledAgain = false;
   for (let i = 0; i < 20; i++) {
-    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL WHERE id='${c.id}'`);
+    await pool.query(`UPDATE characters SET nerve=99, jail_until=NULL, street_action_at=NULL WHERE id='${c.id}'`);
     const cr = await call('POST', '/v1/crimes/pick', { token: c.token });
-    if (cr.body?.success) break;
+    assert.notEqual(cr.body?.error, 'cooldown', 'the idempotence retry reaches the crime roll');
+    if (cr.body?.success) { pulledAgain = true; break; }
   }
+  assert.ok(pulledAgain, 'the same job lands again');
   const board2 = (await call('GET', '/v1/collection', { token: c.token })).body;
   assert.equal(board2.categories.find((x) => x.id === 'crimes').have, crimesHave, 'the log is idempotent');
   // the leaderboard ranks the collector

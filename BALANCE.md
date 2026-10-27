@@ -447,11 +447,11 @@ This drains the gang-treasury side of the passive stack (territory income was pu
 with no recurring counter-flow). Numbers parallel the business pad for sign-off clarity; both dials
 are independent.
 
-**Step three — crew wages ("the nut")**: `CREW_WAGE_PER_HR` $1,200 / `CREW_WAGE_CAP_MS` 7d /
-`CREW_WAGE_COLD_MS` 3d (M4). Each kitchen corner man draws $1,200/hr whether the stash moves or
+**Step three — crew wages ("the nut")**: `CREW_WAGE_PER_HR` $1,200 / `CREW_WAGE_CAP_MS` 2d /
+`CREW_WAGE_COLD_MS` 2d (M4). Each kitchen corner man draws $1,200/hr whether the stash moves or
 not — a flat wage (not a % of sales, since crew income depends on stash supply), owed even when
 idle, so it discourages keeping crew you don't supply. `crew:wages` is a cash sink (added to the
-vocabulary beside `crew:hire`). Unpaid past 3d the crew goes cold and the §7.1 accrual stops their
+vocabulary beside `crew:hire`). At 2d unpaid the crew goes cold and the §7.1 accrual stops their
 offline sales. Economic note: this is the FIRST sink gating an OFFLINE faucet — a busy 5-crew
 grosses ~$48k/hr while the nut is $6k/hr (~12%), but an IDLE 5-crew (no stash) still owes $6k/hr
 for $0, so the drain is sharpest on hoarded-but-unsupplied crew (intended). The $1,200 flat is the
@@ -3518,7 +3518,7 @@ The daily board pays **2.3× a sitting of crime**. **F2 is retired, not deferred
 have roughly doubled a daily faucet that already out-pays the loop it was meant to compete with, on
 the signed pacing curve, on the strength of a number I got wrong.
 
-## THE NUT — the crew, and the door out (tester-reported; measured, made legible, not retuned)
+## THE NUT — the crew, and the door out (tester-reported; current 48h cap/cold model)
 
 The same tester who found the pad also wrote **"same for the kitchen. it's unbalanced"** and
 **"no way a 25k runner costs 8k in 5h"**. Measured from the signed constants (sim **P9.20c**, printed
@@ -3530,11 +3530,11 @@ every run):
 | what one hand moves while stocked | **$4,320/hr** on VIM, the cheapest line — **3.6:1** against the wage (360:1 on NOCTURNE) |
 | 1 hand, checking in every 8h | **+$24,960** per cycle — 3.60:1 |
 | 1 hand, checking in daily | **+$5,760** per cycle — **1.20:1** |
-| 1 hand, absent 3 days (the cold line) | **−$51,840** per cycle — **0.40:1** |
-| the asymmetry | sales cap at `OFFLINE_CAP_MS` **8h**; the nut runs to `CREW_WAGE_CAP_MS` **168h** — **21×** |
+| 1 hand, absent 2 days (the cold line) | **−$23,040** per cycle — **0.60:1** |
+| the asymmetry | sales cap at `OFFLINE_CAP_MS` **8h**; the nut runs to `CREW_WAGE_CAP_MS` **48h** — **6×** |
 
-So the tester's arithmetic was right and the mechanic is working as designed. It is the pad's fiction,
-sharper: **the corner holds a shift's take, the envelope runs a week.** A stocked, attentive crew is
+So the tester's arithmetic was right and the mechanic is working as designed. It is the pad's fiction:
+**the corner holds a shift's take, the wage envelope runs two days.** A stocked, attentive crew is
 never the problem; a daily one is thin on the cheapest line; an absent one bleeds. That is attendance
 pricing, and it is a better mechanic than a risk-free drip.
 
@@ -3542,25 +3542,25 @@ pricing, and it is a better mechanic than a risk-free drip.
 `crew` only ever incremented. There was no fire button anywhere in the game, so a player who hired ahead
 of their kitchen owed $1,200/hr/head with no way to stop, forever, on a street that could live months.
 
-Shipped (no lever moved, §10.4 untouched):
+Shipped and retained with the 48h cap/cold correction (§10.4 untouched):
 
 - **the terms ride with the price** — the sheet and `/v1/rules.crew` now carry the per-head rate, the
-  cold window, and the week the nut runs to, so the deal is visible before the hire, not after;
+  cold window, and the two days the nut runs to, so the deal is visible before the hire, not after;
 - **a countdown** to downed tools on the card;
 - **`DELETE /v1/kitchen/crew`** — square up and let one go. A **cold** crew (downed tools past
-  `CREW_WAGE_COLD_MS`) walks for **nothing**: men who stopped working three days ago have already gone,
+  `CREW_WAGE_COLD_MS`) walks for **nothing**: men who reached the wage cap have already gone,
   and that is the exit a broke player needs.
 
 **The dodge is closed on the economics, not with a special rule.** `crewWageOwed` is `crew × elapsed`
 and is never stored, so shedding heads retroactively shrinks the nut. But the free door is only open
-once you are cold, and reaching cold costs three days of sales: **~$311k of product forgone against
-~$86k of wages dodged**, on the cheapest line. Nobody takes that trade. A warm crew's only exit is
+once you are cold, and reaching cold costs two days of sales: **~$207k of product forgone against
+~$58k of wages dodged**, on the cheapest line. Nobody takes that trade. A warm crew's only exit is
 through the till.
 
-**OPEN founder levers** (not moved, ground rule #1): `M4.CREW_WAGE_PER_HR` ($1,200),
-`M4.CREW_WAGE_CAP_MS` (7d — the week the envelope runs), `CONSTANTS.OFFLINE_CAP_MS` (8h — the shift
+**Current founder levers**: `M4.CREW_WAGE_PER_HR` ($1,200),
+`M4.CREW_WAGE_CAP_MS` (2d — the bounded wage envelope), `CONSTANTS.OFFLINE_CAP_MS` (8h — the shift
 the corner holds), `M4.CREW_COST_STEP` ($50k × N), `M4.CREW_MAX` (5). The single number that would
-remove the crossover itself is `OFFLINE_CAP_MS`: raise the shift the corner holds toward the week the
+remove the crossover itself is `OFFLINE_CAP_MS`: raise the shift the corner holds toward the wage
 envelope runs and an absent owner stops bleeding — which also changes every other offline faucet, so
 it is a whole-economy decision, not a kitchen one.
 
@@ -4065,9 +4065,18 @@ that stretches the cap or steepens the pad fails by name rather than quietly res
 Stated precisely, because C **softens** the crossover rather than removing it. A hand draws $1,200/hr
 on the wall clock while offline sales cap at 8h, and only raising `OFFLINE_CAP_MS` would close that —
 which moves every offline faucet in the game, so it was the wrong tool for a kitchen problem. What the
-cap buys is that **the loss stops growing**: three days away goes 0.40:1 → 0.60:1, and a week away is
-no longer any worse than three days. Absence has a floor. An attentive owner is unaffected; they were
+cap buys is that **the loss stops growing**: two days away bottoms out at 0.60:1, and any longer
+absence is no worse because both sales and wages are stopped. Absence has a floor. An attentive owner is unaffected; they were
 never near the cap.
+
+### The wage-cap grace exploit is closed (2026-10-26)
+
+`M4.CREW_WAGE_COLD_MS` is **72h → 48h**, equal to `CREW_WAGE_CAP_MS`. The old split let an
+attentive player touch the game throughout hours 49–72, collect crew sales, and then settle only 48
+hours of wages. Repeating that cycle permanently removed one third of the intended wall-clock sink.
+The crew now downs tools at the exact instant its bounded tab stops growing: working time earns wages,
+and no sales accrue in an unwaged grace window. The 48-hour liability ceiling and broke-player exit
+remain unchanged.
 
 ### D8=C, THEN D8=D — the gates came back, and §4.3 went (founder, 2026-08-02)
 

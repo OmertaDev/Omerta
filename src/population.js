@@ -28,6 +28,8 @@ import { wipeFighterAtDeath } from './boxing.js';
 import { residentEnterTournament, residentNominateFuturity } from './casino.js';
 import { residentEnterGrandPrix } from './races.js';
 import { residentEnterStakes } from './stable.js';
+import { consumeGoodsLiquidity } from './goodsmarket.js';
+import { goodsBuyQuote } from './goodsquote.js';
 // NPC FAMILIES: founding and joining run through the AUDITED player path, not a copy of it — the
 // name/tag validation, the uniqueness clash check, the ledgered `gang:found` sink, the FOR UPDATE
 // on the gang row and the GANG_MAX_MEMBERS count invariant are all the same code a player runs.
@@ -35,7 +37,7 @@ import { residentEnterStakes } from './stable.js';
 import { createGang, joinGang, removeMember } from './social/gangs.js';
 import { clearInboundPointers } from './social/estate.js';
 import { POPULATION, NPC_FIRST, NPC_LAST, npcBandOf, DISTRICTS, PACING, dayOf,
-         LOAN, loanOwed, GOODS, BLACK_MARKET, M3, DUELS, CASINO, CARS, goodPriceOf,
+         LOAN, loanOwed, GOODS, BLACK_MARKET, M3, DUELS, CASINO, CARS, priceBlock,
          BOXING, STABLE, stableKindOf, FIGHTER_MONIKERS, RACER_NAMES, rollRarity, FAMILY_WAR } from './rules.js';
 
 const uid = () => crypto.randomUUID();
@@ -763,18 +765,28 @@ export async function residentAct(client, r) {
     'SELECT COALESCE(SUM(qty),0) n FROM character_cargo WHERE character_id=$1', [r.id])).rows[0].n);
   if (carrying === 0) {
     const good = pick(GOODS);
-    const unit = Math.round(goodPriceOf(good.id, r.loc));
     const budget = Math.min(spendable(Number(r.cash)), bps(Number(r.cash), POPULATION.MARKS.GOODS_BPS));
-    const qty = Math.min(POPULATION.MARKS.GOODS_MAX_UNITS, Math.floor(budget / (unit * 1.02)));
+    const block = priceBlock();
+    let qty = POPULATION.MARKS.GOODS_MAX_UNITS;
+    while (qty > 0 && goodsBuyQuote(good.id, r.loc, qty, {}, block).total > budget) qty--;
     if (qty >= 1) {
-      const cost = unit * qty, fee = Math.ceil(cost * 0.01), tax = Math.ceil(cost * 0.01);
-      await client.query('UPDATE characters SET cash = cash - $2 WHERE id=$1', [r.id, cost + fee + tax]);
-      await client.query('INSERT INTO transactions (id, character_id, currency, amount, reason) VALUES ($1,$2,$3,$4,$5)',
-        [uid(), r.id, 'cash', -(cost + fee + tax), `goods:buy:${good.id}`]);
-      await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]);
-      await client.query('INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,$2,$3)',
-        [r.id, good.id, qty]);
-      return 'freighted';
+      const quote = goodsBuyQuote(good.id, r.loc, qty, {}, block);
+      try {
+        await consumeGoodsLiquidity(client, good.id, r.loc, 'buy', qty, block);
+        await client.query('UPDATE characters SET cash = cash - $2 WHERE id=$1', [r.id, quote.total]);
+        await client.query('INSERT INTO transactions (id, character_id, currency, amount, reason) VALUES ($1,$2,$3,$4,$5)',
+          [uid(), r.id, 'cash', -quote.total, `goods:buy:${good.id}`]);
+        await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [quote.tax]);
+        await client.query('INSERT INTO character_cargo (character_id, good_id, qty) VALUES ($1,$2,$3)',
+          [r.id, good.id, qty]);
+        return 'freighted';
+      } catch (error) {
+        // An empty shared shop is ordinary resident behavior: skip the load and drift instead of
+        // aborting the whole turn. Other failures still roll the transaction back.
+        // `price_changed` must escape so the caller rolls back: the boundary can be observed only
+        // after the guarded liquidity UPDATE, and committing that partial turn would burn stock.
+        if (error?.code !== 'goods_stock') throw error;
+      }
     }
   }
 

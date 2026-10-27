@@ -21,7 +21,7 @@ import { businessesOf } from './business.js';
 import { territoryOf } from './territory.js';
 import { sovBoard } from './sov.js';
 import { staffWagesOf } from './estate.js';
-import { M4, crewWageOwed, crewCold } from './rules.js';
+import { M4, crewWageOwed, crewRehireDebt, crewCold } from './rules.js';
 
 const num = (v) => Number(v || 0);
 
@@ -31,15 +31,19 @@ export async function payrollBoard(ch, client, h) {
   // 1) THE KITCHEN CREW — the nut. All-or-nothing from pocket cash (the signed design: one crew,
   //    one book — you square the whole nut or none of it).
   const crew = num(ch.crew);
-  if (crew > 0) {
+  const now = Date.now();
+  const activeCrewDebt = crewWageOwed(ch, now), deferredCrewDebt = crewRehireDebt(ch, now);
+  if (crew > 0 || deferredCrewDebt > 0) {
     items.push({
-      id: 'crew', label: 'The kitchen crew', flavor: 'the nut', tab: 'kitchen', currency: 'cash',
-      perHr: crew * M4.CREW_WAGE_PER_HR, perDay: null, owed: crewWageOwed(ch),
-      cold: crewCold(ch), coldCount: 0,
-      coldSeconds: ch.crew_paid_at
-        ? Math.max(0, Math.ceil((new Date(ch.crew_paid_at).getTime() + M4.CREW_WAGE_COLD_MS - Date.now()) / 1000)) : null,
+      id: 'crew', label: crew > 0 ? 'The kitchen crew' : 'The former kitchen crew', flavor: 'the nut', tab: 'kitchen', currency: 'cash',
+      perHr: crew * M4.CREW_WAGE_PER_HR, perDay: null, owed: activeCrewDebt + deferredCrewDebt,
+      cold: crewCold(ch, now), coldCount: 0,
+      coldSeconds: crew > 0 && ch.crew_paid_at
+        ? Math.max(0, Math.ceil((new Date(ch.crew_paid_at).getTime() + M4.CREW_WAGE_COLD_MS - now) / 1000)) : null,
       coldWord: 'downed tools',
-      pay: 'POST /v1/kitchen/crew/wages', how: 'all at once, from pocket cash', canPay: true,
+      pay: crew > 0 ? 'POST /v1/kitchen/crew/wages' : 'POST /v1/kitchen/crew/hire',
+      how: crew > 0 ? 'all at once, from pocket cash' : 'settled with the next hire, from pocket cash',
+      canPay: crew > 0,
     });
   }
 
