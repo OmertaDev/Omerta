@@ -12,10 +12,10 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **591** files, **137658** lines (recursive source inventory) |
-| Test suites | **936** files, **198348** lines (recursive source inventory) |
+| Backend modules | **591** files, **137886** lines (recursive source inventory) |
+| Test suites | **938** files, **199019** lines (recursive source inventory) |
 | HTTP routes | **1355** registrations (**1355** unique; 1259 under `/v1`) |
-| Database tables | **582** (`schema.sql`, 9780 lines) |
+| Database tables | **582** (`schema.sql`, 9784 lines) |
 | Client | **14533** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11545** lines, **1111** declared top-level Foundry test functions; the release gate re-measures the passing suite |
