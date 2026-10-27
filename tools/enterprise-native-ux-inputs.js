@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "03e02602e5b4b8f0a6af8dfb0166607be357c525",
+  "authoredRevision": "093d66b680b7f97acaa9cc46f4893d2de81897df",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -10208,8 +10208,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/sale-source-compatibility.js",
       "mode": "100644",
-      "blob": "81cf95f039df7e0569698055fe3c91b1a6ff06ef",
-      "sha256": "517d7eb53408740d8e1e7c1b23cef72524ec33b3e10b84ba6b9e89c5b0adb1f5"
+      "blob": "64d06433e7419bf4cf6125ddfbe098bf875cc3c0",
+      "sha256": "70cb3764e4649d9ee24aa780ba790992dda1577c0e619a718e98a1b8847d9fa1"
     },
     {
       "file": "tools/sale-source-data.js",
@@ -11954,8 +11954,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/sale-source-compatibility.js",
       "mode": "100644",
-      "blob": "81cf95f039df7e0569698055fe3c91b1a6ff06ef",
-      "sha256": "517d7eb53408740d8e1e7c1b23cef72524ec33b3e10b84ba6b9e89c5b0adb1f5"
+      "blob": "64d06433e7419bf4cf6125ddfbe098bf875cc3c0",
+      "sha256": "70cb3764e4649d9ee24aa780ba790992dda1577c0e619a718e98a1b8847d9fa1"
     },
     {
       "file": "tools/sale-source-data.js",
@@ -12067,4 +12067,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "a7dbe72cfb506a5096aa71e20e7888c16dd9be65909fd9721fc82674cbdfc07d";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "976b75fd8dc31e68733b5b329a168dd40810e3d07df59802ee7bf910d92f0849";
