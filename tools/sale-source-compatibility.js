@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { SALE_SOURCE, SALE_SOURCE_SHA256 } from './sale-source-data.js';
 export { SALE_SOURCE };
-export const SALE_SOURCE_FILES = Object.freeze(['package.json', 'public/index.html', 'src/server.js']);
+export const SALE_SOURCE_FILES = Object.freeze(['package.json', 'public/index.html', 'src/server.js', 'test/director-migration.js']);
 export const SALE_SOURCE_PREDECESSOR = 'bb55398ccc135228353e890648bda18222e76a35';
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 const blob = value => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(value) + '\0').update(value).digest('hex');

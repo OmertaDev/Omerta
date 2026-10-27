@@ -1,4 +1,4 @@
-// Bind only the sale-page readers and its required test registration to an authored commit.
+// Bind the sale-page readers and required release fixture correction to an authored commit.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';

@@ -118,5 +118,6 @@ export function economyUxMergeCandidateHistoricalInput(file, input) {
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
+  input = saleHistoricalInput(file, input);
   return historicalInput(file, input, 'main');
 }
