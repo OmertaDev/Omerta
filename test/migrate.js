@@ -342,6 +342,7 @@ for (const need of [
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS contraband NUMERIC NOT NULL DEFAULT 0',
   'ALTER TABLE characters ADD COLUMN IF NOT EXISTS heat_exposure NUMERIC NOT NULL DEFAULT 0',
   'ALTER TABLE social_claims ADD COLUMN IF NOT EXISTS legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true',
+  'ALTER TABLE social_claims ADD COLUMN IF NOT EXISTS proof_contract TEXT',
   'ALTER TABLE commission_votes ADD COLUMN IF NOT EXISTS standing',
   'ALTER TABLE gang_members ADD COLUMN IF NOT EXISTS joined_at',
   "ALTER TABLE item_events ADD COLUMN IF NOT EXISTS quality TEXT NOT NULL DEFAULT 'standard'",
@@ -520,10 +521,12 @@ const has = async (t, c) => { try { await pool.query(`SELECT ${c} FROM ${t} LIMI
 await pool.query('ALTER TABLE track_bets DROP COLUMN odds');       // simulate an in-place upgrade gap
 await pool.query('ALTER TABLE characters DROP COLUMN wire_tier');
 await pool.query('ALTER TABLE social_claims DROP COLUMN legacy_proof_bridge');
+await pool.query('ALTER TABLE social_claims DROP COLUMN proof_contract');
 await pool.query("INSERT INTO social_claims (account_id,day,task_id,paid,proof) VALUES ('pre-cutover',1,'sw_post',false,'legacy')");
 assert.equal(await has('track_bets', 'odds'), false, 'the "old" DB is missing odds');
 assert.equal(await has('characters', 'wire_tier'), false, 'the "old" DB is missing wire_tier');
 assert.equal(await has('social_claims', 'legacy_proof_bridge'), false, 'the old DB is missing the bridge marker');
+assert.equal(await has('social_claims', 'proof_contract'), false, 'the old DB is missing the frozen proof contract');
 const fixed = await migrateColumns(pool, SCHEMA);
 assert.equal(fixed.failed, 0, 're-migration adds the missing columns without error');
 assert.equal(await has('track_bets', 'odds'), true, 'odds is restored by the migration');
@@ -531,6 +534,9 @@ assert.equal(await has('characters', 'wire_tier'), true, 'wire_tier is restored 
 assert.equal((await pool.query(
   "SELECT legacy_proof_bridge FROM social_claims WHERE account_id='pre-cutover'")).rows[0].legacy_proof_bridge,
 true, 'the upgrade marks an existing pending social row for the bounded predecessor bridge');
+assert.equal((await pool.query(
+  "SELECT proof_contract FROM social_claims WHERE account_id='pre-cutover'")).rows[0].proof_contract,
+null, 'the upgrade leaves predecessor rows on the bounded compatibility validator');
 // idempotent: running again is still a clean no-op
 assert.equal((await migrateColumns(pool, SCHEMA)).failed, 0, 're-running the migration is idempotent');
 
