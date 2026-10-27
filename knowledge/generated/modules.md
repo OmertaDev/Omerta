@@ -6,7 +6,7 @@
 |---|---:|---|---:|---:|---:|---:|
 | [src/access.js](../../src/access.js) | 42 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/accountdaily.js](../../src/accountdaily.js) | 79 | platform-core | 0 / 10 | 0 | 2 | 2 |
-| [src/accrual.js](../../src/accrual.js) | 217 | platform-core | 0 / 7 | 0 | 3 | 7 |
+| [src/accrual.js](../../src/accrual.js) | 239 | platform-core | 0 / 7 | 0 | 3 | 7 |
 | [src/actioncooldown.js](../../src/actioncooldown.js) | 22 | platform-core | 2 / 3 | 0 | 1 | 1 |
 | [src/age.js](../../src/age.js) | 38 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 17 | 3 | 5 | 15 |

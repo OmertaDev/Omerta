@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b933d6e2cf86e3b756e092496e41d3c848eea3cb",
+  "sourceRevision": "ce94c717ccb06c0bc151508287598c0574eee741",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17286,
-    "edges": 69264,
+    "nodes": 17294,
+    "edges": 69289,
     "byNodeType": {
-      "Artifact": 7047,
+      "Artifact": 7049,
       "Command": 300,
-      "Commit": 4943,
+      "Commit": 4949,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -64,17 +64,17 @@
       "Workflow": 7
     },
     "byEdgeType": {
-      "BELONGS_TO": 5630,
-      "CHANGED": 26631,
-      "CONTAINS": 7068,
+      "BELONGS_TO": 5632,
+      "CHANGED": 26645,
+      "CONTAINS": 7070,
       "DECLARES": 300,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1187,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 4943,
+      "HAS_COMMIT": 4949,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8236,
+      "IMPORTS": 8237,
       "INHERITS": 45,
       "REFERENCES": 3871,
       "REPRESENTS": 2611,
@@ -118881,20 +118881,20 @@
       "path": "src/accrual.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 14426,
-      "lines": 217,
-      "version": "7a2d1e0be61b02dc",
+      "bytes": 15605,
+      "lines": 239,
+      "version": "ff99ed4d9194ce09",
       "text": true,
       "provenance": [
         {
           "file": "src/accrual.js",
           "line": 1,
-          "version": "7a2d1e0be61b02dc"
+          "version": "ff99ed4d9194ce09"
         }
       ],
-      "lastChangedAt": "2026-10-26T21:42:04.000Z",
+      "lastChangedAt": "2026-10-27T14:14:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c16a43b0b951b8c7f37aa5a66109785f271e1888"
+      "lastChangedCommit": "9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a"
     },
     {
       "key": "Artifact:src/actioncooldown.js",
@@ -139006,20 +139006,20 @@
       "path": "test/economy-balance.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 16125,
-      "lines": 277,
-      "version": "d9477d68d82ada96",
+      "bytes": 17417,
+      "lines": 300,
+      "version": "c463978a6796b940",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-balance.js",
           "line": 1,
-          "version": "d9477d68d82ada96"
+          "version": "c463978a6796b940"
         }
       ],
-      "lastChangedAt": "2026-10-26T21:42:04.000Z",
+      "lastChangedAt": "2026-10-27T14:14:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c16a43b0b951b8c7f37aa5a66109785f271e1888"
+      "lastChangedCommit": "9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a"
     },
     {
       "key": "Artifact:test/economy-hardening-source-compatibility.js",
@@ -139029,20 +139029,20 @@
       "path": "test/economy-hardening-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 81480,
-      "lines": 1152,
-      "version": "996a52f1baf0c8bc",
+      "bytes": 87685,
+      "lines": 1244,
+      "version": "18c6b2a9f02839e9",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "996a52f1baf0c8bc"
+          "version": "18c6b2a9f02839e9"
         }
       ],
-      "lastChangedAt": "2026-10-27T10:55:34.000Z",
+      "lastChangedAt": "2026-10-27T14:20:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0242cc53d307a8e272873d16a2876015510df30b"
+      "lastChangedCommit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
     },
     {
       "key": "Artifact:test/economy-invariant-hardening.js",
@@ -142021,18 +142021,18 @@
       "extension": ".js",
       "bytes": 12780,
       "lines": 90,
-      "version": "f8225cdeac157834",
+      "version": "0f56601338664284",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "f8225cdeac157834"
+          "version": "0f56601338664284"
         }
       ],
-      "lastChangedAt": "2026-10-27T11:08:17.000Z",
+      "lastChangedAt": "2026-10-27T14:30:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ea04050c700506907f53ea46fe3cd88032e050e1"
+      "lastChangedCommit": "1822593cfff6e66483a685fc7bf6bff4c50de5f0"
     },
     {
       "key": "Artifact:test/lib/equipment-economy-migration-catalog.js",
@@ -151127,20 +151127,20 @@
       "path": "test/sale-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9227,
-      "lines": 102,
-      "version": "e6fdd6b8c2353d53",
+      "bytes": 9425,
+      "lines": 104,
+      "version": "219cd4e6682ec5d0",
       "text": true,
       "provenance": [
         {
           "file": "test/sale-source-compatibility.js",
           "line": 1,
-          "version": "e6fdd6b8c2353d53"
+          "version": "219cd4e6682ec5d0"
         }
       ],
-      "lastChangedAt": "2026-10-27T10:55:34.000Z",
+      "lastChangedAt": "2026-10-27T14:20:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0242cc53d307a8e272873d16a2876015510df30b"
+      "lastChangedCommit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
     },
     {
       "key": "Artifact:test/saleattribution-api.js",
@@ -155950,6 +155950,29 @@
       "lastChangedCommit": "b7fb5ff36dd30a99fec83c7dff49b0988de62a7e"
     },
     {
+      "key": "Artifact:tools/economy-bank-interest-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/economy-bank-interest-source-transfer.js",
+      "label": "economy-bank-interest-source-transfer.js",
+      "path": "tools/economy-bank-interest-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 10179,
+      "lines": 95,
+      "version": "2e9c64fb5a08f6f9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/economy-bank-interest-source-transfer.js",
+          "line": 1,
+          "version": "2e9c64fb5a08f6f9"
+        }
+      ],
+      "lastChangedAt": "2026-10-27T14:20:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
+    },
+    {
       "key": "Artifact:tools/economy-hardening-source-transfer.js",
       "type": "Artifact",
       "id": "tools/economy-hardening-source-transfer.js",
@@ -156164,20 +156187,20 @@
       "path": "tools/economy-ux-merge-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 7139,
-      "lines": 133,
-      "version": "ddf0782bdb714cc6",
+      "bytes": 7381,
+      "lines": 136,
+      "version": "c027cdf11599511a",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-ux-merge-source-compatibility.js",
           "line": 1,
-          "version": "ddf0782bdb714cc6"
+          "version": "c027cdf11599511a"
         }
       ],
-      "lastChangedAt": "2026-10-27T10:55:34.000Z",
+      "lastChangedAt": "2026-10-27T14:20:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0242cc53d307a8e272873d16a2876015510df30b"
+      "lastChangedCommit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
     },
     {
       "key": "Artifact:tools/economy-ux-merge-source-data.js",
@@ -156348,20 +156371,20 @@
       "path": "tools/enterprise-native-ux-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 456926,
-      "lines": 12209,
-      "version": "d4636288a521d99d",
+      "bytes": 457912,
+      "lines": 12233,
+      "version": "70db907a20352f43",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "d4636288a521d99d"
+          "version": "70db907a20352f43"
         }
       ],
-      "lastChangedAt": "2026-10-27T11:19:29.000Z",
+      "lastChangedAt": "2026-10-27T14:45:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "88321f1d4e2c95a29b3d906a33318799fa93e05f"
+      "lastChangedCommit": "e846e8445088803657fb6214ffe0b958edcf6265"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -156394,20 +156417,20 @@
       "path": "tools/enterprise-native-ux.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 12512,
+      "bytes": 12571,
       "lines": 101,
-      "version": "31bdf85ebc24db3e",
+      "version": "7c4912e7c713e2f9",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux.js",
           "line": 1,
-          "version": "31bdf85ebc24db3e"
+          "version": "7c4912e7c713e2f9"
         }
       ],
-      "lastChangedAt": "2026-10-27T11:08:17.000Z",
+      "lastChangedAt": "2026-10-27T14:30:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ea04050c700506907f53ea46fe3cd88032e050e1"
+      "lastChangedCommit": "1822593cfff6e66483a685fc7bf6bff4c50de5f0"
     },
     {
       "key": "Artifact:tools/enterprise-native.js",
@@ -156592,6 +156615,29 @@
       "lastChangedAt": "2026-10-21T22:34:00.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "463ad87afb9d4fda010ebfda97d94c55a70e0266"
+    },
+    {
+      "key": "Artifact:tools/generate-economy-bank-interest-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/generate-economy-bank-interest-source-transfer.js",
+      "label": "generate-economy-bank-interest-source-transfer.js",
+      "path": "tools/generate-economy-bank-interest-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 7161,
+      "lines": 118,
+      "version": "3f94499bb28dc4a1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/generate-economy-bank-interest-source-transfer.js",
+          "line": 1,
+          "version": "3f94499bb28dc4a1"
+        }
+      ],
+      "lastChangedAt": "2026-10-27T14:20:08.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
     },
     {
       "key": "Artifact:tools/generate-economy-hardening-source-transfer.js",
@@ -173621,6 +173667,22 @@
         {
           "commit": "181a18df474f6f8d3a54ca38c31dd925baccbb27",
           "url": "https://github.com/OmertaDev/Omerta/commit/181a18df474f6f8d3a54ca38c31dd925baccbb27"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+      "type": "Commit",
+      "id": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+      "label": "Prepare native admission for bank hardening",
+      "title": "Prepare native admission for bank hardening",
+      "date": "2026-10-27T14:30:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+      "provenance": [
+        {
+          "commit": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1822593cfff6e66483a685fc7bf6bff4c50de5f0"
         }
       ]
     },
@@ -214617,6 +214679,22 @@
       ]
     },
     {
+      "key": "Commit:9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a",
+      "type": "Commit",
+      "id": "9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a",
+      "label": "Make bank interest request-frequency invariant",
+      "title": "Make bank interest request-frequency invariant",
+      "date": "2026-10-27T14:14:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a",
+      "provenance": [
+        {
+          "commit": "9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a"
+        }
+      ]
+    },
+    {
       "key": "Commit:9afff866cd3e8b4247435f5526e8505f572ff2c8",
       "type": "Commit",
       "id": "9afff866cd3e8b4247435f5526e8505f572ff2c8",
@@ -220757,6 +220835,22 @@
         {
           "commit": "af0bb4fce514ffbf58eb3a9679ccbc7c63474c52",
           "url": "https://github.com/OmertaDev/Omerta/commit/af0bb4fce514ffbf58eb3a9679ccbc7c63474c52"
+        }
+      ]
+    },
+    {
+      "key": "Commit:af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "type": "Commit",
+      "id": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "label": "Seal bank interest anti-spam hardening",
+      "title": "Seal bank interest anti-spam hardening",
+      "date": "2026-10-27T14:20:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "provenance": [
+        {
+          "commit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
         }
       ]
     },
@@ -230441,6 +230535,22 @@
       ]
     },
     {
+      "key": "Commit:ce94c717ccb06c0bc151508287598c0574eee741",
+      "type": "Commit",
+      "id": "ce94c717ccb06c0bc151508287598c0574eee741",
+      "label": "Merge remote-tracking branch 'origin/main' into codex/economy-adversarial-r7",
+      "title": "Merge remote-tracking branch 'origin/main' into codex/economy-adversarial-r7",
+      "date": "2026-10-27T15:54:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ce94c717ccb06c0bc151508287598c0574eee741",
+      "provenance": [
+        {
+          "commit": "ce94c717ccb06c0bc151508287598c0574eee741",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ce94c717ccb06c0bc151508287598c0574eee741"
+        }
+      ]
+    },
+    {
       "key": "Commit:ce9c41c3ca298387c5e7efe602fe1639ab19dba7",
       "type": "Commit",
       "id": "ce9c41c3ca298387c5e7efe602fe1639ab19dba7",
@@ -237737,6 +237847,22 @@
       ]
     },
     {
+      "key": "Commit:e846e8445088803657fb6214ffe0b958edcf6265",
+      "type": "Commit",
+      "id": "e846e8445088803657fb6214ffe0b958edcf6265",
+      "label": "Seal native inputs for bank hardening",
+      "title": "Seal native inputs for bank hardening",
+      "date": "2026-10-27T14:45:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e846e8445088803657fb6214ffe0b958edcf6265",
+      "provenance": [
+        {
+          "commit": "e846e8445088803657fb6214ffe0b958edcf6265",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e846e8445088803657fb6214ffe0b958edcf6265"
+        }
+      ]
+    },
+    {
       "key": "Commit:e8547b0eec82585c6803b10cadd910f7664b0965",
       "type": "Commit",
       "id": "e8547b0eec82585c6803b10cadd910f7664b0965",
@@ -239765,6 +239891,22 @@
         {
           "commit": "efd043bdcffb395a5b109bc712a96db822d17c67",
           "url": "https://github.com/OmertaDev/Omerta/commit/efd043bdcffb395a5b109bc712a96db822d17c67"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eff0364ea464d92c03826feef663d49827d40108",
+      "type": "Commit",
+      "id": "eff0364ea464d92c03826feef663d49827d40108",
+      "label": "chore(knowledge): refresh generated artifacts for b933d6e2",
+      "title": "chore(knowledge): refresh generated artifacts for b933d6e2",
+      "date": "2026-10-27T13:35:25.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eff0364ea464d92c03826feef663d49827d40108",
+      "provenance": [
+        {
+          "commit": "eff0364ea464d92c03826feef663d49827d40108",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eff0364ea464d92c03826feef663d49827d40108"
         }
       ]
     },
@@ -274408,6 +274550,9 @@
           "commit": "ef441063ad19f0f3ff83e10cd09d7268cfaac4c4"
         },
         {
+          "commit": "eff0364ea464d92c03826feef663d49827d40108"
+        },
+        {
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
         },
         {
@@ -276889,6 +277034,9 @@
           "commit": "ef441063ad19f0f3ff83e10cd09d7268cfaac4c4"
         },
         {
+          "commit": "eff0364ea464d92c03826feef663d49827d40108"
+        },
+        {
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
         },
         {
@@ -279368,6 +279516,9 @@
         },
         {
           "commit": "ef441063ad19f0f3ff83e10cd09d7268cfaac4c4"
+        },
+        {
+          "commit": "eff0364ea464d92c03826feef663d49827d40108"
         },
         {
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
@@ -282526,6 +282677,9 @@
           "commit": "ef441063ad19f0f3ff83e10cd09d7268cfaac4c4"
         },
         {
+          "commit": "eff0364ea464d92c03826feef663d49827d40108"
+        },
+        {
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
         },
         {
@@ -285184,13 +285338,13 @@
       "type": "Module",
       "id": "src/accrual.js",
       "label": "src/accrual.js",
-      "lines": 217,
-      "version": "7a2d1e0be61b02dc",
+      "lines": 239,
+      "version": "ff99ed4d9194ce09",
       "provenance": [
         {
           "file": "src/accrual.js",
           "line": 1,
-          "version": "7a2d1e0be61b02dc"
+          "version": "ff99ed4d9194ce09"
         }
       ]
     },
@@ -297169,12 +297323,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b933d6e2cf86e3b756e092496e41d3c848eea3cb",
-      "currentBranch": "main",
+      "revision": "ce94c717ccb06c0bc151508287598c0574eee741",
+      "currentBranch": "codex/economy-adversarial-r7",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7047,
+      "currentArtifactCount": 7049,
       "provenance": [
         {
           "file": "README.md",
@@ -339078,13 +339232,13 @@
       "type": "TestSuite",
       "id": "test/economy-balance.js",
       "label": "test/economy-balance.js",
-      "lines": 277,
-      "version": "d9477d68d82ada96",
+      "lines": 300,
+      "version": "c463978a6796b940",
       "provenance": [
         {
           "file": "test/economy-balance.js",
           "line": 1,
-          "version": "d9477d68d82ada96"
+          "version": "c463978a6796b940"
         }
       ]
     },
@@ -339093,13 +339247,13 @@
       "type": "TestSuite",
       "id": "test/economy-hardening-source-compatibility.js",
       "label": "test/economy-hardening-source-compatibility.js",
-      "lines": 1152,
-      "version": "996a52f1baf0c8bc",
+      "lines": 1244,
+      "version": "18c6b2a9f02839e9",
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "996a52f1baf0c8bc"
+          "version": "18c6b2a9f02839e9"
         }
       ]
     },
@@ -340894,12 +341048,12 @@
       "id": "test/lib/enterprise-ux-native-guard.js",
       "label": "test/lib/enterprise-ux-native-guard.js",
       "lines": 90,
-      "version": "f8225cdeac157834",
+      "version": "0f56601338664284",
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "f8225cdeac157834"
+          "version": "0f56601338664284"
         }
       ]
     },
@@ -346818,13 +346972,13 @@
       "type": "TestSuite",
       "id": "test/sale-source-compatibility.js",
       "label": "test/sale-source-compatibility.js",
-      "lines": 102,
-      "version": "e6fdd6b8c2353d53",
+      "lines": 104,
+      "version": "219cd4e6682ec5d0",
       "provenance": [
         {
           "file": "test/sale-source-compatibility.js",
           "line": 1,
-          "version": "e6fdd6b8c2353d53"
+          "version": "219cd4e6682ec5d0"
         }
       ]
     },
@@ -387785,6 +387939,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/economy-bank-interest-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/economy-bank-interest-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/economy-hardening-source-transfer.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -388032,6 +388195,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/generate-deed-quest-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/generate-economy-bank-interest-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/generate-economy-bank-interest-source-transfer.js",
         "line": 1
       }
     },
@@ -414560,6 +414732,22 @@
       "to": "Artifact:tools/rc1-checkpoint-recovery-review.js",
       "provenance": {
         "commit": "181a18df474f6f8d3a54ca38c31dd925baccbb27"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+      "to": "Artifact:test/lib/enterprise-ux-native-guard.js",
+      "provenance": {
+        "commit": "1822593cfff6e66483a685fc7bf6bff4c50de5f0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "commit": "1822593cfff6e66483a685fc7bf6bff4c50de5f0"
       }
     },
     {
@@ -516764,6 +516952,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a",
+      "to": "Artifact:src/accrual.js",
+      "provenance": {
+        "commit": "9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a",
+      "to": "Artifact:test/economy-balance.js",
+      "provenance": {
+        "commit": "9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9afff866cd3e8b4247435f5526e8505f572ff2c8",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -530568,6 +530772,46 @@
       "to": "Artifact:src/routes/depot.js",
       "provenance": {
         "commit": "af0bb4fce514ffbf58eb3a9679ccbc7c63474c52"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "to": "Artifact:test/economy-hardening-source-compatibility.js",
+      "provenance": {
+        "commit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "to": "Artifact:test/sale-source-compatibility.js",
+      "provenance": {
+        "commit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "to": "Artifact:tools/economy-bank-interest-source-transfer.js",
+      "provenance": {
+        "commit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
+      "provenance": {
+        "commit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "to": "Artifact:tools/generate-economy-bank-interest-source-transfer.js",
+      "provenance": {
+        "commit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
       }
     },
     {
@@ -591876,6 +592120,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e846e8445088803657fb6214ffe0b958edcf6265",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "e846e8445088803657fb6214ffe0b958edcf6265"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e8547b0eec82585c6803b10cadd910f7664b0965",
       "to": "Artifact:test/enterprise-release-phase2-migration-catalog.js",
       "provenance": {
@@ -596904,6 +597156,38 @@
       "to": "Artifact:tools/economy-hardening-source-transfer.js",
       "provenance": {
         "commit": "efd043bdcffb395a5b109bc712a96db822d17c67"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff0364ea464d92c03826feef663d49827d40108",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "eff0364ea464d92c03826feef663d49827d40108"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff0364ea464d92c03826feef663d49827d40108",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "eff0364ea464d92c03826feef663d49827d40108"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff0364ea464d92c03826feef663d49827d40108",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "eff0364ea464d92c03826feef663d49827d40108"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eff0364ea464d92c03826feef663d49827d40108",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "eff0364ea464d92c03826feef663d49827d40108"
       }
     },
     {
@@ -653786,6 +654070,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/economy-bank-interest-source-transfer.js",
+      "provenance": {
+        "file": "tools/economy-bank-interest-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/economy-hardening-source-transfer.js",
       "provenance": {
         "file": "tools/economy-hardening-source-transfer.js",
@@ -654032,6 +654325,15 @@
       "to": "Artifact:tools/generate-deed-quest-source-transfer.js",
       "provenance": {
         "file": "tools/generate-deed-quest-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/generate-economy-bank-interest-source-transfer.js",
+      "provenance": {
+        "file": "tools/generate-economy-bank-interest-source-transfer.js",
         "line": 1
       }
     },
@@ -719120,6 +719422,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+      "provenance": {
+        "commit": "1822593cfff6e66483a685fc7bf6bff4c50de5f0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:183520c81ecce18b9cd3bc3aa0792cfa8e807323",
       "provenance": {
         "commit": "183520c81ecce18b9cd3bc3aa0792cfa8e807323"
@@ -739616,6 +739926,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a",
+      "provenance": {
+        "commit": "9afbb9b78c22876dbe8d8e0b41c3b78fc2212d4a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9afff866cd3e8b4247435f5526e8505f572ff2c8",
       "provenance": {
         "commit": "9afff866cd3e8b4247435f5526e8505f572ff2c8"
@@ -742683,6 +743001,14 @@
       "to": "Commit:af0bb4fce514ffbf58eb3a9679ccbc7c63474c52",
       "provenance": {
         "commit": "af0bb4fce514ffbf58eb3a9679ccbc7c63474c52"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:af24bdab4fc5658b65c13446c7161dbcc9c87dc8",
+      "provenance": {
+        "commit": "af24bdab4fc5658b65c13446c7161dbcc9c87dc8"
       }
     },
     {
@@ -747528,6 +747854,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ce94c717ccb06c0bc151508287598c0574eee741",
+      "provenance": {
+        "commit": "ce94c717ccb06c0bc151508287598c0574eee741"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ce9c41c3ca298387c5e7efe602fe1639ab19dba7",
       "provenance": {
         "commit": "ce9c41c3ca298387c5e7efe602fe1639ab19dba7"
@@ -751176,6 +751510,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e846e8445088803657fb6214ffe0b958edcf6265",
+      "provenance": {
+        "commit": "e846e8445088803657fb6214ffe0b958edcf6265"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e8547b0eec82585c6803b10cadd910f7664b0965",
       "provenance": {
         "commit": "e8547b0eec82585c6803b10cadd910f7664b0965"
@@ -752187,6 +752529,14 @@
       "to": "Commit:efd043bdcffb395a5b109bc712a96db822d17c67",
       "provenance": {
         "commit": "efd043bdcffb395a5b109bc712a96db822d17c67"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eff0364ea464d92c03826feef663d49827d40108",
+      "provenance": {
+        "commit": "eff0364ea464d92c03826feef663d49827d40108"
       }
     },
     {
@@ -823183,7 +823533,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/economy-ux-merge-source-compatibility.js",
-      "to": "Artifact:tools/economy-social-proof-cutover-source-transfer.js",
+      "to": "Artifact:tools/economy-bank-interest-source-transfer.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-compatibility.js",
         "line": 6
@@ -823192,7 +823542,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/economy-ux-merge-source-compatibility.js",
-      "to": "Artifact:tools/economy-social-proof-receipt-safety-source-transfer.js",
+      "to": "Artifact:tools/economy-social-proof-cutover-source-transfer.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-compatibility.js",
         "line": 7
@@ -823201,10 +823551,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/economy-ux-merge-source-compatibility.js",
-      "to": "Artifact:tools/economy-social-proof-receipt-source-transfer.js",
+      "to": "Artifact:tools/economy-social-proof-receipt-safety-source-transfer.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-compatibility.js",
         "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-ux-merge-source-compatibility.js",
+      "to": "Artifact:tools/economy-social-proof-receipt-source-transfer.js",
+      "provenance": {
+        "file": "tools/economy-ux-merge-source-compatibility.js",
+        "line": 9
       }
     },
     {
@@ -912178,7 +912537,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/accrual.js",
-        "line": 9
+        "line": 33
       }
     },
     {
@@ -912187,7 +912546,7 @@
       "to": "Table:districts",
       "provenance": {
         "file": "src/accrual.js",
-        "line": 37
+        "line": 61
       }
     },
     {
@@ -912196,7 +912555,7 @@
       "to": "Table:stash",
       "provenance": {
         "file": "src/accrual.js",
-        "line": 105
+        "line": 127
       }
     },
     {
