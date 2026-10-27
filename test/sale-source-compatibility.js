@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { SALE_SOURCE, SALE_SOURCE_FILES, SALE_SOURCE_PREDECESSOR, qualifySaleSource, saleHistoricalInput } from '../tools/sale-source-compatibility.js';
 import { uxHistoricalInput, qualifyUxSource } from '../tools/ux-source-compatibility.js';
+import { economyUxMergeCandidateHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -42,10 +43,15 @@ for (const row of pin.files) {
     assert.equal(proof.sourceRevision, pin.revision); assert.equal(proof.targetRevision, pin.targetRevision);
     assert.equal(saleHistoricalInput(row.file, input), target);
     assert.equal(uxHistoricalInput(row.file, input), uxHistoricalInput(row.file, target), 'Existing historical reader chain sees its exact predecessor');
+    assert.equal(economyUxMergeCandidateHistoricalInput(row.file, input), economyUxMergeCandidateHistoricalInput(row.file, target), 'Existing candidate reader chain sees its exact predecessor');
     assert.throws(() => qualifyUxSource(row.file, input), 'Sale bytes never acquire direct older qualification');
     positives++; refusals++;
   }
   assert.deepEqual(saleHistoricalInput(row.file, Buffer.from(current)), Buffer.from(target)); positives++;
+  for (const input of [physical, current, current.replaceAll('\n', '\r\n')]) {
+    assert.deepEqual(economyUxMergeCandidateHistoricalInput(row.file, Buffer.from(input)), economyUxMergeCandidateHistoricalInput(row.file, Buffer.from(target)));
+    positives++;
+  }
   const reject = input => { assert.throws(() => qualifySaleSource(row.file, input)); refusals++; };
   for (const input of [current + '\n', current.slice(1), '\ufeff' + current, current + '\0', current.replace(/\S/, '?'), current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null, target]) reject(input);
   for (const inverse of row.inverses) {
@@ -56,12 +62,15 @@ for (const row of pin.files) {
     assert.equal(saleHistoricalInput(row.file, input), input, 'Unknown or predecessor bytes retain their original form');
   const unknown = current + '\n// unrelated future mutation\n';
   assert.equal(uxHistoricalInput(row.file, unknown), unknown, 'Unknown bytes do not get an older inverse');
+  for (const input of [unknown, current.slice(1), Buffer.from(unknown)])
+    assert.equal(economyUxMergeCandidateHistoricalInput(row.file, input), input, 'Unknown candidate bytes retain their original form');
   assert.throws(() => qualifySaleSource(row.file, current, Object.freeze({ ...pin }))); refusals++;
   assert.throws(() => saleHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([255])])), /lossless/); refusals++;
   assert.equal(sha(current), row.currentSha256);
 }
 for (const file of ['../src/server.js', '__proto__', 'constructor', 'public/sale.html', 'src/unknown.js']) {
   assert.throws(() => qualifySaleSource(file, 'x')); assert.equal(saleHistoricalInput(file, 'x'), 'x'); refusals++;
+  assert.equal(economyUxMergeCandidateHistoricalInput(file, 'x'), 'x');
 }
 // Original commerce boot directory predicates remain one complete, unchanged source block.
 assert.equal(fs.readFileSync('src/server.js', 'utf8').replaceAll('\r\n', '\n').split(COMMERCE_CURRENT_BOOT_READER).length, 2);
@@ -70,4 +79,9 @@ for (const hook of ["import { saleHistoricalInput } from './sale-source-compatib
   assert.equal(conserved.split(hook).length, 2, 'One exact sale integration hook'); conserved = conserved.replace(hook, '');
 }
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
+let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+for (const hook of ["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", '  input = saleHistoricalInput(file, input);\n']) {
+  assert.equal(candidateConserved.split(hook).length, 2, 'One exact candidate sale integration hook'); candidateConserved = candidateConserved.replace(hook, '');
+}
+assert.equal(candidateConserved, git('show', 'c86bcd310e5f38845642637230ba4bec7d653183:tools/economy-ux-merge-source-compatibility.js'), 'All committed economy merge qualifiers and refusal predicates remain byte-identical');
 console.log(JSON.stringify({ phase: pin.phase, files: pin.files.length, hunks, positives, refusals, runtime: false, native: false }));
