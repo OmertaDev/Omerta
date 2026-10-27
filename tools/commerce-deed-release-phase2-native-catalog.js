@@ -961,8 +961,12 @@ function economyRepairAddedRows(profile,serverVersionNum){
       '((referred_by IS NOT NULL) AND minted AND (NOT agent_flag) AND (NOT npc_flag))'),
     economyHardeningIndex('characters','ix_char_alive_account_respect',
       'CREATE INDEX ix_char_alive_account_respect ON $self.characters USING btree (account_id, respect) WHERE alive',false,false,'alive'),
+    economyHardeningIndex('social_claims','ix_social_claims_sweep',
+      'CREATE INDEX ix_social_claims_sweep ON $self.social_claims USING btree (paid, posted_at, account_id, day, task_id)',false,false),
     economyHardeningIndex('telemetry','ix_telemetry_account_at',
       'CREATE INDEX ix_telemetry_account_at ON $self.telemetry USING btree (account_id, at)',false,false),
+    economyHardeningIndex('telemetry','ix_telemetry_event_at_id',
+      'CREATE INDEX ix_telemetry_event_at_id ON $self.telemetry USING btree (event, at, id)',false,false),
     economyHardeningIndex('worker_sweep_cursors','worker_sweep_cursors_pkey',
       'CREATE UNIQUE INDEX worker_sweep_cursors_pkey ON $self.worker_sweep_cursors USING btree (sweep_key)',true,true),
   ];
@@ -1211,9 +1215,15 @@ async function verifyEconomyRepairWrongIndexDdl(pool,catalog){
     {identity:'characters.ix_char_alive_account_respect',name:'ix_char_alive_account_respect',
       wrongDdl:'CREATE INDEX ix_char_alive_account_respect ON characters(account_id,respect)',
       wrong:{definition:'CREATE INDEX ix_char_alive_account_respect ON $self.characters USING btree (account_id, respect)',predicate:null}},
+    {identity:'social_claims.ix_social_claims_sweep',name:'ix_social_claims_sweep',
+      wrongDdl:'CREATE INDEX ix_social_claims_sweep ON social_claims(paid,posted_at,account_id)',
+      wrong:{definition:'CREATE INDEX ix_social_claims_sweep ON $self.social_claims USING btree (paid, posted_at, account_id)',predicate:null}},
     {identity:'telemetry.ix_telemetry_account_at',name:'ix_telemetry_account_at',
       wrongDdl:'CREATE INDEX ix_telemetry_account_at ON telemetry(account_id)',
       wrong:{definition:'CREATE INDEX ix_telemetry_account_at ON $self.telemetry USING btree (account_id)',predicate:null}},
+    {identity:'telemetry.ix_telemetry_event_at_id',name:'ix_telemetry_event_at_id',
+      wrongDdl:'CREATE INDEX ix_telemetry_event_at_id ON telemetry(event,at)',
+      wrong:{definition:'CREATE INDEX ix_telemetry_event_at_id ON $self.telemetry USING btree (event, at)',predicate:null}},
   ],'economy-repair');
 }
 

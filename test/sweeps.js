@@ -50,6 +50,8 @@ import { sweepGrandPrix } from '../src/races.js';
 import { sweepStakes } from '../src/stable.js';
 import { sweepExpiredBounties, sweepContests, huntWanted } from '../src/social.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { migrateSocialProofReceipts } from '../src/db.js';
+import { takeAccountDailyClaims } from '../src/accountdaily.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -186,19 +188,90 @@ console.log(`✅ all ${ALL_SWEEPS.length} worker sweeps run clean on an empty DB
   const failingPool = { connect: async () => {
     const client = await pool.connect();
     return {
-      query: (sql, params) => {
-        if (/INSERT INTO account_daily_claims/.test(String(sql))) throw new Error('injected receipt failure');
+      query: async (sql, params) => {
+        if (/DELETE FROM social_claims/.test(String(sql))) throw new Error('injected post-receipt failure');
         return client.query(sql, params);
       },
       release: () => client.release(),
     };
   } };
-  await assert.rejects(sweepSocialClaims(failingPool), /injected receipt failure/,
-    'a receipt failure aborts the sweep');
+  await assert.rejects(sweepSocialClaims(failingPool), /injected post-receipt failure/,
+    'a post-receipt failure aborts the sweep');
   assert.equal((await pool.query(
     'SELECT COUNT(*)::int n FROM social_claims WHERE account_id=$1 AND day=6 AND task_id=$2',
-    [acc, 'sw_post'])).rows[0].n, 1, 'receipt failure rolls back deletion of the paid evidence');
+    [acc, 'sw_post'])).rows[0].n, 1, 'failure never deletes the paid evidence');
+  // pg-mem retains the just-inserted receipt across ROLLBACK; PostgreSQL rolls it back. Both states
+  // are conservative and retry-safe, so this portable suite asserts only evidence retention/recovery.
   assert.equal((await sweepSocialClaims(pool)).swept, 1, 'the retained row is recoverable on the next sweep');
+
+  for (let i = 0; i < 3; i++) {
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_post',$3,true,$4),($5,$6,'sw_invite',$7,false,NULL)`,
+      [`page-paid-${i}`, 20 + i, oldPaid, `https://x.com/legacy/status/${12345678920000 + i}`,
+        `page-pending-${i}`, 30 + i, oldPending]);
+  }
+  const page = await sweepSocialClaims(pool, { batchSize: 1, maxBatches: 1 });
+  assert.deepEqual([page.swept, page.batches, page.more], [2, 1, true],
+    'one bounded cycle advances one paid and one pending page without starvation');
+  assert.equal((await sweepSocialClaims(pool, { batchSize: 1, maxBatches: 5 })).swept, 4,
+    'later cycles resume and exhaust both backlogs');
+
+  // A rolling boot can overlap this worker sweep. Feed the two paths inverse evidence order and
+  // prove they still acquire every overlapping synthetic receipt PK in the same global order.
+  const proofs = [
+    'https://x.com/legacy/status/99999999999999',
+    'https://x.com/legacy/status/11111111111111',
+    'https://twitter.com/legacy/statuses/99999999999999',
+  ];
+  const migrationOrder = [];
+  const migrationClient = { query: async (sql, params = []) => {
+    const text = String(sql);
+    if (/SELECT 1 FROM economy_migrations/.test(text)) return { rowCount: 1, rows: [{}] };
+    if (/AS cutoff_at/.test(text))
+      return { rowCount: 1, rows: [{ cutoff_at: new Date() }] };
+    if (/SELECT id FROM economy_migrations/.test(text)) return { rowCount: 0, rows: [] };
+    if (/AS cursor_posted_at/.test(text))
+      return { rowCount: proofs.length, rows: proofs.map((proof) => ({ proof })) };
+    if (/INSERT INTO account_daily_claims/.test(text)) {
+      migrationOrder.push(...params.filter((_, index) => index % 4 === 0));
+      return { rowCount: migrationOrder.length, rows: [] };
+    }
+    if (/^(?:BEGIN|COMMIT|ROLLBACK)$/.test(text)
+        || /(?:INSERT INTO|DELETE FROM) economy_migrations/.test(text))
+      return { rowCount: 0, rows: [] };
+    throw new Error(`unexpected migration lock-order query: ${text}`);
+  } };
+  await migrateSocialProofReceipts(migrationClient, { maxBatches: 1 });
+
+  const sweepOrder = [];
+  const sweepClient = { query: async (sql, params = []) => {
+    const text = String(sql);
+    if (/SELECT account_id, day, task_id, proof FROM social_claims/.test(text)) return {
+      rowCount: proofs.length,
+      rows: proofs.map((proof, index) => ({ account_id: `acct-${index}`, day: index, task_id: 'sw_post', proof })),
+    };
+    if (/SELECT account_id, day, task_id FROM social_claims/.test(text)) return { rowCount: 0, rows: [] };
+    if (/INSERT INTO account_daily_claims/.test(text)) {
+      sweepOrder.push(...params.filter((_, index) => index % 4 === 0));
+      return { rowCount: sweepOrder.length, rows: [] };
+    }
+    if (/DELETE FROM social_claims/.test(text)) return { rowCount: proofs.length, rows: [] };
+    if (/^(?:BEGIN|COMMIT|ROLLBACK)$/.test(text)) return { rowCount: 0, rows: [] };
+    throw new Error(`unexpected sweep lock-order query: ${text}`);
+  }, release() {} };
+  await sweepSocialClaims({ connect: async () => sweepClient });
+  const canonicalOrder = [
+    'social-proof:x:11111111111111',
+    'social-proof:x:99999999999999',
+  ];
+  assert.deepEqual(migrationOrder, canonicalOrder, 'boot repair acquires deduplicated receipt PKs canonically');
+  assert.deepEqual(sweepOrder, canonicalOrder, 'worker sweep uses the identical receipt PK lock order');
+  let oversizedQuery = false;
+  await assert.rejects(takeAccountDailyClaims({ query: async () => { oversizedQuery = true; } },
+    Array.from({ length: 1001 }, (_, index) => `social-proof:x:${10000000000000 + index}`),
+    0, 'social-proof', 'used'), /exceeds 1000/);
+  assert.equal(oversizedQuery, false, 'the bulk helper refuses an unbounded SQL parameter fan-out');
   console.log('✅ sweepSocialClaims drops spent/lapsed rows, keeps live registrations, idempotent');
 }
 

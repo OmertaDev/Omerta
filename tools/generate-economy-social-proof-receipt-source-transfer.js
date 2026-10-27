@@ -101,8 +101,8 @@ export function assertEconomySocialReceiptSourceTransfer(file, input) {
 }
 
 export function economySocialReceiptHistoricalInput(file, input) {
+  if (!Object.hasOwn(ECONOMY_SOCIAL_RECEIPT_DOMAINS, file)) return input;
   const pin = ECONOMY_SOCIAL_RECEIPT_DOMAINS[file];
-  if (!pin) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only');
   if (!uniform(text) || sha256(lf(text)) !== pin.currentSha256) return input;

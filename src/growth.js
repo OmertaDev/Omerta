@@ -10,7 +10,7 @@ import { verifySocial, verifyPostUp, verifyLegacyPostUp, normalizeSocialPostProo
   normalizeLegacySocialPostProof, requireLinkedXIdentity,
   socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
 import { spendOmr } from './vanity.js';
-import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
+import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim, takeAccountDailyClaims,
   takeBoundedAccountDailyClaim } from './accountdaily.js';
 import { dbCaps } from './db.js';
 import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
@@ -975,8 +975,11 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     if (live && !await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
       SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM))
       throw new GameError('proof_used', 'That X post has already earned a social reward.');
-    await client.query('UPDATE social_claims SET paid=true WHERE account_id=$1 AND day=$2 AND task_id=$3',
+    const paid = await client.query(
+      'UPDATE social_claims SET paid=true WHERE account_id=$1 AND day=$2 AND task_id=$3 AND NOT paid',
       [h.accountId, pend.day, taskId]);
+    if (paid.rowCount !== 1)
+      throw new GameError('claim_lapsed', 'That share registration expired while it was being checked. Register it again.');
     const paidIds = (await client.query(
       'SELECT task_id FROM social_claims WHERE account_id=$1 AND day=$2 AND paid', [h.accountId, pend.day])).rows.map((r) => r.task_id);
     const allDone = SOCIAL_TASKS.TASKS.every((x) => paidIds.includes(x.id));
@@ -1011,33 +1014,65 @@ export async function claimSocial(ch, taskId, proof, client, h) {
 // worker housekeeping (L5): drop spent social_claims rows so the table doesn't grow forever. The
 // board/claim queries already FILTER on today / the 48h pending window, so this only trims what's
 // no longer readable: PAID rows older than a week and UNPAID registrations past the pending TTL.
-export async function sweepSocialClaims(pool) {
+export async function sweepSocialClaims(pool, options = {}) {
   const paidCut = new Date(Date.now() - 7 * 24 * 3600000);
   const pendCut = new Date(Date.now() - SOCIAL_PENDING_TTL);
+  const wantedBatchSize = Number(options.batchSize ?? 500);
+  const wantedBatches = Number(options.maxBatches ?? 20);
+  const batchSize = Number.isSafeInteger(wantedBatchSize) && wantedBatchSize > 0
+    ? Math.min(wantedBatchSize, 1000) : 500;
+  const maxBatches = Number.isSafeInteger(wantedBatches) && wantedBatches > 0
+    ? Math.min(wantedBatches, 100) : 20;
   const client = await pool.connect();
+  let swept = 0, batches = 0, more = false;
   try {
-    await client.query('BEGIN');
-    // A predecessor process can commit a paid proof without the permanent provider/id latch. Never
-    // delete that last row of evidence first: reserve the idempotent receipt in the same transaction,
-    // then prune. Current-format payouts already own the receipt, so their inserts are clean no-ops.
-    const paidRows = (await client.query(
-      `SELECT account_id, day, task_id, proof FROM social_claims
-        WHERE paid AND posted_at < $1 AND proof IS NOT NULL
-        ORDER BY account_id, day, task_id FOR UPDATE`, [paidCut])).rows;
-    for (const row of paidRows) {
-      const normalized = normalizeLegacyPaidSocialPostProof(row.proof);
-      if (normalized)
-        await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
+    while (batches < maxBatches) {
+      await client.query('BEGIN');
+      try {
+        const skipLocked = dbCaps.skipLocked ? ' SKIP LOCKED' : '';
+        // Alternate one bounded paid page with one bounded expired-pending page. Neither backlog can
+        // starve the other, and every committed page is durable progress under the 15s query bound.
+        const paidRows = (await client.query(
+          `SELECT account_id, day, task_id, proof FROM social_claims
+            WHERE paid AND posted_at < $1
+            ORDER BY posted_at, account_id, day, task_id LIMIT $2 FOR UPDATE${skipLocked}`,
+          [paidCut, batchSize])).rows;
+        const pendingRows = (await client.query(
+          `SELECT account_id, day, task_id FROM social_claims
+            WHERE NOT paid AND posted_at < $1
+            ORDER BY posted_at, account_id, day, task_id LIMIT $2 FOR UPDATE${skipLocked}`,
+          [pendCut, batchSize])).rows;
+        // A predecessor process can commit a paid proof without the permanent provider/id latch.
+        // Reserve every canonical receipt before deleting its last evidence row. The shared bulk
+        // helper deduplicates and acquires overlapping receipt PKs in one global order.
+        const receiptAccounts = paidRows.map(row => {
+          const normalized = normalizeLegacyPaidSocialPostProof(row.proof);
+          return normalized ? socialProofReceiptAccount(normalized) : null;
+        }).filter(Boolean);
+        await takeAccountDailyClaims(client, receiptAccounts, SOCIAL_PROOF_EPOCH,
           SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM);
+        const dueRows = [...paidRows, ...pendingRows];
+        let removed = 0;
+        if (dueRows.length) {
+          const params = [];
+          const predicates = dueRows.map(row => {
+            const offset = params.length;
+            params.push(row.account_id, row.day, row.task_id);
+            return `(account_id=$${offset + 1} AND day=$${offset + 2} AND task_id=$${offset + 3})`;
+          });
+          removed = (await client.query(
+            `DELETE FROM social_claims WHERE ${predicates.join(' OR ')}`, params)).rowCount || 0;
+        }
+        await client.query('COMMIT');
+        swept += removed; batches++;
+        more = paidRows.length === batchSize || pendingRows.length === batchSize;
+        if (!more) break;
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw error;
+      }
     }
-    const r = await client.query(
-      'DELETE FROM social_claims WHERE (paid AND posted_at < $1) OR (NOT paid AND posted_at < $2)',
-      [paidCut, pendCut]);
-    await client.query('COMMIT');
-    return { swept: r.rowCount || 0 };
-  } catch (error) {
-    await client.query('ROLLBACK').catch(() => {});
-    throw error;
+    return { swept, batches, more };
   } finally {
     client.release();
   }
