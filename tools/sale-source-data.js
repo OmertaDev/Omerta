@@ -4,8 +4,8 @@ export const SALE_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_SALE_PAGE_SOURCE_ONLY",
-  "revision": "5991f507ef9d0d10bb87657e357b8bfd9213fa59",
-  "tree": "e130741911c95fb9a275c911b8adb230d92ccabd",
+  "revision": "7a47598f72669b347ce99a61eacca4320ae066b9",
+  "tree": "e0edc11fa150e7d202367506346fa4fd06949e31",
   "targetRevision": "bb55398ccc135228353e890648bda18222e76a35",
   "targetTree": "85bbefdde7d91237537c7f1c356643236788dc7d",
   "contextLines": 3,
@@ -35,19 +35,19 @@ export const SALE_SOURCE = freeze({
       "file": "public/index.html",
       "mode": "100644",
       "targetMode": "100644",
-      "currentBlob": "24e8759f91aeae0a03bfd2c1d99b09820d62a13c",
-      "currentSha256": "5a18ff07afe92bf52fae66ed066dff0e31f8848bef659e07efc8acb7e3eb5c3a",
+      "currentBlob": "0b187d5f921800af383e612025d1c635dc89c442",
+      "currentSha256": "e123908ed56e87ec55a8cb5ab0922f94b6a9651b01c039591d3652ac1e3c8750",
       "currentRawSha256": {
-        "lf": "5a18ff07afe92bf52fae66ed066dff0e31f8848bef659e07efc8acb7e3eb5c3a",
-        "crlf": "dc193be35af3a26e200868f52d904c3f141f292ce963e2df33ee20de5c082eb3"
+        "lf": "e123908ed56e87ec55a8cb5ab0922f94b6a9651b01c039591d3652ac1e3c8750",
+        "crlf": "0c23d851503dae95a84bf9b9c3436f6b5134cef628d21798b1f93d7b1eca3dfe"
       },
-      "currentBytes": 1398253,
+      "currentBytes": 1398261,
       "targetBlob": "0caed5d7e8650d5f516e8cf0429a143213885c08",
       "targetSha256": "4b68e55569751bba2ad7f9748103dc507d1bcc43dccd2dc9b3bf32a443698786",
       "targetBytes": 1398049,
       "inverses": [
         {
-          "current": "\n<div id=\"screen-auth\" class=\"landing hidden\">\n  <a class=\"skip-link\" href=\"#landing-main\">Skip to the city</a>\n  <a class=\"public-sale-banner\" href=\"/sale\"><span>$OMR AUCTION · STREET DEEDS</span><strong>Explore the launch <span aria-hidden=\"true\">↗</span></strong></a>\n  <nav class=\"public-nav\" aria-label=\"Primary\">\n    <a class=\"public-nav__brand\" href=\"/\" aria-current=\"page\">OMERTÀ</a>\n    <details class=\"public-nav__menu\"><summary>Explore</summary><div class=\"public-nav__menu-list\">\n      <a href=\"/\" aria-current=\"page\">The city</a><a href=\"#city-guide\">Explore the gameplay</a><a href=\"/path\">Find your Path</a><a href=\"/wiki\">The Codex</a><a href=\"/arena\">The Arena</a><a href=\"/play\">Connect an AI</a><a href=\"/sale\">Token sale &amp; Deeds</a><a href=\"#omr-economy\">Understand $OMR</a>\n    </div></details>\n    <div class=\"public-nav__links\">\n      <a href=\"/wiki\">Codex</a>\n",
+          "current": "\n<div id=\"screen-auth\" class=\"landing hidden\">\n  <a class=\"skip-link\" href=\"#landing-main\">Skip to the city</a>\n  <a class=\"public-sale-banner\" href=\"/sale\"><span>$OMR AUCTION · STREET DEEDS</span><strong>Token Sale &amp; Deed Mint <span aria-hidden=\"true\">↗</span></strong></a>\n  <nav class=\"public-nav\" aria-label=\"Primary\">\n    <a class=\"public-nav__brand\" href=\"/\" aria-current=\"page\">OMERTÀ</a>\n    <details class=\"public-nav__menu\"><summary>Explore</summary><div class=\"public-nav__menu-list\">\n      <a href=\"/\" aria-current=\"page\">The city</a><a href=\"#city-guide\">Explore the gameplay</a><a href=\"/path\">Find your Path</a><a href=\"/wiki\">The Codex</a><a href=\"/arena\">The Arena</a><a href=\"/play\">Connect an AI</a><a href=\"/sale\">Token sale &amp; Deeds</a><a href=\"#omr-economy\">Understand $OMR</a>\n    </div></details>\n    <div class=\"public-nav__links\">\n      <a href=\"/wiki\">Codex</a>\n",
           "baseline": "\n<div id=\"screen-auth\" class=\"landing hidden\">\n  <a class=\"skip-link\" href=\"#landing-main\">Skip to the city</a>\n  <nav class=\"public-nav\" aria-label=\"Primary\">\n    <a class=\"public-nav__brand\" href=\"/\" aria-current=\"page\">OMERTÀ</a>\n    <details class=\"public-nav__menu\"><summary>Explore</summary><div class=\"public-nav__menu-list\">\n      <a href=\"/\" aria-current=\"page\">The city</a><a href=\"#city-guide\">Explore the gameplay</a><a href=\"/path\">Find your Path</a><a href=\"/wiki\">The Codex</a><a href=\"/arena\">The Arena</a><a href=\"/play\">Connect an AI</a><a href=\"#omr-economy\">Understand $OMR</a>\n    </div></details>\n    <div class=\"public-nav__links\">\n      <a href=\"/wiki\">Codex</a>\n"
         }
       ]
@@ -116,4 +116,4 @@ export const SALE_SOURCE = freeze({
     }
   ]
 });
-export const SALE_SOURCE_SHA256 = "ef2c273cf1d372ec272db401656881f344a8fede941481501eb5038a663dd682";
+export const SALE_SOURCE_SHA256 = "62534316755bdf4ab7aff123e9740f8b85b7b4bf001d7ae9a845eb3d13677a02";
