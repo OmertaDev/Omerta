@@ -246,7 +246,8 @@ export function economySocialReceiptSafetyHistoricalInput(file, input) {
   if (!Object.hasOwn(ECONOMY_SOCIAL_RECEIPT_SAFETY_DOMAINS, file)) return input;
   const pin = ECONOMY_SOCIAL_RECEIPT_SAFETY_DOMAINS[file];
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
+  if (buffer) assert(Buffer.from(text).equals(input),
+    'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (!uniform(text) || sha256(lf(text)) !== pin.currentSha256) return input;
   const baseline = assertEconomySocialReceiptSafetySourceTransfer(file, text).baselineText;
   return buffer ? Buffer.from(baseline) : baseline;
