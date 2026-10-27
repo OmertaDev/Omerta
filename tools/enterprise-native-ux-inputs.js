@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "ccdbad91518f50b929e051737676db92c7d90fd6",
+  "authoredRevision": "e562848c251e8b6ab57f8c9f286fcdca3cbc49a2",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -10118,8 +10118,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "5a9bb8a0dc907c2e7c49ff60223efbfa2e1aa04e",
-      "sha256": "8ce41fc91fba59e2b9eed6d1584956f47bf0297e0bde0c9784de680429710ed5"
+      "blob": "51c46b554aaf5b72a9d3f1e19560af2e006cffb1",
+      "sha256": "17ad099e065bcd23b673e82a6e2bb1733eac864d8980276704a44854938a0c85"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -11864,8 +11864,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "5a9bb8a0dc907c2e7c49ff60223efbfa2e1aa04e",
-      "sha256": "8ce41fc91fba59e2b9eed6d1584956f47bf0297e0bde0c9784de680429710ed5"
+      "blob": "51c46b554aaf5b72a9d3f1e19560af2e006cffb1",
+      "sha256": "17ad099e065bcd23b673e82a6e2bb1733eac864d8980276704a44854938a0c85"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -12067,4 +12067,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "8d1b77bc234fd00ed2a7a31d8d1d1a25fb4351e3f9a97d5396269affc02e34c9";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "a9a935d05913bd60c278c7803940aa7ee2c8482a93a50c834223a953f8813609";
