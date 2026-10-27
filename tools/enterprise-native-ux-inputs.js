@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "e562848c251e8b6ab57f8c9f286fcdca3cbc49a2",
+  "authoredRevision": "03e02602e5b4b8f0a6af8dfb0166607be357c525",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -10148,8 +10148,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/sale-source-compatibility.js",
       "mode": "100644",
-      "blob": "6a271360efec5fab45bd5460abddfcdd07cc1a95",
-      "sha256": "3e7a491e1fc39eb6f087a93bc59c93782eec904febcb21fdd5d4e76997cdcd20"
+      "blob": "e23d0d5355d4af4c7a5b651c16161bf5dee78ec0",
+      "sha256": "41c1f68afccabced29eff0cb2ca827f28db8f7cb9479d2cb936bea8b8524eba5"
     },
     {
       "file": "test/ux-source-compatibility.js",
@@ -10184,8 +10184,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economy-ux-merge-source-compatibility.js",
       "mode": "100644",
-      "blob": "e73764e69f82c27d91fe8d96a6548eac938b1c06",
-      "sha256": "a364db1987cd92954119881614e641fe535ab3a7ebb1f4206cc7708aa881c48c"
+      "blob": "ef6edf7c5c0bc2a8304bb7f0cf4af88bc254f424",
+      "sha256": "677c9eb42e00e14af6c3fd6b3ef52925b2529d68a8eb0ccc25a11ff304c90594"
     },
     {
       "file": "tools/economy-ux-merge-source-data.js",
@@ -11894,8 +11894,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/sale-source-compatibility.js",
       "mode": "100644",
-      "blob": "6a271360efec5fab45bd5460abddfcdd07cc1a95",
-      "sha256": "3e7a491e1fc39eb6f087a93bc59c93782eec904febcb21fdd5d4e76997cdcd20"
+      "blob": "e23d0d5355d4af4c7a5b651c16161bf5dee78ec0",
+      "sha256": "41c1f68afccabced29eff0cb2ca827f28db8f7cb9479d2cb936bea8b8524eba5"
     },
     {
       "file": "test/ux-source-compatibility.js",
@@ -11930,8 +11930,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economy-ux-merge-source-compatibility.js",
       "mode": "100644",
-      "blob": "e73764e69f82c27d91fe8d96a6548eac938b1c06",
-      "sha256": "a364db1987cd92954119881614e641fe535ab3a7ebb1f4206cc7708aa881c48c"
+      "blob": "ef6edf7c5c0bc2a8304bb7f0cf4af88bc254f424",
+      "sha256": "677c9eb42e00e14af6c3fd6b3ef52925b2529d68a8eb0ccc25a11ff304c90594"
     },
     {
       "file": "tools/economy-ux-merge-source-data.js",
@@ -12067,4 +12067,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "a9a935d05913bd60c278c7803940aa7ee2c8482a93a50c834223a953f8813609";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "a7dbe72cfb506a5096aa71e20e7888c16dd9be65909fd9721fc82674cbdfc07d";
