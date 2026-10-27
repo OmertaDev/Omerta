@@ -3567,6 +3567,8 @@ scopedSocialContext = async function(db) {
 
     // GENERATED PLACEHOLDERS — the fragment is `$n,$n,...`; every value is bound.
     'src/game.js|vals.join(\',\')': 'multi-row INSERT VALUES tuples built from $n placeholders; values bound',
+    'src/accountdaily.js|values.join(\',\')': 'bounded receipt batch VALUES tuples contain only generated $n placeholders; every account/day/scope/claim value is separately bound',
+    'src/growth.js|predicates.join(\' OR \')': 'bounded social-claim delete predicates contain only fixed columns and generated $n placeholders; every PK component is separately bound',
     'src/rwanominations.js|values.join(\',\')': 'same batched-INSERT placeholder fan-out; values bound',
     'src/rwanominations.js|placeholders': 'same — a generated $n list; values bound',
     'src/rwanominations.js|conditions.join(\' OR \')': 'OR of generated $n comparisons; values bound',
@@ -5074,7 +5076,7 @@ scopedSocialContext = async function(db) {
     const normalized=source.replaceAll('\r\n','\n');
     if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\r')
       ||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n'))
-      ||createHash('sha256').update(normalized).digest('hex')!=='51f30dd2f9f7f6d6594bf3649ecc6a583606fe223df12747c9222e450ea16292')return source;
+      ||createHash('sha256').update(normalized).digest('hex')!=='a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b')return source;
     // These three refusals read the permanent provider/post receipt, not a refillable allowance.
     // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.
     return source.replaceAll(original,original.replace("'proof_used'","'proof'"));

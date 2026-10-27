@@ -22,7 +22,7 @@ export async function assertUxNativeDirectorGuards() {
  await invoke(director());
  const ciDirector = director(); ciDirector.endpoint = ci; ciDirector.env.COORDINATION_TEST_DATABASE_URL = ci; ciDirector.settings.role = 'postgres'; await invoke(ciDirector);
  const fallback = director(); delete fallback.env.COORDINATION_TEST_DATABASE_URL; fallback.env.WORLD_KERNEL_TEST_DATABASE_URL = local; await invoke(fallback);
- for (const [profile, flag, child] of [['phase2', '--definitions', 'upgrade'], ['fresh', '--lots', 'lots']]) {
+ for (const [profile, flag, child] of [['phase2', '--definitions', 'upgrade'], ['fresh', '--lots', 'lots-catalog']]) {
   await invoke({ argv: ['node', '/workspace/test/phase2-postgres.js', flag], env: { P2_TEST_CHILD: child, P2_TEST_SCHEMA: phase2Schema }, endpoint: local, profile, includeNotNull: true, settings: { schema: phase2Schema, database: 'omerta_check', role: 'pilot_runner' } });
  }
  let refusals = 0;

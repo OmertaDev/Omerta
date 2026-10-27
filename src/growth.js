@@ -10,9 +10,10 @@ import { verifySocial, verifyPostUp, verifyLegacyPostUp, normalizeSocialPostProo
   normalizeLegacySocialPostProof, requireLinkedXIdentity,
   socialProviders, socialTaskAvailable, throttleXCheck } from './verify.js';
 import { spendOmr } from './vanity.js';
-import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
+import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim, takeAccountDailyClaims,
   takeBoundedAccountDailyClaim } from './accountdaily.js';
 import { dbCaps } from './db.js';
+import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
 
 
 // ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──
@@ -856,7 +857,7 @@ export async function claimOnboard(ch, taskId, client, h) {
 // ── DAILY SOCIAL TASKS ("Spread the Word") — the organic-growth petty-cash faucet ──────────────
 // The reward is gated behind SOCIAL_VERIFY_MODE!=='off' (the verify.js philosophy: never pay a
 // social-task faucet with no verification configured), agent-flagged accounts are excluded, and
-// each task pays ONCE per (account, day). Cash only — never $OMR (the v24 rule). Share URLs carry
+// the task pays ONCE per (account, day). Cash only — never $OMR (the v24 rule). Share URLs carry
 // the player's living name as their referral code, so sharing feeds the §7.13 referral loop.
 export function socialRewardsLive() {
   const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
@@ -877,9 +878,9 @@ export function socialRewardsLive() {
 }
 
 // THE 4-HOUR STAND (founder-directed anti-abuse): a share pays in TWO steps. Step one REGISTERS
-// it (a social_claims row, paid=false, proof stored) — no cash. Step two, after SOCIAL_MATURE_MS
-// (4h; env is the test knob), the claim PAYS — and in live verify mode the stored proof is
-// re-checked against X first, so post-and-delete earns nothing. A registration unclaimed for
+// it (a social_claims row, paid=false, proof plus the server-generated share contract stored) — no
+// cash. Step two, after SOCIAL_MATURE_MS (4h; env is the test knob), the claim PAYS — and in live
+// verify mode the stored proof is re-checked against X first, so post-and-delete earns nothing. A registration unclaimed for
 // PENDING_TTL (48h) lapses (which also retires any pre-maturity historical rows cleanly).
 const socialMatureMs = () => Number(process.env.SOCIAL_MATURE_MS ?? 4 * 3600000);
 const SOCIAL_PENDING_TTL = 48 * 3600000;
@@ -947,7 +948,7 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   // claims serialize — the SELECT-then-INSERT/UPDATE can't double-pay; the PK is the backstop.
   // (1) a live registration in the window? pay it if matured, else report the clock
   const pend = (await client.query(
-    'SELECT day, posted_at, proof, legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2 AND NOT paid AND posted_at > $3 ORDER BY posted_at DESC LIMIT 1',
+    'SELECT day, posted_at, proof, proof_contract, legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2 AND NOT paid AND posted_at > $3 ORDER BY posted_at DESC LIMIT 1',
     [h.accountId, taskId, new Date(Date.now() - SOCIAL_PENDING_TTL)])).rows[0];
   if (pend) {
     const age = Date.now() - new Date(pend.posted_at).getTime();
@@ -958,31 +959,61 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     // live mode: the post must STILL be up AND (for an X-linked account) come from THEIR handle —
     // pass ctx so verifyPostUp's D2 author-binding activates on the real claim path (was dead code:
     // it only fired via a direct unit call). Trust mode short-circuits before touching ctx.
+    // The deployed predecessor allowed proof-less registration and accepted the post URL on the
+    // settlement request. Bound that fallback before verification, then persist it atomically with
+    // the paid transition so the database receipt guard canonicalizes the same verified proof.
+    const settlementProof = pend.proof ?? cleanText(proof).slice(0, 300);
     const legacyBridge = live && pend.legacy_proof_bridge === true
       && await socialLegacyProofBridgeOpen(client);
     const normalized = live
-      ? (legacyBridge ? normalizeLegacySocialPostProof(pend.proof ?? proof) : normalizeSocialPostProof(pend.proof ?? proof))
+      ? (legacyBridge ? normalizeLegacySocialPostProof(settlementProof) : normalizeSocialPostProof(settlementProof))
       : null;
     if (live && await socialProofWasUsed(client, normalized))
       throw new GameError('proof_used', 'That X post has already earned a social reward.');
     if (live)
       await throttleXCheck(client, h.accountId, 'post', h.pool);    // the retry loop, not the happy path
-    await (legacyBridge ? verifyLegacyPostUp : verifyPostUp)(pend.proof ?? proof,
-      { client, accountId: h.accountId });
+    let storedContract = null;
+    if (pend.proof_contract) {
+      try { storedContract = JSON.parse(pend.proof_contract); }
+      catch { throw new GameError('proof_mismatch', 'That share registration has an invalid proof contract. Register it again.'); }
+      if (storedContract?.version !== 1 || typeof storedContract.text !== 'string'
+          || typeof storedContract.url !== 'string')
+        throw new GameError('proof_mismatch', 'That share registration has an invalid proof contract. Register it again.');
+    }
+    const legacyIntent = storedContract ? null : new URL(socialShareUrl(t.kind, ''));
+    await (legacyBridge ? verifyLegacyPostUp : verifyPostUp)(settlementProof,
+      { client, accountId: h.accountId, proofContract: {
+        registeredAt: pend.posted_at,
+        expectedText: storedContract?.text ?? legacyIntent.searchParams.get('text'),
+        expectedUrl: storedContract?.url,
+        expectedBaseUrl: storedContract ? null : legacyIntent.searchParams.get('url'),
+      } });
     // Reserve only after the linked author has been verified. The synthetic receipt's database PK
-    // is the cross-account/cross-task race winner; exactly one concurrent claimant can proceed.
-    if (live && !await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
-      SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM))
-      throw new GameError('proof_used', 'That X post has already earned a social reward.');
-    await client.query('UPDATE social_claims SET paid=true WHERE account_id=$1 AND day=$2 AND task_id=$3',
-      [h.accountId, pend.day, taskId]);
+    // is the cross-account/cross-day race winner; exactly one concurrent claimant can proceed.
+    if (live) {
+      const receiptAccount = socialProofReceiptAccount(normalized);
+      if (!await takeAccountDailyClaim(client, receiptAccount, SOCIAL_PROOF_EPOCH,
+        SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM))
+        throw new GameError('proof_used', 'That X post has already earned a social reward.');
+      // PostgreSQL's legacy-payout trigger also sees current paid transitions. This transaction-local
+      // capability proves the current path already reserved this exact receipt; predecessor binaries
+      // cannot set it, so they must insert the receipt themselves or lose a duplicate race.
+      if (dbCaps.skipLocked)
+        await client.query("SELECT set_config('omerta.social_receipt_account',$1,true)", [receiptAccount]);
+    }
+    const paid = await client.query(
+      'UPDATE social_claims SET paid=true, proof=COALESCE(proof,$4), legacy_proof_bridge=false WHERE account_id=$1 AND day=$2 AND task_id=$3 AND NOT paid',
+      [h.accountId, pend.day, taskId, settlementProof || null]);
+    if (paid.rowCount !== 1)
+      throw new GameError('claim_lapsed', 'That share registration expired while it was being checked. Register it again.');
     const paidIds = (await client.query(
       'SELECT task_id FROM social_claims WHERE account_id=$1 AND day=$2 AND paid', [h.accountId, pend.day])).rows.map((r) => r.task_id);
     const allDone = SOCIAL_TASKS.TASKS.every((x) => paidIds.includes(x.id));
-    const cash = SOCIAL_TASKS.CASH + (allDone ? SOCIAL_TASKS.ALL_BONUS : 0); // the all-done bonus folds into the last payout (the onboard-capstone precedent)
+    const cash = SOCIAL_TASKS.CASH + (allDone ? SOCIAL_TASKS.ALL_BONUS : 0);
     ch.cash = Number(ch.cash) + cash;
     await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: cash, reason: `social:${taskId}` });
-    await h.track(client, h.accountId, 'social_task', { task: taskId, allDone, proof: cleanText(pend.proof ?? proof).slice(0, 300) });
+    await h.track(client, h.accountId, 'social_task', { task: taskId, allDone,
+      proof: cleanText(settlementProof).slice(0, 300) });
     return { ok: true, kind: 'social', task: taskId, cash, allDone };
   }
   // (2) no live registration → register today's share (once per task per day)
@@ -1000,8 +1031,11 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     if (await socialProofWasUsed(client, normalized))
       throw new GameError('proof_used', 'That X post has already earned a social reward.');
   }
-  await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof, legacy_proof_bridge) VALUES ($1,$2,$3,false,$4,false)',
-    [h.accountId, day, taskId, cleanProof || null]);
+  const shareIntent = new URL(socialShareUrl(t.kind, ch.name));
+  const proofContract = JSON.stringify({ version: 1,
+    text: shareIntent.searchParams.get('text'), url: shareIntent.searchParams.get('url') });
+  await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof, proof_contract, legacy_proof_bridge) VALUES ($1,$2,$3,false,$4,$5,false)',
+    [h.accountId, day, taskId, cleanProof || null, proofContract]);
   await h.track(client, h.accountId, 'social_post', { task: taskId, proof: cleanProof });
   return { ok: true, kind: 'social', task: taskId, pending: true, registered: true,
     matureSeconds: Math.ceil(mature / 1000) };
@@ -1010,13 +1044,68 @@ export async function claimSocial(ch, taskId, proof, client, h) {
 // worker housekeeping (L5): drop spent social_claims rows so the table doesn't grow forever. The
 // board/claim queries already FILTER on today / the 48h pending window, so this only trims what's
 // no longer readable: PAID rows older than a week and UNPAID registrations past the pending TTL.
-export async function sweepSocialClaims(pool) {
+export async function sweepSocialClaims(pool, options = {}) {
   const paidCut = new Date(Date.now() - 7 * 24 * 3600000);
   const pendCut = new Date(Date.now() - SOCIAL_PENDING_TTL);
-  const r = await pool.query(
-    'DELETE FROM social_claims WHERE (paid AND posted_at < $1) OR (NOT paid AND posted_at < $2)',
-    [paidCut, pendCut]);
-  return { swept: r.rowCount || 0 };
+  const wantedBatchSize = Number(options.batchSize ?? 500);
+  const wantedBatches = Number(options.maxBatches ?? 20);
+  const batchSize = Number.isSafeInteger(wantedBatchSize) && wantedBatchSize > 0
+    ? Math.min(wantedBatchSize, 1000) : 500;
+  const maxBatches = Number.isSafeInteger(wantedBatches) && wantedBatches > 0
+    ? Math.min(wantedBatches, 100) : 20;
+  const client = await pool.connect();
+  let swept = 0, batches = 0, more = false;
+  try {
+    while (batches < maxBatches) {
+      await client.query('BEGIN');
+      try {
+        const skipLocked = dbCaps.skipLocked ? ' SKIP LOCKED' : '';
+        // Alternate one bounded paid page with one bounded expired-pending page. Neither backlog can
+        // starve the other, and every committed page is durable progress under the 15s query bound.
+        const paidRows = (await client.query(
+          `SELECT account_id, day, task_id, proof FROM social_claims
+            WHERE paid AND posted_at < $1
+            ORDER BY posted_at, account_id, day, task_id LIMIT $2 FOR UPDATE${skipLocked}`,
+          [paidCut, batchSize])).rows;
+        const pendingRows = (await client.query(
+          `SELECT account_id, day, task_id FROM social_claims
+            WHERE NOT paid AND posted_at < $1
+            ORDER BY posted_at, account_id, day, task_id LIMIT $2 FOR UPDATE${skipLocked}`,
+          [pendCut, batchSize])).rows;
+        // A predecessor process can commit a paid proof without the permanent provider/id latch.
+        // Reserve every canonical receipt before deleting its last evidence row. The shared bulk
+        // helper deduplicates and acquires overlapping receipt PKs in one global order.
+        const receiptAccounts = paidRows.map(row => {
+          const normalized = normalizeLegacyPaidSocialPostProof(row.proof);
+          return normalized ? socialProofReceiptAccount(normalized) : null;
+        }).filter(Boolean);
+        await takeAccountDailyClaims(client, receiptAccounts, SOCIAL_PROOF_EPOCH,
+          SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM);
+        const dueRows = [...paidRows, ...pendingRows];
+        let removed = 0;
+        if (dueRows.length) {
+          const params = [];
+          const predicates = dueRows.map(row => {
+            const offset = params.length;
+            params.push(row.account_id, row.day, row.task_id);
+            return `(account_id=$${offset + 1} AND day=$${offset + 2} AND task_id=$${offset + 3})`;
+          });
+          removed = (await client.query(
+            `DELETE FROM social_claims WHERE ${predicates.join(' OR ')}`, params)).rowCount || 0;
+        }
+        await client.query('COMMIT');
+        swept += removed; batches++;
+        more = paidRows.length === batchSize || pendingRows.length === batchSize;
+        if (!more) break;
+      } catch (error) {
+        await client.query('ROLLBACK').catch(() => {});
+        throw error;
+      }
+    }
+    return { swept, batches, more };
+  } finally {
+    client.release();
+  }
 }
 
 // WALLET LINK is SIWE now — see chain.js walletChallenge/walletVerify. The legacy

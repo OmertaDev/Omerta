@@ -1517,16 +1517,14 @@ assert.equal(r.code, 200); assert.equal(r.body.cash, SOCIAL_TASKS.CASH, 'a matur
 assert.equal((await meOf(promoter.token)).cash, swCashBefore + SOCIAL_TASKS.CASH, 'the cash landed');
 assert.equal((await call('GET', '/v1/social', { token: promoter.token })).body.tasks.find((t) => t.id === 'sw_post').claimed, true, 'the board marks it done today');
 assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: promoter.token })).body.error, 'claimed', 'once per day per task');
-await call('POST', '/v1/social/sw_invite/claim', { token: promoter.token });
-await matureSw(promoter.id, 'sw_invite');
-await call('POST', '/v1/social/sw_invite/claim', { token: promoter.token });
-await call('POST', '/v1/social/sw_boost/claim', { token: promoter.token });
-await matureSw(promoter.id, 'sw_boost');
-r = await call('POST', '/v1/social/sw_boost/claim', { token: promoter.token });
-assert.equal(r.body.allDone, true, 'the last matured task completes the day');
-assert.equal(r.body.cash, SOCIAL_TASKS.CASH + SOCIAL_TASKS.ALL_BONUS, 'and pays the all-done bonus, folded into the row');
+assert.equal(r.body.allDone, true, 'the one verifiable daily post completes the board');
+assert.equal(SOCIAL_TASKS.ALL_BONUS, 0, 'there is no multi-post spam bonus');
+assert.equal((await call('POST', '/v1/social/sw_invite/claim', { token: promoter.token })).body.error,
+  'bad_task', 'the unverifiable invite-post faucet is retired');
+assert.equal((await call('POST', '/v1/social/sw_boost/claim', { token: promoter.token })).body.error,
+  'bad_task', 'the unverifiable like/repost/follow faucet is retired');
 assert.equal((await call('POST', '/v1/social/sw_nope/claim', { token: promoter.token })).body.error, 'bad_task', 'unknown task rejected');
-const swPaid = SOCIAL_TASKS.CASH * 3 + SOCIAL_TASKS.ALL_BONUS;
+const swPaid = SOCIAL_TASKS.CASH;
 assert.equal(Number((await pool.query(`SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE character_id='${promoter.id}' AND reason LIKE 'social:%'`)).rows[0].s), swPaid, 'every payout is a ledgered social: cash faucet');
 assert.equal((await meOf(promoter.token)).cash, 500 + swPaid, 'the character cash reconciles with the ledger (§10.4)');
 // agent accounts are excluded (the referral precedent)
@@ -1569,8 +1567,21 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
   process.env.X_CHECK_CD_MS = '0';
   const realFetch = global.fetch;
   let stubAuthor = '777';
+  const shareContract = (name) => {
+    const intent = new URL(socialShareUrl('tweet', name));
+    return { text: intent.searchParams.get('text'), url: intent.searchParams.get('url') };
+  };
+  let stubShare = shareContract('Fixture Player');
+  let stubText = stubShare.text;
+  let stubExpandedUrl = stubShare.url;
+  const useShare = (name) => {
+    stubShare = shareContract(name); stubText = stubShare.text; stubExpandedUrl = stubShare.url;
+  };
+  let stubCreatedAt = () => new Date(Date.now() - 5 * 3600000).toISOString();
   global.fetch = async (url) => ({ status: 200, ok: true, json: async () => ({
-    data: { id: String(url).match(/\/tweets\/(\d+)/)?.[1], author_id: stubAuthor },
+    data: { id: String(url).match(/\/tweets\/(\d+)/)?.[1], author_id: stubAuthor,
+      text: stubText, created_at: stubCreatedAt(),
+      entities: { urls: [{ expanded_url: stubExpandedUrl }] } },
   }) });
   try {
     // Rolling upgrade: predecessor rows retain their permissive proof parser inside the bounded
@@ -1587,10 +1598,43 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
       'the refused legacy guest proof moves no cash');
     await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='781' WHERE id=$1", [bridgedGuest.accountId]);
     stubAuthor = '781';
+    useShare('Bridged Guest Bea');
     const bridged = await call('POST', '/v1/social/sw_post/claim', { token: bridgedGuest.token });
     assert.equal(bridged.body.cash, SOCIAL_TASKS.CASH,
       'the bounded predecessor parser remains available after linked-X ownership is proved');
     assert.equal(Number((await meOf(bridgedGuest.token)).cash), bridgedCash + SOCIAL_TASKS.CASH);
+    assert.equal((await pool.query(
+      'SELECT legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [bridgedGuest.accountId, 'sw_post'])).rows[0].legacy_proof_bridge, false,
+    'the current payout path disarms the database predecessor guard after taking its own receipt');
+
+    const proofAtSettlement = await mk('Settlement Proof Sal');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='794' WHERE id=$1",
+      [proofAtSettlement.accountId]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id,day,task_id,posted_at,paid,proof)
+       VALUES ($1,$2,'sw_post',$3,false,NULL)`,
+      [proofAtSettlement.accountId, dayOf(), new Date(Date.now() - 5 * 3600000)]);
+    const settlementId = '12345678901252';
+    const settlementUrl = `https://x.com/settlement/status/${settlementId}`;
+    const settlementCash = Number((await meOf(proofAtSettlement.token)).cash);
+    stubAuthor = '794';
+    useShare('Settlement Proof Sal');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', {
+      token: proofAtSettlement.token, body: { proof: settlementUrl },
+    })).body.cash, SOCIAL_TASKS.CASH,
+    'a predecessor proof-less registration can settle with a verified request proof');
+    const settledLegacy = (await pool.query(
+      'SELECT paid,proof FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [proofAtSettlement.accountId, 'sw_post'])).rows[0];
+    assert.deepEqual([settledLegacy.paid, settledLegacy.proof], [true, settlementUrl],
+      'the verified fallback proof is persisted atomically with the paid transition');
+    assert.equal(Number((await meOf(proofAtSettlement.token)).cash), settlementCash + SOCIAL_TASKS.CASH);
+    assert.equal((await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      [`social-proof:x:${settlementId}`])).rowCount, 1,
+    'proof-at-settlement consumes its permanent receipt exactly once');
 
     const invalidLegacy = await mk('Invalid Legacy Ivy');
     await pool.query(
@@ -1672,23 +1716,99 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     const linkedAcct = (await pool.query(`SELECT account_id a FROM characters WHERE id='${linked.id}'`)).rows[0].a;
     await pool.query(`UPDATE accounts SET auth_provider='x', auth_subject='777' WHERE id='${linkedAcct}'`);
     stubAuthor = '777';
+    useShare('Linked Lou');
     await call('POST', '/v1/social/sw_post/claim', { token: linked.token, body: { proof: 'https://x.com/lou/status/12345678901234' } });
     assert.equal((await pool.query(
       'SELECT legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2',
       [linked.accountId, 'sw_post'])).rows[0].legacy_proof_bridge, false,
     'the current registration path explicitly opts out of the rolling bridge');
     await matureSw(linked.id, 'sw_post');
+    await pool.query("UPDATE characters SET name='Linked Lou Renamed' WHERE id=$1", [linked.id]);
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.cash, SOCIAL_TASKS.CASH,
-      'live mode: a matured post from the linked X account pays (H2 author-binding wired through the claim path)');
+      'the frozen registration-era share contract survives a character rename during the four-hour stand');
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: linked.token })).body.error, 'claimed',
       'the linked author is paid only once for the task');
+
+    // The registration belongs to the account, not the mortal street. Prove the stored contract is
+    // what pays after an intervening rename AND estate transition; rebuilding it from the heir's
+    // current name would point at a different referral URL and strand an otherwise valid four-hour stand.
+    const bloodline = await mk('Bloodline Share Bea');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='787' WHERE id=$1", [bloodline.accountId]);
+    stubAuthor = '787';
+    useShare('Bloodline Share Bea');
+    const bloodlineProof = '12345678901251';
+    await call('POST', '/v1/social/sw_post/claim', { token: bloodline.token,
+      body: { proof: `https://x.com/bloodline/status/${bloodlineProof}` } });
+    const frozenBloodlineContract = (await pool.query(
+      'SELECT proof_contract FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [bloodline.accountId, 'sw_post'])).rows[0].proof_contract;
+    await matureSw(bloodline.id, 'sw_post');
+    await pool.query("UPDATE characters SET name='Bloodline Heir Bea' WHERE id=$1", [bloodline.id]);
+    const estate = await call('POST', '/v1/mod/kill', {
+      body: { characterId: bloodline.id, reason: 'social proof contract lifecycle test' },
+      headers: { 'x-mod-key': 'test-mod-key' },
+    });
+    assert.equal(estate.code, 200, 'the pending sharer entered estate resolution');
+    assert.equal((await meOf(bloodline.token)).id, estate.body.heirId, 'the same account now acts through its heir');
+    const heirCash = Number((await meOf(bloodline.token)).cash);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: bloodline.token })).body.cash,
+      SOCIAL_TASKS.CASH, 'the heir settles the account-level registration from its frozen original contract');
+    assert.equal(Number((await meOf(bloodline.token)).cash), heirCash + SOCIAL_TASKS.CASH,
+      'the social payout lands once on the living heir');
+    assert.equal((await pool.query(
+      'SELECT proof_contract FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [bloodline.accountId, 'sw_post'])).rows[0].proof_contract, frozenBloodlineContract,
+    'rename and death do not rewrite the registered share contract');
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: bloodline.token })).body.error,
+      'claimed', 'the heir cannot settle the inherited registration twice');
+    assert.equal((await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      [`social-proof:x:${bloodlineProof}`])).rowCount, 1,
+    'the inherited payout consumes exactly one permanent proof receipt');
+
+    // The 48h housekeeping sweep can race the external X check. If it deletes the pending row while
+    // verification is in flight, the conditional paid transition must lose and roll the receipt back;
+    // otherwise cash would move with no paid row and the task could be registered and paid again.
+    const lapsing = await mk('Lapsing Proof Lila');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='786' WHERE id=$1", [lapsing.accountId]);
+    const lapsingProof = '12345678901247';
+    stubAuthor = '786';
+    useShare('Lapsing Proof Lila');
+    await call('POST', '/v1/social/sw_post/claim', { token: lapsing.token,
+      body: { proof: `https://x.com/lila/status/${lapsingProof}` } });
+    await matureSw(lapsing.id, 'sw_post');
+    const lapsingCash = Number((await meOf(lapsing.token)).cash);
+    const ordinaryFetch = global.fetch;
+    let enterCheck, releaseCheck;
+    const checking = new Promise(resolve => { enterCheck = resolve; });
+    const checked = new Promise(resolve => { releaseCheck = resolve; });
+    global.fetch = async (url) => { enterCheck(); await checked; return ordinaryFetch(url); };
+    try {
+      const settling = call('POST', '/v1/social/sw_post/claim', { token: lapsing.token });
+      await checking;
+      assert.equal((await pool.query(
+        'DELETE FROM social_claims WHERE account_id=$1 AND task_id=$2',
+        [lapsing.accountId, 'sw_post'])).rowCount, 1, 'the sweep wins while verification is in flight');
+      releaseCheck();
+      assert.equal((await settling).body.error, 'claim_lapsed',
+        'a lost pending-row transition cannot continue into a payout');
+    } finally { releaseCheck?.(); global.fetch = ordinaryFetch; }
+    assert.equal(Number((await meOf(lapsing.token)).cash), lapsingCash, 'the lost transition moves no cash');
+    const lapsedReceiptCount = (await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      [`social-proof:x:${lapsingProof}`])).rowCount;
+    const { dbCaps } = await import('../src/db.js');
+    assert.equal(lapsedReceiptCount, dbCaps.skipLocked ? 0 : 1,
+      'PostgreSQL rolls the failed receipt back; pg-mem may conservatively retain it, but neither pays cash');
 
     // The proof receipt is provider/id based, not URL-string or account based. Model an X identity
     // moving to a new game account: the same tweet stays spent under a twitter.com/statuses alias.
     await pool.query("UPDATE accounts SET auth_provider='guest', auth_subject=id WHERE id=$1", [linkedAcct]);
     const successor = await mk('Proof Successor');
     await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='777' WHERE id=$1", [successor.accountId]);
-    assert.equal((await call('POST', '/v1/social/sw_invite/claim', { token: successor.token,
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: successor.token,
       body: { proof: 'https://twitter.com/lou/statuses/12345678901234?ref=replay' } })).body.error, 'proof_used',
     'one normalized tweet cannot pay a second account');
 
@@ -1735,12 +1855,110 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     assert.equal((await migrateSocialProofReceipts(pool)).inserted, 0,
       'reapplying the historical receipt repair after cutover is idempotent');
 
+    // R5 retention repair: R4's repeat pass read only two telemetry days after its marker existed,
+    // while paid claim rows were swept at day seven. Model an R4-era sweep that already removed the
+    // row; the new one-time full retained-history pass must still recover the permanent proof latch.
+    const delayedProof = 'https://x.com/legacy/status/00012345678901246';
+    const delayedAt = new Date(Date.now() - 8 * 86400000);
+    await pool.query("DELETE FROM economy_migrations WHERE id='social-proof-receipt-retention-2026-10-27'");
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props) VALUES
+       ('legacy-social-proof-retention-gap',$1,$2,'social_task',$3)`,
+      [delayedAt, legacy.accountId, JSON.stringify({ task: 'sw_post', proof: delayedProof })]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_boost',$3,true,$4)`,
+      [legacy.accountId, legacyDay - 7, delayedAt, delayedProof]);
+    await pool.query('DELETE FROM social_claims WHERE account_id=$1 AND day=$2 AND task_id=$3',
+      [legacy.accountId, legacyDay - 7, 'sw_boost']); // predecessor sweep, before receipt-aware R5
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 1,
+      'the retention repair recovers a predecessor payout after its seven-day claim row was swept');
+    assert.equal(Number((await pool.query(
+      `SELECT COUNT(*) n FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      ['social-proof:x:12345678901246'])).rows[0].n), 1,
+    'the delayed predecessor proof is permanently spent');
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 0,
+      'the retention catch-up marker and receipt are idempotent');
+
+    // The retained-history repair is keyset-paged and commits its cursor after every bounded page.
+    // Force multiple pages (including same-timestamp ids, a duplicate alias and malformed JSON), then
+    // resume one page per invocation as a process restart would.
+    const pageAt = new Date(Date.now() - 12 * 86400000);
+    const pageProofs = [
+      ['receipt-page-a', 'https://x.com/legacy/status/12345678930001'],
+      ['receipt-page-b', 'https://twitter.com/legacy/statuses/12345678930002'],
+      ['receipt-page-c', '00012345678930003'],
+      ['receipt-page-d', 'https://x.com/alias/status/12345678930001'],
+    ];
+    for (const [id, pageProof] of pageProofs)
+      await pool.query(
+        `INSERT INTO telemetry (id, at, account_id, event, props)
+         VALUES ($1,$2,$3,'social_task',$4)`,
+        [id, pageAt, legacy.accountId, JSON.stringify({ task: 'sw_post', proof: pageProof })]);
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props)
+       VALUES ('receipt-page-malformed',$1,$2,'social_task','{')`, [pageAt, legacy.accountId]);
+    await pool.query(
+      `DELETE FROM economy_migrations
+        WHERE id IN ('social-proof-receipts-2026-10-23','social-proof-receipt-retention-2026-10-27')
+           OR id LIKE 'social-proof-receipt-retention-progress-2026-10-27%'`);
+    let pagedCalls = 0, pagedInserted = 0, pageResult;
+    do {
+      pageResult = await migrateSocialProofReceipts(pool, { batchSize: 2, maxBatches: 1 });
+      pagedCalls++; pagedInserted += pageResult.inserted;
+      if (pagedCalls === 1) {
+        await new Promise(resolve => setTimeout(resolve, 20));
+        const duringProof = 'https://x.com/legacy/status/12345678930004';
+        await pool.query(
+          `INSERT INTO social_claims (account_id,day,task_id,posted_at,paid,proof,legacy_proof_bridge)
+           VALUES ($1,$2,'sw_post',now(),true,$3,false)`,
+          [legacy.accountId, dayOf() + 10, duringProof]);
+        await pool.query(
+          `INSERT INTO telemetry (id,at,account_id,event,props)
+           VALUES ('receipt-page-during-full',now(),$1,'social_task',$2)`,
+          [legacy.accountId, JSON.stringify({ task: 'sw_post', proof: duringProof })]);
+      }
+      if (!pageResult.complete)
+        assert.equal((await pool.query(
+          "SELECT 1 FROM economy_migrations WHERE id='social-proof-receipt-retention-2026-10-27'"
+        )).rowCount, 0, 'final marker stays absent while a durable page cursor remains');
+      assert(pagedCalls < 500, 'bounded receipt migration must make forward progress');
+    } while (!pageResult.complete);
+    assert(pagedCalls > 3, 'the repair resumed across multiple committed pages');
+    assert(pagedInserted >= 3, 'all unique canonical page proofs were retained');
+    for (const id of ['12345678930001', '12345678930002', '12345678930003'])
+      assert.equal((await pool.query(
+        `SELECT 1 FROM account_daily_claims
+          WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+        [`social-proof:x:${id}`])).rowCount, 1, `paged proof ${id} survived cursor boundaries`);
+    assert.equal((await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id='social-proof:x:12345678930004' AND day=0
+          AND scope='social-proof' AND claim_id='used'`)).rowCount, 1,
+    'the same migration lifecycle catches a payout committed after its initial cutoff');
+    assert.equal((await pool.query(
+      "SELECT 1 FROM economy_migrations WHERE id LIKE 'social-proof-receipt-retention-progress-2026-10-27%'"
+    )).rowCount, 0, 'completion removes transient cursor rows');
+
+    const postCutoffProof = 'https://x.com/legacy/status/12345678930005';
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props)
+       VALUES ('receipt-page-post-cutoff',now(),$1,'social_task',$2)`,
+      [legacy.accountId, JSON.stringify({ task: 'sw_post', proof: postCutoffProof })]);
+    assert((await migrateSocialProofReceipts(pool, { batchSize: 2 })).inserted >= 1,
+      'the bounded two-day repeat pass catches evidence committed after the full-pass cutoff');
+    assert.equal((await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id='social-proof:x:12345678930005' AND day=0
+          AND scope='social-proof' AND claim_id='used'`)).rowCount, 1);
+
     const legacyReuser = await mk('Legacy Proof Reuser');
     await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='778' WHERE id=$1", [legacyReuser.accountId]);
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,
       body: { proof: 'https://twitter.com/replay/statuses/12345678901238?s=20' } })).body.error, 'proof_used',
     'a pre-upgrade paid proof cannot register or pay again through a URL alias');
-    assert.equal((await call('POST', '/v1/social/sw_invite/claim', { token: legacyReuser.token,
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,
       body: { proof: 'https://x.com/replay/status/12345678901242' } })).body.error, 'proof_used',
     'a host alias accepted and X-verified by the predecessor cannot replay through canonical x.com');
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,
@@ -1755,6 +1973,7 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     const reuser = await mk('Proof Reuser');
     await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='889' WHERE id=$1", [reuser.accountId]);
     stubAuthor = '889';
+    useShare('Proof Reuser');
     await call('POST', '/v1/social/sw_post/claim', { token: reuser.token,
       body: { proof: 'https://x.com/reuser/status/12345678901236?s=20' } });
     await matureSw(reuser.id, 'sw_post');
@@ -1762,7 +1981,7 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     const realNow = Date.now;
     Date.now = () => realNow() + 86400000;
     try {
-      assert.equal((await call('POST', '/v1/social/sw_boost/claim', { token: reuser.token,
+      assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: reuser.token,
         body: { proof: '00012345678901236' } })).body.error, 'proof_used',
       'one tweet can fund at most one reward ever, including a leading-zero alias on the next UTC day');
     } finally { Date.now = realNow; }
@@ -1777,38 +1996,96 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: faker.token })).body.error, 'not_your_post',
       "live mode binds the post to the player's linked X account (registering a celebrity's tweet earns nothing)");
 
-    // pg-mem does not serialize SELECT FOR UPDATE, so two task routes for one linked account reach
-    // the global receipt concurrently. Its PK must elect exactly one payout and keep cash ledger-exact.
-    // Native Postgres additionally serializes this same-account case; duplicate linked X identities
-    // across accounts are independently impossible under accounts(auth_provider,auth_subject) UNIQUE.
-    const race = await mk('Proof Race Rita');
-    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='990' WHERE id=$1", [race.accountId]);
-    const raceProof = '12345678901237';
+    // A tweet inventory is not a daily-action proof. The one paid task requires its distinctive
+    // share text and a post timestamp close to the stored registration time.
+    const unrelated = await mk('Unrelated Post Uma');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='990' WHERE id=$1", [unrelated.accountId]);
     stubAuthor = '990';
-    const raceCashBefore = Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [race.id])).rows[0].cash);
-    await call('POST', '/v1/social/sw_post/claim', { token: race.token,
-      body: { proof: `https://x.com/race/status/${raceProof}` } });
-    await call('POST', '/v1/social/sw_invite/claim', { token: race.token,
-      body: { proof: `https://twitter.com/race/statuses/${raceProof}?s=20` } });
-    await matureSw(race.id, 'sw_post'); await matureSw(race.id, 'sw_invite');
-    const raced = await Promise.all([
-      call('POST', '/v1/social/sw_post/claim', { token: race.token }),
-      call('POST', '/v1/social/sw_invite/claim', { token: race.token }),
-    ]);
-    assert.equal(raced.filter((x) => x.code === 200).length, 1, JSON.stringify(raced));
-    assert.equal(raced.filter((x) => x.body.error === 'proof_used').length, 1, JSON.stringify(raced));
-    const raceBook = (await pool.query(
-      `SELECT COUNT(*)::int n, COALESCE(SUM(amount),0) amount FROM transactions
-        WHERE character_id=$1 AND currency='cash' AND reason LIKE 'social:%'`, [race.id])).rows[0];
-    assert.deepEqual([Number(raceBook.n), Number(raceBook.amount)], [1, SOCIAL_TASKS.CASH],
-      'concurrent duplicate proof creates exactly one social ledger row');
-    assert.equal(Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [race.id])).rows[0].cash),
-      raceCashBefore + SOCIAL_TASKS.CASH, 'concurrent duplicate proof moves cash by exactly its one ledger row');
-    assert.equal(Number((await pool.query(
-      `SELECT COUNT(*) n FROM account_daily_claims
+    useShare('Unrelated Post Uma');
+    await call('POST', '/v1/social/sw_post/claim', { token: unrelated.token,
+      body: { proof: 'https://x.com/unrelated/status/12345678901237' } });
+    await matureSw(unrelated.id, 'sw_post');
+    stubText = 'An unrelated old post with no game share contract';
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: unrelated.token })).body.error,
+      'proof_mismatch', 'an authored but unrelated tweet cannot farm the social faucet');
+    useShare('Unrelated Post Uma');
+    stubText = 'I dislike this noir mob rpghack; report @OmertaOnRHScam';
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: unrelated.token })).body.error,
+      'proof_mismatch', 'marker substrings and handle prefixes cannot imitate the exact share contract');
+    useShare('Unrelated Post Uma');
+    stubExpandedUrl = 'https://attacker.example/u/Unrelated%20Post%20Uma?ref=Unrelated+Post+Uma';
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: unrelated.token })).body.error,
+      'proof_mismatch', 'the official text without its exact referral link cannot earn cash');
+
+    // A corrupted frozen contract must never fall back to current character or legacy intent data.
+    // Exercise both invalid JSON and a valid-JSON wrong version/shape before proving no value moved.
+    const corrupt = await mk('Corrupt Contract Cora');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='992' WHERE id=$1", [corrupt.accountId]);
+    stubAuthor = '992';
+    useShare('Corrupt Contract Cora');
+    const corruptProof = '12345678901250';
+    await call('POST', '/v1/social/sw_post/claim', { token: corrupt.token,
+      body: { proof: `https://x.com/corrupt/status/${corruptProof}` } });
+    await matureSw(corrupt.id, 'sw_post');
+    const corruptCash = Number((await meOf(corrupt.token)).cash);
+    await pool.query("UPDATE social_claims SET proof_contract='{' WHERE account_id=$1 AND task_id='sw_post'",
+      [corrupt.accountId]);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: corrupt.token })).body.error,
+      'proof_mismatch', 'malformed stored contract JSON fails closed');
+    await pool.query('UPDATE social_claims SET proof_contract=$2 WHERE account_id=$1 AND task_id=$3',
+      [corrupt.accountId, JSON.stringify({ version: 2, text: stubText }), 'sw_post']);
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: corrupt.token })).body.error,
+      'proof_mismatch', 'a wrong-version or incomplete stored contract fails closed');
+    assert.equal(Number((await meOf(corrupt.token)).cash), corruptCash,
+      'corrupt contract refusals move no cash');
+    assert.equal((await pool.query(
+      'SELECT paid FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [corrupt.accountId, 'sw_post'])).rows[0].paid, false,
+    'corrupt contract refusals leave the registration unpaid');
+    assert.equal((await pool.query(
+      `SELECT 1 FROM account_daily_claims
         WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
-      [`social-proof:x:${raceProof}`])).rows[0].n), 1,
-    'the permanent synthetic proof namespace contains exactly one receipt');
+      [`social-proof:x:${corruptProof}`])).rowCount, 0,
+    'corrupt contract refusals consume no permanent proof receipt');
+
+    const stale = await mk('Stale Post Stella');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='991' WHERE id=$1", [stale.accountId]);
+    stubAuthor = '991';
+    useShare('Stale Post Stella');
+    await call('POST', '/v1/social/sw_post/claim', { token: stale.token,
+      body: { proof: 'https://x.com/stale/status/12345678901248' } });
+    await matureSw(stale.id, 'sw_post');
+    stubCreatedAt = () => new Date(Date.now() - 24 * 3600000).toISOString();
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: stale.token })).body.error,
+      'proof_stale', 'a historical matching tweet cannot be recycled as today\'s share');
+
+    const futurePost = await mk('Future Post Frida');
+    await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='993' WHERE id=$1", [futurePost.accountId]);
+    stubAuthor = '993';
+    useShare('Future Post Frida');
+    const futureProof = '12345678901249';
+    await call('POST', '/v1/social/sw_post/claim', { token: futurePost.token,
+      body: { proof: `https://x.com/future/status/${futureProof}` } });
+    await matureSw(futurePost.id, 'sw_post');
+    const futureRegistration = (await pool.query(
+      'SELECT posted_at FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [futurePost.accountId, 'sw_post'])).rows[0].posted_at;
+    const futureCash = Number((await meOf(futurePost.token)).cash);
+    stubCreatedAt = () => new Date(new Date(futureRegistration).getTime() + 10 * 60000).toISOString();
+    assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: futurePost.token })).body.error,
+      'proof_stale', 'a post dated beyond the five-minute registration skew cannot pre-authorize a payout');
+    assert.equal(Number((await meOf(futurePost.token)).cash), futureCash,
+      'the future-dated refusal moves no cash');
+    assert.equal((await pool.query(
+      'SELECT paid FROM social_claims WHERE account_id=$1 AND task_id=$2',
+      [futurePost.accountId, 'sw_post'])).rows[0].paid, false,
+    'the future-dated refusal leaves the registration unpaid');
+    assert.equal((await pool.query(
+      `SELECT 1 FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      [`social-proof:x:${futureProof}`])).rowCount, 0,
+    'the future-dated refusal consumes no permanent proof receipt');
+    stubCreatedAt = () => new Date(Date.now() - 5 * 3600000).toISOString();
   } finally {
     global.fetch = realFetch; delete process.env.X_BEARER_TOKEN; delete process.env.X_CHECK_CD_MS;
     process.env.SOCIAL_VERIFY_MODE = 'trust';

@@ -8,6 +8,7 @@ import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,
   verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES } from '../tools/ux-release-phase2-native-catalog.js';
+import { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
 import { boostCar } from '../src/economy.js';
@@ -259,7 +260,7 @@ try {
   const serverVersion = Number((await pool.query("SELECT current_setting('server_version_num') AS version")).rows[0].version);
   dbCaps.skipLocked = true;
   await pool.query(execFileSync('git', ['show', `${BASELINE}:schema.sql`], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
-  const exactBaselineMetadata = await readCommerceReleasePhase2Metadata(pool);
+  const exactBaselineMetadata = await readHistoricalCommerceReleasePhase2Metadata(pool);
   // Current gameplay populates the historical fixture before migration, so give that temporary
   // population schema only the newer read/persist surfaces it uses. We then copy all common-table
   // data into a newly applied exact baseline schema; this avoids dropped-column attnum holes and
@@ -383,7 +384,7 @@ try {
     for (const constraint of foreignKeys) await clone.query(`ALTER TABLE ${quote(namespace)}.${quote(constraint.table_name)}
       ALTER CONSTRAINT ${quote(constraint.name)} ${constraint.deferrable
         ? `DEFERRABLE INITIALLY ${constraint.deferred ? 'DEFERRED' : 'IMMEDIATE'}` : 'NOT DEFERRABLE'}`);
-    assert.deepEqual(await readCommerceReleasePhase2Metadata(clone), exactBaselineMetadata,
+    assert.deepEqual(await readHistoricalCommerceReleasePhase2Metadata(clone), exactBaselineMetadata,
       'Temporary FK deferral restores the exact baseline physical catalog before commit');
     await clone.query('COMMIT');
   } catch (error) { await clone.query('ROLLBACK'); throw error; }
@@ -396,7 +397,7 @@ try {
     ORDER BY table_name,column_name`)).rows, [], 'Temporary current-runtime compatibility columns are absent from the predecessor');
   assert.equal((await pool.query("SELECT to_regclass(current_schema()||'.account_daily_claims') AS relation")).rows[0].relation,
     null, 'Temporary current-runtime compatibility table is absent from the predecessor');
-  assert.deepEqual(await readCommerceReleasePhase2Metadata(pool), exactBaselineMetadata,
+  assert.deepEqual(await readHistoricalCommerceReleasePhase2Metadata(pool), exactBaselineMetadata,
     'Fresh migration target has the exact baseline physical relations, columns/ordinals, constraints and indexes');
   assert.deepEqual(await capture(canonicalTables), populatedCanonicalRows,
     'Fresh exact baseline target preserves every populated canonical row and receipt');

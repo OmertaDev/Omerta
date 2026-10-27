@@ -1,6 +1,6 @@
 {
   "name": "omerta-backend",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -304,7 +304,7 @@
     "test:ux": "npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js",
     "test:ux:browser": "node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js",
     "test:ux:postgres": "node test/ux-postgres.js && node test/ux-postgres-rls.js",
-    "test:ux:source": "node test/ux-source-compatibility.js",
+    "test:ux:source": "node test/sale-source-compatibility.js && node test/ux-source-compatibility.js",
     "test:economy-ux-source": "node test/economy-ux-merge-source-compatibility.js"
   },
   "dependencies": {

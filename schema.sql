@@ -716,8 +716,16 @@ CREATE TABLE IF NOT EXISTS social_claims (
   -- current registrations explicitly write FALSE. A durable cutover marker globally sunsets the
   -- permissive verifier after 48h; the ordinary row TTL independently bounds each pending claim.
   legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true,
+  -- Server-generated share text/link frozen at registration. A rename/death during the four-hour
+  -- stand cannot invalidate honest work, and payout never has to trust a client-supplied campaign.
+  -- NULL is reserved for predecessor registrations and uses the bounded compatibility validator.
+  proof_contract TEXT,
   PRIMARY KEY (account_id, day, task_id)
 );
+-- Receipt-aware housekeeping reads paid seven-day and pending 48-hour tails in bounded pages. Lead
+-- with state/time so each page stays proportional to its limit as the player population grows.
+CREATE INDEX IF NOT EXISTS ix_social_claims_sweep
+  ON social_claims (paid, posted_at, account_id, day, task_id);
 CREATE TABLE IF NOT EXISTS telemetry (
   id TEXT PRIMARY KEY,
   at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -2217,6 +2225,9 @@ CREATE INDEX IF NOT EXISTS ix_rng_action ON rng_audit (action);
 -- this the admin dashboard's 15s poll seq-scanned the whole (fastest-growing) telemetry table twice.
 CREATE INDEX IF NOT EXISTS ix_telemetry_event ON telemetry (event);
 CREATE INDEX IF NOT EXISTS ix_telemetry_account_event ON telemetry (account_id, event);
+-- The social-proof receipt repair walks this retained event class by an exact (at,id) keyset. The
+-- composite order lets LIMIT bound physical work instead of sorting the full retained event set.
+CREATE INDEX IF NOT EXISTS ix_telemetry_event_at_id ON telemetry (event, at, id);
 CREATE INDEX IF NOT EXISTS ix_notif_char_undelivered ON notifications (character_id) WHERE NOT delivered;
 -- one wallet address binds to at most one account (§4)
 CREATE UNIQUE INDEX IF NOT EXISTS ux_wallet_address ON account_persistent (wallet_address) WHERE wallet_address IS NOT NULL;

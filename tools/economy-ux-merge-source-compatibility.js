@@ -2,6 +2,10 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { ECONOMY_UX_MERGE_SOURCE, ECONOMY_UX_MERGE_SOURCE_SHA256 } from './economy-ux-merge-source-data.js';
+import { saleHistoricalInput } from './sale-source-compatibility.js';
+import { economySocialProofCutoverHistoricalInput } from './economy-social-proof-cutover-source-transfer.js';
+import { economySocialReceiptSafetyHistoricalInput } from './economy-social-proof-receipt-safety-source-transfer.js';
+import { economySocialReceiptHistoricalInput } from './economy-social-proof-receipt-source-transfer.js';
 
 export { ECONOMY_UX_MERGE_SOURCE };
 export const ECONOMY_UX_MERGE_FILES = Object.freeze([
@@ -23,6 +27,7 @@ export const ECONOMY_UX_MERGE_FILES = Object.freeze([
   'src/socialproof.js',
   'src/ux-tactics.js',
   'src/verify.js',
+  'tools/commerce-deed-release-phase2-native-catalog.js',
   'tools/economy-hardening-source-transfer.js',
   'tools/economy-readiness-merge-source-compatibility.js',
   'tools/economy-release-tail-source-transfer.js',
@@ -44,6 +49,7 @@ export const ECONOMY_UX_MERGE_FILES = Object.freeze([
   'test/growth.js',
   'test/levers.js',
   'test/lib/enterprise-ux-native-guard.js',
+  'test/lib/rc1-historical-source-fixture.js',
   'test/migrate.js',
   'test/payroll.js',
   'test/phase2-postgres.js',
@@ -111,8 +117,16 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input) {
+  input = economySocialProofCutoverHistoricalInput(file, input);
+  input = economySocialReceiptSafetyHistoricalInput(file, input);
+  input = economySocialReceiptHistoricalInput(file, input);
+  input = saleHistoricalInput(file, input);
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
+  input = economySocialProofCutoverHistoricalInput(file, input);
+  input = economySocialReceiptSafetyHistoricalInput(file, input);
+  input = economySocialReceiptHistoricalInput(file, input);
+  input = saleHistoricalInput(file, input);
   return historicalInput(file, input, 'main');
 }

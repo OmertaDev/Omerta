@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { migrateCityHomeStorage } from './city-home-migration.js';
 import { enforceDatabaseRls } from './db-rls.js';
-import { takeAccountDailyClaim, takeBoundedAccountDailyClaim } from './accountdaily.js';
+import { takeAccountDailyClaim, takeAccountDailyClaims, takeBoundedAccountDailyClaim } from './accountdaily.js';
 import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
 import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
 
@@ -561,6 +561,9 @@ export async function migrateSchemaUnderLock(
   boot, { schemaText = SCHEMA, compatibility = 'postgres' } = {},
 ) {
   await boot.query(schemaText);
+  // The production predecessor already has paid/proof; schema replay creates the receipt table.
+  // Install its rolling-deploy payout guard before slower verification and targeted repairs run.
+  await installLegacySocialReceiptGuard(boot, { compatibility });
   await verifyPhase2DefinitionSchema(boot, { compatibility });
   const migration = await migrateColumns(boot, schemaText);
   if (migration.failed) {
@@ -572,7 +575,14 @@ export async function migrateSchemaUnderLock(
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
   await migrateEconomyDailyClaims(boot);
-  await migrateSocialProofReceipts(boot);
+  const socialReceiptMigration = await migrateSocialProofReceipts(boot,
+    { timestampText: compatibility === 'postgres' });
+  if (!socialReceiptMigration.complete) {
+    const error = new Error(`Social proof receipt migration paused after ${socialReceiptMigration.batches} bounded pages; restart to resume before serving traffic`);
+    error.code = 'social_receipt_migration_pending';
+    error.progress = socialReceiptMigration;
+    throw error;
+  }
   await migrateReferralOriginHolds(boot);
   await migrateCrewWageClocks(boot);
   await resetStartingLevels(boot);
@@ -581,7 +591,7 @@ export async function migrateSchemaUnderLock(
   catch (error) { await boot.query('ROLLBACK'); throw error; }
   const rls = await enforceDatabaseRls(boot, { compatibility });
   const stamp = await stampSchema(boot);
-  return { migration, stamp, rls };
+  return { migration, socialReceiptMigration, stamp, rls };
 }
 
 // Repeatable lineage repair for installs that upgrade after a character already claimed and died on
@@ -738,53 +748,273 @@ export async function migrateEconomyDailyClaims(q, today = Math.floor(Date.now()
   }
 }
 
-// Backfill the permanent provider/id latch for payouts made before that latch shipped. The marker
-// records the first repair, but every boot repeats the bounded scan: an old API process can finish a
-// payout while a replacement process is starting during a rolling deploy. Paid evidence uses the
-// predecessor's accepted post-id shapes so every X-verified payout is retained; arbitrary trust prose
-// without an id is ignored. New submissions use the stricter host-bound parser in verify.js.
-export async function migrateSocialProofReceipts(q) {
+// Backfill the permanent provider/id latch for payouts made before that latch shipped. Large installs
+// can retain millions of payout telemetry rows, so each page is its own committed transaction with a
+// durable keyset cursor. A restart repeats at most one page; no boot materializes the retained history
+// or risks losing all progress to one statement timeout. Once the full pass is marked, later boots use
+// the same pager for current paid rows plus the two-day rolling-deploy telemetry tail.
+const SOCIAL_RECEIPT_MIGRATION_ID = 'social-proof-receipts-2026-10-23';
+const SOCIAL_RECEIPT_RETENTION_ID = 'social-proof-receipt-retention-2026-10-27';
+const SOCIAL_RECEIPT_PROGRESS_ID = 'social-proof-receipt-retention-progress-2026-10-27';
+const SOCIAL_RECEIPT_CURSOR_PREFIX = `${SOCIAL_RECEIPT_PROGRESS_ID}:cursor:`;
+const SOCIAL_RECEIPT_EPOCH = '1970-01-01T00:00:00.000Z';
+const SOCIAL_RECEIPT_MAX_BATCHES = 100;
+const LEGACY_SOCIAL_RECEIPT_GUARD_SOURCE = `
+      DECLARE proof_id TEXT; receipt_account TEXT; inserted_count INTEGER;
+      BEGIN
+        IF OLD.paid OR NOT NEW.paid THEN RETURN NEW; END IF;
+        proof_id := substring(COALESCE(NEW.proof,'') FROM '(?i)status(?:es)?/([0-9]{8,25})');
+        IF proof_id IS NULL AND btrim(COALESCE(NEW.proof,'')) ~ '^[0-9]{8,25}$' THEN
+          proof_id := btrim(NEW.proof);
+        END IF;
+        proof_id := ltrim(proof_id, '0');
+        IF proof_id IS NULL OR proof_id = '' THEN
+          RAISE EXCEPTION 'Legacy social payout has no canonical proof id' USING ERRCODE='23514';
+        END IF;
+        receipt_account := 'social-proof:x:' || proof_id;
+        IF current_setting('omerta.social_receipt_account',true) = receipt_account
+            AND EXISTS (SELECT 1 FROM account_daily_claims
+              WHERE account_id=receipt_account AND day=0 AND scope='social-proof' AND claim_id='used') THEN
+          RETURN NEW;
+        END IF;
+        INSERT INTO account_daily_claims (account_id,day,scope,claim_id)
+          VALUES (receipt_account,0,'social-proof','used')
+          ON CONFLICT DO NOTHING;
+        GET DIAGNOSTICS inserted_count = ROW_COUNT;
+        IF inserted_count <> 1 THEN
+          RAISE EXCEPTION 'Social proof was already rewarded'
+            USING ERRCODE='23505', CONSTRAINT='account_daily_claims_pkey';
+        END IF;
+        RETURN NEW;
+      END
+      `;
+const LEGACY_SOCIAL_RECEIPT_TRIGGER_DEFINITION =
+  'CREATE TRIGGER social_claims_legacy_receipt_guard BEFORE UPDATE OF paid ON social_claims '
+  + 'FOR EACH ROW EXECUTE FUNCTION omerta_legacy_social_receipt_guard()';
+
+export async function verifyLegacySocialReceiptGuard(q) {
+  const guard = (await q.query(`SELECT t.tgenabled AS enabled, t.tgtype AS trigger_type,
+          t.tgattr::text AS trigger_columns, p.proname AS function_name, p.prosrc AS function_source,
+          pg_get_triggerdef(t.oid,true) AS trigger_definition, a.attnum AS paid_column
+        FROM pg_trigger t
+        JOIN pg_proc p ON p.oid=t.tgfoid
+        JOIN pg_attribute a ON a.attrelid=t.tgrelid AND a.attname='paid' AND NOT a.attisdropped
+       WHERE t.tgrelid='social_claims'::regclass
+         AND t.tgname='social_claims_legacy_receipt_guard' AND NOT t.tgisinternal`)).rows;
+  const row = guard[0];
+  const valid = guard.length === 1 && row?.enabled === 'O' && Number(row?.trigger_type) === 19
+    && String(row?.trigger_columns ?? '').trim() === String(row?.paid_column)
+    && row?.function_name === 'omerta_legacy_social_receipt_guard'
+    && row?.function_source === LEGACY_SOCIAL_RECEIPT_GUARD_SOURCE
+    && row?.trigger_definition === LEGACY_SOCIAL_RECEIPT_TRIGGER_DEFINITION;
+  if (!valid) {
+    const error = new Error('Legacy social receipt database guard is missing or invalid');
+    error.code = 'social_receipt_guard_invalid';
+    throw error;
+  }
+  return Object.freeze({ enabled: true, triggerType: 19, column: 'paid',
+    functionName: row.function_name });
+}
+
+// A predecessor API process does not know about the synthetic receipt write. Install a database
+// guard before the backfill starts so every still-running legacy paid transition either creates that
+// receipt in the same transaction or loses to an existing receipt and rolls its entire payout back.
+// Current code presents a transaction-local capability after reserving that exact receipt itself.
+export async function installLegacySocialReceiptGuard(q, { compatibility = 'postgres' } = {}) {
+  if (compatibility !== 'postgres') return { compatibility, installed: false };
   await q.query('BEGIN');
   try {
-    // One global sunset bounds the permissive predecessor verifier even if an old API process keeps
-    // inserting omitted-column rows during a rolling deploy. DO NOTHING preserves the first cutover
-    // timestamp forever; after 48h every row uses the strict current verifier regardless of its flag.
-    await q.query(
-      "INSERT INTO economy_migrations (id) VALUES ('social-pending-proof-bridge-2026-10-26') ON CONFLICT DO NOTHING");
-    const migrationId = 'social-proof-receipts-2026-10-23';
-    const alreadyApplied = (await q.query(
-      'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
-    const claimRows = (await q.query(
-      'SELECT DISTINCT proof FROM social_claims WHERE paid AND proof IS NOT NULL')).rows;
-    // Paid rows are intentionally swept after seven days, but their same-transaction social_task
-    // telemetry survives for 180 days. The first upgrade consumes that retained payout evidence too;
-    // later boots need only the cutover window because the durable receipts now cover older proofs.
-    const telemetryRows = alreadyApplied ? (await q.query(
-      "SELECT props FROM telemetry WHERE event='social_task' AND at >= $1",
-      [new Date(Date.now() - 2 * 86400000)])).rows : (await q.query(
-      "SELECT props FROM telemetry WHERE event='social_task'")).rows;
-    const receiptAccounts = new Set();
-    const proofs = claimRows.map((row) => row.proof);
-    for (const row of telemetryRows) {
-      let props;
-      try { props = JSON.parse(row.props || '{}'); } catch { props = {}; }
-      proofs.push(props.proof);
-    }
-    for (const proof of proofs) {
-      const normalized = normalizeLegacyPaidSocialPostProof(proof);
-      if (normalized)
-        receiptAccounts.add(`social-proof:${normalized.provider}:${normalized.id}`);
-    }
-    let inserted = 0;
-    for (const accountId of receiptAccounts)
-      if (await takeAccountDailyClaim(q, accountId, 0, 'social-proof', 'used')) inserted++;
-    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
+    await q.query(`CREATE OR REPLACE FUNCTION omerta_legacy_social_receipt_guard()
+      RETURNS trigger LANGUAGE plpgsql AS $guard$
+      DECLARE proof_id TEXT; receipt_account TEXT; inserted_count INTEGER;
+      BEGIN
+        IF OLD.paid OR NOT NEW.paid THEN RETURN NEW; END IF;
+        proof_id := substring(COALESCE(NEW.proof,'') FROM '(?i)status(?:es)?/([0-9]{8,25})');
+        IF proof_id IS NULL AND btrim(COALESCE(NEW.proof,'')) ~ '^[0-9]{8,25}$' THEN
+          proof_id := btrim(NEW.proof);
+        END IF;
+        proof_id := ltrim(proof_id, '0');
+        IF proof_id IS NULL OR proof_id = '' THEN
+          RAISE EXCEPTION 'Legacy social payout has no canonical proof id' USING ERRCODE='23514';
+        END IF;
+        receipt_account := 'social-proof:x:' || proof_id;
+        IF current_setting('omerta.social_receipt_account',true) = receipt_account
+            AND EXISTS (SELECT 1 FROM account_daily_claims
+              WHERE account_id=receipt_account AND day=0 AND scope='social-proof' AND claim_id='used') THEN
+          RETURN NEW;
+        END IF;
+        INSERT INTO account_daily_claims (account_id,day,scope,claim_id)
+          VALUES (receipt_account,0,'social-proof','used')
+          ON CONFLICT DO NOTHING;
+        GET DIAGNOSTICS inserted_count = ROW_COUNT;
+        IF inserted_count <> 1 THEN
+          RAISE EXCEPTION 'Social proof was already rewarded'
+            USING ERRCODE='23505', CONSTRAINT='account_daily_claims_pkey';
+        END IF;
+        RETURN NEW;
+      END
+      $guard$`);
+    await q.query('DROP TRIGGER IF EXISTS social_claims_legacy_receipt_guard ON social_claims');
+    await q.query(`CREATE TRIGGER social_claims_legacy_receipt_guard
+      BEFORE UPDATE OF paid ON social_claims FOR EACH ROW
+      EXECUTE FUNCTION omerta_legacy_social_receipt_guard()`);
+    await verifyLegacySocialReceiptGuard(q);
     await q.query('COMMIT');
-    return { applied: !alreadyApplied, scanned: proofs.length, canonical: receiptAccounts.size, inserted };
+    return { compatibility, installed: true };
   } catch (error) {
     await q.query('ROLLBACK').catch(() => {});
     throw error;
   }
+}
+
+const encodeSocialReceiptCursor = state => Buffer.from(JSON.stringify(state)).toString('base64url');
+const decodeSocialReceiptCursor = id => {
+  if (!id.startsWith(SOCIAL_RECEIPT_CURSOR_PREFIX)) throw new Error('Invalid social receipt cursor');
+  let state;
+  try { state = JSON.parse(Buffer.from(id.slice(SOCIAL_RECEIPT_CURSOR_PREFIX.length), 'base64url').toString()); }
+  catch { throw new Error('Invalid social receipt cursor'); }
+  if (!['full', 'catchup', 'tail'].includes(state?.mode) || !['claims', 'telemetry'].includes(state?.stage))
+    throw new Error('Invalid social receipt cursor');
+  return state;
+};
+const socialReceiptAccount = proof => {
+  const normalized = normalizeLegacyPaidSocialPostProof(proof);
+  return normalized ? `social-proof:${normalized.provider}:${normalized.id}` : null;
+};
+
+async function migrateSocialProofReceiptPage(q, { batchSize, timestampText }) {
+  await q.query('BEGIN');
+  try {
+    // One global sunset bounds the permissive predecessor verifier even if an old API process keeps
+    // inserting omitted-column rows during a rolling deploy. DO NOTHING preserves the first cutover.
+    await q.query(
+      "INSERT INTO economy_migrations (id) VALUES ('social-pending-proof-bridge-2026-10-26') ON CONFLICT DO NOTHING");
+    const migrationApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [SOCIAL_RECEIPT_MIGRATION_ID])).rowCount > 0;
+    const retentionApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [SOCIAL_RECEIPT_RETENTION_ID])).rowCount > 0;
+    const fullApplied = migrationApplied && retentionApplied;
+    await q.query(
+      'INSERT INTO economy_migrations (id, applied_at) VALUES ($1,clock_timestamp()) ON CONFLICT DO NOTHING',
+      [SOCIAL_RECEIPT_PROGRESS_ID]);
+    const progress = (await q.query(
+      `SELECT ${timestampText ? 'applied_at::text' : 'applied_at'} AS cutoff_at
+         FROM economy_migrations WHERE id=$1 FOR UPDATE`,
+      [SOCIAL_RECEIPT_PROGRESS_ID])).rows[0];
+    const cursorRows = (await q.query(
+      'SELECT id FROM economy_migrations WHERE id LIKE $1 ORDER BY id FOR UPDATE',
+      [`${SOCIAL_RECEIPT_CURSOR_PREFIX}%`])).rows;
+    if (cursorRows.length > 1) throw new Error('Multiple social receipt migration cursors');
+    let cursorId = cursorRows[0]?.id;
+    let state = cursorId ? decodeSocialReceiptCursor(cursorId) : {
+      mode: fullApplied ? 'tail' : 'full', stage: 'claims', postedAt: SOCIAL_RECEIPT_EPOCH,
+      accountId: '', day: -2147483648, taskId: '',
+    };
+    if (!cursorId) {
+      cursorId = `${SOCIAL_RECEIPT_CURSOR_PREFIX}${encodeSocialReceiptCursor(state)}`;
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [cursorId]);
+    }
+    const cutoff = timestampText ? progress.cutoff_at : new Date(progress.cutoff_at);
+    let rows, proofs;
+    if (state.stage === 'claims') {
+      const cursorPostedAt = timestampText ? state.postedAt : new Date(state.postedAt);
+      rows = (await q.query(
+        `SELECT account_id, day, task_id, proof,
+                ${timestampText ? 'posted_at::text' : 'posted_at'} AS cursor_posted_at
+           FROM social_claims
+          WHERE paid AND proof IS NOT NULL AND posted_at <= $1
+            AND (posted_at > $2 OR (posted_at=$2 AND account_id > $3)
+              OR (posted_at=$2 AND account_id=$3 AND day > $4)
+              OR (posted_at=$2 AND account_id=$3 AND day=$4 AND task_id > $5))
+          ORDER BY posted_at, account_id, day, task_id LIMIT $6`,
+        [cutoff, cursorPostedAt, state.accountId, state.day, state.taskId, batchSize])).rows;
+      proofs = rows.map(row => row.proof);
+    } else {
+      const lower = state.mode !== 'full'
+        ? (timestampText ? cutoff : new Date(cutoff.getTime() - 2 * 86400000)) : new Date(0);
+      const cursorAt = timestampText ? state.at : new Date(state.at);
+      rows = (await q.query(
+        `SELECT id, props, ${timestampText ? 'at::text' : 'at'} AS cursor_at FROM telemetry
+          WHERE event='social_task'
+            AND at >= ${state.mode !== 'full' && timestampText ? "$1::timestamptz - interval '2 days'" : '$1'}
+            AND at <= $2
+            AND (at > $3 OR (at=$3 AND id > $4))
+          ORDER BY at, id LIMIT $5`,
+        [lower, cutoff, cursorAt, state.id, batchSize])).rows;
+      proofs = rows.map((row) => {
+        try { return JSON.parse(row.props || '{}').proof; } catch { return null; }
+      });
+    }
+    const receiptAccounts = proofs.map(socialReceiptAccount).filter(Boolean);
+    const canonical = new Set(receiptAccounts).size;
+    const inserted = await takeAccountDailyClaims(q, receiptAccounts, 0, 'social-proof', 'used');
+    if (rows.length === batchSize) {
+      const last = rows.at(-1);
+      state = state.stage === 'claims'
+        ? { ...state,
+            postedAt: timestampText ? last.cursor_posted_at : new Date(last.cursor_posted_at).toISOString(),
+            accountId: last.account_id, day: Number(last.day), taskId: last.task_id }
+        : { ...state, at: timestampText ? last.cursor_at : new Date(last.cursor_at).toISOString(), id: last.id };
+      const nextCursorId = `${SOCIAL_RECEIPT_CURSOR_PREFIX}${encodeSocialReceiptCursor(state)}`;
+      await q.query('DELETE FROM economy_migrations WHERE id=$1', [cursorId]);
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [nextCursorId]);
+      await q.query('COMMIT');
+      return { complete: false, applied: false, scanned: rows.length, canonical, inserted };
+    }
+    if (state.stage === 'claims') {
+      state = { mode: state.mode, stage: 'telemetry', at: SOCIAL_RECEIPT_EPOCH, id: '' };
+      const nextCursorId = `${SOCIAL_RECEIPT_CURSOR_PREFIX}${encodeSocialReceiptCursor(state)}`;
+      await q.query('DELETE FROM economy_migrations WHERE id=$1', [cursorId]);
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [nextCursorId]);
+      await q.query('COMMIT');
+      return { complete: false, applied: false, scanned: rows.length, canonical, inserted };
+    }
+    // A row can commit after the initial cutoff while the retained-history pass is paging. Refresh
+    // the database-clock cutoff and finish a same-lifecycle catch-up before installing either marker.
+    // The PostgreSQL legacy UPDATE trigger additionally fences predecessor payouts that start later.
+    if (state.mode === 'full') {
+      await q.query('UPDATE economy_migrations SET applied_at=clock_timestamp() WHERE id=$1',
+        [SOCIAL_RECEIPT_PROGRESS_ID]);
+      state = { mode: 'catchup', stage: 'claims', postedAt: SOCIAL_RECEIPT_EPOCH,
+        accountId: '', day: -2147483648, taskId: '' };
+      const nextCursorId = `${SOCIAL_RECEIPT_CURSOR_PREFIX}${encodeSocialReceiptCursor(state)}`;
+      await q.query('DELETE FROM economy_migrations WHERE id=$1', [cursorId]);
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1)', [nextCursorId]);
+      await q.query('COMMIT');
+      return { complete: false, applied: false, scanned: rows.length, canonical, inserted };
+    }
+    const applied = state.mode === 'catchup';
+    if (applied) {
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING',
+        [SOCIAL_RECEIPT_MIGRATION_ID]);
+      await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING',
+        [SOCIAL_RECEIPT_RETENTION_ID]);
+    }
+    await q.query('DELETE FROM economy_migrations WHERE id=$1', [cursorId]);
+    await q.query('DELETE FROM economy_migrations WHERE id=$1', [SOCIAL_RECEIPT_PROGRESS_ID]);
+    await q.query('COMMIT');
+    return { complete: true, applied, scanned: rows.length, canonical, inserted };
+  } catch (error) {
+    await q.query('ROLLBACK').catch(() => {});
+    throw error;
+  }
+}
+
+export async function migrateSocialProofReceipts(q, options = {}) {
+  const wantedBatchSize = Number(options.batchSize ?? 1000);
+  const wantedBatches = Number(options.maxBatches ?? SOCIAL_RECEIPT_MAX_BATCHES);
+  const batchSize = Number.isSafeInteger(wantedBatchSize) && wantedBatchSize > 0
+    ? Math.min(wantedBatchSize, 1000) : 1000;
+  const maxBatches = Number.isSafeInteger(wantedBatches) && wantedBatches > 0
+    ? Math.min(wantedBatches, SOCIAL_RECEIPT_MAX_BATCHES) : SOCIAL_RECEIPT_MAX_BATCHES;
+  const timestampText = options.timestampText ?? dbCaps.timestampText;
+  const total = { applied: false, complete: false, batches: 0, scanned: 0, canonical: 0, inserted: 0 };
+  while (!total.complete && total.batches < maxBatches) {
+    const page = await migrateSocialProofReceiptPage(q, { batchSize, timestampText });
+    total.applied ||= page.applied; total.complete = page.complete; total.batches++;
+    total.scanned += page.scanned; total.canonical += page.canonical; total.inserted += page.inserted;
+  }
+  return total;
 }
 
 // Repeatable referral-origin repair. `created_ip` is immutable signup provenance; canonicalizing it
@@ -1176,9 +1406,11 @@ export async function makeDb() {
     //                                         55P03, which maps to the retryable `contention` error.
     //   idle_in_transaction_session_timeout   a transaction left open by a crashed handler is killed
     //                                         instead of holding its row locks until the pool recycles
+    const statementTimeoutMs = Number(process.env.PG_STATEMENT_TIMEOUT_MS || 15000);
+    const lockTimeoutMs = Number(process.env.PG_LOCK_TIMEOUT_MS || 8000);
     const timeouts = [
-      `statement_timeout=${Number(process.env.PG_STATEMENT_TIMEOUT_MS || 15000)}`,
-      `lock_timeout=${Number(process.env.PG_LOCK_TIMEOUT_MS || 8000)}`,
+      `statement_timeout=${statementTimeoutMs}`,
+      `lock_timeout=${lockTimeoutMs}`,
       `idle_in_transaction_session_timeout=${Number(process.env.PG_IDLE_TX_TIMEOUT_MS || 30000)}`,
     ].join(' -c ');
     const pool = new Pool({
@@ -1259,12 +1491,21 @@ export async function makeDb() {
     // (now already-created) schema where every CREATE/ADD IF NOT EXISTS cleanly no-ops. One dedicated
     // connection holds the lock across the DDL, then releases it; pg-mem (single process) needs none of this.
     const boot = await pool.connect();
+    let schemaLocked = false;
     try {
+      // The dedicated boot connection must actually wait for the other service's schema session.
+      // Request timeouts stay strict; only this lock acquisition disables them, then restores them
+      // before any DDL or bounded migration page runs.
+      await boot.query("SELECT set_config('statement_timeout','0',false),set_config('lock_timeout','0',false)");
       await boot.query('SELECT pg_advisory_lock($1)', [SCHEMA_LOCK_KEY]);
+      schemaLocked = true;
+      await boot.query("SELECT set_config('statement_timeout',$1,false),set_config('lock_timeout',$2,false)",
+        [`${statementTimeoutMs}ms`, `${lockTimeoutMs}ms`]);
       const { migration: mig } = await migrateSchemaUnderLock(boot);
       console.log(`[db] Postgres ready — column migration ran ${mig.total} ADD COLUMN IF NOT EXISTS statements${mig.failed ? ` (${mig.failed} skipped — see above)` : ''}.`);
     } finally {
-      await boot.query('SELECT pg_advisory_unlock($1)', [SCHEMA_LOCK_KEY]).catch(() => {});
+      if (schemaLocked)
+        await boot.query('SELECT pg_advisory_unlock($1)', [SCHEMA_LOCK_KEY]).catch(() => {});
       boot.release();
     }
     dbCaps.skipLocked = true; // real Postgres — see dbCaps
@@ -1287,7 +1528,13 @@ export async function makeDb() {
   const pool = new Pool();
   await pool.query(SCHEMA);
   await migrateEconomyDailyClaims(pool);
-  await migrateSocialProofReceipts(pool);
+  const socialReceiptMigration = await migrateSocialProofReceipts(pool);
+  if (!socialReceiptMigration.complete) {
+    const error = new Error(`Social proof receipt migration paused after ${socialReceiptMigration.batches} bounded pages; refusing in-memory schema stamp`);
+    error.code = 'social_receipt_migration_pending';
+    error.progress = socialReceiptMigration;
+    throw error;
+  }
   await migrateReferralOriginHolds(pool);
   await migrateCrewWageClocks(pool);
   await pool.query('BEGIN');

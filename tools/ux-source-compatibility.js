@@ -1,6 +1,7 @@
 // Exact test/tool source reconstruction only. Current runtime/native tests use actual files.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { saleHistoricalInput } from './sale-source-compatibility.js';
 import { UX_SOURCE, UX_SOURCE_SHA256 } from './ux-source-data.js';
 import { UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_SOURCE_SHA256 } from './ux-workflow-bound-source-data.js';
 import { uxNativeReaderHistoricalInput } from './ux-native-reader-source-compatibility.js';
@@ -89,6 +90,7 @@ export function uxWorkflowBoundHistoricalInput(file, input) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function uxHistoricalInput(file, input) {
+  input = saleHistoricalInput(file, input);
   input = uxWorkflowBoundHistoricalInput(file, input);
   input = uxDirectorReaderHistoricalInput(file, input);
   input = uxEnterpriseReaderHistoricalInput(file, input);

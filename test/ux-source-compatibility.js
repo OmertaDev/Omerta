@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { saleHistoricalInput } from '../tools/sale-source-compatibility.js';
 import { UX_SOURCE, UX_SOURCE_FILES, qualifyUxSource, uxHistoricalInput, UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_FILE, qualifyUxWorkflowBoundSource, uxWorkflowBoundHistoricalInput } from '../tools/ux-source-compatibility.js';
 import { UX_SUITES_GATE_SOURCE, UX_SUITES_GATE_FILE, qualifyUxSuitesGateSource, uxSuitesGateHistoricalInput } from '../tools/ux-director-reader-source-compatibility.js';
 import { ACTION_READINESS_SOURCE, qualifyActionReadinessSource } from '../tools/action-readiness-source-compatibility.js';
@@ -27,9 +28,9 @@ const inverseHunks = diff => {
 };
 let positives = 0, refusals = 0, inverseCount = 0;
 for (const row of pin.files) {
-  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))), stat = fs.lstatSync(row.file);
+  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')))), stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical guarded source is a regular file');
-  assert.equal(uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, git('show', 'HEAD:' + row.file))), current, 'Actual current committed source must retain the authored UX checkpoint after the exact workflow-parent forward layer');
+  assert.equal(uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, git('show', 'HEAD:' + row.file)))), current, 'Actual current committed source must retain the authored UX checkpoint after the exact workflow-parent forward layer');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Actual physical source must retain the complete UX checkpoint');
   for (const [revision, mode, expectedBlob] of [[pin.revision, row.mode, row.currentBlob], [pin.targetRevision, row.targetMode, row.targetBlob]])
     assert.equal(git('ls-tree', revision, '--', row.file).trim(), mode + ' blob ' + expectedBlob + '\t' + row.file);
@@ -128,6 +129,10 @@ await import('./lib/ux-director-reader-source-compatibility.js');
   for (const unknown of ['../.github/workflows/ci.yml', '__proto__', 'schema.sql']) { assert.throws(() => qualifyUxWorkflowBoundSource(unknown, current)); assert.equal(uxWorkflowBoundHistoricalInput(unknown, current), current); refusals++; }
   for (const input of [prior, current + '\n# unknown future workflow\n', current.slice(1)]) assert.equal(uxWorkflowBoundHistoricalInput(file, input), input);
   let conservedModule = fs.readFileSync('tools/ux-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+  for (const hook of ["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", '  input = saleHistoricalInput(file, input);\n']) {
+    assert.equal(conservedModule.split(hook).length, 2, 'One exact sale source integration hook');
+    conservedModule = conservedModule.replace(hook, '');
+  }
   conservedModule = conservedModule.replace("import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\n", '');
   conservedModule = conservedModule.replace("import { UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_SOURCE_SHA256 } from './ux-workflow-bound-source-data.js';\n", '');
   const start = conservedModule.indexOf('export { UX_WORKFLOW_BOUND_SOURCE };'), end = conservedModule.indexOf('export function uxHistoricalInput(file, input) {', start);
