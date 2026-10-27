@@ -44,6 +44,7 @@ export const ECONOMY_UX_MERGE_FILES = Object.freeze([
   'test/growth.js',
   'test/levers.js',
   'test/lib/enterprise-ux-native-guard.js',
+  'test/lib/rc1-historical-source-fixture.js',
   'test/migrate.js',
   'test/payroll.js',
   'test/phase2-postgres.js',
