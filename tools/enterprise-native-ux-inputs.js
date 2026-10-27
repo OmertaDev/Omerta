@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "a4d2df5ad697e86be552d8187f565624fc2c8da9",
+  "authoredRevision": "ccdbad91518f50b929e051737676db92c7d90fd6",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -308,8 +308,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "package.json",
       "mode": "100644",
-      "blob": "59396648eaaf33c7c424f6569c8e909f9d27d050",
-      "sha256": "8229c3b94687dea00d531c1b1b4ef8884e56dbac3c03cfdc8ecdbf4b0e3985fd"
+      "blob": "45d2870b08c789a3d1e8c12034f15d121fd72709",
+      "sha256": "774f4fb21a1535704e3c9d818cc6ad8b09b7fb1bf05ace600ccbbc94ddc4ca39"
     },
     {
       "file": "public/admin.html",
@@ -3806,14 +3806,14 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "public/index.html",
       "mode": "100644",
-      "blob": "0caed5d7e8650d5f516e8cf0429a143213885c08",
-      "sha256": "4b68e55569751bba2ad7f9748103dc507d1bcc43dccd2dc9b3bf32a443698786"
+      "blob": "24e8759f91aeae0a03bfd2c1d99b09820d62a13c",
+      "sha256": "5a18ff07afe92bf52fae66ed066dff0e31f8848bef659e07efc8acb7e3eb5c3a"
     },
     {
       "file": "public/invite.html",
       "mode": "100644",
-      "blob": "b07f1e538492b6968da759e893d45570173878bc",
-      "sha256": "55b49c18eaeb928b0ce914b3d2e0617c2fcd7fd3dcfe853dbf78b801ea4247a3"
+      "blob": "459a0ec83d08c55667088526876dbf5f05ae5bde",
+      "sha256": "9d21658dfc2e65c09c891774100483c0f530fc2c16b4c986b6bd872b87b1fdc9"
     },
     {
       "file": "public/manifest.json",
@@ -3824,8 +3824,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "public/omerta-ui.css",
       "mode": "100644",
-      "blob": "a6f3f6ca2c6fc0de7cbf23fec694f9643c7cdd2f",
-      "sha256": "f707521d5fe5258867a881fbd3f3ae59bef00eb07ede60c59f7567067b799178"
+      "blob": "92a2efdb38d6f4464d704e3ca798b14d4f6f8cd9",
+      "sha256": "cd09baffbed16a5755cab10d2460e825a1be496a89c89aafe94408b90c396070"
     },
     {
       "file": "public/play.html",
@@ -6806,8 +6806,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "src/server.js",
       "mode": "100644",
-      "blob": "fd9ad23bf69fee2cb31b6dcc4cdf2b0126b0250d",
-      "sha256": "5cbd491362f8e34087bd783b5382ff265f9f1aa5946c446b5905c2118dcbcfff"
+      "blob": "98be176eb2d676e3eaa1992da787c76cb15acb00",
+      "sha256": "f0fba7a89de112aa2c85e61955cd2b36eb6387605f46696ef1290d442d14615e"
     },
     {
       "file": "src/servicesubscriptions.js",
@@ -9870,6 +9870,48 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "sha256": "0d989d3c8cc6c650e9056aba8868b36b0b12a7ae38ef6e3a1ef87a5db1eb76d5"
     },
     {
+      "file": "public/art/nft/deed-brick.jpg",
+      "mode": "100644",
+      "blob": "fd9752e5e088a0b1a5e046a31afd8b06130bc15e",
+      "sha256": "90de9fea9068467efbd1b98749ff4a0551009c0da7de607682b131aa508997ab"
+    },
+    {
+      "file": "public/art/nft/deed-canal.jpg",
+      "mode": "100644",
+      "blob": "db26625530050a1519c735fa5c172c55f803d2f5",
+      "sha256": "9807ea3011c43c307665673078298d0965ac192f9965370755e4dcf2e65e023a"
+    },
+    {
+      "file": "public/art/nft/deed-cathedral.jpg",
+      "mode": "100644",
+      "blob": "52a8db2609f9226aee3dc118d8fb6bfa893d85a3",
+      "sha256": "54414fe26b8cbc7c637c795c2c26e1627be89b4c966b01d2fe63c081ed538710"
+    },
+    {
+      "file": "public/art/nft/deed-docks.jpg",
+      "mode": "100644",
+      "blob": "b76aba998f63f7018ff69b422a8732b207d637b8",
+      "sha256": "272edf7499e5aa300405da2e13930cb20b1f52a5d51ec3d42665c1ba7857c95a"
+    },
+    {
+      "file": "public/art/nft/deed-foundry.jpg",
+      "mode": "100644",
+      "blob": "e19dabe1b8b3103631d89070f25eee657b215e76",
+      "sha256": "832c7f4ab17c9ae4527afc79972ba587d94b529925d0e89734c534bbe5ce3f64"
+    },
+    {
+      "file": "public/art/nft/deed-neon.jpg",
+      "mode": "100644",
+      "blob": "f66015fdb12681d5dec7e9fe6ddfc48ac80fa7a8",
+      "sha256": "8413d21afd5b2d71b24981ec3d4fa51b3fac0e05b81eae8e087ba3e60914c055"
+    },
+    {
+      "file": "public/sale.html",
+      "mode": "100644",
+      "blob": "d6c60cb31e849a988364e0d2e347717c3c17bc41",
+      "sha256": "87817dbd2e4f716a0933c1c58ac7d32b0135a56049185538403d90e48ffac857"
+    },
+    {
       "file": "public/ux-community.css",
       "mode": "100644",
       "blob": "4c3aeb6e3aad5fbd536a16d624f602574d919705",
@@ -10104,10 +10146,16 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "sha256": "bfeb64c42f056a2c7e556fb9e079faded5a5cb8f9785e428e8dd40a4194bce61"
     },
     {
+      "file": "test/sale-source-compatibility.js",
+      "mode": "100644",
+      "blob": "6a271360efec5fab45bd5460abddfcdd07cc1a95",
+      "sha256": "3e7a491e1fc39eb6f087a93bc59c93782eec904febcb21fdd5d4e76997cdcd20"
+    },
+    {
       "file": "test/ux-source-compatibility.js",
       "mode": "100644",
-      "blob": "350b2e9a2f35418907d4847b0cde538bd75b2718",
-      "sha256": "1e350b495758317ecf5fc52516228dd31d95909cdb80265dc841313c86acd8c5"
+      "blob": "d37ee22044e7314521df4f0b327e922084fa217f",
+      "sha256": "9c64ace981c024f013f9328f8d41608d35dedc80cd00275c603f073a03bf728d"
     },
     {
       "file": "tools/action-readiness-source-compatibility.js",
@@ -10154,8 +10202,26 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/enterprise-native-ux.js",
       "mode": "100644",
-      "blob": "1e17c04ef26c3556307e262a524b466576f6f69c",
-      "sha256": "5ed80399661e12894de824dc2a8b2a8a7ecea37db1776d5f6dda3e027ca9b89f"
+      "blob": "128b755a85f7118350a559fc519034ecbc257b87",
+      "sha256": "b10129733160affd3c8a55f35e66411b0e32c5f27f468fab77ac6a458dfd9db3"
+    },
+    {
+      "file": "tools/sale-source-compatibility.js",
+      "mode": "100644",
+      "blob": "81cf95f039df7e0569698055fe3c91b1a6ff06ef",
+      "sha256": "517d7eb53408740d8e1e7c1b23cef72524ec33b3e10b84ba6b9e89c5b0adb1f5"
+    },
+    {
+      "file": "tools/sale-source-data.js",
+      "mode": "100644",
+      "blob": "386a27f63ab2a4812f4676c343b328d391065056",
+      "sha256": "c94b94636781be815dafacbb4908bebf51cfad65e57b110137e7ac46565c9825"
+    },
+    {
+      "file": "tools/sale-source-seal.js",
+      "mode": "100644",
+      "blob": "3657add1ade747b2070242aa65c86e1adba57116",
+      "sha256": "10014014fa9aca377fd2057fcbfdf509d80bc2ab62dbeae28ef60b3bac308955"
     },
     {
       "file": "tools/ux-director-reader-source-compatibility.js",
@@ -10220,8 +10286,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/ux-source-compatibility.js",
       "mode": "100644",
-      "blob": "4f215e349cd4158778bd95559be621962eb66a86",
-      "sha256": "b397fdddc37a82a7083262f7c1e73b400df7181f8655dde0061ddc4a5d004b92"
+      "blob": "510ec979b9e83221cf6a7dd2045b08e2f0419d6a",
+      "sha256": "7d4652ef370a10daf52c59a40d5e9435bf4b3aeb71f717da9a21371bcab37096"
     },
     {
       "file": "tools/ux-source-data.js",
@@ -10281,8 +10347,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "59396648eaaf33c7c424f6569c8e909f9d27d050",
-        "sha256": "8229c3b94687dea00d531c1b1b4ef8884e56dbac3c03cfdc8ecdbf4b0e3985fd"
+        "blob": "45d2870b08c789a3d1e8c12034f15d121fd72709",
+        "sha256": "774f4fb21a1535704e3c9d818cc6ad8b09b7fb1bf05ace600ccbbc94ddc4ca39"
       }
     },
     {
@@ -10296,8 +10362,38 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "0caed5d7e8650d5f516e8cf0429a143213885c08",
-        "sha256": "4b68e55569751bba2ad7f9748103dc507d1bcc43dccd2dc9b3bf32a443698786"
+        "blob": "24e8759f91aeae0a03bfd2c1d99b09820d62a13c",
+        "sha256": "5a18ff07afe92bf52fae66ed066dff0e31f8848bef659e07efc8acb7e3eb5c3a"
+      }
+    },
+    {
+      "file": "public/invite.html",
+      "before": {
+        "file": "public/invite.html",
+        "mode": "100644",
+        "blob": "b07f1e538492b6968da759e893d45570173878bc",
+        "sha256": "55b49c18eaeb928b0ce914b3d2e0617c2fcd7fd3dcfe853dbf78b801ea4247a3"
+      },
+      "after": {
+        "file": "public/invite.html",
+        "mode": "100644",
+        "blob": "459a0ec83d08c55667088526876dbf5f05ae5bde",
+        "sha256": "9d21658dfc2e65c09c891774100483c0f530fc2c16b4c986b6bd872b87b1fdc9"
+      }
+    },
+    {
+      "file": "public/omerta-ui.css",
+      "before": {
+        "file": "public/omerta-ui.css",
+        "mode": "100644",
+        "blob": "a6f3f6ca2c6fc0de7cbf23fec694f9643c7cdd2f",
+        "sha256": "f707521d5fe5258867a881fbd3f3ae59bef00eb07ede60c59f7567067b799178"
+      },
+      "after": {
+        "file": "public/omerta-ui.css",
+        "mode": "100644",
+        "blob": "92a2efdb38d6f4464d704e3ca798b14d4f6f8cd9",
+        "sha256": "cd09baffbed16a5755cab10d2460e825a1be496a89c89aafe94408b90c396070"
       }
     },
     {
@@ -10821,8 +10917,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "src/server.js",
         "mode": "100644",
-        "blob": "fd9ad23bf69fee2cb31b6dcc4cdf2b0126b0250d",
-        "sha256": "5cbd491362f8e34087bd783b5382ff265f9f1aa5946c446b5905c2118dcbcfff"
+        "blob": "98be176eb2d676e3eaa1992da787c76cb15acb00",
+        "sha256": "f0fba7a89de112aa2c85e61955cd2b36eb6387605f46696ef1290d442d14615e"
       }
     },
     {
@@ -11520,6 +11616,48 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   ],
   "additions": [
     {
+      "file": "public/art/nft/deed-brick.jpg",
+      "mode": "100644",
+      "blob": "fd9752e5e088a0b1a5e046a31afd8b06130bc15e",
+      "sha256": "90de9fea9068467efbd1b98749ff4a0551009c0da7de607682b131aa508997ab"
+    },
+    {
+      "file": "public/art/nft/deed-canal.jpg",
+      "mode": "100644",
+      "blob": "db26625530050a1519c735fa5c172c55f803d2f5",
+      "sha256": "9807ea3011c43c307665673078298d0965ac192f9965370755e4dcf2e65e023a"
+    },
+    {
+      "file": "public/art/nft/deed-cathedral.jpg",
+      "mode": "100644",
+      "blob": "52a8db2609f9226aee3dc118d8fb6bfa893d85a3",
+      "sha256": "54414fe26b8cbc7c637c795c2c26e1627be89b4c966b01d2fe63c081ed538710"
+    },
+    {
+      "file": "public/art/nft/deed-docks.jpg",
+      "mode": "100644",
+      "blob": "b76aba998f63f7018ff69b422a8732b207d637b8",
+      "sha256": "272edf7499e5aa300405da2e13930cb20b1f52a5d51ec3d42665c1ba7857c95a"
+    },
+    {
+      "file": "public/art/nft/deed-foundry.jpg",
+      "mode": "100644",
+      "blob": "e19dabe1b8b3103631d89070f25eee657b215e76",
+      "sha256": "832c7f4ab17c9ae4527afc79972ba587d94b529925d0e89734c534bbe5ce3f64"
+    },
+    {
+      "file": "public/art/nft/deed-neon.jpg",
+      "mode": "100644",
+      "blob": "f66015fdb12681d5dec7e9fe6ddfc48ac80fa7a8",
+      "sha256": "8413d21afd5b2d71b24981ec3d4fa51b3fac0e05b81eae8e087ba3e60914c055"
+    },
+    {
+      "file": "public/sale.html",
+      "mode": "100644",
+      "blob": "d6c60cb31e849a988364e0d2e347717c3c17bc41",
+      "sha256": "87817dbd2e4f716a0933c1c58ac7d32b0135a56049185538403d90e48ffac857"
+    },
+    {
       "file": "public/ux-community.css",
       "mode": "100644",
       "blob": "4c3aeb6e3aad5fbd536a16d624f602574d919705",
@@ -11754,10 +11892,16 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "sha256": "bfeb64c42f056a2c7e556fb9e079faded5a5cb8f9785e428e8dd40a4194bce61"
     },
     {
+      "file": "test/sale-source-compatibility.js",
+      "mode": "100644",
+      "blob": "6a271360efec5fab45bd5460abddfcdd07cc1a95",
+      "sha256": "3e7a491e1fc39eb6f087a93bc59c93782eec904febcb21fdd5d4e76997cdcd20"
+    },
+    {
       "file": "test/ux-source-compatibility.js",
       "mode": "100644",
-      "blob": "350b2e9a2f35418907d4847b0cde538bd75b2718",
-      "sha256": "1e350b495758317ecf5fc52516228dd31d95909cdb80265dc841313c86acd8c5"
+      "blob": "d37ee22044e7314521df4f0b327e922084fa217f",
+      "sha256": "9c64ace981c024f013f9328f8d41608d35dedc80cd00275c603f073a03bf728d"
     },
     {
       "file": "tools/action-readiness-source-compatibility.js",
@@ -11804,8 +11948,26 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/enterprise-native-ux.js",
       "mode": "100644",
-      "blob": "1e17c04ef26c3556307e262a524b466576f6f69c",
-      "sha256": "5ed80399661e12894de824dc2a8b2a8a7ecea37db1776d5f6dda3e027ca9b89f"
+      "blob": "128b755a85f7118350a559fc519034ecbc257b87",
+      "sha256": "b10129733160affd3c8a55f35e66411b0e32c5f27f468fab77ac6a458dfd9db3"
+    },
+    {
+      "file": "tools/sale-source-compatibility.js",
+      "mode": "100644",
+      "blob": "81cf95f039df7e0569698055fe3c91b1a6ff06ef",
+      "sha256": "517d7eb53408740d8e1e7c1b23cef72524ec33b3e10b84ba6b9e89c5b0adb1f5"
+    },
+    {
+      "file": "tools/sale-source-data.js",
+      "mode": "100644",
+      "blob": "386a27f63ab2a4812f4676c343b328d391065056",
+      "sha256": "c94b94636781be815dafacbb4908bebf51cfad65e57b110137e7ac46565c9825"
+    },
+    {
+      "file": "tools/sale-source-seal.js",
+      "mode": "100644",
+      "blob": "3657add1ade747b2070242aa65c86e1adba57116",
+      "sha256": "10014014fa9aca377fd2057fcbfdf509d80bc2ab62dbeae28ef60b3bac308955"
     },
     {
       "file": "tools/ux-director-reader-source-compatibility.js",
@@ -11870,8 +12032,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/ux-source-compatibility.js",
       "mode": "100644",
-      "blob": "4f215e349cd4158778bd95559be621962eb66a86",
-      "sha256": "b397fdddc37a82a7083262f7c1e73b400df7181f8655dde0061ddc4a5d004b92"
+      "blob": "510ec979b9e83221cf6a7dd2045b08e2f0419d6a",
+      "sha256": "7d4652ef370a10daf52c59a40d5e9435bf4b3aeb71f717da9a21371bcab37096"
     },
     {
       "file": "tools/ux-source-data.js",
@@ -11905,4 +12067,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "2186db69e6eaf29d9cae765aeec1611f24949a6b1c7a7c20effed8e749eb325c";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "8d1b77bc234fd00ed2a7a31d8d1d1a25fb4351e3f9a97d5396269affc02e34c9";
