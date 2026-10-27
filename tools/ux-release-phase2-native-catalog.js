@@ -7,7 +7,8 @@ import { parse } from 'acorn';
 import pg from 'pg';
 import * as original from './commerce-deed-release-phase2-native-catalog.js';
 import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
-import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
+import { economyUxMergeCandidateHistoricalInput,
+  economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 import { UX_SOURCE, qualifyUxSource } from './ux-source-compatibility.js';
 export * from './commerce-deed-release-phase2-native-catalog.js';
 
@@ -28,8 +29,13 @@ const merge = (base, ux) => freeze(Object.fromEntries(fields.map(field => [field
 
 // The unchanged historical constructor also reads its caller's catalog internally. Only its four
 // exact, immutable catalog SELECTs get the validated UX projection; all other queries stay real.
-assert.equal(economyHardeningSourceBaseline('tools/commerce-deed-release-phase2-native-catalog.js',
-  fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8')),
+const commerceDeedHelper = 'tools/commerce-deed-release-phase2-native-catalog.js';
+const commerceDeedRaw = fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8');
+const commerceDeedCandidate = economyUxMergeCandidateHistoricalInput(commerceDeedHelper, commerceDeedRaw);
+const commerceDeedMain = economyUxMergeMainHistoricalInput(commerceDeedHelper, commerceDeedRaw);
+assert.equal(economyHardeningSourceBaseline(commerceDeedHelper, commerceDeedCandidate), commerceDeedMain,
+  'Integrated economy and UX helper parents must share the exact predecessor');
+assert.equal(commerceDeedMain,
   git('show', UX_SOURCE.revision + ':tools/commerce-deed-release-phase2-native-catalog.js'), 'Whole original native helper remains unchanged');
 const catalogQueries = [];
 function collectCatalogQueries(node) {
@@ -60,7 +66,7 @@ async function assertNativeCaller(pool, endpoint, profile, includeNotNull) {
   } else {
     assert(main.endsWith('/test/phase2-postgres.js')); assert(['phase2', 'fresh'].includes(profile)); assert.equal(includeNotNull, true);
     assert.equal(process.argv[2], profile === 'phase2' ? '--definitions' : '--lots');
-    assert.equal(process.env.P2_TEST_CHILD, profile === 'phase2' ? 'upgrade' : 'lots');
+    assert.equal(process.env.P2_TEST_CHILD, profile === 'phase2' ? 'upgrade' : 'lots-catalog');
     assert.match(settings.schema, /^p2_definitions_[a-f0-9]{32}$/); assert.equal(settings.schema, process.env.P2_TEST_SCHEMA);
   }
   assert.equal(settings.role, address.username); assert.equal('/' + settings.database, address.pathname);
@@ -165,16 +171,24 @@ function extendCatalog(prior, ux, branches = false) {
   if (branches) return Object.freeze({ ...common, current: reference, verify: verifyMetadata });
   return Object.freeze({ ...common, normalize: rows => prior.normalize(projection.projectConstraints(rows, prior.includeNotNull)) });
 }
-export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {
+function integratedSchemaSources(input) {
+  const candidate = economyUxMergeCandidateHistoricalInput('schema.sql', input);
   const predecessor = qualifyUxSource('schema.sql', economyUxMergeMainHistoricalInput('schema.sql', input)).baselineText;
+  assert.equal(economyHardeningSourceBaseline('schema.sql', candidate), predecessor,
+    'Integrated economy and UX source parents must share the exact predecessor');
+  return Object.freeze({ candidate, predecessor });
+}
+export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {
+  const { candidate } = integratedSchemaSources(input);
   await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);
   const ux = await compileUxReference(pool, endpoint);
-  const prior = await original.createCommerceReleasePhase2MigrationCatalog(await projectedCaller(pool, ux), endpoint, predecessor, options);
+  const prior = await original.createCommerceReleasePhase2MigrationCatalog(await projectedCaller(pool, ux), endpoint, candidate, options);
   return extendCatalog(prior, ux);
 }
 export async function verifyCommerceNativeBranches(pool, endpoint) {
   await assertNativeCaller(pool, endpoint, 'fresh', true);
+  const { candidate } = integratedSchemaSources(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
   const ux = await compileUxReference(pool, endpoint);
-  const prior = await original.verifyCommerceNativeBranches(await projectedCaller(pool, ux), endpoint);
+  const prior = await original.verifyCommerceNativeBranches(await projectedCaller(pool, ux), endpoint, candidate);
   return extendCatalog(prior, ux, true);
 }
