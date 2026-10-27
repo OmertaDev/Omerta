@@ -85,7 +85,9 @@ for (const hook of ["import { saleHistoricalInput } from './sale-source-compatib
 }
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
 let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
-for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2]]) {
+for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
+  ["import { economySocialReceiptHistoricalInput } from './economy-social-proof-receipt-source-transfer.js';\n", 1],
+  ['  input = economySocialReceiptHistoricalInput(file, input);\n', 2]]) {
   assert.equal(candidateConserved.split(hook).length, count + 1, 'Exact candidate and main sale integration hooks'); candidateConserved = candidateConserved.split(hook).join('');
 }
 assert.equal(candidateConserved, git('show', 'c86bcd310e5f38845642637230ba4bec7d653183:tools/economy-ux-merge-source-compatibility.js'), 'All committed economy merge qualifiers and refusal predicates remain byte-identical');

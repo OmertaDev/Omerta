@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { ECONOMY_UX_MERGE_SOURCE, ECONOMY_UX_MERGE_SOURCE_SHA256 } from './economy-ux-merge-source-data.js';
 import { saleHistoricalInput } from './sale-source-compatibility.js';
+import { economySocialReceiptHistoricalInput } from './economy-social-proof-receipt-source-transfer.js';
 
 export { ECONOMY_UX_MERGE_SOURCE };
 export const ECONOMY_UX_MERGE_FILES = Object.freeze([
@@ -114,10 +115,12 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input) {
+  input = economySocialReceiptHistoricalInput(file, input);
   input = saleHistoricalInput(file, input);
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
+  input = economySocialReceiptHistoricalInput(file, input);
   input = saleHistoricalInput(file, input);
   return historicalInput(file, input, 'main');
 }

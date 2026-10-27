@@ -51,6 +51,12 @@ import {
 } from '../tools/economy-release-tail-source-transfer.js';
 import { ECONOMY_UX_MERGE_SOURCE,
   economyUxMergeCandidateHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
+import {
+  ECONOMY_SOCIAL_RECEIPT_REVISION, ECONOMY_SOCIAL_RECEIPT_TREE,
+  ECONOMY_SOCIAL_RECEIPT_PREDECESSOR, ECONOMY_SOCIAL_RECEIPT_PREDECESSOR_TREE,
+  ECONOMY_SOCIAL_RECEIPT_PHASE, ECONOMY_SOCIAL_RECEIPT_DOMAINS,
+  assertEconomySocialReceiptSourceTransfer, economySocialReceiptHistoricalInput,
+} from '../tools/economy-social-proof-receipt-source-transfer.js';
 
 const expectedRevision = 'aaab91ff6bec4c8a0ec53e0ef88682b317a7a182';
 const expectedPredecessor = '9f39df80598d38507c9f6b4ea2414312eb8e7700';
@@ -100,6 +106,7 @@ const releaseTailFiles = [
   'src/growth.js', 'test/gates.js', 'test/lib/rc1-historical-source-fixture.js', 'tools/pgquery.js',
   'src/managementteamautonomy.js', 'test/managementteams-retry-integration.js',
 ];
+const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
   file, fs.readFileSync(file, 'utf8')));
@@ -256,8 +263,69 @@ assert.deepEqual(Object.keys(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS), comm
 assert(Object.isFrozen(ECONOMY_HARDENING_COMMERCE_ADMISSION_DOMAINS));
 assert.deepEqual(Object.keys(ECONOMY_RELEASE_TAIL_DOMAINS), releaseTailFiles);
 assert(Object.isFrozen(ECONOMY_RELEASE_TAIL_DOMAINS));
+assert.equal(ECONOMY_SOCIAL_RECEIPT_REVISION, '5318589c8e8fd7fa64e6e714e6f69111fb0dca0a');
+assert.equal(ECONOMY_SOCIAL_RECEIPT_PREDECESSOR, '011930200e9f4266d92b7a8f77646013d96b697b');
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_SOCIAL_RECEIPT_PREDECESSOR,
+  ECONOMY_SOCIAL_RECEIPT_REVISION]);
+execFileSync('git', ['merge-base', '--is-ancestor', ECONOMY_SOCIAL_RECEIPT_REVISION, 'HEAD']);
+assert.equal(git('rev-parse', ECONOMY_SOCIAL_RECEIPT_REVISION + '^{tree}').trim(),
+  ECONOMY_SOCIAL_RECEIPT_TREE);
+assert.equal(git('rev-parse', ECONOMY_SOCIAL_RECEIPT_PREDECESSOR + '^{tree}').trim(),
+  ECONOMY_SOCIAL_RECEIPT_PREDECESSOR_TREE);
+assert.match(ECONOMY_SOCIAL_RECEIPT_PHASE, /exact-social-proof-receipt-retention-source-transfer-only/);
+assert.deepEqual(Object.keys(ECONOMY_SOCIAL_RECEIPT_DOMAINS), socialReceiptFiles);
+assert(Object.isFrozen(ECONOMY_SOCIAL_RECEIPT_DOMAINS));
 
 let positives = 0, refusals = 0, hunks = 0;
+for (const file of socialReceiptFiles) {
+  const pin = ECONOMY_SOCIAL_RECEIPT_DOMAINS[file];
+  const current = git('show', ECONOMY_SOCIAL_RECEIPT_REVISION + ':' + file);
+  const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_PREDECESSOR + ':' + file);
+  const physical = lf(fs.readFileSync(file, 'utf8'));
+  assert.equal(physical, current, 'Physical social-receipt repair source must remain exact: ' + file);
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.deepEqual(Object.keys(pin).sort(), [
+    'mode', 'currentSha256', 'currentBlob', 'currentBytes', 'baselineSha256', 'baselineBlob',
+    'baselineBytes', 'contextLines', 'inverses',
+  ].sort());
+  assert.equal(pin.contextLines, 3);
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(Buffer.byteLength(current), pin.currentBytes);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(Buffer.byteLength(baseline), pin.baselineBytes);
+  assert.equal(git('rev-parse', ECONOMY_SOCIAL_RECEIPT_REVISION + ':' + file).trim(), pin.currentBlob);
+  assert.equal(git('rev-parse', ECONOMY_SOCIAL_RECEIPT_PREDECESSOR + ':' + file).trim(), pin.baselineBlob);
+  assert.equal(git('ls-tree', ECONOMY_SOCIAL_RECEIPT_REVISION, '--', file).trim().split(/\s+/)[0], pin.mode);
+  assert.deepEqual(pin.inverses, inverseHunks(file, ECONOMY_SOCIAL_RECEIPT_PREDECESSOR,
+    ECONOMY_SOCIAL_RECEIPT_REVISION));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const transfer = assertEconomySocialReceiptSourceTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline); assert.equal(transfer.sourceOnly, true);
+    assert.equal(transfer.runtime, false); assert.equal(transfer.native, false);
+    assert.equal(economySocialReceiptHistoricalInput(file, input), baseline);
+    assert.equal(economyUxMergeCandidateHistoricalInput(file, input),
+      economyUxMergeCandidateHistoricalInput(file, baseline));
+    positives += 2;
+  }
+  assert.deepEqual(economySocialReceiptHistoricalInput(file, Buffer.from(current)), Buffer.from(baseline));
+  positives++;
+  for (const changed of [current + '\n// drift\n', current.slice(1), '\ufeff' + current, current + '\0',
+    current.replace('\n', '\r\n'), current.replace('\n', '\r'), null]) {
+    assert.throws(() => assertEconomySocialReceiptSourceTransfer(file, changed));
+    assert.equal(economySocialReceiptHistoricalInput(file, changed), changed); refusals++;
+  }
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1,
+      'Unique complete social-receipt repair inverse required: ' + file);
+    for (const changed of [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current),
+      current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+      assert.throws(() => assertEconomySocialReceiptSourceTransfer(file, changed));
+      assert.equal(economySocialReceiptHistoricalInput(file, changed), changed); refusals++;
+    }
+    hunks++;
+  }
+}
 for (const file of releaseTailFiles) {
   const pin = ECONOMY_RELEASE_TAIL_DOMAINS[file];
   const current = git('show', ECONOMY_RELEASE_TAIL_REVISION + ':' + file);
@@ -845,7 +913,7 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
   assert.throws(() => assertEconomyReleaseTailTransfer(file, text));
   assert.equal(economyHardeningSourceBaseline(file, text), text); refusals++;
 }
-assert.equal(positives, 251, 'positive control count drifted');
-assert.equal(refusals, 856, 'refusal control count drifted');
-assert.equal(hunks, 344, 'inverse-hunk control count drifted');
+assert.equal(positives, 271, 'positive control count drifted');
+assert.equal(refusals, 902, 'refusal control count drifted');
+assert.equal(hunks, 350, 'inverse-hunk control count drifted');
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
