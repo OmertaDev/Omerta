@@ -1735,6 +1735,32 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     assert.equal((await migrateSocialProofReceipts(pool)).inserted, 0,
       'reapplying the historical receipt repair after cutover is idempotent');
 
+    // R5 retention repair: R4's repeat pass read only two telemetry days after its marker existed,
+    // while paid claim rows were swept at day seven. Model an R4-era sweep that already removed the
+    // row; the new one-time full retained-history pass must still recover the permanent proof latch.
+    const delayedProof = 'https://x.com/legacy/status/00012345678901246';
+    const delayedAt = new Date(Date.now() - 8 * 86400000);
+    await pool.query("DELETE FROM economy_migrations WHERE id='social-proof-receipt-retention-2026-10-27'");
+    await pool.query(
+      `INSERT INTO telemetry (id, at, account_id, event, props) VALUES
+       ('legacy-social-proof-retention-gap',$1,$2,'social_task',$3)`,
+      [delayedAt, legacy.accountId, JSON.stringify({ task: 'sw_post', proof: delayedProof })]);
+    await pool.query(
+      `INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof)
+       VALUES ($1,$2,'sw_boost',$3,true,$4)`,
+      [legacy.accountId, legacyDay - 7, delayedAt, delayedProof]);
+    await pool.query('DELETE FROM social_claims WHERE account_id=$1 AND day=$2 AND task_id=$3',
+      [legacy.accountId, legacyDay - 7, 'sw_boost']); // predecessor sweep, before receipt-aware R5
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 1,
+      'the retention repair recovers a predecessor payout after its seven-day claim row was swept');
+    assert.equal(Number((await pool.query(
+      `SELECT COUNT(*) n FROM account_daily_claims
+        WHERE account_id=$1 AND day=0 AND scope='social-proof' AND claim_id='used'`,
+      ['social-proof:x:12345678901246'])).rows[0].n), 1,
+    'the delayed predecessor proof is permanently spent');
+    assert.equal((await migrateSocialProofReceipts(pool)).inserted, 0,
+      'the retention catch-up marker and receipt are idempotent');
+
     const legacyReuser = await mk('Legacy Proof Reuser');
     await pool.query("UPDATE accounts SET auth_provider='x', auth_subject='778' WHERE id=$1", [legacyReuser.accountId]);
     assert.equal((await call('POST', '/v1/social/sw_post/claim', { token: legacyReuser.token,

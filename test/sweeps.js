@@ -161,12 +161,44 @@ console.log(`✅ all ${ALL_SWEEPS.length} worker sweeps run clean on an empty DB
   const oldPending = new Date(Date.now() - 3 * 86400000);   // > 48h SOCIAL_PENDING_TTL
   const fresh = new Date(Date.now() - 3600000);
   await pool.query("INSERT INTO social_claims (account_id, day, task_id, posted_at, paid) VALUES ($1, 1, 'sw_post', $2, true)", [acc, oldPaid]);
+  await pool.query("INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof) VALUES ($1, 4, 'sw_post', $2, true, $3)",
+    [acc, oldPaid, 'https://twitter.com/legacy/statuses/12345678909999']);
+  await pool.query("INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof) VALUES ($1, 5, 'sw_post', $2, true, $3)",
+    [acc, oldPaid, 'legacy trust prose']);
   await pool.query("INSERT INTO social_claims (account_id, day, task_id, posted_at, paid) VALUES ($1, 2, 'sw_invite', $2, false)", [acc, oldPending]);
   await pool.query("INSERT INTO social_claims (account_id, day, task_id, posted_at, paid) VALUES ($1, 3, 'sw_boost', $2, false)", [acc, fresh]);
   const r = await sweepSocialClaims(pool);
-  assert.equal(r.swept, 2, 'the spent-paid and the lapsed-pending rows are both dropped');
+  assert.equal(r.swept, 4, 'spent paid rows and the lapsed pending row are dropped');
   assert.equal((await pool.query("SELECT COUNT(*)::int n FROM social_claims WHERE account_id=$1", [acc])).rows[0].n, 1, 'the fresh registration survives');
+  assert.equal(Number((await pool.query(
+    `SELECT COUNT(*) n FROM account_daily_claims
+      WHERE account_id='social-proof:x:12345678909999' AND day=0
+        AND scope='social-proof' AND claim_id='used'`)).rows[0].n), 1,
+  'the paid canonical proof is permanently receipted before its row is deleted');
+  assert.equal(Number((await pool.query(
+    "SELECT COUNT(*) n FROM account_daily_claims WHERE account_id='social-proof:x:legacy trust prose'"
+  )).rows[0].n), 0, 'malformed predecessor trust prose never becomes a synthetic X receipt');
   assert.equal((await sweepSocialClaims(pool)).swept, 0, 'idempotent');
+
+  const rollbackProof = 'https://x.com/legacy/status/12345678910000';
+  await pool.query("INSERT INTO social_claims (account_id, day, task_id, posted_at, paid, proof) VALUES ($1, 6, 'sw_post', $2, true, $3)",
+    [acc, oldPaid, rollbackProof]);
+  const failingPool = { connect: async () => {
+    const client = await pool.connect();
+    return {
+      query: (sql, params) => {
+        if (/INSERT INTO account_daily_claims/.test(String(sql))) throw new Error('injected receipt failure');
+        return client.query(sql, params);
+      },
+      release: () => client.release(),
+    };
+  } };
+  await assert.rejects(sweepSocialClaims(failingPool), /injected receipt failure/,
+    'a receipt failure aborts the sweep');
+  assert.equal((await pool.query(
+    'SELECT COUNT(*)::int n FROM social_claims WHERE account_id=$1 AND day=6 AND task_id=$2',
+    [acc, 'sw_post'])).rows[0].n, 1, 'receipt failure rolls back deletion of the paid evidence');
+  assert.equal((await sweepSocialClaims(pool)).swept, 1, 'the retained row is recoverable on the next sweep');
   console.log('✅ sweepSocialClaims drops spent/lapsed rows, keeps live registrations, idempotent');
 }
 

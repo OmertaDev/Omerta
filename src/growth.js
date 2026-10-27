@@ -13,6 +13,7 @@ import { spendOmr } from './vanity.js';
 import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim,
   takeBoundedAccountDailyClaim } from './accountdaily.js';
 import { dbCaps } from './db.js';
+import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
 
 
 // ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──
@@ -1013,10 +1014,33 @@ export async function claimSocial(ch, taskId, proof, client, h) {
 export async function sweepSocialClaims(pool) {
   const paidCut = new Date(Date.now() - 7 * 24 * 3600000);
   const pendCut = new Date(Date.now() - SOCIAL_PENDING_TTL);
-  const r = await pool.query(
-    'DELETE FROM social_claims WHERE (paid AND posted_at < $1) OR (NOT paid AND posted_at < $2)',
-    [paidCut, pendCut]);
-  return { swept: r.rowCount || 0 };
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    // A predecessor process can commit a paid proof without the permanent provider/id latch. Never
+    // delete that last row of evidence first: reserve the idempotent receipt in the same transaction,
+    // then prune. Current-format payouts already own the receipt, so their inserts are clean no-ops.
+    const paidRows = (await client.query(
+      `SELECT account_id, day, task_id, proof FROM social_claims
+        WHERE paid AND posted_at < $1 AND proof IS NOT NULL
+        ORDER BY account_id, day, task_id FOR UPDATE`, [paidCut])).rows;
+    for (const row of paidRows) {
+      const normalized = normalizeLegacyPaidSocialPostProof(row.proof);
+      if (normalized)
+        await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
+          SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM);
+    }
+    const r = await client.query(
+      'DELETE FROM social_claims WHERE (paid AND posted_at < $1) OR (NOT paid AND posted_at < $2)',
+      [paidCut, pendCut]);
+    await client.query('COMMIT');
+    return { swept: r.rowCount || 0 };
+  } catch (error) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 // WALLET LINK is SIWE now — see chain.js walletChallenge/walletVerify. The legacy

@@ -754,12 +754,19 @@ export async function migrateSocialProofReceipts(q) {
     const migrationId = 'social-proof-receipts-2026-10-23';
     const alreadyApplied = (await q.query(
       'SELECT 1 FROM economy_migrations WHERE id=$1', [migrationId])).rowCount > 0;
+    // R4 repeated only a two-day telemetry tail after this marker existed. Paid claim rows live for
+    // seven days, so a predecessor payout followed by a delayed restart could be swept before the
+    // tail saw it. R5 consumes the full retained telemetry history once; the receipt-aware sweep in
+    // growth.js closes the deletion side of the gap for every later payout.
+    const retentionRepairId = 'social-proof-receipt-retention-2026-10-27';
+    const retentionRepairApplied = (await q.query(
+      'SELECT 1 FROM economy_migrations WHERE id=$1', [retentionRepairId])).rowCount > 0;
     const claimRows = (await q.query(
       'SELECT DISTINCT proof FROM social_claims WHERE paid AND proof IS NOT NULL')).rows;
     // Paid rows are intentionally swept after seven days, but their same-transaction social_task
     // telemetry survives for 180 days. The first upgrade consumes that retained payout evidence too;
     // later boots need only the cutover window because the durable receipts now cover older proofs.
-    const telemetryRows = alreadyApplied ? (await q.query(
+    const telemetryRows = alreadyApplied && retentionRepairApplied ? (await q.query(
       "SELECT props FROM telemetry WHERE event='social_task' AND at >= $1",
       [new Date(Date.now() - 2 * 86400000)])).rows : (await q.query(
       "SELECT props FROM telemetry WHERE event='social_task'")).rows;
@@ -779,6 +786,8 @@ export async function migrateSocialProofReceipts(q) {
     for (const accountId of receiptAccounts)
       if (await takeAccountDailyClaim(q, accountId, 0, 'social-proof', 'used')) inserted++;
     await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING', [migrationId]);
+    await q.query('INSERT INTO economy_migrations (id) VALUES ($1) ON CONFLICT DO NOTHING',
+      [retentionRepairId]);
     await q.query('COMMIT');
     return { applied: !alreadyApplied, scanned: proofs.length, canonical: receiptAccounts.size, inserted };
   } catch (error) {
