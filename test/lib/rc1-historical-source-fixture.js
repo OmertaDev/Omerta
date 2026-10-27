@@ -19,6 +19,7 @@ import { createRequire, registerHooks, syncBuiltinESMExports } from 'node:module
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cityPlaySourceBaseline } from '../../tools/city-play-source-transfer.js';
 import { assertDeedQuestSourceTransfer, DEED_QUEST_SOURCE_DOMAINS } from '../../tools/deed-quest-source-transfer.js';
+import { economyUxMergeCandidateHistoricalInput } from '../../tools/economy-ux-merge-source-compatibility.js';
 import { CITY_ACTIVITY_SOURCE_INVERSES, CITY_ACTIVITY_SOURCE_TRANSFER, cityActivitySourceBaseline,
   qualifyCityActivitySource } from '../../tools/rc1-city-activity-source-compatibility.js';
 import { qualifyCityActivityMarketSource } from '../../tools/rc1-city-activity-market-source-compatibility.js';
@@ -534,10 +535,7 @@ function rejectHistoricalApplicationSources() {
   for (const combinedFile of enterpriseCombinedHistoricalFiles) {
     const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);
     const physicalRaw = canonical(originalRead(path.join(root, combinedFile)));
-    const physicalDigest = sha256(physicalRaw);
-    const physicalCurrent = physicalDigest === combinedRow.after.sha256 || physicalDigest === combinedRow.before.sha256
-      ? physicalRaw
-      : canonical(continuousCityHistoricalInput(combinedFile, physicalRaw));
+    const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, physicalRaw));
     const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));
     const combinedFrozen = String(blob(combinedFile, release));
     const combinedExpected = blob(combinedFile, history);
@@ -548,10 +546,9 @@ function rejectHistoricalApplicationSources() {
       'Combined enterprise current revision/blob binding changed: ' + combinedFile);
     assert.equal(sha256(combinedFrozen), combinedRow.before.sha256, 'Combined enterprise predecessor source changed: ' + combinedFile);
     assert.equal(blobHash(Buffer.from(combinedFrozen)), combinedRow.before.blob, 'Combined enterprise predecessor blob changed: ' + combinedFile);
-    const physicalPin = sha256(physicalCurrent) === combinedRow.after.sha256 ? combinedRow.after
-      : sha256(physicalCurrent) === combinedRow.before.sha256 ? combinedRow.before : null;
-    assert(physicalPin, 'Physical source did not compose to an exact combined enterprise layer: ' + combinedFile);
-    assert.equal(blobHash(Buffer.from(physicalCurrent)), physicalPin.blob,
+    assert.equal(sha256(physicalCurrent), combinedRow.after.sha256,
+      'Physical source did not compose to the exact combined enterprise current layer: ' + combinedFile);
+    assert.equal(blobHash(Buffer.from(physicalCurrent)), combinedRow.after.blob,
       'Physical source combined enterprise blob changed: ' + combinedFile);
     const rejectCombined = supplied => {
       assert.throws(() => currentHistoricalApplicationSource(combinedFile, supplied));
