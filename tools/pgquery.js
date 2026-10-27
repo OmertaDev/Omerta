@@ -18,10 +18,11 @@
 // resolution. Anything Postgres would refuse at parse time fails here instead of in front of a player.
 //
 // HONESTY RULE (the one this repo keeps re-learning): a query built with `${...}` interpolation cannot
-// be prepared without knowing the interpolated value, so those are COUNTED AND LISTED, never silently
-// skipped. A guard that quietly ignores what it cannot read reports a pass over exactly the code it
-// failed to check. The count is asserted against a known ceiling so the unreadable set cannot grow
-// unnoticed.
+// be prepared without knowing the interpolated value. A closed, bounded generator may be executed
+// against a capture-only client so every value is materialized and PREPAREd; everything else is
+// COUNTED AND LISTED, never silently skipped. A guard that quietly ignores what it cannot read reports
+// a pass over exactly the code it failed to check. The count is asserted against a known ceiling so
+// the unreadable set cannot grow unnoticed.
 //
 //   createdb omerta_query
 //   DATABASE_URL=postgres://localhost/omerta_query node tools/pgquery.js
@@ -52,10 +53,279 @@ const scan = new URL('../src/', import.meta.url);
 const { readable, unreadable: unreadableSites } = scanQueryCalls(fileURLToPath(scan), { root: ROOT });
 const stmts = [], interpolated = [], skipped = [];
 const unreadable = unreadableSites.map((u) => u.where);
+
+// Seven receipt-retention sites have a finite runtime corpus even though their source is necessarily
+// interpolated: two bounded placeholder fan-outs and five closed engine/cursor branches. Exercise the
+// real exported functions against capture-only clients and PREPARE every SQL string they can emit.
+// This is deliberately a model, not a waiver: exact scanner signatures associate captures with call
+// sites, every cardinality through the runtime ceiling is materialized, and any source/shape drift
+// refuses the model before a database connection is opened.
+const canonicalSql = sql => sql.replaceAll('\r\n', '\n');
+const scannerSignature = ({ rel, sql, parts }) => JSON.stringify([rel, canonicalSql(sql), parts]);
+
+async function modelSocialReceiptQueries(rows) {
+  const sourcePins = Object.freeze({
+    'src/accountdaily.js': 'ec1c5b770146297f4471a839ff8bfbbbeeec44fe607eeadb926fc5c91f39aca3',
+    'src/db.js': 'b81f2db08de8ac9ec4975cb653fd89cbc50e8aeb966726b4ac259f961447ca8c',
+    'src/growth.js': 'a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b',
+  });
+  const verifyPinnedSource = (rel, raw, expectedHash) => {
+    const lf = canonicalSql(raw);
+    if (lf.includes('\r') || (raw !== lf && raw !== lf.replaceAll('\n', '\r\n')))
+      throw new Error(`${rel} must use complete LF or uniform CRLF source bytes`);
+    const hash = createHash('sha256').update(lf).digest('hex');
+    if (hash !== expectedHash)
+      throw new Error(`${rel} source changed; review and repin its complete receipt SQL model`);
+    return lf;
+  };
+  for (const [rel, expectedHash] of Object.entries(sourcePins)) {
+    const lf = verifyPinnedSource(rel, readFileSync(path.join(ROOT, rel), 'utf8'), expectedHash);
+    let mutatedRejected = false;
+    try { verifyPinnedSource(rel, lf + ' ', expectedHash); }
+    catch (error) {
+      if (!String(error?.message).includes('source changed')) throw error;
+      mutatedRejected = true;
+    }
+    if (!mutatedRejected) throw new Error(`${rel} mutated source was not refused`);
+  }
+  const expected = {
+    accountInsert: ['src/accountdaily.js',
+      `INSERT INTO account_daily_claims (account_id, day, scope, claim_id)
+     VALUES  ON CONFLICT DO NOTHING`, ["values.join(',')"]],
+    migrationCutoff: ['src/db.js',
+      `SELECT  AS cutoff_at
+         FROM economy_migrations WHERE id=$1 FOR UPDATE`,
+      ["timestampText ? 'applied_at::text' : 'applied_at'"]],
+    migrationClaims: ['src/db.js',
+      `SELECT account_id, day, task_id, proof,
+                 AS cursor_posted_at
+           FROM social_claims
+          WHERE paid AND proof IS NOT NULL AND posted_at <= $1
+            AND (posted_at > $2 OR (posted_at=$2 AND account_id > $3)
+              OR (posted_at=$2 AND account_id=$3 AND day > $4)
+              OR (posted_at=$2 AND account_id=$3 AND day=$4 AND task_id > $5))
+          ORDER BY posted_at, account_id, day, task_id LIMIT $6`,
+      ["timestampText ? 'posted_at::text' : 'posted_at'"]],
+    migrationTelemetry: ['src/db.js',
+      `SELECT id, props,  AS cursor_at FROM telemetry
+          WHERE event='social_task'
+            AND at >=` + ' ' + `
+            AND at <= $2
+            AND (at > $3 OR (at=$3 AND id > $4))
+          ORDER BY at, id LIMIT $5`,
+      ["timestampText ? 'at::text' : 'at'",
+        `state.mode !== 'full' && timestampText ? "$1::timestamptz - interval '2 days'" : '$1'`]],
+    sweepPaid: ['src/growth.js',
+      `SELECT account_id, day, task_id, proof FROM social_claims
+            WHERE paid AND posted_at < $1
+            ORDER BY posted_at, account_id, day, task_id LIMIT $2 FOR UPDATE`, ['skipLocked']],
+    sweepPending: ['src/growth.js',
+      `SELECT account_id, day, task_id FROM social_claims
+            WHERE NOT paid AND posted_at < $1
+            ORDER BY posted_at, account_id, day, task_id LIMIT $2 FOR UPDATE`, ['skipLocked']],
+    sweepDelete: ['src/growth.js', 'DELETE FROM social_claims WHERE ', ["predicates.join(' OR ')"]],
+  };
+  const rowByName = new Map();
+  for (const [name, [rel, sql, parts]] of Object.entries(expected)) {
+    const signature = scannerSignature({ rel, sql, parts });
+    const matches = rows.filter(row => row.interpolated && scannerSignature(row) === signature);
+    if (matches.length !== 1)
+      throw new Error(`${name} scanner signature matched ${matches.length} sites (expected exactly one)`);
+    rowByName.set(name, matches[0]);
+  }
+  if (new Set(rowByName.values()).size !== Object.keys(expected).length)
+    throw new Error('receipt query model signatures do not identify seven distinct call sites');
+
+  const [{ takeAccountDailyClaims }, { migrateSocialProofReceipts, dbCaps },
+    { sweepSocialClaims }] = await Promise.all([
+    import('../src/accountdaily.js'), import('../src/db.js'), import('../src/growth.js'),
+  ]);
+  const generatorPins = new Map([
+    [takeAccountDailyClaims, '1bfef2047ca65089ad9ed4432cecfa0a790b683aca7ad47b0d5e302ffd2e5c74'],
+    [sweepSocialClaims, '88326b7b2acec33456bfe8880cb8cd51b45186f0a8d76594e96a420fd7a5445d'],
+  ]);
+  for (const [generator, expectedHash] of generatorPins) {
+    const source = canonicalSql(generator.toString());
+    const hash = createHash('sha256').update(source).digest('hex');
+    if (hash !== expectedHash)
+      throw new Error(`${generator.name} source changed; review and repin its bounded SQL model`);
+  }
+  const variants = new Map([...rowByName.values()].map(row => [row, []]));
+  const add = (name, sql) => {
+    if (typeof sql !== 'string' || !DML.test(sql))
+      throw new Error(`${name} model captured a non-DML query`);
+    variants.get(rowByName.get(name)).push(sql);
+  };
+  const assertSequentialPlaceholders = (name, sql, count) => {
+    const placeholders = [...sql.matchAll(/\$(\d+)/g)].map(match => Number(match[1]));
+    if (placeholders.length !== count
+        || placeholders.some((placeholder, index) => placeholder !== index + 1))
+      throw new Error(`${name} model did not generate exactly $1..$${count}`);
+  };
+
+  // The batch helper itself is the model source. Exercise every admitted row count, assert each
+  // value remains separately bound, and prove the first out-of-range call fails before query().
+  const accountIds = [];
+  for (let count = 1; count <= 1000; count++) {
+    accountIds.push(`pgquery-receipt-${String(count).padStart(4, '0')}`);
+    let calls = 0;
+    const client = { query: async (sql, params) => {
+      calls++;
+      if (!Array.isArray(params) || params.length !== count * 4)
+        throw new Error(`account receipt model expected ${count * 4} bound values`);
+      assertSequentialPlaceholders('account receipt', sql, count * 4);
+      if (sql.includes('pgquery-receipt-'))
+        throw new Error('account receipt model placed a fixture value in SQL text');
+      add('accountInsert', sql);
+      return { rowCount: 0 };
+    } };
+    await takeAccountDailyClaims(client, accountIds, 0, 'social-proof', 'used');
+    if (calls !== 1) throw new Error(`account receipt model made ${calls} queries at cardinality ${count}`);
+  }
+  let overflowQueried = false, overflowRejected = false;
+  try {
+    await takeAccountDailyClaims({ query: async () => { overflowQueried = true; return { rowCount: 0 }; } },
+      [...accountIds, 'pgquery-receipt-1001'], 0, 'social-proof', 'used');
+  } catch (error) {
+    if (!(error instanceof RangeError)) throw error;
+    overflowRejected = true;
+  }
+  if (!overflowRejected || overflowQueried)
+    throw new Error('account receipt model did not reject cardinality 1001 before query()');
+
+  const cursorPrefix = 'social-proof-receipt-retention-progress-2026-10-27:cursor:';
+  const epoch = '1970-01-01T00:00:00.000Z';
+  const cursorId = state => cursorPrefix + Buffer.from(JSON.stringify(state)).toString('base64url');
+  const migrationSets = { migrationCutoff: new Set(), migrationClaims: new Set(),
+    migrationTelemetry: new Set() };
+  const captureMigration = async (state, timestampText) => {
+    const id = cursorId(state);
+    const q = { query: async (sql) => {
+      if (typeof sql !== 'string') throw new Error('receipt migration model saw a non-string query');
+      if (sql.includes(' AS cutoff_at')) {
+        migrationSets.migrationCutoff.add(sql);
+        return { rows: [{ cutoff_at: timestampText
+          ? '2026-10-27T00:00:00.000Z' : new Date('2026-10-27T00:00:00.000Z') }], rowCount: 1 };
+      }
+      if (sql.includes('SELECT id FROM economy_migrations WHERE id LIKE'))
+        return { rows: [{ id }], rowCount: 1 };
+      if (sql.includes(' AS cursor_posted_at')) migrationSets.migrationClaims.add(sql);
+      if (sql.includes(' AS cursor_at FROM telemetry')) migrationSets.migrationTelemetry.add(sql);
+      return { rows: [], rowCount: 0 };
+    } };
+    const result = await migrateSocialProofReceipts(q, { batchSize: 1000, maxBatches: 1,
+      timestampText });
+    if (result.batches !== 1) throw new Error('receipt migration model did not execute exactly one page');
+  };
+  const claimsCursor = { mode: 'full', stage: 'claims', postedAt: epoch,
+    accountId: '', day: -2147483648, taskId: '' };
+  const fullTelemetryCursor = { mode: 'full', stage: 'telemetry', at: epoch, id: '' };
+  const tailTelemetryCursor = { mode: 'tail', stage: 'telemetry', at: epoch, id: '' };
+  for (const timestampText of [false, true]) {
+    await captureMigration(claimsCursor, timestampText);
+    await captureMigration(fullTelemetryCursor, timestampText);
+    await captureMigration(tailTelemetryCursor, timestampText);
+  }
+  const migrationExpected = { migrationCutoff: 2, migrationClaims: 2, migrationTelemetry: 3 };
+  for (const [name, set] of Object.entries(migrationSets)) {
+    if (set.size !== migrationExpected[name])
+      throw new Error(`${name} model produced ${set.size} variants (expected ${migrationExpected[name]})`);
+    for (const sql of set) add(name, sql);
+  }
+
+  // Model both engine branches and every possible union cardinality of the two independently
+  // 1000-row sweep pages. All row identity components stay bound; no fixture value enters SQL text.
+  const sweepSets = { sweepPaid: new Set(), sweepPending: new Set(), sweepDelete: new Set() };
+  const captureSweep = async (dueCount, skipLocked) => {
+    const pendingCount = Math.min(dueCount, 1000);
+    const paidCount = dueCount - pendingCount;
+    const paidRows = Array.from({ length: paidCount }, (_, i) => ({
+      account_id: `pgquery-paid-${i}`, day: i, task_id: `paid-${i}`, proof: String(10000000 + i),
+    }));
+    const pendingRows = Array.from({ length: pendingCount }, (_, i) => ({
+      account_id: `pgquery-pending-${i}`, day: i, task_id: `pending-${i}`,
+    }));
+    let deleteCalls = 0;
+    const client = { query: async (sql, params = []) => {
+      if (sql.includes('WHERE paid AND posted_at <')) {
+        if (params[1] !== 1000) throw new Error('social sweep paid-page model lost its 1000-row cap');
+        sweepSets.sweepPaid.add(sql);
+        return { rows: paidRows, rowCount: paidRows.length };
+      }
+      if (sql.includes('WHERE NOT paid AND posted_at <')) {
+        if (params[1] !== 1000) throw new Error('social sweep pending-page model lost its 1000-row cap');
+        sweepSets.sweepPending.add(sql);
+        return { rows: pendingRows, rowCount: pendingRows.length };
+      }
+      if (sql.includes('DELETE FROM social_claims')) {
+        deleteCalls++;
+        if (params.length !== dueCount * 3)
+          throw new Error(`social sweep model expected ${dueCount * 3} delete bindings`);
+        assertSequentialPlaceholders('social sweep delete', sql, dueCount * 3);
+        if (sql.includes('pgquery-paid-') || sql.includes('pgquery-pending-'))
+          throw new Error('social sweep model placed a fixture value in SQL text');
+        sweepSets.sweepDelete.add(sql);
+        return { rows: [], rowCount: dueCount };
+      }
+      return { rows: [], rowCount: 0 };
+    }, release() {} };
+    const previous = dbCaps.skipLocked;
+    dbCaps.skipLocked = skipLocked;
+    try {
+      const result = await sweepSocialClaims({ connect: async () => client },
+        { batchSize: Number.MAX_SAFE_INTEGER, maxBatches: 1 });
+      if (result.batches !== 1) throw new Error('social sweep model did not execute exactly one batch');
+    } finally {
+      dbCaps.skipLocked = previous;
+    }
+    if (deleteCalls !== (dueCount ? 1 : 0))
+      throw new Error(`social sweep model made ${deleteCalls} deletes at cardinality ${dueCount}`);
+  };
+  await captureSweep(0, false);
+  await captureSweep(0, true);
+  for (let count = 1; count <= 2000; count++) await captureSweep(count, false);
+  const sweepExpected = { sweepPaid: 2, sweepPending: 2, sweepDelete: 2000 };
+  for (const [name, set] of Object.entries(sweepSets)) {
+    if (set.size !== sweepExpected[name])
+      throw new Error(`${name} model produced ${set.size} variants (expected ${sweepExpected[name]})`);
+    for (const sql of set) add(name, sql);
+  }
+
+  const expectedCounts = { accountInsert: 1000, migrationCutoff: 2, migrationClaims: 2,
+    migrationTelemetry: 3, sweepPaid: 2, sweepPending: 2, sweepDelete: 2000 };
+  for (const [name, count] of Object.entries(expectedCounts)) {
+    const got = variants.get(rowByName.get(name));
+    if (got.length !== count || new Set(got).size !== count)
+      throw new Error(`${name} model retained ${got.length}/${new Set(got).size} variants (expected ${count})`);
+  }
+  return variants;
+}
+
+let modeledQueries;
+try {
+  modeledQueries = await modelSocialReceiptQueries(readable);
+} catch (error) {
+  console.error('pgquery refused bounded social-receipt query model: ' + error.message);
+  process.exit(1);
+}
+let modeledSites = 0, modeledVariants = 0;
 for (const got of readable) {
-  if (got.interpolated) { interpolated.push({ where: got.where, sql: got.sql }); continue; }
+  if (got.interpolated) {
+    const modeled = modeledQueries.get(got);
+    if (modeled) {
+      modeledSites++;
+      modeledVariants += modeled.length;
+      for (let i = 0; i < modeled.length; i++)
+        stmts.push({ where: `${got.where} [bounded model ${i + 1}/${modeled.length}]`, sql: modeled[i] });
+    } else interpolated.push({ where: got.where, sql: got.sql });
+    continue;
+  }
   if (!DML.test(got.sql)) { skipped.push(got.where); continue; }
   stmts.push({ where: got.where, sql: got.sql });
+}
+if (modeledSites !== 7 || modeledVariants !== 3011) {
+  console.error(`pgquery bounded social-receipt model classified ${modeledSites} sites/${modeledVariants} variants (expected 7/3011)`);
+  process.exit(1);
 }
 
 // These four Commerce sites stay counted/listed as UNPREPARED. Whole-source pins close the
@@ -132,7 +402,8 @@ for (const s of stmts) {
 }
 
 // ── 3. REPORT ────────────────────────────────────────────────────────────────────────────────────
-console.log(`\npgquery — ${stmts.length} static statements prepared against real Postgres`);
+console.log(`\npgquery — ${stmts.length} static/bounded statements prepared against real Postgres`);
+console.log(`  ${modeledVariants} generated variants from ${modeledSites} interpolated sites were materialized and prepared`);
 console.log(`  ${interpolated.length} interpolated (cannot be prepared — counted, never silently passed; PGQUERY_LIST=1 to list)`);
 console.log(`  ${skipped.length} non-DML (DDL / transaction control — not preparable by design)`);
 console.log(`  ${unreadable.length} call sites whose argument is not a literal (a variable or a helper)\n`);
@@ -250,6 +521,10 @@ if (failures.length) {
 // numbered placeholders with every value bound; the private history dispatcher has only closed
 // literal SELECT callers. Whole-source/shape checks reject drift before database work. These are
 // still unprepared, counted and listed: no new type-resolution claim or spare unchecked budget.
+// Receipt retention adds seven interpolated call sites but consumes no unchecked-query budget. The
+// bounded model above invokes their real runtime generators, materializes every admitted cardinality
+// and closed branch (3,011 statements), and PREPAREs each one. Exact scanner signatures and runtime
+// cap assertions fail closed on drift; the pre-R6 measured interpolated corpus therefore remains 172.
 const CEILING = { interpolated: 173, unreadable: 44 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)

@@ -169,13 +169,9 @@ services:
     startCommand: npm start
     healthCheckPath: /             # Render pings this; the homepage returns 200 when the server is healthy
                                    # (NOT /v1/session — that requires a login and returns 401, failing the check)
-    # BLUE-TEAM C1: wait for the GitHub CI checks to pass before deploying. Previously autoDeploy:true
-    # shipped the instant a commit landed, RACING CI — so a red pgcheck (the job that catches the
-    # prod-only class: the uuid=text outage, the roster boot crash-loop) blocked nothing. This makes
-    # the deploy wait for green. A docs-only push (CI skipped via paths-ignore) has no checks and
-    # deploys normally. Verify in the Render dashboard after sync: Settings → Auto-Deploy shows
-    # "After CI Checks Pass"; if it still says "On Commit", flip it there.
-    autoDeployTrigger: checksPass
+    # Releases are exact-SHA, maintenance-gated manual cutovers. Keep Blueprint sync aligned with the
+    # dashboard: a merge must never start an API deploy before the operator establishes the drain.
+    autoDeployTrigger: off
     envVars:
       - fromGroup: omerta-secrets
       - key: NODE_ENV
@@ -276,7 +272,7 @@ services:
     plan: starter
     buildCommand: npm ci --omit=dev   # honour the audited lockfile (blue-team M5)
     startCommand: npm run worker
-    autoDeployTrigger: checksPass      # wait for CI green before deploying (blue-team C1)
+    autoDeployTrigger: off             # exact-SHA manual cutover; never overlap a merge with the old worker
     envVars:
       - fromGroup: omerta-secrets
       - key: NODE_ENV

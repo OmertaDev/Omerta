@@ -2290,11 +2290,12 @@ Same-origin human referrals do not receive referral value. Milestones pay eligib
   cash and $OMR, read straight from the ledger. Your copy-the-link and share buttons live here too;
   the link carries your name as the referral code.
 
-**Spread the Word** (`GET /v1/social`, `/v1/social/:taskId/claim`): three daily social tasks (post about the
-game, share your code, follow or repost). Each pays **$300 cash**, plus **$500 for all three**, once per day
-for human accounts. Register the post to start the clock, keep it published for four hours, then claim
-within 48 hours. Live verification rejects deleted posts. Share links carry your referral code.
-Payments require `SOCIAL_VERIFY_MODE` to be enabled; the tab can remain visible while payments are off.
+**Spread the Word** (`GET /v1/social`, `/v1/social/:taskId/claim`): one verified daily OMERTÀ post pays
+**$300 cash** to a human account, with no completion bonus. Register the X post to start the clock, keep the
+exact prefilled text and official referral link published for four hours, then claim within 48 hours. Live
+verification requires the linked X author, a fresh post, and the same post still standing; one X post can
+pay only once across every account and day. Payments require `SOCIAL_VERIFY_MODE` to be enabled; the tab can
+remain visible while payments are off.
 
 **The First Week** (`GET /v1/onboard`, `/onboard/:taskId/claim`): a short checklist (do a job, boost a car,
 use the bank, declare a Path, join a family, link a wallet, follow on X). It pays cash to teach you the

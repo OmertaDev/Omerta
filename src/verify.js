@@ -14,6 +14,8 @@ export { normalizeSocialPostProof, normalizeLegacySocialPostProof } from './soci
 // retryable "X is busy" that keeps the player's registration standing — NEVER conflated with a
 // definitive answer like post_gone/verify_failed (an X outage must not read as "your post is gone").
 const X_TIMEOUT_MS = 8000;
+const SOCIAL_POST_REGISTRATION_LOOKBACK_MS = 30 * 60 * 1000;
+const SOCIAL_POST_CLOCK_SKEW_MS = 5 * 60 * 1000;
 export async function xfetch(url, opts = {}) {
   let res;
   try {
@@ -182,6 +184,54 @@ export async function requireLinkedXIdentity(ctx = {}) {
 // claimed, live mode re-checks that the registered post STILL EXISTS on X — post-and-delete pays
 // nothing. Trust mode skips the API check but the 4h clock itself is enforced in growth.js either
 // way (deleting early still forfeits under live; under trust the time cost alone deters churn).
+const normalizedProofText = text => String(text || '').normalize('NFKD')
+  .replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const canonicalShareUrl = (raw) => {
+  let url;
+  try { url = new URL(String(raw || '')); } catch { return null; }
+  if (!['http:', 'https:'].includes(url.protocol)) return null;
+  url.hash = '';
+  url.hostname = url.hostname.toLowerCase();
+  url.pathname = url.pathname.replace(/\/+$/, '') || '/';
+  url.search = new URLSearchParams([...url.searchParams.entries()].sort()).toString();
+  return url.href;
+};
+const matchesLegacyReferralUrl = (raw, baseRaw) => {
+  let url, base;
+  try { url = new URL(String(raw || '')); base = new URL(String(baseRaw || '')); }
+  catch { return false; }
+  if (!['http:', 'https:'].includes(url.protocol) || url.origin.toLowerCase() !== base.origin.toLowerCase())
+    return false;
+  const basePath = base.pathname.replace(/\/+$/, '');
+  const prefix = `${basePath}/u/`;
+  if (!url.pathname.startsWith(prefix) || url.pathname.length <= prefix.length) return false;
+  let code;
+  try { code = decodeURIComponent(url.pathname.slice(prefix.length)); } catch { return false; }
+  const params = [...url.searchParams.entries()];
+  return params.length === 1 && params[0][0] === 'ref' && params[0][1] === code;
+};
+
+function verifyPostContract(post, contract) {
+  if (!contract) return;
+  const registeredAt = new Date(contract.registeredAt).getTime();
+  const createdAt = new Date(post.created_at).getTime();
+  if (!Number.isFinite(registeredAt) || !Number.isFinite(createdAt)
+      || createdAt < registeredAt - SOCIAL_POST_REGISTRATION_LOOKBACK_MS
+      || createdAt > registeredAt + SOCIAL_POST_CLOCK_SKEW_MS)
+    throw new GameError('proof_stale', 'Use the fresh OMERTÀ post you made for this registration.');
+  const text = normalizedProofText(post.text);
+  const expectedText = normalizedProofText(contract.expectedText);
+  const exactShareText = expectedText && (text === expectedText || text.startsWith(`${expectedText} `));
+  const expectedUrl = canonicalShareUrl(contract.expectedUrl);
+  const sharedRawUrls = (post.entities?.urls || [])
+    .flatMap(url => [url.expanded_url, url.unwound_url]).filter(Boolean);
+  const exactUrl = expectedUrl && sharedRawUrls.map(canonicalShareUrl).includes(expectedUrl);
+  const legacyUrl = !contract.expectedUrl && sharedRawUrls.some(
+    url => matchesLegacyReferralUrl(url, contract.expectedBaseUrl));
+  if (!exactShareText || (!exactUrl && !legacyUrl))
+    throw new GameError('proof_mismatch', 'That post does not contain the OMERTÀ share text for this task.');
+}
+
 async function verifyNormalizedPostUp(normalized, ctx, requireLinkedIdentity) {
   let wantAuthor = null;
   if (requireLinkedIdentity) wantAuthor = await requireLinkedXIdentity(ctx);
@@ -190,7 +240,9 @@ async function verifyNormalizedPostUp(normalized, ctx, requireLinkedIdentity) {
       'SELECT auth_provider, auth_subject FROM accounts WHERE id=$1', [ctx.accountId])).rows[0];
     if (acc?.auth_provider === 'x' && acc.auth_subject) wantAuthor = String(acc.auth_subject);
   }
-  const url = `https://api.x.com/2/tweets/${normalized.id}${wantAuthor ? '?tweet.fields=author_id' : ''}`;
+  const fields = ['author_id'];
+  if (ctx.proofContract) fields.push('text', 'created_at', 'entities');
+  const url = `https://api.x.com/2/tweets/${normalized.id}?tweet.fields=${fields.join(',')}`;
   // xfetch maps 429/5xx/network/timeout to 'verify_busy' BEFORE we get here — so the post_gone
   // below is only ever a DEFINITIVE answer (X responded and the tweet isn't there), never an
   // outage misread as a deleted post that would scare a legit sharer.
@@ -199,6 +251,7 @@ async function verifyNormalizedPostUp(normalized, ctx, requireLinkedIdentity) {
   if (!res.ok || !j.data || j.errors) throw new GameError('post_gone', 'That post is gone — it has to stand to pay.');
   if (wantAuthor && String(j.data.author_id || '') !== wantAuthor)
     throw new GameError('not_your_post', "That post has to come from your linked X account to pay.");
+  verifyPostContract(j.data, ctx.proofContract);
   return true;
 }
 

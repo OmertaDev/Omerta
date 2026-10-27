@@ -918,7 +918,7 @@ const SIGNED = [
   ['SKILLS.RESPEC_OMR', 60],
   ['SKILLS.RESPEC_ONE_OMR', 30],
   ['SOCIAL_GAME_URL', "https://www.omerta.fun"],
-  ['SOCIAL_TASKS.ALL_BONUS', 500],
+  ['SOCIAL_TASKS.ALL_BONUS', 0],
   ['SOCIAL_TASKS.CASH', 300],
   ['SOCIAL_X_HANDLE', "OmertaOnRH"],
   ['SOLDIERS.FIRST', ["Sal","Vinny","Rocco","Lefty","Knuckles","Ade","Paulie","Frankie","Mo","Curly","Big Tony","Little Tony","Jimmy","Sticks","Doc","Ice","Roxie","Vera","Dot","Mabel"]],

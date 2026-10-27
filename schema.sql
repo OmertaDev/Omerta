@@ -716,6 +716,10 @@ CREATE TABLE IF NOT EXISTS social_claims (
   -- current registrations explicitly write FALSE. A durable cutover marker globally sunsets the
   -- permissive verifier after 48h; the ordinary row TTL independently bounds each pending claim.
   legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true,
+  -- Server-generated share text/link frozen at registration. A rename/death during the four-hour
+  -- stand cannot invalidate honest work, and payout never has to trust a client-supplied campaign.
+  -- NULL is reserved for predecessor registrations and uses the bounded compatibility validator.
+  proof_contract TEXT,
   PRIMARY KEY (account_id, day, task_id)
 );
 -- Receipt-aware housekeeping reads paid seven-day and pending 48-hour tails in bounded pages. Lead

@@ -3452,11 +3452,11 @@ export const auctionLotsOf = (week = weekOf()) => {
 };
 
 // ── DAILY SOCIAL TASKS ("Spread the Word") ────────────────────────────────────────────────────
-// Recurring petty-cash nudges that grow ORGANIC word-of-mouth + referral volume. CASH ONLY (the
+// One recurring petty-cash nudge that grows ORGANIC word-of-mouth + referral volume. CASH ONLY (the
 // v24 social-reward rule; farmed cash must be laundered — heat + the $2.6M/day wash cap — to
-// extract, which bounds its value), petty per task, once/day/account, agent-flagged accounts
-// EXCLUDED (the referral precedent), and the reward is gated behind SOCIAL_VERIFY_MODE!=='off' so
-// a default/misconfigured server never leaks. The share URLs carry the player's LIVING NAME as
+// extract, which bounds its value), once/day/account, agent-flagged accounts EXCLUDED (the referral
+// precedent), and production requires live verification so a default/misconfigured server never
+// leaks. The share URLs carry the player's LIVING NAME as
 // their referral code (referrals resolve by name, §7.13) — a recruit who uses it pays the sharer
 // real referral cash + $OMR on qualification, so this feeds the existing referral loop. ALL
 // numbers are founder sign-off levers. Deploy sets SOCIAL_GAME_URL / SOCIAL_X_HANDLE.
@@ -3472,14 +3472,10 @@ export const SOCIAL_GAME_URL = process.env.SOCIAL_GAME_URL || process.env.PUBLIC
 export const SOCIAL_X_HANDLE = (process.env.SOCIAL_X_HANDLE || 'OmertaOnRH').replace(/^@/, '')
 export const SOCIAL_TASKS = {
   CASH: 300,       // petty cash per task
-  ALL_BONUS: 500,  // a small bonus for doing every task in a day
+  ALL_BONUS: 0,
   TASKS: [
     { id: 'sw_post',   name: 'Post about the family', kind: 'tweet',
       desc: 'Post about OMERTÀ on X. Tag us and include your character name as a referral code.' },
-    { id: 'sw_invite', name: 'Send out your code',    kind: 'referral',
-      desc: 'Share your character name as a referral code. Recruits who qualify can earn you in-game cash.' },
-    { id: 'sw_boost',  name: 'Share the post',        kind: 'boost',
-      desc: 'Follow OMERTÀ on X, or repost or like the pinned post.' },
   ],
 }
 // Prefilled share intents (client opens these in a new tab). code = the player's living name.

@@ -104,7 +104,7 @@ try {
   assert.deepEqual((await client.query('SELECT * FROM schema_meta WHERE id=1')).rows[0], priorStamp);
   await client.query('ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_storage_legacy');
   await migrateSchemaUnderLock(client, { schemaText });
-  assert.equal((await client.query('SELECT app_version FROM schema_meta WHERE id=1')).rows[0].app_version, '1.5.0');
+  assert.equal((await client.query('SELECT app_version FROM schema_meta WHERE id=1')).rows[0].app_version, '1.5.1');
   console.log('Home custody native migration: existing rows, closed custody gates, restart, late DDL rollback/retry and drift/unvalidated refusal passed');
 } finally {
   await client.query('SELECT pg_advisory_unlock(918273645)').catch(() => {});

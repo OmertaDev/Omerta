@@ -857,7 +857,7 @@ export async function claimOnboard(ch, taskId, client, h) {
 // ── DAILY SOCIAL TASKS ("Spread the Word") — the organic-growth petty-cash faucet ──────────────
 // The reward is gated behind SOCIAL_VERIFY_MODE!=='off' (the verify.js philosophy: never pay a
 // social-task faucet with no verification configured), agent-flagged accounts are excluded, and
-// each task pays ONCE per (account, day). Cash only — never $OMR (the v24 rule). Share URLs carry
+// the task pays ONCE per (account, day). Cash only — never $OMR (the v24 rule). Share URLs carry
 // the player's living name as their referral code, so sharing feeds the §7.13 referral loop.
 export function socialRewardsLive() {
   const mode = process.env.SOCIAL_VERIFY_MODE || 'off';
@@ -878,9 +878,9 @@ export function socialRewardsLive() {
 }
 
 // THE 4-HOUR STAND (founder-directed anti-abuse): a share pays in TWO steps. Step one REGISTERS
-// it (a social_claims row, paid=false, proof stored) — no cash. Step two, after SOCIAL_MATURE_MS
-// (4h; env is the test knob), the claim PAYS — and in live verify mode the stored proof is
-// re-checked against X first, so post-and-delete earns nothing. A registration unclaimed for
+// it (a social_claims row, paid=false, proof plus the server-generated share contract stored) — no
+// cash. Step two, after SOCIAL_MATURE_MS (4h; env is the test knob), the claim PAYS — and in live
+// verify mode the stored proof is re-checked against X first, so post-and-delete earns nothing. A registration unclaimed for
 // PENDING_TTL (48h) lapses (which also retires any pre-maturity historical rows cleanly).
 const socialMatureMs = () => Number(process.env.SOCIAL_MATURE_MS ?? 4 * 3600000);
 const SOCIAL_PENDING_TTL = 48 * 3600000;
@@ -948,7 +948,7 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   // claims serialize — the SELECT-then-INSERT/UPDATE can't double-pay; the PK is the backstop.
   // (1) a live registration in the window? pay it if matured, else report the clock
   const pend = (await client.query(
-    'SELECT day, posted_at, proof, legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2 AND NOT paid AND posted_at > $3 ORDER BY posted_at DESC LIMIT 1',
+    'SELECT day, posted_at, proof, proof_contract, legacy_proof_bridge FROM social_claims WHERE account_id=$1 AND task_id=$2 AND NOT paid AND posted_at > $3 ORDER BY posted_at DESC LIMIT 1',
     [h.accountId, taskId, new Date(Date.now() - SOCIAL_PENDING_TTL)])).rows[0];
   if (pend) {
     const age = Date.now() - new Date(pend.posted_at).getTime();
@@ -959,34 +959,61 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     // live mode: the post must STILL be up AND (for an X-linked account) come from THEIR handle —
     // pass ctx so verifyPostUp's D2 author-binding activates on the real claim path (was dead code:
     // it only fired via a direct unit call). Trust mode short-circuits before touching ctx.
+    // The deployed predecessor allowed proof-less registration and accepted the post URL on the
+    // settlement request. Bound that fallback before verification, then persist it atomically with
+    // the paid transition so the database receipt guard canonicalizes the same verified proof.
+    const settlementProof = pend.proof ?? cleanText(proof).slice(0, 300);
     const legacyBridge = live && pend.legacy_proof_bridge === true
       && await socialLegacyProofBridgeOpen(client);
     const normalized = live
-      ? (legacyBridge ? normalizeLegacySocialPostProof(pend.proof ?? proof) : normalizeSocialPostProof(pend.proof ?? proof))
+      ? (legacyBridge ? normalizeLegacySocialPostProof(settlementProof) : normalizeSocialPostProof(settlementProof))
       : null;
     if (live && await socialProofWasUsed(client, normalized))
       throw new GameError('proof_used', 'That X post has already earned a social reward.');
     if (live)
       await throttleXCheck(client, h.accountId, 'post', h.pool);    // the retry loop, not the happy path
-    await (legacyBridge ? verifyLegacyPostUp : verifyPostUp)(pend.proof ?? proof,
-      { client, accountId: h.accountId });
+    let storedContract = null;
+    if (pend.proof_contract) {
+      try { storedContract = JSON.parse(pend.proof_contract); }
+      catch { throw new GameError('proof_mismatch', 'That share registration has an invalid proof contract. Register it again.'); }
+      if (storedContract?.version !== 1 || typeof storedContract.text !== 'string'
+          || typeof storedContract.url !== 'string')
+        throw new GameError('proof_mismatch', 'That share registration has an invalid proof contract. Register it again.');
+    }
+    const legacyIntent = storedContract ? null : new URL(socialShareUrl(t.kind, ''));
+    await (legacyBridge ? verifyLegacyPostUp : verifyPostUp)(settlementProof,
+      { client, accountId: h.accountId, proofContract: {
+        registeredAt: pend.posted_at,
+        expectedText: storedContract?.text ?? legacyIntent.searchParams.get('text'),
+        expectedUrl: storedContract?.url,
+        expectedBaseUrl: storedContract ? null : legacyIntent.searchParams.get('url'),
+      } });
     // Reserve only after the linked author has been verified. The synthetic receipt's database PK
-    // is the cross-account/cross-task race winner; exactly one concurrent claimant can proceed.
-    if (live && !await takeAccountDailyClaim(client, socialProofReceiptAccount(normalized), SOCIAL_PROOF_EPOCH,
-      SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM))
-      throw new GameError('proof_used', 'That X post has already earned a social reward.');
+    // is the cross-account/cross-day race winner; exactly one concurrent claimant can proceed.
+    if (live) {
+      const receiptAccount = socialProofReceiptAccount(normalized);
+      if (!await takeAccountDailyClaim(client, receiptAccount, SOCIAL_PROOF_EPOCH,
+        SOCIAL_PROOF_SCOPE, SOCIAL_PROOF_CLAIM))
+        throw new GameError('proof_used', 'That X post has already earned a social reward.');
+      // PostgreSQL's legacy-payout trigger also sees current paid transitions. This transaction-local
+      // capability proves the current path already reserved this exact receipt; predecessor binaries
+      // cannot set it, so they must insert the receipt themselves or lose a duplicate race.
+      if (dbCaps.skipLocked)
+        await client.query("SELECT set_config('omerta.social_receipt_account',$1,true)", [receiptAccount]);
+    }
     const paid = await client.query(
-      'UPDATE social_claims SET paid=true WHERE account_id=$1 AND day=$2 AND task_id=$3 AND NOT paid',
-      [h.accountId, pend.day, taskId]);
+      'UPDATE social_claims SET paid=true, proof=COALESCE(proof,$4), legacy_proof_bridge=false WHERE account_id=$1 AND day=$2 AND task_id=$3 AND NOT paid',
+      [h.accountId, pend.day, taskId, settlementProof || null]);
     if (paid.rowCount !== 1)
       throw new GameError('claim_lapsed', 'That share registration expired while it was being checked. Register it again.');
     const paidIds = (await client.query(
       'SELECT task_id FROM social_claims WHERE account_id=$1 AND day=$2 AND paid', [h.accountId, pend.day])).rows.map((r) => r.task_id);
     const allDone = SOCIAL_TASKS.TASKS.every((x) => paidIds.includes(x.id));
-    const cash = SOCIAL_TASKS.CASH + (allDone ? SOCIAL_TASKS.ALL_BONUS : 0); // the all-done bonus folds into the last payout (the onboard-capstone precedent)
+    const cash = SOCIAL_TASKS.CASH + (allDone ? SOCIAL_TASKS.ALL_BONUS : 0);
     ch.cash = Number(ch.cash) + cash;
     await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: cash, reason: `social:${taskId}` });
-    await h.track(client, h.accountId, 'social_task', { task: taskId, allDone, proof: cleanText(pend.proof ?? proof).slice(0, 300) });
+    await h.track(client, h.accountId, 'social_task', { task: taskId, allDone,
+      proof: cleanText(settlementProof).slice(0, 300) });
     return { ok: true, kind: 'social', task: taskId, cash, allDone };
   }
   // (2) no live registration → register today's share (once per task per day)
@@ -1004,8 +1031,11 @@ export async function claimSocial(ch, taskId, proof, client, h) {
     if (await socialProofWasUsed(client, normalized))
       throw new GameError('proof_used', 'That X post has already earned a social reward.');
   }
-  await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof, legacy_proof_bridge) VALUES ($1,$2,$3,false,$4,false)',
-    [h.accountId, day, taskId, cleanProof || null]);
+  const shareIntent = new URL(socialShareUrl(t.kind, ch.name));
+  const proofContract = JSON.stringify({ version: 1,
+    text: shareIntent.searchParams.get('text'), url: shareIntent.searchParams.get('url') });
+  await client.query('INSERT INTO social_claims (account_id, day, task_id, paid, proof, proof_contract, legacy_proof_bridge) VALUES ($1,$2,$3,false,$4,$5,false)',
+    [h.accountId, day, taskId, cleanProof || null, proofContract]);
   await h.track(client, h.accountId, 'social_post', { task: taskId, proof: cleanProof });
   return { ok: true, kind: 'social', task: taskId, pending: true, registered: true,
     matureSeconds: Math.ceil(mature / 1000) };

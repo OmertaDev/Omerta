@@ -15,7 +15,9 @@ export * from './commerce-deed-release-phase2-native-catalog.js';
 export const UX_NATIVE_TABLES = Object.freeze(['ux_community_documents', 'ux_community_entries', 'ux_community_portrait_consents', 'ux_crew_notes', 'ux_crew_signals', 'ux_mentor_subjects', 'ux_workspaces']);
 const names = new Set(UX_NATIVE_TABLES), fields = ['relations', 'columns', 'constraints', 'indexes'];
 const socialBridgeTable = 'social_claims', socialBridgeColumn = 'legacy_proof_bridge',
-  socialBridgeConstraint = 'social_claims_legacy_proof_bridge_not_null';
+  socialProofContractColumn = 'proof_contract',
+  socialBridgeConstraint = 'social_claims_legacy_proof_bridge_not_null',
+  socialExtensionColumns = new Set([socialBridgeColumn, socialProofContractColumn]);
 const socialBridgeDdl = `CREATE TABLE social_claims (
   account_id TEXT NOT NULL,
   day INT NOT NULL,
@@ -24,6 +26,7 @@ const socialBridgeDdl = `CREATE TABLE social_claims (
   paid BOOLEAN NOT NULL DEFAULT false,
   proof TEXT,
   legacy_proof_bridge BOOLEAN NOT NULL DEFAULT true,
+  proof_contract TEXT,
   PRIMARY KEY (account_id, day, task_id)
 );`;
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 4 * 1024 * 1024 });
@@ -36,7 +39,7 @@ assert(!/\b(?:ALTER|DROP|INSERT|UPDATE|DELETE|TRUNCATE)\b/i.test(uxDdl), 'Only t
 const tableOf = (field, row) => field === 'relations' ? row.name : row.table_name;
 const uxRows = (metadata, field) => metadata[field].filter(row => names.has(tableOf(field, row)));
 const isSocialBridgeRow = (field, row) => field === 'columns'
-  ? row.table_name === socialBridgeTable && row.column_name === socialBridgeColumn
+  ? row.table_name === socialBridgeTable && socialExtensionColumns.has(row.column_name)
   : field === 'constraints' && row.table_name === socialBridgeTable && row.name === socialBridgeConstraint;
 const socialBridgeRows = (metadata, field) => metadata[field].filter(row => isSocialBridgeRow(field, row));
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
@@ -44,9 +47,12 @@ const freeze = value => { if (value && typeof value === 'object') { Object.value
 // catalog anchors, then retain the reviewed UX append order. No collation normalization is introduced.
 const merge = (base, socialBridge, ux) => {
   const merged = Object.fromEntries(fields.map(field => [field, [...base[field]]]));
-  assert.equal(socialBridge.columns.length, 1); assert(socialBridge.constraints.length <= 1);
+  assert.equal(socialBridge.columns.length, 2); assert(socialBridge.constraints.length <= 1);
+  assert.deepEqual(socialBridge.columns.map(row => row.column_name),
+    [socialBridgeColumn, socialProofContractColumn], 'Exact bridge/contract catalog order');
   const columnAt = merged.columns.findIndex(row => row.table_name === socialBridgeTable && row.column_name === 'proof');
-  assert(columnAt >= 0 && merged.columns[columnAt].ordinal === 6, 'Social bridge follows the exact predecessor proof column');
+  assert(columnAt >= 0 && merged.columns[columnAt].ordinal === 6,
+    'Social bridge and proof contract follow the exact predecessor proof column');
   merged.columns.splice(columnAt + 1, 0, ...socialBridge.columns);
   if (socialBridge.constraints.length) {
     const constraintAt = merged.constraints.findIndex(row => row.table_name === socialBridgeTable && row.name === 'social_claims_paid_not_null');
@@ -161,10 +167,14 @@ async function compileCurrentExtensionReference(pool, endpoint) {
     const ux = Object.fromEntries(fields.map(field => [field, uxRows(reference, field)]));
     assert.deepEqual(ux.relations.map(row => row.name), UX_NATIVE_TABLES, 'Independent immutable DDL creates exactly the seven UX tables');
     const socialBridge = Object.fromEntries(fields.map(field => [field, socialBridgeRows(reference, field)]));
-    assert.deepEqual(socialBridge.columns, [{ table_name: socialBridgeTable, column_name: socialBridgeColumn,
-      ordinal: 7, type: 'boolean', typmod: -1, default_expression: 'true', not_null: true,
-      identity: '', generated: '', collation_schema: null, collation_name: null }],
-    'Independent immutable DDL creates the one exact social bridge column');
+    assert.deepEqual(socialBridge.columns, [
+      { table_name: socialBridgeTable, column_name: socialBridgeColumn,
+        ordinal: 7, type: 'boolean', typmod: -1, default_expression: 'true', not_null: true,
+        identity: '', generated: '', collation_schema: null, collation_name: null },
+      { table_name: socialBridgeTable, column_name: socialProofContractColumn,
+        ordinal: 8, type: 'text', typmod: -1, default_expression: null, not_null: false,
+        identity: '', generated: '', collation_schema: 'pg_catalog', collation_name: 'default' },
+    ], 'Independent immutable DDL creates the exact ordinal-7 bridge and nullable ordinal-8 proof contract');
     const version = Number((await client.query("SELECT current_setting('server_version_num') AS version")).rows[0].version);
     assert.equal(socialBridge.constraints.length, version >= 180000 ? 1 : 0,
       'Only PostgreSQL 18 exposes the exact social bridge NOT NULL constraint row');
@@ -201,7 +211,9 @@ export function uxNativeProjection(reference) {
 }
 function socialLegacyBridgeProjection(reference) {
   reference = freeze(structuredClone(reference));
-  assert.equal(reference.columns.length, 1); assert.equal(reference.relations.length + reference.indexes.length, 0);
+  assert.equal(reference.columns.length, 2); assert.deepEqual(reference.columns.map(row => row.column_name),
+    [socialBridgeColumn, socialProofContractColumn]);
+  assert.equal(reference.relations.length + reference.indexes.length, 0);
   const projectMetadata = metadata => {
     for (const field of fields) assert.deepEqual(socialBridgeRows(metadata, field), reference[field],
       'Exact independently compiled social bridge ' + field);
@@ -223,7 +235,7 @@ function extendCatalog(prior, ux, socialBridge, branches = false) {
     base = branches ? prior.current : prior.reference, reference = merge(base, socialBridge, ux);
   const verifyMetadata = metadata => (branches ? prior.verify : prior.verifyMetadata)(projectMetadata(metadata));
   verifyMetadata(reference);
-  const causal = { socialBridge: 0, ux: 0 };
+  const causal = { socialBridge: 0, socialProofContract: 0, ux: 0 };
   assert.throws(() => { reference.columns.push({}); }, TypeError);
   for (const [label, extension, makeProjection] of [
     ['socialBridge', socialBridge, socialLegacyBridgeProjection], ['ux', ux, uxNativeProjection],
@@ -237,20 +249,26 @@ function extendCatalog(prior, ux, socialBridge, branches = false) {
   verifyMetadata(reference);
   for (const [label, extension] of [['socialBridge', socialBridge], ['ux', ux]]) {
     for (const field of fields) for (const row of extension[field]) {
+      const causalLabel = label === 'socialBridge' && field === 'columns'
+        && row.column_name === socialProofContractColumn ? 'socialProofContract' : label;
       const at = reference[field].findIndex(candidate => candidate === row);
       const missing = { ...reference, [field]: [...reference[field]] }; missing[field].splice(at, 1);
-      assert.throws(() => verifyMetadata(missing), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
+      assert.throws(() => verifyMetadata(missing), error => error?.code === 'ERR_ASSERTION'); causal[causalLabel]++;
       const duplicate = { ...reference, [field]: [...reference[field], { ...row }] };
-      assert.throws(() => verifyMetadata(duplicate), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
+      assert.throws(() => verifyMetadata(duplicate), error => error?.code === 'ERR_ASSERTION'); causal[causalLabel]++;
       for (const key of Object.keys(row)) {
         const changed = { ...reference, [field]: [...reference[field]] }, value = row[key];
         changed[field][at] = { ...row, [key]: typeof value === 'boolean' ? !value : typeof value === 'number' ? value + 1 : Array.isArray(value) ? [...value, 'unknown'] : value === null ? 'unknown' : value + '__unknown' };
-        assert.throws(() => verifyMetadata(changed), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
+        assert.throws(() => verifyMetadata(changed), error => error?.code === 'ERR_ASSERTION'); causal[causalLabel]++;
       }
     }
   }
+  const proofContract = socialBridge.columns.find(row => row.column_name === socialProofContractColumn);
+  assert(proofContract); assert.equal(causal.socialProofContract, Object.keys(proofContract).length + 2,
+    'Proof-contract missing, duplicate and every-field mutations are all refused');
   const common = { ...prior, reference, verifyMetadata, socialBridgeReference: socialBridge,
-    socialBridgeCausal: causal.socialBridge, uxReference: ux, uxSource: UX_SOURCE.revision, uxCausal: causal.ux };
+    socialBridgeCausal: causal.socialBridge, socialProofContractCausal: causal.socialProofContract,
+    uxReference: ux, uxSource: UX_SOURCE.revision, uxCausal: causal.ux };
   if (branches) return Object.freeze({ ...common, current: reference, verify: verifyMetadata });
   return Object.freeze({ ...common, normalize: rows => prior.normalize(socialBridgeProjection.projectConstraints(
     uxProjection.projectConstraints(rows, prior.includeNotNull), prior.includeNotNull)) });
