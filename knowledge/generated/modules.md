@@ -5,7 +5,7 @@
 | Module | Lines | Domain | Imports | Routes | Tables | Direct test imports |
 |---|---:|---|---:|---:|---:|---:|
 | [src/access.js](../../src/access.js) | 42 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/accountdaily.js](../../src/accountdaily.js) | 79 | platform-core | 0 / 8 | 0 | 2 | 2 |
+| [src/accountdaily.js](../../src/accountdaily.js) | 79 | platform-core | 0 / 10 | 0 | 2 | 2 |
 | [src/accrual.js](../../src/accrual.js) | 217 | platform-core | 0 / 7 | 0 | 3 | 7 |
 | [src/actioncooldown.js](../../src/actioncooldown.js) | 22 | platform-core | 2 / 3 | 0 | 1 | 1 |
 | [src/age.js](../../src/age.js) | 38 | platform-core | 1 / 2 | 0 | 0 | 1 |
@@ -184,7 +184,7 @@
 | [src/dailyreminder.js](../../src/dailyreminder.js) | 23 | platform-core | 2 / 3 | 0 | 3 | 1 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
 | [src/db-rls.js](../../src/db-rls.js) | 46 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/db.js](../../src/db.js) | 1398 | platform-core | 6 / 190 | 0 | 26 | 135 |
+| [src/db.js](../../src/db.js) | 1547 | platform-core | 6 / 192 | 0 | 26 | 136 |
 | [src/dbhealth.js](../../src/dbhealth.js) | 148 | platform-core | 0 / 11 | 0 | 0 | 2 |
 | [src/decision-dependency-contracts.js](../../src/decision-dependency-contracts.js) | 966 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/decisionproofs.js](../../src/decisionproofs.js) | 65 | platform-core | 1 / 2 | 0 | 1 | 1 |
@@ -275,7 +275,7 @@
 | [src/genesisrpc.js](../../src/genesisrpc.js) | 10 | platform-core | 1 / 3 | 0 | 0 | 1 |
 | [src/goodsmarket.js](../../src/goodsmarket.js) | 98 | platform-core | 2 / 13 | 0 | 3 | 5 |
 | [src/goodsquote.js](../../src/goodsquote.js) | 56 | platform-core | 1 / 13 | 0 | 0 | 5 |
-| [src/growth.js](../../src/growth.js) | 1274 | engagement-growth | 5 / 19 | 16 | 21 | 8 |
+| [src/growth.js](../../src/growth.js) | 1304 | engagement-growth | 5 / 21 | 16 | 21 | 8 |
 | [src/heist-readiness.js](../../src/heist-readiness.js) | 16 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/heists.js](../../src/heists.js) | 590 | social-combat | 4 / 9 | 10 | 10 | 3 |
 | [src/home.js](../../src/home.js) | 55 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
@@ -501,7 +501,7 @@
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 675 | world-graph | 5 / 10 | 21 | 7 | 5 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 475 | platform-core | 0 / 2 | 0 | 10 | 1 |
 | [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 410 | 0 | 0 | 227 |
-| [src/rules.tail.js](../../src/rules.tail.js) | 6188 | platform-core | 0 / 1 | 0 | 55 | 0 |
+| [src/rules.tail.js](../../src/rules.tail.js) | 6184 | platform-core | 0 / 1 | 0 | 55 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
 | [src/rwahealtherror.js](../../src/rwahealtherror.js) | 20 | platform-core | 0 / 6 | 0 | 0 | 1 |
@@ -533,7 +533,7 @@
 | [src/social/exchange.js](../../src/social/exchange.js) | 128 | economy-ledger | 3 / 1 | 0 | 2 | 0 |
 | [src/social/gangs.js](../../src/social/gangs.js) | 810 | platform-core | 12 / 12 | 0 | 15 | 5 |
 | [src/social/shared.js](../../src/social/shared.js) | 44 | platform-core | 2 / 9 | 0 | 2 | 0 |
-| [src/socialproof.js](../../src/socialproof.js) | 42 | platform-core | 0 / 3 | 0 | 0 | 0 |
+| [src/socialproof.js](../../src/socialproof.js) | 42 | platform-core | 0 / 4 | 0 | 0 | 1 |
 | [src/sol.js](../../src/sol.js) | 91 | platform-core | 0 / 4 | 0 | 0 | 1 |
 | [src/soldiers.js](../../src/soldiers.js) | 116 | social-combat | 2 / 3 | 6 | 3 | 0 |
 | [src/sov.js](../../src/sov.js) | 283 | world-progression | 2 / 5 | 7 | 4 | 0 |
@@ -569,7 +569,7 @@
 | [src/ux-workspace.js](../../src/ux-workspace.js) | 44 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/v4oraclekeeper.js](../../src/v4oraclekeeper.js) | 536 | platform-core | 1 / 1 | 0 | 2 | 0 |
 | [src/vanity.js](../../src/vanity.js) | 164 | engagement-growth | 2 / 21 | 8 | 9 | 0 |
-| [src/verify.js](../../src/verify.js) | 225 | platform-core | 2 / 3 | 0 | 5 | 1 |
+| [src/verify.js](../../src/verify.js) | 278 | platform-core | 2 / 3 | 0 | 5 | 1 |
 | [src/vig.js](../../src/vig.js) | 399 | economy-ledger | 3 / 20 | 6 | 11 | 14 |
 | [src/vouch.js](../../src/vouch.js) | 127 | social-combat | 2 / 5 | 4 | 6 | 2 |
 | [src/walletforge.js](../../src/walletforge.js) | 206 | chain-economy | 3 / 2 | 2 | 6 | 1 |
