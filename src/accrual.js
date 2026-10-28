@@ -5,6 +5,30 @@ import { CONSTANTS, LAW, levelOf, rankIdxOf, cityEventOf, dayOf,
          assetIncome, assetEnergyCap, drugOf, crewCold, envelopeActive, foundationBleedMult , seasonModOf, KITCHEN, M4, PACING, pathFx, racketIncomeLeveled,
          energyCapOf, nerveCapOf, ladderFx } from './rules.js';
 
+// Apply the configured bank return as a partition-invariant time evolution. The old linear step used
+// the newly-grown balance as principal on the next touch, so splitting one eligible window across many
+// requests paid more than settling it once. These two closed forms preserve the exact configured
+// 12-hour map on either side of the taper and compose to the same result for every partition.
+function bankAfterInterest(principal, eligibleMs) {
+  const elapsedPeriods = eligibleMs / CONSTANTS.BANK_PERIOD_MS;
+  if (!(principal > 0) || !(elapsedPeriods > 0) || !(CONSTANTS.BANK_RATE > 0)) return principal;
+
+  const threshold = CONSTANTS.BANK_TAPER_ABOVE;
+  const keep = CONSTANTS.BANK_TAPER_KEEP;
+  const belowBase = 1 + CONSTANTS.BANK_RATE;
+  const above = (bank, periods) => {
+    if (!(periods > 0)) return bank;
+    if (!(keep > 0)) return bank + threshold * CONSTANTS.BANK_RATE * periods;
+    const anchor = threshold * (1 - keep) / keep;
+    return (bank + anchor) * Math.pow(1 + CONSTANTS.BANK_RATE * keep, periods) - anchor;
+  };
+
+  if (!(threshold > 0) || principal >= threshold) return above(principal, elapsedPeriods);
+  const periodsToThreshold = Math.log(threshold / principal) / Math.log(belowBase);
+  if (elapsedPeriods <= periodsToThreshold) return principal * Math.pow(belowBase, elapsedPeriods);
+  return above(threshold, elapsedPeriods - periodsToThreshold);
+}
+
 
 // ch is the character row (mutated in place); acct is account_persistent (mutated);
 // ctx carries the owned racket/asset id lists (income) and ctx.held — the district
@@ -66,9 +90,7 @@ export function accrue(ch, acct = null, ctx = {}, now = new Date()) {
   // BALANCE D5 (founder override of the prototype flat rate): interest TAPERS at whale scale —
   // the full rate on the first BANK_TAPER_ABOVE, BANK_TAPER_KEEP of it beyond. The bank stops
   // being the game's only unbounded exponential; street money out-earns vault money at the top.
-  const effPrincipal = Math.min(bankBefore, CONSTANTS.BANK_TAPER_ABOVE)
-    + Math.max(0, bankBefore - CONSTANTS.BANK_TAPER_ABOVE) * CONSTANTS.BANK_TAPER_KEEP;
-  ch.bank = bankBefore + effPrincipal * CONSTANTS.BANK_RATE * (bankEligibleMs / CONSTANTS.BANK_PERIOD_MS);
+  ch.bank = bankAfterInterest(bankBefore, bankEligibleMs);
   ch._bankInterest = Number(ch.bank) - bankBefore;
 
   // §7.1 racket + front income — capped at the 8h offline window, never minted
