@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ce94c717ccb0`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8759cc9cfb5f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4949 |
+| Commits in clone | 4951 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-27 — Merge remote-tracking branch 'origin/main' into codex/economy-adversarial-r7 |
+| Latest commit | 2026-10-28 — Merge pull request #309 from OmertaDev/codex/economy-adversarial-r7 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3979 |
+| OmertaDev | 3981 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 125 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 825 | historical |
-| knowledge/generated/graph-summary.md | 825 | historical |
-| knowledge/generated/graph.json | 825 | historical |
-| knowledge/generated/inventory.md | 825 | historical |
+| knowledge/generated/github-history.md | 826 | historical |
+| knowledge/generated/graph-summary.md | 826 | historical |
+| knowledge/generated/graph.json | 826 | historical |
+| knowledge/generated/inventory.md | 826 | historical |
 | [SPEC.md](../../SPEC.md) | 612 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 491 | yes |
@@ -41,7 +41,7 @@
 | [schema.sql](../../schema.sql) | 381 | yes |
 | knowledge/generated/documents.md | 370 | historical |
 | [package.json](../../package.json) | 346 | yes |
-| knowledge/generated/modules.md | 279 | historical |
+| knowledge/generated/modules.md | 280 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | knowledge/generated/graph.mmd | 222 | historical |
 | [test/gates.js](../../test/gates.js) | 206 | yes |
