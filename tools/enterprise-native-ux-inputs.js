@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
+  "authoredRevision": "7b4f3bde98117544d26d36de8f7e4a534f18cfbc",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -20,8 +20,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": ".github/workflows/forge.yml",
       "mode": "100644",
-      "blob": "828eae651e5c92596bc829fb3e1890ff63a6c098",
-      "sha256": "f70fa7613f13d4f7e38d19abb30fd5fc65cb42c41dba2f366d083223a6914710"
+      "blob": "aa11a753aa6e7c48266161e8a955ef1a514c6beb",
+      "sha256": "d0b0a2b258789887a3224d53c5bd1185cc11a5fefd74c13780fe4bef59bcf73f"
     },
     {
       "file": ".github/workflows/knowledge-refresh.yml",
@@ -3728,26 +3728,26 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "public/defi.html",
       "mode": "100644",
-      "blob": "778524260321323fa8850802d063361873927fb4",
-      "sha256": "26a2d48e515fb0f4db8700c2406a12c0da3224907bcb0049734a7f5df815807a"
+      "blob": "2ea29c93017be1c2e20b7eedb1e569d92170903d",
+      "sha256": "f4292bc44f74d235f6706dcbd93cd4cf9811e162051be03df90dcc01f017ae11"
     },
     {
       "file": "public/fee-flows.html",
       "mode": "100644",
-      "blob": "2ad9da841ee8aa1b2d09417ab96e80ad1663e280",
-      "sha256": "f2eecafe177b5bbf0e97c4e650b36870751f31aaae6579ea82d624adb8be0498"
+      "blob": "f5e94894aacca70a75a2382f9c42882f4cbaa427",
+      "sha256": "e37fe6b4d4035dae63fc4aa3a8a9e327b9b01def671398acaefd2161f295aebf"
     },
     {
       "file": "public/genesis-deploy-artifact.js",
       "mode": "100644",
-      "blob": "4389f751c2bbb594d0aa8fee1a9127dfd8f4a78a",
-      "sha256": "cf28ec010278929120aa74e1b064a62ad17649b2815f5a2ba5c1476e1b8567af"
+      "blob": "672527b7547425e01924ee25662e8d386302ec35",
+      "sha256": "6e02e182bd877deadbbf70f5381464afd86ae8c4e61a98b80760790036c0968d"
     },
     {
       "file": "public/genesis-deploy-client.js",
       "mode": "100644",
-      "blob": "0480de8ee58a3e83705f42d81c097f9b10d1a4d8",
-      "sha256": "33bfae481ab143bc462c12b99c9ca51706f7b49b89e3785c9097c1f57e3a4272"
+      "blob": "31c42e41b454fa7d0bd2c16fc6a0c90c3aef0769",
+      "sha256": "052712a9aa70c2b2ed50bf58a6084834b9232538d06e1bec5d0a9e9b6e72d1e2"
     },
     {
       "file": "public/genesis-deploy-vendor/_u64.js",
@@ -3806,8 +3806,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "public/index.html",
       "mode": "100644",
-      "blob": "0b187d5f921800af383e612025d1c635dc89c442",
-      "sha256": "e123908ed56e87ec55a8cb5ab0922f94b6a9651b01c039591d3652ac1e3c8750"
+      "blob": "9542428cbd82fd496ea42c213772b3036541ceb6",
+      "sha256": "db4cbe6b819543e3fbc0db32cf4352a987d8b6586823df5c33756b2e2a23f969"
     },
     {
       "file": "public/invite.html",
@@ -3854,8 +3854,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "public/wiki.html",
       "mode": "100644",
-      "blob": "ea7614150f73b9cce28e8d7a8b3330ed922ecf2f",
-      "sha256": "9499045fd0c275b439445598b5c009c33fc69a6bbff1a3a5d0f4fea4f2d8890b"
+      "blob": "32375df4341a81ac8b8c257451de733be30d88df",
+      "sha256": "22629169c5aeb0ad3dd8b28813c22b986a62c689fb16c08cf379546ecb84733a"
     },
     {
       "file": "public/world-fieldwork.css",
@@ -5288,8 +5288,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "src/fundedworkescrowartifact.js",
       "mode": "100644",
-      "blob": "25c4ee5b7d044f531539bad888e29d000291d758",
-      "sha256": "182e5c7c36966d6de62368acc0de0d2779474c4beae81bbdf82a17f3261047e9"
+      "blob": "e0d8bc85634f71c183736ed5bad199adb46db9f1",
+      "sha256": "041abdeddb0f5ac33f773d4a9c2afc5524a6677ff1da50d614399ba268972b83"
     },
     {
       "file": "src/game.js",
@@ -5354,8 +5354,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "src/genesisauction.js",
       "mode": "100644",
-      "blob": "1e6934fc1f9a546ed475905f2ac61b7f389715c0",
-      "sha256": "4383c630f8039ce5c4f45e20cb35afa5a8447da31d93c1376b934c22eb8efeaa"
+      "blob": "da80952587b6a175d5b8fe981a407e6ceadeb9fe",
+      "sha256": "3ead50a4f76140ed6ec8bb0340b39c97e22ef15c3c6adc979493f784051f51bb"
     },
     {
       "file": "src/genesiscadence.js",
@@ -5696,8 +5696,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "src/marketv2keeper.js",
       "mode": "100644",
-      "blob": "738caaa4758de2d9c353cf566aa7fa50de572de5",
-      "sha256": "c655957520790aac1ea79c4db53c92aa5c10930f9096b25e97e9550dc8e29746"
+      "blob": "8354b6d0fd61a9db53e1e4c91fe8388cfa58a500",
+      "sha256": "881ee4c07291a29053cf046d66df9705a100eef717489dab2e756d343632672a"
     },
     {
       "file": "src/marketv2solver.js",
@@ -9836,8 +9836,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economy-hardening-source-transfer.js",
       "mode": "100644",
-      "blob": "77838935c5759cb54e40ab486b9b1d49b32bb205",
-      "sha256": "c6d7a5cb10040a9eee0aae0c36a894b611cd5029b65f56354ea5e402674204f1"
+      "blob": "c33c429a364de2a0f9468611684c56812bb67fa6",
+      "sha256": "abd1b0db1fdc280842a2ccea917db26f88514e739cd707013f0b9dc143fe5dc7"
     },
     {
       "file": "tools/economy-release-tail-source-transfer.js",
@@ -9854,20 +9854,20 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/genesis-auction-deployment-plan.js",
       "mode": "100644",
-      "blob": "09cd9bb50a2ad3f0772d274be2df4f23c27e4f4d",
-      "sha256": "99482795456732aba622e3715448edf39ae50a38066d79c33e38382558174ca2"
+      "blob": "57134f639d152ef83efea1826ed8a6c4a1c80418",
+      "sha256": "654c81c2987ca327df1705342e6ba9311487464b0fe747ab926b0f0c2fc6826e"
     },
     {
       "file": "tools/genesis-auction-preflight.js",
       "mode": "100644",
-      "blob": "dd33b91629b545fd176cfba4cab673a9057bf7d6",
-      "sha256": "6e9b6ee51bd26bb5e4d4cce4deb7481c5994724d548ff49ee76390f0b1bd7bd7"
+      "blob": "71aaf32dfccb099f94e12992246e5b9f371faa10",
+      "sha256": "8fd4a76cd668fa0bcf93111106d22a70b1910718d978306c7ea68f87698e8234"
     },
     {
       "file": "tools/market-v2-deployment-plan.js",
       "mode": "100644",
-      "blob": "44d7016f3bf5b505732881026051fff1ce711564",
-      "sha256": "0d989d3c8cc6c650e9056aba8868b36b0b12a7ae38ef6e3a1ef87a5db1eb76d5"
+      "blob": "67a1ccc2f969dddcab57b809072bd2ec93f6eb34",
+      "sha256": "b11f616285355ef280a20bce22430502f2221e14f8eb1bd5694d038770dc5736"
     },
     {
       "file": "public/art/nft/deed-brick.jpg",
@@ -10124,8 +10124,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "94e4ecab922b3e867d1f045b06bbaf660f184f2e",
-      "sha256": "0f56601338664284990e833531c55467cd5871cfa2df7063a74c9ec64f35eb67"
+      "blob": "af47e848742ac551e4c90a8b11a80c4ddc43778a",
+      "sha256": "c2c0bbba76a4b5466223c3c370d27947cb4e6cc86275f00a5197e794d49c80cc"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -10266,6 +10266,12 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "sha256": "fd5e0962baee09f06e95c9824d7dc29d6d249d8ca8fac4916ad51e89eec3c48f"
     },
     {
+      "file": "tools/genesis-fee-readiness-source-transfer.js",
+      "mode": "100644",
+      "blob": "30bd04db22be1ceb9d7006f0522a2c0d528ac005",
+      "sha256": "d927809fcf6bb6af4c53677cbe250002a723590cd252c854c4a0408743b2dc86"
+    },
+    {
       "file": "tools/pgquery.js",
       "mode": "100644",
       "blob": "db503b17b08439bcbd36aacc4deae0b8a1907c53",
@@ -10403,6 +10409,21 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       }
     },
     {
+      "file": ".github/workflows/forge.yml",
+      "before": {
+        "file": ".github/workflows/forge.yml",
+        "mode": "100644",
+        "blob": "828eae651e5c92596bc829fb3e1890ff63a6c098",
+        "sha256": "f70fa7613f13d4f7e38d19abb30fd5fc65cb42c41dba2f366d083223a6914710"
+      },
+      "after": {
+        "file": ".github/workflows/forge.yml",
+        "mode": "100644",
+        "blob": "aa11a753aa6e7c48266161e8a955ef1a514c6beb",
+        "sha256": "d0b0a2b258789887a3224d53c5bd1185cc11a5fefd74c13780fe4bef59bcf73f"
+      }
+    },
+    {
       "file": "package-lock.json",
       "before": {
         "file": "package-lock.json",
@@ -10433,6 +10454,66 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       }
     },
     {
+      "file": "public/defi.html",
+      "before": {
+        "file": "public/defi.html",
+        "mode": "100644",
+        "blob": "778524260321323fa8850802d063361873927fb4",
+        "sha256": "26a2d48e515fb0f4db8700c2406a12c0da3224907bcb0049734a7f5df815807a"
+      },
+      "after": {
+        "file": "public/defi.html",
+        "mode": "100644",
+        "blob": "2ea29c93017be1c2e20b7eedb1e569d92170903d",
+        "sha256": "f4292bc44f74d235f6706dcbd93cd4cf9811e162051be03df90dcc01f017ae11"
+      }
+    },
+    {
+      "file": "public/fee-flows.html",
+      "before": {
+        "file": "public/fee-flows.html",
+        "mode": "100644",
+        "blob": "2ad9da841ee8aa1b2d09417ab96e80ad1663e280",
+        "sha256": "f2eecafe177b5bbf0e97c4e650b36870751f31aaae6579ea82d624adb8be0498"
+      },
+      "after": {
+        "file": "public/fee-flows.html",
+        "mode": "100644",
+        "blob": "f5e94894aacca70a75a2382f9c42882f4cbaa427",
+        "sha256": "e37fe6b4d4035dae63fc4aa3a8a9e327b9b01def671398acaefd2161f295aebf"
+      }
+    },
+    {
+      "file": "public/genesis-deploy-artifact.js",
+      "before": {
+        "file": "public/genesis-deploy-artifact.js",
+        "mode": "100644",
+        "blob": "4389f751c2bbb594d0aa8fee1a9127dfd8f4a78a",
+        "sha256": "cf28ec010278929120aa74e1b064a62ad17649b2815f5a2ba5c1476e1b8567af"
+      },
+      "after": {
+        "file": "public/genesis-deploy-artifact.js",
+        "mode": "100644",
+        "blob": "672527b7547425e01924ee25662e8d386302ec35",
+        "sha256": "6e02e182bd877deadbbf70f5381464afd86ae8c4e61a98b80760790036c0968d"
+      }
+    },
+    {
+      "file": "public/genesis-deploy-client.js",
+      "before": {
+        "file": "public/genesis-deploy-client.js",
+        "mode": "100644",
+        "blob": "0480de8ee58a3e83705f42d81c097f9b10d1a4d8",
+        "sha256": "33bfae481ab143bc462c12b99c9ca51706f7b49b89e3785c9097c1f57e3a4272"
+      },
+      "after": {
+        "file": "public/genesis-deploy-client.js",
+        "mode": "100644",
+        "blob": "31c42e41b454fa7d0bd2c16fc6a0c90c3aef0769",
+        "sha256": "052712a9aa70c2b2ed50bf58a6084834b9232538d06e1bec5d0a9e9b6e72d1e2"
+      }
+    },
+    {
       "file": "public/index.html",
       "before": {
         "file": "public/index.html",
@@ -10443,8 +10524,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "0b187d5f921800af383e612025d1c635dc89c442",
-        "sha256": "e123908ed56e87ec55a8cb5ab0922f94b6a9651b01c039591d3652ac1e3c8750"
+        "blob": "9542428cbd82fd496ea42c213772b3036541ceb6",
+        "sha256": "db4cbe6b819543e3fbc0db32cf4352a987d8b6586823df5c33756b2e2a23f969"
       }
     },
     {
@@ -10503,8 +10584,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "public/wiki.html",
         "mode": "100644",
-        "blob": "ea7614150f73b9cce28e8d7a8b3330ed922ecf2f",
-        "sha256": "9499045fd0c275b439445598b5c009c33fc69a6bbff1a3a5d0f4fea4f2d8890b"
+        "blob": "32375df4341a81ac8b8c257451de733be30d88df",
+        "sha256": "22629169c5aeb0ad3dd8b28813c22b986a62c689fb16c08cf379546ecb84733a"
       }
     },
     {
@@ -10703,6 +10784,21 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       }
     },
     {
+      "file": "src/fundedworkescrowartifact.js",
+      "before": {
+        "file": "src/fundedworkescrowartifact.js",
+        "mode": "100644",
+        "blob": "25c4ee5b7d044f531539bad888e29d000291d758",
+        "sha256": "182e5c7c36966d6de62368acc0de0d2779474c4beae81bbdf82a17f3261047e9"
+      },
+      "after": {
+        "file": "src/fundedworkescrowartifact.js",
+        "mode": "100644",
+        "blob": "e0d8bc85634f71c183736ed5bad199adb46db9f1",
+        "sha256": "041abdeddb0f5ac33f773d4a9c2afc5524a6677ff1da50d614399ba268972b83"
+      }
+    },
+    {
       "file": "src/game.js",
       "before": {
         "file": "src/game.js",
@@ -10715,6 +10811,21 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
         "mode": "100644",
         "blob": "947046030354529e41b509cb5229147ce466bee5",
         "sha256": "7b2d6a8feaebbf77988afde846565b0a01b0e7a7f11dd83403b73841f1c246f2"
+      }
+    },
+    {
+      "file": "src/genesisauction.js",
+      "before": {
+        "file": "src/genesisauction.js",
+        "mode": "100644",
+        "blob": "1e6934fc1f9a546ed475905f2ac61b7f389715c0",
+        "sha256": "4383c630f8039ce5c4f45e20cb35afa5a8447da31d93c1376b934c22eb8efeaa"
+      },
+      "after": {
+        "file": "src/genesisauction.js",
+        "mode": "100644",
+        "blob": "da80952587b6a175d5b8fe981a407e6ceadeb9fe",
+        "sha256": "3ead50a4f76140ed6ec8bb0340b39c97e22ef15c3c6adc979493f784051f51bb"
       }
     },
     {
@@ -10835,6 +10946,21 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
         "mode": "100644",
         "blob": "f7f112e1f5419f8e226a2a65a5564b4cd5d5a1e7",
         "sha256": "bf28b47d2ec420aa73536f1cee4f20c9527e4b3c58898a03b815ac5e1bef2b42"
+      }
+    },
+    {
+      "file": "src/marketv2keeper.js",
+      "before": {
+        "file": "src/marketv2keeper.js",
+        "mode": "100644",
+        "blob": "738caaa4758de2d9c353cf566aa7fa50de572de5",
+        "sha256": "c655957520790aac1ea79c4db53c92aa5c10930f9096b25e97e9550dc8e29746"
+      },
+      "after": {
+        "file": "src/marketv2keeper.js",
+        "mode": "100644",
+        "blob": "8354b6d0fd61a9db53e1e4c91fe8388cfa58a500",
+        "sha256": "881ee4c07291a29053cf046d66df9705a100eef717489dab2e756d343632672a"
       }
     },
     {
@@ -11646,6 +11772,51 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
         "blob": "3cc8178da261c618c40fc60e73a7500c7cc6e71b",
         "sha256": "4db135f3832ee07e3accc381f6d53d1ff12c1f123e024d63d28cf54485e6ec3e"
       }
+    },
+    {
+      "file": "tools/genesis-auction-deployment-plan.js",
+      "before": {
+        "file": "tools/genesis-auction-deployment-plan.js",
+        "mode": "100644",
+        "blob": "09cd9bb50a2ad3f0772d274be2df4f23c27e4f4d",
+        "sha256": "99482795456732aba622e3715448edf39ae50a38066d79c33e38382558174ca2"
+      },
+      "after": {
+        "file": "tools/genesis-auction-deployment-plan.js",
+        "mode": "100644",
+        "blob": "57134f639d152ef83efea1826ed8a6c4a1c80418",
+        "sha256": "654c81c2987ca327df1705342e6ba9311487464b0fe747ab926b0f0c2fc6826e"
+      }
+    },
+    {
+      "file": "tools/genesis-auction-preflight.js",
+      "before": {
+        "file": "tools/genesis-auction-preflight.js",
+        "mode": "100644",
+        "blob": "dd33b91629b545fd176cfba4cab673a9057bf7d6",
+        "sha256": "6e9b6ee51bd26bb5e4d4cce4deb7481c5994724d548ff49ee76390f0b1bd7bd7"
+      },
+      "after": {
+        "file": "tools/genesis-auction-preflight.js",
+        "mode": "100644",
+        "blob": "71aaf32dfccb099f94e12992246e5b9f371faa10",
+        "sha256": "8fd4a76cd668fa0bcf93111106d22a70b1910718d978306c7ea68f87698e8234"
+      }
+    },
+    {
+      "file": "tools/market-v2-deployment-plan.js",
+      "before": {
+        "file": "tools/market-v2-deployment-plan.js",
+        "mode": "100644",
+        "blob": "44d7016f3bf5b505732881026051fff1ce711564",
+        "sha256": "0d989d3c8cc6c650e9056aba8868b36b0b12a7ae38ef6e3a1ef87a5db1eb76d5"
+      },
+      "after": {
+        "file": "tools/market-v2-deployment-plan.js",
+        "mode": "100644",
+        "blob": "67a1ccc2f969dddcab57b809072bd2ec93f6eb34",
+        "sha256": "b11f616285355ef280a20bce22430502f2221e14f8eb1bd5694d038770dc5736"
+      }
     }
   ],
   "legacyAdditionReplacements": [
@@ -11690,8 +11861,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "tools/economy-hardening-source-transfer.js",
         "mode": "100644",
-        "blob": "77838935c5759cb54e40ab486b9b1d49b32bb205",
-        "sha256": "c6d7a5cb10040a9eee0aae0c36a894b611cd5029b65f56354ea5e402674204f1"
+        "blob": "c33c429a364de2a0f9468611684c56812bb67fa6",
+        "sha256": "abd1b0db1fdc280842a2ccea917db26f88514e739cd707013f0b9dc143fe5dc7"
       }
     },
     {
@@ -11966,8 +12137,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "94e4ecab922b3e867d1f045b06bbaf660f184f2e",
-      "sha256": "0f56601338664284990e833531c55467cd5871cfa2df7063a74c9ec64f35eb67"
+      "blob": "af47e848742ac551e4c90a8b11a80c4ddc43778a",
+      "sha256": "c2c0bbba76a4b5466223c3c370d27947cb4e6cc86275f00a5197e794d49c80cc"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -12108,6 +12279,12 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "sha256": "fd5e0962baee09f06e95c9824d7dc29d6d249d8ca8fac4916ad51e89eec3c48f"
     },
     {
+      "file": "tools/genesis-fee-readiness-source-transfer.js",
+      "mode": "100644",
+      "blob": "30bd04db22be1ceb9d7006f0522a2c0d528ac005",
+      "sha256": "d927809fcf6bb6af4c53677cbe250002a723590cd252c854c4a0408743b2dc86"
+    },
+    {
       "file": "tools/pgquery.js",
       "mode": "100644",
       "blob": "db503b17b08439bcbd36aacc4deae0b8a1907c53",
@@ -12229,4 +12406,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "1a18c61c509dab42516af5763f618c3374f5a30d0ec7ca46eb592aa8ef2dbdab";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "46f4dfe850b02dde91feb2677f3e2b985c3f5c689cb440e28ae5e5e9685951d7";
