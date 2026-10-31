@@ -15,6 +15,11 @@ const files = Object.freeze([
   'tools/commerce-current-native-guard.js', 'test/commerce-current-native-guard.js',
   'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js',
   'tools/enterprise-native.js', 'test/lib/enterprise-ux-native-guard.js',
+  'test/companybankportfolios.js', 'test/companyworkflows.js',
+  'test/family-operation-concurrency.js', 'test/family-operations.js',
+  'test/furnace-ledger.js', 'test/recipe-policy.js', 'test/world-kernel.js',
+  'test/world-projection.js', 'test/lib/player-command-support.js',
+  'test/director-migration.js',
 ]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {

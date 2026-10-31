@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../../src/deedbenefits.js';
 import { newDb, DataType } from 'pg-mem';
 import { dbCaps, registerPgMemCompatibility } from '../../src/db.js';
 import { createPlayerCommandEngine } from '../../src/player-commands.js';
@@ -38,6 +39,7 @@ export async function commandDatabase(tag, { poolFactory = null, initialize = nu
   }
   if (initialize) await initialize(result.pool);
   await result.pool.query(fs.readFileSync(new URL('../../schema.sql', import.meta.url), 'utf8'));
+  await migrateDeedBenefitStorage(result.pool);
   return result;
 }
 

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import * as Portfolio from '../src/companybankportfolios.js';
 import { runCompanyBankPortfolioInvariants } from '../src/companybankportfolioinvariants.js';
 import * as Loans from '../src/loans.js';
@@ -26,6 +27,7 @@ if (native) {
   const mem = newDb(); registerPgMemCompatibility(mem, DataType); pool = new (mem.adapters.createPg().Pool)();
 }
 await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+await migrateDeedBenefitStorage(pool);
 const blank = async () => {}, helper = () => ({ ledger: G.ledger, notify: blank, track: blank, owned: { cars: [], cargo: {}, skills: new Set() }, acct: { omr: 0 }, theirAcct: { omr: 0 }, theirOwned: { cars: [] } });
 let serial = 0;
 async function fixture(cash = 30000) {

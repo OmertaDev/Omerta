@@ -665,6 +665,256 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
         "baseline": " const capture = after.get('captureEnterpriseSource');\n assert(capture.includes('assertEnterpriseUxInputDefinition(ENTERPRISE_NATIVE_FILES,successor)'));\n assert(capture.includes('assertEnterpriseUxTrackedInput(f,tracked,authored.get(f),canonical,ux)'));\n assert(!/HistoricalInput|SourceBaseline|qualifyUxSource/.test(capture), 'Native capture never reconstructs a historical source');\n assert(capture.includes('f===ENTERPRISE_UX_METADATA') && !capture.includes(\"f!=='tools/enterprise-native-inputs.js'\"), 'Exactly the new self-reference is unpinnable; old metadata is pinned');\n assert(capture.includes('assertEnterpriseUxReplacementPlan(ENTERPRISE_NATIVE_FILES,successor,ux.files,predecessorPin,ux)') && capture.includes('uxLegacyAdditionReplacements:replacementPlan.legacyAdditionReplacements.map'), 'UX integration recomputes and records both complete replacement categories');\n console.log(JSON.stringify({ phase: 'CURRENT_UX_NATIVE_ADMISSION_GUARDS', status: pin.status, refusals: negatives, unchangedWorkloadCases: 16, originalGuardsUnchanged: true, nativeExecution: false, priorResultsTransferred: false }));\n"
       }
     ]
+  },
+  "test/companybankportfolios.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "371b6343c7f7b7798768b727a65b28b09597be75dd155321fc97ed1669edbb6c",
+    "currentBlob": "170ffe6c1059fad2c5776c03913f48cb2283c65a",
+    "currentBytes": 17451,
+    "currentRawSha256": {
+      "lf": "371b6343c7f7b7798768b727a65b28b09597be75dd155321fc97ed1669edbb6c",
+      "crlf": "18bd5bb333857d8c94cbec51ebef5ccdba4a7fce32c8e6619b796e379bd7f0fb"
+    },
+    "baselineSha256": "6d1fffcc59ce5af54cf2b64070cb65370b46b417dcc952698758f62bbc6bcf15",
+    "baselineBlob": "1fe19b05f9893576122d69d2a4a60ba01742abc7",
+    "baselineBytes": 17344,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport * as Portfolio from '../src/companybankportfolios.js';\nimport { runCompanyBankPortfolioInvariants } from '../src/companybankportfolioinvariants.js';\nimport * as Loans from '../src/loans.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport * as Portfolio from '../src/companybankportfolios.js';\nimport { runCompanyBankPortfolioInvariants } from '../src/companybankportfolioinvariants.js';\nimport * as Loans from '../src/loans.js';\n"
+      },
+      {
+        "current": "  const mem = newDb(); registerPgMemCompatibility(mem, DataType); pool = new (mem.adapters.createPg().Pool)();\n}\nawait pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\nawait migrateDeedBenefitStorage(pool);\nconst blank = async () => {}, helper = () => ({ ledger: G.ledger, notify: blank, track: blank, owned: { cars: [], cargo: {}, skills: new Set() }, acct: { omr: 0 }, theirAcct: { omr: 0 }, theirOwned: { cars: [] } });\nlet serial = 0;\nasync function fixture(cash = 30000) {\n",
+        "baseline": "  const mem = newDb(); registerPgMemCompatibility(mem, DataType); pool = new (mem.adapters.createPg().Pool)();\n}\nawait pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\nconst blank = async () => {}, helper = () => ({ ledger: G.ledger, notify: blank, track: blank, owned: { cars: [], cargo: {}, skills: new Set() }, acct: { omr: 0 }, theirAcct: { omr: 0 }, theirOwned: { cars: [] } });\nlet serial = 0;\nasync function fixture(cash = 30000) {\n"
+      }
+    ]
+  },
+  "test/companyworkflows.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "f5d377b7abbbb5155515df198113849ee333f316e55acdd36e84f53b83273121",
+    "currentBlob": "baa76230ebab75e8163e7701358c3f2f24fad4eb",
+    "currentBytes": 14856,
+    "currentRawSha256": {
+      "lf": "f5d377b7abbbb5155515df198113849ee333f316e55acdd36e84f53b83273121",
+      "crlf": "db15092cb4f4547b493abe295adc4af1f9cc28bcdfc94b6812112ac3e234a5fd"
+    },
+    "baselineSha256": "6d6a265517ab729a24ae7b5f7ff72164f030be74f1674308ba02b08b3eadbec6",
+    "baselineBlob": "0784e59969f23d5be86a8e87196a23cea618cd6b",
+    "baselineBytes": 14749,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport * as Workflow from '../src/companyworkflows.js';\nimport * as G from '../src/game.js';\nimport { withItemTransaction } from '../src/items.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport * as Workflow from '../src/companyworkflows.js';\nimport * as G from '../src/game.js';\nimport { withItemTransaction } from '../src/items.js';\n"
+      },
+      {
+        "current": "}\nprocess.env.DEPOT_PILOT = 'on'; process.env.DELIVERY_CONTRACTS = 'on';\nawait pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\nawait migrateDeedBenefitStorage(pool);\nif (!native) await pool.query('DROP INDEX ix_depot_owner_open');\nconst blank = async () => {};\nconst helper = cargo => ({ owned: { cargo, cars: [], skills: new Set() }, acct: { prestige: 0 }, ledger: G.ledger, notify: blank, track: blank });\n",
+        "baseline": "}\nprocess.env.DEPOT_PILOT = 'on'; process.env.DELIVERY_CONTRACTS = 'on';\nawait pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\nif (!native) await pool.query('DROP INDEX ix_depot_owner_open');\nconst blank = async () => {};\nconst helper = cargo => ({ owned: { cargo, cars: [], skills: new Set() }, acct: { prestige: 0 }, ledger: G.ledger, notify: blank, track: blank });\n"
+      }
+    ]
+  },
+  "test/family-operation-concurrency.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "91ab5293e53672380115d9f6dcede248f22987dac95bdbfbc565c77d64a27a5e",
+    "currentBlob": "52971a55e5b8f7e86f09571c725182a4847bb997",
+    "currentBytes": 16333,
+    "currentRawSha256": {
+      "lf": "91ab5293e53672380115d9f6dcede248f22987dac95bdbfbc565c77d64a27a5e",
+      "crlf": "b714a742c85b4975ccf56f13a3621dfd5a709c018e1ea04c7b3bc5f7998ea656"
+    },
+    "baselineSha256": "efa89729522e6af8c635b3945b6ac71a4985ed466d637903f908450a7dd2c641",
+    "baselineBlob": "283dec5494e7d2fdfc3d9ca76ba9f2c751db68fb",
+    "baselineBytes": 16224,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport { dbCaps } from '../src/db.js';\nimport { withCharacter } from '../src/game.js';\nimport { acceptInvite, inviteToCrew, CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { dbCaps } from '../src/db.js';\nimport { withCharacter } from '../src/game.js';\nimport { acceptInvite, inviteToCrew, CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';\n"
+      },
+      {
+        "current": "\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  await migrateDeedBenefitStorage(pool);\n  // Invite acceptance holds the historical depositor character first. Cancellation\n  // must release its Crew lock through a mapped NOWAIT rollback, not wait in ABBA.\n  const first = await historicalDepositor('first');\n",
+        "baseline": "\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  // Invite acceptance holds the historical depositor character first. Cancellation\n  // must release its Crew lock through a mapped NOWAIT rollback, not wait in ABBA.\n  const first = await historicalDepositor('first');\n"
+      }
+    ]
+  },
+  "test/family-operations.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "55e87fccafffa2ee2aade920d0f0b7956563e445142be376c1b37ebfe7283474",
+    "currentBlob": "477a4d0c257e214f6dc696c25151b5692b65fe8f",
+    "currentBytes": 27419,
+    "currentRawSha256": {
+      "lf": "55e87fccafffa2ee2aade920d0f0b7956563e445142be376c1b37ebfe7283474",
+      "crlf": "2a18c3aa21d026a0e650723f05163b2af5a6b92392d753afd9b2e2d6ef90e897"
+    },
+    "baselineSha256": "d3536f5f1ce78661fcaa9e044c92d82dcc2aee06e313718abc2758b6bfab4126",
+    "baselineBlob": "95d868fdd2efc7e79088f380d013cd8d054676a5",
+    "baselineBytes": 27310,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport { isDeepStrictEqual } from 'node:util';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { isDeepStrictEqual } from 'node:util';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\n"
+      },
+      {
+        "current": "\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  await migrateDeedBenefitStorage(pool);\n  for (const [roleId, accountId] of Object.entries(actors)) await player(accountId, names[roleId]);\n  await player(outsider, 'Family Outsider');\n  const crew = await social(boss, (ch, client, h) => createCrew(ch, 'Archive Crew', client, h));\n",
+        "baseline": "\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  for (const [roleId, accountId] of Object.entries(actors)) await player(accountId, names[roleId]);\n  await player(outsider, 'Family Outsider');\n  const crew = await social(boss, (ch, client, h) => createCrew(ch, 'Archive Crew', client, h));\n"
+      }
+    ]
+  },
+  "test/furnace-ledger.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "4956620139e9536bc0f11fc0cda985131e6bd0764dbf58c9b4928f12da430bc8",
+    "currentBlob": "10f01a76e645794bff31f0e6e52d2b217fe6f15e",
+    "currentBytes": 19131,
+    "currentRawSha256": {
+      "lf": "4956620139e9536bc0f11fc0cda985131e6bd0764dbf58c9b4928f12da430bc8",
+      "crlf": "d1523b686a23f8fb6ecd5501e8e124689a74e991e6a1e0897ef6738cf31c972a"
+    },
+    "baselineSha256": "27c85fe551560814af614e9435651248c34ea1ae92ed0529a06916fc842a99c4",
+    "baselineBlob": "6f8f958e6edb202e981e5f799d524c7f1cf2cceb",
+    "baselineBytes": 19016,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { travel, withCharacter } from '../src/game.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { travel, withCharacter } from '../src/game.js';\n"
+      },
+      {
+        "current": "    assert.deepEqual(await snapshot(), before, 'denial rolls back every affected domain and receipt');\n  }\n  try {\n    await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n    await migrateDeedBenefitStorage(pool);\n    services();\n    for (const [role, account] of Object.entries(accounts)) {\n      await pool.query(\"INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)\", [account]);\n      await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)', [account]);\n",
+        "baseline": "    assert.deepEqual(await snapshot(), before, 'denial rolls back every affected domain and receipt');\n  }\n  try {\n    await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8')); services();\n    for (const [role, account] of Object.entries(accounts)) {\n      await pool.query(\"INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)\", [account]);\n      await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)', [account]);\n"
+      }
+    ]
+  },
+  "test/recipe-policy.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "564e0ef2b238ec12de0df677c9a1ee0d89ac0373164cf78f9e62a18f26c02537",
+    "currentBlob": "2d76abab32fd8dfb358894aa6956626afbaca532",
+    "currentBytes": 27272,
+    "currentRawSha256": {
+      "lf": "564e0ef2b238ec12de0df677c9a1ee0d89ac0373164cf78f9e62a18f26c02537",
+      "crlf": "5fa521c030ce722bd2fd3bcebddaf4f31b2889bb5ec1bb0cc7a30502032a3b93"
+    },
+    "baselineSha256": "f2178ad341b235eba2c3b972d7da9cc77e254fcced71ca28e4df68824283bf8d",
+    "baselineBlob": "3b189d541c3f1aba9126eafffd1024d2616a9377",
+    "baselineBytes": 27163,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { withCharacter } from '../src/game.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { withCharacter } from '../src/game.js';\n"
+      },
+      {
+        "current": "}\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  await migrateDeedBenefitStorage(pool);\n  for (const id of ['policy-author', 'policy-reader', 'policy-other', 'policy-racer', 'policy-legacy']) await player(id);\n  const author = 'policy-author', reader = 'policy-reader', other = 'policy-other';\n  // These envelopes reproduce graphMutationAuthority at baseline a18c63c. Mint\n",
+        "baseline": "}\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  for (const id of ['policy-author', 'policy-reader', 'policy-other', 'policy-racer', 'policy-legacy']) await player(id);\n  const author = 'policy-author', reader = 'policy-reader', other = 'policy-other';\n  // These envelopes reproduce graphMutationAuthority at baseline a18c63c. Mint\n"
+      }
+    ]
+  },
+  "test/world-kernel.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "64b1c0d2cf943adb50595f39a89706ce3907f71f1eae40fc078f17edafeffc02",
+    "currentBlob": "1f14e406223c672cdf8ca6dcc09ccc0e3518dc58",
+    "currentBytes": 32223,
+    "currentRawSha256": {
+      "lf": "64b1c0d2cf943adb50595f39a89706ce3907f71f1eae40fc078f17edafeffc02",
+      "crlf": "7451337161ea8ee7fa9b65727e1779e56bce2fc6ebdec321b8c941fcec4f437e"
+    },
+    "baselineSha256": "e08465116dc590ee1341bd08cce81cb395439537d521d6bed32dcb0cbf7a3262",
+    "baselineBlob": "63cbd9433a55223a88dffc5bd29b54cc6645f8c4",
+    "baselineBytes": 32114,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { bus, travel, withCharacter } from '../src/game.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { bus, travel, withCharacter } from '../src/game.js';\n"
+      },
+      {
+        "current": "\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  await migrateDeedBenefitStorage(pool);\n  const boss = await player('kernel-boss', 'Kernel Boss');\n  const member = await player('kernel-member', 'Kernel Member');\n  const outsider = await player('kernel-outsider', 'Kernel Outsider');\n",
+        "baseline": "\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  const boss = await player('kernel-boss', 'Kernel Boss');\n  const member = await player('kernel-member', 'Kernel Member');\n  const outsider = await player('kernel-outsider', 'Kernel Outsider');\n"
+      }
+    ]
+  },
+  "test/world-projection.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "f2e7e42b776fd15b7c8cc6b3dd67610d54a9e22e213725065d51316de93d4aa4",
+    "currentBlob": "2402763ac151431957237f8582c8545bb4edebd2",
+    "currentBytes": 20754,
+    "currentRawSha256": {
+      "lf": "f2e7e42b776fd15b7c8cc6b3dd67610d54a9e22e213725065d51316de93d4aa4",
+      "crlf": "48ce500a978e03b77b44af5a7471c16060f2a20a3708d5e68e84a0a9c70bfbe5"
+    },
+    "baselineSha256": "035bac7e51f08c070093e6eb668f0a603b3f9261b8d764f70b553024e4527206",
+    "baselineBlob": "5f6fd934339e4cea598be4e16e6fcc9e4288363e",
+    "baselineBytes": 20645,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { travel, withCharacter } from '../src/game.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../src/db.js';\nimport { travel, withCharacter } from '../src/game.js';\n"
+      },
+      {
+        "current": "}\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  await migrateDeedBenefitStorage(pool);\n  for (const id of [...Object.values(actors), outsider]) await player(id);\n  const crew = await social(boss, (ch, client, h) => createCrew(ch, 'Projection Crew', client, h));\n  const family = await social(boss, (ch, client, h) => createGang(ch, 'Projection Family', 'PROJ', client, h));\n",
+        "baseline": "}\ntry {\n  await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));\n  for (const id of [...Object.values(actors), outsider]) await player(id);\n  const crew = await social(boss, (ch, client, h) => createCrew(ch, 'Projection Crew', client, h));\n  const family = await social(boss, (ch, client, h) => createGang(ch, 'Projection Family', 'PROJ', client, h));\n"
+      }
+    ]
+  },
+  "test/lib/player-command-support.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "a8ef16abc4e2cec361e44acbe79ca4f4ef6fd51bf7a0b7773a63e39c7b149e0f",
+    "currentBlob": "b2a797622dd08345ded80885dfaadceb7d91155e",
+    "currentBytes": 5022,
+    "currentRawSha256": {
+      "lf": "a8ef16abc4e2cec361e44acbe79ca4f4ef6fd51bf7a0b7773a63e39c7b149e0f",
+      "crlf": "21250edfed40dbc376365d13519b4e7507cfc209020caf83192a8410db547601"
+    },
+    "baselineSha256": "01ee09a0805a10ccc742e36b1e525d72a8c482940e1600e0a468c8ad749efdc5",
+    "baselineBlob": "64ea82dc7260db453a4ed25c8eca04deec33ae31",
+    "baselineBytes": 4903,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../../src/deedbenefits.js';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../../src/db.js';\nimport { createPlayerCommandEngine } from '../../src/player-commands.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { newDb, DataType } from 'pg-mem';\nimport { dbCaps, registerPgMemCompatibility } from '../../src/db.js';\nimport { createPlayerCommandEngine } from '../../src/player-commands.js';\n"
+      },
+      {
+        "current": "  }\n  if (initialize) await initialize(result.pool);\n  await result.pool.query(fs.readFileSync(new URL('../../schema.sql', import.meta.url), 'utf8'));\n  await migrateDeedBenefitStorage(result.pool);\n  return result;\n}\n\n",
+        "baseline": "  }\n  if (initialize) await initialize(result.pool);\n  await result.pool.query(fs.readFileSync(new URL('../../schema.sql', import.meta.url), 'utf8'));\n  return result;\n}\n\n"
+      }
+    ]
+  },
+  "test/director-migration.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "5ce0b994c9a0e6f2eec4b39964136bbba4af11a72d1e943a6af2830be23548cd",
+    "currentBlob": "f7280d01e195f14d82c63972b16a26880ac367de",
+    "currentBytes": 72198,
+    "currentRawSha256": {
+      "lf": "5ce0b994c9a0e6f2eec4b39964136bbba4af11a72d1e943a6af2830be23548cd",
+      "crlf": "86c3da9fdc4a74ed757792d1b147e153bbe52b29e0cfe57fac644e49e3ca3f43"
+    },
+    "baselineSha256": "b250fe40588ac1c6e6fc3bec727694c526af71654410974ebe728bbd5b65cc36",
+    "baselineBlob": "d614abcc16118a444e3d6835c6bd72fa9256bf69",
+    "baselineBytes": 72089,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { migrateDeedBenefitStorage } from '../src/deedbenefits.js';\nimport { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\n"
+      },
+      {
+        "current": "    PRIMARY KEY (account_id, day, scope, claim_id)\n  )`);\n  await pool.query('ALTER TABLE characters ADD COLUMN crew_sale_credit_ms BIGINT NOT NULL DEFAULT 0');\n  await migrateDeedBenefitStorage(pool);\n  assert.equal((await pool.query(\"SELECT table_name FROM information_schema.tables WHERE table_schema=current_schema() AND table_name LIKE 'director_%'\")).rows.length, 0);\n  const account = 'director-migration-owner';\n  await addPlayer(pool, account); await addPlayer(pool, 'director-migration-neighbor');\n",
+        "baseline": "    PRIMARY KEY (account_id, day, scope, claim_id)\n  )`);\n  await pool.query('ALTER TABLE characters ADD COLUMN crew_sale_credit_ms BIGINT NOT NULL DEFAULT 0');\n  assert.equal((await pool.query(\"SELECT table_name FROM information_schema.tables WHERE table_schema=current_schema() AND table_name LIKE 'director_%'\")).rows.length, 0);\n  const account = 'director-migration-owner';\n  await addPlayer(pool, account); await addPlayer(pool, 'director-migration-neighbor');\n"
+      }
+    ]
   }
 };
 for (const pin of Object.values(DEED_ALLOCATION_SOURCE_DOMAINS)) {
