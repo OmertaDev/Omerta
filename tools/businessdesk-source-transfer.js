@@ -243,7 +243,7 @@ export function businessDeskHistoricalInput(file, input) {
   if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return input;
   const pin = BUSINESS_DESK_DOMAINS[file];
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only');
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (!uniform(text) || sha256(lf(text)) !== pin.currentSha256) return input;
   const baseline = assertBusinessDeskSourceTransfer(file, text).baselineText;
   return buffer ? Buffer.from(baseline) : baseline;
