@@ -28,6 +28,9 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
   'src/deeddiscovery.js', 'src/deeds.js', 'src/game.js', 'test/deed-discovery-ui.js', 'test/deeddiscovery.js',
   'test/economy-hardening-source-compatibility.js', 'tools/economy-ux-merge-source-compatibility.js',
   'tools/pgquery.js',
+  'tools/commerce-current-native-guard.js', 'test/commerce-current-native-guard.js',
+  'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js',
+  'tools/enterprise-native.js', 'test/lib/enterprise-ux-native-guard.js',
 ], 'Only the closed reviewed Deed allocation domains receive a source alias');
 
 let positives = 0, refusals = 0, hunks = 0;
@@ -81,7 +84,8 @@ for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
   const invalid = Buffer.concat([Buffer.from(current), Buffer.from([0xff])]);
   assert.throws(() => deedAllocationHistoricalInput(file, invalid)); refusals++;
 }
-for (const file of ['__proto__', 'constructor', 'src/unknown.js', 'src/deedbenefits.js', 'schema.sql']) {
+for (const file of ['__proto__', 'constructor', 'src/unknown.js', 'src/deedbenefits.js', 'schema.sql',
+  'tools/enterprise-native-deed-inputs.js']) {
   const text = 'unknown\r\nbytes\n', invalid = Buffer.from([0xff]);
   assert.throws(() => assertDeedAllocationSourceTransfer(file, text));
   assert.equal(deedAllocationHistoricalInput(file, text), text);
@@ -96,7 +100,8 @@ for (const file of [null, { toString: () => 'package.json' }]) {
 assert.equal(lf(fs.readFileSync('schema.sql', 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
   'Source transfer grants no schema/native migration alias');
 for (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',
-  'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])
+  'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js',
+  'tools/enterprise-native-ux-inputs.js'])
   assert.equal(lf(fs.readFileSync(file, 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),
     'Historical literal source pins remain unchanged: ' + file);
 console.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);

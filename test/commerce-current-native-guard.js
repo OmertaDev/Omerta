@@ -15,6 +15,10 @@ const run=text=>vm.runInContext(text,context,{timeout:10000,importModuleDynamica
 const driverEntry="\nif(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))await runCommerceNative();\n";assert(driver.endsWith(driverEntry));
 run(data.replace(/^export /gm,''));run(pure(guard,'tools/commerce-current-native-guard.js'));run(pure(driver.slice(0,-driverEntry.length),'tools/commerce-native.js'));
 const start=parent.indexOf('function safe(p)'),end=parent.indexOf('const admins=new Map',start);assert(start>=0&&end>start);run(parent.slice(start,end));
+const inventoryStart=parent.indexOf('const extras=COMMERCE_CURRENT_LEAVES.N17.includes(item.file)?'),inventoryEnd=parent.indexOf(";await reader.query('COMMIT')",inventoryStart);
+assert(inventoryStart>=0&&inventoryEnd>inventoryStart);
+run('function commerceCurrentAssertTableInventory(tables,initialSource,item){const names=tables.map(tablename=>({tablename}));'+parent.slice(inventoryStart,inventoryEnd)+';}');
+run('const deedBoot='+JSON.stringify(read('src/db.js'))+',deedMarker='+JSON.stringify(read('src/deedbenefits.js'))+';');
 run(`
 let positive=0,refused=0;const no=f=>{assert.throws(f);refused++;},off={CHAIN_ENABLED:'off',RESOURCE_ECONOMY:'off'};
 assertCommerceCurrentEnvironment(off,[]);positive++;
@@ -30,6 +34,31 @@ for(const change of['localhost','35459','wrong-role']){const env={...local,COMME
 no(()=>commerceNativeInvocation(['--ci'],ci,['--import','unknown']));
 assert.equal(COMMERCE_CURRENT_OCCURRENCES.length,37);assert.equal(COMMERCE_CURRENT_LOCAL_CASES.length,35);assert.equal(COMMERCE_CURRENT_CI_CASES.length,33);assert.deepEqual(Object.values(COMMERCE_CURRENT_LEAVES).map(x=>x.length),[3,4,4]);
 const make=profile=>{const cases=profile==='ci'?COMMERCE_CURRENT_CI_CASES:COMMERCE_CURRENT_LOCAL_CASES,contexts=new Map((profile==='ci'?['ci']:[35439,35449]).map(p=>[p,{}])),spec={profile,cases},report={expectedCases:cases.length,sourceAfter:true,finalSourceVerifiedAfterComparison:true,outerDeadlineFired:false,payloads:cases.map((c,i)=>({file:c.file,profile:profile==='ci'?'ci':c.preferredLocalPort,database:c.prefix+i.toString(16).padStart(12,'0'),args:[c.file,'--postgres'],timeoutMs:c.timeoutMs,closed:true,logClosed:true,code:0,signal:null,error:null,deadlineFired:false,sourceAfter:true,probeClosed:true,snapshotClosed:true,snapshotSHA256:'a'.repeat(64)})),adminClosures:[...contexts.keys()].map(profile=>({profile,closed:true})),closures:[...contexts.keys()].map(profile=>({stage:'final',profile,closed:true,zero:true,allOtherClients:[]}))};report.allocatedDatabases=report.payloads.map(p=>({profile:p.profile,database:p.database}));return{report,spec,contexts};};
+const markerInventory=commerceCurrentRuntimeExtraTables(deedBoot,deedMarker);
+assert.deepEqual(markerInventory,['player_reset_migrations','street_deed_benefit_eligibility']);positive++;
+assert.deepEqual(commerceCurrentRuntimeExtraTables(deedBoot.replaceAll('\\n','\\r\\n'),deedMarker.replaceAll('\\n','\\r\\n')),markerInventory);positive++;
+for(const client of['boot','pool'])for(const change of['omit','rename'])no(()=>commerceCurrentRuntimeExtraTables(
+ deedBoot.replace('await migrateDeedBenefitStorage('+client+');',change==='omit'?'':'await unreviewedMigration('+client+');'),deedMarker));
+for(const token of['CREATE TABLE IF NOT EXISTS street_deed_benefit_eligibility (',
+ 'character_id TEXT PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE','eligible_at TIMESTAMPTZ NOT NULL'])
+ no(()=>commerceCurrentRuntimeExtraTables(deedBoot,deedMarker.replace(token,'unreviewed_marker_definition')));
+no(()=>commerceCurrentRuntimeExtraTables(deedBoot.replace('await resetStartingLevels(boot);',''),deedMarker));
+const sourceTables={canonicalTables:['accounts','transactions'],runtimeExtraTables:markerInventory};
+const bootTables=['accounts','transactions','player_reset_migrations','street_deed_benefit_eligibility'];
+for(const[file,sentinel]of[[COMMERCE_CURRENT_LEAVES.N16[0],null],
+ [COMMERCE_CURRENT_LEAVES.N17[0],'merchant_loyalty_native_unknown'],
+ [COMMERCE_CURRENT_LEAVES.N18[0],'shopping_basket_native_unknown']]){
+ const item={file},expected=sentinel?[...bootTables,sentinel]:bootTables;
+ commerceCurrentAssertTableInventory(expected,sourceTables,item);positive++;
+ for(const actual of[expected.filter(name=>name!=='street_deed_benefit_eligibility'),
+   [...expected,'street_deed_benefit_eligibility_unknown'],[...expected,'unreviewed_runtime_table'],
+   expected.map(name=>name==='street_deed_benefit_eligibility'?'street_deed_benefit_eligibility_v2':name),
+   [...expected,'street_deed_benefit_eligibility'],expected.filter(name=>name!=='transactions')])
+   no(()=>commerceCurrentAssertTableInventory(actual,sourceTables,item));
+ if(sentinel)no(()=>commerceCurrentAssertTableInventory(bootTables,sourceTables,item));
+ else for(const unknown of['merchant_loyalty_native_unknown','shopping_basket_native_unknown'])
+   no(()=>commerceCurrentAssertTableInventory([...bootTables,unknown],sourceTables,item));
+}
 for(const profile of['local','ci']){const x=make(profile);assert(commerceCurrentCanRelease(x.report,x.spec,x.contexts,null));positive++;}
 for(const mutate of[x=>Error('safe-prefix allocation failure'),x=>{x.report.failure={message:'snapshot failure'};},x=>{x.report.sourceError='source failure';},x=>{x.report.sourceAfter=false;},x=>{x.report.finalSourceVerifiedAfterComparison=false;},x=>{x.report.outerDeadlineFired=true;},x=>{x.report.payloads.pop();},x=>{x.report.allocatedDatabases.pop();},...['closed','logClosed','sourceAfter','probeClosed','snapshotClosed'].map(key=>x=>{x.report.payloads[0][key]=false;}),x=>{x.report.payloads[0].code=1;},x=>{x.report.payloads[0].signal='SIGTERM';},x=>{x.report.payloads[0].error={};},x=>{x.report.payloads[0].deadlineFired=true;},x=>{x.report.payloads[0].file='unknown';},x=>{x.report.payloads[0].profile=35459;},x=>{x.report.payloads[0].timeoutMs=1;},x=>{x.report.adminClosures[0].closed=false;},x=>{x.report.adminClosures[0].error='close failed';},x=>{x.report.closures[0].closed=false;},x=>{x.report.closures[0].zero=false;},x=>{x.report.closures[0].closeError='close failed';},x=>{x.report.closures[0].allOtherClients=[{datname:null}];},x=>{x.report.closures[0].allOtherClients=[{datname:'postgres'}];}]){const x=make('local'),failure=mutate(x);assert.equal(commerceCurrentCanRelease(x.report,x.spec,x.contexts,failure??null),false);refused++;}
 globalThis.results={positive,refused};
@@ -38,6 +67,7 @@ const bootStart=guard.indexOf('const bootMembership='),bootEnd=guard.indexOf('\n
 const bootContext=vm.createContext({fs:{readdirSync:name=>name.endsWith('/hype')?['hype.mp4','hype.m4a']:['still.jpg','root.mp4','.MP4','ignored.txt']},commerceCurrentRoot:'source-only'});vm.runInContext(boot+';globalThis.result=bootMembership;',bootContext);assert.deepEqual(JSON.parse(JSON.stringify(bootContext.result.rootMedia)),['.MP4','root.mp4']);assert.deepEqual(JSON.parse(JSON.stringify(bootContext.result.hypeMedia)),['hype.m4a','hype.mp4']);
 assert(parent.includes("(backend_type='client backend' OR backend_type IS NULL) AND pid<>pg_backend_pid() ORDER BY datname,pid"));assert(!parent.includes("datname<>'postgres'"));assert(!parent.includes('datname IS NOT NULL'));
 assert(parent.includes("child.once('close'"));assert(parent.includes('finally{fs.closeSync(fd);p.logClosed=true;}'));assert(parent.includes('report.complete=commerceCurrentCanRelease(report,spec,contexts,failure);report.leaseReleased=report.complete;'));
+assert(parent.includes('tables[tablename]=(await reader.query('), 'the reviewed marker retains every row in the complete state snapshot');
 assert(driver.includes("['tools/commerce-current-native-guard.js',source,manifest]"));assert(driver.includes("['tools/commerce-current-native.js',spec.mode,source,manifest,report.manifestSHA256,output]"));assert(driver.includes('for(const key of spec.allowed)delete captureEnv[key]'));assert(driver.includes("child.once('exit'"));assert(driver.includes("child.once('close'"));assert(driver.includes('fs.closeSync(fd);row.logClosed=true'));assert(driver.includes('report.complete=false;report.leaseReleased=false;try{commerceNativeFailureDiagnostics(report,spec,outputRoot,id);}catch{}throw e;'));
 assert.deepEqual(attempts,{PG:0,FS:0,child:0});
 console.log('Current Commerce source-only admission/driver/full-cohort release controls PASS: '+context.results.positive+' positives/'+context.results.refused+' refusals; denied PG/filesystem/child attempts0. No executing source capture or native run.');

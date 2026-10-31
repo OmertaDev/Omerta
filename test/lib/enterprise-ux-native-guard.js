@@ -48,7 +48,12 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.files.length, 1729); assert.equal(pin.replacements.length, 84); assert.equal(pin.legacyAdditionReplacements.length, 4); assert.equal(pin.additions.length, 86);
+  assert.equal(pin.version, 3); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
+  assert.equal(pin.files.length, legacyFiles.length + pin.additions.length);
+  assert.equal(pin.legacyAdditionReplacements.length, 4);
+  assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-inputs.js'), 'The old native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'src/deedbenefits.js'), 'The actual new runtime benefit dependency is in the closed native capture');
+  assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-deed-inputs.js', 'Only the fresh successor manifest is self-referential');
   const requiredLegacyReplacements = ['src/accountdaily.js', 'src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
   assert.deepEqual(pin.legacyAdditionReplacements.map(row => row.file), requiredLegacyReplacements);
   const tree = revision => new Map(git('ls-tree', '-r', '-z', revision).toString().split('\0').filter(Boolean).map(line => { const index = line.indexOf('\t'), [mode, type, blob] = line.slice(0, index).split(' '); return [line.slice(index + 1), { mode, type, blob }]; }));
@@ -57,7 +62,17 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   assertEnterpriseUxReplacementPlan(legacyFiles, legacy, pin.files, predecessorPin, pin);
   for (const file of requiredLegacyReplacements) { const row = pin.legacyAdditionReplacements.find(entry => entry.file === file), before = legacyAdditions.get(file), after = pin.files.find(entry => entry.file === file); assert.equal(git('ls-tree', pin.predecessorRevision, '--', file).length, 0); assert.deepEqual(row.before, before); assert.deepEqual(row.after, after); }
   const first = pin.files[0], canonical = git('show', pin.authoredRevision + ':' + first.file), record = { type: 'blob', mode: first.mode, blob: first.blob };
-  assertEnterpriseUxTrackedInput(first.file, record, record, canonical);
+  const provenance = assertEnterpriseUxTrackedInput(first.file, record, record, canonical);
+  assert(provenance && Object.isFrozen(provenance));
+  assert.equal(provenance.current.blob, record.blob, 'Provenance retains the actual current Git identity');
+  assert.equal(provenance.current.sha256, digest(canonical));
+  assert.notEqual(provenance.predecessor.blob, record.blob);
+  assert.equal(provenance.nativeAdmission, false, 'Historical provenance cannot grant native admission');
+  assert.equal(provenance.priorResultsTransferred, false);
+  const historical = git('show', provenance.predecessorRevision + ':' + first.file);
+  const historicalRecord = { type: 'blob', mode: provenance.predecessor.mode, blob: provenance.predecessor.blob };
+  reject(() => assertEnterpriseUxTrackedInput(first.file, historicalRecord, historicalRecord, historical),
+    'Historical bytes cannot replace the fresh current-native input');
   for (const [current, authored, bytes] of [[{ ...record, blob: '0'.repeat(40) }, record, canonical], [record, { ...record, blob: '1'.repeat(40) }, canonical], [{ ...record, mode: '120000' }, record, canonical], [record, record, Buffer.concat([canonical, Buffer.from('\n')])], [record, record, canonical.subarray(1)], [record, record, canonical.toString('utf8')]]) reject(() => assertEnterpriseUxTrackedInput(first.file, current, authored, bytes));
   reject(() => assertEnterpriseUxTrackedInput('../outside.js', record, record, canonical));
   reject(() => assertEnterpriseUxTrackedInput(first.file, record, record, canonical, structuredClone(pin)));
@@ -82,7 +97,12 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  const capture = after.get('captureEnterpriseSource');
  assert(capture.includes('assertEnterpriseUxInputDefinition(ENTERPRISE_NATIVE_FILES,successor)'));
  assert(capture.includes('assertEnterpriseUxTrackedInput(f,tracked,authored.get(f),canonical,ux)'));
+ assert(capture.includes('if(provenance)sourceProvenance[f]=provenance') && capture.includes('nativeInputProvenance:sourceProvenance'),
+  'Current physical input identity and historical source provenance are captured separately');
  assert(!/HistoricalInput|SourceBaseline|qualifyUxSource/.test(capture), 'Native capture never reconstructs a historical source');
+ const nativeInputGuard = lf(fs.readFileSync('tools/enterprise-native-ux.js', 'utf8'));
+ assert(!/assertDeedAllocationSourceTransfer|deedAllocationHistoricalInput|baselineText/.test(nativeInputGuard),
+  'Actual-current native admission and provenance never reconstruct inverse historical source text');
  assert(capture.includes('f===ENTERPRISE_UX_METADATA') && !capture.includes("f!=='tools/enterprise-native-inputs.js'"), 'Exactly the new self-reference is unpinnable; old metadata is pinned');
  assert(capture.includes('assertEnterpriseUxReplacementPlan(ENTERPRISE_NATIVE_FILES,successor,ux.files,predecessorPin,ux)') && capture.includes('uxLegacyAdditionReplacements:replacementPlan.legacyAdditionReplacements.map'), 'UX integration recomputes and records both complete replacement categories');
  console.log(JSON.stringify({ phase: 'CURRENT_UX_NATIVE_ADMISSION_GUARDS', status: pin.status, refusals: negatives, unchangedWorkloadCases: 16, originalGuardsUnchanged: true, nativeExecution: false, priorResultsTransferred: false }));

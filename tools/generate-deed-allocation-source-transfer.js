@@ -12,6 +12,9 @@ const files = Object.freeze([
   'src/deeddiscovery.js', 'src/deeds.js', 'src/game.js', 'test/deed-discovery-ui.js', 'test/deeddiscovery.js',
   'test/economy-hardening-source-compatibility.js', 'tools/economy-ux-merge-source-compatibility.js',
   'tools/pgquery.js',
+  'tools/commerce-current-native-guard.js', 'test/commerce-current-native-guard.js',
+  'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js',
+  'tools/enterprise-native.js', 'test/lib/enterprise-ux-native-guard.js',
 ]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
