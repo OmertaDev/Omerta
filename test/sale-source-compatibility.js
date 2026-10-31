@@ -7,6 +7,7 @@ import { SALE_SOURCE, SALE_SOURCE_FILES, SALE_SOURCE_PREDECESSOR, qualifySaleSou
 import { uxHistoricalInput, qualifyUxSource } from '../tools/ux-source-compatibility.js';
 import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';
+import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
 import { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -30,8 +31,8 @@ const inverseHunks = diff => {
 let positives = 0, refusals = 0, hunks = 0;
 for (const row of pin.files) {
   const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
-  const physical = economySocialProofCutoverHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'));
-  const committed = economySocialProofCutoverHistoricalInput(row.file, git('show', 'HEAD:' + row.file));
+  const physical = economySocialProofCutoverHistoricalInput(row.file, economyMonitorHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')));
+  const committed = economySocialProofCutoverHistoricalInput(row.file, economyMonitorHistoricalInput(row.file, git('show', 'HEAD:' + row.file)));
   const stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');
@@ -89,6 +90,8 @@ for (const hook of ["import { saleHistoricalInput } from './sale-source-compatib
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
 let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
+  ["import { economyMonitorHistoricalInput } from './economy-monitor-source-transfer.js';\n", 1],
+  ['  input = economyMonitorHistoricalInput(file, input);\n', 2],
   ["import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';\n", 1],
   ['  input = economyBankInterestHardeningHistoricalInput(file, input);\n', 2],
   ["import { economySocialProofCutoverHistoricalInput } from './economy-social-proof-cutover-source-transfer.js';\n", 1],
