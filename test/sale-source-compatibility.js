@@ -86,6 +86,9 @@ let conserved = fs.readFileSync('tools/ux-source-compatibility.js', 'utf8').repl
 for (const hook of ["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", '  input = saleHistoricalInput(file, input);\n']) {
   assert.equal(conserved.split(hook).length, 2, 'One exact sale integration hook'); conserved = conserved.replace(hook, '');
 }
+for (const hook of ["import { uxAfterwordHistoricalInput } from './ux-afterword-source-compatibility.js';\n", '  input = uxAfterwordHistoricalInput(file, input);\n']) {
+  assert.equal(conserved.split(hook).length, 2, 'One exact separately admitted Afterword integration hook'); conserved = conserved.replace(hook, '');
+}
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
 let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
