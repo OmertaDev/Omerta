@@ -38,6 +38,14 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
   'test/director-migration.js',
   'docs/legal-security-setup.md', 'src/legal.js', 'test/legal-security.js',
   'test/lib/phase2-definition-fixtures.js', 'tools/ux-release-phase2-native-catalog.js',
+  'src/content/city-quest-presentation.js', 'src/content/phase1-policy.js', 'src/content/phase1.js',
+  'test/worldgraph-validation.js',
+  'public/ux-coordination.css', 'public/ux-coordination.js',
+  'public/ux-navigation.css', 'public/ux-navigation.js',
+  'public/ux-progression.css', 'public/ux-progression.js',
+  'public/ux-tactics.css', 'public/ux-tactics.js',
+  'src/ux-story.js', 'src/ux-tactics.js', 'tools/ux-source-compatibility.js',
+  'src/worldgraph-ui.js',
 ], 'Only the closed reviewed Deed allocation domains receive a source alias');
 
 let positives = 0, refusals = 0, hunks = 0;
@@ -107,8 +115,13 @@ for (const file of [null, { toString: () => 'package.json' }]) {
 assert.equal(lf(fs.readFileSync('schema.sql', 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
   'Source transfer grants no schema/native migration alias');
 for (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',
-  'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js',
-  'tools/enterprise-native-ux-inputs.js'])
+  'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])
   assert.equal(lf(fs.readFileSync(file, 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),
     'Historical literal source pins remain unchanged: ' + file);
+assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-b35-inputs.js', 'utf8')),
+  git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:tools/enterprise-native-ux-inputs.js`),
+  'The archived B35 native manifest retains its exact historical Git bytes');
+assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-inputs.js', 'utf8')),
+  git('show', 'defb6bdad73e911fa03685e1ef00ff5960935a4d:tools/enterprise-native-ux-inputs.js'),
+  'The qualified UX manifest retains its exact authored Git bytes at the original path');
 console.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);

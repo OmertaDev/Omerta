@@ -52,7 +52,8 @@ export function mysteryUi(board, registry) {
     const nodePresentation = cityQuestNodePresentation(graphId, projected.id);
     return { ...projected, ...(nodePresentation
       ? { ...nodePresentation, description: definition?.metadata?.lore || '',
-        dialogue: definition?.metadata?.description || '' } : {}),
+        dialogue: [definition?.metadata?.description || '', graphId === 'property-investigation'
+          && projected.id === 'mystery:property-verify-title' ? 'Gameplay property claims unlock at Level 25.' : ''].filter(Boolean).join(' ') } : {}),
       uiActions: actions, ...(!Object.hasOwn(projected, 'actions') ? { actions } : {}) };
   });
   const objectives = nodes.filter(node => ['mystery_step', 'world_gate', 'choice'].includes(node.type)

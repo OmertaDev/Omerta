@@ -51,7 +51,8 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   assert.equal(pin.version, 3); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
   assert.equal(pin.files.length, legacyFiles.length + pin.additions.length);
   assert.equal(pin.legacyAdditionReplacements.length, 4);
-  assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-inputs.js'), 'The old native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-b35-inputs.js'), 'The old B35 native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-inputs.js'), 'The qualified UX native manifest is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'src/deedbenefits.js'), 'The actual new runtime benefit dependency is in the closed native capture');
   assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-deed-inputs.js', 'Only the fresh successor manifest is self-referential');
   const requiredLegacyReplacements = ['src/accountdaily.js', 'src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
