@@ -2219,6 +2219,8 @@ CREATE INDEX IF NOT EXISTS ix_tx_currency_reason ON transactions (currency, reas
 -- Lineage cutover reconciliation reads only the current/previous UTC day after its first full pass.
 -- Keep the time key behind the two exact filters so restarts do not revisit the lifetime ledger.
 CREATE INDEX IF NOT EXISTS ix_tx_currency_reason_at ON transactions (currency, reason, at);
+-- The five-minute economy monitor reads a bounded recent window across all sources.
+CREATE INDEX IF NOT EXISTS ix_tx_at_id ON transactions (at, id);
 CREATE INDEX IF NOT EXISTS ix_tx_character ON transactions (character_id);
 CREATE INDEX IF NOT EXISTS ix_rng_action ON rng_audit (action);
 -- (red-team R16) funnelStats filters telemetry by event ('broadcast_share'/'first_week_step'); without

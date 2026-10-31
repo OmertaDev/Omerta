@@ -1727,7 +1727,9 @@ export async function alertDrift(pool, failed, kind = 'ledger', retryDelaysMs = 
   await pool.query('INSERT INTO telemetry (id, event, props) VALUES ($1,$2,$3)',
     [crypto.randomUUID(), event, JSON.stringify(failed)]);
   console.error(`🚨 ${kind === 'ledger' ? '§10.4 LEDGER' : kind.toUpperCase()} INVARIANT DRIFT:`, JSON.stringify(failed));
+  let webhook = 'not_configured';
   if (process.env.INVARIANT_WEBHOOK_URL) {
+    webhook = 'failed';
     // RETRIED, with backoff (bulletproof pass, 2026-08-21). This is the single most important
     // outbound POST in the app — the alarm the whole invariant machinery exists to deliver — and it
     // was one transient Discord 502 away from being lost: the telemetry row and the console line
@@ -1758,6 +1760,7 @@ export async function alertDrift(pool, failed, kind = 'ledger', retryDelaysMs = 
         // nothing worth the branch, and the payload-shape 400s have their own regression above.
         if (res && res.ok === false && i < attempts - 1) { await new Promise((r) => setTimeout(r, retryDelaysMs[i])); continue; }
         if (res && res.ok === false) console.error(`invariant webhook failed after ${attempts} attempts`, `HTTP ${res.status}`);
+        else webhook = 'delivered';
         break;
       } catch (e) {
         if (i === attempts - 1) console.error(`invariant webhook failed after ${attempts} attempts`, e.message);
@@ -1765,6 +1768,9 @@ export async function alertDrift(pool, failed, kind = 'ledger', retryDelaysMs = 
       }
     }
   }
+  // Existing callers remain best-effort. Monitors with durable episode suppression can distinguish
+  // a locally recorded alert from exhausted external delivery and retry on their next sample.
+  return { recorded: true, webhook };
 }
 
 // One human-readable line per failed check, clamped under Discord's 2,000-char message limit. Every alert

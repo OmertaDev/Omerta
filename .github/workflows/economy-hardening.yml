@@ -10,11 +10,16 @@ permissions:
 
 jobs:
   economy-hardening:
+    name: economy-hardening (${{ matrix.postgres }})
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
     services:
       postgres:
-        image: postgres:18.4
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_PASSWORD: pgcheck
         ports:
@@ -33,6 +38,28 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Set owned test PostgreSQL lock capacity for populated migrations
+        timeout-minutes: 3
+        shell: bash
+        env:
+          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          [[ "$POSTGRES_SERVICE_ID" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }
+          timeout 15s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'
+          timeout 45s docker restart --timeout 30 "$POSTGRES_SERVICE_ID"
+          ready=0
+          deadline=$((SECONDS + 60))
+          while (( SECONDS < deadline )); do
+            if timeout 3s docker exec "$POSTGRES_SERVICE_ID" pg_isready -q -t 1 -U postgres -d postgres; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          [[ "$ready" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }
+          actual="$(timeout 10s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')"
+          [[ "$actual" == 512 ]] || { echo "Unexpected test max_locks_per_transaction: $actual" >&2; exit 1; }
       - name: In-memory exploit and pacing regressions
         run: >-
           node test/economy-hardening-source-compatibility.js &&
@@ -45,6 +72,8 @@ jobs:
           node test/secondary-cooldowns.js &&
           node test/cooldown-surfaces.js &&
           node test/economy-balance.js &&
+          node test/economy-monitor.js &&
+          node test/economy-composition.js &&
           node test/cooldown-surfaces-browser.js
       - name: Create isolated native databases
         env:
@@ -58,6 +87,7 @@ jobs:
           createdb daily_lineage_test
           createdb crew_wage_migration_test
           createdb social_receipt_test
+          createdb omerta_economy_composition_test
       - name: PostgreSQL cooldown and lineage races
         env:
           COOLDOWN_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:55442/omerta_cooldown_test
@@ -85,3 +115,10 @@ jobs:
           node test/crew-wage-postgres.js
           node test/social-receipt-postgres.js
           node test/db-boot-lock-postgres.js
+      - name: PostgreSQL economic monitoring and mixed workflow exploit proofs
+        env:
+          ECONOMY_MONITOR_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:55442/postgres
+          ECONOMY_COMPOSITION_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:55442/omerta_economy_composition_test
+        run: |
+          node test/economy-monitor.js --postgres
+          node test/economy-composition.js --postgres

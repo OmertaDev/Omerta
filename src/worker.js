@@ -20,6 +20,7 @@ import { pingDb, archiverHealth } from './dbhealth.js';
 import { levelOf, dayOf, CONSTANTS, DUELS, COMMISSION, POPULATION, FAMILY_YIELD, recapTitleOf } from './rules.js';
 import { recordReckoning } from './season.js';
 import { runLedgerInvariants, alertDrift } from './invariants.js';
+import { runEconomyMonitor } from './economy-monitor.js';
 import { runVigInvariants, chainParity } from './vig.js';
 import { carveExchange, mergeLegacyYieldPools, payFamilyYield, runExchangeInvariants } from './exchange.js';
 import { runRouterInvariants } from './router.js';
@@ -844,6 +845,23 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
   };
   setInterval(guardedCompanyTick, 30000);
   void guardedCompanyTick();
+
+  // A bounded economic window runs independently of the hourly settlements and daily full sweep.
+  // Register first, so a failed initial sample cannot prevent later observations. The monitor owns
+  // durable episode suppression; this guard keeps slow database/webhook work from overlapping here.
+  let economyTicking = false;
+  const guardedEconomyTick = async () => {
+    if (economyTicking) return;
+    economyTicking = true;
+    try {
+      const summary = await runEconomyMonitor(pool, { alert: alertDrift });
+      console.log('[economy monitor]', JSON.stringify(summary));
+    } catch (error) {
+      console.error('worker: economy monitor failed', error);
+    } finally { economyTicking = false; }
+  };
+  setInterval(guardedEconomyTick, 5 * 60 * 1000);
+  void guardedEconomyTick();
 
   // H1 operational health is its own fixed five-minute clock. JavaScript time chooses only when to
   // wake; sweepRwaHealth derives every authoritative slot/timestamp from PostgreSQL. Recomputing the
