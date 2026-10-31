@@ -32,6 +32,8 @@ on:
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
       - 'test/genesis-auction-deployment-plan.js'
+      - 'tools/genesis-fee-readiness-source-transfer.js'
+      - 'test/genesis-fee-readiness-source-transfer.js'
       - 'package.json'
   pull_request:
     paths:
@@ -58,6 +60,8 @@ on:
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
       - 'test/genesis-auction-deployment-plan.js'
+      - 'tools/genesis-fee-readiness-source-transfer.js'
+      - 'test/genesis-fee-readiness-source-transfer.js'
       - 'package.json'
   workflow_dispatch: {}
 
@@ -150,6 +154,7 @@ jobs:
           node test/wbtc-reward-epoch.js
           node test/tokenomics-pilot.js
           node test/player-genesis-deployment.js
+          node test/genesis-fee-readiness-source-transfer.js
           npm run test:genesis-auction:deployment
 
       - name: retain failed genesis compiler artifacts
