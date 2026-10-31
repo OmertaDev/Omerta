@@ -60,7 +60,11 @@ export function accrue(ch, acct = null, ctx = {}, now = new Date()) {
 
   // STREET DEEDS 2C — controlled-corner districts (ctx.deedHeld) count like family turf at this
   // file's two perk reads (cathedral nerve regen, neon racket income). SET-UNION → OR, never stacks.
-  const held = [...(ctx.held || []), ...(ctx.deedHeld || [])];
+  const held = ctx.held || [];
+  const deedActiveMs = ctx.deedActiveFrom == null ? dtMs
+    : Math.max(0, Math.min(dtMs, now - new Date(ctx.deedActiveFrom)));
+  const cathedralBonusMs = held.includes('cathedral') ? dtMs
+    : (ctx.deedHeld || []).includes('cathedral') ? deedActiveMs : 0;
   // THE REGIMEN — stamina/composure raise the CAPS (pool, not rate: the pacing pass's regen
   // numbers are untouched). Same helpers as view/coachOf, so the three sites cannot disagree.
   // THE LADDER (D8=D) raises the caps too — `acct` is already this function's second parameter, so
@@ -71,7 +75,7 @@ export function accrue(ch, acct = null, ctx = {}, now = new Date()) {
   // 40/min a full tank refilled in ~75 seconds, so it paced nothing and the whole progression ran
   // as fast as a player could click. Both rates now live in PACING.
   ch.energy = Math.min(maxEnergy, Number(ch.energy) + (PACING.ENERGY_REGEN_PER_MIN + (rIdx >= 2 ? PACING.ENERGY_REGEN_RANK_BONUS : 0)) * dtMin); // Runner+ regen bump
-  ch.nerve = Math.min(maxNerve, Number(ch.nerve) + PACING.NERVE_REGEN_PER_MIN * (held.includes('cathedral') ? 2 : 1) * dtMin); // Cathedral Hill turf
+  ch.nerve = Math.min(maxNerve, Number(ch.nerve) + PACING.NERVE_REGEN_PER_MIN * ((dtMs + cathedralBonusMs) / 60000));
   ch.health = Math.min(100, Number(ch.health) + 20 * dtMin);
 
   // bank interest: 2% per 12h, continuous approximation, income window cap.
@@ -115,9 +119,11 @@ export function accrue(ch, acct = null, ctx = {}, now = new Date()) {
   // numerically, but that is how the sackEmpire rake-cursor drifted too (copied instead of called).
   const rlv = ctx.racketLevels || {};
   const incPerMin = (rackets.reduce((a, id) => a + racketIncomeLeveled(id, rlv[id]), 0) + assetIncome(assets))
-    * (ev.racketMult || 1) * (held.includes('neon') ? 1.15 : 1)   // Neon Mile turf
+    * (ev.racketMult || 1)
     * pathFx(ch, 'racketIncome') * (rIdx >= 7 ? 1.1 : 1); // PATHS v2 — the ternary → the matrix (ledger keeps its exact 1.1)
-  const income = Math.floor(incPerMin * (eligibleMs / 60000));
+  const neonBonusMs = held.includes('neon') ? eligibleMs
+    : (ctx.deedHeld || []).includes('neon') ? Math.min(eligibleMs, deedActiveMs) : 0;
+  const income = Math.floor(incPerMin * ((eligibleMs + neonBonusMs * 0.15) / 60000));
   ch._accruedIncome = income;                 // surfaced so the caller ledgers it
   if (income > 0) ch.cash = Number(ch.cash) + income;
 

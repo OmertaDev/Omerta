@@ -54,6 +54,14 @@ try {
     [a.account_id, respect, 'docks']);
   await pool.query('UPDATE characters SET respect=$2,loc=$3,energy=100 WHERE account_id=$1',
     [b.account_id, respect, 'docks']);
+  for (const kind of ['paid', 'partnership']) {
+    const reserved = DEED_BUILDINGS.find(lot => lot.district === 'docks' && lot.issuanceKind === kind);
+    await assert.rejects(investigate(a, reserved.id), error => error.code === 'deed_allocation');
+    await assert.rejects(claim(a, reserved.id, `Forbidden ${kind}`), error => error.code === 'deed_allocation');
+  }
+  const eligibleBoard = await read(a);
+  assert(eligibleBoard.buildings.filter(lot => lot.issuanceKind !== 'gameplay')
+    .every(lot => !lot.canClaim && !lot.canInvestigate), 'reserved allocations never advertise discovery actions');
   await assert.rejects(claim(a, building.id, 'Unearned House'), error => error.code === 'deed_not_discovered');
   await assert.rejects(act(a, (ch, client, h) => claimDeed(ch,
     { name: 'Old Free Claim', district: 'docks', discovered: true, questComplete: true }, client, h)),

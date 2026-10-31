@@ -1,4 +1,5 @@
 import { ensureDeedBuildings } from './deedbuildings.js';
+import { migrateDeedBenefitStorage } from './deedbenefits.js';
 // DB layer: real Postgres when DATABASE_URL is set, in-memory pg-mem otherwise.
 // pg-mem mode means `npm start` works with ZERO infrastructure — for Jorge and for CI.
 import fs from 'node:fs';
@@ -587,7 +588,7 @@ export async function migrateSchemaUnderLock(
   await migrateCrewWageClocks(boot);
   await resetStartingLevels(boot);
   await boot.query('BEGIN');
-  try { await ensureDeedBuildings(boot); await boot.query('COMMIT'); }
+  try { await migrateDeedBenefitStorage(boot); await ensureDeedBuildings(boot); await boot.query('COMMIT'); }
   catch (error) { await boot.query('ROLLBACK'); throw error; }
   const rls = await enforceDatabaseRls(boot, { compatibility });
   const stamp = await stampSchema(boot);
@@ -1538,7 +1539,7 @@ export async function makeDb() {
   await migrateReferralOriginHolds(pool);
   await migrateCrewWageClocks(pool);
   await pool.query('BEGIN');
-  try { await ensureDeedBuildings(pool); await pool.query('COMMIT'); }
+  try { await migrateDeedBenefitStorage(pool); await ensureDeedBuildings(pool); await pool.query('COMMIT'); }
   catch (error) { await pool.query('ROLLBACK'); throw error; }
   await stampSchema(pool); // same stamp as the real-PG path, so tests exercise it
   console.log('[db] pg-mem in-memory database (set DATABASE_URL for Postgres)');

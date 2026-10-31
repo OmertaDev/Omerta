@@ -19,7 +19,8 @@ const first = await pool.connect(), second = await pool.connect();
 const definition = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
 const migration = definition.match(/CREATE TABLE IF NOT EXISTS street_deed_supply \([\s\S]*?SELECT 1, COUNT\(\*\) FROM street_deeds ON CONFLICT \(id\) DO NOTHING;/)?.[0];
 assert(migration, 'test exercises the actual boot migration');
-const finalBuilding = DEED_BUILDINGS.at(-1);
+const finalBuilding = DEED_BUILDINGS.filter(lot => lot.issuanceKind === 'gameplay').at(-1);
+const issuedBuildings = DEED_BUILDINGS.filter(lot => lot.id !== finalBuilding.id);
 const player = account_id => ({ id: account_id, account_id, name: account_id, alive: true,
   is_npc: false, loc: finalBuilding.district, respect: 1e8, energy: 100 });
 const street = name => ({ name, district: finalBuilding.district, buildingId: finalBuilding.id });
@@ -34,11 +35,11 @@ try {
   const buildingMigration = definition.match(/CREATE TABLE IF NOT EXISTS street_deed_building_assignments \([\s\S]*?\);/)?.[0];
   assert(buildingMigration, 'test exercises the durable property-assignment migration');
   await first.query(buildingMigration);
-  await first.query(`INSERT INTO street_deeds(account_id,name,name_lc,district,onchain_token_id)
+  await first.query(`INSERT INTO street_deeds(account_id,name,name_lc,district,onchain_token_id,building_id)
     SELECT CASE WHEN i=1 THEN 'onchain:1' ELSE 'legacy-' || i END,
-      'Legacy Street ' || i, 'legacy street ' || i, district, CASE WHEN i=1 THEN '1' ELSE NULL END
-    FROM unnest($1::int[],$2::text[]) AS seeded(i,district)`,
-  [DEED_BUILDINGS.slice(0, -1).map((_, index) => index + 1), DEED_BUILDINGS.slice(0, -1).map((building) => building.district)]);
+      'Legacy Street ' || i, 'legacy street ' || i, district, CASE WHEN i=1 THEN '1' ELSE NULL END, building_id
+    FROM unnest($1::int[],$2::text[],$3::text[]) AS seeded(i,district,building_id)`,
+  [issuedBuildings.map((_, index) => index + 1), issuedBuildings.map(building => building.district), issuedBuildings.map(building => building.id)]);
   await first.query(migration);
   assert.equal((await first.query('SELECT issued FROM street_deed_supply')).rows[0].issued, 2499,
     'legacy migration includes extracted identities');

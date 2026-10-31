@@ -2,6 +2,9 @@
 // shared 960x640 neighborhood scene and its public service venues. Never derive identity from
 // owner, living character, street renown or the current city population.
 export const DEED_BUILDING_TOTAL = 2500;
+export const DEED_ALLOCATION = Object.freeze({ gameplay: 1000, paid: 1000, partnership: 500 });
+const GAMEPLAY_LOTS = [167, 167, 167, 167, 166, 166];
+const PARTNERSHIP_LOTS = [84, 84, 83, 83, 83, 83];
 const TILE = 400, COLUMNS = 21, PITCH = 16;
 const DISTRICT_LOTS = Object.freeze([
   { id: 'docks', name: 'The Docks', count: 417, column: 0, row: 0, kinds: ['row_house', 'warehouse', 'apartment_building'] },
@@ -12,10 +15,12 @@ const DISTRICT_LOTS = Object.freeze([
   { id: 'cathedral', name: 'Cathedral Hill', count: 416, column: 2, row: 1, kinds: ['row_house', 'apartment_building', 'shop_house'] },
 ]);
 
-export const DEED_BUILDINGS = Object.freeze(DISTRICT_LOTS.flatMap((district) =>
+export const DEED_BUILDINGS = Object.freeze(DISTRICT_LOTS.flatMap((district, districtIndex) =>
   Array.from({ length: district.count }, (_, index) => Object.freeze({
     id: `${district.id}-${String(index + 1).padStart(4, '0')}`,
     district: district.id, number: index + 1, kind: district.kinds[index % district.kinds.length],
+    issuanceKind: index < GAMEPLAY_LOTS[districtIndex] ? 'gameplay'
+      : index >= district.count - PARTNERSHIP_LOTS[districtIndex] ? 'partnership' : 'paid',
     x: district.column * TILE + 32 + (index % COLUMNS) * PITCH,
     y: district.row * TILE + 48 + Math.floor(index / COLUMNS) * PITCH,
     width: 10, height: 9,

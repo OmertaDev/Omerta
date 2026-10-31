@@ -1,3 +1,4 @@
+import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -163,8 +164,9 @@ const socialReceiptSafetyFiles = [
 ];
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
+const deedAllocationPhysicalSource = file => deedAllocationHistoricalInput(file, fs.readFileSync(file, 'utf8'));
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
-  file, fs.readFileSync(file, 'utf8')));
+  file, deedAllocationPhysicalSource(file)));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -339,7 +341,7 @@ for (const file of bankInterestHardeningFiles) {
   const pin = ECONOMY_BANK_INTEREST_HARDENING_DOMAINS[file];
   const current = git('show', ECONOMY_BANK_INTEREST_HARDENING_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR + ':' + file);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = lf(deedAllocationPhysicalSource(file));
   assert.equal(physical, current, 'Physical bank-interest hardening source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -426,7 +428,7 @@ for (const file of socialProofCutoverFiles) {
   const predecessorAbsent = socialProofCutoverAdditions.has(file);
   const baseline = predecessorAbsent ? null
     : git('show', ECONOMY_SOCIAL_PROOF_CUTOVER_PREDECESSOR + ':' + file);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = lf(deedAllocationPhysicalSource(file));
   assert.equal(physical, current, 'Physical social-proof cutover source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -519,7 +521,7 @@ for (const file of socialReceiptSafetyFiles) {
   const pin = ECONOMY_SOCIAL_RECEIPT_SAFETY_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_PREDECESSOR + ':' + file);
-  const physical = lf(economySocialProofCutoverHistoricalInput(file, fs.readFileSync(file, 'utf8')));
+  const physical = lf(economySocialProofCutoverHistoricalInput(file, deedAllocationPhysicalSource(file)));
   assert.equal(physical, current, 'Physical receipt-safety repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -598,7 +600,7 @@ for (const file of socialReceiptFiles) {
   const pin = ECONOMY_SOCIAL_RECEIPT_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_RECEIPT_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_PREDECESSOR + ':' + file);
-  const cutoverPhysical = economySocialProofCutoverHistoricalInput(file, fs.readFileSync(file, 'utf8'));
+  const cutoverPhysical = economySocialProofCutoverHistoricalInput(file, deedAllocationPhysicalSource(file));
   const physical = lf(economySocialReceiptSafetyHistoricalInput(file, cutoverPhysical));
   assert.equal(physical, current, 'Physical social-receipt repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
