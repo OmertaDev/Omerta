@@ -133,6 +133,10 @@ await import('./lib/ux-director-reader-source-compatibility.js');
     assert.equal(conservedModule.split(hook).length, 2, 'One exact sale source integration hook');
     conservedModule = conservedModule.replace(hook, '');
   }
+  for (const hook of ["import { uxAfterwordHistoricalInput } from './ux-afterword-source-compatibility.js';\n", '  input = uxAfterwordHistoricalInput(file, input);\n']) {
+    assert.equal(conservedModule.split(hook).length, 2, 'One exact separately admitted Afterword integration hook');
+    conservedModule = conservedModule.replace(hook, '');
+  }
   conservedModule = conservedModule.replace("import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\n", '');
   conservedModule = conservedModule.replace("import { UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_SOURCE_SHA256 } from './ux-workflow-bound-source-data.js';\n", '');
   const start = conservedModule.indexOf('export { UX_WORKFLOW_BOUND_SOURCE };'), end = conservedModule.indexOf('export function uxHistoricalInput(file, input) {', start);
