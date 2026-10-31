@@ -20,9 +20,9 @@ const client = { async query(sql, values) {
   if (sql.includes('FROM characters')) return { rows: [{ cash: '9007199254740993.125', bank: '0.000000000000000001', observed_at: at }] };
   assert.match(sql, /character_id=\$1 AND currency='cash'/);
   assert.match(sql, /ORDER BY at DESC,id DESC LIMIT/);
-  assert.equal(values[0], ch.id); assert.equal(values.at(-1), 3);
-  assert(values.includes('craft:recipe:hardened_steel'));
-  assert(!values.includes('crime:fixture'));
+  assert.deepEqual(values, [ch.id, 3]);
+  assert(sql.includes("'craft:recipe:hardened_steel'"));
+  assert(!sql.includes('crime:fixture'));
   return { rows };
 } };
 const result = await businessDesk(client, ch, 2);

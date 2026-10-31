@@ -11,10 +11,6 @@ const categories = Object.freeze({
   'depot:open': 'business_transfer', 'depot:fund': 'business_transfer', 'depot:withdraw': 'business_transfer',
   travel: 'travel',
 });
-const reasons = Object.keys(categories);
-const ledgerSql = `SELECT id,at,amount::text AS amount,reason,counterparty FROM transactions
-  WHERE character_id=$1 AND currency='cash' AND reason IN (${reasons.map((_, index) => '$' + (index + 2)).join(',')})
-  ORDER BY at DESC,id DESC LIMIT $${reasons.length + 2}`;
 const fail = reason => { throw new GameError('business_desk', reason); };
 
 export function businessDeskLimit(query = {}) {
@@ -59,7 +55,14 @@ export async function businessDesk(client, ch, limit = BUSINESS_DESK.defaultLimi
     FROM characters WHERE id=$1 AND account_id=$2 AND alive=true`, [ch.id, ch.account_id])).rows[0];
   if (!balance) fail('character');
   decimal(balance.cash); decimal(balance.bank);
-  const selected = (await client.query(ledgerSql, [ch.id, ...reasons, limit + 1])).rows;
+  const selected = (await client.query(`SELECT id,at,amount::text AS amount,reason,counterparty FROM transactions
+    WHERE character_id=$1 AND currency='cash' AND reason IN (
+      'market:list','market:bid','market:refund','market:sale','market:order','market:fill',
+      'craft:recipe:hardened_steel',
+      'multi_hop_courier:reserve','multi_hop_courier:fee','multi_hop_courier:refund',
+      'consignment:purchase','consignment:proceeds','consignment:host_fee',
+      'depot:open','depot:fund','depot:withdraw','travel')
+    ORDER BY at DESC,id DESC LIMIT $2`, [ch.id, limit + 1])).rows;
   const rows = selected.slice(0, limit).map(row => ({ id: row.id, at: new Date(row.at).toISOString(),
     amount: row.amount, reason: row.reason, category: categories[row.reason], counterparty: row.counterparty }));
   return { ok: true, currency: 'game_cash', observedAt: new Date(balance.observed_at).toISOString(),
