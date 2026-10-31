@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "8759cc9cfb5f23142fbacd2b72c92bc7953ea917",
+  "sourceRevision": "a8859b0596d92dd908eea58773bce67b8dd4fd12",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17296,
-    "edges": 69296,
+    "nodes": 17298,
+    "edges": 69305,
     "byNodeType": {
       "Artifact": 7049,
       "Command": 300,
-      "Commit": 4951,
+      "Commit": 4953,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5632,
-      "CHANGED": 26650,
+      "CHANGED": 26657,
       "CONTAINS": 7070,
       "DECLARES": 300,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1187,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 4951,
+      "HAS_COMMIT": 4953,
       "IMPLEMENTS": 124,
       "IMPORTS": 8237,
       "INHERITS": 45,
@@ -38939,20 +38939,20 @@
       "path": "docs/legal-security-setup.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 3594,
-      "lines": 55,
-      "version": "f63ddbc5627724c4",
+      "bytes": 3732,
+      "lines": 56,
+      "version": "1ee085c02ccfee10",
       "text": true,
       "provenance": [
         {
           "file": "docs/legal-security-setup.md",
           "line": 1,
-          "version": "f63ddbc5627724c4"
+          "version": "1ee085c02ccfee10"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-31T03:11:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "a8859b0596d92dd908eea58773bce67b8dd4fd12"
     },
     {
       "key": "Artifact:docs/living-world-director/evidence/compiler-final.txt",
@@ -125758,20 +125758,20 @@
       "path": "src/legal.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 10927,
-      "lines": 46,
-      "version": "cc9d56d27c0630d6",
+      "bytes": 13631,
+      "lines": 57,
+      "version": "5256b7000f23cf47",
       "text": true,
       "provenance": [
         {
           "file": "src/legal.js",
           "line": 1,
-          "version": "cc9d56d27c0630d6"
+          "version": "5256b7000f23cf47"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-31T03:11:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "a8859b0596d92dd908eea58773bce67b8dd4fd12"
     },
     {
       "key": "Artifact:src/liquidityaccounting.js",
@@ -141766,20 +141766,20 @@
       "path": "test/legal-security.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7317,
-      "lines": 99,
-      "version": "faf0bc45deb14188",
+      "bytes": 7985,
+      "lines": 105,
+      "version": "aef6909797943e1f",
       "text": true,
       "provenance": [
         {
           "file": "test/legal-security.js",
           "line": 1,
-          "version": "faf0bc45deb14188"
+          "version": "aef6909797943e1f"
         }
       ],
-      "lastChangedAt": "2026-10-23T02:38:19.000Z",
+      "lastChangedAt": "2026-10-31T03:11:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "94841c7ae79f9c06644052e83c5da42ee9f2fced"
+      "lastChangedCommit": "a8859b0596d92dd908eea58773bce67b8dd4fd12"
     },
     {
       "key": "Artifact:test/levers.js",
@@ -219079,6 +219079,22 @@
       ]
     },
     {
+      "key": "Commit:a8859b0596d92dd908eea58773bce67b8dd4fd12",
+      "type": "Commit",
+      "id": "a8859b0596d92dd908eea58773bce67b8dd4fd12",
+      "label": "Publish default privacy policy with minimal operational detail",
+      "title": "Publish default privacy policy with minimal operational detail",
+      "date": "2026-10-31T03:11:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a8859b0596d92dd908eea58773bce67b8dd4fd12",
+      "provenance": [
+        {
+          "commit": "a8859b0596d92dd908eea58773bce67b8dd4fd12",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a8859b0596d92dd908eea58773bce67b8dd4fd12"
+        }
+      ]
+    },
+    {
       "key": "Commit:a88d9a719a972e96294910e588e40dc624b97817",
       "type": "Commit",
       "id": "a88d9a719a972e96294910e588e40dc624b97817",
@@ -222179,6 +222195,22 @@
         {
           "commit": "b35b9decc90c71b75a94afe8d7872ccff577fd60",
           "url": "https://github.com/OmertaDev/Omerta/commit/b35b9decc90c71b75a94afe8d7872ccff577fd60"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "type": "Commit",
+      "id": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "label": "chore(knowledge): refresh generated artifacts for 8759cc9c",
+      "title": "chore(knowledge): refresh generated artifacts for 8759cc9c",
+      "date": "2026-10-28T15:13:59.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "provenance": [
+        {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
         }
       ]
     },
@@ -256898,13 +256930,13 @@
       "id": "docs/legal-security-setup.md",
       "label": "docs/legal-security-setup.md",
       "documentType": "documentation",
-      "lines": 55,
-      "version": "f63ddbc5627724c4",
+      "lines": 56,
+      "version": "1ee085c02ccfee10",
       "provenance": [
         {
           "file": "docs/legal-security-setup.md",
           "line": 1,
-          "version": "f63ddbc5627724c4"
+          "version": "1ee085c02ccfee10"
         }
       ]
     },
@@ -263389,7 +263421,7 @@
         },
         {
           "file": "test/legal-security.js",
-          "line": 89
+          "line": 95
         }
       ]
     },
@@ -274072,6 +274104,9 @@
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
         },
         {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -276559,6 +276594,9 @@
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
         },
         {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -279044,6 +279082,9 @@
         },
         {
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
+        },
+        {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -282206,6 +282247,9 @@
         },
         {
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
+        },
+        {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -289840,13 +289884,13 @@
       "type": "Module",
       "id": "src/legal.js",
       "label": "src/legal.js",
-      "lines": 46,
-      "version": "cc9d56d27c0630d6",
+      "lines": 57,
+      "version": "5256b7000f23cf47",
       "provenance": [
         {
           "file": "src/legal.js",
           "line": 1,
-          "version": "cc9d56d27c0630d6"
+          "version": "5256b7000f23cf47"
         }
       ]
     },
@@ -297370,7 +297414,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "8759cc9cfb5f23142fbacd2b72c92bc7953ea917",
+      "revision": "a8859b0596d92dd908eea58773bce67b8dd4fd12",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
@@ -340929,13 +340973,13 @@
       "type": "TestSuite",
       "id": "test/legal-security.js",
       "label": "test/legal-security.js",
-      "lines": 99,
-      "version": "faf0bc45deb14188",
+      "lines": 105,
+      "version": "aef6909797943e1f",
       "provenance": [
         {
           "file": "test/legal-security.js",
           "line": 1,
-          "version": "faf0bc45deb14188"
+          "version": "aef6909797943e1f"
         }
       ]
     },
@@ -527151,6 +527195,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a8859b0596d92dd908eea58773bce67b8dd4fd12",
+      "to": "Artifact:docs/legal-security-setup.md",
+      "provenance": {
+        "commit": "a8859b0596d92dd908eea58773bce67b8dd4fd12"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a8859b0596d92dd908eea58773bce67b8dd4fd12",
+      "to": "Artifact:src/legal.js",
+      "provenance": {
+        "commit": "a8859b0596d92dd908eea58773bce67b8dd4fd12"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a8859b0596d92dd908eea58773bce67b8dd4fd12",
+      "to": "Artifact:test/legal-security.js",
+      "provenance": {
+        "commit": "a8859b0596d92dd908eea58773bce67b8dd4fd12"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a88d9a719a972e96294910e588e40dc624b97817",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -533139,6 +533207,38 @@
       "to": "Artifact:tools/rc1-source-pair.js",
       "provenance": {
         "commit": "b35b9decc90c71b75a94afe8d7872ccff577fd60"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
       }
     },
     {
@@ -742213,6 +742313,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a8859b0596d92dd908eea58773bce67b8dd4fd12",
+      "provenance": {
+        "commit": "a8859b0596d92dd908eea58773bce67b8dd4fd12"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a88d9a719a972e96294910e588e40dc624b97817",
       "provenance": {
         "commit": "a88d9a719a972e96294910e588e40dc624b97817"
@@ -743760,6 +743868,14 @@
       "to": "Commit:b35b9decc90c71b75a94afe8d7872ccff577fd60",
       "provenance": {
         "commit": "b35b9decc90c71b75a94afe8d7872ccff577fd60"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
       }
     },
     {
@@ -796504,7 +796620,7 @@
       "to": "ExternalDependency:/vendor/walletconnect.js",
       "provenance": {
         "file": "test/legal-security.js",
-        "line": 89
+        "line": 95
       }
     },
     {
@@ -850234,7 +850350,7 @@
       "to": "Artifact:omerta-mcp/README.md",
       "provenance": {
         "file": "docs/legal-security-setup.md",
-        "line": 24
+        "line": 25
       }
     },
     {
@@ -850243,7 +850359,7 @@
       "to": "Artifact:public/vendor/walletconnect-manifest.json",
       "provenance": {
         "file": "docs/legal-security-setup.md",
-        "line": 48
+        "line": 49
       }
     },
     {
@@ -928318,7 +928434,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/legal.js",
-        "line": 33
+        "line": 42
       }
     },
     {
@@ -928327,7 +928443,7 @@
       "to": "Table:notifications",
       "provenance": {
         "file": "src/legal.js",
-        "line": 33
+        "line": 38
       }
     },
     {
@@ -928336,7 +928452,7 @@
       "to": "Table:referrals",
       "provenance": {
         "file": "src/legal.js",
-        "line": 33
+        "line": 36
       }
     },
     {
@@ -928345,7 +928461,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/legal.js",
-        "line": 35
+        "line": 43
       }
     },
     {
