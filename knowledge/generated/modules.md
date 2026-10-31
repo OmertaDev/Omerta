@@ -148,7 +148,7 @@
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 1 | 0 | 6 | 1 |
 | [src/content/furnace-ledger.js](../../src/content/furnace-ledger.js) | 151 | platform-core | 7 / 16 | 0 | 1 | 13 |
 | [src/content/json-source.js](../../src/content/json-source.js) | 337 | platform-core | 0 / 7 | 0 | 0 | 2 |
-| [src/content/neighborhood-afterword.js](../../src/content/neighborhood-afterword.js) | 79 | platform-core | 0 / 2 | 0 | 0 | 0 |
+| [src/content/neighborhood-afterword.js](../../src/content/neighborhood-afterword.js) | 79 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/content/neighborhood-broadcast.js](../../src/content/neighborhood-broadcast.js) | 83 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/content/neighborhood-initiation.js](../../src/content/neighborhood-initiation.js) | 38 | platform-core | 0 / 4 | 0 | 0 | 2 |
 | [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 169 | world-graph | 0 / 3 | 0 | 1 | 1 |

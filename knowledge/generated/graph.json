@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "bb5cd3573e80d00e7e6a717dcfef360108f109ed",
+  "sourceRevision": "39a690be95d686e9663d4b636801263fe6bbc11c",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17319,
-    "edges": 69400,
+    "nodes": 17324,
+    "edges": 69427,
     "byNodeType": {
-      "Artifact": 7056,
+      "Artifact": 7058,
       "Command": 300,
-      "Commit": 4960,
+      "Commit": 4963,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -64,21 +64,21 @@
       "Workflow": 7
     },
     "byEdgeType": {
-      "BELONGS_TO": 5639,
-      "CHANGED": 26708,
-      "CONTAINS": 7077,
+      "BELONGS_TO": 5641,
+      "CHANGED": 26722,
+      "CONTAINS": 7079,
       "DECLARES": 300,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1187,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 4960,
+      "HAS_COMMIT": 4963,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8252,
+      "IMPORTS": 8257,
       "INHERITS": 45,
       "REFERENCES": 3871,
       "REPRESENTS": 2618,
-      "TESTS": 2491,
+      "TESTS": 2492,
       "TRACKS": 126,
       "USES_TABLE": 3229
     }
@@ -133854,20 +133854,20 @@
       "path": "test/city-district-arcs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 17785,
-      "lines": 233,
-      "version": "1ebb6adaae9dc197",
+      "bytes": 19144,
+      "lines": 251,
+      "version": "abb226226c451f2b",
       "text": true,
       "provenance": [
         {
           "file": "test/city-district-arcs.js",
           "line": 1,
-          "version": "1ebb6adaae9dc197"
+          "version": "abb226226c451f2b"
         }
       ],
-      "lastChangedAt": "2026-10-16T16:35:12.000Z",
+      "lastChangedAt": "2026-10-31T03:44:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe"
+      "lastChangedCommit": "778990997b3cac6342a15d8027bfe110fd62d80d"
     },
     {
       "key": "Artifact:test/city-encounters-native-proof.js",
@@ -142113,18 +142113,18 @@
       "extension": ".js",
       "bytes": 12780,
       "lines": 90,
-      "version": "ec665e80534583ff",
+      "version": "aa331e327e99ffd7",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "ec665e80534583ff"
+          "version": "aa331e327e99ffd7"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:20:43.000Z",
+      "lastChangedAt": "2026-10-31T03:44:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bd44ee62874c2e5abb0f22ecaf07e7e1a10f7582"
+      "lastChangedCommit": "778990997b3cac6342a15d8027bfe110fd62d80d"
     },
     {
       "key": "Artifact:test/lib/equipment-economy-migration-catalog.js",
@@ -142571,20 +142571,20 @@
       "path": "test/lib/ux-journeys.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4782,
-      "lines": 58,
-      "version": "0727c30819768152",
+      "bytes": 11619,
+      "lines": 137,
+      "version": "0c2e36762e9f2ee5",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/ux-journeys.js",
           "line": 1,
-          "version": "0727c30819768152"
+          "version": "0c2e36762e9f2ee5"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-10-31T03:44:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "778990997b3cac6342a15d8027bfe110fd62d80d"
     },
     {
       "key": "Artifact:test/lib/ux-native-director-guard.js",
@@ -156532,20 +156532,20 @@
       "path": "tools/enterprise-native-ux-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 461579,
-      "lines": 12335,
-      "version": "1a457f9449e9b606",
+      "bytes": 462513,
+      "lines": 12359,
+      "version": "7c120ae6ae8dfc12",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "1a457f9449e9b606"
+          "version": "7c120ae6ae8dfc12"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:23:02.000Z",
+      "lastChangedAt": "2026-10-31T03:46:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bb5cd3573e80d00e7e6a717dcfef360108f109ed"
+      "lastChangedCommit": "39a690be95d686e9663d4b636801263fe6bbc11c"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -161766,6 +161766,52 @@
       "lastChangedCommit": "d15bb1c5cbb82d0f589b639f3641452296c81c5c"
     },
     {
+      "key": "Artifact:tools/ux-afterword-source-compatibility.js",
+      "type": "Artifact",
+      "id": "tools/ux-afterword-source-compatibility.js",
+      "label": "ux-afterword-source-compatibility.js",
+      "path": "tools/ux-afterword-source-compatibility.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 4223,
+      "lines": 49,
+      "version": "4aa4a1647499fc84",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-afterword-source-compatibility.js",
+          "line": 1,
+          "version": "4aa4a1647499fc84"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:44:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+    },
+    {
+      "key": "Artifact:tools/ux-afterword-source-data.js",
+      "type": "Artifact",
+      "id": "tools/ux-afterword-source-data.js",
+      "label": "ux-afterword-source-data.js",
+      "path": "tools/ux-afterword-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 12653,
+      "lines": 112,
+      "version": "5124255826020ed2",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/ux-afterword-source-data.js",
+          "line": 1,
+          "version": "5124255826020ed2"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:44:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+    },
+    {
       "key": "Artifact:tools/ux-director-reader-source-compatibility.js",
       "type": "Artifact",
       "id": "tools/ux-director-reader-source-compatibility.js",
@@ -162026,20 +162072,20 @@
       "path": "tools/ux-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 8822,
-      "lines": 105,
-      "version": "7d4652ef370a10da",
+      "bytes": 8958,
+      "lines": 107,
+      "version": "cf9ea1c334631561",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-source-compatibility.js",
           "line": 1,
-          "version": "7d4652ef370a10da"
+          "version": "cf9ea1c334631561"
         }
       ],
-      "lastChangedAt": "2026-10-26T21:55:51.000Z",
+      "lastChangedAt": "2026-10-31T03:44:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "edaaed2b9d8913039c7cee61d7a46af7ce0657c5"
+      "lastChangedCommit": "778990997b3cac6342a15d8027bfe110fd62d80d"
     },
     {
       "key": "Artifact:tools/ux-source-data.js",
@@ -184344,6 +184390,22 @@
       ]
     },
     {
+      "key": "Commit:39a690be95d686e9663d4b636801263fe6bbc11c",
+      "type": "Commit",
+      "id": "39a690be95d686e9663d4b636801263fe6bbc11c",
+      "label": "Seal qualified Afterword source inputs",
+      "title": "Seal qualified Afterword source inputs",
+      "date": "2026-10-31T03:46:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/39a690be95d686e9663d4b636801263fe6bbc11c",
+      "provenance": [
+        {
+          "commit": "39a690be95d686e9663d4b636801263fe6bbc11c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/39a690be95d686e9663d4b636801263fe6bbc11c"
+        }
+      ]
+    },
+    {
       "key": "Commit:39ba471904501c22e1356f238ce7b0d814d0cf8e",
       "type": "Commit",
       "id": "39ba471904501c22e1356f238ce7b0d814d0cf8e",
@@ -204020,6 +204082,22 @@
         {
           "commit": "778462db653e79345f302d5d2385272d257d4f87",
           "url": "https://github.com/OmertaDev/Omerta/commit/778462db653e79345f302d5d2385272d257d4f87"
+        }
+      ]
+    },
+    {
+      "key": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "type": "Commit",
+      "id": "778990997b3cac6342a15d8027bfe110fd62d80d",
+      "label": "Qualify Afterword content with exact historical source proofs",
+      "title": "Qualify Afterword content with exact historical source proofs",
+      "date": "2026-10-31T03:44:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/778990997b3cac6342a15d8027bfe110fd62d80d",
+      "provenance": [
+        {
+          "commit": "778990997b3cac6342a15d8027bfe110fd62d80d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/778990997b3cac6342a15d8027bfe110fd62d80d"
         }
       ]
     },
@@ -243208,6 +243286,22 @@
       ]
     },
     {
+      "key": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "type": "Commit",
+      "id": "f82be641e7189248799aa171d51619227d259b29",
+      "label": "Refresh knowledge for merged player journeys release",
+      "title": "Refresh knowledge for merged player journeys release",
+      "date": "2026-10-31T03:31:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f82be641e7189248799aa171d51619227d259b29",
+      "provenance": [
+        {
+          "commit": "f82be641e7189248799aa171d51619227d259b29",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f82be641e7189248799aa171d51619227d259b29"
+        }
+      ]
+    },
+    {
       "key": "Commit:f8443aed631b09224c12ba3b44b28e2db420840a",
       "type": "Commit",
       "id": "f8443aed631b09224c12ba3b44b28e2db420840a",
@@ -264494,7 +264588,7 @@
         },
         {
           "file": "test/city-district-arcs.js",
-          "line": 35
+          "line": 36
         },
         {
           "file": "test/city-encounters-native-proof.js",
@@ -272562,6 +272656,9 @@
           "commit": "f7ec7852f038246553483eec187e32143397c2f7"
         },
         {
+          "commit": "f82be641e7189248799aa171d51619227d259b29"
+        },
+        {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
@@ -275017,6 +275114,9 @@
         },
         {
           "commit": "f7ec7852f038246553483eec187e32143397c2f7"
+        },
+        {
+          "commit": "f82be641e7189248799aa171d51619227d259b29"
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
@@ -277515,6 +277615,9 @@
           "commit": "f7ec7852f038246553483eec187e32143397c2f7"
         },
         {
+          "commit": "f82be641e7189248799aa171d51619227d259b29"
+        },
+        {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
@@ -280009,6 +280112,9 @@
         },
         {
           "commit": "f7ec7852f038246553483eec187e32143397c2f7"
+        },
+        {
+          "commit": "f82be641e7189248799aa171d51619227d259b29"
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
@@ -283185,6 +283291,9 @@
           "commit": "f7ec7852f038246553483eec187e32143397c2f7"
         },
         {
+          "commit": "f82be641e7189248799aa171d51619227d259b29"
+        },
+        {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
         },
         {
@@ -284092,6 +284201,9 @@
         },
         {
           "commit": "f7ec7852f038246553483eec187e32143397c2f7"
+        },
+        {
+          "commit": "f82be641e7189248799aa171d51619227d259b29"
         },
         {
           "commit": "f8642cfa03b06ebae22854e0de9f2512d234b979"
@@ -297753,12 +297865,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "bb5cd3573e80d00e7e6a717dcfef360108f109ed",
+      "revision": "39a690be95d686e9663d4b636801263fe6bbc11c",
       "currentBranch": "codex/ux-player-journeys",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7056,
+      "currentArtifactCount": 7058,
       "provenance": [
         {
           "file": "README.md",
@@ -336287,13 +336399,13 @@
       "type": "TestSuite",
       "id": "test/city-district-arcs.js",
       "label": "test/city-district-arcs.js",
-      "lines": 233,
-      "version": "1ebb6adaae9dc197",
+      "lines": 251,
+      "version": "abb226226c451f2b",
       "provenance": [
         {
           "file": "test/city-district-arcs.js",
           "line": 1,
-          "version": "1ebb6adaae9dc197"
+          "version": "abb226226c451f2b"
         }
       ]
     },
@@ -341523,12 +341635,12 @@
       "id": "test/lib/enterprise-ux-native-guard.js",
       "label": "test/lib/enterprise-ux-native-guard.js",
       "lines": 90,
-      "version": "ec665e80534583ff",
+      "version": "aa331e327e99ffd7",
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "ec665e80534583ff"
+          "version": "aa331e327e99ffd7"
         }
       ]
     },
@@ -341807,13 +341919,13 @@
       "type": "TestSuite",
       "id": "test/lib/ux-journeys.js",
       "label": "test/lib/ux-journeys.js",
-      "lines": 58,
-      "version": "0727c30819768152",
+      "lines": 137,
+      "version": "0c2e36762e9f2ee5",
       "provenance": [
         {
           "file": "test/lib/ux-journeys.js",
           "line": 1,
-          "version": "0727c30819768152"
+          "version": "0c2e36762e9f2ee5"
         }
       ]
     },
@@ -390731,6 +390843,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/stock-e2e.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-afterword-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-afterword-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/ux-afterword-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/ux-afterword-source-data.js",
         "line": 1
       }
     },
@@ -441515,6 +441645,14 @@
       "to": "Artifact:tools/director-validate.js",
       "provenance": {
         "commit": "39a51716b9c99bc5964d83efddd7616477bb8947"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:39a690be95d686e9663d4b636801263fe6bbc11c",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "39a690be95d686e9663d4b636801263fe6bbc11c"
       }
     },
     {
@@ -493139,6 +493277,62 @@
       "to": "Artifact:test/intelforecastjobs.js",
       "provenance": {
         "commit": "778462db653e79345f302d5d2385272d257d4f87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "to": "Artifact:test/city-district-arcs.js",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "to": "Artifact:test/lib/enterprise-ux-native-guard.js",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "to": "Artifact:test/lib/ux-journeys.js",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "to": "Artifact:tools/ux-afterword-source-compatibility.js",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "to": "Artifact:tools/ux-afterword-source-data.js",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "to": "Artifact:tools/ux-source-compatibility.js",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
       }
     },
     {
@@ -607559,6 +607753,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "f82be641e7189248799aa171d51619227d259b29"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f82be641e7189248799aa171d51619227d259b29"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f82be641e7189248799aa171d51619227d259b29"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f82be641e7189248799aa171d51619227d259b29"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f82be641e7189248799aa171d51619227d259b29"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "f82be641e7189248799aa171d51619227d259b29"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f8443aed631b09224c12ba3b44b28e2db420840a",
       "to": "Artifact:docs/company-autonomy-lock-order-proposal.md",
       "provenance": {
@@ -657434,6 +657676,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-afterword-source-compatibility.js",
+      "provenance": {
+        "file": "tools/ux-afterword-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/ux-afterword-source-data.js",
+      "provenance": {
+        "file": "tools/ux-afterword-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/ux-director-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-director-reader-source-compatibility.js",
@@ -696424,7 +696684,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1861
+      "weight": 1862
     },
     {
       "type": "DEPENDS_ON",
@@ -725828,6 +726088,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:39a690be95d686e9663d4b636801263fe6bbc11c",
+      "provenance": {
+        "commit": "39a690be95d686e9663d4b636801263fe6bbc11c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:39ba471904501c22e1356f238ce7b0d814d0cf8e",
       "provenance": {
         "commit": "39ba471904501c22e1356f238ce7b0d814d0cf8e"
@@ -735663,6 +735931,14 @@
       "to": "Commit:778462db653e79345f302d5d2385272d257d4f87",
       "provenance": {
         "commit": "778462db653e79345f302d5d2385272d257d4f87"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:778990997b3cac6342a15d8027bfe110fd62d80d",
+      "provenance": {
+        "commit": "778990997b3cac6342a15d8027bfe110fd62d80d"
       }
     },
     {
@@ -755255,6 +755531,14 @@
       "to": "Commit:f82651da5a5bdaf8b16981bb48e318630d32bc48",
       "provenance": {
         "commit": "f82651da5a5bdaf8b16981bb48e318630d32bc48"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f82be641e7189248799aa171d51619227d259b29",
+      "provenance": {
+        "commit": "f82be641e7189248799aa171d51619227d259b29"
       }
     },
     {
@@ -782057,7 +782341,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/city-district-arcs.js",
-      "to": "Artifact:src/content/property-investigation.js",
+      "to": "Artifact:src/content/neighborhood-afterword.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
         "line": 8
@@ -782066,7 +782350,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/city-district-arcs.js",
-      "to": "Artifact:src/rules.js",
+      "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
         "line": 9
@@ -782075,10 +782359,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/city-district-arcs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/city-district-arcs.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-district-arcs.js",
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 44
+        "line": 45
       }
     },
     {
@@ -782105,7 +782398,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 35
+        "line": 36
       }
     },
     {
@@ -798675,6 +798968,24 @@
       "provenance": {
         "file": "test/lib/ux-journeys-browser.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-journeys.js",
+      "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-journeys.js",
+      "to": "Artifact:tools/ux-afterword-source-compatibility.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 7
       }
     },
     {
@@ -830971,6 +831282,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/ux-afterword-source-compatibility.js",
+      "to": "Artifact:tools/ux-afterword-source-data.js",
+      "provenance": {
+        "file": "tools/ux-afterword-source-compatibility.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/ux-director-reader-source-compatibility.js",
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
@@ -831173,13 +831493,22 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/ux-source-compatibility.js",
       "to": "Artifact:tools/sale-source-compatibility.js",
+      "provenance": {
+        "file": "tools/ux-source-compatibility.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/ux-source-compatibility.js",
+      "to": "Artifact:tools/ux-afterword-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
         "line": 4
@@ -831191,7 +831520,7 @@
       "to": "Artifact:tools/ux-director-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -831200,7 +831529,7 @@
       "to": "Artifact:tools/ux-enterprise-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -831209,7 +831538,7 @@
       "to": "Artifact:tools/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -831218,7 +831547,7 @@
       "to": "Artifact:tools/ux-source-data.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -831227,7 +831556,7 @@
       "to": "Artifact:tools/ux-workflow-bound-source-data.js",
       "provenance": {
         "file": "tools/ux-source-compatibility.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -892433,7 +892762,7 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/city-district-arcs.js",
-      "to": "Artifact:src/content/property-investigation.js",
+      "to": "Artifact:src/content/neighborhood-afterword.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
         "line": 8
@@ -892442,10 +892771,19 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/city-district-arcs.js",
-      "to": "Artifact:src/rules.js",
+      "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
         "line": 9
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-district-arcs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/city-district-arcs.js",
+        "line": 10
       }
     },
     {
