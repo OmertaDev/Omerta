@@ -128,7 +128,7 @@
 | [src/content/belladonna.js](../../src/content/belladonna.js) | 241 | world-graph | 0 / 3 | 0 | 0 | 1 |
 | [src/content/campaign-network.js](../../src/content/campaign-network.js) | 200 | platform-core | 7 / 8 | 0 | 0 | 2 |
 | [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 41 | 0 | 0 | 9 |
-| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 39 | platform-core | 3 / 3 | 0 | 0 | 2 |
+| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 43 | platform-core | 3 / 3 | 0 | 0 | 2 |
 | [src/content/city-rumors.js](../../src/content/city-rumors.js) | 77 | platform-core | 0 / 2 | 0 | 3 | 1 |
 | [src/content/city-world-opportunities.js](../../src/content/city-world-opportunities.js) | 139 | platform-core | 0 / 5 | 0 | 1 | 2 |
 | [src/content/company-production-quality.js](../../src/content/company-production-quality.js) | 22 | platform-core | 0 / 1 | 0 | 0 | 0 |
@@ -148,11 +148,12 @@
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 1 | 0 | 6 | 1 |
 | [src/content/furnace-ledger.js](../../src/content/furnace-ledger.js) | 151 | platform-core | 7 / 16 | 0 | 1 | 13 |
 | [src/content/json-source.js](../../src/content/json-source.js) | 337 | platform-core | 0 / 7 | 0 | 0 | 2 |
+| [src/content/neighborhood-afterword.js](../../src/content/neighborhood-afterword.js) | 79 | platform-core | 0 / 2 | 0 | 0 | 0 |
 | [src/content/neighborhood-broadcast.js](../../src/content/neighborhood-broadcast.js) | 83 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/content/neighborhood-initiation.js](../../src/content/neighborhood-initiation.js) | 38 | platform-core | 0 / 4 | 0 | 0 | 2 |
 | [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 169 | world-graph | 0 / 3 | 0 | 1 | 1 |
 | [src/content/phase1-validation.js](../../src/content/phase1-validation.js) | 54 | world-graph | 5 / 6 | 0 | 0 | 2 |
-| [src/content/phase1.js](../../src/content/phase1.js) | 28 | world-graph | 11 / 17 | 0 | 0 | 11 |
+| [src/content/phase1.js](../../src/content/phase1.js) | 30 | world-graph | 12 / 17 | 0 | 0 | 11 |
 | [src/content/phase2-transactions.js](../../src/content/phase2-transactions.js) | 138 | platform-core | 2 / 15 | 0 | 0 | 6 |
 | [src/content/progression-admission.js](../../src/content/progression-admission.js) | 274 | platform-core | 9 / 3 | 0 | 1 | 1 |
 | [src/content/property-investigation.js](../../src/content/property-investigation.js) | 143 | platform-core | 0 / 3 | 0 | 0 | 1 |
@@ -564,8 +565,8 @@
 | [src/ux-community.js](../../src/ux-community.js) | 254 | platform-core | 4 / 2 | 0 | 12 | 1 |
 | [src/ux-coordination.js](../../src/ux-coordination.js) | 224 | platform-core | 3 / 3 | 0 | 7 | 1 |
 | [src/ux-investigation.js](../../src/ux-investigation.js) | 108 | platform-core | 4 / 3 | 0 | 6 | 1 |
-| [src/ux-story.js](../../src/ux-story.js) | 94 | platform-core | 5 / 2 | 0 | 0 | 1 |
-| [src/ux-tactics.js](../../src/ux-tactics.js) | 196 | platform-core | 6 / 2 | 0 | 3 | 1 |
+| [src/ux-story.js](../../src/ux-story.js) | 113 | platform-core | 6 / 3 | 0 | 0 | 2 |
+| [src/ux-tactics.js](../../src/ux-tactics.js) | 216 | platform-core | 6 / 2 | 0 | 3 | 1 |
 | [src/ux-workspace.js](../../src/ux-workspace.js) | 44 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/v4oraclekeeper.js](../../src/v4oraclekeeper.js) | 536 | platform-core | 1 / 1 | 0 | 2 | 0 |
 | [src/vanity.js](../../src/vanity.js) | 164 | engagement-growth | 2 / 21 | 8 | 9 | 0 |

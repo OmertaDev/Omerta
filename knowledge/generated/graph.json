@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "8759cc9cfb5f23142fbacd2b72c92bc7953ea917",
+  "sourceRevision": "db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,42 +43,42 @@
     ]
   },
   "census": {
-    "nodes": 17296,
-    "edges": 69296,
+    "nodes": 17313,
+    "edges": 69375,
     "byNodeType": {
-      "Artifact": 7049,
+      "Artifact": 7056,
       "Command": 300,
-      "Commit": 4951,
+      "Commit": 4954,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
       "ExternalDependency": 37,
       "HistoricalArtifact": 430,
-      "Module": 591,
+      "Module": 592,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 1054,
       "Subsystem": 8,
       "Table": 582,
-      "TestSuite": 1057,
+      "TestSuite": 1063,
       "Workflow": 7
     },
     "byEdgeType": {
-      "BELONGS_TO": 5632,
-      "CHANGED": 26650,
-      "CONTAINS": 7070,
+      "BELONGS_TO": 5639,
+      "CHANGED": 26689,
+      "CONTAINS": 7077,
       "DECLARES": 300,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1187,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 4951,
+      "HAS_COMMIT": 4954,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8237,
+      "IMPORTS": 8252,
       "INHERITS": 45,
       "REFERENCES": 3871,
-      "REPRESENTS": 2611,
-      "TESTS": 2490,
+      "REPRESENTS": 2618,
+      "TESTS": 2491,
       "TRACKS": 126,
       "USES_TABLE": 3229
     }
@@ -8004,20 +8004,20 @@
       "path": "AGENTS.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 48791,
-      "lines": 743,
-      "version": "1aa9290c76468c11",
+      "bytes": 49364,
+      "lines": 751,
+      "version": "3cc1d78a79ded14d",
       "text": true,
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "1aa9290c76468c11"
+          "version": "3cc1d78a79ded14d"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:AGENTS.override.md",
@@ -117892,20 +117892,20 @@
       "path": "public/ux-coordination.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 2410,
-      "lines": 2,
-      "version": "9b79f34286e6829b",
+      "bytes": 3725,
+      "lines": 3,
+      "version": "8044d107e1a0a9a7",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-coordination.css",
           "line": 1,
-          "version": "9b79f34286e6829b"
+          "version": "8044d107e1a0a9a7"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-coordination.js",
@@ -117915,20 +117915,20 @@
       "path": "public/ux-coordination.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 22671,
-      "lines": 169,
-      "version": "7e74509012c977a5",
+      "bytes": 31090,
+      "lines": 233,
+      "version": "4868b786546015d7",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-coordination.js",
           "line": 1,
-          "version": "7e74509012c977a5"
+          "version": "4868b786546015d7"
         }
       ],
-      "lastChangedAt": "2026-10-26T01:49:45.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5addaa24049a76ce1aef6e293503fdbf2033fa54"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-feedback.css",
@@ -118122,20 +118122,20 @@
       "path": "public/ux-navigation.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 7185,
-      "lines": 31,
-      "version": "b47aa884a0bc7d55",
+      "bytes": 7808,
+      "lines": 34,
+      "version": "712ebf19faf5303e",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-navigation.css",
           "line": 1,
-          "version": "b47aa884a0bc7d55"
+          "version": "712ebf19faf5303e"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:31:03.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-navigation.js",
@@ -118145,20 +118145,20 @@
       "path": "public/ux-navigation.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 29818,
-      "lines": 340,
-      "version": "f0a6d8103c77fceb",
+      "bytes": 34945,
+      "lines": 393,
+      "version": "dc3bb19447298cfc",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-navigation.js",
           "line": 1,
-          "version": "f0a6d8103c77fceb"
+          "version": "dc3bb19447298cfc"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:31:03.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-progression.css",
@@ -118168,20 +118168,20 @@
       "path": "public/ux-progression.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 10116,
-      "lines": 98,
-      "version": "b3f8ddb1bbc31fb2",
+      "bytes": 10787,
+      "lines": 99,
+      "version": "d5e3d1c28b3e8ee6",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-progression.css",
           "line": 1,
-          "version": "b3f8ddb1bbc31fb2"
+          "version": "d5e3d1c28b3e8ee6"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-progression.js",
@@ -118191,20 +118191,20 @@
       "path": "public/ux-progression.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 37886,
-      "lines": 491,
-      "version": "4b016e1f713b94e6",
+      "bytes": 50629,
+      "lines": 630,
+      "version": "afa7aea0a043975e",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-progression.js",
           "line": 1,
-          "version": "4b016e1f713b94e6"
+          "version": "afa7aea0a043975e"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-social.css",
@@ -118306,20 +118306,20 @@
       "path": "public/ux-tactics.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 6017,
-      "lines": 15,
-      "version": "3dd675c2c1e3f53b",
+      "bytes": 6863,
+      "lines": 16,
+      "version": "d4894c313b391e37",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-tactics.css",
           "line": 1,
-          "version": "3dd675c2c1e3f53b"
+          "version": "d4894c313b391e37"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-tactics.js",
@@ -118329,20 +118329,20 @@
       "path": "public/ux-tactics.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 32681,
-      "lines": 278,
-      "version": "b42132fa716af364",
+      "bytes": 41886,
+      "lines": 372,
+      "version": "23ee8040bd87b1e1",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-tactics.js",
           "line": 1,
-          "version": "b42132fa716af364"
+          "version": "23ee8040bd87b1e1"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:public/ux-tools.css",
@@ -118814,18 +118814,18 @@
       "extension": ".md",
       "bytes": 57077,
       "lines": 760,
-      "version": "0a3c0747c102a6a8",
+      "version": "ff212fb62524d6fc",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0a3c0747c102a6a8"
+          "version": "ff212fb62524d6fc"
         }
       ],
-      "lastChangedAt": "2026-10-27T11:08:17.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ea04050c700506907f53ea46fe3cd88032e050e1"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:src/access.js",
@@ -121710,20 +121710,20 @@
       "path": "src/content/city-quest-presentation.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 2207,
-      "lines": 39,
-      "version": "12acd35f7ec91bc1",
+      "bytes": 2565,
+      "lines": 43,
+      "version": "7abe9758e99a68dd",
       "text": true,
       "provenance": [
         {
           "file": "src/content/city-quest-presentation.js",
           "line": 1,
-          "version": "12acd35f7ec91bc1"
+          "version": "7abe9758e99a68dd"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:src/content/city-rumors.js",
@@ -122163,6 +122163,29 @@
       "lastChangedCommit": "49d3066f587652d6b9b8948a670f0ebe6cedb9f6"
     },
     {
+      "key": "Artifact:src/content/neighborhood-afterword.js",
+      "type": "Artifact",
+      "id": "src/content/neighborhood-afterword.js",
+      "label": "neighborhood-afterword.js",
+      "path": "src/content/neighborhood-afterword.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 6764,
+      "lines": 79,
+      "version": "86a7bf33ecbdaee3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/neighborhood-afterword.js",
+          "line": 1,
+          "version": "86a7bf33ecbdaee3"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+    },
+    {
       "key": "Artifact:src/content/neighborhood-broadcast.js",
       "type": "Artifact",
       "id": "src/content/neighborhood-broadcast.js",
@@ -122239,20 +122262,20 @@
       "path": "src/content/phase1-policy.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 7826,
+      "bytes": 7852,
       "lines": 169,
-      "version": "54fcf367ee323452",
+      "version": "f5d2339a39d85655",
       "text": true,
       "provenance": [
         {
           "file": "src/content/phase1-policy.js",
           "line": 1,
-          "version": "54fcf367ee323452"
+          "version": "f5d2339a39d85655"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:src/content/phase1-validation.js",
@@ -122285,20 +122308,20 @@
       "path": "src/content/phase1.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 1416,
-      "lines": 28,
-      "version": "6d3d5cccc4fbf99c",
+      "bytes": 1528,
+      "lines": 30,
+      "version": "6d8ca127ad60b3e1",
       "text": true,
       "provenance": [
         {
           "file": "src/content/phase1.js",
           "line": 1,
-          "version": "6d3d5cccc4fbf99c"
+          "version": "6d8ca127ad60b3e1"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:src/content/phase2-transactions.js",
@@ -131807,20 +131830,20 @@
       "path": "src/ux-story.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 12337,
-      "lines": 94,
-      "version": "a7becb7b78c09e03",
+      "bytes": 14224,
+      "lines": 113,
+      "version": "59f2c4d6021e5e96",
       "text": true,
       "provenance": [
         {
           "file": "src/ux-story.js",
           "line": 1,
-          "version": "a7becb7b78c09e03"
+          "version": "59f2c4d6021e5e96"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:src/ux-tactics.js",
@@ -131830,20 +131853,20 @@
       "path": "src/ux-tactics.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 17478,
-      "lines": 196,
-      "version": "1d15b503c1fffe91",
+      "bytes": 18980,
+      "lines": 216,
+      "version": "c92cfabb6f5786aa",
       "text": true,
       "provenance": [
         {
           "file": "src/ux-tactics.js",
           "line": 1,
-          "version": "1d15b503c1fffe91"
+          "version": "c92cfabb6f5786aa"
         }
       ],
-      "lastChangedAt": "2026-10-26T20:02:08.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a6248ef475ab7fea693fee16611d99a2223abf0b"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:src/ux-workspace.js",
@@ -134086,18 +134109,18 @@
       "extension": ".js",
       "bytes": 17775,
       "lines": 270,
-      "version": "2f8df22bade33d7a",
+      "version": "04c61d8a9e8c0be7",
       "text": true,
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "2f8df22bade33d7a"
+          "version": "04c61d8a9e8c0be7"
         }
       ],
-      "lastChangedAt": "2026-10-17T09:02:02.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bcb7250445084b6aaf4e2d4f182b7acd88bed8ae"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/city-scene-browser.js",
@@ -141828,6 +141851,52 @@
       "lastChangedCommit": "612bb49b94ab756c0165dc50b0eb27b69b2b316b"
     },
     {
+      "key": "Artifact:test/lib/city-afterword-browser.js",
+      "type": "Artifact",
+      "id": "test/lib/city-afterword-browser.js",
+      "label": "city-afterword-browser.js",
+      "path": "test/lib/city-afterword-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 6035,
+      "lines": 86,
+      "version": "6a8e0fed01c44d65",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/city-afterword-browser.js",
+          "line": 1,
+          "version": "6a8e0fed01c44d65"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+    },
+    {
+      "key": "Artifact:test/lib/city-afterword-fixture.js",
+      "type": "Artifact",
+      "id": "test/lib/city-afterword-fixture.js",
+      "label": "city-afterword-fixture.js",
+      "path": "test/lib/city-afterword-fixture.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 4803,
+      "lines": 71,
+      "version": "3d9a1a892c6f5d12",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/city-afterword-fixture.js",
+          "line": 1,
+          "version": "3d9a1a892c6f5d12"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+    },
+    {
       "key": "Artifact:test/lib/city-gameplay-migration-catalog.js",
       "type": "Artifact",
       "id": "test/lib/city-gameplay-migration-catalog.js",
@@ -141849,6 +141918,29 @@
       "lastChangedAt": "2026-10-13T01:35:41.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "df3f621c03646b55b22938733d72e12579862f05"
+    },
+    {
+      "key": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "type": "Artifact",
+      "id": "test/lib/city-neighborhood-afterword.js",
+      "label": "city-neighborhood-afterword.js",
+      "path": "test/lib/city-neighborhood-afterword.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 5457,
+      "lines": 72,
+      "version": "62a7daeb97b11800",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/city-neighborhood-afterword.js",
+          "line": 1,
+          "version": "62a7daeb97b11800"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/lib/city-world-opportunity-controls.js",
@@ -142021,18 +142113,18 @@
       "extension": ".js",
       "bytes": 12780,
       "lines": 90,
-      "version": "0f56601338664284",
+      "version": "0939c81067e07ec1",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "0f56601338664284"
+          "version": "0939c81067e07ec1"
         }
       ],
-      "lastChangedAt": "2026-10-27T14:30:19.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1822593cfff6e66483a685fc7bf6bff4c50de5f0"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/lib/equipment-economy-migration-catalog.js",
@@ -142449,6 +142541,52 @@
       "lastChangedCommit": "5edb326fe8a77523359780c322f323d23464861e"
     },
     {
+      "key": "Artifact:test/lib/ux-journeys-browser.js",
+      "type": "Artifact",
+      "id": "test/lib/ux-journeys-browser.js",
+      "label": "ux-journeys-browser.js",
+      "path": "test/lib/ux-journeys-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 10468,
+      "lines": 118,
+      "version": "6f841bbb13811b5d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/ux-journeys-browser.js",
+          "line": 1,
+          "version": "6f841bbb13811b5d"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+    },
+    {
+      "key": "Artifact:test/lib/ux-journeys.js",
+      "type": "Artifact",
+      "id": "test/lib/ux-journeys.js",
+      "label": "ux-journeys.js",
+      "path": "test/lib/ux-journeys.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 4782,
+      "lines": 58,
+      "version": "0727c30819768152",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/ux-journeys.js",
+          "line": 1,
+          "version": "0727c30819768152"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+    },
+    {
       "key": "Artifact:test/lib/ux-native-director-guard.js",
       "type": "Artifact",
       "id": "test/lib/ux-native-director-guard.js",
@@ -142493,6 +142631,29 @@
       "lastChangedAt": "2026-10-26T19:06:06.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "5edb326fe8a77523359780c322f323d23464861e"
+    },
+    {
+      "key": "Artifact:test/lib/ux-opening-live-browser.js",
+      "type": "Artifact",
+      "id": "test/lib/ux-opening-live-browser.js",
+      "label": "ux-opening-live-browser.js",
+      "path": "test/lib/ux-opening-live-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 12596,
+      "lines": 167,
+      "version": "10de7a3357f42a1e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/ux-opening-live-browser.js",
+          "line": 1,
+          "version": "10de7a3357f42a1e"
+        }
+      ],
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/lib/ux-personal-fixture.js",
@@ -152852,20 +153013,20 @@
       "path": "test/ux-coordination-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 17079,
-      "lines": 156,
-      "version": "f340b1e5c7f57c87",
+      "bytes": 23164,
+      "lines": 215,
+      "version": "dcd38c02c1f5e558",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-coordination-browser.js",
           "line": 1,
-          "version": "f340b1e5c7f57c87"
+          "version": "dcd38c02c1f5e558"
         }
       ],
-      "lastChangedAt": "2026-10-26T01:49:45.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5addaa24049a76ce1aef6e293503fdbf2033fa54"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-coordination.js",
@@ -152944,20 +153105,20 @@
       "path": "test/ux-feedback.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9146,
-      "lines": 111,
-      "version": "9063e5f768e85b1a",
+      "bytes": 9247,
+      "lines": 113,
+      "version": "695105465076d36b",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-feedback.js",
           "line": 1,
-          "version": "9063e5f768e85b1a"
+          "version": "695105465076d36b"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-feel-browser.js",
@@ -153082,20 +153243,20 @@
       "path": "test/ux-navigation-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 19651,
-      "lines": 210,
-      "version": "1ba15c34023f7c8b",
+      "bytes": 19820,
+      "lines": 214,
+      "version": "2e3c7b2f70461314",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-navigation-browser.js",
           "line": 1,
-          "version": "1ba15c34023f7c8b"
+          "version": "2e3c7b2f70461314"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:31:03.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-personality-browser.js",
@@ -153174,20 +153335,20 @@
       "path": "test/ux-progression-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 12207,
-      "lines": 158,
-      "version": "a2fbe26b4d4e7db0",
+      "bytes": 12445,
+      "lines": 162,
+      "version": "aad6f10d7723e9c4",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-progression-browser.js",
           "line": 1,
-          "version": "a2fbe26b4d4e7db0"
+          "version": "aad6f10d7723e9c4"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-social-browser.js",
@@ -153243,20 +153404,20 @@
       "path": "test/ux-story-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18646,
-      "lines": 160,
-      "version": "b0afc27073460454",
+      "bytes": 18853,
+      "lines": 164,
+      "version": "b6dc30e0be17e764",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "b0afc27073460454"
+          "version": "b6dc30e0be17e764"
         }
       ],
-      "lastChangedAt": "2026-10-26T09:47:52.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-story.js",
@@ -153266,20 +153427,20 @@
       "path": "test/ux-story.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10957,
-      "lines": 117,
-      "version": "cb03a23bd3b14137",
+      "bytes": 11180,
+      "lines": 121,
+      "version": "e5cffb3d71f9ef9a",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-story.js",
           "line": 1,
-          "version": "cb03a23bd3b14137"
+          "version": "e5cffb3d71f9ef9a"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-tactics-browser.js",
@@ -153289,20 +153450,20 @@
       "path": "test/ux-tactics-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13013,
-      "lines": 158,
-      "version": "1fc21675b7425de0",
+      "bytes": 17332,
+      "lines": 218,
+      "version": "f4fcd87b652487c6",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-tactics-browser.js",
           "line": 1,
-          "version": "1fc21675b7425de0"
+          "version": "f4fcd87b652487c6"
         }
       ],
-      "lastChangedAt": "2026-10-26T20:02:08.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a6248ef475ab7fea693fee16611d99a2223abf0b"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-tactics.js",
@@ -153312,20 +153473,20 @@
       "path": "test/ux-tactics.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13677,
-      "lines": 171,
-      "version": "4ff0566f9ec246eb",
+      "bytes": 19512,
+      "lines": 244,
+      "version": "f402d0dfe9126b93",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-tactics.js",
           "line": 1,
-          "version": "4ff0566f9ec246eb"
+          "version": "f402d0dfe9126b93"
         }
       ],
-      "lastChangedAt": "2026-10-26T20:02:08.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a6248ef475ab7fea693fee16611d99a2223abf0b"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/ux-tools-browser.js",
@@ -154301,20 +154462,20 @@
       "path": "test/worldgraph-validation.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 82362,
-      "lines": 1907,
-      "version": "f6b5dc19d1b3b7be",
+      "bytes": 82460,
+      "lines": 1908,
+      "version": "3c5db55fc8f1cb0f",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "f6b5dc19d1b3b7be"
+          "version": "3c5db55fc8f1cb0f"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-31T03:06:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
       "key": "Artifact:test/worldgraph.js",
@@ -156371,20 +156532,20 @@
       "path": "tools/enterprise-native-ux-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 457912,
-      "lines": 12233,
-      "version": "70db907a20352f43",
+      "bytes": 461078,
+      "lines": 12320,
+      "version": "1e38c4fbb28d60df",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "70db907a20352f43"
+          "version": "1e38c4fbb28d60df"
         }
       ],
-      "lastChangedAt": "2026-10-27T14:45:47.000Z",
+      "lastChangedAt": "2026-10-31T03:10:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e846e8445088803657fb6214ffe0b958edcf6265"
+      "lastChangedCommit": "db40306adc8117f12313d3a7d6fdc78d87bc2b7f"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -222183,6 +222344,22 @@
       ]
     },
     {
+      "key": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "type": "Commit",
+      "id": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "label": "chore(knowledge): refresh generated artifacts for 8759cc9c",
+      "title": "chore(knowledge): refresh generated artifacts for 8759cc9c",
+      "date": "2026-10-28T15:13:59.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "provenance": [
+        {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+        }
+      ]
+    },
+    {
       "key": "Commit:b36d59a23eb9a488900b877b862de9e18c6b9026",
       "type": "Commit",
       "id": "b36d59a23eb9a488900b877b862de9e18c6b9026",
@@ -234167,6 +234344,22 @@
       ]
     },
     {
+      "key": "Commit:db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
+      "type": "Commit",
+      "id": "db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
+      "label": "Seal current native inputs for player journeys release",
+      "title": "Seal current native inputs for player journeys release",
+      "date": "2026-10-31T03:10:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
+      "provenance": [
+        {
+          "commit": "db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/db40306adc8117f12313d3a7d6fdc78d87bc2b7f"
+        }
+      ]
+    },
+    {
       "key": "Commit:db43832d126393e4264f8c2fcc29f514d1aaa647",
       "type": "Commit",
       "id": "db43832d126393e4264f8c2fcc29f514d1aaa647",
@@ -244199,6 +244392,22 @@
       ]
     },
     {
+      "key": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "type": "Commit",
+      "id": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "label": "Add guided player journeys, mastery trials and lasting story choices",
+      "title": "Add guided player journeys, mastery trials and lasting story choices",
+      "date": "2026-10-31T03:06:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "provenance": [
+        {
+          "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+        }
+      ]
+    },
+    {
       "key": "Commit:fc342f50841ae2dc406b0913045c50db8308f49d",
       "type": "Commit",
       "id": "fc342f50841ae2dc406b0913045c50db8308f49d",
@@ -250898,13 +251107,13 @@
       "id": "AGENTS.md",
       "label": "AGENTS.md",
       "documentType": "documentation",
-      "lines": 743,
-      "version": "1aa9290c76468c11",
+      "lines": 751,
+      "version": "3cc1d78a79ded14d",
       "provenance": [
         {
           "file": "AGENTS.md",
           "line": 1,
-          "version": "1aa9290c76468c11"
+          "version": "3cc1d78a79ded14d"
         }
       ]
     },
@@ -262803,12 +263012,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "0a3c0747c102a6a8",
+      "version": "ff212fb62524d6fc",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0a3c0747c102a6a8"
+          "version": "ff212fb62524d6fc"
         }
       ]
     },
@@ -265478,6 +265687,18 @@
         {
           "file": "test/launch-invites-browser.js",
           "line": 5
+        },
+        {
+          "file": "test/lib/city-afterword-browser.js",
+          "line": 4
+        },
+        {
+          "file": "test/lib/ux-journeys-browser.js",
+          "line": 4
+        },
+        {
+          "file": "test/lib/ux-opening-live-browser.js",
+          "line": 6
         },
         {
           "file": "test/lib/ux-personal-fixture.js",
@@ -274072,6 +274293,9 @@
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
         },
         {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -276559,6 +276783,9 @@
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
         },
         {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -279044,6 +279271,9 @@
         },
         {
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
+        },
+        {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -282206,6 +282436,9 @@
         },
         {
           "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
+        },
+        {
+          "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -287215,13 +287448,13 @@
       "type": "Module",
       "id": "src/content/city-quest-presentation.js",
       "label": "src/content/city-quest-presentation.js",
-      "lines": 39,
-      "version": "12acd35f7ec91bc1",
+      "lines": 43,
+      "version": "7abe9758e99a68dd",
       "provenance": [
         {
           "file": "src/content/city-quest-presentation.js",
           "line": 1,
-          "version": "12acd35f7ec91bc1"
+          "version": "7abe9758e99a68dd"
         }
       ]
     },
@@ -287511,6 +287744,21 @@
       ]
     },
     {
+      "key": "Module:src/content/neighborhood-afterword.js",
+      "type": "Module",
+      "id": "src/content/neighborhood-afterword.js",
+      "label": "src/content/neighborhood-afterword.js",
+      "lines": 79,
+      "version": "86a7bf33ecbdaee3",
+      "provenance": [
+        {
+          "file": "src/content/neighborhood-afterword.js",
+          "line": 1,
+          "version": "86a7bf33ecbdaee3"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/neighborhood-broadcast.js",
       "type": "Module",
       "id": "src/content/neighborhood-broadcast.js",
@@ -287546,12 +287794,12 @@
       "id": "src/content/phase1-policy.js",
       "label": "src/content/phase1-policy.js",
       "lines": 169,
-      "version": "54fcf367ee323452",
+      "version": "f5d2339a39d85655",
       "provenance": [
         {
           "file": "src/content/phase1-policy.js",
           "line": 1,
-          "version": "54fcf367ee323452"
+          "version": "f5d2339a39d85655"
         }
       ]
     },
@@ -287575,13 +287823,13 @@
       "type": "Module",
       "id": "src/content/phase1.js",
       "label": "src/content/phase1.js",
-      "lines": 28,
-      "version": "6d3d5cccc4fbf99c",
+      "lines": 30,
+      "version": "6d8ca127ad60b3e1",
       "provenance": [
         {
           "file": "src/content/phase1.js",
           "line": 1,
-          "version": "6d3d5cccc4fbf99c"
+          "version": "6d8ca127ad60b3e1"
         }
       ]
     },
@@ -293755,13 +294003,13 @@
       "type": "Module",
       "id": "src/ux-story.js",
       "label": "src/ux-story.js",
-      "lines": 94,
-      "version": "a7becb7b78c09e03",
+      "lines": 113,
+      "version": "59f2c4d6021e5e96",
       "provenance": [
         {
           "file": "src/ux-story.js",
           "line": 1,
-          "version": "a7becb7b78c09e03"
+          "version": "59f2c4d6021e5e96"
         }
       ]
     },
@@ -293770,13 +294018,13 @@
       "type": "Module",
       "id": "src/ux-tactics.js",
       "label": "src/ux-tactics.js",
-      "lines": 196,
-      "version": "1d15b503c1fffe91",
+      "lines": 216,
+      "version": "c92cfabb6f5786aa",
       "provenance": [
         {
           "file": "src/ux-tactics.js",
           "line": 1,
-          "version": "1d15b503c1fffe91"
+          "version": "c92cfabb6f5786aa"
         }
       ]
     },
@@ -297370,12 +297618,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "8759cc9cfb5f23142fbacd2b72c92bc7953ea917",
-      "currentBranch": "main",
+      "revision": "db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
+      "currentBranch": "codex/ux-player-journeys",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7049,
+      "currentArtifactCount": 7056,
       "provenance": [
         {
           "file": "README.md",
@@ -336070,12 +336318,12 @@
       "id": "test/city-rpg.js",
       "label": "test/city-rpg.js",
       "lines": 270,
-      "version": "2f8df22bade33d7a",
+      "version": "04c61d8a9e8c0be7",
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "2f8df22bade33d7a"
+          "version": "04c61d8a9e8c0be7"
         }
       ]
     },
@@ -340970,6 +341218,36 @@
       ]
     },
     {
+      "key": "TestSuite:test/lib/city-afterword-browser.js",
+      "type": "TestSuite",
+      "id": "test/lib/city-afterword-browser.js",
+      "label": "test/lib/city-afterword-browser.js",
+      "lines": 86,
+      "version": "6a8e0fed01c44d65",
+      "provenance": [
+        {
+          "file": "test/lib/city-afterword-browser.js",
+          "line": 1,
+          "version": "6a8e0fed01c44d65"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/city-afterword-fixture.js",
+      "type": "TestSuite",
+      "id": "test/lib/city-afterword-fixture.js",
+      "label": "test/lib/city-afterword-fixture.js",
+      "lines": 71,
+      "version": "3d9a1a892c6f5d12",
+      "provenance": [
+        {
+          "file": "test/lib/city-afterword-fixture.js",
+          "line": 1,
+          "version": "3d9a1a892c6f5d12"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/lib/city-gameplay-migration-catalog.js",
       "type": "TestSuite",
       "id": "test/lib/city-gameplay-migration-catalog.js",
@@ -340981,6 +341259,21 @@
           "file": "test/lib/city-gameplay-migration-catalog.js",
           "line": 1,
           "version": "d7a40f688e3202ba"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/city-neighborhood-afterword.js",
+      "type": "TestSuite",
+      "id": "test/lib/city-neighborhood-afterword.js",
+      "label": "test/lib/city-neighborhood-afterword.js",
+      "lines": 72,
+      "version": "62a7daeb97b11800",
+      "provenance": [
+        {
+          "file": "test/lib/city-neighborhood-afterword.js",
+          "line": 1,
+          "version": "62a7daeb97b11800"
         }
       ]
     },
@@ -341095,12 +341388,12 @@
       "id": "test/lib/enterprise-ux-native-guard.js",
       "label": "test/lib/enterprise-ux-native-guard.js",
       "lines": 90,
-      "version": "0f56601338664284",
+      "version": "0939c81067e07ec1",
       "provenance": [
         {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "line": 1,
-          "version": "0f56601338664284"
+          "version": "0939c81067e07ec1"
         }
       ]
     },
@@ -341360,6 +341653,36 @@
       ]
     },
     {
+      "key": "TestSuite:test/lib/ux-journeys-browser.js",
+      "type": "TestSuite",
+      "id": "test/lib/ux-journeys-browser.js",
+      "label": "test/lib/ux-journeys-browser.js",
+      "lines": 118,
+      "version": "6f841bbb13811b5d",
+      "provenance": [
+        {
+          "file": "test/lib/ux-journeys-browser.js",
+          "line": 1,
+          "version": "6f841bbb13811b5d"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/ux-journeys.js",
+      "type": "TestSuite",
+      "id": "test/lib/ux-journeys.js",
+      "label": "test/lib/ux-journeys.js",
+      "lines": 58,
+      "version": "0727c30819768152",
+      "provenance": [
+        {
+          "file": "test/lib/ux-journeys.js",
+          "line": 1,
+          "version": "0727c30819768152"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/lib/ux-native-director-guard.js",
       "type": "TestSuite",
       "id": "test/lib/ux-native-director-guard.js",
@@ -341386,6 +341709,21 @@
           "file": "test/lib/ux-native-reader-source-compatibility.js",
           "line": 1,
           "version": "bfeb64c42f056a2c"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/ux-opening-live-browser.js",
+      "type": "TestSuite",
+      "id": "test/lib/ux-opening-live-browser.js",
+      "label": "test/lib/ux-opening-live-browser.js",
+      "lines": 167,
+      "version": "10de7a3357f42a1e",
+      "provenance": [
+        {
+          "file": "test/lib/ux-opening-live-browser.js",
+          "line": 1,
+          "version": "10de7a3357f42a1e"
         }
       ]
     },
@@ -348144,13 +348482,13 @@
       "type": "TestSuite",
       "id": "test/ux-coordination-browser.js",
       "label": "test/ux-coordination-browser.js",
-      "lines": 156,
-      "version": "f340b1e5c7f57c87",
+      "lines": 215,
+      "version": "dcd38c02c1f5e558",
       "provenance": [
         {
           "file": "test/ux-coordination-browser.js",
           "line": 1,
-          "version": "f340b1e5c7f57c87"
+          "version": "dcd38c02c1f5e558"
         }
       ]
     },
@@ -348204,13 +348542,13 @@
       "type": "TestSuite",
       "id": "test/ux-feedback.js",
       "label": "test/ux-feedback.js",
-      "lines": 111,
-      "version": "9063e5f768e85b1a",
+      "lines": 113,
+      "version": "695105465076d36b",
       "provenance": [
         {
           "file": "test/ux-feedback.js",
           "line": 1,
-          "version": "9063e5f768e85b1a"
+          "version": "695105465076d36b"
         }
       ]
     },
@@ -348294,13 +348632,13 @@
       "type": "TestSuite",
       "id": "test/ux-navigation-browser.js",
       "label": "test/ux-navigation-browser.js",
-      "lines": 210,
-      "version": "1ba15c34023f7c8b",
+      "lines": 214,
+      "version": "2e3c7b2f70461314",
       "provenance": [
         {
           "file": "test/ux-navigation-browser.js",
           "line": 1,
-          "version": "1ba15c34023f7c8b"
+          "version": "2e3c7b2f70461314"
         }
       ]
     },
@@ -348354,13 +348692,13 @@
       "type": "TestSuite",
       "id": "test/ux-progression-browser.js",
       "label": "test/ux-progression-browser.js",
-      "lines": 158,
-      "version": "a2fbe26b4d4e7db0",
+      "lines": 162,
+      "version": "aad6f10d7723e9c4",
       "provenance": [
         {
           "file": "test/ux-progression-browser.js",
           "line": 1,
-          "version": "a2fbe26b4d4e7db0"
+          "version": "aad6f10d7723e9c4"
         }
       ]
     },
@@ -348399,13 +348737,13 @@
       "type": "TestSuite",
       "id": "test/ux-story-browser.js",
       "label": "test/ux-story-browser.js",
-      "lines": 160,
-      "version": "b0afc27073460454",
+      "lines": 164,
+      "version": "b6dc30e0be17e764",
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "b0afc27073460454"
+          "version": "b6dc30e0be17e764"
         }
       ]
     },
@@ -348414,13 +348752,13 @@
       "type": "TestSuite",
       "id": "test/ux-story.js",
       "label": "test/ux-story.js",
-      "lines": 117,
-      "version": "cb03a23bd3b14137",
+      "lines": 121,
+      "version": "e5cffb3d71f9ef9a",
       "provenance": [
         {
           "file": "test/ux-story.js",
           "line": 1,
-          "version": "cb03a23bd3b14137"
+          "version": "e5cffb3d71f9ef9a"
         }
       ]
     },
@@ -348429,13 +348767,13 @@
       "type": "TestSuite",
       "id": "test/ux-tactics-browser.js",
       "label": "test/ux-tactics-browser.js",
-      "lines": 158,
-      "version": "1fc21675b7425de0",
+      "lines": 218,
+      "version": "f4fcd87b652487c6",
       "provenance": [
         {
           "file": "test/ux-tactics-browser.js",
           "line": 1,
-          "version": "1fc21675b7425de0"
+          "version": "f4fcd87b652487c6"
         }
       ]
     },
@@ -348444,13 +348782,13 @@
       "type": "TestSuite",
       "id": "test/ux-tactics.js",
       "label": "test/ux-tactics.js",
-      "lines": 171,
-      "version": "4ff0566f9ec246eb",
+      "lines": 244,
+      "version": "f402d0dfe9126b93",
       "provenance": [
         {
           "file": "test/ux-tactics.js",
           "line": 1,
-          "version": "4ff0566f9ec246eb"
+          "version": "f402d0dfe9126b93"
         }
       ]
     },
@@ -349089,13 +349427,13 @@
       "type": "TestSuite",
       "id": "test/worldgraph-validation.js",
       "label": "test/worldgraph-validation.js",
-      "lines": 1907,
-      "version": "f6b5dc19d1b3b7be",
+      "lines": 1908,
+      "version": "3c5db55fc8f1cb0f",
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "f6b5dc19d1b3b7be"
+          "version": "3c5db55fc8f1cb0f"
         }
       ]
     },
@@ -374774,6 +375112,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/neighborhood-afterword.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/neighborhood-afterword.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/neighborhood-broadcast.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -382469,10 +382816,37 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/city-afterword-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/city-afterword-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/city-afterword-fixture.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/city-afterword-fixture.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/city-gameplay-migration-catalog.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/lib/city-gameplay-migration-catalog.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/city-neighborhood-afterword.js",
         "line": 1
       }
     },
@@ -382712,6 +383086,24 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/ux-journeys-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/ux-journeys-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/ux-journeys.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/ux-native-director-guard.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -382725,6 +383117,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/lib/ux-native-reader-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/ux-opening-live-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/ux-opening-live-browser.js",
         "line": 1
       }
     },
@@ -533143,6 +533544,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b387389d69b7e0bb2ad8ae98d69c1884a83c85e5",
       "to": "Artifact:AGENTS.md",
       "provenance": {
@@ -580047,6 +580480,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "db40306adc8117f12313d3a7d6fdc78d87bc2b7f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:db43832d126393e4264f8c2fcc29f514d1aaa647",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -609711,6 +610152,278 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:AGENTS.md",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-coordination.css",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-coordination.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-navigation.css",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-navigation.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-progression.css",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-progression.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-tactics.css",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:public/ux-tactics.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:src/content/city-quest-presentation.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:src/content/neighborhood-afterword.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:src/content/phase1-policy.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:src/ux-story.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:src/ux-tactics.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/city-rpg.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/lib/city-afterword-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/lib/city-afterword-fixture.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/lib/enterprise-ux-native-guard.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/lib/ux-journeys-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/lib/ux-journeys.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/lib/ux-opening-live-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-coordination-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-feedback.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-navigation-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-progression-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-story-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-story.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-tactics-browser.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/ux-tactics.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:test/worldgraph-validation.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:fc342f50841ae2dc406b0913045c50db8308f49d",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -614483,6 +615196,15 @@
       "to": "Artifact:src/content/json-source.js",
       "provenance": {
         "file": "src/content/json-source.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/content/neighborhood-afterword.js",
+      "provenance": {
+        "file": "src/content/neighborhood-afterword.js",
         "line": 1
       }
     },
@@ -648649,9 +649371,36 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/city-afterword-browser.js",
+      "provenance": {
+        "file": "test/lib/city-afterword-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/city-afterword-fixture.js",
+      "provenance": {
+        "file": "test/lib/city-afterword-fixture.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/lib/city-gameplay-migration-catalog.js",
       "provenance": {
         "file": "test/lib/city-gameplay-migration-catalog.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "provenance": {
+        "file": "test/lib/city-neighborhood-afterword.js",
         "line": 1
       }
     },
@@ -648883,6 +649632,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/ux-journeys-browser.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/ux-journeys.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/lib/ux-native-director-guard.js",
       "provenance": {
         "file": "test/lib/ux-native-director-guard.js",
@@ -648895,6 +649662,15 @@
       "to": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "test/lib/ux-native-reader-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/ux-opening-live-browser.js",
+      "provenance": {
+        "file": "test/lib/ux-opening-live-browser.js",
         "line": 1
       }
     },
@@ -695361,7 +696137,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1860
+      "weight": 1861
     },
     {
       "type": "DEPENDS_ON",
@@ -695655,7 +696431,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:world-graph",
       "to": "Domain:platform-core",
-      "weight": 53
+      "weight": 54
     },
     {
       "type": "DEPENDS_ON",
@@ -743765,6 +744541,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
+      "provenance": {
+        "commit": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b36d59a23eb9a488900b877b862de9e18c6b9026",
       "provenance": {
         "commit": "b36d59a23eb9a488900b877b862de9e18c6b9026"
@@ -749757,6 +750541,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:db40306adc8117f12313d3a7d6fdc78d87bc2b7f",
+      "provenance": {
+        "commit": "db40306adc8117f12313d3a7d6fdc78d87bc2b7f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:db43832d126393e4264f8c2fcc29f514d1aaa647",
       "provenance": {
         "commit": "db43832d126393e4264f8c2fcc29f514d1aaa647"
@@ -754768,6 +755560,14 @@
       "to": "Commit:fc243912ae5a44f6039dcf54f1ed54c7a88b2a5f",
       "provenance": {
         "commit": "fc243912ae5a44f6039dcf54f1ed54c7a88b2a5f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
+      "provenance": {
+        "commit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
       }
     },
     {
@@ -760774,7 +761574,7 @@
       "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "src/content/city-quest-presentation.js",
-        "line": 6
+        "line": 8
       }
     },
     {
@@ -761230,6 +762030,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/content/phase1.js",
+      "to": "Artifact:src/content/neighborhood-afterword.js",
+      "provenance": {
+        "file": "src/content/phase1.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1.js",
       "to": "Artifact:src/content/neighborhood-broadcast.js",
       "provenance": {
         "file": "src/content/phase1.js",
@@ -761251,7 +762060,7 @@
       "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -776588,6 +777397,15 @@
       "provenance": {
         "file": "src/ux-investigation.js",
         "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/ux-story.js",
+      "to": "Artifact:src/content/neighborhood-afterword.js",
+      "provenance": {
+        "file": "src/ux-story.js",
+        "line": 7
       }
     },
     {
@@ -796590,11 +797408,56 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/lib/city-afterword-browser.js",
+      "to": "Artifact:test/lib/city-afterword-fixture.js",
+      "provenance": {
+        "file": "test/lib/city-afterword-browser.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/city-afterword-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/lib/city-afterword-browser.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/city-afterword-fixture.js",
+      "to": "Artifact:test/server-fixture.js",
+      "provenance": {
+        "file": "test/lib/city-afterword-fixture.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/lib/city-gameplay-migration-catalog.js",
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/lib/city-gameplay-migration-catalog.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "to": "Artifact:src/ux-story.js",
+      "provenance": {
+        "file": "test/lib/city-neighborhood-afterword.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "to": "Artifact:test/lib/city-afterword-fixture.js",
+      "provenance": {
+        "file": "test/lib/city-neighborhood-afterword.js",
+        "line": 4
       }
     },
     {
@@ -797472,6 +798335,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-journeys-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/lib/ux-journeys-browser.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/lib/ux-native-director-guard.js",
       "to": "ExternalDependency:acorn",
       "provenance": {
@@ -797504,6 +798376,24 @@
       "provenance": {
         "file": "test/lib/ux-native-reader-source-compatibility.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-opening-live-browser.js",
+      "to": "Artifact:test/server-fixture.js",
+      "provenance": {
+        "file": "test/lib/ux-opening-live-browser.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-opening-live-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/lib/ux-opening-live-browser.js",
+        "line": 6
       }
     },
     {
@@ -817966,6 +818856,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/ux-feedback.js",
+      "to": "Artifact:test/lib/ux-journeys.js",
+      "provenance": {
+        "file": "test/ux-feedback.js",
+        "line": 111
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-feedback.js",
       "to": "ExternalDependency:acorn",
       "provenance": {
         "file": "test/ux-feedback.js",
@@ -818146,6 +819045,24 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/ux-progression-browser.js",
+      "to": "Artifact:test/lib/ux-journeys-browser.js",
+      "provenance": {
+        "file": "test/ux-progression-browser.js",
+        "line": 158
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-progression-browser.js",
+      "to": "Artifact:test/lib/ux-opening-live-browser.js",
+      "provenance": {
+        "file": "test/ux-progression-browser.js",
+        "line": 160
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-progression-browser.js",
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "test/ux-progression-browser.js",
@@ -818299,6 +819216,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/ux-story-browser.js",
+      "to": "Artifact:test/lib/city-afterword-browser.js",
+      "provenance": {
+        "file": "test/ux-story-browser.js",
+        "line": 162
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-story-browser.js",
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/ux-story-browser.js",
@@ -818330,6 +819256,15 @@
       "provenance": {
         "file": "test/ux-story.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-story.js",
+      "to": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "provenance": {
+        "file": "test/ux-story.js",
+        "line": 119
       }
     },
     {
@@ -834061,7 +834996,7 @@
       "to": "Artifact:docs/agent-business-shadow.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 736
+        "line": 744
       }
     },
     {
@@ -834088,7 +835023,7 @@
       "to": "Artifact:omerta-contracts/docs/market/DESIGN.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 541
+        "line": 549
       }
     },
     {
@@ -834106,7 +835041,7 @@
       "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
       "provenance": {
         "file": "AGENTS.md",
-        "line": 540
+        "line": 548
       }
     },
     {
@@ -875601,6 +876536,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/neighborhood-afterword.js",
+      "to": "Artifact:src/content/neighborhood-afterword.js",
+      "provenance": {
+        "file": "src/content/neighborhood-afterword.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/neighborhood-broadcast.js",
       "to": "Artifact:src/content/neighborhood-broadcast.js",
       "provenance": {
@@ -884250,10 +885194,37 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/city-afterword-browser.js",
+      "to": "Artifact:test/lib/city-afterword-browser.js",
+      "provenance": {
+        "file": "test/lib/city-afterword-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/city-afterword-fixture.js",
+      "to": "Artifact:test/lib/city-afterword-fixture.js",
+      "provenance": {
+        "file": "test/lib/city-afterword-fixture.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/lib/city-gameplay-migration-catalog.js",
       "to": "Artifact:test/lib/city-gameplay-migration-catalog.js",
       "provenance": {
         "file": "test/lib/city-gameplay-migration-catalog.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/city-neighborhood-afterword.js",
+      "to": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "provenance": {
+        "file": "test/lib/city-neighborhood-afterword.js",
         "line": 1
       }
     },
@@ -884484,6 +885455,24 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/ux-journeys-browser.js",
+      "to": "Artifact:test/lib/ux-journeys-browser.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/ux-journeys.js",
+      "to": "Artifact:test/lib/ux-journeys.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/lib/ux-native-director-guard.js",
       "to": "Artifact:test/lib/ux-native-director-guard.js",
       "provenance": {
@@ -884497,6 +885486,15 @@
       "to": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
       "provenance": {
         "file": "test/lib/ux-native-reader-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/ux-opening-live-browser.js",
+      "to": "Artifact:test/lib/ux-opening-live-browser.js",
+      "provenance": {
+        "file": "test/lib/ux-opening-live-browser.js",
         "line": 1
       }
     },
@@ -901256,6 +902254,15 @@
       "provenance": {
         "file": "test/lib/campaign-network-support.js",
         "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/city-neighborhood-afterword.js",
+      "to": "Artifact:src/ux-story.js",
+      "provenance": {
+        "file": "test/lib/city-neighborhood-afterword.js",
+        "line": 5
       }
     },
     {
@@ -939757,7 +940764,7 @@
       "to": "Table:boats",
       "provenance": {
         "file": "src/ux-tactics.js",
-        "line": 117
+        "line": 129
       }
     },
     {
@@ -939766,7 +940773,7 @@
       "to": "Table:route_notoriety",
       "provenance": {
         "file": "src/ux-tactics.js",
-        "line": 119
+        "line": 131
       }
     },
     {
