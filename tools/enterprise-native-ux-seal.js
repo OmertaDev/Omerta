@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { ENTERPRISE_NATIVE_FILES } from './enterprise-native.js';
 import { ENTERPRISE_NATIVE_RELEASE_INPUTS } from './enterprise-native-inputs.js';
-import { ENTERPRISE_UX_METADATA, ENTERPRISE_UX_PREDECESSOR_METADATA, ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256, ENTERPRISE_UX_QUALIFIED_METADATA, ENTERPRISE_UX_QUALIFIED_METADATA_SHA256, enterpriseUxClosure, enterpriseUxMetadataBytes, enterpriseUxReplacementPlan } from './enterprise-native-ux.js';
+import { ENTERPRISE_UX_METADATA, ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA, ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA_SHA256, ENTERPRISE_UX_PREDECESSOR_METADATA, ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256, ENTERPRISE_UX_QUALIFIED_METADATA, ENTERPRISE_UX_QUALIFIED_METADATA_SHA256, enterpriseUxClosure, enterpriseUxMetadataBytes, enterpriseUxReplacementPlan } from './enterprise-native-ux.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessorNativeInputs } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 const revision = process.argv[2], predecessorRevision = 'c6247976ff71e8d4c103ebd1498c2d373217d077', uxRevision = '940df6a1efbe4ddcd8301cd138d5643dbe48a0bc';
@@ -26,6 +26,7 @@ const predecessorPin = (file) => { const before = record(predecessorRevision, fi
 const plan = enterpriseUxReplacementPlan(ENTERPRISE_NATIVE_FILES, ENTERPRISE_NATIVE_RELEASE_INPUTS, files, predecessorPin);
 assert.equal(sha(read(ENTERPRISE_UX_PREDECESSOR_METADATA)), ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256, 'Never reseal a rewritten predecessor native manifest');
 assert.equal(sha(read(ENTERPRISE_UX_QUALIFIED_METADATA)), ENTERPRISE_UX_QUALIFIED_METADATA_SHA256, 'Never reseal a rewritten qualified UX manifest');
+assert.equal(sha(read(ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA)), ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA_SHA256, 'Never reseal a rewritten frozen Deed record');
 const value = { version: 3, status: 'SEALED', phase: 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS', authoredRevision: revision, predecessorRevision, uxRevision,
  nativePredecessorRevision: predecessorNativeInputs.authoredRevision,
  nativePredecessorMetadataSha256: sha(read(ENTERPRISE_UX_PREDECESSOR_METADATA)),

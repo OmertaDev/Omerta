@@ -1,11 +1,12 @@
-// Exact authored afterword content/reader to genuine B35 source only; no runtime/native/release clearance.
+// Exact Afterword content/reader and merged account-policy source to genuine B35, for historical readers only.
+// Production and native execution retain actual current policy and source bytes.
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const UX_AFTERWORD_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_UX_AFTERWORD_SOURCE_ONLY",
-  "revision": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a",
-  "tree": "66f5b98ec9b6d35eb5e4b1fa5d63ad5e98af29d7",
+  "revision": "91173f29929b73df9398ba079eb0bbddb73883af",
+  "tree": "56adeb80eba3529973bf6742ff5658cdeccc0454",
   "targetRevision": "b35dd222054f0c5f3ca814f228dd7d9a46c58ae9",
   "targetTree": "c90fffe3232811c91878c9cc11b162074f335b6e",
   "contextLines": 3,
@@ -105,7 +106,32 @@ export const UX_AFTERWORD_SOURCE = freeze({
           "baseline": "  'src/content/belladonna.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',\n  'src/content/neighborhood-initiation.js', 'src/content/neighborhood-initiation.json',\n  'src/content/neighborhood-broadcast.js',\n  'src/content/property-investigation.js',\n  'src/content/district-story-arcs.js', 'src/content/city-quest-presentation.js',\n  'src/content/staged-crew-missions.js', 'src/content/city-world-opportunities.js',\n"
         }
       ]
+    },
+    {
+      "file": "src/server.js",
+      "mode": "100644",
+      "targetMode": "100644",
+      "currentBlob": "9ac86b5b025e3a40f0142f8adf855471e8a21e77",
+      "currentSha256": "eae571fecd106622365194b2fd862f54635a9488ea9784d660defa292da28b5a",
+      "currentRawSha256": {
+        "lf": "eae571fecd106622365194b2fd862f54635a9488ea9784d660defa292da28b5a",
+        "crlf": "4f18eb64548eb03849c77c5ab2379d444f7ce14a7f4c46d653a52f1c05bdfdc1"
+      },
+      "currentBytes": 303757,
+      "targetBlob": "98be176eb2d676e3eaa1992da787c76cb15acb00",
+      "targetSha256": "f0fba7a89de112aa2c85e61955cd2b36eb6387605f46696ef1290d442d14615e",
+      "targetBytes": 303719,
+      "inverses": [
+        {
+          "current": "import crypto from 'node:crypto';\nimport { rescueQuote } from './rescue-quote.js';\nimport { clientIpContextForRequest } from './client-ip.js';\nimport { MINIMUM_AGE, eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';\nimport zlib from 'node:zlib';\nimport { makeDb } from './db.js';\nimport { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';\n",
+          "baseline": "import crypto from 'node:crypto';\nimport { rescueQuote } from './rescue-quote.js';\nimport { clientIpContextForRequest } from './client-ip.js';\nimport { eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';\nimport zlib from 'node:zlib';\nimport { makeDb } from './db.js';\nimport { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';\n"
+        },
+        {
+          "current": "  app.post('/v1/age-check', async (req, reply) => {\n    reply.header('Cache-Control', 'no-store');\n    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);\n    const cookie = app.jwt.sign({ purpose: 'age-check', minimumAge: MINIMUM_AGE, eligible }, { expiresIn: '15m' });\n    reply.header('Set-Cookie', ageCookie(cookie));\n    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });\n    return { ok: true };\n",
+          "baseline": "  app.post('/v1/age-check', async (req, reply) => {\n    reply.header('Cache-Control', 'no-store');\n    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);\n    const cookie = app.jwt.sign({ purpose: 'age-check', eligible }, { expiresIn: '15m' });\n    reply.header('Set-Cookie', ageCookie(cookie));\n    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });\n    return { ok: true };\n"
+        }
+      ]
     }
   ]
 });
-export const UX_AFTERWORD_SOURCE_SHA256 = "8078db64c051999e4dac30e2ef852644404e44e49b145d0ec9c8b6e304c12389";
+export const UX_AFTERWORD_SOURCE_SHA256 = "8b0b2841324494f3affa02863b8bc780af0f7514f92950a3608940703e82ab7c";
