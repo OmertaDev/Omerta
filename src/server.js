@@ -14,7 +14,7 @@ import websocket from '@fastify/websocket';
 import crypto from 'node:crypto';
 import { rescueQuote } from './rescue-quote.js';
 import { clientIpContextForRequest } from './client-ip.js';
-import { eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
+import { MINIMUM_AGE, eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';
@@ -1542,7 +1542,7 @@ export async function buildServer() {
   app.post('/v1/age-check', async (req, reply) => {
     reply.header('Cache-Control', 'no-store');
     const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);
-    const cookie = app.jwt.sign({ purpose: 'age-check', eligible }, { expiresIn: '15m' });
+    const cookie = app.jwt.sign({ purpose: 'age-check', minimumAge: MINIMUM_AGE, eligible }, { expiresIn: '15m' });
     reply.header('Set-Cookie', ageCookie(cookie));
     if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });
     return { ok: true };

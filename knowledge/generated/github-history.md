@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a8859b0596d9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `837f0e45558b`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4953 |
+| Commits in clone | 4955 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-31 — Publish default privacy policy with minimal operational detail |
+| Latest commit | 2026-10-31 — Set privacy policy and new-account eligibility to age 21 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3982 |
+| OmertaDev | 3983 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 126 |
+| github-actions[bot] | 127 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,18 +30,18 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 827 | historical |
-| knowledge/generated/graph-summary.md | 827 | historical |
-| knowledge/generated/graph.json | 827 | historical |
-| knowledge/generated/inventory.md | 827 | historical |
+| knowledge/generated/github-history.md | 828 | historical |
+| knowledge/generated/graph-summary.md | 828 | historical |
+| knowledge/generated/graph.json | 828 | historical |
+| knowledge/generated/inventory.md | 828 | historical |
 | [SPEC.md](../../SPEC.md) | 612 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 491 | yes |
-| [src/server.js](../../src/server.js) | 450 | yes |
+| [src/server.js](../../src/server.js) | 451 | yes |
 | [schema.sql](../../schema.sql) | 381 | yes |
-| knowledge/generated/documents.md | 370 | historical |
+| knowledge/generated/documents.md | 371 | historical |
 | [package.json](../../package.json) | 346 | yes |
-| knowledge/generated/modules.md | 280 | historical |
+| knowledge/generated/modules.md | 281 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | knowledge/generated/graph.mmd | 222 | historical |
 | [test/gates.js](../../test/gates.js) | 206 | yes |

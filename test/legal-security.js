@@ -20,7 +20,7 @@ try {
   for (const key of Object.keys(profile)) delete process.env[key];
   const defaultPrivacy = await app.inject('/privacy');
   assert.equal(defaultPrivacy.statusCode, 200, 'default privacy policy is public without operator configuration');
-  assert(defaultPrivacy.body.includes('October 30, 2026'));
+  assert(defaultPrivacy.body.includes('October 31, 2026'));
   assert(defaultPrivacy.body.includes('A dedicated privacy contact has not yet been published'));
   assert(!/\b(?:null|undefined)\b/.test(defaultPrivacy.body), 'default policy has no missing-value placeholders');
   assert(!/180 days|seven days|thirty days|\/v1\/|background worker|BYPASSRLS|JWT_SECRET|end-to-end encrypted|token records/.test(defaultPrivacy.body), 'public notice omits security internals and cleanup timings');
@@ -47,6 +47,8 @@ try {
     assert(page.body.includes('href="/privacy"'), 'legal navigation is available');
   }
   const privacy = (await app.inject('/privacy')).body;
+  assert(privacy.includes('under 21, including children'));
+  assert(!privacy.includes('under 13'));
   for (const description of ['IP addresses', 'Wallet addresses', 'Messages', 'Notification-delivery', 'Delegated-agent', 'Retention depends', 'without retaining', 'Technical diagnostics']) assert(privacy.includes(description));
   delete process.env.DMCA_AGENT_REGISTERED;
   assert.equal((await app.inject('/dmca')).statusCode, 503, 'unverified registration is not presented as registered');
