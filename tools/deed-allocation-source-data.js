@@ -424,12 +424,12 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
   "test/economy-hardening-source-compatibility.js": {
     "currentMode": "100644",
     "baselineMode": "100644",
-    "currentSha256": "66489c133d097107b4bdc2a6ab6334725a7b7229e8fcc0248fb0343fd43bccaf",
-    "currentBlob": "8324da825cc74f51547c45f04b3da2777a1c578e",
-    "currentBytes": 87916,
+    "currentSha256": "136ec510491f7fc6fce130209b3728add5fc3cb1e2ab1d9e18c9eefdf45ad7fc",
+    "currentBlob": "33e8a00549129dde4fd23b40a9d020679bfd2428",
+    "currentBytes": 88042,
     "currentRawSha256": {
-      "lf": "66489c133d097107b4bdc2a6ab6334725a7b7229e8fcc0248fb0343fd43bccaf",
-      "crlf": "bb1272c9aa5c2c0e53c5ca22e0af01146513be7ee14b4e01820ae7c33e6690d7"
+      "lf": "136ec510491f7fc6fce130209b3728add5fc3cb1e2ab1d9e18c9eefdf45ad7fc",
+      "crlf": "4a27925ed0f755904fe56909a291213608ed1678927229f478f75c5d9b5d5a71"
     },
     "baselineSha256": "18c6b2a9f02839e90354b880ff3e7a8a9c0bdc92698a2ec8c4fb022599c62c4d",
     "baselineBlob": "7f21aba7ad3b843db1003d395acfec729f6dff72",
@@ -437,11 +437,11 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
     "contextLines": 3,
     "inverses": [
       {
-        "current": "import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n",
-        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n"
+        "current": "import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';\nimport {\n  ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_SOURCE_TREE,\n  ECONOMY_HARDENING_SOURCE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_PREDECESSOR_TREE,\n",
+        "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport {\n  ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_SOURCE_TREE,\n  ECONOMY_HARDENING_SOURCE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_PREDECESSOR_TREE,\n"
       },
       {
-        "current": "];\nconst socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];\nconst lf = text => text.replaceAll('\\r\\n', '\\n');\nconst deedAllocationPhysicalSource = file => deedAllocationHistoricalInput(file, fs.readFileSync(file, 'utf8'));\nconst physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(\n  file, deedAllocationPhysicalSource(file)));\nconst git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,\n  stdio: ['ignore', 'pipe', 'pipe'] }));\nconst hash = text => crypto.createHash('sha256').update(text).digest('hex');\n",
+        "current": "];\nconst socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];\nconst lf = text => text.replaceAll('\\r\\n', '\\n');\nconst deedAllocationPhysicalSource = file => deedAllocationHistoricalInput(file, fs.readFileSync(file, 'utf8'));\nconst physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(\n  file, uxAfterwordHistoricalInput(file, deedAllocationPhysicalSource(file))));\nconst git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,\n  stdio: ['ignore', 'pipe', 'pipe'] }));\nconst hash = text => crypto.createHash('sha256').update(text).digest('hex');\n",
         "baseline": "];\nconst socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];\nconst lf = text => text.replaceAll('\\r\\n', '\\n');\nconst physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(\n  file, fs.readFileSync(file, 'utf8')));\nconst git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,\n  stdio: ['ignore', 'pipe', 'pipe'] }));\nconst hash = text => crypto.createHash('sha256').update(text).digest('hex');\n"
       },
       {
@@ -1622,12 +1622,12 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
   "test/sale-source-compatibility.js": {
     "currentMode": "100644",
     "baselineMode": "100644",
-    "currentSha256": "24311c0fb9cfaf79bd62569e557ae17e366863172070c2e9f27cda51917b8dcd",
-    "currentBlob": "282a11e79be8a0d0dc19a5c4bf2ba8347d2d8679",
-    "currentBytes": 10002,
+    "currentSha256": "30ab4aeee8d601dc44928d80321b7f9b757b94e4674e35342d6e2f44aa030eed",
+    "currentBlob": "b0f0c53d6d15d95ac3a2c27966c8aa23c5fc466a",
+    "currentBytes": 10170,
     "currentRawSha256": {
-      "lf": "24311c0fb9cfaf79bd62569e557ae17e366863172070c2e9f27cda51917b8dcd",
-      "crlf": "7e0cf3cdf0ce314ec6a1b57d404230632b4ffae512c2f65588ddf8d470603d49"
+      "lf": "30ab4aeee8d601dc44928d80321b7f9b757b94e4674e35342d6e2f44aa030eed",
+      "crlf": "6b92d408a7c633b9519b0466fb26168b582de1e2aa9e1ff72338dabbcb9fddbc"
     },
     "baselineSha256": "219cd4e6682ec5d0340e15effb6f207722b002d20bfb504be4175e6049264525",
     "baselineBlob": "6b8e9c0d281ded00ce4833d346189145ec25967f",
@@ -1635,11 +1635,11 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
     "contextLines": 3,
     "inverses": [
       {
-        "current": "import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';\nimport { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';\nimport { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';\nimport { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';\nconst git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });\nconst sha = value => crypto.createHash('sha256').update(value).digest('hex');\nconst pin = SALE_SOURCE;\n",
-        "baseline": "import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';\nimport { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';\nimport { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';\nconst git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });\nconst sha = value => crypto.createHash('sha256').update(value).digest('hex');\nconst pin = SALE_SOURCE;\n"
+        "current": "import { execFileSync } from 'node:child_process';\nimport { SALE_SOURCE, SALE_SOURCE_FILES, SALE_SOURCE_PREDECESSOR, qualifySaleSource, saleHistoricalInput } from '../tools/sale-source-compatibility.js';\nimport { uxHistoricalInput, qualifyUxSource } from '../tools/ux-source-compatibility.js';\nimport { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';\nimport { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';\nimport { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';\nimport { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';\nimport { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';\nconst git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });\nconst sha = value => crypto.createHash('sha256').update(value).digest('hex');\nconst pin = SALE_SOURCE;\n",
+        "baseline": "import { execFileSync } from 'node:child_process';\nimport { SALE_SOURCE, SALE_SOURCE_FILES, SALE_SOURCE_PREDECESSOR, qualifySaleSource, saleHistoricalInput } from '../tools/sale-source-compatibility.js';\nimport { uxHistoricalInput, qualifyUxSource } from '../tools/ux-source-compatibility.js';\nimport { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';\nimport { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';\nimport { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';\nconst git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });\nconst sha = value => crypto.createHash('sha256').update(value).digest('hex');\nconst pin = SALE_SOURCE;\n"
       },
       {
-        "current": "let positives = 0, refusals = 0, hunks = 0;\nfor (const row of pin.files) {\n  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);\n  const physical = economySocialProofCutoverHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')));\n  const committed = economySocialProofCutoverHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, git('show', 'HEAD:' + row.file)));\n  const stat = fs.lstatSync(row.file);\n  assert(stat.isFile() && !stat.isSymbolicLink());\n  assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');\n",
+        "current": "let positives = 0, refusals = 0, hunks = 0;\nfor (const row of pin.files) {\n  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);\n  const physical = economySocialProofCutoverHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))));\n  const committed = economySocialProofCutoverHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, git('show', 'HEAD:' + row.file))));\n  const stat = fs.lstatSync(row.file);\n  assert(stat.isFile() && !stat.isSymbolicLink());\n  assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');\n",
         "baseline": "let positives = 0, refusals = 0, hunks = 0;\nfor (const row of pin.files) {\n  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);\n  const physical = economySocialProofCutoverHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'));\n  const committed = economySocialProofCutoverHistoricalInput(row.file, git('show', 'HEAD:' + row.file));\n  const stat = fs.lstatSync(row.file);\n  assert(stat.isFile() && !stat.isSymbolicLink());\n  assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');\n"
       },
       {
@@ -1651,18 +1651,26 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
   "test/ux-source-compatibility.js": {
     "currentMode": "100644",
     "baselineMode": "100644",
-    "currentSha256": "86398e62df923ad0362b49b4c433d42d4e15629b7f6de3bb17152a7d2b87d158",
-    "currentBlob": "8107e46c96f3040f746feb83fa9ac6b732edc00e",
-    "currentBytes": 23017,
+    "currentSha256": "144648a26a9126e899a8cebd6f04419492538ab39b572f16dfa3caa6305db42d",
+    "currentBlob": "0e0ace196c4845a2b5a5c57dd5e215932ecc6654",
+    "currentBytes": 23185,
     "currentRawSha256": {
-      "lf": "86398e62df923ad0362b49b4c433d42d4e15629b7f6de3bb17152a7d2b87d158",
-      "crlf": "bd309f101e6657e1e368bd52888695dbdf1c254ec5bad6cff7bac50f558d9f22"
+      "lf": "144648a26a9126e899a8cebd6f04419492538ab39b572f16dfa3caa6305db42d",
+      "crlf": "44464e6094fa428d3c474fda849b57e23656c3418adc2b183ef80bf4f14a1d7f"
     },
     "baselineSha256": "9c64ace981c024f013f9328f8d41608d35dedc80cd00275c603f073a03bf728d",
     "baselineBlob": "d37ee22044e7314521df4f0b327e922084fa217f",
     "baselineBytes": 22668,
     "contextLines": 3,
     "inverses": [
+      {
+        "current": "import crypto from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\nimport { saleHistoricalInput } from '../tools/sale-source-compatibility.js';\nimport { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';\nimport { UX_SOURCE, UX_SOURCE_FILES, qualifyUxSource, uxHistoricalInput, UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_FILE, qualifyUxWorkflowBoundSource, uxWorkflowBoundHistoricalInput } from '../tools/ux-source-compatibility.js';\nimport { UX_SUITES_GATE_SOURCE, UX_SUITES_GATE_FILE, qualifyUxSuitesGateSource, uxSuitesGateHistoricalInput } from '../tools/ux-director-reader-source-compatibility.js';\nimport { ACTION_READINESS_SOURCE, qualifyActionReadinessSource } from '../tools/action-readiness-source-compatibility.js';\n",
+        "baseline": "import crypto from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\nimport { saleHistoricalInput } from '../tools/sale-source-compatibility.js';\nimport { UX_SOURCE, UX_SOURCE_FILES, qualifyUxSource, uxHistoricalInput, UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_FILE, qualifyUxWorkflowBoundSource, uxWorkflowBoundHistoricalInput } from '../tools/ux-source-compatibility.js';\nimport { UX_SUITES_GATE_SOURCE, UX_SUITES_GATE_FILE, qualifyUxSuitesGateSource, uxSuitesGateHistoricalInput } from '../tools/ux-director-reader-source-compatibility.js';\nimport { ACTION_READINESS_SOURCE, qualifyActionReadinessSource } from '../tools/action-readiness-source-compatibility.js';\n"
+      },
+      {
+        "current": "};\nlet positives = 0, refusals = 0, inverseCount = 0;\nfor (const row of pin.files) {\n  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))))), stat = fs.lstatSync(row.file);\n  assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical guarded source is a regular file');\n  assert.equal(uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, git('show', 'HEAD:' + row.file))))), current, 'Actual current committed source must retain the authored UX checkpoint after the exact workflow-parent forward layer');\n  assert(physical === current || physical === current.replaceAll('\\n', '\\r\\n'), 'Actual physical source must retain the complete UX checkpoint');\n  for (const [revision, mode, expectedBlob] of [[pin.revision, row.mode, row.currentBlob], [pin.targetRevision, row.targetMode, row.targetBlob]])\n    assert.equal(git('ls-tree', revision, '--', row.file).trim(), mode + ' blob ' + expectedBlob + '\\t' + row.file);\n",
+        "baseline": "};\nlet positives = 0, refusals = 0, inverseCount = 0;\nfor (const row of pin.files) {\n  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')))), stat = fs.lstatSync(row.file);\n  assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical guarded source is a regular file');\n  assert.equal(uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, git('show', 'HEAD:' + row.file)))), current, 'Actual current committed source must retain the authored UX checkpoint after the exact workflow-parent forward layer');\n  assert(physical === current || physical === current.replaceAll('\\n', '\\r\\n'), 'Actual physical source must retain the complete UX checkpoint');\n  for (const [revision, mode, expectedBlob] of [[pin.revision, row.mode, row.currentBlob], [pin.targetRevision, row.targetMode, row.targetBlob]])\n    assert.equal(git('ls-tree', revision, '--', row.file).trim(), mode + ' blob ' + expectedBlob + '\\t' + row.file);\n"
+      },
       {
         "current": "    assert.equal(conservedModule.split(hook).length, 2, 'One exact sale source integration hook');\n    conservedModule = conservedModule.replace(hook, '');\n  }\n  for (const hook of [\"import { uxAfterwordHistoricalInput } from './ux-afterword-source-compatibility.js';\\n\", '  input = uxAfterwordHistoricalInput(file, input);\\n']) {\n    assert.equal(conservedModule.split(hook).length, 2, 'One exact separately admitted Afterword integration hook');\n    conservedModule = conservedModule.replace(hook, '');\n  }\n  conservedModule = conservedModule.replace(\"import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\\n\", '');\n  conservedModule = conservedModule.replace(\"import { UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_SOURCE_SHA256 } from './ux-workflow-bound-source-data.js';\\n\", '');\n  const start = conservedModule.indexOf('export { UX_WORKFLOW_BOUND_SOURCE };'), end = conservedModule.indexOf('export function uxHistoricalInput(file, input) {', start);\n",
         "baseline": "    assert.equal(conservedModule.split(hook).length, 2, 'One exact sale source integration hook');\n    conservedModule = conservedModule.replace(hook, '');\n  }\n  conservedModule = conservedModule.replace(\"import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\\n\", '');\n  conservedModule = conservedModule.replace(\"import { UX_WORKFLOW_BOUND_SOURCE, UX_WORKFLOW_BOUND_SOURCE_SHA256 } from './ux-workflow-bound-source-data.js';\\n\", '');\n  const start = conservedModule.indexOf('export { UX_WORKFLOW_BOUND_SOURCE };'), end = conservedModule.indexOf('export function uxHistoricalInput(file, input) {', start);\n"
