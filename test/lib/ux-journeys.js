@@ -83,7 +83,7 @@ export function runAfterwordSourceProof() {
     }
     return hunks.map(row => ({ current: row.current.join('\n') + '\n', baseline: row.baseline.join('\n') + '\n' }));
   };
-  assert.equal(pin.revision, 'fc32848ba3cc52b9b0e7c880c7f0d69771a4364a');
+  assert.equal(pin.revision, '91173f29929b73df9398ba079eb0bbddb73883af');
   assert.equal(pin.targetRevision, 'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9');
   assert.equal(git('rev-parse', pin.revision + '^{tree}').trim(), pin.tree);
   assert.equal(git('rev-parse', pin.targetRevision + '^{tree}').trim(), pin.targetTree);
@@ -98,6 +98,8 @@ export function runAfterwordSourceProof() {
     assert.deepEqual(row.inverses, gitInverses(row.file), 'Every ordered inverse is the actual context-three Git hunk');
     assert.equal(sha(current), row.currentSha256); assert.equal(blob(current), row.currentBlob); assert.equal(Buffer.byteLength(current), row.currentBytes);
     assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);
+    const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);
+    if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');
     const physical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
     assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
     for (const input of [current, current.replaceAll('\n', '\r\n')]) {
@@ -105,7 +107,7 @@ export function runAfterwordSourceProof() {
       assert.equal(proof.baselineText, baseline); assert.equal(proof.sourceRevision, pin.revision); assert.equal(proof.targetRevision, pin.targetRevision);
       assert.equal(proof.sourceOnly, true); assert.equal(proof.native, false); assert.equal(proof.runtime, false);
       assert.equal(uxAfterwordHistoricalInput(row.file, input), baseline);
-      assert.equal(classicInterfaceHistoricalInput(row.file, input), baseline, 'Existing strict reader composition receives exact B35');
+      assert.equal(classicInterfaceHistoricalInput(row.file, input), composedBaseline, 'Existing strict reader composition matches exact B35 composition');
       assert(uxAfterwordHistoricalInput(row.file, Buffer.from(input)).equals(Buffer.from(baseline))); positives += 2;
     }
     assert.equal(uxAfterwordHistoricalInput(row.file, baseline), baseline, 'Historical input remains unchanged');
@@ -115,10 +117,10 @@ export function runAfterwordSourceProof() {
     for (const inverse of row.inverses) for (const input of [current.replace(inverse.current, ''), current.replace(inverse.current, () => inverse.current + inverse.current), current.replace(inverse.current, () => inverse.baseline)]) {
       reject(() => qualifyUxAfterwordSource(row.file, input));
       assert.equal(uxAfterwordHistoricalInput(row.file, input), input, 'Partial/unknown sources cannot be projected into the historical namespace');
-      if (input !== baseline) assert.notEqual(sha(classicInterfaceHistoricalInput(row.file, input)), row.targetSha256);
+      if (input !== baseline) assert.notEqual(sha(classicInterfaceHistoricalInput(row.file, input)), sha(composedBaseline));
     }
     for (const input of [current + '\n// unreviewed\n', current.replace(/\S/, '?')]) {
-      assert.equal(uxAfterwordHistoricalInput(row.file, input), input); assert.notEqual(sha(classicInterfaceHistoricalInput(row.file, input)), row.targetSha256);
+      assert.equal(uxAfterwordHistoricalInput(row.file, input), input); assert.notEqual(sha(classicInterfaceHistoricalInput(row.file, input)), sha(composedBaseline));
     }
     reject(() => uxAfterwordHistoricalInput(row.file, Buffer.from([255])));
     reject(() => { row.currentSha256 = '0'.repeat(64); });
@@ -129,8 +131,8 @@ export function runAfterwordSourceProof() {
     assert.equal(uxAfterwordHistoricalInput(file, buffer), buffer); assert.equal(uxAfterwordHistoricalInput(file, 'unknown'), 'unknown');
   }
   assert.deepEqual(pin.files.map(row => row.file), UX_AFTERWORD_SOURCE_FILES);
-  assert.equal(pin.files.reduce((sum, row) => sum + row.inverses.length, 0), 7);
+  assert.equal(pin.files.reduce((sum, row) => sum + row.inverses.length, 0), 9);
   console.log(JSON.stringify({ phase: 'EXACT_UX_AFTERWORD_SOURCE_ONLY', source: pin.revision, predecessor: pin.targetRevision,
-    files: 4, runtimeContentFiles: 3, existingTestSourceInputs: 1, inverseHunks: 7, positives, refusals, actualGitModesBlobsTreesAndWholeInverse: true, unchangedOriginalReaderAssertions: true,
+    files: 5, afterwordContentFiles: 3, mergedPolicySourceInputs: 1, existingTestSourceInputs: 1, inverseHunks: 9, positives, refusals, actualGitModesBlobsTreesAndWholeInverse: true, unchangedOriginalReaderAssertions: true,
     runtime: false, native: false, releaseQualified: false }));
 }
