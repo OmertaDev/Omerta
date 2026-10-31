@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { SALE_SOURCE, SALE_SOURCE_FILES, SALE_SOURCE_PREDECESSOR, qualifySaleSource, saleHistoricalInput } from '../tools/sale-source-compatibility.js';
 import { uxHistoricalInput, qualifyUxSource } from '../tools/ux-source-compatibility.js';
+import { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';
 import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';
 import { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';
@@ -31,8 +32,8 @@ const inverseHunks = diff => {
 let positives = 0, refusals = 0, hunks = 0;
 for (const row of pin.files) {
   const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
-  const physical = economySocialProofCutoverHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')));
-  const committed = economySocialProofCutoverHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, git('show', 'HEAD:' + row.file)));
+  const physical = economySocialProofCutoverHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))));
+  const committed = economySocialProofCutoverHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, git('show', 'HEAD:' + row.file))));
   const stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');

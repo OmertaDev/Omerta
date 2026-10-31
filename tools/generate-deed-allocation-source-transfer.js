@@ -59,7 +59,9 @@ else {
   priorAuthoredRevision = args[2]; assert.match(priorAuthoredRevision, /^[a-f0-9]{40}$/);
   const reviewedControls = ['package.json', 'test/lib/enterprise-ux-native-guard.js',
     'AGENTS.md', 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js',
-    'src/legal.js', 'test/legal-security.js', 'docs/legal-security-setup.md'];
+    'src/legal.js', 'test/legal-security.js', 'docs/legal-security-setup.md',
+    'test/economy-hardening-source-compatibility.js', 'test/sale-source-compatibility.js',
+    'test/ux-source-compatibility.js'];
   for (const file of args.slice(3)) {
     assert(reviewedControls.includes(file), 'Only explicitly reviewed unreleased controls may advance: ' + file);
     assert(!advance.has(file), 'A reviewed control may be named only once'); advance.add(file);
