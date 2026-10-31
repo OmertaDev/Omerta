@@ -20,6 +20,7 @@ const files = Object.freeze([
   'test/furnace-ledger.js', 'test/recipe-policy.js', 'test/world-kernel.js',
   'test/world-projection.js', 'test/lib/player-command-support.js',
   'test/director-migration.js',
+  'docs/legal-security-setup.md', 'src/legal.js', 'test/legal-security.js',
 ]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {

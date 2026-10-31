@@ -36,6 +36,7 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
   'test/furnace-ledger.js', 'test/recipe-policy.js', 'test/world-kernel.js',
   'test/world-projection.js', 'test/lib/player-command-support.js',
   'test/director-migration.js',
+  'docs/legal-security-setup.md', 'src/legal.js', 'test/legal-security.js',
 ], 'Only the closed reviewed Deed allocation domains receive a source alias');
 
 let positives = 0, refusals = 0, hunks = 0;
