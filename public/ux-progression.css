@@ -95,3 +95,4 @@
   .ux-skill-branches { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) { .ux-progress-meter > span { transition: none; } }
+.ux-opening{max-width:100%;box-sizing:border-box}.ux-opening-steps{display:grid;gap:10px;margin:12px 0;padding-left:24px;font-size:12px;line-height:1.5}.ux-opening-steps strong,.ux-opening-steps span{display:block}.ux-opening-steps span{color:var(--dim,#b9aa94)}.ux-opening-steps [aria-current=step]{color:var(--gold,#d2b577)}.ux-opening-steps [data-complete=true] strong,.ux-opening-complete{color:var(--ok,#9bbd91)}.ux-opening-budget{padding:10px;border-left:2px solid var(--gold,#d2b577);font-size:12px;line-height:1.5}.ux-opening select{width:100%;min-width:0}.ux-opening>.act{margin:5px 8px 5px 0;min-height:44px}.ux-opening-complete{font-size:12px;line-height:1.5}

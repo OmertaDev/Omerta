@@ -38,10 +38,17 @@
   const fieldKey = (el, index) => `${el.tagName}:${el.type || ''}:${el.id || el.name || index}`;
   const safeField = (el) => !el.disabled && !el.readOnly && !['password', 'hidden', 'file'].includes(el.type)
     && !/token|secret|password|provider|credential/i.test(`${el.id} ${el.name}`);
+  const TOOL_TIPS = [
+    { id: 'opening', tabs: ['start'], selector: '[data-ux-progression="opening"]', title: 'Turn a job into your first upgrade', text: 'Follow a confirmed job, a useful purchase, and the capability it actually improves.', action: 'See the upgrade journey' },
+    { id: 'compare', tabs: ['streets'], selector: '[data-ux-tactics]', title: 'Compare before you spend nerve', text: 'See the current approaches, costs, chance and blockers beside the original job controls.', action: 'Open job comparison' },
+    { id: 'skills', tabs: ['life'], selector: '.ux-skill-branches', title: 'Find the next branch of your build', text: 'Inspect prerequisites and your available points before choosing a skill.', action: 'Inspect skill branches' },
+    { id: 'crew-flow', tabs: ['crew'], selector: '[data-crew-playbook]', title: 'Give the operation a clear next step', text: 'Follow the actual brief, roles, readiness, issued actions and recorded debrief.', action: 'Open the operation playbook' },
+  ];
 
   window.createOmertaNavigation = function ({ getState, navigate, notify = () => {}, workspace }) {
     let account = '', key = '', favorites = [], resume = null, lastActivity = null, previousTab = '', lastMe = null;
     let clocks = [], snapshot = null, mobilePocket = null, activeInterest = '', tourStep = 0;
+    let discoveries = [], tipsEnabled = true, tipTab = '', tipFinished = false, tipObserver = null, observedPanel = null, tipFrame = null;
     const dirty = new WeakSet(), delivered = new Set();
     const $ = (selector) => document.querySelector(selector);
     const catalog = () => [...document.querySelectorAll('#tabs [data-tab]')].map((b) => ({ id: b.dataset.tab, name: b.textContent.trim() || b.dataset.tab }));
@@ -56,10 +63,15 @@
       restorePocket(); account = next; key = `omerta_ux_navigation:${next}`;
       const saved = readStore(key, {});
       favorites = list(saved.favorites).filter((id) => typeof id === 'string').slice(0, 3);
+      discoveries = list(saved.discoveries).filter(id => TOOL_TIPS.some(tip => tip.id === id));
+      tipsEnabled = saved.tipsEnabled !== false; tipTab = ''; tipFinished = false;
+      tipObserver?.disconnect(); observedPanel = null;
+      $('#ux-tool-discovery')?.remove();
+      $('.ux-tool-tip-badge')?.remove();
       resume = saved.resume && typeof saved.resume.tab === 'string' ? saved.resume : null;
       lastActivity = resume; previousTab = ''; lastMe = null; snapshot = null; clocks = []; delivered.clear(); activeInterest = ''; tourStep = 0;
     };
-    const save = (passive = false) => { if (account) { const value = { favorites, resume: lastActivity || resume }; writeStore(key, value); workspace?.set('navigation', value, { passive }); } };
+    const save = (passive = false) => { if (account) { const value = { favorites, resume: lastActivity || resume, discoveries, tipsEnabled }; writeStore(key, value); workspace?.set('navigation', value, { passive }); } };
     function mountStrip() {
       let strip = $('#ux-navigation');
       const tabs = $('#tabs');
@@ -89,7 +101,8 @@
       const resumeValid = resume && ids.has(resume.tab) && resume.tab !== currentTab && Date.now() - Number(resume.at) < 30 * 86400000;
       const markup = `<div class="ux-shortcuts"><span class="ux-kicker">FAVORITES</span>${favorites.map((id) => `<button type="button" class="act ux-shortcut" data-ux-go="${esc(id)}"${id === currentTab ? ' aria-current="page"' : ''}>${esc(title(id))}</button>`).join('')}
         <button type="button" class="act ux-pin" data-ux-pin aria-pressed="${pinned}" title="Keep up to three activities close">${pinned ? 'Unpin' : 'Pin this screen'}</button>
-        <button type="button" class="act ux-search" data-ux-search>Find an activity <kbd>Ctrl K</kbd></button></div>
+        <button type="button" class="act ux-search" data-ux-search>Find an activity <kbd>Ctrl K</kbd></button>
+        <button type="button" class="act" data-ux-tips aria-pressed="${tipsEnabled}">Tool tips: ${tipsEnabled ? 'on' : 'off'}</button></div>
         ${resumeValid ? `<button type="button" class="ux-resume" data-ux-go="${esc(resume.tab)}">Continue ${esc(title(resume.tab))} <span>last visited ${esc(new Date(resume.at).toLocaleDateString())}</span> →</button>` : ''}
         <div id="ux-readiness" class="ux-readiness" aria-label="Activity clocks"></div>`;
       // Avoid replacing a focused shortcut when live state changes.
@@ -105,8 +118,48 @@
           save(); renderStrip(); tickClocks();
         };
         strip.querySelector('[data-ux-search]').onclick = () => $('#btn-jump')?.click();
+        strip.querySelector('[data-ux-tips]').onclick = () => { tipsEnabled = !tipsEnabled; save(); renderStrip(); renderDiscovery(); strip.querySelector('[data-ux-tips]')?.focus(); };
         if (focused) [...strip.querySelectorAll('button')].find((b) => b.dataset.uxGo === focused || (focused === 'pin' && b.hasAttribute('data-ux-pin')) || (focused === 'search' && b.hasAttribute('data-ux-search')))?.focus({ preventScroll: true });
       }
+    }
+    function renderDiscovery() {
+      const panel = activePanel(), tab = state().currentTab;
+      if (tipTab !== tab) { tipTab = tab; tipFinished = false; }
+      if (panel !== observedPanel) {
+        tipObserver?.disconnect(); observedPanel = panel;
+        if (panel && typeof MutationObserver !== 'undefined') {
+          tipObserver = new MutationObserver(() => {
+            if (tipFrame != null) return;
+            tipFrame = requestAnimationFrame(() => { tipFrame = null; if (panel === activePanel()) renderDiscovery(); });
+          });
+          tipObserver.observe(panel, { childList: true, subtree: true });
+        }
+      }
+      const tip = state().me && tipsEnabled && !tipFinished && TOOL_TIPS.find(entry => entry.tabs.includes(tab)
+        && !discoveries.includes(entry.id) && panel?.querySelector(entry.selector));
+      const summary = $('#ux-screen-tools > summary');
+      summary?.querySelector('.ux-tool-tip-badge')?.remove();
+      let host = $('#ux-tool-discovery');
+      if (!tip) { host?.remove(); return; }
+      if (summary) { const badge = document.createElement('span'); badge.className = 'ux-tool-tip-badge'; badge.textContent = 'New tip'; summary.append(badge); }
+      if (host?.dataset.tip === tip.id && host.dataset.account === account) return;
+      host?.remove(); host = document.createElement('section'); host.id = 'ux-tool-discovery'; host.className = 'ux-tool-discovery';
+      host.dataset.tip = tip.id; host.dataset.account = account; host.setAttribute('aria-label', 'A tool for this moment');
+      host.innerHTML = `<strong>${esc(tip.title)}</strong><p>${esc(tip.text)}</p><div><button type="button" class="act" data-ux-show-tool>${esc(tip.action)}</button><button type="button" class="ux-text-button" data-ux-tip-done>Got it</button></div>`;
+      const owner = account;
+      const finish = () => { if (owner !== account || tab !== state().currentTab) return; discoveries = [...new Set([...discoveries, tip.id])]; tipFinished = true; save(); renderDiscovery(); };
+      host.querySelector('[data-ux-tip-done]').onclick = () => { finish(); summary?.focus(); };
+      host.querySelector('[data-ux-show-tool]').onclick = () => {
+        if (owner !== account || tab !== state().currentTab) return;
+        const target = activePanel()?.querySelector(tip.selector); if (!target) return;
+        for (let node = target; node; node = node.parentElement) if (node.tagName === 'DETAILS') node.open = true;
+        const tools = $('#ux-screen-tools'); if (tools && !tools.contains(target) && matchMedia('(max-width:760px)').matches) tools.open = false;
+        const focus = target.matches('details') ? target.querySelector(':scope > summary') : target.querySelector('summary,button,input,select') || target;
+        for (let node = focus; node; node = node.parentElement) if (node.tagName === 'DETAILS') node.open = true;
+        if (!focus.hasAttribute('tabindex') && !focus.matches('summary,button,input,select,a')) focus.tabIndex = -1;
+        finish(); focus.scrollIntoView({ block: 'center', behavior: 'auto' }); focus.focus({ preventScroll: true });
+      };
+      $('#ux-screen-tools .ux-screen-tools-body')?.append(host);
     }
     function syncClocks() {
       const { me } = state();
@@ -322,7 +375,7 @@
       previousTab = tab;
       render(); explainBlockers(panel); reachAction(panel);
     }
-    function render() { ensureAccount(); landing(); if (!state().me) return; syncClocks(); renderStrip(); tickClocks(); resourceIcons(); }
+    function render() { ensureAccount(); landing(); if (!state().me) return; syncClocks(); renderStrip(); renderDiscovery(); tickClocks(); resourceIcons(); }
     document.addEventListener('input', (event) => { if (event.target.closest?.('#tabbodies') && safeField(event.target)) dirty.add(event.target); });
     document.addEventListener('change', (event) => { if (event.target.closest?.('#tabbodies') && safeField(event.target)) dirty.add(event.target); });
     document.addEventListener('keydown', (event) => {
@@ -334,6 +387,6 @@
     const clock = window.setInterval(() => { if (!document.hidden) tickClocks(); }, 1000);
     return { render, beforeRender, afterRender, observe(path) { if (path === '/v1/me') lastMe = null; }, icon,
       reloadWorkspace() { account = ''; render(); afterRender(); },
-      destroy() { window.clearInterval(clock); restorePocket(); } };
+      destroy() { window.clearInterval(clock); tipObserver?.disconnect(); if (tipFrame != null) cancelAnimationFrame(tipFrame); $('#ux-tool-discovery')?.remove(); restorePocket(); } };
   };
 })();

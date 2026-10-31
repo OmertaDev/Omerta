@@ -135,6 +135,66 @@ try {
   assert.equal(await harbor.locator('.ux-tactics-table-wrap').evaluate(node => node.scrollWidth > node.clientWidth), true, 'Wide comparisons scroll locally on phones.');
   await page.setViewportSize({ width: 1440, height: 1050 });
 
+  // Practice starts with a fresh read, then advances only from real confirmed jobs.
+  // Tab activation precedes the async native board replacement. Do not click the
+  // planning toolbar retained from the earlier Streets visit while it is replaced.
+  const previousStreetTable = await table.elementHandle();
+  await openTab(page, 'streets');
+  if (previousStreetTable) {
+    await page.waitForFunction(previous => !previous.isConnected, previousStreetTable);
+    await previousStreetTable.dispose();
+  }
+  await table.locator('[data-tactics-view="trials"]').waitFor();
+  await table.locator('[data-tactics-view="trials"]').click();
+  const light = () => table.locator('[data-trial-card="light-touch"]');
+  await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);
+  assert.equal(await table.locator('[data-trial-card]').count(), 3);
+  assert.match(await table.locator('.ux-tactics-trials').innerText(), /private practice stamps add no currency, items or public rank/);
+  await light().locator('[data-tactics-trial]').click();
+  await light().locator('.ux-tactics-trial-status').filter({ hasText: 'In progress · 0 / 2' }).waitFor();
+  assert.equal(mutations.length, 0, 'Starting a mastery trial only reads conditions and saves private notes.');
+  assert.deepEqual(await economicSnapshot(row.id), initialEconomy);
+  const practiceRandom = Math.random;
+  try {
+    Math.random = () => 0.01;
+    for (let step = 1; step <= 2; step++) {
+      const fullBook = page.locator('#tab-streets details[data-sect="crimes-all"]');
+      if (await fullBook.count() && !await fullBook.evaluate(node => node.open)) await fullBook.locator(':scope > summary').click();
+      const confirmed = page.waitForResponse(response => response.url().includes('/v1/crimes/') && response.request().method() === 'POST');
+      await page.locator('#tab-streets [data-do="POST /v1/crimes/pick"].prime:enabled').click();
+      const outcome = await (await confirmed).json();
+      assert.equal(outcome.success, true);
+      assert(outcome.decisionContext.cost.nerve <= 6);
+      await light().locator('.ux-tactics-trial-status').filter({ hasText: step === 2 ? 'Practice complete · 2 / 2' : 'In progress · 1 / 2' }).waitFor();
+      await page.waitForFunction(() => document.body.style.cursor !== 'progress');
+      if (step === 1) {
+        await pool.query('UPDATE characters SET street_action_at=NULL WHERE id=$1', [row.id]);
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await page.locator('#screen-main:not(.hidden)').waitFor();
+        await openTab(page, 'streets');
+        await light().locator('.ux-tactics-trial-status').filter({ hasText: 'In progress · 1 / 2' }).waitFor();
+      }
+    }
+  } finally { Math.random = practiceRandom; }
+  assert.match(await light().locator('.ux-tactics-trial-stamp').innerText(), /Personal record · this character/);
+  const afterPractice = await economicSnapshot(row.id), practiceMutations = mutations.length;
+  await light().locator('[data-tactics-trial]').click();
+  await light().locator('.ux-tactics-trial-status').filter({ hasText: 'In progress · 0 / 2' }).waitFor();
+  assert.equal(mutations.length, practiceMutations, 'Resetting a trial never repeats or reverses a real job.');
+  assert.deepEqual(await economicSnapshot(row.id), afterPractice);
+  await light().locator('[data-tactics-trial-stop]').click();
+  await light().locator('.ux-tactics-trial-status').filter({ hasText: 'Run paused' }).waitFor();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await light().scrollIntoViewIfNeeded();
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'Mastery rules and controls stay within the phone viewport.');
+  assert(await light().locator('[data-tactics-trial]').evaluate(button => button.getBoundingClientRect().height >= 44));
+  await page.setViewportSize({ width: 1440, height: 1050 });
+  await pool.query('UPDATE characters SET generation=2,street_action_at=NULL WHERE id=$1', [row.id]);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.locator('#screen-main:not(.hidden)').waitFor();
+  await openTab(page, 'streets');
+  await light().locator('.ux-tactics-trial-status').filter({ hasText: 'Not started · 0 / 2' }).waitFor();
+
   // A real failed action carries its pre-action quote into the explanatory receipt.
   await openTab(page, 'streets');
   const random = Math.random;

@@ -8,6 +8,62 @@
   const pct = value => `${(Math.max(0, Math.min(1, num(value))) * 100).toFixed(1)}%`;
   const duration = value => value == null ? 'Not estimated' : num(value) <= 0 ? 'Immediate' : `${Math.ceil(num(value) / 60)} min`;
   const array = value => Array.isArray(value) ? value : [];
+  const trialIds = ['light-touch', 'three-approaches', 'measured-risk'];
+  function normalizeTrials(value, actor) {
+    const runs = {};
+    for (const id of trialIds) {
+      const run = value?.[id];
+      if (!run || run.actor !== actor || !['active', 'complete', 'over-budget', 'paused'].includes(run.status)
+        || !Number.isFinite(run.startedAt)) continue;
+      runs[id] = { actor, startedAt: run.startedAt, status: run.status,
+        successes: Math.max(0, Math.min(100, Math.floor(num(run.successes)))),
+        attempts: Math.max(0, Math.min(100, Math.floor(num(run.attempts)))),
+        nerveSpent: Math.max(0, Math.min(100000, num(run.nerveSpent))),
+        approaches: [...new Set(array(run.approaches).filter(id => ['quiet', 'standard', 'loud'].includes(id)))],
+        jobs: [...new Set(array(run.jobs).filter(id => typeof id === 'string' && /^[a-z0-9_-]{1,80}$/.test(id)))].slice(0, 100),
+        seen: [...new Set(array(run.seen).filter(id => typeof id === 'string' && id.length <= 160))].slice(0, 100),
+        last: typeof run.last === 'string' ? run.last.slice(0, 180) : '' };
+    }
+    return runs;
+  }
+  function trialProgress(run, trial) {
+    return !run ? 0 : trial.id === 'three-approaches' ? run.approaches.length
+      : trial.id === 'measured-risk' ? run.jobs.length : run.successes;
+  }
+  function advanceTrial(run, trial, receipt, before, after, result, actor, account) {
+    const body = result?.body, context = body?.decisionContext;
+    const crimeId = /^\/v1\/crimes\/([a-z0-9_-]+)$/.exec(receipt?.path || '')?.[1];
+    const key = receipt?.feedbackId == null ? '' : String(receipt.feedbackId);
+    if (!run || run.status !== 'active' || run.actor !== actor || !trialIds.includes(trial?.id)
+      || receipt?.actor !== actor || before?.identity !== actor || after?.identity !== actor
+      || before?.accountId !== account || after?.accountId !== account
+      || (receipt.isCurrent && !receipt.isCurrent()) || receipt.method !== 'POST'
+      || receipt.feedbackState !== 'confirmed' || !crimeId || !key || key.length > 160 || run.seen.includes(key)
+      || !Number.isInteger(result?.code) || result.code < 200 || result.code >= 300
+      || body?.ok === false || typeof body?.success !== 'boolean'
+      || context?.crimeId !== crimeId || !['quiet', 'standard', 'loud'].includes(body.approach)
+      || !Number.isFinite(context?.probability) || context.probability < 0 || context.probability > 1
+      || !Number.isFinite(context?.cost?.nerve) || context.cost.nerve < 0
+      || !Number.isFinite(Date.parse(context.projectedAt)) || Date.parse(context.projectedAt) < run.startedAt) return run;
+    const next = { ...run, seen: [...run.seen, key], attempts: run.attempts + 1,
+      nerveSpent: run.nerveSpent + context.cost.nerve, approaches: [...run.approaches], jobs: [...run.jobs] };
+    if (body.success) {
+      next.successes++;
+      if (!next.approaches.includes(body.approach)) next.approaches.push(body.approach);
+      if (context.probability >= trial.minimumChance && !next.jobs.includes(crimeId)) next.jobs.push(crimeId);
+    }
+    next.last = body.success ? 'Confirmed successful job recorded.' : 'An unsuccessful job was recorded; its nerve still counts.';
+    if (trial.id === 'measured-risk' && body.success && context.probability < trial.minimumChance)
+      next.last = 'This job succeeded, but its pre-action chance was below 85%; it does not count toward this trial.';
+    if (trial.nerveBudget != null && next.nerveSpent > trial.nerveBudget) {
+      next.status = 'over-budget'; next.last = 'The listed nerve budget was exceeded. Your game result is unchanged; start a fresh practice run when ready.';
+    } else if (trialProgress(next, trial) >= trial.target) {
+      next.status = 'complete'; next.last = 'Practice complete. Your personal stamp is filed below.';
+    } else if (next.attempts >= 100) {
+      next.status = 'paused'; next.last = 'This run reached 100 recorded jobs. Start a fresh run to continue practice.';
+    }
+    return next;
+  }
   function evaluateFormula(node, inputs) {
     if (typeof node === 'number') return node;
     if (node?.input) return num(inputs[node.input]);
@@ -42,10 +98,11 @@
   }
 
   function create({ getState, read, navigate, notify = () => {}, workspace }) {
-    let owner = '', board = null, loadedAt = 0, request = 0, pending = false, requestedPath = '', error = '', draft = {}, workspaceValue = '';
+    let owner = '', actor = '', board = null, loadedAt = 0, request = 0, trialRequest = 0, pending = false, requestedPath = '', error = '', draft = {}, workspaceValue = '';
     const eligibleTabs = ['start', 'streets', 'garage', 'life', 'port', 'law', 'pen'];
     const state = () => getState() || {};
     const accountOf = () => String(state().session?.accountId || state().me?.accountId || state().me?.id || '');
+    const actorOf = () => state().me?.id && state().me?.generation != null ? `${state().me.id}:${state().me.generation}` : '';
     const panel = () => document.getElementById(`tab-${state().currentTab}`);
     const storeKey = () => `ux-tactics:${owner}`;
     function readDraft() {
@@ -56,8 +113,10 @@
     }
     function ensureOwner() {
       const next = accountOf();
-      if (next === owner) return;
-      owner = next; board = null; loadedAt = 0; request++; pending = false; requestedPath = ''; error = '';
+      const nextActor = actorOf();
+      if (next === owner && nextActor === actor) return;
+      owner = next; actor = nextActor; board = null; loadedAt = 0; request++; trialRequest++; pending = false; requestedPath = ''; error = '';
+      document.querySelectorAll('[data-ux-tactics]').forEach(host => host.remove());
       const stored = readDraft() || {}; workspaceValue = JSON.stringify(stored);
       draft = normalizeDraft(stored);
     }
@@ -66,7 +125,8 @@
         plan: array(stored.plan).filter(p => typeof p?.id === 'string').slice(0, 3).map(p => ({ id: p.id, wait: Math.max(0, Math.min(86400, num(p.wait))) })),
         energy: stored.energy == null ? null : Math.max(0, num(stored.energy)), nerve: stored.nerve == null ? null : Math.max(0, num(stored.nerve)),
         gear: Array.isArray(stored.gear) ? stored.gear : null, skills: Array.isArray(stored.skills) ? stored.skills : null,
-        unowned: !!stored.unowned, gearStat: stored.gearStat || '', boat: stored.boat || '', escort: !!stored.escort, setback: stored.setback || null };
+        unowned: !!stored.unowned, gearStat: stored.gearStat || '', boat: stored.boat || '', escort: !!stored.escort, setback: stored.setback || null,
+        trials: normalizeTrials(stored.trials, actor) };
     }
     const catalog = () => {
       const result = [...array(board?.planner), ...array(board?.jobs).flatMap(job => array(job.actual))];
@@ -86,12 +146,13 @@
     async function load(force = false) {
       ensureOwner();
       if (!owner || pending || (!force && board && Date.now() - loadedAt < 30000 && (state().currentTab !== 'port' || board.sea))) return;
-      const identity = owner, character = state().me?.id, sequence = ++request, path = pathForPreview();
+      const identity = owner, character = actorOf(), sequence = ++request, path = pathForPreview();
       pending = true; error = ''; requestedPath = path; paint();
       try {
         const result = await read(path);
-        if (identity !== accountOf() || character !== state().me?.id || sequence !== request) return;
+        if (identity !== accountOf() || character !== actorOf() || sequence !== request) return;
         if (result.code >= 400 || !result.body?.tactics) throw new Error(result.body?.message || 'This comparison could not be loaded.');
+        if (result.body.tactics.characterId !== state().me?.id) throw new Error('This comparison belongs to a different character. Refresh it before continuing.');
         board = result.body.tactics; loadedAt = Date.now();
       } catch (failure) { if (sequence === request && identity === accountOf()) error = failure.message || 'This comparison could not be loaded.'; }
       finally { if (sequence === request) { pending = false; paint(); } }
@@ -174,19 +235,42 @@
       if (!setback) return '';
       return `<details class="ux-tactics-setback"><summary>Understand the last setback</summary><p><b>${esc(setback.label)}</b> · ${esc(setback.summary)}</p>${setback.random ? `<p>The server recorded an unsuccessful random roll. The pre-action projection was ${setback.probability == null ? 'not available' : pct(setback.probability)} success. No individual modifier is proven to have caused the failure.</p>` : '<p>This was an explicit server refusal or connection failure. It is separate from losing a random outcome.</p>'}${setback.factors?.length ? `<ul>${setback.factors.map(m => `<li>${esc(m.label)}: ${m.value == null ? '' : esc(fmt(m.value))} · ${esc(m.effect)}</li>`).join('')}</ul>` : ''}<p>Known result: ${esc(setback.known || 'No additional state change is confirmed.')}</p><button class="act" data-tactics-view="recovery" type="button">Compare recovery routes</button></details>`;
     }
+    function trialsMarkup() {
+      const trials = array(board?.trials).filter(trial => trialIds.includes(trial.id));
+      return `<div class="ux-tactics-trials"><h3>Mastery practice</h3><p>Pick an optional constraint, then use the original job controls. Progress uses confirmed jobs observed here after you start. These private practice stamps add no currency, items or public rank.</p>${trials.length ? trials.map(trial => {
+        const run = draft.trials[trial.id], progress = trialProgress(run, trial), active = run?.status === 'active';
+        const status = !run ? 'Not started' : run.status === 'complete' ? 'Practice complete' : run.status === 'over-budget' ? 'Budget exceeded' : run.status === 'paused' ? 'Run paused' : 'In progress';
+        const eligible = trial.minimumChance == null ? '' : `<p class="ux-tactics-note">${array(board.jobs).filter(job => job.actual.some(quote => quote.probability >= trial.minimumChance && quote.blockers.length === 0)).length} different jobs currently meet the chance and listed eligibility checks. Open Compare jobs to inspect the choices.</p>`;
+        return `<article class="ux-tactics-trial${run?.status === 'complete' ? ' is-complete' : ''}" data-trial-card="${esc(trial.id)}"><h4>${esc(trial.name)}</h4><p>${esc(trial.rule)}</p><p class="ux-tactics-trial-status" role="status">${esc(status)} · ${progress} / ${trial.target}</p><progress max="${trial.target}" value="${Math.min(trial.target, progress)}" aria-label="${esc(trial.name)} progress"></progress>${run ? `<p>${run.attempts} confirmed job${run.attempts === 1 ? '' : 's'} · ${fmt(run.nerveSpent)} listed nerve${trial.nerveBudget == null ? '' : ` / ${trial.nerveBudget} budget`}</p>${trial.id === 'three-approaches' ? `<p>Recorded approaches: ${run.approaches.length ? esc(run.approaches.join(', ')) : 'none yet'}</p>` : ''}<p class="ux-tactics-note">${esc(run.last)}</p>` : ''}${eligible}${run?.status === 'complete' ? `<p class="ux-tactics-trial-stamp">✓ ${esc(trial.stamp)}<small>Personal record · this character</small></p>` : ''}<div class="ux-tactics-trial-actions"><button class="act" type="button" data-tactics-trial="${esc(trial.id)}"${pending ? ' disabled' : ''}>${!run ? 'Start practice' : 'Start a fresh run'}</button>${active ? `<button class="act" type="button" data-tactics-trial-stop="${esc(trial.id)}">Pause run</button>` : ''}</div></article>`;
+      }).join('') : '<p>The trial rules are not available yet. Refresh the planning table.</p>'}<button class="act" type="button" data-tactics-view="jobs">Compare jobs</button> <button class="act" type="button" data-tactics-open="streets">Open the original job controls →</button></div>`;
+    }
+    async function startTrial(id) {
+      ensureOwner();
+      if (!owner || !actor || pending) return;
+      const identity = owner, character = actor, previousBoard = board, sequence = ++trialRequest;
+      await load(true);
+      if (sequence !== trialRequest || identity !== accountOf() || character !== actorOf() || pending || error || !board || board === previousBoard) return;
+      const trial = array(board.trials).find(trial => trial.id === id && trialIds.includes(id));
+      const startedAt = Date.parse(board.generatedAt);
+      if (!trial || !Number.isFinite(startedAt)) return;
+      draft.trials[id] = { actor: character, startedAt, status: 'active', successes: 0, attempts: 0,
+        nerveSpent: 0, approaches: [], jobs: [], seen: [], last: 'Run started. Only subsequent confirmed jobs count.' };
+      save(); paint();
+      if (draft.view === 'trials') panel()?.querySelector(`[data-tactics-trial="${id}"]`)?.focus({ preventScroll: true });
+    }
     function paint() {
       const host = mount();
       if (!host?.open) return;
       const body = host.querySelector('.ux-tactics-body'), focus = document.activeElement;
-      const focusKey = host.contains(focus) ? ['data-tactics-view', 'data-tactics-field', 'data-tactics-preview', 'data-tactics-reset', 'data-tactics-wait'].map(key => focus.hasAttribute?.(key) ? [key, focus.getAttribute(key)] : null).find(Boolean) : null;
+      const focusKey = host.contains(focus) ? ['data-tactics-view', 'data-tactics-field', 'data-tactics-preview', 'data-tactics-reset', 'data-tactics-wait', 'data-tactics-trial', 'data-tactics-trial-stop'].map(key => focus.hasAttribute?.(key) ? [key, focus.getAttribute(key)] : null).find(Boolean) : null;
       const active = draft.view || defaultView();
       if (!board) body.innerHTML = `<p role="status">${error ? esc(error) : 'Reading current costs and conditions…'}</p>${error ? '<button class="act" data-tactics-retry type="button">Try again</button>' : ''}`;
       else {
-        const views = [['jobs', 'Compare jobs'], ['sea', 'Sea lanes'], ['loadout', 'Loadout bench'], ['skills', 'Skill sandbox'], ['plan', 'Three moves'], ['formula', 'Explain odds'], ['recovery', 'Recovery']];
+        const views = [['jobs', 'Compare jobs'], ['sea', 'Sea lanes'], ['loadout', 'Loadout bench'], ['skills', 'Skill sandbox'], ['plan', 'Three moves'], ['formula', 'Explain odds'], ['recovery', 'Recovery'], ['trials', 'Mastery trials']];
         const coach = board.coach;
         body.innerHTML = `<div class="ux-tactics-toolbar" aria-label="Planning views">${views.map(([id, name]) => `<button class="act" type="button" data-tactics-view="${id}" aria-pressed="${active === id}">${name}</button>`).join('')}</div><p class="ux-tactics-note">Read ${esc(new Date(board.generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))} · ${esc(board.note)} ${pending ? '<span role="status">Updating preview…</span>' : ''}</p>${error ? `<p role="alert">${esc(error)}</p>` : ''}
           ${coach ? `<details class="ux-tactics-coach"><summary>Why did the city recommend “${esc(coach.label)}”?</summary><p>${esc(coach.explanation)}</p><blockquote>${esc(coach.hint || '')}</blockquote><p>Level ${coach.resources.level} · ${coach.resources.nerve} nerve · ${coach.resources.energy} energy · ${money(coach.resources.cash)} cash</p>${array(coach.eligibility).length ? `<ul>${coach.eligibility.map(item => `<li>${esc(item.name)}: ${item.blockers.length ? esc(item.blockers.join(' ')) : 'listed checks currently pass'}</li>`).join('')}</ul>` : ''}<button class="act" type="button" data-tactics-open="${esc(coach.tab)}">Review the recommended screen →</button></details>` : ''}
-          ${setbackMarkup()}<div class="ux-tactics-view">${({ jobs: jobsMarkup, sea: seaMarkup, loadout: loadoutMarkup, skills: skillsMarkup, plan: planMarkup, formula: formulaMarkup, recovery: recoveryMarkup }[active] || jobsMarkup)()}</div>`;
+          ${setbackMarkup()}<div class="ux-tactics-view">${({ jobs: jobsMarkup, sea: seaMarkup, loadout: loadoutMarkup, skills: skillsMarkup, plan: planMarkup, formula: formulaMarkup, recovery: recoveryMarkup, trials: trialsMarkup }[active] || jobsMarkup)()}</div>`;
       }
       body.onclick = onClick; body.onchange = onChange; body.oninput = onInput;
       if (focusKey) [...body.querySelectorAll(`[${focusKey[0]}]`)].find(node => node.getAttribute(focusKey[0]) === focusKey[1])?.focus({ preventScroll: true });
@@ -199,6 +283,8 @@
     function onClick(event) {
       const button = event.target.closest('button'); if (!button) return;
       if (button.hasAttribute('data-tactics-view')) { draft.view = button.dataset.tacticsView; save(); paint(); if (draft.view === 'sea' && !board?.sea && state().currentTab === 'port') load(true); }
+      else if (button.hasAttribute('data-tactics-trial')) startTrial(button.dataset.tacticsTrial);
+      else if (button.hasAttribute('data-tactics-trial-stop')) { const run = draft.trials[button.dataset.tacticsTrialStop]; if (run?.status === 'active') { trialRequest++; run.status = 'paused'; run.last = 'Run paused. Start fresh when you want to practice again.'; save(); paint(); } }
       else if (button.hasAttribute('data-tactics-open')) navigate(button.dataset.tacticsOpen);
       else if (button.hasAttribute('data-tactics-add')) add(button.dataset.tacticsAdd);
       else if (button.hasAttribute('data-tactics-add-choice')) add(panel()?.querySelector('[data-tactics-field="plan-choice"]')?.value);
@@ -239,6 +325,12 @@
     }
     function recordOperation(receipt, before, after, result) {
       ensureOwner(); loadedAt = 0;
+      let changed = false;
+      for (const trial of array(board?.trials)) {
+        const run = draft.trials[trial.id], next = advanceTrial(run, trial, receipt, before, after, result, actor, owner);
+        if (next !== run) { draft.trials[trial.id] = next; changed = true; }
+      }
+      if (changed) save();
       if (result?.body?.success === false || num(result?.code) >= 400) {
         const context = result.body?.decisionContext;
         draft.setback = { label: receipt.label || 'Move', summary: receipt.summary || '', random: result.body?.success === false && num(result.code) < 400,
@@ -258,7 +350,8 @@
         }
       }
       if (draft.tab !== state().currentTab) { draft.tab = state().currentTab; draft.view = defaultView(); save(true); }
-      mount(); if (draft.open) { paint(); load(); }
+      mount(); if (draft.open) paint();
+      if (draft.open || Object.values(draft.trials).some(run => run.status === 'active')) load();
     }
     document.addEventListener('omerta:tactics-apply-plan', event => {
       ensureOwner();
@@ -273,5 +366,6 @@
     return { render, observe, recordOperation, afterRender: render, load };
   }
   create.analyzePlan = analyzePlan; create.evaluateFormula = evaluateFormula;
+  create.normalizeTrials = normalizeTrials; create.advanceTrial = advanceTrial; create.trialProgress = trialProgress;
   window.createOmertaTactics = create;
 })();
