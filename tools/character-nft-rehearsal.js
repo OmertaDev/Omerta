@@ -22,7 +22,7 @@ const binary = (name) => {
   return process.env[name.toUpperCase() + '_BIN'] || (fs.existsSync(local) ? local : name);
 };
 const forge = binary('forge'), anvil = binary('anvil');
-const cachedSolc = path.join(CONTRACTS, 'cache', 'verify', 'solc-0.8.26' + suffix);
+const cachedSolc = path.join(CONTRACTS, 'cache', 'verify', 'solc-0.8.38' + suffix);
 const solc = process.env.SOLC_BIN || (fs.existsSync(cachedSolc) ? cachedSolc : null);
 if (process.argv.length !== 2) throw new Error('This local-only rehearsal accepts no arguments or remote target.');
 
