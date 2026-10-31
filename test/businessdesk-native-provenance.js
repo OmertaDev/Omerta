@@ -6,11 +6,14 @@ import { businessDeskNativeProvenance } from '../tools/businessdesk-native-prove
 import { BUSINESS_DESK_DOMAINS } from '../tools/businessdesk-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from '../tools/deed-allocation-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previousNative } from '../tools/enterprise-native-ux-b35-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as deedNative } from '../tools/businessdesk-deed-native-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as currentNative } from '../tools/enterprise-native-deed-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
 
 assert.deepEqual(process.argv.slice(2), [], 'Complete source-only provenance test; no skip or native selector.');
 assert.equal(previousNative.status, 'SEALED'); assert(Object.isFrozen(previousNative));
+assert.equal(deedNative.status, 'SEALED'); assert.equal(deedNative.version, 3);
+assert(Object.isFrozen(deedNative) && Object.isFrozen(deedNative.files));
 assert.equal(currentNative.status, 'SEALED', 'Seal actual current inputs before executing this test.');
 assert.equal(currentNative.version, 3); assert.equal(currentNative.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
 assert(Object.isFrozen(currentNative) && Object.isFrozen(currentNative.files));
@@ -22,6 +25,7 @@ const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const blob = bytes => crypto.createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
 const relation = 'exact-reviewed-business-and-deed-source-provenance-only';
 const previousRows = new Map(previousNative.files.map(row => [row.file, row]));
+const deedRows = new Map(deedNative.files.map(row => [row.file, row]));
 const currentRows = new Map(currentNative.files.map(row => [row.file, row]));
 const samePin = (a, b) => a.mode === b.mode && a.blob === b.blob && a.sha256 === b.sha256;
 const proofOf = (proof, file, previous, expected) => {
@@ -42,6 +46,10 @@ for (const [file, desk] of Object.entries(BUSINESS_DESK_DOMAINS)) {
   }
   assert(Object.isFrozen(previous) && Object.isFrozen(expected));
   assert.equal(desk.mode, expected.mode); assert.equal(desk.currentBlob, expected.blob); assert.equal(desk.currentSha256, expected.sha256);
+  const stage = deedRows.get(file);
+  assert(stage && Object.isFrozen(stage), 'An actual frozen Deed native archive row anchors every applicable Desk baseline.');
+  assert.deepEqual([desk.baselineMode, desk.baselineBlob, desk.baselineSha256], [stage.mode, stage.blob, stage.sha256]);
+  reject(() => { stage.blob = '0'.repeat(40); });
   const deed = Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS, file) ? DEED_ALLOCATION_SOURCE_DOMAINS[file] : null;
   if (deed) {
     assert.deepEqual([desk.baselineMode, desk.baselineBlob, desk.baselineSha256], [deed.currentMode, deed.currentBlob, deed.currentSha256]);
@@ -67,7 +75,7 @@ const record = (revision, file) => {
 const { file, previous, expected } = sample;
 const current = record('HEAD', file), authored = record(currentNative.authoredRevision, file);
 const bytes = git('show', `${currentNative.authoredRevision}:${file}`);
-assert(git('show', `HEAD:${file}`).equals(bytes), 'The current physical source candidate equals its sealed authored bytes.');
+assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');
 assert.equal(sha(bytes), expected.sha256); assert.equal(blob(bytes), expected.blob);
 const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
 proofOf(admitted, file, previous, expected); assert.deepEqual(admitted, sample.proof);
