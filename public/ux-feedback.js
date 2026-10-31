@@ -45,15 +45,16 @@
       `<span class="ux-change">${escape(change.key === 'omr' ? '$OMR' : change.key)} <b>${signed(change.delta, change.key === 'bank')}</b></span>`).join('');
     const trades = facts.trades.map(trade => `<div class="ux-receipt-trade"><b>${escape(trade.name)} +${format(trade.xp)} XP</b><span>${trade.remaining == null ? 'Mastered' : `${format(trade.remaining)} XP to next rank`}</span></div>`).join('');
     const recovery = receipt.recovery;
+    const delta = facts.changedCharacter ? 'A new character started; resource balances are not compared.' : receipt.delta;
     return `<article class="operation-receipt operation-receipt--${tone} ux-receipt" data-operation-receipt="${receipt.id}">
       <div class="operation-receipt__head"><b>${escape(receipt.label)}</b><time datetime="${escape(receipt.atIso)}">${escape(receipt.at)}</time></div>
       <div class="ux-receipt-outcome">${escape(hero)}</div>
       ${tone !== 'success' ? `<div class="operation-receipt__summary">${escape(receipt.summary)}</div>` : ''}
       ${facts.verified ? `<div class="ux-changes">${changes}</div>${trades}` : ''}
-      ${tone !== 'success' ? `<div class="operation-receipt__delta">${escape(receipt.delta)}</div>` : ''}
+      ${tone !== 'success' ? `<div class="operation-receipt__delta">${escape(delta)}</div>` : ''}
       ${facts.milestones.length ? `<div class="ux-milestone">${facts.milestones.map(item => escape(item.label)).join(' · ')}</div>` : ''}
       ${recovery ? `<div class="operation-receipt__recovery"><span>${escape(recovery.text)}</span>${recovery.run ? `<button class="act" data-operation-retry="${receipt.id}">${escape(recovery.label || 'try again')}</button>` : ''}${recovery.tab ? `<button class="act" data-operation-tab="${escape(recovery.tab)}">${escape(recovery.label || 'show me')}</button>` : ''}</div>` : ''}
-      ${tone === 'success' ? `<details class="ux-receipt-details"><summary>Full result and ledger</summary><div class="operation-receipt__summary">${escape(receipt.summary)}</div><div class="operation-receipt__delta">${escape(receipt.delta)}</div>${receipt.flavour ? `<p class="ux-receipt-flavour">${escape(receipt.flavour)}</p>` : ''}${receipt.cashBreakdown ? `<div class="ux-receipt-books">${escape(receipt.cashBreakdown)}</div>` : ''}${receipt.next ? `<button class="act ux-next" data-operation-tab="${escape(receipt.next.tab)}">${escape(receipt.next.label)} →</button>` : ''}</details>` : ''}
+      ${tone === 'success' ? `<details class="ux-receipt-details"><summary>Full result and ledger</summary><div class="operation-receipt__summary">${escape(receipt.summary)}</div><div class="operation-receipt__delta">${escape(delta)}</div>${receipt.flavour ? `<p class="ux-receipt-flavour">${escape(receipt.flavour)}</p>` : ''}${receipt.cashBreakdown ? `<div class="ux-receipt-books">${escape(receipt.cashBreakdown)}</div>` : ''}${receipt.next ? `<button class="act ux-next" data-operation-tab="${escape(receipt.next.tab)}">${escape(receipt.next.label)} →</button>` : ''}</details>` : ''}
     </article>`;
   }
   function create({ getState, navigate, notify, getOrigin, syncAudio, celebrate }) {

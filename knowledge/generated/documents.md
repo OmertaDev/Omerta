@@ -718,7 +718,7 @@
 | [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 83 | 2026-10-26 |
 | [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 20 | 2026-10-26 |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2746 | 2026-10-27 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2765 | 2026-10-31 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
 | [docs/workshop-floor-integration.md](../../docs/workshop-floor-integration.md) | documentation | 22 | 2026-10-15 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |

@@ -1,0 +1,133 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:04.003
+OMERTÀ connects a persistent crime game to an on-chain economy.
+
+00:00:04.003 --> 00:00:08.407
+Players build characters, earn cash, spend OMR, and compete over property.
+
+00:00:08.407 --> 00:00:12.010
+This film explains the current launch design and implementation.
+
+00:00:12.010 --> 00:00:17.215
+Production trading, staking rewards, NFT issuance, and stock delivery still require launch approval.
+
+00:00:18.333 --> 00:00:22.343
+Inside the city, cash pays for equipment, operations, and survival.
+
+00:00:22.343 --> 00:00:24.749
+OMR powers premium actions and commitments.
+
+00:00:24.749 --> 00:00:26.353
+Cash never buys OMR.
+
+00:00:26.353 --> 00:00:29.962
+ETH enters through supported market trades and paid services.
+
+00:00:29.962 --> 00:00:34.373
+Spending OMR recycles inventory; moving game balances on-chain requires verified backing.
+
+00:00:35.500 --> 00:00:39.505
+OMR has a fixed supply of one hundred million tokens.
+
+00:00:39.505 --> 00:00:43.110
+Trading, gameplay accounting, and inventory programs move existing value.
+
+00:00:43.110 --> 00:00:45.514
+They do not create extra tokens.
+
+00:00:45.514 --> 00:00:48.317
+The launch plan auctions sixty million OMR.
+
+00:00:48.317 --> 00:00:52.323
+Total supply, circulating supply, and treasury inventory are different quantities.
+
+00:00:53.433 --> 00:00:56.235
+The base protocol fee is four percent.
+
+00:00:56.235 --> 00:01:04.639
+It splits across operations, the stock acquisition recipient, community, protocol liquidity, and ETH staking rewards, in the exact percentages shown here.
+
+00:01:04.639 --> 00:01:08.241
+Opening or sell surge can add half a percent.
+
+00:01:08.241 --> 00:01:10.242
+Liquidity provider fees are separate.
+
+00:01:10.242 --> 00:01:14.645
+Family turf can direct eligible future liquidity fees, never liquidity principal.
+
+00:01:15.767 --> 00:01:19.768
+On-chain OMR staking earns a share of ETH actually funded.
+
+00:01:19.768 --> 00:01:23.369
+Every deposit has its own thirty-day minimum withdrawal lock.
+
+00:01:23.369 --> 00:01:25.770
+Matured principal keeps earning until withdrawn.
+
+00:01:25.770 --> 00:01:29.371
+Earned claims and mature exits remain available during pauses.
+
+00:01:29.371 --> 00:01:32.172
+There is no promised fixed annual return.
+
+00:01:33.300 --> 00:01:42.112
+The city contains twenty-five hundred permanent Street Deeds: one thousand earned through gameplay, one thousand paid mints, and five hundred partnership properties.
+
+00:01:42.112 --> 00:01:44.515
+Earned discovery begins at level twenty-five.
+
+00:01:44.515 --> 00:01:51.324
+Both public routes create the same type of property, with the same operating rules and loss risks.
+
+00:01:52.433 --> 00:01:55.237
+Your soulbound identity NFT represents the bloodline.
+
+00:01:55.237 --> 00:01:59.243
+A separate escrow holds equipped Deeds for each mortal life.
+
+00:01:59.243 --> 00:02:06.052
+Equipped Deeds and their stock assets can pass to a player killer after recorded death and settlement.
+
+00:02:06.052 --> 00:02:08.455
+Safe release needs twenty-four hours' notice.
+
+00:02:08.455 --> 00:02:14.063
+Other deaths send inheritance to the exact heir after a separate twenty-four-hour estate delay.
+
+00:02:15.167 --> 00:02:18.368
+Stocks belong in the Deed's own token-bound account.
+
+00:02:18.368 --> 00:02:24.771
+New rewards require equipment on a living character, no pending exit, Broker activation, and qualifying play.
+
+00:02:24.771 --> 00:02:31.575
+Three activity tracks and a score of twenty-five determine eligibility for a proportional share of acquired stock.
+
+00:02:31.575 --> 00:02:35.176
+Purchases and deliveries require funded assets and enabled settlement.
+
+00:02:36.300 --> 00:02:41.107
+The backend records authoritative gameplay; EVM contracts enforce on-chain custody and settlement.
+
+00:02:41.107 --> 00:02:47.515
+Node and Fastify serve the game, PostgreSQL stores its state, and viem connects wallets and contracts.
+
+00:02:47.515 --> 00:02:50.319
+Keepers connect confirmed game events with contracts.
+
+00:02:50.319 --> 00:02:53.123
+Dashboards must reflect the state actually observed.
+
+00:02:54.233 --> 00:02:56.236
+Implementation is different from activation.
+
+00:02:56.236 --> 00:03:03.045
+Current records show production database preparation and partnership reservations, but no contract deployment or minted partnership NFTs.
+
+00:03:03.045 --> 00:03:07.051
+Funding, verified configuration, indexing, and owner approval remain launch gates.
+
+00:03:07.051 --> 00:03:11.056
+Treat every reward flow as conditional until those gates open.

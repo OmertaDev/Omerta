@@ -1,3 +1,5 @@
+import { wikiMediaHistoricalInput } from './wiki-media-source-transfer.js';
+import { age21HistoricalInput } from './age21-source-transfer.js';
 // Exact source reconstruction only. Runtime and native checks always use physical current bytes.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -118,6 +120,7 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input) {
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);
@@ -126,6 +129,7 @@ export function economyUxMergeCandidateHistoricalInput(file, input) {
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);
