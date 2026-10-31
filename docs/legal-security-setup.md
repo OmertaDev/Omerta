@@ -11,8 +11,9 @@ API/worker environment group:
   in the [U.S. Copyright Office directory](https://www.copyright.gov/dmca-directory/faq.html); this flag does not register an agent.
 - `PAYMENT_REFUND_POLICY` (the actual approved refund policy, rendered as plain text).
 
-Privacy, payment and copyright pages return 503 until their necessary details are
-present. Marketing remains disabled without a postal address. The resource inventory
+The default privacy policy is public even before operator details are configured;
+it identifies the missing privacy contact without inventing one. Payment and copyright
+pages return 503 until their necessary details are present. Marketing remains disabled without a postal address. The resource inventory
 is public without these details. Do not use test profile values for a deployment.
 
 The operator must monitor the published contacts, process rights/child-data reports,
