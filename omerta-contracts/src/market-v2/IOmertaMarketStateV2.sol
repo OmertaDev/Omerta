@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 /// @notice Closed observation interface shared by the V2 market and funded strategy contracts.
 /// @dev Prices are OMR base units per 1 ETH (18 decimals); a larger tick means cheaper OMR.

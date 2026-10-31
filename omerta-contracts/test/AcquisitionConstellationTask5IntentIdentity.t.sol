@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {AcquisitionIntentExecution} from "../src/AcquisitionIntentExecution.sol";
@@ -180,7 +180,7 @@ contract AcquisitionConstellationTask5IntentIdentityTest is Test {
             "pragmasolidity0.8.26;interfaceI{}"
         );
         vm.expectRevert(bytes("unterminated block comment"));
-        this.exposedSemanticCompact("pragma solidity 0.8.26; /*");
+        this.exposedSemanticCompact("pragma solidity 0.8.38; /*");
     }
 
     function exposedSemanticCompact(string memory source) external pure returns (string memory) {

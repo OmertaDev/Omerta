@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-import {GenesisCharacterMock} from "./helpers/GenesisCharacterMock.sol";
+pragma solidity 0.8.38;
 import {Test} from "forge-std/Test.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {GenesisPlayerSale, IGenesisPlayerIntegration} from "../src/GenesisPlayerSale.sol";
@@ -25,7 +24,6 @@ contract PlayerRefundReentrant {
     }
 }
 contract GenesisPlayerSaleTest is Test {
-    GenesisCharacterMock characterNft;
     GenesisPlayerSale sale;
     PlayerTokenMock token;
     PlayerIntegrationMock integration;
@@ -34,8 +32,6 @@ contract GenesisPlayerSaleTest is Test {
     bytes32 aliceLeaf;
     bytes32 bobLeaf;
     function setUp() public {
-        characterNft = new GenesisCharacterMock();
-        characterNft.mint(alice); characterNft.mint(bob);
         token = new PlayerTokenMock(); integration = new PlayerIntegrationMock();
         address predicted = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
         aliceLeaf = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, predicted, alice, uint8(1)))));
@@ -43,7 +39,7 @@ contract GenesisPlayerSaleTest is Test {
         bytes32 root = aliceLeaf < bobLeaf ? keccak256(abi.encodePacked(aliceLeaf, bobLeaf))
             : keccak256(abi.encodePacked(bobLeaf, aliceLeaf));
         sale = new GenesisPlayerSale(token, integration, root, 1 ether, block.timestamp + 1 days,
-            block.timestamp + 5 days, address(0xCAFE), characterNft);
+            block.timestamp + 5 days, address(0xCAFE));
         assertEq(address(sale), predicted); token.mint(address(sale), 1 ether);
         vm.deal(alice, 10 ether); vm.deal(bob, 10 ether); sale.open();
     }

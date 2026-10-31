@@ -305,7 +305,10 @@
     "test:ux:browser": "node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js",
     "test:ux:postgres": "node test/ux-postgres.js && node test/ux-postgres-rls.js",
     "test:ux:source": "node test/sale-source-compatibility.js && node test/ux-source-compatibility.js",
-    "test:economy-ux-source": "node test/economy-ux-merge-source-compatibility.js"
+    "test:economy-ux-source": "node test/economy-ux-merge-source-compatibility.js",
+    "test:wbtc-rewards": "node test/wbtc-reward-epoch.js",
+    "test:tokenomics-pilot": "node test/tokenomics-pilot.js",
+    "test:market-rewards:release": "npm run test:market-v2 && npm run test:wbtc-rewards && npm run test:tokenomics-pilot && node test/player-genesis-deployment.js && npm run test:genesis-auction:deployment"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

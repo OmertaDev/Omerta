@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {StabilityV2Fixture} from "./StabilityV2.t.sol";
 import {OmertaStabilityControllerV2 as Controller} from "../../src/market-v2/OmertaStabilityControllerV2.sol";
@@ -37,7 +37,7 @@ contract FundingIntegrationV2Test is StabilityV2Fixture {
                 OmertaHookV2.OpeningConfig(0, 0, 0),
                 uint24(600),
                 uint32(60)
-            ),
+            , recipients[2]),
             replacement
         );
         hook = OmertaHookV2(payable(replacement));
@@ -61,7 +61,8 @@ contract FundingIntegrationV2Test is StabilityV2Fixture {
         uint256 surge = hook.owed(key.currency0, 4);
         assertGt(pol, 0);
         assertGt(surge, 0);
-        uint256 otherFunding = hook.owed(key.currency0, 0) + hook.owed(key.currency0, 1) + hook.owed(key.currency0, 2);
+        uint256 otherFunding = hook.owed(key.currency0, 0) + hook.owed(key.currency0, 1)
+            + hook.owed(key.currency0, 2) + hook.owed(key.currency0, 5);
         Controller.Account memory coreBefore = controller.account(CORE);
         Controller.Account memory reserveBefore = controller.account(RESERVE);
         hook.sweep(key.currency0, 3);

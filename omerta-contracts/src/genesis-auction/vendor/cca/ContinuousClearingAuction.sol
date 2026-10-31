@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {AuctionStorage} from './AuctionStorage.sol';
 import {BidStorage} from './BidStorage.sol';
@@ -475,6 +475,7 @@ contract ContinuousClearingAuction is
         if (_getBlockNumberish() >= END_BLOCK) revert AuctionIsOver();
         if (_amount == 0) revert BidAmountTooSmall();
         if (_owner == address(0)) revert BidOwnerCannotBeZeroAddress();
+        _validateBidOwner(_owner);
         if (CURRENCY.isAddressZero()) {
             if (msg.value != _amount) revert InvalidAmount();
         } else {
@@ -482,6 +483,14 @@ contract ContinuousClearingAuction is
             SafeTransferLib.permit2TransferFrom(Currency.unwrap(CURRENCY), msg.sender, address(this), _amount);
         }
         return _submitBid(_maxPriceQ96, _amount, _owner, _prevTickPriceQ96, _hookData);
+    }
+
+    /// @dev Local extension point; both public bid overloads share this acceptance check.
+    function _validateBidOwner(address) internal view virtual {}
+
+    /// @notice Immutable graduation threshold, exposed for the guarded launch's pre-bid checks.
+    function requiredCurrencyRaised() external view returns (uint256) {
+        return ValueX7.unwrap(REQUIRED_CURRENCY_RAISED_Q96X7) / (uint256(1) << 96) / 10_000_000;
     }
 
     /// @inheritdoc IContinuousClearingAuction

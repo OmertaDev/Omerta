@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 /// @notice Test-only replacement for Robinhood Chain's ArbSys block-number precompile.
 /// @dev Anvil forks the chain state but does not emulate ArbSys at address(100). The exact pinned

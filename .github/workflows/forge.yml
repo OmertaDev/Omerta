@@ -3,7 +3,7 @@ name: forge test (contracts)
 # The pre-mainnet gate the sandboxed build environment can't run (Foundry's release binaries are
 # egress-blocked there). GitHub's runners have open internet, so `forge test` — the OMERTÀ Solidity
 # suite (unit + 512-run fuzz) — runs here on every push/PR that touches the contracts. Mirrors
-# omerta-contracts/run-forge-test.sh: solc 0.8.26 (foundry.toml), OpenZeppelin v5.6.1, forge-std v1.9.6.
+# omerta-contracts/run-forge-test.sh: solc 0.8.38 (foundry.toml), OpenZeppelin v5.6.1, forge-std v1.9.6.
 
 on:
   push:
@@ -106,6 +106,8 @@ jobs:
           git -C lib/v4-periphery checkout --detach ad04c9f24a170accf5ea1b2836bbafd514537ca6
           git clone --no-checkout https://github.com/Uniswap/permit2 lib/permit2
           git -C lib/permit2 checkout --detach cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
+          # Apply only exact version pragma pins for the reviewed compiler migration.
+          node ../tools/solidity-dependency-pragmas.js
 
       # PARSE gate only — the SIZE gate is its own step at the END of this job, and the split is
       # load-bearing rather than tidy. `forge build --sizes` is all-or-nothing: on 2026-08-27 a test

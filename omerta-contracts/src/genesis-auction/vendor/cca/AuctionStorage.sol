@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {IAuctionStorage} from './interfaces/IAuctionStorage.sol';
 import {IERC20Minimal} from './interfaces/external/IERC20Minimal.sol';

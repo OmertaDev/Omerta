@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {TickMath} from "v4-core/libraries/TickMath.sol";

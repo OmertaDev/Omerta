@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {AcquisitionConstellationTask1Test} from "./AcquisitionConstellationTask1.t.sol";
 import {AcquisitionConstellationFactory} from "../src/AcquisitionConstellationFactory.sol";

@@ -61,12 +61,27 @@ function fixture({ valid = true, owed = 1000n, code = '0x60006000', rejectDeploy
   assert.equal(plan.actions[0].target, address(3));
   const decoded = decodeFunctionData({ abi: marketV2Abi('OmertaHookV2'), data: plan.actions[0].request.data });
   assert.deepEqual(decoded.args, [zeroAddress, 4], 'separate opening/surge revenues still sweep from the hook');
-  const badBucket = structuredClone(raw); badBucket.jobs[1].bucket = 4;
+  const badBucket = structuredClone(raw); badBucket.jobs[1].bucket = 5;
   assert.throws(() => validateMarketV2Manifest(badBucket), /invalid_integer/);
   const badTarget = structuredClone(raw); badTarget.jobs[1].target = 'hook';
   assert.throws(() => validateMarketV2Manifest(badTarget), /invalid_job/);
   const badArtifact = structuredClone(raw); badArtifact.contracts.manager.artifact = 'OmertaHookV2';
   assert.throws(() => validateMarketV2Manifest(badArtifact), /invalid_job/);
+}
+{
+  for (const [kind, target, bucket, artifact] of [
+    ['manager_claim', 'manager', 4, 'OmertaPoolManagerV2'],
+    ['hook_claim', 'hook', 5, 'OmertaHookV2'],
+  ]) {
+    const policy = structuredClone(raw);
+    policy.jobs = [{ id: 'fund-wbtc-rewards', kind, target, bucket, currency: zeroAddress, minimumAmount: '100', intervalSeconds: 60 }];
+    const plan = await planMarketV2(policy, fixture(), { now });
+    assert.equal(plan.actions.length, 1);
+    assert.equal(plan.actions[0].target, policy.contracts[target].address);
+    assert.deepEqual(decodeFunctionData({ abi: marketV2Abi(artifact), data: plan.actions[0].request.data }).args, [zeroAddress, bucket]);
+    policy.jobs[0].bucket = bucket + 1;
+    assert.throws(() => validateMarketV2Manifest(policy), /invalid_integer/);
+  }
 }
 {
   const plan = await planMarketV2(m, fixture({ valid: false, owed: 0n }), { now });
@@ -132,13 +147,45 @@ const packedSlot0 = tick => word((BigInt.asUintN(24, BigInt(tick)) << 160n) | 1n
   const f = fixture(); const originalRead = f.publicClient.readContract;
   let lastObservedAt = 0n;
   f.publicClient.readContract = async req => {
-    if (req.functionName === 'commitment') return { depositor: address(20), withdrawn: false, lastObservedAt, lastEpoch: 1n, depositedAt: 1n, maturesAt: block.timestamp + 1000n };
+    if (req.functionName === 'commitment') return { depositor: address(20), campaignId: 1n, withdrawn: false, lastObservedAt, lastEpoch: 1n, depositedAt: 1n, maturesAt: block.timestamp + 1000n };
+    if (req.functionName === 'campaign') return { finalized: false };
+    if (req.functionName === 'settlementClosesAt') return block.timestamp + 1000n;
     if (req.functionName === 'snapshot') return { valid: false, observedAt: block.timestamp - 60n };
     return originalRead(req);
   };
   assert.equal((await planMarketV2(policy, f, { now })).actions.length, 0, 'an already broken anchor is not repeatedly reset');
   lastObservedAt = block.timestamp - 120n;
   assert.equal((await planMarketV2(policy, f, { now })).actions[0].functionName, 'checkpoint', 'one reset can still protect a previously live anchor');
+}
+{
+  const policy = structuredClone(raw);
+  policy.contracts.commitment = { address: address(6), runtimeHash: hash, artifact: 'OmertaCommitmentVaultV2' };
+  policy.jobs = [
+    { id: 'finalize', kind: 'commitment_finalize', target: 'commitment', campaignId: '1', intervalSeconds: 60 },
+    { id: 'settle', kind: 'commitment_settle', target: 'commitment', tokenId: '2', intervalSeconds: 60 },
+  ];
+  const f = fixture(); const originalRead = f.publicClient.readContract;
+  let finalized = false; let rewardSettled = false; let closesAt = block.timestamp;
+  f.publicClient.readContract = async req => {
+    assert.equal(req.blockNumber, block.number);
+    if (req.functionName === 'commitment') return { depositor: address(20), campaignId: 1n, rewardSettled, withdrawn: true, usefulDepthSeconds: 4n };
+    if (req.functionName === 'campaign') return { finalized, totalDepthSeconds: 8n, settlementBudget: 20n };
+    if (req.functionName === 'settlementClosesAt') return closesAt;
+    return originalRead(req);
+  };
+  assert.equal((await planMarketV2(policy, f, { now })).actions.length, 0, 'no settlement before the entire observation grace closes');
+  closesAt -= 1n;
+  let result = await planMarketV2(policy, f, { now });
+  assert.deepEqual(result.actions.map(x => x.functionName), ['finalizeCampaign']);
+  finalized = true;
+  result = await planMarketV2(policy, f, { now });
+  assert.deepEqual(result.actions.map(x => x.functionName), ['settleReward']);
+  assert.deepEqual(decodeFunctionData({ abi: marketV2Abi('OmertaCommitmentVaultV2'), data: result.actions[0].request.data }).args, [2n]);
+  rewardSettled = true;
+  assert.equal((await planMarketV2(policy, f, { now })).actions.length, 0, 'settled entitlements are never replayed');
+  assert.throws(() => validateMarketV2Manifest({ ...policy, jobs: [{ ...policy.jobs[1], campaignId: '1' }] }), /unexpected_campaign/);
+  assert.throws(() => validateMarketV2Manifest({ ...policy, jobs: [{ ...policy.jobs[0], campaignId: String(1n << 64n) }] }), /invalid_amount/);
+  assert.throws(() => validateMarketV2Manifest({ ...policy, jobs: [{ ...policy.jobs[0], kind: '__proto__' }] }), /invalid_job/);
 }
 {
   const policy = structuredClone(raw);

@@ -9,9 +9,15 @@ import { encodeDeployData, encodeFunctionData, encodeAbiParameters, getContractA
 
 const ROOT = fileURLToPath(new URL('../omerta-contracts/', import.meta.url));
 export const MARKET_V2_HOOK_FLAGS = 0x35c4n;
-export const RESTRICTED_MARKET_POLICY_ID = keccak256(toHex('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS'));
+export const RESTRICTED_MARKET_TRADE_FEE_BPS = 400;
+export const RESTRICTED_MARKET_BASE_FEE_BPS = 350;
+export const RESTRICTED_MARKET_REWARDS_FEE_BPS = 50;
+export const RESTRICTED_MARKET_POLICY_ID = keccak256(toHex('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS'));
+// Hamilton/largest-remainder apportionment of 350 bps over weights 200:80:120:150.
+export const RESTRICTED_MARKET_SPLIT_BPS = Object.freeze({ dev: 127, rwa: 51, community: 76, pol: 96 });
 export const RESTRICTED_MARKET_SUPPLY = 100_000_000n * 10n ** 18n;
 export const MARKET_V2_ROLES = [
+  ['btcRewards', 'OmertaWbtcRewardsV2'], ['btcConverter', 'OmertaWbtcConverterV2'],
   ['polFunding', 'OmertaReserveFundingV2'], ['reserveFunding', 'OmertaReserveFundingV2'],
   ['gameSettlement', 'OmertaGameSettlementV2'], ['hook', 'OmertaHookV2'],
   ['marketState', 'OmertaMarketStateV2'], ['turf', 'OmertaTurfV2'],
@@ -20,7 +26,7 @@ export const MARKET_V2_ROLES = [
   ['router', 'OmertaSwapRouterV2'],
 ];
 const RESTRICTED_OPERATORS = { hook: 2, controller: 2, bond: 2, turf: 2, arbitrage: 1, router: 1, positionManager: 1, permit2: 1 };
-const RESTRICTED_CONTRACT_HOLDERS = ['polFunding', 'reserveFunding', 'turfFeeBridge'];
+const RESTRICTED_CONTRACT_HOLDERS = ['polFunding', 'reserveFunding', 'turfFeeBridge', 'btcRewards'];
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const json = (v) => JSON.stringify(v, (_, x) => typeof x === 'bigint' ? x.toString() : x, 2);
 const clone = (v) => JSON.parse(json(v));
@@ -79,15 +85,13 @@ export function loadMarketV2Artifact(contract, { contractsRoot = ROOT } = {}) {
   const a = JSON.parse(bytes);
   const m = typeof a.rawMetadata === 'string' ? JSON.parse(a.rawMetadata) : a.metadata;
   if (m?.settings?.compilationTarget?.[`src/market-v2/${contract}.sol`] !== contract
-    || !m.compiler?.version?.startsWith('0.8.26+') || !m.settings.optimizer?.enabled
+    || !m.compiler?.version?.startsWith('0.8.38+') || !m.settings.optimizer?.enabled
     || m.settings.optimizer.runs !== 800 || m.settings.evmVersion !== 'cancun' || m.settings.viaIR !== true
     || !Array.isArray(a.abi) || identity(a.abi) !== identity(m.output.abi)) throw Error(`${contract}: compiler/ABI metadata mismatch`);
   const sourceHashes = {};
   for (const [source, info] of Object.entries(m.sources)) {
     const p = path.resolve(root, source);
-    const dependency = /^lib\/(openzeppelin-contracts|v4-core|v4-periphery|permit2)\//.exec(source);
-    const mount = dependency ? fs.realpathSync(path.join(root, 'lib', dependency[1])) : root;
-    if (!within(root, p) || !within(mount, fs.realpathSync(p))) throw Error(`${contract}: source outside approved source/dependency mount`);
+    if (!within(root, p) || !within(root, fs.realpathSync(p))) throw Error(`${contract}: source outside contracts root`);
     const sourceBytes = fs.readFileSync(p);
     const actual = keccak256(toHex(sourceBytes));
     const lf = keccak256(toHex(sourceBytes.toString('utf8').replace(/\r\n/g, '\n')));
@@ -121,7 +125,7 @@ export function mineMarketV2Hook(factory, initCodeHash, start, attempts) {
 }
 
 // Exact integer TickMath port for offline bootstrap cost checks, constants pinned to v4-core.
-function sqrtAtTick(tick) {
+export function sqrtAtTick(tick) {
   const factors = ['fffcb933bd6fad37aa2d162d1a594001','fff97272373d413259a46990580e213a','fff2e50f5f656932ef12357cf3c7fdcc','ffe5caca7e10e4e61c3624eaa0941cd0',
     'ffcb9843d60f6159c9db58835c926644','ff973b41fa98c081472e6896dfb254c0','ff2ea16466c96a3843ec78b326b52861','fe5dee046a99a2a811c461f1969c3053',
     'fcbe86c7900a88aedcffc83b479aa3a4','f987a7253ac413176f2b074cf7815e54','f3392b0822b70005940c7a398e4b70f3','e7159475a2c29b7443b29c7fa6e889d9',
@@ -159,10 +163,11 @@ function checkedArgs(abi, args, name) {
 }
 
 /** Full one-season, one-Turf V2 deployment plan; all capacities and public identities come from input. */
-export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artifactLoader = loadMarketV2Artifact } = {}) {
+export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artifactLoader = loadMarketV2Artifact, deferBootstrap = false } = {}) {
+  if (typeof deferBootstrap !== 'boolean') throw Error('deferBootstrap must be boolean');
   const m = clone(obj('manifest', input)); noSecrets(m);
   closed('manifest', m, ['schemaVersion', 'chainId', 'localRehearsal', 'sourceRevision', 'startingNonce', 'roles', 'snapshot',
-    'external', 'restrictedMarket', 'create2', 'artifactHashes', 'policies', 'season', 'bootstrap', 'funding']);
+    'external', 'restrictedMarket', 'create2', 'artifactHashes', 'policies', 'season', 'bootstrap', 'funding', 'rewards']);
   if (typeof m.localRehearsal !== 'boolean') throw Error('localRehearsal must explicitly be true or false');
   if (m.schemaVersion !== 2) throw Error('schemaVersion must be 2 for the restricted market');
   integer('chainId', m.chainId, 1, Number.MAX_SAFE_INTEGER);
@@ -174,11 +179,18 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   if (r.capitalProvider !== r.safe) throw Error('Restricted market capitalProvider must be the token-owning Safe; pre-seal external allocation is forbidden');
   if (r.deployer === r.safe || r.deployer === r.safeExecutor || r.deployer === r.capitalProvider || r.deployer === r.adjudicator || r.deployer === r.initializer)
     throw Error('Deployment nonce owner must be separate from setup/initialization/funding callers');
-  const external = Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2'].map(k => [k, {
+  const external = Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2', 'wbtc', 'rewardManager'].map(k => [k, {
     address: address(`external.${k}`, m.external?.[k]?.address), runtimeHash: hash(`external.${k}.runtimeHash`, m.external?.[k]?.runtimeHash),
   }]));
   closed('external', m.external, Object.keys(external));
   for (const k of Object.keys(external)) closed(`external.${k}`, m.external[k], ['address', 'runtimeHash']);
+  if (m.chainId === 4663 && external.wbtc.address.toLowerCase() !== '0x6bac06600d220ac5ac281ad1f504d2cf0f90f6e6')
+    throw Error('Mainnet rewards require the reviewed bridged WBTC address');
+  if (new Set([external.omr.address, external.poolManager.address, external.wbtc.address, external.rewardManager.address].map(x => x.toLowerCase())).size !== 4)
+    throw Error('OMR and WBTC assets and settlement managers must be distinct');
+  const rewards = obj('rewards', m.rewards);
+  closed('rewards', rewards, ['converterRuntimeHash']);
+  const converterRuntimeHash = hash('rewards.converterRuntimeHash', rewards.converterRuntimeHash);
   const restricted = obj('restrictedMarket', m.restrictedMarket);
   closed('restrictedMarket', restricted, ['policyId', 'operatorRuntimeHashes', 'additionalOperators', 'holderRuntimeHashes', 'contractHolders']);
   exact('restrictedMarket.policyId', hash('restrictedMarket.policyId', restricted.policyId), RESTRICTED_MARKET_POLICY_ID);
@@ -234,7 +246,14 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
     }
   }
   const p = obj('policies', m.policies);
-  closed('policies', p, ['pool', 'hook', 'market', 'turf', 'stability', 'bond', 'arbitrage', 'commitment']);
+  closed('policies', p, ['pool', 'hook', 'market', 'turf', 'stability', 'bond', 'arbitrage', 'commitment', 'rewards']);
+  closed('policies.rewards', p.rewards, ['fee', 'tickSpacing']);
+  integer('rewards.fee', p.rewards.fee, 0, 999999);
+  integer('rewards.tickSpacing', p.rewards.tickSpacing, 1, 32767);
+  if (converterRuntimeHash === artifacts.OmertaWbtcConverterV2.evidence.runtimeTemplateKeccak256)
+    throw Error('rewards.converterRuntimeHash: immutable template is not constructor-specific runtime');
+  const rewardPool = { currency0: zeroAddress, currency1: external.wbtc.address,
+    fee: p.rewards.fee, tickSpacing: p.rewards.tickSpacing, hooks: zeroAddress };
   closed('policies.pool', p.pool, ['fee', 'tickSpacing']);
   closed('policies.hook', p.hook, ['opening', 'surgeFullTicks', 'epochDuration']);
   const fee = integer('pool.fee', p.pool?.fee, 0, 100_000);
@@ -250,28 +269,41 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   args.polFunding = [r.safe, external.omr.address, 0]; args.reserveFunding = [r.safe, external.omr.address, 5];
   args.gameSettlement = [r.safe, r.adjudicator];
   args.hook = [external.poolManager.address, external.omr.address, r.initializer, fee, spacing,
-    [r.dev, r.rwa, r.community, deployed.polFunding, deployed.reserveFunding], opening, p.hook.surgeFullTicks, p.hook.epochDuration];
+    [r.dev, r.rwa, r.community, deployed.polFunding, deployed.reserveFunding], opening, p.hook.surgeFullTicks, p.hook.epochDuration, deployed.btcRewards];
+  args.btcConverter = [deployed.btcRewards, external.wbtc.address, external.rewardManager.address,
+    rewardPool, external.rewardManager.runtimeHash, external.wbtc.runtimeHash];
   const hookArtifact = artifacts.OmertaHookV2;
   const hookInit = encodeDeployData({ abi: hookArtifact.abi, bytecode: hookArtifact.bytecode,
     args: checkedArgs(hookArtifact.abi, args.hook, 'hook') });
   const mined = mineMarketV2Hook(factory, keccak256(hookInit), start, attempts);
   deployed.hook = mined.address;
+  const converterAddress = deployed.btcConverter.toLowerCase();
+  if (Object.values(r).some(value => value.toLowerCase() === converterAddress))
+    throw Error('WBTC converter cannot be an OMR public-role recipient or caller');
   const operatorAddresses = Object.fromEntries(Object.keys(RESTRICTED_OPERATORS).map(role => [role, external[role]?.address || deployed[role]]));
   const usedOperatorAddresses = new Set([external.omr.address, external.poolManager.address, ...Object.values(operatorAddresses)].map(x => x.toLowerCase()));
   if (usedOperatorAddresses.size !== Object.keys(operatorAddresses).length + 2) throw Error('Restricted settlement identities must be distinct');
   for (const operator of additionalOperators) {
     const lower = operator.address.toLowerCase();
-    if (usedOperatorAddresses.has(lower) || Object.values(r).some(x => x.toLowerCase() === lower)) throw Error('Duplicate or public-role additional operator');
+    if (lower === converterAddress) throw Error('WBTC converter cannot be an OMR operator');
+    const guardedInitializer = deferBootstrap && lower === r.initializer.toLowerCase()
+      && !Object.entries(r).some(([role, value]) => role !== 'initializer' && value.toLowerCase() === lower);
+    if (usedOperatorAddresses.has(lower) || (!guardedInitializer && Object.values(r).some(x => x.toLowerCase() === lower)))
+      throw Error('Duplicate or public-role additional operator');
     usedOperatorAddresses.add(lower);
   }
   const contractHolderAddresses = Object.fromEntries(RESTRICTED_CONTRACT_HOLDERS.map(role => [role, deployed[role]]));
   const usedRecipientAddresses = new Set([...usedOperatorAddresses, r.safe.toLowerCase()]);
   for (const holder of [...Object.values(contractHolderAddresses), ...additionalContractHolders.map(x => x.address)]) {
     const lower = holder.toLowerCase();
+    if (lower === converterAddress) throw Error('WBTC converter cannot be an OMR contract holder');
     if (usedRecipientAddresses.has(lower)) throw Error('Duplicate, operator or genesis address cannot be a contract holder');
     usedRecipientAddresses.add(lower);
   }
   const pool = { currency0: zeroAddress, currency1: external.omr.address, fee, tickSpacing: spacing, hooks: deployed.hook };
+  args.btcRewards = [{ safe: r.safe, wbtc: external.wbtc.address, omr: external.omr.address,
+    omrRouter: deployed.router, omrPool: pool, converter: deployed.btcConverter,
+    routerRuntimeHash: restricted.operatorRuntimeHashes.router, converterRuntimeHash }];
   const poolId = keccak256(encodeAbiParameters([POOL_PARAM], [pool]));
   const s = obj('season', m.season);
   closed('season', s, ['startsAt', 'endsAt', 'lowerTick', 'upperTick', 'families', 'owners']);
@@ -334,10 +366,10 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
     }
   }
   range('bond.maxObservationAge', p.bond.maxObservationAge, 1, 86400);
-  range('bond.vestingSeconds', p.bond.vestingSeconds, 86400, 365 * 86400);
+  range('bond.vestingSeconds', p.bond.vestingSeconds, 30 * 86400, 365 * 86400);
   range('bond.minLiquidity', p.bond.minLiquidity, 1, u128);
   range('bond.maxSpotDeviationTicks', p.bond.maxSpotDeviationTicks, 1, 2000);
-  range('bond.discountBps', p.bond.discountBps, 0, 1000);
+  range('bond.discountBps', p.bond.discountBps, 0, 50);
   let minimum = range('bond.minNativePurchase', p.bond.minNativePurchase, 1, u128);
   for (const k of ['maxNativePurchase', 'maxNativePerEpoch', 'maxNativeLifetime']) minimum = range(`bond.${k}`, p.bond[k], minimum, u128);
   minimum = 1n;
@@ -371,6 +403,10 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
       ...(role === 'hook' ? { salt: mined.salt, hookFlags: toHex(MARKET_V2_HOOK_FLAGS), miningAttempts: mined.attempts } : {}) };
   });
   const steps = [];
+  steps.push({ kind: 'readiness', label: 'Verify pinned WBTC asset and reward conversion route before deployments', required: {
+    wbtc: external.wbtc, decimals: 8, rewardManager: external.rewardManager, pool: rewardPool,
+    initialized: true, executableDepthForBudgetRequired: true,
+    limitation: 'This offline plan does not establish pool liquidity, price validity or available conversion capacity.' } });
   const externalCall = (label, to, abi, fn, values, from, value = 0n) => steps.push({ kind: 'call', label,
     functionName: fn, args: values, transaction: { chainId: m.chainId, from, to, value, data: encodeFunctionData({ abi, functionName: fn, args: values }) } });
   function call(label, role, fn, values, caller = r.safe, value = 0n) {
@@ -398,9 +434,20 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
       contractHolderCount: 0, genesisTreasury: r.safe, genesisTreasuryRuntimeHashMatchesLiveCode: true,
       totalSupply: RESTRICTED_MARKET_SUPPLY, ownerBalance: RESTRICTED_MARKET_SUPPLY, zeroExternalInventory: true },
     manager: { address: external.poolManager.address, runtimeHash: external.poolManager.runtimeHash, owner: r.safe, omr: external.omr.address,
-      TRADE_FEE_BPS: 500, revenuePolicyId: RESTRICTED_MARKET_POLICY_ID,
-      developerRecipient: r.dev, rwaRecipient: r.rwa, communityRecipient: r.community, polRecipient: deployed.polFunding },
+      TRADE_FEE_BPS: RESTRICTED_MARKET_TRADE_FEE_BPS, revenuePolicyId: RESTRICTED_MARKET_POLICY_ID,
+      developerRecipient: r.dev, rwaRecipient: r.rwa, communityRecipient: r.community, polRecipient: deployed.polFunding,
+      rewardsRecipient: deployed.btcRewards, MAX_HOOK_FEE_BPS: 50 },
+    rewards: { vault: deployed.btcRewards, converter: deployed.btcConverter, safe: r.safe,
+      wbtc: external.wbtc, externalManager: external.rewardManager, pool: rewardPool, converterRuntimeHash,
+      omrRouter: deployed.router, omrPool: pool, eligibility: 'wallet-and-backed-game',
+      accounting: 'Published completed periods with complete time-weighted balance history; Safe attests the manifest and funded Merkle root',
+      claimFee: 0, userPaysNativeGas: true, noStakingRequired: true,
+      conversion: 'Separate Safe transaction with explicit input/output limits and bounded deadline; never during an OMR swap',
+      routeAdmission: 'Before deployment, prove this exact external ETH/WBTC pool is initialized and has executable depth for the selected budget; address identity is insufficient',
+      runtimePinLimit: 'Proxy runtime hashes do not freeze WBTC issuer/bridge upgrade authority' },
     positionManager: { poolManager: external.poolManager.address, permit2: external.permit2.address },
+    bond: { address: deployed.bond, safe: r.safe, paused: true,
+      discountBps: p.bond.discountBps, vestingSeconds: p.bond.vestingSeconds },
     operatorRuntimeHashes: restricted.operatorRuntimeHashes, additionalOperators,
     holderRuntimeHashes: restricted.holderRuntimeHashes, contractHolders: additionalContractHolders,
     capitalProvider: r.safe,
@@ -459,6 +506,8 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   } });
   externalCall('Seal the immutable restricted transfer policy before funding', external.omr.address, restrictedTokenAbi, 'sealPolicy', [], r.safe);
 
+  let bootstrapAmounts = null;
+  if (!deferBootstrap) {
   const b = obj('bootstrap', m.bootstrap);
   closed('bootstrap', b, ['sqrtPriceX96', 'liquidity', 'maxNative', 'maxOmr', 'deadline', 'positionOwner', 'lowerTick', 'upperTick']);
   const price = uint('bootstrap.sqrtPriceX96', b.sqrtPriceX96, 160);
@@ -517,27 +566,39 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
     call('Fund actual bond inventory', 'bond', 'fundInventory', [inventory], r.capitalProvider);
     externalCall('Revoke bond inventory funding allowance', external.omr.address, tokenAbi, 'approve', [deployed.bond, 0n], r.capitalProvider);
   }
+  bootstrapAmounts = { native: required0, omr: required1, nativeCap: max0, omrCap: max1 };
+  }
   const output = { schemaVersion: 2, mode: 'offline-unsigned', chainId: m.chainId, sourceRevision: m.sourceRevision,
     manifestSha256: sha(json(m)), snapshot: m.snapshot, addresses: deployed, canonicalPool: { ...pool, poolId },
-    economics: { baseTradeBps: 500, sellBaseBps: 500, ordinaryBuyBps: 500, enforcedBy: external.poolManager.address,
-      splitBps: { dev: 200, rwa: 100, community: 100, pol: 100 },
+    economics: { baseTradeBps: RESTRICTED_MARKET_BASE_FEE_BPS, sellBaseBps: RESTRICTED_MARKET_BASE_FEE_BPS,
+      rewardsTradeBps: RESTRICTED_MARKET_REWARDS_FEE_BPS, totalTradeBps: RESTRICTED_MARKET_TRADE_FEE_BPS,
+      ordinaryBuyBps: RESTRICTED_MARKET_TRADE_FEE_BPS, enforcedBy: external.poolManager.address,
+      splitBps: { ...RESTRICTED_MARKET_SPLIT_BPS },
+      splitRounding: 'Separately floor the 350-bps base and 50-bps reward. Base largest-remainder allocation retains its atomic-unit residual for POL.',
       primaryRecipients: { dev: r.dev, rwa: r.rwa, community: r.community, pol: deployed.polFunding },
+      rewardsRecipient: deployed.btcRewards,
       maximumSurgeBps: 50, surgeRecipient: deployed.reserveFunding, opening, maximumHookBps: 50,
-      maximumCombinedTradeBps: 550, maximumCombinedEnforcedBy: external.poolManager.address, lpFeeUnits: fee },
+      maximumCombinedTradeBps: RESTRICTED_MARKET_TRADE_FEE_BPS + 50, maximumCombinedEnforcedBy: external.poolManager.address, lpFeeUnits: fee },
+    bondPolicy: { startsPaused: true, maximumDiscountBps: 50, minimumVestingSeconds: 30 * 86400,
+      discountBps: p.bond.discountBps, vestingSeconds: p.bond.vestingSeconds,
+      activation: 'Separate Safe action after reviewed stress validation; this plan never enables purchases' },
     artifacts: Object.fromEntries(Object.entries(artifacts).map(([c, a]) => [c, { abi: a.abi, ...a.evidence }])),
-    bootstrapAmounts: { native: required0, omr: required1, nativeCap: max0, omrCap: max1 },
+    bootstrapAmounts, ...(deferBootstrap ? { bootstrapDeferred: true } : {}),
     externalRuntimePins: external, restrictedMarket: { ...restricted, operatorAddresses, contractHolderAddresses }, create2Factory: m.create2, steps,
     executionConditions: [
       'No transaction has been simulated, signed or broadcast by this tool.',
       'Readiness steps state required live checks; this offline generator does not perform them. Verify each condition independently before its next transaction.',
       'Read live chain ID, source/runtime identities, deployer nonce and empty predicted addresses before simulation.',
-      'All twelve companion deployments consume the listed deployer nonce sequence; setup, initialization and funding use their separate callers before any optional later wallet self-registration.',
+      'All fourteen companion deployments consume the listed deployer nonce sequence; setup, initialization and funding use their separate callers before any optional later wallet self-registration.',
       'Safe calls are inner calls for the configured Safe; use its existing threshold and the separate Safe executor.',
       'The salt-prefix factory must have the explicitly pinned runtime and accept salt||initCode with zero value.',
       'Initialize must execute from the hook authorized address; a contract initializer needs its reviewed entry point to make the listed inner call.',
       'Season and fee lane setup must complete before the explicit season starts; bootstrap deadlines and funded balances must remain valid.',
       'External OMR must be OmertaRestrictedOMRV2, with its Safe owner and fixed policy ID; existing ERC20 OMR is not a compatible substitute.',
-      'External manager must be OmertaPoolManagerV2 bound to the replacement OMR, 500 bps in both directions, and the exact four listed recipients.',
+      'External manager must bind the replacement OMR and collect the 350-bps base plus 50-bps WBTC reward on both directions, including pools without a hook; verify all five fixed recipients.',
+      'WBTC epochs need an independently verified complete wallet/game balance history and custody backing; a Safe-published root attests allocation rather than proving backend state onchain.',
+      'Verify and quote the exact external ETH/WBTC conversion pool before deployment. No live route or liquidity is inferred from the token address or this unsigned plan.',
+      'Inventory bonds start paused; inventory funding does not enable purchases. Separately review stress and approve a Safe activation before enabling sales.',
       'Deploy the replacement token, custom manager and manager-paired PositionManager before this companion plan; manager POL recipient is the predicted polFunding address.',
       'Verify PositionManager.poolManager and PositionManager.permit2 against the explicit external bindings and reviewed actual runtime.',
       'Pin actual operator runtime hashes including immutable substitutions; reject unresolved templates and unreviewed proxy or forwarding operators.',
