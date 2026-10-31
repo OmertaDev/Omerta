@@ -1,3 +1,5 @@
+import { wikiMediaHistoricalInput } from '../tools/wiki-media-source-transfer.js';
+import { age21HistoricalInput } from '../tools/age21-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -426,7 +428,7 @@ for (const file of socialProofCutoverFiles) {
   const predecessorAbsent = socialProofCutoverAdditions.has(file);
   const baseline = predecessorAbsent ? null
     : git('show', ECONOMY_SOCIAL_PROOF_CUTOVER_PREDECESSOR + ':' + file);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = lf(age21HistoricalInput(file, wikiMediaHistoricalInput(file, fs.readFileSync(file, 'utf8'))));
   assert.equal(physical, current, 'Physical social-proof cutover source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
