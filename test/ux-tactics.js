@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { CRIMES, M3, MARKET, CONSUMABLES, SKILLS, PORT, NOTORIETY, interdictChance, PACING } from '../src/rules.js';
-import { quoteCrime, tacticsBoard, previewSkillAllocation, recoveryOptions, registerTacticsRoutes, crimeWithDecisionContext, seaComparisons } from '../src/ux-tactics.js';
+import { CRIMES, M3, MARKET, ASSETS, CONSUMABLES, SKILLS, PORT, NOTORIETY, interdictChance, PACING, effStat } from '../src/rules.js';
+import { quoteCrime, tacticsBoard, previewSkillAllocation, recoveryOptions, registerTacticsRoutes, crimeWithDecisionContext, seaComparisons, MASTERY_TRIALS } from '../src/ux-tactics.js';
 import { doCrime } from '../src/game.js';
-import { itemEffectPreview, useItem } from '../src/economy.js';
+import { itemEffectPreview, useItem, buyAsset } from '../src/economy.js';
 import { collectRun } from '../src/port.js';
 
 process.env.CLUE_DROP_P = '0';
@@ -92,6 +92,22 @@ try {
   const beforeCharacter = structuredClone(projectedCharacter), beforeOwned = structuredClone(projectedHandle.owned);
   const result = await tacticsBoard(projectedCharacter, readonlyClient, projectedHandle, { gear: 'lockpick', skills: 'pack_mule,getaway' });
   assert.equal(result.tactics.jobs.length, CRIMES.length);
+  assert.deepEqual(result.tactics.trials, MASTERY_TRIALS, 'Practice rules arrive through the authenticated read-only board.');
+  assert(result.tactics.openingUpgrades.length > 0);
+  for (const upgrade of result.tactics.openingUpgrades) {
+    const asset = ASSETS.find(asset => asset.id === upgrade.id), ch = character(), h = handle();
+    ch.cash = upgrade.cost.total;
+    const before = effStat(ch[upgrade.stat], upgrade.stat, h.owned.assets, h.owned.gear);
+    const bought = await buyAsset(ch, asset.id, actionClient, h);
+    assert.equal(bought.spent, upgrade.cost.total, 'An opening-upgrade quote includes the exact price, fee and tax charged by buyAsset.');
+    assert.equal(ch.cash, 0); assert(h.owned.assets.includes(asset.id));
+    assert(effStat(ch[upgrade.stat], upgrade.stat, h.owned.assets, h.owned.gear) > before,
+      'Every suggested opening purchase improves its named effective capability.');
+    assert.equal(upgrade.affordable, projectedCharacter.cash >= upgrade.cost.total);
+  }
+  const alreadyOwned = handle(); alreadyOwned.owned.assets = [result.tactics.openingUpgrades[0].id];
+  assert(!(await tacticsBoard(character(), readonlyClient, alreadyOwned)).tactics.openingUpgrades
+    .some(upgrade => alreadyOwned.owned.assets.includes(upgrade.id)), 'Owned upgrades are excluded from the opening loop.');
   assert.equal(result.tactics.jobs[0].actual.length, 3);
   const finite = (value) => { if (typeof value === 'number') assert(Number.isFinite(value), 'Every numeric projection field must be finite.'); else if (value && typeof value === 'object') Object.values(value).forEach(finite); };
   finite(result);
@@ -146,7 +162,7 @@ try {
 
   const context = vm.createContext({ window: {}, Date });
   vm.runInContext(readFileSync(new URL('../public/ux-tactics.js', import.meta.url), 'utf8'), context);
-  const { evaluateFormula, analyzePlan } = context.window.createOmertaTactics;
+  const { evaluateFormula, analyzePlan, advanceTrial, normalizeTrials, trialProgress } = context.window.createOmertaTactics;
   assert.equal(evaluateFormula(baseline.formula.expression, baseline.formula.inputs), baseline.threshold, 'The interactive explorer evaluates exactly the server-published AST.');
   const now = Date.now(), move = { id: 'a', cost: { energy: 0, nerve: 5 }, blockers: [], cooldown: { group: 'gym', seconds: 30, readyAt: now } };
   const analysis = analyzePlan([{ id: 'a', wait: 0 }, { id: 'a', wait: 0 }], [move], { energy: 10, nerve: 7, cash: 0 }, now);
@@ -165,6 +181,63 @@ try {
   let calls = 0; Math.random = () => calls++ === 0 ? 0.99999 : 0.5;
   const contextual = await crimeWithDecisionContext(character(), crime.id, actionClient, handle(), 'standard');
   assert.equal(contextual.success, false); assert.equal(contextual.decisionContext.probability, baseline.probability);
+  assert.equal(contextual.decisionContext.crimeId, crime.id);
+  assert.deepEqual(contextual.decisionContext.cost, baseline.cost, 'Practice observes the actual pre-action listed costs, including unsuccessful jobs.');
   assert(contextual.decisionContext.modifiers.some(m => m.label === 'Path'));
+
+  const actor = 'practice-character:1', account = 'practice-account', startedAt = Date.now();
+  const freshRun = () => ({ actor, startedAt, status: 'active', successes: 0, attempts: 0, nerveSpent: 0,
+    approaches: [], jobs: [], seen: [], last: '' });
+  const snapshot = { identity: actor, accountId: account };
+  const trialOf = id => MASTERY_TRIALS.find(trial => trial.id === id);
+  let receiptSequence = 0;
+  const observation = (run, trial, override = {}) => {
+    const id = override.job || 'pickpocket';
+    const receipt = { actor, method: 'POST', path: '/v1/crimes/' + id, feedbackId: 'practice-' + ++receiptSequence,
+      feedbackState: 'confirmed', ...override.receipt };
+    const result = { code: 200, body: { ok: true, success: true, approach: override.approach || 'standard',
+      decisionContext: { crimeId: id, cost: { nerve: override.nerve ?? 6 }, probability: override.probability ?? 0.9,
+        projectedAt: new Date(startedAt + 1).toISOString(), ...override.context }, ...override.body }, ...override.result };
+    return advanceTrial(run, trial, receipt, override.before || snapshot, override.after || snapshot, result, actor, account);
+  };
+  const light = trialOf('light-touch');
+  let run = observation(freshRun(), light, { receipt: { feedbackId: 'stable-retry' } });
+  assert.equal(run.status, 'active'); assert.equal(run.successes, 1); assert.equal(run.nerveSpent, 6);
+  assert.equal(observation(run, light, { receipt: { feedbackId: 'stable-retry' } }), run, 'An idempotent replay cannot count twice.');
+  run = observation(run, light);
+  assert.equal(run.status, 'complete'); assert.equal(trialProgress(run, light), 2); assert.equal(run.nerveSpent, 12);
+  assert.equal(observation(run, light), run, 'A completed personal stamp is stable until deliberately reset.');
+  run = observation(freshRun(), light, { nerve: 10, body: { success: false } });
+  run = observation(run, light, { nerve: 3 });
+  assert.equal(run.status, 'over-budget'); assert.equal(run.attempts, 2); assert.equal(run.successes, 1);
+  assert.equal(run.nerveSpent, 13, 'Failed rolls still consume the listed practice budget.');
+  for (const override of [
+    { receipt: { actor: 'practice-character:2' } }, { before: { ...snapshot, identity: 'practice-character:2' } },
+    { after: { ...snapshot, identity: 'practice-character:2' } }, { before: { ...snapshot, accountId: 'foreign' } },
+    { after: { ...snapshot, accountId: 'foreign' } }, { receipt: { isCurrent: () => false } },
+    { receipt: { feedbackState: 'unknown' } }, { receipt: { feedbackId: null } }, { receipt: { method: 'GET' } },
+    { result: { code: 400 } }, { result: { code: 499 } }, { body: { success: undefined } },
+    { context: { probability: NaN } }, { context: { cost: { nerve: -1 } } },
+    { context: { crimeId: 'different-job' } }, { context: { projectedAt: new Date(startedAt - 1).toISOString() } },
+    { body: { decisionContext: null } },
+  ]) {
+    const unchanged = freshRun();
+    assert.equal(observation(unchanged, light, override), unchanged, 'Unknown, stale, refused, mismatched and pre-start observations cannot advance practice.');
+  }
+  const ways = trialOf('three-approaches');
+  run = freshRun();
+  for (const approach of ['quiet', 'quiet', 'standard', 'loud']) run = observation(run, ways, { approach });
+  assert.equal(run.status, 'complete'); assert.equal(trialProgress(run, ways), 3);
+  const measured = trialOf('measured-risk');
+  run = observation(freshRun(), measured, { probability: 0.84 });
+  assert.equal(trialProgress(run, measured), 0);
+  run = observation(run, measured, { job: 'first', probability: 0.85 });
+  run = observation(run, measured, { job: 'first', probability: 0.99 });
+  assert.equal(trialProgress(run, measured), 1, 'Repeated easy jobs do not satisfy distinct-job mastery.');
+  run = observation(run, measured, { job: 'second', probability: 0.9 });
+  assert.equal(run.status, 'complete');
+  assert.equal(Object.keys(normalizeTrials({ 'measured-risk': run }, 'practice-character:2')).length, 0,
+    'Saved practice never transfers to another character or generation.');
+  assert.equal(normalizeTrials({ unknown: run, 'measured-risk': run }, actor)['measured-risk'].status, 'complete');
   console.log('Tactics projections passed: actual crime threshold/jail/payout parity, exact item-use parity without preview writes, loadouts, budgets, prerequisites, formula AST, planner conflicts, authenticated current-account registration, and pre-action setback context.');
 } finally { Math.random = originalRandom; }

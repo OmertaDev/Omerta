@@ -114,3 +114,7 @@ try {
   await call('GET', '/v1/ux/story/neighborhood-initiation', bob, undefined, 404);
   console.log('Story API proof passed: authorized resident cast, revealed-only documents and variants, distinct real-choice epilogues, milestone letters, two-case crossover, server clock and no gameplay writes.');
 } finally { await app.close(); }
+
+// Keep the new real-choice continuation in the established UX CI entry point.
+const { runCityNeighborhoodAfterwordProof } = await import('./lib/city-neighborhood-afterword.js');
+await runCityNeighborhoodAfterwordProof();

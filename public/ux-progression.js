@@ -122,10 +122,51 @@
   <text x="66" y="532" fill="#8e826c" font-family="sans-serif" font-size="10" letter-spacing="2">A KEEPSAKE OF YOUR RECORDED SEASON · DISPLAY ONLY</text>
 </svg>`;
   }
-  window.OmertaProgressionModel = { goals, goalStatus, earnedTitles, nextUnlocks, skillBranches, milestoneChanges };
+  const actorKey = me => me?.id ? `${me.id}:${me.generation ?? 1}` : '';
+  function openingUpgrades(me, board) {
+    return list(board?.openingUpgrades).filter(item => item && typeof item.id === 'string' && /^[a-z0-9_-]{1,80}$/.test(item.id)
+      && ['muscle', 'cunning', 'speed'].includes(item.stat) && Number.isFinite(item.cost?.total) && item.cost.total > 0
+      && typeof item.name === 'string' && item.name.length <= 100 && Number.isFinite(item.boost) && item.boost > 0
+      && ['price', 'fee', 'tax'].every(key => Number.isFinite(item.cost[key]) && item.cost[key] >= 0)
+      && !list(me?.assets).includes(item.id));
+  }
+  const validOpening = (plan, actor) => plan && plan.actor === actor && typeof plan.startedAt === 'string'
+    && Number.isFinite(Date.parse(plan.startedAt)) && openingUpgrades({}, { openingUpgrades: [plan.asset] }).length === 1
+    && (!plan.job || typeof plan.job.name === 'string' && plan.job.name.length <= 100 && Number.isFinite(plan.job.take) && plan.job.take > 0)
+    && (!plan.purchase || plan.job && Number.isFinite(plan.purchase.spent) && plan.purchase.spent > 0)
+    && (!plan.gain || plan.purchase && plan.gain.stat === plan.asset.stat && Number.isFinite(plan.gain.before) && Number.isFinite(plan.gain.after) && plan.gain.after > plan.gain.before);
+  function openingReceipt(plan, receipt, before, after, result) {
+    const body = result?.body || {}, actor = actorKey(after), key = String(receipt?.feedbackId ?? receipt?.id ?? '');
+    if (!actor || !validOpening(plan, actor) || actorKey(before) !== actor || receipt?.actor !== actor
+      || receipt?.isCurrent?.() === false || receipt?.resourceCurrent === false || receipt?.feedbackState !== 'confirmed'
+      || typeof receipt.resourceCurrent === 'function' && !receipt.resourceCurrent()
+      || receipt?.state !== 'success' || receipt?.method !== 'POST' || result?.code !== 200 || body.ok !== true
+      || !Number.isFinite(Date.parse(receipt.atIso)) || Date.parse(receipt.atIso) < Date.parse(plan.startedAt)
+      || !key || key.length > 120 || list(plan.seen).includes(key)) return plan;
+    const next = { ...plan, seen: [...list(plan.seen), key].slice(-80) };
+    if (!plan.job && /^\/v1\/crimes\/[a-z0-9_-]+$/.test(receipt.path || '') && body.success === true
+      && body.decisionContext?.crimeId === receipt.path.split('/').pop()
+      && Number.isFinite(Date.parse(body.decisionContext.projectedAt))
+      && Date.parse(body.decisionContext.projectedAt) >= Date.parse(plan.serverStartedAt || plan.startedAt)
+      && number(body.take) > 0 && Number(after.cash) > Number(before.cash)) {
+      next.job = { name: String(receipt.label || 'A street job').slice(0, 100), take: number(body.take), at: receipt.atIso || new Date().toISOString() };
+    }
+    if (plan.job && !plan.purchase && receipt.path === `/v1/assets/${plan.asset?.id}/buy` && body.asset === plan.asset.id
+      && Array.isArray(before.assets) && Array.isArray(after.assets)
+      && !before.assets.includes(plan.asset.id) && after.assets.includes(plan.asset.id)
+      && Number(before.cash) > Number(after.cash) && number(body.spent) > 0) {
+      next.purchase = { spent: number(body.spent), at: receipt.atIso || new Date().toISOString() };
+      const previous = Number(before.eff?.[plan.asset.stat]), current = Number(after.eff?.[plan.asset.stat]);
+      if (Number.isFinite(previous) && Number.isFinite(current) && current > previous)
+        next.gain = { stat: plan.asset.stat, before: previous, after: current };
+    }
+    return next;
+  }
+  window.OmertaProgressionModel = { goals, goalStatus, earnedTitles, nextUnlocks, skillBranches, milestoneChanges, openingUpgrades, openingReceipt };
 
   window.createOmertaProgression = function ({ getState, read, navigate, notify, workspace }) {
-    let scope = '', data = {}, boards = {}, loaded = {}, pending = {}, failed = {}, revision = 0, lastTab = '';
+    let scope = '', character = '', data = {}, boards = {}, loaded = {}, pending = {}, failed = {}, revision = 0, lastTab = '';
+    let characterViews = [];
     const openPanels = new Map();
     const document = window.document;
     const el = (tag, cls, text) => {
@@ -142,7 +183,12 @@
     }
     function ensureScope() {
       const next = activeScope();
-      if (next === scope) return !!scope;
+      if (next === scope) {
+        if (character !== actorKey(getState().me)) { character = actorKey(getState().me); characterViews = []; boards = {}; loaded = {}; pending = {}; failed = {}; lastTab = ''; revision++; }
+        return !!scope;
+      }
+      character = actorKey(getState().me);
+      characterViews = [];
       scope = next; boards = {}; loaded = {}; pending = {}; failed = {}; lastTab = ''; openPanels.clear(); revision++;
       try { data = JSON.parse(window.localStorage.getItem(`omerta_progression_v1:${scope}`) || '{}') || {}; } catch { data = {}; }
       if (!data || typeof data !== 'object' || Array.isArray(data)) data = {};
@@ -163,27 +209,48 @@
       data.scrapbook = data.scrapbook.slice(-100); return true;
     }
     const endpoint = { mastery: '/v1/mastery', skills: '/v1/skills', underworld: '/v1/underworld',
-      collection: '/v1/collection', seasons: '/v1/season/recap', content: '/v1/content' };
+      collection: '/v1/collection', seasons: '/v1/season/recap', content: '/v1/content', tactics: '/v1/ux/tactics' };
     function observe(path, body) {
       if (!ensureScope()) return;
+      if (path === '/v1/me' && body?.character && actorKey(body.character) === character) { rememberCharacter(body.character); return; }
       const key = Object.keys(endpoint).find(k => path.split('?')[0] === endpoint[k]);
       if (!key || !body || typeof body !== 'object') return;
-      boards[key] = body; loaded[key] = Date.now(); delete failed[key];
+      if (key === 'tactics' && body.tactics?.characterId !== getState().me?.id) return;
+      boards[key] = key === 'tactics' ? { openingUpgrades: list(body.tactics.openingUpgrades), generatedAt: body.tactics.generatedAt } : body;
+      loaded[key] = Date.now(); delete failed[key];
       if (key === 'seasons') for (const s of list(body.recaps)) remember({ id: `season:${s.season}`,
         title: `Season ${s.season} · ${s.title || 'Your season'}`, detail: `Level ${s.level} · ${count(s.prestigeGained)} prestige gained`, kind: 'season', tab: 'life' });
       if (key === 'content') for (const c of list(body.instances).filter(c => c.status === 'completed')) remember({
         id: `case:${c.id}`, title: c.title, detail: 'Case closed · server record', kind: 'case', tab: 'desk' });
       save(true);
     }
+    function rememberCharacter(me) {
+      if (actorKey(me) !== character || !Array.isArray(me.assets) || !me.eff) return;
+      const entry = { actor: character, cash: Number(me.cash), assets: [...me.assets], eff: { ...me.eff }, stats: { ...me.stats } };
+      const signature = JSON.stringify(entry);
+      if (characterViews.at(-1)?.signature === signature) return;
+      characterViews.push({ ...entry, signature }); characterViews = characterViews.slice(-8);
+    }
+    function fullOperationView(snapshot) {
+      if (!snapshot || actorKey(snapshot) !== character) return snapshot;
+      const view = [...characterViews].reverse().find(entry => entry.actor === character && entry.cash === Number(snapshot.cash)
+        && ['muscle', 'cunning', 'speed'].every(stat => !Number.isFinite(snapshot[stat]) || Number(snapshot[stat]) === Number(entry.stats[stat])));
+      return view ? { ...snapshot, assets: view.assets, eff: view.eff } : snapshot;
+    }
     async function load(key) {
       if (loaded[key] && Date.now() - loaded[key] < 60000) return;
       if (pending[key]) return pending[key];
-      const requestedScope = scope;
+      const requestedScope = scope, requestedActor = character, requestedRevision = revision;
       pending[key] = Promise.resolve(read(endpoint[key])).then(response => {
-        if (requestedScope !== activeScope()) return;
-        if (response.code === 200) observe(endpoint[key], response.body);
+        if (requestedScope !== activeScope() || requestedActor !== actorKey(getState().me) || requestedRevision !== revision) return;
+        if (response.code === 200) {
+          if (key === 'tactics' && (response.body?.tactics?.characterId !== getState().me?.id
+            || !Number.isFinite(Date.parse(response.body?.tactics?.generatedAt)))) throw new Error('Upgrade quote unavailable');
+          observe(endpoint[key], response.body);
+        }
         else failed[key] = true;
-      }).catch(() => { if (requestedScope === activeScope()) failed[key] = true; }).finally(() => { if (requestedScope === scope) delete pending[key]; });
+      }).catch(() => { if (requestedScope === activeScope() && requestedActor === actorKey(getState().me) && requestedRevision === revision) failed[key] = true; })
+        .finally(() => { if (requestedScope === scope && requestedActor === character && requestedRevision === revision) delete pending[key]; });
       return pending[key];
     }
     function mount(parent, key, factory) {
@@ -191,7 +258,7 @@
       let host = parent.querySelector(`[data-ux-progression="${key}"]`);
       const me = getState().me;
       const signature = JSON.stringify([{ id: me?.id, name: me?.name, generation: me?.generation,
-        level: me?.level, loc: me?.loc, honor: me?.honor, trades: me?.trades }, boards, data, key]);
+        level: me?.level, loc: me?.loc, honor: me?.honor, trades: me?.trades, cash: me?.cash, assets: me?.assets, eff: me?.eff }, boards, data, failed, key]);
       if (host?.dataset.signature === signature) return;
       // Do not replace a form while its user is interacting with it.
       if (host && host.contains(document.activeElement) && /^(SELECT|INPUT)$/.test(document.activeElement.tagName)) return;
@@ -224,7 +291,11 @@
       await navigate(tab);
       if (selector) {
         const target = document.querySelector(selector);
-        if (target) { target.scrollIntoView({ block: 'center', behavior: 'auto' }); target.focus({ preventScroll: true }); }
+        if (target) {
+          for (let parent = target; parent; parent = parent.parentElement) if (parent.tagName === 'DETAILS') parent.open = true;
+          const focus = target.matches('details') ? target.querySelector(':scope > summary') : target;
+          focus.scrollIntoView({ block: 'center', behavior: 'auto' }); focus.focus({ preventScroll: true });
+        }
       }
     }
     function selectControl(label, options, selected, onChange) {
@@ -415,6 +486,14 @@
       if (!ensureScope()) return;
       const response = result?.body || result || {}, successful = !(result?.code >= 400) && response.ok !== false;
       if (!successful) return;
+      const previousOpening = data.opening;
+      rememberCharacter(getState().me);
+      const nextOpening = openingReceipt(previousOpening, receipt, fullOperationView(before), fullOperationView(after), result);
+      if (nextOpening !== previousOpening) {
+        data.opening = nextOpening;
+        if (!previousOpening?.gain && nextOpening.gain) remember({ id: `opening:${character}:${nextOpening.startedAt}`,
+          title: 'A job became a useful upgrade', detail: `${nextOpening.asset.name}: ${nextOpening.gain.stat} ${nextOpening.gain.before} → ${nextOpening.gain.after}. Observed for this character.`, kind: 'upgrade', tab: 'empire' });
+      }
       for (const item of milestoneChanges(before, after)) {
         const track = item.kind === 'trade' && list(after?.trades).find(t => item.id === `trade:${after.id}:${t.id}:${t.lvl}`);
         if (track && number(track.lvl) > number(data.records[track.id]?.level)) item.detail += ' A new personal high in this browser.';
@@ -428,6 +507,62 @@
       for (const key of Object.keys(loaded)) loaded[key] = 0;
       save();
     }
+    function openingPanel() {
+      const me = getState().me, actor = actorKey(me), owner = scope;
+      const plan = validOpening(data.opening, actor) ? data.opening : null;
+      const root = details('Your first useful upgrade', 'opening', 'A private guided journey using existing jobs and purchases. Progress records confirmed receipts for this character.');
+      root.classList.add('ux-opening'); root.dataset.openingActor = actor;
+      const steps = el('ol', 'ux-opening-steps');
+      const stages = [
+        [!!plan?.job, 'Earn from a job', plan?.job ? `${plan.job.name}: $${count(plan.job.take)} confirmed.` : 'Read the current chance, costs and risks before attempting a job.'],
+        [!!plan?.purchase, 'Choose a useful purchase', plan?.purchase ? `${plan.asset.name}: $${count(plan.purchase.spent)} actually spent.` : 'Save toward a quoted stat upgrade, then use the original purchase control.'],
+        [!!plan?.gain, 'See the capability change', plan?.gain ? `${plan.gain.stat}: ${plan.gain.before} → ${plan.gain.after}.` : 'Completion requires a confirmed increase in the named effective stat.'],
+      ];
+      const active = stages.findIndex(stage => !stage[0]);
+      for (const [index, [done, title, note]] of stages.entries()) {
+        const row = el('li'); row.dataset.complete = String(done); if (index === active) row.setAttribute('aria-current', 'step');
+        row.append(el('strong', '', `${done ? '✓ ' : ''}${title}`), el('span', '', note)); steps.append(row);
+      }
+      root.append(steps);
+      if (!plan) {
+        const offers = openingUpgrades(me, boards.tactics);
+        if (!boards.tactics) root.append(button('Find a useful upgrade', async event => {
+          event.currentTarget.disabled = true; await load('tactics');
+          if (owner === activeScope() && actor === actorKey(getState().me)) render();
+        }));
+        else if (!offers.length) root.append(el('p', 'ux-progress-note', 'No unowned stat upgrade is available in the current catalog. Your existing activities remain available.'));
+        else {
+          const select = el('select'); select.setAttribute('aria-label', 'Choose your first upgrade');
+          for (const offer of offers) { const option = el('option', '', `${offer.name} · $${count(offer.cost.total)} total · +${number(offer.boost)} ${offer.stat}`); option.value = offer.id; select.append(option); }
+          const label = el('label', 'ux-progress-field'); label.append(el('span', '', 'Pick a target from the current server quote'), select); root.append(label);
+          root.append(button('Start this journey', async event => {
+            if (owner !== activeScope() || actor !== actorKey(getState().me)) return;
+            const selected = select.value; event.currentTarget.disabled = true; loaded.tactics = 0; await load('tactics');
+            if (owner !== activeScope() || actor !== actorKey(getState().me)) return;
+            const asset = openingUpgrades(getState().me, boards.tactics).find(item => item.id === selected);
+            if (!asset || failed.tactics || !Number.isFinite(Date.parse(boards.tactics.generatedAt))) { render(); return; }
+            rememberCharacter(getState().me);
+            data.opening = { actor, asset, startedAt: new Date().toISOString(), serverStartedAt: boards.tactics.generatedAt, seen: [] };
+            data.openingHidden = ''; save(); select.blur(); render();
+          }));
+        }
+        if (failed.tactics) root.append(el('p', 'ux-progress-note', 'Upgrade quotes could not be loaded. Try again when connected.'));
+      } else {
+        const quote = openingUpgrades(me, boards.tactics).find(item => item.id === plan.asset.id) || plan.asset;
+        const acquiredOutside = !plan.purchase && list(me.assets).includes(plan.asset.id);
+        if (acquiredOutside) root.append(el('p', 'ux-progress-note', 'You already own this upgrade, but this journey did not observe its purchase after a qualifying job. Reset the private journey to choose another target; nothing needs to be bought again.'));
+        else if (!plan.purchase) root.append(el('p', 'ux-opening-budget', `${plan.asset.name}: $${count(quote.cost.total)} quoted total, including $${count(quote.cost.fee + quote.cost.tax)} house take. ${number(me.cash) < quote.cost.total ? `$${count(quote.cost.total - number(me.cash))} still to save.` : 'Your current pocket covers this quote.'} Recheck the original purchase terms before buying.`));
+        if (acquiredOutside) { /* Keep only the private reset below; the original buy control no longer exists. */ }
+        else if (!plan.job) root.append(button('Choose a street job', () => go('streets')));
+        else if (!plan.purchase) root.append(button('Review this purchase', () => go('empire', `#tab-empire [data-asbuy="${plan.asset.id}"]`)));
+        else if (!plan.gain) root.append(el('p', 'ux-progress-note', 'Purchase confirmed; no effective-stat increase was confirmed. This journey is not marked complete.'));
+        else root.append(el('p', 'ux-opening-complete', 'Journey complete: earned, invested, and improved. Your next result still depends on its current chance and requirements.'),
+          button('Compare your next job', () => go('streets', '[data-ux-tactics]')));
+        root.append(button('Reset private journey', () => { if (owner !== activeScope() || actor !== actorKey(getState().me)) return; data.opening = null; save(); render(); }));
+      }
+      if (getState().currentTab !== 'life') root.append(button('Hide this journey', () => { if (owner !== activeScope() || actor !== actorKey(getState().me)) return; data.openingHidden = actor; save(); render(); }));
+      return root;
+    }
     function loadingNote(needs) {
       const missing = needs.filter(key => failed[key]);
       if (!missing.length) return null;
@@ -439,6 +574,7 @@
     async function render() {
       if (!ensureScope()) return;
       const me = getState().me, tab = getState().currentTab, requestedScope = scope, currentRevision = revision;
+      rememberCharacter(me);
       const entered = tab !== lastTab; lastTab = tab;
       if (me.loc && !Object.hasOwn(data.visits, me.loc)) {
         data.visits[me.loc] = { at: new Date().toISOString() };
@@ -452,6 +588,9 @@
       if (updatedRecords) save(true);
       mount(document.querySelector('#sheet-body'), 'goal', goalTracker);
       const active = document.getElementById(`tab-${tab}`);
+      if (['start', 'streets', 'empire'].includes(tab) && data.openingHidden !== character
+        && (data.opening?.actor === character || tab === 'start' && number(me.level) <= 5)) mount(active, 'opening', openingPanel);
+      else document.querySelectorAll('[data-ux-progression="opening"]').forEach(host => host.remove());
       if (tabTracks[tab]?.length) mount(active, 'context-trades', contextualTracks);
       // Life's renderer already reads its four progression boards. Reuse observe() instead of
       // racing those reads from refresh(). Extra archives load on entry, never on sheet polls.
@@ -461,7 +600,7 @@
       if (requestedScope !== activeScope() || currentRevision !== revision || getState().currentTab !== tab) return;
       mount(document.querySelector('#sheet-body'), 'goal', goalTracker);
       if (tab === 'life') mount(active, 'life', () => {
-        const root = el('div', 'ux-progress-hub'); root.append(heading('Make your next move count', 'Your progression dossier'), goalPicker(), unlockPreview(), permanencePanel());
+        const root = el('div', 'ux-progress-hub'); root.append(heading('Make your next move count', 'Your progression dossier'), goalPicker(), unlockPreview(), permanencePanel(), openingPanel());
         if (boards.skills) root.append(treePanel()); if (boards.underworld) root.append(npcPanel());
         if (boards.seasons) root.append(seasonPanel()); root.append(scrapbookPanel());
         const failure = loadingNote(needs); if (failure) root.append(failure); return root;
