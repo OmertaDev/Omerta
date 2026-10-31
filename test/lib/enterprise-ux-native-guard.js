@@ -61,7 +61,13 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   const predecessorPin = (file, after) => { const before = predecessor.get(file); if (before) return Object.freeze({ file, mode: before.mode, blob: before.blob, sha256: before.blob === after.blob ? after.sha256 : digest(git('show', pin.predecessorRevision + ':' + file)) }); const legacyPin = legacyAdditions.get(file), actual = legacyTree.get(file); assert(legacyPin && actual?.type === 'blob'); assert.equal(actual.mode, legacyPin.mode); assert.equal(actual.blob, legacyPin.blob); assert.equal(digest(git('show', pin.legacyRevision + ':' + file)), legacyPin.sha256); return null; };
   assertEnterpriseUxReplacementPlan(legacyFiles, legacy, pin.files, predecessorPin, pin);
   for (const file of requiredLegacyReplacements) { const row = pin.legacyAdditionReplacements.find(entry => entry.file === file), before = legacyAdditions.get(file), after = pin.files.find(entry => entry.file === file); assert.equal(git('ls-tree', pin.predecessorRevision, '--', file).length, 0); assert.deepEqual(row.before, before); assert.deepEqual(row.after, after); }
-  const first = pin.files[0], canonical = git('show', pin.authoredRevision + ':' + first.file), record = { type: 'blob', mode: first.mode, blob: first.blob };
+  const unchanged = pin.files.find(row => row.file === '.github/workflows/ci.yml'); assert(unchanged);
+  const unchangedBytes = git('show', pin.authoredRevision + ':' + unchanged.file);
+  const unchangedRecord = { type: 'blob', mode: unchanged.mode, blob: unchanged.blob };
+  assert.equal(assertEnterpriseUxTrackedInput(unchanged.file, unchangedRecord, unchangedRecord, unchangedBytes), null,
+    'An unchanged actual-current input needs no changed-source provenance');
+  const first = pin.files.find(row => row.file === 'AGENTS.md'); assert(first);
+  const canonical = git('show', pin.authoredRevision + ':' + first.file), record = { type: 'blob', mode: first.mode, blob: first.blob };
   const provenance = assertEnterpriseUxTrackedInput(first.file, record, record, canonical);
   assert(provenance && Object.isFrozen(provenance));
   assert.equal(provenance.current.blob, record.blob, 'Provenance retains the actual current Git identity');

@@ -21,6 +21,7 @@ const files = Object.freeze([
   'test/world-projection.js', 'test/lib/player-command-support.js',
   'test/director-migration.js',
   'docs/legal-security-setup.md', 'src/legal.js', 'test/legal-security.js',
+  'test/lib/phase2-definition-fixtures.js', 'tools/ux-release-phase2-native-catalog.js',
 ]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
@@ -29,7 +30,30 @@ const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 
-assert.deepEqual(process.argv.slice(2), ['--write'], 'Use --write only after freezing the reviewed Deed allocation app candidate');
+function assertReviewedAdvancement(file, pin, candidate, prior, mode) {
+  assert.equal(pin.currentMode, mode); assert.equal(pin.currentBlob, blob(prior));
+  assert.equal(pin.currentSha256, sha256(prior)); assert.equal(pin.currentBytes, Buffer.byteLength(prior));
+  assert.deepEqual(pin.currentRawSha256, { lf: sha256(prior), crlf: sha256(prior.replaceAll('\n', '\r\n')) });
+  for (const field of ['baselineMode', 'baselineSha256', 'baselineBlob', 'baselineBytes', 'contextLines'])
+    assert.equal(candidate[field], pin[field], 'Immutable historical baseline remains exact: ' + file);
+  assert.notEqual(candidate.currentBlob, pin.currentBlob, 'Reviewed advancement must change its proposed control');
+}
+
+const args = process.argv.slice(2), advance = new Set();
+let priorAuthoredRevision = null;
+if (args.length === 1) assert.equal(args[0], '--write', 'Explicit frozen-candidate write required');
+else {
+  assert(args.length >= 4 && args[0] === '--write' && args[1] === '--advance-reviewed',
+    'Use --write --advance-reviewed <prior-authored-commit> <reviewed-file...>');
+  priorAuthoredRevision = args[2]; assert.match(priorAuthoredRevision, /^[a-f0-9]{40}$/);
+  const reviewedControls = ['package.json', 'test/lib/enterprise-ux-native-guard.js'];
+  for (const file of args.slice(3)) {
+    assert(reviewedControls.includes(file), 'Only explicitly reviewed unreleased controls may advance: ' + file);
+    assert(!advance.has(file), 'A reviewed control may be named only once'); advance.add(file);
+  }
+  git('merge-base', '--is-ancestor', predecessor, priorAuthoredRevision);
+  git('merge-base', '--is-ancestor', priorAuthoredRevision, 'HEAD');
+}
 git('merge-base', '--is-ancestor', predecessor, 'HEAD');
 const domains = {};
 for (const file of files) {
@@ -72,9 +96,25 @@ for (const file of files) {
 }
 const existingData = new URL('./deed-allocation-source-data.js', import.meta.url);
 if (fs.existsSync(existingData)) {
+  if (priorAuthoredRevision) {
+    const rawData = fs.readFileSync(existingData, 'utf8');
+    const priorData = git('show', `${priorAuthoredRevision}:tools/deed-allocation-source-data.js`);
+    assert(rawData === priorData || rawData === priorData.replaceAll('\n', '\r\n'),
+      'Advancement starts from exact prior Git bytes or a uniform CRLF checkout, never mixed line endings');
+  }
   const previous = (await import(existingData.href)).DEED_ALLOCATION_SOURCE_DOMAINS;
-  for (const [file, pin] of Object.entries(previous))
-    assert.deepEqual(domains[file], pin, 'An existing frozen Deed allocation source binding cannot be refreshed: ' + file);
+  for (const file of advance) assert(Object.hasOwn(previous, file), 'Only an existing candidate control binding may advance');
+  for (const [file, pin] of Object.entries(previous)) {
+    if (!advance.has(file)) {
+      assert.deepEqual(domains[file], pin, 'An existing frozen Deed allocation source binding cannot be refreshed: ' + file);
+      continue;
+    }
+    const prior = git('show', `${priorAuthoredRevision}:${file}`);
+    const mode = git('ls-tree', priorAuthoredRevision, '--', file).trim().split(/\s+/)[0];
+    assertReviewedAdvancement(file, pin, domains[file], prior, mode);
+  }
+} else {
+  assert.equal(advance.size, 0, 'Reviewed advancement requires the retained prior candidate declaration');
 }
 const output = `// Generated exact Deed allocation source-only envelope. No dynamic pin discovery or release clearance.
 export const DEED_ALLOCATION_SOURCE_PREDECESSOR = ${JSON.stringify(predecessor)};
