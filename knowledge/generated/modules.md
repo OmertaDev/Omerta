@@ -6,7 +6,7 @@
 |---|---:|---|---:|---:|---:|---:|
 | [src/access.js](../../src/access.js) | 42 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/accountdaily.js](../../src/accountdaily.js) | 79 | platform-core | 0 / 10 | 0 | 2 | 2 |
-| [src/accrual.js](../../src/accrual.js) | 239 | platform-core | 0 / 7 | 0 | 3 | 7 |
+| [src/accrual.js](../../src/accrual.js) | 239 | platform-core | 0 / 8 | 0 | 3 | 8 |
 | [src/actioncooldown.js](../../src/actioncooldown.js) | 22 | platform-core | 2 / 3 | 0 | 1 | 1 |
 | [src/age.js](../../src/age.js) | 44 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 17 | 3 | 5 | 15 |
@@ -224,6 +224,7 @@
 | [src/earningreceipts.js](../../src/earningreceipts.js) | 67 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/economicdependencymap.js](../../src/economicdependencymap.js) | 69 | platform-core | 2 / 3 | 1 | 6 | 2 |
 | [src/economicintelligence.js](../../src/economicintelligence.js) | 79 | platform-core | 5 / 4 | 6 | 8 | 1 |
+| [src/economy-monitor.js](../../src/economy-monitor.js) | 247 | platform-core | 0 / 3 | 0 | 5 | 1 |
 | [src/economy.js](../../src/economy.js) | 748 | economy-ledger | 7 / 50 | 26 | 18 | 46 |
 | [src/emission.js](../../src/emission.js) | 34 | economy-ledger | 1 / 2 | 1 | 0 | 1 |
 | [src/employmentorganizations.js](../../src/employmentorganizations.js) | 64 | platform-core | 4 / 6 | 0 | 9 | 1 |
@@ -256,7 +257,7 @@
 | [src/fundedworkchainobservations.js](../../src/fundedworkchainobservations.js) | 74 | platform-core | 0 / 3 | 0 | 0 | 2 |
 | [src/fundedworkescrowadapter.js](../../src/fundedworkescrowadapter.js) | 85 | platform-core | 3 / 1 | 0 | 5 | 1 |
 | [src/fundedworkescrowartifact.js](../../src/fundedworkescrowartifact.js) | 472 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/game.js](../../src/game.js) | 2992 | platform-core | 20 / 525 | 42 | 63 | 186 |
+| [src/game.js](../../src/game.js) | 2997 | platform-core | 21 / 526 | 42 | 63 | 187 |
 | [src/gameemployment.js](../../src/gameemployment.js) | 185 | platform-core | 2 / 7 | 0 | 8 | 3 |
 | [src/gameemploymentinvariants.js](../../src/gameemploymentinvariants.js) | 15 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/gateway/actions.js](../../src/gateway/actions.js) | 42 | platform-core | 1 / 1 | 0 | 0 | 0 |
@@ -292,7 +293,7 @@
 | [src/intelforecastinvariants.js](../../src/intelforecastinvariants.js) | 65 | platform-core | 1 / 1 | 0 | 2 | 0 |
 | [src/intelforecastjobs.js](../../src/intelforecastjobs.js) | 171 | platform-core | 4 / 6 | 5 | 2 | 2 |
 | [src/intelforecasts.js](../../src/intelforecasts.js) | 86 | platform-core | 1 / 14 | 0 | 1 | 6 |
-| [src/invariants.js](../../src/invariants.js) | 1808 | economy-ledger | 51 / 224 | 1 | 75 | 210 |
+| [src/invariants.js](../../src/invariants.js) | 1814 | economy-ledger | 51 / 225 | 1 | 75 | 211 |
 | [src/invites.js](../../src/invites.js) | 45 | platform-core | 1 / 8 | 2 | 3 | 2 |
 | [src/item-lock-trace.js](../../src/item-lock-trace.js) | 59 | platform-core | 1 / 6 | 0 | 0 | 4 |
 | [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 13 | 0 | 6 | 9 |
@@ -500,7 +501,7 @@
 | [src/routes/world-kernel.js](../../src/routes/world-kernel.js) | 87 | platform-core | 8 / 1 | 6 | 1 | 0 |
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 675 | world-graph | 5 / 10 | 21 | 7 | 5 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 475 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 410 | 0 | 0 | 227 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 412 | 0 | 0 | 229 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6184 | platform-core | 0 / 1 | 0 | 55 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
@@ -576,7 +577,7 @@
 | [src/warehouseleases.js](../../src/warehouseleases.js) | 192 | platform-core | 5 / 22 | 6 | 5 | 14 |
 | [src/watcher.js](../../src/watcher.js) | 512 | chain-economy | 7 / 7 | 0 | 5 | 9 |
 | [src/wire.js](../../src/wire.js) | 482 | law-intelligence | 6 / 7 | 11 | 18 | 2 |
-| [src/worker.js](../../src/worker.js) | 1109 | platform-core | 73 / 12 | 0 | 35 | 11 |
+| [src/worker.js](../../src/worker.js) | 1127 | platform-core | 74 / 12 | 0 | 35 | 11 |
 | [src/workertraining.js](../../src/workertraining.js) | 94 | platform-core | 3 / 11 | 0 | 8 | 6 |
 | [src/workshopfloor-admission.js](../../src/workshopfloor-admission.js) | 6 | platform-core | 1 / 6 | 0 | 0 | 0 |
 | [src/workshopfloor-api.js](../../src/workshopfloor-api.js) | 10 | platform-core | 3 / 1 | 0 | 2 | 0 |

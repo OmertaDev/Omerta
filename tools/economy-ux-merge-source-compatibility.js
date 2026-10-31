@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { ECONOMY_UX_MERGE_SOURCE, ECONOMY_UX_MERGE_SOURCE_SHA256 } from './economy-ux-merge-source-data.js';
 import { saleHistoricalInput } from './sale-source-compatibility.js';
+import { economyMonitorHistoricalInput } from './economy-monitor-source-transfer.js';
+import { ageEligibilityHistoricalInput } from './age-eligibility-source-transfer.js';
 import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';
 import { economySocialProofCutoverHistoricalInput } from './economy-social-proof-cutover-source-transfer.js';
 import { economySocialReceiptSafetyHistoricalInput } from './economy-social-proof-receipt-safety-source-transfer.js';
@@ -118,6 +120,8 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input) {
+  input = ageEligibilityHistoricalInput(file, input);
+  input = economyMonitorHistoricalInput(file, input);
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);
@@ -126,6 +130,8 @@ export function economyUxMergeCandidateHistoricalInput(file, input) {
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
+  input = ageEligibilityHistoricalInput(file, input);
+  input = economyMonitorHistoricalInput(file, input);
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);

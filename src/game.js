@@ -23,6 +23,7 @@ import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
          STABLE, SPEAKEASY, ESTATE, MADE, CREW, crewObjectiveOf, DEEDS, deedController , runOf, npcOf, usd, WALLET_FORGE, bustAttemptsLeft, bustRefillSeconds, safehouseLeftMs , coolLeft, coolWait } from './rules.js';
 import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
+import { captureAccrualEconomy, accrualEconomyIssues } from './economy-monitor.js';
 import { consumeStreetActionCooldown } from './actioncooldown.js';
 import { resolvedBoundedClaimIds, takeAccountDailyClaim } from './accountdaily.js';
 import { logCollect } from './collection.js';
@@ -967,6 +968,7 @@ const accrualMark = (ch, acct) =>
   `${+new Date(ch.last_accrued_at)}|${Number(ch.bank_intransit || 0)}|${Number(acct?.unbonding || 0)}`;
 
 async function accrueAndLedger(client, ch, acct, owned) {
+  const economyBefore = captureAccrualEconomy(ch, owned);
   accrueInMemory(ch, acct, owned);
   // §7.1 accrued racket/front income is a faucet — record it so the ledger balances
   if (ch._accruedIncome > 0) {
@@ -988,6 +990,9 @@ async function accrueAndLedger(client, ch, acct, owned) {
     await client.query('UPDATE account_persistent SET product_moved = product_moved + $1 WHERE account_id=$2',
       [Math.floor(ch._crewSale.proceeds), ch.account_id]);
   }
+  const economyIssues = accrualEconomyIssues(economyBefore, ch);
+  if (economyIssues.length)
+    await track(client, ch.account_id, 'economy_payout_bound', { characterId: ch.id, issues: economyIssues });
   if (ch._raid) {
     await rngLog(client, ch.id, 'raid', ch._raid.roll, `raided (P ${ch._raid.pWindow.toFixed(4)}, kept ${ch._raid.keepPct}%)`);
     await notify(client, ch.id, 'raid', { lost: ch._raid.lost, keptPct: ch._raid.keepPct });
