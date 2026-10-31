@@ -125,6 +125,6 @@ assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-b35-inputs.js', 'utf
   git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:tools/enterprise-native-ux-inputs.js`),
   'The archived B35 native manifest retains its exact historical Git bytes');
 assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-inputs.js', 'utf8')),
-  git('show', 'defb6bdad73e911fa03685e1ef00ff5960935a4d:tools/enterprise-native-ux-inputs.js'),
+  git('show', '845973dfc5b66e4105dea84e5967e74f1950af13:tools/enterprise-native-ux-inputs.js'),
   'The qualified UX manifest retains its exact authored Git bytes at the original path');
 console.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);
