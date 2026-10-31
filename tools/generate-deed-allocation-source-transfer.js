@@ -11,6 +11,7 @@ const files = Object.freeze([
   'public/index.html', 'public/sale.html', 'src/accrual.js', 'src/db.js', 'src/deedbuildings.js',
   'src/deeddiscovery.js', 'src/deeds.js', 'src/game.js', 'test/deed-discovery-ui.js', 'test/deeddiscovery.js',
   'test/economy-hardening-source-compatibility.js', 'tools/economy-ux-merge-source-compatibility.js',
+  'tools/pgquery.js',
 ]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
@@ -59,6 +60,12 @@ for (const file of files) {
     currentBytes: Buffer.byteLength(current), currentRawSha256: { lf: sha256(current), crlf: sha256(current.replaceAll('\n', '\r\n')) },
     baselineSha256: sha256(baseline), baselineBlob: blob(baseline), baselineBytes: Buffer.byteLength(baseline),
     contextLines: 3, inverses };
+}
+const existingData = new URL('./deed-allocation-source-data.js', import.meta.url);
+if (fs.existsSync(existingData)) {
+  const previous = (await import(existingData.href)).DEED_ALLOCATION_SOURCE_DOMAINS;
+  for (const [file, pin] of Object.entries(previous))
+    assert.deepEqual(domains[file], pin, 'An existing frozen Deed allocation source binding cannot be refreshed: ' + file);
 }
 const output = `// Generated exact Deed allocation source-only envelope. No dynamic pin discovery or release clearance.
 export const DEED_ALLOCATION_SOURCE_PREDECESSOR = ${JSON.stringify(predecessor)};

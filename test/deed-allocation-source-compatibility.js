@@ -27,6 +27,7 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
   'public/index.html', 'public/sale.html', 'src/accrual.js', 'src/db.js', 'src/deedbuildings.js',
   'src/deeddiscovery.js', 'src/deeds.js', 'src/game.js', 'test/deed-discovery-ui.js', 'test/deeddiscovery.js',
   'test/economy-hardening-source-compatibility.js', 'tools/economy-ux-merge-source-compatibility.js',
+  'tools/pgquery.js',
 ], 'Only the closed reviewed Deed allocation domains receive a source alias');
 
 let positives = 0, refusals = 0, hunks = 0;

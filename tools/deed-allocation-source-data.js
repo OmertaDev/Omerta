@@ -486,6 +486,27 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
         "baseline": "  return historicalInput(file, input, 'candidate');\n}\nexport function economyUxMergeMainHistoricalInput(file, input) {\n  input = economyBankInterestHardeningHistoricalInput(file, input);\n  input = economySocialProofCutoverHistoricalInput(file, input);\n  input = economySocialReceiptSafetyHistoricalInput(file, input);\n"
       }
     ]
+  },
+  "tools/pgquery.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "be9447f2ae9ff8c0263d188029b80fd7d4671510a7b4f8c38503b7ead23e455d",
+    "currentBlob": "f8a33c93f7f417a6b7ee2928d6ae4a3720f0cfca",
+    "currentBytes": 35419,
+    "currentRawSha256": {
+      "lf": "be9447f2ae9ff8c0263d188029b80fd7d4671510a7b4f8c38503b7ead23e455d",
+      "crlf": "85d37441604ed4d4c8407824a348babbe28a81c6a220f1562661cc178b5fe7c9"
+    },
+    "baselineSha256": "ed8d93ce2c634c861af924270ea77b26ab77d3e5e34a3d7cb24e84d06540d311",
+    "baselineBlob": "db503b17b08439bcbd36aacc4deae0b8a1907c53",
+    "baselineBytes": 35419,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "async function modelSocialReceiptQueries(rows) {\n  const sourcePins = Object.freeze({\n    'src/accountdaily.js': 'ec1c5b770146297f4471a839ff8bfbbbeeec44fe607eeadb926fc5c91f39aca3',\n    'src/db.js': '9d8ef3f15ed9141792679808d791b51dd679daf28f9f70768ba9472d3b84cae4',\n    'src/growth.js': 'a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b',\n  });\n  const verifyPinnedSource = (rel, raw, expectedHash) => {\n",
+        "baseline": "async function modelSocialReceiptQueries(rows) {\n  const sourcePins = Object.freeze({\n    'src/accountdaily.js': 'ec1c5b770146297f4471a839ff8bfbbbeeec44fe607eeadb926fc5c91f39aca3',\n    'src/db.js': 'b81f2db08de8ac9ec4975cb653fd89cbc50e8aeb966726b4ac259f961447ca8c',\n    'src/growth.js': 'a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b',\n  });\n  const verifyPinnedSource = (rel, raw, expectedHash) => {\n"
+      }
+    ]
   }
 };
 for (const pin of Object.values(DEED_ALLOCATION_SOURCE_DOMAINS)) {
