@@ -42,7 +42,7 @@ export async function businessDeskFixture(definitions) {
   }
   Object.assign(process.env, {
     CHAIN_ENABLED: 'off', RESOURCE_ECONOMY: 'off', RESOURCE_COMPUTE_ENABLED: 'off', DEPOT_PILOT: 'on',
-    POPULATION_OFF: 'on', RATE_LIMIT: 'off', INVITE_MODE: 'off', SOCIAL_VERIFY_MODE: 'off', STAT_USE_P: '0',
+    POPULATION_OFF: 'on', RATE_LIMIT: 'off', INVITE_MODE: 'off', SOCIAL_VERIFY_MODE: 'off',
     LEGAL_OPERATOR_NAME: 'CI Test Operator', LEGAL_POSTAL_ADDRESS: '123 Fixture Street, Test City',
     PRIVACY_CONTACT_EMAIL: 'privacy@example.test', DMCA_AGENT_NAME: 'CI Test Agent',
     DMCA_AGENT_EMAIL: 'copyright@example.test', DMCA_AGENT_ADDRESS: '123 Fixture Street, Test City',
