@@ -8,7 +8,7 @@
 | [src/accountdaily.js](../../src/accountdaily.js) | 79 | platform-core | 0 / 10 | 0 | 2 | 2 |
 | [src/accrual.js](../../src/accrual.js) | 245 | platform-core | 0 / 8 | 0 | 3 | 8 |
 | [src/actioncooldown.js](../../src/actioncooldown.js) | 22 | platform-core | 2 / 3 | 0 | 1 | 1 |
-| [src/age.js](../../src/age.js) | 38 | platform-core | 1 / 2 | 0 | 0 | 1 |
+| [src/age.js](../../src/age.js) | 44 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 17 | 3 | 5 | 15 |
 | [src/agentgateway.js](../../src/agentgateway.js) | 2405 | platform-core | 36 / 8 | 0 | 23 | 7 |
 | [src/agentoperatingmemory.js](../../src/agentoperatingmemory.js) | 70 | platform-core | 3 / 5 | 0 | 11 | 2 |
@@ -128,7 +128,7 @@
 | [src/content/belladonna.js](../../src/content/belladonna.js) | 241 | world-graph | 0 / 3 | 0 | 0 | 1 |
 | [src/content/campaign-network.js](../../src/content/campaign-network.js) | 200 | platform-core | 7 / 8 | 0 | 0 | 2 |
 | [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 41 | 0 | 0 | 9 |
-| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 39 | platform-core | 3 / 3 | 0 | 0 | 2 |
+| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 43 | platform-core | 3 / 3 | 0 | 0 | 2 |
 | [src/content/city-rumors.js](../../src/content/city-rumors.js) | 77 | platform-core | 0 / 2 | 0 | 3 | 1 |
 | [src/content/city-world-opportunities.js](../../src/content/city-world-opportunities.js) | 139 | platform-core | 0 / 5 | 0 | 1 | 2 |
 | [src/content/company-production-quality.js](../../src/content/company-production-quality.js) | 22 | platform-core | 0 / 1 | 0 | 0 | 0 |
@@ -148,11 +148,12 @@
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 1 | 0 | 6 | 1 |
 | [src/content/furnace-ledger.js](../../src/content/furnace-ledger.js) | 151 | platform-core | 7 / 16 | 0 | 1 | 13 |
 | [src/content/json-source.js](../../src/content/json-source.js) | 337 | platform-core | 0 / 7 | 0 | 0 | 2 |
+| [src/content/neighborhood-afterword.js](../../src/content/neighborhood-afterword.js) | 79 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/content/neighborhood-broadcast.js](../../src/content/neighborhood-broadcast.js) | 83 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/content/neighborhood-initiation.js](../../src/content/neighborhood-initiation.js) | 38 | platform-core | 0 / 4 | 0 | 0 | 2 |
 | [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 169 | world-graph | 0 / 3 | 0 | 1 | 1 |
 | [src/content/phase1-validation.js](../../src/content/phase1-validation.js) | 54 | world-graph | 5 / 6 | 0 | 0 | 2 |
-| [src/content/phase1.js](../../src/content/phase1.js) | 28 | world-graph | 11 / 17 | 0 | 0 | 11 |
+| [src/content/phase1.js](../../src/content/phase1.js) | 30 | world-graph | 12 / 17 | 0 | 0 | 11 |
 | [src/content/phase2-transactions.js](../../src/content/phase2-transactions.js) | 138 | platform-core | 2 / 15 | 0 | 0 | 6 |
 | [src/content/progression-admission.js](../../src/content/progression-admission.js) | 274 | platform-core | 9 / 3 | 0 | 1 | 1 |
 | [src/content/property-investigation.js](../../src/content/property-investigation.js) | 143 | platform-core | 0 / 3 | 0 | 0 | 1 |
@@ -501,7 +502,7 @@
 | [src/routes/world-kernel.js](../../src/routes/world-kernel.js) | 87 | platform-core | 8 / 1 | 6 | 1 | 0 |
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 675 | world-graph | 5 / 10 | 21 | 7 | 5 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 475 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 413 | 0 | 0 | 229 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 414 | 0 | 0 | 230 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6184 | platform-core | 0 / 1 | 0 | 55 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
@@ -565,8 +566,8 @@
 | [src/ux-community.js](../../src/ux-community.js) | 254 | platform-core | 4 / 2 | 0 | 12 | 1 |
 | [src/ux-coordination.js](../../src/ux-coordination.js) | 224 | platform-core | 3 / 3 | 0 | 7 | 1 |
 | [src/ux-investigation.js](../../src/ux-investigation.js) | 108 | platform-core | 4 / 3 | 0 | 6 | 1 |
-| [src/ux-story.js](../../src/ux-story.js) | 94 | platform-core | 5 / 2 | 0 | 0 | 1 |
-| [src/ux-tactics.js](../../src/ux-tactics.js) | 196 | platform-core | 6 / 2 | 0 | 3 | 1 |
+| [src/ux-story.js](../../src/ux-story.js) | 113 | platform-core | 6 / 3 | 0 | 0 | 2 |
+| [src/ux-tactics.js](../../src/ux-tactics.js) | 216 | platform-core | 6 / 2 | 0 | 3 | 1 |
 | [src/ux-workspace.js](../../src/ux-workspace.js) | 44 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/v4oraclekeeper.js](../../src/v4oraclekeeper.js) | 536 | platform-core | 1 / 1 | 0 | 2 | 0 |
 | [src/vanity.js](../../src/vanity.js) | 164 | engagement-growth | 2 / 21 | 8 | 9 | 0 |
@@ -593,6 +594,6 @@
 | [src/world-projection.js](../../src/world-projection.js) | 144 | platform-core | 7 / 4 | 0 | 4 | 2 |
 | [src/world-telemetry.js](../../src/world-telemetry.js) | 129 | platform-core | 1 / 3 | 1 | 10 | 1 |
 | [src/world.js](../../src/world.js) | 806 | world-progression | 3 / 11 | 14 | 10 | 2 |
-| [src/worldgraph-ui.js](../../src/worldgraph-ui.js) | 84 | platform-core | 2 / 4 | 0 | 0 | 1 |
+| [src/worldgraph-ui.js](../../src/worldgraph-ui.js) | 85 | platform-core | 2 / 4 | 0 | 0 | 1 |
 | [src/worldgraph-validate.js](../../src/worldgraph-validate.js) | 1928 | world-graph | 4 / 29 | 0 | 1 | 18 |
 | [src/worldgraph.js](../../src/worldgraph.js) | 111 | world-graph | 0 / 26 | 0 | 0 | 14 |
