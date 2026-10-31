@@ -30,6 +30,9 @@ const files = Object.freeze([
   'public/ux-tactics.css', 'public/ux-tactics.js',
   'src/ux-story.js', 'src/ux-tactics.js', 'tools/ux-source-compatibility.js',
   'src/worldgraph-ui.js',
+  'src/age.js', 'src/server.js',
+  'test/sale-source-compatibility.js', 'test/ux-source-compatibility.js',
+  'test/lib/ux-native-reader-source-compatibility.js',
 ]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
@@ -55,7 +58,8 @@ else {
     'Use --write --advance-reviewed <prior-authored-commit> <reviewed-file...>');
   priorAuthoredRevision = args[2]; assert.match(priorAuthoredRevision, /^[a-f0-9]{40}$/);
   const reviewedControls = ['package.json', 'test/lib/enterprise-ux-native-guard.js',
-    'AGENTS.md', 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js'];
+    'AGENTS.md', 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js',
+    'src/legal.js', 'test/legal-security.js', 'docs/legal-security-setup.md'];
   for (const file of args.slice(3)) {
     assert(reviewedControls.includes(file), 'Only explicitly reviewed unreleased controls may advance: ' + file);
     assert(!advance.has(file), 'A reviewed control may be named only once'); advance.add(file);
