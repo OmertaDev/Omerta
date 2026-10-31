@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "5dc4c7fda7a42fa2dba3331cf11ce194070e2762",
+  "authoredRevision": "7df5dad925f3c32f8a8d60498add8eadbcae89b7",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -3890,8 +3890,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "src/age.js",
       "mode": "100644",
-      "blob": "314806666a9f590e4755aa50707d40adcfbde0db",
-      "sha256": "70aa08ad07eba867d8b4c0fd7ced892e7e1871869c03832295d60ee78331e0ff"
+      "blob": "94a8b0e92dbb559e79e4d169ac238eaddafca663",
+      "sha256": "b3aea51a8cb6b537fdb45ec2fa44aebeb1a0af39bc248c4e2afaee57eb9cf3dd"
     },
     {
       "file": "src/agentcompany.js",
@@ -5570,8 +5570,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "src/legal.js",
       "mode": "100644",
-      "blob": "546de3723af508dd846cdcca1dcd08b167973009",
-      "sha256": "5256b7000f23cf4790702157f61b9fbe6924a86e4e566af9db89678e99c077b9"
+      "blob": "1f9241475697b532c572bdd1ca21e20e4e1f788a",
+      "sha256": "a9d8138f0efe8deb268468af19c8c92e82b5401dc9975ab988ddae3a320b487c"
     },
     {
       "file": "src/liquidityaccounting.js",
@@ -6806,8 +6806,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "src/server.js",
       "mode": "100644",
-      "blob": "98be176eb2d676e3eaa1992da787c76cb15acb00",
-      "sha256": "f0fba7a89de112aa2c85e61955cd2b36eb6387605f46696ef1290d442d14615e"
+      "blob": "9ac86b5b025e3a40f0142f8adf855471e8a21e77",
+      "sha256": "eae571fecd106622365194b2fd862f54635a9488ea9784d660defa292da28b5a"
     },
     {
       "file": "src/servicesubscriptions.js",
@@ -10124,8 +10124,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "0c81b8b94b105e58039802e386a5d823f8ea2cca",
-      "sha256": "92dc978c047d4fa9448f5d6cad8b71d6739a7841877e5e92aab996ecff9363bb"
+      "blob": "2b9682271860b80b03cec2c71ae201add2aebee3",
+      "sha256": "0bcd2d91e4af6c038af40531b197aace34b5fe98371f146fed51de4d445f3e42"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -10182,6 +10182,12 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "sha256": "2895e34a8f1b96fb3d49edcaf5a9f92452e4ec8a653c7dc15cc680f56b862dfa"
     },
     {
+      "file": "tools/age-policy-source-transfer.js",
+      "mode": "100644",
+      "blob": "e7eaa73d30eb25636910e91f30d52c4777338ea6",
+      "sha256": "969a1a10ce0541ffa6af1e6874e3a8c9d6f48b6e20f6b11ffdd9d61d841334b7"
+    },
+    {
       "file": "tools/economy-bank-interest-source-transfer.js",
       "mode": "100644",
       "blob": "ff63d996d3bc69ce7581a681933ca08782d4306e",
@@ -10202,8 +10208,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economy-social-proof-cutover-source-transfer.js",
       "mode": "100644",
-      "blob": "3447af71c952f322c4387706aaeec669a6484713",
-      "sha256": "07f651ff4e1594fc50312f829703143d1a34c4f0b293f3f439ab43fb5d1be26e"
+      "blob": "da8c237c282f9ef4d20de9eb5c04730a55303ec4",
+      "sha256": "4f377dd31e2f964fdaa2133bee77c4974ecb29fd11c5d62984ffdb48ef506131"
     },
     {
       "file": "tools/economy-social-proof-receipt-safety-source-transfer.js",
@@ -10640,6 +10646,21 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       }
     },
     {
+      "file": "src/age.js",
+      "before": {
+        "file": "src/age.js",
+        "mode": "100644",
+        "blob": "314806666a9f590e4755aa50707d40adcfbde0db",
+        "sha256": "70aa08ad07eba867d8b4c0fd7ced892e7e1871869c03832295d60ee78331e0ff"
+      },
+      "after": {
+        "file": "src/age.js",
+        "mode": "100644",
+        "blob": "94a8b0e92dbb559e79e4d169ac238eaddafca663",
+        "sha256": "b3aea51a8cb6b537fdb45ec2fa44aebeb1a0af39bc248c4e2afaee57eb9cf3dd"
+      }
+    },
+    {
       "file": "src/agentreferrals.js",
       "before": {
         "file": "src/agentreferrals.js",
@@ -10935,8 +10956,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "src/legal.js",
         "mode": "100644",
-        "blob": "546de3723af508dd846cdcca1dcd08b167973009",
-        "sha256": "5256b7000f23cf4790702157f61b9fbe6924a86e4e566af9db89678e99c077b9"
+        "blob": "1f9241475697b532c572bdd1ca21e20e4e1f788a",
+        "sha256": "a9d8138f0efe8deb268468af19c8c92e82b5401dc9975ab988ddae3a320b487c"
       }
     },
     {
@@ -11145,8 +11166,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "src/server.js",
         "mode": "100644",
-        "blob": "98be176eb2d676e3eaa1992da787c76cb15acb00",
-        "sha256": "f0fba7a89de112aa2c85e61955cd2b36eb6387605f46696ef1290d442d14615e"
+        "blob": "9ac86b5b025e3a40f0142f8adf855471e8a21e77",
+        "sha256": "eae571fecd106622365194b2fd862f54635a9488ea9784d660defa292da28b5a"
       }
     },
     {
@@ -12158,8 +12179,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "0c81b8b94b105e58039802e386a5d823f8ea2cca",
-      "sha256": "92dc978c047d4fa9448f5d6cad8b71d6739a7841877e5e92aab996ecff9363bb"
+      "blob": "2b9682271860b80b03cec2c71ae201add2aebee3",
+      "sha256": "0bcd2d91e4af6c038af40531b197aace34b5fe98371f146fed51de4d445f3e42"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -12216,6 +12237,12 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "sha256": "2895e34a8f1b96fb3d49edcaf5a9f92452e4ec8a653c7dc15cc680f56b862dfa"
     },
     {
+      "file": "tools/age-policy-source-transfer.js",
+      "mode": "100644",
+      "blob": "e7eaa73d30eb25636910e91f30d52c4777338ea6",
+      "sha256": "969a1a10ce0541ffa6af1e6874e3a8c9d6f48b6e20f6b11ffdd9d61d841334b7"
+    },
+    {
       "file": "tools/economy-bank-interest-source-transfer.js",
       "mode": "100644",
       "blob": "ff63d996d3bc69ce7581a681933ca08782d4306e",
@@ -12236,8 +12263,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economy-social-proof-cutover-source-transfer.js",
       "mode": "100644",
-      "blob": "3447af71c952f322c4387706aaeec669a6484713",
-      "sha256": "07f651ff4e1594fc50312f829703143d1a34c4f0b293f3f439ab43fb5d1be26e"
+      "blob": "da8c237c282f9ef4d20de9eb5c04730a55303ec4",
+      "sha256": "4f377dd31e2f964fdaa2133bee77c4974ecb29fd11c5d62984ffdb48ef506131"
     },
     {
       "file": "tools/economy-social-proof-receipt-safety-source-transfer.js",
@@ -12433,4 +12460,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "bc11719ef74e958fb71667cbbdf3f26dc1fae0e05b869a60b6e1858eb94e60d5";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "98977669654740451e30ba9f854cd0222546312659adef29fd5095ef01253f0c";
