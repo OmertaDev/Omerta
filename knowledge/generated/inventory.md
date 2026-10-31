@@ -1,34 +1,34 @@
 # Generated repository inventory
 
-> Source: worktree at `837f0e45558b`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `51501f8b6f64`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 7,049 |
-| Text lines | 6,045,430 |
-| Repository bytes inventoried | 3,059,268,335 |
+| Current artifacts | 7,085 |
+| Text lines | 6,046,705 |
+| Repository bytes inventoried | 3,212,521,742 |
 | Backend/route modules | 591 |
-| HTTP route registrations / unique routes | 1,054 / 1,054 |
+| HTTP route registrations / unique routes | 1,055 / 1,055 |
 | Database tables | 582 |
 | Solidity declarations | 134 |
-| Git commits | 4,955 |
+| Git commits | 4,961 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 17,300 / 69,320 |
+| Graph nodes / edges | 17,347 / 69,490 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
-| media-asset | 2,158 |
+| media-asset | 2,187 |
 | contract-project | 995 |
-| test-suite | 938 |
+| test-suite | 941 |
 | artifact | 882 |
 | documentation | 610 |
 | backend-module | 491 |
-| engineering-harness | 340 |
+| engineering-harness | 344 |
 | contract-test | 119 |
 | contract-source | 110 |
 | route-module | 100 |
@@ -82,19 +82,19 @@
 | Extension | Files | Bytes |
 |---|---:|---:|
 | .wav | 168 | 1,218,737,842 |
-| .png | 409 | 550,487,711 |
-| .mp4 | 235 | 380,054,233 |
-| .jpg | 339 | 65,056,612 |
+| .png | 421 | 558,753,522 |
+| .mp4 | 236 | 424,022,177 |
+| .svg | 166 | 107,620,458 |
+| .jpg | 340 | 65,307,548 |
 | .mp3 | 256 | 52,633,677 |
-| .svg | 154 | 7,014,908 |
 | .m4a | 10 | 6,069,278 |
 | .json | 154 | 5,832,622 |
 | .webp | 57 | 2,969,224 |
 | .mjs | 108 | 914,421 |
-| .md | 73 | 852,445 |
+| .md | 74 | 856,080 |
 | .csv | 9 | 351,226 |
 | .tsx | 76 | 313,083 |
-| .html | 26 | 246,696 |
+| .html | 27 | 259,977 |
 | .txt | 20 | 111,036 |
 | .woff2 | 4 | 50,960 |
 | .ts | 24 | 31,586 |
@@ -104,5 +104,5 @@
 | .js | 5 | 13,998 |
 | .css | 4 | 12,612 |
 | .pdf | 3 | 8,849 |
-| .vtt | 2 | 1,969 |
+| .vtt | 3 | 6,512 |
 | (none) | 3 | 262 |
