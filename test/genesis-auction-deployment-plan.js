@@ -86,7 +86,7 @@ const rawDown = 10n * E * (1n << 96n) / BigInt(input.auction.totalSupply);
 assert.equal(BigInt(input.auction.totalSupply) * (rawDown / 100n * 100n) / (1n << 96n), 10n * E - 1n,
   'Down-aligned full sale misses 10 ETH graduation by one wei');
 assert.deepEqual(plan.inventory.auctionDurationSecondsBounds, ['432000', '432000']);
-assert.deepEqual(Object.keys(plan.finalManifest.contracts).sort(), ['auction','characterNft','coordinator','omr','validator']);
+assert.deepEqual(Object.keys(plan.finalManifest.contracts).sort(), ['auction','btcRewards','characterNft','coordinator','omr','validator']);
 assert.equal(plan.finalManifest.contracts.coordinator.runtimeCodeHash, null, 'Cannot invent constructor-immutable runtime hash before deployment');
 assert.equal(plan.finalManifest.dependencies.hook.runtimeCodeHash, null);
 assert(!JSON.stringify(plan).includes('playerSale'), 'No gameplay tranche is planned');
