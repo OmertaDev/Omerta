@@ -7,6 +7,7 @@ import { economyBankInterestHardeningHistoricalInput } from './economy-bank-inte
 import { economySocialProofCutoverHistoricalInput } from './economy-social-proof-cutover-source-transfer.js';
 import { economySocialReceiptSafetyHistoricalInput } from './economy-social-proof-receipt-safety-source-transfer.js';
 import { economySocialReceiptHistoricalInput } from './economy-social-proof-receipt-source-transfer.js';
+import { marketFeeCopyHistoricalInput } from './market-fee-copy-source-transfer.js';
 
 export { ECONOMY_UX_MERGE_SOURCE };
 export const ECONOMY_UX_MERGE_FILES = Object.freeze([
@@ -118,6 +119,7 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input) {
+  input = marketFeeCopyHistoricalInput(file, input);
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);
@@ -126,6 +128,7 @@ export function economyUxMergeCandidateHistoricalInput(file, input) {
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
+  input = marketFeeCopyHistoricalInput(file, input);
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);

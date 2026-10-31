@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import {
   MARKET_FEE_COPY_BASE_REVISION, MARKET_FEE_COPY_DOMAINS, assertMarketFeeCopySourceTransfer,
+  marketFeeCopyHistoricalInput,
 } from '../tools/market-fee-copy-source-transfer.js';
 import {
   ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_SOURCE_TREE,
@@ -1268,12 +1269,22 @@ for (const file of Object.keys(MARKET_FEE_COPY_DOMAINS)) {
     const transfer = assertMarketFeeCopySourceTransfer(file, input);
     assert.equal(transfer.baselineText, baseline);
     assert.equal(transfer.sourceOnly, true); assert.equal(transfer.runtime, false); assert.equal(transfer.native, false);
+    const expected = Buffer.isBuffer(input) ? Buffer.from(baseline) : baseline;
+    assert.deepEqual(marketFeeCopyHistoricalInput(file, input), expected);
+    assert.deepEqual(marketFeeCopyHistoricalInput(file, expected), expected);
+    assert.deepEqual(economyUxMergeCandidateHistoricalInput(file, input),
+      economyUxMergeCandidateHistoricalInput(file, expected));
+    assert.deepEqual(economyUxMergeMainHistoricalInput(file, input),
+      economyUxMergeMainHistoricalInput(file, expected));
     feeCopyPositives++;
   }
   for (const changed of [current + '\n// outside fee-copy drift\n', current.slice(1), '\ufeff' + current,
     current + '\0', current.replace('\n', '\r\n'), current.replace('\n', '\r'), baseline, null,
     Buffer.from([0xc3, 0x28])]) {
-    assert.throws(() => assertMarketFeeCopySourceTransfer(file, changed)); feeCopyRefusals++;
+    assert.throws(() => assertMarketFeeCopySourceTransfer(file, changed));
+    if (Buffer.isBuffer(changed)) assert.throws(() => marketFeeCopyHistoricalInput(file, changed));
+    else assert.strictEqual(marketFeeCopyHistoricalInput(file, changed), changed);
+    feeCopyRefusals++;
   }
   assert(pin.inverses.length > 0);
   for (const inverse of pin.inverses) {
@@ -1282,14 +1293,16 @@ for (const file of Object.keys(MARKET_FEE_COPY_DOMAINS)) {
       current.replace(inverse.current, () => inverse.current + inverse.current),
       current.replace(inverse.current, () => inverse.baseline),
       current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
-      assert.throws(() => assertMarketFeeCopySourceTransfer(file, changed)); feeCopyRefusals++;
+      assert.throws(() => assertMarketFeeCopySourceTransfer(file, changed));
+      assert.strictEqual(marketFeeCopyHistoricalInput(file, changed), changed); feeCopyRefusals++;
     }
     feeCopyHunks++;
   }
 }
 for (const file of ['__proto__', 'constructor', 'toString', 'src/unknown.js']) {
-  assert.throws(() => assertMarketFeeCopySourceTransfer(file, 'unknown\nbytes\n')); feeCopyRefusals++;
+  assert.throws(() => assertMarketFeeCopySourceTransfer(file, 'unknown\nbytes\n'));
+  assert.equal(marketFeeCopyHistoricalInput(file, 'unknown\nbytes\n'), 'unknown\nbytes\n'); feeCopyRefusals++;
 }
-assert.equal(feeCopyPositives, 20); assert.equal(feeCopyRefusals, 97); assert.equal(feeCopyHunks, 12);
+assert.equal(feeCopyPositives, 20); assert.equal(feeCopyRefusals, 105); assert.equal(feeCopyHunks, 14);
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
 console.log(`Market fee-copy source projection PASS: ${feeCopyPositives} positives, ${feeCopyRefusals} refusals, ${feeCopyHunks} exact inverse hunks`);
