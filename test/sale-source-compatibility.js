@@ -1,5 +1,6 @@
 // Independent exact-source and mutation proofs; no runtime or native results transfer.
 import assert from 'node:assert/strict';
+import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -30,8 +31,8 @@ const inverseHunks = diff => {
 let positives = 0, refusals = 0, hunks = 0;
 for (const row of pin.files) {
   const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
-  const physical = economySocialProofCutoverHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'));
-  const committed = economySocialProofCutoverHistoricalInput(row.file, git('show', 'HEAD:' + row.file));
+  const physical = economySocialProofCutoverHistoricalInput(row.file, businessDeskHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')));
+  const committed = economySocialProofCutoverHistoricalInput(row.file, businessDeskHistoricalInput(row.file, git('show', 'HEAD:' + row.file)));
   const stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');
