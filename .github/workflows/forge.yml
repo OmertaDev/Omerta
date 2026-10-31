@@ -83,6 +83,9 @@ jobs:
         working-directory: omerta-contracts
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Source-transfer guards read exact historical blobs and their ancestry.
+          fetch-depth: 0
 
       # PINNED, like every other dependency this workflow fetches. `foundry-toolchain@v1` with no
       # `version` resolves `stable` AT RUN TIME, so the one thing compiling and running the suite was
