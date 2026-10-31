@@ -25,6 +25,9 @@ try {
       await page.addLocatorHandler(page.locator('#welcome:not(.hidden)'), async () => page.locator('#tour-skip').click());
       await page.goto(f.origin, { waitUntil: 'domcontentloaded' });
       await page.locator('#screen-main:not(.hidden)').waitFor();
+      if (!await page.locator('[data-tab="business"]:visible').count()) {
+        await page.locator('#grouprail [data-group="earners"]').click();
+      }
       await page.locator('[data-tab="business"]:visible').first().click();
       const desk = page.locator('#tab-business');
       await desk.waitFor({ state: 'visible' });
