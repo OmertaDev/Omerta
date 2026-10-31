@@ -85,13 +85,15 @@ export async function businessDeskFixture(definitions) {
     }
     async function player(label, role, location, credential) {
       setupOnly();
-      const token = (await ok(null, 'POST', '/v1/auth/guest', {})).token;
+      // Credential creation is deliberately non-replayable; never put secrets
+      // behind the gameplay HTTP receipt mechanism.
+      const token = (await ok(null, 'POST', '/v1/auth/guest', {}, null)).token;
       const actor = { token, location, credential, role };
       await ok(actor, 'POST', '/v1/character', { name: `Desk ${label.slice(0, 5)} ${role.slice(0, 5)} ${crypto.randomBytes(2).toString('hex')}` }, undefined, 'human');
       const me = await ok(actor, 'GET', '/v1/me', undefined, undefined, 'human');
       actor.id = me.character.id;
       actor.account = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [actor.id])).rows[0].account_id;
-      actor.agent = (await ok(actor, 'POST', '/v1/auth/agent-key', {}, undefined, 'human')).token;
+      actor.agent = (await ok(actor, 'POST', '/v1/auth/agent-key', {}, null, 'human')).token;
       assert(actor.agent && actor.agent !== actor.token, 'The public owner-authenticated API issues the agent credential.');
       await fund(actor, 30000);
       for (const skill of ['fast_talker', 'fence_network']) {
@@ -116,7 +118,7 @@ export async function businessDeskFixture(definitions) {
       await ok(maker, 'POST', '/v1/company/specializations', scenario.grantBody, undefined, 'human');
       scenario.delegatedToken = (await ok(maker, 'POST', '/v1/gateway/connections', {
         provider: 'test', label: 'Business desk boundary', scopes: ['omerta.player.read', 'omerta.actions.prepare'], expiresInSeconds: 3600,
-      }, undefined, 'human')).token;
+      }, null, 'human')).token;
       scenario.inputs = [];
       for (const price of [1000, 5000]) {
         setupOnly();
