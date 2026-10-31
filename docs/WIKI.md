@@ -195,6 +195,25 @@ with raids, a small garrison is enough.
 
 ## 5. The economy
 
+### Watch: how the game economy works
+
+**October 30, 2026 · launch design snapshot.** This captioned, narrated guide explains the current design. Production trading, financial rewards and NFT issuance remain subject to deployment, funding and launch activation.
+
+[![Watch the OMERTÀ game economy explainer](../public/art/wiki-economy/omerta-wiki-economy-poster.jpg)](../public/art/wiki-economy/omerta-wiki-economy-1080p.mp4)
+
+[Watch or download the film](../public/art/wiki-economy/omerta-wiki-economy-1080p.mp4) · [English captions](../public/art/wiki-economy/captions.vtt) · [Read the transcript](../public/art/wiki-economy/transcript.md) · [Explore all six graphics](../public/art/wiki-economy/gallery.html)
+
+Select a diagram for its full-resolution PNG; editable SVGs are also available.
+
+| Diagram | Preview | Editable SVG |
+| --- | --- | --- |
+| How value moves | [![Game cash, OMR and stock rewards follow separate value flows.](../public/art/wiki-economy/economy-map.png)](../public/art/wiki-economy/economy-map.png) | [SVG](../public/art/wiki-economy/economy-map.svg) |
+| Where trading fees go | [![The 4% protocol fee has five destinations; hook and LP fees are separate.](../public/art/wiki-economy/fee-split.png)](../public/art/wiki-economy/fee-split.png) | [SVG](../public/art/wiki-economy/fee-split.svg) |
+| The Deed lifecycle | [![Bloodline identity, character custody and equipped Deeds have separate ownership and death rules.](../public/art/wiki-economy/deed-lifecycle.png)](../public/art/wiki-economy/deed-lifecycle.png) | [SVG](../public/art/wiki-economy/deed-lifecycle.svg) |
+| Qualifying for stocks | [![New stocks require verified equipment, a living character, Broker activation and qualifying play.](../public/art/wiki-economy/stock-rewards.png)](../public/art/wiki-economy/stock-rewards.png) | [SVG](../public/art/wiki-economy/stock-rewards.svg) |
+| Token and property supply | [![Fixed supply of 100 million OMR and 2,500 Deeds: 1,000 earned, 1,000 paid and 500 partnership.](../public/art/wiki-economy/token-supply.png)](../public/art/wiki-economy/token-supply.png) | [SVG](../public/art/wiki-economy/token-supply.svg) |
+| Technology and ownership | [![Token and NFT standards connect authoritative gameplay to on-chain custody and settlement.](../public/art/wiki-economy/technology-stack.png)](../public/art/wiki-economy/technology-stack.png) | [SVG](../public/art/wiki-economy/technology-stack.svg) |
+
 ### The Canonical Market
 
 **Status: verify deployment, funding and activation separately.**

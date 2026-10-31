@@ -136,6 +136,19 @@
   #doc .diagram-sheet figcaption{padding:8px 10px;background:var(--panel2);color:var(--dim);font:11px/1.45 var(--mono)}
   #doc .diagram-sheet:hover{border-color:var(--neon-d)}
 
+#doc .wiki-economy-media{margin:0 0 28px;padding:18px;border:1px solid var(--line2);background:var(--panel);border-radius:2px}
+  #doc .wiki-economy-media h3{margin:0 0 10px}
+  #doc .wiki-economy-media .media-status{color:var(--dim);font-size:14px}
+  #doc .wiki-economy-media video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#080706}
+  #doc .wiki-economy-media .media-links{display:flex;flex-wrap:wrap;gap:6px 18px;margin:12px 0 16px;font-size:14px}
+  #doc .wiki-economy-media .media-links a{display:inline-flex;align-items:center;min-height:44px}
+  #doc .wiki-economy-previews{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 14px}
+  #doc .wiki-economy-previews figure{margin:0;min-width:0;border:1px solid var(--line)}
+  #doc .wiki-economy-previews img{display:block;width:100%;height:auto}
+  #doc .wiki-economy-previews figcaption{padding:8px 10px;color:var(--dim);font:14px/1.45 var(--mono)}
+  #doc .wiki-economy-previews figcaption{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  #doc .wiki-economy-previews figcaption a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;flex-shrink:0}
+
   #totop{position:fixed;right:22px;bottom:22px;z-index:7;font-family:var(--mono);font-size:11px;
     letter-spacing:.1em;color:var(--dim);background:rgba(18,17,16,.94);border:1px solid var(--line2);
     min-height:44px;display:inline-flex;align-items:center;padding:9px 13px;border-radius:2px;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -419,7 +432,24 @@ const SECTIONS = [
     html: `<p>The Omerta Coordination Engine runs private graph investigations with immutable discoveries, live sharing permissions, evidence requirements, player assertions and personal reference archives. Its API pilots are implemented but default off, and award no money, items or combat power.</p><p>The Dead Letter follows two discoverable leads to a conclusion. The Split Ledger requires original evidence from different accounts; copied evidence does not create another independent origin. Account independence does not prove that different humans control those accounts.</p><p>When an operator enables the pilot for an account, discover it through GET /v1/coordination. Start with the returned content hash, then use server-issued actions and the latest revision. Sharing uses current permissions and ACL revisions. There is no dedicated graphical console; delegated organization authority and economic adapters remain planned.</p>` },
 
   { id: 'economy', group: 'Money', title: 'The economy: $OMR, the Window & the Vault', tag: 'currencies, spending and staking',
-    html: `<p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
+    html: `<div class="wiki-economy-media" aria-labelledby="economy-explainer-title">
+      <h3 id="economy-explainer-title">Watch: how the game economy works</h3>
+      <p class="media-status" id="economy-explainer-status"><b>October 30, 2026 · launch design snapshot.</b> This captioned, narrated guide explains the current design. Production trading, financial rewards and NFT issuance remain subject to deployment, funding and launch activation.</p>
+      <video controls playsinline preload="none" width="1920" height="1080" poster="/art/wiki-economy/omerta-wiki-economy-poster.jpg" aria-label="OMERTÀ game economy explainer" aria-describedby="economy-explainer-status">
+        <source src="/art/wiki-economy/omerta-wiki-economy-1080p.mp4" type="video/mp4">
+        <p><a href="/art/wiki-economy/omerta-wiki-economy-1080p.mp4">Download the video</a> or <a href="/art/wiki-economy/transcript.md">read the transcript</a>.</p>
+      </video>
+      <div class="media-links"><a href="/art/wiki-economy/transcript.md">Read the transcript</a><a href="/art/wiki-economy/gallery.html">Open the media gallery</a><a href="/art/wiki-economy/omerta-wiki-economy-1080p.mp4" download>Download the film</a><a href="/art/wiki-economy/captions.vtt" download>Download captions (VTT)</a></div>
+      <div class="wiki-economy-previews" aria-label="Six economy diagrams; select an image for the full-resolution PNG">
+        <figure><a href="/art/wiki-economy/economy-map.png"><img src="/art/wiki-economy/economy-map.png" width="1920" height="1080" loading="lazy" decoding="async" alt="Game cash, OMR and stock rewards follow separate value flows."></a><figcaption>How value moves <a href="/art/wiki-economy/economy-map.svg" download>SVG</a></figcaption></figure>
+        <figure><a href="/art/wiki-economy/fee-split.png"><img src="/art/wiki-economy/fee-split.png" width="1920" height="1080" loading="lazy" decoding="async" alt="The 4% protocol fee has five destinations; hook and LP fees are separate."></a><figcaption>Where trading fees go <a href="/art/wiki-economy/fee-split.svg" download>SVG</a></figcaption></figure>
+        <figure><a href="/art/wiki-economy/deed-lifecycle.png"><img src="/art/wiki-economy/deed-lifecycle.png" width="1920" height="1080" loading="lazy" decoding="async" alt="Bloodline identity, character custody and equipped Deeds have separate ownership and death rules."></a><figcaption>The Deed lifecycle <a href="/art/wiki-economy/deed-lifecycle.svg" download>SVG</a></figcaption></figure>
+        <figure><a href="/art/wiki-economy/stock-rewards.png"><img src="/art/wiki-economy/stock-rewards.png" width="1920" height="1080" loading="lazy" decoding="async" alt="New stocks require verified equipment, a living character, Broker activation and qualifying play."></a><figcaption>Qualifying for stocks <a href="/art/wiki-economy/stock-rewards.svg" download>SVG</a></figcaption></figure>
+        <figure><a href="/art/wiki-economy/token-supply.png"><img src="/art/wiki-economy/token-supply.png" width="1920" height="1080" loading="lazy" decoding="async" alt="Fixed supply of 100 million OMR and 2,500 Deeds: 1,000 earned, 1,000 paid and 500 partnership."></a><figcaption>Token and property supply <a href="/art/wiki-economy/token-supply.svg" download>SVG</a></figcaption></figure>
+        <figure><a href="/art/wiki-economy/technology-stack.png"><img src="/art/wiki-economy/technology-stack.png" width="1920" height="1080" loading="lazy" decoding="async" alt="Token and NFT standards connect authoritative gameplay to on-chain custody and settlement."></a><figcaption>Technology and ownership <a href="/art/wiki-economy/technology-stack.svg" download>SVG</a></figcaption></figure>
+      </div>
+    </div>
+      <p><b>Currencies:</b> cash (pocket and bank), <b>$OMR</b> (premium, account-level, earned through enumerated rules, and eligible for on-chain extraction by minted accounts once the production rail opens), crates, and ammo. <b>Cash can never buy $OMR.</b> The one live conversion runs the other way at the Window: spend $OMR for cash from a funded till. The game records every movement of value on a ledger.</p>
       <p><b>Read the current systems:</b> the <a href="#canonical-market">canonical market</a> describes the Hook, funded inventory bonds, reserves and Turf. The <a href="#grillv2">Stock Token and custody entry</a> distinguishes implemented foundations from pending launch work.</p>
       <p><b>The game has no time-based $OMR faucet.</b> No wage, inflationary yield, or drip. One-time mission awards and daily prize credits are enumerated and funded on the game ledger; they do not call the ERC-20 mint. The canonical market design uses funded OMR inventory bonds with linear vesting and prefunded commitment rewards; neither mechanism mints its payouts. Market deployment, funding and production activation require separate verification.</p>
       <p>Five ways to get some: <b>take it</b>
