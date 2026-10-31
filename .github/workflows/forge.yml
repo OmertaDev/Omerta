@@ -3,7 +3,7 @@ name: forge test (contracts)
 # The pre-mainnet gate the sandboxed build environment can't run (Foundry's release binaries are
 # egress-blocked there). GitHub's runners have open internet, so `forge test` — the OMERTÀ Solidity
 # suite (unit + 512-run fuzz) — runs here on every push/PR that touches the contracts. Mirrors
-# omerta-contracts/run-forge-test.sh: solc 0.8.26 (foundry.toml), OpenZeppelin v5.6.1, forge-std v1.9.6.
+# omerta-contracts/run-forge-test.sh: solc 0.8.38 (foundry.toml), OpenZeppelin v5.6.1, forge-std v1.9.6.
 
 on:
   push:
@@ -21,10 +21,19 @@ on:
       - 'test/liquidity*.js'
       - 'src/marketv2*.js'
       - 'tools/market-v2-deployment-plan.js'
+      - 'tools/solidity-dependency-pragmas.js'
+      - 'tools/wbtc-reward-epoch.js'
+      - 'test/wbtc-reward-epoch.js'
+      - 'tools/tokenomics-pilot.js'
+      - 'test/tokenomics-pilot.js'
+      - 'tools/player-genesis-*.js'
+      - 'test/player-genesis-deployment.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
       - 'test/genesis-auction-deployment-plan.js'
+      - 'tools/genesis-fee-readiness-source-transfer.js'
+      - 'test/genesis-fee-readiness-source-transfer.js'
       - 'package.json'
   pull_request:
     paths:
@@ -40,10 +49,19 @@ on:
       - 'test/liquidity*.js'
       - 'src/marketv2*.js'
       - 'tools/market-v2-deployment-plan.js'
+      - 'tools/solidity-dependency-pragmas.js'
+      - 'tools/wbtc-reward-epoch.js'
+      - 'test/wbtc-reward-epoch.js'
+      - 'tools/tokenomics-pilot.js'
+      - 'test/tokenomics-pilot.js'
+      - 'tools/player-genesis-*.js'
+      - 'test/player-genesis-deployment.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
       - 'test/genesis-auction-deployment-plan.js'
+      - 'tools/genesis-fee-readiness-source-transfer.js'
+      - 'test/genesis-fee-readiness-source-transfer.js'
       - 'package.json'
   workflow_dispatch: {}
 
@@ -65,11 +83,14 @@ jobs:
         working-directory: omerta-contracts
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Source-transfer guards read exact historical blobs and their ancestry.
+          fetch-depth: 0
 
       # PINNED, like every other dependency this workflow fetches. `foundry-toolchain@v1` with no
       # `version` resolves `stable` AT RUN TIME, so the one thing compiling and running the suite was
       # the only thing here not held still — while forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
-      # (1.0.2) and solc (0.8.26, foundry.toml) are all pinned by hand a few lines below. The forgotten
+      # (1.0.2) and solc (0.8.38, foundry.toml) are all pinned by hand a few lines below. The forgotten
       # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the
       # position this gate was in. The banner is the instrument: when local and CI disagree again, the
       # log answers "which forge ran this" instead of leaving it to be guessed at.
@@ -106,6 +127,8 @@ jobs:
           git -C lib/v4-periphery checkout --detach ad04c9f24a170accf5ea1b2836bbafd514537ca6
           git clone --no-checkout https://github.com/Uniswap/permit2 lib/permit2
           git -C lib/permit2 checkout --detach cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
+          # Apply only exact version pragma pins for the reviewed compiler migration.
+          node ../tools/solidity-dependency-pragmas.js
 
       # PARSE gate only — the SIZE gate is its own step at the END of this job, and the split is
       # load-bearing rather than tidy. `forge build --sizes` is all-or-nothing: on 2026-08-27 a test
@@ -131,6 +154,10 @@ jobs:
         run: |
           npm ci
           npm run test:market-v2
+          node test/wbtc-reward-epoch.js
+          node test/tokenomics-pilot.js
+          node test/player-genesis-deployment.js
+          node test/genesis-fee-readiness-source-transfer.js
           npm run test:genesis-auction:deployment
 
       - name: retain failed genesis compiler artifacts
@@ -145,6 +172,7 @@ jobs:
             omerta-contracts/out/OmertaReserveFundingV2.sol/OmertaReserveFundingV2.json
             omerta-contracts/out/OmertaAuctionCoordinatorV2.sol/OmertaAuctionCoordinatorV2.json
             omerta-contracts/out/OmertaGuardedAuction.sol/OmertaGuardedAuction.json
+            omerta-contracts/out/OmertaCharacterGuardedAuction.sol/OmertaCharacterGuardedAuction.json
 
       - name: forge test (unit + fuzz)
         run: forge test -vvv

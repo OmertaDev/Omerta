@@ -6,6 +6,8 @@ export const DEPLOYER = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e';
 export const SAFE = '0xbe225658718dcb3865902437887a11830e4a9b10';
 export const FACTORY = '0x4e59b44847b379578588920ca78fbf26c0b4956c';
 export const STORAGE_KEY = `omerta:genesis-deploy:4663:${DEPLOYER}`;
+// Set only after the owner-approved rewards vault address and runtime are verified.
+export const APPROVED_BTC_REWARDS = null;
 const ROLES = ['polFunding', 'reserveFunding', 'coordinator', 'hook', 'auction'];
 const DEPENDENCIES = {
   omr: '0x2e82f8c1cfd5172612b3af56088d7d68d920545d',
@@ -59,13 +61,13 @@ function verifyHookCreation(p) {
     && configuration.surgeFullTicks === 100 && configuration.epochDuration === 3600,
     'The reviewed static 0.3% LP fee and disabled opening policy metadata differs.');
   const deployment = p.deployments[3], raw = bytes(deployment.data), template = bytes(TRUSTED_HOOK.creationBytecode);
-  check(TRUSTED_HOOK.constructorWords === 15 && template.length === TRUSTED_HOOK.creationBytecodeBytes
+  check(TRUSTED_HOOK.constructorWords === 16 && template.length === TRUSTED_HOOK.creationBytecodeBytes
     && keccakHex(TRUSTED_HOOK.creationBytecode) === TRUSTED_HOOK.creationBytecodeKeccak256,
     'The locally shipped trusted hook creation template is inconsistent.');
-  check(raw.length === 32 + template.length + 15 * 32
+  check(raw.length === 32 + template.length + 16 * 32
     && byteHex(raw.slice(32, 32 + template.length)) === lower(TRUSTED_HOOK.creationBytecode),
     'Hook calldata does not contain the trusted local compiled creation bytecode and canonical constructor size.');
-  const words = Array.from({ length: 15 }, (_, i) => byteHex(raw.slice(32 + template.length + i * 32, 32 + template.length + (i + 1) * 32)));
+  const words = Array.from({ length: 16 }, (_, i) => byteHex(raw.slice(32 + template.length + i * 32, 32 + template.length + (i + 1) * 32)));
   const addressWord = (index, expected) => check(words[index] === `0x${'00'.repeat(12)}${lower(expected).slice(2)}`,
     'A hook constructor authority, recipient, token or manager differs.');
   const uintWord = (index, expected) => check(words[index] === `0x${BigInt(expected).toString(16).padStart(64, '0')}`,
@@ -75,7 +77,7 @@ function verifyHookCreation(p) {
   [ '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', SAFE,
     '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments[0].predicted, p.deployments[1].predicted ]
     .forEach((address, i) => addressWord(5 + i, address));
-  [10, 11, 12].forEach(i => uintWord(i, 0)); uintWord(13, 100); uintWord(14, 3600);
+  [10, 11, 12].forEach(i => uintWord(i, 0)); uintWord(13, 100); uintWord(14, 3600); addressWord(15, p.finalManifest.hookPolicy.rewardsRecipient);
   const predicted = predictCreate2Address(FACTORY, byteHex(raw.slice(0, 32)), byteHex(raw.slice(32)));
   check(predicted === lower(deployment.predicted) && (BigInt(predicted) & 0x3fffn) === 0x35c4n,
     'The salt/initcode CREATE2 address or hook permission flags differ from the reviewed prediction.');
@@ -117,7 +119,7 @@ function verifyOtherCreations(p) {
   const tuple = [addr('0x' + '0'.repeat(40)), addr(SAFE), addr(address[2]), word(p.launchClock.startBlock), word(p.launchClock.endBlock),
     word(p.launchClock.claimBlock), word(tick), addr('0x' + '0'.repeat(40)), word(floor), word(minimum), word(352)].join('');
   const scheduleBytes = bytes(schedule), padded = schedule.slice(2).padEnd(Math.ceil(scheduleBytes.length / 32) * 64, '0');
-  expected.push(['OmertaGuardedAuction', head + tuple + word(scheduleBytes.length) + padded]);
+  expected.push(['OmertaCharacterGuardedAuction', head + tuple + word(scheduleBytes.length) + padded]);
   for (let i = 0; i < expected.length; i++) {
     const [name, argumentsHex] = expected[i], definition = TRUSTED_CREATIONS[name];
     check(definition && bytes(definition.creationBytecode).length === definition.creationBytecodeBytes
@@ -133,7 +135,7 @@ export async function sha256(value, cryptoApi = globalThis.crypto) {
   return [...new Uint8Array(digest)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
-export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date.now(), cryptoApi = globalThis.crypto, recoveryOnly = false } = {}) {
+export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date.now(), cryptoApi = globalThis.crypto, recoveryOnly = false, approvedRewards = APPROVED_BTC_REWARDS } = {}) {
   check(SHA.test(expectedSha || '') && rawBytes.byteLength <= 4_194_304, 'Enter the reviewed packet SHA-256 and a bounded packet file.');
   const digest = await sha256(rawBytes, cryptoApi);
   check(digest === expectedSha.toLowerCase(), 'Packet bytes differ from the reviewed SHA-256.');
@@ -151,15 +153,20 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
   check(p.finalManifest?.chainId === 4663 && policy && Object.entries(amounts).every(([k, v]) => policy[k] === v)
     && ['familySafe', 'liquidityOwner', 'unsoldRecipient', 'bondReserveCustodian'].every(k => lower(policy[k]) === SAFE),
   'The founder-approved allocation, proceeds or Safe custody differs.');
+  check(approvedRewards && ADDRESS.test(approvedRewards.address || '') && !/^0x0{40}$/i.test(approvedRewards.address)
+    && SHA.test(approvedRewards.sha256 || '') && !/^0{64}$/i.test(approvedRewards.sha256),
+    'The WBTC rewards vault must be approved before deployment.');
+  const approvedDependencies = { ...DEPENDENCIES, btcRewards: lower(approvedRewards.address) };
   const hookPolicy = p.finalManifest.hookPolicy;
-  const fixed = { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100 };
+  const fixed = { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96 };
   const hookRecipients = ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', SAFE,
     '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments?.[0]?.predicted, p.deployments?.[1]?.predicted];
-  check(hookPolicy && Object.keys(hookPolicy).length === 7
+  check(hookPolicy && Object.keys(hookPolicy).length === Object.keys(fixed).length + 2
     && Object.entries(fixed).every(([key, value]) => hookPolicy[key] === value)
+    && lower(hookPolicy.rewardsRecipient) === approvedDependencies.btcRewards
     && Array.isArray(hookPolicy.recipients) && hookPolicy.recipients.length === 5
     && hookPolicy.recipients.every((recipient, i) => lower(recipient) === lower(hookRecipients[i])),
-    'The fixed 5% trade revenue, 0.5% maximum surge or reviewed recipients differ.');
+    'The 3.5% base plus 0.5% WBTC rewards, 0.5% maximum surge or reviewed recipients differ.');
   const clock = p.launchClock;
   check(clock && ['arbsys', 'block.number'].includes(clock.mode), 'The native launch clock is missing.');
   check(integer(clock.startBlock) < integer(clock.endBlock) && clock.claimBlock === clock.endBlock,
@@ -186,11 +193,12 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
     === predictCreateAddress(DEPLOYER, integer(p.deployments[index].nonce)), 'A CREATE deployment address differs from the reviewed EOA nonce.');
   verifyHookCreation(p);
   verifyOtherCreations(p);
-  check(Array.isArray(p.dependencyChecks) && p.dependencyChecks.length === 6, 'Six production dependency checks are required.');
+  check(Array.isArray(p.dependencyChecks) && p.dependencyChecks.length === 7, 'Seven production dependency checks are required.');
   const names = new Set();
   for (const pin of p.dependencyChecks) {
-    check(Object.hasOwn(DEPENDENCIES, pin.name) && !names.has(pin.name) && lower(pin.address) === DEPENDENCIES[pin.name]
+    check(Object.hasOwn(approvedDependencies, pin.name) && !names.has(pin.name) && lower(pin.address) === approvedDependencies[pin.name]
       && SHA.test(pin.sha256 || '') && !/^0{64}$/.test(pin.sha256), 'A production dependency address or SHA-256 differs.');
+    if (pin.name === 'btcRewards') check(pin.sha256.toLowerCase() === approvedRewards.sha256.toLowerCase(), 'The WBTC rewards vault runtime differs from its approved identity.');
     names.add(pin.name);
   }
   check(Array.isArray(p.auxiliaryRuntimeChecks) && p.auxiliaryRuntimeChecks.length === 2,
@@ -217,7 +225,7 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
     === p.auxiliaryRuntimeChecks.find(pin => pin.name === 'scheduleStore').sha256.toLowerCase(),
     'The schedule-store SHA-256 differs from the exact reviewed schedule runtime.');
   check(new Set([...p.dependencyChecks, ...Object.values(p.runtimeChecks), ...p.auxiliaryRuntimeChecks]
-    .map(pin => lower(pin.address))).size === 13, 'Production, deployment and internal runtime addresses collide.');
+    .map(pin => lower(pin.address))).size === 14, 'Production, deployment and internal runtime addresses collide.');
   const snapshot = structuredClone(p);
   const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } };
   freeze(snapshot);
@@ -227,10 +235,11 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
 export class GenesisDeploymentClient {
   constructor({ provider, storage = globalThis.localStorage, locks = globalThis.navigator?.locks,
     cryptoApi = globalThis.crypto, now = () => Date.now(), readTimeoutMs = 12_000, status = () => {},
-    confirm = async text => globalThis.confirm(text) } = {}) {
+    confirm = async text => globalThis.confirm(text), approvedRewards = APPROVED_BTC_REWARDS } = {}) {
     this.provider = provider; this.storage = storage; this.locks = locks; this.crypto = cryptoApi;
     this.now = now; this.readTimeoutMs = readTimeoutMs; this.status = status; this.inFlight = false; this.loaded = null;
     this.confirm = confirm;
+    this.approvedRewards = approvedRewards && Object.freeze({ ...approvedRewards });
     this.snapshotRequest = genesisSnapshotRequest(args => this.provider.request(args));
   }
   state() {
@@ -246,7 +255,7 @@ export class GenesisDeploymentClient {
     check(!this.inFlight, 'A deployment action is in flight; wait before replacing its packet.');
     const s = this.state();
     const recoveryOnly = !!s.pending && lower(expectedSha) === s.packetHash;
-    const verified = await verifyDeploymentPacket(raw, expectedSha, { now: this.now(), cryptoApi: this.crypto, recoveryOnly });
+    const verified = await verifyDeploymentPacket(raw, expectedSha, { now: this.now(), cryptoApi: this.crypto, recoveryOnly, approvedRewards: this.approvedRewards });
     return this.exclusive(async () => {
       const current = this.state();
       if (current.packetHash && current.packetHash !== verified.digest) {
@@ -280,8 +289,9 @@ export class GenesisDeploymentClient {
   async restrictedManagerAt(block) {
     const recipients = this.loaded.packet.finalManifest.hookPolicy.recipients;
     const expected = [
-      ['revenuePolicyId()', byteHex(keccak_256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')))],
-      ['TRADE_FEE_BPS()', `0x${abiWord(500)}`], ['omr()', `0x${abiAddress(DEPENDENCIES.omr)}`],
+      ['revenuePolicyId()', byteHex(keccak_256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS')))],
+      ['TRADE_FEE_BPS()', `0x${abiWord(400)}`], ['omr()', `0x${abiAddress(DEPENDENCIES.omr)}`],
+      ['rewardsRecipient()', `0x${abiAddress(this.loaded.packet.finalManifest.hookPolicy.rewardsRecipient)}`],
       ...['developerRecipient()', 'rwaRecipient()', 'communityRecipient()', 'polRecipient()']
         .map((signature, i) => [signature, `0x${abiAddress(recipients[i])}`]),
     ];

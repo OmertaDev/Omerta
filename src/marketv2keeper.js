@@ -23,6 +23,8 @@ const kinds = {
   lp_regenerate: ['OmertaStabilityControllerV2', 'regenerate'],
   turf_checkpoint: ['OmertaTurfFeeBridgeV2', 'checkpointFees'],
   commitment_checkpoint: ['OmertaCommitmentVaultV2', 'checkpoint'],
+  commitment_finalize: ['OmertaCommitmentVaultV2', 'finalizeCampaign'],
+  commitment_settle: ['OmertaCommitmentVaultV2', 'settleReward'],
   bond_proceeds: ['OmertaInventoryBondV2', 'claimProceeds'],
   arb_claim: ['OmertaArbitrageV2', 'claimFor'],
 };
@@ -66,8 +68,8 @@ export function validateMarketV2Manifest(input) {
   if (!Array.isArray(m.jobs) || m.jobs.length > 32) throw fail('invalid_jobs');
   const ids = new Set();
   for (const j of m.jobs) {
-    exact(j, ['id', 'kind', 'target', 'intervalSeconds', 'tranche', 'bucket', 'currency', 'tokenId', 'beneficiary', 'minimumAmount']);
-    if (!/^[a-zA-Z][a-zA-Z0-9_-]{0,40}$/.test(j.id) || ids.has(j.id) || !kinds[j.kind]
+    exact(j, ['id', 'kind', 'target', 'intervalSeconds', 'tranche', 'bucket', 'currency', 'tokenId', 'campaignId', 'beneficiary', 'minimumAmount']);
+    if (!/^[a-zA-Z][a-zA-Z0-9_-]{0,40}$/.test(j.id) || ids.has(j.id) || !Object.hasOwn(kinds, j.kind)
         || m.contracts[j.target]?.artifact !== kinds[j.kind][0]) throw fail('invalid_job');
     ids.add(j.id); integer(j.intervalSeconds, 60, 86400);
     if (['lp_collect', 'lp_claim', 'lp_finalize', 'lp_deploy', 'lp_recover', 'lp_regenerate'].includes(j.kind)) integer(j.tranche, 0, 6);
@@ -75,12 +77,17 @@ export function validateMarketV2Manifest(input) {
     if (['lp_collect', 'lp_claim', 'lp_finalize', 'lp_deploy', 'lp_recover', 'lp_regenerate'].includes(j.kind) && j.tranche === 5) throw fail('reserve_is_idle');
     if (['lp_finalize', 'lp_recover', 'lp_regenerate'].includes(j.kind) && ![1, 2, 3, 4].includes(j.tranche)) throw fail('not_directional_tranche');
     if (j.kind === 'hook_claim' || j.kind === 'manager_claim') {
-      integer(j.bucket, 0, j.kind === 'manager_claim' ? 3 : 4);
+      integer(j.bucket, 0, j.kind === 'manager_claim' ? 4 : 5);
       if (!isAddress(j.currency, { strict: true })) throw fail('invalid_currency');
       j.currency = getAddress(j.currency).toLowerCase();
     } else if (j.bucket !== undefined || j.currency !== undefined) throw fail('unexpected_fee_argument');
-    if (j.kind === 'commitment_checkpoint') j.tokenId = String(uint(j.tokenId));
+    if (j.kind === 'commitment_checkpoint' || j.kind === 'commitment_settle') j.tokenId = String(uint(j.tokenId));
     else if (j.tokenId !== undefined) throw fail('unexpected_token');
+    if (j.kind === 'commitment_finalize') {
+      const campaignId = uint(j.campaignId);
+      if (campaignId >= 1n << 64n) throw fail('invalid_amount');
+      j.campaignId = String(campaignId);
+    } else if (j.campaignId !== undefined) throw fail('unexpected_campaign');
     if (j.kind === 'arb_claim') j.beneficiary = addr(j.beneficiary);
     else if (j.beneficiary !== undefined) throw fail('unexpected_recipient');
     j.minimumAmount = String(uint(j.minimumAmount ?? '1'));
@@ -199,6 +206,8 @@ async function jobArgs(j, target, block, client, abi) {
     case 'commitment_checkpoint': {
       const p = await read('commitment', [BigInt(j.tokenId)]);
       if (p.withdrawn || p.depositor === zeroAddress || await read('paused')) return null;
+      const c = await read('campaign', [p.campaignId]);
+      if (c.finalized || block.timestamp > await read('settlementClosesAt', [p.campaignId])) return null;
       const source = await read('marketState'); const s = await read('snapshot', [], source, marketV2Abi('OmertaMarketStateV2'));
       // Invalid readings intentionally reset the anchor on chain; repeatedly paying for the
       // same already-broken anchor does no useful work. Never credit intervals off chain.
@@ -206,6 +215,17 @@ async function jobArgs(j, target, block, client, abi) {
           || s.observedAt > block.timestamp || s.observedAt < p.depositedAt
           || block.timestamp - s.observedAt > BigInt(await read('maxObservationAge'))) return p.lastObservedAt > 0n ? [BigInt(j.tokenId)] : null;
       return s.epoch > p.lastEpoch && s.observedAt > p.lastObservedAt && p.lastObservedAt < p.maturesAt ? [BigInt(j.tokenId)] : null;
+    }
+    case 'commitment_finalize': {
+      const id = BigInt(j.campaignId); const c = await read('campaign', [id]);
+      return !c.finalized && block.timestamp > await read('settlementClosesAt', [id]) ? [id] : null;
+    }
+    case 'commitment_settle': {
+      const id = BigInt(j.tokenId); const p = await read('commitment', [id]);
+      if (p.depositor === zeroAddress || p.rewardSettled) return null;
+      const c = await read('campaign', [p.campaignId]);
+      if (!c.finalized || c.totalDepthSeconds === 0n) return null;
+      return c.settlementBudget * p.usefulDepthSeconds / c.totalDepthSeconds >= min ? [id] : null;
     }
     case 'bond_proceeds': return await read('proceedsOwed') >= min ? [] : null;
     case 'arb_claim': return await read('claimable', [j.beneficiary]) >= min ? [j.beneficiary] : null;

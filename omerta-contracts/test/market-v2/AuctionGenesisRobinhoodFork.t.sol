@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -10,7 +10,8 @@ import {PositionInfo, PositionInfoLibrary} from "../../lib/v4-periphery/src/libr
 import {IAllowanceTransfer} from "permit2/src/interfaces/IAllowanceTransfer.sol";
 import {OmertaHookV2} from "../../src/market-v2/OmertaHookV2.sol";
 import {OmertaAuctionCoordinatorV2, ISingleGenesisAuction} from "../../src/market-v2/OmertaAuctionCoordinatorV2.sol";
-import {OmertaGuardedAuction, IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
+import {OmertaCharacterGuardedAuction as OmertaGuardedAuction} from "../../src/genesis-auction/OmertaCharacterGuardedAuction.sol";
+import {IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
 import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol";
 
 /// @notice Opt-in public RPC fork, no signing or broadcasting. Live NFT/OMR/v4 dependencies keep code.
@@ -53,7 +54,7 @@ contract AuctionGenesisRobinhoodForkTest is Test {
         address[5] memory recipients = [SAFE,SAFE,SAFE,SAFE,SAFE];
         bytes memory hookCode = abi.encodePacked(type(OmertaHookV2).creationCode,abi.encode(
             MANAGER,address(TOKEN),predicted,uint24(3000),int24(60),recipients,
-            OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60)));
+            OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60),SAFE));
         bytes32 codeHash = keccak256(hookCode);
         bytes32 salt;
         address hookAddress;

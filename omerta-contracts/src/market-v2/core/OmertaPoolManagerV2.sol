@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Hooks} from "v4-core/libraries/Hooks.sol";
 import {Pool} from "v4-core/libraries/Pool.sol";
@@ -60,7 +60,8 @@ abstract contract OmertaProtocolFeesV2 is IProtocolFees, Owned {
     }
 
     function collectProtocolFees(address recipient, Currency currency, uint256 amount)
-        external returns (uint256 amountCollected)
+        external
+        returns (uint256 amountCollected)
     {
         _checkRestrictedOperator();
         _checkCurrency(currency);
@@ -81,12 +82,14 @@ abstract contract OmertaProtocolFeesV2 is IProtocolFees, Owned {
     function _endWithdrawal() internal virtual;
 
     function _updateProtocolFees(Currency currency, uint256 amount) internal {
-        unchecked { protocolFeesAccrued[currency] += amount; }
+        unchecked {
+            protocolFeesAccrued[currency] += amount;
+        }
     }
 }
 
 /// @title OMERTA restricted LP settlement manager
-/// @notice Every raw ETH/OMR swap pays the immutable 5% trade fee in either direction.
+/// @notice Every raw ETH/OMR swap pays the immutable 3.5% trade fee in either direction.
 /// @dev Fork of the vendored v4 PoolManager. Core storage and settlement accounting are preserved;
 /// restriction and revenue fields are appended after the pool mapping. This guarantee covers this
 /// manager's swaps, not markets in independent receipts or third-party custody claims.
@@ -105,13 +108,18 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
 
     mapping(PoolId id => Pool.State) internal _pools;
 
-    uint16 public constant TRADE_FEE_BPS = 500;
-    bytes32 public constant revenuePolicyId = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS");
+    uint16 public constant TRADE_FEE_BPS = 400;
+    uint16 public constant MAX_HOOK_FEE_BPS = 50;
+    uint16 private constant BASE_FEE_BPS = 350;
+    uint16 private constant REWARDS_BPS = 50;
+    bytes32 public constant revenuePolicyId =
+        keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
     address public immutable omr;
     address public immutable developerRecipient;
     address public immutable rwaRecipient;
     address public immutable communityRecipient;
     address public immutable polRecipient;
+    address public immutable rewardsRecipient;
     mapping(Currency currency => mapping(uint8 bucket => uint256 amount)) public owed;
     mapping(Currency currency => uint256 amount) public totalOwed;
     uint256 private _withdrawalGuard = 1;
@@ -129,7 +137,9 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     error OnlyRevenueRecipient();
 
     event TradeRevenueAccrued(address indexed caller, PoolId indexed poolId, Currency indexed currency, uint256 amount);
-    event TradeRevenueClaimed(Currency indexed currency, uint8 indexed bucket, address indexed recipient, uint256 amount);
+    event TradeRevenueClaimed(
+        Currency indexed currency, uint8 indexed bucket, address indexed recipient, uint256 amount
+    );
 
     modifier onlyRestrictedPolicy() {
         _checkRestrictedPolicy();
@@ -147,7 +157,7 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
         _;
     }
 
-    constructor(address omr_, address owner_, address[4] memory recipients_) OmertaProtocolFeesV2(owner_) {
+    constructor(address omr_, address owner_, address[4] memory recipients_, address rewardsRecipient_) OmertaProtocolFeesV2(owner_) {
         if (omr_ == address(0) || omr_.code.length == 0 || owner_ == address(0)) {
             revert InvalidRestrictedConfiguration();
         }
@@ -156,15 +166,17 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
                 revert InvalidRestrictedConfiguration();
             }
         }
+        if (rewardsRecipient_ == address(0) || rewardsRecipient_ == address(this)) revert InvalidRestrictedConfiguration();
         omr = omr_;
         developerRecipient = recipients_[0];
         rwaRecipient = recipients_[1];
         communityRecipient = recipients_[2];
         polRecipient = recipients_[3];
+        rewardsRecipient = rewardsRecipient_;
     }
 
     /// @inheritdoc IPoolManager
-    function unlock(bytes calldata data) external onlyOperator override returns (bytes memory result) {
+    function unlock(bytes calldata data) external override onlyOperator returns (bytes memory result) {
         if (Lock.isUnlocked()) AlreadyUnlocked.selector.revertWith();
 
         Lock.unlock();
@@ -177,15 +189,19 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     }
 
     /// @inheritdoc IPoolManager
-    function initialize(PoolKey memory key, uint160 sqrtPriceX96) external onlyRestrictedPolicy noDelegateCall returns (int24 tick) {
+    function initialize(PoolKey memory key, uint160 sqrtPriceX96)
+        external
+        onlyRestrictedPolicy
+        noDelegateCall
+        returns (int24 tick)
+    {
         _checkPoolKey(key);
         // see TickBitmap.sol for overflow conditions that can arise from tick spacing being too large
         if (key.tickSpacing > MAX_TICK_SPACING) TickSpacingTooLarge.selector.revertWith(key.tickSpacing);
         if (key.tickSpacing < MIN_TICK_SPACING) TickSpacingTooSmall.selector.revertWith(key.tickSpacing);
         if (key.currency0 >= key.currency1) {
-            CurrenciesOutOfOrderOrEqual.selector.revertWith(
-                Currency.unwrap(key.currency0), Currency.unwrap(key.currency1)
-            );
+            CurrenciesOutOfOrderOrEqual.selector
+                .revertWith(Currency.unwrap(key.currency0), Currency.unwrap(key.currency1));
         }
         if (!key.hooks.isValidHookAddress(key.fee)) Hooks.HookAddressNotValid.selector.revertWith(address(key.hooks));
 
@@ -288,9 +304,9 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
         BalanceDelta hookDelta;
         (swapDelta, hookDelta) = key.hooks.afterSwap(key, params, swapDelta, hookData, beforeSwapDelta);
         {
-            // 500 = 10 * 50, so dividing the rounded base fee by 10 gives exactly the rounded
-            // 50-bps limit on the same raw magnitude. Every approved hook shares the 5.5% combined cap.
-            int256 maxHookFee = int256(tradeFee / (TRADE_FEE_BPS / 50));
+            // fee=floor(7*x)+floor(x), x=raw*50/10000, so floor(fee/8)=floor(x) exactly.
+            // Rewards are mandatory here; the hook retains only the original 50-bps surcharge.
+            int256 maxHookFee = int256(tradeFee / (TRADE_FEE_BPS / MAX_HOOK_FEE_BPS));
             if (int256(hookDelta.amount0()) > maxHookFee || int256(hookDelta.amount1()) > maxHookFee) {
                 revert RestrictedHookNotAllowed();
             }
@@ -487,7 +503,12 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
         revert ClaimsNotTransferable();
     }
 
-    function transferFrom(address, address, uint256, uint256) public pure override(ERC6909, IERC6909Claims) returns (bool) {
+    function transferFrom(address, address, uint256, uint256)
+        public
+        pure
+        override(ERC6909, IERC6909Claims)
+        returns (bool)
+    {
         revert ClaimsNotTransferable();
     }
 
@@ -497,9 +518,7 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     }
 
     /// @notice A fixed recipient may direct only its own bucket to a chosen receiving address.
-    function claim(Currency currency, uint8 bucket, address to)
-        external onlyRestrictedPolicy returns (uint256 amount)
-    {
+    function claim(Currency currency, uint8 bucket, address to) external onlyRestrictedPolicy returns (uint256 amount) {
         if (msg.sender != _recipient(bucket)) revert OnlyRevenueRecipient();
         if (to == address(0) || to == address(this)) revert InvalidRestrictedConfiguration();
         return _claimRevenue(currency, bucket, to);
@@ -517,29 +536,41 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     }
 
     function _accrueTradeRevenue(PoolKey memory key, SwapParams memory params, BalanceDelta rawDelta)
-        private returns (uint256 fee)
+        private
+        returns (uint256 fee)
     {
         bool currency0 = params.amountSpecified < 0 ? !params.zeroForOne : params.zeroForOne;
         int256 raw = currency0 ? int256(rawDelta.amount0()) : int256(rawDelta.amount1());
-        uint256 magnitude = uint256(raw < 0 ? -raw : raw);
-        fee = magnitude * TRADE_FEE_BPS / 10_000;
+        uint256 base;
+        unchecked {
+            // raw comes from int128: abs(raw)<=2^127, each product<2^136, fee<2^124.
+            // Only these bounded locals are unchecked; ledger additions and narrowing stay checked.
+            uint256 magnitude = uint256(raw < 0 ? -raw : raw);
+            base = magnitude * BASE_FEE_BPS / 10_000;
+            fee = base + magnitude * REWARDS_BPS / 10_000;
+        }
         if (fee == 0) return 0;
         Currency currency = currency0 ? key.currency0 : key.currency1;
-        uint256 developer = fee * 200 / TRADE_FEE_BPS;
-        uint256 rwa = fee * 100 / TRADE_FEE_BPS;
-        uint256 community = fee * 100 / TRADE_FEE_BPS;
+        // Largest-remainder allocation of 350 bps over weights 200:80:120:150:
+        // 127:51:76:96. Atomic-unit rounding residual still belongs to POL.
+        uint256 developer = base * 127 / BASE_FEE_BPS;
+        uint256 rwa = base * 51 / BASE_FEE_BPS;
+        uint256 community = base * 76 / BASE_FEE_BPS;
         owed[currency][0] += developer;
         owed[currency][1] += rwa;
         owed[currency][2] += community;
-        owed[currency][3] += fee - developer - rwa - community;
+        owed[currency][3] += base - developer - rwa - community;
+        owed[currency][4] += fee / (TRADE_FEE_BPS / REWARDS_BPS);
         totalOwed[currency] += fee;
-        // 5% of any int128 magnitude fits a positive int128, including abs(type(int128).min).
+        // 4% of any int128 magnitude fits a positive int128, including abs(type(int128).min).
         _accountDelta(currency, -(int256(fee).toInt128()), msg.sender);
         emit TradeRevenueAccrued(msg.sender, key.toId(), currency, fee);
     }
 
     function _subtractTradeFee(SwapParams memory params, BalanceDelta delta, uint256 fee)
-        private pure returns (BalanceDelta)
+        private
+        pure
+        returns (BalanceDelta)
     {
         if (fee == 0) return delta;
         bool currency0 = params.amountSpecified < 0 ? !params.zeroForOne : params.zeroForOne;
@@ -555,13 +586,13 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
         if (bucket == 1) return rwaRecipient;
         if (bucket == 2) return communityRecipient;
         if (bucket == 3) return polRecipient;
+        if (bucket == 4) return rewardsRecipient;
         revert InvalidRevenueBucket();
     }
 
     function _checkRestrictedPolicy() private view {
         IOmertaRestrictedOMRV2 token = IOmertaRestrictedOMRV2(omr);
-        if (!token.policySealed() || token.settlementManager() != address(this)
-            || !token.isOperator(address(this))) {
+        if (!token.policySealed() || token.settlementManager() != address(this) || !token.isOperator(address(this))) {
             revert RestrictedPolicyNotSealed();
         }
     }
@@ -578,8 +609,10 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
         }
         address hook = address(key.hooks);
         if (hook == address(0)) return;
-        if (!IOmertaRestrictedOMRV2(omr).isOperator(hook)
-            || Hooks.hasPermission(key.hooks, Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG)) {
+        if (
+            !IOmertaRestrictedOMRV2(omr).isOperator(hook)
+                || Hooks.hasPermission(key.hooks, Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG)
+        ) {
             revert RestrictedHookNotAllowed();
         }
         (bool ok, bytes memory data) = hook.staticcall(abi.encodeWithSignature("poolManager()"));

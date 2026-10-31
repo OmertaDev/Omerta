@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {AcquisitionIntentExecution} from "../src/AcquisitionIntentExecution.sol";
@@ -180,7 +180,7 @@ contract AcquisitionConstellationTask5IntentIdentityTest is Test {
             "pragmasolidity0.8.26;interfaceI{}"
         );
         vm.expectRevert(bytes("unterminated block comment"));
-        this.exposedSemanticCompact("pragma solidity 0.8.26; /*");
+        this.exposedSemanticCompact("pragma solidity 0.8.38; /*");
     }
 
     function exposedSemanticCompact(string memory source) external pure returns (string memory) {
@@ -252,7 +252,7 @@ contract AcquisitionConstellationTask5IntentIdentityTest is Test {
         assertEq(_abiKindCount(j, "function"), 0, "type-only interface executable ABI");
         string memory compact = _semanticCompact(vm.readFile("src/interfaces/IAcquisitionIntentExecutionV2.sol"));
         string memory expected =
-            "pragmasolidity0.8.26;interfaceIAcquisitionIntentExecutionV2{structIntentIdentityInput{uint256ballotDay;bytes32assetVersionKey;}structAttemptIdentityInput{uint256operatorGeneration;uint256attemptIndex;bytes32intentId;addressadapter;bytes32runtimeCodeHash;bytes32routeHash;}structImmutableIntentCommitment{bytes32intentId;bytes32budgetId;uint256ballotDay;bytes32assetVersionKey;addresstoken;uint8tokenDecimals;uint256maxEthWei;uint64purchaseUntil;uint256ingressGeneration;bytes32oracleCommitment;uint256minimumOutput;addressadapter;bytes32adapterRuntimeCodeHash;bytes32routeHash;}}";
+            "pragmasolidity0.8.38;interfaceIAcquisitionIntentExecutionV2{structIntentIdentityInput{uint256ballotDay;bytes32assetVersionKey;}structAttemptIdentityInput{uint256operatorGeneration;uint256attemptIndex;bytes32intentId;addressadapter;bytes32runtimeCodeHash;bytes32routeHash;}structImmutableIntentCommitment{bytes32intentId;bytes32budgetId;uint256ballotDay;bytes32assetVersionKey;addresstoken;uint8tokenDecimals;uint256maxEthWei;uint64purchaseUntil;uint256ingressGeneration;bytes32oracleCommitment;uint256minimumOutput;addressadapter;bytes32adapterRuntimeCodeHash;bytes32routeHash;}}";
         assertEq(compact, expected, "exact complete type-only source unit");
     }
 

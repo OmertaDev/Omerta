@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {GenesisCharacterEligibility} from "./genesis-auction/GenesisCharacterEligibility.sol";
+
+interface IGenesisInventoryToken {
+    function genesisTreasury() external view returns (address);
+    function policySealed() external view returns (bool);
+}
 
 interface IGenesisPlayerIntegration {
     /// @return Final, graduated native ETH auction price in Q96 wei per token base unit; zero before finality.
@@ -22,7 +25,7 @@ interface IGenesisPlayerIntegration {
 /// @notice Fixed snapshot player tranche. Off-chain gameplay determines the Merkle list, never this contract.
 /// @dev Exact per-wallet settlement avoids aggregate rounding releasing refundable ETH. Anyone may
 /// settle another wallet; all participants must settle before migration. No privileged refund override.
-contract GenesisPlayerSale is ReentrancyGuard, GenesisCharacterEligibility {
+contract GenesisPlayerSale is ReentrancyGuard {
     using SafeERC20 for IERC20;
     uint256 public constant Q96 = 1 << 96;
     uint256 public constant PURCHASE_WINDOW = 48 hours;
@@ -45,6 +48,7 @@ contract GenesisPlayerSale is ReentrancyGuard, GenesisCharacterEligibility {
     bool public released;
     bool public cancelled;
     bool public unsoldRecovered;
+    bool public inventoryFunded;
     mapping(address => uint256) public requested;
     mapping(address => uint256) public accepted;
     mapping(address => uint256) public allocation;
@@ -58,14 +62,14 @@ contract GenesisPlayerSale is ReentrancyGuard, GenesisCharacterEligibility {
     event ProceedsReleased(uint256 amount);
     event Refunded(address indexed wallet, uint256 amount);
     event Claimed(address indexed wallet, uint256 amount);
+    event InventoryFunded(address indexed treasury, uint256 amount);
     error InvalidConfiguration();
     error WrongPhase();
     error InvalidEligibility();
     error TransferFailed();
 
     constructor(IERC20 token_, IGenesisPlayerIntegration integration_, bytes32 root_, uint256 inventory_,
-        uint256 openDeadline_, uint256 migrationDeadline_, address unsoldRecipient_, IERC721 characterNft_)
-        GenesisCharacterEligibility(characterNft_) {
+        uint256 openDeadline_, uint256 migrationDeadline_, address unsoldRecipient_) {
         if (address(token_).code.length == 0 || address(integration_).code.length == 0 || root_ == bytes32(0)
             || inventory_ == 0 || openDeadline_ <= block.timestamp
             || migrationDeadline_ <= openDeadline_ + PURCHASE_WINDOW || unsoldRecipient_ == address(0)
@@ -74,6 +78,21 @@ contract GenesisPlayerSale is ReentrancyGuard, GenesisCharacterEligibility {
         merkleRoot = root_; chainId = block.chainid; inventory = inventory_;
         openDeadline = openDeadline_; migrationDeadline = migrationDeadline_; unsoldRecipient = unsoldRecipient_;
     }
+
+    /// @notice Pull only this tranche's inventory from the fixed genesis treasury after policy sealing.
+    function fundInventory() external nonReentrant {
+        IGenesisInventoryToken policy = IGenesisInventoryToken(address(token));
+        address source = policy.genesisTreasury();
+        if (msg.sender != source || !policy.policySealed() || inventoryFunded || cancelled || closesAt != 0
+            || block.timestamp >= openDeadline || block.chainid != chainId
+            || address(integration).codehash != integrationCodeHash) revert WrongPhase();
+        inventoryFunded = true;
+        uint256 beforeBalance = token.balanceOf(address(this));
+        token.safeTransferFrom(source, address(this), inventory);
+        if (token.balanceOf(address(this)) - beforeBalance != inventory) revert TransferFailed();
+        emit InventoryFunded(source, inventory);
+    }
+
     function cap(uint8 daysPlayed) public pure returns (uint256) {
         if (daysPlayed == 1) return 0.5 ether;
         if (daysPlayed == 2) return 1 ether;
@@ -97,7 +116,7 @@ contract GenesisPlayerSale is ReentrancyGuard, GenesisCharacterEligibility {
     }
     function contribute(uint8 daysPlayed, bytes32[] calldata proof) external payable nonReentrant {
         if (cancelled || closesAt == 0 || block.timestamp >= closesAt || block.chainid != chainId) revert WrongPhase();
-        _requireCharacter(msg.sender);
+        _validateContributor(msg.sender);
         uint256 maximum = cap(daysPlayed);
         if (msg.value == 0 || requested[msg.sender] + msg.value > maximum
             || !MerkleProof.verifyCalldata(proof, merkleRoot, leaf(msg.sender, daysPlayed))) revert InvalidEligibility();
@@ -105,6 +124,9 @@ contract GenesisPlayerSale is ReentrancyGuard, GenesisCharacterEligibility {
         requested[msg.sender] += msg.value; totalRequested += msg.value;
         emit Contributed(msg.sender, msg.value);
     }
+    /// @dev Specialized sale eligibility applies only to fresh contributions, never recovery.
+    function _validateContributor(address) internal view virtual {}
+
     function settle(address wallet) external {
         if (cancelled || released || closesAt == 0 || block.timestamp < closesAt
             || block.timestamp >= migrationDeadline || requested[wallet] == 0 || settled[wallet]) revert WrongPhase();

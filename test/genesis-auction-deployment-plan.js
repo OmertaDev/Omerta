@@ -14,7 +14,7 @@ const pricing = genesisAuctionFloor(40000000n * E);
 const input = {
   schemaVersion: 1, chainId: 31337, localRehearsal: true, sourceRevision: inventory.sourceRevision, startingNonce: '17',
   roles: { deployer: A(100), safe: A(101), hookRecipients: [A(107), A(108), A(109)] },
-  external: Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft'].map((k, i) => [k, { address: A(200 + i), runtimeHash: H }])),
+  external: Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft', 'btcRewards'].map((k, i) => [k, { address: A(200 + i), runtimeHash: H }])),
   create2: { factory: A(300), runtimeHash: H, kind: 'salt-prefix', saltStart: '0', maxAttempts: 200000 },
   artifactHashes: inventory.artifactHashes, sourceHashes: inventory.sourceHashes,
   observation: { blockNumber: '1000', blockHash: H, timestamp: '2000000000' },
@@ -23,7 +23,7 @@ const input = {
   hook: { poolFee: 3000, tickSpacing: 60, opening: { blocks: 0, buyBps: 0, maxBuyQuote: '0' }, surgeFullTicks: 100, epochDuration: 3600 },
   auction: { totalSupply: String(40000000n * E), startBlock: '1010', endBlock: '11010', claimBlock: '11010', tickSpacing: pricing.tickSpacing,
     floorPrice: pricing.floorPrice, requiredCurrencyRaised: String(10n * E), auctionStepsData: '0x0003e80000002710' },
-  hookPolicy: { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100 },
+  hookPolicy: { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96 },
   tokenReserve: String(20000000n * E),
   allocation: { totalSupply: String(100000000n * E), decimals: 18, safeAddress: A(101), safeBalance: String(100000000n * E), observationBlockNumber: '1000', observationBlockHash: H, omrRuntimeHash: H, evidenceSha256: '31'.repeat(32) },
 };
@@ -46,12 +46,12 @@ const decodeConstructor = (contract, data) => {
 const coordinator = decodeConstructor('OmertaAuctionCoordinatorV2', plan.deployments[2].data);
 assert.equal(coordinator[4], plan.addresses.hook); assert.equal(coordinator[8], input.roles.safe);
 const hook = decodeConstructor('OmertaHookV2', `0x${plan.deployments[3].data.slice(66)}`);
-assert.equal(hook.length, 9); assert.deepEqual(plan.hookPolicy, input.hookPolicy);
-assert.deepEqual(plan.finalManifest.hookPolicy, { ...input.hookPolicy, recipients: [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding] });
+assert.equal(hook.length, 10); assert.equal(hook[9], input.external.btcRewards.address); assert.deepEqual(plan.hookPolicy, input.hookPolicy);
+assert.deepEqual(plan.finalManifest.hookPolicy, { ...input.hookPolicy, recipients: [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding], rewardsRecipient: input.external.btcRewards.address });
 assert.equal(hook[2], plan.addresses.coordinator); assert.deepEqual(hook[5], [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding]);
 assert.equal(decodeConstructor('OmertaReserveFundingV2', plan.deployments[0].data)[2], 0);
 assert.equal(decodeConstructor('OmertaReserveFundingV2', plan.deployments[1].data)[2], 5);
-const auction = decodeConstructor('OmertaGuardedAuction', plan.deployments[4].data);
+const auction = decodeConstructor('OmertaCharacterGuardedAuction', plan.deployments[4].data);
 assert.equal(auction[2].currency, A(0)); assert.equal(auction[2].validationHook, A(0));
 assert.equal(auction[2].fundsRecipient, plan.addresses.coordinator); assert.equal(auction[4], input.external.characterNft.address);
 assert.equal(coordinator[9], input.external.characterNft.address);
@@ -86,7 +86,7 @@ const rawDown = 10n * E * (1n << 96n) / BigInt(input.auction.totalSupply);
 assert.equal(BigInt(input.auction.totalSupply) * (rawDown / 100n * 100n) / (1n << 96n), 10n * E - 1n,
   'Down-aligned full sale misses 10 ETH graduation by one wei');
 assert.deepEqual(plan.inventory.auctionDurationSecondsBounds, ['432000', '432000']);
-assert.deepEqual(Object.keys(plan.finalManifest.contracts).sort(), ['auction','characterNft','coordinator','omr','validator']);
+assert.deepEqual(Object.keys(plan.finalManifest.contracts).sort(), ['auction','btcRewards','characterNft','coordinator','omr','validator']);
 assert.equal(plan.finalManifest.contracts.coordinator.runtimeCodeHash, null, 'Cannot invent constructor-immutable runtime hash before deployment');
 assert.equal(plan.finalManifest.dependencies.hook.runtimeCodeHash, null);
 assert(!JSON.stringify(plan).includes('playerSale'), 'No gameplay tranche is planned');
@@ -115,7 +115,7 @@ for (const key of Object.keys(input.hookPolicy)) bad(v => v.hookPolicy[key]++, /
 bad(v => v.hookPolicy.governanceSafe = A(110), /unknown field/);
 bad(v => v.hook.opening.buyBps = 51, /policy bounds/);
 bad(v => v.sourceRevision = '01'.repeat(20), /sourceRevision differs/);
-bad(v => v.artifactHashes.OmertaGuardedAuction = '22'.repeat(32), /artifact hash mismatch/);
+bad(v => v.artifactHashes.OmertaCharacterGuardedAuction = '22'.repeat(32), /artifact hash mismatch/);
 bad(v => v.sourceHashes['src/market-v2/OmertaAuctionCoordinatorV2.sol'] = '22'.repeat(32), /Source hash mismatch/);
 bad(v => v.startingNonce = '18446744073709551615', /Nonce sequence/);
 bad(v => v.roles.hookRecipients[0] = A(0), /nonzero address/);
@@ -188,7 +188,7 @@ assert.throws(() => buildGenesisAuctionDeploymentPlan(nonuniform), /uniform sche
 // Tamper actual artifact/source bytes in an isolated disposable tree, preserving real compiler metadata.
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-genesis-planner-'));
 try {
-  const name = 'OmertaGuardedAuction', source = GENESIS_AUCTION_ARTIFACTS[name];
+  const name = 'OmertaCharacterGuardedAuction', source = GENESIS_AUCTION_ARTIFACTS[name];
   const artifactPath = path.join('out', path.basename(source), `${name}.json`);
   const bytes = fs.readFileSync(path.join(root, artifactPath)), artifact = JSON.parse(bytes);
   for (const file of Object.keys(artifact.metadata.sources)) { fs.mkdirSync(path.dirname(path.join(temp, file)), { recursive: true }); fs.copyFileSync(path.join(root, file), path.join(temp, file)); }

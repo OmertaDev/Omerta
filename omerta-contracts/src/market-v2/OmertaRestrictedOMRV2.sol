@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
@@ -13,12 +13,13 @@ interface IRestrictedSettlementPolicyV2 {
     function revenuePolicyId() external view returns (bytes32);
 }
 
-/// @notice Fixed-supply OMR whose sealed transfer policy admits only pinned settlement and custody contracts.
+/// @notice Fixed-supply OMR with an immutable settlement policy and delayed, runtime-pinned module admissions.
 /// @dev Custody operators must be reviewed typed contracts, with fixed runtime and no arbitrary forwarding.
 ///      Approvals and permits are standard ERC20 approvals; they never bypass the caller's transfer role.
 contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOMRV2 {
     uint256 public constant SUPPLY = 100_000_000e18;
-    bytes32 public constant REVENUE_POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS");
+    bytes32 public constant REVENUE_POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
+    uint64 public constant override POLICY_UPDATE_DELAY = 7 days;
 
     error PolicySealed();
     error InvalidOperator();
@@ -29,18 +30,36 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
     error InvalidRecipient();
     error UnauthorizedWalletRegistration();
     error InvalidGenesisInventory();
+    error PolicyNotSealed();
+    error InvalidPolicyUpdate();
+    error PolicyUpdateNotReady();
 
     event OperatorSet(address indexed operator, OperatorRole role, bytes32 runtimeHash);
     event SettlementManagerBound(address indexed manager, bytes32 runtimeHash);
     event TransferPolicySealed();
     event ContractHolderSet(address indexed holder, bytes32 runtimeHash);
     event WalletRegistered(address indexed wallet);
+    event OperatorProposed(address indexed operator, OperatorRole role, bytes32 runtimeHash, uint64 executableAt);
+    event OperatorProposalCancelled(address indexed operator);
+    event ContractHolderProposed(address indexed holder, bytes32 runtimeHash, uint64 executableAt);
+    event ContractHolderProposalCancelled(address indexed holder);
+
+    struct OperatorProposal {
+        OperatorRole role;
+        bytes32 runtimeHash;
+        uint64 executableAt;
+    }
+
+    struct ContractHolderProposal {
+        bytes32 runtimeHash;
+        uint64 executableAt;
+    }
 
     address public immutable genesisTreasury;
     bytes32 public immutable genesisTreasuryRuntimeHash;
     address public override settlementManager;
     bool public override policySealed;
-    mapping(address => OperatorRole) public operatorRole;
+    mapping(address => OperatorRole) public override operatorRole;
     mapping(address => bytes32) public operatorRuntimeHash;
     address[] private _operators;
     mapping(address => bool) private _operatorListed;
@@ -48,6 +67,9 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
     mapping(address => bool) public registeredWallet;
     address[] private _contractHolders;
     mapping(address => bool) private _contractHolderListed;
+    mapping(address => OperatorProposal) public override operatorProposal;
+    mapping(address => ContractHolderProposal) public override contractHolderProposal;
+    uint256 public override pendingPolicyUpdates;
 
     modifier onlyUnsealed() {
         if (policySealed) revert PolicySealed();
@@ -60,7 +82,7 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
         _mint(treasurySafe, SUPPLY);
     }
 
-    /// @notice Receiving-only contract holders are frozen with the operator policy.
+    /// @notice Configure receiving-only holders before sealing; later additions require the public delay.
     /// @dev A zero hash removes a holder before sealing; enumeration retains its historical entry.
     function setContractHolder(address holder, bytes32 expectedRuntimeHash) external onlyOwner onlyUnsealed {
         if (holder == address(0) || holder == genesisTreasury) revert InvalidRecipient();
@@ -100,10 +122,7 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
         onlyOwner
         onlyUnsealed
     {
-        if (
-            operator == address(0) || role == OperatorRole.SettlementManager
-                || operator == settlementManager
-        ) revert InvalidOperator();
+        if (operator == address(0) || role == OperatorRole.SettlementManager || operator == settlementManager) revert InvalidOperator();
         if (role == OperatorRole.None) {
             if (expectedRuntimeHash != bytes32(0)) revert InvalidRuntimeHash();
         } else {
@@ -122,7 +141,7 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
             revert InvalidSettlementManager();
         }
         try policy.TRADE_FEE_BPS() returns (uint16 feeBps) {
-            if (feeBps != 500) revert InvalidSettlementManager();
+            if (feeBps != 400) revert InvalidSettlementManager();
         } catch {
             revert InvalidSettlementManager();
         }
@@ -155,6 +174,97 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
         }
         policySealed = true;
         emit TransferPolicySealed();
+    }
+
+    /// @notice Admit a new reviewed module after seven days. Existing roles and runtime pins never change.
+    /// @dev Runtime pins do not establish that a contract is safe: governance must review its complete
+    /// behavior, including proxies and delegation. Replacing a pending proposal restarts its full delay.
+    function proposeOperator(address operator, OperatorRole role, bytes32 expectedRuntimeHash)
+        external
+        override
+        onlyOwner
+    {
+        _checkExtensionAuthority();
+        _checkNewOperator(operator, role);
+        _checkRuntimeHash(operator, expectedRuntimeHash);
+        if (operatorProposal[operator].executableAt == 0) ++pendingPolicyUpdates;
+        uint64 executableAt = uint64(block.timestamp + POLICY_UPDATE_DELAY);
+        operatorProposal[operator] = OperatorProposal(role, expectedRuntimeHash, executableAt);
+        emit OperatorProposed(operator, role, expectedRuntimeHash, executableAt);
+    }
+
+    function cancelOperatorProposal(address operator) external override onlyOwner {
+        if (operatorProposal[operator].executableAt == 0) revert InvalidPolicyUpdate();
+        delete operatorProposal[operator];
+        --pendingPolicyUpdates;
+        emit OperatorProposalCancelled(operator);
+    }
+
+    /// @notice Anyone may execute exactly the published proposal once its delay has elapsed.
+    function executeOperatorProposal(address operator) external override {
+        _checkExtensionAuthority();
+        OperatorProposal memory proposal = operatorProposal[operator];
+        if (proposal.executableAt == 0 || block.timestamp < proposal.executableAt) revert PolicyUpdateNotReady();
+        _checkNewOperator(operator, proposal.role);
+        _checkRuntimeHash(operator, proposal.runtimeHash);
+        delete operatorProposal[operator];
+        --pendingPolicyUpdates;
+        _setOperator(operator, proposal.role, proposal.runtimeHash);
+    }
+
+    function proposeContractHolder(address holder, bytes32 expectedRuntimeHash) external override onlyOwner {
+        _checkExtensionAuthority();
+        _checkNewHolder(holder);
+        _checkRuntimeHash(holder, expectedRuntimeHash);
+        if (contractHolderProposal[holder].executableAt == 0) ++pendingPolicyUpdates;
+        uint64 executableAt = uint64(block.timestamp + POLICY_UPDATE_DELAY);
+        contractHolderProposal[holder] = ContractHolderProposal(expectedRuntimeHash, executableAt);
+        emit ContractHolderProposed(holder, expectedRuntimeHash, executableAt);
+    }
+
+    function cancelContractHolderProposal(address holder) external override onlyOwner {
+        if (contractHolderProposal[holder].executableAt == 0) revert InvalidPolicyUpdate();
+        delete contractHolderProposal[holder];
+        --pendingPolicyUpdates;
+        emit ContractHolderProposalCancelled(holder);
+    }
+
+    function executeContractHolderProposal(address holder) external override {
+        _checkExtensionAuthority();
+        ContractHolderProposal memory proposal = contractHolderProposal[holder];
+        if (proposal.executableAt == 0 || block.timestamp < proposal.executableAt) revert PolicyUpdateNotReady();
+        _checkNewHolder(holder);
+        _checkRuntimeHash(holder, proposal.runtimeHash);
+        delete contractHolderProposal[holder];
+        --pendingPolicyUpdates;
+        if (!_contractHolderListed[holder]) {
+            _contractHolderListed[holder] = true;
+            _contractHolders.push(holder);
+        }
+        contractHolderRuntimeHash[holder] = proposal.runtimeHash;
+        emit ContractHolderSet(holder, proposal.runtimeHash);
+    }
+
+    function _checkExtensionAuthority() private view {
+        if (!policySealed) revert PolicyNotSealed();
+        if (owner() != genesisTreasury || !_validGenesisTreasury()) revert InvalidPolicyUpdate();
+    }
+
+    function _checkNewOperator(address operator, OperatorRole role) private view {
+        if (
+            operator == address(0) || operator == genesisTreasury || operator == settlementManager
+                || (role != OperatorRole.SettlementInput && role != OperatorRole.ProtocolCustody)
+                || operatorRole[operator] != OperatorRole.None || operatorRuntimeHash[operator] != bytes32(0)
+                || contractHolderRuntimeHash[operator] != bytes32(0)
+                || contractHolderProposal[operator].executableAt != 0
+        ) revert InvalidPolicyUpdate();
+    }
+
+    function _checkNewHolder(address holder) private view {
+        if (
+            holder == address(0) || holder == genesisTreasury || operatorRole[holder] != OperatorRole.None
+                || contractHolderRuntimeHash[holder] != bytes32(0) || operatorProposal[holder].executableAt != 0
+        ) revert InvalidPolicyUpdate();
     }
 
     function isOperator(address operator) public view override returns (bool) {
@@ -195,7 +305,8 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
     }
 
     function _checkRuntimeHash(address operator, bytes32 expectedRuntimeHash) private view {
-        if (operator.code.length == 0 || expectedRuntimeHash == bytes32(0) || operator.codehash != expectedRuntimeHash) {
+        if (operator.code.length == 0 || expectedRuntimeHash == bytes32(0) || operator.codehash != expectedRuntimeHash)
+        {
             revert InvalidRuntimeHash();
         }
     }

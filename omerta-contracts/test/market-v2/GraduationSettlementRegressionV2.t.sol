@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {GenesisCoordinatorV2Test} from "./GenesisCoordinatorV2.t.sol";
 import {OmertaGenesisCoordinatorV2} from "../../src/market-v2/OmertaGenesisCoordinatorV2.sol";
@@ -63,7 +63,7 @@ contract GraduationSettlementRegressionV2Test is GenesisCoordinatorV2Test {
         assertTrue(coordinator.playerMigrationSucceeded());
         assertTrue(sale.released());
         assertTrue(auction.swept());
-        assertEq(positions.ownerOf(1), address(0xBEEF));
+        assertEq(positions.ownerOf(1), address(coordinator));
     }
 
     function test_graduationPoolCannotBeInitializedAheadOfCoordinator() public {
@@ -93,12 +93,12 @@ contract GraduationSettlementRegressionV2Test is GenesisCoordinatorV2Test {
         coordinator.migrate();
 
         assertTrue(coordinator.playerMigrationSucceeded());
-        assertEq(positions.ownerOf(1), address(0xBEEF));
+        assertEq(positions.ownerOf(1), address(coordinator));
         assertEq(address(positions).balance, 0);
         uint256 credits = coordinator.residualCredit(address(0x11))
             + coordinator.residualCredit(address(0x12)) + coordinator.residualCredit(address(0x13));
         assertEq(address(coordinator).balance - credits, 9 ether);
-        assertGe(credits, 11 ether * 6250 / 10_000);
-        assertLe(credits, 11 ether - (11 ether * 3750 / 10_000) * 9900 / 10_000);
+        assertGe(credits, 11 ether * 5000 / 10_000);
+        assertLe(credits, 11 ether - (11 ether * 5000 / 10_000) * 9900 / 10_000);
     }
 }

@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { economyUxMergeCandidateHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 import { economyReleaseTailHistoricalInput } from './economy-release-tail-source-transfer.js';
+import { genesisFeeReadinessSourceBaseline } from './genesis-fee-readiness-source-transfer.js';
 export const ECONOMY_HARDENING_SOURCE_REVISION = "aaab91ff6bec4c8a0ec53e0ef88682b317a7a182";
 export const ECONOMY_HARDENING_SOURCE_TREE = "c1b5c03dbb02427f5a6a967269fd816681276032";
 export const ECONOMY_HARDENING_SOURCE_PREDECESSOR = "9f39df80598d38507c9f6b4ea2414312eb8e7700";
@@ -2445,6 +2446,7 @@ export function assertEconomyHardeningCommerceAdmissionTransfer(file, input) {
     inverseChunks: pin.inverses.length, phase: ECONOMY_HARDENING_COMMERCE_ADMISSION_PHASE, sourceOnly: true };
 }
 export function economyHardeningSourceBaseline(file, input) {
+  input = genesisFeeReadinessSourceBaseline(file, input);
   if (!uniform(input)) return input;
   let text = economyUxMergeCandidateHistoricalInput(file, input);
   text = economyReleaseTailHistoricalInput(file, text);

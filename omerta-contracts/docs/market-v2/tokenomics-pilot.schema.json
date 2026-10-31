@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OMERTA public 90-day economic pilot input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "pilotStartedAt",
+    "asOf",
+    "genesis",
+    "liquidity",
+    "cash",
+    "claims",
+    "plannedNativeFeeBaseWeiPerDay",
+    "budgetedSpendWeiPerDay",
+    "daily",
+    "retention",
+    "approvals"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "pilotStartedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d\\d-\\d\\dT00:00:00Z$"
+    },
+    "asOf": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\dZ$"
+    },
+    "genesis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acceptedProceedsWei",
+        "lpNativeBudgetWei",
+        "claimedSaleOmrAtoms",
+        "eligibleBondOmrAtoms",
+        "referenceHash"
+      ],
+      "properties": {
+        "acceptedProceedsWei": {
+          "$ref": "#/$defs/uint"
+        },
+        "lpNativeBudgetWei": {
+          "$ref": "#/$defs/uint"
+        },
+        "claimedSaleOmrAtoms": {
+          "$ref": "#/$defs/uint"
+        },
+        "eligibleBondOmrAtoms": {
+          "$ref": "#/$defs/uint"
+        },
+        "referenceHash": {
+          "$ref": "#/$defs/ref"
+        }
+      }
+    },
+    "liquidity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observedAt",
+        "liquidity",
+        "sqrtPriceX96",
+        "sqrtUpperX96",
+        "lpFeePips",
+        "referenceHash",
+        "quote",
+        "blockNumber",
+        "blockHash"
+      ],
+      "properties": {
+        "observedAt": {
+          "type": "string"
+        },
+        "liquidity": {
+          "$ref": "#/$defs/uint"
+        },
+        "sqrtPriceX96": {
+          "$ref": "#/$defs/uint"
+        },
+        "sqrtUpperX96": {
+          "$ref": "#/$defs/uint"
+        },
+        "lpFeePips": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 999999
+        },
+        "referenceHash": {
+          "$ref": "#/$defs/ref"
+        },
+        "quote": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "inputOmrAtoms",
+            "minimumNativeWei",
+            "expiresAt",
+            "referenceHash",
+            "observedAt",
+            "blockNumber",
+            "blockHash"
+          ],
+          "properties": {
+            "inputOmrAtoms": {
+              "$ref": "#/$defs/uint"
+            },
+            "minimumNativeWei": {
+              "$ref": "#/$defs/uint"
+            },
+            "expiresAt": {
+              "type": "string"
+            },
+            "referenceHash": {
+              "$ref": "#/$defs/ref"
+            },
+            "observedAt": {
+              "type": "string"
+            },
+            "blockNumber": {
+              "$ref": "#/$defs/uint"
+            },
+            "blockHash": {
+              "type": "string",
+              "pattern": "^0x[a-f0-9]{64}$"
+            }
+          }
+        },
+        "blockNumber": {
+          "$ref": "#/$defs/uint"
+        },
+        "blockHash": {
+          "type": "string",
+          "pattern": "^0x[a-f0-9]{64}$"
+        }
+      }
+    },
+    "cash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observedAt",
+        "nativeBalanceWei",
+        "reservedNativeWei",
+        "referenceHash"
+      ],
+      "properties": {
+        "observedAt": {
+          "type": "string"
+        },
+        "nativeBalanceWei": {
+          "$ref": "#/$defs/uint"
+        },
+        "reservedNativeWei": {
+          "$ref": "#/$defs/uint"
+        },
+        "referenceHash": {
+          "$ref": "#/$defs/ref"
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "omrHeldAtoms",
+        "omrOwedAtoms",
+        "nativeOwedWei",
+        "observedAt",
+        "referenceHash"
+      ],
+      "properties": {
+        "omrHeldAtoms": {
+          "$ref": "#/$defs/uint"
+        },
+        "omrOwedAtoms": {
+          "$ref": "#/$defs/uint"
+        },
+        "nativeOwedWei": {
+          "$ref": "#/$defs/uint"
+        },
+        "observedAt": {
+          "type": "string"
+        },
+        "referenceHash": {
+          "$ref": "#/$defs/ref"
+        }
+      }
+    },
+    "plannedNativeFeeBaseWeiPerDay": {
+      "$ref": "#/$defs/uint"
+    },
+    "budgetedSpendWeiPerDay": {
+      "$ref": "#/$defs/uint"
+    },
+    "daily": {
+      "type": "array",
+      "maxItems": 90,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "day",
+          "operatingSpendWei",
+          "nativeFeeBaseWei",
+          "referenceHash"
+        ],
+        "properties": {
+          "day": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d\\d-\\d\\d$"
+          },
+          "operatingSpendWei": {
+            "$ref": "#/$defs/uint"
+          },
+          "nativeFeeBaseWei": {
+            "$ref": "#/$defs/uint"
+          },
+          "referenceHash": {
+            "$ref": "#/$defs/ref"
+          }
+        }
+      }
+    },
+    "retention": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "initialPayers",
+        "retainedDay90Payers",
+        "repeatPayers",
+        "referenceHash"
+      ],
+      "properties": {
+        "initialPayers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "retainedDay90Payers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repeatPayers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "referenceHash": {
+          "$ref": "#/$defs/ref"
+        }
+      }
+    },
+    "approvals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maximumExitSlippageBps",
+        "minimumPayerRetentionBps",
+        "minimumRepeatPayers",
+        "referenceHash"
+      ],
+      "properties": {
+        "maximumExitSlippageBps": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 4000
+        },
+        "minimumPayerRetentionBps": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "minimumRepeatPayers": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "referenceHash": {
+          "$ref": "#/$defs/ref"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "uint": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "maxLength": 78
+    },
+    "ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

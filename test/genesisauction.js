@@ -6,11 +6,11 @@ import { readGenesisAuction, prepareGenesisAuctionTransaction } from '../src/gen
 const address = n => `0x${n.toString(16).padStart(40, '0')}`;
 const account = address(99), other = address(100), validator = address(5);
 const zero = address(0), blockHash = `0x${'ab'.repeat(32)}`;
-const names = ['auction', 'coordinator', 'characterNft', 'omr', 'validator'];
+const names = ['auction', 'coordinator', 'characterNft', 'omr', 'validator', 'btcRewards'];
 const tickInterface = fs.readFileSync(new URL('../omerta-contracts/src/genesis-auction/vendor/cca/interfaces/ITickStorage.sol', import.meta.url), 'utf8');
 assert.match(tickInterface, /function tickSpacing\(\)/, 'the pinned CCA interface exposes tickSpacing()');
-const artifactNames = { auction: 'OmertaGuardedAuction', coordinator: 'OmertaAuctionCoordinatorV2', hook: 'OmertaHookV2',
-  validator: 'GenesisCharacterBidValidation', omr: 'OMR', characterNft: 'DynastyNFT' };
+const artifactNames = { auction: 'OmertaCharacterGuardedAuction', coordinator: 'OmertaAuctionCoordinatorV2', hook: 'OmertaHookV2',
+  validator: 'GenesisCharacterBidValidation', btcRewards: 'OmertaWbtcRewardsV2', poolManager: 'OmertaPoolManagerV2', omr: 'OMR', characterNft: 'DynastyNFT' };
 const actualAbiFunctions = {};
 for (const [role, contract] of Object.entries(artifactNames)) {
   const sourceName = contract === 'GenesisCharacterBidValidation' ? 'GenesisCharacterEligibility' : contract;
@@ -32,16 +32,17 @@ const policy = { totalSupplyWei:'100000000000000000000000000',decimals:18,saleTo
 const ceilFloor=((10n**19n<<96n)+BigInt(policy.saleTokenAmountWei)-1n)/BigInt(policy.saleTokenAmountWei);
 const tick=(ceilFloor+99n)/100n,floor=tick*100n,bidPrice=floor+tick*1000n;
 const founder = '0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD';
-const hookPolicy = { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100, recipients: ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', safe, address(81), address(82), address(83)] };
+const hookPolicy = { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96, rewardsRecipient: contracts.btcRewards.address, recipients: ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', safe, address(81), address(82), address(83)] };
 const manifest = { chainId: 4663, contracts, dependencies, policy, hookPolicy };
 const codes = Object.fromEntries(names.map((name, i) => [contracts[name].address, `0x60${(i + 1).toString(16).padStart(2, '0')}`]));
 codes[validator] = '0x6005';
 for (const pin of Object.values(dependencies)) codes[pin.address] = `0x60${Number(BigInt(pin.address)).toString(16)}`;
 function fixture() {
   const values = {
-    poolManager: { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')), TRADE_FEE_BPS: 500n, omr: contracts.omr.address,
-      developerRecipient: hookPolicy.recipients[0], rwaRecipient: hookPolicy.recipients[1], communityRecipient: hookPolicy.recipients[2], polRecipient: hookPolicy.recipients[3] },
-    hook: { BASE_SELL_BPS: 500n, MAX_SURGE_BPS: 50n, managerCollectsRevenue: true, recipients: [...hookPolicy.recipients] },
+    poolManager: { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS')), TRADE_FEE_BPS: 400n, omr: contracts.omr.address,
+      developerRecipient: hookPolicy.recipients[0], rwaRecipient: hookPolicy.recipients[1], communityRecipient: hookPolicy.recipients[2], polRecipient: hookPolicy.recipients[3], rewardsRecipient: contracts.btcRewards.address },
+    btcRewards: { safe, omr: contracts.omr.address },
+    hook: { BASE_SELL_BPS: 350n, REWARDS_BPS: 50n, rewardsRecipient: contracts.btcRewards.address, MAX_SURGE_BPS: 50n, managerCollectsRevenue: true, recipients: [...hookPolicy.recipients] },
     auction: { characterNft: contracts.characterNft.address, token: contracts.omr.address, currency: zero,
       launchGate: contracts.coordinator.address, fundsRecipient: contracts.coordinator.address,
       launchGateCodeHash: contracts.coordinator.runtimeCodeHash, launchChainId: 4663n,
@@ -308,10 +309,15 @@ for (const change of [
 console.log('Validator OMR identity, runtime and immutable approved-supply snapshot bindings PASS');
 f = fixture();
 const fixed = await readGenesisAuction(f.options);
-assert.equal(fixed.hookTax.baseTradeBps, 500);
+assert.equal(fixed.hookTax.baseTradeBps, 350);
 assert.equal(fixed.hookTax.maxSurgeBps, 50);
+assert.equal(fixed.hookTax.rewardsTradeBps, 50);
+assert.equal(fixed.hookTax.totalTradeBps, 400);
+assert.equal(fixed.hookTax.rewardsRecipient, contracts.btcRewards.address);
 assert.equal(fixed.hookTax.managerCollectsRevenue, true);
-for (const change of [f => { f.values.hook.BASE_SELL_BPS = 900n; }, f => { f.values.hook.MAX_SURGE_BPS = 51n; },
+for (const change of [f => { f.values.hook.REWARDS_BPS = 51n; }, f => { f.values.hook.rewardsRecipient = other; },
+  f => { f.values.poolManager.rewardsRecipient = other; }, f => { f.values.btcRewards.safe = other; }, f => { f.values.btcRewards.omr = other; },
+  f => { f.values.hook.BASE_SELL_BPS = 900n; }, f => { f.values.hook.MAX_SURGE_BPS = 51n; },
   f => { f.values.hook.managerCollectsRevenue = false; }, f => { f.values.hook.recipients[0] = other; },
   f => { f.values.hook.recipients[4] = other; }, f => { f.values.poolManager.TRADE_FEE_BPS = 501n; },
   f => { f.values.poolManager.revenuePolicyId = blockHash; }, f => { f.values.poolManager.omr = other; },
@@ -320,9 +326,9 @@ for (const change of [f => { f.values.hook.BASE_SELL_BPS = 900n; }, f => { f.val
   await assert.rejects(() => readGenesisAuction(f.options), { code: 'deployment_mismatch' });
   await assert.rejects(() => readGenesisAuction(f.options, { recovery: true }), { code: 'deployment_mismatch' });
 }
-for (const key of ['baseTradeBps', 'maxSurgeBps', 'developerBps', 'rwaBps', 'communityBps', 'polBps']) {
+for (const key of ['baseTradeBps', 'rewardsTradeBps', 'totalTradeBps', 'maxSurgeBps', 'developerBps', 'rwaBps', 'communityBps', 'polBps']) {
   f = fixture();
   const changed = structuredClone(manifest); changed.hookPolicy[key]++;
   await assert.rejects(() => readGenesisAuction({ ...f.options, manifest: changed }), { code: 'invalid_configuration' });
 }
-console.log('Fixed 500 bps manager revenue, 50 bps surge cap and all immutable recipient bindings PASS');
+console.log('Fixed 350 base + 50 rewards bps manager revenue, 50 bps surge cap and all immutable recipient bindings PASS');

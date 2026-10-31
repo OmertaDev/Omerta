@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -17,7 +17,8 @@ import {DeployPermit2} from "permit2/test/utils/DeployPermit2.sol";
 import {GenesisCharacterMock} from "../helpers/GenesisCharacterMock.sol";
 import {OmertaHookV2} from "../../src/market-v2/OmertaHookV2.sol";
 import {OmertaAuctionCoordinatorV2, ISingleGenesisAuction} from "../../src/market-v2/OmertaAuctionCoordinatorV2.sol";
-import {OmertaGuardedAuction, IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
+import {OmertaCharacterGuardedAuction as OmertaGuardedAuction} from "../../src/genesis-auction/OmertaCharacterGuardedAuction.sol";
+import {IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
 import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol";
 
 contract AuctionCoordinatorToken is ERC20 {
@@ -62,7 +63,7 @@ contract AuctionCoordinatorV2Test is Test, DeployPermit2 {
             3000, 60, LP_RESERVE, owner, nft);
         address[5] memory recipients = [treasury, vig, founder, address(0x14), address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(token), address(coordinator),
-            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60)), hook);
+            uint24(3000), int24(60), recipients, OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60),address(0x16)), hook);
         auction = deployAuction(nft); token.transfer(owner,40_000_000 ether);
     }
     function deployAuction(IERC721 character) internal returns (OmertaGuardedAuction result) {
@@ -196,7 +197,7 @@ contract AuctionCoordinatorV2Test is Test, DeployPermit2 {
         vm.clearMockedCalls();
         address[5] memory recipients = [treasury,vig,founder,address(0x14),address(0x15)];
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2",abi.encode(manager,address(token),address(coordinator),
-            uint24(500),int24(10),recipients,OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60)),hook);
+            uint24(500),int24(10),recipients,OmertaHookV2.OpeningConfig(0,0,0),uint24(100),uint32(60),address(0x16)),hook);
         vm.expectRevert(OmertaAuctionCoordinatorV2.BadConfiguration.selector);
         coordinator.bind(ISingleGenesisAuction(address(auction)));
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {IRwaHealthOverlay} from "./interfaces/IRwaHealthOverlay.sol";
 import {IStockTokenRegistryV2} from "./interfaces/IStockTokenRegistryV2.sol";

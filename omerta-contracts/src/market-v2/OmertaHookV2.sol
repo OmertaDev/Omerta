@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
@@ -18,8 +18,9 @@ import {IInitializerHook} from "../interfaces/IInitializerHook.sol";
 import {IOmrV4ObservationSource} from "../interfaces/IOmrV4ObservationSource.sol";
 
 /// @notice Immutable canonical ETH/OMR market settlement and observation layer.
-/// @dev The restricted PoolManager collects the 5% base on buys and sells. This hook does not
-///      collect that base a second time. Standard-manager fixtures retain their original sell base.
+/// @dev The restricted PoolManager collects the 3.5% base plus 0.5% rewards on buys and sells. This
+///      hook does not collect those a second time. Standard-manager fixtures collect sell base and
+///      both-direction rewards in this hook, without conversion or distribution in a swap.
 ///      Additional sell-pressure surcharge is separately owed to stability, never funding slices.
 ///      Exact-input fees use actual output; exact-output fees use actual input, including partial fills.
 ///      No strategy, oracle, recipient, or game callback executes during a swap. No owner can pause,
@@ -31,18 +32,20 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
             | Hooks.AFTER_REMOVE_LIQUIDITY_FLAG | Hooks.BEFORE_SWAP_FLAG | Hooks.AFTER_SWAP_FLAG
             | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG
     );
-    uint16 public constant BASE_SELL_BPS = 500;
+    uint16 public constant BASE_SELL_BPS = 350;
+    uint16 public constant REWARDS_BPS = 50;
     uint16 public constant MAX_SURGE_BPS = 50;
-    uint16 public constant MAX_HOOK_BPS = 600;
+    uint16 public constant MAX_HOOK_BPS = 450;
     uint16 public constant MAX_OPENING_BLOCKS = 200;
     bytes32 public constant MANAGER_REVENUE_POLICY =
-        keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS");
+        keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
     uint32 public constant PRESSURE_DECAY_SECONDS = 60;
     uint8 public constant DEV = 0;
     uint8 public constant RWA = 1;
     uint8 public constant COMMUNITY = 2;
     uint8 public constant POL = 3;
     uint8 public constant STABILITY = 4;
+    uint8 public constant REWARDS = 5;
 
     struct OpeningConfig {
         uint16 blocks;
@@ -78,6 +81,7 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     uint16 public immutable openingBuyBps;
     uint128 public immutable openingMaxBuyQuote;
     address[5] public recipients;
+    address public immutable rewardsRecipient;
     mapping(Currency => mapping(uint8 => uint256)) public owed;
     mapping(Currency => uint256) public totalOwed;
 
@@ -107,6 +111,7 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
 
     event PoolOpened(PoolId indexed id, uint64 blockNumber, uint64 openingEnd);
     event FeesAccrued(address indexed sender, Currency indexed currency, bool sell, uint256 base, uint256 stability);
+    event RewardsAccrued(address indexed sender, Currency indexed currency, bool sell, uint256 amount);
     event FeesPaid(Currency indexed currency, uint8 indexed bucket, address indexed recipient, uint256 amount);
     event EpochFinalized(uint64 indexed epoch, uint64 end, uint32 observedSeconds);
 
@@ -119,16 +124,16 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         address[5] memory recipients_,
         OpeningConfig memory opening_,
         uint24 surgeFullTicks_,
-        uint32 epochDuration_
+        uint32 epochDuration_,
+        address rewardsRecipient_
     ) {
-        bool managerRevenue = _managerRevenuePolicy(address(manager_), omr_);
+        bool managerRevenue = _managerRevenuePolicy(address(manager_), omr_, rewardsRecipient_);
         if (
-            address(manager_) == address(0) || omr_ == address(0) || initializer_ == address(0)
-                || poolFee_ > 100_000 || tickSpacing_ <= 0 || tickSpacing_ > 32767
-                || opening_.blocks > MAX_OPENING_BLOCKS || opening_.buyBps > MAX_HOOK_BPS
-                || (opening_.blocks == 0 && (opening_.buyBps != 0 || opening_.maxBuyQuote != 0))
-                || surgeFullTicks_ == 0 || surgeFullTicks_ > 100_000
-                || epochDuration_ < 60 || epochDuration_ > 1 days
+            address(manager_) == address(0) || omr_ == address(0) || initializer_ == address(0) || poolFee_ > 100_000
+                || tickSpacing_ <= 0 || tickSpacing_ > 32767 || opening_.blocks > MAX_OPENING_BLOCKS
+                || opening_.buyBps > MAX_HOOK_BPS - REWARDS_BPS
+                || (opening_.blocks == 0 && (opening_.buyBps != 0 || opening_.maxBuyQuote != 0)) || surgeFullTicks_ == 0
+                || surgeFullTicks_ > 100_000 || epochDuration_ < 60 || epochDuration_ > 1 days
                 || (managerRevenue && opening_.buyBps > MAX_SURGE_BPS)
         ) revert InvalidConfiguration();
         if (IERC20Metadata(omr_).decimals() != 18) revert InvalidConfiguration();
@@ -136,6 +141,7 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         for (uint256 i; i < 5; ++i) {
             if (recipients_[i] == address(0) || recipients_[i] == address(this)) revert InvalidRecipient();
         }
+        if (rewardsRecipient_ == address(0) || rewardsRecipient_ == address(this)) revert InvalidRecipient();
         poolManager = manager_;
         managerCollectsRevenue = managerRevenue;
         omr = omr_;
@@ -143,6 +149,7 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         poolFee = poolFee_;
         tickSpacing = tickSpacing_;
         recipients = recipients_;
+        rewardsRecipient = rewardsRecipient_;
         openingBlocks = opening_.blocks;
         openingBuyBps = opening_.buyBps;
         openingMaxBuyQuote = opening_.maxBuyQuote;
@@ -178,16 +185,16 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         p.afterSwapReturnDelta = true;
     }
 
-    function beforeInitialize(address sender, PoolKey calldata key, uint160)
-        external onlyPoolManager returns (bytes4)
-    {
+    function beforeInitialize(address sender, PoolKey calldata key, uint160) external onlyPoolManager returns (bytes4) {
         _checkPool(key);
         if (sender != authorized) revert NotInitializer();
         return IHooks.beforeInitialize.selector;
     }
 
     function afterInitialize(address, PoolKey calldata key, uint160, int24 tick)
-        external onlyPoolManager returns (bytes4)
+        external
+        onlyPoolManager
+        returns (bytes4)
     {
         _checkPool(key);
         if (initialized) revert PoolNotAllowed();
@@ -202,7 +209,9 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     }
 
     function beforeSwap(address, PoolKey calldata key, SwapParams calldata, bytes calldata)
-        external onlyPoolManager returns (bytes4, BeforeSwapDelta, uint24)
+        external
+        onlyPoolManager
+        returns (bytes4, BeforeSwapDelta, uint24)
     {
         _checkPool(key);
         // Store actual pre-swap tick, never a router-supplied trader identity or price.
@@ -212,9 +221,13 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         return (IHooks.beforeSwap.selector, BeforeSwapDeltaLibrary.ZERO_DELTA, 0);
     }
 
-    function afterSwap(address sender, PoolKey calldata key, SwapParams calldata params, BalanceDelta delta, bytes calldata)
-        external onlyPoolManager returns (bytes4, int128)
-    {
+    function afterSwap(
+        address sender,
+        PoolKey calldata key,
+        SwapParams calldata params,
+        BalanceDelta delta,
+        bytes calldata
+    ) external onlyPoolManager returns (bytes4, int128) {
         _checkPool(key);
         _advance();
         _adoptPoolState(key.toId());
@@ -222,7 +235,8 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     }
 
     function _collectFee(address sender, PoolKey calldata key, SwapParams calldata params, BalanceDelta delta)
-        private returns (int128)
+        private
+        returns (int128)
     {
         bool sell = !params.zeroForOne; // currency0 ETH; currency1 OMR, always.
         uint256 quote = _abs(delta.amount0());
@@ -235,42 +249,66 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         uint256 amount = _abs(currency0 ? delta.amount0() : delta.amount1());
         uint256 base = sell && !managerCollectsRevenue ? amount * BASE_SELL_BPS / 10_000 : 0;
         uint256 stability = amount * extra / 10_000;
-        uint256 total = base + stability;
+        uint256 rewards = managerCollectsRevenue ? 0 : amount * REWARDS_BPS / 10_000;
+        uint256 total = base + stability + rewards;
         if (total == 0) return 0;
         _accrueBase(currency, base);
         owed[currency][STABILITY] += stability;
+        owed[currency][REWARDS] += rewards;
         totalOwed[currency] += total;
         emit FeesAccrued(sender, currency, sell, base, stability);
+        emit RewardsAccrued(sender, currency, sell, rewards);
         poolManager.take(currency, address(this), total);
-        // <=6% of the magnitude of an int128, including its negative minimum, fits int128.
+        // <=4.5% of the magnitude of an int128, including its negative minimum, fits int128.
         return int128(uint128(total));
     }
 
-    function afterAddLiquidity(address, PoolKey calldata key, ModifyLiquidityParams calldata, BalanceDelta, BalanceDelta, bytes calldata)
-        external onlyPoolManager returns (bytes4, BalanceDelta)
-    {
+    function afterAddLiquidity(
+        address,
+        PoolKey calldata key,
+        ModifyLiquidityParams calldata,
+        BalanceDelta,
+        BalanceDelta,
+        bytes calldata
+    ) external onlyPoolManager returns (bytes4, BalanceDelta) {
         _afterLiquidity(key);
         return (IHooks.afterAddLiquidity.selector, BalanceDeltaLibrary.ZERO_DELTA);
     }
 
-    function afterRemoveLiquidity(address, PoolKey calldata key, ModifyLiquidityParams calldata, BalanceDelta, BalanceDelta, bytes calldata)
-        external onlyPoolManager returns (bytes4, BalanceDelta)
-    {
+    function afterRemoveLiquidity(
+        address,
+        PoolKey calldata key,
+        ModifyLiquidityParams calldata,
+        BalanceDelta,
+        BalanceDelta,
+        bytes calldata
+    ) external onlyPoolManager returns (bytes4, BalanceDelta) {
         _afterLiquidity(key);
         return (IHooks.afterRemoveLiquidity.selector, BalanceDeltaLibrary.ZERO_DELTA);
     }
 
     /// @notice Anyone can pay one fixed recipient. A broken recipient cannot block other buckets.
     function sweep(Currency currency, uint8 bucket) external nonReentrant returns (uint256 amount) {
-        if (bucket > STABILITY) revert InvalidRecipient();
-        return _pay(currency, bucket, recipients[bucket]);
+        return _pay(currency, bucket, _recipient(bucket));
     }
 
     /// @notice A recipient may collect its own bucket to another destination without changing rights.
-    function claim(Currency currency, uint8 bucket, address destination) external nonReentrant returns (uint256 amount) {
-        if (bucket > STABILITY || destination == address(0) || destination == address(this)) revert InvalidRecipient();
-        if (msg.sender != recipients[bucket]) revert NotRecipient();
+    function claim(Currency currency, uint8 bucket, address destination)
+        external
+        nonReentrant
+        returns (uint256 amount)
+    {
+        if (destination == address(0) || destination == address(this)) {
+            revert InvalidRecipient();
+        }
+        if (msg.sender != _recipient(bucket)) revert NotRecipient();
         return _pay(currency, bucket, destination);
+    }
+
+    function _recipient(uint8 bucket) private view returns (address) {
+        if (bucket < REWARDS) return recipients[bucket];
+        if (bucket == REWARDS) return rewardsRecipient;
+        revert InvalidRecipient();
     }
 
     function _pay(Currency currency, uint8 bucket, address destination) private returns (uint256 amount) {
@@ -286,8 +324,13 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         if (initialized) _advance();
     }
 
-    function latestEpoch() external view returns (Epoch memory) { return _latest; }
-    function activeEpoch() external view returns (Epoch memory) { return _active; }
+    function latestEpoch() external view returns (Epoch memory) {
+        return _latest;
+    }
+
+    function activeEpoch() external view returns (Epoch memory) {
+        return _active;
+    }
 
     function currentTickCumulative(PoolId id) external view returns (int56 cumulative, uint32 timestamp, bool ready) {
         if (!initialized || PoolId.unwrap(id) != PoolId.unwrap(poolKey().toId())) return (0, 0, false);
@@ -297,8 +340,10 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     }
 
     function _checkPool(PoolKey calldata key) private view {
-        if (Currency.unwrap(key.currency0) != address(0) || Currency.unwrap(key.currency1) != omr
-            || key.fee != poolFee || key.tickSpacing != tickSpacing || address(key.hooks) != address(this)) {
+        if (
+            Currency.unwrap(key.currency0) != address(0) || Currency.unwrap(key.currency1) != omr || key.fee != poolFee
+                || key.tickSpacing != tickSpacing || address(key.hooks) != address(this)
+        ) {
             revert PoolNotAllowed();
         }
     }
@@ -321,6 +366,7 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         uint256 grossQuote = actualQuote;
         // Exact-output buys pay their opening fee in ETH; exact-input buys pay it in OMR output.
         if (exactOutput) grossQuote += actualQuote * openingBuyBps / 10_000;
+        if (exactOutput) grossQuote += actualQuote * REWARDS_BPS / 10_000;
         if (exactOutput && managerCollectsRevenue) grossQuote += actualQuote * BASE_SELL_BPS / 10_000;
         if (openingMaxBuyQuote != 0 && grossQuote > openingMaxBuyQuote) revert OpeningBuyTooLarge();
         return openingBuyBps;
@@ -328,13 +374,15 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
 
     /// @dev A policy getter binds this hook's accounting mode; release review must separately
     /// verify the immutable manager runtime. A matching getter is not a code-integrity proof.
-    function _managerRevenuePolicy(address manager_, address omr_) private view returns (bool) {
+    function _managerRevenuePolicy(address manager_, address omr_, address rewardsRecipient_) private view returns (bool) {
         (bool ok, bytes memory data) = manager_.staticcall(abi.encodeWithSignature("revenuePolicyId()"));
         if (!ok || data.length != 32 || abi.decode(data, (bytes32)) != MANAGER_REVENUE_POLICY) return false;
         (ok, data) = manager_.staticcall(abi.encodeWithSignature("omr()"));
         if (!ok || data.length != 32 || abi.decode(data, (address)) != omr_) revert InvalidConfiguration();
         (ok, data) = manager_.staticcall(abi.encodeWithSignature("TRADE_FEE_BPS()"));
-        if (!ok || data.length != 32 || abi.decode(data, (uint256)) != BASE_SELL_BPS) revert InvalidConfiguration();
+        if (!ok || data.length != 32 || abi.decode(data, (uint256)) != BASE_SELL_BPS + REWARDS_BPS) revert InvalidConfiguration();
+        (ok, data) = manager_.staticcall(abi.encodeWithSignature("rewardsRecipient()"));
+        if (!ok || data.length != 32 || abi.decode(data, (address)) != rewardsRecipient_) revert InvalidConfiguration();
         return true;
     }
 
@@ -344,7 +392,8 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     function _surgeRate() private returns (uint16 rate) {
         uint256 elapsed = block.timestamp - pressureUpdatedAt;
         uint256 pressure = elapsed >= PRESSURE_DECAY_SECONDS
-            ? 0 : uint256(sellPressureTicks) * (PRESSURE_DECAY_SECONDS - elapsed) / PRESSURE_DECAY_SECONDS;
+            ? 0
+            : uint256(sellPressureTicks) * (PRESSURE_DECAY_SECONDS - elapsed) / PRESSURE_DECAY_SECONDS;
         bytes32 slot = PRE_TICK_SLOT;
         int256 beforeTick;
         assembly ("memory-safe") { beforeTick := signextend(2, tload(slot)) }
@@ -353,9 +402,11 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         uint256 limit = surgeFullTicks;
         // Integrate min(pressure/limit,1) over the traversed tick interval rather than charging the
         // last rate to the entire move. Weighted trade amounts still make exact partitioning nontrivial.
-        if (movement == 0) rate = uint16(pressure * MAX_SURGE_BPS / limit);
-        else if (end <= limit) rate = uint16((pressure + end) * MAX_SURGE_BPS / (2 * limit));
-        else {
+        if (movement == 0) {
+            rate = uint16(pressure * MAX_SURGE_BPS / limit);
+        } else if (end <= limit) {
+            rate = uint16((pressure + end) * MAX_SURGE_BPS / (2 * limit));
+        } else {
             uint256 below = limit - pressure;
             rate = uint16(MAX_SURGE_BPS - below * below * MAX_SURGE_BPS / (2 * limit * movement));
         }
@@ -365,9 +416,10 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
 
     function _accrueBase(Currency currency, uint256 base) private {
         if (base == 0) return;
-        uint256 dev = base * 200 / BASE_SELL_BPS;
-        uint256 rwa = base * 100 / BASE_SELL_BPS;
-        uint256 community = base * 100 / BASE_SELL_BPS;
+        // Largest-remainder 127:51:76:96 policy, matching the restricted manager.
+        uint256 dev = base * 127 / BASE_SELL_BPS;
+        uint256 rwa = base * 51 / BASE_SELL_BPS;
+        uint256 community = base * 76 / BASE_SELL_BPS;
         owed[currency][DEV] += dev;
         owed[currency][RWA] += rwa;
         owed[currency][COMMUNITY] += community;
@@ -420,8 +472,27 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
         lastTimestamp = now_;
     }
 
-    function beforeAddLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata) external pure returns (bytes4) { revert HookNotImplemented(); }
-    function beforeRemoveLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata) external pure returns (bytes4) { revert HookNotImplemented(); }
-    function beforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata) external pure returns (bytes4) { revert HookNotImplemented(); }
-    function afterDonate(address, PoolKey calldata, uint256, uint256, bytes calldata) external pure returns (bytes4) { revert HookNotImplemented(); }
+    function beforeAddLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
+        external
+        pure
+        returns (bytes4)
+    {
+        revert HookNotImplemented();
+    }
+
+    function beforeRemoveLiquidity(address, PoolKey calldata, ModifyLiquidityParams calldata, bytes calldata)
+        external
+        pure
+        returns (bytes4)
+    {
+        revert HookNotImplemented();
+    }
+
+    function beforeDonate(address, PoolKey calldata, uint256, uint256, bytes calldata) external pure returns (bytes4) {
+        revert HookNotImplemented();
+    }
+
+    function afterDonate(address, PoolKey calldata, uint256, uint256, bytes calldata) external pure returns (bytes4) {
+        revert HookNotImplemented();
+    }
 }

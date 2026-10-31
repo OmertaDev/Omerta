@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
@@ -50,13 +50,13 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
     IPoolManager private _foreignManager;
     address alice = address(0xA11CE);
     address bob = address(0xB0B);
-    bytes32 constant POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS");
+    bytes32 constant POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
     bytes32 constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
     function setUp() public {
         token = new RestrictedOMR(address(this));
-        manager = new RestrictedManagerPolicyMockV2(address(token), 500, POLICY_ID);
+        manager = new RestrictedManagerPolicyMockV2(address(token), 400, POLICY_ID);
         input = new RestrictedRoleProbeV2();
         custody = new RestrictedRoleProbeV2();
         _registerWallet(alice);
@@ -100,7 +100,9 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
         vm.expectRevert(RestrictedOMR.InvalidRuntimeHash.selector);
         token.setOperator(address(input), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput, bytes32(uint256(1)));
         vm.expectRevert(RestrictedOMR.InvalidOperator.selector);
-        token.setOperator(address(input), IOmertaRestrictedOMRV2.OperatorRole.SettlementManager, address(input).codehash);
+        token.setOperator(
+            address(input), IOmertaRestrictedOMRV2.OperatorRole.SettlementManager, address(input).codehash
+        );
         _registerOperators();
         assertTrue(token.isOperator(address(input)));
         assertFalse(token.isOperator(alice));
@@ -109,11 +111,21 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
     }
 
     function testBindingRequiresExactTokenFeePolicyAndRuntimeAndIsOneTime() public {
-        RestrictedManagerPolicyMockV2 foreign = new RestrictedManagerPolicyMockV2(address(1), 500, POLICY_ID);
+        RestrictedManagerPolicyMockV2 foreign = new RestrictedManagerPolicyMockV2(address(1), 400, POLICY_ID);
         _expectInvalidManager(foreign);
-        foreign = new RestrictedManagerPolicyMockV2(address(token), 549, POLICY_ID);
+        foreign = new RestrictedManagerPolicyMockV2(address(token), 349, POLICY_ID);
         _expectInvalidManager(foreign);
-        foreign = new RestrictedManagerPolicyMockV2(address(token), 500, bytes32(uint256(1)));
+        foreign = new RestrictedManagerPolicyMockV2(
+            address(token), 550, keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_550_BOTH_DIRECTIONS")
+        );
+        _expectInvalidManager(foreign);
+        foreign = new RestrictedManagerPolicyMockV2(address(token), 500, POLICY_ID);
+        _expectInvalidManager(foreign);
+        foreign = new RestrictedManagerPolicyMockV2(
+            address(token), 400, keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS")
+        );
+        _expectInvalidManager(foreign);
+        foreign = new RestrictedManagerPolicyMockV2(address(token), 400, bytes32(uint256(1)));
         _expectInvalidManager(foreign);
         vm.expectRevert(RestrictedOMR.InvalidSettlementManager.selector);
         token.bindSettlementManager(address(input), address(input).codehash);
@@ -121,7 +133,9 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
         token.bindSettlementManager(address(manager), bytes32(uint256(1)));
         token.bindSettlementManager(address(manager), address(manager).codehash);
         assertEq(token.settlementManager(), address(manager));
-        assertEq(uint8(token.operatorRole(address(manager))), uint8(IOmertaRestrictedOMRV2.OperatorRole.SettlementManager));
+        assertEq(
+            uint8(token.operatorRole(address(manager))), uint8(IOmertaRestrictedOMRV2.OperatorRole.SettlementManager)
+        );
         vm.expectRevert(RestrictedOMR.SettlementManagerAlreadyBound.selector);
         token.bindSettlementManager(address(manager), address(manager).codehash);
         vm.expectRevert(RestrictedOMR.InvalidOperator.selector);
@@ -180,9 +194,8 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
     function unlockCallback(bytes calldata data) external returns (bytes memory) {
         require(msg.sender == address(_foreignManager));
         PoolKey memory foreignKey = abi.decode(data, (PoolKey));
-        (BalanceDelta delta,) = _foreignManager.modifyLiquidity(
-            foreignKey, ModifyLiquidityParams(-887220, 887220, 1 ether, bytes32(0)), ""
-        );
+        (BalanceDelta delta,) =
+            _foreignManager.modifyLiquidity(foreignKey, ModifyLiquidityParams(-887220, 887220, 1 ether, bytes32(0)), "");
         _foreignManager.sync(foreignKey.currency0);
         _foreignManager.settle{value: uint256(-int256(delta.amount0()))}();
         _foreignManager.sync(foreignKey.currency1);
@@ -424,7 +437,7 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
 
     function testEoaGenesisTreasuryRequiresLiveEmptyCode() public {
         RestrictedOMR eoaToken = new RestrictedOMR(alice);
-        RestrictedManagerPolicyMockV2 eoaManager = new RestrictedManagerPolicyMockV2(address(eoaToken), 500, POLICY_ID);
+        RestrictedManagerPolicyMockV2 eoaManager = new RestrictedManagerPolicyMockV2(address(eoaToken), 400, POLICY_ID);
         assertEq(eoaToken.genesisTreasuryRuntimeHash(), keccak256(""));
         assertTrue(eoaToken.isRecipient(alice));
         vm.prank(alice, alice);
@@ -460,7 +473,9 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
 
     function _registerOperators() private {
         token.setOperator(address(input), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput, address(input).codehash);
-        token.setOperator(address(custody), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody, address(custody).codehash);
+        token.setOperator(
+            address(custody), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody, address(custody).codehash
+        );
     }
 
     function _seal() private {
@@ -483,7 +498,7 @@ contract RestrictedRouterManagerMockV2 is RestrictedManagerPolicyMockV2 {
     uint256 public lastSettled;
 
     constructor(address token)
-        RestrictedManagerPolicyMockV2(token, 500, keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS"))
+        RestrictedManagerPolicyMockV2(token, 400, keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS"))
     {}
 
     function configure(int128 amount0, int128 amount1, uint8 mode) external {
@@ -543,8 +558,12 @@ contract RestrictedSwapRouterV2Test is Test {
         manager = new RestrictedRouterManagerMockV2(address(token));
         router = new SwapRouter(IPoolManager(address(manager)), token);
         RestrictedRoleProbeV2 custody = new RestrictedRoleProbeV2();
-        token.setOperator(address(router), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput, address(router).codehash);
-        token.setOperator(address(custody), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody, address(custody).codehash);
+        token.setOperator(
+            address(router), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput, address(router).codehash
+        );
+        token.setOperator(
+            address(custody), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody, address(custody).codehash
+        );
         token.bindSettlementManager(address(manager), address(manager).codehash);
         token.sealPolicy();
         vm.prank(alice, alice);

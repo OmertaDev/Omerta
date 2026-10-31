@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {Vm} from "forge-std/Vm.sol";
@@ -48,20 +48,37 @@ contract RestrictedMarketIntegrationV2Test is Test {
         vm.roll(100);
         vm.warp(3600);
         omr = new OmertaRestrictedOMRV2(address(this));
-        manager = IPoolManager(deployCode("OmertaPoolManagerV2.sol:OmertaPoolManagerV2",
-            abi.encode(address(omr), address(this), recipients)));
+        manager = IPoolManager(
+            deployCode(
+                "OmertaPoolManagerV2.sol:OmertaPoolManagerV2", abi.encode(address(omr), address(this), recipients, recipients[2])
+            )
+        );
         revenue = IRestrictedRevenueIntegrationV2(address(manager));
         token = Currency.wrap(address(omr));
         router = new OmertaSwapRouterV2(manager, omr);
         lpRouter = new PoolModifyLiquidityTest(manager);
-        uint160 flags = uint160(Hooks.BEFORE_INITIALIZE_FLAG | Hooks.AFTER_INITIALIZE_FLAG
-            | Hooks.AFTER_ADD_LIQUIDITY_FLAG | Hooks.AFTER_REMOVE_LIQUIDITY_FLAG
-            | Hooks.BEFORE_SWAP_FLAG | Hooks.AFTER_SWAP_FLAG | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG);
+        uint160 flags = uint160(
+            Hooks.BEFORE_INITIALIZE_FLAG | Hooks.AFTER_INITIALIZE_FLAG | Hooks.AFTER_ADD_LIQUIDITY_FLAG
+                | Hooks.AFTER_REMOVE_LIQUIDITY_FLAG | Hooks.BEFORE_SWAP_FLAG | Hooks.AFTER_SWAP_FLAG
+                | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG
+        );
         address target = address(uint160((uint256(0xABCD) << 144) | flags));
         address[5] memory hookRecipients = [recipients[0], recipients[1], recipients[2], recipients[3], address(0x11)];
-        deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(omr), address(this),
-            uint24(3000), int24(60), hookRecipients, OmertaHookV2.OpeningConfig(200, 50, 10 ether),
-            uint24(100), uint32(60)), target);
+        deployCodeTo(
+            "OmertaHookV2.sol:OmertaHookV2",
+            abi.encode(
+                manager,
+                address(omr),
+                address(this),
+                uint24(3000),
+                int24(60),
+                hookRecipients,
+                OmertaHookV2.OpeningConfig(200, 50, 10 ether),
+                uint24(100),
+                uint32(60)
+            , hookRecipients[2]),
+            target
+        );
         hook = OmertaHookV2(payable(target));
         key = hook.poolKey();
         _register(address(this), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody);
@@ -79,8 +96,9 @@ contract RestrictedMarketIntegrationV2Test is Test {
         omr.approve(address(lpRouter), type(uint256).max);
         vm.prank(trader, trader);
         omr.approve(address(router), type(uint256).max);
-        lpRouter.modifyLiquidity{value: 1001 ether}(key,
-            ModifyLiquidityParams(-887220, 887220, 1000e18, bytes32(0)), "");
+        lpRouter.modifyLiquidity{value: 1001 ether}(
+            key, ModifyLiquidityParams(-887220, 887220, 1000e18, bytes32(0)), ""
+        );
         vm.roll(301);
     }
 
@@ -89,12 +107,14 @@ contract RestrictedMarketIntegrationV2Test is Test {
     }
 
     function _swap(bool buy, int256 specified, uint160 limit, uint256 minOut, uint256 maxInput)
-        private returns (BalanceDelta delta, int128 raw0, int128 raw1)
+        private
+        returns (BalanceDelta delta, int128 raw0, int128 raw1)
     {
         vm.recordLogs();
         vm.prank(trader, trader);
-        delta = router.swap{value: buy ? 1000 ether : 0}(key, SwapParams(buy, specified, limit),
-            minOut, maxInput, uint64(block.timestamp));
+        delta = router.swap{value: buy ? 1000 ether : 0}(
+            key, SwapParams(buy, specified, limit), minOut, maxInput, uint64(block.timestamp)
+        );
         Vm.Log[] memory logs = vm.getRecordedLogs();
         bool found;
         for (uint256 i; i < logs.length; ++i) {
@@ -107,22 +127,32 @@ contract RestrictedMarketIntegrationV2Test is Test {
         require(found, "missing real core swap");
     }
 
-    function _assertSplit(Currency currency, uint256 base) private view {
-        assertEq(revenue.totalOwed(currency), base);
-        assertEq(revenue.owed(currency, 0), base * 200 / 500);
-        assertEq(revenue.owed(currency, 1), base * 100 / 500);
-        assertEq(revenue.owed(currency, 2), base * 100 / 500);
-        assertEq(revenue.owed(currency, 3), base - base * 200 / 500 - base * 100 / 500 - base * 100 / 500);
-        for (uint8 i; i < 4; ++i) assertEq(hook.owed(currency, i), 0, "hook must not double collect base");
+    function _assertSplit(Currency currency, uint256 gross) private view {
+        uint256 base = gross * 350 / 10_000;
+        uint256 rewards = gross * 50 / 10_000;
+        assertEq(revenue.totalOwed(currency), base + rewards);
+        assertEq(revenue.owed(currency, 0), base * 127 / 350);
+        assertEq(revenue.owed(currency, 1), base * 51 / 350);
+        assertEq(revenue.owed(currency, 2), base * 76 / 350);
+        assertEq(revenue.owed(currency, 3), base - base * 127 / 350 - base * 51 / 350 - base * 76 / 350);
+        assertEq(revenue.owed(currency, 4), rewards);
+        assertEq(hook.owed(currency, 5), 0, "hook must not double collect rewards");
+        for (uint8 i; i < 4; ++i) {
+            assertEq(hook.owed(currency, i), 0, "hook must not double collect base");
+        }
     }
 
-    function test_realRouterExactInputBuyCollectsBaseOnly() public {
+    function _fees(uint256 gross) private pure returns (uint256) {
+        return gross * 350 / 10_000 + gross * 50 / 10_000;
+    }
+
+    function test_realRouterExactInputBuyCollectsBaseAndRewards() public {
         assertTrue(hook.managerCollectsRevenue());
         uint256 nativeBefore = trader.balance;
         uint256 omrBefore = omr.balanceOf(trader);
         (BalanceDelta delta,, int128 raw1) = _swap(true, -10 ether, Q96 / 2, 1, 10 ether);
-        uint256 fee = uint256(int256(raw1)) * 500 / 10_000;
-        _assertSplit(token, fee);
+        uint256 fee = _fees(uint256(int256(raw1)));
+        _assertSplit(token, uint256(int256(raw1)));
         assertEq(hook.totalOwed(token), 0);
         assertEq(int256(delta.amount1()), int256(raw1) - int256(fee));
         assertEq(omr.balanceOf(trader) - omrBefore, uint256(int256(delta.amount1())));
@@ -132,33 +162,33 @@ contract RestrictedMarketIntegrationV2Test is Test {
     function test_realRouterExactInputSellCollectsBaseAndSeparateSurge() public {
         (BalanceDelta delta, int128 raw0,) = _swap(false, -10 ether, Q96 * 2, 1, 10 ether);
         uint256 gross = uint256(int256(raw0));
-        uint256 base = gross * 500 / 10_000;
-        _assertSplit(eth, base);
+        uint256 fees = _fees(gross);
+        _assertSplit(eth, gross);
         uint256 surge = hook.owed(eth, 4);
         assertGt(surge, 0);
         assertLe(surge, gross * 50 / 10_000);
-        assertEq(int256(delta.amount0()), int256(raw0) - int256(base + surge));
+        assertEq(int256(delta.amount0()), int256(raw0) - int256(fees + surge));
         assertEq(address(hook).balance, hook.totalOwed(eth));
     }
 
     function test_realRouterExactOutputBuyAddsBaseToActualInput() public {
         (BalanceDelta delta, int128 raw0,) = _swap(true, 1 ether, Q96 / 2, 1 ether, 2 ether);
-        uint256 fee = uint256(-int256(raw0)) * 500 / 10_000;
-        _assertSplit(eth, fee);
+        uint256 fee = _fees(uint256(-int256(raw0)));
+        _assertSplit(eth, uint256(-int256(raw0)));
         assertEq(int256(delta.amount0()), int256(raw0) - int256(fee));
         assertEq(delta.amount1(), 1 ether);
     }
 
     function test_realRouterExactOutputSellAddsBaseAndSurgeToActualInput() public {
         (BalanceDelta delta,, int128 raw1) = _swap(false, 1 ether, Q96 * 2, 1 ether, 2 ether);
-        uint256 fee = uint256(-int256(raw1)) * 500 / 10_000;
-        _assertSplit(token, fee);
+        uint256 fee = _fees(uint256(-int256(raw1)));
+        _assertSplit(token, uint256(-int256(raw1)));
         assertEq(int256(delta.amount1()), int256(raw1) - int256(fee + hook.owed(token, 4)));
         assertEq(delta.amount0(), 1 ether);
         assertEq(omr.balanceOf(address(hook)), hook.totalOwed(token));
     }
 
-    function test_saturatedSellSurgeReachesSixPercentInBothExactModes() public {
+    function test_saturatedSellSurgeReachesFourPointFivePercentInBothExactModes() public {
         _swap(false, -10 ether, Q96 * 2, 1, 10 ether);
         assertEq(hook.sellPressureTicks(), hook.surgeFullTicks());
         for (uint8 mode; mode < 2; ++mode) {
@@ -170,36 +200,51 @@ contract RestrictedMarketIntegrationV2Test is Test {
             uint256 gross = mode == 0 ? uint256(int256(raw0)) : uint256(-int256(raw1));
             uint256 base = revenue.totalOwed(currency) - baseBefore;
             uint256 surge = hook.owed(currency, 4) - surgeBefore;
-            assertEq(base, gross * 500 / 10_000);
+            assertEq(base, _fees(gross));
             assertEq(surge, gross * 50 / 10_000);
-            assertLe(base + surge, gross * 600 / 10_000);
-            assertEq(mode == 0 ? int256(delta.amount0()) : int256(delta.amount1()),
-                (mode == 0 ? int256(raw0) : int256(raw1)) - int256(base + surge));
+            assertLe(base + surge, gross * 450 / 10_000);
+            assertEq(
+                mode == 0 ? int256(delta.amount0()) : int256(delta.amount1()),
+                (mode == 0 ? int256(raw0) : int256(raw1)) - int256(base + surge)
+            );
         }
     }
 
-    function test_openingBuysReachSixPercentInBothExactModes() public {
+    function test_openingBuysReachFourPointFivePercentInBothExactModes() public {
         vm.roll(101);
         for (uint8 mode; mode < 2; ++mode) {
             Currency currency = mode == 0 ? token : eth;
             (BalanceDelta delta, int128 raw0, int128 raw1) =
                 _swap(true, mode == 0 ? -int256(1 ether) : int256(1 ether), Q96 / 2, 1, 2 ether);
             uint256 gross = mode == 0 ? uint256(int256(raw1)) : uint256(-int256(raw0));
-            _assertSplit(currency, gross * 500 / 10_000);
+            _assertSplit(currency, gross);
             uint256 surge = hook.owed(currency, 4);
             assertEq(surge, gross * 50 / 10_000);
-            assertLe(revenue.totalOwed(currency) + surge, gross * 600 / 10_000);
-            assertEq(mode == 0 ? int256(delta.amount1()) : int256(delta.amount0()),
-                (mode == 0 ? int256(raw1) : int256(raw0)) - int256(revenue.totalOwed(currency) + surge));
+            assertLe(revenue.totalOwed(currency) + surge, gross * 450 / 10_000);
+            assertEq(
+                mode == 0 ? int256(delta.amount1()) : int256(delta.amount0()),
+                (mode == 0 ? int256(raw1) : int256(raw0)) - int256(revenue.totalOwed(currency) + surge)
+            );
         }
     }
 
     function test_restrictedOpeningFeeAboveHalfPercentIsRejected() public {
         address target = address(uint160((uint256(0xDCBA) << 144) | hook.HOOK_FLAGS()));
         address[5] memory hookRecipients = [recipients[0], recipients[1], recipients[2], recipients[3], address(0x11)];
-        bytes memory creation = abi.encodePacked(vm.getCode("OmertaHookV2.sol:OmertaHookV2"),
-            abi.encode(manager, address(omr), address(this), uint24(3000), int24(60), hookRecipients,
-                OmertaHookV2.OpeningConfig(200, 51, 10 ether), uint24(100), uint32(60)));
+        bytes memory creation = abi.encodePacked(
+            vm.getCode("OmertaHookV2.sol:OmertaHookV2"),
+            abi.encode(
+                manager,
+                address(omr),
+                address(this),
+                uint24(3000),
+                int24(60),
+                hookRecipients,
+                OmertaHookV2.OpeningConfig(200, 51, 10 ether),
+                uint24(100),
+                uint32(60)
+            , hookRecipients[2])
+        );
         vm.etch(target, creation);
         (bool ok, bytes memory reason) = target.call("");
         assertFalse(ok);
@@ -208,10 +253,9 @@ contract RestrictedMarketIntegrationV2Test is Test {
 
     function test_realPartialFillUsesFilledOutputAndRefundsETH() public {
         uint256 beforeBalance = trader.balance;
-        (BalanceDelta delta,, int128 raw1) = _swap(true, -100 ether,
-            TickMath.getSqrtPriceAtTick(-10), 1, 100 ether);
+        (BalanceDelta delta,, int128 raw1) = _swap(true, -100 ether, TickMath.getSqrtPriceAtTick(-10), 1, 100 ether);
         assertLt(uint256(-int256(delta.amount0())), 100 ether);
-        _assertSplit(token, uint256(int256(raw1)) * 500 / 10_000);
+        _assertSplit(token, uint256(int256(raw1)));
         assertEq(beforeBalance - trader.balance, uint256(-int256(delta.amount0())));
         assertEq(address(router).balance, 0);
     }
@@ -219,13 +263,15 @@ contract RestrictedMarketIntegrationV2Test is Test {
     function test_actualFeeAdjustedLimitsRevertAtomically() public {
         vm.prank(trader);
         vm.expectRevert(OmertaSwapRouterV2.InputAboveMaximum.selector);
-        router.swap{value: 2 ether}(key, SwapParams(true, 1 ether, Q96 / 2), 1 ether, 1.05 ether,
-            uint64(block.timestamp));
+        router.swap{value: 2 ether}(
+            key, SwapParams(true, 1 ether, Q96 / 2), 1 ether, 1.035 ether, uint64(block.timestamp)
+        );
         assertEq(revenue.totalOwed(eth), 0);
         vm.prank(trader);
         vm.expectRevert(OmertaSwapRouterV2.OutputBelowMinimum.selector);
-        router.swap{value: 1 ether}(key, SwapParams(true, -1 ether, Q96 / 2), 0.95 ether, 1 ether,
-            uint64(block.timestamp));
+        router.swap{value: 1 ether}(
+            key, SwapParams(true, -1 ether, Q96 / 2), 0.965 ether, 1 ether, uint64(block.timestamp)
+        );
         assertEq(revenue.totalOwed(token), 0);
         assertEq(manager.getLiquidity(key.toId()), 1000e18);
     }
@@ -234,12 +280,11 @@ contract RestrictedMarketIntegrationV2Test is Test {
         vm.roll(101);
         vm.prank(trader);
         vm.expectRevert();
-        router.swap{value: 20 ether}(key, SwapParams(true, 9.5 ether, Q96 / 2), 0, 20 ether,
-            uint64(block.timestamp));
+        router.swap{value: 20 ether}(key, SwapParams(true, 9.5 ether, Q96 / 2), 0, 20 ether, uint64(block.timestamp));
         assertEq(revenue.totalOwed(eth), 0);
         (BalanceDelta delta, int128 raw0,) = _swap(true, 8 ether, Q96 / 2, 8 ether, 10 ether);
-        uint256 base = uint256(-int256(raw0)) * 500 / 10_000;
-        _assertSplit(eth, base);
+        uint256 base = _fees(uint256(-int256(raw0)));
+        _assertSplit(eth, uint256(-int256(raw0)));
         assertGt(hook.owed(eth, 4), 0);
         assertEq(int256(delta.amount0()), int256(raw0) - int256(base + hook.owed(eth, 4)));
     }
@@ -276,8 +321,8 @@ contract RestrictedMarketIntegrationV2Test is Test {
         vm.deal(newcomer, 1 ether);
         assertFalse(omr.isRecipient(newcomer));
         vm.prank(newcomer, newcomer);
-        BalanceDelta delta = router.swap{value: 1 ether}(key, SwapParams(true, -1 ether, Q96 / 2),
-            1, 1 ether, uint64(block.timestamp));
+        BalanceDelta delta =
+            router.swap{value: 1 ether}(key, SwapParams(true, -1 ether, Q96 / 2), 1, 1 ether, uint64(block.timestamp));
         assertTrue(omr.isRecipient(newcomer));
         assertEq(omr.balanceOf(newcomer), uint256(int256(delta.amount1())));
         assertGt(revenue.totalOwed(token), 0);

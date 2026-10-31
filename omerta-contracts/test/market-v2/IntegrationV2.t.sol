@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {StabilityV2Fixture} from "./StabilityV2.t.sol";
 import {OmertaStabilityControllerV2 as Controller} from "../../src/market-v2/OmertaStabilityControllerV2.sol";
+import {OmertaReserveFundingV2 as Funding} from "../../src/market-v2/OmertaReserveFundingV2.sol";
 import {OmertaTurfV2} from "../../src/market-v2/OmertaTurfV2.sol";
 import {OmertaTurfFeeBridgeV2} from "../../src/market-v2/OmertaTurfFeeBridgeV2.sol";
 import {OmertaGameSettlementV2} from "../../src/market-v2/OmertaGameSettlementV2.sol";
@@ -98,6 +99,30 @@ contract TurfIntegrationV2Test is StabilityV2Fixture {
         assertEq(credited, actual);
         assertEq(token.balanceOf(address(bridge)), 100 ether);
         _assertFees();
+    }
+
+    function testTurfFundingRejectsControllerRotationBecauseBridgeSourceIsImmutable() public {
+        Funding turfFunding = new Funding(safe, token, TURF);
+        vm.prank(safe);
+        turfFunding.bindController(controller);
+
+        Controller.Config memory c = _config(recipient);
+        c.feeRecipients[6] = address(bridge);
+        c.turfSeasonStart = controller.turfSeasonStart();
+        c.turfSeasonEnd = controller.turfSeasonEnd();
+        Controller candidate = new Controller(c);
+
+        assertEq(address(bridge.source()), address(controller));
+        assertEq(candidate.feeRecipients(6), address(bridge));
+        vm.deal(address(candidate), 1 wei);
+        vm.prank(address(candidate));
+        (bool accepted,) = address(bridge).call{value: 1 wei}("");
+        assertFalse(accepted);
+
+        vm.prank(safe);
+        vm.expectRevert(Funding.InvalidConfiguration.selector);
+        turfFunding.proposeController(candidate, address(candidate).codehash);
+        assertEq(address(turfFunding.pendingController()), address(0));
     }
 
     function testWalletRotationCheckpointsAccruedFeesBeforeChangingTreasury() public {

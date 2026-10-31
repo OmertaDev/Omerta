@@ -4,12 +4,11 @@
 // tools/chain-e2e.js and any viem deploy script.
 //
 // Deps are AD HOC (never project dependencies — the deploy story stays zero-build):
-//   npm i --no-save solc@0.8.26 @openzeppelin/contracts@5.1.0
+//   npm i --no-save solc@0.8.38 @openzeppelin/contracts@5.6.1
 // or point CONTRACT_DEPS at any directory whose node_modules holds them.
 //
-// Settings mirror foundry.toml: solc 0.8.26, optimizer 800 runs. evmVersion is 'shanghai'
-// (not the 0.8.26 default 'cancun') so the bytecode runs on every live dev node — no
-// cancun-only MCOPY; nothing in the suite needs transient storage.
+// Compiler/optimizer follow foundry.toml: solc 0.8.38, optimizer 800 runs.
+// This dev-node fallback retains Shanghai. Canonical release verification uses Foundry's Cancun profiles.
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -23,12 +22,12 @@ const req = createRequire(path.join(depsDir, 'noop.js'));
 
 let solc;
 try { solc = req('solc'); } catch {
-  console.error('solc not found. Run: npm i --no-save solc@0.8.26 @openzeppelin/contracts@5.1.0');
+  console.error('solc not found. Run: npm i --no-save solc@0.8.38 @openzeppelin/contracts@5.6.1');
   console.error('(or set CONTRACT_DEPS to a dir whose node_modules has them)');
   process.exit(1);
 }
-if (!String(solc.version()).includes('0.8.26'))
-  console.warn(`warning: solc ${solc.version()} != 0.8.26 (foundry.toml pin)`);
+if (!String(solc.version()).startsWith('0.8.38+commit.1835d247'))
+  console.warn(`warning: solc ${solc.version()} != 0.8.38+commit.1835d247 (foundry.toml pin)`);
 
 const sources = {};
 for (const f of fs.readdirSync(SRC).filter((x) => x.endsWith('.sol')))

@@ -15,6 +15,7 @@
     --eth:#3a6b5f; --omr:var(--om-color-gold-700); --usd:#4a5d7a;
     --d-vig:#6b4a8f; --d-treasury:#3a6b5f; --d-operations:#8f3a2f; --d-pol:#2f6d55;
     --d-community:var(--om-color-gold-700); --d-desk-buyback:#4a5d7a;
+    --d-wbtc-rewards:var(--gold);
     --shadow:0 1px 0 #fff8, 0 14px 34px -18px #0007;
   }
   @media (prefers-color-scheme: dark){
@@ -169,7 +170,7 @@
     <h1>Where the fees go</h1>
     <p class="sub">Try a fee allocation. Change each source's split, trace its destinations, then export your proposal.</p>
   </header>
-  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The current restricted-manager policy charges a fixed 5% base on buys and sells: 2% developer, 1% RWA, 1% community and 1% POL, with rounding remainder assigned to POL. The Hook adds a sell-pressure surcharge of at most 0.5% without collecting the base twice. The planned genesis pool uses a separate static 0.3% LP fee; its opening buy charges and caps are disabled. Base rates, allocation shares and recipients are fixed for the deployment; local edits cannot become an executable Committee or Safe fee-change proposal. Inventory-bond proceeds, surge receipts and the arbitrage reserve share fund the War Chest; the base POL fee funds Core. ETH and OMR receipts are separate, and each currency row is an example; exact-input fees use actual output and exact-output fees use actual input. Character creation proceeds go 100% to DEV_WALLET. Gameplay fees and withdrawal policy are separate. All edits stay in this browser; they cannot change policy, move money or open extraction. Production trading remains inactive. Read the <a href="/wiki#canonical-market">current market mechanics</a> and <a href="/wiki#chain">production rail status</a>.</div>
+  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The current restricted-manager policy charges a fixed 3.5% base on buys and sells: 1.27% developer, 0.51% RWA, 0.76% community and 0.96% POL, with rounding remainder assigned to POL. A separate 0.5% allocation funds WBTC holder rewards, making the ordinary protocol charge 4%. The Hook adds a sell-pressure surcharge of at most 0.5%, for a maximum protocol charge of 4.5%, without collecting the base or rewards twice. LP fees and network gas are additional. The planned genesis pool uses a separate static 0.3% LP fee; its opening buy charges and caps are disabled. Base rates, allocation shares and recipients are fixed for the deployment; local edits cannot become an executable Committee or Safe fee-change proposal. Inventory-bond proceeds, surge receipts and the arbitrage reserve share fund the War Chest; the base POL fee funds Core. ETH and OMR receipts are separate, and each currency row is an example; exact-input fees use actual output and exact-output fees use actual input. Character creation proceeds go 100% to DEV_WALLET. Gameplay fees and withdrawal policy are separate. All edits stay in this browser; they cannot change policy, move money or open extraction. Production trading remains inactive. Read the <a href="/wiki#canonical-market">current market mechanics</a> and <a href="/wiki#chain">production rail status</a>.</div>
 
   <div class="scenario-notice"><b>Approved genesis terms, subject to deployment and launch verification.</b> One five-day ETH/OMR auction admits paid or free-credit character NFT holders without individual allocation caps. The 100M allocation is 40M offered, 20M for initial liquidity and 40M held at the Safe until bond activation; unsold sale tokens are tracked separately. The successful-raise minimum is 10 ETH. Half of accepted ETH funds liquidity at the funded asset ratio, independently of the last auction price; all remaining accepted ETH credits the Safe’s Family Yield treasury. Successful-auction filled tokens are claimable at closure after bid exit, without waiting for LP migration; completed purchases are final and unused ETH is returned. Read <a href="/wiki#genesis">the full terms and native-clock timing</a>.</div>
 
@@ -230,7 +231,7 @@
 /* Illustrative current-market destinations, with separate gameplay fee policies from
    deploy/fee-splits.json. Market authority is defined by src/market-v2 and docs/market/DESIGN.md.
    The editor changes a local illustration, not the immutable on-chain fee policy.
-   Base revenue uses exact 200:100:100:100 shares, with POL receiving rounding remainder.
+   Ordinary trading revenue uses 127:51:76:96:50 developer/RWA/community/POL/WBTC shares; base rounding remainder goes to POL.
    Existing source IDs and the export schema remain compatible with saved scenarios. */
 const LIVE = [
   {id:"mint",name:"Character creation mint",currency:"eth",splits:[
@@ -247,11 +248,12 @@ const LIVE = [
     {dest:"operations",bps:5000,lands:"dev wallet (on-chain remainder)",implicit:true}]},
   {id:"bond",name:"Inventory bonds — ETH for prefunded OMR",currency:"eth",splits:[
     {dest:"war-chest",bps:10000,lands:"Fixed proceeds recipient → War Chest funding adapter"}]},
-  {id:"tax",name:"Fixed canonical base trade fee — 5% of settled fee leg",currency:"eth",splits:[
-    {dest:"operations",bps:4000,lands:"Fixed developer allocation: 2% of settled fee base to A87"},
-    {dest:"treasury",bps:2000,lands:"Fixed RWA allocation: 1% of settled fee base"},
-    {dest:"community",bps:2000,lands:"Fixed community allocation: 1% of settled fee base"},
-    {dest:"pol",bps:2000,lands:"Core funding: 1% of settled fee base, including rounding remainder"}]},
+  {id:"tax",name:"Fixed canonical trading fee — 4% of settled fee leg",currency:"eth",splits:[
+    {dest:"operations",bps:3175,lands:"Fixed developer allocation: 1.27% of settled fee base to A87"},
+    {dest:"treasury",bps:1275,lands:"Fixed RWA allocation: 0.51% of settled fee base"},
+    {dest:"community",bps:1900,lands:"Fixed community allocation: 0.76% of settled fee base"},
+    {dest:"pol",bps:2400,lands:"Core funding: 0.96% of settled fee base, including base rounding remainder"},
+    {dest:"wbtc-rewards",bps:1250,lands:"Separate 0.5% allocation → funded WBTC holder rewards"}]},
   {id:"surge",name:"Canonical sell-pressure surcharge — 0–0.5% of settled fee leg",currency:"eth",splits:[
     {dest:"war-chest",bps:10000,lands:"Fixed stability recipient → War Chest funding adapter"}]},
   {id:"opening",name:"Hypothetical opening buy charge — disabled at launch",currency:"omr",splits:[
@@ -283,6 +285,7 @@ const DESTS = [
   {id:"turf-families",label:"Turf family fee entitlements"},
   {id:"operations",label:"Operations"},
   {id:"community",label:"Community (family yield pool)"},
+  {id:"wbtc-rewards",label:"WBTC holder rewards (funded claims)"},
   {id:"desk-buyback",label:"Buyback budget"},
 ];
 const destColor = d => DESTS.some(x=>x.id===d) ? `var(--d-${d})` : 'var(--gold)';
@@ -295,7 +298,7 @@ const destLabel = d => (DESTS.find(x=>x.id===d)||{}).label || d;
    load the NEW seed and FLAG it (never silently drop edits — the status pill says the baseline moved
    and to Import to recover). An Import or Reset re-saves under the current version, so a chosen
    variant persists. */
-const SEED_VERSION = 7;
+const SEED_VERSION = 8;
 let staleLocal = false;
 let localSaveFailed = false;
 let hasLocalEdits = false;

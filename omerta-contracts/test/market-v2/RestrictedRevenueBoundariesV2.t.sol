@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {RestrictedPoolManagerV2Test, OmertaPoolManagerV2} from "./RestrictedPoolManagerV2.t.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
