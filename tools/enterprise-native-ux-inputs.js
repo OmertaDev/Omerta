@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "7df5dad925f3c32f8a8d60498add8eadbcae89b7",
+  "authoredRevision": "c24740f54fc3ca3e35dca18516d3d1b2ce6556a1",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -20,8 +20,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": ".github/workflows/forge.yml",
       "mode": "100644",
-      "blob": "aa11a753aa6e7c48266161e8a955ef1a514c6beb",
-      "sha256": "d0b0a2b258789887a3224d53c5bd1185cc11a5fefd74c13780fe4bef59bcf73f"
+      "blob": "c5c6256b33afe78b04787aef786d9cdff527e28e",
+      "sha256": "55c3a480484f10d97ecaeccf09a58499cc48f550550cfbea308f1ef79560a7dd"
     },
     {
       "file": ".github/workflows/knowledge-refresh.yml",
@@ -10431,8 +10431,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": ".github/workflows/forge.yml",
         "mode": "100644",
-        "blob": "aa11a753aa6e7c48266161e8a955ef1a514c6beb",
-        "sha256": "d0b0a2b258789887a3224d53c5bd1185cc11a5fefd74c13780fe4bef59bcf73f"
+        "blob": "c5c6256b33afe78b04787aef786d9cdff527e28e",
+        "sha256": "55c3a480484f10d97ecaeccf09a58499cc48f550550cfbea308f1ef79560a7dd"
       }
     },
     {
@@ -12460,4 +12460,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "98977669654740451e30ba9f854cd0222546312659adef29fd5095ef01253f0c";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "fa84c049fcf5842c3ada79957b1adf8b1c30e1c82d5aec470a9e0c7dd7400ff3";
