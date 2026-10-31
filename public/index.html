@@ -1273,6 +1273,7 @@
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261016-refinements-1">
+<link rel="stylesheet" href="/business-control-desk.css?v=20261030-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
 .district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}
@@ -2512,6 +2513,7 @@
   // drawn UI icons (the sprite in <body>) — nav chrome only; toasts/options stay text (textContent)
   const ic = (n) => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   let me = null, rules = null, ws = null, session = null;
+  let _businessDesk = null, _businessDeskEpoch = 0;
   let streetActionReadyAt = 0;
   let feedbackUX = null;
   const uxModules = [];
@@ -4952,6 +4954,7 @@
         $('#action-readiness')?.classList.add('hidden');
       }
       if (['session', 'character', 'player'].includes(kind)) destroyFieldwork();
+      if (['session', 'character'].includes(kind)) destroyBusinessDesk();
       worldChoiceConfirmation?.();
       worldProjection = null; worldFeedback = null;
       worldStatus = 'Refreshing your street…';
@@ -6228,7 +6231,7 @@
     landingMenu.querySelector('summary').focus();
   });
   function show(id) {
-    if (id !== 'screen-main') { destroyFieldwork(); clearScopedOperations(); }
+    if (id !== 'screen-main') { destroyFieldwork(); destroyBusinessDesk(); clearScopedOperations(); }
     for (const s of ['screen-auth', 'screen-create', 'screen-main', 'screen-down']) $('#' + s).classList.add('hidden');
     $('#' + id).classList.remove('hidden');
     if (id === 'screen-auth') { mountHeroMotion(); deferLandingArt(); }
@@ -7488,9 +7491,9 @@
 
   // ── tabs ──
   // tab labels come from the language packs (T falls back to English if a pack misses a key)
-  const TABS = Object.fromEntries(['start', 'profile', 'streets', 'pvp', 'kitchen', 'family', 'map', 'deeds', 'crew', 'discover', 'market', 'garage', 'empire',
+  const TABS = Object.fromEntries(['start', 'profile', 'streets', 'pvp', 'kitchen', 'family', 'map', 'deeds', 'crew', 'discover', 'market', 'garage', 'empire', 'business',
     'speakeasy', 'boxing', 'races', 'stable', 'scores', 'loans', 'portfolio', 'estate', 'life', 'pen', 'law',
-    'wire', 'store', 'city', 'den', 'port', 'desk', 'world', 'fieldwork', 'deck'].map((id) => [id, id === 'fieldwork' ? 'Quest Journal' : T('t_' + id)]));
+    'wire', 'store', 'city', 'den', 'port', 'desk', 'world', 'fieldwork', 'deck'].map((id) => [id, id === 'fieldwork' ? 'Quest Journal' : id === 'business' ? 'Business Desk' : T('t_' + id)]));
   // Player language, not implementation taxonomy. Quick jump accepts the job somebody has in mind.
   const TAB_SEARCH = {
     start: ['now', 'today', 'next move', 'home', 'missions'],
@@ -7501,6 +7504,7 @@
     city: ['city', 'the city', 'events', 'travel', 'district', 'prices', 'arbitrage', 'live players'],
     kitchen: ['cook', 'deal', 'drugs', 'crew wages', 'product'],
     empire: ['business', 'racket', 'collect income', 'front', 'passive income'],
+    business: ['business desk', 'company', 'production', 'manufacturing', 'orders', 'courier', 'consignment', 'cash flow', 'reinvest'],
     scores: ['heist', 'big score', 'crew job', 'contract'],
     market: ['buy order', 'sell order', 'black market', 'trade gear'],
     port: ['boat', 'convoy', 'freight', 'smuggle', 'shipment'],
@@ -7532,7 +7536,7 @@
   const TAB_GROUPS = [
     ['', ['start']],
     ['Streets', ['streets', 'garage', 'life', 'city']],
-    ['Earners', ['kitchen', 'empire', 'scores', 'market', 'port']],
+    ['Earners', ['kitchen', 'empire', 'business', 'scores', 'market', 'port']],
     ['Vice', ['den', 'speakeasy', 'boxing', 'races', 'stable']],
     ['Blood', ['pvp', 'loans', 'law', 'pen', 'wire']],
     ['Family', ['family', 'world', 'map', 'deeds', 'crew', 'discover', 'profile']],
@@ -7546,7 +7550,7 @@
   const TAB_ART = {
     start: 'interior-start', profile: 'pill-legacy', streets: 'interior-streets', garage: 'interior-garage',
     life: 'interior-life', city: 'landing-break', kitchen: 'interior-kitchen',
-    empire: 'interior-empire', scores: 'interior-scores', market: 'interior-market',
+    empire: 'interior-empire', business: 'interior-empire', scores: 'interior-scores', market: 'interior-market',
     port: 'interior-port', den: 'interior-den', speakeasy: 'interior-speakeasy',
     boxing: 'interior-gym', races: 'interior-races', stable: 'interior-stable',
     pvp: 'interior-pvp', loans: 'interior-loans', law: 'interior-law', pen: 'interior-pen',
@@ -7691,7 +7695,7 @@
   // declarations are hoisted, so this map can name them here.
   const RENDERERS = { start: renderStart, profile: renderProfile, streets: renderStreets, city: renderCity, den: renderDen,
     kitchen: renderKitchen, family: renderFamily, market: renderMarket, pvp: renderPvp, law: renderLaw,
-    garage: renderGarage, empire: renderEmpire, speakeasy: renderSpeakeasy, boxing: renderBoxing,
+    garage: renderGarage, empire: renderEmpire, business: renderBusiness, speakeasy: renderSpeakeasy, boxing: renderBoxing,
     scores: renderScores, loans: renderLoans, portfolio: renderPortfolio, estate: renderEstate,
     life: renderLife, pen: renderPen, wire: renderWire, store: renderStore, races: renderRaces, port: renderPort, stable: renderStable,
     crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk, world: renderWorld, fieldwork: renderFieldwork };
@@ -7705,6 +7709,7 @@
     city: 'The living city: today\'s events, the weather that moves goods prices (the arbitrage map), rival NPC cartels to raid, and the monument the whole server is building. Check the forecast — plan around it.',
     kitchen: 'The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.',
     empire: 'Legit fronts that farm cash while you\'re away. They cost upkeep, rivals can shake them down — and if you\'re killed, your killer can take one. Passive is not the same as safe.',
+    business: 'Run your company with real inventory, production, deliveries and customer sales. Cash flow records game-cash movements, including refundable escrow and transfers; it is not a profit forecast.',
     scores: 'The big jobs: your solo Score, crew heists (crew up with real players — or rat), and smuggling convoys anyone on the road can ambush. Start with the solo Score, crew up at level 8.',
     market: 'Player-to-player trade: auction cars, buy and sell goods (pickup is district-pinned — you go to the dock), post buy orders. Prices are set by people, so the deals are real.',
     port: 'Contraband by sea: buy a boat, run a route, slip the Coast Guard. Faster boats and escorts beat interdiction; repeat the same lane and they learn it. Sell the boat back anytime.',
@@ -9108,6 +9113,38 @@
     const rendered = setTab(tab);
     if (gym) Promise.resolve(rendered).then(() => { if (currentTab === tab) spotlight('[data-sect="streets-train"]'); });
     $('#tab-' + tab)?.focus({ preventScroll: true });
+  }
+
+  function businessIdentity() { return me?.id ? [session?.accountId || "", me.id, me.generation].join(":") : ""; }
+  function destroyBusinessDesk() { _businessDeskEpoch++; _businessDesk?.destroy(); _businessDesk = null; }
+  async function renderBusiness() {
+    const host = $("#tab-business");
+    if (!host || currentTab !== "business") return;
+    const identity = businessIdentity(), credential = token;
+    const current = () => !!identity && identity === businessIdentity() && credential === token;
+    const guarded = (options, mutation = false) => ({ ...options,
+      isCurrent: () => current() && (!options.isCurrent || options.isCurrent()),
+      ...(mutation ? { beforeDispatch: () => current() && currentTab === "business" && (!options.beforeDispatch || options.beforeDispatch()) } : {}),
+    });
+    const options = { character: { ...me }, identity,
+      api: (method, path, body, request = {}) => api(method, path, body, guarded(request)),
+      act: (method, path, body, request = {}) => act(method, path, body, guarded(request, true)),
+      refresh: () => current() ? refresh() : Promise.resolve({ ignored: true, code: 499, body: {} }),
+      onNavigate: (tab, context) => { if (current()) navigateGameTab(tab, context); },
+      isActive: () => current() && currentTab === "business" && !$("#screen-main").classList.contains("hidden"),
+    };
+    if (_businessDesk) { _businessDesk.update(options); return; }
+    const epoch = ++_businessDeskEpoch;
+    host.innerHTML = '<div class="card" role="status">Opening your business desk…</div>';
+    try {
+      await loadGameScript("/business-control-desk.js?v=20261030-1", () => !!window.OmertaBusinessDesk);
+      if (epoch !== _businessDeskEpoch || !current() || currentTab !== "business") return;
+      _businessDesk = window.OmertaBusinessDesk.mount(host, options);
+    } catch {
+      if (epoch !== _businessDeskEpoch || !current() || currentTab !== "business") return;
+      host.innerHTML = '<div class="card"><p role="status">The business desk could not open. Your other game screens remain available.</p><button class="act" id="business-retry-open">Try again</button></div>';
+      $("#business-retry-open").onclick = renderBusiness;
+    }
   }
 
   async function renderMap() {
