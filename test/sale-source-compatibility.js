@@ -8,6 +8,7 @@ import { uxHistoricalInput, qualifyUxSource } from '../tools/ux-source-compatibi
 import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';
 import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
+import { ageEligibilityHistoricalInput } from '../tools/age-eligibility-source-transfer.js';
 import { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -31,8 +32,8 @@ const inverseHunks = diff => {
 let positives = 0, refusals = 0, hunks = 0;
 for (const row of pin.files) {
   const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
-  const physical = economySocialProofCutoverHistoricalInput(row.file, economyMonitorHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')));
-  const committed = economySocialProofCutoverHistoricalInput(row.file, economyMonitorHistoricalInput(row.file, git('show', 'HEAD:' + row.file)));
+  const physical = economySocialProofCutoverHistoricalInput(row.file, economyMonitorHistoricalInput(row.file, ageEligibilityHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))));
+  const committed = economySocialProofCutoverHistoricalInput(row.file, economyMonitorHistoricalInput(row.file, ageEligibilityHistoricalInput(row.file, git('show', 'HEAD:' + row.file))));
   const stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');
@@ -92,6 +93,8 @@ let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatib
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
   ["import { economyMonitorHistoricalInput } from './economy-monitor-source-transfer.js';\n", 1],
   ['  input = economyMonitorHistoricalInput(file, input);\n', 2],
+  ["import { ageEligibilityHistoricalInput } from './age-eligibility-source-transfer.js';\n", 1],
+  ['  input = ageEligibilityHistoricalInput(file, input);\n', 2],
   ["import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';\n", 1],
   ['  input = economyBankInterestHardeningHistoricalInput(file, input);\n', 2],
   ["import { economySocialProofCutoverHistoricalInput } from './economy-social-proof-cutover-source-transfer.js';\n", 1],

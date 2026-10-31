@@ -16,7 +16,9 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  const pin = ENTERPRISE_NATIVE_UX_INPUTS;
  const economySupport = ['.github/workflows/economy-hardening.yml',
   'tools/generate-economy-monitor-source-transfer.js', 'test/economy-monitor-source-compatibility.js',
-  'test/economy-monitor.js', 'test/economy-composition.js', 'test/economy-composition-restart.js'];
+  'test/economy-monitor.js', 'test/economy-composition.js', 'test/economy-composition-restart.js',
+  'tools/generate-age-eligibility-source-transfer.js', 'test/age-eligibility-source-compatibility.js',
+  'test/age.js', 'test/legal-security.js'];
  for (const file of economySupport)
   assert(ENTERPRISE_UX_SUPPORT.includes(file), 'Current economy monitor and composition execution inputs stay in the native closure: ' + file);
  const fixturePin = (file, blobDigit, shaDigit, mode = '100644') => Object.freeze({ file, mode, blob: blobDigit.repeat(40), sha256: shaDigit.repeat(64) });
@@ -50,12 +52,13 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  if (pin.status === 'UNSEALED') reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy));
  else {
   assert.equal(assertEnterpriseUxInputDefinition(legacyFiles, legacy), pin);
-  for (const file of [...economySupport, 'src/economy-monitor.js', 'tools/economy-monitor-source-transfer.js'])
+  for (const file of [...economySupport, 'src/economy-monitor.js', 'tools/economy-monitor-source-transfer.js',
+   'tools/age-eligibility-source-transfer.js', 'tools/walletconnect-privacy.mjs'])
    assert(pin.files.some(row => row.file === file), 'Sealed actual economy monitoring/composition input: ' + file);
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.files.length, 1737); assert.equal(pin.replacements.length, 86); assert.equal(pin.legacyAdditionReplacements.length, 4); assert.equal(pin.additions.length, 94);
+  assert.equal(pin.files.length, 1743); assert.equal(pin.replacements.length, 87); assert.equal(pin.legacyAdditionReplacements.length, 4); assert.equal(pin.additions.length, 100);
   const requiredLegacyReplacements = ['src/accountdaily.js', 'src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
   assert.deepEqual(pin.legacyAdditionReplacements.map(row => row.file), requiredLegacyReplacements);
   const tree = revision => new Map(git('ls-tree', '-r', '-z', revision).toString().split('\0').filter(Boolean).map(line => { const index = line.indexOf('\t'), [mode, type, blob] = line.slice(0, index).split(' '); return [line.slice(index + 1), { mode, type, blob }]; }));
