@@ -3,6 +3,10 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import {
+  AGE_POLICY_SERVER_BINDING, AGE_POLICY_SERVER_BINDING_SHA256,
+  assertAgePolicyServerSourceTransfer, agePolicyServerHistoricalInput,
+} from '../tools/age-policy-source-transfer.js';
+import {
   MARKET_FEE_COPY_BASE_REVISION, MARKET_FEE_COPY_DOMAINS, assertMarketFeeCopySourceTransfer,
   marketFeeCopyHistoricalInput,
 } from '../tools/market-fee-copy-source-transfer.js';
@@ -1306,3 +1310,68 @@ for (const file of ['__proto__', 'constructor', 'toString', 'src/unknown.js']) {
 assert.equal(feeCopyPositives, 20); assert.equal(feeCopyRefusals, 105); assert.equal(feeCopyHunks, 14);
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
 console.log(`Market fee-copy source projection PASS: ${feeCopyPositives} positives, ${feeCopyRefusals} refusals, ${feeCopyHunks} exact inverse hunks`);
+
+// Exact 21+ server source successor. This is historical source projection, not runtime acceptance.
+const agePin = AGE_POLICY_SERVER_BINDING;
+assert.equal(agePin.file, 'src/server.js');
+assert.equal(agePin.sourceRevision, 'f4474d358e8c9feddcd01deaadf77c1a67ace9cb');
+assert.equal(agePin.baselineRevision, '019be25da3396d143b09a5b7ded945334a1337c8');
+assert.equal(agePin.sourceParentRevision, 'a24df18ea1a0b57f25df942675dd9fef7415f275');
+assert.equal(hash(JSON.stringify(agePin)), AGE_POLICY_SERVER_BINDING_SHA256);
+assert(Object.isFrozen(agePin) && Object.isFrozen(agePin.inverses) && agePin.inverses.every(Object.isFrozen));
+const ageCurrent = git('show', agePin.sourceRevision + ':' + agePin.file);
+const ageBaseline = git('show', agePin.baselineRevision + ':' + agePin.file);
+assert.equal(git('show', agePin.sourceParentRevision + ':' + agePin.file), ageBaseline);
+assert.equal(hash(ageCurrent), agePin.currentSha256); assert.equal(blob(ageCurrent), agePin.currentBlob);
+assert.equal(hash(ageBaseline), agePin.baselineSha256); assert.equal(blob(ageBaseline), agePin.baselineBlob);
+assert.equal(Buffer.byteLength(ageCurrent), agePin.currentBytes);
+assert.equal(Buffer.byteLength(ageBaseline), agePin.baselineBytes);
+assert.equal(agePin.mode, '100644'); assert.equal(agePin.contextLines, 3);
+assert.equal(git('ls-tree', agePin.sourceRevision, '--', agePin.file).trim(),
+  '100644 blob ' + agePin.currentBlob + '\t' + agePin.file);
+assert.equal(git('ls-tree', agePin.baselineRevision, '--', agePin.file).trim(),
+  '100644 blob ' + agePin.baselineBlob + '\t' + agePin.file);
+assert.deepEqual(agePin.inverses, inverseHunks(agePin.file, agePin.baselineRevision, agePin.sourceRevision));
+assert.equal(lf(fs.readFileSync(agePin.file, 'utf8')), ageCurrent, 'Actual runtime retains the complete 21+ server source');
+let agePositives = 0, ageRefusals = 0;
+for (const input of [ageCurrent, ageCurrent.replaceAll('\n', '\r\n'),
+  Buffer.from(ageCurrent), Buffer.from(ageCurrent.replaceAll('\n', '\r\n'))]) {
+  const transfer = assertAgePolicyServerSourceTransfer(agePin.file, input);
+  const expected = Buffer.isBuffer(input) ? Buffer.from(ageBaseline) : ageBaseline;
+  assert.equal(transfer.baselineText, ageBaseline); assert.equal(transfer.inverseChunks, 2);
+  assert.equal(transfer.sourceOnly, true); assert.equal(transfer.runtime, false); assert.equal(transfer.native, false);
+  assert.deepEqual(agePolicyServerHistoricalInput(agePin.file, input), expected);
+  assert.strictEqual(agePolicyServerHistoricalInput(agePin.file, expected), expected);
+  assert.deepEqual(economySocialProofCutoverHistoricalInput(agePin.file, input), expected);
+  assert.deepEqual(economyUxMergeCandidateHistoricalInput(agePin.file, input),
+    economyUxMergeCandidateHistoricalInput(agePin.file, expected));
+  assert.deepEqual(economyUxMergeMainHistoricalInput(agePin.file, input),
+    economyUxMergeMainHistoricalInput(agePin.file, expected));
+  agePositives++;
+}
+for (const changed of [ageCurrent + '\n// unrelated source edit\n', ageCurrent.slice(1), ageCurrent.slice(0, -1),
+  '\ufeff' + ageCurrent, ageCurrent + '\0', ageCurrent.replace('\n', '\r\n'),
+  ageCurrent.replace('\n', '\r'), ageBaseline, null]) {
+  assert.throws(() => assertAgePolicyServerSourceTransfer(agePin.file, changed));
+  assert.strictEqual(agePolicyServerHistoricalInput(agePin.file, changed), changed); ageRefusals++;
+}
+const ageInvalidUtf8 = Buffer.from([0xc3, 0x28]);
+assert.throws(() => assertAgePolicyServerSourceTransfer(agePin.file, ageInvalidUtf8));
+assert.throws(() => agePolicyServerHistoricalInput(agePin.file, ageInvalidUtf8)); ageRefusals++;
+for (const inverse of agePin.inverses) {
+  assert.equal(ageCurrent.split(inverse.current).length - 1, 1);
+  for (const changed of [ageCurrent.replace(inverse.current, ''),
+    ageCurrent.replace(inverse.current, () => inverse.current + inverse.current),
+    ageCurrent.replace(inverse.current, () => inverse.baseline),
+    ageCurrent.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+    assert.throws(() => assertAgePolicyServerSourceTransfer(agePin.file, changed));
+    assert.strictEqual(agePolicyServerHistoricalInput(agePin.file, changed), changed); ageRefusals++;
+  }
+}
+for (const file of ['__proto__', 'constructor', 'toString', 'src/age.js', 'src/legal.js', 'public/index.html']) {
+  assert.throws(() => assertAgePolicyServerSourceTransfer(file, ageCurrent));
+  assert.strictEqual(agePolicyServerHistoricalInput(file, ageCurrent), ageCurrent);
+  assert.strictEqual(agePolicyServerHistoricalInput(file, ageInvalidUtf8), ageInvalidUtf8); ageRefusals++;
+}
+assert.equal(agePositives, 4); assert.equal(ageRefusals, 24);
+console.log('Age-policy exact server source projection PASS: 4 positives, 24 refusals, 2 inverse hunks; actual 21+ source retained');
