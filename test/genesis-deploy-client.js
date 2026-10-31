@@ -15,8 +15,9 @@ const hash = n => `0x${n.toString(16).padStart(64, '0')}`;
 const dependencyAddresses = {
   omr: '0x2e82f8c1cfd5172612b3af56088d7d68d920545d', characterNft: '0x669c8878a2db3c3d0f7a447f398daa3178a0200b',
   poolManager: '0x8366a39cc670b4001a1121b8f6a443a643e40951', positionManager: '0x58daec3116aae6d93017baaea7749052e8a04fa7',
-  permit2: '0x000000000022d473030f116ddee9f6b43ac78ba3', create2Factory: FACTORY,
+  permit2: '0x000000000022d473030f116ddee9f6b43ac78ba3', create2Factory: FACTORY, btcRewards: addr(250),
 };
+const fixtureRewardsApproval = Object.freeze({ address: dependencyAddresses.btcRewards, sha256: runtimeSha });
 const packetTemplate = {
   chainId: 4663, signingReady: true, validUntil: '2026-10-08T00:00:00Z', deploymentDeadline: '2026-10-08T00:00:00Z',
   launchClock: { mode: 'arbsys', startBlock: '10000', endBlock: '4000000', claimBlock: '4000000' },
@@ -24,7 +25,7 @@ const packetTemplate = {
     saleTokenAmountWei: '40000000000000000000000000', lpTokenAmountWei: '20000000000000000000000000',
     bondTokenAmountWei: '40000000000000000000000000', minimumRaiseWei: '10000000000000000000', lpProceedsBps: 5000,
     claimsAtAuctionEnd: true, familySafe: SAFE, liquidityOwner: SAFE, unsoldRecipient: SAFE, bondReserveCustodian: SAFE },
-    hookPolicy: { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100, recipients: [] } },
+    hookPolicy: { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96, rewardsRecipient: dependencyAddresses.btcRewards, recipients: [] } },
   deployments: roles.map((role, i) => ({ role, chainId: 4663, from: DEPLOYER, nonce: String(i), value: '0x0',
     predicted: addr(100 + i), data: i === 3 ? '0x' + '00'.repeat(32) + '6000' : '0x6000', ...(i === 3 ? { to: FACTORY } : {}) })),
   runtimeChecks: Object.fromEntries(roles.map((role, i) => [role, { address: addr(100 + i), sha256: runtimeSha }])),
@@ -42,10 +43,10 @@ function makePacket(start=27n) {
     '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments[0].predicted, p.deployments[1].predicted];
   const args=encodeAbiParameters([{type:'address'},{type:'address'},{type:'address'},{type:'uint24'},{type:'int24'},
     {type:'address[5]'},{type:'tuple',components:[{type:'uint16'},{type:'uint16'},{type:'uint128'}]},
-    {type:'uint24'},{type:'uint32'}],
+    {type:'uint24'},{type:'uint32'},{type:'address'}],
     [dependencyAddresses.poolManager,dependencyAddresses.omr,p.deployments[2].predicted,3000,60,
       ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced',SAFE,'0x785be68e426a382c52004e04340897f834f2fcaf',p.deployments[0].predicted,p.deployments[1].predicted],
-      [0,0,0n],100,3600]);
+      [0,0,0n],100,3600,dependencyAddresses.btcRewards]);
   const init=TRUSTED_HOOK.creationBytecode+args.slice(2),initHash=keccak256(init);
   for(let n=0n;n<1000000n;n++){
     const salt='0x'+n.toString(16).padStart(64,'0');const candidate=getCreate2Address({from:FACTORY,salt,bytecodeHash:initHash}).toLowerCase();
@@ -66,7 +67,7 @@ function makePacket(start=27n) {
     dependencyAddresses.omr,p.deployments[3].predicted,3000,60,BigInt(p.finalManifest.policy.lpTokenAmountWei),SAFE,dependencyAddresses.characterNft]);
   const supply=BigInt(p.finalManifest.policy.saleTokenAmountWei),minimum=BigInt(p.finalManifest.policy.minimumRaiseWei);
   const ceilFloor=(minimum*(1n<<96n)+supply-1n)/supply,tick=(ceilFloor+99n)/100n;
-  p.deployments[4].data=build('OmertaGuardedAuction',[dependencyAddresses.omr,supply,
+  p.deployments[4].data=build('OmertaCharacterGuardedAuction',[dependencyAddresses.omr,supply,
     {currency:addr(0),tokensRecipient:SAFE,fundsRecipient:p.deployments[2].predicted,startBlock:BigInt(p.launchClock.startBlock),endBlock:BigInt(p.launchClock.endBlock),
       claimBlock:BigInt(p.launchClock.claimBlock),tickSpacing:tick,validationHook:addr(0),floorPrice:tick*100n,requiredCurrencyRaised:minimum,auctionStepsData:schedule.auctionStepsData},
     p.deployments[2].predicted,dependencyAddresses.characterNft]);
@@ -104,8 +105,9 @@ function fixture({ storage = new Storage(), locks = new Locks(), clock = () => n
       if (params[0].to.toLowerCase() === dependencyAddresses.poolManager) {
         if (state.standardManager) throw Error('unknown selector');
         const words = {
-          'revenuePolicyId()': state.badManagerPolicy ? hash(777) : keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')),
-          'TRADE_FEE_BPS()': '0x' + BigInt(state.badManagerFee ? 501 : 500).toString(16).padStart(64, '0'),
+          'revenuePolicyId()': state.badManagerPolicy ? hash(777) : keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS')),
+          'TRADE_FEE_BPS()': '0x' + BigInt(state.badManagerFee ? 401 : 400).toString(16).padStart(64, '0'),
+          'rewardsRecipient()': '0x' + (state.badRewardsRecipient ? addr(777) : dependencyAddresses.btcRewards).slice(2).padStart(64, '0'),
           'omr()': '0x' + (state.badManagerOmr ? addr(777) : dependencyAddresses.omr).slice(2).padStart(64, '0'),
           ...Object.fromEntries(['developerRecipient()', 'rwaRecipient()', 'communityRecipient()', 'polRecipient()']
             .map((signature, i) => [signature, '0x' + (state.badManagerRecipient ? addr(777) : packet.finalManifest.hookPolicy.recipients[i]).slice(2).padStart(64, '0')])),
@@ -142,10 +144,12 @@ function fixture({ storage = new Storage(), locks = new Locks(), clock = () => n
     if (method === 'eth_getTransactionReceipt') { state.receiptRead++; return state.receipts.get(params[0]) || null; }
     throw Error(`unexpected method ${method}`);
   } };
-  const client = new GenesisDeploymentClient({ provider, storage, locks, cryptoApi: webcrypto, now: clock, readTimeoutMs: 200, confirm });
+  const client = new GenesisDeploymentClient({ provider, storage, locks, cryptoApi: webcrypto, now: clock, readTimeoutMs: 200, confirm, approvedRewards: fixtureRewardsApproval });
   return { client, state, provider, storage, locks };
 }
 const [raw, digest] = await encoded();
+await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto }), /WBTC rewards vault must be approved/);
+await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto, approvedRewards: { ...fixtureRewardsApproval, sha256: '11'.repeat(32) } }), /rewards vault runtime/);
 const load = async f => f.client.load(raw, digest);
 let f = fixture(); await load(f);
 assert.ok(!f.state.requests.some(r => r.method === 'eth_sendTransaction'), 'loading never sends');
@@ -168,14 +172,16 @@ for (const change of [p => { p.signingReady = false; }, p => { p.chainId = 1; },
   p => { p.internalValidatorApprovedSupply = '1'; }, p => { p.internalScheduleRuntime = '0x006001'; },
   p => { delete p.finalManifest.hookPolicy; }, p => { p.finalManifest.hookPolicy.developerBps = 201; },
   p => { p.finalManifest.hookPolicy.baseTradeBps = 900; }, p => { p.finalManifest.hookPolicy.maxSurgeBps = 51; },
+  p => { p.finalManifest.hookPolicy.rewardsRecipient = addr(2); },
+  p => { p.dependencyChecks.find(pin => pin.name === 'btcRewards').address = addr(2); },
   p => { p.finalManifest.hookPolicy.recipients[0] = addr(2); }, p => { p.finalManifest.hookPolicy.recipients[4] = addr(2); },
   p => { p.finalManifest.hookPolicy.governanceSafe = SAFE; },
   p => { p.internalValidatorAddress = dependencyAddresses.omr; p.auxiliaryRuntimeChecks[0].address = dependencyAddresses.omr; },
   p => { p.validUntil = '2026-10-01T00:00:00Z'; }, p => { p.launchClock.claimBlock = '4000001'; }]) {
   const p = structuredClone(packet); change(p); const [r, d] = await encoded(p);
-  await assert.rejects(() => verifyDeploymentPacket(r, d, { now, cryptoApi: webcrypto }));
+  await assert.rejects(() => verifyDeploymentPacket(r, d, { now, cryptoApi: webcrypto, approvedRewards: fixtureRewardsApproval }));
 }
-await assert.rejects(() => verifyDeploymentPacket(raw, '00'.repeat(32), { now, cryptoApi: webcrypto }), /SHA-256/);
+await assert.rejects(() => verifyDeploymentPacket(raw, '00'.repeat(32), { now, cryptoApi: webcrypto, approvedRewards: fixtureRewardsApproval }), /SHA-256/);
 for (const change of [s => { s.nonce = 1n; }, s => { s.pendingNonce = 1n; }, s => { s.chain = '0x1'; },
   s => { s.account = addr(2); }, s => { s.codes.set(dependencyAddresses.omr, '0x6001'); },
   s => { s.codes.set(packet.deployments[0].predicted, code); }]) {
@@ -333,7 +339,7 @@ for (const change of [
   p => replaceWord(p, 2, addr(777).slice(2)), p => replaceWord(p, 5, addr(777).slice(2)),
   p => replaceWord(p, 6, addr(777).slice(2)), p => replaceWord(p, 7, addr(777).slice(2)),
   p => replaceWord(p, 3, '1f4'), p => replaceWord(p, 4, '1'), p => replaceWord(p, 10, '1'),
-  p => replaceWord(p, 13, '1'), p => replaceWord(p, 14, '1'),
+  p => replaceWord(p, 13, '1'), p => replaceWord(p, 14, '1'), p => replaceWord(p, 15, addr(777).slice(2)),
   p => { p.deployments[3].data = '0x' + 'ab'.repeat(32) + p.deployments[3].data.slice(66); },
   p => { p.deployments[3].predicted = addr(777); p.runtimeChecks.hook.address = addr(777); },
   p => { p.deployments[3].data = p.deployments[3].data.slice(0, 66) + '00' + p.deployments[3].data.slice(68); },
@@ -345,7 +351,7 @@ for (const change of [
   await assert.rejects(() => f.client.load(forgedRaw, forgedHash));
   assert.equal(f.state.requests.length, 0, 'self-hashed forged hook data is rejected before any wallet request');
 }
-console.log('Trusted local hook bytecode/15 canonical constructor words/static LP policy/CREATE and CREATE2 bindings defeat self-hashed forged payloads before wallet access PASS');
+console.log('Trusted local hook bytecode/16 canonical constructor words/static LP policy/CREATE and CREATE2 bindings defeat self-hashed forged payloads before wallet access PASS');
 const replaceCreationWord = (p, roleIndex, contract, wordIndex, word) => {
   const offset = 2 + TRUSTED_CREATIONS[contract].creationBytecodeBytes * 2 + wordIndex * 64;
   p.deployments[roleIndex].data = p.deployments[roleIndex].data.slice(0, offset) + word.padStart(64, '0') + p.deployments[roleIndex].data.slice(offset + 64);
@@ -360,16 +366,16 @@ for (const change of [
   p => replaceCreationWord(p, 1, 'OmertaReserveFundingV2', 2, '0'),
   p => replaceCreationWord(p, 2, 'OmertaAuctionCoordinatorV2', 4, addr(777).slice(2)),
   p => replaceCreationWord(p, 2, 'OmertaAuctionCoordinatorV2', 7, '1'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 1, '1'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 2, 'c0'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 6, addr(777).slice(2)),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 8, '1'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 11, '1'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 12, addr(777).slice(2)),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 13, '1'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 14, '1'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 15, '180'),
-  p => replaceCreationWord(p, 4, 'OmertaGuardedAuction', 16, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 1, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 2, 'c0'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 6, addr(777).slice(2)),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 8, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 11, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 12, addr(777).slice(2)),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 13, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 14, '1'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 15, '180'),
+  p => replaceCreationWord(p, 4, 'OmertaCharacterGuardedAuction', 16, '1'),
   p => { p.deployments[4].data += '00'; },
   p => { p.launchClock.endBlock = (1n << 64n).toString(); p.launchClock.claimBlock = p.launchClock.endBlock; },
   p => {

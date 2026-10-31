@@ -29,7 +29,7 @@ Object.entries(base.external).forEach(([name, pin], i) => { const code = '0x60' 
 base.allocation.omrRuntimeHash = base.external.omr.runtimeHash;
 const plan = buildGenesisAuctionDeploymentPlan({ ...base, localRehearsal: true });
 const artifactName = { polFunding: 'OmertaReserveFundingV2', reserveFunding: 'OmertaReserveFundingV2', coordinator: 'OmertaAuctionCoordinatorV2',
-  hook: 'OmertaHookV2', auction: 'OmertaGuardedAuction', validator: 'GenesisCharacterBidValidation' };
+  hook: 'OmertaHookV2', auction: 'OmertaCharacterGuardedAuction', validator: 'GenesisCharacterBidValidation' };
 const addresses = { ...plan.addresses, validator: plan.internalValidatorAddress, scheduleStore: plan.internalScheduleStoreAddress };
 const fixtureCodes = Object.fromEntries(Object.entries(artifactName).map(([role, name]) => {
   const a = loadGenesisAuctionArtifact(name); let code = a.runtimeTemplate;
@@ -52,7 +52,7 @@ const bindings = {
     poolKey: { currency0: A(0), currency1: base.external.omr.address, fee: base.hook.poolFee, tickSpacing: base.hook.tickSpacing, hooks: addresses.hook } },
   hook: { poolManager: base.external.poolManager.address, omr: base.external.omr.address, authorized: addresses.coordinator, poolFee: base.hook.poolFee,
     tickSpacing: base.hook.tickSpacing, epochDuration: base.hook.epochDuration, surgeFullTicks: base.hook.surgeFullTicks, openingBlocks: 0, openingBuyBps: 0, openingMaxBuyQuote: 0,
-    managerCollectsRevenue: true, BASE_SELL_BPS: 500, MAX_SURGE_BPS: 50, recipients: [...base.roles.hookRecipients, addresses.polFunding, addresses.reserveFunding] },
+    managerCollectsRevenue: true, BASE_SELL_BPS: 350, REWARDS_BPS: 50, rewardsRecipient: base.external.btcRewards.address, MAX_SURGE_BPS: 50, recipients: [...base.roles.hookRecipients, addresses.polFunding, addresses.reserveFunding] },
   auction: { token: base.external.omr.address, characterNft: base.external.characterNft.address, launchGate: addresses.coordinator, fundsRecipient: addresses.coordinator,
     tokensRecipient: base.roles.safe, currency: A(0), validationHook: addresses.validator, totalSupply: base.auction.totalSupply, minimumRaiseWei: base.auction.requiredCurrencyRaised,
     startBlock: base.auction.startBlock, endBlock: base.auction.endBlock, claimBlock: base.auction.claimBlock, floorPrice: base.auction.floorPrice, tickSpacing: base.auction.tickSpacing,
@@ -82,11 +82,12 @@ function fixture(options = {}) {
     readContract: async ({ address, functionName, blockNumber }) => { requests.push({ address, blockNumber });
       if (address.toLowerCase() === base.external.poolManager.address.toLowerCase()) {
         if (options.standardManager) throw Error('unknown selector');
-        const manager = { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')), TRADE_FEE_BPS: options.badManagerFee ? 501 : 500,
+        const manager = { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS')), TRADE_FEE_BPS: options.badManagerFee ? 401 : 400,
           omr: base.external.omr.address, developerRecipient: base.roles.hookRecipients[0], rwaRecipient: base.roles.hookRecipients[1],
-          communityRecipient: base.roles.hookRecipients[2], polRecipient: options.badManagerRecipient ? A(333) : plan.addresses.polFunding };
+          communityRecipient: base.roles.hookRecipients[2], polRecipient: options.badManagerRecipient ? A(333) : plan.addresses.polFunding, rewardsRecipient: options.badRewardsRecipient ? A(334) : base.external.btcRewards.address };
         assert(Object.hasOwn(manager, functionName)); return manager[functionName];
       }
+      if (address.toLowerCase() === base.external.btcRewards.address.toLowerCase()) return functionName === 'safe' ? (options.badRewardsSafe ? A(335) : base.roles.safe) : base.external.omr.address;
       const values = { totalSupply: options.supplyDrift ? 100000000n * E + 1n : 100000000n * E, balanceOf: 100000000n * E, decimals: 18,
         minter: A(0), sellTaxBps: 0n, ammPairs: false, poolManager: base.external.poolManager.address, permit2: base.external.permit2.address,
         getOwners: owners, getThreshold: options.badThreshold ? 1n : 2n, arbBlockNumber: 1000n };
@@ -98,7 +99,7 @@ function fixture(options = {}) {
       const lower = address.toLowerCase(); if (lower === A(100).toLowerCase()) return arbCode;
       if (externalCodes[lower]) return externalCodes[lower];
       if (options.badSchedule && lower === addresses.scheduleStore.toLowerCase()) return '0x006001';
-      if (options.wrongClock && lower === addresses.auction.toLowerCase()) return loadGenesisAuctionArtifact('OmertaGuardedAuction').runtimeTemplate;
+      if (options.wrongClock && lower === addresses.auction.toLowerCase()) return loadGenesisAuctionArtifact('OmertaCharacterGuardedAuction').runtimeTemplate;
       if (options.wrongPrivateHash && lower === addresses.coordinator.toLowerCase()) {
         const a = loadGenesisAuctionArtifact('OmertaAuctionCoordinatorV2'); let code = fixtureCodes[lower];
         for (const { start, length } of a.evidence.immutableReferences[a.privateDependencyImmutableIds._managerHash])
@@ -133,7 +134,7 @@ for (const [name, pattern] of [['wrongChain', /Wrong primary/], ['nonceChanged',
   await assert.rejects(() => verifyGenesisAuctionPreflight(fixture({ [name]: true })), pattern, name);
 f = fixture(); f.evidenceSha256 = '33'.repeat(32); await assert.rejects(() => verifyGenesisAuctionPreflight(f), /evidence hash/);
 f = fixture(); f.nowMs += 121000; await assert.rejects(() => verifyGenesisAuctionPreflight(f), /Stale primary/);
-console.log('Read-only genesis preflight PASS: real compiled-runtime templates, five main/two auxiliary SHA snapshots, actual-clock immutable selection, nine dependency/getter bindings, source/head/nonce/supply/authority/runtime/schedule rejection; no key, signing or broadcasting and signingReady remains false.');
+console.log('Read-only genesis preflight PASS: real compiled-runtime templates, five main/two auxiliary SHA snapshots, actual-clock immutable selection, ten dependency/getter bindings, source/head/nonce/supply/authority/runtime/schedule rejection; no key, signing or broadcasting and signingReady remains false.');
 
 // Actual transport wiring, not a high-level fixture that ignores block selectors.
 const rpcAddress = A(1);
@@ -184,7 +185,9 @@ rpcHeader = { ...rpcHeader, number: '0x1' + '0'.repeat(64) };
 await assert.rejects(() => pinnedRpc({ method: 'eth_getBlockByNumber', params: ['latest', false] }), /unavailable/);
 console.log('Genesis canonical hash transport PASS: real viem reads, immutable calldata, unknown/reorg/wrong-header/chain/eviction/provider rejection and live nonce/balance exceptions; no fallback.');
 
-for (const options of [{ standardManager: true }, { badManagerFee: true }, { badManagerRecipient: true }, { standardHook: true }]) {
+for (const options of [{ standardManager: true }, { badManagerFee: true }, { badManagerRecipient: true }, { badRewardsRecipient: true }, { standardHook: true }]) {
   await assert.rejects(() => verifyGenesisAuctionPreflight(fixture(options)), /restricted manager|Restricted manager|managerCollectsRevenue/);
 }
 console.log('Standard-manager production readiness and mismatched fixed revenue policies rejected PASS');
+
+await assert.rejects(() => verifyGenesisAuctionPreflight(fixture({ badRewardsSafe: true })), /WBTC rewards vault Safe/);

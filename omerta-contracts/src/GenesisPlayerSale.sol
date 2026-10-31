@@ -116,6 +116,7 @@ contract GenesisPlayerSale is ReentrancyGuard {
     }
     function contribute(uint8 daysPlayed, bytes32[] calldata proof) external payable nonReentrant {
         if (cancelled || closesAt == 0 || block.timestamp >= closesAt || block.chainid != chainId) revert WrongPhase();
+        _validateContributor(msg.sender);
         uint256 maximum = cap(daysPlayed);
         if (msg.value == 0 || requested[msg.sender] + msg.value > maximum
             || !MerkleProof.verifyCalldata(proof, merkleRoot, leaf(msg.sender, daysPlayed))) revert InvalidEligibility();
@@ -123,6 +124,9 @@ contract GenesisPlayerSale is ReentrancyGuard {
         requested[msg.sender] += msg.value; totalRequested += msg.value;
         emit Contributed(msg.sender, msg.value);
     }
+    /// @dev Specialized sale eligibility applies only to fresh contributions, never recovery.
+    function _validateContributor(address) internal view virtual {}
+
     function settle(address wallet) external {
         if (cancelled || released || closesAt == 0 || block.timestamp < closesAt
             || block.timestamp >= migrationDeadline || requested[wallet] == 0 || settled[wallet]) revert WrongPhase();

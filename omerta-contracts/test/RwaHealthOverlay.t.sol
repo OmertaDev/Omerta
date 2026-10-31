@@ -502,8 +502,9 @@ contract RwaHealthOverlayUnitTest is RwaHealthOverlayTestBase {
             ),
             0xda9118bfbb750eb109fbcd8e639664c2c42b9669b49381d6a4f40bc09a696db7
         );
-        assertEq(vm.getDeployedCode("RwaHealthOverlay.sol:RwaHealthOverlay").length, 3_825);
-        assertEq(vm.getCode("RwaHealthOverlay.sol:RwaHealthOverlay").length, 4_205);
+        // Exact solc 0.8.38 / via-IR / 800 runs / Cancun artifact census.
+        assertEq(vm.getDeployedCode("RwaHealthOverlay.sol:RwaHealthOverlay").length, 3_824);
+        assertEq(vm.getCode("RwaHealthOverlay.sol:RwaHealthOverlay").length, 4_204);
     }
 
     function _expectRejectOn(RwaHealthOverlay target, IRwaHealthOverlay.Clearance memory value) private {

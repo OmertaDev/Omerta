@@ -20,12 +20,13 @@ const sourceHashes = evidence => Object.fromEntries(Object.entries(evidence.sour
 const artifact = loadGenesisAuctionArtifact('OmertaHookV2');
 const constructor = artifact.abi.find(entry => entry.type === 'constructor');
 const schema = constructor?.inputs.map(input => input.type);
-if (JSON.stringify(schema) !== JSON.stringify(['address', 'address', 'address', 'uint24', 'int24', 'address[5]', 'tuple', 'uint24', 'uint32'])
+if (JSON.stringify(schema) !== JSON.stringify(['address', 'address', 'address', 'uint24', 'int24', 'address[5]', 'tuple', 'uint24', 'uint32', 'address'])
   || JSON.stringify(constructor.inputs[6].components.map(input => input.type)) !== JSON.stringify(['uint16', 'uint16', 'uint128']))
-  throw Error('Trusted hook constructor is not the reviewed 9-argument, 15-word static schema.');
-const hookSource = artifact.evidence.sources['src/market-v2/OmertaHookV2.sol'];
-if (hookSource.sha256 !== 'ec6362e88daeb7f35bd8f95cbc6bf2344378cb29603b3bf31460a14eada0c903')
-  throw Error('Hook source differs from the reviewed fixed-policy revision; review before updating this builder pin.');
+  throw Error('Trusted hook constructor is not the pinned 10-argument, 16-word static schema.');
+const primarySourceHash = (a, source) => compilerSourceSha256(fs.readFileSync(path.join(root, 'omerta-contracts', source)), a.evidence.sources[source].compilerInputKeccak256);
+const hookSource = primarySourceHash(artifact, 'src/market-v2/OmertaHookV2.sol');
+if (hookSource !== '8153d2456a191e05bee3c7eca106d66cc8408b698a7372b68f54be47321c5e96')
+  throw Error('Hook source differs from the pinned fixed-policy release candidate; review before updating this builder pin.');
 const packageRoot = path.dirname(require.resolve('@noble/hashes/sha3'));
 const metadata = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json')));
 if (metadata.version !== '1.8.0') throw Error('Only reviewed @noble/hashes 1.8.0 may be shipped.');
@@ -47,7 +48,7 @@ outputs.set(path.join(vendorRoot, 'LICENSE'), license);
 provenance.files.LICENSE = { originalSha256: sha(license), shippedSha256: sha(license) };
 outputs.set(path.join(vendorRoot, 'provenance.json'), Buffer.from(JSON.stringify(provenance, null, 2) + '\n'));
 const trusted = { schemaVersion: 1, contract: 'OmertaHookV2', constructorSchema: schema,
-  openingSchema: ['uint16', 'uint16', 'uint128'], constructorWords: 15,
+  openingSchema: ['uint16', 'uint16', 'uint128'], constructorWords: 16,
   compiler: artifact.evidence.compiler, optimizerRuns: 800, viaIR: true, evmVersion: 'cancun',
   sourceHashEncoding: 'compiler-verified UTF-8 LF', sourceHashes: sourceHashes(artifact.evidence),
   abiSha256: artifact.evidence.abiSha256, creationBytecode: artifact.bytecode,
@@ -55,18 +56,18 @@ const trusted = { schemaVersion: 1, contract: 'OmertaHookV2', constructorSchema:
   creationBytecodeSha256: sha(Buffer.from(artifact.bytecode.slice(2), 'hex')),
   creationBytecodeBytes: (artifact.bytecode.length - 2) / 2 };
 const creationDefinitions = {}, reviewed = {
-  OmertaReserveFundingV2: { source: 'src/market-v2/OmertaReserveFundingV2.sol', sha256: '142d00824aeaaa2c40fd861ced331461e8989b199a68355c4bfafe04fa4cbce3',
+  OmertaReserveFundingV2: { source: 'src/market-v2/OmertaReserveFundingV2.sol', sha256: '38970157400b3537c529a70a5e9450d57ed02e9e13ef630037437c7cb713ed11',
     schema: ['address', 'address', 'uint8'] },
-  OmertaAuctionCoordinatorV2: { source: 'src/market-v2/OmertaAuctionCoordinatorV2.sol', sha256: '330aecbf53bcb899414fadb72fbe82ea7160c3d39cb7155307867715460f4ec0',
+  OmertaAuctionCoordinatorV2: { source: 'src/market-v2/OmertaAuctionCoordinatorV2.sol', sha256: 'df0f46a144b885217248dcfb37a26d0fe7116ec05e5bc4ca14dc5454926f69eb',
     schema: ['address', 'address', 'address', 'address', 'address', 'uint24', 'int24', 'uint128', 'address', 'address'] },
-  OmertaGuardedAuction: { source: 'src/genesis-auction/OmertaGuardedAuction.sol', sha256: '1630ccf3f39b4d35f99d78587102a9d2f1d59601c1056cf169e035ced06c4140',
+  OmertaCharacterGuardedAuction: { source: 'src/genesis-auction/OmertaCharacterGuardedAuction.sol', sha256: '419d9102c1c518a89a204be30a7b59fefc4b6217dcdb85a4d3480d875a60b4c1',
     schema: ['address', 'uint128', 'tuple', 'address', 'address'] },
 };
 for (const [name, pin] of Object.entries(reviewed)) {
   const a = loadGenesisAuctionArtifact(name), ctor = a.abi.find(entry => entry.type === 'constructor');
-  if (a.evidence.sources[pin.source]?.sha256 !== pin.sha256 || JSON.stringify(ctor?.inputs.map(input => input.type)) !== JSON.stringify(pin.schema))
+  if (primarySourceHash(a, pin.source) !== pin.sha256 || JSON.stringify(ctor?.inputs.map(input => input.type)) !== JSON.stringify(pin.schema))
     throw Error(`${name}: reviewed source or constructor schema differs.`);
-  if (name === 'OmertaGuardedAuction' && JSON.stringify(ctor.inputs[2].components.map(input => input.type))
+  if (name === 'OmertaCharacterGuardedAuction' && JSON.stringify(ctor.inputs[2].components.map(input => input.type))
     !== JSON.stringify(['address', 'address', 'address', 'uint64', 'uint64', 'uint64', 'uint256', 'address', 'uint256', 'uint128', 'bytes']))
     throw Error('Guarded auction dynamic tuple does not match the reviewed canonical schema.');
   creationDefinitions[name] = { contract: name, constructorAbi: ctor, compiler: a.evidence.compiler,

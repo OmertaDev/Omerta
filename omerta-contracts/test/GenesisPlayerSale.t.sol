@@ -33,15 +33,20 @@ contract GenesisPlayerSaleTest is Test {
     bytes32 bobLeaf;
     function setUp() public {
         token = new PlayerTokenMock(); integration = new PlayerIntegrationMock();
+        _beforeSaleDeployment();
         address predicted = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
         aliceLeaf = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, predicted, alice, uint8(1)))));
         bobLeaf = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, predicted, bob, uint8(5)))));
         bytes32 root = aliceLeaf < bobLeaf ? keccak256(abi.encodePacked(aliceLeaf, bobLeaf))
             : keccak256(abi.encodePacked(bobLeaf, aliceLeaf));
-        sale = new GenesisPlayerSale(token, integration, root, 1 ether, block.timestamp + 1 days,
-            block.timestamp + 5 days, address(0xCAFE));
+        sale = _deploySale(root);
         assertEq(address(sale), predicted); token.mint(address(sale), 1 ether);
         vm.deal(alice, 10 ether); vm.deal(bob, 10 ether); sale.open();
+    }
+    function _beforeSaleDeployment() internal virtual {}
+    function _deploySale(bytes32 root) internal virtual returns (GenesisPlayerSale) {
+        return new GenesisPlayerSale(token, integration, root, 1 ether, block.timestamp + 1 days,
+            block.timestamp + 5 days, address(0xCAFE));
     }
     function contribute(address who, uint8 daysPlayed, uint256 amount) internal {
         bytes32[] memory proof = new bytes32[](1); proof[0] = who == alice ? bobLeaf : aliceLeaf;

@@ -1811,7 +1811,7 @@ contract AcquisitionVaultOperatorTest is Test {
         string memory rawMetadata = vm.parseJsonString(artifact, ".rawMetadata");
         bytes memory metadata = bytes(rawMetadata);
         assertNotEq(
-            _find(metadata, bytes('"compiler\":{\"version\":\"0.8.26+commit.8a97fa7a\"}'), 0),
+            _find(metadata, bytes('"compiler\":{\"version\":\"0.8.38+commit.1835d247\"}'), 0),
             type(uint256).max,
             "wrong compiler metadata"
         );

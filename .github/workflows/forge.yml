@@ -21,6 +21,13 @@ on:
       - 'test/liquidity*.js'
       - 'src/marketv2*.js'
       - 'tools/market-v2-deployment-plan.js'
+      - 'tools/solidity-dependency-pragmas.js'
+      - 'tools/wbtc-reward-epoch.js'
+      - 'test/wbtc-reward-epoch.js'
+      - 'tools/tokenomics-pilot.js'
+      - 'test/tokenomics-pilot.js'
+      - 'tools/player-genesis-*.js'
+      - 'test/player-genesis-deployment.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
@@ -40,6 +47,13 @@ on:
       - 'test/liquidity*.js'
       - 'src/marketv2*.js'
       - 'tools/market-v2-deployment-plan.js'
+      - 'tools/solidity-dependency-pragmas.js'
+      - 'tools/wbtc-reward-epoch.js'
+      - 'test/wbtc-reward-epoch.js'
+      - 'tools/tokenomics-pilot.js'
+      - 'test/tokenomics-pilot.js'
+      - 'tools/player-genesis-*.js'
+      - 'test/player-genesis-deployment.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
@@ -69,7 +83,7 @@ jobs:
       # PINNED, like every other dependency this workflow fetches. `foundry-toolchain@v1` with no
       # `version` resolves `stable` AT RUN TIME, so the one thing compiling and running the suite was
       # the only thing here not held still — while forge-std (v1.9.6), OpenZeppelin (v5.6.1), v4-core
-      # (1.0.2) and solc (0.8.26, foundry.toml) are all pinned by hand a few lines below. The forgotten
+      # (1.0.2) and solc (0.8.38, foundry.toml) are all pinned by hand a few lines below. The forgotten
       # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the
       # position this gate was in. The banner is the instrument: when local and CI disagree again, the
       # log answers "which forge ran this" instead of leaving it to be guessed at.
@@ -133,6 +147,9 @@ jobs:
         run: |
           npm ci
           npm run test:market-v2
+          node test/wbtc-reward-epoch.js
+          node test/tokenomics-pilot.js
+          node test/player-genesis-deployment.js
           npm run test:genesis-auction:deployment
 
       - name: retain failed genesis compiler artifacts
@@ -147,6 +164,7 @@ jobs:
             omerta-contracts/out/OmertaReserveFundingV2.sol/OmertaReserveFundingV2.json
             omerta-contracts/out/OmertaAuctionCoordinatorV2.sol/OmertaAuctionCoordinatorV2.json
             omerta-contracts/out/OmertaGuardedAuction.sol/OmertaGuardedAuction.json
+            omerta-contracts/out/OmertaCharacterGuardedAuction.sol/OmertaCharacterGuardedAuction.json
 
       - name: forge test (unit + fuzz)
         run: forge test -vvv

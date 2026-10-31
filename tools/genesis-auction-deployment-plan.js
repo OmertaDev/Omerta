@@ -19,7 +19,7 @@ const PRODUCTION_FOUNDER = '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced';
 export const GENESIS_AUCTION_ARTIFACTS = Object.freeze({
   OmertaAuctionCoordinatorV2: 'src/market-v2/OmertaAuctionCoordinatorV2.sol',
   OmertaHookV2: 'src/market-v2/OmertaHookV2.sol',
-  OmertaGuardedAuction: 'src/genesis-auction/OmertaGuardedAuction.sol',
+  OmertaCharacterGuardedAuction: 'src/genesis-auction/OmertaCharacterGuardedAuction.sol',
   GenesisCharacterBidValidation: 'src/genesis-auction/GenesisCharacterEligibility.sol',
   OmertaReserveFundingV2: 'src/market-v2/OmertaReserveFundingV2.sol',
 });
@@ -106,7 +106,7 @@ export function loadGenesisAuctionArtifact(contract, { contractsRoot = ROOT } = 
   const bytes = fs.readFileSync(artifactFile), a = JSON.parse(bytes);
   const m = typeof a.rawMetadata === 'string' ? JSON.parse(a.rawMetadata) : a.metadata;
   const viaIR = target.startsWith('src/market-v2/');
-  check(m?.settings?.compilationTarget?.[target] === contract && m.compiler?.version === '0.8.26+commit.8a97fa7a'
+  check(m?.settings?.compilationTarget?.[target] === contract && m.compiler?.version === '0.8.38+commit.1835d247'
     && m.settings.optimizer?.enabled === true && m.settings.optimizer.runs === 800
     && m.settings.evmVersion === 'cancun' && Boolean(m.settings.viaIR) === viaIR,
   `${contract}: compiler profile mismatch`);
@@ -128,7 +128,7 @@ export function loadGenesisAuctionArtifact(contract, { contractsRoot = ROOT } = 
   const runtimeBytes = (a.deployedBytecode.object.length - 2) / 2;
   check(runtimeBytes <= 24576, `${contract}: EIP-170 runtime size`);
   check((a.bytecode.object.length - 2) / 2 <= 49152, `${contract}: EIP-3860 creation bytecode size`);
-  const nativeClockImmutableId = contract === 'OmertaGuardedAuction'
+  const nativeClockImmutableId = contract === 'OmertaCharacterGuardedAuction'
     ? /_USE_ARB_SYS"\s*\*\/\s*loadimmutable\("([0-9]+)"\)/.exec(a.irOptimized || '')?.[1] : null;
   const privateDependencyImmutableIds = contract === 'OmertaAuctionCoordinatorV2'
     ? Object.fromEntries(['_managerHash', '_positionsHash', '_permitHash', '_tokenHash'].map(name =>
@@ -182,11 +182,11 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   check(Array.isArray(input.roles.hookRecipients) && input.roles.hookRecipients.length === 3, 'Three explicit dev/RWA/community hook recipients required; POL/reserve adapters are deployed internally');
   const recipients = input.roles.hookRecipients.map((a, i) => addr(`hookRecipients.${i}`, a));
   if (chainId === 4663) check(recipients[0].toLowerCase() === PRODUCTION_FOUNDER, 'Production fixed Founder Ops recipient must be approved A87');
-  const fixedHookPolicy = { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100 };
+  const fixedHookPolicy = { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96 };
   closed('hookPolicy', input.hookPolicy, Object.keys(fixedHookPolicy));
   check(Object.entries(fixedHookPolicy).every(([key, value]) => input.hookPolicy[key] === value),
-    'Fixed trade revenue policy must be 500 bps with 200/100/100/100 allocation and at most 50 bps surge');
-  const externalKeys = ['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft'];
+    'Fixed trade revenue policy must be 350 base + 50 rewards bps with 127/51/76/96 base allocation and at most 50 bps surge');
+  const externalKeys = ['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft', 'btcRewards'];
   closed('external', input.external, externalKeys);
   const e = Object.fromEntries(externalKeys.map(k => { closed(`external.${k}`, input.external[k], ['address', 'runtimeHash']);
     return [k, { address: addr(k, input.external[k].address), runtimeHash: digest(k, input.external[k].runtimeHash) }]; }));
@@ -244,7 +244,7 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   const deployData = (name, args) => { const a = artifacts[name]; const data = encodeDeployData({ abi: a.abi, bytecode: a.bytecode, args });
     check((data.length - 2) / 2 <= 49152, `${name}: EIP-3860 initcode size`); return data; };
   const hookInit = deployData('OmertaHookV2', [e.poolManager.address, e.omr.address, deployed.coordinator, fee, spacing,
-    [...recipients, deployed.polFunding, deployed.reserveFunding], h.opening, h.surgeFullTicks, h.epochDuration]);
+    [...recipients, deployed.polFunding, deployed.reserveFunding], h.opening, h.surgeFullTicks, h.epochDuration, e.btcRewards.address]);
   const mined = mineMarketV2Hook(factory, keccak256(hookInit), uint('saltStart', input.create2.saltStart, 256, true), number('maxAttempts', input.create2.maxAttempts, 1, 1000000));
   deployed.hook = mined.address;
   const internalValidatorAddress = getContractAddress({ from: deployed.auction, nonce: 1n });
@@ -283,12 +283,12 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
     requiredCurrencyRaised: BigInt(a.requiredCurrencyRaised), auctionStepsData: a.auctionStepsData };
   const coordinatorData = deployData('OmertaAuctionCoordinatorV2', [e.poolManager.address, e.positionManager.address, e.permit2.address, e.omr.address,
     deployed.hook, fee, spacing, reserve, r.safe, e.characterNft.address]);
-  const auctionData = deployData('OmertaGuardedAuction', [e.omr.address, supply, params, deployed.coordinator, e.characterNft.address]);
+  const auctionData = deployData('OmertaCharacterGuardedAuction', [e.omr.address, supply, params, deployed.coordinator, e.characterNft.address]);
   const validatorInit = deployData('GenesisCharacterBidValidation', [e.characterNft.address, e.omr.address]);
   const call = (from, to, abi, functionName, args = []) => ({ chainId, from, to, value: '0x0', data: encodeFunctionData({ abi, functionName, args }) });
   const funding = [[deployed.auction, supply], [deployed.coordinator, reserve]].map(([to, amount]) =>
     call(r.safe, e.omr.address, parseAbi(['function transfer(address to,uint256 amount) returns(bool)']), 'transfer', [to, amount]));
-  funding.push(call(r.safe, deployed.auction, artifacts.OmertaGuardedAuction.abi, 'onTokensReceived'));
+  funding.push(call(r.safe, deployed.auction, artifacts.OmertaCharacterGuardedAuction.abi, 'onTokensReceived'));
   const deployments = [
     { role: 'polFunding', nonce: String(nonce), predicted: deployed.polFunding, data: deployData('OmertaReserveFundingV2', [r.safe, e.omr.address, 0]) },
     { role: 'reserveFunding', nonce: String(nonce + 1n), predicted: deployed.reserveFunding, data: deployData('OmertaReserveFundingV2', [r.safe, e.omr.address, 5]) },
@@ -319,13 +319,14 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
     liquidityPolicy: { lpTokenAmountWei: String(lpAllocation), lpProceedsBps: 5000, familyProceedsBps: 5000, liquidityOwner: r.safe,
       familyYieldTreasury: r.safe, poolPrice: 'Derived from actual fixed LP tokens and 50% accepted ETH; independent of auction clearing price.' },
     deployments, safeFundingCalls: funding, deployerBindCall: call(r.deployer, deployed.coordinator, artifacts.OmertaAuctionCoordinatorV2.abi, 'bind', [deployed.auction]),
-    finalManifest: { chainId, activationReady: false, hookPolicy: { ...fixedHookPolicy, recipients: [...recipients, deployed.polFunding, deployed.reserveFunding] }, policy: { totalSupplyWei: String(totalSupply), decimals: 18,
+    finalManifest: { chainId, activationReady: false, hookPolicy: { ...fixedHookPolicy, recipients: [...recipients, deployed.polFunding, deployed.reserveFunding], rewardsRecipient: e.btcRewards.address }, policy: { totalSupplyWei: String(totalSupply), decimals: 18,
       saleTokenAmountWei: String(saleAllocation), lpTokenAmountWei: String(lpAllocation), bondTokenAmountWei: String(bondAllocation),
       familySafe: r.safe, liquidityOwner: r.safe, unsoldRecipient: r.safe, bondReserveCustodian: r.safe,
       minimumRaiseWei: String(MINIMUM_RAISE), lpProceedsBps: 5000, claimsAtAuctionEnd: true }, contracts: {
       auction: { address: deployed.auction, runtimeCodeHash: null },
       coordinator: { address: deployed.coordinator, runtimeCodeHash: null },
       characterNft: { address: e.characterNft.address, runtimeCodeHash: e.characterNft.runtimeHash },
+      btcRewards: { address: e.btcRewards.address, runtimeCodeHash: e.btcRewards.runtimeHash },
       omr: { address: e.omr.address, runtimeCodeHash: e.omr.runtimeHash },
       validator: { address: getContractAddress({ from: deployed.auction, nonce: 1n }), runtimeCodeHash: null },
     }, dependencies: {

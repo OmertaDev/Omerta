@@ -173,7 +173,8 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         bytes memory initcode = vm.getCode("AcquisitionAuthority.sol:AcquisitionAuthority");
         assertLe(runtime.length, 20_000);
         assertLe(initcode.length, 49_152);
-        assertEq(runtime.length, 16_300);
+        // Exact solc 0.8.38 / via-IR / 800 runs / Cancun artifact census.
+        assertEq(runtime.length, 16_299);
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
         assertEq(vm.parseJsonString(artifact, ".abi[16].name"), "authoritySnapshot");
         for (uint256 i; i < 27; ++i) {
@@ -565,8 +566,8 @@ contract AcquisitionAuthorityTask2Test is AcquisitionConstellationTask1Test {
         assertEq(chainId, 4663);
         assertEq(verifyingContract, address(authority));
         string memory artifact = vm.readFile("out/AcquisitionAuthority.sol/AcquisitionAuthority.json");
-        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_868);
-        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_300);
+        assertEq((vm.parseJsonBytes(artifact, ".bytecode.object")).length, 18_891);
+        assertEq((vm.parseJsonBytes(artifact, ".deployedBytecode.object")).length, 16_299);
     }
 
     function test_task2FreshFactoriesCannotReuseTask1AddressesOrCommitments() public {

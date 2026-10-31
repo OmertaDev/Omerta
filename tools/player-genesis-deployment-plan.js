@@ -129,7 +129,9 @@ export function loadPlayerGenesisArtifact(contract, { contractsRoot = ROOT } = {
   const sources = {};
   for (const [source, info] of Object.entries(m.sources)) {
     const p = path.resolve(root, source);
-    if (!within(root, p) || !within(root, fs.realpathSync(p))) throw Error(`${contract}: source outside contracts root`);
+    const dependency = /^lib\/(openzeppelin-contracts|v4-core|v4-periphery|permit2)\//.exec(source);
+    const mount = dependency ? fs.realpathSync(path.join(root, 'lib', dependency[1])) : root;
+    if (!within(root, p) || !within(mount, fs.realpathSync(p))) throw Error(`${contract}: source outside approved contracts/dependency mount`);
     const b = fs.readFileSync(p);
     if (![keccak256(toHex(b)), keccak256(toHex(b.toString('utf8').replace(/\r\n/g, '\n')))].includes(info.keccak256))
       throw Error(`${contract}: stale artifact for ${source}`);

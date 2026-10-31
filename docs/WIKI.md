@@ -218,7 +218,7 @@ Allocate the existing 100M OMR as 40M offered, 20M for initial liquidity and 40M
 
 #### Fixed market fee policy
 
-The current manager fixes the 5% trade fee and its 2% developer, 1% RWA, 1% community and 1% POL allocation. Its recipients are immutable. The Hook fixes the additional sell-pressure surcharge ceiling at 0.5%; it has no fee-configuration queue or execution function. A Committee vote or Safe transaction cannot change these deployed rates or recipients.
+The market fixes a 3.5% base trading fee: 1.27% developer, 0.51% RWA, 0.76% community and 0.96% POL, with rounding dust assigned to POL. A separate 0.5% allocation funds WBTC holder rewards, making the ordinary protocol charge 4%. The Hook can add up to 0.5%, for a maximum protocol charge of 4.5%; LP fees and network gas are additional. Rates and recipients are immutable. A Committee vote or Safe transaction cannot change them. WBTC rewards use funded, published periods with time-weighted eligible wallet and backed game balances; claimants pay network gas.
 
 The developer allocation goes to A87 (0xA87b7A7eEcB6F4C771445F5CBa5Bb0D4B29E5CED). LP fees, genesis proceeds, NFT eligibility, closure claims, Safe liquidity custody, character creation charges, gameplay fees and withdrawal policy are separate. Their own applicable permissions and delays remain in force. Production trading requires verified deployment, sealed-token funding and explicit launch activation; this page does not establish readiness.
 
