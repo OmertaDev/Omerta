@@ -43,7 +43,7 @@ const mk = async (name) => {
 async function discoveryFixture(player, district) {
   const before = (await pool.query('SELECT loc,respect,cash,energy FROM characters WHERE id=$1', [player.id])).rows[0];
   const used = new Set((await pool.query('SELECT building_id FROM street_deed_building_assignments')).rows.map(row => row.building_id));
-  const building = DEED_BUILDINGS.find(lot => lot.district === district && !used.has(lot.id));
+  const building = DEED_BUILDINGS.find(lot => lot.district === district && lot.issuanceKind === 'gameplay' && !used.has(lot.id));
   await pool.query('UPDATE characters SET respect=$2,cash=1000000,energy=100 WHERE id=$1',
     [player.id, Math.max(Number(before.respect), (DEED_DISCOVERY.minimumLevel - 1) ** 2 * PACING.LEVEL_DIVISOR)]);
   let location = before.loc;
@@ -88,7 +88,9 @@ assert.equal(deedRenown([{ kind: 'claim' }, { kind: 'fell' }]), 6, 'renown sums 
 const b0 = (await call('GET', '/v1/deeds', { token: a.token })).body;
 assert.equal(b0.deed, null, 'no deed yet');
 assert.equal(b0.canClaim, false, 'a fresh account must investigate a property before claiming');
-assert.deepEqual(b0.supply, { maximum: 2500, issued: 0, remaining: 2500 }, 'new city advertises the fixed lifetime supply');
+assert.deepEqual(b0.supply, { maximum: 2500, issued: 0, remaining: 2500,
+  gameplay: { maximum: 1000, issued: 0, remaining: 1000 }, paid: { maximum: 1000, issued: 0, remaining: 1000 },
+  partnership: { maximum: 500, issued: 0, remaining: 500 } }, 'new city advertises the lifetime allocation');
 assert.equal(b0.districts.length, 6, 'all six core districts are shown to claim in');
 assert(b0.ranks.length >= 3, 'the renown-rank ladder is published');
 
@@ -160,8 +162,15 @@ assert(!lb.streets.find((s) => s.name === cx.body.name), "the real agent's stree
 // The deed is property; CONTROL (the corner take) is contestable. `a` owns "Corvino Way" in neon,
 // `b` owns "Nine Fingers Row" in brick. §10.4: the corner take is the ONE new faucet (`deed:corner`,
 // character_id'd); the shakedown moves control, not money.
-const backdate = (acct, hours) =>
-  pool.query("UPDATE street_deeds SET corner_at = now() - ($2 || ' hours')::interval WHERE account_id=$1", [acct, String(hours)]);
+const backdate = async (acct, hours) => {
+  await pool.query("UPDATE street_deeds SET corner_at = now() - ($2 || ' hours')::interval WHERE account_id=$1", [acct, String(hours)]);
+  const deed = (await pool.query('SELECT controller_account,control_until FROM street_deeds WHERE account_id=$1', [acct])).rows[0];
+  const controller = deed?.controller_account && new Date(deed.control_until).getTime() > Date.now() ? deed.controller_account : acct;
+  const ch = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [controller])).rows[0];
+  if (ch) await pool.query(`INSERT INTO street_deed_benefit_eligibility(character_id,eligible_at) VALUES ($1,$2)
+    ON CONFLICT (character_id) DO UPDATE SET eligible_at=EXCLUDED.eligible_at`,
+  [ch.id, new Date(Date.now() - hours * 3600000)]);
+};
 // THE CORNER TAKE IS A PURE FUNCTION OF THE WALL CLOCK, and these assertions used to pretend it
 // wasn't. Backdate N hours and every millisecond between that UPDATE and the collect's own
 // `Date.now()` adds to the take: at CORNER_PER_HR the floor crosses a dollar every 1.8 seconds, and
@@ -185,7 +194,7 @@ const deedRows = async (reason) => Number((await pool.query(
 // (red team 2026-08-16) a corner EARNER has to be somebody — DEEDS.CORNER_MIN_LVL. The claim itself
 // stays free and ungated; only the money has a floor, so this seeds Vito past it. A dedicated block at
 // the end of this file proves the floor from both sides.
-await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [a.id, 1000]); // level 11
+await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [a.id, 5760]); // level 11
 await backdate(a.acct, 6);
 const cA = (await call('GET', '/v1/deeds', { token: a.token })).body.corner;
 assert.equal(cA.iControl, true, 'the owner controls their own corner');
@@ -208,7 +217,7 @@ assert.equal((await call('GET', '/v1/deeds', { token: a.token })).body.corner.ow
   DEEDS.CORNER_PER_HR * (DEEDS.CORNER_CAP_MS / 3600000), 'the corner take caps at CORNER_CAP_MS');
 
 // THE SHAKEDOWN — `b` muscles in on `a`'s corner. Put b on the block, past the level floor, funded.
-await pool.query("UPDATE characters SET loc='neon', respect=1000, muscle=40, cunning=40, energy=100 WHERE id=$1", [b.id]);
+await pool.query("UPDATE characters SET loc='neon', respect=5760, muscle=40, cunning=40, energy=100 WHERE id=$1", [b.id]);
 const cashBpre = await cashOf(b.id);
 process.env.DEEDS_SHAKE_P = '1'; // force the roll to land
 const shake = await call('POST', `/v1/deeds/shakedown/${a.id}`, { token: b.token });
@@ -247,7 +256,7 @@ nearTake(await cashOf(b.id) - cashB0, DEEDS.CORNER_PER_HR * 5, 'b banks the seiz
 
 // RECLAIM — `a` takes their own corner back. Clear the cooldown, put a on the block, fund them.
 await pool.query("UPDATE street_deeds SET shakedown_at = now() - interval '7 hours' WHERE account_id=$1", [a.acct]);
-await pool.query("UPDATE characters SET loc='neon', respect=1000, muscle=40, cunning=40, energy=100 WHERE id=$1", [a.id]);
+await pool.query("UPDATE characters SET loc='neon', respect=5760, muscle=40, cunning=40, energy=100 WHERE id=$1", [a.id]);
 const reclaim = await call('POST', `/v1/deeds/shakedown/${a.id}`, { token: a.token });
 assert.equal(reclaim.body.reclaim, true, 'the owner taking their own corner back is a reclaim');
 const aBack = (await call('GET', '/v1/deeds', { token: a.token })).body.corner;
@@ -260,7 +269,7 @@ delete process.env.DEEDS_SHAKE_P;
 
 // CONTROL LAPSES — a rival's window expires and control falls back to the owner with no action.
 process.env.DEEDS_SHAKE_P = '1';
-await pool.query("UPDATE characters SET loc='neon', respect=1000, muscle=40, cunning=40, energy=100 WHERE id=$1", [b.id]);
+await pool.query("UPDATE characters SET loc='neon', respect=5760, muscle=40, cunning=40, energy=100 WHERE id=$1", [b.id]);
 await pool.query("UPDATE street_deeds SET shakedown_at = now() - interval '7 hours' WHERE account_id=$1", [a.acct]);
 await call('POST', `/v1/deeds/shakedown/${a.id}`, { token: b.token }); // b re-seizes
 await pool.query("UPDATE street_deeds SET control_until = now() - interval '1 hour' WHERE account_id=$1", [a.acct]); // window lapses
@@ -286,7 +295,7 @@ delete process.env.DEEDS_SHAKE_P;
 // (a goods price, a workshop bill, a racket seat), never by reading a flag back.
 {
   // `a` controls their own neon corner (the lapse above handed it back). Fund + place them.
-  await pool.query("UPDATE characters SET cash=100000000, loc='neon', respect=1000, energy=100 WHERE id=$1", [a.id]);
+  await pool.query("UPDATE characters SET cash=100000000, loc='neon', respect=5760, energy=100 WHERE id=$1", [a.id]);
   const gid = GOODS[0].id;
   const base = goodPriceOf(gid, 'neon');
   // (1) THE TURF PRICE EDGE — the controller buys at the held-district 0.95; a deedless twin at 1.0
@@ -316,20 +325,20 @@ delete process.env.DEEDS_SHAKE_P;
   await pool.query("DELETE FROM gang_members WHERE gang_id='g2c'");
   await pool.query("DELETE FROM gangs WHERE id='g2c'");
   // (3) THE FOUNDRY BILL — a separate discovered foundry property gets its district discount.
-  await pool.query('UPDATE characters SET cash=10000000, cb=20 WHERE id=$1', [b.id]);
+  await pool.query('UPDATE characters SET cash=10000000, cb=20, respect=5760 WHERE id=$1', [b.id]);
   const c0 = CONSUMABLES[0];
   const cashPre = await cashOf(b.id);
   await call('POST', `/v1/workshop/craft/${c0.id}`, { token: b.token });
   assert.equal(await cashOf(b.id), cashPre - c0.cost, "a brick corner buys no foundry discount — the bill is full");
   const smith = await mk('Foundry Smith');
   assert.equal((await claimFixture(smith, { name: 'Smith Workshop', district: 'foundry' })).code, 200);
-  await pool.query('UPDATE characters SET cash=10000000, cb=20 WHERE id=$1', [smith.id]);
+  await pool.query('UPDATE characters SET cash=10000000, cb=20, respect=5760 WHERE id=$1', [smith.id]);
   const cashPre2 = await cashOf(smith.id);
   await call('POST', `/v1/workshop/craft/${c0.id}`, { token: smith.token });
   assert.equal(await cashOf(smith.id), cashPre2 - Math.floor(c0.cost * 0.75),
     'a foundry corner controller crafts at the signed 0.75 — the workshop till reads the corner');
   // (4) THE OP SEAT — the board AND the till: level 11 seats opSlotsOf(11); the corner seats one more.
-  const lvlA = 11; // respect 1000
+  const lvlA = 25; // respect 5760
   const meA = (await call('GET', '/v1/me', { token: a.token })).body.character;
   assert.equal(meA.ops.slots, opSlotsOf(lvlA) + DEEDS.PERK_OP_SLOTS,
     'the board shows the corner seat (the same opSlotsOf the till gates on)');
@@ -351,11 +360,11 @@ delete process.env.DEEDS_SHAKE_P;
   await pool.query('UPDATE characters SET respect=20000 WHERE id=$1', [a.id]); // level 45
   assert.equal((await call('GET', '/v1/me', { token: a.token })).body.character.ops.slots, OPERATIONS.SLOTS_MAX,
     'MUTATION cap: the corner seat NEVER exceeds SLOTS_MAX — a deed accelerates the seat curve, it cannot exceed what level alone reaches');
-  await pool.query('UPDATE characters SET respect=1000 WHERE id=$1', [a.id]);
+  await pool.query('UPDATE characters SET respect=5760 WHERE id=$1', [a.id]);
   // (6) THE PERK FOLLOWS CONTROL — b re-seizes a's corner: a loses the price edge AND the seat;
   // b (whose own deed is in foundry) now enjoys the NEON edge through the corner they muscled.
   process.env.DEEDS_SHAKE_P = '1';
-  await pool.query("UPDATE characters SET loc='neon', respect=1000, muscle=40, cunning=40, energy=100, cash=1000000 WHERE id=$1", [b.id]);
+  await pool.query("UPDATE characters SET loc='neon', respect=5760, muscle=40, cunning=40, energy=100, cash=1000000 WHERE id=$1", [b.id]);
   await pool.query("UPDATE street_deeds SET shakedown_at = now() - interval '7 hours' WHERE account_id=$1", [a.acct]);
   assert.equal((await call('POST', `/v1/deeds/shakedown/${a.id}`, { token: b.token })).body.won, true, 'b re-seizes the corner');
   delete process.env.DEEDS_SHAKE_P;
@@ -550,7 +559,7 @@ assert.equal((await call('POST', '/v1/deeds/claim', { token: e.token, body: { na
 // take, and assert both ends read the same nothing.
 await pool.query('UPDATE street_deeds SET corner_at=$1 WHERE onchain_token_id IS NOT NULL', [new Date(Date.now() - 20 * 3600e3)]);
 // past DEEDS.CORNER_MIN_LVL, so what's asserted below is the INERT DEED and not the anti-alt floor
-await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [e.id, 1000]);
+await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [e.id, 5760]);
 const eInert = (await call('GET', '/v1/deeds', { token: e.token })).body;
 assert.equal(eInert.corner.owed, 0, 'an extracted deed accrues no corner take on the board');
 assert.equal(eInert.corner.collectable, 0, 'and nothing reads as collectable');
@@ -768,16 +777,19 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
   const cash0 = Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [rookie.id])).rows[0].cash);
   const bd = (await call('GET', '/v1/deeds', { token: rookie.token })).body;
   assert.equal(bd.corner.canCollect, false, 'the board says a rookie cannot work the corner — it never advertises a take the till refuses');
-  assert.ok(bd.corner.collectable > 0, 'but the take IS accruing — the floor delays the money, it does not destroy it');
+  assert.equal(bd.corner.collectable, 0, 'ownership cannot bank income below level 25');
   const nope = await call('POST', '/v1/deeds/corner', { token: rookie.token });
   assert.equal(nope.body.error, 'rookie', 'and the till refuses a level-1 alt');
   assert.equal(Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [rookie.id])).rows[0].cash), cash0,
     'not one dollar moved — a fresh alt is no longer a $48k/day faucet');
   // …and the same street pays the moment its owner is somebody
   await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [rookie.id, 40000]);
+  assert.equal((await call('GET', '/v1/deeds', { token: rookie.token })).body.corner.owed, 0,
+    'reaching level 25 starts the reward clock without paying the earlier ownership interval');
+  await backdate(rookie.acct, 1);
   const yes = await call('POST', '/v1/deeds/corner', { token: rookie.token });
-  assert.equal(yes.code, 200, 'past the floor the corner pays normally — the gate is the level, not the deed');
-  assert.ok(yes.body.total > 0, 'and it banks the take that built up while he was coming up');
+  assert.equal(yes.code, 200, 'an eligible interval pays normally');
+  assert.ok(yes.body.total > 0);
   assert.equal((await call('GET', '/v1/deeds', { token: rookie.token })).body.corner.canCollect, true, 'the board agrees');
 }
 
@@ -819,7 +831,9 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
   assert.equal(Number((await pool.query('SELECT issued FROM street_deed_supply WHERE id=1')).rows[0].issued), 2500);
   const closed = (await call('GET', '/v1/deeds', { token: excess.token })).body;
   assert.equal(closed.canClaim, false, 'exhausted collection hides new issuance');
-  assert.deepEqual(closed.supply, { maximum: 2500, issued: 2500, remaining: 0 });
+  assert.equal(closed.supply.maximum, 2500);
+  assert.equal(closed.supply.issued, 2500);
+  assert.equal(closed.supply.remaining, 0);
   const no = await call('POST', '/v1/deeds/claim', { token: excess.token,
     body: { name: 'Excess Street', district: 'neon', buildingId: excessDiscovery.buildingId } });
   assert.equal(no.body.error, 'deed_supply_exhausted', 'API refuses the 2,501st identity');

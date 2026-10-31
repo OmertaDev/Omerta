@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
@@ -274,6 +275,7 @@ try {
     PRIMARY KEY (account_id, day, scope, claim_id)
   )`);
   await pool.query('ALTER TABLE characters ADD COLUMN crew_sale_credit_ms BIGINT NOT NULL DEFAULT 0');
+  await migrateDeedBenefitStorage(pool);
   assert.equal((await pool.query("SELECT table_name FROM information_schema.tables WHERE table_schema=current_schema() AND table_name LIKE 'director_%'")).rows.length, 0);
   const account = 'director-migration-owner';
   await addPlayer(pool, account); await addPlayer(pool, 'director-migration-neighbor');
