@@ -94,6 +94,8 @@
           if (!input.name || ['hidden', 'submit', 'checkbox'].includes(input.type) || values[input.name] === undefined) continue;
           if (input.tagName !== 'SELECT' || [...input.options].some(option => option.value === values[input.name])) input.value = values[input.name];
         }
+        const item = element.querySelector('[name="itemId"]');
+        if (item) element.dataset.businessId = item.value;
       });
     }
 
@@ -221,7 +223,7 @@
         + '<p class="business-help">Choose three different districts and two different courier accounts, separate from your own. Publishing does not accept for either courier. Dispatch reserves both fees.</p>'
         + consent('I offer this exact tool and these fees. Each courier must accept separately.') + reasons(missing(['inventory', 'courier', 'consignments', 'me']))
         + (!items.length ? empty('No uncommitted account-owned precision tool is available. Finish production or delivery, or release an existing offer first.') : '')
-        + button('publish-courier', 'Offer two-leg delivery', locked('inventory', 'courier', 'consignments', 'me') || !items.length));
+        + button('publish-courier', 'Offer two-leg delivery', locked('inventory', 'courier', 'consignments', 'me') || !items.length), items[0]?.id || '');
       const networks = list(boards.courier?.networks).map(row => {
         const owner = row.ownerOriginal === character().id, first = row.firstOriginal === character().id, second = row.secondOriginal === character().id;
         const expired = Date.parse(row.expiresAt) <= Date.now(), disabled = locked('courier', 'me') || expired;
@@ -261,7 +263,7 @@
         + field('lifetimeSeconds', 'Offer lifetime · seconds', 86400, { type: 'number', min: 60, max: 86400 }, 'sale') + '</div>'
         + '<p class="business-help">The distinct host must accept in their own session. A third account must pay the price at the host’s pickup district. Seller proceeds are price minus the host commission.</p>'
         + consent('I offer this exact item at this price, commission and deadline. The host must accept separately.') + reasons(missing(['inventory', 'courier', 'consignments', 'me']))
-        + button('create-consignment', 'Offer tool for consignment', locked('inventory', 'courier', 'consignments', 'me') || !items.length));
+        + button('create-consignment', 'Offer tool for consignment', locked('inventory', 'courier', 'consignments', 'me') || !items.length), items[0]?.id || '');
       const rows = list(boards.consignments?.rows).map(row => {
         const owner = row.originalOwner === character().id, hostRole = row.originalHost === character().id;
         const expired = Date.parse(row.expiresAt) <= Date.now(), closed = !['offered', 'active'].includes(row.status);
@@ -470,6 +472,10 @@
       }
     });
     root.addEventListener('change', event => {
+      if (event.target.name === 'itemId') {
+        const element = event.target.closest('form[data-business-form]');
+        if (element) element.dataset.businessId = event.target.value;
+      }
       if (event.target.closest('[data-business-form="production"]')) {
         const name = event.target.name; captureDrafts(); draw(); root.querySelector('[data-business-form="production"] [name="' + name + '"]')?.focus({ preventScroll: true });
       }
