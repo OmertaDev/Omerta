@@ -22,6 +22,11 @@ if (native) {
 for (const key of Object.keys(process.env)) if (/^(CHAIN_|VOUCHER_|PRIVY_|X_OAUTH|INVARIANT_WEBHOOK|DISCORD_|REDIS_URL)/.test(key)) delete process.env[key];
 Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', INVITE_MODE: 'off', POPULATION_OFF: 'on',
   DEPOT_PILOT: 'off', CHAIN_ENABLED: 'off', RESOURCE_ECONOMY: 'off', RESOURCE_COMPUTE_ENABLED: 'off', RESOURCE_PAYMENTS_MODE: 'test',
+  // Explicit disposable-fixture identity; production legal preflight remains enabled.
+  LEGAL_OPERATOR_NAME: 'CI Test Operator', LEGAL_POSTAL_ADDRESS: '123 Fixture Street, Test City',
+  PRIVACY_CONTACT_EMAIL: 'privacy@example.test', DMCA_AGENT_NAME: 'CI Test Agent',
+  DMCA_AGENT_EMAIL: 'copyright@example.test', DMCA_AGENT_ADDRESS: '123 Fixture Street, Test City',
+  DMCA_AGENT_PHONE: '+1 202 555 0100', DMCA_AGENT_REGISTERED: 'true', PAYMENT_REFUND_POLICY: 'Test fixture policy; not a production policy.',
   JWT_SECRET: 'business-desk-owned-fixture-secret', MARKET_SEED: 'business-desk-owned-fixture-market-seed', MOD_KEY: 'business-desk-owned-fixture-moderator' });
 const { buildServer } = await import('./server-fixture.js');
 const app = await buildServer(), pool = app.pool, base = '/v1/company/desk';
