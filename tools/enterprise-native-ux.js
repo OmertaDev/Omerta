@@ -7,13 +7,14 @@ import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from 
 import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
  ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as PREDECESSOR_NATIVE_DEFINITION_SHA256 } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
+import { businessDeskNativeProvenance } from './businessdesk-native-provenance.js';
 export { ENTERPRISE_NATIVE_UX_INPUTS };
 export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-deed-inputs.js';
 export const ENTERPRISE_UX_PREDECESSOR_METADATA = 'tools/enterprise-native-ux-b35-inputs.js';
 export const ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256 = '70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e';
 export const ENTERPRISE_UX_QUALIFIED_METADATA = 'tools/enterprise-native-ux-inputs.js';
 export const ENTERPRISE_UX_QUALIFIED_METADATA_SHA256 = '7c120ae6ae8dfc12ab2b32d2d0044ca4e20d6ce6ffeddad02bcc8aa998a69c45';
-export const ENTERPRISE_UX_SUPPORT = Object.freeze([ENTERPRISE_UX_PREDECESSOR_METADATA, ENTERPRISE_UX_QUALIFIED_METADATA, 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js', 'tools/ux-workflow-bound-source-seal.js', 'tools/ux-phase2-upgrade-bound-source-seal.js', 'tools/ux-suites-gate-source-seal.js', 'tools/sale-source-seal.js', 'test/sale-source-compatibility.js', 'tools/generate-economy-social-proof-receipt-source-transfer.js', 'tools/generate-economy-social-proof-receipt-safety-source-transfer.js', 'tools/generate-economy-social-proof-cutover-source-transfer.js', 'tools/generate-economy-bank-interest-source-transfer.js', 'tools/pgquery.js', 'test/social-receipt-postgres.js', 'test/db-boot-lock-postgres.js', 'test/businessdesk.js', 'test/businessdesk-api.js', 'test/business-control-desk-loop.js', 'test/business-control-desk-browser.js', 'test/businessdesk-source-compatibility.js', 'tools/generate-businessdesk-source-transfer.js']);
+export const ENTERPRISE_UX_SUPPORT = Object.freeze([ENTERPRISE_UX_PREDECESSOR_METADATA, ENTERPRISE_UX_QUALIFIED_METADATA, 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js', 'tools/ux-workflow-bound-source-seal.js', 'tools/ux-phase2-upgrade-bound-source-seal.js', 'tools/ux-suites-gate-source-seal.js', 'tools/sale-source-seal.js', 'test/sale-source-compatibility.js', 'tools/generate-economy-social-proof-receipt-source-transfer.js', 'tools/generate-economy-social-proof-receipt-safety-source-transfer.js', 'tools/generate-economy-social-proof-cutover-source-transfer.js', 'tools/generate-economy-bank-interest-source-transfer.js', 'tools/pgquery.js', 'test/social-receipt-postgres.js', 'test/db-boot-lock-postgres.js', 'test/businessdesk.js', 'test/businessdesk-api.js', 'test/business-control-desk-loop.js', 'test/business-control-desk-browser.js', 'test/businessdesk-source-compatibility.js', 'test/businessdesk-native-provenance.js', 'tools/generate-businessdesk-source-transfer.js']);
 export const ENTERPRISE_UX_ASSETS = Object.freeze([
  ...['feedback', 'progression', 'social', 'navigation', 'workspace', 'world', 'tactics', 'investigation', 'coordination', 'feel', 'tools', 'identity', 'story', 'community'].flatMap(name => ['public/ux-' + name + '.js', ...(name === 'workspace' ? [] : ['public/ux-' + name + '.css'])]),
  'public/sale.html', 'public/business-control-desk.js', 'public/business-control-desk.css',
@@ -115,6 +116,8 @@ export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, d
  // The relation below records provenance only; native execution and its sixteen fresh cases remain mandatory.
  const previous = PREDECESSOR_NATIVE_INPUTS.files.find(row => row.file === file);
  if (!previous || !changedPin(previous, expected)) return null;
+ const businessProof = businessDeskNativeProvenance(file, previous, expected);
+ if (businessProof) return businessProof;
  const sourcePin = DEED_ALLOCATION_SOURCE_DOMAINS[file];
  assert(sourcePin, 'No unreviewed change to an existing native input: ' + file);
  assert.equal(expected.mode, sourcePin.currentMode); assert.equal(expected.blob, sourcePin.currentBlob);
