@@ -108,3 +108,5 @@ audioDocument.hidden = true; audioListeners.visibilitychange(); assert.equal(aud
 audioDocument.hidden = false; audioListeners.visibilitychange(); await Promise.resolve(); advanceAudio(); assert.equal(audioInstances[1].paused, false);
 audioEnabled = false; audioContext.audioEngine.sync(); advanceAudio(); assert.equal(audioInstances[1].paused, true, 'the site master mute stops the custom room bed');
 console.log('UX soundscape bridge: gesture, verified assets, independent crossfades, volume, hidden page and master mute passed.');
+const { runJourneyModelProof } = await import('./lib/ux-journeys.js');
+await runJourneyModelProof();

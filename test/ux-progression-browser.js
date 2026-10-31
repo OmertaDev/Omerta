@@ -155,3 +155,7 @@ try {
 } finally {
   await browser.close(); await new Promise(resolve => server.close(resolve));
 }
+const { runJourneyBrowserProof } = await import('./lib/ux-journeys-browser.js');
+await runJourneyBrowserProof();
+const { runOpeningLiveBrowserProof } = await import('./lib/ux-opening-live-browser.js');
+await runOpeningLiveBrowserProof();

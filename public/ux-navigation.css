@@ -27,4 +27,7 @@
   .ux-screen-tools[open]>.ux-screen-tools-body{position:fixed;z-index:40;inset:68px 8px calc(112px + env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain;padding:12px;background:var(--panel,#151512);border:1px solid var(--line2,#72644b);box-shadow:0 12px 40px #000b}
 }
 body[data-celebration=quiet] .ux-clock--ready{animation:none;outline:1px solid var(--gold,#c7af79)}
+.ux-tool-tip-badge{display:inline-block;margin-left:9px;padding:2px 6px;border:1px solid var(--line2,#72644b);font-size:10px;color:var(--gold,#c7af79)}
+.ux-tool-discovery{margin:8px 0;padding:12px;border-left:2px solid var(--gold,#c7af79);background:var(--panel,#151512);font-size:12px;line-height:1.5;max-width:100%;box-sizing:border-box}
+.ux-tool-discovery p{margin:5px 0 10px;color:var(--dim,#b6b1a4)}.ux-tool-discovery>div{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.ux-tool-discovery button{min-height:44px}.ux-tool-discovery button:focus-visible{outline:2px solid var(--gold,#c7af79);outline-offset:2px}
 @media(forced-colors:active){.ux-clock,.ux-practice,.ux-context-rules,.ux-action-pocket{border-color:CanvasText}.ux-text-button{color:LinkText}.ux-shortcut[aria-current=page]{outline:1px solid Highlight}}
