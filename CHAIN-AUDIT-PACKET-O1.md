@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory refreshed 2026-10-15; historical baseline measured 2026-09-14.** This supersedes
+> **LIVE PACKET — source inventory refreshed 2026-10-31; historical baseline measured 2026-09-14.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -32,10 +32,12 @@ unreproducible for 19 hours on 2026-08-29. Hence:
 | what | value | how it was measured |
 |---|---|---|
 | historical inventory snapshot | merge working tree over `53671d23` and `353e05b1` | source inventory measured 2026-09-14; the base commit does not identify the working-tree changes. The new review's source/artifact manifests identify the final reviewed bytes |
-| current owned source inventory | `15c03fa8e869f29f866d374e5b96bf63a2a8a81b` | inventory refreshed 2026-10-13: 65 owned Solidity files, 54 contracts and 11 interfaces; 35 pinned vendor files, 100 total source files. Inventory only, not a new aggregate audit or Foundry result |
+| historical owned source inventory | `15c03fa8e869f29f866d374e5b96bf63a2a8a81b` | inventory refreshed 2026-10-13: 65 owned Solidity files, 54 contracts and 11 interfaces; 35 pinned vendor files, 100 total source files. Inventory only, not a new aggregate audit or Foundry result |
+| current owned source inventory | PR #310 source over `8f15ed04b3443bd0860683af65654f2b32aae093` | inventory refreshed 2026-10-31: 76 owned Solidity files, 64 contracts and 12 interfaces; 35 pinned vendor files, 111 total source files. Inventory only; source-specific review and deployment gates remain separate |
 | historical suite baseline | `b0a214ca` | the earlier CI `forge test (contracts)` run cited below; it predates the new liquidity contracts and is not a test result for this working tree |
 | toolchain | **forge v1.7.1** | pinned in `.github/workflows/forge.yml`, which also prints `forge --version` as its own step |
-| compiler | **solc 0.8.26**, optimizer on, `optimizer_runs = 800`, `evm_version = "cancun"` | `omerta-contracts/foundry.toml` |
+| historical compiler baseline | **solc 0.8.26**, optimizer on, `optimizer_runs = 800`, `evm_version = "cancun"` | `b0a214ca:omerta-contracts/foundry.toml`; retained with the historical suite baseline |
+| current compiler | **solc 0.8.38+commit.1835d247**, optimizer on, `optimizer_runs = 800`, `evm_version = "cancun"` | `omerta-contracts/foundry.toml` and canonical artifact metadata; its declared IR and non-IR profiles remain distinct |
 | fuzz | **512 runs** | `foundry.toml [fuzz]` |
 | invariants | **forge defaults** — there is no `[invariant]` section | `foundry.toml`; stated rather than implying tuned depth |
 | historical suite result | **896 tests across 43 suites, 0 failed, 0 skipped** | the CI forge job on `b0a214ca`, dated 2026-09-06; the 43 per-suite lines sum to exactly 896. Retained as baseline evidence only |
@@ -53,14 +55,14 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 57 contracts + 12 interfaces, current owned source inventory
+## 1. SCOPE — 64 contracts + 12 interfaces, current owned source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-owned `omerta-contracts/src` modules — 69 Solidity files, 57 contracts and 12 interfaces.
+owned `omerta-contracts/src` modules — 76 Solidity files, 64 contracts and 12 interfaces.
 The additional 35 vendored Solidity files are included through the complete pinned
 [dependency manifest](omerta-contracts/src/genesis-auction/vendor/SOURCE-MANIFEST.json),
-including its declared local CCA patch. Together these identify all 104 source files; libraries
+including its declared local CCA patch. Together these identify all 111 source files; libraries
 and data types in that closure are source-review dependencies, not independently deployable contracts.
 This is the complete source inventory, not a claim that one review package clears every component.
 The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market/`;
@@ -71,6 +73,10 @@ Its source manifest, findings and exclusions govern applicability; it grants no 
 or activation approval, and this inventory does not expand its scope.
 The 2026-09-08 liquidity review names its own source closure and release phase; earlier packages
 retain their original scopes and conclusions.
+
+The PR #310 family-fee composition review remains pending under the Daybreak account-security
+requirement. Existing component tests and this inventory refresh do not close that review or grant
+production deployment, funding, custody migration or activation clearance.
 
 | # | contract | what it is | its tests |
 |---|---|---|---|
@@ -136,14 +142,21 @@ retain their original scopes and conclusions.
 | 60 | `GenesisPlayerSale` | signed eligibility, inventory caps, settlement and cancellation | `test/GenesisPlayerSale.t.sol`, `test/GenesisPlayerSaleInvariant.t.sol` |
 | 61 | `OmertaGuardedAuction` | public auction custody, safe batch claims and guarded initialization | `test/OmertaGuardedAuction.t.sol` |
 | 62 | `OmertaGenesisCoordinatorV2` | exact auction binding, inventory allocation and real liquidity execution | `test/market-v2/GenesisCoordinatorV2.t.sol`, `test/market-v2/PlayerGenesisIntegrationV2.t.sol` |
-| 63 | `GenesisCharacterEligibility` | fixed NFT identity and supply-snapshot admission; includes the fixed bid validator from the same source file | `test/OmertaGuardedAuction.t.sol` |
+| 63 | `GenesisCharacterEligibility` | fixed NFT identity and supply-snapshot admission; includes the fixed bid validator from the same source file | `test/GenesisCharacterEligibility.t.sol` |
 | 64 | `OmertaAuctionCoordinatorV2` | approved single-auction liquidity funding, Safe custody and reserved ETH recovery | `test/market-v2/AuctionCoordinatorV2.t.sol`, `test/market-v2/AuctionGenesisRobinhoodFork.t.sol` |
 | 65 | `OmertaRestrictedOMRV2` | fixed-supply token with a sealed transfer policy and pinned settlement and custody operators; independent review and launch gates apply | `test/market-v2/RestrictedOMRV2.t.sol`, `test/market-v2/RestrictedMarketIntegrationV2.t.sol` |
 | 66 | `OmertaSwapRouterV2` | bounded ETH/OMR router settling the restricted manager's final fee-adjusted deltas; independent review and launch gates apply | `test/market-v2/RestrictedPoolManagerV2.t.sol`, `test/market-v2/RestrictedMarketIntegrationV2.t.sol` |
-| 67 | `OmertaProtocolFeesV2` | abstract protocol-fee base in `market-v2/core/OmertaPoolManagerV2.sol`; the same source file includes the restricted `OmertaPoolManagerV2` and its immutable 5% base revenue policy on buys and sells; independent review and launch gates apply | `test/market-v2/RestrictedPoolManagerV2.t.sol`, `test/market-v2/RestrictedRevenueBoundariesV2.t.sol` |
+| 67 | `OmertaProtocolFeesV2` | abstract protocol-fee base in `market-v2/core/OmertaPoolManagerV2.sol`; the same source file includes the restricted `OmertaPoolManagerV2` with immutable 3.5% base plus 0.5% WBTC rewards allocation on buys and sells, a 4% ordinary protocol charge; independent review and launch gates apply | `test/market-v2/RestrictedPoolManagerV2.t.sol`, `test/market-v2/RestrictedRevenueBoundariesV2.t.sol`, `test/market-v2/RewardsFeeV2.t.sol` |
 | 68 | `IOmertaRestrictedOMRV2` | interface only; sealed token policy, operator roles and runtime bindings | `test/market-v2/RestrictedOMRV2.t.sol`, `test/market-v2/RestrictedPoolManagerV2.t.sol` |
 
 | 69 | `OmertaWorkEscrowV2` | immutable original-party ETH/native issuer USDC work escrow candidate: funded reserve, acceptance, allocation, payee settlement and unused original-funder recovery; no admin, redirect, upgrade or sweep. Public financial activation remains OFF | `test/market-v2/WorkEscrowV2.t.sol` |
+| 70 | `GenesisCharacterPlayerSale` | character ownership required for fresh snapshot-tranche contributions; existing settlements, claims and refunds retain their original rights | `test/GenesisCharacterEligibility.t.sol`, `test/GenesisPlayerSale.t.sol` |
+| 71 | `OmertaCharacterGuardedAuction` | character-gated auction with an internally deployed NFT/supply validator and a common token-claim gate | `test/GenesisCharacterEligibility.t.sol`, `test/market-v2/AuctionCoordinatorV2.t.sol` |
+| 72 | `OmertaFamilyDistributorV2` | family fee policies, checkpointed transitions, fixed-wallet credits and reserve accounting; composition review remains pending | `test/market-v2/FamilyDistributorV2.t.sol`, `test/market-v2/FamilyDeparturePolicyV2.t.sol`, `test/market-v2/FamilyDissolutionPolicyV2.t.sol` |
+| 73 | `OmertaGameCustodyV2` | backed game OMR custody with an explicit treasury baseline, domain-bound withdrawal vouchers and finite payout caps | `test/market-v2/GameCustodyV2.t.sol`, `test/market-v2/GameCustodyAdversarialV2.t.sol` |
+| 74 | `OmertaPositionDescriptorV2` | read-only liquidity-position metadata bound to the actual custom manager | `test/market-v2/PositionDescriptorV2.t.sol` |
+| 75 | `OmertaWbtcConverterV2` | vault-authorized conversion through a fixed hookless ETH/WBTC pool with runtime pins, minimum output and a bounded deadline | `test/market-v2/WbtcConverterV2.t.sol` |
+| 76 | `OmertaWbtcRewardsV2` | prefunded eight-decimal WBTC epochs with immutable roots/budgets and beneficiary-bound claims; the Safe attests off-chain eligibility | `test/market-v2/WbtcRewardsV2.t.sol`, `test/wbtc-reward-epoch.js` |
 
 The new escrow source has separate scoped evidence in the [current autonomy review](docs/agent-economy-autonomy-release-review.md). Its retained genuine compiler/EVM proof records **10 passed tests, zero failures/skips**, including **512 native-ETH plus 512 USDC conservation fuzz cases (1,024 total)** under Forge1.7.1/Solc0.8.26, viaIR, optimizer800 and Cancun. These are isolated-EVM tests with mock USDC, not production token custody, a chain fork or a new aggregate full-suite/audit result. Original-party rights, exact token deltas, allocation/payout/refund, replay/deadlines, reentrancy and failed-recipient liabilities are scoped to the reviewed source/artifact. No approved deployed escrow/provider, actual external funding/payment, crypto backing or public activation is established. Financial activation and paid compute remain **OFF**. The September historical counts, dates and toolchain below retain their original point-in-time meaning.
 
