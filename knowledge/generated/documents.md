@@ -517,7 +517,7 @@
 | [docs/investors/02-technical-detail.md](../../docs/investors/02-technical-detail.md) | documentation | 456 | 2026-10-06 |
 | [docs/item-durability-integrated-review.md](../../docs/item-durability-integrated-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 131 | 2026-09-25 |
-| [docs/legal-security-setup.md](../../docs/legal-security-setup.md) | documentation | 55 | 2026-10-14 |
+| [docs/legal-security-setup.md](../../docs/legal-security-setup.md) | documentation | 56 | 2026-10-31 |
 | [docs/living-world-director/evidence/README.md](../../docs/living-world-director/evidence/README.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/HANDOFF.md](../../docs/living-world-director/HANDOFF.md) | documentation | 118 | 2026-09-18 |
 | [docs/living-world-director/OPPORTUNITY-FEED.md](../../docs/living-world-director/OPPORTUNITY-FEED.md) | documentation | 71 | 2026-09-18 |
