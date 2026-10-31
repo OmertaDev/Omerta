@@ -5,8 +5,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const revision = 'd52232e223bf26355160ad511a711a1f1bc916c1';
-const predecessor = 'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9';
+const revision = 'da6b0dc00ca95c24c3e30b66c773e5c397d8d4ee';
+const predecessor = 'a24df18ea1a0b57f25df942675dd9fef7415f275';
 const files = Object.freeze(['.github/workflows/ci.yml', 'package.json', 'public/index.html', 'src/server.js']);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
@@ -21,7 +21,7 @@ assert.equal(process.argv[2], '--write',
   'Use --write only for the fixed reviewed business control desk');
 git('merge-base', '--is-ancestor', predecessor, revision);
 git('merge-base', '--is-ancestor', revision, 'HEAD');
-assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split('\n'), ['.github/workflows/ci.yml', 'package.json', 'public/business-control-desk.css', 'public/business-control-desk.js', 'public/index.html', 'src/businessdesk.js', 'src/routes/businessdesk.js', 'src/server.js', 'test/business-control-desk-browser.js', 'test/business-control-desk-loop.js', 'test/businessdesk-api.js', 'test/businessdesk.js', 'test/lib/business-control-desk-fixture.js', 'tools/enterprise-native-ux.js'],
+assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split('\n'), ['.github/workflows/ci.yml', 'package.json', 'public/business-control-desk.css', 'public/business-control-desk.js', 'public/index.html', 'src/businessdesk.js', 'src/routes/businessdesk.js', 'src/server.js', 'test/business-control-desk-browser.js', 'test/business-control-desk-loop.js', 'test/businessdesk-api.js', 'test/businessdesk-source-compatibility.js', 'test/businessdesk.js', 'test/lib/business-control-desk-fixture.js', 'tools/businessdesk-source-transfer.js', 'tools/economy-ux-merge-source-compatibility.js', 'tools/enterprise-native-ux.js', 'tools/generate-businessdesk-source-transfer.js'],
   'Authored business desk changed outside its closed source domains');
 
 const domains = {};
