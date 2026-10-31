@@ -304,7 +304,7 @@
 | [src/kitchen.js](../../src/kitchen.js) | 397 | platform-core | 4 / 4 | 13 | 8 | 1 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |
 | [src/law.js](../../src/law.js) | 287 | law-intelligence | 3 / 7 | 9 | 7 | 2 |
-| [src/legal.js](../../src/legal.js) | 46 | platform-core | 0 / 2 | 0 | 5 | 1 |
+| [src/legal.js](../../src/legal.js) | 57 | platform-core | 0 / 2 | 0 | 5 | 1 |
 | [src/liquidityaccounting.js](../../src/liquidityaccounting.js) | 321 | platform-core | 1 / 8 | 0 | 16 | 3 |
 | [src/liquidityautomation.js](../../src/liquidityautomation.js) | 39 | platform-core | 5 / 3 | 0 | 1 | 0 |
 | [src/liquidityindexer.js](../../src/liquidityindexer.js) | 254 | platform-core | 3 / 4 | 0 | 3 | 1 |
