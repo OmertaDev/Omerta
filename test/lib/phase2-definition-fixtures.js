@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { newDb, DataType } from 'pg-mem';
 import { registerPgMemCompatibility } from '../../src/db.js';
+import { migrateDeedBenefitStorage } from '../../src/deedbenefits.js';
 import { discoverContentPackages } from '../../src/content/discovery.js';
 import { compileContentCorpus, sealedBundleBytes } from '../../src/content/corpus.js';
 
@@ -124,6 +125,7 @@ export async function seedLegacyCompatibility(pool) {
   const { collectContentSource,startContentWorkOrder,finishContentWorkOrder,craftContentRecipe } = await import('../../src/content/crafting.js');
   const { createContentExchangeListing } = await import('../../src/content/exchange.js');
   const { withItemTransaction,grantStack,createItem,escrowItem } = await import('../../src/items.js');
+  await migrateDeedBenefitStorage(pool);
   const accountId=randomUUID(),characterId=randomUUID(),crewId=randomUUID();
   await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES ($1,$2,$3)',[accountId,'guest',accountId]);
   await pool.query('INSERT INTO account_persistent(account_id,agent_flag) VALUES ($1,true)',[accountId]);

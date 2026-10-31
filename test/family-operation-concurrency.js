@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { dbCaps } from '../src/db.js';
 import { withCharacter } from '../src/game.js';
 import { acceptInvite, inviteToCrew, CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';
@@ -150,6 +151,7 @@ const accept = (selectedPool, run) => withCharacter(selectedPool, run.donor, (ch
 
 try {
   await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+  await migrateDeedBenefitStorage(pool);
   // Invite acceptance holds the historical depositor character first. Cancellation
   // must release its Crew lock through a mapped NOWAIT rollback, not wait in ABBA.
   const first = await historicalDepositor('first');

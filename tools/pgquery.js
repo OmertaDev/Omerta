@@ -66,7 +66,7 @@ const scannerSignature = ({ rel, sql, parts }) => JSON.stringify([rel, canonical
 async function modelSocialReceiptQueries(rows) {
   const sourcePins = Object.freeze({
     'src/accountdaily.js': 'ec1c5b770146297f4471a839ff8bfbbbeeec44fe607eeadb926fc5c91f39aca3',
-    'src/db.js': 'b81f2db08de8ac9ec4975cb653fd89cbc50e8aeb966726b4ac259f961447ca8c',
+    'src/db.js': '9d8ef3f15ed9141792679808d791b51dd679daf28f9f70768ba9472d3b84cae4',
     'src/growth.js': 'a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b',
   });
   const verifyPinnedSource = (rel, raw, expectedHash) => {

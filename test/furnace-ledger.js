@@ -4,6 +4,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { newDb, DataType } from 'pg-mem';
 import { dbCaps, registerPgMemCompatibility } from '../src/db.js';
 import { travel, withCharacter } from '../src/game.js';
@@ -116,7 +117,9 @@ for (const branch of ['preserve', 'expose']) {
     assert.deepEqual(await snapshot(), before, 'denial rolls back every affected domain and receipt');
   }
   try {
-    await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8')); services();
+    await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+    await migrateDeedBenefitStorage(pool);
+    services();
     for (const [role, account] of Object.entries(accounts)) {
       await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [account]);
       await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)', [account]);

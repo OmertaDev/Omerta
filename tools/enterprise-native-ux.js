@@ -1,12 +1,19 @@
-// Admission to execute the unchanged native proofs on actual current source. No historical inverses.
+// Admission executes unchanged native proofs on exact current source. Historical provenance never admits bytes.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { parse } from 'acorn';
-import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-ux-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-deed-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
+ ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as PREDECESSOR_NATIVE_DEFINITION_SHA256 } from './enterprise-native-ux-b35-inputs.js';
+import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 export { ENTERPRISE_NATIVE_UX_INPUTS };
-export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-ux-inputs.js';
-export const ENTERPRISE_UX_SUPPORT = Object.freeze(['tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js', 'tools/ux-workflow-bound-source-seal.js', 'tools/ux-phase2-upgrade-bound-source-seal.js', 'tools/ux-suites-gate-source-seal.js', 'tools/sale-source-seal.js', 'test/sale-source-compatibility.js', 'tools/generate-economy-social-proof-receipt-source-transfer.js', 'tools/generate-economy-social-proof-receipt-safety-source-transfer.js', 'tools/generate-economy-social-proof-cutover-source-transfer.js', 'tools/generate-economy-bank-interest-source-transfer.js', 'tools/pgquery.js', 'test/social-receipt-postgres.js', 'test/db-boot-lock-postgres.js']);
+export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-deed-inputs.js';
+export const ENTERPRISE_UX_PREDECESSOR_METADATA = 'tools/enterprise-native-ux-b35-inputs.js';
+export const ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256 = '70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e';
+export const ENTERPRISE_UX_QUALIFIED_METADATA = 'tools/enterprise-native-ux-inputs.js';
+export const ENTERPRISE_UX_QUALIFIED_METADATA_SHA256 = 'b37b8de9a428f2e23a43c33d69393785fc6b2e7b728750950ab4ad177c5c4e68';
+export const ENTERPRISE_UX_SUPPORT = Object.freeze([ENTERPRISE_UX_PREDECESSOR_METADATA, ENTERPRISE_UX_QUALIFIED_METADATA, 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js', 'tools/ux-workflow-bound-source-seal.js', 'tools/ux-phase2-upgrade-bound-source-seal.js', 'tools/ux-suites-gate-source-seal.js', 'tools/sale-source-seal.js', 'test/sale-source-compatibility.js', 'tools/generate-economy-social-proof-receipt-source-transfer.js', 'tools/generate-economy-social-proof-receipt-safety-source-transfer.js', 'tools/generate-economy-social-proof-cutover-source-transfer.js', 'tools/generate-economy-bank-interest-source-transfer.js', 'tools/pgquery.js', 'test/social-receipt-postgres.js', 'test/db-boot-lock-postgres.js']);
 export const ENTERPRISE_UX_ASSETS = Object.freeze([
  ...['feedback', 'progression', 'social', 'navigation', 'workspace', 'world', 'tactics', 'investigation', 'coordination', 'feel', 'tools', 'identity', 'story', 'community'].flatMap(name => ['public/ux-' + name + '.js', ...(name === 'workspace' ? [] : ['public/ux-' + name + '.css'])]),
  'public/sale.html',
@@ -76,14 +83,21 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
  assert.equal(declaration, ENTERPRISE_NATIVE_UX_INPUTS, 'Only the actual frozen current-native declaration');
  assert.equal(declaration.status, 'SEALED', 'Current UX native inputs remain UNSEALED; no prior native results transfer');
  assert.equal(digest(JSON.stringify(declaration)), ENTERPRISE_NATIVE_UX_INPUTS_SHA256, 'Whole current-native declaration changed');
- fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
- assert.equal(declaration.version, 2); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS');
+ fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
+ assert.equal(declaration.version, 3); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
+ assert.equal(PREDECESSOR_NATIVE_INPUTS.status, 'SEALED');
+ assert.equal(digest(JSON.stringify(PREDECESSOR_NATIVE_INPUTS)), PREDECESSOR_NATIVE_DEFINITION_SHA256, 'Immutable predecessor native declaration');
+ assert.equal(declaration.nativePredecessorRevision, PREDECESSOR_NATIVE_INPUTS.authoredRevision);
+ assert.equal(declaration.nativePredecessorMetadataSha256, ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256, 'Original native manifest bytes remain immutable');
+ assert.equal(declaration.deedSourceDefinitionSha256, digest(JSON.stringify(DEED_ALLOCATION_SOURCE_DOMAINS)), 'Exact reviewed Deed source layer, not a phase-only grant');
  assert.equal(declaration.predecessorRevision, 'c6247976ff71e8d4c103ebd1498c2d373217d077'); assert.equal(declaration.uxRevision, '940df6a1efbe4ddcd8301cd138d5643dbe48a0bc'); assert.match(declaration.authoredRevision, /^[a-f0-9]{40}$/);
  assert.equal(declaration.legacyRevision, legacy.revision); assert.equal(declaration.legacyDefinitionSha256, digest(JSON.stringify(legacy))); assert.equal(declaration.legacyInventorySha256, digest(JSON.stringify(legacyFiles)));
  assert(Object.isFrozen(declaration) && Object.isFrozen(declaration.files) && Object.isFrozen(declaration.replacements) && Object.isFrozen(declaration.legacyAdditionReplacements) && Object.isFrozen(declaration.additions));
  assert.equal(new Set(declaration.files.map(row => row.file)).size, declaration.files.length);
  assert.deepEqual(declaration.files.slice(0, legacyFiles.length).map(row => row.file), legacyFiles, 'Complete original ordered native inventory retained');
  const current = new Map(); for (const row of declaration.files) { pin(row); assert.notEqual(row.file, ENTERPRISE_UX_METADATA, 'Only unavoidable manifest self-reference is separately captured'); current.set(row.file, row); }
+ assert.equal(current.get(ENTERPRISE_UX_PREDECESSOR_METADATA)?.sha256, declaration.nativePredecessorMetadataSha256, 'The old native manifest is an exact ordinary input, never another self-reference');
+ assert.equal(current.get(ENTERPRISE_UX_QUALIFIED_METADATA)?.sha256, ENTERPRISE_UX_QUALIFIED_METADATA_SHA256, 'The qualified UX manifest remains an exact ordinary input, never native admission');
  const extra = declaration.files.slice(legacyFiles.length); assert.deepEqual(extra.map(row => row.file), extra.map(row => row.file).sort()); assert.deepEqual(declaration.additions, extra);
  for (const file of [...ENTERPRISE_UX_SUPPORT, ...ENTERPRISE_UX_ASSETS]) assert(current.has(file), 'Required actual UX/native support file: ' + file);
  const seen = new Set(), order = new Map(legacyFiles.map((file, index) => [file, index]));
@@ -97,4 +111,17 @@ export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, d
  assert(Buffer.isBuffer(bytes)); assert(current && authored && current.type === 'blob' && authored.type === 'blob');
  assert.equal(current.mode, expected.mode); assert.equal(authored.mode, expected.mode); assert.equal(current.blob, expected.blob, 'Current native source differs from actual authored input'); assert.equal(authored.blob, expected.blob, 'Native pin is not actual authored Git');
  assert.equal(digest(bytes), expected.sha256, 'Whole actual native source changed'); assert.equal(blob(bytes), expected.blob, 'Actual native Git bytes changed');
+ // These exact current bytes have already been admitted independently of any historical relation.
+ // The relation below records provenance only; native execution and its sixteen fresh cases remain mandatory.
+ const previous = PREDECESSOR_NATIVE_INPUTS.files.find(row => row.file === file);
+ if (!previous || !changedPin(previous, expected)) return null;
+ const sourcePin = DEED_ALLOCATION_SOURCE_DOMAINS[file];
+ assert(sourcePin, 'No unreviewed change to an existing native input: ' + file);
+ assert.equal(expected.mode, sourcePin.currentMode); assert.equal(expected.blob, sourcePin.currentBlob);
+ assert.equal(expected.sha256, sourcePin.currentSha256);
+ assert.equal(previous.mode, sourcePin.baselineMode); assert.equal(previous.blob, sourcePin.baselineBlob);
+ assert.equal(previous.sha256, sourcePin.baselineSha256);
+ return Object.freeze({ file, current: Object.freeze({ mode: current.mode, blob: current.blob, sha256: digest(bytes) }),
+  predecessor: previous, predecessorRevision: PREDECESSOR_NATIVE_INPUTS.authoredRevision,
+  relation: 'exact-reviewed-deed-source-provenance-only', nativeAdmission: false, priorResultsTransferred: false });
 }

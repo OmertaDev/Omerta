@@ -157,3 +157,7 @@ try {
   assert.ok(!(await isolated.locator('#tab-profile').innerText()).includes('Stale successor ending'), 'a late previous-character reply cannot paint into a successor on the same account');
   assert.deepEqual(errors, []); console.log(`Story browser proof passed: real resident scenes, skippable openings, case epilogues and letters, crossover, expressive reading, synchronized found documents, private annotations, server lighting, reduced motion, account isolation and 390px layout. Screenshots: ${artifacts}`);
 } finally { await browser?.close(); await app.close(); }
+
+// Exercise the continuation through the actual journal on desktop and phone.
+const { runCityAfterwordBrowserProof } = await import('./lib/city-afterword-browser.js');
+await runCityAfterwordBrowserProof();

@@ -5,20 +5,20 @@
   const words = (v) => String(v || '').replace(/[_:-]+/g, ' ');
   const path = '/v1/ux/crew-workspace';
   window.createOmertaCoordination = ({ getState, read, navigate, notify, action }) => {
-    let account = '', character = '', epoch = 0, crewId, observedAt = 0, observeAllowed = true, board = null, loadedAt = 0, loading = false, busy = false, scope = 'crew', pendingFrame = false, unavailable = '';
+    let account = '', character = '', epoch = 0, crewId, observedAt = 0, observeAllowed = true, board = null, loadedAt = 0, loading = false, busy = false, scope = 'crew', pendingFrame = false, unavailable = '', stage = '', issuedTarget = null, fieldworkView = null;
     const drafts = new Map();
     const localTime = (v) => new Date(v).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
     const key = () => String(getState().session?.accountId || getState().me?.accountId || getState().me?.id || '');
     const actor = () => String(getState().me?.id || '');
     const context = () => ({ account, character, epoch });
     const current = (requested) => requested.account === key() && requested.character === actor() && requested.epoch === epoch;
-    const reset = () => { const next = key(), nextActor = actor(); if (next !== account || nextActor !== character) { account = next; character = nextActor; epoch++; crewId = undefined; observedAt = 0; observeAllowed = true; board = null; loading = busy = false; loadedAt = 0; scope = 'crew'; unavailable = ''; drafts.clear(); document.getElementById('ux-coordination')?.remove(); } };
+    const reset = () => { const next = key(), nextActor = actor(); if (next !== account || nextActor !== character) { account = next; character = nextActor; epoch++; crewId = undefined; observedAt = 0; observeAllowed = true; board = null; loading = busy = false; loadedAt = 0; scope = 'crew'; unavailable = ''; stage = ''; issuedTarget = fieldworkView = null; drafts.clear(); document.getElementById('ux-coordination')?.remove(); } };
     const schedule = () => { if (['crew', 'fieldwork'].includes(getState().currentTab) && !pendingFrame) { pendingFrame = true; requestAnimationFrame(() => { pendingFrame = false; render(); }); } };
     const accept = (body, freshRead = false) => {
       const at = Date.parse(body?.serverTime) || 0;
       if (at < observedAt) return false;
       if (body?.available === false && body.reason === 'no_crew' && body.crew === null) {
-        epoch++; crewId = null; observedAt = at; observeAllowed = false; board = null; loadedAt = Date.now(); loading = busy = false; scope = 'crew'; unavailable = body.message || 'Join a crew to use its planning room.'; schedule(); return true;
+        epoch++; crewId = null; observedAt = at; observeAllowed = false; board = null; loadedAt = Date.now(); loading = busy = false; scope = 'crew'; stage = ''; issuedTarget = fieldworkView = null; unavailable = body.message || 'Join a crew to use its planning room.'; schedule(); return true;
       }
       if (!body?.crew || !body.members?.some((member) => member.mine && member.characterId === character)) return false;
       if (observedAt && (!freshRead && at === observedAt || !observeAllowed && at <= observedAt)) return false;
@@ -48,11 +48,34 @@
       if (note.kind === 'clue') return `[Shared lead] ${d.title} · ${d.status}. Reference in the crew planning room.`.slice(0, 240);
       return `[Crew planning] ${d.title} · Open the crew planning room to ${['poll', 'availability'].includes(note.kind) ? 'vote' : 'review the next step'}.`.slice(0, 240);
     };
+    function operationFlow(op) {
+      const notes = board.notes.filter((note) => note.operationId === op.id), plans = notes.filter((note) => note.kind === 'plan' && note.status === 'open');
+      const filled = op.roles.filter((role) => role.filled).length, ready = signals('readiness'), mine = own('readiness');
+      const closed = ['completed', 'canceled', 'abandoned'].includes(op.status), debriefs = notes.filter((note) => note.kind === 'debrief');
+      const steps = op.summary.completedSteps || [], pending = op.summary.awaitedSteps || [];
+      const stages = [
+        { id: 'brief', label: 'Brief', done: plans.length > 0, fact: `${plans.length} open ${plans.length === 1 ? 'plan' : 'plans'}` },
+        { id: 'roles', label: 'Roles', done: op.roles.length > 0 && filled === op.roles.length, fact: `${filled}/${op.roles.length} issued roles filled` },
+        { id: 'ready', label: 'Your readiness', done: mine?.data.value === 'ready', fact: mine ? words(mine.data.value) : 'Not set' },
+        { id: 'execute', label: 'Execute', done: op.status === 'completed', fact: closed ? words(op.status) : `${steps.length} shared steps recorded` },
+        { id: 'debrief', label: 'Debrief', done: debriefs.length > 0, fact: debriefs.length ? 'Record filed' : closed ? 'Ready to review' : 'After the operation closes' },
+      ];
+      const next = closed ? 'debrief' : stages.find((entry) => !entry.done)?.id || 'execute';
+      const selected = stages.some((entry) => entry.id === stage) ? stage : next;
+      const content = {
+        brief: `<h4 id="ux-coord-stage-title">Agree on the next move</h4><p>${plans.length ? plans.map((note) => `${esc(note.data.title)}${note.data.nextStep ? ` · ${esc(note.data.nextStep)}` : ''}`).join('<br>') : 'Write a shared objective and the next concrete action before the crew spends resources.'}</p><button type="button" class="act" data-coord-compose="plan">${plans.length ? 'Add a plan' : 'Write the operation plan'}</button>`,
+        roles: `<h4 id="ux-coord-stage-title">Review the issued roles</h4><p>${filled} of ${op.roles.length} roles are filled. ${op.roles.filter((role) => !role.filled).map((role) => esc(role.title)).join(' · ') || 'Review your assigned role and its requirements in the operation board.'}</p><button type="button" class="act" data-coord-issued>Open this operation’s role controls</button><p class="d">Only the issued controls can assign a role. A plan or pledge cannot fill a position.</p>`,
+        ready: `<h4 id="ux-coord-stage-title">Check your own preparation</h4><p>${ready.filter((signal) => signal.data.value === 'ready').length} current crewmates marked ready for this operation. Your status: ${esc(mine ? words(mine.data.value) : 'not set')}.</p><button type="button" class="act" data-coord-compose="readiness">Review your readiness</button><p class="d">Readiness is a voluntary planning signal. The operation board still checks roles, resources and permissions.</p>`,
+        execute: `<h4 id="ux-coord-stage-title">${closed ? 'Review the recorded outcome' : 'Take your issued step'}</h4><p>${Number(op.summary.contributionCount)} recorded contributions · ${steps.length} completed shared steps.</p><p><b>${closed ? 'Shared steps left unfinished' : 'Next shared steps'}:</b> ${pending.length ? pending.slice(0, 3).map(esc).join(' · ') : 'No pending shared steps on the issued board.'}</p>${closed ? `<p>Recorded outcome: ${esc(words(op.status))}. Closing an operation does not imply success.</p>` : '<button type="button" class="act" data-coord-issued>Open this operation’s issued actions</button>'}`,
+        debrief: `<h4 id="ux-coord-stage-title">${debriefs.length ? 'Keep the shared account' : 'Close with a factual debrief'}</h4>${debriefs.length ? '<p>The operation’s recorded outcome and contributions are filed below. Review what finished and what remains unfinished.</p><button type="button" class="act" data-coord-review-debrief>Read the debrief</button>' : closed ? '<p>The server can prepare an account of the actual outcome, contributions and unfinished shared steps.</p><button type="button" class="act" data-coord-review-debrief>Review debrief controls</button>' : '<p>A factual debrief becomes available after the issued operation is completed, canceled or abandoned. You can review the current shared steps while work continues.</p><button type="button" class="act" data-coord-stage="execute">Review current work</button>'}`,
+      };
+      return `<section class="ux-coord-flow" data-crew-playbook aria-label="Operation playbook"><div class="ux-coord-flow-heading"><div><span class="ux-kicker">Operation playbook</span><h4>${esc(op.title)}</h4></div><span class="chip">${esc(words(op.status))}</span></div><ol class="ux-coord-stages">${stages.map((entry) => `<li><button type="button" data-coord-stage="${entry.id}" data-complete="${entry.done}" aria-pressed="${selected === entry.id}"${next === entry.id ? ' aria-current="step"' : ''}><span>${entry.done ? '✓ ' : ''}${esc(entry.label)}</span><small>${esc(entry.fact)}</small></button></li>`).join('')}</ol><div class="ux-coord-stage" aria-labelledby="ux-coord-stage-title" tabindex="-1" data-coord-current-stage="${selected}">${content[selected]}</div><p class="d">Stage markers follow saved plans and server records. Reviewing a stage does not complete it.</p></section>`;
+    }
     function operationPanel() {
       const op = operation();
-      if (!op) return `<p class="d">Choose a shared operation above to see its issued roles, open positions, and next shared step.</p><button type="button" class="act" data-coord-journal>Open Quest Journal</button>`;
+      if (!op) return `<p class="d">Choose a shared operation above to follow its brief, roles, preparation, issued actions and debrief.</p><button type="button" class="act" data-coord-journal>Find issued Crew operations</button>`;
       const pending = op.summary.awaitedSteps || [];
-      return `<div class="ux-coord-roles">${op.roles.map((r) => `<div><strong>${esc(r.title)}</strong><span class="chip ${r.filled ? 'good' : ''}">${r.filled ? 'Filled' : 'Open position'}</span><small>${r.contributions} recorded contributions</small></div>`).join('')}</div><p><b>${['forming', 'active'].includes(op.status) ? 'Awaiting' : 'Shared steps left unfinished'}:</b> ${pending.length ? pending.slice(0, 3).map(esc).join(' · ') : 'No pending shared steps on the issued board.'}</p><p class="d">Planning signals do not assign roles or reserve resources. Use the issued controls in the Quest Journal.</p><button type="button" class="act" data-coord-journal>Open operation controls</button>`;
+      return operationFlow(op) + `<div class="ux-coord-roles">${op.roles.map((r) => `<div><strong>${esc(r.title)}</strong><span class="chip ${r.filled ? 'good' : ''}">${r.filled ? 'Filled' : 'Open position'}</span><small>${r.contributions} recorded contributions</small></div>`).join('')}</div><p><b>${['forming', 'active'].includes(op.status) ? 'Awaiting' : 'Shared steps left unfinished'}:</b> ${pending.length ? pending.slice(0, 3).map(esc).join(' · ') : 'No pending shared steps on the issued board.'}</p><p class="d">Planning signals do not assign roles or reserve resources. Use the issued controls in the Quest Journal.</p>`;
     }
     function memberSignals() {
       const ready = own('readiness'), pledge = own('pledge'), presence = own('presence');
@@ -73,7 +96,7 @@
       const vote = options ? `<div class="ux-coord-votes">${options.map((o, index) => `<button type="button" class="act" data-coord-vote="${esc(note.id)}" data-option="${index}" aria-pressed="${note.myVote === index}"${closed ? ' disabled' : ''}><span>${esc(d.slots ? localTime(o) : o)}</span><b>${Number(note.votes?.[index] || 0)} votes${note.myVote === index ? ' · your choice' : ''}</b></button>`).join('')}</div><small>${d.slots ? `Shown in ${esc(Intl.DateTimeFormat().resolvedOptions().timeZone)} · creator timezone ${esc(d.timezone)}. ` : ''}${closed ? 'Voting closed' : `Closes ${esc(localTime(d.closesAt))}`}. One current vote per crewmate; you can change yours.</small>` : '';
       const summary = ['handoff', 'debrief'].includes(note.kind) ? `<dl><div><dt>Shared status</dt><dd>${esc(d.status)}</dd></div><div><dt>Recorded contributions</dt><dd>${Number(d.contributionCount)}</dd></div><div><dt>Completed steps</dt><dd>${(d.completedSteps || []).map(esc).join(' · ') || 'None recorded'}</dd></div><div><dt>${['forming', 'active'].includes(d.status) ? 'Next shared steps' : 'Uncompleted shared steps'}</dt><dd>${(d.awaitedSteps || []).map(esc).join(' · ') || 'None pending'}</dd></div></dl>` : '';
       const preview = shareText(note);
-      return `<article class="ux-coord-note"><div class="ux-coord-note-head"><span class="ux-kicker">${esc(words(note.kind))}</span><span class="chip">${esc(note.status)}</span></div><h4>${esc(d.title)}</h4><small>${esc(note.author)} · ${esc(localTime(note.createdAt))}</small>${d.details ? `<p>${esc(d.details)}</p>` : ''}${d.nextStep ? `<p><b>Next:</b> ${esc(d.nextStep)}</p>` : ''}${d.note ? `<p>${esc(d.note)}</p>` : ''}${summary}${vote}<details class="ux-coord-share"><summary>Preview a Crew Room message</summary><p>${esc(preview)}</p><button type="button" class="act" data-coord-share="${esc(preview)}">Send this message to the crew</button></details>${note.canModerate ? `<div class="row">${note.status === 'open' ? `<button type="button" class="act" data-coord-close="${esc(note.id)}">Close entry</button>` : ''}<button type="button" class="act" data-coord-remove="${esc(note.id)}">Remove entry</button></div>` : ''}</article>`;
+      return `<article class="ux-coord-note" data-coord-note-kind="${esc(note.kind)}"><div class="ux-coord-note-head"><span class="ux-kicker">${esc(words(note.kind))}</span><span class="chip">${esc(note.status)}</span></div><h4>${esc(d.title)}</h4><small>${esc(note.author)} · ${esc(localTime(note.createdAt))}</small>${d.details ? `<p>${esc(d.details)}</p>` : ''}${d.nextStep ? `<p><b>Next:</b> ${esc(d.nextStep)}</p>` : ''}${d.note ? `<p>${esc(d.note)}</p>` : ''}${summary}${vote}<details class="ux-coord-share"><summary>Preview a Crew Room message</summary><p>${esc(preview)}</p><button type="button" class="act" data-coord-share="${esc(preview)}">Send this message to the crew</button></details>${note.canModerate ? `<div class="row">${note.status === 'open' ? `<button type="button" class="act" data-coord-close="${esc(note.id)}">Close entry</button>` : ''}<button type="button" class="act" data-coord-remove="${esc(note.id)}">Remove entry</button></div>` : ''}</article>`;
     }
     function paint() {
       if (!['crew', 'fieldwork'].includes(getState().currentTab) || !account) return;
@@ -88,7 +111,7 @@
         start: document.activeElement.selectionStart, end: document.activeElement.selectionEnd,
       } : null;
       if (!board) { root._markup = ""; root.innerHTML = `<h3>Crew planning room</h3><p>${esc(unavailable || 'Opening the shared planning room…')}</p>${unavailable && crewId === null ? '<button class="act" type="button" data-coord-join>Find a crew</button> ' : ''}${unavailable ? '<button class="act" type="button" data-coord-retry>Refresh planning room</button>' : ''}`; root.querySelector('[data-coord-join]')?.addEventListener('click', () => navigate('crew')); root.querySelector('[data-coord-retry]')?.addEventListener('click', () => { loadedAt = 0; render(); }); return; }
-      if (scope !== 'crew' && !board.operations.some((o) => o.id === scope)) scope = 'crew';
+      if (scope !== 'crew' && !board.operations.some((o) => o.id === scope)) { scope = 'crew'; stage = ''; issuedTarget = null; }
       const entries = board.notes.filter((n) => scope === 'crew' ? !n.operationId : n.operationId === scope);
       const markup = `<header><span class="ux-kicker">${esc(board.crew.name)} · deliberately shared</span><h3>Crew planning room</h3><p>Plans, check-ins, and intentions. The game's issued controls decide all permissions and outcomes.</p></header>${scopeSelect()}${row('Roleboard and the next step', operationPanel())}<div class="ux-coord-grid">${memberSignals()}</div><div class="ux-coord-composers">${composers()}</div><div class="ux-coord-notes">${entries.map(noteMarkup).join('') || '<p>No entries for this plan yet. Start with a plan or an actionable help request.</p>'}</div><button type="button" class="act" data-coord-retry>Refresh planning room</button>`;
       const open = [...root.querySelectorAll('details[open]')].map((d) => d.querySelector('summary')?.textContent);
@@ -115,14 +138,54 @@
         const reply = await action('POST', path, body, { label: 'Update crew planning' });
         if (reply?.code >= 200 && reply.code < 300 && current(requested) && accept(reply.body, true)) {
           for (const [fieldKey, value] of submittedDrafts) if (drafts.get(fieldKey) === value) drafts.delete(fieldKey);
-          notify('The shared planning room is updated.');
+          stage = ''; notify('The shared planning room is updated.');
         }
       } catch { if (current(requested)) notify('The planning update could not be confirmed. Refresh the room before trying again.', true); }
       finally { if (current(requested)) { busy = false; if (button?.isConnected) button.disabled = false; paint(); } }
     }
+    function openIssued() {
+      issuedTarget = { ...context(), operationId: operation()?.id || '', opened: false };
+      navigate('fieldwork');
+      if (fieldworkView?.root?.isConnected) followIssued(fieldworkView);
+    }
+    function followIssued(detail) {
+      if (!issuedTarget || !current(issuedTarget) || getState().currentTab !== 'fieldwork'
+        || detail.characterId !== character || detail.loading || detail.busy || !detail.boards?.operations) return;
+      if (!issuedTarget.opened) {
+        issuedTarget.opened = true;
+        document.dispatchEvent(new CustomEvent('omerta:fieldwork-navigate', { detail: { view: 'operations', ...(issuedTarget.operationId ? { operationId: issuedTarget.operationId } : {}) } }));
+        return;
+      }
+      if (detail.view !== 'operations') return;
+      const id = issuedTarget.operationId; issuedTarget = null;
+      if (id && detail.operationDetail?.operationId !== id) { notify('That operation is no longer on your issued board. Review the current Crew operations.', true); return; }
+      const target = detail.root.querySelector(id ? '.fieldwork-case' : '[data-fieldwork-view="operations"]');
+      if (target) { if (!target.matches('button')) target.tabIndex = -1; target.scrollIntoView({ block: 'start', behavior: 'instant' }); target.focus({ preventScroll: true }); }
+    }
+    document.addEventListener('omerta:fieldwork-rendered', (event) => {
+      reset();
+      if (!account || event.detail?.characterId !== character) return;
+      fieldworkView = event.detail; followIssued(fieldworkView); schedule();
+    });
+    function focusPlanning(root, selector) {
+      const target = root.querySelector(selector); if (!target) return;
+      const disclosure = target.closest('details'); if (disclosure) disclosure.open = true;
+      if (!target.matches('button,input,select,textarea,a[href]')) target.tabIndex = -1;
+      target.scrollIntoView({ block: 'center', behavior: 'instant' }); target.focus({ preventScroll: true });
+    }
     function bind(root) {
-      root.querySelector('[data-coord-scope]').onchange = (e) => { scope = e.target.value; root._markup = ''; paint(); };
-      root.querySelectorAll('[data-coord-journal]').forEach((b) => { b.onclick = () => navigate('fieldwork'); });
+      root.querySelector('[data-coord-scope]').onchange = (e) => { scope = e.target.value; stage = ''; issuedTarget = null; root._markup = ''; paint(); };
+      root.querySelectorAll('[data-coord-journal],[data-coord-issued]').forEach((b) => { b.onclick = openIssued; });
+      root.querySelectorAll('[data-coord-stage]').forEach((b) => { b.onclick = () => {
+        stage = b.dataset.coordStage; paint(); root.querySelector('.ux-coord-stage')?.focus({ preventScroll: true });
+      }; });
+      root.querySelectorAll('[data-coord-compose]').forEach((b) => { b.onclick = () => {
+        focusPlanning(root, `form[data-coord-form="${b.dataset.coordCompose}"] input,form[data-coord-form="${b.dataset.coordCompose}"] select`);
+      }; });
+      root.querySelector('[data-coord-review-debrief]')?.addEventListener('click', () => {
+        const filed = '.ux-coord-note[data-coord-note-kind="debrief"] h4';
+        focusPlanning(root, root.querySelector(filed) ? filed : '[data-coord-debrief]');
+      });
       root.querySelectorAll('[data-coord-retry]').forEach((b) => { b.onclick = () => { loadedAt = 0; render(); }; });
       root.querySelectorAll('[data-coord-form]').forEach((f) => { f.onsubmit = (event) => {
         event.preventDefault(); const values = Object.fromEntries(new FormData(f)), type = f.dataset.coordForm;
@@ -146,7 +209,8 @@
       }; });
     }
     async function render() {
-      reset(); if (!account || !character || !['crew', 'fieldwork'].includes(getState().currentTab)) return;
+      reset(); if (getState().currentTab !== 'fieldwork') issuedTarget = null;
+      if (!account || !character || !['crew', 'fieldwork'].includes(getState().currentTab)) return;
       if (!loading && ((!board && !loadedAt) || Date.now() - loadedAt > 30000)) {
         loading = true; const requested = context(), tab = getState().currentTab;
         try { const reply = await read(path); if (!current(requested)) return; loadedAt = Date.now(); if (reply?.code >= 200 && reply.code < 300) accept(reply.body, true); else unavailable = reply?.body?.message || 'Join a crew to use the shared planning room.'; }
@@ -160,7 +224,7 @@
       reset();
       if (!account || !character) return;
       if (url === path) accept(body);
-      if (url === '/v1/crew' && crewId !== (body?.crew?.id || null)) { epoch++; crewId = body?.crew?.id || null; observeAllowed = false; board = null; loading = busy = false; loadedAt = 0; unavailable = ''; }
+      if (url === '/v1/crew' && crewId !== (body?.crew?.id || null)) { epoch++; crewId = body?.crew?.id || null; observeAllowed = false; board = null; loading = busy = false; loadedAt = 0; unavailable = ''; stage = ''; issuedTarget = fieldworkView = null; }
       if (url === path || url === '/v1/crew' || String(url).startsWith('/v1/worldgraph/')) schedule();
     }
     return { render, observe, recordOperation(receipt, _before, _after, result) { if (result?.code >= 200 && result.code < 300 && String(receipt?.path).startsWith('/v1/worldgraph/')) { loadedAt = 0; render(); } } };

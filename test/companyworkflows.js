@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import * as Workflow from '../src/companyworkflows.js';
 import * as G from '../src/game.js';
 import { withItemTransaction } from '../src/items.js';
@@ -29,6 +30,7 @@ if (native) {
 }
 process.env.DEPOT_PILOT = 'on'; process.env.DELIVERY_CONTRACTS = 'on';
 await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+await migrateDeedBenefitStorage(pool);
 if (!native) await pool.query('DROP INDEX ix_depot_owner_open');
 const blank = async () => {};
 const helper = cargo => ({ owned: { cargo, cars: [], skills: new Set() }, acct: { prestige: 0 }, ledger: G.ledger, notify: blank, track: blank });

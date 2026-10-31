@@ -55,26 +55,27 @@ try {
     window.calls=[]; window.notices=[];
     window.fixture={steps:0,qualified:false,claimed:false,primary:false,quest:false,remote:false,cooldown:false,fail:false};
     const lot={id:'brick-0001',district:'brick',kind:'row_house',x:32,y:448,width:10,height:9,claimed:false,street:null};
-    const config={minimumLevel:15,stepsRequired:4,cooldownSeconds:0,energyPerStep:5,primaryClaimsPerAccount:1};
+    const config={minimumLevel:25,stepsRequired:4,cooldownSeconds:0,energyPerStep:5,primaryClaimsPerAccount:1};
     const objectives=[['site','inspect-site','Inspect the property','brick'],['registry','verify-registry','Verify the registry record','cathedral'],['witness','question-witness','Question the title witness','neon'],['title','secure-title','Secure the property title','brick']];
     const toast=(message)=>notices.push(message);
     const describe=(body,code)=>body.message||('Response '+code);
     async function api(method,path,body) {
       calls.push({method,path,body});
       if(path==='/v1/deeds') {
-        const result={code:200,body:{deed:null,market:{},ranks:[],districts:['brick','cathedral','neon','docks'].map(id=>({id,name:id,deeds:0})),nameMax:28}};
+        const result={code:200,body:{deed:fixture.deed||null,chain:fixture.chain||{},supply:fixture.supply,
+          upgrades:fixture.upgrades||{},rewards:fixture.rewards||{},market:{},ranks:[],districts:['brick','cathedral','neon','docks'].map(id=>({id,name:id,deeds:0})),nameMax:28}};
         if(fixture.deferBoard) {fixture.deferBoard=false;await new Promise(resolve=>{window.releaseBoard=resolve;});}
         return result;
       }
       if(fixture.fail) return {code:503,body:{message:'Temporarily unavailable <script>bad</script>'}};
-      const current={...lot,claimed:fixture.claimed,street:fixture.claimed?'<img src=x onerror="window.pwned=1">':null};
+      const current={...lot,issuanceKind:fixture.issuanceKind||'gameplay',claimed:fixture.claimed,street:fixture.claimed?'<img src=x onerror="window.pwned=1">':null};
       if(path.startsWith('/v1/deeds/buildings?')) return {code:200,body:{width:1200,height:800,districts:[{id:'brick',name:'Brick Yards',x:0,y:400,width:400,height:400}],buildings:[{...current,claimed:fixture.claimed||fixture.atlasClaimed}]}};
       if(path.startsWith('/v1/deeds/discovery?')) {
         const location=fixture.remote?'docks':me.loc, next=objectives[fixture.steps];
         const blockedReason=fixture.energyBlocked?'energy':next&&location!==next[3]?'location':null;
         const canAct=!!next&&!blockedReason&&!fixture.primary&&!fixture.claimed&&!fixture.qualified&&!fixture.quest;
         const objective=next?{id:next[0],actionId:next[1],title:next[2],description:'Follow the recorded evidence for this exact building.',requiredDistrict:next[3],canAct,blockedReason}:null;
-        return {code:200,body:{config,primaryClaimed:fixture.primary,claimedName:fixture.primary?'First Street':null,currentDistrict:location,questEligible:fixture.quest,actorEligible:true,reason:null,buildings:[{...current,steps:fixture.steps,qualified:fixture.qualified||fixture.quest,source:fixture.quest?'quest':'exploration',nextInvestigateAt:null,objective,canInvestigate:canAct,canClaim:!fixture.primary&&!fixture.claimed&&location==='brick'&&(fixture.qualified||fixture.quest)}]}};
+        return {code:200,body:{config,primaryClaimed:fixture.primary,claimedName:fixture.primary?'First Street':null,currentDistrict:location,questEligible:fixture.quest,actorEligible:true,reason:null,buildings:fixture.hideDiscovery?[]:[{...current,steps:fixture.steps,qualified:fixture.qualified||fixture.quest,source:fixture.quest?'quest':'exploration',nextInvestigateAt:null,objective,canInvestigate:canAct,canClaim:!fixture.primary&&!fixture.claimed&&location==='brick'&&(fixture.qualified||fixture.quest)}]}};
       }
       throw new Error('Unexpected API '+path);
     }
@@ -188,6 +189,40 @@ try {
     'Property name drafts cannot cross character or account changes.');
   assert.deepEqual(errors, [], 'The actual production panel completes every scenario without browser errors.');
 
+  const writesBeforeAllocation = await page.evaluate(() => calls.filter(call => call.method === 'POST').length);
+  await page.evaluate(async () => {
+    fixture.issuanceKind='paid';fixture.hideDiscovery=true;fixture.primary=false;fixture.quest=true;
+    fixture.supply={gameplay:{maximum:1000,issued:1000,remaining:0},paid:{maximum:1000,issued:0,remaining:1000},
+      partnership:{maximum:500,issued:0,remaining:500}};
+    await renderDeeds({district:'brick',buildingId:'brick-0001'});
+  });
+  assert.match(await page.locator('#deed-supply').textContent(), /Gameplay: 0 of 1,000 remaining · fully claimed/);
+  assert.match(await page.locator('#deed-supply').textContent(), /Paid allocation: 1,000 of 1,000 unissued · minting pending/);
+  assert.match(await page.locator('#deed-property-detail').textContent(), /Paid NFT minting is not available yet/);
+  assert.equal(await page.locator('#deed-investigate, #deed-property-claim, #deed-property-paid, #deed-property-name').count(), 0,
+    'An unlaunched paid allocation offers no quest claim or fake checkout, even with a qualifying quest.');
+  await page.evaluate(async () => {fixture.issuanceKind='partnership';await renderDeeds();});
+  assert.match(await page.locator('#deed-property-detail').textContent(), /500-Deed partnership allocation/);
+  assert.equal(await page.locator('#deed-investigate, #deed-property-claim, #deed-property-paid').count(), 0);
+  assert.equal(await page.evaluate(() => calls.filter(call => call.method === 'POST').length), writesBeforeAllocation,
+    'Inspecting a reserved allocation dispatches no gameplay or payment mutation.');
+  await page.evaluate(async () => {
+    fixture.issuanceKind='gameplay';fixture.hideDiscovery=false;
+    fixture.deed={name:'Earned Row',issuanceKind:'gameplay',district:'brick',districtName:'Brick Yards'};
+    fixture.chain={configured:true,canExtract:true,activationPending:true};
+    fixture.upgrades={deedName:'Earned Row',level:2,maxLevel:5,effectiveBonusBps:1000,bonusBps:1000,next:null};
+    fixture.rewards={configured:false,allocations:[{ticker:'ACME',allocated:3,pending:1,delivered:2}]};
+    await renderDeeds();
+  });
+  assert.match(await page.locator('#deed-mint-pending').textContent(), /Deed NFT activation pending/);
+  assert.equal(await page.locator('#deed-extract').count(), 0,
+    'An environment address cannot expose minting while contract activation is pending.');
+  assert.equal(await page.locator('#deed-upgrade-title').textContent(), 'Optional deed upgrades');
+  assert.match(await page.locator('#tab-deeds').textContent(), /current reward-weight bonus \+10%/);
+  assert.match(await page.locator('#tab-deeds').textContent(), /ACME/);
+  assert.equal(await page.locator('#deed-reward-title').textContent(), 'Your RWA distributions');
+  assert.deepEqual(errors, [], 'Allocation changes preserve the modern rewards, upgrades and rendering guards.');
+
   const spec = buildOpenApi([
     {method:'GET',url:'/v1/deeds/discovery',hasAuth:true},
     {method:'POST',url:'/v1/deeds/investigate',hasAuth:true},
@@ -202,5 +237,5 @@ try {
   assert.deepEqual(spec.paths['/v1/deeds/claim'].post.requestBody.content['application/json'].schema.required,
     ['name', 'buildingId']);
   assert.equal(spec.paths['/v1/deeds/discovery'].get.parameters[0].name, 'district');
-  console.log('✓ Deed discovery UI: server-issued objectives, district travel, earned claims, bounded reads, keyboard access, actor/draft races, lifetime and OpenAPI boundaries.');
+  console.log('✓ Deed discovery UI: Level 25 gameplay allocation, pending paid mint, partnership exclusion, retained rewards/upgrades, actor/draft races, earned claims and OpenAPI boundaries.');
 } finally { await browser.close(); }

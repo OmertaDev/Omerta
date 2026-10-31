@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { newDb, DataType } from 'pg-mem';
 import { dbCaps, registerPgMemCompatibility } from '../src/db.js';
 import { bus, travel, withCharacter } from '../src/game.js';
@@ -171,6 +172,7 @@ const mutationSnapshot = async () => Object.fromEntries(await Promise.all(snapsh
 
 try {
   await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+  await migrateDeedBenefitStorage(pool);
   const boss = await player('kernel-boss', 'Kernel Boss');
   const member = await player('kernel-member', 'Kernel Member');
   const outsider = await player('kernel-outsider', 'Kernel Outsider');

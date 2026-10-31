@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { newDb, DataType } from 'pg-mem';
 import { dbCaps, registerPgMemCompatibility } from '../src/db.js';
 import { withCharacter } from '../src/game.js';
@@ -137,6 +138,7 @@ function absentQuotaRacePool(recipeId) {
 }
 try {
   await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+  await migrateDeedBenefitStorage(pool);
   for (const id of ['policy-author', 'policy-reader', 'policy-other', 'policy-racer', 'policy-legacy']) await player(id);
   const author = 'policy-author', reader = 'policy-reader', other = 'policy-other';
   // These envelopes reproduce graphMutationAuthority at baseline a18c63c. Mint
