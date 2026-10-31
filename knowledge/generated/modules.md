@@ -6,7 +6,7 @@
 |---|---:|---|---:|---:|---:|---:|
 | [src/access.js](../../src/access.js) | 42 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/accountdaily.js](../../src/accountdaily.js) | 79 | platform-core | 0 / 10 | 0 | 2 | 2 |
-| [src/accrual.js](../../src/accrual.js) | 239 | platform-core | 0 / 7 | 0 | 3 | 7 |
+| [src/accrual.js](../../src/accrual.js) | 245 | platform-core | 0 / 8 | 0 | 3 | 8 |
 | [src/actioncooldown.js](../../src/actioncooldown.js) | 22 | platform-core | 2 / 3 | 0 | 1 | 1 |
 | [src/age.js](../../src/age.js) | 38 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 17 | 3 | 5 | 15 |
@@ -183,17 +183,18 @@
 | [src/customervaults.js](../../src/customervaults.js) | 192 | platform-core | 6 / 7 | 2 | 7 | 2 |
 | [src/dailyreminder.js](../../src/dailyreminder.js) | 23 | platform-core | 2 / 3 | 0 | 3 | 1 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
-| [src/db-rls.js](../../src/db-rls.js) | 46 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/db.js](../../src/db.js) | 1547 | platform-core | 6 / 192 | 0 | 26 | 136 |
+| [src/db-rls.js](../../src/db-rls.js) | 46 | platform-core | 0 / 3 | 0 | 0 | 2 |
+| [src/db.js](../../src/db.js) | 1548 | platform-core | 7 / 193 | 0 | 26 | 137 |
 | [src/dbhealth.js](../../src/dbhealth.js) | 148 | platform-core | 0 / 11 | 0 | 0 | 2 |
 | [src/decision-dependency-contracts.js](../../src/decision-dependency-contracts.js) | 966 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/decisionproofs.js](../../src/decisionproofs.js) | 65 | platform-core | 1 / 2 | 0 | 1 | 1 |
 | [src/decisionreplay.js](../../src/decisionreplay.js) | 70 | platform-core | 3 / 3 | 2 | 8 | 2 |
 | [src/deed-upgrades.js](../../src/deed-upgrades.js) | 65 | platform-core | 3 / 5 | 1 | 5 | 2 |
-| [src/deedbuildings.js](../../src/deedbuildings.js) | 124 | platform-core | 0 / 11 | 1 | 4 | 7 |
-| [src/deeddiscovery.js](../../src/deeddiscovery.js) | 221 | platform-core | 4 / 8 | 0 | 8 | 5 |
+| [src/deedbenefits.js](../../src/deedbenefits.js) | 33 | platform-core | 1 / 16 | 0 | 1 | 12 |
+| [src/deedbuildings.js](../../src/deedbuildings.js) | 129 | platform-core | 0 / 12 | 1 | 4 | 8 |
+| [src/deeddiscovery.js](../../src/deeddiscovery.js) | 224 | platform-core | 4 / 8 | 0 | 8 | 5 |
 | [src/deedquesteligibility.js](../../src/deedquesteligibility.js) | 56 | platform-core | 2 / 2 | 0 | 3 | 1 |
-| [src/deeds.js](../../src/deeds.js) | 633 | enterprise-logistics | 6 / 13 | 11 | 12 | 7 |
+| [src/deeds.js](../../src/deeds.js) | 647 | enterprise-logistics | 7 / 15 | 11 | 13 | 9 |
 | [src/defi.js](../../src/defi.js) | 599 | platform-core | 0 / 1 | 0 | 1 | 1 |
 | [src/delivery.js](../../src/delivery.js) | 129 | platform-core | 10 / 26 | 4 | 2 | 15 |
 | [src/deliverybook.js](../../src/deliverybook.js) | 21 | platform-core | 1 / 6 | 0 | 2 | 1 |
@@ -256,7 +257,7 @@
 | [src/fundedworkchainobservations.js](../../src/fundedworkchainobservations.js) | 74 | platform-core | 0 / 3 | 0 | 0 | 2 |
 | [src/fundedworkescrowadapter.js](../../src/fundedworkescrowadapter.js) | 85 | platform-core | 3 / 1 | 0 | 5 | 1 |
 | [src/fundedworkescrowartifact.js](../../src/fundedworkescrowartifact.js) | 472 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/game.js](../../src/game.js) | 2992 | platform-core | 20 / 525 | 42 | 63 | 186 |
+| [src/game.js](../../src/game.js) | 3000 | platform-core | 21 / 526 | 42 | 63 | 187 |
 | [src/gameemployment.js](../../src/gameemployment.js) | 185 | platform-core | 2 / 7 | 0 | 8 | 3 |
 | [src/gameemploymentinvariants.js](../../src/gameemploymentinvariants.js) | 15 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/gateway/actions.js](../../src/gateway/actions.js) | 42 | platform-core | 1 / 1 | 0 | 0 | 0 |
@@ -500,7 +501,7 @@
 | [src/routes/world-kernel.js](../../src/routes/world-kernel.js) | 87 | platform-core | 8 / 1 | 6 | 1 | 0 |
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 675 | world-graph | 5 / 10 | 21 | 7 | 5 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 475 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 410 | 0 | 0 | 227 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 413 | 0 | 0 | 229 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6184 | platform-core | 0 / 1 | 0 | 55 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
