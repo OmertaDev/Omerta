@@ -21,11 +21,11 @@ const inverseHunks = diff => {
   }
   return rows;
 };
-const files = ['.github/workflows/ci.yml', 'package.json', 'public/index.html', 'src/server.js'];
+const files = ['.github/workflows/ci.yml', 'package.json', 'public/index.html', 'src/server.js', 'test/gates.js'];
 const phase = 'exact-business-control-desk-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
-assert.equal(O.BUSINESS_DESK_REVISION, 'da6b0dc00ca95c24c3e30b66c773e5c397d8d4ee');
+assert.equal(O.BUSINESS_DESK_REVISION, '4a0cc5598e6bc19818d3f28684bb89e435440006');
 assert.equal(O.BUSINESS_DESK_PREDECESSOR, 'a24df18ea1a0b57f25df942675dd9fef7415f275');
-assert.equal(O.BUSINESS_DESK_TREE, '7682d3c6bb88193f4c384d41c901faf87fe32307');
+assert.equal(O.BUSINESS_DESK_TREE, 'f9445bd20025a36f8785b17817905f0b3b8d51fc');
 assert.equal(O.BUSINESS_DESK_PREDECESSOR_TREE, '71f63dbc85d6f53af047ab93739fa67bb28b4062');
 assert.equal(O.BUSINESS_DESK_PHASE, phase);
 assert.deepEqual(Object.keys(O.BUSINESS_DESK_DOMAINS), files);
