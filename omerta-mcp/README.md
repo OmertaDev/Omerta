@@ -32,7 +32,7 @@ nothing to install or keep up to date. Then just tell Claude:
 For a new account, provide your complete birth date to `omerta_start` as
 `birthDate: "YYYY-MM-DD"`. The agent must ask for it and never infer or invent it.
 The server checks eligibility without saving the birth date. Account creation is
-unavailable to children under 13; the privacy page provides help. Returning saved
+unavailable to users under 21, including children; the privacy page provides help. Returning saved
 sessions do not need the date again.
 
 REST clients can send `birthDate` in a guest/provider signup body, or first POST
@@ -44,7 +44,7 @@ For Agent Alpha CLI creation, supply the human operator's complete birth date
 with `--birth-date YYYY-MM-DD` alongside `--create`. The date is sent only for
 signup eligibility and is never written to its session, bootstrap recovery file,
 or report. Existing committed accounts can recover without the date. Agents must
-ask the operator rather than inventing a date; operators under 13 cannot sign up.
+ask the operator rather than inventing a date; operators under 21 cannot sign up.
 
 The config file lives at:
 

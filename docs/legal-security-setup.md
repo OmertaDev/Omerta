@@ -23,7 +23,7 @@ Audience assessment and applicable jurisdictional obligations still need operato
 
 New human/operator account creation requires a neutral birth-date check; REST and MCP
 signup instructions are in `omerta-mcp/README.md`. Dates are checked transiently, never
-saved in account records. Under-13 visitors are refused before account creation; the
+saved in account records. Visitors under 21, including children, are refused before account creation; the
 privacy contact provides the path to investigate existing child data.
 
 RLS is enabled on every game-schema table during the PostgreSQL migration, with a

@@ -1,6 +1,8 @@
 // Birth dates are checked in memory and never persisted or included in tokens.
 import { GameError } from './game.js';
 
+export const MINIMUM_AGE = 21;
+
 export function eligibleBirthDate(value, now = new Date()) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value))
     throw new GameError('birth_date', 'Enter a valid complete birth date.');
@@ -8,8 +10,10 @@ export function eligibleBirthDate(value, now = new Date()) {
   if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== value ||
       date > now || date.getUTCFullYear() < now.getUTCFullYear() - 120)
     throw new GameError('birth_date', 'Enter a valid complete birth date.');
-  const cutoff = new Date(Date.UTC(now.getUTCFullYear() - 13, now.getUTCMonth(), now.getUTCDate()));
-  return date <= cutoff;
+  let years = now.getUTCFullYear() - date.getUTCFullYear();
+  if (now.getUTCMonth() < date.getUTCMonth() ||
+      (now.getUTCMonth() === date.getUTCMonth() && now.getUTCDate() < date.getUTCDate())) years--;
+  return years >= MINIMUM_AGE;
 }
 
 export function ageCookie(token = '', maxAge = 900) {
@@ -21,7 +25,9 @@ export function ageStatus(app, req) {
     .find((part) => part.startsWith('omerta_age='))?.slice(11);
   try {
     const claims = app.jwt.verify(value);
-    return claims.purpose === 'age-check' ? claims.eligible : null;
+    if (claims.purpose !== 'age-check') return null;
+    if (claims.eligible === false) return false;
+    return claims.eligible === true && claims.minimumAge === MINIMUM_AGE ? true : null;
   } catch { return null; }
 }
 
