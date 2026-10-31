@@ -90,6 +90,8 @@ for (const hook of ["import { saleHistoricalInput } from './sale-source-compatib
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
 let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
+  ["import { businessDeskHistoricalInput } from './businessdesk-source-transfer.js';\n", 1],
+  ['  input = businessDeskHistoricalInput(file, input);\n', 2],
   ["import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';\n", 1],
   ['  input = economyBankInterestHardeningHistoricalInput(file, input);\n', 2],
   ["import { economySocialProofCutoverHistoricalInput } from './economy-social-proof-cutover-source-transfer.js';\n", 1],
