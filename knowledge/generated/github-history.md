@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8759cc9cfb5f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a8859b0596d9`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4951 |
+| Commits in clone | 4953 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-28 — Merge pull request #309 from OmertaDev/codex/economy-adversarial-r7 |
+| Latest commit | 2026-10-31 — Publish default privacy policy with minimal operational detail |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3981 |
+| OmertaDev | 3982 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 125 |
+| github-actions[bot] | 126 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 826 | historical |
-| knowledge/generated/graph-summary.md | 826 | historical |
-| knowledge/generated/graph.json | 826 | historical |
-| knowledge/generated/inventory.md | 826 | historical |
+| knowledge/generated/github-history.md | 827 | historical |
+| knowledge/generated/graph-summary.md | 827 | historical |
+| knowledge/generated/graph.json | 827 | historical |
+| knowledge/generated/inventory.md | 827 | historical |
 | [SPEC.md](../../SPEC.md) | 612 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 491 | yes |
