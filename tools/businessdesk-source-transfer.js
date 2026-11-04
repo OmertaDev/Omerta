@@ -3,10 +3,10 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
-export const BUSINESS_DESK_REVISION = "6fcd697c860ab328b4b830bdc20b51a17dc459d7";
-export const BUSINESS_DESK_TREE = "0aa12854b78ab6fda5d704c9159a1fb2aec8d5d9";
-export const BUSINESS_DESK_PREDECESSOR = "2eb7731eb82068ad5da7c077b5fd96e6aea7d23e";
-export const BUSINESS_DESK_PREDECESSOR_TREE = "521fb95f229e645c83d9271c651a71ab1600027e";
+export const BUSINESS_DESK_REVISION = "ed1bf2ff973b6c6c5f0fdfd6c011e414cc60aa23";
+export const BUSINESS_DESK_TREE = "4e8bd2c8d5fc0fa3c7a530f81f56f925925ae7ea";
+export const BUSINESS_DESK_PREDECESSOR = "a343fe067f7a1d244d761d8f4da7b3aea337809f";
+export const BUSINESS_DESK_PREDECESSOR_TREE = "a2e8d4c21d701a6f013c29ecfa18d0976918e7ed";
 export const BUSINESS_DESK_PHASE = 'exact-business-control-desk-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
 export const BUSINESS_DESK_DOMAINS = {
   ".github/workflows/ci.yml": {
@@ -140,12 +140,12 @@ export const BUSINESS_DESK_DOMAINS = {
   "test/deed-allocation-source-compatibility.js": {
     "mode": "100644",
     "baselineMode": "100644",
-    "currentSha256": "eb63632058582c81df60f5f3f92ff24e3e69bfa32552b036257cdda1ce2ee444",
-    "currentBlob": "84dbaec502f05dec3ffa231a130d24fef735c01d",
-    "currentBytes": 9170,
-    "baselineSha256": "2a213b642e38d8dc04892bea413a19d815aecfdd6c1e60db3555975f52604bae",
-    "baselineBlob": "b0f68926549969120abc0035ab6c7f004a3b3851",
-    "baselineBytes": 9047,
+    "currentSha256": "c143c81561ab110de55f2359bfe86366a2ff45698996be1a22ecdb14d8484f1f",
+    "currentBlob": "0932e62ce535004aac23e6b5176fd70d1116e219",
+    "currentBytes": 9190,
+    "baselineSha256": "691a69e15f90fa575c102f51bda84dce3e9ce5e2314903c0b3ca31aadb8a03fc",
+    "baselineBlob": "73ccd1952fd91bc7b488280eea5fef61ece3e358",
+    "baselineBytes": 9067,
     "contextLines": 3,
     "inverses": [
       {
