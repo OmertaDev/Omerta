@@ -23,9 +23,9 @@ const inverseHunks = diff => {
 };
 const files = [".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","test/lib/enterprise-ux-native-guard.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"];
 const phase = 'exact-business-control-desk-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
-assert.equal(O.BUSINESS_DESK_REVISION, 'ed1bf2ff973b6c6c5f0fdfd6c011e414cc60aa23');
+assert.equal(O.BUSINESS_DESK_REVISION, 'aca55842a0e0d858678d8504d5ca2bd6dcd5392a');
 assert.equal(O.BUSINESS_DESK_PREDECESSOR, 'a343fe067f7a1d244d761d8f4da7b3aea337809f');
-assert.equal(O.BUSINESS_DESK_TREE, '4e8bd2c8d5fc0fa3c7a530f81f56f925925ae7ea');
+assert.equal(O.BUSINESS_DESK_TREE, '74bfaa9be80fcf2449c10a695b270ce7878ea293');
 assert.equal(O.BUSINESS_DESK_PREDECESSOR_TREE, 'a2e8d4c21d701a6f013c29ecfa18d0976918e7ed');
 assert.equal(O.BUSINESS_DESK_PHASE, phase);
 assert.deepEqual(Object.keys(O.BUSINESS_DESK_DOMAINS), files);
