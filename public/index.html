@@ -1273,6 +1273,7 @@
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261016-refinements-1">
+<link rel="stylesheet" href="/business-control-desk.css?v=20261030-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
 .district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}
@@ -2512,6 +2513,7 @@
   // drawn UI icons (the sprite in <body>) — nav chrome only; toasts/options stay text (textContent)
   const ic = (n) => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
   let me = null, rules = null, ws = null, session = null;
+  let _businessDesk = null, _businessDeskEpoch = 0;
   let streetActionReadyAt = 0;
   let feedbackUX = null;
   const uxModules = [];
@@ -4952,6 +4954,7 @@
         $('#action-readiness')?.classList.add('hidden');
       }
       if (['session', 'character', 'player'].includes(kind)) destroyFieldwork();
+      if (['session', 'character'].includes(kind)) destroyBusinessDesk();
       worldChoiceConfirmation?.();
       worldProjection = null; worldFeedback = null;
       worldStatus = 'Refreshing your street…';
@@ -6228,7 +6231,7 @@
     landingMenu.querySelector('summary').focus();
   });
   function show(id) {
-    if (id !== 'screen-main') { destroyFieldwork(); clearScopedOperations(); }
+    if (id !== 'screen-main') { destroyFieldwork(); destroyBusinessDesk(); clearScopedOperations(); }
     for (const s of ['screen-auth', 'screen-create', 'screen-main', 'screen-down']) $('#' + s).classList.add('hidden');
     $('#' + id).classList.remove('hidden');
     if (id === 'screen-auth') { mountHeroMotion(); deferLandingArt(); }
@@ -7488,9 +7491,9 @@
 
   // ── tabs ──
   // tab labels come from the language packs (T falls back to English if a pack misses a key)
-  const TABS = Object.fromEntries(['start', 'profile', 'streets', 'pvp', 'kitchen', 'family', 'map', 'deeds', 'crew', 'discover', 'market', 'garage', 'empire',
+  const TABS = Object.fromEntries(['start', 'profile', 'streets', 'pvp', 'kitchen', 'family', 'map', 'deeds', 'crew', 'discover', 'market', 'garage', 'empire', 'business',
     'speakeasy', 'boxing', 'races', 'stable', 'scores', 'loans', 'portfolio', 'estate', 'life', 'pen', 'law',
-    'wire', 'store', 'city', 'den', 'port', 'desk', 'world', 'fieldwork', 'deck'].map((id) => [id, id === 'fieldwork' ? 'Quest Journal' : T('t_' + id)]));
+    'wire', 'store', 'city', 'den', 'port', 'desk', 'world', 'fieldwork', 'deck'].map((id) => [id, id === 'fieldwork' ? 'Quest Journal' : id === 'business' ? 'Business Desk' : T('t_' + id)]));
   // Player language, not implementation taxonomy. Quick jump accepts the job somebody has in mind.
   const TAB_SEARCH = {
     start: ['now', 'today', 'next move', 'home', 'missions'],
@@ -7501,6 +7504,7 @@
     city: ['city', 'the city', 'events', 'travel', 'district', 'prices', 'arbitrage', 'live players'],
     kitchen: ['cook', 'deal', 'drugs', 'crew wages', 'product'],
     empire: ['business', 'racket', 'collect income', 'front', 'passive income'],
+    business: ['business desk', 'company', 'production', 'manufacturing', 'orders', 'courier', 'consignment', 'cash flow', 'reinvest'],
     scores: ['heist', 'big score', 'crew job', 'contract'],
     market: ['buy order', 'sell order', 'black market', 'trade gear'],
     port: ['boat', 'convoy', 'freight', 'smuggle', 'shipment'],
@@ -7532,7 +7536,7 @@
   const TAB_GROUPS = [
     ['', ['start']],
     ['Streets', ['streets', 'garage', 'life', 'city']],
-    ['Earners', ['kitchen', 'empire', 'scores', 'market', 'port']],
+    ['Earners', ['kitchen', 'empire', 'business', 'scores', 'market', 'port']],
     ['Vice', ['den', 'speakeasy', 'boxing', 'races', 'stable']],
     ['Blood', ['pvp', 'loans', 'law', 'pen', 'wire']],
     ['Family', ['family', 'world', 'map', 'deeds', 'crew', 'discover', 'profile']],
@@ -7546,7 +7550,7 @@
   const TAB_ART = {
     start: 'interior-start', profile: 'pill-legacy', streets: 'interior-streets', garage: 'interior-garage',
     life: 'interior-life', city: 'landing-break', kitchen: 'interior-kitchen',
-    empire: 'interior-empire', scores: 'interior-scores', market: 'interior-market',
+    empire: 'interior-empire', business: 'interior-empire', scores: 'interior-scores', market: 'interior-market',
     port: 'interior-port', den: 'interior-den', speakeasy: 'interior-speakeasy',
     boxing: 'interior-gym', races: 'interior-races', stable: 'interior-stable',
     pvp: 'interior-pvp', loans: 'interior-loans', law: 'interior-law', pen: 'interior-pen',
@@ -7691,7 +7695,7 @@
   // declarations are hoisted, so this map can name them here.
   const RENDERERS = { start: renderStart, profile: renderProfile, streets: renderStreets, city: renderCity, den: renderDen,
     kitchen: renderKitchen, family: renderFamily, market: renderMarket, pvp: renderPvp, law: renderLaw,
-    garage: renderGarage, empire: renderEmpire, speakeasy: renderSpeakeasy, boxing: renderBoxing,
+    garage: renderGarage, empire: renderEmpire, business: renderBusiness, speakeasy: renderSpeakeasy, boxing: renderBoxing,
     scores: renderScores, loans: renderLoans, portfolio: renderPortfolio, estate: renderEstate,
     life: renderLife, pen: renderPen, wire: renderWire, store: renderStore, races: renderRaces, port: renderPort, stable: renderStable,
     crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk, world: renderWorld, fieldwork: renderFieldwork };
@@ -7705,6 +7709,7 @@
     city: 'The living city: today\'s events, the weather that moves goods prices (the arbitrage map), rival NPC cartels to raid, and the monument the whole server is building. Check the forecast — plan around it.',
     kitchen: 'The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.',
     empire: 'Legit fronts that farm cash while you\'re away. They cost upkeep, rivals can shake them down — and if you\'re killed, your killer can take one. Passive is not the same as safe.',
+    business: 'Run your company with real inventory, production, deliveries and customer sales. Cash flow records game-cash movements, including refundable escrow and transfers; it is not a profit forecast.',
     scores: 'The big jobs: your solo Score, crew heists (crew up with real players — or rat), and smuggling convoys anyone on the road can ambush. Start with the solo Score, crew up at level 8.',
     market: 'Player-to-player trade: auction cars, buy and sell goods (pickup is district-pinned — you go to the dock), post buy orders. Prices are set by people, so the deals are real.',
     port: 'Contraband by sea: buy a boat, run a route, slip the Coast Guard. Faster boats and escorts beat interdiction; repeat the same lane and they learn it. Sell the boat back anytime.',
@@ -9110,6 +9115,38 @@
     $('#tab-' + tab)?.focus({ preventScroll: true });
   }
 
+  function businessIdentity() { return me?.id ? [session?.accountId || "", me.id, me.generation].join(":") : ""; }
+  function destroyBusinessDesk() { _businessDeskEpoch++; _businessDesk?.destroy(); _businessDesk = null; }
+  async function renderBusiness() {
+    const host = $("#tab-business");
+    if (!host || currentTab !== "business") return;
+    const identity = businessIdentity(), credential = token;
+    const current = () => !!identity && identity === businessIdentity() && credential === token;
+    const guarded = (options, mutation = false) => ({ ...options,
+      isCurrent: () => current() && (!options.isCurrent || options.isCurrent()),
+      ...(mutation ? { beforeDispatch: () => current() && currentTab === "business" && (!options.beforeDispatch || options.beforeDispatch()) } : {}),
+    });
+    const options = { character: { ...me }, identity,
+      api: (method, path, body, request = {}) => api(method, path, body, guarded(request)),
+      act: (method, path, body, request = {}) => act(method, path, body, guarded(request, true)),
+      refresh: () => current() ? refresh() : Promise.resolve({ ignored: true, code: 499, body: {} }),
+      onNavigate: (tab, context) => { if (current()) navigateGameTab(tab, context); },
+      isActive: () => current() && currentTab === "business" && !$("#screen-main").classList.contains("hidden"),
+    };
+    if (_businessDesk) { _businessDesk.update(options); return; }
+    const epoch = ++_businessDeskEpoch;
+    host.innerHTML = '<div class="card" role="status">Opening your business desk…</div>';
+    try {
+      await loadGameScript("/business-control-desk.js?v=20261030-1", () => !!window.OmertaBusinessDesk);
+      if (epoch !== _businessDeskEpoch || !current() || currentTab !== "business") return;
+      _businessDesk = window.OmertaBusinessDesk.mount(host, options);
+    } catch {
+      if (epoch !== _businessDeskEpoch || !current() || currentTab !== "business") return;
+      host.innerHTML = '<div class="card"><p role="status">The business desk could not open. Your other game screens remain available.</p><button class="act" id="business-retry-open">Try again</button></div>';
+      $("#business-retry-open").onclick = renderBusiness;
+    }
+  }
+
   async function renderMap() {
     const t = $('#tab-map');
     const revision = ++_mapReadRevision, navigation = navigationRevision;
@@ -9278,7 +9315,8 @@
       That vault is keyed on the street's name, so anything left in it survives the burn and travels with the
       deed to whoever extracts it next, including a buyer if you sell in-game. Move what's yours out first.</div>`;
     const chainCard = () => {
-      if (!deed || !chain.configured) return '';   // only when you hold a street + the deed chain is live
+      if (!deed) return '';
+      if (chain.activationPending || !chain.configured) return `<div class="card" id="deed-mint-pending" style="margin-top:10px"><span class="t">Deed NFT activation pending</span><div class="d">Your in-game property is recorded. NFT issuance is not available yet. Mint availability and any wallet network gas will be shown before it opens.</div></div>`;
       if (chain.extractPending) return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">Mint your deed</span>
         <div class="d">Your street is being taken on-chain — submit the signed claim to your wallet to mint the NFT. It's <b>inert in-game</b> (no corner, no in-game sale) until you re-import it.</div>
         ${burnWarning}
@@ -9304,7 +9342,9 @@
         <button class="act" data-deed-district="${esc(d.id)}">explore properties here</button></div>`; }).join('')}</div>`;
     t.innerHTML = `
       <div class="card"><span class="t">City properties</span>
-        <div class="d">All 2,500 permanent houses and buildings are discoverable now. Earn a building's deed through a qualifying quest or by following its leads across the city. Each account can claim one new deed in its lifetime. Existing deeds and secondary trades remain available.</div>
+        <div class="d">1,000 gameplay Deeds · 1,000 paid mint Deeds · 500 partnership Deeds. From Level 25, earn a gameplay building's deed through a qualifying quest or by following its leads across the city. Each account has one lifetime gameplay claim. Existing deeds and secondary trades remain available.</div>
+        <div class="d">Operating benefits require Level 25 for either public allocation. Paid NFT minting is not available yet.</div>
+        ${b.supply?.gameplay && b.supply?.paid ? `<div class="d" id="deed-supply">Gameplay: ${Number(b.supply.gameplay.remaining).toLocaleString()} of 1,000 remaining${b.supply.gameplay.remaining === 0 ? ' · fully claimed' : ''}. Paid allocation: ${Number(b.supply.paid.remaining).toLocaleString()} of 1,000 unissued · minting pending. Partnership: 500 reserved.</div>` : ''}
         ${deed?.building ? `<div class="d">Your property: ${esc(deed.building.id)} · ${esc(deed.building.kind.replaceAll('_', ' '))}</div>` : ''}
         <button class="act" id="deed-atlas-open">explore the property map</button>
         <button class="act" id="deed-quests-open">quests and inventory</button>
@@ -9358,16 +9398,27 @@
       const config = discovery.config || discovery, progress = new Map((discovery.buildings || []).map(p => [p.id, p]));
       const bounds = atlas.districts[0] || { x: 0, y: 0, width: atlas.width, height: atlas.height };
       host.innerHTML = `<p class="d">${esc(atlas.districts[0]?.name || district)} · ${atlas.buildings.length} permanent properties. Select a building to inspect its claim requirements.</p>
-        <div class="d">Build a property case: inspect the site, trace its registry record, question the witness, then return to secure its title. ${config.stepsRequired} objectives · ${config.energyPerStep} energy each · level ${config.minimumLevel}. Each lead names its required district; map coordinates do not establish your location.</div>
-        ${discovery.primaryClaimed ? `<p class="d">Your account has already used its lifetime discovery claim${discovery.claimedName ? ' for ' + esc(discovery.claimedName) : ''}. Buying or winning existing deeds remains available.</p>` : discovery.questEligible ? '<p class="d">Your completed quest qualifies you to claim an available building in your current district. Select the exact property first.</p>' : ''}
+        <div class="d">Gameplay properties: inspect the site, trace its registry record, question the witness, then return to secure its title. ${config.stepsRequired} objectives · ${config.energyPerStep} energy each · level ${config.minimumLevel}. Each lead names its required district; map coordinates do not establish your location.</div>
+        ${discovery.primaryClaimed ? `<p class="d">Your account has already used its lifetime discovery claim${discovery.claimedName ? ' for ' + esc(discovery.claimedName) : ''}. Buying or winning existing deeds remains available.</p>` : discovery.questEligible ? '<p class="d">Your completed quest qualifies you to claim an available gameplay building in your current district. Select the exact property first.</p>' : ''}
         ${(discovery.activeInvestigations || []).some(p => p.district !== district && !p.claimed) ? `<p class="d">Cases you are following elsewhere:</p>${discovery.activeInvestigations.filter(p => p.district !== district && !p.claimed).slice(0, 12).map(p => `<button class="act" data-deed-resume="${esc(p.id)}" data-deed-resume-district="${esc(p.district)}">resume ${esc(p.id)} · ${Number(p.steps || 0)}/${config.stepsRequired}</button>`).join('')}` : ''}
         <div style="overflow:auto"><svg viewBox="${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}" style="max-width:720px;width:100%;background:#111820" role="group" aria-label="${esc(district)} deed properties">
         ${atlas.districts.map(d => `<rect x="${d.x + 4}" y="${d.y + 4}" width="${d.width - 8}" height="${d.height - 8}" fill="#1c2935" stroke="#597184"/><text x="${d.x + 24}" y="${d.y + 30}" fill="#e5d6aa" font-size="18">${esc(d.name)}</text>`).join('')}
-        ${atlas.buildings.map(p => `<g data-property="${esc(p.id)}" role="button" tabindex="0" aria-label="${esc(p.id + ', ' + p.kind.replaceAll('_', ' ') + (p.street ? ', ' + p.street : ', unclaimed'))}" style="cursor:pointer"><title>${esc(p.id)} · ${esc(p.street || 'unclaimed')}</title><rect x="${p.x}" y="${p.y}" width="${p.width}" height="${p.height}" fill="${p.claimed ? '#dfb976' : progress.get(p.id)?.qualified ? '#81b68c' : '#688493'}" stroke="#111820"/>${p.kind.includes('house') ? `<path d="M${p.x - 1},${p.y} l${p.width / 2 + 1},-4 l${p.width / 2 + 1},4" fill="${p.claimed ? '#b77e4a' : '#495e70'}"/>` : ''}</g>`).join('')}</svg></div><div class="card" id="deed-property-detail" aria-live="polite">Choose a property on this district's map.</div>`;
+        ${atlas.buildings.map(p => `<g data-property="${esc(p.id)}" role="button" tabindex="0" aria-label="${esc(p.id + ', ' + p.kind.replaceAll('_', ' ') + (p.street ? ', ' + p.street : ', unclaimed') + (p.issuanceKind ? ', ' + p.issuanceKind + ' allocation' : ''))}" style="cursor:pointer"><title>${esc(p.id)} · ${esc(p.street || 'unclaimed')}${p.issuanceKind ? ' · ' + esc(p.issuanceKind) : ''}</title><rect x="${p.x}" y="${p.y}" width="${p.width}" height="${p.height}" fill="${p.claimed ? '#dfb976' : progress.get(p.id)?.qualified ? '#81b68c' : '#688493'}" stroke="#111820"/>${p.kind.includes('house') ? `<path d="M${p.x - 1},${p.y} l${p.width / 2 + 1},-4 l${p.width / 2 + 1},4" fill="${p.claimed ? '#b77e4a' : '#495e70'}"/>` : ''}</g>`).join('')}</svg></div><div class="card" id="deed-property-detail" aria-live="polite">Choose a property on this district's map.</div>`;
       const showProperty = p => {
         if (actor !== me?.id || render !== deedPropertyRender) return;
         deedPropertyFocus = { district, buildingId: p.id };
         const entry = progress.get(p.id), detail = $('#deed-property-detail');
+        if (p.issuanceKind === 'paid' || p.issuanceKind === 'partnership') {
+          const paid = p.issuanceKind === 'paid';
+          detail.innerHTML = `<span class="t">${esc(p.id)} · ${esc(p.kind.replaceAll('_', ' '))}</span>
+            <div class="d"><span class="chip">${paid ? 'Paid mint allocation' : 'Partnership allocation'}</span></div>
+            ${p.claimed || entry?.claimed ? `<div class="d">Already claimed: ${esc(entry?.street || p.street || 'this permanent property')}${p.tokenId ? ' · deed ' + esc(p.tokenId) : ''}.</div>`
+              : paid ? '<div class="d">This property belongs to the 1,000-Deed paid mint allocation. Paid NFT minting is not available yet. Discovery and quests cannot claim this allocation.</div>'
+              : '<div class="d">This property belongs to the 500-Deed partnership allocation. It cannot be claimed through discovery or public paid minting.</div>'}
+            <button class="act" id="deed-property-refresh">recheck property</button>`;
+          $('#deed-property-refresh').onclick = () => openPropertyDistrict(district, p.id);
+          return;
+        }
         if (!entry) { detail.textContent = 'Claim eligibility is unavailable. Reopen this district to retry.'; return; }
         const objective = entry.objective;
         const requiredDistrict = entry.qualified ? p.district : objective?.requiredDistrict;

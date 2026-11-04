@@ -98,6 +98,7 @@ import { register as registerMarketFeed } from './routes/marketfeed.js';
 import { register as registerStrategyLeagues } from './routes/strategyleagues.js';
 import { register as registerCompanyOperators } from './routes/companyoperators.js';
 import { register as registerCompanyProduction } from './routes/companyproduction.js';
+import { register as registerBusinessDesk } from './routes/businessdesk.js';
 import {registerWorkshopFloor} from './workshopfloor-api.js';
 import { register as registerCompanyDemand } from './routes/companydemand.js';
 import { register as registerCompanyForecast } from './routes/companyforecast.js';
@@ -647,6 +648,7 @@ export async function buildServer() {
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
     ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],
     ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],
+    ['business-control-desk.js', 'application/javascript'], ['business-control-desk.css', 'text/css'],
     ['ux-feedback.js', 'application/javascript'], ['ux-feedback.css', 'text/css'],
     ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],
     ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],
@@ -2551,6 +2553,7 @@ export async function buildServer() {
   registerStrategyLeagues(app, { pool, auth });
   registerCompanyOperators(app, { pool, auth });
   registerCompanyProduction(app, { pool, auth, beforeCraft: assertCompanySpecializationBeforeCraft, sourceScope: withInfrastructureProductionScope });
+  registerBusinessDesk(app, { pool, auth });
   registerEquipmentRecovery(app,{pool,auth});
   registerManufacturingLicenses(app,{pool,auth});
   registerWorkshopFloor(app,{pool,auth});
