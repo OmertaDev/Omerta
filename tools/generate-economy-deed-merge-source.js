@@ -89,19 +89,45 @@ for (const { revision } of Object.values(profiles)) for (const pin of previous.f
 }
 assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES,
   'Changed existing-native review scope must remain the two immutable parent scopes');
-// Read predecessor objects in one bounded Git batch rather than thousands of helper processes.
+// Bound each batch by the immutable Git object sizes; the complete archived asset set is larger
+// than one child-process buffer. Every object still undergoes the same identity and hash checks.
 const previousObjects = [...new Set(previous.files.map(pin => pin.blob))];
-const batch = execFileSync('git', ['--no-replace-objects', 'cat-file', '--batch'],
-  { input: previousObjects.join('\n') + '\n', windowsHide: true, maxBuffer: 256 * 1024 * 1024 });
-let offset = 0;
+const sizeLines = execFileSync('git', ['--no-replace-objects', 'cat-file', '--batch-check'],
+  { input: previousObjects.join('\n') + '\n', encoding: 'ascii', windowsHide: true,
+    maxBuffer: 4 * 1024 * 1024 }).trimEnd().split(/\r?\n/);
+assert.equal(sizeLines.length, previousObjects.length);
+const objectSizes = new Map(sizeLines.map((line, index) => {
+  const fields = line.split(' '); assert.equal(fields.length, 3);
+  const [oid, type, count] = fields, size = Number(count);
+  assert.equal(oid, previousObjects[index]); assert.equal(type, 'blob');
+  assert(Number.isSafeInteger(size) && size >= 0);
+  return [oid, size];
+}));
+const groups = []; let group = [], groupBytes = 0;
 for (const oid of previousObjects) {
-  const end = batch.indexOf(10, offset); assert(end >= 0);
-  const [got, type, count] = batch.subarray(offset, end).toString('ascii').split(' ');
-  assert.equal(got, oid); assert.equal(type, 'blob'); const length = Number(count); assert(Number.isSafeInteger(length) && length >= 0);
-  const value = batch.subarray(end + 1, end + 1 + length); assert.equal(value.length, length); assert.equal(batch[end + 1 + length], 10);
-  contents.set(oid, value); offset = end + 2 + length;
+  const length = objectSizes.get(oid) + 128;
+  if (group.length && groupBytes + length > 16 * 1024 * 1024) {
+    groups.push(group); group = []; groupBytes = 0;
+  }
+  group.push(oid); groupBytes += length;
 }
-assert.equal(offset, batch.length);
+if (group.length) groups.push(group);
+for (const objects of groups) {
+  const maximum = objects.reduce((sum, oid) => sum + objectSizes.get(oid) + 128, 1024);
+  assert(maximum <= 256 * 1024 * 1024, 'An oversized individual archived object requires a reviewed streaming reader');
+  const batch = execFileSync('git', ['--no-replace-objects', 'cat-file', '--batch'],
+    { input: objects.join('\n') + '\n', windowsHide: true, maxBuffer: maximum });
+  let offset = 0;
+  for (const oid of objects) {
+    const end = batch.indexOf(10, offset); assert(end >= 0);
+    const [got, type, count] = batch.subarray(offset, end).toString('ascii').split(' ');
+    assert.equal(got, oid); assert.equal(type, 'blob'); const length = Number(count);
+    assert.equal(length, objectSizes.get(oid));
+    const value = batch.subarray(end + 1, end + 1 + length); assert.equal(value.length, length); assert.equal(batch[end + 1 + length], 10);
+    contents.set(oid, value); offset = end + 2 + length;
+  }
+  assert.equal(offset, batch.length);
+}
 const provenanceRows = [];
 for (const predecessor of previous.files) {
   assert.deepEqual(nativePin(previous.authoredRevision, predecessor.file), predecessor, 'Exact immutable predecessor Git pin required');
