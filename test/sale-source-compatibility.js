@@ -11,6 +11,8 @@ import { economySocialProofCutoverHistoricalInput } from '../tools/economy-socia
 import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
 import { ageEligibilityHistoricalInput } from '../tools/age-eligibility-source-transfer.js';
 import { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';
+import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
+import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 const pin = SALE_SOURCE;
@@ -32,6 +34,8 @@ const inverseHunks = diff => {
 };
 let positives = 0, refusals = 0, hunks = 0;
 const currentSaleSource = (file, input) => {
+  input = economyDeedMergeHistoricalInput(file, input, 'monitor');
+  input = deedAllocationHistoricalInput(file, input);
   input = uxAfterwordHistoricalInput(file, input);
   input = ageEligibilityHistoricalInput(file, input);
   input = economyMonitorHistoricalInput(file, input);
@@ -99,12 +103,12 @@ for (const hook of ["import { uxAfterwordHistoricalInput } from './ux-afterword-
   assert.equal(conserved.split(hook).length, 2, 'One exact separately admitted Afterword integration hook'); conserved = conserved.replace(hook, '');
 }
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
-let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
-// The current correction reader admits only exact newer sources before the old hooks below. Prove
-// its complete authored bytes and reconstruct the immutable pre-correction reader separately; the
-// original hook counts and final byte-for-byte conservation assertion remain unchanged.
+// The dual-parent definition first proves the complete physical integration reader and reconstructs
+// its monitor parent. Retain that parent's independently pinned correction-reader conservation
+// proof below; neither reconstruction executes historical source or admits native bytes.
 const correctionFile = 'tools/economy-ux-merge-source-compatibility.js';
-const correctionPhysical = fs.readFileSync(correctionFile, 'utf8');
+const correctionPhysical = economyDeedMergeHistoricalInput(correctionFile, fs.readFileSync(correctionFile, 'utf8'), 'monitor');
+let candidateConserved = correctionPhysical.replaceAll('\r\n', '\n');
 const correctionRevision = '77882cdfc2e54f94602065c58132b9da913b5427';
 const correctionPredecessor = '6fdc897851ef23e8c2cf691733ad944a7663242a';
 const correctionCurrent = Object.freeze({ sha256: 'bae09cba0a3833d53b1f29db1c8462513924eb3e9f0b6373544b9c94304e4aea',

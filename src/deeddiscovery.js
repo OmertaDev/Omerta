@@ -6,7 +6,7 @@ import { buildingAtlas, deedBuildingById } from './deedbuildings.js';
 import { verifiedQuestDeedEligibility } from './deedquesteligibility.js';
 
 export const DEED_DISCOVERY = Object.freeze({
-  minimumLevel: 15, stepsRequired: 4, cooldownSeconds: 0, energyPerStep: 5, policyVersion: 2,
+  minimumLevel: 25, stepsRequired: 4, cooldownSeconds: 0, energyPerStep: 5, policyVersion: 2,
   primaryClaimsPerAccount: 1,
 });
 
@@ -79,6 +79,8 @@ async function lockExplorer(client, ch) {
 async function availableBuilding(client, ch, id, { atProperty = true } = {}) {
   const building = deedBuildingById(id);
   if (!building) throw new GameError('building', 'Choose a building from the property atlas.');
+  if (building.issuanceKind !== 'gameplay')
+    throw new GameError('deed_allocation', 'Only gameplay properties can be discovered.');
   assertExplorer(ch, atProperty ? building : null);
   if ((await client.query('SELECT 1 FROM street_deed_building_assignments WHERE building_id=$1', [building.id])).rowCount)
     throw new GameError('deed_building_claimed', 'That building has already been claimed. Investigate another property.');
@@ -105,8 +107,9 @@ export async function deedDiscoveryBoard(client, ch, { district = ch.loc } = {})
     // Quest approval is checked at claim too; a stale quest flag cannot grant a deed.
     const qualified = !!questSource || explored;
     const step = deedInvestigationRoute(building)[state.steps] || null;
-    const open = !receipt && !reason && !building.claimed;
-    const blockedReason = !open ? receipt ? 'deed_primary_claimed' : reason || 'deed_building_claimed'
+    const open = !receipt && !reason && !building.claimed && building.issuanceKind === 'gameplay';
+    const blockedReason = !open ? receipt ? 'deed_primary_claimed' : reason
+      || (building.issuanceKind !== 'gameplay' ? 'deed_allocation' : 'deed_building_claimed')
       : !step ? 'deed_discovered' : ch.loc !== step.requiredDistrict ? 'location'
         : Number(ch.energy) < DEED_DISCOVERY.energyPerStep ? 'energy' : null;
     const objective = step ? { ...step, canAct: !blockedReason && !qualified, blockedReason } : null;

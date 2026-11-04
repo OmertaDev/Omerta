@@ -17,6 +17,7 @@ import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInp
   ECONOMY_MONITOR_RELEASE_SOURCES as releasePins, assertEconomyMonitorReleaseSource,
   economyMonitorReleaseHistoricalInput }
   from '../tools/economy-ux-merge-source-compatibility.js';
+import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 
 const files = [
   '.github/workflows/economy-hardening.yml', 'package.json', 'schema.sql',
@@ -54,7 +55,7 @@ let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = domains[file], current = git('show', `${revision}:${file}`);
   const absent = additions.has(file), baseline = absent ? null : git('show', `${predecessor}:${file}`);
-  const physical = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const physical = economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'monitor').replaceAll('\r\n', '\n');
   assert.equal(economyMonitorReleaseHistoricalInput(file,
     economyMonitorWorkerHistoricalInput(file, economyMonitorReaderHistoricalInput(file, physical))), current,
     'Physical current monitoring/composition source remains exact after the named successors: ' + file);
@@ -119,7 +120,7 @@ for (const [pin, qualify, historical] of [
   [readerPin, assertEconomyMonitorReaderSource, economyMonitorReaderHistoricalInput],
   ...Object.values(releasePins).map(pin => [pin, assertEconomyMonitorReleaseSource, economyMonitorReleaseHistoricalInput]),
 ]) {
-  const { file } = pin, physical = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const { file } = pin, physical = economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'monitor').replaceAll('\r\n', '\n');
   const baseline = git('show', `${pin.predecessorRevision}:${file}`);
   const priorReleaseSource = ['test/gates.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js'].includes(file);
   assert.equal(pin.predecessorRevision, priorReleaseSource ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);
@@ -208,7 +209,7 @@ for (const file of ['__proto__', 'constructor', 'toString', '../schema.sql', 'sr
   assert.strictEqual(economyMonitorHistoricalInput(file, invalidUtf8), invalidUtf8); refusals++;
 }
 const previousPackage = JSON.parse(git('show', `${predecessor}:package.json`));
-const currentPackage = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const currentPackage = JSON.parse(economyDeedMergeHistoricalInput('package.json', fs.readFileSync('package.json', 'utf8'), 'monitor'));
 assert.equal(currentPackage.scripts['test:economy-security'],
   'node test/economy-monitor.js && node test/economy-composition.js');
 delete currentPackage.scripts['test:economy-security'];

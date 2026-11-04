@@ -8,6 +8,7 @@ import { isApprovedDeedQuestSource, QUEST_DEED_SOURCE, verifiedQuestDeedEligibil
 import { claimDeed } from '../src/deeds.js';
 import { deedDiscoveryBoard, investigateDeed } from '../src/deeddiscovery.js';
 import { cityQuestNodePresentation, cityQuestPresentation } from '../src/content/city-quest-presentation.js';
+import { PACING } from '../src/rules.js';
 
 const source = QUEST_DEED_SOURCE;
 const current = PHASE1_WORLD_GRAPH_PACKAGES.find((pkg) => pkg.id === source.graphId);
@@ -190,6 +191,14 @@ try {
   assert.deepEqual(await eligibility(), expected);
   await assert.rejects(eligibility({ accountId: otherAccountId, characterId }),
     (error) => error?.code === 'no_character', 'a foreign account cannot use another character completion');
+  const claimRespect = 24 ** 2 * PACING.LEVEL_DIVISOR;
+  await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [characterId, claimRespect - 1]);
+  assert.deepEqual(await eligibility(), expected, 'a completed dossier remains valid below the separate claim level');
+  await assert.rejects(tx(async (client) => {
+    const ch = (await client.query('SELECT * FROM characters WHERE id=$1', [characterId])).rows[0];
+    return claimDeed(ch, { name: 'Quest Earned House', buildingId: 'docks-0001' }, client);
+  }), { code: 'level' }, 'completing the real property quest cannot bypass the Level 25 claim gate');
+  await pool.query('UPDATE characters SET respect=$2 WHERE id=$1', [characterId, claimRespect]);
   const claim = await tx(async (client) => {
     const ch = (await client.query('SELECT * FROM characters WHERE id=$1', [characterId])).rows[0];
     return claimDeed(ch, { name: 'Quest Earned House', buildingId: 'docks-0001' }, client);

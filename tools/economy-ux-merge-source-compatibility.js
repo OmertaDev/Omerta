@@ -1,3 +1,5 @@
+import { deedAllocationHistoricalInput } from './deed-allocation-source-transfer.js';
+import { economyDeedMergeHistoricalInput } from './economy-deed-merge-source-compatibility.js';
 // Exact source reconstruction only. Runtime and native checks always use physical current bytes.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -307,6 +309,8 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input) {
+  input = economyDeedMergeHistoricalInput(file, input, 'monitor');
+  input = deedAllocationHistoricalInput(file, input);
   input = ageEligibilityHistoricalInput(file, input);
   input = economyMonitorWorkerHistoricalInput(file, input);
   input = economyMonitorReaderHistoricalInput(file, input);
@@ -320,6 +324,8 @@ export function economyUxMergeCandidateHistoricalInput(file, input) {
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
+  input = economyDeedMergeHistoricalInput(file, input, 'monitor');
+  input = deedAllocationHistoricalInput(file, input);
   input = ageEligibilityHistoricalInput(file, input);
   input = economyMonitorWorkerHistoricalInput(file, input);
   input = economyMonitorReaderHistoricalInput(file, input);

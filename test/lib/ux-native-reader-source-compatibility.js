@@ -6,6 +6,9 @@ import { execFileSync } from 'node:child_process';
 import { UX_NATIVE_READER_SOURCE as pin, UX_NATIVE_READER_SOURCE_FILES, qualifyUxNativeReaderSource, uxNativeReaderHistoricalInput, UX_PHASE2_UPGRADE_BOUND_SOURCE, UX_PHASE2_UPGRADE_BOUND_FILE, qualifyUxPhase2UpgradeBoundSource, uxPhase2UpgradeBoundHistoricalInput } from '../../tools/ux-native-reader-source-compatibility.js';
 import { qualifyUxSource, uxHistoricalInput } from '../../tools/ux-source-compatibility.js';
 import { ECONOMY_UX_MERGE_SOURCE, economyUxMergeMainHistoricalInput } from '../../tools/economy-ux-merge-source-compatibility.js';
+import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_DOMAINS, assertDeedAllocationSourceTransfer } from '../../tools/deed-allocation-source-transfer.js';
+import { ECONOMY_DEED_MERGE_SOURCE, assertEconomyDeedMergeSource,
+  economyDeedMergeHistoricalInput } from '../../tools/economy-deed-merge-source-compatibility.js';
 const AUTHORED_NATIVE_READER_FIX = 'c1720a694799e743c6f70bc3069dba2bbecae08e';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -24,7 +27,28 @@ const hunks = diff => {
 };
 // This is only the historical reader's qualified view; raw HEAD is independently pinned below.
 function qualifiedNativeReaderHeadEntry(file) {
-  const raw = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const actual = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const raw = economyDeedMergeHistoricalInput(file, actual, 'deed');
+  if (raw !== actual) {
+    const integration = ECONOMY_DEED_MERGE_SOURCE.files.find(row => row.file === file);
+    const proof = assertEconomyDeedMergeSource(file, actual, 'deed');
+    assert.equal(entry, integration.current.mode + ' blob ' + integration.current.blob + '\t' + file,
+      'Actual merged HEAD mode/blob must qualify before source-only parent bookkeeping');
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    assert.equal(proof.baselineText, raw);
+    entry = integration.parents.deed.mode + ' blob ' + integration.parents.deed.blob + '\t' + file;
+  }
+  const deed = DEED_ALLOCATION_SOURCE_DOMAINS[file];
+  if (deed) {
+    assert.equal(entry, deed.currentMode + ' blob ' + deed.currentBlob + '\t' + file, 'Raw Deed HEAD mode/blob must qualify before historical source bookkeeping');
+    const proof = assertDeedAllocationSourceTransfer(file, raw);
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    assert.equal(proof.predecessorRevision, DEED_ALLOCATION_SOURCE_PREDECESSOR);
+    const baselineEntry = git('ls-tree', DEED_ALLOCATION_SOURCE_PREDECESSOR, '--', file).trim();
+    assert.equal(baselineEntry, deed.baselineMode + ' blob ' + deed.baselineBlob + '\t' + file);
+    assert.equal(proof.baselineText, git('show', DEED_ALLOCATION_SOURCE_PREDECESSOR + ':' + file));
+    entry = baselineEntry;
+  }
   const mergeQualified = economyUxMergeMainHistoricalInput(file, raw);
   if (mergeQualified !== raw) {
     const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === file); assert(mergeRow);

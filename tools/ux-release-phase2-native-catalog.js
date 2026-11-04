@@ -10,6 +10,8 @@ import { economyHardeningSourceBaseline } from './economy-hardening-source-trans
 import { economyUxMergeCandidateHistoricalInput,
   economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
 import { UX_SOURCE, qualifyUxSource } from './ux-source-compatibility.js';
+import { DEED_BENEFIT_NATIVE_DDL, DEED_BENEFIT_NATIVE_TABLE, assertDeedBenefitNativeMigration,
+  assertDeedBenefitNativeSecurity, deedBenefitNativeRows, deedBenefitNativeProjection } from './deed-benefit-native-catalog.js';
 export * from './commerce-deed-release-phase2-native-catalog.js';
 
 export const UX_NATIVE_TABLES = Object.freeze(['ux_community_documents', 'ux_community_entries', 'ux_community_portrait_consents', 'ux_crew_notes', 'ux_crew_signals', 'ux_mentor_subjects', 'ux_workspaces']);
@@ -113,12 +115,13 @@ async function assertNativeCaller(pool, endpoint, profile, includeNotNull) {
   }
   assert.equal(settings.role, address.username); assert.equal('/' + settings.database, address.pathname);
 }
-async function projectedCaller(pool, ux, socialBridge, monitor) {
+async function projectedCaller(pool, ux, socialBridge, monitor, benefitNative) {
   const uxProjection = uxNativeProjection(ux), socialBridgeProjection = socialLegacyBridgeProjection(socialBridge),
     monitorProjection = monitorNativeProjection(monitor);
-  const projectMetadata = metadata => monitorProjection.projectMetadata(socialBridgeProjection.projectMetadata(uxProjection.projectMetadata(metadata)));
+  const projectMetadata = metadata => monitorProjection.projectMetadata(socialBridgeProjection.projectMetadata(
+    uxProjection.projectMetadata(benefitNative.projectMetadata(metadata))));
   const context = (await pool.query(catalogQueries[0])).rows[0];
-  const verify = async () => { projectMetadata(await original.readCommerceReleasePhase2Metadata(pool)); await assertUxNativeSecurity(pool); };
+  const verify = async () => { projectMetadata(await original.readCommerceReleasePhase2Metadata(pool)); await assertUxNativeSecurity(pool); await assertDeedBenefitNativeSecurity(pool); };
   await verify();
   const wrap = (queryable, guarded) => ({ query: async (sql, values) => {
     if (guarded && sql === catalogQueries[0]) await verify();
@@ -137,8 +140,15 @@ async function projectedCaller(pool, ux, socialBridge, monitor) {
       return { ...row, definition: row.definition.replace(prefix, ' ON $self.') };
     });
     assert.deepEqual(monitorSelected, monitor[field], 'Every fresh projected SQL result retains the exact monitor ' + field);
-    if (guarded) await assertUxNativeSecurity(pool);
-    return { ...result, rows: result.rows.filter(row => !names.has(tableOf(field, row)) && !isSocialBridgeRow(field, row) && !isMonitorIndexRow(field, row)) };
+    let benefitRows = deedBenefitNativeRows({ [field]: result.rows }, field);
+    if (field === 'indexes') benefitRows = benefitRows.map(row => {
+      const prefix = ' ON ' + context.schema + '.'; assert.equal(row.definition.split(prefix).length, 2);
+      return { ...row, definition: row.definition.replace(prefix, ' ON $self.') };
+    });
+    assert.deepEqual(benefitRows, benefitNative.reference[field], 'Every fresh projected SQL result retains the complete current marker ' + field);
+    if (guarded) { await assertUxNativeSecurity(pool); await assertDeedBenefitNativeSecurity(pool); }
+    return { ...result, rows: result.rows.filter(row => !names.has(tableOf(field, row)) && !isSocialBridgeRow(field, row)
+      && !isMonitorIndexRow(field, row) && tableOf(field, row) !== DEED_BENEFIT_NATIVE_TABLE) };
   } });
   return { ...wrap(pool, true), connect: async () => {
     const client = await pool.connect();
@@ -158,7 +168,7 @@ export async function assertUxNativeSecurity(pool) {
 }
 export async function readCommerceReleasePhase2Metadata(pool) {
   const metadata = await original.readCommerceReleasePhase2Metadata(pool);
-  await assertUxNativeSecurity(pool); return metadata;
+  await assertUxNativeSecurity(pool); await assertDeedBenefitNativeSecurity(pool); return metadata;
 }
 async function compileCurrentExtensionReference(pool, endpoint) {
   const schema = 'release_phase2_ref_' + crypto.randomBytes(8).toString('hex');
@@ -174,10 +184,12 @@ async function compileCurrentExtensionReference(pool, endpoint) {
     assert.equal(settings.schema, schema); assert.equal(settings.database, parent.database); assert.equal(settings.role, parent.role);
     // Compile the monitor index independently of schema.sql and the migrated caller. Only this
     // exact additive index is projected from the unchanged predecessor's complete catalog proof.
-    await client.query(socialBridgeDdl + '\n' + uxDdl + '\nCREATE TABLE transactions (at TIMESTAMPTZ, id TEXT);\nCREATE INDEX ix_tx_at_id ON transactions (at, id);');
+    await assertDeedBenefitNativeMigration();
+    await client.query('CREATE TABLE characters (id TEXT PRIMARY KEY);\n' + DEED_BENEFIT_NATIVE_DDL + ';\n' + socialBridgeDdl + '\n' + uxDdl
+      + '\nCREATE TABLE transactions (at TIMESTAMPTZ, id TEXT);\nCREATE INDEX ix_tx_at_id ON transactions (at, id);');
     const reference = await original.readCommerceReleasePhase2Metadata(client);
-    assert.deepEqual(reference.relations.map(row => row.name), [socialBridgeTable, 'transactions', ...UX_NATIVE_TABLES],
-      'Independent immutable DDL creates exactly the social bridge, monitor fixture and seven UX tables');
+    assert.deepEqual(reference.relations.map(row => row.name), ['characters', socialBridgeTable, DEED_BENEFIT_NATIVE_TABLE, 'transactions', ...UX_NATIVE_TABLES],
+      'Independent immutable DDL creates exactly the FK target, current marker, social bridge, monitor fixture and seven UX tables');
     const ux = Object.fromEntries(fields.map(field => [field, uxRows(reference, field)]));
     assert.deepEqual(ux.relations.map(row => row.name), UX_NATIVE_TABLES, 'Independent immutable DDL creates exactly the seven UX tables');
     const socialBridge = Object.fromEntries(fields.map(field => [field, socialBridgeRows(reference, field)]));
@@ -203,7 +215,9 @@ async function compileCurrentExtensionReference(pool, endpoint) {
       definition: 'CREATE INDEX ix_tx_at_id ON $self.transactions USING btree (at, id)',
       unique: false, primary: false, valid: true, ready: true, live: true, nulls_not_distinct: false, predicate: null }],
     'Independent fixed DDL compiles the exact complete monitor index catalog row');
-    return freeze({ ux, socialBridge, monitor });
+    const benefitNative = deedBenefitNativeProjection(Object.fromEntries(fields.map(field =>
+      [field, deedBenefitNativeRows(reference, field)])), version);
+    return freeze({ ux, socialBridge, monitor, benefitNative });
   } finally {
     await client?.end();
     if (created) {
@@ -260,11 +274,12 @@ export function monitorNativeProjection(reference) {
   };
   return Object.freeze({ projectMetadata });
 }
-function extendCatalog(prior, ux, socialBridge, monitor, branches = false) {
+function extendCatalog(prior, ux, socialBridge, monitor, benefitNative, branches = false) {
   const uxProjection = uxNativeProjection(ux), socialBridgeProjection = socialLegacyBridgeProjection(socialBridge),
     monitorProjection = monitorNativeProjection(monitor),
-    projectMetadata = metadata => monitorProjection.projectMetadata(socialBridgeProjection.projectMetadata(uxProjection.projectMetadata(metadata))),
-    base = branches ? prior.current : prior.reference, reference = merge(base, socialBridge, ux, monitor);
+    projectMetadata = metadata => monitorProjection.projectMetadata(socialBridgeProjection.projectMetadata(
+      uxProjection.projectMetadata(benefitNative.projectMetadata(metadata)))),
+    base = branches ? prior.current : prior.reference, reference = benefitNative.extendReference(merge(base, socialBridge, ux, monitor));
   const verifyMetadata = metadata => (branches ? prior.verify : prior.verifyMetadata)(projectMetadata(metadata));
   verifyMetadata(reference);
   const causal = { socialBridge: 0, socialProofContract: 0, ux: 0, monitor: 0 };
@@ -277,8 +292,8 @@ function extendCatalog(prior, ux, socialBridge, monitor, branches = false) {
     assert.throws(() => { extension[field][0][key] = 'tampered'; }, TypeError);
     const retained = structuredClone(extension), independent = makeProjection(retained);
     retained[field][0][key] = 'tampered';
-    const integrated = merge(base, label === 'socialBridge' ? retained : socialBridge,
-      label === 'ux' ? retained : ux, label === 'monitor' ? retained : monitor);
+    const integrated = benefitNative.extendReference(merge(base, label === 'socialBridge' ? retained : socialBridge,
+      label === 'ux' ? retained : ux, label === 'monitor' ? retained : monitor));
     assert.throws(() => independent.projectMetadata(integrated), error => error?.code === 'ERR_ASSERTION'); causal[label]++;
   }
   verifyMetadata(reference);
@@ -301,13 +316,28 @@ function extendCatalog(prior, ux, socialBridge, monitor, branches = false) {
   const proofContract = socialBridge.columns.find(row => row.column_name === socialProofContractColumn);
   assert(proofContract); assert.equal(causal.socialProofContract, Object.keys(proofContract).length + 2,
     'Proof-contract missing, duplicate and every-field mutations are all refused');
+  let deedBenefitCausal = 0;
+  for (const field of fields) for (const row of benefitNative.reference[field]) {
+    const at = reference[field].findIndex(candidate => candidate === row); assert(at >= 0);
+    const reject = metadata => { assert.throws(() => verifyMetadata(metadata), error => error?.code === 'ERR_ASSERTION'); deedBenefitCausal++; };
+    reject({ ...reference, [field]: reference[field].filter((_, index) => index !== at) });
+    reject({ ...reference, [field]: [...reference[field], { ...row }] });
+    for (const key of Object.keys(row)) {
+      const value = row[key], changed = { ...row, [key]: typeof value === 'boolean' ? !value
+        : typeof value === 'number' ? value + 1 : Array.isArray(value) ? [...value, 'unknown'] : value === null ? 'unknown' : value + '__unknown' };
+      reject({ ...reference, [field]: reference[field].map((candidate, index) => index === at ? changed : candidate) });
+    }
+    const unknown = { ...row, [field === 'relations' ? 'name' : 'table_name']: '__unknown_deed_marker__' };
+    reject({ ...reference, [field]: [...reference[field], unknown] });
+  }
   const common = { ...prior, reference, verifyMetadata, socialBridgeReference: socialBridge,
     socialBridgeCausal: causal.socialBridge, socialProofContractCausal: causal.socialProofContract,
     uxReference: ux, uxSource: UX_SOURCE.revision, uxCausal: causal.ux,
-    monitorReference: monitor, monitorCausal: causal.monitor };
+    monitorReference: monitor, monitorCausal: causal.monitor,
+    deedBenefitReference: benefitNative.reference, deedBenefitCausal };
   if (branches) return Object.freeze({ ...common, current: reference, verify: verifyMetadata });
   return Object.freeze({ ...common, normalize: rows => prior.normalize(socialBridgeProjection.projectConstraints(
-    uxProjection.projectConstraints(rows, prior.includeNotNull), prior.includeNotNull)) });
+    uxProjection.projectConstraints(benefitNative.projectConstraints(rows, prior.includeNotNull), prior.includeNotNull), prior.includeNotNull)) });
 }
 function integratedSchemaSources(input) {
   const candidate = economyUxMergeCandidateHistoricalInput('schema.sql', input);
@@ -319,16 +349,16 @@ function integratedSchemaSources(input) {
 export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {
   const { candidate } = integratedSchemaSources(input);
   await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);
-  const { ux, socialBridge, monitor } = await compileCurrentExtensionReference(pool, endpoint);
+  const { ux, socialBridge, monitor, benefitNative } = await compileCurrentExtensionReference(pool, endpoint);
   const prior = await original.createCommerceReleasePhase2MigrationCatalog(
-    await projectedCaller(pool, ux, socialBridge, monitor), endpoint, candidate, options);
-  return extendCatalog(prior, ux, socialBridge, monitor);
+    await projectedCaller(pool, ux, socialBridge, monitor, benefitNative), endpoint, candidate, options);
+  return extendCatalog(prior, ux, socialBridge, monitor, benefitNative);
 }
 export async function verifyCommerceNativeBranches(pool, endpoint) {
   await assertNativeCaller(pool, endpoint, 'fresh', true);
   const { candidate } = integratedSchemaSources(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
-  const { ux, socialBridge, monitor } = await compileCurrentExtensionReference(pool, endpoint);
+  const { ux, socialBridge, monitor, benefitNative } = await compileCurrentExtensionReference(pool, endpoint);
   const prior = await original.verifyCommerceNativeBranches(
-    await projectedCaller(pool, ux, socialBridge, monitor), endpoint, candidate);
-  return extendCatalog(prior, ux, socialBridge, monitor, true);
+    await projectedCaller(pool, ux, socialBridge, monitor, benefitNative), endpoint, candidate);
+  return extendCatalog(prior, ux, socialBridge, monitor, benefitNative, true);
 }
