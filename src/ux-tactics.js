@@ -1,6 +1,6 @@
 // Read-only decision aids. No projection grants authority or samples an outcome.
 import {
-  CRIMES, M3, PACING, MARKET, SKILLS, SOLDIERS, PORT, NOTORIETY, COMMISSION, CONSUMABLES,
+  CRIMES, M3, PACING, MARKET, ASSETS, SKILLS, SOLDIERS, PORT, NOTORIETY, COMMISSION, CONSUMABLES,
   effStat, levelOf, rankIdxOf, gangLevelOf, roleMultOf, cityEventOf, dayOf, pathFx,
   soldierFxOf, coolLeft, boatOf, effHold, effSpeed, interdictChance, cityHourOf,
   smuggleRepPerks, smugglerTierOf, notorietyNow, jailed, hospitalized, safeHoused,
@@ -14,6 +14,18 @@ import { itemEffectPreview } from './economy.js';
 
 const amount = (value) => Number(value || 0);
 const remaining = (value, now = Date.now()) => value ? Math.max(0, Math.ceil((new Date(value).getTime() - now) / 1000)) : 0;
+export const MASTERY_TRIALS = Object.freeze([
+  Object.freeze({ id: 'light-touch', name: 'Light touch', target: 2, nerveBudget: 12,
+    rule: 'Complete two successful jobs within 12 listed job nerve. Unsuccessful jobs also count toward the budget.',
+    stamp: 'Light touch practice' }),
+  Object.freeze({ id: 'three-approaches', name: 'Three ways through', target: 3,
+    approaches: Object.freeze(Object.keys(M3.CRIME_APPROACHES)),
+    rule: 'Complete a successful job using each approach: quiet, standard and loud. Ordinary costs, heat and failure risks apply.',
+    stamp: 'Three approaches practice' }),
+  Object.freeze({ id: 'measured-risk', name: 'Measured risk', target: 2, minimumChance: 0.85,
+    rule: 'Complete two different jobs successfully, each with at least an 85% success projection immediately before the attempt.',
+    stamp: 'Measured risk practice' }),
+]);
 function ids(value, valid, fallback) {
   if (value == null) return [...fallback];
   if (typeof value !== 'string' || value.length > 3000) throw new GameError('preview', 'Invalid preview selection.');
@@ -165,6 +177,13 @@ export async function tacticsBoard(ch, client, h, query = {}) {
     cost: { cash: 0, nerve: 0, energy: PACING.TRAIN_ENERGY }, blockers: [...(jailed(ch) ? ['In lockup.'] : []), ...(amount(ch.energy) < PACING.TRAIN_ENERGY ? ['Insufficient energy.'] : []), ...(coolLeft(ch.train_at) ? ['Gym cooldown active.'] : [])],
     cooldown: { group: 'gym', seconds: Math.max(0, Number(process.env.TRAIN_CD_MS ?? PACING.TRAIN_CD_MS)) / 1000, readyAt: Date.now() + coolLeft(ch.train_at) * 1000 } });
   const result = { tactics: { generatedAt: new Date().toISOString(), characterId: ch.id, hypothetical, jobs, planner,
+    trials: MASTERY_TRIALS,
+    openingUpgrades: ASSETS.filter(asset => ['muscle', 'cunning', 'speed'].includes(asset.stat) && asset.boost > 0
+      && !(h.owned.assets || []).includes(asset.id)).map(asset => {
+      const fee = Math.ceil(asset.price * 0.01), tax = Math.ceil(asset.price * 0.01), total = asset.price + fee + tax;
+      return { id: asset.id, name: asset.name, stat: asset.stat, boost: asset.boost,
+        cost: { price: asset.price, fee, tax, total }, affordable: amount(ch.cash) >= total };
+    }).sort((a, b) => a.cost.total - b.cost.total),
     loadout: { actual: h.owned.gear || [], proposed: selectedGear, actualStats, proposedStats,
       catalog: MARKET.map(g => ({ id: g.id, name: g.name, stat: g.stat, boost: g.boost, owned: (h.owned.gear || []).includes(g.id), extracted: (h.owned.gearOnchain || []).includes(g.id) })),
       note: 'All owned, in-play gear applies automatically. This bench is a hypothetical inclusion preview; it does not equip, buy, extract, or remove gear.' },
@@ -189,7 +208,8 @@ export async function crimeWithDecisionContext(ch, crimeId, client, h, approach)
   const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id));
   const projectedAt = new Date().toISOString();
   const result = await doCrime(ch, crimeId, client, h, approach);
-  return { ...result, decisionContext: { probability: projection.probability, modifiers: projection.modifiers,
+  return { ...result, decisionContext: { crimeId: crime.id, cost: { ...projection.cost },
+    probability: projection.probability, modifiers: projection.modifiers,
     jailSecondsOnFailure: projection.jailSeconds, projectedAt, source: projection.formula.source,
     note: 'Projection immediately before this attempt; a failed roll does not identify one modifier as its cause.' } };
 }

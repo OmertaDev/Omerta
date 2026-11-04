@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';
 import {
   ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_SOURCE_TREE,
   ECONOMY_HARDENING_SOURCE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_PREDECESSOR_TREE,
@@ -164,7 +165,7 @@ const socialReceiptSafetyFiles = [
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
-  file, fs.readFileSync(file, 'utf8')));
+  file, uxAfterwordHistoricalInput(file, fs.readFileSync(file, 'utf8'))));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');

@@ -5,6 +5,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { DISTRICT_STORY_ARCS } from '../src/content/district-story-arcs.js';
 import { CITY_QUEST_PRESENTATIONS } from '../src/content/city-quest-presentation.js';
+import { NEIGHBORHOOD_AFTERWORD_PRESENTATION } from '../src/content/neighborhood-afterword.js';
 import { PROPERTY_QUEST_PRESENTATION } from '../src/content/property-investigation.js';
 import { DISTRICTS, skillOf } from '../src/rules.js';
 
@@ -88,8 +89,25 @@ try {
   const catalogue = await success(call(witness, 'GET', '/v1/worldgraph/mysteries'));
   assert(validateCatalogue(catalogue), JSON.stringify(validateCatalogue.errors));
   const city = catalogue.mysteries.filter(entry => entry.cityQuest);
-  assert.equal(city.length, 9);
-  assert.equal(CITY_QUEST_PRESENTATIONS.length, 9);
+  const originalCityGraphIds = ['neighborhood-initiation', 'district-docks-story', 'district-neon-story',
+    'district-foundry-story', 'district-brick-story', 'district-canal-story', 'district-cathedral-story',
+    'neighborhood-broadcast', 'property-investigation'];
+  const afterwordId = NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId;
+  assert.equal(afterwordId, 'neighborhood-afterword');
+  for (const entries of [city, CITY_QUEST_PRESENTATIONS]) {
+    assert.deepEqual(entries.filter(entry => entry.graphId !== afterwordId).map(entry => entry.graphId).sort(),
+      [...originalCityGraphIds].sort(), 'All nine original City quests retain their identities.');
+    assert.equal(entries.filter(entry => entry.graphId === afterwordId).length, 1,
+      'Exactly one Afterword follow-up joins the original catalogue.');
+    assert.equal(entries.length, 10);
+  }
+  assert.deepEqual(CITY_QUEST_PRESENTATIONS.find(entry => entry.graphId === afterwordId), NEIGHBORHOOD_AFTERWORD_PRESENTATION);
+  for (const presentation of CITY_QUEST_PRESENTATIONS) {
+    const entry = city.find(candidate => candidate.graphId === presentation.graphId);
+    for (const [field, value] of Object.entries(presentation)) {
+      assert.deepEqual(entry[field], value, 'City discovery retains the exact authored presentation: ' + presentation.graphId + ':' + field);
+    }
+  }
   assert.deepEqual(CITY_QUEST_PRESENTATIONS.find(entry => entry.graphId === 'property-investigation'), PROPERTY_QUEST_PRESENTATION);
   const property = city.find(entry => entry.graphId === 'property-investigation');
   for (const field of ['title', 'districtId', 'startVenueId', 'exploreVenueId', 'rewardTitle', 'deathPolicy']) {

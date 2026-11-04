@@ -4,6 +4,7 @@ import { cityHourOf } from './rules.js';
 import { PHASE1_WORLD_GRAPH, mysteryDiscovery } from './routes/worldgraph.js';
 import { mysteryUi } from './worldgraph-ui.js';
 import { authorizedBoard, investigationPresentation } from './ux-investigation.js';
+import { NEIGHBORHOOD_AFTERWORD_PACKAGE } from './content/neighborhood-afterword.js';
 
 const RESIDENTS = {
   'Nico Bellini': { role: 'Neighborhood fixer', place: 'The Fixer', scene: 'Nico closes a pocket notebook before he speaks. The empty chair across his desk is an invitation to listen, not a promise of work.', expression: 'measured' },
@@ -17,8 +18,13 @@ const OPENINGS = {
   'neighborhood-initiation': { title: 'Before the first correction', text: 'A name reaches the neighborhood before its owner learns every door. At Bellini’s desk, a notebook is closed and a chair is left open. There is time to hear an account before repeating it.' },
   'property-investigation': { title: 'An address on an old cover', text: 'The registry smells of paper warmed by a desk lamp. A number has been crossed out, but the old ink remains legible. Irene opens the folder to the first page.' },
   'belladonna-demo': { title: 'A mark in the metal', text: 'In the Foundry, a stamp survives the wear around it. Looking closely is the first job. Whatever the mark will mean, the file starts with what can actually be seen.' },
+  'neighborhood-afterword': { title: 'The next time they ask for you', text: 'The room has quieted since the broadcast, but your decision has not stopped working. Nico has another reason to leave the chair open. Bring the keepsake you earned and hear what your choice set in motion.' },
 };
 const VARIANTS = {
+  ...Object.fromEntries(NEIGHBORHOOD_AFTERWORD_PACKAGE.nodes.filter(node => node.type === 'mystery_step').map(node => {
+    const [, speaker, text] = node.metadata.description.match(/^([^:]+): (.+)$/s);
+    return [node.id, { speaker, text }];
+  })),
   'mystery:neighborhood-fixer': { speaker: 'Nico Bellini', text: 'Nico rests two fingers on the closed notebook. “Ada has a delivery that never arrived. Hear her at the workshop. Then bring Elena at the newsroom an account she can put her name behind.”' },
   'choice:neighborhood-approach': { speaker: 'Nico Bellini', text: '“A room leaves things unsaid,” Nico says. “A direct question can open another door. Tell me whether you mean to listen first or ask Ada what she needs.”' },
   'mystery:neighborhood-listen': { speaker: 'Ada Ferri', text: 'Ada holds her hand away from the clock face. “Listen for the ferry horn. That hand stops with it. Everyone read the same clock. Now put its stuck hand beside the receipt.”' },
@@ -67,6 +73,19 @@ export function caseStory(rawBoard) {
     if (proof && complete(board, proof) && complete(board, 'evidence:property-boundary')) {
       epilogue = { branch, title: branch === 'witness' ? 'A remembered departure, checked' : 'A signed delivery, checked', text: `${branch === 'witness' ? 'Mara’s dated account' : 'The final signed delivery'} joins the corrected registry, address reference and survey in your verified file. The old and new numbers describe one parcel. The alley remains a public easement. Verification records that finding; a building claim remains a separate action.` };
       letters = [{ id: `irene:${board.instanceId}`, from: 'Irene Bell', subject: 'Your registry file is complete', text: `The ${branch === 'witness' ? 'witness account' : 'delivery record'} has been reconciled with the address and signed plan. The public alley has not become a private yard by repetition. Your verified dossier is filed. Any property claim must still be made separately. — Irene` }];
+    }
+  }
+  if (board.status === 'completed' && graphId === 'neighborhood-afterword') {
+    for (const branch of ['live', 'archive']) {
+      if (![...['invitation', 'work', 'finale'].map(step => `mystery:afterword-${branch}-${step}`),
+        `evidence:afterword-${branch}`, `reward:afterword-${branch}`].every(id => complete(board, id))) continue;
+      const finale = NEIGHBORHOOD_AFTERWORD_PACKAGE.nodes.find(node => node.id === `mystery:afterword-${branch}-finale`);
+      epilogue = { branch, title: branch === 'live' ? 'The neighborhood knows whom to call' : 'The archive remembers another name',
+        text: finale.metadata.description };
+      letters = [{ id: `afterword:${board.instanceId}`, from: branch === 'live' ? 'Ada Ferri' : 'Elena Serra',
+        subject: branch === 'live' ? 'The next delivery found its door' : 'The corrected sleeve is filed',
+        text: branch === 'live' ? 'The bakery and the porter are using the signal you tested. Restoring the transmitter made this work possible. I have left your signed agreement beside the dial. — Ada'
+          : 'The porter’s mother has her name back in the archive. Keeping the reel made his account possible. The corrected sleeve is filed with your signed identification. — Elena' }];
     }
   }
   return { graphId, instanceId: board.instanceId, status: board.status,
