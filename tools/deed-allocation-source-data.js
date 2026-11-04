@@ -1701,6 +1701,31 @@ export const DEED_ALLOCATION_SOURCE_DOMAINS = {
         "baseline": "// This is only the historical reader's qualified view; raw HEAD is independently pinned below.\nfunction qualifiedNativeReaderHeadEntry(file) {\n  const raw = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();\n  const mergeQualified = economyUxMergeMainHistoricalInput(file, raw);\n  if (mergeQualified !== raw) {\n    const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === file); assert(mergeRow);\n"
       }
     ]
+  },
+  "test/client.js": {
+    "currentMode": "100644",
+    "baselineMode": "100644",
+    "currentSha256": "62496859ad98d2bc6b82d77754141dac93eadabb3cdefae3432e5527294501a1",
+    "currentBlob": "b712b8bc0fa7e26c2188b5f214e6fc5e42117213",
+    "currentBytes": 758653,
+    "currentRawSha256": {
+      "lf": "62496859ad98d2bc6b82d77754141dac93eadabb3cdefae3432e5527294501a1",
+      "crlf": "8af51a59e34adee46213c510e84c5bf4b76a8e59a4c68a357542a9de17ee8a74"
+    },
+    "baselineSha256": "fe807783ec2f55b263e4a7d72a65aaed28c2216e6dd05a9177cdb1e25cc2a5aa",
+    "baselineBlob": "9042c603a35b5f6c3dd82f54fae03f64c3bd42ff",
+    "baselineBytes": 758653,
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "    // shape a RENAME answers with — so it told the player they had just named the place; the marker\n    // that fixed it then had to name the SYSTEM rather than the state, because a bare `listed:false`\n    // is what a duel DE-listing sends (\"off the ladder\"). Two collisions, one verb.\n    [dd.t, 'POST', '/v1/deeds/claim', { buildingId: 'docks-0167', name: 'Ledger Row ' + Math.random().toString(36).slice(2, 6) }],\n    [dd.t, 'POST', '/v1/deeds/list', { price: 400000 }],\n    [dd.t, 'POST', '/v1/deeds/unlist', null],\n  ];\n  await app.pool.query(\"UPDATE characters SET loc='docks' WHERE id=$1\", [dd.id]);\n  await earnBuildingClaim(app, dd.t, 'docks-0167');\n  await app.pool.query('UPDATE characters SET heat_exposure=800, heat=70 WHERE id=$1', [club.id]);\n  for (const [t, m, url, payload] of w10) {\n    const r = await inject(m, url, t, payload);\n",
+        "baseline": "    // shape a RENAME answers with — so it told the player they had just named the place; the marker\n    // that fixed it then had to name the SYSTEM rather than the state, because a bare `listed:false`\n    // is what a duel DE-listing sends (\"off the ladder\"). Two collisions, one verb.\n    [dd.t, 'POST', '/v1/deeds/claim', { buildingId: 'docks-0417', name: 'Ledger Row ' + Math.random().toString(36).slice(2, 6) }],\n    [dd.t, 'POST', '/v1/deeds/list', { price: 400000 }],\n    [dd.t, 'POST', '/v1/deeds/unlist', null],\n  ];\n  await app.pool.query(\"UPDATE characters SET loc='docks' WHERE id=$1\", [dd.id]);\n  await earnBuildingClaim(app, dd.t, 'docks-0417');\n  await app.pool.query('UPDATE characters SET heat_exposure=800, heat=70 WHERE id=$1', [club.id]);\n  for (const [t, m, url, payload] of w10) {\n    const r = await inject(m, url, t, payload);\n"
+      },
+      {
+        "current": "  // ── F1: the deed receipt names the price the server sent.\n  const sellerW = await mk10('W76s'), buyerW = await mk10('W76b');\n  const streetW = 'Wave76 Row ' + Math.random().toString(36).slice(2, 6);\n  await earnBuildingClaim(app10, sellerW.token, 'docks-0167');\n  const clm = await inj10('POST', '/v1/deeds/claim', sellerW.token, { buildingId: 'docks-0167', name: streetW });\n  assert.equal(clm.code, 200, `WAVE 76 fixture: the seller must hold a street (${JSON.stringify(clm.body)})`);\n  const askW = 4321000;\n  assert.equal((await inj10('POST', '/v1/deeds/list', sellerW.token, { price: askW })).code, 200,\n",
+        "baseline": "  // ── F1: the deed receipt names the price the server sent.\n  const sellerW = await mk10('W76s'), buyerW = await mk10('W76b');\n  const streetW = 'Wave76 Row ' + Math.random().toString(36).slice(2, 6);\n  await earnBuildingClaim(app10, sellerW.token, 'docks-0417');\n  const clm = await inj10('POST', '/v1/deeds/claim', sellerW.token, { buildingId: 'docks-0417', name: streetW });\n  assert.equal(clm.code, 200, `WAVE 76 fixture: the seller must hold a street (${JSON.stringify(clm.body)})`);\n  const askW = 4321000;\n  assert.equal((await inj10('POST', '/v1/deeds/list', sellerW.token, { price: askW })).code, 200,\n"
+      }
+    ]
   }
 };
 for (const pin of Object.values(DEED_ALLOCATION_SOURCE_DOMAINS)) {
