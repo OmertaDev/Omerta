@@ -163,7 +163,7 @@ export function assertEconomyMonitorReaderSource(file, input) {
 function monitorSuccessorHistoricalInput(file, input, pin) {
   if (file !== pin.file) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical successor source required');
+  if (buffer) assert(Buffer.from(text).equals(input), 'lossless UTF-8 physical successor source required');
   let current;
   try { current = normalize(text); } catch { return input; }
   if (sha(current) !== pin.currentSha256) return input;
