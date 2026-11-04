@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 3,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS",
-  "authoredRevision": "fb7fa8aa2cbf22bd541a33a3fa0d8fe02e899a97",
+  "authoredRevision": "f1aa03beee823494a310282ccb8821248277b86a",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -10157,8 +10157,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/business-control-desk-browser.js",
       "mode": "100644",
-      "blob": "7c309ffcb12c71349c122a1a00f5393c3ad1375a",
-      "sha256": "59a45e77271237adc849acf851382f580af15cccb3b8d3b3f39dc294a99e9025"
+      "blob": "2a05bba71d31f0bafabbe7775fce4c58164a9507",
+      "sha256": "87b00326a8c7438a91e5d64e97fcee39064968a37a6e514ea1f1799ca8153b97"
     },
     {
       "file": "test/business-control-desk-loop.js",
@@ -12374,8 +12374,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/business-control-desk-browser.js",
       "mode": "100644",
-      "blob": "7c309ffcb12c71349c122a1a00f5393c3ad1375a",
-      "sha256": "59a45e77271237adc849acf851382f580af15cccb3b8d3b3f39dc294a99e9025"
+      "blob": "2a05bba71d31f0bafabbe7775fce4c58164a9507",
+      "sha256": "87b00326a8c7438a91e5d64e97fcee39064968a37a6e514ea1f1799ca8153b97"
     },
     {
       "file": "test/business-control-desk-loop.js",
@@ -12757,4 +12757,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "19161212128e00643f777f7dbb761072db9360db138579f67a45425229e878fd";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "3710f71805f2e932a48585692ec3d436f00a42ba6882f140af9772b7cdaa48d3";
