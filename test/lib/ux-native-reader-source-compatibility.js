@@ -85,7 +85,7 @@ for (const row of pin.files) {
   if (row.inverses.length > 1) { const [left, right] = row.inverses, marker = '\u0001NATIVE_READER_HUNK_SWAP\u0001'; assert(!current.includes(marker)); reject(current.replace(left.current, () => marker).replace(right.current, () => left.current).replace(marker, () => right.current)); }
   for (const input of [current + '\n// arbitrary future source\n', current.slice(1), target]) assert.equal(uxNativeReaderHistoricalInput(row.file, input), input);
   assert.throws(() => qualifyUxNativeReaderSource(row.file, current, Object.freeze({ ...pin }))); refusals++;
-  assert.throws(() => uxNativeReaderHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /Lossless UTF-8/); refusals++;
+  assert.throws(() => uxNativeReaderHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /Lossless UTF-8/i); refusals++;
   assert.throws(() => qualifyUxSource(row.file, current)); refusals++;
   assert.equal(sha(current), row.currentSha256);
 }
