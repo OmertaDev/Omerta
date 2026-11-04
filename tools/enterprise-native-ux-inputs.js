@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 2,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS",
-  "authoredRevision": "66c128357debbe46d0ea9c6f5c0671d56d6147bd",
+  "authoredRevision": "cf58f330c7c37cde2d1ac1d8244cd5167d2ec7ce",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
@@ -9530,8 +9530,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/client.js",
       "mode": "100644",
-      "blob": "9042c603a35b5f6c3dd82f54fae03f64c3bd42ff",
-      "sha256": "fe807783ec2f55b263e4a7d72a65aaed28c2216e6dd05a9177cdb1e25cc2a5aa"
+      "blob": "46a91967cddf37c5536ac95e31f2ba5601aa945f",
+      "sha256": "322bfdbc6d06e4a35afd7e32cbb84541a812635421f1579817f9352b0b76e799"
     },
     {
       "file": "test/continuous-city-host-contract.js",
@@ -9554,8 +9554,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/decision-guide-client.js",
       "mode": "100644",
-      "blob": "a54d80d37241834e29f793169e694f329bf179c3",
-      "sha256": "b540d98b574eb60807be621feeb72564c3df8a51a2fc545703a306ddf47a7001"
+      "blob": "c1385258d1dc40318d1ba97d531bd6a79b89e94e",
+      "sha256": "2c7833f97720b1f226776cc67884869c29ba6ff3e13cf7c19c90e31ecc87fbad"
     },
     {
       "file": "test/decision-guide.js",
@@ -10124,8 +10124,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "745a87b54c74e193b31553c78df7143df48f2089",
-      "sha256": "b4f930916208cf49993739cea62c86056bb607bc0064b46820b88d0c64a944a4"
+      "blob": "17f213cef9abb41c3a2ddf4045ded062948cc010",
+      "sha256": "62c974ce45a7d2e065e81590cc51987388c0b6032025748f06345aae07b3da29"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -11622,8 +11622,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "test/client.js",
         "mode": "100644",
-        "blob": "9042c603a35b5f6c3dd82f54fae03f64c3bd42ff",
-        "sha256": "fe807783ec2f55b263e4a7d72a65aaed28c2216e6dd05a9177cdb1e25cc2a5aa"
+        "blob": "46a91967cddf37c5536ac95e31f2ba5601aa945f",
+        "sha256": "322bfdbc6d06e4a35afd7e32cbb84541a812635421f1579817f9352b0b76e799"
       }
     },
     {
@@ -11639,6 +11639,21 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
         "mode": "100644",
         "blob": "8bd764e3ddd53cea4042dcba8c2e30642aa86249",
         "sha256": "5baaeb0160ae23656d0aa49f1c38bbd312d573d67f4e46cf68538865c6fc9882"
+      }
+    },
+    {
+      "file": "test/decision-guide-client.js",
+      "before": {
+        "file": "test/decision-guide-client.js",
+        "mode": "100644",
+        "blob": "a54d80d37241834e29f793169e694f329bf179c3",
+        "sha256": "b540d98b574eb60807be621feeb72564c3df8a51a2fc545703a306ddf47a7001"
+      },
+      "after": {
+        "file": "test/decision-guide-client.js",
+        "mode": "100644",
+        "blob": "c1385258d1dc40318d1ba97d531bd6a79b89e94e",
+        "sha256": "2c7833f97720b1f226776cc67884869c29ba6ff3e13cf7c19c90e31ecc87fbad"
       }
     },
     {
@@ -12020,8 +12035,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/enterprise-ux-native-guard.js",
       "mode": "100644",
-      "blob": "745a87b54c74e193b31553c78df7143df48f2089",
-      "sha256": "b4f930916208cf49993739cea62c86056bb607bc0064b46820b88d0c64a944a4"
+      "blob": "17f213cef9abb41c3a2ddf4045ded062948cc010",
+      "sha256": "62c974ce45a7d2e065e81590cc51987388c0b6032025748f06345aae07b3da29"
     },
     {
       "file": "test/lib/ux-director-reader-source-compatibility.js",
@@ -12307,4 +12322,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "365e9f2cd481305a7f54f8862232e9fab6929fc932c21f7bf3d89d3f525dc24a";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "7903b3fd3f7da6305d93c89de46cd37cb0c9f6015547d035eca764a227ba279e";
