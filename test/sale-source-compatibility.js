@@ -96,7 +96,10 @@ for (const [hook, count] of [["import { saleHistoricalInput } from './sale-sourc
   ["import { economySocialReceiptSafetyHistoricalInput } from './economy-social-proof-receipt-safety-source-transfer.js';\n", 1],
   ['  input = economySocialReceiptSafetyHistoricalInput(file, input);\n', 2],
   ["import { economySocialReceiptHistoricalInput } from './economy-social-proof-receipt-source-transfer.js';\n", 1],
-  ['  input = economySocialReceiptHistoricalInput(file, input);\n', 2]]) {
+  ['  input = economySocialReceiptHistoricalInput(file, input);\n', 2],
+  ["import { wikiMediaHistoricalInput } from './wiki-media-source-transfer.js';\n", 1],
+  ["import { age21HistoricalInput } from './age21-source-transfer.js';\n", 1],
+  ['  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));\n', 2]]) {
   assert.equal(candidateConserved.split(hook).length, count + 1, 'Exact candidate and main sale integration hooks'); candidateConserved = candidateConserved.split(hook).join('');
 }
 assert.equal(candidateConserved, git('show', 'c86bcd310e5f38845642637230ba4bec7d653183:tools/economy-ux-merge-source-compatibility.js'), 'All committed economy merge qualifiers and refusal predicates remain byte-identical');
