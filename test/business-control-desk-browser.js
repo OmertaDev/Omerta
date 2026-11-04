@@ -106,7 +106,7 @@ try {
     const s = f.scenarios[index], { maker, first, second, host, buyer } = s.actors;
     const before = await f.snapshot(), errors = [], requests = [], failedRequests = [];
     const context = await browser.newContext({ viewport, isMobile: index === 1, hasTouch: index === 1 });
-    let page;
+    let page, lastAction = '';
     try {
       await context.addInitScript(token => localStorage.setItem('omerta_token', token), maker.token);
       page = await context.newPage();
@@ -130,14 +130,18 @@ try {
       const desk = page.locator('#tab-business');
       await desk.waitFor({ state: 'visible' });
       await desk.locator('[data-business-refresh]').waitFor();
-      const idle = () => page.waitForFunction(() => document.body.style.cursor !== 'progress');
+      // The first desk response can finish before the rest of its read cohort.
+      const idle = () => page.waitForFunction(() => document.body.style.cursor !== 'progress'
+        && document.querySelector('#tab-business .business-body')?.getAttribute('aria-busy') === 'false');
       async function refresh() {
         await idle();
         const response = page.waitForResponse(result => result.request().method() === 'GET' && new URL(result.url()).pathname === '/v1/company/desk');
         await desk.locator('[data-business-refresh]').click();
         assert.equal((await response).status(), 200);
+        await idle();
       }
       async function action(name, path, body, fields = {}, entityId) {
+        lastAction = name;
         await idle();
         let button;
         if (entityId) {
@@ -156,6 +160,7 @@ try {
           else if (tag === 'select') await control.selectOption(String(value));
           else await control.fill(String(value));
         }
+        await idle();
         const responsePromise = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === path);
         await button.click();
         const response = await responsePromise, request = response.request();
@@ -283,11 +288,24 @@ try {
     } catch (error) {
       const directory = path.resolve(process.env.BUSINESS_CONTROL_DESK_BROWSER_OUTPUT || 'output/business-control-desk-browser', `${Date.now()}-${s.label}`);
       fs.mkdirSync(directory, { recursive: true });
+      const formState = page ? await page.evaluate(action => {
+        const desk = document.querySelector('#tab-business');
+        return { action, cursor: document.body.style.cursor,
+          busy: desk?.querySelector('.business-body')?.getAttribute('aria-busy'),
+          notice: desk?.querySelector('.business-notice')?.textContent?.slice(0, 512),
+          forms: [...(desk?.querySelectorAll('form[data-business-form]') || [])]
+            .filter(form => [...form.querySelectorAll('[data-business-action]')].some(button => button.dataset.businessAction === action))
+            .slice(0, 3).map(form => ({ form: form.dataset.businessForm, entityId: form.dataset.businessId,
+              invalid: [...form.elements].filter(input => input.willValidate && !input.validity.valid).map(input => input.name),
+              fields: [...form.elements].filter(input => input.name).slice(0, 16).map(input => ({ name: input.name,
+                value: input.type === 'checkbox' ? input.checked : input.value.slice(0, 100) })) })) };
+      }, lastAction).catch(() => null) : null;
       const diagnostics = { viewport, message: error.message, requests, failedRequests, pageErrors: errors,
+        formState,
         desk: page ? (await page.locator('#tab-business').innerText().catch(() => '')).slice(0, 4000) : '' };
       fs.writeFileSync(path.join(directory, 'failure.json'), JSON.stringify(diagnostics, null, 2));
       if (page) await page.screenshot({ path: path.join(directory, 'failure.png'), fullPage: true }).catch(() => {});
-      console.error(JSON.stringify({ businessDeskFailure: directory, message: error.message, requests, failedRequests, pageErrors: errors }));
+      console.error(JSON.stringify({ businessDeskFailure: directory, message: error.message, requests, failedRequests, pageErrors: errors, formState }));
       throw error;
     } finally { await context.close(); }
   }
