@@ -6,8 +6,8 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
 const revision = 'e4f901bc6c025f63cdb9828916e57d2f359d5ac7';
-const predecessor = 'a24df18ea1a0b57f25df942675dd9fef7415f275';
-const files = Object.freeze([".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/economy-hardening-source-compatibility.js","test/gates.js","test/lib/enterprise-ux-native-guard.js"]);
+const predecessor = '2eb7731eb82068ad5da7c077b5fd96e6aea7d23e';
+const files = Object.freeze([".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024,
@@ -27,7 +27,7 @@ assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split(
 const domains = {};
 for (const file of files) {
   const current = git('show', `${revision}:${file}`), baseline = git('show', `${predecessor}:${file}`);
-  assert.notEqual(current, baseline, `Bank-interest hardening has no change: ${file}`);
+  assert.notEqual(current, baseline, `Business desk has no change: ${file}`);
   const inverses = []; let hunk = null;
   for (const line of git('diff', '--no-ext-diff', '--unified=3', predecessor, revision, '--', file).split('\n')) {
     if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; inverses.push(hunk); }
@@ -40,12 +40,13 @@ for (const file of files) {
   for (const inverse of inverses) {
     assert(inverse.current.length, `Empty business desk inverse context: ${file}`);
     assert.equal(reconstructed.split(inverse.current).length - 1, 1,
-      `Bank-interest hardening inverse context must occur once: ${file}`);
+      `Business desk inverse context must occur once: ${file}`);
     reconstructed = reconstructed.replace(inverse.current, () => inverse.baseline);
   }
-  assert.equal(reconstructed, baseline, `Complete bank-interest predecessor reconstruction: ${file}`);
+  assert.equal(reconstructed, baseline, `Complete business desk predecessor reconstruction: ${file}`);
   domains[file] = {
     mode: git('ls-tree', revision, '--', file).trim().split(/\s+/)[0],
+    baselineMode: git('ls-tree', predecessor, '--', file).trim().split(/\s+/)[0],
     currentSha256: sha256(current), currentBlob: blob(current), currentBytes: Buffer.byteLength(current),
     baselineSha256: sha256(baseline), baselineBlob: blob(baseline), baselineBytes: Buffer.byteLength(baseline),
     contextLines: 3, inverses,
@@ -76,7 +77,7 @@ const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLengt
 const uniform = text => typeof text === 'string' && (text === lf(text) || text === lf(text).replaceAll('\\n', '\\r\\n'));
 
 export function assertBusinessDeskSourceTransfer(file, input) {
-  assert(Object.hasOwn(BUSINESS_DESK_DOMAINS, file),
+  assert(typeof file === 'string' && Object.hasOwn(BUSINESS_DESK_DOMAINS, file),
     'Unknown business desk source domain');
   assert(uniform(input), 'Uniform whole business desk LF/CRLF source text required');
   const pin = BUSINESS_DESK_DOMAINS[file], text = lf(input);
@@ -103,7 +104,7 @@ export function assertBusinessDeskSourceTransfer(file, input) {
 }
 
 export function businessDeskHistoricalInput(file, input) {
-  if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return input;
+  if (typeof file !== 'string' || !Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return input;
   const pin = BUSINESS_DESK_DOMAINS[file];
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');

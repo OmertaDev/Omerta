@@ -266,7 +266,7 @@
     "test:city-gameplay:postgres": "node tools/city-gameplay-native.js",
     "test:player-intel:postgres": "node tools/player-intel-native.js",
     "test:business-desk": "node test/businessdesk.js && node test/businessdesk-api.js && node test/business-control-desk-loop.js",
-    "test:business-desk:browser": "node test/business-control-desk-browser.js",
+    "test:business-desk:browser": "node test/businessdesk-consent-browser.js && node test/business-control-desk-browser.js",
     "test:business-desk:postgres": "node test/businessdesk-api.js --postgres && node test/business-control-desk-loop.js --postgres",
     "test:business-desk:provenance": "node test/businessdesk-native-provenance.js",
     "test:company-economy": "node test/companyproduction.js && node test/companyspecialization.js && node test/itemdurability.js && node test/itemdurability-quality.js && node test/companydemand.js && node test/companyforecast.js && node test/companyproduction-integration.js && node test/company-economy-contracts.js",

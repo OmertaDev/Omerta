@@ -21,7 +21,7 @@ const inverseHunks = diff => {
   }
   return rows;
 };
-const files = [".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/economy-hardening-source-compatibility.js","test/gates.js","test/lib/enterprise-ux-native-guard.js"];
+const files = [".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"];
 const phase = 'exact-business-control-desk-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
 assert.equal(O.BUSINESS_DESK_REVISION, 'e4f901bc6c025f63cdb9828916e57d2f359d5ac7');
 assert.equal(O.BUSINESS_DESK_PREDECESSOR, 'a24df18ea1a0b57f25df942675dd9fef7415f275');
@@ -43,11 +43,11 @@ const refused = (file, input) => {
 for (const file of files) {
   const pin = O.BUSINESS_DESK_DOMAINS[file];
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
-  assert.equal(pin.mode, '100644'); assert.equal(pin.contextLines, 3); assert(pin.inverses.length > 0);
+  assert.equal(pin.mode, '100644'); assert.equal(pin.baselineMode, '100644'); assert.equal(pin.contextLines, 3); assert(pin.inverses.length > 0);
   const current = git('show', `${O.BUSINESS_DESK_REVISION}:${file}`);
   const baseline = git('show', `${O.BUSINESS_DESK_PREDECESSOR}:${file}`);
   assert.equal(git('ls-tree', O.BUSINESS_DESK_REVISION, '--', file).trim(), `${pin.mode} blob ${pin.currentBlob}\t${file}`);
-  assert.equal(git('ls-tree', O.BUSINESS_DESK_PREDECESSOR, '--', file).trim(), `${pin.mode} blob ${pin.baselineBlob}\t${file}`);
+  assert.equal(git('ls-tree', O.BUSINESS_DESK_PREDECESSOR, '--', file).trim(), `${pin.baselineMode} blob ${pin.baselineBlob}\t${file}`);
   assert.equal(current, git('show', pin.currentBlob)); assert.equal(baseline, git('show', pin.baselineBlob));
   assert.equal(sha(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob); assert.equal(Buffer.byteLength(current), pin.currentBytes);
   assert.equal(sha(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob); assert.equal(Buffer.byteLength(baseline), pin.baselineBytes);
@@ -88,11 +88,20 @@ for (const file of files) {
   assert.throws(() => { pin.currentSha256 = '0'.repeat(64); }, TypeError);
   assert.throws(() => { pin.inverses.push({ current: 'unreviewed', baseline: '' }); }, TypeError);
 }
-for (const file of ['__proto__', 'constructor', 'toString', '../src/server.js', 'unknown']) {
+for (const file of ['__proto__', 'constructor', 'toString', '../src/server.js', 'unknown', null, undefined, {}, [], 7, Symbol('domain')]) {
   for (const input of ['unreviewed', Buffer.from([0xff, 0, 13]), null, {}]) {
     refused(file, input); assert.strictEqual(O.businessDeskHistoricalInput(file, input), input);
   }
 }
+const hook = 'tools/deed-allocation-source-transfer.js';
+const authoredHook = git('show', `${O.BUSINESS_DESK_REVISION}:${hook}`);
+const preservedHook = authoredHook
+  .replace("import { businessDeskHistoricalInput } from './businessdesk-source-transfer.js';\n", '')
+  .replace("  if (typeof file !== 'string') return input;\n  input = businessDeskHistoricalInput(file, input);\n  if (!Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS, file)) return input;",
+    "  if (typeof file !== 'string' || !Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS, file)) return input;");
+assert.notEqual(preservedHook, authoredHook);
+assert.equal(preservedHook, git('show', `${O.BUSINESS_DESK_PREDECESSOR}:${hook}`),
+  'Only the exact Business source hook is added; every original Deed qualifier and predicate is preserved.');
 assert.throws(() => { O.BUSINESS_DESK_REVISION = '0'.repeat(40); }, TypeError);
 assert.throws(() => { O.BUSINESS_DESK_DOMAINS.unreviewed = {}; }, TypeError);
 console.log(JSON.stringify({ phase, source: O.BUSINESS_DESK_REVISION, predecessor: O.BUSINESS_DESK_PREDECESSOR,
