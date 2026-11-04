@@ -86,8 +86,12 @@ try {
   assert.equal(await page.locator('.ux-clock').filter({ hasText: 'Gym' }).locator('b').innerText(), '0:01', 'Rendering a cloned me projection does not restart an unchanged server clock.');
   await page.evaluate(() => { delete appState.me.streetActionSeconds; navigation.observe('/v1/me'); navigation.render(); });
   assert.equal(await page.locator('.ux-clock').filter({ hasText: 'Street jobs' }).count(), 0, 'A model without a street clock never gets an invented readiness timer.');
-  await page.evaluate(() => { Date.now=realNow; appState.me={...appState.me,trainSeconds:1}; navigation.observe('/v1/me'); navigation.render(); });
-  await page.waitForFunction(() => notices.some(n => n.startsWith('Gym cooldown ended.')));
+  await page.evaluate(() => {
+    Date.now=realNow; window.notices=notices.filter(n => !n.startsWith('Gym cooldown ended.'));
+    appState.me={...appState.me,trainSeconds:1}; navigation.observe('/v1/me'); navigation.render();
+  });
+  await page.waitForFunction(() => [...document.querySelectorAll('.ux-clock')]
+    .some(node => node.textContent.includes('Gym') && node.textContent.includes('Clock clear')));
   await page.evaluate(() => navigation.render());
   assert.equal((await page.evaluate(() => notices)).filter(n => n.startsWith('Gym cooldown ended.')).length, 1, 'A completed clock signals once.');
   assert.match(await page.locator('#ux-readiness').innerText(), /Clock clear/);

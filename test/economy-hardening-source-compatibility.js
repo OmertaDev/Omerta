@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';
 import {
   AGE_POLICY_SERVER_BINDING, AGE_POLICY_SERVER_BINDING_SHA256,
   assertAgePolicyServerSourceTransfer, agePolicyServerHistoricalInput,
@@ -177,7 +178,7 @@ const physicalFeeCopySource = file => {
     ? assertMarketFeeCopySourceTransfer(file, input).baselineText : input;
 };
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
-  file, physicalFeeCopySource(file)));
+  file, uxAfterwordHistoricalInput(file, physicalFeeCopySource(file))));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
