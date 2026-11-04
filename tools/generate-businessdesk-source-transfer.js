@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 
-const revision = 'e4f901bc6c025f63cdb9828916e57d2f359d5ac7';
+const revision = '6fcd697c860ab328b4b830bdc20b51a17dc459d7';
 const predecessor = '2eb7731eb82068ad5da7c077b5fd96e6aea7d23e';
 const files = Object.freeze([".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"]);
 const lf = text => text.replaceAll('\r\n', '\n');
@@ -21,7 +21,7 @@ assert.equal(process.argv[2], '--write',
   'Use --write only for the fixed reviewed business control desk');
 git('merge-base', '--is-ancestor', predecessor, revision);
 git('merge-base', '--is-ancestor', revision, 'HEAD');
-assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split('\n'), [".github/workflows/ci.yml","package.json","public/business-control-desk.css","public/business-control-desk.js","public/index.html","src/businessdesk.js","src/routes/businessdesk.js","src/server.js","test/business-control-desk-browser.js","test/business-control-desk-loop.js","test/businessdesk-api.js","test/businessdesk-source-compatibility.js","test/businessdesk.js","test/economy-hardening-source-compatibility.js","test/gates.js","test/lib/business-control-desk-fixture.js","test/lib/enterprise-ux-native-guard.js","test/sale-source-compatibility.js","tools/businessdesk-source-transfer.js","tools/economy-ux-merge-source-compatibility.js","tools/enterprise-native-ux.js","tools/generate-businessdesk-source-transfer.js"],
+assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split('\n'), [".github/workflows/ci.yml","knowledge/generated/documents.md","knowledge/generated/github-history.md","knowledge/generated/graph-summary.md","knowledge/generated/graph.json","knowledge/generated/graph.mmd","knowledge/generated/inventory.md","knowledge/generated/modules.md","knowledge/generated/schema.md","package.json","public/business-control-desk.css","public/business-control-desk.js","public/index.html","src/businessdesk.js","src/routes/businessdesk.js","src/server.js","test/business-control-desk-browser.js","test/business-control-desk-loop.js","test/businessdesk-api.js","test/businessdesk-consent-browser.js","test/businessdesk-native-provenance.js","test/businessdesk-source-compatibility.js","test/businessdesk.js","test/deed-allocation-source-compatibility.js","test/gates.js","test/lib/business-control-desk-fixture.js","tools/businessdesk-deed-native-inputs.js","tools/businessdesk-native-provenance.js","tools/businessdesk-source-transfer.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-deed-inputs.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js","tools/generate-businessdesk-source-transfer.js"],
   'Authored business desk changed outside its closed source domains');
 
 const domains = {};
