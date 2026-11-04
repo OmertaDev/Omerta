@@ -1,5 +1,6 @@
 // Exact historical source transfer only. Runtime and native checks use the physical source.
 import assert from 'node:assert/strict';
+import {combinedEconomicTermsInput} from './combined-economic-deed-source-transfer.js';
 import {createHash} from 'node:crypto';
 import {economicTermsPin} from './current-economic-terms-source-data.js';
 
@@ -21,6 +22,7 @@ function verify(text,pin) {
 export function currentEconomicTermsBaseline(file,input) {
   const files=currentEconomicTermsPin.files;
   if (!Object.hasOwn(files,file)) return input;
+  input=combinedEconomicTermsInput(file,input);
   const isBuffer=Buffer.isBuffer(input), text=isBuffer ? input.toString('utf8') : input;
   if (isBuffer) assert(Buffer.from(text).equals(input),'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (typeof text!=='string') return input;
