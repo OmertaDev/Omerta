@@ -5,9 +5,11 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { SALE_SOURCE, SALE_SOURCE_FILES, SALE_SOURCE_PREDECESSOR, qualifySaleSource, saleHistoricalInput } from '../tools/sale-source-compatibility.js';
 import { uxHistoricalInput, qualifyUxSource } from '../tools/ux-source-compatibility.js';
+import { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';
 import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';
 import { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';
+import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 const pin = SALE_SOURCE;
@@ -30,8 +32,8 @@ const inverseHunks = diff => {
 let positives = 0, refusals = 0, hunks = 0;
 for (const row of pin.files) {
   const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
-  const physical = economySocialProofCutoverHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'));
-  const committed = economySocialProofCutoverHistoricalInput(row.file, git('show', 'HEAD:' + row.file));
+  const physical = economySocialProofCutoverHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))));
+  const committed = economySocialProofCutoverHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, deedAllocationHistoricalInput(row.file, git('show', 'HEAD:' + row.file))));
   const stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');
@@ -86,8 +88,11 @@ let conserved = fs.readFileSync('tools/ux-source-compatibility.js', 'utf8').repl
 for (const hook of ["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", '  input = saleHistoricalInput(file, input);\n']) {
   assert.equal(conserved.split(hook).length, 2, 'One exact sale integration hook'); conserved = conserved.replace(hook, '');
 }
+for (const hook of ["import { uxAfterwordHistoricalInput } from './ux-afterword-source-compatibility.js';\n", '  input = uxAfterwordHistoricalInput(file, input);\n']) {
+  assert.equal(conserved.split(hook).length, 2, 'One exact separately admitted Afterword integration hook'); conserved = conserved.replace(hook, '');
+}
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
-let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+let candidateConserved = deedAllocationHistoricalInput('tools/economy-ux-merge-source-compatibility.js', fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8')).replaceAll('\r\n', '\n');
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
   ["import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';\n", 1],
   ['  input = economyBankInterestHardeningHistoricalInput(file, input);\n', 2],

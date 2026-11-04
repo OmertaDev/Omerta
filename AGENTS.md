@@ -359,6 +359,14 @@ each character receives its chosen cosmetic keepsake once, with no currency rewa
 The additive `neighborhood-broadcast` version 1 package leaves existing case definitions
 and their pinned instances unchanged.
 
+After that ending, **What Your Choice Set in Motion** (`neighborhood-afterword`,
+version 1) opens a return visit in the Docks. Carry your actual Brass Tuning Dial
+or Signed First Reel: the live ending opens work connecting the bakery and porter,
+while the archive ending opens a private identification with Elena. In Fieldwork's
+Mysteries, begin the case and investigate its next lead; only your earned route is
+revealed. Three explicit steps record its lasting conclusion. The case grants no
+currency or item and cannot pass a previous character's invitation to an heir.
+
 After the individual graph opens its Crew gate, use
 `GET /v1/worldgraph/operations`, open the listed operation, read the shared
 board and your assigned `/role` board, claim one graph-defined role, contribute
@@ -514,7 +522,7 @@ Upgrade level follows the deed when sold. Transfers, reimports and wallet change
 
 Authenticated API: `GET /v1/deeds` shows upgrade status; `POST /v1/deeds/upgrade` accepts `{ "deedName": "Ash Street", "expectedLevel": 0 } (the named deed and its current level)`. `POST /v1/brokers/activate` is retired for new paid activations.
 
-New Street Deeds are earned at level 15. All 2,500 permanent buildings are available to discover; each account can claim one primary deed over its lifetime. Follow four ordered property leads across three districts, or finish “A House With a Past” through its Docks, Neon and Foundry evidence chain. `GET /v1/deeds/discovery?district=docks` returns the current objective; submit its `buildingId` and `actionId` to `POST /v1/deeds/investigate`. Return to the building’s district and submit `{ "name": "Ash Street", "buildingId": "docks-0001" }` to `POST /v1/deeds/claim`. Investigating does not reserve a building; the first qualified claim wins. Existing deeds and secondary trades remain available.
+Street Deeds have three permanent allocations: 1,000 earned through gameplay at level 25+, 1,000 for paid minting, and 500 for partnerships. Gameplay discovery is limited to its allocation; each account can claim one gameplay deed over its lifetime. Operating benefits unlock at level 25. NFT minting remains unavailable until the matching contracts are deployed and verified. Follow four ordered property leads across three districts, or finish “A House With a Past” through its Docks, Neon and Foundry evidence chain. `GET /v1/deeds/discovery?district=docks` returns the current objective; submit its `buildingId` and `actionId` to `POST /v1/deeds/investigate`. Return to the building’s district and submit `{ "name": "Ash Street", "buildingId": "docks-0001" }` to `POST /v1/deeds/claim`. Investigating does not reserve a building; the first qualified claim wins. Existing deeds and secondary trades remain available.
 
 ## How to extract (turn $OMR into on-chain value)
 

@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { newDb, DataType } from 'pg-mem';
 import { dbCaps, registerPgMemCompatibility } from '../src/db.js';
 import { travel, withCharacter } from '../src/game.js';
@@ -100,6 +101,7 @@ async function state() {
 }
 try {
   await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+  await migrateDeedBenefitStorage(pool);
   for (const id of [...Object.values(actors), outsider]) await player(id);
   const crew = await social(boss, (ch, client, h) => createCrew(ch, 'Projection Crew', client, h));
   const family = await social(boss, (ch, client, h) => createGang(ch, 'Projection Family', 'PROJ', client, h));
