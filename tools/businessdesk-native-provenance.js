@@ -4,6 +4,7 @@ import { BUSINESS_DESK_DOMAINS } from './businessdesk-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as current } from './enterprise-native-deed-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessor } from './enterprise-native-ux-b35-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as deedNative } from './businessdesk-deed-native-inputs.js';
 
 const same = (row, mode, blob, sha256) => row.mode === mode && row.blob === blob && row.sha256 === sha256;
 
@@ -20,6 +21,11 @@ export function businessDeskNativeProvenance(file, previous, expected) {
   if (!same(expected, desk.mode, desk.currentBlob, desk.currentSha256)) return null;
 
   // Compare exact pin identities, never historical or transformed execution bytes.
+  assert.equal(deedNative.status, 'SEALED', 'Sealed immutable Deed native metadata required');
+  const stage = deedNative.files.find(row => row.file === file);
+  assert(stage, 'An actual frozen Deed native input anchors the Desk predecessor');
+  assert(same(stage, desk.baselineMode, desk.baselineBlob, desk.baselineSha256),
+    'Desk predecessor is the exact frozen Deed native input');
   const deed = DEED_ALLOCATION_SOURCE_DOMAINS[file];
   if (deed) {
     assert.equal(desk.baselineMode, deed.currentMode, 'Desk predecessor mode is exact Deed source');

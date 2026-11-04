@@ -91,7 +91,8 @@ for (const [now, anchor, raw] of [
   [{ ...current, type: 'tree' }, authored, bytes],
 ]) reject(() => assertEnterpriseUxTrackedInput(file, now, anchor, raw));
 reject(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));
-for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../src/server.js']) {
+for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../src/server.js',
+  undefined, null, 1, Symbol('src/server.js'), Object.freeze({ toString() { throw new Error('No coercion'); } })]) {
   assert.equal(businessDeskNativeProvenance(unknown, previous, expected), null);
 }
 console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,
