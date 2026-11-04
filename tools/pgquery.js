@@ -307,7 +307,7 @@ async function modelSocialReceiptQueries(rows) {
 // these three statements needs an unchecked-query allowance: dates, sources and limits stay bound.
 async function modelEconomyMonitorQueries(rows, dynamicSites) {
   const rel = 'src/economy-monitor.js';
-  const sourcePin = 'bcd10f2fbc0f45c73243d8a2aaa07d934f603ffe8b83607678ad5582775a25a9';
+  const sourcePin = '2f08e91725b6692a9c846f1528ca099e2ace7461ed29b6d14ae663f4a923095a';
   const verifySource = raw => {
     const lf = canonicalSql(raw);
     if (lf.includes('\r') || (raw !== lf && raw !== lf.replaceAll('\n', '\r\n'))
@@ -329,7 +329,7 @@ async function modelEconomyMonitorQueries(rows, dynamicSites) {
   const dailyTemplate = `SELECT  FROM transactions t LEFT JOIN characters c ON c.id=t.character_id
       WHERE t.at >= $1 AND t.at <= $2 AND t.currency=$3 AND t.reason=$4
       ORDER BY t.at DESC,t.id DESC LIMIT $5`;
-  const expectedReadable = [[rel, checkpoint, []], [rel, dailyTemplate, ['columns']], [rel, insert, []]];
+  const expectedReadable = [[rel, checkpoint, []], [rel, dailyTemplate, ['COLUMNS']], [rel, insert, []]];
   const monitorRows = rows.filter(row => row.rel === rel);
   if (JSON.stringify(monitorRows.map(scannerSignature))
       !== JSON.stringify(expectedReadable.map(([rel, sql, parts]) => scannerSignature({ rel, sql, parts }))))

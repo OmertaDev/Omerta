@@ -10,7 +10,12 @@ import {
   ECONOMY_MONITOR_SOURCE_PHASE as phase, ECONOMY_MONITOR_SOURCE_DOMAINS as domains,
   assertEconomyMonitorSourceTransfer, economyMonitorHistoricalInput,
 } from '../tools/economy-monitor-source-transfer.js';
-import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput }
+import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput,
+  ECONOMY_MONITOR_WORKER_SOURCE as workerPin, assertEconomyMonitorWorkerSource,
+  economyMonitorWorkerHistoricalInput, ECONOMY_MONITOR_READER_SOURCE as readerPin,
+  assertEconomyMonitorReaderSource, economyMonitorReaderHistoricalInput,
+  ECONOMY_MONITOR_RELEASE_SOURCES as releasePins, assertEconomyMonitorReleaseSource,
+  economyMonitorReleaseHistoricalInput }
   from '../tools/economy-ux-merge-source-compatibility.js';
 
 const files = [
@@ -50,7 +55,9 @@ for (const file of files) {
   const pin = domains[file], current = git('show', `${revision}:${file}`);
   const absent = additions.has(file), baseline = absent ? null : git('show', `${predecessor}:${file}`);
   const physical = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
-  assert.equal(physical, current, 'Physical current monitoring/composition source remains exact: ' + file);
+  assert.equal(economyMonitorReleaseHistoricalInput(file,
+    economyMonitorWorkerHistoricalInput(file, economyMonitorReaderHistoricalInput(file, physical))), current,
+    'Physical current monitoring/composition source remains exact after the named successors: ' + file);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(pin.predecessorAbsent, absent);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
@@ -104,6 +111,77 @@ for (const file of files) {
     hunks++;
   }
 }
+assert.deepEqual(Object.keys(releasePins), ['.github/workflows/economy-hardening.yml', 'test/gates.js', 'test/economy-composition.js']);
+assert(Object.isFrozen(releasePins));
+for (const [pin, qualify, historical] of [
+  [workerPin, assertEconomyMonitorWorkerSource, economyMonitorWorkerHistoricalInput],
+  [readerPin, assertEconomyMonitorReaderSource, economyMonitorReaderHistoricalInput],
+  ...Object.values(releasePins).map(pin => [pin, assertEconomyMonitorReleaseSource, economyMonitorReleaseHistoricalInput]),
+]) {
+  const { file } = pin, physical = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const baseline = git('show', `${pin.predecessorRevision}:${file}`);
+  assert.equal(pin.predecessorRevision, file === 'test/gates.js' ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);
+  assert.equal(git('show', `${pin.sourceRevision}:${file}`), physical);
+  git('merge-base', '--is-ancestor', pin.sourceRevision, 'HEAD');
+  const authoredFiles = pin.sourceRevision === '9a5c784034a9f543cd32e27fd0b73a23e332ee5b'
+    ? ['.github/workflows/economy-hardening.yml', 'test/gates.js'] : [file];
+  assert.deepEqual(git('diff', '--name-only', `${pin.sourceRevision}^`, pin.sourceRevision).trim().split('\n'), authoredFiles);
+  assert.equal(hash(physical), pin.currentSha256); assert.equal(blob(physical), pin.currentBlob);
+  assert.equal(Buffer.byteLength(physical), pin.currentBytes); assert(Object.isFrozen(pin));
+  for (const current of [physical, physical.replaceAll('\n', '\r\n')]) {
+    const restored = qualify(file, current);
+    assert(Object.isFrozen(restored)); assert.equal(restored.baselineText, baseline);
+    assert.deepEqual([restored.sourceOnly, restored.runtime, restored.native], [true, false, false]);
+    assert.equal(historical(file, current), baseline);
+    assert.deepEqual(historical(file, Buffer.from(current)), Buffer.from(baseline));
+    for (const helper of [economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput])
+      assert.equal(helper(file, current), helper(file, baseline));
+    positives += 5;
+  }
+  for (const current of [physical + '\n// drift\n', physical.slice(1), '\ufeff' + physical, physical + '\0',
+    physical.replace('\n', '\r\n'), physical.replace('\n', '\r'), physical.replace(pin.current, ''),
+    physical.replace(pin.current, pin.current + pin.current), baseline, null]) {
+    assert.throws(() => qualify(file, current));
+    assert.equal(historical(file, current), current); refusals++;
+  }
+  assert.throws(() => historical(file, Buffer.from([0xc3, 0x28]))); refusals++;
+  for (const unknown of ['__proto__', 'constructor', 'toString', '../src/worker.js', 'src/unknown.js']) {
+    assert.throws(() => qualify(unknown, physical));
+    assert.equal(historical(unknown, physical), physical); refusals++;
+  }
+}
+
+// Run the physical current scheduler and shared safe() body with controlled jobs/timers. This is a
+// current worker control proof, with no database, payouts, or historical runtime result transferred.
+const worker = fs.readFileSync('src/worker.js', 'utf8').replaceAll('\r\n', '\n');
+const safeStart = worker.indexOf('  let currentJob = null;');
+const safeEnd = worker.indexOf('  // How many consecutive ticks', safeStart);
+const timerStart = worker.indexOf('  let economyTicking = false;');
+const timerEnd = worker.indexOf('  void guardedEconomyTick();', timerStart) + '  void guardedEconomyTick();'.length;
+assert(safeStart >= 0 && safeEnd > safeStart && timerStart >= 0 && timerEnd > timerStart);
+const events = [], logs = [], errors = []; let interval, calls = 0, rejectFirst;
+const tick = new Function('runEconomyMonitor', 'pool', 'alertDrift', 'setInterval', 'console',
+  worker.slice(safeStart, safeEnd) + '\n' + worker.slice(timerStart, timerEnd) + '\nreturn guardedEconomyTick;')(
+  async () => {
+    calls++; events.push('run');
+    if (calls === 1) return new Promise((_, reject) => { rejectFirst = reject; });
+    return { ok: true, sample: calls };
+  }, {}, () => {}, (callback, period) => { assert.equal(period, 5 * 60 * 1000); interval = callback; events.push('registered'); },
+  { log: (...args) => logs.push(args), error: (...args) => errors.push(args) });
+assert.deepEqual(events, ['registered', 'run'], 'The initial monitor runs only after its interval is registered');
+assert.equal(tick, interval);
+await interval(); assert.equal(calls, 1, 'A pending monitor cannot overlap itself');
+rejectFirst(new Error('synthetic monitor database outage'));
+await new Promise(resolve => setImmediate(resolve));
+assert.equal(errors.length, 1); assert.equal(errors[0][0], 'worker: economy monitor failed');
+assert.equal(logs.length, 0, 'A safe() null result never logs a clean monitoring sample');
+await interval(); assert.equal(calls, 2, 'Failure releases the guard for the next scheduled monitor');
+assert.equal(logs.length, 1); assert.equal(logs[0][0], '[economy monitor]');
+assert.deepEqual(JSON.parse(logs[0][1]), { ok: true, sample: 2 });
+console.log(JSON.stringify({ phase: 'CURRENT_ECONOMY_MONITOR_WORKER_CONTROL', sourceRevision: workerPin.sourceRevision,
+  registerFirst: true, nonOverlap: true, failureContained: true, nextSampleRecovered: true,
+  falseCleanSampleLogs: 0, postgresImportsOrConnections: 0, priorNativeResultsTransferred: false }));
+
 for (const file of ['__proto__', 'constructor', 'toString', '../schema.sql', 'src/unknown.js']) {
   const text = 'unknown\r\nbytes\n', invalidUtf8 = Buffer.from([0xff]);
   assert.throws(() => assertEconomyMonitorSourceTransfer(file, text));
@@ -120,7 +198,8 @@ const workflow = fs.readFileSync('.github/workflows/economy-hardening.yml', 'utf
 const previousWorkflow = git('show', `${predecessor}:.github/workflows/economy-hardening.yml`);
 const commands = source => [...source.matchAll(/\bnode (test\/[\w./-]+\.js)(?: --postgres)?/g)].map(match => match[0]);
 const addedCommands = new Set(['node test/economy-monitor.js', 'node test/economy-composition.js',
-  'node test/economy-monitor.js --postgres', 'node test/economy-composition.js --postgres']);
+  'node test/economy-monitor.js --postgres', 'node test/economy-composition.js --postgres',
+  'node test/age-eligibility-source-compatibility.js', 'node test/economy-monitor-source-compatibility.js']);
 const currentCommands = commands(workflow);
 for (const command of addedCommands)
   assert.equal(currentCommands.filter(value => value === command).length, 1, 'Each new economy proof is invoked once per CI lane');
