@@ -43,7 +43,6 @@ export function waterfall() {
   // OMITTED rather than declared at 0 bps: the board renders every declared split, and a permanent
   // row of zeroes reads as a destination that exists when it does not (the empty-state honesty rule).
   const commFee = COMMUNITY.FEE_BPS();
-  const commStore = COMMUNITY.STORE_BPS();
   // sell-tax community, normalized from a share OF THE TAX to a share of the inflow (the dev/rwa shape)
   const commTax = Math.round(COMMUNITY.TAX_BPS() / SELL_TAX.BPS * 10000);
   const commHarvest = COMMUNITY.HARVEST_BPS();
@@ -58,13 +57,12 @@ export function waterfall() {
         ...(commFee > 0 ? [{ dest: 'community', bps: commFee, lands: "community_revenue source='fee' (→ family buyback)" }] : []),
         { dest: 'operations', bps: 10000 - VIG_BPS - feeTreasury - commFee, lands: 'dev wallet (on-chain, implicit remainder)', implicit: true },
       ] },
-    { id: 'store', name: 'The Store (ETH packages)', currency: 'eth', totalBps: 10000,
+    { id: 'store', name: 'ETH packages through FeeRevenueRouter', currency: 'eth', totalBps: 10000,
       splits: [
         { dest: 'vig', bps: STORE.SPLIT_BPS.buyback, lands: "vig_revenue source='store'" },
         { dest: 'treasury', bps: STORE.SPLIT_BPS.rwa, lands: "rwa_revenue source='store'" },
-        ...(commStore > 0 ? [{ dest: 'community', bps: commStore, lands: "community_revenue source='store' (→ family buyback)" }] : []),
-        // community carves FROM the founder share at booking time, so the implicit remainder shrinks
-        { dest: 'operations', bps: STORE.SPLIT_BPS.founder - commStore, lands: 'dev wallet (on-chain, implicit remainder)', implicit: true },
+        { dest: 'community', bps: STORE.SPLIT_BPS.community, lands: "community_revenue source='store' (→ family buyback)" },
+        { dest: 'operations', bps: STORE.SPLIT_BPS.founder, lands: 'dev wallet (on-chain, implicit remainder)', implicit: true },
       ] },
     { id: 'bond', name: 'Reserve Bonds (ETH principal)', currency: 'eth', totalBps: 10000,
       splits: [
@@ -207,16 +205,29 @@ export async function runRouterInvariants(pool) {
   push('character mint belongs entirely to DEV_WALLET', mintRevenueRows === 0,
     `${mintRevenueRows} non-DEV revenue rows reference a DEV-only mint`);
 
-  // (6)+(7) THE STORE MIRRORS — same shape over store_payments (real only).
-  const storeRows = (await pool.query('SELECT amount_wei FROM store_payments WHERE tx_hash IS NOT NULL')).rows;
-  const storeGross = storeRows.reduce((a, r) => { try { return a + Number(BigInt(r.amount_wei)) / 1e18; } catch { return a; } }, 0);
-  const storeTol = 2e-6 * (storeRows.length + 1);
-  const storeVig = num((await pool.query("SELECT COALESCE(SUM(vig_eth),0) s FROM vig_revenue WHERE source='store'")).rows[0].s);
-  push('store → vig mirror matches the declared split', Math.abs(storeVig - storeGross * STORE.SPLIT_BPS.buyback / 10000) <= storeTol,
-    `booked ${storeVig} vs declared ${round6(storeGross * STORE.SPLIT_BPS.buyback / 10000)}`);
-  const storeTre = num((await pool.query("SELECT COALESCE(SUM(rwa_eth),0) s FROM rwa_revenue WHERE source='store'")).rows[0].s);
-  push('store → treasury mirror matches the declared split', Math.abs(storeTre - storeGross * STORE.SPLIT_BPS.rwa / 10000) <= storeTol,
-    `booked ${storeTre} vs declared ${round6(storeGross * STORE.SPLIT_BPS.rwa / 10000)}`);
+  // Compare each new booking against the amounts in its own receipt. Historical bookings have no
+  // routing snapshot, and an earlier payment may have used a different policy.
+  const storeDrift = (await pool.query(`
+    SELECT CAST(p.nonce AS TEXT) nonce FROM store_payments p
+    LEFT JOIN vig_revenue v ON v.source='store' AND v.ref=CAST(p.nonce AS TEXT)
+    LEFT JOIN rwa_revenue t ON t.source='store' AND t.ref=CAST(p.nonce AS TEXT)
+    LEFT JOIN community_revenue c ON c.source='store' AND c.ref=CAST(p.nonce AS TEXT)
+    WHERE (p.revenue_split IS NULL AND p.tx_hash IS NOT NULL AND p.amount_wei <> '0' AND (v.ref IS NULL OR t.ref IS NULL))
+    OR (p.revenue_split IS NOT NULL AND (
+      v.ref IS NULL OR t.ref IS NULL OR
+      v.gross_eth * 1000000000000000000 <> CAST(p.amount_wei AS NUMERIC) OR
+      v.vig_eth <> CAST(p.revenue_split->>'vig' AS NUMERIC) OR
+      t.rwa_eth <> CAST(p.revenue_split->>'treasury' AS NUMERIC) OR
+      COALESCE(c.amount,0) <> CAST(p.revenue_split->>'community' AS NUMERIC)))
+    UNION ALL
+    SELECT r.ref FROM (
+      SELECT ref FROM vig_revenue WHERE source='store' UNION
+      SELECT ref FROM rwa_revenue WHERE source='store' UNION
+      SELECT ref FROM community_revenue WHERE source='store'
+    ) r LEFT JOIN store_payments p ON r.ref=CAST(p.nonce AS TEXT)
+    WHERE p.tx_hash IS NULL`)).rows;
+  push('store mirrors match payment receipts', storeDrift.length === 0,
+    `mismatched payment nonces: ${storeDrift.map((r) => r.nonce).join(',')}`);
 
   // (8) THE TRADE RAIL IS RETIRED — the freshness shape (emission.js's `emission faucet retired`).
   // The check that lived here held the booking to its declared lever, which caught the F1 drift; with

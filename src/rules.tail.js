@@ -2590,18 +2590,13 @@ export const wireSubTier = (tier) => WIRE.SUB_TIERS.find((t) => t.tier === Numbe
 // ── THE STORE (ETH revenue packages) — real-money purchases that grant ONLY non-§10.4 things
 // (entitlements / access windows / status), so §10.4 is untouched by construction (design
 // omerta-eth-store-design.md). Each SKU's ETH price is enforced ON-CHAIN by the OmertaFees tollbooth
-// (dormant); the backend records the payment (three-way revenue split) + grants the entitlement.
+// and the backend records the receipt and grants the entitlement.
 // `grant` is a spec the backend applies: mintCredits/respawnTokens ADD; wireDays/passDays EXTEND;
 // patron SETS true. All numbers are founder sign-off levers. NB anti-pay-to-win: nothing here grants
 // cash / $OMR / gear / sim-audited power — only convenience, access, consumables, and status.
 export const STORE = {
-  // the founder's three-way revenue split (must sum to 10000): founder profit / $OMR buyback
-  // flywheel / RWA reserve (R2, dormant). Env-overridable; validated at module load.
-  SPLIT_BPS: {
-    founder: Number(process.env.REVENUE_FOUNDER_BPS || 4000),
-    buyback: Number(process.env.REVENUE_BUYBACK_BPS || 4000),
-    rwa: Number(process.env.REVENUE_RWA_BPS || 2000),
-  },
+  // FeeRevenueRouter policy for routed package payments. Public field names are retained for clients.
+  SPLIT_BPS: Object.freeze({ founder: 5000, buyback: 2500, rwa: 1000, community: 1500 }),
   PACKAGES: [
     { sku: 'revive_3', name: 'Revive Bundle (3)', priceEth: 0.25, grant: { respawnTokens: 3 },
       blurb: 'Three pre-paid revives — a killing blow is absorbed, you keep everything.' },
@@ -2847,20 +2842,8 @@ PASS.PRESTIGE_RANKS = [
 export const passPrestigeOf = (seasons) => {
   let r = 0; for (let i = 0; i < PASS.PRESTIGE_RANKS.length; i++) if (Number(seasons || 0) >= PASS.PRESTIGE_RANKS[i].min) r = i; return r;
 };
-// validate the split sums to 10000 at load — a misconfig would silently mis-earmark real revenue
-(() => { const s = STORE.SPLIT_BPS; const t = s.founder + s.buyback + s.rwa;
-  if (t !== 10000) throw new Error(`REVENUE_SPLIT_BPS must sum to 10000 (got ${t})`);
-  // (red team 2026-08-16) …AND the community carve must fit inside the share it comes out of. The
-  // Store's community slice is carved from the FOUNDER remainder, which nothing validated: the sum
-  // check above cannot catch it because the remainder is computed as `founder - carve` and therefore
-  // sums to 10000 for ANY carve, including a negative one. Measured with STORE_COMMUNITY_BPS=5000:
-  // the module boots clean and the store row reads `[vig 4000, treasury 2000, community 5000,
-  // operations -1000] sum 10000` — real ETH earmarked to the dev wallet booked as another system's
-  // spendable budget. The fee split (above) already guards its own three-way sum; this is the same
-  // guard for the shape that hides behind an implicit remainder.
-  const commStore = Number(process.env.STORE_COMMUNITY_BPS ?? 0);
-  if (commStore > s.founder)
-    throw new Error(`STORE_COMMUNITY_BPS (${commStore}) exceeds the founder share it is carved from (${s.founder}) — the operations remainder would go negative and real revenue would be double-booked.`);
+// A harvest carve cannot exceed the underlying payment.
+(() => {
   const commHarvest = Number(process.env.HARVEST_COMMUNITY_BPS ?? 0);
   if (commHarvest > 10000)
     throw new Error(`HARVEST_COMMUNITY_BPS (${commHarvest}) exceeds 10000 — the treasury remainder in recordHarvestFee would go negative.`);
@@ -6034,7 +6017,6 @@ export const brokerWeight = (tierId, gains = {}) => {
 // design doc records, with the ops-slice alternative if the founder wants the buyback budget pure).
 export const COMMUNITY = {
   FEE_BPS: () => Number(process.env.FEE_COMMUNITY_BPS ?? 0),          // of each gameplay fee's gross
-  STORE_BPS: () => Number(process.env.STORE_COMMUNITY_BPS ?? 0),      // of each Store payment's gross
   TAX_BPS: () => Number(process.env.SELL_TAX_COMMUNITY_BPS ?? 0),     // of the TAX (out of SELL_TAX.BPS, not 10000)
   HARVEST_BPS: () => Number(process.env.HARVEST_COMMUNITY_BPS ?? 0),  // of each harvest fee (in the market's underlying)
   POLFEES_VIG_BPS: () => Number(process.env.POL_FEES_VIG_BPS ?? 0),   // POL fees diverted to the Vig (not community — the same locked package)

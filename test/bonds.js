@@ -81,11 +81,11 @@ assert.equal(vigBond, 0.45, 'the bond routed its Vig share into the flywheel');
 
 // ── the board surfaces the offering + your bond + the Treasury Backer status ──
 const board = (await call('GET', '/v1/bonds', { token: bonder.token })).body;
-assert.equal(board.reserve.committedOmr, expectPayout, 'the board shows the committed tranche');
-assert.equal(board.reserve.remainingOmr, 100000 - expectPayout, 'and the remaining capacity');
-assert.equal(board.reserve.polEth, 0.75, 'and the POL acquired');
-assert.equal(board.reserve.devEth, 0.3, 'and the dev share recorded');
-assert.equal(board.reserve.rwaEth, 0.5, 'and the treasury share recorded');
+assert.equal(board.accounting.reserve.committedOmr, expectPayout, 'the board shows the committed tranche');
+assert.equal(board.accounting.reserve.remainingOmr, 100000 - expectPayout, 'and the remaining capacity');
+assert.equal(board.accounting.reserve.polEth, 0.75, 'and the POL acquired');
+assert.equal(board.accounting.reserve.devEth, 0.3, 'and the dev share recorded');
+assert.equal(board.accounting.reserve.rwaEth, 0.5, 'and the treasury share recorded');
 assert(board.isBacker, 'the bonder is a Treasury Backer (pure status)');
 assert.equal(board.yours.length, 1, 'their bond is on the board');
 const bondId = board.yours[0].id;

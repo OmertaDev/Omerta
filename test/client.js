@@ -636,6 +636,11 @@ for (const m of html.matchAll(/"([a-zA-Z_]+)"\s*:\s*"([a-z0-9_]+)"/g)) if (!KEYW
 
 const checked = [], skipped = new Set(), bogus = [];
 for (const [field, value] of literals) {
+  if (field === 'principalEth') {
+    assert.match(value, /^(?:0|[1-9]\d*)(?:\.\d{1,18})?$/, 'inventory bond principal is an exact decimal ETH string');
+    assert.ok(/[1-9]/.test(value), 'inventory bond principal is positive');
+    continue;
+  }
   const cat = CATALOGS[field];
   if (!cat) { skipped.add(field); continue; }
   checked.push(`${field}=${value}`);
@@ -8801,22 +8806,9 @@ await app.close();
   assert.match(rr.line, /credit spent/, `WAVE 73 (chain): the re-roll must say what it cost — got ${rr.line}`);
   assert.ok(rr.line.includes(String(credPost)), `WAVE 73 (chain): the re-roll must say how many are left — got ${rr.line}`);
 
-  // ── THE BOND QUOTE. The curated card renders its own panel through the silent api() and is NOT
-  // defective; the raw deck presses this same route through act() and read "done." over a signed
-  // quote carrying a payout, a discount, a vest window and a deadline.
-  await app8.pool.query(
-    `INSERT INTO vig_buyback (id, eth_spent, omr_bought, price_omr_per_eth, to_reserve, to_prize, real, created_at)
-       VALUES ('w73-vb', 1, 3000, 3000, 0, 0, true, now())`);
-  await app8.pool.query('UPDATE bond_reserve SET capacity_omr = 1000000 WHERE id=1');
-  await app8.pool.query('INSERT INTO bond_offerings (day, offered_omr, quoted_omr) VALUES ($1, 500000, 0)',
-    [Math.floor(Date.now() / 86400000)]);
-  const bq = await driveC('/v1/bond/quote', tC, { principalEth: 1 }, 'the bond quote');
-  assert.equal(bq.r.body.bond, 'quote', 'WAVE 73 (chain): the quote must NAME its system');
-  assert.ok(bq.r.body.payoutOmr > 0 && bq.r.body.discountBps > 0 && bq.r.body.vestSeconds > 0 && bq.r.body.deadline > 0,
-    'WAVE 73 (chain): the quote must SEND the payout, the discount, the vest window and the deadline — none is derivable client-side');
-  assert.ok(bq.line.includes(fmtC(bq.r.body.payoutOmr)), `WAVE 73 (chain): the quote must name what it pays — got ${bq.line}`);
-  assert.ok(bq.line.includes(String(bq.r.body.discountBps / 100)), `WAVE 73 (chain): the quote must name the discount it was signed at — got ${bq.line}`);
-  assert.match(bq.line, /vesting over/, `WAVE 73 (chain): the quote must state that the payout vests — got ${bq.line}`);
+  const closedQuote = await inj8('POST','/v1/bond/quote',tC,{principalEth:'1'});
+  assert.equal(closedQuote.code,503);
+  assert.equal(closedQuote.body.error,'bond_unavailable');
 
   // ── THE BOND CLAIM: a five-figure vested release read "done.", with nothing saying how much of
   // the bond is still vesting behind it. Seeded part-vested so BOTH halves of the line are exercised.

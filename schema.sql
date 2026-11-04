@@ -823,6 +823,7 @@ CREATE TABLE IF NOT EXISTS store_payments (
   payer_address TEXT NOT NULL,
   amount_wei TEXT NOT NULL,
   tx_hash TEXT,
+  revenue_split JSONB,                -- exact decimal ETH legs and receipt route; null for historical rows and comps
   account_id TEXT,
   granted BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()

@@ -4585,9 +4585,8 @@
         + (body.onchain
           ? '. That squared the BOOKS only: the tokens sit in the OmertaBond contract until YOUR wallet submits claim() for this bond — nothing moved on-chain yet.'
           : ' · a comp/QA bond — off-chain accounting is the whole record; it has no on-chain release'));
-    if (body.bond === 'quote')
-      bits.push(`\u{1F4DD} quote signed — ${fmt(body.payoutOmr)} $OMR at ${body.discountBps / 100}% off the market price, vesting over ${
-        minsTxt(body.vestSeconds)} · submit bond(quote, signature) with your wallet within ${untilTxt(body.deadline)} or it lapses`);
+    if (body.intent?.minimumOmr && body.noteId)
+      bits.push(`Pay ${body.intent.principalEth} ETH for at least ${body.intent.minimumOmr} OMR base units, vesting over ${minsTxt(body.vestingSeconds)}. Review the wallet transaction in Portfolio before the quote expires.`);
     // the SIGNING PAYLOAD is not a receipt: without a branch the `body.message` fallback rendered
     // the whole blob — account UUID and nonce — as the player's toast.
     if (body.walletLink === 'challenge') bits.push('sign the challenge in your wallet to finish linking it');
@@ -4696,7 +4695,7 @@
     // the vault claim. `clamped` is a TERM: you asked for more than the treasury had unallocated
     // and took what there was, which a player must be told rather than left to work out.
     if (body.eth !== undefined && body.omrPerEth !== undefined)
-      bits.push(`\u{1F3E6} claimed ${body.eth} ETH into the vault for ${fmt(body.spent)} $OMR (${fmt(body.omrPerEth)} $OMR/ETH)`
+      bits.push(`\u{1F3E6} recorded a treasury allocation of ${body.eth} ETH for ${fmt(body.spent)} $OMR (${fmt(body.omrPerEth)} $OMR/ETH)`
         + `${body.clamped ? ' — clamped to what the treasury had unallocated' : ''}`
         + `${body.totalEth !== undefined ? ` · ${body.totalEth} ETH allocated to you now` : ''}`);
     // the heist fence read "paid $72,000" — the catch-all, which frames money RECEIVED as money
@@ -5889,24 +5888,17 @@
     finally { walletLinkPending = false; }
   }
 
-  // submit a signed bond quote on-chain with the connected wallet. The server ABI-encodes bond(quote, sig)
-  // (viem — the zero-dep client never hand-rolls ABI); the wallet switches to the right chain, shows the tx
-  // (to / value / data), and the player approves. Mainnet-dormant until the bond chain is configured.
-  async function submitBondOnChain(nonce) {
+  async function inventoryBondWallet() {
     const provider = await pickProvider();
-    if (!provider) return; // picker closed — it already showed what is available / how to get one
-    try {
-      const cd = await api('POST', '/v1/bond/calldata', { nonce });
-      if (cd.code !== 200) { toast(describe(cd.body, cd.code), true); return; }
-      if (cd.body.deadline && cd.body.deadline * 1000 < Date.now()) { toast('that quote expired — request a fresh one', true); return; }
-      const [from] = await provider.request({ method: 'eth_requestAccounts' });
-      connectedProvider = provider;
-      try { await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: cd.body.chainIdHex }] }); }
-      catch (sw) { if (sw?.code !== 4902) throw sw; toast('add the OMERTÀ chain to your wallet first', true); return; }
-      const txHash = await provider.request({ method: 'eth_sendTransaction',
-        params: [{ from, to: cd.body.to, value: cd.body.value, data: cd.body.data }] });
-      toast('bond submitted on-chain — tx ' + String(txHash).slice(0, 12) + '…');
-    } catch (e) { toast(e?.message ? 'bond: ' + e.message : 'bond submit cancelled', true); }
+    if (!provider) throw Error('A wallet is required.');
+    await provider.request({method:'eth_requestAccounts'});
+    await switchCharacterChain(provider, '0x1237');
+    return provider;
+  }
+
+  function bondOmr(units) {
+    const whole = units / 10n**18n, fraction = (units % 10n**18n).toString().padStart(18,'0').replace(/0+$/, '');
+    return String(whole) + (fraction ? '.'+fraction : '');
   }
 
   const characterTransactionsInFlight = new Set();
@@ -7719,9 +7711,9 @@
     pen: 'Lockup is a place, not a timeout: work the yard, buy protection, bribe the guard, join a crew — or go over the wall and live wanted.',
     wire: 'Information is a weapon: tap rivals to see what they hold, sweep your own lines, buy the dirt. Everything here is paid in $OMR — knowing is never free.',
     family: 'Nobody survives alone: a family means turf, a shared treasury, wars, territory rackets, and a seat at the Commission. Join one, or found your own.',
-    portfolio: 'Going legit: the stake ladder, the one-way redemption Window, the backed Vault, and the future on-chain rail. Production extraction remains dormant until the audit and launch gates clear.',
+    portfolio: 'Going legit: the stake ladder, the one-way redemption Window, treasury allocations, and the future on-chain rail. Production extraction remains dormant until the audit and launch gates clear.',
     estate: 'The compound: a $OMR monument to your bloodline — tiers, wings, staff, galas, the auction block. Pure status, survives death, and status is the point.',
-    store: 'Real-money support: revives, passes, cosmetics — never power. A skilled free player still tops every board; spending here funds the prize pools.',
+    store: 'Real-money support: revives, passes, cosmetics — never power. Free players can compete on the boards. Each item lists its price and benefits.',
     life: 'Who you are and who you know: skills, the Trades, your Path, and the six fixtures of the Underworld — earn their trust and the whole city gets cheaper.',
     desk: 'The city’s authored files live here: work a case, follow the evidence, restore rare objects, barter exact materials, and keep the permanent record of the choices you made.',
   };
@@ -11167,7 +11159,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
       ['GET', '/v1/session'], ['POST', '/v1/wallet/challenge', {}],
       ['POST', '/v1/wallet/verify', { address: '', signature: '' }], ['POST', '/v1/withdraw', { amount: 1 }],
       ['GET', '/v1/withdraw/status'], ['POST', '/v1/character/mint', {}], ['POST', '/v1/character/reroll', {}], ['GET', '/v1/fees/status'],
-      ['GET', '/v1/bonds'], ['POST', '/v1/bond/quote', { principalEth: 1 }],
+      ['GET', '/v1/bonds'], ['POST', '/v1/bond/quote', { principalEth: '1' }],
       ['GET', '/v1/store'],
       ['GET', '/v1/pass'], ['POST', '/v1/pass/claim', {}],
     ],
@@ -11871,8 +11863,8 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
     t.innerHTML = `
       <h2>The Store</h2>
       <div class="card"><div class="d">Buy revives, subscriptions, and badges. Purchases do not raise combat strength,
-        and free players can compete on the boards. Spending funds token buybacks and backed prize pools.
-        <div style="margin-top:6px">Pay in ETH or with in-game $OMR through PLEX for the same goods.
+        and free players can compete on the boards.
+        <div style="margin-top:6px">Use in-game $OMR for items showing a PLEX price. The ETH checkout requires activation.
         Minting your identity uses ETH or a mission mint credit and requires checkout to be available.
         A minted identity is one requirement for on-chain extraction.</div>
         <div style="margin-top:6px;color:var(--dim);font-size:11px">The mission ladder pays a bit over a thousand $OMR across a career.
@@ -11898,7 +11890,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
           ${p.plexOmr ? `<button class="act" data-plex="${p.sku}" ${myOmr >= p.plexOmr ? '' : `disabled title="you hold ${fmt(Math.floor(myOmr))} $OMR"`}>${myOmr >= p.plexOmr ? `pay ${fmt(Math.ceil(p.plexOmr))} $OMR` : `needs ${fmt(Math.ceil(p.plexOmr - myOmr))} more $OMR`}</button>` : ''}
           <button class="act" disabled title="the on-chain checkout is not live yet">ETH checkout opens at launch</button></div>`).join('')}</div>
       <div class="card" style="margin-top:8px"><div class="d">${esc(S.note)} ${me.wallet ? '' : '<b>Link a wallet first</b> (Going Legit → Your Wallet) — a purchase made before linking is credited the moment you link.'}</div></div>
-      <div class="d" style="font-size:11px;margin-top:6px">Revenue split — founder ${S.split.founder / 100}% · token buyback ${S.split.buyback / 100}% · treasury ${S.split.rwa / 100}%.</div>
+      <div class="d" style="font-size:11px;margin-top:6px">ETH package fees through the payment router: developer ${S.split.founder / 100}% · Vig prize funding ${S.split.buyback / 100}% · treasury ${S.split.rwa / 100}% · community ${S.split.community / 100}%. PLEX spends game $OMR.</div>
       <div id="pass-slot"></div>
       <h2 style="margin-top:14px">The Benefactors <span class="d" style="font-size:11px">(the family's biggest patrons — a status board, no power)</span> <a href="#" id="patron-lb" style="font-size:12px">🏛 the league →</a></h2>
       <div id="patron-board"></div>`;
@@ -12918,7 +12910,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
     const identityBody = identityR.body || {};
     const readFailureCount = [vaultR, deskR, bdR, winR, yldR, wdR, bkR, bkrR, drR, pvR, fgR]
       .filter((r) => Number(r?.code) >= 400).length;
-    const genesis = desk.genesis || bd.genesis || {};
+    const genesis = desk.genesis || {};
     const launchSteps = [
       ['prepare', 'Prepare'], ['auction', 'Auction'], ['migration', 'Migrate'],
       ['oracle_warmup', 'Warm oracle'], ['live', 'Market live'],
@@ -12945,16 +12937,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
         : i === phaseIndex ? ' capital-stage--current' : '';
       return `<span class="capital-stage${cls}">${label}</span>`;
     }).join('');
-    const bondDaily = bd.daily || null;
-    const bondUnlimited = bondDaily?.unlimited === true;
-    const bondUnlimitedReady = bd.liquidity?.bondReady === true && bd.genesis?.bondQuotesOpen === true && !!bd.quote;
-    const bondOffered = Number(bondDaily?.offeredOmr || 0);
-    const bondRemaining = Number(bondDaily?.remainingOmr || 0);
-    const bondTranche = Number(bd.reserve?.remainingOmr || 0);
-    const bondCapacityKnown = bd.reserve?.remainingOmr != null && Number.isFinite(bondTranche);
-    const bondBuyable = bondUnlimited ? (bondUnlimitedReady && bondCapacityKnown ? Math.max(0, bondTranche) : 0)
-      : Math.max(0, Math.min(bondRemaining, bondTranche));
-    const bondFilledPct = bondOffered > 0 ? Math.max(0, Math.min(100, ((bondOffered - bondRemaining) / bondOffered) * 100)) : 0;
+    const bondChecksAvailable = bd.purchase?.verificationAvailable === true;
     const deskAuction = desk.auction || null;
     const deskLot = Number(deskAuction?.lot || 0);
     const deskSold = Number(deskAuction?.sold || 0);
@@ -13022,19 +13005,19 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
             <span class="capital-market__value ${deskAuction ? 'is-live' : 'is-closed'}">${deskAuction ? `${Math.round(deskFilledPct)}% sold` : esc(deskClosedCopy)}</span>
           </div>
           <div class="capital-market">
-            <span class="capital-market__name">Bond account records</span>
-            <span class="capital-market__body">${bondUnlimited ? `No daily account quota · ${bondCapacityKnown ? `${fmt(Math.max(0, bondTranche))} $OMR of reported quote capacity` : 'quote capacity is not reported'}` : bondDaily ? `${fmt(bondBuyable)} $OMR of reported quote capacity within today’s account limit` : 'No account bond offering has been posted.'}</span>
-            <span class="capital-market__value ${bondBuyable > 0 ? 'is-live' : 'is-closed'}">${bondUnlimited ? (bondBuyable > 0 ? 'open' : 'quotes unavailable') : bondDaily ? `${Math.round(bondFilledPct)}% filled` : 'closed'}</span>
+            <span class="capital-market__name">Inventory bonds</span>
+            <span class="capital-market__body">Funded OMR vests over the bond contract’s published term. Check the current quote before sending ETH.</span>
+            <span class="capital-market__value ${bondChecksAvailable ? '' : 'is-closed'}">${bondChecksAvailable ? 'verify terms' : 'purchases unavailable'}</span>
           </div>
           <div class="capital-market">
             <span class="capital-market__name">Price oracle</span>
             <span class="capital-market__body">The account service reports this $OMR / ETH reference. Canonical-market execution separately checks its own fresh observations and liquidity.</span>
-            <span class="capital-market__value ${bd.oracle ? 'is-live' : 'is-closed'}">${bd.oracle ? `${fmt(bd.oracle)} $OMR / ETH` : 'no trusted print'}</span>
+            <span class="capital-market__value ${bd.accounting?.oracle ? 'is-live' : 'is-closed'}">${bd.accounting?.oracle ? `${fmt(bd.accounting?.oracle)} $OMR / ETH` : 'no trusted print'}</span>
           </div>
           <div class="capital-market">
             <span class="capital-market__name">Capital accounting</span>
             <span class="capital-market__body">Amounts recorded by the account service. The current market separately accounts for funded liquidity compartments and War Chest receipts on-chain.</span>
-            <span class="capital-market__value">POL ${fmt(bd.reserve?.polEth || 0)} ETH · RWA ${fmt(bd.reserve?.rwaEth || 0)} ETH</span>
+            <span class="capital-market__value">POL ${fmt(bd.accounting?.reserve?.polEth || 0)} ETH · RWA ${fmt(bd.accounting?.reserve?.rwaEth || 0)} ETH</span>
           </div>
           <div class="capital-market">
             <span class="capital-market__name">Cash window</span>
@@ -13073,7 +13056,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
       <div class="card" style="border-color:var(--neon)"><span class="t" style="color:var(--neon)">Where $OMR Comes From</span>
         <div class="d">The <b>mission ladder</b> pays a bit over a thousand $OMR across a career, once per account.
           A perfect daily board pays a few more. Other jobs do not issue a token wage or yield.
-          The rest of the city's $OMR comes from purchases made with real money.</div>
+          Transfers, loot, and funded distributions can move existing $OMR between accounts.</div>
         <div class="d">You can get $OMR through missions, loot from a kill, payments from other players,
           purchases, or Bank distributions. The Bank uses borrowers' fees to buy $OMR on the market
           and distribute it to active players. A nightly check accounts for these sources.</div>
@@ -13246,53 +13229,24 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
         <button class="act" id="stake-in">stake</button>
         <button class="act" id="stake-out">unstake it all</button></div>
 
-      <h2 class="capital-anchor" id="capital-bonds" style="margin-top:12px">Bond account quotes <span class="d" style="font-size:11px">(reported account terms — verify the settlement contract, funded inventory and current market availability before paying)</span></h2>
-      ${(() => {
-        const dl = bd.daily, off = bd.offering || {};
-        const unlimited = dl?.unlimited === true;
-        // Unlimited daily policy does not imply readiness or available quote capacity.
-        const tranche = Number(bd.reserve?.remainingOmr || 0);
-        const capacityKnown = bd.reserve?.remainingOmr != null && Number.isFinite(tranche);
-        const posted = dl ? Number(dl.remainingOmr || 0) : 0;
-        const left = unlimited ? (capacityKnown ? Math.max(0, tranche) : 0) : Math.min(posted, tranche);
-        const ready = !unlimited || (bd.liquidity?.bondReady === true && bd.genesis?.bondQuotesOpen === true && !!bd.quote);
-        const open = !!dl && left > 0 && ready;
-        const pct = dl && Number(dl.offeredOmr) > 0 ? Math.round((posted / Number(dl.offeredOmr)) * 100) : 0;
-        return `
-      <div class="card" style="border-color:${open ? 'var(--neon)' : 'rgba(255,255,255,.12)'}">
-        <span class="t" style="color:${open ? 'var(--neon)' : 'var(--dim)'}">${unlimited ? 'No daily purchase limit' : open ? "TODAY'S WINDOW — OPEN" : 'THE WINDOW IS SHUT TODAY'}</span>
-        ${unlimited ? `<div class="d">${capacityKnown ? `<b>${fmt(left)}</b> $OMR available for new quotes.` : 'Available supply is not reported.'}</div>
-          ${Number(bd.reserve?.reservedQuotesOmr) > 0 ? `<div class="d">${fmt(bd.reserve.reservedQuotesOmr)} $OMR is reserved for outstanding signed quotes.</div>` : ''}
-          <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">${open ? 'Choose your purchase amount. The quote checks the available supply and current price.' : !ready ? 'New bond purchases are temporarily unavailable while the desk is paused or waiting for launch, liquidity and a current price.' : !capacityKnown ? 'Purchases are unavailable until the available supply is confirmed.' : 'There is no available supply for a new quote. Purchases resume when supply becomes available.'}</div>`
-        : open ? `<div class="d"><b>${fmt(left)}</b> $OMR still on offer${posted > left ? ` <span class="chip cold">the tranche behind the desk is the tighter of the two</span>` : ` of ${fmt(dl.offeredOmr)} posted`}</div>
-          <div class="bar" style="margin-top:4px"><i style="width:${pct}%"></i></div>
-          <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">When it's gone it's gone until the house posts the next one. There is no queue and no reservation.</div>`
-        : (dl
-          ? `<div class="d">An account offering was posted for today, but its quote budget has no remaining capacity. No new quote is available.</div>`
-          : `<div class="d">No offering was posted. The house opens the window day by day and it is shut until it does — nothing is bought or sold here today.</div>`)}
+      <h2 class="capital-anchor" id="capital-bonds" style="margin-top:12px">Inventory bonds</h2>
+      <div class="card"><span class="t">Buy a vested OMR note</span>
+        <div class="d">When open, the market bond reserves existing OMR for your wallet. It vests linearly. Your quote shows the ETH payment, minimum OMR, vesting term and expiry. Network gas applies.</div>
+        ${bondChecksAvailable ? `<div style="margin-top:6px"><input id="bond-eth" inputmode="decimal" maxlength="60" aria-label="ETH to pay" placeholder="ETH" size="8"> <button class="act" id="bond-quote">Check purchase terms</button>
+          <button class="act" id="bond-submit" hidden>Review purchase in wallet</button>
+          <pre id="bond-quote-out" style="white-space:pre-wrap;overflow-wrap:anywhere" aria-live="polite"></pre></div>` : '<p class="d">New purchases are awaiting verified deployment, activation and funding.</p>'}
       </div>
       <div class="card">
-        <span class="t">The Terms</span>
-        <table>
-          <tr><th>what you pay</th><td>ETH, on-chain, minimum ${off.minEth ?? '—'}</td></tr>
-          <tr><th>what you get</th><td>$OMR at <b>${off.discountBps != null ? (off.discountBps / 100) + '%' : '—'}</b> below the market price${bd.quote ? ` — about <b>${fmt(bd.quote.payoutOmr)}</b> per ETH right now` : ''}</td></tr>
-          <tr><th>when</th><td>released steadily over <b>${off.vestHours ?? '—'}h</b>, not all at once</td></tr>
-          <tr><th>settlement terms</th><td>verify the exact contract and recipient before paying. Canonical-market inventory bonds reserve already funded OMR and route proceeds to the configured War Chest.</td></tr>
-        </table>
-        <div class="d" style="font-size:11.5px;color:var(--dim);margin-top:4px">${unlimited ? `${bd.quote ? '' : 'A quote is unavailable while the desk is closed. '}${capacityKnown ? `${fmt(left)} $OMR remains available after accounting for outstanding signed quotes.` : 'Available supply is not reported.'}` : `${bd.quote ? '' : 'No market price has printed yet, so no quote can be signed. '}${tranche > 0
-          ? `The account service reports ${fmt(tranche)} $OMR of remaining quote capacity. This figure alone does not prove on-chain inventory or purchase availability.`
-          : 'The account quote budget has no remaining capacity.'}`}</div>
+        <span class="t">Inventory bond receipts</span>
+        <p class="d">Find your note ID in the Purchased event of your confirmed wallet transaction. On Robinhood Chain, read claimable(bytes32) on the contract that emitted the event. Send claim(bytes32) with that note ID and zero ETH to collect vested OMR. The recorded beneficiary receives the tokens.</p>
+        ${bd.purchase?.deployment && me.wallet ? `<div class="d">Bond contract: ${esc(bd.purchase.deployment.address)}</div>
+          <label>Receipt ID <input id="bond-note-id" size="24" list="bond-saved" placeholder="0x…" maxlength="66"></label><datalist id="bond-saved"></datalist>
+          <button class="act" id="bond-note-read">Check receipt</button><button class="act" id="bond-note-claim" hidden>Claim vested OMR in wallet</button>
+          <pre id="bond-note-out" aria-live="polite" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>` : ''}
       </div>
       <div class="card">
-        <span class="t">Take the Deal</span>
-        <div class="d">This form reads the account quote service. Check its contract and terms before authorizing ETH; a returned quote does not establish canonical-market activation. Canonical-market inventory bonds use prefunded inventory, bounded purchases and linear vesting.</div>
-        <div style="margin-top:6px"><input id="bond-eth" placeholder="ETH" size="6"> <button class="act" id="bond-quote"${open ? '' : ' disabled'}>${open ? 'request a signed quote' : unlimited ? 'quotes unavailable' : 'the window is shut'}</button>
-          <button class="act" id="bond-submit" style="display:none;border-color:var(--neon)">submit on-chain with wallet</button>
-          <div class="d" style="font-size:11px;color:var(--dim)">${me.wallet ? '' : '<b>Link your wallet above first</b> — a quote is bound to a proven address. '}${unlimited ? (open ? 'The desk is ready for on-chain purchases.' : 'New on-chain purchases are currently unavailable.') : 'The on-chain desk is <b>dormant until launch</b>.'}</div>
-          <pre id="bond-quote-out" style="display:none;white-space:pre-wrap;font-size:11px;background:#111;padding:6px;border-radius:4px;margin-top:4px;overflow-x:auto"></pre></div>
-      </div>
-      <div class="card">
-        <span class="t">Your Bonds</span>
+        <span class="t">Your historical bond records</span>
+        <div class="d">For an older on-chain purchase, find the numeric bondId in its Bonded event. Use the original contract’s claim(uint256) from the owner wallet. The claim button below updates your game record.</div>
         ${(bd.yours || []).length ? (bd.yours || []).map((b) => `<div class="row"><span class="k">bond #${b.id} — ${fmt(b.payoutOmr)} $OMR${b.fullyVested ? ' <span class="chip good">fully vested</span>' : ''}</span>
           <span>${b.claimableOmr ? `${fmt(b.claimableOmr)} ready <button class="act" data-bondclaim="${b.id}">claim</button>`
             /* CODEX R5: once the off-chain claim zeroes claimableOmr the button goes away, so this
@@ -13300,7 +13254,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
                read "N taken" over tokens still sitting in the OmertaBond contract. */
             : `<span class="chip">${fmt(b.claimedOmr)} squared${b.onchain ? ' — tokens claim on-chain from your wallet' : ''}</span>`}</span></div>`).join('')
         : '<div class="d" style="color:var(--dim)">You hold none. Anyone who does is a <b>Treasury Backer</b> — a standing the city can see.</div>'}
-      </div>`; })()}
+      </div>
 
       ${bd.yourStanding ? sect('legit-underwriter', "The Underwriters' League", 'back the treasury with $OMR — earn a backer tier, commission a Charter seal, climb the league', `
       <div class="card">
@@ -13315,16 +13269,16 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
         <div id="uw-lbout"></div></div>`,
         bd.yourStanding.score > 0) : ''}
 
-      <h2 style="margin-top:12px">The Vault <span class="d" style="font-size:11px">(spend game $OMR to record a bounded internal ETH allocation; no blockchain token burn, ETH payout or redemption is implemented)</span></h2>
+      <h2 style="margin-top:12px">Treasury Allocation <span class="d" style="font-size:11px">(spend game $OMR to record an allocation denominated in ETH)</span></h2>
       <div class="card">
-        <div class="d">the house never owes ETH it doesn't hold · claims ${vault.claimMin ?? 150}–${fmt(vault.claimDailyOmr ?? 12000)} $OMR/day per house · big moves draw the Bureau's eye</div>
-        ${vault.availableEth > 0 ? `
-        <div class="d" style="margin-top:6px"><b>${vault.availableEth} ETH</b> unclaimed of ${vault.heldEth} held · ${fmt(vault.omrPerEth)} $OMR per ETH
-          <input id="vault-amt" placeholder="$OMR" size="7"> <button class="act" id="vault-claim"${groundOff('The vault')}>claim</button></div>
+        <div class="d">This records an allocation on your account. No ETH is sent to your wallet. Minimum spend: ${vault.claimMin ?? 150} $OMR. Rolling daily limit: ${fmt(vault.claimDailyOmr ?? 12000)} $OMR per account.</div>
+        ${vault.open ? `
+        <div class="d" style="margin-top:6px"><b>${vault.availableEth} ETH</b> available to allocate from ${vault.heldEth} ETH in recorded revenue · ${fmt(vault.omrPerEth)} $OMR per ETH
+          <input id="vault-amt" placeholder="$OMR" size="7"> <button class="act" id="vault-claim"${groundOff('The vault')}>record allocation</button></div>
         ${vault.claimHeadroomOmr != null ? `<div class="d" style="font-size:11px;color:var(--dim)">the vault takes ${fmt(vault.claimDailyOmr)} $OMR a day per house — <b>${fmt(vault.claimHeadroomOmr)}</b> of that is still open to you today (it refills as the day runs)</div>` : ''}`
-        : '<div class="d" style="color:var(--dim)">the vault is fully claimed — the next revenue refills it (the ETH streams are accumulating)</div>'}
-        ${vault.mine?.eth > 0 ? `<div class="d" style="margin-top:6px">your vault: <b>${vault.mine.eth} ETH</b> (${fmt(vault.mine.costOmr)} $OMR burned) <span class="chip good">BACKED</span></div>` : ''}
-        ${vault.funding ? `<div class="d" style="font-size:11px;margin-top:6px">WHAT'S BEHIND IT — ${
+        : `<div class="d" style="color:var(--dim)">${vaultR.code !== 200 ? 'The allocation ledger is unavailable.' : vault.priceStale ? 'A current $OMR price is required before an allocation can be recorded.' : 'No recorded revenue is available for an allocation.'}</div>`}
+        ${vault.mine?.eth > 0 ? `<div class="d" style="margin-top:6px">Your recorded allocation: <b>${vault.mine.eth} ETH</b> (${fmt(vault.mine.costOmr)} game $OMR spent).</div>` : ''}
+        ${vault.funding ? `<div class="d" style="font-size:11px;margin-top:6px">Recorded revenue by source · ${
           Object.entries(vault.funding.bySource || {}).map(([k, v]) =>
             `${({ tax: 'recorded market-fee receipts', bond: 'recorded bond receipts', store: 'the store', fee: 'game fees' })[k] || k} ${v} ETH`).join(' · ')
             || 'nothing yet'}</div>` : ''}
@@ -13384,16 +13338,66 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
       t.querySelector('#uw-lbout').innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
         <div style="flex:1;min-width:190px"><div class="d"><b>THE LEAGUE</b></div>${(b.league || []).slice(0, 10).map((e2) => `<div class="d">${e2.financier ? '👑 ' : `#${e2.rank} `}${esc(e2.name)} — ${e2.tier} (${fmt(e2.score)})${e2.charterName ? ` ✦` : ''}</div>`).join('') || '<div class="d">none yet</div>'}</div>
         <div style="flex:1;min-width:190px"><div class="d"><b>THE SYNDICATES</b> (family backing)</div>${(b.syndicate || []).slice(0, 8).map((g) => `<div class="d">#${g.rank} ${esc(g.name)}${g.tag ? ` [${esc(g.tag)}]` : ''} — ${fmt(g.score)} (${g.backers})</div>`).join('') || '<div class="d">none yet</div>'}</div></div>`; }; }
-    { const bq = $('#bond-quote'); if (bq) { let lastNonce = null;
+    { const bq = $('#bond-quote'); if (bq) {
+      const input = $('#bond-eth'), out = $('#bond-quote-out'), buy = $('#bond-submit');
+      let quote = null;
+      input.oninput = () => { quote = null; out.textContent = ''; buy.hidden = true; };
       bq.onclick = async () => {
-        const r = await api('POST', '/v1/bond/quote', { principalEth: Number($('#bond-eth').value) });
-        const out = $('#bond-quote-out'); const bs = $('#bond-submit');
-        if (r.code === 200) { lastNonce = r.body.nonce; out.style.display = 'block'; if (bs) bs.style.display = 'inline-block';
-          out.textContent = `${fmt(r.body.payoutOmr)} $OMR at ${r.body.discountBps / 100}% off · nonce ${r.body.nonce}\nsubmit bond(quote, signature) on-chain (or use the button):\n` + JSON.stringify({ quote: r.body.quote, signature: r.body.signature }, null, 2);
-          toast('quote signed — submit it with your wallet'); }
-        else { out.style.display = 'none'; if (bs) bs.style.display = 'none'; toast(describe(r.body) || 'quote failed'); }
+        quote = null; buy.hidden = true; bq.disabled = true;
+        try {
+          const principalEth = input.value.trim();
+          const reply = await api('POST','/v1/bond/quote',{principalEth});
+          if (reply.code !== 200) throw Error(describe(reply.body,reply.code) || 'Quote unavailable.');
+          const intent = reply.body.intent;
+          const client = await import('/inventory-bond-client.js');
+          if (input.value.trim() !== principalEth) return;
+          client.validateBondQuote(reply.body,bd.purchase.deployment,me.wallet,principalEth);
+          const minDisplay = bondOmr(BigInt(intent.minimumOmr));
+          out.textContent = 'Pay '+principalEth+' ETH for at least '+minDisplay+' OMR. Vesting: '+reply.body.vestingSeconds+' seconds.'
+            +'\nExpires: '+new Date(intent.deadline*1000).toLocaleTimeString()+'\nBond: '+intent.to+'\nYour wallet: '+intent.buyer+'\nNote ID: '+reply.body.noteId;
+          quote = reply.body; buy.hidden = false;
+        } catch(error) {out.textContent=error?.message || 'Quote unavailable.';}
+        finally { bq.disabled = false; }
       };
-      const bs = $('#bond-submit'); if (bs) bs.onclick = () => { if (lastNonce != null) submitBondOnChain(lastNonce); else toast('request a quote first', true); };
+      buy.onclick = async () => {
+        if (!quote || buy.disabled) return;
+        buy.disabled = true; bq.disabled = true; input.disabled = true;
+        try {
+          const provider = await inventoryBondWallet();
+          const reply = await api('POST','/v1/bond/calldata',quote.intent);
+          if (reply.code !== 200) throw Error(describe(reply.body,reply.code) || 'Request a fresh quote.');
+          const client = await import('/inventory-bond-client.js');
+          const hash = await client.submitPurchase(provider,bd.purchase.deployment,quote,reply.body,me.wallet,localStorage);
+          out.textContent += '\nSubmitted: '+hash+'. Check the receipt after confirmation.';
+          $('#bond-note-id').value = quote.noteId;
+        } catch (error) { out.textContent += '\n'+(error?.message || 'Purchase unavailable.'); }
+        finally { quote=null; buy.hidden=true; buy.disabled=false; bq.disabled=false; input.disabled=false; }
+      };
+    } }
+    { const input = $('#bond-note-id'); if (input) {
+      const read = $('#bond-note-read'), claim = $('#bond-note-claim'), out = $('#bond-note-out'), pin = bd.purchase.deployment;
+      const client = await import('/inventory-bond-client.js');
+      try {
+        const ids = client.savedBondIds(localStorage,pin,me.wallet);
+        $('#bond-saved').replaceChildren(...ids.map(id => new Option(id,id)));
+        input.value = ids.at(-1) || '';
+      } catch { out.textContent = 'Paste the note ID from your wallet receipt.'; }
+      input.oninput = () => { claim.hidden = true; out.textContent = ''; };
+      const handle = async sending => {
+        read.disabled = claim.disabled = input.disabled = true; claim.hidden = true;
+        try {
+          const id = input.value.trim(), provider = await inventoryBondWallet();
+          if (sending) out.textContent = 'Claim submitted: '+await client.submitClaim(provider,pin,me.wallet,id)+'. Check the receipt after confirmation.';
+          else {
+            const note = await client.readBondNote(provider,pin,me.wallet,id);
+            out.textContent = 'Amount: '+bondOmr(note.amount)+' OMR. Claimed: '+bondOmr(note.claimed)+' OMR. Available: '
+              +bondOmr(note.claimable)+' OMR. Fully vested: '+new Date(note.end*1000).toLocaleString()+'.';
+            claim.hidden = !note.claimable;
+          }
+        } catch(error) { out.textContent = error?.message || 'Unable to verify this receipt.'; }
+        finally { read.disabled = claim.disabled = input.disabled = false; }
+      };
+      read.onclick = () => handle(false); claim.onclick = () => handle(true);
     } }
     $('#lad-go').onclick = () =>
       act('POST', '/v1/stake', { amount: Number($('#lad-amt').value) }).then(() => renderPortfolio());

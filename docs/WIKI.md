@@ -210,7 +210,7 @@ Turf allocates future funded fees to families, not liquidity principal. Game adj
 
 #### Genesis auction
 
-The approved launch is one five-day native ETH auction on Robinhood Chain for character NFT holders. Paid and free-credit mints qualify, with no individual allocation caps or gameplay eligibility list. The target is around noon New York on October 9–14, 2026. Verified native block boundaries determine the window; exact wall-clock timing is not guaranteed. Deployment, funding and launch verification must complete before participation opens.
+The approved launch is one five-day native ETH auction on Robinhood Chain for character NFT holders. Paid and free-credit mints qualify, with no individual allocation caps or gameplay eligibility list. The verified auction contract’s opening and closing blocks determine when bids are accepted. Check the published auction status for timing. Deployment, funding and launch verification must complete before participation opens.
 
 Allocate the existing 100M OMR as 40M offered, 20M for initial liquidity and 40M retained in the Safe for later bond activation. Unsold auction tokens return to the Safe and are accounted separately. The successful-raise minimum is 10 ETH; the starting floor corresponds approximately to 10 ETH for the complete 40M offered inventory.
 
@@ -2034,8 +2034,7 @@ The currency used does not change what the package grants.
 published ETH wave price or a mint credit earned through the mission ladder's *Dockside Heist*. There is
 no PLEX price for minting.
 
-Across the mission ladder, $OMR rewards sum to 1,320 and the daily contract bonus adds 3 per day, compared
-with 4,118 for the cheapest PLEX package. Other sources include loot (a fifth of staked or half of loose
+The Store quotes PLEX prices from the market rate, subject to each package’s price floor. Other sources include loot (a fifth of staked or half of loose
 $OMR after a kill), Desk purchases, and family payments.
 
 **The Season Pass / The Ledger** (`GET /v1/pass`, `/pass/claim`): while your pass is active, claim the next of
@@ -2192,7 +2191,7 @@ describe the posture as legally approved without written support. See
 - **The Vault** (`GET /v1/vault`) — configured treasury revenue funds its separate ETH allocation ledger.
   Spend game OMR to record a bounded internal ETH allocation, subject to recorded available funding,
   account caps and the quoted rate. Spent OMR recycles to the Desk; it does not burn blockchain tokens.
-  The board publishes funding and allocation records. **No ETH payout, withdrawal or on-chain delivery
+  The board publishes recorded receipts and allocations. Verifying the treasury’s actual wallet balance requires a separate on-chain check. **No ETH payout, withdrawal or on-chain delivery
   is implemented.** This is separate from The Brokers and the canonical market, and is not an OMR
   redemption floor.
 

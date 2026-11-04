@@ -527,13 +527,11 @@ New Street Deeds are earned at level 15. All 2,500 permanent buildings are avail
 1. **Link a wallet** (SIWE): `POST /v1/wallet/challenge` → sign → `POST
    /v1/wallet/verify`. (Guest accounts should first upgrade to an authentication provider
    via `POST /v1/auth/upgrade`.)
-2. **Mint the character:** extraction requires a one-time mint. Pay the mint
-   fee on-chain (the `OmertaFees` tollbooth) and call `POST
-   /v1/character/mint`. Free-trial characters play fully but cannot extract.
+2. **Mint the character:** extraction requires a one-time character mint. Use the current
+   ETH fee quoted by `OmertaFees` or an earned mission credit, then call `POST /v1/character/mint`. Free-trial characters play fully but cannot extract.
 3. **Withdraw:** `POST /v1/withdraw` debits your $OMR through the ledger and
-   signs an EIP-712 voucher; `claim()` it on-chain from your wallet. Withdrawals
-   are full-reserve backed (extraction ≤ inflow, by construction), so a large
-   withdrawal may queue until the reserve funds.
+   signs an EIP-712 voucher; `claim()` it on-chain from your wallet. The server signs only within its recorded reserve capacity. A withdrawal can queue for capacity.
+   The wallet receives the net amount after the configured withdrawal toll and age-based surcharge when the voucher is redeemed.
 4. **Gear** (ERC-1155) withdraws via `POST /v1/gear/:id/withdraw`.
 
 The chain rail requires the scoped security review defined by the
@@ -639,7 +637,7 @@ loan-sharking empire and I need a human trigger finger."
 ### The Capo's License
 
 The License is a capability ladder, separate from budgeted referral claims.
-Each human you recruit who is **minted** (paid the identity mint fee, currently 0.01 ETH, wave 1 of the published tranche schedule), **retained**
+Each human you recruit who is **minted** (the account has minted its character), **retained**
 (played inside the last 14 days) and **levelled** (a living street at level
 8+) counts toward your license, recomputed hourly:
 

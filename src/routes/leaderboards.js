@@ -100,9 +100,6 @@ export function register(app, { pool, auth, modAuth }) {
     app.get('/v1/leaderboard/commanders', { preHandler: auth }, async () => Soldiers.commanderLeaderboard(pool));
     app.get('/v1/leaderboard/collection', { preHandler: auth }, async () => Collection.collectionLeaderboard(pool));
     app.get('/v1/leaderboard/underwriters', { preHandler: auth }, async () => Bonds.underwriterLeaderboard(pool));
-    // the EIP-712 bond QUOTE SIGNER — a player requests a signed BondQuote (bound to their linked wallet),
-    // then submits bond(quote, signature) to the on-chain OmertaBond contract; the Bonded watcher books it.
-    // Chain-dormant: 400s chain_unconfigured unless the bond chain (CHAIN_ID + OMERTA_BOND_ADDRESS + signer) is set.
     // THE PATRON PROGRAM (Tier-4) — the read-derived Benefactors league + Patron Families + The House's Favor
     app.get('/v1/leaderboard/patrons', { preHandler: auth }, async () => Store.benefactorLeaderboard(pool));
     // PLEX-for-packages — buy a Store SKU with EARNED $OMR (burns $OMR for the same entitlement)
