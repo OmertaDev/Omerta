@@ -140,8 +140,8 @@ export async function runEconomyMonitor(pool, options = {}) {
     if (rows.length > rowLimit) { complete = false; add({ name: 'monitor_scan_overflow', source, maximum: rowLimit }); }
     return rows.slice(0, rowLimit);
   };
-  const columns = 't.id,t.at,t.character_id,COALESCE(t.account_id,c.account_id) AS account_id,t.currency,t.amount,t.reason,t.counterparty';
-  const rows = await readRows(`SELECT ${columns} FROM transactions t LEFT JOIN characters c ON c.id=t.character_id
+  const COLUMNS = 't.id,t.at,t.character_id,COALESCE(t.account_id,c.account_id) AS account_id,t.currency,t.amount,t.reason,t.counterparty';
+  const rows = await readRows(`SELECT ${COLUMNS} FROM transactions t LEFT JOIN characters c ON c.id=t.character_id
     WHERE t.at >= $1 AND t.at <= $2 ORDER BY t.at DESC,t.id DESC LIMIT $3`, [since, now, rowLimit + 1], 'recent_ledger');
   // Exact source predicates use (currency,reason,at), rather than filtering a two-day global scan.
   // Unknown older board IDs still appear in recent-ledger statistics, but are not assigned a claim
@@ -151,7 +151,7 @@ export async function runEconomyMonitor(pool, options = {}) {
   const dailyRows = [];
   for (const [currency, reason] of dailySources) {
     const available = rowLimit - dailyRows.length;
-    const found = (await pool.query(`SELECT ${columns} FROM transactions t LEFT JOIN characters c ON c.id=t.character_id
+    const found = (await pool.query(`SELECT ${COLUMNS} FROM transactions t LEFT JOIN characters c ON c.id=t.character_id
       WHERE t.at >= $1 AND t.at <= $2 AND t.currency=$3 AND t.reason=$4
       ORDER BY t.at DESC,t.id DESC LIMIT $5`, [dailySince, now, currency, reason, available + 1])).rows;
     dailyRows.push(...found.slice(0, available));
