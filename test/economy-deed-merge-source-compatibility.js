@@ -11,6 +11,8 @@ import { ECONOMY_DEED_MERGE_SOURCE as source, ECONOMY_DEED_MERGE_SOURCE_SHA256 a
   from '../tools/economy-deed-merge-source-compatibility.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous,
   ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as previousSha } from '../tools/enterprise-native-ux-b35-inputs.js';
+import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput }
+  from '../tools/economy-ux-merge-source-compatibility.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args],
   { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -98,6 +100,20 @@ for (const profile of ['monitor', 'deed']) for (const file of ['__proto__', 'con
 }
 for (const profile of [null, undefined, 'other', new String('monitor'), { toString: () => 'monitor' }])
   reject(() => economyDeedMergeHistoricalInput('package.json', '', profile));
+// These identical newer postimages have distinct age-policy and Deed predecessors. Require the
+// caller's explicit source context rather than letting whichever frozen hook ran first decide.
+for (const file of ['docs/legal-security-setup.md', 'src/legal.js', 'test/legal-security.js']) {
+  const current = git('show', '837f0e45558be03d65b8a4584018c20ff7f69dbc:' + file);
+  const ageBaseline = git('show', 'a24df18ea1a0b57f25df942675dd9fef7415f275:' + file);
+  const deedBaseline = git('show', 'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9:' + file);
+  for (const helper of [economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput]) {
+    assert.equal(helper(file, current), helper(file, ageBaseline));
+    assert.equal(helper(file, current, 'monitor'), helper(file, ageBaseline, 'monitor'));
+    assert.equal(helper(file, current, 'deed'), helper(file, deedBaseline, 'deed')); positives++;
+    reject(() => helper(file, current, 'other'));
+    reject(() => helper(file, current, { toString: () => 'monitor' }));
+  }
+}
 assert.equal(assertEconomyDeedNativeProvenanceDefinition(), provenance);
 assert.equal(provenance.sourceRevision, source.sourceRevision); assert.equal(provenance.sourceTree, source.sourceTree);
 assert.equal(provenance.predecessorDefinitionSha256, previousSha); assert.equal(provenance.predecessorRevision, previous.authoredRevision);

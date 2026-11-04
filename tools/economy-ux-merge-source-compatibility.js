@@ -308,10 +308,11 @@ function historicalInput(file, input, target) {
   const restored = qualifyEconomyUxMergeSource(file, text, target).baselineText;
   return buffer ? Buffer.from(restored) : restored;
 }
-export function economyUxMergeCandidateHistoricalInput(file, input) {
-  input = economyDeedMergeHistoricalInput(file, input, 'monitor');
+export function economyUxMergeCandidateHistoricalInput(file, input, profile = 'monitor') {
+  input = economyDeedMergeHistoricalInput(file, input, profile);
+  if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);
   input = deedAllocationHistoricalInput(file, input);
-  input = ageEligibilityHistoricalInput(file, input);
+  if (profile === 'deed') input = ageEligibilityHistoricalInput(file, input);
   input = economyMonitorWorkerHistoricalInput(file, input);
   input = economyMonitorReaderHistoricalInput(file, input);
   input = economyMonitorReleaseHistoricalInput(file, input);
@@ -323,10 +324,11 @@ export function economyUxMergeCandidateHistoricalInput(file, input) {
   input = saleHistoricalInput(file, input);
   return historicalInput(file, input, 'candidate');
 }
-export function economyUxMergeMainHistoricalInput(file, input) {
-  input = economyDeedMergeHistoricalInput(file, input, 'monitor');
+export function economyUxMergeMainHistoricalInput(file, input, profile = 'monitor') {
+  input = economyDeedMergeHistoricalInput(file, input, profile);
+  if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);
   input = deedAllocationHistoricalInput(file, input);
-  input = ageEligibilityHistoricalInput(file, input);
+  if (profile === 'deed') input = ageEligibilityHistoricalInput(file, input);
   input = economyMonitorWorkerHistoricalInput(file, input);
   input = economyMonitorReaderHistoricalInput(file, input);
   input = economyMonitorReleaseHistoricalInput(file, input);

@@ -82,7 +82,7 @@ for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
     assert.equal(deedAllocationHistoricalInput(file, raw), baseline);
     assert.deepEqual(deedAllocationHistoricalInput(file, Buffer.from(raw)), Buffer.from(baseline));
     for (const compose of [economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput])
-      assert.deepEqual(compose(file, raw), compose(file, baseline), 'The new envelope preserves historical composition');
+      assert.deepEqual(compose(file, raw, 'deed'), compose(file, baseline, 'deed'), 'The explicit Deed profile preserves historical composition');
     positives++;
   }
   const reject = text => {
