@@ -21,7 +21,7 @@ const inverseHunks = diff => {
   }
   return rows;
 };
-const files = [".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"];
+const files = [".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","test/lib/enterprise-ux-native-guard.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"];
 const phase = 'exact-business-control-desk-source-transfer-only; no historical runtime, native, migration, financial, activation or deployment clearance';
 assert.equal(O.BUSINESS_DESK_REVISION, 'ed1bf2ff973b6c6c5f0fdfd6c011e414cc60aa23');
 assert.equal(O.BUSINESS_DESK_PREDECESSOR, 'a343fe067f7a1d244d761d8f4da7b3aea337809f');
@@ -102,6 +102,12 @@ const preservedHook = authoredHook
 assert.notEqual(preservedHook, authoredHook);
 assert.equal(preservedHook, git('show', `${O.BUSINESS_DESK_PREDECESSOR}:${hook}`),
   'Only the exact Business source hook is added; every original Deed qualifier and predicate is preserved.');
+const guard = 'test/lib/enterprise-ux-native-guard.js';
+const authoredGuard = git('show', `${O.BUSINESS_DESK_REVISION}:${guard}`);
+assert.equal(authoredGuard.split("row.file === 'schema.sql'").length, 2);
+assert.equal(authoredGuard.replace("row.file === 'schema.sql'", "row.file === '.github/workflows/ci.yml'"),
+  git('show', `${O.BUSINESS_DESK_PREDECESSOR}:${guard}`),
+  'Only the genuinely unchanged fixture selector changes; all native guard predicates, controls and counters remain byte-exact.');
 assert.throws(() => { O.BUSINESS_DESK_REVISION = '0'.repeat(40); }, TypeError);
 assert.throws(() => { O.BUSINESS_DESK_DOMAINS.unreviewed = {}; }, TypeError);
 console.log(JSON.stringify({ phase, source: O.BUSINESS_DESK_REVISION, predecessor: O.BUSINESS_DESK_PREDECESSOR,

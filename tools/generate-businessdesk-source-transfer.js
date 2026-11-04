@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 
 const revision = 'ed1bf2ff973b6c6c5f0fdfd6c011e414cc60aa23';
 const predecessor = 'a343fe067f7a1d244d761d8f4da7b3aea337809f';
-const files = Object.freeze([".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"]);
+const files = Object.freeze([".github/workflows/ci.yml","package.json","public/index.html","src/server.js","test/deed-allocation-source-compatibility.js","test/gates.js","test/lib/enterprise-ux-native-guard.js","tools/deed-allocation-source-transfer.js","tools/enterprise-native-ux-seal.js","tools/enterprise-native-ux.js"]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024,

@@ -62,7 +62,7 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   const predecessorPin = (file, after) => { const before = predecessor.get(file); if (before) return Object.freeze({ file, mode: before.mode, blob: before.blob, sha256: before.blob === after.blob ? after.sha256 : digest(git('show', pin.predecessorRevision + ':' + file)) }); const legacyPin = legacyAdditions.get(file), actual = legacyTree.get(file); assert(legacyPin && actual?.type === 'blob'); assert.equal(actual.mode, legacyPin.mode); assert.equal(actual.blob, legacyPin.blob); assert.equal(digest(git('show', pin.legacyRevision + ':' + file)), legacyPin.sha256); return null; };
   assertEnterpriseUxReplacementPlan(legacyFiles, legacy, pin.files, predecessorPin, pin);
   for (const file of requiredLegacyReplacements) { const row = pin.legacyAdditionReplacements.find(entry => entry.file === file), before = legacyAdditions.get(file), after = pin.files.find(entry => entry.file === file); assert.equal(git('ls-tree', pin.predecessorRevision, '--', file).length, 0); assert.deepEqual(row.before, before); assert.deepEqual(row.after, after); }
-  const unchanged = pin.files.find(row => row.file === '.github/workflows/ci.yml'); assert(unchanged);
+  const unchanged = pin.files.find(row => row.file === 'schema.sql'); assert(unchanged);
   const unchangedBytes = git('show', pin.authoredRevision + ':' + unchanged.file);
   const unchangedRecord = { type: 'blob', mode: unchanged.mode, blob: unchanged.blob };
   assert.equal(assertEnterpriseUxTrackedInput(unchanged.file, unchangedRecord, unchangedRecord, unchangedBytes), null,
