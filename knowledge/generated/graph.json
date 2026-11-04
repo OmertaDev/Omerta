@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b33dee0c73b1a6b09aebaf75501303a301930592",
+  "sourceRevision": "fd4e3eee7636e79afa53f014cd47056e3963f76b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17335,
-    "edges": 69478,
+    "nodes": 17337,
+    "edges": 69484,
     "byNodeType": {
       "Artifact": 7058,
       "Command": 300,
-      "Commit": 4974,
+      "Commit": 4976,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5641,
-      "CHANGED": 26759,
+      "CHANGED": 26763,
       "CONTAINS": 7079,
       "DECLARES": 300,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1187,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 4974,
+      "HAS_COMMIT": 4976,
       "IMPLEMENTS": 124,
       "IMPORTS": 8260,
       "INHERITS": 45,
@@ -201558,6 +201558,22 @@
       ]
     },
     {
+      "key": "Commit:70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "type": "Commit",
+      "id": "70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "label": "Refresh knowledge for final UX browser qualification",
+      "title": "Refresh knowledge for final UX browser qualification",
+      "date": "2026-11-04T18:34:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "provenance": [
+        {
+          "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+          "url": "https://github.com/OmertaDev/Omerta/commit/70f9527f6a6428cfd5239bbeecf7bac7373b4635"
+        }
+      ]
+    },
+    {
       "key": "Commit:70fca4fa19a24298116bdd1e6ff4e63f4bd7b471",
       "type": "Commit",
       "id": "70fca4fa19a24298116bdd1e6ff4e63f4bd7b471",
@@ -245142,6 +245158,22 @@
       ]
     },
     {
+      "key": "Commit:fd4e3eee7636e79afa53f014cd47056e3963f76b",
+      "type": "Commit",
+      "id": "fd4e3eee7636e79afa53f014cd47056e3963f76b",
+      "label": "Merge pull request #312 from OmertaDev/codex/ux-player-journeys",
+      "title": "Merge pull request #312 from OmertaDev/codex/ux-player-journeys",
+      "date": "2026-11-04T20:17:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fd4e3eee7636e79afa53f014cd47056e3963f76b",
+      "provenance": [
+        {
+          "commit": "fd4e3eee7636e79afa53f014cd47056e3963f76b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fd4e3eee7636e79afa53f014cd47056e3963f76b"
+        }
+      ]
+    },
+    {
       "key": "Commit:fd5bcbe7c7f869c092e4bcd1a89e029c6ca28150",
       "type": "Commit",
       "id": "fd5bcbe7c7f869c092e4bcd1a89e029c6ca28150",
@@ -274002,6 +274034,9 @@
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
         },
         {
+          "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
+        },
+        {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
         },
         {
@@ -276510,6 +276545,9 @@
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
         },
         {
+          "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
+        },
+        {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
         },
         {
@@ -279016,6 +279054,9 @@
         },
         {
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
+        },
+        {
+          "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
         },
         {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
@@ -282205,6 +282246,9 @@
         },
         {
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
+        },
+        {
+          "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
         },
         {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
@@ -298089,8 +298133,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b33dee0c73b1a6b09aebaf75501303a301930592",
-      "currentBranch": "codex/ux-player-journeys",
+      "revision": "fd4e3eee7636e79afa53f014cd47056e3963f76b",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -484605,6 +484649,38 @@
       "to": "Artifact:docs/equipment-rental-primitive-review.md",
       "provenance": {
         "commit": "7098a4c4cb8cabe351003fdd9b466369c338c1d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
       }
     },
     {
@@ -735192,6 +735268,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:70f9527f6a6428cfd5239bbeecf7bac7373b4635",
+      "provenance": {
+        "commit": "70f9527f6a6428cfd5239bbeecf7bac7373b4635"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:70fca4fa19a24298116bdd1e6ff4e63f4bd7b471",
       "provenance": {
         "commit": "70fca4fa19a24298116bdd1e6ff4e63f4bd7b471"
@@ -756979,6 +757063,14 @@
       "to": "Commit:fd496761625aaa9bc872e73ce8e5df8e08bb3e90",
       "provenance": {
         "commit": "fd496761625aaa9bc872e73ce8e5df8e08bb3e90"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fd4e3eee7636e79afa53f014cd47056e3963f76b",
+      "provenance": {
+        "commit": "fd4e3eee7636e79afa53f014cd47056e3963f76b"
       }
     },
     {
