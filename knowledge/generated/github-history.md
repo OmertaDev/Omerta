@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8699f4da6cbc`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b9e66a41202f`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4975 |
+| Commits in clone | 5000 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-31 — Seal full-history launch verification source |
+| Latest commit | 2026-11-04 — Seal merged contract release source and reader controls |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4002 |
+| OmertaDev | 4026 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 128 |
+| github-actions[bot] | 129 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,20 +30,20 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 829 | historical |
-| knowledge/generated/graph-summary.md | 829 | historical |
-| knowledge/generated/graph.json | 829 | historical |
-| knowledge/generated/inventory.md | 829 | historical |
-| [SPEC.md](../../SPEC.md) | 613 | yes |
+| knowledge/generated/github-history.md | 836 | historical |
+| knowledge/generated/graph-summary.md | 836 | historical |
+| knowledge/generated/graph.json | 836 | historical |
+| knowledge/generated/inventory.md | 836 | historical |
+| [SPEC.md](../../SPEC.md) | 615 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 492 | yes |
 | [src/server.js](../../src/server.js) | 451 | yes |
 | [schema.sql](../../schema.sql) | 381 | yes |
-| knowledge/generated/documents.md | 371 | historical |
+| knowledge/generated/documents.md | 374 | historical |
 | [package.json](../../package.json) | 348 | yes |
-| knowledge/generated/modules.md | 282 | historical |
+| knowledge/generated/modules.md | 287 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
-| knowledge/generated/graph.mmd | 222 | historical |
+| knowledge/generated/graph.mmd | 225 | historical |
 | [test/gates.js](../../test/gates.js) | 206 | yes |
 | [src/game.js](../../src/game.js) | 196 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
