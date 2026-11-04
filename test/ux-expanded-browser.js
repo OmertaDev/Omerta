@@ -142,6 +142,10 @@ try {
 
   const comfortableSize = await page.locator('#tab-life .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
   await page.locator('select[data-ux-density]').selectOption('large');
+  await page.waitForFunction(previous => {
+    const paragraph = document.querySelector('#tab-life .ux-world-panel p');
+    return paragraph && parseFloat(getComputedStyle(paragraph).fontSize) > previous;
+  }, comfortableSize);
   const largeSize = await page.locator('#tab-life .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize)); assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode visibly removes the side column');
   assert.match(await page.locator('#ux-focus-vitals').innerText(), /Health.*nerve/);
