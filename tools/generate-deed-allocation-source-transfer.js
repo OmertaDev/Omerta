@@ -33,6 +33,7 @@ const files = Object.freeze([
   'src/age.js', 'src/server.js',
   'test/sale-source-compatibility.js', 'test/ux-source-compatibility.js',
   'test/lib/ux-native-reader-source-compatibility.js',
+  'test/client.js',
 ]);
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
