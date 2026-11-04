@@ -59,7 +59,7 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.files.length, 1736); assert.equal(pin.replacements.length, 98); assert.equal(pin.legacyAdditionReplacements.length, 4); assert.equal(pin.additions.length, 93);
+  assert.equal(pin.files.length, 1739); assert.equal(pin.replacements.length, 102); assert.equal(pin.legacyAdditionReplacements.length, 4); assert.equal(pin.additions.length, 96);
   for (const file of ['public/inventory-bond-client.js', 'src/inventorybond.js', 'test/inventory-bond-checkout.js',
    'test/economy-ux-merge-source-compatibility.js', 'tools/current-economic-terms-source-data.js',
    'tools/current-economic-terms-source-transfer.js', 'tools/generate-current-economic-terms-source-transfer.js']) {

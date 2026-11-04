@@ -2,6 +2,8 @@
 
 Reviewed on November 4, 2026 for the application merge in PR #316. The application source is commit `b216e52081c378b879f3056bed9b76f5565179ef`, based on `f4474d358e8c9feddcd01deaadf77c1a67ace9cb`. The application diff between these commits is the file inventory. Later commits on the PR qualify that source for the repository checks. The PR records the final revision and hosted results.
 
+The integration base advanced to `c4b626b631b04e594097fb6bb416c36fdfea00f3` after PR #312 merged. All 23 changed application, configuration, schema and public asset files in the economic patch retained their reviewed Git blobs. Both source checks cover `src/server.js`. Their distinct approved revisions reconstruct the same earlier file, and all 13 economic source domains retained their original base blobs on the new main revision.
+
 ## Trust boundaries and checks
 
 | Boundary | Property reviewed | Evidence |
