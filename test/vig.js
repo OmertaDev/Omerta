@@ -18,6 +18,47 @@ const { runLedgerInvariants } = await import('../src/invariants.js');
 
 const app = await buildServer();
 const pool = app.pool;
+
+// PostgreSQL NUMERIC SUM is exact; pg-mem adds JavaScript numbers. The Linux
+// repro's valid 2.400077 + 2.40008 became 4.8001570000000005, which correctly
+// failed drainQueue's strict six-decimal guard. Emulate only that SUM here,
+// preserving each row's precision and leaving the production guard untouched.
+const exactOutstandingSum = (rows) => {
+  let units = 0n;
+  for (const row of rows) {
+    const parts = /^(\d+)(?:\.(\d*))?$/.exec(String(row.amount ?? 0));
+    const fraction = (parts?.[2] || '').replace(/0+$/, '');
+    assert(parts && fraction.length <= 6, 'reserve fixture rejects genuine overprecision');
+    units += BigInt(parts[1]) * 1_000_000n + BigInt(fraction.padEnd(6, '0'));
+  }
+  return String(units / 1_000_000n) + '.' + String(units % 1_000_000n).padStart(6, '0');
+};
+const precisionRows = [{ amount: 2.400077 }, { amount: 2.40008 }];
+assert.equal(String(precisionRows.reduce((sum, row) => sum + row.amount, 0)), '4.8001570000000005',
+  'the actual Linux operands reproduce pg-mem binary SUM drift');
+assert.equal(exactOutstandingSum(precisionRows), '4.800157', 'NUMERIC SUM retains exact micro units');
+assert.throws(() => exactOutstandingSum([{ amount: '2.4000771' }]), /genuine overprecision/,
+  'the fixture never rounds a real seventh decimal into valid reserve backing');
+if (!process.env.DATABASE_URL) {
+  const outstandingSql = "SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND (status='signed' OR claimed_onchain)";
+  const outstandingRowsSql = "SELECT amount FROM vouchers WHERE kind='omr' AND (status='signed' OR claimed_onchain)";
+  const connect = pool.connect.bind(pool);
+  pool.connect = async (...args) => {
+    const client = await connect(...args), query = client.query.bind(client);
+    return new Proxy(client, {
+      get(target, key) {
+        if (key === 'query') return async (sql, ...values) => {
+          const result = await query(sql, ...values);
+          if (sql !== outstandingSql) return result;
+          const { rows } = await query(outstandingRowsSql);
+          return { ...result, rows: [{ ...result.rows[0], s: exactOutstandingSum(rows) }] };
+        };
+        const value = Reflect.get(target, key);
+        return typeof value === 'function' ? value.bind(target) : value;
+      },
+    });
+  };
+}
 const modH = { 'x-mod-key': 'test-mod-key' };
 const call = async (method, url, { token, body, headers } = {}) => {
   const res = await app.inject({ method, url, payload: body,
@@ -273,6 +314,7 @@ assert((await runLedgerInvariants(pool, { alert: false })).ok, '§10.4 in-game l
   // the comp consumed no real budget either — the same revenue is still there for a real buyback
   const real = await call('POST', '/v1/mod/vig/buyback', { headers: modH,
     body: { priceOmrPerEth: 3000, txHash: '0xreal-after-comp' } });
+  assert.equal(real.code, 200, 'A7: real buyback succeeds: ' + JSON.stringify(real.body));
   assert(real.body.omrBought > 0, 'A7: the real buyback still has the whole budget — a comp spends nothing');
   assert.equal(real.body.real, true, 'A7: and it books real');
 }
