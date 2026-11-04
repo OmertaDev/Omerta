@@ -266,8 +266,8 @@
 | [src/gateway/http-contract.js](../../src/gateway/http-contract.js) | 49 | platform-core | 2 / 1 | 0 | 0 | 0 |
 | [src/gateway/security.js](../../src/gateway/security.js) | 122 | platform-core | 0 / 9 | 0 | 3 | 4 |
 | [src/gateway/service.js](../../src/gateway/service.js) | 160 | platform-core | 2 / 4 | 0 | 3 | 3 |
-| [src/genesisauction.js](../../src/genesisauction.js) | 376 | platform-core | 0 / 3 | 0 | 0 | 1 |
-| [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 6 | 0 | 0 | 2 |
+| [src/genesisauction.js](../../src/genesisauction.js) | 380 | platform-core | 0 / 3 | 0 | 0 | 1 |
+| [src/genesiscadence.js](../../src/genesiscadence.js) | 152 | platform-core | 0 / 8 | 0 | 0 | 3 |
 | [src/genesiscca.js](../../src/genesiscca.js) | 1093 | platform-core | 1 / 4 | 0 | 0 | 1 |
 | [src/genesiskeeper.js](../../src/genesiskeeper.js) | 133 | platform-core | 0 / 1 | 0 | 0 | 0 |
 | [src/genesislaunch.js](../../src/genesislaunch.js) | 74 | platform-core | 2 / 3 | 0 | 1 | 0 |
@@ -324,7 +324,7 @@
 | [src/manufacturinglicensesroutes.js](../../src/manufacturinglicensesroutes.js) | 11 | platform-core | 2 / 1 | 0 | 2 | 0 |
 | [src/market.js](../../src/market.js) | 710 | economy-ledger | 10 / 44 | 8 | 11 | 30 |
 | [src/marketfeed.js](../../src/marketfeed.js) | 37 | platform-core | 5 / 2 | 1 | 1 | 1 |
-| [src/marketv2keeper.js](../../src/marketv2keeper.js) | 268 | platform-core | 1 / 5 | 0 | 1 | 2 |
+| [src/marketv2keeper.js](../../src/marketv2keeper.js) | 288 | platform-core | 1 / 5 | 0 | 1 | 2 |
 | [src/marketv2solver.js](../../src/marketv2solver.js) | 222 | platform-core | 2 / 1 | 0 | 1 | 0 |
 | [src/mastery.js](../../src/mastery.js) | 117 | world-progression | 2 / 2 | 3 | 9 | 0 |
 | [src/megaproject.js](../../src/megaproject.js) | 296 | enterprise-logistics | 4 / 4 | 6 | 7 | 0 |

@@ -313,9 +313,9 @@
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6869 | 2026-10-27 |
-| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 442 | 2026-10-14 |
+| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 455 | 2026-10-31 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-25 |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-06 |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-31 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 52 | 2026-09-25 |
 | [content/README.md](../../content/README.md) | documentation | 282 | 2026-09-25 |
 | [CREDIT_CHECKPOINT.md](../../CREDIT_CHECKPOINT.md) | documentation | 88 | 2026-09-24 |
@@ -718,7 +718,7 @@
 | [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 83 | 2026-10-26 |
 | [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 20 | 2026-10-26 |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2746 | 2026-10-27 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2746 | 2026-10-31 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
 | [docs/workshop-floor-integration.md](../../docs/workshop-floor-integration.md) | documentation | 22 | 2026-10-15 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
@@ -817,5 +817,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-27 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-31 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
