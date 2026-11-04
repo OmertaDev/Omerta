@@ -158,3 +158,61 @@ for (const path of Object.keys(GENESIS_FEE_READINESS_DOMAINS).filter(path => pat
   negative++;
 }
 console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources, twenty exact Git hunks, SHA256/blob/bytes, ${positive} positive and ${negative} negative controls; unchanged historical recovery metadata; source-only scope`);
+
+// The cold historical fixture reads one public source as text; it never executes that client.
+// Keep its complete predecessor body sealed while exercising the exact reader-only delta.
+{
+  const { GENESIS_HISTORICAL_READER_BINDING: binding, GENESIS_HISTORICAL_READER_BINDING_SHA256,
+    assertGenesisHistoricalReaderSourceTransfer, genesisHistoricalReaderHistoricalInput } = await import('../tools/genesis-historical-reader-source-transfer.js');
+  const { economyHardeningSourceBaseline } = await import('../tools/economy-hardening-source-transfer.js');
+  const fixture = binding.file, text = lf(fs.readFileSync(fixture, 'utf8'));
+  const previous = git('show', `${binding.baselineRevision}:${fixture}`);
+  assert.equal(binding.baselineRevision, '009ba651c4b7746351ee3522e3bb9552514bfcb6');
+  assert.equal(git('rev-parse', `${binding.baselineRevision}^{tree}`).trim(), binding.baselineTree);
+  git('merge-base', '--is-ancestor', binding.baselineRevision, 'HEAD');
+  assert.equal(sha(JSON.stringify(binding)), GENESIS_HISTORICAL_READER_BINDING_SHA256);
+  assert.equal(sha(text), binding.currentSha256); assert.equal(gitBlob(text), binding.currentBlob);
+  assert.equal(sha(previous), binding.baselineSha256); assert.equal(gitBlob(previous), binding.baselineBlob);
+  assert.deepEqual(binding.inverses, parseHunks(git('diff', '--no-ext-diff', '--unified=3', binding.baselineRevision, '--', fixture)));
+  assert.equal(binding.inverses.length, 3);
+  assert.equal(WORLD_RECOVERY_REVIEW.sourceFiles['public/genesis-deploy-client.js'], '3c8e2e19ddab7df96c77bb332bda35161e1be242913481b6504539f183d1d2ad');
+  let readerPositive = 0, readerNegative = 0;
+  for (const supplied of [text, text.replaceAll('\n', '\r\n'), Buffer.from(text), Buffer.from(text.replaceAll('\n', '\r\n'))]) {
+    const proof = assertGenesisHistoricalReaderSourceTransfer(fixture, supplied);
+    assert.equal(proof.baselineText, previous); assert.equal(proof.sourceOnly, true);
+    assert.equal(proof.runtime, false); assert.equal(proof.native, false);
+    const projected = genesisHistoricalReaderHistoricalInput(fixture, supplied);
+    assert.equal(Buffer.isBuffer(projected), Buffer.isBuffer(supplied));
+    assert.equal(String(projected), previous);
+    assert.equal(economyHardeningSourceBaseline(fixture, String(supplied)), economyHardeningSourceBaseline(fixture, previous),
+      'Every unchanged outer historical guard must still inspect the complete frozen fixture body');
+    readerPositive++;
+  }
+  assert.equal(genesisHistoricalReaderHistoricalInput(fixture, previous), previous); readerPositive++;
+  assert.throws(() => assertGenesisHistoricalReaderSourceTransfer(fixture, previous)); readerNegative++;
+  const changed = [text + '\n// future unrelated source edit\n', text.slice(1), '\ufeff' + text, text + '\0',
+    text.replace('\n', '\r\n'), text.replace('\n', '\r'),
+    text.replace('fs.readFileSync = fixtureRead', 'fs.readFileSync = originalRead'),
+    text.replace("if (file === 'public/genesis-deploy-client.js')", "if (file.startsWith('public/'))")];
+  for (const inverse of binding.inverses) changed.push(text.replace(inverse.current, ''), text + inverse.current,
+    text.replace(inverse.current, () => inverse.baseline));
+  for (const supplied of changed) {
+    assert.notEqual(supplied, text);
+    assert.throws(() => assertGenesisHistoricalReaderSourceTransfer(fixture, supplied));
+    assert.equal(genesisHistoricalReaderHistoricalInput(fixture, supplied), supplied, 'Changed reader source must reach the original rejecting guards');
+    readerNegative++;
+  }
+  for (const unrelated of ['public/genesis-deploy-client.js', 'test/lib/other.js', './' + fixture, 'test/lib/../lib/rc1-historical-source-fixture.js']) {
+    assert.throws(() => assertGenesisHistoricalReaderSourceTransfer(unrelated, text));
+    assert.equal(genesisHistoricalReaderHistoricalInput(unrelated, text), text); readerNegative++;
+  }
+  for (const invalid of [null, undefined, 42, {}]) {
+    assert.throws(() => assertGenesisHistoricalReaderSourceTransfer(fixture, invalid));
+    assert.equal(genesisHistoricalReaderHistoricalInput(fixture, invalid), invalid); readerNegative++;
+  }
+  const invalidUtf8 = Buffer.from([0xff, 0xfe]);
+  assert.throws(() => assertGenesisHistoricalReaderSourceTransfer(fixture, invalidUtf8));
+  assert.throws(() => genesisHistoricalReaderHistoricalInput(fixture, invalidUtf8)); readerNegative++;
+  assert.equal(readerPositive, 5); assert.equal(readerNegative, 27);
+  console.log(`genesis historical reader: PASS three exact Git hunks, complete predecessor and outer-guard parity, ${readerPositive} positive and ${readerNegative} negative controls; source inspection only`);
+}
