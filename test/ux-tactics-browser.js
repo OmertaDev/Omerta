@@ -147,6 +147,21 @@ try {
   await table.locator('[data-tactics-view="trials"]').waitFor();
   await table.locator('[data-tactics-view="trials"]').click();
   const light = () => table.locator('[data-trial-card="light-touch"]');
+  const reopenTrials = async () => {
+    // This new character's unfinished onboarding lands on Home after boot.
+    // Let that real landing finish so the reload covers the changed view.
+    await page.locator('#tab-start.on').waitFor();
+    const [previous] = await table.elementHandles();
+    await openTab(page, 'streets');
+    if (previous) {
+      await page.waitForFunction(host => !host.isConnected, previous);
+      await previous.dispose();
+    }
+    // The onboarding landing can visit Home during reload, selecting the default
+    // planning view. Reopen Trials before inspecting the persisted practice run.
+    await table.locator('[data-tactics-view="trials"]').click();
+    await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);
+  };
   await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);
   assert.equal(await table.locator('[data-trial-card]').count(), 3);
   assert.match(await table.locator('.ux-tactics-trials').innerText(), /private practice stamps add no currency, items or public rank/);
@@ -171,7 +186,7 @@ try {
         await pool.query('UPDATE characters SET street_action_at=NULL WHERE id=$1', [row.id]);
         await page.reload({ waitUntil: 'domcontentloaded' });
         await page.locator('#screen-main:not(.hidden)').waitFor();
-        await openTab(page, 'streets');
+        await reopenTrials();
         await light().locator('.ux-tactics-trial-status').filter({ hasText: 'In progress · 1 / 2' }).waitFor();
       }
     }
@@ -192,7 +207,7 @@ try {
   await pool.query('UPDATE characters SET generation=2,street_action_at=NULL WHERE id=$1', [row.id]);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.locator('#screen-main:not(.hidden)').waitFor();
-  await openTab(page, 'streets');
+  await reopenTrials();
   await light().locator('.ux-tactics-trial-status').filter({ hasText: 'Not started · 0 / 2' }).waitFor();
 
   // A real failed action carries its pre-action quote into the explanatory receipt.
