@@ -41,6 +41,7 @@ import {
   assertEconomyHardeningCommerceAdmissionTransfer,
   economyHardeningSourceBaseline,
 } from '../tools/economy-hardening-source-transfer.js';
+import { currentEconomicTermsBaseline } from '../tools/current-economic-terms-source-transfer.js';
 import { ECONOMY_READINESS_MERGE_SOURCE, economyHardeningMergeHistoricalInput,
   qualifyEconomyHardeningSuccessorSource } from '../tools/economy-readiness-merge-source-compatibility.js';
 import {
@@ -163,6 +164,8 @@ const socialReceiptSafetyFiles = [
 ];
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
+// These cutover-era checks compare against the pre-release source before older receipt repairs.
+const physicalCutoverSource = file => currentEconomicTermsBaseline(file, fs.readFileSync(file, 'utf8'));
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
   file, fs.readFileSync(file, 'utf8')));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
@@ -426,7 +429,7 @@ for (const file of socialProofCutoverFiles) {
   const predecessorAbsent = socialProofCutoverAdditions.has(file);
   const baseline = predecessorAbsent ? null
     : git('show', ECONOMY_SOCIAL_PROOF_CUTOVER_PREDECESSOR + ':' + file);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = lf(physicalCutoverSource(file));
   assert.equal(physical, current, 'Physical social-proof cutover source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -519,7 +522,7 @@ for (const file of socialReceiptSafetyFiles) {
   const pin = ECONOMY_SOCIAL_RECEIPT_SAFETY_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_PREDECESSOR + ':' + file);
-  const physical = lf(economySocialProofCutoverHistoricalInput(file, fs.readFileSync(file, 'utf8')));
+  const physical = lf(economySocialProofCutoverHistoricalInput(file, physicalCutoverSource(file)));
   assert.equal(physical, current, 'Physical receipt-safety repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [

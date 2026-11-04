@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { currentEconomicTermsBaseline, currentEconomicTermsPin as terms } from '../tools/current-economic-terms-source-transfer.js';
 import {
   ECONOMY_UX_MERGE_SOURCE as pin, ECONOMY_UX_MERGE_FILES, qualifyEconomyUxMergeSource,
   economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput,
@@ -87,3 +88,39 @@ assert.throws(() => qualifyEconomyUxMergeSource(first.file, firstCurrent, 'candi
 console.log(JSON.stringify({ phase: pin.phase, source: pin.sourceRevision, merge: pin.mergeRevision,
   candidateParent: pin.candidateParentRevision, mainParent: pin.mainParentRevision, files: pin.files.length,
   inverseHunks: inverseCount, absentParents, positives, refusals, sourceOnly: true, native: false, runtime: false }));
+
+// Prove the reviewed retail, inventory and account changes compose with both earlier merge parents.
+// These comparisons use full committed blobs. Future edits and unlisted paths receive no transfer.
+assert.equal(terms.source,'b216e52081c378b879f3056bed9b76f5565179ef');
+assert.equal(terms.predecessor,'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9');
+git('merge-base','--is-ancestor',terms.source,'HEAD');
+git('merge-base','--is-ancestor',terms.predecessor,terms.source);
+for (const [rev,tree] of [[terms.source,terms.sourceTree],[terms.predecessor,terms.predecessorTree]])
+  assert.equal(git('rev-parse',rev+'^{tree}').trim(),tree);
+assert.deepEqual(Object.keys(terms.files),['docs/WIKI.md','package.json','public/index.html','public/wiki.html',
+  'schema.sql','src/agentgateway.js','src/chain.js','src/preflight.js','src/routes/modtools.js',
+  'src/rules.tail.js','src/server.js','test/client.js','test/gates.js']);
+for (const [file,row] of Object.entries(terms.files)) {
+  const current=git('show',terms.source+':'+file), prior=git('show',terms.predecessor+':'+file);
+  assert.notEqual(current,prior);
+  for (const [rev,text,record] of [[terms.source,current,row.current],[terms.predecessor,prior,row.baseline]]) {
+    assert.equal(git('ls-tree',rev,'--',file).trim(),record.mode+' blob '+record.blob+'\t'+file);
+    assert.equal(sha(text),record.sha256);
+    assert.equal(Buffer.byteLength(text),record.bytes);
+  }
+  assert.equal(currentEconomicTermsBaseline(file,current),prior);
+  assert.equal(currentEconomicTermsBaseline(file,current.replaceAll('\n','\r\n')),prior);
+  assert.deepEqual(currentEconomicTermsBaseline(file,Buffer.from(current)),Buffer.from(prior));
+  for (const changed of [prior,current+'\n',current.slice(1),current.replace('\n','\r\n'),current+'\0'])
+    assert.strictEqual(currentEconomicTermsBaseline(file,changed),changed);
+  for (const helper of Object.values(helpers)) {
+    assert.equal(helper(file,current),helper(file,prior));
+    assert.equal(helper(file,current+'\n'),current+'\n');
+  }
+  assert.throws(()=>currentEconomicTermsBaseline(file,Buffer.from([255])),/lossless/i);
+}
+for (const path of ['SPEC.md','../src/server.js','constructor','__proto__']) {
+  const blob=Buffer.from([255]);
+  assert.strictEqual(currentEconomicTermsBaseline(path,blob),blob);
+}
+console.log('Verified the complete economic-terms successor and both historical merge-parent routes.');

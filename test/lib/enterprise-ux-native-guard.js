@@ -14,6 +14,17 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  let negatives = 0;
  const reject = run => { assert.throws(run); negatives++; };
  const pin = ENTERPRISE_NATIVE_UX_INPUTS;
+ const nativeEntry = 'tools/enterprise-native.js';
+ assert.equal(JSON.parse(fs.readFileSync('package.json', 'utf8')).scripts['test:agent-economy-enterprise:postgres'], 'node ' + nativeEntry);
+ for (const profile of ['ci', 'local']) {
+  for (const key of ['INVENTORY_BOND_MANIFEST_PATH', 'inventory_bond_manifest_sha256']) {
+   assert.throws(() => execFileSync(process.execPath, [nativeEntry], {
+    env: { ...process.env, ENTERPRISE_NATIVE_PROFILE: profile, [key]: 'forbidden' },
+    stdio: 'pipe', windowsHide: true,
+   }), error => error.status === 1 && String(error.stderr).includes('Inventory bond manifest forbidden during native qualification: ' + key));
+   negatives++;
+  }
+ }
  const fixturePin = (file, blobDigit, shaDigit, mode = '100644') => Object.freeze({ file, mode, blob: blobDigit.repeat(40), sha256: shaDigit.repeat(64) });
  const fixtureFiles = ['src/present-changed.js', 'src/present-unchanged.js', 'src/absent-changed.js', 'src/absent-unchanged.js'];
  const presentBefore = fixturePin(fixtureFiles[0], '1', '2'), presentAfter = fixturePin(fixtureFiles[0], '3', '4'), presentSame = fixturePin(fixtureFiles[1], '5', '6');
@@ -48,7 +59,12 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.files.length, 1729); assert.equal(pin.replacements.length, 84); assert.equal(pin.legacyAdditionReplacements.length, 4); assert.equal(pin.additions.length, 86);
+  assert.equal(pin.files.length, 1736); assert.equal(pin.replacements.length, 98); assert.equal(pin.legacyAdditionReplacements.length, 4); assert.equal(pin.additions.length, 93);
+  for (const file of ['public/inventory-bond-client.js', 'src/inventorybond.js', 'test/inventory-bond-checkout.js',
+   'test/economy-ux-merge-source-compatibility.js', 'tools/current-economic-terms-source-data.js',
+   'tools/current-economic-terms-source-transfer.js', 'tools/generate-current-economic-terms-source-transfer.js']) {
+   assert(pin.additions.some(row => row.file === file), 'Required economic terms input: ' + file);
+  }
   const requiredLegacyReplacements = ['src/accountdaily.js', 'src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
   assert.deepEqual(pin.legacyAdditionReplacements.map(row => row.file), requiredLegacyReplacements);
   const tree = revision => new Map(git('ls-tree', '-r', '-z', revision).toString().split('\0').filter(Boolean).map(line => { const index = line.indexOf('\t'), [mode, type, blob] = line.slice(0, index).split(' '); return [line.slice(index + 1), { mode, type, blob }]; }));

@@ -1,0 +1,22 @@
+# Economic terms and checkout release review
+
+Reviewed on November 4, 2026 for the application merge in PR #316. The application source is commit `b216e52081c378b879f3056bed9b76f5565179ef`, based on `f4474d358e8c9feddcd01deaadf77c1a67ace9cb`. The application diff between these commits is the file inventory. Later commits on the PR qualify that source for the repository checks. The PR records the final revision and hosted results.
+
+## Trust boundaries and checks
+
+| Boundary | Property reviewed | Evidence |
+| --- | --- | --- |
+| ETH receipt to Store ledger | The watcher binds the fee event to the configured tollbooth, transaction, block and nonce. A routed payment also needs the distribution event from the router named by that tollbooth. The Store compares each leg in wei before booking. Direct receipts retain their own split. | `test/watcher.js`, `test/store.js`, `test/router.js`. An additional deterministic run with seed 316 exercised 96 direct and routed payments, alternating between routes, including 1–20 wei. Each incorrect developer amount was rejected. Redelivery produced exactly 96 payment rows. |
+| Ledger to entitlement | The payment row, revenue entries and entitlement share one transaction. Its unique payment nonce serializes duplicate deliveries. Historical payments have a nullable split and retain their original bookings. | On PostgreSQL 18.4 two migrations preserved a 19-wei historical payment. Six simultaneous deliveries of a new 1 ETH + 19 wei payment produced one booking, one three-revive grant and five duplicate responses. The developer remainder was 500000000000000012 wei. |
+| Quote to wallet | The authenticated API reads the linked wallet and checks the operator-supplied manifest digest, chain, runtime code, funding, token eligibility and purchase simulation. The wallet derives the calldata, ETH value and note ID from the displayed terms and checks its active account before sending. | `test/inventory-bond-checkout.js`, `test/chain.js`, `test/client.js`. Cases include modified calldata or value, changed wallet or chain, unexpected code, stale terms and insufficient backing. These tests use a simulated deployment. |
+| Note to vested claim | The note ID binds chain, contract, buyer and nonce. The client saves it before submission and accepts a receipt ID after reload. A claim uses the original contract and recorded beneficiary. A pause on purchases leaves vested claims available. | `test/inventory-bond-checkout.js` exercised reload, paused-sale claim and refusal of an empty repeat claim. `test/bonds.js` covered existing account records. |
+| Treasury ledger and public terms | The Capital Desk explains what spending OMR records before the player authorizes it. The public market text uses the fee constants from the contract source. | `test/current-copy.js`, `test/treasury.js`, `test/docs.js` and `test/routes.js`. |
+
+The review traced the modified entry points and compared the watcher and wallet ABIs with `OmertaFees`, `FeeRevenueRouter` and `OmertaInventoryBondV2`. On Windows with Node 24.19.0, npm 11.17.0 and viem 2.55.1, all 23 changed JavaScript files passed `node --check`. The application diff passed `git diff --check`. The contract tree is identical to the base revision. The PR's Forge run covers that tree.
+
+## Release findings
+
+- **R1, release blocker.** The source checks rejected the changed package scripts, Codex and native enterprise inputs. Earlier changes to age and privacy on main also diverged from the reviewed revision. The source transfer verifies whole-file identities before reconstructing the predecessor. The native proof uses the physical application source. The final hosted runs are linked from the PR.
+- **R2, native test isolation.** The enterprise runner inherited environment variables supplied to its parent. The new bond manifest variables could select an external deployment during an isolated test. The native admission guard rejects these inputs before starting a proof. The regression covers both profiles and case variants.
+
+The merge review covers the application with inventory checkout closed by default. Enabling purchases requires an approved deployment manifest and a purchase, receipt-recovery and vested-claim rehearsal on the funded release runtime. Wallet confirmations, deployed bytecode, live operator settings and treasury wallet balances require independent verification at activation.
