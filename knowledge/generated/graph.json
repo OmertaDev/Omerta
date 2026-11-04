@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a799a021fefe74ad856fc451e2ebfb380667027f",
+  "sourceRevision": "b33dee0c73b1a6b09aebaf75501303a301930592",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17333,
-    "edges": 69470,
+    "nodes": 17335,
+    "edges": 69478,
     "byNodeType": {
       "Artifact": 7058,
       "Command": 300,
-      "Commit": 4972,
+      "Commit": 4974,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5641,
-      "CHANGED": 26753,
+      "CHANGED": 26759,
       "CONTAINS": 7079,
       "DECLARES": 300,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1187,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 4972,
+      "HAS_COMMIT": 4974,
       "IMPLEMENTS": 124,
       "IMPORTS": 8260,
       "INHERITS": 45,
@@ -153450,20 +153450,20 @@
       "path": "test/ux-tactics-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 17332,
-      "lines": 218,
-      "version": "f4fcd87b652487c6",
+      "bytes": 18133,
+      "lines": 233,
+      "version": "634e327105dd093c",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-tactics-browser.js",
           "line": 1,
-          "version": "f4fcd87b652487c6"
+          "version": "634e327105dd093c"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-04T18:23:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "b33dee0c73b1a6b09aebaf75501303a301930592"
     },
     {
       "key": "Artifact:test/ux-tactics.js",
@@ -205174,6 +205174,22 @@
       ]
     },
     {
+      "key": "Commit:7b5daa6041bbb0dc719916068263040866f4a60f",
+      "type": "Commit",
+      "id": "7b5daa6041bbb0dc719916068263040866f4a60f",
+      "label": "Refresh knowledge for qualified UX production release",
+      "title": "Refresh knowledge for qualified UX production release",
+      "date": "2026-10-31T05:27:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7b5daa6041bbb0dc719916068263040866f4a60f",
+      "provenance": [
+        {
+          "commit": "7b5daa6041bbb0dc719916068263040866f4a60f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7b5daa6041bbb0dc719916068263040866f4a60f"
+        }
+      ]
+    },
+    {
       "key": "Commit:7b68baeb7d329fb15257debfaf0428d38d251267",
       "type": "Commit",
       "id": "7b68baeb7d329fb15257debfaf0428d38d251267",
@@ -222482,6 +222498,22 @@
         {
           "commit": "b336678025440ce27c162435463a6daeeca1fb86",
           "url": "https://github.com/OmertaDev/Omerta/commit/b336678025440ce27c162435463a6daeeca1fb86"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b33dee0c73b1a6b09aebaf75501303a301930592",
+      "type": "Commit",
+      "id": "b33dee0c73b1a6b09aebaf75501303a301930592",
+      "label": "Open mastery trials after the real reload landing",
+      "title": "Open mastery trials after the real reload landing",
+      "date": "2026-11-04T18:23:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b33dee0c73b1a6b09aebaf75501303a301930592",
+      "provenance": [
+        {
+          "commit": "b33dee0c73b1a6b09aebaf75501303a301930592",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b33dee0c73b1a6b09aebaf75501303a301930592"
         }
       ]
     },
@@ -274102,6 +274134,9 @@
           "commit": "7b2f6c668f95aaac5ec14e5ab7f0f3e97c7252ad"
         },
         {
+          "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+        },
+        {
           "commit": "7bb02dcfe1dce1cdae75fbea496e7d6f94c1c00d"
         },
         {
@@ -276607,6 +276642,9 @@
           "commit": "7b2f6c668f95aaac5ec14e5ab7f0f3e97c7252ad"
         },
         {
+          "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+        },
+        {
           "commit": "7bb02dcfe1dce1cdae75fbea496e7d6f94c1c00d"
         },
         {
@@ -279110,6 +279148,9 @@
         },
         {
           "commit": "7b2f6c668f95aaac5ec14e5ab7f0f3e97c7252ad"
+        },
+        {
+          "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
         },
         {
           "commit": "7bb02dcfe1dce1cdae75fbea496e7d6f94c1c00d"
@@ -282298,6 +282339,9 @@
           "commit": "7b2f6c668f95aaac5ec14e5ab7f0f3e97c7252ad"
         },
         {
+          "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+        },
+        {
           "commit": "7bb02dcfe1dce1cdae75fbea496e7d6f94c1c00d"
         },
         {
@@ -283928,6 +283972,9 @@
         },
         {
           "commit": "764eaa4112d85d92fa6e4c3780cbab941f5b12d3"
+        },
+        {
+          "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
         },
         {
           "commit": "7bb02dcfe1dce1cdae75fbea496e7d6f94c1c00d"
@@ -298042,7 +298089,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a799a021fefe74ad856fc451e2ebfb380667027f",
+      "revision": "b33dee0c73b1a6b09aebaf75501303a301930592",
       "currentBranch": "codex/ux-player-journeys",
       "defaultBranch": "main",
       "visibility": "public",
@@ -349191,13 +349238,13 @@
       "type": "TestSuite",
       "id": "test/ux-tactics-browser.js",
       "label": "test/ux-tactics-browser.js",
-      "lines": 218,
-      "version": "f4fcd87b652487c6",
+      "lines": 233,
+      "version": "634e327105dd093c",
       "provenance": [
         {
           "file": "test/ux-tactics-browser.js",
           "line": 1,
-          "version": "f4fcd87b652487c6"
+          "version": "634e327105dd093c"
         }
       ]
     },
@@ -495642,6 +495689,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7b5daa6041bbb0dc719916068263040866f4a60f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b5daa6041bbb0dc719916068263040866f4a60f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b5daa6041bbb0dc719916068263040866f4a60f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b5daa6041bbb0dc719916068263040866f4a60f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b5daa6041bbb0dc719916068263040866f4a60f",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7b68baeb7d329fb15257debfaf0428d38d251267",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -534182,6 +534269,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "b336678025440ce27c162435463a6daeeca1fb86"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b33dee0c73b1a6b09aebaf75501303a301930592",
+      "to": "Artifact:test/ux-tactics-browser.js",
+      "provenance": {
+        "commit": "b33dee0c73b1a6b09aebaf75501303a301930592"
       }
     },
     {
@@ -736905,6 +737000,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7b5daa6041bbb0dc719916068263040866f4a60f",
+      "provenance": {
+        "commit": "7b5daa6041bbb0dc719916068263040866f4a60f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7b68baeb7d329fb15257debfaf0428d38d251267",
       "provenance": {
         "commit": "7b68baeb7d329fb15257debfaf0428d38d251267"
@@ -745556,6 +745659,14 @@
       "to": "Commit:b336678025440ce27c162435463a6daeeca1fb86",
       "provenance": {
         "commit": "b336678025440ce27c162435463a6daeeca1fb86"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b33dee0c73b1a6b09aebaf75501303a301930592",
+      "provenance": {
+        "commit": "b33dee0c73b1a6b09aebaf75501303a301930592"
       }
     },
     {

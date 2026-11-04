@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a799a021fefe`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b33dee0c73b1`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4972 |
+| Commits in clone | 4974 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-31 — Prepare auction bidders before the timed bid window |
+| Latest commit | 2026-11-04 — Open mastery trials after the real reload landing |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3999 |
+| OmertaDev | 4001 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 128 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 832 | historical |
-| knowledge/generated/graph-summary.md | 832 | historical |
-| knowledge/generated/graph.json | 832 | historical |
-| knowledge/generated/inventory.md | 832 | historical |
+| knowledge/generated/github-history.md | 833 | historical |
+| knowledge/generated/graph-summary.md | 833 | historical |
+| knowledge/generated/graph.json | 833 | historical |
+| knowledge/generated/inventory.md | 833 | historical |
 | [SPEC.md](../../SPEC.md) | 613 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 491 | yes |
@@ -41,7 +41,7 @@
 | [schema.sql](../../schema.sql) | 381 | yes |
 | knowledge/generated/documents.md | 373 | historical |
 | [package.json](../../package.json) | 346 | yes |
-| knowledge/generated/modules.md | 285 | historical |
+| knowledge/generated/modules.md | 286 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | knowledge/generated/graph.mmd | 224 | historical |
 | [test/gates.js](../../test/gates.js) | 206 | yes |
