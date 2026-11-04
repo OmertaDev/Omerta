@@ -93,15 +93,16 @@ async function kill(player) {
 async function restartProbe(probe) {
   const child = spawn(process.execPath, [fileURLToPath(new URL('./economy-composition-restart.js', import.meta.url))],
     { env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });
+  const exited = new Promise((resolve, reject) => {
+    child.once('error', reject); child.once('close', resolve);
+  });
   let stdout = '', stderr = '';
   const timeout = setTimeout(() => child.kill(), 90_000); timeout.unref();
   child.stdout.on('data', chunk => { stdout += chunk; });
   child.stderr.on('data', chunk => { stderr += chunk; });
   child.stdin.end(JSON.stringify({ ...probe, wall }));
   try {
-    const exitCode = await new Promise((resolve, reject) => {
-      child.once('error', reject); child.once('close', resolve);
-    });
+    const exitCode = await exited;
     assert.equal(exitCode, 0, `${stdout}\n${stderr}`);
     const result = JSON.parse(stdout.trim().split(/\r?\n/).at(-1));
     assert.equal(result.status, 'PASS'); assert.notEqual(result.pid, process.pid);
