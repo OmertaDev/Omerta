@@ -301,11 +301,95 @@ async function modelSocialReceiptQueries(rows) {
   return variants;
 }
 
+// The monitor's private readRows dispatcher has exactly two closed callers; its daily SELECT
+// interpolates only one fixed column list. Pin the complete caller authority and scanner corpus,
+// then capture the actual exported monitor at both row-limit extremes and UTC boundaries. None of
+// these three statements needs an unchecked-query allowance: dates, sources and limits stay bound.
+async function modelEconomyMonitorQueries(rows, dynamicSites) {
+  const rel = 'src/economy-monitor.js';
+  const sourcePin = 'bcd10f2fbc0f45c73243d8a2aaa07d934f603ffe8b83607678ad5582775a25a9';
+  const verifySource = raw => {
+    const lf = canonicalSql(raw);
+    if (lf.includes('\r') || (raw !== lf && raw !== lf.replaceAll('\n', '\r\n'))
+        || createHash('sha256').update(lf).digest('hex') !== sourcePin)
+      throw new Error('economy monitor source changed; review its complete closed SQL model');
+  };
+  const source = readFileSync(path.join(ROOT, rel), 'utf8');
+  verifySource(source);
+  let mutationRejected = false;
+  try { verifySource(source + ' '); }
+  catch (error) {
+    if (!error.message.includes('source changed')) throw error;
+    mutationRejected = true;
+  }
+  if (!mutationRejected) throw new Error('economy monitor SQL model accepted mutated source');
+
+  const checkpoint = "SELECT props FROM telemetry WHERE event='economy_monitor' ORDER BY at DESC,id DESC LIMIT 1";
+  const insert = 'INSERT INTO telemetry (id,event,props,at) VALUES ($1,$2,$3,$4)';
+  const dailyTemplate = `SELECT  FROM transactions t LEFT JOIN characters c ON c.id=t.character_id
+      WHERE t.at >= $1 AND t.at <= $2 AND t.currency=$3 AND t.reason=$4
+      ORDER BY t.at DESC,t.id DESC LIMIT $5`;
+  const expectedReadable = [[rel, checkpoint, []], [rel, dailyTemplate, ['columns']], [rel, insert, []]];
+  const monitorRows = rows.filter(row => row.rel === rel);
+  if (JSON.stringify(monitorRows.map(scannerSignature))
+      !== JSON.stringify(expectedReadable.map(([rel, sql, parts]) => scannerSignature({ rel, sql, parts }))))
+    throw new Error('economy monitor readable SQL call sites changed');
+  const helperSites = dynamicSites.filter(row => row.rel === rel);
+  if (helperSites.length !== 1 || helperSites[0].where !== rel + ':139')
+    throw new Error('economy monitor private SQL dispatcher changed');
+  const dailyRow = monitorRows[1], helper = helperSites[0];
+  const shapes = new Map(['recent', 'daily', 'bounds'].map(name => [name, new Set()]));
+  const { runEconomyMonitor } = await import('../src/economy-monitor.js');
+  for (const rowLimit of [1, 50000]) for (const instant of ['2026-10-31T23:59:59.999Z', '2026-11-01T00:00:00.000Z']) {
+    const now = new Date(instant), calls = [];
+    const client = { query: async (sql, params) => {
+      if (typeof sql !== 'string') throw new Error('economy monitor model captured non-string SQL');
+      calls.push(sql);
+      if (sql === checkpoint) {
+        if (params !== undefined) throw new Error('economy monitor checkpoint acquired unmodeled parameters');
+        return { rows: [] };
+      }
+      if (sql === insert) {
+        if (!Array.isArray(params) || params.length !== 4 || params[1] !== 'economy_monitor'
+            || +params[3] !== +now)
+          throw new Error('economy monitor summary INSERT changed its bound values');
+        return { rows: [] };
+      }
+      const kind = sql.includes('FROM transactions t')
+        ? (sql.includes('t.currency=$3 AND t.reason=$4') ? 'daily' : 'recent')
+        : sql.includes("event='economy_payout_bound'") ? 'bounds' : null;
+      if (!kind) throw new Error('economy monitor model captured an unknown dispatcher query');
+      const count = kind === 'daily' ? 5 : 3;
+      const placeholders = [...sql.matchAll(/\$(\d+)/g)].map(match => Number(match[1]));
+      if (!Array.isArray(params) || params.length !== count || placeholders.length !== count
+          || placeholders.some((placeholder, index) => placeholder !== index + 1)
+          || !(params[0] instanceof Date) || +params[1] !== +now || params.at(-1) !== rowLimit + 1)
+        throw new Error('economy monitor model did not retain dates and limit as separate bound values');
+      if (kind === 'daily' && (!['cash', 'omr'].includes(params[2]) || typeof params[3] !== 'string'))
+        throw new Error('economy monitor daily source values are not bound');
+      shapes.get(kind).add(sql);
+      return { rows: [] };
+    } };
+    const summary = await runEconomyMonitor(client, { now, rowLimit, ledgerRowsWarn: 1000,
+      netCashWarn: 10000000, netOmrWarn: 1000 });
+    if (!summary.ok || calls.length !== summary.dailySources.length + 4
+        || calls[0] !== checkpoint || calls.at(-1) !== insert)
+      throw new Error('economy monitor model did not execute its complete closed query path');
+  }
+  if ([...shapes.values()].some(set => set.size !== 1))
+    throw new Error('economy monitor dates or row limits changed a closed SQL shape');
+  return { variants: new Map([[dailyRow, [...shapes.get('daily')]]]),
+    helper, helperSql: [...shapes.get('recent'), ...shapes.get('bounds')] };
+}
+
 let modeledQueries;
+let monitorModel;
 try {
   modeledQueries = await modelSocialReceiptQueries(readable);
+  monitorModel = await modelEconomyMonitorQueries(readable, unreadableSites);
+  for (const [site, sql] of monitorModel.variants) modeledQueries.set(site, sql);
 } catch (error) {
-  console.error('pgquery refused bounded social-receipt query model: ' + error.message);
+  console.error('pgquery refused bounded runtime query model: ' + error.message);
   process.exit(1);
 }
 let modeledSites = 0, modeledVariants = 0;
@@ -323,10 +407,16 @@ for (const got of readable) {
   if (!DML.test(got.sql)) { skipped.push(got.where); continue; }
   stmts.push({ where: got.where, sql: got.sql });
 }
-if (modeledSites !== 7 || modeledVariants !== 3011) {
-  console.error(`pgquery bounded social-receipt model classified ${modeledSites} sites/${modeledVariants} variants (expected 7/3011)`);
+if (modeledSites !== 8 || modeledVariants !== 3012) {
+  console.error(`pgquery bounded interpolated models classified ${modeledSites} sites/${modeledVariants} variants (expected 8/3012)`);
   process.exit(1);
 }
+const monitorHelperIndex = unreadable.indexOf(monitorModel.helper.where);
+if (monitorHelperIndex < 0 || monitorModel.helperSql.length !== 2)
+  throw new Error('economy monitor modeled dispatcher is not in the unchecked corpus exactly once');
+unreadable.splice(monitorHelperIndex, 1);
+for (let i = 0; i < monitorModel.helperSql.length; i++)
+  stmts.push({ where: `${monitorModel.helper.where} [closed dispatcher ${i + 1}/2]`, sql: monitorModel.helperSql[i] });
 
 // These four Commerce sites stay counted/listed as UNPREPARED. Whole-source pins close the
 // caller/column authority: a 23-column INSERT with bound values; the forward/undo UPDATE over
@@ -404,6 +494,7 @@ for (const s of stmts) {
 // ── 3. REPORT ────────────────────────────────────────────────────────────────────────────────────
 console.log(`\npgquery — ${stmts.length} static/bounded statements prepared against real Postgres`);
 console.log(`  ${modeledVariants} generated variants from ${modeledSites} interpolated sites were materialized and prepared`);
+console.log('  2 closed SELECT shapes from the economy monitor non-literal dispatcher were captured and prepared');
 console.log(`  ${interpolated.length} interpolated (cannot be prepared — counted, never silently passed; PGQUERY_LIST=1 to list)`);
 console.log(`  ${skipped.length} non-DML (DDL / transaction control — not preparable by design)`);
 console.log(`  ${unreadable.length} call sites whose argument is not a literal (a variable or a helper)\n`);
@@ -525,6 +616,10 @@ if (failures.length) {
 // bounded model above invokes their real runtime generators, materializes every admitted cardinality
 // and closed branch (3,011 statements), and PREPAREs each one. Exact scanner signatures and runtime
 // cap assertions fail closed on drift; the pre-R6 measured interpolated corpus therefore remains 172.
+// Economy monitoring adds one fixed-column interpolation and a two-caller private dispatcher. The
+// pinned runtime model above captures and PREPAREs all three shapes instead of consuming new
+// unchecked-query room. Its one non-literal dispatcher is removed only after that complete model
+// succeeds; the 44-site non-literal ceiling is unchanged.
 const CEILING = { interpolated: 173, unreadable: 44 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
