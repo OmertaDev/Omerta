@@ -59,7 +59,7 @@
     let options = { ...initialOptions }, destroyed = false, loading = false, busy = false, epoch = 0, readVersion = 0;
     let identity = options.identity, characterKey = actorKey(options.character), session = null, sessionUnavailable = false;
     let notice = '', noticeBad = false, retry = null;
-    const boards = {}, errors = {}, drafts = new Map(), issuedSalvage = new Map();
+    const boards = {}, errors = {}, drafts = new Map(), issuedSalvage = new Map(), approvedConsents = new Set();
     const root = document.createElement('section');
     root.className = 'business-desk'; root.setAttribute('aria-label', 'Business control desk'); host.replaceChildren(root);
     const active = () => !destroyed && host.isConnected && (!options.isActive || options.isActive());
@@ -68,7 +68,8 @@
     const ready = (...keys) => !!session && !sessionUnavailable && keys.every(key => !!boards[key] && !errors[key]);
     const locked = (...keys) => busy || loading || !!retry || !ready(...keys);
     const button = (action, label, disabled = false) => '<button type="submit" data-business-action="' + action + '"' + (disabled || busy || loading || retry || sessionUnavailable ? ' disabled' : '') + '>' + escape(label) + '</button>';
-    const form = (key, contents, id = '') => '<form data-business-form="' + escape(key) + '"' + (id ? ' data-business-id="' + escape(id) + '"' : '') + '>' + contents + '</form>';
+    const form = (key, contents, id = '', terms = null) => '<form data-business-form="' + escape(key) + '"' + (id ? ' data-business-id="' + escape(id) + '"' : '')
+      + ' data-business-consent-scope="' + escape(JSON.stringify([epoch, identity, characterKey, terms])) + '">' + contents + '</form>';
     const card = (id, contents) => '<article class="business-card" data-business-id="' + escape(id) + '">' + contents + '</article>';
     const missing = keys => keys.filter(key => !ready(key)).map(key => READS[key][1] + (errors[key] ? ' unavailable. Refresh to retry.' : ' has not loaded.'));
     const draft = (key, name, fallback) => drafts.get(key)?.[name] ?? fallback;
@@ -97,6 +98,33 @@
         const item = element.querySelector('[name="itemId"]');
         if (item) element.dataset.businessId = item.value;
       });
+    }
+
+    // Consent is an explicit, in-memory choice for one actor and exact terms.
+    // Preserve it through a harmless redraw, never through a changed request.
+    function consentFingerprint(element) {
+      return JSON.stringify([element.dataset.businessConsentScope, element.dataset.businessForm,
+        [...element.querySelectorAll('[data-business-action]')].map(button => button.dataset.businessAction),
+        [...element.elements].filter(input => input.name && input.name !== 'consent' && input.type !== 'submit')
+          .map(input => [input.name, input.type, input.type === 'checkbox' ? input.checked : input.value])]);
+    }
+    function captureConsents() {
+      approvedConsents.clear();
+      root.querySelectorAll('form[data-business-form]').forEach(element => {
+        if (element.querySelector('[name="consent"]')?.checked) approvedConsents.add(consentFingerprint(element));
+      });
+    }
+    function restoreConsents() {
+      root.querySelectorAll('form[data-business-form]').forEach(element => {
+        const input = element.querySelector('[name="consent"]');
+        if (input) input.checked = approvedConsents.has(consentFingerprint(element));
+      });
+    }
+    function clearEditedConsent(event) {
+      if (event.target.name === 'consent') return;
+      const element = event.target.closest('form[data-business-form]');
+      const input = element?.querySelector('[name="consent"]');
+      if (input) { approvedConsents.delete(consentFingerprint(element)); input.checked = false; }
     }
 
     function cashView() {
@@ -210,7 +238,7 @@
     function referenceForm(kind, row, action, label, explanation, disabled = false) {
       const network = kind === 'courier', id = network ? row.networkId : row.consignmentId;
       return form(kind + '-' + action, hidden(network ? 'networkId' : 'consignmentId', id) + hidden('sourceHash', row.sourceHash)
-        + consent(explanation) + button(action, label, disabled), id);
+        + consent(explanation) + button(action, label, disabled), id, row);
     }
     function courierView() {
       const items = availableItems().filter(item => !liveCourier(item.id) && !offeredSale(item.id)), location = character().loc;
@@ -291,6 +319,7 @@
     function draw() {
       if (destroyed) return;
       captureDrafts();
+      captureConsents();
       const failed = Object.keys(errors).filter(key => errors[key]);
       root.innerHTML = '<header class="business-mast"><div><span>Game-cash business</span><h1>Business control desk</h1><p>Buy → salvage → produce → deliver → sell → reinvest.</p></div><button type="button" data-business-refresh' + (busy || loading ? ' disabled' : '') + '>' + (loading ? 'Updating records…' : 'Refresh records') + '</button></header>'
         + '<nav class="business-nav" aria-label="Business desk sections">' + [['supply', 'Supply & reinvest'], ['production', 'Production'], ['delivery', 'Delivery & travel'], ['sales', 'Sales']].map(([id, label]) => '<button type="button" data-business-section="' + id + '">' + label + '</button>').join('') + '</nav>'
@@ -299,6 +328,7 @@
         + '<div class="business-body" aria-busy="' + String(loading || busy) + '">' + (sessionUnavailable ? empty('Your current session could not be verified. Restore the session, then refresh records. No previous actor’s records are shown.')
           : !session ? empty('Checking your current session…') : cashView() + setupView() + marketView() + salvageView() + productionView() + courierView() + consignmentView() + inventoryView()) + '</div>';
       restoreDrafts();
+      restoreConsents();
     }
 
     function validBoard(key, body) {
@@ -322,7 +352,7 @@
     function invalidate(message, changedActor = false) {
       epoch++; readVersion++; loading = busy = false; session = null; sessionUnavailable = true;
       if (changedActor) retry = null;
-      drafts.clear(); issuedSalvage.clear();
+      drafts.clear(); issuedSalvage.clear(); approvedConsents.clear();
       for (const key of Object.keys(boards)) delete boards[key];
       for (const key of Object.keys(errors)) delete errors[key];
       notice = message; noticeBad = true; root.replaceChildren(); draw();
@@ -459,7 +489,12 @@
       event.preventDefault();
       if (!submitter?.dataset.businessAction || submitter.disabled || busy || loading || retry || sessionUnavailable || !active()) return;
       if (!element.reportValidity()) return;
-      try { const entry = describeAction(element, submitter.dataset.businessAction); run(entry); }
+      try {
+        const entry = describeAction(element, submitter.dataset.businessAction), input = element.querySelector('[name="consent"]');
+        approvedConsents.delete(consentFingerprint(element));
+        if (input) input.checked = false;
+        run(entry);
+      }
       catch (error) { notice = error.message || 'Review the form before continuing.'; noticeBad = true; draw(); }
     });
     root.addEventListener('click', event => {
@@ -471,7 +506,9 @@
         if (section) { section.tabIndex = -1; section.scrollIntoView({ block: 'start', behavior: 'instant' }); section.focus({ preventScroll: true }); }
       }
     });
+    root.addEventListener('input', clearEditedConsent);
     root.addEventListener('change', event => {
+      clearEditedConsent(event);
       if (event.target.name === 'itemId') {
         const element = event.target.closest('form[data-business-form]');
         if (element) element.dataset.businessId = event.target.value;
@@ -488,14 +525,14 @@
         options = nextOptions;
         if (changed) {
           identity = nextIdentity; characterKey = nextCharacterKey; epoch++; readVersion++; loading = busy = false; retry = null; session = null; sessionUnavailable = false;
-          notice = ''; noticeBad = false; drafts.clear(); issuedSalvage.clear();
+          notice = ''; noticeBad = false; drafts.clear(); issuedSalvage.clear(); approvedConsents.clear();
           for (const key of Object.keys(boards)) delete boards[key];
           for (const key of Object.keys(errors)) delete errors[key];
           root.replaceChildren(); draw(); load(); return;
         }
         if (!busy && !loading) load();
       },
-      destroy() { destroyed = true; epoch++; readVersion++; drafts.clear(); issuedSalvage.clear(); root.remove(); },
+      destroy() { destroyed = true; epoch++; readVersion++; drafts.clear(); issuedSalvage.clear(); approvedConsents.clear(); root.remove(); },
     };
   }
   window.OmertaBusinessDesk = Object.freeze({ mount });
