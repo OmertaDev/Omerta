@@ -854,8 +854,8 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     if (economyTicking) return;
     economyTicking = true;
     try {
-      const summary = await runEconomyMonitor(pool, { alert: alertDrift });
-      console.log('[economy monitor]', JSON.stringify(summary));
+      const summary = await safe('economy monitor', () => runEconomyMonitor(pool, { alert: alertDrift }));
+      if (summary) console.log('[economy monitor]', JSON.stringify(summary));
     } catch (error) {
       console.error('worker: economy monitor failed', error);
     } finally { economyTicking = false; }
