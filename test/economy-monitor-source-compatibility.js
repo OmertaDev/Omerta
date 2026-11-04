@@ -111,7 +111,8 @@ for (const file of files) {
     hunks++;
   }
 }
-assert.deepEqual(Object.keys(releasePins), ['.github/workflows/economy-hardening.yml', 'test/gates.js', 'test/economy-composition.js']);
+assert.deepEqual(Object.keys(releasePins), ['.github/workflows/economy-hardening.yml', 'test/gates.js', 'test/economy-composition.js',
+  'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js']);
 assert(Object.isFrozen(releasePins));
 for (const [pin, qualify, historical] of [
   [workerPin, assertEconomyMonitorWorkerSource, economyMonitorWorkerHistoricalInput],
@@ -120,14 +121,24 @@ for (const [pin, qualify, historical] of [
 ]) {
   const { file } = pin, physical = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   const baseline = git('show', `${pin.predecessorRevision}:${file}`);
-  assert.equal(pin.predecessorRevision, file === 'test/gates.js' ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);
+  const priorReleaseSource = ['test/gates.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js'].includes(file);
+  assert.equal(pin.predecessorRevision, priorReleaseSource ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);
   assert.equal(git('show', `${pin.sourceRevision}:${file}`), physical);
   git('merge-base', '--is-ancestor', pin.sourceRevision, 'HEAD');
-  const authoredFiles = pin.sourceRevision === '9a5c784034a9f543cd32e27fd0b73a23e332ee5b'
-    ? ['.github/workflows/economy-hardening.yml', 'test/gates.js'] : [file];
+  const authoredFiles = {
+    '9a5c784034a9f543cd32e27fd0b73a23e332ee5b': ['.github/workflows/economy-hardening.yml', 'test/gates.js'],
+    '5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0': ['test/lib/ux-native-director-guard.js', 'test/vig.js', 'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js'],
+    '29d6861f44bf281182ea55880d4262aaa4cfb8d1': ['test/economy-monitor-source-compatibility.js', 'tools/economy-ux-merge-source-compatibility.js', 'tools/pgquery.js'],
+  }[pin.sourceRevision] || [file];
   assert.deepEqual(git('diff', '--name-only', `${pin.sourceRevision}^`, pin.sourceRevision).trim().split('\n'), authoredFiles);
   assert.equal(hash(physical), pin.currentSha256); assert.equal(blob(physical), pin.currentBlob);
   assert.equal(Buffer.byteLength(physical), pin.currentBytes); assert(Object.isFrozen(pin));
+  if (pin.inverses) {
+    assert.equal(pin.contextLines, 3);
+    assert(Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+    assert.deepEqual(pin.inverses, inverseHunks(git('diff', '--no-ext-diff', '--unified=3',
+      pin.predecessorRevision, pin.sourceRevision, '--', file)));
+  }
   for (const current of [physical, physical.replaceAll('\n', '\r\n')]) {
     const restored = qualify(file, current);
     assert(Object.isFrozen(restored)); assert.equal(restored.baselineText, baseline);
@@ -138,11 +149,19 @@ for (const [pin, qualify, historical] of [
       assert.equal(helper(file, current), helper(file, baseline));
     positives += 5;
   }
+  const replacement = pin.inverses?.[0]?.current || pin.current;
   for (const current of [physical + '\n// drift\n', physical.slice(1), '\ufeff' + physical, physical + '\0',
-    physical.replace('\n', '\r\n'), physical.replace('\n', '\r'), physical.replace(pin.current, ''),
-    physical.replace(pin.current, pin.current + pin.current), baseline, null]) {
+    physical.replace('\n', '\r\n'), physical.replace('\n', '\r'), physical.replace(replacement, ''),
+    physical.replace(replacement, replacement + replacement), baseline, null]) {
     assert.throws(() => qualify(file, current));
     assert.equal(historical(file, current), current); refusals++;
+  }
+  for (const inverse of pin.inverses || []) for (const changed of [
+    physical.replace(inverse.current, ''), physical.replace(inverse.current, inverse.current + inverse.current),
+    physical.replace(inverse.current, inverse.baseline),
+    physical.replace(inverse.current, inverse.current.replace(/\S/, char => char === '?' ? '!' : '?')),
+  ]) {
+    assert.throws(() => qualify(file, changed)); assert.equal(historical(file, changed), changed); refusals++;
   }
   assert.throws(() => historical(file, Buffer.from([0xc3, 0x28]))); refusals++;
   for (const unknown of ['__proto__', 'constructor', 'toString', '../src/worker.js', 'src/unknown.js']) {

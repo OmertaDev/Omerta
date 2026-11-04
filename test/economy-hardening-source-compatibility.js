@@ -54,7 +54,8 @@ import {
 } from '../tools/economy-release-tail-source-transfer.js';
 import { ECONOMY_UX_MERGE_SOURCE,
   economyUxMergeCandidateHistoricalInput,
-  economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
+  economyUxMergeMainHistoricalInput, economyMonitorWorkerHistoricalInput,
+  economyMonitorReaderHistoricalInput, economyMonitorReleaseHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import {
   ECONOMY_BANK_INTEREST_HARDENING_REVISION, ECONOMY_BANK_INTEREST_HARDENING_TREE,
   ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR, ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR_TREE,
@@ -166,7 +167,13 @@ const socialReceiptSafetyFiles = [
 ];
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
-const monitorPhysicalSource = file => economyMonitorHistoricalInput(file, fs.readFileSync(file, 'utf8'));
+const monitorPhysicalSource = file => {
+  let input = fs.readFileSync(file, 'utf8');
+  input = economyMonitorWorkerHistoricalInput(file, input);
+  input = economyMonitorReaderHistoricalInput(file, input);
+  input = economyMonitorReleaseHistoricalInput(file, input);
+  return economyMonitorHistoricalInput(file, input);
+};
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
   file, fs.readFileSync(file, 'utf8')));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
