@@ -359,6 +359,14 @@ each character receives its chosen cosmetic keepsake once, with no currency rewa
 The additive `neighborhood-broadcast` version 1 package leaves existing case definitions
 and their pinned instances unchanged.
 
+After that ending, **What Your Choice Set in Motion** (`neighborhood-afterword`,
+version 1) opens a return visit in the Docks. Carry your actual Brass Tuning Dial
+or Signed First Reel: the live ending opens work connecting the bakery and porter,
+while the archive ending opens a private identification with Elena. In Fieldwork's
+Mysteries, begin the case and investigate its next lead; only your earned route is
+revealed. Three explicit steps record its lasting conclusion. The case grants no
+currency or item and cannot pass a previous character's invitation to an heir.
+
 After the individual graph opens its Crew gate, use
 `GET /v1/worldgraph/operations`, open the listed operation, read the shared
 board and your assigned `/role` board, claim one graph-defined role, contribute

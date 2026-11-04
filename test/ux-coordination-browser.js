@@ -12,7 +12,13 @@ const app = await buildServer(), pool = app.pool, errors = [], artifacts = fs.mk
 let browser;
 const api = async (method, url, token, body) => { const r = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body }); assert.equal(r.statusCode, 200, `${method} ${url}: ${r.body}`); return r.json(); };
 const create = async (name) => { const { token } = await api('POST', '/v1/auth/guest'); await api('POST', '/v1/character', token, { name }); return { token, ch: (await pool.query('SELECT * FROM characters WHERE name=$1', [name])).rows[0] }; };
-const openCrew = async (page, member = true) => { await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('crew'); await page.locator('#jump-list [data-jump="crew"]').click(); await page.locator(member ? '#crew-room' : '#crew-form').waitFor(); await page.locator(member ? '#ux-coordination [data-coord-scope]' : '#ux-coordination [data-coord-join]').waitFor(); };
+const openCrew = async (page, member = true) => {
+  // Returning to this tab briefly shows its prior DOM while the native Crew renderer refreshes.
+  const refreshed = member ? page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/crew/chat' && response.request().method() === 'GET') : null;
+  await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('crew'); await page.locator('#jump-list [data-jump="crew"]').click();
+  if (refreshed) await (await refreshed).finished();
+  await page.locator(member ? '#crew-room' : '#crew-form').waitFor(); await page.locator(member ? '#ux-coordination [data-coord-scope]' : '#ux-coordination [data-coord-join]').waitFor();
+};
 const ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));
 const submit = async (page, type, values) => {
   const f = page.locator(`#ux-coordination form[data-coord-form="${type}"]`), details = f.locator('..');
@@ -94,19 +100,71 @@ try {
   await page.locator('[data-coord-scope]').selectOption('ux-ui-operation');
   assert.match(await page.locator('.ux-coord-roles').innerText(), /Open position/);
   assert.doesNotMatch(await page.locator('#ux-coordination').innerText(), /fourth petal|Cipher Fragment/);
+  const stages = page.locator('.ux-coord-stages');
+  assert.equal(await stages.locator('button').count(), 5, 'the actual operation has a single brief-to-debrief playbook');
+  assert.equal(await stages.locator('[aria-current="step"]').getAttribute('data-coord-stage'), 'brief');
+  await stages.locator('[data-coord-stage="roles"]').click();
+  assert.equal(await stages.locator('[data-coord-stage="roles"]').getAttribute('data-complete'), 'false');
+  assert.equal(await stages.locator('[aria-current="step"]').getAttribute('data-coord-stage'), 'brief', 'reviewing a stage cannot complete it or advance saved progress');
+  await stages.locator('[data-coord-stage="brief"]').click();
+  await page.locator('[data-coord-compose="plan"]').click();
+  assert.deepEqual(await page.evaluate(() => ({ form: document.activeElement.closest('form')?.dataset.coordForm, name: document.activeElement.name })), { form: 'plan', name: 'title' }, 'the playbook opens and focuses the original plan form');
+  await submit(page, 'plan', { title: 'Lockbox operation brief', nextStep: 'Review the open driver role before taking a step.' });
+  assert.equal(await stages.locator('[data-coord-stage="brief"]').getAttribute('data-complete'), 'true');
+  assert.equal(await stages.locator('[aria-current="step"]').getAttribute('data-coord-stage'), 'roles');
+  assert.equal(await stages.locator('[data-coord-stage="ready"]').getAttribute('data-complete'), 'false', 'crew-wide readiness is not reused for an operation');
+  await submit(page, 'readiness', { value: 'ready', note: 'I have reviewed this operation.' });
+  assert.equal(await stages.locator('[data-coord-stage="ready"]').getAttribute('data-complete'), 'true');
+  assert.equal(await stages.locator('[data-coord-stage="roles"]').getAttribute('data-complete'), 'false', 'a ready check never fills the unassigned role');
+  const issuedWrites = [];
+  const recordIssuedWrite = (request) => { if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/v1/worldgraph/')) issuedWrites.push(request.url()); };
+  page.on('request', recordIssuedWrite);
+  const openedOperation = page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/worldgraph/operations/ux-ui-operation' && response.request().method() === 'GET');
+  await page.locator('[data-coord-issued]').click();
+  assert.equal((await openedOperation).status(), 200);
+  await page.locator('.world-fieldwork [data-fieldwork-role="driver"]').waitFor();
+  await page.waitForFunction(() => document.activeElement?.classList.contains('fieldwork-case'));
+  assert.equal(await page.locator('.world-fieldwork [data-fieldwork-view="operations"]').getAttribute('aria-pressed'), 'true', 'the playbook opens the original Crew-operation view');
+  assert.deepEqual(issuedWrites, [], 'opening issued controls performs no gameplay action');
+  page.off('request', recordIssuedWrite);
+  assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM world_operation_roles WHERE operation_id='ux-ui-operation'")).rows[0].n), 1, 'navigation cannot assign the open role');
+  await openCrew(page);
+  assert.equal(await page.locator('[data-coord-scope]').inputValue(), 'ux-ui-operation', 'the selected shared operation is retained after reviewing its issued controls');
   await submit(page, 'clue', { nodeId: 'operation:belladonna-drive' });
   await submit(page, 'handoff', { targetCharacterId: boss.ch.id, note: 'Review the next shared step when you return.' });
   assert.match(await page.locator('#ux-coordination').innerText(), /Handoff to Crew UI Boss/);
   await pool.query("UPDATE world_operations SET status='canceled',canceled_at=now(),close_reason='canceled' WHERE id='ux-ui-operation'");
   await page.locator('#ux-coordination > [data-coord-retry]').click(); await page.locator('[data-coord-debrief]').waitFor();
+  assert.equal(await stages.locator('[aria-current="step"]').getAttribute('data-coord-stage'), 'debrief');
+  assert.equal(await stages.locator('[data-coord-stage="execute"]').getAttribute('data-complete'), 'false', 'a canceled operation is not shown as a successful execution');
+  await page.locator('[data-coord-review-debrief]').click();
+  assert.equal(await page.evaluate(() => document.activeElement?.hasAttribute('data-coord-debrief')), true, 'debrief navigation focuses its original manual creation control');
   await page.locator('[data-coord-debrief]').click(); await ready(page);
   await page.locator('.ux-coord-note h4').filter({ hasText: 'Operation debrief' }).waitFor();
+  assert.equal(await stages.locator('[data-coord-stage="debrief"]').getAttribute('data-complete'), 'true', 'the filed marker follows a real server-created debrief');
+  await page.locator('[data-coord-review-debrief]').click();
+  assert.equal(await page.evaluate(() => document.activeElement?.closest('[data-coord-note-kind="debrief"]')?.dataset.coordNoteKind), 'debrief');
   assert.match(await page.locator('#ux-coordination').innerText(), /canceled/);
   await page.locator('#ux-coordination').scrollIntoViewIfNeeded();
   await page.screenshot({ path: path.join(artifacts, 'ux-coordination-desktop.png') });
   await page.setViewportSize({ width: 390, height: 844 });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2));
   await page.screenshot({ path: path.join(artifacts, 'ux-coordination-mobile.png') });
+  await page.locator('[data-crew-playbook]').scrollIntoViewIfNeeded();
+  await page.screenshot({ path: path.join(artifacts, 'ux-coordination-playbook-mobile.png') });
+  // act() schedules the native Crew repaint after confirming the debrief. Resize/capture
+  // can straddle that replacement, so take the scope, presence and sizes in one ready snapshot.
+  const readyTargets = await page.waitForFunction((operationId) => {
+    const root = document.querySelector('#ux-coordination');
+    if (coordinationContextUnderTest.getState().currentTab !== 'crew' || root?.querySelector('[data-coord-scope]')?.value !== operationId) return false;
+    const buttons = [...root.querySelectorAll('[data-crew-playbook] .ux-coord-stages button')];
+    if (buttons.map((button) => button.dataset.coordStage).join(',') !== 'brief,roles,ready,execute,debrief') return false;
+    const bounds = buttons.map((button) => { const rect = button.getBoundingClientRect(); return { stage: button.dataset.coordStage, width: rect.width, height: rect.height }; });
+    return bounds.every((rect) => rect.height >= 44 && rect.width >= 44) ? bounds : false;
+  }, 'ux-ui-operation');
+  const tapTargets = await readyTargets.jsonValue(); await readyTargets.dispose();
+  assert.equal(tapTargets.length, 5);
+  assert.ok(tapTargets.every((bounds) => bounds.height >= 44 && bounds.width >= 44), 'phone operation-stage tap targets: ' + JSON.stringify(tapTargets));
   let releaseHeld, reportHeld, heldBody, holdNext = true;
   const held = new Promise((resolve) => { reportHeld = resolve; }), release = new Promise((resolve) => { releaseHeld = resolve; });
   await page.route('**/v1/ux/crew-workspace', async (request) => {
@@ -124,6 +182,7 @@ try {
     await page.locator('#ux-coordination [data-coord-join]').waitFor();
     assert.match(await page.locator('#ux-coordination').innerText(), /Join a crew/);
     assert.equal(await page.locator('#ux-coordination form').count(), 0);
+    assert.equal(await page.locator('.ux-coord-flow').count(), 0, 'leaving the Crew also clears its operation playbook');
     const completed = page.waitForResponse((response) => response.url().endsWith('/v1/ux/crew-workspace') && response.request().method() === 'GET');
     releaseHeld(); await completed;
     await page.waitForFunction(() => coordinationReadsPending === 0);
@@ -151,5 +210,5 @@ try {
   assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n), ledgerBefore, 'metadata controls and deliberate chat do not move funds');
   assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM world_operation_roles WHERE operation_id='ux-ui-operation'")).rows[0].n), 1, 'planning controls grant no actual role');
   assert.deepEqual(errors, []);
-  console.log(`ux-coordination-browser: PASS (real persisted forms, distinct crew votes, availability, explicit shared leads/handoff/debrief and previewed chat); screenshots ${artifacts}`);
+  console.log(`ux-coordination-browser: PASS (factual five-stage playbook, exact issued-operation navigation, real persisted forms, distinct crew votes, availability, explicit shared leads/handoff/debrief and previewed chat); screenshots ${artifacts}`);
 } finally { await browser?.close(); await app.close(); }

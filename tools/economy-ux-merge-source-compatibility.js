@@ -113,31 +113,8 @@ export const ECONOMY_MONITOR_RELEASE_SOURCES = Object.freeze({
     predecessorRevision: '9000f2afaf4640e018b2d4026fb7b1ff984a8257',
     currentSha256: '20d42640e5f750f6abc35d7631024a132ad56f375e48b268827fb704c55b7022',
     currentBlob: '7f8426a3f112703709e08b8a1b2546c2d72a7896', currentBytes: 21633,
-    current: `  const child = spawn(process.execPath, [fileURLToPath(new URL('./economy-composition-restart.js', import.meta.url))],
-    { env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });
-  const exited = new Promise((resolve, reject) => {
-    child.once('error', reject); child.once('close', resolve);
-  });
-  let stdout = '', stderr = '';
-  const timeout = setTimeout(() => child.kill(), 90_000); timeout.unref();
-  child.stdout.on('data', chunk => { stdout += chunk; });
-  child.stderr.on('data', chunk => { stderr += chunk; });
-  child.stdin.end(JSON.stringify({ ...probe, wall }));
-  try {
-    const exitCode = await exited;
-`,
-    baseline: `  const child = spawn(process.execPath, [fileURLToPath(new URL('./economy-composition-restart.js', import.meta.url))],
-    { env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });
-  let stdout = '', stderr = '';
-  const timeout = setTimeout(() => child.kill(), 90_000); timeout.unref();
-  child.stdout.on('data', chunk => { stdout += chunk; });
-  child.stderr.on('data', chunk => { stderr += chunk; });
-  child.stdin.end(JSON.stringify({ ...probe, wall }));
-  try {
-    const exitCode = await new Promise((resolve, reject) => {
-      child.once('error', reject); child.once('close', resolve);
-    });
-`, occurrences: 1,
+    current: "  const child = spawn(process.execPath, [fileURLToPath(new URL('./economy-composition-restart.js', import.meta.url))],\n    { env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });\n  const exited = new Promise((resolve, reject) => {\n    child.once('error', reject); child.once('close', resolve);\n  });\n  let stdout = '', stderr = '';\n  const timeout = setTimeout(() => child.kill(), 90_000); timeout.unref();\n  child.stdout.on('data', chunk => { stdout += chunk; });\n  child.stderr.on('data', chunk => { stderr += chunk; });\n  child.stdin.end(JSON.stringify({ ...probe, wall }));\n  try {\n    const exitCode = await exited;\n",
+    baseline: "  const child = spawn(process.execPath, [fileURLToPath(new URL('./economy-composition-restart.js', import.meta.url))],\n    { env: process.env, stdio: ['pipe', 'pipe', 'pipe'] });\n  let stdout = '', stderr = '';\n  const timeout = setTimeout(() => child.kill(), 90_000); timeout.unref();\n  child.stdout.on('data', chunk => { stdout += chunk; });\n  child.stderr.on('data', chunk => { stderr += chunk; });\n  child.stdin.end(JSON.stringify({ ...probe, wall }));\n  try {\n    const exitCode = await new Promise((resolve, reject) => {\n      child.once('error', reject); child.once('close', resolve);\n    });\n", occurrences: 1,
   }),
   "tools/ux-release-phase2-native-catalog.js": Object.freeze({
     "file": "tools/ux-release-phase2-native-catalog.js",

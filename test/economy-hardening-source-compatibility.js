@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
+import { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';
 import {
   ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_SOURCE_TREE,
   ECONOMY_HARDENING_SOURCE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_PREDECESSOR_TREE,
@@ -169,13 +170,14 @@ const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'tes
 const lf = text => text.replaceAll('\r\n', '\n');
 const monitorPhysicalSource = file => {
   let input = fs.readFileSync(file, 'utf8');
+  input = uxAfterwordHistoricalInput(file, input);
   input = economyMonitorWorkerHistoricalInput(file, input);
   input = economyMonitorReaderHistoricalInput(file, input);
   input = economyMonitorReleaseHistoricalInput(file, input);
   return economyMonitorHistoricalInput(file, input);
 };
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
-  file, fs.readFileSync(file, 'utf8')));
+  file, uxAfterwordHistoricalInput(file, fs.readFileSync(file, 'utf8'))));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
