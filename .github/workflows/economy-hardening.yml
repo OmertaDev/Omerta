@@ -62,6 +62,8 @@ jobs:
           [[ "$actual" == 512 ]] || { echo "Unexpected test max_locks_per_transaction: $actual" >&2; exit 1; }
       - name: In-memory exploit and pacing regressions
         run: >-
+          node test/age-eligibility-source-compatibility.js &&
+          node test/economy-monitor-source-compatibility.js &&
           node test/economy-hardening-source-compatibility.js &&
           node test/economy-invariant-hardening.js &&
           node test/checkin-lineage.js &&
