@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "779f3e897072027e90526e4b2c463dc4461af84f",
+  "sourceRevision": "9fdb0bff939680b3ef94049e01efac475cc2af6c",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17324,
-    "edges": 69421,
+    "nodes": 17334,
+    "edges": 69457,
     "byNodeType": {
       "Artifact": 7059,
       "Command": 301,
-      "Commit": 4962,
+      "Commit": 4972,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5642,
-      "CHANGED": 26702,
+      "CHANGED": 26727,
       "CONTAINS": 7080,
       "DECLARES": 301,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1189,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 4962,
+      "HAS_COMMIT": 4972,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8259,
+      "IMPORTS": 8260,
       "INHERITS": 45,
       "REFERENCES": 3871,
       "REPRESENTS": 2617,
@@ -7774,20 +7774,20 @@
       "path": ".github/workflows/economy-hardening.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 5299,
-      "lines": 125,
-      "version": "9f8158f99f3aa7c0",
+      "bytes": 5425,
+      "lines": 127,
+      "version": "1551813fbb50fb14",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/economy-hardening.yml",
           "line": 1,
-          "version": "9f8158f99f3aa7c0"
+          "version": "1551813fbb50fb14"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:42:07.000Z",
+      "lastChangedAt": "2026-11-04T19:43:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9000f2afaf4640e018b2d4026fb7b1ff984a8257"
+      "lastChangedCommit": "9a5c784034a9f543cd32e27fd0b73a23e332ee5b"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -123943,18 +123943,18 @@
       "extension": ".js",
       "bytes": 16574,
       "lines": 247,
-      "version": "bcd10f2fbc0f45c7",
+      "version": "2f08e91725b6692a",
       "text": true,
       "provenance": [
         {
           "file": "src/economy-monitor.js",
           "line": 1,
-          "version": "bcd10f2fbc0f45c7"
+          "version": "2f08e91725b6692a"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:42:07.000Z",
+      "lastChangedAt": "2026-11-04T19:41:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9000f2afaf4640e018b2d4026fb7b1ff984a8257"
+      "lastChangedCommit": "9da329e2be042a105b78c6df089c5c88a4f8ba1f"
     },
     {
       "key": "Artifact:src/economy.js",
@@ -132106,20 +132106,20 @@
       "path": "src/worker.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 87231,
+      "bytes": 87275,
       "lines": 1127,
-      "version": "84d388556abf7e40",
+      "version": "8461ccc60c86ccad",
       "text": true,
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "84d388556abf7e40"
+          "version": "8461ccc60c86ccad"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:42:07.000Z",
+      "lastChangedAt": "2026-11-04T19:39:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9000f2afaf4640e018b2d4026fb7b1ff984a8257"
+      "lastChangedCommit": "fd9ba2014cf7ceb42a7b155bf94a208f9992cfea"
     },
     {
       "key": "Artifact:src/workertraining.js",
@@ -139098,20 +139098,20 @@
       "path": "test/economy-composition.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 21612,
-      "lines": 352,
-      "version": "b9bd2e165f1b792f",
+      "bytes": 21633,
+      "lines": 353,
+      "version": "20d42640e5f750f6",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-composition.js",
           "line": 1,
-          "version": "b9bd2e165f1b792f"
+          "version": "20d42640e5f750f6"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:42:07.000Z",
+      "lastChangedAt": "2026-11-04T19:45:26.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9000f2afaf4640e018b2d4026fb7b1ff984a8257"
+      "lastChangedCommit": "b5155c297f9ab4d097ca4cba1e3ef86babaa449e"
     },
     {
       "key": "Artifact:test/economy-hardening-source-compatibility.js",
@@ -139121,20 +139121,20 @@
       "path": "test/economy-hardening-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 87980,
-      "lines": 1248,
-      "version": "8e20067cbd12e296",
+      "bytes": 88310,
+      "lines": 1255,
+      "version": "6d7395d8695d8a4a",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "8e20067cbd12e296"
+          "version": "6d7395d8695d8a4a"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:49:01.000Z",
+      "lastChangedAt": "2026-11-04T20:01:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "402f74aa2cc69b2e97e76bb87cbacf5330cce909"
+      "lastChangedCommit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
     },
     {
       "key": "Artifact:test/economy-invariant-hardening.js",
@@ -139167,20 +139167,20 @@
       "path": "test/economy-monitor-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8797,
-      "lines": 133,
-      "version": "2ef58a092e13a03c",
+      "bytes": 16054,
+      "lines": 231,
+      "version": "bf816937da2b62d2",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-monitor-source-compatibility.js",
           "line": 1,
-          "version": "2ef58a092e13a03c"
+          "version": "bf816937da2b62d2"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:44:57.000Z",
+      "lastChangedAt": "2026-11-04T20:01:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "77f2bb9a129e146d5e17f6c2875f1917370b159f"
+      "lastChangedCommit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
     },
     {
       "key": "Artifact:test/economy-monitor.js",
@@ -139236,20 +139236,20 @@
       "path": "test/economy-ux-merge-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6431,
+      "bytes": 6432,
       "lines": 90,
-      "version": "a09853ea31cce663",
+      "version": "a0471b64dc4d6d43",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-ux-merge-source-compatibility.js",
           "line": 1,
-          "version": "a09853ea31cce663"
+          "version": "a0471b64dc4d6d43"
         }
       ],
-      "lastChangedAt": "2026-10-26T19:06:06.000Z",
+      "lastChangedAt": "2026-11-04T20:01:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5edb326fe8a77523359780c322f323d23464861e"
+      "lastChangedCommit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
     },
     {
       "key": "Artifact:test/economy.js",
@@ -140869,20 +140869,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 461461,
-      "lines": 5205,
-      "version": "727b8cfba27ab2b1",
+      "bytes": 461700,
+      "lines": 5206,
+      "version": "a30914836d5d503a",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "727b8cfba27ab2b1"
+          "version": "a30914836d5d503a"
         }
       ],
-      "lastChangedAt": "2026-10-27T10:09:34.000Z",
+      "lastChangedAt": "2026-11-04T19:43:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3d1e7efade73521910494dcfdb66590e70b95140"
+      "lastChangedCommit": "9a5c784034a9f543cd32e27fd0b73a23e332ee5b"
     },
     {
       "key": "Artifact:test/gateway-api.js",
@@ -142594,20 +142594,20 @@
       "path": "test/lib/ux-native-director-guard.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7610,
-      "lines": 73,
-      "version": "9c61586bea0737db",
+      "bytes": 9429,
+      "lines": 94,
+      "version": "1cce2f6aaf303737",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/ux-native-director-guard.js",
           "line": 1,
-          "version": "9c61586bea0737db"
+          "version": "1cce2f6aaf303737"
         }
       ],
-      "lastChangedAt": "2026-10-27T03:37:52.000Z",
+      "lastChangedAt": "2026-11-04T19:39:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a4d2df5ad697e86be552d8187f565624fc2c8da9"
+      "lastChangedCommit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
     },
     {
       "key": "Artifact:test/lib/ux-native-reader-source-compatibility.js",
@@ -153588,20 +153588,20 @@
       "path": "test/vig.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23242,
-      "lines": 282,
-      "version": "a568f1a3633f51d4",
+      "bytes": 25338,
+      "lines": 307,
+      "version": "961ff3b60f4926bc",
       "text": true,
       "provenance": [
         {
           "file": "test/vig.js",
           "line": 1,
-          "version": "a568f1a3633f51d4"
+          "version": "961ff3b60f4926bc"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-11-04T19:39:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
     },
     {
       "key": "Artifact:test/vouch.js",
@@ -156371,20 +156371,20 @@
       "path": "tools/economy-ux-merge-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 7769,
-      "lines": 142,
-      "version": "ca6fd1a86117cf5c",
+      "bytes": 46570,
+      "lines": 358,
+      "version": "64b5062c0aeadd8a",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-ux-merge-source-compatibility.js",
           "line": 1,
-          "version": "ca6fd1a86117cf5c"
+          "version": "64b5062c0aeadd8a"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:49:01.000Z",
+      "lastChangedAt": "2026-11-04T20:01:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "402f74aa2cc69b2e97e76bb87cbacf5330cce909"
+      "lastChangedCommit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
     },
     {
       "key": "Artifact:tools/economy-ux-merge-source-data.js",
@@ -156557,18 +156557,18 @@
       "extension": ".js",
       "bytes": 465852,
       "lines": 12446,
-      "version": "4b7009310ac88671",
+      "version": "b1147c2484ab6c9c",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-ux-inputs.js",
           "line": 1,
-          "version": "4b7009310ac88671"
+          "version": "b1147c2484ab6c9c"
         }
       ],
-      "lastChangedAt": "2026-10-31T05:04:42.000Z",
+      "lastChangedAt": "2026-11-04T20:13:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "779f3e897072027e90526e4b2c463dc4461af84f"
+      "lastChangedCommit": "9fdb0bff939680b3ef94049e01efac475cc2af6c"
     },
     {
       "key": "Artifact:tools/enterprise-native-ux-seal.js",
@@ -158165,20 +158165,20 @@
       "path": "tools/pgquery.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 35419,
-      "lines": 556,
-      "version": "ed8d93ce2c634c86",
+      "bytes": 41576,
+      "lines": 651,
+      "version": "0676e31ece6b2412",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgquery.js",
           "line": 1,
-          "version": "ed8d93ce2c634c86"
+          "version": "0676e31ece6b2412"
         }
       ],
-      "lastChangedAt": "2026-10-27T10:09:34.000Z",
+      "lastChangedAt": "2026-11-04T19:47:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3d1e7efade73521910494dcfdb66590e70b95140"
+      "lastChangedCommit": "29d6861f44bf281182ea55880d4262aaa4cfb8d1"
     },
     {
       "key": "Artifact:tools/player-intel-native.js",
@@ -162072,20 +162072,20 @@
       "path": "tools/ux-release-phase2-native-catalog.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 22713,
-      "lines": 299,
-      "version": "4c122b2439ef1986",
+      "bytes": 25797,
+      "lines": 335,
+      "version": "fccef92e9a633a8e",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-release-phase2-native-catalog.js",
           "line": 1,
-          "version": "4c122b2439ef1986"
+          "version": "fccef92e9a633a8e"
         }
       ],
-      "lastChangedAt": "2026-10-27T10:09:34.000Z",
+      "lastChangedAt": "2026-11-04T19:39:23.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3d1e7efade73521910494dcfdb66590e70b95140"
+      "lastChangedCommit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
     },
     {
       "key": "Artifact:tools/ux-source-compatibility.js",
@@ -179386,6 +179386,22 @@
       ]
     },
     {
+      "key": "Commit:29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+      "type": "Commit",
+      "id": "29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+      "label": "Pin current monitoring corrections without weakening prior proofs",
+      "title": "Pin current monitoring corrections without weakening prior proofs",
+      "date": "2026-11-04T19:47:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+      "provenance": [
+        {
+          "commit": "29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/29d6861f44bf281182ea55880d4262aaa4cfb8d1"
+        }
+      ]
+    },
+    {
       "key": "Commit:29d7c6c92f78d4f65aa4657c10adfe6ea2135acf",
       "type": "Commit",
       "id": "29d7c6c92f78d4f65aa4657c10adfe6ea2135acf",
@@ -195130,6 +195146,22 @@
       ]
     },
     {
+      "key": "Commit:5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "type": "Commit",
+      "id": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "label": "Cover monitor SQL and index in existing release proofs",
+      "title": "Cover monitor SQL and index in existing release proofs",
+      "date": "2026-11-04T19:39:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "provenance": [
+        {
+          "commit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
+        }
+      ]
+    },
+    {
       "key": "Commit:5d4242ae41149e49342430579002b8ebd346877e",
       "type": "Commit",
       "id": "5d4242ae41149e49342430579002b8ebd346877e",
@@ -201354,6 +201386,22 @@
       ]
     },
     {
+      "key": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "type": "Commit",
+      "id": "6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "label": "Refresh knowledge for economic monitoring release",
+      "title": "Refresh knowledge for economic monitoring release",
+      "date": "2026-10-31T05:21:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "provenance": [
+        {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6fdc897851ef23e8c2cf691733ad944a7663242a"
+        }
+      ]
+    },
+    {
       "key": "Commit:6feb94051259a1263722bf570b8eac9810cc7ae8",
       "type": "Commit",
       "id": "6feb94051259a1263722bf570b8eac9810cc7ae8",
@@ -205366,6 +205414,22 @@
         {
           "commit": "7bc06d2ffc923a8fb1113ea62b2ca2316aad1df6",
           "url": "https://github.com/OmertaDev/Omerta/commit/7bc06d2ffc923a8fb1113ea62b2ca2316aad1df6"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7bc595840fc836f6bf9f21f8b95523bc83e0ed50",
+      "type": "Commit",
+      "id": "7bc595840fc836f6bf9f21f8b95523bc83e0ed50",
+      "label": "Preserve inherited source refusal diagnostics",
+      "title": "Preserve inherited source refusal diagnostics",
+      "date": "2026-11-04T19:49:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7bc595840fc836f6bf9f21f8b95523bc83e0ed50",
+      "provenance": [
+        {
+          "commit": "7bc595840fc836f6bf9f21f8b95523bc83e0ed50",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7bc595840fc836f6bf9f21f8b95523bc83e0ed50"
         }
       ]
     },
@@ -214906,6 +214970,22 @@
       ]
     },
     {
+      "key": "Commit:9a5c784034a9f543cd32e27fd0b73a23e332ee5b",
+      "type": "Commit",
+      "id": "9a5c784034a9f543cd32e27fd0b73a23e332ee5b",
+      "label": "Run new source proofs and account for restart child probe",
+      "title": "Run new source proofs and account for restart child probe",
+      "date": "2026-11-04T19:43:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9a5c784034a9f543cd32e27fd0b73a23e332ee5b",
+      "provenance": [
+        {
+          "commit": "9a5c784034a9f543cd32e27fd0b73a23e332ee5b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9a5c784034a9f543cd32e27fd0b73a23e332ee5b"
+        }
+      ]
+    },
+    {
       "key": "Commit:9a81c9494cb4fa89c1dca5ea483e1d18db2cfb61",
       "type": "Commit",
       "id": "9a81c9494cb4fa89c1dca5ea483e1d18db2cfb61",
@@ -215786,6 +215866,22 @@
       ]
     },
     {
+      "key": "Commit:9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "type": "Commit",
+      "id": "9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "label": "Preserve exact source proofs across current monitor readers",
+      "title": "Preserve exact source proofs across current monitor readers",
+      "date": "2026-11-04T20:01:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "provenance": [
+        {
+          "commit": "9d31e7489387aa88129a09e05d5cef9770f818f4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9d31e7489387aa88129a09e05d5cef9770f818f4"
+        }
+      ]
+    },
+    {
       "key": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
       "type": "Commit",
       "id": "9d411a75deacc25e76bced570be72209c2bc981f",
@@ -215862,6 +215958,22 @@
         {
           "commit": "9d641d8817b2519a817533eba2f0b069eeb217cb",
           "url": "https://github.com/OmertaDev/Omerta/commit/9d641d8817b2519a817533eba2f0b069eeb217cb"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9da329e2be042a105b78c6df089c5c88a4f8ba1f",
+      "type": "Commit",
+      "id": "9da329e2be042a105b78c6df089c5c88a4f8ba1f",
+      "label": "Declare fixed monitor columns for SQL safety checks",
+      "title": "Declare fixed monitor columns for SQL safety checks",
+      "date": "2026-11-04T19:41:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9da329e2be042a105b78c6df089c5c88a4f8ba1f",
+      "provenance": [
+        {
+          "commit": "9da329e2be042a105b78c6df089c5c88a4f8ba1f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9da329e2be042a105b78c6df089c5c88a4f8ba1f"
         }
       ]
     },
@@ -216630,6 +216742,22 @@
         {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
           "url": "https://github.com/OmertaDev/Omerta/commit/9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9fdb0bff939680b3ef94049e01efac475cc2af6c",
+      "type": "Commit",
+      "id": "9fdb0bff939680b3ef94049e01efac475cc2af6c",
+      "label": "Seal corrected monitoring release native inputs",
+      "title": "Seal corrected monitoring release native inputs",
+      "date": "2026-11-04T20:13:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9fdb0bff939680b3ef94049e01efac475cc2af6c",
+      "provenance": [
+        {
+          "commit": "9fdb0bff939680b3ef94049e01efac475cc2af6c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9fdb0bff939680b3ef94049e01efac475cc2af6c"
         }
       ]
     },
@@ -223142,6 +223270,22 @@
         {
           "commit": "b5042275d98afa9fe6cef3566124ad69ae6fdc2c",
           "url": "https://github.com/OmertaDev/Omerta/commit/b5042275d98afa9fe6cef3566124ad69ae6fdc2c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b5155c297f9ab4d097ca4cba1e3ef86babaa449e",
+      "type": "Commit",
+      "id": "b5155c297f9ab4d097ca4cba1e3ef86babaa449e",
+      "label": "Capture restart probe completion immediately after spawn",
+      "title": "Capture restart probe completion immediately after spawn",
+      "date": "2026-11-04T19:45:26.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b5155c297f9ab4d097ca4cba1e3ef86babaa449e",
+      "provenance": [
+        {
+          "commit": "b5155c297f9ab4d097ca4cba1e3ef86babaa449e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b5155c297f9ab4d097ca4cba1e3ef86babaa449e"
         }
       ]
     },
@@ -245050,6 +245194,22 @@
       ]
     },
     {
+      "key": "Commit:fd9ba2014cf7ceb42a7b155bf94a208f9992cfea",
+      "type": "Commit",
+      "id": "fd9ba2014cf7ceb42a7b155bf94a208f9992cfea",
+      "label": "Use standard worker isolation for economy monitoring",
+      "title": "Use standard worker isolation for economy monitoring",
+      "date": "2026-11-04T19:39:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fd9ba2014cf7ceb42a7b155bf94a208f9992cfea",
+      "provenance": [
+        {
+          "commit": "fd9ba2014cf7ceb42a7b155bf94a208f9992cfea",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fd9ba2014cf7ceb42a7b155bf94a208f9992cfea"
+        }
+      ]
+    },
+    {
       "key": "Commit:fda1ecf935021a5e7d93bed3d4402596ef626697",
       "type": "Commit",
       "id": "fda1ecf935021a5e7d93bed3d4402596ef626697",
@@ -264864,7 +265024,7 @@
         },
         {
           "file": "test/economy-composition.js",
-          "line": 114
+          "line": 115
         },
         {
           "file": "test/economy-monitor.js",
@@ -265904,7 +266064,7 @@
         },
         {
           "file": "test/gates.js",
-          "line": 4148
+          "line": 4149
         },
         {
           "file": "test/launch-invites-browser.js",
@@ -273840,6 +274000,9 @@
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
         },
         {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+        },
+        {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
         },
         {
@@ -276334,6 +276497,9 @@
         },
         {
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
+        },
+        {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
         },
         {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
@@ -278832,6 +278998,9 @@
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
         },
         {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+        },
+        {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
         },
         {
@@ -280482,6 +280651,9 @@
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
         },
         {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+        },
+        {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
@@ -282001,6 +282173,9 @@
         },
         {
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
+        },
+        {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
         },
         {
           "commit": "70fcf41b478cf3020780e9f23fa3ff4e1d6e4a59"
@@ -283740,6 +283915,9 @@
           "commit": "6f6271687704a576a86a9d8acbb4eebb063a908e"
         },
         {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+        },
+        {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
         },
         {
@@ -284854,6 +285032,9 @@
         },
         {
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
+        },
+        {
+          "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
         },
         {
           "commit": "711e005409b67e48860b62656965aa6430cbcd50"
@@ -289132,12 +289313,12 @@
       "id": "src/economy-monitor.js",
       "label": "src/economy-monitor.js",
       "lines": 247,
-      "version": "bcd10f2fbc0f45c7",
+      "version": "2f08e91725b6692a",
       "provenance": [
         {
           "file": "src/economy-monitor.js",
           "line": 1,
-          "version": "bcd10f2fbc0f45c7"
+          "version": "2f08e91725b6692a"
         }
       ]
     },
@@ -294427,12 +294608,12 @@
       "id": "src/worker.js",
       "label": "src/worker.js",
       "lines": 1127,
-      "version": "84d388556abf7e40",
+      "version": "8461ccc60c86ccad",
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "84d388556abf7e40"
+          "version": "8461ccc60c86ccad"
         }
       ]
     },
@@ -297861,7 +298042,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "779f3e897072027e90526e4b2c463dc4461af84f",
+      "revision": "9fdb0bff939680b3ef94049e01efac475cc2af6c",
       "currentBranch": "codex/economy-monitor-composition",
       "defaultBranch": "main",
       "visibility": "public",
@@ -339815,13 +339996,13 @@
       "type": "TestSuite",
       "id": "test/economy-composition.js",
       "label": "test/economy-composition.js",
-      "lines": 352,
-      "version": "b9bd2e165f1b792f",
+      "lines": 353,
+      "version": "20d42640e5f750f6",
       "provenance": [
         {
           "file": "test/economy-composition.js",
           "line": 1,
-          "version": "b9bd2e165f1b792f"
+          "version": "20d42640e5f750f6"
         }
       ]
     },
@@ -339830,13 +340011,13 @@
       "type": "TestSuite",
       "id": "test/economy-hardening-source-compatibility.js",
       "label": "test/economy-hardening-source-compatibility.js",
-      "lines": 1248,
-      "version": "8e20067cbd12e296",
+      "lines": 1255,
+      "version": "6d7395d8695d8a4a",
       "provenance": [
         {
           "file": "test/economy-hardening-source-compatibility.js",
           "line": 1,
-          "version": "8e20067cbd12e296"
+          "version": "6d7395d8695d8a4a"
         }
       ]
     },
@@ -339860,13 +340041,13 @@
       "type": "TestSuite",
       "id": "test/economy-monitor-source-compatibility.js",
       "label": "test/economy-monitor-source-compatibility.js",
-      "lines": 133,
-      "version": "2ef58a092e13a03c",
+      "lines": 231,
+      "version": "bf816937da2b62d2",
       "provenance": [
         {
           "file": "test/economy-monitor-source-compatibility.js",
           "line": 1,
-          "version": "2ef58a092e13a03c"
+          "version": "bf816937da2b62d2"
         }
       ]
     },
@@ -339906,12 +340087,12 @@
       "id": "test/economy-ux-merge-source-compatibility.js",
       "label": "test/economy-ux-merge-source-compatibility.js",
       "lines": 90,
-      "version": "a09853ea31cce663",
+      "version": "a0471b64dc4d6d43",
       "provenance": [
         {
           "file": "test/economy-ux-merge-source-compatibility.js",
           "line": 1,
-          "version": "a09853ea31cce663"
+          "version": "a0471b64dc4d6d43"
         }
       ]
     },
@@ -340820,13 +341001,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 5205,
-      "version": "727b8cfba27ab2b1",
+      "lines": 5206,
+      "version": "a30914836d5d503a",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "727b8cfba27ab2b1"
+          "version": "a30914836d5d503a"
         }
       ]
     },
@@ -341930,13 +342111,13 @@
       "type": "TestSuite",
       "id": "test/lib/ux-native-director-guard.js",
       "label": "test/lib/ux-native-director-guard.js",
-      "lines": 73,
-      "version": "9c61586bea0737db",
+      "lines": 94,
+      "version": "1cce2f6aaf303737",
       "provenance": [
         {
           "file": "test/lib/ux-native-director-guard.js",
           "line": 1,
-          "version": "9c61586bea0737db"
+          "version": "1cce2f6aaf303737"
         }
       ]
     },
@@ -349100,13 +349281,13 @@
       "type": "TestSuite",
       "id": "test/vig.js",
       "label": "test/vig.js",
-      "lines": 282,
-      "version": "a568f1a3633f51d4",
+      "lines": 307,
+      "version": "961ff3b60f4926bc",
       "provenance": [
         {
           "file": "test/vig.js",
           "line": 1,
-          "version": "a568f1a3633f51d4"
+          "version": "961ff3b60f4926bc"
         }
       ]
     },
@@ -349700,13 +349881,13 @@
       "type": "Workflow",
       "id": ".github/workflows/economy-hardening.yml",
       "label": ".github/workflows/economy-hardening.yml",
-      "lines": 125,
-      "version": "9f8158f99f3aa7c0",
+      "lines": 127,
+      "version": "1551813fbb50fb14",
       "provenance": [
         {
           "file": ".github/workflows/economy-hardening.yml",
           "line": 1,
-          "version": "9f8158f99f3aa7c0"
+          "version": "1551813fbb50fb14"
         }
       ]
     },
@@ -430743,6 +430924,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+      "to": "Artifact:test/economy-monitor-source-compatibility.js",
+      "provenance": {
+        "commit": "29d6861f44bf281182ea55880d4262aaa4cfb8d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+      "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
+      "provenance": {
+        "commit": "29d6861f44bf281182ea55880d4262aaa4cfb8d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+      "to": "Artifact:tools/pgquery.js",
+      "provenance": {
+        "commit": "29d6861f44bf281182ea55880d4262aaa4cfb8d1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:29d7c6c92f78d4f65aa4657c10adfe6ea2135acf",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -468735,6 +468940,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "to": "Artifact:test/lib/ux-native-director-guard.js",
+      "provenance": {
+        "commit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "to": "Artifact:test/vig.js",
+      "provenance": {
+        "commit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "to": "Artifact:tools/pgquery.js",
+      "provenance": {
+        "commit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "to": "Artifact:tools/ux-release-phase2-native-catalog.js",
+      "provenance": {
+        "commit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5d4242ae41149e49342430579002b8ebd346877e",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -483711,6 +483948,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6feb94051259a1263722bf570b8eac9810cc7ae8",
       "to": "Artifact:test/rc1-law-world-adapter.js",
       "provenance": {
@@ -495915,6 +496208,14 @@
       "to": "Artifact:test/levers.js",
       "provenance": {
         "commit": "7bc06d2ffc923a8fb1113ea62b2ca2316aad1df6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7bc595840fc836f6bf9f21f8b95523bc83e0ed50",
+      "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
+      "provenance": {
+        "commit": "7bc595840fc836f6bf9f21f8b95523bc83e0ed50"
       }
     },
     {
@@ -517375,6 +517676,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9a5c784034a9f543cd32e27fd0b73a23e332ee5b",
+      "to": "Artifact:.github/workflows/economy-hardening.yml",
+      "provenance": {
+        "commit": "9a5c784034a9f543cd32e27fd0b73a23e332ee5b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9a5c784034a9f543cd32e27fd0b73a23e332ee5b",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "9a5c784034a9f543cd32e27fd0b73a23e332ee5b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9a81c9494cb4fa89c1dca5ea483e1d18db2cfb61",
       "to": "Artifact:src/rwahealthclearance.js",
       "provenance": {
@@ -519439,6 +519756,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "to": "Artifact:test/economy-hardening-source-compatibility.js",
+      "provenance": {
+        "commit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "to": "Artifact:test/economy-monitor-source-compatibility.js",
+      "provenance": {
+        "commit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "to": "Artifact:test/economy-ux-merge-source-compatibility.js",
+      "provenance": {
+        "commit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
+      "provenance": {
+        "commit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
       "to": "Artifact:test/classic-interface-source-compatibility.js",
       "provenance": {
@@ -519611,6 +519960,14 @@
       "to": "Artifact:tools/rc1-native-commit-observer.js",
       "provenance": {
         "commit": "9d641d8817b2519a817533eba2f0b069eeb217cb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9da329e2be042a105b78c6df089c5c88a4f8ba1f",
+      "to": "Artifact:src/economy-monitor.js",
+      "provenance": {
+        "commit": "9da329e2be042a105b78c6df089c5c88a4f8ba1f"
       }
     },
     {
@@ -522739,6 +523096,14 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9fdb0bff939680b3ef94049e01efac475cc2af6c",
+      "to": "Artifact:tools/enterprise-native-ux-inputs.js",
+      "provenance": {
+        "commit": "9fdb0bff939680b3ef94049e01efac475cc2af6c"
       }
     },
     {
@@ -535571,6 +535936,14 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "commit": "b5042275d98afa9fe6cef3566124ad69ae6fdc2c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b5155c297f9ab4d097ca4cba1e3ef86babaa449e",
+      "to": "Artifact:test/economy-composition.js",
+      "provenance": {
+        "commit": "b5155c297f9ab4d097ca4cba1e3ef86babaa449e"
       }
     },
     {
@@ -612307,6 +612680,14 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "fd986263f768fba96d161cd255e0da476471a176"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fd9ba2014cf7ceb42a7b155bf94a208f9992cfea",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "commit": "fd9ba2014cf7ceb42a7b155bf94a208f9992cfea"
       }
     },
     {
@@ -696532,7 +696913,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1865
+      "weight": 1867
     },
     {
       "type": "DEPENDS_ON",
@@ -723434,6 +723815,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:29d6861f44bf281182ea55880d4262aaa4cfb8d1",
+      "provenance": {
+        "commit": "29d6861f44bf281182ea55880d4262aaa4cfb8d1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:29d7c6c92f78d4f65aa4657c10adfe6ea2135acf",
       "provenance": {
         "commit": "29d7c6c92f78d4f65aa4657c10adfe6ea2135acf"
@@ -731306,6 +731695,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0",
+      "provenance": {
+        "commit": "5d364a6aa6ff1f5e90a56b056ccc7974c8e4a1f0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5d4242ae41149e49342430579002b8ebd346877e",
       "provenance": {
         "commit": "5d4242ae41149e49342430579002b8ebd346877e"
@@ -734418,6 +734815,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6fdc897851ef23e8c2cf691733ad944a7663242a",
+      "provenance": {
+        "commit": "6fdc897851ef23e8c2cf691733ad944a7663242a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6feb94051259a1263722bf570b8eac9810cc7ae8",
       "provenance": {
         "commit": "6feb94051259a1263722bf570b8eac9810cc7ae8"
@@ -736421,6 +736826,14 @@
       "to": "Commit:7bc06d2ffc923a8fb1113ea62b2ca2316aad1df6",
       "provenance": {
         "commit": "7bc06d2ffc923a8fb1113ea62b2ca2316aad1df6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7bc595840fc836f6bf9f21f8b95523bc83e0ed50",
+      "provenance": {
+        "commit": "7bc595840fc836f6bf9f21f8b95523bc83e0ed50"
       }
     },
     {
@@ -741194,6 +741607,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9a5c784034a9f543cd32e27fd0b73a23e332ee5b",
+      "provenance": {
+        "commit": "9a5c784034a9f543cd32e27fd0b73a23e332ee5b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9a81c9494cb4fa89c1dca5ea483e1d18db2cfb61",
       "provenance": {
         "commit": "9a81c9494cb4fa89c1dca5ea483e1d18db2cfb61"
@@ -741634,6 +742055,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9d31e7489387aa88129a09e05d5cef9770f818f4",
+      "provenance": {
+        "commit": "9d31e7489387aa88129a09e05d5cef9770f818f4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9d411a75deacc25e76bced570be72209c2bc981f",
       "provenance": {
         "commit": "9d411a75deacc25e76bced570be72209c2bc981f"
@@ -741669,6 +742098,14 @@
       "to": "Commit:9d641d8817b2519a817533eba2f0b069eeb217cb",
       "provenance": {
         "commit": "9d641d8817b2519a817533eba2f0b069eeb217cb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9da329e2be042a105b78c6df089c5c88a4f8ba1f",
+      "provenance": {
+        "commit": "9da329e2be042a105b78c6df089c5c88a4f8ba1f"
       }
     },
     {
@@ -742053,6 +742490,14 @@
       "to": "Commit:9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
       "provenance": {
         "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9fdb0bff939680b3ef94049e01efac475cc2af6c",
+      "provenance": {
+        "commit": "9fdb0bff939680b3ef94049e01efac475cc2af6c"
       }
     },
     {
@@ -745309,6 +745754,14 @@
       "to": "Commit:b5042275d98afa9fe6cef3566124ad69ae6fdc2c",
       "provenance": {
         "commit": "b5042275d98afa9fe6cef3566124ad69ae6fdc2c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b5155c297f9ab4d097ca4cba1e3ef86babaa449e",
+      "provenance": {
+        "commit": "b5155c297f9ab4d097ca4cba1e3ef86babaa449e"
       }
     },
     {
@@ -756261,6 +756714,14 @@
       "to": "Commit:fd986263f768fba96d161cd255e0da476471a176",
       "provenance": {
         "commit": "fd986263f768fba96d161cd255e0da476471a176"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fd9ba2014cf7ceb42a7b155bf94a208f9992cfea",
+      "provenance": {
+        "commit": "fd9ba2014cf7ceb42a7b155bf94a208f9992cfea"
       }
     },
     {
@@ -792210,7 +792671,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/economy-composition.js",
-        "line": 123
+        "line": 124
       }
     },
     {
@@ -792219,7 +792680,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/economy-composition.js",
-        "line": 124
+        "line": 125
       }
     },
     {
@@ -792228,7 +792689,7 @@
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/economy-composition.js",
-        "line": 122
+        "line": 123
       }
     },
     {
@@ -792237,7 +792698,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/economy-composition.js",
-        "line": 114
+        "line": 115
       }
     },
     {
@@ -792283,15 +792744,6 @@
       "provenance": {
         "file": "test/economy-invariant-hardening.js",
         "line": 8
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/economy-monitor-source-compatibility.js",
-      "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
-      "provenance": {
-        "file": "test/economy-monitor-source-compatibility.js",
-        "line": 13
       }
     },
     {
@@ -795819,7 +796271,7 @@
       "to": "Artifact:tools/company-autonomy-native.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3925
+        "line": 3926
       }
     },
     {
@@ -795828,7 +796280,7 @@
       "to": "Artifact:tools/company-autonomy-native.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 4423
+        "line": 4424
       }
     },
     {
@@ -795891,7 +796343,7 @@
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "test/gates.js",
-        "line": 4148
+        "line": 4149
       }
     },
     {
@@ -825093,6 +825545,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/economy-ux-merge-source-compatibility.js",
+      "to": "Artifact:src/economy-monitor.js",
+      "provenance": {
+        "file": "tools/economy-ux-merge-source-compatibility.js",
+        "line": 205
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "to": "Artifact:tools/age-eligibility-source-transfer.js",
       "provenance": {
         "file": "tools/economy-ux-merge-source-compatibility.js",
@@ -827103,7 +827564,16 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "tools/pgquery.js",
-        "line": 380
+        "line": 470
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/pgquery.js",
+      "to": "Artifact:src/economy-monitor.js",
+      "provenance": {
+        "file": "tools/pgquery.js",
+        "line": 342
       }
     },
     {
@@ -899103,7 +899573,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/economy-composition.js",
-        "line": 123
+        "line": 124
       }
     },
     {
@@ -899112,7 +899582,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/economy-composition.js",
-        "line": 124
+        "line": 125
       }
     },
     {

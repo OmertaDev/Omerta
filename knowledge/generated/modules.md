@@ -224,7 +224,7 @@
 | [src/earningreceipts.js](../../src/earningreceipts.js) | 67 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/economicdependencymap.js](../../src/economicdependencymap.js) | 69 | platform-core | 2 / 3 | 1 | 6 | 2 |
 | [src/economicintelligence.js](../../src/economicintelligence.js) | 79 | platform-core | 5 / 4 | 6 | 8 | 1 |
-| [src/economy-monitor.js](../../src/economy-monitor.js) | 247 | platform-core | 0 / 3 | 0 | 5 | 1 |
+| [src/economy-monitor.js](../../src/economy-monitor.js) | 247 | platform-core | 0 / 5 | 0 | 5 | 1 |
 | [src/economy.js](../../src/economy.js) | 748 | economy-ledger | 7 / 50 | 26 | 18 | 46 |
 | [src/emission.js](../../src/emission.js) | 34 | economy-ledger | 1 / 2 | 1 | 0 | 1 |
 | [src/employmentorganizations.js](../../src/employmentorganizations.js) | 64 | platform-core | 4 / 6 | 0 | 9 | 1 |
