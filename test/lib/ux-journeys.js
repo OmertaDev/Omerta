@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSource, uxAfterwordHistoricalInput } from '../../tools/ux-afterword-source-compatibility.js';
 import { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';
+import { combinedEconomicDeedInput } from '../../tools/combined-economic-deed-source-transfer.js';
 
 export async function runJourneyModelProof() {
   runAfterwordSourceProof();
@@ -94,13 +95,14 @@ export function runAfterwordSourceProof() {
     const current = git('show', pin.revision + ':' + row.file), baseline = git('show', pin.targetRevision + ':' + row.file);
     assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });
     assert.deepEqual(record(pin.targetRevision, row.file), { mode: row.targetMode, blob: row.targetBlob });
-    assert.deepEqual(record('HEAD', row.file), record(pin.revision, row.file), 'Actual checked-out content remains the authored successor');
+    const committed = combinedEconomicDeedInput(row.file, git('show', 'HEAD:' + row.file));
+    assert.deepEqual({ mode: record('HEAD', row.file).mode, blob: blob(committed) }, record(pin.revision, row.file), 'Reviewed combined source reconstructs the authored successor');
     assert.deepEqual(row.inverses, gitInverses(row.file), 'Every ordered inverse is the actual context-three Git hunk');
     assert.equal(sha(current), row.currentSha256); assert.equal(blob(current), row.currentBlob); assert.equal(Buffer.byteLength(current), row.currentBytes);
     assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);
     const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);
     if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');
-    const physical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
+    const physical = combinedEconomicDeedInput(row.file, readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8'));
     assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
     for (const input of [current, current.replaceAll('\n', '\r\n')]) {
       const proof = qualifyUxAfterwordSource(row.file, input);
