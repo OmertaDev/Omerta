@@ -80,6 +80,10 @@ try {
   await propertyStep('verify-title', 'property_verify_title', 'docks');
   const verified = await call('GET', '/v1/ux/story/property-investigation', alice);
   assert.equal(verified.epilogue.branch, 'witness'); assert.match(verified.epilogue.text, /Mara/); assert.match(verified.epilogue.text, /separate action/);
+  assert.match(verified.variants.find(node => node.nodeId === 'mystery:property-verify-title').text, /once you reach Level 25/);
+  const propertyBoard = await call('GET', '/v1/worldgraph/mysteries/property-investigation', alice);
+  assert.match(propertyBoard.nodes.find(node => node.id === 'mystery:property-verify-title').dialogue,
+    /Gameplay property claims unlock at Level 25\./);
   assert.equal(verified.letters[0].from, 'Irene Bell');
   const overview = await call('GET', '/v1/ux/story', alice);
   assert.deepEqual(overview.crossover.prerequisites, [listener.instanceId, verified.instanceId]);

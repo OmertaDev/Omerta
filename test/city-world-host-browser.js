@@ -1537,11 +1537,11 @@ try {
   // The current real successor is the seller; no additional account is created.
   await app.pool.query('UPDATE characters SET respect=500000,energy=100,cash=cash+2000 WHERE account_id=$1 AND alive',
     [viewer.character.account_id]);
-  await earnBuildingClaim(app, viewer.token, 'brick-0417');
+  await earnBuildingClaim(app, viewer.token, 'brick-0167');
   const seller = await currentActor(viewer); assert(seller && seller.id !== viewer.character.id);
   const sellerPage = await newPage({ width: 1440, height: 1000 }, { actor: viewer });
   await enterDeeds(sellerPage.page); await sellerPage.page.locator('#deed-atlas-open').click();
-  await sellerPage.page.locator('[data-property="brick-0417"]').focus();
+  await sellerPage.page.locator('[data-property="brick-0167"]').focus();
   await sellerPage.page.keyboard.press('Enter');
   await sellerPage.page.locator('#deed-property-name').waitFor();
   const street = 'Connected World Street', key = street.toLowerCase(), propertyDistrict = 'brick';
@@ -1562,7 +1562,7 @@ try {
   assert.equal(claimedBoard.districtId, propertyDistrict); assert.equal(claimedBoard.placement, 'illustrative');
   assert.equal(claimedBoard.myHome.key, key); assert.equal(claimedBoard.myHome.mine, true);
   assert.deepEqual(Object.keys(claimedBoard.myHome).sort(), ['buildingId', 'districtId', 'key', 'mine', 'owner', 'ownership', 'street']);
-  assert.equal(claimedBoard.myHome.buildingId, 'brick-0417');
+  assert.equal(claimedBoard.myHome.buildingId, 'brick-0167');
   assert.deepEqual(Object.keys(claimedBoard.myHome.owner).sort(), ['kind', 'name']);
   const deeds = await app.inject({ url: '/v1/deeds', headers: viewer.headers }); assert.equal(deeds.statusCode, 200);
   const salePrice = deeds.json().market.minPrice;

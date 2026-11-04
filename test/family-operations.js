@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { isDeepStrictEqual } from 'node:util';
 import { newDb, DataType } from 'pg-mem';
 import { dbCaps, registerPgMemCompatibility } from '../src/db.js';
@@ -188,6 +189,7 @@ function faultPool(match) {
 
 try {
   await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+  await migrateDeedBenefitStorage(pool);
   for (const [roleId, accountId] of Object.entries(actors)) await player(accountId, names[roleId]);
   await player(outsider, 'Family Outsider');
   const crew = await social(boss, (ch, client, h) => createCrew(ch, 'Archive Crew', client, h));

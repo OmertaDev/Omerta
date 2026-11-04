@@ -10,6 +10,7 @@ import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInp
 import { currentEconomicTermsBaseline } from '../tools/current-economic-terms-source-transfer.js';
 import { economySocialProofCutoverHistoricalInput } from '../tools/economy-social-proof-cutover-source-transfer.js';
 import { COMMERCE_CURRENT_BOOT_READER } from '../tools/commerce-current-native-data.js';
+import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 const pin = SALE_SOURCE;
@@ -33,7 +34,7 @@ let positives = 0, refusals = 0, hunks = 0;
 for (const row of pin.files) {
   const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
   const historical = raw => economySocialProofCutoverHistoricalInput(row.file,
-    uxAfterwordHistoricalInput(row.file, currentEconomicTermsBaseline(row.file, raw)));
+    uxAfterwordHistoricalInput(row.file, currentEconomicTermsBaseline(row.file, deedAllocationHistoricalInput(row.file, raw))));
   const physical = historical(fs.readFileSync(row.file, 'utf8'));
   const committed = historical(git('show', 'HEAD:' + row.file));
   const stat = fs.lstatSync(row.file);
@@ -96,6 +97,8 @@ for (const hook of ["import { uxAfterwordHistoricalInput } from './ux-afterword-
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
 let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
+  ["import { deedAllocationHistoricalInput } from './deed-allocation-source-transfer.js';\n", 1],
+  ['  input = deedAllocationHistoricalInput(file, input);\n', 2],
   ["import { currentEconomicTermsBaseline } from './current-economic-terms-source-transfer.js';\n", 1],
   ['  input = currentEconomicTermsBaseline(file, input);\n', 2],
   ["import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';\n", 1],

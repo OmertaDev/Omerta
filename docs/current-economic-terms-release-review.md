@@ -4,6 +4,8 @@ Reviewed on November 4, 2026 for the application merge in PR #316. The applicati
 
 The integration base advanced to `c4b626b631b04e594097fb6bb416c36fdfea00f3` after PR #312 merged. All 23 changed application, configuration, schema and public asset files in the economic patch retained their reviewed Git blobs. Both source checks cover `src/server.js`. Their distinct approved revisions reconstruct the same earlier file, and all 13 economic source domains retained their original base blobs on the new main revision.
 
+PR #311 subsequently merged at `4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364`. Its Deed rules reserve 1,000 buildings for gameplay, 1,000 for paid issuance and 500 for partnerships. The site now distinguishes level 25 gameplay discovery and operating benefits from signed extraction. Paid primary pricing awaits announcement. All 12 backend modules changed for this economic release retain their reviewed Git blobs. The Store, watcher, chain and inventory bond checks passed again after integrating the Deed migrations and client changes.
+
 ## Trust boundaries and checks
 
 | Boundary | Property reviewed | Evidence |

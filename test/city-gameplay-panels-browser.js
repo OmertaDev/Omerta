@@ -312,7 +312,7 @@ try {
     await adventureRevisionJourney(viewport);
     await npcJourney(viewport);
     const actor = await create('Panel Browser ' + viewport.width), street = 'Panel Home ' + viewport.width;
-    const buildingId = viewport.width <= 680 ? 'docks-0417' : 'docks-0416';
+    const buildingId = viewport.width <= 680 ? 'docks-0167' : 'docks-0166';
     await earnBuildingClaim(app, actor.token, buildingId);
     const claim = await post(actor, '/v1/deeds/claim', { name: street, buildingId }); assert.equal(claim.statusCode, 200, claim.body);
     const directory = await get(actor, '/v1/city/homes?district=docks'); assert(directory.myHome);
@@ -547,7 +547,7 @@ try {
     const homeEntry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), homePose = (await state(fixture)).position;
     const guestHomes = [];
     for (const [index, host] of members.slice(1).entries()) {
-      const buildingId = 'foundry-' + String(417 - index - (viewport.width <= 680 ? 0 : 20)).padStart(4, '0');
+      const buildingId = 'foundry-' + String(167 - index - (viewport.width <= 680 ? 0 : 20)).padStart(4, '0');
       await earnBuildingClaim(app, host.token, buildingId);
       await success(post(host, '/v1/deeds/claim', { name: 'Panel Visit ' + index + ' ' + viewport.width, buildingId }));
       const home = (await get(host, '/v1/city/homes?district=foundry')).myHome; assert(home);

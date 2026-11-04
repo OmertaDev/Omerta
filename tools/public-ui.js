@@ -153,25 +153,6 @@ try {
   check(firstFrame.over <= 1, `desktop landing scrolls sideways by ${firstFrame.over}px`);
   check(firstFrame.editorial && !firstFrame.announcesLive,
     'the fictional landing feed is not programmatically identified as editorial flavor');
-  // A 1728px MacBook Pro report exposed the hero's right edge as black while the animated layer played.
-  // Both the first-paint still and the progressively-mounted video must be centered on the VIEWPORT,
-  // not sized from the 1080px copy column that happens to own them in the DOM.
-  await desktop.setViewportSize({ width: 1728, height: 1117 });
-  const wideHero = await desktop.evaluate(() => {
-    const hero = document.querySelector('#screen-auth .hero');
-    const still = document.querySelector('#screen-auth .hero-art').getBoundingClientRect();
-    const probe = document.createElement('div');
-    probe.className = 'herovid';
-    hero.prepend(probe);
-    const motion = probe.getBoundingClientRect();
-    probe.remove();
-    const shape = (rect) => ({ left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width) });
-    return { viewport: innerWidth, still: shape(still), motion: shape(motion) };
-  });
-  check(wideHero.still.left === 0 && wideHero.still.right === wideHero.viewport
-    && wideHero.motion.left === 0 && wideHero.motion.right === wideHero.viewport,
-  `1728px landing hero media does not cover both viewport edges — ${JSON.stringify(wideHero)}`);
-  await desktop.setViewportSize({ width: 1440, height: 900 });
   const gameProof = await desktop.evaluate(() => ({
     approaches: document.querySelectorAll('.operation-proof .operation-approach').length,
     receipt: document.querySelectorAll('.operation-proof .operation-receipt').length,
@@ -193,6 +174,26 @@ try {
   console.log(`    Cold landing: ${Math.round(landingLoad.bytes / 1024)} KB / 768 KB transfer budget`);
   check(landingLoad.heroFallbackBytes === 0,
     `the responsive landing still fetched the 630 KB hero fallback — ${JSON.stringify(landingLoad.resources)}`);
+  // Measure the cold page before resizing selects another responsive poster.
+  // A 1728px MacBook Pro report exposed the hero's right edge as black while the animated layer played.
+  // Both the first-paint still and the progressively-mounted video must be centered on the VIEWPORT,
+  // not sized from the 1080px copy column that happens to own them in the DOM.
+  await desktop.setViewportSize({ width: 1728, height: 1117 });
+  const wideHero = await desktop.evaluate(() => {
+    const hero = document.querySelector('#screen-auth .hero');
+    const still = document.querySelector('#screen-auth .hero-art').getBoundingClientRect();
+    const probe = document.createElement('div');
+    probe.className = 'herovid';
+    hero.prepend(probe);
+    const motion = probe.getBoundingClientRect();
+    probe.remove();
+    const shape = (rect) => ({ left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width) });
+    return { viewport: innerWidth, still: shape(still), motion: shape(motion) };
+  });
+  check(wideHero.still.left === 0 && wideHero.still.right === wideHero.viewport
+    && wideHero.motion.left === 0 && wideHero.motion.right === wideHero.viewport,
+  `1728px landing hero media does not cover both viewport edges — ${JSON.stringify(wideHero)}`);
+  await desktop.setViewportSize({ width: 1440, height: 900 });
 
   // Merely moving a pointer must not silently begin the large atmosphere transfer.
   // Measure before any explicit play and keep that opt-in transfer outside the cold-load budget.
@@ -595,8 +596,8 @@ try {
   const deedMe = (await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: 'Bearer ' + deedToken } })).json();
   const deedAccount = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [deedMe.character.id])).rows[0].account_id;
   await app.pool.query('UPDATE characters SET respect=500000,energy=100,cash=cash+2000 WHERE id=$1', [deedMe.character.id]);
-  await earnBuildingClaim(app, deedToken, 'docks-0417');
-  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', buildingId: 'docks-0417' } });
+  await earnBuildingClaim(app, deedToken, 'docks-0167');
+  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', buildingId: 'docks-0167' } });
   check(claim.statusCode === 200, 'Browser deed fixture could not claim a street');
   await mobile.evaluate(() => document.querySelector('#tabs [data-tab="deeds"]').click());
   await mobile.waitForSelector('#deed-upgrade', { state: 'visible' });

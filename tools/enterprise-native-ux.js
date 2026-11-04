@@ -1,20 +1,30 @@
-// Admission to execute the unchanged native proofs on actual current source. No historical inverses.
+// Admission executes unchanged native proofs on exact current source. Historical provenance never admits bytes.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'acorn';
-import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-ux-inputs.js';
-// The sixteen proofs boot the server with financial activation off. Refuse ambient checkout
-// manifests at the native entry point before any database access or child process can inherit them.
+import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-economic-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as DEED_NATIVE_INPUTS } from './enterprise-native-deed-inputs.js';
+import { combinedEconomicDeedPin } from './combined-economic-deed-source-transfer.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
+ ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as PREDECESSOR_NATIVE_DEFINITION_SHA256 } from './enterprise-native-ux-b35-inputs.js';
+import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
+// Refuse ambient checkout manifests before a native parent can connect or launch any of its sixteen children.
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(new URL('./enterprise-native.js', import.meta.url))) {
   for (const key of Object.keys(process.env)) {
     assert(!/^INVENTORY_BOND_MANIFEST_(?:PATH|SHA256)$/i.test(key), 'Inventory bond manifest forbidden during native qualification: ' + key);
   }
 }
 export { ENTERPRISE_NATIVE_UX_INPUTS };
-export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-ux-inputs.js';
-export const ENTERPRISE_UX_SUPPORT = Object.freeze(['tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js', 'tools/ux-workflow-bound-source-seal.js', 'tools/ux-phase2-upgrade-bound-source-seal.js', 'tools/ux-suites-gate-source-seal.js', 'tools/sale-source-seal.js', 'test/sale-source-compatibility.js', 'tools/generate-economy-social-proof-receipt-source-transfer.js', 'tools/generate-economy-social-proof-receipt-safety-source-transfer.js', 'tools/generate-economy-social-proof-cutover-source-transfer.js', 'tools/generate-economy-bank-interest-source-transfer.js', 'tools/generate-current-economic-terms-source-transfer.js', 'test/economy-ux-merge-source-compatibility.js', 'test/inventory-bond-checkout.js', 'tools/pgquery.js', 'test/social-receipt-postgres.js', 'test/db-boot-lock-postgres.js']);
+export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-economic-inputs.js';
+export const ENTERPRISE_DEED_METADATA = 'tools/enterprise-native-deed-inputs.js';
+export const ENTERPRISE_DEED_METADATA_SHA256 = '7dab84d91912e78448797e70dcf0fca4af19027a482d780c8557ae6a2293d311';
+export const ENTERPRISE_UX_PREDECESSOR_METADATA = 'tools/enterprise-native-ux-b35-inputs.js';
+export const ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256 = '70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e';
+export const ENTERPRISE_UX_QUALIFIED_METADATA = 'tools/enterprise-native-ux-inputs.js';
+export const ENTERPRISE_UX_QUALIFIED_METADATA_SHA256 = 'b37b8de9a428f2e23a43c33d69393785fc6b2e7b728750950ab4ad177c5c4e68';
+export const ENTERPRISE_UX_SUPPORT = Object.freeze([ENTERPRISE_UX_PREDECESSOR_METADATA, ENTERPRISE_UX_QUALIFIED_METADATA, ENTERPRISE_DEED_METADATA, 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js', 'test/lib/enterprise-ux-native-guard.js', 'test/ux-source-compatibility.js', 'test/lib/ux-native-reader-source-compatibility.js', 'tools/ux-director-reader-source-seal.js', 'tools/ux-workflow-bound-source-seal.js', 'tools/ux-phase2-upgrade-bound-source-seal.js', 'tools/ux-suites-gate-source-seal.js', 'tools/sale-source-seal.js', 'test/sale-source-compatibility.js', 'tools/generate-economy-social-proof-receipt-source-transfer.js', 'tools/generate-economy-social-proof-receipt-safety-source-transfer.js', 'tools/generate-economy-social-proof-cutover-source-transfer.js', 'tools/generate-economy-bank-interest-source-transfer.js', 'tools/generate-current-economic-terms-source-transfer.js', 'tools/generate-combined-economic-deed-source-transfer.js', 'test/economy-ux-merge-source-compatibility.js', 'test/inventory-bond-checkout.js', 'tools/pgquery.js', 'test/social-receipt-postgres.js', 'test/db-boot-lock-postgres.js']);
 export const ENTERPRISE_UX_ASSETS = Object.freeze([
  ...['feedback', 'progression', 'social', 'navigation', 'workspace', 'world', 'tactics', 'investigation', 'coordination', 'feel', 'tools', 'identity', 'story', 'community'].flatMap(name => ['public/ux-' + name + '.js', ...(name === 'workspace' ? [] : ['public/ux-' + name + '.css'])]),
  'public/sale.html', 'public/inventory-bond-client.js',
@@ -84,14 +94,29 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
  assert.equal(declaration, ENTERPRISE_NATIVE_UX_INPUTS, 'Only the actual frozen current-native declaration');
  assert.equal(declaration.status, 'SEALED', 'Current UX native inputs remain UNSEALED; no prior native results transfer');
  assert.equal(digest(JSON.stringify(declaration)), ENTERPRISE_NATIVE_UX_INPUTS_SHA256, 'Whole current-native declaration changed');
- fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
- assert.equal(declaration.version, 2); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_UX_NATIVE_INPUTS');
+ fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', 'deedNativeMetadataSha256', 'economicNativeSourceSha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
+ assert.equal(declaration.version, 4); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_DEED_NATIVE_INPUTS');
+ assert.equal(declaration.deedNativeMetadataSha256, ENTERPRISE_DEED_METADATA_SHA256);
+ assert.equal(declaration.economicNativeSourceSha256, digest(JSON.stringify(combinedEconomicDeedPin.nativeFiles)));
+ assert.equal(PREDECESSOR_NATIVE_INPUTS.status, 'SEALED');
+ assert.equal(digest(JSON.stringify(PREDECESSOR_NATIVE_INPUTS)), PREDECESSOR_NATIVE_DEFINITION_SHA256, 'Immutable predecessor native declaration');
+ assert.equal(declaration.nativePredecessorRevision, PREDECESSOR_NATIVE_INPUTS.authoredRevision);
+ assert.equal(declaration.nativePredecessorMetadataSha256, ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256, 'Original native manifest bytes remain immutable');
+ assert.equal(declaration.deedSourceDefinitionSha256, digest(JSON.stringify(DEED_ALLOCATION_SOURCE_DOMAINS)), 'Exact reviewed Deed source layer, not a phase-only grant');
  assert.equal(declaration.predecessorRevision, 'c6247976ff71e8d4c103ebd1498c2d373217d077'); assert.equal(declaration.uxRevision, '940df6a1efbe4ddcd8301cd138d5643dbe48a0bc'); assert.match(declaration.authoredRevision, /^[a-f0-9]{40}$/);
  assert.equal(declaration.legacyRevision, legacy.revision); assert.equal(declaration.legacyDefinitionSha256, digest(JSON.stringify(legacy))); assert.equal(declaration.legacyInventorySha256, digest(JSON.stringify(legacyFiles)));
  assert(Object.isFrozen(declaration) && Object.isFrozen(declaration.files) && Object.isFrozen(declaration.replacements) && Object.isFrozen(declaration.legacyAdditionReplacements) && Object.isFrozen(declaration.additions));
  assert.equal(new Set(declaration.files.map(row => row.file)).size, declaration.files.length);
  assert.deepEqual(declaration.files.slice(0, legacyFiles.length).map(row => row.file), legacyFiles, 'Complete original ordered native inventory retained');
  const current = new Map(); for (const row of declaration.files) { pin(row); assert.notEqual(row.file, ENTERPRISE_UX_METADATA, 'Only unavoidable manifest self-reference is separately captured'); current.set(row.file, row); }
+ assert.equal(current.get(ENTERPRISE_UX_PREDECESSOR_METADATA)?.sha256, declaration.nativePredecessorMetadataSha256, 'The old native manifest is an exact ordinary input, never another self-reference');
+ assert.equal(current.get(ENTERPRISE_UX_QUALIFIED_METADATA)?.sha256, ENTERPRISE_UX_QUALIFIED_METADATA_SHA256, 'The qualified UX manifest remains an exact ordinary input, never native admission');
+ assert.equal(current.get(ENTERPRISE_DEED_METADATA)?.sha256, ENTERPRISE_DEED_METADATA_SHA256, 'Preserve the qualified Deed native manifest');
+ const changedFromDeed = DEED_NATIVE_INPUTS.files.filter(row => {
+  const actual = current.get(row.file); assert(actual, 'Missing existing Deed native input: ' + row.file);
+  return changedPin(row, actual);
+ }).map(row => row.file).sort();
+ assert.deepEqual(Object.keys(combinedEconomicDeedPin.nativeFiles).sort(), changedFromDeed, 'Reviewed transitions must cover exactly the changed Deed inputs');
  const extra = declaration.files.slice(legacyFiles.length); assert.deepEqual(extra.map(row => row.file), extra.map(row => row.file).sort()); assert.deepEqual(declaration.additions, extra);
  for (const file of [...ENTERPRISE_UX_SUPPORT, ...ENTERPRISE_UX_ASSETS]) assert(current.has(file), 'Required actual UX/native support file: ' + file);
  const seen = new Set(), order = new Map(legacyFiles.map((file, index) => [file, index]));
@@ -105,4 +130,30 @@ export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, d
  assert(Buffer.isBuffer(bytes)); assert(current && authored && current.type === 'blob' && authored.type === 'blob');
  assert.equal(current.mode, expected.mode); assert.equal(authored.mode, expected.mode); assert.equal(current.blob, expected.blob, 'Current native source differs from actual authored input'); assert.equal(authored.blob, expected.blob, 'Native pin is not actual authored Git');
  assert.equal(digest(bytes), expected.sha256, 'Whole actual native source changed'); assert.equal(blob(bytes), expected.blob, 'Actual native Git bytes changed');
+ // These exact current bytes have already been admitted independently of any historical relation.
+ // The relation below records provenance only; native execution and its sixteen fresh cases remain mandatory.
+ const previous = PREDECESSOR_NATIVE_INPUTS.files.find(row => row.file === file);
+ const deed = DEED_NATIVE_INPUTS.files.find(row => row.file === file);
+ assert(!previous || deed, 'Existing B35 native input is missing from Deed admission: ' + file);
+ let deedProvenance = null;
+ if (previous && deed && changedPin(previous, deed)) {
+  const sourcePin = DEED_ALLOCATION_SOURCE_DOMAINS[file];
+  assert(sourcePin, 'No unreviewed Deed change to an existing native input: ' + file);
+  assert.equal(deed.mode, sourcePin.currentMode); assert.equal(deed.blob, sourcePin.currentBlob);
+  assert.equal(deed.sha256, sourcePin.currentSha256);
+  assert.equal(previous.mode, sourcePin.baselineMode); assert.equal(previous.blob, sourcePin.baselineBlob);
+  assert.equal(previous.sha256, sourcePin.baselineSha256);
+  deedProvenance = Object.freeze({ file, current: deed, predecessor: previous,
+   predecessorRevision: PREDECESSOR_NATIVE_INPUTS.authoredRevision, relation: 'exact-reviewed-deed-source-provenance-only',
+   nativeAdmission: false, priorResultsTransferred: false });
+ }
+ if (!deed || !changedPin(deed, expected)) return deedProvenance;
+ const transition = combinedEconomicDeedPin.nativeFiles[file];
+ assert(transition, 'No unreviewed economic change to an existing Deed native input: ' + file);
+ for (const key of ['mode', 'blob', 'sha256']) {
+  assert.equal(transition.baseline[key], deed[key], 'Economic native predecessor: ' + file);
+  assert.equal(transition.current[key], expected[key], 'Economic native input: ' + file);
+ }
+ return Object.freeze({ file, current: expected, predecessor: deed, predecessorRevision: DEED_NATIVE_INPUTS.authoredRevision,
+  relation: 'exact-reviewed-economic-deed-source-provenance-only', deedProvenance, nativeAdmission: false, priorResultsTransferred: false });
 }

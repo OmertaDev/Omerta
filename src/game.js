@@ -33,6 +33,7 @@ import { fightersOf } from './boxing.js';
 import { withItemTransaction, assertItemTransactionHealthy } from './items.js';
 import { prelockEquipmentRentalDeathActors } from './equipmentrentals.js';
 import { normalizeClientIp, normalizeClientIpAuthority } from './client-ip.js';
+import { DEED_BENEFITS_MIN_LEVEL, deedBenefitEligibilityAt, recordDeedBenefitEligibility } from './deedbenefits.js';
 
 const uid = () => crypto.randomUUID();
 import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assign a fresh player their first rival
@@ -452,14 +453,19 @@ export async function loadOwned(client, ch) {
   // / extraction-pending deed is INERT (the car/boat rule) so it perks nobody. `deedPerk` is OR'd
   // with family turf by SET-UNION at every perk site — a district in both lists adds NOTHING —
   // and `deedSeat` (you control your OWN corner) is the +1 operation seat, capped at SLOTS_MAX.
-  let deedPerk = [], deedSeat = false;
-  if (DEEDS.PERK_TURF || DEEDS.PERK_OP_SLOTS) {
+  let deedPerk = [], deedSeat = false, deedActiveFrom = null;
+  if ((DEEDS.PERK_TURF || DEEDS.PERK_OP_SLOTS) && levelOf(Number(ch.respect)) >= DEED_BENEFITS_MIN_LEVEL) {
     const now = Date.now();
     const drows = (await client.query(
-      'SELECT district, account_id, controller_account, control_until, onchain_token_id FROM street_deeds WHERE account_id=$1 OR controller_account=$1',
+      'SELECT district, account_id, controller_account, control_until, onchain_token_id, corner_at FROM street_deeds WHERE account_id=$1 OR controller_account=$1',
       [ch.account_id])).rows.filter((d) => !d.onchain_token_id && deedController(d, now) === ch.account_id);
     deedPerk = DEEDS.PERK_TURF ? [...new Set(drows.map((d) => d.district))] : [];
     deedSeat = drows.some((d) => d.account_id === ch.account_id);
+    if (drows.length) {
+      const eligibleAt = await deedBenefitEligibilityAt(client, ch, now);
+      const transitions = drows.map(d => new Date(d.corner_at).getTime());
+      deedActiveFrom = new Date(Math.max(+eligibleAt, ...transitions.map(at => Number.isFinite(at) ? at : now)));
+    }
   }
   const businesses = await businessesOf(client, ch.id); // late-game personal fronts (usually empty)
   const speakeasy = await speakeasyOwnedOf(client, ch.id); // the district's club, if this man runs one
@@ -492,7 +498,7 @@ export async function loadOwned(client, ch) {
     gear: idList(gear.rows, 'gear_id'), guns: idList(guns.rows, 'gun_id'),
     gearOnchain: idList(gearnft.rows, 'gear_id'), // extracted gear: boosts nothing, but blocks a re-mint and dedupes kill-loot (the row still holds the PK)
     gangId, gangRole: gm.rows[0]?.role || null, gangJoinedAt: gm.rows[0]?.joined_at || null, gang, held,
-    deedPerk, deedSeat, // STREET DEEDS 2C — controlled-corner districts (turf perk) + the own-corner op seat
+    deedPerk, deedSeat, deedActiveFrom, // controlled corners and their eligible passive interval
     crewId,   // THE CREW — the non-aggression gate reads this off owned/victimOwned (combat.js)
     bespoke,  // THE SHIPMENT — commissioned pieces (account-level status, survives death)
     makings: Object.fromEntries(mk.rows.map((r) => [r.drug_id, Number(r.qty)])),
@@ -954,6 +960,7 @@ export const trunkCap = (h) => cargoCapacity(h.owned.assets)
 export function accrueInMemory(ch, acct, owned, { preview = false } = {}) {
   accrue(ch, acct, { preview, rackets: owned.rackets, assets: owned.assets, held: owned.held, stash: owned.stash,
     deedHeld: owned.deedPerk, // STREET DEEDS 2C — controlled corners count at accrual's two perk reads (cathedral nerve, neon income)
+    deedActiveFrom: owned.deedActiveFrom,
     racketLevels: owned.racketLevels, // Tier-4 — per-racket upgrade levels multiply the drip
     disciplines: owned.disciplines, // THE REGIMEN — stamina/composure raise the regen CAPS (pool, not rate)
     foundationTier: owned.gang?.foundation || 0 }); // THE FOUNDATION step two: the family charity speeds the exposure bleed
@@ -1593,6 +1600,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
 }
 
 async function persistCharacter(client, ch) {
+  await recordDeedBenefitEligibility(client, ch);
   await client.query(`UPDATE characters SET ${CHARACTER_SET} WHERE id=$1`,
     [ch.id, ...valuesOf(CHARACTER_PERSIST_COLUMNS, ch)]);
 }

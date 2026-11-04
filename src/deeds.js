@@ -16,7 +16,8 @@ import crypto from 'node:crypto';
 import { GameError, cleanText } from './game.js';
 import { vaultHistoryFor, vaultLiveBalances, deedTargetRows, deliveryKeeperReady } from './stockdeliver.js';
 import { paintedDeedSvg } from './nft-art.js';
-import { buildingForDeed, reserveDeedBuilding, deedBuildingById } from './deedbuildings.js';
+import { DEED_ALLOCATION, buildingForDeed, reserveDeedBuilding, deedBuildingById } from './deedbuildings.js';
+import { DEED_BENEFITS_MIN_LEVEL, deedBenefitEligibilityAt } from './deedbenefits.js';
 import { discoveryAvailability, prepareDiscoveredDeedClaim, consumeDiscoveredDeedClaim } from './deeddiscovery.js';
 import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedController,
   deedNeighborhoodsOpen, deedNeighborhoodOf, dayOf,
@@ -26,7 +27,7 @@ import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedControlle
 // still consume their original slot; trading or bringing one back never creates another identity.
 export const MAX_DEED_IDENTITIES = 2500;
 
-async function deedSupply(client, { lock = false } = {}) {
+export async function deedSupply(client, { lock = false } = {}) {
   const state = (lock
     ? await client.query('SELECT issued FROM street_deed_supply WHERE id=1 FOR UPDATE')
     : await client.query('SELECT issued FROM street_deed_supply WHERE id=1')).rows[0];
@@ -34,8 +35,14 @@ async function deedSupply(client, { lock = false } = {}) {
   // Existing streets include synthetic onchain owners. Counting also catches streets imported by
   // older tooling, while the durable counter never releases a slot if a row is removed later.
   const existing = Number((await client.query('SELECT COUNT(*) n FROM street_deeds')).rows[0].n);
-  const issued = Math.max(Number(state.issued), existing);
-  return { maximum: MAX_DEED_IDENTITIES, issued, remaining: Math.max(0, MAX_DEED_IDENTITIES - issued) };
+  const assignments = (await client.query('SELECT building_id FROM street_deed_building_assignments')).rows;
+  const issued = Math.max(Number(state.issued), existing, assignments.length);
+  const allocations = Object.fromEntries(Object.entries(DEED_ALLOCATION).map(([kind, maximum]) => {
+    const count = assignments.filter(row => deedBuildingById(row.building_id)?.issuanceKind === kind).length;
+    return [kind, { maximum, issued: count, remaining: Math.max(0, maximum - count) }];
+  }));
+  return { maximum: MAX_DEED_IDENTITIES, issued, remaining: Math.max(0, MAX_DEED_IDENTITIES - issued),
+    ...allocations };
 }
 
 // living-player population (drives the growing map — Phase 4). NPCs/dead excluded (the ops.js count).
@@ -109,6 +116,7 @@ export async function claimDeed(ch, body, client, h) {
   // checking COUNT before INSERT alone would let concurrent claimants overrun the final slot.
   const supply = await deedSupply(client, { lock: true });
   if (!supply.remaining) throw new GameError('deed_supply_exhausted', 'All 2,500 streets have been issued. Buy an existing deed from another player.');
+  if (!supply.gameplay.remaining) throw new GameError('deed_gameplay_exhausted', 'All 1,000 gameplay properties have been claimed.');
   let building;
   try { building = await reserveDeedBuilding(client, district, name, eligibility.building.id); }
   catch (err) {
@@ -129,7 +137,7 @@ export async function claimDeed(ch, body, client, h) {
   await consumeDiscoveredDeedClaim(client, ch, name, eligibility);
   await recordDeedEvent(client, ch.account_id, 'claim', `claimed by ${ch.name}`);
   if (h?.track) await h.track(client, ch.account_id, 'deed_claim', { district });
-  return { ok: true, name, district, districtName: districtName(district), building };
+  return { ok: true, name, district, districtName: districtName(district), building, issuanceKind: building.issuanceKind };
 }
 
 // The board: your deed (or the claim form), its legend + renown/rank, and the districts (with how
@@ -161,21 +169,25 @@ export async function deedBoard(ch, client, h) {
   // Phase 2 — CONTROL + THE CORNER TAKE. Your own deed: who controls it (you, or a rival who muscled in)
   // and the corner take you can collect while you do. Plus any RIVAL corners you currently control.
   const now = Date.now();
+  const benefitLevel = levelOf(Number(ch.respect)) >= DEED_BENEFITS_MIN_LEVEL;
+  const eligibleAt = benefitLevel ? await deedBenefitEligibilityAt(client, ch, now) : null;
+  const eligibleOwed = row => eligibleAt
+    ? deedCornerOwed({ corner_at: new Date(Math.max(+eligibleAt, new Date(row.corner_at).getTime())) }, now) : 0;
   const iControl = deed && deedController(deed, now) === ch.account_id;
   const seized = deed && deed.controller_account && deed.control_until && new Date(deed.control_until).getTime() > now
     && deed.controller_account !== ch.account_id; // a rival holds your corner
   const rivalCorners = (await client.query(
     'SELECT district, name, corner_at, control_until FROM street_deeds WHERE controller_account=$1 AND control_until > now()',
     [ch.account_id])).rows.map((r) => ({ district: r.district, districtName: districtName(r.district),
-      name: r.name, owed: deedCornerOwed(r, now),
+      name: r.name, owed: eligibleOwed(r),
       // 2C — controlling a rival's corner carries that district's turf perk too (the control split)
-      perk: DEEDS.PERK_TURF ? ((DISTRICTS.find((d) => d.id === r.district) || {}).perk || null) : null,
+      perk: benefitLevel && DEEDS.PERK_TURF ? ((DISTRICTS.find((d) => d.id === r.district) || {}).perk || null) : null,
       controlSeconds: Math.max(0, Math.ceil((new Date(r.control_until).getTime() - now) / 1000)) }));
   // `!onchain_token_id` — an extracted (or extraction-pending) deed is INERT in-game, and the collect till
   // enforces that (`AND onchain_token_id IS NULL`). Without the same test here the board advertised a corner
   // take climbing to the full 24h cap on a deed the till then refuses with `nothing` — the control-that-lies
   // class. `perkActive`/`seatActive` below already carry it; this line was the one that didn't.
-  const myOwed = deed && iControl && !deed.onchain_token_id ? deedCornerOwed(deed, now) : 0;
+  const myOwed = deed && iControl && !deed.onchain_token_id ? eligibleOwed(deed) : 0;
   // RIVAL corners on the block you're standing on — the marks you could lean on (the shakedown targets the
   // deed's OWNER, whose living character id the client passes). Excludes your own; flags ones you already run.
   const here = (await client.query(
@@ -193,21 +205,21 @@ export async function deedBoard(ch, client, h) {
     collectable: myOwed + rivalCorners.reduce((a, c) => a + c.owed, 0),
     here,                                  // rival corners at your current location you could shake down
     // you can reclaim your OWN seized corner if you're standing on the block (target your own character)
-    canReclaim: !!seized && deed && String(ch.loc) === String(deed.district),
+    canReclaim: benefitLevel && !!seized && deed && String(ch.loc) === String(deed.district),
     myTargetId: ch.id,                     // the client targets this to reclaim your own corner
-    shakedownMinLvl: DEEDS.SHAKEDOWN_MIN_LVL, shakedownEnergy: DEEDS.SHAKEDOWN_ENERGY,
+    shakedownMinLvl: Math.max(DEEDS.SHAKEDOWN_MIN_LVL, DEED_BENEFITS_MIN_LEVEL), shakedownEnergy: DEEDS.SHAKEDOWN_ENERGY,
     // the MONEY's anti-alt floor, mirrored from the till so the card can never advertise a take the
-    // server then refuses (the control-that-lies class). `owed` stays honest — it really is accruing,
-    // and it is banked the first time the floor is cleared — `canCollect` is what the button reads.
-    cornerMinLvl: DEEDS.CORNER_MIN_LVL,
-    canCollect: levelOf(Number(ch.respect)) >= DEEDS.CORNER_MIN_LVL,
+    // server then refuses. Income starts with this life's level-25 eligibility marker;
+    // `canCollect` is what the button reads.
+    cornerMinLvl: DEED_BENEFITS_MIN_LEVEL,
+    canCollect: benefitLevel,
     // Phase 2C — THE CONTROLLER'S PERKS. While YOU run your own corner: the district's signed turf
     // perk (OR'd with family turf — never stacks) + one extra operation seat (capped at SLOTS_MAX).
     // A rival who muscles in takes the perk with the corner; an on-chain deed perks nobody (inert).
     perkText: DEEDS.PERK_TURF && deed ? ((DISTRICTS.find((d) => d.id === deed.district) || {}).perk || null) : null,
-    perkActive: !!(DEEDS.PERK_TURF && deed && iControl && !deed.onchain_token_id),
+    perkActive: !!(benefitLevel && DEEDS.PERK_TURF && deed && iControl && !deed.onchain_token_id),
     seatBonus: DEEDS.PERK_OP_SLOTS,
-    seatActive: !!(DEEDS.PERK_OP_SLOTS && deed && iControl && !deed.onchain_token_id),
+    seatActive: !!(benefitLevel && DEEDS.PERK_OP_SLOTS && deed && iControl && !deed.onchain_token_id),
   };
   // Phase 3 — THE MARKET: your own listing state + the streets currently for sale (a deedless buyer
   // browses these). One deed per account, so only a deedless account can buy — the "acquire a storied
@@ -246,6 +258,7 @@ export async function deedBoard(ch, client, h) {
   // = a voucher signed, not yet claimed on-chain (still inert; the account can't claim a new street yet).
   const chain = {
     configured: !!(process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID),
+    activationPending: !(process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID),
     minted: !!acct.minted, walletLinked: !!acct.wallet_address,
     extractPending: !!(deed && deed.onchain_token_id),
     tokenId: deed && deed.onchain_token_id ? deed.onchain_token_id : null,
@@ -254,6 +267,7 @@ export async function deedBoard(ch, client, h) {
   };
   return {
     deed: deed ? { name: deed.name, district: deed.district, districtName: districtName(deed.district),
+      issuanceKind: buildingForDeed(deed)?.issuanceKind || null,
       claimedAt: deed.claimed_at, building: buildingForDeed(deed), neighborhood: myHood ? myHood.name : null, frontier: myHood ? myHood.frontier : false,
       onChain: !!deed.onchain_token_id, vault: vaults.get(deed.name) || null } : null,
     renown, rank: deedRankOf(renown).name, ranks: DEEDS.RANKS,
@@ -273,7 +287,7 @@ export async function deedBoard(ch, client, h) {
     nameMin: DEEDS.NAME_MIN, nameMax: DEEDS.NAME_MAX,
     supply,
     discovery,
-    canClaim: !deed && supply.remaining > 0 && discovery.canClaim,
+    canClaim: !deed && supply.remaining > 0 && supply.gameplay.remaining > 0 && discovery.canClaim,
   };
 }
 
@@ -287,9 +301,7 @@ export async function collectCorner(ch, client, h) {
   // work his corner (the collectTerritory/collectBusiness/collectFrontier gate — a safehouse is a shield,
   // not a bunker). No jail/hosp gate: the corner take is passive and you can't safehouse from lockup.
   if (safeHoused(ch)) throw new GameError('safe', "Can't work the corner from a safehouse — it's a shield, not a bunker.");
-  // (red team 2026-08-16) the anti-alt floor — see DEEDS.CORNER_MIN_LVL. The claim stays free and open;
-  // the money waits. The take keeps ACCRUING on the deed's own clock (capped), so nothing is destroyed
-  // by waiting for the level — it is banked the first time you can legally collect.
+  // Ownership persists below the operating level, while its rewards begin only at eligibility.
   // The level floor is stated to somebody who HOLDS a corner ("the street is yours, the take isn't
   // yet") — so it has to know that they do. Checked ahead of it: a caller with no corner at all was
   // being told they owned a street, which is fluent and false. The console hides the button behind
@@ -302,9 +314,10 @@ export async function collectCorner(ch, client, h) {
     `SELECT COUNT(*) c FROM street_deeds WHERE account_id=$1 OR (controller_account=$1 AND control_until > now())`,
     [ch.account_id])).rows[0].c);
   if (!holds) throw new GameError('no_corner', 'You work no corner — claim a street, or muscle in on somebody else\'s.');
-  if (levelOf(Number(ch.respect)) < DEEDS.CORNER_MIN_LVL)
-    throw new GameError('rookie', `Working a corner takes level ${DEEDS.CORNER_MIN_LVL} — the street is yours, the take isn't yet.`);
+  if (levelOf(Number(ch.respect)) < DEED_BENEFITS_MIN_LEVEL)
+    throw new GameError('rookie', `Working a corner takes level ${DEED_BENEFITS_MIN_LEVEL} — the street is yours, the take isn't yet.`);
   const now = Date.now();
+  const eligibleAt = await deedBenefitEligibilityAt(client, ch, now);
   // every deed I effectively control: my own (when not seized) or a rival's inside my window
   // `onchain_token_id IS NULL` excludes a deed that's extracted or extraction-pending — an on-chain deed
   // is INERT in-game (the car/boat precedent), so it generates no corner take until it's re-imported.
@@ -314,7 +327,7 @@ export async function collectCorner(ch, client, h) {
   let total = 0; const collected = [];
   for (const d of rows) {
     if (deedController(d, now) !== ch.account_id) continue; // my own deed a rival currently holds → skip
-    const owed = deedCornerOwed(d, now);
+    const owed = deedCornerOwed({ corner_at: new Date(Math.max(+eligibleAt, new Date(d.corner_at).getTime())) }, now);
     if (owed <= 0) continue;
     ch.cash = Number(ch.cash) + owed;
     await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: owed, reason: 'deed:corner' });
@@ -356,8 +369,9 @@ export async function shakedownCorner(ch, targetCharacterId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', 'No street work from lockup.');
   if (safeHoused(ch)) throw new GameError('safe', "Can't lean on a corner while you're to ground — a safehouse is a shield, not a bunker.");
   if (hospitalized(ch)) throw new GameError('hosp_self', 'No leaning on anyone from a hospital bed.');
-  if (levelOf(Number(ch.respect)) < DEEDS.SHAKEDOWN_MIN_LVL)
-    throw new GameError('rookie', `Muscling a corner takes level ${DEEDS.SHAKEDOWN_MIN_LVL}.`);
+  const minimumLevel = Math.max(DEEDS.SHAKEDOWN_MIN_LVL, DEED_BENEFITS_MIN_LEVEL);
+  if (levelOf(Number(ch.respect)) < minimumLevel)
+    throw new GameError('rookie', `Muscling a corner takes level ${minimumLevel}.`);
   if (Number(ch.energy) < DEEDS.SHAKEDOWN_ENERGY) throw new GameError('energy', `Need ${DEEDS.SHAKEDOWN_ENERGY} energy for that.`);
   const target = (await client.query('SELECT account_id FROM characters WHERE id=$1', [targetCharacterId])).rows[0];
   if (!target) throw new GameError('gone', 'No such mark.');

@@ -33,7 +33,7 @@ const VARIANTS = {
   'mystery:property-briefing': { speaker: 'Irene Bell', text: 'Irene keeps the file open beneath her palm. “An empty house is not an ownerless house. Begin with the Docks ledger, follow the occupancy trail through Neon Mile, and compare the survey at the Foundry. Bring back evidence, not an empty-window theory.”' },
   'mystery:property-witness': { speaker: 'Mara Voss', text: 'Mara takes a moment over the dates. “After the fire. Before the new number went up. That is when I remember the tenant leaving.” Her account still needs to be checked against the dated correction.' },
   'mystery:property-survey': { speaker: 'Enzo Ferri', text: 'Enzo unfolds the signed plan and keeps one finger on the parcel reference. “The alley is an easement. The wall is shared. A painted doorway cannot replace either line.”' },
-  'mystery:property-verify-title': { speaker: 'Irene Bell', text: '“Read the address back to me,” Irene says. “Name the occupancy source. Acknowledge the alley easement. A verified file qualifies you for a separate primary claim; it does not reserve a building or issue its deed.”' },
+  'mystery:property-verify-title': { speaker: 'Irene Bell', text: '“Read the address back to me,” Irene says. “Name the occupancy source. Acknowledge the alley easement. A verified file qualifies you for a separate primary claim once you reach Level 25; it does not reserve a building or issue its deed.”' },
 };
 const complete = (board, id) => board.nodes?.some(node => node.id === id && node.status === 'completed');
 const choiceOf = (board, id) => board.choices?.find(choice => choice.nodeId === id)?.choiceId;
