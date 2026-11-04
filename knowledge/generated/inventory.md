@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `837f0e45558b`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `677b91a06689`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 7,049 |
-| Text lines | 6,045,430 |
-| Repository bytes inventoried | 3,059,268,335 |
-| Backend/route modules | 591 |
-| HTTP route registrations / unique routes | 1,054 / 1,054 |
+| Current artifacts | 7,056 |
+| Text lines | 6,046,903 |
+| Repository bytes inventoried | 3,059,367,035 |
+| Backend/route modules | 592 |
+| HTTP route registrations / unique routes | 1,055 / 1,055 |
 | Database tables | 582 |
 | Solidity declarations | 134 |
-| Git commits | 4,955 |
+| Git commits | 4,960 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 17,300 / 69,320 |
+| Graph nodes / edges | 17,317 / 69,437 |
 
 ## Artifact kinds
 
@@ -24,17 +24,17 @@
 |---|---:|
 | media-asset | 2,158 |
 | contract-project | 995 |
-| test-suite | 938 |
+| test-suite | 939 |
 | artifact | 882 |
-| documentation | 610 |
-| backend-module | 491 |
-| engineering-harness | 340 |
+| documentation | 611 |
+| backend-module | 492 |
+| engineering-harness | 343 |
 | contract-test | 119 |
 | contract-source | 110 |
 | route-module | 100 |
 | audit | 98 |
 | design | 91 |
-| web-surface | 70 |
+| web-surface | 71 |
 | operations | 21 |
 | knowledge-base | 11 |
 | workflow | 7 |
