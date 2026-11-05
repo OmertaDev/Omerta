@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSource, uxAfterwordHistoricalInput } from '../../tools/ux-afterword-source-compatibility.js';
 import { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';
+import { WIKI_MEDIA_MERGE_SOURCE, assertWikiMediaMergeSourceTransfer } from '../../tools/wiki-media-source-transfer.js';
 
 export async function runJourneyModelProof() {
   runAfterwordSourceProof();
@@ -94,13 +95,28 @@ export function runAfterwordSourceProof() {
     const current = git('show', pin.revision + ':' + row.file), baseline = git('show', pin.targetRevision + ':' + row.file);
     assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });
     assert.deepEqual(record(pin.targetRevision, row.file), { mode: row.targetMode, blob: row.targetBlob });
-    assert.deepEqual(record('HEAD', row.file), record(pin.revision, row.file), 'Actual checked-out content remains the authored successor');
+    const checkedOutRecord = record('HEAD', row.file), checkedOut = git('show', 'HEAD:' + row.file);
+    const rawPhysical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
+    assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+      'Complete actual checkout must match its raw current Git bytes before any historical source view');
+    let sourceRecord = checkedOutRecord, physical = rawPhysical;
+    const merged = WIKI_MEDIA_MERGE_SOURCE.files[row.file];
+    if (merged) {
+      assert.deepEqual(checkedOutRecord, { mode: merged.current.mode, blob: merged.current.lf.blob },
+        'Only the exact authored current merge may enter the source-only parent view');
+      const source = assertWikiMediaMergeSourceTransfer(row.file, rawPhysical);
+      assert.equal(source.predecessorRevision, WIKI_MEDIA_MERGE_SOURCE.parents.main.revision);
+      assert.deepEqual([source.sourceOnly, source.native, source.runtime], [true, false, false]);
+      sourceRecord = { mode: merged.main.mode, blob: merged.main.lf.blob }; physical = source.baselineText;
+      reject(() => assertWikiMediaMergeSourceTransfer(row.file, checkedOut + '\n'));
+      reject(() => assertWikiMediaMergeSourceTransfer(row.file, source.baselineText));
+    }
+    assert.deepEqual(sourceRecord, record(pin.revision, row.file), 'Actual checked-out content remains the authored successor');
     assert.deepEqual(row.inverses, gitInverses(row.file), 'Every ordered inverse is the actual context-three Git hunk');
     assert.equal(sha(current), row.currentSha256); assert.equal(blob(current), row.currentBlob); assert.equal(Buffer.byteLength(current), row.currentBytes);
     assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);
     const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);
     if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');
-    const physical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
     assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
     for (const input of [current, current.replaceAll('\n', '\r\n')]) {
       const proof = qualifyUxAfterwordSource(row.file, input);
