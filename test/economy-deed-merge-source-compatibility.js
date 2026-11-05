@@ -46,7 +46,7 @@ assert.deepEqual(process.argv.slice(2), []);
 assert.equal(source.status, 'SEALED', 'Commit complete integration source, then generate its exact definition');
 assert.equal(sha(JSON.stringify(source)), sourceSha); assert.equal(sha(JSON.stringify(provenance)), provenanceSha);
 assert.deepEqual(source.files.map(row => row.file), ECONOMY_DEED_MERGE_FILES);
-assert.equal(source.files.length, 12); assert.equal(ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.length, 53);
+assert.equal(source.files.length, 13); assert.equal(ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.length, 53);
 assert.deepEqual(Object.keys(source.profiles), ['monitor', 'deed']);
 assert.equal(git('rev-parse', source.sourceRevision + '^{tree}').trim(), source.sourceTree);
 git('merge-base', '--is-ancestor', source.sourceRevision, 'HEAD');

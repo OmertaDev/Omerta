@@ -10,7 +10,8 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
 export { ECONOMY_DEED_MERGE_SOURCE, ECONOMY_DEED_MERGE_SOURCE_SHA256,
   ECONOMY_DEED_MERGE_NATIVE_PROVENANCE, ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 };
 export const ECONOMY_DEED_MERGE_FILES = Object.freeze([
-  'package.json', 'src/game.js', 'test/economy-hardening-source-compatibility.js',
+  'package.json', 'src/game.js', 'src/preflight.js',
+  'test/economy-hardening-source-compatibility.js',
   'test/lib/enterprise-ux-native-guard.js', 'test/lib/ux-native-reader-source-compatibility.js',
   'test/sale-source-compatibility.js',
   'tools/economy-ux-merge-source-compatibility.js', 'tools/enterprise-native-ux.js',
@@ -39,7 +40,7 @@ export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/ux-source-compatibility.js',
 ]);
 // This existing input was identical in both reviewed parents. Its sole later correction classifies
-// the already implemented alert thresholds; it grants no historical source or native-result alias.
+// the already implemented alert thresholds; these forward checks grant no native-result alias.
 export const ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR = Object.freeze({
   file: 'src/preflight.js',
   anchor: "  'WS_PING_MS', 'WS_MAX_BUFFER', 'INVARIANT_WEBHOOK_URL', 'CITY_WIRE_WEBHOOK_URL',\n",
