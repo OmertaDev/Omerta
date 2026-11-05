@@ -9,8 +9,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
   "reviewedUiRevision": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7",
   "baseRevision": "8d60765b0a0f28be1696be108ff47683ff22eef5",
   "baseTree": "1a17883bbc63430b3c27bde6675f60eb26e091aa",
-  "sourceRevision": "35ef735015caa7c1bebd3433b4ad2491daa564ed",
-  "sourceTree": "5a22e1a5e92375074d871cf22eafbf0b63e1b4c6",
+  "sourceRevision": "5eddb01ea28fe87d8702c19a3edc3e2c98b7e08e",
+  "sourceTree": "3204ab3db9bcaaf0003f84e4066b5a501a8aecc1",
   "historicalManifests": {
     "tools/enterprise-native-ux-b35-inputs.js": {
       "file": "tools/enterprise-native-ux-b35-inputs.js",
@@ -537,14 +537,14 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/generate-contract-release-source-transfer.js": {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "297b81d323ec5bfdea741c36f851b48f9bc2a50a",
-      "sha256": "01bdd5a9b6ff456fdd34321aec7c8fb946ad4b9f5fff7b44461750876a6bcb8a"
+      "blob": "b63e0d4310560dc9fc33a5b3959117330a10f74e",
+      "sha256": "175faf5abaae608c37c22bb22fd718dda35bf82eefbb5c91d0c0c3a8605094d5"
     },
     "test/contract-release-source-compatibility.js": {
       "file": "test/contract-release-source-compatibility.js",
       "mode": "100644",
-      "blob": "0810247be0430caa42aa84a7e45f49d37813dbc9",
-      "sha256": "29165e092105a5f1c6aecb0b9df83de7f4416a82e68a5d9276ff8f9f043a9542"
+      "blob": "08fcd7422ce600191d40223be08f71b7b7d1d86d",
+      "sha256": "968240e53c89492cbc452bd1fcf8b83aaf7de0b1ed2878f8e56a13a3bebdcb55"
     },
     "public/eth-staking.js": {
       "file": "public/eth-staking.js",
@@ -659,6 +659,74 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
             {
               "current": "            omerta-contracts/out/OmertaReserveFundingV2.sol/OmertaReserveFundingV2.json\n            omerta-contracts/out/OmertaAuctionCoordinatorV2.sol/OmertaAuctionCoordinatorV2.json\n            omerta-contracts/out/OmertaGuardedAuction.sol/OmertaGuardedAuction.json\n            omerta-contracts/out/OmertaCharacterGuardedAuction.sol/OmertaCharacterGuardedAuction.json\n\n      - name: forge test (unit + fuzz)\n        run: forge test -vvv\n",
               "baseline": "            omerta-contracts/out/OmertaReserveFundingV2.sol/OmertaReserveFundingV2.json\n            omerta-contracts/out/OmertaAuctionCoordinatorV2.sol/OmertaAuctionCoordinatorV2.json\n            omerta-contracts/out/OmertaGuardedAuction.sol/OmertaGuardedAuction.json\n\n      - name: forge test (unit + fuzz)\n        run: forge test -vvv\n"
+            }
+          ]
+        }
+      }
+    },
+    "MARKETING-POSTS.md": {
+      "current": {
+        "file": "MARKETING-POSTS.md",
+        "mode": "100644",
+        "blob": "22afcb451e813f41d48c41b5a21e6f7dcd8c57b8",
+        "sha256": "33dc6d3725ee43d1195f1ed9b13ed9c1bdb8d7309c3acbbc56243fb8db77c324",
+        "bytes": 7062,
+        "rawSha256": {
+          "lf": "33dc6d3725ee43d1195f1ed9b13ed9c1bdb8d7309c3acbbc56243fb8db77c324",
+          "crlf": "f30e689103855440da11eb44d58a9b685bffc6b6a3df6ad8bed634539d924729"
+        }
+      },
+      "targets": {
+        "desk": {
+          "revision": "8d60765b0a0f28be1696be108ff47683ff22eef5",
+          "pin": {
+            "file": "MARKETING-POSTS.md",
+            "mode": "100644",
+            "blob": "9b960bbe87c664c0e54eae4476530ba74bd962f9",
+            "sha256": "e7c789e105a5edf0259b1a5426c7313bf987e426b6c01b1d514863162562f464",
+            "bytes": 7062
+          },
+          "contextLines": 3,
+          "inverses": [
+            {
+              "current": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1362 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n",
+              "baseline": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1356 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n"
+            },
+            {
+              "current": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1362 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n",
+              "baseline": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1356 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n"
+            }
+          ]
+        }
+      }
+    },
+    "SPEC.md": {
+      "current": {
+        "file": "SPEC.md",
+        "mode": "100644",
+        "blob": "a9c912a110c84784a7b70f379f49fb9db9f0b631",
+        "sha256": "aa7abafbc2279b468e407f8a82c842b0b6c755d78f7b03951c86b692dea0ffca",
+        "bytes": 57077,
+        "rawSha256": {
+          "lf": "aa7abafbc2279b468e407f8a82c842b0b6c755d78f7b03951c86b692dea0ffca",
+          "crlf": "37ae9db56df120e7490db43802469041490bf35d23decc46e3b7bdd522451bce"
+        }
+      },
+      "targets": {
+        "desk": {
+          "revision": "8d60765b0a0f28be1696be108ff47683ff22eef5",
+          "pin": {
+            "file": "SPEC.md",
+            "mode": "100644",
+            "blob": "39b584b0e34c3cb2b5c8e303af4aa801672c1999",
+            "sha256": "c1fbe15ec7dd0bbce78cd43c76c97379eaff98a2111f9c845a806309563f53ba",
+            "bytes": 57077
+          },
+          "contextLines": 3,
+          "inverses": [
+            {
+              "current": "\n| | |\n|---|---|\n| Backend modules | **600** files, **139049** lines (recursive source inventory) |\n| Test suites | **982** files, **208041** lines (recursive source inventory) |\n| HTTP routes | **1362** registrations (**1362** unique; 1262 under `/v1`) |\n| Database tables | **582** (`schema.sql`, 9786 lines) |\n| Client | **14648** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **979** markdown files, **157833** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **368,000 lines** of backend code, tests, schema and top-level contracts.\n\n---\n\n",
+              "baseline": "\n| | |\n|---|---|\n| Backend modules | **596** files, **138522** lines (recursive source inventory) |\n| Test suites | **971** files, **205080** lines (recursive source inventory) |\n| HTTP routes | **1356** registrations (**1356** unique; 1260 under `/v1`) |\n| Database tables | **582** (`schema.sql`, 9784 lines) |\n| Client | **14638** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **40** top-level Solidity files, **11545** lines, **1111** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **970** markdown files, **156909** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **356,000 lines** of backend code, tests, schema and top-level contracts.\n\n---\n\n"
             }
           ]
         }
@@ -2065,6 +2133,66 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
         }
       }
     },
+    "test/lib/ux-journeys.js": {
+      "current": {
+        "file": "test/lib/ux-journeys.js",
+        "mode": "100644",
+        "blob": "5d14e4e9614cf7d0494e0706a1512be5c57d3792",
+        "sha256": "5dcbea170e38ef54ef60706049e17eb2785579dbeeb0624dfbda39d0a68937c0",
+        "bytes": 19188,
+        "rawSha256": {
+          "lf": "5dcbea170e38ef54ef60706049e17eb2785579dbeeb0624dfbda39d0a68937c0",
+          "crlf": "22992e050f502a79821481ef167ae9b5812396eb66e5aebc26f404cd74201d5b"
+        }
+      },
+      "targets": {
+        "desk": {
+          "revision": "8d60765b0a0f28be1696be108ff47683ff22eef5",
+          "pin": {
+            "file": "test/lib/ux-journeys.js",
+            "mode": "100644",
+            "blob": "6cdb42d8d08e3360c233f54a314f601a96f9e43c",
+            "sha256": "f0bbc66dfe11d4e89604570778f132a01b4b37ca8e4746cf6ba3cb28c8b5bd84",
+            "bytes": 15011
+          },
+          "contextLines": 3,
+          "inverses": [
+            {
+              "current": "import { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';\nimport { BUSINESS_DESK_DOMAINS, BUSINESS_DESK_PREDECESSOR, assertBusinessDeskSourceTransfer,\n  businessDeskHistoricalInput } from '../../tools/businessdesk-source-transfer.js';\nimport { assertContractReleaseSourceDefinition, assertContractReleaseSourceTransfer,\n  contractReleaseDeskInput } from '../../tools/contract-release-source-transfer.js';\n\nexport async function runJourneyModelProof() {\n  runAfterwordSourceProof();\n",
+              "baseline": "import { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';\nimport { BUSINESS_DESK_DOMAINS, BUSINESS_DESK_PREDECESSOR, assertBusinessDeskSourceTransfer,\n  businessDeskHistoricalInput } from '../../tools/businessdesk-source-transfer.js';\n\nexport async function runJourneyModelProof() {\n  runAfterwordSourceProof();\n"
+            },
+            {
+              "current": "    const match = git('ls-tree', '-z', revision, '--', file).match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0]+)\\0$/);\n    assert(match && match[3] === file, 'Exact regular committed content input'); return { mode: match[1], blob: match[2] };\n  };\n  const rootSource = assertContractReleaseSourceDefinition();\n  const assertActualHeadInput = (file, raw, current, physical = current) => {\n    const original = pin.files.find(row => row.file === file); assert(original, 'Closed actual Afterword source subject');\n    const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)\n      && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;\n    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;\n    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file);\n    const expected = desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,\n      sha256: domain.currentSha256, bytes: domain.currentBytes };\n    assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');\n    assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);\n    assert.equal(blob(current), raw.blob); assert.equal(Buffer.byteLength(current), expected.bytes);\n    assert.equal(typeof physical, 'string'); assert.equal(Buffer.from(physical).toString('utf8'), physical);\n    assert(physical === current || physical === current.replaceAll('\\n', '\\r\\n'),\n      'Complete actual HEAD LF/CRLF physical bytes required before any historical projection');\n    return desk;\n  };\n  // This historical reader first qualifies the complete actual Git postimage.\n  // Current runtime and native inputs are never replaced by this source view.\n  const rejectCombinedMutation = (file, source) => {\n",
+              "baseline": "    const match = git('ls-tree', '-z', revision, '--', file).match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0]+)\\0$/);\n    assert(match && match[3] === file, 'Exact regular committed content input'); return { mode: match[1], blob: match[2] };\n  };\n  // This historical reader first qualifies the complete actual Git postimage.\n  // Current runtime and native inputs are never replaced by this source view.\n  const rejectCombinedMutation = (file, source) => {\n"
+            },
+            {
+              "current": "    const physical = readFileSync(physicalPath, 'utf8');\n    assert(physical === committed || physical === committed.replaceAll('\\n', '\\r\\n'), 'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');\n    let source = committed;\n    const rootDesk = rootSource.status === 'BOUND' && rootSource.sourceViews[file]?.targets.desk;\n    if (rootDesk) {\n      const outer = assertContractReleaseSourceTransfer(file, committed, 'desk');\n      assert.deepEqual(raw, { mode: rootSource.sourceViews[file].current.mode, blob: rootSource.sourceViews[file].current.blob });\n      assert.deepEqual([outer.sourceOnly, outer.runtime, outer.native], [true, false, false]);\n      assert.equal(outer.sourceRevision, rootSource.sourceRevision);\n      assert.equal(outer.predecessorRevision, rootDesk.revision);\n      source = outer.baselineText;\n      raw = record(outer.predecessorRevision, file);\n      assert.deepEqual(raw, { mode: rootDesk.pin.mode, blob: rootDesk.pin.blob });\n      assert.equal(source, git('show', outer.predecessorRevision + ':' + file));\n    }\n    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.desk);\n    if (combined) {\n      assert.deepEqual(raw, { mode: combined.current.mode, blob: combined.current.blob });\n",
+              "baseline": "    const physical = readFileSync(physicalPath, 'utf8');\n    assert(physical === committed || physical === committed.replaceAll('\\n', '\\r\\n'), 'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');\n    let source = committed;\n    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.desk);\n    if (combined) {\n      assert.deepEqual(raw, { mode: combined.current.mode, blob: combined.current.blob });\n"
+            },
+            {
+              "current": "      raw = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };\n      assert.deepEqual(raw, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));\n      assert.equal(source, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));\n      rejectCombinedMutation(file, rootDesk ? git('show', rootDesk.revision + ':' + file) : committed);\n    }\n    if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;\n    const domain = BUSINESS_DESK_DOMAINS[file];\n",
+              "baseline": "      raw = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };\n      assert.deepEqual(raw, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));\n      assert.equal(source, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));\n      rejectCombinedMutation(file, committed);\n    }\n    if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;\n    const domain = BUSINESS_DESK_DOMAINS[file];\n"
+            },
+            {
+              "current": "  assert.equal(git('rev-parse', pin.revision + '^{tree}').trim(), pin.tree);\n  assert.equal(git('rev-parse', pin.targetRevision + '^{tree}').trim(), pin.targetTree);\n  git('merge-base', '--is-ancestor', pin.targetRevision, pin.revision);\n  let positives = 0, refusals = 0, rawCurrentPositives = 0, rawCurrentRefusals = 0;\n  const reject = run => { assert.throws(run); refusals++; };\n  const rejectRaw = run => { assert.throws(run); rawCurrentRefusals++; };\n  for (const row of pin.files) {\n    const current = git('show', pin.revision + ':' + row.file), baseline = git('show', pin.targetRevision + ':' + row.file);\n    assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });\n",
+              "baseline": "  assert.equal(git('rev-parse', pin.revision + '^{tree}').trim(), pin.tree);\n  assert.equal(git('rev-parse', pin.targetRevision + '^{tree}').trim(), pin.targetTree);\n  git('merge-base', '--is-ancestor', pin.targetRevision, pin.revision);\n  let positives = 0, refusals = 0;\n  const reject = run => { assert.throws(run); refusals++; };\n  for (const row of pin.files) {\n    const current = git('show', pin.revision + ':' + row.file), baseline = git('show', pin.targetRevision + ':' + row.file);\n    assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });\n"
+            },
+            {
+              "current": "    assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);\n    const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);\n    if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');\n    const actualHead = git('show', 'HEAD:' + row.file), actualRecord = record('HEAD', row.file);\n    const rawPhysical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');\n    assertActualHeadInput(row.file, actualRecord, actualHead, rawPhysical);\n    const physical = businessDeskHistoricalInput(row.file, contractReleaseDeskInput(row.file, rawPhysical));\n    assert(physical === current || physical === current.replaceAll('\\n', '\\r\\n'), 'Complete actual LF/CRLF content only');\n    for (const input of [actualHead, actualHead.replaceAll('\\n', '\\r\\n')]) {\n      assertActualHeadInput(row.file, actualRecord, actualHead, input); rawCurrentPositives++;\n    }\n    rejectRaw(() => assertActualHeadInput(row.file, { ...actualRecord, mode: '100755' }, actualHead));\n    rejectRaw(() => assertActualHeadInput(row.file, { ...actualRecord, blob: '0'.repeat(40) }, actualHead));\n    rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead + '\\n'));\n    for (const input of [actualHead + '\\n', actualHead.slice(1), '\\ufeff' + actualHead, actualHead + '\\0',\n      actualHead.replace('\\n', '\\r\\n'), actualHead.replace('\\n', '\\r'), baseline]) {\n      rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));\n    }\n    if (row.file === 'src/server.js') {\n      for (const input of [git('show', rootSource.baseRevision + ':' + row.file), current]) {\n        assert.notEqual(input, actualHead, 'The stale server fixture differs from actual HEAD');\n        rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));\n      }\n    }\n    for (const input of [current, current.replaceAll('\\n', '\\r\\n')]) {\n      const proof = qualifyUxAfterwordSource(row.file, input);\n      assert.equal(proof.baselineText, baseline); assert.equal(proof.sourceRevision, pin.revision); assert.equal(proof.targetRevision, pin.targetRevision);\n",
+              "baseline": "    assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);\n    const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);\n    if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');\n    const physical = businessDeskHistoricalInput(row.file, readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8'));\n    assert(physical === current || physical === current.replaceAll('\\n', '\\r\\n'), 'Complete actual LF/CRLF content only');\n    for (const input of [current, current.replaceAll('\\n', '\\r\\n')]) {\n      const proof = qualifyUxAfterwordSource(row.file, input);\n      assert.equal(proof.baselineText, baseline); assert.equal(proof.sourceRevision, pin.revision); assert.equal(proof.targetRevision, pin.targetRevision);\n"
+            },
+            {
+              "current": "    reject(() => qualifyUxAfterwordSource(row.file, current, structuredClone(pin)));\n  }\n  for (const file of ['__proto__', 'constructor', '../src/content/phase1.js', 'src/content/neighborhood-afterword.js', 'src/unknown.js']) {\n    rejectRaw(() => assertActualHeadInput(file, { mode: '100644', blob: '0'.repeat(40) }, 'unknown'));\n    reject(() => qualifyUxAfterwordSource(file, 'unknown')); const buffer = Buffer.from('unknown');\n    assert.equal(uxAfterwordHistoricalInput(file, buffer), buffer); assert.equal(uxAfterwordHistoricalInput(file, 'unknown'), 'unknown');\n  }\n",
+              "baseline": "    reject(() => qualifyUxAfterwordSource(row.file, current, structuredClone(pin)));\n  }\n  for (const file of ['__proto__', 'constructor', '../src/content/phase1.js', 'src/content/neighborhood-afterword.js', 'src/unknown.js']) {\n    reject(() => qualifyUxAfterwordSource(file, 'unknown')); const buffer = Buffer.from('unknown');\n    assert.equal(uxAfterwordHistoricalInput(file, buffer), buffer); assert.equal(uxAfterwordHistoricalInput(file, 'unknown'), 'unknown');\n  }\n"
+            },
+            {
+              "current": "  assert.equal(pin.files.reduce((sum, row) => sum + row.inverses.length, 0), 9);\n  console.log(JSON.stringify({ phase: 'EXACT_UX_AFTERWORD_SOURCE_ONLY', source: pin.revision, predecessor: pin.targetRevision,\n    files: 5, afterwordContentFiles: 3, mergedPolicySourceInputs: 1, existingTestSourceInputs: 1, inverseHunks: 9, positives, refusals, actualGitModesBlobsTreesAndWholeInverse: true, unchangedOriginalReaderAssertions: true,\n    rawCurrentPositives, rawCurrentRefusals, actualRawHeadAndPhysicalGate: true,\n    runtime: false, native: false, releaseQualified: false }));\n}\n",
+              "baseline": "  assert.equal(pin.files.reduce((sum, row) => sum + row.inverses.length, 0), 9);\n  console.log(JSON.stringify({ phase: 'EXACT_UX_AFTERWORD_SOURCE_ONLY', source: pin.revision, predecessor: pin.targetRevision,\n    files: 5, afterwordContentFiles: 3, mergedPolicySourceInputs: 1, existingTestSourceInputs: 1, inverseHunks: 9, positives, refusals, actualGitModesBlobsTreesAndWholeInverse: true, unchangedOriginalReaderAssertions: true,\n    runtime: false, native: false, releaseQualified: false }));\n}\n"
+            }
+          ]
+        }
+      }
+    },
     "test/noir-ui-source-compatibility.js": {
       "current": {
         "file": "test/noir-ui-source-compatibility.js",
@@ -2539,4 +2667,4 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     }
   }
 });
-export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "e68f7437ed13d5d3ab0a34a4a13d7b0dc77fbe971c387503cfb68d9447c77adf";
+export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "7d50962e55ab545b9c157d45792928c721dfe7f3b30cdad25affba96a9e53bcb";
