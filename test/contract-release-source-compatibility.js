@@ -519,7 +519,7 @@ try {
     { ...completeIndex, pin: { ...completeIndex.pin, mode: '100755' } }));
   refused(() => { escape.file = 'src/server.js'; });
   assert.deepEqual(CONTRACT_RELEASE_CENSUS_ORIGIN, {
-    revision: '2e710730ba7292d66ae99cb872fd6cd4e1d787d8',
+    revision: 'ecf48c4c69817546b484fced0404aa28d5e02697',
     baseRevision: '68a4d92d810ee17c192abb8a8c2a3fcbf87c4c52',
     files: ['MARKETING-POSTS.md', 'SPEC.md'],
   });

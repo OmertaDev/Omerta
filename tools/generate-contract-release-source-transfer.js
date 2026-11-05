@@ -61,7 +61,7 @@ export const CONTRACT_RELEASE_START_ORDER_ORIGIN = Object.freeze({
   files: Object.freeze(['public/index.html']),
 });
 export const CONTRACT_RELEASE_CENSUS_ORIGIN = Object.freeze({
-  revision: '2e710730ba7292d66ae99cb872fd6cd4e1d787d8',
+  revision: 'ecf48c4c69817546b484fced0404aa28d5e02697',
   baseRevision: '68a4d92d810ee17c192abb8a8c2a3fcbf87c4c52',
   files: Object.freeze(['MARKETING-POSTS.md', 'SPEC.md']),
 });
