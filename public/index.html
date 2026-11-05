@@ -10193,8 +10193,8 @@ async function renderStart() {
       ${sect('start-missions', 'Family missions', 'Story jobs, requirements, and rewards', missionsMarkup, !!ob.allDone)}
       ${sect('start-city', 'Around the city', 'Events, the weekly bulletin, and your people', `${primeCard}${bulletinBanner}${eventStrip}${resultsStrip}${!ob.allDone ? situation : ''}`)}
       ${careerMarkup.trim() ? sect('start-career', 'The Career', 'Your permanent climb through five ranks', careerMarkup) : ''}
-      ${sect('start-mint', 'Your character &amp; deed', 'Wallet, character mint, and deed requirements', mintMarkup)}
       ${sect('start-outreach', 'Your crew starts with a name', `Referral links, sharing, and the recruiters${ob.referral?.canClaim ? ' · name who sent you' : ''}`, outreachMarkup)}
+      ${sect('start-mint', 'Your character &amp; deed', 'Wallet, character mint, and deed requirements', mintMarkup)}
       ${sect('start-standing', 'The City Standing', 'Your standing and the city leaderboard', '<div id="city-standing" class="d">loading…</div>')}
       ${ob.allDone ? deepCityMarkup(ex) : ''}
       ${sect('howto', 'How the city works', 'the six things worth knowing — 60 seconds', `
