@@ -122,7 +122,7 @@ export function businessDeskCombinedHistoricalInput(file, input, profile) {
   const row = BUSINESS_DESK_COMBINED_SOURCE.files.find(value => value.file === file);
   if (!row || !Object.hasOwn(row.parents, profile)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'lossless UTF-8 physical comparison source required');
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (!uniform(text) || sha(text) !== row.current.rawSha256[text === lf(text) ? 'lf' : 'crlf'] || sha(lf(text)) !== row.current.sha256) return input;
   const target = assertBusinessDeskCombinedSourceTransfer(file, text, profile).targetText;
   return buffer ? Buffer.from(target) : target;
