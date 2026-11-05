@@ -58,7 +58,7 @@ try {
     await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     // Only the old welcome UI is suppressed; feature rendering and all data reads are real.
     await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(node => node.classList.add('hidden')));
-    if (mobile) await page.locator('#ux-screen-tools > summary').click();
+    await disclosure(page.locator('#ux-screen-tools'));
     await page.locator('select[data-ux-density]').waitFor();
     if (mobile) {
       await page.locator('.ux-screen-tools-close').click();

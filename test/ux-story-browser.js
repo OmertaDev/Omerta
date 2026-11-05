@@ -45,7 +45,7 @@ try {
     page.on('console', message => { if (['warning', 'error'].includes(message.type()) && /UI .*unavailable|UI enhancement unavailable/.test(message.text())) errors.push(message.text()); });
     await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));
-    if (mobile) await page.locator('#ux-screen-tools > summary').click();
+    await disclosure(page.locator('#ux-screen-tools'));
     await page.locator('select[data-ux-density]').waitFor();
     if (mobile) {
       await page.locator('.ux-screen-tools-close').click();

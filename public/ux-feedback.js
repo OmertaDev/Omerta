@@ -96,7 +96,7 @@
       if (top && !top.querySelector('[data-feedback-settings]')) {
         const button = document.createElement('button'); button.type = 'button'; button.className = 'act ux-feedback-button';
         button.dataset.feedbackSettings = ''; button.textContent = 'Feel'; button.title = 'Sound, touch, and celebration preferences';
-        button.setAttribute('aria-label', button.title); button.onclick = openSettings; top.append(button);
+        button.setAttribute('aria-label', button.title); button.onclick = openSettings; (document.getElementById('game-menu-content') || top).append(button);
       }
       const me = getState().me;
       if (!me) return;

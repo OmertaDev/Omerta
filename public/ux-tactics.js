@@ -165,7 +165,7 @@
       if (!host) {
         host = document.createElement('details'); host.className = 'ux-tactics'; host.dataset.uxTactics = ''; host.dataset.uxPanel = 'tactics'; host.dataset.uxOwner = owner;
         host.innerHTML = '<summary>THE PLANNING TABLE <span>Compare · preview · plan</span></summary><div class="ux-tactics-body"></div>';
-        current.prepend(host);
+        if (state().currentTab === 'start') current.append(host); else current.prepend(host);
         host.addEventListener('toggle', () => { if (draft.open !== host.open) { draft.open = host.open; save(); } if (host.open) { paint(); load(); } });
       }
       if (host.open !== draft.open) host.open = draft.open;
