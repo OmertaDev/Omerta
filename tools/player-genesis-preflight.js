@@ -13,6 +13,7 @@ function same(label, actual, expected) {
   if (JSON.stringify(norm(actual)) !== JSON.stringify(norm(expected))) throw Error(`${label}: live binding mismatch`);
 }
 function requireTrue(label, condition) { if (!condition) throw Error(label); }
+const MAX_FUTURE_CLOCK_SKEW_SECONDS = 15n;
 
 export async function preflightPlayerGenesis(input, client, { phase = 'predeploy', confirmations = 5, now = Date.now, ...buildOptions } = {}) {
   if (!['predeploy', 'prepared'].includes(phase)) throw Error('phase must be predeploy or prepared');
