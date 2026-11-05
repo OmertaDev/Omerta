@@ -4,14 +4,14 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 4,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_ECONOMIC_DEED_NATIVE_INPUTS",
-  "authoredRevision": "5214dc13676c6c4bae8f631bb0786c94976045d4",
+  "authoredRevision": "fb8911c7b4aafe6fc1d666528150d507fafe4a87",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
   "nativePredecessorMetadataSha256": "70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e",
   "deedSourceDefinitionSha256": "73bf24b95a07a2b409f8c05c5fb8601e34fe7ae402e5616b26749fbee42ad242",
   "deedNativeMetadataSha256": "7dab84d91912e78448797e70dcf0fca4af19027a482d780c8557ae6a2293d311",
-  "economicNativeSourceSha256": "524e712c440210b8a6f875f616f6da227c2d7698a087c4f9752bc7458e8f384d",
+  "economicNativeSourceSha256": "791efea16f4cb2e00222413f14aa58cc849bbb7dc859a45a3f3745f25df880c3",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
   "legacyDefinitionSha256": "a5b7fb0db57cc7945b5f96b975b7ac0fe6cef4d05e1dd10c929c083429703ce4",
   "legacyInventorySha256": "385de56c6df70d28b8550412dd2c4909b6ed2eae99ef5d5c79da4d641481a84f",
@@ -7753,8 +7753,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/lib/rc1-historical-source-fixture.js",
       "mode": "100644",
-      "blob": "0773ce2a68874504490d6301f896c2b908f14656",
-      "sha256": "0c7d1202e9b1eb86ec144451cdf28e81ebc8784648c0ab27aa43513d1625d989"
+      "blob": "05b015e5e73922216d5a98aa746baaee373fbc66",
+      "sha256": "fb724f2bddeb67bc14273f53781c5b74b42f51889d5688a31c7dfee2373ed3f5"
     },
     {
       "file": "test/lib/rc1-historical-worker-source.js",
@@ -10225,14 +10225,14 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/combined-economic-deed-source-data.js",
       "mode": "100644",
-      "blob": "8162a259a1e330c88ef28f25ab2c56a4c7e8f73e",
-      "sha256": "049b009d167658002fb67a9f668c44ed95d56bdea36f5f029bb4b76be1357a42"
+      "blob": "87e5aea7b807db33fa947b8a327a086774e4cba4",
+      "sha256": "e8165b70d48a811212a2c781672d64507703914037db8453460039b34a06959b"
     },
     {
       "file": "tools/combined-economic-deed-source-transfer.js",
       "mode": "100644",
-      "blob": "ac43b3c88dee8a2a13c859d0ec7112aee583f906",
-      "sha256": "a47b60ea6096986d45df28f57d4a45f755c3c8d844e40602a8512173c6e8ad4e"
+      "blob": "1e3b013ffec9b3b8f3fb9c2bc496e70496d775b4",
+      "sha256": "ed3e17f26859df700e3a48af3af13e8127bfe5f7a49930c8f9be60fc3d3fcd36"
     },
     {
       "file": "tools/current-economic-terms-source-data.js",
@@ -10243,8 +10243,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/current-economic-terms-source-transfer.js",
       "mode": "100644",
-      "blob": "03b208f3a4f22115b4886268739ff45b5014efac",
-      "sha256": "95de9d3d6ea909fca633d34f3536f807c28dee9f5ef3ca5de97c3c70f84eeb33"
+      "blob": "c02de1d56bf860191fa185009ebd8be2be01f378",
+      "sha256": "26406b6390ac84605e53e14fec9ebdfc1133971ed15f168b89262805e9288670"
     },
     {
       "file": "tools/deed-allocation-source-data.js",
@@ -10345,8 +10345,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-combined-economic-deed-source-transfer.js",
       "mode": "100644",
-      "blob": "ffc48341489f5b63868287417404f44f4def8e46",
-      "sha256": "21aa71c9eac3d01c9cff3ca4460b27a28e49f772cd76b395947e32c107850795"
+      "blob": "344b696d2269a10cdfbbcedf8ea444942daa27e6",
+      "sha256": "7ddbeb082a1c37465b0d6ae45c06869211140f6880d0916cda2f4de0ac1ce8c2"
     },
     {
       "file": "tools/generate-current-economic-terms-source-transfer.js",
@@ -10471,8 +10471,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/ux-release-phase2-native-catalog.js",
       "mode": "100644",
-      "blob": "d600b17bdcc244abc64312194a85ce29d7bfda2b",
-      "sha256": "bfc7ce695934b6d14fb2d414b9f7ce237d9b54fcb62bbea860fd2b98b6821d3a"
+      "blob": "14beaa6ac20acf452d911791b9cc45552e4fadf5",
+      "sha256": "ebfc9dc7e4f990415a8f9795e151d9c8234f7deac3559c8df961c1f1b44b4c5e"
     },
     {
       "file": "tools/ux-source-compatibility.js",
@@ -11603,8 +11603,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "test/lib/rc1-historical-source-fixture.js",
         "mode": "100644",
-        "blob": "0773ce2a68874504490d6301f896c2b908f14656",
-        "sha256": "0c7d1202e9b1eb86ec144451cdf28e81ebc8784648c0ab27aa43513d1625d989"
+        "blob": "05b015e5e73922216d5a98aa746baaee373fbc66",
+        "sha256": "fb724f2bddeb67bc14273f53781c5b74b42f51889d5688a31c7dfee2373ed3f5"
       }
     },
     {
@@ -12577,14 +12577,14 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/combined-economic-deed-source-data.js",
       "mode": "100644",
-      "blob": "8162a259a1e330c88ef28f25ab2c56a4c7e8f73e",
-      "sha256": "049b009d167658002fb67a9f668c44ed95d56bdea36f5f029bb4b76be1357a42"
+      "blob": "87e5aea7b807db33fa947b8a327a086774e4cba4",
+      "sha256": "e8165b70d48a811212a2c781672d64507703914037db8453460039b34a06959b"
     },
     {
       "file": "tools/combined-economic-deed-source-transfer.js",
       "mode": "100644",
-      "blob": "ac43b3c88dee8a2a13c859d0ec7112aee583f906",
-      "sha256": "a47b60ea6096986d45df28f57d4a45f755c3c8d844e40602a8512173c6e8ad4e"
+      "blob": "1e3b013ffec9b3b8f3fb9c2bc496e70496d775b4",
+      "sha256": "ed3e17f26859df700e3a48af3af13e8127bfe5f7a49930c8f9be60fc3d3fcd36"
     },
     {
       "file": "tools/current-economic-terms-source-data.js",
@@ -12595,8 +12595,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/current-economic-terms-source-transfer.js",
       "mode": "100644",
-      "blob": "03b208f3a4f22115b4886268739ff45b5014efac",
-      "sha256": "95de9d3d6ea909fca633d34f3536f807c28dee9f5ef3ca5de97c3c70f84eeb33"
+      "blob": "c02de1d56bf860191fa185009ebd8be2be01f378",
+      "sha256": "26406b6390ac84605e53e14fec9ebdfc1133971ed15f168b89262805e9288670"
     },
     {
       "file": "tools/deed-allocation-source-data.js",
@@ -12697,8 +12697,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-combined-economic-deed-source-transfer.js",
       "mode": "100644",
-      "blob": "ffc48341489f5b63868287417404f44f4def8e46",
-      "sha256": "21aa71c9eac3d01c9cff3ca4460b27a28e49f772cd76b395947e32c107850795"
+      "blob": "344b696d2269a10cdfbbcedf8ea444942daa27e6",
+      "sha256": "7ddbeb082a1c37465b0d6ae45c06869211140f6880d0916cda2f4de0ac1ce8c2"
     },
     {
       "file": "tools/generate-current-economic-terms-source-transfer.js",
@@ -12823,8 +12823,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/ux-release-phase2-native-catalog.js",
       "mode": "100644",
-      "blob": "d600b17bdcc244abc64312194a85ce29d7bfda2b",
-      "sha256": "bfc7ce695934b6d14fb2d414b9f7ce237d9b54fcb62bbea860fd2b98b6821d3a"
+      "blob": "14beaa6ac20acf452d911791b9cc45552e4fadf5",
+      "sha256": "ebfc9dc7e4f990415a8f9795e151d9c8234f7deac3559c8df961c1f1b44b4c5e"
     },
     {
       "file": "tools/ux-source-compatibility.js",
@@ -12864,4 +12864,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "f5f58a46ae7c3a6ee1708924b51e06687ec0ca9174eae0038399a4221023d9d6";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "d880675ff28f4b7a595df946933c2f8d9c2f44459c1169ecda32658f3d40b22b";
