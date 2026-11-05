@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS } from './enterprise-native-ux-b35-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as DEED_NATIVE_INPUTS } from './economic-deed-parent-native-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as active } from './enterprise-native-economic-release-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as economic } from './enterprise-native-economic-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as desk } from './enterprise-native-deed-inputs.js';
 import { combinedEconomicDeedSource as combinedEconomicDeedPin } from './combined-economic-deed-source-data.js';
@@ -114,6 +115,9 @@ export function assertEconomicReleaseNativeDefinition(declaration) {
 }
 
 export function economicReleaseNativeProvenance(file, expected) {
+ const sealed = active.files?.find(row => row.file === file);
+ assert(sealed && Object.isFrozen(sealed) && sealed === expected, 'Only the exact immutable current native row may receive provenance');
+ assertReviewedNativePin(sealed);
  const before = b35Rows.get(file), deskPin = deskRows.get(file), economicPin = economicRows.get(file);
  const deskProvenance = before && deskPin ? businessDeskCombinedNativeProvenance(file, before, deskPin) : null;
  const economicProvenance = economicPin ? economicParentProvenance(file, economicPin) : null;

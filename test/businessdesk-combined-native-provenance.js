@@ -10,6 +10,7 @@ import { BUSINESS_DESK_COMBINED_NATIVE_PARENT_OBJECTS, assertBusinessDeskCombine
   assertBusinessDeskCombinedNativeDefinition, businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as current } from '../tools/enterprise-native-deed-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous } from '../tools/enterprise-native-ux-b35-inputs.js';
+import { economicReleaseNativeProvenance } from '../tools/economic-release-native-provenance.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as active, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
 
 assert.deepEqual(process.argv.slice(2),[],'Bare source-only entrypoint required');
@@ -97,6 +98,10 @@ for(const row of data.files){
   assert.equal(sha(git('show',current.authoredRevision+':'+row.file)),expected.sha256);
   const actual=active.files.find(pin=>pin.file===row.file);assert.equal(sha(bytes),actual.sha256);
   const admitted=assertEnterpriseUxTrackedInput(row.file,now,anchor,bytes);
+  assert.deepEqual(economicReleaseNativeProvenance(row.file,actual),admitted);
+  refuse(()=>economicReleaseNativeProvenance(row.file,Object.freeze({...actual})));
+  refuse(()=>economicReleaseNativeProvenance(row.file,Object.freeze({...actual,sha256:'0'.repeat(64)})));
+  refuse(()=>economicReleaseNativeProvenance(row.file,expected));
   assert.equal(admitted.current.blob,actual.blob);assert.deepEqual(admitted.deskProvenance??admitted,proof);
   if(actual.blob!==expected.blob)refuse(()=>assertEnterpriseUxTrackedInput(row.file,now,anchor,git('show',current.authoredRevision+':'+row.file)));
   for(const raw of [Buffer.concat([bytes,Buffer.from('\n')]),bytes.subarray(1),bytes.toString(),Buffer.from(bytes.toString().replaceAll('\n','\r\n'))])refuse(()=>assertEnterpriseUxTrackedInput(row.file,now,anchor,raw));
