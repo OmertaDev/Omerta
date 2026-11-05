@@ -1,5 +1,6 @@
 // Provenance only. Native callers must first admit actual current/authored bytes.
 import assert from 'node:assert/strict';
+import { businessDeskNoirNativeProvenance } from './businessdesk-noir-native-provenance.js';
 import { BUSINESS_DESK_DOMAINS } from './businessdesk-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as current } from './enterprise-native-deed-inputs.js';
@@ -9,6 +10,8 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as deedNative } from './businessdesk-deed-n
 const same = (row, mode, blob, sha256) => row.mode === mode && row.blob === blob && row.sha256 === sha256;
 
 export function businessDeskNativeProvenance(file, previous, expected) {
+  const combined = businessDeskNoirNativeProvenance(file, previous, expected);
+  if (combined) return combined;
   if (typeof file !== 'string' || !Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return null;
   const original = predecessor.files.find(row => row.file === file);
   if (!original) return null;

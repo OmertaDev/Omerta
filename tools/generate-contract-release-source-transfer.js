@@ -29,6 +29,7 @@ const RELEASE = Object.freeze(['.github/workflows/forge.yml', 'docs/WIKI.md',
   'tools/genesis-historical-reader-source-transfer.js', 'tools/market-fee-copy-source-transfer.js']);
 const INTEGRATION = Object.freeze(['package.json', 'tools/enterprise-native-ux.js', 'tools/enterprise-native-ux-seal.js',
   'tools/deed-allocation-source-transfer.js', 'test/deed-allocation-source-compatibility.js',
+  'test/noir-ui-source-compatibility.js', 'test/businessdesk-noir-source-compatibility.js',
   'test/economy-hardening-source-compatibility.js', 'test/lib/enterprise-ux-native-guard.js',
   'test/businessdesk-native-provenance.js', 'tools/contract-release-native-provenance.js',
   'tools/contract-release-source-format.js',
