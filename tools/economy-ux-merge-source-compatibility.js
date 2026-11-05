@@ -121,8 +121,8 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input) {
-  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = deedAllocationHistoricalInput(file, input);
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);
@@ -131,8 +131,8 @@ export function economyUxMergeCandidateHistoricalInput(file, input) {
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input) {
-  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = deedAllocationHistoricalInput(file, input);
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyBankInterestHardeningHistoricalInput(file, input);
   input = economySocialProofCutoverHistoricalInput(file, input);
   input = economySocialReceiptSafetyHistoricalInput(file, input);

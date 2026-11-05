@@ -167,8 +167,8 @@ const socialReceiptSafetyFiles = [
 ];
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
-const deedAllocationPhysicalSource = file => deedAllocationHistoricalInput(file,
-  age21HistoricalInput(file, wikiMediaHistoricalInput(file, fs.readFileSync(file, 'utf8'))));
+const deedAllocationPhysicalSource = file => age21HistoricalInput(file, wikiMediaHistoricalInput(file,
+  deedAllocationHistoricalInput(file, fs.readFileSync(file, 'utf8'))));
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
   file, uxAfterwordHistoricalInput(file, deedAllocationPhysicalSource(file))));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
