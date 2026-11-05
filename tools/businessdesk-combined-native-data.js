@@ -4,9 +4,9 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_NATIVE_PROVENANCE_ONLY",
-  "sourceRevision": "1719932f04c252913334f0a318e398aa7673f91f",
-  "sourceTree": "3b4ca8e6b5a92e521c311bbf07fbf67eec739fb3",
-  "topSourceDefinitionSha256": "e40ee2f38d2ecc602e1bcb478fc4fb1d3e3e8f024a56e594a14800c52330d22b",
+  "sourceRevision": "1ae98ee96858b36c8435ce164532795bf2ac5e26",
+  "sourceTree": "d332d1137e16c1407d8ddd512dd88dc70fe80dd5",
+  "topSourceDefinitionSha256": "a7301220f56e35087a6dfd55337fd9fbaef5dae2d0d4e561738506edb01b408e",
   "parentRegistryDefinitionSha256": "d38d8283d7b29eff2a80cefb43f68e768f6df294ed5e8d297b3219bc36622516",
   "nativeClosure": [
     ".github/workflows/ci.yml",
@@ -4312,4 +4312,4 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="7705dbe44257bb05b8f248d3850872ab55be3bdea57c5bca5f3e18df22378e5c";
+export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="358d0f8f0bf0240d8bf8de28d461948fd1a721ad977df0ecd6bc93ffa88e49f9";
