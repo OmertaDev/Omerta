@@ -4,8 +4,8 @@ export const ECONOMY_DEED_MERGE_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_ECONOMY_DEED_MERGE_SOURCE_ONLY",
-  "sourceRevision": "1866a0064e9933a84cb5bd4ced9a80199fd7fc8b",
-  "sourceTree": "83d0774b22d82b8b7bd21bacb3f00965bcc08e11",
+  "sourceRevision": "02a36b165d5097c007a0515db9825da0e4a62994",
+  "sourceTree": "6e84da6ccde8f131ef04cb03ea58b6433cc6aacf",
   "profiles": {
     "monitor": {
       "revision": "c771f5ba73453a57e24e31f8eeb920933fe7544c",
@@ -1709,13 +1709,13 @@ export const ECONOMY_DEED_MERGE_SOURCE = freeze({
   "runtime": false,
   "native": false
 });
-export const ECONOMY_DEED_MERGE_SOURCE_SHA256 = "b2742a2d94ee5363851e6711e56449244281889b2206403134b9faeeb5a66e1f";
+export const ECONOMY_DEED_MERGE_SOURCE_SHA256 = "0c0c52779fcd128337f8b13d92b56bc0cbdc9f73128b7dbf5df5a267e7604d0e";
 export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_ECONOMY_DEED_MERGE_SOURCE_PROVENANCE_ONLY",
-  "sourceRevision": "1866a0064e9933a84cb5bd4ced9a80199fd7fc8b",
-  "sourceTree": "83d0774b22d82b8b7bd21bacb3f00965bcc08e11",
+  "sourceRevision": "02a36b165d5097c007a0515db9825da0e4a62994",
+  "sourceTree": "6e84da6ccde8f131ef04cb03ea58b6433cc6aacf",
   "predecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
   "predecessorDefinitionSha256": "1a18c61c509dab42516af5763f618c3374f5a30d0ec7ca46eb592aa8ef2dbdab",
   "predecessorMetadataSha256": "70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e",
@@ -1728,6 +1728,7 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
     "public/ux-coordination.css",
     "public/ux-coordination.js",
     "public/ux-feedback.js",
+    "public/ux-identity.js",
     "public/ux-navigation.css",
     "public/ux-navigation.js",
     "public/ux-progression.css",
@@ -1896,6 +1897,21 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
         "mode": "100644",
         "blob": "edd1a6bcfaa690852bf753349fff1046da3a36de",
         "sha256": "002d872bc67a440a512bd1903418ae6acd28940e84b0499af42eba3a34700b97"
+      }
+    },
+    {
+      "file": "public/ux-identity.js",
+      "current": {
+        "file": "public/ux-identity.js",
+        "mode": "100644",
+        "blob": "86fece90a1c9af09ae766193033cef678ecd988b",
+        "sha256": "6c95d5de538d710b5d506dbe1ad42baf5d55edb91bd42688c402ce5bd4cb644a"
+      },
+      "predecessor": {
+        "file": "public/ux-identity.js",
+        "mode": "100644",
+        "blob": "faba4e7e26204df0f877414859b81a7c53fc97f5",
+        "sha256": "ae7505a1022130eacfd885124d3f59d375b463ae023ffaea87f51ecf90c3aeaa"
       }
     },
     {
@@ -2623,4 +2639,4 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 = "c9458e84f11a2ada8bef1df43e43a723399aa8afd7871b6f599a8df6dc64703f";
+export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 = "7dc64e68bc9c8e949c54c671773b9b83794b7e1dd05ed408eadbda8e16bd89fe";
