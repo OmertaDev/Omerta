@@ -145,12 +145,13 @@ let nativeRelations = 0, nativeRefusals = 0, sample;
 const nativeRefused = run => { assert.throws(run); nativeRefusals++; };
 for (const file of nativeFiles) {
   const previous = previousNative.files.find(row => row.file === file), expected = currentNative.files.find(row => row.file === file);
-  assert(expected && Object.isFrozen(expected));
   if (!previous) {
     assert(nativeFiles.indexOf(file) >= 7, 'Only the two declared shared additions lack a B35 predecessor.');
+    if (expected) assert(Object.isFrozen(expected));
     assert.equal(businessDeskNoirNativeProvenance(file, previous, expected), null, 'An addition never invents an existing-input predecessor pin.');
     continue;
   }
+  assert(expected && Object.isFrozen(expected));
   assert(nativeFiles.indexOf(file) < 7); assert(Object.isFrozen(previous));
   const proof = businessDeskNoirNativeProvenance(file, previous, expected);
   assert(proof && Object.isFrozen(proof) && Object.isFrozen(proof.current));
