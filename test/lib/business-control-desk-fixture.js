@@ -108,6 +108,10 @@ export async function businessDeskFixture(definitions) {
       for (const [role, location] of Object.entries({ maker: 'foundry', seller: 'foundry', first: 'foundry', second: 'docks', host: 'neon', buyer: 'neon', outsider: 'foundry' })) {
         scenario.actors[role] = await player(definition.label, role, location, scenario.credential);
       }
+      if (definition.rateLimitProbe) {
+        await app.pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [scenario.actors.outsider.account]);
+        assert.equal((await app.pool.query('SELECT agent_flag FROM account_persistent WHERE account_id=$1', [scenario.actors.outsider.account])).rows[0].agent_flag, true);
+      }
       const { maker, seller } = scenario.actors;
       await ok(maker, 'POST', '/v1/resources/company', { expectedRevision: 0, name: `Desk Company ${definition.label}`, published: false, premises: null }, undefined, 'human');
       scenario.businessId = (await ok(maker, 'POST', '/v1/depot', { salePrice: 1000, bidPrice: 500, targetStock: 2, reorderAt: 0, restockBudget: 2000 }, undefined, 'human')).id;

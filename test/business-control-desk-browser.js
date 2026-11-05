@@ -95,10 +95,83 @@ async function componentIdentityBoundary(context, f, scenario, production, toolI
   }
 }
 
+async function mountedAgentRateBoundary(context, f, scenario) {
+  const actor = scenario.actors.outsider;
+  const character = (await f.ok(actor, 'GET', '/v1/me')).character;
+  assert.equal((await f.app.pool.query('SELECT agent_flag FROM account_persistent WHERE account_id=$1', [actor.account])).rows[0].agent_flag, true);
+  const before = await f.snapshot(), priorRateLimit = process.env.RATE_LIMIT;
+  const page = await context.newPage(), errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  try {
+    await page.goto(f.origin + '/robots.txt', { waitUntil: 'domcontentloaded' });
+    await page.setContent('<!doctype html><title>Mounted agent cadence proof</title><div id="agent-desk"></div>');
+    await page.addScriptTag({ url: f.origin + '/business-control-desk.js' });
+    process.env.RATE_LIMIT = 'on';
+    const allowed = await f.request(actor, 'GET', '/v1/session', undefined, undefined, 'agent');
+    assert.equal(allowed.status, 200, allowed.text);
+    const limited = await f.request(actor, 'GET', '/v1/me', undefined, undefined, 'agent');
+    assert.equal(limited.status, 429, 'The default mounted agent bucket really limits an immediate authenticated read.');
+    assert.equal(limited.body.error, 'rate_limited'); assert.equal(limited.body.retryAfter, 3);
+    assert.equal(limited.headers['retry-after'], '3');
+    await page.evaluate(({ character, account, token }) => {
+      const proof = window.__mountedAgentProof = { requests: [] };
+      async function request(method, path, body, options = {}) {
+        if (options.beforeDispatch && !options.beforeDispatch()) return { ignored: true };
+        const headers = { authorization: 'Bearer ' + token };
+        if (body !== undefined) headers['content-type'] = 'application/json';
+        if (options.idempotencyKey) headers['idempotency-key'] = options.idempotencyKey;
+        const at = Date.now();
+        const response = await fetch(path, { method, headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
+        const result = { code: response.status, body: await response.json() };
+        proof.requests.push({ method, path, at, code: result.code, body, key: options.idempotencyKey });
+        return options.isCurrent && !options.isCurrent() ? { ignored: true } : result;
+      }
+      proof.controller = window.OmertaBusinessDesk.mount(document.getElementById('agent-desk'), {
+        identity: account, character, api: request, act: request, isActive: () => true,
+      });
+    }, { character, account: actor.account, token: actor.agent });
+    // Thirteen authenticated reads at the real unchanged 1/3s cadence require
+    // over thirty seconds. This bound applies only to this added live-rate case.
+    const idle = () => page.waitForFunction(() => document.querySelector('#agent-desk .business-body')?.getAttribute('aria-busy') === 'false', undefined, { timeout: 90000 });
+    await idle();
+    assert.equal(await page.locator('#agent-desk .business-partial').count(), 0);
+    assert.equal(await page.locator('#agent-desk .business-summary').count(), 1);
+    const travel = page.locator('#agent-desk form[data-business-form="travel"]');
+    assert.equal(await travel.locator('[data-business-action="travel"]').isDisabled(), false, 'The real agent finishes loading every dependent board.');
+    await travel.locator('[name="district"]').selectOption('neon');
+    const response = page.waitForResponse(value => value.request().method() === 'POST' && new URL(value.url()).pathname === '/v1/travel/neon', { timeout: 20000 });
+    await travel.locator('[data-business-action="travel"]').click();
+    const committed = await response; assert.equal(committed.status(), 200, await committed.text());
+    assert.deepEqual(committed.request().postDataJSON(), {});
+    assert.match(committed.request().headers()['idempotency-key'] ?? '', /^[!-~]{1,128}$/);
+    await idle();
+    assert.equal(await page.locator('#agent-desk .business-partial').count(), 0, 'The post-mutation read cohort also respects the real agent cadence.');
+    const trace = await page.evaluate(() => window.__mountedAgentProof.requests);
+    assert(trace.some(row => row.method === 'GET' && row.code === 429), 'This proof exercises an actual mounted rate refusal, rather than disabling the limiter.');
+    const posts = trace.filter(row => row.method === 'POST');
+    assert.equal(posts.length, 1, 'Cadence prevents duplicate real travel effects.'); assert.equal(posts[0].code, 200);
+    console.log(JSON.stringify({ businessDeskAgentRateTrace: { agentFlag: true, rateLimit: 'on',
+      immediateRead: { session: allowed.status, me: limited.status, retryAfter: limited.body.retryAfter }, requests: trace } }));
+    const after = await f.snapshot(), initial = before.characters.find(row => row.id === actor.id), final = after.characters.find(row => row.id === actor.id);
+    assert.equal(final.loc, 'neon');
+    const oldIds = new Set(before.transactions.map(row => row.id));
+    const added = after.transactions.filter(row => !oldIds.has(row.id));
+    assert(added.some(row => row.character_id === actor.id && row.currency === 'cash' && Number(row.amount) < 0), 'Travel pays its canonical game-cash cost.');
+    assert.equal(Number(final.cash) + Number(final.bank) - Number(initial.cash) - Number(initial.bank), added.filter(row => row.character_id === actor.id && row.currency === 'cash').reduce((sum, row) => sum + Number(row.amount), 0));
+    for (const key of ['cars', 'market', 'stacks', 'items', 'events', 'escrow', 'production', 'couriers', 'consignments']) assert.deepEqual(after[key], before[key], `Rate recovery does not invent ${key} effects.`);
+    await f.books(); assert.deepEqual(errors, []);
+    console.log('business desk real mounted agent cadence PASS: default RATE_LIMIT=on/agent_flag, actual 429, complete reads, canonical session-preflight/travel and single reconciled game-cash effect');
+  } finally {
+    process.env.RATE_LIMIT = priorRateLimit;
+    await page.evaluate(() => window.__mountedAgentProof?.controller.destroy()).catch(() => {});
+    await page.close();
+  }
+}
+
 const executablePath = [process.env.CHROMIUM_PATH, chromium.executablePath(),
   'C:/Program Files/Google/Chrome/Application/chrome.exe', '/usr/bin/chromium', '/usr/bin/google-chrome'].find(file => file && fs.existsSync(file));
 assert(executablePath, 'Install Chromium or set CHROMIUM_PATH; the business desk browser proof never skips.');
-const f = await businessDeskFixture([{ label: 'desktop' }, { label: 'mobile' }]);
+const f = await businessDeskFixture([{ label: 'desktop', rateLimitProbe: true }, { label: 'mobile' }]);
 let browser;
 try {
   browser = await chromium.launch({ executablePath, headless: true });
@@ -281,7 +354,10 @@ try {
       await refresh();
       await action('reinvest', `/v1/market/${next.listingId}/buy`, {}, {}, next.listingId);
       await f.assertFinished(s, toolId, before);
-      if (index === 0) await componentIdentityBoundary(context, f, s, produced, toolId);
+      if (index === 0) {
+        await componentIdentityBoundary(context, f, s, produced, toolId);
+        await mountedAgentRateBoundary(context, f, s);
+      }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'The complete desk fits the viewport.');
       assert.deepEqual(errors, []);
       console.log(`business desk Chromium ${viewport.width}x${viewport.height} PASS: human controls buy/salvage/two-recipe batch/courier consent/dispatch/travel/sale offer/reinvestment; public funded counterparties, canonical balances/title, exact HTTP receipts, no page errors or horizontal overflow${index === 0 ? '; committed-response loss recovery, partial read recovery and separate component identity/preflight no-dispatch boundaries' : ''}`);
