@@ -1,8 +1,8 @@
-// DRAFT parent registry: Monitor is provisional. It cannot bind native provenance until explicitly finalized.
+// Exact frozen parent source pins only; no historical qualification or native results transfer.
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
   "version": 1,
-  "status": "UNBOUND",
+  "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_NATIVE_PARENTS",
   "commonRevision": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
   "profiles": {
@@ -23,20 +23,20 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
       "provisional": false
     },
     "monitor": {
-      "revision": "ee3457ee8641a77b0ccd465440b7bbb00b02bbb0",
-      "tree": "fda632480025d4242c4b04d0e17389004647b07a",
+      "revision": "966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "tree": "7a3a8e8768d8b4e386f39b313ac540eb7819f383",
       "archiveFile": "tools/businessdesk-monitor-parent-native-inputs.js",
       "original": {
         "file": "tools/enterprise-native-deed-inputs.js",
         "mode": "100644",
-        "blob": "ba356bea24733cee920b961247c00ec1285f1458",
-        "rawSha256": "8099f89648f75ff29768a01d8ada9ffadb0a75103efe9170872b331e3bc227ea"
+        "blob": "d3849474cc22eac441ea4ecf0a5d749ca427bea0",
+        "rawSha256": "77378d24c733507f9ba5bc18339b9ce40e85a0be4d84294e37dfb90cd411b4bb"
       },
-      "definitionSha256": "db0c7282b43480475e3421ba909c3c652398c9af91dfd2c388acbb498791a827",
-      "authoredRevision": "9cf7b9dd3365e19a67e86d5ebef219a9ce29a8f4",
+      "definitionSha256": "e7ba70cebadb35d7198a20784da422f12315aefc60a804b99c40aee5f688d24f",
+      "authoredRevision": "b66d8721bef251f43ec2ef0ce1cdb387383314a4",
       "version": 3,
       "phase": "ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS",
-      "provisional": true
+      "provisional": false
     },
     "wiki": {
       "revision": "6c4d37842f4d7ebd7f96d5fee9935720f442007a",
@@ -62,7 +62,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "file": "tools/deed-allocation-source-data.js",
         "mode": "100644",
         "blob": "9655f5beab168e96682228564b939b6998a1e50f",
-        "rawSha256": "c7d8be59edfd0a5b7ba3a0974bf623b4d4db1f258f79aff146b3f5cff1c4613e"
+        "rawSha256": "c7d8be59edfd0a5b7ba3a0974bf623b4d4db1f258f79aff146b3f5cff1c4613e",
+        "bytes": 432530
       },
       "exportName": "DEED_ALLOCATION_SOURCE_DOMAINS",
       "definitionSha256": "73bf24b95a07a2b409f8c05c5fb8601e34fe7ae402e5616b26749fbee42ad242"
@@ -73,7 +74,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "file": "tools/noir-ui-source-data.js",
         "mode": "100644",
         "blob": "a755d169d73ddad6227e08d5f9ba319c82579677",
-        "rawSha256": "3c4e12629f09192083eb5f40732c14f90d14cea68a4abe84b049d0943d9e4ee5"
+        "rawSha256": "3c4e12629f09192083eb5f40732c14f90d14cea68a4abe84b049d0943d9e4ee5",
+        "bytes": 113121
       },
       "exportName": "NOIR_UI_SOURCE",
       "definitionSha256": "20762cad6a54b37c532be5240e90877999f01986ea025a3cb438f9ccd844bc71"
@@ -84,7 +86,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "file": "tools/businessdesk-noir-source-data.js",
         "mode": "100644",
         "blob": "c43874f5435abe6152a3ee7f92f33271800bf115",
-        "rawSha256": "60d9e14410c288a26833c2b71b3993124eb94619607cffad7385630a33b934a7"
+        "rawSha256": "60d9e14410c288a26833c2b71b3993124eb94619607cffad7385630a33b934a7",
+        "bytes": 53989
       },
       "exportName": "BUSINESS_DESK_NOIR_SOURCE",
       "definitionSha256": "7737f879421c7ca1c4f0629777c2d52f0cd8bc0cd2cb2f057ab10cec294f5ff2"
@@ -95,21 +98,23 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "file": "tools/businessdesk-source-transfer.js",
         "mode": "100644",
         "blob": "355b4bfd56ce1ac03c69d1ab2a0badaf75a33632",
-        "rawSha256": "a5a10b6c301d0242a537f154ee17340014d68b25cfadb084bf4c2495ec7828b5"
+        "rawSha256": "a5a10b6c301d0242a537f154ee17340014d68b25cfadb084bf4c2495ec7828b5",
+        "bytes": 77031
       },
       "exportName": "BUSINESS_DESK_DOMAINS",
       "definitionSha256": "abd5de024529047c9c8ea57ce549803b25b06cdee74f439fee6c037f3cd55562"
     },
     "monitor": {
-      "revision": "ee3457ee8641a77b0ccd465440b7bbb00b02bbb0",
+      "revision": "966228e58e3b948ddcd3b85f40375dbf5364df1c",
       "source": {
         "file": "tools/economy-deed-merge-source-data.js",
         "mode": "100644",
-        "blob": "19979fa64d3edcb18ff398011464c85c3e7974a5",
-        "rawSha256": "60f3749e2f3064883ad71dc596e4134a49d7c4251e482e1c73c0459f990f9b33"
+        "blob": "a0edfe553c5187d679ee28668083413678b2e0a5",
+        "rawSha256": "0533f6bea923ba8b2eed2d2e6885330563b36fd608eb1b394d81e9fe2214b3d2",
+        "bytes": 723122
       },
       "exportName": "ECONOMY_DEED_MERGE_NATIVE_PROVENANCE",
-      "definitionSha256": "044165c7b6a09fe71384a13551b1384f61a538cfd5cd0709bced36219b425a20"
+      "definitionSha256": "7dc64e68bc9c8e949c54c671773b9b83794b7e1dd05ed408eadbda8e16bd89fe"
     },
     "wiki": {
       "revision": "6c4d37842f4d7ebd7f96d5fee9935720f442007a",
@@ -117,7 +122,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "file": "tools/wiki-media-source-data.js",
         "mode": "100644",
         "blob": "f88a5dec354ea6ecf0c198148565d6f16d8da481",
-        "rawSha256": "6b0dc94e703aaabad55a538f8f96157b8721126d1821f89c2b422f7a49bbba42"
+        "rawSha256": "6b0dc94e703aaabad55a538f8f96157b8721126d1821f89c2b422f7a49bbba42",
+        "bytes": 1099439
       },
       "exportName": "WIKI_MEDIA_SOURCE",
       "definitionSha256": "a9bff9da0739fc27d09f7324c0e63c17a5f4d7f011a6c9bbba0fd24eca8cc8a0"
@@ -128,7 +134,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "file": "tools/wiki-media-source-data.js",
         "mode": "100644",
         "blob": "f88a5dec354ea6ecf0c198148565d6f16d8da481",
-        "rawSha256": "6b0dc94e703aaabad55a538f8f96157b8721126d1821f89c2b422f7a49bbba42"
+        "rawSha256": "6b0dc94e703aaabad55a538f8f96157b8721126d1821f89c2b422f7a49bbba42",
+        "bytes": 1099439
       },
       "exportName": "WIKI_MEDIA_MERGE_SOURCE",
       "definitionSha256": "9d01bbeecceacd3a7f93aa1c44e444ed2f2059e21717a3473aab90e8429cd5ec"
@@ -139,7 +146,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "file": "tools/wiki-media-source-data.js",
         "mode": "100644",
         "blob": "f88a5dec354ea6ecf0c198148565d6f16d8da481",
-        "rawSha256": "6b0dc94e703aaabad55a538f8f96157b8721126d1821f89c2b422f7a49bbba42"
+        "rawSha256": "6b0dc94e703aaabad55a538f8f96157b8721126d1821f89c2b422f7a49bbba42",
+        "bytes": 1099439
       },
       "exportName": "WIKI_MEDIA_NOIR_MERGE_SOURCE",
       "definitionSha256": "096fab5d678af31b99a4af456fbd5f2cda05b97afe26e216c51beaedc370e441"
@@ -323,6 +331,7 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
     "public/ux-coordination.css",
     "public/ux-coordination.js",
     "public/ux-feedback.js",
+    "public/ux-identity.js",
     "public/ux-navigation.css",
     "public/ux-navigation.js",
     "public/ux-progression.css",
@@ -385,6 +394,7 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
     "public/ux-coordination.css": "desk",
     "public/ux-coordination.js": "desk",
     "public/ux-feedback.js": "wiki",
+    "public/ux-identity.js": "monitor",
     "public/ux-navigation.css": "desk",
     "public/ux-navigation.js": "desk",
     "public/ux-progression.css": "desk",
@@ -447,7 +457,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
     "test/sale-source-compatibility.js": "wiki",
     "tools/economy-ux-merge-source-compatibility.js": "monitor",
     "tools/enterprise-native-ux-seal.js": "desk",
-    "tools/enterprise-native-ux.js": "desk"
+    "tools/enterprise-native-ux.js": "desk",
+    "public/omerta-ui.css": "wiki"
   },
   "parentPaths": {
     "desk": [
@@ -2304,8 +2315,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "current": {
           "file": "public/index.html",
           "mode": "100644",
-          "blob": "36d900d027a7ffbfe598036adb1b2635a32fe1ea",
-          "sha256": "13c2cc9b99b9fbde817718741e05e3a1f2f8615107ce1de98d1c7fdd4c04fb28"
+          "blob": "de2f347271fd2a6d32d93315b3db89d842f04fa6",
+          "sha256": "633ac1ff51edfc510c1ca64d49177ee3340c1e12ceeb2a7682b7666f4e299acd"
         },
         "predecessor": {
           "file": "public/index.html",
@@ -2319,8 +2330,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
             "from": {
               "file": "public/index.html",
               "mode": "100644",
-              "blob": "36d900d027a7ffbfe598036adb1b2635a32fe1ea",
-              "sha256": "13c2cc9b99b9fbde817718741e05e3a1f2f8615107ce1de98d1c7fdd4c04fb28"
+              "blob": "de2f347271fd2a6d32d93315b3db89d842f04fa6",
+              "sha256": "633ac1ff51edfc510c1ca64d49177ee3340c1e12ceeb2a7682b7666f4e299acd"
             },
             "to": {
               "file": "public/index.html",
@@ -2336,8 +2347,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "current": {
           "file": "public/omerta-ui.css",
           "mode": "100644",
-          "blob": "f394406e1edb1f5571f67676266c291e1aea1c96",
-          "sha256": "c19546a18cde7f354e97c7c631fc5dee0401c466da7cf91eaa4318d6ada8a66c"
+          "blob": "e2b45e3b8fa9b261a60f3dbe84d91abea362b926",
+          "sha256": "4daa6519dfb0b6eaf327e6442a35af74fe7b6d127fdebd04f3a66924ad46841e"
         },
         "predecessor": {
           "file": "public/omerta-ui.css",
@@ -2351,8 +2362,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
             "from": {
               "file": "public/omerta-ui.css",
               "mode": "100644",
-              "blob": "f394406e1edb1f5571f67676266c291e1aea1c96",
-              "sha256": "c19546a18cde7f354e97c7c631fc5dee0401c466da7cf91eaa4318d6ada8a66c"
+              "blob": "e2b45e3b8fa9b261a60f3dbe84d91abea362b926",
+              "sha256": "4daa6519dfb0b6eaf327e6442a35af74fe7b6d127fdebd04f3a66924ad46841e"
             },
             "to": {
               "file": "public/omerta-ui.css",
@@ -2487,6 +2498,38 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
               "mode": "100644",
               "blob": "edd1a6bcfaa690852bf753349fff1046da3a36de",
               "sha256": "002d872bc67a440a512bd1903418ae6acd28940e84b0499af42eba3a34700b97"
+            }
+          }
+        ]
+      },
+      {
+        "file": "public/ux-identity.js",
+        "current": {
+          "file": "public/ux-identity.js",
+          "mode": "100644",
+          "blob": "86fece90a1c9af09ae766193033cef678ecd988b",
+          "sha256": "6c95d5de538d710b5d506dbe1ad42baf5d55edb91bd42688c402ce5bd4cb644a"
+        },
+        "predecessor": {
+          "file": "public/ux-identity.js",
+          "mode": "100644",
+          "blob": "faba4e7e26204df0f877414859b81a7c53fc97f5",
+          "sha256": "ae7505a1022130eacfd885124d3f59d375b463ae023ffaea87f51ecf90c3aeaa"
+        },
+        "edges": [
+          {
+            "kind": "monitor56",
+            "from": {
+              "file": "public/ux-identity.js",
+              "mode": "100644",
+              "blob": "86fece90a1c9af09ae766193033cef678ecd988b",
+              "sha256": "6c95d5de538d710b5d506dbe1ad42baf5d55edb91bd42688c402ce5bd4cb644a"
+            },
+            "to": {
+              "file": "public/ux-identity.js",
+              "mode": "100644",
+              "blob": "faba4e7e26204df0f877414859b81a7c53fc97f5",
+              "sha256": "ae7505a1022130eacfd885124d3f59d375b463ae023ffaea87f51ecf90c3aeaa"
             }
           }
         ]
@@ -3520,8 +3563,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "current": {
           "file": "test/lib/enterprise-ux-native-guard.js",
           "mode": "100644",
-          "blob": "8182daf62bc59329fc2615bb578d7335eec8f880",
-          "sha256": "ae900aa404ba362b53796aea40f1efb892474f35cb787be8996afc1570b2a67f"
+          "blob": "ff56f364fc9117ed49d81e083f3366f919ea7136",
+          "sha256": "d86904cfa17d4c37c66391443841f638e2d5e949c3e0dc58cd6728fbaf25aa37"
         },
         "predecessor": {
           "file": "test/lib/enterprise-ux-native-guard.js",
@@ -3535,8 +3578,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
             "from": {
               "file": "test/lib/enterprise-ux-native-guard.js",
               "mode": "100644",
-              "blob": "8182daf62bc59329fc2615bb578d7335eec8f880",
-              "sha256": "ae900aa404ba362b53796aea40f1efb892474f35cb787be8996afc1570b2a67f"
+              "blob": "ff56f364fc9117ed49d81e083f3366f919ea7136",
+              "sha256": "d86904cfa17d4c37c66391443841f638e2d5e949c3e0dc58cd6728fbaf25aa37"
             },
             "to": {
               "file": "test/lib/enterprise-ux-native-guard.js",
@@ -3872,8 +3915,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
         "current": {
           "file": "tools/enterprise-native-ux.js",
           "mode": "100644",
-          "blob": "9c040bf70db1d9aea3c63d0d196cf987a3a1ee56",
-          "sha256": "36f2f1a63470b264aa38936078abfd241e42d928492e04a8a80f4781ea841cee"
+          "blob": "a1b637c26e1b402fddc0e3ece01daa4218f63ead",
+          "sha256": "ba6db9adee22f09d46285d24c4cc942328a2ba111751e9c2784659449ec71073"
         },
         "predecessor": {
           "file": "tools/enterprise-native-ux.js",
@@ -3887,8 +3930,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
             "from": {
               "file": "tools/enterprise-native-ux.js",
               "mode": "100644",
-              "blob": "9c040bf70db1d9aea3c63d0d196cf987a3a1ee56",
-              "sha256": "36f2f1a63470b264aa38936078abfd241e42d928492e04a8a80f4781ea841cee"
+              "blob": "a1b637c26e1b402fddc0e3ece01daa4218f63ead",
+              "sha256": "ba6db9adee22f09d46285d24c4cc942328a2ba111751e9c2784659449ec71073"
             },
             "to": {
               "file": "tools/enterprise-native-ux.js",
@@ -6089,4 +6132,4 @@ export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS=freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS_SHA256="af1961184e46b8c58f5402eb0ccd979ef979cf7a21f8e882f1bb215bf28c4f10";
+export const BUSINESS_DESK_COMBINED_NATIVE_PARENTS_SHA256="0c1bb3be0809913744020dacd386242b2328f9c03de3eb580dbf828b24ebc1e2";

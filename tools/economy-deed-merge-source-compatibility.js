@@ -11,20 +11,20 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
 export { ECONOMY_DEED_MERGE_SOURCE, ECONOMY_DEED_MERGE_SOURCE_SHA256,
   ECONOMY_DEED_MERGE_NATIVE_PROVENANCE, ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 };
 export const ECONOMY_DEED_MERGE_FILES = Object.freeze([
-  'package.json', 'src/game.js', 'src/preflight.js',
+  'package.json', 'public/index.html', 'public/omerta-ui.css', 'src/game.js', 'src/preflight.js',
   'test/economy-hardening-source-compatibility.js',
   'test/lib/enterprise-ux-native-guard.js', 'test/lib/ux-native-reader-source-compatibility.js',
   'test/sale-source-compatibility.js', 'test/ux-expanded-browser.js',
   'tools/economy-ux-merge-source-compatibility.js', 'tools/enterprise-native-ux.js',
-  'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native.js',
+  'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native.js', 'tools/mobile.js',
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js',
 ]);
 // Closed review scope from the three immutable parents, intersected with the immutable B35 native
-// inventory, plus the two bounded operational-classification successors below. Integration changes
+// inventory, plus the three bounded source successors below. Integration changes
 // outside this list must be reviewed explicitly, never auto-admitted.
 export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
   'AGENTS.md', 'package.json', 'public/index.html', 'public/omerta-ui.css', 'public/sale.html',
-  'public/ux-coordination.css', 'public/ux-coordination.js', 'public/ux-feedback.js', 'public/ux-navigation.css',
+  'public/ux-coordination.css', 'public/ux-coordination.js', 'public/ux-feedback.js', 'public/ux-identity.js', 'public/ux-navigation.css',
   'public/ux-navigation.js', 'public/ux-progression.css', 'public/ux-progression.js',
   'public/ux-tactics.css', 'public/ux-tactics.js', 'public/ux-world.js', 'schema.sql', 'src/accrual.js', 'src/age.js',
   'src/content/city-quest-presentation.js', 'src/content/phase1-policy.js', 'src/content/phase1.js',
@@ -56,6 +56,13 @@ export const ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR = Object.freeze({
   anchor: "  'mod_kill_reason',\n",
   addition: '  // Source payout integrity diagnostics are operational observations.\n'
     + "  'economy_payout_bound',\n",
+});
+// The unchanged parent asset now renders its pending state before asynchronous record reads.
+// This exact forward correction grants neither historical execution nor native-result authority.
+export const ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR = Object.freeze({
+  file: 'public/ux-identity.js',
+  anchor: '      if (pending || !scope()) return; pending = true; const owner = account, life = character, version = serial;\n',
+  addition: '      render();\n',
 });
 export const ECONOMY_DEED_MERGE_PROFILES = Object.freeze({
   monitor: 'c771f5ba73453a57e24e31f8eeb920933fe7544c',

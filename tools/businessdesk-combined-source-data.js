@@ -9,7 +9,7 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
   contextLines: 8,
   profiles: {
     desk: { revision: 'de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', tree: '147add1847b8b34e019f1a24afaa9c1d48e538f7' },
-    monitor: { revision: 'ee3457ee8641a77b0ccd465440b7bbb00b02bbb0', tree: 'fda632480025d4242c4b04d0e17389004647b07a' },
+    monitor: { revision: '966228e58e3b948ddcd3b85f40375dbf5364df1c', tree: '7a3a8e8768d8b4e386f39b313ac540eb7819f383' },
     wiki: { revision: '6c4d37842f4d7ebd7f96d5fee9935720f442007a', tree: 'ca38e8e705f4d48df651a843b7f28d93d720a963' },
   },
   files: [],

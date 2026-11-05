@@ -44,10 +44,20 @@ try {
   assert.equal(board.enabled, false);
   await page.locator('[data-tab="start"]').evaluate((el) => el.click());
   await page.waitForFunction(() => document.querySelector('#tab-start')?.textContent.includes('Spread the Word'));
-  assert(await page.evaluate(() => document.querySelector('#tab-start').textContent.indexOf('Spread the Word') < document.querySelector('#tab-start').textContent.indexOf('Your character. Your deed.')), 'daily sharing leads the screen');
+  await page.locator('#tab-start .start-next-card .act').waitFor({ state: 'visible' });
+  assert(await page.evaluate(() => {
+    const primary = document.querySelector('#tab-start .start-next-card');
+    return primary && ['start-mint', 'start-outreach'].every(name => {
+      const secondary = document.querySelector('#tab-start details[data-sect="' + name + '"]');
+      return secondary && !!(primary.compareDocumentPosition(secondary) & Node.DOCUMENT_POSITION_FOLLOWING);
+    });
+  }), 'the playable first-week task leads secondary mint and outreach controls');
+  const outreach = page.locator('#tab-start details[data-sect="start-outreach"]');
+  if (!await outreach.evaluate(node => node.open)) await outreach.locator(':scope > summary').click();
+  await outreach.getByRole('heading', { name: /Spread the Word/i }).waitFor({ state: 'visible' });
   await page.screenshot({ path: path.join(output, 'mobile.png'), fullPage: true });
   // Only the gate script must be free of execution errors; report any legacy console errors too.
   assert.deepEqual(errors, [], 'no uncaught browser script errors');
   await context.close();
-  console.log('PASS: public mobile signup, durable login, disabled invite issuance, and prominent daily tasks. Screenshots: ' + output);
+  console.log('PASS: public mobile signup, durable login, disabled invite issuance, playable first-week task and reachable daily sharing. Screenshots: ' + output);
 } finally { await browser.close(); await app.close(); }

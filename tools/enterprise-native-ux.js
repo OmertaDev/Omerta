@@ -83,7 +83,11 @@ export const ENTERPRISE_UX_SUPPORT = Object.freeze([
  "tools/businessdesk-combined-native-data.js",
  "tools/businessdesk-combined-native-provenance.js",
  "tools/generate-businessdesk-combined-native.js",
- "test/businessdesk-combined-native-provenance.js"
+ "test/businessdesk-combined-native-provenance.js",
+ "test/launch-invites-browser.js",
+ "test/wallet-connect-browser.js",
+ "tools/mobile.js",
+ "tools/public-ui.js"
 ]);
 export const ENTERPRISE_UX_ASSETS = Object.freeze([
  "public/ux-feedback.js",

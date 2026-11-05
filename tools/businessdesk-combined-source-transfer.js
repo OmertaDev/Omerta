@@ -7,7 +7,7 @@ export { BUSINESS_DESK_COMBINED_SOURCE, BUSINESS_DESK_COMBINED_SOURCE_SHA256 };
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const BUSINESS_DESK_COMBINED_PROFILES = freeze({
   desk: { revision: 'de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', tree: '147add1847b8b34e019f1a24afaa9c1d48e538f7' },
-  monitor: { revision: 'ee3457ee8641a77b0ccd465440b7bbb00b02bbb0', tree: 'fda632480025d4242c4b04d0e17389004647b07a' },
+  monitor: { revision: '966228e58e3b948ddcd3b85f40375dbf5364df1c', tree: '7a3a8e8768d8b4e386f39b313ac540eb7819f383' },
   wiki: { revision: '6c4d37842f4d7ebd7f96d5fee9935720f442007a', tree: 'ca38e8e705f4d48df651a843b7f28d93d720a963' },
 });
 export const BUSINESS_DESK_COMBINED_READER_FILES = freeze({
@@ -26,7 +26,7 @@ export const BUSINESS_DESK_COMBINED_READER_FILES = freeze({
     'test/ux-expanded-browser.js', 'test/ux-experience-browser.js', 'test/ux-personality-browser.js',
     'test/ux-shell-browser.js', 'test/ux-story-browser.js', 'tools/economy-ux-merge-source-compatibility.js',
     'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native-ux.js', 'tools/enterprise-native.js',
-    'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js'],
+    'tools/mobile.js', 'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js'],
   wiki: ['MARKETING-POSTS.md', 'SPEC.md', 'docs/WIKI.md', 'package.json', 'public/index.html', 'public/omerta-ui.css',
     'public/ux-feedback.js', 'public/ux-navigation.js', 'public/ux-tactics.js', 'public/ux-world.js', 'public/wiki.html',
     'src/server.js', 'test/classic-interface-browser.js', 'test/client.js', 'test/decision-guide-client.js',
@@ -40,7 +40,7 @@ export const BUSINESS_DESK_COMBINED_READER_FILES = freeze({
     'tools/noir-ui-source-transfer.js', 'tools/public-ui.js', 'tools/wiki-media-source-transfer.js'],
 });
 // The Monitor's separately pinned release-roster proof reads this existing file
-// outside its base 10/14/Noir union. It already belongs to the global 55 paths.
+// outside its base 10/17/Noir union. It already belongs to the global 55 paths.
 export const BUSINESS_DESK_COMBINED_EXTRA_READERS = freeze({ desk: [], monitor: ['test/gates.js'], wiki: [] });
 export const BUSINESS_DESK_COMBINED_SOURCE_FILES = Object.freeze([...new Set(Object.values(BUSINESS_DESK_COMBINED_READER_FILES).flat())].sort());
 export const BUSINESS_DESK_COMBINED_EXCLUDED_FILES = Object.freeze([

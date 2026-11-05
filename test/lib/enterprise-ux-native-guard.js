@@ -27,7 +27,8 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   'tools/economy-deed-merge-source-compatibility.js', 'tools/generate-economy-deed-merge-source.js',
   'test/economy-deed-merge-source-compatibility.js', 'tools/noir-ui-source-data.js',
   'tools/noir-ui-source-transfer.js', 'tools/generate-noir-ui-source-transfer.js',
-  'test/noir-ui-source-compatibility.js', 'test/ux-expanded-browser.js'];
+  'test/noir-ui-source-compatibility.js', 'test/ux-expanded-browser.js', 'test/launch-invites-browser.js', 'test/wallet-connect-browser.js',
+  'tools/mobile.js', 'tools/public-ui.js'];
  for (const file of economySupport)
   assert(ENTERPRISE_UX_SUPPORT.includes(file), 'Current monitoring and merged-source proofs remain in the native closure: ' + file);
  const fixturePin = (file, blobDigit, shaDigit, mode = '100644') => Object.freeze({ file, mode, blob: blobDigit.repeat(40), sha256: shaDigit.repeat(64) });
