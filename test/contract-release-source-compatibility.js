@@ -13,12 +13,14 @@ import { assertContractReleaseSourceDefinition, assertContractReleaseSourceTrans
 import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
   deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN, CONTRACT_RELEASE_ETH_ORIGIN,
   CONTRACT_RELEASE_START_ORDER_ORIGIN,
+  CONTRACT_RELEASE_CENSUS_ORIGIN,
   CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION,
   contractReleaseReviewedOrigins, deriveContractReleaseApprovedSource,
   assertContractReleaseApprovedSource } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import { assertDeedAllocationSourceTransfer } from '../tools/deed-allocation-source-transfer.js';
 import { assertMarketFeeCopySourceTransfer } from '../tools/market-fee-copy-source-transfer.js';
+import { BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -93,6 +95,20 @@ try {
     assert.equal(git('rev-parse', data.sourceRevision + '^{tree}').trim(), data.sourceTree);
     assert.equal(git('rev-parse', data.baseRevision + '^{tree}').trim(), data.baseTree);
     git('merge-base', '--is-ancestor', data.sourceRevision, 'HEAD');
+    // Every changed comparison input needs its own exact outer view, including
+    // documents and reader helpers outside the native SQL input closure.
+    assert.equal(BUSINESS_DESK_COMBINED_SOURCE_FILES.length, 55);
+    for (const file of BUSINESS_DESK_COMBINED_SOURCE_FILES) {
+      const before = git('ls-tree', data.baseRevision, '--', file).trim();
+      const current = git('ls-tree', data.sourceRevision, '--', file).trim();
+      assert(before && current, 'Every frozen comparison domain has exact committed base and source inputs');
+      if (before !== current) {
+        const view = data.sourceViews[file];
+        assert(view?.targets.desk, 'Changed comparison input requires its own outer Desk view: ' + file);
+        assert.equal(current, view.current.mode + ' blob ' + view.current.blob + '\t' + file);
+        assert.equal(before, view.targets.desk.pin.mode + ' blob ' + view.targets.desk.pin.blob + '\t' + file);
+      }
+    }
     for (const [file, row] of Object.entries(data.sourceViews)) {
       const filename = path.join(root, file), stat = fs.lstatSync(filename);
       assert(stat.isFile() && !stat.isSymbolicLink());
@@ -502,6 +518,25 @@ try {
   refused(() => assertContractReleaseApprovedSource(escape.file, acceptedDeskIndex,
     { ...completeIndex, pin: { ...completeIndex.pin, mode: '100755' } }));
   refused(() => { escape.file = 'src/server.js'; });
+  assert.deepEqual(CONTRACT_RELEASE_CENSUS_ORIGIN, {
+    revision: '2e710730ba7292d66ae99cb872fd6cd4e1d787d8',
+    baseRevision: '68a4d92d810ee17c192abb8a8c2a3fcbf87c4c52',
+    files: ['MARKETING-POSTS.md', 'SPEC.md'],
+  });
+  assert(Object.isFrozen(CONTRACT_RELEASE_CENSUS_ORIGIN) && Object.isFrozen(CONTRACT_RELEASE_CENSUS_ORIGIN.files));
+  for (const file of CONTRACT_RELEASE_CENSUS_ORIGIN.files) {
+    assert.deepEqual(contractReleaseReviewedOrigins(file), [CONTRACT_RELEASE_CENSUS_ORIGIN]);
+    const base = committedOriginRecord(escape.baseRevision, file), actual = committedOriginRecord('HEAD', file);
+    assert.equal(base.pin.blob, committedOriginRecord(CONTRACT_RELEASE_CENSUS_ORIGIN.baseRevision, file).pin.blob);
+    assert(deriveContractReleaseApprovedSource(file, base).bytes.equals(actual.bytes), 'Exact census origin preserves the complete current document');
+    assertContractReleaseApprovedSource(file, base, actual); positives += 2;
+    const changed = sourceRecord(actual.bytes.toString() + '\n// unreviewed\n'); changed.pin.file = file;
+    refused(() => assertContractReleaseApprovedSource(file, base, changed));
+    refused(() => assertContractReleaseApprovedSource(file, base, { ...actual, pin: { ...actual.pin, mode: '100755' } }));
+  }
+  refused(() => { CONTRACT_RELEASE_CENSUS_ORIGIN.files.push('src/server.js'); });
+  for (const file of [...mobileFiles, ...CONTRACT_RELEASE_ETH_ORIGIN.files, 'test/lib/ux-journeys.js'])
+    assert(!contractReleaseReviewedOrigins(file).includes(CONTRACT_RELEASE_CENSUS_ORIGIN), 'Census origin cannot authorize product or reader source');
   const fixtureRepository = path.join(approvalDirectory, 'repository'), redirect = path.join(approvalDirectory, 'redirect');
   fs.mkdirSync(fixtureRepository);
   fs.symlinkSync(fixtureRepository, redirect, process.platform === 'win32' ? 'junction' : 'dir');

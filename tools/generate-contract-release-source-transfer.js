@@ -60,6 +60,11 @@ export const CONTRACT_RELEASE_START_ORDER_ORIGIN = Object.freeze({
   baseRevision: 'd80412c5f2cf6b597f9832825293cdae9d7d3480',
   files: Object.freeze(['public/index.html']),
 });
+export const CONTRACT_RELEASE_CENSUS_ORIGIN = Object.freeze({
+  revision: '2e710730ba7292d66ae99cb872fd6cd4e1d787d8',
+  baseRevision: '68a4d92d810ee17c192abb8a8c2a3fcbf87c4c52',
+  files: Object.freeze(['MARKETING-POSTS.md', 'SPEC.md']),
+});
 // The released Desk preserves consumed Escape events. Keep that exact reviewed
 // integration when composing the earlier mobile origin; never resolve arbitrary conflicts.
 export const CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION = Object.freeze({
@@ -99,6 +104,7 @@ const INTEGRATION = Object.freeze(['package.json', 'tools/enterprise-native-ux.j
   'test/businessdesk-combined-source-compatibility.js', 'test/businessdesk-combined-native-provenance.js',
   'test/economy-deed-merge-source-compatibility.js', 'test/wiki-media-source-transfer.js',
   'test/economy-monitor-source-compatibility.js', 'test/age-eligibility-source-compatibility.js',
+  'test/lib/ux-journeys.js',
   // Generated source-authority data only; product files always retain fixed reviewed origins.
   'tools/native-eth-source-transfer.json']);
 const NEW_SUPPORT = Object.freeze(['tools/age-policy-source-transfer.js', 'tools/genesis-fee-readiness-source-transfer.js',
@@ -220,6 +226,7 @@ export function contractReleaseReviewedOrigins(file) {
   if (CONTRACT_RELEASE_MOBILE_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_MOBILE_ORIGIN);
   if (CONTRACT_RELEASE_ETH_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_ETH_ORIGIN);
   if (CONTRACT_RELEASE_START_ORDER_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_START_ORDER_ORIGIN);
+  if (CONTRACT_RELEASE_CENSUS_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_CENSUS_ORIGIN);
   return Object.freeze(origins);
 }
 export function deriveContractReleaseApprovedSource(file, base) {
@@ -333,7 +340,8 @@ function main() {
   // Validate the separately reviewed UI change even when it is outside the native closure.
   const uiCurrent = record(source, UI_FILE), uiBase = record(base, UI_FILE);
   if (uiCurrent.pin.blob !== uiBase.pin.blob) authorize(UI_FILE);
-  const viewFiles = [...new Set([...RELEASE, ...INTEGRATION, ...FEE, ...CONTRACT_RELEASE_MOBILE_ORIGIN.files, ...CONTRACT_RELEASE_ETH_ORIGIN.files])].sort();
+  const viewFiles = [...new Set([...RELEASE, ...INTEGRATION, ...FEE, ...CONTRACT_RELEASE_MOBILE_ORIGIN.files,
+    ...CONTRACT_RELEASE_ETH_ORIGIN.files, ...CONTRACT_RELEASE_CENSUS_ORIGIN.files])].sort();
   for (const file of viewFiles) {
     const actual = record(source, file, true), prior = record(base, file, true);
     if (!actual || !prior) continue;
