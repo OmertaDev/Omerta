@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_SHA256 } from './noir-ui-source-data.js';
+import { combinedNoirUiInput } from './combined-economic-deed-source-transfer.js';
 
 export { NOIR_UI_SOURCE };
 export const NOIR_UI_SOURCE_FILES = Object.freeze([
@@ -73,6 +74,7 @@ export function assertNoirUiSourceTransfer(file, input, pin = NOIR_UI_SOURCE) {
 
 export function noirUiHistoricalInput(file, input) {
   if (NOIR_UI_SOURCE.status !== 'SEALED' || typeof file !== 'string') return input;
+  input = combinedNoirUiInput(file, input);
   const row = NOIR_UI_SOURCE.files.find(record => record.file === file);
   if (!row || row.predecessorAbsent) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

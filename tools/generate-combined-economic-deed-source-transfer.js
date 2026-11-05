@@ -6,8 +6,9 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {economicTermsPin} from './current-economic-terms-source-data.js';
 import {DEED_ALLOCATION_SOURCE_DOMAINS} from './deed-allocation-source-data.js';
 import {ENTERPRISE_NATIVE_UX_INPUTS} from './enterprise-native-deed-inputs.js';
+import {NOIR_UI_SOURCE} from './noir-ui-source-data.js';
 
-const source = '3785994c91797a68c6bbc8673d56f314651858e5';
+const source = '8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd';
 const predecessor = '4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364';
 const git = (...args) => execFileSync('git',['--no-replace-objects',...args],{
   encoding:'utf8', maxBuffer:32*1024*1024, windowsHide:true,
@@ -25,9 +26,9 @@ function record(rev,file) {
 
 // Git supplies line boundaries. Retaining only the changed part of each hunk keeps the giant
 // npm script on one line from duplicating tens of thousands of unrelated characters in the proof.
-function changes(file,current,baseline) {
+function changes(file,current,baseline,targetRevision=predecessor) {
   const offsets=lines(current), priorOffsets=lines(baseline), inverses=[];
-  const diff=git('diff','--no-ext-diff','--no-textconv','--unified=0',predecessor,source,'--',file);
+  const diff=git('diff','--no-ext-diff','--no-textconv','--unified=0',targetRevision,source,'--',file);
   for (const match of diff.matchAll(/^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/gm)) {
     const oldCount=Number(match[2]??1), newCount=Number(match[4]??1);
     const oldLine=Number(match[1])-(oldCount?1:0), newLine=Number(match[3])-(newCount?1:0);
@@ -76,7 +77,16 @@ for (const file of changed) {
   if(file==='test/lib/rc1-historical-source-fixture.js')
     fixtureFiles[file]={current:actual.pin,baseline:prior.pin,inverses:changes(file,actual.text,prior.text)};
 }
-const pin={source,sourceTree:tree(source),predecessor,predecessorTree:tree(predecessor),files,economicFiles,fixtureFiles,nativeFiles};
+const noirSource=NOIR_UI_SOURCE.revision, noirFiles={};
+assert.equal(tree(noirSource),NOIR_UI_SOURCE.tree);
+git('merge-base','--is-ancestor',noirSource,source);
+for(const row of NOIR_UI_SOURCE.files) {
+  const file=row.file, actual=record(source,file), prior=record(noirSource,file);
+  assert.equal(prior.pin.blob,row.currentBlob);
+  if(actual.pin.blob!==prior.pin.blob) noirFiles[file]={current:actual.pin,baseline:prior.pin,inverses:changes(file,actual.text,prior.text,noirSource)};
+}
+assert.deepEqual(Object.keys(noirFiles),['package.json','public/index.html']);
+const pin={source,sourceTree:tree(source),predecessor,predecessorTree:tree(predecessor),files,economicFiles,fixtureFiles,nativeFiles,noirSource,noirFiles};
 writeFileSync(new URL('./combined-economic-deed-source-data.js',import.meta.url),
   '// Generated from exact reviewed combined and Deed trees. Native records contain original byte identities only.\n'
   +'export const combinedEconomicDeedSource = '+JSON.stringify(pin,null,2)+';\n');

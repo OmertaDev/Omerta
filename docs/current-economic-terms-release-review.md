@@ -6,6 +6,8 @@ The integration base advanced to `c4b626b631b04e594097fb6bb416c36fdfea00f3` afte
 
 PR #311 subsequently merged at `4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364`. Its Deed rules reserve 1,000 buildings for gameplay, 1,000 for paid issuance and 500 for partnerships. The site now distinguishes level 25 gameplay discovery and operating benefits from signed extraction. Paid primary pricing awaits announcement. All 12 backend modules changed for this economic release retain their reviewed Git blobs. The Store, watcher, chain and inventory bond checks passed again after integrating the Deed migrations and client changes.
 
+The Noir interface entered main at `ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8`. The integrated source at `8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd` retains the reviewed economic backend. Two of the fourteen Noir files also carry economic changes, `package.json` and `public/index.html`. Their complete merged contents reconstruct the reviewed Noir sources, and the other twelve files match the Noir revision directly. The inventory checkout, Store receipt and Noir shell checks passed. Desktop and phone browser interactions also verified the Capital Desk and Store paths on the merged page.
+
 ## Trust boundaries and checks
 
 | Boundary | Property reviewed | Evidence |

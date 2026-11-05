@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {combinedEconomicDeedSource} from './combined-economic-deed-source-data.js';
 
 const hash = text => createHash('sha256').update(text).digest('hex');
-assert.equal(hash(JSON.stringify(combinedEconomicDeedSource)),'49946bf2fa0c07fe0c0f5861e25dbba5d0599c9e92f5b46092d31b1cfb21cfd1','Reviewed combined economic and Deed source envelope changed');
+assert.equal(hash(JSON.stringify(combinedEconomicDeedSource)),'f6a4328bed0b2ce439e7eb3b61d05df01543eaf23450fa0d332bc78601613384','Reviewed combined economic and Deed source envelope changed');
 function freeze(value) {
   for(const item of Object.values(value)) if(item && typeof item==='object') freeze(item);
   return Object.freeze(value);
@@ -43,4 +43,7 @@ export function combinedEconomicTermsInput(file,input) {
 }
 export function combinedEconomicFixtureInput(file,input) {
   return historical(combinedEconomicDeedPin.fixtureFiles,file,input);
+}
+export function combinedNoirUiInput(file,input) {
+  return historical(combinedEconomicDeedPin.noirFiles,file,input);
 }

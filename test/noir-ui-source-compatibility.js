@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,
   noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
+import { combinedEconomicDeedPin, combinedNoirUiInput } from '../tools/combined-economic-deed-source-transfer.js';
 
 const revision = '42d9df7628a30653ff7c8bac203b7bd317dee597';
 const predecessor = 'fe887350a661901983282183fb21e9d1d330f04f';
@@ -14,6 +15,8 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
 assert.equal(NOIR_UI_SOURCE.revision, revision);
+assert.equal(combinedEconomicDeedPin.noirSource, revision);
+assert.deepEqual(Object.keys(combinedEconomicDeedPin.noirFiles), ['package.json', 'public/index.html']);
 assert.equal(NOIR_UI_SOURCE.predecessor, predecessor);
 assert.equal(NOIR_UI_SOURCE.tree, git('rev-parse', revision + '^{tree}').trim());
 assert.equal(NOIR_UI_SOURCE.predecessorTree, git('rev-parse', predecessor + '^{tree}').trim());
@@ -26,7 +29,22 @@ let positives = 0, refusals = 0;
 for (const file of NOIR_UI_SOURCE_FILES) {
   const committed = git('show', `${revision}:${file}`);
   const physical = fs.readFileSync(file, 'utf8');
-  assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
+  const actual = git('show', `HEAD:${file}`);
+  assert(physical === actual || physical === actual.replaceAll('\n', '\r\n'), 'Complete checked-out UI source: ' + file);
+  assert.equal(lf(combinedNoirUiInput(file, physical)), committed, 'Reviewed integrated UI reconstructs its original Noir source: ' + file);
+  const combined = combinedEconomicDeedPin.noirFiles[file];
+  if (combined) {
+    assert.equal(actual, git('show', `${combinedEconomicDeedPin.source}:${file}`));
+    assert.equal(sha(actual), combined.current.sha256);
+    assert.equal(sha(committed), combined.baseline.sha256);
+    assert.equal(combinedNoirUiInput(file, actual.replaceAll('\n', '\r\n')), committed);
+    assert.deepEqual(combinedNoirUiInput(file, Buffer.from(actual)), Buffer.from(committed));
+    for (const changed of [actual.slice(1), actual + '\n', actual + '\0', actual.replace('\n', '\r\n'),
+      ...combined.inverses.map(h => actual.slice(0, h.at) + h.baseline + actual.slice(h.at + h.current.length))]) {
+      assert.equal(combinedNoirUiInput(file, changed), changed);
+      if (changed !== committed) assert.equal(noirUiHistoricalInput(file, changed), changed);
+    }
+  }
   const pin = NOIR_UI_SOURCE.files.find(row => row.file === file);
   assert.equal(sha(committed), pin.currentSha256);
   assert.equal(pin.currentBlob, git('rev-parse', `${revision}:${file}`).trim());
