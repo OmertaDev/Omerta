@@ -244,9 +244,15 @@ assert((await runLedgerInvariants(pool, { alert: false })).ok, '§10.4 in-game l
 // both checks stayed green — while the sibling term one line below already read `WHERE real`.
 {
   // fresh real revenue so there is a live budget to fabricate against
-  await call('POST', '/v1/mod/fees/record', { headers: modH,
+  const budgetBeforeFee = (await vigOf()).status.unspentEth;
+  const fee = await call('POST', '/v1/mod/fees/record', { headers: modH,
     body: { nonce: 990001, kind: 'respawn', payer: player.address, amountWei: '200000000000000000', txHash: '0xcompgate' } });
+  assert.equal(fee.code, 200, `A7: real fee accepted: ${JSON.stringify(fee.body)}`);
+  assert.equal(fee.body.recorded, true, 'A7: the fresh real fee is recorded');
   const before = await vigOf();
+  const expectedBudget = budgetBeforeFee + 0.2 * before.status.config.vigBps / 10000;
+  assert(expectedBudget > 0 && near(before.status.unspentEth, expectedBudget),
+    `A7: the fresh fee opens the expected real budget: ${JSON.stringify(before.status)}`);
   const fundedBefore2 = before.invariants.summary.funded;
   const prizeBefore = Number((await pool.query('SELECT balance FROM vig_prize_pool WHERE id=1')).rows[0].balance);
   const anchorBefore = Number((await pool.query(
@@ -254,11 +260,16 @@ assert((await runLedgerInvariants(pool, { alert: false })).ok, '§10.4 in-game l
 
   // a COMP: the mod route with no txHash. It succeeds (QA still exercises the path) and books zero.
   const comp = await call('POST', '/v1/mod/vig/buyback', { headers: modH, body: { priceOmrPerEth: 3000 } });
+  assert.equal(comp.code, 200, `A7: comp accepted: ${JSON.stringify(comp.body)}`);
   assert.equal(comp.body.real, false, 'A7: a buyback with no txHash is a comp');
+  assert.equal(comp.body.ethSpent, 0, 'A7: a comp spends no real ETH');
   assert.equal(comp.body.omrBought, 0, 'A7: a comp buys NOTHING — the mod key cannot assert hard $OMR arrived');
   assert.equal(comp.body.toReserve, 0, 'A7: and credits no withdrawal reserve');
+  assert.equal(comp.body.toPrize, 0, 'A7: and credits no prize pool');
 
   const after = await vigOf();
+  assert(near(after.status.ethSpent, before.status.ethSpent) && near(after.status.unspentEth, expectedBudget),
+    `A7: a comp preserves the whole real budget: ${JSON.stringify(after.status)}`);
   assert(near(after.invariants.summary.funded, fundedBefore2),
     'A7: the reserve — what signVoucher checks before signing a REAL withdrawal — did not move');
   assert.equal(Number((await pool.query('SELECT balance FROM vig_prize_pool WHERE id=1')).rows[0].balance), prizeBefore,
@@ -273,8 +284,22 @@ assert((await runLedgerInvariants(pool, { alert: false })).ok, '§10.4 in-game l
   // the comp consumed no real budget either — the same revenue is still there for a real buyback
   const real = await call('POST', '/v1/mod/vig/buyback', { headers: modH,
     body: { priceOmrPerEth: 3000, txHash: '0xreal-after-comp' } });
+  assert.equal(real.code, 200, `A7: real buyback accepted: ${JSON.stringify(real.body)}`);
   assert(real.body.omrBought > 0, 'A7: the real buyback still has the whole budget — a comp spends nothing');
   assert.equal(real.body.real, true, 'A7: and it books real');
+  assert(near(real.body.ethSpent, expectedBudget) && near(real.body.omrBought, expectedBudget * 3000),
+    `A7: the real buyback spends exactly the preserved budget: ${JSON.stringify(real.body)}`);
+  const expectedReserve = real.body.omrBought * before.status.config.reserveBps / 10000;
+  const expectedPrize = real.body.omrBought - expectedReserve;
+  assert(near(real.body.toReserve, expectedReserve) && near(real.body.toPrize, expectedPrize),
+    'A7: only the real buyback funds the configured reserve/prize split');
+  const settled = await vigOf();
+  assert(near(settled.status.unspentEth, 0), 'A7: exactly the real budget has now been spent');
+  assert(near(settled.invariants.summary.funded, fundedBefore2 + expectedReserve),
+    'A7: the reserve receives exactly the real buyback share');
+  assert(near(settled.status.prizePool, prizeBefore + expectedPrize),
+    'A7: the prize pool receives exactly the real buyback share');
+  assert(settled.invariants.ok, `A7: every Vig check stays green after the real buyback: ${JSON.stringify(settled.invariants.checks.filter((c) => !c.ok))}`);
 }
 
 console.log('✅ Vig test passed — real revenue → 60/40 split → buyback (spend ≤ inflow) → reserve+prize → prize payout → the PLEX bridge (the MINT is ETH only — and the Store door beside it is shut; the respawn pays in earned $OMR, and the freshness check is narrowed to the dead rail so it cannot fire on the live one) → real Vig-funded withdrawal + TIER A: a TRADE-fee source (the afterSwap→Vig hook rail) splits/buys/reconciles end-to-end and WIDENS extraction≤inflow, §10.4 untouched — the extraction-≤-inflow invariant + §10.4 conservation holding throughout');

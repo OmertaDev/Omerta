@@ -158,6 +158,8 @@ export const SYSTEM_IDS = Object.freeze({
 // abandoned is precisely what the reach number exists to separate from a system being used.
 export const NON_ENGAGEMENT = [
   'mod_kill_reason',
+  // Source payout integrity diagnostics are operational observations.
+  'economy_payout_bound',
   'screen_open',
   'world_view',
   'world_command',

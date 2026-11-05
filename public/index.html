@@ -107,7 +107,7 @@
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
   /* Let the dashboard header scroll away on phones so it cannot cover gameplay controls. */
   @media (max-width: 760px) {
-    #top { position: static; }
+    #top { position: relative; }
   }
   #top h1 { font-family: var(--display); font-size: 22px; margin: 0; letter-spacing: 8px; color: var(--neon); font-weight: 600;
     text-shadow: 0 0 22px var(--neon-glow); }
@@ -5556,6 +5556,10 @@
     document.querySelectorAll('[data-operation-tab]').forEach((button) => {
       button.onclick = () => { setTab(button.dataset.operationTab); spotlight(SPOT[button.dataset.operationTab]); };
     });
+    // Showing a closed <details> only reveals its summary, not the protected recovery control.
+    const history = $('#operation-desk .operation-desk__history'), latest = operationReceipts[0];
+    if (history && latest?.state === 'error' && (latest.recovery?.run || latest.recovery?.tab))
+      history.open = true;
   }
   function renderOperationFeed() {
     const latest = $('#operation-latest'), current = operationReceipts.find(receipt => receipt.actor === `${me?.id}:${me?.generation}` && (!receipt.isCurrent || receipt.isCurrent()));
@@ -6593,7 +6597,7 @@
     paint();
     sb.onclick = () => { const on = SFX.toggle(); paint(); AMBIENT.sync(); if (on) sfx('ok'); toast(on ? 'the city has a soundtrack again' : 'silence — the professional’s choice', false); }; }
   $('#glossary-close').onclick = () => $('#glossary').classList.add('hidden');
-  $('#glossary-tour').onclick = () => { $('#glossary').classList.add('hidden'); openTour(); };
+  $('#glossary-tour').onclick = () => { $('#glossary').classList.add('hidden'); closeGameMenu(); openTour(); };
   $('#glossary').onclick = (e) => { if (e.target.id === 'glossary') $('#glossary').classList.add('hidden'); };
 
   // ── THE QUICK-JUMP (🔍 / the "/" key) — go anywhere without touching the 24-screen wall.
@@ -6747,7 +6751,7 @@
     $('#welcome').classList.remove('hidden');
   }
   window.openTour = openTour;
-  const closeTour = ({ play = false } = {}) => {
+  const closeTour = async ({ play = false } = {}) => {
     localStorage.setItem('omerta_tour2', '1');
     localStorage.setItem('omerta_welcomed', '1');
     $('#welcome').classList.add('hidden');
@@ -6755,16 +6759,21 @@
     if (play || !tourReplay) {
       setTab('streets');
     } else {
-      setTab(tourReturnTab);
+      const returnTab = tourReturnTab, opener = tourReplayOpener;
+      // The screen render replaces its controls; restore focus only after that render and modal teardown.
+      await setTab(returnTab);
+      if (currentTab !== returnTab || topModal()) return;
       const fallbackCandidates = [
-        $(`#tab-${tourReturnTab}`),
-        ...document.querySelectorAll(`#tab-${tourReturnTab} button:not([disabled]), #tab-${tourReturnTab} [href], #tab-${tourReturnTab} input:not([disabled]), #tab-${tourReturnTab} select:not([disabled])`),
-        $(`#tab-control-${tourReturnTab}`),
+        $(`#tab-${returnTab}`),
+        ...document.querySelectorAll(`#tab-${returnTab} button:not([disabled]), #tab-${returnTab} [href], #tab-${returnTab} input:not([disabled]), #tab-${returnTab} select:not([disabled])`),
+        $(`#tab-control-${returnTab}`),
       ];
       const fallback = fallbackCandidates.find((el) =>
         el?.isConnected && el.getClientRects().length && typeof el.focus === 'function');
-      if (tourReplayOpener?.isConnected && tourReplayOpener.getClientRects().length && typeof tourReplayOpener.focus === 'function') {
-        tourReplayOpener.focus({ preventScroll: true });
+      if (opener?.isConnected && !opener.closest('.hidden, [hidden], [inert]')
+        && opener.getClientRects().length && getComputedStyle(opener).visibility !== 'hidden'
+        && typeof opener.focus === 'function') {
+        opener.focus({ preventScroll: true });
       } else if (typeof fallback?.focus === 'function') fallback.focus({ preventScroll: true });
     }
   };
@@ -14575,11 +14584,13 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   $('#wire-close').onclick = () => toggleWire(false, true);
   gameMenu.addEventListener('toggle', () => { if (gameMenu.open) toggleWire(false); });
   document.addEventListener('click', event => {
+    if (event.target.closest('.modal-bg, dialog')) return;
     if (!gameMenu.contains(event.target)) closeGameMenu();
     if (!wideNavigation.matches && event.target.closest('#city-sidebar [data-tab], #city-sidebar [data-group]')) cityDirectory.open = false;
   });
   document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || event.defaultPrevented) return;
+    if (document.querySelector('.modal-bg:not(.hidden), dialog[open]')) return;
     if (gameMenu.open) { event.preventDefault(); closeGameMenu(true); }
     else if (!$('#wirepanel').hidden && !document.querySelector('.modal-bg:not(.hidden), dialog[open]')) { event.preventDefault(); toggleWire(false, true); }
   });

@@ -64,9 +64,21 @@ if(process.argv.includes('--browser')) {
 }
 
 for(const [actor,isCurrent,expected] of [['a',true,1],['b',true,0],['a',false,0]]) {
- let retries=0;const button={dataset:{operationRetry:'7'}};
- const c=vm.createContext({me:{id:actor,generation:1},operationReceipts:[{id:7,actor:'a:1',isCurrent:()=>isCurrent,recovery:{run(){retries++;}}}],document:{querySelectorAll:s=>s==='[data-operation-retry]'?[button]:[]}});
+ let retries=0;const button={dataset:{operationRetry:'7'}},history={open:false};
+ const document={querySelector:s=>{assert.equal(s,'#operation-desk .operation-desk__history');return history;},querySelectorAll:s=>s==='[data-operation-retry]'?[button]:[]};
+ const c=vm.createContext({me:{id:actor,generation:1},operationReceipts:[{id:7,actor:'a:1',isCurrent:()=>isCurrent,recovery:{run(){retries++;}}}],document,$:s=>document.querySelector(s)});
  vm.runInContext(source('bindOperationDesk')+'; bindOperationDesk();',c);button.onclick();assert.equal(retries,expected,'retry must belong to current actor and current scope');
+}
+for(const [state,recovery,hasHistory,expected] of [
+ ['error',{run(){}},true,true],['error',{tab:'market'},true,true],
+ ['success',{run(){}},true,false],['pending',{tab:'market'},true,false],
+ ['error',{},true,false],[null,null,true,false],['error',{run(){}},false,false],
+]) {
+ const history={open:false};
+ const document={querySelector:s=>{assert.equal(s,'#operation-desk .operation-desk__history');return hasHistory?history:null;},querySelectorAll:()=>[]};
+ const c=vm.createContext({operationReceipts:state?[{state,recovery}]:[],document,$:s=>document.querySelector(s)});
+ vm.runInContext(source('bindOperationDesk')+'; bindOperationDesk();',c);
+ assert.equal(history.open,expected,'history opens only for an actionable error with an existing disclosure');
 }
 {
  const c=vm.createContext({window:{},me:{id:'a',generation:1},currentTab:'market',operationReceipts:[{id:1,actor:'a:1',tab:'market'}],operationReceiptMarkup:r=>`receipt-${r.id}`});
