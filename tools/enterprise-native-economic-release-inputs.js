@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 7,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS",
-  "authoredRevision": "2141c19113d7eaaf3b1e89b4b5b4b717739ace6d",
+  "authoredRevision": "77839fd65fa5d629bbedbe819444136a00452a89",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -16,8 +16,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "noirMergeSourceDefinitionSha256": "096fab5d678af31b99a4af456fbd5f2cda05b97afe26e216c51beaedc370e441",
   "combinedSourceDefinitionSha256": "e0738d5716f90a375785d729c72aa7245df7a41bc78d328b239669a07e2ecbab",
   "combinedNativeDefinitionSha256": "826c8faa5782a9b7054b0ad3d3aa1b9316ccab18f0ff6e3dd04f30a59b432afb",
-  "reviewedNativeRevision": "3ebc93af0bd594de6015c2bf8916f84d3ee4f985",
-  "reviewedNativeTree": "6f26c6bd9fb39c7d573d0205c3554a3aae20bff0",
+  "reviewedNativeRevision": "344ed83b6affdc5e6671242fb0936dfd0f8d4627",
+  "reviewedNativeTree": "a0d725a02a9243c3e03c45d64141e2aa81e46270",
   "combinedNativeParentsDefinitionSha256": "d38d8283d7b29eff2a80cefb43f68e768f6df294ed5e8d297b3219bc36622516",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
   "legacyDefinitionSha256": "a5b7fb0db57cc7945b5f96b975b7ac0fe6cef4d05e1dd10c929c083429703ce4",
@@ -10556,8 +10556,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economic-release-native-source.js",
       "mode": "100644",
-      "blob": "0319964d9fdd4414409ece757148fff8f18530cc",
-      "sha256": "e735e71b1c6c95084ec369f72a1bc28788a1739c34ef9621cebb7a5287709049"
+      "blob": "0ce994567eabf5354fb1cf8f61dcfb4ae84e31ae",
+      "sha256": "e5ac6920d5578fac90297a956eed83cfe5e4ab8b83726dec922c092d3142bf3b"
     },
     {
       "file": "tools/economy-bank-interest-source-transfer.js",
@@ -13361,8 +13361,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economic-release-native-source.js",
       "mode": "100644",
-      "blob": "0319964d9fdd4414409ece757148fff8f18530cc",
-      "sha256": "e735e71b1c6c95084ec369f72a1bc28788a1739c34ef9621cebb7a5287709049"
+      "blob": "0ce994567eabf5354fb1cf8f61dcfb4ae84e31ae",
+      "sha256": "e5ac6920d5578fac90297a956eed83cfe5e4ab8b83726dec922c092d3142bf3b"
     },
     {
       "file": "tools/economy-bank-interest-source-transfer.js",
@@ -13732,4 +13732,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "86d912649fd6e9c16c94f8ab1db30c8d02eb827ad5bc10f1413a0e3a45c4ff69";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "605ee77c542b220fb5d28cf003a27d4b06964e641bd52ff8468da7f0054ea75d";
