@@ -1,5 +1,5 @@
 {
-  "sourceRevision": "83ba8baac52d64614a2f4b82a7b230db1e16c80f",
+  "sourceRevision": "51f1167bb6aa0292b497ab20b5435d8a578a515c",
   "predecessorRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
   "predecessorTree": "2fb48b34fdb9fab7f630844205d035b29ee063c0",
   "phase": "exact historical source transfer only; no runtime, native, financial or deployment qualification",
@@ -38,20 +38,15 @@
       "authoredBytes": 22260,
       "baselineSha256": "8fd4a76cd668fa0bcf93111106d22a70b1910718d978306c7ea68f87698e8234",
       "baselineBlob": "71aaf32dfccb099f94e12992246e5b9f371faa10",
-      "baselineBytes": 20606,
-      "exactWorkingEncoding": {
-        "sha256": "73618492db74365a7331077b658005db6236aaa3370ee82eb09a7594f692d44b",
-        "blob": "c28941aafb48ca2daf0096bc7b09f7ea0a723121",
-        "bytes": 22461
-      }
+      "baselineBytes": 20606
     },
     "docs/WIKI.md": {
-      "currentSha256": "0c2df5e1cca30a8b76d398615cbacee337b61e1c490e67ca2ee20107d3ca4860",
-      "currentBlob": "9e3297663879f99f6f913c428459dd82887157f1",
-      "currentBytes": 228889,
-      "authoredSha256": "0c2df5e1cca30a8b76d398615cbacee337b61e1c490e67ca2ee20107d3ca4860",
-      "authoredBlob": "9e3297663879f99f6f913c428459dd82887157f1",
-      "authoredBytes": 228889,
+      "currentSha256": "36c3a44a1f85feb37763b873621d22349ff695625e4d7dc68d83bb81b2e41ba1",
+      "currentBlob": "75281de555e028ede8b36ab05d2f5a647efc0b10",
+      "currentBytes": 229109,
+      "authoredSha256": "36c3a44a1f85feb37763b873621d22349ff695625e4d7dc68d83bb81b2e41ba1",
+      "authoredBlob": "75281de555e028ede8b36ab05d2f5a647efc0b10",
+      "authoredBytes": 229109,
       "baselineSha256": "ca2492084f566f4f553b5540ab6febc59bd7d2f21a90435aff728b9086d5792b",
       "baselineBlob": "abea7d2cce25e9b66ac3828be8444ea562b899a0",
       "baselineBytes": 228278
@@ -68,12 +63,12 @@
       "baselineBytes": 245711
     },
     "public/index.html": {
-      "currentSha256": "7b34f7da38f822c8e5588d6f24a31353696b06435cedcee0978a9c7d9b6a5b9a",
-      "currentBlob": "bcde5d244454d3572fd644c1e38268d4a4ddc2a0",
-      "currentBytes": 1399294,
-      "authoredSha256": "7b34f7da38f822c8e5588d6f24a31353696b06435cedcee0978a9c7d9b6a5b9a",
-      "authoredBlob": "bcde5d244454d3572fd644c1e38268d4a4ddc2a0",
-      "authoredBytes": 1399294,
+      "currentSha256": "af3101856f3b6fa0ba5c8be85c917f38cb8ded1220640c40941d2369c3b8d868",
+      "currentBlob": "59fcbff93c4d13cdb736f2ee3b2b51fb7a27b08b",
+      "currentBytes": 1407014,
+      "authoredSha256": "af3101856f3b6fa0ba5c8be85c917f38cb8ded1220640c40941d2369c3b8d868",
+      "authoredBlob": "59fcbff93c4d13cdb736f2ee3b2b51fb7a27b08b",
+      "authoredBytes": 1407014,
       "baselineSha256": "db4cbe6b819543e3fbc0db32cf4352a987d8b6586823df5c33756b2e2a23f969",
       "baselineBlob": "9542428cbd82fd496ea42c213772b3036541ceb6",
       "baselineBytes": 1398458
@@ -101,36 +96,26 @@
       "baselineBytes": 38411
     },
     "src/server.js": {
-      "currentSha256": "db9d48ebc027ec66ad3f7d856fa537ee69b4907813e326eb12f432dcc1f5c99a",
-      "currentBlob": "426168d4229ad1f4107179717e9ebb89176dbf8f",
-      "currentBytes": 303937,
-      "authoredSha256": "db9d48ebc027ec66ad3f7d856fa537ee69b4907813e326eb12f432dcc1f5c99a",
-      "authoredBlob": "426168d4229ad1f4107179717e9ebb89176dbf8f",
-      "authoredBytes": 303937,
+      "currentSha256": "794525ae2c5dc58f2eb4d470e29d32946e7c28b14764fe87d5ed1306f770ab59",
+      "currentBlob": "64fa9d7d699b9d9ae0a8cbb8855c4a0a973861b3",
+      "currentBytes": 304162,
+      "authoredSha256": "794525ae2c5dc58f2eb4d470e29d32946e7c28b14764fe87d5ed1306f770ab59",
+      "authoredBlob": "64fa9d7d699b9d9ae0a8cbb8855c4a0a973861b3",
+      "authoredBytes": 304162,
       "baselineSha256": "eae571fecd106622365194b2fd862f54635a9488ea9784d660defa292da28b5a",
       "baselineBlob": "9ac86b5b025e3a40f0142f8adf855471e8a21e77",
-      "baselineBytes": 303757,
-      "exactWorkingEncoding": {
-        "sha256": "87b4a90e2915022b82201e5cc5a4e6f3c20e207629f997f6f3cf2b57eb9db02c",
-        "blob": "5e07487f13dd230af644ac97c5e9536914357395",
-        "bytes": 307944
-      }
+      "baselineBytes": 303757
     },
     "package.json": {
-      "currentSha256": "03d651ae9bcf799d7ce58b18deb2e465b6fd6aebbe5614b3c85e7b4827beb70d",
-      "currentBlob": "b3ee3abfa59e5e1155abe9e1b6949b5c0fa4cc60",
-      "currentBytes": 59988,
-      "authoredSha256": "03d651ae9bcf799d7ce58b18deb2e465b6fd6aebbe5614b3c85e7b4827beb70d",
-      "authoredBlob": "b3ee3abfa59e5e1155abe9e1b6949b5c0fa4cc60",
-      "authoredBytes": 59988,
+      "currentSha256": "3868cf3da2b47ec7643da6ec03b996b8636df9871bfc4bb2db0fe99f081e1808",
+      "currentBlob": "aba8ebef6cffa81f2e08c04561174c8e9ab9e3a3",
+      "currentBytes": 60976,
+      "authoredSha256": "3868cf3da2b47ec7643da6ec03b996b8636df9871bfc4bb2db0fe99f081e1808",
+      "authoredBlob": "aba8ebef6cffa81f2e08c04561174c8e9ab9e3a3",
+      "authoredBytes": 60976,
       "baselineSha256": "25a5a2cb4f5c8bc5ce9538495716d60fad3c67e995a2db36daca01505c92e2fc",
       "baselineBlob": "531e67d793e7758751f1734fe6dd96b7520268d4",
-      "baselineBytes": 59697,
-      "exactWorkingEncoding": {
-        "sha256": "e78cfce1ad039d59834fa800cf06f44546b53a73ea907bce863b5ec39a15ecf6",
-        "blob": "4d38ef5e28dda1044a75a41d77c04cf376610a3a",
-        "bytes": 60318
-      }
+      "baselineBytes": 59697
     },
     "src/worker.js": {
       "currentSha256": "f1fb6fb9bd0330d807e5c93f61acdb7dc81813728a159bffe133ea909bb60438",
@@ -141,12 +126,7 @@
       "authoredBytes": 86474,
       "baselineSha256": "2a07dc2ac6740ffa9495b08f807d4cae591e0e7c8cc50da3f2746f9b6eaf0329",
       "baselineBlob": "84be99e513a7a66343f0652a55fdc6d885d8687a",
-      "baselineBytes": 86380,
-      "exactWorkingEncoding": {
-        "sha256": "5240869a5d5389e42b7bea59be8652fb28215713c6476bef6637bc5c9cc80cc9",
-        "blob": "e08868a7ebdcbf13fa3e5cb61e4c7c1e49f46c6f",
-        "bytes": 87582
-      }
+      "baselineBytes": 86380
     },
     "src/preflight.js": {
       "currentSha256": "519547750876ef4af87309e46b28fd1069295d35ed3a6bf8da70038f46c59d93",
