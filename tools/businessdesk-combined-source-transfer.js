@@ -7,7 +7,7 @@ export { BUSINESS_DESK_COMBINED_SOURCE, BUSINESS_DESK_COMBINED_SOURCE_SHA256 };
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const BUSINESS_DESK_COMBINED_PROFILES = freeze({
   desk: { revision: 'de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', tree: '147add1847b8b34e019f1a24afaa9c1d48e538f7' },
-  monitor: { revision: '3d412bfaf8805c8ca09a49a8f8377b0649351a09', tree: '62dafe49da92bc70290f71e61540b0d217e0b5d8' },
+  monitor: { revision: 'ac68c41a6267d249624fc37e05b63ba0b5778b70', tree: 'c821c0fc8ba26d8775271d8a1d89bc3380b52c84' },
   wiki: { revision: '6c4d37842f4d7ebd7f96d5fee9935720f442007a', tree: 'ca38e8e705f4d48df651a843b7f28d93d720a963' },
 });
 export const BUSINESS_DESK_COMBINED_READER_FILES = freeze({
