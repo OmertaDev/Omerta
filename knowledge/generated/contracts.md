@@ -50,6 +50,12 @@
 | `IDistributor` | interface | [omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol:8](../../omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol#L8) | — |
 | `IERC20Minimal` | interface | [omerta-contracts/src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol:5](../../omerta-contracts/src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol#L5) | — |
 | `IERC5192` | interface | [omerta-contracts/src/DynastyNFT.sol:14](../../omerta-contracts/src/DynastyNFT.sol#L14) | — |
+| `IEthRewardHookV2` | interface | [omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol:23](../../omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol#L23) | — |
+| `IEthRewardMarketStateV2` | interface | [omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol:30](../../omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol#L30) | — |
+| `IEthRewardVaultV2` | interface | [omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol:33](../../omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol#L33) | — |
+| `IEthStakingDistributorV2` | interface | [omerta-contracts/src/market-v2/OmertaEthStakingV2.sol:11](../../omerta-contracts/src/market-v2/OmertaEthStakingV2.sol#L11) | — |
+| `IEthStakingTokenPolicyV2` | interface | [omerta-contracts/src/market-v2/OmertaEthStakingV2.sol:16](../../omerta-contracts/src/market-v2/OmertaEthStakingV2.sol#L16) | — |
+| `IEthTaxManagerV2` | interface | [omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol:17](../../omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol#L17) | — |
 | `IFamilyBridgeV2` | interface | [omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol:28](../../omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol#L28) | — |
 | `IFamilyGameV2` | interface | [omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol:19](../../omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol#L19) | — |
 | `IFamilyRegistryV2` | interface | [omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol:10](../../omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol#L10) | — |
@@ -100,7 +106,6 @@
 | `IUniswapV2Factory` | interface | [omerta-contracts/src/OmrTwapOracle.sol:8](../../omerta-contracts/src/OmrTwapOracle.sol#L8) | — |
 | `IUniswapV2Pair` | interface | [omerta-contracts/src/OmrTwapOracle.sol:12](../../omerta-contracts/src/OmrTwapOracle.sol#L12) | — |
 | `IValidationHook` | interface | [omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IValidationHook.sol:5](../../omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IValidationHook.sol#L5) | — |
-| `IWbtcRewardsConverterV2` | interface | [omerta-contracts/src/market-v2/OmertaWbtcRewardsV2.sol:15](../../omerta-contracts/src/market-v2/OmertaWbtcRewardsV2.sol#L15) | — |
 | `KeeperGasVault` | contract | [omerta-contracts/src/KeeperGasVault.sol:14](../../omerta-contracts/src/KeeperGasVault.sol#L14) | `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `LiquidityBuybackExecutor` | contract | [omerta-contracts/src/LiquidityBuybackExecutor.sol:27](../../omerta-contracts/src/LiquidityBuybackExecutor.sol#L27) | `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `IUnlockCallback` |
 | `MaxBidPriceLib` | library | [omerta-contracts/src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol:9](../../omerta-contracts/src/genesis-auction/vendor/cca/libraries/MaxBidPriceLib.sol#L9) | — |
@@ -109,6 +114,8 @@
 | `OmertaBond` | contract | [omerta-contracts/src/OmertaBond.sol:74](../../omerta-contracts/src/OmertaBond.sol#L74) | `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `OmertaCharacterGuardedAuction` | contract | [omerta-contracts/src/genesis-auction/OmertaCharacterGuardedAuction.sol:15](../../omerta-contracts/src/genesis-auction/OmertaCharacterGuardedAuction.sol#L15) | `ContinuousClearingAuction` |
 | `OmertaCommitmentVaultV2` | contract | [omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol:31](../../omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol#L31) | `Ownable2Step`, `ReentrancyGuard`, `IERC721Receiver` |
+| `OmertaEthRewardsV2` | contract | [omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol:46](../../omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol#L46) | `Pausable`, `ReentrancyGuard` |
+| `OmertaEthStakingV2` | contract | [omerta-contracts/src/market-v2/OmertaEthStakingV2.sol:28](../../omerta-contracts/src/market-v2/OmertaEthStakingV2.sol#L28) | `Ownable2Step`, `ReentrancyGuard` |
 | `OmertaFamilyDistributorV2` | contract | [omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol:33](../../omerta-contracts/src/market-v2/OmertaFamilyDistributorV2.sol#L33) | `EIP712`, `ReentrancyGuard` |
 | `OmertaFees` | contract | [omerta-contracts/src/OmertaFees.sol:21](../../omerta-contracts/src/OmertaFees.sol#L21) | `Ownable2Step`, `ReentrancyGuard` |
 | `OmertaGameCustodyV2` | contract | [omerta-contracts/src/market-v2/OmertaGameCustodyV2.sol:28](../../omerta-contracts/src/market-v2/OmertaGameCustodyV2.sol#L28) | `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
@@ -128,8 +135,6 @@
 | `OmertaSwapRouterV2` | contract | [omerta-contracts/src/market-v2/OmertaSwapRouterV2.sol:16](../../omerta-contracts/src/market-v2/OmertaSwapRouterV2.sol#L16) | `IUnlockCallback`, `ReentrancyGuard` |
 | `OmertaTurfFeeBridgeV2` | contract | [omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol:12](../../omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol#L12) | `ReentrancyGuard` |
 | `OmertaTurfV2` | contract | [omerta-contracts/src/market-v2/OmertaTurfV2.sol:15](../../omerta-contracts/src/market-v2/OmertaTurfV2.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
-| `OmertaWbtcConverterV2` | contract | [omerta-contracts/src/market-v2/OmertaWbtcConverterV2.sol:17](../../omerta-contracts/src/market-v2/OmertaWbtcConverterV2.sol#L17) | `IUnlockCallback`, `ReentrancyGuard` |
-| `OmertaWbtcRewardsV2` | contract | [omerta-contracts/src/market-v2/OmertaWbtcRewardsV2.sol:26](../../omerta-contracts/src/market-v2/OmertaWbtcRewardsV2.sol#L26) | `ReentrancyGuard` |
 | `OmertaWorkEscrowV2` | contract | [omerta-contracts/src/market-v2/OmertaWorkEscrowV2.sol:12](../../omerta-contracts/src/market-v2/OmertaWorkEscrowV2.sol#L12) | `ReentrancyGuard` |
 | `OMR` | contract | [omerta-contracts/src/OMR.sol:76](../../omerta-contracts/src/OMR.sol#L76) | `ERC20Permit`, `Ownable2Step` |
 | `OMRStaking` | contract | [omerta-contracts/src/OMRStaking.sol:15](../../omerta-contracts/src/OMRStaking.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
