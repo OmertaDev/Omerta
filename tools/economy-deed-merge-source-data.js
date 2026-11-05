@@ -4,8 +4,8 @@ export const ECONOMY_DEED_MERGE_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_ECONOMY_DEED_MERGE_SOURCE_ONLY",
-  "sourceRevision": "34ad488a93450530136972f48c188988f1210e5f",
-  "sourceTree": "d01741a225ee4bacde88dc15870f1ae9bdcae9f8",
+  "sourceRevision": "6d2396b878508cf88c23d0d6d6da7b27ce1c17ef",
+  "sourceTree": "0c9caee19edc16b7c9f9394fdbec103c8aaeb394",
   "profiles": {
     "monitor": {
       "revision": "c771f5ba73453a57e24e31f8eeb920933fe7544c",
@@ -122,6 +122,45 @@ export const ECONOMY_DEED_MERGE_SOURCE = freeze({
             {
               "current": "    await client.query('UPDATE account_persistent SET product_moved = product_moved + $1 WHERE account_id=$2',\n      [Math.floor(ch._crewSale.proceeds), ch.account_id]);\n  }\n  const economyIssues = accrualEconomyIssues(economyBefore, ch);\n  if (economyIssues.length)\n    await track(client, ch.account_id, 'economy_payout_bound', { characterId: ch.id, issues: economyIssues });\n  if (ch._raid) {\n    await rngLog(client, ch.id, 'raid', ch._raid.roll, `raided (P ${ch._raid.pWindow.toFixed(4)}, kept ${ch._raid.keepPct}%)`);\n    await notify(client, ch.id, 'raid', { lost: ch._raid.lost, keptPct: ch._raid.keepPct });\n",
               "baseline": "    await client.query('UPDATE account_persistent SET product_moved = product_moved + $1 WHERE account_id=$2',\n      [Math.floor(ch._crewSale.proceeds), ch.account_id]);\n  }\n  if (ch._raid) {\n    await rngLog(client, ch.id, 'raid', ch._raid.roll, `raided (P ${ch._raid.pWindow.toFixed(4)}, kept ${ch._raid.keepPct}%)`);\n    await notify(client, ch.id, 'raid', { lost: ch._raid.lost, keptPct: ch._raid.keepPct });\n"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "file": "src/preflight.js",
+      "current": {
+        "mode": "100644",
+        "sha256": "ec03b2586d2a816b02a66a8128ca396ec4dae829fbeadb8557d29c364e892a80",
+        "blob": "3f020b59416c6edd9f63ac5753510377088105fa",
+        "bytes": 40275,
+        "rawSha256": {
+          "lf": "ec03b2586d2a816b02a66a8128ca396ec4dae829fbeadb8557d29c364e892a80",
+          "crlf": "83b081593d27468f592cbde75ce5b1020e2539a1a824e1086ffeb02ad99ce748"
+        }
+      },
+      "parents": {
+        "monitor": {
+          "mode": "100644",
+          "sha256": "4901dca23d457a6c0dc56c6ca72371162200235de7287ec449363584f74286ea",
+          "blob": "ac3ba92249dbcebe7cfde910d2276373b15eb845",
+          "bytes": 40073,
+          "inverses": [
+            {
+              "current": "  // (never queued — every durable event is a notifications row the 30s poll re-derives). A tuning\n  // bound on the slow-consumer guard, not a switch: raising it trades memory for feed completeness.\n  'WS_PING_MS', 'WS_MAX_BUFFER', 'INVARIANT_WEBHOOK_URL', 'CITY_WIRE_WEBHOOK_URL',\n  // Economic anomaly alert thresholds; the monitor validates positive finite values and defaults.\n  'ECONOMY_MONITOR_LEDGER_ROWS_WARN', 'ECONOMY_MONITOR_NET_CASH_WARN', 'ECONOMY_MONITOR_NET_OMR_WARN',\n  // graceful shutdown: how long in-flight requests get to finish after SIGTERM before the hard exit\n  // (server.js drain). Operational — Render SIGKILLs ~30s after SIGTERM, so keep it well under that.\n  'DRAIN_MS',\n",
+              "baseline": "  // (never queued — every durable event is a notifications row the 30s poll re-derives). A tuning\n  // bound on the slow-consumer guard, not a switch: raising it trades memory for feed completeness.\n  'WS_PING_MS', 'WS_MAX_BUFFER', 'INVARIANT_WEBHOOK_URL', 'CITY_WIRE_WEBHOOK_URL',\n  // graceful shutdown: how long in-flight requests get to finish after SIGTERM before the hard exit\n  // (server.js drain). Operational — Render SIGKILLs ~30s after SIGTERM, so keep it well under that.\n  'DRAIN_MS',\n"
+            }
+          ]
+        },
+        "deed": {
+          "mode": "100644",
+          "sha256": "4901dca23d457a6c0dc56c6ca72371162200235de7287ec449363584f74286ea",
+          "blob": "ac3ba92249dbcebe7cfde910d2276373b15eb845",
+          "bytes": 40073,
+          "inverses": [
+            {
+              "current": "  // (never queued — every durable event is a notifications row the 30s poll re-derives). A tuning\n  // bound on the slow-consumer guard, not a switch: raising it trades memory for feed completeness.\n  'WS_PING_MS', 'WS_MAX_BUFFER', 'INVARIANT_WEBHOOK_URL', 'CITY_WIRE_WEBHOOK_URL',\n  // Economic anomaly alert thresholds; the monitor validates positive finite values and defaults.\n  'ECONOMY_MONITOR_LEDGER_ROWS_WARN', 'ECONOMY_MONITOR_NET_CASH_WARN', 'ECONOMY_MONITOR_NET_OMR_WARN',\n  // graceful shutdown: how long in-flight requests get to finish after SIGTERM before the hard exit\n  // (server.js drain). Operational — Render SIGKILLs ~30s after SIGTERM, so keep it well under that.\n  'DRAIN_MS',\n",
+              "baseline": "  // (never queued — every durable event is a notifications row the 30s poll re-derives). A tuning\n  // bound on the slow-consumer guard, not a switch: raising it trades memory for feed completeness.\n  'WS_PING_MS', 'WS_MAX_BUFFER', 'INVARIANT_WEBHOOK_URL', 'CITY_WIRE_WEBHOOK_URL',\n  // graceful shutdown: how long in-flight requests get to finish after SIGTERM before the hard exit\n  // (server.js drain). Operational — Render SIGKILLs ~30s after SIGTERM, so keep it well under that.\n  'DRAIN_MS',\n"
             }
           ]
         }
@@ -742,13 +781,13 @@ export const ECONOMY_DEED_MERGE_SOURCE = freeze({
   "runtime": false,
   "native": false
 });
-export const ECONOMY_DEED_MERGE_SOURCE_SHA256 = "e527170d18ab73feca7458dcf671afdf7d63a9b7d38d38d359cdbaf157217ad3";
+export const ECONOMY_DEED_MERGE_SOURCE_SHA256 = "0d20ad83e78558568711b23bf3e95a0129d36ba75ea1d0efb3109eada621bf6d";
 export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_ECONOMY_DEED_MERGE_SOURCE_PROVENANCE_ONLY",
-  "sourceRevision": "34ad488a93450530136972f48c188988f1210e5f",
-  "sourceTree": "d01741a225ee4bacde88dc15870f1ae9bdcae9f8",
+  "sourceRevision": "6d2396b878508cf88c23d0d6d6da7b27ce1c17ef",
+  "sourceTree": "0c9caee19edc16b7c9f9394fdbec103c8aaeb394",
   "predecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
   "predecessorDefinitionSha256": "1a18c61c509dab42516af5763f618c3374f5a30d0ec7ca46eb592aa8ef2dbdab",
   "predecessorMetadataSha256": "70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e",
@@ -1608,4 +1647,4 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 = "7e1789e4f7e7c65c23b6145835b10a66432efbc32d0d3726b1ae26237971ee85";
+export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 = "fb2751ca97e449b65dd2c9a5914fd0606b2b910787b6edf2a7ffa61fef051396";
