@@ -108,9 +108,10 @@ async function checkDialogKeyboard(page, opener, overlay, name) {
     `${name}: reverse/forward focus loop did not return to the initial control`);
   await page.keyboard.press('Escape');
   await page.locator(overlay).waitFor({ state: 'hidden' });
-  check(await page.locator(opener).evaluate((element) => element === document.activeElement
-    && element.getClientRects().length > 0 && getComputedStyle(element).visibility !== 'hidden'),
-    `${name}: Escape did not restore the visible opener's keyboard focus`);
+  check(await page.locator(opener).isVisible()
+    && await page.locator(opener).evaluate((element) => element === document.activeElement
+      && !element.closest('.hidden, [hidden], [inert]')),
+    `${name}: Escape did not restore the opener's keyboard focus`);
 }
 
 async function checkPublicKeyboard(page, route) {

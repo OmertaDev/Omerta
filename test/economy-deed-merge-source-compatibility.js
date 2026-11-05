@@ -9,7 +9,7 @@ import { ECONOMY_DEED_MERGE_SOURCE as source, ECONOMY_DEED_MERGE_SOURCE_SHA256 a
   ECONOMY_DEED_MERGE_FILES, ECONOMY_DEED_MERGE_PROFILES, ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES,
   ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES,
   ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR,
-  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR,
+  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR, ECONOMY_DEED_MERGE_DECISION_CLIENT_SUCCESSOR,
   assertEconomyDeedMergeSource, economyDeedMergeHistoricalInput,
   assertEconomyDeedNativeProvenanceDefinition, assertEconomyDeedNativeProvenance }
   from '../tools/economy-deed-merge-source-compatibility.js';
@@ -70,7 +70,7 @@ assert.deepEqual(process.argv.slice(2), []);
 assert.equal(source.status, 'SEALED', 'Commit complete integration source, then generate its exact definition');
 assert.equal(sha(JSON.stringify(source)), sourceSha); assert.equal(sha(JSON.stringify(provenance)), provenanceSha);
 assert.deepEqual(source.files.map(row => row.file), ECONOMY_DEED_MERGE_FILES);
-assert.equal(source.files.length, 17); assert.equal(ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.length, 57);
+assert.equal(source.files.length, 18); assert.equal(ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.length, 58);
 assert.deepEqual(Object.keys(source.profiles), ['monitor', 'deed', 'noir']);
 assert.equal(git('rev-parse', source.sourceRevision + '^{tree}').trim(), source.sourceTree);
 git('merge-base', '--is-ancestor', source.sourceRevision, 'HEAD');
@@ -120,7 +120,7 @@ for (const row of source.files) {
   }
 }
 for (const profile of ['monitor', 'deed', 'noir']) for (const file of ['__proto__', 'constructor', 'toString', 'src/unknown.js',
-  '../src/game.js', 'schema.sql', 'public/ux-identity.js', 'tools/economy-deed-merge-source-compatibility.js', null]) {
+  '../src/game.js', 'schema.sql', 'public/ux-identity.js', 'test/decision-guide-client.js', 'tools/economy-deed-merge-source-compatibility.js', null]) {
   const input = Buffer.from([0xff]); reject(() => assertEconomyDeedMergeSource(file, 'unknown', profile));
   assert.strictEqual(economyDeedMergeHistoricalInput(file, input, profile), input);
 }
@@ -157,8 +157,9 @@ for (const profile of ['monitor', 'deed']) for (const pin of previous.files) {
   if (entry.mode !== pin.mode || entry.blob !== pin.blob) parentReview.add(pin.file);
 }
 const boundedSuccessors = [ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR,
-  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR];
-assert.deepEqual(boundedSuccessors.map(row => row.file), ['src/preflight.js', 'src/engagement.js', 'public/ux-identity.js']);
+  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR, ECONOMY_DEED_MERGE_DECISION_CLIENT_SUCCESSOR];
+assert.deepEqual(boundedSuccessors.map(row => row.file),
+  ['src/preflight.js', 'src/engagement.js', 'public/ux-identity.js', 'test/decision-guide-client.js']);
 assert.equal(parentReview.size, 51);
 assert.deepEqual([...parentReview].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !boundedSuccessors.some(row => row.file === file)
   && !ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES.includes(file)));
@@ -182,18 +183,24 @@ for (const successor of boundedSuccessors) {
       'The exact bounded input remains unchanged in all immutable parents');
   const before = git('show', previous.authoredRevision + ':' + successor.file);
   const current = git('show', source.sourceRevision + ':' + successor.file);
+  const replaces = Object.hasOwn(successor, 'replacement');
+  assert.deepEqual(Object.keys(successor).sort(), ['file', 'anchor', replaces ? 'replacement' : 'addition'].sort());
+  const insertion = replaces ? successor.replacement : successor.anchor + successor.addition;
+  assert.equal(typeof insertion, 'string'); assert(insertion.length); assert.notEqual(insertion, successor.anchor);
   assert.equal(before.split(successor.anchor).length, 2);
-  const expected = before.replace(successor.anchor, successor.anchor + successor.addition);
+  const expected = before.replace(successor.anchor, () => insertion);
   const check = input => assert.equal(input, expected,
     'Only the exact frozen source correction extends native provenance');
   check(current); assert.notEqual(current, before); positives++;
   assert.equal(tree(source.sourceRevision).get(successor.file).mode, predecessor.mode);
-  const insertion = successor.anchor + successor.addition;
   assert.equal(current.split(insertion).length, 2, 'Mutants target the unique reviewed insertion site');
+  const duplicate = replaces ? insertion + insertion : insertion + successor.addition;
+  const altered = replaces ? insertion.replace(/\S/, char => char === '?' ? '!' : '?')
+    : successor.anchor + successor.addition.replace(/\S/, char => char === '?' ? '!' : '?');
   for (const changed of [before, current + '\n// drift\n',
     current.replace(insertion, successor.anchor),
-    current.replace(insertion, insertion + successor.addition),
-    current.replace(insertion, successor.anchor + successor.addition.replace(/\S/, char => char === '?' ? '!' : '?'))])
+    current.replace(insertion, () => duplicate),
+    current.replace(insertion, () => altered)])
     reject(() => check(changed));
   parentReview.add(successor.file);
 }

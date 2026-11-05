@@ -11,7 +11,7 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
 export { ECONOMY_DEED_MERGE_SOURCE, ECONOMY_DEED_MERGE_SOURCE_SHA256,
   ECONOMY_DEED_MERGE_NATIVE_PROVENANCE, ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 };
 export const ECONOMY_DEED_MERGE_FILES = Object.freeze([
-  'package.json', 'public/index.html', 'public/omerta-ui.css', 'src/game.js', 'src/preflight.js',
+  'package.json', 'public/index.html', 'public/omerta-ui.css', 'src/game.js', 'src/preflight.js', 'test/client.js',
   'test/economy-hardening-source-compatibility.js',
   'test/lib/enterprise-ux-native-guard.js', 'test/lib/ux-native-reader-source-compatibility.js',
   'test/sale-source-compatibility.js', 'test/ux-expanded-browser.js',
@@ -20,7 +20,7 @@ export const ECONOMY_DEED_MERGE_FILES = Object.freeze([
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js',
 ]);
 // Closed review scope from the three immutable parents, intersected with the immutable B35 native
-// inventory, plus the three bounded source successors below. Integration changes
+// inventory, plus the four bounded source successors below. Integration changes
 // outside this list must be reviewed explicitly, never auto-admitted.
 export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
   'AGENTS.md', 'package.json', 'public/index.html', 'public/omerta-ui.css', 'public/sale.html',
@@ -31,7 +31,7 @@ export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
   'src/db.js', 'src/deedbuildings.js', 'src/deeddiscovery.js', 'src/deeds.js', 'src/engagement.js', 'src/game.js',
   'src/invariants.js', 'src/legal.js', 'src/preflight.js', 'src/server.js', 'src/ux-story.js', 'src/ux-tactics.js',
   'src/worker.js', 'src/worldgraph-ui.js', 'test/client.js', 'test/commerce-current-native-guard.js',
-  'test/companyworkflows.js', 'test/director-migration.js', 'test/gates.js',
+  'test/companyworkflows.js', 'test/decision-guide-client.js', 'test/director-migration.js', 'test/gates.js',
   'test/lib/enterprise-ux-native-guard.js', 'test/lib/phase2-definition-fixtures.js',
   'test/lib/player-command-support.js', 'test/lib/ux-native-director-guard.js',
   'test/lib/ux-native-reader-source-compatibility.js', 'test/sale-source-compatibility.js',
@@ -63,6 +63,13 @@ export const ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR = Object.freeze({
   file: 'public/ux-identity.js',
   anchor: '      if (pending || !scope()) return; pending = true; const owner = account, life = character, version = serial;\n',
   addition: '      render();\n',
+});
+// The isolated VM gains the production selector dependency and strict disclosure-state controls.
+// Only this complete reviewed retry-fixture block may replace its original parent block.
+export const ECONOMY_DEED_MERGE_DECISION_CLIENT_SUCCESSOR = Object.freeze({
+  file: 'test/decision-guide-client.js',
+  anchor: "for(const [actor,isCurrent,expected] of [['a',true,1],['b',true,0],['a',false,0]]) {\n let retries=0;const button={dataset:{operationRetry:'7'}};\n const c=vm.createContext({me:{id:actor,generation:1},operationReceipts:[{id:7,actor:'a:1',isCurrent:()=>isCurrent,recovery:{run(){retries++;}}}],document:{querySelectorAll:s=>s==='[data-operation-retry]'?[button]:[]}});\n vm.runInContext(source('bindOperationDesk')+'; bindOperationDesk();',c);button.onclick();assert.equal(retries,expected,'retry must belong to current actor and current scope');\n}",
+  replacement: "for(const [actor,isCurrent,expected] of [['a',true,1],['b',true,0],['a',false,0]]) {\n let retries=0;const button={dataset:{operationRetry:'7'}},history={open:false};\n const document={querySelector:s=>{assert.equal(s,'#operation-desk .operation-desk__history');return history;},querySelectorAll:s=>s==='[data-operation-retry]'?[button]:[]};\n const c=vm.createContext({me:{id:actor,generation:1},operationReceipts:[{id:7,actor:'a:1',isCurrent:()=>isCurrent,recovery:{run(){retries++;}}}],document,$:s=>document.querySelector(s)});\n vm.runInContext(source('bindOperationDesk')+'; bindOperationDesk();',c);button.onclick();assert.equal(retries,expected,'retry must belong to current actor and current scope');\n}\nfor(const [state,recovery,hasHistory,expected] of [\n ['error',{run(){}},true,true],['error',{tab:'market'},true,true],\n ['success',{run(){}},true,false],['pending',{tab:'market'},true,false],\n ['error',{},true,false],[null,null,true,false],['error',{run(){}},false,false],\n]) {\n const history={open:false};\n const document={querySelector:s=>{assert.equal(s,'#operation-desk .operation-desk__history');return hasHistory?history:null;},querySelectorAll:()=>[]};\n const c=vm.createContext({operationReceipts:state?[{state,recovery}]:[],document,$:s=>document.querySelector(s)});\n vm.runInContext(source('bindOperationDesk')+'; bindOperationDesk();',c);\n assert.equal(history.open,expected,'history opens only for an actionable error with an existing disclosure');\n}",
 });
 export const ECONOMY_DEED_MERGE_PROFILES = Object.freeze({
   monitor: 'c771f5ba73453a57e24e31f8eeb920933fe7544c',

@@ -6766,8 +6766,13 @@
       // The screen render replaces its controls; restore focus only after that render and modal teardown.
       await setTab(returnTab);
       if (currentTab !== returnTab || topModal()) return;
-      // The tabpanel survives UX reorderings that can detach a focused child control.
-      const fallback = $(`#tab-${returnTab}`) || $(`#tab-control-${returnTab}`);
+      const fallbackCandidates = [
+        $(`#tab-${returnTab}`),
+        ...document.querySelectorAll(`#tab-${returnTab} button:not([disabled]), #tab-${returnTab} [href], #tab-${returnTab} input:not([disabled]), #tab-${returnTab} select:not([disabled])`),
+        $(`#tab-control-${returnTab}`),
+      ];
+      const fallback = fallbackCandidates.find((el) =>
+        el?.isConnected && el.getClientRects().length && typeof el.focus === 'function');
       if (opener?.isConnected && !opener.closest('.hidden, [hidden], [inert]')
         && opener.getClientRects().length && getComputedStyle(opener).visibility !== 'hidden'
         && typeof opener.focus === 'function') {

@@ -314,85 +314,104 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     'the final action takes both first-run and replay users to play');
   assert(/closeTour\(\{ play: !tourReplay \}\)/.test(tour),
     'first-run skip opens Streets while replay close returns to its captured screen');
-  const makeTourFixture = ({ openerState = {}, panelPresent = true } = {}) => {
-    const focused = [], tabs = [], stored = new Map([['omerta_tour2', '1']]);
-    const state = { rendered: false, modal: null };
-    const document = { activeElement: null };
-    const element = (id, overrides = {}) => ({
-      isConnected: true, rects: 1, visibility: 'visible', blocked: false,
-      closest() { return this.blocked ? { id: this.blocked } : null; },
-      getClientRects() { return this.rects ? [{}] : []; },
-      focus(options) {
-        assert(state.rendered, 'focus waits for the returned screen to finish rendering');
-        assert(this.isConnected && this.rects && !this.blocked && this.visibility !== 'hidden',
-          'focus must land on a connected, visible element');
-        focused.push({ id, preventScroll: options?.preventScroll }); document.activeElement = this;
-      },
-      ...overrides,
-    });
-    const nodes = new Map(['welcome', 'tour-art', 'tour-body', 'tour-dots', 'tour-back', 'tour-skip', 'tour-next']
-      .map(id => ['#' + id, { style: {}, classList: { add() {}, remove() {} } }]));
-    const opener = element('opener', openerState), panel = element('panel'), nav = element('nav');
-    if (panelPresent) nodes.set('#tab-market', panel);
-    nodes.set('#tab-control-market', nav);
-    document.activeElement = opener;
-    let finishRender;
-    const context = { document, window: {}, currentTab: 'market', esc: String,
-      $: selector => nodes.get(selector) || null,
-      localStorage: { getItem: key => stored.get(key) || null, setItem: (key, value) => stored.set(key, value) },
-      syncStaticModal() {}, topModal: () => state.modal,
-      getComputedStyle: node => ({ visibility: node.visibility }),
-      setTab(tab) {
-        tabs.push(tab); context.currentTab = tab;
-        return new Promise(resolve => { finishRender = () => { state.rendered = true; resolve(); }; });
-      },
+  const declaration = (re, label) => {
+    const lines = tour.split(/\r?\n/), start = lines.findIndex(line => re.test(line));
+    assert(start >= 0, `${label} is missing from the tour`);
+    for (let end = start; end < Math.min(lines.length, start + 100); end++) {
+      const source = lines.slice(start, end + 1).join('\n');
+      try { new vm.Script(source); return source; } catch { /* wait for the complete declaration */ }
+    }
+    assert.fail(`${label} never parses as a complete browser declaration`);
+  };
+  const openSource = declaration(/^  function openTour\(/, 'replay opener');
+  const closeSource = declaration(/^  const closeTour = /, 'tour close handler');
+  const fixture = ({ replay = true, connected = true, hidden = false, rects = true, visibility = 'visible', focusable = true, panel = {}, children = [], control = {} } = {}) => {
+    const focused = [], navigated = [], stored = {}, welcome = { hidden: false }, modal = { active: false };
+    welcome.classList = { add(name) { assert.equal(name, 'hidden'); welcome.hidden = true; }, remove(name) { assert.equal(name, 'hidden'); welcome.hidden = false; } };
+    const focus = name => options => { assert.equal(options.preventScroll, true); focused.push(name); };
+    const opener = { isConnected: connected, closest: () => hidden ? {} : null, getClientRects: () => rects ? [{}] : [], ...(focusable ? { focus: focus('opener') } : {}) };
+    const candidate = (name, options) => options === false ? null : {
+      isConnected: options.connected !== false, getClientRects: () => options.rects === false ? [] : [{}],
+      ...(options.focusable === false ? {} : { focus: focus(name) }),
     };
-    const controls = vm.runInNewContext(`${tour}\n({ openTour, closeTour });`, context);
-    controls.openTour();
-    // The modal changes the active control and can outlive the screen it interrupted.
-    document.activeElement = element('modal-close'); context.currentTab = 'streets';
-    return { ...controls, focused, tabs, stored, state, context, opener,
-      finishRender() { assert(finishRender, 'closing a replay restores its captured tab'); finishRender(); } };
+    const fallback = candidate('panel', panel), childControls = children.map((options, index) => candidate(`child-${index}`, options)), tabControl = candidate('tab-control', control);
+    let resolveNavigation, rejectNavigation, synced = false;
+    const context = vm.createContext({ tourReplay: false, tourReturnTab: null, tourReplayOpener: null, currentTab: 'market',
+      document: { activeElement: opener, querySelectorAll(selector) {
+        assert.equal(selector, '#tab-market button:not([disabled]), #tab-market [href], #tab-market input:not([disabled]), #tab-market select:not([disabled])');
+        return childControls;
+      } }, localStorage: { setItem(key, value) { stored[key] = value; } },
+      tourStep(step) { assert.equal(step, 0); }, syncStaticModal(node) { assert.equal(node, welcome); synced = true; },
+      topModal: () => modal.active ? {} : null, getComputedStyle: () => ({ visibility }),
+      $: selector => selector === '#welcome' ? welcome : selector === '#tab-market' ? fallback : selector === '#tab-control-market' ? tabControl : null,
+      setTab(tab) { navigated.push(tab); return new Promise((resolve, reject) => { resolveNavigation = resolve; rejectNavigation = reject; }); },
+    });
+    vm.runInContext(`${openSource}\n${closeSource}\nglobalThis.closeTour = closeTour;`, context);
+    if (replay) {
+      context.openTour();
+      assert.equal(context.tourReplay, true);
+      assert.equal(context.tourReturnTab, 'market', 'replay captures the interrupted screen');
+      assert.equal(context.tourReplayOpener, opener, 'replay captures the opener before modal focus moves');
+      assert.equal(welcome.hidden, false);
+    }
+    return { context, opener, focused, navigated, stored, welcome, modal, synced: () => synced,
+      settle(tab = 'market') { context.currentTab = tab; resolveNavigation(); }, fail() { rejectNavigation(new Error('navigation failed')); } };
   };
   {
-    const fixture = makeTourFixture(), closing = fixture.closeTour();
-    assert.deepEqual(fixture.tabs, ['market'], 'replay returns to the screen captured before opening');
-    assert.deepEqual(fixture.focused, [], 'replay does not focus while async screen rendering is pending');
-    fixture.finishRender(); await closing;
-    assert.deepEqual(fixture.focused, [{ id: 'opener', preventScroll: true }],
-      'replay restores its captured connected visible opener after rendering');
-    assert.equal(fixture.stored.get('omerta_tour2'), '1');
-    assert.equal(fixture.stored.get('omerta_welcomed'), '1');
+    const f = fixture(), closing = f.context.closeTour();
+    assert.deepEqual(f.navigated, ['market'], 'replay Close restores its interrupted screen');
+    assert.deepEqual(f.focused, [], 'held navigation cannot focus controls before their screen renders');
+    assert.equal(f.welcome.hidden, true); assert.equal(f.synced(), true);
+    assert.deepEqual(f.stored, { omerta_tour2: '1', omerta_welcomed: '1' });
+    f.context.tourReturnTab = 'scores'; f.context.tourReplayOpener = null;
+    f.settle(); await closing;
+    assert.deepEqual(f.focused, ['opener'], 'settled replay restores its captured, visible connected opener');
+  }
+  for (const options of [{ connected: false }, { hidden: true }, { rects: false }, { visibility: 'hidden' }, { focusable: false }]) {
+    const f = fixture(options), closing = f.context.closeTour();
+    assert.deepEqual(f.focused, [], 'an unusable opener cannot be focused during navigation');
+    f.settle(); await closing;
+    assert.deepEqual(f.focused, ['panel'], 'a stale or hidden opener falls back to the rendered current tab');
   }
   {
-    const fixture = makeTourFixture(), closing = fixture.closeTour();
-    fixture.opener.isConnected = false; // the asynchronous render replaced its old child controls
-    fixture.finishRender(); await closing;
-    assert.deepEqual(fixture.focused, [{ id: 'panel', preventScroll: true }],
-      'a replaced opener falls back to the stable restored tabpanel');
+    const f = fixture(), closing = f.context.closeTour();
+    f.opener.isConnected = false;
+    f.settle(); await closing;
+    assert.deepEqual(f.focused, ['panel'], 'an opener replaced during navigation cannot receive focus');
   }
-  for (const [label, openerState] of [
-    ['disconnected', { isConnected: false }], ['hidden ancestor', { blocked: 'hidden' }],
-    ['inert ancestor', { blocked: 'inert' }], ['CSS visibility hidden', { visibility: 'hidden' }],
-    ['no layout box', { rects: 0 }], ['not focusable', { focus: undefined }],
+  {
+    const f = fixture({ connected: false, panel: false }), closing = f.context.closeTour();
+    f.settle(); await closing;
+    assert.deepEqual(f.focused, ['tab-control'], 'the restored tab control is the fallback when its panel is absent');
+  }
+  for (const [options, expected] of [
+    [{ panel: {}, children: [{}] }, ['panel']],
+    [{ panel: { connected: false } }, ['tab-control']],
+    [{ panel: { rects: false } }, ['tab-control']],
+    [{ panel: { focusable: false } }, ['tab-control']],
+    [{ panel: false, children: [{}] }, ['child-0']],
+    [{ panel: { rects: false }, children: [{ connected: false }, { rects: false }, { focusable: false }, {}] }, ['child-3']],
+    [{ panel: false, children: [{ rects: false }], control: {} }, ['tab-control']],
+    [{ panel: { connected: false }, children: [{ rects: false }], control: { focusable: false } }, []],
+    [{ panel: false, control: false }, []],
   ]) {
-    const fixture = makeTourFixture({ openerState }), closing = fixture.closeTour();
-    fixture.finishRender(); await closing;
-    assert.deepEqual(fixture.focused, [{ id: 'panel', preventScroll: true }],
-      `${label} opener cannot take focus from the restored tabpanel`);
+    const f = fixture({ connected: false, ...options }), closing = f.context.closeTour();
+    assert.deepEqual(f.focused, [], 'fallback controls cannot receive focus before navigation settles');
+    f.settle(); await closing;
+    assert.deepEqual(f.focused, expected, 'fallback order is usable panel, then enabled usable children, then usable tab control; no eligible target means no focus');
   }
-  {
-    const fixture = makeTourFixture({ openerState: { isConnected: false }, panelPresent: false });
-    const closing = fixture.closeTour(); fixture.finishRender(); await closing;
-    assert.deepEqual(fixture.focused, [{ id: 'nav', preventScroll: true }],
-      'the tab navigation control is the fallback when its tabpanel is absent');
+  for (const blocked of ['different-tab', 'active-modal', 'failed-navigation']) {
+    const f = fixture(), closing = f.context.closeTour();
+    if (blocked === 'failed-navigation') { f.fail(); await assert.rejects(closing, /navigation failed/); }
+    else { f.modal.active = blocked === 'active-modal'; f.settle(blocked === 'different-tab' ? 'scores' : 'market'); await closing; }
+    assert.deepEqual(f.focused, [], `${blocked} cannot return focus to an interrupted screen`);
   }
-  for (const interruption of ['modal', 'tab']) {
-    const fixture = makeTourFixture(), closing = fixture.closeTour();
-    if (interruption === 'modal') fixture.state.modal = { id: 'new-modal' };
-    else fixture.context.currentTab = 'bank';
-    fixture.finishRender(); await closing;
-    assert.deepEqual(fixture.focused, [], `replay cannot steal focus after a new ${interruption} opens`);
+  for (const [replay, play] of [[false, false], [false, true], [true, true]]) {
+    const f = fixture({ replay });
+    await f.context.closeTour({ play });
+    assert.deepEqual(f.navigated, ['streets'], 'first-run Close and either Play hand off to Streets');
+    assert.deepEqual(f.focused, [], 'the play handoff leaves focus and gameplay to the real Streets controls');
+    f.settle('streets');
   }
   assert(/if \(play \|\| !tourReplay\)\s*\{\s*setTab\('streets'\)/.test(tour),
     'the play handoff opens Streets; its real job controls own gameplay');

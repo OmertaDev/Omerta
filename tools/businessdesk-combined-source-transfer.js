@@ -7,7 +7,7 @@ export { BUSINESS_DESK_COMBINED_SOURCE, BUSINESS_DESK_COMBINED_SOURCE_SHA256 };
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const BUSINESS_DESK_COMBINED_PROFILES = freeze({
   desk: { revision: 'de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', tree: '147add1847b8b34e019f1a24afaa9c1d48e538f7' },
-  monitor: { revision: '966228e58e3b948ddcd3b85f40375dbf5364df1c', tree: '7a3a8e8768d8b4e386f39b313ac540eb7819f383' },
+  monitor: { revision: '2cab2105b679ff6ddf4723bea37bc5c0f4ce2335', tree: '4394bdd69c211291a767ac0a4d810b8dc00dfc8f' },
   wiki: { revision: '6c4d37842f4d7ebd7f96d5fee9935720f442007a', tree: 'ca38e8e705f4d48df651a843b7f28d93d720a963' },
 });
 export const BUSINESS_DESK_COMBINED_READER_FILES = freeze({
@@ -20,7 +20,7 @@ export const BUSINESS_DESK_COMBINED_READER_FILES = freeze({
   monitor: ['.github/workflows/economy-hardening.yml', 'package.json', 'public/index.html', 'public/omerta-ui.css',
     'public/ux-feedback.js', 'public/ux-navigation.js', 'public/ux-tactics.js', 'public/ux-world.js', 'schema.sql',
     'src/economy-monitor.js', 'src/game.js', 'src/invariants.js', 'src/preflight.js', 'src/worker.js',
-    'test/classic-interface-browser.js', 'test/economy-composition-restart.js', 'test/economy-composition.js',
+    'test/classic-interface-browser.js', 'test/client.js', 'test/economy-composition-restart.js', 'test/economy-composition.js',
     'test/economy-hardening-source-compatibility.js', 'test/economy-monitor.js', 'test/lib/enterprise-ux-native-guard.js',
     'test/lib/ux-native-reader-source-compatibility.js', 'test/sale-source-compatibility.js', 'test/ux-community-browser.js',
     'test/ux-expanded-browser.js', 'test/ux-experience-browser.js', 'test/ux-personality-browser.js',
@@ -40,7 +40,7 @@ export const BUSINESS_DESK_COMBINED_READER_FILES = freeze({
     'tools/noir-ui-source-transfer.js', 'tools/public-ui.js', 'tools/wiki-media-source-transfer.js'],
 });
 // The Monitor's separately pinned release-roster proof reads this existing file
-// outside its base 10/17/Noir union. It already belongs to the global 55 paths.
+// outside its base 10/18/Noir union. It already belongs to the global 55 paths.
 export const BUSINESS_DESK_COMBINED_EXTRA_READERS = freeze({ desk: [], monitor: ['test/gates.js'], wiki: [] });
 export const BUSINESS_DESK_COMBINED_SOURCE_FILES = Object.freeze([...new Set(Object.values(BUSINESS_DESK_COMBINED_READER_FILES).flat())].sort());
 export const BUSINESS_DESK_COMBINED_EXCLUDED_FILES = Object.freeze([

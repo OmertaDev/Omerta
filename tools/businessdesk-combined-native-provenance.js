@@ -86,7 +86,7 @@ export function assertBusinessDeskCombinedNativeParents(registry=parents){
     }
   }
   for(const [name,data] of Object.entries(catalogs)){assert(Object.isFrozen(data));assert.equal(sha(data),registry.catalogs[name].definitionSha256,'Immutable original source definition: '+name);}
-  assert.equal(ECONOMY_DEED_MERGE_NATIVE_PROVENANCE.files.length,57,'The reviewed frozen Monitor successor retains all 56 prior paths plus the exact identity pending-state correction');
+  assert.equal(ECONOMY_DEED_MERGE_NATIVE_PROVENANCE.files.length,58,'The reviewed frozen Monitor successor retains all 57 prior paths plus the exact decision-guide fixture correction');
   for(const [name,data] of Object.entries({b35:previous,ux:qualifiedUx,deed:deedNative})){
     assert.equal(data.status,'SEALED');assert.equal(sha(data),registry.immutable[name].definitionSha256);assert.equal(data.authoredRevision,registry.immutable[name].authoredRevision);
   }

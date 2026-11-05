@@ -65,7 +65,7 @@ const expectedReaders = {
     .map(name => Object.keys(literal(profiles.wiki.revision, 'tools/wiki-media-source-data.js', name).files))),
 };
 assert.deepEqual(readers, expectedReaders, 'Reader domains are the exact closed unions of the frozen parent catalogs.');
-assert.deepEqual(Object.values(readers).map(value => value.length), [22, 35, 39]);
+assert.deepEqual(Object.values(readers).map(value => value.length), [22, 36, 39]);
 assert.deepEqual(extraReaders, { desk: [], monitor: ['test/gates.js'], wiki: [] });
 assert(text('show', `${profiles.monitor.revision}:tools/economy-ux-merge-source-compatibility.js`).includes("  'test/gates.js': Object.freeze({"),
   'The sole supplemental reader is the separately pinned Monitor release-roster proof.');
