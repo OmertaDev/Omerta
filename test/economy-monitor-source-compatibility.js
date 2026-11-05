@@ -1,3 +1,4 @@
+import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Exact source/control proofs only. Runtime and native tests execute physical current bytes.
 import { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -56,7 +57,7 @@ let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = domains[file], current = git('show', `${revision}:${file}`);
   const absent = additions.has(file), baseline = absent ? null : git('show', `${predecessor}:${file}`);
-  const physical = economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'monitor').replaceAll('\r\n', '\n');
+  const physical = economyDeedMergeHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'monitor').replaceAll('\r\n', '\n');
   assert.equal(economyMonitorReleaseHistoricalInput(file,
     economyMonitorWorkerHistoricalInput(file, economyMonitorReaderHistoricalInput(file, physical))), current,
     'Physical current monitoring/composition source remains exact after the named successors: ' + file);
@@ -129,7 +130,7 @@ for (const [pin, qualify, historical] of [
   assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));
   assert(actual === committed || actual === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF source qualifies before projection');
   const physical = economyDeedMergeHistoricalInput(file,
-    businessDeskCombinedHistoricalInput(file, actual, 'monitor'), 'monitor').replaceAll('\r\n', '\n');
+    businessDeskCombinedHistoricalInput(file, contractReleaseDeskInput(file, actual), 'monitor'), 'monitor').replaceAll('\r\n', '\n');
   const baseline = git('show', `${pin.predecessorRevision}:${file}`);
   const priorReleaseSource = ['test/gates.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js'].includes(file);
   assert.equal(pin.predecessorRevision, priorReleaseSource ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);
@@ -218,7 +219,7 @@ for (const file of ['__proto__', 'constructor', 'toString', '../schema.sql', 'sr
   assert.strictEqual(economyMonitorHistoricalInput(file, invalidUtf8), invalidUtf8); refusals++;
 }
 const previousPackage = JSON.parse(git('show', `${predecessor}:package.json`));
-const currentPackage = JSON.parse(economyDeedMergeHistoricalInput('package.json', fs.readFileSync('package.json', 'utf8'), 'monitor'));
+const currentPackage = JSON.parse(economyDeedMergeHistoricalInput('package.json', contractReleaseDeskInput('package.json', fs.readFileSync('package.json', 'utf8')), 'monitor'));
 assert.equal(currentPackage.scripts['test:economy-security'],
   'node test/economy-monitor.js && node test/economy-composition.js');
 delete currentPackage.scripts['test:economy-security'];

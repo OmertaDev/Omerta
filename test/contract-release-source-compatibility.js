@@ -13,6 +13,7 @@ import { assertContractReleaseSourceDefinition, assertContractReleaseSourceTrans
 import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
   deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN, CONTRACT_RELEASE_ETH_ORIGIN,
   CONTRACT_RELEASE_START_ORDER_ORIGIN,
+  CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION,
   contractReleaseReviewedOrigins, deriveContractReleaseApprovedSource,
   assertContractReleaseApprovedSource } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
@@ -468,6 +469,39 @@ try {
     assert.deepEqual(contractReleaseReviewedOrigins(file), []);
     refused(() => deriveContractReleaseApprovedSource(file, null));
   }
+  // The accepted Desk consumes handled Escape events; the earlier mobile origin
+  // must compose without removing that behavior or admitting another conflict.
+  const escape = CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION;
+  assert(Object.isFrozen(escape));
+  assert.deepEqual(escape, {
+    baseRevision: '8d60765b0a0f28be1696be108ff47683ff22eef5',
+    baseTree: '1a17883bbc63430b3c27bde6675f60eb26e091aa', file: 'public/index.html',
+    baseBlob: 'cb87163f7b87389596a737e18be397ce6a1af02a',
+    baseSha256: 'e2795f78d407109a4b2e8e12f09b3eedd5d640fa6d7f3cecc435c0dd273e5f28',
+    variantBlob: 'd3c1a10defdb23c025a7ec689f1f5c26f0fd562d',
+    variantSha256: '92c1e91b83a58b77134dd5d11115dc2777addc58be4fce0b995962511b0c3e49',
+  });
+  const acceptedDeskIndex = committedOriginRecord(escape.baseRevision, escape.file);
+  const completeIndex = committedOriginRecord('HEAD', escape.file);
+  assert.equal(git('rev-parse', escape.baseRevision + '^{tree}').trim(), escape.baseTree);
+  assert.equal(acceptedDeskIndex.pin.blob, escape.baseBlob); assert.equal(acceptedDeskIndex.pin.sha256, escape.baseSha256);
+  const composedIndex = deriveContractReleaseApprovedSource(escape.file, acceptedDeskIndex);
+  assert(composedIndex.bytes.equals(completeIndex.bytes), 'All fixed origins compose to the complete actual integration, preserving the stronger Escape guard');
+  assertContractReleaseApprovedSource(escape.file, acceptedDeskIndex, completeIndex); positives += 2;
+  const strongerEscape = "    if (event.key !== 'Escape' || event.defaultPrevented) return;\n";
+  assert.equal(composedIndex.bytes.toString().split(strongerEscape).length, 2);
+  for (const basePin of [{ ...acceptedDeskIndex.pin, mode: '100755' },
+    { ...acceptedDeskIndex.pin, sha256: '0'.repeat(64) }, { ...acceptedDeskIndex.pin, file: 'public/wiki.html' }])
+    refused(() => deriveContractReleaseApprovedSource(escape.file, { ...acceptedDeskIndex, pin: basePin }));
+  refused(() => deriveContractReleaseApprovedSource(escape.file, { ...acceptedDeskIndex, bytes: Buffer.concat([acceptedDeskIndex.bytes, Buffer.from('\n')]) }));
+  for (const changed of [completeIndex.bytes.toString() + '\n// unreviewed\n',
+    completeIndex.bytes.toString().replace(strongerEscape, "    if (event.key !== 'Escape') return;\n")]) {
+    const candidate = sourceRecord(changed); candidate.pin.file = escape.file;
+    refused(() => assertContractReleaseApprovedSource(escape.file, acceptedDeskIndex, candidate));
+  }
+  refused(() => assertContractReleaseApprovedSource(escape.file, acceptedDeskIndex,
+    { ...completeIndex, pin: { ...completeIndex.pin, mode: '100755' } }));
+  refused(() => { escape.file = 'src/server.js'; });
   const fixtureRepository = path.join(approvalDirectory, 'repository'), redirect = path.join(approvalDirectory, 'redirect');
   fs.mkdirSync(fixtureRepository);
   fs.symlinkSync(fixtureRepository, redirect, process.platform === 'win32' ? 'junction' : 'dir');

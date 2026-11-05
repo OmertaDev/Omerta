@@ -1,3 +1,5 @@
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.
 import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -11,23 +13,28 @@ import { WIKI_MEDIA_SOURCE, WIKI_MEDIA_SOURCE_SHA256, assertWikiMediaSourceTrans
   assertWikiMediaNoirMergeSourceTransfer, wikiMediaNoirMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 
 
-// This comparison boundary admits actual C6 HEAD, index and physical bytes
-// before selecting a separately pinned historical parent. It executes no view.
+// Admit actual HEAD, index and complete physical bytes before either source-only view.
 function readCombinedPhysical(file) {
-  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');
+  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');
   assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);
-  const authoredEntry = git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
-  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
-  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');
-  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');
+  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file, 'Only actual regular committed source can be compared');
   assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\t' + file,
     'Actual index mode/blob qualifies before projection');
-  const authored = git('show', combinedSource.sourceRevision + ':' + file);
-  assert.equal(git('show', 'HEAD:' + file), authored, 'Actual HEAD retains the complete authored source');
+  const authored = git('show', 'HEAD:' + file);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
   const raw = fs.readFileSync(file), physical = raw.toString('utf8');
   assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');
   assert(physical === authored || physical === authored.replaceAll('\n', '\r\n'), 'Whole actual LF/CRLF physical source qualifies first');
+  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
+  const expectedEntry = outer?.targets.desk
+    ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
+    : git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
+  assert.equal(actualEntry, expectedEntry, 'Current source identity must qualify independently of its historical view');
+  const combined = contractReleaseDeskInput(file, physical);
+  const target = git('show', combinedSource.sourceRevision + ':' + file);
+  assert(combined === target || combined === target.replaceAll('\n', '\r\n'), 'The exact combined-source target is unchanged after the outer view');
   return physical;
 }
 
@@ -143,7 +150,7 @@ const wiring = [
 ];
 for (const item of wiring) {
   let current = wikiMediaMergeHistoricalInput(item.file,
-    fs.readFileSync(new URL('../' + item.file, import.meta.url), 'utf8'), 'wiki').replaceAll('\r\n', '\n');
+    contractReleaseDeskInput(item.file, fs.readFileSync(new URL('../' + item.file, import.meta.url), 'utf8')), 'wiki').replaceAll('\r\n', '\n');
   assert.equal(current.split(item.imports).length, 2);
   current = current.replace(item.imports, '');
   for (const name of item.calls || []) {
@@ -182,7 +189,7 @@ assert.deepEqual(Object.keys(merge.files), changedMergeFiles, 'Only the finite a
 let mergePositives = 0, mergeRefusals = 0, mergeHunks = 0;
 for (const [file, row] of Object.entries(merge.files)) {
   const current = git('show', merge.revision + ':' + file);
-  assert.equal(wikiMediaNoirMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'wiki').replaceAll('\r\n', '\n'), current,
+  assert.equal(wikiMediaNoirMergeHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'wiki').replaceAll('\r\n', '\n'), current,
     'Actual physical merge source remains exact after the separately qualified integration: ' + file);
   assert(Object.isFrozen(row) && Object.isFrozen(row.current));
   const checkRecord = (revision, record, text) => {
@@ -312,7 +319,7 @@ assert.deepEqual(noirMergeFiles, noirActualScope, 'Closed actual modified source
 let noirPositives = 0, noirRefusals = 0, noirHunks = 0;
 for (const [file, row] of Object.entries(noirMerge.files)) {
   const actualPhysical = readCombinedPhysical(file);
-  const current = git('show', noirMerge.revision + ':' + file), physical = businessDeskCombinedHistoricalInput(file, actualPhysical, 'wiki');
+  const current = git('show', noirMerge.revision + ':' + file), physical = businessDeskCombinedHistoricalInput(file, contractReleaseDeskInput(file, actualPhysical), 'wiki');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'The exact Wiki parent retains its complete authored comparison source: ' + file);
   assert.equal(git('ls-tree', combinedSource.profiles.wiki.revision, '--', file).trim(), row.current.mode + ' blob ' + row.current.lf.blob + '\t' + file,
     'The selected Wiki parent remains exactly pinned after actual C6 admission');

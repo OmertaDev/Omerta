@@ -60,6 +60,17 @@ export const CONTRACT_RELEASE_START_ORDER_ORIGIN = Object.freeze({
   baseRevision: 'd80412c5f2cf6b597f9832825293cdae9d7d3480',
   files: Object.freeze(['public/index.html']),
 });
+// The released Desk preserves consumed Escape events. Keep that exact reviewed
+// integration when composing the earlier mobile origin; never resolve arbitrary conflicts.
+export const CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION = Object.freeze({
+  baseRevision: '8d60765b0a0f28be1696be108ff47683ff22eef5',
+  baseTree: '1a17883bbc63430b3c27bde6675f60eb26e091aa',
+  file: 'public/index.html',
+  baseBlob: 'cb87163f7b87389596a737e18be397ce6a1af02a',
+  baseSha256: 'e2795f78d407109a4b2e8e12f09b3eedd5d640fa6d7f3cecc435c0dd273e5f28',
+  variantBlob: 'd3c1a10defdb23c025a7ec689f1f5c26f0fd562d',
+  variantSha256: '92c1e91b83a58b77134dd5d11115dc2777addc58be4fce0b995962511b0c3e49',
+});
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
 const HISTORY = Object.freeze(['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
@@ -83,6 +94,9 @@ const INTEGRATION = Object.freeze(['package.json', 'tools/enterprise-native-ux.j
   'tools/contract-release-source-format.js',
   'tools/contract-release-source-transfer.js', 'tools/generate-contract-release-source-transfer.js',
   'test/contract-release-source-compatibility.js',
+  'test/businessdesk-combined-source-compatibility.js', 'test/businessdesk-combined-native-provenance.js',
+  'test/economy-deed-merge-source-compatibility.js', 'test/wiki-media-source-transfer.js',
+  'test/economy-monitor-source-compatibility.js', 'test/age-eligibility-source-compatibility.js',
   // Generated source-authority data only; product files always retain fixed reviewed origins.
   'tools/native-eth-source-transfer.json']);
 const NEW_SUPPORT = Object.freeze(['tools/age-policy-source-transfer.js', 'tools/genesis-fee-readiness-source-transfer.js',
@@ -213,7 +227,21 @@ export function deriveContractReleaseApprovedSource(file, base) {
   if (base) { assert.equal(base.pin.file, file); sourceText(base); }
   let expected = base;
   for (const origin of origins) {
-    const original = record(origin.baseRevision, file, true), reviewed = record(origin.revision, file);
+    const original = record(origin.baseRevision, file, true);
+    let reviewed = record(origin.revision, file);
+    const resolution = CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION;
+    if (base && file === resolution.file && origin === CONTRACT_RELEASE_MOBILE_ORIGIN
+      && base.pin.blob === resolution.baseBlob) {
+      assert.equal(gitText('rev-parse', resolution.baseRevision + '^{tree}').trim(), resolution.baseTree);
+      const accepted = record(resolution.baseRevision, file);
+      assert.deepEqual(base.pin, accepted.pin); assert(base.bytes.equals(accepted.bytes));
+      const before = "    if (event.key !== 'Escape') return;\n";
+      const after = "    if (event.key !== 'Escape' || event.defaultPrevented) return;\n";
+      const text = sourceText(reviewed); assert.equal(text.split(before).length, 2);
+      const bytes = Buffer.from(text.replace(before, () => after));
+      assert.equal(blob(bytes), resolution.variantBlob); assert.equal(sha256(bytes), resolution.variantSha256);
+      reviewed = { pin: { ...reviewed.pin, blob: resolution.variantBlob, sha256: resolution.variantSha256 }, bytes };
+    }
     const bytes = deriveContractReleaseReviewedSource(expected, original, reviewed);
     expected = { pin: { file, mode: reviewed.pin.mode, blob: blob(bytes), sha256: sha256(bytes) }, bytes };
   }

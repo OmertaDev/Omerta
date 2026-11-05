@@ -1,3 +1,5 @@
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Exact immutable Git source/provenance controls; no reconstructed source is executed.
 import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -46,23 +48,28 @@ const inverses = (prior, authored, file) => {
   return rows;
 };
 
-// This comparison boundary admits actual C6 HEAD, index and physical bytes
-// before selecting a separately pinned historical parent. It executes no view.
+// Admit actual HEAD, index and complete physical bytes before either source-only view.
 function readCombinedPhysical(file) {
-  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');
+  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');
   assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);
-  const authoredEntry = git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
-  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
-  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');
-  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');
+  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file, 'Only actual regular committed source can be compared');
   assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\t' + file,
     'Actual index mode/blob qualifies before projection');
-  const authored = git('show', combinedSource.sourceRevision + ':' + file);
-  assert.equal(git('show', 'HEAD:' + file), authored, 'Actual HEAD retains the complete authored source');
+  const authored = git('show', 'HEAD:' + file);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
   const raw = fs.readFileSync(file), physical = raw.toString('utf8');
   assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');
   assert(physical === authored || physical === authored.replaceAll('\n', '\r\n'), 'Whole actual LF/CRLF physical source qualifies first');
+  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
+  const expectedEntry = outer?.targets.desk
+    ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
+    : git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
+  assert.equal(actualEntry, expectedEntry, 'Current source identity must qualify independently of its historical view');
+  const combined = contractReleaseDeskInput(file, physical);
+  const target = git('show', combinedSource.sourceRevision + ':' + file);
+  assert(combined === target || combined === target.replaceAll('\n', '\r\n'), 'The exact combined-source target is unchanged after the outer view');
   return physical;
 }
 
@@ -78,7 +85,7 @@ let positives = 0, refusals = 0, sourceHunks = 0;
 const reject = action => { assert.throws(action, error => error?.code === 'ERR_ASSERTION'); refusals++; };
 for (const row of source.files) {
   const actualPhysical = readCombinedPhysical(row.file);
-  const physical = businessDeskCombinedHistoricalInput(row.file, actualPhysical, 'monitor'), current = git('show', source.sourceRevision + ':' + row.file);
+  const physical = businessDeskCombinedHistoricalInput(row.file, contractReleaseDeskInput(row.file, actualPhysical), 'monitor'), current = git('show', source.sourceRevision + ':' + row.file);
   const stat = fs.lstatSync(row.file); assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(lf(physical), current, 'The exact Monitor parent retains its current complete integration postimage.');
   assert.equal(sha(current), row.current.sha256); assert.equal(blob(current), row.current.blob);
