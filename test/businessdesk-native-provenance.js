@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { businessDeskNativeProvenance } from '../tools/businessdesk-native-provenance.js';
+import { businessDeskNoirNativeProvenance } from '../tools/businessdesk-noir-native-provenance.js';
+import { NOIR_UI_SOURCE } from '../tools/noir-ui-source-data.js';
 import { BUSINESS_DESK_DOMAINS } from '../tools/businessdesk-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from '../tools/deed-allocation-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previousNative } from '../tools/enterprise-native-ux-b35-inputs.js';
@@ -24,6 +26,7 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const blob = bytes => crypto.createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
 const relation = 'exact-reviewed-business-and-deed-source-provenance-only';
+const combinedRelation = 'exact-combined-noir-and-deed-source-provenance-only';
 const previousRows = new Map(previousNative.files.map(row => [row.file, row]));
 const deedRows = new Map(deedNative.files.map(row => [row.file, row]));
 const currentRows = new Map(currentNative.files.map(row => [row.file, row]));
@@ -34,9 +37,10 @@ const proofOf = (proof, file, previous, expected) => {
   assert.equal(proof.file, file);
   assert.deepEqual(proof.current, { mode: expected.mode, blob: expected.blob, sha256: expected.sha256 });
   assert.deepEqual(proof.predecessor, previous); assert.equal(proof.predecessorRevision, previousNative.authoredRevision);
-  assert.equal(proof.relation, relation); assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
+  assert.equal(proof.relation, businessDeskNoirNativeProvenance(file, previous, expected) ? combinedRelation : relation);
+  assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
 };
-let applicable = 0, refusals = 0, sample;
+let applicable = 0, refusals = 0, refinedApplicable = 0, sample;
 const reject = run => { assert.throws(run); refusals++; };
 for (const [file, desk] of Object.entries(BUSINESS_DESK_DOMAINS)) {
   const previous = previousRows.get(file), expected = currentRows.get(file);
@@ -45,7 +49,17 @@ for (const [file, desk] of Object.entries(BUSINESS_DESK_DOMAINS)) {
     continue;
   }
   assert(Object.isFrozen(previous) && Object.isFrozen(expected));
-  assert.equal(desk.mode, expected.mode); assert.equal(desk.currentBlob, expected.blob); assert.equal(desk.currentSha256, expected.sha256);
+  const refinement = businessDeskNoirNativeProvenance(file, previous, expected);
+  if (refinement) {
+    assert(['package.json', 'public/index.html'].includes(file), 'Only the two exact shared Noir/Business native domains refine this original relation.');
+    const noir = NOIR_UI_SOURCE.files.find(row => row.file === file);
+    assert(noir && !noir.predecessorAbsent);
+    assert.deepEqual([noir.predecessorMode, noir.predecessorBlob, noir.predecessorSha256],
+      [desk.baselineMode, desk.baselineBlob, desk.baselineSha256], 'Both reviewed branches anchor the same exact frozen Deed input.');
+    refinedApplicable++;
+  } else {
+    assert.equal(desk.mode, expected.mode); assert.equal(desk.currentBlob, expected.blob); assert.equal(desk.currentSha256, expected.sha256);
+  }
   const stage = deedRows.get(file);
   assert(stage && Object.isFrozen(stage), 'An actual frozen Deed native archive row anchors every applicable Desk baseline.');
   assert.deepEqual([desk.baselineMode, desk.baselineBlob, desk.baselineSha256], [stage.mode, stage.blob, stage.sha256]);
@@ -96,4 +110,4 @@ for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../sr
   assert.equal(businessDeskNativeProvenance(unknown, previous, expected), null);
 }
 console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,
-  authoredRevision: currentNative.authoredRevision, relation, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));
+  authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: combinedRelation, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));

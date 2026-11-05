@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,
   noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
 
@@ -25,7 +26,7 @@ assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split(
 let positives = 0, refusals = 0;
 for (const file of NOIR_UI_SOURCE_FILES) {
   const committed = git('show', `${revision}:${file}`);
-  const physical = fs.readFileSync(file, 'utf8');
+  const physical = businessDeskNoirHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'noir');
   assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
   const pin = NOIR_UI_SOURCE.files.find(row => row.file === file);
   assert.equal(sha(committed), pin.currentSha256);
