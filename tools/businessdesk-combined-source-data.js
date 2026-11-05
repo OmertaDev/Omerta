@@ -4,8 +4,8 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_SOURCE_ONLY",
-  "sourceRevision": "d94e350b0df92c35b39bb8bdf580e3058c18ba1b",
-  "sourceTree": "a741423921a9d40b262ab546261b6e7ac0eb91da",
+  "sourceRevision": "cd433c350c39ee0b13aa54c39f50ed940861ab38",
+  "sourceTree": "6c039abfa1405ac83e3b1491c758ce45a45235c8",
   "contextLines": 8,
   "profiles": {
     "desk": {
@@ -13,8 +13,8 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
       "tree": "147add1847b8b34e019f1a24afaa9c1d48e538f7"
     },
     "monitor": {
-      "revision": "3d412bfaf8805c8ca09a49a8f8377b0649351a09",
-      "tree": "62dafe49da92bc70290f71e61540b0d217e0b5d8"
+      "revision": "ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "tree": "c821c0fc8ba26d8775271d8a1d89bc3380b52c84"
     },
     "wiki": {
       "revision": "6c4d37842f4d7ebd7f96d5fee9935720f442007a",
@@ -175,12 +175,12 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
       "file": "public/index.html",
       "current": {
         "mode": "100644",
-        "blob": "b268ff50dfdc0f645d52bc837f5a36a3b952d525",
-        "sha256": "b048c71394a058a153a0789a0c596a6f41fd20c21c644047180ec63cc466ad89",
-        "bytes": 1406692,
+        "blob": "cb87163f7b87389596a737e18be397ce6a1af02a",
+        "sha256": "e2795f78d407109a4b2e8e12f09b3eedd5d640fa6d7f3cecc435c0dd273e5f28",
+        "bytes": 1406694,
         "rawSha256": {
-          "lf": "b048c71394a058a153a0789a0c596a6f41fd20c21c644047180ec63cc466ad89",
-          "crlf": "22c64a050aa8274d19318281ef09c4e8b54f3a48aaf4a8e759d240feb268232e"
+          "lf": "e2795f78d407109a4b2e8e12f09b3eedd5d640fa6d7f3cecc435c0dd273e5f28",
+          "crlf": "0272b204286431566a74bf9fb51c604cc68ec81219aaaf92fc251ee428ac039b"
         }
       },
       "parents": {
@@ -194,6 +194,10 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
             "crlf": "0c9eb2dfa1ba0a5f9b186de777e80c2179b2e92d79f87d1ca51d9a1559bd205d"
           },
           "inverses": [
+            {
+              "current": "\n  /* ── top bar: frosted, pinned, understated ── */\n  #top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: calc(10px + var(--sat)) 16px 10px;\n    border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;\n    background: color-mix(in srgb, var(--panel) 82%, transparent);\n    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }\n  /* Let the dashboard header scroll away on phones so it cannot cover gameplay controls. */\n  @media (max-width: 760px) {\n    #top { position: relative; }\n  }\n  #top h1 { font-family: var(--display); font-size: 22px; margin: 0; letter-spacing: 8px; color: var(--neon); font-weight: 600;\n    text-shadow: 0 0 22px var(--neon-glow); }\n  #top .sub { color: var(--faint); font-size: 12.5px; letter-spacing: .4px; }\n  #whoami { margin-left: auto; color: var(--dim); font-size: 13.5px; }\n  #whoami b { color: var(--ink); }\n  /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */\n  #vitals { display: none; }\n",
+              "target": "\n  /* ── top bar: frosted, pinned, understated ── */\n  #top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: calc(10px + var(--sat)) 16px 10px;\n    border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;\n    background: color-mix(in srgb, var(--panel) 82%, transparent);\n    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }\n  /* Let the dashboard header scroll away on phones so it cannot cover gameplay controls. */\n  @media (max-width: 760px) {\n    #top { position: static; }\n  }\n  #top h1 { font-family: var(--display); font-size: 22px; margin: 0; letter-spacing: 8px; color: var(--neon); font-weight: 600;\n    text-shadow: 0 0 22px var(--neon-glow); }\n  #top .sub { color: var(--faint); font-size: 12.5px; letter-spacing: .4px; }\n  #whoami { margin-left: auto; color: var(--dim); font-size: 13.5px; }\n  #whoami b { color: var(--ink); }\n  /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */\n  #vitals { display: none; }\n"
+            },
             {
               "current": "  }\n  function bindOperationDesk() {\n    document.querySelectorAll('[data-operation-retry]').forEach((button) => {\n      button.onclick = () => { const r = operationReceipts.find(r=>String(r.id)===button.dataset.operationRetry); if(r?.actor === `${me?.id}:${me?.generation}` && (!r.isCurrent || r.isCurrent())) r.recovery?.run?.(); };\n    });\n    document.querySelectorAll('[data-operation-tab]').forEach((button) => {\n      button.onclick = () => { setTab(button.dataset.operationTab); spotlight(SPOT[button.dataset.operationTab]); };\n    });\n    // Showing a closed <details> only reveals its summary, not the protected recovery control.\n    const history = $('#operation-desk .operation-desk__history'), latest = operationReceipts[0];\n    if (history && latest?.state === 'error' && (latest.recovery?.run || latest.recovery?.tab))\n      history.open = true;\n  }\n  function renderOperationFeed() {\n    const latest = $('#operation-latest'), current = operationReceipts.find(receipt => receipt.actor === `${me?.id}:${me?.generation}` && (!receipt.isCurrent || receipt.isCurrent()));\n    if (latest) latest.innerHTML = current ? operationReceiptMarkup(current) : '';\n    const feed = $('#operation-feed');\n    if (feed) feed.innerHTML = operationFeedMarkup();\n    bindOperationDesk();\n  }\n",
               "target": "  }\n  function bindOperationDesk() {\n    document.querySelectorAll('[data-operation-retry]').forEach((button) => {\n      button.onclick = () => { const r = operationReceipts.find(r=>String(r.id)===button.dataset.operationRetry); if(r?.actor === `${me?.id}:${me?.generation}` && (!r.isCurrent || r.isCurrent())) r.recovery?.run?.(); };\n    });\n    document.querySelectorAll('[data-operation-tab]').forEach((button) => {\n      button.onclick = () => { setTab(button.dataset.operationTab); spotlight(SPOT[button.dataset.operationTab]); };\n    });\n  }\n  function renderOperationFeed() {\n    const latest = $('#operation-latest'), current = operationReceipts.find(receipt => receipt.actor === `${me?.id}:${me?.generation}` && (!receipt.isCurrent || receipt.isCurrent()));\n    if (latest) latest.innerHTML = current ? operationReceiptMarkup(current) : '';\n    const feed = $('#operation-feed');\n    if (feed) feed.innerHTML = operationFeedMarkup();\n    bindOperationDesk();\n  }\n"
@@ -214,12 +218,12 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
         },
         "monitor": {
           "mode": "100644",
-          "blob": "eaf534944078cbb97693f59da213ebe882511a7a",
-          "sha256": "28a37dc7ba42b3b08801a1e55876ff2475f919e90af8fd2223a783c3c661f059",
-          "bytes": 1403789,
+          "blob": "46e2cd574402daaa4d1fbaace692e6265c369366",
+          "sha256": "d2ff362939f5bad634a17d3488b221c613f404b27bbd743877b363405ee1fa3b",
+          "bytes": 1403791,
           "rawSha256": {
-            "lf": "28a37dc7ba42b3b08801a1e55876ff2475f919e90af8fd2223a783c3c661f059",
-            "crlf": "190800c71c336cb3db9876807856bac086867e4e22356f03fb16022873704077"
+            "lf": "d2ff362939f5bad634a17d3488b221c613f404b27bbd743877b363405ee1fa3b",
+            "crlf": "399380df17072a2fc5621c1a847f981d7d932464147d43fde604342db759d850"
           },
           "inverses": [
             {
@@ -266,6 +270,10 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
             "crlf": "057e07e8e3f9901d6cf364c9928fac4f26355758282213c0bf7aba038c759d28"
           },
           "inverses": [
+            {
+              "current": "\n  /* ── top bar: frosted, pinned, understated ── */\n  #top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: calc(10px + var(--sat)) 16px 10px;\n    border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;\n    background: color-mix(in srgb, var(--panel) 82%, transparent);\n    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }\n  /* Let the dashboard header scroll away on phones so it cannot cover gameplay controls. */\n  @media (max-width: 760px) {\n    #top { position: relative; }\n  }\n  #top h1 { font-family: var(--display); font-size: 22px; margin: 0; letter-spacing: 8px; color: var(--neon); font-weight: 600;\n    text-shadow: 0 0 22px var(--neon-glow); }\n  #top .sub { color: var(--faint); font-size: 12.5px; letter-spacing: .4px; }\n  #whoami { margin-left: auto; color: var(--dim); font-size: 13.5px; }\n  #whoami b { color: var(--ink); }\n  /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */\n  #vitals { display: none; }\n",
+              "target": "\n  /* ── top bar: frosted, pinned, understated ── */\n  #top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: calc(10px + var(--sat)) 16px 10px;\n    border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;\n    background: color-mix(in srgb, var(--panel) 82%, transparent);\n    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }\n  /* Let the dashboard header scroll away on phones so it cannot cover gameplay controls. */\n  @media (max-width: 760px) {\n    #top { position: static; }\n  }\n  #top h1 { font-family: var(--display); font-size: 22px; margin: 0; letter-spacing: 8px; color: var(--neon); font-weight: 600;\n    text-shadow: 0 0 22px var(--neon-glow); }\n  #top .sub { color: var(--faint); font-size: 12.5px; letter-spacing: .4px; }\n  #whoami { margin-left: auto; color: var(--dim); font-size: 13.5px; }\n  #whoami b { color: var(--ink); }\n  /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */\n  #vitals { display: none; }\n"
+            },
             {
               "current": "  .world-board button { min-height: 42px; }\n  .world-board button:disabled { opacity: .5; cursor: not-allowed; }\n  .world-board details { margin-top: 12px; }\n  .world-board summary { cursor: pointer; min-height: 32px; color: var(--dim); }\n  @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }\n</style>\n<link rel=\"stylesheet\" href=\"/omerta-ui.css?v=20261105-noir-release\">\n<link rel=\"stylesheet\" href=\"/world-fieldwork.css?v=20261016-refinements-1\">\n<link rel=\"stylesheet\" href=\"/business-control-desk.css?v=20261030-1\">\n<style id=\"district-refresh-style\">\n.landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}\n.district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}\n.district-atlas .atlas-kicker{color:#c7af79;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 12px}\n.district-atlas h2{font-family:var(--display);font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:1px;color:#eee8db;margin:0 0 14px}\n.district-atlas .atlas-intro{max-width:540px;color:var(--dim);font-size:15px;line-height:1.6;margin-bottom:28px}\n.district-atlas .atlas-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}\n.district-atlas article{position:relative;min-height:365px;overflow:hidden;background:#101616;border:1px solid #45463d}\n",
               "target": "  .world-board button { min-height: 42px; }\n  .world-board button:disabled { opacity: .5; cursor: not-allowed; }\n  .world-board details { margin-top: 12px; }\n  .world-board summary { cursor: pointer; min-height: 32px; color: var(--dim); }\n  @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }\n</style>\n<link rel=\"stylesheet\" href=\"/omerta-ui.css?v=20261105-noir-release\">\n<link rel=\"stylesheet\" href=\"/world-fieldwork.css?v=20261016-refinements-1\">\n<style id=\"district-refresh-style\">\n.landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}\n.district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}\n.district-atlas .atlas-kicker{color:#c7af79;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 12px}\n.district-atlas h2{font-family:var(--display);font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:1px;color:#eee8db;margin:0 0 14px}\n.district-atlas .atlas-intro{max-width:540px;color:var(--dim);font-size:15px;line-height:1.6;margin-bottom:28px}\n.district-atlas .atlas-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}\n.district-atlas article{position:relative;min-height:365px;overflow:hidden;background:#101616;border:1px solid #45463d}\n"
@@ -1442,6 +1450,45 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
       }
     },
     {
+      "file": "tools/mobile.js",
+      "current": {
+        "mode": "100644",
+        "blob": "9a8e31406748ff55f8b325a0b5ed6a3f1febe46e",
+        "sha256": "f69783a4e0858f7cfeaba5eb581b59883808150a694bb6e57be93446a29423ab",
+        "bytes": 82679,
+        "rawSha256": {
+          "lf": "f69783a4e0858f7cfeaba5eb581b59883808150a694bb6e57be93446a29423ab",
+          "crlf": "528c63e2e37b53aeb81565ef754bbe1aa22a07358d985350fe65bc3a813d3004"
+        }
+      },
+      "parents": {
+        "wiki": {
+          "mode": "100644",
+          "blob": "7e430c69348ddd002514ab163840e6dc8ce34a1a",
+          "sha256": "d8ab341221bca964f33614d76df1d3470d614b609482bbcf06da35e96050b8cb",
+          "bytes": 81694,
+          "rawSha256": {
+            "lf": "d8ab341221bca964f33614d76df1d3470d614b609482bbcf06da35e96050b8cb",
+            "crlf": "277ab67a3537bb5a4069d8bb3ef201ce49fe8fc3db73203d0a3d8a1420da64c5"
+          },
+          "inverses": [
+            {
+              "current": "async function openControlDisclosures(control) {\n  const ancestors = control.locator('xpath=ancestor::details');\n  for (let index = 0; index < await ancestors.count(); index++) {\n    const disclosure = ancestors.nth(index);\n    if (!await disclosure.evaluate(node => node.open)) await disclosure.locator(':scope > summary').click();\n  }\n}\n\nasync function clickDisclosureControl(page, selector, verifyPointer = false) {\n  const control = page.locator(selector);\n  await openControlDisclosures(control);\n  if (verifyPointer) {\n    const pointer = await control.evaluate(node => {\n      const box = node.getBoundingClientRect(), x = box.x + box.width / 2, y = box.y + box.height / 2;\n      const hit = document.elementFromPoint(x, y);\n      return { receives: hit === node || node.contains(hit), x, y, width: innerWidth, height: innerHeight,\n        hit: hit ? { tag: hit.tagName, id: hit.id, className: hit.className } : null };\n    });\n    if (!pointer.receives) throw new Error(`${selector} center is covered before its pointer click — ${JSON.stringify(pointer)}`);\n  }\n  await control.click();\n}\n\n// ── finding a browser ───────────────────────────────────────────────────────────────────────────\n// playwright-core deliberately downloads nothing (a browser per `npm ci` is a heavy tax on a repo\n// where most work never touches the client). So we resolve one from the environment, in order of\n// how explicit it is, and say precisely what to do when there is none.\nfunction resolveBrowser() {\n",
+              "target": "async function openControlDisclosures(control) {\n  const ancestors = control.locator('xpath=ancestor::details');\n  for (let index = 0; index < await ancestors.count(); index++) {\n    const disclosure = ancestors.nth(index);\n    if (!await disclosure.evaluate(node => node.open)) await disclosure.locator(':scope > summary').click();\n  }\n}\n\nasync function clickDisclosureControl(page, selector) {\n  const control = page.locator(selector);\n  await openControlDisclosures(control);\n  await control.click();\n}\n\n// ── finding a browser ───────────────────────────────────────────────────────────────────────────\n// playwright-core deliberately downloads nothing (a browser per `npm ci` is a heavy tax on a repo\n// where most work never touches the client). So we resolve one from the environment, in order of\n// how explicit it is, and say precisely what to do when there is none.\nfunction resolveBrowser() {\n"
+            },
+            {
+              "current": "  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });\n  await page.waitForSelector('#tab-start.on .start-next-card .act', { state: 'visible', timeout: 20000 });\n  // THE FIRST ACTION — gameplay opens directly; the optional Codex tour can open Streets.\n  // Arrival and the tour handoff must never submit the action.\n  let firstJobHandoff = false;\n  if (await page.locator('#welcome:not(.hidden)').count()) {\n    fail('(first action)', vp, 'a fresh character was interrupted by a mandatory tour');\n  } else {\n    await clickDisclosureControl(page, '#btn-help', true);\n    await page.click('#glossary-close');\n    await page.click('#btn-jump');\n    await page.fill('#jump-q', 'garage');\n    await page.locator('#jump-list [data-jump=\"garage\"]').click();\n    await page.locator('#tab-garage.on').waitFor({ state: 'visible' });\n    await page.locator('#coach').waitFor({ state: 'visible' });\n    await clickDisclosureControl(page, '#btn-help', true);\n    await page.click('#glossary-tour');\n  }\n  if (!(await page.locator('#welcome:not(.hidden)').count())) {\n    fail('(first action)', vp, 'choosing the optional Codex tour did not open it');\n  } else {\n    await check(page, 'the tour (arrival)', vp);\n    await page.click('#tour-next');\n    const step2 = await page.evaluate(() => ({\n",
+              "target": "  await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });\n  await page.waitForSelector('#tab-start.on .start-next-card .act', { state: 'visible', timeout: 20000 });\n  // THE FIRST ACTION — gameplay opens directly; the optional Codex tour can open Streets.\n  // Arrival and the tour handoff must never submit the action.\n  let firstJobHandoff = false;\n  if (await page.locator('#welcome:not(.hidden)').count()) {\n    fail('(first action)', vp, 'a fresh character was interrupted by a mandatory tour');\n  } else {\n    await clickDisclosureControl(page, '#btn-help');\n    await page.click('#glossary-tour');\n  }\n  if (!(await page.locator('#welcome:not(.hidden)').count())) {\n    fail('(first action)', vp, 'choosing the optional Codex tour did not open it');\n  } else {\n    await check(page, 'the tour (arrival)', vp);\n    await page.click('#tour-next');\n    const step2 = await page.evaluate(() => ({\n"
+            },
+            {
+              "current": "              meStatus: meR.status, obStatus: obR.status, obError: ob.error || '' };\n          });\n          if (!claimed.claimed || claimed.coach !== 'Get to level 5' || claimed.coachTab !== 'streets')\n            fail('(first reward)', vp, `claim did not resume the level-5 road — ${JSON.stringify(claimed)}`);\n        }\n      }\n\n      await check(page, 'start-here (after first action)', vp, { contentMustShow: true });\n      await clickDisclosureControl(page, '#btn-help', true);\n      await page.waitForSelector('#glossary:not(.hidden)', { timeout: 5000 });\n      const replayOpener = page.locator('#glossary-tour');\n      if (!(await replayOpener.count())) {\n        fail('(replay focus)', vp, 'the glossary has no tour replay opener');\n      } else {\n        await replayOpener.click();\n        await page.waitForSelector('#welcome:not(.hidden)', { timeout: 5000 });\n        // The replay returns to Start Here while its real Home read is still pending.\n",
+              "target": "              meStatus: meR.status, obStatus: obR.status, obError: ob.error || '' };\n          });\n          if (!claimed.claimed || claimed.coach !== 'Get to level 5' || claimed.coachTab !== 'streets')\n            fail('(first reward)', vp, `claim did not resume the level-5 road — ${JSON.stringify(claimed)}`);\n        }\n      }\n\n      await check(page, 'start-here (after first action)', vp, { contentMustShow: true });\n      await clickDisclosureControl(page, '#btn-help');\n      await page.waitForSelector('#glossary:not(.hidden)', { timeout: 5000 });\n      const replayOpener = page.locator('#glossary-tour');\n      if (!(await replayOpener.count())) {\n        fail('(replay focus)', vp, 'the glossary has no tour replay opener');\n      } else {\n        await replayOpener.click();\n        await page.waitForSelector('#welcome:not(.hidden)', { timeout: 5000 });\n        // The replay returns to Start Here while its real Home read is still pending.\n"
+            }
+          ]
+        }
+      }
+    },
+    {
       "file": "tools/noir-ui-source-transfer.js",
       "current": {
         "mode": "100644",
@@ -1547,4 +1594,4 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
   "runtime": false,
   "native": false
 });
-export const BUSINESS_DESK_COMBINED_SOURCE_SHA256 = 'b26bddb26cb587e402cf27d31f6e608295616a2793acf35f8c559df1cebe0222';
+export const BUSINESS_DESK_COMBINED_SOURCE_SHA256 = '1be5eafba45d5b2c2b859fc2e0fb6aaf9792c7588a82da19f0dcbeac7f606cfb';
