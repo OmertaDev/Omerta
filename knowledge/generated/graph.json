@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "42c21fe028fae7e639c16fbf9e3a0e432ab05483",
+  "sourceRevision": "2fc3aad23938f83485e3ae9d68695f3b5056846d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17773,
-    "edges": 71384,
+    "nodes": 17775,
+    "edges": 71395,
     "byNodeType": {
       "Artifact": 7176,
       "Command": 305,
-      "Commit": 5250,
+      "Commit": 5252,
       "Contract": 134,
       "Document": 958,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5761,
-      "CHANGED": 27513,
+      "CHANGED": 27522,
       "CONTAINS": 7197,
       "DECLARES": 305,
       "DEFINED_IN": 1773,
       "DEPENDS_ON": 69,
       "EXECUTES": 1213,
       "HANDLED_BY": 937,
-      "HAS_COMMIT": 5250,
+      "HAS_COMMIT": 5252,
       "IMPLEMENTS": 124,
       "IMPORTS": 8745,
       "INHERITS": 45,
@@ -184509,6 +184509,22 @@
       ]
     },
     {
+      "key": "Commit:2fc3aad23938f83485e3ae9d68695f3b5056846d",
+      "type": "Commit",
+      "id": "2fc3aad23938f83485e3ae9d68695f3b5056846d",
+      "label": "Merge pull request #316 from OmertaDev/codex/align-site-contract-economics",
+      "title": "Merge pull request #316 from OmertaDev/codex/align-site-contract-economics",
+      "date": "2026-11-05T23:43:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2fc3aad23938f83485e3ae9d68695f3b5056846d",
+      "provenance": [
+        {
+          "commit": "2fc3aad23938f83485e3ae9d68695f3b5056846d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2fc3aad23938f83485e3ae9d68695f3b5056846d"
+        }
+      ]
+    },
+    {
       "key": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "type": "Commit",
       "id": "2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
@@ -226825,6 +226841,22 @@
         {
           "commit": "aea9904c0eb85a1e78125b1cf66bbb6b6e760f68",
           "url": "https://github.com/OmertaDev/Omerta/commit/aea9904c0eb85a1e78125b1cf66bbb6b6e760f68"
+        }
+      ]
+    },
+    {
+      "key": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "type": "Commit",
+      "id": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "label": "Refresh release knowledge for the reviewed economic and Business Desk integration",
+      "title": "Refresh release knowledge for the reviewed economic and Business Desk integration",
+      "date": "2026-11-05T20:37:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "provenance": [
+        {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
         }
       ]
     },
@@ -279823,6 +279855,9 @@
           "commit": "ae622cb88e3b41c6ced37509b1a804676d2ae05b"
         },
         {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+        },
+        {
           "commit": "afe2f5abd00adc2e40e47bc8011ceb35f28ee5d1"
         },
         {
@@ -282032,6 +282067,9 @@
         },
         {
           "commit": "ae622cb88e3b41c6ced37509b1a804676d2ae05b"
+        },
+        {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
         },
         {
           "commit": "af86f9a0ae57b16a50b5d92fa295ffe619b45d78"
@@ -284668,6 +284706,9 @@
           "commit": "ae622cb88e3b41c6ced37509b1a804676d2ae05b"
         },
         {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+        },
+        {
           "commit": "af86f9a0ae57b16a50b5d92fa295ffe619b45d78"
         },
         {
@@ -287302,6 +287343,9 @@
           "commit": "ae622cb88e3b41c6ced37509b1a804676d2ae05b"
         },
         {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+        },
+        {
           "commit": "af86f9a0ae57b16a50b5d92fa295ffe619b45d78"
         },
         {
@@ -288587,6 +288631,9 @@
         },
         {
           "commit": "ab4ab2583c21ec6bdd9fddec90fc8cd3dd60904a"
+        },
+        {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
         },
         {
           "commit": "b0c85c11dd636b04d92f8f017ca31982b9c63999"
@@ -290662,6 +290709,9 @@
           "commit": "ae622cb88e3b41c6ced37509b1a804676d2ae05b"
         },
         {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+        },
+        {
           "commit": "af86f9a0ae57b16a50b5d92fa295ffe619b45d78"
         },
         {
@@ -292078,6 +292128,9 @@
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
         },
         {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+        },
+        {
           "commit": "b0c85c11dd636b04d92f8f017ca31982b9c63999"
         },
         {
@@ -292684,6 +292737,9 @@
           "commit": "ab4ab2583c21ec6bdd9fddec90fc8cd3dd60904a"
         },
         {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+        },
+        {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
         },
         {
@@ -293162,6 +293218,9 @@
         },
         {
           "commit": "aab87060e775fb18ccf952c417b1583c40fca931"
+        },
+        {
+          "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
         },
         {
           "commit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
@@ -306112,8 +306171,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "42c21fe028fae7e639c16fbf9e3a0e432ab05483",
-      "currentBranch": "codex/align-site-contract-economics",
+      "revision": "2fc3aad23938f83485e3ae9d68695f3b5056846d",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -545468,6 +545527,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:aeb05914604b17fb34a7400d4c946442257c5c51",
       "to": "Artifact:AUDIT-megaproject.md",
       "provenance": {
@@ -742321,6 +742452,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2fc3aad23938f83485e3ae9d68695f3b5056846d",
+      "provenance": {
+        "commit": "2fc3aad23938f83485e3ae9d68695f3b5056846d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "provenance": {
         "commit": "2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74"
@@ -763476,6 +763615,14 @@
       "to": "Commit:aea9904c0eb85a1e78125b1cf66bbb6b6e760f68",
       "provenance": {
         "commit": "aea9904c0eb85a1e78125b1cf66bbb6b6e760f68"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+      "provenance": {
+        "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
       }
     },
     {
