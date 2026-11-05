@@ -5,7 +5,7 @@ import os from 'node:os';
 import {spawnSync} from 'node:child_process';
 import {pathToFileURL} from 'node:url';
 import {loadBundledMarketV2Abi,MARKET_V2_ETH_ABI_NAMES,MARKET_V2_ETH_ABI_DIGEST,ethAbiPackDigest} from '../src/marketv2abi.js';
-import {buildEthAbiPack} from '../tools/eth-rewards-abi-pack.js';
+import {buildEthAbiPack,assertEthAbiPackMatchesCompilation} from '../tools/eth-rewards-abi-pack.js';
 const loader=fs.readFileSync('src/marketv2abi.js','utf8'),data=fs.readFileSync('src/data/market-v2-eth-abis.json','utf8'),pack=JSON.parse(data);
 let groups=0;
 const test=(name,fn)=>{fn();groups++;console.log(`PASS ${name}`);};
@@ -29,7 +29,7 @@ function isolated({text=data,includeData=true,script}={}){
   }finally{removeFixture(dir);}
 }
 test('five bundled ABIs match current native compiler outputs and all dependency source pins',()=>{
-  assert.equal(MARKET_V2_ETH_ABI_NAMES.length,5);assert.deepEqual(buildEthAbiPack(),pack);
+  assert.equal(MARKET_V2_ETH_ABI_NAMES.length,5);assertEthAbiPackMatchesCompilation(pack);
   for(const name of MARKET_V2_ETH_ABI_NAMES){
     const artifact=JSON.parse(fs.readFileSync(`omerta-contracts/out/${name}.sol/${name}.json`));
     assert.deepEqual(loadBundledMarketV2Abi(name),artifact.abi);
@@ -99,5 +99,61 @@ test('offline regeneration rejects stale source even when an artifact declares t
     fs.appendFileSync(path.join(dir,`src/market-v2/${name}.sol`),'\n// stale source probe\n');
     assert.throws(()=>buildEthAbiPack({contractsRoot:dir}),/stale artifact/);
   }finally{removeFixture(dir);}
+});
+test('fresh artifact JSON reserialization preserves every contract identity field',()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'omerta-eth-abi-containers-'));
+  try{
+    const before=buildEthAbiPack();
+    for(const name of MARKET_V2_ETH_ABI_NAMES){
+      const file=`out/${name}.sol/${name}.json`,raw=fs.readFileSync(path.join('omerta-contracts',file),'utf8'),artifact=JSON.parse(raw);
+      const metadata=typeof artifact.rawMetadata==='string'?JSON.parse(artifact.rawMetadata):artifact.metadata;
+      fs.mkdirSync(path.dirname(path.join(dir,file)),{recursive:true});
+      let reserialized=JSON.stringify(artifact,null,2)+'\n';if(reserialized===raw)reserialized+=' ';
+      fs.writeFileSync(path.join(dir,file),reserialized);
+      for(const source of Object.keys(metadata.sources)){
+        const dest=path.join(dir,source);fs.mkdirSync(path.dirname(dest),{recursive:true});
+        fs.copyFileSync(path.join('omerta-contracts',source),dest);
+      }
+    }
+    const current=buildEthAbiPack({contractsRoot:dir});
+    for(const name of MARKET_V2_ETH_ABI_NAMES)assert.notEqual(current.contracts[name].artifactSha256,before.contracts[name].artifactSha256);
+    const result=assertEthAbiPackMatchesCompilation(pack,current);
+    assert.equal(result.semanticDigest,MARKET_V2_ETH_ABI_DIGEST);
+    assert(result.artifactContainerDifferences.length>0);
+    for(const row of result.artifactContainerDifferences){
+      assert.equal(row.publishedSha256,pack.contracts[row.name].artifactSha256);
+      assert.equal(row.currentSha256,current.contracts[row.name].artifactSha256);
+    }
+  }finally{removeFixture(dir);}
+});
+test('published raw artifact provenance remains part of the full integrity pin',()=>{
+  const tampered=structuredClone(pack);tampered.contracts.OmertaEthRewardsV2.artifactSha256='0'.repeat(64);
+  assert.throws(()=>assertEthAbiPackMatchesCompilation(tampered),/Published bundled ABI integrity mismatch/);
+});
+test('fresh compilation differences never bypass contract, source or schema guards',()=>{
+  const current=buildEthAbiPack(),name=MARKET_V2_ETH_ABI_NAMES[0],source=Object.keys(current.sources)[0];
+  const dependency=Object.keys(current.contracts[name].sourcePins)[0],zero='0x'+'0'.repeat(64);
+  const mutations=[
+    value=>{value.schemaVersion++;},value=>{delete value.kind;},value=>{value.extra=true;},
+    value=>{delete value.contracts[name];},value=>{value.contracts.extra=structuredClone(value.contracts[name]);},
+    value=>{delete value.contracts[name].source;},value=>{value.contracts[name].extra=true;},
+    value=>{value.contracts[name].abi.push({type:'function',name:'unreviewed',inputs:[],outputs:[],stateMutability:'view'});},
+    ...['version','optimizer','runs','evmVersion','viaIr'].map(field=>value=>{value.contracts[name].compiler[field]='unreviewed';}),
+    value=>{value.sources[source].sha256Lf='0'.repeat(64);},
+    value=>{value.sources.extra={sha256Lf:'0'.repeat(64)};},
+    value=>{value.contracts[name].sourcePins[dependency]=zero;},
+    value=>{delete value.contracts[name].sourcePins[dependency];},
+    value=>{value.contracts[name].sourcePins.extra=zero;},
+    value=>{value.contracts[name].creationBytecodeHash=zero;},
+    value=>{value.contracts[name].runtimeTemplateHash=zero;},
+    value=>{delete value.contracts[name].artifactSha256;},
+    value=>{value.contracts[name].artifactSha256='x'.repeat(64);},
+    value=>{value.contracts[name].artifactSha256='0'.repeat(63);},
+    value=>{value.contracts[name].artifactSha256=0;},
+  ];
+  for(const mutate of mutations){const changed=structuredClone(current);mutate(changed);assert.throws(()=>assertEthAbiPackMatchesCompilation(pack,changed));}
+  for(const changed of [null,[],{},'invalid',false,0])assert.throws(()=>assertEthAbiPackMatchesCompilation(pack,changed));
+  assert.equal(fs.readFileSync('src/marketv2abi.js','utf8'),loader);
+  assert.equal(fs.readFileSync('src/data/market-v2-eth-abis.json','utf8'),data);
 });
 console.log(JSON.stringify({pass:true,groups,contracts:5,semanticDigest:MARKET_V2_ETH_ABI_DIGEST,network:false,productionWrites:false,productionSigning:false}));

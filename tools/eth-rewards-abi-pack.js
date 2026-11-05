@@ -50,18 +50,38 @@ export function buildEthAbiPack({contractsRoot=root}={}){
   }
   return canonical(pack);
 }
+export function assertEthAbiPackMatchesCompilation(published,compiled){
+  const digest=ethAbiPackDigest(published);
+  assert.equal(digest,MARKET_V2_ETH_ABI_DIGEST,'Published bundled ABI integrity mismatch');
+  // The published digest retains its original raw artifact provenance. Fresh
+  // compiler JSON containers may differ while the complete contract tuple agrees.
+  const current=compiled===undefined?buildEthAbiPack():compiled,contracts={...published.contracts},artifactContainerDifferences=[];
+  for(const name of MARKET_V2_ETH_ABI_NAMES){
+    const currentSha256=current?.contracts?.[name]?.artifactSha256;
+    assert.equal(typeof currentSha256,'string',`${name}: current artifact container hash required`);
+    assert.match(currentSha256,/^[\da-f]{64}$/,`${name}: invalid current artifact container hash`);
+    const publishedSha256=published.contracts[name].artifactSha256;
+    if(currentSha256!==publishedSha256)artifactContainerDifferences.push({name,publishedSha256,currentSha256});
+    contracts[name]={...published.contracts[name],artifactSha256:currentSha256};
+  }
+  assert.deepEqual(current,{...published,contracts},'Bundled ABI data differs from current compiled source');
+  return{semanticDigest:digest,artifactContainerDifferences};
+}
 async function main(){
   const args=process.argv.slice(2);assert(args.length===1&&['--check','--write'].includes(args[0]),'Usage: node tools/eth-rewards-abi-pack.js --check|--write');
-  const pack=buildEthAbiPack(),digest=ethAbiPackDigest(pack);
+  let digest,sourcePins,artifactContainerDifferences=[];
   if(args[0]==='--write'){
+    const pack=buildEthAbiPack();digest=ethAbiPackDigest(pack);sourcePins=Object.keys(pack.sources).length;
     const old=fs.readFileSync(loaderFile,'utf8'),next=old.replace(/(export const MARKET_V2_ETH_ABI_DIGEST=')[\da-f]{64}(';)/,`$1${digest}$2`);
     assert(next!==old||MARKET_V2_ETH_ABI_DIGEST===digest,'ABI integrity literal not found');
     atomicWrite(dataFile,JSON.stringify(pack,null,2)+'\n');if(next!==old)atomicWrite(loaderFile,next);
   }else{
-    assert.equal(digest,MARKET_V2_ETH_ABI_DIGEST,'Bundled ABI digest is stale; regenerate/review the pack');
-    assert.equal(ethAbiPackDigest(JSON.parse(fs.readFileSync(dataFile,'utf8'))),digest,'Bundled ABI data differs from current compiled source');
+    const published=JSON.parse(fs.readFileSync(dataFile,'utf8'));
+    ({semanticDigest:digest,artifactContainerDifferences}=assertEthAbiPackMatchesCompilation(published));
+    sourcePins=Object.keys(published.sources).length;
   }
   console.log(JSON.stringify({status:'PASS',mode:args[0],contracts:MARKET_V2_ETH_ABI_NAMES.length,
-    sourcePins:Object.keys(pack.sources).length,semanticDigest:digest,productionWrites:false,productionSigning:false}));
+    sourcePins,semanticDigest:digest,
+    artifactContainerDifferences,productionWrites:false,productionSigning:false}));
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(error=>{console.error(error.message);process.exitCode=1;});
