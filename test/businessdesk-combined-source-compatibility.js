@@ -135,7 +135,10 @@ for (const row of source.files) {
       const at = current.indexOf(inverse.current); assert(at >= end); end = at + inverse.current.length;
       assert.equal(restored.split(inverse.current).length, 2); restored = restored.replace(inverse.current, () => inverse.target);
       for (const changed of [current.replace(inverse.current, ''), current.replace(inverse.current, () => inverse.current + inverse.current),
-        current.replace(inverse.current, () => inverse.target), current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) refused(file, changed, profile);
+        current.replace(inverse.current, () => inverse.target), current.replace(inverse.current, () => inverse.current.replace(/\S/, char => char === '?' ? '!' : '?'))]) {
+        assert.notEqual(changed, current, 'Every adversarial case must actually alter the complete source');
+        refused(file, changed, profile);
+      }
       assert.throws(() => { inverse.current = 'unreviewed'; }, TypeError); hunks++;
     }
     assert.equal(restored, target.content, 'Ordered complete inverses reconstruct the exact full frozen parent source.');
