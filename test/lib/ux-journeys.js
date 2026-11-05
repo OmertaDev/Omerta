@@ -8,6 +8,8 @@ import { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSourc
 import { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';
 import { BUSINESS_DESK_DOMAINS, BUSINESS_DESK_PREDECESSOR, assertBusinessDeskSourceTransfer,
   businessDeskHistoricalInput } from '../../tools/businessdesk-source-transfer.js';
+import { assertContractReleaseSourceDefinition, assertContractReleaseSourceTransfer,
+  contractReleaseDeskInput } from '../../tools/contract-release-source-transfer.js';
 
 export async function runJourneyModelProof() {
   runAfterwordSourceProof();
@@ -73,14 +75,42 @@ export function runAfterwordSourceProof() {
     const match = git('ls-tree', '-z', revision, '--', file).match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0]+)\0$/);
     assert(match && match[3] === file, 'Exact regular committed content input'); return { mode: match[1], blob: match[2] };
   };
+  const rootSource = assertContractReleaseSourceDefinition();
+  const assertActualHeadInput = (file, raw, current, physical = current) => {
+    const original = pin.files.find(row => row.file === file); assert(original, 'Closed actual Afterword source subject');
+    const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)
+      && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;
+    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;
+    const expected = desk ? desk.current : { mode: domain.mode, blob: domain.currentBlob,
+      sha256: domain.currentSha256, bytes: domain.currentBytes };
+    assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');
+    assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);
+    assert.equal(blob(current), raw.blob); assert.equal(Buffer.byteLength(current), expected.bytes);
+    assert.equal(typeof physical, 'string'); assert.equal(Buffer.from(physical).toString('utf8'), physical);
+    assert(physical === current || physical === current.replaceAll('\n', '\r\n'),
+      'Complete actual HEAD LF/CRLF physical bytes required before any historical projection');
+    return desk;
+  };
   // This historical reader first qualifies the complete actual Git postimage.
   // Current runtime and native inputs are never replaced by this source view.
   const historicalHeadRecord = file => {
-    const raw = record('HEAD', file);
+    const raw = record('HEAD', file), actual = git('show', 'HEAD:' + file);
+    const rootDesk = assertActualHeadInput(file, raw, actual);
     if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;
     const domain = BUSINESS_DESK_DOMAINS[file];
-    assert.deepEqual(raw, { mode: domain.mode, blob: domain.currentBlob }, 'Actual raw HEAD must qualify before historical bookkeeping');
-    const proof = assertBusinessDeskSourceTransfer(file, git('show', 'HEAD:' + file));
+    let current = actual, currentRecord = raw;
+    if (rootDesk) {
+      const outer = assertContractReleaseSourceTransfer(file, actual, 'desk');
+      assert.deepEqual([outer.sourceOnly, outer.runtime, outer.native], [true, false, false]);
+      assert.equal(outer.sourceRevision, rootSource.sourceRevision);
+      assert.equal(outer.predecessorRevision, rootDesk.targets.desk.revision);
+      currentRecord = record(outer.predecessorRevision, file);
+      assert.deepEqual(currentRecord, { mode: rootDesk.targets.desk.pin.mode, blob: rootDesk.targets.desk.pin.blob });
+      assert.equal(outer.baselineText, git('show', outer.predecessorRevision + ':' + file), 'Root Desk view remains exact committed base bytes');
+      current = outer.baselineText;
+    }
+    assert.deepEqual(currentRecord, { mode: domain.mode, blob: domain.currentBlob }, 'Original BusinessDesk current pin remains exact after root qualification');
+    const proof = assertBusinessDeskSourceTransfer(file, current);
     assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
     const predecessor = record(BUSINESS_DESK_PREDECESSOR, file);
     assert.deepEqual(predecessor, { mode: domain.baselineMode, blob: domain.baselineBlob });
@@ -104,8 +134,9 @@ export function runAfterwordSourceProof() {
   assert.equal(git('rev-parse', pin.revision + '^{tree}').trim(), pin.tree);
   assert.equal(git('rev-parse', pin.targetRevision + '^{tree}').trim(), pin.targetTree);
   git('merge-base', '--is-ancestor', pin.targetRevision, pin.revision);
-  let positives = 0, refusals = 0;
+  let positives = 0, refusals = 0, rawCurrentPositives = 0, rawCurrentRefusals = 0;
   const reject = run => { assert.throws(run); refusals++; };
+  const rejectRaw = run => { assert.throws(run); rawCurrentRefusals++; };
   for (const row of pin.files) {
     const current = git('show', pin.revision + ':' + row.file), baseline = git('show', pin.targetRevision + ':' + row.file);
     assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });
@@ -116,8 +147,27 @@ export function runAfterwordSourceProof() {
     assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);
     const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);
     if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');
-    const physical = businessDeskHistoricalInput(row.file, readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8'));
+    const actualHead = git('show', 'HEAD:' + row.file), actualRecord = record('HEAD', row.file);
+    const rawPhysical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
+    assertActualHeadInput(row.file, actualRecord, actualHead, rawPhysical);
+    const physical = businessDeskHistoricalInput(row.file, contractReleaseDeskInput(row.file, rawPhysical));
     assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
+    for (const input of [actualHead, actualHead.replaceAll('\n', '\r\n')]) {
+      assertActualHeadInput(row.file, actualRecord, actualHead, input); rawCurrentPositives++;
+    }
+    rejectRaw(() => assertActualHeadInput(row.file, { ...actualRecord, mode: '100755' }, actualHead));
+    rejectRaw(() => assertActualHeadInput(row.file, { ...actualRecord, blob: '0'.repeat(40) }, actualHead));
+    rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead + '\n'));
+    for (const input of [actualHead + '\n', actualHead.slice(1), '\ufeff' + actualHead, actualHead + '\0',
+      actualHead.replace('\n', '\r\n'), actualHead.replace('\n', '\r'), baseline]) {
+      rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));
+    }
+    if (row.file === 'src/server.js') {
+      for (const input of [git('show', rootSource.baseRevision + ':' + row.file), current]) {
+        assert.notEqual(input, actualHead, 'The stale server fixture differs from actual HEAD');
+        rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));
+      }
+    }
     for (const input of [current, current.replaceAll('\n', '\r\n')]) {
       const proof = qualifyUxAfterwordSource(row.file, input);
       assert.equal(proof.baselineText, baseline); assert.equal(proof.sourceRevision, pin.revision); assert.equal(proof.targetRevision, pin.targetRevision);
@@ -143,6 +193,7 @@ export function runAfterwordSourceProof() {
     reject(() => qualifyUxAfterwordSource(row.file, current, structuredClone(pin)));
   }
   for (const file of ['__proto__', 'constructor', '../src/content/phase1.js', 'src/content/neighborhood-afterword.js', 'src/unknown.js']) {
+    rejectRaw(() => assertActualHeadInput(file, { mode: '100644', blob: '0'.repeat(40) }, 'unknown'));
     reject(() => qualifyUxAfterwordSource(file, 'unknown')); const buffer = Buffer.from('unknown');
     assert.equal(uxAfterwordHistoricalInput(file, buffer), buffer); assert.equal(uxAfterwordHistoricalInput(file, 'unknown'), 'unknown');
   }
@@ -150,5 +201,6 @@ export function runAfterwordSourceProof() {
   assert.equal(pin.files.reduce((sum, row) => sum + row.inverses.length, 0), 9);
   console.log(JSON.stringify({ phase: 'EXACT_UX_AFTERWORD_SOURCE_ONLY', source: pin.revision, predecessor: pin.targetRevision,
     files: 5, afterwordContentFiles: 3, mergedPolicySourceInputs: 1, existingTestSourceInputs: 1, inverseHunks: 9, positives, refusals, actualGitModesBlobsTreesAndWholeInverse: true, unchangedOriginalReaderAssertions: true,
+    rawCurrentPositives, rawCurrentRefusals, actualRawHeadAndPhysicalGate: true,
     runtime: false, native: false, releaseQualified: false }));
 }
