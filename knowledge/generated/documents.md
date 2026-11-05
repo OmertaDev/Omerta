@@ -470,7 +470,7 @@
 | [docs/courier-continuation-security-review.md](../../docs/courier-continuation-security-review.md) | documentation | 67 | 2026-10-11 |
 | [docs/crew-logistics-security-review.md](../../docs/crew-logistics-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/cross-docking-security-review.md](../../docs/cross-docking-security-review.md) | documentation | 62 | 2026-10-15 |
-| [docs/current-economic-terms-release-review.md](../../docs/current-economic-terms-release-review.md) | documentation | 29 | 2026-11-05 |
+| [docs/current-economic-terms-release-review.md](../../docs/current-economic-terms-release-review.md) | documentation | 32 | 2026-11-05 |
 | [docs/customer-bank-vaults-security-review.md](../../docs/customer-bank-vaults-security-review.md) | documentation | 38 | 2026-10-15 |
 | [docs/decision-execution-security-review.md](../../docs/decision-execution-security-review.md) | documentation | 92 | 2026-10-11 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 75 | 2026-10-11 |

@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2e77851ce868ae98bb89a3235051b164fec4547b",
+  "sourceRevision": "00f5796998b196f6edcbc1c4c99c472dc01d7564",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17422,
-    "edges": 69949,
+    "nodes": 17438,
+    "edges": 70028,
     "byNodeType": {
-      "Artifact": 7081,
+      "Artifact": 7086,
       "Command": 300,
-      "Commit": 5027,
+      "Commit": 5036,
       "Contract": 134,
       "Document": 957,
       "Domain": 13,
@@ -60,24 +60,24 @@
       "Route": 1055,
       "Subsystem": 8,
       "Table": 582,
-      "TestSuite": 1069,
+      "TestSuite": 1071,
       "Workflow": 7
     },
     "byEdgeType": {
-      "BELONGS_TO": 5664,
-      "CHANGED": 26979,
-      "CONTAINS": 7102,
+      "BELONGS_TO": 5669,
+      "CHANGED": 27024,
+      "CONTAINS": 7107,
       "DECLARES": 300,
       "DEFINED_IN": 1771,
       "DEPENDS_ON": 69,
-      "EXECUTES": 1193,
+      "EXECUTES": 1195,
       "HANDLED_BY": 935,
-      "HAS_COMMIT": 5027,
+      "HAS_COMMIT": 5036,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8352,
+      "IMPORTS": 8362,
       "INHERITS": 45,
-      "REFERENCES": 3884,
-      "REPRESENTS": 2627,
+      "REFERENCES": 3885,
+      "REPRESENTS": 2629,
       "TESTS": 2520,
       "TRACKS": 126,
       "USES_TABLE": 3231
@@ -36892,20 +36892,20 @@
       "path": "docs/current-economic-terms-release-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 6649,
-      "lines": 29,
-      "version": "c3c0997788108af7",
+      "bytes": 7810,
+      "lines": 32,
+      "version": "553b77cbfa332ad9",
       "text": true,
       "provenance": [
         {
           "file": "docs/current-economic-terms-release-review.md",
           "line": 1,
-          "version": "c3c0997788108af7"
+          "version": "553b77cbfa332ad9"
         }
       ],
-      "lastChangedAt": "2026-11-05T01:24:21.000Z",
+      "lastChangedAt": "2026-11-05T03:46:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2e77851ce868ae98bb89a3235051b164fec4547b"
+      "lastChangedCommit": "c220834210928560f303795086ee1098d0a65509"
     },
     {
       "key": "Artifact:docs/customer-bank-vaults-security-review.md",
@@ -87808,20 +87808,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 59944,
+      "bytes": 60022,
       "lines": 331,
-      "version": "6730372d7dbaebb6",
+      "version": "82107889e119e262",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "6730372d7dbaebb6"
+          "version": "82107889e119e262"
         }
       ],
-      "lastChangedAt": "2026-11-04T18:39:17.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b216e52081c378b879f3056bed9b76f5565179ef"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:Procfile",
@@ -117685,20 +117685,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1397791,
-      "lines": 14552,
-      "version": "2bd669ec26a82f5e",
+      "bytes": 1400474,
+      "lines": 14600,
+      "version": "9c520c523d8d79be",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "2bd669ec26a82f5e"
+          "version": "9c520c523d8d79be"
         }
       ],
-      "lastChangedAt": "2026-11-04T18:39:17.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b216e52081c378b879f3056bed9b76f5565179ef"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/inventory-bond-client.js",
@@ -117777,20 +117777,20 @@
       "path": "public/omerta-ui.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 78645,
-      "lines": 1685,
-      "version": "0c706ab6e86876c3",
+      "bytes": 94859,
+      "lines": 1899,
+      "version": "c19546a18cde7f35",
       "text": true,
       "provenance": [
         {
           "file": "public/omerta-ui.css",
           "line": 1,
-          "version": "0c706ab6e86876c3"
+          "version": "c19546a18cde7f35"
         }
       ],
-      "lastChangedAt": "2026-10-27T08:33:40.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7a47598f72669b347ce99a61eacca4320ae066b9"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/play.html",
@@ -118007,20 +118007,20 @@
       "path": "public/ux-feedback.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 13315,
+      "bytes": 13365,
       "lines": 160,
-      "version": "002d872bc67a440a",
+      "version": "1098d0997cdc81da",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-feedback.js",
           "line": 1,
-          "version": "002d872bc67a440a"
+          "version": "1098d0997cdc81da"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:26:36.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/ux-feel.css",
@@ -118191,20 +118191,20 @@
       "path": "public/ux-navigation.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 34945,
-      "lines": 393,
-      "version": "dc3bb19447298cfc",
+      "bytes": 35488,
+      "lines": 402,
+      "version": "1295c1e3bed266ec",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-navigation.js",
           "line": 1,
-          "version": "dc3bb19447298cfc"
+          "version": "1295c1e3bed266ec"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/ux-progression.css",
@@ -118375,20 +118375,20 @@
       "path": "public/ux-tactics.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 41886,
+      "bytes": 41949,
       "lines": 372,
-      "version": "23ee8040bd87b1e1",
+      "version": "a9d9c24792f17dd4",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-tactics.js",
           "line": 1,
-          "version": "23ee8040bd87b1e1"
+          "version": "a9d9c24792f17dd4"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/ux-tools.css",
@@ -118490,20 +118490,20 @@
       "path": "public/ux-world.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 23951,
+      "bytes": 24001,
       "lines": 222,
-      "version": "fd3b021e1c8a0e8e",
+      "version": "e7cd7674ecbf91bf",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-world.js",
           "line": 1,
-          "version": "fd3b021e1c8a0e8e"
+          "version": "e7cd7674ecbf91bf"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:26:36.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/vendor/phaser.js",
@@ -134452,20 +134452,20 @@
       "path": "test/classic-interface-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9541,
-      "lines": 163,
-      "version": "6245cc0363f76cb9",
+      "bytes": 10398,
+      "lines": 175,
+      "version": "2a97217a55751fdf",
       "text": true,
       "provenance": [
         {
           "file": "test/classic-interface-browser.js",
           "line": 1,
-          "version": "6245cc0363f76cb9"
+          "version": "2a97217a55751fdf"
         }
       ],
-      "lastChangedAt": "2026-10-18T22:35:49.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "71615921a2e2c2f465584f478988a5e4e82e5ca8"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/classic-interface-source-compatibility.js",
@@ -137856,20 +137856,20 @@
       "path": "test/deed-allocation-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 14510,
-      "lines": 205,
-      "version": "b475a091ef4063ca",
+      "bytes": 14616,
+      "lines": 206,
+      "version": "bf992b2cbe5b175e",
       "text": true,
       "provenance": [
         {
           "file": "test/deed-allocation-source-compatibility.js",
           "line": 1,
-          "version": "b475a091ef4063ca"
+          "version": "bf992b2cbe5b175e"
         }
       ],
-      "lastChangedAt": "2026-11-05T01:11:44.000Z",
+      "lastChangedAt": "2026-11-05T03:48:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      "lastChangedCommit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
     },
     {
       "key": "Artifact:test/deed-benefit-boundaries.js",
@@ -144977,6 +144977,29 @@
       "lastChangedAt": "2026-10-14T21:13:41.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+    },
+    {
+      "key": "Artifact:test/noir-ui-source-compatibility.js",
+      "type": "Artifact",
+      "id": "test/noir-ui-source-compatibility.js",
+      "label": "noir-ui-source-compatibility.js",
+      "path": "test/noir-ui-source-compatibility.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 5187,
+      "lines": 86,
+      "version": "1355dc3d62d6e170",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/noir-ui-source-compatibility.js",
+          "line": 1,
+          "version": "1355dc3d62d6e170"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:48:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
     },
     {
       "key": "Artifact:test/npcwar.js",
@@ -153197,20 +153220,20 @@
       "path": "test/ux-community-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 27486,
-      "lines": 220,
-      "version": "756f7a58fbdac520",
+      "bytes": 27965,
+      "lines": 226,
+      "version": "968afcda607bb725",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-community-browser.js",
           "line": 1,
-          "version": "756f7a58fbdac520"
+          "version": "968afcda607bb725"
         }
       ],
-      "lastChangedAt": "2026-10-26T01:49:45.000Z",
+      "lastChangedAt": "2026-11-05T03:46:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5addaa24049a76ce1aef6e293503fdbf2033fa54"
+      "lastChangedCommit": "c220834210928560f303795086ee1098d0a65509"
     },
     {
       "key": "Artifact:test/ux-community.js",
@@ -153289,20 +153312,20 @@
       "path": "test/ux-expanded-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 22478,
+      "bytes": 22460,
       "lines": 213,
-      "version": "70ad64f35e8c8f6f",
+      "version": "991ef7b4702c0a13",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-expanded-browser.js",
           "line": 1,
-          "version": "70ad64f35e8c8f6f"
+          "version": "991ef7b4702c0a13"
         }
       ],
-      "lastChangedAt": "2026-10-26T09:47:52.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0463b86ea6d239a31db7b8d3b98deda969a3014c"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-experience-browser.js",
@@ -153312,20 +153335,20 @@
       "path": "test/ux-experience-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 12162,
-      "lines": 158,
-      "version": "f25c7830366c9c94",
+      "bytes": 12614,
+      "lines": 167,
+      "version": "83f6a4efbbcaf76d",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "f25c7830366c9c94"
+          "version": "83f6a4efbbcaf76d"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:31:03.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-feedback.js",
@@ -153496,20 +153519,20 @@
       "path": "test/ux-personality-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 24284,
+      "bytes": 24266,
       "lines": 189,
-      "version": "83a1d8852c119164",
+      "version": "56b8971e26089ded",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "83a1d8852c119164"
+          "version": "56b8971e26089ded"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:31:03.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-postgres-rls.js",
@@ -153581,6 +153604,29 @@
       "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
+      "key": "Artifact:test/ux-shell-browser.js",
+      "type": "Artifact",
+      "id": "test/ux-shell-browser.js",
+      "label": "ux-shell-browser.js",
+      "path": "test/ux-shell-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 13338,
+      "lines": 215,
+      "version": "4c4bcf0990d2c200",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/ux-shell-browser.js",
+          "line": 1,
+          "version": "4c4bcf0990d2c200"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+    },
+    {
       "key": "Artifact:test/ux-social-browser.js",
       "type": "Artifact",
       "id": "test/ux-social-browser.js",
@@ -153634,20 +153680,20 @@
       "path": "test/ux-story-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18853,
+      "bytes": 18835,
       "lines": 164,
-      "version": "b6dc30e0be17e764",
+      "version": "713dd4e4196205c0",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "b6dc30e0be17e764"
+          "version": "713dd4e4196205c0"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-story.js",
@@ -155451,20 +155497,20 @@
       "path": "tools/combined-economic-deed-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 89430,
-      "lines": 1292,
-      "version": "e8165b70d48a8112",
+      "bytes": 149837,
+      "lines": 1805,
+      "version": "7e99764f6ab40e53",
       "text": true,
       "provenance": [
         {
           "file": "tools/combined-economic-deed-source-data.js",
           "line": 1,
-          "version": "e8165b70d48a8112"
+          "version": "7e99764f6ab40e53"
         }
       ],
-      "lastChangedAt": "2026-11-05T01:11:44.000Z",
+      "lastChangedAt": "2026-11-05T03:48:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      "lastChangedCommit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
     },
     {
       "key": "Artifact:tools/combined-economic-deed-source-transfer.js",
@@ -155474,20 +155520,20 @@
       "path": "tools/combined-economic-deed-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 2375,
-      "lines": 47,
-      "version": "ed3e17f26859df70",
+      "bytes": 2494,
+      "lines": 50,
+      "version": "9c023f08ee4ce43b",
       "text": true,
       "provenance": [
         {
           "file": "tools/combined-economic-deed-source-transfer.js",
           "line": 1,
-          "version": "ed3e17f26859df70"
+          "version": "9c023f08ee4ce43b"
         }
       ],
-      "lastChangedAt": "2026-11-05T01:11:44.000Z",
+      "lastChangedAt": "2026-11-05T03:48:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      "lastChangedCommit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
     },
     {
       "key": "Artifact:tools/combined-fifth-release-phase2-migration-catalog.js",
@@ -156302,20 +156348,20 @@
       "path": "tools/deed-allocation-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 3766,
-      "lines": 53,
-      "version": "898e6978b0700138",
+      "bytes": 3882,
+      "lines": 55,
+      "version": "f200ba9d3bb5dd03",
       "text": true,
       "provenance": [
         {
           "file": "tools/deed-allocation-source-transfer.js",
           "line": 1,
-          "version": "898e6978b0700138"
+          "version": "f200ba9d3bb5dd03"
         }
       ],
-      "lastChangedAt": "2026-10-31T02:33:12.000Z",
+      "lastChangedAt": "2026-11-05T02:36:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a35dc43bc74ecbb00a0bd49848de10e95ab984fc"
+      "lastChangedCommit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
     },
     {
       "key": "Artifact:tools/deed-benefit-native-catalog.js",
@@ -156923,20 +156969,20 @@
       "path": "tools/enterprise-native-economic-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 481503,
-      "lines": 12868,
-      "version": "deb378ffaa7770b0",
+      "bytes": 482407,
+      "lines": 12892,
+      "version": "b84e844da34bdcda",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-economic-inputs.js",
           "line": 1,
-          "version": "deb378ffaa7770b0"
+          "version": "b84e844da34bdcda"
         }
       ],
-      "lastChangedAt": "2026-11-05T01:24:21.000Z",
+      "lastChangedAt": "2026-11-05T03:56:52.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2e77851ce868ae98bb89a3235051b164fec4547b"
+      "lastChangedCommit": "00f5796998b196f6edcbc1c4c99c472dc01d7564"
     },
     {
       "key": "Artifact:tools/enterprise-native-inputs.js",
@@ -157219,20 +157265,20 @@
       "path": "tools/generate-combined-economic-deed-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 5211,
-      "lines": 84,
-      "version": "7ddbeb082a1c3746",
+      "bytes": 5916,
+      "lines": 94,
+      "version": "96e1e0acfdb760f9",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-combined-economic-deed-source-transfer.js",
           "line": 1,
-          "version": "7ddbeb082a1c3746"
+          "version": "96e1e0acfdb760f9"
         }
       ],
-      "lastChangedAt": "2026-11-05T01:11:44.000Z",
+      "lastChangedAt": "2026-11-05T03:48:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      "lastChangedCommit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
     },
     {
       "key": "Artifact:tools/generate-current-economic-terms-source-transfer.js",
@@ -157463,6 +157509,29 @@
       "lastChangedAt": "2026-10-27T03:04:24.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "8112a1b09acf3de7c525e7246bc8b7477ffc29a6"
+    },
+    {
+      "key": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/generate-noir-ui-source-transfer.js",
+      "label": "generate-noir-ui-source-transfer.js",
+      "path": "tools/generate-noir-ui-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5515,
+      "lines": 81,
+      "version": "ed160b0f7ab45abf",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/generate-noir-ui-source-transfer.js",
+          "line": 1,
+          "version": "ed160b0f7ab45abf"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T02:36:45.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
     },
     {
       "key": "Artifact:tools/genesis-auction-deployment-plan.js",
@@ -158454,6 +158523,52 @@
       "lastChangedCommit": "bcd03318c2416205000353d51d2abc8bd93df11d"
     },
     {
+      "key": "Artifact:tools/noir-ui-source-data.js",
+      "type": "Artifact",
+      "id": "tools/noir-ui-source-data.js",
+      "label": "noir-ui-source-data.js",
+      "path": "tools/noir-ui-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 113121,
+      "lines": 435,
+      "version": "3c4e12629f091920",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/noir-ui-source-data.js",
+          "line": 1,
+          "version": "3c4e12629f091920"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T02:36:45.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+    },
+    {
+      "key": "Artifact:tools/noir-ui-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/noir-ui-source-transfer.js",
+      "label": "noir-ui-source-transfer.js",
+      "path": "tools/noir-ui-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5145,
+      "lines": 86,
+      "version": "04c9a8ba2835daa8",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/noir-ui-source-transfer.js",
+          "line": 1,
+          "version": "04c9a8ba2835daa8"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:34:23.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+    },
+    {
       "key": "Artifact:tools/omr-graphic.html",
       "type": "Artifact",
       "id": "tools/omr-graphic.html",
@@ -158780,20 +158895,20 @@
       "path": "tools/public-ui.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 46980,
-      "lines": 708,
-      "version": "844425c2428717d4",
+      "bytes": 47708,
+      "lines": 714,
+      "version": "a65cf99ba0877c44",
       "text": true,
       "provenance": [
         {
           "file": "tools/public-ui.js",
           "line": 1,
-          "version": "844425c2428717d4"
+          "version": "a65cf99ba0877c44"
         }
       ],
-      "lastChangedAt": "2026-10-18T22:44:05.000Z",
+      "lastChangedAt": "2026-11-05T03:46:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1b3f16b99353fb3767b5013da5023e1579f37b15"
+      "lastChangedCommit": "c220834210928560f303795086ee1098d0a65509"
     },
     {
       "key": "Artifact:tools/rc1-aggression-policy.js",
@@ -166645,7 +166760,7 @@
       "type": "Command",
       "id": "npm:test:ux:browser",
       "label": "npm run test:ux:browser",
-      "command": "node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js",
+      "command": "node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js",
       "provenance": [
         {
           "file": "package.json",
@@ -166671,7 +166786,7 @@
       "type": "Command",
       "id": "npm:test:ux:source",
       "label": "npm run test:ux:source",
-      "command": "node test/sale-source-compatibility.js && node test/ux-source-compatibility.js",
+      "command": "node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js",
       "provenance": [
         {
           "file": "package.json",
@@ -167136,6 +167251,22 @@
         {
           "commit": "00ed87172fb9d0cdecdc757e9cd77e622963e405",
           "url": "https://github.com/OmertaDev/Omerta/commit/00ed87172fb9d0cdecdc757e9cd77e622963e405"
+        }
+      ]
+    },
+    {
+      "key": "Commit:00f5796998b196f6edcbc1c4c99c472dc01d7564",
+      "type": "Commit",
+      "id": "00f5796998b196f6edcbc1c4c99c472dc01d7564",
+      "label": "Seal current native inputs after integrating Noir and browser corrections",
+      "title": "Seal current native inputs after integrating Noir and browser corrections",
+      "date": "2026-11-05T03:56:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/00f5796998b196f6edcbc1c4c99c472dc01d7564",
+      "provenance": [
+        {
+          "commit": "00f5796998b196f6edcbc1c4c99c472dc01d7564",
+          "url": "https://github.com/OmertaDev/Omerta/commit/00f5796998b196f6edcbc1c4c99c472dc01d7564"
         }
       ]
     },
@@ -188164,6 +188295,22 @@
       ]
     },
     {
+      "key": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "type": "Commit",
+      "id": "42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "label": "Redesign noir game shell and focused onboarding",
+      "title": "Redesign noir game shell and focused onboarding",
+      "date": "2026-11-05T02:29:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "provenance": [
+        {
+          "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597",
+          "url": "https://github.com/OmertaDev/Omerta/commit/42d9df7628a30653ff7c8bac203b7bd317dee597"
+        }
+      ]
+    },
+    {
       "key": "Commit:42e4885f63eee6fb719fc822892ebe3dae4c1a37",
       "type": "Commit",
       "id": "42e4885f63eee6fb719fc822892ebe3dae4c1a37",
@@ -188928,6 +189075,22 @@
         {
           "commit": "451b87348931157404307ddd391c48b2f0270a52",
           "url": "https://github.com/OmertaDev/Omerta/commit/451b87348931157404307ddd391c48b2f0270a52"
+        }
+      ]
+    },
+    {
+      "key": "Commit:45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "type": "Commit",
+      "id": "45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "label": "Refresh release knowledge for verified receipt proof corrections",
+      "title": "Refresh release knowledge for verified receipt proof corrections",
+      "date": "2026-11-05T01:29:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "provenance": [
+        {
+          "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/45379c3e9bfa82ebd32a76259ae02192f5081b6c"
         }
       ]
     },
@@ -211956,6 +212119,22 @@
       ]
     },
     {
+      "key": "Commit:8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd",
+      "type": "Commit",
+      "id": "8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd",
+      "label": "Integrate the Noir UI with the reviewed economic release",
+      "title": "Integrate the Noir UI with the reviewed economic release",
+      "date": "2026-11-05T03:27:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd",
+      "provenance": [
+        {
+          "commit": "8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd"
+        }
+      ]
+    },
+    {
       "key": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
       "type": "Commit",
       "id": "8e9b7408faceb6d6d69badff386c15e92cd02f69",
@@ -220548,6 +220727,22 @@
       ]
     },
     {
+      "key": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "type": "Commit",
+      "id": "a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "label": "Bind reviewed noir UI revision to source compatibility checks",
+      "title": "Bind reviewed noir UI revision to source compatibility checks",
+      "date": "2026-11-05T02:36:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "provenance": [
+        {
+          "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a87217d664d52eb119683ed305c564ee3cf9deb0"
+        }
+      ]
+    },
+    {
       "key": "Commit:a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
       "type": "Commit",
       "id": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
@@ -222128,6 +222323,22 @@
         {
           "commit": "adde0dba4c2bde165a5ce23959047787e679d850",
           "url": "https://github.com/OmertaDev/Omerta/commit/adde0dba4c2bde165a5ce23959047787e679d850"
+        }
+      ]
+    },
+    {
+      "key": "Commit:adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "type": "Commit",
+      "id": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "label": "Bind the portrait browser correction to the reviewed Noir source",
+      "title": "Bind the portrait browser correction to the reviewed Noir source",
+      "date": "2026-11-05T03:48:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "provenance": [
+        {
+          "commit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+          "url": "https://github.com/OmertaDev/Omerta/commit/adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
         }
       ]
     },
@@ -225280,6 +225491,22 @@
         {
           "commit": "b7c1f137a108cfecedbd39ff5043d9b5d7878222",
           "url": "https://github.com/OmertaDev/Omerta/commit/b7c1f137a108cfecedbd39ff5043d9b5d7878222"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "type": "Commit",
+      "id": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "label": "Qualify the integrated Noir interface and economic source",
+      "title": "Qualify the integrated Noir interface and economic source",
+      "date": "2026-11-05T03:34:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "provenance": [
+        {
+          "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
         }
       ]
     },
@@ -228544,6 +228771,22 @@
         {
           "commit": "c20d97d03faa9148fd1494100041bafd553eabc0",
           "url": "https://github.com/OmertaDev/Omerta/commit/c20d97d03faa9148fd1494100041bafd553eabc0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c220834210928560f303795086ee1098d0a65509",
+      "type": "Commit",
+      "id": "c220834210928560f303795086ee1098d0a65509",
+      "label": "Verify consented portraits and settled Noir navigation in browser checks",
+      "title": "Verify consented portraits and settled Noir navigation in browser checks",
+      "date": "2026-11-05T03:46:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c220834210928560f303795086ee1098d0a65509",
+      "provenance": [
+        {
+          "commit": "c220834210928560f303795086ee1098d0a65509",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c220834210928560f303795086ee1098d0a65509"
         }
       ]
     },
@@ -247236,6 +247479,22 @@
       ]
     },
     {
+      "key": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "type": "Commit",
+      "id": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "label": "chore(knowledge): refresh generated artifacts for a87217d6",
+      "title": "chore(knowledge): refresh generated artifacts for a87217d6",
+      "date": "2026-11-05T02:45:59.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "provenance": [
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+        }
+      ]
+    },
+    {
       "key": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
       "type": "Commit",
       "id": "ffe20171a9ae64a13067a8aa15f2f15bad80c250",
@@ -258095,13 +258354,13 @@
       "id": "docs/current-economic-terms-release-review.md",
       "label": "docs/current-economic-terms-release-review.md",
       "documentType": "documentation",
-      "lines": 29,
-      "version": "c3c0997788108af7",
+      "lines": 32,
+      "version": "553b77cbfa332ad9",
       "provenance": [
         {
           "file": "docs/current-economic-terms-release-review.md",
           "line": 1,
-          "version": "c3c0997788108af7"
+          "version": "553b77cbfa332ad9"
         }
       ]
     },
@@ -265350,7 +265609,11 @@
       "provenance": [
         {
           "file": "tools/combined-economic-deed-source-data.js",
-          "line": 237
+          "line": 1772
+        },
+        {
+          "file": "tools/combined-economic-deed-source-data.js",
+          "line": 412
         },
         {
           "file": "tools/current-economic-terms-source-data.js",
@@ -267562,6 +267825,10 @@
         },
         {
           "file": "test/ux-progression-browser.js",
+          "line": 6
+        },
+        {
+          "file": "test/ux-shell-browser.js",
           "line": 6
         },
         {
@@ -273502,6 +273769,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+        },
+        {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
@@ -275059,6 +275329,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+        },
+        {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
@@ -276872,6 +277145,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -277597,6 +277873,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+        },
+        {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
@@ -279410,6 +279689,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -280135,6 +280417,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+        },
+        {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
@@ -281948,6 +282233,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -283369,6 +283657,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+        },
+        {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
         },
         {
@@ -285182,6 +285473,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -299731,12 +300025,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2e77851ce868ae98bb89a3235051b164fec4547b",
+      "revision": "00f5796998b196f6edcbc1c4c99c472dc01d7564",
       "currentBranch": "codex/align-site-contract-economics",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7081,
+      "currentArtifactCount": 7086,
       "provenance": [
         {
           "file": "README.md",
@@ -338619,13 +338913,13 @@
       "type": "TestSuite",
       "id": "test/classic-interface-browser.js",
       "label": "test/classic-interface-browser.js",
-      "lines": 163,
-      "version": "6245cc0363f76cb9",
+      "lines": 175,
+      "version": "2a97217a55751fdf",
       "provenance": [
         {
           "file": "test/classic-interface-browser.js",
           "line": 1,
-          "version": "6245cc0363f76cb9"
+          "version": "2a97217a55751fdf"
         }
       ]
     },
@@ -340839,13 +341133,13 @@
       "type": "TestSuite",
       "id": "test/deed-allocation-source-compatibility.js",
       "label": "test/deed-allocation-source-compatibility.js",
-      "lines": 205,
-      "version": "b475a091ef4063ca",
+      "lines": 206,
+      "version": "bf992b2cbe5b175e",
       "provenance": [
         {
           "file": "test/deed-allocation-source-compatibility.js",
           "line": 1,
-          "version": "b475a091ef4063ca"
+          "version": "bf992b2cbe5b175e"
         }
       ]
     },
@@ -345316,6 +345610,21 @@
           "file": "test/nft.js",
           "line": 1,
           "version": "a12cbd5db18b4db6"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/noir-ui-source-compatibility.js",
+      "type": "TestSuite",
+      "id": "test/noir-ui-source-compatibility.js",
+      "label": "test/noir-ui-source-compatibility.js",
+      "lines": 86,
+      "version": "1355dc3d62d6e170",
+      "provenance": [
+        {
+          "file": "test/noir-ui-source-compatibility.js",
+          "line": 1,
+          "version": "1355dc3d62d6e170"
         }
       ]
     },
@@ -350679,13 +350988,13 @@
       "type": "TestSuite",
       "id": "test/ux-community-browser.js",
       "label": "test/ux-community-browser.js",
-      "lines": 220,
-      "version": "756f7a58fbdac520",
+      "lines": 226,
+      "version": "968afcda607bb725",
       "provenance": [
         {
           "file": "test/ux-community-browser.js",
           "line": 1,
-          "version": "756f7a58fbdac520"
+          "version": "968afcda607bb725"
         }
       ]
     },
@@ -350740,12 +351049,12 @@
       "id": "test/ux-expanded-browser.js",
       "label": "test/ux-expanded-browser.js",
       "lines": 213,
-      "version": "70ad64f35e8c8f6f",
+      "version": "991ef7b4702c0a13",
       "provenance": [
         {
           "file": "test/ux-expanded-browser.js",
           "line": 1,
-          "version": "70ad64f35e8c8f6f"
+          "version": "991ef7b4702c0a13"
         }
       ]
     },
@@ -350754,13 +351063,13 @@
       "type": "TestSuite",
       "id": "test/ux-experience-browser.js",
       "label": "test/ux-experience-browser.js",
-      "lines": 158,
-      "version": "f25c7830366c9c94",
+      "lines": 167,
+      "version": "83f6a4efbbcaf76d",
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "f25c7830366c9c94"
+          "version": "83f6a4efbbcaf76d"
         }
       ]
     },
@@ -350875,12 +351184,12 @@
       "id": "test/ux-personality-browser.js",
       "label": "test/ux-personality-browser.js",
       "lines": 189,
-      "version": "83a1d8852c119164",
+      "version": "56b8971e26089ded",
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "83a1d8852c119164"
+          "version": "56b8971e26089ded"
         }
       ]
     },
@@ -350930,6 +351239,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/ux-shell-browser.js",
+      "type": "TestSuite",
+      "id": "test/ux-shell-browser.js",
+      "label": "test/ux-shell-browser.js",
+      "lines": 215,
+      "version": "4c4bcf0990d2c200",
+      "provenance": [
+        {
+          "file": "test/ux-shell-browser.js",
+          "line": 1,
+          "version": "4c4bcf0990d2c200"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/ux-social-browser.js",
       "type": "TestSuite",
       "id": "test/ux-social-browser.js",
@@ -350965,12 +351289,12 @@
       "id": "test/ux-story-browser.js",
       "label": "test/ux-story-browser.js",
       "lines": 164,
-      "version": "b6dc30e0be17e764",
+      "version": "713dd4e4196205c0",
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "b6dc30e0be17e764"
+          "version": "713dd4e4196205c0"
         }
       ]
     },
@@ -386258,6 +386582,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/noir-ui-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/npcwar.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -389624,6 +389957,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/ux-shell-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/ux-social-browser.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -391136,6 +391478,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/generate-noir-ui-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/genesis-auction-deployment-plan.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -391518,6 +391869,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/nft-art.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/noir-ui-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/noir-ui-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/noir-ui-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
         "line": 1
       }
     },
@@ -403088,6 +403457,14 @@
       "to": "Artifact:test/companyopportunity-integration.js",
       "provenance": {
         "commit": "00ed87172fb9d0cdecdc757e9cd77e622963e405"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:00f5796998b196f6edcbc1c4c99c472dc01d7564",
+      "to": "Artifact:tools/enterprise-native-economic-inputs.js",
+      "provenance": {
+        "commit": "00f5796998b196f6edcbc1c4c99c472dc01d7564"
       }
     },
     {
@@ -452812,6 +453189,118 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/omerta-ui.css",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-feedback.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-navigation.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-tactics.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-world.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/classic-interface-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-community-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-expanded-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-experience-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-personality-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-story-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:42e4885f63eee6fb719fc822892ebe3dae4c1a37",
       "to": "Artifact:tools/enterprise-current-source-data.js",
       "provenance": {
@@ -454944,6 +455433,46 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "commit": "451b87348931157404307ddd391c48b2f0270a52"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
       }
     },
     {
@@ -531428,6 +531957,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:test/deed-allocation-source-compatibility.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/deed-allocation-source-transfer.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -534760,6 +535337,46 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "adde0dba4c2bde165a5ce23959047787e679d850"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "to": "Artifact:test/deed-allocation-source-compatibility.js",
+      "provenance": {
+        "commit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "commit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "to": "Artifact:tools/combined-economic-deed-source-data.js",
+      "provenance": {
+        "commit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "commit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "to": "Artifact:tools/generate-combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "commit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
       }
     },
     {
@@ -556652,6 +557269,62 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "to": "Artifact:docs/current-economic-terms-release-review.md",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "to": "Artifact:test/deed-allocation-source-compatibility.js",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "to": "Artifact:tools/combined-economic-deed-source-data.js",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "to": "Artifact:tools/generate-combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b7c68c8a618d9f4cd67fa25263cd687aead5f615",
       "to": "Artifact:docs/release/readiness-work/harness-season-conversion-index.json",
       "provenance": {
@@ -567960,6 +568633,30 @@
       "to": "Artifact:tools/next-layer-source-compatibility.js",
       "provenance": {
         "commit": "c20d97d03faa9148fd1494100041bafd553eabc0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c220834210928560f303795086ee1098d0a65509",
+      "to": "Artifact:docs/current-economic-terms-release-review.md",
+      "provenance": {
+        "commit": "c220834210928560f303795086ee1098d0a65509"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c220834210928560f303795086ee1098d0a65509",
+      "to": "Artifact:test/ux-community-browser.js",
+      "provenance": {
+        "commit": "c220834210928560f303795086ee1098d0a65509"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c220834210928560f303795086ee1098d0a65509",
+      "to": "Artifact:tools/public-ui.js",
+      "provenance": {
+        "commit": "c220834210928560f303795086ee1098d0a65509"
       }
     },
     {
@@ -618524,6 +619221,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -655349,6 +656078,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "test/npcwar.js",
@@ -658715,6 +659453,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/ux-social-browser.js",
       "provenance": {
         "file": "test/ux-social-browser.js",
@@ -660227,6 +660974,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/generate-noir-ui-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/genesis-auction-deployment-plan.js",
       "provenance": {
         "file": "tools/genesis-auction-deployment-plan.js",
@@ -660608,6 +661364,24 @@
       "to": "Artifact:tools/nft-art.js",
       "provenance": {
         "file": "tools/nft-art.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
         "line": 1
       }
     },
@@ -711915,6 +712689,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:ux:browser",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:ux:browser",
       "to": "Artifact:test/ux-social-browser.js",
       "provenance": {
         "file": "package.json",
@@ -711970,6 +712753,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:ux:postgres",
       "to": "Artifact:test/ux-postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:ux:source",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -721718,6 +722510,14 @@
       "to": "Commit:00ed87172fb9d0cdecdc757e9cd77e622963e405",
       "provenance": {
         "commit": "00ed87172fb9d0cdecdc757e9cd77e622963e405"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:00f5796998b196f6edcbc1c4c99c472dc01d7564",
+      "provenance": {
+        "commit": "00f5796998b196f6edcbc1c4c99c472dc01d7564"
       }
     },
     {
@@ -732235,6 +733035,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:42e4885f63eee6fb719fc822892ebe3dae4c1a37",
       "provenance": {
         "commit": "42e4885f63eee6fb719fc822892ebe3dae4c1a37"
@@ -732614,6 +733422,14 @@
       "to": "Commit:451b87348931157404307ddd391c48b2f0270a52",
       "provenance": {
         "commit": "451b87348931157404307ddd391c48b2f0270a52"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:45379c3e9bfa82ebd32a76259ae02192f5081b6c",
+      "provenance": {
+        "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
       }
     },
     {
@@ -744131,6 +744947,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd",
+      "provenance": {
+        "commit": "8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8e9b7408faceb6d6d69badff386c15e92cd02f69",
       "provenance": {
         "commit": "8e9b7408faceb6d6d69badff386c15e92cd02f69"
@@ -748427,6 +749251,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78",
       "provenance": {
         "commit": "a877def6b5fd4b3bbb36c6d06f64f3f8f6147b78"
@@ -749214,6 +750046,14 @@
       "to": "Commit:adde0dba4c2bde165a5ce23959047787e679d850",
       "provenance": {
         "commit": "adde0dba4c2bde165a5ce23959047787e679d850"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:adf4678ce4af773c7c0db7ed5b9c18c2c6eff508",
+      "provenance": {
+        "commit": "adf4678ce4af773c7c0db7ed5b9c18c2c6eff508"
       }
     },
     {
@@ -750790,6 +751630,14 @@
       "to": "Commit:b7c1f137a108cfecedbd39ff5043d9b5d7878222",
       "provenance": {
         "commit": "b7c1f137a108cfecedbd39ff5043d9b5d7878222"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b7c4ca95c544c99a60262580a17f42ea60a3a8f8",
+      "provenance": {
+        "commit": "b7c4ca95c544c99a60262580a17f42ea60a3a8f8"
       }
     },
     {
@@ -752422,6 +753270,14 @@
       "to": "Commit:c20d97d03faa9148fd1494100041bafd553eabc0",
       "provenance": {
         "commit": "c20d97d03faa9148fd1494100041bafd553eabc0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c220834210928560f303795086ee1098d0a65509",
+      "provenance": {
+        "commit": "c220834210928560f303795086ee1098d0a65509"
       }
     },
     {
@@ -761766,6 +762622,14 @@
       "to": "Commit:ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16",
       "provenance": {
         "commit": "ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
       }
     },
     {
@@ -794489,7 +795353,7 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "test/deed-allocation-source-compatibility.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -794499,6 +795363,15 @@
       "provenance": {
         "file": "test/deed-allocation-source-compatibility.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/deed-allocation-source-compatibility.js",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "test/deed-allocation-source-compatibility.js",
+        "line": 9
       }
     },
     {
@@ -807513,6 +808386,15 @@
       "provenance": {
         "file": "test/nft.js",
         "line": 21
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/noir-ui-source-compatibility.js",
+      "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 8
       }
     },
     {
@@ -825220,6 +826102,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/ux-shell-browser.js",
+      "to": "Artifact:test/server-fixture.js",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-shell-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/ux-social-browser.js",
       "to": "ExternalDependency:playwright-core",
       "provenance": {
@@ -828473,7 +829373,7 @@
       "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
       "provenance": {
         "file": "tools/combined-economic-deed-source-data.js",
-        "line": 550
+        "line": 792
       }
     },
     {
@@ -828482,7 +829382,7 @@
       "to": "Artifact:tools/current-economic-terms-source-transfer.js",
       "provenance": {
         "file": "tools/combined-economic-deed-source-data.js",
-        "line": 386
+        "line": 628
       }
     },
     {
@@ -828491,7 +829391,7 @@
       "to": "Artifact:tools/current-economic-terms-source-transfer.js",
       "provenance": {
         "file": "tools/combined-economic-deed-source-data.js",
-        "line": 478
+        "line": 720
       }
     },
     {
@@ -828500,7 +829400,7 @@
       "to": "Artifact:tools/current-economic-terms-source-transfer.js",
       "provenance": {
         "file": "tools/combined-economic-deed-source-data.js",
-        "line": 493
+        "line": 735
       }
     },
     {
@@ -828509,7 +829409,7 @@
       "to": "Artifact:tools/current-economic-terms-source-transfer.js",
       "provenance": {
         "file": "tools/combined-economic-deed-source-data.js",
-        "line": 514
+        "line": 756
       }
     },
     {
@@ -828518,7 +829418,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/combined-economic-deed-source-data.js",
-        "line": 493
+        "line": 735
       }
     },
     {
@@ -828527,7 +829427,16 @@
       "to": "ExternalDependency:/inventory-bond-client.js",
       "provenance": {
         "file": "tools/combined-economic-deed-source-data.js",
-        "line": 237
+        "line": 1772
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/combined-economic-deed-source-data.js",
+      "to": "ExternalDependency:/inventory-bond-client.js",
+      "provenance": {
+        "file": "tools/combined-economic-deed-source-data.js",
+        "line": 412
       }
     },
     {
@@ -830049,6 +830958,15 @@
       "provenance": {
         "file": "tools/deed-allocation-source-transfer.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/deed-allocation-source-transfer.js",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/deed-allocation-source-transfer.js",
+        "line": 6
       }
     },
     {
@@ -831871,11 +832789,29 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/generate-combined-economic-deed-source-transfer.js",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "file": "tools/generate-combined-economic-deed-source-transfer.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/generate-deed-quest-source-transfer.js",
       "to": "Artifact:tools/economy-hardening-source-transfer.js",
       "provenance": {
         "file": "tools/generate-deed-quest-source-transfer.js",
         "line": 46
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/generate-noir-ui-source-transfer.js",
+        "line": 6
       }
     },
     {
@@ -832677,6 +833613,24 @@
       "provenance": {
         "file": "tools/nft-art.js",
         "line": 101
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/noir-ui-source-transfer.js",
+      "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/noir-ui-source-transfer.js",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
+        "line": 4
       }
     },
     {
@@ -856559,6 +857513,15 @@
     {
       "type": "REFERENCES",
       "from": "Artifact:docs/current-economic-terms-release-review.md",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "file": "docs/current-economic-terms-release-review.md",
+        "line": 9
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/current-economic-terms-release-review.md",
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
@@ -856571,7 +857534,7 @@
       "to": "Artifact:test/bonds.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 16
+        "line": 18
       }
     },
     {
@@ -856580,7 +857543,7 @@
       "to": "Artifact:test/chain.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 15
+        "line": 17
       }
     },
     {
@@ -856589,7 +857552,7 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 15
+        "line": 17
       }
     },
     {
@@ -856598,7 +857561,7 @@
       "to": "Artifact:test/current-copy.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 17
+        "line": 19
       }
     },
     {
@@ -856607,6 +857570,15 @@
       "to": "Artifact:test/docs.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
+        "line": 19
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/current-economic-terms-release-review.md",
+      "to": "Artifact:test/inventory-bond-checkout.js",
+      "provenance": {
+        "file": "docs/current-economic-terms-release-review.md",
         "line": 17
       }
     },
@@ -856616,16 +857588,7 @@
       "to": "Artifact:test/inventory-bond-checkout.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 15
-      }
-    },
-    {
-      "type": "REFERENCES",
-      "from": "Artifact:docs/current-economic-terms-release-review.md",
-      "to": "Artifact:test/inventory-bond-checkout.js",
-      "provenance": {
-        "file": "docs/current-economic-terms-release-review.md",
-        "line": 16
+        "line": 18
       }
     },
     {
@@ -856634,7 +857597,7 @@
       "to": "Artifact:test/router.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 13
+        "line": 15
       }
     },
     {
@@ -856643,7 +857606,7 @@
       "to": "Artifact:test/routes.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 17
+        "line": 19
       }
     },
     {
@@ -856652,7 +857615,7 @@
       "to": "Artifact:test/store.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 13
+        "line": 15
       }
     },
     {
@@ -856661,7 +857624,7 @@
       "to": "Artifact:test/treasury.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 17
+        "line": 19
       }
     },
     {
@@ -856670,7 +857633,7 @@
       "to": "Artifact:test/watcher.js",
       "provenance": {
         "file": "docs/current-economic-terms-release-review.md",
-        "line": 13
+        "line": 15
       }
     },
     {
@@ -893071,6 +894034,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/noir-ui-source-compatibility.js",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/npcwar.js",
       "to": "Artifact:test/npcwar.js",
       "provenance": {
@@ -896432,6 +897404,15 @@
       "to": "Artifact:test/ux-progression-browser.js",
       "provenance": {
         "file": "test/ux-progression-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/ux-shell-browser.js",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
         "line": 1
       }
     },
