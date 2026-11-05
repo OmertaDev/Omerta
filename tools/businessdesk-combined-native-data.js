@@ -4,9 +4,9 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_NATIVE_PROVENANCE_ONLY",
-  "sourceRevision": "1ae98ee96858b36c8435ce164532795bf2ac5e26",
-  "sourceTree": "d332d1137e16c1407d8ddd512dd88dc70fe80dd5",
-  "topSourceDefinitionSha256": "a7301220f56e35087a6dfd55337fd9fbaef5dae2d0d4e561738506edb01b408e",
+  "sourceRevision": "bf335ab4009a2648daaa03c8cec5ddac6654a547",
+  "sourceTree": "53ca55cadf3da5d0fda224ea52161ab84afa63a5",
+  "topSourceDefinitionSha256": "e0738d5716f90a375785d729c72aa7245df7a41bc78d328b239669a07e2ecbab",
   "parentRegistryDefinitionSha256": "d38d8283d7b29eff2a80cefb43f68e768f6df294ed5e8d297b3219bc36622516",
   "nativeClosure": [
     ".github/workflows/ci.yml",
@@ -1945,8 +1945,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
       "current": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "e0a1a7c22a923009ed8147244a0065dda012228d",
-        "sha256": "1d62d7cdfaf75c44ecd896eea8aedeea679befbc6f78360c86bb766a857371a1"
+        "blob": "8377a7868772bcd0aba88aec3df9590aea3cbe69",
+        "sha256": "81f5d07b01fb62a61eee002d88b5d5ae70ead9d764286569955ad6af6aadf202"
       },
       "profile": "desk",
       "parent": {
@@ -1961,8 +1961,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
           "from": {
             "file": "package.json",
             "mode": "100644",
-            "blob": "e0a1a7c22a923009ed8147244a0065dda012228d",
-            "sha256": "1d62d7cdfaf75c44ecd896eea8aedeea679befbc6f78360c86bb766a857371a1"
+            "blob": "8377a7868772bcd0aba88aec3df9590aea3cbe69",
+            "sha256": "81f5d07b01fb62a61eee002d88b5d5ae70ead9d764286569955ad6af6aadf202"
           },
           "to": {
             "file": "package.json",
@@ -4312,4 +4312,4 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="358d0f8f0bf0240d8bf8de28d461948fd1a721ad977df0ecd6bc93ffa88e49f9";
+export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="826c8faa5782a9b7054b0ad3d3aa1b9316ccab18f0ff6e3dd04f30a59b432afb";
