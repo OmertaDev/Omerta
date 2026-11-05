@@ -384,6 +384,7 @@
     }
     function invalidate(message, changedActor = false) {
       epoch++; readVersion++; loading = busy = false; session = null; sessionUnavailable = true;
+      requestQueue = Promise.resolve();
       consignmentAfter = ''; consignmentHistory = []; cadence = lastDispatch = cooldownUntil = 0;
       if (changedActor) retry = null;
       drafts.clear(); issuedSalvage.clear(); approvedConsents.clear();
@@ -566,6 +567,7 @@
         options = nextOptions;
         if (changed) {
           identity = nextIdentity; characterKey = nextCharacterKey; epoch++; readVersion++; loading = busy = false; retry = null; session = null; sessionUnavailable = false;
+          requestQueue = Promise.resolve();
           consignmentAfter = ''; consignmentHistory = []; cadence = lastDispatch = cooldownUntil = 0;
           notice = ''; noticeBad = false; drafts.clear(); issuedSalvage.clear(); approvedConsents.clear();
           for (const key of Object.keys(boards)) delete boards[key];
