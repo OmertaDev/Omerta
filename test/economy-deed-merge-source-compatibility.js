@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { ECONOMY_DEED_MERGE_SOURCE as source, ECONOMY_DEED_MERGE_SOURCE_SHA256 as sourceSha,
   ECONOMY_DEED_MERGE_NATIVE_PROVENANCE as provenance, ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 as provenanceSha,
   ECONOMY_DEED_MERGE_FILES, ECONOMY_DEED_MERGE_PROFILES, ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES,
+  ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR,
   assertEconomyDeedMergeSource, economyDeedMergeHistoricalInput,
   assertEconomyDeedNativeProvenanceDefinition, assertEconomyDeedNativeProvenance }
   from '../tools/economy-deed-merge-source-compatibility.js';
@@ -45,7 +46,7 @@ assert.deepEqual(process.argv.slice(2), []);
 assert.equal(source.status, 'SEALED', 'Commit complete integration source, then generate its exact definition');
 assert.equal(sha(JSON.stringify(source)), sourceSha); assert.equal(sha(JSON.stringify(provenance)), provenanceSha);
 assert.deepEqual(source.files.map(row => row.file), ECONOMY_DEED_MERGE_FILES);
-assert.equal(source.files.length, 12); assert.equal(ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.length, 51);
+assert.equal(source.files.length, 12); assert.equal(ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.length, 53);
 assert.deepEqual(Object.keys(source.profiles), ['monitor', 'deed']);
 assert.equal(git('rev-parse', source.sourceRevision + '^{tree}').trim(), source.sourceTree);
 git('merge-base', '--is-ancestor', source.sourceRevision, 'HEAD');
@@ -128,6 +129,31 @@ const parentReview = new Set();
 for (const revision of Object.values(ECONOMY_DEED_MERGE_PROFILES)) for (const pin of previous.files) {
   const entry = tree(revision).get(pin.file); assert(entry);
   if (entry.mode !== pin.mode || entry.blob !== pin.blob) parentReview.add(pin.file);
+}
+const operationalSuccessors = [ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR];
+assert.deepEqual(operationalSuccessors.map(row => row.file), ['src/preflight.js', 'src/engagement.js']);
+assert.equal(parentReview.size, 51);
+assert.deepEqual([...parentReview].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !operationalSuccessors.some(row => row.file === file)));
+for (const operational of operationalSuccessors) {
+  assert(Object.isFrozen(operational));
+  const operationalPredecessor = previous.files.find(pin => pin.file === operational.file); assert(operationalPredecessor);
+  for (const revision of Object.values(ECONOMY_DEED_MERGE_PROFILES))
+    assert.deepEqual(nativePin(revision, operational.file), operationalPredecessor,
+      'The exact operational input remains unchanged in each immutable parent');
+  const operationalBefore = git('show', previous.authoredRevision + ':' + operational.file);
+  const operationalCurrent = git('show', source.sourceRevision + ':' + operational.file);
+  assert.equal(operationalBefore.split(operational.anchor).length, 2);
+  const expectedOperational = operationalBefore.replace(operational.anchor, operational.anchor + operational.addition);
+  const checkOperational = current => assert.equal(current, expectedOperational,
+    'Only the bounded monitor operational classification extends native provenance');
+  checkOperational(operationalCurrent); assert.notEqual(operationalCurrent, operationalBefore); positives++;
+  assert.equal(tree(source.sourceRevision).get(operational.file).mode, operationalPredecessor.mode);
+  for (const current of [operationalBefore, operationalCurrent + '\n// drift\n',
+    operationalCurrent.replace(operational.addition, ''),
+    operationalCurrent.replace(operational.addition, operational.addition + operational.addition),
+    operationalCurrent.replace(operational.addition, operational.addition.replace(/\S/, char => char === '?' ? '!' : '?'))])
+    reject(() => checkOperational(current));
+  parentReview.add(operational.file);
 }
 assert.deepEqual([...parentReview].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES);
 for (const row of provenance.files) {

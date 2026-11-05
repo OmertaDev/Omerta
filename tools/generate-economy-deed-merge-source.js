@@ -4,7 +4,9 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { ECONOMY_DEED_MERGE_FILES, ECONOMY_DEED_MERGE_PROFILES,
-  ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES } from './economy-deed-merge-source-compatibility.js';
+  ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES,
+  ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR,
+  ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR } from './economy-deed-merge-source-compatibility.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous,
   ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as previousDefinitionSha256 } from './enterprise-native-ux-b35-inputs.js';
 const output = 'tools/economy-deed-merge-source-data.js';
@@ -87,8 +89,25 @@ for (const { revision } of Object.values(profiles)) for (const pin of previous.f
   const entry = tree(revision).get(pin.file); assert(entry, 'Existing predecessor input removed by a parent: ' + pin.file);
   if (entry.mode !== pin.mode || entry.blob !== pin.blob) review.add(pin.file);
 }
-assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES,
+const operationalSuccessors = [ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR];
+assert.deepEqual(operationalSuccessors.map(row => row.file), ['src/preflight.js', 'src/engagement.js']);
+assert.equal(review.size, 51);
+assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !operationalSuccessors.some(row => row.file === file)),
   'Changed existing-native review scope must remain the two immutable parent scopes');
+for (const operational of operationalSuccessors) {
+  const operationalPredecessor = previous.files.find(pin => pin.file === operational.file); assert(operationalPredecessor);
+  for (const { revision } of Object.values(profiles))
+    assert.deepEqual(nativePin(revision, operational.file), operationalPredecessor,
+      'The operational classification input was unchanged in both immutable parents');
+  const operationalBefore = text(previous.authoredRevision, operational.file), operationalCurrent = text(authored, operational.file);
+  assert.equal(operationalBefore.split(operational.anchor).length, 2);
+  assert.equal(operationalCurrent, operationalBefore.replace(operational.anchor, operational.anchor + operational.addition),
+    'Only the exact monitor operational classifications may extend the reviewed native scope');
+  assert.notEqual(operationalCurrent, operationalBefore, 'The explicit CI successor must change its predecessor');
+  assert.equal(tree(authored).get(operational.file).mode, operationalPredecessor.mode);
+  review.add(operational.file);
+}
+assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES);
 // Bound each batch by the immutable Git object sizes; the complete archived asset set is larger
 // than one child-process buffer. Every object still undergoes the same identity and hash checks.
 const previousObjects = [...new Set(previous.files.map(pin => pin.blob))];

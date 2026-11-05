@@ -18,15 +18,16 @@ export const ECONOMY_DEED_MERGE_FILES = Object.freeze([
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js',
 ]);
 // Closed review scope from the two immutable parents, intersected with the immutable B35 native
-// inventory. Integration changes outside this list must be reviewed explicitly, never auto-admitted.
+// inventory, plus the two bounded operational-classification successors below. Integration changes
+// outside this list must be reviewed explicitly, never auto-admitted.
 export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
   'AGENTS.md', 'package.json', 'public/index.html', 'public/sale.html',
   'public/ux-coordination.css', 'public/ux-coordination.js', 'public/ux-navigation.css',
   'public/ux-navigation.js', 'public/ux-progression.css', 'public/ux-progression.js',
   'public/ux-tactics.css', 'public/ux-tactics.js', 'schema.sql', 'src/accrual.js', 'src/age.js',
   'src/content/city-quest-presentation.js', 'src/content/phase1-policy.js', 'src/content/phase1.js',
-  'src/db.js', 'src/deedbuildings.js', 'src/deeddiscovery.js', 'src/deeds.js', 'src/game.js',
-  'src/invariants.js', 'src/legal.js', 'src/server.js', 'src/ux-story.js', 'src/ux-tactics.js',
+  'src/db.js', 'src/deedbuildings.js', 'src/deeddiscovery.js', 'src/deeds.js', 'src/engagement.js', 'src/game.js',
+  'src/invariants.js', 'src/legal.js', 'src/preflight.js', 'src/server.js', 'src/ux-story.js', 'src/ux-tactics.js',
   'src/worker.js', 'src/worldgraph-ui.js', 'test/client.js', 'test/commerce-current-native-guard.js',
   'test/companyworkflows.js', 'test/director-migration.js', 'test/gates.js',
   'test/lib/enterprise-ux-native-guard.js', 'test/lib/phase2-definition-fixtures.js',
@@ -37,6 +38,20 @@ export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
   'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native-ux.js', 'tools/enterprise-native.js',
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/ux-source-compatibility.js',
 ]);
+// This existing input was identical in both reviewed parents. Its sole later correction classifies
+// the already implemented alert thresholds; it grants no historical source or native-result alias.
+export const ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR = Object.freeze({
+  file: 'src/preflight.js',
+  anchor: "  'WS_PING_MS', 'WS_MAX_BUFFER', 'INVARIANT_WEBHOOK_URL', 'CITY_WIRE_WEBHOOK_URL',\n",
+  addition: '  // Economic anomaly alert thresholds; the monitor validates positive finite values and defaults.\n'
+    + "  'ECONOMY_MONITOR_LEDGER_ROWS_WARN', 'ECONOMY_MONITOR_NET_CASH_WARN', 'ECONOMY_MONITOR_NET_OMR_WARN',\n",
+});
+export const ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR = Object.freeze({
+  file: 'src/engagement.js',
+  anchor: "  'mod_kill_reason',\n",
+  addition: '  // Source payout integrity diagnostics are operational observations.\n'
+    + "  'economy_payout_bound',\n",
+});
 export const ECONOMY_DEED_MERGE_PROFILES = Object.freeze({
   monitor: 'c771f5ba73453a57e24e31f8eeb920933fe7544c',
   deed: '4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364',
