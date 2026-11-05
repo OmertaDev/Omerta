@@ -1,0 +1,91 @@
+{
+  "old": {
+    "authored": "8359d189727f74204aa128769b0ca779393938f5",
+    "files": 1736,
+    "replacements": 102,
+    "legacy": 4,
+    "additions": 93
+  },
+  "current": {
+    "authored": "cfe621381ca778af58892b64b9ae5889c1e2394d",
+    "files": 1741,
+    "replacements": 103,
+    "legacy": 4,
+    "additions": 98
+  },
+  "files": {
+    "added": [
+      "src/ethrewardsworker.js",
+      "src/ethstaking.js",
+      "src/marketv2abi.js",
+      "src/routes/ethstaking.js",
+      "tools/native-eth-source-transfer.js"
+    ],
+    "removed": [],
+    "changed": [
+      ".github/workflows/forge.yml",
+      "package.json",
+      "public/defi.html",
+      "public/fee-flows.html",
+      "public/genesis-deploy-artifact.js",
+      "public/genesis-deploy-client.js",
+      "public/index.html",
+      "public/wiki.html",
+      "src/genesisauction.js",
+      "src/marketv2keeper.js",
+      "src/preflight.js",
+      "src/server.js",
+      "src/worker.js",
+      "tools/economy-hardening-source-transfer.js",
+      "tools/genesis-auction-deployment-plan.js",
+      "tools/genesis-auction-preflight.js",
+      "tools/market-v2-deployment-plan.js",
+      "tools/genesis-fee-readiness-source-transfer.js",
+      "tools/market-fee-copy-source-transfer.js"
+    ]
+  },
+  "replacements": {
+    "added": [
+      "src/worker.js"
+    ],
+    "removed": [],
+    "changed": [
+      ".github/workflows/forge.yml",
+      "package.json",
+      "public/defi.html",
+      "public/fee-flows.html",
+      "public/genesis-deploy-artifact.js",
+      "public/genesis-deploy-client.js",
+      "public/index.html",
+      "public/wiki.html",
+      "src/genesisauction.js",
+      "src/marketv2keeper.js",
+      "src/preflight.js",
+      "src/server.js",
+      "tools/genesis-auction-deployment-plan.js",
+      "tools/genesis-auction-preflight.js",
+      "tools/market-v2-deployment-plan.js"
+    ]
+  },
+  "legacyAdditionReplacements": {
+    "added": [],
+    "removed": [],
+    "changed": [
+      "tools/economy-hardening-source-transfer.js"
+    ]
+  },
+  "additions": {
+    "added": [
+      "src/ethrewardsworker.js",
+      "src/ethstaking.js",
+      "src/marketv2abi.js",
+      "src/routes/ethstaking.js",
+      "tools/native-eth-source-transfer.js"
+    ],
+    "removed": [],
+    "changed": [
+      "tools/genesis-fee-readiness-source-transfer.js",
+      "tools/market-fee-copy-source-transfer.js"
+    ]
+  }
+}

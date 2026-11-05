@@ -1,0 +1,40 @@
+{
+  "kind": "player genesis deployment checks across unchanged offline prefix and final focused preflight run",
+  "sourceRevision": "8f716e05269d079b98aa74f9a47a16e376d03873",
+  "canonicalPositionManagerArtifactSha256": "98b20807d353c6aa43906df59d2ed84d04677f3382a0c99965277cc2a918c11e",
+  "offlinePrefix": {
+    "command": "node test/player-genesis-deployment.js",
+    "checksPassed": 9,
+    "fullCommandExitCode": 1,
+    "logs": [
+      "eth-player-genesis-missing-clock.log",
+      "eth-player-genesis-missing-reward-route.log"
+    ],
+    "scope": "The nine offline checks passed before preflight completion failed. Their build-plan code was unchanged by the subsequent clock/return corrections."
+  },
+  "finalFocusedRun": {
+    "command": "node test/player-genesis-deployment.js --preflight-only",
+    "exitCode": 0,
+    "checksPassed": 4,
+    "log": "eth-player-genesis-preflight-focused.log",
+    "logSha256": "f5a2ec16a1d1a3140fe0266022b71b67483e51b94efbb9a1928a15161f24beca",
+    "scope": "Runs all four existing preflight checks, including complete prepared mutation controls; exact predicted-only and verified-dormant native ETH evidence assertions added."
+  },
+  "fullDefaultCommandPassed": false,
+  "fullRepeat": {
+    "command": "node test/player-genesis-deployment.js",
+    "status": "stopped at parent request after focused checks passed; unchanged offline prefix already validated",
+    "log": "eth-player-genesis-full-repeat-stopped.log"
+  },
+  "ciDefaultCommand": "node test/player-genesis-deployment.js",
+  "productionChanges": {
+    "byRoot": "Restored original 15-second future skew constant and replaced obsolete external reward-route return locals with actual native ETH evidence.",
+    "byThisAgent": "Test assertions and preflight-only selector only; no production guard, mutation control or Solidity change."
+  },
+  "workingTreeSourceSha256": {
+    "tools/player-genesis-preflight.js": "e4321f6272f919afcf49e941f6c95c509613f160ede9489ef9ba7dcd2f17897a",
+    "tools/player-genesis-deployment-plan.js": "9d2afa2664bf2ad55f48aa41377957e887ad97e96ccbe5c477d7c88e9fb5fd88",
+    "test/player-genesis-deployment.js": "e70e1c2bf150554d94feb5a5039aa2aa9cd3e45ca42a2ef6e7ca29fd47b5d748"
+  },
+  "sourceState": "Final focused run used these exact working-tree source bytes; subsequent authored commits must preserve these hashes or rerun the affected checks."
+}

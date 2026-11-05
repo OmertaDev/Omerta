@@ -1,0 +1,72 @@
+
+> omerta-backend@1.5.1 test:eth-rewards
+> node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js
+
+PASS five bundled ABIs match current native compiler outputs and all dependency source pins
+PASS runtime loads all native ETH jobs in an isolated checkout without out or node_modules
+PASS current keeper resolves native ETH signing ABIs without compiler output and rejects tampering
+PASS line endings and JSON key order cannot invalidate the published semantic pin
+PASS tampered signing ABI fails closed before returning a native ABI
+PASS missing and malformed production packs are explicit blocked states
+PASS unsupported names never select paths and leave generic fallback available
+PASS returned ABIs cannot be mutated between planning and signing
+PASS offline pack check verifies the exact current build without rewriting runtime files
+PASS offline regeneration rejects stale source even when an artifact declares the right compiler
+{"pass":true,"groups":10,"contracts":5,"semanticDigest":"ed64becb0cd97f18f34638892c3b67223e8373bc1bb40be38e57383a576611ad","network":false,"productionWrites":false,"productionSigning":false}
+PASS ETH jobs use conversion quote, remaining caps and zero-value typed funding calls
+PASS ETH automation and production are disabled unless explicitly enabled
+PASS conversion pause missing health and inactive conversion preserve native ETH funding and closed-epoch finalization
+PASS empty inventory and exhausted caps prevent conversion/funding; zero quote blocks conversion alone
+PASS keeper, governance, chain and runtime identity are mandatory
+PASS native funding does not read conversion health market state or quote dependencies
+PASS finalization names one closed epoch and skips finalized/open/inactive vaults
+PASS omitted epoch automatically advances latest closed0→1→2 with no unbounded recovery scan
+PASS deadlines are positive, policy-bounded and cannot be smuggled into other jobs
+PASS Safe-only configuration and health renewal are outside the keeper allowlist
+PASS disabled ETH flags prevent rebroadcast of a previously journaled ETH transaction
+{"pass":true,"groups":11,"broadcast":false,"syntheticOnly":true}
+PASS explicit reviewed ETH candidate and SHA are required, with no fallback to older setup
+PASS ETH funding is an unsigned permissionless zero-value call while conversion waits for Safe lease
+PASS native funding survives stale missing or stressed market and the launch conversion gate
+PASS failed Safe-call simulation clears conversion proposals and preserves valid native funding
+PASS funding uses actual balance and bounded remaining native caps without WBTC or quote reads
+PASS recovery grace requires actual later health state and never batches activation with initial lease
+PASS missing or wrong runtime deployments block calls before querying missing contracts
+PASS Safe owners threshold singleton guard fallback modules and nonce drift remain pinned
+PASS vault distributor collector recipient and keeper mismatches reject all funding proposals
+PASS wrong chain stalled stale future insufficient wait and reorg invalidate evidence
+PASS conversion floor includes canonical LP fee full450bps protocol ceiling and slippage
+{"pass":true,"groups":11,"syntheticOnly":true,"productionWrites":false,"productionSigning":false}
+PASS generator pins a dedicated ETH manifest and disables every production job by default
+PASS gas thresholds cadence unknown options and limits cannot silently become unusable upkeep
+PASS all continuously ready jobs receive bounded service even across process restarts and reverted attempts
+PASS unready jobs do not consume turns and older ready conversion beats newly recurring fees
+PASS generic job positions and ordering are preserved when ETH jobs are serviced fairly
+PASS ETH refresh runs only for an invalid or near-stale snapshot with a newer finalized epoch
+PASS single-shot runner consults persisted service history instead of resetting first-job priority
+PASS disabled ETH-only upkeep also blocks replay of a pending market-refresh transaction
+{"pass":true,"groups":8,"syntheticOnly":true,"productionWrites":false,"productionSigning":false}
+PASS off means no manifest read, credentials, clients, RPC or timer
+PASS both manifest production flags precede credentials and RPC
+PASS hash schema chain and ETH-only domain mismatches block before credentials
+PASS database URL and real PostgreSQL capability precede credentials
+PASS enabled work uses shared production journal runner and signing clients
+PASS in-flight work cannot overlap and completion releases the guard
+PASS provider errors expose no secrets and later work recovers
+PASS configuration failures recover without stranding the timer
+PASS start is idempotent and logging emits bounded state transitions
+PASS existing worker registers ETH before unrelated watcher startup RPC
+{"pass":true,"groups":10,"syntheticOnly":true,"productionWrites":false,"productionSigning":false}
+PASS disabled player rail reads no manifest, account, RPC or credential
+PASS linked-wallet read is independent of character, paid mint and game custody activation
+PASS exact approval and stake calldata bind token, vault, amount, account and native chain
+PASS registration is explicit and protocol/contract holders cannot open stakes
+PASS mature self withdrawals remain usable during pause and never touch reward eligibility on the server
+PASS claims are bounded closed ascending periods and pay only the linked wallet while paused
+PASS malformed amounts, unsafe numeric indices and arbitrary transaction fields reject
+PASS runtime, chain, confirmation block, duration and owner pins reject before simulation
+PASS simulation, reorg, linked-wallet and public-config drift invalidate prepared calls
+PASS player routes require authentication and off mode exposes no chain target
+PASS browser amounts retain exact18-decimal units and reject unbounded input
+PASS fixed browser ABI intent matches independent viem encoding for every allowed action
+{"pass":true,"groups":12,"publicRpc":"synthetic","mainnetBroadcast":false,"databaseWrites":false}

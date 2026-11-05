@@ -1,0 +1,5 @@
+PASS all nonce-bound deployments include native ETH collector and staking dependencies
+PASS ETH distributor and staking bind before sealing with preserved RWA and health-gated conversion
+PASS single public route contains no player tranche, eligibility or extra wait and preserves explicit public inventory
+PASS bind follows deployment and exact typed inventory pulls follow irreversible sealing
+PASS Genesis LP policy preserves half the accepted ETH and locks principal after successful migration
