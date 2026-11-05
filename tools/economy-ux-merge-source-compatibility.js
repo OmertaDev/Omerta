@@ -1,3 +1,6 @@
+import { wikiMediaHistoricalInput } from './wiki-media-source-transfer.js';
+import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-source-transfer.js';
+import { age21HistoricalInput } from './age21-source-transfer.js';
 import { deedAllocationHistoricalInput } from './deed-allocation-source-transfer.js';
 import { economyDeedMergeHistoricalInput } from './economy-deed-merge-source-compatibility.js';
 // Exact source reconstruction only. Runtime and native checks always use physical current bytes.
@@ -309,10 +312,12 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input, profile = 'monitor') {
+  input = businessDeskCombinedHistoricalInput(file, input, 'monitor');
   input = economyDeedMergeHistoricalInput(file, input, profile);
   if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);
   input = deedAllocationHistoricalInput(file, input);
   if (profile === 'deed') input = ageEligibilityHistoricalInput(file, input);
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyMonitorWorkerHistoricalInput(file, input);
   input = economyMonitorReaderHistoricalInput(file, input);
   input = economyMonitorReleaseHistoricalInput(file, input);
@@ -325,10 +330,12 @@ export function economyUxMergeCandidateHistoricalInput(file, input, profile = 'm
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input, profile = 'monitor') {
+  input = businessDeskCombinedHistoricalInput(file, input, 'monitor');
   input = economyDeedMergeHistoricalInput(file, input, profile);
   if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);
   input = deedAllocationHistoricalInput(file, input);
   if (profile === 'deed') input = ageEligibilityHistoricalInput(file, input);
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyMonitorWorkerHistoricalInput(file, input);
   input = economyMonitorReaderHistoricalInput(file, input);
   input = economyMonitorReleaseHistoricalInput(file, input);

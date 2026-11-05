@@ -28,6 +28,20 @@ const markup = receiptMarkup({ id: 1, state: 'success', label: '<img src=x onerr
 assert(markup.includes('+$300 pocket change'));
 assert(markup.includes('Larceny +8 XP'));
 assert(markup.includes('data-operation-tab="life"'));
+const resourceReceipt = receiptMarkup({ id: 5, state: 'success', label: 'Check in',
+  summary: 'Day 1 recorded', delta: 'cash +$300 · respect +20 · nerve −2', feedback: facts });
+assert(resourceReceipt.includes('class="operation-receipt__delta"')
+  && resourceReceipt.includes('cash +$300 · respect +20 · nerve −2'),
+'The full result retains the confirmed resource delta beside the server summary.');
+const unverifiedReceipt = receiptMarkup({ id: 6, state: 'success', label: 'Check in',
+  delta: 'Current state could not be refreshed.', feedback: summarize(before, null, success) });
+assert(unverifiedReceipt.includes('class="operation-receipt__delta"')
+  && unverifiedReceipt.includes('Current state could not be refreshed.'),
+'An unverified refresh remains an explicit resource receipt, not a fabricated gain.');
+const heirReceipt = receiptMarkup({ id: 7, state: 'success', label: 'A new generation',
+  delta: 'cash −$990', feedback: heir });
+assert(heirReceipt.includes('resource balances are not compared.') && !heirReceipt.includes('cash −$990'),
+'The durable receipt does not compare resources across different characters.');
 assert(!markup.includes('<img src=x') && !markup.includes('<script>'));
 const failed = receiptMarkup({ id: 2, state: 'success', label: 'Job', feedback: facts, outcome: false });
 assert(failed.includes('operation-receipt--setback') && failed.includes('went sideways'));

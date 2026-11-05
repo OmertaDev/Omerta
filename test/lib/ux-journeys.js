@@ -1,11 +1,14 @@
+import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, lstatSync } from 'node:fs';
 import vm from 'node:vm';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSource, uxAfterwordHistoricalInput } from '../../tools/ux-afterword-source-compatibility.js';
 import { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';
+import { BUSINESS_DESK_DOMAINS, BUSINESS_DESK_PREDECESSOR, assertBusinessDeskSourceTransfer,
+  businessDeskHistoricalInput } from '../../tools/businessdesk-source-transfer.js';
 
 export async function runJourneyModelProof() {
   runAfterwordSourceProof();
@@ -71,6 +74,43 @@ export function runAfterwordSourceProof() {
     const match = git('ls-tree', '-z', revision, '--', file).match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0]+)\0$/);
     assert(match && match[3] === file, 'Exact regular committed content input'); return { mode: match[1], blob: match[2] };
   };
+  // This historical reader first qualifies the complete actual Git postimage.
+  // Current runtime and native inputs are never replaced by this source view.
+  const rejectCombinedMutation = (file, source) => {
+    for (const changed of [source + '\n', '\ufeff' + source, source + '\0', source.replace(/\S/, '?')])
+      assert.throws(() => assertBusinessDeskCombinedSourceTransfer(file, changed, 'desk'));
+  };
+  const historicalHeadRecord = file => {
+    let raw = record('HEAD', file);
+    const committed = git('show', 'HEAD:' + file);
+    const indexed = git('ls-files', '--stage', '--', file).trim();
+    assert.equal(indexed, raw.mode + ' ' + raw.blob + ' 0\t' + file, 'Actual index must equal raw HEAD before any historical view');
+    const physicalPath = new URL('../../' + file, import.meta.url), stat = lstatSync(physicalPath);
+    assert(stat.isFile() && !stat.isSymbolicLink(), 'Actual physical comparison input is a regular file');
+    const physical = readFileSync(physicalPath, 'utf8');
+    assert(physical === committed || physical === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');
+    let source = committed;
+    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.desk);
+    if (combined) {
+      assert.deepEqual(raw, { mode: combined.current.mode, blob: combined.current.blob });
+      const proof = assertBusinessDeskCombinedSourceTransfer(file, source, 'desk');
+      assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+      source = proof.targetText;
+      raw = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };
+      assert.deepEqual(raw, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));
+      assert.equal(source, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));
+      rejectCombinedMutation(file, committed);
+    }
+    if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;
+    const domain = BUSINESS_DESK_DOMAINS[file];
+    assert.deepEqual(raw, { mode: domain.mode, blob: domain.currentBlob }, 'Actual raw HEAD must qualify before historical bookkeeping');
+    const proof = assertBusinessDeskSourceTransfer(file, source);
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    const predecessor = record(BUSINESS_DESK_PREDECESSOR, file);
+    assert.deepEqual(predecessor, { mode: domain.baselineMode, blob: domain.baselineBlob });
+    assert.equal(proof.baselineText, git('show', BUSINESS_DESK_PREDECESSOR + ':' + file), 'Historical view remains exact committed predecessor bytes');
+    return predecessor;
+  };
   const gitInverses = file => {
     const diff = git('diff', '--no-ext-diff', '--no-textconv', '--unified=3', pin.targetRevision, pin.revision, '--', file);
     const hunks = []; let hunk = null;
@@ -94,13 +134,13 @@ export function runAfterwordSourceProof() {
     const current = git('show', pin.revision + ':' + row.file), baseline = git('show', pin.targetRevision + ':' + row.file);
     assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });
     assert.deepEqual(record(pin.targetRevision, row.file), { mode: row.targetMode, blob: row.targetBlob });
-    assert.deepEqual(record('HEAD', row.file), record(pin.revision, row.file), 'Actual checked-out content remains the authored successor');
+    assert.deepEqual(historicalHeadRecord(row.file), record(pin.revision, row.file), 'Actual checked-out content remains the authored successor');
     assert.deepEqual(row.inverses, gitInverses(row.file), 'Every ordered inverse is the actual context-three Git hunk');
     assert.equal(sha(current), row.currentSha256); assert.equal(blob(current), row.currentBlob); assert.equal(Buffer.byteLength(current), row.currentBytes);
     assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);
     const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);
     if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');
-    const physical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
+    const physical = businessDeskHistoricalInput(row.file, readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8'));
     assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
     for (const input of [current, current.replaceAll('\n', '\r\n')]) {
       const proof = qualifyUxAfterwordSource(row.file, input);

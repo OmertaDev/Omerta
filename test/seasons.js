@@ -11,7 +11,7 @@ process.env.SEASON_MOD = 'dead_quiet'; // TEST-ONLY override (boot-guard rejects
 process.env.SEARCH_MS = '50'; process.env.SHOOT_CD_MS = '1'; // the §9 hit timers (test-only)
 import assert from 'node:assert';
 import { buildServer } from './server-fixture.js';
-import { SEASON_MODS, seasonModOf, seasonPhaseOf, seasonPhaseLeft, seasonFx, cityHourOf, M3, M4 } from '../src/rules.js';
+import { SEASON_MODS, seasonModOf, seasonPhaseOf, seasonPhaseLeft, seasonFx, cityHourOf, goodPriceOf, cityEventOf, M3, M4 } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { onWatch } from '../src/social.js';
 import { runSeasonRollover } from '../src/worker.js';
@@ -57,13 +57,25 @@ assert.equal(r.body.seasonMods.pool.length, SEASON_MODS.length, 'the pool is a p
 
 // ── BASELINE (dead quiet): laylow at the signed price; a goods sale at the vanilla unit ──
 const vic = await mk('Season Vic');
-await seedCh(vic.id, "cash=cash+2000000, energy=200, heat=60, loc='docks'");
+await seedCh(vic.id, "cash=cash+2000000, energy=200, heat=60, loc='docks', path=NULL");
 r = await call('POST', '/v1/kitchen/laylow', { token: vic.token, body: {} });
 assert.equal(r.code, 200, 'baseline laylow lands');
 const baseLaylow = Math.abs(Number((await cashRow(vic.id, 'laylow')).amount));
 await call('POST', '/v1/goods/buy', { token: vic.token, body: { goodId: 'gin', qty: 5 } });
 r = await call('POST', '/v1/goods/sell', { token: vic.token, body: { goodId: 'gin', qty: 1 } });
+assert.equal(r.code, 200, 'the baseline sale lands');
 const baseUnit = r.body.unit;
+// Use the settled quote's block, even if the wall clock advances between requests.
+// This fresh actor has no turf or path bonus. The season multiplies the unrounded
+// 70% bid; e.g. reference95 gives baseline67 and Gold Rush68, not round(67*1.03).
+const saleTerms = (sale) => {
+  const block = sale.liquidity.priceBlock;
+  assert(Number.isSafeInteger(block), 'the settled sale identifies its price block');
+  const price = goodPriceOf('gin', 'docks', block);
+  return { referenceBid: price * 7000 / 10000 * (cityEventOf(Math.floor(block / 6)).tradeMult || 1),
+    minimumAskUnit: Math.round(price * 0.95) };
+};
+assert.equal(baseUnit, Math.round(saleTerms(r.body).referenceBid), 'dead quiet rounds the unmodified bid exactly');
 
 // ── THE CRACKDOWN: laylow ×0.75, ledger-exact ──
 process.env.SEASON_MOD = 'the_crackdown';
@@ -74,16 +86,20 @@ const crackLaylow = Math.abs(Number((await cashRow(vic.id, 'laylow')).amount));
 assert.equal(crackLaylow, Math.floor(M4.LAYLOW_CASH * 0.75), `the judges are cheap — ×0.75 ledgered exactly (${crackLaylow})`);
 assert(crackLaylow < baseLaylow, 'cheaper than the vanilla season');
 
-// ── THE GOLD RUSH: the same sale runs ×1.03 vs the dead-quiet baseline unit ──
-// (retuned 1.05 → 1.03: at 1.05 the sell-only bonus flipped a same-district buy→sell round trip
-// past the 4% fee wall — ~+1% riskless per cycle for a whole season. 1.03 sits under the wall.)
+// ── THE GOLD RUSH: apply ×1.03 before the final unit rounding ──
 process.env.SEASON_MOD = 'the_gold_rush';
 r = await call('POST', '/v1/goods/sell', { token: vic.token, body: { goodId: 'gin', qty: 1 } });
 assert.equal(r.code, 200, 'the gold-rush sale lands');
-assert(r.body.unit > baseUnit, `gold rush lifts the sale (${baseUnit} → ${r.body.unit})`);
-assert(Math.abs(r.body.unit - baseUnit * 1.03) <= 1, 'by ~3% (rounding-exact)');
-// and the lift must stay UNDER the 4% round-trip fee wall, or the season pays for standing still
-assert(r.body.unit < baseUnit * 1.04, 'under the 4% fee wall — no riskless same-district round trip');
+const goldTerms = saleTerms(r.body);
+const comparableBaseUnit = Math.round(goldTerms.referenceBid);
+const expectedGoldUnit = Math.round(goldTerms.referenceBid * 1.03);
+assert(expectedGoldUnit < goldTerms.minimumAskUnit - 1, 'the fixture leaves the anti-arbitrage cap nonbinding');
+assert(r.body.unit > comparableBaseUnit, `gold rush lifts the same-block sale (${comparableBaseUnit} → ${r.body.unit})`);
+assert.equal(r.body.unit, expectedGoldUnit, '3% applies before the single final rounding');
+// A rounded percentage comparison can itself reject valid prices (71→74). The
+// actual anti-arbitrage wall is stricter: even the cheapest turf ask exceeds this
+// bid before either side's nonnegative fees, for every request partition.
+assert(r.body.unit < goldTerms.minimumAskUnit, 'below the cheapest local ask — no riskless same-district round trip');
 
 // ── BLOOD IN THE STREETS: the safehouse quote ×1.25 (ledger-exact) + kill loot ×1.15 ──
 process.env.SEASON_MOD = 'blood_in_the_streets';

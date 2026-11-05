@@ -1,7 +1,10 @@
 // Exact physical-source bridge for the gameplay/paid Deed allocation. Never a runtime import.
+import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-source-transfer.js';
 // Every historical binding remains unchanged; unknown bytes receive no historical authority.
 import assert from 'node:assert/strict';
+import { businessDeskHistoricalInput } from './businessdesk-source-transfer.js';
 import crypto from 'node:crypto';
+import { wikiMediaMergeHistoricalInput } from './wiki-media-source-transfer.js';
 import { noirUiHistoricalInput } from './noir-ui-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_PREDECESSOR_TREE,
   DEED_ALLOCATION_SOURCE_PHASE, DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
@@ -42,8 +45,12 @@ export function assertDeedAllocationSourceTransfer(file, input) {
 }
 
 export function deedAllocationHistoricalInput(file, input) {
+  if (typeof file !== 'string') return input;
+  input = businessDeskCombinedHistoricalInput(file, input, 'desk');
+  input = wikiMediaMergeHistoricalInput(file, input);
   input = noirUiHistoricalInput(file, input);
-  if (typeof file !== 'string' || !Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS, file)) return input;
+  input = businessDeskHistoricalInput(file, input);
+  if (!Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS, file)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text, 'utf8').equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (!uniform(text) || sha256(lf(text)) !== DEED_ALLOCATION_SOURCE_DOMAINS[file].currentSha256) return input;

@@ -1,4 +1,5 @@
 // Exact source reconstruction/provenance only. Native admission and execution use current bytes.
+import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { ECONOMY_DEED_MERGE_SOURCE, ECONOMY_DEED_MERGE_SOURCE_SHA256,
@@ -80,7 +81,7 @@ const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLengt
 const keys = (value, expected) => assert.deepEqual(Object.keys(value).sort(), [...expected].sort());
 const normalize = input => {
   assert.equal(typeof input, 'string', 'Complete physical source text required');
-  assert.equal(Buffer.from(input).toString('utf8'), input, 'lossless UTF-8 physical source required');
+  assert.equal(Buffer.from(input).toString('utf8'), input, 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   assert(!input.includes('\ufeff') && !input.includes('\0'));
   const current = input.replaceAll('\r\n', '\n');
   assert(!current.includes('\r') && (input === current || input === current.replaceAll('\n', '\r\n')),
@@ -134,8 +135,9 @@ export function assertEconomyDeedMergeSource(file, input, profile, pin = ECONOMY
 export function economyDeedMergeHistoricalInput(file, input, profile) {
   assert(typeof profile === 'string' && Object.hasOwn(ECONOMY_DEED_MERGE_PROFILES, profile), 'Closed integration source profile');
   if (typeof file !== 'string' || !ECONOMY_DEED_MERGE_FILES.includes(file)) return input;
+  input = businessDeskCombinedHistoricalInput(file, input, 'monitor');
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'lossless UTF-8 physical source required');
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   let current; try { current = normalize(text); } catch { return input; }
   assertSourceDefinition(ECONOMY_DEED_MERGE_SOURCE);
   const row = ECONOMY_DEED_MERGE_SOURCE.files.find(row => row.file === file);

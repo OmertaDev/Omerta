@@ -1,4 +1,5 @@
 // Exact source/control proofs only. Runtime and native tests execute physical current bytes.
+import { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -120,7 +121,15 @@ for (const [pin, qualify, historical] of [
   [readerPin, assertEconomyMonitorReaderSource, economyMonitorReaderHistoricalInput],
   ...Object.values(releasePins).map(pin => [pin, assertEconomyMonitorReleaseSource, economyMonitorReleaseHistoricalInput]),
 ]) {
-  const { file } = pin, physical = economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'monitor').replaceAll('\r\n', '\n');
+  const { file } = pin, committed = git('show', 'HEAD:' + file), entry = git('ls-tree', 'HEAD', '--', file).trim();
+  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\t/);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'),
+    'The release reader qualifies actual raw HEAD/index before its explicit Monitor comparison view');
+  const raw = fs.readFileSync(file), actual = raw.toString('utf8'), stat = fs.lstatSync(file);
+  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));
+  assert(actual === committed || actual === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF source qualifies before projection');
+  const physical = economyDeedMergeHistoricalInput(file,
+    businessDeskCombinedHistoricalInput(file, actual, 'monitor'), 'monitor').replaceAll('\r\n', '\n');
   const baseline = git('show', `${pin.predecessorRevision}:${file}`);
   const priorReleaseSource = ['test/gates.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js'].includes(file);
   assert.equal(pin.predecessorRevision, priorReleaseSource ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);

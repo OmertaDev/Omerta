@@ -325,11 +325,11 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
   };
   const openSource = declaration(/^  function openTour\(/, 'replay opener');
   const closeSource = declaration(/^  const closeTour = /, 'tour close handler');
-  const fixture = ({ replay = true, connected = true, hidden = false, rects = true, visibility = 'visible', panel = {}, children = [], control = {} } = {}) => {
+  const fixture = ({ replay = true, connected = true, hidden = false, rects = true, visibility = 'visible', focusable = true, panel = {}, children = [], control = {} } = {}) => {
     const focused = [], navigated = [], stored = {}, welcome = { hidden: false }, modal = { active: false };
     welcome.classList = { add(name) { assert.equal(name, 'hidden'); welcome.hidden = true; }, remove(name) { assert.equal(name, 'hidden'); welcome.hidden = false; } };
     const focus = name => options => { assert.equal(options.preventScroll, true); focused.push(name); };
-    const opener = { isConnected: connected, closest: () => hidden ? {} : null, getClientRects: () => rects ? [{}] : [], focus: focus('opener') };
+    const opener = { isConnected: connected, closest: () => hidden ? {} : null, getClientRects: () => rects ? [{}] : [], ...(focusable ? { focus: focus('opener') } : {}) };
     const candidate = (name, options) => options === false ? null : {
       isConnected: options.connected !== false, getClientRects: () => options.rects === false ? [] : [{}],
       ...(options.focusable === false ? {} : { focus: focus(name) }),
@@ -367,11 +367,17 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     f.settle(); await closing;
     assert.deepEqual(f.focused, ['opener'], 'settled replay restores its captured, visible connected opener');
   }
-  for (const options of [{ connected: false }, { hidden: true }, { rects: false }, { visibility: 'hidden' }]) {
+  for (const options of [{ connected: false }, { hidden: true }, { rects: false }, { visibility: 'hidden' }, { focusable: false }]) {
     const f = fixture(options), closing = f.context.closeTour();
     assert.deepEqual(f.focused, [], 'an unusable opener cannot be focused during navigation');
     f.settle(); await closing;
     assert.deepEqual(f.focused, ['panel'], 'a stale or hidden opener falls back to the rendered current tab');
+  }
+  {
+    const f = fixture(), closing = f.context.closeTour();
+    f.opener.isConnected = false;
+    f.settle(); await closing;
+    assert.deepEqual(f.focused, ['panel'], 'an opener replaced during navigation cannot receive focus');
   }
   {
     const f = fixture({ connected: false, panel: false }), closing = f.context.closeTour();
