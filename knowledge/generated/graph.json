@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "bf1aa6c11fd324d3377a81e77e9e97bbcea8d0ef",
+  "sourceRevision": "b17f8c83f170defb5b3a152b5b6fe011a46116d6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17707,
-    "edges": 71008,
+    "nodes": 17712,
+    "edges": 71021,
     "byNodeType": {
       "Artifact": 7158,
       "Command": 305,
-      "Commit": 5207,
+      "Commit": 5212,
       "Contract": 134,
       "Document": 957,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5743,
-      "CHANGED": 27358,
+      "CHANGED": 27366,
       "CONTAINS": 7179,
       "DECLARES": 305,
       "DEFINED_IN": 1772,
       "DEPENDS_ON": 69,
       "EXECUTES": 1212,
       "HANDLED_BY": 936,
-      "HAS_COMMIT": 5207,
+      "HAS_COMMIT": 5212,
       "IMPLEMENTS": 124,
       "IMPORTS": 8631,
       "INHERITS": 45,
@@ -152941,20 +152941,20 @@
       "path": "test/seasons.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 19265,
-      "lines": 264,
-      "version": "c3b8c585e25232b1",
+      "bytes": 20351,
+      "lines": 280,
+      "version": "467ff5718bcfa983",
       "text": true,
       "provenance": [
         {
           "file": "test/seasons.js",
           "line": 1,
-          "version": "c3b8c585e25232b1"
+          "version": "467ff5718bcfa983"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedAt": "2026-11-05T16:30:14.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185"
     },
     {
       "key": "Artifact:test/secondary-cooldowns.js",
@@ -158445,18 +158445,18 @@
       "extension": ".js",
       "bytes": 501529,
       "lines": 13365,
-      "version": "267fa3850991f6a5",
+      "version": "efffdc723601dbca",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-deed-inputs.js",
           "line": 1,
-          "version": "267fa3850991f6a5"
+          "version": "efffdc723601dbca"
         }
       ],
-      "lastChangedAt": "2026-11-05T14:30:09.000Z",
+      "lastChangedAt": "2026-11-05T16:44:36.000Z",
       "lastChangedBy": "Codex",
-      "lastChangedCommit": "bf1aa6c11fd324d3377a81e77e9e97bbcea8d0ef"
+      "lastChangedCommit": "b17f8c83f170defb5b3a152b5b6fe011a46116d6"
     },
     {
       "key": "Artifact:tools/enterprise-native-inputs.js",
@@ -213813,6 +213813,22 @@
       ]
     },
     {
+      "key": "Commit:8a265dd4f23ed803639044cf0b31ed5166b71c6f",
+      "type": "Commit",
+      "id": "8a265dd4f23ed803639044cf0b31ed5166b71c6f",
+      "label": "Check seasonal goods rounding against the settled market reference",
+      "title": "Check seasonal goods rounding against the settled market reference",
+      "date": "2026-11-05T16:25:41.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8a265dd4f23ed803639044cf0b31ed5166b71c6f",
+      "provenance": [
+        {
+          "commit": "8a265dd4f23ed803639044cf0b31ed5166b71c6f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8a265dd4f23ed803639044cf0b31ed5166b71c6f"
+        }
+      ]
+    },
+    {
       "key": "Commit:8a449970cd74cf4e5e49a26bb1dbaae530936dae",
       "type": "Commit",
       "id": "8a449970cd74cf4e5e49a26bb1dbaae530936dae",
@@ -213889,6 +213905,22 @@
         {
           "commit": "8a96e576becd606abbc3abdf0c29dd5024299816",
           "url": "https://github.com/OmertaDev/Omerta/commit/8a96e576becd606abbc3abdf0c29dd5024299816"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
+      "type": "Commit",
+      "id": "8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
+      "label": "Prove the seasonal multiplier fixture is below the quote cap",
+      "title": "Prove the seasonal multiplier fixture is below the quote cap",
+      "date": "2026-11-05T16:30:14.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
+      "provenance": [
+        {
+          "commit": "8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185"
         }
       ]
     },
@@ -215697,6 +215729,22 @@
         {
           "commit": "90bc48a348b2b6cdcb513e1aa009f455721b0cc5",
           "url": "https://github.com/OmertaDev/Omerta/commit/90bc48a348b2b6cdcb513e1aa009f455721b0cc5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "type": "Commit",
+      "id": "90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "label": "Refresh knowledge snapshot for corrected desk release",
+      "title": "Refresh knowledge snapshot for corrected desk release",
+      "date": "2026-11-05T14:34:20.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "provenance": [
+        {
+          "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/90cf922670a2e35e04f8cb32037acfaf830fbfe1"
         }
       ]
     },
@@ -226853,6 +226901,22 @@
       ]
     },
     {
+      "key": "Commit:b17f8c83f170defb5b3a152b5b6fe011a46116d6",
+      "type": "Commit",
+      "id": "b17f8c83f170defb5b3a152b5b6fe011a46116d6",
+      "label": "Seal the exact-rounding season fixture release candidate",
+      "title": "Seal the exact-rounding season fixture release candidate",
+      "date": "2026-11-05T16:44:36.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b17f8c83f170defb5b3a152b5b6fe011a46116d6",
+      "provenance": [
+        {
+          "commit": "b17f8c83f170defb5b3a152b5b6fe011a46116d6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b17f8c83f170defb5b3a152b5b6fe011a46116d6"
+        }
+      ]
+    },
+    {
       "key": "Commit:b1813184fdde5cd2c1c5c38b85e20656ff89c452",
       "type": "Commit",
       "id": "b1813184fdde5cd2c1c5c38b85e20656ff89c452",
@@ -227089,6 +227153,22 @@
         {
           "commit": "b1f1e7259932339480022b4d3746f8a6ca36fd1a",
           "url": "https://github.com/OmertaDev/Omerta/commit/b1f1e7259932339480022b4d3746f8a6ca36fd1a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b20b51fc0f182c1fdfec089d676231522fc00ce5",
+      "type": "Commit",
+      "id": "b20b51fc0f182c1fdfec089d676231522fc00ce5",
+      "label": "Express the seasonal reference in exact basis-point order",
+      "title": "Express the seasonal reference in exact basis-point order",
+      "date": "2026-11-05T16:26:52.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b20b51fc0f182c1fdfec089d676231522fc00ce5",
+      "provenance": [
+        {
+          "commit": "b20b51fc0f182c1fdfec089d676231522fc00ce5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b20b51fc0f182c1fdfec089d676231522fc00ce5"
         }
       ]
     },
@@ -280514,6 +280594,9 @@
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
         },
         {
+          "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
+        },
+        {
           "commit": "90d3300b05eada3188de885f587f84358b2d2666"
         },
         {
@@ -283121,6 +283204,9 @@
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
         },
         {
+          "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
+        },
+        {
           "commit": "90d3300b05eada3188de885f587f84358b2d2666"
         },
         {
@@ -285726,6 +285812,9 @@
         },
         {
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+        },
+        {
+          "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
         },
         {
           "commit": "90d3300b05eada3188de885f587f84358b2d2666"
@@ -289050,6 +289139,9 @@
         },
         {
           "commit": "90a07070d3efd08fe3e70d1c78def530cf79f184"
+        },
+        {
+          "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
         },
         {
           "commit": "90d3300b05eada3188de885f587f84358b2d2666"
@@ -304790,7 +304882,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "bf1aa6c11fd324d3377a81e77e9e97bbcea8d0ef",
+      "revision": "b17f8c83f170defb5b3a152b5b6fe011a46116d6",
       "currentBranch": "codex/business-desk-c9-sealed-checks",
       "defaultBranch": "main",
       "visibility": "public",
@@ -355132,13 +355224,13 @@
       "type": "TestSuite",
       "id": "test/seasons.js",
       "label": "test/seasons.js",
-      "lines": 264,
-      "version": "c3b8c585e25232b1",
+      "lines": 280,
+      "version": "467ff5718bcfa983",
       "provenance": [
         {
           "file": "test/seasons.js",
           "line": 1,
-          "version": "c3b8c585e25232b1"
+          "version": "467ff5718bcfa983"
         }
       ]
     },
@@ -514849,6 +514941,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8a265dd4f23ed803639044cf0b31ed5166b71c6f",
+      "to": "Artifact:test/seasons.js",
+      "provenance": {
+        "commit": "8a265dd4f23ed803639044cf0b31ed5166b71c6f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8a51a334a90296aaafb1840e02e88935e9d06ed8",
       "to": "Artifact:test/logisticscoverage-api.js",
       "provenance": {
@@ -514965,6 +515065,14 @@
       "to": "Artifact:package-lock.json",
       "provenance": {
         "commit": "8a96e576becd606abbc3abdf0c29dd5024299816"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
+      "to": "Artifact:test/seasons.js",
+      "provenance": {
+        "commit": "8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185"
       }
     },
     {
@@ -519789,6 +519897,38 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "90bc48a348b2b6cdcb513e1aa009f455721b0cc5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
       }
     },
     {
@@ -545065,6 +545205,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b17f8c83f170defb5b3a152b5b6fe011a46116d6",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "provenance": {
+        "commit": "b17f8c83f170defb5b3a152b5b6fe011a46116d6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b1813184fdde5cd2c1c5c38b85e20656ff89c452",
       "to": "Artifact:test/migrate.js",
       "provenance": {
@@ -545405,6 +545553,14 @@
       "to": "Artifact:test/client.js",
       "provenance": {
         "commit": "b1f1e7259932339480022b4d3746f8a6ca36fd1a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b20b51fc0f182c1fdfec089d676231522fc00ce5",
+      "to": "Artifact:test/seasons.js",
+      "provenance": {
+        "commit": "b20b51fc0f182c1fdfec089d676231522fc00ce5"
       }
     },
     {
@@ -754224,6 +754380,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8a265dd4f23ed803639044cf0b31ed5166b71c6f",
+      "provenance": {
+        "commit": "8a265dd4f23ed803639044cf0b31ed5166b71c6f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8a449970cd74cf4e5e49a26bb1dbaae530936dae",
       "provenance": {
         "commit": "8a449970cd74cf4e5e49a26bb1dbaae530936dae"
@@ -754259,6 +754423,14 @@
       "to": "Commit:8a96e576becd606abbc3abdf0c29dd5024299816",
       "provenance": {
         "commit": "8a96e576becd606abbc3abdf0c29dd5024299816"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
+      "provenance": {
+        "commit": "8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185"
       }
     },
     {
@@ -755163,6 +755335,14 @@
       "to": "Commit:90bc48a348b2b6cdcb513e1aa009f455721b0cc5",
       "provenance": {
         "commit": "90bc48a348b2b6cdcb513e1aa009f455721b0cc5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:90cf922670a2e35e04f8cb32037acfaf830fbfe1",
+      "provenance": {
+        "commit": "90cf922670a2e35e04f8cb32037acfaf830fbfe1"
       }
     },
     {
@@ -760744,6 +760924,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b17f8c83f170defb5b3a152b5b6fe011a46116d6",
+      "provenance": {
+        "commit": "b17f8c83f170defb5b3a152b5b6fe011a46116d6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b1813184fdde5cd2c1c5c38b85e20656ff89c452",
       "provenance": {
         "commit": "b1813184fdde5cd2c1c5c38b85e20656ff89c452"
@@ -760859,6 +761047,14 @@
       "to": "Commit:b1f1e7259932339480022b4d3746f8a6ca36fd1a",
       "provenance": {
         "commit": "b1f1e7259932339480022b4d3746f8a6ca36fd1a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b20b51fc0f182c1fdfec089d676231522fc00ce5",
+      "provenance": {
+        "commit": "b20b51fc0f182c1fdfec089d676231522fc00ce5"
       }
     },
     {
@@ -834438,7 +834634,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/seasons.js",
-        "line": 122
+        "line": 138
       }
     },
     {
@@ -834465,7 +834661,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/seasons.js",
-        "line": 126
+        "line": 14
       }
     },
     {
@@ -834474,7 +834670,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/seasons.js",
-        "line": 14
+        "line": 142
       }
     },
     {
@@ -930081,7 +930277,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/seasons.js",
-        "line": 122
+        "line": 138
       }
     },
     {
@@ -930108,7 +930304,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/seasons.js",
-        "line": 126
+        "line": 14
       }
     },
     {
@@ -930117,7 +930313,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/seasons.js",
-        "line": 14
+        "line": 142
       }
     },
     {
