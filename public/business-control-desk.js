@@ -59,6 +59,8 @@
     let options = { ...initialOptions }, destroyed = false, loading = false, busy = false, epoch = 0, readVersion = 0;
     let identity = options.identity, characterKey = actorKey(options.character), session = null, sessionUnavailable = false;
     let notice = '', noticeBad = false, retry = null;
+    let requestQueue = Promise.resolve(), cadence = 0, lastDispatch = 0, cooldownUntil = 0;
+    let consignmentAfter = '', consignmentHistory = [];
     const boards = {}, errors = {}, drafts = new Map(), issuedSalvage = new Map(), approvedConsents = new Set();
     const root = document.createElement('section');
     root.className = 'business-desk'; root.setAttribute('aria-label', 'Business control desk'); host.replaceChildren(root);
@@ -76,6 +78,36 @@
     const availableItems = () => list(boards.inventory?.items).filter(item => item.templateId === 'item:precision_lock_tool' && item.state === 'active' && !item.escrowed);
     const liveCourier = itemId => list(boards.courier?.networks).some(row => row.itemId === itemId && ['offered', 'ready', 'first_leg', 'second_leg'].includes(row.status) && Date.parse(row.expiresAt) > Date.now());
     const offeredSale = itemId => list(boards.consignments?.rows).some(row => row.itemId === itemId && ['offered', 'active'].includes(row.status));
+
+    // Agent reads and mutations share the server's account bucket. A rate refusal
+    // happens before gameplay execution; only that explicit refusal is retried.
+    function request(method, path, body, controls, mutation = false) {
+      const allowed = () => active() && controls.isCurrent() && controls.beforeDispatch();
+      const ignored = () => ({ ignored: true, code: 499, body: {} });
+      const dispatch = async () => {
+        for (let attempt = 0; attempt < 4; attempt++) {
+          let waitUntil = Math.max(cooldownUntil, lastDispatch + cadence);
+          while (allowed() && Date.now() < waitUntil) {
+            await new Promise(resolve => setTimeout(resolve, Math.min(100, waitUntil - Date.now())));
+            waitUntil = Math.max(cooldownUntil, lastDispatch + cadence);
+          }
+          if (!allowed()) return ignored();
+          lastDispatch = Date.now();
+          const response = await (mutation ? options.act : options.api)(method, path, body, controls);
+          if (!allowed()) return ignored();
+          lastDispatch = Date.now();
+          const seconds = response?.body?.retryAfter;
+          if (response?.code !== 429 || response.body?.error !== 'rate_limited'
+            || !Number.isFinite(seconds) || seconds <= 0 || seconds > 60) return response;
+          cadence = Math.max(cadence, Math.ceil(seconds * 1000));
+          cooldownUntil = Date.now() + Math.ceil(seconds * 1000);
+          if (attempt === 3) return response;
+        }
+      };
+      const pending = requestQueue.then(dispatch);
+      requestQueue = pending.catch(() => {});
+      return pending;
+    }
 
     function captureDrafts() {
       root.querySelectorAll('form[data-business-form]').forEach(element => {
@@ -306,7 +338,8 @@
           + (row.itemId ? '<p class="business-id">Tool: ' + escape(row.itemId) + '</p>' : '<p class="business-help">Item identity is private to the owner and host until purchase.</p>') + '<p>' + escape(explanation) + '</p>'
           + (!owner && !hostRole && row.available && character().loc !== row.pickupDistrict ? reasons(['Travel to ' + districtName(row.pickupDistrict) + ' before purchasing.']) : '') + controls);
       }).join('');
-      return '<section id="business-sales" class="business-section"><div class="business-heading"><span>05 / 06</span><h2>Make a buyer-paid sale</h2></div><details class="business-offer"' + (items.length ? ' open' : '') + '><summary>Offer a new consignment</summary>' + offer + '</details><div class="business-grid">' + (rows || empty('No consignment rows are returned.')) + '</div><p class="business-help">This is a bounded consignment page.' + (boards.consignments?.next ? ' More rows exist.' : '') + '</p></section>';
+      const pageLocked = busy || loading || !!retry || !ready('consignments');
+      return '<section id="business-sales" class="business-section"><div class="business-heading"><span>05 / 06</span><h2>Make a buyer-paid sale</h2></div><details class="business-offer"' + (items.length ? ' open' : '') + '><summary>Offer a new consignment</summary>' + offer + '</details><div class="business-grid">' + (rows || empty('No consignment rows are returned.')) + '</div><nav class="business-nav" aria-label="Consignment pages"><button type="button" data-business-consignment-page="previous"' + (pageLocked || !consignmentHistory.length ? ' disabled' : '') + '>Previous consignments</button><span role="status">Page ' + (consignmentHistory.length + 1) + '</span><button type="button" data-business-consignment-page="next"' + (pageLocked || !boards.consignments?.next ? ' disabled' : '') + '>Next consignments</button></nav><p class="business-help">This is a bounded consignment page.' + (boards.consignments?.next ? ' More rows exist.' : '') + '</p></section>';
     }
 
     function inventoryView() {
@@ -351,25 +384,28 @@
     }
     function invalidate(message, changedActor = false) {
       epoch++; readVersion++; loading = busy = false; session = null; sessionUnavailable = true;
+      consignmentAfter = ''; consignmentHistory = []; cadence = lastDispatch = cooldownUntil = 0;
       if (changedActor) retry = null;
       drafts.clear(); issuedSalvage.clear(); approvedConsents.clear();
       for (const key of Object.keys(boards)) delete boards[key];
       for (const key of Object.keys(errors)) delete errors[key];
       notice = message; noticeBad = true; root.replaceChildren(); draw();
     }
-    async function load() {
+    async function load(pageChange) {
       if (!active() || busy || loading) return;
       const token = epoch, version = ++readVersion, isCurrent = () => current(token) && version === readVersion;
       loading = true; draw();
       try {
-        const response = await options.api('GET', '/v1/session', undefined, { beforeDispatch: isCurrent, isCurrent });
+        const response = await request('GET', '/v1/session', undefined, { beforeDispatch: isCurrent, isCurrent });
         if (!isCurrent()) return;
         if (response?.ignored || !(response?.code >= 200 && response.code < 300) || !validSession(response.body)) { invalidate('Session verification failed. Refresh after restoring your current character.', response?.code >= 200 && response.code < 300); return; }
         if ((session && (session.accountId !== response.body.accountId || actorKey(session.character) !== actorKey(response.body.character)))
           || (retry && (retry.accountId !== response.body.accountId || retry.character !== actorKey(response.body.character)))) { invalidate('Your session changed. Previous records and pending controls have been cleared.', true); return; }
         session = response.body; sessionUnavailable = false;
-        const results = await Promise.allSettled(Object.entries(READS).map(async ([key, [path]]) => {
-          const record = await options.api('GET', path, undefined, { beforeDispatch: isCurrent, isCurrent });
+        const entries = pageChange ? [['consignments', READS.consignments]] : Object.entries(READS);
+        const after = pageChange ? pageChange.after : consignmentAfter;
+        const results = await Promise.allSettled(entries.map(async ([key, [path]]) => {
+          const record = await request('GET', path + (key === 'consignments' && after ? '?after=' + encodeURIComponent(after) : ''), undefined, { beforeDispatch: isCurrent, isCurrent });
           if (!isCurrent()) return;
           if (record?.ignored || !(record?.code >= 200 && record.code < 300)) {
             if (record?.code === 401 || ['no_character', 'token_revoked'].includes(record?.body?.error)) { invalidate('Your session needs to be restored before business can continue.'); return; }
@@ -379,9 +415,10 @@
             || (key === 'desk' && record.body?.character?.id && record.body.character.id !== session.character.id)) { invalidate('Your character changed while records were loading. Previous records have been cleared.', true); return; }
           if (!validBoard(key, record.body)) { errors[key] = 'The returned record is incomplete or belongs to another character.'; return; }
           boards[key] = record.body; delete errors[key];
+          if (key === 'consignments' && pageChange) { consignmentAfter = after; consignmentHistory = pageChange.history; }
         }));
         if (!isCurrent()) return;
-        results.forEach((result, index) => { if (result.status === 'rejected') errors[Object.keys(READS)[index]] = 'The response could not be read. Refresh to retry.'; });
+        results.forEach((result, index) => { if (result.status === 'rejected') errors[entries[index][0]] = 'The response could not be read. Refresh to retry.'; });
       } catch {
         if (isCurrent()) invalidate('Session verification is unavailable. Refresh to try again.');
       } finally {
@@ -449,7 +486,7 @@
       let sent = false;
       busy = true; notice = 'Checking your session before sending ' + pending.entry.label.toLowerCase() + '…'; noticeBad = false; draw();
       try {
-        const probe = await options.api('GET', '/v1/session', undefined, { beforeDispatch: canDispatch, isCurrent });
+        const probe = await request('GET', '/v1/session', undefined, { beforeDispatch: canDispatch, isCurrent });
         if (!isCurrent()) return;
         if (probe?.ignored || !(probe?.code >= 200 && probe.code < 300) || !validSession(probe.body) || probe.body.accountId !== originalSession?.accountId || actorKey(probe.body.character) !== actorKey(originalSession?.character)) {
           if (probe?.code === 401) invalidate('Restore your session before continuing. No new action was sent.');
@@ -459,7 +496,7 @@
         }
         if (!canDispatch()) return;
         sent = true; notice = 'Submitting ' + pending.entry.label.toLowerCase() + '…'; draw();
-        const response = await options.act('POST', pending.entry.path, pending.entry.body, { label: pending.entry.label, idempotencyKey: pending.key, beforeDispatch: canDispatch, isCurrent });
+        const response = await request('POST', pending.entry.path, pending.entry.body, { label: pending.entry.label, idempotencyKey: pending.key, beforeDispatch: canDispatch, isCurrent }, true);
         if (!isCurrent()) return;
         if (!response || response.ignored || !Number.isInteger(response.code) || response.code < 200 || response.code >= 500 || [408, 425].includes(response.code) || (previous && response.code === 429)
           || [response.body?.error, response.body?.message, response.body?.reason].some(value => ['offline', 'in_progress', 'idempotency_in_progress', 'request_in_progress'].includes(value))) {
@@ -501,6 +538,10 @@
       const target = event.target.closest('button'); if (!target || !root.contains(target) || target.disabled) return;
       if (target.hasAttribute('data-business-refresh')) load();
       if (target.hasAttribute('data-business-retry') && retry) run(retry.entry, retry);
+      if (target.dataset.businessConsignmentPage && !busy && !loading && !retry && ready('consignments')) {
+        if (target.dataset.businessConsignmentPage === 'next' && boards.consignments.next) load({ after: boards.consignments.next, history: [...consignmentHistory, consignmentAfter] });
+        if (target.dataset.businessConsignmentPage === 'previous' && consignmentHistory.length) load({ after: consignmentHistory.at(-1), history: consignmentHistory.slice(0, -1) });
+      }
       if (target.dataset.businessSection) {
         const section = root.querySelector('#business-' + target.dataset.businessSection);
         if (section) { section.tabIndex = -1; section.scrollIntoView({ block: 'start', behavior: 'instant' }); section.focus({ preventScroll: true }); }
@@ -525,6 +566,7 @@
         options = nextOptions;
         if (changed) {
           identity = nextIdentity; characterKey = nextCharacterKey; epoch++; readVersion++; loading = busy = false; retry = null; session = null; sessionUnavailable = false;
+          consignmentAfter = ''; consignmentHistory = []; cadence = lastDispatch = cooldownUntil = 0;
           notice = ''; noticeBad = false; drafts.clear(); issuedSalvage.clear(); approvedConsents.clear();
           for (const key of Object.keys(boards)) delete boards[key];
           for (const key of Object.keys(errors)) delete errors[key];
