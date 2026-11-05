@@ -4,6 +4,9 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../../tools/contract-release-source-data.js';
+import { contractReleaseSourceDataBytes, contractReleaseSourceDataPin } from '../../tools/contract-release-source-format.js';
+import { assertContractReleaseCandidatePins } from '../../tools/contract-release-native-provenance.js';
 import { assertUxNativeDirectorGuards } from './ux-native-director-guard.js';
 await assertUxNativeDirectorGuards();
 import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_UX_METADATA, ENTERPRISE_UX_SUPPORT, ENTERPRISE_UX_ASSETS, assertEnterpriseUxInputDefinition, assertEnterpriseUxTrackedInput, assertEnterpriseUxMetadataBytes, assertEnterpriseUxReplacementPlan, enterpriseUxReplacementPlan, enterpriseUxMetadataBytes, enterpriseUxClosure, enterpriseUxImports } from '../../tools/enterprise-native-ux.js';
@@ -48,13 +51,33 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.version, 3); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
+  assert.equal(pin.version, 4); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS');
   assert.equal(pin.files.length, legacyFiles.length + pin.additions.length);
   assert.equal(pin.legacyAdditionReplacements.length, 4);
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-b35-inputs.js'), 'The old B35 native manifest is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-inputs.js'), 'The qualified UX native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/businessdesk-deed-native-inputs.js'), 'The frozen Deed native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/enterprise-native-deed-inputs.js'), 'The accepted Desk native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/contract-release-source-data.js'), 'The complete contract source definition is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'src/deedbenefits.js'), 'The actual new runtime benefit dependency is in the closed native capture');
-  assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-deed-inputs.js', 'Only the fresh successor manifest is self-referential');
+  assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-contract-release-inputs.js', 'Only the fresh successor manifest is self-referential');
+  for (const key of ['contractPredecessorRevision', 'contractPredecessorMetadataSha256', 'contractSourceDefinitionSha256',
+    'contractSourceRevision', 'contractBaseRevision', 'reviewedContractRevision', 'reviewedUiRevision']) {
+    const changed = structuredClone(pin); changed[key] = '0'.repeat(key.endsWith('Sha256') ? 64 : 40);
+    reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
+  }
+  const dataPin = contractReleaseSourceDataPin(CONTRACT_RELEASE_SOURCE_DATA);
+  const dataBytes = contractReleaseSourceDataBytes(CONTRACT_RELEASE_SOURCE_DATA);
+  assert.deepEqual(pin.files.find(row => row.file === dataPin.file), dataPin, 'The ordinary data input has the canonical 100644 Git identity');
+  assertContractReleaseCandidatePins(pin.files);
+  for (const [bytes, mode] of [[Buffer.concat([dataBytes, Buffer.from('// extra comment\n')]), '100644'],
+    [Buffer.concat([dataBytes, Buffer.from('globalThis.unreviewedDataMarker = true;\n')]), '100644'],
+    [dataBytes, '100755'], [Buffer.concat([dataBytes, Buffer.from('// extra source\n')]), '100755']]) {
+    const changedData = Object.freeze({ file: dataPin.file, mode,
+      blob: crypto.createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex'), sha256: digest(bytes) });
+    const changedFiles = Object.freeze(pin.files.map(row => row.file === dataPin.file ? changedData : row));
+    reject(() => assertContractReleaseCandidatePins(changedFiles));
+  }
   const requiredLegacyReplacements = ['src/accountdaily.js', 'src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
   assert.deepEqual(pin.legacyAdditionReplacements.map(row => row.file), requiredLegacyReplacements);
   const tree = revision => new Map(git('ls-tree', '-r', '-z', revision).toString().split('\0').filter(Boolean).map(line => { const index = line.indexOf('\t'), [mode, type, blob] = line.slice(0, index).split(' '); return [line.slice(index + 1), { mode, type, blob }]; }));
@@ -110,6 +133,16 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  const nativeInputGuard = lf(fs.readFileSync('tools/enterprise-native-ux.js', 'utf8'));
  assert(!/assertDeedAllocationSourceTransfer|deedAllocationHistoricalInput|baselineText/.test(nativeInputGuard),
   'Actual-current native admission and provenance never reconstruct inverse historical source text');
+ const contractInputGuard = lf(fs.readFileSync('tools/contract-release-native-provenance.js', 'utf8'));
+ assert(!/contractReleaseDeskInput|contractReleaseFeeInput|assertContractReleaseSourceTransfer|baselineText/.test(contractInputGuard),
+  'Contract provenance compares identities and never requests a source-text view');
+ const trackedFunction = parse(nativeInputGuard, { ecmaVersion: 'latest', sourceType: 'module' }).body
+  .find(node => node.type === 'ExportNamedDeclaration' && node.declaration?.id?.name === 'assertEnterpriseUxTrackedInput')?.declaration;
+ assert(trackedFunction, 'The actual tracked-input admission entry point remains explicit');
+ const trackedBody = nativeInputGuard.slice(trackedFunction.start, trackedFunction.end);
+ assert(trackedBody.indexOf('assert.equal(digest(bytes), expected.sha256') >= 0
+  && trackedBody.indexOf('assert.equal(digest(bytes), expected.sha256') < trackedBody.indexOf('contractReleaseNativeProvenance('),
+  'Whole actual raw bytes are admitted before any contract provenance is consulted');
  assert(capture.includes('f===ENTERPRISE_UX_METADATA') && !capture.includes("f!=='tools/enterprise-native-inputs.js'"), 'Exactly the new self-reference is unpinnable; old metadata is pinned');
  assert(capture.includes('assertEnterpriseUxReplacementPlan(ENTERPRISE_NATIVE_FILES,successor,ux.files,predecessorPin,ux)') && capture.includes('uxLegacyAdditionReplacements:replacementPlan.legacyAdditionReplacements.map'), 'UX integration recomputes and records both complete replacement categories');
  console.log(JSON.stringify({ phase: 'CURRENT_UX_NATIVE_ADMISSION_GUARDS', status: pin.status, refusals: negatives, unchangedWorkloadCases: 16, originalGuardsUnchanged: true, nativeExecution: false, priorResultsTransferred: false }));

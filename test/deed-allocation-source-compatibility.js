@@ -1,6 +1,7 @@
 // Exact app-source proof only. Historical test text is reconstructed for comparison, never execution.
 import assert from 'node:assert/strict';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
+import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -55,7 +56,7 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
-  const physical = businessDeskHistoricalInput(file, fs.readFileSync(file, 'utf8')), current = lf(physical);
+  const physical = businessDeskHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8'))), current = lf(physical);
   const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && Object.isFrozen(pin.currentRawSha256));
   assert.equal(pin.contextLines, 3); assert.equal(pin.currentMode, '100644'); assert.equal(pin.baselineMode, '100644');

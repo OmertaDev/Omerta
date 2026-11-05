@@ -17,7 +17,8 @@ assert(Object.isFrozen(deedNative) && Object.isFrozen(deedNative.files));
 assert.equal(currentNative.status, 'SEALED', 'Seal actual current inputs before executing this test.');
 assert.equal(currentNative.version, 3); assert.equal(currentNative.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
 assert(Object.isFrozen(currentNative) && Object.isFrozen(currentNative.files));
-assert.strictEqual(activeNative, currentNative, 'The real admission function uses the actual current declaration.');
+assert.notStrictEqual(activeNative, currentNative, 'The Desk record remains frozen under its original module identity.');
+assert.equal(activeNative.version, 4); assert.equal(activeNative.phase, 'ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   windowsHide: true, maxBuffer: 16 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -73,12 +74,22 @@ const record = (revision, file) => {
   return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });
 };
 const { file, previous, expected } = sample;
-const current = record('HEAD', file), authored = record(currentNative.authoredRevision, file);
-const bytes = git('show', `${currentNative.authoredRevision}:${file}`);
-assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');
-assert.equal(sha(bytes), expected.sha256); assert.equal(blob(bytes), expected.blob);
-const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
-proofOf(admitted, file, previous, expected); assert.deepEqual(admitted, sample.proof);
+const actualSource = activeNative.status === 'SEALED' ? activeNative.authoredRevision : currentNative.authoredRevision;
+const actualExpected = activeNative.status === 'SEALED' ? activeNative.files.find(row => row.file === file) : expected;
+const current = record('HEAD', file), authored = record(actualSource, file);
+const bytes = git('show', `${actualSource}:${file}`);
+if (activeNative.status === 'UNSEALED') {
+  reject(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes));
+} else {
+  assert.equal(activeNative.status, 'SEALED'); assert(actualExpected);
+  assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');
+  assert.equal(sha(bytes), actualExpected.sha256); assert.equal(blob(bytes), actualExpected.blob);
+  const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
+  assert(admitted && Object.isFrozen(admitted)); assert.strictEqual(admitted.current, actualExpected);
+  assert.strictEqual(admitted.intermediate, expected, 'The old helper receives its exact canonical frozen Desk row');
+  assert.deepEqual(admitted.prior, sample.proof, 'The existing Desk provenance controls remain intact as a historical stage');
+  assert.equal(admitted.nativeAdmission, false); assert.equal(admitted.priorResultsTransferred, false);
+}
 const otherMode = current.mode === '100644' ? '100755' : '100644';
 for (const [now, anchor, raw] of [
   [current, authored, Buffer.concat([bytes, Buffer.from('\n')])],
@@ -96,4 +107,5 @@ for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../sr
   assert.equal(businessDeskNativeProvenance(unknown, previous, expected), null);
 }
 console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,
-  authoredRevision: currentNative.authoredRevision, relation, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));
+  authoredRevision: currentNative.authoredRevision, activeStatus: activeNative.status,
+  relation, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));
