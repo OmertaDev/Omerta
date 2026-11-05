@@ -157,7 +157,11 @@ if (process.argv.includes('--example')) {
 } else {
   const fixture = playerGenesisDeploymentExample(), plan = buildPlayerGenesisDeploymentPlan(fixture);
   let count = 0;
-  const test = async (name, fn) => { await fn(); count++; console.log(`PASS ${name}`); };
+  const preflightOnly = process.argv.includes('--preflight-only');
+  const test = async (name, fn) => {
+    if (preflightOnly && !/^(predeploy |prepared |wall clock )/.test(name)) return;
+    await fn(); count++; console.log(`PASS ${name}`);
+  };
   await test('all nonce-bound deployments include native ETH collector and staking dependencies', () => {
     const deployments = plan.steps.filter(x => x.kind === 'deployment');
     assert.equal(deployments.length, 19);
@@ -340,7 +344,11 @@ if (process.argv.includes('--example')) {
   });
   await test('predeploy validates Safe configuration, native clock, empty addresses and exact EOA nonce', async () => {
     const { client } = predeployClient(fixture);
-    assert.equal((await preflightPlayerGenesis(fixture, client)).ok, true);
+    const result = await preflightPlayerGenesis(fixture, client);
+    assert.equal(result.ok, true);
+    assert.deepEqual(result.rewardRoute, { asset: 'ETH', collector: plan.addresses.ethRewards,
+      stakingVault: plan.addresses.ethStaking, canonicalPool: plan.canonicalPool,
+      bindingEvidence: 'predicted-only', executableDepthForBudgetVerified: false });
     await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client, getTransactionCount: async () => Number(fixture.startingNonce) + 1 }), /nonce/);
     await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client, getBytecode: async () => CODE }), /Deployer/);
     await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client, readContract: async x => x.functionName === 'getModulesPaginated'
@@ -399,6 +407,9 @@ if (process.argv.includes('--example')) {
     const result = await preflightPlayerGenesis(fixture, { ...client,
       readContract: request => { requests.push(request); return client.readContract(request); } }, { phase: 'prepared' });
     assert.equal(result.ok, true);
+    assert.deepEqual(result.rewardRoute, { asset: 'ETH', collector: plan.addresses.ethRewards,
+      stakingVault: plan.addresses.ethStaking, canonicalPool: plan.canonicalPool,
+      bindingEvidence: 'verified-dormant', executableDepthForBudgetVerified: false });
     assert.ok(requests.every(x => x.address !== zeroAddress));
     assert.ok(requests.every(x => !['merkleRoot', 'openDeadline', 'migrationDeadline', 'closesAt', 'released', 'cancelled'].includes(x.functionName)));
     const managerSource = fs.readFileSync(new URL('../omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol', import.meta.url), 'utf8');
@@ -418,8 +429,8 @@ if (process.argv.includes('--example')) {
       ['INITIAL_LP_BPS', () => 3750n, /INITIAL_LP_BPS/], ['LIQUIDITY_LOCK_SECONDS', () => 0n, /LIQUIDITY_LOCK_SECONDS/],
       ['migrationTimestamp', () => 1n, /migrationTimestamp/], ['liquidityUnlockTimestamp', () => 1n, /liquidityUnlockTimestamp/],
       ['liquidityPositionId', () => 1n, /liquidityPositionId/],
-      ['operatorRole', () => 1n, /operator role/], ['balanceOf', () => 0n, /exact OMR inventory/],
-      ['isRecipient', () => false, /receiving wallet|recovery recipient|reward vault receiving-only/], ['blockNumberish', () => 2000n, /latest native clock/],
+      ['operatorRole', () => 1n, /ETH collector must not be an operator|operator role/], ['balanceOf', () => 0n, /exact OMR inventory/],
+      ['isRecipient', () => false, /receiving wallet|recovery recipient|ETH collector receiving-only/], ['blockNumberish', () => 2000n, /latest native clock/],
       ['publicOnly', () => false, /publicOnly/],
       ['playerSale', () => A(99), /playerSale/], ['saleCodeHash', () => H, /saleCodeHash/],
       ['auctionCodeHash', () => `0x${'22'.repeat(32)}`, /auctionCodeHash/],
@@ -436,5 +447,6 @@ if (process.argv.includes('--example')) {
         && request.args?.[0] === target ? value : client.readContract(request) }, { phase: 'prepared' }), expected);
 
   });
+  if (preflightOnly) assert.equal(count, 4, 'The focused run must execute all four existing preflight checks');
   console.log(`player-genesis-deployment: ${count} focused checks passed`);
 }

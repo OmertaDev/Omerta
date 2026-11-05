@@ -193,8 +193,9 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
   checkWallClock('RPC tip at completion', finalTip.timestamp, finalWall);
   return { ok: true, phase, chainId: plan.chainId, blockNumber: String(block.number), blockHash: block.hash,
     timestamp: String(block.timestamp), auctionClock: String(clock), latestAuctionClock: String(latestClock), manifestSha256: plan.manifestSha256,
-    rewardRoute: { poolId: rewardPoolId, pool: rewardPool, sqrtPriceX96: String(rewardSqrtPrice), liquidity: String(rewardLiquidity),
-      initialized: true, activeLiquidityObserved: true, executableDepthForBudgetVerified: false },
+    rewardRoute: { asset: 'ETH', collector: plan.addresses.ethRewards, stakingVault: plan.addresses.ethStaking,
+      canonicalPool: plan.canonicalPool, bindingEvidence: phase === 'prepared' ? 'verified-dormant' : 'predicted-only',
+      executableDepthForBudgetVerified: false },
     freshness: { wallClockTimestamp: String(finalWall), maxAgeSeconds: input.snapshot.maxAgeSeconds,
       maximumFutureClockSkewSeconds: String(MAX_FUTURE_CLOCK_SKEW_SECONDS) },
     limits: 'Read-only configuration evidence; does not replace scoped security review, fork rehearsal, owner acceptance or transaction simulation.' };
