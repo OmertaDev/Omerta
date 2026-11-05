@@ -18,7 +18,7 @@ interface IRestrictedSettlementPolicyV2 {
 ///      Approvals and permits are standard ERC20 approvals; they never bypass the caller's transfer role.
 contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOMRV2 {
     uint256 public constant SUPPLY = 100_000_000e18;
-    bytes32 public constant REVENUE_POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
+    bytes32 public constant REVENUE_POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS");
     uint64 public constant override POLICY_UPDATE_DELAY = 7 days;
 
     error PolicySealed();

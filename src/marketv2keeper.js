@@ -6,11 +6,17 @@ import { fileURLToPath } from 'node:url';
 import { createPublicClient, createWalletClient, defineChain, encodeAbiParameters, encodePacked, encodeFunctionData, getAddress, http, isAddress, keccak256, toHex, zeroAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { keeperTransactionStatus, reconcileKeeperTransactions, runKeeperTransaction } from './keepertransactions.js';
+import { loadBundledMarketV2Abi } from './marketv2abi.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const fail = code => Object.assign(new Error(code), { keeperCode: code });
 const kinds = {
   refresh: ['OmertaMarketStateV2', 'refresh'],
+  eth_collect: ['OmertaEthRewardsV2', 'collectTax'],
+  eth_convert: ['OmertaEthRewardsV2', 'convertOmr'],
+  eth_fund: ['OmertaEthRewardsV2', 'fundRewards'],
+  eth_finalize: ['OmertaEthStakingV2', 'finalizeEpoch'],
+  eth_refresh: ['OmertaMarketStateV2', 'refresh'],
   manager_claim: ['OmertaPoolManagerV2', 'sweep'],
   hook_claim: ['OmertaHookV2', 'sweep'],
   funding_flush: ['OmertaReserveFundingV2', 'flush'],
@@ -45,7 +51,11 @@ const uint = (x, zero = false) => {
 
 export function validateMarketV2Manifest(input) {
   const m = JSON.parse(JSON.stringify(input));
-  exact(m, ['schemaVersion', 'chainId', 'keeper', 'governanceSafe', 'contracts', 'jobs', 'gas']);
+  exact(m, ['schemaVersion', 'chainId', 'keeper', 'governanceSafe', 'contracts', 'jobs', 'gas', 'ethAutomation']);
+  if (m.ethAutomation !== undefined) {
+    exact(m.ethAutomation, ['enabled', 'productionEnabled']);
+    if (typeof m.ethAutomation.enabled !== 'boolean' || typeof m.ethAutomation.productionEnabled !== 'boolean') throw fail('invalid_eth_flags');
+  }
   if (m.schemaVersion !== 2) throw fail('invalid_version');
   integer(m.chainId, 1, Number.MAX_SAFE_INTEGER);
   m.keeper = addr(m.keeper); m.governanceSafe = addr(m.governanceSafe);
@@ -68,7 +78,7 @@ export function validateMarketV2Manifest(input) {
   if (!Array.isArray(m.jobs) || m.jobs.length > 32) throw fail('invalid_jobs');
   const ids = new Set();
   for (const j of m.jobs) {
-    exact(j, ['id', 'kind', 'target', 'intervalSeconds', 'tranche', 'bucket', 'currency', 'tokenId', 'campaignId', 'beneficiary', 'minimumAmount']);
+    exact(j, ['id', 'kind', 'target', 'intervalSeconds', 'tranche', 'bucket', 'currency', 'tokenId', 'campaignId', 'beneficiary', 'minimumAmount', 'epochId', 'deadlineSeconds']);
     if (!/^[a-zA-Z][a-zA-Z0-9_-]{0,40}$/.test(j.id) || ids.has(j.id) || !Object.hasOwn(kinds, j.kind)
         || m.contracts[j.target]?.artifact !== kinds[j.kind][0]) throw fail('invalid_job');
     ids.add(j.id); integer(j.intervalSeconds, 60, 86400);
@@ -90,6 +100,14 @@ export function validateMarketV2Manifest(input) {
     } else if (j.campaignId !== undefined) throw fail('unexpected_campaign');
     if (j.kind === 'arb_claim') j.beneficiary = addr(j.beneficiary);
     else if (j.beneficiary !== undefined) throw fail('unexpected_recipient');
+    if (j.kind === 'eth_finalize') {
+      if (j.epochId !== undefined) {
+        const epoch = uint(j.epochId, true); if (epoch >= 1n << 64n) throw fail('invalid_epoch'); j.epochId = String(epoch);
+      }
+    } else if (j.epochId !== undefined) throw fail('unexpected_epoch');
+    if (j.kind === 'eth_convert') {
+      if (j.deadlineSeconds !== undefined) integer(j.deadlineSeconds, 1, 3600);
+    } else if (j.deadlineSeconds !== undefined) throw fail('unexpected_deadline');
     j.minimumAmount = String(uint(j.minimumAmount ?? '1'));
   }
   return m;
@@ -97,7 +115,7 @@ export function validateMarketV2Manifest(input) {
 
 export function marketV2Abi(name) {
   if (!Object.values(kinds).some(([a]) => a === name)) throw fail('invalid_artifact');
-  return JSON.parse(fs.readFileSync(path.join(root, 'omerta-contracts', 'out', `${name}.sol`, `${name}.json`))).abi;
+  return loadBundledMarketV2Abi(name) ?? JSON.parse(fs.readFileSync(path.join(root, 'omerta-contracts', 'out', `${name}.sol`, `${name}.json`))).abi;
 }
 
 export function makeMarketV2Clients(manifest, { rpcUrl, signing = false, privateKey } = {}) {
@@ -148,10 +166,78 @@ async function pendingFees(client, block, controller, tranche, position) {
   return marketV2PendingFees(words, position.liquidity, position.lower, position.upper);
 }
 
-async function jobArgs(j, target, block, client, abi) {
+async function jobArgs(j, target, block, client, abi, manifest) {
   const read = (functionName, args = [], address = target.address, readAbi = abi) => client.readContract({ address, abi: readAbi, functionName, args, blockNumber: block.number });
   const min = BigInt(j.minimumAmount);
+  const pinned = (address, artifact) => {
+    const found = Object.values(manifest.contracts).find(c => c.address === String(address).toLowerCase() && c.artifact === artifact);
+    if (!found) throw fail('unreviewed_eth_dependency'); return found;
+  };
   switch (j.kind) {
+    case 'eth_refresh': {
+      const distributors = Object.values(manifest.contracts).filter(c => c.artifact === 'OmertaEthRewardsV2');
+      if (distributors.length !== 1) throw fail('unreviewed_eth_dependency');
+      const distributor = distributors[0], distributorAbi = marketV2Abi('OmertaEthRewardsV2');
+      if (String(await read('marketState', [], distributor.address, distributorAbi)).toLowerCase() !== target.address
+          || String(await read('safe', [], distributor.address, distributorAbi)).toLowerCase() !== manifest.governanceSafe
+          || String(await read('keeper', [], distributor.address, distributorAbi)).toLowerCase() !== manifest.keeper) throw fail('eth_market_binding_mismatch');
+      const snapshot = await read('snapshot'), source = pinned(await read('source'), 'OmertaHookV2');
+      const duration = BigInt(await read('epochDuration', [], source.address, marketV2Abi('OmertaHookV2')));
+      const policy = await read('policy', [], distributor.address, distributorAbi), maxAge = BigInt(policy.maxMarketAge);
+      if (duration <= 0n || maxAge <= 0n) throw fail('invalid_eth_market_policy');
+      const observed = BigInt(snapshot.observedAt), margin = BigInt(j.intervalSeconds);
+      const threshold = maxAge > margin ? maxAge - margin : 0n;
+      const needed = !snapshot.valid || observed === 0n || observed > block.timestamp || block.timestamp - observed >= threshold;
+      return needed && block.timestamp / duration > BigInt(snapshot.epoch) + 1n ? [] : null;
+    }
+    case 'eth_finalize': {
+      if (String(await read('owner')).toLowerCase() !== manifest.governanceSafe
+          || String(await read('governanceSafe')).toLowerCase() !== manifest.governanceSafe) throw fail('eth_governance_mismatch');
+      if (!await read('active')) return null;
+      const currentEpoch = BigInt(await read('currentEpoch'));
+      if (currentEpoch === 0n) return null;
+      const epoch = j.epochId === undefined ? currentEpoch - 1n : BigInt(j.epochId);
+      if (epoch >= currentEpoch || (await read('epoch', [epoch])).finalized) return null;
+      return [epoch];
+    }
+    case 'eth_collect': case 'eth_convert': case 'eth_fund': {
+      if (String(await read('safe')).toLowerCase() !== manifest.governanceSafe
+          || String(await read('keeper')).toLowerCase() !== manifest.keeper) throw fail('eth_keeper_mismatch');
+      const manager = pinned(await read('manager'), 'OmertaPoolManagerV2');
+      const vault = pinned(await read('rewardVault'), 'OmertaEthStakingV2');
+      const vaultAbi = marketV2Abi('OmertaEthStakingV2'), managerAbi = marketV2Abi('OmertaPoolManagerV2');
+      if (String(await read('distributor', [], vault.address, vaultAbi)).toLowerCase() !== target.address
+          || String(await read('distributorRuntimeHash', [], vault.address, vaultAbi)).toLowerCase() !== target.runtimeHash) throw fail('eth_distributor_binding_mismatch');
+      if (String(await read('rewardsRecipient', [], manager.address, managerAbi)).toLowerCase() !== target.address) throw fail('eth_revenue_recipient_mismatch');
+      if (j.kind === 'eth_collect') {
+        const token = await read('omr');
+        const native = BigInt(await read('owed', [zeroAddress, 4], manager.address, managerAbi));
+        const omr = BigInt(await read('owed', [token, 4], manager.address, managerAbi));
+        return native >= min || omr >= min ? [] : null;
+      }
+      if (!await read('active', [], vault.address, vaultAbi)) return null;
+      const policy = await read('policy'), isOmr = j.kind === 'eth_convert';
+      if (isOmr) {
+        if (!await read('active') || await read('paused') || !await read('healthReady')) return null;
+        pinned(await read('marketState'), 'OmertaMarketStateV2');
+      }
+      const perCall = BigInt(isOmr ? policy.maxOmrPerCall : policy.maxNativePerCall);
+      const perDay = BigInt(isOmr ? policy.maxOmrPerDay : policy.maxNativePerDay);
+      const spent = BigInt(await read(isOmr ? 'omrConvertedOnDay' : 'nativeFundedOnDay', [block.timestamp / 86400n]));
+      if (spent >= perDay || perCall === 0n) return null;
+      const tokenAbi = [{ type:'function',name:'balanceOf',stateMutability:'view',inputs:[{type:'address'}],outputs:[{type:'uint256'}] }];
+      const available = BigInt(isOmr ? await read('balanceOf', [target.address], await read('omr'), tokenAbi)
+        : await client.getBalance({address:target.address,blockNumber:block.number}));
+      const amount = [available,perCall,perDay-spent].reduce((x,y)=>x<y?x:y);
+      if (amount < min || amount === 0n) return null;
+      if (!isOmr) return [amount];
+      const minimum = BigInt(await read('minimumNativeFor', [amount]));
+      if (minimum === 0n) return null;
+      const maxDelay = BigInt(policy.maxDeadlineDelay), requested = BigInt(j.deadlineSeconds ?? 300);
+      const delay = j.deadlineSeconds === undefined && requested > maxDelay ? maxDelay : requested;
+      if (delay <= 0n || delay > maxDelay || block.timestamp + delay >= 1n << 64n) return null;
+      return [amount,minimum,block.timestamp+delay];
+    }
     case 'refresh': {
       const s = await read('snapshot'); const source = await read('source');
       const duration = BigInt(await read('epochDuration', [], source, marketV2Abi('OmertaHookV2')));
@@ -252,8 +338,11 @@ export async function planMarketV2(input, clients, { completedJobKeys = [], now 
     const target = m.contracts[j.target]; const abi = marketV2Abi(target.artifact);
     const jobKey = `marketv2:${j.id}:${block.timestamp / BigInt(j.intervalSeconds)}`;
     if (completedJobKeys.includes(jobKey)) { blocked.push({ jobId: j.id, reason: 'interval_already_attempted' }); continue; }
+    if (j.kind.startsWith('eth_') && (!m.ethAutomation?.enabled || (m.chainId !== 31337 && !m.ethAutomation?.productionEnabled))) {
+      blocked.push({jobId:j.id,reason:'eth_automation_disabled'});continue;
+    }
     try {
-      const args = await jobArgs(j, target, block, pub, abi);
+      const args = await jobArgs(j, target, block, pub, abi, m);
       if (args === null) { blocked.push({ jobId: j.id, reason: 'not_ready' }); continue; }
       const functionName = kinds[j.kind][1];
       await pub.simulateContract({ address: target.address, abi, functionName, args, account: m.keeper, blockNumber: block.number });
@@ -269,17 +358,48 @@ export async function planMarketV2(input, clients, { completedJobKeys = [], now 
   return { chainId: m.chainId, blockNumber: String(block.number), blockHash: block.hash, actions, blocked };
 }
 
+// Dedicated ETH upkeep uses the existing transaction journal for fair service across restarts.
+// Generic actions retain their exact relative positions. A fresh manifest starts with bounded
+// finalization/funding priority; continuously available fee collection cannot monopolize a worker.
+export function prioritizeEthUpkeepActions(actions, history = []) {
+  const priority = { eth_finalize: 0, eth_fund: 1, eth_refresh: 2, eth_convert: 3, eth_collect: 4 };
+  const key = row => `${String(row.target).toLowerCase()}:${row.metadata?.kind}:${row.metadata?.jobId}`;
+  const serviced = new Map();
+  for (const row of history) {
+    if (!Object.hasOwn(priority, row.metadata?.kind)) continue;
+    if (!Number.isSafeInteger(row.nonce) || row.nonce < 0) throw fail('invalid_upkeep_history');
+    const id = key(row), nonce = BigInt(row.nonce);
+    if (!serviced.has(id) || nonce > serviced.get(id)) serviced.set(id, nonce);
+  }
+  const eth = actions.filter(a => Object.hasOwn(priority, a.metadata?.kind)).sort((a, b) => {
+    const an = serviced.get(key(a)) ?? -1n, bn = serviced.get(key(b)) ?? -1n;
+    return an < bn ? -1 : an > bn ? 1 : priority[a.metadata.kind] - priority[b.metadata.kind];
+  });
+  let index = 0;
+  return actions.map(a => Object.hasOwn(priority, a.metadata?.kind) ? eth[index++] : a);
+}
+
 export async function runMarketV2(pool, input, clients, { dryRun = true } = {}) {
   const m = validateMarketV2Manifest(input);
   if (!dryRun && !process.env.DATABASE_URL) throw fail('postgres_required');
   if (!dryRun) {
+    const onlyEthJobs = m.jobs.length > 0 && m.jobs.every(j => j.kind.startsWith('eth_'));
+    const ethEnabled = m.ethAutomation?.enabled && (m.chainId === 31337 || m.ethAutomation?.productionEnabled);
     const pending = await reconcileKeeperTransactions(pool, { chainId: m.chainId, wallet: m.keeper, clients,
-      allowedTargets: Object.fromEntries(Object.values(m.contracts).map(c => [c.address, c.runtimeHash])) });
+      allowedTargets: Object.fromEntries(Object.entries(m.contracts).filter(([name, c]) => onlyEthJobs
+        ? ethEnabled && m.jobs.some(j => j.target === name)
+        : !['OmertaEthRewardsV2', 'OmertaEthStakingV2'].includes(c.artifact) || ethEnabled).map(([, c]) => [c.address, c.runtimeHash])) });
     if (pending.state !== 'idle') return pending;
   }
   const initial = await planMarketV2(m, clients);
-  const rows = pool ? await keeperTransactionStatus(pool, { chainId: m.chainId, wallet: m.keeper, jobKeys: initial.actions.map(a => a.jobKey) }) : [];
-  const plan = { ...initial, actions: initial.actions.filter(a => !rows.some(r => r.jobKey === a.jobKey)) };
+  const hasEthJobs = m.jobs.some(j => j.kind.startsWith('eth_'));
+  const rows = pool ? await keeperTransactionStatus(pool,
+    { chainId: m.chainId, wallet: m.keeper, jobKeys: initial.actions.map(a => a.jobKey) }) : [];
+  const history = pool && hasEthJobs ? await keeperTransactionStatus(pool,
+    { chainId: m.chainId, wallet: m.keeper }) : [];
+  const available = initial.actions.filter(a => !rows.some(r => r.jobKey === a.jobKey));
+  const plan = { ...initial, actions: prioritizeEthUpkeepActions(available, history),
+    ...(hasEthJobs ? { ethScheduling: { mode: 'least-recently-serviced', journalHistoryAvailable: Boolean(pool), boundedHistoryRows: history.length } } : {}) };
   if (dryRun) return { state: 'planned', plan };
   if (!plan.actions.length) return { state: 'idle', plan };
   return runKeeperTransaction(pool, { ...plan.actions[0], chainId: m.chainId, wallet: m.keeper, clients,

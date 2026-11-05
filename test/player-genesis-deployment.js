@@ -21,22 +21,13 @@ const POOL_ABI = { type: 'tuple', components: [
   { name: 'tickSpacing', type: 'int24' }, { name: 'hooks', type: 'address' },
 ] };
 const poolOnly = key => Object.fromEntries(POOL_ABI.components.map(({ name }) => [name, key[name]]));
-const rewardPoolFor = input => ({ currency0: zeroAddress, currency1: input.external.wbtc.address,
-  fee: input.policies.rewards.fee, tickSpacing: input.policies.rewards.tickSpacing, hooks: zeroAddress });
-function rewardSlots(input) {
-  const id = keccak256(encodeAbiParameters([POOL_ABI], [rewardPoolFor(input)]));
-  const slot = keccak256(encodeAbiParameters([{ type: 'bytes32' }, { type: 'uint256' }], [id, 6n]));
-  return { slot, liquidity: toHex((BigInt(slot) + 3n) % (1n << 256n), { size: 32 }) };
-}
-
-/** Synthetic local-only values. This is never a mainnet configuration or approved allocation. */
 export function playerGenesisDeploymentExample() {
   const baseResult = spawnSync(process.execPath, ['test/market-v2-deployment-plan.js', '--example'], {
     cwd: fileURLToPath(new URL('../', import.meta.url)), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024,
   });
   if (baseResult.status !== 0) throw Error(baseResult.stderr);
   const b = JSON.parse(baseResult.stdout);
-  const { initializer: _i, capitalProvider: _c, ...roles } = b.roles;
+  const { initializer: _i, capitalProvider: _c, stakingReward: _stakingReward, ...roles } = b.roles;
   const contractNames = [...new Set(PLAYER_GENESIS_ROLES.map(([, c]) => c))];
   return {
     schemaVersion: 2, route: 'guarded-public-auction', chainId: 31337, localRehearsal: true, sourceRevision: b.sourceRevision,
@@ -44,8 +35,11 @@ export function playerGenesisDeploymentExample() {
     snapshot: { timestamp: b.snapshot.timestamp, blockNumber: b.snapshot.blockNumber, blockHash: H, auctionClock: '1000', maxAgeSeconds: '300' },
     governance: { runtimeHash: H, owners: [A(0x71001), A(0x71002), A(0x71003)], threshold: 2,
       singleton: A(0x71004), singletonRuntimeHash: H, fallbackHandler: A(0x71005), fallbackHandlerRuntimeHash: H },
-    external: Object.fromEntries(['permit2', 'weth', 'descriptor', 'wbtc', 'rewardManager']
-      .map((k, i) => [k, { address: A(0x72000 + i), runtimeHash: H }])),
+    external: Object.fromEntries(['permit2', 'weth', 'descriptor'].map((k, i) => [k, { address: A(0x72000 + i), runtimeHash: H }])),
+    ethRewards: { keeper: roles.adjudicator,
+      policy: { maxOmrPerCall: String(E), maxOmrPerDay: String(5n * E), maxNativePerCall: String(E), maxNativePerDay: String(5n * E),
+        maxSlippageBps: '500', maxStressBps: '6000', maxMarketAge: '120', maxDeadlineDelay: '300', maxHealthLease: '3600', recoveryGrace: '600' },
+      conversion: { active: false, paused: true } },
     positionManager: { unsubscribeGasLimit: '100000' }, create2: { ...b.create2, runtimeHash: H },
     artifactHashes: Object.fromEntries(contractNames.map(c => [c, loadPlayerGenesisArtifact(c).evidence.artifactSha256])),
     runtimeHashes: Object.fromEntries(PLAYER_GENESIS_ROLES.map(([role]) => [role, H])),
@@ -62,7 +56,6 @@ function mainnetProfileExample(input) {
   const mainnet = clone(input), snapshot = Number(mainnet.snapshot.timestamp);
   mainnet.chainId = 4663;
   mainnet.localRehearsal = false;
-  mainnet.external.wbtc.address = getAddress('0x6bac06600d220ac5ac281ad1f504d2cf0f90f6e6');
   mainnet.snapshot.auctionClock = '50000180';
   mainnet.snapshot.blockNumber = '50000280';
   const cadence = buildGenesisCadenceEvidence({
@@ -83,7 +76,6 @@ function mainnetProfileExample(input) {
 
 function predeployClient(input, changes = {}) {
   const plan = buildPlayerGenesisDeploymentPlan(input);
-  const rewardStorage = rewardSlots(input);
   const occupied = new Set([input.roles.safe, input.governance.singleton, input.governance.fallbackHandler,
     ...Object.values(input.external).map(x => x.address), input.create2.factory, A(100),
     ...input.restrictedMarket.additionalOperators.map(x => x.address), ...input.restrictedMarket.contractHolders.map(x => x.address)]
@@ -98,16 +90,8 @@ function predeployClient(input, changes = {}) {
     getStorageAt: async ({ slot }) => BigInt(slot) === 0n ? ownerAddress(input.governance.singleton)
       : slot === keccak256('0x67756172645f6d616e616765722e67756172642e61646472657373') ? `0x${'00'.repeat(32)}`
         : ownerAddress(input.governance.fallbackHandler),
-    readContract: async ({ address, functionName, args = [] }) => {
-      if (address.toLowerCase() === input.external.wbtc.address.toLowerCase() && functionName === 'decimals') return 8;
-      if (address.toLowerCase() === input.external.rewardManager.address.toLowerCase() && functionName === 'extsload') {
-        if (args[0] === rewardStorage.slot) return toHex(1n << 96n, { size: 32 });
-        if (args[0] === rewardStorage.liquidity) return toHex(1000n * E, { size: 32 });
-        throw Error('Unexpected synthetic reward manager storage slot');
-      }
-      return ({ getOwners: input.governance.owners, getThreshold: BigInt(input.governance.threshold),
-        VERSION: '1.4.1', getModulesPaginated: [[], A(1)], arbBlockNumber: BigInt(input.snapshot.auctionClock) })[functionName];
-    },
+    readContract: async ({ functionName }) => ({ getOwners: input.governance.owners, getThreshold: BigInt(input.governance.threshold),
+      VERSION: '1.4.1', decimals: 8, getModulesPaginated: [[], A(1)], arbBlockNumber: BigInt(input.snapshot.auctionClock) })[functionName],
     ...changes,
   } };
 }
@@ -119,20 +103,19 @@ function preparedClient(input) {
     omr: { owner: input.roles.safe, genesisTreasury: input.roles.safe, genesisTreasuryRuntimeHash: input.governance.runtimeHash,
       policySealed: true, settlementManager: a.poolManager, REVENUE_POLICY_ID: plan.restrictedMarket.policyId,
       totalSupply: 100_000_000n * E, decimals: 18, operatorCount: registry.operatorCount, contractHolderCount: registry.contractHolderCount },
-    poolManager: { owner: input.roles.safe, omr: a.omr, TRADE_FEE_BPS: 400, MAX_HOOK_FEE_BPS: 50,
-      revenuePolicyId: plan.restrictedMarket.policyId, rewardsRecipient: a.btcRewards,
-      developerRecipient: input.roles.dev, rwaRecipient: input.roles.rwa, communityRecipient: input.roles.community, polRecipient: a.polFunding,
+    poolManager: { owner: input.roles.safe, omr: a.omr, TRADE_FEE_BPS: 400, MAX_HOOK_FEE_BPS: 50, revenuePolicyId: plan.restrictedMarket.policyId,
+      developerRecipient: input.roles.dev, rwaRecipient: input.roles.rwa, communityRecipient: input.roles.community, polRecipient: a.polFunding, rewardsRecipient: a.ethRewards,
       extsload: `0x${'00'.repeat(32)}` },
+    ethStaking: { owner: input.roles.safe, governanceSafe: input.roles.safe, omr: a.omr,
+      distributor: a.ethRewards, distributorRuntimeHash: H, active: false, paused: false, epochOrigin: 0n, EPOCH_DURATION: 30 * 86400, LOCK_DURATION: 30 * 86400 },
+    ethRewards: { omr: a.omr, rewardVault: a.ethStaking, safe: input.roles.safe,
+      keeper: input.ethRewards.keeper, manager: a.poolManager, canonicalRouter: a.router, marketState: a.marketState,
+      active: false, paused: true, healthValidUntil: 0n, healthySince: 0n,
+      canonicalPoolId: plan.canonicalPool.poolId, poolKey: plan.canonicalPool, policy: input.ethRewards.policy,
+      omrRuntimeHash: H, rewardVaultRuntimeHash: H, managerRuntimeHash: H, canonicalRouterRuntimeHash: H, marketStateRuntimeHash: H, canonicalHookRuntimeHash: H },
     positionManager: { poolManager: a.poolManager, permit2: input.external.permit2.address },
     router: { manager: a.poolManager, omr: a.omr },
-    hook: { authorized: a.coordinator, poolKey: plan.canonicalPool, rewardsRecipient: a.btcRewards, managerCollectsRevenue: true, REWARDS_BPS: 50 },
-    btcRewards: { safe: input.roles.safe, wbtc: input.external.wbtc.address, omr: a.omr, omrRouter: a.router,
-      converter: a.btcConverter, routerRuntimeHash: H, converterRuntimeHash: H, wbtcRuntimeHash: H,
-      MAX_PROOF_LENGTH: 64, MAX_DEADLINE_DELAY: 86400, omrPool: plan.canonicalPool },
-    btcConverter: { authorizedVault: a.btcRewards, wbtc: input.external.wbtc.address,
-      externalManager: input.external.rewardManager.address, poolFee: input.policies.rewards.fee,
-      poolTickSpacing: input.policies.rewards.tickSpacing, managerRuntimeHash: H, wbtcRuntimeHash: H,
-      MAX_DEADLINE_DELAY: 86400, poolKey: rewardPoolFor(input) },
+    hook: { rewardsRecipient: a.ethRewards, REWARDS_BPS: 50, authorized: a.coordinator, poolKey: plan.canonicalPool, managerCollectsRevenue: true, MANAGER_TRADE_FEE_BPS: 400, MANAGER_REVENUE_POLICY: plan.restrictedMarket.policyId },
     coordinator: { auction: a.auction, playerSale: zeroAddress, publicOnly: true, omr: a.omr, poolManager: a.poolManager,
       positionManager: a.positionManager, permit2: input.external.permit2.address, ...input.coordinator,
       playerMigrationSucceeded: false, chainId: input.chainId, auctionCodeHash: H, saleCodeHash: `0x${'00'.repeat(32)}`, hookCodeHash: H,
@@ -156,7 +139,7 @@ function preparedClient(input) {
       if (role === 'omr') {
         if (fn === 'balanceOf') return balances.get(args[0].toLowerCase()) || 0n;
         if (fn === 'allowance') return 0n;
-        if (fn === 'isRecipient') return args[0].toLowerCase() !== a.btcConverter.toLowerCase();
+        if (fn === 'isRecipient') return true;
         if (fn === 'operatorAt') return registry.operators[Number(args[0])].operatorAt;
         if (fn === 'operatorRole') return registry.operators.find(x => x.operatorAt.toLowerCase() === args[0].toLowerCase())?.operatorRole || 0;
         if (fn === 'operatorRuntimeHash') return registry.operators.find(x => x.operatorAt.toLowerCase() === args[0].toLowerCase()).operatorRuntimeHash;
@@ -175,11 +158,8 @@ if (process.argv.includes('--example')) {
   const fixture = playerGenesisDeploymentExample(), plan = buildPlayerGenesisDeploymentPlan(fixture);
   let count = 0;
   const test = async (name, fn) => { await fn(); count++; console.log(`PASS ${name}`); };
-  await test('all nineteen nonce-bound deployments bind the reward vault and converter before the hook', () => {
+  await test('all nonce-bound deployments include native ETH collector and staking dependencies', () => {
     const deployments = plan.steps.filter(x => x.kind === 'deployment');
-    assert.equal(plan.steps[0].kind, 'readiness');
-    assert.equal(plan.steps[0].label, 'Verify pinned WBTC asset and reward conversion route before deployments');
-    assert.equal(plan.steps[0].transaction, undefined);
     assert.equal(deployments.length, 19);
     for (const [index, d] of deployments.entries()) {
       assert.equal(d.transaction.nonce, String(BigInt(fixture.startingNonce) + BigInt(index)));
@@ -187,38 +167,42 @@ if (process.argv.includes('--example')) {
     }
     const predicted = predictPlayerGenesisAddresses(fixture.roles.deployer, fixture.startingNonce);
     assert.equal(predicted.auction, plan.addresses.auction);
-    assert.equal(plan.nextDeployerNonceAfterDeployments, String(BigInt(fixture.startingNonce) + 19n));
+    assert.equal(plan.nextDeployerNonceAfterDeployments, String(BigInt(fixture.startingNonce) + BigInt(PLAYER_GENESIS_ROLES.length)));
     assert.equal(plan.addresses.playerSale, undefined);
     assert.equal(plan.artifacts.GenesisPlayerSale, undefined);
     assert.equal(plan.runtimeHashes.playerSale, undefined);
     assert.deepEqual(deployments.find(x => x.role === 'poolManager').constructorArgs[2],
       [fixture.roles.dev, fixture.roles.rwa, fixture.roles.community, plan.addresses.polFunding]);
-    assert.equal(deployments.find(x => x.role === 'poolManager').constructorArgs[3], plan.addresses.btcRewards);
+    assert.equal(deployments.find(x => x.role === 'poolManager').constructorArgs[3], plan.addresses.ethRewards);
     assert.equal(deployments.find(x => x.role === 'hook').constructorArgs[2], plan.addresses.coordinator);
-    assert.equal(deployments.find(x => x.role === 'hook').constructorArgs.at(-1), plan.addresses.btcRewards);
+    assert.equal(deployments.find(x => x.role === 'hook').constructorArgs.at(-1), plan.addresses.ethRewards);
     assert.equal(deployments.find(x => x.role === 'coordinator').constructorArgs[4], plan.addresses.hook);
-    assert.deepEqual(deployments.slice(4, 6).map(x => x.role), ['btcRewards', 'btcConverter']);
   });
-  await test('reward constructors bind future vault and converter addresses and exact external runtimes', () => {
-    const deployment = role => plan.steps.find(x => x.kind === 'deployment' && x.role === role);
-    assert.deepEqual(deployment('btcRewards').constructorArgs, [{ safe: fixture.roles.safe,
-      wbtc: fixture.external.wbtc.address, omr: plan.addresses.omr, omrRouter: plan.addresses.router,
-      omrPool: poolOnly(plan.canonicalPool), converter: plan.addresses.btcConverter,
-      routerRuntimeHash: fixture.runtimeHashes.router, converterRuntimeHash: fixture.runtimeHashes.btcConverter }]);
-    assert.deepEqual(deployment('btcConverter').constructorArgs, [plan.addresses.btcRewards, fixture.external.wbtc.address,
-      fixture.external.rewardManager.address, rewardPoolFor(fixture), fixture.external.rewardManager.runtimeHash,
-      fixture.external.wbtc.runtimeHash]);
-    const registry = plan.steps.find(x => x.label === 'Verify the exact complete operator and contract-holder registries immediately before sealing').required;
-    assert.ok(registry.contractHolders.some(x => x.contractHolderAt === plan.addresses.btcRewards
-      && x.contractHolderRuntimeHash === fixture.runtimeHashes.btcRewards));
-    assert.ok(!registry.operators.some(x => [plan.addresses.btcRewards, plan.addresses.btcConverter].includes(x.operatorAt)));
-    assert.ok(!registry.contractHolders.some(x => x.contractHolderAt === plan.addresses.btcConverter));
-    const changed = clone(fixture); changed.runtimeHashes.btcConverter = `0x${'33'.repeat(32)}`;
-    const changedPlan = buildPlayerGenesisDeploymentPlan(changed);
-    assert.equal(changedPlan.steps.find(x => x.kind === 'deployment' && x.role === 'btcRewards')
-      .constructorArgs[0].converterRuntimeHash, changed.runtimeHashes.btcConverter);
-    assert.notEqual(changedPlan.steps.find(x => x.kind === 'deployment' && x.role === 'btcRewards').initCodeHash,
-      deployment('btcRewards').initCodeHash);
+  await test('ETH distributor and staking bind before sealing with preserved RWA and health-gated conversion', () => {
+    const seal = plan.steps.findIndex(step => step.functionName === 'sealPolicy');
+    const binding = plan.steps.findIndex(step => step.role === 'ethStaking' && step.functionName === 'setDistributor');
+    assert.ok(binding > -1 && binding < seal);
+    assert.deepEqual(plan.steps[binding].args, [plan.addresses.ethRewards, H]);
+    assert.equal(plan.steps[binding].transaction.from, fixture.roles.safe);
+    const registry = plan.steps[seal - 1].required;
+    assert.ok(registry.operators.some(x => x.operatorAt === plan.addresses.ethStaking && x.operatorRole === 2));
+    assert.equal(registry.operators.some(x => x.operatorAt === plan.addresses.ethRewards), false);
+    assert.ok(registry.contractHolders.some(x => x.contractHolderAt === plan.addresses.ethRewards && x.contractHolderRuntimeHash === H));
+    assert.equal(plan.economics.primaryRecipients.rwa, fixture.roles.rwa);
+    assert.equal(plan.economics.rewardsRecipient, plan.addresses.ethRewards);
+    assert.equal(plan.ethRewards.bucket, 4);
+    assert.equal(plan.ethRewards.activation.transaction.from, fixture.roles.safe);
+    assert.equal(plan.steps.some(step => ['activate', 'configureRoute', 'confirmHealthyUntil'].includes(step.functionName)), false);
+    for (const [mutate, reason] of [
+      [x => { delete x.ethRewards; }, /ethRewards/],
+      [x => { x.ethRewards.conversion.active = true; }, /conversion starts inactive/],
+      [x => { x.ethRewards.conversion.paused = false; }, /conversion starts inactive/],
+      [x => { x.ethRewards.policy.maxSlippageBps = '1001'; }, /bounded/],
+      [x => { x.ethRewards.policy.maxDeadlineDelay = '3601'; }, /bounded/],
+      [x => { x.ethRewards.policy.recoveryGrace = x.ethRewards.policy.maxHealthLease; }, /bounded/],
+      [x => { x.restrictedMarket.contractHolders.push({address: plan.addresses.ethRewards,runtimeHash:H,purpose:'duplicate buyer'}); }, /managed/],
+      [x => { x.restrictedMarket.additionalOperators.push({address:plan.addresses.ethRewards,role:2,runtimeHash:H,purpose:'buyer may not be arbitrary custody'}); }, /receiving-only/],
+    ]) { const changed = clone(fixture); mutate(changed); assert.throws(() => buildPlayerGenesisDeploymentPlan(changed), reason); }
   });
   await test('single public route contains no player tranche, eligibility or extra wait and preserves explicit public inventory', () => {
     assert.equal(plan.route, 'guarded-public-auction');
@@ -280,15 +264,7 @@ if (process.argv.includes('--example')) {
     assert.equal(plan.inventories.public, fixture.auction.inventory);
     assert.equal(plan.auctionParameters.floorPrice, fixture.auction.floorPrice);
     for (const mutate of [x => delete x.auction.inventory, x => delete x.auction.startBlock, x => delete x.coordinator.founder,
-      x => delete x.external.permit2.runtimeHash, x => delete x.external.wbtc, x => delete x.external.rewardManager.runtimeHash,
-      x => delete x.runtimeHashes.btcRewards, x => delete x.runtimeHashes.btcConverter, x => delete x.policies.rewards,
-      x => { x.policies.rewards.hooks = A(99); }, x => { x.rewards = { converterRuntimeHash: H }; },
-      x => { x.runtimeHashes.btcConverter = plan.artifacts.OmertaWbtcConverterV2.runtimeTemplateKeccak256; },
-      x => { x.restrictedMarket.additionalOperators.push({ address: predictPlayerGenesisAddresses(x.roles.deployer, x.startingNonce).btcConverter,
-        role: 2, runtimeHash: H, purpose: 'Unneeded converter custody privilege' }); },
-      x => { x.restrictedMarket.contractHolders.push({ address: predictPlayerGenesisAddresses(x.roles.deployer, x.startingNonce).btcConverter,
-        runtimeHash: H, purpose: 'Unneeded converter receiving privilege' }); },
-      x => delete x.runtimeHashes.coordinator, x => { x.schemaVersion = 1; }, x => { x.route = 'guarded-player-genesis'; }, x => { delete x.route; },
+      x => delete x.external.permit2.runtimeHash, x => delete x.runtimeHashes.coordinator, x => { x.schemaVersion = 1; }, x => { x.route = 'guarded-player-genesis'; }, x => { delete x.route; },
       x => { x.auction.steps[0].mps = '1'; }, x => { x.auction.startBlock = x.snapshot.auctionClock; },
       x => { x.auction.inventory = String(100_000_000n * E); },
       x => { x.player = { inventory: String(1_000_000n * E), eligibility: [] }; },
@@ -381,35 +357,6 @@ if (process.argv.includes('--example')) {
         : { ...b, timestamp: BigInt(fixture.snapshot.timestamp) + BigInt(fixture.snapshot.maxAgeSeconds) + 1n };
     } }), /became stale/);
   });
-  await test('predeploy requires exact pinned WBTC and initialized liquid reward pool without claiming budget depth', async () => {
-    const { client } = predeployClient(fixture), requests = [];
-    const result = await preflightPlayerGenesis(fixture, { ...client,
-      readContract: request => { requests.push(request); return client.readContract(request); } });
-    assert.equal(result.rewardRoute.initialized, true);
-    assert.equal(result.rewardRoute.activeLiquidityObserved, true);
-    assert.equal(result.rewardRoute.executableDepthForBudgetVerified, false);
-    assert.equal(result.rewardRoute.sqrtPriceX96, String(1n << 96n));
-    assert.equal(result.rewardRoute.liquidity, String(1000n * E));
-    assert.deepEqual(result.rewardRoute.pool, rewardPoolFor(fixture));
-    const externalReads = requests.filter(x => [fixture.external.wbtc.address, fixture.external.rewardManager.address].includes(x.address));
-    assert.equal(externalReads.length, 3);
-    assert.ok(externalReads.every(x => x.blockNumber === BigInt(fixture.snapshot.blockNumber)));
-    for (const role of ['wbtc', 'rewardManager']) await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client,
-      getBytecode: request => request.address === fixture.external[role].address ? '0x6002' : client.getBytecode(request),
-    }), new RegExp(`${role} runtime`));
-    await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client,
-      readContract: request => request.functionName === 'decimals' ? 18 : client.readContract(request),
-    }), /WBTC decimals/);
-    const slots = rewardSlots(fixture);
-    for (const [slot, value, reason] of [
-      [slots.slot, toHex(1n << 200n, { size: 32 }), /must be initialized/],
-      [slots.liquidity, toHex(1n << 200n, { size: 32 }), /must have active liquidity/],
-      [slots.slot, '0x01', /state response missing/],
-    ]) await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client,
-      readContract: request => request.address === fixture.external.rewardManager.address && request.args?.[0] === slot
-        ? value : client.readContract(request),
-    }), reason);
-  });
   await test('wall clock rejects coherent replayed RPC state and future clocks at entry and completion', async () => {
     const { client } = predeployClient(fixture);
     const snapshot = BigInt(fixture.snapshot.timestamp), milliseconds = seconds => Number(seconds) * 1000;
@@ -462,15 +409,11 @@ if (process.argv.includes('--example')) {
       ['TRADE_FEE_BPS', () => 500n, /TRADE_FEE_BPS/], ['REVENUE_POLICY_ID', () => H, /REVENUE_POLICY_ID/],
       ['MAX_HOOK_FEE_BPS', () => 100n, /MAX_HOOK_FEE_BPS/], ['REWARDS_BPS', () => 0n, /REWARDS_BPS/],
       ['rewardsRecipient', () => A(99), /rewardsRecipient/], ['managerCollectsRevenue', () => false, /managerCollectsRevenue/],
-      ['authorizedVault', () => A(99), /authorizedVault/], ['wbtc', () => A(99), /wbtc/],
-      ['omrRouter', () => A(99), /omrRouter/], ['converter', () => A(99), /converter/],
-      ['externalManager', () => A(99), /externalManager/], ['poolFee', () => 500n, /poolFee/],
-      ['poolTickSpacing', () => 1n, /poolTickSpacing/],
-      ['routerRuntimeHash', () => `0x${'22'.repeat(32)}`, /routerRuntimeHash/],
-      ['converterRuntimeHash', () => `0x${'22'.repeat(32)}`, /converterRuntimeHash/],
-      ['managerRuntimeHash', () => `0x${'22'.repeat(32)}`, /managerRuntimeHash/],
-      ['wbtcRuntimeHash', () => `0x${'22'.repeat(32)}`, /wbtcRuntimeHash/],
-      ['MAX_PROOF_LENGTH', () => 65n, /MAX_PROOF_LENGTH/], ['MAX_DEADLINE_DELAY', () => 86401n, /MAX_DEADLINE_DELAY/],
+      ['rewardVault', () => A(99), /rewardVault/], ['distributor', () => A(99), /distributor/],
+      ['distributorRuntimeHash', () => '0x'+'22'.repeat(32), /distributorRuntimeHash/],
+      ['LOCK_DURATION', () => 0n, /LOCK_DURATION/], ['EPOCH_DURATION', () => 86400n, /EPOCH_DURATION/],
+      ['canonicalRouterRuntimeHash', () => '0x'+'22'.repeat(32), /canonicalRouterRuntimeHash/],
+      ['canonicalHookRuntimeHash', () => '0x'+'22'.repeat(32), /canonicalHookRuntimeHash/],
       ['minimumTokenReserve', () => 1n, /minimumTokenReserve/], ['requiredCurrencyRaised', () => 1n, /requiredCurrencyRaised/],
       ['INITIAL_LP_BPS', () => 3750n, /INITIAL_LP_BPS/], ['LIQUIDITY_LOCK_SECONDS', () => 0n, /LIQUIDITY_LOCK_SECONDS/],
       ['migrationTimestamp', () => 1n, /migrationTimestamp/], ['liquidityUnlockTimestamp', () => 1n, /liquidityUnlockTimestamp/],
@@ -485,21 +428,13 @@ if (process.argv.includes('--example')) {
       ['tokensReceived', () => false, /tokensReceived/],
     ]) await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client,
       readContract: request => request.functionName === name ? override(request) : client.readContract(request) }, { phase: 'prepared' }), message);
-    for (const [target, getter, expected] of [
-      [plan.addresses.btcConverter, 'poolKey', /reward converter PoolKey/],
-      [plan.addresses.btcRewards, 'omrPool', /reward vault OMR PoolKey/],
-    ]) await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client,
-      readContract: request => request.address === target && request.functionName === getter
-        ? { ...(getter === 'poolKey' ? rewardPoolFor(fixture) : plan.canonicalPool), hooks: A(99) }
-        : client.readContract(request) }, { phase: 'prepared' }), expected);
     for (const [target, getter, value, expected] of [
-      [plan.addresses.btcRewards, 'operatorRole', 2n, /reward vault must not be an operator/],
-      [plan.addresses.btcConverter, 'operatorRole', 2n, /converter must not be an operator/],
-      [plan.addresses.btcConverter, 'contractHolderRuntimeHash', H, /converter must not be a contract holder/],
-      [plan.addresses.btcConverter, 'isRecipient', true, /converter must not be an OMR recipient/],
+      [plan.addresses.ethRewards, 'operatorRole', 2n, /must not be an operator/],
+      [plan.addresses.ethStaking, 'operatorRole', 0n, /operator role|custody role/],
     ]) await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client,
       readContract: request => request.address === plan.addresses.omr && request.functionName === getter
         && request.args?.[0] === target ? value : client.readContract(request) }, { phase: 'prepared' }), expected);
+
   });
   console.log(`player-genesis-deployment: ${count} focused checks passed`);
 }

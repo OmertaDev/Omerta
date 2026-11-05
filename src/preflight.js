@@ -193,6 +193,8 @@ export const OPERATIONAL_ENV = [
   // no authority: an enabled old sender or reused oracle key makes the new keeper refuse startup.
   'DEX_BOT_ENABLED', 'OMERTA_ORACLE_PK', 'ORACLE_KEEPER_PK',
   'POL_POSITION_OWNER', 'DEX_POOL_FEE', 'DEX_POOL_TICK_SPACING',
+  'MARKET_V2_RPC_URL', 'MARKET_V2_KEEPER_KEY', 'OMR_GAME_TOKEN_ADDRESS', 'OMR_GAME_TOKEN_RUNTIME_HASH',
+  'ETH_REWARDS_AUTOMATION_ENABLED', 'ETH_REWARDS_MANIFEST_PATH', 'ETH_REWARDS_MANIFEST_SHA256', 'ETH_STAKING_UI_ENABLED',
   'DEX_BUYBACK_MAX_ETH', 'POL_PAIR_MAX_ETH', 'DEX_MAX_SLIPPAGE_BPS', 'DEX_TWAP_MAX_AGE_S', 'DEX_BOT_EVERY_MS',
   // THE LP LEAGUE reader (dexbot.js:readLpPositions) — read-only, no key. Its log scan starts at the
   // pool's deploy block; 0 works and just re-scans the chain every tick, so this is a cost knob, not

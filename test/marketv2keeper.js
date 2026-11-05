@@ -74,7 +74,7 @@ function fixture({ valid = true, owed = 1000n, code = '0x60006000', rejectDeploy
     ['hook_claim', 'hook', 5, 'OmertaHookV2'],
   ]) {
     const policy = structuredClone(raw);
-    policy.jobs = [{ id: 'fund-wbtc-rewards', kind, target, bucket, currency: zeroAddress, minimumAmount: '100', intervalSeconds: 60 }];
+    policy.jobs = [{ id: 'fund-eth-rewards', kind, target, bucket, currency: zeroAddress, minimumAmount: '100', intervalSeconds: 60 }];
     const plan = await planMarketV2(policy, fixture(), { now });
     assert.equal(plan.actions.length, 1);
     assert.equal(plan.actions[0].target, policy.contracts[target].address);

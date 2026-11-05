@@ -24,6 +24,8 @@
     "test:rc1:mobile": "node tools/rc1-mobile-journeys.js",
     "test:rc1:shutdown": "node tools/rc1-shutdown.js",
     "rc1:sim": "node tools/rc1-sim.js",
+    "test:eth-rewards": "node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js",
+    "test:eth-staking:browser": "node test/eth-staking.js --browser",
     "test:market-v2": "node test/market-v2-deployment-plan.js && node test/marketv2keeper.js && node test/marketv2solver.js",
     "test:coordination": "node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js",
     "test:coordination:postgres": "node test/coordination.js --postgres && node test/coordination-knowledge-runtime.js --postgres && node test/coordination-knowledge-postgres.js",

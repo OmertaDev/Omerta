@@ -17,7 +17,7 @@ const json = x => JSON.stringify(x, (_, v) => typeof v === 'bigint' ? v.toString
 export function marketV2DeploymentExample() {
   const root = fileURLToPath(new URL('../', import.meta.url));
   const sourceRevision = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim();
-  const roles = Object.fromEntries(['safe', 'deployer', 'safeExecutor', 'adjudicator', 'initializer', 'dev', 'rwa', 'community', 'capitalProvider']
+  const roles = Object.fromEntries(['safe', 'deployer', 'safeExecutor', 'adjudicator', 'initializer', 'dev', 'rwa', 'community', 'stakingReward', 'capitalProvider']
     .map((name, i) => [name, A(0x10000 + i)]));
   roles.capitalProvider = roles.safe;
   const artifactHashes = Object.fromEntries([...new Set(MARKET_V2_ROLES.map(([, c]) => c))]
@@ -27,16 +27,14 @@ export function marketV2DeploymentExample() {
   return {
     schemaVersion: 2, chainId: 31337, localRehearsal: true, sourceRevision, startingNonce: '17', roles,
     snapshot: { blockNumber: '123', blockHash: H, timestamp: '2000000000' },
-    external: Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2', 'wbtc', 'rewardManager'].map((k, i) => [k, { address: A(0x20000 + i), runtimeHash: H }])),
+    external: Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2'].map((k, i) => [k, { address: A(0x20000 + i), runtimeHash: H }])),
     restrictedMarket: { policyId: RESTRICTED_MARKET_POLICY_ID,
       operatorRuntimeHashes: Object.fromEntries(['hook', 'controller', 'bond', 'turf', 'arbitrage', 'router', 'positionManager', 'permit2'].map(k => [k, H])),
-      additionalOperators: [], holderRuntimeHashes: Object.fromEntries(['polFunding', 'reserveFunding', 'turfFeeBridge', 'btcRewards'].map(k => [k, H])),
-      contractHolders: [] },
+      additionalOperators: [], holderRuntimeHashes: Object.fromEntries(['polFunding', 'reserveFunding', 'turfFeeBridge'].map(k => [k, H])),
+      contractHolders: [{ address: roles.stakingReward, runtimeHash: H, purpose: 'Typed ETH reward collector receiving-only holder' }] },
     create2: { factory: A(0x30000), runtimeHash: H, kind: 'salt-prefix', saltStart: '0', maxAttempts: 200000 },
     artifactHashes,
-    rewards: { converterRuntimeHash: H },
     policies: {
-      rewards: { fee: 3000, tickSpacing: 60 },
       pool: { fee: 3000, tickSpacing: 60 },
       hook: { opening: { blocks: 200, buyBps: 50, maxBuyQuote: String(10n * E) }, surgeFullTicks: 100, epochDuration: 60 },
       market: { requiredLiquidity: String(500n * E), maxAge: '120', fullStressTicks: 100 },
@@ -66,9 +64,9 @@ if (process.argv.includes('--example')) {
   const plan = buildMarketV2DeploymentPlan(fixture);
   let passed = 0;
   const test = (name, fn) => { fn(); ++passed; console.log(`PASS ${name}`); };
-  test('fourteen deployments bind reward contracts and preserve the exact companion CREATE sequence', () => {
+  test('twelve deployments preserve companion CREATE addresses and append one restricted router', () => {
     const ds = plan.steps.filter(x => x.kind === 'deployment');
-    assert.equal(ds.length, 14);
+    assert.equal(ds.length, 12);
     assert.equal(ds.filter(x => x.method === 'CREATE2').length, 1);
     ds.forEach((d, i) => {
       assert.equal(d.transaction.nonce, String(17 + i));
@@ -90,13 +88,13 @@ if (process.argv.includes('--example')) {
     assert.equal(decoded[0], fixture.external.poolManager.address);
     assert.equal(decoded[1], fixture.external.omr.address);
     assert.deepEqual(decoded[5], [fixture.roles.dev, fixture.roles.rwa, fixture.roles.community, plan.addresses.polFunding, plan.addresses.reserveFunding]);
-    assert.equal(decoded[9], plan.addresses.btcRewards);
+    assert.equal(decoded[9], fixture.roles.stakingReward);
     assert.deepEqual(plan.economics.splitBps, { dev: 127, rwa: 51, community: 76, pol: 96 });
     assert.equal(plan.economics.sellBaseBps, 350);
     assert.equal(plan.economics.ordinaryBuyBps, 400);
     assert.equal(plan.economics.rewardsTradeBps, 50);
     assert.equal(plan.economics.totalTradeBps, 400);
-    assert.equal(plan.economics.rewardsRecipient, plan.addresses.btcRewards);
+    assert.equal(plan.economics.rewardsRecipient, fixture.roles.stakingReward);
     assert.equal(plan.economics.baseTradeBps, 350);
     assert.equal(plan.economics.enforcedBy, fixture.external.poolManager.address);
     assert.equal(plan.economics.primaryRecipients.pol, plan.addresses.polFunding);
@@ -124,48 +122,14 @@ if (process.argv.includes('--example')) {
     assert.equal(Number(source.match(/rwa = base \* (\d+) \/ BASE_FEE_BPS/)[1]), allocated[1]);
     assert.equal(Number(source.match(/community = base \* (\d+) \/ BASE_FEE_BPS/)[1]), allocated[2]);
   });
-  test('reward deployments encode the same vault, router, asset and hookless external conversion pool', () => {
-    const decode = role => {
-      const d = plan.steps.find(x => x.kind === 'deployment' && x.role === role);
-      const a = loadMarketV2Artifact(d.contract);
-      return decodeAbiParameters(a.abi.find(x => x.type === 'constructor').inputs, `0x${d.transaction.data.slice(a.bytecode.length)}`);
-    };
-    const [vault] = decode('btcRewards');
-    assert.equal(vault.safe, fixture.roles.safe);
-    assert.equal(vault.wbtc, fixture.external.wbtc.address);
-    assert.equal(vault.omr, fixture.external.omr.address);
-    assert.equal(vault.omrRouter, plan.addresses.router);
-    assert.equal(vault.converter, plan.addresses.btcConverter);
-    assert.equal(vault.routerRuntimeHash, H);
-    assert.equal(vault.converterRuntimeHash, H);
-    const { poolId, ...canonicalPoolKey } = plan.canonicalPool;
-    assert.deepEqual(vault.omrPool, canonicalPoolKey);
-    const converter = decode('btcConverter');
-    assert.deepEqual(converter, [plan.addresses.btcRewards, fixture.external.wbtc.address,
-      fixture.external.rewardManager.address, { currency0: zeroAddress, currency1: fixture.external.wbtc.address,
-        fee: 3000, tickSpacing: 60, hooks: zeroAddress }, H, H]);
-    assert.equal(plan.steps[0].kind, 'readiness');
-    assert.equal(plan.steps[0].required.executableDepthForBudgetRequired, true);
-    assert.equal(plan.steps[0].required.decimals, 8);
-  });
-  test('the external converter cannot receive OMR privileges through additional manifest entries', () => {
-    const x = clone(fixture);
-    x.restrictedMarket.additionalOperators.push({ address: plan.addresses.btcConverter, role: 2, runtimeHash: H, purpose: 'Forbidden converter custody' });
-    assert.throws(() => buildMarketV2DeploymentPlan(x), /converter.*OMR operator/);
-    const y = clone(fixture);
-    y.restrictedMarket.contractHolders.push({ address: plan.addresses.btcConverter, runtimeHash: H, purpose: 'Forbidden converter holder' });
-    assert.throws(() => buildMarketV2DeploymentPlan(y), /converter.*OMR contract holder/);
-    assert.equal(plan.steps.some(step => step.functionName === 'setOperator' && step.args[0] === plan.addresses.btcRewards), false);
-  });
-  test('rewards require actual constructor-specific runtime evidence and a distinct external settlement domain', () => {
-    const x = clone(fixture); x.rewards.converterRuntimeHash = loadMarketV2Artifact('OmertaWbtcConverterV2').evidence.runtimeTemplateKeccak256;
-    assert.throws(() => buildMarketV2DeploymentPlan(x), /immutable template/);
-    const y = clone(fixture); y.external.rewardManager.address = y.external.poolManager.address;
-    assert.throws(() => buildMarketV2DeploymentPlan(y), /must be distinct/);
-    const z = clone(fixture); z.chainId = 4663; z.localRehearsal = false;
-    assert.throws(() => buildMarketV2DeploymentPlan(z), /reviewed bridged WBTC address/);
-    const w = clone(fixture); w.policies.rewards.tickSpacing = 0;
-    assert.throws(() => buildMarketV2DeploymentPlan(w), /rewards.tickSpacing/);
+  test('ETH collector is a separately reviewed receiving-only holder', () => {
+    assert.equal(plan.economics.rewardsRecipient, fixture.roles.stakingReward);
+    assert.equal(plan.steps.some(x => x.functionName === 'setOperator' && x.args[0] === fixture.roles.stakingReward), false);
+    const absent = clone(fixture); absent.restrictedMarket.contractHolders = [];
+    assert.throws(() => buildMarketV2DeploymentPlan(absent), /receiving-only/);
+    const operator = clone(fixture); operator.restrictedMarket.additionalOperators.push({ address: fixture.roles.stakingReward, role: 2, runtimeHash: H, purpose: 'Invalid custody privilege' });
+    assert.throws(() => buildMarketV2DeploymentPlan(operator), /never a custody operator/);
+    assert.equal(plan.steps.find(x => x.label === 'Verify replacement market contracts and actual operator runtime before irrevocable policy sealing').required.rewards.rewardAsset, 'native ETH');
   });
   test('inventory bonds deploy dormant with a bounded discount and at least thirty-day vesting', () => {
     assert.equal(plan.bondPolicy.startsPaused, true);
@@ -202,7 +166,7 @@ if (process.argv.includes('--example')) {
     const readiness = plan.steps.find(x => x.label === 'Verify replacement market contracts and actual operator runtime before irrevocable policy sealing');
     assert.equal(readiness.required.manager.polRecipient, plan.addresses.polFunding);
     assert.equal(readiness.required.manager.TRADE_FEE_BPS, 400);
-    assert.equal(readiness.required.manager.rewardsRecipient, plan.addresses.btcRewards);
+    assert.equal(readiness.required.manager.rewardsRecipient, fixture.roles.stakingReward);
     assert.equal(readiness.required.positionManager.poolManager, fixture.external.poolManager.address);
     assert.equal(readiness.required.token.operatorCount, 0);
     assert.equal(readiness.required.token.contractHolderCount, 0);
@@ -226,7 +190,7 @@ if (process.argv.includes('--example')) {
         operatorAt: plan.restrictedMarket.operatorAddresses[role], operatorRole: n, operatorRuntimeHash: H });
     });
     assert.equal(finalRegistry.required.contractHolderCount, 4);
-    ['polFunding', 'reserveFunding', 'turfFeeBridge', 'btcRewards'].forEach((role, index) => {
+    ['polFunding', 'reserveFunding', 'turfFeeBridge'].forEach((role, index) => {
       assert.deepEqual(finalRegistry.required.contractHolders[index], { index, contractHolderAt: plan.addresses[role], contractHolderRuntimeHash: H });
     });
     assert.ok(plan.executionConditions.some(x => x.includes('offline generator does not perform them')));
@@ -276,7 +240,7 @@ if (process.argv.includes('--example')) {
     assert.equal(holders.length, 4);
     const seal = plan.steps.findIndex(step => step.functionName === 'sealPolicy');
     const abi = parseAbi(['function setContractHolder(address holder,bytes32 expectedRuntimeHash)']);
-    ['polFunding', 'reserveFunding', 'turfFeeBridge', 'btcRewards'].forEach((role, i) => {
+    ['polFunding', 'reserveFunding', 'turfFeeBridge'].forEach((role, i) => {
       const step = holders[i];
       assert.equal(step.transaction.from, fixture.roles.safe);
       assert.deepEqual(decodeFunctionData({ abi, data: step.transaction.data }).args, [plan.addresses[role], H]);
@@ -299,17 +263,17 @@ if (process.argv.includes('--example')) {
     const readiness = plan.steps.find(step => step.label === 'Verify self-enrolling revenue wallets are undelegated EOAs');
     assert.equal(readiness.required.liveCode, '0x');
     assert.equal(readiness.required.directCallerEqualsTransactionOrigin, true);
-    const x = clone(fixture); x.restrictedMarket.contractHolders = [{ address: x.roles.rwa, runtimeHash: H, purpose: 'Reviewed RWA treasury' }];
+    const x = clone(fixture); x.restrictedMarket.contractHolders.push({ address: x.roles.rwa, runtimeHash: H, purpose: 'Reviewed RWA treasury' });
     const p = buildMarketV2DeploymentPlan(x);
     assert.equal(p.steps.some(step => step.functionName === 'registerWallet' && step.args[0] === x.roles.rwa), false);
     const registry = p.steps.find(step => step.label === 'Verify the exact complete operator and contract-holder registries immediately before sealing');
     assert.equal(registry.required.contractHolderCount, 5);
     assert.deepEqual(registry.required.contractHolders.at(-1), { index: 4, contractHolderAt: x.roles.rwa, contractHolderRuntimeHash: H });
-    x.restrictedMarket.contractHolders[0].address = x.roles.safe;
+    x.restrictedMarket.contractHolders.at(-1).address = x.roles.safe;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /genesis address/);
-    x.restrictedMarket.contractHolders[0].address = p.addresses.router;
+    x.restrictedMarket.contractHolders.at(-1).address = p.addresses.router;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /operator.*genesis address/);
-    x.restrictedMarket.contractHolders[0].address = p.addresses.polFunding;
+    x.restrictedMarket.contractHolders.at(-1).address = p.addresses.polFunding;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /Duplicate/);
   });
   test('season/Turf setup precedes bridge deployment and complete one-time binding calls follow controller', () => {

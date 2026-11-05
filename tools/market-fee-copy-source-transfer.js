@@ -2,6 +2,7 @@
 // Historical review pins stay unchanged. This confers no runtime or deployment clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { nativeEthHistoricalInput } from './native-eth-source-transfer.js';
 
 export const MARKET_FEE_COPY_BASE_REVISION = 'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9';
 export const MARKET_FEE_COPY_DOMAINS = {
@@ -123,6 +124,7 @@ const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLengt
 
 export function assertMarketFeeCopySourceTransfer(file, input) {
   assert(Object.hasOwn(MARKET_FEE_COPY_DOMAINS, file), 'Unknown market fee-copy source domain');
+  input = nativeEthHistoricalInput(file, input);
   const text = Buffer.isBuffer(input) ? input.toString('utf8') : input;
   if (Buffer.isBuffer(input)) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required');
   assert(typeof text === 'string', 'Market fee-copy source text required');
@@ -148,6 +150,7 @@ export function assertMarketFeeCopySourceTransfer(file, input) {
 
 export function marketFeeCopyHistoricalInput(file, input) {
   if (!Object.hasOwn(MARKET_FEE_COPY_DOMAINS, file)) return input;
+  input = nativeEthHistoricalInput(file, input);
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required');
   if (typeof text !== 'string' || (text !== lf(text) && text !== lf(text).replaceAll('\n', '\r\n')))

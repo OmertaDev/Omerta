@@ -22,8 +22,12 @@ on:
       - 'src/marketv2*.js'
       - 'tools/market-v2-deployment-plan.js'
       - 'tools/solidity-dependency-pragmas.js'
-      - 'tools/wbtc-reward-epoch.js'
-      - 'test/wbtc-reward-epoch.js'
+      - 'tools/eth-rewards-*.js'
+      - 'src/eth*.js'
+      - 'test/eth*.js'
+      - 'public/eth-staking.js'
+      - 'tools/*native-eth-source-transfer*'
+      - 'test/native-eth-source-transfer.js'
       - 'tools/tokenomics-pilot.js'
       - 'test/tokenomics-pilot.js'
       - 'tools/player-genesis-*.js'
@@ -50,8 +54,12 @@ on:
       - 'src/marketv2*.js'
       - 'tools/market-v2-deployment-plan.js'
       - 'tools/solidity-dependency-pragmas.js'
-      - 'tools/wbtc-reward-epoch.js'
-      - 'test/wbtc-reward-epoch.js'
+      - 'tools/eth-rewards-*.js'
+      - 'src/eth*.js'
+      - 'test/eth*.js'
+      - 'public/eth-staking.js'
+      - 'tools/*native-eth-source-transfer*'
+      - 'test/native-eth-source-transfer.js'
       - 'tools/tokenomics-pilot.js'
       - 'test/tokenomics-pilot.js'
       - 'tools/player-genesis-*.js'
@@ -154,7 +162,9 @@ jobs:
         run: |
           npm ci
           npm run test:market-v2
-          node test/wbtc-reward-epoch.js
+          node tools/eth-rewards-abi-pack.js --check
+          npm run test:eth-rewards
+          node test/native-eth-source-transfer.js
           node test/tokenomics-pilot.js
           node test/player-genesis-deployment.js
           node test/genesis-fee-readiness-source-transfer.js

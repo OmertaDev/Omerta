@@ -25,7 +25,7 @@ if (JSON.stringify(schema) !== JSON.stringify(['address', 'address', 'address', 
   throw Error('Trusted hook constructor is not the pinned 10-argument, 16-word static schema.');
 const primarySourceHash = (a, source) => compilerSourceSha256(fs.readFileSync(path.join(root, 'omerta-contracts', source)), a.evidence.sources[source].compilerInputKeccak256);
 const hookSource = primarySourceHash(artifact, 'src/market-v2/OmertaHookV2.sol');
-if (hookSource !== '8153d2456a191e05bee3c7eca106d66cc8408b698a7372b68f54be47321c5e96')
+if (hookSource !== 'e63aec4054854d1928a04eb5779c291a4e2bcaa0b548b800b33b94c33425b28a')
   throw Error('Hook source differs from the pinned fixed-policy release candidate; review before updating this builder pin.');
 const packageRoot = path.dirname(require.resolve('@noble/hashes/sha3'));
 const metadata = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json')));

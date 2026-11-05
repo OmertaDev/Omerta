@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { nativeEthHistoricalInput, NATIVE_ETH_PREDECESSOR_REVISION } from '../tools/native-eth-source-transfer.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -173,7 +174,7 @@ const socialReceiptSafetyFiles = [
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const physicalFeeCopySource = file => {
-  const input = fs.readFileSync(file, 'utf8');
+  const input = nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8'));
   return Object.hasOwn(MARKET_FEE_COPY_DOMAINS, file)
     ? assertMarketFeeCopySourceTransfer(file, input).baselineText : input;
 };
@@ -353,7 +354,7 @@ for (const file of bankInterestHardeningFiles) {
   const pin = ECONOMY_BANK_INTEREST_HARDENING_DOMAINS[file];
   const current = git('show', ECONOMY_BANK_INTEREST_HARDENING_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR + ':' + file);
-  const physical = lf(fs.readFileSync(file, 'utf8'));
+  const physical = lf(nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8')));
   assert.equal(physical, current, 'Physical bank-interest hardening source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -533,7 +534,7 @@ for (const file of socialReceiptSafetyFiles) {
   const pin = ECONOMY_SOCIAL_RECEIPT_SAFETY_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_PREDECESSOR + ':' + file);
-  const physical = lf(economySocialProofCutoverHistoricalInput(file, fs.readFileSync(file, 'utf8')));
+  const physical = lf(economySocialProofCutoverHistoricalInput(file, nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8'))));
   assert.equal(physical, current, 'Physical receipt-safety repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -612,7 +613,7 @@ for (const file of socialReceiptFiles) {
   const pin = ECONOMY_SOCIAL_RECEIPT_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_RECEIPT_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_PREDECESSOR + ':' + file);
-  const cutoverPhysical = economySocialProofCutoverHistoricalInput(file, fs.readFileSync(file, 'utf8'));
+  const cutoverPhysical = economySocialProofCutoverHistoricalInput(file, nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8')));
   const physical = lf(economySocialReceiptSafetyHistoricalInput(file, cutoverPhysical));
   assert.equal(physical, current, 'Physical social-receipt repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
@@ -1261,14 +1262,14 @@ assert.deepEqual(Object.keys(MARKET_FEE_COPY_DOMAINS), [
 assert(Object.isFrozen(MARKET_FEE_COPY_DOMAINS));
 let feeCopyPositives = 0, feeCopyRefusals = 0, feeCopyHunks = 0;
 for (const file of Object.keys(MARKET_FEE_COPY_DOMAINS)) {
-  const pin = MARKET_FEE_COPY_DOMAINS[file], current = lf(fs.readFileSync(file, 'utf8'));
+  const pin = MARKET_FEE_COPY_DOMAINS[file], current = lf(nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8')));
   const baseline = git('show', MARKET_FEE_COPY_BASE_REVISION + ':' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
   assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
   assert.equal(Buffer.byteLength(current), pin.currentBytes);
   assert.equal(Buffer.byteLength(baseline), pin.baselineBytes);
-  assert.deepEqual(pin.inverses, inverseHunks(file, MARKET_FEE_COPY_BASE_REVISION, null));
+  assert.deepEqual(pin.inverses, inverseHunks(file, MARKET_FEE_COPY_BASE_REVISION, NATIVE_ETH_PREDECESSOR_REVISION));
   for (const input of [current, current.replaceAll('\n', '\r\n'),
     Buffer.from(current), Buffer.from(current.replaceAll('\n', '\r\n'))]) {
     const transfer = assertMarketFeeCopySourceTransfer(file, input);
@@ -1333,7 +1334,8 @@ assert.equal(git('ls-tree', agePin.sourceRevision, '--', agePin.file).trim(),
 assert.equal(git('ls-tree', agePin.baselineRevision, '--', agePin.file).trim(),
   '100644 blob ' + agePin.baselineBlob + '\t' + agePin.file);
 assert.deepEqual(agePin.inverses, inverseHunks(agePin.file, agePin.baselineRevision, agePin.sourceRevision));
-assert.equal(lf(fs.readFileSync(agePin.file, 'utf8')), ageCurrent, 'Actual runtime retains the complete 21+ server source');
+assert.equal(lf(nativeEthHistoricalInput(agePin.file, fs.readFileSync(agePin.file, 'utf8'))), ageCurrent,
+  'Exact historical source retains the complete 21+ server predecessor; native runtime is checked separately');
 let agePositives = 0, ageRefusals = 0;
 for (const input of [ageCurrent, ageCurrent.replaceAll('\n', '\r\n'),
   Buffer.from(ageCurrent), Buffer.from(ageCurrent.replaceAll('\n', '\r\n'))]) {

@@ -1,6 +1,7 @@
 // Exact source transfer only; new genesis readiness and chain behavior require separate evidence.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { nativeEthHistoricalInput } from './native-eth-source-transfer.js';
 
 export const GENESIS_FEE_READINESS_REVIEWED_REVISION = 'cb85073717eaec8ffde23f7a35436b443a0a75d4';
 export const GENESIS_FEE_READINESS_BASE_REVISION = 'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9';
@@ -168,6 +169,7 @@ function sourceText(input, pin) {
 
 export function assertGenesisFeeReadinessSourceTransfer(file, input) {
   assert(Object.hasOwn(GENESIS_FEE_READINESS_DOMAINS, file), 'Unknown genesis readiness source domain');
+  input = nativeEthHistoricalInput(file, input);
   const pin = GENESIS_FEE_READINESS_DOMAINS[file], text = sourceText(input, pin);
   assert.equal(sha256(text), pin.currentSha256, 'Complete genesis readiness source drift: ' + file);
   assert.equal(blob(text), pin.currentBlob, 'Complete genesis readiness blob drift: ' + file);
@@ -190,6 +192,7 @@ export function assertGenesisFeeReadinessSourceTransfer(file, input) {
 
 export function qualifyGenesisFeeReadinessSource(file, input) {
   assert(Object.hasOwn(GENESIS_FEE_READINESS_DOMAINS, file), 'Unknown genesis readiness source domain');
+  input = nativeEthHistoricalInput(file, input);
   const pin = GENESIS_FEE_READINESS_DOMAINS[file], text = sourceText(input, pin);
   if (sha256(text) === pin.baselineSha256) {
     assert.equal(blob(text), pin.baselineBlob); assert.equal(Buffer.byteLength(text), pin.baselineBytes);
@@ -204,6 +207,7 @@ export function qualifyGenesisFeeReadinessSource(file, input) {
 // Unknown or changed bytes stay with the original rejecting guard; never strip by pattern alone.
 export function genesisFeeReadinessSourceBaseline(file, input) {
   if (!Object.hasOwn(GENESIS_FEE_READINESS_DOMAINS, file)) return input;
+  input = nativeEthHistoricalInput(file, input);
   const text = Buffer.isBuffer(input) ? input.toString('utf8') : input;
   const pin = GENESIS_FEE_READINESS_DOMAINS[file];
   if (typeof text !== 'string' || (!uniform(text) && sha256(text) !== pin.exactWorkingEncoding?.sha256)

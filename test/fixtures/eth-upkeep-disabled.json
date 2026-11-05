@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 2,
+  "chainId": 4663,
+  "keeper": "0x9c1e5fac0de08d0714b80812347f66cce16decca",
+  "governanceSafe": "0xbe225658718dcb3865902437887a11830e4a9b10",
+  "ethAutomation": {
+    "enabled": false,
+    "productionEnabled": false
+  },
+  "contracts": {
+    "rewards": {
+      "address": "0x1f0aae0ec54ec7ac39c3a5683b72608e65575902",
+      "runtimeHash": "0x75eee21d3cd863f1f28279e77153d19a8da2749812acac59dcd798173b7dc0ce",
+      "artifact": "OmertaEthRewardsV2"
+    },
+    "vault": {
+      "address": "0x5aef24a3c438784df1dc82b07538f6bfe883c804",
+      "runtimeHash": "0x3036274823213fad93e8e20126f259d70771d6367db959d5664a5b704ae6d353",
+      "artifact": "OmertaEthStakingV2"
+    },
+    "market": {
+      "address": "0x2f4a14d92b1094892abd50da98b04aa9e6a9b2d7",
+      "runtimeHash": "0x948d1734821c288fade17c1eea48dcdd1be8e4ead78f3fa108d78e6de3c06882",
+      "artifact": "OmertaMarketStateV2"
+    },
+    "hook": {
+      "address": "0x89b7b69e7bca0bc1a559dfc2a14c1ed61b3df5c4",
+      "runtimeHash": "0xe7a8606165df73b261eec9f7cbe12b2ba4090a20115b928d723689e43c1e38d2",
+      "artifact": "OmertaHookV2"
+    },
+    "manager": {
+      "address": "0xd342ae41527b4eb83cddc0fda8201586ac6042d9",
+      "runtimeHash": "0xee1596b9408c78268b20b21473e3cb4ee968e7b4f6032a4185aa8fc42ca7761f",
+      "artifact": "OmertaPoolManagerV2"
+    }
+  },
+  "gas": {
+    "maxGas": "1000000",
+    "maxFeePerGas": "40004000",
+    "maxPriorityFeePerGas": "0",
+    "dailyBudget": "1000000000000000",
+    "confirmations": 2,
+    "maxSnapshotAgeSeconds": 60
+  },
+  "jobs": [
+    {
+      "id": "eth-finalize",
+      "kind": "eth_finalize",
+      "target": "vault",
+      "intervalSeconds": 60,
+      "minimumAmount": "1"
+    },
+    {
+      "id": "eth-fund",
+      "kind": "eth_fund",
+      "target": "rewards",
+      "minimumAmount": "100000000000000",
+      "intervalSeconds": 60
+    },
+    {
+      "id": "eth-refresh",
+      "kind": "eth_refresh",
+      "target": "market",
+      "intervalSeconds": 60,
+      "minimumAmount": "1"
+    },
+    {
+      "id": "eth-convert",
+      "kind": "eth_convert",
+      "target": "rewards",
+      "minimumAmount": "100000000000000000000",
+      "intervalSeconds": 60
+    },
+    {
+      "id": "eth-collect",
+      "kind": "eth_collect",
+      "target": "rewards",
+      "minimumAmount": "1",
+      "intervalSeconds": 60
+    }
+  ]
+}

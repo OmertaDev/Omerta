@@ -2,7 +2,7 @@
 
 This is the restricted ETH/OMR market and its companion contracts. The replacement token binds to a reviewed settlement manager that charges mandatory revenue on every buy and sell, including swaps in alternative pools hosted by that manager. These files do not activate a live deployment, funded reserve, production signer, or game route.
 
-`OmertaRestrictedOMRV2` seals the existing settlement/custody roles and receiving-only runtime pins. Later admissions require separate Safe proposals, a seven-day delay and runtime revalidation; they cannot rewrite existing permissions, the manager or fee policy. `OmertaPoolManagerV2` enforces the base trade fee and WBTC rewards charge in swap accounting. The hook retains market measurements and bounded opening/surge charges. Position custody, reserve policy, inventory bonds, family entitlements, player commitments, rewards claims and conversion, and solver execution have separate contracts.
+`OmertaRestrictedOMRV2` seals the existing settlement/custody roles and receiving-only runtime pins. Later admissions require separate Safe proposals, a seven-day delay and runtime revalidation; they cannot rewrite existing permissions, the manager or fee policy. `OmertaPoolManagerV2` enforces the base trade fee and native ETH staking rewards charge in swap accounting. The hook retains market measurements and bounded opening/surge charges. Position custody, reserve policy, inventory bonds, family entitlements, player commitments, rewards claims and conversion, and solver execution have separate contracts.
 
 ```mermaid
 flowchart TD
@@ -14,9 +14,9 @@ flowchart TD
     PM --> RWA[0.51% RWA recipient]
     PM --> COMMUNITY[0.76% community recipient]
     PM --> POL[0.96% POL funding adapter]
-    PM --> BTC[0.5% WBTC rewards vault]
-    BTC --> CONV[Separate Safe conversion with output limits]
-    CONV --> CLAIM[Funded time-weighted epochs / holder claims]
+    PM --> ETH[0.5% native ETH collector]
+    ETH --> CONV[Bounded canonical OMR conversion / direct ETH funding]
+    CONV --> CLAIM[Onchain stake-seconds / funded native ETH claims]
     H --> SURGE[0–0.5% surge / reserve adapter]
     H --> O[Finalized market observations]
     O --> C[Stability controller]
@@ -40,7 +40,7 @@ flowchart TD
 | Requested capability | Implementation | Exact meaning |
 | --- | --- | --- |
 | Mandatory LP trade revenue | `OmertaPoolManagerV2` | 350 bps on buys and sells in every supported ETH/OMR pool: 127 founder/operations (`dev`), 51 RWA, 76 community, 96 POL. Rounding residual belongs to POL. |
-| WBTC holder rewards | `OmertaWbtcRewardsV2`, `OmertaWbtcConverterV2` | An additional mandatory 50 bps on buys and sells funds the vault. Separate Safe conversions buy WBTC through a pinned external pool. Immutable funded periods use time-weighted wallet and backed-game balances; holders claim their Merkle allocation for network gas. The Safe attests the off-chain manifest. |
+| Native ETH staking rewards | `OmertaEthRewardsV2`, `OmertaEthStakingV2` | An additional mandatory 50 bps on buys and sells funds the collector. Native ETH funds the fixed vault independently of conversion health. OMR converts only through the runtime-pinned canonical route under caps, fresh market data and a Safe health lease. Native ETH rewards use time-weighted unwithdrawn OMR stake. Each deposit has a 30-day minimum withdrawal lock. Matured principal continues earning until withdrawn, without renewal. Stake, mature withdrawal and reward claim have zero protocol tax; network gas applies. Thirty-day reward periods become claimable after closing and finalization. |
 | Protocol charge ceiling | `OmertaPoolManagerV2` | Rejects a positive post-swap hook surcharge above 50 bps of the actual raw swap delta, enforcing at most 450 bps including the 350-bps base and 50-bps rewards charge across reviewed hooks. LP fees are additional. |
 | Enforced settlement boundary | `OmertaRestrictedOMRV2` | Fixed-supply token and one settlement manager. Existing roles/runtime pins remain fixed after sealing; reviewed additional contracts require a seven-day admission process. Ordinary wallet transfers and unapproved venue funding fail after sealing. |
 | Wallet swap entry point | `OmertaSwapRouterV2` | Direct payer-to-manager OMR settlement, actual fee-adjusted limits, exact input/output and partial-fill accounting. |
@@ -67,7 +67,7 @@ The contracts expose the market facts and bounded game settlement needed for the
 
 ## Taxes and routing
 
-The manager charges a 350-bps base plus a separate 50-bps WBTC rewards allocation on the actual unspecified-side swap delta for both buys and sells, including partial fills. Both charges are independently rounded down. For exact input they reduce output; for exact output they increase required input. Its accounting records independent founder/operations, RWA, community, POL and rewards buckets for both ETH and OMR, and requires the caller to settle the fee-adjusted debt before unlocking ends. The manager rejects any positive post-swap hook surcharge above 0.5% of the raw delta, enforcing a maximum 4.5% protocol charge per swap across reviewed hooks. The canonical hook uses that bounded addition for opening or sell surge and does not collect the base or rewards twice. The proportionally scaled founder/operations share is 1.27%, with 0.51% for RWA, 0.76% for community and 0.96% for POL. Largest-remainder rounding makes these base shares sum to 350 bps; base allocation dust belongs to POL. These percentages use the actual raw swap delta, not a promised percentage of a trader's gross payment or net receipt. A multihop or arbitrage cycle pays on each executed swap. Never assume every receipt is ETH. LP fees are additional and are explicitly selected in the PoolKey.
+The manager charges a 350-bps base plus a separate 50-bps native ETH staking rewards allocation on the actual unspecified-side swap delta for both buys and sells, including partial fills. Both charges are independently rounded down. For exact input they reduce output; for exact output they increase required input. Its accounting records independent founder/operations, RWA, community, POL and rewards buckets for both ETH and OMR, and requires the caller to settle the fee-adjusted debt before unlocking ends. The manager rejects any positive post-swap hook surcharge above 0.5% of the raw delta, enforcing a maximum 4.5% protocol charge per swap across reviewed hooks. The canonical hook uses that bounded addition for opening or sell surge and does not collect the base or rewards twice. The proportionally scaled founder/operations share is 1.27%, with 0.51% for RWA, 0.76% for community and 0.96% for POL. Largest-remainder rounding makes these base shares sum to 350 bps; base allocation dust belongs to POL. These percentages use the actual raw swap delta, not a promised percentage of a trader's gross payment or net receipt. A multihop or arbitrage cycle pays on each executed swap. Never assume every receipt is ETH. LP fees are additional and are explicitly selected in the PoolKey.
 
 Each manager bucket can be swept to its fixed recipient independently. A recipient may claim its own bucket to another destination while the manager is locked. A failed recipient does not stop swaps or unrelated bucket claims. The canonical hook applies only its bounded sell surge or temporary opening buy charge, with separate accounting; it does not repeat the manager's base fee. Recipient addresses, base rates, maximum surge, and opening policy are immutable.
 

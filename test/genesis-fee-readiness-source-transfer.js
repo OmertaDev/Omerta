@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { nativeEthHistoricalInput } from '../tools/native-eth-source-transfer.js';
 import {
   GENESIS_FEE_READINESS_BASE_REVISION, GENESIS_FEE_READINESS_REVIEWED_REVISION,
   GENESIS_FEE_READINESS_DOMAINS, GENESIS_FEE_READINESS_SOURCE_TRANSFER,
@@ -17,7 +18,7 @@ const file = 'src/genesisauction.js', pin = GENESIS_FEE_READINESS_DOMAINS[file];
 const lf = text => text.replaceAll('\r\n', '\n');
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
-const current = lf(fs.readFileSync(file, 'utf8'));
+const current = lf(nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8')));
 const baseline = git('show', `${GENESIS_FEE_READINESS_BASE_REVISION}:${file}`);
 const pinned = git('show', `${GENESIS_FEE_READINESS_REVIEWED_REVISION}:${file}`);
 const gitBlob = text => execFileSync('git', ['hash-object', '--stdin'], { input: text, encoding: 'utf8' }).trim();
@@ -105,7 +106,7 @@ for (const invalid of [null, undefined, 1, {}, []]) {
 }
 
 for (const [path, domain] of Object.entries(GENESIS_FEE_READINESS_DOMAINS).filter(([path]) => path !== file)) {
-  const text = lf(fs.readFileSync(path, 'utf8'));
+  const text = lf(nativeEthHistoricalInput(path, fs.readFileSync(path, 'utf8')));
   const previous = git('show', `${GENESIS_FEE_READINESS_BASE_REVISION}:${path}`);
   assert.equal(text, git('show', `${GENESIS_FEE_READINESS_REVIEWED_REVISION}:${path}`));
   assert.equal(sha(text), domain.currentSha256); assert.equal(gitBlob(text), domain.currentBlob);
@@ -141,9 +142,9 @@ assert.equal(WORLD_RECOVERY_REVIEW.sourceFiles[file], '7fe75323e9ce4e3e5047d653b
 assert.equal(GENESIS_FEE_READINESS_SOURCE_TRANSFER.phase, 'exact source transfer only; no runtime, native, financial or deployment qualification');
 const reader = file => hasEnterpriseOverRootSource(file)
   ? enterpriseOverRootSourceBaseline(file, String(hasCommerceCurrentEnterpriseSource(file)
-    ? commerceOverCurrentEnterpriseSourceBaseline(file, fs.readFileSync(file, 'utf8'))
-    : continuousCityHistoricalInput(file, fs.readFileSync(file, 'utf8'))))
-  : continuousCityHistoricalInput(file, fs.readFileSync(file, 'utf8'));
+    ? commerceOverCurrentEnterpriseSourceBaseline(file, nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8')))
+    : continuousCityHistoricalInput(file, nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8')))))
+  : continuousCityHistoricalInput(file, nativeEthHistoricalInput(file, fs.readFileSync(file, 'utf8')));
 const actual = await verifyWorldRecoverySources({ readFile: reader, sourceRevision: GENESIS_FEE_READINESS_REVIEWED_REVISION });
 const prior = await verifyWorldRecoverySources({ readFile: path => Object.hasOwn(GENESIS_FEE_READINESS_DOMAINS, path)
   ? git('show', `${GENESIS_FEE_READINESS_BASE_REVISION}:${path}`) : reader(path), sourceRevision: GENESIS_FEE_READINESS_REVIEWED_REVISION });

@@ -15,9 +15,9 @@ const hash = n => `0x${n.toString(16).padStart(64, '0')}`;
 const dependencyAddresses = {
   omr: '0x2e82f8c1cfd5172612b3af56088d7d68d920545d', characterNft: '0x669c8878a2db3c3d0f7a447f398daa3178a0200b',
   poolManager: '0x8366a39cc670b4001a1121b8f6a443a643e40951', positionManager: '0x58daec3116aae6d93017baaea7749052e8a04fa7',
-  permit2: '0x000000000022d473030f116ddee9f6b43ac78ba3', create2Factory: FACTORY, btcRewards: addr(250),
+  permit2: '0x000000000022d473030f116ddee9f6b43ac78ba3', create2Factory: FACTORY, ethRewards: addr(250), ethStaking: addr(251),
 };
-const fixtureRewardsApproval = Object.freeze({ address: dependencyAddresses.btcRewards, sha256: runtimeSha });
+const fixtureRewardsApproval = Object.freeze({ address: dependencyAddresses.ethRewards, sha256: runtimeSha, staking: { address: dependencyAddresses.ethStaking, sha256: runtimeSha } });
 const packetTemplate = {
   chainId: 4663, signingReady: true, validUntil: '2026-10-08T00:00:00Z', deploymentDeadline: '2026-10-08T00:00:00Z',
   launchClock: { mode: 'arbsys', startBlock: '10000', endBlock: '4000000', claimBlock: '4000000' },
@@ -25,7 +25,7 @@ const packetTemplate = {
     saleTokenAmountWei: '40000000000000000000000000', lpTokenAmountWei: '20000000000000000000000000',
     bondTokenAmountWei: '40000000000000000000000000', minimumRaiseWei: '10000000000000000000', lpProceedsBps: 5000,
     claimsAtAuctionEnd: true, familySafe: SAFE, liquidityOwner: SAFE, unsoldRecipient: SAFE, bondReserveCustodian: SAFE },
-    hookPolicy: { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96, rewardsRecipient: dependencyAddresses.btcRewards, recipients: [] } },
+    hookPolicy: { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96, rewardsRecipient: dependencyAddresses.ethRewards, recipients: [] } },
   deployments: roles.map((role, i) => ({ role, chainId: 4663, from: DEPLOYER, nonce: String(i), value: '0x0',
     predicted: addr(100 + i), data: i === 3 ? '0x' + '00'.repeat(32) + '6000' : '0x6000', ...(i === 3 ? { to: FACTORY } : {}) })),
   runtimeChecks: Object.fromEntries(roles.map((role, i) => [role, { address: addr(100 + i), sha256: runtimeSha }])),
@@ -46,7 +46,7 @@ function makePacket(start=27n) {
     {type:'uint24'},{type:'uint32'},{type:'address'}],
     [dependencyAddresses.poolManager,dependencyAddresses.omr,p.deployments[2].predicted,3000,60,
       ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced',SAFE,'0x785be68e426a382c52004e04340897f834f2fcaf',p.deployments[0].predicted,p.deployments[1].predicted],
-      [0,0,0n],100,3600,dependencyAddresses.btcRewards]);
+      [0,0,0n],100,3600,dependencyAddresses.ethRewards]);
   const init=TRUSTED_HOOK.creationBytecode+args.slice(2),initHash=keccak256(init);
   for(let n=0n;n<1000000n;n++){
     const salt='0x'+n.toString(16).padStart(64,'0');const candidate=getCreate2Address({from:FACTORY,salt,bytecodeHash:initHash}).toLowerCase();
@@ -102,12 +102,23 @@ function fixture({ storage = new Storage(), locks = new Locks(), clock = () => n
       return state.codes.get(params[0].toLowerCase()) || '0x';
     }
     if (method === 'eth_call') {
+      const to = params[0].to.toLowerCase();
+      if ([dependencyAddresses.ethRewards, dependencyAddresses.ethStaking].includes(to)) {
+        const collector = to === dependencyAddresses.ethRewards;
+        const native = collector ? { 'safe()': SAFE, 'omr()': dependencyAddresses.omr, 'manager()': dependencyAddresses.poolManager,
+          'rewardVault()': dependencyAddresses.ethStaking, 'rewardVaultRuntimeHash()': keccak256(code) }
+          : { 'omr()': dependencyAddresses.omr, 'owner()': SAFE, 'governanceSafe()': SAFE, 'distributor()': dependencyAddresses.ethRewards,
+              'distributorRuntimeHash()': keccak256(code), 'EPOCH_DURATION()': 2592000n, 'LOCK_DURATION()': 2592000n };
+        const signature = Object.keys(native).find(k => keccak256('0x'+Buffer.from(k).toString('hex')).slice(0,10) === params[0].data);
+        assert(signature, 'The native runtime mock must know the queried binding');
+        return '0x'+BigInt(native[signature]).toString(16).padStart(64,'0');
+      }
       if (params[0].to.toLowerCase() === dependencyAddresses.poolManager) {
         if (state.standardManager) throw Error('unknown selector');
         const words = {
-          'revenuePolicyId()': state.badManagerPolicy ? hash(777) : keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS')),
+          'revenuePolicyId()': state.badManagerPolicy ? hash(777) : keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS')),
           'TRADE_FEE_BPS()': '0x' + BigInt(state.badManagerFee ? 401 : 400).toString(16).padStart(64, '0'),
-          'rewardsRecipient()': '0x' + (state.badRewardsRecipient ? addr(777) : dependencyAddresses.btcRewards).slice(2).padStart(64, '0'),
+          'rewardsRecipient()': '0x' + (state.badRewardsRecipient ? addr(777) : dependencyAddresses.ethRewards).slice(2).padStart(64, '0'),
           'omr()': '0x' + (state.badManagerOmr ? addr(777) : dependencyAddresses.omr).slice(2).padStart(64, '0'),
           ...Object.fromEntries(['developerRecipient()', 'rwaRecipient()', 'communityRecipient()', 'polRecipient()']
             .map((signature, i) => [signature, '0x' + (state.badManagerRecipient ? addr(777) : packet.finalManifest.hookPolicy.recipients[i]).slice(2).padStart(64, '0')])),
@@ -148,8 +159,10 @@ function fixture({ storage = new Storage(), locks = new Locks(), clock = () => n
   return { client, state, provider, storage, locks };
 }
 const [raw, digest] = await encoded();
-await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto }), /WBTC rewards vault must be approved/);
-await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto, approvedRewards: { ...fixtureRewardsApproval, sha256: '11'.repeat(32) } }), /rewards vault runtime/);
+await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto, approvedRewards: { ...fixtureRewardsApproval, staking: null } }), /staking vault/);
+await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto, approvedRewards: { ...fixtureRewardsApproval, staking: { ...fixtureRewardsApproval.staking, sha256: '11'.repeat(32) } } }), /staking runtime/);
+await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto }), /native ETH staking rewards vault must be approved/);
+await assert.rejects(() => verifyDeploymentPacket(raw, digest, { now, cryptoApi: webcrypto, approvedRewards: { ...fixtureRewardsApproval, sha256: '11'.repeat(32) } }), /collector runtime/);
 const load = async f => f.client.load(raw, digest);
 let f = fixture(); await load(f);
 assert.ok(!f.state.requests.some(r => r.method === 'eth_sendTransaction'), 'loading never sends');
@@ -173,7 +186,7 @@ for (const change of [p => { p.signingReady = false; }, p => { p.chainId = 1; },
   p => { delete p.finalManifest.hookPolicy; }, p => { p.finalManifest.hookPolicy.developerBps = 201; },
   p => { p.finalManifest.hookPolicy.baseTradeBps = 900; }, p => { p.finalManifest.hookPolicy.maxSurgeBps = 51; },
   p => { p.finalManifest.hookPolicy.rewardsRecipient = addr(2); },
-  p => { p.dependencyChecks.find(pin => pin.name === 'btcRewards').address = addr(2); },
+  p => { p.dependencyChecks.find(pin => pin.name === 'ethRewards').address = addr(2); },
   p => { p.finalManifest.hookPolicy.recipients[0] = addr(2); }, p => { p.finalManifest.hookPolicy.recipients[4] = addr(2); },
   p => { p.finalManifest.hookPolicy.governanceSafe = SAFE; },
   p => { p.internalValidatorAddress = dependencyAddresses.omr; p.auxiliaryRuntimeChecks[0].address = dependencyAddresses.omr; },
