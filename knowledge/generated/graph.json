@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "7f2c5ffbe337fc2699a8d5f615f1dff83a318f03",
+  "sourceRevision": "2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17464,
-    "edges": 70091,
+    "nodes": 17468,
+    "edges": 70108,
     "byNodeType": {
       "Artifact": 7089,
       "Command": 301,
-      "Commit": 5056,
+      "Commit": 5060,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5672,
-      "CHANGED": 27022,
+      "CHANGED": 27035,
       "CONTAINS": 7110,
       "DECLARES": 301,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1197,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 5056,
+      "HAS_COMMIT": 5060,
       "IMPLEMENTS": 124,
       "IMPORTS": 8405,
       "INHERITS": 45,
@@ -117662,20 +117662,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1403403,
-      "lines": 14601,
-      "version": "633ac1ff51edfc51",
+      "bytes": 1403789,
+      "lines": 14607,
+      "version": "28a37dc7ba42b3b0",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "633ac1ff51edfc51"
+          "version": "28a37dc7ba42b3b0"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:10:37.000Z",
+      "lastChangedAt": "2026-11-05T07:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1866a0064e9933a84cb5bd4ced9a80199fd7fc8b"
+      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -134498,20 +134498,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 758653,
-      "lines": 9743,
-      "version": "62496859ad98d2bc",
+      "bytes": 764347,
+      "lines": 9824,
+      "version": "cdc566ec4b387889",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "62496859ad98d2bc"
+          "version": "cdc566ec4b387889"
         }
       ],
-      "lastChangedAt": "2026-11-04T18:23:45.000Z",
+      "lastChangedAt": "2026-11-05T07:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a343fe067f7a1d244d761d8f4da7b3aea337809f"
+      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -137649,20 +137649,20 @@
       "path": "test/decision-guide-client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6515,
-      "lines": 77,
-      "version": "b540d98b574eb608",
+      "bytes": 7441,
+      "lines": 89,
+      "version": "c0fd97f43f32661e",
       "text": true,
       "provenance": [
         {
           "file": "test/decision-guide-client.js",
           "line": 1,
-          "version": "b540d98b574eb608"
+          "version": "c0fd97f43f32661e"
         }
       ],
-      "lastChangedAt": "2026-10-22T19:51:44.000Z",
+      "lastChangedAt": "2026-11-05T07:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2de6487750a24ed4fd4aaca3d47887622b318ccf"
+      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
     },
     {
       "key": "Artifact:test/decision-guide.js",
@@ -139282,20 +139282,20 @@
       "path": "test/economy-deed-merge-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 14100,
-      "lines": 196,
-      "version": "2e13d6af773ea14f",
+      "bytes": 14746,
+      "lines": 203,
+      "version": "444709e5cddb0da7",
       "text": true,
       "provenance": [
         {
           "file": "test/economy-deed-merge-source-compatibility.js",
           "line": 1,
-          "version": "2e13d6af773ea14f"
+          "version": "444709e5cddb0da7"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:25:23.000Z",
+      "lastChangedAt": "2026-11-05T07:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "02a36b165d5097c007a0515db9825da0e4a62994"
+      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
     },
     {
       "key": "Artifact:test/economy-hardening-source-compatibility.js",
@@ -156578,20 +156578,20 @@
       "path": "tools/economy-deed-merge-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 13479,
-      "lines": 178,
-      "version": "afb7926aa0697bc3",
+      "bytes": 15905,
+      "lines": 185,
+      "version": "2ac1a21568d7f11f",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-deed-merge-source-compatibility.js",
           "line": 1,
-          "version": "afb7926aa0697bc3"
+          "version": "2ac1a21568d7f11f"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:25:23.000Z",
+      "lastChangedAt": "2026-11-05T07:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "02a36b165d5097c007a0515db9825da0e4a62994"
+      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
     },
     {
       "key": "Artifact:tools/economy-deed-merge-source-data.js",
@@ -156601,20 +156601,20 @@
       "path": "tools/economy-deed-merge-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 723122,
-      "lines": 2643,
-      "version": "0533f6bea923ba8b",
+      "bytes": 761023,
+      "lines": 2730,
+      "version": "f4fdb55db9703383",
       "text": true,
       "provenance": [
         {
           "file": "tools/economy-deed-merge-source-data.js",
           "line": 1,
-          "version": "0533f6bea923ba8b"
+          "version": "f4fdb55db9703383"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:26:06.000Z",
+      "lastChangedAt": "2026-11-05T07:16:50.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b66d8721bef251f43ec2ef0ce1cdb387383314a4"
+      "lastChangedCommit": "3ca2c8f11feb737876653aa5cb369c297224ba71"
     },
     {
       "key": "Artifact:tools/economy-hardening-source-transfer.js",
@@ -157015,20 +157015,20 @@
       "path": "tools/enterprise-native-deed-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 483929,
-      "lines": 12924,
-      "version": "77378d24c733507f",
+      "bytes": 484481,
+      "lines": 12939,
+      "version": "d9357f1fd56d48a6",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-deed-inputs.js",
           "line": 1,
-          "version": "77378d24c733507f"
+          "version": "d9357f1fd56d48a6"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:34:58.000Z",
+      "lastChangedAt": "2026-11-05T07:25:18.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7f2c5ffbe337fc2699a8d5f615f1dff83a318f03"
+      "lastChangedCommit": "2cab2105b679ff6ddf4723bea37bc5c0f4ce2335"
     },
     {
       "key": "Artifact:tools/enterprise-native-inputs.js",
@@ -157403,20 +157403,20 @@
       "path": "tools/generate-economy-deed-merge-source.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 13133,
-      "lines": 192,
-      "version": "ab79f02af0d9b1dc",
+      "bytes": 13607,
+      "lines": 198,
+      "version": "f29e55b777047d77",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-economy-deed-merge-source.js",
           "line": 1,
-          "version": "ab79f02af0d9b1dc"
+          "version": "f29e55b777047d77"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:25:23.000Z",
+      "lastChangedAt": "2026-11-05T07:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "02a36b165d5097c007a0515db9825da0e4a62994"
+      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
     },
     {
       "key": "Artifact:tools/generate-economy-hardening-source-transfer.js",
@@ -158964,20 +158964,20 @@
       "path": "tools/public-ui.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 47756,
-      "lines": 722,
-      "version": "3ca027b9fcc53690",
+      "bytes": 47858,
+      "lines": 724,
+      "version": "44d7124d1bbf9d7e",
       "text": true,
       "provenance": [
         {
           "file": "tools/public-ui.js",
           "line": 1,
-          "version": "3ca027b9fcc53690"
+          "version": "44d7124d1bbf9d7e"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:10:37.000Z",
+      "lastChangedAt": "2026-11-05T07:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1866a0064e9933a84cb5bd4ced9a80199fd7fc8b"
+      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
     },
     {
       "key": "Artifact:tools/rc1-aggression-policy.js",
@@ -181081,6 +181081,22 @@
       ]
     },
     {
+      "key": "Commit:2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
+      "type": "Commit",
+      "id": "2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
+      "label": "test: seal preserved UI safeguards and corrected VM fixtures",
+      "title": "test: seal preserved UI safeguards and corrected VM fixtures",
+      "date": "2026-11-05T07:25:18.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
+      "provenance": [
+        {
+          "commit": "2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2cab2105b679ff6ddf4723bea37bc5c0f4ce2335"
+        }
+      ]
+    },
+    {
       "key": "Commit:2cb05714ef6228b940becd20f757d596c5204f65",
       "type": "Commit",
       "id": "2cb05714ef6228b940becd20f757d596c5204f65",
@@ -186341,6 +186357,22 @@
         {
           "commit": "3c99e325d7e9d7be2dfd2aecf99252545ad18375",
           "url": "https://github.com/OmertaDev/Omerta/commit/3c99e325d7e9d7be2dfd2aecf99252545ad18375"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3ca2c8f11feb737876653aa5cb369c297224ba71",
+      "type": "Commit",
+      "id": "3ca2c8f11feb737876653aa5cb369c297224ba71",
+      "label": "test: bind current UI fixtures and preserved tour safeguards",
+      "title": "test: bind current UI fixtures and preserved tour safeguards",
+      "date": "2026-11-05T07:16:50.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3ca2c8f11feb737876653aa5cb369c297224ba71",
+      "provenance": [
+        {
+          "commit": "3ca2c8f11feb737876653aa5cb369c297224ba71",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3ca2c8f11feb737876653aa5cb369c297224ba71"
         }
       ]
     },
@@ -214857,6 +214889,22 @@
       ]
     },
     {
+      "key": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "type": "Commit",
+      "id": "966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "label": "chore: refresh knowledge for repaired release",
+      "title": "chore: refresh knowledge for repaired release",
+      "date": "2026-11-05T05:39:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "provenance": [
+        {
+          "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/966228e58e3b948ddcd3b85f40375dbf5364df1c"
+        }
+      ]
+    },
+    {
       "key": "Commit:9664ff11829dd59276f0e60d128d3bf0114a5fcc",
       "type": "Commit",
       "id": "9664ff11829dd59276f0e60d128d3bf0114a5fcc",
@@ -237141,6 +237189,22 @@
         {
           "commit": "de27d8bc2aff4ecfa92529f7013dd72cc38c47d4",
           "url": "https://github.com/OmertaDev/Omerta/commit/de27d8bc2aff4ecfa92529f7013dd72cc38c47d4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "type": "Commit",
+      "id": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "label": "fix: preserve tour focus guards and update isolated UI fixtures",
+      "title": "fix: preserve tour focus guards and update isolated UI fixtures",
+      "date": "2026-11-05T07:15:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "provenance": [
+        {
+          "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+          "url": "https://github.com/OmertaDev/Omerta/commit/de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
         }
       ]
     },
@@ -266011,7 +266075,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 669
+          "line": 750
         }
       ]
     },
@@ -266023,7 +266087,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 690
+          "line": 771
         }
       ]
     },
@@ -268863,7 +268927,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8712
+          "line": 8793
         },
         {
           "file": "test/deeds.js",
@@ -276463,6 +276527,9 @@
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
         },
         {
+          "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
+        },
+        {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
@@ -279010,6 +279077,9 @@
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
         },
         {
+          "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
+        },
+        {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
@@ -281555,6 +281625,9 @@
         },
         {
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
+        },
+        {
+          "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
@@ -284804,6 +284877,9 @@
         },
         {
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
+        },
+        {
+          "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
@@ -300391,7 +300467,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "7f2c5ffbe337fc2699a8d5f615f1dff83a318f03",
+      "revision": "2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
       "currentBranch": "codex/economy-monitor-composition",
       "defaultBranch": "main",
       "visibility": "public",
@@ -339315,13 +339391,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 9743,
-      "version": "62496859ad98d2bc",
+      "lines": 9824,
+      "version": "cdc566ec4b387889",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "62496859ad98d2bc"
+          "version": "cdc566ec4b387889"
         }
       ]
     },
@@ -341370,13 +341446,13 @@
       "type": "TestSuite",
       "id": "test/decision-guide-client.js",
       "label": "test/decision-guide-client.js",
-      "lines": 77,
-      "version": "b540d98b574eb608",
+      "lines": 89,
+      "version": "c0fd97f43f32661e",
       "provenance": [
         {
           "file": "test/decision-guide-client.js",
           "line": 1,
-          "version": "b540d98b574eb608"
+          "version": "c0fd97f43f32661e"
         }
       ]
     },
@@ -342435,13 +342511,13 @@
       "type": "TestSuite",
       "id": "test/economy-deed-merge-source-compatibility.js",
       "label": "test/economy-deed-merge-source-compatibility.js",
-      "lines": 196,
-      "version": "2e13d6af773ea14f",
+      "lines": 203,
+      "version": "444709e5cddb0da7",
       "provenance": [
         {
           "file": "test/economy-deed-merge-source-compatibility.js",
           "line": 1,
-          "version": "2e13d6af773ea14f"
+          "version": "444709e5cddb0da7"
         }
       ]
     },
@@ -436129,6 +436205,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "provenance": {
+        "commit": "2cab2105b679ff6ddf4723bea37bc5c0f4ce2335"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2cb05714ef6228b940becd20f757d596c5204f65",
       "to": "Artifact:omerta-contracts/audits/2026-10-04-character-checkout/coldstart-retest.txt",
       "provenance": {
@@ -449413,6 +449497,14 @@
       "to": "HistoricalArtifact:knowledge/generated/modules.md",
       "provenance": {
         "commit": "3c99e325d7e9d7be2dfd2aecf99252545ad18375"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3ca2c8f11feb737876653aa5cb369c297224ba71",
+      "to": "Artifact:tools/economy-deed-merge-source-data.js",
+      "provenance": {
+        "commit": "3ca2c8f11feb737876653aa5cb369c297224ba71"
       }
     },
     {
@@ -518117,6 +518209,38 @@
       "to": "Artifact:tools/pgquery.js",
       "provenance": {
         "commit": "96520062c2ea862e25475d56fd173679400b421c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
       }
     },
     {
@@ -587301,6 +587425,62 @@
       "to": "Artifact:tools/rc1-native-worker.js",
       "provenance": {
         "commit": "de23cb2ec766095beec4c1a3e00a4fa3e77fdf09"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "to": "Artifact:test/decision-guide-client.js",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "to": "Artifact:test/economy-deed-merge-source-compatibility.js",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "to": "Artifact:tools/economy-deed-merge-source-compatibility.js",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "to": "Artifact:tools/generate-economy-deed-merge-source.js",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "to": "Artifact:tools/public-ui.js",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
       }
     },
     {
@@ -729850,6 +730030,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2cab2105b679ff6ddf4723bea37bc5c0f4ce2335",
+      "provenance": {
+        "commit": "2cab2105b679ff6ddf4723bea37bc5c0f4ce2335"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2cb05714ef6228b940becd20f757d596c5204f65",
       "provenance": {
         "commit": "2cb05714ef6228b940becd20f757d596c5204f65"
@@ -732477,6 +732665,14 @@
       "to": "Commit:3c99e325d7e9d7be2dfd2aecf99252545ad18375",
       "provenance": {
         "commit": "3c99e325d7e9d7be2dfd2aecf99252545ad18375"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:3ca2c8f11feb737876653aa5cb369c297224ba71",
+      "provenance": {
+        "commit": "3ca2c8f11feb737876653aa5cb369c297224ba71"
       }
     },
     {
@@ -746738,6 +746934,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
+      "provenance": {
+        "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9664ff11829dd59276f0e60d128d3bf0114a5fcc",
       "provenance": {
         "commit": "9664ff11829dd59276f0e60d128d3bf0114a5fcc"
@@ -757877,6 +758081,14 @@
       "to": "Commit:de27d8bc2aff4ecfa92529f7013dd72cc38c47d4",
       "provenance": {
         "commit": "de27d8bc2aff4ecfa92529f7013dd72cc38c47d4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:de2d64e25e45d4f6f8bf491d308b232fb10a4aba",
+      "provenance": {
+        "commit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
       }
     },
     {
@@ -790009,7 +790221,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1454
+        "line": 1535
       }
     },
     {
@@ -790027,7 +790239,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 2754
+        "line": 2835
       }
     },
     {
@@ -790054,7 +790266,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6331
+        "line": 6412
       }
     },
     {
@@ -790063,7 +790275,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6434
+        "line": 6515
       }
     },
     {
@@ -790099,7 +790311,7 @@
       "to": "ExternalDependency:\\.\\/([\\w.-]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 669
+        "line": 750
       }
     },
     {
@@ -790108,7 +790320,7 @@
       "to": "ExternalDependency:\\.\\/([\\w./]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 690
+        "line": 771
       }
     },
     {
@@ -790117,7 +790329,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8712
+        "line": 8793
       }
     },
     {
@@ -831787,7 +831999,7 @@
       "to": "Artifact:src/economy-monitor.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1505
+        "line": 1045
       }
     },
     {
@@ -831796,7 +832008,7 @@
       "to": "Artifact:src/economy-monitor.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1529
+        "line": 1069
       }
     },
     {
@@ -831805,7 +832017,7 @@
       "to": "Artifact:src/economy-monitor.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 974
+        "line": 1576
       }
     },
     {
@@ -831814,7 +832026,7 @@
       "to": "Artifact:src/economy-monitor.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 998
+        "line": 1600
       }
     },
     {
@@ -831823,7 +832035,7 @@
       "to": "Artifact:tools/age-eligibility-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 844
+        "line": 915
       }
     },
     {
@@ -831832,7 +832044,7 @@
       "to": "Artifact:tools/age-eligibility-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 864
+        "line": 935
       }
     },
     {
@@ -831841,7 +832053,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 563
+        "line": 1021
       }
     },
     {
@@ -831850,7 +832062,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 583
+        "line": 1041
       }
     },
     {
@@ -831859,7 +832071,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 584
+        "line": 1042
       }
     },
     {
@@ -831868,7 +832080,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 619
+        "line": 1065
       }
     },
     {
@@ -831877,7 +832089,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 620
+        "line": 1066
       }
     },
     {
@@ -831886,7 +832098,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 950
+        "line": 634
       }
     },
     {
@@ -831895,7 +832107,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 970
+        "line": 654
       }
     },
     {
@@ -831904,7 +832116,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 971
+        "line": 655
       }
     },
     {
@@ -831913,7 +832125,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 994
+        "line": 690
       }
     },
     {
@@ -831922,7 +832134,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 995
+        "line": 691
       }
     },
     {
@@ -831931,7 +832143,7 @@
       "to": "Artifact:tools/economy-bank-interest-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 844
+        "line": 915
       }
     },
     {
@@ -831940,7 +832152,7 @@
       "to": "Artifact:tools/economy-bank-interest-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 845
+        "line": 916
       }
     },
     {
@@ -831949,7 +832161,7 @@
       "to": "Artifact:tools/economy-bank-interest-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 864
+        "line": 935
       }
     },
     {
@@ -831958,7 +832170,7 @@
       "to": "Artifact:tools/economy-bank-interest-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 865
+        "line": 936
       }
     },
     {
@@ -831967,7 +832179,7 @@
       "to": "Artifact:tools/economy-monitor-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 816
+        "line": 887
       }
     },
     {
@@ -831976,7 +832188,7 @@
       "to": "Artifact:tools/economy-monitor-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 817
+        "line": 888
       }
     },
     {
@@ -831985,7 +832197,7 @@
       "to": "Artifact:tools/economy-monitor-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 844
+        "line": 915
       }
     },
     {
@@ -831994,7 +832206,7 @@
       "to": "Artifact:tools/economy-monitor-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 864
+        "line": 935
       }
     },
     {
@@ -832003,7 +832215,7 @@
       "to": "Artifact:tools/economy-social-proof-cutover-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 844
+        "line": 915
       }
     },
     {
@@ -832012,7 +832224,7 @@
       "to": "Artifact:tools/economy-social-proof-cutover-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 845
+        "line": 916
       }
     },
     {
@@ -832021,7 +832233,7 @@
       "to": "Artifact:tools/economy-social-proof-cutover-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 864
+        "line": 935
       }
     },
     {
@@ -832030,7 +832242,7 @@
       "to": "Artifact:tools/economy-social-proof-cutover-source-transfer.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 865
+        "line": 936
       }
     },
     {
@@ -832039,7 +832251,7 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1568
+        "line": 1639
       }
     },
     {
@@ -832048,7 +832260,7 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1569
+        "line": 1640
       }
     },
     {
@@ -832057,7 +832269,7 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1171
+        "line": 1242
       }
     },
     {
@@ -832066,7 +832278,7 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1172
+        "line": 1243
       }
     },
     {
@@ -832075,7 +832287,7 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1191
+        "line": 1262
       }
     },
     {
@@ -832084,7 +832296,7 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1192
+        "line": 1263
       }
     },
     {
@@ -832093,7 +832305,7 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1207
+        "line": 1278
       }
     },
     {
@@ -832102,49 +832314,13 @@
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1208
+        "line": 1279
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/economy-deed-merge-source-data.js",
       "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
-      "provenance": {
-        "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1053
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/economy-deed-merge-source-data.js",
-      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
-      "provenance": {
-        "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1054
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/economy-deed-merge-source-data.js",
-      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
-      "provenance": {
-        "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1073
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/economy-deed-merge-source-data.js",
-      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
-      "provenance": {
-        "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1074
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/economy-deed-merge-source-data.js",
-      "to": "Artifact:tools/enterprise-native-ux.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
         "line": 1124
@@ -832153,7 +832329,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/economy-deed-merge-source-data.js",
-      "to": "Artifact:tools/enterprise-native-ux.js",
+      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
         "line": 1125
@@ -832162,10 +832338,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/economy-deed-merge-source-data.js",
-      "to": "Artifact:tools/enterprise-native-ux.js",
+      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1140
+        "line": 1144
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-deed-merge-source-data.js",
+      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
+      "provenance": {
+        "file": "tools/economy-deed-merge-source-data.js",
+        "line": 1145
       }
     },
     {
@@ -832174,7 +832359,34 @@
       "to": "Artifact:tools/enterprise-native-ux.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 1141
+        "line": 1195
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-deed-merge-source-data.js",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "file": "tools/economy-deed-merge-source-data.js",
+        "line": 1196
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-deed-merge-source-data.js",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "file": "tools/economy-deed-merge-source-data.js",
+        "line": 1211
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/economy-deed-merge-source-data.js",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "file": "tools/economy-deed-merge-source-data.js",
+        "line": 1212
       }
     },
     {
@@ -832183,7 +832395,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 844
+        "line": 915
       }
     },
     {
@@ -832192,7 +832404,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 845
+        "line": 916
       }
     },
     {
@@ -832201,7 +832413,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 864
+        "line": 935
       }
     },
     {
@@ -832210,7 +832422,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 865
+        "line": 936
       }
     },
     {
@@ -832219,7 +832431,7 @@
       "to": "Artifact:tools/ux-afterword-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 836
+        "line": 907
       }
     },
     {
@@ -832228,7 +832440,7 @@
       "to": "Artifact:tools/ux-afterword-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 837
+        "line": 908
       }
     },
     {
@@ -832237,7 +832449,7 @@
       "to": "Artifact:tools/ux-afterword-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 856
+        "line": 927
       }
     },
     {
@@ -832246,7 +832458,7 @@
       "to": "Artifact:tools/ux-afterword-source-compatibility.js",
       "provenance": {
         "file": "tools/economy-deed-merge-source-data.js",
-        "line": 857
+        "line": 928
       }
     },
     {
@@ -901339,7 +901551,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1454
+        "line": 1535
       }
     },
     {
@@ -901357,7 +901569,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 2754
+        "line": 2835
       }
     },
     {
@@ -901384,7 +901596,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6331
+        "line": 6412
       }
     },
     {
@@ -901393,7 +901605,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6434
+        "line": 6515
       }
     },
     {
