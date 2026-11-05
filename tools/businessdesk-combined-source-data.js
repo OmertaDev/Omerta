@@ -4,8 +4,8 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_SOURCE_ONLY",
-  "sourceRevision": "e7395ada8ee79d5d2fb5be0afe917664b5caaf01",
-  "sourceTree": "0583cc19dd02b5e3d8ffa2a6fb44d32654716f45",
+  "sourceRevision": "f7c7192b1dc4edfdc1716acb19d1f8243e37a3a8",
+  "sourceTree": "e7a9062f5cf853d6f4fe5977c0e93aa2c1615480",
   "contextLines": 8,
   "profiles": {
     "desk": {
@@ -825,12 +825,12 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
       "file": "test/lib/ux-journeys.js",
       "current": {
         "mode": "100644",
-        "blob": "fce382b9cdb54226df956dab21c70fcc73757d05",
-        "sha256": "72c333a80a9697b8bbc60478626376e8ed33b814a6d6434a05091898047f336a",
-        "bytes": 15000,
+        "blob": "6cdb42d8d08e3360c233f54a314f601a96f9e43c",
+        "sha256": "f0bbc66dfe11d4e89604570778f132a01b4b37ca8e4746cf6ba3cb28c8b5bd84",
+        "bytes": 15011,
         "rawSha256": {
-          "lf": "72c333a80a9697b8bbc60478626376e8ed33b814a6d6434a05091898047f336a",
-          "crlf": "78251f815b33caf54d195afd8ac7408e9605e1d909cc00e66d539eb1236bc0bb"
+          "lf": "f0bbc66dfe11d4e89604570778f132a01b4b37ca8e4746cf6ba3cb28c8b5bd84",
+          "crlf": "4f201051ac8e557249731240d0b54c26edbfad94914c8501f9883093191b3593"
         }
       },
       "parents": {
@@ -845,7 +845,7 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
           },
           "inverses": [
             {
-              "current": "import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { readFileSync } from 'node:fs';\nimport vm from 'node:vm';\nimport crypto from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\nimport { fileURLToPath } from 'node:url';\nimport { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSource, uxAfterwordHistoricalInput } from '../../tools/ux-afterword-source-compatibility.js';\nimport { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';\nimport { BUSINESS_DESK_DOMAINS, BUSINESS_DESK_PREDECESSOR, assertBusinessDeskSourceTransfer,\n  businessDeskHistoricalInput } from '../../tools/businessdesk-source-transfer.js';\n\nexport async function runJourneyModelProof() {\n  runAfterwordSourceProof();\n  const context = vm.createContext({ window: {} });\n  vm.runInContext(readFileSync(new URL('../../public/ux-progression.js', import.meta.url), 'utf8'), context);\n  const { openingUpgrades, openingReceipt } = context.window.OmertaProgressionModel;\n  const asset = { id: 'beater', name: 'Beater Sedan', stat: 'speed', boost: 2,\n    cost: { price: 5000, fee: 50, tax: 50, total: 5100 }, affordable: true };\n",
+              "current": "import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { readFileSync, lstatSync } from 'node:fs';\nimport vm from 'node:vm';\nimport crypto from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\nimport { fileURLToPath } from 'node:url';\nimport { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSource, uxAfterwordHistoricalInput } from '../../tools/ux-afterword-source-compatibility.js';\nimport { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';\nimport { BUSINESS_DESK_DOMAINS, BUSINESS_DESK_PREDECESSOR, assertBusinessDeskSourceTransfer,\n  businessDeskHistoricalInput } from '../../tools/businessdesk-source-transfer.js';\n\nexport async function runJourneyModelProof() {\n  runAfterwordSourceProof();\n  const context = vm.createContext({ window: {} });\n  vm.runInContext(readFileSync(new URL('../../public/ux-progression.js', import.meta.url), 'utf8'), context);\n  const { openingUpgrades, openingReceipt } = context.window.OmertaProgressionModel;\n  const asset = { id: 'beater', name: 'Beater Sedan', stat: 'speed', boost: 2,\n    cost: { price: 5000, fee: 50, tax: 50, total: 5100 }, affordable: true };\n",
               "target": "import assert from 'node:assert/strict';\nimport { readFileSync, lstatSync } from 'node:fs';\nimport vm from 'node:vm';\nimport crypto from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\nimport { fileURLToPath } from 'node:url';\nimport { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSource, uxAfterwordHistoricalInput } from '../../tools/ux-afterword-source-compatibility.js';\nimport { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';\nimport { WIKI_MEDIA_MERGE_SOURCE, assertWikiMediaMergeSourceTransfer,\n  WIKI_MEDIA_NOIR_MERGE_SOURCE, assertWikiMediaNoirMergeSourceTransfer } from '../../tools/wiki-media-source-transfer.js';\n\nexport async function runJourneyModelProof() {\n  runAfterwordSourceProof();\n  const context = vm.createContext({ window: {} });\n  vm.runInContext(readFileSync(new URL('../../public/ux-progression.js', import.meta.url), 'utf8'), context);\n  const { openingUpgrades, openingReceipt } = context.window.OmertaProgressionModel;\n  const asset = { id: 'beater', name: 'Beater Sedan', stat: 'speed', boost: 2,\n    cost: { price: 5000, fee: 50, tax: 50, total: 5100 }, affordable: true };\n"
             },
             {
@@ -1586,4 +1586,4 @@ export const BUSINESS_DESK_COMBINED_SOURCE = freeze({
   "runtime": false,
   "native": false
 });
-export const BUSINESS_DESK_COMBINED_SOURCE_SHA256 = 'e40ee2f38d2ecc602e1bcb478fc4fb1d3e3e8f024a56e594a14800c52330d22b';
+export const BUSINESS_DESK_COMBINED_SOURCE_SHA256 = 'a7301220f56e35087a6dfd55337fd9fbaef5dae2d0d4e561738506edb01b408e';
