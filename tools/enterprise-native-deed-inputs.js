@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 6,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_MONITOR_WIKI_DESK_NATIVE_INPUTS",
-  "authoredRevision": "6824f5f211e6914764a39776c08930194cd6ecfa",
+  "authoredRevision": "8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -13361,4 +13361,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "e5cbaf1b2fd9d9be385ab61f21609c0e5d9c9554334d92017fcf9f5040e3cbe9";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "955fbce52a2d4b8c069f1e649732a056b3b011e91bca32908cc8823ac61fc1b9";
