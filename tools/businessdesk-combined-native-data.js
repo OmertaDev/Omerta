@@ -4,10 +4,10 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_NATIVE_PROVENANCE_ONLY",
-  "sourceRevision": "28ca907caa6c672b3226c021cd6455a2755ec807",
-  "sourceTree": "bf87565746ff7ad4ace5e56895a8acad843651c8",
-  "topSourceDefinitionSha256": "443bcfc5297975287820c755a14273b72a253e9ced57a01b31e6782c212ce7f0",
-  "parentRegistryDefinitionSha256": "0c1bb3be0809913744020dacd386242b2328f9c03de3eb580dbf828b24ebc1e2",
+  "sourceRevision": "8dd6ed969b72f14104b0ae7759ebfd999af19ff3",
+  "sourceTree": "c9395c6597788e8b4cddafc818c670ff663d552b",
+  "topSourceDefinitionSha256": "b26bddb26cb587e402cf27d31f6e608295616a2793acf35f8c559df1cebe0222",
+  "parentRegistryDefinitionSha256": "6d5d17e6ed71469ba5bd4b4f02d14ef47d5d8ce258fea66ca19a1075008abe0a",
   "nativeClosure": [
     ".github/workflows/ci.yml",
     ".github/workflows/forge.yml",
@@ -2023,8 +2023,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
       "current": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "dcdd569aa0057b719631b3cdc93338a04a8fd62f",
-        "sha256": "bf449a72bd440d8077c77acc2c8d784319ee9829faaeee48560ad5b11a8f5b7a"
+        "blob": "b268ff50dfdc0f645d52bc837f5a36a3b952d525",
+        "sha256": "b048c71394a058a153a0789a0c596a6f41fd20c21c644047180ec63cc466ad89"
       },
       "profile": "desk",
       "parent": {
@@ -2039,8 +2039,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
           "from": {
             "file": "public/index.html",
             "mode": "100644",
-            "blob": "dcdd569aa0057b719631b3cdc93338a04a8fd62f",
-            "sha256": "bf449a72bd440d8077c77acc2c8d784319ee9829faaeee48560ad5b11a8f5b7a"
+            "blob": "b268ff50dfdc0f645d52bc837f5a36a3b952d525",
+            "sha256": "b048c71394a058a153a0789a0c596a6f41fd20c21c644047180ec63cc466ad89"
           },
           "to": {
             "file": "public/index.html",
@@ -3313,54 +3313,39 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
       "current": {
         "file": "test/client.js",
         "mode": "100644",
-        "blob": "4259fd4e4f5e5cede203eba5d5ea3b19a5a0e977",
-        "sha256": "46dfdff626b2946558710238179f559d7fd830f2919db72200bd0ad2c57c26b7"
+        "blob": "dd27c8809894ed3f68545db1a334f46a64eb207b",
+        "sha256": "b815589854b57a62565bec7a565a6b434d85e9d0e295c48fdab97b26dd46e54b"
       },
-      "profile": "wiki",
+      "profile": "monitor",
       "parent": {
         "file": "test/client.js",
         "mode": "100644",
-        "blob": "4259fd4e4f5e5cede203eba5d5ea3b19a5a0e977",
-        "sha256": "46dfdff626b2946558710238179f559d7fd830f2919db72200bd0ad2c57c26b7"
+        "blob": "ad69814b477d75266455a7948af2709ffc9ff960",
+        "sha256": "cdc566ec4b3878894f48995589549668fcb5bc5d31328f630a83236549a685ac"
       },
       "path": [
         {
-          "kind": "wiki-noir-merge",
+          "kind": "combined-source",
           "from": {
             "file": "test/client.js",
             "mode": "100644",
-            "blob": "4259fd4e4f5e5cede203eba5d5ea3b19a5a0e977",
-            "sha256": "46dfdff626b2946558710238179f559d7fd830f2919db72200bd0ad2c57c26b7"
+            "blob": "dd27c8809894ed3f68545db1a334f46a64eb207b",
+            "sha256": "b815589854b57a62565bec7a565a6b434d85e9d0e295c48fdab97b26dd46e54b"
           },
           "to": {
             "file": "test/client.js",
             "mode": "100644",
-            "blob": "4259fd4e4f5e5cede203eba5d5ea3b19a5a0e977",
-            "sha256": "46dfdff626b2946558710238179f559d7fd830f2919db72200bd0ad2c57c26b7"
+            "blob": "ad69814b477d75266455a7948af2709ffc9ff960",
+            "sha256": "cdc566ec4b3878894f48995589549668fcb5bc5d31328f630a83236549a685ac"
           }
         },
         {
-          "kind": "wiki-merge",
+          "kind": "monitor56",
           "from": {
             "file": "test/client.js",
             "mode": "100644",
-            "blob": "4259fd4e4f5e5cede203eba5d5ea3b19a5a0e977",
-            "sha256": "46dfdff626b2946558710238179f559d7fd830f2919db72200bd0ad2c57c26b7"
-          },
-          "to": {
-            "file": "test/client.js",
-            "mode": "100644",
-            "blob": "b712b8bc0fa7e26c2188b5f214e6fc5e42117213",
-            "sha256": "62496859ad98d2bc6b82d77754141dac93eadabb3cdefae3432e5527294501a1"
-          }
-        },
-        {
-          "kind": "deed",
-          "from": {
-            "file": "test/client.js",
-            "mode": "100644",
-            "blob": "b712b8bc0fa7e26c2188b5f214e6fc5e42117213",
-            "sha256": "62496859ad98d2bc6b82d77754141dac93eadabb3cdefae3432e5527294501a1"
+            "blob": "ad69814b477d75266455a7948af2709ffc9ff960",
+            "sha256": "cdc566ec4b3878894f48995589549668fcb5bc5d31328f630a83236549a685ac"
           },
           "to": {
             "file": "test/client.js",
@@ -3442,39 +3427,24 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
       "current": {
         "file": "test/decision-guide-client.js",
         "mode": "100644",
-        "blob": "c1385258d1dc40318d1ba97d531bd6a79b89e94e",
-        "sha256": "2c7833f97720b1f226776cc67884869c29ba6ff3e13cf7c19c90e31ecc87fbad"
+        "blob": "ce8a155c44a155d44ab0083eeb72dfb8dd1b9334",
+        "sha256": "c0fd97f43f32661e74a2101f5858b866cc236f4d288c7f5c849ef03e268b5e01"
       },
-      "profile": "wiki",
+      "profile": "monitor",
       "parent": {
         "file": "test/decision-guide-client.js",
         "mode": "100644",
-        "blob": "c1385258d1dc40318d1ba97d531bd6a79b89e94e",
-        "sha256": "2c7833f97720b1f226776cc67884869c29ba6ff3e13cf7c19c90e31ecc87fbad"
+        "blob": "ce8a155c44a155d44ab0083eeb72dfb8dd1b9334",
+        "sha256": "c0fd97f43f32661e74a2101f5858b866cc236f4d288c7f5c849ef03e268b5e01"
       },
       "path": [
         {
-          "kind": "wiki-noir-merge",
+          "kind": "monitor56",
           "from": {
             "file": "test/decision-guide-client.js",
             "mode": "100644",
-            "blob": "c1385258d1dc40318d1ba97d531bd6a79b89e94e",
-            "sha256": "2c7833f97720b1f226776cc67884869c29ba6ff3e13cf7c19c90e31ecc87fbad"
-          },
-          "to": {
-            "file": "test/decision-guide-client.js",
-            "mode": "100644",
-            "blob": "c1385258d1dc40318d1ba97d531bd6a79b89e94e",
-            "sha256": "2c7833f97720b1f226776cc67884869c29ba6ff3e13cf7c19c90e31ecc87fbad"
-          }
-        },
-        {
-          "kind": "wiki-merge",
-          "from": {
-            "file": "test/decision-guide-client.js",
-            "mode": "100644",
-            "blob": "c1385258d1dc40318d1ba97d531bd6a79b89e94e",
-            "sha256": "2c7833f97720b1f226776cc67884869c29ba6ff3e13cf7c19c90e31ecc87fbad"
+            "blob": "ce8a155c44a155d44ab0083eeb72dfb8dd1b9334",
+            "sha256": "c0fd97f43f32661e74a2101f5858b866cc236f4d288c7f5c849ef03e268b5e01"
           },
           "to": {
             "file": "test/decision-guide-client.js",
@@ -4342,4 +4312,4 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="ff5e9838f5a1159ffcb6a628eceeb90d2d78c0491b2a829d0637eff85700dc63";
+export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="d853ff72d931971fb9a24c9a7e9192999782252ff1211384a00c3c1268679e97";
