@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 6,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_MONITOR_WIKI_DESK_NATIVE_INPUTS",
-  "authoredRevision": "aaaae2d4b5a364112de93e7564a2efeb2e43872c",
+  "authoredRevision": "295af18559026bc6a1b3312beb8ff747039ee6af",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -10176,8 +10176,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/age-eligibility-source-compatibility.js",
       "mode": "100644",
-      "blob": "d45c2dbfc600e1cc2c5752eafc3d682db73ca508",
-      "sha256": "3363c1041b117fb8842edb28c521cc64172d78506d0e6b7ff3ba9e0734148c4d"
+      "blob": "e75b570681f6721d734aebda5c0be0607de90c8a",
+      "sha256": "c5635ebf9b327c933fc1d338587349925703e22a75665163c060d1d30e2a19cb"
     },
     {
       "file": "test/age.js",
@@ -12714,8 +12714,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/age-eligibility-source-compatibility.js",
       "mode": "100644",
-      "blob": "d45c2dbfc600e1cc2c5752eafc3d682db73ca508",
-      "sha256": "3363c1041b117fb8842edb28c521cc64172d78506d0e6b7ff3ba9e0734148c4d"
+      "blob": "e75b570681f6721d734aebda5c0be0607de90c8a",
+      "sha256": "c5635ebf9b327c933fc1d338587349925703e22a75665163c060d1d30e2a19cb"
     },
     {
       "file": "test/age.js",
@@ -13361,4 +13361,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "46daf89be6f814360b1a720c4faa7b760ec942ca7a611927e75571a5848d1e76";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "523abfaa3e293ebe8f61866fa620136746567df886f64ffbe3cf32bdc56ffccd";
