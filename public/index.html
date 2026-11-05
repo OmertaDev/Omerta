@@ -6597,7 +6597,7 @@
     paint();
     sb.onclick = () => { const on = SFX.toggle(); paint(); AMBIENT.sync(); if (on) sfx('ok'); toast(on ? 'the city has a soundtrack again' : 'silence — the professional’s choice', false); }; }
   $('#glossary-close').onclick = () => $('#glossary').classList.add('hidden');
-  $('#glossary-tour').onclick = () => { $('#glossary').classList.add('hidden'); openTour(); };
+  $('#glossary-tour').onclick = () => { $('#glossary').classList.add('hidden'); closeGameMenu(); openTour(); };
   $('#glossary').onclick = (e) => { if (e.target.id === 'glossary') $('#glossary').classList.add('hidden'); };
 
   // ── THE QUICK-JUMP (🔍 / the "/" key) — go anywhere without touching the 24-screen wall.
@@ -6763,8 +6763,13 @@
       // The screen render replaces its controls; restore focus only after that render and modal teardown.
       await setTab(returnTab);
       if (currentTab !== returnTab || topModal()) return;
-      // The tabpanel survives UX reorderings that can detach a focused child control.
-      const fallback = $(`#tab-${returnTab}`) || $(`#tab-control-${returnTab}`);
+      const fallbackCandidates = [
+        $(`#tab-${returnTab}`),
+        ...document.querySelectorAll(`#tab-${returnTab} button:not([disabled]), #tab-${returnTab} [href], #tab-${returnTab} input:not([disabled]), #tab-${returnTab} select:not([disabled])`),
+        $(`#tab-control-${returnTab}`),
+      ];
+      const fallback = fallbackCandidates.find((el) =>
+        el?.isConnected && el.getClientRects().length && typeof el.focus === 'function');
       if (opener?.isConnected && !opener.closest('.hidden, [hidden], [inert]')
         && opener.getClientRects().length && getComputedStyle(opener).visibility !== 'hidden'
         && typeof opener.focus === 'function') {
@@ -14579,11 +14584,12 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   $('#wire-close').onclick = () => toggleWire(false, true);
   gameMenu.addEventListener('toggle', () => { if (gameMenu.open) toggleWire(false); });
   document.addEventListener('click', event => {
+    if (event.target.closest('.modal-bg, dialog')) return;
     if (!gameMenu.contains(event.target)) closeGameMenu();
     if (!wideNavigation.matches && event.target.closest('#city-sidebar [data-tab], #city-sidebar [data-group]')) cityDirectory.open = false;
   });
   document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || event.defaultPrevented) return;
     if (document.querySelector('.modal-bg:not(.hidden), dialog[open]')) return;
     if (gameMenu.open) { event.preventDefault(); closeGameMenu(true); }
     else if (!$('#wirepanel').hidden && !document.querySelector('.modal-bg:not(.hidden), dialog[open]')) { event.preventDefault(); toggleWire(false, true); }

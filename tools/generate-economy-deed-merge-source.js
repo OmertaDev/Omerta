@@ -7,7 +7,8 @@ import { ECONOMY_DEED_MERGE_FILES, ECONOMY_DEED_MERGE_PROFILES,
   ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES, ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES,
   ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR,
   ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR,
-  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR } from './economy-deed-merge-source-compatibility.js';
+  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR,
+  ECONOMY_DEED_MERGE_DECISION_CLIENT_SUCCESSOR } from './economy-deed-merge-source-compatibility.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous,
   ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as previousDefinitionSha256 } from './enterprise-native-ux-b35-inputs.js';
 const output = 'tools/economy-deed-merge-source-data.js';
@@ -92,8 +93,9 @@ for (const profile of ['monitor', 'deed']) for (const pin of previous.files) {
   if (entry.mode !== pin.mode || entry.blob !== pin.blob) review.add(pin.file);
 }
 const boundedSuccessors = [ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR,
-  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR];
-assert.deepEqual(boundedSuccessors.map(row => row.file), ['src/preflight.js', 'src/engagement.js', 'public/ux-identity.js']);
+  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR, ECONOMY_DEED_MERGE_DECISION_CLIENT_SUCCESSOR];
+assert.deepEqual(boundedSuccessors.map(row => row.file),
+  ['src/preflight.js', 'src/engagement.js', 'public/ux-identity.js', 'test/decision-guide-client.js']);
 assert.equal(review.size, 51);
 assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !boundedSuccessors.some(row => row.file === file)
   && !ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES.includes(file)),
@@ -114,8 +116,12 @@ for (const successor of boundedSuccessors) {
     assert.deepEqual(nativePin(revision, successor.file), predecessor,
       'The bounded successor input was unchanged in all immutable parents');
   const before = text(previous.authoredRevision, successor.file), current = text(authored, successor.file);
+  const replaces = Object.hasOwn(successor, 'replacement');
+  assert.deepEqual(Object.keys(successor).sort(), ['file', 'anchor', replaces ? 'replacement' : 'addition'].sort());
+  const after = replaces ? successor.replacement : successor.anchor + successor.addition;
+  assert.equal(typeof after, 'string'); assert(after.length); assert.notEqual(after, successor.anchor);
   assert.equal(before.split(successor.anchor).length, 2);
-  assert.equal(current, before.replace(successor.anchor, successor.anchor + successor.addition),
+  assert.equal(current, before.replace(successor.anchor, () => after),
     'Only the exact frozen source correction may extend the reviewed native scope');
   assert.notEqual(current, before, 'The explicit source successor must change its predecessor');
   assert.equal(tree(authored).get(successor.file).mode, predecessor.mode);
