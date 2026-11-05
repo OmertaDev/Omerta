@@ -92,7 +92,7 @@ for (const hook of ["import { uxAfterwordHistoricalInput } from './ux-afterword-
   assert.equal(conserved.split(hook).length, 2, 'One exact separately admitted Afterword integration hook'); conserved = conserved.replace(hook, '');
 }
 assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compatibility.js'), 'All prior historical qualifiers and refusal predicates remain byte-identical');
-let candidateConserved = deedAllocationHistoricalInput('tools/economy-ux-merge-source-compatibility.js', fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8')).replaceAll('\r\n', '\n');
+let candidateConserved = fs.readFileSync('tools/economy-ux-merge-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
   ["import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';\n", 1],
   ['  input = economyBankInterestHardeningHistoricalInput(file, input);\n', 2],
@@ -104,7 +104,9 @@ for (const [hook, count] of [["import { saleHistoricalInput } from './sale-sourc
   ['  input = economySocialReceiptHistoricalInput(file, input);\n', 2],
   ["import { wikiMediaHistoricalInput } from './wiki-media-source-transfer.js';\n", 1],
   ["import { age21HistoricalInput } from './age21-source-transfer.js';\n", 1],
-  ['  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));\n', 2]]) {
+  ['  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));\n', 2],
+  ["import { deedAllocationHistoricalInput } from './deed-allocation-source-transfer.js';\n", 1],
+  ['  input = deedAllocationHistoricalInput(file, input);\n', 2]]) {
   assert.equal(candidateConserved.split(hook).length, count + 1, 'Exact candidate and main sale integration hooks'); candidateConserved = candidateConserved.split(hook).join('');
 }
 assert.equal(candidateConserved, git('show', 'c86bcd310e5f38845642637230ba4bec7d653183:tools/economy-ux-merge-source-compatibility.js'), 'All committed economy merge qualifiers and refusal predicates remain byte-identical');

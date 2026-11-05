@@ -1,9 +1,11 @@
 // Pure historical source reconstruction. Game runtime and native capture do not use this alias.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { WIKI_MEDIA_SOURCE, WIKI_MEDIA_SOURCE_SHA256 } from './wiki-media-source-data.js';
+import { WIKI_MEDIA_SOURCE, WIKI_MEDIA_SOURCE_SHA256,
+  WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256 } from './wiki-media-source-data.js';
 
 export { WIKI_MEDIA_SOURCE, WIKI_MEDIA_SOURCE_SHA256 };
+export { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256 };
 const lf = text => text.replaceAll('\r\n', '\n');
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -49,10 +51,56 @@ export function assertWikiMediaSourceTransfer(file, input, pin = WIKI_MEDIA_SOUR
 // Unknown bytes stay unchanged for the caller's original rejecting guard. Only this literal source
 // obtains an inverse; actual current runtime/native source is never replaced by this function.
 export function wikiMediaHistoricalInput(file, input) {
+  input = wikiMediaMergeHistoricalInput(file, input);
   if (!Object.hasOwn(WIKI_MEDIA_SOURCE.files, file)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source required');
   if (!uniform(text) || sha256(lf(text)) !== WIKI_MEDIA_SOURCE.files[file].current.lf.sha256) return input;
   const baseline = assertWikiMediaSourceTransfer(file, text).baselineText;
+  return buffer ? Buffer.from(baseline) : baseline;
+}
+
+export function assertWikiMediaMergeSourceTransfer(file, input, target = 'main', pin = WIKI_MEDIA_MERGE_SOURCE) {
+  assert.equal(pin, WIKI_MEDIA_MERGE_SOURCE, 'Only the exact frozen wiki merge source binding');
+  assert.equal(sha256(JSON.stringify(pin)), WIKI_MEDIA_MERGE_SOURCE_SHA256, 'Wiki merge declaration changed');
+  assert.equal(pin.status, 'SEALED');
+  assert(target === 'main' || target === 'wiki', 'An exact merge parent is required');
+  assert(Object.hasOwn(pin.files, file), 'Unknown wiki merge source domain');
+  assert.equal(typeof input, 'string');
+  assert.equal(Buffer.from(input).toString('utf8'), input, 'Lossless UTF-8 source required');
+  assert(!input.includes('\ufeff') && !input.includes('\0'), 'No BOM or NUL in source');
+  assert(uniform(input), 'Uniform complete LF or CRLF source required');
+  const row = pin.files[file], parent = row[target], text = lf(input);
+  assert.equal(row.current.mode, '100644');
+  assert(!parent.absent, 'Absent parent source cannot receive a historical inverse');
+  assert.equal(parent.mode, '100644');
+  fingerprint(input, input === text ? row.current.lf : row.current.crlf, 'Raw merged source');
+  fingerprint(text, row.current.lf, 'Normalized merged source');
+  let baselineText = text, end = 0;
+  for (const inverse of parent.inverses) {
+    assert(inverse.current.length, 'Nonempty merge inverse required');
+    assert.equal(text.split(inverse.current).length, 2, 'Unique complete merge context required');
+    const at = text.indexOf(inverse.current); assert(at >= end, 'Ordered merge contexts required');
+    end = at + inverse.current.length;
+    assert.equal(baselineText.split(inverse.current).length, 2, 'Missing or duplicate merge context');
+    baselineText = baselineText.replace(inverse.current, () => inverse.baseline);
+  }
+  fingerprint(baselineText, parent.lf, 'Complete merge parent');
+  fingerprint(baselineText.replaceAll('\n', '\r\n'), parent.crlf, 'CRLF merge parent');
+  return Object.freeze({ file, baselineText, sourceRevision: pin.revision,
+    predecessorRevision: pin.parents[target].revision, target, phase: pin.phase,
+    sourceOnly: true, native: false, runtime: false, migration: false,
+    financial: false, activation: false, deployment: false });
+}
+
+// This forward boundary is source-only. Unknown complete bytes retain their original rejecting form.
+export function wikiMediaMergeHistoricalInput(file, input, target = 'main') {
+  if (typeof file !== 'string' || !Object.hasOwn(WIKI_MEDIA_MERGE_SOURCE.files, file)) return input;
+  const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source required');
+  if (!uniform(text) || sha256(lf(text)) !== WIKI_MEDIA_MERGE_SOURCE.files[file].current.lf.sha256) return input;
+  assert(target === 'main' || target === 'wiki', 'An exact merge parent is required');
+  if (WIKI_MEDIA_MERGE_SOURCE.files[file][target].absent) return input;
+  const baseline = assertWikiMediaMergeSourceTransfer(file, text, target).baselineText;
   return buffer ? Buffer.from(baseline) : baseline;
 }

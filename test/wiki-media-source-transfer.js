@@ -4,7 +4,8 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { WIKI_MEDIA_SOURCE, WIKI_MEDIA_SOURCE_SHA256, assertWikiMediaSourceTransfer,
-  wikiMediaHistoricalInput } from '../tools/wiki-media-source-transfer.js';
+  wikiMediaHistoricalInput, WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256,
+  assertWikiMediaMergeSourceTransfer, wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 
 assert.deepEqual(process.argv.slice(2), [], 'Source-only proof has no native/runtime flags');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
@@ -117,7 +118,8 @@ const wiring = [
   }
 ];
 for (const item of wiring) {
-  let current = fs.readFileSync(new URL('../' + item.file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+  let current = wikiMediaMergeHistoricalInput(item.file,
+    fs.readFileSync(new URL('../' + item.file, import.meta.url), 'utf8'), 'wiki').replaceAll('\r\n', '\n');
   assert.equal(current.split(item.imports).length, 2);
   current = current.replace(item.imports, '');
   for (const name of item.calls || []) {
@@ -132,3 +134,85 @@ for (const item of wiring) {
 }
 console.log(JSON.stringify({ phase: 'PASS_EXACT_WIKI_MEDIA_SOURCE_ONLY', files: files.length,
   positives, refusals, nativeAdmission: false, runtimeAdmission: false }));
+
+// A separate exact merge relation preserves both immutable parent source histories.
+const merge = WIKI_MEDIA_MERGE_SOURCE;
+assert.equal(merge.status, 'SEALED'); assert.equal(hash(JSON.stringify(merge)), WIKI_MEDIA_MERGE_SOURCE_SHA256);
+assert.equal(merge.version, 1);
+assert.equal(merge.phase, 'exact-dual-parent-wiki-merge-source-only; no native, runtime, financial or deployment clearance');
+assert.equal(merge.mergeRevision, '51cf345fc5501e7bc0ef4fe0c8cdf83e19795771');
+assert.equal(merge.parents.main.revision, 'fe887350a661901983282183fb21e9d1d330f04f');
+assert.equal(merge.parents.wiki.revision, '6607bf3105c7fa019611d85c1994d7576d4708b2');
+assert.equal(git('rev-parse', merge.mergeRevision + '^1').trim(), merge.parents.wiki.revision);
+assert.equal(git('rev-parse', merge.mergeRevision + '^2').trim(), merge.parents.main.revision);
+for (const record of [{ revision: merge.revision, tree: merge.tree },
+  { revision: merge.mergeRevision, tree: merge.mergeTree }, ...Object.values(merge.parents)])
+  assert.equal(git('rev-parse', record.revision + '^{tree}').trim(), record.tree);
+git('merge-base', '--is-ancestor', merge.mergeRevision, merge.revision);
+git('merge-base', '--is-ancestor', merge.revision, 'HEAD');
+const excluded = new Set(['tools/wiki-media-source-data.js', 'tools/enterprise-native-deed-inputs.js']);
+const changedMergeFiles = git('diff', '--diff-filter=M', '--name-only', merge.parents.main.revision, merge.revision)
+  .trim().split('\n').filter(file => file && !file.startsWith('knowledge/generated/') && !excluded.has(file));
+assert.deepEqual(Object.keys(merge.files), changedMergeFiles, 'Only the finite actual modified main-source scope is admitted');
+let mergePositives = 0, mergeRefusals = 0, mergeHunks = 0;
+for (const [file, row] of Object.entries(merge.files)) {
+  const current = git('show', merge.revision + ':' + file);
+  assert.equal(fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n'), current, 'Actual physical merge source remains exact: ' + file);
+  assert(Object.isFrozen(row) && Object.isFrozen(row.current));
+  const checkRecord = (revision, record, text) => {
+    assert.equal(git('ls-tree', revision, '--', file).trim(), record.mode + ' blob ' + record.lf.blob + '\t' + file);
+    for (const [variant, value] of [['lf', text], ['crlf', text.replaceAll('\n', '\r\n')]]) {
+      assert.equal(hash(value), record[variant].sha256); assert.equal(blob(value), record[variant].blob);
+      assert.equal(Buffer.byteLength(value), record[variant].bytes);
+    }
+  };
+  checkRecord(merge.revision, row.current, current);
+  for (const target of ['main', 'wiki']) {
+    const parent = row[target], revision = merge.parents[target].revision;
+    if (parent.absent) {
+      assert.equal(git('ls-tree', revision, '--', file), '');
+      assert.throws(() => assertWikiMediaMergeSourceTransfer(file, current, target)); mergeRefusals++; continue;
+    }
+    const baseline = git('show', revision + ':' + file); checkRecord(revision, parent, baseline);
+    assert(Object.isFrozen(parent) && Object.isFrozen(parent.inverses) && parent.inverses.every(Object.isFrozen));
+    assert.deepEqual(parent.inverses, actualInverses(git('diff', '--no-ext-diff', '--no-renames',
+      '--unified=' + merge.contextLines, revision, merge.revision, '--', file)));
+    for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+      const proof = assertWikiMediaMergeSourceTransfer(file, input, target);
+      assert.equal(proof.baselineText, baseline); assert.equal(proof.predecessorRevision, revision);
+      assert.equal(wikiMediaMergeHistoricalInput(file, input, target), baseline);
+      assert.deepEqual(wikiMediaMergeHistoricalInput(file, Buffer.from(input), target), Buffer.from(baseline));
+      assert.equal(proof.sourceOnly, true);
+      for (const phase of ['native', 'runtime', 'migration', 'financial', 'activation', 'deployment']) assert.equal(proof[phase], false);
+      mergePositives++;
+    }
+    for (const inverse of parent.inverses) {
+      for (const value of [current.replace(inverse.current, ''), current.replace(inverse.current, () => inverse.current + inverse.current),
+        current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+        assert.throws(() => assertWikiMediaMergeSourceTransfer(file, value, target)); mergeRefusals++;
+      }
+      mergeHunks++;
+    }
+    if (parent.inverses.length > 1) {
+      const [a, b] = parent.inverses, marker = '\u0001MERGE_SWAP\u0001';
+      assert(!current.includes(marker));
+      const swapped = current.replace(a.current, () => marker).replace(b.current, () => a.current).replace(marker, () => b.current);
+      assert.throws(() => assertWikiMediaMergeSourceTransfer(file, swapped, target)); mergeRefusals++;
+    }
+  }
+  for (const value of [current + '\n// unknown successor\n', current.slice(1), '\ufeff' + current,
+    current + '\0', current.replace('\n', '\r\n'), current.replace('\n', '\r'), null]) {
+    assert.throws(() => assertWikiMediaMergeSourceTransfer(file, value));
+    assert.equal(wikiMediaMergeHistoricalInput(file, value), value, 'Unknown merged bytes stay unchanged'); mergeRefusals++;
+  }
+  assert.throws(() => wikiMediaMergeHistoricalInput(file, Buffer.concat([Buffer.from(current), Buffer.from([255])])), /Lossless UTF-8/);
+  assert.throws(() => assertWikiMediaMergeSourceTransfer(file, current, 'foreign'));
+  assert.throws(() => assertWikiMediaMergeSourceTransfer(file, current, 'main', Object.freeze({ ...merge })));
+  mergeRefusals += 3;
+}
+for (const file of ['../src/server.js', '__proto__', 'constructor', 'unknown']) {
+  assert.throws(() => assertWikiMediaMergeSourceTransfer(file, 'unknown'));
+  assert.equal(wikiMediaMergeHistoricalInput(file, 'unknown'), 'unknown'); mergeRefusals++;
+}
+console.log(JSON.stringify({ phase: 'PASS_EXACT_DUAL_PARENT_WIKI_MERGE_SOURCE_ONLY', files: Object.keys(merge.files).length,
+  positives: mergePositives, refusals: mergeRefusals, hunks: mergeHunks, nativeAdmission: false, runtimeAdmission: false }));

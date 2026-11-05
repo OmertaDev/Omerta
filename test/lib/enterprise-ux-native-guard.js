@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
+import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256 } from '../../tools/wiki-media-source-data.js';
 import { assertUxNativeDirectorGuards } from './ux-native-director-guard.js';
 await assertUxNativeDirectorGuards();
 import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_UX_METADATA, ENTERPRISE_UX_SUPPORT, ENTERPRISE_UX_ASSETS, assertEnterpriseUxInputDefinition, assertEnterpriseUxTrackedInput, assertEnterpriseUxMetadataBytes, assertEnterpriseUxReplacementPlan, enterpriseUxReplacementPlan, enterpriseUxMetadataBytes, enterpriseUxClosure, enterpriseUxImports } from '../../tools/enterprise-native-ux.js';
@@ -48,7 +49,8 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.version, 3); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
+  assert.equal(pin.version, 4); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_WIKI_MERGE_NATIVE_INPUTS');
+  assert.equal(pin.wikiMergeSourceDefinitionSha256, WIKI_MEDIA_MERGE_SOURCE_SHA256);
   assert.equal(pin.files.length, legacyFiles.length + pin.additions.length);
   assert.equal(pin.legacyAdditionReplacements.length, 4);
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-b35-inputs.js'), 'The old B35 native manifest is an ordinary pinned input');
@@ -76,6 +78,20 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   assert.notEqual(provenance.predecessor.blob, record.blob);
   assert.equal(provenance.nativeAdmission, false, 'Historical provenance cannot grant native admission');
   assert.equal(provenance.priorResultsTransferred, false);
+  const merged = pin.files.find(row => row.file === 'src/server.js'); assert(merged);
+  const mergedRow = WIKI_MEDIA_MERGE_SOURCE.files[merged.file]; assert(mergedRow);
+  const mergedBytes = git('show', pin.authoredRevision + ':' + merged.file);
+  const mergedRecord = { type: 'blob', mode: merged.mode, blob: merged.blob };
+  const mergedProvenance = assertEnterpriseUxTrackedInput(merged.file, mergedRecord, mergedRecord, mergedBytes);
+  assert.equal(mergedProvenance.current.blob, merged.blob);
+  assert.equal(mergedProvenance.mainParent.blob, mergedRow.main.lf.blob);
+  assert.equal(mergedProvenance.mergeSourceRevision, WIKI_MEDIA_MERGE_SOURCE.revision);
+  assert.equal(mergedProvenance.nativeAdmission, false); assert.equal(mergedProvenance.priorResultsTransferred, false);
+  const mainBytes = git('show', WIKI_MEDIA_MERGE_SOURCE.parents.main.revision + ':' + merged.file);
+  const mainRecord = { type: 'blob', mode: mergedRow.main.mode, blob: mergedRow.main.lf.blob };
+  reject(() => assertEnterpriseUxTrackedInput(merged.file, mainRecord, mainRecord, mainBytes),
+    'Even an exact admitted main parent cannot replace the actual merged native input');
+  reject(() => assertEnterpriseUxTrackedInput(merged.file, mergedRecord, mergedRecord, Buffer.concat([mergedBytes, Buffer.from('\n')])));
   const historical = git('show', provenance.predecessorRevision + ':' + first.file);
   const historicalRecord = { type: 'blob', mode: provenance.predecessor.mode, blob: provenance.predecessor.blob };
   reject(() => assertEnterpriseUxTrackedInput(first.file, historicalRecord, historicalRecord, historical),

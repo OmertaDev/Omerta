@@ -266,3 +266,7 @@ export const WIKI_MEDIA_SOURCE = freeze({
   }
 });
 export const WIKI_MEDIA_SOURCE_SHA256 = "a9bff9da0739fc27d09f7324c0e63c17a5f4d7f011a6c9bbba0fd24eca8cc8a0";
+
+// Separately authored dual-parent merge evidence. The original 37ff binding above is immutable.
+export const WIKI_MEDIA_MERGE_SOURCE = freeze({ status: 'UNSEALED', files: {} });
+export const WIKI_MEDIA_MERGE_SOURCE_SHA256 = '';

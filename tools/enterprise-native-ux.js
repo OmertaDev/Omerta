@@ -7,6 +7,7 @@ import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from 
 import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
  ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as PREDECESSOR_NATIVE_DEFINITION_SHA256 } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
+import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256 } from './wiki-media-source-data.js';
 export { ENTERPRISE_NATIVE_UX_INPUTS };
 export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-deed-inputs.js';
 export const ENTERPRISE_UX_PREDECESSOR_METADATA = 'tools/enterprise-native-ux-b35-inputs.js';
@@ -83,8 +84,11 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
  assert.equal(declaration, ENTERPRISE_NATIVE_UX_INPUTS, 'Only the actual frozen current-native declaration');
  assert.equal(declaration.status, 'SEALED', 'Current UX native inputs remain UNSEALED; no prior native results transfer');
  assert.equal(digest(JSON.stringify(declaration)), ENTERPRISE_NATIVE_UX_INPUTS_SHA256, 'Whole current-native declaration changed');
- fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
- assert.equal(declaration.version, 3); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
+ fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', 'wikiMergeSourceDefinitionSha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
+ assert.equal(declaration.version, 4); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_WIKI_MERGE_NATIVE_INPUTS');
+ assert.equal(WIKI_MEDIA_MERGE_SOURCE.status, 'SEALED');
+ assert.equal(digest(JSON.stringify(WIKI_MEDIA_MERGE_SOURCE)), WIKI_MEDIA_MERGE_SOURCE_SHA256, 'Immutable exact merge definition');
+ assert.equal(declaration.wikiMergeSourceDefinitionSha256, WIKI_MEDIA_MERGE_SOURCE_SHA256, 'Exact reviewed merge source relation');
  assert.equal(PREDECESSOR_NATIVE_INPUTS.status, 'SEALED');
  assert.equal(digest(JSON.stringify(PREDECESSOR_NATIVE_INPUTS)), PREDECESSOR_NATIVE_DEFINITION_SHA256, 'Immutable predecessor native declaration');
  assert.equal(declaration.nativePredecessorRevision, PREDECESSOR_NATIVE_INPUTS.authoredRevision);
@@ -115,6 +119,22 @@ export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, d
  // The relation below records provenance only; native execution and its sixteen fresh cases remain mandatory.
  const previous = PREDECESSOR_NATIVE_INPUTS.files.find(row => row.file === file);
  if (!previous || !changedPin(previous, expected)) return null;
+ const merged = WIKI_MEDIA_MERGE_SOURCE.files[file];
+ if (merged) {
+  assert.equal(merged.current.mode, expected.mode); assert.equal(merged.current.lf.blob, expected.blob);
+  assert.equal(merged.current.lf.sha256, expected.sha256);
+  assert.equal(merged.main.absent, false, 'An exact existing main input is required for merge provenance');
+  const main = Object.freeze({ file, mode: merged.main.mode, blob: merged.main.lf.blob, sha256: merged.main.lf.sha256 });
+  if (changedPin(previous, main)) {
+   const deed = DEED_ALLOCATION_SOURCE_DOMAINS[file]; assert(deed, 'No unreviewed main-to-predecessor source relation: ' + file);
+   assert.equal(main.mode, deed.currentMode); assert.equal(main.blob, deed.currentBlob); assert.equal(main.sha256, deed.currentSha256);
+   assert.equal(previous.mode, deed.baselineMode); assert.equal(previous.blob, deed.baselineBlob); assert.equal(previous.sha256, deed.baselineSha256);
+  }
+  return Object.freeze({ file, current: Object.freeze({ mode: current.mode, blob: current.blob, sha256: digest(bytes) }),
+   predecessor: previous, predecessorRevision: PREDECESSOR_NATIVE_INPUTS.authoredRevision, mainParent: main,
+   mergeSourceRevision: WIKI_MEDIA_MERGE_SOURCE.revision, mergeParentRevision: WIKI_MEDIA_MERGE_SOURCE.parents.main.revision,
+   relation: 'exact-reviewed-wiki-merge-source-provenance-only', nativeAdmission: false, priorResultsTransferred: false });
+ }
  const sourcePin = DEED_ALLOCATION_SOURCE_DOMAINS[file];
  assert(sourcePin, 'No unreviewed change to an existing native input: ' + file);
  assert.equal(expected.mode, sourcePin.currentMode); assert.equal(expected.blob, sourcePin.currentBlob);

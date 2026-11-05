@@ -1,5 +1,6 @@
 // Independently pinned source-reader conservation. No native compiler/runtime is imported here.
 import assert from 'node:assert/strict';
+import { WIKI_MEDIA_MERGE_SOURCE, assertWikiMediaMergeSourceTransfer } from '../../tools/wiki-media-source-transfer.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -25,7 +26,14 @@ const hunks = diff => {
 };
 // This is only the historical reader's qualified view; raw HEAD is independently pinned below.
 function qualifiedNativeReaderHeadEntry(file) {
-  const raw = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();
+  let raw = git('show', 'HEAD:' + file), entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const merged = WIKI_MEDIA_MERGE_SOURCE.files[file];
+  if (merged) {
+    assert.equal(entry, merged.current.mode + ' blob ' + merged.current.lf.blob + '\t' + file,
+      'Actual merged HEAD identity must qualify before source-only reader bookkeeping');
+    raw = assertWikiMediaMergeSourceTransfer(file, raw).baselineText;
+    entry = git('ls-tree', WIKI_MEDIA_MERGE_SOURCE.parents.main.revision, '--', file).trim();
+  }
   const deed = DEED_ALLOCATION_SOURCE_DOMAINS[file];
   if (deed) {
     assert.equal(entry, deed.currentMode + ' blob ' + deed.currentBlob + '\t' + file, 'Raw Deed HEAD mode/blob must qualify before historical source bookkeeping');
