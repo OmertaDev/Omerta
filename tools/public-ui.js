@@ -75,7 +75,13 @@ async function newPage(options) {
 }
 
 // Keep these checks behavioral: a labelled overlay can still strand a real keyboard user.
+async function openControlDetails(control) {
+  for (const details of await control.locator('xpath=ancestor::details').all()) {
+    if (!await details.evaluate(node => node.open)) await details.locator(':scope > summary').click();
+  }
+}
 async function checkDialogKeyboard(page, opener, overlay, name) {
+  await openControlDetails(page.locator(opener));
   await page.locator(opener).focus();
   await page.keyboard.press('Enter');
   await page.locator(`${overlay}:not(.hidden)`).waitFor();
@@ -153,6 +159,22 @@ try {
   check(firstFrame.over <= 1, `desktop landing scrolls sideways by ${firstFrame.over}px`);
   check(firstFrame.editorial && !firstFrame.announcesLive,
     'the fictional landing feed is not programmatically identified as editorial flavor');
+  // Measure the cold viewport before the responsive-layout probes request other poster sizes.
+  await desktop.waitForLoadState('networkidle');
+  const landingLoad = await desktop.evaluate(() => {
+    const nav = performance.getEntriesByType('navigation')[0];
+    const resources = performance.getEntriesByType('resource').map((r) => ({
+      name: new URL(r.name).pathname, bytes: r.transferSize || r.encodedBodySize || 0,
+    })).sort((a, b) => b.bytes - a.bytes);
+    return { bytes: (nav?.transferSize || nav?.encodedBodySize || 0) + resources.reduce((sum, r) => sum + r.bytes, 0),
+      heroFallbackBytes: resources.find((r) => r.name === '/art/hero-poster.jpg')?.bytes || 0,
+      resources: resources.slice(0, 6) };
+  });
+  check(landingLoad.bytes <= 768 * 1024,
+    `cold landing transfers ${Math.round(landingLoad.bytes / 1024)} KB; budget is 768 KB — ${JSON.stringify(landingLoad.resources)}`);
+  console.log(`    Cold landing: ${Math.round(landingLoad.bytes / 1024)} KB / 768 KB transfer budget`);
+  check(landingLoad.heroFallbackBytes === 0,
+    `the responsive landing still fetched the 630 KB hero fallback — ${JSON.stringify(landingLoad.resources)}`);
   // A 1728px MacBook Pro report exposed the hero's right edge as black while the animated layer played.
   // Both the first-paint still and the progressively-mounted video must be centered on the VIEWPORT,
   // not sized from the 1080px copy column that happens to own them in the DOM.
@@ -178,21 +200,6 @@ try {
   }));
   check(gameProof.approaches === 3 && gameProof.receipt === 1,
     `landing does not prove one game decision and its recorded consequence — ${JSON.stringify(gameProof)}`);
-  await desktop.waitForLoadState('networkidle');
-  const landingLoad = await desktop.evaluate(() => {
-    const nav = performance.getEntriesByType('navigation')[0];
-    const resources = performance.getEntriesByType('resource').map((r) => ({
-      name: new URL(r.name).pathname, bytes: r.transferSize || r.encodedBodySize || 0,
-    })).sort((a, b) => b.bytes - a.bytes);
-    return { bytes: (nav?.transferSize || nav?.encodedBodySize || 0) + resources.reduce((sum, r) => sum + r.bytes, 0),
-      heroFallbackBytes: resources.find((r) => r.name === '/art/hero-poster.jpg')?.bytes || 0,
-      resources: resources.slice(0, 6) };
-  });
-  check(landingLoad.bytes <= 768 * 1024,
-    `cold landing transfers ${Math.round(landingLoad.bytes / 1024)} KB; budget is 768 KB — ${JSON.stringify(landingLoad.resources)}`);
-  console.log(`    Cold landing: ${Math.round(landingLoad.bytes / 1024)} KB / 768 KB transfer budget`);
-  check(landingLoad.heroFallbackBytes === 0,
-    `the responsive landing still fetched the 630 KB hero fallback — ${JSON.stringify(landingLoad.resources)}`);
 
   // Merely moving a pointer must not silently begin the large atmosphere transfer.
   // Measure before any explicit play and keep that opt-in transfer outside the cold-load budget.
@@ -449,7 +456,14 @@ try {
   await mobile.fill('#new-name', 'Intent ' + Math.random().toString(36).slice(2, 8));
   await mobile.click('#btn-create');
   await mobile.waitForSelector('#screen-main:not(.hidden)');
-  if (await mobile.locator('#welcome:not(.hidden)').count()) await mobile.click('#tour-skip');
+  await mobile.locator('#tab-start.on .start-next-card .act').waitFor();
+  check(await mobile.locator('#welcome:not(.hidden)').count() === 0, 'The welcome tour is optional on fresh arrival.');
+  await openControlDetails(mobile.locator('#btn-help'));
+  await mobile.click('#btn-help');
+  await mobile.click('#glossary-tour');
+  await mobile.locator('#welcome:not(.hidden)').waitFor();
+  for (let step = 0; step < 2; step++) await mobile.click('#tour-next');
+  await mobile.locator('#welcome.hidden').waitFor({ state: 'attached' });
   await mobile.waitForSelector('#tab-streets.on [data-do^="POST /v1/crimes/"]:not([disabled])');
   check(await mobile.locator('#tab-streets.on').isVisible()
       && await mobile.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected') === 'true',
@@ -511,6 +525,7 @@ try {
     } else await route.continue();
   });
   const checkin = mobile.locator('#sheet [data-do="POST /v1/checkin"]');
+  await openControlDetails(checkin);
   await checkin.click();
   await mobile.waitForTimeout(40);
   const pending = await mobile.evaluate(() => ({
@@ -595,8 +610,8 @@ try {
   const deedMe = (await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: 'Bearer ' + deedToken } })).json();
   const deedAccount = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [deedMe.character.id])).rows[0].account_id;
   await app.pool.query('UPDATE characters SET respect=500000,energy=100,cash=cash+2000 WHERE id=$1', [deedMe.character.id]);
-  await earnBuildingClaim(app, deedToken, 'docks-0417');
-  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', buildingId: 'docks-0417' } });
+  await earnBuildingClaim(app, deedToken, 'docks-0001');
+  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', buildingId: 'docks-0001' } });
   check(claim.statusCode === 200, 'Browser deed fixture could not claim a street');
   await mobile.evaluate(() => document.querySelector('#tabs [data-tab="deeds"]').click());
   await mobile.waitForSelector('#deed-upgrade', { state: 'visible' });

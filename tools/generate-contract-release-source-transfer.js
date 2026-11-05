@@ -14,6 +14,13 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CONTRACT = 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e';
 const CONTRACT_BASE = 'c4b626b631b04e594097fb6bb416c36fdfea00f3';
 const UI = 'f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7';
+const CONTRACT_ORIGIN = Object.freeze({ revision: CONTRACT, baseRevision: CONTRACT_BASE });
+const UI_ORIGIN = Object.freeze({ revision: UI, baseRevision: CONTRACT });
+export const CONTRACT_RELEASE_MOBILE_ORIGIN = Object.freeze({
+  revision: '6c4d37842f4d7ebd7f96d5fee9935720f442007a',
+  baseRevision: '4fc2f4100dbe0dca019cab2c4a13b18e5bee93e5',
+  files: Object.freeze(['public/index.html', 'public/omerta-ui.css', 'tools/mobile.js', 'tools/public-ui.js']),
+});
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
 const HISTORY = Object.freeze(['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
@@ -137,6 +144,34 @@ export function deriveContractReleaseReviewedSource(base, original, reviewed) {
   }
 }
 
+export function contractReleaseReviewedOrigins(file) {
+  const origins = [];
+  if (RELEASE.includes(file)) origins.push(CONTRACT_ORIGIN);
+  if (file === UI_FILE) origins.push(UI_ORIGIN);
+  if (CONTRACT_RELEASE_MOBILE_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_MOBILE_ORIGIN);
+  return Object.freeze(origins);
+}
+export function deriveContractReleaseApprovedSource(file, base) {
+  assert(canonicalPath(file), 'Canonical fixed reviewed source path required');
+  const origins = contractReleaseReviewedOrigins(file);
+  assert(origins.length, 'No fixed reviewed source origin: ' + file);
+  if (base) { assert.equal(base.pin.file, file); sourceText(base); }
+  let expected = base;
+  for (const origin of origins) {
+    const original = record(origin.baseRevision, file, true), reviewed = record(origin.revision, file);
+    const bytes = deriveContractReleaseReviewedSource(expected, original, reviewed);
+    expected = { pin: { file, mode: reviewed.pin.mode, blob: blob(bytes), sha256: sha256(bytes) }, bytes };
+  }
+  return expected;
+}
+export function assertContractReleaseApprovedSource(file, base, actual) {
+  const expected = deriveContractReleaseApprovedSource(file, base);
+  assert.equal(actual.pin.file, file); assert.equal(actual.pin.mode, expected.pin.mode);
+  sourceText(actual); assert.equal(actual.pin.sha256, sha256(actual.bytes));
+  assert(actual.bytes.equals(expected.bytes), 'Only the ordered independently reviewed edits at their exact contexts are approved: ' + file);
+  return expected;
+}
+
 // Pure output-scope check; main always supplies this module's actual repository root.
 export function resolveContractReleasePrototypeOutput(output, repositoryRoot = root) {
   assert.equal(typeof output, 'string');
@@ -189,12 +224,8 @@ function main() {
     if (INTEGRATION.includes(file)) {
       assert(Object.hasOwn(approval.pins, file), 'Exact explicit integration approval required: ' + file);
       assert.deepEqual(actual.pin, approval.pins[file]);
-    } else if (RELEASE.includes(file) || file === UI_FILE) {
-      const origin = file === UI_FILE ? UI : CONTRACT, originBase = file === UI_FILE ? CONTRACT : CONTRACT_BASE;
-      const reviewed = record(origin, file), original = record(originBase, file, true);
-      assert.equal(actual.pin.mode, reviewed.pin.mode);
-      const expected = deriveContractReleaseReviewedSource(prior, original, reviewed);
-      assert(actual.bytes.equals(expected), 'Only the independently reviewed edit at its exact context is approved: ' + file);
+    } else if (contractReleaseReviewedOrigins(file).length) {
+      assertContractReleaseApprovedSource(file, prior, actual);
     } else assert.fail('No approved contract or support source: ' + file);
     checked.add(file); return actual;
   };
@@ -216,7 +247,7 @@ function main() {
   // Validate the separately reviewed UI change even when it is outside the native closure.
   const uiCurrent = record(source, UI_FILE), uiBase = record(base, UI_FILE);
   if (uiCurrent.pin.blob !== uiBase.pin.blob) authorize(UI_FILE);
-  const viewFiles = [...new Set([...RELEASE, ...INTEGRATION, ...FEE])].sort();
+  const viewFiles = [...new Set([...RELEASE, ...INTEGRATION, ...FEE, ...CONTRACT_RELEASE_MOBILE_ORIGIN.files])].sort();
   for (const file of viewFiles) {
     const actual = record(source, file, true), prior = record(base, file, true);
     if (!actual || !prior) continue;

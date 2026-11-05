@@ -123,7 +123,7 @@ assert.equal(lf(fs.readFileSync('schema.sql', 'utf8')), git('show', `${DEED_ALLO
   'Source transfer grants no schema/native migration alias');
 for (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',
   'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])
-  assert.equal(lf(fs.readFileSync(file, 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),
+  assert.equal(lf(contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8'))), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),
     'Historical literal source pins remain unchanged: ' + file);
 assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-b35-inputs.js', 'utf8')),
   git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:tools/enterprise-native-ux-inputs.js`),

@@ -11,7 +11,9 @@ import { assertContractReleaseSourceDefinition, assertContractReleaseSourceTrans
   contractReleaseDeskInput, contractReleaseFeeInput, CONTRACT_RELEASE_MIN_CONTEXT_LINES,
   CONTRACT_RELEASE_MAX_CONTEXT_LINES } from '../tools/contract-release-source-transfer.js';
 import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
-  deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks } from '../tools/generate-contract-release-source-transfer.js';
+  deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN,
+  contractReleaseReviewedOrigins, deriveContractReleaseApprovedSource,
+  assertContractReleaseApprovedSource } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import { assertDeedAllocationSourceTransfer } from '../tools/deed-allocation-source-transfer.js';
 import { assertMarketFeeCopySourceTransfer } from '../tools/market-fee-copy-source-transfer.js';
@@ -57,7 +59,7 @@ const fixture = {
 };
 const helperText = fs.readFileSync(path.join(root, 'tools/contract-release-source-transfer.js'), 'utf8');
 const directories = [];
-let positives = 0, refusals = 0, malformedDefinitions = 0, provisionalCompositions = 0, expandedContextRegressions = 0;
+let positives = 0, refusals = 0, malformedDefinitions = 0, provisionalCompositions = 0, expandedContextRegressions = 0, mobileOriginCompositions = 0;
 const tempModule = async (value, mutate = '') => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-contract-source-controls-'));
   directories.push(directory);
@@ -305,6 +307,57 @@ try {
     sourceRecord(originalSource), sourceRecord(reviewedSource)));
   refused(() => deriveContractReleaseReviewedSource(null, sourceRecord(originalSource), sourceRecord(reviewedSource)));
   refused(() => deriveContractReleaseReviewedSource(sourceRecord(acceptedSource), null, sourceRecord(reviewedSource)));
+  // Immutable origin fixtures preserve the exact C5 base and ordered contract-then-mobile approval.
+  const mobileFiles = ['public/index.html', 'public/omerta-ui.css', 'tools/mobile.js', 'tools/public-ui.js'];
+  const mobileRevision = '6c4d37842f4d7ebd7f96d5fee9935720f442007a', mobileBase = '4fc2f4100dbe0dca019cab2c4a13b18e5bee93e5';
+  assert.deepEqual(CONTRACT_RELEASE_MOBILE_ORIGIN, { revision: mobileRevision, baseRevision: mobileBase, files: mobileFiles });
+  assert(Object.isFrozen(CONTRACT_RELEASE_MOBILE_ORIGIN) && Object.isFrozen(CONTRACT_RELEASE_MOBILE_ORIGIN.files));
+  refused(() => { CONTRACT_RELEASE_MOBILE_ORIGIN.files.push('src/server.js'); });
+  const origins = contractReleaseReviewedOrigins('public/index.html');
+  assert(Object.isFrozen(origins)); refused(() => { origins.reverse(); });
+  assert.deepEqual(origins.map(({ revision, baseRevision }) => ({ revision, baseRevision })), [
+    { revision: fixture.reviewedContractRevision, baseRevision: 'c4b626b631b04e594097fb6bb416c36fdfea00f3' },
+    { revision: mobileRevision, baseRevision: mobileBase },
+  ]);
+  assert.deepEqual(contractReleaseReviewedOrigins('test/ux-expanded-browser.js'), [
+    { revision: fixture.reviewedUiRevision, baseRevision: fixture.reviewedContractRevision },
+  ], 'The independent typography origin remains unchanged');
+  const expectedMobileSha256 = {
+    'public/index.html': '66fff9739ffabc3b1b0321c43b48973452230f0cca17acf1241fb71759562c0b',
+    'public/omerta-ui.css': '4daa6519dfb0b6eaf327e6442a35af74fe7b6d127fdebd04f3a66924ad46841e',
+    'tools/mobile.js': 'd8ab341221bca964f33614d76df1d3470d614b609482bbcf06da35e96050b8cb',
+    'tools/public-ui.js': '3ca027b9fcc536903f71e0055ae7825ed87bbf102c7e2f332e771038ef4d82e3',
+  };
+  const originRecord = (file, bytes) => ({ pin: { file, mode: '100644', blob: blob(bytes), sha256: sha(bytes) }, bytes: Buffer.from(bytes) });
+  const committedOriginRecord = (revision, file) => {
+    const row = originRecord(file, Buffer.from(git('show', revision + ':' + file)));
+    assert.equal(git('ls-tree', revision, '--', file).trim(), '100644 blob ' + row.pin.blob + '\t' + file); return row;
+  };
+  for (const file of mobileFiles) {
+    const base = committedOriginRecord('de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', file);
+    const expected = deriveContractReleaseApprovedSource(file, base);
+    assert.equal(expected.pin.sha256, expectedMobileSha256[file], 'Independent five-stage Git composition fixture hash');
+    assert.equal(expected.pin.mode, '100644');
+    assert.deepEqual(assertContractReleaseApprovedSource(file, base, expected), expected); positives++;
+    for (const bytes of [Buffer.concat([expected.bytes, Buffer.from('\n')]), expected.bytes.subarray(1),
+      Buffer.from(expected.bytes.toString('utf8').replace(/\S/, '?'))])
+      refused(() => assertContractReleaseApprovedSource(file, base, originRecord(file, bytes)));
+    refused(() => assertContractReleaseApprovedSource(file, base, { ...expected, pin: { ...expected.pin, mode: '100755' } }));
+    if (file !== 'public/index.html') assert.deepEqual(contractReleaseReviewedOrigins(file), [CONTRACT_RELEASE_MOBILE_ORIGIN]);
+    mobileOriginCompositions++;
+  }
+  const indexBase = committedOriginRecord('de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', 'public/index.html');
+  const contractOnlyIndex = deriveContractReleaseReviewedSource(indexBase,
+    committedOriginRecord('c4b626b631b04e594097fb6bb416c36fdfea00f3', 'public/index.html'),
+    committedOriginRecord(fixture.reviewedContractRevision, 'public/index.html'));
+  const mobileOnlyIndex = deriveContractReleaseReviewedSource(indexBase,
+    committedOriginRecord(mobileBase, 'public/index.html'), committedOriginRecord(mobileRevision, 'public/index.html'));
+  for (const bytes of [contractOnlyIndex, mobileOnlyIndex])
+    refused(() => assertContractReleaseApprovedSource('public/index.html', indexBase, originRecord('public/index.html', bytes)));
+  for (const file of ['src/server.js', 'tools/mobile.js.extra', '../tools/mobile.js']) {
+    assert.deepEqual(contractReleaseReviewedOrigins(file), []);
+    refused(() => deriveContractReleaseApprovedSource(file, null));
+  }
   const fixtureRepository = path.join(approvalDirectory, 'repository'), redirect = path.join(approvalDirectory, 'redirect');
   fs.mkdirSync(fixtureRepository);
   fs.symlinkSync(fixtureRepository, redirect, process.platform === 'win32' ? 'junction' : 'dir');
@@ -314,14 +367,18 @@ try {
   refused(() => resolveContractReleasePrototypeOutput(path.join(redirect, 'inside.json'), fixtureRepository));
   assert(!fs.existsSync(path.join(fixtureRepository, 'inside.json')));
   const approvalPath = path.join(approvalDirectory, 'integration.json'), outputPath = path.join(approvalDirectory, 'prototype.json');
-  fs.writeFileSync(approvalPath, JSON.stringify({ version: 1, sourceRevision: 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e',
-    pins: { 'src/unapproved.js': { file: 'src/unapproved.js', mode: '100644', blob: 'a'.repeat(40), sha256: 'b'.repeat(64) } } }));
-  const generator = spawnSync(process.execPath, [path.join(root, 'tools/generate-contract-release-source-transfer.js'),
-    '--prototype', '--source=d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e', '--base=c4b626b631b04e594097fb6bb416c36fdfea00f3',
-    '--integration-pins=' + approvalPath, '--output=' + outputPath], { cwd: root, encoding: 'utf8', windowsHide: true });
-  assert.notEqual(generator.status, 0); assert(generator.stderr.includes('No unlisted integration approval')); assert(!fs.existsSync(outputPath)); refusals++;
+  for (const file of ['src/unapproved.js', ...mobileFiles]) {
+    fs.writeFileSync(approvalPath, JSON.stringify({ version: 1, sourceRevision: 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e',
+      pins: { [file]: { file, mode: '100644', blob: 'a'.repeat(40), sha256: 'b'.repeat(64) } } }));
+    const generator = spawnSync(process.execPath, [path.join(root, 'tools/generate-contract-release-source-transfer.js'),
+      '--prototype', '--source=d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e', '--base=c4b626b631b04e594097fb6bb416c36fdfea00f3',
+      '--integration-pins=' + approvalPath, '--output=' + outputPath], { cwd: root, encoding: 'utf8', windowsHide: true });
+    assert.notEqual(generator.status, 0); assert(generator.stderr.includes('No unlisted integration approval'),
+      'Fixed origins cannot be bypassed by an integration approval: ' + file);
+    assert(!fs.existsSync(outputPath)); refusals++;
+  }
   console.log(JSON.stringify({ phase: 'CONTRACT_RELEASE_SOURCE_CONTROLS', status: data.status,
-    positives, refusals, malformedDefinitions, provisionalCompositions, expandedContextRegressions,
+    positives, refusals, malformedDefinitions, provisionalCompositions, expandedContextRegressions, mobileOriginCompositions,
     contextBounds: [CONTRACT_RELEASE_MIN_CONTEXT_LINES, CONTRACT_RELEASE_MAX_CONTEXT_LINES], currentBindingAccepted: data.status === 'BOUND',
     fixtureScope: 'Synthetic exact source-text controls; no native/runtime/financial qualification',
     runtime: false, native: false }));
