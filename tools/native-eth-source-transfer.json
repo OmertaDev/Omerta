@@ -1,5 +1,5 @@
 {
-  "sourceRevision": "51f1167bb6aa0292b497ab20b5435d8a578a515c",
+  "sourceRevision": "894ffa94ca4de65a12be72e79b8081bc5e3e0530",
   "predecessorRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
   "predecessorTree": "2fb48b34fdb9fab7f630844205d035b29ee063c0",
   "phase": "exact historical source transfer only; no runtime, native, financial or deployment qualification",
@@ -63,11 +63,11 @@
       "baselineBytes": 245711
     },
     "public/index.html": {
-      "currentSha256": "af3101856f3b6fa0ba5c8be85c917f38cb8ded1220640c40941d2369c3b8d868",
-      "currentBlob": "59fcbff93c4d13cdb736f2ee3b2b51fb7a27b08b",
+      "currentSha256": "c48a241aa1eb252dd1b5e92a468f85272480632915fa75f0b5af7e08ba9930aa",
+      "currentBlob": "9a277cca6c4c5b8051fce5a954365ba1317c989a",
       "currentBytes": 1407014,
-      "authoredSha256": "af3101856f3b6fa0ba5c8be85c917f38cb8ded1220640c40941d2369c3b8d868",
-      "authoredBlob": "59fcbff93c4d13cdb736f2ee3b2b51fb7a27b08b",
+      "authoredSha256": "c48a241aa1eb252dd1b5e92a468f85272480632915fa75f0b5af7e08ba9930aa",
+      "authoredBlob": "9a277cca6c4c5b8051fce5a954365ba1317c989a",
       "authoredBytes": 1407014,
       "baselineSha256": "db4cbe6b819543e3fbc0db32cf4352a987d8b6586823df5c33756b2e2a23f969",
       "baselineBlob": "9542428cbd82fd496ea42c213772b3036541ceb6",
