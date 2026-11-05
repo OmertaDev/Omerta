@@ -4,9 +4,9 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_NATIVE_PROVENANCE_ONLY",
-  "sourceRevision": "84532d5d08248d533b573f621fada39d83e0ac3f",
-  "sourceTree": "c495f28621ff0c796400c31b5c9e630ddb844302",
-  "topSourceDefinitionSha256": "1be5eafba45d5b2c2b859fc2e0fb6aaf9792c7588a82da19f0dcbeac7f606cfb",
+  "sourceRevision": "1719932f04c252913334f0a318e398aa7673f91f",
+  "sourceTree": "3b4ca8e6b5a92e521c311bbf07fbf67eec739fb3",
+  "topSourceDefinitionSha256": "e40ee2f38d2ecc602e1bcb478fc4fb1d3e3e8f024a56e594a14800c52330d22b",
   "parentRegistryDefinitionSha256": "d38d8283d7b29eff2a80cefb43f68e768f6df294ed5e8d297b3219bc36622516",
   "nativeClosure": [
     ".github/workflows/ci.yml",
@@ -3703,8 +3703,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
       "current": {
         "file": "test/lib/ux-native-reader-source-compatibility.js",
         "mode": "100644",
-        "blob": "038a24c8b576d48c6488cb3b1a82b657f4b06eb5",
-        "sha256": "adcb7b00b41486e4cccb5f58424558c7f4313becdb47da519d95385e2ba9bbea"
+        "blob": "0a09ea5c6fd3e9a8d01d398e7183cb87a5e3a133",
+        "sha256": "f433b7807bd56b3ebb6d0bcf761c40f601e9f05062abff14276349ddd7f736c2"
       },
       "profile": "wiki",
       "parent": {
@@ -3719,8 +3719,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
           "from": {
             "file": "test/lib/ux-native-reader-source-compatibility.js",
             "mode": "100644",
-            "blob": "038a24c8b576d48c6488cb3b1a82b657f4b06eb5",
-            "sha256": "adcb7b00b41486e4cccb5f58424558c7f4313becdb47da519d95385e2ba9bbea"
+            "blob": "0a09ea5c6fd3e9a8d01d398e7183cb87a5e3a133",
+            "sha256": "f433b7807bd56b3ebb6d0bcf761c40f601e9f05062abff14276349ddd7f736c2"
           },
           "to": {
             "file": "test/lib/ux-native-reader-source-compatibility.js",
@@ -4312,4 +4312,4 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="5b16acf1f90ab60f64f6441f3544a418cd66f36a70fa0acf1daae86d6012288a";
+export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="7705dbe44257bb05b8f248d3850872ab55be3bdea57c5bca5f3e18df22378e5c";
