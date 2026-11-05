@@ -97,7 +97,7 @@ const INTEGRATION = Object.freeze(['package.json', 'tools/enterprise-native-ux.j
   'tools/economy-social-proof-cutover-source-transfer.js',
   'test/noir-ui-source-compatibility.js', 'test/businessdesk-noir-source-compatibility.js',
   'test/economy-hardening-source-compatibility.js', 'test/lib/enterprise-ux-native-guard.js',
-  'test/businessdesk-native-provenance.js', 'tools/contract-release-native-provenance.js',
+  'test/businessdesk-native-provenance.js', 'test/companyopportunities.js', 'tools/contract-release-native-provenance.js',
   'tools/contract-release-source-format.js',
   'tools/contract-release-source-transfer.js', 'tools/generate-contract-release-source-transfer.js',
   'test/contract-release-source-compatibility.js',
