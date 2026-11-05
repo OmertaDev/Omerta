@@ -73,9 +73,18 @@ async function openControlDisclosures(control) {
   }
 }
 
-async function clickDisclosureControl(page, selector) {
+async function clickDisclosureControl(page, selector, verifyPointer = false) {
   const control = page.locator(selector);
   await openControlDisclosures(control);
+  if (verifyPointer) {
+    const pointer = await control.evaluate(node => {
+      const box = node.getBoundingClientRect(), x = box.x + box.width / 2, y = box.y + box.height / 2;
+      const hit = document.elementFromPoint(x, y);
+      return { receives: hit === node || node.contains(hit), x, y, width: innerWidth, height: innerHeight,
+        hit: hit ? { tag: hit.tagName, id: hit.id, className: hit.className } : null };
+    });
+    if (!pointer.receives) throw new Error(`${selector} center is covered before its pointer click — ${JSON.stringify(pointer)}`);
+  }
   await control.click();
 }
 
@@ -401,7 +410,14 @@ for (const vp of VIEWPORTS) {
   if (await page.locator('#welcome:not(.hidden)').count()) {
     fail('(first action)', vp, 'a fresh character was interrupted by a mandatory tour');
   } else {
-    await clickDisclosureControl(page, '#btn-help');
+    await clickDisclosureControl(page, '#btn-help', true);
+    await page.click('#glossary-close');
+    await page.click('#btn-jump');
+    await page.fill('#jump-q', 'garage');
+    await page.locator('#jump-list [data-jump="garage"]').click();
+    await page.locator('#tab-garage.on').waitFor({ state: 'visible' });
+    await page.locator('#coach').waitFor({ state: 'visible' });
+    await clickDisclosureControl(page, '#btn-help', true);
     await page.click('#glossary-tour');
   }
   if (!(await page.locator('#welcome:not(.hidden)').count())) {
@@ -565,7 +581,7 @@ for (const vp of VIEWPORTS) {
       }
 
       await check(page, 'start-here (after first action)', vp, { contentMustShow: true });
-      await clickDisclosureControl(page, '#btn-help');
+      await clickDisclosureControl(page, '#btn-help', true);
       await page.waitForSelector('#glossary:not(.hidden)', { timeout: 5000 });
       const replayOpener = page.locator('#glossary-tour');
       if (!(await replayOpener.count())) {
