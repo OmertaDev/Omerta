@@ -4,10 +4,10 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_MONITOR_WIKI_DESK_NATIVE_PROVENANCE_ONLY",
-  "sourceRevision": "8dd6ed969b72f14104b0ae7759ebfd999af19ff3",
-  "sourceTree": "c9395c6597788e8b4cddafc818c670ff663d552b",
-  "topSourceDefinitionSha256": "b26bddb26cb587e402cf27d31f6e608295616a2793acf35f8c559df1cebe0222",
-  "parentRegistryDefinitionSha256": "6d5d17e6ed71469ba5bd4b4f02d14ef47d5d8ce258fea66ca19a1075008abe0a",
+  "sourceRevision": "84532d5d08248d533b573f621fada39d83e0ac3f",
+  "sourceTree": "c495f28621ff0c796400c31b5c9e630ddb844302",
+  "topSourceDefinitionSha256": "1be5eafba45d5b2c2b859fc2e0fb6aaf9792c7588a82da19f0dcbeac7f606cfb",
+  "parentRegistryDefinitionSha256": "d38d8283d7b29eff2a80cefb43f68e768f6df294ed5e8d297b3219bc36622516",
   "nativeClosure": [
     ".github/workflows/ci.yml",
     ".github/workflows/forge.yml",
@@ -2023,8 +2023,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
       "current": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "b268ff50dfdc0f645d52bc837f5a36a3b952d525",
-        "sha256": "b048c71394a058a153a0789a0c596a6f41fd20c21c644047180ec63cc466ad89"
+        "blob": "cb87163f7b87389596a737e18be397ce6a1af02a",
+        "sha256": "e2795f78d407109a4b2e8e12f09b3eedd5d640fa6d7f3cecc435c0dd273e5f28"
       },
       "profile": "desk",
       "parent": {
@@ -2039,8 +2039,8 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
           "from": {
             "file": "public/index.html",
             "mode": "100644",
-            "blob": "b268ff50dfdc0f645d52bc837f5a36a3b952d525",
-            "sha256": "b048c71394a058a153a0789a0c596a6f41fd20c21c644047180ec63cc466ad89"
+            "blob": "cb87163f7b87389596a737e18be397ce6a1af02a",
+            "sha256": "e2795f78d407109a4b2e8e12f09b3eedd5d640fa6d7f3cecc435c0dd273e5f28"
           },
           "to": {
             "file": "public/index.html",
@@ -4312,4 +4312,4 @@ export const BUSINESS_DESK_COMBINED_NATIVE=freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="d853ff72d931971fb9a24c9a7e9192999782252ff1211384a00c3c1268679e97";
+export const BUSINESS_DESK_COMBINED_NATIVE_SHA256="5b16acf1f90ab60f64f6441f3544a418cd66f36a70fa0acf1daae86d6012288a";
