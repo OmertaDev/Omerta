@@ -349,16 +349,31 @@ delete process.env.DAILY_CAP_OMR;
     "INSERT INTO vig_buyback (id, eth_spent, omr_bought, price_omr_per_eth, to_reserve, to_prize) VALUES ('bb-bondtest', 1, 2000, 2000, 0, 0)");
   await call('POST', '/v1/mod/bond/fund', { headers: modH, body: { omr: 100000 } });
 
+  // Legacy chain credentials and database settings cannot activate current retail purchases.
+  for (const url of ['/v1/bond/quote','/v1/bond/calldata']) {
+    const closed = await call('POST',url,{token,body:{principalEth:'1'}});
+    assert.equal(closed.code,503);
+    assert.equal(closed.body.error,'bond_unavailable');
+  }
+  // Build historical records through the original model to retain signer, budget and watcher coverage.
+  const {quoteBond,bondCalldata} = await import('../src/chain.js');
+  const ownerAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1',[cid])).rows[0].account_id;
+  async function historicalResult(promise) {
+    try { return {code:200,body:await promise}; }
+    catch (error) { if (!error.code) throw error; return {code:400,body:{error:error.code}}; }
+  }
+  const makeHistoricalQuote = (eth,id=ownerAccount) => historicalResult(quoteBond(pool,id,eth));
+
   // ══ THE DAILY OFFERING (GM issuance control) — FAIL-CLOSED: a funded tranche + a live oracle
   // still sign NOTHING until the GM posts today's window ══
   {
-    const noOffer = await call('POST', '/v1/bond/quote', { token, body: { principalEth: 1 } });
+    const noOffer = await makeHistoricalQuote(1);
     assert.equal(noOffer.body.error, 'no_offering', 'no offering posted → the desk is closed (fail-closed, whatever the tranche holds)');
     // staging TOMORROW does not open TODAY (the window is per-day)
     const { dayOf } = await import('../src/rules.js');
     const stage = await call('POST', '/v1/mod/bond/offer', { headers: modH, body: { omr: 5000, day: dayOf() + 1 } });
     assert.equal(stage.code, 200, 'a future day can be staged');
-    assert.equal((await call('POST', '/v1/bond/quote', { token, body: { principalEth: 1 } })).body.error, 'no_offering',
+    assert.equal((await makeHistoricalQuote(1)).body.error, 'no_offering',
       "tomorrow's window does not serve today");
     // the GM opens TODAY — 100,000 OMR on the desk ("I only want to issue 100000 OMR ... this day")
     const open = await call('POST', '/v1/mod/bond/offer', { headers: modH, body: { omr: 100000 } });
@@ -366,20 +381,22 @@ delete process.env.DAILY_CAP_OMR;
     assert.equal(open.body.offeredOmr, 100000);
     // and it is PUBLIC on the board (the terms-ride-with-the-price rule)
     const bb = await call('GET', '/v1/bonds', { token });
-    assert(bb.body.daily && bb.body.daily.offeredOmr === 100000 && bb.body.daily.remainingOmr === 100000,
-      "the board shows today's window before anyone quotes");
+    assert.equal(bb.body.purchase.verificationAvailable,false);
+    assert.ok(!('quote' in bb.body) && !('offering' in bb.body) && !('daily' in bb.body),
+      'historical settings do not advertise availability or prices for new purchases');
   }
 
   // a fresh, wallet-LESS guest can't quote — a bond quote is bound to the payer wallet
   const { body: { token: noWallet } } = await call('POST', '/v1/auth/guest');
   await call('POST', '/v1/character', { token: noWallet, body: { name: 'No Wallet Nick' } });
-  assert.equal((await call('POST', '/v1/bond/quote', { token: noWallet, body: { principalEth: 1 } })).body.error, 'wallet', 'no linked wallet → no bond quote');
+  const otherAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [(await meOf(noWallet)).id])).rows[0].account_id;
+  assert.equal((await makeHistoricalQuote(1, otherAccount)).body.error, 'wallet', 'no linked wallet → no bond quote');
 
   // below the floor is refused
-  assert.equal((await call('POST', '/v1/bond/quote', { token, body: { principalEth: 0.001 } })).body.error, 'min', 'sub-minimum principal refused');
+  assert.equal((await makeHistoricalQuote(0.001)).body.error, 'min', 'sub-minimum principal refused');
 
   // sign a real quote for 1 ETH
-  const q = await call('POST', '/v1/bond/quote', { token, body: { principalEth: 1 } });
+  const q = await makeHistoricalQuote(1);
   assert.equal(q.code, 200, 'quote signed');
   const expectedPayout = Math.round((1 * 2000 / (1 - 800 / 10000)) * 1e6) / 1e6; // bondPayout(1, 2000, 800)
   assert.equal(q.body.payoutOmr, expectedPayout, 'payout = principal × price / (1 − discount)');
@@ -405,7 +422,7 @@ delete process.env.DAILY_CAP_OMR;
     { name: 'q', type: 'tuple', components: [{ name: 'payer', type: 'address' }, { name: 'principal', type: 'uint256' },
       { name: 'priceOmrPerEth', type: 'uint256' }, { name: 'discountBps', type: 'uint256' }, { name: 'vestSeconds', type: 'uint256' },
       { name: 'nonce', type: 'uint256' }, { name: 'deadline', type: 'uint256' }] }, { name: 'sig', type: 'bytes' }], outputs: [{ type: 'uint256' }] }];
-  const cd = await call('POST', '/v1/bond/calldata', { token, body: { nonce: bondNonce } });
+  const cd = await historicalResult(bondCalldata(pool, ownerAccount, bondNonce));
   assert.equal(cd.code, 200, 'calldata encoded');
   assert.equal(cd.body.to.toLowerCase(), process.env.OMERTA_BOND_ADDRESS, 'the tx targets the OmertaBond contract');
   assert.equal(BigInt(cd.body.value), parseUnits('1', 18), 'the tx value is the principal in wei');
@@ -415,12 +432,12 @@ delete process.env.DAILY_CAP_OMR;
   assert.equal(decoded.args[0].nonce, BigInt(bondNonce), 'the encoded quote carries the right nonce');
   assert.equal(decoded.args[0].payer.toLowerCase(), player.address.toLowerCase(), 'the encoded quote is bound to the wallet');
   assert.equal(decoded.args[1], q.body.signature, 'the encoded sig is the server-signed quote signature');
-  assert.equal((await call('POST', '/v1/bond/calldata', { token: noWallet, body: { nonce: bondNonce } })).body.error, 'no_quote', "another account can't fetch your quote's calldata");
+  assert.equal((await historicalResult(bondCalldata(pool, otherAccount, bondNonce))).body.error, 'no_quote', "another account can't fetch your quote's calldata");
 
   // ══ THE DAILY OFFERING — consumption, exhaustion, the quoted floor ══
   {
     // the 1-ETH quote above CONSUMED today's window at sign time (a quote is a live option)
-    const b1 = await call('GET', '/v1/bonds', { token });
+    const b1 = {body: await (await import('../src/bonds.js')).bondBoard(pool,ownerAccount)};
     assert(Math.abs(b1.body.daily.quotedOmr - q.body.payoutOmr) < 1e-6,
       "a signed quote consumes today's window (quoted == the quote's payout)");
     assert(Math.abs(b1.body.daily.remainingOmr - (100000 - q.body.payoutOmr)) < 1e-6, 'remaining = offered − quoted');
@@ -430,7 +447,7 @@ delete process.env.DAILY_CAP_OMR;
     const floorAt = Math.ceil(q.body.payoutOmr); // the set floors at what's quoted, so aim just above it
     const shrink = await call('POST', '/v1/mod/bond/offer', { headers: modH, body: { omr: floorAt } });
     assert.equal(shrink.code, 200);
-    assert.equal((await call('POST', '/v1/bond/quote', { token, body: { principalEth: 1 } })).body.error, 'offering_spent',
+    assert.equal((await makeHistoricalQuote(1)).body.error, 'offering_spent',
       "today's window is spoken for — the desk refuses the quote the window can't cover");
     // the GM cannot retract below what's already signed: asking for 0 floors at quoted
     const retract = await call('POST', '/v1/mod/bond/offer', { headers: modH, body: { omr: 0 } });
@@ -439,7 +456,7 @@ delete process.env.DAILY_CAP_OMR;
       'an offering never retracts below the quotes already signed (a signed quote is a commitment)');
     // re-open generously; the desk serves again
     await call('POST', '/v1/mod/bond/offer', { headers: modH, body: { omr: 100000 } });
-    const q2 = await call('POST', '/v1/bond/quote', { token, body: { principalEth: 1 } });
+    const q2 = await makeHistoricalQuote(1);
     assert.equal(q2.code, 200, 'a re-opened window serves quotes again');
     // and the mod route is mod-gated (the modtools posture)
     assert.equal((await call('POST', '/v1/mod/bond/offer', { token, body: { omr: 1 } })).code, 401, 'the offering is GM-only');

@@ -2,20 +2,29 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parse } from 'acorn';
-import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-deed-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-economic-release-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
  ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as PREDECESSOR_NATIVE_DEFINITION_SHA256 } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
-import { businessDeskCombinedNativeProvenance, assertBusinessDeskCombinedNativeDefinition } from './businessdesk-combined-native-provenance.js';
+import { assertBusinessDeskCombinedNativeDefinition } from './businessdesk-combined-native-provenance.js';
 import { BUSINESS_DESK_COMBINED_SOURCE, BUSINESS_DESK_COMBINED_SOURCE_SHA256 } from './businessdesk-combined-source-data.js';
 import { BUSINESS_DESK_COMBINED_NATIVE_SHA256 } from './businessdesk-combined-native-data.js';
 import { BUSINESS_DESK_COMBINED_NATIVE_PARENTS, BUSINESS_DESK_COMBINED_NATIVE_PARENTS_SHA256 } from './businessdesk-combined-native-parents.js';
 import { ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 } from './economy-deed-merge-source-data.js';
 import { WIKI_MEDIA_MERGE_SOURCE_SHA256, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256 } from './wiki-media-source-data.js';
 import { NOIR_UI_SOURCE_SHA256 } from './noir-ui-source-data.js';
+import { assertEconomicReleaseNativeDefinition, economicReleaseNativeProvenance,
+ assertReviewedNativePin } from './economic-release-native-provenance.js';
+// Refuse ambient checkout manifests before a native parent can connect or launch any of its sixteen children.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(new URL('./enterprise-native.js', import.meta.url))) {
+  for (const key of Object.keys(process.env)) {
+    assert(!/^INVENTORY_BOND_MANIFEST_(?:PATH|SHA256)$/i.test(key), 'Inventory bond manifest forbidden during native qualification: ' + key);
+  }
+}
 export { ENTERPRISE_NATIVE_UX_INPUTS };
-export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-deed-inputs.js';
+export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-economic-release-inputs.js';
 export const ENTERPRISE_UX_PREDECESSOR_METADATA = 'tools/enterprise-native-ux-b35-inputs.js';
 export const ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256 = '70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e';
 export const ENTERPRISE_UX_QUALIFIED_METADATA = 'tools/enterprise-native-ux-inputs.js';
@@ -87,7 +96,11 @@ export const ENTERPRISE_UX_SUPPORT = Object.freeze([
  "test/launch-invites-browser.js",
  "test/wallet-connect-browser.js",
  "tools/mobile.js",
- "tools/public-ui.js"
+ "tools/public-ui.js",
+ "tools/generate-current-economic-terms-source-transfer.js",
+ "tools/generate-combined-economic-deed-source-transfer.js",
+ "test/economy-ux-merge-source-compatibility.js",
+ "test/inventory-bond-checkout.js"
 ]);
 export const ENTERPRISE_UX_ASSETS = Object.freeze([
  "public/ux-feedback.js",
@@ -118,6 +131,7 @@ export const ENTERPRISE_UX_ASSETS = Object.freeze([
  "public/ux-community.js",
  "public/ux-community.css",
  "public/sale.html",
+ "public/inventory-bond-client.js",
  "public/business-control-desk.js",
  "public/business-control-desk.css",
  "public/art/nft/deed-docks.jpg",
@@ -191,8 +205,8 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
  assert.equal(declaration, ENTERPRISE_NATIVE_UX_INPUTS, 'Only the actual frozen current-native declaration');
  assert.equal(declaration.status, 'SEALED', 'Current UX native inputs remain UNSEALED; no prior native results transfer');
  assert.equal(digest(JSON.stringify(declaration)), ENTERPRISE_NATIVE_UX_INPUTS_SHA256, 'Whole current-native declaration changed');
- fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', "economyDeedProvenanceDefinitionSha256", "wikiMergeSourceDefinitionSha256", "noirSourceDefinitionSha256", "noirMergeSourceDefinitionSha256", "combinedSourceDefinitionSha256", "combinedNativeDefinitionSha256", "combinedNativeParentsDefinitionSha256", 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
- assert.equal(declaration.version, 6); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_MONITOR_WIKI_DESK_NATIVE_INPUTS');
+ fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', "economyDeedProvenanceDefinitionSha256", "wikiMergeSourceDefinitionSha256", "noirSourceDefinitionSha256", "noirMergeSourceDefinitionSha256", "combinedSourceDefinitionSha256", "combinedNativeDefinitionSha256", "combinedNativeParentsDefinitionSha256", "reviewedNativeRevision", "reviewedNativeTree", 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
+ assert.equal(declaration.version, 7); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');
  assert.equal(declaration.economyDeedProvenanceDefinitionSha256, ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256);
  assert.equal(declaration.wikiMergeSourceDefinitionSha256, WIKI_MEDIA_MERGE_SOURCE_SHA256);
  assert.equal(declaration.noirSourceDefinitionSha256, NOIR_UI_SOURCE_SHA256);
@@ -222,6 +236,7 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
   assert.equal(actual.mode, parent.original.mode); assert.equal(actual.blob, parent.original.blob);
   assert.equal(actual.sha256, parent.original.rawSha256, 'Never admit a rewritten parent archive');
  }
+ assertEconomicReleaseNativeDefinition(declaration);
  const extra = declaration.files.slice(legacyFiles.length); assert.deepEqual(extra.map(row => row.file), extra.map(row => row.file).sort()); assert.deepEqual(declaration.additions, extra);
  for (const file of [...ENTERPRISE_UX_SUPPORT, ...ENTERPRISE_UX_ASSETS]) assert(current.has(file), 'Required actual UX/native support file: ' + file);
  const seen = new Set(), order = new Map(legacyFiles.map((file, index) => [file, index]));
@@ -237,7 +252,6 @@ export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, d
  assert.equal(digest(bytes), expected.sha256, 'Whole actual native source changed'); assert.equal(blob(bytes), expected.blob, 'Actual native Git bytes changed');
  // These exact current bytes have already been admitted independently of any historical relation.
  // The relation below records provenance only; native execution and its sixteen fresh cases remain mandatory.
- const previous = PREDECESSOR_NATIVE_INPUTS.files.find(row => row.file === file);
- if (!previous || !changedPin(previous, expected)) return null;
- return businessDeskCombinedNativeProvenance(file, previous, expected);
+ assertReviewedNativePin(expected);
+ return economicReleaseNativeProvenance(file, expected);
 }

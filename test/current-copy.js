@@ -59,7 +59,18 @@ for (const source of [home, markdown, sections.find((s) => s.id === 'economy').h
   assert.match(plain(source), /50%.*20%/s, 'Staking must disclose both loss rates');
   assert.match(plain(source), /(?:six|6).{0,25}hours?/i, 'Staking must disclose the unbonding delay');
 }
-for (const file of ['public/index.html', 'public/wiki.html', 'public/defi.html', 'public/fee-flows.html']) {
+// A player spends game OMR at this button. Keep the delivery terms next to it.
+const allocationHeading = home.indexOf('>Treasury Allocation <');
+const allocationButton = home.indexOf('id="vault-claim"', allocationHeading);
+assert(allocationHeading >= 0 && allocationButton > allocationHeading, 'The treasury allocation control must be present');
+assert(home.slice(allocationHeading, allocationButton).includes('No ETH is sent to your wallet'),
+  'State the wallet delivery terms before the player spends OMR');
+for (const source of [home, wiki, markdown, read('src/treasury.js').split('export async function vaultBoard')[1]]) {
+  assert(!/the house never owes ETH it doesn't hold|Backed by ETH the treasury actually holds/i.test(source),
+    'The treasury ledger cannot attest a wallet balance');
+}
+for (const name of fs.readdirSync('public').filter(name => name.endsWith('.html'))) {
+  const file = 'public/' + name;
   for (const [, attributes, script] of read(file).matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
     if (/application\/ld\+json/.test(attributes)) JSON.parse(script);
     else if (!/\bsrc=|type="module"/.test(attributes)) new vm.Script(script, { filename: file });

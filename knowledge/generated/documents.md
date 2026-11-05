@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 751 | 2026-10-31 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 749 | 2026-11-04 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -470,6 +470,7 @@
 | [docs/courier-continuation-security-review.md](../../docs/courier-continuation-security-review.md) | documentation | 67 | 2026-10-11 |
 | [docs/crew-logistics-security-review.md](../../docs/crew-logistics-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/cross-docking-security-review.md](../../docs/cross-docking-security-review.md) | documentation | 62 | 2026-10-15 |
+| [docs/current-economic-terms-release-review.md](../../docs/current-economic-terms-release-review.md) | documentation | 41 | 2026-11-05 |
 | [docs/customer-bank-vaults-security-review.md](../../docs/customer-bank-vaults-security-review.md) | documentation | 38 | 2026-10-15 |
 | [docs/decision-execution-security-review.md](../../docs/decision-execution-security-review.md) | documentation | 92 | 2026-10-11 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 75 | 2026-10-11 |
@@ -718,7 +719,7 @@
 | [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 83 | 2026-10-26 |
 | [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 20 | 2026-10-26 |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2765 | 2026-10-31 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2764 | 2026-11-04 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
 | [docs/workshop-floor-integration.md](../../docs/workshop-floor-integration.md) | documentation | 22 | 2026-10-15 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |

@@ -145,6 +145,21 @@ const mod = async (method, url, body) => {
     [0.01 * TREASURY.FEE_TREASURY_BPS() / 10000]);
   assert((await runRouterInvariants(pool)).ok, 'restored — green again');
 
+  // Keep older booked payments under the policy that actually booked them. New payments have
+  // an exact receipt snapshot, and a missing community entry must alarm even across policies.
+  await pool.query("INSERT INTO store_payments (nonce,sku,payer_address,amount_wei,tx_hash) VALUES (91,'decor_deco',$1,'1000000000000000000','old')", ['0x' + 'a'.repeat(40)]);
+  await pool.query("INSERT INTO vig_revenue (source,ref,gross_eth,vig_eth) VALUES ('store','91',1,0.4)");
+  await pool.query("INSERT INTO rwa_revenue (source,ref,rwa_eth) VALUES ('store','91',0.2)");
+  await pool.query("INSERT INTO community_revenue (source,ref,currency,gross,amount) VALUES ('store','91','eth',1,0.05)");
+  const { revenueStatus } = await import('../src/store.js');
+  const history = await revenueStatus(pool);
+  assert.equal(history.founderEth, 0.355);
+  assert.equal(history.communityEth, 0.0515);
+  assert((await runRouterInvariants(pool)).ok, 'earlier bookings retain their original allocations');
+  await pool.query("DELETE FROM community_revenue WHERE source='store' AND ref='910003'");
+  assert.equal((await runRouterInvariants(pool)).checks.find((c) => c.name === 'store mirrors match payment receipts').ok, false);
+  await pool.query("INSERT INTO community_revenue (source,ref,currency,gross,amount) VALUES ('store','910003','eth',0.01,0.0015)");
+
   // (c) THE DEV-FUND IDENTITY — the one revenue bucket that had no balance==ledger check. Credit
   // the bucket with no tax:dev row behind it: the identity fails on both legs.
   await pool.query('UPDATE dev_fund SET omr = omr + 5, lifetime = lifetime + 5 WHERE id=1');

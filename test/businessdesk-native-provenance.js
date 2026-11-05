@@ -21,7 +21,9 @@ assert.equal(currentNative.version, 6); assert.equal(currentNative.phase, 'ACTUA
 assert.equal(archivedDeskNative.status, 'SEALED'); assert.equal(archivedDeskNative.version, 3);
 assert.equal(archivedDeskNative.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
 assert(Object.isFrozen(currentNative) && Object.isFrozen(currentNative.files));
-assert.strictEqual(activeNative, currentNative, 'The real admission function uses the actual current declaration.');
+assert.equal(activeNative.version, 7); assert.equal(activeNative.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');
+assert.equal(activeNative.files.find(row => row.file === 'tools/enterprise-native-deed-inputs.js').sha256,
+  'efffdc723601dbcac89c651092748c7931fa97a8f252a1f7c7045434237f858e');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   windowsHide: true, maxBuffer: 16 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -101,12 +103,18 @@ const record = (revision, file) => {
   return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });
 };
 const { file, previous, expected } = sample;
-const current = record('HEAD', file), authored = record(currentNative.authoredRevision, file);
-const bytes = git('show', `${currentNative.authoredRevision}:${file}`);
+const current = record('HEAD', file), authored = record(activeNative.authoredRevision, file);
+const bytes = git('show', activeNative.authoredRevision + ':' + file);
 assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');
-assert.equal(sha(bytes), expected.sha256); assert.equal(blob(bytes), expected.blob);
+const activeRow = activeNative.files.find(row => row.file === file);
+assert.equal(sha(bytes), activeRow.sha256); assert.equal(blob(bytes), activeRow.blob);
+const parentBytes = git('show', currentNative.authoredRevision + ':' + file);
+assert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);
 const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
-proofOf(admitted, file, previous, expected); assert.deepEqual(admitted, sample.proof);
+assert.equal(admitted.current.blob, activeRow.blob);
+const parentProof = admitted.deskProvenance ?? admitted;
+proofOf(parentProof, file, previous, expected); assert.deepEqual(parentProof, sample.proof);
+if (activeRow.blob !== expected.blob) reject(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));
 const otherMode = current.mode === '100644' ? '100755' : '100644';
 for (const [now, anchor, raw] of [
   [current, authored, Buffer.concat([bytes, Buffer.from('\n')])],

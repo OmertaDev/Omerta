@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0a0909">
 <title>The capital desk | OMERTÀ DeFi</title>
-<meta name="description" content="Check OMERTÀ's on-chain reserves, contracts and fee routing. Connect a wallet to review available staking and bond transactions.">
+<meta name="description" content="Check OMERTÀ's on-chain reserves, contracts and fee routing. Connect a wallet to review available staking actions and claims on existing bond positions.">
 <meta property="og:title" content="The capital desk | OMERTÀ DeFi">
 <meta property="og:description" content="Check OMERTÀ's on-chain reserves and contracts using the current chain snapshot.">
 <meta property="og:type" content="website">
@@ -358,7 +358,7 @@
 
   <section class="section" aria-labelledby="genesis-terms-title">
     <div class="section-head"><h2 id="genesis-terms-title">Genesis &amp; market terms</h2><p>Approved terms; deployment, funding and activation are verified separately.</p></div>
-    <p>One five-day ETH/OMR auction on Robinhood Chain is open to character NFT holders once launch verification clears. Paid and free-credit NFTs qualify, with no individual allocation caps. The target is around noon New York on October 9–14, 2026; verified native block boundaries determine the window, so exact wall-clock timing is not guaranteed.</p>
+    <p>One five-day ETH/OMR auction on Robinhood Chain is open to character NFT holders once launch verification clears. Paid and free-credit NFTs qualify, with no individual allocation caps. The verified auction contract’s opening and closing blocks determine when bids are accepted. Check the published auction status for timing.</p>
     <p>The 100M OMR allocation is 40M for the sale, 20M for initial liquidity and 40M retained in the Safe for later bond activation. Unsold auction tokens return to the Safe and are accounted separately. The successful-raise minimum is 10 ETH, with a starting floor corresponding approximately to 10 ETH for all 40M offered tokens.</p>
     <p>50% of accepted ETH funds liquidity with the 20M token allocation, subject to tightly bounded rounding. The pool's opening price follows these funded amounts independently of the final auction price and can be lower. All remaining accepted ETH goes to the Safe's Family Yield treasury; this does not activate game reward conversion or payouts. After successful closure, exit your bid and claim filled tokens without waiting for LP migration. Completed purchases are final; unused bid ETH is returned.</p>
     <p>The current source configures a fixed 5% base fee on buys and sells, split 2% developer, 1% RWA, 1% community and 1% POL, plus a sell-pressure surcharge capped at 0.5%. The restricted manager collects the base; the Hook avoids collecting it twice. The planned genesis pool uses a separate static 0.3% LP fee, with opening buy charges and caps disabled. Deployed rates and recipients are fixed; there is no Committee or Safe fee-change queue. Production trading remains inactive and requires verified deployment, sealed-token funding and launch approval. Read the <a href="/wiki#genesis">auction terms</a> and <a href="/wiki#committee-tax">fixed fee policy</a>; <a href="/">check your wallet's live sale status</a> before bidding.</p>
@@ -400,7 +400,7 @@
   </section>
 
   <section class="section" aria-labelledby="fees-title">
-    <div class="section-head"><h2 id="fees-title">FEE ROUTING</h2><p>The server's published fee destinations and allocations.</p></div>
+    <div class="section-head"><h2 id="fees-title">FEE ROUTING</h2><p>The snapshot lists the fee routes published for its registered contracts. The genesis market’s fixed 5% swap fee and separate LP fee are described above.</p></div>
     <div class="fee-grid" id="fees" aria-busy="true">
       <div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>—</strong><p>Waiting for the current routing table.</p></div>
       <div class="panel"><div class="panel-empty">Reading fee destinations…</div></div>
@@ -408,7 +408,7 @@
   </section>
 
   <section class="section" aria-labelledby="wallet-title">
-    <div class="section-head"><h2 id="wallet-title">YOUR WALLET</h2><p>Connect your wallet to review transactions prepared by the server.</p></div>
+    <div class="section-head"><h2 id="wallet-title">YOUR WALLET</h2><p>Connect your wallet to review available actions. For an inventory bond, open the Capital Desk in <a href="/">the game</a> and use the note ID from your purchase receipt. For an older numeric bond ID, claim from the contract that issued it.</p></div>
     <div class="panel wallet-panel">
       <aside class="wallet-sidebar">
         <div class="wallet-mark" aria-hidden="true">0x</div>
@@ -495,7 +495,7 @@
     { id: 'staking.stake', title: 'Stake OMR', copy: 'Commit approved OMR to the published staking contract.', field: 'amountOmr', label: 'OMR amount', placeholder: '0.00', functionName: 'stake', selector: '0xa694fc3a', contractKind: 'staking' },
     { id: 'staking.unstake', title: 'Unstake OMR', copy: 'Return part of your current position to your wallet.', field: 'amountOmr', label: 'OMR amount', placeholder: '0.00', functionName: 'unstake', selector: '0x2e17de78', contractKind: 'staking' },
     { id: 'staking.claim', title: 'Claim rewards', copy: 'Claim rewards currently recorded for your connected wallet.', functionName: 'claimRewards', selector: '0x372500ab', contractKind: 'staking' },
-    { id: 'bond.claim', title: 'Claim vested bond', copy: 'Claim the vested amount from one eligible bond position.', field: 'bondId', label: 'Bond ID', placeholder: 'Server-issued ID', functionName: 'claim', selector: '0x379607f5', contractKind: 'bond' },
+    { id: 'bond.claim', title: 'Claim an existing bond', copy: 'Claim vested OMR from an existing numeric bond ID issued by this contract.', field: 'bondId', label: 'Bond ID', placeholder: 'Server-issued ID', functionName: 'claim', selector: '0x379607f5', contractKind: 'bond' },
   ];
   const INPUT_BLOCKERS = new Set(['amount_required', 'bond_id_required', 'input_required']);
 

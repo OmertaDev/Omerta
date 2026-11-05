@@ -65,7 +65,7 @@ const checkOf = async (runner, name) => {
 // each booking must be the pre-drop figure exactly.
 {
   await recordFeePayment(pool, { nonce: 800001, kind: 'reroll', payer: wallet, amountWei: (10n ** 16n).toString(), txHash: tx() });
-  await recordStorePurchase(pool, { nonce: 800002, sku: 'decor_deco', payer: wallet, amountWei: (2n * 10n ** 16n).toString(), txHash: tx() });
+  await recordStorePurchase(pool, { nonce: 800002, sku: 'decor_deco', payer: wallet, amountWei: (2n * 10n ** 16n).toString(), txHash: tx(), routing: { route: 'direct', toVig: 5n * 10n ** 15n, toDev: 15n * 10n ** 15n } });
   const taxed = await recordSellTax(pool, { ref: 'cm-tax-0', omrTaxed: 900, priceOmrPerEth: 1000, txHash: tx(), bootstrap: true });
   // gross 0.9 ETH → the ORIGINAL three-way split: dev 0.2 / rwa 0.4 / lp 0.3, community 0
   assert.equal(taxed.communityEth, 0, 'a default sell-tax episode carves NO community slice');
@@ -92,7 +92,6 @@ const checkOf = async (runner, name) => {
 // production lower RWA in the same deploy. What this block asserts is the carve arithmetic and that
 // the four shares still sum to the gross exactly.
 process.env.FEE_COMMUNITY_BPS = '1500';
-process.env.STORE_COMMUNITY_BPS = '1500';
 process.env.SELL_TAX_COMMUNITY_BPS = '240';
 process.env.HARVEST_COMMUNITY_BPS = '6280';
 process.env.POL_FEES_VIG_BPS = '2500';
@@ -108,10 +107,10 @@ process.env.POL_FEES_VIG_BPS = '2500';
   assert.equal((await commRows('fee')).length, 1, 'a comp fee books NO community slice even with the lever on');
 
   // the Store: 0.02 ETH × 15% = 0.003, carved BEFORE the founder remainder
-  await recordStorePurchase(pool, { nonce: 800005, sku: 'decor_deco', payer: wallet, amountWei: (2n * 10n ** 16n).toString(), txHash: tx() });
+  await recordStorePurchase(pool, { nonce: 800005, sku: 'decor_deco', payer: wallet, amountWei: (2n * 10n ** 16n).toString(), txHash: tx(), routing: { route: 'simulation' } });
   const store = await commRows('store');
   assert.equal(store.length, 1, 'the real Store purchase carved ONE community row');
-  assert.equal(Number(store[0].amount), 0.003, 'store slice = gross × STORE_COMMUNITY_BPS exactly');
+  assert.equal(Number(store[0].amount), 0.003, 'store slice = 15% of the routed payment');
 
   // the sell tax: gross 0.9 → dev 0.2 / rwa 0.4 / community 0.9×240÷900 = 0.24 / lp = the remainder
   const taxed = await recordSellTax(pool, { ref: 'cm-tax-1', omrTaxed: 900, priceOmrPerEth: 1000, txHash: tx() });

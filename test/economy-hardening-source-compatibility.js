@@ -3,6 +3,7 @@ import { age21HistoricalInput } from '../tools/age21-source-transfer.js';
 import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 import assert from 'node:assert/strict';
+import { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import './economy-monitor-source-compatibility.js';
 import './age-eligibility-source-compatibility.js';
 import crypto from 'node:crypto';
@@ -173,7 +174,7 @@ const socialReceiptSafetyFiles = [
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const deedAllocationPhysicalSource = file => age21HistoricalInput(file, wikiMediaHistoricalInput(file, deedAllocationHistoricalInput(file,
-  economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'monitor'))));
+  economyDeedMergeHistoricalInput(file, integratedEconomicParentInput(file, fs.readFileSync(file, 'utf8'), 'main'), 'monitor'))));
 const monitorPhysicalSource = file => {
   let input = deedAllocationPhysicalSource(file);
   input = uxAfterwordHistoricalInput(file, input);
@@ -183,7 +184,7 @@ const monitorPhysicalSource = file => {
   return economyMonitorHistoricalInput(file, input);
 };
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
-  file, uxAfterwordHistoricalInput(file, deedAllocationPhysicalSource(file))));
+  file, uxAfterwordHistoricalInput(file, monitorPhysicalSource(file))));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');

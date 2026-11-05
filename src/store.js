@@ -1,20 +1,9 @@
-// THE STORE — ETH revenue packages (design omerta-eth-store-design.md). Real-money purchases that
-// grant ONLY non-§10.4 things — entitlements (mint_credit / respawn_token), access windows
-// (pass_until / wire_until), and status (patron). So §10.4 is UNTOUCHED by construction: this module
-// writes ZERO `transactions` rows (the entitlements it grants are already out-of-band, the fees.js
-// precedent). The only real-value accounting is the three-way revenue split (out-of-band, like
-// vig_revenue): founder profit / $OMR buyback flywheel / RWA reserve (R2, dormant). The ETH itself
-// went to the dev wallet ON-CHAIN via the OmertaFees tollbooth — the backend never custodies it.
-//
-// Isolation: this module writes only store_payments / store_grants / rwa_revenue / vig_revenue and
-// the entitlement columns on account_persistent (+ the wire_until access window on the living
-// character). The chain layer (a StorePaid watcher) is DORMANT — until it ships, the mod comp route
-// and the test drive recordStorePurchase directly (the test/chain.js fee precedent).
+// Store packages grant account entitlements. On-chain payments also book the ETH distributed
+// in their receipts. Comps grant the entitlement without funding any revenue ledger.
 import crypto from 'node:crypto';
-import { getAddress, keccak256, toBytes } from 'viem';
+import { formatEther, getAddress, keccak256, toBytes } from 'viem';
 import { GameError, notify } from './game.js';
-import { recordCommunityRevenue } from './community.js';
-import { STORE, PASS, PATRON, COMMUNITY, packageOf, RETIRED_PACKAGES, passActive, patronTierOf, patronTierName, passPrestigeOf } from './rules.js';
+import { STORE, PASS, PATRON, packageOf, RETIRED_PACKAGES, passActive, patronTierOf, patronTierName, passPrestigeOf } from './rules.js';
 import { spendOmr } from './vanity.js'; // the audited $OMR till — gates the balance, debits in-memory, ledgers the burn
 
 const uid = () => crypto.randomUUID();
@@ -23,39 +12,36 @@ const positiveWei = (s) => { try { return BigInt(s ?? '0') > 0n; } catch { retur
 const round6 = (x) => Math.round(x * 1e6) / 1e6;
 const laterMs = (a, b) => Math.max(a, b ? new Date(b).getTime() : 0);
 
-// ── the three-way revenue split (recorded inside the caller's txn; idempotent on source+ref) ──
-// buyback share → vig_revenue (the EXISTING flywheel: runVigBuyback buys $OMR → reserve + prize pool,
-// so Store revenue funds earner prizes and runVigInvariants' `spend ≤ revenue` absorbs it unchanged).
-// rwa share → rwa_revenue (R2, DORMANT — recorded, never spent). founder share is implicit (the ETH
-// already hit the dev wallet on-chain). Amounts stored in ETH units to stay in JS-safe-integer range.
-async function splitRevenue(client, { ref, amountWei }) {
-  let grossEth = 0;
-  try { grossEth = Number(BigInt(amountWei ?? '0')) / 1e18; } catch { grossEth = 0; }
-  if (!(grossEth > 0)) return { split: false };
-  const { founder, buyback, rwa } = STORE.SPLIT_BPS;
-  const buybackEth = round6(grossEth * buyback / 10000);
-  const rwaEth = round6(grossEth * rwa / 10000);
-  // THE COMMUNITY SLICE (the family buyback, Phase 1 — ships at 0): carved from the implicit
-  // founder/operations remainder at booking time, computed BEFORE founderEth so founder stays the
-  // exact remainder and the shares still sum to the gross. Phase 2 flips STORE_COMMUNITY_BPS; the
-  // SPLIT_BPS equality guard (founder+buyback+rwa == 10000) is untouched because community is a
-  // carve FROM founder, the same shape as the gameplay fee's treasury slice.
-  const communityEth = round6(grossEth * COMMUNITY.STORE_BPS() / 10000);
-  const founderEth = round6(grossEth - buybackEth - rwaEth - communityEth);
-  // buyback share → the Vig flywheel (source 'store'). SELECT-then-INSERT (pg-mem ON CONFLICT is
-  // unreliable); a re-delivered event is a no-op. gross_eth = the FULL payment, vig_eth = the buyback
-  // share (so vigStatus.devRevenueEth = gross − buyback = founder + rwa, correct from the Vig's view).
-  if (!(await client.query("SELECT 1 FROM vig_revenue WHERE source='store' AND ref=$1", [String(ref)])).rows[0])
-    await client.query(
-      "INSERT INTO vig_revenue (source, ref, kind, gross_eth, vig_eth) VALUES ('store',$1,'store',$2,$3)",
-      [String(ref), round6(grossEth), buybackEth]);
-  // rwa share → the dormant R2 accounting bucket
-  if (!(await client.query("SELECT 1 FROM rwa_revenue WHERE source='store' AND ref=$1", [String(ref)])).rows[0])
-    await client.query("INSERT INTO rwa_revenue (source, ref, rwa_eth) VALUES ('store',$1,$2)", [String(ref), rwaEth]);
-  // community share → the family-buyback inflow ledger (idempotent inside recordCommunityRevenue)
-  if (communityEth > 0)
-    await recordCommunityRevenue(client, { source: 'store', ref: String(ref), currency: 'eth', gross: round6(grossEth), amount: communityEth });
-  return { split: true, grossEth: round6(grossEth), founderEth, buybackEth, rwaEth, communityEth };
+// The route is identified by OmertaFees in the payment receipt. Only the QA ingest simulates a
+// four-way payment. Compute in wei like FeeRevenueRouter and persist exact NUMERIC ETH mirrors.
+function storeRevenueSplit(amountWei, routing) {
+  const gross = BigInt(amountWei);
+  if (!routing || gross <= 0n) throw new Error('Missing routing evidence or invalid Store payment amount');
+  const { buyback, rwa, community } = STORE.SPLIT_BPS;
+  const direct = routing.route === 'direct';
+  const vig = direct ? BigInt(routing.toVig) : gross * BigInt(buyback) / 10000n;
+  const treasury = direct ? 0n : gross * BigInt(rwa) / 10000n;
+  const family = direct ? 0n : gross * BigInt(community) / 10000n;
+  const dev = gross - vig - treasury - family;
+  if (routing.route !== 'simulation' && (
+    (!direct && !norm(routing.route)) || dev < 0n || vig < 0n ||
+    BigInt(routing.toDev) !== dev || BigInt(routing.toVig) !== vig ||
+    (!direct && (BigInt(routing.toTreasury) !== treasury || BigInt(routing.toCommunity) !== family))
+  )) throw new Error('Store routing amounts differ from the payment policy');
+  return { route: routing.route, dev: formatEther(dev), vig: formatEther(vig),
+    treasury: formatEther(treasury), community: formatEther(family) };
+}
+
+async function bookStoreRevenue(client, nonce, amountWei, split) {
+  const ref = String(nonce);
+  const gross = formatEther(BigInt(amountWei));
+  await client.query(
+    "INSERT INTO vig_revenue (source, ref, kind, gross_eth, vig_eth) VALUES ('store',$1,'store',$2,$3)",
+    [ref, gross, split.vig]);
+  await client.query("INSERT INTO rwa_revenue (source, ref, rwa_eth) VALUES ('store',$1,$2)", [ref, split.treasury]);
+  if (split.community !== '0')
+    await client.query("INSERT INTO community_revenue (source, ref, currency, gross, amount) VALUES ('store',$1,'eth',$2,$3)",
+      [ref, gross, split.community]);
 }
 
 // ── apply a SKU's grant to the account (headless — direct SQL, the fees.js no-clobber discipline) ──
@@ -156,18 +142,18 @@ export function skuFromChainId(id) {
 // Idempotent on nonce: a re-delivered event (reorg / watcher restart) is a no-op. If the payer's
 // wallet is already linked AND the payment carried value, the entitlement is granted now; else the
 // row waits (account_id NULL, granted false) until reconcileStore runs at link.
-export async function recordStorePurchase(pool, { nonce, sku, payer, amountWei, txHash }) {
+export async function recordStorePurchase(pool, { nonce, sku, payer, amountWei, txHash, routing }) {
   // A RETIRED sku throwing here is the RIGHT failure, not an oversight. This is the ingest, so a
   // throw rolls the transaction back and the watcher cursor does NOT advance — which is what we want
   // if real money ever arrives for a package we no longer sell: a human looks, rather than the game
-  // silently keeping the ETH or silently granting a bound-bypassing credit. Today it is unreachable
-  // for `made_man` (the on-chain Store paywall is unbuilt, so the only caller is the mod comp route).
+  // silently keeping the ETH or silently granting a bound-bypassing credit.
   if (!packageOf(sku)) throw new GameError(RETIRED_PACKAGES[sku] ? 'retired' : 'bad_sku',
     RETIRED_PACKAGES[sku]?.why || `Unknown package: ${sku}`);
   const addr = norm(payer);
   if (!addr) throw new GameError('bad_payer', 'Payer is not a valid EVM address.');
   const n = Number(nonce);
   if (!Number.isInteger(n) || n < 0) throw new GameError('bad_nonce', 'Bad payment nonce.');
+  const split = txHash && positiveWei(amountWei) ? storeRevenueSplit(amountWei, routing) : null;
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -176,19 +162,14 @@ export async function recordStorePurchase(pool, { nonce, sku, payer, amountWei, 
     // (the fees.js F1 discipline — never swallow a non-duplicate insert error as "duplicate").
     try {
       await client.query(
-        'INSERT INTO store_payments (nonce, sku, payer_address, amount_wei, tx_hash) VALUES ($1,$2,$3,$4,$5)',
-        [n, sku, addr, String(amountWei ?? '0'), txHash || null]);
+        'INSERT INTO store_payments (nonce, sku, payer_address, amount_wei, tx_hash, revenue_split) VALUES ($1,$2,$3,$4,$5,$6)',
+        [n, sku, addr, String(amountWei ?? '0'), txHash || null, split && JSON.stringify(split)]);
     } catch (e) {
       await client.query('ROLLBACK');
       if (e?.code === '23505') return { recorded: false, duplicate: true };
       throw e;
     }
-    // Record the three-way revenue split ONLY for a REAL on-chain payment (one carrying a txHash from
-    // the StorePaid event). A comp / QA grant via the mod route has no txHash → it grants the
-    // entitlement but injects NO Vig buyback basis (audit MED: else a free comp would fabricate real-ETH
-    // "revenue" that runVigBuyback — which sums vig_revenue with no source filter — could then spend,
-    // unbacking the withdrawal reserve). Real ETH only ever comes with a tx.
-    if (txHash) await splitRevenue(client, { ref: n, amountWei });
+    if (split) await bookStoreRevenue(client, n, amountWei, split);
     const acct = (await client.query('SELECT account_id FROM account_persistent WHERE wallet_address=$1', [addr])).rows[0];
     let granted = false;
     if (acct) {
@@ -413,21 +394,24 @@ export async function benefactorLeaderboard(pool, limit = 25) {
   return { patrons: ranked, families, favor: ranked[0] || null }; // favor = THE HOUSE'S FAVOR (the read-derived crown)
 }
 
-// ── the founder's revenue view (the three-way split totals) for the ops dashboard ──
+// Lifetime booked revenue across all receipt policies.
 export async function revenueStatus(pool) {
-  const grossEth = round6(Number((await pool.query("SELECT COALESCE(SUM(gross_eth),0) s FROM vig_revenue WHERE source='store'")).rows[0].s));
-  const buybackEth = round6(Number((await pool.query("SELECT COALESCE(SUM(vig_eth),0) s FROM vig_revenue WHERE source='store'")).rows[0].s));
-  // the TREASURY's share. Named `rwa*` throughout because the table and the split key are — the
-  // stock layer it funded was retired 2026-07-31 (omerta-stock-layer-retirement.md) and the ETH now
-  // simply accumulates. There is no spend seat any more, so nothing reads a buyback log.
-  const rwaEth = round6(Number((await pool.query("SELECT COALESCE(SUM(rwa_eth),0) s FROM rwa_revenue WHERE source='store'")).rows[0].s));
-  const founderEth = round6(grossEth - buybackEth - rwaEth);
+  const totals = (await pool.query(`
+    SELECT COALESCE(SUM(gross_eth),0) gross, COALESCE(SUM(vig_eth),0) vig,
+      (SELECT COALESCE(SUM(rwa_eth),0) FROM rwa_revenue WHERE source='store') treasury,
+      (SELECT COALESCE(SUM(amount),0) FROM community_revenue WHERE source='store') community
+    FROM vig_revenue WHERE source='store'`)).rows[0];
+  const grossEth = round6(Number(totals.gross));
+  const buybackEth = round6(Number(totals.vig));
+  const rwaEth = round6(Number(totals.treasury));
+  const communityEth = round6(Number(totals.community));
+  const founderEth = round6(totals.gross - totals.vig - totals.treasury - totals.community);
   const bySku = (await pool.query(
     'SELECT sku, COUNT(*) n FROM store_payments WHERE granted GROUP BY sku')).rows.map((r) => ({ sku: r.sku, sold: Number(r.n) }));
   const pending = Number((await pool.query('SELECT COUNT(*) n FROM store_payments WHERE NOT granted')).rows[0].n);
   return {
     split: STORE.SPLIT_BPS,
-    grossEth, founderEth, buybackEth, rwaEth, treasuryEth: rwaEth,
+    grossEth, founderEth, buybackEth, rwaEth, treasuryEth: rwaEth, communityEth,
     treasuryHolds: 'eth', // the stock layer is retired — this slice accumulates as ETH, it is not spent on units
     bySku, pendingLinks: pending,
   };

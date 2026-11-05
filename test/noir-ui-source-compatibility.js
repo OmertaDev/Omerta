@@ -1,12 +1,14 @@
 // Qualify actual redesigned bytes independently of the historical readers they preserve.
 import { BUSINESS_DESK_COMBINED_PROFILES, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
+import { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,
   noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
+import { combinedEconomicDeedPin, combinedNoirUiInput } from '../tools/combined-economic-deed-source-transfer.js';
 import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 import { WIKI_MEDIA_NOIR_MERGE_SOURCE, assertWikiMediaNoirMergeSourceTransfer } from '../tools/wiki-media-source-transfer.js';
 
@@ -18,6 +20,8 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
 assert.equal(NOIR_UI_SOURCE.revision, revision);
+assert.equal(combinedEconomicDeedPin.noirSource, revision);
+assert.deepEqual(Object.keys(combinedEconomicDeedPin.noirFiles), ['package.json', 'public/index.html', 'test/ux-community-browser.js']);
 assert.equal(NOIR_UI_SOURCE.predecessor, predecessor);
 assert.equal(NOIR_UI_SOURCE.tree, git('rev-parse', revision + '^{tree}').trim());
 assert.equal(NOIR_UI_SOURCE.predecessorTree, git('rev-parse', predecessor + '^{tree}').trim());
@@ -58,6 +62,20 @@ for (const file of NOIR_UI_SOURCE_FILES) {
     }
   }
   assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
+  const combined = combinedEconomicDeedPin.noirFiles[file];
+  if (combined) {
+    const actual = lf(integratedEconomicParentInput(file, rawPhysical, 'economic'));
+    assert.equal(actual, git('show', `${combinedEconomicDeedPin.source}:${file}`));
+    assert.equal(sha(actual), combined.current.sha256);
+    assert.equal(sha(committed), combined.baseline.sha256);
+    assert.equal(combinedNoirUiInput(file, actual.replaceAll('\n', '\r\n')), committed);
+    assert.deepEqual(combinedNoirUiInput(file, Buffer.from(actual)), Buffer.from(committed));
+    for (const changed of [actual.slice(1), actual + '\n', actual + '\0', actual.replace('\n', '\r\n'),
+      ...combined.inverses.map(h => actual.slice(0, h.at) + h.baseline + actual.slice(h.at + h.current.length))]) {
+      assert.equal(combinedNoirUiInput(file, changed), changed);
+      if (changed !== committed) assert.equal(noirUiHistoricalInput(file, changed), changed);
+    }
+  }
   const pin = NOIR_UI_SOURCE.files.find(row => row.file === file);
   assert.equal(sha(committed), pin.currentSha256);
   assert.equal(pin.currentBlob, git('rev-parse', `${revision}:${file}`).trim());

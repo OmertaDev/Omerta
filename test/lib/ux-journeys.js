@@ -1,3 +1,4 @@
+import { integratedEconomicParentInput } from '../../tools/integrated-economic-parent-source.js';
 import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { readFileSync, lstatSync } from 'node:fs';
@@ -89,7 +90,9 @@ export function runAfterwordSourceProof() {
     assert(stat.isFile() && !stat.isSymbolicLink(), 'Actual physical comparison input is a regular file');
     const physical = readFileSync(physicalPath, 'utf8');
     assert(physical === committed || physical === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');
-    let source = committed;
+    const mainSource = integratedEconomicParentInput(file, committed, 'main');
+    let source = mainSource;
+    raw = { mode: raw.mode, blob: blob(source) };
     const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.desk);
     if (combined) {
       assert.deepEqual(raw, { mode: combined.current.mode, blob: combined.current.blob });
@@ -99,7 +102,7 @@ export function runAfterwordSourceProof() {
       raw = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };
       assert.deepEqual(raw, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));
       assert.equal(source, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));
-      rejectCombinedMutation(file, committed);
+      rejectCombinedMutation(file, mainSource);
     }
     if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;
     const domain = BUSINESS_DESK_DOMAINS[file];
@@ -140,7 +143,8 @@ export function runAfterwordSourceProof() {
     assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);
     const composedBaseline = classicInterfaceHistoricalInput(row.file, baseline);
     if (row.file !== 'src/server.js') assert.equal(composedBaseline, baseline, 'The four existing reader inputs retain their exact B35 identity');
-    const physical = businessDeskHistoricalInput(row.file, readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8'));
+    const fileText = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
+    const physical = businessDeskHistoricalInput(row.file, integratedEconomicParentInput(row.file, fileText, 'main'));
     assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
     for (const input of [current, current.replaceAll('\n', '\r\n')]) {
       const proof = qualifyUxAfterwordSource(row.file, input);

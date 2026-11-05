@@ -186,6 +186,7 @@ import * as Exchange from './exchange.js';
 import * as Bank from './bank.js';
 import { register as registerCasino } from './routes/casino.js';
 import { register as registerGenesisAuction } from './routes/genesisauction.js';
+import { loadInventoryBondCheckout, inventoryBondTransaction } from './inventorybond.js';
 import { register as registerPen } from './routes/pen.js';
 import { register as registerSpeakeasy } from './routes/speakeasy.js';
 import { register as registerPort } from './routes/port.js';
@@ -690,6 +691,7 @@ export async function buildServer() {
       .header('cache-control', 'no-store').send(code);
   };
   app.get('/genesis-deploy-client.js', reviewedModule('genesis-deploy-client.js'));
+  app.get('/inventory-bond-client.js', reviewedModule('inventory-bond-client.js'));
   app.get('/player-experience.js', reviewedModule('player-experience.js'));
   app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));
   app.get('/genesis-deploy-artifact.js', reviewedModule('genesis-deploy-artifact.js'));
@@ -3756,7 +3758,14 @@ export async function buildServer() {
   // ── M4: mod tools (§10.3) — X-Mod-Key header; disabled unless MOD_KEY is set ──
 
   // ── THE RESERVE BOND (Protocol-Owned Liquidity; off-chain accounting, chain DORMANT / mainnet-gated) ──
-  app.get('/v1/bonds', { preHandler: auth }, async (req) => Bonds.bondBoard(pool, req.user.sub));
+  const inventoryCheckout = loadInventoryBondCheckout();
+  app.get('/v1/bonds', { preHandler: auth }, async (req, reply) => {
+    reply.header('cache-control','no-store');
+    const { yours, isBacker, yourStanding, catalogs, oracle, reserve } = await Bonds.bondBoard(pool, req.user.sub);
+    return { yours, isBacker, yourStanding, catalogs, accounting: { oracle, reserve },
+      purchase: { verificationAvailable: Boolean(inventoryCheckout), deployment: inventoryCheckout?.manifest.contracts.bond ?? null },
+      note: 'Account records are historical. Request current purchase terms from POST /v1/bond/quote.' };
+  });
   app.post('/v1/bonds/:id/claim', { preHandler: auth }, async (req) => Bonds.claimBond(pool, req.user.sub, req.params.id));
   // THE UNDERWRITER (Tier-4) — the off-chain backer-prestige pillar: pledge $OMR into the treasury's name
   // (a live-now sink), commission the sequential Charter seal, and the read-derived Underwriters' League.
@@ -3764,10 +3773,17 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Bonds.pledgeTreasury(ch, req.body?.omr, client, h)));
   app.post('/v1/bonds/charter', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Bonds.commissionCharter(ch, client, h)));
-  app.post('/v1/bond/quote', { preHandler: auth }, async (req) => Chain.quoteBond(pool, req.user.sub, req.body?.principalEth));
-  // server-encode the bond() submission so an injected browser wallet (MetaMask / Robinhood Wallet / etc.)
-  // can `eth_sendTransaction` it without the zero-dep client hand-rolling ABI (viem does it server-side).
-  app.post('/v1/bond/calldata', { preHandler: auth }, async (req) => Chain.bondCalldata(pool, req.user.sub, req.body?.nonce));
+  const bondPurchase = async (req, reply, prepare) => {
+    reply.header('cache-control', 'no-store');
+    if (!inventoryCheckout) return reply.code(503).send({ error: 'bond_unavailable',
+      message: 'Inventory bond purchases are awaiting verified deployment, activation and funding.' });
+    if (typeof req.body?.principalEth !== 'string') throw new G.GameError('bond_input', 'Enter the ETH amount as an exact decimal string.');
+    const wallet = (await pool.query('SELECT wallet_address FROM account_persistent WHERE account_id=$1',
+      [req.user.sub])).rows[0]?.wallet_address;
+    return inventoryBondTransaction(inventoryCheckout, wallet, req.body, { prepare });
+  };
+  app.post('/v1/bond/quote', { preHandler: auth }, async (req, reply) => bondPurchase(req, reply, false));
+  app.post('/v1/bond/calldata', { preHandler: auth }, async (req, reply) => bondPurchase(req, reply, true));
 
   // ── M6-B: the chain service (§11, EVM) — withdrawals, gear mint, SIWE wallet link ──
   app.post('/v1/wallet/challenge', { preHandler: auth }, async (req) => Chain.walletChallenge(pool, req.user.sub));

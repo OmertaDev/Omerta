@@ -10,7 +10,8 @@ import { BUSINESS_DESK_COMBINED_NATIVE_PARENT_OBJECTS, assertBusinessDeskCombine
   assertBusinessDeskCombinedNativeDefinition, businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as current } from '../tools/enterprise-native-deed-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous } from '../tools/enterprise-native-ux-b35-inputs.js';
-import { assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
+import { economicReleaseNativeProvenance } from '../tools/economic-release-native-provenance.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as active, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
 
 assert.deepEqual(process.argv.slice(2),[],'Bare source-only entrypoint required');
 const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{windowsHide:true,maxBuffer:64*1024*1024});
@@ -43,7 +44,7 @@ for(const clone of [{...data},structuredClone(data)])refuse(()=>assertBusinessDe
 assert.equal(text('rev-parse',data.sourceRevision+'^{tree}').trim(),data.sourceTree);
 git('merge-base','--is-ancestor',BUSINESS_DESK_COMBINED_SOURCE.sourceRevision,data.sourceRevision);
 git('merge-base','--is-ancestor',data.sourceRevision,'HEAD');
-const head=tree('HEAD'),authored=tree(current.authoredRevision),priorRows=new Map(previous.files.map(row=>[row.file,row]));
+const head=tree('HEAD'),authored=tree(active.authoredRevision),priorRows=new Map(previous.files.map(row=>[row.file,row]));
 const immutableRecord=file=>{const bytes=git('show','HEAD:'+file),row=head.get(file),stat=fs.lstatSync(file),physical=fs.readFileSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());assert(physical.equals(bytes)||physical.equals(Buffer.from(bytes.toString().replaceAll('\n','\r\n'))),'Raw physical source matches actual HEAD before any historical view');return{bytes,row};};
 for(const profile of ['desk','monitor','wiki']){
   const p=parents.profiles[profile];assert.equal(p.provisional,false);assert.equal(text('rev-parse',p.revision+'^{tree}').trim(),p.tree);
@@ -94,7 +95,15 @@ for(const row of data.files){
     const parent=archive.files.find(pin=>pin.file===row.file);if(parent)refuse(()=>businessDeskCombinedNativeProvenance(row.file,before,parent));
   }
   const bytes=git('show','HEAD:'+row.file),now=head.get(row.file),anchor=authored.get(row.file);
-  assert.equal(sha(bytes),expected.sha256);assert.deepEqual(assertEnterpriseUxTrackedInput(row.file,now,anchor,bytes),proof);
+  assert.equal(sha(git('show',current.authoredRevision+':'+row.file)),expected.sha256);
+  const actual=active.files.find(pin=>pin.file===row.file);assert.equal(sha(bytes),actual.sha256);
+  const admitted=assertEnterpriseUxTrackedInput(row.file,now,anchor,bytes);
+  assert.deepEqual(economicReleaseNativeProvenance(row.file,actual),admitted);
+  refuse(()=>economicReleaseNativeProvenance(row.file,Object.freeze({...actual})));
+  refuse(()=>economicReleaseNativeProvenance(row.file,Object.freeze({...actual,sha256:'0'.repeat(64)})));
+  refuse(()=>economicReleaseNativeProvenance(row.file,expected));
+  assert.equal(admitted.current.blob,actual.blob);assert.deepEqual(admitted.deskProvenance??admitted,proof);
+  if(actual.blob!==expected.blob)refuse(()=>assertEnterpriseUxTrackedInput(row.file,now,anchor,git('show',current.authoredRevision+':'+row.file)));
   for(const raw of [Buffer.concat([bytes,Buffer.from('\n')]),bytes.subarray(1),bytes.toString(),Buffer.from(bytes.toString().replaceAll('\n','\r\n'))])refuse(()=>assertEnterpriseUxTrackedInput(row.file,now,anchor,raw));
   refuse(()=>assertEnterpriseUxTrackedInput(row.file,{...now,mode:now.mode==='100644'?'100755':'100644'},anchor,bytes));
   refuse(()=>assertEnterpriseUxTrackedInput(row.file,now,{...anchor,blob:'0'.repeat(40)},bytes));

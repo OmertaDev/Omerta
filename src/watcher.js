@@ -231,7 +231,7 @@ export async function syncStorePaidEvents(pool, source, opts = {}) {
     if (await isolate('store', () => {
       const sku = skuFromChainId(l.skuId);
       if (!sku) { const e = new Error(`PackagePaid for an unknown sku id ${l.skuId} — held for a human`); e.code = 'unknown_sku'; throw e; }
-      return recordStorePurchase(pool, { nonce: l.nonce, sku, payer: l.payer, amountWei: l.amount, txHash: l.txHash });
+      return recordStorePurchase(pool, { nonce: l.nonce, sku, payer: l.payer, amountWei: l.amount, txHash: l.txHash, routing: l.routing });
     })) processed++;
   }
   await setCursor(pool, 'store', w.to);
@@ -351,7 +351,7 @@ export async function syncBondEvents(pool, source, opts = {}) {
 // Returns null unless a real RPC + the relevant contract addresses are configured.
 export async function makeViemSource({ publicClient } = {}) {
   if (!publicClient && !process.env.CHAIN_RPC_URL) return null;
-  const { createPublicClient, http, parseAbiItem, formatUnits } = await import('viem');
+  const { createPublicClient, http, parseAbiItem, parseEventLogs, formatUnits } = await import('viem');
   const client = publicClient || createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
   const feesAddr = process.env.OMERTA_FEES_ADDRESS;
   const claimAddr = process.env.VOUCHER_CLAIM_ADDRESS;
@@ -371,6 +371,9 @@ export async function makeViemSource({ publicClient } = {}) {
   const rerollEv = parseAbiItem('event RerollFeePaid(address indexed payer, uint256 indexed nonce, uint256 amount)');
   const claimedEv = parseAbiItem('event Claimed(uint256 indexed nonce, address indexed to, uint8 kind, uint256 amount, uint256 gearId)');
   const packagePaidEv = parseAbiItem('event PackagePaid(address indexed payer, uint256 indexed nonce, uint256 indexed sku, uint256 amount)');
+  const feeSplitEv = parseAbiItem('event FeeSplit(uint256 indexed nonce, uint256 toDev, uint256 toVig)');
+  const nonMintRoutedEv = parseAbiItem('event NonMintFeeRouted(uint256 indexed nonce, address indexed router, uint256 gross)');
+  const revenueRoutedEv = parseAbiItem('event RevenueRouted(uint256 indexed nonce, uint256 gross, address dev, uint256 toDev, address vig, uint256 toVig, address treasury, uint256 toTreasury, address community, uint256 toCommunity)');
   const harvestEv = parseAbiItem('event HarvestFeeTaken(address indexed user, address indexed recipient, uint256 assets)');
   const bondEv = parseAbiItem('event Bonded(uint256 indexed bondId, address indexed payer, uint256 indexed nonce, uint256 principal, uint256 payout, uint256 toPol, uint256 toDev, uint256 toRwa, uint256 toVig)');
   const redeemedEv = parseAbiItem('event Redeemed(address indexed from, uint256 indexed tokenId, uint256 amount)');
@@ -404,6 +407,25 @@ export async function makeViemSource({ publicClient } = {}) {
     if (mintDevBps !== 10000n) throw new Error('OmertaFees mint allocation is not 100% DEV_WALLET; fee indexing held for contract correction.');
     feeSplitChecked = true;
   };
+  // A router can change between payments, even within one block. Use only the receipt for this
+  // PackagePaid and the router address identified by OmertaFees for this particular nonce.
+  const packageRouting = async (payment) => {
+    const receipt = await client.getTransactionReceipt({ hash: payment.transactionHash });
+    if (receipt.status !== 'success' || receipt.blockHash !== payment.blockHash || receipt.transactionHash !== payment.transactionHash)
+      throw new Error('Package payment receipt is unavailable or changed block');
+    const matching = (address, abi) => parseEventLogs({
+      abi, logs: receipt.logs.filter((l) => l.address.toLowerCase() === address.toLowerCase()),
+    }).filter((l) => l.args.nonce === payment.args.nonce);
+    const bindings = matching(feesAddr, [feeSplitEv, nonMintRoutedEv]);
+    if (bindings.length !== 1) throw new Error('Package receipt has missing or ambiguous fee routing');
+    const [binding] = bindings;
+    if (binding.eventName === 'FeeSplit') return { route: 'direct', toDev: binding.args.toDev, toVig: binding.args.toVig };
+    const { router, gross } = binding.args;
+    const legs = matching(router, [revenueRoutedEv]);
+    if (legs.length !== 1 || gross !== payment.args.amount || legs[0].args.gross !== gross)
+      throw new Error('Package receipt does not match its router distribution');
+    return { route: router, ...legs[0].args };
+  };
   return {
     head: () => client.getBlockNumber(),
     feeLogs: async (from, to) => {
@@ -424,8 +446,12 @@ export async function makeViemSource({ publicClient } = {}) {
       const logs = await client.getLogs({ address: feesAddr, event: packagePaidEv, ...range(from, to) });
       // sku is uint256(keccak256(skuString)) — far beyond 2^53, so it stays a decimal string for the
       // skuFromChainId reverse map (the deliveryId/tokenId discipline).
-      return logs.map((l) => ({ nonce: Number(l.args.nonce), payer: l.args.payer,
-        skuId: l.args.sku?.toString(), amount: l.args.amount?.toString(), txHash: l.transactionHash }));
+      const payments = [];
+      for (const l of logs) {
+        payments.push({ nonce: Number(l.args.nonce), payer: l.args.payer, skuId: l.args.sku.toString(),
+          amount: l.args.amount.toString(), txHash: l.transactionHash, routing: await packageRouting(l) });
+      }
+      return payments;
     },
     claimedLogs: async (from, to) => {
       if (!claimAddr) return [];

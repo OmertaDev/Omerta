@@ -1,6 +1,7 @@
 // Exact immutable Git source/provenance controls; no reconstructed source is executed.
 import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
+import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -51,19 +52,22 @@ const inverses = (prior, authored, file) => {
 function readCombinedPhysical(file) {
   assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');
   assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);
-  const authoredEntry = git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
+  const authoredEntry = git('ls-tree', integratedEconomicSource.revision, '--', file).trim();
   const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
   assert(match && match[3] === file, 'Only an actual regular authored source can be compared');
   assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');
   assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\t' + file,
     'Actual index mode/blob qualifies before projection');
-  const authored = git('show', combinedSource.sourceRevision + ':' + file);
+  const authored = git('show', integratedEconomicSource.revision + ':' + file);
   assert.equal(git('show', 'HEAD:' + file), authored, 'Actual HEAD retains the complete authored source');
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
   const raw = fs.readFileSync(file), physical = raw.toString('utf8');
   assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');
   assert(physical === authored || physical === authored.replaceAll('\n', '\r\n'), 'Whole actual LF/CRLF physical source qualifies first');
-  return physical;
+  const main = integratedEconomicParentInput(file, physical, 'main');
+  const parent = git('show', combinedSource.sourceRevision + ':' + file);
+  assert(main === parent || main === parent.replaceAll('\n', '\r\n'), 'Exact original combined comparison source: ' + file);
+  return main;
 }
 
 assert.deepEqual(process.argv.slice(2), []);

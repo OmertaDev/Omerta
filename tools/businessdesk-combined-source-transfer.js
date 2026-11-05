@@ -1,5 +1,6 @@
 // Exact historical comparison views only. Never pass a projection to native/runtime execution.
 import assert from 'node:assert/strict';
+import { integratedEconomicParentInput } from './integrated-economic-parent-source.js';
 import crypto from 'node:crypto';
 import { BUSINESS_DESK_COMBINED_SOURCE, BUSINESS_DESK_COMBINED_SOURCE_SHA256 } from './businessdesk-combined-source-data.js';
 
@@ -119,6 +120,8 @@ export function assertBusinessDeskCombinedSourceTransfer(file, input, profile, p
 export function businessDeskCombinedHistoricalInput(file, input, profile) {
   profileOf(profile);
   if (BUSINESS_DESK_COMBINED_SOURCE.status !== 'SEALED' || typeof file !== 'string') return input;
+  if (businessDeskCombinedReaderFiles(profile).includes(file))
+    input = integratedEconomicParentInput(file, input, 'main');
   const row = BUSINESS_DESK_COMBINED_SOURCE.files.find(value => value.file === file);
   if (!row || !Object.hasOwn(row.parents, profile)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

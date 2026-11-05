@@ -15,6 +15,8 @@ import { assertBusinessDeskCombinedNativeParents } from './businessdesk-combined
 import { ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 } from './economy-deed-merge-source-data.js';
 import { WIKI_MEDIA_MERGE_SOURCE_SHA256, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256 } from './wiki-media-source-data.js';
 import { NOIR_UI_SOURCE_SHA256 } from './noir-ui-source-data.js';
+import { assertEconomicReleaseNativeDefinition } from './economic-release-native-provenance.js';
+import { reviewedRevision, reviewedTree } from './economic-release-native-source.js';
 const revision = process.argv[2], predecessorRevision = 'c6247976ff71e8d4c103ebd1498c2d373217d077', uxRevision = '940df6a1efbe4ddcd8301cd138d5643dbe48a0bc';
 assert.equal(process.argv.length, 3, 'Usage: node tools/enterprise-native-ux-seal.js <authored-commit>'); assert.match(revision || '', /^[a-f0-9]{40}$/);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
@@ -61,14 +63,7 @@ const plan = enterpriseUxReplacementPlan(ENTERPRISE_NATIVE_FILES, ENTERPRISE_NAT
 assert.equal(sha(read(ENTERPRISE_UX_PREDECESSOR_METADATA)), ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256, 'Never reseal a rewritten predecessor native manifest');
 assert.equal(sha(read(ENTERPRISE_UX_QUALIFIED_METADATA)), ENTERPRISE_UX_QUALIFIED_METADATA_SHA256, 'Never reseal a rewritten qualified UX manifest');
 assert.equal(sha(read(ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA)), ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA_SHA256, 'Never reseal a rewritten frozen Deed record');
-assert.deepEqual(inventory, BUSINESS_DESK_COMBINED_NATIVE.nativeClosure, 'Combined native provenance covers the actual raw closure');
-const changedExisting = files.filter(row => {
- const before = predecessorNativeInputs.files.find(old => old.file === row.file);
- return before && (before.mode !== row.mode || before.blob !== row.blob || before.sha256 !== row.sha256);
-}).sort((a, b) => a.file < b.file ? -1 : a.file > b.file ? 1 : 0);
-assert.deepEqual(changedExisting, BUSINESS_DESK_COMBINED_NATIVE.files.map(row => row.current),
- 'Every changed existing native provenance row exactly matches actual authored raw mode/blob/SHA before sealing');
-const value = { version: 6, status: 'SEALED', phase: 'ACTUAL_ENTERPRISE_MONITOR_WIKI_DESK_NATIVE_INPUTS', authoredRevision: revision, predecessorRevision, uxRevision,
+const value = { version: 7, status: 'SEALED', phase: 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS', authoredRevision: revision, predecessorRevision, uxRevision,
  nativePredecessorRevision: predecessorNativeInputs.authoredRevision,
  nativePredecessorMetadataSha256: sha(read(ENTERPRISE_UX_PREDECESSOR_METADATA)),
  deedSourceDefinitionSha256: sha(JSON.stringify(DEED_ALLOCATION_SOURCE_DOMAINS)),
@@ -78,7 +73,9 @@ const value = { version: 6, status: 'SEALED', phase: 'ACTUAL_ENTERPRISE_MONITOR_
  noirMergeSourceDefinitionSha256: WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256,
  combinedSourceDefinitionSha256: BUSINESS_DESK_COMBINED_SOURCE_SHA256,
  combinedNativeDefinitionSha256: BUSINESS_DESK_COMBINED_NATIVE_SHA256,
+ reviewedNativeRevision: reviewedRevision, reviewedNativeTree: reviewedTree,
  combinedNativeParentsDefinitionSha256: BUSINESS_DESK_COMBINED_NATIVE_PARENTS_SHA256,
  legacyRevision: ENTERPRISE_NATIVE_RELEASE_INPUTS.revision, legacyDefinitionSha256: sha(JSON.stringify(ENTERPRISE_NATIVE_RELEASE_INPUTS)), legacyInventorySha256: sha(JSON.stringify(ENTERPRISE_NATIVE_FILES)), files, replacements: plan.replacements, legacyAdditionReplacements: plan.legacyAdditionReplacements, additions: files.slice(ENTERPRISE_NATIVE_FILES.length) };
+assertEconomicReleaseNativeDefinition(value);
 fs.writeFileSync(new URL('../' + ENTERPRISE_UX_METADATA, import.meta.url), enterpriseUxMetadataBytes(value));
 console.log(JSON.stringify({ authoredRevision: revision, actualInputs: files.length, replacements: plan.replacements.length, legacyAdditionReplacements: plan.legacyAdditionReplacements.length, additions: value.additions.length, onlySelfReference: ENTERPRISE_UX_METADATA, nativeResultsTransferred: false }));
