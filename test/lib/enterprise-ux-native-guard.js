@@ -7,6 +7,8 @@ import { parse } from 'acorn';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../../tools/contract-release-source-data.js';
 import { contractReleaseSourceDataBytes, contractReleaseSourceDataPin } from '../../tools/contract-release-source-format.js';
 import { assertContractReleaseCandidatePins } from '../../tools/contract-release-native-provenance.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as ORIGINAL_B35_NATIVE_INPUTS } from '../../tools/enterprise-native-ux-b35-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as ACCEPTED_DESK_NATIVE_INPUTS } from '../../tools/enterprise-native-deed-inputs.js';
 import { assertUxNativeDirectorGuards } from './ux-native-director-guard.js';
 await assertUxNativeDirectorGuards();
 import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_UX_METADATA, ENTERPRISE_UX_SUPPORT, ENTERPRISE_UX_ASSETS, assertEnterpriseUxInputDefinition, assertEnterpriseUxTrackedInput, assertEnterpriseUxMetadataBytes, assertEnterpriseUxReplacementPlan, enterpriseUxReplacementPlan, enterpriseUxMetadataBytes, enterpriseUxClosure, enterpriseUxImports } from '../../tools/enterprise-native-ux.js';
@@ -60,6 +62,8 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-deed-inputs.js'), 'The accepted Desk native manifest is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'tools/contract-release-source-data.js'), 'The complete contract source definition is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'src/deedbenefits.js'), 'The actual new runtime benefit dependency is in the closed native capture');
+  for (const file of ['tools/noir-ui-source-data.js', 'tools/noir-ui-source-transfer.js'])
+   assert(pin.files.some(row => row.file === file), 'The actual noir source dependency is in the closed native capture: ' + file);
   assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-contract-release-inputs.js', 'Only the fresh successor manifest is self-referential');
   for (const key of ['contractPredecessorRevision', 'contractPredecessorMetadataSha256', 'contractSourceDefinitionSha256',
     'contractSourceRevision', 'contractBaseRevision', 'reviewedContractRevision', 'reviewedUiRevision']) {
@@ -85,11 +89,40 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   const predecessorPin = (file, after) => { const before = predecessor.get(file); if (before) return Object.freeze({ file, mode: before.mode, blob: before.blob, sha256: before.blob === after.blob ? after.sha256 : digest(git('show', pin.predecessorRevision + ':' + file)) }); const legacyPin = legacyAdditions.get(file), actual = legacyTree.get(file); assert(legacyPin && actual?.type === 'blob'); assert.equal(actual.mode, legacyPin.mode); assert.equal(actual.blob, legacyPin.blob); assert.equal(digest(git('show', pin.legacyRevision + ':' + file)), legacyPin.sha256); return null; };
   assertEnterpriseUxReplacementPlan(legacyFiles, legacy, pin.files, predecessorPin, pin);
   for (const file of requiredLegacyReplacements) { const row = pin.legacyAdditionReplacements.find(entry => entry.file === file), before = legacyAdditions.get(file), after = pin.files.find(entry => entry.file === file); assert.equal(git('ls-tree', pin.predecessorRevision, '--', file).length, 0); assert.deepEqual(row.before, before); assert.deepEqual(row.after, after); }
-  const unchanged = pin.files.find(row => row.file === 'schema.sql'); assert(unchanged);
+  const unchangedOriginal = ORIGINAL_B35_NATIVE_INPUTS.files.find(before => {
+   const actual = pin.files.find(row => row.file === before.file);
+   const accepted = ACCEPTED_DESK_NATIVE_INPUTS.files.find(row => row.file === before.file);
+   return [actual, accepted].every(row => row && row.mode === before.mode && row.blob === before.blob && row.sha256 === before.sha256);
+  });
+  assert(unchangedOriginal, 'A real independently pinned unchanged input across every source stage is mandatory');
+  const unchanged = pin.files.find(row => row.file === unchangedOriginal.file);
+  const unchangedAccepted = ACCEPTED_DESK_NATIVE_INPUTS.files.find(row => row.file === unchangedOriginal.file);
+  assert.deepEqual(unchanged, unchangedOriginal); assert.deepEqual(unchangedAccepted, unchangedOriginal);
   const unchangedBytes = git('show', pin.authoredRevision + ':' + unchanged.file);
   const unchangedRecord = { type: 'blob', mode: unchanged.mode, blob: unchanged.blob };
+  assert.equal(digest(unchangedBytes), unchangedOriginal.sha256);
+  assert.equal(crypto.createHash('sha1').update('blob ' + unchangedBytes.length + '\0').update(unchangedBytes).digest('hex'), unchangedOriginal.blob);
   assert.equal(assertEnterpriseUxTrackedInput(unchanged.file, unchangedRecord, unchangedRecord, unchangedBytes), null,
     'An unchanged actual-current input needs no changed-source provenance');
+  const schema = pin.files.find(row => row.file === 'schema.sql');
+  const acceptedSchema = ACCEPTED_DESK_NATIVE_INPUTS.files.find(row => row.file === 'schema.sql');
+  const originalSchema = ORIGINAL_B35_NATIVE_INPUTS.files.find(row => row.file === 'schema.sql');
+  assert(schema && acceptedSchema && originalSchema);
+  assert.deepEqual(schema, acceptedSchema); assert.notDeepEqual(schema, originalSchema);
+  const schemaBytes = git('show', pin.authoredRevision + ':schema.sql');
+  const schemaRecord = { type: 'blob', mode: schema.mode, blob: schema.blob };
+  const schemaProvenance = assertEnterpriseUxTrackedInput('schema.sql', schemaRecord, schemaRecord, schemaBytes);
+  assert(schemaProvenance && Object.isFrozen(schemaProvenance));
+  assert.strictEqual(schemaProvenance.current, schema); assert.strictEqual(schemaProvenance.intermediate, acceptedSchema);
+  assert.strictEqual(schemaProvenance.predecessor, originalSchema);
+  assert.equal(schemaProvenance.predecessorRevision, ORIGINAL_B35_NATIVE_INPUTS.authoredRevision);
+  assert.equal(schemaProvenance.intermediateRevision, ACCEPTED_DESK_NATIVE_INPUTS.authoredRevision);
+  assert(schemaProvenance.prior && Object.isFrozen(schemaProvenance.prior));
+  assert.strictEqual(schemaProvenance.prior.predecessor, originalSchema);
+  assert.deepEqual(schemaProvenance.prior.current, { mode: acceptedSchema.mode, blob: acceptedSchema.blob, sha256: acceptedSchema.sha256 });
+  for (const relation of [schemaProvenance, schemaProvenance.prior]) {
+   assert.equal(relation.nativeAdmission, false); assert.equal(relation.priorResultsTransferred, false);
+  }
   const first = pin.files.find(row => row.file === 'AGENTS.md'); assert(first);
   const canonical = git('show', pin.authoredRevision + ':' + first.file), record = { type: 'blob', mode: first.mode, blob: first.blob };
   const provenance = assertEnterpriseUxTrackedInput(first.file, record, record, canonical);
