@@ -7,7 +7,9 @@ import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from 
 import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
  ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as PREDECESSOR_NATIVE_DEFINITION_SHA256 } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
-import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256 } from './wiki-media-source-data.js';
+import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256,
+ WIKI_MEDIA_NOIR_MERGE_SOURCE, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256 } from './wiki-media-source-data.js';
+import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_SHA256 } from './noir-ui-source-data.js';
 export { ENTERPRISE_NATIVE_UX_INPUTS };
 export const ENTERPRISE_UX_METADATA = 'tools/enterprise-native-deed-inputs.js';
 export const ENTERPRISE_UX_PREDECESSOR_METADATA = 'tools/enterprise-native-ux-b35-inputs.js';
@@ -84,11 +86,17 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
  assert.equal(declaration, ENTERPRISE_NATIVE_UX_INPUTS, 'Only the actual frozen current-native declaration');
  assert.equal(declaration.status, 'SEALED', 'Current UX native inputs remain UNSEALED; no prior native results transfer');
  assert.equal(digest(JSON.stringify(declaration)), ENTERPRISE_NATIVE_UX_INPUTS_SHA256, 'Whole current-native declaration changed');
- fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', 'wikiMergeSourceDefinitionSha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
- assert.equal(declaration.version, 4); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_WIKI_MERGE_NATIVE_INPUTS');
+ fields(declaration, ['version', 'status', 'phase', 'authoredRevision', 'predecessorRevision', 'uxRevision', 'legacyRevision', 'legacyDefinitionSha256', 'legacyInventorySha256', 'nativePredecessorRevision', 'nativePredecessorMetadataSha256', 'deedSourceDefinitionSha256', 'wikiMergeSourceDefinitionSha256', 'noirSourceDefinitionSha256', 'noirMergeSourceDefinitionSha256', 'files', 'replacements', 'legacyAdditionReplacements', 'additions']);
+ assert.equal(declaration.version, 5); assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_NOIR_WIKI_MERGE_NATIVE_INPUTS');
  assert.equal(WIKI_MEDIA_MERGE_SOURCE.status, 'SEALED');
  assert.equal(digest(JSON.stringify(WIKI_MEDIA_MERGE_SOURCE)), WIKI_MEDIA_MERGE_SOURCE_SHA256, 'Immutable exact merge definition');
  assert.equal(declaration.wikiMergeSourceDefinitionSha256, WIKI_MEDIA_MERGE_SOURCE_SHA256, 'Exact reviewed merge source relation');
+ assert.equal(NOIR_UI_SOURCE.status, 'SEALED');
+ assert.equal(digest(JSON.stringify(NOIR_UI_SOURCE)), NOIR_UI_SOURCE_SHA256, 'Immutable exact noir UI source definition');
+ assert.equal(declaration.noirSourceDefinitionSha256, NOIR_UI_SOURCE_SHA256, 'Exact reviewed noir UI source relation');
+ assert.equal(WIKI_MEDIA_NOIR_MERGE_SOURCE.status, 'SEALED');
+ assert.equal(digest(JSON.stringify(WIKI_MEDIA_NOIR_MERGE_SOURCE)), WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256, 'Immutable exact noir/wiki merge definition');
+ assert.equal(declaration.noirMergeSourceDefinitionSha256, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256, 'Exact reviewed noir/wiki merge source relation');
  assert.equal(PREDECESSOR_NATIVE_INPUTS.status, 'SEALED');
  assert.equal(digest(JSON.stringify(PREDECESSOR_NATIVE_INPUTS)), PREDECESSOR_NATIVE_DEFINITION_SHA256, 'Immutable predecessor native declaration');
  assert.equal(declaration.nativePredecessorRevision, PREDECESSOR_NATIVE_INPUTS.authoredRevision);
@@ -119,10 +127,28 @@ export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, d
  // The relation below records provenance only; native execution and its sixteen fresh cases remain mandatory.
  const previous = PREDECESSOR_NATIVE_INPUTS.files.find(row => row.file === file);
  if (!previous || !changedPin(previous, expected)) return null;
+ const noirMerged = WIKI_MEDIA_NOIR_MERGE_SOURCE.files[file];
+ let reviewed = expected, noirProvenance = null;
+ if (noirMerged) {
+  assert.equal(noirMerged.current.mode, expected.mode); assert.equal(noirMerged.current.lf.blob, expected.blob);
+  assert.equal(noirMerged.current.lf.sha256, expected.sha256);
+  assert.equal(noirMerged.wiki.absent, false, 'An exact existing wiki input is required for noir merge provenance');
+  reviewed = Object.freeze({ file, mode: noirMerged.wiki.mode, blob: noirMerged.wiki.lf.blob, sha256: noirMerged.wiki.lf.sha256 });
+  noirProvenance = { wikiParent: reviewed, noirMergeSourceRevision: WIKI_MEDIA_NOIR_MERGE_SOURCE.revision,
+   noirMergeParentRevision: WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.wiki.revision };
+ }
+ const provenance = details => Object.freeze({ file, current: Object.freeze({ mode: current.mode, blob: current.blob, sha256: digest(bytes) }),
+  predecessor: previous, predecessorRevision: PREDECESSOR_NATIVE_INPUTS.authoredRevision, ...details,
+  ...(noirProvenance || {}), ...(noirProvenance ? { relation: 'exact-reviewed-noir-wiki-merge-source-provenance-only' } : {}),
+  nativeAdmission: false, priorResultsTransferred: false });
+ if (!changedPin(previous, reviewed)) {
+  assert(noirProvenance, 'A changed current input requires an exact reviewed source relation');
+  return provenance({});
+ }
  const merged = WIKI_MEDIA_MERGE_SOURCE.files[file];
  if (merged) {
-  assert.equal(merged.current.mode, expected.mode); assert.equal(merged.current.lf.blob, expected.blob);
-  assert.equal(merged.current.lf.sha256, expected.sha256);
+  assert.equal(merged.current.mode, reviewed.mode); assert.equal(merged.current.lf.blob, reviewed.blob);
+  assert.equal(merged.current.lf.sha256, reviewed.sha256);
   assert.equal(merged.main.absent, false, 'An exact existing main input is required for merge provenance');
   const main = Object.freeze({ file, mode: merged.main.mode, blob: merged.main.lf.blob, sha256: merged.main.lf.sha256 });
   if (changedPin(previous, main)) {
@@ -130,18 +156,15 @@ export function assertEnterpriseUxTrackedInput(file, current, authored, bytes, d
    assert.equal(main.mode, deed.currentMode); assert.equal(main.blob, deed.currentBlob); assert.equal(main.sha256, deed.currentSha256);
    assert.equal(previous.mode, deed.baselineMode); assert.equal(previous.blob, deed.baselineBlob); assert.equal(previous.sha256, deed.baselineSha256);
   }
-  return Object.freeze({ file, current: Object.freeze({ mode: current.mode, blob: current.blob, sha256: digest(bytes) }),
-   predecessor: previous, predecessorRevision: PREDECESSOR_NATIVE_INPUTS.authoredRevision, mainParent: main,
+  return provenance({ mainParent: main,
    mergeSourceRevision: WIKI_MEDIA_MERGE_SOURCE.revision, mergeParentRevision: WIKI_MEDIA_MERGE_SOURCE.parents.main.revision,
-   relation: 'exact-reviewed-wiki-merge-source-provenance-only', nativeAdmission: false, priorResultsTransferred: false });
+   relation: 'exact-reviewed-wiki-merge-source-provenance-only' });
  }
  const sourcePin = DEED_ALLOCATION_SOURCE_DOMAINS[file];
  assert(sourcePin, 'No unreviewed change to an existing native input: ' + file);
- assert.equal(expected.mode, sourcePin.currentMode); assert.equal(expected.blob, sourcePin.currentBlob);
- assert.equal(expected.sha256, sourcePin.currentSha256);
+ assert.equal(reviewed.mode, sourcePin.currentMode); assert.equal(reviewed.blob, sourcePin.currentBlob);
+ assert.equal(reviewed.sha256, sourcePin.currentSha256);
  assert.equal(previous.mode, sourcePin.baselineMode); assert.equal(previous.blob, sourcePin.baselineBlob);
  assert.equal(previous.sha256, sourcePin.baselineSha256);
- return Object.freeze({ file, current: Object.freeze({ mode: current.mode, blob: current.blob, sha256: digest(bytes) }),
-  predecessor: previous, predecessorRevision: PREDECESSOR_NATIVE_INPUTS.authoredRevision,
-  relation: 'exact-reviewed-deed-source-provenance-only', nativeAdmission: false, priorResultsTransferred: false });
+ return provenance({ relation: 'exact-reviewed-deed-source-provenance-only' });
 }

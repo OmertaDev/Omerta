@@ -1880,7 +1880,7 @@ body.ux-operation-focus #screen-main #layout { grid-template-columns: minmax(0, 
   #screen-main #operation-desk #coach,
   #screen-main #operation-desk #coach:has(.cplan) { grid-template-columns: minmax(0, 1fr); }
   #screen-main #operation-desk #coach .cl { font-size: 22px; }
-  #screen-main #operation-desk #coach .ch { grid-row: auto; font-size: 13px !important; }
+  #screen-main #operation-desk #coach .ch { grid-row: auto; font-size: 14px !important; }
   #screen-main #operation-desk #coach-go { grid-column: 1; grid-row: auto; justify-self: stretch; margin-top: 8px; }
   #screen-main #operation-desk #coach .cplan { margin-top: 0; }
   #screen-main #ux-screen-tools { margin-bottom: 18px; }
@@ -1892,6 +1892,15 @@ body.ux-operation-focus #screen-main #layout { grid-template-columns: minmax(0, 
   #screen-main .start-first-week .sect > summary h2 { flex: 1; font: 13px/1.5 var(--om-font-body); letter-spacing: 0; text-transform: none; }
   #screen-main .start-first-week .sect > summary > .d { flex-basis: 100%; margin-left: 16px; }
   #screen-main #wirepanel { right: 12px; top: 75px; max-height: calc(100dvh - 150px); }
+}
+@media (max-width: 760px) and (max-height: 700px) {
+  #screen-main #operation-desk #coach { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 8px; }
+  #screen-main #operation-desk #coach .operation-desk__eyebrow,
+  #screen-main #operation-desk #coach .ch,
+  #screen-main #operation-desk #coach .cplan,
+  #screen-main #operation-desk #coach .operation-readiness { display: none !important; }
+  #screen-main #operation-desk #coach .cl { grid-column: 1; grid-row: 1; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #screen-main #operation-desk #coach-go { grid-column: 2; grid-row: 1; min-height: 44px; margin: 0; padding: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #screen-main *, #screen-main *::before, #screen-main *::after { scroll-behavior: auto !important; }

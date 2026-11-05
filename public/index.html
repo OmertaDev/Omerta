@@ -14584,6 +14584,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   });
   document.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
+    if (document.querySelector('.modal-bg:not(.hidden), dialog[open]')) return;
     if (gameMenu.open) { event.preventDefault(); closeGameMenu(true); }
     else if (!$('#wirepanel').hidden && !document.querySelector('.modal-bg:not(.hidden), dialog[open]')) { event.preventDefault(); toggleWire(false, true); }
   });

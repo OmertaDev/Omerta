@@ -50,8 +50,33 @@ const unexpectedConsoleError = (message, intentionalOffline) => message.type() =
   && !/status of 4\d\d/.test(message.text())
   && !(intentionalOffline && message.text() === 'Failed to load resource: net::ERR_INTERNET_DISCONNECTED');
 
+async function openDirectory(page) {
+  const directory = page.locator('#city-directory');
+  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();
+}
+
+async function clickGroup(page, id) {
+  await openDirectory(page);
+  await page.click(`#grouprail [data-group="${id}"]`);
+}
+
 async function clickTab(page, id) {
+  await openDirectory(page);
   await page.click(`#tabs [data-tab="${id}"]`);
+}
+
+async function openControlDisclosures(control) {
+  const ancestors = control.locator('xpath=ancestor::details');
+  for (let index = 0; index < await ancestors.count(); index++) {
+    const disclosure = ancestors.nth(index);
+    if (!await disclosure.evaluate(node => node.open)) await disclosure.locator(':scope > summary').click();
+  }
+}
+
+async function clickDisclosureControl(page, selector) {
+  const control = page.locator(selector);
+  await openControlDisclosures(control);
+  await control.click();
 }
 
 // ── finding a browser ───────────────────────────────────────────────────────────────────────────
@@ -216,6 +241,8 @@ const check = async (page, screen, vp, { contentMustShow = false } = {}) => {
 };
 
 async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
+  const tools = page.locator('#ux-screen-tools');
+  if (!await tools.evaluate(node => node.open)) await tools.locator(':scope > summary').click();
   const strip = page.locator('#action-readiness');
   await strip.waitFor({ state: 'visible', timeout: 5000 });
   const entries = await strip.locator('[data-readiness-tab]').evaluateAll(buttons => buttons.map(button => ({
@@ -238,17 +265,18 @@ async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
     for (const { tab } of entries) {
       await strip.locator(`[data-readiness-tab="${tab}"]`).click();
       await page.waitForSelector(`#tab-${tab}.on`, { state: 'visible', timeout: 10000 });
-      if (tab === 'garage') await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+      await strip.scrollIntoViewIfNeeded();
       const layout = await strip.evaluate(nav => {
         const box = nav.getBoundingClientRect();
         return { visible: box.width > 0 && box.height > 0 && box.top >= -1 && box.bottom <= innerHeight + 1,
           left: box.left, right: box.right, viewport: document.documentElement.clientWidth,
           clipped: nav.scrollWidth > nav.clientWidth + 1, overflow: getComputedStyle(nav).overflowX,
-          entries: nav.querySelectorAll('[data-readiness-tab]').length };
+          entries: nav.querySelectorAll('[data-readiness-tab]').length,
+          toolsOpen: document.querySelector('#ux-screen-tools')?.open };
       });
-      if (!layout.visible || layout.entries !== 4 || layout.left < -1 || layout.right > layout.viewport + 1
+      if (!layout.visible || !layout.toolsOpen || layout.entries !== 4 || layout.left < -1 || layout.right > layout.viewport + 1
         || (layout.clipped && !['auto', 'scroll'].includes(layout.overflow)))
-        fail('(readiness)', vp, `strip must remain visible and contain any horizontal scrolling on ${tab} — ${JSON.stringify(layout)}`);
+        fail('(readiness)', vp, `the opened screen tools must expose the strip and contain any horizontal scrolling on ${tab} — ${JSON.stringify(layout)}`);
       await check(page, `readiness-${tab}`, vp);
     }
     if (vp.w === 360) {
@@ -268,7 +296,7 @@ async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
       await page.route('**/v1/projections/player', delayedProjection, { times: 1 });
       try {
         const delivered = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player');
-        await page.locator('#btn-refresh').evaluate(button => button.click());
+        await clickDisclosureControl(page, '#btn-refresh');
         await captured;
         // Only Chromium's exact resource-disconnected notice is expected during this fault window.
         setIntentionalOffline(true);
@@ -297,7 +325,7 @@ async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
       const desktop = { w: 1280, h: 900 };
       try {
         await page.setViewportSize({ width: desktop.w, height: desktop.h });
-        await page.evaluate(() => window.scrollBy(0, window.innerHeight));
+        await strip.scrollIntoViewIfNeeded();
         const layout = await strip.evaluate(nav => ({
           buttons: [...nav.querySelectorAll('[data-readiness-tab]')].filter(button => {
             const box = button.getBoundingClientRect();
@@ -305,10 +333,11 @@ async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
               && box.top >= -1 && box.bottom <= innerHeight + 1;
           }).length,
           overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-          vitalsHidden: getComputedStyle(document.querySelector('#vitals')).display === 'none',
+          vitalsVisible: getComputedStyle(document.querySelector('#vitals')).display !== 'none',
+          toolsOpen: document.querySelector('#ux-screen-tools')?.open,
         }));
-        if (layout.buttons !== 4 || layout.overflow > 1 || !layout.vitalsHidden)
-          fail('(readiness desktop)', desktop, `all four sticky controls must fit with desktop vitals hidden — ${JSON.stringify(layout)}`);
+        if (layout.buttons !== 4 || layout.overflow > 1 || !layout.vitalsVisible || !layout.toolsOpen)
+          fail('(readiness desktop)', desktop, `all four controls must fit in opened screen tools with desktop vitals available — ${JSON.stringify(layout)}`);
         if (SHOTS) await page.screenshot({ path: path.join(SHOTS, 'readiness-desktop.png') });
       } finally {
         await page.setViewportSize({ width: vp.w, height: vp.h });
@@ -321,6 +350,7 @@ async function checkReadinessNavigation(page, vp, setIntentionalOffline) {
   }
   if (mutations.length)
     fail('(readiness)', vp, `navigation submitted action requests: ${mutations.join(', ')}`);
+  if (await tools.evaluate(node => node.open)) await tools.locator(':scope > summary').click();
 }
 
 for (const vp of VIEWPORTS) {
@@ -364,11 +394,18 @@ for (const vp of VIEWPORTS) {
   await page.fill('#new-name', 'Probe ' + Math.random().toString(36).slice(2, 8));
   await page.click('#btn-create');
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
-  // THE FIRST ACTION — the tour opens Streets, then the player chooses the real job.
-  // Arrival must never submit the action.
+  await page.waitForSelector('#tab-start.on .start-next-card .act', { state: 'visible', timeout: 20000 });
+  // THE FIRST ACTION — gameplay opens directly; the optional Codex tour can open Streets.
+  // Arrival and the tour handoff must never submit the action.
   let firstJobHandoff = false;
+  if (await page.locator('#welcome:not(.hidden)').count()) {
+    fail('(first action)', vp, 'a fresh character was interrupted by a mandatory tour');
+  } else {
+    await clickDisclosureControl(page, '#btn-help');
+    await page.click('#glossary-tour');
+  }
   if (!(await page.locator('#welcome:not(.hidden)').count())) {
-    fail('(first action)', vp, 'a fresh character never received the first-session tour');
+    fail('(first action)', vp, 'choosing the optional Codex tour did not open it');
   } else {
     await check(page, 'the tour (arrival)', vp);
     await page.click('#tour-next');
@@ -501,7 +538,7 @@ for (const vp of VIEWPORTS) {
           // Keep the rest of the rehearsal diagnostic after recording the real failure. This manual
           // recovery must never satisfy the assertion above; it only prevents one wrong tab from
           // turning the whole harness into an unhelpful timeout.
-          await page.click('#tabs [data-tab="start"]');
+          await clickTab(page, 'start');
         }
         await page.waitForSelector('#tab-start [data-obclaim="ob_crime"]', { state: 'visible', timeout: 5000 });
         const reward = page.locator('#tab-start [data-obclaim="ob_crime"]').first();
@@ -528,7 +565,7 @@ for (const vp of VIEWPORTS) {
       }
 
       await check(page, 'start-here (after first action)', vp, { contentMustShow: true });
-      await page.click('#btn-help');
+      await clickDisclosureControl(page, '#btn-help');
       await page.waitForSelector('#glossary:not(.hidden)', { timeout: 5000 });
       const replayOpener = page.locator('#glossary-tour');
       if (!(await replayOpener.count())) {
@@ -566,10 +603,16 @@ for (const vp of VIEWPORTS) {
   }
 
   if (firstJobHandoff) {
+  // The optional install prompt has its own visible dismissal before the longer city walk.
+  if (await page.locator('#install-x').isVisible()) {
+    await page.click('#install-x');
+    await page.locator('#installbar').waitFor({ state: 'detached', timeout: 5000 });
+  }
   // The shared clocks remain reachable outside Home; selecting one only opens its screen.
   await checkReadinessNavigation(page, vp, value => { intentionalOffline = value; });
   // open the whole city and walk every screen in every group
-  if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
+  await openDirectory(page);
+  if (await page.locator('#tabs-more').isVisible()) await page.click('#tabs-more');
   await page.waitForTimeout(400);
   // Selected by the data-group ID, never by the button's TEXT: the labels come from the i18n
   // dictionary, and `:has-text()` is a SUBSTRING match, so text matching is wrong twice over.
@@ -577,7 +620,7 @@ for (const vp of VIEWPORTS) {
     (els) => els.map((e) => e.dataset.group));
   if (!groups.length) fail('(nav)', vp, 'no group rail buttons found — the walk below covers nothing');
   for (const g of groups) {
-    await page.click(`#grouprail [data-group="${g}"]`);
+    await clickGroup(page, g);
     await page.waitForTimeout(200);
     const subs = await page.locator('#tabs [data-tab]:not(.hidden)').evaluateAll(els => els.map(el => el.dataset.tab));
     // A ONE-SCREEN group (profile, deck) shows no sub-row at all, so the loop below runs zero
@@ -605,9 +648,9 @@ for (const vp of VIEWPORTS) {
   // The ordinary walk proves the first view fits. This expands the same server-backed Desk into
   // its three live working modes so a refactor cannot leave Cases polished while Workshop or the
   // Exchange silently overflows, empties, or drops its exact-hash controls.
-  await page.click('#grouprail [data-group="desk"]');
+  await clickGroup(page, 'desk');
   // The Desk group also contains Fieldwork and remembers its last visited screen.
-  await page.click('#tabs [data-tab="desk"]');
+  await clickTab(page, 'desk');
   await page.waitForSelector('#tab-desk .desk-file', { state: 'visible', timeout: 20000 });
   const cases = await page.evaluate(() => ({
     title: document.querySelector('#tab-desk #desk-case-title')?.textContent || '',
@@ -690,7 +733,7 @@ for (const vp of VIEWPORTS) {
   await check(page, 'content-desk-exchange', vp, { contentMustShow: true });
 
   // the overlays, which get their own stacking and their own chance to overflow
-  await page.click('#btn-help'); await check(page, 'glossary', vp);
+  await clickDisclosureControl(page, '#btn-help'); await check(page, 'glossary', vp);
   await page.click('#glossary-close'); await page.waitForTimeout(200);
   await page.click('#btn-phone'); await check(page, 'cellphone', vp);
 
@@ -727,11 +770,16 @@ for (const vp of VIEWPORTS) {
   screensChecked++;
 
   // ── I — THE SHEET'S CHROME BUTTONS STATE THEIR TERMS ──────────────────────────────────────────
-  // `heal` and `check in` sit in the always-visible row beside the money figure and said only their
+  // `heal` and `check in` sit in the character sheet beside the money figure and said only their
   // own names: a price with the purchase left off, and a ladder invisible until after the money
   // landed. test/client.js proves the two figures are READ; only a browser can prove they are
   // RENDERED, which is why the assertion lives here. Crossed against what /v1/me really sends —
   // a literal would pass while the sheet and the till drifted.
+  // The layout walk leaves the phone open. Reveal the character sheet through its native
+  // disclosures before checking what a player can read beside the still-unclaimed control.
+  await page.click('#phone-close'); await page.waitForTimeout(200);
+  await openControlDisclosures(page.locator('#sheet-terms'));
+  await page.locator('#sheet-terms').waitFor({ state: 'visible', timeout: 5000 });
   const terms = await page.evaluate(async () => {
     const r = await fetch('/v1/me', { headers: { authorization: 'Bearer ' + localStorage.omerta_token } });
     const me = (await r.json())?.character || {};
@@ -756,9 +804,7 @@ for (const vp of VIEWPORTS) {
   // then the line must say today is claimed, still carry the come-back-tomorrow figure, and the
   // button must go dead rather than stay live and refuse on press.
   // pressed the way a player presses it — the real act() path, so the re-render is the real one too.
-  // The layout walk above leaves the cellphone open, and its card intercepts the click.
-  await page.click('#phone-close'); await page.waitForTimeout(200);
-  await page.click('[data-do="POST /v1/checkin"]');
+  await clickDisclosureControl(page, '[data-do="POST /v1/checkin"]');
   await page.waitForTimeout(2000);
   const after = await page.evaluate(async () => {
     const h = { authorization: 'Bearer ' + localStorage.omerta_token };
@@ -1200,7 +1246,8 @@ for (const vp of VIEWPORTS) {
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
   await page.waitForTimeout(1500);
-  if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
+  await openDirectory(page);
+  if (await page.locator('#tabs-more').isVisible()) await page.click('#tabs-more');
   await page.waitForTimeout(300);
 
   // Tab bodies PERSIST in the DOM once rendered, so a per-screen element count only ever grows and
@@ -1230,7 +1277,7 @@ for (const vp of VIEWPORTS) {
   const groups = await page.locator('#grouprail [data-group]').evaluateAll((els) => els.map((e) => e.dataset.group));
   if (!groups.length) fail('(xss)', vp, 'no group rail buttons found — the XSS walk below covers nothing');
   for (const g of groups) {
-    await page.click(`#grouprail [data-group="${g}"]`);
+    await clickGroup(page, g);
     await page.waitForTimeout(200);
     const subs = await page.locator('#tabs [data-tab]:not(.hidden)').evaluateAll(els => els.map(el => el.dataset.tab));
     if (!subs.length) await probeScreen(g);

@@ -4,7 +4,9 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
-import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256 } from '../../tools/wiki-media-source-data.js';
+import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256,
+ WIKI_MEDIA_NOIR_MERGE_SOURCE, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256 } from '../../tools/wiki-media-source-data.js';
+import { NOIR_UI_SOURCE_SHA256 } from '../../tools/noir-ui-source-data.js';
 import { assertUxNativeDirectorGuards } from './ux-native-director-guard.js';
 await assertUxNativeDirectorGuards();
 import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_UX_METADATA, ENTERPRISE_UX_SUPPORT, ENTERPRISE_UX_ASSETS, assertEnterpriseUxInputDefinition, assertEnterpriseUxTrackedInput, assertEnterpriseUxMetadataBytes, assertEnterpriseUxReplacementPlan, enterpriseUxReplacementPlan, enterpriseUxMetadataBytes, enterpriseUxClosure, enterpriseUxImports } from '../../tools/enterprise-native-ux.js';
@@ -49,13 +51,18 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.version, 4); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_WIKI_MERGE_NATIVE_INPUTS');
+  assert.equal(pin.version, 5); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_NOIR_WIKI_MERGE_NATIVE_INPUTS');
   assert.equal(pin.wikiMergeSourceDefinitionSha256, WIKI_MEDIA_MERGE_SOURCE_SHA256);
+  assert.equal(pin.noirSourceDefinitionSha256, NOIR_UI_SOURCE_SHA256);
+  assert.equal(pin.noirMergeSourceDefinitionSha256, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256);
   assert.equal(pin.files.length, legacyFiles.length + pin.additions.length);
   assert.equal(pin.legacyAdditionReplacements.length, 4);
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-b35-inputs.js'), 'The old B35 native manifest is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-inputs.js'), 'The qualified UX native manifest is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'src/deedbenefits.js'), 'The actual new runtime benefit dependency is in the closed native capture');
+  for (const file of ['tools/noir-ui-source-data.js', 'tools/noir-ui-source-transfer.js']) {
+   assert(pin.files.some(row => row.file === file), 'The actual noir source dependency is in the closed native capture: ' + file);
+  }
   assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-deed-inputs.js', 'Only the fresh successor manifest is self-referential');
   const requiredLegacyReplacements = ['src/accountdaily.js', 'src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
   assert.deepEqual(pin.legacyAdditionReplacements.map(row => row.file), requiredLegacyReplacements);
@@ -92,6 +99,22 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   reject(() => assertEnterpriseUxTrackedInput(merged.file, mainRecord, mainRecord, mainBytes),
     'Even an exact admitted main parent cannot replace the actual merged native input');
   reject(() => assertEnterpriseUxTrackedInput(merged.file, mergedRecord, mergedRecord, Buffer.concat([mergedBytes, Buffer.from('\n')])));
+  const noir = pin.files.find(row => row.file === 'public/index.html'); assert(noir);
+  const noirRow = WIKI_MEDIA_NOIR_MERGE_SOURCE.files[noir.file]; assert(noirRow);
+  const noirBytes = git('show', pin.authoredRevision + ':' + noir.file);
+  const noirRecord = { type: 'blob', mode: noir.mode, blob: noir.blob };
+  const noirProvenance = assertEnterpriseUxTrackedInput(noir.file, noirRecord, noirRecord, noirBytes);
+  assert.equal(noirProvenance.current.blob, noir.blob);
+  assert.equal(noirProvenance.wikiParent.blob, noirRow.wiki.lf.blob);
+  assert.equal(noirProvenance.noirMergeSourceRevision, WIKI_MEDIA_NOIR_MERGE_SOURCE.revision);
+  assert.equal(noirProvenance.noirMergeParentRevision, WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.wiki.revision);
+  assert.equal(noirProvenance.relation, 'exact-reviewed-noir-wiki-merge-source-provenance-only');
+  assert.equal(noirProvenance.nativeAdmission, false); assert.equal(noirProvenance.priorResultsTransferred, false);
+  const wikiBytes = git('show', WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.wiki.revision + ':' + noir.file);
+  const wikiRecord = { type: 'blob', mode: noirRow.wiki.mode, blob: noirRow.wiki.lf.blob };
+  reject(() => assertEnterpriseUxTrackedInput(noir.file, wikiRecord, wikiRecord, wikiBytes),
+    'An exact admitted wiki parent cannot replace actual noir/merged native source');
+  reject(() => assertEnterpriseUxTrackedInput(noir.file, noirRecord, noirRecord, Buffer.concat([noirBytes, Buffer.from('\n')])));
   const historical = git('show', provenance.predecessorRevision + ':' + first.file);
   const historicalRecord = { type: 'blob', mode: provenance.predecessor.mode, blob: provenance.predecessor.blob };
   reject(() => assertEnterpriseUxTrackedInput(first.file, historicalRecord, historicalRecord, historical),

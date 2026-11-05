@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, lstatSync } from 'node:fs';
 import vm from 'node:vm';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { UX_AFTERWORD_SOURCE, UX_AFTERWORD_SOURCE_FILES, qualifyUxAfterwordSource, uxAfterwordHistoricalInput } from '../../tools/ux-afterword-source-compatibility.js';
 import { classicInterfaceHistoricalInput } from '../../tools/commerce-current-enterprise-source-compatibility.js';
-import { WIKI_MEDIA_MERGE_SOURCE, assertWikiMediaMergeSourceTransfer } from '../../tools/wiki-media-source-transfer.js';
+import { WIKI_MEDIA_MERGE_SOURCE, assertWikiMediaMergeSourceTransfer,
+  WIKI_MEDIA_NOIR_MERGE_SOURCE, assertWikiMediaNoirMergeSourceTransfer } from '../../tools/wiki-media-source-transfer.js';
 
 export async function runJourneyModelProof() {
   runAfterwordSourceProof();
@@ -96,19 +97,33 @@ export function runAfterwordSourceProof() {
     assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });
     assert.deepEqual(record(pin.targetRevision, row.file), { mode: row.targetMode, blob: row.targetBlob });
     const checkedOutRecord = record('HEAD', row.file), checkedOut = git('show', 'HEAD:' + row.file);
-    const rawPhysical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
+    const physicalPath = new URL('../../' + row.file, import.meta.url), stat = lstatSync(physicalPath);
+    assert(stat.isFile() && !stat.isSymbolicLink());
+    const rawPhysical = readFileSync(physicalPath, 'utf8');
     assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
       'Complete actual checkout must match its raw current Git bytes before any historical source view');
     let sourceRecord = checkedOutRecord, physical = rawPhysical;
+    const noirMerged = WIKI_MEDIA_NOIR_MERGE_SOURCE.files[row.file];
+    if (noirMerged) {
+      assert.deepEqual(sourceRecord, { mode: noirMerged.current.mode, blob: noirMerged.current.lf.blob },
+        'Actual current mode/blob must qualify before the source-only wiki parent view');
+      const source = assertWikiMediaNoirMergeSourceTransfer(row.file, physical, 'wiki');
+      assert.equal(source.predecessorRevision, WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.wiki.revision);
+      assert.deepEqual([source.sourceOnly, source.native, source.runtime], [true, false, false]);
+      sourceRecord = { mode: noirMerged.wiki.mode, blob: noirMerged.wiki.lf.blob }; physical = source.baselineText;
+      reject(() => assertWikiMediaNoirMergeSourceTransfer(row.file, rawPhysical + '\n', 'wiki'));
+      if (noirMerged.wiki.lf.blob !== noirMerged.current.lf.blob)
+        reject(() => assertWikiMediaNoirMergeSourceTransfer(row.file, source.baselineText, 'wiki'));
+    }
     const merged = WIKI_MEDIA_MERGE_SOURCE.files[row.file];
     if (merged) {
-      assert.deepEqual(checkedOutRecord, { mode: merged.current.mode, blob: merged.current.lf.blob },
+      assert.deepEqual(sourceRecord, { mode: merged.current.mode, blob: merged.current.lf.blob },
         'Only the exact authored current merge may enter the source-only parent view');
-      const source = assertWikiMediaMergeSourceTransfer(row.file, rawPhysical);
+      const mergedPhysical = physical, source = assertWikiMediaMergeSourceTransfer(row.file, mergedPhysical);
       assert.equal(source.predecessorRevision, WIKI_MEDIA_MERGE_SOURCE.parents.main.revision);
       assert.deepEqual([source.sourceOnly, source.native, source.runtime], [true, false, false]);
       sourceRecord = { mode: merged.main.mode, blob: merged.main.lf.blob }; physical = source.baselineText;
-      reject(() => assertWikiMediaMergeSourceTransfer(row.file, checkedOut + '\n'));
+      reject(() => assertWikiMediaMergeSourceTransfer(row.file, mergedPhysical + '\n'));
       reject(() => assertWikiMediaMergeSourceTransfer(row.file, source.baselineText));
     }
     assert.deepEqual(sourceRecord, record(pin.revision, row.file), 'Actual checked-out content remains the authored successor');

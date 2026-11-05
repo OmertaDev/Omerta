@@ -1,9 +1,9 @@
 // Actual-current native input admission only; prior native results do not transfer.
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
-  "version": 4,
-  "status": "SEALED",
-  "phase": "ACTUAL_ENTERPRISE_WIKI_MERGE_NATIVE_INPUTS",
+  "version": 5,
+  "status": "UNSEALED",
+  "phase": "ACTUAL_ENTERPRISE_NOIR_WIKI_MERGE_NATIVE_INPUTS",
   "authoredRevision": "41de301d6ddf346af3935b4740b6441a0014431f",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
@@ -12627,6 +12627,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "blob": "59af421c7a53c7dcec214ae5016afc08455f5a39",
       "sha256": "a2c59aafb61b6aae9b1199d70f42811a8ece67de4893ceac3e6acc1739c157fe"
     }
-  ]
+  ],
+  "noirSourceDefinitionSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "noirMergeSourceDefinitionSha256": "0000000000000000000000000000000000000000000000000000000000000000"
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "5fb2e633eb3e1cffdf09f060963a86968482fec9a0aa2b87b14c9a475b4c089f";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "815e02fbdb4152a818351eeacf4c95b2a71507d7f34993f3c2363ec3d4d2216b";

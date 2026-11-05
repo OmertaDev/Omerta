@@ -1561,3 +1561,7 @@ export const WIKI_MEDIA_MERGE_SOURCE = freeze({
   }
 });
 export const WIKI_MEDIA_MERGE_SOURCE_SHA256 = "9d01bbeecceacd3a7f93aa1c44e444ed2f2059e21717a3473aab90e8429cd5ec";
+
+// Separately authored noir/wiki merge evidence. Both earlier declarations above are immutable.
+export const WIKI_MEDIA_NOIR_MERGE_SOURCE = freeze({ version: 1, status: 'UNSEALED', files: {} });
+export const WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256 = '';

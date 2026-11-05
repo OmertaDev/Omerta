@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,
   noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
+import { WIKI_MEDIA_NOIR_MERGE_SOURCE, assertWikiMediaNoirMergeSourceTransfer } from '../tools/wiki-media-source-transfer.js';
 
 const revision = '42d9df7628a30653ff7c8bac203b7bd317dee597';
 const predecessor = 'fe887350a661901983282183fb21e9d1d330f04f';
@@ -25,7 +26,25 @@ assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split(
 let positives = 0, refusals = 0;
 for (const file of NOIR_UI_SOURCE_FILES) {
   const committed = git('show', `${revision}:${file}`);
-  const physical = fs.readFileSync(file, 'utf8');
+  const rawPhysical = fs.readFileSync(file, 'utf8'), checkedOut = git('show', 'HEAD:' + file);
+  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+    'Complete actual checkout must match current Git before the source-only view: ' + file);
+  const currentEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  assert.match(currentEntry, /^100644 blob /, 'Only an actual committed regular source file');
+  let physical = rawPhysical;
+  const merged = WIKI_MEDIA_NOIR_MERGE_SOURCE.files[file];
+  if (merged) {
+    assert.equal(currentEntry, merged.current.mode + ' blob ' + merged.current.lf.blob + '\t' + file);
+    const proof = assertWikiMediaNoirMergeSourceTransfer(file, rawPhysical, 'main');
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    assert.equal(proof.predecessorRevision, WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.main.revision);
+    physical = proof.baselineText;
+    assert.throws(() => assertWikiMediaNoirMergeSourceTransfer(file, checkedOut + '\n', 'main')); refusals++;
+    if (merged.main.lf.blob !== merged.current.lf.blob) {
+      assert.throws(() => assertWikiMediaNoirMergeSourceTransfer(file, physical, 'main')); refusals++;
+    }
+  }
   assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
   const pin = NOIR_UI_SOURCE.files.find(row => row.file === file);
   assert.equal(sha(committed), pin.currentSha256);
