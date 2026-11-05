@@ -72,7 +72,7 @@ const saleTerms = (sale) => {
   const block = sale.liquidity.priceBlock;
   assert(Number.isSafeInteger(block), 'the settled sale identifies its price block');
   const price = goodPriceOf('gin', 'docks', block);
-  return { referenceBid: price * 0.7 * (cityEventOf(Math.floor(block / 6)).tradeMult || 1),
+  return { referenceBid: price * 7000 / 10000 * (cityEventOf(Math.floor(block / 6)).tradeMult || 1),
     minimumAskUnit: Math.round(price * 0.95) };
 };
 assert.equal(baseUnit, Math.round(saleTerms(r.body).referenceBid), 'dead quiet rounds the unmodified bid exactly');
