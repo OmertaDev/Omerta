@@ -4,15 +4,15 @@
 
 ## Census
 
-17,482 nodes and 70,014 edges at `8ab7500caa30`.
+17,506 nodes and 70,116 edges at `52579da99604`.
 
 ### Nodes
 
 | Type | Count |
 |---|---:|
-| Artifact | 7086 |
+| Artifact | 7096 |
 | Command | 304 |
-| Commit | 5072 |
+| Commit | 5083 |
 | Contract | 134 |
 | Document | 956 |
 | Domain | 13 |
@@ -24,27 +24,27 @@
 | Route | 1055 |
 | Subsystem | 8 |
 | Table | 582 |
-| TestSuite | 1076 |
+| TestSuite | 1079 |
 | Workflow | 7 |
 
 ### Edges
 
 | Type | Count |
 |---|---:|
-| BELONGS_TO | 5670 |
-| CHANGED | 26989 |
-| CONTAINS | 7107 |
+| BELONGS_TO | 5680 |
+| CHANGED | 27031 |
+| CONTAINS | 7117 |
 | DECLARES | 304 |
 | DEFINED_IN | 1771 |
 | DEPENDS_ON | 69 |
-| EXECUTES | 1201 |
+| EXECUTES | 1204 |
 | HANDLED_BY | 935 |
-| HAS_COMMIT | 5072 |
+| HAS_COMMIT | 5083 |
 | IMPLEMENTS | 124 |
-| IMPORTS | 8345 |
+| IMPORTS | 8368 |
 | INHERITS | 45 |
 | REFERENCES | 3871 |
-| REPRESENTS | 2634 |
+| REPRESENTS | 2637 |
 | TESTS | 2517 |
 | TRACKS | 126 |
 | USES_TABLE | 3234 |

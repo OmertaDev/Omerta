@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "8ab7500caa301cec4d99226693cb9d85bd8499da",
+  "sourceRevision": "52579da9960476ccfd28d2512d9311b226e82527",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17482,
-    "edges": 70014,
+    "nodes": 17506,
+    "edges": 70116,
     "byNodeType": {
-      "Artifact": 7086,
+      "Artifact": 7096,
       "Command": 304,
-      "Commit": 5072,
+      "Commit": 5083,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -60,24 +60,24 @@
       "Route": 1055,
       "Subsystem": 8,
       "Table": 582,
-      "TestSuite": 1076,
+      "TestSuite": 1079,
       "Workflow": 7
     },
     "byEdgeType": {
-      "BELONGS_TO": 5670,
-      "CHANGED": 26989,
-      "CONTAINS": 7107,
+      "BELONGS_TO": 5680,
+      "CHANGED": 27031,
+      "CONTAINS": 7117,
       "DECLARES": 304,
       "DEFINED_IN": 1771,
       "DEPENDS_ON": 69,
-      "EXECUTES": 1201,
+      "EXECUTES": 1204,
       "HANDLED_BY": 935,
-      "HAS_COMMIT": 5072,
+      "HAS_COMMIT": 5083,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8345,
+      "IMPORTS": 8368,
       "INHERITS": 45,
       "REFERENCES": 3871,
-      "REPRESENTS": 2634,
+      "REPRESENTS": 2637,
       "TESTS": 2517,
       "TRACKS": 126,
       "USES_TABLE": 3234
@@ -87785,20 +87785,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 60498,
+      "bytes": 60631,
       "lines": 335,
-      "version": "a0c6b6ed59af6913",
+      "version": "ec1cc4fae1524167",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "a0c6b6ed59af6913"
+          "version": "ec1cc4fae1524167"
         }
       ],
-      "lastChangedAt": "2026-11-04T18:21:47.000Z",
-      "lastChangedBy": "Codex",
-      "lastChangedCommit": "6fcd697c860ab328b4b830bdc20b51a17dc459d7"
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:Procfile",
@@ -117708,20 +117708,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1403218,
-      "lines": 14585,
-      "version": "3d4ec3ab4a5f9853",
+      "bytes": 1405901,
+      "lines": 14633,
+      "version": "f346529cc0dcb500",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "3d4ec3ab4a5f9853"
+          "version": "f346529cc0dcb500"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:02:10.000Z",
-      "lastChangedBy": "Codex",
-      "lastChangedCommit": "0f916ccff8abe43b5d49f37709229af3d9d0e268"
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -117777,20 +117777,20 @@
       "path": "public/omerta-ui.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 78645,
-      "lines": 1685,
-      "version": "0c706ab6e86876c3",
+      "bytes": 94859,
+      "lines": 1899,
+      "version": "c19546a18cde7f35",
       "text": true,
       "provenance": [
         {
           "file": "public/omerta-ui.css",
           "line": 1,
-          "version": "0c706ab6e86876c3"
+          "version": "c19546a18cde7f35"
         }
       ],
-      "lastChangedAt": "2026-10-27T08:33:40.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7a47598f72669b347ce99a61eacca4320ae066b9"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/play.html",
@@ -118007,20 +118007,20 @@
       "path": "public/ux-feedback.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 13315,
+      "bytes": 13365,
       "lines": 160,
-      "version": "002d872bc67a440a",
+      "version": "1098d0997cdc81da",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-feedback.js",
           "line": 1,
-          "version": "002d872bc67a440a"
+          "version": "1098d0997cdc81da"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:26:36.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/ux-feel.css",
@@ -118191,20 +118191,20 @@
       "path": "public/ux-navigation.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 34945,
-      "lines": 393,
-      "version": "dc3bb19447298cfc",
+      "bytes": 35488,
+      "lines": 402,
+      "version": "1295c1e3bed266ec",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-navigation.js",
           "line": 1,
-          "version": "dc3bb19447298cfc"
+          "version": "1295c1e3bed266ec"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/ux-progression.css",
@@ -118375,20 +118375,20 @@
       "path": "public/ux-tactics.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 41886,
+      "bytes": 41949,
       "lines": 372,
-      "version": "23ee8040bd87b1e1",
+      "version": "a9d9c24792f17dd4",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-tactics.js",
           "line": 1,
-          "version": "23ee8040bd87b1e1"
+          "version": "a9d9c24792f17dd4"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/ux-tools.css",
@@ -118490,20 +118490,20 @@
       "path": "public/ux-world.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 23951,
+      "bytes": 24001,
       "lines": 222,
-      "version": "fd3b021e1c8a0e8e",
+      "version": "e7cd7674ecbf91bf",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-world.js",
           "line": 1,
-          "version": "fd3b021e1c8a0e8e"
+          "version": "e7cd7674ecbf91bf"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:26:36.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9842799c7a6471dd429c9140406642882437c9f4"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:public/vendor/phaser.js",
@@ -133279,20 +133279,20 @@
       "path": "test/business-control-desk-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 29517,
-      "lines": 389,
-      "version": "20e4a1ad0a04bd86",
+      "bytes": 29837,
+      "lines": 395,
+      "version": "c3647859b65f0b52",
       "text": true,
       "provenance": [
         {
           "file": "test/business-control-desk-browser.js",
           "line": 1,
-          "version": "20e4a1ad0a04bd86"
+          "version": "c3647859b65f0b52"
         }
       ],
-      "lastChangedAt": "2026-11-05T02:47:07.000Z",
+      "lastChangedAt": "2026-11-05T03:32:25.000Z",
       "lastChangedBy": "Codex",
-      "lastChangedCommit": "1a2c338c1b56ba473151e8e90f1d7e04bbb1444d"
+      "lastChangedCommit": "964bb2df08ef1c2bea193bb22e2047b4245cf7b4"
     },
     {
       "key": "Artifact:test/business-control-desk-loop.js",
@@ -133371,20 +133371,43 @@
       "path": "test/businessdesk-native-provenance.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7821,
-      "lines": 100,
-      "version": "dfb191bf4db1e8ba",
+      "bytes": 8887,
+      "lines": 114,
+      "version": "6e8a0ce6c764fdea",
       "text": true,
       "provenance": [
         {
           "file": "test/businessdesk-native-provenance.js",
           "line": 1,
-          "version": "dfb191bf4db1e8ba"
+          "version": "6e8a0ce6c764fdea"
         }
       ],
-      "lastChangedAt": "2026-11-04T18:19:46.000Z",
+      "lastChangedAt": "2026-11-05T03:32:30.000Z",
       "lastChangedBy": "Codex",
-      "lastChangedCommit": "daca9f5c63799b6fd8c2df455531782ef04d09e5"
+      "lastChangedCommit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+    },
+    {
+      "key": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "type": "Artifact",
+      "id": "test/businessdesk-noir-source-compatibility.js",
+      "label": "businessdesk-noir-source-compatibility.js",
+      "path": "test/businessdesk-noir-source-compatibility.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 15409,
+      "lines": 195,
+      "version": "86d7badef3ebee55",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/businessdesk-noir-source-compatibility.js",
+          "line": 1,
+          "version": "86d7badef3ebee55"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:59:35.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "52579da9960476ccfd28d2512d9311b226e82527"
     },
     {
       "key": "Artifact:test/businessdesk-source-compatibility.js",
@@ -134636,20 +134659,20 @@
       "path": "test/classic-interface-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9541,
-      "lines": 163,
-      "version": "6245cc0363f76cb9",
+      "bytes": 10398,
+      "lines": 175,
+      "version": "2a97217a55751fdf",
       "text": true,
       "provenance": [
         {
           "file": "test/classic-interface-browser.js",
           "line": 1,
-          "version": "6245cc0363f76cb9"
+          "version": "2a97217a55751fdf"
         }
       ],
-      "lastChangedAt": "2026-10-18T22:35:49.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "71615921a2e2c2f465584f478988a5e4e82e5ca8"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/classic-interface-source-compatibility.js",
@@ -138040,20 +138063,20 @@
       "path": "test/deed-allocation-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9190,
-      "lines": 133,
-      "version": "c143c81561ab110d",
+      "bytes": 9296,
+      "lines": 134,
+      "version": "933976f091d1d825",
       "text": true,
       "provenance": [
         {
           "file": "test/deed-allocation-source-compatibility.js",
           "line": 1,
-          "version": "c143c81561ab110d"
+          "version": "933976f091d1d825"
         }
       ],
-      "lastChangedAt": "2026-11-04T18:23:45.000Z",
+      "lastChangedAt": "2026-11-05T02:36:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a343fe067f7a1d244d761d8f4da7b3aea337809f"
+      "lastChangedCommit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
     },
     {
       "key": "Artifact:test/deed-benefit-boundaries.js",
@@ -145161,6 +145184,29 @@
       "lastChangedAt": "2026-10-14T21:13:41.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+    },
+    {
+      "key": "Artifact:test/noir-ui-source-compatibility.js",
+      "type": "Artifact",
+      "id": "test/noir-ui-source-compatibility.js",
+      "label": "noir-ui-source-compatibility.js",
+      "path": "test/noir-ui-source-compatibility.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3956,
+      "lines": 69,
+      "version": "0312fa1d045c840f",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/noir-ui-source-compatibility.js",
+          "line": 1,
+          "version": "0312fa1d045c840f"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:32:30.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
     },
     {
       "key": "Artifact:test/npcwar.js",
@@ -153381,20 +153427,20 @@
       "path": "test/ux-community-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 29028,
-      "lines": 241,
-      "version": "27da8020e62e88c6",
+      "bytes": 29227,
+      "lines": 242,
+      "version": "548f20f2364c22fd",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-community-browser.js",
           "line": 1,
-          "version": "27da8020e62e88c6"
+          "version": "548f20f2364c22fd"
         }
       ],
-      "lastChangedAt": "2026-11-05T00:02:50.000Z",
-      "lastChangedBy": "Codex",
-      "lastChangedCommit": "5e14c680eaa49df3734a61c82cddb40f346a2575"
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-community.js",
@@ -153473,20 +153519,20 @@
       "path": "test/ux-expanded-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23251,
+      "bytes": 23233,
       "lines": 226,
-      "version": "809d5bb8b8b4daba",
+      "version": "7e8eaa3203b266a9",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-expanded-browser.js",
           "line": 1,
-          "version": "809d5bb8b8b4daba"
+          "version": "7e8eaa3203b266a9"
         }
       ],
-      "lastChangedAt": "2026-11-04T23:51:48.000Z",
-      "lastChangedBy": "Codex",
-      "lastChangedCommit": "f50942e9ea77d6860f775074a55caea453c3bfe1"
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-experience-browser.js",
@@ -153496,20 +153542,20 @@
       "path": "test/ux-experience-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 12162,
-      "lines": 158,
-      "version": "f25c7830366c9c94",
+      "bytes": 12614,
+      "lines": 167,
+      "version": "83f6a4efbbcaf76d",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "f25c7830366c9c94"
+          "version": "83f6a4efbbcaf76d"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:31:03.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-feedback.js",
@@ -153680,20 +153726,20 @@
       "path": "test/ux-personality-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 24284,
+      "bytes": 24266,
       "lines": 189,
-      "version": "83a1d8852c119164",
+      "version": "56b8971e26089ded",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "83a1d8852c119164"
+          "version": "56b8971e26089ded"
         }
       ],
-      "lastChangedAt": "2026-10-26T08:31:03.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "59b2204739c36e417fc6a60dbc49187030004bb1"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-postgres-rls.js",
@@ -153765,6 +153811,29 @@
       "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
     },
     {
+      "key": "Artifact:test/ux-shell-browser.js",
+      "type": "Artifact",
+      "id": "test/ux-shell-browser.js",
+      "label": "ux-shell-browser.js",
+      "path": "test/ux-shell-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 13338,
+      "lines": 215,
+      "version": "4c4bcf0990d2c200",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/ux-shell-browser.js",
+          "line": 1,
+          "version": "4c4bcf0990d2c200"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+    },
+    {
       "key": "Artifact:test/ux-social-browser.js",
       "type": "Artifact",
       "id": "test/ux-social-browser.js",
@@ -153818,20 +153887,20 @@
       "path": "test/ux-story-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18853,
+      "bytes": 18835,
       "lines": 164,
-      "version": "b6dc30e0be17e764",
+      "version": "713dd4e4196205c0",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "b6dc30e0be17e764"
+          "version": "713dd4e4196205c0"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-05T02:29:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
     },
     {
       "key": "Artifact:test/ux-story.js",
@@ -155356,20 +155425,89 @@
       "path": "tools/businessdesk-native-provenance.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 2981,
-      "lines": 44,
-      "version": "4af7e8a8cc407050",
+      "bytes": 3186,
+      "lines": 47,
+      "version": "318a470295323918",
       "text": true,
       "provenance": [
         {
           "file": "tools/businessdesk-native-provenance.js",
           "line": 1,
-          "version": "4af7e8a8cc407050"
+          "version": "318a470295323918"
         }
       ],
-      "lastChangedAt": "2026-11-04T18:19:46.000Z",
+      "lastChangedAt": "2026-11-05T03:32:30.000Z",
       "lastChangedBy": "Codex",
-      "lastChangedCommit": "daca9f5c63799b6fd8c2df455531782ef04d09e5"
+      "lastChangedCommit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+    },
+    {
+      "key": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "type": "Artifact",
+      "id": "tools/businessdesk-noir-native-provenance.js",
+      "label": "businessdesk-noir-native-provenance.js",
+      "path": "tools/businessdesk-noir-native-provenance.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5013,
+      "lines": 64,
+      "version": "1fbb3c6716457e5b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/businessdesk-noir-native-provenance.js",
+          "line": 1,
+          "version": "1fbb3c6716457e5b"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:31:21.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
+    },
+    {
+      "key": "Artifact:tools/businessdesk-noir-source-data.js",
+      "type": "Artifact",
+      "id": "tools/businessdesk-noir-source-data.js",
+      "label": "businessdesk-noir-source-data.js",
+      "path": "tools/businessdesk-noir-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 53989,
+      "lines": 208,
+      "version": "60d9e14410c288a2",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/businessdesk-noir-source-data.js",
+          "line": 1,
+          "version": "60d9e14410c288a2"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:36:35.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "695bcfc007e7a0d76621984f7efc6752d5fbaa29"
+    },
+    {
+      "key": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/businessdesk-noir-source-transfer.js",
+      "label": "businessdesk-noir-source-transfer.js",
+      "path": "tools/businessdesk-noir-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5462,
+      "lines": 73,
+      "version": "f67839e33d21e7c4",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/businessdesk-noir-source-transfer.js",
+          "line": 1,
+          "version": "f67839e33d21e7c4"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:31:21.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
     },
     {
       "key": "Artifact:tools/businessdesk-source-transfer.js",
@@ -155379,20 +155517,20 @@
       "path": "tools/businessdesk-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 76873,
-      "lines": 313,
-      "version": "87c2f592d6c31a2a",
+      "bytes": 77031,
+      "lines": 315,
+      "version": "a5a10b6c301d0242",
       "text": true,
       "provenance": [
         {
           "file": "tools/businessdesk-source-transfer.js",
           "line": 1,
-          "version": "87c2f592d6c31a2a"
+          "version": "a5a10b6c301d0242"
         }
       ],
-      "lastChangedAt": "2026-11-04T19:14:29.000Z",
+      "lastChangedAt": "2026-11-05T03:32:30.000Z",
       "lastChangedBy": "Codex",
-      "lastChangedCommit": "fb7fa8aa2cbf22bd541a33a3fa0d8fe02e899a97"
+      "lastChangedCommit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
     },
     {
       "key": "Artifact:tools/campaign-network-sim.js",
@@ -156460,20 +156598,20 @@
       "path": "tools/deed-allocation-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 3778,
-      "lines": 54,
-      "version": "9f0013b2511ae502",
+      "bytes": 3894,
+      "lines": 56,
+      "version": "b446ae98b8a668b1",
       "text": true,
       "provenance": [
         {
           "file": "tools/deed-allocation-source-transfer.js",
           "line": 1,
-          "version": "9f0013b2511ae502"
+          "version": "b446ae98b8a668b1"
         }
       ],
-      "lastChangedAt": "2026-10-31T02:33:12.000Z",
+      "lastChangedAt": "2026-11-05T02:36:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a35dc43bc74ecbb00a0bd49848de10e95ab984fc"
+      "lastChangedCommit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
     },
     {
       "key": "Artifact:tools/deed-benefit-native-catalog.js",
@@ -157058,20 +157196,20 @@
       "path": "tools/enterprise-native-deed-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 477748,
-      "lines": 12761,
-      "version": "715141c205da0bcc",
+      "bytes": 480076,
+      "lines": 12821,
+      "version": "b02535ace95608e8",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-deed-inputs.js",
           "line": 1,
-          "version": "715141c205da0bcc"
+          "version": "b02535ace95608e8"
         }
       ],
-      "lastChangedAt": "2026-11-05T03:04:39.000Z",
+      "lastChangedAt": "2026-11-05T03:56:36.000Z",
       "lastChangedBy": "Codex",
-      "lastChangedCommit": "8ab7500caa301cec4d99226693cb9d85bd8499da"
+      "lastChangedCommit": "c61f6b44c6a0799aa08b895447c287c33f97e940"
     },
     {
       "key": "Artifact:tools/enterprise-native-inputs.js",
@@ -157347,6 +157485,29 @@
       "lastChangedCommit": "3f434841a7138e84fd2041849e89ab54fdf5de8f"
     },
     {
+      "key": "Artifact:tools/generate-businessdesk-noir-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/generate-businessdesk-noir-source-transfer.js",
+      "label": "generate-businessdesk-noir-source-transfer.js",
+      "path": "tools/generate-businessdesk-noir-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5391,
+      "lines": 73,
+      "version": "ba39e2de367c21ab",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/generate-businessdesk-noir-source-transfer.js",
+          "line": 1,
+          "version": "ba39e2de367c21ab"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:31:21.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
+    },
+    {
       "key": "Artifact:tools/generate-businessdesk-source-transfer.js",
       "type": "Artifact",
       "id": "tools/generate-businessdesk-source-transfer.js",
@@ -157575,6 +157736,29 @@
       "lastChangedAt": "2026-10-27T03:04:24.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "8112a1b09acf3de7c525e7246bc8b7477ffc29a6"
+    },
+    {
+      "key": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/generate-noir-ui-source-transfer.js",
+      "label": "generate-noir-ui-source-transfer.js",
+      "path": "tools/generate-noir-ui-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5515,
+      "lines": 81,
+      "version": "ed160b0f7ab45abf",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/generate-noir-ui-source-transfer.js",
+          "line": 1,
+          "version": "ed160b0f7ab45abf"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T02:36:45.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
     },
     {
       "key": "Artifact:tools/genesis-auction-deployment-plan.js",
@@ -158564,6 +158748,52 @@
       "lastChangedAt": "2026-09-24T21:20:23.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "bcd03318c2416205000353d51d2abc8bd93df11d"
+    },
+    {
+      "key": "Artifact:tools/noir-ui-source-data.js",
+      "type": "Artifact",
+      "id": "tools/noir-ui-source-data.js",
+      "label": "noir-ui-source-data.js",
+      "path": "tools/noir-ui-source-data.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 113121,
+      "lines": 435,
+      "version": "3c4e12629f091920",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/noir-ui-source-data.js",
+          "line": 1,
+          "version": "3c4e12629f091920"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T02:36:45.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+    },
+    {
+      "key": "Artifact:tools/noir-ui-source-transfer.js",
+      "type": "Artifact",
+      "id": "tools/noir-ui-source-transfer.js",
+      "label": "noir-ui-source-transfer.js",
+      "path": "tools/noir-ui-source-transfer.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 5172,
+      "lines": 86,
+      "version": "8ec813c2e0df3e30",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/noir-ui-source-transfer.js",
+          "line": 1,
+          "version": "8ec813c2e0df3e30"
+        }
+      ],
+      "lastChangedAt": "2026-11-05T03:32:30.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
     },
     {
       "key": "Artifact:tools/omr-graphic.html",
@@ -165119,7 +165349,7 @@
       "type": "Command",
       "id": "npm:test:economy-ux-source",
       "label": "npm run test:economy-ux-source",
-      "command": "node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js",
+      "command": "node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js",
       "provenance": [
         {
           "file": "package.json",
@@ -166809,7 +167039,7 @@
       "type": "Command",
       "id": "npm:test:ux:browser",
       "label": "npm run test:ux:browser",
-      "command": "node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js",
+      "command": "node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js",
       "provenance": [
         {
           "file": "package.json",
@@ -166835,7 +167065,7 @@
       "type": "Command",
       "id": "npm:test:ux:source",
       "label": "npm run test:ux:source",
-      "command": "node test/sale-source-compatibility.js && node test/ux-source-compatibility.js",
+      "command": "node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js",
       "provenance": [
         {
           "file": "package.json",
@@ -178344,6 +178574,22 @@
       ]
     },
     {
+      "key": "Commit:241712d83fe270d7d12318a89e04d39aab0490d8",
+      "type": "Commit",
+      "id": "241712d83fe270d7d12318a89e04d39aab0490d8",
+      "label": "Preserve live noir UI in Business Desk integration",
+      "title": "Preserve live noir UI in Business Desk integration",
+      "date": "2026-11-05T03:28:47.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/241712d83fe270d7d12318a89e04d39aab0490d8",
+      "provenance": [
+        {
+          "commit": "241712d83fe270d7d12318a89e04d39aab0490d8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/241712d83fe270d7d12318a89e04d39aab0490d8"
+        }
+      ]
+    },
+    {
       "key": "Commit:241ab9a100fdde6195e7c34197042751c46faa6d",
       "type": "Commit",
       "id": "241ab9a100fdde6195e7c34197042751c46faa6d",
@@ -188392,6 +188638,22 @@
       ]
     },
     {
+      "key": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "type": "Commit",
+      "id": "42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "label": "Redesign noir game shell and focused onboarding",
+      "title": "Redesign noir game shell and focused onboarding",
+      "date": "2026-11-05T02:29:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "provenance": [
+        {
+          "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597",
+          "url": "https://github.com/OmertaDev/Omerta/commit/42d9df7628a30653ff7c8bac203b7bd317dee597"
+        }
+      ]
+    },
+    {
       "key": "Commit:42e4885f63eee6fb719fc822892ebe3dae4c1a37",
       "type": "Commit",
       "id": "42e4885f63eee6fb719fc822892ebe3dae4c1a37",
@@ -193124,6 +193386,22 @@
         {
           "commit": "5247b180220343e57b39b46cc7ee3bd2f1e847ae",
           "url": "https://github.com/OmertaDev/Omerta/commit/5247b180220343e57b39b46cc7ee3bd2f1e847ae"
+        }
+      ]
+    },
+    {
+      "key": "Commit:52579da9960476ccfd28d2512d9311b226e82527",
+      "type": "Commit",
+      "id": "52579da9960476ccfd28d2512d9311b226e82527",
+      "label": "Keep source-only Deed hook outside invented native predecessor claims",
+      "title": "Keep source-only Deed hook outside invented native predecessor claims",
+      "date": "2026-11-05T03:59:35.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/52579da9960476ccfd28d2512d9311b226e82527",
+      "provenance": [
+        {
+          "commit": "52579da9960476ccfd28d2512d9311b226e82527",
+          "url": "https://github.com/OmertaDev/Omerta/commit/52579da9960476ccfd28d2512d9311b226e82527"
         }
       ]
     },
@@ -200548,6 +200826,22 @@
         {
           "commit": "6958056bef545f8eb13eb29be5162b31ee229815",
           "url": "https://github.com/OmertaDev/Omerta/commit/6958056bef545f8eb13eb29be5162b31ee229815"
+        }
+      ]
+    },
+    {
+      "key": "Commit:695bcfc007e7a0d76621984f7efc6752d5fbaa29",
+      "type": "Commit",
+      "id": "695bcfc007e7a0d76621984f7efc6752d5fbaa29",
+      "label": "Seal exact combined Business Desk and noir source comparisons",
+      "title": "Seal exact combined Business Desk and noir source comparisons",
+      "date": "2026-11-05T03:36:35.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/695bcfc007e7a0d76621984f7efc6752d5fbaa29",
+      "provenance": [
+        {
+          "commit": "695bcfc007e7a0d76621984f7efc6752d5fbaa29",
+          "url": "https://github.com/OmertaDev/Omerta/commit/695bcfc007e7a0d76621984f7efc6752d5fbaa29"
         }
       ]
     },
@@ -214904,6 +215198,22 @@
       ]
     },
     {
+      "key": "Commit:964bb2df08ef1c2bea193bb22e2047b4245cf7b4",
+      "type": "Commit",
+      "id": "964bb2df08ef1c2bea193bb22e2047b4245cf7b4",
+      "label": "Guard combined Noir source views and open mobile business navigation",
+      "title": "Guard combined Noir source views and open mobile business navigation",
+      "date": "2026-11-05T03:32:25.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/964bb2df08ef1c2bea193bb22e2047b4245cf7b4",
+      "provenance": [
+        {
+          "commit": "964bb2df08ef1c2bea193bb22e2047b4245cf7b4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/964bb2df08ef1c2bea193bb22e2047b4245cf7b4"
+        }
+      ]
+    },
+    {
       "key": "Commit:96520062c2ea862e25475d56fd173679400b421c",
       "type": "Commit",
       "id": "96520062c2ea862e25475d56fd173679400b421c",
@@ -221028,6 +221338,22 @@
         {
           "commit": "a8627a151d00042a917d29346aa820a45615a0e9",
           "url": "https://github.com/OmertaDev/Omerta/commit/a8627a151d00042a917d29346aa820a45615a0e9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "type": "Commit",
+      "id": "a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "label": "Bind reviewed noir UI revision to source compatibility checks",
+      "title": "Bind reviewed noir UI revision to source compatibility checks",
+      "date": "2026-11-05T02:36:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "provenance": [
+        {
+          "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a87217d664d52eb119683ed305c564ee3cf9deb0"
         }
       ]
     },
@@ -230168,6 +230494,22 @@
       ]
     },
     {
+      "key": "Commit:c61f6b44c6a0799aa08b895447c287c33f97e940",
+      "type": "Commit",
+      "id": "c61f6b44c6a0799aa08b895447c287c33f97e940",
+      "label": "Seal actual native inputs for preserved noir Business Desk",
+      "title": "Seal actual native inputs for preserved noir Business Desk",
+      "date": "2026-11-05T03:56:36.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c61f6b44c6a0799aa08b895447c287c33f97e940",
+      "provenance": [
+        {
+          "commit": "c61f6b44c6a0799aa08b895447c287c33f97e940",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c61f6b44c6a0799aa08b895447c287c33f97e940"
+        }
+      ]
+    },
+    {
       "key": "Commit:c6247976ff71e8d4c103ebd1498c2d373217d077",
       "type": "Commit",
       "id": "c6247976ff71e8d4c103ebd1498c2d373217d077",
@@ -233204,6 +233546,22 @@
         {
           "commit": "d018e04cd3d607bed1378576cfbe781620f4409f",
           "url": "https://github.com/OmertaDev/Omerta/commit/d018e04cd3d607bed1378576cfbe781620f4409f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d01c02b67896521ac3651cea827f235197c6d870",
+      "type": "Commit",
+      "id": "d01c02b67896521ac3651cea827f235197c6d870",
+      "label": "Refresh knowledge for corrected Business Desk release",
+      "title": "Refresh knowledge for corrected Business Desk release",
+      "date": "2026-11-05T03:11:22.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d01c02b67896521ac3651cea827f235197c6d870",
+      "provenance": [
+        {
+          "commit": "d01c02b67896521ac3651cea827f235197c6d870",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d01c02b67896521ac3651cea827f235197c6d870"
         }
       ]
     },
@@ -238548,6 +238906,22 @@
         {
           "commit": "e2180ddd138ae34ef76522dc581d286d31f93fab",
           "url": "https://github.com/OmertaDev/Omerta/commit/e2180ddd138ae34ef76522dc581d286d31f93fab"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "type": "Commit",
+      "id": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "label": "Bind combined Desk and Noir source provenance",
+      "title": "Bind combined Desk and Noir source provenance",
+      "date": "2026-11-05T03:31:21.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "provenance": [
+        {
+          "commit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
         }
       ]
     },
@@ -244856,6 +245230,22 @@
       ]
     },
     {
+      "key": "Commit:f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "type": "Commit",
+      "id": "f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "label": "Compose exact source views without altering native execution",
+      "title": "Compose exact source views without altering native execution",
+      "date": "2026-11-05T03:32:30.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "provenance": [
+        {
+          "commit": "f629af41e64f276c04618cb91f9f119c45aaa76d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f629af41e64f276c04618cb91f9f119c45aaa76d"
+        }
+      ]
+    },
+    {
       "key": "Commit:f633dbc90ae2f9174417da54878bdb68b2f98bf5",
       "type": "Commit",
       "id": "f633dbc90ae2f9174417da54878bdb68b2f98bf5",
@@ -248116,6 +248506,22 @@
         {
           "commit": "ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16",
           "url": "https://github.com/OmertaDev/Omerta/commit/ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "type": "Commit",
+      "id": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "label": "chore(knowledge): refresh generated artifacts for a87217d6",
+      "title": "chore(knowledge): refresh generated artifacts for a87217d6",
+      "date": "2026-11-05T02:45:59.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "provenance": [
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -268429,6 +268835,10 @@
           "line": 6
         },
         {
+          "file": "test/ux-shell-browser.js",
+          "line": 6
+        },
+        {
           "file": "test/ux-social-browser.js",
           "line": 4
         },
@@ -277247,6 +277657,9 @@
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
+          "commit": "d01c02b67896521ac3651cea827f235197c6d870"
+        },
+        {
           "commit": "d060e9579adee6b290d9b21ec3b944e8855cc3c2"
         },
         {
@@ -277722,6 +278135,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -279785,6 +280201,9 @@
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
+          "commit": "d01c02b67896521ac3651cea827f235197c6d870"
+        },
+        {
           "commit": "d060e9579adee6b290d9b21ec3b944e8855cc3c2"
         },
         {
@@ -280260,6 +280679,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -282323,6 +282745,9 @@
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
+          "commit": "d01c02b67896521ac3651cea827f235197c6d870"
+        },
+        {
           "commit": "d060e9579adee6b290d9b21ec3b944e8855cc3c2"
         },
         {
@@ -282798,6 +283223,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -285554,6 +285982,9 @@
           "commit": "d012c78a1812b3c25547235788fdf65afee68f4e"
         },
         {
+          "commit": "d01c02b67896521ac3651cea827f235197c6d870"
+        },
+        {
           "commit": "d060e9579adee6b290d9b21ec3b944e8855cc3c2"
         },
         {
@@ -286029,6 +286460,9 @@
         },
         {
           "commit": "ffa5ec22cbb7e8c1c3256d014fe6122ab017c4f9"
+        },
+        {
+          "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
         }
       ]
     },
@@ -300584,12 +301018,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "8ab7500caa301cec4d99226693cb9d85bd8499da",
+      "revision": "52579da9960476ccfd28d2512d9311b226e82527",
       "currentBranch": "codex/business-control-desk",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7086,
+      "currentArtifactCount": 7096,
       "provenance": [
         {
           "file": "README.md",
@@ -338692,13 +339126,13 @@
       "type": "TestSuite",
       "id": "test/business-control-desk-browser.js",
       "label": "test/business-control-desk-browser.js",
-      "lines": 389,
-      "version": "20e4a1ad0a04bd86",
+      "lines": 395,
+      "version": "c3647859b65f0b52",
       "provenance": [
         {
           "file": "test/business-control-desk-browser.js",
           "line": 1,
-          "version": "20e4a1ad0a04bd86"
+          "version": "c3647859b65f0b52"
         }
       ]
     },
@@ -338752,13 +339186,28 @@
       "type": "TestSuite",
       "id": "test/businessdesk-native-provenance.js",
       "label": "test/businessdesk-native-provenance.js",
-      "lines": 100,
-      "version": "dfb191bf4db1e8ba",
+      "lines": 114,
+      "version": "6e8a0ce6c764fdea",
       "provenance": [
         {
           "file": "test/businessdesk-native-provenance.js",
           "line": 1,
-          "version": "dfb191bf4db1e8ba"
+          "version": "6e8a0ce6c764fdea"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/businessdesk-noir-source-compatibility.js",
+      "type": "TestSuite",
+      "id": "test/businessdesk-noir-source-compatibility.js",
+      "label": "test/businessdesk-noir-source-compatibility.js",
+      "lines": 195,
+      "version": "86d7badef3ebee55",
+      "provenance": [
+        {
+          "file": "test/businessdesk-noir-source-compatibility.js",
+          "line": 1,
+          "version": "86d7badef3ebee55"
         }
       ]
     },
@@ -339577,13 +340026,13 @@
       "type": "TestSuite",
       "id": "test/classic-interface-browser.js",
       "label": "test/classic-interface-browser.js",
-      "lines": 163,
-      "version": "6245cc0363f76cb9",
+      "lines": 175,
+      "version": "2a97217a55751fdf",
       "provenance": [
         {
           "file": "test/classic-interface-browser.js",
           "line": 1,
-          "version": "6245cc0363f76cb9"
+          "version": "2a97217a55751fdf"
         }
       ]
     },
@@ -341797,13 +342246,13 @@
       "type": "TestSuite",
       "id": "test/deed-allocation-source-compatibility.js",
       "label": "test/deed-allocation-source-compatibility.js",
-      "lines": 133,
-      "version": "c143c81561ab110d",
+      "lines": 134,
+      "version": "933976f091d1d825",
       "provenance": [
         {
           "file": "test/deed-allocation-source-compatibility.js",
           "line": 1,
-          "version": "c143c81561ab110d"
+          "version": "933976f091d1d825"
         }
       ]
     },
@@ -346274,6 +346723,21 @@
           "file": "test/nft.js",
           "line": 1,
           "version": "a12cbd5db18b4db6"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/noir-ui-source-compatibility.js",
+      "type": "TestSuite",
+      "id": "test/noir-ui-source-compatibility.js",
+      "label": "test/noir-ui-source-compatibility.js",
+      "lines": 69,
+      "version": "0312fa1d045c840f",
+      "provenance": [
+        {
+          "file": "test/noir-ui-source-compatibility.js",
+          "line": 1,
+          "version": "0312fa1d045c840f"
         }
       ]
     },
@@ -351637,13 +352101,13 @@
       "type": "TestSuite",
       "id": "test/ux-community-browser.js",
       "label": "test/ux-community-browser.js",
-      "lines": 241,
-      "version": "27da8020e62e88c6",
+      "lines": 242,
+      "version": "548f20f2364c22fd",
       "provenance": [
         {
           "file": "test/ux-community-browser.js",
           "line": 1,
-          "version": "27da8020e62e88c6"
+          "version": "548f20f2364c22fd"
         }
       ]
     },
@@ -351698,12 +352162,12 @@
       "id": "test/ux-expanded-browser.js",
       "label": "test/ux-expanded-browser.js",
       "lines": 226,
-      "version": "809d5bb8b8b4daba",
+      "version": "7e8eaa3203b266a9",
       "provenance": [
         {
           "file": "test/ux-expanded-browser.js",
           "line": 1,
-          "version": "809d5bb8b8b4daba"
+          "version": "7e8eaa3203b266a9"
         }
       ]
     },
@@ -351712,13 +352176,13 @@
       "type": "TestSuite",
       "id": "test/ux-experience-browser.js",
       "label": "test/ux-experience-browser.js",
-      "lines": 158,
-      "version": "f25c7830366c9c94",
+      "lines": 167,
+      "version": "83f6a4efbbcaf76d",
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "f25c7830366c9c94"
+          "version": "83f6a4efbbcaf76d"
         }
       ]
     },
@@ -351833,12 +352297,12 @@
       "id": "test/ux-personality-browser.js",
       "label": "test/ux-personality-browser.js",
       "lines": 189,
-      "version": "83a1d8852c119164",
+      "version": "56b8971e26089ded",
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "83a1d8852c119164"
+          "version": "56b8971e26089ded"
         }
       ]
     },
@@ -351888,6 +352352,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/ux-shell-browser.js",
+      "type": "TestSuite",
+      "id": "test/ux-shell-browser.js",
+      "label": "test/ux-shell-browser.js",
+      "lines": 215,
+      "version": "4c4bcf0990d2c200",
+      "provenance": [
+        {
+          "file": "test/ux-shell-browser.js",
+          "line": 1,
+          "version": "4c4bcf0990d2c200"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/ux-social-browser.js",
       "type": "TestSuite",
       "id": "test/ux-social-browser.js",
@@ -351923,12 +352402,12 @@
       "id": "test/ux-story-browser.js",
       "label": "test/ux-story-browser.js",
       "lines": 164,
-      "version": "b6dc30e0be17e764",
+      "version": "713dd4e4196205c0",
       "provenance": [
         {
           "file": "test/ux-story-browser.js",
           "line": 1,
-          "version": "b6dc30e0be17e764"
+          "version": "713dd4e4196205c0"
         }
       ]
     },
@@ -382689,6 +383168,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/businessdesk-source-compatibility.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -387297,6 +387785,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/noir-ui-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/npcwar.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -390663,6 +391160,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/ux-shell-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/ux-social-browser.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -391279,6 +391785,33 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/businessdesk-native-provenance.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/businessdesk-noir-native-provenance.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/businessdesk-noir-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/businessdesk-noir-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/businessdesk-noir-source-transfer.js",
         "line": 1
       }
     },
@@ -392058,6 +392591,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:tools/generate-businessdesk-noir-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/generate-businessdesk-noir-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:tools/generate-businessdesk-source-transfer.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -392143,6 +392685,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/generate-economy-ux-merge-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/generate-noir-ui-source-transfer.js",
         "line": 1
       }
     },
@@ -392530,6 +393081,24 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/nft-art.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/noir-ui-source-data.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/noir-ui-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/noir-ui-source-transfer.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
         "line": 1
       }
     },
@@ -453832,6 +454401,118 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/omerta-ui.css",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-feedback.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-navigation.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-tactics.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:public/ux-world.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/classic-interface-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-community-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-expanded-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-experience-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-personality-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "to": "Artifact:test/ux-story-browser.js",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:42e4885f63eee6fb719fc822892ebe3dae4c1a37",
       "to": "Artifact:tools/enterprise-current-source-data.js",
       "provenance": {
@@ -463004,6 +463685,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "5247b180220343e57b39b46cc7ee3bd2f1e847ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:52579da9960476ccfd28d2512d9311b226e82527",
+      "to": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "provenance": {
+        "commit": "52579da9960476ccfd28d2512d9311b226e82527"
       }
     },
     {
@@ -483084,6 +483773,14 @@
       "to": "Artifact:tools/rc1-native-actor-replay.js",
       "provenance": {
         "commit": "6958056bef545f8eb13eb29be5162b31ee229815"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:695bcfc007e7a0d76621984f7efc6752d5fbaa29",
+      "to": "Artifact:tools/businessdesk-noir-source-data.js",
+      "provenance": {
+        "commit": "695bcfc007e7a0d76621984f7efc6752d5fbaa29"
       }
     },
     {
@@ -517920,6 +518617,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:964bb2df08ef1c2bea193bb22e2047b4245cf7b4",
+      "to": "Artifact:test/business-control-desk-browser.js",
+      "provenance": {
+        "commit": "964bb2df08ef1c2bea193bb22e2047b4245cf7b4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:964bb2df08ef1c2bea193bb22e2047b4245cf7b4",
+      "to": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "provenance": {
+        "commit": "964bb2df08ef1c2bea193bb22e2047b4245cf7b4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:96520062c2ea862e25475d56fd173679400b421c",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -532556,6 +533269,54 @@
       "to": "HistoricalArtifact:src/rwa.js",
       "provenance": {
         "commit": "a8627a151d00042a917d29346aa820a45615a0e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:test/deed-allocation-source-compatibility.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/deed-allocation-source-transfer.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
       }
     },
     {
@@ -570368,6 +571129,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c61f6b44c6a0799aa08b895447c287c33f97e940",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "provenance": {
+        "commit": "c61f6b44c6a0799aa08b895447c287c33f97e940"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c6247976ff71e8d4c103ebd1498c2d373217d077",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -576836,6 +577605,38 @@
       "to": "Artifact:test/eventmarkets-integration.js",
       "provenance": {
         "commit": "d018e04cd3d607bed1378576cfbe781620f4409f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d01c02b67896521ac3651cea827f235197c6d870",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "d01c02b67896521ac3651cea827f235197c6d870"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d01c02b67896521ac3651cea827f235197c6d870",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "d01c02b67896521ac3651cea827f235197c6d870"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d01c02b67896521ac3651cea827f235197c6d870",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "d01c02b67896521ac3651cea827f235197c6d870"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d01c02b67896521ac3651cea827f235197c6d870",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "d01c02b67896521ac3651cea827f235197c6d870"
       }
     },
     {
@@ -592972,6 +593773,38 @@
       "to": "Artifact:tools/rc1-cohort-policy.js",
       "provenance": {
         "commit": "e2180ddd138ae34ef76522dc581d286d31f93fab"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "to": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "provenance": {
+        "commit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "to": "Artifact:tools/businessdesk-noir-source-data.js",
+      "provenance": {
+        "commit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "to": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "provenance": {
+        "commit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "to": "Artifact:tools/generate-businessdesk-noir-source-transfer.js",
+      "provenance": {
+        "commit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
       }
     },
     {
@@ -611408,6 +612241,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "to": "Artifact:test/businessdesk-native-provenance.js",
+      "provenance": {
+        "commit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "commit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "to": "Artifact:tools/businessdesk-native-provenance.js",
+      "provenance": {
+        "commit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "to": "Artifact:tools/businessdesk-source-transfer.js",
+      "provenance": {
+        "commit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "commit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f633dbc90ae2f9174417da54878bdb68b2f98bf5",
       "to": "Artifact:test/gates.js",
       "provenance": {
@@ -619612,6 +620485,38 @@
       "to": "Artifact:test/rc1-native-world-workload.js",
       "provenance": {
         "commit": "ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
       }
     },
     {
@@ -651995,6 +652900,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/businessdesk-source-compatibility.js",
       "provenance": {
         "file": "test/businessdesk-source-compatibility.js",
@@ -656504,6 +657418,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/npcwar.js",
       "provenance": {
         "file": "test/npcwar.js",
@@ -659870,6 +660793,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/ux-social-browser.js",
       "provenance": {
         "file": "test/ux-social-browser.js",
@@ -660485,6 +661417,33 @@
       "to": "Artifact:tools/businessdesk-native-provenance.js",
       "provenance": {
         "file": "tools/businessdesk-native-provenance.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-native-provenance.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/businessdesk-noir-source-data.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-source-transfer.js",
         "line": 1
       }
     },
@@ -661265,6 +662224,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:tools/generate-businessdesk-noir-source-transfer.js",
+      "provenance": {
+        "file": "tools/generate-businessdesk-noir-source-transfer.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:tools/generate-businessdesk-source-transfer.js",
       "provenance": {
         "file": "tools/generate-businessdesk-source-transfer.js",
@@ -661349,6 +662317,15 @@
       "to": "Artifact:tools/generate-economy-ux-merge-source-data.js",
       "provenance": {
         "file": "tools/generate-economy-ux-merge-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/generate-noir-ui-source-transfer.js",
         "line": 1
       }
     },
@@ -661736,6 +662713,24 @@
       "to": "Artifact:tools/nft-art.js",
       "provenance": {
         "file": "tools/nft-art.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-data.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
         "line": 1
       }
     },
@@ -709974,6 +710969,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:economy-ux-source",
+      "to": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:economy-ux-source",
       "to": "Artifact:test/businessdesk-source-compatibility.js",
       "provenance": {
         "file": "package.json",
@@ -713160,6 +714164,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:ux:browser",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:ux:browser",
       "to": "Artifact:test/ux-social-browser.js",
       "provenance": {
         "file": "package.json",
@@ -713215,6 +714228,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:ux:postgres",
       "to": "Artifact:test/ux-postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:ux:source",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -728488,6 +729510,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:241712d83fe270d7d12318a89e04d39aab0490d8",
+      "provenance": {
+        "commit": "241712d83fe270d7d12318a89e04d39aab0490d8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:241ab9a100fdde6195e7c34197042751c46faa6d",
       "provenance": {
         "commit": "241ab9a100fdde6195e7c34197042751c46faa6d"
@@ -733512,6 +734542,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:42d9df7628a30653ff7c8bac203b7bd317dee597",
+      "provenance": {
+        "commit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:42e4885f63eee6fb719fc822892ebe3dae4c1a37",
       "provenance": {
         "commit": "42e4885f63eee6fb719fc822892ebe3dae4c1a37"
@@ -735875,6 +736913,14 @@
       "to": "Commit:5247b180220343e57b39b46cc7ee3bd2f1e847ae",
       "provenance": {
         "commit": "5247b180220343e57b39b46cc7ee3bd2f1e847ae"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:52579da9960476ccfd28d2512d9311b226e82527",
+      "provenance": {
+        "commit": "52579da9960476ccfd28d2512d9311b226e82527"
       }
     },
     {
@@ -739587,6 +740633,14 @@
       "to": "Commit:6958056bef545f8eb13eb29be5162b31ee229815",
       "provenance": {
         "commit": "6958056bef545f8eb13eb29be5162b31ee229815"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:695bcfc007e7a0d76621984f7efc6752d5fbaa29",
+      "provenance": {
+        "commit": "695bcfc007e7a0d76621984f7efc6752d5fbaa29"
       }
     },
     {
@@ -746768,6 +747822,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:964bb2df08ef1c2bea193bb22e2047b4245cf7b4",
+      "provenance": {
+        "commit": "964bb2df08ef1c2bea193bb22e2047b4245cf7b4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:96520062c2ea862e25475d56fd173679400b421c",
       "provenance": {
         "commit": "96520062c2ea862e25475d56fd173679400b421c"
@@ -749827,6 +750889,14 @@
       "to": "Commit:a8627a151d00042a917d29346aa820a45615a0e9",
       "provenance": {
         "commit": "a8627a151d00042a917d29346aa820a45615a0e9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a87217d664d52eb119683ed305c564ee3cf9deb0",
+      "provenance": {
+        "commit": "a87217d664d52eb119683ed305c564ee3cf9deb0"
       }
     },
     {
@@ -754400,6 +755470,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c61f6b44c6a0799aa08b895447c287c33f97e940",
+      "provenance": {
+        "commit": "c61f6b44c6a0799aa08b895447c287c33f97e940"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c6247976ff71e8d4c103ebd1498c2d373217d077",
       "provenance": {
         "commit": "c6247976ff71e8d4c103ebd1498c2d373217d077"
@@ -755915,6 +756993,14 @@
       "to": "Commit:d018e04cd3d607bed1378576cfbe781620f4409f",
       "provenance": {
         "commit": "d018e04cd3d607bed1378576cfbe781620f4409f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d01c02b67896521ac3651cea827f235197c6d870",
+      "provenance": {
+        "commit": "d01c02b67896521ac3651cea827f235197c6d870"
       }
     },
     {
@@ -758587,6 +759673,14 @@
       "to": "Commit:e2180ddd138ae34ef76522dc581d286d31f93fab",
       "provenance": {
         "commit": "e2180ddd138ae34ef76522dc581d286d31f93fab"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e224c15c25c7f88f492d29f9a1f6e68babd4e35e",
+      "provenance": {
+        "commit": "e224c15c25c7f88f492d29f9a1f6e68babd4e35e"
       }
     },
     {
@@ -761744,6 +762838,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f629af41e64f276c04618cb91f9f119c45aaa76d",
+      "provenance": {
+        "commit": "f629af41e64f276c04618cb91f9f119c45aaa76d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f633dbc90ae2f9174417da54878bdb68b2f98bf5",
       "provenance": {
         "commit": "f633dbc90ae2f9174417da54878bdb68b2f98bf5"
@@ -763371,6 +764473,14 @@
       "to": "Commit:ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16",
       "provenance": {
         "commit": "ffb9ae3ef11764d9d55bbe2df94d91bcccea3b16"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
+      "provenance": {
+        "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
       }
     },
     {
@@ -787589,7 +788699,7 @@
       "to": "Artifact:tools/businessdesk-deed-native-inputs.js",
       "provenance": {
         "file": "test/businessdesk-native-provenance.js",
-        "line": 9
+        "line": 11
       }
     },
     {
@@ -787604,7 +788714,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/businessdesk-source-transfer.js",
+      "to": "Artifact:tools/businessdesk-noir-native-provenance.js",
       "provenance": {
         "file": "test/businessdesk-native-provenance.js",
         "line": 6
@@ -787613,25 +788723,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/deed-allocation-source-data.js",
-      "provenance": {
-        "file": "test/businessdesk-native-provenance.js",
-        "line": 7
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
-      "provenance": {
-        "file": "test/businessdesk-native-provenance.js",
-        "line": 10
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
+      "to": "Artifact:tools/businessdesk-source-transfer.js",
       "provenance": {
         "file": "test/businessdesk-native-provenance.js",
         "line": 8
@@ -787640,10 +788732,91 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/businessdesk-native-provenance.js",
+      "to": "Artifact:tools/deed-allocation-source-data.js",
+      "provenance": {
+        "file": "test/businessdesk-native-provenance.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-native-provenance.js",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "provenance": {
+        "file": "test/businessdesk-native-provenance.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-native-provenance.js",
+      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
+      "provenance": {
+        "file": "test/businessdesk-native-provenance.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-native-provenance.js",
       "to": "Artifact:tools/enterprise-native-ux.js",
       "provenance": {
         "file": "test/businessdesk-native-provenance.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-native-provenance.js",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "file": "test/businessdesk-native-provenance.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "to": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "to": "Artifact:tools/businessdesk-noir-source-data.js",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
         "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "to": "Artifact:tools/enterprise-native-ux.js",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
+        "line": 12
       }
     },
     {
@@ -796211,7 +797384,16 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "test/deed-allocation-source-compatibility.js",
-        "line": 10
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/deed-allocation-source-compatibility.js",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "test/deed-allocation-source-compatibility.js",
+        "line": 7
       }
     },
     {
@@ -809199,6 +810381,15 @@
       "provenance": {
         "file": "test/nft.js",
         "line": 21
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/noir-ui-source-compatibility.js",
+      "to": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 6
       }
     },
     {
@@ -826870,6 +828061,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/ux-shell-browser.js",
+      "to": "Artifact:test/server-fixture.js",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ux-shell-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/ux-social-browser.js",
       "to": "ExternalDependency:playwright-core",
       "provenance": {
@@ -829889,13 +831098,13 @@
       "to": "Artifact:tools/businessdesk-deed-native-inputs.js",
       "provenance": {
         "file": "tools/businessdesk-native-provenance.js",
-        "line": 7
+        "line": 8
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/businessdesk-source-transfer.js",
+      "to": "Artifact:tools/businessdesk-noir-native-provenance.js",
       "provenance": {
         "file": "tools/businessdesk-native-provenance.js",
         "line": 3
@@ -829904,7 +831113,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/deed-allocation-source-data.js",
+      "to": "Artifact:tools/businessdesk-source-transfer.js",
       "provenance": {
         "file": "tools/businessdesk-native-provenance.js",
         "line": 4
@@ -829913,7 +831122,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "to": "Artifact:tools/deed-allocation-source-data.js",
       "provenance": {
         "file": "tools/businessdesk-native-provenance.js",
         "line": 5
@@ -829922,7 +831131,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/businessdesk-native-provenance.js",
-      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
       "provenance": {
         "file": "tools/businessdesk-native-provenance.js",
         "line": 6
@@ -829930,11 +831139,74 @@
     },
     {
       "type": "IMPORTS",
-      "from": "Artifact:tools/businessdesk-source-transfer.js",
+      "from": "Artifact:tools/businessdesk-native-provenance.js",
       "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
       "provenance": {
+        "file": "tools/businessdesk-native-provenance.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "to": "Artifact:tools/businessdesk-deed-native-inputs.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-native-provenance.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "to": "Artifact:tools/deed-allocation-source-data.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-native-provenance.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-native-provenance.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-native-provenance.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-noir-native-provenance.js",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-native-provenance.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "to": "Artifact:tools/businessdesk-noir-source-data.js",
+      "provenance": {
+        "file": "tools/businessdesk-noir-source-transfer.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-source-transfer.js",
+      "to": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "provenance": {
         "file": "tools/businessdesk-source-transfer.js",
-        "line": 253
+        "line": 4
       }
     },
     {
@@ -829944,6 +831216,15 @@
       "provenance": {
         "file": "tools/businessdesk-source-transfer.js",
         "line": 254
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/businessdesk-source-transfer.js",
+      "to": "Artifact:tools/enterprise-native-ux-b35-inputs.js",
+      "provenance": {
+        "file": "tools/businessdesk-source-transfer.js",
+        "line": 255
       }
     },
     {
@@ -831645,6 +832926,15 @@
       "provenance": {
         "file": "tools/deed-allocation-source-transfer.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/deed-allocation-source-transfer.js",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/deed-allocation-source-transfer.js",
+        "line": 6
       }
     },
     {
@@ -833422,6 +834712,15 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:tools/generate-noir-ui-source-transfer.js",
+      "to": "Artifact:tools/noir-ui-source-transfer.js",
+      "provenance": {
+        "file": "tools/generate-noir-ui-source-transfer.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:tools/genesis-auction-deployment-plan.js",
       "to": "Artifact:tools/market-v2-deployment-plan.js",
       "provenance": {
@@ -834219,6 +835518,24 @@
       "provenance": {
         "file": "tools/nft-art.js",
         "line": 101
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/noir-ui-source-transfer.js",
+      "to": "Artifact:tools/businessdesk-noir-source-transfer.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/noir-ui-source-transfer.js",
+      "to": "Artifact:tools/noir-ui-source-data.js",
+      "provenance": {
+        "file": "tools/noir-ui-source-transfer.js",
+        "line": 5
       }
     },
     {
@@ -890050,6 +891367,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/businessdesk-noir-source-compatibility.js",
+      "to": "Artifact:test/businessdesk-noir-source-compatibility.js",
+      "provenance": {
+        "file": "test/businessdesk-noir-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/businessdesk-source-compatibility.js",
       "to": "Artifact:test/businessdesk-source-compatibility.js",
       "provenance": {
@@ -894559,6 +895885,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/noir-ui-source-compatibility.js",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/npcwar.js",
       "to": "Artifact:test/npcwar.js",
       "provenance": {
@@ -897920,6 +899255,15 @@
       "to": "Artifact:test/ux-progression-browser.js",
       "provenance": {
         "file": "test/ux-progression-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/ux-shell-browser.js",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "file": "test/ux-shell-browser.js",
         "line": 1
       }
     },
