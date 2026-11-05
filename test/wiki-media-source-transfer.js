@@ -140,6 +140,7 @@ const merge = WIKI_MEDIA_MERGE_SOURCE;
 assert.equal(merge.status, 'SEALED'); assert.equal(hash(JSON.stringify(merge)), WIKI_MEDIA_MERGE_SOURCE_SHA256);
 assert.equal(merge.version, 1);
 assert.equal(merge.phase, 'exact-dual-parent-wiki-merge-source-only; no native, runtime, financial or deployment clearance');
+assert.equal(merge.revision, '9c78948fc3f081250c1f1755ca06f8334a7ad0a3');
 assert.equal(merge.mergeRevision, '51cf345fc5501e7bc0ef4fe0c8cdf83e19795771');
 assert.equal(merge.parents.main.revision, 'fe887350a661901983282183fb21e9d1d330f04f');
 assert.equal(merge.parents.wiki.revision, '6607bf3105c7fa019611d85c1994d7576d4708b2');
