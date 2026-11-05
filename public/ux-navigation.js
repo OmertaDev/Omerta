@@ -49,7 +49,7 @@
     let account = '', key = '', favorites = [], resume = null, lastActivity = null, previousTab = '', lastMe = null;
     let clocks = [], snapshot = null, mobilePocket = null, activeInterest = '', tourStep = 0;
     let discoveries = [], tipsEnabled = true, tipTab = '', tipFinished = false, tipObserver = null, observedPanel = null, tipFrame = null;
-    const dirty = new WeakSet(), delivered = new Set();
+    const dirty = new WeakSet(), delivered = new Set(), mountedTools = new WeakSet();
     const $ = (selector) => document.querySelector(selector);
     const catalog = () => [...document.querySelectorAll('#tabs [data-tab]')].map((b) => ({ id: b.dataset.tab, name: b.textContent.trim() || b.dataset.tab }));
     const title = (id) => catalog().find((c) => c.id === id)?.name || String(id).replace(/[_-]/g, ' ');
@@ -82,9 +82,17 @@
         tools.innerHTML = '<summary>Screen tools</summary><div class="ux-screen-tools-body"><button class="act ux-screen-tools-close" type="button">Close screen tools</button></div>';
         const mobile = matchMedia('(max-width:760px)'); tools.open = !mobile.matches;
         mobile.addEventListener('change', () => { tools.open = !mobile.matches; });
-        tools.querySelector('.ux-screen-tools-close').onclick = () => { tools.open = false; tools.querySelector(':scope > summary').focus(); };
-        tools.addEventListener('keydown', event => { if (event.key === 'Escape' && mobile.matches) { tools.open = false; tools.querySelector(':scope > summary').focus(); } });
         tabs.before(tools);
+      }
+      if (!mountedTools.has(tools)) {
+        const body = tools.querySelector('.ux-screen-tools-body');
+        let close = body.querySelector('.ux-screen-tools-close');
+        if (!close) {
+          close = document.createElement('button'); close.type = 'button'; close.className = 'act ux-screen-tools-close'; close.textContent = 'Close screen tools'; body.prepend(close);
+        }
+        close.onclick = () => { tools.open = false; tools.querySelector(':scope > summary').focus(); };
+        tools.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); tools.open = false; tools.querySelector(':scope > summary').focus(); } });
+        mountedTools.add(tools);
       }
       if (!strip) { strip = document.createElement('nav'); strip.id = 'ux-navigation'; strip.className = 'ux-navigation'; strip.setAttribute('aria-label', 'Your shortcuts'); tools.querySelector('.ux-screen-tools-body').append(strip); }
       return strip;
@@ -325,7 +333,8 @@
       if (!activeInterest) activeInterest = interestHint() || (saved && INTERESTS[saved.interest] ? saved.interest : '');
       if (saved?.done) return;
       const host = document.createElement('section'); host.id = 'ux-interest-tour'; host.className = 'ux-interest-tour'; host.setAttribute('aria-label', 'Explore your interests');
-      panel.prepend(host);
+      const tourContent = panel.querySelector('#start-tour-content');
+      if (tourContent) tourContent.append(host); else panel.prepend(host);
       const paint = () => {
         const route = INTERESTS[activeInterest];
         host.innerHTML = `<div class="ux-kicker">YOUR FIRST TOUR</div><h3>${route ? `Explore ${esc(route.name)}` : 'What interests you?'}</h3><p>${route ? 'Your quiz interest shapes these suggestions. This tour never declares or switches a Path.' : 'Use the same six interests as the Path quiz to pick a short tour. You can explore every part of the city.'}</p>
