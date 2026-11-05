@@ -17,11 +17,13 @@ const EXTRA = {
   PositionManager: ['lib/v4-periphery/src/PositionManager.sol', true],
   OmertaGenesisCoordinatorV2: ['src/market-v2/OmertaGenesisCoordinatorV2.sol', true],
   OmertaGuardedAuction: ['src/genesis-auction/OmertaGuardedAuction.sol', false],
+  OmertaEthStakingV2: ['src/market-v2/OmertaEthStakingV2.sol', true],
+  OmertaEthRewardsV2: ['src/market-v2/OmertaEthRewardsV2.sol', true],
 };
 export const PLAYER_GENESIS_ROLES = [
   ['omr', 'OmertaRestrictedOMRV2'], ['poolManager', 'OmertaPoolManagerV2'], ['positionManager', 'PositionManager'],
   ['coordinator', 'OmertaGenesisCoordinatorV2'], ...MARKET_V2_ROLES,
-  ['auction', 'OmertaGuardedAuction'],
+  ['auction', 'OmertaGuardedAuction'], ['ethStaking', 'OmertaEthStakingV2'], ['ethRewards', 'OmertaEthRewardsV2'],
 ];
 const stringify = x => JSON.stringify(x, (_, v) => typeof v === 'bigint' ? v.toString() : v, 2);
 const clone = x => JSON.parse(stringify(x));
@@ -161,7 +163,7 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
   const m = clone(obj('manifest', input)); publicOnly(m);
   keys('manifest', m, ['schemaVersion', 'route', 'chainId', 'localRehearsal', 'sourceRevision', 'startingNonce', 'snapshot', 'roles',
     'external', 'positionManager', 'create2', 'artifactHashes', 'runtimeHashes', 'restrictedMarket', 'policies', 'season',
-    'auction', 'coordinator', 'governance']);
+    'auction', 'coordinator', 'governance', 'ethRewards']);
   if (m.schemaVersion !== 2 || m.route !== 'guarded-public-auction' || ![4663, 31337].includes(m.chainId) || typeof m.localRehearsal !== 'boolean'
     || (m.chainId === 31337 && !m.localRehearsal)) throw Error('Explicit public-only guarded route schema v2, chain 4663 or local rehearsal 31337 required');
   if (!/^[\da-f]{40}$/i.test(m.sourceRevision || '')) throw Error('sourceRevision: full commit required');
@@ -179,6 +181,25 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
     throw Error('Explicit bounded Safe owners and valid threshold required');
   const safeOwners = m.governance.owners.map(x => addr('Safe owner', x));
   if (new Set(safeOwners).size !== safeOwners.length) throw Error('Duplicate Safe owner');
+  const eth = obj('ethRewards', m.ethRewards);
+  keys('ethRewards', eth, ['keeper', 'policy', 'conversion']);
+  const ethKeeper = addr('ethRewards.keeper', eth.keeper);
+  if (ethKeeper === roles.deployer) throw Error('ethRewards.keeper: separate operating wallet required');
+  const ethPolicyFields = ['maxOmrPerCall', 'maxOmrPerDay', 'maxNativePerCall', 'maxNativePerDay', 'maxSlippageBps', 'maxStressBps', 'maxMarketAge', 'maxDeadlineDelay', 'maxHealthLease', 'recoveryGrace'];
+  keys('ethRewards.policy', eth.policy, ethPolicyFields);
+  for (const field of ethPolicyFields) {
+    const bits = ['maxSlippageBps', 'maxStressBps'].includes(field) ? 16 : ['maxMarketAge', 'maxDeadlineDelay', 'maxHealthLease', 'recoveryGrace'].includes(field) ? 64 : 256;
+    uint(`ethRewards.policy.${field}`, eth.policy[field], bits, ['maxSlippageBps', 'maxStressBps'].includes(field));
+  }
+  const ethPolicy = Object.fromEntries(ethPolicyFields.map(field => [field, eth.policy[field]]));
+  if (BigInt(eth.policy.maxOmrPerDay) < BigInt(eth.policy.maxOmrPerCall) || BigInt(eth.policy.maxNativePerDay) < BigInt(eth.policy.maxNativePerCall)
+    || BigInt(eth.policy.maxSlippageBps) > 1000n || BigInt(eth.policy.maxStressBps) > 10000n
+    || BigInt(eth.policy.maxMarketAge) > 7n * 86400n || BigInt(eth.policy.maxDeadlineDelay) > 3600n
+    || BigInt(eth.policy.maxHealthLease) > 3600n || BigInt(eth.policy.recoveryGrace) >= BigInt(eth.policy.maxHealthLease))
+    throw Error('ethRewards.policy: bounded per-call/day, slippage, stress, deadline and health lease limits required');
+  keys('ethRewards.conversion', eth.conversion, ['active', 'paused']);
+  if (eth.conversion.active !== false || eth.conversion.paused !== true)
+    throw Error('ethRewards.conversion: conversion starts inactive and paused pending actual health lease and recovery grace');
   if (m.chainId === 4663 && (safeOwners.length !== 3 || m.governance.threshold !== 2)) throw Error('Mainnet governance requires approved 2-of-3 Safe');
   const addresses = predictPlayerGenesisAddresses(roles.deployer, m.startingNonce);
   keys('snapshot', m.snapshot, ['timestamp', 'blockNumber', 'blockHash', 'auctionClock', 'maxAgeSeconds']);
@@ -186,7 +207,7 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
   const clock = uint('snapshot.auctionClock', m.snapshot.auctionClock, 64, true);
   uint('snapshot.blockNumber', m.snapshot.blockNumber, 64, true); hash('snapshot.blockHash', m.snapshot.blockHash);
   uint('snapshot.maxAgeSeconds', m.snapshot.maxAgeSeconds, 64);
-  keys('external', m.external, ['permit2', 'weth', 'descriptor', 'wbtc', 'rewardManager']);
+  keys('external', m.external, ['permit2', 'weth', 'descriptor']);
   const external = Object.fromEntries(Object.entries(m.external).map(([key, x]) => {
     keys(`external.${key}`, x, ['address', 'runtimeHash']);
     return [key, { address: addr(`external.${key}.address`, x.address), runtimeHash: hash(`external.${key}.runtimeHash`, x.runtimeHash) }];
@@ -212,8 +233,11 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
   keys('restrictedMarket', m.restrictedMarket, ['additionalOperators', 'contractHolders']);
   if (!Array.isArray(m.restrictedMarket.additionalOperators) || !Array.isArray(m.restrictedMarket.contractHolders))
     throw Error('Explicit restricted operator/holder lists required');
-  const launchOperators = ['coordinator', 'auction'].map(role => ({ address: addresses[role], role: 2,
-    runtimeHash: m.runtimeHashes[role], purpose: `Reviewed guarded Genesis ${role} custody and exact typed inventory pull` }));
+  const launchOperators = ['coordinator', 'auction', 'ethStaking'].map(role => ({ address: addresses[role], role: 2,
+    runtimeHash: m.runtimeHashes[role], purpose: role === 'ethStaking' ? 'Typed OMR staking custody for native ETH rewards only'
+      : `Reviewed guarded Genesis ${role} custody and exact typed inventory pull` }));
+  if (m.restrictedMarket.contractHolders.some(x => x.address?.toLowerCase() === addresses.ethRewards.toLowerCase()))
+    throw Error('ETH reward distributor receiving-only holder is managed by the guarded planner');
   const duplicateLaunch = m.restrictedMarket.additionalOperators.some(x => launchOperators.some(y => x.address?.toLowerCase() === y.address.toLowerCase()));
   if (duplicateLaunch) throw Error('Launch custody operators are managed by the guarded planner');
   if (m.restrictedMarket.additionalOperators.some(x => [roles.safe, roles.deployer].some(a => x.address?.toLowerCase() === a.toLowerCase())))
@@ -221,18 +245,18 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
   const marketInput = { schemaVersion: 2, chainId: m.chainId, localRehearsal: m.localRehearsal,
     sourceRevision: m.sourceRevision, startingNonce: String(BigInt(m.startingNonce) + 4n),
     snapshot: { timestamp: m.snapshot.timestamp, blockNumber: m.snapshot.blockNumber, blockHash: m.snapshot.blockHash },
-    roles: { ...roles, initializer: addresses.coordinator, capitalProvider: roles.safe },
+    roles: { ...roles, stakingReward: addresses.ethRewards, initializer: addresses.coordinator, capitalProvider: roles.safe },
     external: { omr: { address: addresses.omr, runtimeHash: m.runtimeHashes.omr },
       poolManager: { address: addresses.poolManager, runtimeHash: m.runtimeHashes.poolManager },
-      positionManager: { address: addresses.positionManager, runtimeHash: m.runtimeHashes.positionManager }, permit2: external.permit2,
-      wbtc: external.wbtc, rewardManager: external.rewardManager },
+      positionManager: { address: addresses.positionManager, runtimeHash: m.runtimeHashes.positionManager }, permit2: external.permit2 },
     restrictedMarket: { policyId: RESTRICTED_MARKET_POLICY_ID,
       operatorRuntimeHashes: Object.fromEntries(['hook', 'controller', 'bond', 'turf', 'arbitrage', 'router', 'positionManager', 'permit2']
         .map(k => [k, k === 'permit2' ? external.permit2.runtimeHash : m.runtimeHashes[k]])),
-      holderRuntimeHashes: Object.fromEntries(['polFunding', 'reserveFunding', 'turfFeeBridge', 'btcRewards'].map(k => [k, m.runtimeHashes[k]])),
-      additionalOperators: [...launchOperators, ...m.restrictedMarket.additionalOperators], contractHolders: m.restrictedMarket.contractHolders },
+      holderRuntimeHashes: Object.fromEntries(['polFunding', 'reserveFunding', 'turfFeeBridge'].map(k => [k, m.runtimeHashes[k]])),
+      additionalOperators: [...launchOperators, ...m.restrictedMarket.additionalOperators], contractHolders: [
+        ...m.restrictedMarket.contractHolders, { address: addresses.ethRewards, runtimeHash: m.runtimeHashes.ethRewards,
+          purpose: 'Typed ETH reward distributor; receiving-only, canonical router pulls exact approved OMR' }] },
     create2: m.create2, artifactHashes: Object.fromEntries(MARKET_V2_ROLES.map(([, c]) => [c, m.artifactHashes[c]])),
-    rewards: { converterRuntimeHash: m.runtimeHashes.btcConverter },
     policies: m.policies, season: m.season, bootstrap: null, funding: null };
   const market = buildMarketV2DeploymentPlan(marketInput, { contractsRoot, artifactLoader, deferBootstrap: true });
   Object.assign(addresses, market.addresses);
@@ -283,12 +307,15 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
     validationHook: zeroAddress, floorPrice: floor, requiredCurrencyRaised: requiredRaise, auctionStepsData: stepsData };
   const args = {
     omr: [roles.safe], poolManager: [addresses.omr, roles.safe,
-      [roles.dev, roles.rwa, roles.community, addresses.polFunding], addresses.btcRewards],
+      [roles.dev, roles.rwa, roles.community, addresses.polFunding], addresses.ethRewards],
     positionManager: [addresses.poolManager, external.permit2.address, unsubscribeGas, external.descriptor.address, external.weth.address],
     coordinator: [addresses.poolManager, addresses.positionManager, external.permit2.address, addresses.omr, addresses.hook,
       m.policies.pool.fee, m.policies.pool.tickSpacing, reserve, addr('liquidityOwner', m.coordinator.liquidityOwner),
       addr('treasury', m.coordinator.treasury), addr('vig', m.coordinator.vig), addr('founder', m.coordinator.founder)],
     auction: [addresses.omr, publicInventory, parameters, addresses.coordinator],
+    ethStaking: [addresses.omr, roles.safe],
+    ethRewards: [addresses.omr, roles.safe, ethKeeper, addresses.ethStaking, addresses.poolManager,
+      addresses.router, addresses.marketState, Object.fromEntries(['currency0', 'currency1', 'fee', 'tickSpacing', 'hooks'].map(key => [key, market.canonicalPool[key]])), ethPolicy],
   };
   const deployment = role => {
     const contract = PLAYER_GENESIS_ROLES.find(([r]) => r === role)[1], a = artifacts[contract];
@@ -303,20 +330,34 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
       data: encodeFunctionData({ abi: artifacts[PLAYER_GENESIS_ROLES.find(([r]) => r === role)[1]].abi, functionName, args: values }) } });
   const boundary = market.steps.findIndex(x => x.label === 'Verify replacement market contracts and actual operator runtime before irrevocable policy sealing');
   if (boundary < 0 || !market.bootstrapDeferred) throw Error('Market planner guarded-route boundary unavailable');
-  if (market.steps[0]?.kind !== 'readiness'
-    || market.steps[0]?.label !== 'Verify pinned WBTC asset and reward conversion route before deployments')
-    throw Error('Market planner predeployment reward-route boundary unavailable');
   const funding = [];
   for (const [role, amount] of [['coordinator', reserve], ['auction', publicInventory]]) {
     funding.push(call(`Approve exact ${role} inventory`, 'omr', 'approve', [addresses[role], amount], roles.safe));
+
     funding.push(call(`Pull exact ${role} inventory after policy sealing`, role, 'fundInventory', [], roles.safe));
     funding.push(call(`Revoke ${role} inventory approval`, 'omr', 'approve', [addresses[role], 0n], roles.safe));
   }
+  const remainingMarketSteps = market.steps.slice(boundary);
+  const registryIndex = remainingMarketSteps.findIndex(step => step.label === 'Verify the exact complete operator and contract-holder registries immediately before sealing');
+  if (registryIndex < 0) throw Error('Complete pre-seal registry readiness is required');
+  remainingMarketSteps.splice(registryIndex, 0, { kind: 'readiness', label: 'Verify ETH vault/distributor bindings and dormant conversion posture before sealing', required: {
+    staking: { address: addresses.ethStaking, runtimeHash: m.runtimeHashes.ethStaking, owner: roles.safe, governanceSafe: roles.safe,
+      omr: addresses.omr, distributor: addresses.ethRewards, distributorRuntimeHash: m.runtimeHashes.ethRewards,
+      active: false, paused: false, epochOrigin: '0', epochSeconds: 30 * 86400, lockSeconds: 30 * 86400 },
+    distributor: { address: addresses.ethRewards, runtimeHash: m.runtimeHashes.ethRewards, safe: roles.safe, keeper: ethKeeper,
+      omr: addresses.omr, rewardVault: addresses.ethStaking, manager: addresses.poolManager,
+      canonicalRouter: addresses.router, marketState: addresses.marketState, canonicalPoolId: market.canonicalPool.poolId,
+      policy: ethPolicy, active: false, paused: true, healthValidUntil: '0', healthySince: '0' },
+    rewardAsset: 'native ETH', vaultOperatorRole: 2, distributorReceivingOnly: true,
+    fullSafeGenesisInventoryRequired: true, conversionExecutionAuthorized: false,
+  } });
   const steps = [
-    market.steps[0], ...['omr', 'poolManager', 'positionManager', 'coordinator'].map(deployment), ...market.steps.slice(1, boundary),
-    deployment('auction'),
+    ...['omr', 'poolManager', 'positionManager', 'coordinator'].map(deployment), ...market.steps.slice(0, boundary),
+    deployment('auction'), deployment('ethStaking'), deployment('ethRewards'),
     call('Bind the single guarded public auction before bids', 'coordinator', 'bindPublicAuction', [addresses.auction], roles.deployer),
-    ...market.steps.slice(boundary), ...funding,
+    call('Bind the one-time ETH distributor and actual runtime to staking rewards before sealing', 'ethStaking', 'setDistributor',
+      [addresses.ethRewards, m.runtimeHashes.ethRewards], roles.safe),
+    ...remainingMarketSteps, ...funding,
   ];
   return clone({ schemaVersion: 2, route: 'guarded-public-auction', mode: 'offline-unsigned', chainId: m.chainId,
     localRehearsal: m.localRehearsal, sourceRevision: m.sourceRevision, manifestSha256: sha(stringify(m)), snapshot: m.snapshot,
@@ -331,13 +372,23 @@ export function buildPlayerGenesisDeploymentPlan(input, { contractsRoot = ROOT, 
       lockedPositionOwner: addresses.coordinator, releasedPositionOwner: m.coordinator.liquidityOwner,
       feeRecipient: m.coordinator.liquidityOwner, feesCollectibleDuringCustody: true,
       residualSplitBps: { treasury: 4000, vig: 3600, founder: 2400 } },
+    ethRewards: { ...eth, policy: ethPolicy, staking: addresses.ethStaking, distributor: addresses.ethRewards,
+      bucket: 4, feeBps: 50, stakersOnly: true, rewardAsset: 'native ETH', stakingEpochSeconds: 30 * 86400,
+      stakingLockSeconds: 30 * 86400, rewardEligibility: 'unwithdrawn-staked-principal',
+      rewardsContinueAfterMaturity: true, renewalRequiredForRewards: false,
+      stakingActiveAtPrepared: false, stakingPausedAtPrepared: false,
+      stakingTermsStatus: 'Owner-confirmed 30-day minimum withdrawal lock per deposit; unwithdrawn principal keeps earning ETH after maturity without renewal; withdrawal stops only that amount from earning future rewards',
+      activation: { after: 'Successful auction migration and gameplay launch gates',
+        transaction: { from: roles.safe, to: addresses.ethStaking, value: '0',
+          data: encodeFunctionData({ abi: artifacts.OmertaEthStakingV2.abi, functionName: 'activate', args: [] }) },
+        distributorConversionRemainsInactiveAndPaused: true } },
     artifacts: Object.fromEntries(Object.entries(artifacts).map(([c, a]) => [c, { abi: a.abi, ...a.evidence }])),
     runtimeHashes: m.runtimeHashes, externalRuntimePins: external, create2Factory: m.create2,
     restrictedMarket: market.restrictedMarket, steps,
     executionConditions: [
       'Unsigned only. No transaction is simulated, signed or broadcast. A generated plan is not release approval.',
       'Every actual runtime hash must come from constructor-specific fork deployment, not the artifact runtime template.',
-      'Before deployments, verify the exact pinned WBTC asset and hookless external ETH/WBTC pool; initialized liquidity is not executable-depth proof for the selected conversion budget.',
+      'Before sealing, verify the native ETH collector/vault runtimes, reciprocal bindings and dormant conversion posture.',
       `All ${PLAYER_GENESIS_ROLES.length} deployment transactions consume the exact EOA nonce sequence. Intervening deployer transactions invalidate auction and manager recipient addresses.`,
       'Coordinator bind is the first subsequent deployer transaction; interleaved setup uses separate configured callers.',
       'Guarded auction uses native auction clock (ArbSys when available), not assumed Robinhood L2 block cadence.',

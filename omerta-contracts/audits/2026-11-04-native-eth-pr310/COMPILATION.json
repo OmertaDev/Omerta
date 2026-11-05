@@ -1,0 +1,272 @@
+{
+  "started": "2026-11-05T00:27:54.121Z",
+  "finished": "2026-11-05T00:27:59.565Z",
+  "baseRevision": "cfe621381ca778af58892b64b9ae5889c1e2394d",
+  "dirtyWorkingTree": true,
+  "scope": [
+    "OmertaEthStakingV2",
+    "OmertaEthRewardsV2"
+  ],
+  "sourceCount": 38,
+  "sourcePins": {
+    "lib/openzeppelin-contracts/contracts/access/Ownable.sol": {
+      "sha256Raw": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81",
+      "sha256CompilerInput": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81",
+      "keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb"
+    },
+    "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol": {
+      "sha256Raw": "c75345d7b9feef17ae29f2a800ca2f65f8021cf80436a41d6ec00f57f5180f36",
+      "sha256CompilerInput": "c75345d7b9feef17ae29f2a800ca2f65f8021cf80436a41d6ec00f57f5180f36",
+      "keccak256": "0xdcad8898fda432696597752e8ec361b87d85c82cb258115427af006dacf7128c"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": {
+      "sha256Raw": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+      "sha256CompilerInput": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b",
+      "keccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": {
+      "sha256Raw": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+      "sha256CompilerInput": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368",
+      "keccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc"
+    },
+    "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol": {
+      "sha256Raw": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+      "sha256CompilerInput": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1",
+      "keccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+      "sha256Raw": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+      "sha256CompilerInput": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+      "keccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+    },
+    "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol": {
+      "sha256Raw": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+      "sha256CompilerInput": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3",
+      "keccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+      "sha256Raw": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6",
+      "sha256CompilerInput": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6",
+      "keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Panic.sol": {
+      "sha256Raw": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+      "sha256CompilerInput": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec",
+      "keccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol": {
+      "sha256Raw": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+      "sha256CompilerInput": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8",
+      "keccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+      "sha256Raw": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+      "sha256CompilerInput": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778",
+      "keccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+      "sha256Raw": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+      "sha256CompilerInput": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca",
+      "keccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/math/Math.sol": {
+      "sha256Raw": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+      "sha256CompilerInput": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+      "keccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol": {
+      "sha256Raw": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+      "sha256CompilerInput": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134",
+      "keccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083"
+    },
+    "src/market-v2/IOmertaRestrictedOMRV2.sol": {
+      "sha256Raw": "1c6db8c22aff661942cb6c63c4662c8bf7a1a68e6e56a357e09040ba05c7c8c0",
+      "sha256CompilerInput": "d6af03909291e3d5d3d33a59da87b51952492bf5feef9f55538b7272616f6654",
+      "keccak256": "0xcea3bdf1451b2c4d60903366c75516105762384f00525c44698d84d002443a51"
+    },
+    "src/market-v2/OmertaEthStakingV2.sol": {
+      "sha256Raw": "b6f791a3e4634dc1a58baab198b460312d763df1bd17f045e4887b43cc319f74",
+      "sha256CompilerInput": "b6f791a3e4634dc1a58baab198b460312d763df1bd17f045e4887b43cc319f74",
+      "keccak256": "0x6b1b86570debdbee52a9abef199b0e0bca3b009971f390040564dd0997cca6d7"
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Pausable.sol": {
+      "sha256Raw": "2c26130748f06552c65ca74d89eaf78c9324a3cbac3ba6fdbadaa8beba0cb0b4",
+      "sha256CompilerInput": "2c26130748f06552c65ca74d89eaf78c9324a3cbac3ba6fdbadaa8beba0cb0b4",
+      "keccak256": "0xdb484371dfbb848cb6f5d70464e9ac9b2900e4164ead76bbce4fef0b44bcc68f"
+    },
+    "lib/v4-core/src/interfaces/IExtsload.sol": {
+      "sha256Raw": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+      "sha256CompilerInput": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+      "keccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+    },
+    "lib/v4-core/src/interfaces/IExttload.sol": {
+      "sha256Raw": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+      "sha256CompilerInput": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+      "keccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+    },
+    "lib/v4-core/src/interfaces/IHooks.sol": {
+      "sha256Raw": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+      "sha256CompilerInput": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+      "keccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+    },
+    "lib/v4-core/src/interfaces/IPoolManager.sol": {
+      "sha256Raw": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+      "sha256CompilerInput": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+      "keccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+    },
+    "lib/v4-core/src/interfaces/IProtocolFees.sol": {
+      "sha256Raw": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+      "sha256CompilerInput": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+      "keccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+    },
+    "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol": {
+      "sha256Raw": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e",
+      "sha256CompilerInput": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e",
+      "keccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+    },
+    "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+      "sha256Raw": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+      "sha256CompilerInput": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+      "keccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+    },
+    "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": {
+      "sha256Raw": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+      "sha256CompilerInput": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+      "keccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+    },
+    "lib/v4-core/src/libraries/BitMath.sol": {
+      "sha256Raw": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+      "sha256CompilerInput": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+      "keccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+    },
+    "lib/v4-core/src/libraries/CustomRevert.sol": {
+      "sha256Raw": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+      "sha256CompilerInput": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+      "keccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+    },
+    "lib/v4-core/src/libraries/SafeCast.sol": {
+      "sha256Raw": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+      "sha256CompilerInput": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+      "keccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+    },
+    "lib/v4-core/src/libraries/TickMath.sol": {
+      "sha256Raw": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+      "sha256CompilerInput": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+      "keccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+    },
+    "lib/v4-core/src/types/BalanceDelta.sol": {
+      "sha256Raw": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+      "sha256CompilerInput": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+      "keccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+    },
+    "lib/v4-core/src/types/BeforeSwapDelta.sol": {
+      "sha256Raw": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+      "sha256CompilerInput": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+      "keccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+    },
+    "lib/v4-core/src/types/Currency.sol": {
+      "sha256Raw": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+      "sha256CompilerInput": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+      "keccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+    },
+    "lib/v4-core/src/types/PoolId.sol": {
+      "sha256Raw": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+      "sha256CompilerInput": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+      "keccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+    },
+    "lib/v4-core/src/types/PoolKey.sol": {
+      "sha256Raw": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+      "sha256CompilerInput": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+      "keccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+    },
+    "lib/v4-core/src/types/PoolOperation.sol": {
+      "sha256Raw": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+      "sha256CompilerInput": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+      "keccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+    },
+    "src/market-v2/IOmertaMarketStateV2.sol": {
+      "sha256Raw": "4149f575c8c9562e32085a3d74290af6b5faae6e41fb717d57a40c32a19123d6",
+      "sha256CompilerInput": "f3d960dacb445a2ee5057986e6a8adfd3348f6e49a5488db611a0fc2165a4538",
+      "keccak256": "0x6b8deba1c3a95d5b617dab08696d8b2603b4cda3b755d4976b6eb6ac28b34ab4"
+    },
+    "src/market-v2/OmertaEthRewardsV2.sol": {
+      "sha256Raw": "b4b916bab1d87c491718df3c278da70dcad9ccc852253ddaa92b283a60087b62",
+      "sha256CompilerInput": "b4b916bab1d87c491718df3c278da70dcad9ccc852253ddaa92b283a60087b62",
+      "keccak256": "0xfb1a11519195b286ec20a2b31f0aa8e6eff9ee05af2159509cf5800c11880186"
+    },
+    "src/market-v2/OmertaSwapRouterV2.sol": {
+      "sha256Raw": "40efd48079b60739cd212de417b011fe8d87aecf582e8365dc5d5cf02743adf6",
+      "sha256CompilerInput": "ca0c08015ea1aa0452703c1d853cdae0eab4b253a1c4197333d65d4a1f50b0ab",
+      "keccak256": "0xa3317765dfed514d9b0c002786ac3307d6ff52f809b59474bb7e4f8ec799c0b1"
+    }
+  },
+  "compiler": {
+    "path": "C:/Users/Jorge/.solc-select/artifacts/solc-0.8.38/solc-0.8.38",
+    "sha256": "3fb6699791d7eb9d8cb28168116cc9b5eca9f2bec1ec356f7d66034d91035e9b",
+    "version": "solc, the solidity compiler commandline interface\r\nVersion: 0.8.38+commit.1835d247.Windows.msvc",
+    "argv": [
+      "--standard-json"
+    ],
+    "settings": {
+      "evmVersion": "cancun",
+      "libraries": {},
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "remappings": [
+        ":@openzeppelin/=lib/openzeppelin-contracts/",
+        ":@uniswap/v4-core/=lib/v4-core/",
+        ":@uniswap/v4-periphery/=lib/v4-periphery/",
+        ":forge-std/=lib/forge-std/src/",
+        ":openzeppelin-contracts/=lib/openzeppelin-contracts/",
+        ":permit2/=lib/permit2/",
+        ":solmate/=lib/v4-core/lib/solmate/",
+        ":v4-core/=lib/v4-core/src/",
+        ":v4-periphery/=lib/v4-periphery/src/"
+      ],
+      "viaIR": true,
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "evm.bytecode",
+            "evm.deployedBytecode"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      }
+    }
+  },
+  "inputSha256": "02222346a9a055075ce1bd527cedc95d6f53f11bee3aacb709a0e02c8a1cc228",
+  "outputSha256": "d166c83f580a313631b67dac128363a8f34a114d28e74c2c474b7b3fe338ed3a",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "exit": 0,
+  "compilerDiagnostics": [],
+  "artifactComparison": {
+    "OmertaEthStakingV2": {
+      "artifactSha256": "1ce0b55185619527ad72c189e86e6ba66efd9a8cbf0bd087ab35989919158e17",
+      "creationMatch": true,
+      "runtimeMatch": true,
+      "creationBytes": 10518,
+      "runtimeBytes": 9956
+    },
+    "OmertaEthRewardsV2": {
+      "artifactSha256": "7f12445195acb9c513e061bca35e63c85e080726790271254929a75e0f5149ec",
+      "creationMatch": true,
+      "runtimeMatch": true,
+      "creationBytes": 14329,
+      "runtimeBytes": 10881
+    }
+  },
+  "productionWrites": false,
+  "forgeInvoked": false
+}

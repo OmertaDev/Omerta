@@ -11,7 +11,7 @@ import { assertContractReleaseSourceDefinition, assertContractReleaseSourceTrans
   contractReleaseDeskInput, contractReleaseFeeInput, CONTRACT_RELEASE_MIN_CONTEXT_LINES,
   CONTRACT_RELEASE_MAX_CONTEXT_LINES } from '../tools/contract-release-source-transfer.js';
 import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
-  deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN,
+  deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN, CONTRACT_RELEASE_ETH_ORIGIN,
   contractReleaseReviewedOrigins, deriveContractReleaseApprovedSource,
   assertContractReleaseApprovedSource } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
@@ -318,6 +318,7 @@ try {
   assert.deepEqual(origins.map(({ revision, baseRevision }) => ({ revision, baseRevision })), [
     { revision: fixture.reviewedContractRevision, baseRevision: 'c4b626b631b04e594097fb6bb416c36fdfea00f3' },
     { revision: mobileRevision, baseRevision: mobileBase },
+    { revision: CONTRACT_RELEASE_ETH_ORIGIN.revision, baseRevision: CONTRACT_RELEASE_ETH_ORIGIN.baseRevision },
   ]);
   assert.deepEqual(contractReleaseReviewedOrigins('test/ux-expanded-browser.js'), [
     { revision: fixture.reviewedUiRevision, baseRevision: fixture.reviewedContractRevision },
@@ -335,8 +336,13 @@ try {
   };
   for (const file of mobileFiles) {
     const base = committedOriginRecord('de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', file);
+    let mobileStage = base;
+    for (const origin of contractReleaseReviewedOrigins(file).filter(row => row !== CONTRACT_RELEASE_ETH_ORIGIN)) {
+      const bytes = deriveContractReleaseReviewedSource(mobileStage, committedOriginRecord(origin.baseRevision, file), committedOriginRecord(origin.revision, file));
+      mobileStage = originRecord(file, bytes);
+    }
+    assert.equal(mobileStage.pin.sha256, expectedMobileSha256[file], 'Independent pre-ETH mobile composition fixture hash remains unchanged');
     const expected = deriveContractReleaseApprovedSource(file, base);
-    assert.equal(expected.pin.sha256, expectedMobileSha256[file], 'Independent five-stage Git composition fixture hash');
     assert.equal(expected.pin.mode, '100644');
     assert.deepEqual(assertContractReleaseApprovedSource(file, base, expected), expected); positives++;
     for (const bytes of [Buffer.concat([expected.bytes, Buffer.from('\n')]), expected.bytes.subarray(1),
@@ -354,9 +360,54 @@ try {
     committedOriginRecord(mobileBase, 'public/index.html'), committedOriginRecord(mobileRevision, 'public/index.html'));
   for (const bytes of [contractOnlyIndex, mobileOnlyIndex])
     refused(() => assertContractReleaseApprovedSource('public/index.html', indexBase, originRecord('public/index.html', bytes)));
-  for (const file of ['src/server.js', 'tools/mobile.js.extra', '../tools/mobile.js']) {
+  assert.deepEqual(contractReleaseReviewedOrigins('src/server.js'), [CONTRACT_RELEASE_ETH_ORIGIN], 'Server ETH edits use a fixed origin, never integration approval');
+  for (const file of ['src/server.js.extra', 'tools/mobile.js.extra', '../tools/mobile.js']) {
     assert.deepEqual(contractReleaseReviewedOrigins(file), []);
     refused(() => deriveContractReleaseApprovedSource(file, null));
+  }
+  // Exact ETH origin/postimage controls preserve all pre-ETH source pins and refusal checks.
+  assert.deepEqual(CONTRACT_RELEASE_ETH_ORIGIN, { revision: '03d6a65a9f9ffaaca2573b15236592ade91de0ea', baseRevision: 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e', files: [".github/workflows/forge.yml","docs/WIKI.md","public/defi.html","public/eth-staking.js","public/fee-flows.html","public/genesis-deploy-artifact.js","public/genesis-deploy-client.js","public/index.html","public/wiki.html","src/data/market-v2-eth-abis.json","src/ethrewardsworker.js","src/ethstaking.js","src/genesisauction.js","src/marketv2abi.js","src/marketv2keeper.js","src/preflight.js","src/routes/ethstaking.js","src/server.js","src/worker.js","test/native-eth-source-transfer.js","tools/economy-hardening-source-transfer.js","tools/generate-native-eth-source-transfer.js","tools/genesis-auction-deployment-plan.js","tools/genesis-auction-preflight.js","tools/genesis-fee-readiness-source-transfer.js","tools/market-fee-copy-source-transfer.js","tools/market-v2-deployment-plan.js","tools/native-eth-source-transfer.js"] });
+  assert(Object.isFrozen(CONTRACT_RELEASE_ETH_ORIGIN) && Object.isFrozen(CONTRACT_RELEASE_ETH_ORIGIN.files));
+  refused(() => { CONTRACT_RELEASE_ETH_ORIGIN.files.push('src/unreviewed.js'); });
+  const expectedEthSha256 = {
+    ".github/workflows/forge.yml": "e97eb70c6e22fc816815f425afc1a5408e42aac7b98e0393f2f4ed3249eadfb4",
+    "docs/WIKI.md": "36c3a44a1f85feb37763b873621d22349ff695625e4d7dc68d83bb81b2e41ba1",
+    "public/defi.html": "bed20d7697d39a5d2ce600f136df8f1840bcc013465db504d397ce9967538d7e",
+    "public/eth-staking.js": "1e06327f1195d33b44b0add5d1a31156aae94fca6b108e7890c17f7a34264733",
+    "public/fee-flows.html": "1d97e7cc9422714b3e2fcb2400789b05281bec65d8c3baf9a5397e1df03a7091",
+    "public/genesis-deploy-artifact.js": "357e7d0c50538e0662356d17e2eb2325fc00a73198905048c59a0d6574730920",
+    "public/genesis-deploy-client.js": "e7ec082a630554358b4b6a70888e9bd1281b0de99735ab0e7950c8cdbb879ad8",
+    "public/index.html": "af3101856f3b6fa0ba5c8be85c917f38cb8ded1220640c40941d2369c3b8d868",
+    "public/wiki.html": "4a491d75fde3b1c687b904afd5f8d55f2a0ebec491f8b25909df8c0db8280068",
+    "src/data/market-v2-eth-abis.json": "92486df4310b1357114f44b959ac015a3e74e0f0307eb675d1d61e9c44700d82",
+    "src/ethrewardsworker.js": "715e53bb4fcff992947d19312b63e9c942131566a476f1325ff30ceb26f54df8",
+    "src/ethstaking.js": "7740bb5c022a8f0f40dfe2a99063dfd998d076bf38d2716d7a3c057ef3e1d764",
+    "src/genesisauction.js": "b29b7760a29cc3f7ddebbc615d21b38861fc8c3b70da6d957f6e77400a77e701",
+    "src/marketv2abi.js": "21318015f11fddd27763ef447a557944c90273cf9cbb767d6af8f01a0ec80efe",
+    "src/marketv2keeper.js": "b660b2552658acbc1722b4f74a00ca98c5d0ad84e59d284e3d5e3ee6d68c79f3",
+    "src/preflight.js": "519547750876ef4af87309e46b28fd1069295d35ed3a6bf8da70038f46c59d93",
+    "src/routes/ethstaking.js": "4430a71e2344506da9036f621a97d61b45c052ded250811ab5c26b346c82d9e8",
+    "src/server.js": "794525ae2c5dc58f2eb4d470e29d32946e7c28b14764fe87d5ed1306f770ab59",
+    "src/worker.js": "f1fb6fb9bd0330d807e5c93f61acdb7dc81813728a159bffe133ea909bb60438",
+    "test/native-eth-source-transfer.js": "9475ba47d6a654aa55491de9d9ca50a721d089ed4e6095eb287566db3121b8d3",
+    "tools/economy-hardening-source-transfer.js": "49feced87ed91a9bbf37ac1a144a35db330c49e99bf2cd6eacb3909feb13b68e",
+    "tools/generate-native-eth-source-transfer.js": "8479ac64cb7fcd87160b462cdea41e8a75adf5df9fc5b57afdb97e0aecdb6199",
+    "tools/genesis-auction-deployment-plan.js": "8795d16d31aa6a2120d2e87f47d1c1e60dd1bf418da3ab54086fc3fa0db35df1",
+    "tools/genesis-auction-preflight.js": "9288a39bd2e1d85d47caa84b7af14fa513030682b246856b93c8098350561246",
+    "tools/genesis-fee-readiness-source-transfer.js": "ee095fbd7dc2f1f5147581ef866294633ac831494d7af656d39020eb0ca6d591",
+    "tools/market-fee-copy-source-transfer.js": "c68ab063466637512b4e437c36aa638c9c0fac438e532576ecf0e2a8affdaf9f",
+    "tools/market-v2-deployment-plan.js": "9ff049e8cf56b6acceca5da1100964454183a4c21aa84f4f3d97383c56f5297a",
+    "tools/native-eth-source-transfer.js": "73f00e4620cbfdf4ca3ed54ef36c2e952a7b5408fe1a99b0c1e0993dd775b1e5"
+  };
+  for (const file of CONTRACT_RELEASE_ETH_ORIGIN.files) {
+    const baseRevision = 'de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660';
+    const base = git('ls-tree', baseRevision, '--', file).trim() ? committedOriginRecord(baseRevision, file) : null;
+    const expected = deriveContractReleaseApprovedSource(file, base);
+    assert.equal(expected.pin.sha256, expectedEthSha256[file], 'Independent immutable ETH composition postimage');
+    assert.deepEqual(assertContractReleaseApprovedSource(file, base, expected), expected); positives++;
+    for (const bytes of [Buffer.concat([expected.bytes, Buffer.from('unreviewed\n')]), expected.bytes.subarray(1), Buffer.from(expected.bytes.toString('utf8').replace(/\S/, '?'))])
+      refused(() => assertContractReleaseApprovedSource(file, base, originRecord(file, bytes)));
+    refused(() => assertContractReleaseApprovedSource(file, base, { ...expected, pin: { ...expected.pin, mode: '100755' } }));
   }
   const fixtureRepository = path.join(approvalDirectory, 'repository'), redirect = path.join(approvalDirectory, 'redirect');
   fs.mkdirSync(fixtureRepository);
@@ -367,7 +418,7 @@ try {
   refused(() => resolveContractReleasePrototypeOutput(path.join(redirect, 'inside.json'), fixtureRepository));
   assert(!fs.existsSync(path.join(fixtureRepository, 'inside.json')));
   const approvalPath = path.join(approvalDirectory, 'integration.json'), outputPath = path.join(approvalDirectory, 'prototype.json');
-  for (const file of ['src/unapproved.js', ...mobileFiles]) {
+  for (const file of [...new Set(['src/unapproved.js', ...mobileFiles, ...CONTRACT_RELEASE_ETH_ORIGIN.files])]) {
     fs.writeFileSync(approvalPath, JSON.stringify({ version: 1, sourceRevision: 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e',
       pins: { [file]: { file, mode: '100644', blob: 'a'.repeat(40), sha256: 'b'.repeat(64) } } }));
     const generator = spawnSync(process.execPath, [path.join(root, 'tools/generate-contract-release-source-transfer.js'),

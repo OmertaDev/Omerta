@@ -186,7 +186,7 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   closed('hookPolicy', input.hookPolicy, Object.keys(fixedHookPolicy));
   check(Object.entries(fixedHookPolicy).every(([key, value]) => input.hookPolicy[key] === value),
     'Fixed trade revenue policy must be 350 base + 50 rewards bps with 127/51/76/96 base allocation and at most 50 bps surge');
-  const externalKeys = ['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft', 'btcRewards'];
+  const externalKeys = ['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft', 'ethRewards', 'ethStaking'];
   closed('external', input.external, externalKeys);
   const e = Object.fromEntries(externalKeys.map(k => { closed(`external.${k}`, input.external[k], ['address', 'runtimeHash']);
     return [k, { address: addr(k, input.external[k].address), runtimeHash: digest(k, input.external[k].runtimeHash) }]; }));
@@ -244,7 +244,7 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
   const deployData = (name, args) => { const a = artifacts[name]; const data = encodeDeployData({ abi: a.abi, bytecode: a.bytecode, args });
     check((data.length - 2) / 2 <= 49152, `${name}: EIP-3860 initcode size`); return data; };
   const hookInit = deployData('OmertaHookV2', [e.poolManager.address, e.omr.address, deployed.coordinator, fee, spacing,
-    [...recipients, deployed.polFunding, deployed.reserveFunding], h.opening, h.surgeFullTicks, h.epochDuration, e.btcRewards.address]);
+    [...recipients, deployed.polFunding, deployed.reserveFunding], h.opening, h.surgeFullTicks, h.epochDuration, e.ethRewards.address]);
   const mined = mineMarketV2Hook(factory, keccak256(hookInit), uint('saltStart', input.create2.saltStart, 256, true), number('maxAttempts', input.create2.maxAttempts, 1, 1000000));
   deployed.hook = mined.address;
   const internalValidatorAddress = getContractAddress({ from: deployed.auction, nonce: 1n });
@@ -319,14 +319,15 @@ export function buildGenesisAuctionDeploymentPlan(input, { contractsRoot = ROOT 
     liquidityPolicy: { lpTokenAmountWei: String(lpAllocation), lpProceedsBps: 5000, familyProceedsBps: 5000, liquidityOwner: r.safe,
       familyYieldTreasury: r.safe, poolPrice: 'Derived from actual fixed LP tokens and 50% accepted ETH; independent of auction clearing price.' },
     deployments, safeFundingCalls: funding, deployerBindCall: call(r.deployer, deployed.coordinator, artifacts.OmertaAuctionCoordinatorV2.abi, 'bind', [deployed.auction]),
-    finalManifest: { chainId, activationReady: false, hookPolicy: { ...fixedHookPolicy, recipients: [...recipients, deployed.polFunding, deployed.reserveFunding], rewardsRecipient: e.btcRewards.address }, policy: { totalSupplyWei: String(totalSupply), decimals: 18,
+    finalManifest: { chainId, activationReady: false, hookPolicy: { ...fixedHookPolicy, recipients: [...recipients, deployed.polFunding, deployed.reserveFunding], rewardsRecipient: e.ethRewards.address }, policy: { totalSupplyWei: String(totalSupply), decimals: 18,
       saleTokenAmountWei: String(saleAllocation), lpTokenAmountWei: String(lpAllocation), bondTokenAmountWei: String(bondAllocation),
       familySafe: r.safe, liquidityOwner: r.safe, unsoldRecipient: r.safe, bondReserveCustodian: r.safe,
       minimumRaiseWei: String(MINIMUM_RAISE), lpProceedsBps: 5000, claimsAtAuctionEnd: true }, contracts: {
       auction: { address: deployed.auction, runtimeCodeHash: null },
       coordinator: { address: deployed.coordinator, runtimeCodeHash: null },
       characterNft: { address: e.characterNft.address, runtimeCodeHash: e.characterNft.runtimeHash },
-      btcRewards: { address: e.btcRewards.address, runtimeCodeHash: e.btcRewards.runtimeHash },
+      ethRewards: { address: e.ethRewards.address, runtimeCodeHash: e.ethRewards.runtimeHash },
+      ethStaking: { address: e.ethStaking.address, runtimeCodeHash: e.ethStaking.runtimeHash },
       omr: { address: e.omr.address, runtimeCodeHash: e.omr.runtimeHash },
       validator: { address: getContractAddress({ from: deployed.auction, nonce: 1n }), runtimeCodeHash: null },
     }, dependencies: {

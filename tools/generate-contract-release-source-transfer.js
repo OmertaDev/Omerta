@@ -21,6 +21,40 @@ export const CONTRACT_RELEASE_MOBILE_ORIGIN = Object.freeze({
   baseRevision: '4fc2f4100dbe0dca019cab2c4a13b18e5bee93e5',
   files: Object.freeze(['public/index.html', 'public/omerta-ui.css', 'tools/mobile.js', 'tools/public-ui.js']),
 });
+export const CONTRACT_RELEASE_ETH_ORIGIN = Object.freeze({
+  revision: '03d6a65a9f9ffaaca2573b15236592ade91de0ea',
+  baseRevision: 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e',
+  files: Object.freeze([
+    ".github/workflows/forge.yml",
+    "docs/WIKI.md",
+    "public/defi.html",
+    "public/eth-staking.js",
+    "public/fee-flows.html",
+    "public/genesis-deploy-artifact.js",
+    "public/genesis-deploy-client.js",
+    "public/index.html",
+    "public/wiki.html",
+    "src/data/market-v2-eth-abis.json",
+    "src/ethrewardsworker.js",
+    "src/ethstaking.js",
+    "src/genesisauction.js",
+    "src/marketv2abi.js",
+    "src/marketv2keeper.js",
+    "src/preflight.js",
+    "src/routes/ethstaking.js",
+    "src/server.js",
+    "src/worker.js",
+    "test/native-eth-source-transfer.js",
+    "tools/economy-hardening-source-transfer.js",
+    "tools/generate-native-eth-source-transfer.js",
+    "tools/genesis-auction-deployment-plan.js",
+    "tools/genesis-auction-preflight.js",
+    "tools/genesis-fee-readiness-source-transfer.js",
+    "tools/market-fee-copy-source-transfer.js",
+    "tools/market-v2-deployment-plan.js",
+    "tools/native-eth-source-transfer.js"
+  ]),
+});
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
 const HISTORY = Object.freeze(['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
@@ -41,12 +75,24 @@ const INTEGRATION = Object.freeze(['package.json', 'tools/enterprise-native-ux.j
   'test/businessdesk-native-provenance.js', 'tools/contract-release-native-provenance.js',
   'tools/contract-release-source-format.js',
   'tools/contract-release-source-transfer.js', 'tools/generate-contract-release-source-transfer.js',
-  'test/contract-release-source-compatibility.js']);
+  'test/contract-release-source-compatibility.js',
+  // Generated source-authority data only; product files always retain fixed reviewed origins.
+  'tools/native-eth-source-transfer.json']);
 const NEW_SUPPORT = Object.freeze(['tools/age-policy-source-transfer.js', 'tools/genesis-fee-readiness-source-transfer.js',
   'tools/genesis-historical-reader-source-transfer.js', 'tools/market-fee-copy-source-transfer.js',
   'tools/contract-release-native-provenance.js', 'tools/contract-release-source-transfer.js',
   'tools/contract-release-source-format.js',
-  'tools/generate-contract-release-source-transfer.js', 'test/contract-release-source-compatibility.js']);
+  'tools/generate-contract-release-source-transfer.js', 'test/contract-release-source-compatibility.js',
+  "public/eth-staking.js",
+  "src/data/market-v2-eth-abis.json",
+  "src/ethrewardsworker.js",
+  "src/ethstaking.js",
+  "src/marketv2abi.js",
+  "src/routes/ethstaking.js",
+  "test/native-eth-source-transfer.js",
+  "tools/generate-native-eth-source-transfer.js",
+  "tools/native-eth-source-transfer.js",
+  "tools/native-eth-source-transfer.json"]);
 const FEE = Object.freeze(['docs/WIKI.md', 'public/wiki.html', 'public/index.html', 'public/defi.html', 'public/fee-flows.html']);
 const UI_FILE = 'test/ux-expanded-browser.js';
 const canonicalPath = file => typeof file === 'string' && !file.includes('\\') && !file.includes(':') && !file.includes('\0')
@@ -149,6 +195,7 @@ export function contractReleaseReviewedOrigins(file) {
   if (RELEASE.includes(file)) origins.push(CONTRACT_ORIGIN);
   if (file === UI_FILE) origins.push(UI_ORIGIN);
   if (CONTRACT_RELEASE_MOBILE_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_MOBILE_ORIGIN);
+  if (CONTRACT_RELEASE_ETH_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_ETH_ORIGIN);
   return Object.freeze(origins);
 }
 export function deriveContractReleaseApprovedSource(file, base) {
@@ -209,6 +256,7 @@ function main() {
   git('merge-base', '--is-ancestor', base, source);
   git('merge-base', '--is-ancestor', CONTRACT, source);
   git('merge-base', '--is-ancestor', UI, source);
+  git('merge-base', '--is-ancestor', CONTRACT_RELEASE_ETH_ORIGIN.revision, source);
   const history = {};
   for (const file of HISTORY) {
     const prior = record(base, file), actual = record(source, file);
@@ -247,7 +295,7 @@ function main() {
   // Validate the separately reviewed UI change even when it is outside the native closure.
   const uiCurrent = record(source, UI_FILE), uiBase = record(base, UI_FILE);
   if (uiCurrent.pin.blob !== uiBase.pin.blob) authorize(UI_FILE);
-  const viewFiles = [...new Set([...RELEASE, ...INTEGRATION, ...FEE, ...CONTRACT_RELEASE_MOBILE_ORIGIN.files])].sort();
+  const viewFiles = [...new Set([...RELEASE, ...INTEGRATION, ...FEE, ...CONTRACT_RELEASE_MOBILE_ORIGIN.files, ...CONTRACT_RELEASE_ETH_ORIGIN.files])].sort();
   for (const file of viewFiles) {
     const actual = record(source, file, true), prior = record(base, file, true);
     if (!actual || !prior) continue;

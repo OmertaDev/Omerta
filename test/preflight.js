@@ -66,14 +66,14 @@ function envBindingNames(pattern) {
   if (pattern.type === 'ArrayPattern') return pattern.elements.flatMap(envBindingNames);
   return [];
 }
-function assertEnvNamesUnchanged(tree, names, label) {
+function assertEnvNamesUnchanged(tree, names, label, admittedDeclarations = new Set()) {
   walkEnvAst(tree, (node) => {
     const declared = node.type === 'VariableDeclarator' ? envBindingNames(node.id)
       : /^(?:FunctionDeclaration|FunctionExpression|ArrowFunctionExpression)$/.test(node.type)
         ? [...envBindingNames(node.id), ...node.params.flatMap(envBindingNames)]
         : /^(?:ClassDeclaration|ClassExpression)$/.test(node.type) ? envBindingNames(node.id)
           : node.type === 'CatchClause' ? envBindingNames(node.param) : [];
-    assert(!declared.some(name => names.has(name)), `${label}: admitted binding is shadowed or redeclared`);
+    assert(admittedDeclarations.has(node) || !declared.some(name => names.has(name)), `${label}: admitted binding is shadowed or redeclared`);
     const target = node.type === 'AssignmentExpression' ? node.left
       : node.type === 'UpdateExpression' || node.type === 'UnaryExpression' && node.operator === 'delete' ? node.argument : null;
     let root = target;
@@ -191,6 +191,41 @@ function injectedLiquidityEnvReads(consumerText, callerText) {
   ]) assert.throws(() => injectedLiquidityEnvReads(changedConsumer, changedCaller), undefined, label);
 }
 
+// The wallet staking rail has two real default-environment callers and one closed config reader.
+function injectedEthStakingEnvReads(text) {
+  const tree = parse(text, { ecmaVersion: 'latest', sourceType: 'module' });
+  const config = tree.body.find(n => n.type === 'FunctionDeclaration' && n.id.name === 'config');
+  assert(config && config.params[0].name === 'env', 'staking config environment binding must remain explicit');
+  assertEnvNamesUnchanged(config.body, new Set(['env']), 'staking config environment');
+  const reads = new Set();
+  walkEnvAst(config.body, (node, parent) => {
+    if (node.type !== 'Identifier' || node.name !== 'env') return;
+    assert(parent?.type === 'MemberExpression' && parent.object === node && !parent.computed
+      && /^[A-Z][A-Z0-9_]*$/.test(parent.property.name), 'staking environment reads must use literal property names');
+    reads.add(parent.property.name);
+  });
+  for (const name of ['ethStakingBoard', 'prepareEthStakingTransaction']) {
+    const fn = tree.body.find(n => n.type === 'ExportNamedDeclaration' && n.declaration?.id?.name === name)?.declaration;
+    assert(fn, 'both public staking consumers must remain present');
+    let environment = false, configured = false, declaration;
+    walkEnvAst(fn.body, node => {
+      if (node.type !== 'VariableDeclarator') return;
+      const value = node.init;
+      if (node.id.name === 'env' && value?.type === 'LogicalExpression' && value.operator === '??') {
+        declaration = node;
+        environment = value.left.type === 'MemberExpression' && !value.left.computed
+          && value.left.object.name === 'options' && value.left.property.name === 'env'
+          && value.right.type === 'MemberExpression' && !value.right.computed
+          && value.right.object.name === 'process' && value.right.property.name === 'env';
+      }
+      if (node.id.name === 'cfg' && value?.type === 'CallExpression' && value.callee.name === 'config')
+        configured = value.arguments[0]?.name === 'env';
+    });
+    assert(environment && configured, 'staking production caller must use the real default environment');
+    assertEnvNamesUnchanged(fn.body, new Set(['env']), name+' environment', new Set([declaration]));
+  }
+  return [...reads];
+}
 const used = new Set();
 // preflight.js is the classifier, not a consumer — it only ever reads the `env` object it is
 // handed, and its prose mentions `process.env.X` generically, which the scanner would take literally
@@ -200,6 +235,10 @@ for (const f of walkSrc('src', { exclude: ['src/preflight.js'] }))
   for (const m of fs.readFileSync(f, 'utf8').matchAll(/process\.env\.([A-Z_0-9]+)/g)) used.add(m[1]);
 for (const key of injectedLiquidityEnvReads(fs.readFileSync('src/liquiditykeeper.js', 'utf8'),
   fs.readFileSync('src/liquidityautomation.js', 'utf8'))) used.add(key);
+const stakingEnvSource = fs.readFileSync('src/ethstaking.js', 'utf8');
+for (const key of injectedEthStakingEnvReads(stakingEnvSource)) used.add(key);
+assert(injectedEthStakingEnvReads(stakingEnvSource.replace('env.ETH_STAKING_UI_ENABLED', 'env.NEW_UNCLASSIFIED_STAKING')).includes('NEW_UNCLASSIFIED_STAKING'));
+assert.throws(() => injectedEthStakingEnvReads(stakingEnvSource.replace('env.ETH_STAKING_UI_ENABLED', 'env[dynamicKey]')), /literal property/);
 
 // This one switch is consumed by the classifier itself. Admit only a real read
 // from its unmodified process.env default, never the required-field declarations.

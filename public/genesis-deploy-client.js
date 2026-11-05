@@ -6,8 +6,8 @@ export const DEPLOYER = '0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e';
 export const SAFE = '0xbe225658718dcb3865902437887a11830e4a9b10';
 export const FACTORY = '0x4e59b44847b379578588920ca78fbf26c0b4956c';
 export const STORAGE_KEY = `omerta:genesis-deploy:4663:${DEPLOYER}`;
-// Set only after the owner-approved rewards vault address and runtime are verified.
-export const APPROVED_BTC_REWARDS = null;
+// Set only after the owner-approved native ETH collector and staking vault addresses and runtimes are verified.
+export const APPROVED_ETH_REWARDS = null;
 const ROLES = ['polFunding', 'reserveFunding', 'coordinator', 'hook', 'auction'];
 const DEPENDENCIES = {
   omr: '0x2e82f8c1cfd5172612b3af56088d7d68d920545d',
@@ -135,7 +135,7 @@ export async function sha256(value, cryptoApi = globalThis.crypto) {
   return [...new Uint8Array(digest)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
-export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date.now(), cryptoApi = globalThis.crypto, recoveryOnly = false, approvedRewards = APPROVED_BTC_REWARDS } = {}) {
+export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date.now(), cryptoApi = globalThis.crypto, recoveryOnly = false, approvedRewards = APPROVED_ETH_REWARDS } = {}) {
   check(SHA.test(expectedSha || '') && rawBytes.byteLength <= 4_194_304, 'Enter the reviewed packet SHA-256 and a bounded packet file.');
   const digest = await sha256(rawBytes, cryptoApi);
   check(digest === expectedSha.toLowerCase(), 'Packet bytes differ from the reviewed SHA-256.');
@@ -155,18 +155,21 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
   'The founder-approved allocation, proceeds or Safe custody differs.');
   check(approvedRewards && ADDRESS.test(approvedRewards.address || '') && !/^0x0{40}$/i.test(approvedRewards.address)
     && SHA.test(approvedRewards.sha256 || '') && !/^0{64}$/i.test(approvedRewards.sha256),
-    'The WBTC rewards vault must be approved before deployment.');
-  const approvedDependencies = { ...DEPENDENCIES, btcRewards: lower(approvedRewards.address) };
+    'The native ETH staking rewards vault must be approved before deployment.');
+  check(ADDRESS.test(approvedRewards.staking?.address || '') && !/^0x0{40}$/i.test(approvedRewards.staking.address)
+    && SHA.test(approvedRewards.staking.sha256 || '') && !/^0{64}$/i.test(approvedRewards.staking.sha256),
+    'The native ETH staking vault must have its own approved address and runtime before deployment.');
+  const approvedDependencies = { ...DEPENDENCIES, ethRewards: lower(approvedRewards.address), ethStaking: lower(approvedRewards.staking.address) };
   const hookPolicy = p.finalManifest.hookPolicy;
   const fixed = { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96 };
   const hookRecipients = ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', SAFE,
     '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments?.[0]?.predicted, p.deployments?.[1]?.predicted];
   check(hookPolicy && Object.keys(hookPolicy).length === Object.keys(fixed).length + 2
     && Object.entries(fixed).every(([key, value]) => hookPolicy[key] === value)
-    && lower(hookPolicy.rewardsRecipient) === approvedDependencies.btcRewards
+    && lower(hookPolicy.rewardsRecipient) === approvedDependencies.ethRewards
     && Array.isArray(hookPolicy.recipients) && hookPolicy.recipients.length === 5
     && hookPolicy.recipients.every((recipient, i) => lower(recipient) === lower(hookRecipients[i])),
-    'The 3.5% base plus 0.5% WBTC rewards, 0.5% maximum surge or reviewed recipients differ.');
+    'The 3.5% base plus 0.5% native ETH staking rewards, 0.5% maximum surge or reviewed recipients differ.');
   const clock = p.launchClock;
   check(clock && ['arbsys', 'block.number'].includes(clock.mode), 'The native launch clock is missing.');
   check(integer(clock.startBlock) < integer(clock.endBlock) && clock.claimBlock === clock.endBlock,
@@ -193,12 +196,13 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
     === predictCreateAddress(DEPLOYER, integer(p.deployments[index].nonce)), 'A CREATE deployment address differs from the reviewed EOA nonce.');
   verifyHookCreation(p);
   verifyOtherCreations(p);
-  check(Array.isArray(p.dependencyChecks) && p.dependencyChecks.length === 7, 'Seven production dependency checks are required.');
+  check(Array.isArray(p.dependencyChecks) && p.dependencyChecks.length === 8, 'Eight production dependency checks are required.');
   const names = new Set();
   for (const pin of p.dependencyChecks) {
     check(Object.hasOwn(approvedDependencies, pin.name) && !names.has(pin.name) && lower(pin.address) === approvedDependencies[pin.name]
       && SHA.test(pin.sha256 || '') && !/^0{64}$/.test(pin.sha256), 'A production dependency address or SHA-256 differs.');
-    if (pin.name === 'btcRewards') check(pin.sha256.toLowerCase() === approvedRewards.sha256.toLowerCase(), 'The WBTC rewards vault runtime differs from its approved identity.');
+    if (pin.name === 'ethRewards') check(pin.sha256.toLowerCase() === approvedRewards.sha256.toLowerCase(), 'The native ETH collector runtime differs from its approved identity.');
+    if (pin.name === 'ethStaking') check(pin.sha256.toLowerCase() === approvedRewards.staking.sha256.toLowerCase(), 'The native ETH staking runtime differs from its approved identity.');
     names.add(pin.name);
   }
   check(Array.isArray(p.auxiliaryRuntimeChecks) && p.auxiliaryRuntimeChecks.length === 2,
@@ -225,7 +229,7 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
     === p.auxiliaryRuntimeChecks.find(pin => pin.name === 'scheduleStore').sha256.toLowerCase(),
     'The schedule-store SHA-256 differs from the exact reviewed schedule runtime.');
   check(new Set([...p.dependencyChecks, ...Object.values(p.runtimeChecks), ...p.auxiliaryRuntimeChecks]
-    .map(pin => lower(pin.address))).size === 14, 'Production, deployment and internal runtime addresses collide.');
+    .map(pin => lower(pin.address))).size === 15, 'Production, deployment and internal runtime addresses collide.');
   const snapshot = structuredClone(p);
   const freeze = x => { if (x && typeof x === 'object') { Object.values(x).forEach(freeze); Object.freeze(x); } };
   freeze(snapshot);
@@ -235,11 +239,11 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
 export class GenesisDeploymentClient {
   constructor({ provider, storage = globalThis.localStorage, locks = globalThis.navigator?.locks,
     cryptoApi = globalThis.crypto, now = () => Date.now(), readTimeoutMs = 12_000, status = () => {},
-    confirm = async text => globalThis.confirm(text), approvedRewards = APPROVED_BTC_REWARDS } = {}) {
+    confirm = async text => globalThis.confirm(text), approvedRewards = APPROVED_ETH_REWARDS } = {}) {
     this.provider = provider; this.storage = storage; this.locks = locks; this.crypto = cryptoApi;
     this.now = now; this.readTimeoutMs = readTimeoutMs; this.status = status; this.inFlight = false; this.loaded = null;
     this.confirm = confirm;
-    this.approvedRewards = approvedRewards && Object.freeze({ ...approvedRewards });
+    this.approvedRewards = approvedRewards && Object.freeze({ ...approvedRewards, staking: Object.freeze({ ...approvedRewards.staking }) });
     this.snapshotRequest = genesisSnapshotRequest(args => this.provider.request(args));
   }
   state() {
@@ -289,7 +293,7 @@ export class GenesisDeploymentClient {
   async restrictedManagerAt(block) {
     const recipients = this.loaded.packet.finalManifest.hookPolicy.recipients;
     const expected = [
-      ['revenuePolicyId()', byteHex(keccak_256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS')))],
+      ['revenuePolicyId()', byteHex(keccak_256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS')))],
       ['TRADE_FEE_BPS()', `0x${abiWord(400)}`], ['omr()', `0x${abiAddress(DEPENDENCIES.omr)}`],
       ['rewardsRecipient()', `0x${abiAddress(this.loaded.packet.finalManifest.hookPolicy.rewardsRecipient)}`],
       ...['developerRecipient()', 'rwaRecipient()', 'communityRecipient()', 'polRecipient()']
@@ -301,8 +305,26 @@ export class GenesisDeploymentClient {
         const value = await this.rpc('eth_call', [{ to: DEPENDENCIES.poolManager, data }, block]);
         check(HASH.test(value || '') && lower(value) === lower(word), 'Restricted manager policy mismatch.');
       }));
+      const collector = this.approvedRewards.address, vault = this.approvedRewards.staking.address;
+      const collectorCode = await this.rpc('eth_getCode', [collector, block]), vaultCode = await this.rpc('eth_getCode', [vault, block]);
+      check(await sha256(bytes(collectorCode), this.crypto) === this.approvedRewards.sha256.toLowerCase()
+        && await sha256(bytes(vaultCode), this.crypto) === this.approvedRewards.staking.sha256.toLowerCase(), 'Native ETH runtimes changed.');
+      const nativeChecks = [
+        [collector, 'safe()', '0x'+abiAddress(SAFE)], [collector, 'omr()', '0x'+abiAddress(DEPENDENCIES.omr)],
+        [collector, 'manager()', '0x'+abiAddress(DEPENDENCIES.poolManager)], [collector, 'rewardVault()', '0x'+abiAddress(vault)],
+        [collector, 'rewardVaultRuntimeHash()', keccakHex(vaultCode)],
+        [vault, 'omr()', '0x'+abiAddress(DEPENDENCIES.omr)], [vault, 'owner()', '0x'+abiAddress(SAFE)],
+        [vault, 'governanceSafe()', '0x'+abiAddress(SAFE)], [vault, 'distributor()', '0x'+abiAddress(collector)],
+        [vault, 'distributorRuntimeHash()', keccakHex(collectorCode)],
+        [vault, 'EPOCH_DURATION()', '0x'+abiWord(2592000)], [vault, 'LOCK_DURATION()', '0x'+abiWord(2592000)],
+      ];
+      for (const [to, signature, expectedWord] of nativeChecks) {
+        const data = byteHex(keccak_256(new TextEncoder().encode(signature))).slice(0, 10);
+        const value = await this.rpc('eth_call', [{ to, data }, block]);
+        check(HASH.test(value || '') && lower(value) === lower(expectedWord), 'Native ETH collector/vault binding differs.');
+      }
     } catch {
-      throw Error('Production deployment requires the reviewed restricted manager with fixed 5% revenue and exact recipients.');
+      throw Error('Production deployment requires the reviewed restricted manager with fixed 3.5% base plus 0.5% ETH staking allocation and exact recipients.');
     }
   }
   deadline() {

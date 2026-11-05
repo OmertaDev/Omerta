@@ -20,7 +20,7 @@ contract GameCustodyManagerFixture {
     uint16 public constant TRADE_FEE_BPS = 400;
     constructor(address token) { omr = token; }
     function revenuePolicyId() external pure returns (bytes32) {
-        return keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
+        return keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS");
     }
 }
 

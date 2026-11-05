@@ -52,7 +52,7 @@ const bindings = {
     poolKey: { currency0: A(0), currency1: base.external.omr.address, fee: base.hook.poolFee, tickSpacing: base.hook.tickSpacing, hooks: addresses.hook } },
   hook: { poolManager: base.external.poolManager.address, omr: base.external.omr.address, authorized: addresses.coordinator, poolFee: base.hook.poolFee,
     tickSpacing: base.hook.tickSpacing, epochDuration: base.hook.epochDuration, surgeFullTicks: base.hook.surgeFullTicks, openingBlocks: 0, openingBuyBps: 0, openingMaxBuyQuote: 0,
-    managerCollectsRevenue: true, BASE_SELL_BPS: 350, REWARDS_BPS: 50, rewardsRecipient: base.external.btcRewards.address, MAX_SURGE_BPS: 50, recipients: [...base.roles.hookRecipients, addresses.polFunding, addresses.reserveFunding] },
+    managerCollectsRevenue: true, BASE_SELL_BPS: 350, REWARDS_BPS: 50, rewardsRecipient: base.external.ethRewards.address, MAX_SURGE_BPS: 50, recipients: [...base.roles.hookRecipients, addresses.polFunding, addresses.reserveFunding] },
   auction: { token: base.external.omr.address, characterNft: base.external.characterNft.address, launchGate: addresses.coordinator, fundsRecipient: addresses.coordinator,
     tokensRecipient: base.roles.safe, currency: A(0), validationHook: addresses.validator, totalSupply: base.auction.totalSupply, minimumRaiseWei: base.auction.requiredCurrencyRaised,
     startBlock: base.auction.startBlock, endBlock: base.auction.endBlock, claimBlock: base.auction.claimBlock, floorPrice: base.auction.floorPrice, tickSpacing: base.auction.tickSpacing,
@@ -82,12 +82,19 @@ function fixture(options = {}) {
     readContract: async ({ address, functionName, blockNumber }) => { requests.push({ address, blockNumber });
       if (address.toLowerCase() === base.external.poolManager.address.toLowerCase()) {
         if (options.standardManager) throw Error('unknown selector');
-        const manager = { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS')), TRADE_FEE_BPS: options.badManagerFee ? 401 : 400,
+        const manager = { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS')), TRADE_FEE_BPS: options.badManagerFee ? 401 : 400,
           omr: base.external.omr.address, developerRecipient: base.roles.hookRecipients[0], rwaRecipient: base.roles.hookRecipients[1],
-          communityRecipient: base.roles.hookRecipients[2], polRecipient: options.badManagerRecipient ? A(333) : plan.addresses.polFunding, rewardsRecipient: options.badRewardsRecipient ? A(334) : base.external.btcRewards.address };
+          communityRecipient: base.roles.hookRecipients[2], polRecipient: options.badManagerRecipient ? A(333) : plan.addresses.polFunding, rewardsRecipient: options.badRewardsRecipient ? A(334) : base.external.ethRewards.address };
         assert(Object.hasOwn(manager, functionName)); return manager[functionName];
       }
-      if (address.toLowerCase() === base.external.btcRewards.address.toLowerCase()) return functionName === 'safe' ? (options.badRewardsSafe ? A(335) : base.roles.safe) : base.external.omr.address;
+      if (address.toLowerCase() === base.external.ethRewards.address.toLowerCase()) return ({
+        safe: options.badRewardsSafe ? A(335) : base.roles.safe, omr: base.external.omr.address, manager: base.external.poolManager.address,
+        rewardVault: base.external.ethStaking.address, rewardVaultRuntimeHash: base.external.ethStaking.runtimeHash,
+        omrRuntimeHash: base.external.omr.runtimeHash, managerRuntimeHash: base.external.poolManager.runtimeHash })[functionName];
+      if (address.toLowerCase() === base.external.ethStaking.address.toLowerCase()) return ({
+        owner: base.roles.safe, governanceSafe: base.roles.safe, omr: base.external.omr.address,
+        distributor: base.external.ethRewards.address, distributorRuntimeHash: base.external.ethRewards.runtimeHash,
+        EPOCH_DURATION: 2592000n, LOCK_DURATION: 2592000n })[functionName];
       const values = { totalSupply: options.supplyDrift ? 100000000n * E + 1n : 100000000n * E, balanceOf: 100000000n * E, decimals: 18,
         minter: A(0), sellTaxBps: 0n, ammPairs: false, poolManager: base.external.poolManager.address, permit2: base.external.permit2.address,
         getOwners: owners, getThreshold: options.badThreshold ? 1n : 2n, arbBlockNumber: 1000n };
@@ -190,4 +197,4 @@ for (const options of [{ standardManager: true }, { badManagerFee: true }, { bad
 }
 console.log('Standard-manager production readiness and mismatched fixed revenue policies rejected PASS');
 
-await assert.rejects(() => verifyGenesisAuctionPreflight(fixture({ badRewardsSafe: true })), /WBTC rewards vault Safe/);
+await assert.rejects(() => verifyGenesisAuctionPreflight(fixture({ badRewardsSafe: true })), /native ETH staking rewards vault Safe/);

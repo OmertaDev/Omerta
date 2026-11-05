@@ -1,0 +1,1043 @@
+{
+  "reviewDateLocal": "2026-11-04 America/New_York",
+  "recordedAt": "2026-11-05T00:57:23.049Z",
+  "phase": "Scoped implementation and agent review; before deployment or activation",
+  "baseRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
+  "implementationRevision": "83ba8baac52d64614a2f4b82a7b230db1e16c80f",
+  "finalCodeRevision": "8f716e05269d079b98aa74f9a47a16e376d03873",
+  "recordedHead": "4d2f1c9ddc01fe2e0be68979093ec04e179e358e",
+  "scopeLimit": "Changed-source and direct-boundary evidence only; prior full hosted npm/native PostgreSQL acceptance is not transferred.",
+  "sourceFiles": [
+    {
+      "file": ".env.example",
+      "bytes": 6800,
+      "sha256Git": "9a3de49b698282da120ff42e17ae3bb6add65132951c6c5b7a4b8325dc96d811",
+      "gitBlob": "0d859b6315a2c27d3c266a70b13da17042cdedcf",
+      "currentRawSha256": "9a3de49b698282da120ff42e17ae3bb6add65132951c6c5b7a4b8325dc96d811"
+    },
+    {
+      "file": ".github/workflows/forge.yml",
+      "bytes": 12684,
+      "sha256Git": "e97eb70c6e22fc816815f425afc1a5408e42aac7b98e0393f2f4ed3249eadfb4",
+      "gitBlob": "5b9f629f53efc96da3991572d49b52d332c48ab0",
+      "currentRawSha256": "870e4215edc26116689089ecad0df897bb2c1ebad0088a0b99cf219c72f3cdc5"
+    },
+    {
+      "file": "CHAIN-AUDIT-PACKET-O1.md",
+      "bytes": 43057,
+      "sha256Git": "dc0a9e179b237c50c88d1e16b751e1d3768c3f4762caf74c3177dc4d0ec036e1",
+      "gitBlob": "340f52babf2e6e0e785ca30c04b833db73252b13",
+      "currentRawSha256": "918b5b4b2d2a04d25e0bfcaa7c34229722d89dd22796ce492bc614225355b088"
+    },
+    {
+      "file": "SPEC.md",
+      "bytes": 57077,
+      "sha256Git": "340e751577f51984438b2f4c1bc015686ca54bc6586b36aa951c1dd49d48a8d5",
+      "gitBlob": "ee71757387f53d06e5fb16a10f7274a71d46af7d",
+      "currentRawSha256": "248b2246bd17e6adf2b1cb1316cacc1854f668a7ee991b76c09633b4725c2be0"
+    },
+    {
+      "file": "docs/WIKI.md",
+      "bytes": 228889,
+      "sha256Git": "0c2df5e1cca30a8b76d398615cbacee337b61e1c490e67ca2ee20107d3ca4860",
+      "gitBlob": "9e3297663879f99f6f913c428459dd82887157f1",
+      "currentRawSha256": "0c2df5e1cca30a8b76d398615cbacee337b61e1c490e67ca2ee20107d3ca4860"
+    },
+    {
+      "file": "omerta-contracts/docs/market-v2/DESIGN.md",
+      "bytes": 26623,
+      "sha256Git": "aa721042fefff7e7888acac12de96926a85ddddb1da8836330222d4e6986839d",
+      "gitBlob": "fdcf4d3f5aa5ceb411401020f404d2f2e09e79d2",
+      "currentRawSha256": "aa721042fefff7e7888acac12de96926a85ddddb1da8836330222d4e6986839d"
+    },
+    {
+      "file": "omerta-contracts/docs/market-v2/RESTRICTED-BOOTSTRAP.md",
+      "bytes": 15750,
+      "sha256Git": "fc6c218dcb5dabe46c1d242cebd054fe862ae368c2db90d832d512d0a82bc388",
+      "gitBlob": "f794040d396af4e62d873e0f6413189ef3ddfde1",
+      "currentRawSha256": "fc6c218dcb5dabe46c1d242cebd054fe862ae368c2db90d832d512d0a82bc388"
+    },
+    {
+      "file": "omerta-contracts/src/market-v2/OmertaEthRewardsV2.sol",
+      "bytes": 15448,
+      "sha256Git": "b4b916bab1d87c491718df3c278da70dcad9ccc852253ddaa92b283a60087b62",
+      "gitBlob": "fd620e0247f679b80816292cd22360e6d8958d74",
+      "currentRawSha256": "b4b916bab1d87c491718df3c278da70dcad9ccc852253ddaa92b283a60087b62"
+    },
+    {
+      "file": "omerta-contracts/src/market-v2/OmertaEthStakingV2.sol",
+      "bytes": 18168,
+      "sha256Git": "b6f791a3e4634dc1a58baab198b460312d763df1bd17f045e4887b43cc319f74",
+      "gitBlob": "d6a3efd1542cc1ee5de1d7736f9b0d4624cb5fb1",
+      "currentRawSha256": "b6f791a3e4634dc1a58baab198b460312d763df1bd17f045e4887b43cc319f74"
+    },
+    {
+      "file": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+      "bytes": 23056,
+      "sha256Git": "e63aec4054854d1928a04eb5779c291a4e2bcaa0b548b800b33b94c33425b28a",
+      "gitBlob": "b35cc27e803040d2ab5bb278360a4fdff38baf63",
+      "currentRawSha256": "e63aec4054854d1928a04eb5779c291a4e2bcaa0b548b800b33b94c33425b28a"
+    },
+    {
+      "file": "omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol",
+      "bytes": 15991,
+      "sha256Git": "5577f5e76e8220ccca086d7a73881d546ddf1153bda3dc41ccd506c97b49cdb7",
+      "gitBlob": "4a1bda86b119ff5abeb48a21225c2de052ad112e",
+      "currentRawSha256": "60731f3f786c9a6c3238b144e11e0bf26ceb165891cd5441a9e81038b1b08f44"
+    },
+    {
+      "file": "omerta-contracts/src/market-v2/OmertaWbtcConverterV2.sol",
+      "deleted": true
+    },
+    {
+      "file": "omerta-contracts/src/market-v2/OmertaWbtcRewardsV2.sol",
+      "deleted": true
+    },
+    {
+      "file": "omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol",
+      "bytes": 27819,
+      "sha256Git": "3373a354aa4fc40e6ae02dc6e7c80460578ed1fba5de3beed72754293763fb8e",
+      "gitBlob": "fcc4ae4928522912563839b915beafc807956e57",
+      "currentRawSha256": "a185e13053c5d170487bf674b756595e5ff97234bf96e1c3e45221a60905da87"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/EthRewardsIntegrationV2.t.sol",
+      "bytes": 14097,
+      "sha256Git": "80020a32db1cb63e38f045debaaaac4acc320a3f42e95aeb9d20244c7bb4e748",
+      "gitBlob": "a474bb083571c210dbe76873e18271a6f6978565",
+      "currentRawSha256": "80020a32db1cb63e38f045debaaaac4acc320a3f42e95aeb9d20244c7bb4e748"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/EthRewardsV2.t.sol",
+      "bytes": 20770,
+      "sha256Git": "ba402f07d361a59d84c28fbb2198d3a3eeef86578fbeab317bc8e8e0a25e370c",
+      "gitBlob": "f12f3c06b90fe45e4adaa4e270c8af5affae9b49",
+      "currentRawSha256": "ba402f07d361a59d84c28fbb2198d3a3eeef86578fbeab317bc8e8e0a25e370c"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/EthStakingV2.t.sol",
+      "bytes": 33464,
+      "sha256Git": "c9a823f5278b9ba1f40de6721eedb1cda9bdaaaf0bbdd87c1b4ffecfda843b43",
+      "gitBlob": "fb294d41bbf1b9add4c5def1160bb16701768b9c",
+      "currentRawSha256": "c9a823f5278b9ba1f40de6721eedb1cda9bdaaaf0bbdd87c1b4ffecfda843b43"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/FamilyDistributorV2.t.sol",
+      "bytes": 12363,
+      "sha256Git": "8b25cc0a70237ce0d7db25d8364e74665fe549c5d33d5c1fa8f308c9f67b9921",
+      "gitBlob": "e37c2ac4c33f9b76241e895f07bed24589f78444",
+      "currentRawSha256": "84143fc09b81232f9dddf451c778f5c65339af97ca3c3b8f2abc40f9048396dd"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/GameCustodyV2.t.sol",
+      "bytes": 10258,
+      "sha256Git": "7ba4e5beb4d0bfa5fbd5aef94702d5cb539b3f4e35757523407624037ea1547d",
+      "gitBlob": "6170d9479f9c9a6e58c85a44d35092816e327664",
+      "currentRawSha256": "05a9baa5d4740f8b45a6cb70fedc3d05d70d8b0a10001a2cb28c9e253d0ac98e"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/InventoryBondV2.t.sol",
+      "bytes": 14128,
+      "sha256Git": "cb99ca935162bc1d4925114c7757cf509954889988eaa6a3d4387bd883863a21",
+      "gitBlob": "50cd839172d4c49ed8e2e5d4715de4d4abd7a336",
+      "currentRawSha256": "e0dab484efb1491706716949f2db76e5490a62046dc074c7b817d1a608714cd4"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/RestrictedOMRV2.t.sol",
+      "bytes": 33618,
+      "sha256Git": "ebaa5c84ebd9d89379033024a0e82a4dc0438c2bf5a7e6509d1ab36458c2dc5c",
+      "gitBlob": "f2924f9bdbd99cf22d551a5d1a0063d9182b43af",
+      "currentRawSha256": "8ec21b5e47193f73fe964df0edcd89a23dd0cb98ba586bc68bc9d087b2ddd68a"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/RestrictedPoolManagerV2.t.sol",
+      "bytes": 40584,
+      "sha256Git": "aa40eaa9222933c51dbd4480d52a03ee6b34cb62482c4b7632f5db25cb88acc3",
+      "gitBlob": "26f1fdeb497cfc176134a756f8086ddb1360a5f6",
+      "currentRawSha256": "d4a3ea55c63866cc56b11dcb73dc4625f73adb5584a5209efcf8919a96059ebc"
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/WbtcConverterV2.t.sol",
+      "deleted": true
+    },
+    {
+      "file": "omerta-contracts/test/market-v2/WbtcRewardsV2.t.sol",
+      "deleted": true
+    },
+    {
+      "file": "package.json",
+      "bytes": 59988,
+      "sha256Git": "03d651ae9bcf799d7ce58b18deb2e465b6fd6aebbe5614b3c85e7b4827beb70d",
+      "gitBlob": "b3ee3abfa59e5e1155abe9e1b6949b5c0fa4cc60",
+      "currentRawSha256": "e78cfce1ad039d59834fa800cf06f44546b53a73ea907bce863b5ec39a15ecf6"
+    },
+    {
+      "file": "public/defi.html",
+      "bytes": 83971,
+      "sha256Git": "bed20d7697d39a5d2ce600f136df8f1840bcc013465db504d397ce9967538d7e",
+      "gitBlob": "5939cd9874366a70a3169514c75e52d9749584a3",
+      "currentRawSha256": "bed20d7697d39a5d2ce600f136df8f1840bcc013465db504d397ce9967538d7e"
+    },
+    {
+      "file": "public/eth-staking.js",
+      "bytes": 13662,
+      "sha256Git": "1e06327f1195d33b44b0add5d1a31156aae94fca6b108e7890c17f7a34264733",
+      "gitBlob": "9059a0f12c0b4214d926d89811c252a9893e9e94",
+      "currentRawSha256": "1e06327f1195d33b44b0add5d1a31156aae94fca6b108e7890c17f7a34264733"
+    },
+    {
+      "file": "public/fee-flows.html",
+      "bytes": 38779,
+      "sha256Git": "1d97e7cc9422714b3e2fcb2400789b05281bec65d8c3baf9a5397e1df03a7091",
+      "gitBlob": "6324fd8ef684b6e3ea1c3ade532b7211d35a8a0b",
+      "currentRawSha256": "1d97e7cc9422714b3e2fcb2400789b05281bec65d8c3baf9a5397e1df03a7091"
+    },
+    {
+      "file": "public/genesis-deploy-artifact.js",
+      "bytes": 149535,
+      "sha256Git": "357e7d0c50538e0662356d17e2eb2325fc00a73198905048c59a0d6574730920",
+      "gitBlob": "feb1bb736ce1824cccbd7758343b16265731380d",
+      "currentRawSha256": "357e7d0c50538e0662356d17e2eb2325fc00a73198905048c59a0d6574730920"
+    },
+    {
+      "file": "public/genesis-deploy-client.js",
+      "bytes": 37739,
+      "sha256Git": "e7ec082a630554358b4b6a70888e9bd1281b0de99735ab0e7950c8cdbb879ad8",
+      "gitBlob": "6290e5c20937966a8e4e32f8439c9190ceede478",
+      "currentRawSha256": "e7ec082a630554358b4b6a70888e9bd1281b0de99735ab0e7950c8cdbb879ad8"
+    },
+    {
+      "file": "public/index.html",
+      "bytes": 1399294,
+      "sha256Git": "7b34f7da38f822c8e5588d6f24a31353696b06435cedcee0978a9c7d9b6a5b9a",
+      "gitBlob": "bcde5d244454d3572fd644c1e38268d4a4ddc2a0",
+      "currentRawSha256": "7b34f7da38f822c8e5588d6f24a31353696b06435cedcee0978a9c7d9b6a5b9a"
+    },
+    {
+      "file": "public/wiki.html",
+      "bytes": 246323,
+      "sha256Git": "4a491d75fde3b1c687b904afd5f8d55f2a0ebec491f8b25909df8c0db8280068",
+      "gitBlob": "67ce1cb8f4beba71e441059ce934c2d44551e688",
+      "currentRawSha256": "4a491d75fde3b1c687b904afd5f8d55f2a0ebec491f8b25909df8c0db8280068"
+    },
+    {
+      "file": "src/data/market-v2-eth-abis.json",
+      "bytes": 184989,
+      "sha256Git": "92486df4310b1357114f44b959ac015a3e74e0f0307eb675d1d61e9c44700d82",
+      "gitBlob": "c580fa48933d4ba26f4af585f2510e1a3ef3b1f0",
+      "currentRawSha256": "92486df4310b1357114f44b959ac015a3e74e0f0307eb675d1d61e9c44700d82"
+    },
+    {
+      "file": "src/ethrewardsworker.js",
+      "bytes": 5054,
+      "sha256Git": "715e53bb4fcff992947d19312b63e9c942131566a476f1325ff30ceb26f54df8",
+      "gitBlob": "109b69354f19e4d5288a609a7ffb5d2ed09b70b2",
+      "currentRawSha256": "715e53bb4fcff992947d19312b63e9c942131566a476f1325ff30ceb26f54df8"
+    },
+    {
+      "file": "src/ethstaking.js",
+      "bytes": 15461,
+      "sha256Git": "7740bb5c022a8f0f40dfe2a99063dfd998d076bf38d2716d7a3c057ef3e1d764",
+      "gitBlob": "d4265e103748a0c5ea66e3eb16fc94659c4f6d62",
+      "currentRawSha256": "7740bb5c022a8f0f40dfe2a99063dfd998d076bf38d2716d7a3c057ef3e1d764"
+    },
+    {
+      "file": "src/genesisauction.js",
+      "bytes": 29363,
+      "sha256Git": "b29b7760a29cc3f7ddebbc615d21b38861fc8c3b70da6d957f6e77400a77e701",
+      "gitBlob": "d13c9f06b5d6c682aa88d626db29c4dabb140680",
+      "currentRawSha256": "b29b7760a29cc3f7ddebbc615d21b38861fc8c3b70da6d957f6e77400a77e701"
+    },
+    {
+      "file": "src/marketv2abi.js",
+      "bytes": 4443,
+      "sha256Git": "21318015f11fddd27763ef447a557944c90273cf9cbb767d6af8f01a0ec80efe",
+      "gitBlob": "9c54a0446a6d8c2aa7565417ee0f6db1751d68d9",
+      "currentRawSha256": "21318015f11fddd27763ef447a557944c90273cf9cbb767d6af8f01a0ec80efe"
+    },
+    {
+      "file": "src/marketv2keeper.js",
+      "bytes": 28734,
+      "sha256Git": "b660b2552658acbc1722b4f74a00ca98c5d0ad84e59d284e3d5e3ee6d68c79f3",
+      "gitBlob": "97a261367565c8bf84ce983e97ac3d1d306d6916",
+      "currentRawSha256": "a9c83d0e455981ba3f104f3f7c045b0b51c0f69747c3e99046b47501bacb8da8"
+    },
+    {
+      "file": "src/preflight.js",
+      "bytes": 40299,
+      "sha256Git": "519547750876ef4af87309e46b28fd1069295d35ed3a6bf8da70038f46c59d93",
+      "gitBlob": "257051806c4da66a823f69490edf244697528d82",
+      "currentRawSha256": "519547750876ef4af87309e46b28fd1069295d35ed3a6bf8da70038f46c59d93"
+    },
+    {
+      "file": "src/routes/ethstaking.js",
+      "bytes": 358,
+      "sha256Git": "4430a71e2344506da9036f621a97d61b45c052ded250811ab5c26b346c82d9e8",
+      "gitBlob": "a811cab9c79c6f4d0699e3ff2cccc9d3a3149775",
+      "currentRawSha256": "4430a71e2344506da9036f621a97d61b45c052ded250811ab5c26b346c82d9e8"
+    },
+    {
+      "file": "src/server.js",
+      "bytes": 303937,
+      "sha256Git": "db9d48ebc027ec66ad3f7d856fa537ee69b4907813e326eb12f432dcc1f5c99a",
+      "gitBlob": "426168d4229ad1f4107179717e9ebb89176dbf8f",
+      "currentRawSha256": "87b4a90e2915022b82201e5cc5a4e6f3c20e207629f997f6f3cf2b57eb9db02c"
+    },
+    {
+      "file": "src/worker.js",
+      "bytes": 86474,
+      "sha256Git": "f1fb6fb9bd0330d807e5c93f61acdb7dc81813728a159bffe133ea909bb60438",
+      "gitBlob": "9804c4e022e58c6ba9edc760580b1a3dce982707",
+      "currentRawSha256": "5240869a5d5389e42b7bea59be8652fb28215713c6476bef6637bc5c9cc80cc9"
+    },
+    {
+      "file": "test/current-copy.js",
+      "bytes": 9914,
+      "sha256Git": "d497fb2de9b05a2ee8e4430220e5341309a259e4564937041f54131a28757b41",
+      "gitBlob": "9647af415524593846cd221a6fab68b30e250ab7",
+      "currentRawSha256": "ca4f5fa664d9a7b129a07584fdf1e9c850f7e46c4aa7a8830f2094a3e019d47c"
+    },
+    {
+      "file": "test/economy-hardening-source-compatibility.js",
+      "bytes": 97300,
+      "sha256Git": "b6e592d3d3ca0a9060cb1c47718b61652681763bedf747b009de1acd0fc0a0c0",
+      "gitBlob": "7b64a25b77d318985874face3a847c2e79601b05",
+      "currentRawSha256": "cc148e89685114a7771cc544bb3dbf849769c4cad704b446e1e15c1d49c4cad0"
+    },
+    {
+      "file": "test/eth-rewards-readiness.js",
+      "bytes": 12427,
+      "sha256Git": "686f84dec78a81bf96588edaf27bbe4be529cbc1435525efb2450219d042d25c",
+      "gitBlob": "784e7f951ba06f1656ce8c44accf48028c79e995",
+      "currentRawSha256": "686f84dec78a81bf96588edaf27bbe4be529cbc1435525efb2450219d042d25c"
+    },
+    {
+      "file": "test/eth-rewards-upkeep.js",
+      "bytes": 8636,
+      "sha256Git": "c803c66e6551d30ec7ea513f6ec2ffe7663e29a9469965b23e3c61de21eff588",
+      "gitBlob": "4b0b3739e52ad48e5a9df0843e1e5a0d047a46d3",
+      "currentRawSha256": "c803c66e6551d30ec7ea513f6ec2ffe7663e29a9469965b23e3c61de21eff588"
+    },
+    {
+      "file": "test/eth-staking.js",
+      "bytes": 23241,
+      "sha256Git": "316d25c1a10c15575da00633f658f75ce8068c4c458e2e7d85b81fb869da39b0",
+      "gitBlob": "e9e6b5c32fa305b845ba30a522a19ffb94960e08",
+      "currentRawSha256": "316d25c1a10c15575da00633f658f75ce8068c4c458e2e7d85b81fb869da39b0"
+    },
+    {
+      "file": "test/ethrewardsworker.js",
+      "bytes": 7147,
+      "sha256Git": "0fa520046b25c2266a5e12a5c9a2f7457ff4eaa5d8d5a2f1ace8ebd9dda653f6",
+      "gitBlob": "0c5b890044620ea7bc953e3112ddc51992802489",
+      "currentRawSha256": "0fa520046b25c2266a5e12a5c9a2f7457ff4eaa5d8d5a2f1ace8ebd9dda653f6"
+    },
+    {
+      "file": "test/fixtures/eth-readiness-candidate.json",
+      "bytes": 12884,
+      "sha256Git": "15bb11b677e9ea9b8c65b3dfee7e55438a717233aa15aea081d3e18ffc6e4794",
+      "gitBlob": "24ddec99f4848d084555c533e6429f9caea4c392",
+      "currentRawSha256": "bc93713de1b5b158298e00a1d9cf623a0d27928314014b2e1804de1c6bf62aab"
+    },
+    {
+      "file": "test/fixtures/eth-upkeep-disabled.json",
+      "bytes": 2347,
+      "sha256Git": "5677f334637691f4d0378237cb6766d0ba35c3953b70e35192efc86131e3f637",
+      "gitBlob": "447770828902eeff58653a218994054e79a60634",
+      "currentRawSha256": "5677f334637691f4d0378237cb6766d0ba35c3953b70e35192efc86131e3f637"
+    },
+    {
+      "file": "test/genesis-auction-deployment-plan.js",
+      "bytes": 19301,
+      "sha256Git": "7e9bd5e94b93efd4f44bd8a6d1e7fb8e33f1ec5daa37288fa8264b8b6a7bfaf7",
+      "gitBlob": "f3fda8a9ab46af5ebfed55662a071d30f903aafc",
+      "currentRawSha256": "7e9bd5e94b93efd4f44bd8a6d1e7fb8e33f1ec5daa37288fa8264b8b6a7bfaf7"
+    },
+    {
+      "file": "test/genesis-auction-operations.js",
+      "bytes": 15112,
+      "sha256Git": "242d530fc6cd765380c2446075120d5660b217c9d1603b481a6cdd5e713261a3",
+      "gitBlob": "4fe4ae45eaa2021ca8abb7c5ec4286a593650ae6",
+      "currentRawSha256": "242d530fc6cd765380c2446075120d5660b217c9d1603b481a6cdd5e713261a3"
+    },
+    {
+      "file": "test/genesis-auction-preflight.js",
+      "bytes": 19241,
+      "sha256Git": "e583aa7f6eed18049251c9e1b4b7dcad531eaff68b8fad967e0d0529e751f846",
+      "gitBlob": "617b60ae29e679c8f8e9f522463674d080c68a20",
+      "currentRawSha256": "e583aa7f6eed18049251c9e1b4b7dcad531eaff68b8fad967e0d0529e751f846"
+    },
+    {
+      "file": "test/genesis-deploy-client.js",
+      "bytes": 32553,
+      "sha256Git": "e22cddeca9708a133cbc7d37d2ec55404fa74fdd381f22bcb4ea2a7114739b20",
+      "gitBlob": "509058aea894b42d6c4610823b258344f29cf79a",
+      "currentRawSha256": "e22cddeca9708a133cbc7d37d2ec55404fa74fdd381f22bcb4ea2a7114739b20"
+    },
+    {
+      "file": "test/genesis-fee-readiness-source-transfer.js",
+      "bytes": 15718,
+      "sha256Git": "1da407bd442b5ebb17a9cfcd1f7f932f0eb775768f4dbcd385b7574b4a878bbc",
+      "gitBlob": "513e166782e0bff5492876f0528593459427cedc",
+      "currentRawSha256": "2c5a7c8f5722780521eb6a4b95fb62215eaf8cb7db0304f150bddb87515f41c4"
+    },
+    {
+      "file": "test/genesisauction.js",
+      "bytes": 26819,
+      "sha256Git": "c96585d45e9d56b0d1ab97a9fb1535889b8f66db3ccf79aecb78117085263aa6",
+      "gitBlob": "1b166460584ce127031b4b77cd7cb030d515dd26",
+      "currentRawSha256": "c96585d45e9d56b0d1ab97a9fb1535889b8f66db3ccf79aecb78117085263aa6"
+    },
+    {
+      "file": "test/lib/enterprise-ux-native-guard.js",
+      "bytes": 12781,
+      "sha256Git": "48e4f86b78d71922084df6d170ab02e36da0a624ae78183b534cc851bb2585ca",
+      "gitBlob": "4046ea1427d2c022b0dbce965e721da15daeab97",
+      "currentRawSha256": "1fce30573a9559183c3b3fc6924886a315a9e6bf7e0d8cfb4db173bbd54b83a8"
+    },
+    {
+      "file": "test/market-v2-deployment-plan.js",
+      "bytes": 27593,
+      "sha256Git": "3c4e5d4f3a8c6364dc6270b52f7dd03a4c7dc68c09f049710a1a127d13807e78",
+      "gitBlob": "a7e4b6b93c4fc76f79651e357aa2256e41fc424e",
+      "currentRawSha256": "3c4e5d4f3a8c6364dc6270b52f7dd03a4c7dc68c09f049710a1a127d13807e78"
+    },
+    {
+      "file": "test/marketv2abi.js",
+      "bytes": 8384,
+      "sha256Git": "2c974a2e2b3cd365433c2d3955b579d74cbbea9eefab7216ce130806f44c5fcb",
+      "gitBlob": "eac468f145572e0f88ddd06981e3be53efe29fbf",
+      "currentRawSha256": "2c974a2e2b3cd365433c2d3955b579d74cbbea9eefab7216ce130806f44c5fcb"
+    },
+    {
+      "file": "test/marketv2keeper-eth.js",
+      "bytes": 11041,
+      "sha256Git": "9a45badf370d3898cb3b2532f4910d1fee082d6c03363e84c2b68d92d5c251f9",
+      "gitBlob": "d08ffdcafd5cfa60a250cfd991e11c87a16265f8",
+      "currentRawSha256": "9a45badf370d3898cb3b2532f4910d1fee082d6c03363e84c2b68d92d5c251f9"
+    },
+    {
+      "file": "test/marketv2keeper.js",
+      "bytes": 15554,
+      "sha256Git": "741e5bb2f49044ed46f780986ac9988ef0a6afdfea20b153762ad52817ddff06",
+      "gitBlob": "46f80142e487a822812b3c3f8346e80012135f52",
+      "currentRawSha256": "ee9aa00e637e3ce3049814d91ee81884eb5f0166029f5dce3b6d1bfd7a97f6e3"
+    },
+    {
+      "file": "test/native-eth-source-transfer.js",
+      "bytes": 5623,
+      "sha256Git": "9475ba47d6a654aa55491de9d9ca50a721d089ed4e6095eb287566db3121b8d3",
+      "gitBlob": "4c65d96678e9af2f0c9cf6e3b1bc3c659c5f6bc0",
+      "currentRawSha256": "9475ba47d6a654aa55491de9d9ca50a721d089ed4e6095eb287566db3121b8d3"
+    },
+    {
+      "file": "test/player-genesis-deployment.js",
+      "bytes": 36302,
+      "sha256Git": "e70e1c2bf150554d94feb5a5039aa2aa9cd3e45ca42a2ef6e7ca29fd47b5d748",
+      "gitBlob": "f0e776cb551a717920a696cf57ec773d539f6b9f",
+      "currentRawSha256": "e70e1c2bf150554d94feb5a5039aa2aa9cd3e45ca42a2ef6e7ca29fd47b5d748"
+    },
+    {
+      "file": "test/preflight.js",
+      "bytes": 42187,
+      "sha256Git": "75ffcd694850c2beb0fa37ca63dd67741e8e7735c1f46d6680af6779818208d9",
+      "gitBlob": "0f0291c82aa060d845e8c24f72594d9292e4e4db",
+      "currentRawSha256": "75ffcd694850c2beb0fa37ca63dd67741e8e7735c1f46d6680af6779818208d9"
+    },
+    {
+      "file": "test/wbtc-reward-epoch.js",
+      "deleted": true
+    },
+    {
+      "file": "tools/build-genesis-deploy-trust.js",
+      "bytes": 7458,
+      "sha256Git": "78da2fd99337cac130a8726eed34e9984d6840ba9ac91e92ddf9822a88e321cc",
+      "gitBlob": "91d03c5e5ed9ea30b6d276ba627b3408f3714370",
+      "currentRawSha256": "d0451998f893533e9dfb8a5709b4f30d9f79aa4131140326dbd46a68d2dc9ca2"
+    },
+    {
+      "file": "tools/economy-hardening-source-transfer.js",
+      "bytes": 951901,
+      "sha256Git": "49feced87ed91a9bbf37ac1a144a35db330c49e99bf2cd6eacb3909feb13b68e",
+      "gitBlob": "54d28587c981071b3373df61779a2592a5792e48",
+      "currentRawSha256": "1ea5980e9230e1149d96978856937a82f15cd56139e36e382b1d9b1c4684f528"
+    },
+    {
+      "file": "tools/enterprise-native-ux-inputs.js",
+      "bytes": 473658,
+      "sha256Git": "0dab4c290f8700707ca373ca686ed5b3be87383e846d1522d1ff5e02efca8edc",
+      "gitBlob": "4f4b19cdf24939f3c72aa8e352fdacc5c9d1fa66",
+      "currentRawSha256": "505ddf9d3373e87347e726125415f446ad1bbbbe4639fc8d1d25ab1893b6921c"
+    },
+    {
+      "file": "tools/eth-rewards-abi-pack.js",
+      "bytes": 5277,
+      "sha256Git": "107f5ea501718d2fdef5d94996ed637e458551e9a06df6c146fd2d16833f29cc",
+      "gitBlob": "a8e3aa95581b4b74e2359b659216ee85eecb2eb6",
+      "currentRawSha256": "107f5ea501718d2fdef5d94996ed637e458551e9a06df6c146fd2d16833f29cc"
+    },
+    {
+      "file": "tools/eth-rewards-keeper-plan.js",
+      "bytes": 4129,
+      "sha256Git": "7add6310d397c0cda62224773e4bc1f898d1a106502f931c09af817855a2136a",
+      "gitBlob": "857fecffef0afcbeb29517c8450b497fffbadf73",
+      "currentRawSha256": "7add6310d397c0cda62224773e4bc1f898d1a106502f931c09af817855a2136a"
+    },
+    {
+      "file": "tools/eth-rewards-readiness.js",
+      "bytes": 18065,
+      "sha256Git": "6b0a6b89d215657e22d681ba00024283bc207dd1d11885ddaa6de05f3803d23e",
+      "gitBlob": "09e164aa1c8382ce084d009bcb781e20f0042b37",
+      "currentRawSha256": "6b0a6b89d215657e22d681ba00024283bc207dd1d11885ddaa6de05f3803d23e"
+    },
+    {
+      "file": "tools/generate-native-eth-source-transfer.js",
+      "bytes": 3829,
+      "sha256Git": "8479ac64cb7fcd87160b462cdea41e8a75adf5df9fc5b57afdb97e0aecdb6199",
+      "gitBlob": "de64d6cf7dbc31ebacc537ccebe12705e1402e3a",
+      "currentRawSha256": "8479ac64cb7fcd87160b462cdea41e8a75adf5df9fc5b57afdb97e0aecdb6199"
+    },
+    {
+      "file": "tools/genesis-auction-deployment-plan.js",
+      "bytes": 33489,
+      "sha256Git": "8795d16d31aa6a2120d2e87f47d1c1e60dd1bf418da3ab54086fc3fa0db35df1",
+      "gitBlob": "9ef496d697638b70d6e507a54d93db28b635d455",
+      "currentRawSha256": "b0b19b6f3f314275741edf8088187fff34f6c80cdbe8d316c54f37caf6da46e4"
+    },
+    {
+      "file": "tools/genesis-auction-preflight.js",
+      "bytes": 22260,
+      "sha256Git": "9288a39bd2e1d85d47caa84b7af14fa513030682b246856b93c8098350561246",
+      "gitBlob": "5ca5cdd16387e9642cd0a8610ec7a71132811866",
+      "currentRawSha256": "73618492db74365a7331077b658005db6236aaa3370ee82eb09a7594f692d44b"
+    },
+    {
+      "file": "tools/genesis-fee-readiness-source-transfer.js",
+      "bytes": 45781,
+      "sha256Git": "ee095fbd7dc2f1f5147581ef866294633ac831494d7af656d39020eb0ca6d591",
+      "gitBlob": "b06de1c26172cbf4ef1ab9f3302627b363330fa8",
+      "currentRawSha256": "257fee6cce7efee3466df00341d45ee5c64058f9a85f1f8b6a3991cfbf8b4e4d"
+    },
+    {
+      "file": "tools/market-fee-copy-source-transfer.js",
+      "bytes": 52244,
+      "sha256Git": "c68ab063466637512b4e437c36aa638c9c0fac438e532576ecf0e2a8affdaf9f",
+      "gitBlob": "d543ebab61c272bab0ccc63148098f4780134182",
+      "currentRawSha256": "b82842bcb81cd398090edb3b65fc67869ee688d314775ec0e572361fa51ec7b0"
+    },
+    {
+      "file": "tools/market-v2-deployment-plan.js",
+      "bytes": 50115,
+      "sha256Git": "9ff049e8cf56b6acceca5da1100964454183a4c21aa84f4f3d97383c56f5297a",
+      "gitBlob": "1b0149211fd1e131d28bee768d87d43d1e3c0eab",
+      "currentRawSha256": "12467bde93265ebbfed4c4de8e716360b0c2585e30a8b280bc07b36bed4cb128"
+    },
+    {
+      "file": "tools/native-eth-source-transfer.js",
+      "bytes": 5803,
+      "sha256Git": "73f00e4620cbfdf4ca3ed54ef36c2e952a7b5408fe1a99b0c1e0993dd775b1e5",
+      "gitBlob": "02eba87af7aeab166ce8bd16c3853cb4b4e134f8",
+      "currentRawSha256": "73f00e4620cbfdf4ca3ed54ef36c2e952a7b5408fe1a99b0c1e0993dd775b1e5"
+    },
+    {
+      "file": "tools/native-eth-source-transfer.json",
+      "bytes": 8392,
+      "sha256Git": "8e4802fef590c36123d4416cb1cad54afb49db2f02713f94b8604ff238ef0dc4",
+      "gitBlob": "350b95935740fe2db8865f9e7ffd140aec61f820",
+      "currentRawSha256": "8e4802fef590c36123d4416cb1cad54afb49db2f02713f94b8604ff238ef0dc4"
+    },
+    {
+      "file": "tools/player-genesis-deployment-plan.js",
+      "bytes": 34781,
+      "sha256Git": "9d2afa2664bf2ad55f48aa41377957e887ad97e96ccbe5c477d7c88e9fb5fd88",
+      "gitBlob": "64f0a0435b9de2057363f471ac1cfa0ffa3767a4",
+      "currentRawSha256": "9d2afa2664bf2ad55f48aa41377957e887ad97e96ccbe5c477d7c88e9fb5fd88"
+    },
+    {
+      "file": "tools/player-genesis-preflight.js",
+      "bytes": 19461,
+      "sha256Git": "e4321f6272f919afcf49e941f6c95c509613f160ede9489ef9ba7dcd2f17897a",
+      "gitBlob": "b893d33b5b7506dd4c93ba961e21b8374e4088c2",
+      "currentRawSha256": "e4321f6272f919afcf49e941f6c95c509613f160ede9489ef9ba7dcd2f17897a"
+    },
+    {
+      "file": "tools/wbtc-reward-epoch.js",
+      "deleted": true
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "OmertaEthStakingV2",
+      "file": "omerta-contracts/out/OmertaEthStakingV2.sol/OmertaEthStakingV2.json",
+      "bytes": 393986,
+      "sha256": "1ce0b55185619527ad72c189e86e6ba66efd9a8cbf0bd087ab35989919158e17",
+      "compiler": "0.8.38+commit.1835d247",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIr": true,
+      "creationTemplateHash": "0x32451f948ef7427f53ad6ba766694c96760826041063bbeb842320ea3e6c28fe",
+      "runtimeTemplateHash": "0xcb49f28d5d7fcb6a736fdf75d2d5bad6301d71f24daa0204782f8027a7e5e3c6",
+      "runtimeBytes": 9956
+    },
+    {
+      "name": "OmertaEthRewardsV2",
+      "file": "omerta-contracts/out/OmertaEthRewardsV2.sol/OmertaEthRewardsV2.json",
+      "bytes": 447660,
+      "sha256": "7f12445195acb9c513e061bca35e63c85e080726790271254929a75e0f5149ec",
+      "compiler": "0.8.38+commit.1835d247",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIr": true,
+      "creationTemplateHash": "0x52c2a09f58232e96ffa48336cb83cd7ff76c31c8827152019b0b1e7a926eea2c",
+      "runtimeTemplateHash": "0x2f74774e04ba9ee6f4e04a23352d3ba4d325cd7a3c1b64de6d5e761d0b5f8014",
+      "runtimeBytes": 10881
+    },
+    {
+      "name": "OmertaRestrictedOMRV2",
+      "file": "omerta-contracts/out/OmertaRestrictedOMRV2.sol/OmertaRestrictedOMRV2.json",
+      "bytes": 470181,
+      "sha256": "b9c20c64ad38bf667c7841136e5d76537074170cc2d7467ee10b89acfb7fd424",
+      "compiler": "0.8.38+commit.1835d247",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIr": true,
+      "creationTemplateHash": "0xf9ff2804c508cc1f1886108c60386b7da4ea4cb6609346f31c024e942d0df676",
+      "runtimeTemplateHash": "0x9210607d3e5b4210b05d0ca7e2649f4ca59e3b4131e1ee6ed4c1b6473c109b6e",
+      "runtimeBytes": 10261
+    },
+    {
+      "name": "OmertaPoolManagerV2",
+      "file": "omerta-contracts/out/OmertaPoolManagerV2.sol/OmertaPoolManagerV2.json",
+      "bytes": 1009079,
+      "sha256": "78df238f432d8175772f54d11ea09e28e9ba1ec70d1437b5d056dfc8baab6a92",
+      "compiler": "0.8.38+commit.1835d247",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIr": false,
+      "creationTemplateHash": "0xcb02246500846fddb415ccc0b0816a99421f10c09f739e460527c65a6c7b4a86",
+      "runtimeTemplateHash": "0x1bd4a62de577faa7e7c72d18b28eac610b8e2c939c93d4301a716952f78560bb",
+      "runtimeBytes": 24536
+    },
+    {
+      "name": "OmertaHookV2",
+      "file": "omerta-contracts/out/OmertaHookV2.sol/OmertaHookV2.json",
+      "bytes": 491953,
+      "sha256": "73ed5271a7805b7fe2199db28849ef65cd76cbbd846856706eb0edfd7fbdfd94",
+      "compiler": "0.8.38+commit.1835d247",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIr": true,
+      "creationTemplateHash": "0x9c7eb50b660ac8dcb3708b3b06cd93919e3b7107b9ae7fc11e501dbfccd11614",
+      "runtimeTemplateHash": "0xf3b51548f044d3c6446a31dffb1961d6230127da0563bceaba2cd8cbcffda376",
+      "runtimeBytes": 12153
+    },
+    {
+      "name": "PositionManager",
+      "file": "omerta-contracts/out/PositionManager.sol/PositionManager.json",
+      "bytes": 692252,
+      "sha256": "98b20807d353c6aa43906df59d2ed84d04677f3382a0c99965277cc2a918c11e",
+      "compiler": "0.8.38+commit.1835d247",
+      "optimizer": {
+        "enabled": true,
+        "runs": 800
+      },
+      "evmVersion": "cancun",
+      "viaIr": true,
+      "creationTemplateHash": "0xb391c6c2c80e197b1e947897a695577d03b5134b1bdfd1ea5e836da125971dbf",
+      "runtimeTemplateHash": "0x436a9649e6cf0b9c8d602004c6951e2bde4101081caa4aa7272d7988c1d51d84",
+      "runtimeBytes": 19838
+    }
+  ],
+  "toolchain": {
+    "forge": "1.7.1 / 4072e48705af9d93e3c0f6e29e93b5e9a40caed8",
+    "solc": "0.8.38+commit.1835d247",
+    "optimizerRuns": 800,
+    "evm": "cancun",
+    "marketPeripheryViaIr": true,
+    "managerViaIr": false,
+    "dependencies": "Exact source identities in COMPILATION.json and bundled ABI metadata; test/tool fetch versions remain repository-pinned. No Git tag identity is inferred from the mounted dependency directories."
+  },
+  "checks": {
+    "forge": {
+      "exit": 0,
+      "passed": 1714,
+      "failed": 0,
+      "skipped": [
+        "PlayerGenesisRobinhoodForkTest.setUp",
+        "AuctionGenesisRobinhoodForkTest.setUp"
+      ],
+      "suites": 126,
+      "fuzzSeed": "0x5",
+      "fuzzRuns": 512,
+      "fuzzProperties": 83,
+      "invariantRuns": 64,
+      "invariantDepth": 64,
+      "invariantProperties": 23,
+      "command": "FOUNDRY_INVARIANT_RUNS=64 FOUNDRY_INVARIANT_DEPTH=64 forge test --root omerta-contracts --fuzz-runs 512 --fuzz-seed 0x5 -vv"
+    },
+    "nativeJs": {
+      "command": "npm run test:eth-rewards",
+      "exit": 0,
+      "rpc": "synthetic",
+      "productionBroadcast": false
+    },
+    "postgresKeeper": {
+      "command": "node test/keepertransactions.js",
+      "exit": 0,
+      "checks": 18,
+      "postgres": "18.4",
+      "endpoint": "isolated loopback-only test cluster, stopped",
+      "productionDatabase": false
+    },
+    "playerPreflight": {
+      "command": "node test/player-genesis-deployment.js --preflight-only",
+      "exit": 0,
+      "finalChecks": 4,
+      "unchangedOfflinePrefixPassed": 9,
+      "fullDefaultCommandPassed": false,
+      "details": "auditcontext/PLAYER-GENESIS-FINAL-VALIDATION.json"
+    },
+    "docs": {
+      "command": "node test/docs.js",
+      "exit": 0
+    },
+    "gates": {
+      "command": "node test/gates.js",
+      "exit": 0
+    },
+    "abiAndBrowserTemplates": {
+      "commands": [
+        "node tools/eth-rewards-abi-pack.js --check",
+        "node tools/build-genesis-deploy-trust.js --check"
+      ],
+      "exit": 0
+    },
+    "historicalSourceBridge": {
+      "command": "node test/native-eth-source-transfer.js",
+      "exit": 0,
+      "domains": 12,
+      "positives": 72,
+      "refusals": 271,
+      "sourceOnly": true,
+      "native": false,
+      "runtime": false
+    },
+    "currentNativeInputControls": {
+      "command": "node test/enterprise-native-guard.js",
+      "exit": 0,
+      "nativeExecution": false,
+      "postgresImportsOrConnections": 0
+    },
+    "static": {
+      "slither": "0.11.6",
+      "cryticCompile": "0.4.2",
+      "detectors": 102,
+      "rawDiagnostics": 124,
+      "nativeReviewed": 32,
+      "routerReviewed": 8,
+      "dependencyDiagnostics": 84,
+      "dependencyObservationsOutsideFullVendorReview": 67,
+      "findingsExit": 4294967295,
+      "jsonSuccess": true,
+      "confirmedInScopeCriticalHighMediumFromDiagnostics": 0,
+      "cleanScanClaim": false
+    }
+  },
+  "actualNativeAdmission": {
+    "authoredRevision": "8f716e05269d079b98aa74f9a47a16e376d03873",
+    "inputs": 1741,
+    "replacements": 103,
+    "legacyAdditionReplacements": 4,
+    "additions": 98,
+    "metadata": {
+      "file": "tools/enterprise-native-ux-inputs.js",
+      "bytes": 473658,
+      "sha256": "505ddf9d3373e87347e726125415f446ad1bbbbe4639fc8d1d25ab1893b6921c"
+    },
+    "priorNativeExecutionResultsTransferred": false
+  },
+  "correctedFailures": [
+    {
+      "id": "ETH-TEST-001",
+      "kind": "test fixture",
+      "issue": "Deadline sampled before VM time jump",
+      "fix": "VM timestamp read; production guard unchanged",
+      "retest": "isolated integration and full Forge pass"
+    },
+    {
+      "id": "ETH-PREFLIGHT-001",
+      "kind": "fail-closed tooling availability",
+      "issue": "15-second clock constant removed with obsolete helper block",
+      "fix": "original constant restored",
+      "retest": "final clock entry/completion refusal checks pass"
+    },
+    {
+      "id": "ETH-PREFLIGHT-002",
+      "kind": "fail-closed tooling availability",
+      "issue": "Return object referenced removed external pool locals",
+      "fix": "native fixed-route evidence with predicted/prepared status",
+      "retest": "final predeploy/prepared checks and mutation controls pass"
+    },
+    {
+      "id": "ETH-GUARD-001",
+      "kind": "current input census",
+      "issue": "New source inputs exceeded old exact literal",
+      "fix": "1741/103/4/98 exact census; all legacy guards and workloads retained",
+      "retest": "final current-native control pass"
+    },
+    {
+      "id": "ETH-STATIC-TOOL-001",
+      "kind": "tool adapter failure",
+      "issue": "Foundry split build-info output absent",
+      "fix": "fresh native standard-JSON analysis with byte-exact target templates",
+      "retest": "Slither JSON success; diagnostics individually retained and triaged"
+    }
+  ],
+  "remainingGates": [
+    "Full current hosted npm/native PostgreSQL/browser cohorts and combined-main acceptance are separate; no prior results transfer.",
+    "Existing blocked Daybreak family-fee combined backend/EVM/wallet review remains blocked.",
+    "Five-step browser deployment remains fail-closed pending an accepted native dependency sequence.",
+    "Actual addresses, Safe authorities, budgets, liquidity/executable depth, custody reconciliation, deployment and activation remain separate."
+  ],
+  "productionActions": {
+    "merge": false,
+    "deployment": false,
+    "databaseWrites": false,
+    "signing": false,
+    "funding": false,
+    "activation": false
+  },
+  "evidence": [
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/.gitattributes",
+      "bytes": 69,
+      "sha256": "08cd4c4361007561811780682715409e757b3619c69dc82d95b2088104e1914d"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/ARITHMETIC-CROSSCHECK.json",
+      "bytes": 693,
+      "sha256": "1797bcdaa3e506f5ace0bc4d9ef53230348a825ae607fba0769f7bc0301d053b"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/COMPILATION.json",
+      "bytes": 15258,
+      "sha256": "961db196200bfe0480616eed05b4a79d12ec40d01e762b15ed1a0e9b18a7748e"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/DETECTORS.json",
+      "bytes": 25148,
+      "sha256": "4c46c9562f4eb57c1ac5a196cceec7b2a288d50c467ba0288295a888ce1993be"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/docs-final.log",
+      "bytes": 4507,
+      "sha256": "e4a963e41781da2f2a959cb1c6e67faf7773811fb056f3820ca721c61f4d0a70"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-focused-initial.log",
+      "bytes": 36717,
+      "sha256": "21b5ebd882ff4f5cf0e9eac893b40a29e8368d9287017c38309bf847a1a17547"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-forge-full.log",
+      "bytes": 287110,
+      "sha256": "8ed02950bccc19b5a740e15481cba1b944d18e19a83e3fb43dce2ef12277a190"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-integration-retest.log",
+      "bytes": 26035,
+      "sha256": "cfc10847753ea14a69bc2301ba3d64c398cdd7f43de606dd9cc321df6db803e8"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-native-js-final.log",
+      "bytes": 6272,
+      "sha256": "b99ecf7635a2655d353d9e4110829d3b791889dda105c4763301a2a5962b342a"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-player-genesis-missing-clock.log",
+      "bytes": 1929,
+      "sha256": "962a7ea966d04fdfff55650976d89e29452520c07fb9c44c6de7d85fc2645b1a"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-player-genesis-missing-reward-route.log",
+      "bytes": 1719,
+      "sha256": "6afcb6d523e749269ae2b4a7f3d73532d90cffad043bc55410b6e7d9aaabb80f"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-player-genesis-preflight-focused.log",
+      "bytes": 424,
+      "sha256": "f5a2ec16a1d1a3140fe0266022b71b67483e51b94efbb9a1928a15161f24beca"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-source-bridge-sealed.log",
+      "bytes": 181,
+      "sha256": "d6b0d05c54c65f63e430a138ad00ad61dcbaa1d92b47814cbf0a92758d185137"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/eth-test-gates.log",
+      "bytes": 4452,
+      "sha256": "d8bde9e073e0735fcc56e1faf1043e7100e74ebd83885cc0005e20491e429446"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/keeper-postgres.log",
+      "bytes": 1846,
+      "sha256": "9a0f0cfdfaf44f28ec96506732356826cb4a8d9dc3cbd4d7be35ec32a7139bc3"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/NATIVE-CENSUS-DELTA.json",
+      "bytes": 2369,
+      "sha256": "e9e1ee154c9b7d920f1ab32eea1846783974833e9cc054dd179876ab608b33ad"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/native-input-controls-final.log",
+      "bytes": 656,
+      "sha256": "8090c072a1948496041ab00692bfc48412dc7c825e5ed69596fdf66c93e75a51"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/native-input-old-census-failure.log",
+      "bytes": 843,
+      "sha256": "8e1ab47810ec2309d382790a0c7c35f8e9dec8bc296bd34e16d0803d85e6cb2c"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/native-input-seal-final.log",
+      "bytes": 242,
+      "sha256": "4232c4f5baa05bf67e25f6f0797d18453697399a342af13544effbf81c2ccf6e"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/PLAYER-GENESIS-FINAL-VALIDATION.json",
+      "bytes": 2376,
+      "sha256": "7b99fbec442e399788bd252ef0e031e5cdc5e25e5cd5de03a36149ca63ff6955"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/POSITION-MANAGER-DONOR-REFUSAL.json",
+      "bytes": 20456,
+      "sha256": "61f5ed616c2020e14ec0a3c4ac3726d4bbdcfccdcf0fe69953b5e302aee23d5c"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/POSITION-MANAGER-FRESH-VALIDATION.json",
+      "bytes": 20044,
+      "sha256": "b558888b0c2489644bfe2310ed67a17f6a2018c12b3ed2cbc107d1b07de16b2b"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/raw-static.zip",
+      "bytes": 673508,
+      "sha256": "52364f4ebb04689e56129eb47987c5abbb932c586b425d4f89e9278298b9c42a"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/evidence/slither-build-info-adapter-failure.log",
+      "bytes": 2674,
+      "sha256": "d4faa831c083d9b3f347a02d007c840cb46b00949fe6b38157efca3703018039"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/REVIEW.md",
+      "bytes": 8412,
+      "sha256": "e2ab172197e20cc3e15470d2da440f7a404bb5da9ea148373c0e5ecd151cc2da"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/SLITHER-RUN.json",
+      "bytes": 796,
+      "sha256": "7d07114deee514db27ed3cc123af8dbd893c9d11c014ae898d3c29aa34eed571"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/STATIC-REVIEW.md",
+      "bytes": 2550,
+      "sha256": "2f0d43e582895ae41ef9f6f054037fa7f4e64c8d77d731c14747f2cede8a3982"
+    },
+    {
+      "file": "omerta-contracts/audits/2026-11-04-native-eth-pr310/STATIC-TRIAGE.json",
+      "bytes": 266042,
+      "sha256": "98462a398c6196bb011745bb449787ffacefef04a7f09cb5f12b3059c6995237"
+    },
+    {
+      "file": "auditcontext/.gitattributes",
+      "bytes": 71,
+      "sha256": "039bed0c6d2712fe6cb21bcc8e2ed5671297bc69598995bcc0567e6fbe11b927"
+    },
+    {
+      "file": "auditcontext/docs-final.log",
+      "bytes": 4507,
+      "sha256": "e4a963e41781da2f2a959cb1c6e67faf7773811fb056f3820ca721c61f4d0a70"
+    },
+    {
+      "file": "auditcontext/DOSSIER-contracts.md",
+      "bytes": 7295,
+      "sha256": "b120b22983c2adf33c8b97cb5d529ac314678481231cb66415134c8c9a6b684a"
+    },
+    {
+      "file": "auditcontext/DOSSIER-periphery.md",
+      "bytes": 4909,
+      "sha256": "f7da2b7451e18c8ebad4eb49b7f72565d020059a9071e044cb5a2d07172eebb4"
+    },
+    {
+      "file": "auditcontext/eth-player-genesis-attempt1.log",
+      "bytes": 1929,
+      "sha256": "962a7ea966d04fdfff55650976d89e29452520c07fb9c44c6de7d85fc2645b1a"
+    },
+    {
+      "file": "auditcontext/eth-player-genesis-final.log",
+      "bytes": 502,
+      "sha256": "27905115bf36fe97e4b2b8337fbaf2adde46b94fa8c269258aa8c1e80e50ee9c"
+    },
+    {
+      "file": "auditcontext/eth-player-genesis-full-repeat-stopped.log",
+      "bytes": 502,
+      "sha256": "27905115bf36fe97e4b2b8337fbaf2adde46b94fa8c269258aa8c1e80e50ee9c"
+    },
+    {
+      "file": "auditcontext/eth-player-genesis-missing-clock.log",
+      "bytes": 1929,
+      "sha256": "962a7ea966d04fdfff55650976d89e29452520c07fb9c44c6de7d85fc2645b1a"
+    },
+    {
+      "file": "auditcontext/eth-player-genesis-missing-reward-route.log",
+      "bytes": 1719,
+      "sha256": "6afcb6d523e749269ae2b4a7f3d73532d90cffad043bc55410b6e7d9aaabb80f"
+    },
+    {
+      "file": "auditcontext/eth-player-genesis-preflight-focused.log",
+      "bytes": 424,
+      "sha256": "f5a2ec16a1d1a3140fe0266022b71b67483e51b94efbb9a1928a15161f24beca"
+    },
+    {
+      "file": "auditcontext/INDEPENDENT-ETH-PERIPHERY-REVIEW.md",
+      "bytes": 11009,
+      "sha256": "4899f1f1da00c661273f857bd47161cd822284396aef66bb7672377a3f8d863e"
+    },
+    {
+      "file": "auditcontext/INDEPENDENT-ETH-REVIEW.md",
+      "bytes": 14803,
+      "sha256": "6a32550f448a6e0588b8ce86fe1c5c1e42a6c9c40dd87341a19e7ea92071322b"
+    },
+    {
+      "file": "auditcontext/PLAYER-GENESIS-FINAL-VALIDATION.json",
+      "bytes": 2376,
+      "sha256": "7b99fbec442e399788bd252ef0e031e5cdc5e25e5cd5de03a36149ca63ff6955"
+    },
+    {
+      "file": "auditcontext/POSITION-MANAGER-DONOR-REFUSAL.json",
+      "bytes": 20456,
+      "sha256": "61f5ed616c2020e14ec0a3c4ac3726d4bbdcfccdcf0fe69953b5e302aee23d5c"
+    },
+    {
+      "file": "auditcontext/POSITION-MANAGER-FRESH-VALIDATION.json",
+      "bytes": 20044,
+      "sha256": "b558888b0c2489644bfe2310ed67a17f6a2018c12b3ed2cbc107d1b07de16b2b"
+    }
+  ],
+  "selfHashExcluded": true
+}

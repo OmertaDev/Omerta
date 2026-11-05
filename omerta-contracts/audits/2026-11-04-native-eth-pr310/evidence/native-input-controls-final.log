@@ -1,0 +1,3 @@
+{"phase":"UX_NATIVE_DIRECTOR_PROFILE_GUARDS","nativeExecution":false,"postgresImportsOrConnections":0,"refusals":38,"exactExistingCallerProfiles":["phase2","fresh","director"],"fullMetadataNotNullChecksRetained":true,"priorNativeResultsTransferred":false}
+{"phase":"CURRENT_UX_NATIVE_ADMISSION_GUARDS","status":"SEALED","refusals":40,"unchangedWorkloadCases":16,"originalGuardsUnchanged":true,"nativeExecution":false,"priorResultsTransferred":false}
+{"phase":"SOURCE_ONLY_ENTERPRISE_NATIVE_GUARDS","checks":366,"syntheticAdmissionFixturesOnly":true,"postgresImportsOrConnections":0,"nativeExecution":false,"sourceCaptureExecuted":false,"release":false}

@@ -524,7 +524,7 @@ contract RestrictedPoolManagerV2Test is Test {
         assertEq(revenueManager.rewardsRecipient(), rewardsRecipient);
         assertEq(
             revenueManager.revenuePolicyId(),
-            keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS")
+            keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS")
         );
         vm.recordLogs();
         _swap(noHookKey, true, -1 ether, Q96 / 2);

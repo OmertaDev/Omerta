@@ -1,3 +1,4 @@
+import { startEthRewardsWorker } from './ethrewardsworker.js';
 import { runManagementTeams } from './managementteamautonomy.js';
 import { runStrategyLaboratories } from './strategylaboratories.js';
 // §7.12 buyback worker. Every 12h the accumulated street tax buys $OMR through the
@@ -843,6 +844,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     finally { companyTicking = false; }
   };
   setInterval(guardedCompanyTick, 30000);
+  startEthRewardsWorker(pool);
   void guardedCompanyTick();
 
   // H1 operational health is its own fixed five-minute clock. JavaScript time chooses only when to

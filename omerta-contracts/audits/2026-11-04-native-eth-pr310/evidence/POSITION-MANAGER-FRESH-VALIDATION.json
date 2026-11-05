@@ -1,0 +1,349 @@
+{
+  "kind": "fresh isolated PositionManager artifact validation",
+  "artifactSha256": "98b20807d353c6aa43906df59d2ed84d04677f3382a0c99965277cc2a918c11e",
+  "compiler": "0.8.38+commit.1835d247",
+  "settings": {
+    "compilationTarget": {
+      "lib/v4-periphery/src/PositionManager.sol": "PositionManager"
+    },
+    "evmVersion": "cancun",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 800
+    },
+    "remappings": [
+      ":@openzeppelin/=lib/openzeppelin-contracts/",
+      ":@uniswap/v4-core/=lib/v4-core/",
+      ":@uniswap/v4-periphery/=lib/v4-periphery/",
+      ":forge-std/=lib/forge-std/src/",
+      ":openzeppelin-contracts/=lib/openzeppelin-contracts/",
+      ":permit2/=lib/permit2/",
+      ":solmate/=lib/v4-core/lib/solmate/",
+      ":v4-core/=lib/v4-core/src/",
+      ":v4-periphery/=lib/v4-periphery/src/"
+    ],
+    "viaIR": true
+  },
+  "sourceCount": 71,
+  "sources": {
+    "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+      "sha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c",
+      "compilerInputKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+    },
+    "lib/permit2/src/interfaces/IAllowanceTransfer.sol": {
+      "sha256": "5cf9ef1bb81dc1e226749781c7a6e57d031887d7809a031ea065ecac5ccb7999",
+      "compilerInputKeccak256": "0x37f0ac203b6ef605c9533e1a739477e8e9dcea90710b40e645a367f8a21ace29"
+    },
+    "lib/permit2/src/interfaces/IEIP712.sol": {
+      "sha256": "bc6bf21f3ef5efd8cf0be404885797ef40e93040fa7485ececedc22826a8541f",
+      "compilerInputKeccak256": "0xfdccf2b9639070803cd0e4198427fb0df3cc452ca59bd3b8a0d957a9a4254138"
+    },
+    "lib/permit2/src/interfaces/IERC1271.sol": {
+      "sha256": "0f477eae7a45541f9be08c824dbe3a267ce9fb9cfcd0f510543d2a91cddfef33",
+      "compilerInputKeccak256": "0x0a546b8535127fb4a49d36d5f306fd5a8bbe6125a1852f935b9bb85a04c1acef"
+    },
+    "lib/permit2/src/libraries/SignatureVerification.sol": {
+      "sha256": "6b1e5d31e221fa5ca815f131ebf7f89d7eac6b633dd3edec9d442d36eedafa91",
+      "compilerInputKeccak256": "0x99f437ffe99aa1ff7885aec8b971f48efac00c6ebc59c02eec78c9ca850a5e30"
+    },
+    "lib/v4-core/lib/solmate/src/tokens/ERC721.sol": {
+      "sha256": "2da0cca384448208e25d43eeb5953a237de0e6712942a07d0f2674e895b0d3d3",
+      "compilerInputKeccak256": "0x04af19f16f00ba65ae168d6d10da5210dc18da6bcec6974dccf984ba388aa22d"
+    },
+    "lib/v4-core/src/interfaces/IExtsload.sol": {
+      "sha256": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025",
+      "compilerInputKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+    },
+    "lib/v4-core/src/interfaces/IExttload.sol": {
+      "sha256": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e",
+      "compilerInputKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+    },
+    "lib/v4-core/src/interfaces/IHooks.sol": {
+      "sha256": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73",
+      "compilerInputKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+    },
+    "lib/v4-core/src/interfaces/IPoolManager.sol": {
+      "sha256": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c",
+      "compilerInputKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+    },
+    "lib/v4-core/src/interfaces/IProtocolFees.sol": {
+      "sha256": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654",
+      "compilerInputKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+    },
+    "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol": {
+      "sha256": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e",
+      "compilerInputKeccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+    },
+    "lib/v4-core/src/interfaces/external/IERC20Minimal.sol": {
+      "sha256": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282",
+      "compilerInputKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+    },
+    "lib/v4-core/src/interfaces/external/IERC6909Claims.sol": {
+      "sha256": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8",
+      "compilerInputKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+    },
+    "lib/v4-core/src/libraries/BitMath.sol": {
+      "sha256": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4",
+      "compilerInputKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+    },
+    "lib/v4-core/src/libraries/CurrencyReserves.sol": {
+      "sha256": "b38f1d3807d90bbccb865c0d96caf1ef92d6df9b69adbbe43b1d12e1241523c9",
+      "compilerInputKeccak256": "0x1576616129933fcdf3b684cea33cffd9c95e18fafbd2832a8c48ac3d8526d4c3"
+    },
+    "lib/v4-core/src/libraries/CustomRevert.sol": {
+      "sha256": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca",
+      "compilerInputKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+    },
+    "lib/v4-core/src/libraries/FixedPoint128.sol": {
+      "sha256": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb",
+      "compilerInputKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+    },
+    "lib/v4-core/src/libraries/FixedPoint96.sol": {
+      "sha256": "66ee26d4fb3ac639124bdfa27d3256d196970997fa127c09e9bf7154e30d4590",
+      "compilerInputKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741"
+    },
+    "lib/v4-core/src/libraries/FullMath.sol": {
+      "sha256": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3",
+      "compilerInputKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+    },
+    "lib/v4-core/src/libraries/LiquidityMath.sol": {
+      "sha256": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a",
+      "compilerInputKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+    },
+    "lib/v4-core/src/libraries/Lock.sol": {
+      "sha256": "29cd41a53de22514164e638e7bc965ccf4d9f34b455b43a1a15e06a8cb86e7f1",
+      "compilerInputKeccak256": "0x9338be4b5695f1da5f3d3f7a3eeaf7a356c1045458289586ac0cbe9cef77c6d5"
+    },
+    "lib/v4-core/src/libraries/NonzeroDeltaCount.sol": {
+      "sha256": "0ae35ca64da2527b4e1f7afa4ca10c4b65af952dc473c33b6663101e8d199f40",
+      "compilerInputKeccak256": "0x0666ebd5d3528d7d52c48538296367a4cff97a578cf13365c51983fae3219b87"
+    },
+    "lib/v4-core/src/libraries/Position.sol": {
+      "sha256": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb",
+      "compilerInputKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+    },
+    "lib/v4-core/src/libraries/SafeCast.sol": {
+      "sha256": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be",
+      "compilerInputKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+    },
+    "lib/v4-core/src/libraries/StateLibrary.sol": {
+      "sha256": "eebdbc1b6e431072ce5521b9e1b603d43831e3b6e062743e6665e070d5cf8a1a",
+      "compilerInputKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+    },
+    "lib/v4-core/src/libraries/TickMath.sol": {
+      "sha256": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b",
+      "compilerInputKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+    },
+    "lib/v4-core/src/libraries/TransientStateLibrary.sol": {
+      "sha256": "9835fca9df8b3f649def66835c5d7ee68de6a6cbe92bf255eb5d8b92a6a8d60e",
+      "compilerInputKeccak256": "0x7d1e0875747bd89b32c25f1a48da2766e5f4aff1f671ad5f3c0c07ebbbcb946a"
+    },
+    "lib/v4-core/src/types/BalanceDelta.sol": {
+      "sha256": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32",
+      "compilerInputKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+    },
+    "lib/v4-core/src/types/BeforeSwapDelta.sol": {
+      "sha256": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12",
+      "compilerInputKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+    },
+    "lib/v4-core/src/types/Currency.sol": {
+      "sha256": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3",
+      "compilerInputKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+    },
+    "lib/v4-core/src/types/PoolId.sol": {
+      "sha256": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f",
+      "compilerInputKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+    },
+    "lib/v4-core/src/types/PoolKey.sol": {
+      "sha256": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9",
+      "compilerInputKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+    },
+    "lib/v4-core/src/types/PoolOperation.sol": {
+      "sha256": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232",
+      "compilerInputKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+    },
+    "lib/v4-periphery/src/PositionManager.sol": {
+      "sha256": "2f51b2db2914116c212b39c2b971f2315522b36c349a4734333caae4d8424cc2",
+      "compilerInputKeccak256": "0xe6afa5cf291ebe885e3b6c8c5b26170c041141b815aee38e6b3804fed748d3c6"
+    },
+    "lib/v4-periphery/src/base/BaseActionsRouter.sol": {
+      "sha256": "7c6aab6af7eea956521542baf0b7d57a5487b3ffcf23cd23b85586205e466e97",
+      "compilerInputKeccak256": "0xc9ed11618c4d82c5b723841a7d8eaf61600118c593e01e9929a193ecdb1ad63a"
+    },
+    "lib/v4-periphery/src/base/DeltaResolver.sol": {
+      "sha256": "bff375b0c32f0ec28429d172ab8618758060d6b153d2a8ebf44cb117f601ef86",
+      "compilerInputKeccak256": "0x94a2da2be5c924df65a8e1e29f585bbe4c37777fedd43b45989c66d509a4a83c"
+    },
+    "lib/v4-periphery/src/base/EIP712_v4.sol": {
+      "sha256": "3df032f8194f0ba3c68d39d8a678d58a992ee38db0e3a7b54ee30cfc7f9f9901",
+      "compilerInputKeccak256": "0x151e85890822c1b0fe85ec3c021826cb42f615e2b9d6fcdd79019681a6ee5588"
+    },
+    "lib/v4-periphery/src/base/ERC721Permit_v4.sol": {
+      "sha256": "5388341c638be10736bbac7223d091c9817db073571ebd959dd944265c143f7d",
+      "compilerInputKeccak256": "0xb1c3d4cc1fa0c7f9562674917d9ffdd119a1ccdb3adca44b2832d5c91c068125"
+    },
+    "lib/v4-periphery/src/base/ImmutableState.sol": {
+      "sha256": "37301d3a6fa89ba0609f4be4d82d5bcec42d6085833a3991d40c2f2f15d7c7b6",
+      "compilerInputKeccak256": "0x1867c9fa2f9b4fa73bab0fcdc9d19ccef4eeac552273d8b84a170cd1cc90350a"
+    },
+    "lib/v4-periphery/src/base/Multicall_v4.sol": {
+      "sha256": "a9991c1a94bfb38ce6be9170886afee55e9b04304741b8f019f2e84f3c24cd4a",
+      "compilerInputKeccak256": "0x654c6e65bd9bbf12b2cc393f8523db04e85ec45e829200de3895709479d6d569"
+    },
+    "lib/v4-periphery/src/base/NativeWrapper.sol": {
+      "sha256": "7653d72b0f426c859b6b1d93a8f68fe58a82a528553899fef299ce0b712454ac",
+      "compilerInputKeccak256": "0xfb756bc69e401d621f615746d881cfef7e98f3f563775905a1eca79a074a35ca"
+    },
+    "lib/v4-periphery/src/base/Notifier.sol": {
+      "sha256": "7a1ad1a50e3c3258f8d981270a730a946217967c8b6683a586d48369953af2e3",
+      "compilerInputKeccak256": "0x5f2a29b2a528269643d026bf4698e6520eeb1e5fc773f9d5059b3e279a488bf6"
+    },
+    "lib/v4-periphery/src/base/Permit2Forwarder.sol": {
+      "sha256": "00c46786ee5ca70f0e8006c9ac853d26401f4edb8ef58cf7164c5c8c9ab355f5",
+      "compilerInputKeccak256": "0xcdf793e6732cdf0c386f89573384032314b0893bf208b3d75ac71d3002674a3b"
+    },
+    "lib/v4-periphery/src/base/PoolInitializer_v4.sol": {
+      "sha256": "64370facd16d3d03df1933cf647379564468f428093eae3240a728a8dbca23a1",
+      "compilerInputKeccak256": "0x068c85032e50ef6374958ff3e7dcc143527f669de1bbba831e552d033344a1e3"
+    },
+    "lib/v4-periphery/src/base/ReentrancyLock.sol": {
+      "sha256": "158d2a265c27522fdb763b94a37232465018e9cd4af759ee323a117a75e1bcfc",
+      "compilerInputKeccak256": "0x66dd19f8eb40b7a86afea0e5b1dcada6268041027b0dfc493b80ca1f66af217d"
+    },
+    "lib/v4-periphery/src/base/SafeCallback.sol": {
+      "sha256": "838865e1be6f90407bf179ba1d148269ccb2d16cd1bcaf16c2b8ecd55ce1f313",
+      "compilerInputKeccak256": "0xd78b583df1b9ee06d58e83b84fc9f08971389b34dd34bc13db072e0c13c710da"
+    },
+    "lib/v4-periphery/src/base/UnorderedNonce.sol": {
+      "sha256": "2266c8f365719a6681dcb675e45886f4f4a08054bfdc3d36154af150bff8452d",
+      "compilerInputKeccak256": "0x0ec175bf2213d75606ebb770227e8622ae9666fbde8ff2d1682d85890b81676e"
+    },
+    "lib/v4-periphery/src/interfaces/IEIP712_v4.sol": {
+      "sha256": "c7dd9bb343b0f079cae8c861fbe13711e659b1cf74104cbb4cc4536efa01891f",
+      "compilerInputKeccak256": "0xd7f7115476e307a0bfc32a0f0a0f5434e9e5ca62a6c5af1e18b75e48161bb408"
+    },
+    "lib/v4-periphery/src/interfaces/IERC721Permit_v4.sol": {
+      "sha256": "f6987dbe451d1207ccc1322cf89c81f4a3ad06b2229e8c3be6f5abbc529e1026",
+      "compilerInputKeccak256": "0x103adbba724ef536abc536fe8a4d7dc12880724c562109b69f2adce4a91fa017"
+    },
+    "lib/v4-periphery/src/interfaces/IImmutableState.sol": {
+      "sha256": "c1eda88405c19dc061b37a304558ee54210124c7563110ad67ffcc4ed24d34b9",
+      "compilerInputKeccak256": "0x36ab3100e87457ecf04887f4f540e34fd7f21d8e3b83880cb679239e60b7b06b"
+    },
+    "lib/v4-periphery/src/interfaces/IMsgSender.sol": {
+      "sha256": "0f17bcd8bbba1c702b4504140c3963320702bc1089d62122e065ae32fe9dda45",
+      "compilerInputKeccak256": "0xcc7d4e3f2fde34cf1ad9f05a8e43977e04d19624f71eb8a8c295feaf64b362a3"
+    },
+    "lib/v4-periphery/src/interfaces/IMulticall_v4.sol": {
+      "sha256": "5e3fedcaf5c711fb564caf43a7dd33ac6cc985157d1339ebb36651015490245c",
+      "compilerInputKeccak256": "0x336bec303f7ff86497d2679464c5adad5040f412b3d0769ce5e1d2a42f7e2c08"
+    },
+    "lib/v4-periphery/src/interfaces/INotifier.sol": {
+      "sha256": "ed4aec42c8aed343a13a7111e1904dedb921733d80e87e58adce395cefc0d627",
+      "compilerInputKeccak256": "0xfdc5187a98240a1691aae98b7dd2444d4c2bfb4746f3c34de9f3d18399c17c5e"
+    },
+    "lib/v4-periphery/src/interfaces/IPermit2Forwarder.sol": {
+      "sha256": "438fa4797fe51454c9f4780a6c694c6aad59ed7a258cf29b75a8f921c58ab359",
+      "compilerInputKeccak256": "0xfad472937280e861125ff12aa6f9c2cf7440fbb20a2cc29485c24662ad4279c5"
+    },
+    "lib/v4-periphery/src/interfaces/IPoolInitializer_v4.sol": {
+      "sha256": "5f00a2d13a4726ec4dd6ed4e52e75a85537cc5ae20a852576762f386da9de753",
+      "compilerInputKeccak256": "0x2e4feda94650a2642039e0309ffdec480ee050bc40864bf5e1dba42bb4dc9e98"
+    },
+    "lib/v4-periphery/src/interfaces/IPositionDescriptor.sol": {
+      "sha256": "5e1141cf3469c730e90e84aedf6b3d845f9cb4cef94cdc8e4c096e14bb970af6",
+      "compilerInputKeccak256": "0x5a4327e608b35ba2d3451c267b609336efbd780912080dbb1a21563db25c9768"
+    },
+    "lib/v4-periphery/src/interfaces/IPositionManager.sol": {
+      "sha256": "814910e65a48828c9e98115937a6e00d42cb5c5f9141865d00ed1b687be573f7",
+      "compilerInputKeccak256": "0x62dfa0cbee8314ee7e6787db8bc1d364245c340f940875ac7ff11e89d074fc7e"
+    },
+    "lib/v4-periphery/src/interfaces/ISubscriber.sol": {
+      "sha256": "6ed5e7b45c87f04fb6f9f8a44b082099b06b99ee1e2f5427f8a31b0e24d4f238",
+      "compilerInputKeccak256": "0x34ceadec4a63019680e543fe73197f198a55c825d86e18f327840354760b57e7"
+    },
+    "lib/v4-periphery/src/interfaces/IUnorderedNonce.sol": {
+      "sha256": "c280271ffe32bc702a73fedbca5f250c77453f1c716e3cbfa53ab5cdb41f1b87",
+      "compilerInputKeccak256": "0xd7f32fee74dc7d1a3b078ca1263961baccaa6bf434c79e8fe0e092e30c3e0ec3"
+    },
+    "lib/v4-periphery/src/interfaces/IV4Router.sol": {
+      "sha256": "e4528c09fc1008317fdbc2eb0f48eb2c950625fd9149095b48632a6953fbf0ae",
+      "compilerInputKeccak256": "0xc4133fae25e61cc2447d7331729f6035322d7c1fe26b39b225422bf98cc63459"
+    },
+    "lib/v4-periphery/src/interfaces/external/IWETH9.sol": {
+      "sha256": "0e24f150815ee60ebcd0a349e40941cfbcee3812c7da606e97cc966a180d192f",
+      "compilerInputKeccak256": "0xe88abf12501ac275619aec0687240a07d26968aecbbcdfea88ba8bbd5d6e5e14"
+    },
+    "lib/v4-periphery/src/libraries/ActionConstants.sol": {
+      "sha256": "42c04b05150fc1719cf12806769c9e37e133ff988ab8f910e450a4097c3dbab8",
+      "compilerInputKeccak256": "0x3d6f0e5b4a7b1e60bad93e73dce5db67fb66bebef11c31ed8355014a79aa03b3"
+    },
+    "lib/v4-periphery/src/libraries/Actions.sol": {
+      "sha256": "941f31b48e6f673427fff1ea839a0a0fdd43dc168e847664b9c832cbfc2586c0",
+      "compilerInputKeccak256": "0x8efd4b8b289177ee27e557d9d0a5a9f973d66fe1eb1ef8959d316b11987ca830"
+    },
+    "lib/v4-periphery/src/libraries/CalldataDecoder.sol": {
+      "sha256": "1cffdfdb4896df69aae8dd319749729d5d5e6edd33d51fe84cca32080e4db03b",
+      "compilerInputKeccak256": "0x26df49e13fb5410fd4db253cca877dfdfb3a1ba03e394d054c0e0514a88a56e5"
+    },
+    "lib/v4-periphery/src/libraries/ERC721PermitHash.sol": {
+      "sha256": "bbf67d2c32af2aa431917bde29642a7b8532eac13efc7f4cb732a12eb70f73d0",
+      "compilerInputKeccak256": "0xd8024f516738a1f968169875efd4ba803049c933cf6ea5e36189df9915f4e3f2"
+    },
+    "lib/v4-periphery/src/libraries/LiquidityAmounts.sol": {
+      "sha256": "d5ad3268881c4374afa6434a4fee043b2d17cdc9b532f572eb25d81118fd15c2",
+      "compilerInputKeccak256": "0x8ea74b89831877ffe657f8461164a01a6f3c7e46f415410854fca8d28a8cab53"
+    },
+    "lib/v4-periphery/src/libraries/Locker.sol": {
+      "sha256": "a1e4767cf3b91009f0fd51725867a262fdd351c215e401e80e38912381afb959",
+      "compilerInputKeccak256": "0x5c0859290a277fbfba8579b506426d3fc4b2ff7d8b691c03dd23aa85797fdae1"
+    },
+    "lib/v4-periphery/src/libraries/PathKey.sol": {
+      "sha256": "dbe74e1c1415275bcc032579aaa309dc741e2ba9fdc822a4c827bf53ea598fbb",
+      "compilerInputKeccak256": "0xbbd79ffefe045f025263e389539021266fb4d371463aefba405e1ff1d3fcf9bc"
+    },
+    "lib/v4-periphery/src/libraries/PositionInfoLibrary.sol": {
+      "sha256": "aefbce0d0d1db8d996bd48148a6b261da5fe1496cc0034188c14a1f33f06ba0d",
+      "compilerInputKeccak256": "0xc5ddf96bd088bc87ea50a20f907fc932fb28397a42682a301b268a11b7f34078"
+    },
+    "lib/v4-periphery/src/libraries/SlippageCheck.sol": {
+      "sha256": "65870b67b7c1b2c56ffabd986a3b9d809992c7533fedcf73ccd350e21817be77",
+      "compilerInputKeccak256": "0x9b7872e403b417dfbcf9835b16109f80f7abed702652a9817e28f07189983b4b"
+    }
+  },
+  "creationBytecodeKeccak256": "0xb391c6c2c80e197b1e947897a695577d03b5134b1bdfd1ea5e836da125971dbf",
+  "runtimeTemplateKeccak256": "0x436a9649e6cf0b9c8d602004c6951e2bde4101081caa4aa7272d7988c1d51d84",
+  "canonicalLoaderPassed": true,
+  "canonicalRemappingsMatch": true,
+  "sourceRevision": "cfe621381ca778af58892b64b9ae5889c1e2394d",
+  "freshBuildReportedByRoot": true,
+  "buildProvenance": "Root completed the full isolated Forge profile with 1714 passed, 0 failed, and 2 skipped across 126 suites; root targeted and standalone builds exited 0 with no changes. This agent performed loader/input validation and no Forge invocation.",
+  "donorArtifactReused": false,
+  "priorDonorRefusal": "POSITION-MANAGER-DONOR-REFUSAL.json",
+  "limits": "Current compiled artifact and source/profile validation; no live deployment/runtime activation qualification.",
+  "playerGenesisAttempts": [
+    {
+      "exitCode": 1,
+      "checksPassedBeforeFailure": 9,
+      "failure": "Missing original future-clock constant",
+      "log": "eth-player-genesis-missing-clock.log"
+    },
+    {
+      "exitCode": 1,
+      "checksPassedBeforeFailure": 9,
+      "failure": "Obsolete rewardRoute return referenced removed external-pool locals",
+      "log": "eth-player-genesis-missing-reward-route.log"
+    },
+    {
+      "command": "node test/player-genesis-deployment.js --preflight-only",
+      "exitCode": 0,
+      "checksPassed": 4,
+      "log": "eth-player-genesis-preflight-focused.log"
+    }
+  ],
+  "playerGenesisVerification": "PLAYER-GENESIS-FINAL-VALIDATION.json"
+}

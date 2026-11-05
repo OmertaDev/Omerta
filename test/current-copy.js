@@ -62,7 +62,7 @@ const surfaces = [home.match(/<h3>The Canonical Market<\/h3>([\s\S]*?)<\/article
 for (const surface of surfaces.map(plain)) {
   assert(surface.includes(`fixed ${basePercent}% base`) && surface.includes('buys and sells'), 'Both trade directions must disclose the manager fee');
   assert(surface.includes(`separate ${rewardsPercent}% allocation`) || surface.includes(`separate ${rewardsPercent}% allocation`.replace('separate', 'Separate')), 'Holder rewards must be separate from the base');
-  assert(surface.includes('WBTC holder rewards') && surface.includes(`ordinary protocol charge ${totalPercent}%`), 'Ordinary trading cost includes funded holder rewards');
+  assert(surface.includes('native ETH staking rewards') && surface.includes(`ordinary protocol charge ${totalPercent}%`), 'Ordinary trading cost includes funded holder rewards');
   assert(surface.includes(`capped at ${surgePercent}%`) || surface.includes(`at most ${surgePercent}%`), 'Sell-pressure cap must match Hook source');
   assert(surface.includes(`maximum protocol charge of ${maximumPercent}%`), 'Maximum includes base, holder rewards and surge');
   assert(surface.includes('LP fees and network gas are additional'), 'LP fees and gas are outside the protocol charge');
@@ -74,10 +74,11 @@ for (const surface of surfaces.map(plain)) {
   assert(/opening buy charges and caps (?:are )?disabled/.test(surface), 'Genesis opening restrictions remain off');
   assert(/no Committee or Safe fee-change queue|cannot become an executable Committee or Safe fee-change proposal/.test(surface), 'No mutable fee-governance process may be advertised');
   assert(!/fixed [45]% base|(?:^|\s)2% (?:to the )?developer|9% base|1\.6% RWA|2\.4% community|0[–-]1% surge|48.hours|10% hook-tax/.test(surface), 'Superseded fee policy must not appear in current policy sections');
+  assert(surface.includes('30-day minimum withdrawal lock') && surface.includes('Matured principal continues earning until withdrawn, without renewal'), 'Native ETH terms must preserve the per-deposit minimum and continuing maturity rewards');
   assert(surface.includes('inactive'), 'Source policy must not imply production activation');
 }
 assert(!/queues an exact configuration|waits at least 48 hours/.test(plain(fixedPolicy.html)), 'The preserved policy anchor cannot promise a fee-change queue');
-assert(plain(fixedPolicy.html).includes(`ordinary protocol charge ${totalPercent}%`) && plain(fixedPolicy.html).includes('time-weighted eligible wallet and backed game balances'), 'Fixed policy must explain funded holder periods');
+assert(plain(fixedPolicy.html).includes(`ordinary protocol charge ${totalPercent}%`) && plain(fixedPolicy.html).includes('time-weighted unwithdrawn OMR stake'), 'Fixed policy must explain funded holder periods');
 // The editor's ordinary-fee defaults use exact shares of the complete 400-bps allocation.
 const scenarioSources = JSON.parse(JSON.stringify(vm.runInNewContext(feeFlows.slice(feeFlows.indexOf('const LIVE ='), feeFlows.indexOf('/* Destination catalogue')) + '\nLIVE;')));
 const scenarioTax = scenarioSources.find(source => source.id === 'tax');
@@ -85,7 +86,7 @@ assert(scenarioTax.name.includes(`${totalPercent}% of settled fee leg`));
 assert.deepEqual(scenarioTax.splits.map(split => [split.dest, split.bps]), [
   ['operations', developerBps * 10_000 / totalBps], ['treasury', rwaBps * 10_000 / totalBps],
   ['community', communityBps * 10_000 / totalBps], ['pol', polBps * 10_000 / totalBps],
-  ['wbtc-rewards', rewardsBps * 10_000 / totalBps],
+  ['eth-rewards', rewardsBps * 10_000 / totalBps],
 ]);
 assert.equal(scenarioTax.splits.reduce((sum, split) => sum + split.bps, 0), 10_000);
 // Existing scenario versions must show the updated baseline; current user edits remain recoverable.

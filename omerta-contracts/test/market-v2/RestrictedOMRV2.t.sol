@@ -50,7 +50,7 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
     IPoolManager private _foreignManager;
     address alice = address(0xA11CE);
     address bob = address(0xB0B);
-    bytes32 constant POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
+    bytes32 constant POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS");
     bytes32 constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
@@ -498,7 +498,7 @@ contract RestrictedRouterManagerMockV2 is RestrictedManagerPolicyMockV2 {
     uint256 public lastSettled;
 
     constructor(address token)
-        RestrictedManagerPolicyMockV2(token, 400, keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS"))
+        RestrictedManagerPolicyMockV2(token, 400, keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS"))
     {}
 
     function configure(int128 amount0, int128 amount1, uint8 mode) external {

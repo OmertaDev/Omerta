@@ -89,7 +89,7 @@ abstract contract OmertaProtocolFeesV2 is IProtocolFees, Owned {
 }
 
 /// @title OMERTA restricted LP settlement manager
-/// @notice Every raw ETH/OMR swap pays the immutable 3.5% trade fee in either direction.
+/// @notice Every raw ETH/OMR swap pays the immutable 3.5% base plus 0.5% staker reward allocation.
 /// @dev Fork of the vendored v4 PoolManager. Core storage and settlement accounting are preserved;
 /// restriction and revenue fields are appended after the pool mapping. This guarantee covers this
 /// manager's swaps, not markets in independent receipts or third-party custody claims.
@@ -113,7 +113,7 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     uint16 private constant BASE_FEE_BPS = 350;
     uint16 private constant REWARDS_BPS = 50;
     bytes32 public constant revenuePolicyId =
-        keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
+        keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS");
     address public immutable omr;
     address public immutable developerRecipient;
     address public immutable rwaRecipient;

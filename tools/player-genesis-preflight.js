@@ -13,12 +13,6 @@ function same(label, actual, expected) {
   if (JSON.stringify(norm(actual)) !== JSON.stringify(norm(expected))) throw Error(`${label}: live binding mismatch`);
 }
 function requireTrue(label, condition) { if (!condition) throw Error(label); }
-const POOL_ABI = { type: 'tuple', components: [
-  { name: 'currency0', type: 'address' }, { name: 'currency1', type: 'address' }, { name: 'fee', type: 'uint24' },
-  { name: 'tickSpacing', type: 'int24' }, { name: 'hooks', type: 'address' },
-] };
-const POOL_SIGNATURE = '(address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks)';
-const poolValues = key => [key.currency0, key.currency1, key.fee, key.tickSpacing, key.hooks];
 const MAX_FUTURE_CLOCK_SKEW_SECONDS = 15n;
 
 export async function preflightPlayerGenesis(input, client, { phase = 'predeploy', confirmations = 5, now = Date.now, ...buildOptions } = {}) {
@@ -62,22 +56,6 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
     ...input.restrictedMarket.additionalOperators.map(x => checkCode('additional custody operator', x.address, x.runtimeHash)),
     ...input.restrictedMarket.contractHolders.map(x => checkCode('additional receiving holder', x.address, x.runtimeHash)),
   ]);
-  const rewardPool = plan.steps.find(x => x.kind === 'deployment' && x.role === 'btcConverter').constructorArgs[3];
-  same('WBTC decimals', await read(plan.externalRuntimePins.wbtc.address,
-    'function decimals() view returns (uint8)', 'decimals'), 8);
-  // The external dependency must be the reviewed standard v4 manager: its pools mapping is slot 6,
-  // and active liquidity is at offset 3 (v4-core StateLibrary). This is configuration admission only;
-  // nonzero liquidity is not a quote or executable-depth proof for any conversion amount.
-  const rewardPoolId = keccak256(encodeAbiParameters([POOL_ABI], [rewardPool]));
-  const rewardPoolSlot = keccak256(encodeAbiParameters([{ type: 'bytes32' }, { type: 'uint256' }], [rewardPoolId, 6n]));
-  const rewardLiquiditySlot = toHex((BigInt(rewardPoolSlot) + 3n) % (1n << 256n), { size: 32 });
-  const [rewardSlot0, rewardLiquidityWord] = await Promise.all([rewardPoolSlot, rewardLiquiditySlot].map(slot =>
-    read(plan.externalRuntimePins.rewardManager.address, 'function extsload(bytes32) view returns (bytes32)', 'extsload', [slot])));
-  requireTrue('Reward pool state response missing', [rewardSlot0, rewardLiquidityWord].every(x => /^0x[\da-fA-F]{64}$/.test(x || '')));
-  const rewardSqrtPrice = BigInt(rewardSlot0) & ((1n << 160n) - 1n);
-  const rewardLiquidity = BigInt(rewardLiquidityWord) & ((1n << 128n) - 1n);
-  requireTrue('Reward ETH/WBTC pool must be initialized before deployment', rewardSqrtPrice !== 0n);
-  requireTrue('Reward ETH/WBTC pool must have active liquidity before deployment', rewardLiquidity !== 0n);
   const owners = await read(safe, 'function getOwners() view returns (address[])', 'getOwners');
   same('Safe owners', owners.map(x => x.toLowerCase()).sort(), g.owners.map(x => x.toLowerCase()).sort());
   same('Safe threshold', await read(safe, 'function getThreshold() view returns (uint256)', 'getThreshold'), g.threshold);
@@ -113,7 +91,7 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
     }));
   } else {
     await Promise.all(Object.entries(plan.addresses).map(([role, address]) => checkCode(role, address, plan.runtimeHashes[role])));
-    const { omr, poolManager: manager, positionManager: positions, hook, coordinator, auction, btcRewards, btcConverter } = plan.addresses;
+    const { omr, poolManager: manager, positionManager: positions, hook, coordinator, auction } = plan.addresses;
     const getters = async (address, fields) => Promise.all(fields.map(async ([fn, type, value]) =>
       same(fn, await read(address, `function ${fn}() view returns (${type})`, fn), value)));
     await getters(omr, [['owner', 'address', safe], ['genesisTreasury', 'address', safe], ['policySealed', 'bool', true],
@@ -123,24 +101,29 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
     await getters(manager, [['owner', 'address', safe], ['omr', 'address', omr], ['TRADE_FEE_BPS', 'uint16', RESTRICTED_MARKET_TRADE_FEE_BPS],
       ['revenuePolicyId', 'bytes32', RESTRICTED_MARKET_POLICY_ID], ['developerRecipient', 'address', plan.roles.dev],
       ['rwaRecipient', 'address', plan.roles.rwa], ['communityRecipient', 'address', plan.roles.community], ['polRecipient', 'address', plan.addresses.polFunding],
-      ['rewardsRecipient', 'address', btcRewards], ['MAX_HOOK_FEE_BPS', 'uint16', 50]]);
+      ['rewardsRecipient', 'address', plan.addresses.ethRewards], ['MAX_HOOK_FEE_BPS', 'uint16', 50]]);
     await getters(positions, [['poolManager', 'address', manager], ['permit2', 'address', plan.externalRuntimePins.permit2.address]]);
+    const eth = plan.ethRewards, vault = plan.addresses.ethStaking, buyer = plan.addresses.ethRewards;
+    await getters(vault, [['owner', 'address', safe], ['governanceSafe', 'address', safe], ['omr', 'address', omr], ['distributor', 'address', buyer],
+      ['distributorRuntimeHash', 'bytes32', plan.runtimeHashes.ethRewards], ['active', 'bool', false], ['paused', 'bool', false],
+      ['epochOrigin', 'uint64', 0], ['EPOCH_DURATION', 'uint256', eth.stakingEpochSeconds],
+      ['LOCK_DURATION', 'uint256', eth.stakingLockSeconds]]);
+    await getters(buyer, [['omr', 'address', omr], ['rewardVault', 'address', vault],
+      ['safe', 'address', safe], ['keeper', 'address', eth.keeper], ['manager', 'address', manager],
+      ['canonicalRouter', 'address', plan.addresses.router], ['marketState', 'address', plan.addresses.marketState],
+      ['active', 'bool', false], ['paused', 'bool', true],
+      ['healthValidUntil', 'uint64', 0], ['healthySince', 'uint64', 0], ['canonicalPoolId', 'bytes32', plan.canonicalPool.poolId],
+      ['omrRuntimeHash', 'bytes32', plan.runtimeHashes.omr],
+      ['rewardVaultRuntimeHash', 'bytes32', plan.runtimeHashes.ethStaking], ['managerRuntimeHash', 'bytes32', plan.runtimeHashes.poolManager],
+      ['canonicalRouterRuntimeHash', 'bytes32', plan.runtimeHashes.router], ['marketStateRuntimeHash', 'bytes32', plan.runtimeHashes.marketState], ['canonicalHookRuntimeHash', 'bytes32', plan.runtimeHashes.hook]]);
+    same('ETH distributor bounded conversion and funding policy', await read(buyer,
+      'function policy() view returns ((uint256 maxOmrPerCall,uint256 maxOmrPerDay,uint256 maxNativePerCall,uint256 maxNativePerDay,uint16 maxSlippageBps,uint16 maxStressBps,uint64 maxMarketAge,uint64 maxDeadlineDelay,uint64 maxHealthLease,uint64 recoveryGrace))', 'policy'), eth.policy);
     await getters(plan.addresses.router, [['manager', 'address', manager], ['omr', 'address', omr]]);
-    await getters(hook, [['authorized', 'address', coordinator], ['rewardsRecipient', 'address', btcRewards],
+    await getters(hook, [['authorized', 'address', coordinator], ['rewardsRecipient', 'address', buyer],
       ['managerCollectsRevenue', 'bool', true], ['REWARDS_BPS', 'uint16', 50]]);
-    await getters(btcRewards, [['safe', 'address', safe], ['wbtc', 'address', plan.externalRuntimePins.wbtc.address],
-      ['omr', 'address', omr], ['omrRouter', 'address', plan.addresses.router], ['converter', 'address', btcConverter],
-      ['routerRuntimeHash', 'bytes32', plan.runtimeHashes.router], ['converterRuntimeHash', 'bytes32', plan.runtimeHashes.btcConverter],
-      ['wbtcRuntimeHash', 'bytes32', plan.externalRuntimePins.wbtc.runtimeHash], ['MAX_PROOF_LENGTH', 'uint256', 64],
-      ['MAX_DEADLINE_DELAY', 'uint256', 86400]]);
-    await getters(btcConverter, [['authorizedVault', 'address', btcRewards], ['wbtc', 'address', plan.externalRuntimePins.wbtc.address],
-      ['externalManager', 'address', plan.externalRuntimePins.rewardManager.address], ['poolFee', 'uint24', rewardPool.fee],
-      ['poolTickSpacing', 'int24', rewardPool.tickSpacing], ['managerRuntimeHash', 'bytes32', plan.externalRuntimePins.rewardManager.runtimeHash],
-      ['wbtcRuntimeHash', 'bytes32', plan.externalRuntimePins.wbtc.runtimeHash], ['MAX_DEADLINE_DELAY', 'uint256', 86400]]);
-    same('reward converter PoolKey', poolValues(await read(btcConverter,
-      `function poolKey() view returns (${POOL_SIGNATURE})`, 'poolKey')), poolValues(rewardPool));
-    same('reward vault OMR PoolKey', poolValues(await read(btcRewards,
-      `function omrPool() view returns (${POOL_SIGNATURE})`, 'omrPool')), poolValues(plan.canonicalPool));
+    same('ETH collector receiving-only admission', await read(omr, 'function isRecipient(address) view returns (bool)', 'isRecipient', [buyer]), true);
+    same('ETH collector must not be an operator', await read(omr, 'function operatorRole(address) view returns (uint8)', 'operatorRole', [buyer]), 0);
+    same('ETH vault custody role', await read(omr, 'function operatorRole(address) view returns (uint8)', 'operatorRole', [vault]), 2);
     await getters(coordinator, [['auction', 'address', auction], ['playerSale', 'address', zeroAddress], ['publicOnly', 'bool', true], ['omr', 'address', omr],
       ['poolManager', 'address', manager], ['positionManager', 'address', positions], ['permit2', 'address', plan.externalRuntimePins.permit2.address],
       ['liquidityOwner', 'address', input.coordinator.liquidityOwner], ['treasury', 'address', input.coordinator.treasury],
@@ -172,12 +155,6 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
       same('contractHolderAt', await read(omr, 'function contractHolderAt(uint256) view returns (address)', 'contractHolderAt', [BigInt(holder.index)]), holder.contractHolderAt);
       same('holder runtime pin', await read(omr, 'function contractHolderRuntimeHash(address) view returns (bytes32)', 'contractHolderRuntimeHash', [holder.contractHolderAt]), holder.contractHolderRuntimeHash);
     }
-    same('reward vault receiving-only admission', await read(omr, 'function isRecipient(address) view returns (bool)', 'isRecipient', [btcRewards]), true);
-    same('reward vault must not be an operator', await read(omr, 'function operatorRole(address) view returns (uint8)', 'operatorRole', [btcRewards]), 0);
-    same('converter must not be an operator', await read(omr, 'function operatorRole(address) view returns (uint8)', 'operatorRole', [btcConverter]), 0);
-    same('converter must not be a contract holder', await read(omr,
-      'function contractHolderRuntimeHash(address) view returns (bytes32)', 'contractHolderRuntimeHash', [btcConverter]), `0x${'00'.repeat(32)}`);
-    same('converter must not be an OMR recipient', await read(omr, 'function isRecipient(address) view returns (bool)', 'isRecipient', [btcConverter]), false);
     for (const [address, expected] of [[safe, plan.inventories.retainedBySafe], [auction, plan.inventories.public],
       [coordinator, plan.inventories.liquidity]])
       same('exact OMR inventory', await read(omr, 'function balanceOf(address) view returns (uint256)', 'balanceOf', [address]), expected);
@@ -190,7 +167,7 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
     }
     for (const recipient of [input.auction.unsoldRecipient, input.coordinator.liquidityOwner, input.coordinator.treasury])
       same('launch recovery recipient', await read(omr, 'function isRecipient(address) view returns (bool)', 'isRecipient', [recipient]), true);
-    for (const target of [hook, coordinator]) {
+    for (const target of [hook, coordinator, buyer]) {
       const key = await read(target, 'function poolKey() view returns ((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks))', 'poolKey');
       const expected = plan.canonicalPool;
       same('canonical PoolKey', [key.currency0, key.currency1, key.fee, key.tickSpacing, key.hooks],
@@ -216,8 +193,9 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
   checkWallClock('RPC tip at completion', finalTip.timestamp, finalWall);
   return { ok: true, phase, chainId: plan.chainId, blockNumber: String(block.number), blockHash: block.hash,
     timestamp: String(block.timestamp), auctionClock: String(clock), latestAuctionClock: String(latestClock), manifestSha256: plan.manifestSha256,
-    rewardRoute: { poolId: rewardPoolId, pool: rewardPool, sqrtPriceX96: String(rewardSqrtPrice), liquidity: String(rewardLiquidity),
-      initialized: true, activeLiquidityObserved: true, executableDepthForBudgetVerified: false },
+    rewardRoute: { asset: 'ETH', collector: plan.addresses.ethRewards, stakingVault: plan.addresses.ethStaking,
+      canonicalPool: plan.canonicalPool, bindingEvidence: phase === 'prepared' ? 'verified-dormant' : 'predicted-only',
+      executableDepthForBudgetVerified: false },
     freshness: { wallClockTimestamp: String(finalWall), maxAgeSeconds: input.snapshot.maxAgeSeconds,
       maximumFutureClockSkewSeconds: String(MAX_FUTURE_CLOCK_SKEW_SECONDS) },
     limits: 'Read-only configuration evidence; does not replace scoped security review, fork rehearsal, owner acceptance or transaction simulation.' };

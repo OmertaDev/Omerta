@@ -1,0 +1,163 @@
+{
+  "sourceRevision": "83ba8baac52d64614a2f4b82a7b230db1e16c80f",
+  "predecessorRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
+  "predecessorTree": "2fb48b34fdb9fab7f630844205d035b29ee063c0",
+  "phase": "exact historical source transfer only; no runtime, native, financial or deployment qualification",
+  "sourceOnly": true,
+  "runtime": false,
+  "native": false,
+  "files": {
+    "src/genesisauction.js": {
+      "currentSha256": "b29b7760a29cc3f7ddebbc615d21b38861fc8c3b70da6d957f6e77400a77e701",
+      "currentBlob": "d13c9f06b5d6c682aa88d626db29c4dabb140680",
+      "currentBytes": 29363,
+      "authoredSha256": "b29b7760a29cc3f7ddebbc615d21b38861fc8c3b70da6d957f6e77400a77e701",
+      "authoredBlob": "d13c9f06b5d6c682aa88d626db29c4dabb140680",
+      "authoredBytes": 29363,
+      "baselineSha256": "3ead50a4f76140ed6ec8bb0340b39c97e22ef15c3c6adc979493f784051f51bb",
+      "baselineBlob": "da80952587b6a175d5b8fe981a407e6ceadeb9fe",
+      "baselineBytes": 27146
+    },
+    "public/genesis-deploy-client.js": {
+      "currentSha256": "e7ec082a630554358b4b6a70888e9bd1281b0de99735ab0e7950c8cdbb879ad8",
+      "currentBlob": "6290e5c20937966a8e4e32f8439c9190ceede478",
+      "currentBytes": 37739,
+      "authoredSha256": "e7ec082a630554358b4b6a70888e9bd1281b0de99735ab0e7950c8cdbb879ad8",
+      "authoredBlob": "6290e5c20937966a8e4e32f8439c9190ceede478",
+      "authoredBytes": 37739,
+      "baselineSha256": "052712a9aa70c2b2ed50bf58a6084834b9232538d06e1bec5d0a9e9b6e72d1e2",
+      "baselineBlob": "31c42e41b454fa7d0bd2c16fc6a0c90c3aef0769",
+      "baselineBytes": 35425
+    },
+    "tools/genesis-auction-preflight.js": {
+      "currentSha256": "9288a39bd2e1d85d47caa84b7af14fa513030682b246856b93c8098350561246",
+      "currentBlob": "5ca5cdd16387e9642cd0a8610ec7a71132811866",
+      "currentBytes": 22260,
+      "authoredSha256": "9288a39bd2e1d85d47caa84b7af14fa513030682b246856b93c8098350561246",
+      "authoredBlob": "5ca5cdd16387e9642cd0a8610ec7a71132811866",
+      "authoredBytes": 22260,
+      "baselineSha256": "8fd4a76cd668fa0bcf93111106d22a70b1910718d978306c7ea68f87698e8234",
+      "baselineBlob": "71aaf32dfccb099f94e12992246e5b9f371faa10",
+      "baselineBytes": 20606,
+      "exactWorkingEncoding": {
+        "sha256": "73618492db74365a7331077b658005db6236aaa3370ee82eb09a7594f692d44b",
+        "blob": "c28941aafb48ca2daf0096bc7b09f7ea0a723121",
+        "bytes": 22461
+      }
+    },
+    "docs/WIKI.md": {
+      "currentSha256": "0c2df5e1cca30a8b76d398615cbacee337b61e1c490e67ca2ee20107d3ca4860",
+      "currentBlob": "9e3297663879f99f6f913c428459dd82887157f1",
+      "currentBytes": 228889,
+      "authoredSha256": "0c2df5e1cca30a8b76d398615cbacee337b61e1c490e67ca2ee20107d3ca4860",
+      "authoredBlob": "9e3297663879f99f6f913c428459dd82887157f1",
+      "authoredBytes": 228889,
+      "baselineSha256": "ca2492084f566f4f553b5540ab6febc59bd7d2f21a90435aff728b9086d5792b",
+      "baselineBlob": "abea7d2cce25e9b66ac3828be8444ea562b899a0",
+      "baselineBytes": 228278
+    },
+    "public/wiki.html": {
+      "currentSha256": "4a491d75fde3b1c687b904afd5f8d55f2a0ebec491f8b25909df8c0db8280068",
+      "currentBlob": "67ce1cb8f4beba71e441059ce934c2d44551e688",
+      "currentBytes": 246323,
+      "authoredSha256": "4a491d75fde3b1c687b904afd5f8d55f2a0ebec491f8b25909df8c0db8280068",
+      "authoredBlob": "67ce1cb8f4beba71e441059ce934c2d44551e688",
+      "authoredBytes": 246323,
+      "baselineSha256": "73b5ae9618ecde1e9728d3c0a0b0b20cc20eb83dc8f3c7d187b9547f2faf1249",
+      "baselineBlob": "f4794fc48434b6fb425ce92aa96700fe31ea74cd",
+      "baselineBytes": 245711
+    },
+    "public/index.html": {
+      "currentSha256": "7b34f7da38f822c8e5588d6f24a31353696b06435cedcee0978a9c7d9b6a5b9a",
+      "currentBlob": "bcde5d244454d3572fd644c1e38268d4a4ddc2a0",
+      "currentBytes": 1399294,
+      "authoredSha256": "7b34f7da38f822c8e5588d6f24a31353696b06435cedcee0978a9c7d9b6a5b9a",
+      "authoredBlob": "bcde5d244454d3572fd644c1e38268d4a4ddc2a0",
+      "authoredBytes": 1399294,
+      "baselineSha256": "db4cbe6b819543e3fbc0db32cf4352a987d8b6586823df5c33756b2e2a23f969",
+      "baselineBlob": "9542428cbd82fd496ea42c213772b3036541ceb6",
+      "baselineBytes": 1398458
+    },
+    "public/defi.html": {
+      "currentSha256": "bed20d7697d39a5d2ce600f136df8f1840bcc013465db504d397ce9967538d7e",
+      "currentBlob": "5939cd9874366a70a3169514c75e52d9749584a3",
+      "currentBytes": 83971,
+      "authoredSha256": "bed20d7697d39a5d2ce600f136df8f1840bcc013465db504d397ce9967538d7e",
+      "authoredBlob": "5939cd9874366a70a3169514c75e52d9749584a3",
+      "authoredBytes": 83971,
+      "baselineSha256": "f4292bc44f74d235f6706dcbd93cd4cf9811e162051be03df90dcc01f017ae11",
+      "baselineBlob": "2ea29c93017be1c2e20b7eedb1e569d92170903d",
+      "baselineBytes": 83621
+    },
+    "public/fee-flows.html": {
+      "currentSha256": "1d97e7cc9422714b3e2fcb2400789b05281bec65d8c3baf9a5397e1df03a7091",
+      "currentBlob": "6324fd8ef684b6e3ea1c3ade532b7211d35a8a0b",
+      "currentBytes": 38779,
+      "authoredSha256": "1d97e7cc9422714b3e2fcb2400789b05281bec65d8c3baf9a5397e1df03a7091",
+      "authoredBlob": "6324fd8ef684b6e3ea1c3ade532b7211d35a8a0b",
+      "authoredBytes": 38779,
+      "baselineSha256": "e37fe6b4d4035dae63fc4aa3a8a9e327b9b01def671398acaefd2161f295aebf",
+      "baselineBlob": "f5e94894aacca70a75a2382f9c42882f4cbaa427",
+      "baselineBytes": 38411
+    },
+    "src/server.js": {
+      "currentSha256": "db9d48ebc027ec66ad3f7d856fa537ee69b4907813e326eb12f432dcc1f5c99a",
+      "currentBlob": "426168d4229ad1f4107179717e9ebb89176dbf8f",
+      "currentBytes": 303937,
+      "authoredSha256": "db9d48ebc027ec66ad3f7d856fa537ee69b4907813e326eb12f432dcc1f5c99a",
+      "authoredBlob": "426168d4229ad1f4107179717e9ebb89176dbf8f",
+      "authoredBytes": 303937,
+      "baselineSha256": "eae571fecd106622365194b2fd862f54635a9488ea9784d660defa292da28b5a",
+      "baselineBlob": "9ac86b5b025e3a40f0142f8adf855471e8a21e77",
+      "baselineBytes": 303757,
+      "exactWorkingEncoding": {
+        "sha256": "87b4a90e2915022b82201e5cc5a4e6f3c20e207629f997f6f3cf2b57eb9db02c",
+        "blob": "5e07487f13dd230af644ac97c5e9536914357395",
+        "bytes": 307944
+      }
+    },
+    "package.json": {
+      "currentSha256": "03d651ae9bcf799d7ce58b18deb2e465b6fd6aebbe5614b3c85e7b4827beb70d",
+      "currentBlob": "b3ee3abfa59e5e1155abe9e1b6949b5c0fa4cc60",
+      "currentBytes": 59988,
+      "authoredSha256": "03d651ae9bcf799d7ce58b18deb2e465b6fd6aebbe5614b3c85e7b4827beb70d",
+      "authoredBlob": "b3ee3abfa59e5e1155abe9e1b6949b5c0fa4cc60",
+      "authoredBytes": 59988,
+      "baselineSha256": "25a5a2cb4f5c8bc5ce9538495716d60fad3c67e995a2db36daca01505c92e2fc",
+      "baselineBlob": "531e67d793e7758751f1734fe6dd96b7520268d4",
+      "baselineBytes": 59697,
+      "exactWorkingEncoding": {
+        "sha256": "e78cfce1ad039d59834fa800cf06f44546b53a73ea907bce863b5ec39a15ecf6",
+        "blob": "4d38ef5e28dda1044a75a41d77c04cf376610a3a",
+        "bytes": 60318
+      }
+    },
+    "src/worker.js": {
+      "currentSha256": "f1fb6fb9bd0330d807e5c93f61acdb7dc81813728a159bffe133ea909bb60438",
+      "currentBlob": "9804c4e022e58c6ba9edc760580b1a3dce982707",
+      "currentBytes": 86474,
+      "authoredSha256": "f1fb6fb9bd0330d807e5c93f61acdb7dc81813728a159bffe133ea909bb60438",
+      "authoredBlob": "9804c4e022e58c6ba9edc760580b1a3dce982707",
+      "authoredBytes": 86474,
+      "baselineSha256": "2a07dc2ac6740ffa9495b08f807d4cae591e0e7c8cc50da3f2746f9b6eaf0329",
+      "baselineBlob": "84be99e513a7a66343f0652a55fdc6d885d8687a",
+      "baselineBytes": 86380,
+      "exactWorkingEncoding": {
+        "sha256": "5240869a5d5389e42b7bea59be8652fb28215713c6476bef6637bc5c9cc80cc9",
+        "blob": "e08868a7ebdcbf13fa3e5cb61e4c7c1e49f46c6f",
+        "bytes": 87582
+      }
+    },
+    "src/preflight.js": {
+      "currentSha256": "519547750876ef4af87309e46b28fd1069295d35ed3a6bf8da70038f46c59d93",
+      "currentBlob": "257051806c4da66a823f69490edf244697528d82",
+      "currentBytes": 40299,
+      "authoredSha256": "519547750876ef4af87309e46b28fd1069295d35ed3a6bf8da70038f46c59d93",
+      "authoredBlob": "257051806c4da66a823f69490edf244697528d82",
+      "authoredBytes": 40299,
+      "baselineSha256": "4901dca23d457a6c0dc56c6ca72371162200235de7287ec449363584f74286ea",
+      "baselineBlob": "ac3ba92249dbcebe7cfde910d2276373b15eb845",
+      "baselineBytes": 40073
+    }
+  }
+}

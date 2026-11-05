@@ -14,7 +14,7 @@ const pricing = genesisAuctionFloor(40000000n * E);
 const input = {
   schemaVersion: 1, chainId: 31337, localRehearsal: true, sourceRevision: inventory.sourceRevision, startingNonce: '17',
   roles: { deployer: A(100), safe: A(101), hookRecipients: [A(107), A(108), A(109)] },
-  external: Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft', 'btcRewards'].map((k, i) => [k, { address: A(200 + i), runtimeHash: H }])),
+  external: Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2', 'characterNft', 'ethRewards', 'ethStaking'].map((k, i) => [k, { address: A(200 + i), runtimeHash: H }])),
   create2: { factory: A(300), runtimeHash: H, kind: 'salt-prefix', saltStart: '0', maxAttempts: 200000 },
   artifactHashes: inventory.artifactHashes, sourceHashes: inventory.sourceHashes,
   observation: { blockNumber: '1000', blockHash: H, timestamp: '2000000000' },
@@ -46,8 +46,8 @@ const decodeConstructor = (contract, data) => {
 const coordinator = decodeConstructor('OmertaAuctionCoordinatorV2', plan.deployments[2].data);
 assert.equal(coordinator[4], plan.addresses.hook); assert.equal(coordinator[8], input.roles.safe);
 const hook = decodeConstructor('OmertaHookV2', `0x${plan.deployments[3].data.slice(66)}`);
-assert.equal(hook.length, 10); assert.equal(hook[9], input.external.btcRewards.address); assert.deepEqual(plan.hookPolicy, input.hookPolicy);
-assert.deepEqual(plan.finalManifest.hookPolicy, { ...input.hookPolicy, recipients: [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding], rewardsRecipient: input.external.btcRewards.address });
+assert.equal(hook.length, 10); assert.equal(hook[9], input.external.ethRewards.address); assert.deepEqual(plan.hookPolicy, input.hookPolicy);
+assert.deepEqual(plan.finalManifest.hookPolicy, { ...input.hookPolicy, recipients: [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding], rewardsRecipient: input.external.ethRewards.address });
 assert.equal(hook[2], plan.addresses.coordinator); assert.deepEqual(hook[5], [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding]);
 assert.equal(decodeConstructor('OmertaReserveFundingV2', plan.deployments[0].data)[2], 0);
 assert.equal(decodeConstructor('OmertaReserveFundingV2', plan.deployments[1].data)[2], 5);
@@ -86,7 +86,7 @@ const rawDown = 10n * E * (1n << 96n) / BigInt(input.auction.totalSupply);
 assert.equal(BigInt(input.auction.totalSupply) * (rawDown / 100n * 100n) / (1n << 96n), 10n * E - 1n,
   'Down-aligned full sale misses 10 ETH graduation by one wei');
 assert.deepEqual(plan.inventory.auctionDurationSecondsBounds, ['432000', '432000']);
-assert.deepEqual(Object.keys(plan.finalManifest.contracts).sort(), ['auction','btcRewards','characterNft','coordinator','omr','validator']);
+assert.deepEqual(Object.keys(plan.finalManifest.contracts).sort(), ['auction','characterNft','coordinator','ethRewards','ethStaking','omr','validator']);
 assert.equal(plan.finalManifest.contracts.coordinator.runtimeCodeHash, null, 'Cannot invent constructor-immutable runtime hash before deployment');
 assert.equal(plan.finalManifest.dependencies.hook.runtimeCodeHash, null);
 assert(!JSON.stringify(plan).includes('playerSale'), 'No gameplay tranche is planned');

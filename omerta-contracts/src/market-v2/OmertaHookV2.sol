@@ -18,7 +18,7 @@ import {IInitializerHook} from "../interfaces/IInitializerHook.sol";
 import {IOmrV4ObservationSource} from "../interfaces/IOmrV4ObservationSource.sol";
 
 /// @notice Immutable canonical ETH/OMR market settlement and observation layer.
-/// @dev The restricted PoolManager collects the 3.5% base plus 0.5% rewards on buys and sells. This
+/// @dev The restricted PoolManager collects the 3.5% base plus 0.5% staker ETH rewards on buys and sells. This
 ///      hook does not collect those a second time. Standard-manager fixtures collect sell base and
 ///      both-direction rewards in this hook, without conversion or distribution in a swap.
 ///      Additional sell-pressure surcharge is separately owed to stability, never funding slices.
@@ -38,7 +38,7 @@ contract OmertaHookV2 is IHooks, IInitializerHook, IOmrV4ObservationSource, Reen
     uint16 public constant MAX_HOOK_BPS = 450;
     uint16 public constant MAX_OPENING_BLOCKS = 200;
     bytes32 public constant MANAGER_REVENUE_POLICY =
-        keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_BTC_REWARDS_BOTH_DIRECTIONS");
+        keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS");
     uint32 public constant PRESSURE_DECAY_SECONDS = 60;
     uint8 public constant DEV = 0;
     uint8 public constant RWA = 1;
