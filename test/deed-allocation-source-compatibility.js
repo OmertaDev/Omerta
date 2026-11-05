@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_PREDECESSOR_TREE,
   DEED_ALLOCATION_SOURCE_PHASE, DEED_ALLOCATION_SOURCE_DOMAINS,
   assertDeedAllocationSourceTransfer, deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
@@ -54,7 +55,7 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
-  const physical = fs.readFileSync(file, 'utf8'), current = lf(physical);
+  const physical = noirUiHistoricalInput(file, fs.readFileSync(file, 'utf8')), current = lf(physical);
   const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && Object.isFrozen(pin.currentRawSha256));
   assert.equal(pin.contextLines, 3); assert.equal(pin.currentMode, '100644'); assert.equal(pin.baselineMode, '100644');
