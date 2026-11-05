@@ -6,7 +6,8 @@ import { execFileSync } from 'node:child_process';
 import { ECONOMY_DEED_MERGE_FILES, ECONOMY_DEED_MERGE_PROFILES,
   ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES, ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES,
   ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR,
-  ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR } from './economy-deed-merge-source-compatibility.js';
+  ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR,
+  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR } from './economy-deed-merge-source-compatibility.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous,
   ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as previousDefinitionSha256 } from './enterprise-native-ux-b35-inputs.js';
 const output = 'tools/economy-deed-merge-source-data.js';
@@ -90,10 +91,11 @@ for (const profile of ['monitor', 'deed']) for (const pin of previous.files) {
   const entry = tree(revision).get(pin.file); assert(entry, 'Existing predecessor input removed by a parent: ' + pin.file);
   if (entry.mode !== pin.mode || entry.blob !== pin.blob) review.add(pin.file);
 }
-const operationalSuccessors = [ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR];
-assert.deepEqual(operationalSuccessors.map(row => row.file), ['src/preflight.js', 'src/engagement.js']);
+const boundedSuccessors = [ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR,
+  ECONOMY_DEED_MERGE_IDENTITY_PENDING_SUCCESSOR];
+assert.deepEqual(boundedSuccessors.map(row => row.file), ['src/preflight.js', 'src/engagement.js', 'public/ux-identity.js']);
 assert.equal(review.size, 51);
-assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !operationalSuccessors.some(row => row.file === file)
+assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !boundedSuccessors.some(row => row.file === file)
   && !ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES.includes(file)),
   'Changed existing-native review scope must remain the two immutable parent scopes');
 const noirChanges = [];
@@ -106,18 +108,18 @@ for (const pin of previous.files) {
 assert.deepEqual(noirChanges.sort(), ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES,
   'Only the exact three additional Noir inputs extend the original native review scope');
 assert.equal(review.size, 54);
-for (const operational of operationalSuccessors) {
-  const operationalPredecessor = previous.files.find(pin => pin.file === operational.file); assert(operationalPredecessor);
+for (const successor of boundedSuccessors) {
+  const predecessor = previous.files.find(pin => pin.file === successor.file); assert(predecessor);
   for (const { revision } of Object.values(profiles))
-    assert.deepEqual(nativePin(revision, operational.file), operationalPredecessor,
-      'The operational classification input was unchanged in all immutable parents');
-  const operationalBefore = text(previous.authoredRevision, operational.file), operationalCurrent = text(authored, operational.file);
-  assert.equal(operationalBefore.split(operational.anchor).length, 2);
-  assert.equal(operationalCurrent, operationalBefore.replace(operational.anchor, operational.anchor + operational.addition),
-    'Only the exact monitor operational classifications may extend the reviewed native scope');
-  assert.notEqual(operationalCurrent, operationalBefore, 'The explicit CI successor must change its predecessor');
-  assert.equal(tree(authored).get(operational.file).mode, operationalPredecessor.mode);
-  review.add(operational.file);
+    assert.deepEqual(nativePin(revision, successor.file), predecessor,
+      'The bounded successor input was unchanged in all immutable parents');
+  const before = text(previous.authoredRevision, successor.file), current = text(authored, successor.file);
+  assert.equal(before.split(successor.anchor).length, 2);
+  assert.equal(current, before.replace(successor.anchor, successor.anchor + successor.addition),
+    'Only the exact frozen source correction may extend the reviewed native scope');
+  assert.notEqual(current, before, 'The explicit source successor must change its predecessor');
+  assert.equal(tree(authored).get(successor.file).mode, predecessor.mode);
+  review.add(successor.file);
 }
 assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES);
 // Bound each batch by the immutable Git object sizes; the complete archived asset set is larger

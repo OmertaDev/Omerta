@@ -81,6 +81,7 @@
     }
     async function load() {
       if (pending || !scope()) return; pending = true; const owner = account, life = character, version = serial;
+      render();
       try {
         for (const path of ['/v1/bloodline', '/v1/people', '/v1/collection', '/v1/season/recap', '/v1/port']) {
           const response = await read(path);
