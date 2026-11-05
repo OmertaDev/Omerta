@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `593b0495f1f5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d9a2305f2fe8`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5064 |
+| Commits in clone | 5066 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-05 — test: seal phone menu pointer fix inputs |
+| Latest commit | 2026-11-05 — Merge pull request #315 from OmertaDev/codex/economy-monitor-composition |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4088 |
+| OmertaDev | 4090 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 131 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 848 | historical |
-| knowledge/generated/graph-summary.md | 848 | historical |
-| knowledge/generated/graph.json | 848 | historical |
-| knowledge/generated/inventory.md | 848 | historical |
+| knowledge/generated/github-history.md | 849 | historical |
+| knowledge/generated/graph-summary.md | 849 | historical |
+| knowledge/generated/graph.json | 849 | historical |
+| knowledge/generated/inventory.md | 849 | historical |
 | [SPEC.md](../../SPEC.md) | 616 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 496 | yes |

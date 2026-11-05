@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "593b0495f1f5009ee8c04fcc1c55a598a52f27e1",
+  "sourceRevision": "d9a2305f2fe85a635edf76384c8fb6e4665f044a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17472,
-    "edges": 70120,
+    "nodes": 17474,
+    "edges": 70126,
     "byNodeType": {
       "Artifact": 7089,
       "Command": 301,
-      "Commit": 5064,
+      "Commit": 5066,
       "Contract": 134,
       "Document": 956,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5672,
-      "CHANGED": 27043,
+      "CHANGED": 27047,
       "CONTAINS": 7110,
       "DECLARES": 301,
       "DEFINED_IN": 1770,
       "DEPENDS_ON": 69,
       "EXECUTES": 1197,
       "HANDLED_BY": 934,
-      "HAS_COMMIT": 5064,
+      "HAS_COMMIT": 5066,
       "IMPLEMENTS": 124,
       "IMPORTS": 8405,
       "INHERITS": 45,
@@ -222265,6 +222265,22 @@
       ]
     },
     {
+      "key": "Commit:ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "type": "Commit",
+      "id": "ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "label": "chore: refresh knowledge for phone menu pointer fix",
+      "title": "chore: refresh knowledge for phone menu pointer fix",
+      "date": "2026-11-05T10:12:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "provenance": [
+        {
+          "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ac68c41a6267d249624fc37e05b63ba0b5778b70"
+        }
+      ]
+    },
+    {
       "key": "Commit:ac6e7cd580e9208ca28c0a434fd28b0bb41f3969",
       "type": "Commit",
       "id": "ac6e7cd580e9208ca28c0a434fd28b0bb41f3969",
@@ -236117,6 +236133,22 @@
         {
           "commit": "d98dcf441476a234107716e6bf9083f3e1e52cb0",
           "url": "https://github.com/OmertaDev/Omerta/commit/d98dcf441476a234107716e6bf9083f3e1e52cb0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d9a2305f2fe85a635edf76384c8fb6e4665f044a",
+      "type": "Commit",
+      "id": "d9a2305f2fe85a635edf76384c8fb6e4665f044a",
+      "label": "Merge pull request #315 from OmertaDev/codex/economy-monitor-composition",
+      "title": "Merge pull request #315 from OmertaDev/codex/economy-monitor-composition",
+      "date": "2026-11-05T11:56:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d9a2305f2fe85a635edf76384c8fb6e4665f044a",
+      "provenance": [
+        {
+          "commit": "d9a2305f2fe85a635edf76384c8fb6e4665f044a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d9a2305f2fe85a635edf76384c8fb6e4665f044a"
         }
       ]
     },
@@ -276831,6 +276863,9 @@
           "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
         },
         {
+          "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
+        },
+        {
           "commit": "ac878de6e6fd497dcba7d00b68ec29c01078b510"
         },
         {
@@ -279384,6 +279419,9 @@
           "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
         },
         {
+          "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
+        },
+        {
           "commit": "ac878de6e6fd497dcba7d00b68ec29c01078b510"
         },
         {
@@ -281935,6 +281973,9 @@
         },
         {
           "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+        },
+        {
+          "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
         },
         {
           "commit": "ac878de6e6fd497dcba7d00b68ec29c01078b510"
@@ -285190,6 +285231,9 @@
         },
         {
           "commit": "ac0ca3c60f14cba4996855b20657454ca23f175a"
+        },
+        {
+          "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
         },
         {
           "commit": "ac878de6e6fd497dcba7d00b68ec29c01078b510"
@@ -300543,8 +300587,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "593b0495f1f5009ee8c04fcc1c55a598a52f27e1",
-      "currentBranch": "codex/economy-monitor-composition",
+      "revision": "d9a2305f2fe85a635edf76384c8fb6e4665f044a",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -535401,6 +535445,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ac6e7cd580e9208ca28c0a434fd28b0bb41f3969",
       "to": "Artifact:src/social.js",
       "provenance": {
@@ -750762,6 +750838,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ac68c41a6267d249624fc37e05b63ba0b5778b70",
+      "provenance": {
+        "commit": "ac68c41a6267d249624fc37e05b63ba0b5778b70"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ac6e7cd580e9208ca28c0a434fd28b0bb41f3969",
       "provenance": {
         "commit": "ac6e7cd580e9208ca28c0a434fd28b0bb41f3969"
@@ -757685,6 +757769,14 @@
       "to": "Commit:d98dcf441476a234107716e6bf9083f3e1e52cb0",
       "provenance": {
         "commit": "d98dcf441476a234107716e6bf9083f3e1e52cb0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d9a2305f2fe85a635edf76384c8fb6e4665f044a",
+      "provenance": {
+        "commit": "d9a2305f2fe85a635edf76384c8fb6e4665f044a"
       }
     },
     {
