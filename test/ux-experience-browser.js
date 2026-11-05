@@ -33,6 +33,10 @@ const wireErrors = (page) => {
   page.on('console', (message) => { if (['warning', 'error'].includes(message.type()) && /UI .*unavailable|UI enhancement unavailable|renderSheet failed/.test(message.text())) faults.push(message.text()); });
 };
 const hideIntro = (page) => page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((modal) => modal.classList.add('hidden')));
+const openDisclosure = async (page, selector) => {
+  const details = page.locator(selector);
+  if (!await details.evaluate(element => element.open)) await details.locator(':scope > summary').click();
+};
 const openTab = async (page, tab) => {
   // Boot and guide routing can change the active rail between a visibility check
   // and its click. The public jump control is available across every rail.
@@ -77,11 +81,13 @@ try {
   page.on('response', async (response) => { if ([base + '/v1/me', base + '/v1/projections/player'].includes(response.url()) && response.status() === 200) { const data = await response.json().catch(() => null); if (data) lastMe = data.player?.character || data.player || data.character || data; } });
   await page.goto(base, { waitUntil: 'domcontentloaded' });
   await page.locator('#screen-main:not(.hidden)').waitFor(); await hideIntro(page);
+  await openDisclosure(page, '#ux-screen-tools');
   await page.locator('[data-ux-search]').waitFor();
   assert.equal(await page.evaluate(() => ['createOmertaFeedback', 'createOmertaProgression', 'createOmertaSocial', 'createOmertaNavigation'].every((name) => typeof window[name] === 'function')), true);
   await openTab(page, 'life');
   const goal = page.locator('#tab-life select[aria-label="Choose your next achievement"]');
   await goal.waitFor(); await goal.selectOption('trade:larceny');
+  await openDisclosure(page, '#character-sheet');
   await page.locator('#sheet-body .ux-goal-card strong').filter({ hasText: 'Larceny' }).waitFor();
   await openTab(page, 'streets');
   await page.locator('#tab-streets [data-do^="POST /v1/crimes/"]:enabled').first().waitFor();
@@ -117,12 +123,14 @@ try {
   assert.ok(await page.locator('#operation-latest .operation-receipt__delta').innerText(), 'The expanded mobile receipt retains its confirmed resource delta.');
   await page.locator('#operation-latest .ux-receipt-details > summary').click();
   await page.setViewportSize({ width: 1440, height: 1050 });
+  await openDisclosure(page, '#game-menu');
   await page.locator('[data-feedback-settings]').click();
   await page.locator('#ux-effects-volume').fill('25'); await page.locator('#ux-celebration').selectOption('quiet');
   assert.equal(await page.locator('body').getAttribute('data-celebration'), 'quiet');
   await page.locator('button[aria-label="Close feedback preferences"]').click();
   await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await hideIntro(page);
   await openTab(page, 'streets');
+  await openDisclosure(page, '#ux-screen-tools');
   await page.locator('[data-ux-pin][aria-pressed="true"]').waitFor();
   assert.equal(await page.locator('body').getAttribute('data-celebration'), 'quiet', 'feedback preference survives reload');
   await page.setViewportSize({ width: 390, height: 844 });
@@ -149,6 +157,7 @@ try {
   const otherPage = await plainContext.newPage(); wireErrors(otherPage);
   await otherPage.goto(base, { waitUntil: 'domcontentloaded' }); await otherPage.locator('#screen-main:not(.hidden)').waitFor(); await hideIntro(otherPage);
   await openTab(otherPage, 'streets');
+  await openDisclosure(otherPage, '#ux-screen-tools');
   await otherPage.locator('[data-ux-pin][aria-pressed="false"]').waitFor();
   assert.equal(await otherPage.locator('#sheet-body .ux-goal-card > strong').count(), 0, 'a pinned achievement does not cross accounts');
   assert.deepEqual(faults, [], 'real-page modules have no page errors or swallowed UI failures');

@@ -13,19 +13,19 @@ export const ECONOMY_DEED_MERGE_FILES = Object.freeze([
   'package.json', 'src/game.js', 'src/preflight.js',
   'test/economy-hardening-source-compatibility.js',
   'test/lib/enterprise-ux-native-guard.js', 'test/lib/ux-native-reader-source-compatibility.js',
-  'test/sale-source-compatibility.js',
+  'test/sale-source-compatibility.js', 'test/ux-expanded-browser.js',
   'tools/economy-ux-merge-source-compatibility.js', 'tools/enterprise-native-ux.js',
   'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native.js',
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js',
 ]);
-// Closed review scope from the two immutable parents, intersected with the immutable B35 native
+// Closed review scope from the three immutable parents, intersected with the immutable B35 native
 // inventory, plus the two bounded operational-classification successors below. Integration changes
 // outside this list must be reviewed explicitly, never auto-admitted.
 export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
-  'AGENTS.md', 'package.json', 'public/index.html', 'public/sale.html',
-  'public/ux-coordination.css', 'public/ux-coordination.js', 'public/ux-navigation.css',
+  'AGENTS.md', 'package.json', 'public/index.html', 'public/omerta-ui.css', 'public/sale.html',
+  'public/ux-coordination.css', 'public/ux-coordination.js', 'public/ux-feedback.js', 'public/ux-navigation.css',
   'public/ux-navigation.js', 'public/ux-progression.css', 'public/ux-progression.js',
-  'public/ux-tactics.css', 'public/ux-tactics.js', 'schema.sql', 'src/accrual.js', 'src/age.js',
+  'public/ux-tactics.css', 'public/ux-tactics.js', 'public/ux-world.js', 'schema.sql', 'src/accrual.js', 'src/age.js',
   'src/content/city-quest-presentation.js', 'src/content/phase1-policy.js', 'src/content/phase1.js',
   'src/db.js', 'src/deedbuildings.js', 'src/deeddiscovery.js', 'src/deeds.js', 'src/engagement.js', 'src/game.js',
   'src/invariants.js', 'src/legal.js', 'src/preflight.js', 'src/server.js', 'src/ux-story.js', 'src/ux-tactics.js',
@@ -38,6 +38,9 @@ export const ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES = Object.freeze([
   'tools/commerce-current-native-guard.js', 'tools/economy-ux-merge-source-compatibility.js',
   'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native-ux.js', 'tools/enterprise-native.js',
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/ux-source-compatibility.js',
+]);
+export const ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES = Object.freeze([
+  'public/omerta-ui.css', 'public/ux-feedback.js', 'public/ux-world.js',
 ]);
 // This existing input was identical in both reviewed parents. Its sole later correction classifies
 // the already implemented alert thresholds; these forward checks grant no native-result alias.
@@ -56,6 +59,7 @@ export const ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR = Object.freeze({
 export const ECONOMY_DEED_MERGE_PROFILES = Object.freeze({
   monitor: 'c771f5ba73453a57e24e31f8eeb920933fe7544c',
   deed: '4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364',
+  noir: 'a87217d664d52eb119683ed305c564ee3cf9deb0',
 });
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
@@ -78,7 +82,7 @@ const assertSourceDefinition = pin => {
   assert.equal(pin.sourceOnly, true); assert.equal(pin.runtime, false); assert.equal(pin.native, false);
   assert.match(pin.sourceRevision, /^[a-f0-9]{40}$/); assert.match(pin.sourceTree, /^[a-f0-9]{40}$/);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.profiles) && Object.isFrozen(pin.files));
-  assert.deepEqual(Object.keys(pin.profiles), ['monitor', 'deed']);
+  assert.deepEqual(Object.keys(pin.profiles), ['monitor', 'deed', 'noir']);
   for (const profile of Object.keys(ECONOMY_DEED_MERGE_PROFILES)) {
     keys(pin.profiles[profile], ['revision', 'tree']);
     assert.equal(pin.profiles[profile].revision, ECONOMY_DEED_MERGE_PROFILES[profile]);
@@ -92,7 +96,7 @@ export function assertEconomyDeedMergeSource(file, input, profile, pin = ECONOMY
   assert(typeof file === 'string' && ECONOMY_DEED_MERGE_FILES.includes(file), 'Closed integration source file');
   assertSourceDefinition(pin);
   const row = pin.files.find(row => row.file === file), current = normalize(input), expected = row.current;
-  keys(row, ['file', 'current', 'parents']); keys(row.parents, ['monitor', 'deed']);
+  keys(row, ['file', 'current', 'parents']); keys(row.parents, ['monitor', 'deed', 'noir']);
   keys(expected, ['mode', 'sha256', 'blob', 'bytes', 'rawSha256']);
   keys(expected.rawSha256, ['lf', 'crlf']); assert(Object.isFrozen(expected.rawSha256));
   assert(['100644', '100755'].includes(expected.mode));

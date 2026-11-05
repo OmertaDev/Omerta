@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { ECONOMY_DEED_MERGE_FILES, ECONOMY_DEED_MERGE_PROFILES,
-  ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES,
+  ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES, ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES,
   ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR,
   ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR } from './economy-deed-merge-source-compatibility.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous,
@@ -85,20 +85,32 @@ const source = { version: 1, status: 'SEALED', phase: 'EXACT_ECONOMY_DEED_MERGE_
   }), sourceOnly: true, runtime: false, native: false };
 assert.equal(previous.status, 'SEALED'); assert.equal(sha(JSON.stringify(previous)), previousDefinitionSha256);
 const review = new Set();
-for (const { revision } of Object.values(profiles)) for (const pin of previous.files) {
+for (const profile of ['monitor', 'deed']) for (const pin of previous.files) {
+  const { revision } = profiles[profile];
   const entry = tree(revision).get(pin.file); assert(entry, 'Existing predecessor input removed by a parent: ' + pin.file);
   if (entry.mode !== pin.mode || entry.blob !== pin.blob) review.add(pin.file);
 }
 const operationalSuccessors = [ECONOMY_DEED_MERGE_PREFLIGHT_SUCCESSOR, ECONOMY_DEED_MERGE_ENGAGEMENT_SUCCESSOR];
 assert.deepEqual(operationalSuccessors.map(row => row.file), ['src/preflight.js', 'src/engagement.js']);
 assert.equal(review.size, 51);
-assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !operationalSuccessors.some(row => row.file === file)),
+assert.deepEqual([...review].sort(), ECONOMY_DEED_MERGE_NATIVE_REVIEW_FILES.filter(file => !operationalSuccessors.some(row => row.file === file)
+  && !ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES.includes(file)),
   'Changed existing-native review scope must remain the two immutable parent scopes');
+const noirChanges = [];
+for (const pin of previous.files) {
+  const entry = tree(profiles.noir.revision).get(pin.file); assert(entry, 'Existing predecessor input removed by the Noir parent: ' + pin.file);
+  if (entry.mode === pin.mode && entry.blob === pin.blob) continue;
+  if (!review.has(pin.file)) noirChanges.push(pin.file);
+  review.add(pin.file);
+}
+assert.deepEqual(noirChanges.sort(), ECONOMY_DEED_MERGE_NOIR_NATIVE_FILES,
+  'Only the exact three additional Noir inputs extend the original native review scope');
+assert.equal(review.size, 54);
 for (const operational of operationalSuccessors) {
   const operationalPredecessor = previous.files.find(pin => pin.file === operational.file); assert(operationalPredecessor);
   for (const { revision } of Object.values(profiles))
     assert.deepEqual(nativePin(revision, operational.file), operationalPredecessor,
-      'The operational classification input was unchanged in both immutable parents');
+      'The operational classification input was unchanged in all immutable parents');
   const operationalBefore = text(previous.authoredRevision, operational.file), operationalCurrent = text(authored, operational.file);
   assert.equal(operationalBefore.split(operational.anchor).length, 2);
   assert.equal(operationalCurrent, operationalBefore.replace(operational.anchor, operational.anchor + operational.addition),

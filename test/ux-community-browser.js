@@ -174,6 +174,7 @@ try {
  const predecessor = mate.ch;
  await pool.query('UPDATE characters SET alive=false WHERE id=$1', [predecessor.id]);
  await pool.query('INSERT INTO characters(id,account_id,name,generation,season) VALUES ($1,$2,$3,$4,$5)', ['culture-successor', predecessor.account_id, 'Culture Successor', predecessor.generation + 1, predecessor.season]);
+ for (const details of await page.locator('#btn-refresh').locator('xpath=ancestor::details').all()) if (!await details.evaluate(node => node.open)) await details.locator(':scope > summary').click();
  await page.locator('#btn-refresh').click();
  await page.waitForFunction(() => !!document.querySelector('#ux-community [name=participant][value="culture-successor"]'));
  assert.equal(await page.locator(`#ux-community img[src="/v1/avatar/${predecessor.id}"]`).count(), 0, 'a same-account successor immediately loses the predecessor’s cached accepted avatar');

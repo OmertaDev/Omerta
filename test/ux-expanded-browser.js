@@ -58,7 +58,7 @@ try {
     await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     // Only the old welcome UI is suppressed; feature rendering and all data reads are real.
     await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(node => node.classList.add('hidden')));
-    if (mobile) await page.locator('#ux-screen-tools > summary').click();
+    await disclosure(page.locator('#ux-screen-tools'));
     await page.locator('select[data-ux-density]').waitFor();
     if (mobile) {
       await page.locator('.ux-screen-tools-close').click();
@@ -140,9 +140,17 @@ try {
   const learning = page.locator('#tab-life .ux-world-panel details[data-section="learning"]'); await disclosure(learning); await disclosure(learning.locator('details'));
   assert.match(await learning.locator('tbody tr').last().innerText(), new RegExp((priorRespect + 123).toLocaleString('en-US')), 'curve table reflects actual newly recorded server respect');
 
-  const comfortableSize = await page.locator('#tab-life .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
+  const readingParagraph = learning.locator(':scope > p').first(); await readingParagraph.waitFor({ state: 'visible' });
+  await page.locator('select[data-ux-density]').selectOption('comfortable');
+  await page.waitForFunction(() => document.body.dataset.uxDensity === 'comfortable');
+  const comfortableSize = await readingParagraph.evaluate(node => parseFloat(getComputedStyle(node).fontSize));
   await page.locator('select[data-ux-density]').selectOption('large');
-  const largeSize = await page.locator('#tab-life .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize)); assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
+  await page.waitForFunction(baseline => {
+    const paragraph = document.querySelector('#tab-life .ux-world-panel details[data-section="learning"] > p');
+    return document.body.dataset.uxDensity === 'large' && paragraph && paragraph.getClientRects().length
+      && parseFloat(getComputedStyle(paragraph).fontSize) > baseline;
+  }, comfortableSize);
+  const largeSize = await readingParagraph.evaluate(node => parseFloat(getComputedStyle(node).fontSize)); assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode visibly removes the side column');
   assert.match(await page.locator('#ux-focus-vitals').innerText(), /Health.*nerve/);
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), true);
