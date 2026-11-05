@@ -230,7 +230,7 @@
 | [src/economy.js](../../src/economy.js) | 748 | economy-ledger | 7 / 50 | 26 | 18 | 46 |
 | [src/emission.js](../../src/emission.js) | 34 | economy-ledger | 1 / 2 | 1 | 0 | 1 |
 | [src/employmentorganizations.js](../../src/employmentorganizations.js) | 64 | platform-core | 4 / 6 | 0 | 9 | 1 |
-| [src/engagement.js](../../src/engagement.js) | 374 | engagement-growth | 1 / 5 | 1 | 8 | 2 |
+| [src/engagement.js](../../src/engagement.js) | 376 | engagement-growth | 1 / 5 | 1 | 8 | 2 |
 | [src/equipment-economy-contracts.js](../../src/equipment-economy-contracts.js) | 107 | platform-core | 0 / 2 | 0 | 2 | 1 |
 | [src/equipmentinsurance.js](../../src/equipmentinsurance.js) | 54 | platform-core | 4 / 6 | 0 | 13 | 3 |
 | [src/equipmentmaintenance.js](../../src/equipmentmaintenance.js) | 49 | platform-core | 4 / 5 | 0 | 9 | 3 |
@@ -372,7 +372,7 @@
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait-access.js](../../src/portrait-access.js) | 34 | platform-core | 0 / 4 | 0 | 2 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 341 | engagement-growth | 4 / 7 | 0 | 6 | 4 |
-| [src/preflight.js](../../src/preflight.js) | 544 | platform-core | 0 / 10 | 0 | 7 | 4 |
+| [src/preflight.js](../../src/preflight.js) | 546 | platform-core | 0 / 10 | 0 | 7 | 4 |
 | [src/primetime.js](../../src/primetime.js) | 292 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/productionslots-contracts.js](../../src/productionslots-contracts.js) | 7 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/productionslots.js](../../src/productionslots.js) | 32 | platform-core | 6 / 8 | 0 | 11 | 3 |
