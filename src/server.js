@@ -98,6 +98,7 @@ import { register as registerMarketFeed } from './routes/marketfeed.js';
 import { register as registerStrategyLeagues } from './routes/strategyleagues.js';
 import { register as registerCompanyOperators } from './routes/companyoperators.js';
 import { register as registerCompanyProduction } from './routes/companyproduction.js';
+import { register as registerBusinessDesk } from './routes/businessdesk.js';
 import {registerWorkshopFloor} from './workshopfloor-api.js';
 import { register as registerCompanyDemand } from './routes/companydemand.js';
 import { register as registerCompanyForecast } from './routes/companyforecast.js';
@@ -648,6 +649,7 @@ export async function buildServer() {
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
     ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],
     ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],
+    ['business-control-desk.js', 'application/javascript'], ['business-control-desk.css', 'text/css'],
     ['ux-feedback.js', 'application/javascript'], ['ux-feedback.css', 'text/css'],
     ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],
     ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],
@@ -756,10 +758,10 @@ export async function buildServer() {
   // RANGE support is not optional for <video>: Chromium's media stack refuses a source it cannot seek
   // (a chunked stream with no Content-Length/Accept-Ranges fires the element's error event and the
   // client's fail-safe removes the clip) — found live by the motion probe, not by reading specs.
-  const sendVideo = (key, req, reply) => {
+  const sendVideo = (key, req, reply, cacheControl = 'public, max-age=604800, immutable') => {
     const hit = ART_VIDEOS.get(key);
     if (!hit) return reply.code(404).send({ error: 'not_found' });
-    reply.header('accept-ranges', 'bytes').header('cache-control', 'public, max-age=604800, immutable');
+    reply.header('accept-ranges', 'bytes').header('cache-control', hit.cacheControl || cacheControl);
     const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
     if (m && (m[1] !== '' || m[2] !== '')) {
       const start = m[1] === '' ? Math.max(0, hit.size - Number(m[2])) : Number(m[1]);
@@ -784,6 +786,44 @@ export async function buildServer() {
     const hit = ART_FILES.get('nft/' + req.params.file);
     if (!hit) return reply.code(404).send({ error: 'not_found' });
     return reply.type(hit.type).header('cache-control', 'public, max-age=604800').send(hit.body);
+  });
+  // The wiki explainer uses stable public filenames. Allow only the finished reader-facing assets;
+  // generated source art and production metadata in neighbouring files never become public routes.
+  // Stream the diagrams too: their embedded art can make SVGs much larger than the root art plates.
+  const wikiEconomyDir = join(artDir, 'wiki-economy');
+  const wikiEconomyFiles = new Map();
+  const wikiDiagramIds = ['economy-map', 'fee-split', 'deed-lifecycle', 'stock-rewards', 'token-supply', 'technology-stack'];
+  const wikiEconomyTypes = new Map([
+    ...wikiDiagramIds.flatMap(id => ['', '-panel'].flatMap(suffix => [
+      [`${id}${suffix}.png`, 'image/png'], [`${id}${suffix}.svg`, 'image/svg+xml; charset=utf-8'],
+    ])),
+    ['omerta-wiki-economy-poster.jpg', 'image/jpeg'],
+    ['gallery.html', 'text/html; charset=utf-8'],
+    ['captions.vtt', 'text/vtt; charset=utf-8'],
+    ['transcript.md', 'text/plain; charset=utf-8'],
+  ]);
+  for (const [name, type] of wikiEconomyTypes) {
+    try {
+      const path = join(wikiEconomyDir, name), stat = statSync(path);
+      if (stat.isFile()) wikiEconomyFiles.set(name, { path, size: stat.size, type });
+    } catch { /* optional until the completed explainer ships */ }
+  }
+  const wikiMovieName = 'omerta-wiki-economy-1080p.mp4';
+  const wikiMovieKey = 'wiki-economy/' + wikiMovieName;
+  try {
+    const path = join(wikiEconomyDir, wikiMovieName), stat = statSync(path);
+    if (stat.isFile()) ART_VIDEOS.set(wikiMovieKey, { path, size: stat.size, type: 'video/mp4', cacheControl: 'no-cache' });
+  } catch { /* no film player until the completed export ships */ }
+  app.get('/art/wiki-economy/:file', async (req, reply) => {
+    const name = req.params.file;
+    if (name === wikiMovieName) return sendVideo(wikiMovieKey, req, reply, 'no-cache');
+    const hit = wikiEconomyFiles.get(name);
+    if (!hit) return reply.code(404).send({ error: 'not_found' });
+    if (hit.type.startsWith('text/html')) reply.header('Content-Security-Policy',
+      "default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; "
+      + "style-src 'unsafe-inline'; img-src 'self'; media-src 'self'");
+    return reply.type(hit.type).header('cache-control', 'no-cache').header('content-length', String(hit.size))
+      .send(createReadStream(hit.path));
   });
   // THE MOTION MANIFEST — the client asks which plates have a living clip (and which ambient beds
   // shipped) instead of hardcoding a list that would drift from the directory. Derived from the SAME
@@ -2553,6 +2593,7 @@ export async function buildServer() {
   registerStrategyLeagues(app, { pool, auth });
   registerCompanyOperators(app, { pool, auth });
   registerCompanyProduction(app, { pool, auth, beforeCraft: assertCompanySpecializationBeforeCraft, sourceScope: withInfrastructureProductionScope });
+  registerBusinessDesk(app, { pool, auth });
   registerEquipmentRecovery(app,{pool,auth});
   registerManufacturingLicenses(app,{pool,auth});
   registerWorkshopFloor(app,{pool,auth});

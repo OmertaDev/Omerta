@@ -1,5 +1,8 @@
+import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer, businessDeskCombinedHistoricalInput } from '../../tools/businessdesk-combined-source-transfer.js';
 // Independently pinned source-reader conservation. No native compiler/runtime is imported here.
 import assert from 'node:assert/strict';
+import { WIKI_MEDIA_MERGE_SOURCE, assertWikiMediaMergeSourceTransfer,
+  WIKI_MEDIA_NOIR_MERGE_SOURCE, assertWikiMediaNoirMergeSourceTransfer } from '../../tools/wiki-media-source-transfer.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -7,9 +10,13 @@ import { UX_NATIVE_READER_SOURCE as pin, UX_NATIVE_READER_SOURCE_FILES, qualifyU
 import { qualifyUxSource, uxHistoricalInput } from '../../tools/ux-source-compatibility.js';
 import { ECONOMY_UX_MERGE_SOURCE, economyUxMergeMainHistoricalInput } from '../../tools/economy-ux-merge-source-compatibility.js';
 import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_DOMAINS, assertDeedAllocationSourceTransfer } from '../../tools/deed-allocation-source-transfer.js';
+import { ECONOMY_DEED_MERGE_SOURCE, assertEconomyDeedMergeSource,
+  economyDeedMergeHistoricalInput } from '../../tools/economy-deed-merge-source-compatibility.js';
 const AUTHORED_NATIVE_READER_FIX = 'c1720a694799e743c6f70bc3069dba2bbecae08e';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+const gitRaw = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
+let integrationReaderControls = 0;
 assert.equal(pin.status, 'SEALED'); assert.equal(pin.revision, AUTHORED_NATIVE_READER_FIX);
 assert.equal(pin.targetRevision, 'a93245c8eb798dd3760720b65e61c300cb0fceed');
 assert.deepEqual(UX_NATIVE_READER_SOURCE_FILES, ['test/phase2-postgres.js', 'tools/enterprise-native.js', 'test/enterprise-native-guard.js']);
@@ -25,7 +32,61 @@ const hunks = diff => {
 };
 // This is only the historical reader's qualified view; raw HEAD is independently pinned below.
 function qualifiedNativeReaderHeadEntry(file) {
-  const raw = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();
+  assert(UX_NATIVE_READER_SOURCE_FILES.includes(file), 'Only the three frozen source readers are qualified');
+  const committed = gitRaw('show', 'HEAD:' + file), physicalBytes = fs.readFileSync(file), physicalStat = fs.lstatSync(file);
+  let raw = committed.toString('utf8'), entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const actual = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(actual && actual[3] === file, 'Actual committed regular source identity is required');
+  assert(Buffer.from(raw).equals(committed) && !/[\r\0\ufeff]/.test(raw), 'Actual Git source is complete lossless UTF-8 LF');
+  assert.equal(crypto.createHash('sha1').update('blob ' + committed.length + '\0').update(committed).digest('hex'), actual[2]);
+  assert(physicalStat.isFile() && !physicalStat.isSymbolicLink(), 'Actual physical reader is a regular non-symlink file');
+  assert(physicalBytes.equals(committed) || physicalBytes.equals(Buffer.from(raw.replaceAll('\n', '\r\n'))),
+    'Whole physical LF/CRLF reader bytes qualify before any historical view');
+  const actualEntry = entry, actualRaw = raw, combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.wiki);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'),
+    'The actual index qualifies before the source-only parent view');
+  if (combined) {
+    assert.equal(actualEntry, combined.current.mode + ' blob ' + combined.current.blob + '\t' + file);
+    const proof = assertBusinessDeskCombinedSourceTransfer(file, actualRaw, 'wiki');
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    raw = proof.targetText;
+    entry = git('ls-tree', BUSINESS_DESK_COMBINED_SOURCE.profiles.wiki.revision, '--', file).trim();
+    assert.equal(raw, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.wiki.revision + ':' + file));
+  }
+  const noirMerged = WIKI_MEDIA_NOIR_MERGE_SOURCE.files[file];
+  if (noirMerged) {
+    assert.equal(entry, noirMerged.current.mode + ' blob ' + noirMerged.current.lf.blob + '\t' + file,
+      'Actual HEAD must qualify before the source-only wiki parent');
+    raw = assertWikiMediaNoirMergeSourceTransfer(file, raw, 'wiki').baselineText;
+    entry = git('ls-tree', WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.wiki.revision, '--', file).trim();
+  }
+  const merged = WIKI_MEDIA_MERGE_SOURCE.files[file];
+  if (merged) {
+    assert.equal(entry, merged.current.mode + ' blob ' + merged.current.lf.blob + '\t' + file,
+      'Actual merged HEAD identity must qualify before source-only reader bookkeeping');
+    raw = assertWikiMediaMergeSourceTransfer(file, raw).baselineText;
+    entry = git('ls-tree', WIKI_MEDIA_MERGE_SOURCE.parents.main.revision, '--', file).trim();
+  }
+  const integrated = economyDeedMergeHistoricalInput(file, raw, 'deed');
+  if (integrated !== raw) {
+    const integration = ECONOMY_DEED_MERGE_SOURCE.files.find(row => row.file === file);
+    assert(integration, 'Only an existing closed integration source file can enter the Deed view');
+    assert.equal(entry, integration.current.mode + ' blob ' + integration.current.blob + '\t' + file,
+      'Actual integrated HEAD mode/blob qualifies before source-only Deed bookkeeping');
+    const proof = assertEconomyDeedMergeSource(file, raw, 'deed');
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    assert.equal(proof.baselineText, integrated);
+    const parent = ECONOMY_DEED_MERGE_SOURCE.profiles.deed.revision;
+    const parentEntry = integration.parents.deed.mode + ' blob ' + integration.parents.deed.blob + '\t' + file;
+    assert.equal(parentEntry, git('ls-tree', parent, '--', file).trim());
+    assert.equal(integrated, git('show', parent + ':' + file), 'Complete frozen Deed source remains exact');
+    for (const changed of [raw + '\n', raw.slice(1), '\ufeff' + raw, raw + '\0']) {
+      assert.throws(() => assertEconomyDeedMergeSource(file, changed, 'deed')); integrationReaderControls++;
+    }
+    assert.throws(() => assertEconomyDeedMergeSource(file, raw, 'deed', Object.freeze({ ...ECONOMY_DEED_MERGE_SOURCE })));
+    integrationReaderControls++;
+    raw = integrated; entry = parentEntry;
+  }
   const deed = DEED_ALLOCATION_SOURCE_DOMAINS[file];
   if (deed) {
     assert.equal(entry, deed.currentMode + ' blob ' + deed.currentBlob + '\t' + file, 'Raw Deed HEAD mode/blob must qualify before historical source bookkeeping');
@@ -52,8 +113,17 @@ function qualifiedNativeReaderHeadEntry(file) {
 }
 let positives = 0, refusals = 0, inverseHunks = 0;
 for (const row of pin.files) {
-  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = uxPhase2UpgradeBoundHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')), stat = fs.lstatSync(row.file);
-  assert(stat.isFile() && !stat.isSymbolicLink()); assert.equal(uxPhase2UpgradeBoundHistoricalInput(row.file, git('show', 'HEAD:' + row.file)), current, 'Actual committed native-reader source remains authored source');
+  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
+  const rawPhysical = fs.readFileSync(row.file, 'utf8'), checkedOut = git('show', 'HEAD:' + row.file), stat = fs.lstatSync(row.file);
+  assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+    'Complete raw physical reader must match actual HEAD before historical reconstruction');
+  const actualEntry = git('ls-tree', 'HEAD', '--', row.file).trim();
+  assert.equal(git('ls-files', '--stage', '--', row.file).trim(), actualEntry.replace(' blob ', ' ').replace('\t', ' 0\t'));
+  const comparisonPhysical = businessDeskCombinedHistoricalInput(row.file, rawPhysical, 'wiki');
+  const comparisonHead = businessDeskCombinedHistoricalInput(row.file, checkedOut, 'wiki');
+  const physical = uxPhase2UpgradeBoundHistoricalInput(row.file, comparisonPhysical);
+  assert.equal(uxPhase2UpgradeBoundHistoricalInput(row.file, comparisonHead), current, 'Actual committed native-reader source remains authored source');
   assert.equal(qualifiedNativeReaderHeadEntry(row.file), row.mode + ' blob ' + row.currentBlob + '\t' + row.file, 'Actual committed reader mode and blob remain exact');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'));
   for (const [revision, mode, expected] of [[pin.revision, row.mode, row.currentBlob], [pin.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', row.file).trim(), mode + ' blob ' + expected + '\t' + row.file);
@@ -78,7 +148,7 @@ for (const row of pin.files) {
   assert.equal(sha(current), row.currentSha256);
 }
 for (const file of ['../schema.sql', 'schema.sql', 'constructor', '__proto__', 'src/unknown.js']) { assert.throws(() => qualifyUxNativeReaderSource(file, 'x')); assert.equal(uxNativeReaderHistoricalInput(file, 'x'), 'x'); refusals++; }
-console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor: pin.targetRevision, files: pin.files.length, inverseHunks, positives, refusals, sourceOnly: true, runtime: false, native: false }));
+console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor: pin.targetRevision, files: pin.files.length, inverseHunks, positives, refusals, integrationReaderControls, sourceOnly: true, runtime: false, native: false }));
 
 // A distinct one-file forward layer, never a native execution or runtime clearance.
 {
@@ -89,8 +159,17 @@ console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor
   assert.deepEqual(next.files.map(row => row.file), [file]);
   for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
   git('merge-base', '--is-ancestor', next.targetRevision, next.revision); git('merge-base', '--is-ancestor', next.revision, 'HEAD');
-  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file), physical = economyUxMergeMainHistoricalInput(file, fs.readFileSync(file, 'utf8'));
-  assert.equal(economyUxMergeMainHistoricalInput(file, git('show', 'HEAD:' + file)), current, 'Parent-qualified actual HEAD retains the complete new authored Phase2 file');
+  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file);
+  const rawPhysical = fs.readFileSync(file, 'utf8'), checkedOut = git('show', 'HEAD:' + file);
+  assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+    'Complete raw physical Phase2 source must match actual HEAD before its source-only view');
+  assert(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink());
+  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), actualEntry.replace(' blob ', ' ').replace('\t', ' 0\t'));
+  const comparisonPhysical = businessDeskCombinedHistoricalInput(file, rawPhysical, 'wiki');
+  const comparisonHead = businessDeskCombinedHistoricalInput(file, checkedOut, 'wiki');
+  const physical = economyUxMergeMainHistoricalInput(file, comparisonPhysical);
+  assert.equal(economyUxMergeMainHistoricalInput(file, comparisonHead), current, 'Parent-qualified actual HEAD retains the complete new authored Phase2 file');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Raw physical Phase2 file is whole LF/CRLF authored source');
   assert(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink());
   for (const [revision, mode, expected] of [[next.revision, row.mode, row.currentBlob], [next.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', file).trim(), mode + ' blob ' + expected + '\t' + file);

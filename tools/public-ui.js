@@ -75,7 +75,13 @@ async function newPage(options) {
 }
 
 // Keep these checks behavioral: a labelled overlay can still strand a real keyboard user.
-async function checkDialogKeyboard(page, opener, overlay, name, returnTarget = opener) {
+async function openControlDetails(control) {
+  for (const details of await control.locator('xpath=ancestor::details').all()) {
+    if (!await details.evaluate(node => node.open)) await details.locator(':scope > summary').click();
+  }
+}
+async function checkDialogKeyboard(page, opener, overlay, name) {
+  await openControlDetails(page.locator(opener));
   await page.locator(opener).focus();
   await page.keyboard.press('Enter');
   await page.locator(`${overlay}:not(.hidden)`).waitFor();
@@ -102,8 +108,10 @@ async function checkDialogKeyboard(page, opener, overlay, name, returnTarget = o
     `${name}: reverse/forward focus loop did not return to the initial control`);
   await page.keyboard.press('Escape');
   await page.locator(overlay).waitFor({ state: 'hidden' });
-  check(await page.locator(returnTarget).evaluate((element) => element === document.activeElement),
-    `${name}: Escape did not return keyboard focus to ${returnTarget}`);
+  check(await page.locator(opener).isVisible()
+    && await page.locator(opener).evaluate((element) => element === document.activeElement
+      && !element.closest('.hidden, [hidden], [inert]')),
+    `${name}: Escape did not restore the opener's keyboard focus`);
 }
 
 async function checkPublicKeyboard(page, route) {
@@ -153,12 +161,7 @@ try {
   check(firstFrame.over <= 1, `desktop landing scrolls sideways by ${firstFrame.over}px`);
   check(firstFrame.editorial && !firstFrame.announcesLive,
     'the fictional landing feed is not programmatically identified as editorial flavor');
-  const gameProof = await desktop.evaluate(() => ({
-    approaches: document.querySelectorAll('.operation-proof .operation-approach').length,
-    receipt: document.querySelectorAll('.operation-proof .operation-receipt').length,
-  }));
-  check(gameProof.approaches === 3 && gameProof.receipt === 1,
-    `landing does not prove one game decision and its recorded consequence — ${JSON.stringify(gameProof)}`);
+  // Measure the cold viewport before the responsive-layout probes request other poster sizes.
   await desktop.waitForLoadState('networkidle');
   const landingLoad = await desktop.evaluate(() => {
     const nav = performance.getEntriesByType('navigation')[0];
@@ -174,7 +177,6 @@ try {
   console.log(`    Cold landing: ${Math.round(landingLoad.bytes / 1024)} KB / 768 KB transfer budget`);
   check(landingLoad.heroFallbackBytes === 0,
     `the responsive landing still fetched the 630 KB hero fallback — ${JSON.stringify(landingLoad.resources)}`);
-  // Measure the cold page before resizing selects another responsive poster.
   // A 1728px MacBook Pro report exposed the hero's right edge as black while the animated layer played.
   // Both the first-paint still and the progressively-mounted video must be centered on the VIEWPORT,
   // not sized from the 1080px copy column that happens to own them in the DOM.
@@ -194,6 +196,12 @@ try {
     && wideHero.motion.left === 0 && wideHero.motion.right === wideHero.viewport,
   `1728px landing hero media does not cover both viewport edges — ${JSON.stringify(wideHero)}`);
   await desktop.setViewportSize({ width: 1440, height: 900 });
+  const gameProof = await desktop.evaluate(() => ({
+    approaches: document.querySelectorAll('.operation-proof .operation-approach').length,
+    receipt: document.querySelectorAll('.operation-proof .operation-receipt').length,
+  }));
+  check(gameProof.approaches === 3 && gameProof.receipt === 1,
+    `landing does not prove one game decision and its recorded consequence — ${JSON.stringify(gameProof)}`);
 
   // Merely moving a pointer must not silently begin the large atmosphere transfer.
   // Measure before any explicit play and keep that opt-in transfer outside the cold-load budget.
@@ -451,12 +459,17 @@ try {
   await mobile.click('#btn-create');
   await mobile.waitForSelector('#screen-main:not(.hidden)');
   await mobile.locator('#tab-start.on .start-next-card .act').waitFor();
-  check(!await mobile.locator('#welcome').isVisible(), 'Fresh players reach their first-week guidance directly.');
-  await mobile.locator('#bnav [data-go="streets"]').click();
+  check(await mobile.locator('#welcome:not(.hidden)').count() === 0, 'The welcome tour is optional on fresh arrival.');
+  await openControlDetails(mobile.locator('#btn-help'));
+  await mobile.click('#btn-help');
+  await mobile.click('#glossary-tour');
+  await mobile.locator('#welcome:not(.hidden)').waitFor();
+  for (let step = 0; step < 2; step++) await mobile.click('#tour-next');
+  await mobile.locator('#welcome.hidden').waitFor({ state: 'attached' });
   const firstJob = mobile.locator('#tab-streets.on #ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled');
   await firstJob.click({ trial: true });
   check(await mobile.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected') === 'true',
-    'The Streets navigation control selects the first job screen.');
+    'Completing the tour selects Streets with an available first job.');
   check(await mobile.locator('#player-view-switch, #city-actions, #city-panel, #city-scene-host').count() === 0,
     'The first job uses the classic interface.');
   const operationDesk = await firstJob.evaluate((primary) => {
@@ -512,11 +525,8 @@ try {
         body: JSON.stringify({ error: 'in_progress', message: 'That move is still being recorded.' }) });
     } else await route.continue();
   });
-  const directory = mobile.locator('#city-directory');
-  if (!await directory.evaluate(element => element.open)) await directory.locator(':scope > summary').click();
-  const sheet = mobile.locator('#character-sheet');
-  if (!await sheet.evaluate(element => element.open)) await sheet.locator(':scope > summary').click();
   const checkin = mobile.locator('#sheet [data-do="POST /v1/checkin"]');
+  await openControlDetails(checkin);
   await checkin.click();
   await mobile.waitForTimeout(40);
   const pending = await mobile.evaluate(() => ({
@@ -601,8 +611,8 @@ try {
   const deedMe = (await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: 'Bearer ' + deedToken } })).json();
   const deedAccount = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [deedMe.character.id])).rows[0].account_id;
   await app.pool.query('UPDATE characters SET respect=500000,energy=100,cash=cash+2000 WHERE id=$1', [deedMe.character.id]);
-  await earnBuildingClaim(app, deedToken, 'docks-0167');
-  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', buildingId: 'docks-0167' } });
+  await earnBuildingClaim(app, deedToken, 'docks-0001');
+  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', buildingId: 'docks-0001' } });
   check(claim.statusCode === 200, 'Browser deed fixture could not claim a street');
   await mobile.evaluate(() => document.querySelector('#tabs [data-tab="deeds"]').click());
   await mobile.waitForSelector('#deed-upgrade', { state: 'visible' });
@@ -629,8 +639,7 @@ try {
 
   reportStage('Keyboard navigation, modal focus, and accessible destinations');
   await checkDialogKeyboard(mobile, '#btn-jump', '#jumpmodal', 'Quick jump');
-  await mobile.locator('#game-menu > summary').click();
-  await checkDialogKeyboard(mobile, '#btn-logout', '.modal-bg[data-managed-dialog]', 'Sign-out confirmation', '#game-menu > summary');
+  await checkDialogKeyboard(mobile, '#btn-logout', '.modal-bg[data-managed-dialog]', 'Sign-out confirmation');
   await mobile.locator('#btn-jump').focus();
   await mobile.keyboard.press('Enter');
   await mobile.locator('#jump-q').fill('heal');

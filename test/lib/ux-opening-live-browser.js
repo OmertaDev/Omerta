@@ -136,11 +136,18 @@ export async function runOpeningLiveBrowserProof() {
     // The unchanged application's authenticated queue is serial. Character changes are
     // checked through actual refreshed sessions rather than an impossible parallel read.
     await pool.query('UPDATE characters SET generation=2 WHERE id=$1', [alice.character.id]);
+    // A real background quote can populate the cache before the visible button is
+    // clicked. Observe the new page's quote rather than requiring a duplicate GET.
+    const generationReloadAt = Date.now();
+    const currentQuote = page.waitForResponse(async response => {
+      if (response.request().method() !== 'GET' || new URL(response.url()).pathname !== '/v1/ux/tactics' || response.status() !== 200) return false;
+      return response.request().timing().startTime >= generationReloadAt
+        && (await response.json()).tactics?.characterId === alice.character.id;
+    });
     await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     await openTab(page, 'start'); await openDetails(opening(page, 'start'));
     assert.equal(await opening(page, 'start').getAttribute('data-opening-actor'), `${alice.character.id}:2`);
     assert.equal(await opening(page, 'start').locator('[data-complete=true]').count(), 0);
-    const currentQuote = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/ux/tactics' && response.status() === 200);
     await opening(page, 'start').getByRole('button', { name: 'Find a useful upgrade', exact: true }).click();
     const currentOffers = (await (await currentQuote).json()).tactics;
     assert.equal(currentOffers.characterId, alice.character.id);

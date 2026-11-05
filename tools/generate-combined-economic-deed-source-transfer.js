@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {economicTermsPin} from './current-economic-terms-source-data.js';
 import {DEED_ALLOCATION_SOURCE_DOMAINS} from './deed-allocation-source-data.js';
-import {ENTERPRISE_NATIVE_UX_INPUTS} from './enterprise-native-deed-inputs.js';
+import {ENTERPRISE_NATIVE_UX_INPUTS} from './economic-deed-parent-native-inputs.js';
 import {NOIR_UI_SOURCE} from './noir-ui-source-data.js';
 
 const source = 'c220834210928560f303795086ee1098d0a65509';
@@ -52,7 +52,7 @@ assert.deepEqual(process.argv.slice(2),['--write']);
 git('merge-base','--is-ancestor',source,'HEAD');
 git('merge-base','--is-ancestor',predecessor,source);
 for (const file of ['tools/deed-allocation-source-data.js','tools/enterprise-native-deed-inputs.js'])
-  assert.equal(readFileSync(file,'utf8').replaceAll('\r\n','\n'),git('show',predecessor+':'+file),'Immutable Deed domain listing: '+file);
+  assert.equal(readFileSync(file==='tools/enterprise-native-deed-inputs.js'?'tools/economic-deed-parent-native-inputs.js':file,'utf8').replaceAll('\r\n','\n'),git('show',predecessor+':'+file),'Immutable Deed domain listing: '+file);
 const changed=git('diff','--name-only','-z',predecessor,source).split('\0').filter(Boolean);
 const native = new Map(ENTERPRISE_NATIVE_UX_INPUTS.files.map(row=>[row.file,row]));
 const files={}, economicFiles={}, fixtureFiles={}, nativeFiles={};

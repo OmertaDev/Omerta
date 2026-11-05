@@ -1,9 +1,13 @@
 // Exact app-source proof only. Historical test text is reconstructed for comparison, never execution.
+import { businessDeskCombinedHistoricalInput, BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
+import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
+import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
+import { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import { currentEconomicTermsBaseline } from '../tools/current-economic-terms-source-transfer.js';
-import { ENTERPRISE_NATIVE_UX_INPUTS as deedNative } from '../tools/enterprise-native-deed-inputs.js';
+import { currentEconomicTermsBaseline, currentEconomicTermsPin } from '../tools/current-economic-terms-source-transfer.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as deedNative } from '../tools/economic-deed-parent-native-inputs.js';
 import { combinedEconomicDeedPin as combined, combinedEconomicDeedInput, combinedEconomicTermsInput, combinedEconomicFixtureInput } from '../tools/combined-economic-deed-source-transfer.js';
 import { execFileSync } from 'node:child_process';
 import { noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
@@ -12,6 +16,8 @@ import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_PREDECESSOR_
   assertDeedAllocationSourceTransfer, deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput }
   from '../tools/economy-ux-merge-source-compatibility.js';
+import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
+import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
 
 const lf = text => text.replaceAll('\r\n', '\n');
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -58,7 +64,16 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
-  const physical = combinedEconomicDeedInput(file, noirUiHistoricalInput(file, fs.readFileSync(file, 'utf8'))), current = lf(physical);
+  const rawPhysical = fs.readFileSync(file, 'utf8'), checkedOut = git('show', 'HEAD:' + file);
+  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+    'Actual whole source must match HEAD before the comparison-only view: ' + file);
+  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();
+  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\t' + file);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\t' + file);
+  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, rawPhysical, 'main'), 'desk');
+  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,
+    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);
   const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && Object.isFrozen(pin.currentRawSha256));
   assert.equal(pin.contextLines, 3); assert.equal(pin.currentMode, '100644'); assert.equal(pin.baselineMode, '100644');
@@ -84,7 +99,7 @@ for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
     assert.equal(deedAllocationHistoricalInput(file, raw), baseline);
     assert.deepEqual(deedAllocationHistoricalInput(file, Buffer.from(raw)), Buffer.from(baseline));
     for (const compose of [economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput])
-      assert.deepEqual(compose(file, raw), compose(file, baseline), 'The new envelope preserves historical composition');
+      assert.deepEqual(compose(file, raw, 'deed'), compose(file, baseline, 'deed'), 'The explicit Deed profile preserves historical composition');
     positives++;
   }
   const reject = text => {
@@ -122,8 +137,11 @@ for (const file of [null, { toString: () => 'package.json' }]) {
 }
 const actualSchema = lf(fs.readFileSync('schema.sql', 'utf8'));
 assert.equal(deedAllocationHistoricalInput('schema.sql', actualSchema), actualSchema, 'Deed normalization excludes the native schema');
-assert.equal(currentEconomicTermsBaseline('schema.sql', actualSchema), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
+assert.equal(currentEconomicTermsBaseline('schema.sql', integratedEconomicParentInput('schema.sql', actualSchema, 'economic')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
   'Only the independently reviewed economic schema can reconstruct its predecessor for source comparison');
+assert.equal(lf(economyMonitorHistoricalInput('schema.sql', integratedEconomicParentInput('schema.sql', actualSchema, 'main'))),
+  git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
+  'Deed source transfer grants no schema/native migration alias; only the separately pinned monitor index is reconstructed');
 for (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',
   'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])
   assert.equal(lf(fs.readFileSync(file, 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),
@@ -161,12 +179,16 @@ for(const file of new Set([...Object.keys(combined.files),...Object.keys(combine
     assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\t'+file);
     assert.equal(sha256(text),pin.sha256); assert.equal(Buffer.byteLength(text),pin.bytes);
   }
-  const physical=fs.readFileSync(file,'utf8');
-  assert(physical===current || physical===current.replaceAll('\n','\r\n'),'Exact reviewed physical merge source: '+file);
-  assert.equal(git('rev-parse','HEAD:'+file).trim(),row.current.blob,'Current Git blob must remain reviewed: '+file);
+  const physical=fs.readFileSync(file,'utf8'), head=git('show','HEAD:'+file);
+  assert(physical===head || physical===head.replaceAll('\n','\r\n'),'Exact physical integration source: '+file);
+  assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),
+    'Current mode and blob must match the reviewed integrated source: '+file);
+  if(economicOnly || Object.hasOwn(combined.files,file)) {
+    assert.equal(lf(integratedEconomicParentInput(file,physical,'economic')),current,'Exact economic merge parent: '+file);
+  }
   if(economicOnly) {
     assert.strictEqual(combinedEconomicDeedInput(file,physical),physical);
-    assert.equal(currentEconomicTermsBaseline(file,physical),prior);
+    assert.equal(currentEconomicTermsBaseline(file,integratedEconomicParentInput(file,physical,'economic')),prior);
   }
   if(!economicOnly && !Object.hasOwn(combined.files,file)) {
     assert.strictEqual(combinedEconomicDeedInput(file,physical),physical,'Native-only inputs never receive historical substitutions');
@@ -203,3 +225,51 @@ for(const [file,row] of Object.entries(combined.fixtureFiles)) {
 for(const file of ['src/store.js','__proto__','../test/lib/rc1-historical-source-fixture.js'])
   assert.strictEqual(combinedEconomicFixtureInput(file,'unknown'),'unknown');
 console.log('Verified the separate exact RC1 fixture source reconstruction and mutation refusals.');
+
+// Seal only the changed paths in the two existing comparison domains. Execution always uses the checkout.
+const integration = integratedEconomicSource;
+assert.deepEqual(integration.parents, {
+  economic:'3cf03ab3ebec43983b59ee07849594ed34f3dcae',
+  main:'68a4d92d810ee17c192abb8a8c2a3fcbf87c4c52',
+});
+assert.equal(git('rev-parse',integration.revision+'^{tree}').trim(),integration.tree);
+git('merge-base','--is-ancestor',integration.revision,'HEAD');
+const economicDomain = new Set([currentEconomicTermsPin.files, combined.files, combined.noirFiles,
+  combined.economicFiles, combined.fixtureFiles].flatMap(Object.keys));
+const mainDomain = new Set([...BUSINESS_DESK_COMBINED_SOURCE_FILES, ...Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), ...economicDomain]);
+for (const [profile,parent] of Object.entries(integration.parents)) {
+  git('merge-base','--is-ancestor',parent,integration.revision);
+  const domain = profile === 'main' ? mainDomain : economicDomain;
+  const changed = git('diff','--name-only','--diff-filter=M','-z',parent,integration.revision).split('\0').filter(file=>domain.has(file));
+  assert.deepEqual(Object.keys(integration.files).filter(file=>Object.hasOwn(integration.files[file].parents,profile)).sort(),changed.sort());
+  for (const file of changed) {
+    const row = integration.files[file], target = row.parents[profile];
+    const current = git('show',integration.revision+':'+file), predecessor = git('show',parent+':'+file);
+    for (const [rev,source,pin] of [[integration.revision,current,row.current],[parent,predecessor,target.pin]]) {
+      assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\t'+file);
+      assert.equal(sha256(source),pin.sha256); assert.equal(Buffer.byteLength(source),pin.bytes);
+    }
+    assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integration.revision,'--',file).trim());
+    assert.equal(git('ls-files','--stage','--',file).trim(),row.current.mode+' '+row.current.blob+' 0\t'+file);
+    const stat=fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+    const raw = fs.readFileSync(file);
+    assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\n','\r\n'))));
+    for (const input of [current,current.replaceAll('\n','\r\n'),raw]) {
+      const result = integratedEconomicParentInput(file,input,profile);
+      assert.equal(String(result),predecessor); assert.equal(Buffer.isBuffer(result),Buffer.isBuffer(input));
+    }
+    for (const input of [current+'\n', current.slice(1), current.replace('\n','\r\n'), '\ufeff'+current, current+'\0', predecessor]) {
+      assert.strictEqual(integratedEconomicParentInput(file,input,profile),input);
+    }
+    for (const h of target.inverses) {
+      const partial = current.slice(0,h.at)+h.baseline+current.slice(h.at+h.current.length);
+      assert.notEqual(partial,current); assert.strictEqual(integratedEconomicParentInput(file,partial,profile),partial);
+    }
+    assert.throws(()=>integratedEconomicParentInput(file,Buffer.from([255]),profile),/lossless/i);
+  }
+}
+for (const path of ['../package.json','__proto__','tools/enterprise-native-deed-inputs.js']) {
+  const invalid=Buffer.from([255]);
+  assert.strictEqual(integratedEconomicParentInput(path,invalid,'main'),invalid);
+}
+console.log('Verified complete comparison postimages for both reviewed economic integration parents.');

@@ -140,9 +140,22 @@ try {
   const learning = page.locator('#tab-life .ux-world-panel details[data-section="learning"]'); await disclosure(learning); await disclosure(learning.locator('details'));
   assert.match(await learning.locator('tbody tr').last().innerText(), new RegExp((priorRespect + 123).toLocaleString('en-US')), 'curve table reflects actual newly recorded server respect');
 
-  const comfortableSize = await page.locator('#tab-life .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
+  // Live panel renders can detach a locator's resolved node; sample the current paragraph in one browser turn.
+  await page.locator('select[data-ux-density]').selectOption('comfortable');
+  const comfortableFont = await page.waitForFunction(() => {
+    const node = document.querySelector('#tab-life .ux-world-panel details[data-section="learning"] > p');
+    const size = node?.isConnected && node.getClientRects().length ? parseFloat(getComputedStyle(node).fontSize) : NaN;
+    return document.body.dataset.uxDensity === 'comfortable' && Number.isFinite(size) && size > 0 ? size : false;
+  });
+  const comfortableSize = await comfortableFont.jsonValue(); await comfortableFont.dispose();
   await page.locator('select[data-ux-density]').selectOption('large');
-  const largeSize = await page.locator('#tab-life .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize)); assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
+  const largeFont = await page.waitForFunction(baseline => {
+    const node = document.querySelector('#tab-life .ux-world-panel details[data-section="learning"] > p');
+    const size = node?.isConnected && node.getClientRects().length ? parseFloat(getComputedStyle(node).fontSize) : NaN;
+    return document.body.dataset.uxDensity === 'large' && Number.isFinite(size) && size > baseline ? size : false;
+  }, comfortableSize);
+  const largeSize = await largeFont.jsonValue(); await largeFont.dispose();
+  assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode visibly removes the side column');
   assert.match(await page.locator('#ux-focus-vitals').innerText(), /Health.*nerve/);
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), true);

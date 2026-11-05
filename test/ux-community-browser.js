@@ -77,12 +77,33 @@ try {
  assert.match(await thread.locator(':scope > .ux-community-spoiler').innerText(), /brass key/);
  await bossPage.locator('[data-community-refresh]').click(); await bossPage.locator('.ux-community-thread h4').filter({ hasText: 'Driver timing' }).waitFor();
  await submit(bossPage, 'reply', { stepId: 'step-1', body: 'I can review the shared costs.', spoiler: false }, threadId);
- const emoteSummary = page.locator(`form[data-community-form=emote][data-subject="${threadId}"]`).locator('xpath=parent::details/summary');
- await emoteSummary.evaluate((summary) => summary.addEventListener('click', () => {
-  // Recreate the panel in the exact native-click / asynchronous-toggle window. Its user’s
-  // requested disclosure state must survive a concurrent base-screen refresh.
-  summary.closest('[data-community-host]').remove(); communityUnderTest.render();
- }, { once: true }));
+ const emoteDetails = page.locator(`form[data-community-form=emote][data-subject="${threadId}"]`).locator('xpath=parent::details');
+ const emoteSummary = emoteDetails.locator(':scope > summary');
+ if (await emoteDetails.evaluate((node) => node.open)) await emoteSummary.click();
+ await page.waitForFunction((subject) => {
+  const form = [...document.querySelectorAll('form[data-community-form=emote]')].find((node) => node.dataset.subject === subject);
+  return form?.parentElement.isConnected && !form.parentElement.open;
+ }, threadId);
+ await page.evaluate((subject) => {
+  window.communityDisclosureRace = { removals: 0, preclickOpen: null };
+  const interrupt = (event) => {
+   const summary = event.target.closest?.('summary'), details = summary?.parentElement;
+   const form = details?.querySelector(':scope > form[data-community-form=emote]'), host = details?.closest('[data-community-host]');
+   if (!host?.isConnected || form?.dataset.subject !== subject || summary !== details.querySelector(':scope > summary')) return;
+   document.removeEventListener('click', interrupt, true);
+   // Registered after the runtime intent handler: recreate the live panel before native toggle.
+   communityDisclosureRace.preclickOpen = details.open;
+   host.remove(); communityDisclosureRace.removals++; communityUnderTest.render();
+  };
+  document.addEventListener('click', interrupt, true);
+ }, threadId);
+ await emoteSummary.click();
+ assert.deepEqual(await page.evaluate(() => communityDisclosureRace), { removals: 1, preclickOpen: false }, 'The live closed disclosure is interrupted exactly once during its opening click');
+ await page.waitForFunction((subject) => {
+  const form = [...document.querySelectorAll('form[data-community-form=emote]')].find((node) => node.dataset.subject === subject);
+  return form?.parentElement.isConnected && form.parentElement.open;
+ }, threadId);
+ assert.equal(await emoteDetails.evaluate((node) => node.open), true, 'The replacement disclosure preserves the deliberate opening intent without another click');
  await submit(page, 'emote', { emote: 'hat' }, threadId);
  assert.match(await thread.innerText(), /Culture Mate tips their hat/);
  const replyDraft = await openForm(page, 'reply', threadId); await replyDraft.locator('[name=body]').fill('Keep this unsent comment while the crew updates.');
