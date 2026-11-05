@@ -4,8 +4,8 @@ export const ECONOMY_DEED_MERGE_SOURCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_ECONOMY_DEED_MERGE_SOURCE_ONLY",
-  "sourceRevision": "e4439a346b9cc944a064cb7f576edd5b7a609e00",
-  "sourceTree": "053dc7ca983467e6e15fc47729ea9110291bdff5",
+  "sourceRevision": "34ad488a93450530136972f48c188988f1210e5f",
+  "sourceTree": "d01741a225ee4bacde88dc15870f1ae9bdcae9f8",
   "profiles": {
     "monitor": {
       "revision": "c771f5ba73453a57e24e31f8eeb920933fe7544c",
@@ -742,13 +742,13 @@ export const ECONOMY_DEED_MERGE_SOURCE = freeze({
   "runtime": false,
   "native": false
 });
-export const ECONOMY_DEED_MERGE_SOURCE_SHA256 = "0b2931ac2476c174daf288618b97de731b276573c9dc481481a7eaac5b49ef74";
+export const ECONOMY_DEED_MERGE_SOURCE_SHA256 = "e527170d18ab73feca7458dcf671afdf7d63a9b7d38d38d359cdbaf157217ad3";
 export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "EXACT_ECONOMY_DEED_MERGE_SOURCE_PROVENANCE_ONLY",
-  "sourceRevision": "e4439a346b9cc944a064cb7f576edd5b7a609e00",
-  "sourceTree": "053dc7ca983467e6e15fc47729ea9110291bdff5",
+  "sourceRevision": "34ad488a93450530136972f48c188988f1210e5f",
+  "sourceTree": "d01741a225ee4bacde88dc15870f1ae9bdcae9f8",
   "predecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
   "predecessorDefinitionSha256": "1a18c61c509dab42516af5763f618c3374f5a30d0ec7ca46eb592aa8ef2dbdab",
   "predecessorMetadataSha256": "70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e",
@@ -775,9 +775,11 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
     "src/deedbuildings.js",
     "src/deeddiscovery.js",
     "src/deeds.js",
+    "src/engagement.js",
     "src/game.js",
     "src/invariants.js",
     "src/legal.js",
+    "src/preflight.js",
     "src/server.js",
     "src/ux-story.js",
     "src/ux-tactics.js",
@@ -1137,6 +1139,21 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
       }
     },
     {
+      "file": "src/engagement.js",
+      "current": {
+        "file": "src/engagement.js",
+        "mode": "100644",
+        "blob": "3fc2773c44cd32dcd970c470fcfcc941dcd73b00",
+        "sha256": "9dd0e49b49bc2403ed7dca6b5bb6dffb953c36fcb056dadcf6207219ef725b63"
+      },
+      "predecessor": {
+        "file": "src/engagement.js",
+        "mode": "100644",
+        "blob": "c7f1d2521ca4afc974aed7d5504c09b75a8c6270",
+        "sha256": "d8166dc243fd0ff54322a4da048436566182fba76d098b865215d68db69c1356"
+      }
+    },
+    {
       "file": "src/game.js",
       "current": {
         "file": "src/game.js",
@@ -1179,6 +1196,21 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
         "mode": "100644",
         "blob": "70942fdd7dfd2848988280ffdfdd70a760197ec8",
         "sha256": "cc9d56d27c0630d67dc2cdc1d53a8ff3fc294d7e2faa86a49a1fe1d15b1fa9b6"
+      }
+    },
+    {
+      "file": "src/preflight.js",
+      "current": {
+        "file": "src/preflight.js",
+        "mode": "100644",
+        "blob": "3f020b59416c6edd9f63ac5753510377088105fa",
+        "sha256": "ec03b2586d2a816b02a66a8128ca396ec4dae829fbeadb8557d29c364e892a80"
+      },
+      "predecessor": {
+        "file": "src/preflight.js",
+        "mode": "100644",
+        "blob": "ac3ba92249dbcebe7cfde910d2276373b15eb845",
+        "sha256": "4901dca23d457a6c0dc56c6ca72371162200235de7287ec449363584f74286ea"
       }
     },
     {
@@ -1576,4 +1608,4 @@ export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE = freeze({
   "nativeAdmission": false,
   "priorResultsTransferred": false
 });
-export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 = "9ddcab4388fd3ee6cfc7747bde5182e3aa8a066c35af8a11bb01414f588223cc";
+export const ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 = "7e1789e4f7e7c65c23b6145835b10a66432efbc32d0d3726b1ae26237971ee85";
