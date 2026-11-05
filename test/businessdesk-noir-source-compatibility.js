@@ -176,6 +176,7 @@ const record = (revision, file) => {
 };
 const relation = 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only';
 let nativeRelations = 0, nativeRefusals = 0, neutralAdditions = 0, sample;
+const refusedDeskParentInputs = [];
 const nativeRefused = run => { assert.throws(run); nativeRefusals++; };
 for (const file of nativeFiles) {
   const previous = previousNative.files.find(row => row.file === file), expected = currentNative.files.find(row => row.file === file);
@@ -220,7 +221,10 @@ for (const file of nativeFiles) {
   assert.equal(sha(bytes), activeRow.sha256); assert.equal(blob(bytes), activeRow.blob);
   const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
   assert.equal(admitted.current.blob, activeRow.blob); assert.deepEqual(admitted.deskProvenance ?? admitted, proof);
-  if (activeRow.blob !== expected.blob) nativeRefused(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));
+  if (activeRow.blob !== expected.blob) {
+    assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));
+    refusedDeskParentInputs.push(file);
+  }
   const otherMode = current.mode === '100644' ? '100755' : '100644';
   for (const [now, anchor, raw] of [
     [current, authored, Buffer.concat([bytes, Buffer.from('\n')])],
@@ -237,9 +241,10 @@ for (const file of nativeFiles) {
   nativeRefused(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));
   sample ||= { previous, expected }; nativeRelations++;
 }
+assert.deepEqual(refusedDeskParentInputs, ['package.json', 'public/index.html']);
 assert.equal(nativeRelations, 7); assert.equal(neutralAdditions, 2); assert.equal(nativeRefusals, 119, 'All original Noir refusal categories are retained.'); assert(sample);
 for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../public/index.html', null, undefined, 1, Symbol('source'),
   Object.freeze({ toString() { throw Error('No coercion'); } })]) assert.equal(businessDeskCombinedNativeProvenance(unknown, sample.previous, sample.expected), null);
 console.log(JSON.stringify({ phase, source: source.revision, tree: source.tree, targets, inverseHunks: inverseCount,
-  positives, refusals, nativeRelations, nativeRefusals, sourceOnly: true, runtime: false, native: false,
+  positives, refusals, nativeRelations, nativeRefusals, refusedDeskParentInputs, sourceOnly: true, runtime: false, native: false,
   migration: false, financial: false, activation: false, deployment: false }));
