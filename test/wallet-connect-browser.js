@@ -145,7 +145,10 @@ try {
       await page.locator('#screen-main:not(.hidden)').waitFor();
       // Existing first-session overlays are unrelated to this wallet flow.
       await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((modal) => modal.classList.add('hidden')));
+      const directory = page.locator('#city-directory');
+      if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();
       await page.locator('#grouprail [data-group="legit"]').click();
+      if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();
       await page.locator('#tabs [data-tab="portfolio"]').click();
       await page.locator('#wallet-link').waitFor();
     }

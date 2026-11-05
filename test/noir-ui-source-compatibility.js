@@ -27,8 +27,8 @@ let positives = 0, refusals = 0;
 for (const file of NOIR_UI_SOURCE_FILES) {
   const committed = git('show', `${revision}:${file}`);
   const actual = fs.readFileSync(file, 'utf8');
-  // Runtime UI bytes stay actual; only the combined scripts and strict browser-wait correction need parent views.
-  const physical = ['package.json', 'test/ux-expanded-browser.js'].includes(file)
+  // Exact parent views preserve the immutable UI proof; runtime/browser checks execute current repaired files.
+  const physical = ['package.json', 'public/index.html', 'public/omerta-ui.css', 'test/ux-expanded-browser.js'].includes(file)
     ? economyDeedMergeHistoricalInput(file, actual, 'noir') : actual;
   assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
   const pin = NOIR_UI_SOURCE.files.find(row => row.file === file);

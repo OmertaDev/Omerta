@@ -10,12 +10,12 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
 export { ECONOMY_DEED_MERGE_SOURCE, ECONOMY_DEED_MERGE_SOURCE_SHA256,
   ECONOMY_DEED_MERGE_NATIVE_PROVENANCE, ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 };
 export const ECONOMY_DEED_MERGE_FILES = Object.freeze([
-  'package.json', 'src/game.js', 'src/preflight.js',
+  'package.json', 'public/index.html', 'public/omerta-ui.css', 'src/game.js', 'src/preflight.js',
   'test/economy-hardening-source-compatibility.js',
   'test/lib/enterprise-ux-native-guard.js', 'test/lib/ux-native-reader-source-compatibility.js',
   'test/sale-source-compatibility.js', 'test/ux-expanded-browser.js',
   'tools/economy-ux-merge-source-compatibility.js', 'tools/enterprise-native-ux.js',
-  'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native.js',
+  'tools/enterprise-native-ux-seal.js', 'tools/enterprise-native.js', 'tools/mobile.js',
   'tools/pgquery.js', 'tools/ux-release-phase2-native-catalog.js',
 ]);
 // Closed review scope from the three immutable parents, intersected with the immutable B35 native

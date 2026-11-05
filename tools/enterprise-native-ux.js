@@ -36,7 +36,8 @@ export const ENTERPRISE_UX_SUPPORT = Object.freeze([
  'tools/generate-economy-deed-merge-source.js', 'test/economy-deed-merge-source-compatibility.js',
  'tools/noir-ui-source-data.js', 'tools/noir-ui-source-transfer.js',
  'tools/generate-noir-ui-source-transfer.js', 'test/noir-ui-source-compatibility.js',
- 'test/ux-expanded-browser.js',
+ 'test/ux-expanded-browser.js', 'test/launch-invites-browser.js', 'test/wallet-connect-browser.js',
+ 'tools/mobile.js', 'tools/public-ui.js',
 ]);
 export const ENTERPRISE_UX_ASSETS = Object.freeze([
  ...['feedback', 'progression', 'social', 'navigation', 'workspace', 'world', 'tactics', 'investigation', 'coordination', 'feel', 'tools', 'identity', 'story', 'community'].flatMap(name => ['public/ux-' + name + '.js', ...(name === 'workspace' ? [] : ['public/ux-' + name + '.css'])]),
