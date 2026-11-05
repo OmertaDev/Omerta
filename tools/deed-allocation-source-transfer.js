@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { businessDeskHistoricalInput } from './businessdesk-source-transfer.js';
 import crypto from 'node:crypto';
+import { noirUiHistoricalInput } from './noir-ui-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_PREDECESSOR_TREE,
   DEED_ALLOCATION_SOURCE_PHASE, DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 
@@ -43,6 +44,7 @@ export function assertDeedAllocationSourceTransfer(file, input) {
 
 export function deedAllocationHistoricalInput(file, input) {
   if (typeof file !== 'string') return input;
+  input = noirUiHistoricalInput(file, input);
   input = businessDeskHistoricalInput(file, input);
   if (!Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS, file)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
