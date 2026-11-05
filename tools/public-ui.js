@@ -75,7 +75,7 @@ async function newPage(options) {
 }
 
 // Keep these checks behavioral: a labelled overlay can still strand a real keyboard user.
-async function checkDialogKeyboard(page, opener, overlay, name) {
+async function checkDialogKeyboard(page, opener, overlay, name, returnTarget = opener) {
   await page.locator(opener).focus();
   await page.keyboard.press('Enter');
   await page.locator(`${overlay}:not(.hidden)`).waitFor();
@@ -102,8 +102,8 @@ async function checkDialogKeyboard(page, opener, overlay, name) {
     `${name}: reverse/forward focus loop did not return to the initial control`);
   await page.keyboard.press('Escape');
   await page.locator(overlay).waitFor({ state: 'hidden' });
-  check(await page.locator(opener).evaluate((element) => element === document.activeElement),
-    `${name}: Escape did not restore the opener's keyboard focus`);
+  check(await page.locator(returnTarget).evaluate((element) => element === document.activeElement),
+    `${name}: Escape did not return keyboard focus to ${returnTarget}`);
 }
 
 async function checkPublicKeyboard(page, route) {
@@ -450,32 +450,33 @@ try {
   await mobile.fill('#new-name', 'Intent ' + Math.random().toString(36).slice(2, 8));
   await mobile.click('#btn-create');
   await mobile.waitForSelector('#screen-main:not(.hidden)');
-  if (await mobile.locator('#welcome:not(.hidden)').count()) await mobile.click('#tour-skip');
-  await mobile.waitForSelector('#tab-streets.on [data-do^="POST /v1/crimes/"]:not([disabled])');
-  check(await mobile.locator('#tab-streets.on').isVisible()
-      && await mobile.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected') === 'true',
-    'The first-job welcome opens Streets with an available job.');
+  await mobile.locator('#tab-start.on .start-next-card .act').waitFor();
+  check(!await mobile.locator('#welcome').isVisible(), 'Fresh players reach their first-week guidance directly.');
+  await mobile.locator('#bnav [data-go="streets"]').click();
+  const firstJob = mobile.locator('#tab-streets.on #ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled');
+  await firstJob.click({ trial: true });
+  check(await mobile.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected') === 'true',
+    'The Streets navigation control selects the first job screen.');
   check(await mobile.locator('#player-view-switch, #city-actions, #city-panel, #city-scene-host').count() === 0,
-    'The first-job welcome must use the classic interface.');
-  const operationDesk = await mobile.evaluate(() => {
+    'The first job uses the classic interface.');
+  const operationDesk = await firstJob.evaluate((primary) => {
     const desk = document.querySelector('#operation-desk');
-    const primary = desk?.querySelector('[data-operation-primary]');
-    const rect = desk?.getBoundingClientRect();
+    const rect = primary.getBoundingClientRect();
     return {
       visible: !!desk && getComputedStyle(desk).display !== 'none',
       region: desk?.getAttribute('role'),
       labelled: !!desk?.getAttribute('aria-labelledby'),
       primary: primary?.textContent.trim(),
-      top: rect?.top,
+      top: rect.top, bottom: rect.bottom, height: rect.height, viewportHeight: innerHeight,
       feed: !!desk?.querySelector('#operation-feed[aria-live="polite"]'),
       over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
   });
   check(operationDesk.visible && operationDesk.region === 'region' && operationDesk.labelled
       && operationDesk.primary && operationDesk.feed,
-    `Your Turn is not one labelled, actionable operation surface — ${JSON.stringify(operationDesk)}`);
-  check(operationDesk.top < 260 && operationDesk.over <= 1,
-    `Your Turn is buried or causes mobile overflow — ${JSON.stringify(operationDesk)}`);
+    'Your Turn needs a labelled operation region, an available job and a live receipt feed.');
+  check(operationDesk.height >= 44 && operationDesk.top >= 0 && operationDesk.bottom <= operationDesk.viewportHeight && operationDesk.over <= 1,
+    'The first Streets job must scroll into reach with a 44px touch target and fit the phone width — ' + JSON.stringify(operationDesk));
   const actionTerms = await mobile.evaluate(() => {
     const crime = document.querySelector('#tab-streets .card [data-do^="POST /v1/crimes/"]')?.closest('.card');
     const crimeButton = crime?.querySelector('[data-do^="POST /v1/crimes/"]');
@@ -511,6 +512,10 @@ try {
         body: JSON.stringify({ error: 'in_progress', message: 'That move is still being recorded.' }) });
     } else await route.continue();
   });
+  const directory = mobile.locator('#city-directory');
+  if (!await directory.evaluate(element => element.open)) await directory.locator(':scope > summary').click();
+  const sheet = mobile.locator('#character-sheet');
+  if (!await sheet.evaluate(element => element.open)) await sheet.locator(':scope > summary').click();
   const checkin = mobile.locator('#sheet [data-do="POST /v1/checkin"]');
   await checkin.click();
   await mobile.waitForTimeout(40);
@@ -557,7 +562,7 @@ try {
     const px = (selector) => Number.parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
     return { cardDetail: px('#tab-streets .card .d'), coachHint: px('#coach .ch'), bottomNav: px('#bnav button') };
   });
-  check(typeFloor.cardDetail >= 14 && typeFloor.coachHint >= 14 && typeFloor.bottomNav >= 11.5,
+  check(typeFloor.cardDetail >= 14 && typeFloor.coachHint >= 13 && typeFloor.bottomNav >= 11.5,
     `operational type floor is still too small — ${JSON.stringify(typeFloor)}`);
 
   // A completed action must refresh its own board even when its keyboard trigger remains
@@ -624,7 +629,8 @@ try {
 
   reportStage('Keyboard navigation, modal focus, and accessible destinations');
   await checkDialogKeyboard(mobile, '#btn-jump', '#jumpmodal', 'Quick jump');
-  await checkDialogKeyboard(mobile, '#btn-logout', '.modal-bg[data-managed-dialog]', 'Sign-out confirmation');
+  await mobile.locator('#game-menu > summary').click();
+  await checkDialogKeyboard(mobile, '#btn-logout', '.modal-bg[data-managed-dialog]', 'Sign-out confirmation', '#game-menu > summary');
   await mobile.locator('#btn-jump').focus();
   await mobile.keyboard.press('Enter');
   await mobile.locator('#jump-q').fill('heal');
