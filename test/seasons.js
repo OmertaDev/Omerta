@@ -92,8 +92,10 @@ r = await call('POST', '/v1/goods/sell', { token: vic.token, body: { goodId: 'gi
 assert.equal(r.code, 200, 'the gold-rush sale lands');
 const goldTerms = saleTerms(r.body);
 const comparableBaseUnit = Math.round(goldTerms.referenceBid);
+const expectedGoldUnit = Math.round(goldTerms.referenceBid * 1.03);
+assert(expectedGoldUnit < goldTerms.minimumAskUnit - 1, 'the fixture leaves the anti-arbitrage cap nonbinding');
 assert(r.body.unit > comparableBaseUnit, `gold rush lifts the same-block sale (${comparableBaseUnit} → ${r.body.unit})`);
-assert.equal(r.body.unit, Math.round(goldTerms.referenceBid * 1.03), '3% applies before the single final rounding');
+assert.equal(r.body.unit, expectedGoldUnit, '3% applies before the single final rounding');
 // A rounded percentage comparison can itself reject valid prices (71→74). The
 // actual anti-arbitrage wall is stricter: even the cheapest turf ask exceeds this
 // bid before either side's nonnegative fees, for every request partition.
