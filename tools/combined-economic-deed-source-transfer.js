@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 import {combinedEconomicDeedSource} from './combined-economic-deed-source-data.js';
 
 const hash = text => createHash('sha256').update(text).digest('hex');
-assert.equal(hash(JSON.stringify(combinedEconomicDeedSource)),'f6a4328bed0b2ce439e7eb3b61d05df01543eaf23450fa0d332bc78601613384','Reviewed combined economic and Deed source envelope changed');
+assert.equal(hash(JSON.stringify(combinedEconomicDeedSource)),'782b41ced211d4e7caad40dbd61b486aeb6933db9ef9f9041b5b4c7fc35f7617','Reviewed combined economic and Deed source envelope changed');
 function freeze(value) {
   for(const item of Object.values(value)) if(item && typeof item==='object') freeze(item);
   return Object.freeze(value);

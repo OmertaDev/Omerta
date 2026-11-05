@@ -137,7 +137,7 @@ assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-inputs.js', 'utf8'))
 console.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);
 
 // The authored merge and the Deed release both stay independently identifiable after later proof commits.
-assert.equal(combined.source,'8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd');
+assert.equal(combined.source,'c220834210928560f303795086ee1098d0a65509');
 assert.equal(combined.predecessor,'4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364');
 git('merge-base','--is-ancestor',combined.predecessor,combined.source);
 git('merge-base','--is-ancestor',combined.source,'HEAD');

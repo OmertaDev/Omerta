@@ -16,7 +16,7 @@ const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
 assert.equal(NOIR_UI_SOURCE.revision, revision);
 assert.equal(combinedEconomicDeedPin.noirSource, revision);
-assert.deepEqual(Object.keys(combinedEconomicDeedPin.noirFiles), ['package.json', 'public/index.html']);
+assert.deepEqual(Object.keys(combinedEconomicDeedPin.noirFiles), ['package.json', 'public/index.html', 'test/ux-community-browser.js']);
 assert.equal(NOIR_UI_SOURCE.predecessor, predecessor);
 assert.equal(NOIR_UI_SOURCE.tree, git('rev-parse', revision + '^{tree}').trim());
 assert.equal(NOIR_UI_SOURCE.predecessorTree, git('rev-parse', predecessor + '^{tree}').trim());

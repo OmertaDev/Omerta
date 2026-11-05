@@ -8,7 +8,7 @@ import {DEED_ALLOCATION_SOURCE_DOMAINS} from './deed-allocation-source-data.js';
 import {ENTERPRISE_NATIVE_UX_INPUTS} from './enterprise-native-deed-inputs.js';
 import {NOIR_UI_SOURCE} from './noir-ui-source-data.js';
 
-const source = '8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd';
+const source = 'c220834210928560f303795086ee1098d0a65509';
 const predecessor = '4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364';
 const git = (...args) => execFileSync('git',['--no-replace-objects',...args],{
   encoding:'utf8', maxBuffer:32*1024*1024, windowsHide:true,
@@ -85,7 +85,7 @@ for(const row of NOIR_UI_SOURCE.files) {
   assert.equal(prior.pin.blob,row.currentBlob);
   if(actual.pin.blob!==prior.pin.blob) noirFiles[file]={current:actual.pin,baseline:prior.pin,inverses:changes(file,actual.text,prior.text,noirSource)};
 }
-assert.deepEqual(Object.keys(noirFiles),['package.json','public/index.html']);
+assert.deepEqual(Object.keys(noirFiles),['package.json','public/index.html','test/ux-community-browser.js']);
 const pin={source,sourceTree:tree(source),predecessor,predecessorTree:tree(predecessor),files,economicFiles,fixtureFiles,nativeFiles,noirSource,noirFiles};
 writeFileSync(new URL('./combined-economic-deed-source-data.js',import.meta.url),
   '// Generated from exact reviewed combined and Deed trees. Native records contain original byte identities only.\n'

@@ -1,7 +1,7 @@
 // Generated from exact reviewed combined and Deed trees. Native records contain original byte identities only.
 export const combinedEconomicDeedSource = {
-  "source": "8e94d5c1cbb3521bb3164fbd2b1ba6e37eb269bd",
-  "sourceTree": "1df7d73e5f8e776464f0f19559354dbd58f17a2e",
+  "source": "c220834210928560f303795086ee1098d0a65509",
+  "sourceTree": "efd4b0e4a441c65bdd5955b4dfbd760e527b74e8",
   "predecessor": "4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364",
   "predecessorTree": "916df76fb589bb506040879b904af02275fb109d",
   "files": {
@@ -1776,6 +1776,27 @@ export const combinedEconomicDeedSource = {
           "at": 1280050,
           "current": "read.onclick = () => handle(false); claim.onclick = () => handle(true)",
           "baseline": "const bs = $('#bond-submit'); if (bs) bs.onclick = () => { if (lastNonce != null) submitBondOnChain(lastNonce); else toast('request a quote first', true); }"
+        }
+      ]
+    },
+    "test/ux-community-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4985b962d60f67d3fbbf59cd58fe914a82f4e366",
+        "sha256": "968afcda607bb725fd520b16993a87fcfcfe1e4e61e57346dcdcd0afc7b0e9b3",
+        "bytes": 27965
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "1a427c92e286f4785a3e1950dc1877d025cc34b6",
+        "sha256": "53c0e15a42e774d78e678248a1708b30525699782ae8ec2232a3a2130b568e92",
+        "bytes": 27685
+      },
+      "inverses": [
+        {
+          "at": 16923,
+          "current": "const acceptedAvatars = verified.participants.filter((p) => p.status === 'accepted' && p.characterId)\n  .map((p) => `/v1/avatar/${encodeURIComponent(p.characterId)}`).sort();\n assert.equal(acceptedAvatars.length, 2, 'the actual crew read verifies both explicit current consents');\n const renderedAvatars = await bossPage.waitForFunction(({ id, count }) => {\n  const portrait = document.querySelector(`[data-community-download=\"${id}\"]:enabled`)?.closest('.ux-community-portrait');\n  const images = portrait?.querySelectorAll('img');\n  return images?.length === count && Array.from(images, (img) => img.getAttribute('src')).sort();\n }, { id: portraitId, count: acceptedAvatars.length });\n assert.deepEqual(await renderedAvatars.jsonValue(), acceptedAvatars, 'only the two explicitly accepted avatars appear in the enabled portrait",
+          "baseline": "assert.equal(verified.participants.filter((p) => p.status === 'accepted' && p.characterId).length, 2, 'the actual crew read verifies both explicit current consents');\n await bossPortrait.locator('[data-community-download]:enabled').waitFor({ state: 'attached' });\n await bossPage.waitForFunction((id) => document.querySelector(`[data-community-download=\"${id}\"]`)?.closest('.ux-community-portrait')?.querySelectorAll('img').length === 2, portraitId);\n assert.equal(await bossPortrait.locator('img').count(), 2, 'only explicit accepted avatars appear"
         }
       ]
     }
