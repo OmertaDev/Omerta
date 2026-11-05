@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { currentEconomicTermsBaseline } from '../tools/current-economic-terms-source-transfer.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as deedNative } from '../tools/enterprise-native-deed-inputs.js';
-import { combinedEconomicDeedPin as combined, combinedEconomicDeedInput, combinedEconomicTermsInput } from '../tools/combined-economic-deed-source-transfer.js';
+import { combinedEconomicDeedPin as combined, combinedEconomicDeedInput, combinedEconomicTermsInput, combinedEconomicFixtureInput } from '../tools/combined-economic-deed-source-transfer.js';
 import { execFileSync } from 'node:child_process';
 import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_PREDECESSOR_TREE,
   DEED_ALLOCATION_SOURCE_PHASE, DEED_ALLOCATION_SOURCE_DOMAINS,
@@ -136,7 +136,7 @@ assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-inputs.js', 'utf8'))
 console.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);
 
 // The authored merge and the Deed release both stay independently identifiable after later proof commits.
-assert.equal(combined.source,'43a7a24679fd7a55d067c1319d3bab43ae9cdc21');
+assert.equal(combined.source,'3785994c91797a68c6bbc8673d56f314651858e5');
 assert.equal(combined.predecessor,'4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364');
 git('merge-base','--is-ancestor',combined.predecessor,combined.source);
 git('merge-base','--is-ancestor',combined.source,'HEAD');
@@ -180,3 +180,25 @@ for(const file of new Set([...Object.keys(combined.files),...Object.keys(combine
   assert.throws(()=>inputFor(file,invalid),/lossless/i);
 }
 console.log('Verified the merged economic and Deed source and its separate native input identities.');
+
+assert.deepEqual(Object.keys(combined.fixtureFiles),['test/lib/rc1-historical-source-fixture.js']);
+for(const [file,row] of Object.entries(combined.fixtureFiles)) {
+  assert.deepEqual(combined.nativeFiles[file],{current:row.current,baseline:row.baseline});
+  const current=git('show',combined.source+':'+file), prior=git('show',combined.predecessor+':'+file);
+  for(const input of [current,current.replaceAll('\n','\r\n'),Buffer.from(current)]) {
+    const restored=combinedEconomicFixtureInput(file,input);
+    assert.equal(String(restored),prior);
+    assert.equal(Buffer.isBuffer(restored),Buffer.isBuffer(input));
+    assert.equal(String(currentEconomicTermsBaseline(file,input)),prior);
+  }
+  for(const input of [prior,current+'\n',current.slice(1),'\ufeff'+current,current+'\0',current.replace('\n','\r\n'),current.replace(/\S/,'?')])
+    assert.strictEqual(combinedEconomicFixtureInput(file,input),input);
+  for(const inverse of row.inverses) {
+    const partial=current.slice(0,inverse.at)+inverse.baseline+current.slice(inverse.at+inverse.current.length);
+    assert.strictEqual(combinedEconomicFixtureInput(file,partial),partial);
+  }
+  assert.throws(()=>combinedEconomicFixtureInput(file,Buffer.from([255])),/lossless/i);
+}
+for(const file of ['src/store.js','__proto__','../test/lib/rc1-historical-source-fixture.js'])
+  assert.strictEqual(combinedEconomicFixtureInput(file,'unknown'),'unknown');
+console.log('Verified the separate exact RC1 fixture source reconstruction and mutation refusals.');

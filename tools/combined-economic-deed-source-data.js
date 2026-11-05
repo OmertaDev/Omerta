@@ -1,7 +1,7 @@
 // Generated from exact reviewed combined and Deed trees. Native records contain original byte identities only.
 export const combinedEconomicDeedSource = {
-  "source": "43a7a24679fd7a55d067c1319d3bab43ae9cdc21",
-  "sourceTree": "1281db02a400c5972562f460485e389c846e4e38",
+  "source": "3785994c91797a68c6bbc8673d56f314651858e5",
+  "sourceTree": "170dde56fb962c15bbb0f7053eea69567013ca7a",
   "predecessor": "4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364",
   "predecessorTree": "916df76fb589bb506040879b904af02275fb109d",
   "files": {
@@ -622,6 +622,107 @@ export const combinedEconomicDeedSource = {
           "baseline": "if (!previous || !changedPin(previous, expected)) return null;\n const sourcePin = DEED_ALLOCATION_SOURCE_DOMAINS[file];\n assert(sourcePin, 'No unreviewed change to an existing native input: ' + file);\n assert.equal(expected.mode, sourcePin.currentMode); assert.equal(expected.blob, sourcePin.currentBlob);\n assert.equal(expected.sha256, sourcePin.currentSha256);\n assert.equal(previous.mode, sourcePin.baselineMode); assert.equal(previous.blob, sourcePin.baselineBlob);\n assert.equal(previous.sha256, sourcePin.baselineSha256);\n return Object.freeze({ file, current: Object.freeze({ mode: current.mode, blob: current.blob, sha256: digest(bytes) }),\n  predecessor: previous, predecessorRevision: PREDECESSOR_NATIVE_INPUTS.authoredRevision,\n  relation: 'exact-reviewed-deed-source-provenance-only'"
         }
       ]
+    },
+    "tools/ux-release-phase2-native-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "14beaa6ac20acf452d911791b9cc45552e4fadf5",
+        "sha256": "ebfc9dc7e4f990415a8f9795e151d9c8234f7deac3559c8df961c1f1b44b4c5e",
+        "bytes": 30199
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d600b17bdcc244abc64312194a85ce29d7bfda2b",
+        "sha256": "bfc7ce695934b6d14fb2d414b9f7ce237d9b54fcb62bbea860fd2b98b6821d3a",
+        "bytes": 25482
+      },
+      "inverses": [
+        {
+          "at": 1284,
+          "current": "const storeRevenueTable = 'store_payments', storeRevenueColumn = 'revenue_split';\nconst isStoreRevenueColumn = row => row.table_name === storeRevenueTable && row.column_name === storeRevenueColumn;\nconst storeTrailingColumns = ['account_id', 'granted', 'created_at'];\n",
+          "baseline": ""
+        },
+        {
+          "at": 9069,
+          "current": ", storeRevenue",
+          "baseline": ""
+        },
+        {
+          "at": 9339,
+          "current": "storeRevenue.projectMetadata(metadata)",
+          "baseline": "metadata"
+        },
+        {
+          "at": 11130,
+          "current": "const rows = result.rows.filter(row => !names.has(tableOf(field, row)) && !isSocialBridgeRow(field, row)\n      && tableOf(field, row) !== DEED_BENEFIT_NATIVE_TABLE);\n    return { ...result, rows: field === 'columns' ? storeRevenue.projectColumns(rows) : rows",
+          "baseline": "return { ...result, rows: result.rows.filter(row => !names.has(tableOf(field, row)) && !isSocialBridgeRow(field, row)\n      && tableOf(field, row) !== DEED_BENEFIT_NATIVE_TABLE)"
+        },
+        {
+          "at": 12909,
+          "current": ", profile) {\n  assert(['fresh', 'phase2', 'director'].includes(profile));",
+          "baseline": ") {"
+        },
+        {
+          "at": 14069,
+          "current": "const storeDdl = `CREATE TABLE store_payments (\n      nonce BIGINT PRIMARY KEY, sku TEXT NOT NULL, payer_address TEXT NOT NULL,\n      amount_wei TEXT NOT NULL, tx_hash TEXT, ${profile === 'fresh' ? 'revenue_split JSONB,' : ''}\n      account_id TEXT, granted BOOLEAN NOT NULL DEFAULT false, created_at TIMESTAMPTZ NOT NULL DEFAULT now()\n    );` + (profile === 'fresh' ? '' : '\\nALTER TABLE store_payments ADD COLUMN revenue_split JSONB;');\n    await client.query('CREATE TABLE characters (id TEXT PRIMARY KEY);\\n' + DEED_BENEFIT_NATIVE_DDL + ';\\n' + socialBridgeDdl + '\\n' + stor",
+          "baseline": "await client.query('CREATE TABLE characters (id TEXT PRIMARY KEY);\\n' + DEED_BENEFIT_NATIVE_DDL + ';\\n' + socialBridg"
+        },
+        {
+          "at": 14846,
+          "current": "storeRevenueTable, DEED_BENEFIT_NATIVE_TABLE, ...UX_NATIVE_TABLES],\n      'Independent DDL creates exactly the FK target, current marker, social bridge and Store fixtures",
+          "baseline": "DEED_BENEFIT_NATIVE_TABLE, ...UX_NATIVE_TABLES],\n      'Independent immutable DDL creates exactly the FK target, current marker, social bridge fixture"
+        },
+        {
+          "at": 17143,
+          "current": "const storeRevenue = storeRevenueNativeProjection(reference.columns.filter(isStoreRevenueColumn), profile);\n    return freeze({ ux, socialBridge, benefitNative, storeRevenu",
+          "baseline": "return freeze({ ux, socialBridge, benefitNativ"
+        },
+        {
+          "at": 17607,
+          "current": "function storeRevenueNativeProjection(reference, profile) {\n  const fresh = profile === 'fresh';\n  assert.deepEqual(reference, [{ table_name: storeRevenueTable, column_name: storeRevenueColumn,\n    ordinal: fresh ? 6 : 9, type: 'jsonb', typmod: -1, default_expression: null, not_null: false,\n    identity: '', generated: '', collation_schema: null, collation_name: null }],\n  'Independent Store DDL yields exactly the nullable JSONB receipt column at its fresh or upgrade ordinal');\n  reference = freeze(structuredClone(reference));\n  const projectColumns = columns => {\n    assert.deepEqual(columns.filter(isStoreRevenueColumn), reference, 'The complete Store receipt column remains exact before historical projection');\n    let shifted = 0;\n    const projected = columns.filter(row => !isStoreRevenueColumn(row)).map(row => {\n      const index = row.table_name === storeRevenueTable ? storeTrailingColumns.indexOf(row.column_name) : -1;\n      if (!fresh || index < 0) return row;\n      assert.equal(row.ordinal, index + 7, 'Only the three exact fresh Store columns follow the new receipt column');\n      shifted++; return { ...row, ordinal: row.ordinal - 1 };\n    });\n    assert.equal(shifted, fresh ? 3 : 0);\n    return projected;\n  };\n  const projectMetadata = metadata => ({ ...metadata, columns: projectColumns(metadata.columns) });\n  const extendReference = base => {\n    assert.deepEqual(base.columns.filter(row => row.table_name === storeRevenueTable).map(row => [row.column_name, row.ordinal]),\n      ['nonce', 'sku', 'payer_address', 'amount_wei', 'tx_hash', ...storeTrailingColumns].map((name, index) => [name, index + 1]),\n      'The unchanged historical oracle has exactly the eight original Store columns');\n    const columns = base.columns.map(row => fresh && row.table_name === storeRevenueTable && storeTrailingColumns.includes(row.column_name)\n      ? { ...row, ordinal: row.ordinal + 1 } : row);\n    const at = columns.findIndex(row => row.table_name === storeRevenueTable && row.column_name === (fresh ? 'tx_hash' : 'created_at'));\n    assert(at >= 0); columns.splice(at + 1, 0, ...reference);\n    return freeze({ ...base, columns });\n  };\n  return Object.freeze({ reference, projectColumns, projectMetadata, extendReference });\n}\n",
+          "baseline": ""
+        },
+        {
+          "at": 22401,
+          "current": "storeRevenue, ",
+          "baseline": ""
+        },
+        {
+          "at": 22683,
+          "current": "storeRevenue.projectMetadata(metadata)))),\n    base = branches ? prior.current : prior.reference, reference = storeRevenue.extendReference(benefitNative.extendReference(merge(base, socialBridge, ux)",
+          "baseline": "metadata))),\n    base = branches ? prior.current : prior.reference, reference = benefitNative.extendReference(merge(base, socialBridge, ux"
+        },
+        {
+          "at": 26556,
+          "current": "  let storeRevenueCausal = 0;\n  const receipt = storeRevenue.reference[0], at = reference.columns.indexOf(receipt);\n  assert(at >= 0);\n  const rejectStore = columns => { assert.throws(() => verifyMetadata({ ...reference, columns }), error => error?.code === 'ERR_ASSERTION'); storeRevenueCausal++; };\n  rejectStore(reference.columns.filter((_, index) => index !== at));\n  rejectStore([...reference.columns, { ...receipt }]);\n  for (const key of Object.keys(receipt)) {\n    const value = receipt[key], changed = { ...receipt, [key]: typeof value === 'boolean' ? !value\n      : typeof value === 'number' ? value + 1 : value === null ? 'unknown' : value + '__unknown' };\n    rejectStore(reference.columns.map((row, index) => index === at ? changed : row));\n  }\n  for (const column of storeTrailingColumns) rejectStore(reference.columns.map(row =>\n    row.table_name === storeRevenueTable && row.column_name === column ? { ...row, ordinal: row.ordinal + 1 } : row));\n  assert.equal(storeRevenueCausal, Object.keys(receipt).length + 5, 'Store receipt missing, duplicate, every field and all three adjacent ordinal mutations are refused');\n",
+          "baseline": ""
+        },
+        {
+          "at": 28023,
+          "current": ",\n    storeRevenueReference: storeRevenue.reference, storeRevenueCausal",
+          "baseline": ""
+        },
+        {
+          "at": 29215,
+          "current": ", storeRevenue } = await compileCurrentExtensionReference(pool, endpoint, options.legacyProfile",
+          "baseline": " } = await compileCurrentExtensionReference(pool, endpoint"
+        },
+        {
+          "at": 29452,
+          "current": ", storeRevenue), endpoint, candidate, options);\n  return extendCatalog(prior, ux, socialBridge, benefitNative, storeRevenu",
+          "baseline": "), endpoint, candidate, options);\n  return extendCatalog(prior, ux, socialBridge, benefitNativ"
+        },
+        {
+          "at": 29866,
+          "current": ", storeRevenue } = await compileCurrentExtensionReference(pool, endpoint, 'fresh'",
+          "baseline": " } = await compileCurrentExtensionReference(pool, endpoint"
+        },
+        {
+          "at": 30074,
+          "current": ", storeRevenue), endpoint, candidate);\n  return extendCatalog(prior, ux, socialBridge, benefitNative, storeRevenu",
+          "baseline": "), endpoint, candidate);\n  return extendCatalog(prior, ux, socialBridge, benefitNativ"
+        }
+      ]
     }
   },
   "economicFiles": {
@@ -718,6 +819,49 @@ export const combinedEconomicDeedSource = {
           "at": 220287,
           "current": "",
           "baseline": " · GET /v1/bonds [public] · /bonds/:id/claim"
+        }
+      ]
+    }
+  },
+  "fixtureFiles": {
+    "test/lib/rc1-historical-source-fixture.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "05b015e5e73922216d5a98aa746baaee373fbc66",
+        "sha256": "fb724f2bddeb67bc14273f53781c5b74b42f51889d5688a31c7dfee2373ed3f5",
+        "bytes": 47402
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0773ce2a68874504490d6301f896c2b908f14656",
+        "sha256": "0c7d1202e9b1eb86ec144451cdf28e81ebc8784648c0ab27aa43513d1625d989",
+        "bytes": 44705
+      },
+      "inverses": [
+        {
+          "at": 455,
+          "current": "import {combinedEconomicDeedPin} from '../../tools/combined-economic-deed-source-transfer.js';\n",
+          "baseline": ""
+        },
+        {
+          "at": 7369,
+          "current": "const economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);\n",
+          "baseline": ""
+        },
+        {
+          "at": 14244,
+          "current": "function economicReceiptHistoricalInput(file, input, expected) {\n  if (!economicReceiptHistoricalFiles.includes(file)) return input;\n  const raw = uniformHistoricalInput(file, input), current = canonical(raw);\n  const row = combinedEconomicDeedPin.nativeFiles[file];\n  // This table binds source identities only. The frozen fixture independently selects its body.\n  assert(row, 'Reviewed economic receipt identities required: ' + file);\n  assert.equal(row.baseline.sha256, sha256(expected), 'Economic receipt predecessor differs from frozen release: ' + file);\n  assert.equal(row.baseline.blob, blobHash(expected), 'Economic receipt predecessor blob changed: ' + file);\n  if (sha256(current) !== row.current.sha256) return raw;\n  assert.equal(blobHash(Buffer.from(current)), row.current.blob, 'Economic receipt current blob changed: ' + file);\n  assert.equal(Buffer.byteLength(current), row.current.bytes);\n  for (const [revision, pin] of [[combinedEconomicDeedPin.source, row.current], [combinedEconomicDeedPin.predecessor, row.baseline]]) {\n    assert.equal(String(git(['ls-tree', revision, '--', file])).trim(), pin.mode + ' blob ' + pin.blob + '\\t' + file,\n      'Economic receipt revision identity changed: ' + file);\n  }\n  assert.equal(current, String(git(['cat-file', 'blob', row.current.blob])), 'Complete economic receipt authored source changed: ' + file);\n  return String(expected);\n}\n",
+          "baseline": ""
+        },
+        {
+          "at": 18311,
+          "current": "receipts = economicReceiptHistoricalInput(file, input, expected);\n  const combined = enterpriseCombinedHistoricalInput(file, receipts",
+          "baseline": "combined = enterpriseCombinedHistoricalInput(file, input"
+        },
+        {
+          "at": 35422,
+          "current": "  for (const file of economicReceiptHistoricalFiles) {\n    const current = canonical(originalRead(path.join(root, file))), frozen = String(blob(file, release));\n    const expected = blob(file, history);\n    assert.notEqual(current, frozen, 'Receipt fixture control exercises the reviewed successor: ' + file);\n    for (const source of [current, frozen]) {\n      for (const supplied of [source, source.replaceAll('\\n', '\\r\\n')]) {\n        assert.deepEqual(currentHistoricalApplicationSource(file, supplied), expected);\n        positives++;\n      }\n      for (const supplied of [source + '\\n// unreviewed\\n', source.slice(1), source.replace(/\\S/, '?'),\n        '\\ufeff' + source, source.replace('\\n', '\\r\\n'), source.replace('\\n', '\\r')]) {\n        assert.throws(() => currentHistoricalApplicationSource(file, supplied));\n        refusals++;\n      }\n    }\n  }\n  assert.throws(() => currentHistoricalApplicationSource('src/store.js', String(originalRead(path.join(root, 'src/router.js')))));\n  refusals++;\n",
+          "baseline": ""
         }
       ]
     }
@@ -1045,6 +1189,20 @@ export const combinedEconomicDeedSource = {
         "bytes": 15325
       }
     },
+    "test/lib/rc1-historical-source-fixture.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "05b015e5e73922216d5a98aa746baaee373fbc66",
+        "sha256": "fb724f2bddeb67bc14273f53781c5b74b42f51889d5688a31c7dfee2373ed3f5",
+        "bytes": 47402
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0773ce2a68874504490d6301f896c2b908f14656",
+        "sha256": "0c7d1202e9b1eb86ec144451cdf28e81ebc8784648c0ab27aa43513d1625d989",
+        "bytes": 44705
+      }
+    },
     "test/sale-source-compatibility.js": {
       "current": {
         "mode": "100644",
@@ -1113,6 +1271,20 @@ export const combinedEconomicDeedSource = {
         "blob": "cfc8df57c2f6afe1dde3b02a5ec63191baea469a",
         "sha256": "ac538474d4fa502d69f5abd3a202deef1ae13b7f435082deda514b7f0fd5cd49",
         "bytes": 15631
+      }
+    },
+    "tools/ux-release-phase2-native-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "14beaa6ac20acf452d911791b9cc45552e4fadf5",
+        "sha256": "ebfc9dc7e4f990415a8f9795e151d9c8234f7deac3559c8df961c1f1b44b4c5e",
+        "bytes": 30199
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d600b17bdcc244abc64312194a85ce29d7bfda2b",
+        "sha256": "bfc7ce695934b6d14fb2d414b9f7ce237d9b54fcb62bbea860fd2b98b6821d3a",
+        "bytes": 25482
       }
     }
   }

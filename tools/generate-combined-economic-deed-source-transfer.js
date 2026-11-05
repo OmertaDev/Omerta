@@ -7,7 +7,7 @@ import {economicTermsPin} from './current-economic-terms-source-data.js';
 import {DEED_ALLOCATION_SOURCE_DOMAINS} from './deed-allocation-source-data.js';
 import {ENTERPRISE_NATIVE_UX_INPUTS} from './enterprise-native-deed-inputs.js';
 
-const source = '43a7a24679fd7a55d067c1319d3bab43ae9cdc21';
+const source = '3785994c91797a68c6bbc8673d56f314651858e5';
 const predecessor = '4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364';
 const git = (...args) => execFileSync('git',['--no-replace-objects',...args],{
   encoding:'utf8', maxBuffer:32*1024*1024, windowsHide:true,
@@ -54,7 +54,7 @@ for (const file of ['tools/deed-allocation-source-data.js','tools/enterprise-nat
   assert.equal(readFileSync(file,'utf8').replaceAll('\r\n','\n'),git('show',predecessor+':'+file),'Immutable Deed domain listing: '+file);
 const changed=git('diff','--name-only','-z',predecessor,source).split('\0').filter(Boolean);
 const native = new Map(ENTERPRISE_NATIVE_UX_INPUTS.files.map(row=>[row.file,row]));
-const files={}, economicFiles={}, nativeFiles={};
+const files={}, economicFiles={}, fixtureFiles={}, nativeFiles={};
 for (const file of changed) {
   const deed=Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS,file)?DEED_ALLOCATION_SOURCE_DOMAINS[file]:null;
   const physical=native.get(file);
@@ -73,8 +73,10 @@ for (const file of changed) {
     for(const field of ['mode','sha256','blob']) assert.equal(prior.pin[field],physical[field],'Exact native input: '+file);
     nativeFiles[file]={current:actual.pin,baseline:prior.pin};
   }
+  if(file==='test/lib/rc1-historical-source-fixture.js')
+    fixtureFiles[file]={current:actual.pin,baseline:prior.pin,inverses:changes(file,actual.text,prior.text)};
 }
-const pin={source,sourceTree:tree(source),predecessor,predecessorTree:tree(predecessor),files,economicFiles,nativeFiles};
+const pin={source,sourceTree:tree(source),predecessor,predecessorTree:tree(predecessor),files,economicFiles,fixtureFiles,nativeFiles};
 writeFileSync(new URL('./combined-economic-deed-source-data.js',import.meta.url),
   '// Generated from exact reviewed combined and Deed trees. Native records contain original byte identities only.\n'
   +'export const combinedEconomicDeedSource = '+JSON.stringify(pin,null,2)+';\n');

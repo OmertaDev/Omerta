@@ -1,6 +1,6 @@
 // Exact historical source transfer only. Runtime and native checks use the physical source.
 import assert from 'node:assert/strict';
-import {combinedEconomicTermsInput} from './combined-economic-deed-source-transfer.js';
+import {combinedEconomicTermsInput,combinedEconomicFixtureInput} from './combined-economic-deed-source-transfer.js';
 import {createHash} from 'node:crypto';
 import {economicTermsPin} from './current-economic-terms-source-data.js';
 
@@ -20,6 +20,7 @@ function verify(text,pin) {
 }
 
 export function currentEconomicTermsBaseline(file,input) {
+  input=combinedEconomicFixtureInput(file,input);
   const files=currentEconomicTermsPin.files;
   if (!Object.hasOwn(files,file)) return input;
   input=combinedEconomicTermsInput(file,input);
