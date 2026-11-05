@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 4,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS",
-  "authoredRevision": "4b91f859a0f648b3ce5a0261c39388e33d56bd26",
+  "authoredRevision": "8c037059fb647cebab7b3a357e497b4a84c0e0dc",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -12,8 +12,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "deedSourceDefinitionSha256": "73bf24b95a07a2b409f8c05c5fb8601e34fe7ae402e5616b26749fbee42ad242",
   "contractPredecessorRevision": "8a994ddd7e8ca8a7b29c70c7d97dcd827fbcc185",
   "contractPredecessorMetadataSha256": "efffdc723601dbcac89c651092748c7931fa97a8f252a1f7c7045434237f858e",
-  "contractSourceDefinitionSha256": "e68f7437ed13d5d3ab0a34a4a13d7b0dc77fbe971c387503cfb68d9447c77adf",
-  "contractSourceRevision": "35ef735015caa7c1bebd3433b4ad2491daa564ed",
+  "contractSourceDefinitionSha256": "7d50962e55ab545b9c157d45792928c721dfe7f3b30cdad25affba96a9e53bcb",
+  "contractSourceRevision": "5eddb01ea28fe87d8702c19a3edc3e2c98b7e08e",
   "contractBaseRevision": "8d60765b0a0f28be1696be108ff47683ff22eef5",
   "reviewedContractRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
   "reviewedUiRevision": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7",
@@ -10278,8 +10278,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/contract-release-source-compatibility.js",
       "mode": "100644",
-      "blob": "0810247be0430caa42aa84a7e45f49d37813dbc9",
-      "sha256": "29165e092105a5f1c6aecb0b9df83de7f4416a82e68a5d9276ff8f9f043a9542"
+      "blob": "08fcd7422ce600191d40223be08f71b7b7d1d86d",
+      "sha256": "968240e53c89492cbc452bd1fcf8b83aaf7de0b1ed2878f8e56a13a3bebdcb55"
     },
     {
       "file": "test/db-boot-lock-postgres.js",
@@ -10536,8 +10536,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/contract-release-source-data.js",
       "mode": "100644",
-      "blob": "eb6a7d5fa9f1e2840835a5cbcff983d3cb13a5f1",
-      "sha256": "42a766b9ccfd4535392d7c2263b5ce7369150ae0b01d3524c639e7976d724ab3"
+      "blob": "ec885227f2bd1663b4ce4748654991679f787595",
+      "sha256": "1c7698076349386a0a0264a11a0e0ec5f2fa96669d60009c9d8af2db5d0722ac"
     },
     {
       "file": "tools/contract-release-source-format.js",
@@ -10692,8 +10692,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "297b81d323ec5bfdea741c36f851b48f9bc2a50a",
-      "sha256": "01bdd5a9b6ff456fdd34321aec7c8fb946ad4b9f5fff7b44461750876a6bcb8a"
+      "blob": "b63e0d4310560dc9fc33a5b3959117330a10f74e",
+      "sha256": "175faf5abaae608c37c22bb22fd718dda35bf82eefbb5c91d0c0c3a8605094d5"
     },
     {
       "file": "tools/generate-economy-bank-interest-source-transfer.js",
@@ -13107,8 +13107,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/contract-release-source-compatibility.js",
       "mode": "100644",
-      "blob": "0810247be0430caa42aa84a7e45f49d37813dbc9",
-      "sha256": "29165e092105a5f1c6aecb0b9df83de7f4416a82e68a5d9276ff8f9f043a9542"
+      "blob": "08fcd7422ce600191d40223be08f71b7b7d1d86d",
+      "sha256": "968240e53c89492cbc452bd1fcf8b83aaf7de0b1ed2878f8e56a13a3bebdcb55"
     },
     {
       "file": "test/db-boot-lock-postgres.js",
@@ -13365,8 +13365,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/contract-release-source-data.js",
       "mode": "100644",
-      "blob": "eb6a7d5fa9f1e2840835a5cbcff983d3cb13a5f1",
-      "sha256": "42a766b9ccfd4535392d7c2263b5ce7369150ae0b01d3524c639e7976d724ab3"
+      "blob": "ec885227f2bd1663b4ce4748654991679f787595",
+      "sha256": "1c7698076349386a0a0264a11a0e0ec5f2fa96669d60009c9d8af2db5d0722ac"
     },
     {
       "file": "tools/contract-release-source-format.js",
@@ -13521,8 +13521,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "297b81d323ec5bfdea741c36f851b48f9bc2a50a",
-      "sha256": "01bdd5a9b6ff456fdd34321aec7c8fb946ad4b9f5fff7b44461750876a6bcb8a"
+      "blob": "b63e0d4310560dc9fc33a5b3959117330a10f74e",
+      "sha256": "175faf5abaae608c37c22bb22fd718dda35bf82eefbb5c91d0c0c3a8605094d5"
     },
     {
       "file": "tools/generate-economy-bank-interest-source-transfer.js",
@@ -13778,4 +13778,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "bf38ad93cd7e5a41499edeb67db0b093f7bbf8ea8f00f999cdef3e5924d54725";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "3a1c55550464cf582c58cd0f9ecebf731a53a64ff7267004a4e3745f695488ac";
