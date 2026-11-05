@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "da9e7abaed40dcbfa17ee349c13d345e6eed0f71",
+  "sourceRevision": "5dc070efc3264e6f957de93a591fe0096260d4a5",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17677,
-    "edges": 70934,
+    "nodes": 17680,
+    "edges": 70944,
     "byNodeType": {
       "Artifact": 7158,
       "Command": 305,
-      "Commit": 5177,
+      "Commit": 5180,
       "Contract": 134,
       "Document": 957,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5743,
-      "CHANGED": 27313,
+      "CHANGED": 27319,
       "CONTAINS": 7179,
       "DECLARES": 305,
       "DEFINED_IN": 1772,
       "DEPENDS_ON": 69,
       "EXECUTES": 1214,
       "HANDLED_BY": 936,
-      "HAS_COMMIT": 5177,
+      "HAS_COMMIT": 5180,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8630,
+      "IMPORTS": 8631,
       "INHERITS": 45,
       "REFERENCES": 3889,
       "REPRESENTS": 2650,
@@ -133394,20 +133394,20 @@
       "path": "test/age-eligibility-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 5816,
-      "lines": 86,
-      "version": "3363c1041b117fb8",
+      "bytes": 10577,
+      "lines": 144,
+      "version": "c5635ebf9b327c93",
       "text": true,
       "provenance": [
         {
           "file": "test/age-eligibility-source-compatibility.js",
           "line": 1,
-          "version": "3363c1041b117fb8"
+          "version": "c5635ebf9b327c93"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:49:01.000Z",
-      "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "402f74aa2cc69b2e97e76bb87cbacf5330cce909"
+      "lastChangedAt": "2026-11-05T08:38:24.000Z",
+      "lastChangedBy": "Codex",
+      "lastChangedCommit": "295af18559026bc6a1b3312beb8ff747039ee6af"
     },
     {
       "key": "Artifact:test/age.js",
@@ -158442,18 +158442,18 @@
       "extension": ".js",
       "bytes": 501529,
       "lines": 13365,
-      "version": "19ecffefab3a469e",
+      "version": "d025a4e4ab37946c",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-deed-inputs.js",
           "line": 1,
-          "version": "19ecffefab3a469e"
+          "version": "d025a4e4ab37946c"
         }
       ],
-      "lastChangedAt": "2026-11-05T08:08:23.000Z",
+      "lastChangedAt": "2026-11-05T09:14:45.000Z",
       "lastChangedBy": "Codex",
-      "lastChangedCommit": "da9e7abaed40dcbfa17ee349c13d345e6eed0f71"
+      "lastChangedCommit": "5dc070efc3264e6f957de93a591fe0096260d4a5"
     },
     {
       "key": "Artifact:tools/enterprise-native-inputs.js",
@@ -181794,6 +181794,22 @@
       ]
     },
     {
+      "key": "Commit:295af18559026bc6a1b3312beb8ff747039ee6af",
+      "type": "Commit",
+      "id": "295af18559026bc6a1b3312beb8ff747039ee6af",
+      "label": "Qualify actual source before historical age-policy comparisons",
+      "title": "Qualify actual source before historical age-policy comparisons",
+      "date": "2026-11-05T08:38:24.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/295af18559026bc6a1b3312beb8ff747039ee6af",
+      "provenance": [
+        {
+          "commit": "295af18559026bc6a1b3312beb8ff747039ee6af",
+          "url": "https://github.com/OmertaDev/Omerta/commit/295af18559026bc6a1b3312beb8ff747039ee6af"
+        }
+      ]
+    },
+    {
       "key": "Commit:2964478cb71c88a7bdf0a4a827ccb29a31f49813",
       "type": "Commit",
       "id": "2964478cb71c88a7bdf0a4a827ccb29a31f49813",
@@ -198606,6 +198622,22 @@
         {
           "commit": "5db2e2a5393c698a15c10b8820c7a6faa03b9bbc",
           "url": "https://github.com/OmertaDev/Omerta/commit/5db2e2a5393c698a15c10b8820c7a6faa03b9bbc"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5dc070efc3264e6f957de93a591fe0096260d4a5",
+      "type": "Commit",
+      "id": "5dc070efc3264e6f957de93a591fe0096260d4a5",
+      "label": "Seal the corrected age-source reader in current native inputs",
+      "title": "Seal the corrected age-source reader in current native inputs",
+      "date": "2026-11-05T09:14:45.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5dc070efc3264e6f957de93a591fe0096260d4a5",
+      "provenance": [
+        {
+          "commit": "5dc070efc3264e6f957de93a591fe0096260d4a5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5dc070efc3264e6f957de93a591fe0096260d4a5"
         }
       ]
     },
@@ -238686,6 +238718,22 @@
         {
           "commit": "d8bff472a99bede6e1deb41f3a51d051eba39ff8",
           "url": "https://github.com/OmertaDev/Omerta/commit/d8bff472a99bede6e1deb41f3a51d051eba39ff8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "type": "Commit",
+      "id": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "label": "Refresh knowledge artifacts for the final Desk release",
+      "title": "Refresh knowledge artifacts for the final Desk release",
+      "date": "2026-11-05T08:15:34.000Z",
+      "author": "Codex",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "provenance": [
+        {
+          "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
         }
       ]
     },
@@ -280718,6 +280766,9 @@
           "commit": "d8650c6b0990a3eeb1697492fa50a6f7e4364fa0"
         },
         {
+          "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
+        },
+        {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
         },
         {
@@ -283310,6 +283361,9 @@
           "commit": "d8650c6b0990a3eeb1697492fa50a6f7e4364fa0"
         },
         {
+          "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
+        },
+        {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
         },
         {
@@ -285900,6 +285954,9 @@
         },
         {
           "commit": "d8650c6b0990a3eeb1697492fa50a6f7e4364fa0"
+        },
+        {
+          "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
         },
         {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
@@ -289209,6 +289266,9 @@
         },
         {
           "commit": "d8650c6b0990a3eeb1697492fa50a6f7e4364fa0"
+        },
+        {
+          "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
         },
         {
           "commit": "d8d787d227d2aaa30f3a7323ab5fbecdd55fb48a"
@@ -304247,8 +304307,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "da9e7abaed40dcbfa17ee349c13d345e6eed0f71",
-      "currentBranch": "codex/business-desk-final-release",
+      "revision": "5dc070efc3264e6f957de93a591fe0096260d4a5",
+      "currentBranch": "codex/business-desk-age-source-repair",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -342004,13 +342064,13 @@
       "type": "TestSuite",
       "id": "test/age-eligibility-source-compatibility.js",
       "label": "test/age-eligibility-source-compatibility.js",
-      "lines": 86,
-      "version": "3363c1041b117fb8",
+      "lines": 144,
+      "version": "c5635ebf9b327c93",
       "provenance": [
         {
           "file": "test/age-eligibility-source-compatibility.js",
           "line": 1,
-          "version": "3363c1041b117fb8"
+          "version": "c5635ebf9b327c93"
         }
       ]
     },
@@ -438042,6 +438102,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:295af18559026bc6a1b3312beb8ff747039ee6af",
+      "to": "Artifact:test/age-eligibility-source-compatibility.js",
+      "provenance": {
+        "commit": "295af18559026bc6a1b3312beb8ff747039ee6af"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2964478cb71c88a7bdf0a4a827ccb29a31f49813",
       "to": "Artifact:test/buyercooperatives.js",
       "provenance": {
@@ -478142,6 +478210,14 @@
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
         "commit": "5db2e2a5393c698a15c10b8820c7a6faa03b9bbc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5dc070efc3264e6f957de93a591fe0096260d4a5",
+      "to": "Artifact:tools/enterprise-native-deed-inputs.js",
+      "provenance": {
+        "commit": "5dc070efc3264e6f957de93a591fe0096260d4a5"
       }
     },
     {
@@ -590910,6 +590986,38 @@
       "to": "Artifact:src/vouch.js",
       "provenance": {
         "commit": "d8bff472a99bede6e1deb41f3a51d051eba39ff8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
       }
     },
     {
@@ -737331,6 +737439,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:295af18559026bc6a1b3312beb8ff747039ee6af",
+      "provenance": {
+        "commit": "295af18559026bc6a1b3312beb8ff747039ee6af"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2964478cb71c88a7bdf0a4a827ccb29a31f49813",
       "provenance": {
         "commit": "2964478cb71c88a7bdf0a4a827ccb29a31f49813"
@@ -745734,6 +745850,14 @@
       "to": "Commit:5db2e2a5393c698a15c10b8820c7a6faa03b9bbc",
       "provenance": {
         "commit": "5db2e2a5393c698a15c10b8820c7a6faa03b9bbc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5dc070efc3264e6f957de93a591fe0096260d4a5",
+      "provenance": {
+        "commit": "5dc070efc3264e6f957de93a591fe0096260d4a5"
       }
     },
     {
@@ -765774,6 +765898,14 @@
       "to": "Commit:d8bff472a99bede6e1deb41f3a51d051eba39ff8",
       "provenance": {
         "commit": "d8bff472a99bede6e1deb41f3a51d051eba39ff8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08",
+      "provenance": {
+        "commit": "d8c6b5441e17ef5b79cafd04ed7e6f9e4655ea08"
       }
     },
     {
@@ -795204,10 +795336,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/age-eligibility-source-compatibility.js",
+      "to": "Artifact:tools/businessdesk-source-transfer.js",
+      "provenance": {
+        "file": "test/age-eligibility-source-compatibility.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/age-eligibility-source-compatibility.js",
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "test/age-eligibility-source-compatibility.js",
-        "line": 12
+        "line": 13
       }
     },
     {
