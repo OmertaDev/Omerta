@@ -1,3 +1,5 @@
+import { wikiMediaHistoricalInput } from '../tools/wiki-media-source-transfer.js';
+import { age21HistoricalInput } from '../tools/age21-source-transfer.js';
 import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -170,8 +172,8 @@ const socialReceiptSafetyFiles = [
 ];
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
-const deedAllocationPhysicalSource = file => deedAllocationHistoricalInput(file,
-  economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'monitor'));
+const deedAllocationPhysicalSource = file => age21HistoricalInput(file, wikiMediaHistoricalInput(file, deedAllocationHistoricalInput(file,
+  economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'monitor'))));
 const monitorPhysicalSource = file => {
   let input = deedAllocationPhysicalSource(file);
   input = uxAfterwordHistoricalInput(file, input);

@@ -1,3 +1,5 @@
+import { wikiMediaHistoricalInput } from './wiki-media-source-transfer.js';
+import { age21HistoricalInput } from './age21-source-transfer.js';
 // Generated exact source-only envelope for the social-proof production cutover repair.
 // Historical pins remain unchanged; unknown or non-exact bytes pass through.
 import assert from 'node:assert/strict';
@@ -596,6 +598,7 @@ export function assertEconomySocialProofCutoverSourceTransfer(file, input) {
 }
 
 export function economySocialProofCutoverHistoricalInput(file, input) {
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   if (!Object.hasOwn(ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS, file)) return input;
   const pin = ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS[file];
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

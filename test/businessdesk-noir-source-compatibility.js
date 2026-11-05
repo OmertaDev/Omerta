@@ -1,4 +1,5 @@
 // Exact combined-source qualification only; no runtime, native execution or release transfer.
+import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -6,10 +7,36 @@ import { execFileSync } from 'node:child_process';
 import { BUSINESS_DESK_NOIR_SOURCE, BUSINESS_DESK_NOIR_SOURCE_SHA256 } from '../tools/businessdesk-noir-source-data.js';
 import { BUSINESS_DESK_NOIR_SOURCE_FILES, assertBusinessDeskNoirSourceTransfer,
   businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';
-import { BUSINESS_DESK_NOIR_NATIVE_FILES, businessDeskNoirNativeProvenance } from '../tools/businessdesk-noir-native-provenance.js';
+import { BUSINESS_DESK_NOIR_NATIVE_FILES } from '../tools/businessdesk-noir-native-provenance.js';
+import { businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';
+import { BUSINESS_DESK_COMBINED_NATIVE_PARENTS as nativeParents } from '../tools/businessdesk-combined-native-parents.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as archivedDeskNative } from '../tools/businessdesk-desk-parent-native-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as deedNative } from '../tools/businessdesk-deed-native-inputs.js';
+import { NOIR_UI_SOURCE } from '../tools/noir-ui-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previousNative } from '../tools/enterprise-native-ux-b35-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as currentNative } from '../tools/enterprise-native-deed-inputs.js';
 import { assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
+
+
+// This comparison boundary admits actual C6 HEAD, index and physical bytes
+// before selecting a separately pinned historical parent. It executes no view.
+function readCombinedPhysical(file) {
+  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');
+  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);
+  const authoredEntry = git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
+  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');
+  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\t' + file,
+    'Actual index mode/blob qualifies before projection');
+  const authored = git('show', combinedSource.sourceRevision + ':' + file);
+  assert.equal(git('show', 'HEAD:' + file), authored, 'Actual HEAD retains the complete authored source');
+  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  const raw = fs.readFileSync(file), physical = raw.toString('utf8');
+  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');
+  assert(physical === authored || physical === authored.replaceAll('\n', '\r\n'), 'Whole actual LF/CRLF physical source qualifies first');
+  return physical;
+}
 
 assert.deepEqual(process.argv.slice(2), [], 'Bare source-only entrypoint required.');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
@@ -84,9 +111,9 @@ for (const [file, targetKind, targetRevision] of targets) {
     assert.throws(() => { inverse.current = 'unreviewed'; }, TypeError); inverseCount++;
   }
   assert.equal(reconstructed, target, 'Every actual inverse reconstructs the complete exact target; partial recovery grants no authority.');
-  const physical = fs.readFileSync(file), physicalText = physical.toString('utf8');
-  assert(Buffer.from(physicalText).equals(physical), 'Physical input is lossless UTF-8.');
-  assert.equal(lf(physicalText), current, 'Current physical bytes match the actual bound source, allowing only uniform line endings.');
+  const actualPhysical = readCombinedPhysical(file);
+  const physicalText = businessDeskCombinedHistoricalInput(file, actualPhysical, 'desk');
+  assert.equal(lf(physicalText), current, 'The exact Desk parent comparison retains its original whole-source binding.');
   for (const input of [current, current.replaceAll('\n', '\r\n'), physicalText]) {
     const proof = assertBusinessDeskNoirSourceTransfer(file, input);
     assert(Object.isFrozen(proof));
@@ -133,37 +160,52 @@ const nativeFiles = ['package.json', 'public/index.html', 'public/omerta-ui.css'
   'test/deed-allocation-source-compatibility.js', 'tools/deed-allocation-source-transfer.js'];
 assert.deepEqual(BUSINESS_DESK_NOIR_NATIVE_FILES, nativeFiles); assert(Object.isFrozen(BUSINESS_DESK_NOIR_NATIVE_FILES));
 assert.equal(currentNative.status, 'SEALED'); assert.equal(previousNative.status, 'SEALED');
-assert.equal(currentNative.version, 3); assert.equal(currentNative.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
+assert.equal(currentNative.version, 6); assert.equal(currentNative.phase, 'ACTUAL_ENTERPRISE_MONITOR_WIKI_DESK_NATIVE_INPUTS');
+assert.equal(archivedDeskNative.status, 'SEALED'); assert.equal(archivedDeskNative.version, 3);
+const archivedDeskRows = new Map(archivedDeskNative.files.map(row => [row.file, row]));
+const deedRows = new Map(deedNative.files.map(row => [row.file, row]));
 const record = (revision, file) => {
   const line = git('ls-tree', '-z', revision, '--', file);
   const match = line.match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0]+)\0$/);
   assert(match && match[3] === file, 'Actual regular authored Git input required.');
   return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });
 };
-const relation = 'exact-combined-noir-and-deed-source-provenance-only';
-let nativeRelations = 0, nativeRefusals = 0, sample;
+const relation = 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only';
+let nativeRelations = 0, nativeRefusals = 0, neutralAdditions = 0, sample;
 const nativeRefused = run => { assert.throws(run); nativeRefusals++; };
 for (const file of nativeFiles) {
   const previous = previousNative.files.find(row => row.file === file), expected = currentNative.files.find(row => row.file === file);
   if (!previous) {
     assert(nativeFiles.indexOf(file) >= 7, 'Only the two declared shared additions lack a B35 predecessor.');
     if (expected) assert(Object.isFrozen(expected));
-    assert.equal(businessDeskNoirNativeProvenance(file, previous, expected), null, 'An addition never invents an existing-input predecessor pin.');
-    continue;
+    assert.equal(businessDeskCombinedNativeProvenance(file, previous, expected), null, 'An addition never invents an existing-input predecessor pin.');
+    neutralAdditions++; continue;
   }
   assert(expected && Object.isFrozen(expected));
   assert(nativeFiles.indexOf(file) < 7); assert(Object.isFrozen(previous));
-  const proof = businessDeskNoirNativeProvenance(file, previous, expected);
+  const archivedDesk = archivedDeskRows.get(file), archivedPath = nativeParents.parentPaths.desk.find(row => row.file === file);
+  assert(archivedDesk && Object.isFrozen(archivedDesk) && archivedPath, 'Every original Noir case retains its archived Desk path.');
+  assert.deepEqual(archivedPath.current, archivedDesk); assert.deepEqual(archivedPath.predecessor, previous);
+  const noirAnchor = NOIR_UI_SOURCE.files.find(row => row.file === file); assert(noirAnchor && !noirAnchor.predecessorAbsent);
+  const noirEdge = archivedPath.edges.find(edge => edge.kind === 'noir'); assert(noirEdge);
+  assert.deepEqual(noirEdge.from, { file, mode: noirAnchor.mode, blob: noirAnchor.currentBlob, sha256: noirAnchor.currentSha256 });
+  assert.deepEqual(noirEdge.to, { file, mode: noirAnchor.predecessorMode, blob: noirAnchor.predecessorBlob, sha256: noirAnchor.predecessorSha256 });
+  const stage = deedRows.get(file); assert(stage && Object.isFrozen(stage)); assert.deepEqual(noirEdge.to, stage);
+  if (nativeFiles.indexOf(file) < 2) {
+    const refinement = archivedPath.edges.find(edge => edge.kind === 'desk-noir-combined'); assert(refinement);
+    assert.deepEqual(refinement.from, archivedDesk); assert.deepEqual(refinement.to, noirEdge.from);
+  } else assert.deepEqual(archivedDesk, noirEdge.from);
+  const proof = businessDeskCombinedNativeProvenance(file, previous, expected);
   assert(proof && Object.isFrozen(proof) && Object.isFrozen(proof.current));
   assert.deepEqual(Object.keys(proof).sort(), ['file', 'current', 'predecessor', 'predecessorRevision', 'relation', 'nativeAdmission', 'priorResultsTransferred'].sort());
   assert.equal(proof.file, file); assert.strictEqual(proof.predecessor, previous);
   assert.equal(proof.predecessorRevision, previousNative.authoredRevision); assert.equal(proof.relation, relation);
   assert.deepEqual(proof.current, { mode: expected.mode, blob: expected.blob, sha256: expected.sha256 });
   assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
-  nativeRefused(() => businessDeskNoirNativeProvenance(file, Object.freeze({ ...previous }), expected));
-  nativeRefused(() => businessDeskNoirNativeProvenance(file, previous, Object.freeze({ ...expected })));
-  nativeRefused(() => businessDeskNoirNativeProvenance(file, Object.freeze({ ...previous, blob: '0'.repeat(40) }), expected));
-  nativeRefused(() => businessDeskNoirNativeProvenance(file, previous, Object.freeze({ ...expected, sha256: '0'.repeat(64) })));
+  nativeRefused(() => businessDeskCombinedNativeProvenance(file, Object.freeze({ ...previous }), expected));
+  nativeRefused(() => businessDeskCombinedNativeProvenance(file, previous, Object.freeze({ ...expected })));
+  nativeRefused(() => businessDeskCombinedNativeProvenance(file, Object.freeze({ ...previous, blob: '0'.repeat(40) }), expected));
+  nativeRefused(() => businessDeskCombinedNativeProvenance(file, previous, Object.freeze({ ...expected, sha256: '0'.repeat(64) })));
   nativeRefused(() => { proof.nativeAdmission = true; }); nativeRefused(() => { proof.current.blob = '0'.repeat(40); });
   const current = record('HEAD', file), authored = record(currentNative.authoredRevision, file);
   const bytes = Buffer.from(git('show', `${currentNative.authoredRevision}:${file}`));
@@ -186,9 +228,9 @@ for (const file of nativeFiles) {
   nativeRefused(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));
   sample ||= { previous, expected }; nativeRelations++;
 }
-assert.equal(nativeRelations, 7); assert(sample);
+assert.equal(nativeRelations, 7); assert.equal(neutralAdditions, 2); assert.equal(nativeRefusals, 119, 'All original Noir refusal categories are retained.'); assert(sample);
 for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../public/index.html', null, undefined, 1, Symbol('source'),
-  Object.freeze({ toString() { throw Error('No coercion'); } })]) assert.equal(businessDeskNoirNativeProvenance(unknown, sample.previous, sample.expected), null);
+  Object.freeze({ toString() { throw Error('No coercion'); } })]) assert.equal(businessDeskCombinedNativeProvenance(unknown, sample.previous, sample.expected), null);
 console.log(JSON.stringify({ phase, source: source.revision, tree: source.tree, targets, inverseHunks: inverseCount,
   positives, refusals, nativeRelations, nativeRefusals, sourceOnly: true, runtime: false, native: false,
   migration: false, financial: false, activation: false, deployment: false }));

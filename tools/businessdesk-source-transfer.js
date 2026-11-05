@@ -1,4 +1,5 @@
 // Generated exact source-only envelope for business control desk.
+import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-source-transfer.js';
 // Historical pins remain unchanged; unknown or non-exact bytes pass through.
 import assert from 'node:assert/strict';
 import { businessDeskNoirHistoricalInput } from './businessdesk-noir-source-transfer.js';
@@ -303,6 +304,8 @@ export function assertBusinessDeskSourceTransfer(file, input) {
 }
 
 export function businessDeskHistoricalInput(file, input) {
+  if (typeof file === 'string' && Object.hasOwn(BUSINESS_DESK_DOMAINS, file))
+    input = businessDeskCombinedHistoricalInput(file, input, 'desk');
   input = businessDeskNoirHistoricalInput(file, input, 'business');
   if (typeof file !== 'string' || !Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return input;
   const pin = BUSINESS_DESK_DOMAINS[file];

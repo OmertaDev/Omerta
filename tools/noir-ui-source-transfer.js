@@ -1,8 +1,10 @@
 // Finite historical reader only. Runtime/browser tests continue to use actual current files.
+import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { businessDeskNoirHistoricalInput } from './businessdesk-noir-source-transfer.js';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_SHA256 } from './noir-ui-source-data.js';
+import { wikiMediaNoirMergeHistoricalInput } from './wiki-media-source-transfer.js';
 
 export { NOIR_UI_SOURCE };
 export const NOIR_UI_SOURCE_FILES = Object.freeze([
@@ -73,7 +75,11 @@ export function assertNoirUiSourceTransfer(file, input, pin = NOIR_UI_SOURCE) {
 }
 
 export function noirUiHistoricalInput(file, input) {
+  if (NOIR_UI_SOURCE.status === 'SEALED' && typeof file === 'string'
+    && NOIR_UI_SOURCE.files.some(row => row.file === file && !row.predecessorAbsent))
+    input = businessDeskCombinedHistoricalInput(file, input, 'desk');
   input = businessDeskNoirHistoricalInput(file, input, 'noir');
+  input = wikiMediaNoirMergeHistoricalInput(file, input, 'main');
   if (NOIR_UI_SOURCE.status !== 'SEALED' || typeof file !== 'string') return input;
   const row = NOIR_UI_SOURCE.files.find(record => record.file === file);
   if (!row || row.predecessorAbsent) return input;

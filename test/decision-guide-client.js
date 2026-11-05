@@ -65,7 +65,8 @@ if(process.argv.includes('--browser')) {
 
 for(const [actor,isCurrent,expected] of [['a',true,1],['b',true,0],['a',false,0]]) {
  let retries=0;const button={dataset:{operationRetry:'7'}};
- const c=vm.createContext({me:{id:actor,generation:1},operationReceipts:[{id:7,actor:'a:1',isCurrent:()=>isCurrent,recovery:{run(){retries++;}}}],document:{querySelectorAll:s=>s==='[data-operation-retry]'?[button]:[]}});
+ const document={querySelector:()=>null,querySelectorAll:s=>s==='[data-operation-retry]'?[button]:[]};
+ const c=vm.createContext({me:{id:actor,generation:1},operationReceipts:[{id:7,actor:'a:1',isCurrent:()=>isCurrent,recovery:{run(){retries++;}}}],document,$:s=>document.querySelector(s)});
  vm.runInContext(source('bindOperationDesk')+'; bindOperationDesk();',c);button.onclick();assert.equal(retries,expected,'retry must belong to current actor and current scope');
 }
 {
