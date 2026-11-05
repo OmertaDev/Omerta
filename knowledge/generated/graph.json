@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5ae699afe849a34d22b367498fcdc90a8811527d",
+  "sourceRevision": "2e77851ce868ae98bb89a3235051b164fec4547b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17418,
-    "edges": 69930,
+    "nodes": 17422,
+    "edges": 69949,
     "byNodeType": {
       "Artifact": 7081,
       "Command": 300,
-      "Commit": 5023,
+      "Commit": 5027,
       "Contract": 134,
       "Document": 957,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5664,
-      "CHANGED": 26965,
+      "CHANGED": 26979,
       "CONTAINS": 7102,
       "DECLARES": 300,
       "DEFINED_IN": 1771,
       "DEPENDS_ON": 69,
       "EXECUTES": 1193,
       "HANDLED_BY": 935,
-      "HAS_COMMIT": 5023,
+      "HAS_COMMIT": 5027,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8351,
+      "IMPORTS": 8352,
       "INHERITS": 45,
       "REFERENCES": 3884,
       "REPRESENTS": 2627,
@@ -36892,20 +36892,20 @@
       "path": "docs/current-economic-terms-release-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 5383,
-      "lines": 27,
-      "version": "9da298c954e4d404",
+      "bytes": 6649,
+      "lines": 29,
+      "version": "c3c0997788108af7",
       "text": true,
       "provenance": [
         {
           "file": "docs/current-economic-terms-release-review.md",
           "line": 1,
-          "version": "9da298c954e4d404"
+          "version": "c3c0997788108af7"
         }
       ],
-      "lastChangedAt": "2026-11-04T19:41:24.000Z",
+      "lastChangedAt": "2026-11-05T01:24:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "08893ae7ec8437993b05e6ba481d813a0af57e01"
+      "lastChangedCommit": "2e77851ce868ae98bb89a3235051b164fec4547b"
     },
     {
       "key": "Artifact:docs/customer-bank-vaults-security-review.md",
@@ -137856,20 +137856,20 @@
       "path": "test/deed-allocation-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 12970,
-      "lines": 183,
-      "version": "87f1784b329c9592",
+      "bytes": 14510,
+      "lines": 205,
+      "version": "b475a091ef4063ca",
       "text": true,
       "provenance": [
         {
           "file": "test/deed-allocation-source-compatibility.js",
           "line": 1,
-          "version": "87f1784b329c9592"
+          "version": "b475a091ef4063ca"
         }
       ],
-      "lastChangedAt": "2026-11-04T21:36:31.000Z",
+      "lastChangedAt": "2026-11-05T01:11:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5214dc13676c6c4bae8f631bb0786c94976045d4"
+      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
     },
     {
       "key": "Artifact:test/deed-benefit-boundaries.js",
@@ -142617,20 +142617,20 @@
       "path": "test/lib/rc1-historical-source-fixture.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 44705,
-      "lines": 692,
-      "version": "0c7d1202e9b1eb86",
+      "bytes": 47402,
+      "lines": 731,
+      "version": "fb724f2bddeb67bc",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
           "line": 1,
-          "version": "0c7d1202e9b1eb86"
+          "version": "fb724f2bddeb67bc"
         }
       ],
-      "lastChangedAt": "2026-10-27T02:34:53.000Z",
+      "lastChangedAt": "2026-11-05T01:02:38.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "38dfa088abf83dce56a76ad1eb1193303198b699"
+      "lastChangedCommit": "3785994c91797a68c6bbc8673d56f314651858e5"
     },
     {
       "key": "Artifact:test/lib/rc1-historical-worker-source.js",
@@ -155451,20 +155451,20 @@
       "path": "tools/combined-economic-deed-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 75752,
-      "lines": 1120,
-      "version": "049b009d16765800",
+      "bytes": 89430,
+      "lines": 1292,
+      "version": "e8165b70d48a8112",
       "text": true,
       "provenance": [
         {
           "file": "tools/combined-economic-deed-source-data.js",
           "line": 1,
-          "version": "049b009d16765800"
+          "version": "e8165b70d48a8112"
         }
       ],
-      "lastChangedAt": "2026-11-04T21:36:31.000Z",
+      "lastChangedAt": "2026-11-05T01:11:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5214dc13676c6c4bae8f631bb0786c94976045d4"
+      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
     },
     {
       "key": "Artifact:tools/combined-economic-deed-source-transfer.js",
@@ -155474,20 +155474,20 @@
       "path": "tools/combined-economic-deed-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 2244,
-      "lines": 44,
-      "version": "a47b60ea6096986d",
+      "bytes": 2375,
+      "lines": 47,
+      "version": "ed3e17f26859df70",
       "text": true,
       "provenance": [
         {
           "file": "tools/combined-economic-deed-source-transfer.js",
           "line": 1,
-          "version": "a47b60ea6096986d"
+          "version": "ed3e17f26859df70"
         }
       ],
-      "lastChangedAt": "2026-11-04T21:36:31.000Z",
+      "lastChangedAt": "2026-11-05T01:11:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5214dc13676c6c4bae8f631bb0786c94976045d4"
+      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
     },
     {
       "key": "Artifact:tools/combined-fifth-release-phase2-migration-catalog.js",
@@ -156256,20 +156256,20 @@
       "path": "tools/current-economic-terms-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 2074,
-      "lines": 40,
-      "version": "95de9d3d6ea909fc",
+      "bytes": 2153,
+      "lines": 41,
+      "version": "26406b6390ac8460",
       "text": true,
       "provenance": [
         {
           "file": "tools/current-economic-terms-source-transfer.js",
           "line": 1,
-          "version": "95de9d3d6ea909fc"
+          "version": "26406b6390ac8460"
         }
       ],
-      "lastChangedAt": "2026-11-04T21:36:31.000Z",
+      "lastChangedAt": "2026-11-05T01:11:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5214dc13676c6c4bae8f631bb0786c94976045d4"
+      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
     },
     {
       "key": "Artifact:tools/deed-allocation-source-data.js",
@@ -156925,18 +156925,18 @@
       "extension": ".js",
       "bytes": 481503,
       "lines": 12868,
-      "version": "11a46dc465d8d1be",
+      "version": "deb378ffaa7770b0",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-economic-inputs.js",
           "line": 1,
-          "version": "11a46dc465d8d1be"
+          "version": "deb378ffaa7770b0"
         }
       ],
-      "lastChangedAt": "2026-11-04T21:44:18.000Z",
+      "lastChangedAt": "2026-11-05T01:24:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0bd646fa55128b3e17e5c5633a43275dbb3adf6c"
+      "lastChangedCommit": "2e77851ce868ae98bb89a3235051b164fec4547b"
     },
     {
       "key": "Artifact:tools/enterprise-native-inputs.js",
@@ -157219,20 +157219,20 @@
       "path": "tools/generate-combined-economic-deed-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 5014,
-      "lines": 82,
-      "version": "21aa71c9eac3d01c",
+      "bytes": 5211,
+      "lines": 84,
+      "version": "7ddbeb082a1c3746",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-combined-economic-deed-source-transfer.js",
           "line": 1,
-          "version": "21aa71c9eac3d01c"
+          "version": "7ddbeb082a1c3746"
         }
       ],
-      "lastChangedAt": "2026-11-04T21:36:31.000Z",
+      "lastChangedAt": "2026-11-05T01:11:44.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5214dc13676c6c4bae8f631bb0786c94976045d4"
+      "lastChangedCommit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
     },
     {
       "key": "Artifact:tools/generate-current-economic-terms-source-transfer.js",
@@ -162575,20 +162575,20 @@
       "path": "tools/ux-release-phase2-native-catalog.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 25482,
-      "lines": 326,
-      "version": "bfc7ce695934b6d1",
+      "bytes": 30199,
+      "lines": 384,
+      "version": "ebfc9dc7e4f99041",
       "text": true,
       "provenance": [
         {
           "file": "tools/ux-release-phase2-native-catalog.js",
           "line": 1,
-          "version": "bfc7ce695934b6d1"
+          "version": "ebfc9dc7e4f99041"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:05:45.000Z",
+      "lastChangedAt": "2026-11-05T01:02:38.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dea6d6943b8ab421119b4a3c61f8b07f7182d253"
+      "lastChangedCommit": "3785994c91797a68c6bbc8673d56f314651858e5"
     },
     {
       "key": "Artifact:tools/ux-source-compatibility.js",
@@ -181540,6 +181540,22 @@
       ]
     },
     {
+      "key": "Commit:2e77851ce868ae98bb89a3235051b164fec4547b",
+      "type": "Commit",
+      "id": "2e77851ce868ae98bb89a3235051b164fec4547b",
+      "label": "Seal the verified receipt catalog and historical fixture inputs",
+      "title": "Seal the verified receipt catalog and historical fixture inputs",
+      "date": "2026-11-05T01:24:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2e77851ce868ae98bb89a3235051b164fec4547b",
+      "provenance": [
+        {
+          "commit": "2e77851ce868ae98bb89a3235051b164fec4547b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2e77851ce868ae98bb89a3235051b164fec4547b"
+        }
+      ]
+    },
+    {
       "key": "Commit:2e8037dcca7f589eec05d4612745af8fd90d9bdb",
       "type": "Commit",
       "id": "2e8037dcca7f589eec05d4612745af8fd90d9bdb",
@@ -184400,6 +184416,22 @@
         {
           "commit": "378265ba4520b82403c282adb07ca308c669d1a1",
           "url": "https://github.com/OmertaDev/Omerta/commit/378265ba4520b82403c282adb07ca308c669d1a1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3785994c91797a68c6bbc8673d56f314651858e5",
+      "type": "Commit",
+      "id": "3785994c91797a68c6bbc8673d56f314651858e5",
+      "label": "Validate economic receipt metadata in native and historical release checks",
+      "title": "Validate economic receipt metadata in native and historical release checks",
+      "date": "2026-11-05T01:02:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3785994c91797a68c6bbc8673d56f314651858e5",
+      "provenance": [
+        {
+          "commit": "3785994c91797a68c6bbc8673d56f314651858e5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3785994c91797a68c6bbc8673d56f314651858e5"
         }
       ]
     },
@@ -216996,6 +217028,22 @@
       ]
     },
     {
+      "key": "Commit:9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "type": "Commit",
+      "id": "9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "label": "Refresh release knowledge after the Afterword proof correction",
+      "title": "Refresh release knowledge after the Afterword proof correction",
+      "date": "2026-11-04T22:45:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "provenance": [
+        {
+          "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9df286a61c2c499065d5191d3ee2ab968d3bed1b"
+        }
+      ]
+    },
+    {
       "key": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
       "type": "Commit",
       "id": "9df83f23de23558d19ebe38c7ef011e419ffd655",
@@ -245764,6 +245812,22 @@
       ]
     },
     {
+      "key": "Commit:fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "type": "Commit",
+      "id": "fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "label": "Bind catalog and RC1 fixture corrections to their reviewed source",
+      "title": "Bind catalog and RC1 fixture corrections to their reviewed source",
+      "date": "2026-11-05T01:11:44.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "provenance": [
+        {
+          "commit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+        }
+      ]
+    },
+    {
       "key": "Commit:fb8a634f8ec29f9fac0b0ccc01dbcdb5fa86fdd4",
       "type": "Commit",
       "id": "fb8a634f8ec29f9fac0b0ccc01dbcdb5fa86fdd4",
@@ -258031,13 +258095,13 @@
       "id": "docs/current-economic-terms-release-review.md",
       "label": "docs/current-economic-terms-release-review.md",
       "documentType": "documentation",
-      "lines": 27,
-      "version": "9da298c954e4d404",
+      "lines": 29,
+      "version": "c3c0997788108af7",
       "provenance": [
         {
           "file": "docs/current-economic-terms-release-review.md",
           "line": 1,
-          "version": "9da298c954e4d404"
+          "version": "c3c0997788108af7"
         }
       ]
     },
@@ -266546,7 +266610,7 @@
         },
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
-          "line": 351
+          "line": 372
         },
         {
           "file": "test/liquidityindexer.js",
@@ -275874,6 +275938,9 @@
           "commit": "9db9b9a4d740c9faced0edece981145028f3f6c5"
         },
         {
+          "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
+        },
+        {
           "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
         },
         {
@@ -278409,6 +278476,9 @@
           "commit": "9db9b9a4d740c9faced0edece981145028f3f6c5"
         },
         {
+          "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
+        },
+        {
           "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
         },
         {
@@ -280942,6 +281012,9 @@
         },
         {
           "commit": "9db9b9a4d740c9faced0edece981145028f3f6c5"
+        },
+        {
+          "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
         },
         {
           "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
@@ -284173,6 +284246,9 @@
         },
         {
           "commit": "9db9b9a4d740c9faced0edece981145028f3f6c5"
+        },
+        {
+          "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
         },
         {
           "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
@@ -299655,7 +299731,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5ae699afe849a34d22b367498fcdc90a8811527d",
+      "revision": "2e77851ce868ae98bb89a3235051b164fec4547b",
       "currentBranch": "codex/align-site-contract-economics",
       "defaultBranch": "main",
       "visibility": "public",
@@ -340763,13 +340839,13 @@
       "type": "TestSuite",
       "id": "test/deed-allocation-source-compatibility.js",
       "label": "test/deed-allocation-source-compatibility.js",
-      "lines": 183,
-      "version": "87f1784b329c9592",
+      "lines": 205,
+      "version": "b475a091ef4063ca",
       "provenance": [
         {
           "file": "test/deed-allocation-source-compatibility.js",
           "line": 1,
-          "version": "87f1784b329c9592"
+          "version": "b475a091ef4063ca"
         }
       ]
     },
@@ -343703,13 +343779,13 @@
       "type": "TestSuite",
       "id": "test/lib/rc1-historical-source-fixture.js",
       "label": "test/lib/rc1-historical-source-fixture.js",
-      "lines": 692,
-      "version": "0c7d1202e9b1eb86",
+      "lines": 731,
+      "version": "fb724f2bddeb67bc",
       "provenance": [
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
           "line": 1,
-          "version": "0c7d1202e9b1eb86"
+          "version": "fb724f2bddeb67bc"
         }
       ]
     },
@@ -436704,6 +436780,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2e77851ce868ae98bb89a3235051b164fec4547b",
+      "to": "Artifact:docs/current-economic-terms-release-review.md",
+      "provenance": {
+        "commit": "2e77851ce868ae98bb89a3235051b164fec4547b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2e77851ce868ae98bb89a3235051b164fec4547b",
+      "to": "Artifact:tools/enterprise-native-economic-inputs.js",
+      "provenance": {
+        "commit": "2e77851ce868ae98bb89a3235051b164fec4547b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2ea9c9c505eaf9a7de274cfc3a10cec2f381b4b0",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -442556,6 +442648,30 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "378265ba4520b82403c282adb07ca308c669d1a1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3785994c91797a68c6bbc8673d56f314651858e5",
+      "to": "Artifact:docs/current-economic-terms-release-review.md",
+      "provenance": {
+        "commit": "3785994c91797a68c6bbc8673d56f314651858e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3785994c91797a68c6bbc8673d56f314651858e5",
+      "to": "Artifact:test/lib/rc1-historical-source-fixture.js",
+      "provenance": {
+        "commit": "3785994c91797a68c6bbc8673d56f314651858e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3785994c91797a68c6bbc8673d56f314651858e5",
+      "to": "Artifact:tools/ux-release-phase2-native-catalog.js",
+      "provenance": {
+        "commit": "3785994c91797a68c6bbc8673d56f314651858e5"
       }
     },
     {
@@ -523100,6 +523216,38 @@
       "to": "Artifact:tools/next-five-native.js",
       "provenance": {
         "commit": "9df0e13732a381611cb90091f4a3f7781e909ce6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
       }
     },
     {
@@ -614300,6 +614448,46 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "commit": "fb81f9bdf3b9ff095207a1ff83260a4b5492c1ca"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "to": "Artifact:test/deed-allocation-source-compatibility.js",
+      "provenance": {
+        "commit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "to": "Artifact:tools/combined-economic-deed-source-data.js",
+      "provenance": {
+        "commit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "commit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "to": "Artifact:tools/current-economic-terms-source-transfer.js",
+      "provenance": {
+        "commit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "to": "Artifact:tools/generate-combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "commit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
       }
     },
     {
@@ -728735,6 +728923,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2e77851ce868ae98bb89a3235051b164fec4547b",
+      "provenance": {
+        "commit": "2e77851ce868ae98bb89a3235051b164fec4547b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2e8037dcca7f589eec05d4612745af8fd90d9bdb",
       "provenance": {
         "commit": "2e8037dcca7f589eec05d4612745af8fd90d9bdb"
@@ -730162,6 +730358,14 @@
       "to": "Commit:378265ba4520b82403c282adb07ca308c669d1a1",
       "provenance": {
         "commit": "378265ba4520b82403c282adb07ca308c669d1a1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:3785994c91797a68c6bbc8673d56f314651858e5",
+      "provenance": {
+        "commit": "3785994c91797a68c6bbc8673d56f314651858e5"
       }
     },
     {
@@ -746463,6 +746667,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9df286a61c2c499065d5191d3ee2ab968d3bed1b",
+      "provenance": {
+        "commit": "9df286a61c2c499065d5191d3ee2ab968d3bed1b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9df83f23de23558d19ebe38c7ef011e419ffd655",
       "provenance": {
         "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
@@ -760842,6 +761054,14 @@
       "to": "Commit:fb81f9bdf3b9ff095207a1ff83260a4b5492c1ca",
       "provenance": {
         "commit": "fb81f9bdf3b9ff095207a1ff83260a4b5492c1ca"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fb8911c7b4aafe6fc1d666528150d507fafe4a87",
+      "provenance": {
+        "commit": "fb8911c7b4aafe6fc1d666528150d507fafe4a87"
       }
     },
     {
@@ -803899,7 +804119,16 @@
       "to": "Artifact:tools/city-play-source-transfer.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 20
+        "line": 21
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/rc1-historical-source-fixture.js",
+      "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
+      "provenance": {
+        "file": "test/lib/rc1-historical-source-fixture.js",
+        "line": 5
       }
     },
     {
@@ -803926,7 +804155,7 @@
       "to": "Artifact:tools/deed-market-source-compatibility.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 26
+        "line": 27
       }
     },
     {
@@ -803935,7 +804164,7 @@
       "to": "Artifact:tools/deed-quest-source-transfer.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 21
+        "line": 22
       }
     },
     {
@@ -803944,7 +804173,7 @@
       "to": "Artifact:tools/economy-hardening-source-transfer.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 27
+        "line": 28
       }
     },
     {
@@ -803953,7 +804182,7 @@
       "to": "Artifact:tools/economy-release-composition.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -803962,7 +804191,7 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 22
+        "line": 23
       }
     },
     {
@@ -803980,7 +804209,7 @@
       "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -803998,7 +804227,7 @@
       "to": "Artifact:tools/rc1-city-activity-market-source-compatibility.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 25
+        "line": 26
       }
     },
     {
@@ -804007,7 +804236,7 @@
       "to": "Artifact:tools/rc1-fourth-batch-source-compatibility.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -804016,7 +804245,7 @@
       "to": "Artifact:tools/rc1-npc-boat-journal.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 379
+        "line": 400
       }
     },
     {
@@ -804025,7 +804254,7 @@
       "to": "Artifact:tools/rc1-npc-car-acquisition.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 378
+        "line": 399
       }
     },
     {
@@ -804034,7 +804263,7 @@
       "to": "Artifact:tools/rc1-npc-market-order-journal.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 380
+        "line": 401
       }
     },
     {
@@ -804043,7 +804272,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 351
+        "line": 372
       }
     },
     {
