@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 6,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_MONITOR_WIKI_DESK_NATIVE_INPUTS",
-  "authoredRevision": "c5fbf05be6907e906ed5dda3d53db051270d8b76",
+  "authoredRevision": "6824f5f211e6914764a39776c08930194cd6ecfa",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -14,8 +14,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "wikiMergeSourceDefinitionSha256": "9d01bbeecceacd3a7f93aa1c44e444ed2f2059e21717a3473aab90e8429cd5ec",
   "noirSourceDefinitionSha256": "20762cad6a54b37c532be5240e90877999f01986ea025a3cb438f9ccd844bc71",
   "noirMergeSourceDefinitionSha256": "096fab5d678af31b99a4af456fbd5f2cda05b97afe26e216c51beaedc370e441",
-  "combinedSourceDefinitionSha256": "a7301220f56e35087a6dfd55337fd9fbaef5dae2d0d4e561738506edb01b408e",
-  "combinedNativeDefinitionSha256": "358d0f8f0bf0240d8bf8de28d461948fd1a721ad977df0ecd6bc93ffa88e49f9",
+  "combinedSourceDefinitionSha256": "e0738d5716f90a375785d729c72aa7245df7a41bc78d328b239669a07e2ecbab",
+  "combinedNativeDefinitionSha256": "826c8faa5782a9b7054b0ad3d3aa1b9316ccab18f0ff6e3dd04f30a59b432afb",
   "combinedNativeParentsDefinitionSha256": "d38d8283d7b29eff2a80cefb43f68e768f6df294ed5e8d297b3219bc36622516",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
   "legacyDefinitionSha256": "a5b7fb0db57cc7945b5f96b975b7ac0fe6cef4d05e1dd10c929c083429703ce4",
@@ -318,8 +318,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "package.json",
       "mode": "100644",
-      "blob": "e0a1a7c22a923009ed8147244a0065dda012228d",
-      "sha256": "1d62d7cdfaf75c44ecd896eea8aedeea679befbc6f78360c86bb766a857371a1"
+      "blob": "8377a7868772bcd0aba88aec3df9590aea3cbe69",
+      "sha256": "81f5d07b01fb62a61eee002d88b5d5ae70ead9d764286569955ad6af6aadf202"
     },
     {
       "file": "public/admin.html",
@@ -10392,8 +10392,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/businessdesk-combined-native-data.js",
       "mode": "100644",
-      "blob": "07ec44145b8819e60b3d26d04deea9a84abe6942",
-      "sha256": "35117834b41502b2ba663650113de6b8559f5f7908f930461331000a68441921"
+      "blob": "de2a09a84cf5fdc0ba496466cae1185e7246475d",
+      "sha256": "2de9f47da311426112d1844f88ece179fbabd7174dec266b9049dea6ae120a50"
     },
     {
       "file": "tools/businessdesk-combined-native-parents.js",
@@ -10410,8 +10410,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/businessdesk-combined-source-data.js",
       "mode": "100644",
-      "blob": "e5b222278f5b90dec1cb434ec24880eb5d751a84",
-      "sha256": "007e81427fca2edf62eda0ca5b9cfd11e907d4bfef4060cdfc3fd716d7ddcece"
+      "blob": "10539c40d0286c11ac741b057b46e44fafe08e4f",
+      "sha256": "18407233dc2ebefd12211039899dd2eee8c0d9f7b05a59abee7c09888ce0bde9"
     },
     {
       "file": "tools/businessdesk-combined-source-transfer.js",
@@ -10879,8 +10879,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
       "after": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "e0a1a7c22a923009ed8147244a0065dda012228d",
-        "sha256": "1d62d7cdfaf75c44ecd896eea8aedeea679befbc6f78360c86bb766a857371a1"
+        "blob": "8377a7868772bcd0aba88aec3df9590aea3cbe69",
+        "sha256": "81f5d07b01fb62a61eee002d88b5d5ae70ead9d764286569955ad6af6aadf202"
       }
     },
     {
@@ -12930,8 +12930,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/businessdesk-combined-native-data.js",
       "mode": "100644",
-      "blob": "07ec44145b8819e60b3d26d04deea9a84abe6942",
-      "sha256": "35117834b41502b2ba663650113de6b8559f5f7908f930461331000a68441921"
+      "blob": "de2a09a84cf5fdc0ba496466cae1185e7246475d",
+      "sha256": "2de9f47da311426112d1844f88ece179fbabd7174dec266b9049dea6ae120a50"
     },
     {
       "file": "tools/businessdesk-combined-native-parents.js",
@@ -12948,8 +12948,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/businessdesk-combined-source-data.js",
       "mode": "100644",
-      "blob": "e5b222278f5b90dec1cb434ec24880eb5d751a84",
-      "sha256": "007e81427fca2edf62eda0ca5b9cfd11e907d4bfef4060cdfc3fd716d7ddcece"
+      "blob": "10539c40d0286c11ac741b057b46e44fafe08e4f",
+      "sha256": "18407233dc2ebefd12211039899dd2eee8c0d9f7b05a59abee7c09888ce0bde9"
     },
     {
       "file": "tools/businessdesk-combined-source-transfer.js",
@@ -13361,4 +13361,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "97ad5a23c96f31380cd891609500e150d3eace4f273c34b7f185c5e7c6ca66b4";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "e5cbaf1b2fd9d9be385ab61f21609c0e5d9c9554334d92017fcf9f5040e3cbe9";
