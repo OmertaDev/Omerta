@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { wikiMediaMergeHistoricalInput } from './wiki-media-source-transfer.js';
+import { noirUiHistoricalInput } from './noir-ui-source-transfer.js';
 import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_PREDECESSOR_TREE,
   DEED_ALLOCATION_SOURCE_PHASE, DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 
@@ -43,6 +44,7 @@ export function assertDeedAllocationSourceTransfer(file, input) {
 
 export function deedAllocationHistoricalInput(file, input) {
   input = wikiMediaMergeHistoricalInput(file, input);
+  input = noirUiHistoricalInput(file, input);
   if (typeof file !== 'string' || !Object.hasOwn(DEED_ALLOCATION_SOURCE_DOMAINS, file)) return input;
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text, 'utf8').equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');

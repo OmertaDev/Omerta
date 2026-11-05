@@ -45,8 +45,11 @@ try {
     return token;
   };
   const assertClassic = async (page, phone) => {
-    for (const selector of ['#leftcol', '#tabs', '#grouprail', ...(phone ? ['#bnav'] : [])])
+    const directory = page.locator('#city-directory');
+    if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();
+    for (const selector of ['#leftcol', '#grouprail', ...(phone ? ['#bnav'] : [])])
       assert(await page.locator(selector).isVisible(), selector + ' remains available in the classic interface');
+    assert.equal(await page.locator('#tabs').count(), 1, 'The original operation tablist remains available; single-screen groups need no subnavigation.');
     assert.equal(await page.locator('#player-view-switch, #city-actions, #city-panel, #city-scene-host, #map-mode-walk, #map-mode-territory, #tab-map canvas').count(),
       0, 'The classic interface has no visual city launcher, HUD, mount, or canvas.');
     assert.deepEqual(await page.evaluate(() => ({
@@ -77,6 +80,13 @@ try {
     assert.deepEqual(await board.locator(':scope > .grid > .card > .t').allTextContents(),
       districts.map(district => district.name), 'Every server district is displayed as a classic card.');
     assert.match(await board.textContent(), /Who holds the city/);
+  };
+  const openTourFromHelp = async page => {
+    const menu = page.locator('#game-menu');
+    if (!await menu.evaluate(node => node.open)) await menu.locator(':scope > summary').click();
+    await page.locator('#btn-help').click();
+    await page.locator('#glossary-tour').click();
+    await page.locator('#welcome:not(.hidden)').waitFor({ state: 'visible' });
   };
   const load = async page => {
     await page.goto(base, { waitUntil: 'networkidle' });
@@ -109,19 +119,22 @@ try {
         });
         await load(page);
         if (firstRun) {
-          await page.locator('#welcome:not(.hidden)').waitFor({ state: 'visible' });
-          await page.locator('#tour-skip').click();
-          await page.locator('#tab-streets.on').waitFor({ state: 'visible' });
+          await page.locator('#tab-start.on .start-next-card').waitFor({ state: 'visible' });
+          assert.equal(await page.locator('#welcome').isVisible(), false, 'A fresh player starts with inline first-week guidance.');
           await assertClassic(page, phone);
-          await load(page);
-          await page.locator('#welcome:not(.hidden)').waitFor({ state: 'visible' });
+          await openTourFromHelp(page);
+          await page.locator('#tour-skip').click();
+          await page.locator('#welcome').waitFor({ state: 'hidden' });
+          await page.locator('#tab-start.on').waitFor({ state: 'visible' });
+          await assertClassic(page, phone);
+          await openTourFromHelp(page);
           const steps = await page.locator('#tour-dots i').count();
-          assert(steps > 0 && steps <= 10, 'The first-run tour has a bounded number of steps.');
+          assert(steps > 0 && steps <= 10, 'The optional tour has a bounded number of steps.');
           for (let step = 0; step < steps; step++) await page.locator('#tour-next').click();
           await page.locator('#welcome').waitFor({ state: 'hidden' });
           await page.locator('#tab-streets.on').waitFor({ state: 'visible' });
           await assertClassic(page, phone);
-          completed.push(label + ': first-run skip and completion open Streets');
+          completed.push(label + ': inline first week, optional tour close, and tour completion opens Streets');
         } else {
           if (await page.locator('.modal-bg[data-managed-dialog]').count()) await page.keyboard.press('Escape');
           await jump(page, 'streets');
@@ -130,8 +143,7 @@ try {
           await assertClassic(page, phone);
           await jump(page, 'profile');
           await assertClassic(page, phone);
-          await page.locator('#btn-help').click();
-          await page.locator('#glossary-tour').click();
+          await openTourFromHelp(page);
           await page.locator('#tour-skip').click();
           await page.locator('#welcome').waitFor({ state: 'hidden' });
           await page.locator('#tab-profile.on').waitFor({ state: 'visible' });
