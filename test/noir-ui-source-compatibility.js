@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,
   noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
+import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 
 const revision = '42d9df7628a30653ff7c8bac203b7bd317dee597';
 const predecessor = 'fe887350a661901983282183fb21e9d1d330f04f';
@@ -26,7 +27,7 @@ assert.deepEqual(git('diff', '--name-only', predecessor, revision).trim().split(
 let positives = 0, refusals = 0;
 for (const file of NOIR_UI_SOURCE_FILES) {
   const committed = git('show', `${revision}:${file}`);
-  const physical = businessDeskNoirHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'noir');
+  const physical = businessDeskNoirHistoricalInput(file, economyDeedMergeHistoricalInput(file, fs.readFileSync(file, 'utf8'), 'noir'), 'noir');
   assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
   const pin = NOIR_UI_SOURCE.files.find(row => row.file === file);
   assert.equal(sha(committed), pin.currentSha256);

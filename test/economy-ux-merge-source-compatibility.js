@@ -74,7 +74,7 @@ for (const row of pin.files) {
   }
   for (const helper of Object.values(helpers)) {
     const future = `${current}\n// unknown future integrated source\n`; assert.equal(helper(row.file, future), future);
-    assert.throws(() => helper(row.file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /Lossless UTF-8/); refusals += 2;
+    assert.throws(() => helper(row.file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /Lossless UTF-8/i); refusals += 2;
   }
 }
 for (const file of ['../schema.sql', '__proto__', 'constructor', 'unknown']) {

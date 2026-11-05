@@ -14,6 +14,17 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  let negatives = 0;
  const reject = run => { assert.throws(run); negatives++; };
  const pin = ENTERPRISE_NATIVE_UX_INPUTS;
+ const economySupport = ['.github/workflows/economy-hardening.yml',
+  'tools/generate-economy-monitor-source-transfer.js', 'test/economy-monitor-source-compatibility.js',
+  'test/economy-monitor.js', 'test/economy-composition.js', 'test/economy-composition-restart.js',
+  'tools/generate-age-eligibility-source-transfer.js', 'test/age-eligibility-source-compatibility.js',
+  'test/age.js', 'test/legal-security.js', 'tools/economy-deed-merge-source-data.js',
+  'tools/economy-deed-merge-source-compatibility.js', 'tools/generate-economy-deed-merge-source.js',
+  'test/economy-deed-merge-source-compatibility.js', 'tools/noir-ui-source-data.js',
+  'tools/noir-ui-source-transfer.js', 'tools/generate-noir-ui-source-transfer.js',
+  'test/noir-ui-source-compatibility.js', 'test/ux-expanded-browser.js'];
+ for (const file of economySupport)
+  assert(ENTERPRISE_UX_SUPPORT.includes(file), 'Current monitoring and merged-source proofs remain in the native closure: ' + file);
  const fixturePin = (file, blobDigit, shaDigit, mode = '100644') => Object.freeze({ file, mode, blob: blobDigit.repeat(40), sha256: shaDigit.repeat(64) });
  const fixtureFiles = ['src/present-changed.js', 'src/present-unchanged.js', 'src/absent-changed.js', 'src/absent-unchanged.js'];
  const presentBefore = fixturePin(fixtureFiles[0], '1', '2'), presentAfter = fixturePin(fixtureFiles[0], '3', '4'), presentSame = fixturePin(fixtureFiles[1], '5', '6');
@@ -76,6 +87,20 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   assert.notEqual(provenance.predecessor.blob, record.blob);
   assert.equal(provenance.nativeAdmission, false, 'Historical provenance cannot grant native admission');
   assert.equal(provenance.priorResultsTransferred, false);
+  const merged = pin.files.find(row => row.file === 'src/game.js'); assert(merged);
+  const mergedBytes = git('show', pin.authoredRevision + ':' + merged.file);
+  const mergedRecord = { type: 'blob', mode: merged.mode, blob: merged.blob };
+  const mergedProvenance = assertEnterpriseUxTrackedInput(merged.file, mergedRecord, mergedRecord, mergedBytes);
+  assert.equal(mergedProvenance.relation, 'exact-reviewed-economy-deed-merge-source-provenance-only');
+  assert.equal(mergedProvenance.nativeAdmission, false); assert.equal(mergedProvenance.priorResultsTransferred, false);
+  assert.equal(mergedProvenance.current.sha256, digest(mergedBytes));
+  for (const parent of ['c771f5ba73453a57e24e31f8eeb920933fe7544c', '4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364']) {
+   const parentBytes = git('show', parent + ':' + merged.file);
+   const parentBlob = crypto.createHash('sha1').update('blob ' + parentBytes.length + '\0').update(parentBytes).digest('hex');
+   assert.notEqual(parentBlob, merged.blob, 'Each reviewed parent lacks part of the actual merged game source');
+   const parentRecord = { type: 'blob', mode: merged.mode, blob: parentBlob };
+   reject(() => assertEnterpriseUxTrackedInput(merged.file, parentRecord, parentRecord, parentBytes));
+  }
   const historical = git('show', provenance.predecessorRevision + ':' + first.file);
   const historicalRecord = { type: 'blob', mode: provenance.predecessor.mode, blob: provenance.predecessor.blob };
   reject(() => assertEnterpriseUxTrackedInput(first.file, historicalRecord, historicalRecord, historical),

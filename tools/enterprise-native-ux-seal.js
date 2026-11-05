@@ -8,11 +8,17 @@ import { ENTERPRISE_NATIVE_RELEASE_INPUTS } from './enterprise-native-inputs.js'
 import { ENTERPRISE_UX_METADATA, ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA, ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA_SHA256, ENTERPRISE_UX_PREDECESSOR_METADATA, ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256, ENTERPRISE_UX_QUALIFIED_METADATA, ENTERPRISE_UX_QUALIFIED_METADATA_SHA256, enterpriseUxClosure, enterpriseUxMetadataBytes, enterpriseUxReplacementPlan } from './enterprise-native-ux.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessorNativeInputs } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
+import { ECONOMY_DEED_MERGE_NATIVE_PROVENANCE, ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256 } from './economy-deed-merge-source-data.js';
+import { assertEconomyDeedNativeProvenanceDefinition } from './economy-deed-merge-source-compatibility.js';
 const revision = process.argv[2], predecessorRevision = 'c6247976ff71e8d4c103ebd1498c2d373217d077', uxRevision = '940df6a1efbe4ddcd8301cd138d5643dbe48a0bc';
 assert.equal(process.argv.length, 3, 'Usage: node tools/enterprise-native-ux-seal.js <authored-commit>'); assert.match(revision || '', /^[a-f0-9]{40}$/);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 git('merge-base', '--is-ancestor', predecessorRevision, revision); git('merge-base', '--is-ancestor', uxRevision, revision); git('merge-base', '--is-ancestor', ENTERPRISE_NATIVE_RELEASE_INPUTS.revision, revision);
+assertEconomyDeedNativeProvenanceDefinition();
+git('merge-base', '--is-ancestor', ECONOMY_DEED_MERGE_NATIVE_PROVENANCE.sourceRevision, revision);
+assert.equal(ECONOMY_DEED_MERGE_NATIVE_PROVENANCE.predecessorRevision, predecessorNativeInputs.authoredRevision);
+assert.equal(ECONOMY_DEED_MERGE_NATIVE_PROVENANCE.predecessorDefinitionSha256, sha(JSON.stringify(predecessorNativeInputs)));
 const read = file => git('show', revision + ':' + file);
 const legacyAdditions = new Map(ENTERPRISE_NATIVE_RELEASE_INPUTS.additions.map(row => [row.file, row]));
 const record = (rev, file, allowAbsence = false) => {
@@ -31,6 +37,7 @@ const value = { version: 3, status: 'SEALED', phase: 'ACTUAL_ENTERPRISE_DEED_NAT
  nativePredecessorRevision: predecessorNativeInputs.authoredRevision,
  nativePredecessorMetadataSha256: sha(read(ENTERPRISE_UX_PREDECESSOR_METADATA)),
  deedSourceDefinitionSha256: sha(JSON.stringify(DEED_ALLOCATION_SOURCE_DOMAINS)),
+ economyDeedProvenanceDefinitionSha256: ECONOMY_DEED_MERGE_NATIVE_PROVENANCE_SHA256,
  legacyRevision: ENTERPRISE_NATIVE_RELEASE_INPUTS.revision, legacyDefinitionSha256: sha(JSON.stringify(ENTERPRISE_NATIVE_RELEASE_INPUTS)), legacyInventorySha256: sha(JSON.stringify(ENTERPRISE_NATIVE_FILES)), files, replacements: plan.replacements, legacyAdditionReplacements: plan.legacyAdditionReplacements, additions: files.slice(ENTERPRISE_NATIVE_FILES.length) };
 fs.writeFileSync(new URL('../' + ENTERPRISE_UX_METADATA, import.meta.url), enterpriseUxMetadataBytes(value));
 console.log(JSON.stringify({ authoredRevision: revision, actualInputs: files.length, replacements: plan.replacements.length, legacyAdditionReplacements: plan.legacyAdditionReplacements.length, additions: value.additions.length, onlySelfReference: ENTERPRISE_UX_METADATA, nativeResultsTransferred: false }));

@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {ENTERPRISE_NATIVE_BASE_REVISION,ENTERPRISE_NATIVE_FILES as HISTORICAL_ENTERPRISE_NATIVE_FILES,ENTERPRISE_NATIVE_BASE_INPUTS,ENTERPRISE_NATIVE_BINARY_FILES,ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS,ENTERPRISE_NATIVE_RELEASE_INPUTS} from './enterprise-native-inputs.js';
 import {ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS as CURRENT_GUI_INPUTS} from './enterprise-native-continuous-city-inputs.js';
 import {ENTERPRISE_UX_METADATA,assertEnterpriseUxInputDefinition,assertEnterpriseUxTrackedInput,assertEnterpriseUxMetadataBytes,assertEnterpriseUxReplacementPlan,enterpriseUxClosure} from './enterprise-native-ux.js';
+import {ECONOMY_DEED_MERGE_NATIVE_PROVENANCE} from './economy-deed-merge-source-data.js';
 
 const SUCCESSOR_DATA='tools/enterprise-native-continuous-city-inputs.js';
 const SUCCESSOR_PREDECESSOR='792f1da708375fc28fca6fe9c4fb9c2c7c756ee6';
@@ -214,6 +215,7 @@ function inspectDirectories(){return ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS.map
 function tree(revision){return git('ls-tree','-r','-z',revision).toString().split('\0').filter(Boolean).map(line=>{const i=line.indexOf('\t'),[mode,type,blob]=line.slice(0,i).split(' ');return{file:line.slice(i+1),mode,type,blob,line};});}
 export function captureEnterpriseSource(){
  const successor=assertEnterpriseCombinedInputDefinition(),ux=assertEnterpriseUxInputDefinition(ENTERPRISE_NATIVE_FILES,successor),revision=textGit('rev-parse','HEAD');assert.match(revision,/^[a-f0-9]{40}$/);assert.equal(textGit('status','--porcelain','--untracked-files=all'),'','Clean exact committed source required');
+ git('merge-base','--is-ancestor',ECONOMY_DEED_MERGE_NATIVE_PROVENANCE.sourceRevision,ux.authoredRevision);
  assertHistoricalGUIWitness();assertCurrentGUIWitness();git('merge-base','--is-ancestor',COMMERCE_SOURCE,successor.revision);git('merge-base','--is-ancestor',CURRENT_GUI_SOURCE,successor.revision);git('merge-base','--is-ancestor',successor.revision,revision);
  git('merge-base','--is-ancestor',successor.revision,ux.authoredRevision);git('merge-base','--is-ancestor',ux.predecessorRevision,ux.authoredRevision);git('merge-base','--is-ancestor',ux.uxRevision,ux.authoredRevision);git('merge-base','--is-ancestor',ux.authoredRevision,revision);
  const records=tree(revision),current=new Map(records.map(r=>[r.file,r])),base=new Map(tree(ENTERPRISE_NATIVE_BASE_REVISION).map(r=>[r.file,r])),authored=new Map(tree(ux.authoredRevision).map(r=>[r.file,r])),predecessor=new Map(tree(ux.predecessorRevision).map(r=>[r.file,r])),legacyTree=new Map(tree(ux.legacyRevision).map(r=>[r.file,r])),legacyAdditions=new Map(successor.additions.map(r=>[r.file,r])),pins=new Map(ENTERPRISE_NATIVE_BASE_INPUTS.map(r=>[r.file,r])),binary=new Set(ENTERPRISE_NATIVE_BINARY_FILES),files={},sourceProvenance={};

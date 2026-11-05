@@ -7,6 +7,8 @@ import { UX_NATIVE_READER_SOURCE as pin, UX_NATIVE_READER_SOURCE_FILES, qualifyU
 import { qualifyUxSource, uxHistoricalInput } from '../../tools/ux-source-compatibility.js';
 import { ECONOMY_UX_MERGE_SOURCE, economyUxMergeMainHistoricalInput } from '../../tools/economy-ux-merge-source-compatibility.js';
 import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_DOMAINS, assertDeedAllocationSourceTransfer } from '../../tools/deed-allocation-source-transfer.js';
+import { ECONOMY_DEED_MERGE_SOURCE, assertEconomyDeedMergeSource,
+  economyDeedMergeHistoricalInput } from '../../tools/economy-deed-merge-source-compatibility.js';
 const AUTHORED_NATIVE_READER_FIX = 'c1720a694799e743c6f70bc3069dba2bbecae08e';
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -25,7 +27,17 @@ const hunks = diff => {
 };
 // This is only the historical reader's qualified view; raw HEAD is independently pinned below.
 function qualifiedNativeReaderHeadEntry(file) {
-  const raw = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const actual = git('show', 'HEAD:' + file); let entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const raw = economyDeedMergeHistoricalInput(file, actual, 'deed');
+  if (raw !== actual) {
+    const integration = ECONOMY_DEED_MERGE_SOURCE.files.find(row => row.file === file);
+    const proof = assertEconomyDeedMergeSource(file, actual, 'deed');
+    assert.equal(entry, integration.current.mode + ' blob ' + integration.current.blob + '\t' + file,
+      'Actual merged HEAD mode/blob must qualify before source-only parent bookkeeping');
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    assert.equal(proof.baselineText, raw);
+    entry = integration.parents.deed.mode + ' blob ' + integration.parents.deed.blob + '\t' + file;
+  }
   const deed = DEED_ALLOCATION_SOURCE_DOMAINS[file];
   if (deed) {
     assert.equal(entry, deed.currentMode + ' blob ' + deed.currentBlob + '\t' + file, 'Raw Deed HEAD mode/blob must qualify before historical source bookkeeping');
@@ -73,7 +85,7 @@ for (const row of pin.files) {
   if (row.inverses.length > 1) { const [left, right] = row.inverses, marker = '\u0001NATIVE_READER_HUNK_SWAP\u0001'; assert(!current.includes(marker)); reject(current.replace(left.current, () => marker).replace(right.current, () => left.current).replace(marker, () => right.current)); }
   for (const input of [current + '\n// arbitrary future source\n', current.slice(1), target]) assert.equal(uxNativeReaderHistoricalInput(row.file, input), input);
   assert.throws(() => qualifyUxNativeReaderSource(row.file, current, Object.freeze({ ...pin }))); refusals++;
-  assert.throws(() => uxNativeReaderHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /Lossless UTF-8/); refusals++;
+  assert.throws(() => uxNativeReaderHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /Lossless UTF-8/i); refusals++;
   assert.throws(() => qualifyUxSource(row.file, current)); refusals++;
   assert.equal(sha(current), row.currentSha256);
 }
