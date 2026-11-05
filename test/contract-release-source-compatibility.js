@@ -12,6 +12,7 @@ import { assertContractReleaseSourceDefinition, assertContractReleaseSourceTrans
   CONTRACT_RELEASE_MAX_CONTEXT_LINES } from '../tools/contract-release-source-transfer.js';
 import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
   deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN, CONTRACT_RELEASE_ETH_ORIGIN,
+  CONTRACT_RELEASE_START_ORDER_ORIGIN,
   contractReleaseReviewedOrigins, deriveContractReleaseApprovedSource,
   assertContractReleaseApprovedSource } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
@@ -59,7 +60,7 @@ const fixture = {
 };
 const helperText = fs.readFileSync(path.join(root, 'tools/contract-release-source-transfer.js'), 'utf8');
 const directories = [];
-let positives = 0, refusals = 0, malformedDefinitions = 0, provisionalCompositions = 0, expandedContextRegressions = 0, mobileOriginCompositions = 0;
+let positives = 0, refusals = 0, malformedDefinitions = 0, provisionalCompositions = 0, expandedContextRegressions = 0, mobileOriginCompositions = 0, startOrderCompositions = 0;
 const tempModule = async (value, mutate = '') => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-contract-source-controls-'));
   directories.push(directory);
@@ -319,6 +320,7 @@ try {
     { revision: fixture.reviewedContractRevision, baseRevision: 'c4b626b631b04e594097fb6bb416c36fdfea00f3' },
     { revision: mobileRevision, baseRevision: mobileBase },
     { revision: CONTRACT_RELEASE_ETH_ORIGIN.revision, baseRevision: CONTRACT_RELEASE_ETH_ORIGIN.baseRevision },
+    { revision: CONTRACT_RELEASE_START_ORDER_ORIGIN.revision, baseRevision: CONTRACT_RELEASE_START_ORDER_ORIGIN.baseRevision },
   ]);
   assert.deepEqual(contractReleaseReviewedOrigins('test/ux-expanded-browser.js'), [
     { revision: fixture.reviewedUiRevision, baseRevision: fixture.reviewedContractRevision },
@@ -337,7 +339,7 @@ try {
   for (const file of mobileFiles) {
     const base = committedOriginRecord('de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', file);
     let mobileStage = base;
-    for (const origin of contractReleaseReviewedOrigins(file).filter(row => row !== CONTRACT_RELEASE_ETH_ORIGIN)) {
+    for (const origin of contractReleaseReviewedOrigins(file).filter(row => row !== CONTRACT_RELEASE_ETH_ORIGIN && row !== CONTRACT_RELEASE_START_ORDER_ORIGIN)) {
       const bytes = deriveContractReleaseReviewedSource(mobileStage, committedOriginRecord(origin.baseRevision, file), committedOriginRecord(origin.revision, file));
       mobileStage = originRecord(file, bytes);
     }
@@ -402,12 +404,67 @@ try {
   for (const file of CONTRACT_RELEASE_ETH_ORIGIN.files) {
     const baseRevision = 'de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660';
     const base = git('ls-tree', baseRevision, '--', file).trim() ? committedOriginRecord(baseRevision, file) : null;
+    let ethStage = base;
+    for (const origin of contractReleaseReviewedOrigins(file).filter(row => row !== CONTRACT_RELEASE_START_ORDER_ORIGIN)) {
+      const original = git('ls-tree', origin.baseRevision, '--', file).trim() ? committedOriginRecord(origin.baseRevision, file) : null;
+      const bytes = deriveContractReleaseReviewedSource(ethStage,
+        original, committedOriginRecord(origin.revision, file));
+      ethStage = originRecord(file, bytes);
+    }
+    assert.equal(ethStage.pin.sha256, expectedEthSha256[file], 'Independent immutable ETH composition postimage');
     const expected = deriveContractReleaseApprovedSource(file, base);
-    assert.equal(expected.pin.sha256, expectedEthSha256[file], 'Independent immutable ETH composition postimage');
+    if (file !== 'public/index.html') assert.deepEqual(expected, ethStage, 'Every other ETH postimage remains unchanged');
     assert.deepEqual(assertContractReleaseApprovedSource(file, base, expected), expected); positives++;
     for (const bytes of [Buffer.concat([expected.bytes, Buffer.from('unreviewed\n')]), expected.bytes.subarray(1), Buffer.from(expected.bytes.toString('utf8').replace(/\S/, '?'))])
       refused(() => assertContractReleaseApprovedSource(file, base, originRecord(file, bytes)));
     refused(() => assertContractReleaseApprovedSource(file, base, { ...expected, pin: { ...expected.pin, mode: '100755' } }));
+  }
+  // The page repair is a separate immutable one-file origin after every prior reviewed stage.
+  assert.deepEqual(CONTRACT_RELEASE_START_ORDER_ORIGIN, {
+    revision: '7e2ce748912e9c4422432fb684e4454a23f18978',
+    baseRevision: 'd80412c5f2cf6b597f9832825293cdae9d7d3480', files: ['public/index.html'],
+  });
+  assert(Object.isFrozen(CONTRACT_RELEASE_START_ORDER_ORIGIN) && Object.isFrozen(CONTRACT_RELEASE_START_ORDER_ORIGIN.files));
+  refused(() => { CONTRACT_RELEASE_START_ORDER_ORIGIN.files.push('public/omerta-ui.css'); });
+  const startBefore = committedOriginRecord(CONTRACT_RELEASE_START_ORDER_ORIGIN.baseRevision, 'public/index.html');
+  const startAfter = committedOriginRecord(CONTRACT_RELEASE_START_ORDER_ORIGIN.revision, 'public/index.html');
+  assert.deepEqual(startBefore.pin, { file: 'public/index.html', mode: '100644',
+    blob: '59fcbff93c4d13cdb736f2ee3b2b51fb7a27b08b', sha256: 'af3101856f3b6fa0ba5c8be85c917f38cb8ded1220640c40941d2369c3b8d868' });
+  assert.deepEqual(startAfter.pin, { file: 'public/index.html', mode: '100644',
+    blob: '9a277cca6c4c5b8051fce5a954365ba1317c989a', sha256: 'c48a241aa1eb252dd1b5e92a468f85272480632915fa75f0b5af7e08ba9930aa' });
+  assert.equal(startBefore.bytes.length, 1407014); assert.equal(startAfter.bytes.length, 1407014);
+  assert.deepEqual(deriveContractReleaseApprovedSource('public/index.html', indexBase), startAfter);
+  const startHunks = deriveContractReleaseInverseHunks(startBefore, startAfter);
+  assert.equal(startHunks.contextLines, 3); assert.equal(startHunks.inverses.length, 1);
+  assert.deepEqual(startHunks.inverses, gitInverses(startBefore.pin.blob, startAfter.pin.blob));
+  const startFixture = structuredClone(fixture);
+  startFixture.baseRevision = CONTRACT_RELEASE_START_ORDER_ORIGIN.baseRevision;
+  startFixture.baseTree = git('rev-parse', startFixture.baseRevision + '^{tree}').trim();
+  startFixture.sourceRevision = CONTRACT_RELEASE_START_ORDER_ORIGIN.revision;
+  startFixture.sourceTree = git('rev-parse', startFixture.sourceRevision + '^{tree}').trim();
+  const startText = startAfter.bytes.toString('utf8'), beforeText = startBefore.bytes.toString('utf8');
+  startFixture.sourceViews = { 'public/index.html': { current: fields('public/index.html', startText, true), targets: {
+    desk: { revision: startFixture.baseRevision, pin: fields('public/index.html', beforeText), ...startHunks },
+  } } };
+  const startModule = await tempModule(startFixture);
+  for (const input of [startText, startText.replaceAll('\n', '\r\n'), Buffer.from(startText), Buffer.from(startText.replaceAll('\n', '\r\n'))]) {
+    const proof = startModule.assertContractReleaseSourceTransfer('public/index.html', input);
+    assert.equal(proof.baselineText, beforeText);
+    assert.equal(proof.sourceRevision, startFixture.sourceRevision); assert.equal(proof.predecessorRevision, startFixture.baseRevision);
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]); positives++; startOrderCompositions++;
+  }
+  for (const text of [beforeText, startText + '\n', startText.slice(1), '\ufeff' + startText, startText + '\0',
+    startText.replace('\n', '\r\n'), startText.replace(/\S/, '?')])
+    refused(() => startModule.assertContractReleaseSourceTransfer('public/index.html', text));
+  for (const pin of [{ ...startAfter.pin, mode: '100755' }, { ...startAfter.pin, blob: 'a'.repeat(40) },
+    { ...startAfter.pin, sha256: 'b'.repeat(64) }])
+    refused(() => assertContractReleaseApprovedSource('public/index.html', indexBase, { ...startAfter, pin }));
+  refused(() => assertContractReleaseApprovedSource('public/index.html', indexBase, startBefore));
+  for (const file of [...new Set([...mobileFiles, ...CONTRACT_RELEASE_ETH_ORIGIN.files, 'test/ux-expanded-browser.js'])].filter(file => file !== 'public/index.html'))
+    assert(!contractReleaseReviewedOrigins(file).includes(CONTRACT_RELEASE_START_ORDER_ORIGIN), 'Start order origin cannot authorize any other subject');
+  for (const file of ['public/index.html.extra', 'public/Index.html', '../public/index.html']) {
+    assert.deepEqual(contractReleaseReviewedOrigins(file), []);
+    refused(() => deriveContractReleaseApprovedSource(file, null));
   }
   const fixtureRepository = path.join(approvalDirectory, 'repository'), redirect = path.join(approvalDirectory, 'redirect');
   fs.mkdirSync(fixtureRepository);
@@ -429,7 +486,7 @@ try {
     assert(!fs.existsSync(outputPath)); refusals++;
   }
   console.log(JSON.stringify({ phase: 'CONTRACT_RELEASE_SOURCE_CONTROLS', status: data.status,
-    positives, refusals, malformedDefinitions, provisionalCompositions, expandedContextRegressions, mobileOriginCompositions,
+    positives, refusals, malformedDefinitions, provisionalCompositions, expandedContextRegressions, mobileOriginCompositions, startOrderCompositions,
     contextBounds: [CONTRACT_RELEASE_MIN_CONTEXT_LINES, CONTRACT_RELEASE_MAX_CONTEXT_LINES], currentBindingAccepted: data.status === 'BOUND',
     fixtureScope: 'Synthetic exact source-text controls; no native/runtime/financial qualification',
     runtime: false, native: false }));

@@ -55,6 +55,11 @@ export const CONTRACT_RELEASE_ETH_ORIGIN = Object.freeze({
     "tools/native-eth-source-transfer.js"
   ]),
 });
+export const CONTRACT_RELEASE_START_ORDER_ORIGIN = Object.freeze({
+  revision: '7e2ce748912e9c4422432fb684e4454a23f18978',
+  baseRevision: 'd80412c5f2cf6b597f9832825293cdae9d7d3480',
+  files: Object.freeze(['public/index.html']),
+});
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
 const HISTORY = Object.freeze(['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
@@ -196,6 +201,7 @@ export function contractReleaseReviewedOrigins(file) {
   if (file === UI_FILE) origins.push(UI_ORIGIN);
   if (CONTRACT_RELEASE_MOBILE_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_MOBILE_ORIGIN);
   if (CONTRACT_RELEASE_ETH_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_ETH_ORIGIN);
+  if (CONTRACT_RELEASE_START_ORDER_ORIGIN.files.includes(file)) origins.push(CONTRACT_RELEASE_START_ORDER_ORIGIN);
   return Object.freeze(origins);
 }
 export function deriveContractReleaseApprovedSource(file, base) {
