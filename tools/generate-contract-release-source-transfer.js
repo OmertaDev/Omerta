@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { contractReleaseSourceDataBytes } from './contract-release-source-format.js';
+import { CONTRACT_RELEASE_MIN_CONTEXT_LINES, CONTRACT_RELEASE_MAX_CONTEXT_LINES } from './contract-release-source-transfer.js';
 export { contractReleaseSourceDataBytes };
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -83,28 +84,40 @@ const parseManifest = bytes => {
   assert(Array.isArray(value.files) && value.files.every(row => canonicalPath(row.file)));
   return value;
 };
-const inverseHunks = (before, current) => {
+const inverseHunksAtContext = (before, current, contextLines) => {
   const result = []; let hunk;
-  for (const line of gitText('diff', '--no-ext-diff', '--unified=3', before.pin.blob, current.pin.blob).split('\n')) {
+  for (const line of gitText('diff', '--no-ext-diff', '--unified=' + contextLines, before.pin.blob, current.pin.blob).split('\n')) {
     if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; result.push(hunk); }
     else if (hunk && /^[ +\-]/.test(line)) {
       if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
       if (line[0] !== '+') hunk.baseline += line.slice(1) + '\n';
     }
   }
-  assert(result.length, 'A view must describe a real source change');
-  let restored = sourceText(current), end = -1;
-  for (const hunk of result) {
-    assert(hunk.current.length && hunk.current.endsWith('\n') && hunk.baseline.endsWith('\n'));
-    const at = restored.indexOf(hunk.current);
-    assert.equal(sourceText(current).split(hunk.current).length, 2, 'Complete context must occur exactly once');
-    const originalAt = sourceText(current).indexOf(hunk.current); assert(originalAt >= end, 'Inverse contexts ordered and nonoverlapping');
-    end = originalAt + hunk.current.length; assert(at >= 0 && restored.split(hunk.current).length === 2);
-    restored = restored.replace(hunk.current, () => hunk.baseline);
-  }
-  assert.equal(restored, sourceText(before), 'Every complete view restores exact source');
   return result;
 };
+export function deriveContractReleaseInverseHunks(before, current) {
+  const currentText = sourceText(current), targetText = sourceText(before);
+  assert.notEqual(current.pin.blob, before.pin.blob, 'A view must describe a real source change');
+  for (let contextLines = CONTRACT_RELEASE_MIN_CONTEXT_LINES; contextLines <= CONTRACT_RELEASE_MAX_CONTEXT_LINES; contextLines++) {
+    const inverses = inverseHunksAtContext(before, current, contextLines);
+    assert(inverses.length, 'A source change has complete Git hunks');
+    let restored = currentText, end = -1, unique = true;
+    for (const hunk of inverses) {
+      assert(hunk.current.length && hunk.current.endsWith('\n') && hunk.baseline.endsWith('\n'));
+      const at = currentText.indexOf(hunk.current);
+      if (currentText.split(hunk.current).length !== 2 || at < end || restored.split(hunk.current).length !== 2) {
+        unique = false; break;
+      }
+      end = at + hunk.current.length;
+      restored = restored.replace(hunk.current, () => hunk.baseline);
+    }
+    if (!unique) continue;
+    assert.equal(restored, targetText, 'Every complete view restores exact source');
+    return { contextLines, inverses };
+  }
+  assert.fail('No unique ordered complete Git context within ' + CONTRACT_RELEASE_MIN_CONTEXT_LINES + '..'
+    + CONTRACT_RELEASE_MAX_CONTEXT_LINES + ': ' + current.pin.file);
+}
 export function deriveContractReleaseReviewedSource(base, original, reviewed) {
   if (!base) { assert(!original, 'An absent base cannot drop original reviewed source'); return reviewed.bytes; }
   assert(original, 'Reviewed source has its exact original base');
@@ -209,13 +222,13 @@ function main() {
     const targets = {};
     if (actual.pin.blob !== prior.pin.blob || actual.pin.mode !== prior.pin.mode) {
       if (!checked.has(file)) authorize(file);
-      targets.desk = { revision: base, pin: detailed(prior), inverses: inverseHunks(prior, actual) };
+      targets.desk = { revision: base, pin: detailed(prior), ...deriveContractReleaseInverseHunks(prior, actual) };
     }
     if (FEE.includes(file)) {
       const fee = record(CONTRACT, file);
       if (actual.pin.blob !== fee.pin.blob) {
         if (!checked.has(file) && (actual.pin.blob !== prior.pin.blob || actual.pin.mode !== prior.pin.mode)) authorize(file);
-        targets.fee = { revision: CONTRACT, pin: detailed(fee), inverses: inverseHunks(fee, actual) };
+        targets.fee = { revision: CONTRACT, pin: detailed(fee), ...deriveContractReleaseInverseHunks(fee, actual) };
       }
     }
     if (Object.keys(targets).length) sourceViews[file] = { current: currentDetailed(actual), targets };

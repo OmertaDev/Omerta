@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { CONTRACT_RELEASE_SOURCE_DATA as data, CONTRACT_RELEASE_SOURCE_DATA_SHA256 } from './contract-release-source-data.js';
 
+export const CONTRACT_RELEASE_MIN_CONTEXT_LINES = 3;
+export const CONTRACT_RELEASE_MAX_CONTEXT_LINES = 64;
+
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
@@ -76,7 +79,9 @@ export function assertContractReleaseSourceDefinition() {
       'Only enumerable data source views');
     assert(Object.keys(row.targets).length && Object.keys(row.targets).every(view => ['desk', 'fee'].includes(view)));
     for (const [view, target] of Object.entries(row.targets)) {
-      fields(target, ['revision', 'pin', 'inverses']); revision(target.revision); pin(target.pin, file, true);
+      fields(target, ['revision', 'pin', 'contextLines', 'inverses']); revision(target.revision); pin(target.pin, file, true);
+      assert(Number.isSafeInteger(target.contextLines) && target.contextLines >= CONTRACT_RELEASE_MIN_CONTEXT_LINES
+        && target.contextLines <= CONTRACT_RELEASE_MAX_CONTEXT_LINES, 'Explicit bounded Git context required');
       assert.equal(target.revision, view === 'desk' ? data.baseRevision : data.reviewedContractRevision);
       assert(Array.isArray(target.inverses) && Object.isFrozen(target.inverses) && target.inverses.length);
       assert.deepEqual(Reflect.ownKeys(target.inverses), [...target.inverses.keys()].map(String).concat('length'), 'No sparse or hidden inverse array fields');
@@ -123,7 +128,7 @@ export function assertContractReleaseSourceTransfer(file, input, view = 'desk') 
   assert.equal(sha256(restored), target.pin.sha256, 'Complete target source changed');
   assert.equal(blob(restored), target.pin.blob); assert.equal(Buffer.byteLength(restored), target.pin.bytes);
   return Object.freeze({ file, view, baselineText: restored, sourceRevision: data.sourceRevision,
-    predecessorRevision: target.revision, inverseChunks: target.inverses.length, phase,
+    predecessorRevision: target.revision, contextLines: target.contextLines, inverseChunks: target.inverses.length, phase,
     sourceOnly: true, runtime: false, native: false });
 }
 

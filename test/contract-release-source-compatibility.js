@@ -8,9 +8,10 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { CONTRACT_RELEASE_SOURCE_DATA as data } from '../tools/contract-release-source-data.js';
 import { assertContractReleaseSourceDefinition, assertContractReleaseSourceTransfer,
-  contractReleaseDeskInput, contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
+  contractReleaseDeskInput, contractReleaseFeeInput, CONTRACT_RELEASE_MIN_CONTEXT_LINES,
+  CONTRACT_RELEASE_MAX_CONTEXT_LINES } from '../tools/contract-release-source-transfer.js';
 import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
-  deriveContractReleaseReviewedSource } from '../tools/generate-contract-release-source-transfer.js';
+  deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import { assertDeedAllocationSourceTransfer } from '../tools/deed-allocation-source-transfer.js';
 import { assertMarketFeeCopySourceTransfer } from '../tools/market-fee-copy-source-transfer.js';
@@ -22,9 +23,9 @@ const lf = value => value.replaceAll('\r\n', '\n');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   cwd: root, encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024,
 });
-const gitInverses = (before, after) => {
+const gitInverses = (before, after, contextLines = 3) => {
   const result = []; let hunk;
-  for (const line of lf(git('diff', '--no-ext-diff', '--unified=3', before, after)).split('\n')) {
+  for (const line of lf(git('diff', '--no-ext-diff', '--unified=' + contextLines, before, after)).split('\n')) {
     if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; result.push(hunk); }
     else if (hunk && /^[ +\-]/.test(line)) {
       if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
@@ -33,6 +34,9 @@ const gitInverses = (before, after) => {
   }
   return result;
 };
+const assertMeasuredInverses = (target, currentPin) => assert.deepEqual(target.inverses,
+  gitInverses(target.pin.blob, currentPin.blob, target.contextLines),
+  'Only complete independently measured Git inverse hunks at the declared context width');
 const fields = (file, text, raw = false) => ({ file, mode: '100644', blob: blob(text), sha256: sha(text),
   bytes: Buffer.byteLength(text), ...(raw ? { rawSha256: { lf: sha(text), crlf: sha(text.replaceAll('\n', '\r\n')) } } : {}) });
 const history = ['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
@@ -47,13 +51,13 @@ const fixture = {
   historicalManifests: Object.fromEntries(history.map(file => [file, { file, mode: '100644', blob: 'a'.repeat(40), sha256: 'b'.repeat(64) }])),
   nativeChanges: {}, approvedAdditions: {},
   sourceViews: { [fixtureFile]: { current: fields(fixtureFile, current, true), targets: {
-    desk: { revision: '1'.repeat(40), pin: fields(fixtureFile, desk), inverses: [{ current, baseline: desk }] },
-    fee: { revision: 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e', pin: fields(fixtureFile, fee), inverses: [{ current, baseline: fee }] },
+    desk: { revision: '1'.repeat(40), pin: fields(fixtureFile, desk), contextLines: 3, inverses: [{ current, baseline: desk }] },
+    fee: { revision: 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e', pin: fields(fixtureFile, fee), contextLines: 3, inverses: [{ current, baseline: fee }] },
   } } },
 };
 const helperText = fs.readFileSync(path.join(root, 'tools/contract-release-source-transfer.js'), 'utf8');
 const directories = [];
-let positives = 0, refusals = 0, malformedDefinitions = 0, provisionalCompositions = 0;
+let positives = 0, refusals = 0, malformedDefinitions = 0, provisionalCompositions = 0, expandedContextRegressions = 0;
 const tempModule = async (value, mutate = '') => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-contract-source-controls-'));
   directories.push(directory);
@@ -90,10 +94,13 @@ try {
       const physical = fs.readFileSync(filename), text = lf(physical.toString('utf8'));
       for (const [view, target] of Object.entries(row.targets)) {
         const expected = lf(git('show', target.revision + ':' + file));
-        assert.deepEqual(target.inverses, gitInverses(target.pin.blob, row.current.blob), 'Only complete independently measured Git U3 inverse hunks');
+        assertMeasuredInverses(target, row.current);
+        assert.equal(deriveContractReleaseInverseHunks({ pin: target.pin, bytes: Buffer.from(expected) },
+          { pin: row.current, bytes: Buffer.from(text) }).contextLines, target.contextLines, 'Smallest valid bounded context width');
         for (const input of [physical, text, text.replaceAll('\n', '\r\n')]) {
           const proof = assertContractReleaseSourceTransfer(file, input, view);
           assert.equal(proof.baselineText, expected);
+          assert.equal(proof.contextLines, target.contextLines);
           assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]); positives++;
         }
         for (const changed of [text + '\n', text.slice(1), '\ufeff' + text, text + '\0', text.replace(/\S/, '?')])
@@ -109,6 +116,7 @@ try {
     for (const input of [current, current.replaceAll('\n', '\r\n'), Buffer.from(current), Buffer.from(current.replaceAll('\n', '\r\n'))]) {
       const proof = synthetic.assertContractReleaseSourceTransfer(fixtureFile, input, view);
       assert.equal(proof.baselineText, expected);
+      assert.equal(proof.contextLines, 3);
       assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
       assert(Object.isFrozen(proof)); refused(() => { proof.native = true; });
       assert.deepEqual(project(fixtureFile, input), Buffer.isBuffer(input) ? Buffer.from(expected) : expected); positives++;
@@ -132,7 +140,7 @@ try {
   const twoCurrent = first + middle + second, twoDesk = twoCurrent.replace('first delta', 'first prior').replace('second delta', 'second prior');
   const twoHunks = structuredClone(fixture);
   twoHunks.sourceViews[fixtureFile] = { current: fields(fixtureFile, twoCurrent, true), targets: {
-    desk: { revision: fixture.baseRevision, pin: fields(fixtureFile, twoDesk), inverses: [
+    desk: { revision: fixture.baseRevision, pin: fields(fixtureFile, twoDesk), contextLines: 3, inverses: [
       { current: first, baseline: first.replace('first delta', 'first prior') },
       { current: second, baseline: second.replace('second delta', 'second prior') },
     ] },
@@ -162,9 +170,15 @@ try {
     const deskText = lf(git('show', provisional.baseRevision + ':' + file));
     const feeText = lf(git('show', provisional.reviewedContractRevision + ':' + file));
     provisional.sourceViews[file] = { current: fields(file, combined, true), targets: {
-      desk: { revision: provisional.baseRevision, pin: fields(file, deskText), inverses: gitInverses(blob(deskText), blob(combined)) },
-      fee: { revision: provisional.reviewedContractRevision, pin: fields(file, feeText), inverses: gitInverses(blob(feeText), blob(combined)) },
+      desk: { revision: provisional.baseRevision, pin: fields(file, deskText), contextLines: 3, inverses: gitInverses(blob(deskText), blob(combined)) },
+      fee: { revision: provisional.reviewedContractRevision, pin: fields(file, feeText), contextLines: 3, inverses: gitInverses(blob(feeText), blob(combined)) },
     } };
+    for (const target of Object.values(provisional.sourceViews[file].targets)) {
+      const derived = deriveContractReleaseInverseHunks({ pin: target.pin, bytes: Buffer.from(git('show', target.pin.blob)) },
+        { pin: provisional.sourceViews[file].current, bytes: Buffer.from(combined) });
+      assert.equal(derived.contextLines, 3, 'Unique U3 targets retain the default width');
+      assert.deepEqual(derived.inverses, target.inverses); positives++;
+    }
   }
   const composed = await tempModule(provisional);
   for (const file of Object.keys(provisional.sourceViews)) {
@@ -177,6 +191,51 @@ try {
     assert.equal(viaDesk, old); assert.equal(viaFee, old); provisionalCompositions++; positives += 2;
   }
 
+  // The actual repeated compiler metadata requires expansion; this remains an unaccepted source-only fixture.
+  const expanded = structuredClone(fixture), artifactFile = 'public/genesis-deploy-artifact.js';
+  expanded.baseRevision = '72dfd0f0174322721973de980292c3262c1707d0';
+  expanded.baseTree = git('rev-parse', expanded.baseRevision + '^{tree}').trim();
+  expanded.sourceRevision = '45f5418ed34614621a54fd49bf5cb8f5f8207cf6';
+  expanded.sourceTree = git('rev-parse', expanded.sourceRevision + '^{tree}').trim();
+  const artifactCurrent = git('show', expanded.sourceRevision + ':' + artifactFile);
+  const artifactBefore = git('show', expanded.baseRevision + ':' + artifactFile);
+  const artifactCurrentPin = fields(artifactFile, artifactCurrent, true), artifactBeforePin = fields(artifactFile, artifactBefore);
+  const artifactHunks = deriveContractReleaseInverseHunks({ pin: artifactBeforePin, bytes: Buffer.from(artifactBefore) },
+    { pin: artifactCurrentPin, bytes: Buffer.from(artifactCurrent) });
+  assert.equal(artifactHunks.contextLines, 10); assert.equal(artifactHunks.inverses.length, 7);
+  assert.equal(artifactBeforePin.sha256, 'cf28ec010278929120aa74e1b064a62ad17649b2815f5a2ba5c1476e1b8567af');
+  for (let width = CONTRACT_RELEASE_MIN_CONTEXT_LINES; width < artifactHunks.contextLines; width++)
+    assert(gitInverses(artifactBeforePin.blob, artifactCurrentPin.blob, width)
+      .some(hunk => artifactCurrent.split(hunk.current).length !== 2), 'Every narrower width retains a repeated complete context');
+  expanded.sourceViews = { [artifactFile]: { current: artifactCurrentPin, targets: {
+    desk: { revision: expanded.baseRevision, pin: artifactBeforePin, ...artifactHunks },
+  } } };
+  const artifactTarget = expanded.sourceViews[artifactFile].targets.desk;
+  assertMeasuredInverses(artifactTarget, artifactCurrentPin);
+  refused(() => assertMeasuredInverses({ ...artifactTarget, contextLines: 3 }, artifactCurrentPin));
+  const expandedModule = await tempModule(expanded);
+  for (const input of [artifactCurrent, artifactCurrent.replaceAll('\n', '\r\n'), Buffer.from(artifactCurrent)]) {
+    const proof = expandedModule.assertContractReleaseSourceTransfer(artifactFile, input);
+    assert.equal(proof.baselineText, artifactBefore); assert.equal(proof.contextLines, 10);
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]); positives++;
+  }
+  for (const changed of [artifactCurrent.replace('stateMutability', 'stateMutabilitY'), artifactCurrent + '\n'])
+    refused(() => expandedModule.assertContractReleaseSourceTransfer(artifactFile, changed));
+  const ambiguous = structuredClone(expanded);
+  ambiguous.sourceViews[artifactFile].targets.desk.contextLines = 3;
+  ambiguous.sourceViews[artifactFile].targets.desk.inverses = gitInverses(artifactBeforePin.blob, artifactCurrentPin.blob);
+  const ambiguousModule = await tempModule(ambiguous);
+  refused(() => ambiguousModule.assertContractReleaseSourceTransfer(artifactFile, artifactCurrent));
+  for (const mutate of [
+    "value.sourceViews['" + artifactFile + "'].targets.desk.inverses.reverse();",
+    "value.sourceViews['" + artifactFile + "'].targets.desk.inverses.shift();",
+    "value.sourceViews['" + artifactFile + "'].targets.desk.inverses.push(value.sourceViews['" + artifactFile + "'].targets.desk.inverses[0]);",
+  ]) {
+    const module = await tempModule(expanded, mutate);
+    refused(() => module.assertContractReleaseSourceTransfer(artifactFile, artifactCurrent));
+  }
+  expandedContextRegressions++;
+
   const malformed = [
     "value.sourceViews['" + fixtureFile + "'].extra = true;",
     "value.sourceViews['" + fixtureFile + "'][Symbol('hidden')] = true;",
@@ -187,6 +246,12 @@ try {
     "delete value.sourceViews['" + fixtureFile + "'].targets.desk.inverses[0];",
     "value.sourceViews['" + fixtureFile + "'].current.mode = '120000';",
     "value.sourceViews['" + fixtureFile + "'].targets.desk.revision = '9'.repeat(40);",
+    "delete value.sourceViews['" + fixtureFile + "'].targets.desk.contextLines;",
+    "value.sourceViews['" + fixtureFile + "'].targets.desk.contextLines = 2;",
+    "value.sourceViews['" + fixtureFile + "'].targets.desk.contextLines = 65;",
+    "value.sourceViews['" + fixtureFile + "'].targets.desk.contextLines = 3.5;",
+    "value.sourceViews['" + fixtureFile + "'].targets.desk.contextLines = '3';",
+    "value.sourceViews['" + fixtureFile + "'].targets.desk.contextLines = NaN;",
     "value.sourceViews['" + fixtureFile + "'].targets.runtime = value.sourceViews['" + fixtureFile + "'].targets.desk;",
     "value.sourceViews['tools/contract-release-source-data.js'] = value.sourceViews['" + fixtureFile + "'];",
     "value.sourceViews['tools/enterprise-native-contract-release-inputs.js'] = value.sourceViews['" + fixtureFile + "'];",
@@ -211,6 +276,27 @@ try {
   const reviewedSource = originalSource.replace('old fee', 'reviewed fee');
   const acceptedSource = originalSource.replace('old Desk', 'accepted Desk');
   const sourceRecord = text => ({ pin: { file: fixtureFile, mode: '100644', blob: blob(text), sha256: sha(text) }, bytes: Buffer.from(text) });
+  refused(() => deriveContractReleaseInverseHunks(sourceRecord(originalSource), sourceRecord(originalSource)));
+  // Isolated loose objects exercise the finite cap without writing to repository objects or configuration.
+  const objectsDirectory = path.join(approvalDirectory, 'objects'); fs.mkdirSync(objectsDirectory);
+  const repeated = Array.from({ length: 150 }, (_, index) => 'repeated line ' + index).join('\n') + '\n';
+  const capCurrent = 'one\n' + repeated + 'two\n' + repeated + 'three\n' + repeated + 'four\n';
+  const capBefore = capCurrent.replace('repeated line 75\n', 'original line 75\n');
+  const objectNames = [blob(capBefore), blob(capCurrent)], priorObjects = process.env.GIT_OBJECT_DIRECTORY;
+  try {
+    process.env.GIT_OBJECT_DIRECTORY = objectsDirectory;
+    for (const text of [capBefore, capCurrent]) assert.equal(execFileSync('git', ['--no-replace-objects', 'hash-object', '-w', '--stdin'],
+      { cwd: root, input: text, encoding: 'utf8', windowsHide: true }).trim(), blob(text));
+    assert(gitInverses(blob(capBefore), blob(capCurrent), CONTRACT_RELEASE_MAX_CONTEXT_LINES)
+      .every(hunk => capCurrent.split(hunk.current).length > 2), 'Complete contexts still repeat at the finite cap');
+    assert.throws(() => deriveContractReleaseInverseHunks(sourceRecord(capBefore), sourceRecord(capCurrent)),
+      /No unique ordered complete Git context within 3\.\.64/); refusals++;
+  } finally {
+    if (priorObjects === undefined) delete process.env.GIT_OBJECT_DIRECTORY; else process.env.GIT_OBJECT_DIRECTORY = priorObjects;
+    for (const name of objectNames) fs.rmSync(path.join(objectsDirectory, name.slice(0, 2), name.slice(2)), { force: true });
+    for (const prefix of new Set(objectNames.map(name => name.slice(0, 2)))) fs.rmdirSync(path.join(objectsDirectory, prefix));
+    fs.rmdirSync(objectsDirectory);
+  }
   assert.equal(deriveContractReleaseReviewedSource(sourceRecord(acceptedSource), sourceRecord(originalSource), sourceRecord(reviewedSource)).toString('utf8'),
     acceptedSource.replace('old fee', 'reviewed fee'), 'Independent reviewed edits retain all accepted base source'); positives++;
   assert.equal(deriveContractReleaseReviewedSource(null, null, sourceRecord(reviewedSource)).toString('utf8'), reviewedSource); positives++;
@@ -235,7 +321,8 @@ try {
     '--integration-pins=' + approvalPath, '--output=' + outputPath], { cwd: root, encoding: 'utf8', windowsHide: true });
   assert.notEqual(generator.status, 0); assert(generator.stderr.includes('No unlisted integration approval')); assert(!fs.existsSync(outputPath)); refusals++;
   console.log(JSON.stringify({ phase: 'CONTRACT_RELEASE_SOURCE_CONTROLS', status: data.status,
-    positives, refusals, malformedDefinitions, provisionalCompositions, currentBindingAccepted: data.status === 'BOUND',
+    positives, refusals, malformedDefinitions, provisionalCompositions, expandedContextRegressions,
+    contextBounds: [CONTRACT_RELEASE_MIN_CONTEXT_LINES, CONTRACT_RELEASE_MAX_CONTEXT_LINES], currentBindingAccepted: data.status === 'BOUND',
     fixtureScope: 'Synthetic exact source-text controls; no native/runtime/financial qualification',
     runtime: false, native: false }));
 } finally {
