@@ -113,6 +113,8 @@ export const OPERATIONAL_ENV = [
   // (never queued — every durable event is a notifications row the 30s poll re-derives). A tuning
   // bound on the slow-consumer guard, not a switch: raising it trades memory for feed completeness.
   'WS_PING_MS', 'WS_MAX_BUFFER', 'INVARIANT_WEBHOOK_URL', 'CITY_WIRE_WEBHOOK_URL',
+  // Economic anomaly alert thresholds; the monitor validates positive finite values and defaults.
+  'ECONOMY_MONITOR_LEDGER_ROWS_WARN', 'ECONOMY_MONITOR_NET_CASH_WARN', 'ECONOMY_MONITOR_NET_OMR_WARN',
   // graceful shutdown: how long in-flight requests get to finish after SIGTERM before the hard exit
   // (server.js drain). Operational — Render SIGKILLs ~30s after SIGTERM, so keep it well under that.
   'DRAIN_MS',

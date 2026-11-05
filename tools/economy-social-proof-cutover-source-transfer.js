@@ -1,3 +1,6 @@
+import { wikiMediaHistoricalInput } from './wiki-media-source-transfer.js';
+import { age21HistoricalInput } from './age21-source-transfer.js';
+import { contractReleaseDeskInput } from './contract-release-source-transfer.js';
 // Generated exact source-only envelope for the social-proof production cutover repair.
 // Historical pins remain unchanged; unknown or non-exact bytes pass through.
 import assert from 'node:assert/strict';
@@ -599,6 +602,8 @@ export function assertEconomySocialProofCutoverSourceTransfer(file, input) {
 }
 
 export function economySocialProofCutoverHistoricalInput(file, input) {
+  input = contractReleaseDeskInput(file, input);
+  input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = genesisHistoricalReaderHistoricalInput(file, input);
   input = agePolicyServerHistoricalInput(file, input);
   input = marketFeeCopyHistoricalInput(file, input);

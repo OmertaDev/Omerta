@@ -1,5 +1,6 @@
+import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, lstatSync } from 'node:fs';
 import vm from 'node:vm';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -81,7 +82,8 @@ export function runAfterwordSourceProof() {
     const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)
       && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;
     const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;
-    const expected = desk ? desk.current : { mode: domain.mode, blob: domain.currentBlob,
+    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file);
+    const expected = desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,
       sha256: domain.currentSha256, bytes: domain.currentBytes };
     assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');
     assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);
@@ -93,24 +95,47 @@ export function runAfterwordSourceProof() {
   };
   // This historical reader first qualifies the complete actual Git postimage.
   // Current runtime and native inputs are never replaced by this source view.
+  const rejectCombinedMutation = (file, source) => {
+    for (const changed of [source + '\n', '\ufeff' + source, source + '\0', source.replace(/\S/, '?')])
+      assert.throws(() => assertBusinessDeskCombinedSourceTransfer(file, changed, 'desk'));
+  };
   const historicalHeadRecord = file => {
-    const raw = record('HEAD', file), actual = git('show', 'HEAD:' + file);
-    const rootDesk = assertActualHeadInput(file, raw, actual);
-    if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;
-    const domain = BUSINESS_DESK_DOMAINS[file];
-    let current = actual, currentRecord = raw;
+    let raw = record('HEAD', file);
+    const committed = git('show', 'HEAD:' + file);
+    const indexed = git('ls-files', '--stage', '--', file).trim();
+    assert.equal(indexed, raw.mode + ' ' + raw.blob + ' 0\t' + file, 'Actual index must equal raw HEAD before any historical view');
+    const physicalPath = new URL('../../' + file, import.meta.url), stat = lstatSync(physicalPath);
+    assert(stat.isFile() && !stat.isSymbolicLink(), 'Actual physical comparison input is a regular file');
+    const physical = readFileSync(physicalPath, 'utf8');
+    assert(physical === committed || physical === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');
+    let source = committed;
+    const rootDesk = rootSource.status === 'BOUND' && rootSource.sourceViews[file]?.targets.desk;
     if (rootDesk) {
-      const outer = assertContractReleaseSourceTransfer(file, actual, 'desk');
+      const outer = assertContractReleaseSourceTransfer(file, committed, 'desk');
+      assert.deepEqual(raw, { mode: rootSource.sourceViews[file].current.mode, blob: rootSource.sourceViews[file].current.blob });
       assert.deepEqual([outer.sourceOnly, outer.runtime, outer.native], [true, false, false]);
       assert.equal(outer.sourceRevision, rootSource.sourceRevision);
-      assert.equal(outer.predecessorRevision, rootDesk.targets.desk.revision);
-      currentRecord = record(outer.predecessorRevision, file);
-      assert.deepEqual(currentRecord, { mode: rootDesk.targets.desk.pin.mode, blob: rootDesk.targets.desk.pin.blob });
-      assert.equal(outer.baselineText, git('show', outer.predecessorRevision + ':' + file), 'Root Desk view remains exact committed base bytes');
-      current = outer.baselineText;
+      assert.equal(outer.predecessorRevision, rootDesk.revision);
+      source = outer.baselineText;
+      raw = record(outer.predecessorRevision, file);
+      assert.deepEqual(raw, { mode: rootDesk.pin.mode, blob: rootDesk.pin.blob });
+      assert.equal(source, git('show', outer.predecessorRevision + ':' + file));
     }
-    assert.deepEqual(currentRecord, { mode: domain.mode, blob: domain.currentBlob }, 'Original BusinessDesk current pin remains exact after root qualification');
-    const proof = assertBusinessDeskSourceTransfer(file, current);
+    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.desk);
+    if (combined) {
+      assert.deepEqual(raw, { mode: combined.current.mode, blob: combined.current.blob });
+      const proof = assertBusinessDeskCombinedSourceTransfer(file, source, 'desk');
+      assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+      source = proof.targetText;
+      raw = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };
+      assert.deepEqual(raw, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));
+      assert.equal(source, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));
+      rejectCombinedMutation(file, rootDesk ? git('show', rootDesk.revision + ':' + file) : committed);
+    }
+    if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;
+    const domain = BUSINESS_DESK_DOMAINS[file];
+    assert.deepEqual(raw, { mode: domain.mode, blob: domain.currentBlob }, 'Actual raw HEAD must qualify before historical bookkeeping');
+    const proof = assertBusinessDeskSourceTransfer(file, source);
     assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
     const predecessor = record(BUSINESS_DESK_PREDECESSOR, file);
     assert.deepEqual(predecessor, { mode: domain.baselineMode, blob: domain.baselineBlob });

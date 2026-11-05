@@ -1,4 +1,5 @@
 // Exact historical comparison views only. Runtime and native execution use actual files.
+import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { BUSINESS_DESK_NOIR_SOURCE, BUSINESS_DESK_NOIR_SOURCE_SHA256 } from './businessdesk-noir-source-data.js';
@@ -62,6 +63,7 @@ export function businessDeskNoirHistoricalInput(file, input, targetKind = 'noir'
     || !['noir', 'business'].includes(targetKind)) return input;
   const row = BUSINESS_DESK_NOIR_SOURCE.files.find(record => record.file === file);
   if (!row || row.targetKind !== targetKind) return input;
+  input = businessDeskCombinedHistoricalInput(file, input, 'desk');
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
   if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical Desk/Noir source required');
   if (!uniform(text)) return input;

@@ -31,7 +31,9 @@ const pin = (value, file, detailed = false, raw = false) => {
   }
 };
 const manifests = Object.freeze(['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
-  'tools/businessdesk-deed-native-inputs.js', 'tools/enterprise-native-deed-inputs.js']);
+  'tools/businessdesk-deed-native-inputs.js', 'tools/businessdesk-desk-parent-native-inputs.js',
+  'tools/businessdesk-monitor-parent-native-inputs.js', 'tools/businessdesk-wiki-parent-native-inputs.js',
+  'tools/enterprise-native-deed-inputs.js']);
 const phase = 'EXACT_CONTRACT_RELEASE_SOURCE_ONLY';
 const excluded = file => manifests.includes(file) || ['tools/contract-release-source-data.js',
   'tools/enterprise-native-contract-release-inputs.js'].includes(file);
@@ -58,7 +60,7 @@ export function assertContractReleaseSourceDefinition() {
     return data;
   }
   for (const key of ['baseRevision', 'baseTree', 'sourceRevision', 'sourceTree']) revision(data[key]);
-  assert.deepEqual(Object.keys(data.historicalManifests).sort(), manifests.slice().sort(), 'Exactly four immutable old manifests');
+  assert.deepEqual(Object.keys(data.historicalManifests).sort(), manifests.slice().sort(), 'Exactly the six immutable archives and accepted Desk descriptor');
   for (const file of manifests) pin(data.historicalManifests[file], file);
   for (const [file, row] of Object.entries(data.nativeChanges)) {
     assert(canonicalPath(file) && !excluded(file), 'No immutable or self-referential changed source subject'); fields(row, ['current', 'predecessor']);

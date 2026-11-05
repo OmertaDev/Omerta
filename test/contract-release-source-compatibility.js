@@ -43,7 +43,9 @@ const assertMeasuredInverses = (target, currentPin) => assert.deepEqual(target.i
 const fields = (file, text, raw = false) => ({ file, mode: '100644', blob: blob(text), sha256: sha(text),
   bytes: Buffer.byteLength(text), ...(raw ? { rawSha256: { lf: sha(text), crlf: sha(text.replaceAll('\n', '\r\n')) } } : {}) });
 const history = ['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
-  'tools/businessdesk-deed-native-inputs.js', 'tools/enterprise-native-deed-inputs.js'];
+  'tools/businessdesk-deed-native-inputs.js', 'tools/businessdesk-desk-parent-native-inputs.js',
+  'tools/businessdesk-monitor-parent-native-inputs.js', 'tools/businessdesk-wiki-parent-native-inputs.js',
+  'tools/enterprise-native-deed-inputs.js'];
 const fixtureFile = 'docs/closed-source-fixture.md', current = 'alpha\ncurrent delta\nomega\n';
 const desk = 'alpha\noriginal Desk\nomega\n', fee = 'alpha\nreviewed fee\nomega\n';
 const fixture = {

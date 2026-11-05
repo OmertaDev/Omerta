@@ -63,7 +63,9 @@ export const CONTRACT_RELEASE_START_ORDER_ORIGIN = Object.freeze({
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
 const HISTORY = Object.freeze(['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
-  'tools/businessdesk-deed-native-inputs.js', 'tools/enterprise-native-deed-inputs.js']);
+  'tools/businessdesk-deed-native-inputs.js', 'tools/businessdesk-desk-parent-native-inputs.js',
+  'tools/businessdesk-monitor-parent-native-inputs.js', 'tools/businessdesk-wiki-parent-native-inputs.js',
+  'tools/enterprise-native-deed-inputs.js']);
 const RELEASE = Object.freeze(['.github/workflows/forge.yml', 'docs/WIKI.md',
   'public/defi.html', 'public/fee-flows.html', 'public/genesis-deploy-artifact.js',
   'public/genesis-deploy-client.js', 'public/index.html', 'public/wiki.html',

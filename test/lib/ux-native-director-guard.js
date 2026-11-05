@@ -7,10 +7,10 @@ export async function assertUxNativeDirectorGuards() {
  const source = fs.readFileSync('tools/ux-release-phase2-native-catalog.js', 'utf8');
  const nodes = parse(source, { ecmaVersion: 'latest', sourceType: 'module' }).body.map(node => node.type === 'ExportNamedDeclaration' ? node.declaration : node);
  const functionText = name => { const node = nodes.find(node => node?.type === 'FunctionDeclaration' && node.id.name === name); assert(node); return source.slice(node.start, node.end); };
- const declarations = ['UX_NATIVE_TABLES', 'names', 'tableOf', 'uxRows', 'freeze'].map(name => {
+ const declarations = ['UX_NATIVE_TABLES', 'names', 'tableOf', 'uxRows', 'monitorIndexName', 'isMonitorIndexRow', 'monitorRows', 'freeze'].map(name => {
   const node = nodes.find(node => node?.type === 'VariableDeclaration' && node.declarations.some(row => row.id.name === name)); assert(node); return source.slice(node.start, node.end);
  }).join('\n');
- const { projection, tables } = new Function('assert', declarations + '\n' + functionText('uxNativeProjection') + '\nreturn { projection: uxNativeProjection, tables: UX_NATIVE_TABLES };')(assert);
+ const { projection, tables, monitorProjection } = new Function('assert', declarations + '\n' + functionText('uxNativeProjection') + '\n' + functionText('monitorNativeProjection') + '\nreturn { projection: uxNativeProjection, tables: UX_NATIVE_TABLES, monitorProjection: monitorNativeProjection };')(assert);
  const directorSchema = 'director_migration_' + 'a'.repeat(16), phase2Schema = 'p2_definitions_' + 'b'.repeat(32);
  const local = 'postgresql://pilot_runner@127.0.0.1:35439/omerta_check';
  const ci = 'postgresql://postgres:pgcheck@127.0.0.1:5432/omerta_check';
@@ -68,5 +68,26 @@ export async function assertUxNativeDirectorGuards() {
  }
  metadata.constraints[0].definition = 'tampered retained input';
  assert.throws(() => guarded.projectMetadata(metadata)); refusals++;
+ const monitor = { relations: [], columns: [], constraints: [], indexes: [{ table_name: 'transactions', name: 'ix_tx_at_id',
+  definition: 'CREATE INDEX ix_tx_at_id ON $self.transactions USING btree (at, id)',
+  unique: false, primary: false, valid: true, ready: true, live: true, nulls_not_distinct: false, predicate: null }] };
+ const monitorGuarded = monitorProjection(monitor), unrelated = { relations: [{ name: 'transactions' }],
+  columns: [{ table_name: 'transactions', column_name: 'id' }], constraints: [],
+  indexes: [{ table_name: 'transactions', name: 'ix_tx_character', definition: 'existing index' },
+   { table_name: 'unrelated', name: 'ix_tx_at_id', definition: 'same name on another table' }] };
+ const current = { ...unrelated, indexes: [...unrelated.indexes, ...monitor.indexes] };
+ assert.deepEqual(monitorGuarded.projectMetadata(current), unrelated, 'Only the verified monitor index is projected; all other catalog rows survive');
+ for (const mutate of [
+  value => value.indexes.pop(), value => value.indexes.push({ ...monitor.indexes[0] }),
+  ...Object.keys(monitor.indexes[0]).map(key => value => {
+   const row = value.indexes.at(-1), before = row[key];
+   row[key] = typeof before === 'boolean' ? !before : before === null ? 'unknown' : before + '__altered';
+  }),
+ ]) {
+  const changed = structuredClone(current); mutate(changed);
+  assert.throws(() => monitorGuarded.projectMetadata(changed), error => error?.code === 'ERR_ASSERTION'); refusals++;
+ }
+ monitor.indexes[0].valid = false;
+ assert.throws(() => monitorGuarded.projectMetadata({ ...unrelated, indexes: [...unrelated.indexes, ...monitor.indexes] })); refusals++;
  console.log(JSON.stringify({ phase: 'UX_NATIVE_DIRECTOR_PROFILE_GUARDS', nativeExecution: false, postgresImportsOrConnections: 0, refusals, exactExistingCallerProfiles: ['phase2', 'fresh', 'director'], fullMetadataNotNullChecksRetained: true, priorNativeResultsTransferred: false }));
 }

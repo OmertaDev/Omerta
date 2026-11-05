@@ -1,7 +1,9 @@
 // Exact app-source proof only. Historical test text is reconstructed for comparison, never execution.
+import { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -11,6 +13,8 @@ import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_PREDECESSOR_
   assertDeedAllocationSourceTransfer, deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 import { economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput }
   from '../tools/economy-ux-merge-source-compatibility.js';
+import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
+import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
 
 const lf = text => text.replaceAll('\r\n', '\n');
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -57,7 +61,16 @@ assert.deepEqual(Object.keys(DEED_ALLOCATION_SOURCE_DOMAINS), [
 
 let positives = 0, refusals = 0, hunks = 0;
 for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
-  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')))), current = lf(physical);
+  const rawPhysical = fs.readFileSync(file, 'utf8'), checkedOut = git('show', 'HEAD:' + file);
+  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+    'Actual whole source must match HEAD before the comparison-only view: ' + file);
+  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();
+  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\t' + file);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\t' + file);
+  const deskPhysical = businessDeskCombinedHistoricalInput(file, contractReleaseDeskInput(file, rawPhysical), 'desk');
+  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,
+    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);
   const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && Object.isFrozen(pin.currentRawSha256));
   assert.equal(pin.contextLines, 3); assert.equal(pin.currentMode, '100644'); assert.equal(pin.baselineMode, '100644');
@@ -83,7 +96,7 @@ for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
     assert.equal(deedAllocationHistoricalInput(file, raw), baseline);
     assert.deepEqual(deedAllocationHistoricalInput(file, Buffer.from(raw)), Buffer.from(baseline));
     for (const compose of [economyUxMergeCandidateHistoricalInput, economyUxMergeMainHistoricalInput])
-      assert.deepEqual(compose(file, raw), compose(file, baseline), 'The new envelope preserves historical composition');
+      assert.deepEqual(compose(file, raw, 'deed'), compose(file, baseline, 'deed'), 'The explicit Deed profile preserves historical composition');
     positives++;
   }
   const reject = text => {
@@ -119,8 +132,9 @@ for (const file of [null, { toString: () => 'package.json' }]) {
   assert.throws(() => assertDeedAllocationSourceTransfer(file, text));
   assert.equal(deedAllocationHistoricalInput(file, text), text); refusals++;
 }
-assert.equal(lf(fs.readFileSync('schema.sql', 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
-  'Source transfer grants no schema/native migration alias');
+assert.equal(lf(economyMonitorHistoricalInput('schema.sql', fs.readFileSync('schema.sql', 'utf8'))),
+  git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
+  'Deed source transfer grants no schema/native migration alias; only the separately pinned monitor index is reconstructed');
 for (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',
   'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])
   assert.equal(lf(contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8'))), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),

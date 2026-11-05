@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `92ae5bb4493b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8597ccb01757`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5133 |
+| Commits in clone | 5214 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-05 — test: qualify current source before UX afterword history |
+| Latest commit | 2026-11-05 — Merge pull request #313 from OmertaDev/codex/business-control-desk |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4084 |
+| OmertaDev | 4121 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 131 |
-| Codex | 73 |
+| github-actions[bot] | 132 |
+| Codex | 116 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,41 +31,41 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 850 | historical |
-| knowledge/generated/graph-summary.md | 850 | historical |
-| knowledge/generated/graph.json | 850 | historical |
-| knowledge/generated/inventory.md | 850 | historical |
-| [SPEC.md](../../SPEC.md) | 623 | yes |
+| knowledge/generated/github-history.md | 868 | historical |
+| knowledge/generated/graph-summary.md | 868 | historical |
+| knowledge/generated/graph.json | 868 | historical |
+| knowledge/generated/inventory.md | 868 | historical |
+| [SPEC.md](../../SPEC.md) | 619 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 497 | yes |
+| [public/index.html](../../public/index.html) | 500 | yes |
 | [src/server.js](../../src/server.js) | 453 | yes |
-| [schema.sql](../../schema.sql) | 381 | yes |
-| knowledge/generated/documents.md | 380 | historical |
-| [package.json](../../package.json) | 358 | yes |
-| knowledge/generated/modules.md | 293 | historical |
+| knowledge/generated/documents.md | 382 | historical |
+| [schema.sql](../../schema.sql) | 382 | yes |
+| [package.json](../../package.json) | 357 | yes |
+| knowledge/generated/modules.md | 297 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
-| knowledge/generated/graph.mmd | 232 | historical |
-| [test/gates.js](../../test/gates.js) | 207 | yes |
-| [src/game.js](../../src/game.js) | 197 | yes |
+| knowledge/generated/graph.mmd | 236 | historical |
+| [test/gates.js](../../test/gates.js) | 210 | yes |
+| [src/game.js](../../src/game.js) | 198 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
-| [src/invariants.js](../../src/invariants.js) | 170 | yes |
-| knowledge/generated/schema.md | 165 | historical |
+| [src/invariants.js](../../src/invariants.js) | 171 | yes |
+| knowledge/generated/schema.md | 166 | historical |
+| [test/client.js](../../test/client.js) | 145 | yes |
 | knowledge/generated/routes.md | 143 | historical |
-| [test/client.js](../../test/client.js) | 143 | yes |
-| [src/worker.js](../../src/worker.js) | 141 | yes |
+| [src/worker.js](../../src/worker.js) | 142 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 130 | yes |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 130 | yes |
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 126 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 113 | yes |
-| [public/wiki.html](../../public/wiki.html) | 100 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 114 | yes |
+| [public/wiki.html](../../public/wiki.html) | 98 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 97 | yes |
 | [test/growth.js](../../test/growth.js) | 95 | yes |
 | [test/migrate.js](../../test/migrate.js) | 94 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 90 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 87 | yes |
 | [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 72 | yes |
 | [test/hardening.js](../../test/hardening.js) | 71 | yes |
 | [src/preflight.js](../../src/preflight.js) | 69 | yes |

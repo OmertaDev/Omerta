@@ -7,7 +7,10 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as desk, ENTERPRISE_NATIVE_UX_INPUTS_SHA256
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as predecessorDefinition } from './enterprise-native-ux-b35-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as qualifiedUx, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as qualifiedUxDefinition } from './enterprise-native-ux-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as deed, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as deedDefinition } from './businessdesk-deed-native-inputs.js';
-import { businessDeskNativeProvenance } from './businessdesk-native-provenance.js';
+import { businessDeskCombinedNativeProvenance } from './businessdesk-combined-native-provenance.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as archivedDesk, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as archivedDeskDefinition } from './businessdesk-desk-parent-native-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as archivedMonitor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as archivedMonitorDefinition } from './businessdesk-monitor-parent-native-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as archivedWiki, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as archivedWikiDefinition } from './businessdesk-wiki-parent-native-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 import { CONTRACT_RELEASE_SOURCE_DATA_FILE, contractReleaseSourceDataPin } from './contract-release-source-format.js';
 
@@ -16,12 +19,17 @@ export const CONTRACT_RELEASE_METADATA = 'tools/enterprise-native-contract-relea
 export const CONTRACT_RELEASE_DESK_METADATA = 'tools/enterprise-native-deed-inputs.js';
 export const CONTRACT_RELEASE_HISTORICAL_METADATA = Object.freeze([
   'tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
-  'tools/businessdesk-deed-native-inputs.js', CONTRACT_RELEASE_DESK_METADATA,
+  'tools/businessdesk-deed-native-inputs.js', 'tools/businessdesk-desk-parent-native-inputs.js',
+  'tools/businessdesk-monitor-parent-native-inputs.js', 'tools/businessdesk-wiki-parent-native-inputs.js',
+  CONTRACT_RELEASE_DESK_METADATA,
 ]);
 const history = Object.freeze([
   [CONTRACT_RELEASE_HISTORICAL_METADATA[0], predecessor, predecessorDefinition],
   [CONTRACT_RELEASE_HISTORICAL_METADATA[1], qualifiedUx, qualifiedUxDefinition],
   [CONTRACT_RELEASE_HISTORICAL_METADATA[2], deed, deedDefinition],
+  [CONTRACT_RELEASE_HISTORICAL_METADATA[3], archivedDesk, archivedDeskDefinition],
+  [CONTRACT_RELEASE_HISTORICAL_METADATA[4], archivedMonitor, archivedMonitorDefinition],
+  [CONTRACT_RELEASE_HISTORICAL_METADATA[5], archivedWiki, archivedWikiDefinition],
   [CONTRACT_RELEASE_DESK_METADATA, desk, deskDefinition],
 ]);
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -171,7 +179,7 @@ export function contractReleaseNativeProvenance(file, previous, expected, declar
   let prior = null;
   if (!same(original, stage)) {
     // The old helper requires this exact frozen Desk object, not an equal new-current row.
-    prior = businessDeskNativeProvenance(file, original, stage);
+    prior = businessDeskCombinedNativeProvenance(file, original, stage);
     if (!prior) {
       const bound = DEED_ALLOCATION_SOURCE_DOMAINS[file]; assert(bound, 'Unreviewed pre-contract native change: ' + file);
       assert.deepEqual([stage.mode, stage.blob, stage.sha256], [bound.currentMode, bound.currentBlob, bound.currentSha256]);

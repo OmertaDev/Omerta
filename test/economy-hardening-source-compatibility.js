@@ -1,11 +1,17 @@
+import { wikiMediaHistoricalInput } from '../tools/wiki-media-source-transfer.js';
+import { age21HistoricalInput } from '../tools/age21-source-transfer.js';
 import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import { contractReleaseDeskInput, contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 import assert from 'node:assert/strict';
+import './economy-monitor-source-compatibility.js';
+import './age-eligibility-source-compatibility.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
 import { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';
 import {
   AGE_POLICY_SERVER_BINDING, AGE_POLICY_SERVER_BINDING_SHA256,
@@ -64,7 +70,8 @@ import {
 } from '../tools/economy-release-tail-source-transfer.js';
 import { ECONOMY_UX_MERGE_SOURCE,
   economyUxMergeCandidateHistoricalInput,
-  economyUxMergeMainHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
+  economyUxMergeMainHistoricalInput, economyMonitorWorkerHistoricalInput,
+  economyMonitorReaderHistoricalInput, economyMonitorReleaseHistoricalInput } from '../tools/economy-ux-merge-source-compatibility.js';
 import {
   ECONOMY_BANK_INTEREST_HARDENING_REVISION, ECONOMY_BANK_INTEREST_HARDENING_TREE,
   ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR, ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR_TREE,
@@ -181,8 +188,16 @@ const physicalFeeCopySource = file => {
   return Object.hasOwn(MARKET_FEE_COPY_DOMAINS, file)
     ? assertMarketFeeCopySourceTransfer(file, input).baselineText : input;
 };
-const deedAllocationPhysicalSource = file => deedAllocationHistoricalInput(file,
-  contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')));
+const deedAllocationPhysicalSource = file => age21HistoricalInput(file, wikiMediaHistoricalInput(file, deedAllocationHistoricalInput(file,
+  economyDeedMergeHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'monitor'))));
+const monitorPhysicalSource = file => {
+  let input = deedAllocationPhysicalSource(file);
+  input = uxAfterwordHistoricalInput(file, input);
+  input = economyMonitorWorkerHistoricalInput(file, input);
+  input = economyMonitorReaderHistoricalInput(file, input);
+  input = economyMonitorReleaseHistoricalInput(file, input);
+  return economyMonitorHistoricalInput(file, input);
+};
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
   file, uxAfterwordHistoricalInput(file, deedAllocationPhysicalSource(file))));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
@@ -359,7 +374,7 @@ for (const file of bankInterestHardeningFiles) {
   const pin = ECONOMY_BANK_INTEREST_HARDENING_DOMAINS[file];
   const current = git('show', ECONOMY_BANK_INTEREST_HARDENING_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_BANK_INTEREST_HARDENING_PREDECESSOR + ':' + file);
-  const physical = lf(deedAllocationPhysicalSource(file));
+  const physical = lf(monitorPhysicalSource(file));
   assert.equal(physical, current, 'Physical bank-interest hardening source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -446,7 +461,7 @@ for (const file of socialProofCutoverFiles) {
   const predecessorAbsent = socialProofCutoverAdditions.has(file);
   const baseline = predecessorAbsent ? null
     : git('show', ECONOMY_SOCIAL_PROOF_CUTOVER_PREDECESSOR + ':' + file);
-  const physical = lf(deedAllocationPhysicalSource(file));
+  const physical = lf(monitorPhysicalSource(file));
   assert.equal(physical, current, 'Physical social-proof cutover source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -539,7 +554,7 @@ for (const file of socialReceiptSafetyFiles) {
   const pin = ECONOMY_SOCIAL_RECEIPT_SAFETY_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_SAFETY_PREDECESSOR + ':' + file);
-  const physical = lf(economySocialProofCutoverHistoricalInput(file, deedAllocationPhysicalSource(file)));
+  const physical = lf(economySocialProofCutoverHistoricalInput(file, monitorPhysicalSource(file)));
   assert.equal(physical, current, 'Physical receipt-safety repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.deepEqual(Object.keys(pin).sort(), [
@@ -618,7 +633,7 @@ for (const file of socialReceiptFiles) {
   const pin = ECONOMY_SOCIAL_RECEIPT_DOMAINS[file];
   const current = git('show', ECONOMY_SOCIAL_RECEIPT_REVISION + ':' + file);
   const baseline = git('show', ECONOMY_SOCIAL_RECEIPT_PREDECESSOR + ':' + file);
-  const cutoverPhysical = economySocialProofCutoverHistoricalInput(file, deedAllocationPhysicalSource(file));
+  const cutoverPhysical = economySocialProofCutoverHistoricalInput(file, monitorPhysicalSource(file));
   const physical = lf(economySocialReceiptSafetyHistoricalInput(file, cutoverPhysical));
   assert.equal(physical, current, 'Physical social-receipt repair source must remain exact: ' + file);
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
