@@ -102,12 +102,26 @@ try {
   assert.equal(await page.locator('#deed-property-claim').count(), 0, 'Map inspection cannot unlock a claim.');
   const reads = await page.evaluate(() => calls.filter(call => call.method === 'GET').map(call => call.path));
   assert.deepEqual(reads, ['/v1/deeds', '/v1/deeds/buildings?district=brick', '/v1/deeds/discovery?district=brick']);
+  async function assertPendingControl(selector, actionPath) {
+    const writesBeforePending = await page.evaluate(path => calls.filter(call => call.method === 'POST' && call.path === path).length, actionPath);
+    await page.evaluate(async () => {acting=true;await renderDeeds({district:'brick',buildingId:'brick-0001'});});
+    assert.equal(await page.locator(selector).isDisabled(), true,
+      'A background render cannot publish an enabled ' + selector + ' while the prior action is pending.');
+    await page.locator(selector).evaluate(control => control.click());
+    assert.equal(await page.evaluate(path => calls.filter(call => call.method === 'POST' && call.path === path).length, actionPath), writesBeforePending,
+      'A pending action cannot dispatch another property action.');
+    await page.evaluate(async () => {acting=false;await renderDeeds({district:'brick',buildingId:'brick-0001'});});
+    assert.equal(await page.locator(selector).isEnabled(), true,
+      'The completed-action refresh restores the current property action.');
+  }
+  await assertPendingControl('#deed-investigate', '/v1/deeds/investigate');
   await page.locator('#deed-investigate').click();
   await page.waitForFunction(() => document.querySelector('#deed-property-detail')?.textContent.includes('Investigation 1/4'));
   assert.deepEqual(await page.evaluate(() => calls.find(call => call.method === 'POST')),
     { method: 'POST', path: '/v1/deeds/investigate', body: { buildingId: 'brick-0001', actionId: 'inspect-site' } });
   assert.match(await page.locator('#deed-property-detail').textContent(), /Verify the registry record/);
   assert.equal(await page.locator('#deed-investigate').count(), 0, 'The next objective requires its destination, not another local click.');
+  await assertPendingControl('#deed-objective-travel', '/v1/travel/cathedral');
   await page.locator('#deed-objective-travel').click();
   await page.locator('#deed-investigate').waitFor();
   await page.locator('#deed-investigate').click();
