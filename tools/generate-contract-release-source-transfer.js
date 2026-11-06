@@ -126,6 +126,7 @@ const INTEGRATION = Object.freeze(['package.json', 'tools/enterprise-native-ux.j
   'tools/contract-release-source-format.js',
   'tools/contract-release-source-transfer.js', 'tools/generate-contract-release-source-transfer.js',
   'test/contract-release-source-compatibility.js',
+  'test/genesis-fee-readiness-source-transfer.js',
   'test/businessdesk-combined-source-compatibility.js', 'test/businessdesk-combined-native-provenance.js',
   'test/economy-deed-merge-source-compatibility.js', 'test/wiki-media-source-transfer.js',
   'test/economy-monitor-source-compatibility.js', 'test/age-eligibility-source-compatibility.js',
@@ -147,7 +148,9 @@ const NEW_SUPPORT = Object.freeze(['tools/age-policy-source-transfer.js', 'tools
   "tools/generate-native-eth-source-transfer.js",
   "tools/native-eth-source-transfer.js",
   "tools/native-eth-source-transfer.json"]);
-const FEE = Object.freeze(['docs/WIKI.md', 'public/wiki.html', 'public/index.html', 'public/defi.html', 'public/fee-flows.html']);
+// The existing reviewed fixture also needs its exact D70 comparison frame.
+const FEE = Object.freeze(['docs/WIKI.md', 'public/wiki.html', 'public/index.html', 'public/defi.html', 'public/fee-flows.html',
+  'test/lib/rc1-historical-source-fixture.js']);
 const UI_FILE = 'test/ux-expanded-browser.js';
 const canonicalPath = file => typeof file === 'string' && !file.includes('\\') && !file.includes(':') && !file.includes('\0')
   && file.split('/').every(part => part && !['.', '..', '.git', '__proto__', 'constructor', 'prototype'].includes(part));

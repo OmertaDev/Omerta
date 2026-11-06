@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { nativeEthHistoricalInput } from '../tools/native-eth-source-transfer.js';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
 import {
   GENESIS_FEE_READINESS_BASE_REVISION, GENESIS_FEE_READINESS_REVIEWED_REVISION,
   GENESIS_FEE_READINESS_DOMAINS, GENESIS_FEE_READINESS_SOURCE_TRANSFER,
@@ -166,7 +168,41 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   const { GENESIS_HISTORICAL_READER_BINDING: binding, GENESIS_HISTORICAL_READER_BINDING_SHA256,
     assertGenesisHistoricalReaderSourceTransfer, genesisHistoricalReaderHistoricalInput } = await import('../tools/genesis-historical-reader-source-transfer.js');
   const { economyHardeningSourceBaseline } = await import('../tools/economy-hardening-source-transfer.js');
-  const fixture = binding.file, text = lf(fs.readFileSync(fixture, 'utf8'));
+  const fixture = binding.file;
+  const actualEntry = git('ls-tree', 'HEAD', '--', fixture).trim();
+  const actual = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(actual && actual[3] === fixture, 'Regular actual fixture source qualifies first');
+  assert.equal(git('ls-files', '--stage', '--', fixture).trim(),
+    actual[1] + ' ' + actual[2] + ' 0\t' + fixture, 'Actual fixture index qualifies before historical comparison');
+  const head = git('show', 'HEAD:' + fixture);
+  assert.equal(gitBlob(head), actual[2], 'Complete actual fixture Git bytes qualify first');
+  const stat = fs.lstatSync(fixture); assert(stat.isFile() && !stat.isSymbolicLink());
+  const raw = fs.readFileSync(fixture), physical = raw.toString('utf8');
+  assert(Buffer.from(physical).equals(raw), 'Lossless actual fixture UTF-8 required');
+  assert(physical === head || physical === head.replaceAll('\n', '\r\n'),
+    'Whole actual fixture LF/CRLF bytes qualify before projection');
+  assert.equal(CONTRACT_RELEASE_SOURCE_DATA.status, 'BOUND');
+  const rootView = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[fixture];
+  assert(rootView?.targets.fee, 'An explicit Root D70 fixture comparison target is required');
+  assert.deepEqual(rootView.current, { file: fixture, mode: actual[1], blob: actual[2], sha256: sha(head),
+    bytes: Buffer.byteLength(head), rawSha256: { lf: sha(head), crlf: sha(head.replaceAll('\n', '\r\n')) } });
+  const target = rootView.targets.fee;
+  assert.equal(target.revision, CONTRACT_RELEASE_SOURCE_DATA.reviewedContractRevision);
+  assert.equal(target.revision, 'd70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e');
+  assert.deepEqual(target.pin, { file: fixture, mode: binding.mode, blob: binding.currentBlob,
+    sha256: binding.currentSha256, bytes: binding.currentBytes });
+  const frozen = git('show', target.revision + ':' + fixture);
+  assert.equal(git('ls-tree', target.revision, '--', fixture).trim(),
+    binding.mode + ' blob ' + binding.currentBlob + '\t' + fixture);
+  assert.equal(sha(frozen), binding.currentSha256); assert.equal(gitBlob(frozen), binding.currentBlob);
+  assert.equal(Buffer.byteLength(frozen), binding.currentBytes);
+  const projected = contractReleaseFeeInput(fixture, raw);
+  assert(Buffer.isBuffer(projected), 'The comparison-only view preserves Buffer type');
+  const projectedText = projected.toString('utf8');
+  assert(Buffer.from(projectedText).equals(projected), 'Lossless frozen fixture comparison source');
+  assert(projectedText === frozen || projectedText === frozen.replaceAll('\n', '\r\n'),
+    'The complete frozen fixture frame follows actual Root admission');
+  const text = lf(projectedText);
   const previous = git('show', `${binding.baselineRevision}:${fixture}`);
   assert.equal(binding.baselineRevision, '009ba651c4b7746351ee3522e3bb9552514bfcb6');
   assert.equal(git('rev-parse', `${binding.baselineRevision}^{tree}`).trim(), binding.baselineTree);
@@ -174,7 +210,7 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   assert.equal(sha(JSON.stringify(binding)), GENESIS_HISTORICAL_READER_BINDING_SHA256);
   assert.equal(sha(text), binding.currentSha256); assert.equal(gitBlob(text), binding.currentBlob);
   assert.equal(sha(previous), binding.baselineSha256); assert.equal(gitBlob(previous), binding.baselineBlob);
-  assert.deepEqual(binding.inverses, parseHunks(git('diff', '--no-ext-diff', '--unified=3', binding.baselineRevision, '--', fixture)));
+  assert.deepEqual(binding.inverses, parseHunks(git('diff', '--no-ext-diff', '--unified=3', binding.baselineBlob, binding.currentBlob)));
   assert.equal(binding.inverses.length, 3);
   assert.equal(WORLD_RECOVERY_REVIEW.sourceFiles['public/genesis-deploy-client.js'], '3c8e2e19ddab7df96c77bb332bda35161e1be242913481b6504539f183d1d2ad');
   let readerPositive = 0, readerNegative = 0;
