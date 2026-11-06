@@ -9,8 +9,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
   "reviewedUiRevision": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7",
   "baseRevision": "8d60765b0a0f28be1696be108ff47683ff22eef5",
   "baseTree": "1a17883bbc63430b3c27bde6675f60eb26e091aa",
-  "sourceRevision": "f022ce14a15b828de670cc73cf3b55ea2e1c6352",
-  "sourceTree": "05faf6f64cc4ef39e4685a7e2766346de730b5b2",
+  "sourceRevision": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+  "sourceTree": "a0d9ad9dfe1161b5a1532e68140290661fbb7440",
   "historicalManifests": {
     "tools/enterprise-native-ux-b35-inputs.js": {
       "file": "tools/enterprise-native-ux-b35-inputs.js",
@@ -537,8 +537,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/generate-contract-release-source-transfer.js": {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "b63e0d4310560dc9fc33a5b3959117330a10f74e",
-      "sha256": "175faf5abaae608c37c22bb22fd718dda35bf82eefbb5c91d0c0c3a8605094d5"
+      "blob": "87c42d6f77da545a4306596968e9861caa4700ed",
+      "sha256": "c0cf2bd889ca345e3e9d3c770482ae44facbf0baad1e505ca5924260895136a2"
     },
     "test/contract-release-source-compatibility.js": {
       "file": "test/contract-release-source-compatibility.js",
@@ -1881,6 +1881,38 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
         }
       }
     },
+    "test/companyopportunities.js": {
+      "current": {
+        "file": "test/companyopportunities.js",
+        "mode": "100644",
+        "blob": "21edf54b0005e9d64b4701f37661e2332d9201ee",
+        "sha256": "5d809a90d26c96016bd2c928d41e5aa2296527a7d0746c78835e0941fd3bc362",
+        "bytes": 14345,
+        "rawSha256": {
+          "lf": "5d809a90d26c96016bd2c928d41e5aa2296527a7d0746c78835e0941fd3bc362",
+          "crlf": "0b23ee534ac8677632c6a6c15321068e335ba43c9607fe152093140ddb3b074f"
+        }
+      },
+      "targets": {
+        "desk": {
+          "revision": "8d60765b0a0f28be1696be108ff47683ff22eef5",
+          "pin": {
+            "file": "test/companyopportunities.js",
+            "mode": "100644",
+            "blob": "bd5e378b07353f973a17dc978f1c1fc80980b8aa",
+            "sha256": "7f8c0b3dcb1fa3b39ab32fca7b55a0fbdda7981e92d877c74c38984cd56572fa",
+            "bytes": 14199
+          },
+          "contextLines": 3,
+          "inverses": [
+            {
+              "current": "  assert.equal(missing.status, 'not_observed'); assert.equal(missing.quote, null, 'disappearance never claims expiry without a known expired quote');\n  await pool.query('UPDATE supply_tenders SET offers_close_at=$2 WHERE id=$1', ['opportunity-tender', new Date(Date.now() - 1000)]);\n  assert.equal((await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.kind === 'tender').quote, null);\n  // Keep a live observation window for native queries, then wait for this same real deadline.\n  const shortExpiry = new Date(Date.now() + 30000);\n  await pool.query(\"INSERT INTO market_listings(id,seller_character,kind,good_id,district,qty,price,expires_at) VALUES('known-expiry',$1,'order','gin','docks',1,500,$2)\", [character, shortExpiry]);\n  await tx(db => O.refreshCompanyOpportunities(ch, db));\n  assert.equal((await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.sourceId === 'known-expiry').status, 'observed');\n  await new Promise(resolve => setTimeout(resolve, Math.max(0, shortExpiry.getTime() - Date.now() + 25)));\n  const expired = (await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.sourceId === 'known-expiry');\n  assert.equal(expired.status, 'expired'); assert.equal(expired.quote, null, 'known captured deadline proves expiry honestly');\n  if (native) {\n",
+              "baseline": "  assert.equal(missing.status, 'not_observed'); assert.equal(missing.quote, null, 'disappearance never claims expiry without a known expired quote');\n  await pool.query('UPDATE supply_tenders SET offers_close_at=$2 WHERE id=$1', ['opportunity-tender', new Date(Date.now() - 1000)]);\n  assert.equal((await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.kind === 'tender').quote, null);\n  const shortExpiry = new Date(Date.now() + 250);\n  await pool.query(\"INSERT INTO market_listings(id,seller_character,kind,good_id,district,qty,price,expires_at) VALUES('known-expiry',$1,'order','gin','docks',1,500,$2)\", [character, shortExpiry]);\n  await tx(db => O.refreshCompanyOpportunities(ch, db));\n  assert.equal((await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.sourceId === 'known-expiry').status, 'observed');\n  await new Promise(resolve => setTimeout(resolve, 275));\n  const expired = (await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.sourceId === 'known-expiry');\n  assert.equal(expired.status, 'expired'); assert.equal(expired.quote, null, 'known captured deadline proves expiry honestly');\n  if (native) {\n"
+            }
+          ]
+        }
+      }
+    },
     "test/deed-allocation-source-compatibility.js": {
       "current": {
         "file": "test/deed-allocation-source-compatibility.js",
@@ -2675,4 +2707,4 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     }
   }
 });
-export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "965eff167f21d55b14cef9d11f8cb752ce010ecc4eee7ee69b44693d77e17a8b";
+export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "780c9f306f8f10b272e9ce7a7dcd8e2ce0b6b8460f503bb2cc62565142a0cb14";
