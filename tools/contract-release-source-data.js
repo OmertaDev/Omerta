@@ -7,10 +7,10 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
   "phase": "EXACT_CONTRACT_RELEASE_SOURCE_ONLY",
   "reviewedContractRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
   "reviewedUiRevision": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7",
-  "baseRevision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
-  "baseTree": "b45024815077a564ecb48eb35e4835b830d44c2f",
-  "sourceRevision": "efe8607ed1c72fc329cb315b507fe57217fb3120",
-  "sourceTree": "5450ec12c505c640ee739a68a2581e8e8be8f224",
+  "baseRevision": "1aed5b529e891257b2ffb07177c48b34712316e6",
+  "baseTree": "916bab6a50cc69b6df9c5d50ef1a0977e27e3870",
+  "sourceRevision": "5be3c5e17a93561fb0e5491fe43a53a9c08ea65e",
+  "sourceTree": "04e326ded64220f6f1195f42cc0051ad131340b1",
   "historicalManifests": {
     "tools/enterprise-native-ux-b35-inputs.js": {
       "file": "tools/enterprise-native-ux-b35-inputs.js",
@@ -57,8 +57,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/enterprise-native-economic-release-inputs.js": {
       "file": "tools/enterprise-native-economic-release-inputs.js",
       "mode": "100644",
-      "blob": "00cde6bac960e8c5de75f7d88c7031438844e000",
-      "sha256": "ce732a483247679bd77567f28677163218400f01ae536bcf8f4b9b93f0f17771"
+      "blob": "87c0643fee47bccba1c4f70ac12d4e84d61bfeb5",
+      "sha256": "f25e50759ce4b5359ba00fe5fbf98267f39749b2ddf1842fe2d1b04fe62cfe3f"
     },
     "tools/enterprise-native-economic-inputs.js": {
       "file": "tools/enterprise-native-economic-inputs.js",
@@ -98,14 +98,14 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "ad34c283423b5290e8db7e79db91a395058dd007",
-        "sha256": "683c507fd3426464d1e9cb8deb96f3a174c7e87852937f3bf57da074d466efd6"
+        "blob": "e974da47da54a5500b4605c77e81a55be78bc2fb",
+        "sha256": "c25139ddc6d46f99ab9060ce02871cb6be1af4a407912272feda6011ad59076e"
       },
       "predecessor": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "2ba16a679f284ba94ca9957045607b4dd3bb4509",
-        "sha256": "18794e721e0c6ac8797266a12e41fccb53c74df19af6b3634897d99e1260976d"
+        "blob": "a1b0d500f9376dace81fcec9e2d6d78fcfb265f3",
+        "sha256": "0a897a337894320df10d31f67d64c49d8f810aa3f36bad9c3e4c0dde3f17c75c"
       }
     },
     "public/defi.html": {
@@ -168,14 +168,14 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "084cc645a83355f59239d9902ea00deca4010d17",
-        "sha256": "12368284aba77a3e47d71ae085a0df6fdeb8cd79182c78084d67921c02c37808"
+        "blob": "ea48eb922b9668c19d6c3aa0f9530e4cf57e772d",
+        "sha256": "3b12d14aa59209466626b7f9cc9fc3d2080379d66cfdda83a15b62edf2e2e534"
       },
       "predecessor": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "8bf91d981ed41b573b19b59ca61d9b0a2e95aa96",
-        "sha256": "9e4a8c2889e7fef7f3d9ddda6e2737b17b8df4489c68171df082cfe9bb3ad226"
+        "blob": "ec86b4cd66b34ceca1d9f0739cc8579a122d843f",
+        "sha256": "54b01e88f6a2314a620e9e98cad60e55e562045dee2fdd9901d7f87858b21e91"
       }
     },
     "public/wiki.html": {
@@ -378,56 +378,70 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/businessdesk-combined-source-compatibility.js",
         "mode": "100644",
-        "blob": "e6e853b9c3921b2a21c934332ff0d7ab9b4c2cf8",
-        "sha256": "1e762c3503bb98c7bb081a411af46b35abef0d49bac95936156472a66697b762"
+        "blob": "3992e06615513eafa8602d385eafcc0ae94177df",
+        "sha256": "03406684f504575f24d5793a0c2dfd5ce6b4cd42c8894af8e9a1c9ddec708606"
       },
       "predecessor": {
         "file": "test/businessdesk-combined-source-compatibility.js",
         "mode": "100644",
-        "blob": "562eaecf214645f72b8863d5863dabfce4a9a621",
-        "sha256": "49e8fca0a4228c49fff3aaa056feb648e6c32226de22ccb60be859c546894c53"
+        "blob": "a1f1f5fcfa8272c4c9b378960b44ee0e1048ab31",
+        "sha256": "9ddcdb388c85a6dbc7a49e465354d1ac59d8bc8bfd06b18a00ed01c6970b4e4c"
       }
     },
     "test/businessdesk-native-provenance.js": {
       "current": {
         "file": "test/businessdesk-native-provenance.js",
         "mode": "100644",
-        "blob": "44599133a49c0fe290d8c9bb9f5f5e66e082cac5",
-        "sha256": "4ca335f820f79f9cf26e7f5ef2cf4da7d824ca81ba21ed837d1145ff1632faa2"
+        "blob": "0dffa86a29a05ad5127ff045eec54a7b8d6f7ae9",
+        "sha256": "216959a9295137a4afead33b7ee93bda93adb70b1881b06549c12cec0d395c4e"
       },
       "predecessor": {
         "file": "test/businessdesk-native-provenance.js",
         "mode": "100644",
-        "blob": "171b81eb8cce5fe10961c667ee8fe01598afa3fb",
-        "sha256": "d7b64097e0c5a964339188aa1c5c200d57e8330886e9949219ab4b8b7a449b3f"
+        "blob": "72a7b5ddb1ec96062de37949e0d3f60cb946ab68",
+        "sha256": "b3f9ee47bde9fb52cd8741681fdef4c231e3b4c475bb51b43b72e0f63652893c"
+      }
+    },
+    "test/ci-deed-recovery-source.js": {
+      "current": {
+        "file": "test/ci-deed-recovery-source.js",
+        "mode": "100644",
+        "blob": "cd6dc70490ca481285e6a127c5dc300806c7daa3",
+        "sha256": "ac83bdda7d4d81a4c617413c99cca06f65a357c07920b262e08cf1bc68fd6f6b"
+      },
+      "predecessor": {
+        "file": "test/ci-deed-recovery-source.js",
+        "mode": "100644",
+        "blob": "218c4509e658accffc5de98000e120c774d13362",
+        "sha256": "5ab7f45ccee4f9af3cd914a645e94bddd2cce30ef14635fae69cec152fefc0b6"
       }
     },
     "test/economy-deed-merge-source-compatibility.js": {
       "current": {
         "file": "test/economy-deed-merge-source-compatibility.js",
         "mode": "100644",
-        "blob": "927023e07b4d426ee4038e9ac25b00388ac97a76",
-        "sha256": "7b874267a43c06c797d093803655281b634db820dbeb747a211fced2b98eafbe"
+        "blob": "df8df97b8e0a9f9f2d55a670583896587a92aa4e",
+        "sha256": "5c7b985fbafcb5cfbe82c2ff85b5ffb6031581c8bf87f72b97e897c5becfe658"
       },
       "predecessor": {
         "file": "test/economy-deed-merge-source-compatibility.js",
         "mode": "100644",
-        "blob": "a0dd6bf3147cbf4f1fb4045ec545490d31b7f481",
-        "sha256": "eb7e2842654d95b44e086cb627443678694a7c42f4d307a9da837997eeb0a636"
+        "blob": "cc912f83d1d6719cb1c720478e57d3d04242122c",
+        "sha256": "861fc568140e637000828e375562894d5f42bb9c578f754d4a7d1a95b0c8b8ff"
       }
     },
     "test/economy-monitor-source-compatibility.js": {
       "current": {
         "file": "test/economy-monitor-source-compatibility.js",
         "mode": "100644",
-        "blob": "583f2b4e9551b9e9fc919912551a5d5f2aad81e5",
-        "sha256": "6478ef009e71a0e4fbb50466ff227c8c1de8cb50f2e4b081447828f03f4d8f66"
+        "blob": "ffeb815452445a8b5147670b7317d61923c9d3ae",
+        "sha256": "e441c86ba8f01a7ca968b1f3d7237fe9242097a62d39ca665c1d234ad64ad7d9"
       },
       "predecessor": {
         "file": "test/economy-monitor-source-compatibility.js",
         "mode": "100644",
-        "blob": "fe5c7265715f57da19f70681775ba2bfab9e2181",
-        "sha256": "311a9c3cf88d2e8d55db80a3c819f29cd1ffac28048a60966aaf58863c1c792e"
+        "blob": "9c3267026cd672948a3bd09ce1bbb624c87c515b",
+        "sha256": "1776b4995643464207c0c7db5e911808800ef7d66cd283cf6ed64ea8e6971812"
       }
     },
     "test/lib/enterprise-ux-native-guard.js": {
@@ -448,8 +462,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/noir-ui-source-compatibility.js",
         "mode": "100644",
-        "blob": "fd2dfb4799160b7a6de47d4c535f8cc72cbf44d2",
-        "sha256": "70934091ed398e8299e4d1f201b1ec940f1b08219b9f655423d94d203e855de4"
+        "blob": "6b9f6fc4f420a1182a26f825c79d9c9cb6805840",
+        "sha256": "bbe378f0d74f17500d5fccbe869b45944363797c361d72bc0d37fe8d95e5d17c"
       },
       "predecessor": {
         "file": "test/noir-ui-source-compatibility.js",
@@ -504,18 +518,24 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "tools/enterprise-native-ux.js",
         "mode": "100644",
-        "blob": "fe703e7d75f15f628a2fe87055a780d5eb40cd55",
-        "sha256": "3d69dc604553e2a1e5e02b3a7dfcb29651283fe806fa02f0cf88e38e4f7368e4"
+        "blob": "627a52ef1a8fb9677beed7ef8181e69a0b4dcd7f",
+        "sha256": "1bbf23bf19be3b92b814c6a9b1e2d5a0c17aeaeb49869d36e3d5af9d7e0fdea2"
       },
       "predecessor": {
         "file": "tools/enterprise-native-ux.js",
         "mode": "100644",
-        "blob": "a38cc7c689453a6fe050e210c5717c0bcf333292",
-        "sha256": "97118ab64a10a710fd8715fca4183d34be1755dcc62ec0712129a12b08cd69fe"
+        "blob": "0d7043216e99f6bb24fd820ed43ce52bd1a44106",
+        "sha256": "607fee9bbd5ff8afaef5fc5af06e93c6ce28e261fd02ef242047c571d52eb200"
       }
     }
   },
   "approvedAdditions": {
+    "tools/enterprise-native-economic-release-aeae-inputs.js": {
+      "file": "tools/enterprise-native-economic-release-aeae-inputs.js",
+      "mode": "100644",
+      "blob": "00cde6bac960e8c5de75f7d88c7031438844e000",
+      "sha256": "ce732a483247679bd77567f28677163218400f01ae536bcf8f4b9b93f0f17771"
+    },
     "tools/age-policy-source-transfer.js": {
       "file": "tools/age-policy-source-transfer.js",
       "mode": "100644",
@@ -543,8 +563,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/contract-release-native-provenance.js": {
       "file": "tools/contract-release-native-provenance.js",
       "mode": "100644",
-      "blob": "50de5121d877dad3abc3612a9e9c6628f2928b0a",
-      "sha256": "a8d9b84b45a8ebca888bf38cb0a8ffc5df047066eebd51b1be6e3fc92801e1e0"
+      "blob": "6b43a6cf3c482138eed00b47d05f98091bea17ca",
+      "sha256": "d61c472fa0663e0d715771307c5c606d0bdb395f7c1c0bd425c7298514c85c9a"
     },
     "tools/contract-release-source-transfer.js": {
       "file": "tools/contract-release-source-transfer.js",
@@ -561,14 +581,14 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/generate-contract-release-source-transfer.js": {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "db9d71f46ffe83ffd2edde2cde7ef410a52cd67e",
-      "sha256": "5b973d8495b4af27132d18bc8f4e2fbd9d0ba4727c8cfd9c9fb213754108b28d"
+      "blob": "6fbe56ecf46729cc8259b322ff19a4f42244c050",
+      "sha256": "2e0e375f074b4dc0b99cfff12cd57a52c44587053b3e8c9eb21d545693ce6309"
     },
     "test/contract-release-source-compatibility.js": {
       "file": "test/contract-release-source-compatibility.js",
       "mode": "100644",
-      "blob": "aa2aa9c0b3d6739bd1da5819aeda13e61e9c736f",
-      "sha256": "8a62157b40429488e8cb2966914a54f29c12b028de997dbe1dbf5535260026bd"
+      "blob": "e39a5e8658d5f5f36094d9a422a95539d4eeba1b",
+      "sha256": "16263486ebce69d095ec867bbea67dfe7a8c7da8d4c8866b56fdc6ea1db9ac38"
     },
     "public/eth-staking.js": {
       "file": "public/eth-staking.js",
@@ -627,8 +647,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/native-eth-source-transfer.json": {
       "file": "tools/native-eth-source-transfer.json",
       "mode": "100644",
-      "blob": "96610afc413b031daf71711baa8f269037b28488",
-      "sha256": "71406513088c0e4896d42a0bbe79cd5ea60ac450d8356f702b520f9f1caa69dd"
+      "blob": "2e9cc5b8b17e43720f93591865639e6c2b37b2cc",
+      "sha256": "afde690e6b4de6760309f02ce49be4bf0e64b1d1be731a597e77e32fe5f07d69"
     }
   },
   "sourceViews": {
@@ -646,7 +666,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": ".github/workflows/forge.yml",
             "mode": "100644",
@@ -692,22 +712,22 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "MARKETING-POSTS.md",
         "mode": "100644",
-        "blob": "115fb0a79c2766a91b961d1983ea2b8e948f20b0",
-        "sha256": "c438c3734e135e873ea8018dba3980dd325261748efbef87a2a15ce3513773f3",
+        "blob": "4a55e8ec02025612e72da304dcfda7f0febba41d",
+        "sha256": "a04b0789d2f36b3166cf12879da78768f673d13da3357c61233e91c95bbf30b6",
         "bytes": 7062,
         "rawSha256": {
-          "lf": "c438c3734e135e873ea8018dba3980dd325261748efbef87a2a15ce3513773f3",
-          "crlf": "82bb2d4d93c9edbc39da02a59a846ae73037b1835334944d1fea8e1277a06785"
+          "lf": "a04b0789d2f36b3166cf12879da78768f673d13da3357c61233e91c95bbf30b6",
+          "crlf": "68e49330f06458279a059531abb7802983d448b94d60800116b11ffbb240ce5a"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "MARKETING-POSTS.md",
             "mode": "100644",
-            "blob": "989796d7b5c64fe60a44c6448384fa760a5497fc",
-            "sha256": "5ee66cb1aeb501cd3e6b0fa9c65059e26349b90ed23bb49ba0b59c9f42793dfb",
+            "blob": "ea6d4ccdd2281531411af28c458c883bfa74fc85",
+            "sha256": "87585d7c3ebc2c34131d38c40fa273ec4ce892db1c58998c4f7212326fb4bbe9",
             "bytes": 7062
           },
           "contextLines": 3,
@@ -728,29 +748,29 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "SPEC.md",
         "mode": "100644",
-        "blob": "01fdd91d001f8085291945c0978377b42e147df1",
-        "sha256": "6fca611cd919dd3d7da0f7cc8ca58879b07187f8b189ba9660e87b8e6616306d",
-        "bytes": 57114,
+        "blob": "99b237579c9855fdb2f638d3dcdc24ccf9d3a342",
+        "sha256": "21d4334195455c4c7e5d63480f124aba9f3b41c625c4bb5b27501b12b92f5ff8",
+        "bytes": 57154,
         "rawSha256": {
-          "lf": "6fca611cd919dd3d7da0f7cc8ca58879b07187f8b189ba9660e87b8e6616306d",
-          "crlf": "e5fe6c3610ea4c05536dc0718d51150d4a44b42c676f607321830426dca21131"
+          "lf": "21d4334195455c4c7e5d63480f124aba9f3b41c625c4bb5b27501b12b92f5ff8",
+          "crlf": "a39f03ae26caac6df7c654b7bc5b0761fa1880467494fec87fa52789f37928f0"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "SPEC.md",
             "mode": "100644",
-            "blob": "6848cba281d30a27dfedca01b7ac8f53f6e3fe9c",
-            "sha256": "0591dcb9ae261fcabaf9be2c1cacbfdacbd834adadf2f2ecb7e41c21a5c0eecc",
+            "blob": "b6b2112baf264466eae5742e34d78fdb9cd151af",
+            "sha256": "3bd0bf3ca7036743af5989fad714199b620de8b10ef207533df86c9b30e548b5",
             "bytes": 57077
           },
           "contextLines": 3,
           "inverses": [
             {
-              "current": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the measured integration snapshot `863d990b33c2`. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured at `863d990b33c2`, before generated release records; they do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **601** files, **139179** lines (recursive source inventory) |\n| Test suites | **983** files, **208818** lines (recursive source inventory) |\n| HTTP routes | **1363** registrations (**1363** unique; 1262 under `/v1`) |\n| Database tables | **582** (`schema.sql`, 9787 lines) |\n| Client | **14652** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **980** markdown files, **157883** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n\n---\n\n",
-              "baseline": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below is measured from the current repository. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCensus refreshed from the current repository; these counts do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **597** files, **138652** lines (recursive source inventory) |\n| Test suites | **972** files, **205772** lines (recursive source inventory) |\n| HTTP routes | **1360** registrations (**1360** unique; 1260 under `/v1`) |\n| Database tables | **582** (`schema.sql`, 9787 lines) |\n| Client | **14647** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **40** top-level Solidity files, **11545** lines, **1111** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **971** markdown files, **156942** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **366,000 lines** of backend code, tests, schema and top-level contracts.\n\n---\n\n"
+              "current": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the combined release source inventory measured on 2026-11-06. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured for the combined release source on 2026-11-06, before generated release records; they do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **601** files, **139179** lines (recursive source inventory) |\n| Test suites | **984** files, **208818** lines (recursive source inventory) |\n| HTTP routes | **1363** registrations (**1363** unique; 1262 under `/v1`) |\n| Database tables | **582** (`schema.sql`, 9787 lines) |\n| Client | **14652** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **980** markdown files, **157883** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n\n---\n\n",
+              "baseline": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below is measured from the current repository. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCensus refreshed from the current repository; these counts do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **597** files, **138652** lines (recursive source inventory) |\n| Test suites | **973** files, **205948** lines (recursive source inventory) |\n| HTTP routes | **1360** registrations (**1360** unique; 1260 under `/v1`) |\n| Database tables | **582** (`schema.sql`, 9787 lines) |\n| Client | **14647** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **40** top-level Solidity files, **11545** lines, **1111** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **971** markdown files, **156942** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **366,000 lines** of backend code, tests, schema and top-level contracts.\n\n---\n\n"
             }
           ]
         }
@@ -770,7 +790,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "docs/WIKI.md",
             "mode": "100644",
@@ -841,23 +861,23 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "ad34c283423b5290e8db7e79db91a395058dd007",
-        "sha256": "683c507fd3426464d1e9cb8deb96f3a174c7e87852937f3bf57da074d466efd6",
-        "bytes": 61400,
+        "blob": "e974da47da54a5500b4605c77e81a55be78bc2fb",
+        "sha256": "c25139ddc6d46f99ab9060ce02871cb6be1af4a407912272feda6011ad59076e",
+        "bytes": 61440,
         "rawSha256": {
-          "lf": "683c507fd3426464d1e9cb8deb96f3a174c7e87852937f3bf57da074d466efd6",
-          "crlf": "258e1199979cff19f262cd6a3a0a8ffc85be2171f021ed26d4e4a5133b600dd4"
+          "lf": "c25139ddc6d46f99ab9060ce02871cb6be1af4a407912272feda6011ad59076e",
+          "crlf": "c201cb603778d5d636a7aa474e421598bbaca17de3b31951933a217df7502ec6"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "package.json",
             "mode": "100644",
-            "blob": "2ba16a679f284ba94ca9957045607b4dd3bb4509",
-            "sha256": "18794e721e0c6ac8797266a12e41fccb53c74df19af6b3634897d99e1260976d",
-            "bytes": 61055
+            "blob": "a1b0d500f9376dace81fcec9e2d6d78fcfb265f3",
+            "sha256": "0a897a337894320df10d31f67d64c49d8f810aa3f36bad9c3e4c0dde3f17c75c",
+            "bytes": 61095
           },
           "contextLines": 3,
           "inverses": [
@@ -883,7 +903,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "public/defi.html",
             "mode": "100644",
@@ -952,7 +972,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "public/fee-flows.html",
             "mode": "100644",
@@ -1041,7 +1061,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "public/genesis-deploy-artifact.js",
             "mode": "100644",
@@ -1097,7 +1117,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "public/genesis-deploy-client.js",
             "mode": "100644",
@@ -1163,23 +1183,23 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "084cc645a83355f59239d9902ea00deca4010d17",
-        "sha256": "12368284aba77a3e47d71ae085a0df6fdeb8cd79182c78084d67921c02c37808",
-        "bytes": 1405203,
+        "blob": "ea48eb922b9668c19d6c3aa0f9530e4cf57e772d",
+        "sha256": "3b12d14aa59209466626b7f9cc9fc3d2080379d66cfdda83a15b62edf2e2e534",
+        "bytes": 1405259,
         "rawSha256": {
-          "lf": "12368284aba77a3e47d71ae085a0df6fdeb8cd79182c78084d67921c02c37808",
-          "crlf": "5bb0fcb94efe48d3de9dfc16f2682ed1cca509587795982ef3d69971ee434074"
+          "lf": "3b12d14aa59209466626b7f9cc9fc3d2080379d66cfdda83a15b62edf2e2e534",
+          "crlf": "e0dd9c505c5766c1f86154c16ed3ccb1fe3c5d2349888306fdd0627c347629da"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "public/index.html",
             "mode": "100644",
-            "blob": "8bf91d981ed41b573b19b59ca61d9b0a2e95aa96",
-            "sha256": "9e4a8c2889e7fef7f3d9ddda6e2737b17b8df4489c68171df082cfe9bb3ad226",
-            "bytes": 1404170
+            "blob": "ec86b4cd66b34ceca1d9f0739cc8579a122d843f",
+            "sha256": "54b01e88f6a2314a620e9e98cad60e55e562045dee2fdd9901d7f87858b21e91",
+            "bytes": 1404226
           },
           "contextLines": 3,
           "inverses": [
@@ -1365,6 +1385,10 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
               "baseline": "      const config = discovery.config || discovery, progress = new Map((discovery.buildings || []).map(p => [p.id, p]));\n      const bounds = atlas.districts[0] || { x: 0, y: 0, width: atlas.width, height: atlas.height };\n      host.innerHTML = `<p class=\"d\">${esc(atlas.districts[0]?.name || district)} · ${atlas.buildings.length} permanent properties. Select a building to inspect its claim requirements.</p>\n        <div class=\"d\">Build a property case: inspect the site, trace its registry record, question the witness, then return to secure its title. ${config.stepsRequired} objectives · ${config.energyPerStep} energy each · level ${config.minimumLevel}. Each lead names its required district; map coordinates do not establish your location.</div>\n        ${discovery.primaryClaimed ? `<p class=\"d\">Your account has already used its lifetime discovery claim${discovery.claimedName ? ' for ' + esc(discovery.claimedName) : ''}. Buying or winning existing deeds remains available.</p>` : discovery.questEligible ? '<p class=\"d\">Your completed quest qualifies you to claim an available building in your current district. Select the exact property first.</p>' : ''}\n        ${(discovery.activeInvestigations || []).some(p => p.district !== district && !p.claimed) ? `<p class=\"d\">Cases you are following elsewhere:</p>${discovery.activeInvestigations.filter(p => p.district !== district && !p.claimed).slice(0, 12).map(p => `<button class=\"act\" data-deed-resume=\"${esc(p.id)}\" data-deed-resume-district=\"${esc(p.district)}\">resume ${esc(p.id)} · ${Number(p.steps || 0)}/${config.stepsRequired}</button>`).join('')}` : ''}\n        <div style=\"overflow:auto\"><svg viewBox=\"${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}\" style=\"max-width:720px;width:100%;background:#111820\" role=\"group\" aria-label=\"${esc(district)} deed properties\">\n        ${atlas.districts.map(d => `<rect x=\"${d.x + 4}\" y=\"${d.y + 4}\" width=\"${d.width - 8}\" height=\"${d.height - 8}\" fill=\"#1c2935\" stroke=\"#597184\"/><text x=\"${d.x + 24}\" y=\"${d.y + 30}\" fill=\"#e5d6aa\" font-size=\"18\">${esc(d.name)}</text>`).join('')}\n        ${atlas.buildings.map(p => `<g data-property=\"${esc(p.id)}\" role=\"button\" tabindex=\"0\" aria-label=\"${esc(p.id + ', ' + p.kind.replaceAll('_', ' ') + (p.street ? ', ' + p.street : ', unclaimed'))}\" style=\"cursor:pointer\"><title>${esc(p.id)} · ${esc(p.street || 'unclaimed')}</title><rect x=\"${p.x}\" y=\"${p.y}\" width=\"${p.width}\" height=\"${p.height}\" fill=\"${p.claimed ? '#dfb976' : progress.get(p.id)?.qualified ? '#81b68c' : '#688493'}\" stroke=\"#111820\"/>${p.kind.includes('house') ? `<path d=\"M${p.x - 1},${p.y} l${p.width / 2 + 1},-4 l${p.width / 2 + 1},4\" fill=\"${p.claimed ? '#b77e4a' : '#495e70'}\"/>` : ''}</g>`).join('')}</svg></div><div class=\"card\" id=\"deed-property-detail\" aria-live=\"polite\">Choose a property on this district's map.</div>`;\n      const showProperty = p => {\n        if (actor !== me?.id || render !== deedPropertyRender) return;\n        deedPropertyFocus = { district, buildingId: p.id };\n        const entry = progress.get(p.id), detail = $('#deed-property-detail');\n        if (!entry) { detail.textContent = 'Claim eligibility is unavailable. Reopen this district to retry.'; return; }\n        const objective = entry.objective;\n        const requiredDistrict = entry.qualified ? p.district : objective?.requiredDistrict;\n"
             },
             {
+              "current": "            ${entry.legacyReset ? '<p class=\"d\">This property now requires a complete investigation; earlier visits do not replace its evidence.</p>' : ''}\n            ${!entry.qualified && objective ? `<div class=\"d\"><b>${esc(objective.title)}</b> · ${esc(districtName(objective.requiredDistrict))}</div><p class=\"d\">${esc(objective.description)}</p>` : ''}\n            <div class=\"d\">${!discovery.actorEligible ? 'Your current character cannot act right now. Check level, health and lockup status.' : entry.qualified && deed ? 'You already hold a deed; you cannot claim another while holding it.' : away ? 'Travel to ' + esc(districtName(requiredDistrict)) + (entry.qualified ? ' to claim this property.' : ' to follow this lead.') : entry.qualified ? 'Name this property below, then claim its deed.' : objective?.blockedReason === 'energy' ? 'You need ' + config.energyPerStep + ' energy to complete this objective.' : objective?.canAct ? 'Complete the current objective to record its evidence.' : 'This lead is unavailable. Recheck the property for current requirements.'}</div>\n            ${canTravel ? `<button class=\"act\" id=\"deed-objective-travel\"${acting ? ' disabled' : ''}>travel to ${esc(districtName(requiredDistrict))} — $${Number(rules.travelCost).toLocaleString()}</button>` : ''}` : ''}\n          ${entry.canInvestigate && objective?.canAct && objective.actionId && !p.claimed && !entry.claimed && !discovery.primaryClaimed ? `<button class=\"act\" id=\"deed-investigate\"${acting ? ' disabled' : ''}>${esc(objective.title)}</button>` : ''}\n          ${entry.canClaim && !p.claimed && !entry.claimed && !discovery.primaryClaimed && !deed ? `<label class=\"d\" for=\"deed-property-name\">Property name</label><input id=\"deed-property-name\" placeholder=\"name your street\" size=\"20\" maxlength=\"${b.nameMax || 28}\"><button class=\"act\" id=\"deed-property-claim\"${acting ? ' disabled' : ''}>claim this building's deed</button>` : ''}\n          <button class=\"act\" id=\"deed-property-refresh\">recheck property</button>`;\n        const nameInput = $('#deed-property-name');\n",
+              "baseline": "            ${entry.legacyReset ? '<p class=\"d\">This property now requires a complete investigation; earlier visits do not replace its evidence.</p>' : ''}\n            ${!entry.qualified && objective ? `<div class=\"d\"><b>${esc(objective.title)}</b> · ${esc(districtName(objective.requiredDistrict))}</div><p class=\"d\">${esc(objective.description)}</p>` : ''}\n            <div class=\"d\">${!discovery.actorEligible ? 'Your current character cannot act right now. Check level, health and lockup status.' : entry.qualified && deed ? 'You already hold a deed; you cannot claim another while holding it.' : away ? 'Travel to ' + esc(districtName(requiredDistrict)) + (entry.qualified ? ' to claim this property.' : ' to follow this lead.') : entry.qualified ? 'Name this property below, then claim its deed.' : objective?.blockedReason === 'energy' ? 'You need ' + config.energyPerStep + ' energy to complete this objective.' : objective?.canAct ? 'Complete the current objective to record its evidence.' : 'This lead is unavailable. Recheck the property for current requirements.'}</div>\n            ${canTravel ? `<button class=\"act\" id=\"deed-objective-travel\">travel to ${esc(districtName(requiredDistrict))} — $${Number(rules.travelCost).toLocaleString()}</button>` : ''}` : ''}\n          ${entry.canInvestigate && objective?.canAct && objective.actionId && !p.claimed && !entry.claimed && !discovery.primaryClaimed ? `<button class=\"act\" id=\"deed-investigate\">${esc(objective.title)}</button>` : ''}\n          ${entry.canClaim && !p.claimed && !entry.claimed && !discovery.primaryClaimed && !deed ? `<label class=\"d\" for=\"deed-property-name\">Property name</label><input id=\"deed-property-name\" placeholder=\"name your street\" size=\"20\" maxlength=\"${b.nameMax || 28}\"><button class=\"act\" id=\"deed-property-claim\"${acting ? ' disabled' : ''}>claim this building's deed</button>` : ''}\n          <button class=\"act\" id=\"deed-property-refresh\">recheck property</button>`;\n        const nameInput = $('#deed-property-name');\n"
+            },
+            {
               "current": "  }\n\n  // ── START HERE: the guided First-Week funnel — the new-player on-ramp over the /v1/onboard board ──\nasync function renderStart() {\n    const t = $('#tab-start');\n    // ONE read for the whole screen. Home was measured at 19 requests a tick — the worst screen in\n    // the game, and the one a returning player LANDS on — because sixteen boards each fetched\n",
               "baseline": "  }\n\n  // ── START HERE: the guided First-Week funnel — the new-player on-ramp over the /v1/onboard board ──\n  async function renderStart() {\n    const t = $('#tab-start');\n    // ONE read for the whole screen. Home was measured at 19 requests a tick — the worst screen in\n    // the game, and the one a returning player LANDS on — because sixteen boards each fetched\n"
             },
@@ -1478,7 +1502,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "public/wiki.html",
             "mode": "100644",
@@ -1575,7 +1599,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "src/fundedworkescrowartifact.js",
             "mode": "100644",
@@ -1607,7 +1631,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "src/genesisauction.js",
             "mode": "100644",
@@ -1651,7 +1675,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "src/marketv2keeper.js",
             "mode": "100644",
@@ -1723,7 +1747,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "src/preflight.js",
             "mode": "100644",
@@ -1755,7 +1779,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "src/server.js",
             "mode": "100644",
@@ -1795,7 +1819,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "src/worker.js",
             "mode": "100644",
@@ -1831,7 +1855,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/age-eligibility-source-compatibility.js",
             "mode": "100644",
@@ -1867,7 +1891,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/businessdesk-combined-native-provenance.js",
             "mode": "100644",
@@ -1901,33 +1925,33 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/businessdesk-combined-source-compatibility.js",
         "mode": "100644",
-        "blob": "e6e853b9c3921b2a21c934332ff0d7ab9b4c2cf8",
-        "sha256": "1e762c3503bb98c7bb081a411af46b35abef0d49bac95936156472a66697b762",
-        "bytes": 20324,
+        "blob": "3992e06615513eafa8602d385eafcc0ae94177df",
+        "sha256": "03406684f504575f24d5793a0c2dfd5ce6b4cd42c8894af8e9a1c9ddec708606",
+        "bytes": 20879,
         "rawSha256": {
-          "lf": "1e762c3503bb98c7bb081a411af46b35abef0d49bac95936156472a66697b762",
-          "crlf": "51c04d8ec7a0766669aedcda3ae080732a340614d2c7ecb1110fc6d611faea6a"
+          "lf": "03406684f504575f24d5793a0c2dfd5ce6b4cd42c8894af8e9a1c9ddec708606",
+          "crlf": "8e63dc6e6d9cf8c86133e39379c0ec6a9e302ad1a3002d63d67b078a9656d59a"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/businessdesk-combined-source-compatibility.js",
             "mode": "100644",
-            "blob": "562eaecf214645f72b8863d5863dabfce4a9a621",
-            "sha256": "49e8fca0a4228c49fff3aaa056feb648e6c32226de22ccb60be859c546894c53",
-            "bytes": 19252
+            "blob": "a1f1f5fcfa8272c4c9b378960b44ee0e1048ab31",
+            "sha256": "9ddcdb388c85a6dbc7a49e465354d1ac59d8bc8bfd06b18a00ed01c6970b4e4c",
+            "bytes": 19530
           },
           "contextLines": 3,
           "inverses": [
             {
-              "current": "import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Raw current-source qualification and finite historical comparisons only. No native/runtime execution.\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\n",
-              "baseline": "// Raw current-source qualification and finite historical comparisons only. No native/runtime execution.\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\n"
+              "current": "import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalRecord } from '../tools/ci-deed-recovery-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Raw current-source qualification and finite historical comparisons only. No native/runtime execution.\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\n",
+              "baseline": "// Raw current-source qualification and finite historical comparisons only. No native/runtime execution.\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry, ciDeedRecoveryHistoricalRecord } from '../tools/ci-deed-recovery-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\n"
             },
             {
-              "current": "const currentInputs = new Map(), expectedRows = new Map();\nfor (const file of files) {\n  const authored = record(source.sourceRevision, file), current = record('HEAD', file);\n  const integration = record(integratedEconomicSource.revision, file), acceptedRecord = record(CONTRACT_RELEASE_SOURCE_DATA.baseRevision, file);\n  assert(authored && current && integration && acceptedRecord);\n  assert.deepEqual(acceptedRecord.pin, integration.pin, 'The accepted predecessor has the exact reviewed integration identity');\n  assert.equal(text('ls-files', '--stage', '--', file).trim(), current.pin.mode + ' ' + current.pin.blob + ' 0\\t' + file, 'Current index identity qualifies before any historical view.');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical comparison source must be a regular file.');\n  const actualPhysical = fs.readFileSync(file), crlf = Buffer.from(current.content.replaceAll('\\n', '\\r\\n'));\n  assert(actualPhysical.equals(current.raw) || actualPhysical.equals(crlf), 'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  if (outer?.targets.desk) {\n    const { file: domain, ...expected } = outer.current; assert.equal(domain, file);\n    assert.deepEqual(current.pin, expected, 'The exact current contract source identity qualifies before the historical view');\n  } else assert.deepEqual(current.pin, acceptedRecord.pin, 'Unchanged current source retains the exact accepted predecessor identity');\n  const acceptedPhysical = contractReleaseDeskInput(file, actualPhysical);\n  assert(acceptedPhysical.equals(acceptedRecord.raw) || acceptedPhysical.equals(Buffer.from(acceptedRecord.content.replaceAll('\\n','\\r\\n'))), 'The complete accepted integration source qualifies before its parent comparison');\n  const physical = integratedEconomicParentInput(file, acceptedPhysical, 'main');\n  assert(physical.equals(authored.raw) || physical.equals(Buffer.from(authored.content.replaceAll('\\n', '\\r\\n'))), 'The separately qualified combined source remains complete and exact');\n  const parents = {};\n  for (const [profile, parent] of Object.entries(profiles)) {\n    if (!businessDeskCombinedReaderFiles(profile).includes(file)) continue;\n",
-              "baseline": "const currentInputs = new Map(), expectedRows = new Map();\nfor (const file of files) {\n  const authored = record(source.sourceRevision, file), current = record('HEAD', file);\n  const integration = record(integratedEconomicSource.revision, file);\n  assert(authored && current && integration);\n  assert.deepEqual(current.pin, integration.pin, 'The authored integration is the only current source admitted: ' + file);\n  assert.equal(text('ls-files', '--stage', '--', file).trim(), `${current.pin.mode} ${current.pin.blob} 0\\t${file}`, 'Current index identity qualifies before any historical view.');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical comparison source must be a regular file.');\n  const raw = fs.readFileSync(file);\n  assert(raw.equals(current.raw) || raw.equals(Buffer.from(current.content.replaceAll('\\n','\\r\\n'))),\n    'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);\n  const physical = integratedEconomicParentInput(file, raw, 'main');\n  assert(physical.equals(authored.raw) || physical.equals(Buffer.from(authored.content.replaceAll('\\n','\\r\\n'))),\n    'Original combined source identity after exact parent comparison: ' + file);\n  const parents = {};\n  for (const [profile, parent] of Object.entries(profiles)) {\n    if (!businessDeskCombinedReaderFiles(profile).includes(file)) continue;\n"
+              "current": "};\nconst currentInputs = new Map(), expectedRows = new Map();\nfor (const file of files) {\n  const authored = record(source.sourceRevision, file), current = record('HEAD', file);\n  const integration = record(integratedEconomicSource.revision, file), acceptedRecord = record(CONTRACT_RELEASE_SOURCE_DATA.baseRevision, file);\n  assert(authored && current && integration && acceptedRecord);\n\n  assert.equal(text('ls-files', '--stage', '--', file).trim(), current.pin.mode + ' ' + current.pin.blob + ' 0\\t' + file, 'Current index identity qualifies before any historical view.');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical comparison source must be a regular file.');\n  const actualPhysical = fs.readFileSync(file), crlf = Buffer.from(current.content.replaceAll('\\n', '\\r\\n'));\n  assert(actualPhysical.equals(current.raw) || actualPhysical.equals(crlf), 'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  if (outer?.targets.desk) {\n    const { file: domain, ...expected } = outer.current; assert.equal(domain, file);\n    assert.deepEqual(current.pin, expected, 'The exact current contract source identity qualifies before the historical view');\n  } else assert.deepEqual(current.pin, acceptedRecord.pin, 'Unchanged current source retains the exact accepted predecessor identity');\n  const acceptedPhysical = contractReleaseDeskInput(file, actualPhysical);\n  assert(acceptedPhysical.equals(acceptedRecord.raw) || acceptedPhysical.equals(Buffer.from(acceptedRecord.content.replaceAll('\\n','\\r\\n'))), 'The complete accepted integration source qualifies before its parent comparison');\n  const acceptedIntegration = ciDeedRecoveryHistoricalRecord(file, acceptedRecord);\n  assert.deepEqual(acceptedIntegration.pin, integration.pin, 'The exact accepted CI predecessor has the reviewed integration identity');\n  const comparisonPhysical = ciDeedRecoveryHistoricalInput(file, acceptedPhysical);\n  assert(comparisonPhysical.equals(acceptedIntegration.raw) || comparisonPhysical.equals(Buffer.from(acceptedIntegration.content.replaceAll('\\n','\\r\\n'))), 'The complete frozen CI predecessor qualifies after actual Root and current-main admission');\n  const physical = integratedEconomicParentInput(file, comparisonPhysical, 'main');\n  assert(physical.equals(authored.raw) || physical.equals(Buffer.from(authored.content.replaceAll('\\n', '\\r\\n'))), 'The separately qualified combined source remains complete and exact');\n  const parents = {};\n  for (const [profile, parent] of Object.entries(profiles)) {\n    if (!businessDeskCombinedReaderFiles(profile).includes(file)) continue;\n",
+              "baseline": "};\nconst currentInputs = new Map(), expectedRows = new Map();\nfor (const file of files) {\n  const authored = record(source.sourceRevision, file), current = ciDeedRecoveryHistoricalRecord(file, record('HEAD', file));\n  const integration = record(integratedEconomicSource.revision, file);\n  assert(authored && current && integration);\n  assert.deepEqual(current.pin, integration.pin, 'The authored integration is the only current source admitted: ' + file);\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, text('ls-files', '--stage', '--', file), 'index').trim(), `${current.pin.mode} ${current.pin.blob} 0\\t${file}`, 'Current index identity qualifies before any historical view.');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical comparison source must be a regular file.');\n  const raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file));\n  assert(raw.equals(current.raw) || raw.equals(Buffer.from(current.content.replaceAll('\\n','\\r\\n'))),\n    'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);\n  const physical = integratedEconomicParentInput(file, raw, 'main');\n  assert(physical.equals(authored.raw) || physical.equals(Buffer.from(authored.content.replaceAll('\\n','\\r\\n'))),\n    'Original combined source identity after exact parent comparison: ' + file);\n  const parents = {};\n  for (const [profile, parent] of Object.entries(profiles)) {\n    if (!businessDeskCombinedReaderFiles(profile).includes(file)) continue;\n"
             }
           ]
         }
@@ -1937,23 +1961,23 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/businessdesk-native-provenance.js",
         "mode": "100644",
-        "blob": "44599133a49c0fe290d8c9bb9f5f5e66e082cac5",
-        "sha256": "4ca335f820f79f9cf26e7f5ef2cf4da7d824ca81ba21ed837d1145ff1632faa2",
-        "bytes": 13441,
+        "blob": "0dffa86a29a05ad5127ff045eec54a7b8d6f7ae9",
+        "sha256": "216959a9295137a4afead33b7ee93bda93adb70b1881b06549c12cec0d395c4e",
+        "bytes": 13733,
         "rawSha256": {
-          "lf": "4ca335f820f79f9cf26e7f5ef2cf4da7d824ca81ba21ed837d1145ff1632faa2",
-          "crlf": "a4e3141aa9078919a710e02319ee84a6ee09f580ab2f4176357643a3516dbc81"
+          "lf": "216959a9295137a4afead33b7ee93bda93adb70b1881b06549c12cec0d395c4e",
+          "crlf": "4a206e91620a36ddd59e98d59d9cbdaab679c86f141cf255b978a9875ee87781"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/businessdesk-native-provenance.js",
             "mode": "100644",
-            "blob": "171b81eb8cce5fe10961c667ee8fe01598afa3fb",
-            "sha256": "d7b64097e0c5a964339188aa1c5c200d57e8330886e9949219ab4b8b7a449b3f",
-            "bytes": 11410
+            "blob": "72a7b5ddb1ec96062de37949e0d3f60cb946ab68",
+            "sha256": "b3f9ee47bde9fb52cd8741681fdef4c231e3b4c475bb51b43b72e0f63652893c",
+            "bytes": 11685
           },
           "contextLines": 3,
           "inverses": [
@@ -1966,16 +1990,16 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
               "baseline": "assert.equal(archivedDeskNative.status, 'SEALED'); assert.equal(archivedDeskNative.version, 3);\nassert.equal(archivedDeskNative.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');\nassert(Object.isFrozen(currentNative) && Object.isFrozen(currentNative.files));\nassert.equal(activeNative.version, 7); assert.equal(activeNative.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');\nassert.equal(activeNative.files.find(row => row.file === 'tools/enterprise-native-deed-inputs.js').sha256,\n  'efffdc723601dbcac89c651092748c7931fa97a8f252a1f7c7045434237f858e');\nconst git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {\n"
             },
             {
-              "current": "  assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);\n};\nlet applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;\nlet activeCloneRefusals = 0, unsealedAdmissionRefusals = 0, acceptedParentRefusals = 0;\nconst reject = run => { assert.throws(run); refusals++; };\nconst rejectActiveClone = run => { assert.throws(run); activeCloneRefusals++; };\nfor (const [file, desk] of Object.entries(nativeParents.businessPins)) {\n  const previous = previousRows.get(file), archivedDesk = archivedDeskRows.get(file), expected = currentRows.get(file);\n  if (!previous) {\n",
-              "baseline": "  assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);\n};\nlet applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;\nconst reject = run => { assert.throws(run); refusals++; };\nfor (const [file, desk] of Object.entries(nativeParents.businessPins)) {\n  const previous = previousRows.get(file), archivedDesk = archivedDeskRows.get(file), expected = currentRows.get(file);\n  if (!previous) {\n"
+              "current": "  assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);\n};\nlet applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;\nlet activeCloneRefusals = 0, unsealedAdmissionRefusals = 0, acceptedParentRefusals = 0, successorRefusals = 0;\nconst reject = run => { assert.throws(run); refusals++; };\nconst rejectActiveClone = run => { assert.throws(run); activeCloneRefusals++; };\nfor (const [file, desk] of Object.entries(nativeParents.businessPins)) {\n  const previous = previousRows.get(file), archivedDesk = archivedDeskRows.get(file), expected = currentRows.get(file);\n  if (!previous) {\n",
+              "baseline": "  assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);\n};\nlet applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;\nlet successorRefusals = 0;\nconst reject = run => { assert.throws(run); refusals++; };\nfor (const [file, desk] of Object.entries(nativeParents.businessPins)) {\n  const previous = previousRows.get(file), archivedDesk = archivedDeskRows.get(file), expected = currentRows.get(file);\n  if (!previous) {\n"
             },
             {
-              "current": "  return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });\n};\nconst { file, previous, expected } = sample;\nconst actualSource = activeNative.status === 'SEALED' ? activeNative.authoredRevision : currentNative.authoredRevision;\nconst actualExpected = activeNative.status === 'SEALED' ? activeNative.files.find(row => row.file === file) : expected;\nconst current = record('HEAD', file), authored = record(actualSource, file);\nconst bytes = git('show', `${actualSource}:${file}`);\nif (activeNative.status === 'UNSEALED') {\n  assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes), /Unsealed current inputs cannot grant native admission/); unsealedAdmissionRefusals++;\n} else {\n  assert.equal(activeNative.status, 'SEALED'); assert(actualExpected);\n  assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');\n  assert.equal(sha(bytes), actualExpected.sha256); assert.equal(blob(bytes), actualExpected.blob);\n  const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);\n  assert(admitted && Object.isFrozen(admitted)); assert.strictEqual(admitted.current, actualExpected);\n  const accepted = acceptedNative.files.find(row => row.file === file); assert(accepted);\n  assert.strictEqual(admitted.intermediate, accepted, 'The upstream helper receives its exact canonical accepted V7 row');\n  assert.equal(admitted.intermediateRevision, acceptedNative.authoredRevision);\n  assert.strictEqual(admitted.predecessor, previous); assert.equal(admitted.predecessorRevision, previousNative.authoredRevision);\n  const deskProof = admitted.prior.deskProvenance ?? admitted.prior;\n  proofOf(deskProof, file, previous, expected);\n  assert.deepEqual(deskProof, sample.proof, 'The existing Desk provenance controls remain intact as a historical stage');\n  const parentBytes = git('show', currentNative.authoredRevision + ':' + file);\n  assert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);\n  if (actualExpected.blob !== expected.blob) {\n    assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes)); acceptedParentRefusals++;\n  }\n  assert.equal(admitted.nativeAdmission, false); assert.equal(admitted.priorResultsTransferred, false);\n}\nconst otherMode = current.mode === '100644' ? '100755' : '100644';\nfor (const [now, anchor, raw] of [\n  [current, authored, Buffer.concat([bytes, Buffer.from('\\n')])],\n",
-              "baseline": "  return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });\n};\nconst { file, previous, expected } = sample;\nconst current = record('HEAD', file), authored = record(activeNative.authoredRevision, file);\nconst bytes = git('show', activeNative.authoredRevision + ':' + file);\nassert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');\nconst activeRow = activeNative.files.find(row => row.file === file);\nassert.equal(sha(bytes), activeRow.sha256); assert.equal(blob(bytes), activeRow.blob);\nconst parentBytes = git('show', currentNative.authoredRevision + ':' + file);\nassert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);\nconst admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);\nassert.equal(admitted.current.blob, activeRow.blob);\nconst parentProof = admitted.deskProvenance ?? admitted;\nproofOf(parentProof, file, previous, expected); assert.deepEqual(parentProof, sample.proof);\nif (activeRow.blob !== expected.blob) reject(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));\nconst otherMode = current.mode === '100644' ? '100755' : '100644';\nfor (const [now, anchor, raw] of [\n  [current, authored, Buffer.concat([bytes, Buffer.from('\\n')])],\n"
+              "current": "  return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });\n};\nconst { file, previous, expected } = sample;\nconst actualSource = activeNative.status === 'SEALED' ? activeNative.authoredRevision : currentNative.authoredRevision;\nconst actualExpected = activeNative.status === 'SEALED' ? activeNative.files.find(row => row.file === file) : expected;\nconst current = record('HEAD', file), authored = record(actualSource, file);\nconst bytes = git('show', `${actualSource}:${file}`);\nconst successorBytesDiffer = activeNative.status === 'SEALED' && actualExpected.blob !== expected.blob;\nif (activeNative.status === 'UNSEALED') {\n  assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes), /Unsealed current inputs cannot grant native admission/); unsealedAdmissionRefusals++;\n} else {\n  assert.equal(activeNative.status, 'SEALED'); assert(actualExpected);\n  assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');\n  assert.equal(sha(bytes), actualExpected.sha256); assert.equal(blob(bytes), actualExpected.blob);\n  const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);\n  assert(admitted && Object.isFrozen(admitted)); assert.strictEqual(admitted.current, actualExpected);\n  const accepted = acceptedNative.files.find(row => row.file === file); assert(accepted);\n  assert.strictEqual(admitted.intermediate, accepted, 'The upstream helper receives its exact canonical accepted V7 row');\n  assert.equal(admitted.intermediateRevision, acceptedNative.authoredRevision);\n  assert.strictEqual(admitted.predecessor, previous); assert.equal(admitted.predecessorRevision, previousNative.authoredRevision);\n  const deskProof = admitted.prior.deskProvenance ?? admitted.prior;\n  proofOf(deskProof, file, previous, expected);\n  assert.deepEqual(deskProof, sample.proof, 'The existing Desk provenance controls remain intact as a historical stage');\n  const parentBytes = git('show', currentNative.authoredRevision + ':' + file);\n  assert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);\n  if (successorBytesDiffer) {\n    assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes)); acceptedParentRefusals++; successorRefusals++;\n  }\n  assert.equal(admitted.nativeAdmission, false); assert.equal(admitted.priorResultsTransferred, false);\n}\nconst otherMode = current.mode === '100644' ? '100755' : '100644';\nfor (const [now, anchor, raw] of [\n",
+              "baseline": "  return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });\n};\nconst { file, previous, expected } = sample;\nconst current = record('HEAD', file), authored = record(activeNative.authoredRevision, file);\nconst bytes = git('show', activeNative.authoredRevision + ':' + file);\nassert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');\nconst activeRow = activeNative.files.find(row => row.file === file);\nassert.equal(sha(bytes), activeRow.sha256); assert.equal(blob(bytes), activeRow.blob);\nconst parentBytes = git('show', currentNative.authoredRevision + ':' + file);\nassert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);\nconst admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);\nassert.equal(admitted.current.blob, activeRow.blob);\nconst parentProof = admitted.deskProvenance ?? admitted;\nproofOf(parentProof, file, previous, expected); assert.deepEqual(parentProof, sample.proof);\nconst successorBytesDiffer = activeRow.blob !== expected.blob;\nif (successorBytesDiffer) {\n  assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));\n  successorRefusals++;\n}\nconst otherMode = current.mode === '100644' ? '100755' : '100644';\nfor (const [now, anchor, raw] of [\n"
             },
             {
-              "current": "  [{ ...current, type: 'tree' }, authored, bytes],\n]) reject(() => assertEnterpriseUxTrackedInput(file, now, anchor, raw));\nreject(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));\nrejectActiveClone(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...activeNative })));\nfor (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../src/server.js',\n  undefined, null, 1, Symbol('src/server.js'), Object.freeze({ toString() { throw new Error('No coercion'); } })]) {\n  assert.equal(businessDeskCombinedNativeProvenance(unknown, previous, expected), null);\n}\nassert.equal(refusals, 65, 'All original Business refusal categories are retained.');\nassert.equal(activeCloneRefusals, 1, 'The current declaration clone is independently refused.');\nassert.equal(unsealedAdmissionRefusals, activeNative.status === 'UNSEALED' ? 1 : 0, 'Unsealed admission refusal remains separate from historical categories.');\nconsole.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,\n  activeCloneRefusals, unsealedAdmissionRefusals, acceptedParentRefusals,\n  authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));\n",
-              "baseline": "  [{ ...current, type: 'tree' }, authored, bytes],\n]) reject(() => assertEnterpriseUxTrackedInput(file, now, anchor, raw));\nreject(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));\nfor (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../src/server.js',\n  undefined, null, 1, Symbol('src/server.js'), Object.freeze({ toString() { throw new Error('No coercion'); } })]) {\n  assert.equal(businessDeskCombinedNativeProvenance(unknown, previous, expected), null);\n}\nassert.equal(refusals, 65, 'All original Business refusal categories are retained.');\nconsole.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,\n  authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));\n"
+              "current": "  [{ ...current, type: 'tree' }, authored, bytes],\n]) reject(() => assertEnterpriseUxTrackedInput(file, now, anchor, raw));\nreject(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));\nrejectActiveClone(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...activeNative })));\nfor (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../src/server.js',\n  undefined, null, 1, Symbol('src/server.js'), Object.freeze({ toString() { throw new Error('No coercion'); } })]) {\n  assert.equal(businessDeskCombinedNativeProvenance(unknown, previous, expected), null);\n}\nassert.equal(refusals, 65, 'All original Business refusal categories are retained.');\nassert.equal(successorRefusals, Number(successorBytesDiffer), 'Changed actual successor bytes additionally reject the frozen parent bytes.');\nassert.equal(activeCloneRefusals, 1, 'The current declaration clone is independently refused.');\nassert.equal(unsealedAdmissionRefusals, activeNative.status === 'UNSEALED' ? 1 : 0, 'Unsealed admission refusal remains separate from historical categories.');\nconsole.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,\n  activeCloneRefusals, unsealedAdmissionRefusals, acceptedParentRefusals, successorRefusals,\n  authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));\n",
+              "baseline": "  [{ ...current, type: 'tree' }, authored, bytes],\n]) reject(() => assertEnterpriseUxTrackedInput(file, now, anchor, raw));\nreject(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));\nfor (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../src/server.js',\n  undefined, null, 1, Symbol('src/server.js'), Object.freeze({ toString() { throw new Error('No coercion'); } })]) {\n  assert.equal(businessDeskCombinedNativeProvenance(unknown, previous, expected), null);\n}\nassert.equal(refusals, 65, 'All original Business refusal categories are retained.');\nassert.equal(successorRefusals, Number(successorBytesDiffer), 'Changed actual successor bytes additionally reject the frozen parent bytes.');\nconsole.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals, successorRefusals,\n  authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));\n"
             }
           ]
         }
@@ -1985,37 +2009,33 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/businessdesk-noir-source-compatibility.js",
         "mode": "100644",
-        "blob": "a25a5d2269e09c967092cf872b77d30fe1e87205",
-        "sha256": "93c67c3360b7a4a061ecfa8d3dfb25dca25cc02953ef285ac5c57afb39e34152",
-        "bytes": 23427,
+        "blob": "191441157c9a61ff16fadaa46950af680052814b",
+        "sha256": "050911b890dab5fb95c5cd0efd674d84aef551390e6052f2e1d4c504e5dbb995",
+        "bytes": 23772,
         "rawSha256": {
-          "lf": "93c67c3360b7a4a061ecfa8d3dfb25dca25cc02953ef285ac5c57afb39e34152",
-          "crlf": "b229ef50a72058819fec21a41386e262358e3eb83630efa20ef48a6d65c37548"
+          "lf": "050911b890dab5fb95c5cd0efd674d84aef551390e6052f2e1d4c504e5dbb995",
+          "crlf": "8b26b0dc7aab201a92ab3eb99231e65da64cc46e40869ac7e56509f92772853f"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/businessdesk-noir-source-compatibility.js",
             "mode": "100644",
-            "blob": "3651323b637b6c0a22b752ec74394b9e90722df8",
-            "sha256": "f0116326192e2a64bef522334dd4ae7f7f577e116d585f3226556b2af4f45cc7",
-            "bytes": 20532
+            "blob": "f08929adbf3d345de1831556b437269d6b0b3f03",
+            "sha256": "fe9c907d03c20612e436263c44845fb896971531dd52963544eb6cd64d30c600",
+            "bytes": 20822
           },
           "contextLines": 3,
           "inverses": [
             {
-              "current": "import { ENTERPRISE_NATIVE_UX_INPUTS as acceptedNative } from '../tools/enterprise-native-economic-release-inputs.js';\n// Exact combined-source qualification only; no runtime, native execution or release transfer.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\n",
-              "baseline": "// Exact combined-source qualification only; no runtime, native execution or release transfer.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\n"
+              "current": "import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport { ENTERPRISE_NATIVE_UX_INPUTS as acceptedNative } from '../tools/enterprise-native-economic-release-inputs.js';\n// Exact combined-source qualification only; no runtime, native execution or release transfer.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport { BUSINESS_DESK_NOIR_SOURCE, BUSINESS_DESK_NOIR_SOURCE_SHA256 } from '../tools/businessdesk-noir-source-data.js';\nimport { BUSINESS_DESK_NOIR_SOURCE_FILES, assertBusinessDeskNoirSourceTransfer,\n  businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\nimport { BUSINESS_DESK_NOIR_NATIVE_FILES } from '../tools/businessdesk-noir-native-provenance.js';\nimport { businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';\nimport { BUSINESS_DESK_COMBINED_NATIVE_PARENTS as nativeParents } from '../tools/businessdesk-combined-native-parents.js';\n",
+              "baseline": "// Exact combined-source qualification only; no runtime, native execution or release transfer.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport { BUSINESS_DESK_NOIR_SOURCE, BUSINESS_DESK_NOIR_SOURCE_SHA256 } from '../tools/businessdesk-noir-source-data.js';\nimport { BUSINESS_DESK_NOIR_SOURCE_FILES, assertBusinessDeskNoirSourceTransfer,\n  businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';\nimport { BUSINESS_DESK_NOIR_NATIVE_FILES } from '../tools/businessdesk-noir-native-provenance.js';\nimport { businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';\nimport { BUSINESS_DESK_COMBINED_NATIVE_PARENTS as nativeParents } from '../tools/businessdesk-combined-native-parents.js';\n"
             },
             {
-              "current": "import { BUSINESS_DESK_NOIR_SOURCE, BUSINESS_DESK_NOIR_SOURCE_SHA256 } from '../tools/businessdesk-noir-source-data.js';\nimport { BUSINESS_DESK_NOIR_SOURCE_FILES, assertBusinessDeskNoirSourceTransfer,\n  businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\nimport { BUSINESS_DESK_NOIR_NATIVE_FILES } from '../tools/businessdesk-noir-native-provenance.js';\nimport { businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';\nimport { BUSINESS_DESK_COMBINED_NATIVE_PARENTS as nativeParents } from '../tools/businessdesk-combined-native-parents.js';\n",
-              "baseline": "import { BUSINESS_DESK_NOIR_SOURCE, BUSINESS_DESK_NOIR_SOURCE_SHA256 } from '../tools/businessdesk-noir-source-data.js';\nimport { BUSINESS_DESK_NOIR_SOURCE_FILES, assertBusinessDeskNoirSourceTransfer,\n  businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';\nimport { BUSINESS_DESK_NOIR_NATIVE_FILES } from '../tools/businessdesk-noir-native-provenance.js';\nimport { businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';\nimport { BUSINESS_DESK_COMBINED_NATIVE_PARENTS as nativeParents } from '../tools/businessdesk-combined-native-parents.js';\n"
-            },
-            {
-              "current": "import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';\n\n\n// Admit actual HEAD, index and complete physical bytes before either source-only view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only actual regular committed source can be compared');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', 'HEAD:' + file);\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  const expectedEntry = outer?.targets.desk\n    ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');\n  const accepted = contractReleaseDeskInput(file, physical);\n  const acceptedLf = accepted.replaceAll('\\r\\n', '\\n');\n  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');\n  const acceptedEntry = outer?.targets.desk\n    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\\t' + file : actualEntry;\n  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted integration mode/blob qualifies before its parent comparison');\n  assert.equal(acceptedLf, git('show', integratedEconomicSource.revision + ':' + file), 'The complete accepted integration source remains exact');\n  const main = integratedEconomicParentInput(file, accepted, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source');\n  return main;\n}\n\n",
-              "baseline": "import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';\n\n\n// This comparison boundary admits actual C6 HEAD, index and physical bytes\n// before selecting a separately pinned historical parent. It executes no view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const authoredEntry = git('ls-tree', integratedEconomicSource.revision, '--', file).trim();\n  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', integratedEconomicSource.revision + ':' + file);\n  assert.equal(git('show', 'HEAD:' + file), authored, 'Actual HEAD retains the complete authored source');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const main = integratedEconomicParentInput(file, physical, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source: ' + file);\n  return main;\n}\n\n"
+              "current": "import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';\n\n\n// Admit actual HEAD, index and complete physical bytes before either source-only view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only actual regular committed source can be compared');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', 'HEAD:' + file);\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  const expectedEntry = outer?.targets.desk\n    ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');\n  const accepted = contractReleaseDeskInput(file, physical);\n  const acceptedLf = accepted.replaceAll('\\r\\n', '\\n');\n  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');\n  const acceptedEntry = outer?.targets.desk\n    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\\t' + file : actualEntry;\n  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');\n  const comparison = ciDeedRecoveryHistoricalInput(file, accepted);\n  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The separately qualified CI predecessor mode/blob matches the reviewed integration');\n  assert.equal(comparison.replaceAll('\\r\\n', '\\n'), git('show', integratedEconomicSource.revision + ':' + file), 'The complete frozen CI predecessor qualifies before its integration comparison');\n  const main = integratedEconomicParentInput(file, comparison, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source');\n  return main;\n}\n\n",
+              "baseline": "import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';\n\n\n// This comparison boundary admits actual C6 HEAD, index and physical bytes\n// before selecting a separately pinned historical parent. It executes no view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const authoredEntry = git('ls-tree', integratedEconomicSource.revision, '--', file).trim();\n  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file), 'tree').trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-files', '--stage', '--', file), 'index').trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', integratedEconomicSource.revision + ':' + file);\n  assert.equal(ciDeedRecoveryHistoricalInput(file, git('show', 'HEAD:' + file)), authored, 'Actual HEAD retains the complete authored source');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file)), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const main = integratedEconomicParentInput(file, physical, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source: ' + file);\n  return main;\n}\n\n"
             },
             {
               "current": "  }\n  assert.equal(reconstructed, target, 'Every actual inverse reconstructs the complete exact target; partial recovery grants no authority.');\n  const actualPhysical = readCombinedPhysical(file);\n  const physicalText = businessDeskCombinedHistoricalInput(file, contractReleaseDeskInput(file, actualPhysical), 'desk');\n  assert.equal(lf(physicalText), current, 'The exact Desk parent comparison retains its original whole-source binding.');\n  for (const input of [current, current.replaceAll('\\n', '\\r\\n'), physicalText]) {\n    const proof = assertBusinessDeskNoirSourceTransfer(file, input);\n",
@@ -2037,6 +2057,42 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
         }
       }
     },
+    "test/ci-deed-recovery-source.js": {
+      "current": {
+        "file": "test/ci-deed-recovery-source.js",
+        "mode": "100644",
+        "blob": "cd6dc70490ca481285e6a127c5dc300806c7daa3",
+        "sha256": "ac83bdda7d4d81a4c617413c99cca06f65a357c07920b262e08cf1bc68fd6f6b",
+        "bytes": 9742,
+        "rawSha256": {
+          "lf": "ac83bdda7d4d81a4c617413c99cca06f65a357c07920b262e08cf1bc68fd6f6b",
+          "crlf": "5c4841ab9840502dcd5e65ebda7fe2b9c0bded7e031969b13f389ca6576e1fe3"
+        }
+      },
+      "targets": {
+        "desk": {
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
+          "pin": {
+            "file": "test/ci-deed-recovery-source.js",
+            "mode": "100644",
+            "blob": "218c4509e658accffc5de98000e120c774d13362",
+            "sha256": "5ab7f45ccee4f9af3cd914a645e94bddd2cce30ef14635fae69cec152fefc0b6",
+            "bytes": 8099
+          },
+          "contextLines": 3,
+          "inverses": [
+            {
+              "current": "import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Current raw Git/index/physical admission precedes exact historical source comparisons.\n// This source-only proof executes no reconstructed test or runtime code.\nimport assert from 'node:assert/strict';\n",
+              "baseline": "// Current raw Git/index/physical admission precedes exact historical source comparisons.\n// This source-only proof executes no reconstructed test or runtime code.\nimport assert from 'node:assert/strict';\n"
+            },
+            {
+              "current": "    assert.equal(git('ls-tree', revision, '--', file).trim(), pin.mode + ' blob ' + pin.blob + '\\t' + file);\n    assert.equal(Buffer.byteLength(text), pin.bytes); assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob);\n  }\n  const rootEntry = git('ls-tree', 'HEAD', '--', file), rootIndex = git('ls-files', '--stage', '--', file);\n  const rootCommitted = git('show', 'HEAD:' + file), rootRaw = fs.readFileSync(file), rootStat = fs.lstatSync(file);\n  const match = rootEntry.trim().match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file && rootStat.isFile() && !rootStat.isSymbolicLink());\n  assert.equal(blob(rootCommitted), match[2], 'Complete actual Root committed source has its own exact blob');\n  assert.equal(rootIndex.trim(), match[1] + ' ' + match[2] + ' 0\\t' + file, 'Actual Root index qualifies before comparison');\n  assert(rootRaw.equals(Buffer.from(rootCommitted)) || rootRaw.equals(Buffer.from(rootCommitted.replaceAll('\\n', '\\r\\n'))), 'Complete actual Root physical bytes qualify before comparison');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;\n  const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file);\n  assert.equal(rootEntry.trim(), view ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file : acceptedEntry.trim(), 'Actual Root identity qualifies independently of the frozen CI comparison');\n  const actualEntry = view ? view.pin.mode + ' blob ' + view.pin.blob + '\\t' + file + '\\n' : rootEntry;\n  const actualIndex = actualEntry.replace(' blob ', ' ').replace('\\t', ' 0\\t');\n  assert.equal(actualEntry, acceptedEntry, 'The exact accepted current-main comparison has its independently pinned Git identity');\n  assert.equal(actualEntry.trim(), row.current.mode + ' blob ' + row.current.blob + '\\t' + file, 'Current HEAD is exact before any source comparison');\n  assert.equal(actualIndex.trim(), row.current.mode + ' ' + row.current.blob + ' 0\\t' + file, 'Current index is exact before any source comparison');\n  const committed = contractReleaseDeskInput(file, rootCommitted); assert.equal(committed, current, 'Complete frozen CI source qualifies after actual Root admission');\n  const stat = rootStat, raw = contractReleaseDeskInput(file, rootRaw); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\\n', '\\r\\n'))), 'Complete actual physical bytes qualify first');\n  for (const input of [current, current.replaceAll('\\n', '\\r\\n'), raw]) {\n    const proof = qualifyCiDeedRecoverySource(file, input);\n",
+              "baseline": "    assert.equal(git('ls-tree', revision, '--', file).trim(), pin.mode + ' blob ' + pin.blob + '\\t' + file);\n    assert.equal(Buffer.byteLength(text), pin.bytes); assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob);\n  }\n  const actualEntry = git('ls-tree', 'HEAD', '--', file), actualIndex = git('ls-files', '--stage', '--', file);\n  assert.equal(actualEntry.trim(), row.current.mode + ' blob ' + row.current.blob + '\\t' + file, 'Current HEAD is exact before any source comparison');\n  assert.equal(actualIndex.trim(), row.current.mode + ' ' + row.current.blob + ' 0\\t' + file, 'Current index is exact before any source comparison');\n  const committed = git('show', 'HEAD:' + file); assert.equal(committed, current, 'Complete committed current source qualifies first');\n  const stat = fs.lstatSync(file), raw = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\\n', '\\r\\n'))), 'Complete actual physical bytes qualify first');\n  for (const input of [current, current.replaceAll('\\n', '\\r\\n'), raw]) {\n    const proof = qualifyCiDeedRecoverySource(file, input);\n"
+            }
+          ]
+        }
+      }
+    },
     "test/companyopportunities.js": {
       "current": {
         "file": "test/companyopportunities.js",
@@ -2051,7 +2107,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/companyopportunities.js",
             "mode": "100644",
@@ -2073,49 +2129,49 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/deed-allocation-source-compatibility.js",
         "mode": "100644",
-        "blob": "69bf87d4e34dc4aca3999b3c53a3f4659ad74e90",
-        "sha256": "1323e5203cf8157c7a5d2d1d254e4de5e6c2c86db36f15938926ed259439f276",
-        "bytes": 23688,
+        "blob": "4698a9ef88e39d890ebe73ad3a1f12d5f87d7e20",
+        "sha256": "af230c0917a7b85e33bf1a1e4ef8bf007e8599133ec04e852ec9d9a7d6c740ca",
+        "bytes": 24471,
         "rawSha256": {
-          "lf": "1323e5203cf8157c7a5d2d1d254e4de5e6c2c86db36f15938926ed259439f276",
-          "crlf": "dcd4506787cca713ab12f2fb6d6b33a23a4174799a8575395b53886ee093e287"
+          "lf": "af230c0917a7b85e33bf1a1e4ef8bf007e8599133ec04e852ec9d9a7d6c740ca",
+          "crlf": "cfca2bc35df383a944a4bc5ae86806da5d851eee99d500ea37997998f7ffb2af"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/deed-allocation-source-compatibility.js",
             "mode": "100644",
-            "blob": "80947aa1a1d22b28f3bd499e71851a9e8672ac58",
-            "sha256": "2c1301ea7deccb7935e9c69b18ae1d3659641c1035793853425efec02bb02583",
-            "bytes": 20243
+            "blob": "ac5dbc7e3562d9c40a813734537e44a26e2097fc",
+            "sha256": "877ec4794aab533ba1fab5d522ecedbc3b8209c7ad2950d5682802de80b2d96d",
+            "bytes": 20643
           },
           "contextLines": 3,
           "inverses": [
             {
-              "current": "import assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n",
-              "baseline": "import assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';\nimport { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n"
+              "current": "import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\n// Exact app-source proof only. Historical test text is reconstructed for comparison, never execution.\nimport { businessDeskCombinedHistoricalInput, BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n",
+              "baseline": "// Exact app-source proof only. Historical test text is reconstructed for comparison, never execution.\nimport { businessDeskCombinedHistoricalInput, BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';\nimport { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n"
             },
             {
               "current": "  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\\t' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\\t' + file);\n  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, contractReleaseDeskInput(file, rawPhysical), 'main'), 'desk');\n  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,\n    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);\n  const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);\n",
-              "baseline": "  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\\t' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\\t' + file);\n  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, rawPhysical, 'main'), 'desk');\n  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,\n    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);\n  const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);\n"
+              "baseline": "  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\\t' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\\t' + file);\n  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, ciDeedRecoveryHistoricalInput(file, rawPhysical), 'main'), 'desk');\n  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,\n    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);\n  const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);\n"
             },
             {
               "current": "  'Deed source transfer grants no schema/native migration alias; only the separately pinned monitor index is reconstructed');\nfor (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',\n  'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])\n  assert.equal(lf(contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8'))), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),\n    'Historical literal source pins remain unchanged: ' + file);\nassert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-b35-inputs.js', 'utf8')),\n  git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:tools/enterprise-native-ux-inputs.js`),\n",
               "baseline": "  'Deed source transfer grants no schema/native migration alias; only the separately pinned monitor index is reconstructed');\nfor (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',\n  'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])\n  assert.equal(lf(fs.readFileSync(file, 'utf8')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),\n    'Historical literal source pins remain unchanged: ' + file);\nassert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-b35-inputs.js', 'utf8')),\n  git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:tools/enterprise-native-ux-inputs.js`),\n"
             },
             {
-              "current": "  'The qualified UX manifest retains its exact authored Git bytes at the original path');\nconsole.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);\n\n// Actual Root bytes qualify before the accepted integration comparison frame.\nassert.equal(CONTRACT_RELEASE_SOURCE_DATA.status, 'BOUND');\nassert.equal(git('rev-parse', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + '^{tree}').trim(),\n  CONTRACT_RELEASE_SOURCE_DATA.baseTree);\nfunction readAcceptedIntegrationPhysical(file) {\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const actual = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(actual && actual[3] === file, 'Only actual regular committed source qualifies');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(),\n    actual[1] + ' ' + actual[2] + ' 0\\t' + file, 'Actual index mode/blob qualifies before projection');\n  const head = git('show', 'HEAD:' + file);\n  assert.equal(blob(head), actual[2], 'Complete actual Git source has its own exact blob');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source qualifies first');\n  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual LF/CRLF physical source qualifies before any historical comparison');\n  const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  const accepted = acceptedEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(accepted && accepted[3] === file, 'Regular accepted integration source required');\n  const acceptedText = git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file);\n  assert.equal(blob(acceptedText), accepted[2], 'Complete accepted Git source has its own exact blob');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  if (outer?.targets.desk) {\n    assert.deepEqual(outer.current, { file, mode: actual[1], blob: actual[2], sha256: sha256(head),\n      bytes: Buffer.byteLength(head), rawSha256: { lf: sha256(head), crlf: sha256(head.replaceAll('\\n', '\\r\\n')) } },\n    'The complete actual Root source identity qualifies before projection');\n    assert.equal(outer.targets.desk.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);\n    assert.deepEqual(outer.targets.desk.pin, { file, mode: accepted[1], blob: accepted[2],\n      sha256: sha256(acceptedText), bytes: Buffer.byteLength(acceptedText) });\n  } else {\n    assert.equal(actualEntry, acceptedEntry, 'An unchanged Root input retains its exact accepted mode/blob');\n    assert.equal(head, acceptedText, 'An unchanged Root input retains its complete accepted source');\n  }\n  const acceptedRaw = contractReleaseDeskInput(file, raw);\n  assert(Buffer.isBuffer(acceptedRaw), 'The comparison-only projection preserves Buffer type');\n  const acceptedPhysical = acceptedRaw.toString('utf8');\n  assert(Buffer.from(acceptedPhysical).equals(acceptedRaw), 'Lossless accepted comparison source');\n  assert(acceptedPhysical === acceptedText || acceptedPhysical === acceptedText.replaceAll('\\n', '\\r\\n'),\n    'The whole accepted integration source qualifies after actual Root admission');\n  assert.equal(sha256(lf(acceptedPhysical)), sha256(acceptedText));\n  assert.equal(blob(lf(acceptedPhysical)), accepted[2]);\n  assert.equal(Buffer.byteLength(lf(acceptedPhysical)), Buffer.byteLength(acceptedText));\n  return { raw: acceptedRaw, text: acceptedPhysical, entry: acceptedEntry };\n}\n\n// The authored merge and the Deed release both stay independently identifiable after later proof commits.\nassert.equal(combined.source,'c220834210928560f303795086ee1098d0a65509');\nassert.equal(combined.predecessor,'4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364');\n",
+              "current": "  'The qualified UX manifest retains its exact authored Git bytes at the original path');\nconsole.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);\n\n// Actual Root bytes qualify before the accepted integration comparison frame.\nassert.equal(CONTRACT_RELEASE_SOURCE_DATA.status, 'BOUND');\nassert.equal(git('rev-parse', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + '^{tree}').trim(),\n  CONTRACT_RELEASE_SOURCE_DATA.baseTree);\nfunction readAcceptedIntegrationPhysical(file) {\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const actual = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(actual && actual[3] === file, 'Only actual regular committed source qualifies');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(),\n    actual[1] + ' ' + actual[2] + ' 0\\t' + file, 'Actual index mode/blob qualifies before projection');\n  const head = git('show', 'HEAD:' + file);\n  assert.equal(blob(head), actual[2], 'Complete actual Git source has its own exact blob');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source qualifies first');\n  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual LF/CRLF physical source qualifies before any historical comparison');\n  const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  const accepted = acceptedEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(accepted && accepted[3] === file, 'Regular accepted integration source required');\n  const acceptedText = git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file);\n  assert.equal(blob(acceptedText), accepted[2], 'Complete accepted Git source has its own exact blob');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  if (outer?.targets.desk) {\n    assert.deepEqual(outer.current, { file, mode: actual[1], blob: actual[2], sha256: sha256(head),\n      bytes: Buffer.byteLength(head), rawSha256: { lf: sha256(head), crlf: sha256(head.replaceAll('\\n', '\\r\\n')) } },\n    'The complete actual Root source identity qualifies before projection');\n    assert.equal(outer.targets.desk.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);\n    assert.deepEqual(outer.targets.desk.pin, { file, mode: accepted[1], blob: accepted[2],\n      sha256: sha256(acceptedText), bytes: Buffer.byteLength(acceptedText) });\n  } else {\n    assert.equal(actualEntry, acceptedEntry, 'An unchanged Root input retains its exact accepted mode/blob');\n    assert.equal(head, acceptedText, 'An unchanged Root input retains its complete accepted source');\n  }\n  const acceptedRaw = contractReleaseDeskInput(file, raw);\n  assert(Buffer.isBuffer(acceptedRaw), 'The comparison-only projection preserves Buffer type');\n  const acceptedPhysical = acceptedRaw.toString('utf8');\n  assert(Buffer.from(acceptedPhysical).equals(acceptedRaw), 'Lossless accepted comparison source');\n  assert(acceptedPhysical === acceptedText || acceptedPhysical === acceptedText.replaceAll('\\n', '\\r\\n'),\n    'The whole accepted integration source qualifies after actual Root admission');\n  assert.equal(sha256(lf(acceptedPhysical)), sha256(acceptedText));\n  assert.equal(blob(lf(acceptedPhysical)), accepted[2]);\n  assert.equal(Buffer.byteLength(lf(acceptedPhysical)), Buffer.byteLength(acceptedText));\n  const comparisonRaw = ciDeedRecoveryHistoricalInput(file, acceptedRaw);\n  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');\n  const comparisonText = comparisonRaw.toString('utf8');\n  assert(Buffer.isBuffer(comparisonRaw) && Buffer.from(comparisonText).equals(comparisonRaw));\n  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The exact CI predecessor retains the reviewed integration identity');\n  assert.equal(lf(comparisonText), git('show', integratedEconomicSource.revision + ':' + file), 'Complete frozen CI predecessor qualifies before older Deed comparisons');\n  return { raw: comparisonRaw, text: comparisonText, entry: comparisonEntry };\n}\n\n// The authored merge and the Deed release both stay independently identifiable after later proof commits.\nassert.equal(combined.source,'c220834210928560f303795086ee1098d0a65509');\nassert.equal(combined.predecessor,'4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364');\n",
               "baseline": "  'The qualified UX manifest retains its exact authored Git bytes at the original path');\nconsole.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);\n\n// The authored merge and the Deed release both stay independently identifiable after later proof commits.\nassert.equal(combined.source,'c220834210928560f303795086ee1098d0a65509');\nassert.equal(combined.predecessor,'4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364');\n"
             },
             {
               "current": "    assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\\t'+file);\n    assert.equal(sha256(text),pin.sha256); assert.equal(Buffer.byteLength(text),pin.bytes);\n  }\n  const { text: physical, entry: acceptedEntry } = readAcceptedIntegrationPhysical(file);\n  assert.equal(acceptedEntry,git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),\n    'Accepted mode and blob must match the reviewed integrated source: '+file);\n  if(economicOnly || Object.hasOwn(combined.files,file)) {\n    assert.equal(lf(integratedEconomicParentInput(file,physical,'economic')),current,'Exact economic merge parent: '+file);\n  }\n",
-              "baseline": "    assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\\t'+file);\n    assert.equal(sha256(text),pin.sha256); assert.equal(Buffer.byteLength(text),pin.bytes);\n  }\n  const physical=fs.readFileSync(file,'utf8'), head=git('show','HEAD:'+file);\n  assert(physical===head || physical===head.replaceAll('\\n','\\r\\n'),'Exact physical integration source: '+file);\n  assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),\n    'Current mode and blob must match the reviewed integrated source: '+file);\n  if(economicOnly || Object.hasOwn(combined.files,file)) {\n    assert.equal(lf(integratedEconomicParentInput(file,physical,'economic')),current,'Exact economic merge parent: '+file);\n  }\n"
+              "baseline": "    assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\\t'+file);\n    assert.equal(sha256(text),pin.sha256); assert.equal(Buffer.byteLength(text),pin.bytes);\n  }\n  const physical=ciDeedRecoveryHistoricalInput(file,fs.readFileSync(file,'utf8')), head=ciDeedRecoveryHistoricalInput(file,git('show','HEAD:'+file));\n  assert(physical===head || physical===head.replaceAll('\\n','\\r\\n'),'Exact physical integration source: '+file);\n  assert.equal(ciDeedRecoveryHistoricalEntry(file,git('ls-tree','HEAD','--',file),'tree').trim(),git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),\n    'Current mode and blob must match the reviewed integrated source: '+file);\n  if(economicOnly || Object.hasOwn(combined.files,file)) {\n    assert.equal(lf(integratedEconomicParentInput(file,physical,'economic')),current,'Exact economic merge parent: '+file);\n  }\n"
             },
             {
               "current": "      assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\\t'+file);\n      assert.equal(sha256(source),pin.sha256); assert.equal(Buffer.byteLength(source),pin.bytes);\n    }\n    const { raw, entry: acceptedEntry } = readAcceptedIntegrationPhysical(file);\n    assert.equal(acceptedEntry,git('ls-tree',integration.revision,'--',file).trim());\n    assert.equal(acceptedEntry,row.current.mode+' blob '+row.current.blob+'\\t'+file);\n    assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\\n','\\r\\n'))));\n    for (const input of [current,current.replaceAll('\\n','\\r\\n'),raw]) {\n      const result = integratedEconomicParentInput(file,input,profile);\n",
-              "baseline": "      assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\\t'+file);\n      assert.equal(sha256(source),pin.sha256); assert.equal(Buffer.byteLength(source),pin.bytes);\n    }\n    assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integration.revision,'--',file).trim());\n    assert.equal(git('ls-files','--stage','--',file).trim(),row.current.mode+' '+row.current.blob+' 0\\t'+file);\n    const stat=fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n    const raw = fs.readFileSync(file);\n    assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\\n','\\r\\n'))));\n    for (const input of [current,current.replaceAll('\\n','\\r\\n'),raw]) {\n      const result = integratedEconomicParentInput(file,input,profile);\n"
+              "baseline": "      assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\\t'+file);\n      assert.equal(sha256(source),pin.sha256); assert.equal(Buffer.byteLength(source),pin.bytes);\n    }\n    assert.equal(ciDeedRecoveryHistoricalEntry(file,git('ls-tree','HEAD','--',file),'tree').trim(),git('ls-tree',integration.revision,'--',file).trim());\n    assert.equal(ciDeedRecoveryHistoricalEntry(file,git('ls-files','--stage','--',file),'index').trim(),row.current.mode+' '+row.current.blob+' 0\\t'+file);\n    const stat=fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n    const raw = ciDeedRecoveryHistoricalInput(file,fs.readFileSync(file));\n    assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\\n','\\r\\n'))));\n    for (const input of [current,current.replaceAll('\\n','\\r\\n'),raw]) {\n      const result = integratedEconomicParentInput(file,input,profile);\n"
             }
           ]
         }
@@ -2125,33 +2181,33 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/economy-deed-merge-source-compatibility.js",
         "mode": "100644",
-        "blob": "927023e07b4d426ee4038e9ac25b00388ac97a76",
-        "sha256": "7b874267a43c06c797d093803655281b634db820dbeb747a211fced2b98eafbe",
-        "bytes": 18008,
+        "blob": "df8df97b8e0a9f9f2d55a670583896587a92aa4e",
+        "sha256": "5c7b985fbafcb5cfbe82c2ff85b5ffb6031581c8bf87f72b97e897c5becfe658",
+        "bytes": 18353,
         "rawSha256": {
-          "lf": "7b874267a43c06c797d093803655281b634db820dbeb747a211fced2b98eafbe",
-          "crlf": "c33ac29b84e6a9276c461dec54bb4f43a0ab7db463716368d0c966d6f2a59c98"
+          "lf": "5c7b985fbafcb5cfbe82c2ff85b5ffb6031581c8bf87f72b97e897c5becfe658",
+          "crlf": "74f55b6ce0883ad2ad1124f06f96b5ee65bf888850c7d27e983a1bd76707f1bd"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/economy-deed-merge-source-compatibility.js",
             "mode": "100644",
-            "blob": "a0dd6bf3147cbf4f1fb4045ec545490d31b7f481",
-            "sha256": "eb7e2842654d95b44e086cb627443678694a7c42f4d307a9da837997eeb0a636",
-            "bytes": 17040
+            "blob": "cc912f83d1d6719cb1c720478e57d3d04242122c",
+            "sha256": "861fc568140e637000828e375562894d5f42bb9c578f754d4a7d1a95b0c8b8ff",
+            "bytes": 17330
           },
           "contextLines": 3,
           "inverses": [
             {
-              "current": "import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Exact immutable Git source/provenance controls; no reconstructed source is executed.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\n",
-              "baseline": "// Exact immutable Git source/provenance controls; no reconstructed source is executed.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\n"
+              "current": "import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Exact immutable Git source/provenance controls; no reconstructed source is executed.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\n",
+              "baseline": "// Exact immutable Git source/provenance controls; no reconstructed source is executed.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\n"
             },
             {
-              "current": "  return rows;\n};\n\n// Admit actual HEAD, index and complete physical bytes before either source-only view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only actual regular committed source can be compared');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', 'HEAD:' + file);\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  const expectedEntry = outer?.targets.desk\n    ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');\n  const accepted = contractReleaseDeskInput(file, physical);\n  const acceptedLf = accepted.replaceAll('\\r\\n', '\\n');\n  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');\n  const acceptedEntry = outer?.targets.desk\n    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\\t' + file : actualEntry;\n  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted integration mode/blob qualifies before its parent comparison');\n  assert.equal(acceptedLf, git('show', integratedEconomicSource.revision + ':' + file), 'The complete accepted integration source remains exact');\n  const main = integratedEconomicParentInput(file, accepted, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source');\n  return main;\n}\n\n",
-              "baseline": "  return rows;\n};\n\n// This comparison boundary admits actual C6 HEAD, index and physical bytes\n// before selecting a separately pinned historical parent. It executes no view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const authoredEntry = git('ls-tree', integratedEconomicSource.revision, '--', file).trim();\n  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', integratedEconomicSource.revision + ':' + file);\n  assert.equal(git('show', 'HEAD:' + file), authored, 'Actual HEAD retains the complete authored source');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const main = integratedEconomicParentInput(file, physical, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source: ' + file);\n  return main;\n}\n\n"
+              "current": "  return rows;\n};\n\n// Admit actual HEAD, index and complete physical bytes before either source-only view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only actual regular committed source can be compared');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', 'HEAD:' + file);\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  const expectedEntry = outer?.targets.desk\n    ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');\n  const accepted = contractReleaseDeskInput(file, physical);\n  const acceptedLf = accepted.replaceAll('\\r\\n', '\\n');\n  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');\n  const acceptedEntry = outer?.targets.desk\n    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\\t' + file : actualEntry;\n  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');\n  const comparison = ciDeedRecoveryHistoricalInput(file, accepted);\n  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The separately qualified CI predecessor mode/blob matches the reviewed integration');\n  assert.equal(comparison.replaceAll('\\r\\n', '\\n'), git('show', integratedEconomicSource.revision + ':' + file), 'The complete frozen CI predecessor qualifies before its integration comparison');\n  const main = integratedEconomicParentInput(file, comparison, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source');\n  return main;\n}\n\n",
+              "baseline": "  return rows;\n};\n\n// This comparison boundary admits actual C6 HEAD, index and physical bytes\n// before selecting a separately pinned historical parent. It executes no view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const authoredEntry = git('ls-tree', integratedEconomicSource.revision, '--', file).trim();\n  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file), 'tree').trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-files', '--stage', '--', file), 'index').trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', integratedEconomicSource.revision + ':' + file);\n  assert.equal(ciDeedRecoveryHistoricalInput(file, git('show', 'HEAD:' + file)), authored, 'Actual HEAD retains the complete authored source');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file)), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const main = integratedEconomicParentInput(file, physical, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source: ' + file);\n  return main;\n}\n\n"
             },
             {
               "current": "const reject = action => { assert.throws(action, error => error?.code === 'ERR_ASSERTION'); refusals++; };\nfor (const row of source.files) {\n  const actualPhysical = readCombinedPhysical(row.file);\n  const physical = businessDeskCombinedHistoricalInput(row.file, contractReleaseDeskInput(row.file, actualPhysical), 'monitor'), current = git('show', source.sourceRevision + ':' + row.file);\n  const stat = fs.lstatSync(row.file); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert.equal(lf(physical), current, 'The exact Monitor parent retains its current complete integration postimage.');\n  assert.equal(sha(current), row.current.sha256); assert.equal(blob(current), row.current.blob);\n",
@@ -2175,7 +2231,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/economy-hardening-source-compatibility.js",
             "mode": "100644",
@@ -2209,33 +2265,33 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/economy-monitor-source-compatibility.js",
         "mode": "100644",
-        "blob": "583f2b4e9551b9e9fc919912551a5d5f2aad81e5",
-        "sha256": "6478ef009e71a0e4fbb50466ff227c8c1de8cb50f2e4b081447828f03f4d8f66",
-        "bytes": 18885,
+        "blob": "ffeb815452445a8b5147670b7317d61923c9d3ae",
+        "sha256": "e441c86ba8f01a7ca968b1f3d7237fe9242097a62d39ca665c1d234ad64ad7d9",
+        "bytes": 19180,
         "rawSha256": {
-          "lf": "6478ef009e71a0e4fbb50466ff227c8c1de8cb50f2e4b081447828f03f4d8f66",
-          "crlf": "f329ff10d5d8f618c14ea2dada392743d1a46c71f3a400750e71b90211c72a84"
+          "lf": "e441c86ba8f01a7ca968b1f3d7237fe9242097a62d39ca665c1d234ad64ad7d9",
+          "crlf": "50c808d25e52a60feb3fe36f6e96a6b5de9be4bc90e39865050d9ac84129f414"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/economy-monitor-source-compatibility.js",
             "mode": "100644",
-            "blob": "fe5c7265715f57da19f70681775ba2bfab9e2181",
-            "sha256": "311a9c3cf88d2e8d55db80a3c819f29cd1ffac28048a60966aaf58863c1c792e",
-            "bytes": 17268
+            "blob": "9c3267026cd672948a3bd09ce1bbb624c87c515b",
+            "sha256": "1776b4995643464207c0c7db5e911808800ef7d66cd283cf6ed64ea8e6971812",
+            "bytes": 17558
           },
           "contextLines": 3,
           "inverses": [
             {
-              "current": "import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Exact source/control proofs only. Runtime and native tests execute physical current bytes.\nimport { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport { integratedEconomicSource } from '../tools/integrated-economic-parent-source.js';\n",
-              "baseline": "// Exact source/control proofs only. Runtime and native tests execute physical current bytes.\nimport { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport { integratedEconomicSource } from '../tools/integrated-economic-parent-source.js';\n"
+              "current": "import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Exact source/control proofs only. Runtime and native tests execute physical current bytes.\nimport { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport { integratedEconomicSource } from '../tools/integrated-economic-parent-source.js';\nimport assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n",
+              "baseline": "// Exact source/control proofs only. Runtime and native tests execute physical current bytes.\nimport { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport { integratedEconomicSource } from '../tools/integrated-economic-parent-source.js';\nimport { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n"
             },
             {
-              "current": "function readMonitorSource(file) {\n  const entry = git('ls-tree', 'HEAD', '--', file).trim();\n  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\\t/);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\\t', ' 0\\t'));\n  const committed = git('show', 'HEAD:' + file), raw = fs.readFileSync(file);\n  const actual = raw.toString('utf8'), stat = fs.lstatSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));\n  assert(actual === committed || actual === committed.replaceAll('\\n', '\\r\\n'), 'Whole actual physical LF/CRLF source qualifies before projection');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;\n  const expectedEntry = view ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(entry, expectedEntry, 'Actual Monitor source has its independently qualified current identity');\n  const accepted = contractReleaseDeskInput(file, actual);\n  const acceptedEntry = view ? view.pin.mode + ' blob ' + view.pin.blob + '\\t' + file : entry;\n  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted Monitor source mode/blob matches the reviewed integration');\n  assert.equal(accepted.replaceAll('\\r\\n','\\n'), git('show', integratedEconomicSource.revision + ':' + file), 'Complete reviewed integration source before Monitor comparison');\n  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, accepted, 'monitor'), 'monitor');\n}\n\nconst inverseHunks = diff => {\n  const inverses = []; let hunk = null;\n  for (const line of diff.split('\\n')) {\n",
-              "baseline": "function readMonitorSource(file) {\n  const entry = git('ls-tree', 'HEAD', '--', file).trim();\n  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\\t/);\n  assert.equal(entry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),\n    'Monitor source must match the reviewed integration: ' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\\t', ' 0\\t'));\n  const committed = git('show', 'HEAD:' + file), raw = fs.readFileSync(file);\n  const actual = raw.toString('utf8'), stat = fs.lstatSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));\n  assert(actual === committed || actual === committed.replaceAll('\\n', '\\r\\n'), 'Whole actual physical LF/CRLF source qualifies before projection');\n  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, actual, 'monitor'), 'monitor');\n}\nconst inverseHunks = diff => {\n  const inverses = []; let hunk = null;\n  for (const line of diff.split('\\n')) {\n"
+              "current": "const hash = text => crypto.createHash('sha256').update(text).digest('hex');\nconst blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\\0`).update(text).digest('hex');\nfunction readMonitorSource(file) {\n  const entry = git('ls-tree', 'HEAD', '--', file).trim();\n  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\\t/);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\\t', ' 0\\t'));\n  const committed = git('show', 'HEAD:' + file), raw = fs.readFileSync(file);\n  const actual = raw.toString('utf8'), stat = fs.lstatSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));\n  assert(actual === committed || actual === committed.replaceAll('\\n', '\\r\\n'), 'Whole actual physical LF/CRLF source qualifies before projection');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;\n  const expectedEntry = view ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(entry, expectedEntry, 'Actual Monitor source has its independently qualified current identity');\n  const accepted = contractReleaseDeskInput(file, actual);\n  const acceptedEntry = view ? view.pin.mode + ' blob ' + view.pin.blob + '\\t' + file : entry;\n  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');\n  const comparison = ciDeedRecoveryHistoricalInput(file, accepted);\n  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The exact CI predecessor mode/blob matches the reviewed Monitor integration');\n  assert.equal(comparison.replaceAll('\\r\\n','\\n'), git('show', integratedEconomicSource.revision + ':' + file), 'Complete frozen CI predecessor source before Monitor comparison');\n  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, comparison, 'monitor'), 'monitor');\n}\n\nconst inverseHunks = diff => {\n  const inverses = []; let hunk = null;\n  for (const line of diff.split('\\n')) {\n",
+              "baseline": "const hash = text => crypto.createHash('sha256').update(text).digest('hex');\nconst blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\\0`).update(text).digest('hex');\nfunction readMonitorSource(file) {\n  const entry = ciDeedRecoveryHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file), 'tree').trim();\n  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\\t/);\n  assert.equal(entry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),\n    'Monitor source must match the reviewed integration: ' + file);\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-files', '--stage', '--', file), 'index').trim(), entry.replace(' blob ', ' ').replace('\\t', ' 0\\t'));\n  const committed = ciDeedRecoveryHistoricalInput(file, git('show', 'HEAD:' + file)), raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file));\n  const actual = raw.toString('utf8'), stat = fs.lstatSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));\n  assert(actual === committed || actual === committed.replaceAll('\\n', '\\r\\n'), 'Whole actual physical LF/CRLF source qualifies before projection');\n  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, actual, 'monitor'), 'monitor');\n}\nconst inverseHunks = diff => {\n  const inverses = []; let hunk = null;\n  for (const line of diff.split('\\n')) {\n"
             },
             {
               "current": "  [readerPin, assertEconomyMonitorReaderSource, economyMonitorReaderHistoricalInput],\n  ...Object.values(releasePins).map(pin => [pin, assertEconomyMonitorReleaseSource, economyMonitorReleaseHistoricalInput]),\n]) {\n  const { file } = pin, committed = git('show', 'HEAD:' + file), entry = git('ls-tree', 'HEAD', '--', file).trim();\n  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\\t/);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\\t', ' 0\\t'),\n    'The release reader qualifies actual raw HEAD/index before its explicit Monitor comparison view');\n  const raw = fs.readFileSync(file), actual = raw.toString('utf8'), stat = fs.lstatSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));\n  assert(actual === committed || actual === committed.replaceAll('\\n', '\\r\\n'), 'Whole actual physical LF/CRLF source qualifies before projection');\n  const physical = readMonitorSource(file).replaceAll('\\r\\n', '\\n');\n  const baseline = git('show', `${pin.predecessorRevision}:${file}`);\n  const priorReleaseSource = ['test/gates.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js'].includes(file);\n  assert.equal(pin.predecessorRevision, priorReleaseSource ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);\n",
@@ -2259,7 +2315,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/lib/enterprise-ux-native-guard.js",
             "mode": "100644",
@@ -2315,7 +2371,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/lib/rc1-historical-source-fixture.js",
             "mode": "100644",
@@ -2388,7 +2444,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/lib/ux-journeys.js",
             "mode": "100644",
@@ -2434,17 +2490,17 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/noir-ui-source-compatibility.js",
         "mode": "100644",
-        "blob": "fd2dfb4799160b7a6de47d4c535f8cc72cbf44d2",
-        "sha256": "70934091ed398e8299e4d1f201b1ec940f1b08219b9f655423d94d203e855de4",
-        "bytes": 9512,
+        "blob": "6b9f6fc4f420a1182a26f825c79d9c9cb6805840",
+        "sha256": "bbe378f0d74f17500d5fccbe869b45944363797c361d72bc0d37fe8d95e5d17c",
+        "bytes": 9856,
         "rawSha256": {
-          "lf": "70934091ed398e8299e4d1f201b1ec940f1b08219b9f655423d94d203e855de4",
-          "crlf": "e57dae5ac95f3348482b4914d9a670af473b65da2c0935359b2ac1a80dc3738f"
+          "lf": "bbe378f0d74f17500d5fccbe869b45944363797c361d72bc0d37fe8d95e5d17c",
+          "crlf": "59c1958642123ea90e7062913764696032953d84b9043fab9c93e1f30471465b"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/noir-ui-source-compatibility.js",
             "mode": "100644",
@@ -2455,7 +2511,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
           "contextLines": 3,
           "inverses": [
             {
-              "current": "// Qualify actual redesigned bytes independently of the historical readers they preserve.\nimport { BUSINESS_DESK_COMBINED_PROFILES, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';\nimport { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,\n  noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';\n",
+              "current": "import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\n// Qualify actual redesigned bytes independently of the historical readers they preserve.\nimport { BUSINESS_DESK_COMBINED_PROFILES, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';\nimport { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,\n  noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';\n",
               "baseline": "// Qualify actual redesigned bytes independently of the historical readers they preserve.\nimport { BUSINESS_DESK_COMBINED_PROFILES, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';\nimport { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,\n  noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';\n"
             },
             {
@@ -2463,7 +2519,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
               "baseline": "  assert.equal(currentEntry, '100644 blob ' + currentBlob + '\\t' + file, 'Only actual committed regular source is compared');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\\t' + file,\n    'The actual index qualifies before a historical comparison');\n  const deskPhysical = businessDeskCombinedHistoricalInput(file, rawPhysical, 'desk');\n  const physical = businessDeskNoirHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'noir'), 'noir');\n  const merged = WIKI_MEDIA_NOIR_MERGE_SOURCE.files[file];\n  if (merged) {\n    const wikiPhysical = businessDeskCombinedHistoricalInput(file, rawPhysical, 'wiki');\n    const wikiRevision = BUSINESS_DESK_COMBINED_PROFILES.wiki.revision;\n    const wikiCheckedOut = git('show', wikiRevision + ':' + file);\n    assert(wikiPhysical === wikiCheckedOut || wikiPhysical === wikiCheckedOut.replaceAll('\\n', '\\r\\n'),\n"
             },
             {
-              "current": "  assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);\n  const combined = combinedEconomicDeedPin.noirFiles[file];\n  if (combined) {\n    // Actual HEAD, index and whole physical bytes qualified above; project only after that admission.\n    const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;\n    const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n    assert.equal(currentEntry, view ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file : acceptedEntry,\n      'Current Root mode/blob qualifies before its accepted integration comparison');\n    const acceptedPhysical = contractReleaseDeskInput(file, rawPhysical);\n    const acceptedText = git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file);\n    assert(acceptedPhysical === acceptedText || acceptedPhysical === acceptedText.replaceAll('\\n', '\\r\\n'),\n      'Complete accepted integration source qualifies after actual Root admission');\n    if (view) {\n      assert.equal(view.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);\n      assert.equal(acceptedEntry, view.pin.mode + ' blob ' + view.pin.blob + '\\t' + file);\n    }\n    assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),\n      'Accepted mode/blob matches the frozen integration before its economic parent comparison');\n    assert.equal(acceptedText, git('show', integratedEconomicSource.revision + ':' + file));\n    const actual = lf(integratedEconomicParentInput(file, acceptedPhysical, 'economic'));\n    assert.equal(actual, git('show', `${combinedEconomicDeedPin.source}:${file}`));\n    assert.equal(sha(actual), combined.current.sha256);\n    assert.equal(sha(committed), combined.baseline.sha256);\n",
+              "current": "  assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);\n  const combined = combinedEconomicDeedPin.noirFiles[file];\n  if (combined) {\n    // Actual HEAD, index and whole physical bytes qualified above; project only after that admission.\n    const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;\n    const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n    assert.equal(currentEntry, view ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file : acceptedEntry,\n      'Current Root mode/blob qualifies before its accepted integration comparison');\n    const acceptedPhysical = contractReleaseDeskInput(file, rawPhysical);\n    const acceptedText = git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file);\n    assert(acceptedPhysical === acceptedText || acceptedPhysical === acceptedText.replaceAll('\\n', '\\r\\n'),\n      'Complete accepted integration source qualifies after actual Root admission');\n    if (view) {\n      assert.equal(view.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);\n      assert.equal(acceptedEntry, view.pin.mode + ' blob ' + view.pin.blob + '\\t' + file);\n    }\n    const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');\n    const comparisonPhysical = ciDeedRecoveryHistoricalInput(file, acceptedPhysical);\n    assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),\n      'The separately qualified CI predecessor mode/blob matches the frozen integration before its economic parent comparison');\n    assert.equal(lf(comparisonPhysical), git('show', integratedEconomicSource.revision + ':' + file));\n    const actual = lf(integratedEconomicParentInput(file, comparisonPhysical, 'economic'));\n    assert.equal(actual, git('show', `${combinedEconomicDeedPin.source}:${file}`));\n    assert.equal(sha(actual), combined.current.sha256);\n    assert.equal(sha(committed), combined.baseline.sha256);\n",
               "baseline": "  assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);\n  const combined = combinedEconomicDeedPin.noirFiles[file];\n  if (combined) {\n    const actual = lf(integratedEconomicParentInput(file, rawPhysical, 'economic'));\n    assert.equal(actual, git('show', `${combinedEconomicDeedPin.source}:${file}`));\n    assert.equal(sha(actual), combined.current.sha256);\n    assert.equal(sha(committed), combined.baseline.sha256);\n"
             }
           ]
@@ -2474,33 +2530,33 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/wiki-media-source-transfer.js",
         "mode": "100644",
-        "blob": "acb6e22e1a330d2e3e4414ce45dc8e34a30b6646",
-        "sha256": "6cb06f2bddfde1754bd1dc71c66625a8972561ac6a67fb0b33ba062007fd34d0",
-        "bytes": 27140,
+        "blob": "c3b0540671244d1d28758054fefd377b31ba1b75",
+        "sha256": "05874a64e46d86ca01a86457de54a877de13a7c7178b45b09ba6cf082435587c",
+        "bytes": 27485,
         "rawSha256": {
-          "lf": "6cb06f2bddfde1754bd1dc71c66625a8972561ac6a67fb0b33ba062007fd34d0",
-          "crlf": "c367ea0641adad6406ef9ce3b7159014c5844f7521490384a54c0469d8e179eb"
+          "lf": "05874a64e46d86ca01a86457de54a877de13a7c7178b45b09ba6cf082435587c",
+          "crlf": "eca15516ef524787a7a445783667ee878ba65371e14fedcf46ea89ba59cc4bab"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "test/wiki-media-source-transfer.js",
             "mode": "100644",
-            "blob": "8f9e14b9c702db7ed5bc94ae335311fd06e0a688",
-            "sha256": "c7d1bc79087cd7af810a1c2d68a7cfe1df6687253692ffe54d4a5788af365a21",
-            "bytes": 26107
+            "blob": "67c02ea9426635cbfd4f27fbceea930723e4b84d",
+            "sha256": "c0813574c50432b1f8b9ba7136ddfe494933bdbd21b60abd40e391ec9778f34f",
+            "bytes": 26397
           },
           "contextLines": 3,
           "inverses": [
             {
-              "current": "import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\n",
-              "baseline": "// Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\n"
+              "current": "import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';\n// Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport fs from 'node:fs';\nimport crypto from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\n",
+              "baseline": "// Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.\nimport { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport fs from 'node:fs';\nimport crypto from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\n"
             },
             {
-              "current": "  assertWikiMediaNoirMergeSourceTransfer, wikiMediaNoirMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\n\n\n// Admit actual HEAD, index and complete physical bytes before either source-only view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only actual regular committed source can be compared');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', 'HEAD:' + file);\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  const expectedEntry = outer?.targets.desk\n    ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');\n  const accepted = contractReleaseDeskInput(file, physical);\n  const acceptedLf = accepted.replaceAll('\\r\\n', '\\n');\n  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');\n  const acceptedEntry = outer?.targets.desk\n    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\\t' + file : actualEntry;\n  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted integration mode/blob qualifies before its parent comparison');\n  assert.equal(acceptedLf, git('show', integratedEconomicSource.revision + ':' + file), 'The complete accepted integration source remains exact');\n  const main = integratedEconomicParentInput(file, accepted, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source');\n  return main;\n}\n\n",
-              "baseline": "  assertWikiMediaNoirMergeSourceTransfer, wikiMediaNoirMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\n\n\n// This comparison boundary admits actual C6 HEAD, index and physical bytes\n// before selecting a separately pinned historical parent. It executes no view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const authoredEntry = git('ls-tree', integratedEconomicSource.revision, '--', file).trim();\n  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', integratedEconomicSource.revision + ':' + file);\n  assert.equal(git('show', 'HEAD:' + file), authored, 'Actual HEAD retains the complete authored source');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const main = integratedEconomicParentInput(file, physical, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source: ' + file);\n  return main;\n}\n\n"
+              "current": "  assertWikiMediaNoirMergeSourceTransfer, wikiMediaNoirMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\n\n\n// Admit actual HEAD, index and complete physical bytes before either source-only view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only actual regular committed source can be compared');\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', 'HEAD:' + file);\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = fs.readFileSync(file), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];\n  const expectedEntry = outer?.targets.desk\n    ? outer.current.mode + ' blob ' + outer.current.blob + '\\t' + file\n    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();\n  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');\n  const accepted = contractReleaseDeskInput(file, physical);\n  const acceptedLf = accepted.replaceAll('\\r\\n', '\\n');\n  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');\n  const acceptedEntry = outer?.targets.desk\n    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\\t' + file : actualEntry;\n  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');\n  const comparison = ciDeedRecoveryHistoricalInput(file, accepted);\n  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The separately qualified CI predecessor mode/blob matches the reviewed integration');\n  assert.equal(comparison.replaceAll('\\r\\n', '\\n'), git('show', integratedEconomicSource.revision + ':' + file), 'The complete frozen CI predecessor qualifies before its integration comparison');\n  const main = integratedEconomicParentInput(file, comparison, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source');\n  return main;\n}\n\n",
+              "baseline": "  assertWikiMediaNoirMergeSourceTransfer, wikiMediaNoirMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\n\n\n// This comparison boundary admits actual C6 HEAD, index and physical bytes\n// before selecting a separately pinned historical parent. It executes no view.\nfunction readCombinedPhysical(file) {\n  assert.equal(combinedSource.status, 'SEALED', 'Bind the actual combined source before historical comparisons');\n  assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);\n  const authoredEntry = git('ls-tree', integratedEconomicSource.revision, '--', file).trim();\n  const match = authoredEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Only an actual regular authored source can be compared');\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file), 'tree').trim(), authoredEntry, 'Actual HEAD mode/blob qualifies before projection');\n  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-files', '--stage', '--', file), 'index').trim(), match[1] + ' ' + match[2] + ' 0\\t' + file,\n    'Actual index mode/blob qualifies before projection');\n  const authored = git('show', integratedEconomicSource.revision + ':' + file);\n  assert.equal(ciDeedRecoveryHistoricalInput(file, git('show', 'HEAD:' + file)), authored, 'Actual HEAD retains the complete authored source');\n  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file)), physical = raw.toString('utf8');\n  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source only');\n  assert(physical === authored || physical === authored.replaceAll('\\n', '\\r\\n'), 'Whole actual LF/CRLF physical source qualifies first');\n  const main = integratedEconomicParentInput(file, physical, 'main');\n  const parent = git('show', combinedSource.sourceRevision + ':' + file);\n  assert(main === parent || main === parent.replaceAll('\\n', '\\r\\n'), 'Exact original combined comparison source: ' + file);\n  return main;\n}\n\n"
             },
             {
               "current": "];\nfor (const item of wiring) {\n  let current = wikiMediaMergeHistoricalInput(item.file,\n    contractReleaseDeskInput(item.file, fs.readFileSync(new URL('../' + item.file, import.meta.url), 'utf8')), 'wiki').replaceAll('\\r\\n', '\\n');\n  assert.equal(current.split(item.imports).length, 2);\n  current = current.replace(item.imports, '');\n  for (const name of item.calls || []) {\n",
@@ -2532,7 +2588,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/deed-allocation-source-transfer.js",
             "mode": "100644",
@@ -2568,7 +2624,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/economy-hardening-source-transfer.js",
             "mode": "100644",
@@ -2604,7 +2660,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/economy-social-proof-cutover-source-transfer.js",
             "mode": "100644",
@@ -2640,7 +2696,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/enterprise-native-ux-seal.js",
             "mode": "100644",
@@ -2666,23 +2722,23 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "tools/enterprise-native-ux.js",
         "mode": "100644",
-        "blob": "fe703e7d75f15f628a2fe87055a780d5eb40cd55",
-        "sha256": "3d69dc604553e2a1e5e02b3a7dfcb29651283fe806fa02f0cf88e38e4f7368e4",
-        "bytes": 20444,
+        "blob": "627a52ef1a8fb9677beed7ef8181e69a0b4dcd7f",
+        "sha256": "1bbf23bf19be3b92b814c6a9b1e2d5a0c17aeaeb49869d36e3d5af9d7e0fdea2",
+        "bytes": 20526,
         "rawSha256": {
-          "lf": "3d69dc604553e2a1e5e02b3a7dfcb29651283fe806fa02f0cf88e38e4f7368e4",
-          "crlf": "119eff2ca59928f228bbdf2b799a8d1de3897f6e8681204fc73200e3611529eb"
+          "lf": "1bbf23bf19be3b92b814c6a9b1e2d5a0c17aeaeb49869d36e3d5af9d7e0fdea2",
+          "crlf": "1074672256bd194c78c8c2fad07ef32736309de611da6634457d0868e43d27db"
         }
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/enterprise-native-ux.js",
             "mode": "100644",
-            "blob": "a38cc7c689453a6fe050e210c5717c0bcf333292",
-            "sha256": "97118ab64a10a710fd8715fca4183d34be1755dcc62ec0712129a12b08cd69fe",
-            "bytes": 21005
+            "blob": "0d7043216e99f6bb24fd820ed43ce52bd1a44106",
+            "sha256": "607fee9bbd5ff8afaef5fc5af06e93c6ce28e261fd02ef242047c571d52eb200",
+            "bytes": 21087
           },
           "contextLines": 3,
           "inverses": [
@@ -2728,7 +2784,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/genesis-auction-deployment-plan.js",
             "mode": "100644",
@@ -2784,7 +2840,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/genesis-auction-preflight.js",
             "mode": "100644",
@@ -2832,7 +2888,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       },
       "targets": {
         "desk": {
-          "revision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
+          "revision": "1aed5b529e891257b2ffb07177c48b34712316e6",
           "pin": {
             "file": "tools/market-v2-deployment-plan.js",
             "mode": "100644",
@@ -2904,4 +2960,4 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     }
   }
 });
-export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "cd7c667b6a2287fc1c2516497b800cac35ec050a43d4f89a0118b138a65cf7fa";
+export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "86e7f337402154ec95bc504001b200aff44c729d10ea952066d063566a6edc5d";
