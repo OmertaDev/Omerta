@@ -4016,11 +4016,12 @@ scopedSocialContext = async function(db) {
   }
   const headers = [...jobsText.matchAll(/^ {2}([A-Za-z0-9_-]+):\s*$/gm)];
   const jobNames = headers.map((m) => m[1]);
-  assert.deepEqual(jobNames, ['suites', 'browser', 'ux_browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck_enterprise', 'pgcheck_commerce', 'pgcheck'],
-    '.github/workflows/ci.yml must retain suites, both browser jobs, four isolated native cohorts and their required aggregate');
+  assert.deepEqual(jobNames, ['suites', 'suite_tail', 'browser', 'ux_browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck_enterprise', 'pgcheck_commerce', 'pgcheck'],
+    '.github/workflows/ci.yml must retain suites, its complete bounded tail, both browser jobs, four isolated native cohorts and their required aggregate');
   const jobs = new Map(headers.map((header, i) => [header[1], jobsText.slice(
     header.index, i + 1 < headers.length ? headers[i + 1].index : jobsText.length)]));
   const suites = jobs.get('suites');
+  const suiteTail = jobs.get('suite_tail').replaceAll('\r\n', '\n');
   const browser = jobs.get('browser');
   const uxBrowser = jobs.get('ux_browser');
   const coreNative = jobs.get('pgcheck_core');
@@ -4135,7 +4136,7 @@ scopedSocialContext = async function(db) {
   const expectedUxBrowser = [
     '  ux_browser:',
     '    name: UX desktop and mobile regression',
-    '    needs: suites',
+    '    needs: [suites, suite_tail]',
     '    runs-on: ubuntu-latest',
     '    timeout-minutes: 20',
     '    steps:',
@@ -4154,7 +4155,7 @@ scopedSocialContext = async function(db) {
     '          npm run test:ux:browser',
   ].join('\n');
   assert.equal(nativeShape(uxBrowser), expectedUxBrowser, 'UX browser proof must retain complete coverage, dependency, fresh Chromium and unconditional execution');
-  for (const changed of [expectedUxBrowser.replace('    needs: suites', '    needs: suites\n    if: false'), expectedUxBrowser.replace('    steps:', '    continue-on-error: true\n    steps:'), expectedUxBrowser.replace('npm run test:ux:browser', 'npm run test:ux:browser -- --partial'), expectedUxBrowser.replace('timeout-minutes: 20', 'timeout-minutes: 0')])
+  for (const changed of [expectedUxBrowser.replace('    needs: [suites, suite_tail]', '    needs: suites'), expectedUxBrowser.replace('    steps:', '    if: false\n    steps:'), expectedUxBrowser.replace('    steps:', '    continue-on-error: true\n    steps:'), expectedUxBrowser.replace('npm run test:ux:browser', 'npm run test:ux:browser -- --partial'), expectedUxBrowser.replace('timeout-minutes: 20', 'timeout-minutes: 0')])
     assert.notEqual(nativeShape(changed), expectedUxBrowser, 'Skipped, partial or unbounded UX browser jobs must reject');
   assert.deepEqual(timeouts(pgcheck), [120],
     'the complete native core cohort must retain exactly one finite 120-minute HANG bound after its observed90-minute timeout');
@@ -4168,11 +4169,34 @@ scopedSocialContext = async function(db) {
     'duplicate native wall bounds must reject');
 
 
-  const suitesCommands = ['npm test', 'npm run sim', 'npm run scale'];
-  for (const command of suitesCommands) {
+  const expectedSuiteTail = "  suite_tail:\n    name: worker harness + economy simulations\n    needs: suites\n    runs-on: ubuntu-latest\n    timeout-minutes: 45\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n      - name: Invite-only launch admission and Crew allowance\n        run: npm run test:invites\n      - name: RC1 telemetry isolation and complementary campaign regressions\n        run: npm run test:rc1\n      - name: RC1 private command diagnostics and passive confirmation regression\n        run: npm run test:rc1:observability\n      - name: RC1 original worker scheduling and diagnostic harness controls\n        run: npm run test:rc1:harness\n      - name: economy sim (§10.4 drift-0)\n        run: npm run sim\n      - name: scale (population-scale market reachability + §10.4)\n        env:\n          SCALE_PLAYERS: '18'\n          SCALE_DAYS: '2'\n        run: npm run scale";
+  const requireSuiteTail = block => assert.equal(nativeShape(block), expectedSuiteTail,
+    'Every tail setup, prerequisite, complete command and scale value is unconditional and exact');
+  requireSuiteTail(suiteTail);
+  for (const changed of [suiteTail.replace('needs: suites', 'needs: []'),
+    suiteTail.replace('    steps:', '    if: false\n    steps:'),
+    suiteTail.replace('    steps:', '    continue-on-error: true\n    steps:'),
+    suiteTail.replace('timeout-minutes: 45', 'timeout-minutes: 0'),
+    suiteTail.replace('timeout-minutes: 45', 'timeout-minutes: 150'),
+    suiteTail.replace("SCALE_PLAYERS: '18'", "SCALE_PLAYERS: '1'"),
+    suiteTail.replace('fetch-depth: 0', 'fetch-depth: 1'),
+    suiteTail.replace('run: npm run test:rc1:harness', 'if: false\n        run: npm run test:rc1:harness')]) {
+    assert.notEqual(changed, suiteTail, 'Each negative tail control changes its target');
+    assert.throws(() => requireSuiteTail(changed), 'Skipped, partial, duplicate or unbounded tails reject');
+  }
+  const tailCommands = ['npm run test:invites', 'npm run test:rc1', 'npm run test:rc1:observability', 'npm run test:rc1:harness', 'npm run sim', 'npm run scale'];
+  for (const command of ['npm test', ...tailCommands]) {
     const escaped = command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    assert.equal([...suites.matchAll(new RegExp(`^\\s+run: ${escaped}\\s*$`, 'gm'))].length, 1,
-      `the \`suites\` job must run \`${command}\` exactly once`);
+    const count = block => [...block.matchAll(new RegExp(`^\\s+run: ${escaped}\\s*$`, 'gm'))].length;
+    assert.equal(count(suites), command === 'npm test' ? 1 : 0,
+      `the lifecycle job owns only npm test; tail command \`${command}\` must not run twice`);
+    assert.equal(count(suiteTail), command === 'npm test' ? 0 : 1,
+      `the bounded tail must run \`${command}\` exactly once without repeating npm test`);
+  }
+  for (const command of tailCommands) {
+    for (const replacement of ['', command + ' -- --partial', command + '\n        run: ' + command])
+      assert.throws(() => requireSuiteTail(suiteTail.replace('run: ' + command + '\n', 'run: ' + replacement + '\n')),
+        'Missing, partial or duplicated required tail commands reject');
   }
   // Admit this exact fresh browser job, including every transferred command and
   // preflight value. Unknown conditions, error continuations, setup changes or
@@ -4183,7 +4207,7 @@ scopedSocialContext = async function(db) {
   assert.equal(browserShape, [
     '  browser:',
     '    name: City + mobile browser journeys',
-    '    needs: suites',
+    '    needs: [suites, suite_tail]',
     '    runs-on: ubuntu-latest',
     '    timeout-minutes: 25',
     '    steps:',

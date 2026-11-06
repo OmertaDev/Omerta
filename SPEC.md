@@ -13,7 +13,7 @@ Census refreshed from the current repository; these counts do not identify a dep
 | | |
 |---|---|
 | Backend modules | **597** files, **138652** lines (recursive source inventory) |
-| Test suites | **972** files, **205772** lines (recursive source inventory) |
+| Test suites | **973** files, **205948** lines (recursive source inventory) |
 | HTTP routes | **1360** registrations (**1360** unique; 1260 under `/v1`) |
 | Database tables | **582** (`schema.sql`, 9787 lines) |
 | Client | **14647** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |

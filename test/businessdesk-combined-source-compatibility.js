@@ -1,6 +1,7 @@
 // Raw current-source qualification and finite historical comparisons only. No native/runtime execution.
 import assert from 'node:assert/strict';
 import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry, ciDeedRecoveryHistoricalRecord } from '../tools/ci-deed-recovery-source-transfer.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -87,13 +88,13 @@ const record = (revision, file) => {
 };
 const currentInputs = new Map(), expectedRows = new Map();
 for (const file of files) {
-  const authored = record(source.sourceRevision, file), current = record('HEAD', file);
+  const authored = record(source.sourceRevision, file), current = ciDeedRecoveryHistoricalRecord(file, record('HEAD', file));
   const integration = record(integratedEconomicSource.revision, file);
   assert(authored && current && integration);
   assert.deepEqual(current.pin, integration.pin, 'The authored integration is the only current source admitted: ' + file);
-  assert.equal(text('ls-files', '--stage', '--', file).trim(), `${current.pin.mode} ${current.pin.blob} 0\t${file}`, 'Current index identity qualifies before any historical view.');
+  assert.equal(ciDeedRecoveryHistoricalEntry(file, text('ls-files', '--stage', '--', file), 'index').trim(), `${current.pin.mode} ${current.pin.blob} 0\t${file}`, 'Current index identity qualifies before any historical view.');
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical comparison source must be a regular file.');
-  const raw = fs.readFileSync(file);
+  const raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file));
   assert(raw.equals(current.raw) || raw.equals(Buffer.from(current.content.replaceAll('\n','\r\n'))),
     'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);
   const physical = integratedEconomicParentInput(file, raw, 'main');

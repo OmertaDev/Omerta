@@ -1,6 +1,7 @@
 // Exact source/control proofs only. Runtime and native tests execute physical current bytes.
 import { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import { integratedEconomicSource } from '../tools/integrated-economic-parent-source.js';
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -33,12 +34,12 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 function readMonitorSource(file) {
-  const entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const entry = ciDeedRecoveryHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file), 'tree').trim();
   assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\t/);
   assert.equal(entry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),
     'Monitor source must match the reviewed integration: ' + file);
-  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'));
-  const committed = git('show', 'HEAD:' + file), raw = fs.readFileSync(file);
+  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-files', '--stage', '--', file), 'index').trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'));
+  const committed = ciDeedRecoveryHistoricalInput(file, git('show', 'HEAD:' + file)), raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file));
   const actual = raw.toString('utf8'), stat = fs.lstatSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));
   assert(actual === committed || actual === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF source qualifies before projection');

@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {combinedEconomicDeedSource} from './combined-economic-deed-source-data.js';
+import { ciDeedRecoveryHistoricalInput } from './ci-deed-recovery-source-transfer.js';
 
 const hash = text => createHash('sha256').update(text).digest('hex');
 assert.equal(hash(JSON.stringify(combinedEconomicDeedSource)),'782b41ced211d4e7caad40dbd61b486aeb6933db9ef9f9041b5b4c7fc35f7617','Reviewed combined economic and Deed source envelope changed');
@@ -18,6 +19,7 @@ function verify(text,pin) {
 }
 function historical(files,file,input) {
   if(typeof file!=='string' || !Object.hasOwn(files,file)) return input;
+  input = ciDeedRecoveryHistoricalInput(file, input);
   const buffer=Buffer.isBuffer(input), original=buffer?input.toString('utf8'):input;
   if(buffer) assert(Buffer.from(original).equals(input),'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if(typeof original!=='string') return input;

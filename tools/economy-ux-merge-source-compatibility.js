@@ -1,4 +1,5 @@
 import { wikiMediaHistoricalInput } from './wiki-media-source-transfer.js';
+import { ciDeedRecoveryHistoricalInput } from './ci-deed-recovery-source-transfer.js';
 import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-source-transfer.js';
 import { age21HistoricalInput } from './age21-source-transfer.js';
 import { deedAllocationHistoricalInput } from './deed-allocation-source-transfer.js';
@@ -313,6 +314,7 @@ function historicalInput(file, input, target) {
   return buffer ? Buffer.from(restored) : restored;
 }
 export function economyUxMergeCandidateHistoricalInput(file, input, profile = 'monitor') {
+  if (ECONOMY_UX_MERGE_FILES.includes(file)) input = ciDeedRecoveryHistoricalInput(file, input);
   input = businessDeskCombinedHistoricalInput(file, input, 'monitor');
   input = economyDeedMergeHistoricalInput(file, input, profile);
   if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);
@@ -332,6 +334,7 @@ export function economyUxMergeCandidateHistoricalInput(file, input, profile = 'm
   return historicalInput(file, input, 'candidate');
 }
 export function economyUxMergeMainHistoricalInput(file, input, profile = 'monitor') {
+  if (ECONOMY_UX_MERGE_FILES.includes(file)) input = ciDeedRecoveryHistoricalInput(file, input);
   input = businessDeskCombinedHistoricalInput(file, input, 'monitor');
   input = economyDeedMergeHistoricalInput(file, input, profile);
   if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);

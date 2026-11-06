@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { integratedEconomicSource, integratedEconomicSourceDigest } from './integrated-economic-parent-data.js';
+import { ciDeedRecoveryHistoricalInput } from './ci-deed-recovery-source-transfer.js';
 
 export { integratedEconomicSource };
 const sha = text => createHash('sha256').update(text).digest('hex');
@@ -25,6 +26,7 @@ export function integratedEconomicParentInput(file, input, profile) {
   if (typeof file !== 'string' || !Object.hasOwn(table, file)) return input;
   const row = table[file], target = row.parents[profile];
   if (!target) return input;
+  input = ciDeedRecoveryHistoricalInput(file, input);
   const bytes = Buffer.isBuffer(input), text = bytes ? input.toString('utf8') : input;
   if (bytes) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (typeof text !== 'string') return input;
