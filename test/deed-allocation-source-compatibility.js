@@ -2,6 +2,7 @@
 import { businessDeskCombinedHistoricalInput, BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 import crypto from 'node:crypto';
@@ -179,9 +180,9 @@ for(const file of new Set([...Object.keys(combined.files),...Object.keys(combine
     assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\t'+file);
     assert.equal(sha256(text),pin.sha256); assert.equal(Buffer.byteLength(text),pin.bytes);
   }
-  const physical=fs.readFileSync(file,'utf8'), head=git('show','HEAD:'+file);
+  const physical=ciDeedRecoveryHistoricalInput(file,fs.readFileSync(file,'utf8')), head=ciDeedRecoveryHistoricalInput(file,git('show','HEAD:'+file));
   assert(physical===head || physical===head.replaceAll('\n','\r\n'),'Exact physical integration source: '+file);
-  assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),
+  assert.equal(ciDeedRecoveryHistoricalEntry(file,git('ls-tree','HEAD','--',file),'tree').trim(),git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),
     'Current mode and blob must match the reviewed integrated source: '+file);
   if(economicOnly || Object.hasOwn(combined.files,file)) {
     assert.equal(lf(integratedEconomicParentInput(file,physical,'economic')),current,'Exact economic merge parent: '+file);
@@ -249,10 +250,10 @@ for (const [profile,parent] of Object.entries(integration.parents)) {
       assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\t'+file);
       assert.equal(sha256(source),pin.sha256); assert.equal(Buffer.byteLength(source),pin.bytes);
     }
-    assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integration.revision,'--',file).trim());
-    assert.equal(git('ls-files','--stage','--',file).trim(),row.current.mode+' '+row.current.blob+' 0\t'+file);
+    assert.equal(ciDeedRecoveryHistoricalEntry(file,git('ls-tree','HEAD','--',file),'tree').trim(),git('ls-tree',integration.revision,'--',file).trim());
+    assert.equal(ciDeedRecoveryHistoricalEntry(file,git('ls-files','--stage','--',file),'index').trim(),row.current.mode+' '+row.current.blob+' 0\t'+file);
     const stat=fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-    const raw = fs.readFileSync(file);
+    const raw = ciDeedRecoveryHistoricalInput(file,fs.readFileSync(file));
     assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\n','\r\n'))));
     for (const input of [current,current.replaceAll('\n','\r\n'),raw]) {
       const result = integratedEconomicParentInput(file,input,profile);

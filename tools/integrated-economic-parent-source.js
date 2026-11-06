@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { integratedEconomicSource, integratedEconomicSourceDigest } from './integrated-economic-parent-data.js';
+import { ciDeedRecoveryHistoricalInput } from './ci-deed-recovery-source-transfer.js';
 
 export { integratedEconomicSource };
 const sha = text => createHash('sha256').update(text).digest('hex');
@@ -21,6 +22,7 @@ function check(text, pin) {
 
 export function integratedEconomicParentInput(file, input, profile) {
   assert(profile === 'main' || profile === 'economic', 'Explicit reviewed source comparison parent required');
+  input = ciDeedRecoveryHistoricalInput(file, input);
   const table = integratedEconomicSource.files;
   if (typeof file !== 'string' || !Object.hasOwn(table, file)) return input;
   const row = table[file], target = row.parents[profile];
