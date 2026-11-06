@@ -16,6 +16,7 @@ const domains = [
   'test/deed-allocation-source-compatibility.js', 'test/economy-monitor-source-compatibility.js',
   'tools/integrated-economic-parent-source.js', 'tools/combined-economic-deed-source-transfer.js',
   'tools/enterprise-native-ux.js',
+  'tools/economy-ux-merge-source-compatibility.js',
 ];
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 const sha = text => createHash('sha256').update(text).digest('hex');
@@ -67,6 +68,15 @@ for (const [file, row] of Object.entries(source.files)) {
     assert.throws(() => ciDeedRecoveryHistoricalEntry(file, entry, kind)); refusals++;
   }
   assert.throws(() => ciDeedRecoveryHistoricalRecord(file, { ...record, raw: Buffer.from(current + '\n') })); refusals++;
+  for (const changed of [
+    { ...record, content: current + '\n' },
+    { ...record, content: current.replaceAll('\n', '\r\n'), raw: Buffer.from(current.replaceAll('\n', '\r\n')) },
+    { ...record, pin: { ...record.pin, bytes: record.pin.bytes + 1 } },
+    { ...record, pin: { ...record.pin, mode: '120000' } },
+    { ...record, pin: { ...record.pin, sha256: '0'.repeat(64) } },
+    { ...record, pin: { ...record.pin, rawSha256: { ...record.pin.rawSha256, lf: '0'.repeat(64) } } },
+    { ...record, pin: { ...record.pin, rawSha256: { ...record.pin.rawSha256, crlf: '0'.repeat(64) } } },
+  ]) { assert.throws(() => ciDeedRecoveryHistoricalRecord(file, changed)); refusals++; }
   assert.throws(() => ciDeedRecoveryHistoricalInput(file, Buffer.from([255])), /lossless/i); refusals++;
 }
 for (const file of ['../public/index.html', '__proto__', 'constructor', 'schema.sql', 'tools/enterprise-native-economic-release-inputs.js']) {

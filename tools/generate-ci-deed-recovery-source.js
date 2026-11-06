@@ -13,6 +13,7 @@ export const CI_DEED_RECOVERY_DOMAINS = Object.freeze([
   'test/deed-allocation-source-compatibility.js', 'test/economy-monitor-source-compatibility.js',
   'tools/integrated-economic-parent-source.js', 'tools/combined-economic-deed-source-transfer.js',
   'tools/enterprise-native-ux.js',
+  'tools/economy-ux-merge-source-compatibility.js',
 ]);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 const sha = text => createHash('sha256').update(text).digest('hex');

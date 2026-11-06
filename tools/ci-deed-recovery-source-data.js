@@ -2,8 +2,8 @@
 export const recoverySource = {
   "status": "SEALED",
   "phase": "EXACT_CI_DEED_RECOVERY_COMPARISON_ONLY",
-  "revision": "3156eb5aef982d388f0aa722e2064f205749b81c",
-  "tree": "8210023467272619bbe480d7db387e13c928ace2",
+  "revision": "a8522c03a280563098b9b7bdf6f20fa655244f9f",
+  "tree": "d5e4c103927e4c99b6e57334664e8a2276c2d649",
   "predecessor": "0ce6ab96a34e6061232980ad60bfdbc94cf98fdb",
   "predecessorTree": "f28465d0caa595f199d0161d13039e52bac3de32",
   "files": {
@@ -381,8 +381,8 @@ export const recoverySource = {
     "tools/integrated-economic-parent-source.js": {
       "current": {
         "mode": "100644",
-        "blob": "63cdf6de99fe8073a23c0fef1aed1a13ac9224f4",
-        "sha256": "63f66a2392e4ea39813b40a9996de9ea96ac03cbb393538fa305eb9b93c489f8",
+        "blob": "6d08dedb9e81cba3f15bcc4826784c113eeb59c2",
+        "sha256": "937da67caaa21d76df90300eca5729f92530d8265ab907a4d2b88c4e90bfa504",
         "bytes": 2328
       },
       "baseline": {
@@ -398,7 +398,7 @@ export const recoverySource = {
           "baseline": ""
         },
         {
-          "at": 1254,
+          "at": 1466,
           "current": "  input = ciDeedRecoveryHistoricalInput(file, input);\n",
           "baseline": ""
         }
@@ -407,8 +407,8 @@ export const recoverySource = {
     "tools/combined-economic-deed-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "b4749d330f2db9e3729535b528e22a12616f50c7",
-        "sha256": "3fcfdfbb0611c1c10fa2e9b7ce922f10de217cae7916a2b1ec8ce3a4208d26f5",
+        "blob": "ca96b16bb666aac155adcc0748569dc8b8219aca",
+        "sha256": "5145722699b84ca6cac80a19521c3c101b06d011312cd9259d632426d96f1d25",
         "bytes": 2635
       },
       "baseline": {
@@ -424,8 +424,29 @@ export const recoverySource = {
           "baseline": ""
         },
         {
-          "at": 1180,
+          "at": 1253,
           "current": "  input = ciDeedRecoveryHistoricalInput(file, input);\n",
+          "baseline": ""
+        }
+      ]
+    },
+    "tools/enterprise-native-ux.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "0d7043216e99f6bb24fd820ed43ce52bd1a44106",
+        "sha256": "607fee9bbd5ff8afaef5fc5af06e93c6ce28e261fd02ef242047c571d52eb200",
+        "bytes": 21087
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a38cc7c689453a6fe050e210c5717c0bcf333292",
+        "sha256": "97118ab64a10a710fd8715fca4183d34be1755dcc62ec0712129a12b08cd69fe",
+        "bytes": 21005
+      },
+      "inverses": [
+        {
+          "at": 2888,
+          "current": " \"test/ci-deed-recovery-source.js\",\n \"tools/generate-ci-deed-recovery-source.js\",\n",
           "baseline": ""
         }
       ]

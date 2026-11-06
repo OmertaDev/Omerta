@@ -72,7 +72,7 @@ for (const [file, pin] of Object.entries(DEED_ALLOCATION_SOURCE_DOMAINS)) {
   const currentBlob = git('rev-parse', 'HEAD:' + file).trim();
   assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\t' + file);
   assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\t' + file);
-  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, rawPhysical, 'main'), 'desk');
+  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, ciDeedRecoveryHistoricalInput(file, rawPhysical), 'main'), 'desk');
   const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,
     wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);
   const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);
