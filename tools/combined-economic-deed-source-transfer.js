@@ -18,8 +18,8 @@ function verify(text,pin) {
   assert.equal(createHash('sha1').update('blob '+pin.bytes+'\0').update(text).digest('hex'),pin.blob);
 }
 function historical(files,file,input) {
-  input = ciDeedRecoveryHistoricalInput(file, input);
   if(typeof file!=='string' || !Object.hasOwn(files,file)) return input;
+  input = ciDeedRecoveryHistoricalInput(file, input);
   const buffer=Buffer.isBuffer(input), original=buffer?input.toString('utf8'):input;
   if(buffer) assert(Buffer.from(original).equals(input),'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if(typeof original!=='string') return input;

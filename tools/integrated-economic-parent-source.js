@@ -22,11 +22,11 @@ function check(text, pin) {
 
 export function integratedEconomicParentInput(file, input, profile) {
   assert(profile === 'main' || profile === 'economic', 'Explicit reviewed source comparison parent required');
-  input = ciDeedRecoveryHistoricalInput(file, input);
   const table = integratedEconomicSource.files;
   if (typeof file !== 'string' || !Object.hasOwn(table, file)) return input;
   const row = table[file], target = row.parents[profile];
   if (!target) return input;
+  input = ciDeedRecoveryHistoricalInput(file, input);
   const bytes = Buffer.isBuffer(input), text = bytes ? input.toString('utf8') : input;
   if (bytes) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 physical source only; lossless UTF-8 required');
   if (typeof text !== 'string') return input;
