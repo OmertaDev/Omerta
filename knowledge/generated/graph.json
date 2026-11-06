@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c458332359156e2e7dd05aae6d7ea517eb92ca4a",
+  "sourceRevision": "3c53ece7a8875ea20b5144a3c3f2faef46408c45",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18049,
-    "edges": 72531,
+    "nodes": 18054,
+    "edges": 72547,
     "byNodeType": {
       "Artifact": 7287,
       "Command": 307,
-      "Commit": 5342,
+      "Commit": 5347,
       "Contract": 156,
       "Document": 967,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5860,
-      "CHANGED": 28121,
+      "CHANGED": 28130,
       "CONTAINS": 7308,
       "DECLARES": 307,
       "DEFINED_IN": 1798,
       "DEPENDS_ON": 69,
       "EXECUTES": 1221,
       "HANDLED_BY": 940,
-      "HAS_COMMIT": 5342,
+      "HAS_COMMIT": 5347,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8855,
+      "IMPORTS": 8857,
       "INHERITS": 47,
       "REFERENCES": 3941,
       "REPRESENTS": 2694,
@@ -144411,20 +144411,20 @@
       "path": "test/genesis-fee-readiness-source-transfer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 15718,
-      "lines": 220,
-      "version": "1da407bd442b5ebb",
+      "bytes": 18482,
+      "lines": 256,
+      "version": "32cc79d932ad9c38",
       "text": true,
       "provenance": [
         {
           "file": "test/genesis-fee-readiness-source-transfer.js",
           "line": 1,
-          "version": "1da407bd442b5ebb"
+          "version": "32cc79d932ad9c38"
         }
       ],
-      "lastChangedAt": "2026-11-05T00:27:03.000Z",
+      "lastChangedAt": "2026-11-06T04:11:26.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "83ba8baac52d64614a2f4b82a7b230db1e16c80f"
+      "lastChangedCommit": "8653a4ef119bcad564f50ec332d2bd648377e6ac"
     },
     {
       "key": "Artifact:test/genesisauction.js",
@@ -159987,20 +159987,20 @@
       "path": "tools/contract-release-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 943083,
-      "lines": 2871,
-      "version": "c8b5fbaa508e2351",
+      "bytes": 951227,
+      "lines": 2904,
+      "version": "a0bb8fc3bfd4e50c",
       "text": true,
       "provenance": [
         {
           "file": "tools/contract-release-source-data.js",
           "line": 1,
-          "version": "c8b5fbaa508e2351"
+          "version": "a0bb8fc3bfd4e50c"
         }
       ],
-      "lastChangedAt": "2026-11-06T03:23:47.000Z",
+      "lastChangedAt": "2026-11-06T04:28:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3d1dd499a09cc4c1722eb3b68aea1943b1cfbd18"
+      "lastChangedCommit": "d8fa51b1ebe2c4fcbea930263db7d098ce572e4f"
     },
     {
       "key": "Artifact:tools/contract-release-source-format.js",
@@ -160906,18 +160906,18 @@
       "extension": ".js",
       "bytes": 529867,
       "lines": 14121,
-      "version": "23e6fc2f90902526",
+      "version": "799feca4f553c0cb",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-contract-release-inputs.js",
           "line": 1,
-          "version": "23e6fc2f90902526"
+          "version": "799feca4f553c0cb"
         }
       ],
-      "lastChangedAt": "2026-11-06T03:31:42.000Z",
+      "lastChangedAt": "2026-11-06T04:36:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c458332359156e2e7dd05aae6d7ea517eb92ca4a"
+      "lastChangedCommit": "3c53ece7a8875ea20b5144a3c3f2faef46408c45"
     },
     {
       "key": "Artifact:tools/enterprise-native-deed-inputs.js",
@@ -161470,20 +161470,20 @@
       "path": "tools/generate-contract-release-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 26533,
-      "lines": 426,
-      "version": "47a2933616ee2ede",
+      "bytes": 26707,
+      "lines": 429,
+      "version": "5b973d8495b4af27",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-contract-release-source-transfer.js",
           "line": 1,
-          "version": "47a2933616ee2ede"
+          "version": "5b973d8495b4af27"
         }
       ],
-      "lastChangedAt": "2026-11-06T03:07:42.000Z",
+      "lastChangedAt": "2026-11-06T04:11:26.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "38a92ea4504fdf87e59c8e6d88089b72e4921253"
+      "lastChangedCommit": "8653a4ef119bcad564f50ec332d2bd648377e6ac"
     },
     {
       "key": "Artifact:tools/generate-current-economic-terms-source-transfer.js",
@@ -162731,18 +162731,18 @@
       "extension": ".json",
       "bytes": 7551,
       "lines": 144,
-      "version": "89ab78b78b4a0c9c",
+      "version": "71406513088c0e48",
       "text": true,
       "provenance": [
         {
           "file": "tools/native-eth-source-transfer.json",
           "line": 1,
-          "version": "89ab78b78b4a0c9c"
+          "version": "71406513088c0e48"
         }
       ],
-      "lastChangedAt": "2026-11-05T20:07:50.000Z",
+      "lastChangedAt": "2026-11-06T03:58:09.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "79ca4e11ad47afd6b5fa8c0af9a52c956e0049eb"
+      "lastChangedCommit": "0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed"
     },
     {
       "key": "Artifact:tools/next-five-native.js",
@@ -175900,6 +175900,22 @@
         {
           "commit": "0dcd4a79d9769d12fd8f8e75648b4867546620c7",
           "url": "https://github.com/OmertaDev/Omerta/commit/0dcd4a79d9769d12fd8f8e75648b4867546620c7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed",
+      "type": "Commit",
+      "id": "0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed",
+      "label": "Refresh native ETH source postimages after the accepted main integration",
+      "title": "Refresh native ETH source postimages after the accepted main integration",
+      "date": "2026-11-06T03:58:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed",
+      "provenance": [
+        {
+          "commit": "0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed"
         }
       ]
     },
@@ -191756,6 +191772,22 @@
         {
           "commit": "3c4ad29d721b0ba4ca0ee8beba63d9a64d5c9bea",
           "url": "https://github.com/OmertaDev/Omerta/commit/3c4ad29d721b0ba4ca0ee8beba63d9a64d5c9bea"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+      "type": "Commit",
+      "id": "3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+      "label": "Seal the current release inputs for the verified source corrections",
+      "title": "Seal the current release inputs for the verified source corrections",
+      "date": "2026-11-06T04:36:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+      "provenance": [
+        {
+          "commit": "3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3c53ece7a8875ea20b5144a3c3f2faef46408c45"
         }
       ]
     },
@@ -217072,6 +217104,22 @@
       ]
     },
     {
+      "key": "Commit:8653a4ef119bcad564f50ec332d2bd648377e6ac",
+      "type": "Commit",
+      "id": "8653a4ef119bcad564f50ec332d2bd648377e6ac",
+      "label": "Qualify the current genesis fixture before its frozen fee comparison",
+      "title": "Qualify the current genesis fixture before its frozen fee comparison",
+      "date": "2026-11-06T04:11:26.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8653a4ef119bcad564f50ec332d2bd648377e6ac",
+      "provenance": [
+        {
+          "commit": "8653a4ef119bcad564f50ec332d2bd648377e6ac",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8653a4ef119bcad564f50ec332d2bd648377e6ac"
+        }
+      ]
+    },
+    {
       "key": "Commit:86675fa77e32fd4a8fcc043904da164dc7e03561",
       "type": "Commit",
       "id": "86675fa77e32fd4a8fcc043904da164dc7e03561",
@@ -223340,6 +223388,22 @@
         {
           "commit": "995354ba6b0f9992ed78e7f4463079ad443b2863",
           "url": "https://github.com/OmertaDev/Omerta/commit/995354ba6b0f9992ed78e7f4463079ad443b2863"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "type": "Commit",
+      "id": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "label": "Regenerate Knowledge for the corrected Deed release inputs",
+      "title": "Regenerate Knowledge for the corrected Deed release inputs",
+      "date": "2026-11-06T03:36:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "provenance": [
+        {
+          "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
         }
       ]
     },
@@ -244124,6 +244188,22 @@
         {
           "commit": "d8f9a76727de97de3337fae1db39ae261184cfb9",
           "url": "https://github.com/OmertaDev/Omerta/commit/d8f9a76727de97de3337fae1db39ae261184cfb9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d8fa51b1ebe2c4fcbea930263db7d098ce572e4f",
+      "type": "Commit",
+      "id": "d8fa51b1ebe2c4fcbea930263db7d098ce572e4f",
+      "label": "Bind the corrected native ETH and genesis fixture release sources",
+      "title": "Bind the corrected native ETH and genesis fixture release sources",
+      "date": "2026-11-06T04:28:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d8fa51b1ebe2c4fcbea930263db7d098ce572e4f",
+      "provenance": [
+        {
+          "commit": "d8fa51b1ebe2c4fcbea930263db7d098ce572e4f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d8fa51b1ebe2c4fcbea930263db7d098ce572e4f"
         }
       ]
     },
@@ -286459,6 +286539,9 @@
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
+          "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
+        },
+        {
           "commit": "998883c3662aad32a3966c8de381eeaf217df091"
         },
         {
@@ -289126,6 +289209,9 @@
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
         },
         {
+          "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
+        },
+        {
           "commit": "998883c3662aad32a3966c8de381eeaf217df091"
         },
         {
@@ -291791,6 +291877,9 @@
         },
         {
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+        },
+        {
+          "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
         },
         {
           "commit": "998883c3662aad32a3966c8de381eeaf217df091"
@@ -295205,6 +295294,9 @@
         },
         {
           "commit": "99439d4c633a14dcdf11854903d92ea79abbb12a"
+        },
+        {
+          "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
         },
         {
           "commit": "998883c3662aad32a3966c8de381eeaf217df091"
@@ -311086,7 +311178,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c458332359156e2e7dd05aae6d7ea517eb92ca4a",
+      "revision": "3c53ece7a8875ea20b5144a3c3f2faef46408c45",
       "currentBranch": "codex/contract-launch-fixes",
       "defaultBranch": "main",
       "visibility": "public",
@@ -354984,13 +355076,13 @@
       "type": "TestSuite",
       "id": "test/genesis-fee-readiness-source-transfer.js",
       "label": "test/genesis-fee-readiness-source-transfer.js",
-      "lines": 220,
-      "version": "1da407bd442b5ebb",
+      "lines": 256,
+      "version": "32cc79d932ad9c38",
       "provenance": [
         {
           "file": "test/genesis-fee-readiness-source-transfer.js",
           "line": 1,
-          "version": "1da407bd442b5ebb"
+          "version": "32cc79d932ad9c38"
         }
       ]
     },
@@ -424865,6 +424957,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed",
+      "to": "Artifact:tools/native-eth-source-transfer.json",
+      "provenance": {
+        "commit": "0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0dd3d105343052bd5e5347ffd78befefdc1dd7fd",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -463021,6 +463121,14 @@
       "to": "Artifact:test/logisticscoverage-api.js",
       "provenance": {
         "commit": "3c4ad29d721b0ba4ca0ee8beba63d9a64d5c9bea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+      "to": "Artifact:tools/enterprise-native-contract-release-inputs.js",
+      "provenance": {
+        "commit": "3c53ece7a8875ea20b5144a3c3f2faef46408c45"
       }
     },
     {
@@ -524865,6 +524973,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8653a4ef119bcad564f50ec332d2bd648377e6ac",
+      "to": "Artifact:test/genesis-fee-readiness-source-transfer.js",
+      "provenance": {
+        "commit": "8653a4ef119bcad564f50ec332d2bd648377e6ac"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8653a4ef119bcad564f50ec332d2bd648377e6ac",
+      "to": "Artifact:tools/generate-contract-release-source-transfer.js",
+      "provenance": {
+        "commit": "8653a4ef119bcad564f50ec332d2bd648377e6ac"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:86675fa77e32fd4a8fcc043904da164dc7e03561",
       "to": "Artifact:tools/knowledge.js",
       "provenance": {
@@ -540005,6 +540129,38 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "995354ba6b0f9992ed78e7f4463079ad443b2863"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
       }
     },
     {
@@ -605357,6 +605513,14 @@
       "to": "Artifact:test/worldgraph.js",
       "provenance": {
         "commit": "d8f9a76727de97de3337fae1db39ae261184cfb9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d8fa51b1ebe2c4fcbea930263db7d098ce572e4f",
+      "to": "Artifact:tools/contract-release-source-data.js",
+      "provenance": {
+        "commit": "d8fa51b1ebe2c4fcbea930263db7d098ce572e4f"
       }
     },
     {
@@ -749294,6 +749458,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed",
+      "provenance": {
+        "commit": "0dcecc478e959e844c81ae1f05d6d6cb9a16c8ed"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0dd3d105343052bd5e5347ffd78befefdc1dd7fd",
       "provenance": {
         "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
@@ -757217,6 +757389,14 @@
       "to": "Commit:3c4ad29d721b0ba4ca0ee8beba63d9a64d5c9bea",
       "provenance": {
         "commit": "3c4ad29d721b0ba4ca0ee8beba63d9a64d5c9bea"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+      "provenance": {
+        "commit": "3c53ece7a8875ea20b5144a3c3f2faef46408c45"
       }
     },
     {
@@ -769878,6 +770058,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8653a4ef119bcad564f50ec332d2bd648377e6ac",
+      "provenance": {
+        "commit": "8653a4ef119bcad564f50ec332d2bd648377e6ac"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:86675fa77e32fd4a8fcc043904da164dc7e03561",
       "provenance": {
         "commit": "86675fa77e32fd4a8fcc043904da164dc7e03561"
@@ -773009,6 +773197,14 @@
       "to": "Commit:995354ba6b0f9992ed78e7f4463079ad443b2863",
       "provenance": {
         "commit": "995354ba6b0f9992ed78e7f4463079ad443b2863"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+      "provenance": {
+        "commit": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5"
       }
     },
     {
@@ -783401,6 +783597,14 @@
       "to": "Commit:d8f9a76727de97de3337fae1db39ae261184cfb9",
       "provenance": {
         "commit": "d8f9a76727de97de3337fae1db39ae261184cfb9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d8fa51b1ebe2c4fcbea930263db7d098ce572e4f",
+      "provenance": {
+        "commit": "d8fa51b1ebe2c4fcbea930263db7d098ce572e4f"
       }
     },
     {
@@ -830957,7 +831161,7 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/genesis-fee-readiness-source-transfer.js",
-        "line": 13
+        "line": 15
       }
     },
     {
@@ -830966,7 +831170,25 @@
       "to": "Artifact:tools/continuous-city-source-compatibility.js",
       "provenance": {
         "file": "test/genesis-fee-readiness-source-transfer.js",
-        "line": 12
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/genesis-fee-readiness-source-transfer.js",
+      "to": "Artifact:tools/contract-release-source-data.js",
+      "provenance": {
+        "file": "test/genesis-fee-readiness-source-transfer.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/genesis-fee-readiness-source-transfer.js",
+      "to": "Artifact:tools/contract-release-source-transfer.js",
+      "provenance": {
+        "file": "test/genesis-fee-readiness-source-transfer.js",
+        "line": 7
       }
     },
     {
@@ -830975,7 +831197,7 @@
       "to": "Artifact:tools/economy-hardening-source-transfer.js",
       "provenance": {
         "file": "test/genesis-fee-readiness-source-transfer.js",
-        "line": 168
+        "line": 170
       }
     },
     {
@@ -830984,7 +831206,7 @@
       "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/genesis-fee-readiness-source-transfer.js",
-        "line": 14
+        "line": 16
       }
     },
     {
@@ -830993,7 +831215,7 @@
       "to": "Artifact:tools/genesis-historical-reader-source-transfer.js",
       "provenance": {
         "file": "test/genesis-fee-readiness-source-transfer.js",
-        "line": 167
+        "line": 169
       }
     },
     {
@@ -831011,7 +831233,7 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "file": "test/genesis-fee-readiness-source-transfer.js",
-        "line": 15
+        "line": 17
       }
     },
     {
@@ -860378,7 +860600,7 @@
       "to": "Artifact:tools/contract-release-source-data.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 2461
+        "line": 2494
       }
     },
     {
