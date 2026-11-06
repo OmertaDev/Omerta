@@ -592,7 +592,7 @@ export async function claimVaulted(ch, omr, client, h) {
   if (process.env.DATABASE_URL) await client.query('SELECT pg_advisory_xact_lock($1)', [0x45544856]); // 'ETHV'
   const { available } = await heldAndAllocated(client);
   if (available <= 1e-9)
-    throw new GameError('vault_dry', 'The vault is fully claimed — the next revenue refills it.');
+    throw new GameError('vault_dry', 'No recorded ETH revenue is available for an allocation.');
   const { price: perEth, stale, reason } = await ethPrice(client);
   if (stale) throw new GameError(reason === 'stale_price' ? 'stale_price' : 'no_price',
     reason === 'stale_price'
@@ -655,7 +655,7 @@ export async function vaultBoard(db, accountId) {
     claimMin: TREASURY.CLAIM_MIN_OMR, claimDailyOmr: TREASURY.CLAIM_DAILY_OMR,
     claimHeadroomOmr: accountId ? vaultHeadroomOf(acct, Date.now()) : null,
     funding: { bySource, sellTaxBps: SELL_TAX.RWA_BPS, bondBps: BONDS.RWA_BPS },
-    note: 'Backed by ETH the treasury actually holds — the game never owes ETH it does not have. Allocation only: nothing is delivered, and there is no sell and no cash-out.',
+    note: 'This ledger tracks recorded ETH revenue and your allocation. Verifying the treasury wallet balance requires a separate check. Recording an allocation spends game OMR and sends no ETH to your wallet.',
   };
 }
 

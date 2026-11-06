@@ -7,6 +7,7 @@ import { economyDeedMergeHistoricalInput } from './economy-deed-merge-source-com
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { ECONOMY_UX_MERGE_SOURCE, ECONOMY_UX_MERGE_SOURCE_SHA256 } from './economy-ux-merge-source-data.js';
+import { currentEconomicTermsBaseline } from './current-economic-terms-source-transfer.js';
 import { saleHistoricalInput } from './sale-source-compatibility.js';
 import { assertEconomyMonitorSourceTransfer, economyMonitorHistoricalInput } from './economy-monitor-source-transfer.js';
 import { ageEligibilityHistoricalInput } from './age-eligibility-source-transfer.js';
@@ -316,6 +317,7 @@ export function economyUxMergeCandidateHistoricalInput(file, input, profile = 'm
   input = economyDeedMergeHistoricalInput(file, input, profile);
   if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);
   input = deedAllocationHistoricalInput(file, input);
+  input = currentEconomicTermsBaseline(file, input);
   if (profile === 'deed') input = ageEligibilityHistoricalInput(file, input);
   input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyMonitorWorkerHistoricalInput(file, input);
@@ -334,6 +336,7 @@ export function economyUxMergeMainHistoricalInput(file, input, profile = 'monito
   input = economyDeedMergeHistoricalInput(file, input, profile);
   if (profile === 'monitor') input = ageEligibilityHistoricalInput(file, input);
   input = deedAllocationHistoricalInput(file, input);
+  input = currentEconomicTermsBaseline(file, input);
   if (profile === 'deed') input = ageEligibilityHistoricalInput(file, input);
   input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
   input = economyMonitorWorkerHistoricalInput(file, input);

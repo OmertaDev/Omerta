@@ -6,6 +6,7 @@ import { contractReleaseDeskInput, contractReleaseFeeInput } from '../tools/cont
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 import assert from 'node:assert/strict';
+import { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import './economy-monitor-source-compatibility.js';
 import './age-eligibility-source-compatibility.js';
 import crypto from 'node:crypto';
@@ -189,7 +190,7 @@ const physicalFeeCopySource = file => {
     ? assertMarketFeeCopySourceTransfer(file, input).baselineText : input;
 };
 const deedAllocationPhysicalSource = file => age21HistoricalInput(file, wikiMediaHistoricalInput(file, deedAllocationHistoricalInput(file,
-  economyDeedMergeHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'monitor'))));
+  economyDeedMergeHistoricalInput(file, integratedEconomicParentInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'main'), 'monitor'))));
 const monitorPhysicalSource = file => {
   let input = deedAllocationPhysicalSource(file);
   input = uxAfterwordHistoricalInput(file, input);
@@ -199,7 +200,7 @@ const monitorPhysicalSource = file => {
   return economyMonitorHistoricalInput(file, input);
 };
 const physicalCandidateSource = file => lf(economyUxMergeCandidateHistoricalInput(
-  file, uxAfterwordHistoricalInput(file, deedAllocationPhysicalSource(file))));
+  file, uxAfterwordHistoricalInput(file, monitorPhysicalSource(file))));
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');

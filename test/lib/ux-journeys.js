@@ -1,3 +1,4 @@
+import { integratedEconomicParentInput } from '../../tools/integrated-economic-parent-source.js';
 import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { readFileSync, lstatSync } from 'node:fs';
@@ -121,6 +122,9 @@ export function runAfterwordSourceProof() {
       assert.deepEqual(raw, { mode: rootDesk.pin.mode, blob: rootDesk.pin.blob });
       assert.equal(source, git('show', outer.predecessorRevision + ':' + file));
     }
+    const mainSource = integratedEconomicParentInput(file, source, 'main');
+    source = mainSource;
+    raw = { mode: raw.mode, blob: blob(source) };
     const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.desk);
     if (combined) {
       assert.deepEqual(raw, { mode: combined.current.mode, blob: combined.current.blob });
@@ -130,7 +134,7 @@ export function runAfterwordSourceProof() {
       raw = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };
       assert.deepEqual(raw, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));
       assert.equal(source, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));
-      rejectCombinedMutation(file, rootDesk ? git('show', rootDesk.revision + ':' + file) : committed);
+      rejectCombinedMutation(file, mainSource);
     }
     if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;
     const domain = BUSINESS_DESK_DOMAINS[file];
@@ -175,7 +179,7 @@ export function runAfterwordSourceProof() {
     const actualHead = git('show', 'HEAD:' + row.file), actualRecord = record('HEAD', row.file);
     const rawPhysical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
     assertActualHeadInput(row.file, actualRecord, actualHead, rawPhysical);
-    const physical = businessDeskHistoricalInput(row.file, contractReleaseDeskInput(row.file, rawPhysical));
+    const physical = businessDeskHistoricalInput(row.file, integratedEconomicParentInput(row.file, contractReleaseDeskInput(row.file, rawPhysical), 'main'));
     assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
     for (const input of [actualHead, actualHead.replaceAll('\n', '\r\n')]) {
       assertActualHeadInput(row.file, actualRecord, actualHead, input); rawCurrentPositives++;

@@ -1,3 +1,4 @@
+import { ENTERPRISE_NATIVE_UX_INPUTS as acceptedNative } from '../tools/enterprise-native-economic-release-inputs.js';
 // Source-only admission/provenance assertions. No server, database or native execution.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -23,6 +24,8 @@ assert.equal(archivedDeskNative.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
 assert(Object.isFrozen(currentNative) && Object.isFrozen(currentNative.files));
 assert.notStrictEqual(activeNative, currentNative, 'The Desk record remains frozen under its original module identity.');
 assert.equal(activeNative.version, 4); assert.equal(activeNative.phase, 'ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS');
+assert.equal(activeNative.files.find(row => row.file === 'tools/enterprise-native-deed-inputs.js').sha256,
+  'efffdc723601dbcac89c651092748c7931fa97a8f252a1f7c7045434237f858e');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   windowsHide: true, maxBuffer: 16 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -48,7 +51,7 @@ const proofOf = (proof, file, previous, expected) => {
   assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
 };
 let applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;
-let activeCloneRefusals = 0, unsealedAdmissionRefusals = 0;
+let activeCloneRefusals = 0, unsealedAdmissionRefusals = 0, acceptedParentRefusals = 0;
 const reject = run => { assert.throws(run); refusals++; };
 const rejectActiveClone = run => { assert.throws(run); activeCloneRefusals++; };
 for (const [file, desk] of Object.entries(nativeParents.businessPins)) {
@@ -116,10 +119,18 @@ if (activeNative.status === 'UNSEALED') {
   assert.equal(sha(bytes), actualExpected.sha256); assert.equal(blob(bytes), actualExpected.blob);
   const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
   assert(admitted && Object.isFrozen(admitted)); assert.strictEqual(admitted.current, actualExpected);
-  assert.strictEqual(admitted.intermediate, expected, 'The old helper receives its exact canonical frozen Desk row');
-  assert.equal(admitted.intermediateRevision, currentNative.authoredRevision);
+  const accepted = acceptedNative.files.find(row => row.file === file); assert(accepted);
+  assert.strictEqual(admitted.intermediate, accepted, 'The upstream helper receives its exact canonical accepted V7 row');
+  assert.equal(admitted.intermediateRevision, acceptedNative.authoredRevision);
   assert.strictEqual(admitted.predecessor, previous); assert.equal(admitted.predecessorRevision, previousNative.authoredRevision);
-  assert.deepEqual(admitted.prior, sample.proof, 'The existing Desk provenance controls remain intact as a historical stage');
+  const deskProof = admitted.prior.deskProvenance ?? admitted.prior;
+  proofOf(deskProof, file, previous, expected);
+  assert.deepEqual(deskProof, sample.proof, 'The existing Desk provenance controls remain intact as a historical stage');
+  const parentBytes = git('show', currentNative.authoredRevision + ':' + file);
+  assert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);
+  if (actualExpected.blob !== expected.blob) {
+    assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes)); acceptedParentRefusals++;
+  }
   assert.equal(admitted.nativeAdmission, false); assert.equal(admitted.priorResultsTransferred, false);
 }
 const otherMode = current.mode === '100644' ? '100755' : '100644';
@@ -143,5 +154,5 @@ assert.equal(refusals, 65, 'All original Business refusal categories are retaine
 assert.equal(activeCloneRefusals, 1, 'The current declaration clone is independently refused.');
 assert.equal(unsealedAdmissionRefusals, activeNative.status === 'UNSEALED' ? 1 : 0, 'Unsealed admission refusal remains separate from historical categories.');
 console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,
-  activeCloneRefusals, unsealedAdmissionRefusals,
+  activeCloneRefusals, unsealedAdmissionRefusals, acceptedParentRefusals,
   authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));

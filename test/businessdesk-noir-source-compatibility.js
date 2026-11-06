@@ -1,6 +1,8 @@
+import { ENTERPRISE_NATIVE_UX_INPUTS as acceptedNative } from '../tools/enterprise-native-economic-release-inputs.js';
 // Exact combined-source qualification only; no runtime, native execution or release transfer.
 import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
+import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -37,12 +39,19 @@ function readCombinedPhysical(file) {
   const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
   const expectedEntry = outer?.targets.desk
     ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
-    : git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
-  assert.equal(actualEntry, expectedEntry, 'Current source identity must qualify independently of its historical view');
-  const combined = contractReleaseDeskInput(file, physical);
-  const target = git('show', combinedSource.sourceRevision + ':' + file);
-  assert(combined === target || combined === target.replaceAll('\n', '\r\n'), 'The exact combined-source target is unchanged after the outer view');
-  return physical;
+    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
+  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');
+  const accepted = contractReleaseDeskInput(file, physical);
+  const acceptedLf = accepted.replaceAll('\r\n', '\n');
+  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');
+  const acceptedEntry = outer?.targets.desk
+    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : actualEntry;
+  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted integration mode/blob qualifies before its parent comparison');
+  assert.equal(acceptedLf, git('show', integratedEconomicSource.revision + ':' + file), 'The complete accepted integration source remains exact');
+  const main = integratedEconomicParentInput(file, accepted, 'main');
+  const parent = git('show', combinedSource.sourceRevision + ':' + file);
+  assert(main === parent || main === parent.replaceAll('\n', '\r\n'), 'Exact original combined comparison source');
+  return main;
 }
 
 assert.deepEqual(process.argv.slice(2), [], 'Bare source-only entrypoint required.');
@@ -180,6 +189,7 @@ const record = (revision, file) => {
 const relation = 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only';
 let nativeRelations = 0, nativeRefusals = 0, neutralAdditions = 0, sample;
 let activeCloneRefusals = 0, unsealedAdmissionRefusals = 0;
+const refusedDeskParentInputs = [];
 const nativeRefused = run => { assert.throws(run); nativeRefusals++; };
 const activeCloneRefused = run => { assert.throws(run); activeCloneRefusals++; };
 for (const file of nativeFiles) {
@@ -230,10 +240,15 @@ for (const file of nativeFiles) {
     assert.equal(sha(bytes), actualExpected.sha256); assert.equal(blob(bytes), actualExpected.blob);
     const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
     assert(admitted && Object.isFrozen(admitted)); assert.strictEqual(admitted.current, actualExpected);
-    assert.strictEqual(admitted.intermediate, expected, 'The existing helper receives the exact canonical frozen C5 Desk row.');
-    assert.equal(admitted.intermediateRevision, currentNative.authoredRevision);
+    const accepted = acceptedNative.files.find(row => row.file === file); assert(accepted);
+    assert.strictEqual(admitted.intermediate, accepted, 'The upstream helper receives the exact canonical accepted V7 row.');
+    assert.equal(admitted.intermediateRevision, acceptedNative.authoredRevision);
     assert.strictEqual(admitted.predecessor, previous); assert.equal(admitted.predecessorRevision, previousNative.authoredRevision);
-    assert.deepEqual(admitted.prior, proof, 'All seven existing C5 Noir relations remain intact as historical stages.');
+    assert.deepEqual(admitted.prior.deskProvenance ?? admitted.prior, proof, 'All seven existing C5 Noir relations remain intact as historical stages.');
+    if (accepted.blob !== expected.blob) {
+      assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, historicalBytes));
+      refusedDeskParentInputs.push(file);
+    }
     assert.equal(admitted.nativeAdmission, false); assert.equal(admitted.priorResultsTransferred, false);
   }
   const otherMode = current.mode === '100644' ? '100755' : '100644';
@@ -253,6 +268,7 @@ for (const file of nativeFiles) {
   activeCloneRefused(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...activeNative })));
   sample ||= { previous, expected }; nativeRelations++;
 }
+assert.deepEqual(refusedDeskParentInputs, ['package.json', 'public/index.html']);
 assert.equal(nativeRelations, 7); assert.equal(neutralAdditions, 2); assert.equal(nativeRefusals, 119, 'All original Noir refusal categories are retained.'); assert(sample);
 assert.equal(activeCloneRefusals, 7, 'Every current declaration clone is independently refused.');
 assert.equal(unsealedAdmissionRefusals, activeNative.status === 'UNSEALED' ? 7 : 0, 'Unsealed admission refusals remain separate from historical categories.');
@@ -260,5 +276,5 @@ for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../pu
   Object.freeze({ toString() { throw Error('No coercion'); } })]) assert.equal(businessDeskCombinedNativeProvenance(unknown, sample.previous, sample.expected), null);
 console.log(JSON.stringify({ phase, source: source.revision, tree: source.tree, targets, inverseHunks: inverseCount,
   positives, refusals, nativeRelations, nativeRefusals, activeCloneRefusals, unsealedAdmissionRefusals,
-  activeStatus: activeNative.status, sourceOnly: true, runtime: false, native: false,
+  refusedDeskParentInputs, activeStatus: activeNative.status, sourceOnly: true, runtime: false, native: false,
   migration: false, financial: false, activation: false, deployment: false }));

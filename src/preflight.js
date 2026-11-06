@@ -144,6 +144,7 @@ export const OPERATIONAL_ENV = [
   // Genesis lifecycle interlock. `legacy` preserves the pre-launch server; prepare/auction/migration/
   // oracle_warmup close the Desk and reserve bonds; only `live` reopens them after oracle sign-off.
   'GENESIS_LAUNCH_PHASE',
+  'INVENTORY_BOND_MANIFEST_PATH', 'INVENTORY_BOND_MANIFEST_SHA256',
   'GENESIS_AUCTION_MANIFEST_PATH', 'GENESIS_AUCTION_MANIFEST_SHA256',
   'DAILY_CAP_OMR', 'OMERTA_BOND_ADDRESS', 'OMERTA_FEES_ADDRESS',
   // THE v4 BOND-ORACLE KEEPER. The direct address exists because warmup deliberately precedes
@@ -225,14 +226,13 @@ export const OPERATIONAL_ENV = [
   // env var from live). The genesis rate is the pre-market anchor; the two STORE_* derive from it.
   'PLEX_GENESIS_OMR_PER_ETH', 'PLEX_PREMIUM_BPS', 'PLEX_RESPAWN_OMR',
   'STORE_PLEX_FLOOR', 'STORE_PLEX_PREMIUM_BPS',
-  'RESPAWN_FEE_ETH', 'REVENUE_BUYBACK_BPS', 'REVENUE_FOUNDER_BPS',
-  'REVENUE_RWA_BPS', 'SEASON_MODS', 'SELL_TAX_BPS', 'SELL_TAX_DEV_BPS',
+  'RESPAWN_FEE_ETH', 'SEASON_MODS', 'SELL_TAX_BPS', 'SELL_TAX_DEV_BPS',
   'SELL_TAX_LP_BPS', 'SELL_TAX_RWA_BPS',
   'VIG_BPS', 'VIG_MAX_PRICE_JUMP', 'VIG_RESERVE_BPS',
   'WITHDRAW_TAX_BPS',
   // the community earmark + family buyback (omerta-treasury-to-family-design.md — Phase 1 ships
   // every slice at 0; the Phase-2 flip sets the locked targets, BALANCE.md § THE FAMILY BUYBACK)
-  'FEE_COMMUNITY_BPS', 'STORE_COMMUNITY_BPS', 'SELL_TAX_COMMUNITY_BPS',
+  'FEE_COMMUNITY_BPS', 'SELL_TAX_COMMUNITY_BPS',
   'HARVEST_COMMUNITY_BPS', 'POL_FEES_VIG_BPS', 'FAMILY_MAX_PRICE_JUMP', 'BANK_MAX_PRICE_JUMP',
   'TAX_MAX_PRICE_JUMP', 'STOCK_MAX_PRICE_JUMP',
   // content toggles

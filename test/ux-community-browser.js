@@ -159,10 +159,15 @@ try {
  }, { once: true }));
  await bossPage.locator('[data-community-refresh]').click();
  const verified = (await (await verifiedPortrait).json()).entries.find((e) => e.id === portraitId);
- assert.equal(verified.participants.filter((p) => p.status === 'accepted' && p.characterId).length, 2, 'the actual crew read verifies both explicit current consents');
- await bossPortrait.locator('[data-community-download]:enabled').waitFor({ state: 'attached' });
- await bossPage.waitForFunction((id) => document.querySelector(`[data-community-download="${id}"]`)?.closest('.ux-community-portrait')?.querySelectorAll('img').length === 2, portraitId);
- assert.equal(await bossPortrait.locator('img').count(), 2, 'only explicit accepted avatars appear');
+ const acceptedAvatars = verified.participants.filter((p) => p.status === 'accepted' && p.characterId)
+  .map((p) => `/v1/avatar/${encodeURIComponent(p.characterId)}`).sort();
+ assert.equal(acceptedAvatars.length, 2, 'the actual crew read verifies both explicit current consents');
+ const renderedAvatars = await bossPage.waitForFunction(({ id, count }) => {
+  const portrait = document.querySelector(`[data-community-download="${id}"]:enabled`)?.closest('.ux-community-portrait');
+  const images = portrait?.querySelectorAll('img');
+  return images?.length === count && Array.from(images, (img) => img.getAttribute('src')).sort();
+ }, { id: portraitId, count: acceptedAvatars.length });
+ assert.deepEqual(await renderedAvatars.jsonValue(), acceptedAvatars, 'only the two explicitly accepted avatars appear in the enabled portrait');
  const downloaded = bossPage.waitForEvent('download'); await bossPortrait.locator('[data-community-download]').click(); const download = await downloaded;
  const portraitPath = path.join(artifacts, download.suggestedFilename()); await download.saveAs(portraitPath); assert.match(fs.readFileSync(portraitPath, 'utf8'), /The canal evening together/);
  const playback = bossPage.locator('.ux-community-playback'); await playback.locator(':scope > summary').click(); await playback.locator('[data-community-operation]').selectOption('culture-op'); await playback.locator('[data-community-load-playback]').click();

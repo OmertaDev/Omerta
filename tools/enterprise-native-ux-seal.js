@@ -9,9 +9,9 @@ import { ENTERPRISE_UX_METADATA, ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA, EN
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessorNativeInputs } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 import { CONTRACT_RELEASE_SOURCE_DATA, CONTRACT_RELEASE_SOURCE_DATA_SHA256 } from './contract-release-source-data.js';
-import { CONTRACT_RELEASE_DATA_FILE, CONTRACT_RELEASE_DESK_METADATA, CONTRACT_RELEASE_HISTORICAL_METADATA,
+import { CONTRACT_RELEASE_DATA_FILE, CONTRACT_RELEASE_PREDECESSOR_METADATA, CONTRACT_RELEASE_HISTORICAL_METADATA,
  assertContractReleaseSourceDefinition, assertContractReleaseCandidatePins } from './contract-release-native-provenance.js';
-import { ENTERPRISE_NATIVE_UX_INPUTS as deskNativeInputs } from './enterprise-native-deed-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as acceptedNativeInputs } from './enterprise-native-economic-release-inputs.js';
 const revision = process.argv[2], predecessorRevision = 'c6247976ff71e8d4c103ebd1498c2d373217d077', uxRevision = '940df6a1efbe4ddcd8301cd138d5643dbe48a0bc';
 assert.equal(process.argv.length, 3, 'Usage: node tools/enterprise-native-ux-seal.js <authored-commit>'); assert.match(revision || '', /^[a-f0-9]{40}$/);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
@@ -48,11 +48,12 @@ const value = { version: 4, status: 'SEALED', phase: 'ACTUAL_ENTERPRISE_CONTRACT
  nativePredecessorRevision: predecessorNativeInputs.authoredRevision,
  nativePredecessorMetadataSha256: sha(read(ENTERPRISE_UX_PREDECESSOR_METADATA)),
  deedSourceDefinitionSha256: sha(JSON.stringify(DEED_ALLOCATION_SOURCE_DOMAINS)),
- contractPredecessorRevision: deskNativeInputs.authoredRevision,
- contractPredecessorMetadataSha256: sha(read(CONTRACT_RELEASE_DESK_METADATA)),
+ contractPredecessorRevision: acceptedNativeInputs.authoredRevision,
+ contractPredecessorMetadataSha256: sha(read(CONTRACT_RELEASE_PREDECESSOR_METADATA)),
  contractSourceDefinitionSha256: CONTRACT_RELEASE_SOURCE_DATA_SHA256,
  contractSourceRevision: CONTRACT_RELEASE_SOURCE_DATA.sourceRevision, contractBaseRevision: CONTRACT_RELEASE_SOURCE_DATA.baseRevision,
  reviewedContractRevision: CONTRACT_RELEASE_SOURCE_DATA.reviewedContractRevision, reviewedUiRevision: CONTRACT_RELEASE_SOURCE_DATA.reviewedUiRevision,
  legacyRevision: ENTERPRISE_NATIVE_RELEASE_INPUTS.revision, legacyDefinitionSha256: sha(JSON.stringify(ENTERPRISE_NATIVE_RELEASE_INPUTS)), legacyInventorySha256: sha(JSON.stringify(ENTERPRISE_NATIVE_FILES)), files, replacements: plan.replacements, legacyAdditionReplacements: plan.legacyAdditionReplacements, additions: files.slice(ENTERPRISE_NATIVE_FILES.length) };
+assertContractReleaseCandidatePins(value.files);
 fs.writeFileSync(new URL('../' + ENTERPRISE_UX_METADATA, import.meta.url), enterpriseUxMetadataBytes(value));
 console.log(JSON.stringify({ authoredRevision: revision, actualInputs: files.length, replacements: plan.replacements.length, legacyAdditionReplacements: plan.legacyAdditionReplacements.length, additions: value.additions.length, onlySelfReference: ENTERPRISE_UX_METADATA, nativeResultsTransferred: false }));

@@ -56,12 +56,11 @@
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 130 | yes |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 130 | yes |
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
-| [src/rules.tail.js](../../src/rules.tail.js) | 126 | yes |
+| [src/rules.tail.js](../../src/rules.tail.js) | 127 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 115 | yes |
 | [public/wiki.html](../../public/wiki.html) | 102 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
-| [src/agentgateway.js](../../src/agentgateway.js) | 97 | yes |
 | [test/growth.js](../../test/growth.js) | 95 | yes |
 | [test/migrate.js](../../test/migrate.js) | 94 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 91 | yes |

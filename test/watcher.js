@@ -6,6 +6,7 @@ import fs from 'node:fs/promises';
 import assert from 'node:assert';
 process.env.MOD_KEY = 'test-mod-key';
 process.env.CHAIN_CONFIRMATIONS = '3';
+process.env.VIG_BPS = '2500';
 
 const { makeDb } = await import('../src/db.js');
 const { buildServer } = await import('./server-fixture.js');
@@ -162,7 +163,7 @@ const { syncStorePaidEvents, syncDynastyMintEvents, syncDynastyTransferEvents } 
 const { skuChainId } = await import('../src/store.js');
 const storeLog = []; // { block, nonce, payer, skuId, amount }
 source.storePaidLogs = async (from, to) => storeLog.filter((l) => l.block >= from && l.block <= to)
-  .map((l) => ({ nonce: l.nonce, payer: l.payer, skuId: l.skuId, amount: l.amount, txHash: '0xstore' + l.nonce }));
+  .map((l) => ({ nonce: l.nonce, payer: l.payer, skuId: l.skuId, amount: l.amount, txHash: '0xstore' + l.nonce, routing: { route: 'simulation' } }));
 
 // a LIVE sku (revive_3 → 3 respawn tokens) paid on-chain: the numeric sku is keccak(skuString) — the
 // StreetDeed tokenId convention — and the watcher reverses it with NO registry to keep in lockstep
@@ -239,6 +240,64 @@ assert.equal(await getCursor(pool, 'store'), 62, 'the stream resumes once the po
     await new Promise((resolve) => rpc.close(resolve));
     if (savedRpc === undefined) delete process.env.CHAIN_RPC_URL; else process.env.CHAIN_RPC_URL = savedRpc;
     if (savedFees === undefined) delete process.env.OMERTA_FEES_ADDRESS; else process.env.OMERTA_FEES_ADDRESS = savedFees;
+  }
+}
+
+// Backfill two routes from one block. Each package is paired to its route by transaction,
+// OmertaFees emitter and nonce, and the router's split is recorded at wei precision.
+{
+  const { makeViemSource } = await import('../src/watcher.js');
+  const { encodeEventTopics, encodeAbiParameters, parseAbiItem, formatEther } = await import('viem');
+  const fees = '0x' + '11'.repeat(20), router = '0x' + '33'.repeat(20);
+  const binding = parseAbiItem('event NonMintFeeRouted(uint256 indexed nonce, address indexed router, uint256 gross)');
+  const distribution = parseAbiItem('event RevenueRouted(uint256 indexed nonce, uint256 gross, address dev, uint256 toDev, address vig, uint256 toVig, address treasury, uint256 toTreasury, address community, uint256 toCommunity)');
+  const direct = parseAbiItem('event FeeSplit(uint256 indexed nonce, uint256 toDev, uint256 toVig)');
+  const log = (address, event, args) => {
+    const data = event.inputs.filter((i) => !i.indexed);
+    return { address, topics: encodeEventTopics({ abi: [event], args }),
+      data: encodeAbiParameters(data, data.map((i) => args[i.name])) };
+  };
+  const blockHash = '0x' + '99'.repeat(32);
+  const transactionHash = '0x' + '42'.repeat(32);
+  const nonce = 903n, amount = 19n;
+  const packages = [nonce, nonce + 1n].map((n) => ({ blockHash, transactionHash,
+    args: { nonce: n, sku: BigInt(skuChainId('revive_3')), payer: wallet, amount } }));
+  const legs = { nonce, gross: amount, dev: wallet, vig: wallet, treasury: wallet, community: wallet,
+    toDev: 12n, toVig: 4n, toTreasury: 1n, toCommunity: 2n };
+  const receipt = { blockHash, transactionHash, status: 'success', logs: [
+    log(fees, binding, { nonce, router, gross: amount }),
+    log(wallet, distribution, legs), // a recipient cannot attest for the designated router
+    log(fees, direct, { nonce: nonce + 1n, toDev: 15n, toVig: 4n }),
+  ] };
+  const priorFees = process.env.OMERTA_FEES_ADDRESS;
+  process.env.OMERTA_FEES_ADDRESS = fees;
+  try {
+    const adapter = await makeViemSource({ publicClient: {
+      readContract: ({ functionName }) => functionName === 'vigBps' ? 2500n : 10000n,
+      getBlockNumber: () => 70n, getLogs: () => packages, getTransactionReceipt: () => receipt,
+    } });
+    const before = await respawnTokens();
+    await assert.rejects(() => syncStorePaidEvents(pool, adapter), /does not match its router/);
+    assert.equal(await getCursor(pool, 'store'), 62);
+    receipt.logs.push(log(router, distribution, { ...legs, toDev: 11n, toTreasury: 2n }));
+    await assert.rejects(() => syncStorePaidEvents(pool, adapter), /routing amounts differ/);
+    assert.equal(await getCursor(pool, 'store'), 62);
+    receipt.logs.pop();
+    receipt.logs.push(log(router, distribution, legs));
+    assert.equal((await syncStorePaidEvents(pool, adapter)).processed, 2);
+    assert.equal(await respawnTokens(), before + 6);
+    const snapshots = (await pool.query('SELECT revenue_split FROM store_payments WHERE nonce IN (903,904) ORDER BY nonce')).rows;
+    assert.deepEqual(snapshots.map((r) => r.revenue_split), [
+      { route: router, dev: formatEther(12n), vig: formatEther(4n), treasury: formatEther(1n), community: formatEther(2n) },
+      { route: 'direct', dev: formatEther(15n), vig: formatEther(4n), treasury: '0', community: '0' },
+    ]);
+    assert.equal(Number((await pool.query("SELECT amount FROM community_revenue WHERE source='store' AND ref='903'")).rows[0].amount), 2e-18);
+    assert.equal((await pool.query("SELECT ref FROM community_revenue WHERE source='store' AND ref='904'")).rowCount, 0);
+    await pool.query("UPDATE chain_cursor SET last_block=62 WHERE stream='store'");
+    await syncStorePaidEvents(pool, adapter);
+    assert.equal(await respawnTokens(), before + 6, 'overlapping scans book and grant both orders exactly once');
+  } finally {
+    if (priorFees === undefined) delete process.env.OMERTA_FEES_ADDRESS; else process.env.OMERTA_FEES_ADDRESS = priorFees;
   }
 }
 

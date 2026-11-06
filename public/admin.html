@@ -673,10 +673,9 @@
       + rowHtml('prize pool', `${fmt(vs.prizePool ?? vs.prize_pool ?? '?')} $OMR`)
       + `<div class="note" style="margin-top:8px">staking emission</div>`
       + rowHtml('pool / backed', `${fmt(em?.poolBalance)} $OMR · ${Math.round((em?.backed ?? 1) * 100)}%`)
-      + (rev ? `<div class="note" style="margin-top:8px">the Store (ETH revenue, split ${rev.split.founder / 100}/${rev.split.buyback / 100}/${rev.split.rwa / 100})</div>`
+      + (rev ? `<div class="note" style="margin-top:8px">the Store (current ETH routing % · developer / Vig / Treasury / community ${rev.split.founder / 100} / ${rev.split.buyback / 100} / ${rev.split.rwa / 100} / ${rev.split.community == null ? 'unreported' : rev.split.community / 100})</div>`
         + rowHtml('gross ETH', `Ξ${fmt(rev.grossEth)}`)
-        + rowHtml('operations / buyback / rwa', `Ξ${fmt(rev.founderEth)} · Ξ${fmt(rev.buybackEth)} · Ξ${fmt(rev.rwaEth)}`)
-        + rowHtml('treasury', `Ξ${fmt(rev.rwaEth)} <span class="note">held as ETH</span>`)
+        + rowHtml('booked developer / Vig / Treasury / community', `Ξ${fmt(rev.founderEth)} · Ξ${fmt(rev.buybackEth)} · Ξ${fmt(rev.rwaEth)} · ${rev.communityEth == null ? 'unreported' : 'Ξ' + fmt(rev.communityEth)}`)
         + (rev.pendingLinks ? rowHtml('pending links', `${rev.pendingLinks} unclaimed purchase(s)`) : '') : '')
       + (tre && tre.code !== 401 ? `<div class="note" style="margin-top:8px">Treasury obligations to players</div>`
         + rowHtml('held / owed', `Ξ${fmt(tre.body?.totalEth)} held · Ξ${fmt(tre.body?.allocatedEth)} allocated`)

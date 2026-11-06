@@ -362,9 +362,7 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     app.post('/v1/mod/drop/window', { preHandler: modAuth }, async (req) =>
       Drop.setDropWindow(pool, req.body?.opensAt, req.body?.closesAt));
     app.get('/v1/mod/drop', { preHandler: modAuth }, async () => Drop.dropStatus(pool));
-    // Mod/ops: the founder's three-way revenue split (founder / buyback / RWA), and the comp/simulate
-    // path — drives recordStorePurchase with a synthetic nonce (for comps, QA, and until the paywall
-    // ships). `nonce` must be unique; a duplicate is the idempotent no-op.
+    // Store revenue and idempotent QA grants. Real ETH bookings come from the watcher.
     app.get('/v1/mod/revenue', { preHandler: modAuth }, async () => Store.revenueStatus(pool));
     // THE MONEY ROUTER — WHERE A DOLLAR GOES: the one declared waterfall over every real-value
     // inflow, lifetime figures per slice, and the cross-source invariants (membership, the two
@@ -372,7 +370,7 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     app.get('/v1/mod/router', { preHandler: modAuth }, async () => Router.routerBoard(pool));
     app.post('/v1/mod/store/grant', { preHandler: modAuth }, async (req) =>
       Store.recordStorePurchase(pool, { nonce: req.body?.nonce, sku: req.body?.sku,
-        payer: req.body?.payer, amountWei: req.body?.amountWei, txHash: modRealTxHash(req) })); // D-MED2: strip caller txHash unless the QA flag is set
+        payer: req.body?.payer, amountWei: req.body?.amountWei, txHash: modRealTxHash(req), routing: { route: 'simulation' } })); // QA-only simulated receipt
     // Gauge: pool balance + effective-APY runway; and an ops/test top-up (the buyback funds it live).
     // THE DEV FUND — the founder's revenue bucket (fed by the withdrawal exit toll's tax:dev share).
     app.get('/v1/mod/dev', { preHandler: modAuth }, async () => {

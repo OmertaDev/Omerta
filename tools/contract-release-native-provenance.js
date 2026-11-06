@@ -7,21 +7,28 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as desk, ENTERPRISE_NATIVE_UX_INPUTS_SHA256
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as predecessorDefinition } from './enterprise-native-ux-b35-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as qualifiedUx, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as qualifiedUxDefinition } from './enterprise-native-ux-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as deed, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as deedDefinition } from './businessdesk-deed-native-inputs.js';
-import { businessDeskCombinedNativeProvenance } from './businessdesk-combined-native-provenance.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as accepted, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as acceptedDefinition } from './enterprise-native-economic-release-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as economic, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as economicDefinition } from './enterprise-native-economic-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as economicDeed, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as economicDeedDefinition } from './economic-deed-parent-native-inputs.js';
+import { ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS as continuousCity } from './enterprise-native-continuous-city-inputs.js';
+import { economicReleaseNativeProvenance, assertEconomicReleaseNativeDefinition } from './economic-release-native-provenance.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as archivedDesk, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as archivedDeskDefinition } from './businessdesk-desk-parent-native-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as archivedMonitor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as archivedMonitorDefinition } from './businessdesk-monitor-parent-native-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as archivedWiki, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as archivedWikiDefinition } from './businessdesk-wiki-parent-native-inputs.js';
-import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
 import { CONTRACT_RELEASE_SOURCE_DATA_FILE, contractReleaseSourceDataPin } from './contract-release-source-format.js';
 
 export const CONTRACT_RELEASE_DATA_FILE = CONTRACT_RELEASE_SOURCE_DATA_FILE;
 export const CONTRACT_RELEASE_METADATA = 'tools/enterprise-native-contract-release-inputs.js';
 export const CONTRACT_RELEASE_DESK_METADATA = 'tools/enterprise-native-deed-inputs.js';
+export const CONTRACT_RELEASE_PREDECESSOR_METADATA = 'tools/enterprise-native-economic-release-inputs.js';
+export const CONTRACT_RELEASE_CATALOG_METADATA = 'tools/enterprise-native-continuous-city-inputs.js';
 export const CONTRACT_RELEASE_HISTORICAL_METADATA = Object.freeze([
   'tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
   'tools/businessdesk-deed-native-inputs.js', 'tools/businessdesk-desk-parent-native-inputs.js',
   'tools/businessdesk-monitor-parent-native-inputs.js', 'tools/businessdesk-wiki-parent-native-inputs.js',
-  CONTRACT_RELEASE_DESK_METADATA,
+  CONTRACT_RELEASE_DESK_METADATA, CONTRACT_RELEASE_PREDECESSOR_METADATA,
+  'tools/enterprise-native-economic-inputs.js', 'tools/economic-deed-parent-native-inputs.js',
+  CONTRACT_RELEASE_CATALOG_METADATA,
 ]);
 const history = Object.freeze([
   [CONTRACT_RELEASE_HISTORICAL_METADATA[0], predecessor, predecessorDefinition],
@@ -31,6 +38,9 @@ const history = Object.freeze([
   [CONTRACT_RELEASE_HISTORICAL_METADATA[4], archivedMonitor, archivedMonitorDefinition],
   [CONTRACT_RELEASE_HISTORICAL_METADATA[5], archivedWiki, archivedWikiDefinition],
   [CONTRACT_RELEASE_DESK_METADATA, desk, deskDefinition],
+  [CONTRACT_RELEASE_PREDECESSOR_METADATA, accepted, acceptedDefinition],
+  ['tools/enterprise-native-economic-inputs.js', economic, economicDefinition],
+  ['tools/economic-deed-parent-native-inputs.js', economicDeed, economicDeedDefinition],
 ]);
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const record = value => {
@@ -69,7 +79,7 @@ function pin(row, file) {
   assert(canonical(row.file)); if (file !== undefined) assert.equal(row.file, file); assert(['100644', '100755'].includes(row.mode));
   assert.match(row.blob, /^[a-f0-9]{40}$/); assert.match(row.sha256, /^[a-f0-9]{64}$/);
 }
-let sourceDefinitionChecked = false;
+let sourceDefinitionChecked = false, acceptedDefinitionChecked = false;
 export function assertContractReleaseSourceDefinition() {
   // Once checked, deeply frozen data and const module bindings cannot acquire new authority.
   if (sourceDefinitionChecked) return source;
@@ -91,16 +101,24 @@ export function assertContractReleaseSourceDefinition() {
     assert.equal(digest(declaration), definition, 'Immutable historical native definition: ' + file);
     pin(source.historicalManifests[file], file);
   }
+  frozenData(continuousCity);
+  fields(continuousCity, ['status', 'revision', 'predecessor', 'legacyBaseRevision', 'replacements', 'additions']);
+  assert.equal(continuousCity.status, 'SEALED');
+  assert.equal(digest(continuousCity), '5d3c8f292d7dd378b2e469a431042fd90671fceea3d5b487ce5454a094d80d2b');
+  pin(source.historicalManifests[CONTRACT_RELEASE_CATALOG_METADATA], CONTRACT_RELEASE_CATALOG_METADATA);
+  assert.equal(source.historicalManifests[CONTRACT_RELEASE_CATALOG_METADATA].sha256, '804f29d96f31767fb3447dc61ed01ca243d9770357923ded125493bb19e71f58');
+  assert.equal(source.baseRevision, 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a');
+  assert.equal(source.baseTree, 'b45024815077a564ecb48eb35e4835b830d44c2f');
   for (const [file, row] of Object.entries(source.nativeChanges)) {
     assert(canonical(file)); assert(Object.isFrozen(row)); fields(row, ['current', 'predecessor']);
     pin(row.current, file); pin(row.predecessor, file);
-    const previous = desk.files.find(entry => entry.file === file); assert(previous, 'Contract change has an exact Desk subject');
+    const previous = accepted.files.find(entry => entry.file === file); assert(previous, 'Contract change has an exact Desk subject');
     assert.deepEqual(row.predecessor, previous, 'Contract predecessor is the frozen Desk input');
     assert(!same(row.current, row.predecessor), 'A contract relation must change its exact predecessor');
     assert(!CONTRACT_RELEASE_HISTORICAL_METADATA.includes(file), 'Historical manifests cannot be rewritten');
   }
   for (const [file, row] of Object.entries(source.approvedAdditions)) {
-    pin(row, file); assert(!desk.files.some(entry => entry.file === file), 'Addition cannot replace a Desk input');
+    pin(row, file); assert(!accepted.files.some(entry => entry.file === file), 'Addition cannot replace a Desk input');
     assert(![CONTRACT_RELEASE_DATA_FILE, CONTRACT_RELEASE_METADATA].includes(file), 'No recursive data or metadata identity row');
   }
   sourceDefinitionChecked = true; return source;
@@ -110,10 +128,11 @@ export function assertContractReleaseCandidatePins(files) {
   assert(Array.isArray(files)); const entries = new Map();
   for (const row of files) { pin(row); assert(!entries.has(row.file), 'No duplicate actual candidate inputs'); entries.set(row.file, row); }
   for (const file of CONTRACT_RELEASE_HISTORICAL_METADATA) assert.deepEqual(entries.get(file), source.historicalManifests[file], 'Frozen historical raw input: ' + file);
+  for (const row of accepted.files) assert(entries.has(row.file), 'Every accepted predecessor subject remains in the current closure: ' + row.file);
   const usedChanges = new Set(), usedAdditions = new Set();
   for (const row of files) {
     assert.notEqual(row.file, CONTRACT_RELEASE_METADATA, 'Only the current manifest is self-referential');
-    const stage = desk.files.find(entry => entry.file === row.file);
+    const stage = accepted.files.find(entry => entry.file === row.file);
     if (stage && same(row, stage)) continue;
     if (stage) {
       assert(own(source.nativeChanges, row.file), 'Unlisted change to a Desk input: ' + row.file);
@@ -138,8 +157,8 @@ export function assertContractReleaseNativeDefinition(declaration) {
   assert.equal(declaration.status, 'SEALED'); assert.equal(declaration.version, 4);
   assert.equal(declaration.phase, 'ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS');
   assertContractReleaseCandidatePins(declaration.files);
-  assert.equal(declaration.contractPredecessorRevision, desk.authoredRevision);
-  assert.equal(declaration.contractPredecessorMetadataSha256, source.historicalManifests[CONTRACT_RELEASE_DESK_METADATA].sha256);
+  assert.equal(declaration.contractPredecessorRevision, accepted.authoredRevision);
+  assert.equal(declaration.contractPredecessorMetadataSha256, source.historicalManifests[CONTRACT_RELEASE_PREDECESSOR_METADATA].sha256);
   assert.equal(declaration.contractSourceDefinitionSha256, CONTRACT_RELEASE_SOURCE_DATA_SHA256);
   assert.equal(declaration.contractSourceRevision, source.sourceRevision); assert.equal(declaration.contractBaseRevision, source.baseRevision);
   assert.equal(declaration.reviewedContractRevision, source.reviewedContractRevision); assert.equal(declaration.reviewedUiRevision, source.reviewedUiRevision);
@@ -153,7 +172,7 @@ export function contractReleaseNativeProvenance(file, previous, expected, declar
   assert(expected, 'A declared actual current input is required');
   const original = predecessor.files.find(row => row.file === file);
   assert.strictEqual(previous, original, 'Only the canonical original native predecessor');
-  const stage = desk.files.find(row => row.file === file);
+  const stage = accepted.files.find(row => row.file === file);
   let changed = false;
   if (stage) {
     if (!same(expected, stage)) {
@@ -172,24 +191,20 @@ export function contractReleaseNativeProvenance(file, previous, expected, declar
     assert.deepEqual(expected, source.approvedAdditions[file]); assert(!original); changed = true;
   }
   if (!original) return changed ? Object.freeze({ file, current: expected, predecessor: null, intermediate: stage || null,
-    intermediateRevision: stage ? desk.authoredRevision : null,
+    intermediateRevision: stage ? accepted.authoredRevision : null,
     relation: 'exact-authored-contract-release-addition-only', nativeAdmission: false, priorResultsTransferred: false }) : null;
   assert(stage, 'Every original native input remains in the frozen Desk inventory');
   if (!changed && same(original, expected)) return null;
   let prior = null;
   if (!same(original, stage)) {
-    // The old helper requires this exact frozen Desk object, not an equal new-current row.
-    prior = businessDeskCombinedNativeProvenance(file, original, stage);
-    if (!prior) {
-      const bound = DEED_ALLOCATION_SOURCE_DOMAINS[file]; assert(bound, 'Unreviewed pre-contract native change: ' + file);
-      assert.deepEqual([stage.mode, stage.blob, stage.sha256], [bound.currentMode, bound.currentBlob, bound.currentSha256]);
-      assert.deepEqual([original.mode, original.blob, original.sha256], [bound.baselineMode, bound.baselineBlob, bound.baselineSha256]);
-      prior = Object.freeze({ file, current: stage, predecessor: original, predecessorRevision: predecessor.authoredRevision,
-        relation: 'exact-reviewed-deed-source-provenance-only', nativeAdmission: false, priorResultsTransferred: false });
-    }
+    // The upstream helper accepts only its canonical V7 row after Root raw admission.
+    if (!acceptedDefinitionChecked) { assertEconomicReleaseNativeDefinition(accepted); acceptedDefinitionChecked = true; }
+    prior = economicReleaseNativeProvenance(file, stage);
+    assert(prior && Object.isFrozen(prior), 'Changed historical input needs its accepted predecessor proof');
+    assert(same(prior.current, stage) || (prior.current.mode === stage.mode && prior.current.blob === stage.blob && prior.current.sha256 === stage.sha256));
     assert.equal(prior.nativeAdmission, false); assert.equal(prior.priorResultsTransferred, false);
   }
   return Object.freeze({ file, current: expected, predecessor: original, predecessorRevision: predecessor.authoredRevision,
-    intermediate: stage, intermediateRevision: desk.authoredRevision, prior,
+    intermediate: stage, intermediateRevision: accepted.authoredRevision, prior,
     relation: 'exact-reviewed-contract-release-source-provenance-only', nativeAdmission: false, priorResultsTransferred: false });
 }

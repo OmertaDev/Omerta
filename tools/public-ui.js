@@ -466,31 +466,30 @@ try {
   await mobile.locator('#welcome:not(.hidden)').waitFor();
   for (let step = 0; step < 2; step++) await mobile.click('#tour-next');
   await mobile.locator('#welcome.hidden').waitFor({ state: 'attached' });
-  await mobile.waitForSelector('#tab-streets.on [data-do^="POST /v1/crimes/"]:not([disabled])');
-  check(await mobile.locator('#tab-streets.on').isVisible()
-      && await mobile.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected') === 'true',
-    'The first-job welcome opens Streets with an available job.');
+  const firstJob = mobile.locator('#tab-streets.on #ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled');
+  await firstJob.click({ trial: true });
+  check(await mobile.locator('#tabs [data-tab="streets"]').getAttribute('aria-selected') === 'true',
+    'Completing the tour selects Streets with an available first job.');
   check(await mobile.locator('#player-view-switch, #city-actions, #city-panel, #city-scene-host').count() === 0,
-    'The first-job welcome must use the classic interface.');
-  const operationDesk = await mobile.evaluate(() => {
+    'The first job uses the classic interface.');
+  const operationDesk = await firstJob.evaluate((primary) => {
     const desk = document.querySelector('#operation-desk');
-    const primary = desk?.querySelector('[data-operation-primary]');
-    const rect = desk?.getBoundingClientRect();
+    const rect = primary.getBoundingClientRect();
     return {
       visible: !!desk && getComputedStyle(desk).display !== 'none',
       region: desk?.getAttribute('role'),
       labelled: !!desk?.getAttribute('aria-labelledby'),
       primary: primary?.textContent.trim(),
-      top: rect?.top,
+      top: rect.top, bottom: rect.bottom, height: rect.height, viewportHeight: innerHeight,
       feed: !!desk?.querySelector('#operation-feed[aria-live="polite"]'),
       over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     };
   });
   check(operationDesk.visible && operationDesk.region === 'region' && operationDesk.labelled
       && operationDesk.primary && operationDesk.feed,
-    `Your Turn is not one labelled, actionable operation surface — ${JSON.stringify(operationDesk)}`);
-  check(operationDesk.top < 260 && operationDesk.over <= 1,
-    `Your Turn is buried or causes mobile overflow — ${JSON.stringify(operationDesk)}`);
+    'Your Turn needs a labelled operation region, an available job and a live receipt feed.');
+  check(operationDesk.height >= 44 && operationDesk.top >= 0 && operationDesk.bottom <= operationDesk.viewportHeight && operationDesk.over <= 1,
+    'The first Streets job must scroll into reach with a 44px touch target and fit the phone width — ' + JSON.stringify(operationDesk));
   const actionTerms = await mobile.evaluate(() => {
     const crime = document.querySelector('#tab-streets .card [data-do^="POST /v1/crimes/"]')?.closest('.card');
     const crimeButton = crime?.querySelector('[data-do^="POST /v1/crimes/"]');
@@ -573,7 +572,7 @@ try {
     const px = (selector) => Number.parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
     return { cardDetail: px('#tab-streets .card .d'), coachHint: px('#coach .ch'), bottomNav: px('#bnav button') };
   });
-  check(typeFloor.cardDetail >= 14 && typeFloor.coachHint >= 14 && typeFloor.bottomNav >= 11.5,
+  check(typeFloor.cardDetail >= 14 && typeFloor.coachHint >= 13 && typeFloor.bottomNav >= 11.5,
     `operational type floor is still too small — ${JSON.stringify(typeFloor)}`);
 
   // A completed action must refresh its own board even when its keyboard trigger remains

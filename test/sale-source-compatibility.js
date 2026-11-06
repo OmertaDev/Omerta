@@ -1,5 +1,6 @@
 // Independent exact-source and mutation proofs; no runtime or native results transfer.
 import assert from 'node:assert/strict';
+import { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -34,6 +35,7 @@ const inverseHunks = diff => {
 };
 let positives = 0, refusals = 0, hunks = 0;
 const currentSaleSource = (file, input) => {
+  input = integratedEconomicParentInput(file, input, 'main');
   input = economyDeedMergeHistoricalInput(file, input, 'monitor');
   input = deedAllocationHistoricalInput(file, input);
   input = uxAfterwordHistoricalInput(file, input);
@@ -180,3 +182,21 @@ for (const [hook, count] of [["import { saleHistoricalInput } from './sale-sourc
 }
 assert.equal(candidateConserved, git('show', 'c86bcd310e5f38845642637230ba4bec7d653183:tools/economy-ux-merge-source-compatibility.js'), 'All committed economy merge qualifiers and refusal predicates remain byte-identical');
 console.log(JSON.stringify({ phase: pin.phase, files: pin.files.length, hunks, positives, refusals, runtime: false, native: false }));
+
+let economicConserved = integratedEconomicParentInput(correctionFile, fs.readFileSync(correctionFile, 'utf8'), 'economic').replaceAll('\r\n', '\n');
+for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
+  ["import { deedAllocationHistoricalInput } from './deed-allocation-source-transfer.js';\n", 1],
+  ['  input = deedAllocationHistoricalInput(file, input);\n', 2],
+  ["import { currentEconomicTermsBaseline } from './current-economic-terms-source-transfer.js';\n", 1],
+  ['  input = currentEconomicTermsBaseline(file, input);\n', 2],
+  ["import { economyBankInterestHardeningHistoricalInput } from './economy-bank-interest-source-transfer.js';\n", 1],
+  ['  input = economyBankInterestHardeningHistoricalInput(file, input);\n', 2],
+  ["import { economySocialProofCutoverHistoricalInput } from './economy-social-proof-cutover-source-transfer.js';\n", 1],
+  ['  input = economySocialProofCutoverHistoricalInput(file, input);\n', 2],
+  ["import { economySocialReceiptSafetyHistoricalInput } from './economy-social-proof-receipt-safety-source-transfer.js';\n", 1],
+  ['  input = economySocialReceiptSafetyHistoricalInput(file, input);\n', 2],
+  ["import { economySocialReceiptHistoricalInput } from './economy-social-proof-receipt-source-transfer.js';\n", 1],
+  ['  input = economySocialReceiptHistoricalInput(file, input);\n', 2]]) {
+  assert.equal(economicConserved.split(hook).length, count + 1, 'Exact candidate and main sale integration hooks'); economicConserved = economicConserved.split(hook).join('');
+}
+assert.equal(economicConserved, git('show', 'c86bcd310e5f38845642637230ba4bec7d653183:tools/economy-ux-merge-source-compatibility.js'), 'All committed economy merge qualifiers and refusal predicates remain byte-identical');

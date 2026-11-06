@@ -1,3 +1,4 @@
+import { ENTERPRISE_NATIVE_UX_INPUTS as acceptedNative } from '../tools/enterprise-native-economic-release-inputs.js';
 // Source/pin qualification only. No PostgreSQL, historical workload execution or release transfer.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -11,6 +12,7 @@ import { BUSINESS_DESK_COMBINED_NATIVE_PARENT_OBJECTS, assertBusinessDeskCombine
 import { ENTERPRISE_NATIVE_UX_INPUTS as current } from '../tools/enterprise-native-deed-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous } from '../tools/enterprise-native-ux-b35-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
+import { economicReleaseNativeProvenance } from '../tools/economic-release-native-provenance.js';
 
 assert.deepEqual(process.argv.slice(2),[],'Bare source-only entrypoint required');
 const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{windowsHide:true,maxBuffer:64*1024*1024});
@@ -97,8 +99,17 @@ for(const row of data.files){
   const actualExpected=activeNative.files.find(pin=>pin.file===row.file);assert(actualExpected);
   assert.equal(sha(bytes),actualExpected.sha256);
   const admitted=assertEnterpriseUxTrackedInput(row.file,now,anchor,bytes);
-  assert.strictEqual(admitted.current,actualExpected);assert.strictEqual(admitted.intermediate,expected);
-  assert.strictEqual(admitted.predecessor,before);assert.deepEqual(admitted.prior,proof);
+  assert.strictEqual(admitted.current,actualExpected);
+  const accepted=acceptedNative.files.find(pin=>pin.file===row.file);assert(accepted);
+  assert.strictEqual(admitted.intermediate,accepted);
+  assert.equal(sha(git('show',current.authoredRevision+':'+row.file)),expected.sha256);
+  assert.deepEqual(economicReleaseNativeProvenance(row.file,accepted),admitted.prior);
+  refuse(()=>economicReleaseNativeProvenance(row.file,Object.freeze({...accepted})));
+  refuse(()=>economicReleaseNativeProvenance(row.file,Object.freeze({...accepted,sha256:'0'.repeat(64)})));
+  refuse(()=>economicReleaseNativeProvenance(row.file,expected));
+  refuse(()=>economicReleaseNativeProvenance(row.file,actualExpected));
+  assert.strictEqual(admitted.predecessor,before);assert.deepEqual(admitted.prior.deskProvenance??admitted.prior,proof);
+  if(actualExpected.blob!==expected.blob)refuse(()=>assertEnterpriseUxTrackedInput(row.file,now,anchor,git('show',current.authoredRevision+':'+row.file)));
   assert.equal(admitted.nativeAdmission,false);assert.equal(admitted.priorResultsTransferred,false);
   for(const raw of [Buffer.concat([bytes,Buffer.from('\n')]),bytes.subarray(1),bytes.toString(),Buffer.from(bytes.toString().replaceAll('\n','\r\n'))])refuse(()=>assertEnterpriseUxTrackedInput(row.file,now,anchor,raw));
   refuse(()=>assertEnterpriseUxTrackedInput(row.file,{...now,mode:now.mode==='100644'?'100755':'100644'},anchor,bytes));

@@ -3,6 +3,7 @@ import { contractReleaseDeskInput } from '../tools/contract-release-source-trans
 // Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.
 import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
+import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -30,12 +31,19 @@ function readCombinedPhysical(file) {
   const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
   const expectedEntry = outer?.targets.desk
     ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
-    : git('ls-tree', combinedSource.sourceRevision, '--', file).trim();
-  assert.equal(actualEntry, expectedEntry, 'Current source identity must qualify independently of its historical view');
-  const combined = contractReleaseDeskInput(file, physical);
-  const target = git('show', combinedSource.sourceRevision + ':' + file);
-  assert(combined === target || combined === target.replaceAll('\n', '\r\n'), 'The exact combined-source target is unchanged after the outer view');
-  return physical;
+    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
+  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');
+  const accepted = contractReleaseDeskInput(file, physical);
+  const acceptedLf = accepted.replaceAll('\r\n', '\n');
+  assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');
+  const acceptedEntry = outer?.targets.desk
+    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : actualEntry;
+  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted integration mode/blob qualifies before its parent comparison');
+  assert.equal(acceptedLf, git('show', integratedEconomicSource.revision + ':' + file), 'The complete accepted integration source remains exact');
+  const main = integratedEconomicParentInput(file, accepted, 'main');
+  const parent = git('show', combinedSource.sourceRevision + ':' + file);
+  assert(main === parent || main === parent.replaceAll('\n', '\r\n'), 'Exact original combined comparison source');
+  return main;
 }
 
 assert.deepEqual(process.argv.slice(2), [], 'Source-only proof has no native/runtime flags');

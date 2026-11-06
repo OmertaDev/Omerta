@@ -2,16 +2,22 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parse } from 'acorn';
 import { ENTERPRISE_NATIVE_UX_INPUTS, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 } from './enterprise-native-contract-release-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as PREDECESSOR_NATIVE_INPUTS,
  ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as PREDECESSOR_NATIVE_DEFINITION_SHA256 } from './enterprise-native-ux-b35-inputs.js';
 import { DEED_ALLOCATION_SOURCE_DOMAINS } from './deed-allocation-source-data.js';
-import { CONTRACT_RELEASE_METADATA, CONTRACT_RELEASE_DESK_METADATA,
+import { CONTRACT_RELEASE_METADATA, CONTRACT_RELEASE_PREDECESSOR_METADATA,
  assertContractReleaseNativeDefinition, contractReleaseNativeProvenance } from './contract-release-native-provenance.js';
+import { BUSINESS_DESK_COMBINED_NATIVE_PARENTS } from './businessdesk-combined-native-parents.js';
+// Refuse ambient checkout manifests before the native parent can connect or launch children.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(new URL('./enterprise-native.js', import.meta.url))) {
+ for (const key of Object.keys(process.env)) assert(!/^INVENTORY_BOND_MANIFEST_(?:PATH|SHA256)$/i.test(key), 'Inventory bond manifest forbidden during native qualification: ' + key);
+}
 export { ENTERPRISE_NATIVE_UX_INPUTS };
 export const ENTERPRISE_UX_METADATA = CONTRACT_RELEASE_METADATA;
-export const ENTERPRISE_UX_CONTRACT_PREDECESSOR_METADATA = CONTRACT_RELEASE_DESK_METADATA;
+export const ENTERPRISE_UX_CONTRACT_PREDECESSOR_METADATA = CONTRACT_RELEASE_PREDECESSOR_METADATA;
 export const ENTERPRISE_UX_PREDECESSOR_METADATA = 'tools/enterprise-native-ux-b35-inputs.js';
 export const ENTERPRISE_UX_PREDECESSOR_METADATA_SHA256 = '70db907a20352f433aec965c5cd1bdaa05ac7fb2c159b3c132538fc7d714789e';
 export const ENTERPRISE_UX_QUALIFIED_METADATA = 'tools/enterprise-native-ux-inputs.js';
@@ -94,7 +100,11 @@ export const ENTERPRISE_UX_SUPPORT = Object.freeze([
  "tools/generate-native-eth-source-transfer.js",
  "test/native-eth-source-transfer.js",
  "tools/native-eth-source-transfer.json",
- "src/data/market-v2-eth-abis.json"
+ "src/data/market-v2-eth-abis.json",
+ "tools/generate-current-economic-terms-source-transfer.js",
+ "tools/generate-combined-economic-deed-source-transfer.js",
+ "test/economy-ux-merge-source-compatibility.js",
+ "test/inventory-bond-checkout.js"
 ]);
 export const ENTERPRISE_UX_ASSETS = Object.freeze([
  "public/ux-feedback.js",
@@ -125,6 +135,7 @@ export const ENTERPRISE_UX_ASSETS = Object.freeze([
  "public/ux-community.js",
  "public/ux-community.css",
  "public/sale.html",
+ "public/inventory-bond-client.js",
  "public/business-control-desk.js",
  "public/business-control-desk.css",
  "public/art/nft/deed-docks.jpg",
@@ -217,6 +228,12 @@ export function assertEnterpriseUxInputDefinition(legacyFiles, legacy, declarati
  assert.equal(current.get(ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA)?.sha256, ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA_SHA256, 'The frozen Deed record is an exact ordinary input, never another self-reference');
  assert.equal(current.get(ENTERPRISE_UX_CONTRACT_PREDECESSOR_METADATA)?.sha256, declaration.contractPredecessorMetadataSha256, 'The accepted Desk record is an exact ordinary input, never another self-reference');
  assertContractReleaseNativeDefinition(declaration);
+ for (const parent of Object.values(BUSINESS_DESK_COMBINED_NATIVE_PARENTS.profiles)) {
+  const actual = current.get(parent.archiveFile);
+  assert(actual, 'Every exact frozen parent descriptor is an ordinary input');
+  assert.equal(actual.mode, parent.original.mode); assert.equal(actual.blob, parent.original.blob);
+  assert.equal(actual.sha256, parent.original.rawSha256, 'Never admit a rewritten parent archive');
+ }
  const extra = declaration.files.slice(legacyFiles.length); assert.deepEqual(extra.map(row => row.file), extra.map(row => row.file).sort()); assert.deepEqual(declaration.additions, extra);
  for (const file of [...ENTERPRISE_UX_SUPPORT, ...ENTERPRISE_UX_ASSETS]) assert(current.has(file), 'Required actual UX/native support file: ' + file);
  const seen = new Set(), order = new Map(legacyFiles.map((file, index) => [file, index]));

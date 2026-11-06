@@ -165,9 +165,9 @@
       <p>Your route into the opening auction.</p>
     </div>
     <ol class="sale-steps">
-      <li><span class="sale-step__number" aria-hidden="true">01</span><h3>Read the terms</h3><p>Review the allocation, bidding window and auction rules once launch details are published.</p></li>
-      <li><span class="sale-step__number" aria-hidden="true">02</span><h3>Enter the auction</h3><p>When bidding opens, follow the auction link to connect your wallet and review your bid.</p></li>
-      <li><span class="sale-step__number" aria-hidden="true">03</span><h3>Follow the settlement</h3><p>Check the auction outcome and follow its instructions for claiming tokens or refunds.</p></li>
+      <li><span class="sale-step__number" aria-hidden="true">01</span><h3>Read the terms</h3><p>One five-day auction offers 40 million OMR from the 100 million supply. The graduation minimum is 10 ETH. Check the verified opening and closing blocks before bidding.</p></li>
+      <li><span class="sale-step__number" aria-hidden="true">02</span><h3>Enter the auction</h3><p>When bidding opens, use a wallet that holds a character NFT. Paid and free-credit character mints both qualify. Review the bid before signing.</p></li>
+      <li><span class="sale-step__number" aria-hidden="true">03</span><h3>Follow the settlement</h3><p>After a successful close, exit the bid and claim its filled OMR. Unused bid ETH is refundable. If graduation fails, bidders can reclaim their deposited ETH.</p></li>
     </ol>
   </section>
   <section class="deed-mint" id="deeds" aria-labelledby="deed-title">
@@ -190,7 +190,7 @@
     <div>
       <div class="deed-heading-row"><p class="sale-kicker">The Street Deed collection</p><span class="sale-status" id="deed-status" data-status="pending">Coming soon</span></div>
       <h2 class="deed-heading" id="deed-title">A PIECE OF THE CITY.<br>A NAME ON THE RECORD.</h2>
-      <p class="deed-description">2,500 permanent Street Deed identities across six districts: 1,000 earned through gameplay from Level 25, 1,000 allocated to paid minting, and 500 reserved for partnerships. Earn a gameplay property through its investigation or a qualifying quest. NFT minting is not available yet.</p>
+      <p class="deed-description">The city has 2,500 permanent Street Deeds across six districts. Players can earn 1,000 through gameplay from level 25. Another 1,000 are reserved for paid minting and 500 for partnerships.</p>
       <div class="sale-progress-head">
         <p class="sale-label" id="deed-progress-label">Unique Deeds minted</p>
         <div class="deed-count"><b id="deed-minted">—</b><span> / 2,500</span></div>
@@ -198,14 +198,14 @@
       <div class="sale-progress" id="deed-progress" role="progressbar" aria-labelledby="deed-progress-label" aria-valuemin="0" aria-valuemax="2500" aria-valuetext="Deed mint figures will be available when connected."><span class="sale-progress__fill" id="deed-progress-fill"></span></div>
       <p class="sale-progress-note deed-count-note" id="deed-progress-note">Mint figures will appear here when connected.</p>
       <dl class="sale-metrics">
-        <div><dt>Mint cost</dt><dd id="deed-cost">To be announced</dd></div>
+        <div><dt>Paid mint price</dt><dd>To be announced</dd></div>
         <div><dt>Mint opens</dt><dd id="deed-opens">To be announced</dd></div>
         <div><dt>Collection</dt><dd>Street Deeds · ERC-721</dd></div>
         <div><dt>Gameplay discovery</dt><dd>Level 25 · investigation or qualifying quest</dd></div>
       </dl>
       <button class="sale-action" id="deed-pending" type="button" disabled>Deed mint coming soon</button>
       <a class="sale-action" id="deed-link" hidden target="_blank" rel="noopener noreferrer">Open Deed mint <span class="sale-sr-only">(opens in a new tab)</span></a>
-      <p class="sale-message" id="deed-message" role="status">Mint availability, cost and wallet steps will appear here when connected.</p>
+      <p class="sale-message" id="deed-message" role="status">Mint availability and wallet steps will appear here when connected.</p>
       <a class="deed-discover" href="/">Explore gameplay properties in the city <span aria-hidden="true">↗</span></a>
     </div>
   </section>
@@ -215,7 +215,7 @@
       <details><summary>What is $OMR?</summary><p>$OMR is OMERTÀ’s game token. Explore the <a href="/#omr-economy">$OMR economy</a> to see how it fits into the city.</p></details>
       <details><summary>When does the token sale open?</summary><p>Check the auction panel above for the current status, published timing and bidding link. If it says “Coming soon,” launch details are still to be announced here.</p></details>
       <details><summary>What does the progress bar show?</summary><p>It tracks the share of the auction allocation cleared, using the latest available auction checkpoint. Cleared amounts remain subject to the auction’s final outcome and settlement.</p></details>
-      <details><summary>How do Street Deeds work?</summary><p>Street Deeds are discovered through gameplay or earned through eligible quests. NFT minting requires a deed you own, an eligible account and a linked wallet. Review the requirements in the city before minting.</p></details>
+      <details><summary>How do Street Deeds work?</summary><p>From level 25, investigate an available gameplay property or complete its qualifying quest. Each account can claim one gameplay Deed in its lifetime. You can also buy an existing Deed from another player. Operating benefits begin at level 25 for any Deed you control.</p><p>When extraction opens, an account that has minted its character can take an unlisted Deed it owns on-chain with a verified wallet and eligibility attestation. The signed extraction claim costs 0 ETH plus network gas. The separate character mint terms still apply.</p></details>
     </div>
   </section>
   <footer class="sale-foot"><span>OMERTÀ · The city keeps its own books.</span><a href="/">Enter the city <span aria-hidden="true">&nbsp;↗</span></a></footer>
@@ -298,22 +298,21 @@
     for (const choice of districtButtons) choice.setAttribute('aria-pressed', String(choice === button));
   });
   const deedStates = {
-    pending: ['Coming soon', 'Deed mint coming soon', 'Mint availability, cost and wallet steps will appear here when connected.'],
-    scheduled: ['Opening soon', 'Deed mint not open yet', 'Review deed eligibility and published mint terms before minting opens.'],
+    pending: ['Coming soon', 'Deed mint coming soon', 'Mint availability and wallet steps will appear here when connected.'],
+    scheduled: ['Opening soon', 'Deed mint not open yet', 'Review your account and Deed eligibility before minting opens.'],
     live: ['Mint open', 'Mint link coming soon', 'Minting requires a deed you own and an eligible account. Review the mint terms before connecting your wallet.'],
     closed: ['Mint closed', 'Deed mint closed', 'Deed minting is currently closed. Check back for availability.'],
     unavailable: ['Status unavailable', 'Deed mint unavailable', 'Deed mint data is unavailable. Check back for updated figures and availability.'],
   };
   // Future deed adapter supplies unique identities ever minted, not NFT transfer or
   // extraction-event counts: redeeming and re-extracting do not create a new identity.
-  // mintCostEth is in display units; opensAt is an ISO timestamp; mintUrl is the mint UI.
+  // opensAt is an ISO timestamp and mintUrl is the mint UI.
   function updateDeeds(snapshot = {}) {
     const data = snapshot && typeof snapshot === 'object' ? snapshot : {};
     const state = Object.hasOwn(deedStates, data.status) ? data.status : 'unavailable';
     const [label, button, message] = deedStates[state];
     const count = amount(data.mintedIdentities);
     const minted = Number.isInteger(count) && count <= 2500 ? count : null;
-    const cost = amount(data.mintCostEth);
     byId('deed-status').textContent = label;
     byId('deed-status').dataset.status = state;
     byId('deed-minted').textContent = minted === null ? '—' : number.format(minted);
@@ -324,7 +323,6 @@
     const note = minted === null ? 'Mint figures will appear here when connected.' : `${number.format(minted)} of 2,500 unique Deed identities minted. Each Deed is counted once.`;
     progress.setAttribute('aria-valuetext', note);
     byId('deed-progress-note').textContent = note;
-    byId('deed-cost').textContent = cost === null ? 'To be announced' : `${number.format(cost)} ETH + network fees`;
     const opens = typeof data.opensAt === 'string' ? new Date(data.opensAt) : null;
     byId('deed-opens').textContent = opens && Number.isFinite(opens.getTime())
       ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }).format(opens)

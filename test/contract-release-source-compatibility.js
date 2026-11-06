@@ -48,7 +48,9 @@ const fields = (file, text, raw = false) => ({ file, mode: '100644', blob: blob(
 const history = ['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
   'tools/businessdesk-deed-native-inputs.js', 'tools/businessdesk-desk-parent-native-inputs.js',
   'tools/businessdesk-monitor-parent-native-inputs.js', 'tools/businessdesk-wiki-parent-native-inputs.js',
-  'tools/enterprise-native-deed-inputs.js'];
+  'tools/enterprise-native-deed-inputs.js', 'tools/enterprise-native-economic-release-inputs.js',
+  'tools/enterprise-native-economic-inputs.js', 'tools/economic-deed-parent-native-inputs.js',
+  'tools/enterprise-native-continuous-city-inputs.js'];
 const fixtureFile = 'docs/closed-source-fixture.md', current = 'alpha\ncurrent delta\nomega\n';
 const desk = 'alpha\noriginal Desk\nomega\n', fee = 'alpha\nreviewed fee\nomega\n';
 const fixture = {

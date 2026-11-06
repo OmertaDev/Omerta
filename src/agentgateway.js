@@ -86,9 +86,9 @@ const TAG_DESC = {
   coordination: 'Private, value-neutral coordination runs. Direct issued actions only; disabled by default and separate from Agent Act, item custody, authored content, and currency authority.',
   worldgraph: 'Conserved Phase 1 inventory, data-defined crafting, mysteries, and four-account Crew operations. Direct actions only; this surface is not autonomous-agent authority.',
   wallet: 'SIWE wallet linking for on-chain extraction.',
-  withdraw: 'Withdraw earned $OMR on-chain (EIP-712 voucher, full-reserve backed; rail not yet open — opens when the audit and launch gates clear).',
+  withdraw: 'OMR extraction requires launch approval, a minted account, and a wallet. Requests can queue unsigned until the reserve covers the voucher.',
   gear: 'Withdraw ERC-1155 gear on-chain.', store: 'Real-money packages (entitlements/access/status).',
-  pass: 'The Season Pass reward track.', bonds: 'Reserve bonds (protocol-owned liquidity).',
+  pass: 'The Season Pass reward track.', bonds: 'Inventory bond purchases require verified deployment, funded inventory and an open offering. Existing bond records retain their original claim terms.',
   auction: 'The weekly $OMR auction house.', estate: 'The personal compound ($OMR status sink).',
   opportunities: 'THE OPPORTUNITY BOARD — every open economic action + standing skill-loop, EV-ranked, with a `best` recommended move, in one read.',
   arena: 'THE ARENA — the public agent hall of fame + agent-economy aggregate (the human showcase is at GET /arena).',
@@ -2389,8 +2389,8 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 ## Extraction rail status
 - NOT YET OPEN: production runs with no chain configured. The rail is built and devnet-proven;
   it opens when the audit and launch gates clear.
-- Once open: link a wallet (SIWE), mint the account (one-time on-chain fee), then POST /v1/withdraw
-  signs a full-reserve-backed EIP-712 voucher you claim on-chain (extraction ≤ inflow).
+- Once extraction opens, link a wallet and mint your character using the current fee or an earned mission credit.
+  POST /v1/withdraw debits game OMR. A request can queue until the reserve covers the net voucher amount.
 
 ## Fair play
 - Agent accounts are excluded from human-only referral and social-task faucets and

@@ -236,7 +236,7 @@ export async function requestWithdraw(pool, accountId, amount, toAddress) {
     await client.query('BEGIN');
     const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
     if (!acct) throw new GameError('no_account', 'No such account.');
-    if (!acct.minted) throw new GameError('not_minted', 'Only a made account can cash out — pay the 0.01 ETH mint fee first.');
+    if (!acct.minted) throw new GameError('not_minted', 'Mint your character with the current ETH fee or an earned mint credit before withdrawing OMR.');
     const to = toAddress || acct.wallet_address;
     if (!to || !isAddress(to)) throw new GameError('wallet', 'Link a wallet (SIWE) or pass a valid address first.');
     if (Number(acct.omr) < amt) throw new GameError('omr', 'Not that much $OMR.');
@@ -330,7 +330,7 @@ export async function requestGearWithdraw(pool, accountId, gearId, toAddress) {
   try {
     await client.query('BEGIN');
     const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
-    if (!acct?.minted) throw new GameError('not_minted', 'Only a made account can take gear on-chain — pay the 0.01 ETH mint fee first.');
+    if (!acct?.minted) throw new GameError('not_minted', 'Mint your character with the current ETH fee or an earned mint credit before extracting gear.');
     const to = toAddress || acct?.wallet_address;
     if (!to || !isAddress(to)) throw new GameError('wallet', 'Link a wallet (SIWE) or pass a valid address first.');
     const g = (await client.query('SELECT * FROM account_gear WHERE account_id=$1 AND gear_id=$2 FOR UPDATE', [accountId, gearId])).rows[0];
@@ -371,7 +371,7 @@ export async function requestItemWithdraw(pool, accountId, kind, itemId, toAddre
   try {
     await client.query('BEGIN');
     const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
-    if (!acct?.minted) throw new GameError('not_minted', 'Only a made account can take property on-chain — pay the 0.01 ETH mint fee first.');
+    if (!acct?.minted) throw new GameError('not_minted', 'Mint your character with the current ETH fee or an earned mint credit before extracting property.');
     const to = toAddress || acct?.wallet_address;
     if (!to || !isAddress(to)) throw new GameError('wallet', 'Link a wallet (SIWE) or pass a valid address first.');
     // Two flat queries rather than a locking JOIN: `FOR UPDATE OF` is not parseable by pg-mem (the
@@ -967,7 +967,7 @@ export async function requestDeedWithdraw(pool, accountId, toAddress, { attest }
   try {
     await client.query('BEGIN');
     const acct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
-    if (!acct?.minted) throw new GameError('not_minted', 'Only a made account can take a Street Deed on-chain — pay the 0.01 ETH mint fee first.');
+    if (!acct?.minted) throw new GameError('not_minted', 'Mint your character with the current ETH fee or an earned mint credit before extracting a Street Deed.');
     const to = toAddress || acct?.wallet_address;
     if (!to || !isAddress(to)) throw new GameError('wallet', 'Link a wallet (SIWE) or pass a valid address first.');
     const deed = (await client.query('SELECT * FROM street_deeds WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];

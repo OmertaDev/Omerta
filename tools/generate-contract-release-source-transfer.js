@@ -78,10 +78,25 @@ export const CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION = Object.freeze({
 });
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
+const ACCEPTED_BASE_REVISION = 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a';
+const ACCEPTED_BASE_TREE = 'b45024815077a564ecb48eb35e4835b830d44c2f';
+const ACCEPTED_NATIVE_METADATA = Object.freeze({
+  file: 'tools/enterprise-native-economic-release-inputs.js', mode: '100644',
+  blob: '00cde6bac960e8c5de75f7d88c7031438844e000',
+  sha256: 'ce732a483247679bd77567f28677163218400f01ae536bcf8f4b9b93f0f17771',
+});
+// This immutable catalog is an ordinary raw input, never a full native manifest.
+const HISTORICAL_CATALOG = Object.freeze({
+  file: 'tools/enterprise-native-continuous-city-inputs.js', mode: '100644',
+  blob: '1af546bd54ac00f7dbc5db4d2c6e77ddefe1cf95',
+  sha256: '804f29d96f31767fb3447dc61ed01ca243d9770357923ded125493bb19e71f58',
+});
 const HISTORY = Object.freeze(['tools/enterprise-native-ux-b35-inputs.js', 'tools/enterprise-native-ux-inputs.js',
   'tools/businessdesk-deed-native-inputs.js', 'tools/businessdesk-desk-parent-native-inputs.js',
   'tools/businessdesk-monitor-parent-native-inputs.js', 'tools/businessdesk-wiki-parent-native-inputs.js',
-  'tools/enterprise-native-deed-inputs.js']);
+  'tools/enterprise-native-deed-inputs.js',
+  'tools/enterprise-native-economic-release-inputs.js', 'tools/enterprise-native-economic-inputs.js',
+  'tools/economic-deed-parent-native-inputs.js', 'tools/enterprise-native-continuous-city-inputs.js']);
 const RELEASE = Object.freeze(['.github/workflows/forge.yml', 'docs/WIKI.md',
   'public/defi.html', 'public/fee-flows.html', 'public/genesis-deploy-artifact.js',
   'public/genesis-deploy-client.js', 'public/index.html', 'public/wiki.html',
@@ -298,6 +313,8 @@ function main() {
     assert(INTEGRATION.includes(file), 'No unlisted integration approval: ' + file); pin(row, file);
     assert.deepEqual(record(source, file).pin, row, 'Approved integration source must be exact committed code');
   }
+  assert.equal(base, ACCEPTED_BASE_REVISION, 'Exact accepted economic release base required');
+  assert.equal(gitText('rev-parse', base + '^{tree}').trim(), ACCEPTED_BASE_TREE, 'Exact accepted economic release tree required');
   git('merge-base', '--is-ancestor', base, source);
   git('merge-base', '--is-ancestor', CONTRACT, source);
   git('merge-base', '--is-ancestor', UI, source);
@@ -306,10 +323,20 @@ function main() {
   for (const file of HISTORY) {
     const prior = record(base, file), actual = record(source, file);
     assert.deepEqual(actual.pin, prior.pin, 'Never bind rewritten historical metadata: ' + file);
-    parseManifest(prior.bytes); history[file] = prior.pin;
+    if (file === HISTORICAL_CATALOG.file) {
+      assert.deepEqual(prior.pin, HISTORICAL_CATALOG, 'Exact immutable source-only catalog pin required');
+    } else parseManifest(prior.bytes);
+    history[file] = prior.pin;
   }
-  const desk = parseManifest(record(base, 'tools/enterprise-native-deed-inputs.js').bytes);
-  const old = new Map(desk.files.map(row => [row.file, row]));
+  const acceptedRecord = record(base, ACCEPTED_NATIVE_METADATA.file);
+  assert.deepEqual(acceptedRecord.pin, ACCEPTED_NATIVE_METADATA, 'Exact accepted V7 metadata pin required');
+  const accepted = parseManifest(acceptedRecord.bytes);
+  assert.equal(accepted.version, 7);
+  assert.equal(accepted.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');
+  assert.equal(accepted.authoredRevision, '77839fd65fa5d629bbedbe819444136a00452a89');
+  assert.equal(sha256(JSON.stringify(accepted)), '605ee77c542b220fb5d28cf003a27d4b06964e641bd52ff8468da7f0054ea75d');
+  const old = new Map(accepted.files.map(row => [row.file, row]));
+  assert.equal(old.size, accepted.files.length, 'No duplicate accepted native subjects');
   const checked = new Set();
   const authorize = file => {
     assert(!HISTORY.includes(file) && file !== DATA && file !== CURRENT_MANIFEST, 'No immutable/self subject');

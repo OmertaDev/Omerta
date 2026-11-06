@@ -18,6 +18,24 @@ import { PATRON, PASS, patronTierOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { runVigInvariants } from '../src/vig.js';
 
+// Boot upgrades existing Store tables with the same generated ALTERs used in production.
+{
+  const { readFileSync } = await import('node:fs');
+  const { newDb } = await import('pg-mem');
+  const { migrateColumns } = await import('../src/db.js');
+  const schema = readFileSync(new URL('../schema.sql', import.meta.url), 'utf8')
+    .match(/CREATE TABLE IF NOT EXISTS store_payments \([\s\S]*?\n\);/)[0];
+  const old = newDb();
+  old.public.none(schema.replace(/^.*revenue_split JSONB,.*$/m, ''));
+  old.public.none("INSERT INTO store_payments(nonce,sku,payer_address,amount_wei,tx_hash) VALUES (9,'revive_3','payer','19','original')");
+  const connection = new (old.adapters.createPg().Pool)();
+  assert.equal((await migrateColumns(connection, schema)).failed, 0);
+  assert.equal((await migrateColumns(connection, schema)).failed, 0, 'schema migration is repeatable');
+  const upgraded = (await connection.query('SELECT tx_hash,revenue_split FROM store_payments WHERE nonce=9')).rows[0];
+  assert.deepEqual(upgraded, { tx_hash: 'original', revenue_split: null });
+  await connection.end();
+}
+
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body, mod } = {}) => {
@@ -65,7 +83,7 @@ assert(gone.why && gone.why.length > 30 && !/\/v1\//.test(gone.why),
   'and says WHY in prose — no route name, because this renders on a card a player reads');
 assert.equal(r.body.owned.mintCredits, 0, 'a nobody owns nothing');
 assert.equal(r.body.owned.patron, false, 'not a patron yet');
-assert.equal(r.body.split.founder + r.body.split.buyback + r.body.split.rwa, 10000, 'the split sums to 10000');
+assert.equal(r.body.split.community, 1500, 'the Store exposes the community share');
 
 // ── bad sku is refused ──
 assert.equal((await call('POST', '/v1/mod/store/grant', { mod: true, body: { nonce: nonce(), sku: 'nope', payer: W1, amountWei: ethWei(0.01) } })).body.error, 'bad_sku', 'no such package');
@@ -79,12 +97,13 @@ assert.equal(r.code, 200, 'the purchase landed');
 assert.equal(r.body.granted, true, 'a linked wallet is granted immediately');
 assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM store_cosmetics WHERE account_id=$1 AND style='deco'", [alice.aid])).rows[0].n), 1, 'the cosmetic unlock is on the account');
 
-// the three-way split: 0.02 ETH → founder 40% / buyback 40% / rwa 20%
+// 0.02 ETH through FeeRevenueRouter
 let rev = await revenueStatus(pool);
 assert.equal(rev.grossEth, 0.02, 'gross recorded');
-assert.equal(rev.buybackEth, 0.008, 'buyback share = 40%');
-assert.equal(rev.rwaEth, 0.004, 'rwa share = 20%');
-assert.equal(rev.founderEth, 0.008, 'founder share = gross − buyback − rwa = 40%');
+assert.equal(rev.buybackEth, 0.005, 'Vig share = 25%');
+assert.equal(rev.rwaEth, 0.002, 'treasury share = 10%');
+assert.equal(rev.founderEth, 0.01, 'developer receives the remainder');
+assert.equal(rev.communityEth, 0.003, 'community share = 15%');
 assert.equal(rev.treasuryHolds, 'eth', 'the treasury slice is recorded and HELD AS ETH — the stock layer it once funded is retired');
 
 // ── idempotency: re-delivering the SAME nonce is a no-op (no double-grant) ──
@@ -303,5 +322,5 @@ assert(inv2.checks.find((c) => c.name === 'reason vocabulary').ok, 'no unknown-r
 
 console.log('✅ THE PATRON PROGRAM (Store Tier-4) test passed — the patron ladder (a REAL purchase bumps patron_spent, a COMP does not, the tier climbs Friend→Benefactor), the retired PLEX rail (the Store is ETH only), THE BENEFACTORS league + THE HOUSE\'S FAVOR crown (agents excluded, families aggregate a roster), THE LEDGER PRESTIGE (a completed-then-renewed track bumps pass_seasons, an unfinished one does not), and DEATH SURVIVAL of both status axes');
 
-console.log('✅ The Store (ETH revenue packages) test passed — the catalog board, the three-way revenue split (founder/buyback/rwa, exact math), idempotent ingestion (re-delivered nonce = no-op), per-SKU grants (mint credit, revive bundle, ETH Street Wire window, the season pass + patron, the permanent patron badge), pay-before-link reconcile (claim-then-grant, exactly-once), zero-value no-grant, §10.4 NEUTRALITY (every check drift-0 — the Store mints no currency), and the buyback share funding the EXISTING Vig flywheel (spend ≤ revenue holds; RWA recorded-only, R2 dormant)');
+console.log('✅ The Store (ETH revenue packages) test passed — the catalog board, the four-way revenue split, idempotent ingestion (re-delivered nonce = no-op), per-SKU grants (mint credit, revive bundle, ETH Street Wire window, the season pass + patron, the permanent patron badge), pay-before-link reconcile (claim-then-grant, exactly-once), zero-value no-grant, §10.4 NEUTRALITY (every check drift-0 — the Store mints no currency), and the buyback share funding the EXISTING Vig flywheel (spend ≤ revenue holds; RWA recorded-only, R2 dormant)');
 await app.close();

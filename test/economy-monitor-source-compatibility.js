@@ -1,6 +1,8 @@
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Exact source/control proofs only. Runtime and native tests execute physical current bytes.
 import { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
+import { integratedEconomicSource } from '../tools/integrated-economic-parent-source.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -32,6 +34,25 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 }).replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
+function readMonitorSource(file) {
+  const entry = git('ls-tree', 'HEAD', '--', file).trim();
+  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\t/);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'));
+  const committed = git('show', 'HEAD:' + file), raw = fs.readFileSync(file);
+  const actual = raw.toString('utf8'), stat = fs.lstatSync(file);
+  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));
+  assert(actual === committed || actual === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF source qualifies before projection');
+  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;
+  const expectedEntry = view ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
+    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
+  assert.equal(entry, expectedEntry, 'Actual Monitor source has its independently qualified current identity');
+  const accepted = contractReleaseDeskInput(file, actual);
+  const acceptedEntry = view ? view.pin.mode + ' blob ' + view.pin.blob + '\t' + file : entry;
+  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted Monitor source mode/blob matches the reviewed integration');
+  assert.equal(accepted.replaceAll('\r\n','\n'), git('show', integratedEconomicSource.revision + ':' + file), 'Complete reviewed integration source before Monitor comparison');
+  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, accepted, 'monitor'), 'monitor');
+}
+
 const inverseHunks = diff => {
   const inverses = []; let hunk = null;
   for (const line of diff.split('\n')) {
@@ -57,7 +78,7 @@ let positives = 0, refusals = 0, hunks = 0;
 for (const file of files) {
   const pin = domains[file], current = git('show', `${revision}:${file}`);
   const absent = additions.has(file), baseline = absent ? null : git('show', `${predecessor}:${file}`);
-  const physical = economyDeedMergeHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'monitor').replaceAll('\r\n', '\n');
+  const physical = readMonitorSource(file).replaceAll('\r\n', '\n');
   assert.equal(economyMonitorReleaseHistoricalInput(file,
     economyMonitorWorkerHistoricalInput(file, economyMonitorReaderHistoricalInput(file, physical))), current,
     'Physical current monitoring/composition source remains exact after the named successors: ' + file);
@@ -129,8 +150,7 @@ for (const [pin, qualify, historical] of [
   const raw = fs.readFileSync(file), actual = raw.toString('utf8'), stat = fs.lstatSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));
   assert(actual === committed || actual === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF source qualifies before projection');
-  const physical = economyDeedMergeHistoricalInput(file,
-    businessDeskCombinedHistoricalInput(file, contractReleaseDeskInput(file, actual), 'monitor'), 'monitor').replaceAll('\r\n', '\n');
+  const physical = readMonitorSource(file).replaceAll('\r\n', '\n');
   const baseline = git('show', `${pin.predecessorRevision}:${file}`);
   const priorReleaseSource = ['test/gates.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js'].includes(file);
   assert.equal(pin.predecessorRevision, priorReleaseSource ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);
@@ -219,7 +239,7 @@ for (const file of ['__proto__', 'constructor', 'toString', '../schema.sql', 'sr
   assert.strictEqual(economyMonitorHistoricalInput(file, invalidUtf8), invalidUtf8); refusals++;
 }
 const previousPackage = JSON.parse(git('show', `${predecessor}:package.json`));
-const currentPackage = JSON.parse(economyDeedMergeHistoricalInput('package.json', contractReleaseDeskInput('package.json', fs.readFileSync('package.json', 'utf8')), 'monitor'));
+const currentPackage = JSON.parse(readMonitorSource('package.json'));
 assert.equal(currentPackage.scripts['test:economy-security'],
   'node test/economy-monitor.js && node test/economy-composition.js');
 delete currentPackage.scripts['test:economy-security'];

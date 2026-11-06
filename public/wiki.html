@@ -421,7 +421,7 @@ const SECTIONS = [
     html: `<p>The canonical ETH/OMR market is the current market model. Production operation requires verified deployment, actual funding and launch approval; source code and passing tests do not activate it. The production token rail remains inactive.</p><p>The restricted settlement manager collects a fixed 3.5% base fee on buys and sells: 1.27% to the developer recipient, 0.51% to RWA, 0.76% to the community and 0.96% to protocol-owned liquidity, with rounding remainder assigned to POL. A separate 0.5% allocation funds native ETH staking rewards, making the ordinary protocol charge 4%. Native ETH rewards use time-weighted unwithdrawn OMR stake. Each deposit has a 30-day minimum withdrawal lock. Matured principal continues earning until withdrawn, without renewal. Stake, mature withdrawal and reward claim have zero protocol tax; network gas applies. Thirty-day reward periods become claimable after closing and finalization. The Hook adds a sell-pressure surcharge capped at 0.5%, for a maximum protocol charge of 4.5%, without collecting the base or rewards again. LP fees and network gas are additional. The planned genesis pool uses a separate static 0.3% LP fee; its opening buy charges and caps are disabled. Base rates, allocation shares and recipients are fixed for the deployment; there is no Committee or Safe fee-change queue. Exact-input swaps pay in actual output (OMR on buys, ETH on sells); exact-output swaps pay in actual input (ETH on buys, OMR on sells). Partial fills use settled deltas, so effective rates on the amount a user specifies can differ. Every ETH/OMR swap admitted by this manager pays the base and native ETH staking rewards allocation, including pools without a Hook. Independent third-party receipts, custody arrangements and venues fall outside this policy's guarantees.</p><p>Core liquidity and the War Chest have separate budgets. Controllers enforce finite action, episode and lifetime capacity. Deposits do not reset consumed capacity, and a price rebound does not create ETH. Recovery uses funded, bounded War Chest transfers across qualifying epochs.</p><p>Turf allocates future funded fees to families, not liquidity principal. Game adjudication uses narrowly typed authority. Inventory bonds sell funded OMR entitlements with linear vesting. The commitment vault holds actual liquidity-position NFTs; rewards are prefunded and mature exits do not depend on rewards being available.</p>` },
 
   { id: 'genesis', group: 'Money', title: 'Genesis — the ETH/OMR Auction', tag: 'approved launch terms · verify activation',
-    html: `<p>The approved launch is one five-day native ETH auction on Robinhood Chain. Own a character NFT to bid; paid and free-credit mints both qualify. There are no individual allocation caps or gameplay eligibility list. The target is around noon New York on Friday, October 9 through Wednesday, October 14, 2026. Verified native block boundaries determine the window; exact wall-clock timing is not guaranteed.</p>
+    html: `<p>The approved launch is one five-day native ETH auction on Robinhood Chain. Own a character NFT to bid; paid and free-credit mints both qualify. There are no individual allocation caps or gameplay eligibility list. The verified auction contract’s opening and closing blocks determine when bids are accepted. Check the published auction status for timing.</p>
       <p>Of the existing 100M OMR supply, 40M is offered, 20M funds initial liquidity and 40M stays in the Safe for later bond activation. Unsold auction tokens return to the Safe and are accounted separately. The successful-raise minimum is 10 ETH; the starting floor corresponds approximately to 10 ETH for the full 40M offered tokens.</p>
       <p>Half of accepted ETH funds liquidity with the 20M token allocation, subject to tightly bounded rounding. The pool's opening price follows these funded amounts independently of the final auction price and can be lower. All remaining accepted ETH goes to the Safe's Family Yield treasury. Holding this ETH does not activate game reward conversion or payouts.</p>
       <p>After a successful auction closes, exit your bid and claim its filled tokens without waiting for LP migration. Completed purchases are final; exits return unused bid ETH, and failed graduation returns deposited ETH. NFT transfers do not remove existing bid-owner refund or claim rights. Deployment, funding and launch verification must complete before participation opens; check <a href="/">the wallet's live sale status</a>.</p>` },
@@ -472,15 +472,14 @@ const SECTIONS = [
       off you (a vanity burn, an estate tier, a jury, the Window) is <b>not destroyed</b> — it lands on the
       desk's shelf and goes back up for sale. Once a day the desk runs a <b>descending auction</b>: it opens
       high, the price falls for six hours toward a <b>reserve</b>, and whatever does not sell rolls to
-      tomorrow. The lot is what came home yesterday, capped at 1% of all the $OMR in player hands so a big
-      spending day can't become a dump. <b>The desk can only sell what is on its shelf</b> — it never issues
+      tomorrow. The lot depends on the previous day’s returned inventory and the available shelf. Its daily float cap starts at 1% and can rise to 3% during a surge, with a 6,000 OMR minimum for the cap. <b>The desk can only sell what is on its shelf</b> — it never issues
       anything, so buying here moves no supply: those are somebody else's spent chips changing hands. There is a
       <b>buy side</b> too: if the price falls far enough below the 30-day average the desk restocks off the open
       market rather than waiting for the sinks — paid for out of the trading fees the game's own liquidity earns,
       never by printing. Between the two edges it does nothing, deliberately: a desk that buys and sells at once is
       paying fees to trade with itself. The
       board publishes the shelf, the clock, the price and the exact list of spends that feed it. <b>$OMR
-      bought at the desk is FRESH</b> — full early-exit toll for its first 48 hours, like any other.</p>
+      bought at the desk starts a new 48-hour surcharge window</b>. The extra withdrawal charge falls linearly from 50% at receipt to zero after 48 hours.</p>
       <p><b>The Exchange window</b> — the ONE conversion, one way: spend $OMR, receive cash at a published
       rate, from a till that real cash sinks fill. A short till refuses and takes nothing. 5% of every
       redemption goes to the top families (the family yield). <b>Cash can never become $OMR</b> — there is no swap
@@ -905,11 +904,11 @@ const SECTIONS = [
       ${R(`GET /v1/diplomacy · POST /v1/diplomacy/pact/:gangId · /pact/:gangId/accept · /coalition/:gangId · /coalition/:id/join · DELETE /v1/diplomacy/pact/:gangId · /coalition/:id`)}` },
 
   { id: 'deeds', group: 'Endgame & Going Legit', title: 'Street Deeds & Corners', tag: 'a named street for your bloodline',
-    html: `<p><b>Discover and earn a property.</b> The city has 1,000 gameplay Deeds, 1,000 paid-mint Deeds and 500 partnership Deeds. From level 25, select an available gameplay building on the district property map, then inspect its site, verify the registry record, question its witness and return to secure its title. Each of the four objectives costs 5 energy and names its required district. Alternatively, follow <b>A House With a Past</b> in the quest journal, collecting evidence and committing to its story choices. Each account has one lifetime gameplay claim. Operating benefits require level 25. Paid NFT minting remains unavailable until the matching contracts are deployed and verified. Opening the map alone earns no progress.</p>
+    html: `<p><b>Discover and earn a property.</b> Of the city’s 2,500 permanent properties, 1,000 are available through gameplay from level 25, 1,000 are reserved for paid minting and 500 for partnerships. Select a gameplay property on the district map, then inspect its site, verify the registry record, question its witness and return to secure its title. Each of the four objectives costs 5 energy and names its required district. Alternatively, follow <b>A House With a Past</b> in the quest journal, collecting evidence and committing to its story choices. Paid NFT minting remains unavailable until the matching contracts are deployed and verified. Opening the map alone earns no progress.</p>
       <p>Each account receives <b>one discovery claim for its lifetime</b>. Selling, extracting, losing a deed or replacing a character does not grant another. Investigation does not reserve a building: another qualified player may claim it first. Existing deeds and secondary trades remain available. Every deed keeps its permanent building, name and recorded history.</p>
-      <p>At level 8, collect the capped cash <b>corner take</b> from streets you control. A rival's <b>shakedown</b> contests temporary control of income; it does not transfer the deed's ownership.</p>
+      <p>Once your current character reaches level 25, active streets you control can start earning the capped cash <b>corner take</b>. The same level requirement applies however you acquired the property. A rival's <b>shakedown</b> contests temporary control of income; it does not transfer the deed's ownership.</p>
       <p><b>List</b> or withdraw a deed's cash sale offer, or buy a listed street from its owner. The purchase-confirmation view exposes its vault record and live balance. Extraction and any Stock Token delivery have separate launch gates described in the chain and Brokers sections; an extracted or extraction-pending street earns no in-game corner take.</p>
-      ${R(`GET /v1/deeds · /buildings?district=:district · /discovery?district=:district · POST /v1/deeds/investigate {buildingId} · /claim {name, buildingId} · /corner · /shakedown/:targetCharacterId · /list · /unlist · /buy/:sellerCharacterId · GET /v1/deeds/vault/:sellerCharacterId`)}` },
+      ${R(`GET /v1/deeds · /buildings?district=:district · /discovery?district=:district · POST /v1/deeds/investigate {buildingId,actionId} · /claim {name, buildingId} · /corner · /shakedown/:targetCharacterId · /list · /unlist · /buy/:sellerCharacterId · GET /v1/deeds/vault/:sellerCharacterId`)}` },
 
   { id: 'stable', group: 'Money', title: 'The Stable', tag: 'own the dogs and the ponies',
     html: `<p>Own racing animals. <b>Buy</b> a greyhound ($30k) or a racehorse ($120k) at L6 or higher, <b>train</b> its
@@ -1103,12 +1102,10 @@ const SECTIONS = [
   { id: 'store', group: 'Endgame & Going Legit', title: 'The Store &amp; the Ledger', tag: 'real-money packages',
     html: `<p><b>The Store</b> sells ETH packages for entitlements, access, cosmetics, and status. The packages contain
       no cash, $OMR, gear, or combat power: revive
-      bundles, Street Wire, the Season Pass, the Patron badge, and decor. Revenue divides 40% founder / 40% buyback / 20%
-      treasury (the Vault's ETH).</p>
+      bundles, Street Wire, the Season Pass, the Patron badge, and decor. Under the configured payment router, 50% of ETH package revenue goes to the developer, 25% to the Vig, 10% to Treasury and 15% to the community. Character mint payments go entirely to the developer.</p>
       <p><b>PLEX</b> lets you pay for Store packages in earned $OMR instead of ETH. Character minting, which qualifies
       an account for extraction when that service launches, uses the published ETH wave price or a free mission-earned
-      mint credit. It has no PLEX price. Across the mission ladder, $OMR rewards sum to 1,320 and the daily bonus adds 3,
-      compared with 4,118 for the cheapest PLEX package. Other sources include loot, Desk purchases, and family payments.
+      mint credit. It has no PLEX price. The Store quotes PLEX prices from the market rate, subject to each package’s price floor. Other sources include loot, Desk purchases, and family payments.
       <b>The Season Pass / Ledger:</b>
       while active, claim the next of 12 levels each day (titles, revives, energy, small funded $OMR stipends); it is
       account-level and survives death.</p>
@@ -1119,7 +1116,7 @@ const SECTIONS = [
       treasury-funded distribution based on active play, described next. You can use <b>$OMR</b> for the following:</p>
       <p><b>Stake it</b>: the game-ledger position climbs the Made Ladder and supports commitment locks, while remaining exposed to gameplay loss and six-hour unbonding. Actual on-chain custody and the Broker stake multiplier are planned and not active.
       <b>Redeem it</b> at the Window for
-      cash. <b>Get Made</b> for current game benefits. <b>On-chain extraction and backed ETH claims remain gated</b>; they become available only after production launch requirements clear and actual backing is present. <b>Landmarks</b>: a district plaque still bears your name.</p>
+      cash. <b>Get Made</b> for current game benefits. <b>On-chain extraction requires launch approval and confirmed reserve capacity.</b> The Treasury board records an ETH allocation when you spend game OMR. The allocation stays on the game ledger. It sends no ETH to your wallet. <b>Landmarks</b>: a district plaque still bears your name.</p>
       ${R(`POST /v1/stake · /v1/made · GET /v1/vault · /v1/window · POST /v1/landmarks/:id`)}` },
 
   { id: 'grillv2', group: 'Endgame & Going Legit', title: 'Stock Tokens & OMR: implementation status', tag: 'completed components and launch requirements',
@@ -1734,7 +1731,7 @@ const SECTIONS = [
       <p>Agent accounts have full economic parity in this design. Their verified EOA or ERC-1271 controller wallets may
       deposit, stake, commit, partially unbond, withdraw, survive inheritance, receive idle loot, lose eligible principal
       through canonical gameplay settlement, build finalized Broker stake TWA, and receive Stock Token allocations and
-      delivery under the same activity, activation, wallet-uniqueness, consent, exposure, finality, solvency, and launch
+      delivery under the same gameplay qualification, optional deed upgrades, wallet-uniqueness, consent, exposure, finality, solvency, and launch
       gates as human wallets. The agent flag still excludes human-only faucets and status rewards; it never denies vault
       authorization, settlement, checkpoints, Broker weight, RWA allocation, or delivery.</p>
       <p>Portfolio views lead with actual Stock Token units, acquisition reference and cost, allocation epoch, delivery
@@ -1993,8 +1990,7 @@ const SECTIONS = [
       being only a badge and starts paying, so tribute, wars and the Commission are worth real money to a family.</p>
       <p><b>The Vault</b> — the account ledger records treasury ETH allocated against OMR spent in the game.
       A claim is limited by recorded available funding, account caps and the quoted rate. The spent OMR
-      recycles to the Desk; it does not destroy blockchain supply. The board publishes recorded funding and
-      allocations. <b>Allocation only: no ETH is delivered and no cash-out is implemented.</b> This account
+      recycles to the Desk; it does not destroy blockchain supply. The board publishes recorded receipts and allocations. Verifying the treasury’s actual wallet balance requires a separate on-chain check. <b>Allocation only: no ETH is delivered and no cash-out is implemented.</b> This account
       feature is separate from the canonical market's funded inventory and is not a token redemption floor.</p>
       <h3>Why it is built this way</h3>
       <p>Almost every game with a token has the same pipe: farm the game's currency, convert it to the token, sell.
@@ -2010,10 +2006,7 @@ const SECTIONS = [
         <li><b>Supply is enumerated, and a nightly job proves it.</b> The ledger checks
         <code>buckets == genesis + mints − burns</code>, and a reason nobody enumerated is itself an alarm. The
         city has no scheduled printer. Mission and prize credits are game-ledger awards; they do not call an ERC-20 mint. Canonical inventory bonds distribute funded OMR with linear vesting; commitment rewards are prefunded. Spent game-ledger OMR returns to the Desk rather than being destroyed.</li>
-        <li><b>What you can take out is bounded by code, not by arithmetic.</b> The withdrawal rail signs nothing the
-        reserve cannot back, and the reserve is filled by real revenue — so "you can only take out what somebody put
-        in" is a rule the rail enforces on every withdrawal, whatever the supply does. That is the guarantee worth
-        having, and the one that holds even with the mission tap open.</li>
+        <li><b>Withdrawals depend on reserve capacity.</b> The game checks its recorded reserve before signing a voucher for the net amount after withdrawal charges. Requests can queue. On-chain redemption also depends on the claim contract’s actual OMR balance and available capacity.</li>
         <li><b>The one conversion runs the other way, on money that already exists.</b> The Window takes $OMR and pays
         cash from a till real sinks filled. A short till refuses and takes nothing.</li>
       </ul>
@@ -2044,15 +2037,15 @@ const SECTIONS = [
       strong suit. Extensive history adds a few extra points to the whole build, within a hard cap,
       and gives the archetype's regimen discipline a banded
       head start; once per wallet, ever; free early, a re-roll credit
-      past level 5 (and a later paid re-roll replaces the whole build, bonus and budget perk included); <b>character mint</b> makes a trial character permanent for a one-off
+      past level 5 (and a later paid re-roll replaces the whole build, bonus and budget perk included); <b>character mint</b> qualifies the account for extraction after launch. Pay a one-off
       ETH fee on a published schedule (five waves, 0.01 at the founding wave, never above 0.05; the Store shows
       the current one), or a mint credit earned outright off the mission ladder.
       <b>Inventory bonds</b> — pay ETH for a discounted, nontransferable OMR entitlement that vests linearly.
-      The complete payout is reserved from existing inventory at purchase. Per-purchase, per-epoch and
+      The contract reserves the complete entitlement from existing inventory at purchase. Each offer has a fixed discount of at most 10% and a linear vest of 1 to 365 days. Per-purchase, per-epoch and
       lifetime limits, an absolute rate bound and market checks constrain sales; ETH proceeds route to the
-      configured War Chest funding contract. Vested claims remain available when new sales pause.
+      configured War Chest funding contract. Vested claims remain available when new sales pause. The offer requires verified deployment, funding and activation.
       Game withdrawal tolls are separate, with a surcharge on balances younger than 48 hours.</p>
-      ${R(`POST /v1/withdraw · /gear/:id/withdraw · /wallet/challenge|verify · /character/mint · GET /v1/bonds [public] · /bonds/:id/claim`)}` },
+      ${R(`POST /v1/withdraw · /gear/:id/withdraw · /wallet/challenge|verify · /character/mint`)}` },
 
   { id: 'growth', group: 'Reference', title: 'Growth — Paths, Missions, the First Week', tag: 'progression support',
     html: `<p><b>Paths</b> (L5, $10k; switch for 150 $OMR + a 7-day cooldown) — SIX careers (The Gun, The Ledger,
