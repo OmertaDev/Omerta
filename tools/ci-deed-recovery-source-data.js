@@ -2,8 +2,8 @@
 export const recoverySource = {
   "status": "SEALED",
   "phase": "EXACT_CI_DEED_RECOVERY_COMPARISON_ONLY",
-  "revision": "24716394a5c436afe62d36b9d0a00525c55a0295",
-  "tree": "d580d4df6ec33da7557d58768de69cc3bcc0a244",
+  "revision": "476cfba95a1031e5e43bd0cb47ca74fbfa503085",
+  "tree": "c15b464df17b668904f60355a2debfbf77cb451f",
   "predecessor": "0ce6ab96a34e6061232980ad60bfdbc94cf98fdb",
   "predecessorTree": "f28465d0caa595f199d0161d13039e52bac3de32",
   "files": {
@@ -231,6 +231,37 @@ export const recoverySource = {
           "at": 3366,
           "current": "ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file)",
           "baseline": "fs.readFileSync(file"
+        }
+      ]
+    },
+    "test/businessdesk-native-provenance.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "72a7b5ddb1ec96062de37949e0d3f60cb946ab68",
+        "sha256": "b3f9ee47bde9fb52cd8741681fdef4c231e3b4c475bb51b43b72e0f63652893c",
+        "bytes": 11685
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "171b81eb8cce5fe10961c667ee8fe01598afa3fb",
+        "sha256": "d7b64097e0c5a964339188aa1c5c200d57e8330886e9949219ab4b8b7a449b3f",
+        "bytes": 11410
+      },
+      "inverses": [
+        {
+          "at": 4465,
+          "current": "let successorRefusals = 0;\n",
+          "baseline": ""
+        },
+        {
+          "at": 9814,
+          "current": "const successorBytesDiffer = activeRow.blob !== expected.blob;\nif (successorBytesDiffer) {\n  assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));\n  successorRefusals++;\n}",
+          "baseline": "if (activeRow.blob !== expected.blob) reject(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));"
+        },
+        {
+          "at": 11133,
+          "current": "assert.equal(successorRefusals, Number(successorBytesDiffer), 'Changed actual successor bytes additionally reject the frozen parent bytes.');\nconsole.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals, successorR",
+          "baseline": "console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, r"
         }
       ]
     },
