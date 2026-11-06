@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
 import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -155,6 +156,52 @@ assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-inputs.js', 'utf8'))
   'The qualified UX manifest retains its exact authored Git bytes at the original path');
 console.log(`Deed allocation exact source compatibility PASS: ${positives} positives, ${refusals} refusals, ${hunks} complete Git inverse hunks; source only`);
 
+// Actual Root bytes qualify before the accepted integration comparison frame.
+assert.equal(CONTRACT_RELEASE_SOURCE_DATA.status, 'BOUND');
+assert.equal(git('rev-parse', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + '^{tree}').trim(),
+  CONTRACT_RELEASE_SOURCE_DATA.baseTree);
+function readAcceptedIntegrationPhysical(file) {
+  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  const actual = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(actual && actual[3] === file, 'Only actual regular committed source qualifies');
+  assert.equal(git('ls-files', '--stage', '--', file).trim(),
+    actual[1] + ' ' + actual[2] + ' 0\t' + file, 'Actual index mode/blob qualifies before projection');
+  const head = git('show', 'HEAD:' + file);
+  assert.equal(blob(head), actual[2], 'Complete actual Git source has its own exact blob');
+  const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  const raw = fs.readFileSync(file), physical = raw.toString('utf8');
+  assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source qualifies first');
+  assert(physical === head || physical === head.replaceAll('\n', '\r\n'),
+    'Whole actual LF/CRLF physical source qualifies before any historical comparison');
+  const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
+  const accepted = acceptedEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(accepted && accepted[3] === file, 'Regular accepted integration source required');
+  const acceptedText = git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file);
+  assert.equal(blob(acceptedText), accepted[2], 'Complete accepted Git source has its own exact blob');
+  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
+  if (outer?.targets.desk) {
+    assert.deepEqual(outer.current, { file, mode: actual[1], blob: actual[2], sha256: sha256(head),
+      bytes: Buffer.byteLength(head), rawSha256: { lf: sha256(head), crlf: sha256(head.replaceAll('\n', '\r\n')) } },
+    'The complete actual Root source identity qualifies before projection');
+    assert.equal(outer.targets.desk.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);
+    assert.deepEqual(outer.targets.desk.pin, { file, mode: accepted[1], blob: accepted[2],
+      sha256: sha256(acceptedText), bytes: Buffer.byteLength(acceptedText) });
+  } else {
+    assert.equal(actualEntry, acceptedEntry, 'An unchanged Root input retains its exact accepted mode/blob');
+    assert.equal(head, acceptedText, 'An unchanged Root input retains its complete accepted source');
+  }
+  const acceptedRaw = contractReleaseDeskInput(file, raw);
+  assert(Buffer.isBuffer(acceptedRaw), 'The comparison-only projection preserves Buffer type');
+  const acceptedPhysical = acceptedRaw.toString('utf8');
+  assert(Buffer.from(acceptedPhysical).equals(acceptedRaw), 'Lossless accepted comparison source');
+  assert(acceptedPhysical === acceptedText || acceptedPhysical === acceptedText.replaceAll('\n', '\r\n'),
+    'The whole accepted integration source qualifies after actual Root admission');
+  assert.equal(sha256(lf(acceptedPhysical)), sha256(acceptedText));
+  assert.equal(blob(lf(acceptedPhysical)), accepted[2]);
+  assert.equal(Buffer.byteLength(lf(acceptedPhysical)), Buffer.byteLength(acceptedText));
+  return { raw: acceptedRaw, text: acceptedPhysical, entry: acceptedEntry };
+}
+
 // The authored merge and the Deed release both stay independently identifiable after later proof commits.
 assert.equal(combined.source,'c220834210928560f303795086ee1098d0a65509');
 assert.equal(combined.predecessor,'4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364');
@@ -180,10 +227,9 @@ for(const file of new Set([...Object.keys(combined.files),...Object.keys(combine
     assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\t'+file);
     assert.equal(sha256(text),pin.sha256); assert.equal(Buffer.byteLength(text),pin.bytes);
   }
-  const physical=fs.readFileSync(file,'utf8'), head=git('show','HEAD:'+file);
-  assert(physical===head || physical===head.replaceAll('\n','\r\n'),'Exact physical integration source: '+file);
-  assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),
-    'Current mode and blob must match the reviewed integrated source: '+file);
+  const { text: physical, entry: acceptedEntry } = readAcceptedIntegrationPhysical(file);
+  assert.equal(acceptedEntry,git('ls-tree',integratedEconomicSource.revision,'--',file).trim(),
+    'Accepted mode and blob must match the reviewed integrated source: '+file);
   if(economicOnly || Object.hasOwn(combined.files,file)) {
     assert.equal(lf(integratedEconomicParentInput(file,physical,'economic')),current,'Exact economic merge parent: '+file);
   }
@@ -250,10 +296,9 @@ for (const [profile,parent] of Object.entries(integration.parents)) {
       assert.equal(git('ls-tree',rev,'--',file).trim(),pin.mode+' blob '+pin.blob+'\t'+file);
       assert.equal(sha256(source),pin.sha256); assert.equal(Buffer.byteLength(source),pin.bytes);
     }
-    assert.equal(git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integration.revision,'--',file).trim());
-    assert.equal(git('ls-files','--stage','--',file).trim(),row.current.mode+' '+row.current.blob+' 0\t'+file);
-    const stat=fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-    const raw = fs.readFileSync(file);
+    const { raw, entry: acceptedEntry } = readAcceptedIntegrationPhysical(file);
+    assert.equal(acceptedEntry,git('ls-tree',integration.revision,'--',file).trim());
+    assert.equal(acceptedEntry,row.current.mode+' blob '+row.current.blob+'\t'+file);
     assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\n','\r\n'))));
     for (const input of [current,current.replaceAll('\n','\r\n'),raw]) {
       const result = integratedEconomicParentInput(file,input,profile);

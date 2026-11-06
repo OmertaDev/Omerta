@@ -2,13 +2,13 @@
 
 A complete inventory of the built system, and an honest technical-debt register.
 
-The census below is measured from the current repository. Availability and activation are documented separately in the deployment guides.
+The census below records the measured integration snapshot `863d990b33c2`. Availability and activation are documented separately in the deployment guides.
 
 ---
 
 ## 1. Size, measured
 
-Census refreshed from the current repository; these counts do not identify a deployed revision.
+Counts were measured at `863d990b33c2`, before generated release records; they do not identify a deployed revision.
 
 | | |
 |---|---|
