@@ -76,6 +76,16 @@ export const CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION = Object.freeze({
   variantBlob: 'd3c1a10defdb23c025a7ec689f1f5c26f0fd562d',
   variantSha256: '92c1e91b83a58b77134dd5d11115dc2777addc58be4fce0b995962511b0c3e49',
 });
+// Exact source-composition checkpoint for the accepted main integration. This
+// authorizes only these complete postimages, never a caller-supplied product pin.
+export const CONTRACT_RELEASE_MAIN_RESOLUTION = Object.freeze({
+  revision: '78792260ba4a47aa6fdb599580d98d6725af0d72',
+  tree: '14484204b5dfaea57d88f61181c9c3965c7f6b6b',
+  baseRevision: 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a',
+  baseTree: 'b45024815077a564ecb48eb35e4835b830d44c2f',
+  files: Object.freeze(['MARKETING-POSTS.md', 'SPEC.md', 'public/defi.html',
+    'public/fee-flows.html', 'public/index.html', 'src/server.js']),
+});
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
 const ACCEPTED_BASE_REVISION = 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a';
@@ -249,6 +259,17 @@ export function deriveContractReleaseApprovedSource(file, base) {
   const origins = contractReleaseReviewedOrigins(file);
   assert(origins.length, 'No fixed reviewed source origin: ' + file);
   if (base) { assert.equal(base.pin.file, file); sourceText(base); }
+  const resolution = CONTRACT_RELEASE_MAIN_RESOLUTION;
+  if (base && resolution.files.includes(file)) {
+    const accepted = record(resolution.baseRevision, file);
+    if (base.pin.blob === accepted.pin.blob) {
+      assert.equal(gitText('rev-parse', resolution.baseRevision + '^{tree}').trim(), resolution.baseTree);
+      assert.deepEqual(base.pin, accepted.pin); assert(base.bytes.equals(accepted.bytes));
+      assert.equal(gitText('rev-parse', resolution.revision + '^{tree}').trim(), resolution.tree);
+      git('merge-base', '--is-ancestor', resolution.baseRevision, resolution.revision);
+      return record(resolution.revision, file);
+    }
+  }
   let expected = base;
   for (const origin of origins) {
     const original = record(origin.baseRevision, file, true);

@@ -14,7 +14,7 @@ import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
   deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN, CONTRACT_RELEASE_ETH_ORIGIN,
   CONTRACT_RELEASE_START_ORDER_ORIGIN,
   CONTRACT_RELEASE_CENSUS_ORIGIN,
-  CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION,
+  CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION, CONTRACT_RELEASE_MAIN_RESOLUTION,
   contractReleaseReviewedOrigins, deriveContractReleaseApprovedSource,
   assertContractReleaseApprovedSource } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
@@ -500,11 +500,11 @@ try {
     variantSha256: '92c1e91b83a58b77134dd5d11115dc2777addc58be4fce0b995962511b0c3e49',
   });
   const acceptedDeskIndex = committedOriginRecord(escape.baseRevision, escape.file);
-  const completeIndex = committedOriginRecord('HEAD', escape.file);
+  const completeIndex = committedOriginRecord('f92c3ab1a1f419e415e737cfd4a7c51f088fd4c4', escape.file);
   assert.equal(git('rev-parse', escape.baseRevision + '^{tree}').trim(), escape.baseTree);
   assert.equal(acceptedDeskIndex.pin.blob, escape.baseBlob); assert.equal(acceptedDeskIndex.pin.sha256, escape.baseSha256);
   const composedIndex = deriveContractReleaseApprovedSource(escape.file, acceptedDeskIndex);
-  assert(composedIndex.bytes.equals(completeIndex.bytes), 'All fixed origins compose to the complete actual integration, preserving the stronger Escape guard');
+  assert(composedIndex.bytes.equals(completeIndex.bytes), 'All fixed origins retain their complete frozen pre-main integration and stronger Escape guard');
   assertContractReleaseApprovedSource(escape.file, acceptedDeskIndex, completeIndex); positives += 2;
   const strongerEscape = "    if (event.key !== 'Escape' || event.defaultPrevented) return;\n";
   assert.equal(composedIndex.bytes.toString().split(strongerEscape).length, 2);
@@ -528,9 +528,9 @@ try {
   assert(Object.isFrozen(CONTRACT_RELEASE_CENSUS_ORIGIN) && Object.isFrozen(CONTRACT_RELEASE_CENSUS_ORIGIN.files));
   for (const file of CONTRACT_RELEASE_CENSUS_ORIGIN.files) {
     assert.deepEqual(contractReleaseReviewedOrigins(file), [CONTRACT_RELEASE_CENSUS_ORIGIN]);
-    const base = committedOriginRecord(escape.baseRevision, file), actual = committedOriginRecord('HEAD', file);
+    const base = committedOriginRecord(escape.baseRevision, file), actual = committedOriginRecord('f92c3ab1a1f419e415e737cfd4a7c51f088fd4c4', file);
     assert.equal(base.pin.blob, committedOriginRecord(CONTRACT_RELEASE_CENSUS_ORIGIN.baseRevision, file).pin.blob);
-    assert(deriveContractReleaseApprovedSource(file, base).bytes.equals(actual.bytes), 'Exact census origin preserves the complete current document');
+    assert(deriveContractReleaseApprovedSource(file, base).bytes.equals(actual.bytes), 'Exact census origin preserves the complete frozen pre-main document');
     assertContractReleaseApprovedSource(file, base, actual); positives += 2;
     const changed = sourceRecord(actual.bytes.toString() + '\n// unreviewed\n'); changed.pin.file = file;
     refused(() => assertContractReleaseApprovedSource(file, base, changed));
@@ -539,6 +539,30 @@ try {
   refused(() => { CONTRACT_RELEASE_CENSUS_ORIGIN.files.push('src/server.js'); });
   for (const file of [...mobileFiles, ...CONTRACT_RELEASE_ETH_ORIGIN.files, 'test/lib/ux-journeys.js'])
     assert(!contractReleaseReviewedOrigins(file).includes(CONTRACT_RELEASE_CENSUS_ORIGIN), 'Census origin cannot authorize product or reader source');
+  // Current main composition is a separately pinned source checkpoint. The
+  // original origin/refusal controls above remain unchanged historical evidence.
+  const mainResolution = CONTRACT_RELEASE_MAIN_RESOLUTION;
+  assert(Object.isFrozen(mainResolution) && Object.isFrozen(mainResolution.files));
+  assert.deepEqual(mainResolution.files, ['MARKETING-POSTS.md', 'SPEC.md', 'public/defi.html',
+    'public/fee-flows.html', 'public/index.html', 'src/server.js']);
+  assert.equal(git('rev-parse', mainResolution.revision + '^{tree}').trim(), mainResolution.tree);
+  assert.equal(git('rev-parse', mainResolution.baseRevision + '^{tree}').trim(), mainResolution.baseTree);
+  for (const file of mainResolution.files) {
+    const base = committedOriginRecord(mainResolution.baseRevision, file);
+    const checkpoint = committedOriginRecord(mainResolution.revision, file);
+    const actual = committedOriginRecord('HEAD', file);
+    assert.deepEqual(actual, checkpoint, 'Actual merged product equals the complete scoped source checkpoint');
+    assert.deepEqual(deriveContractReleaseApprovedSource(file, base), checkpoint);
+    assert.deepEqual(assertContractReleaseApprovedSource(file, base, actual), checkpoint); positives += 3;
+    for (const bytes of [Buffer.concat([actual.bytes, Buffer.from('unreviewed\n')]), actual.bytes.subarray(1)])
+      refused(() => assertContractReleaseApprovedSource(file, base, originRecord(file, bytes)));
+    refused(() => assertContractReleaseApprovedSource(file, base, { ...actual, pin: { ...actual.pin, mode: '100755' } }));
+    refused(() => deriveContractReleaseApprovedSource(file, { ...base, pin: { ...base.pin, sha256: '0'.repeat(64) } }));
+    refused(() => deriveContractReleaseApprovedSource(file, { ...base, bytes: Buffer.concat([base.bytes, Buffer.from('\n')]) }));
+  }
+  refused(() => { mainResolution.files.push('src/unreviewed.js'); });
+  refused(() => { mainResolution.revision = '0'.repeat(40); });
+  assert(committedOriginRecord('HEAD', 'public/index.html').bytes.toString().includes(strongerEscape));
   const fixtureRepository = path.join(approvalDirectory, 'repository'), redirect = path.join(approvalDirectory, 'redirect');
   fs.mkdirSync(fixtureRepository);
   fs.symlinkSync(fixtureRepository, redirect, process.platform === 'win32' ? 'junction' : 'dir');
