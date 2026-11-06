@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "cc7bbcab67cbd047a5d9d57798987a59b9176a0d",
+  "sourceRevision": "6c2220e976750e499bf97214006b88beaa7485b6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 17971,
-    "edges": 72098,
+    "nodes": 17975,
+    "edges": 72110,
     "byNodeType": {
       "Artifact": 7269,
       "Command": 307,
-      "Commit": 5287,
+      "Commit": 5291,
       "Contract": 156,
       "Document": 966,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5842,
-      "CHANGED": 27933,
+      "CHANGED": 27941,
       "CONTAINS": 7290,
       "DECLARES": 307,
       "DEFINED_IN": 1797,
       "DEPENDS_ON": 69,
       "EXECUTES": 1220,
       "HANDLED_BY": 939,
-      "HAS_COMMIT": 5287,
+      "HAS_COMMIT": 5291,
       "IMPLEMENTS": 124,
       "IMPORTS": 8729,
       "INHERITS": 47,
@@ -138523,20 +138523,20 @@
       "path": "test/companyopportunities.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 14199,
-      "lines": 144,
-      "version": "7f8c0b3dcb1fa3b3",
+      "bytes": 14345,
+      "lines": 145,
+      "version": "5d809a90d26c9601",
       "text": true,
       "provenance": [
         {
           "file": "test/companyopportunities.js",
           "line": 1,
-          "version": "7f8c0b3dcb1fa3b3"
+          "version": "5d809a90d26c9601"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:41:28.000Z",
+      "lastChangedAt": "2026-11-05T23:58:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "00ed87172fb9d0cdecdc757e9cd77e622963e405"
+      "lastChangedCommit": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962"
     },
     {
       "key": "Artifact:test/companyopportunity-integration.js",
@@ -159849,20 +159849,20 @@
       "path": "tools/contract-release-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 838298,
-      "lines": 2679,
-      "version": "7e070136a33a58a0",
+      "bytes": 841867,
+      "lines": 2711,
+      "version": "ceafa8714384493b",
       "text": true,
       "provenance": [
         {
           "file": "tools/contract-release-source-data.js",
           "line": 1,
-          "version": "7e070136a33a58a0"
+          "version": "ceafa8714384493b"
         }
       ],
-      "lastChangedAt": "2026-11-05T22:49:15.000Z",
+      "lastChangedAt": "2026-11-06T00:10:09.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9b35708a553b49db4654c0390ba9913eb87aba37"
+      "lastChangedCommit": "d77c9323352dc7ffa71d7401e594e70aeca9d2cc"
     },
     {
       "key": "Artifact:tools/contract-release-source-format.js",
@@ -160656,18 +160656,18 @@
       "extension": ".js",
       "bytes": 517132,
       "lines": 13782,
-      "version": "beff54d6db37c42c",
+      "version": "8f8bbf20fb3acff3",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-contract-release-inputs.js",
           "line": 1,
-          "version": "beff54d6db37c42c"
+          "version": "8f8bbf20fb3acff3"
         }
       ],
-      "lastChangedAt": "2026-11-05T22:56:41.000Z",
+      "lastChangedAt": "2026-11-06T00:17:28.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cc7bbcab67cbd047a5d9d57798987a59b9176a0d"
+      "lastChangedCommit": "6c2220e976750e499bf97214006b88beaa7485b6"
     },
     {
       "key": "Artifact:tools/enterprise-native-deed-inputs.js",
@@ -161151,20 +161151,20 @@
       "path": "tools/generate-contract-release-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 23342,
+      "bytes": 23374,
       "lines": 378,
-      "version": "175faf5abaae608c",
+      "version": "c0cf2bd889ca345e",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-contract-release-source-transfer.js",
           "line": 1,
-          "version": "175faf5abaae608c"
+          "version": "c0cf2bd889ca345e"
         }
       ],
-      "lastChangedAt": "2026-11-05T21:07:53.000Z",
+      "lastChangedAt": "2026-11-05T23:58:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5eddb01ea28fe87d8702c19a3edc3e2c98b7e08e"
+      "lastChangedCommit": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962"
     },
     {
       "key": "Artifact:tools/generate-deed-allocation-source-transfer.js",
@@ -185147,6 +185147,22 @@
       ]
     },
     {
+      "key": "Commit:2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "type": "Commit",
+      "id": "2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "label": "Refresh Knowledge for sealed schema guard correction",
+      "title": "Refresh Knowledge for sealed schema guard correction",
+      "date": "2026-11-05T23:01:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "provenance": [
+        {
+          "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+        }
+      ]
+    },
+    {
       "key": "Commit:2b10efe7c087e5d048719cd35c1ad0c626760631",
       "type": "Commit",
       "id": "2b10efe7c087e5d048719cd35c1ad0c626760631",
@@ -206779,6 +206795,22 @@
       ]
     },
     {
+      "key": "Commit:6c2220e976750e499bf97214006b88beaa7485b6",
+      "type": "Commit",
+      "id": "6c2220e976750e499bf97214006b88beaa7485b6",
+      "label": "Seal native inputs after expiry regression fix",
+      "title": "Seal native inputs after expiry regression fix",
+      "date": "2026-11-06T00:17:28.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6c2220e976750e499bf97214006b88beaa7485b6",
+      "provenance": [
+        {
+          "commit": "6c2220e976750e499bf97214006b88beaa7485b6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6c2220e976750e499bf97214006b88beaa7485b6"
+        }
+      ]
+    },
+    {
       "key": "Commit:6c2240b2bbf06ebc3ec48857bdbfc292e96be165",
       "type": "Commit",
       "id": "6c2240b2bbf06ebc3ec48857bdbfc292e96be165",
@@ -224055,6 +224087,22 @@
         {
           "commit": "9e3ddcfacc22f30fd12f10fc9906677d0db67334",
           "url": "https://github.com/OmertaDev/Omerta/commit/9e3ddcfacc22f30fd12f10fc9906677d0db67334"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+      "type": "Commit",
+      "id": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+      "label": "Preserve real expiry without racing native opportunity queries",
+      "title": "Preserve real expiry without racing native opportunity queries",
+      "date": "2026-11-05T23:58:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+      "provenance": [
+        {
+          "commit": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9e41bb6e4fbd15ca3158d6fbf121b6dadf350962"
         }
       ]
     },
@@ -242359,6 +242407,22 @@
         {
           "commit": "d764463f99e6e0896c656c2590165acc65c5b051",
           "url": "https://github.com/OmertaDev/Omerta/commit/d764463f99e6e0896c656c2590165acc65c5b051"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d77c9323352dc7ffa71d7401e594e70aeca9d2cc",
+      "type": "Commit",
+      "id": "d77c9323352dc7ffa71d7401e594e70aeca9d2cc",
+      "label": "Bind opportunity expiry regression source",
+      "title": "Bind opportunity expiry regression source",
+      "date": "2026-11-06T00:10:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d77c9323352dc7ffa71d7401e594e70aeca9d2cc",
+      "provenance": [
+        {
+          "commit": "d77c9323352dc7ffa71d7401e594e70aeca9d2cc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d77c9323352dc7ffa71d7401e594e70aeca9d2cc"
         }
       ]
     },
@@ -283903,6 +283967,9 @@
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
+          "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+        },
+        {
           "commit": "2b10efe7c087e5d048719cd35c1ad0c626760631"
         },
         {
@@ -286537,6 +286604,9 @@
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
         },
         {
+          "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+        },
+        {
           "commit": "2b10efe7c087e5d048719cd35c1ad0c626760631"
         },
         {
@@ -289169,6 +289239,9 @@
         },
         {
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+        },
+        {
+          "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
         },
         {
           "commit": "2b10efe7c087e5d048719cd35c1ad0c626760631"
@@ -292535,6 +292608,9 @@
         },
         {
           "commit": "2aad951460b9d22d2df8636c9b9745b3394ba3c2"
+        },
+        {
+          "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
         },
         {
           "commit": "2b10efe7c087e5d048719cd35c1ad0c626760631"
@@ -309517,7 +309593,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "cc7bbcab67cbd047a5d9d57798987a59b9176a0d",
+      "revision": "6c2220e976750e499bf97214006b88beaa7485b6",
       "currentBranch": "codex/contract-launch-fixes",
       "defaultBranch": "main",
       "visibility": "public",
@@ -349776,13 +349852,13 @@
       "type": "TestSuite",
       "id": "test/companyopportunities.js",
       "label": "test/companyopportunities.js",
-      "lines": 144,
-      "version": "7f8c0b3dcb1fa3b3",
+      "lines": 145,
+      "version": "5d809a90d26c9601",
       "provenance": [
         {
           "file": "test/companyopportunities.js",
           "line": 1,
-          "version": "7f8c0b3dcb1fa3b3"
+          "version": "5d809a90d26c9601"
         }
       ]
     },
@@ -446535,6 +446611,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2b10efe7c087e5d048719cd35c1ad0c626760631",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -499855,6 +499963,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6c2220e976750e499bf97214006b88beaa7485b6",
+      "to": "Artifact:tools/enterprise-native-contract-release-inputs.js",
+      "provenance": {
+        "commit": "6c2220e976750e499bf97214006b88beaa7485b6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6c2240b2bbf06ebc3ec48857bdbfc292e96be165",
       "to": "Artifact:docs/consignments-security-review.md",
       "provenance": {
@@ -541931,6 +542047,22 @@
       "to": "Artifact:test/shoppingbasket.js",
       "provenance": {
         "commit": "9e3ddcfacc22f30fd12f10fc9906677d0db67334"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+      "to": "Artifact:test/companyopportunities.js",
+      "provenance": {
+        "commit": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+      "to": "Artifact:tools/generate-contract-release-source-transfer.js",
+      "provenance": {
+        "commit": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962"
       }
     },
     {
@@ -600211,6 +600343,14 @@
       "to": "Artifact:omerta-transport-depth-design.md",
       "provenance": {
         "commit": "d75d335aa29204d337826cb85898af558ba10311"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d77c9323352dc7ffa71d7401e594e70aeca9d2cc",
+      "to": "Artifact:tools/contract-release-source-data.js",
+      "provenance": {
+        "commit": "d77c9323352dc7ffa71d7401e594e70aeca9d2cc"
       }
     },
     {
@@ -750654,6 +750794,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2b05130eb9fbd6342fed5c5677ac30c8f0074583",
+      "provenance": {
+        "commit": "2b05130eb9fbd6342fed5c5677ac30c8f0074583"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2b10efe7c087e5d048719cd35c1ad0c626760631",
       "provenance": {
         "commit": "2b10efe7c087e5d048719cd35c1ad0c626760631"
@@ -761470,6 +761618,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6c2220e976750e499bf97214006b88beaa7485b6",
+      "provenance": {
+        "commit": "6c2220e976750e499bf97214006b88beaa7485b6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6c2240b2bbf06ebc3ec48857bdbfc292e96be165",
       "provenance": {
         "commit": "6c2240b2bbf06ebc3ec48857bdbfc292e96be165"
@@ -770105,6 +770261,14 @@
       "to": "Commit:9e3ddcfacc22f30fd12f10fc9906677d0db67334",
       "provenance": {
         "commit": "9e3ddcfacc22f30fd12f10fc9906677d0db67334"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9e41bb6e4fbd15ca3158d6fbf121b6dadf350962",
+      "provenance": {
+        "commit": "9e41bb6e4fbd15ca3158d6fbf121b6dadf350962"
       }
     },
     {
@@ -779257,6 +779421,14 @@
       "to": "Commit:d764463f99e6e0896c656c2590165acc65c5b051",
       "provenance": {
         "commit": "d764463f99e6e0896c656c2590165acc65c5b051"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d77c9323352dc7ffa71d7401e594e70aeca9d2cc",
+      "provenance": {
+        "commit": "d77c9323352dc7ffa71d7401e594e70aeca9d2cc"
       }
     },
     {
@@ -855925,7 +856097,7 @@
       "to": "Artifact:tools/businessdesk-combined-source-transfer.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 1909
+        "line": 1941
       }
     },
     {
@@ -855934,7 +856106,7 @@
       "to": "Artifact:tools/businessdesk-combined-source-transfer.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 1910
+        "line": 1942
       }
     },
     {
@@ -855970,7 +856142,7 @@
       "to": "Artifact:tools/contract-release-source-data.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 1949
+        "line": 1981
       }
     },
     {
@@ -855979,7 +856151,7 @@
       "to": "Artifact:tools/contract-release-source-data.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 2265
+        "line": 2297
       }
     },
     {
@@ -855997,7 +856169,7 @@
       "to": "Artifact:tools/contract-release-source-transfer.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 2033
+        "line": 2065
       }
     },
     {
@@ -856024,7 +856196,7 @@
       "to": "Artifact:tools/wiki-media-source-transfer.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 1989
+        "line": 2021
       }
     },
     {
@@ -856033,7 +856205,7 @@
       "to": "Artifact:tools/wiki-media-source-transfer.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 1990
+        "line": 2022
       }
     },
     {
