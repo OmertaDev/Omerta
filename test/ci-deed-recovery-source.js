@@ -18,6 +18,8 @@ const domains = [
   'tools/integrated-economic-parent-source.js', 'tools/combined-economic-deed-source-transfer.js',
   'tools/enterprise-native-ux.js',
   'tools/economy-ux-merge-source-compatibility.js',
+  'SPEC.md',
+  'MARKETING-POSTS.md',
 ];
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 const sha = text => createHash('sha256').update(text).digest('hex');
@@ -31,7 +33,7 @@ git('merge-base', '--is-ancestor', source.predecessor, source.revision); git('me
 const changed = git('diff', '--name-only', '--diff-filter=M', '-z', source.predecessor, source.revision).split('\0').filter(file => domains.includes(file));
 assert.deepEqual(Object.keys(source.files).sort(), changed.sort(), 'Every changed file in the explicit comparison scope is present, and nothing else');
 for (const file of ['.github/workflows/ci.yml', 'public/index.html', 'test/deed-discovery-ui.js', 'test/gates.js',
-  'test/businessdesk-native-provenance.js'])
+  'test/businessdesk-native-provenance.js', 'SPEC.md', 'MARKETING-POSTS.md'])
   assert(Object.hasOwn(source.files, file), 'Each actual CI/Deed fix is admitted independently');
 let positives = 0, refusals = 0;
 for (const [file, row] of Object.entries(source.files)) {
