@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 7,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS",
-  "authoredRevision": "560d1692ca4fdd4893da9d0d2f08608994a092ba",
+  "authoredRevision": "5ae55b10c13e3998f7dcad9010dcb2bffe8bab52",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -16,8 +16,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "noirMergeSourceDefinitionSha256": "096fab5d678af31b99a4af456fbd5f2cda05b97afe26e216c51beaedc370e441",
   "combinedSourceDefinitionSha256": "e0738d5716f90a375785d729c72aa7245df7a41bc78d328b239669a07e2ecbab",
   "combinedNativeDefinitionSha256": "826c8faa5782a9b7054b0ad3d3aa1b9316ccab18f0ff6e3dd04f30a59b432afb",
-  "reviewedNativeRevision": "e49acd7feb417ac717aaf67d3d722babc99bce03",
-  "reviewedNativeTree": "39ed4ef183ddcf1ccf57a934245212b48fccaf35",
+  "reviewedNativeRevision": "90cb90bf730662b07cedb944fe828d9a5adee25c",
+  "reviewedNativeTree": "6b33d99215789d17fc9613579517a6a3b45c5ade",
   "combinedNativeParentsDefinitionSha256": "d38d8283d7b29eff2a80cefb43f68e768f6df294ed5e8d297b3219bc36622516",
   "legacyRevision": "123c1b2e1da3e24398ca88b1b261185c08dd3988",
   "legacyDefinitionSha256": "a5b7fb0db57cc7945b5f96b975b7ac0fe6cef4d05e1dd10c929c083429703ce4",
@@ -10238,8 +10238,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/businessdesk-native-provenance.js",
       "mode": "100644",
-      "blob": "171b81eb8cce5fe10961c667ee8fe01598afa3fb",
-      "sha256": "d7b64097e0c5a964339188aa1c5c200d57e8330886e9949219ab4b8b7a449b3f"
+      "blob": "72a7b5ddb1ec96062de37949e0d3f60cb946ab68",
+      "sha256": "b3f9ee47bde9fb52cd8741681fdef4c231e3b4c475bb51b43b72e0f63652893c"
     },
     {
       "file": "test/businessdesk-source-compatibility.js",
@@ -10256,8 +10256,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/ci-deed-recovery-source.js",
       "mode": "100644",
-      "blob": "4575918d61400b9e09f0a4987ac676182849a9e6",
-      "sha256": "1488f4aafc0928e726e9480b0d2c6183660601ab8ac805a1ac1a53f439d7f4f4"
+      "blob": "11205399386fec46dff906737b98d779b1018be0",
+      "sha256": "66fdc0531bef580f83c719b8559d5418745e484a664275dc4ff29a936ef1e3b7"
     },
     {
       "file": "test/db-boot-lock-postgres.js",
@@ -10508,14 +10508,14 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/ci-deed-recovery-source-data.js",
       "mode": "100644",
-      "blob": "a5b8623865aec5df817b05516a62c45bfce0b862",
-      "sha256": "c74c7dafa24d9ffbb686552c56e89a51677398cb279225c6c640d0d33d8a60ff"
+      "blob": "4dadc13e2d3094a08b8619026afabe3dbd96146d",
+      "sha256": "6aaf50c92599b2003c80c7a5d81609e2c660b0615b84694ec9e555c756e5b203"
     },
     {
       "file": "tools/ci-deed-recovery-source-transfer.js",
       "mode": "100644",
-      "blob": "8789c211bd7d48c4f560052b534cf25d7f8c2fd8",
-      "sha256": "bb49d8050eb5129cd19f18e0a3f36f5d0183ff35849ed3734a073af9e6ddf6cb"
+      "blob": "8604c33485ca3196f324e61dd292aff242178b26",
+      "sha256": "6c89c561a3408bd81562fce64a152d5a09de39f9cb93f89a62e9abb173e92adc"
     },
     {
       "file": "tools/combined-economic-deed-source-data.js",
@@ -10574,8 +10574,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economic-release-native-source.js",
       "mode": "100644",
-      "blob": "c50ae6d859e191a202f105d76a6243db95a2d8f4",
-      "sha256": "4a32db8000ec0600b940c57a8a6d686b57edb5276239ba5be50a78cd04dcc346"
+      "blob": "ed9d5f993deab9a1c14cb213509a3d36e873526c",
+      "sha256": "dbeffdd6eadd986365295ebb5047e76d1e0607c91fbade763dfa8547f52bd094"
     },
     {
       "file": "tools/economy-bank-interest-source-transfer.js",
@@ -10706,8 +10706,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-ci-deed-recovery-source.js",
       "mode": "100644",
-      "blob": "f88ba7ca138ea6c964fb3d1f32387139b0bf55b9",
-      "sha256": "901abcb330ba42f726d4dac69d8cf28b6c79cd358644a46cae932951ae10216b"
+      "blob": "4a7bbc31ed8569283ff740577658e4195119bbd7",
+      "sha256": "76f453ee4246ec01d6051f2ff687e8d2b453a38387421248488e558904d1cfc7"
     },
     {
       "file": "tools/generate-combined-economic-deed-source-transfer.js",
@@ -13067,8 +13067,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/businessdesk-native-provenance.js",
       "mode": "100644",
-      "blob": "171b81eb8cce5fe10961c667ee8fe01598afa3fb",
-      "sha256": "d7b64097e0c5a964339188aa1c5c200d57e8330886e9949219ab4b8b7a449b3f"
+      "blob": "72a7b5ddb1ec96062de37949e0d3f60cb946ab68",
+      "sha256": "b3f9ee47bde9fb52cd8741681fdef4c231e3b4c475bb51b43b72e0f63652893c"
     },
     {
       "file": "test/businessdesk-source-compatibility.js",
@@ -13085,8 +13085,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "test/ci-deed-recovery-source.js",
       "mode": "100644",
-      "blob": "4575918d61400b9e09f0a4987ac676182849a9e6",
-      "sha256": "1488f4aafc0928e726e9480b0d2c6183660601ab8ac805a1ac1a53f439d7f4f4"
+      "blob": "11205399386fec46dff906737b98d779b1018be0",
+      "sha256": "66fdc0531bef580f83c719b8559d5418745e484a664275dc4ff29a936ef1e3b7"
     },
     {
       "file": "test/db-boot-lock-postgres.js",
@@ -13337,14 +13337,14 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/ci-deed-recovery-source-data.js",
       "mode": "100644",
-      "blob": "a5b8623865aec5df817b05516a62c45bfce0b862",
-      "sha256": "c74c7dafa24d9ffbb686552c56e89a51677398cb279225c6c640d0d33d8a60ff"
+      "blob": "4dadc13e2d3094a08b8619026afabe3dbd96146d",
+      "sha256": "6aaf50c92599b2003c80c7a5d81609e2c660b0615b84694ec9e555c756e5b203"
     },
     {
       "file": "tools/ci-deed-recovery-source-transfer.js",
       "mode": "100644",
-      "blob": "8789c211bd7d48c4f560052b534cf25d7f8c2fd8",
-      "sha256": "bb49d8050eb5129cd19f18e0a3f36f5d0183ff35849ed3734a073af9e6ddf6cb"
+      "blob": "8604c33485ca3196f324e61dd292aff242178b26",
+      "sha256": "6c89c561a3408bd81562fce64a152d5a09de39f9cb93f89a62e9abb173e92adc"
     },
     {
       "file": "tools/combined-economic-deed-source-data.js",
@@ -13403,8 +13403,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/economic-release-native-source.js",
       "mode": "100644",
-      "blob": "c50ae6d859e191a202f105d76a6243db95a2d8f4",
-      "sha256": "4a32db8000ec0600b940c57a8a6d686b57edb5276239ba5be50a78cd04dcc346"
+      "blob": "ed9d5f993deab9a1c14cb213509a3d36e873526c",
+      "sha256": "dbeffdd6eadd986365295ebb5047e76d1e0607c91fbade763dfa8547f52bd094"
     },
     {
       "file": "tools/economy-bank-interest-source-transfer.js",
@@ -13535,8 +13535,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-ci-deed-recovery-source.js",
       "mode": "100644",
-      "blob": "f88ba7ca138ea6c964fb3d1f32387139b0bf55b9",
-      "sha256": "901abcb330ba42f726d4dac69d8cf28b6c79cd358644a46cae932951ae10216b"
+      "blob": "4a7bbc31ed8569283ff740577658e4195119bbd7",
+      "sha256": "76f453ee4246ec01d6051f2ff687e8d2b453a38387421248488e558904d1cfc7"
     },
     {
       "file": "tools/generate-combined-economic-deed-source-transfer.js",
@@ -13780,4 +13780,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "8259e5c054dc43e3456a11b267ba617db187bee564676877f1bb411f9dcd0c0a";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "590af77b7b8e04cd8d69a0a57d35c2a1a6846844e77754a56b239bedff33a209";
