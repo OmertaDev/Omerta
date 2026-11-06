@@ -1,5 +1,5 @@
 {
-  "sourceRevision": "9954f6c6b996c459ea050ddb5af254e16cf0d4c5",
+  "sourceRevision": "6e449acedc29488286c08c67061a6becabb15a9e",
   "predecessorRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
   "predecessorTree": "2fb48b34fdb9fab7f630844205d035b29ee063c0",
   "phase": "exact historical source transfer only; no runtime, native, financial or deployment qualification",
@@ -63,12 +63,12 @@
       "baselineBytes": 245711
     },
     "public/index.html": {
-      "currentSha256": "12368284aba77a3e47d71ae085a0df6fdeb8cd79182c78084d67921c02c37808",
-      "currentBlob": "084cc645a83355f59239d9902ea00deca4010d17",
-      "currentBytes": 1405203,
-      "authoredSha256": "12368284aba77a3e47d71ae085a0df6fdeb8cd79182c78084d67921c02c37808",
-      "authoredBlob": "084cc645a83355f59239d9902ea00deca4010d17",
-      "authoredBytes": 1405203,
+      "currentSha256": "3b12d14aa59209466626b7f9cc9fc3d2080379d66cfdda83a15b62edf2e2e534",
+      "currentBlob": "ea48eb922b9668c19d6c3aa0f9530e4cf57e772d",
+      "currentBytes": 1405259,
+      "authoredSha256": "3b12d14aa59209466626b7f9cc9fc3d2080379d66cfdda83a15b62edf2e2e534",
+      "authoredBlob": "ea48eb922b9668c19d6c3aa0f9530e4cf57e772d",
+      "authoredBytes": 1405259,
       "baselineSha256": "db4cbe6b819543e3fbc0db32cf4352a987d8b6586823df5c33756b2e2a23f969",
       "baselineBlob": "9542428cbd82fd496ea42c213772b3036541ceb6",
       "baselineBytes": 1398458
@@ -107,12 +107,12 @@
       "baselineBytes": 303757
     },
     "package.json": {
-      "currentSha256": "683c507fd3426464d1e9cb8deb96f3a174c7e87852937f3bf57da074d466efd6",
-      "currentBlob": "ad34c283423b5290e8db7e79db91a395058dd007",
-      "currentBytes": 61400,
-      "authoredSha256": "683c507fd3426464d1e9cb8deb96f3a174c7e87852937f3bf57da074d466efd6",
-      "authoredBlob": "ad34c283423b5290e8db7e79db91a395058dd007",
-      "authoredBytes": 61400,
+      "currentSha256": "c25139ddc6d46f99ab9060ce02871cb6be1af4a407912272feda6011ad59076e",
+      "currentBlob": "e974da47da54a5500b4605c77e81a55be78bc2fb",
+      "currentBytes": 61440,
+      "authoredSha256": "c25139ddc6d46f99ab9060ce02871cb6be1af4a407912272feda6011ad59076e",
+      "authoredBlob": "e974da47da54a5500b4605c77e81a55be78bc2fb",
+      "authoredBytes": 61440,
       "baselineSha256": "25a5a2cb4f5c8bc5ce9538495716d60fad3c67e995a2db36daca01505c92e2fc",
       "baselineBlob": "531e67d793e7758751f1734fe6dd96b7520268d4",
       "baselineBytes": 59697
