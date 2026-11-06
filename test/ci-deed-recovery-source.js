@@ -67,6 +67,9 @@ for (const [file, row] of Object.entries(source.files)) {
   for (const [entry, kind] of [[actualEntry.replace(row.current.blob, row.baseline.blob), 'tree'], [actualIndex.replace(row.current.blob, '0'.repeat(40)), 'index']]) {
     assert.throws(() => ciDeedRecoveryHistoricalEntry(file, entry, kind)); refusals++;
   }
+  for (const entry of [' ' + actualEntry, actualEntry + '\n', actualEntry.trim() + '\r\n']) {
+    assert.throws(() => ciDeedRecoveryHistoricalEntry(file, entry, 'tree')); refusals++;
+  }
   assert.throws(() => ciDeedRecoveryHistoricalRecord(file, { ...record, raw: Buffer.from(current + '\n') })); refusals++;
   for (const changed of [
     { ...record, content: current + '\n' },

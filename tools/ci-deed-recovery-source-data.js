@@ -2,8 +2,8 @@
 export const recoverySource = {
   "status": "SEALED",
   "phase": "EXACT_CI_DEED_RECOVERY_COMPARISON_ONLY",
-  "revision": "a8522c03a280563098b9b7bdf6f20fa655244f9f",
-  "tree": "d5e4c103927e4c99b6e57334664e8a2276c2d649",
+  "revision": "ea1753d7b1a259803ced90c2596ed0773c193d78",
+  "tree": "f82af30b1c5f703ed070069b237b79391bee171d",
   "predecessor": "0ce6ab96a34e6061232980ad60bfdbc94cf98fdb",
   "predecessorTree": "f28465d0caa595f199d0161d13039e52bac3de32",
   "files": {
@@ -309,9 +309,9 @@ export const recoverySource = {
     "test/deed-allocation-source-compatibility.js": {
       "current": {
         "mode": "100644",
-        "blob": "9338d0f0ebfd0dfa60d7b543310a5f0f6034f121",
-        "sha256": "5224e9b8ac3eaf6825bde862c2125f9a00125180bdfe74dd443ef7f629bb4bd7",
-        "bytes": 20606
+        "blob": "ac5dbc7e3562d9c40a813734537e44a26e2097fc",
+        "sha256": "877ec4794aab533ba1fab5d522ecedbc3b8209c7ad2950d5682802de80b2d96d",
+        "bytes": 20643
       },
       "baseline": {
         "mode": "100644",
@@ -326,22 +326,27 @@ export const recoverySource = {
           "baseline": ""
         },
         {
-          "at": 13942,
+          "at": 5782,
+          "current": "ciDeedRecoveryHistoricalInput(file, rawPhysical)",
+          "baseline": "rawPhysical"
+        },
+        {
+          "at": 13979,
           "current": "ciDeedRecoveryHistoricalInput(file,fs.readFileSync(file,'utf8')), head=ciDeedRecoveryHistoricalInput(file,git('show','HEAD:'+file)",
           "baseline": "fs.readFileSync(file,'utf8'), head=git('show','HEAD:'+file"
         },
         {
-          "at": 14203,
+          "at": 14240,
           "current": "ciDeedRecoveryHistoricalEntry(file,git('ls-tree','HEAD','--',file),'tree'",
           "baseline": "git('ls-tree','HEAD','--',file"
         },
         {
-          "at": 18880,
+          "at": 18917,
           "current": "ciDeedRecoveryHistoricalEntry(file,git('ls-tree','HEAD','--',file),'tree').trim(),git('ls-tree',integration.revision,'--',file).trim());\n    assert.equal(ciDeedRecoveryHistoricalEntry(file,git('ls-files','--stage','--',file),'index'",
           "baseline": "git('ls-tree','HEAD','--',file).trim(),git('ls-tree',integration.revision,'--',file).trim());\n    assert.equal(git('ls-files','--stage','--',file"
         },
         {
-          "at": 19273,
+          "at": 19310,
           "current": "ciDeedRecoveryHistoricalInput(file,fs.readFileSync(file)",
           "baseline": "fs.readFileSync(file"
         }
@@ -447,6 +452,37 @@ export const recoverySource = {
         {
           "at": 2888,
           "current": " \"test/ci-deed-recovery-source.js\",\n \"tools/generate-ci-deed-recovery-source.js\",\n",
+          "baseline": ""
+        }
+      ]
+    },
+    "tools/economy-ux-merge-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "cc89a78ef70738e57ab95492893e7e43919c1f6b",
+        "sha256": "d4e9df92035a55b4c0915b530e8884e7d899bbc9615d4b0a719e6b826fb20510",
+        "bytes": 48281
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "32f2d4fa4df42b2865d7c75ed4a67df5263695a9",
+        "sha256": "5b6bdb2df698198b5083e69e8a56f685a4f620e3405d36a7be320a046457324b",
+        "bytes": 48000
+      },
+      "inverses": [
+        {
+          "at": 76,
+          "current": "import { ciDeedRecoveryHistoricalInput } from './ci-deed-recovery-source-transfer.js';\n",
+          "baseline": ""
+        },
+        {
+          "at": 45508,
+          "current": "  if (ECONOMY_UX_MERGE_FILES.includes(file)) input = ciDeedRecoveryHistoricalInput(file, input);\n",
+          "baseline": ""
+        },
+        {
+          "at": 46762,
+          "current": "  if (ECONOMY_UX_MERGE_FILES.includes(file)) input = ciDeedRecoveryHistoricalInput(file, input);\n",
           "baseline": ""
         }
       ]

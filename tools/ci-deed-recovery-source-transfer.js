@@ -5,7 +5,7 @@ import { recoverySource } from './ci-deed-recovery-source-data.js';
 
 const sha = value => createHash('sha256').update(value).digest('hex');
 const blob = value => createHash('sha1').update('blob ' + Buffer.byteLength(value) + '\0').update(value).digest('hex');
-const expectedDigest = '81c3c6f9a838355f9827b0c44ae65ab4b4772966282d6222068bfee2daf22770';
+const expectedDigest = '4cb54578868ae4310862c0acb48be89c4b6541cda975cb034cd393a7b821953c';
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const CI_DEED_RECOVERY_SOURCE = freeze(recoverySource);
 function definition() {
@@ -54,7 +54,8 @@ export function ciDeedRecoveryHistoricalEntry(file, entry, kind) {
   const row = recoverySource.files[file], format = pin => kind === 'tree'
     ? pin.mode + ' blob ' + pin.blob + '\t' + file
     : pin.mode + ' ' + pin.blob + ' 0\t' + file;
-  assert.equal(entry.trim(), format(row.current), 'Actual current Git identity qualifies before the CI/Deed comparison');
+  assert(typeof entry === 'string' && (entry === format(row.current) || entry === format(row.current) + '\n'),
+    'Exact actual current Git identity qualifies before the CI/Deed comparison');
   return format(row.baseline) + (entry.endsWith('\n') ? '\n' : '');
 }
 export function ciDeedRecoveryHistoricalRecord(file, record) {
