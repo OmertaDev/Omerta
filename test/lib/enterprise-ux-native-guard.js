@@ -13,7 +13,7 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as ORIGINAL_B35_NATIVE_INPUTS } from '../..
 import { ENTERPRISE_NATIVE_UX_INPUTS as ACCEPTED_DESK_NATIVE_INPUTS } from '../../tools/enterprise-native-deed-inputs.js';
 import { combinedEconomicDeedSource as combinedEconomicDeedPin } from '../../tools/combined-economic-deed-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as economicParent } from '../../tools/enterprise-native-economic-inputs.js';
-import { assertReviewedNativePin } from '../../tools/economic-release-native-provenance.js';
+import { assertReviewedNativePin, economicReleaseNativeProvenance } from '../../tools/economic-release-native-provenance.js';
 import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256,
  WIKI_MEDIA_NOIR_MERGE_SOURCE, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256 } from '../../tools/wiki-media-source-data.js';
 import { NOIR_UI_SOURCE_SHA256 } from '../../tools/noir-ui-source-data.js';
@@ -138,6 +138,12 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   const unchanged = pin.files.find(row => row.file === unchangedOriginal.file);
   const unchangedAccepted = ACCEPTED_DESK_NATIVE_INPUTS.files.find(row => row.file === unchangedOriginal.file);
   assert.deepEqual(unchanged, unchangedOriginal); assert.deepEqual(unchangedAccepted, unchangedOriginal);
+  reject(() => assertContractReleaseCandidatePins(Object.freeze(pin.files.filter(row => row.file !== unchanged.file))));
+  for (const file of Object.keys(CONTRACT_RELEASE_SOURCE_DATA.historicalManifests)) {
+   const original = pin.files.find(row => row.file === file); assert(original);
+   for (const changed of [{ ...original, mode: '100755' }, { ...original, blob: '0'.repeat(40) }, { ...original, sha256: '0'.repeat(64) }])
+    reject(() => assertContractReleaseCandidatePins(Object.freeze(pin.files.map(row => row.file === file ? Object.freeze(changed) : row))));
+  }
   const unchangedBytes = git('show', pin.authoredRevision + ':' + unchanged.file);
   const unchangedRecord = { type: 'blob', mode: unchanged.mode, blob: unchanged.blob };
   assert.equal(digest(unchangedBytes), unchangedOriginal.sha256);
@@ -170,11 +176,32 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
    const record = { type: 'blob', mode: actual.mode, blob: actual.blob };
    const bytes = git('show', pin.authoredRevision + ':' + file);
    const admission = assertEnterpriseUxTrackedInput(file, record, record, bytes);
-   const acceptedAdmission = admission.prior; assert(acceptedAdmission);
+   const accepted = ACCEPTED_NATIVE_INPUTS.files.find(row => row.file === file); assert(accepted);
+   // Historical composition follows actual Root admission and uses only the canonical V7 row.
+   const acceptedAdmission = economicReleaseNativeProvenance(file, accepted); assert(acceptedAdmission);
+   const original = ORIGINAL_B35_NATIVE_INPUTS.files.find(row => row.file === file);
+   if (original) {
+    assert(admission && Object.isFrozen(admission));
+    assert.strictEqual(admission.current, actual); assert.strictEqual(admission.predecessor, original);
+    assert.strictEqual(admission.intermediate, accepted);
+    assert.equal(admission.intermediateRevision, ACCEPTED_NATIVE_INPUTS.authoredRevision);
+    assert.deepEqual(admission.prior, acceptedAdmission);
+   } else if (actual.mode === accepted.mode && actual.blob === accepted.blob && actual.sha256 === accepted.sha256) {
+    assert.equal(admission, null, 'An unchanged addition invents no B35 transition');
+   } else {
+    assert(admission && Object.isFrozen(admission));
+    assert.strictEqual(admission.current, actual); assert.equal(admission.predecessor, null);
+    assert.strictEqual(admission.intermediate, accepted);
+    assert.equal(admission.intermediateRevision, ACCEPTED_NATIVE_INPUTS.authoredRevision);
+    assert.equal(admission.relation, 'exact-authored-contract-release-addition-only');
+   }
+   for (const proof of [admission, acceptedAdmission].filter(Boolean)) {
+    assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
+   }
    const transition = acceptedAdmission.economicProvenance ?? acceptedAdmission;
    const historical = economicParent.files.find(row => row.file === file);
    assert.deepEqual(transition.current, historical);
-   assert.equal(admission.current.blob, actual.blob);
+   if (admission) assert.equal(admission.current.blob, actual.blob);
    assert.equal(transition.relation, 'exact-reviewed-economic-deed-source-provenance-only');
    assert.equal(transition.nativeAdmission, false);
    assert.equal(transition.priorResultsTransferred, false);
