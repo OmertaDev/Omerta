@@ -14,7 +14,8 @@ import { contractReleaseSourceDataBytes, resolveContractReleasePrototypeOutput,
   deriveContractReleaseReviewedSource, deriveContractReleaseInverseHunks, CONTRACT_RELEASE_MOBILE_ORIGIN, CONTRACT_RELEASE_ETH_ORIGIN,
   CONTRACT_RELEASE_START_ORDER_ORIGIN,
   CONTRACT_RELEASE_CENSUS_ORIGIN,
-  CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION, CONTRACT_RELEASE_MAIN_RESOLUTION,
+  CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION, CONTRACT_RELEASE_MAIN_RESOLUTION, CONTRACT_RELEASE_MAIN317_RESOLUTION,
+  CONTRACT_RELEASE_ARCHIVED_ECONOMIC_METADATA, assertContractReleaseArchivedEconomicMetadata,
   contractReleaseReviewedOrigins, deriveContractReleaseApprovedSource,
   assertContractReleaseApprovedSource } from '../tools/generate-contract-release-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
@@ -550,8 +551,8 @@ try {
   for (const file of mainResolution.files) {
     const base = committedOriginRecord(mainResolution.baseRevision, file);
     const checkpoint = committedOriginRecord(mainResolution.revision, file);
-    const actual = committedOriginRecord('HEAD', file);
-    assert.deepEqual(actual, checkpoint, 'Actual merged product equals the complete scoped source checkpoint');
+    const actual = committedOriginRecord('ae19e92d6f6481d3f4cdc38cc647254ac6e7afcf', file);
+    assert.deepEqual(actual, checkpoint, 'The complete prior merged product retains its original scoped checkpoint');
     assert.deepEqual(deriveContractReleaseApprovedSource(file, base), checkpoint);
     assert.deepEqual(assertContractReleaseApprovedSource(file, base, actual), checkpoint); positives += 3;
     for (const bytes of [Buffer.concat([actual.bytes, Buffer.from('unreviewed\n')]), actual.bytes.subarray(1)])
@@ -562,6 +563,42 @@ try {
   }
   refused(() => { mainResolution.files.push('src/unreviewed.js'); });
   refused(() => { mainResolution.revision = '0'.repeat(40); });
+  // Fresh current-main composition is independent of the complete prior controls.
+  const nextResolution = CONTRACT_RELEASE_MAIN317_RESOLUTION;
+  assert(Object.isFrozen(nextResolution) && Object.isFrozen(nextResolution.files));
+  assert.deepEqual(nextResolution.files, mainResolution.files, 'No widened product checkpoint scope');
+  assert.equal(git('rev-parse', nextResolution.revision + '^{tree}').trim(), nextResolution.tree);
+  assert.equal(git('rev-parse', nextResolution.baseRevision + '^{tree}').trim(), nextResolution.baseTree);
+  for (const file of nextResolution.files) {
+    const base = committedOriginRecord(nextResolution.baseRevision, file);
+    const checkpoint = committedOriginRecord(nextResolution.revision, file);
+    const actual = committedOriginRecord('HEAD', file);
+    assert.deepEqual(actual, checkpoint, 'Actual merged product equals the new complete scoped source checkpoint');
+    assert.deepEqual(deriveContractReleaseApprovedSource(file, base), checkpoint);
+    assert.deepEqual(assertContractReleaseApprovedSource(file, base, actual), checkpoint); positives += 3;
+    for (const bytes of [Buffer.concat([actual.bytes, Buffer.from('unreviewed\n')]), actual.bytes.subarray(1)])
+      refused(() => assertContractReleaseApprovedSource(file, base, originRecord(file, bytes)));
+    refused(() => assertContractReleaseApprovedSource(file, base, { ...actual, pin: { ...actual.pin, mode: '100755' } }));
+    refused(() => deriveContractReleaseApprovedSource(file, { ...base, pin: { ...base.pin, sha256: '0'.repeat(64) } }));
+    refused(() => deriveContractReleaseApprovedSource(file, { ...base, bytes: Buffer.concat([base.bytes, Buffer.from('\n')]) }));
+  }
+  refused(() => { nextResolution.files.push('src/unreviewed.js'); });
+  refused(() => { nextResolution.revision = '0'.repeat(40); });
+  const archive = CONTRACT_RELEASE_ARCHIVED_ECONOMIC_METADATA;
+  assert(Object.isFrozen(archive));
+  const archivedOriginal = committedOriginRecord(archive.revision, archive.sourceFile);
+  const archivedActual = committedOriginRecord('HEAD', archive.file);
+  assert(archivedActual.bytes.equals(archivedOriginal.bytes), 'Previous V7 module is retained byte for byte');
+  assert.strictEqual(assertContractReleaseArchivedEconomicMetadata(archivedActual), archivedActual); positives++;
+  for (const changed of [
+    { ...archivedActual, pin: { ...archivedActual.pin, file: archive.sourceFile } },
+    { ...archivedActual, pin: { ...archivedActual.pin, mode: '100755' } },
+    { ...archivedActual, pin: { ...archivedActual.pin, blob: '0'.repeat(40) } },
+    { ...archivedActual, pin: { ...archivedActual.pin, sha256: '0'.repeat(64) } },
+    { ...archivedActual, bytes: Buffer.concat([archivedActual.bytes, Buffer.from('\n')]) },
+    { ...archivedActual, bytes: archivedActual.bytes.subarray(1) },
+  ]) refused(() => assertContractReleaseArchivedEconomicMetadata(changed));
+  refused(() => { archive.file = 'src/server.js'; });
   assert(committedOriginRecord('HEAD', 'public/index.html').bytes.toString().includes(strongerEscape));
   const fixtureRepository = path.join(approvalDirectory, 'repository'), redirect = path.join(approvalDirectory, 'redirect');
   fs.mkdirSync(fixtureRepository);

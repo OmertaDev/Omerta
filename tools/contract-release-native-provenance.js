@@ -8,6 +8,7 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS
 import { ENTERPRISE_NATIVE_UX_INPUTS as qualifiedUx, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as qualifiedUxDefinition } from './enterprise-native-ux-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as deed, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as deedDefinition } from './businessdesk-deed-native-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as accepted, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as acceptedDefinition } from './enterprise-native-economic-release-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as archivedAccepted, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as archivedAcceptedDefinition } from './enterprise-native-economic-release-aeae-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as economic, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as economicDefinition } from './enterprise-native-economic-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as economicDeed, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as economicDeedDefinition } from './economic-deed-parent-native-inputs.js';
 import { ENTERPRISE_NATIVE_CONTINUOUS_CITY_INPUTS as continuousCity } from './enterprise-native-continuous-city-inputs.js';
@@ -107,8 +108,17 @@ export function assertContractReleaseSourceDefinition() {
   assert.equal(digest(continuousCity), '5d3c8f292d7dd378b2e469a431042fd90671fceea3d5b487ce5454a094d80d2b');
   pin(source.historicalManifests[CONTRACT_RELEASE_CATALOG_METADATA], CONTRACT_RELEASE_CATALOG_METADATA);
   assert.equal(source.historicalManifests[CONTRACT_RELEASE_CATALOG_METADATA].sha256, '804f29d96f31767fb3447dc61ed01ca243d9770357923ded125493bb19e71f58');
-  assert.equal(source.baseRevision, 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a');
-  assert.equal(source.baseTree, 'b45024815077a564ecb48eb35e4835b830d44c2f');
+  assert.equal(source.baseRevision, '1aed5b529e891257b2ffb07177c48b34712316e6');
+  assert.equal(source.baseTree, '916bab6a50cc69b6df9c5d50ef1a0977e27e3870');
+  // Preserve the earlier evidence as exact raw data. Its rows never become
+  // canonical current/accepted rows and receive no economic provenance grant.
+  frozenData(archivedAccepted);
+  assert.equal(archivedAcceptedDefinition, '605ee77c542b220fb5d28cf003a27d4b06964e641bd52ff8468da7f0054ea75d');
+  assert.equal(digest(archivedAccepted), archivedAcceptedDefinition);
+  const archiveFile = 'tools/enterprise-native-economic-release-aeae-inputs.js';
+  assert.deepEqual(source.approvedAdditions[archiveFile], { file: archiveFile, mode: '100644',
+    blob: '00cde6bac960e8c5de75f7d88c7031438844e000',
+    sha256: 'ce732a483247679bd77567f28677163218400f01ae536bcf8f4b9b93f0f17771' });
   for (const [file, row] of Object.entries(source.nativeChanges)) {
     assert(canonical(file)); assert(Object.isFrozen(row)); fields(row, ['current', 'predecessor']);
     pin(row.current, file); pin(row.predecessor, file);

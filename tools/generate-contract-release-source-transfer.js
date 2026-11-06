@@ -86,14 +86,33 @@ export const CONTRACT_RELEASE_MAIN_RESOLUTION = Object.freeze({
   files: Object.freeze(['MARKETING-POSTS.md', 'SPEC.md', 'public/defi.html',
     'public/fee-flows.html', 'public/index.html', 'src/server.js']),
 });
+// Exact next integration checkpoint. The prior checkpoint and controls remain intact.
+// Pin the complete authored product source before any binding/sealing command.
+// This exact source composition grants no financial activation clearance.
+export const CONTRACT_RELEASE_MAIN317_RESOLUTION = Object.freeze({
+  revision: '11f9936e9d747b157d60191a94914df2c315c764',
+  tree: '59d3ff9f8cdd7b139c6e57f9f3220a90772f7d34',
+  baseRevision: '1aed5b529e891257b2ffb07177c48b34712316e6',
+  baseTree: '916bab6a50cc69b6df9c5d50ef1a0977e27e3870',
+  files: Object.freeze(['MARKETING-POSTS.md', 'SPEC.md', 'public/defi.html',
+    'public/fee-flows.html', 'public/index.html', 'src/server.js']),
+});
+// The previous V7 remains an exact ordinary archive, never the current authority.
+export const CONTRACT_RELEASE_ARCHIVED_ECONOMIC_METADATA = Object.freeze({
+  revision: 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a',
+  sourceFile: 'tools/enterprise-native-economic-release-inputs.js',
+  file: 'tools/enterprise-native-economic-release-aeae-inputs.js',
+  mode: '100644', blob: '00cde6bac960e8c5de75f7d88c7031438844e000',
+  sha256: 'ce732a483247679bd77567f28677163218400f01ae536bcf8f4b9b93f0f17771',
+});
 const DATA = 'tools/contract-release-source-data.js';
 const CURRENT_MANIFEST = 'tools/enterprise-native-contract-release-inputs.js';
-const ACCEPTED_BASE_REVISION = 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a';
-const ACCEPTED_BASE_TREE = 'b45024815077a564ecb48eb35e4835b830d44c2f';
+const ACCEPTED_BASE_REVISION = '1aed5b529e891257b2ffb07177c48b34712316e6';
+const ACCEPTED_BASE_TREE = '916bab6a50cc69b6df9c5d50ef1a0977e27e3870';
 const ACCEPTED_NATIVE_METADATA = Object.freeze({
   file: 'tools/enterprise-native-economic-release-inputs.js', mode: '100644',
-  blob: '00cde6bac960e8c5de75f7d88c7031438844e000',
-  sha256: 'ce732a483247679bd77567f28677163218400f01ae536bcf8f4b9b93f0f17771',
+  blob: '87c0643fee47bccba1c4f70ac12d4e84d61bfeb5',
+  sha256: 'f25e50759ce4b5359ba00fe5fbf98267f39749b2ddf1842fe2d1b04fe62cfe3f',
 });
 // This immutable catalog is an ordinary raw input, never a full native manifest.
 const HISTORICAL_CATALOG = Object.freeze({
@@ -127,13 +146,15 @@ const INTEGRATION = Object.freeze(['package.json', 'tools/enterprise-native-ux.j
   'tools/contract-release-source-transfer.js', 'tools/generate-contract-release-source-transfer.js',
   'test/contract-release-source-compatibility.js',
   'test/genesis-fee-readiness-source-transfer.js',
+  // The current main recovery proof qualifies Root before its frozen CI comparison.
+  'test/ci-deed-recovery-source.js',
   'test/businessdesk-combined-source-compatibility.js', 'test/businessdesk-combined-native-provenance.js',
   'test/economy-deed-merge-source-compatibility.js', 'test/wiki-media-source-transfer.js',
   'test/economy-monitor-source-compatibility.js', 'test/age-eligibility-source-compatibility.js',
   'test/lib/ux-journeys.js',
   // Generated source-authority data only; product files always retain fixed reviewed origins.
   'tools/native-eth-source-transfer.json']);
-const NEW_SUPPORT = Object.freeze(['tools/age-policy-source-transfer.js', 'tools/genesis-fee-readiness-source-transfer.js',
+const NEW_SUPPORT = Object.freeze(['tools/enterprise-native-economic-release-aeae-inputs.js', 'tools/age-policy-source-transfer.js', 'tools/genesis-fee-readiness-source-transfer.js',
   'tools/genesis-historical-reader-source-transfer.js', 'tools/market-fee-copy-source-transfer.js',
   'tools/contract-release-native-provenance.js', 'tools/contract-release-source-transfer.js',
   'tools/contract-release-source-format.js',
@@ -262,8 +283,8 @@ export function deriveContractReleaseApprovedSource(file, base) {
   const origins = contractReleaseReviewedOrigins(file);
   assert(origins.length, 'No fixed reviewed source origin: ' + file);
   if (base) { assert.equal(base.pin.file, file); sourceText(base); }
-  const resolution = CONTRACT_RELEASE_MAIN_RESOLUTION;
-  if (base && resolution.files.includes(file)) {
+  for (const resolution of [CONTRACT_RELEASE_MAIN317_RESOLUTION, CONTRACT_RELEASE_MAIN_RESOLUTION]) {
+    if (!base || !resolution.files.includes(file)) continue;
     const accepted = record(resolution.baseRevision, file);
     if (base.pin.blob === accepted.pin.blob) {
       assert.equal(gitText('rev-parse', resolution.baseRevision + '^{tree}').trim(), resolution.baseTree);
@@ -294,6 +315,18 @@ export function deriveContractReleaseApprovedSource(file, base) {
     expected = { pin: { file, mode: reviewed.pin.mode, blob: blob(bytes), sha256: sha256(bytes) }, bytes };
   }
   return expected;
+}
+export function assertContractReleaseArchivedEconomicMetadata(actual) {
+  const archive = CONTRACT_RELEASE_ARCHIVED_ECONOMIC_METADATA;
+  assert(actual && actual.pin && Buffer.isBuffer(actual.bytes), 'Exact raw archived module required');
+  const expected = record(archive.revision, archive.sourceFile);
+  assert.deepEqual(expected.pin, { file: archive.sourceFile, mode: archive.mode,
+    blob: archive.blob, sha256: archive.sha256 }, 'Exact original historical Git module');
+  assert.deepEqual(actual.pin, { file: archive.file, mode: archive.mode,
+    blob: archive.blob, sha256: archive.sha256 }, 'Only the closed archive path and original raw pin');
+  sourceText(actual);
+  assert(actual.bytes.equals(expected.bytes), 'Historical archive retains every original byte');
+  return actual;
 }
 export function assertContractReleaseApprovedSource(file, base, actual) {
   const expected = deriveContractReleaseApprovedSource(file, base);
@@ -357,15 +390,17 @@ function main() {
   const accepted = parseManifest(acceptedRecord.bytes);
   assert.equal(accepted.version, 7);
   assert.equal(accepted.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');
-  assert.equal(accepted.authoredRevision, '77839fd65fa5d629bbedbe819444136a00452a89');
-  assert.equal(sha256(JSON.stringify(accepted)), '605ee77c542b220fb5d28cf003a27d4b06964e641bd52ff8468da7f0054ea75d');
+  assert.equal(accepted.authoredRevision, '8d0c4b9a71baef49e5eb1b68cf7ad0c3e49f6867');
+  assert.equal(sha256(JSON.stringify(accepted)), '868aae9bad105ab81972ecef94e5cf11a0009641195ae0d4eedd73e1e05f411f');
   const old = new Map(accepted.files.map(row => [row.file, row]));
   assert.equal(old.size, accepted.files.length, 'No duplicate accepted native subjects');
   const checked = new Set();
   const authorize = file => {
     assert(!HISTORY.includes(file) && file !== DATA && file !== CURRENT_MANIFEST, 'No immutable/self subject');
     const actual = record(source, file), prior = record(base, file, true);
-    if (INTEGRATION.includes(file)) {
+    if (file === CONTRACT_RELEASE_ARCHIVED_ECONOMIC_METADATA.file) {
+      assertContractReleaseArchivedEconomicMetadata(actual);
+    } else if (INTEGRATION.includes(file)) {
       assert(Object.hasOwn(approval.pins, file), 'Exact explicit integration approval required: ' + file);
       assert.deepEqual(actual.pin, approval.pins[file]);
     } else if (contractReleaseReviewedOrigins(file).length) {
