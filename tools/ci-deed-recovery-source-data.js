@@ -2,8 +2,8 @@
 export const recoverySource = {
   "status": "SEALED",
   "phase": "EXACT_CI_DEED_RECOVERY_COMPARISON_ONLY",
-  "revision": "476cfba95a1031e5e43bd0cb47ca74fbfa503085",
-  "tree": "c15b464df17b668904f60355a2debfbf77cb451f",
+  "revision": "3707e8226ed5d66cc69798fdb153b8354ccfc531",
+  "tree": "53f0292db8c95d897460a9d40a885897eddffb81",
   "predecessor": "0ce6ab96a34e6061232980ad60bfdbc94cf98fdb",
   "predecessorTree": "f28465d0caa595f199d0161d13039e52bac3de32",
   "files": {
@@ -515,6 +515,48 @@ export const recoverySource = {
           "at": 46762,
           "current": "  if (ECONOMY_UX_MERGE_FILES.includes(file)) input = ciDeedRecoveryHistoricalInput(file, input);\n",
           "baseline": ""
+        }
+      ]
+    },
+    "SPEC.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "b6b2112baf264466eae5742e34d78fdb9cd151af",
+        "sha256": "3bd0bf3ca7036743af5989fad714199b620de8b10ef207533df86c9b30e548b5",
+        "bytes": 57077
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "6848cba281d30a27dfedca01b7ac8f53f6e3fe9c",
+        "sha256": "0591dcb9ae261fcabaf9be2c1cacbfdacbd834adadf2f2ecb7e41c21a5c0eecc",
+        "bytes": 57077
+      },
+      "inverses": [
+        {
+          "at": 506,
+          "current": "3** files, **205948",
+          "baseline": "2** files, **205772"
+        }
+      ]
+    },
+    "MARKETING-POSTS.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "ea6d4ccdd2281531411af28c458c883bfa74fc85",
+        "sha256": "87585d7c3ebc2c34131d38c40fa273ec4ce892db1c58998c4f7212326fb4bbe9",
+        "bytes": 7062
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "989796d7b5c64fe60a44c6448384fa760a5497fc",
+        "sha256": "5ee66cb1aeb501cd3e6b0fa9c65059e26349b90ed23bb49ba0b59c9f42793dfb",
+        "bytes": 7062
+      },
+      "inverses": [
+        {
+          "at": 2712,
+          "current": "3",
+          "baseline": "2"
         }
       ]
     }
