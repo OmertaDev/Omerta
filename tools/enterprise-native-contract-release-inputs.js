@@ -4,7 +4,7 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "version": 4,
   "status": "SEALED",
   "phase": "ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS",
-  "authoredRevision": "087a36372aa6cbcc668a94f93a89682834760391",
+  "authoredRevision": "3d1dd499a09cc4c1722eb3b68aea1943b1cfbd18",
   "predecessorRevision": "c6247976ff71e8d4c103ebd1498c2d373217d077",
   "uxRevision": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc",
   "nativePredecessorRevision": "1822593cfff6e66483a685fc7bf6bff4c50de5f0",
@@ -12,8 +12,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
   "deedSourceDefinitionSha256": "73bf24b95a07a2b409f8c05c5fb8601e34fe7ae402e5616b26749fbee42ad242",
   "contractPredecessorRevision": "77839fd65fa5d629bbedbe819444136a00452a89",
   "contractPredecessorMetadataSha256": "ce732a483247679bd77567f28677163218400f01ae536bcf8f4b9b93f0f17771",
-  "contractSourceDefinitionSha256": "2dc7fdf388b8a0796a03bf17ecb35933581b064ad30ef4834b1f648d50ab6d89",
-  "contractSourceRevision": "aa93e5080f541287eabd607d57f9dc5501f424f1",
+  "contractSourceDefinitionSha256": "3665f9c11910c740b7122db480af4898e4adda63d5298651d203e2c7af4f789c",
+  "contractSourceRevision": "38a92ea4504fdf87e59c8e6d88089b72e4921253",
   "contractBaseRevision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
   "reviewedContractRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
   "reviewedUiRevision": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7",
@@ -10572,8 +10572,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/contract-release-source-data.js",
       "mode": "100644",
-      "blob": "33ec58777dd8ec527fc719c2867473d9cb3396a7",
-      "sha256": "5751bb4cb8df6a2f5826ee1f6a9c7d69ddf9bc8464b12e263581b945a41e2249"
+      "blob": "aa23be3e20414c99117ab6192b5d52610c0a913d",
+      "sha256": "c8b5fbaa508e235186366c5bc266ae3285ae000722d19e7757a6c59982263a0e"
     },
     {
       "file": "tools/contract-release-source-format.js",
@@ -10776,8 +10776,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "9a9cf80993441054fcd31e96b6ca8fd61943d90f",
-      "sha256": "b4cbd6ef0ea7696405b090904696a56f1615cbff77208942daa265c3d718653d"
+      "blob": "95b5c2084a78b021ed3d888a7fbd97cc8277a76c",
+      "sha256": "47a2933616ee2ede96500a2dcd3590b89cbe145e7ab02983c947f3487918cdfa"
     },
     {
       "file": "tools/generate-current-economic-terms-source-transfer.js",
@@ -13638,8 +13638,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/contract-release-source-data.js",
       "mode": "100644",
-      "blob": "33ec58777dd8ec527fc719c2867473d9cb3396a7",
-      "sha256": "5751bb4cb8df6a2f5826ee1f6a9c7d69ddf9bc8464b12e263581b945a41e2249"
+      "blob": "aa23be3e20414c99117ab6192b5d52610c0a913d",
+      "sha256": "c8b5fbaa508e235186366c5bc266ae3285ae000722d19e7757a6c59982263a0e"
     },
     {
       "file": "tools/contract-release-source-format.js",
@@ -13842,8 +13842,8 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "9a9cf80993441054fcd31e96b6ca8fd61943d90f",
-      "sha256": "b4cbd6ef0ea7696405b090904696a56f1615cbff77208942daa265c3d718653d"
+      "blob": "95b5c2084a78b021ed3d888a7fbd97cc8277a76c",
+      "sha256": "47a2933616ee2ede96500a2dcd3590b89cbe145e7ab02983c947f3487918cdfa"
     },
     {
       "file": "tools/generate-current-economic-terms-source-transfer.js",
@@ -14117,4 +14117,4 @@ export const ENTERPRISE_NATIVE_UX_INPUTS = freeze({
     }
   ]
 });
-export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "d305f3b8042e2c37225491fe3beb08426ef8672242a725d4397dff1631a575a8";
+export const ENTERPRISE_NATIVE_UX_INPUTS_SHA256 = "9a8382e174df01dff34a44b527a5004db684c5c0335f64b8c71e0a35beaafb3c";
