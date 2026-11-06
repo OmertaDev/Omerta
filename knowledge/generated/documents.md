@@ -312,10 +312,14 @@
 | [AUDIT-world-occupation.md](../../AUDIT-world-occupation.md) | audit | 71 | 2026-07-21 |
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
+| [auditcontext/DOSSIER-contracts.md](../../auditcontext/DOSSIER-contracts.md) | audit | 97 | 2026-11-05 |
+| [auditcontext/DOSSIER-periphery.md](../../auditcontext/DOSSIER-periphery.md) | audit | 78 | 2026-11-05 |
+| [auditcontext/INDEPENDENT-ETH-PERIPHERY-REVIEW.md](../../auditcontext/INDEPENDENT-ETH-PERIPHERY-REVIEW.md) | audit | 139 | 2026-11-05 |
+| [auditcontext/INDEPENDENT-ETH-REVIEW.md](../../auditcontext/INDEPENDENT-ETH-REVIEW.md) | audit | 190 | 2026-11-05 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6869 | 2026-10-27 |
-| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 442 | 2026-10-14 |
+| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 455 | 2026-11-05 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-25 |
-| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-06 |
+| [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-31 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 52 | 2026-09-25 |
 | [content/README.md](../../content/README.md) | documentation | 282 | 2026-09-25 |
 | [CREDIT_CHECKPOINT.md](../../CREDIT_CHECKPOINT.md) | documentation | 88 | 2026-09-24 |
@@ -719,7 +723,7 @@
 | [docs/ux-production-release-2026-10-25.md](../../docs/ux-production-release-2026-10-25.md) | documentation | 83 | 2026-10-26 |
 | [docs/ux-source-qualification.md](../../docs/ux-source-qualification.md) | documentation | 20 | 2026-10-26 |
 | [docs/warehouse-leases-security-review.md](../../docs/warehouse-leases-security-review.md) | documentation | 76 | 2026-10-11 |
-| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2764 | 2026-11-04 |
+| [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2764 | 2026-11-05 |
 | [docs/worker-training-security-review.md](../../docs/worker-training-security-review.md) | documentation | 40 | 2026-10-13 |
 | [docs/workshop-floor-integration.md](../../docs/workshop-floor-integration.md) | documentation | 22 | 2026-10-15 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |

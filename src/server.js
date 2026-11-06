@@ -186,6 +186,7 @@ import * as Exchange from './exchange.js';
 import * as Bank from './bank.js';
 import { register as registerCasino } from './routes/casino.js';
 import { register as registerGenesisAuction } from './routes/genesisauction.js';
+import { register as registerEthStaking } from './routes/ethstaking.js';
 import { loadInventoryBondCheckout, inventoryBondTransaction } from './inventorybond.js';
 import { register as registerPen } from './routes/pen.js';
 import { register as registerSpeakeasy } from './routes/speakeasy.js';
@@ -695,6 +696,7 @@ export async function buildServer() {
   app.get('/player-experience.js', reviewedModule('player-experience.js'));
   app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));
   app.get('/genesis-deploy-artifact.js', reviewedModule('genesis-deploy-artifact.js'));
+  app.get('/eth-staking.js', reviewedModule('eth-staking.js'));
   app.get('/genesis-deploy-vendor/sha3.js', reviewedModule('genesis-deploy-vendor/sha3.js'));
   app.get('/genesis-deploy-vendor/_u64.js', reviewedModule('genesis-deploy-vendor/_u64.js'));
   app.get('/genesis-deploy-vendor/utils.js', reviewedModule('genesis-deploy-vendor/utils.js'));
@@ -2654,6 +2656,7 @@ export async function buildServer() {
 
   registerCasino(app, { pool, auth });
   registerGenesisAuction(app, { auth });
+  registerEthStaking(app, { pool, auth });
 
   app.get('/v1/gangs', async () => {
     // two flat queries instead of a correlated subquery — identical response, and pg-mem

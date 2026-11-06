@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Script, console} from "forge-std/Script.sol";
 import {OmrTwapOracle, IUniswapV2Factory, IUniswapV2Pair} from "../src/OmrTwapOracle.sol";

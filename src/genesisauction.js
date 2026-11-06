@@ -18,6 +18,12 @@ const ABI = parseAbi([
   'function managerCollectsRevenue() view returns (bool)',
   'function recipients(uint256) view returns (address)',
   'function revenuePolicyId() view returns (bytes32)',
+  'function REWARDS_BPS() view returns (uint16)', 'function rewardsRecipient() view returns (address)', 'function safe() view returns (address)',
+  'function owner() view returns (address)', 'function governanceSafe() view returns (address)',
+  'function rewardVault() view returns (address)', 'function distributor() view returns (address)',
+  'function distributorRuntimeHash() view returns (bytes32)', 'function rewardVaultRuntimeHash() view returns (bytes32)',
+  'function omrRuntimeHash() view returns (bytes32)', 'function managerRuntimeHash() view returns (bytes32)',
+  'function canonicalHookRuntimeHash() view returns (bytes32)', 'function manager() view returns (address)', 'function EPOCH_DURATION() view returns (uint256)', 'function LOCK_DURATION() view returns (uint256)',
   'function TRADE_FEE_BPS() view returns (uint16)',
   'function developerRecipient() view returns (address)',
   'function rwaRecipient() view returns (address)',
@@ -94,17 +100,17 @@ function configuration(manifest, account) {
   if (manifest?.chainId !== CHAIN_ID || !isAddress(account || '') || same(account, ZERO))
     fail('invalid_configuration', 'Robinhood Chain and a valid wallet are required.');
   const contracts = {};
-  const required = ['auction', 'coordinator', 'characterNft', 'omr', 'validator'];
+  const required = ['auction', 'coordinator', 'characterNft', 'omr', 'validator', 'ethRewards', 'ethStaking'];
   if (!manifest.contracts || Object.keys(manifest.contracts).length !== required.length
     || Object.keys(manifest.contracts).some(name => !required.includes(name)))
-    fail('invalid_configuration', 'The public auction requires exactly five reviewed contract pins.');
-  for (const name of ['auction', 'coordinator', 'characterNft', 'omr', 'validator']) {
+    fail('invalid_configuration', 'The public auction requires exactly seven reviewed contract pins.');
+  for (const name of ['auction', 'coordinator', 'characterNft', 'omr', 'validator', 'ethRewards', 'ethStaking']) {
     const pin = manifest.contracts?.[name];
     if (!isAddress(pin?.address || '') || same(pin.address, ZERO) || !HASH.test(pin?.runtimeCodeHash || ''))
       fail('invalid_configuration', 'The reviewed deployment manifest is incomplete.');
     contracts[name] = { address: getAddress(pin.address), runtimeCodeHash: pin.runtimeCodeHash.toLowerCase() };
   }
-  if (new Set(Object.values(contracts).map(p => p.address.toLowerCase())).size !== 5)
+  if (new Set(Object.values(contracts).map(p => p.address.toLowerCase())).size !== 7)
     fail('invalid_configuration', 'Deployment addresses must be distinct.');
   const dependencyNames = ['poolManager', 'positionManager', 'permit2', 'hook'];
   if (!manifest.dependencies || Object.keys(manifest.dependencies).length !== 4
@@ -131,13 +137,14 @@ function configuration(manifest, account) {
       || !same(policy[key], policy.familySafe)))
     fail('invalid_configuration', 'The reviewed founder allocation and Safe custody policy is incomplete or differs.');
   const hookPolicy = manifest.hookPolicy;
-  const fixed = { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100 };
-  if (!hookPolicy || Object.keys(hookPolicy).length !== 7
+  const fixed = { baseTradeBps: 350, rewardsTradeBps: 50, totalTradeBps: 400, maxSurgeBps: 50, developerBps: 127, rwaBps: 51, communityBps: 76, polBps: 96 };
+  if (!hookPolicy || Object.keys(hookPolicy).length !== Object.keys(fixed).length + 2
     || Object.entries(fixed).some(([key, value]) => hookPolicy[key] !== value)
     || !Array.isArray(hookPolicy.recipients) || hookPolicy.recipients.length !== 5
     || hookPolicy.recipients.some(recipient => !isAddress(recipient || '') || same(recipient, ZERO))
+    || !same(hookPolicy.rewardsRecipient, contracts.ethRewards.address)
     || !same(hookPolicy.recipients[0], '0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD'))
-    fail('invalid_configuration', 'The reviewed fixed 5% trade revenue, 0.5% surge cap or recipients differ.');
+    fail('invalid_configuration', 'The reviewed 3.5% base plus 0.5% native ETH staking rewards, 0.5% surge cap or recipients differ.');
   const maxAge = manifest.maxSnapshotAgeSeconds ?? 120;
   if (!Number.isSafeInteger(maxAge) || maxAge < 1 || maxAge > 120)
     fail('invalid_configuration', 'The snapshot freshness limit is invalid.');
@@ -210,18 +217,37 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
   }
   const hook = manifest.dependencies.hook.address, manager = manifest.dependencies.poolManager.address;
   const hookPolicy = manifest.hookPolicy;
-  const [base, surge, managerCollectsRevenue, revenuePolicy, managerFee, managerOmr, ...recipients] = await Promise.all([
-    read(hook, 'BASE_SELL_BPS'), read(hook, 'MAX_SURGE_BPS'), read(hook, 'managerCollectsRevenue'),
+  const [base, surge, rewardsFee, hookRewards, managerRewards, vaultSafe, vaultOmr, managerCollectsRevenue, revenuePolicy, managerFee, managerOmr, ...recipients] = await Promise.all([
+    read(hook, 'BASE_SELL_BPS'), read(hook, 'MAX_SURGE_BPS'), read(hook, 'REWARDS_BPS'), read(hook, 'rewardsRecipient'), read(manager, 'rewardsRecipient'), read('ethRewards', 'safe'), read('ethRewards', 'omr'), read(hook, 'managerCollectsRevenue'),
     read(manager, 'revenuePolicyId'), read(manager, 'TRADE_FEE_BPS'), read(manager, 'omr'),
     ...Array.from({ length: 5 }, (_, i) => read(hook, 'recipients', [BigInt(i)])),
     ...['developerRecipient', 'rwaRecipient', 'communityRecipient', 'polRecipient'].map(fn => read(manager, fn)),
   ]);
-  const expectedRevenuePolicy = keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS'));
-  if (BigInt(base) !== 500n || BigInt(surge) !== 50n || managerCollectsRevenue !== true
-    || !same(revenuePolicy, expectedRevenuePolicy) || BigInt(managerFee) !== 500n || !same(managerOmr, c.omr.address)
+  const expectedRevenuePolicy = keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS'));
+  if (BigInt(base) !== 350n || BigInt(surge) !== 50n || managerCollectsRevenue !== true
+    || BigInt(rewardsFee) !== 50n || !same(hookRewards, c.ethRewards.address) || !same(managerRewards, c.ethRewards.address)
+    || !same(vaultSafe, manifest.policy.familySafe) || !same(vaultOmr, c.omr.address)
+    || !same(revenuePolicy, expectedRevenuePolicy) || BigInt(managerFee) !== 400n || !same(managerOmr, c.omr.address)
     || recipients.slice(0, 5).some((recipient, i) => !same(recipient, hookPolicy.recipients[i]))
     || recipients.slice(5).some((recipient, i) => !same(recipient, hookPolicy.recipients[i])))
     fail('deployment_mismatch', 'The fixed trade revenue policy requires a reviewed restricted manager, exact fee caps and recipients.');
+  const nativeBindings = [
+    ['ethRewards', 'rewardVault', c.ethStaking.address], ['ethRewards', 'rewardVaultRuntimeHash', c.ethStaking.runtimeCodeHash],
+    ['ethRewards', 'omrRuntimeHash', c.omr.runtimeCodeHash], ['ethRewards', 'manager', manager],
+    ['ethRewards', 'managerRuntimeHash', manifest.dependencies.poolManager.runtimeCodeHash],
+    ['ethRewards', 'canonicalHookRuntimeHash', manifest.dependencies.hook.runtimeCodeHash],
+    ['ethStaking', 'omr', c.omr.address], ['ethStaking', 'owner', manifest.policy.familySafe],
+    ['ethStaking', 'governanceSafe', manifest.policy.familySafe], ['ethStaking', 'distributor', c.ethRewards.address],
+    ['ethStaking', 'distributorRuntimeHash', c.ethRewards.runtimeCodeHash],
+  ];
+  for (const [name, fn, expected] of nativeBindings) if (!same(await read(name, fn), expected))
+    fail('deployment_mismatch', 'The native ETH collector and staking vault bindings differ.');
+  if (BigInt(await read('ethStaking', 'EPOCH_DURATION')) !== 2592000n || BigInt(await read('ethStaking', 'LOCK_DURATION')) !== 2592000n)
+    fail('deployment_mismatch', 'The native ETH reward periods and minimum deposit lock must be 30 days.');
+  const rewardsKey = await read('ethRewards', 'poolKey');
+  if (!same(rewardsKey[0], ZERO) || !same(rewardsKey[1], c.omr.address) || !same(rewardsKey[4], manifest.dependencies.hook.address)
+    || BigInt(rewardsKey[2]) !== 3000n || BigInt(rewardsKey[3]) !== 60n)
+    fail('deployment_mismatch', 'The native ETH collector must use the reviewed canonical pool.');
   const hookTax = { ...hookPolicy, managerCollectsRevenue: true, managerRevenuePolicy: revenuePolicy };
   const validator = await read('auction', 'validationHook');
   if (!isAddress(validator || '') || same(validator, ZERO)) fail('deployment_mismatch', 'The auction ownership validator is missing.');

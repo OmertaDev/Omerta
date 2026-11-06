@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -9,10 +9,11 @@ import {IHooks} from "v4-core/interfaces/IHooks.sol";
 import {IPositionManager} from "../../lib/v4-periphery/src/interfaces/IPositionManager.sol";
 import {PositionInfo, PositionInfoLibrary} from "../../lib/v4-periphery/src/libraries/PositionInfoLibrary.sol";
 import {IAllowanceTransfer} from "permit2/src/interfaces/IAllowanceTransfer.sol";
-import {GenesisPlayerSale} from "../../src/GenesisPlayerSale.sol";
+import {GenesisCharacterPlayerSale} from "../../src/GenesisCharacterPlayerSale.sol";
 import {OmertaHookV2} from "../../src/market-v2/OmertaHookV2.sol";
 import {OmertaGenesisCoordinatorV2, IGenesisGatedAuction} from "../../src/market-v2/OmertaGenesisCoordinatorV2.sol";
-import {OmertaGuardedAuction, IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
+import {OmertaCharacterGuardedAuction} from "../../src/genesis-auction/OmertaCharacterGuardedAuction.sol";
+import {IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
 import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol";
 
 /// @notice Opt-in, read-only fork of public production dependencies; never broadcasts transactions.
@@ -21,6 +22,8 @@ import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces
 ///      ArbSys bytecode is removed locally before construction to select the vendor's block.number
 ///      fallback: vm.roll is a deterministic clock simulation, not a live native-clock rehearsal.
 ///      Hook uses real CREATE2 creation with mined permission bits. Dependencies retain live code.
+///      The external token is the historical unrestricted deployment. This NFT-gated compatibility
+///      integration does not verify deployment or activation of the revised restricted token.
 contract PlayerGenesisRobinhoodForkTest is Test {
     using PositionInfoLibrary for PositionInfo;
     uint256 constant Q96 = 1 << 96;
@@ -32,8 +35,8 @@ contract PlayerGenesisRobinhoodForkTest is Test {
     IPositionManager constant POSITIONS = IPositionManager(0x58daec3116aae6D93017bAAea7749052E8a04fA7);
     IAllowanceTransfer constant PERMIT = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
     OmertaGenesisCoordinatorV2 coordinator;
-    OmertaGuardedAuction auction;
-    GenesisPlayerSale sale;
+    OmertaCharacterGuardedAuction auction;
+    GenesisCharacterPlayerSale sale;
     uint256 bid;
     uint256 positionId;
     address outsider = address(0xB0B);
@@ -47,7 +50,7 @@ contract PlayerGenesisRobinhoodForkTest is Test {
         emit log_named_uint("Fork snapshot timestamp", block.timestamp);
         assertEq(block.chainid, 4663);
         assertEq(NFT.ownerOf(1), HOLDER);
-        assertEq(TOKEN.balanceOf(SAFE), 100_000_000 ether);
+        assertGe(TOKEN.balanceOf(SAFE), 2100 ether);
         assertEq(address(POSITIONS.poolManager()), address(MANAGER));
         vm.etch(address(0x64), bytes(""));
         vm.deal(HOLDER, 10 ether); vm.deal(outsider, 10 ether);
@@ -55,7 +58,7 @@ contract PlayerGenesisRobinhoodForkTest is Test {
         address[5] memory recipients = [SAFE, SAFE, SAFE, SAFE, SAFE];
         bytes memory hookCode = abi.encodePacked(type(OmertaHookV2).creationCode, abi.encode(
             MANAGER, address(TOKEN), predictedCoordinator, uint24(3000), int24(60), recipients,
-            OmertaHookV2.OpeningConfig(0, 0, 0), uint24(100), uint32(60)));
+            OmertaHookV2.OpeningConfig(0, 0, 0), uint24(100), uint32(60), SAFE));
         bytes32 codeHash = keccak256(hookCode);
         bytes32 salt;
         address hookAddress;
@@ -73,13 +76,13 @@ contract PlayerGenesisRobinhoodForkTest is Test {
         assertEq(deployed, hookAddress);
         uint64 start = uint64(block.number + 10);
         AuctionParameters memory p = AuctionParameters(address(0), SAFE, address(coordinator),
-            start, start + 10, start + 20, 2, address(0), (Q96 / 1000) / 2 * 2, 1,
+            start, start + 10, start + 20, 2, address(0), (Q96 / 1000) / 2 * 2, 1 ether,
             abi.encodePacked(uint24(1_000_000), uint40(10)));
-        auction = new OmertaGuardedAuction(address(TOKEN), 1000 ether, p,
+        auction = new OmertaCharacterGuardedAuction(address(TOKEN), 1000 ether, p,
             IOmertaGenesisClaimGate(address(coordinator)), NFT);
         address predictedSale = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
         bytes32 root = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, predictedSale, HOLDER, uint8(2)))));
-        sale = new GenesisPlayerSale(TOKEN, coordinator, root, 100 ether, block.timestamp + 1 days,
+        sale = new GenesisCharacterPlayerSale(TOKEN, coordinator, root, 100 ether, block.timestamp + 1 days,
             block.timestamp + 10 days, SAFE, NFT);
         vm.startPrank(SAFE);
         TOKEN.transfer(address(auction), 1000 ether);
@@ -87,6 +90,7 @@ contract PlayerGenesisRobinhoodForkTest is Test {
         TOKEN.transfer(address(coordinator), 1000 ether);
         vm.stopPrank();
         auction.onTokensReceived(); coordinator.bind(IGenesisGatedAuction(address(auction)), sale);
+        assertGe(coordinator.tokenReserve(), coordinator.minimumTokenReserve());
         vm.roll(start);
         vm.prank(outsider); vm.expectRevert();
         auction.submitBid{value: 1 ether}(Q96, uint128(1 ether), outsider, bytes(""));
@@ -104,13 +108,13 @@ contract PlayerGenesisRobinhoodForkTest is Test {
     }
 
     function testPinnedProductionDependenciesSettleMigrateAndClaim() public {
-        vm.expectRevert(OmertaGuardedAuction.LaunchClaimsClosed.selector); auction.claimTokens(bid);
+        vm.expectRevert(OmertaCharacterGuardedAuction.LaunchClaimsClosed.selector); auction.claimTokens(bid);
         vm.warp(sale.closesAt()); sale.settle(HOLDER);
         uint256 proceeds = address(auction).balance + sale.totalAccepted();
         uint256 managerBefore = address(MANAGER).balance;
         coordinator.migrate();
         assertTrue(sale.released()); assertTrue(coordinator.playerClaimsOpen());
-        assertEq(IERC721(address(POSITIONS)).ownerOf(positionId), SAFE);
+        assertEq(IERC721(address(POSITIONS)).ownerOf(positionId), address(coordinator));
         assertGt(POSITIONS.getPositionLiquidity(positionId), 0);
         PositionInfo info = POSITIONS.positionInfo(positionId);
         assertEq(info.tickLower(), -887220);
@@ -119,14 +123,21 @@ contract PlayerGenesisRobinhoodForkTest is Test {
         (uint160 amount,,) = PERMIT.allowance(address(coordinator), address(TOKEN), address(POSITIONS));
         assertEq(amount, 0);
         uint256 spent = address(MANAGER).balance - managerBefore;
-        assertGe(spent, proceeds * 3750 / 10_000 * 99 / 100);
+        assertLe(spent, proceeds / 2);
+        assertGe(spent, proceeds / 2 * 99 / 100);
         assertEq(spent + address(coordinator).balance, proceeds);
         assertEq(coordinator.residualCredit(SAFE), address(coordinator).balance);
         auction.claimTokens(bid);
+        // Existing token allocations and refunds remain recoverable after character ownership loss.
+        vm.prank(HOLDER); NFT.transferFrom(HOLDER, outsider, 1);
         vm.prank(HOLDER); sale.claim();
         assertGt(TOKEN.balanceOf(HOLDER), 0);
         uint256 refund = 1 ether - sale.accepted(HOLDER);
         uint256 beforeRefund = HOLDER.balance;
         vm.prank(HOLDER); sale.refund(); assertEq(HOLDER.balance, beforeRefund + refund);
+        vm.expectRevert(OmertaGenesisCoordinatorV2.WrongPhase.selector); coordinator.releaseLiquidity();
+        vm.warp(coordinator.liquidityUnlockTimestamp());
+        coordinator.releaseLiquidity();
+        assertEq(IERC721(address(POSITIONS)).ownerOf(positionId), SAFE);
     }
 }

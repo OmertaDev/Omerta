@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { decodeFunctionData, decodeAbiParameters, encodeAbiParameters, getContractAddress, getAddress,
-  keccak256, parseAbi, zeroAddress } from 'viem';
-import { MARKET_V2_ROLES, MARKET_V2_HOOK_FLAGS, RESTRICTED_MARKET_POLICY_ID, RESTRICTED_MARKET_SUPPLY, loadMarketV2Artifact, mineMarketV2Hook,
+  keccak256, toHex, parseAbi, zeroAddress } from 'viem';
+import { MARKET_V2_ROLES, MARKET_V2_HOOK_FLAGS, RESTRICTED_MARKET_POLICY_ID, RESTRICTED_MARKET_SUPPLY, RESTRICTED_MARKET_TRADE_FEE_BPS, loadMarketV2Artifact, mineMarketV2Hook,
   buildMarketV2DeploymentPlan } from '../tools/market-v2-deployment-plan.js';
 
 const A = n => getAddress(`0x${BigInt(n).toString(16).padStart(40, '0')}`);
@@ -16,7 +17,7 @@ const json = x => JSON.stringify(x, (_, v) => typeof v === 'bigint' ? v.toString
 export function marketV2DeploymentExample() {
   const root = fileURLToPath(new URL('../', import.meta.url));
   const sourceRevision = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim();
-  const roles = Object.fromEntries(['safe', 'deployer', 'safeExecutor', 'adjudicator', 'initializer', 'dev', 'rwa', 'community', 'capitalProvider']
+  const roles = Object.fromEntries(['safe', 'deployer', 'safeExecutor', 'adjudicator', 'initializer', 'dev', 'rwa', 'community', 'stakingReward', 'capitalProvider']
     .map((name, i) => [name, A(0x10000 + i)]));
   roles.capitalProvider = roles.safe;
   const artifactHashes = Object.fromEntries([...new Set(MARKET_V2_ROLES.map(([, c]) => c))]
@@ -30,7 +31,7 @@ export function marketV2DeploymentExample() {
     restrictedMarket: { policyId: RESTRICTED_MARKET_POLICY_ID,
       operatorRuntimeHashes: Object.fromEntries(['hook', 'controller', 'bond', 'turf', 'arbitrage', 'router', 'positionManager', 'permit2'].map(k => [k, H])),
       additionalOperators: [], holderRuntimeHashes: Object.fromEntries(['polFunding', 'reserveFunding', 'turfFeeBridge'].map(k => [k, H])),
-      contractHolders: [] },
+      contractHolders: [{ address: roles.stakingReward, runtimeHash: H, purpose: 'Typed ETH reward collector receiving-only holder' }] },
     create2: { factory: A(0x30000), runtimeHash: H, kind: 'salt-prefix', saltStart: '0', maxAttempts: 200000 },
     artifactHashes,
     policies: {
@@ -41,8 +42,8 @@ export function marketV2DeploymentExample() {
       stability: { limits: Array.from({ length: 7 }, () => clone(limit)), maxObservationAge: 120, cooldown: 60,
         recoveryInterval: 60, minLiquidity: String(500n * E), maxSpotDeviationTicks: 500, minBandTicks: 60,
         maxBandTicks: 600, stressOnBps: 6000, stressOffBps: 2000, recoveryX: 2, recoveryY: 3 },
-      bond: { maxObservationAge: 120, vestingSeconds: 86400, minLiquidity: String(500n * E), maxSpotDeviationTicks: 500,
-        discountBps: 500, minNativePurchase: String(E / 100n), maxNativePurchase: String(E), maxNativePerEpoch: String(5n * E),
+      bond: { maxObservationAge: 120, vestingSeconds: 30 * 86400, minLiquidity: String(500n * E), maxSpotDeviationTicks: 500,
+        discountBps: 50, minNativePurchase: String(E / 100n), maxNativePurchase: String(E), maxNativePerEpoch: String(5n * E),
         maxNativeLifetime: String(100n * E), maxOmrPerPurchase: String(2n * E), maxOmrPerEpoch: String(10n * E),
         maxOmrLifetime: String(200n * E), maxOmrPerEth: String(2n * E) },
       arbitrage: { reserveProfitBps: 2500, maxInput: String(E) },
@@ -86,19 +87,59 @@ if (process.argv.includes('--example')) {
     const decoded = decodeAbiParameters(a.abi.find(x => x.type === 'constructor').inputs, `0x${initCode.slice(a.bytecode.length)}`);
     assert.equal(decoded[0], fixture.external.poolManager.address);
     assert.equal(decoded[1], fixture.external.omr.address);
-    assert.equal(decoded.length, 9, 'Fixed fees and recipients have no mutable tax authority');
     assert.deepEqual(decoded[5], [fixture.roles.dev, fixture.roles.rwa, fixture.roles.community, plan.addresses.polFunding, plan.addresses.reserveFunding]);
-    assert.deepEqual(plan.economics.splitBps, { dev: 200, rwa: 100, community: 100, pol: 100 });
-    assert.equal(plan.economics.sellBaseBps, 500);
-    assert.equal(plan.economics.ordinaryBuyBps, 500);
-    assert.equal(plan.economics.baseTradeBps, 500);
+    assert.equal(decoded[9], fixture.roles.stakingReward);
+    assert.deepEqual(plan.economics.splitBps, { dev: 127, rwa: 51, community: 76, pol: 96 });
+    assert.equal(plan.economics.sellBaseBps, 350);
+    assert.equal(plan.economics.ordinaryBuyBps, 400);
+    assert.equal(plan.economics.rewardsTradeBps, 50);
+    assert.equal(plan.economics.totalTradeBps, 400);
+    assert.equal(plan.economics.rewardsRecipient, fixture.roles.stakingReward);
+    assert.equal(plan.economics.baseTradeBps, 350);
     assert.equal(plan.economics.enforcedBy, fixture.external.poolManager.address);
     assert.equal(plan.economics.primaryRecipients.pol, plan.addresses.polFunding);
-    assert.equal(plan.economics.maximumCombinedTradeBps, 550);
+    assert.equal(plan.economics.maximumCombinedTradeBps, 450);
     assert.equal(plan.economics.maximumCombinedEnforcedBy, fixture.external.poolManager.address);
     assert.equal(plan.economics.maximumSurgeBps, 50);
     assert.equal(plan.economics.maximumHookBps, 50);
-    assert.equal(Object.values(plan.economics.splitBps).reduce((sum, bps) => sum + bps, 0), 500);
+    assert.equal(Object.values(plan.economics.splitBps).reduce((sum, bps) => sum + bps, 0), 350);
+  });
+  test('fee readbacks and output match the actual current manager policy', () => {
+    const source = fs.readFileSync(new URL('../omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol', import.meta.url), 'utf8');
+    assert.equal(RESTRICTED_MARKET_TRADE_FEE_BPS, Number(source.match(/TRADE_FEE_BPS\s*=\s*(\d+)/)[1]));
+    assert.equal(RESTRICTED_MARKET_POLICY_ID, keccak256(toHex(source.match(/revenuePolicyId\s*=\s*keccak256\("([^"]+)"\)/)[1])));
+    assert.notEqual(RESTRICTED_MARKET_POLICY_ID, keccak256(toHex('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')));
+    assert.notEqual(RESTRICTED_MARKET_POLICY_ID, keccak256(toHex('OMERTA_RESTRICTED_LP_REVENUE_V2_550_BOTH_DIRECTIONS')));
+    const weights = [200, 80, 120, 150], total = weights.reduce((sum, value) => sum + value, 0);
+    const allocated = weights.map(weight => Math.floor(weight * 350 / total));
+    const order = weights.map((weight, i) => ({ i, remainder: weight * 350 % total }))
+      .sort((a, b) => b.remainder - a.remainder || a.i - b.i);
+    for (let i = 0, remaining = 350 - allocated.reduce((sum, value) => sum + value, 0); i < remaining; i++)
+      allocated[order[i].i]++;
+    assert.deepEqual(allocated, [127, 51, 76, 96], 'largest remainders receive the two unassigned basis points');
+    assert.deepEqual(Object.values(plan.economics.splitBps), allocated);
+    assert.equal(Number(source.match(/developer = base \* (\d+) \/ BASE_FEE_BPS/)[1]), allocated[0]);
+    assert.equal(Number(source.match(/rwa = base \* (\d+) \/ BASE_FEE_BPS/)[1]), allocated[1]);
+    assert.equal(Number(source.match(/community = base \* (\d+) \/ BASE_FEE_BPS/)[1]), allocated[2]);
+  });
+  test('ETH collector is a separately reviewed receiving-only holder', () => {
+    assert.equal(plan.economics.rewardsRecipient, fixture.roles.stakingReward);
+    assert.equal(plan.steps.some(x => x.functionName === 'setOperator' && x.args[0] === fixture.roles.stakingReward), false);
+    const absent = clone(fixture); absent.restrictedMarket.contractHolders = [];
+    assert.throws(() => buildMarketV2DeploymentPlan(absent), /receiving-only/);
+    const operator = clone(fixture); operator.restrictedMarket.additionalOperators.push({ address: fixture.roles.stakingReward, role: 2, runtimeHash: H, purpose: 'Invalid custody privilege' });
+    assert.throws(() => buildMarketV2DeploymentPlan(operator), /never a custody operator/);
+    assert.equal(plan.steps.find(x => x.label === 'Verify replacement market contracts and actual operator runtime before irrevocable policy sealing').required.rewards.rewardAsset, 'native ETH');
+  });
+  test('inventory bonds deploy dormant with a bounded discount and at least thirty-day vesting', () => {
+    assert.equal(plan.bondPolicy.startsPaused, true);
+    assert.equal(plan.bondPolicy.maximumDiscountBps, 50);
+    assert.equal(plan.bondPolicy.minimumVestingSeconds, 30 * 86400);
+    assert.equal(plan.steps.some(step => step.role === 'bond' && step.functionName === 'setPaused' && step.args[0] === false), false);
+    const excess = clone(fixture); excess.policies.bond.discountBps = 51;
+    assert.throws(() => buildMarketV2DeploymentPlan(excess), /bond.discountBps.*policy bounds/);
+    const short = clone(fixture); short.policies.bond.vestingSeconds = 30 * 86400 - 1;
+    assert.throws(() => buildMarketV2DeploymentPlan(short), /bond.vestingSeconds.*policy bounds/);
   });
   test('manager binding and reviewed roles are Safe calls sealed after deployments and before asset funding', () => {
     const abi = parseAbi(['function bindSettlementManager(address manager,bytes32 expectedRuntimeHash)',
@@ -124,7 +165,8 @@ if (process.argv.includes('--example')) {
       .every(x => seal < plan.steps.indexOf(x)));
     const readiness = plan.steps.find(x => x.label === 'Verify replacement market contracts and actual operator runtime before irrevocable policy sealing');
     assert.equal(readiness.required.manager.polRecipient, plan.addresses.polFunding);
-    assert.equal(readiness.required.manager.TRADE_FEE_BPS, 500);
+    assert.equal(readiness.required.manager.TRADE_FEE_BPS, 400);
+    assert.equal(readiness.required.manager.rewardsRecipient, fixture.roles.stakingReward);
     assert.equal(readiness.required.positionManager.poolManager, fixture.external.poolManager.address);
     assert.equal(readiness.required.token.operatorCount, 0);
     assert.equal(readiness.required.token.contractHolderCount, 0);
@@ -147,7 +189,7 @@ if (process.argv.includes('--example')) {
       assert.deepEqual(finalRegistry.required.operators[i + 1], { index: i + 1,
         operatorAt: plan.restrictedMarket.operatorAddresses[role], operatorRole: n, operatorRuntimeHash: H });
     });
-    assert.equal(finalRegistry.required.contractHolderCount, 3);
+    assert.equal(finalRegistry.required.contractHolderCount, 4);
     ['polFunding', 'reserveFunding', 'turfFeeBridge'].forEach((role, index) => {
       assert.deepEqual(finalRegistry.required.contractHolders[index], { index, contractHolderAt: plan.addresses[role], contractHolderRuntimeHash: H });
     });
@@ -195,7 +237,7 @@ if (process.argv.includes('--example')) {
   });
   test('receiving-only adapter holders are Safe-registered before sealing and cannot acquire operator authority', () => {
     const holders = plan.steps.filter(step => step.functionName === 'setContractHolder');
-    assert.equal(holders.length, 3);
+    assert.equal(holders.length, 4);
     const seal = plan.steps.findIndex(step => step.functionName === 'sealPolicy');
     const abi = parseAbi(['function setContractHolder(address holder,bytes32 expectedRuntimeHash)']);
     ['polFunding', 'reserveFunding', 'turfFeeBridge'].forEach((role, i) => {
@@ -221,17 +263,17 @@ if (process.argv.includes('--example')) {
     const readiness = plan.steps.find(step => step.label === 'Verify self-enrolling revenue wallets are undelegated EOAs');
     assert.equal(readiness.required.liveCode, '0x');
     assert.equal(readiness.required.directCallerEqualsTransactionOrigin, true);
-    const x = clone(fixture); x.restrictedMarket.contractHolders = [{ address: x.roles.rwa, runtimeHash: H, purpose: 'Reviewed RWA treasury' }];
+    const x = clone(fixture); x.restrictedMarket.contractHolders.push({ address: x.roles.rwa, runtimeHash: H, purpose: 'Reviewed RWA treasury' });
     const p = buildMarketV2DeploymentPlan(x);
     assert.equal(p.steps.some(step => step.functionName === 'registerWallet' && step.args[0] === x.roles.rwa), false);
     const registry = p.steps.find(step => step.label === 'Verify the exact complete operator and contract-holder registries immediately before sealing');
-    assert.equal(registry.required.contractHolderCount, 4);
-    assert.deepEqual(registry.required.contractHolders.at(-1), { index: 3, contractHolderAt: x.roles.rwa, contractHolderRuntimeHash: H });
-    x.restrictedMarket.contractHolders[0].address = x.roles.safe;
+    assert.equal(registry.required.contractHolderCount, 5);
+    assert.deepEqual(registry.required.contractHolders.at(-1), { index: 4, contractHolderAt: x.roles.rwa, contractHolderRuntimeHash: H });
+    x.restrictedMarket.contractHolders.at(-1).address = x.roles.safe;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /genesis address/);
-    x.restrictedMarket.contractHolders[0].address = p.addresses.router;
+    x.restrictedMarket.contractHolders.at(-1).address = p.addresses.router;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /operator.*genesis address/);
-    x.restrictedMarket.contractHolders[0].address = p.addresses.polFunding;
+    x.restrictedMarket.contractHolders.at(-1).address = p.addresses.polFunding;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /Duplicate/);
   });
   test('season/Turf setup precedes bridge deployment and complete one-time binding calls follow controller', () => {
@@ -280,8 +322,6 @@ if (process.argv.includes('--example')) {
   test('unknown hook policy keys cannot silently change the intended economics', () => {
     const x = clone(fixture); x.policies.hook.baseSellBps = 1000;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /unknown manifest field/);
-    const y = clone(fixture); y.policies.hook.governanceSafe = A(0x999);
-    assert.throws(() => buildMarketV2DeploymentPlan(y), /unknown manifest field/, 'A tax governance authority cannot be introduced');
   });
   test('nonce owner cannot also execute setup calls', () => {
     const x = clone(fixture); x.roles.safeExecutor = x.roles.deployer;

@@ -1,0 +1,20 @@
+PASS all nonce-bound deployments include native ETH collector and staking dependencies
+PASS ETH distributor and staking bind before sealing with preserved RWA and health-gated conversion
+PASS single public route contains no player tranche, eligibility or extra wait and preserves explicit public inventory
+PASS bind follows deployment and exact typed inventory pulls follow irreversible sealing
+PASS Genesis LP policy preserves half the accepted ETH and locks principal after successful migration
+PASS guarded output contains no primary-sale allocation, price or dates inferred from defaults
+PASS mainnet profile requires approved economics, fresh native cadence and exact auction and claim periods
+PASS offline reserve and CCA constructor checks reject unexecutable funding before deployment
+PASS manifest and constructor hashes bind explicit inventory, schedule and nonce
+file:///C:/Users/Jorge/.codex/worktrees/pr310-native-eth/Omerta/tools/player-genesis-preflight.js:196
+    rewardRoute: { poolId: rewardPoolId, pool: rewardPool, sqrtPriceX96: String(rewardSqrtPrice), liquidity: String(rewardLiquidity),
+                           ^
+
+ReferenceError: rewardPoolId is not defined
+    at preflightPlayerGenesis (file:///C:/Users/Jorge/.codex/worktrees/pr310-native-eth/Omerta/tools/player-genesis-preflight.js:196:28)
+    at async file:///C:/Users/Jorge/.codex/worktrees/pr310-native-eth/Omerta/test/player-genesis-deployment.js:343:19
+    at async test (file:///C:/Users/Jorge/.codex/worktrees/pr310-native-eth/Omerta/test/player-genesis-deployment.js:160:38)
+    at async file:///C:/Users/Jorge/.codex/worktrees/pr310-native-eth/Omerta/test/player-genesis-deployment.js:341:3
+
+Node.js v24.19.0

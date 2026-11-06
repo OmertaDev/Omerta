@@ -1,3 +1,5 @@
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Current raw Git/index/physical admission precedes exact historical source comparisons.
 // This source-only proof executes no reconstructed test or runtime code.
 import assert from 'node:assert/strict';
@@ -43,11 +45,23 @@ for (const [file, row] of Object.entries(source.files)) {
     assert.equal(git('ls-tree', revision, '--', file).trim(), pin.mode + ' blob ' + pin.blob + '\t' + file);
     assert.equal(Buffer.byteLength(text), pin.bytes); assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob);
   }
-  const actualEntry = git('ls-tree', 'HEAD', '--', file), actualIndex = git('ls-files', '--stage', '--', file);
+  const rootEntry = git('ls-tree', 'HEAD', '--', file), rootIndex = git('ls-files', '--stage', '--', file);
+  const rootCommitted = git('show', 'HEAD:' + file), rootRaw = fs.readFileSync(file), rootStat = fs.lstatSync(file);
+  const match = rootEntry.trim().match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file && rootStat.isFile() && !rootStat.isSymbolicLink());
+  assert.equal(blob(rootCommitted), match[2], 'Complete actual Root committed source has its own exact blob');
+  assert.equal(rootIndex.trim(), match[1] + ' ' + match[2] + ' 0\t' + file, 'Actual Root index qualifies before comparison');
+  assert(rootRaw.equals(Buffer.from(rootCommitted)) || rootRaw.equals(Buffer.from(rootCommitted.replaceAll('\n', '\r\n'))), 'Complete actual Root physical bytes qualify before comparison');
+  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;
+  const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file);
+  assert.equal(rootEntry.trim(), view ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file : acceptedEntry.trim(), 'Actual Root identity qualifies independently of the frozen CI comparison');
+  const actualEntry = view ? view.pin.mode + ' blob ' + view.pin.blob + '\t' + file + '\n' : rootEntry;
+  const actualIndex = actualEntry.replace(' blob ', ' ').replace('\t', ' 0\t');
+  assert.equal(actualEntry, acceptedEntry, 'The exact accepted current-main comparison has its independently pinned Git identity');
   assert.equal(actualEntry.trim(), row.current.mode + ' blob ' + row.current.blob + '\t' + file, 'Current HEAD is exact before any source comparison');
   assert.equal(actualIndex.trim(), row.current.mode + ' ' + row.current.blob + ' 0\t' + file, 'Current index is exact before any source comparison');
-  const committed = git('show', 'HEAD:' + file); assert.equal(committed, current, 'Complete committed current source qualifies first');
-  const stat = fs.lstatSync(file), raw = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  const committed = contractReleaseDeskInput(file, rootCommitted); assert.equal(committed, current, 'Complete frozen CI source qualifies after actual Root admission');
+  const stat = rootStat, raw = contractReleaseDeskInput(file, rootRaw); assert(stat.isFile() && !stat.isSymbolicLink());
   assert(raw.equals(Buffer.from(current)) || raw.equals(Buffer.from(current.replaceAll('\n', '\r\n'))), 'Complete actual physical bytes qualify first');
   for (const input of [current, current.replaceAll('\n', '\r\n'), raw]) {
     const proof = qualifyCiDeedRecoverySource(file, input);

@@ -1,0 +1,618 @@
+{
+  "available": 102,
+  "selected": 102,
+  "detectors": [
+    {
+      "argument": "abiencoderv2-array",
+      "class": "slither.detectors.compiler_bugs.storage_ABIEncoderV2_array.ABIEncoderV2Array",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "arbitrary-send-erc20",
+      "class": "slither.detectors.erc.erc20.arbitrary_send_erc20_no_permit.ArbitrarySendErc20NoPermit",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "arbitrary-send-erc20-permit",
+      "class": "slither.detectors.erc.erc20.arbitrary_send_erc20_permit.ArbitrarySendErc20Permit",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "arbitrary-send-eth",
+      "class": "slither.detectors.functions.arbitrary_send_eth.ArbitrarySendEth",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "array-by-reference",
+      "class": "slither.detectors.compiler_bugs.array_by_reference.ArrayByReference",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "controlled-array-length",
+      "class": "slither.detectors.statements.array_length_assignment.ArrayLengthAssignment",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "backdoor",
+      "class": "slither.detectors.examples.backdoor.Backdoor",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "weak-prng",
+      "class": "slither.detectors.operations.bad_prng.BadPRNG",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "controlled-delegatecall",
+      "class": "slither.detectors.statements.controlled_delegatecall.ControlledDelegateCall",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "delegatecall-loop",
+      "class": "slither.detectors.statements.delegatecall_in_loop.DelegatecallInLoop",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "encode-packed-collision",
+      "class": "slither.detectors.operations.encode_packed.EncodePackedCollision",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "incorrect-exp",
+      "class": "slither.detectors.operations.incorrect_exp.IncorrectOperatorExponentiation",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "incorrect-return",
+      "class": "slither.detectors.assembly.incorrect_return.IncorrectReturn",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "msg-value-loop",
+      "class": "slither.detectors.statements.msg_value_in_loop.MsgValueInLoop",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "msg-value-in-nonpayable",
+      "class": "slither.detectors.statements.msg_value_in_nonpayable.MsgValueInNonPayable",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "multiple-constructors",
+      "class": "slither.detectors.compiler_bugs.multiple_constructor_schemes.MultipleConstructorSchemes",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "name-reused",
+      "class": "slither.detectors.slither.name_reused.NameReused",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "protected-vars",
+      "class": "slither.detectors.functions.protected_variable.ProtectedVariables",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "public-mappings-nested",
+      "class": "slither.detectors.compiler_bugs.public_mapping_nested.PublicMappingNested",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "reentrancy-balance",
+      "class": "slither.detectors.reentrancy.reentrancy_balance.ReentrancyBalance",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "reentrancy-eth",
+      "class": "slither.detectors.reentrancy.reentrancy_eth.ReentrancyEth",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "return-leave",
+      "class": "slither.detectors.assembly.return_instead_of_leave.ReturnInsteadOfLeave",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "rtlo",
+      "class": "slither.detectors.source.rtlo.RightToLeftOverride",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "incorrect-shift",
+      "class": "slither.detectors.assembly.shift_parameter_mixup.ShiftParameterMixup",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "shadowing-state",
+      "class": "slither.detectors.shadowing.state.StateShadowing",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "storage-array",
+      "class": "slither.detectors.compiler_bugs.storage_signed_integer_array.StorageSignedIntegerArray",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "suicidal",
+      "class": "slither.detectors.functions.suicidal.Suicidal",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "unchecked-transfer",
+      "class": "slither.detectors.operations.unchecked_transfer.UncheckedTransfer",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "uninitialized-state",
+      "class": "slither.detectors.variables.uninitialized_state_variables.UninitializedStateVarsDetection",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "uninitialized-storage",
+      "class": "slither.detectors.variables.uninitialized_storage_variables.UninitializedStorageVars",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "unprotected-upgrade",
+      "class": "slither.detectors.statements.unprotected_upgradeable.UnprotectedUpgradeable",
+      "impact": "DetectorClassification.HIGH",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "boolean-cst",
+      "class": "slither.detectors.statements.boolean_constant_misuse.BooleanConstantMisuse",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "chronicle-unchecked-price",
+      "class": "slither.detectors.statements.chronicle_unchecked_price.ChronicleUncheckedPrice",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "constant-function-asm",
+      "class": "slither.detectors.attributes.const_functions_asm.ConstantFunctionsAsm",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "constant-function-state",
+      "class": "slither.detectors.attributes.const_functions_state.ConstantFunctionsState",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "divide-before-multiply",
+      "class": "slither.detectors.statements.divide_before_multiply.DivideBeforeMultiply",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "domain-separator-collision",
+      "class": "slither.detectors.functions.permit_domain_signature_collision.DomainSeparatorCollision",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "enum-conversion",
+      "class": "slither.detectors.compiler_bugs.enum_conversion.EnumConversion",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "gelato-unprotected-randomness",
+      "class": "slither.detectors.functions.gelato_unprotected_randomness.GelatoUnprotectedRandomness",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "erc20-interface",
+      "class": "slither.detectors.erc.erc20.incorrect_erc20_interface.IncorrectERC20InterfaceDetection",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "erc721-interface",
+      "class": "slither.detectors.erc.incorrect_erc721_interface.IncorrectERC721InterfaceDetection",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "incorrect-equality",
+      "class": "slither.detectors.statements.incorrect_strict_equality.IncorrectStrictEquality",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "locked-ether",
+      "class": "slither.detectors.attributes.locked_ether.LockedEther",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "mapping-deletion",
+      "class": "slither.detectors.statements.mapping_deletion.MappingDeletionDetection",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "out-of-order-retryable",
+      "class": "slither.detectors.functions.out_of_order_retryable.OutOfOrderRetryable",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "pyth-deprecated-functions",
+      "class": "slither.detectors.functions.pyth_deprecated_functions.PythDeprecatedFunctions",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "pyth-unchecked-confidence",
+      "class": "slither.detectors.statements.pyth_unchecked_confidence.PythUncheckedConfidence",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "pyth-unchecked-publishtime",
+      "class": "slither.detectors.statements.pyth_unchecked_publishtime.PythUncheckedPublishTime",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "reentrancy-no-eth",
+      "class": "slither.detectors.reentrancy.reentrancy_read_before_write.ReentrancyReadBeforeWritten",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "reused-constructor",
+      "class": "slither.detectors.compiler_bugs.reused_base_constructor.ReusedBaseConstructor",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "shadowing-abstract",
+      "class": "slither.detectors.shadowing.abstract.ShadowingAbstractDetection",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "tautological-compare",
+      "class": "slither.detectors.statements.tautological_compare.TautologicalCompare",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "tx-origin",
+      "class": "slither.detectors.statements.tx_origin.TxOrigin",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "tautology",
+      "class": "slither.detectors.statements.type_based_tautology.TypeBasedTautology",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "unchecked-lowlevel",
+      "class": "slither.detectors.operations.unchecked_low_level_return_values.UncheckedLowLevel",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "unchecked-send",
+      "class": "slither.detectors.operations.unchecked_send_return_value.UncheckedSend",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "uninitialized-local",
+      "class": "slither.detectors.variables.uninitialized_local_variables.UninitializedLocalVars",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "unused-return",
+      "class": "slither.detectors.operations.unused_return_values.UnusedReturnValues",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "write-after-write",
+      "class": "slither.detectors.statements.write_after_write.WriteAfterWrite",
+      "impact": "DetectorClassification.MEDIUM",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "shadowing-builtin",
+      "class": "slither.detectors.shadowing.builtin_symbols.BuiltinSymbolShadowing",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "chainlink-feed-registry",
+      "class": "slither.detectors.functions.chainlink_feed_registry.ChainlinkFeedRegistry",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "incorrect-unary",
+      "class": "slither.detectors.statements.unary.IncorrectUnaryExpressionDetection",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "shadowing-local",
+      "class": "slither.detectors.shadowing.local.LocalShadowing",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "events-access",
+      "class": "slither.detectors.operations.missing_events_access_control.MissingEventsAccessControl",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "events-maths",
+      "class": "slither.detectors.operations.missing_events_arithmetic.MissingEventsArithmetic",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "missing-zero-check",
+      "class": "slither.detectors.operations.missing_zero_address_validation.MissingZeroAddressValidation",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "incorrect-modifier",
+      "class": "slither.detectors.functions.modifier.ModifierDefaultDetection",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "calls-loop",
+      "class": "slither.detectors.statements.calls_in_loop.MultipleCallsInLoop",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "optimism-deprecation",
+      "class": "slither.detectors.functions.optimism_deprecation.OptimismDeprecation",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "variable-scope",
+      "class": "slither.detectors.variables.predeclaration_usage_local.PredeclarationUsageLocal",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "reentrancy-benign",
+      "class": "slither.detectors.reentrancy.reentrancy_benign.ReentrancyBenign",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "reentrancy-events",
+      "class": "slither.detectors.reentrancy.reentrancy_events.ReentrancyEvent",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "return-bomb",
+      "class": "slither.detectors.statements.return_bomb.ReturnBomb",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "timestamp",
+      "class": "slither.detectors.operations.block_timestamp.Timestamp",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "uninitialized-fptr-cst",
+      "class": "slither.detectors.compiler_bugs.uninitialized_function_ptr_in_constructor.UninitializedFunctionPtrsConstructor",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "void-cst",
+      "class": "slither.detectors.operations.void_constructor.VoidConstructor",
+      "impact": "DetectorClassification.LOW",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "assembly",
+      "class": "slither.detectors.statements.assembly.Assembly",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "assert-state-change",
+      "class": "slither.detectors.statements.assert_state_change.AssertStateChange",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "boolean-equal",
+      "class": "slither.detectors.statements.boolean_constant_equality.BooleanEquality",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "pragma",
+      "class": "slither.detectors.attributes.constant_pragma.ConstantPragma",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "costly-loop",
+      "class": "slither.detectors.statements.costly_operations_in_loop.CostlyOperationsInLoop",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "cyclomatic-complexity",
+      "class": "slither.detectors.functions.cyclomatic_complexity.CyclomaticComplexity",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "dead-code",
+      "class": "slither.detectors.functions.dead_code.DeadCode",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "deprecated-standards",
+      "class": "slither.detectors.statements.deprecated_calls.DeprecatedStandards",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "function-init-state",
+      "class": "slither.detectors.variables.function_init_state_variables.FunctionInitializedState",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "solc-version",
+      "class": "slither.detectors.attributes.incorrect_solc.IncorrectSolc",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "incorrect-using-for",
+      "class": "slither.detectors.statements.incorrect_using_for.IncorrectUsingFor",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "low-level-calls",
+      "class": "slither.detectors.operations.low_level_calls.LowLevelCalls",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "missing-inheritance",
+      "class": "slither.detectors.attributes.unimplemented_interface.MissingInheritance",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "naming-convention",
+      "class": "slither.detectors.naming_convention.naming_convention.NamingConvention",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "redundant-statements",
+      "class": "slither.detectors.statements.redundant_statements.RedundantStatements",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "reentrancy-unlimited-gas",
+      "class": "slither.detectors.reentrancy.reentrancy_no_gas.ReentrancyNoGas",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "too-many-digits",
+      "class": "slither.detectors.statements.too_many_digits.TooManyDigits",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.MEDIUM"
+    },
+    {
+      "argument": "unimplemented-functions",
+      "class": "slither.detectors.functions.unimplemented.UnimplementedFunctionDetection",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "erc20-indexed",
+      "class": "slither.detectors.erc.unindexed_event_parameters.UnindexedERC20EventParameters",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "unindexed-event-address",
+      "class": "slither.detectors.attributes.unindexed_event_address.UnindexedEventAddress",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "unused-state",
+      "class": "slither.detectors.variables.unused_state_variables.UnusedStateVars",
+      "impact": "DetectorClassification.INFORMATIONAL",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "cache-array-length",
+      "class": "slither.detectors.operations.cache_array_length.CacheArrayLength",
+      "impact": "DetectorClassification.OPTIMIZATION",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "constable-states",
+      "class": "slither.detectors.variables.could_be_constant.CouldBeConstant",
+      "impact": "DetectorClassification.OPTIMIZATION",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "immutable-states",
+      "class": "slither.detectors.variables.could_be_immutable.CouldBeImmutable",
+      "impact": "DetectorClassification.OPTIMIZATION",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "external-function",
+      "class": "slither.detectors.functions.external_function.ExternalFunction",
+      "impact": "DetectorClassification.OPTIMIZATION",
+      "confidence": "DetectorClassification.HIGH"
+    },
+    {
+      "argument": "var-read-using-this",
+      "class": "slither.detectors.variables.var_read_using_this.VarReadUsingThis",
+      "impact": "DetectorClassification.OPTIMIZATION",
+      "confidence": "DetectorClassification.HIGH"
+    }
+  ]
+}

@@ -1,14 +1,19 @@
-import { BUSINESS_DESK_COMBINED_NATIVE_PARENTS } from '../../tools/businessdesk-combined-native-parents.js';
-import { ENTERPRISE_NATIVE_UX_INPUTS as ORIGINAL_B35_NATIVE_INPUTS } from '../../tools/enterprise-native-ux-b35-inputs.js';
 // Source/control proofs only; no PostgreSQL imports, connections, or native-result transfer.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
+import { ENTERPRISE_NATIVE_UX_INPUTS as ACCEPTED_NATIVE_INPUTS } from '../../tools/enterprise-native-economic-release-inputs.js';
+import { BUSINESS_DESK_COMBINED_NATIVE_PARENTS } from '../../tools/businessdesk-combined-native-parents.js';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../../tools/contract-release-source-data.js';
+import { contractReleaseSourceDataBytes, contractReleaseSourceDataPin } from '../../tools/contract-release-source-format.js';
+import { assertContractReleaseCandidatePins } from '../../tools/contract-release-native-provenance.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as ORIGINAL_B35_NATIVE_INPUTS } from '../../tools/enterprise-native-ux-b35-inputs.js';
+import { ENTERPRISE_NATIVE_UX_INPUTS as ACCEPTED_DESK_NATIVE_INPUTS } from '../../tools/enterprise-native-deed-inputs.js';
 import { combinedEconomicDeedSource as combinedEconomicDeedPin } from '../../tools/combined-economic-deed-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as economicParent } from '../../tools/enterprise-native-economic-inputs.js';
-import { assertReviewedNativePin } from '../../tools/economic-release-native-provenance.js';
+import { assertReviewedNativePin, economicReleaseNativeProvenance } from '../../tools/economic-release-native-provenance.js';
 import { WIKI_MEDIA_MERGE_SOURCE, WIKI_MEDIA_MERGE_SOURCE_SHA256,
  WIKI_MEDIA_NOIR_MERGE_SOURCE, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256 } from '../../tools/wiki-media-source-data.js';
 import { NOIR_UI_SOURCE_SHA256 } from '../../tools/noir-ui-source-data.js';
@@ -78,23 +83,43 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   for (const mutate of [p => p.version = 1, p => p.status = 'UNSEALED', p => p.authoredRevision = '0'.repeat(40), p => p.predecessorRevision = '1'.repeat(40), p => p.legacyDefinitionSha256 = '2'.repeat(64), p => p.files.shift(), p => p.files.push(p.files[0]), p => p.files[0].blob = '3'.repeat(40), p => p.additions.length = 0, p => p.replacements.length = 0, p => p.legacyAdditionReplacements.length = 0, p => p.extraMetadataExemption = 'src/server.js']) {
    const changed = structuredClone(pin); mutate(changed); reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
   }
-  assert.equal(pin.version, 7); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');
-  assert.equal(pin.wikiMergeSourceDefinitionSha256, WIKI_MEDIA_MERGE_SOURCE_SHA256);
-  assert.equal(pin.noirSourceDefinitionSha256, NOIR_UI_SOURCE_SHA256);
-  assert.equal(pin.noirMergeSourceDefinitionSha256, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256);
+  assert.equal(pin.version, 4); assert.equal(pin.phase, 'ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS');
+  assert.equal(ACCEPTED_NATIVE_INPUTS.version, 7); assert.equal(ACCEPTED_NATIVE_INPUTS.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');
+  assert.equal(ACCEPTED_NATIVE_INPUTS.wikiMergeSourceDefinitionSha256, WIKI_MEDIA_MERGE_SOURCE_SHA256);
+  assert.equal(ACCEPTED_NATIVE_INPUTS.noirSourceDefinitionSha256, NOIR_UI_SOURCE_SHA256);
+  assert.equal(ACCEPTED_NATIVE_INPUTS.noirMergeSourceDefinitionSha256, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256);
   assert.equal(pin.files.length, legacyFiles.length + pin.additions.length);
   assert.equal(pin.legacyAdditionReplacements.length, 4);
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-b35-inputs.js'), 'The old B35 native manifest is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'tools/enterprise-native-ux-inputs.js'), 'The qualified UX native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/businessdesk-deed-native-inputs.js'), 'The frozen Deed native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/enterprise-native-deed-inputs.js'), 'The accepted Desk native manifest is an ordinary pinned input');
+  assert(pin.files.some(row => row.file === 'tools/contract-release-source-data.js'), 'The complete contract source definition is an ordinary pinned input');
   assert(pin.files.some(row => row.file === 'src/deedbenefits.js'), 'The actual new runtime benefit dependency is in the closed native capture');
-  assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-economic-release-inputs.js', 'Only the fresh successor manifest is self-referential');
   for (const file of ['tools/enterprise-native-deed-inputs.js', 'public/inventory-bond-client.js', 'src/inventorybond.js',
    'test/inventory-bond-checkout.js', 'test/economy-ux-merge-source-compatibility.js',
    'tools/generate-current-economic-terms-source-transfer.js', 'tools/generate-combined-economic-deed-source-transfer.js']) {
    assert(pin.files.some(row => row.file === file), 'Missing current native support: ' + file);
   }
-  for (const file of ['tools/noir-ui-source-data.js', 'tools/noir-ui-source-transfer.js']) {
+  for (const file of ['tools/noir-ui-source-data.js', 'tools/noir-ui-source-transfer.js'])
    assert(pin.files.some(row => row.file === file), 'The actual noir source dependency is in the closed native capture: ' + file);
+  assert.equal(ENTERPRISE_UX_METADATA, 'tools/enterprise-native-contract-release-inputs.js', 'Only the fresh successor manifest is self-referential');
+  for (const key of ['contractPredecessorRevision', 'contractPredecessorMetadataSha256', 'contractSourceDefinitionSha256',
+    'contractSourceRevision', 'contractBaseRevision', 'reviewedContractRevision', 'reviewedUiRevision']) {
+    const changed = structuredClone(pin); changed[key] = '0'.repeat(key.endsWith('Sha256') ? 64 : 40);
+    reject(() => assertEnterpriseUxInputDefinition(legacyFiles, legacy, changed));
+  }
+  const dataPin = contractReleaseSourceDataPin(CONTRACT_RELEASE_SOURCE_DATA);
+  const dataBytes = contractReleaseSourceDataBytes(CONTRACT_RELEASE_SOURCE_DATA);
+  assert.deepEqual(pin.files.find(row => row.file === dataPin.file), dataPin, 'The ordinary data input has the canonical 100644 Git identity');
+  assertContractReleaseCandidatePins(pin.files);
+  for (const [bytes, mode] of [[Buffer.concat([dataBytes, Buffer.from('// extra comment\n')]), '100644'],
+    [Buffer.concat([dataBytes, Buffer.from('globalThis.unreviewedDataMarker = true;\n')]), '100644'],
+    [dataBytes, '100755'], [Buffer.concat([dataBytes, Buffer.from('// extra source\n')]), '100755']]) {
+    const changedData = Object.freeze({ file: dataPin.file, mode,
+      blob: crypto.createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex'), sha256: digest(bytes) });
+    const changedFiles = Object.freeze(pin.files.map(row => row.file === dataPin.file ? changedData : row));
+    reject(() => assertContractReleaseCandidatePins(changedFiles));
   }
   const requiredLegacyReplacements = ['src/accountdaily.js', 'src/socialproof.js', 'tools/economy-hardening-source-transfer.js', 'tools/economy-release-tail-source-transfer.js'];
   assert.deepEqual(pin.legacyAdditionReplacements.map(row => row.file), requiredLegacyReplacements);
@@ -103,24 +128,80 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   const predecessorPin = (file, after) => { const before = predecessor.get(file); if (before) return Object.freeze({ file, mode: before.mode, blob: before.blob, sha256: before.blob === after.blob ? after.sha256 : digest(git('show', pin.predecessorRevision + ':' + file)) }); const legacyPin = legacyAdditions.get(file), actual = legacyTree.get(file); assert(legacyPin && actual?.type === 'blob'); assert.equal(actual.mode, legacyPin.mode); assert.equal(actual.blob, legacyPin.blob); assert.equal(digest(git('show', pin.legacyRevision + ':' + file)), legacyPin.sha256); return null; };
   assertEnterpriseUxReplacementPlan(legacyFiles, legacy, pin.files, predecessorPin, pin);
   for (const file of requiredLegacyReplacements) { const row = pin.legacyAdditionReplacements.find(entry => entry.file === file), before = legacyAdditions.get(file), after = pin.files.find(entry => entry.file === file); assert.equal(git('ls-tree', pin.predecessorRevision, '--', file).length, 0); assert.deepEqual(row.before, before); assert.deepEqual(row.after, after); }
-  const unchanged = pin.files.find(row => ORIGINAL_B35_NATIVE_INPUTS.files.some(before => before.file === row.file && before.mode === row.mode && before.blob === row.blob && before.sha256 === row.sha256)); assert(unchanged, 'A real independently pinned unchanged native input is mandatory');
-  const unchangedOriginal = ORIGINAL_B35_NATIVE_INPUTS.files.find(row => row.file === unchanged.file);
-  assert.deepEqual(unchanged, unchangedOriginal);
+  const unchangedOriginal = ORIGINAL_B35_NATIVE_INPUTS.files.find(before => {
+   const actual = pin.files.find(row => row.file === before.file);
+   const accepted = ACCEPTED_DESK_NATIVE_INPUTS.files.find(row => row.file === before.file);
+   const immediate = ACCEPTED_NATIVE_INPUTS.files.find(row => row.file === before.file);
+   return [actual, accepted, immediate].every(row => row && row.mode === before.mode && row.blob === before.blob && row.sha256 === before.sha256);
+  });
+  assert(unchangedOriginal, 'A real independently pinned unchanged input across every source stage is mandatory');
+  const unchanged = pin.files.find(row => row.file === unchangedOriginal.file);
+  const unchangedAccepted = ACCEPTED_DESK_NATIVE_INPUTS.files.find(row => row.file === unchangedOriginal.file);
+  assert.deepEqual(unchanged, unchangedOriginal); assert.deepEqual(unchangedAccepted, unchangedOriginal);
+  reject(() => assertContractReleaseCandidatePins(Object.freeze(pin.files.filter(row => row.file !== unchanged.file))));
+  for (const file of Object.keys(CONTRACT_RELEASE_SOURCE_DATA.historicalManifests)) {
+   const original = pin.files.find(row => row.file === file); assert(original);
+   for (const changed of [{ ...original, mode: '100755' }, { ...original, blob: '0'.repeat(40) }, { ...original, sha256: '0'.repeat(64) }])
+    reject(() => assertContractReleaseCandidatePins(Object.freeze(pin.files.map(row => row.file === file ? Object.freeze(changed) : row))));
+  }
   const unchangedBytes = git('show', pin.authoredRevision + ':' + unchanged.file);
   const unchangedRecord = { type: 'blob', mode: unchanged.mode, blob: unchanged.blob };
   assert.equal(digest(unchangedBytes), unchangedOriginal.sha256);
   assert.equal(crypto.createHash('sha1').update('blob ' + unchangedBytes.length + '\0').update(unchangedBytes).digest('hex'), unchangedOriginal.blob);
   assert.equal(assertEnterpriseUxTrackedInput(unchanged.file, unchangedRecord, unchangedRecord, unchangedBytes), null,
     'An unchanged actual-current input needs no changed-source provenance');
+  const schema = pin.files.find(row => row.file === 'schema.sql');
+  const acceptedSchema = ACCEPTED_DESK_NATIVE_INPUTS.files.find(row => row.file === 'schema.sql');
+  const originalSchema = ORIGINAL_B35_NATIVE_INPUTS.files.find(row => row.file === 'schema.sql');
+  assert(schema && acceptedSchema && originalSchema);
+  const immediateSchema = ACCEPTED_NATIVE_INPUTS.files.find(row => row.file === 'schema.sql');
+  assert.deepEqual(schema, immediateSchema); assert.notDeepEqual(acceptedSchema, originalSchema);
+  const schemaBytes = git('show', pin.authoredRevision + ':schema.sql');
+  const schemaRecord = { type: 'blob', mode: schema.mode, blob: schema.blob };
+  const schemaProvenance = assertEnterpriseUxTrackedInput('schema.sql', schemaRecord, schemaRecord, schemaBytes);
+  assert(schemaProvenance && Object.isFrozen(schemaProvenance));
+  assert.strictEqual(schemaProvenance.current, schema); assert.strictEqual(schemaProvenance.intermediate, immediateSchema);
+  assert.strictEqual(schemaProvenance.predecessor, originalSchema);
+  assert.equal(schemaProvenance.predecessorRevision, ORIGINAL_B35_NATIVE_INPUTS.authoredRevision);
+  assert.equal(schemaProvenance.intermediateRevision, ACCEPTED_NATIVE_INPUTS.authoredRevision);
+  assert(schemaProvenance.prior && Object.isFrozen(schemaProvenance.prior));
+  const deskSchemaProvenance = schemaProvenance.prior.deskProvenance ?? schemaProvenance.prior;
+  assert.strictEqual(deskSchemaProvenance.predecessor, originalSchema);
+  assert.deepEqual(deskSchemaProvenance.current, { mode: acceptedSchema.mode, blob: acceptedSchema.blob, sha256: acceptedSchema.sha256 });
+  for (const relation of [schemaProvenance, schemaProvenance.prior, deskSchemaProvenance]) {
+   assert.equal(relation.nativeAdmission, false); assert.equal(relation.priorResultsTransferred, false);
+  }
   for (const file of Object.keys(combinedEconomicDeedPin.nativeFiles)) {
    const actual = pin.files.find(row => row.file === file);
    const record = { type: 'blob', mode: actual.mode, blob: actual.blob };
    const bytes = git('show', pin.authoredRevision + ':' + file);
    const admission = assertEnterpriseUxTrackedInput(file, record, record, bytes);
-   const transition = admission.economicProvenance ?? admission;
+   const accepted = ACCEPTED_NATIVE_INPUTS.files.find(row => row.file === file); assert(accepted);
+   // Historical composition follows actual Root admission and uses only the canonical V7 row.
+   const acceptedAdmission = economicReleaseNativeProvenance(file, accepted); assert(acceptedAdmission);
+   const original = ORIGINAL_B35_NATIVE_INPUTS.files.find(row => row.file === file);
+   if (original) {
+    assert(admission && Object.isFrozen(admission));
+    assert.strictEqual(admission.current, actual); assert.strictEqual(admission.predecessor, original);
+    assert.strictEqual(admission.intermediate, accepted);
+    assert.equal(admission.intermediateRevision, ACCEPTED_NATIVE_INPUTS.authoredRevision);
+    assert.deepEqual(admission.prior, acceptedAdmission);
+   } else if (actual.mode === accepted.mode && actual.blob === accepted.blob && actual.sha256 === accepted.sha256) {
+    assert.equal(admission, null, 'An unchanged addition invents no B35 transition');
+   } else {
+    assert(admission && Object.isFrozen(admission));
+    assert.strictEqual(admission.current, actual); assert.equal(admission.predecessor, null);
+    assert.strictEqual(admission.intermediate, accepted);
+    assert.equal(admission.intermediateRevision, ACCEPTED_NATIVE_INPUTS.authoredRevision);
+    assert.equal(admission.relation, 'exact-authored-contract-release-addition-only');
+   }
+   for (const proof of [admission, acceptedAdmission].filter(Boolean)) {
+    assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
+   }
+   const transition = acceptedAdmission.economicProvenance ?? acceptedAdmission;
    const historical = economicParent.files.find(row => row.file === file);
    assert.deepEqual(transition.current, historical);
-   assert.equal(admission.current.blob, actual.blob);
+   if (admission) assert.equal(admission.current.blob, actual.blob);
    assert.equal(transition.relation, 'exact-reviewed-economic-deed-source-provenance-only');
    assert.equal(transition.nativeAdmission, false);
    assert.equal(transition.priorResultsTransferred, false);
@@ -129,8 +210,11 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
    if (!prior.equals(bytes)) reject(() => assertEnterpriseUxTrackedInput(file, record, record, prior));
    reject(() => assertEnterpriseUxTrackedInput(file, record, record, Buffer.concat([bytes, Buffer.from('\n')])));
   }
-  const pointer = pin.files.find(row => row.file === 'tools/economic-release-native-source.js');
-  for (const row of [pointer, pin.files.find(row => row.file === 'src/server.js')]) {
+  const pointer = ACCEPTED_NATIVE_INPUTS.files.find(row => row.file === 'tools/economic-release-native-source.js');
+  for (const row of [pointer, ACCEPTED_NATIVE_INPUTS.files.find(row => row.file === 'src/server.js')]) {
+   const actual = pin.files.find(input => input.file === row.file);
+   const record = { type: 'blob', mode: actual.mode, blob: actual.blob };
+   assertEnterpriseUxTrackedInput(actual.file, record, record, git('show', pin.authoredRevision + ':' + actual.file));
    assertReviewedNativePin(row);
    reject(() => assertReviewedNativePin({...row, blob:'0'.repeat(40)}));
    reject(() => assertReviewedNativePin({...row, mode:'120000'}));
@@ -149,7 +233,7 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   const monitorBytes = git('show', pin.authoredRevision + ':' + monitored.file);
   const monitorRecord = { type: 'blob', mode: monitored.mode, blob: monitored.blob };
   const monitorProvenance = assertEnterpriseUxTrackedInput(monitored.file, monitorRecord, monitorRecord, monitorBytes);
-  assert.equal((monitorProvenance.deskProvenance ?? monitorProvenance).relation, 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only');
+  assert.equal((monitorProvenance.prior.deskProvenance ?? monitorProvenance.prior).relation, 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only');
   assert.equal(monitorProvenance.nativeAdmission, false); assert.equal(monitorProvenance.priorResultsTransferred, false);
   assert.equal(monitorProvenance.current.sha256, digest(monitorBytes));
   for (const parent of ['c771f5ba73453a57e24e31f8eeb920933fe7544c', '4e5f7fdb1cc4d2055ac613d2d4cb562a8007c364']) {
@@ -185,7 +269,7 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
   const wikiIndexEdge = wikiIndexPath.edges.find(edge => edge.kind === 'wiki-noir-merge'); assert(wikiIndexEdge);
   assert.equal(wikiIndexEdge.to.blob, noirRow.wiki.lf.blob);
   assert.equal(BUSINESS_DESK_COMBINED_NATIVE_PARENTS.catalogs.wikiNoir.definitionSha256, WIKI_MEDIA_NOIR_MERGE_SOURCE_SHA256);
-  assert.equal((noirProvenance.deskProvenance ?? noirProvenance).relation, 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only');
+  assert.equal((noirProvenance.prior.deskProvenance ?? noirProvenance.prior).relation, 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only');
   assert.equal(noirProvenance.nativeAdmission, false); assert.equal(noirProvenance.priorResultsTransferred, false);
   const wikiBytes = git('show', WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.wiki.revision + ':' + noir.file);
   const wikiRecord = { type: 'blob', mode: noirRow.wiki.mode, blob: noirRow.wiki.lf.blob };
@@ -226,6 +310,16 @@ export function assertEnterpriseUxNativeGuards(legacyFiles, legacy) {
  const nativeInputGuard = lf(fs.readFileSync('tools/enterprise-native-ux.js', 'utf8'));
  assert(!/assertDeedAllocationSourceTransfer|deedAllocationHistoricalInput|baselineText/.test(nativeInputGuard),
   'Actual-current native admission and provenance never reconstruct inverse historical source text');
+ const contractInputGuard = lf(fs.readFileSync('tools/contract-release-native-provenance.js', 'utf8'));
+ assert(!/contractReleaseDeskInput|contractReleaseFeeInput|assertContractReleaseSourceTransfer|baselineText/.test(contractInputGuard),
+  'Contract provenance compares identities and never requests a source-text view');
+ const trackedFunction = parse(nativeInputGuard, { ecmaVersion: 'latest', sourceType: 'module' }).body
+  .find(node => node.type === 'ExportNamedDeclaration' && node.declaration?.id?.name === 'assertEnterpriseUxTrackedInput')?.declaration;
+ assert(trackedFunction, 'The actual tracked-input admission entry point remains explicit');
+ const trackedBody = nativeInputGuard.slice(trackedFunction.start, trackedFunction.end);
+ assert(trackedBody.indexOf('assert.equal(digest(bytes), expected.sha256') >= 0
+  && trackedBody.indexOf('assert.equal(digest(bytes), expected.sha256') < trackedBody.indexOf('contractReleaseNativeProvenance('),
+  'Whole actual raw bytes are admitted before any contract provenance is consulted');
  assert(capture.includes('f===ENTERPRISE_UX_METADATA') && !capture.includes("f!=='tools/enterprise-native-inputs.js'"), 'Exactly the new self-reference is unpinnable; old metadata is pinned');
  assert(capture.includes('assertEnterpriseUxReplacementPlan(ENTERPRISE_NATIVE_FILES,successor,ux.files,predecessorPin,ux)') && capture.includes('uxLegacyAdditionReplacements:replacementPlan.legacyAdditionReplacements.map'), 'UX integration recomputes and records both complete replacement categories');
  console.log(JSON.stringify({ phase: 'CURRENT_UX_NATIVE_ADMISSION_GUARDS', status: pin.status, refusals: negatives, unchangedWorkloadCases: 16, originalGuardsUnchanged: true, nativeExecution: false, priorResultsTransferred: false }));

@@ -1,7 +1,9 @@
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalRecord } from '../tools/ci-deed-recovery-source-transfer.js';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Raw current-source qualification and finite historical comparisons only. No native/runtime execution.
 import assert from 'node:assert/strict';
 import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
-import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry, ciDeedRecoveryHistoricalRecord } from '../tools/ci-deed-recovery-source-transfer.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -88,18 +90,27 @@ const record = (revision, file) => {
 };
 const currentInputs = new Map(), expectedRows = new Map();
 for (const file of files) {
-  const authored = record(source.sourceRevision, file), current = ciDeedRecoveryHistoricalRecord(file, record('HEAD', file));
-  const integration = record(integratedEconomicSource.revision, file);
-  assert(authored && current && integration);
-  assert.deepEqual(current.pin, integration.pin, 'The authored integration is the only current source admitted: ' + file);
-  assert.equal(ciDeedRecoveryHistoricalEntry(file, text('ls-files', '--stage', '--', file), 'index').trim(), `${current.pin.mode} ${current.pin.blob} 0\t${file}`, 'Current index identity qualifies before any historical view.');
+  const authored = record(source.sourceRevision, file), current = record('HEAD', file);
+  const integration = record(integratedEconomicSource.revision, file), acceptedRecord = record(CONTRACT_RELEASE_SOURCE_DATA.baseRevision, file);
+  assert(authored && current && integration && acceptedRecord);
+
+  assert.equal(text('ls-files', '--stage', '--', file).trim(), current.pin.mode + ' ' + current.pin.blob + ' 0\t' + file, 'Current index identity qualifies before any historical view.');
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical comparison source must be a regular file.');
-  const raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file));
-  assert(raw.equals(current.raw) || raw.equals(Buffer.from(current.content.replaceAll('\n','\r\n'))),
-    'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);
-  const physical = integratedEconomicParentInput(file, raw, 'main');
-  assert(physical.equals(authored.raw) || physical.equals(Buffer.from(authored.content.replaceAll('\n','\r\n'))),
-    'Original combined source identity after exact parent comparison: ' + file);
+  const actualPhysical = fs.readFileSync(file), crlf = Buffer.from(current.content.replaceAll('\n', '\r\n'));
+  assert(actualPhysical.equals(current.raw) || actualPhysical.equals(crlf), 'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);
+  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
+  if (outer?.targets.desk) {
+    const { file: domain, ...expected } = outer.current; assert.equal(domain, file);
+    assert.deepEqual(current.pin, expected, 'The exact current contract source identity qualifies before the historical view');
+  } else assert.deepEqual(current.pin, acceptedRecord.pin, 'Unchanged current source retains the exact accepted predecessor identity');
+  const acceptedPhysical = contractReleaseDeskInput(file, actualPhysical);
+  assert(acceptedPhysical.equals(acceptedRecord.raw) || acceptedPhysical.equals(Buffer.from(acceptedRecord.content.replaceAll('\n','\r\n'))), 'The complete accepted integration source qualifies before its parent comparison');
+  const acceptedIntegration = ciDeedRecoveryHistoricalRecord(file, acceptedRecord);
+  assert.deepEqual(acceptedIntegration.pin, integration.pin, 'The exact accepted CI predecessor has the reviewed integration identity');
+  const comparisonPhysical = ciDeedRecoveryHistoricalInput(file, acceptedPhysical);
+  assert(comparisonPhysical.equals(acceptedIntegration.raw) || comparisonPhysical.equals(Buffer.from(acceptedIntegration.content.replaceAll('\n','\r\n'))), 'The complete frozen CI predecessor qualifies after actual Root and current-main admission');
+  const physical = integratedEconomicParentInput(file, comparisonPhysical, 'main');
+  assert(physical.equals(authored.raw) || physical.equals(Buffer.from(authored.content.replaceAll('\n', '\r\n'))), 'The separately qualified combined source remains complete and exact');
   const parents = {};
   for (const [profile, parent] of Object.entries(profiles)) {
     if (!businessDeskCombinedReaderFiles(profile).includes(file)) continue;

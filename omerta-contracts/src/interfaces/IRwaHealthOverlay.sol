@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {IStockTokenRegistryV2} from "./IStockTokenRegistryV2.sol";
 

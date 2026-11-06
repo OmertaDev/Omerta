@@ -3,6 +3,7 @@ import { businessDeskCombinedHistoricalInput } from './businessdesk-combined-sou
 // Every historical binding remains unchanged; unknown bytes receive no historical authority.
 import assert from 'node:assert/strict';
 import { businessDeskHistoricalInput } from './businessdesk-source-transfer.js';
+import { contractReleaseDeskInput } from './contract-release-source-transfer.js';
 import crypto from 'node:crypto';
 import { combinedEconomicDeedInput } from './combined-economic-deed-source-transfer.js';
 import { wikiMediaMergeHistoricalInput } from './wiki-media-source-transfer.js';
@@ -47,6 +48,7 @@ export function assertDeedAllocationSourceTransfer(file, input) {
 
 export function deedAllocationHistoricalInput(file, input) {
   if (typeof file !== 'string') return input;
+  input = contractReleaseDeskInput(file, input);
   input = businessDeskCombinedHistoricalInput(file, input, 'desk');
   input = wikiMediaMergeHistoricalInput(file, input);
   input = noirUiHistoricalInput(file, input);

@@ -1,7 +1,9 @@
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Exact source/control proofs only. Runtime and native tests execute physical current bytes.
 import { businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import { integratedEconomicSource } from '../tools/integrated-economic-parent-source.js';
-import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -34,17 +36,26 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 function readMonitorSource(file) {
-  const entry = ciDeedRecoveryHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file), 'tree').trim();
+  const entry = git('ls-tree', 'HEAD', '--', file).trim();
   assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\t/);
-  assert.equal(entry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),
-    'Monitor source must match the reviewed integration: ' + file);
-  assert.equal(ciDeedRecoveryHistoricalEntry(file, git('ls-files', '--stage', '--', file), 'index').trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'));
-  const committed = ciDeedRecoveryHistoricalInput(file, git('show', 'HEAD:' + file)), raw = ciDeedRecoveryHistoricalInput(file, fs.readFileSync(file));
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'));
+  const committed = git('show', 'HEAD:' + file), raw = fs.readFileSync(file);
   const actual = raw.toString('utf8'), stat = fs.lstatSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));
   assert(actual === committed || actual === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF source qualifies before projection');
-  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, actual, 'monitor'), 'monitor');
+  const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;
+  const expectedEntry = view ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
+    : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
+  assert.equal(entry, expectedEntry, 'Actual Monitor source has its independently qualified current identity');
+  const accepted = contractReleaseDeskInput(file, actual);
+  const acceptedEntry = view ? view.pin.mode + ' blob ' + view.pin.blob + '\t' + file : entry;
+  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
+  const comparison = ciDeedRecoveryHistoricalInput(file, accepted);
+  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The exact CI predecessor mode/blob matches the reviewed Monitor integration');
+  assert.equal(comparison.replaceAll('\r\n','\n'), git('show', integratedEconomicSource.revision + ':' + file), 'Complete frozen CI predecessor source before Monitor comparison');
+  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, comparison, 'monitor'), 'monitor');
 }
+
 const inverseHunks = diff => {
   const inverses = []; let hunk = null;
   for (const line of diff.split('\n')) {
@@ -135,7 +146,14 @@ for (const [pin, qualify, historical] of [
   [readerPin, assertEconomyMonitorReaderSource, economyMonitorReaderHistoricalInput],
   ...Object.values(releasePins).map(pin => [pin, assertEconomyMonitorReleaseSource, economyMonitorReleaseHistoricalInput]),
 ]) {
-  const { file } = pin, physical = readMonitorSource(file).replaceAll('\r\n', '\n');
+  const { file } = pin, committed = git('show', 'HEAD:' + file), entry = git('ls-tree', 'HEAD', '--', file).trim();
+  assert.match(entry, /^(100644|100755) blob [a-f0-9]{40}\t/);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'),
+    'The release reader qualifies actual raw HEAD/index before its explicit Monitor comparison view');
+  const raw = fs.readFileSync(file), actual = raw.toString('utf8'), stat = fs.lstatSync(file);
+  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(actual).equals(raw));
+  assert(actual === committed || actual === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF source qualifies before projection');
+  const physical = readMonitorSource(file).replaceAll('\r\n', '\n');
   const baseline = git('show', `${pin.predecessorRevision}:${file}`);
   const priorReleaseSource = ['test/gates.js', 'tools/ux-release-phase2-native-catalog.js', 'tools/pgquery.js'].includes(file);
   assert.equal(pin.predecessorRevision, priorReleaseSource ? '6fdc897851ef23e8c2cf691733ad944a7663242a' : revision);

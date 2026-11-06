@@ -74,9 +74,9 @@ export function loadReviewedArtifact(contract, { contractsRoot = DEFAULT_ROOT } 
   const compilerAbi = typeof artifact.rawMetadata === 'string' ? JSON.parse(artifact.rawMetadata).output?.abi : metadata.output?.abi;
   if (abiIdentity(artifact.abi) !== abiIdentity(compilerAbi))
     throw new Error(`${contract}: ABI differs from its compiler metadata`);
-  if (!metadata.compiler?.version?.startsWith('0.8.26+') || metadata.settings.optimizer?.enabled !== true
+  if (metadata.compiler?.version !== '0.8.38+commit.1835d247' || metadata.settings.optimizer?.enabled !== true
       || metadata.settings.optimizer?.runs !== 800 || metadata.settings.evmVersion !== 'cancun')
-    throw new Error(`${contract}: compiler settings differ from the reviewed 0.8.26/800/Cancun profile`);
+    throw new Error(`${contract}: compiler settings differ from the reviewed 0.8.38+commit.1835d247/800/Cancun profile`);
   const sourceHashes = {};
   for (const [source, entry] of Object.entries(metadata.sources)) {
     const target = path.resolve(root, source);

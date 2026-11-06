@@ -17,7 +17,12 @@ const LIVE_ABI = parseAbi(['function totalSupply() view returns(uint256)', 'func
   'function ammPairs(address) view returns(bool)', 'function poolManager() view returns(address)', 'function permit2() view returns(address)',
   'function revenuePolicyId() view returns(bytes32)', 'function TRADE_FEE_BPS() view returns(uint16)',
   'function omr() view returns(address)', 'function developerRecipient() view returns(address)', 'function rwaRecipient() view returns(address)',
-  'function communityRecipient() view returns(address)', 'function polRecipient() view returns(address)', 'function getOwners() view returns(address[])', 'function getThreshold() view returns(uint256)', 'function arbBlockNumber() view returns(uint256)']);
+  'function owner() view returns(address)', 'function governanceSafe() view returns(address)',
+  'function rewardVault() view returns(address)', 'function distributor() view returns(address)',
+  'function distributorRuntimeHash() view returns(bytes32)', 'function rewardVaultRuntimeHash() view returns(bytes32)',
+  'function omrRuntimeHash() view returns(bytes32)', 'function managerRuntimeHash() view returns(bytes32)', 'function manager() view returns(address)',
+  'function EPOCH_DURATION() view returns(uint256)', 'function LOCK_DURATION() view returns(uint256)',
+  'function rewardsRecipient() view returns(address)', 'function safe() view returns(address)', 'function communityRecipient() view returns(address)', 'function polRecipient() view returns(address)', 'function getOwners() view returns(address[])', 'function getThreshold() view returns(uint256)', 'function arbBlockNumber() view returns(uint256)']);
 
 function sourceRuntimeMatches(artifact, code) {
   const actual = Buffer.from(code.slice(2), 'hex'), template = Buffer.from(artifact.runtimeTemplate.slice(2), 'hex');
@@ -75,14 +80,27 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
   let managerPolicy;
   try {
     managerPolicy = await Promise.all(['revenuePolicyId', 'TRADE_FEE_BPS', 'omr', 'developerRecipient',
-      'rwaRecipient', 'communityRecipient', 'polRecipient'].map(fn => read(input.external.poolManager.address, fn)));
+      'rwaRecipient', 'communityRecipient', 'polRecipient', 'rewardsRecipient'].map(fn => read(input.external.poolManager.address, fn)));
   } catch {
     throw Error('Production readiness requires the reviewed restricted manager; the current standard manager has no fixed revenue policy.');
   }
-  assert(equal(managerPolicy[0], keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')))
-    && BigInt(managerPolicy[1]) === 500n && equal(managerPolicy[2], input.external.omr.address)
-    && managerPolicy.slice(3).every((recipient, i) => equal(recipient, plan.finalManifest.hookPolicy.recipients[i])),
+  assert(equal(managerPolicy[0], keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS')))
+    && BigInt(managerPolicy[1]) === 400n && equal(managerPolicy[2], input.external.omr.address)
+    && managerPolicy.slice(3).every((recipient, i) => equal(recipient, [...plan.finalManifest.hookPolicy.recipients.slice(0, 4), input.external.ethRewards.address][i])),
     'Restricted manager fixed revenue policy, OMR or recipients differ from the reviewed plan');
+  const [rewardsSafe, rewardsOmr] = await Promise.all(['safe', 'omr'].map(fn => read(input.external.ethRewards.address, fn)));
+  assert(equal(rewardsSafe, input.roles.safe) && equal(rewardsOmr, input.external.omr.address), 'native ETH staking rewards vault Safe or OMR binding differs');
+  const nativeBindings = [
+    ['ethRewards', 'rewardVault', input.external.ethStaking.address], ['ethRewards', 'rewardVaultRuntimeHash', input.external.ethStaking.runtimeHash],
+    ['ethRewards', 'omrRuntimeHash', input.external.omr.runtimeHash], ['ethRewards', 'manager', input.external.poolManager.address],
+    ['ethRewards', 'managerRuntimeHash', input.external.poolManager.runtimeHash],
+    ['ethStaking', 'omr', input.external.omr.address], ['ethStaking', 'owner', input.roles.safe], ['ethStaking', 'governanceSafe', input.roles.safe],
+    ['ethStaking', 'distributor', input.external.ethRewards.address], ['ethStaking', 'distributorRuntimeHash', input.external.ethRewards.runtimeHash],
+  ];
+  for (const [name, getter, expected] of nativeBindings)
+    assert(equal(await read(input.external[name].address, getter), expected), `Native ETH binding differs: ${name}.${getter}`);
+  for (const getter of ['EPOCH_DURATION', 'LOCK_DURATION'])
+    assert(BigInt(await read(input.external.ethStaking.address, getter)) === 2592000n, `Native ETH ${getter} must be 30 days`);
   assert(equal(pmManager, input.external.poolManager.address) && equal(pmPermit, input.external.permit2.address), 'Periphery binding changed');
   assert(arbCode && equal(keccak256(arbCode), evidence.codes.arbSys.keccak256), 'Native clock implementation changed');
   assert(input.nativeClock.mode === 'arbsys', 'Successful actual ArbSys call requires the production constructor to select ArbSys');
@@ -110,7 +128,7 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
     const forkArbCode = await forkClient.getCode({ address: '0x0000000000000000000000000000000000000064', blockNumber: forkHead.number });
     assert(forkArbCode && equal(keccak256(forkArbCode), evidence.codes.arbSys.keccak256), 'Local fork must preserve actual ArbSys code while reproducing constructor selection');
     for (const [role, contract] of [['polFunding', 'OmertaReserveFundingV2'], ['reserveFunding', 'OmertaReserveFundingV2'],
-      ['coordinator', 'OmertaAuctionCoordinatorV2'], ['hook', 'OmertaHookV2'], ['auction', 'OmertaGuardedAuction'], ['validator', 'GenesisCharacterBidValidation']]) {
+      ['coordinator', 'OmertaAuctionCoordinatorV2'], ['hook', 'OmertaHookV2'], ['auction', 'OmertaCharacterGuardedAuction'], ['validator', 'GenesisCharacterBidValidation']]) {
       const address = role === 'validator' ? plan.internalValidatorAddress : plan.addresses[role];
       const code = await forkClient.getCode({ address, blockNumber: forkHead.number }), artifact = loadGenesisAuctionArtifact(contract);
       assert(code && code !== '0x' && sourceRuntimeMatches(artifact, code), `Local fork runtime not compiled reviewed source: ${role}`);
@@ -147,7 +165,7 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
       ['hook', 'poolManager', input.external.poolManager.address], ['hook', 'omr', input.external.omr.address], ['hook', 'authorized', plan.addresses.coordinator],
       ['hook', 'poolFee', input.hook.poolFee], ['hook', 'tickSpacing', input.hook.tickSpacing], ['hook', 'epochDuration', input.hook.epochDuration],
       ['hook', 'openingBlocks', 0], ['hook', 'openingBuyBps', 0], ['hook', 'openingMaxBuyQuote', 0], ['hook', 'surgeFullTicks', input.hook.surgeFullTicks],
-      ['hook', 'managerCollectsRevenue', true], ['hook', 'BASE_SELL_BPS', 500], ['hook', 'MAX_SURGE_BPS', 50],
+      ['hook', 'managerCollectsRevenue', true], ['hook', 'BASE_SELL_BPS', 350], ['hook', 'REWARDS_BPS', 50], ['hook', 'rewardsRecipient', input.external.ethRewards.address], ['hook', 'MAX_SURGE_BPS', 50],
       ['auction', 'token', input.external.omr.address], ['auction', 'characterNft', input.external.characterNft.address], ['auction', 'launchGate', plan.addresses.coordinator],
       ['auction', 'fundsRecipient', plan.addresses.coordinator], ['auction', 'tokensRecipient', input.roles.safe], ['auction', 'currency', '0x' + '0'.repeat(40)],
       ['auction', 'validationHook', plan.internalValidatorAddress], ['auction', 'totalSupply', input.auction.totalSupply], ['auction', 'minimumRaiseWei', input.auction.requiredCurrencyRaised],
@@ -160,7 +178,7 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
     [...input.roles.hookRecipients, plan.addresses.polFunding, plan.addresses.reserveFunding].forEach((recipient, i) => getters.push(['hook', 'recipients', recipient, [BigInt(i)]]));
     for (const [role, functionName, expected, args = []] of getters) {
       const snap = forkSnapshots.find(x => x.name === role), contract = role === 'validator' ? 'GenesisCharacterBidValidation'
-        : role === 'auction' ? 'OmertaGuardedAuction' : role === 'hook' ? 'OmertaHookV2' : role === 'coordinator' ? 'OmertaAuctionCoordinatorV2' : 'OmertaReserveFundingV2';
+        : role === 'auction' ? 'OmertaCharacterGuardedAuction' : role === 'hook' ? 'OmertaHookV2' : role === 'coordinator' ? 'OmertaAuctionCoordinatorV2' : 'OmertaReserveFundingV2';
       const value = await forkClient.readContract({ address: snap.address, abi: loadGenesisAuctionArtifact(contract).abi, functionName, args, blockNumber: forkHead.number });
       assert(equal(value, expected), `Local fork constructor/bind getter mismatch: ${role}.${functionName}`);
     }

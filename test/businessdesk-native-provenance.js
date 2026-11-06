@@ -1,3 +1,4 @@
+import { ENTERPRISE_NATIVE_UX_INPUTS as acceptedNative } from '../tools/enterprise-native-economic-release-inputs.js';
 // Source-only admission/provenance assertions. No server, database or native execution.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -21,7 +22,8 @@ assert.equal(currentNative.version, 6); assert.equal(currentNative.phase, 'ACTUA
 assert.equal(archivedDeskNative.status, 'SEALED'); assert.equal(archivedDeskNative.version, 3);
 assert.equal(archivedDeskNative.phase, 'ACTUAL_ENTERPRISE_DEED_NATIVE_INPUTS');
 assert(Object.isFrozen(currentNative) && Object.isFrozen(currentNative.files));
-assert.equal(activeNative.version, 7); assert.equal(activeNative.phase, 'ACTUAL_ENTERPRISE_ECONOMIC_BUSINESS_DESK_NATIVE_INPUTS');
+assert.notStrictEqual(activeNative, currentNative, 'The Desk record remains frozen under its original module identity.');
+assert.equal(activeNative.version, 4); assert.equal(activeNative.phase, 'ACTUAL_ENTERPRISE_CONTRACT_RELEASE_NATIVE_INPUTS');
 assert.equal(activeNative.files.find(row => row.file === 'tools/enterprise-native-deed-inputs.js').sha256,
   'efffdc723601dbcac89c651092748c7931fa97a8f252a1f7c7045434237f858e');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
@@ -49,8 +51,9 @@ const proofOf = (proof, file, previous, expected) => {
   assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
 };
 let applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;
-let successorRefusals = 0;
+let activeCloneRefusals = 0, unsealedAdmissionRefusals = 0, acceptedParentRefusals = 0, successorRefusals = 0;
 const reject = run => { assert.throws(run); refusals++; };
+const rejectActiveClone = run => { assert.throws(run); activeCloneRefusals++; };
 for (const [file, desk] of Object.entries(nativeParents.businessPins)) {
   const previous = previousRows.get(file), archivedDesk = archivedDeskRows.get(file), expected = currentRows.get(file);
   if (!previous) {
@@ -104,21 +107,32 @@ const record = (revision, file) => {
   return Object.freeze({ type: 'blob', mode: match[1], blob: match[2] });
 };
 const { file, previous, expected } = sample;
-const current = record('HEAD', file), authored = record(activeNative.authoredRevision, file);
-const bytes = git('show', activeNative.authoredRevision + ':' + file);
-assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');
-const activeRow = activeNative.files.find(row => row.file === file);
-assert.equal(sha(bytes), activeRow.sha256); assert.equal(blob(bytes), activeRow.blob);
-const parentBytes = git('show', currentNative.authoredRevision + ':' + file);
-assert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);
-const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
-assert.equal(admitted.current.blob, activeRow.blob);
-const parentProof = admitted.deskProvenance ?? admitted;
-proofOf(parentProof, file, previous, expected); assert.deepEqual(parentProof, sample.proof);
-const successorBytesDiffer = activeRow.blob !== expected.blob;
-if (successorBytesDiffer) {
-  assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));
-  successorRefusals++;
+const actualSource = activeNative.status === 'SEALED' ? activeNative.authoredRevision : currentNative.authoredRevision;
+const actualExpected = activeNative.status === 'SEALED' ? activeNative.files.find(row => row.file === file) : expected;
+const current = record('HEAD', file), authored = record(actualSource, file);
+const bytes = git('show', `${actualSource}:${file}`);
+const successorBytesDiffer = activeNative.status === 'SEALED' && actualExpected.blob !== expected.blob;
+if (activeNative.status === 'UNSEALED') {
+  assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes), /Unsealed current inputs cannot grant native admission/); unsealedAdmissionRefusals++;
+} else {
+  assert.equal(activeNative.status, 'SEALED'); assert(actualExpected);
+  assert(git('show', `HEAD:${file}`).equals(bytes), 'The current committed source candidate equals its sealed authored bytes.');
+  assert.equal(sha(bytes), actualExpected.sha256); assert.equal(blob(bytes), actualExpected.blob);
+  const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
+  assert(admitted && Object.isFrozen(admitted)); assert.strictEqual(admitted.current, actualExpected);
+  const accepted = acceptedNative.files.find(row => row.file === file); assert(accepted);
+  assert.strictEqual(admitted.intermediate, accepted, 'The upstream helper receives its exact canonical accepted V7 row');
+  assert.equal(admitted.intermediateRevision, acceptedNative.authoredRevision);
+  assert.strictEqual(admitted.predecessor, previous); assert.equal(admitted.predecessorRevision, previousNative.authoredRevision);
+  const deskProof = admitted.prior.deskProvenance ?? admitted.prior;
+  proofOf(deskProof, file, previous, expected);
+  assert.deepEqual(deskProof, sample.proof, 'The existing Desk provenance controls remain intact as a historical stage');
+  const parentBytes = git('show', currentNative.authoredRevision + ':' + file);
+  assert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);
+  if (successorBytesDiffer) {
+    assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes)); acceptedParentRefusals++; successorRefusals++;
+  }
+  assert.equal(admitted.nativeAdmission, false); assert.equal(admitted.priorResultsTransferred, false);
 }
 const otherMode = current.mode === '100644' ? '100755' : '100644';
 for (const [now, anchor, raw] of [
@@ -132,11 +146,15 @@ for (const [now, anchor, raw] of [
   [{ ...current, type: 'tree' }, authored, bytes],
 ]) reject(() => assertEnterpriseUxTrackedInput(file, now, anchor, raw));
 reject(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));
+rejectActiveClone(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...activeNative })));
 for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../src/server.js',
   undefined, null, 1, Symbol('src/server.js'), Object.freeze({ toString() { throw new Error('No coercion'); } })]) {
   assert.equal(businessDeskCombinedNativeProvenance(unknown, previous, expected), null);
 }
 assert.equal(refusals, 65, 'All original Business refusal categories are retained.');
 assert.equal(successorRefusals, Number(successorBytesDiffer), 'Changed actual successor bytes additionally reject the frozen parent bytes.');
-console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals, successorRefusals,
+assert.equal(activeCloneRefusals, 1, 'The current declaration clone is independently refused.');
+assert.equal(unsealedAdmissionRefusals, activeNative.status === 'UNSEALED' ? 1 : 0, 'Unsealed admission refusal remains separate from historical categories.');
+console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,
+  activeCloneRefusals, unsealedAdmissionRefusals, acceptedParentRefusals, successorRefusals,
   authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));

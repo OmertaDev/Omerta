@@ -1,8 +1,8 @@
 // Frozen isolated source artifact; no approved deployment or financial activation.
-export const WORK_ESCROW_COMPILER=Object.freeze({version:'0.8.26',optimizerRuns:800,viaIR:true,evmVersion:'cancun'});
-export const WORK_ESCROW_RUNTIME_KECCAK='0x0ce241cca78f48c04dde44144f885e2ec37b6e1358a1bf1b53cff2b136eab82e';
-export const WORK_ESCROW_CREATION_KECCAK='0xee54f9beab5899698b2133913569c5c18f33d7db121a592549f0b2877714337a';
-export const WORK_ESCROW_SOURCE_SHA256='b30a8603bd579790013530b422e9d785c536defddbf8df4cde7c325d5c715b23';
+export const WORK_ESCROW_COMPILER=Object.freeze({version:'0.8.38',optimizerRuns:800,viaIR:true,evmVersion:'cancun'});
+export const WORK_ESCROW_RUNTIME_KECCAK='0x8280ba16514084b5d769e8b04ab116b7da5c8db3182139be5789a4e21c7ba674';
+export const WORK_ESCROW_CREATION_KECCAK='0xb1d401c03015360e8904bb9aa9c1a7481aa0247ea136c2ae39a1efd9c26ec38f';
+export const WORK_ESCROW_SOURCE_SHA256='9241363f72ee58acf15ce8448bf8443752613cf668624e2a27f75d8627a182e9';
 export const WORK_ESCROW_ABI=Object.freeze([
   {
     "type": "constructor",

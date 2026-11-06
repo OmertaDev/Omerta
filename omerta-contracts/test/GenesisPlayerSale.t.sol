@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
-import {GenesisCharacterMock} from "./helpers/GenesisCharacterMock.sol";
+pragma solidity 0.8.38;
 import {Test} from "forge-std/Test.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {GenesisPlayerSale, IGenesisPlayerIntegration} from "../src/GenesisPlayerSale.sol";
@@ -25,7 +24,6 @@ contract PlayerRefundReentrant {
     }
 }
 contract GenesisPlayerSaleTest is Test {
-    GenesisCharacterMock characterNft;
     GenesisPlayerSale sale;
     PlayerTokenMock token;
     PlayerIntegrationMock integration;
@@ -34,18 +32,21 @@ contract GenesisPlayerSaleTest is Test {
     bytes32 aliceLeaf;
     bytes32 bobLeaf;
     function setUp() public {
-        characterNft = new GenesisCharacterMock();
-        characterNft.mint(alice); characterNft.mint(bob);
         token = new PlayerTokenMock(); integration = new PlayerIntegrationMock();
+        _beforeSaleDeployment();
         address predicted = vm.computeCreateAddress(address(this), vm.getNonce(address(this)));
         aliceLeaf = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, predicted, alice, uint8(1)))));
         bobLeaf = keccak256(bytes.concat(keccak256(abi.encode(block.chainid, predicted, bob, uint8(5)))));
         bytes32 root = aliceLeaf < bobLeaf ? keccak256(abi.encodePacked(aliceLeaf, bobLeaf))
             : keccak256(abi.encodePacked(bobLeaf, aliceLeaf));
-        sale = new GenesisPlayerSale(token, integration, root, 1 ether, block.timestamp + 1 days,
-            block.timestamp + 5 days, address(0xCAFE), characterNft);
+        sale = _deploySale(root);
         assertEq(address(sale), predicted); token.mint(address(sale), 1 ether);
         vm.deal(alice, 10 ether); vm.deal(bob, 10 ether); sale.open();
+    }
+    function _beforeSaleDeployment() internal virtual {}
+    function _deploySale(bytes32 root) internal virtual returns (GenesisPlayerSale) {
+        return new GenesisPlayerSale(token, integration, root, 1 ether, block.timestamp + 1 days,
+            block.timestamp + 5 days, address(0xCAFE));
     }
     function contribute(address who, uint8 daysPlayed, uint256 amount) internal {
         bytes32[] memory proof = new bytes32[](1); proof[0] = who == alice ? bobLeaf : aliceLeaf;

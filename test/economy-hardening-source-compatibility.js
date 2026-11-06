@@ -1,6 +1,9 @@
 import { wikiMediaHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 import { age21HistoricalInput } from '../tools/age21-source-transfer.js';
 import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
+import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
+import { contractReleaseDeskInput, contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
@@ -11,6 +14,14 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
 import { uxAfterwordHistoricalInput } from '../tools/ux-afterword-source-compatibility.js';
+import {
+  AGE_POLICY_SERVER_BINDING, AGE_POLICY_SERVER_BINDING_SHA256,
+  assertAgePolicyServerSourceTransfer, agePolicyServerHistoricalInput,
+} from '../tools/age-policy-source-transfer.js';
+import {
+  MARKET_FEE_COPY_BASE_REVISION, MARKET_FEE_COPY_DOMAINS, assertMarketFeeCopySourceTransfer,
+  marketFeeCopyHistoricalInput,
+} from '../tools/market-fee-copy-source-transfer.js';
 import {
   ECONOMY_HARDENING_SOURCE_REVISION, ECONOMY_HARDENING_SOURCE_TREE,
   ECONOMY_HARDENING_SOURCE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_PREDECESSOR_TREE,
@@ -173,8 +184,13 @@ const socialReceiptSafetyFiles = [
 ];
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
+const physicalFeeCopySource = file => {
+  const input = contractReleaseFeeInput(file, fs.readFileSync(file, 'utf8'));
+  return Object.hasOwn(MARKET_FEE_COPY_DOMAINS, file)
+    ? assertMarketFeeCopySourceTransfer(file, input).baselineText : input;
+};
 const deedAllocationPhysicalSource = file => age21HistoricalInput(file, wikiMediaHistoricalInput(file, deedAllocationHistoricalInput(file,
-  economyDeedMergeHistoricalInput(file, integratedEconomicParentInput(file, fs.readFileSync(file, 'utf8'), 'main'), 'monitor'))));
+  economyDeedMergeHistoricalInput(file, integratedEconomicParentInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'main'), 'monitor'))));
 const monitorPhysicalSource = file => {
   let input = deedAllocationPhysicalSource(file);
   input = uxAfterwordHistoricalInput(file, input);
@@ -1260,4 +1276,127 @@ for (const file of ['__proto__', 'src/unknown.js', 'schema.sql.extra']) {
 assert.equal(positives, 645, 'positive control count drifted');
 assert.equal(refusals, 1533, 'refusal control count drifted');
 assert.equal(hunks, 436, 'inverse-hunk control count drifted');
+assert.equal(MARKET_FEE_COPY_BASE_REVISION, 'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9');
+assert.deepEqual(Object.keys(MARKET_FEE_COPY_DOMAINS), [
+  'docs/WIKI.md', 'public/wiki.html', 'public/index.html', 'public/defi.html', 'public/fee-flows.html',
+]);
+assert(Object.isFrozen(MARKET_FEE_COPY_DOMAINS));
+let feeCopyPositives = 0, feeCopyRefusals = 0, feeCopyHunks = 0;
+for (const file of Object.keys(MARKET_FEE_COPY_DOMAINS)) {
+  const pin = MARKET_FEE_COPY_DOMAINS[file], current = lf(contractReleaseFeeInput(file, fs.readFileSync(file, 'utf8')));
+  const baseline = git('show', MARKET_FEE_COPY_BASE_REVISION + ':' + file);
+  assert.equal(physicalFeeCopySource(file), baseline, 'The separately qualified fee view reaches the exact fee predecessor');
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
+  assert.equal(hash(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);
+  assert.equal(hash(baseline), pin.baselineSha256); assert.equal(blob(baseline), pin.baselineBlob);
+  assert.equal(Buffer.byteLength(current), pin.currentBytes);
+  assert.equal(Buffer.byteLength(baseline), pin.baselineBytes);
+  assert.deepEqual(pin.inverses, inverseHunks(file, MARKET_FEE_COPY_BASE_REVISION, CONTRACT_RELEASE_SOURCE_DATA.reviewedContractRevision));
+  for (const input of [current, current.replaceAll('\n', '\r\n'),
+    Buffer.from(current), Buffer.from(current.replaceAll('\n', '\r\n'))]) {
+    const transfer = assertMarketFeeCopySourceTransfer(file, input);
+    assert.equal(transfer.baselineText, baseline);
+    assert.equal(transfer.sourceOnly, true); assert.equal(transfer.runtime, false); assert.equal(transfer.native, false);
+    const expected = Buffer.isBuffer(input) ? Buffer.from(baseline) : baseline;
+    assert.deepEqual(marketFeeCopyHistoricalInput(file, input), expected);
+    assert.deepEqual(marketFeeCopyHistoricalInput(file, expected), expected);
+    assert.deepEqual(economyUxMergeCandidateHistoricalInput(file, input),
+      economyUxMergeCandidateHistoricalInput(file, expected));
+    assert.deepEqual(economyUxMergeMainHistoricalInput(file, input),
+      economyUxMergeMainHistoricalInput(file, expected));
+    feeCopyPositives++;
+  }
+  for (const changed of [current + '\n// outside fee-copy drift\n', current.slice(1), '\ufeff' + current,
+    current + '\0', current.replace('\n', '\r\n'), current.replace('\n', '\r'), baseline, null,
+    Buffer.from([0xc3, 0x28])]) {
+    assert.throws(() => assertMarketFeeCopySourceTransfer(file, changed));
+    if (Buffer.isBuffer(changed)) assert.throws(() => marketFeeCopyHistoricalInput(file, changed));
+    else assert.strictEqual(marketFeeCopyHistoricalInput(file, changed), changed);
+    feeCopyRefusals++;
+  }
+  assert(pin.inverses.length > 0);
+  for (const inverse of pin.inverses) {
+    assert.equal(current.split(inverse.current).length - 1, 1);
+    for (const changed of [current.replace(inverse.current, ''),
+      current.replace(inverse.current, () => inverse.current + inverse.current),
+      current.replace(inverse.current, () => inverse.baseline),
+      current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+      assert.throws(() => assertMarketFeeCopySourceTransfer(file, changed));
+      assert.strictEqual(marketFeeCopyHistoricalInput(file, changed), changed); feeCopyRefusals++;
+    }
+    feeCopyHunks++;
+  }
+}
+for (const file of ['__proto__', 'constructor', 'toString', 'src/unknown.js']) {
+  assert.throws(() => assertMarketFeeCopySourceTransfer(file, 'unknown\nbytes\n'));
+  assert.equal(marketFeeCopyHistoricalInput(file, 'unknown\nbytes\n'), 'unknown\nbytes\n'); feeCopyRefusals++;
+}
+assert.equal(feeCopyPositives, 20); assert.equal(feeCopyRefusals, 105); assert.equal(feeCopyHunks, 14);
 console.log(`Economy-hardening exact source transfer PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; historical pins unchanged`);
+console.log(`Market fee-copy source projection PASS: ${feeCopyPositives} positives, ${feeCopyRefusals} refusals, ${feeCopyHunks} exact inverse hunks`);
+
+// Exact 21+ server source successor. This is historical source projection, not runtime acceptance.
+const agePin = AGE_POLICY_SERVER_BINDING;
+assert.equal(agePin.file, 'src/server.js');
+assert.equal(agePin.sourceRevision, 'f4474d358e8c9feddcd01deaadf77c1a67ace9cb');
+assert.equal(agePin.baselineRevision, '019be25da3396d143b09a5b7ded945334a1337c8');
+assert.equal(agePin.sourceParentRevision, 'a24df18ea1a0b57f25df942675dd9fef7415f275');
+assert.equal(hash(JSON.stringify(agePin)), AGE_POLICY_SERVER_BINDING_SHA256);
+assert(Object.isFrozen(agePin) && Object.isFrozen(agePin.inverses) && agePin.inverses.every(Object.isFrozen));
+const ageCurrent = git('show', agePin.sourceRevision + ':' + agePin.file);
+const ageBaseline = git('show', agePin.baselineRevision + ':' + agePin.file);
+assert.equal(git('show', agePin.sourceParentRevision + ':' + agePin.file), ageBaseline);
+assert.equal(hash(ageCurrent), agePin.currentSha256); assert.equal(blob(ageCurrent), agePin.currentBlob);
+assert.equal(hash(ageBaseline), agePin.baselineSha256); assert.equal(blob(ageBaseline), agePin.baselineBlob);
+assert.equal(Buffer.byteLength(ageCurrent), agePin.currentBytes);
+assert.equal(Buffer.byteLength(ageBaseline), agePin.baselineBytes);
+assert.equal(agePin.mode, '100644'); assert.equal(agePin.contextLines, 3);
+assert.equal(git('ls-tree', agePin.sourceRevision, '--', agePin.file).trim(),
+  '100644 blob ' + agePin.currentBlob + '\t' + agePin.file);
+assert.equal(git('ls-tree', agePin.baselineRevision, '--', agePin.file).trim(),
+  '100644 blob ' + agePin.baselineBlob + '\t' + agePin.file);
+assert.deepEqual(agePin.inverses, inverseHunks(agePin.file, agePin.baselineRevision, agePin.sourceRevision));
+assert.equal(lf(businessDeskHistoricalInput(agePin.file, contractReleaseDeskInput(agePin.file,
+  fs.readFileSync(agePin.file, 'utf8')))), ageCurrent, 'Exact pre-Desk source retains the complete 21+ policy; actual raw source is independently pinned');
+let agePositives = 0, ageRefusals = 0;
+for (const input of [ageCurrent, ageCurrent.replaceAll('\n', '\r\n'),
+  Buffer.from(ageCurrent), Buffer.from(ageCurrent.replaceAll('\n', '\r\n'))]) {
+  const transfer = assertAgePolicyServerSourceTransfer(agePin.file, input);
+  const expected = Buffer.isBuffer(input) ? Buffer.from(ageBaseline) : ageBaseline;
+  assert.equal(transfer.baselineText, ageBaseline); assert.equal(transfer.inverseChunks, 2);
+  assert.equal(transfer.sourceOnly, true); assert.equal(transfer.runtime, false); assert.equal(transfer.native, false);
+  assert.deepEqual(agePolicyServerHistoricalInput(agePin.file, input), expected);
+  assert.strictEqual(agePolicyServerHistoricalInput(agePin.file, expected), expected);
+  assert.deepEqual(economySocialProofCutoverHistoricalInput(agePin.file, input), expected);
+  assert.deepEqual(economyUxMergeCandidateHistoricalInput(agePin.file, input),
+    economyUxMergeCandidateHistoricalInput(agePin.file, expected));
+  assert.deepEqual(economyUxMergeMainHistoricalInput(agePin.file, input),
+    economyUxMergeMainHistoricalInput(agePin.file, expected));
+  agePositives++;
+}
+for (const changed of [ageCurrent + '\n// unrelated source edit\n', ageCurrent.slice(1), ageCurrent.slice(0, -1),
+  '\ufeff' + ageCurrent, ageCurrent + '\0', ageCurrent.replace('\n', '\r\n'),
+  ageCurrent.replace('\n', '\r'), ageBaseline, null]) {
+  assert.throws(() => assertAgePolicyServerSourceTransfer(agePin.file, changed));
+  assert.strictEqual(agePolicyServerHistoricalInput(agePin.file, changed), changed); ageRefusals++;
+}
+const ageInvalidUtf8 = Buffer.from([0xc3, 0x28]);
+assert.throws(() => assertAgePolicyServerSourceTransfer(agePin.file, ageInvalidUtf8));
+assert.throws(() => agePolicyServerHistoricalInput(agePin.file, ageInvalidUtf8)); ageRefusals++;
+for (const inverse of agePin.inverses) {
+  assert.equal(ageCurrent.split(inverse.current).length - 1, 1);
+  for (const changed of [ageCurrent.replace(inverse.current, ''),
+    ageCurrent.replace(inverse.current, () => inverse.current + inverse.current),
+    ageCurrent.replace(inverse.current, () => inverse.baseline),
+    ageCurrent.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) {
+    assert.throws(() => assertAgePolicyServerSourceTransfer(agePin.file, changed));
+    assert.strictEqual(agePolicyServerHistoricalInput(agePin.file, changed), changed); ageRefusals++;
+  }
+}
+for (const file of ['__proto__', 'constructor', 'toString', 'src/age.js', 'src/legal.js', 'public/index.html']) {
+  assert.throws(() => assertAgePolicyServerSourceTransfer(file, ageCurrent));
+  assert.strictEqual(agePolicyServerHistoricalInput(file, ageCurrent), ageCurrent);
+  assert.strictEqual(agePolicyServerHistoricalInput(file, ageInvalidUtf8), ageInvalidUtf8); ageRefusals++;
+}
+assert.equal(agePositives, 4); assert.equal(ageRefusals, 24);
+console.log('Age-policy exact server source projection PASS: 4 positives, 24 refusals, 2 inverse hunks; actual 21+ source retained');

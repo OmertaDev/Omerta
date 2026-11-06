@@ -6,6 +6,7 @@ import {combinedEconomicDeedPin} from '../../tools/combined-economic-deed-source
 // Closed pure-control fixtures. Historical source execution never admits the current release.
 import {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';
 import { economyReleaseSource } from '../../tools/economy-release-composition.js';
+import { releaseSourceBaseline } from '../../tools/release-source-transfer.js';
 import { fourthBatchSourceBaseline } from '../../tools/rc1-fourth-batch-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -296,6 +297,14 @@ function historical(file) {
 }
 function fixtureRead(candidate, options) {
   const file = relative(candidate);
+  if (file === 'public/genesis-deploy-client.js') {
+    // Inspect this exact current public source through its closed predecessor projections only.
+    const raw = originalRead(candidate, 'utf8');
+    const text = releaseSourceBaseline(file, economyHardeningSourceBaseline(file, raw));
+    const bytes = Buffer.from(text);
+    const encoding = typeof options === 'string' ? options : options?.encoding;
+    return encoding ? bytes.toString(encoding) : bytes;
+  }
   if (!file?.startsWith('src/') && !file?.startsWith('data/') && file !== 'schema.sql') return originalRead(candidate, options);
   const bytes = historical(file);
   const encoding = typeof options === 'string' ? options : options?.encoding;
@@ -365,7 +374,7 @@ export async function executeHistoricalSourceFixture() {
   fs.readFileSync = fixtureRead;
   fs.promises.readFile = async (candidate, options) => {
     const file = relative(candidate);
-    return file?.startsWith('src/') || file?.startsWith('data/') || file === 'schema.sql' ? fixtureRead(candidate, options) : originalPromiseRead(candidate, options);
+    return file?.startsWith('src/') || file?.startsWith('data/') || file === 'schema.sql' || file === 'public/genesis-deploy-client.js' ? fixtureRead(candidate, options) : originalPromiseRead(candidate, options);
   };
   syncBuiltinESMExports();
   try {

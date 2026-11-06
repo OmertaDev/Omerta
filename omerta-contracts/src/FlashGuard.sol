@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 /// @title FlashGuard — atomicity defenses for THE BANK
 /// @notice Founder-directed 2026-08-10: "figure out how to write in the smart contract ways to kill

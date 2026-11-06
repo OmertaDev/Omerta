@@ -71,7 +71,7 @@ test('E2E swap fixture selects the exact IR profile and hashes its actual artifa
   const directory = path.join(fixtureRoot, 'out', 'PoolSwapTest.sol');
   fs.mkdirSync(directory, { recursive: true });
   const artifact = { abi: [], bytecode: { object: '0x60006000', linkReferences: {} }, metadata: {
-    compiler: { version: '0.8.26+commit.8a97fa7a' }, settings: {
+    compiler: { version: '0.8.38+commit.1835d247' }, settings: {
       compilationTarget: { 'lib/v4-core/src/test/PoolSwapTest.sol': 'PoolSwapTest' },
       optimizer: { enabled: true, runs: 800 }, evmVersion: 'cancun', viaIR: true,
     },
@@ -91,6 +91,8 @@ test('E2E swap fixture selects the exact IR profile and hashes its actual artifa
     for (const edit of [
       (a) => { a.metadata.settings.compilationTarget = { 'src/PoolSwapTest.sol': 'PoolSwapTest' }; },
       (a) => { a.metadata.compiler.version = '0.8.27+commit.fake'; },
+      (a) => { a.metadata.compiler.version = '0.8.26+commit.8a97fa7a'; },
+      (a) => { a.metadata.compiler.version = '0.8.38+commit.deadbeef'; },
       (a) => { a.metadata.settings.optimizer.runs = 1; },
       (a) => { a.metadata.settings.evmVersion = 'prague'; },
       (a) => { a.metadata.settings.viaIR = false; },
@@ -292,6 +294,19 @@ test('missing artifact, changed metadata source hash and invalid compiler settin
     };
     assert.throws(() => buildLiquidityDeploymentPlan(fixture()), /compiler settings differ/);
   } finally { fs.readFileSync = original; }
+  for (const version of ['0.8.26+commit.8a97fa7a', '0.8.38+commit.deadbeef']) {
+    try {
+      fs.readFileSync = function (name, ...args) {
+        const data = original.call(this, name, ...args);
+        if (String(name).endsWith(`${path.sep}KeeperGasVault.json`)) {
+          const a = JSON.parse(data.toString()); a.metadata.compiler.version = version;
+          return Buffer.from(JSON.stringify(a));
+        }
+        return data;
+      };
+      assert.throws(() => buildLiquidityDeploymentPlan(fixture()), /compiler settings differ/);
+    } finally { fs.readFileSync = original; }
+  }
   try {
     fs.readFileSync = function (name, ...args) {
       const data = original.call(this, name, ...args);

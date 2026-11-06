@@ -1,0 +1,289 @@
+{
+  "chainId": 4663,
+  "resultSha256": "d6c2787ae91e577c8bba531f0615df489f181ff08353b09b18656d32c65bcad8",
+  "deployments": [
+    {
+      "role": "OmertaFees",
+      "address": "0x7bd6d4f851d51c8f74c09aa26d42f701cefba33e",
+      "runtimeHash": "0x44e6f59f81cad779b856330ab1dd011db279f8e78900158b185c8e0e5d8c2549"
+    },
+    {
+      "role": "DynastyNFT",
+      "address": "0xb678d766dd5f2766a72787e60f1ce780c80ec1c9",
+      "runtimeHash": "0x53ab8c3ebec8a7d5f3b553408d8dad2ae59cb1ba646e675ff82c0dc295520331"
+    },
+    {
+      "role": "StreetDeed",
+      "address": "0x5a28fbbc89a4a9a87f53812cc8bc619324887532",
+      "runtimeHash": "0x16347561740d089b718c95efe03e465be212a1efc5a741b572a0e66aff65414c"
+    },
+    {
+      "role": "CharacterDeedCustody",
+      "address": "0x44ed8dea688c137819691c2e21e323b88547c32a",
+      "runtimeHash": "0x7c3b55ad6e52a38d088a55e20fb2e4dfd74dbe2c6ac4182a2b2793ab6ef477f4"
+    },
+    {
+      "role": "nonMintRouter",
+      "address": "0x036be01284b5c9ab9f87e537a7a1f52c18fb1539",
+      "runtimeHash": "0xed3d4333e996744f7d2568e31e15519a6cafc47a193a9eb2aee707d16b9d8f26"
+    },
+    {
+      "role": "descriptor",
+      "address": "0x0600845AF579917788fB98995B3eFa3AC41509A6",
+      "runtimeHash": "0x8c3ddde8f6d42996c43a0339844c2905bd461e0a223fb6476e6f6741981ebdc1"
+    },
+    {
+      "role": "omr",
+      "address": "0xd4F814b35dB0d158B82480595c30D314ef34760D",
+      "runtimeHash": "0xa3a7c63d08027b463d4d803c63c6a3c92564d70402b9c800543806cd41ee1292"
+    },
+    {
+      "role": "poolManager",
+      "address": "0xd342aE41527B4eB83CDDc0FdA8201586Ac6042D9",
+      "runtimeHash": "0x1d18dcc5904183c8a432d035aaa54320a75370ec22ee3e063b9cde36291c7c2b"
+    },
+    {
+      "role": "positionManager",
+      "address": "0x3b170F4d6b184657E971ffC1Ec0b298093cd09b7",
+      "runtimeHash": "0xd6dbce20f2bbeb7855f593f4661a75da1d3e7b96354977c23c5f0c4f9da54b1c"
+    },
+    {
+      "role": "coordinator",
+      "address": "0xC431ef98c9c770e07D874612D9cce104A6940D4E",
+      "runtimeHash": "0xd3b98e4eed1e8a2ee9860c455c24c8ffb39e8cb52c34916258d1a426549a1568"
+    },
+    {
+      "role": "polFunding",
+      "address": "0xc941aF2edd9A627Fc2CE2b6E03501505C5eD0D9b",
+      "runtimeHash": "0x49d80605a6b8b6b8deaada60cab7554b311bf4246090fdd3b6a3149055cebdd3"
+    },
+    {
+      "role": "reserveFunding",
+      "address": "0xb6143a3A768912662F74F9B8816e6F76FcF941F0",
+      "runtimeHash": "0x0b27d02e48bf61f24b3861d3e878e292da4f4e267b0f3a5c93f08320ab0d9e6e"
+    },
+    {
+      "role": "gameSettlement",
+      "address": "0x2A56f55718792dA20bdA8b99050963DB7255fEBC",
+      "runtimeHash": "0x4bf06834475fe9e58f05e0639e2af7062f31c22f21b597d9b4c59a8c82a24c9d"
+    },
+    {
+      "role": "hook",
+      "address": "0xB9C3cb5Abd8869346796fa5C26EA48FfC5FC75c4",
+      "runtimeHash": "0x01441110b9212afdb51507834361c54157276eea7b29b01dd5745e3a919af1ff"
+    },
+    {
+      "role": "marketState",
+      "address": "0x2F4a14d92b1094892Abd50Da98B04Aa9e6A9B2d7",
+      "runtimeHash": "0x151b11dde48cb4be9419159c524c79962af653a51b3202b82ffa2840dfe6ab2a"
+    },
+    {
+      "role": "turf",
+      "address": "0x6EFC758Ce80C6B58bB949A261b02280D639b947D",
+      "runtimeHash": "0xd5c9eca448b654d488609acb2c621e2caeb19d437807f802aac7a0662b6c642b"
+    },
+    {
+      "role": "turfFeeBridge",
+      "address": "0xf0766edF6e22BccDFeB6D350a0fF929F1bAC8dC6",
+      "runtimeHash": "0xf733ce22aecacdcabe5586fc43ae5e7401d3825628be20dd12ba771b6ebc9c1f"
+    },
+    {
+      "role": "controller",
+      "address": "0x5F04185a036725660A539d857D7Fef7d3CE304Be",
+      "runtimeHash": "0xe13dfac98e973c7f2e57a6a82bc4c139917000090f78c218e33338a02d7ac810"
+    },
+    {
+      "role": "bond",
+      "address": "0x2E6B8D5beD0f9e950d6077A57FB691758CC245c9",
+      "runtimeHash": "0xa3e1f9eaf06430997fd21381d5fc6b5ba127d6ac944eed1a8cdaa3b2726d0d10"
+    },
+    {
+      "role": "arbitrage",
+      "address": "0x3105641cA1d45E83111b7d54F7AAD722fCe55794",
+      "runtimeHash": "0xeb14a020699cd4857cf220b7ea17e751d6509b5ec6cac50871cb60a339e0c105"
+    },
+    {
+      "role": "commitment",
+      "address": "0x54CD9c62a69e0B5f8D2EBbCaD3018AD0DdDcA0E5",
+      "runtimeHash": "0x91e7459cbc18020c68022f140a5098a4a1925718319d7dfd3ddf3724d683e577"
+    },
+    {
+      "role": "router",
+      "address": "0x182765C140088f7bdf10aA1aFf9C5e497eB1EF90",
+      "runtimeHash": "0xd15bd981429ac9ccc8fa837f56221deeae33bab492515a119c8032d4caf35f56"
+    },
+    {
+      "role": "auction",
+      "address": "0x9be3C378E385c7cfb11F60D033Bd9545F4E02b4C",
+      "runtimeHash": "0xff31ad5ff4b1f521fd59b8689e53e79d7006b459faa8fdfc370ca8463d09a572"
+    },
+    {
+      "role": "ethStaking",
+      "address": "0x5Aef24a3c438784dF1DC82b07538f6bfE883c804",
+      "runtimeHash": "0xc00118a78745fee9f992bfe557ab9a144405a64b49c9f92878c2d16b6041991f"
+    },
+    {
+      "role": "ethRewards",
+      "address": "0x1f0Aae0EC54Ec7AC39C3A5683B72608e65575902",
+      "runtimeHash": "0x11fc2d9ba81eab338ba0d39a566eab6c390698f9ecbc6e407443cd6e49620328"
+    },
+    {
+      "role": "district-1-bridge",
+      "address": "0x542Cb36b16cAF9ea12696221F395fD52b7797a63",
+      "runtimeHash": "0xe581d397d9d249adb57a3559d5256a9b10226648f1f05f1beee376b13ab0cf4e"
+    },
+    {
+      "role": "district-1-controller",
+      "address": "0x7306058B39804D654CD31863fd43b03e219471fA",
+      "runtimeHash": "0x6a7c7649a05b3de73ad9b02c6da3aea4d9b4390dc045df947db74811caa9ed41"
+    },
+    {
+      "role": "district-2-bridge",
+      "address": "0xe6A1525D65B4353A45a80d99580D0b74BA2d4cF4",
+      "runtimeHash": "0x4b5ff5afaf7218a28d3d02716e4d2692a58028aeab87b68908c7e9b0d4f2c364"
+    },
+    {
+      "role": "district-2-controller",
+      "address": "0xA5991fA79501af2b3e712f6c427D6503FDFaA4f3",
+      "runtimeHash": "0xd93274b51e0bcf427a90a840d8838a2fd970b84ba1d1ce0066e1070ec56a6700"
+    },
+    {
+      "role": "district-3-bridge",
+      "address": "0x03d246F59B5534dD0940a78fC2786E5A81a1eBEe",
+      "runtimeHash": "0x3ea7361f453ce60036c53705b9153578598b0721e51fb796b2fbb683f10b240b"
+    },
+    {
+      "role": "district-3-controller",
+      "address": "0x0E7B9Bb0Eaa52aB0E443bf332E92D3C5A52Caba9",
+      "runtimeHash": "0x90701a33d77febd2ee7e6d39c3f6ade2ed5324beb6a4eccdbe446b3d555d0757"
+    },
+    {
+      "role": "district-4-bridge",
+      "address": "0xb3892E8A3518C2149deeC911BF3CB1B85F684a8A",
+      "runtimeHash": "0x743ca2c191fc06d81486477ab35f7818d3da837e06a38c1dfbe95caad5af3841"
+    },
+    {
+      "role": "district-4-controller",
+      "address": "0x25E805F5D4b042E9Ae8d78217D8e86b8cB09FB97",
+      "runtimeHash": "0x0cfa45d19da59f69d17080022860a6b7a74eb5291c432e335af59727ecef5ca8"
+    },
+    {
+      "role": "district-5-bridge",
+      "address": "0xFe494B0d53215cFD0348F59209eAD74EEcc3BEEb",
+      "runtimeHash": "0xd870422280fc58eec333a4963683a5fcba9c86229a235020f142eb8ba733e4f4"
+    },
+    {
+      "role": "district-5-controller",
+      "address": "0x294e4263fF1022C582b7C98DEc48Cf475c938E10",
+      "runtimeHash": "0x53a3f3a782fa2641c3ab70a0e77e6ebe821b0f5f8b10209d1af4ab6e5f6d3124"
+    },
+    {
+      "role": "gameplay-custody",
+      "address": "0x1B9c0eF70efd90484f01270Df39AD3612099777f",
+      "runtimeHash": "0xf69a661af01a0eb527561dc756f87108f3c7dd7744fda50707feec65023283d1"
+    }
+  ],
+  "addresses": {
+    "OmertaFees": "0x7BD6D4F851d51c8F74c09aA26D42f701CEfbA33E",
+    "DynastyNFT": "0xb678D766dD5F2766a72787e60f1ce780c80eC1c9",
+    "StreetDeed": "0x5a28fbBc89a4a9A87F53812cC8BC619324887532",
+    "CharacterDeedCustody": "0x44ed8DEa688C137819691c2E21e323B88547c32a",
+    "DeedStockAccount": "0x72805e9953e98b95196A1CC93D2AEb711F776B5F",
+    "descriptor": "0x0600845AF579917788fB98995B3eFa3AC41509A6",
+    "omr": "0xd4F814b35dB0d158B82480595c30D314ef34760D",
+    "poolManager": "0xd342aE41527B4eB83CDDc0FdA8201586Ac6042D9",
+    "positionManager": "0x3b170F4d6b184657E971ffC1Ec0b298093cd09b7",
+    "coordinator": "0xC431ef98c9c770e07D874612D9cce104A6940D4E",
+    "polFunding": "0xc941aF2edd9A627Fc2CE2b6E03501505C5eD0D9b",
+    "reserveFunding": "0xb6143a3A768912662F74F9B8816e6F76FcF941F0",
+    "gameSettlement": "0x2A56f55718792dA20bdA8b99050963DB7255fEBC",
+    "marketState": "0x2F4a14d92b1094892Abd50Da98B04Aa9e6A9B2d7",
+    "turf": "0x6EFC758Ce80C6B58bB949A261b02280D639b947D",
+    "turfFeeBridge": "0xf0766edF6e22BccDFeB6D350a0fF929F1bAC8dC6",
+    "controller": "0x5F04185a036725660A539d857D7Fef7d3CE304Be",
+    "bond": "0x2E6B8D5beD0f9e950d6077A57FB691758CC245c9",
+    "arbitrage": "0x3105641cA1d45E83111b7d54F7AAD722fCe55794",
+    "commitment": "0x54CD9c62a69e0B5f8D2EBbCaD3018AD0DdDcA0E5",
+    "router": "0x182765C140088f7bdf10aA1aFf9C5e497eB1EF90",
+    "auction": "0x9be3C378E385c7cfb11F60D033Bd9545F4E02b4C",
+    "ethStaking": "0x5Aef24a3c438784dF1DC82b07538f6bfE883c804",
+    "ethRewards": "0x1f0Aae0EC54Ec7AC39C3A5683B72608e65575902",
+    "hook": "0xB9C3cb5Abd8869346796fa5C26EA48FfC5FC75c4",
+    "gameplayCustody": "0x1B9c0eF70efd90484f01270Df39AD3612099777f",
+    "custody": "0x1B9c0eF70efd90484f01270Df39AD3612099777f"
+  },
+  "roles": {
+    "safe": "0xBe225658718DCb3865902437887a11830E4a9b10",
+    "deployer": "0x5aE54B5555ae5dC9F899e03cB9aaC74dCcDc4E7E",
+    "safeExecutor": "0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD",
+    "adjudicator": "0x9c1E5FAC0DE08d0714B80812347F66CCE16DECcA",
+    "dev": "0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD",
+    "rwa": "0xBe225658718DCb3865902437887a11830E4a9b10",
+    "community": "0x785be68e426a382C52004e04340897F834F2FCaF",
+    "stakingReward": "0x1f0Aae0EC54Ec7AC39C3A5683B72608e65575902"
+  },
+  "governance": {
+    "runtimeHash": "0xd7d408ebcd99b2b70be43e20253d6d92a8ea8fab29bd3be7f55b10032331fb4c",
+    "owners": [
+      "0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD",
+      "0x4C2292aAD85Ba677996CDE8afae279daA7bDC9e6",
+      "0x8E2723196659ee82113Dec296D2bAC99c8e46f3A"
+    ],
+    "threshold": 2,
+    "singleton": "0x29fcB43b46531BcA003ddC8FCB67FFE91900C762",
+    "singletonRuntimeHash": "0xb1f926978a0f44a2c0ec8fe822418ae969bd8c3f18d61e5103100339894f81ff",
+    "fallbackHandler": "0xfd0732Dc9E303f09fCEf3a7388Ad10A83459Ec99",
+    "fallbackHandlerRuntimeHash": "0x7c6007a5d711cea8dfd5d91f5940ec29c7f200fe511eb1fc1397b367af3c42f9"
+  },
+  "runtimeHashes": {
+    "omr": "0xa3a7c63d08027b463d4d803c63c6a3c92564d70402b9c800543806cd41ee1292",
+    "poolManager": "0x1d18dcc5904183c8a432d035aaa54320a75370ec22ee3e063b9cde36291c7c2b",
+    "positionManager": "0xd6dbce20f2bbeb7855f593f4661a75da1d3e7b96354977c23c5f0c4f9da54b1c",
+    "coordinator": "0xd3b98e4eed1e8a2ee9860c455c24c8ffb39e8cb52c34916258d1a426549a1568",
+    "polFunding": "0x49d80605a6b8b6b8deaada60cab7554b311bf4246090fdd3b6a3149055cebdd3",
+    "reserveFunding": "0x0b27d02e48bf61f24b3861d3e878e292da4f4e267b0f3a5c93f08320ab0d9e6e",
+    "gameSettlement": "0x4bf06834475fe9e58f05e0639e2af7062f31c22f21b597d9b4c59a8c82a24c9d",
+    "hook": "0x01441110b9212afdb51507834361c54157276eea7b29b01dd5745e3a919af1ff",
+    "marketState": "0x151b11dde48cb4be9419159c524c79962af653a51b3202b82ffa2840dfe6ab2a",
+    "turf": "0xd5c9eca448b654d488609acb2c621e2caeb19d437807f802aac7a0662b6c642b",
+    "turfFeeBridge": "0xf733ce22aecacdcabe5586fc43ae5e7401d3825628be20dd12ba771b6ebc9c1f",
+    "controller": "0xe13dfac98e973c7f2e57a6a82bc4c139917000090f78c218e33338a02d7ac810",
+    "bond": "0xa3e1f9eaf06430997fd21381d5fc6b5ba127d6ac944eed1a8cdaa3b2726d0d10",
+    "arbitrage": "0xeb14a020699cd4857cf220b7ea17e751d6509b5ec6cac50871cb60a339e0c105",
+    "commitment": "0x91e7459cbc18020c68022f140a5098a4a1925718319d7dfd3ddf3724d683e577",
+    "router": "0xd15bd981429ac9ccc8fa837f56221deeae33bab492515a119c8032d4caf35f56",
+    "auction": "0xff31ad5ff4b1f521fd59b8689e53e79d7006b459faa8fdfc370ca8463d09a572",
+    "ethStaking": "0xc00118a78745fee9f992bfe557ab9a144405a64b49c9f92878c2d16b6041991f",
+    "ethRewards": "0x11fc2d9ba81eab338ba0d39a566eab6c390698f9ecbc6e407443cd6e49620328"
+  },
+  "canonicalPool": {
+    "currency0": "0x0000000000000000000000000000000000000000",
+    "currency1": "0xd4F814b35dB0d158B82480595c30D314ef34760D",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "hooks": "0xB9C3cb5Abd8869346796fa5C26EA48FfC5FC75c4",
+    "poolId": "0xb030b1d1ab6c08caaa148f8d14a1e99aefb87e4b045e5e4e7b77fb7e7a52cf26"
+  },
+  "eth": {
+    "keeper": "0x9c1E5FAC0DE08d0714B80812347F66CCE16DECcA",
+    "policy": {
+      "maxOmrPerCall": "1000000000000000000000",
+      "maxOmrPerDay": "10000000000000000000000",
+      "maxNativePerCall": "10000000000000000",
+      "maxNativePerDay": "100000000000000000",
+      "maxSlippageBps": "500",
+      "maxStressBps": "5000",
+      "maxMarketAge": "300",
+      "maxDeadlineDelay": "300",
+      "maxHealthLease": "3600",
+      "recoveryGrace": "600"
+    },
+    "rewardAsset": "native ETH",
+    "stakingEpochSeconds": 2592000,
+    "stakingLockSeconds": 2592000,
+    "rewardEligibility": "unwithdrawn-staked-principal",
+    "rewardsContinueAfterMaturity": true,
+    "renewalRequiredForRewards": false
+  },
+  "syntheticOnlyFixture": true
+}

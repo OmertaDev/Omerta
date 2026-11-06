@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {StdInvariant} from "forge-std/StdInvariant.sol";
@@ -20,11 +20,16 @@ import {OmertaHookV2} from "../../src/market-v2/OmertaHookV2.sol";
 
 contract MockOmrMarketV2 is ERC20 {
     constructor() ERC20("Mock OMR", "OMR") {}
-    function mint(address to, uint256 amount) external { _mint(to, amount); }
+
+    function mint(address to, uint256 amount) external {
+        _mint(to, amount);
+    }
 }
 
 contract RefusingRecipientV2 {
-    receive() external payable { revert("reject ETH"); }
+    receive() external payable {
+        revert("reject ETH");
+    }
 }
 
 abstract contract OmertaHookV2Fixture is Test {
@@ -42,6 +47,7 @@ abstract contract OmertaHookV2Fixture is Test {
     PoolModifyLiquidityTest internal lpRouter;
     PoolKey internal key;
     address[5] internal recipients;
+    address internal rewardsRecipient;
     Currency internal eth = Currency.wrap(address(0));
     Currency internal token;
 
@@ -55,11 +61,24 @@ abstract contract OmertaHookV2Fixture is Test {
         omr = new MockOmrMarketV2();
         token = Currency.wrap(address(omr));
         recipients = [address(new RefusingRecipientV2()), address(0x11), address(0x12), address(0x13), address(0x14)];
+        rewardsRecipient = address(new RefusingRecipientV2());
         address target = address(uint160((uint256(0xBEEF) << 144) | FLAGS));
-        deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(
-            manager, address(omr), address(this), uint24(3000), int24(60), recipients,
-            OmertaHookV2.OpeningConfig(200, 250, 10 ether), uint24(100), uint32(60)
-        ), target);
+        deployCodeTo(
+            "OmertaHookV2.sol:OmertaHookV2",
+            abi.encode(
+                manager,
+                address(omr),
+                address(this),
+                uint24(3000),
+                int24(60),
+                recipients,
+                OmertaHookV2.OpeningConfig(200, 250, 10 ether),
+                uint24(100),
+                uint32(60),
+                rewardsRecipient
+            ),
+            target
+        );
         hook = OmertaHookV2(payable(target));
         key = hook.poolKey();
         manager.initialize(key, Q96);
@@ -88,7 +107,9 @@ abstract contract OmertaHookV2Fixture is Test {
     }
 
     function _total(Currency currency) internal view returns (uint256 total) {
-        for (uint8 i; i < 5; ++i) total += hook.owed(currency, i);
+        for (uint8 i; i < 6; ++i) {
+            total += hook.owed(currency, i);
+        }
     }
 
     function _assertConserved(Currency currency) internal view {
@@ -118,14 +139,24 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         manager.initialize(forged, Q96);
     }
 
+    function test_rewardsRecipientCannotBeZeroOrTheHookItself() public {
+        address target = address(uint160((uint256(0xBEE0) << 144) | FLAGS));
+        for (uint8 i; i < 2; ++i) {
+            address invalid = i == 0 ? address(0) : target;
+            vm.expectRevert();
+            deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(manager, address(omr), address(this), uint24(3000),
+                int24(60), recipients, OmertaHookV2.OpeningConfig(200, 250, 10 ether), uint24(100), uint32(60), invalid), target);
+        }
+    }
+
     function test_sellsKeepBaseAllocationAndIsolateSurge() public {
         BalanceDelta result = _swap(false, -int256(10 ether));
         uint256 gross = uint256(uint128(result.amount0())) + _total(eth);
-        uint256 base = gross * 500 / 10_000;
-        assertEq(hook.owed(eth, 0), base * 200 / 500);
-        assertEq(hook.owed(eth, 1), base * 100 / 500);
-        assertEq(hook.owed(eth, 2), base * 100 / 500);
-        assertEq(hook.owed(eth, 3), base - base * 200 / 500 - base * 100 / 500 - base * 100 / 500);
+        uint256 base = gross * 350 / 10_000;
+        assertEq(hook.owed(eth, 0), base * 127 / 350);
+        assertEq(hook.owed(eth, 1), base * 51 / 350);
+        assertEq(hook.owed(eth, 2), base * 76 / 350);
+        assertEq(hook.owed(eth, 3), base - base * 127 / 350 - base * 51 / 350 - base * 76 / 350);
         assertGt(hook.owed(eth, 4), 0);
         assertLe(hook.owed(eth, 4), gross * 50 / 10_000);
         _assertConserved(eth);
@@ -135,8 +166,9 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         BalanceDelta result = _swap(false, int256(1 ether));
         uint256 total = _total(token);
         uint256 rawInput = uint256(-int256(result.amount1())) - total;
-        uint256 base = rawInput * 500 / 10_000;
-        assertEq(total - hook.owed(token, 4), base);
+        uint256 base = rawInput * 350 / 10_000;
+        assertEq(total - hook.owed(token, 4) - hook.owed(token, 5), base);
+        assertEq(hook.owed(token, 5), rawInput * 50 / 10_000);
         assertEq(uint256(uint128(result.amount0())), 1 ether);
         assertEq(_total(eth), 0);
         _assertConserved(token);
@@ -146,20 +178,28 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         BalanceDelta exactIn = _swapLimit(false, -int256(100 ether), TickMath.getSqrtPriceAtTick(10));
         assertLt(uint256(-int256(exactIn.amount1())), 100 ether);
         uint256 gross = uint256(uint128(exactIn.amount0())) + _total(eth);
-        assertEq(_total(eth) - hook.owed(eth, 4), gross * 500 / 10_000);
+        assertEq(_total(eth) - hook.owed(eth, 4) - hook.owed(eth, 5), gross * 350 / 10_000);
+        assertEq(hook.owed(eth, 5), gross * 50 / 10_000);
         BalanceDelta exactOut = _swapLimit(false, int256(100 ether), TickMath.getSqrtPriceAtTick(20));
         assertLt(uint256(uint128(exactOut.amount0())), 100 ether);
         uint256 rawInput = uint256(-int256(exactOut.amount1())) - _total(token);
-        assertEq(_total(token) - hook.owed(token, 4), rawInput * 500 / 10_000);
+        assertEq(_total(token) - hook.owed(token, 4) - hook.owed(token, 5), rawInput * 350 / 10_000);
+        assertEq(hook.owed(token, 5), rawInput * 50 / 10_000);
         _assertConserved(eth);
         _assertConserved(token);
     }
 
-    function test_postOpeningBuysAreFreeInBothModes() public {
-        _swap(true, -int256(1 ether));
-        _swap(true, int256(1 ether));
-        assertEq(_total(eth), 0);
-        assertEq(_total(token), 0);
+    function test_postOpeningBuysCollectOnlyRewardsInBothModes() public {
+        BalanceDelta exactIn = _swap(true, -int256(1 ether));
+        uint256 grossOutput = uint256(uint128(exactIn.amount1())) + _total(token);
+        assertEq(_total(token), grossOutput * 50 / 10_000);
+        assertEq(_total(token), hook.owed(token, 5));
+        BalanceDelta exactOut = _swap(true, int256(1 ether));
+        uint256 rawInput = uint256(-int256(exactOut.amount0())) - _total(eth);
+        assertEq(_total(eth), rawInput * 50 / 10_000);
+        assertEq(_total(eth), hook.owed(eth, 5));
+        _assertConserved(eth);
+        _assertConserved(token);
     }
 
     function test_openingSupportsExactOutputAndCapsActualQuoteIncludingFee() public {
@@ -184,10 +224,12 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
     function test_openingExpiresWithoutAnAdminCall() public {
         vm.roll(299);
         _swap(true, -int256(1 ether));
-        uint256 beforeOwed = _total(token);
+        uint256 beforeStability = hook.owed(token, 4);
+        uint256 beforeRewards = hook.owed(token, 5);
         vm.roll(300);
         _swap(true, -int256(20 ether));
-        assertEq(_total(token), beforeOwed);
+        assertEq(hook.owed(token, 4), beforeStability);
+        assertGt(hook.owed(token, 5), beforeRewards);
         assertEq(hook.openingEndsAtBlock(), 300);
     }
 
@@ -215,6 +257,31 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         _assertConserved(eth);
     }
 
+    function test_rewardsUseFixedRecipientAndFailedSweepNeverBlocksSwaps() public {
+        _swap(false, -int256(10 ether));
+        uint256 amount = hook.owed(eth, hook.REWARDS());
+        assertGt(amount, 0);
+        assertEq(hook.rewardsRecipient(), rewardsRecipient);
+        vm.expectRevert();
+        hook.sweep(eth, 5);
+        assertEq(hook.owed(eth, hook.REWARDS()), amount);
+        vm.expectRevert(OmertaHookV2.NotRecipient.selector);
+        hook.claim(eth, 5, address(0x1234));
+        vm.prank(rewardsRecipient);
+        hook.claim(eth, 5, address(0x1234));
+        assertEq(address(0x1234).balance, amount);
+        assertEq(hook.owed(eth, hook.REWARDS()), 0);
+        _swap(false, -int256(1 ether));
+        _assertConserved(eth);
+    }
+
+    function test_invalidRewardBucketCannotReadLegacyRecipientArray() public {
+        vm.expectRevert(OmertaHookV2.InvalidRecipient.selector);
+        hook.sweep(eth, 6);
+        vm.expectRevert(OmertaHookV2.InvalidRecipient.selector);
+        hook.claim(eth, 6, address(0x1234));
+    }
+
     function test_buyCannotEraseRecentSellPressure() public {
         _swap(false, -int256(10 ether));
         uint24 pressure = hook.sellPressureTicks();
@@ -227,7 +294,9 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
 
     function test_liquidityChangesAccrueOldDepthBeforeAdoptingNewDepth() public {
         vm.warp(3630);
-        lpRouter.modifyLiquidity(key, ModifyLiquidityParams(-887220, 887220, -int256(uint256(INITIAL_L / 2)), bytes32(0)), "");
+        lpRouter.modifyLiquidity(
+            key, ModifyLiquidityParams(-887220, 887220, -int256(uint256(INITIAL_L / 2)), bytes32(0)), ""
+        );
         vm.warp(3660);
         hook.checkpoint();
         OmertaHookV2.Epoch memory e = hook.latestEpoch();
@@ -275,15 +344,16 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         assertEq(later, int56(int256(tick) * int256(elapsed + 600)));
     }
 
-    function testFuzz_allFeesAreCoveredAndNeverExceedSixPercent(uint96 amountSeed, bool exactOutput) public {
+    function testFuzz_allFeesAreCoveredAndNeverExceedFourPointFivePercent(uint96 amountSeed, bool exactOutput) public {
         uint256 amount = bound(uint256(amountSeed), 1e9, 50 ether);
         BalanceDelta result = _swap(false, exactOutput ? int256(amount) : -int256(amount));
         Currency currency = exactOutput ? token : eth;
         uint256 total = _total(currency);
-        uint256 gross = exactOutput ? uint256(-int256(result.amount1())) - total
-            : uint256(uint128(result.amount0())) + total;
-        assertLe(total, gross * 600 / 10_000);
-        assertEq(total - hook.owed(currency, 4), gross * 500 / 10_000);
+        uint256 gross =
+            exactOutput ? uint256(-int256(result.amount1())) - total : uint256(uint128(result.amount0())) + total;
+        assertLe(total, gross * 450 / 10_000);
+        assertEq(total - hook.owed(currency, 4) - hook.owed(currency, 5), gross * 350 / 10_000);
+        assertEq(hook.owed(currency, 5), gross * 50 / 10_000);
         _assertConserved(currency);
     }
 }
@@ -294,6 +364,7 @@ contract OmertaHookV2InvariantHandler is Test {
     MockOmrMarketV2 public omr;
     PoolKey private _key;
     uint256 public successfulSwaps;
+
     constructor(OmertaHookV2 hook_, PoolSwapTest router_, MockOmrMarketV2 omr_) {
         hook = hook_;
         router = router_;
@@ -302,19 +373,30 @@ contract OmertaHookV2InvariantHandler is Test {
         omr_.approve(address(router_), type(uint256).max);
     }
     receive() external payable {}
+
     function trade(uint64 amountSeed, bool buy, bool exactOutput, uint8 secondsForward) external {
         vm.warp(block.timestamp + secondsForward);
         vm.deal(address(this), 1000 ether);
         omr.mint(address(this), 1000 ether);
         uint256 amount = bound(uint256(amountSeed), 1e9, 0.1 ether);
-        router.swap{value: buy ? 100 ether : 0}(_key, SwapParams(buy, exactOutput ? int256(amount) : -int256(amount),
-            buy ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1), PoolSwapTest.TestSettings(false, false), "");
+        router.swap{value: buy ? 100 ether : 0}(
+            _key,
+            SwapParams(
+                buy,
+                exactOutput ? int256(amount) : -int256(amount),
+                buy ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1
+            ),
+            PoolSwapTest.TestSettings(false, false),
+            ""
+        );
         ++successfulSwaps;
     }
+
     function sweep(uint8 bucket, bool token) external {
         bucket = uint8(bound(bucket, 1, 4)); // fixture's dev deliberately refuses ETH.
         hook.sweep(Currency.wrap(token ? address(omr) : address(0)), bucket);
     }
+
     function checkpoint(uint32 secondsForward) external {
         vm.warp(block.timestamp + bound(secondsForward, 0, 1 days));
         hook.checkpoint();
@@ -323,11 +405,13 @@ contract OmertaHookV2InvariantHandler is Test {
 
 contract OmertaHookV2InvariantTest is OmertaHookV2Fixture {
     OmertaHookV2InvariantHandler internal handler;
+
     function setUp() public override {
         super.setUp();
         handler = new OmertaHookV2InvariantHandler(hook, router, omr);
         targetContract(address(handler));
     }
+
     function invariant_liabilitiesRemainExactlyFundedInBothCurrencies() public view {
         _assertConserved(eth);
         _assertConserved(token);

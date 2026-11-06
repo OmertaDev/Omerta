@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 /// @title IOmrOracle — the price feed OmertaBond's accretion wall reads.
 /// @notice Deliberately the narrowest possible surface. `OmertaBond` needs one number and the time

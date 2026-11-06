@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 /// @notice A custody-backed liquidity floor. A fresh price is a separate requirement.
 interface ILiquidityHealth {

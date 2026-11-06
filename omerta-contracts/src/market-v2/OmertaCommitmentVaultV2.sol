@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
@@ -26,7 +26,8 @@ interface ICommitmentPositionManagerV2 is IPositionManager {
 /// Two distinct fresh observation epochs are required. Gaps, pause transitions, and invalid samples
 /// break accrual. Depth is the smaller ETH-valued inventory on each side of a bounded reference band;
 /// raw liquidity L, one-sided positions, and a single initial snapshot never earn a reward.
-/// Campaign terms are immutable; payment is first-come from available funds at each checkpoint.
+/// Each campaign is one prefunded reward epoch. Checkpoints record uncapped position scores;
+/// after the observation grace period its capped budget is reserved and shared pro rata.
 contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiver {
     using PoolIdLibrary for PoolKey;
 
@@ -37,11 +38,18 @@ contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiv
         uint32 maxLock;
         uint32 maxObservationGap;
         uint24 referenceHalfWidth;
-        uint128 maxDepthWei;
-        uint128 maxRewardPerPosition;
+        uint128 maxEpochDepthWei;
+        uint128 maxRewardPerEpoch;
         uint128 rewardWeiPerEthDay;
     }
-    struct Campaign { CampaignTerms terms; uint256 available; uint256 paidOrOwed; }
+    struct Campaign {
+        CampaignTerms terms;
+        uint256 available;
+        uint256 paidOrOwed;
+        uint256 totalDepthSeconds;
+        uint256 settlementBudget;
+        bool finalized;
+    }
     struct Commitment {
         address depositor;
         uint64 campaignId;
@@ -54,6 +62,7 @@ contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiv
         uint256 usefulDepthSeconds;
         uint256 rewardCredited;
         bool withdrawn;
+        bool rewardSettled;
     }
 
     ICommitmentPositionManagerV2 public immutable positionManager;
@@ -89,6 +98,8 @@ contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiv
     event RewardClaimed(address indexed depositor, address indexed recipient, uint256 amount);
     event PauseChanged(bool paused, uint64 generation);
     event UnusedBudgetRecovered(uint64 indexed campaignId, address indexed recipient, uint256 amount);
+    event CampaignFinalized(uint64 indexed campaignId, uint256 depthSeconds, uint256 reservedReward);
+    event RewardSettled(uint256 indexed tokenId, address indexed depositor, uint256 amount);
 
     constructor(address safe, ICommitmentPositionManagerV2 manager, IOmertaMarketStateV2 state,
         PoolKey memory canonicalKey, uint32 maxAge, uint128 minLiquidity) Ownable(safe)
@@ -113,10 +124,10 @@ contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiv
             || terms.minLock < 1 hours || terms.maxLock < terms.minLock || terms.maxLock > 365 days
             || terms.maxObservationGap == 0 || terms.maxObservationGap > 1 days
             || terms.referenceHalfWidth == 0 || terms.referenceHalfWidth > 50_000
-            || terms.maxDepthWei == 0 || terms.maxRewardPerPosition == 0 || terms.rewardWeiPerEthDay == 0
+            || terms.maxEpochDepthWei == 0 || terms.maxRewardPerEpoch == 0 || terms.rewardWeiPerEthDay == 0
             || msg.value == 0) revert InvalidConfiguration();
         id = ++campaignCount;
-        _campaigns[id] = Campaign(terms, msg.value, 0);
+        _campaigns[id] = Campaign(terms, msg.value, 0, 0, 0, false);
         availableBudget += msg.value;
         emit CampaignCreated(id, msg.value);
     }
@@ -195,12 +206,55 @@ contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiv
         emit RewardClaimed(msg.sender, recipient, amount);
     }
 
-    /// @dev Accrual ends at campaign expiry. Grace covers the last valid observation window.
+    function settlementClosesAt(uint64 id) public view returns (uint256) {
+        CampaignTerms memory t = _campaigns[id].terms;
+        if (t.endsAt == 0) revert InvalidCampaign();
+        return uint256(t.endsAt) + t.maxObservationGap + maxObservationAge;
+    }
+
+    /// @notice Reserves all earned epoch liabilities before any claim or unused-budget recovery.
+    function finalizeCampaign(uint64 id) external nonReentrant {
+        _finalizeCampaign(id);
+    }
+
+    /// @notice Anyone can settle, including after NFT exit; only the original depositor is credited.
+    function settleReward(uint256 tokenId) external nonReentrant {
+        Commitment storage p = commitments[tokenId];
+        if (p.depositor == address(0) || p.rewardSettled) revert InvalidPosition();
+        _finalizeCampaign(p.campaignId);
+        Campaign storage c = _campaigns[p.campaignId];
+        uint256 amount = c.totalDepthSeconds == 0 ? 0
+            : FullMath.mulDiv(c.settlementBudget, p.usefulDepthSeconds, c.totalDepthSeconds);
+        p.rewardSettled = true;
+        p.rewardCredited = amount;
+        rewards[p.depositor] += amount;
+        emit RewardSettled(tokenId, p.depositor, amount);
+    }
+
+    function _finalizeCampaign(uint64 id) internal {
+        Campaign storage c = _campaigns[id];
+        if (block.timestamp <= settlementClosesAt(id)) revert InvalidCampaign();
+        if (c.finalized) return;
+        uint256 cappedScore = uint256(c.terms.maxEpochDepthWei) * (c.terms.endsAt - c.terms.startsAt);
+        if (cappedScore > c.totalDepthSeconds) cappedScore = c.totalDepthSeconds;
+        uint256 amount = FullMath.mulDiv(cappedScore, c.terms.rewardWeiPerEthDay, 1 ether * 1 days);
+        if (amount > c.terms.maxRewardPerEpoch) amount = c.terms.maxRewardPerEpoch;
+        if (amount > c.available) amount = c.available;
+        c.finalized = true;
+        c.settlementBudget = amount;
+        c.available -= amount;
+        c.paidOrOwed += amount;
+        availableBudget -= amount;
+        rewardLiability += amount;
+        emit CampaignFinalized(id, c.totalDepthSeconds, amount);
+    }
+
+    /// @dev Grace covers both the final paired observation gap and its maximum publication age.
     /// Only funds which never became an entitlement can be recovered, never any NFT.
     function recoverUnusedBudget(uint64 id, address payable recipient) external onlyOwner nonReentrant {
         Campaign storage c = _campaigns[id];
-        if (c.terms.endsAt == 0 || block.timestamp <= uint256(c.terms.endsAt) + maxObservationAge
-            || recipient == address(0) || recipient == address(this)) revert InvalidCampaign();
+        if (recipient == address(0) || recipient == address(this)) revert InvalidCampaign();
+        _finalizeCampaign(id);
         uint256 amount = c.available;
         c.available = 0;
         availableBudget -= amount;
@@ -228,6 +282,8 @@ contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiv
     }
 
     function _checkpoint(uint256 tokenId, Commitment storage p) internal {
+        Campaign storage c = _campaigns[p.campaignId];
+        if (c.finalized || block.timestamp > settlementClosesAt(p.campaignId)) revert InvalidCampaign();
         IOmertaMarketStateV2.Snapshot memory s;
         try marketState.snapshot() returns (IOmertaMarketStateV2.Snapshot memory result) { s = result; }
         catch { _breakAnchor(tokenId, p); return; }
@@ -235,33 +291,21 @@ contract OmertaCommitmentVaultV2 is Ownable2Step, ReentrancyGuard, IERC721Receiv
             || s.observedAt > block.timestamp || block.timestamp - s.observedAt > maxObservationAge
             || s.observedAt < p.depositedAt) { _breakAnchor(tokenId, p); return; }
         if (s.epoch <= p.lastEpoch || s.observedAt <= p.lastObservedAt) revert InvalidObservation();
-        Campaign storage c = _campaigns[p.campaignId];
         uint128 depth = usefulDepth(tokenId, s, c.terms.referenceHalfWidth);
-        if (depth > c.terms.maxDepthWei) depth = c.terms.maxDepthWei;
         uint256 depthSeconds;
-        uint256 reward;
         if (p.lastObservedAt != 0 && p.generation == pauseGeneration
             && s.observedAt - p.lastObservedAt <= c.terms.maxObservationGap && p.lastObservedAt < p.maturesAt) {
             uint64 until = s.observedAt < p.maturesAt ? s.observedAt : p.maturesAt;
             uint128 minimumDepth = depth < p.lastDepth ? depth : p.lastDepth;
             depthSeconds = uint256(minimumDepth) * (until - p.lastObservedAt);
             p.usefulDepthSeconds += depthSeconds;
-            reward = FullMath.mulDiv(depthSeconds, c.terms.rewardWeiPerEthDay, 1 ether * 1 days);
-            uint256 remainingCap = c.terms.maxRewardPerPosition - p.rewardCredited;
-            if (reward > remainingCap) reward = remainingCap;
-            if (reward > c.available) reward = c.available;
-            p.rewardCredited += reward;
-            c.available -= reward;
-            c.paidOrOwed += reward;
-            availableBudget -= reward;
-            rewardLiability += reward;
-            rewards[p.depositor] += reward;
+            c.totalDepthSeconds += depthSeconds;
         }
         p.lastEpoch = s.epoch;
         p.lastObservedAt = s.observedAt;
         p.lastDepth = depth;
         p.generation = pauseGeneration;
-        emit Checkpointed(tokenId, s.epoch, depthSeconds, reward);
+        emit Checkpointed(tokenId, s.epoch, depthSeconds, 0);
     }
 
     function _breakAnchor(uint256 tokenId, Commitment storage p) internal {

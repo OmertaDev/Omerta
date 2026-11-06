@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "method": "Independent JavaScript BigInt translation of exact library Yul modular/shift expressions versus direct integer arithmetic; this is not EVM execution or a full vendor audit",
+  "seed": "0x5",
+  "assertions": 31022,
+  "randomCases": 10000,
+  "mulDivValidCases": 7560,
+  "mulDivOverflowCases": 2440,
+  "allOneHotBitPositions": 256,
+  "sourceSha256": {
+    "omerta-contracts/lib/openzeppelin-contracts/contracts/utils/math/Math.sol": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457",
+    "omerta-contracts/lib/v4-core/src/libraries/BitMath.sol": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4"
+  },
+  "forgeInvoked": false
+}

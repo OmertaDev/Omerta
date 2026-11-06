@@ -1,0 +1,143 @@
+{
+  "sourceRevision": "6e449acedc29488286c08c67061a6becabb15a9e",
+  "predecessorRevision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
+  "predecessorTree": "2fb48b34fdb9fab7f630844205d035b29ee063c0",
+  "phase": "exact historical source transfer only; no runtime, native, financial or deployment qualification",
+  "sourceOnly": true,
+  "runtime": false,
+  "native": false,
+  "files": {
+    "src/genesisauction.js": {
+      "currentSha256": "b29b7760a29cc3f7ddebbc615d21b38861fc8c3b70da6d957f6e77400a77e701",
+      "currentBlob": "d13c9f06b5d6c682aa88d626db29c4dabb140680",
+      "currentBytes": 29363,
+      "authoredSha256": "b29b7760a29cc3f7ddebbc615d21b38861fc8c3b70da6d957f6e77400a77e701",
+      "authoredBlob": "d13c9f06b5d6c682aa88d626db29c4dabb140680",
+      "authoredBytes": 29363,
+      "baselineSha256": "3ead50a4f76140ed6ec8bb0340b39c97e22ef15c3c6adc979493f784051f51bb",
+      "baselineBlob": "da80952587b6a175d5b8fe981a407e6ceadeb9fe",
+      "baselineBytes": 27146
+    },
+    "public/genesis-deploy-client.js": {
+      "currentSha256": "e7ec082a630554358b4b6a70888e9bd1281b0de99735ab0e7950c8cdbb879ad8",
+      "currentBlob": "6290e5c20937966a8e4e32f8439c9190ceede478",
+      "currentBytes": 37739,
+      "authoredSha256": "e7ec082a630554358b4b6a70888e9bd1281b0de99735ab0e7950c8cdbb879ad8",
+      "authoredBlob": "6290e5c20937966a8e4e32f8439c9190ceede478",
+      "authoredBytes": 37739,
+      "baselineSha256": "052712a9aa70c2b2ed50bf58a6084834b9232538d06e1bec5d0a9e9b6e72d1e2",
+      "baselineBlob": "31c42e41b454fa7d0bd2c16fc6a0c90c3aef0769",
+      "baselineBytes": 35425
+    },
+    "tools/genesis-auction-preflight.js": {
+      "currentSha256": "9288a39bd2e1d85d47caa84b7af14fa513030682b246856b93c8098350561246",
+      "currentBlob": "5ca5cdd16387e9642cd0a8610ec7a71132811866",
+      "currentBytes": 22260,
+      "authoredSha256": "9288a39bd2e1d85d47caa84b7af14fa513030682b246856b93c8098350561246",
+      "authoredBlob": "5ca5cdd16387e9642cd0a8610ec7a71132811866",
+      "authoredBytes": 22260,
+      "baselineSha256": "8fd4a76cd668fa0bcf93111106d22a70b1910718d978306c7ea68f87698e8234",
+      "baselineBlob": "71aaf32dfccb099f94e12992246e5b9f371faa10",
+      "baselineBytes": 20606
+    },
+    "docs/WIKI.md": {
+      "currentSha256": "778c709c04c533e11032982e41c723957f1256ef18f99b8571ace4e643db6189",
+      "currentBlob": "a9821746937fd4da0e53674fb32025c0a5995c01",
+      "currentBytes": 231561,
+      "authoredSha256": "778c709c04c533e11032982e41c723957f1256ef18f99b8571ace4e643db6189",
+      "authoredBlob": "a9821746937fd4da0e53674fb32025c0a5995c01",
+      "authoredBytes": 231561,
+      "baselineSha256": "ca2492084f566f4f553b5540ab6febc59bd7d2f21a90435aff728b9086d5792b",
+      "baselineBlob": "abea7d2cce25e9b66ac3828be8444ea562b899a0",
+      "baselineBytes": 228278
+    },
+    "public/wiki.html": {
+      "currentSha256": "49b29a952afc08e6e163453927e7683003915387315f536dbe951060d0691105",
+      "currentBlob": "a684d77126a342cd5dd6d2d404b11610d0d2a079",
+      "currentBytes": 251907,
+      "authoredSha256": "49b29a952afc08e6e163453927e7683003915387315f536dbe951060d0691105",
+      "authoredBlob": "a684d77126a342cd5dd6d2d404b11610d0d2a079",
+      "authoredBytes": 251907,
+      "baselineSha256": "73b5ae9618ecde1e9728d3c0a0b0b20cc20eb83dc8f3c7d187b9547f2faf1249",
+      "baselineBlob": "f4794fc48434b6fb425ce92aa96700fe31ea74cd",
+      "baselineBytes": 245711
+    },
+    "public/index.html": {
+      "currentSha256": "3b12d14aa59209466626b7f9cc9fc3d2080379d66cfdda83a15b62edf2e2e534",
+      "currentBlob": "ea48eb922b9668c19d6c3aa0f9530e4cf57e772d",
+      "currentBytes": 1405259,
+      "authoredSha256": "3b12d14aa59209466626b7f9cc9fc3d2080379d66cfdda83a15b62edf2e2e534",
+      "authoredBlob": "ea48eb922b9668c19d6c3aa0f9530e4cf57e772d",
+      "authoredBytes": 1405259,
+      "baselineSha256": "db4cbe6b819543e3fbc0db32cf4352a987d8b6586823df5c33756b2e2a23f969",
+      "baselineBlob": "9542428cbd82fd496ea42c213772b3036541ceb6",
+      "baselineBytes": 1398458
+    },
+    "public/defi.html": {
+      "currentSha256": "1bd88fc2337cfa7c776c82f02cb4777d3f33b9fbbcdc790119bb1a57730c7ba2",
+      "currentBlob": "443a6d4c1fdd393a4a3b29134a939e8adcdebb0d",
+      "currentBytes": 84281,
+      "authoredSha256": "1bd88fc2337cfa7c776c82f02cb4777d3f33b9fbbcdc790119bb1a57730c7ba2",
+      "authoredBlob": "443a6d4c1fdd393a4a3b29134a939e8adcdebb0d",
+      "authoredBytes": 84281,
+      "baselineSha256": "f4292bc44f74d235f6706dcbd93cd4cf9811e162051be03df90dcc01f017ae11",
+      "baselineBlob": "2ea29c93017be1c2e20b7eedb1e569d92170903d",
+      "baselineBytes": 83621
+    },
+    "public/fee-flows.html": {
+      "currentSha256": "42d189e6c800825b5572a1b87412174440a2e08e48eb110a2015ff9c3f6ebd67",
+      "currentBlob": "624beae7563453920c27a54651f4829767b76f07",
+      "currentBytes": 38941,
+      "authoredSha256": "42d189e6c800825b5572a1b87412174440a2e08e48eb110a2015ff9c3f6ebd67",
+      "authoredBlob": "624beae7563453920c27a54651f4829767b76f07",
+      "authoredBytes": 38941,
+      "baselineSha256": "e37fe6b4d4035dae63fc4aa3a8a9e327b9b01def671398acaefd2161f295aebf",
+      "baselineBlob": "f5e94894aacca70a75a2382f9c42882f4cbaa427",
+      "baselineBytes": 38411
+    },
+    "src/server.js": {
+      "currentSha256": "594674b2c15555c1cec21811868281bd2d26202c35a60f451bc45b3e517e2b00",
+      "currentBlob": "a5aebe8a016c18d65f8be0eb375f84f2df50279b",
+      "currentBytes": 307673,
+      "authoredSha256": "594674b2c15555c1cec21811868281bd2d26202c35a60f451bc45b3e517e2b00",
+      "authoredBlob": "a5aebe8a016c18d65f8be0eb375f84f2df50279b",
+      "authoredBytes": 307673,
+      "baselineSha256": "eae571fecd106622365194b2fd862f54635a9488ea9784d660defa292da28b5a",
+      "baselineBlob": "9ac86b5b025e3a40f0142f8adf855471e8a21e77",
+      "baselineBytes": 303757
+    },
+    "package.json": {
+      "currentSha256": "c25139ddc6d46f99ab9060ce02871cb6be1af4a407912272feda6011ad59076e",
+      "currentBlob": "e974da47da54a5500b4605c77e81a55be78bc2fb",
+      "currentBytes": 61440,
+      "authoredSha256": "c25139ddc6d46f99ab9060ce02871cb6be1af4a407912272feda6011ad59076e",
+      "authoredBlob": "e974da47da54a5500b4605c77e81a55be78bc2fb",
+      "authoredBytes": 61440,
+      "baselineSha256": "25a5a2cb4f5c8bc5ce9538495716d60fad3c67e995a2db36daca01505c92e2fc",
+      "baselineBlob": "531e67d793e7758751f1734fe6dd96b7520268d4",
+      "baselineBytes": 59697
+    },
+    "src/worker.js": {
+      "currentSha256": "3c37acd4a4c3b1442278f0915c252097f7b6b93e4d10aebf1cb928bb839aa8c3",
+      "currentBlob": "6b3784a900bfc8be15537411e4bf633d54739253",
+      "currentBytes": 87369,
+      "authoredSha256": "3c37acd4a4c3b1442278f0915c252097f7b6b93e4d10aebf1cb928bb839aa8c3",
+      "authoredBlob": "6b3784a900bfc8be15537411e4bf633d54739253",
+      "authoredBytes": 87369,
+      "baselineSha256": "2a07dc2ac6740ffa9495b08f807d4cae591e0e7c8cc50da3f2746f9b6eaf0329",
+      "baselineBlob": "84be99e513a7a66343f0652a55fdc6d885d8687a",
+      "baselineBytes": 86380
+    },
+    "src/preflight.js": {
+      "currentSha256": "1876a11acc5398f34f08921a3eec716f936f393cf9f97a7b64a989b148181bde",
+      "currentBlob": "670f3760da75509864679284cdefc08b5d4d28c9",
+      "currentBytes": 40479,
+      "authoredSha256": "1876a11acc5398f34f08921a3eec716f936f393cf9f97a7b64a989b148181bde",
+      "authoredBlob": "670f3760da75509864679284cdefc08b5d4d28c9",
+      "authoredBytes": 40479,
+      "baselineSha256": "4901dca23d457a6c0dc56c6ca72371162200235de7287ec449363584f74286ea",
+      "baselineBlob": "ac3ba92249dbcebe7cfde910d2276373b15eb845",
+      "baselineBytes": 40073
+    }
+  }
+}

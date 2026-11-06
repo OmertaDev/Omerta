@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {Test} from "forge-std/Test.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
@@ -90,7 +90,7 @@ abstract contract StabilityV2Fixture is Test {
                 OmertaHookV2.OpeningConfig(0, 0, 0),
                 uint24(600),
                 uint32(60)
-            ),
+            , recipients[2]),
             hookAddress
         );
         hook = OmertaHookV2(payable(hookAddress));

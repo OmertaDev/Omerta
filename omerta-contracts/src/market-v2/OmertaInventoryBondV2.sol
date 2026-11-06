@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -11,6 +11,7 @@ import {PoolId, PoolIdLibrary} from "v4-core/types/PoolId.sol";
 import {Currency} from "v4-core/types/Currency.sol";
 import {StateLibrary} from "v4-core/libraries/StateLibrary.sol";
 import {IOmertaMarketStateV2} from "./IOmertaMarketStateV2.sol";
+import {IOmertaRestrictedOMRV2} from "./IOmertaRestrictedOMRV2.sol";
 
 /// @notice Finite treasury-inventory bonds for large ETH purchases of linearly vested OMR.
 /// @dev There is no mint authority, firm market bid, sellback, callable adapter, or guaranteed
@@ -55,6 +56,7 @@ contract OmertaInventoryBondV2 is ReentrancyGuard {
     error Unauthorized();
     error Paused();
     error InvalidQuote();
+    error InvalidRecipient();
     error InvalidObservation();
     error BudgetExceeded();
     error InsufficientInventory();
@@ -95,7 +97,8 @@ contract OmertaInventoryBondV2 is ReentrancyGuard {
     uint128 public immutable maxOmrPerEpoch;
     uint128 public immutable maxOmrLifetime;
     uint256 public immutable maxOmrPerEth;
-    bool public paused;
+    // Prefunding grants no sale authority; a later Safe action must enable purchases.
+    bool public paused = true;
     uint256 public availableInventory;
     uint256 public outstandingClaims;
     uint256 public proceedsOwed;
@@ -113,8 +116,8 @@ contract OmertaInventoryBondV2 is ReentrancyGuard {
                 || address(c.manager).code.length == 0 || address(c.marketState).code.length == 0
                 || Currency.unwrap(c.key.currency0) != address(0) || Currency.unwrap(c.key.currency1).code.length == 0
                 || address(c.key.hooks).code.length == 0 || c.maxObservationAge == 0 || c.maxObservationAge > 1 days
-                || c.vestingSeconds < 1 days || c.vestingSeconds > 365 days || c.minLiquidity == 0
-                || c.maxSpotDeviationTicks == 0 || c.maxSpotDeviationTicks > 2000 || c.discountBps > 1000
+                || c.vestingSeconds < 30 days || c.vestingSeconds > 365 days || c.minLiquidity == 0
+                || c.maxSpotDeviationTicks == 0 || c.maxSpotDeviationTicks > 2000 || c.discountBps > 50
                 || c.minNativePurchase == 0 || c.minNativePurchase > c.maxNativePurchase
                 || c.maxNativePurchase > c.maxNativePerEpoch || c.maxNativePerEpoch > c.maxNativeLifetime
                 || c.maxOmrPerPurchase == 0 || c.maxOmrPerPurchase > c.maxOmrPerEpoch
@@ -170,6 +173,9 @@ contract OmertaInventoryBondV2 is ReentrancyGuard {
             nonce == bytes32(0) || deadline < block.timestamp || deadline > block.timestamp + 5 minutes
                 || msg.value < minNativePurchase || msg.value > maxNativePurchase || minimumOmr == 0
         ) revert InvalidQuote();
+        // Notes cannot change beneficiary. Reject buyers the token cannot pay before reserving inventory.
+        // EOAs register directly before purchase; this custody module has no wallet-registration authority.
+        if (!IOmertaRestrictedOMRV2(address(omr)).isRecipient(msg.sender)) revert InvalidRecipient();
         IOmertaMarketStateV2.Snapshot memory s = _observation(expectedEpoch);
         id = keccak256(abi.encode(block.chainid, address(this), msg.sender, nonce));
         if (notes[id].beneficiary != address(0)) revert Replay();

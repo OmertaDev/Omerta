@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
 import {OmertaHookV2Fixture} from "./OmertaHookV2.t.sol";
 import {OmertaHookV2} from "../../src/market-v2/OmertaHookV2.sol";

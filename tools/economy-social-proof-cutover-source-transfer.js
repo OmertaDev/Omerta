@@ -4,6 +4,9 @@ import { age21HistoricalInput } from './age21-source-transfer.js';
 // Historical pins remain unchanged; unknown or non-exact bytes pass through.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { marketFeeCopyHistoricalInput } from './market-fee-copy-source-transfer.js';
+import { agePolicyServerHistoricalInput } from './age-policy-source-transfer.js';
+import { genesisHistoricalReaderHistoricalInput } from './genesis-historical-reader-source-transfer.js';
 
 export const ECONOMY_SOCIAL_PROOF_CUTOVER_REVISION = "3d1e7efade73521910494dcfdb66590e70b95140";
 export const ECONOMY_SOCIAL_PROOF_CUTOVER_TREE = "2955723f938e23cf9b813dcc19aa5cc3131e9498";
@@ -599,6 +602,9 @@ export function assertEconomySocialProofCutoverSourceTransfer(file, input) {
 
 export function economySocialProofCutoverHistoricalInput(file, input) {
   input = age21HistoricalInput(file, wikiMediaHistoricalInput(file, input));
+  input = genesisHistoricalReaderHistoricalInput(file, input);
+  input = agePolicyServerHistoricalInput(file, input);
+  input = marketFeeCopyHistoricalInput(file, input);
   if (!Object.hasOwn(ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS, file)) return input;
   const pin = ECONOMY_SOCIAL_PROOF_CUTOVER_DOMAINS[file];
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;

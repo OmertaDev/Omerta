@@ -1,26 +1,27 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.26;
+pragma solidity 0.8.38;
 
-import {GenesisCharacterMock} from "./helpers/GenesisCharacterMock.sol";
 import {Test} from "forge-std/Test.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {OmertaGuardedAuction, IOmertaGenesisClaimGate} from "../src/genesis-auction/OmertaGuardedAuction.sol";
 import {AuctionParameters} from "../src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol";
 
 contract GuardedAuctionToken is ERC20 {
+    mapping(address => bool) public isRecipient;
     constructor() ERC20("OMR", "OMR") {}
     function mint(address to, uint256 amount) external { _mint(to, amount); }
-    function burn(address from, uint256 amount) external { _burn(from, amount); }
+    function setRecipient(address owner, bool allowed) external { isRecipient[owner] = allowed; }
 }
 contract AuctionClaimGateMock is IOmertaGenesisClaimGate {
     bool public playerClaimsOpen;
+    bool public genesisBidsOpen = true;
+    function setBidsOpen(bool value) external { genesisBidsOpen = value; }
     function setOpen(bool value) external { playerClaimsOpen = value; }
     function sweep(OmertaGuardedAuction auction) external { auction.sweepCurrency(); }
     receive() external payable {}
 }
 
 contract OmertaGuardedAuctionTest is Test {
-    GenesisCharacterMock characterNft;
     OmertaGuardedAuction auction;
     AuctionClaimGateMock gate;
     GuardedAuctionToken token;
@@ -32,11 +33,10 @@ contract OmertaGuardedAuctionTest is Test {
             abi.encodePacked(uint24(1_000_000), uint40(10)));
     }
     function setUp() public {
-        characterNft = new GenesisCharacterMock();
-        characterNft.mint(alice);
-        token = new GuardedAuctionToken(); token.mint(address(this),2000 ether); gate = new AuctionClaimGateMock();
-        auction = new OmertaGuardedAuction(address(token), 1000 ether, parameters(address(gate)), gate, characterNft);
-        token.transfer(address(auction),1000 ether); auction.onTokensReceived();
+        token = new GuardedAuctionToken(); gate = new AuctionClaimGateMock();
+        auction = new OmertaGuardedAuction(address(token), 1000 ether, parameters(address(gate)), gate);
+        token.mint(address(auction), 1000 ether); auction.onTokensReceived();
+        token.setRecipient(alice, true);
         vm.deal(alice, 10 ether);
     }
     function completedBid() internal returns (uint256 id) {
@@ -77,10 +77,9 @@ contract OmertaGuardedAuctionTest is Test {
     }
     function testUngradulatedAuctionRefundUnaffectedByClaimGate() public {
         AuctionParameters memory p = parameters(address(gate)); p.requiredCurrencyRaised = 100 ether;
-        OmertaGuardedAuction failed = new OmertaGuardedAuction(address(token), 1000 ether, p, gate, characterNft);
-        token.transfer(address(failed),1000 ether); failed.onTokensReceived(); vm.roll(10);
+        OmertaGuardedAuction failed = new OmertaGuardedAuction(address(token), 1000 ether, p, gate);
+        token.mint(address(failed), 1000 ether); failed.onTokensReceived(); vm.roll(10);
         vm.prank(alice); uint256 id = failed.submitBid{value: 1 ether}(Q96, uint128(1 ether), alice, bytes(""));
-        vm.prank(alice); characterNft.transferFrom(alice, address(0xDEAD), 1);
         vm.roll(20); failed.checkpoint(); assertFalse(failed.isGraduated());
         uint256 beforeRefund = alice.balance; failed.exitBid(id);
         assertEq(alice.balance, beforeRefund + 1 ether);
@@ -88,6 +87,28 @@ contract OmertaGuardedAuctionTest is Test {
     function testRejectWrongGateConfiguration() public {
         AuctionParameters memory p = parameters(address(1));
         vm.expectRevert(OmertaGuardedAuction.InvalidLaunchGate.selector);
-        new OmertaGuardedAuction(address(token), 1000 ether, p, gate, characterNft);
+        new OmertaGuardedAuction(address(token), 1000 ether, p, gate);
+    }
+
+    function testBothBidOverloadsRejectUnsupportedOwnersWithoutAcceptingPayment() public {
+        vm.roll(10);
+        address unsupported = address(0xBAD);
+        uint256 floor = auction.floorPrice();
+        vm.startPrank(alice);
+        vm.expectRevert(OmertaGuardedAuction.UnsupportedBidOwner.selector);
+        auction.submitBid{value: 1 ether}(Q96, uint128(1 ether), unsupported, bytes(""));
+        vm.expectRevert(OmertaGuardedAuction.UnsupportedBidOwner.selector);
+        auction.submitBid{value: 1 ether}(Q96, uint128(1 ether), unsupported, floor, bytes(""));
+        vm.stopPrank();
+        assertEq(alice.balance, 10 ether);
+        assertEq(address(auction).balance, 0);
+    }
+
+    function testDirectInventoryNotificationCannotBypassLaunchReadiness() public {
+        vm.roll(10); gate.setBidsOpen(false);
+        vm.prank(alice);
+        vm.expectRevert(OmertaGuardedAuction.LaunchBidsClosed.selector);
+        auction.submitBid{value: 1 ether}(Q96, uint128(1 ether), alice, bytes(""));
+        assertEq(alice.balance, 10 ether);
     }
 }

@@ -6,7 +6,7 @@
 #
 #   chmod +x run-forge-test.sh && ./run-forge-test.sh
 #
-# Pins: solc 0.8.26 (foundry.toml), OpenZeppelin v5.6.1 (the API the contracts target),
+# Pins: solc 0.8.38 (foundry.toml), OpenZeppelin v5.6.1 (the API the contracts target),
 # forge-std v1.9.6 (Test.sol), and the exact v4 periphery/Permit2 revisions below.
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -41,12 +41,12 @@ fetch_pinned() {
   [ "$(git -C "$destination" rev-parse HEAD)" = "$revision" ] || {
     echo "Dependency revision mismatch: $destination" >&2; exit 1;
   }
-  git -C "$destination" diff --quiet HEAD -- || {
-    echo "Dependency has modified tracked files: $destination" >&2; exit 1;
-  }
+  git -C "$destination" diff --quiet HEAD -- \
+    || node ../tools/solidity-dependency-pragmas.js --verify-repository "$destination"
 }
 fetch_pinned lib/v4-periphery https://github.com/Uniswap/v4-periphery ad04c9f24a170accf5ea1b2836bbafd514537ca6
 fetch_pinned lib/permit2 https://github.com/Uniswap/permit2 cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
+node ../tools/solidity-dependency-pragmas.js
 
 # 3. Build + test -------------------------------------------------------------------
 echo "▸ forge build" && forge build

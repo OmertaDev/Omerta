@@ -4,7 +4,7 @@ out = "out"
 libs = ["lib"]
 # Freeze compiler metadata across local and CI checkouts, including optional node_modules.
 auto_detect_remappings = false
-solc_version = "0.8.26"
+solc_version = "0.8.38"
 optimizer = true
 optimizer_runs = 800
 evm_version = "cancun"
@@ -17,24 +17,24 @@ additional_compiler_profiles = [
   { name = "constellation-via-ir", via_ir = true, optimizer = true, optimizer_runs = 800, evm_version = "cancun" },
 ]
 compilation_restrictions = [
-  # Keep the storage-compatible manager on the core's non-IR profile: solc 0.8.26
+  # Keep the storage-compatible manager on the core's non-IR profile: solc 0.8.38
   # hits a Pool.swap Yul stack error when compiling the manager through IR.
-  { paths = "src/market-v2/core/OmertaPoolManagerV2.sol", version = "=0.8.26", via_ir = false, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/market-v2/Omerta*.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "test/market-v2/*.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/ProtocolLiquidityVault.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "test/ProtocolLiquidityVault.t.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "lib/v4-periphery/src/PositionManager.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/RwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/interfaces/IRwaHealthOverlay.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/AcquisitionConstellationFactory.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/AcquisitionAuthority.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/AcquisitionVaultCore.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/PreVoteBudgetBook.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/AcquisitionIntentExecution.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/AcquisitionReconciliation.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/interfaces/IAcquisitionAuthorityV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
-  { paths = "src/interfaces/IAcquisitionIntentExecutionV2.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/market-v2/core/OmertaPoolManagerV2.sol", version = "=0.8.38", via_ir = false, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/market-v2/Omerta*.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "test/market-v2/*.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/ProtocolLiquidityVault.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "test/ProtocolLiquidityVault.t.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "lib/v4-periphery/src/PositionManager.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/RwaHealthOverlay.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IRwaHealthOverlay.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionConstellationFactory.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionAuthority.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionVaultCore.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/PreVoteBudgetBook.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionIntentExecution.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/AcquisitionReconciliation.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IAcquisitionAuthorityV2.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/interfaces/IAcquisitionIntentExecutionV2.sol", version = "=0.8.38", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
 ]
 # The artifact-reading tests (Task3A/3B read the compiled ABI back out of `out/`) are allowed exactly
 # these two paths. THE TRAP: `forge test --out <anywhere-else>` — the obvious way to run a second
