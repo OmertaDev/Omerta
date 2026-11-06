@@ -5,7 +5,7 @@ import { recoverySource } from './ci-deed-recovery-source-data.js';
 
 const sha = value => createHash('sha256').update(value).digest('hex');
 const blob = value => createHash('sha1').update('blob ' + Buffer.byteLength(value) + '\0').update(value).digest('hex');
-const expectedDigest = '4cb54578868ae4310862c0acb48be89c4b6541cda975cb034cd393a7b821953c';
+const expectedDigest = '7d3b386dfefd3ad9aa4e465790241cd6cd94989a8586eb3f3691b6df2faacc77';
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const CI_DEED_RECOVERY_SOURCE = freeze(recoverySource);
 function definition() {
