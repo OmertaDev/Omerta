@@ -1,11 +1,12 @@
 // Qualify actual redesigned bytes independently of the historical readers they preserve.
 import { BUSINESS_DESK_COMBINED_PROFILES, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
-import { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
+import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,
   noirUiHistoricalInput } from '../tools/noir-ui-source-transfer.js';
@@ -65,7 +66,23 @@ for (const file of NOIR_UI_SOURCE_FILES) {
   assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
   const combined = combinedEconomicDeedPin.noirFiles[file];
   if (combined) {
-    const actual = lf(integratedEconomicParentInput(file, rawPhysical, 'economic'));
+    // Actual HEAD, index and whole physical bytes qualified above; project only after that admission.
+    const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;
+    const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
+    assert.equal(currentEntry, view ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file : acceptedEntry,
+      'Current Root mode/blob qualifies before its accepted integration comparison');
+    const acceptedPhysical = contractReleaseDeskInput(file, rawPhysical);
+    const acceptedText = git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file);
+    assert(acceptedPhysical === acceptedText || acceptedPhysical === acceptedText.replaceAll('\n', '\r\n'),
+      'Complete accepted integration source qualifies after actual Root admission');
+    if (view) {
+      assert.equal(view.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);
+      assert.equal(acceptedEntry, view.pin.mode + ' blob ' + view.pin.blob + '\t' + file);
+    }
+    assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),
+      'Accepted mode/blob matches the frozen integration before its economic parent comparison');
+    assert.equal(acceptedText, git('show', integratedEconomicSource.revision + ':' + file));
+    const actual = lf(integratedEconomicParentInput(file, acceptedPhysical, 'economic'));
     assert.equal(actual, git('show', `${combinedEconomicDeedPin.source}:${file}`));
     assert.equal(sha(actual), combined.current.sha256);
     assert.equal(sha(committed), combined.baseline.sha256);
