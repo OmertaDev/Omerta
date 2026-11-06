@@ -12,6 +12,7 @@ assert.deepEqual(process.argv.slice(2), [], 'Bare complete source-only proof req
 const domains = [
   '.github/workflows/ci.yml', 'package.json', 'public/index.html', 'test/deed-discovery-ui.js', 'test/gates.js',
   'test/businessdesk-combined-source-compatibility.js', 'test/businessdesk-noir-source-compatibility.js',
+  'test/businessdesk-native-provenance.js',
   'test/economy-deed-merge-source-compatibility.js', 'test/wiki-media-source-transfer.js',
   'test/deed-allocation-source-compatibility.js', 'test/economy-monitor-source-compatibility.js',
   'tools/integrated-economic-parent-source.js', 'tools/combined-economic-deed-source-transfer.js',
@@ -29,7 +30,8 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
 git('merge-base', '--is-ancestor', source.predecessor, source.revision); git('merge-base', '--is-ancestor', source.revision, 'HEAD');
 const changed = git('diff', '--name-only', '--diff-filter=M', '-z', source.predecessor, source.revision).split('\0').filter(file => domains.includes(file));
 assert.deepEqual(Object.keys(source.files).sort(), changed.sort(), 'Every changed file in the explicit comparison scope is present, and nothing else');
-for (const file of ['.github/workflows/ci.yml', 'public/index.html', 'test/deed-discovery-ui.js', 'test/gates.js'])
+for (const file of ['.github/workflows/ci.yml', 'public/index.html', 'test/deed-discovery-ui.js', 'test/gates.js',
+  'test/businessdesk-native-provenance.js'])
   assert(Object.hasOwn(source.files, file), 'Each actual CI/Deed fix is admitted independently');
 let positives = 0, refusals = 0;
 for (const [file, row] of Object.entries(source.files)) {

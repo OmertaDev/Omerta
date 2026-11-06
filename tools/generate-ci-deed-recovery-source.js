@@ -9,6 +9,7 @@ const predecessor = '0ce6ab96a34e6061232980ad60bfdbc94cf98fdb';
 export const CI_DEED_RECOVERY_DOMAINS = Object.freeze([
   '.github/workflows/ci.yml', 'package.json', 'public/index.html', 'test/deed-discovery-ui.js', 'test/gates.js',
   'test/businessdesk-combined-source-compatibility.js', 'test/businessdesk-noir-source-compatibility.js',
+  'test/businessdesk-native-provenance.js',
   'test/economy-deed-merge-source-compatibility.js', 'test/wiki-media-source-transfer.js',
   'test/deed-allocation-source-compatibility.js', 'test/economy-monitor-source-compatibility.js',
   'tools/integrated-economic-parent-source.js', 'tools/combined-economic-deed-source-transfer.js',

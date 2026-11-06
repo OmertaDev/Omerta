@@ -49,6 +49,7 @@ const proofOf = (proof, file, previous, expected) => {
   assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
 };
 let applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;
+let successorRefusals = 0;
 const reject = run => { assert.throws(run); refusals++; };
 for (const [file, desk] of Object.entries(nativeParents.businessPins)) {
   const previous = previousRows.get(file), archivedDesk = archivedDeskRows.get(file), expected = currentRows.get(file);
@@ -114,7 +115,11 @@ const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
 assert.equal(admitted.current.blob, activeRow.blob);
 const parentProof = admitted.deskProvenance ?? admitted;
 proofOf(parentProof, file, previous, expected); assert.deepEqual(parentProof, sample.proof);
-if (activeRow.blob !== expected.blob) reject(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));
+const successorBytesDiffer = activeRow.blob !== expected.blob;
+if (successorBytesDiffer) {
+  assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes));
+  successorRefusals++;
+}
 const otherMode = current.mode === '100644' ? '100755' : '100644';
 for (const [now, anchor, raw] of [
   [current, authored, Buffer.concat([bytes, Buffer.from('\n')])],
@@ -132,5 +137,6 @@ for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../sr
   assert.equal(businessDeskCombinedNativeProvenance(unknown, previous, expected), null);
 }
 assert.equal(refusals, 65, 'All original Business refusal categories are retained.');
-console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,
+assert.equal(successorRefusals, Number(successorBytesDiffer), 'Changed actual successor bytes additionally reject the frozen parent bytes.');
+console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals, successorRefusals,
   authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));
