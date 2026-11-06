@@ -9,8 +9,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
   "reviewedUiRevision": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7",
   "baseRevision": "1aed5b529e891257b2ffb07177c48b34712316e6",
   "baseTree": "916bab6a50cc69b6df9c5d50ef1a0977e27e3870",
-  "sourceRevision": "5be3c5e17a93561fb0e5491fe43a53a9c08ea65e",
-  "sourceTree": "04e326ded64220f6f1195f42cc0051ad131340b1",
+  "sourceRevision": "7d684db191502f033bb7c903d8d16292dcb709d9",
+  "sourceTree": "aa215b622153d0f21ae3a9db90d9d6297cd959ed",
   "historicalManifests": {
     "tools/enterprise-native-ux-b35-inputs.js": {
       "file": "tools/enterprise-native-ux-b35-inputs.js",
@@ -2129,12 +2129,12 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
       "current": {
         "file": "test/deed-allocation-source-compatibility.js",
         "mode": "100644",
-        "blob": "4698a9ef88e39d890ebe73ad3a1f12d5f87d7e20",
-        "sha256": "af230c0917a7b85e33bf1a1e4ef8bf007e8599133ec04e852ec9d9a7d6c740ca",
-        "bytes": 24471,
+        "blob": "c49cd97b48c121b0571a334648e38c051eb653aa",
+        "sha256": "1e2c55674d0ee030bd9bc54bc93ccf8fe80e1b9c6a083fa2c31eec3818d1d230",
+        "bytes": 24508,
         "rawSha256": {
-          "lf": "af230c0917a7b85e33bf1a1e4ef8bf007e8599133ec04e852ec9d9a7d6c740ca",
-          "crlf": "cfca2bc35df383a944a4bc5ae86806da5d851eee99d500ea37997998f7ffb2af"
+          "lf": "1e2c55674d0ee030bd9bc54bc93ccf8fe80e1b9c6a083fa2c31eec3818d1d230",
+          "crlf": "f57dd085ba6bc6732f2881a12c7e139519947c5ae7c51cdc8940198ee551e360"
         }
       },
       "targets": {
@@ -2154,7 +2154,7 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
               "baseline": "// Exact app-source proof only. Historical test text is reconstructed for comparison, never execution.\nimport { businessDeskCombinedHistoricalInput, BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';\nimport { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';\nimport { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';\nimport { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';\nimport crypto from 'node:crypto';\nimport fs from 'node:fs';\n"
             },
             {
-              "current": "  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\\t' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\\t' + file);\n  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, contractReleaseDeskInput(file, rawPhysical), 'main'), 'desk');\n  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,\n    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);\n  const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);\n",
+              "current": "  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\\t' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\\t' + file);\n  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, ciDeedRecoveryHistoricalInput(file, contractReleaseDeskInput(file, rawPhysical)), 'main'), 'desk');\n  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,\n    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);\n  const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);\n",
               "baseline": "  const currentBlob = git('rev-parse', 'HEAD:' + file).trim();\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), '100644 blob ' + currentBlob + '\\t' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), '100644 ' + currentBlob + ' 0\\t' + file);\n  const deskPhysical = businessDeskCombinedHistoricalInput(file, integratedEconomicParentInput(file, ciDeedRecoveryHistoricalInput(file, rawPhysical), 'main'), 'desk');\n  const physical = businessDeskHistoricalInput(file, noirUiHistoricalInput(file,\n    wikiMediaMergeHistoricalInput(file, economyDeedMergeHistoricalInput(file, deskPhysical, 'deed')))), current = lf(physical);\n  const baseline = git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`);\n"
             },
             {
@@ -2960,4 +2960,4 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     }
   }
 });
-export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "86e7f337402154ec95bc504001b200aff44c729d10ea952066d063566a6edc5d";
+export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "2817cdfaed9a99285f946ee2a0cba3ccf812e7b7ebb93ccb82276dcd35de4950";
