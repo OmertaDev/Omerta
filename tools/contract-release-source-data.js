@@ -9,8 +9,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
   "reviewedUiRevision": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7",
   "baseRevision": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a",
   "baseTree": "b45024815077a564ecb48eb35e4835b830d44c2f",
-  "sourceRevision": "38a92ea4504fdf87e59c8e6d88089b72e4921253",
-  "sourceTree": "f5f217b3560c38450c53eb1a0ce5847c47a81aaf",
+  "sourceRevision": "8653a4ef119bcad564f50ec332d2bd648377e6ac",
+  "sourceTree": "b717d01d68b0216fc6df1a42b7811c1e3350a41a",
   "historicalManifests": {
     "tools/enterprise-native-ux-b35-inputs.js": {
       "file": "tools/enterprise-native-ux-b35-inputs.js",
@@ -561,8 +561,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/generate-contract-release-source-transfer.js": {
       "file": "tools/generate-contract-release-source-transfer.js",
       "mode": "100644",
-      "blob": "95b5c2084a78b021ed3d888a7fbd97cc8277a76c",
-      "sha256": "47a2933616ee2ede96500a2dcd3590b89cbe145e7ab02983c947f3487918cdfa"
+      "blob": "db9d71f46ffe83ffd2edde2cde7ef410a52cd67e",
+      "sha256": "5b973d8495b4af27132d18bc8f4e2fbd9d0ba4727c8cfd9c9fb213754108b28d"
     },
     "test/contract-release-source-compatibility.js": {
       "file": "test/contract-release-source-compatibility.js",
@@ -627,8 +627,8 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     "tools/native-eth-source-transfer.json": {
       "file": "tools/native-eth-source-transfer.json",
       "mode": "100644",
-      "blob": "575c191d1682fc40ca9f4f2113cd8cbeb5a6c116",
-      "sha256": "89ab78b78b4a0c9c1dd34838c1f49a1279d7a41249e7cc718a258cef7cd5069c"
+      "blob": "96610afc413b031daf71711baa8f269037b28488",
+      "sha256": "71406513088c0e4896d42a0bbe79cd5ea60ac450d8356f702b520f9f1caa69dd"
     }
   },
   "sourceViews": {
@@ -2338,6 +2338,39 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
               "baseline": "  fs.readFileSync = fixtureRead;\n  fs.promises.readFile = async (candidate, options) => {\n    const file = relative(candidate);\n    return file?.startsWith('src/') || file?.startsWith('data/') || file === 'schema.sql' ? fixtureRead(candidate, options) : originalPromiseRead(candidate, options);\n  };\n  syncBuiltinESMExports();\n  try {\n"
             }
           ]
+        },
+        "fee": {
+          "revision": "d70c17d2cd9eb613e8695caf8c6dfc0b60a64a9e",
+          "pin": {
+            "file": "test/lib/rc1-historical-source-fixture.js",
+            "mode": "100644",
+            "blob": "2619c5cdfd7dc5eb4c36cf311593d98141d83df3",
+            "sha256": "45948e148264e1941ff1d91c5b5a3dc27bbbc880cd6c1108f9cfcd966fd234c7",
+            "bytes": 45295
+          },
+          "contextLines": 3,
+          "inverses": [
+            {
+              "current": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';\nimport {ENTERPRISE_NATIVE_RELEASE_INPUTS} from '../../tools/enterprise-native-inputs.js';\nimport {combinedEconomicDeedPin} from '../../tools/combined-economic-deed-source-transfer.js';\n// Closed pure-control fixtures. Historical source execution never admits the current release.\nimport {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';\nimport { economyReleaseSource } from '../../tools/economy-release-composition.js';\n",
+              "baseline": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';\nimport {ENTERPRISE_NATIVE_RELEASE_INPUTS} from '../../tools/enterprise-native-inputs.js';\n// Closed pure-control fixtures. Historical source execution never admits the current release.\nimport {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';\nimport { economyReleaseSource } from '../../tools/economy-release-composition.js';\n"
+            },
+            {
+              "current": "  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js', 'src/verify.js',\n  'src/wire.js',\n]);\nconst economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n  'test/rc1-world-car-melt-witness.js', 'test/rc1-npc-car-acquisition.js',\n",
+              "baseline": "  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js', 'src/verify.js',\n  'src/wire.js',\n]);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n  'test/rc1-world-car-melt-witness.js', 'test/rc1-npc-car-acquisition.js',\n"
+            },
+            {
+              "current": "  assert.equal(String(authored), current, 'Combined enterprise current bytes differ from authored revision: ' + file);\n  return String(expected);\n}\nfunction economicReceiptHistoricalInput(file, input, expected) {\n  if (!economicReceiptHistoricalFiles.includes(file)) return input;\n  const raw = uniformHistoricalInput(file, input), current = canonical(raw);\n  const row = combinedEconomicDeedPin.nativeFiles[file];\n  // This table binds source identities only. The frozen fixture independently selects its body.\n  assert(row, 'Reviewed economic receipt identities required: ' + file);\n  assert.equal(row.baseline.sha256, sha256(expected), 'Economic receipt predecessor differs from frozen release: ' + file);\n  assert.equal(row.baseline.blob, blobHash(expected), 'Economic receipt predecessor blob changed: ' + file);\n  if (sha256(current) !== row.current.sha256) return raw;\n  assert.equal(blobHash(Buffer.from(current)), row.current.blob, 'Economic receipt current blob changed: ' + file);\n  assert.equal(Buffer.byteLength(current), row.current.bytes);\n  for (const [revision, pin] of [[combinedEconomicDeedPin.source, row.current], [combinedEconomicDeedPin.predecessor, row.baseline]]) {\n    assert.equal(String(git(['ls-tree', revision, '--', file])).trim(), pin.mode + ' blob ' + pin.blob + '\\t' + file,\n      'Economic receipt revision identity changed: ' + file);\n  }\n  assert.equal(current, String(git(['cat-file', 'blob', row.current.blob])), 'Complete economic receipt authored source changed: ' + file);\n  return String(expected);\n}\nfunction composedHistoricalHelperSource(file, input) {\n  const raw = uniformHistoricalInput(file, input), pin = composedHistoricalHelperPins[file];\n  const current = canonical(raw);\n",
+              "baseline": "  assert.equal(String(authored), current, 'Combined enterprise current bytes differ from authored revision: ' + file);\n  return String(expected);\n}\nfunction composedHistoricalHelperSource(file, input) {\n  const raw = uniformHistoricalInput(file, input), pin = composedHistoricalHelperPins[file];\n  const current = canonical(raw);\n"
+            },
+            {
+              "current": "  assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',\n    'Historical application provenance excludes tool and test domains');\n  const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];\n  const receipts = economicReceiptHistoricalInput(file, input, expected);\n  const combined = enterpriseCombinedHistoricalInput(file, receipts, expected);\n  let witness = marketOverDeedSourceBaseline(file,\n    cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(combined))));\n  if (domain) {\n",
+              "baseline": "  assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',\n    'Historical application provenance excludes tool and test domains');\n  const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];\n  const combined = enterpriseCombinedHistoricalInput(file, input, expected);\n  let witness = marketOverDeedSourceBaseline(file,\n    cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(combined))));\n  if (domain) {\n"
+            },
+            {
+              "current": "      reject(deedCurrent.replace(inverse.current, () => inverse.current + inverse.current));\n    }\n  }\n  for (const file of economicReceiptHistoricalFiles) {\n    const current = canonical(originalRead(path.join(root, file))), frozen = String(blob(file, release));\n    const expected = blob(file, history);\n    assert.notEqual(current, frozen, 'Receipt fixture control exercises the reviewed successor: ' + file);\n    for (const source of [current, frozen]) {\n      for (const supplied of [source, source.replaceAll('\\n', '\\r\\n')]) {\n        assert.deepEqual(currentHistoricalApplicationSource(file, supplied), expected);\n        positives++;\n      }\n      for (const supplied of [source + '\\n// unreviewed\\n', source.slice(1), source.replace(/\\S/, '?'),\n        '\\ufeff' + source, source.replace('\\n', '\\r\\n'), source.replace('\\n', '\\r')]) {\n        assert.throws(() => currentHistoricalApplicationSource(file, supplied));\n        refusals++;\n      }\n    }\n  }\n  assert.throws(() => currentHistoricalApplicationSource('src/store.js', String(originalRead(path.join(root, 'src/router.js')))));\n  refusals++;\n  const admittedCombinedFiles = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements\n    .filter(row => release.has(row.file) && history.has(row.file) && release.get(row.file) === row.before.blob\n      && (row.file.startsWith('src/') || row.file.startsWith('data/') || row.file === 'schema.sql'))\n",
+              "baseline": "      reject(deedCurrent.replace(inverse.current, () => inverse.current + inverse.current));\n    }\n  }\n  const admittedCombinedFiles = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements\n    .filter(row => release.has(row.file) && history.has(row.file) && release.get(row.file) === row.before.blob\n      && (row.file.startsWith('src/') || row.file.startsWith('data/') || row.file === 'schema.sql'))\n"
+            }
+          ]
         }
       }
     },
@@ -2867,4 +2900,4 @@ export const CONTRACT_RELEASE_SOURCE_DATA = freeze({
     }
   }
 });
-export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "3665f9c11910c740b7122db480af4898e4adda63d5298651d203e2c7af4f789c";
+export const CONTRACT_RELEASE_SOURCE_DATA_SHA256 = "8033dd37a75b1a18e068d70504b8de7b6ff842e6cc4748d9532e7ccea812d58a";
