@@ -79,8 +79,8 @@ export const CONTRACT_RELEASE_MOBILE_ESCAPE_RESOLUTION = Object.freeze({
 // Exact source-composition checkpoint for the accepted main integration. This
 // authorizes only these complete postimages, never a caller-supplied product pin.
 export const CONTRACT_RELEASE_MAIN_RESOLUTION = Object.freeze({
-  revision: '4c7393a3b77e8081408695726cf168ad8e9d3e97',
-  tree: '37f15ddb7584c09307272959f243594886d45d1d',
+  revision: '863d990b33c2d02bb2c6e2e886bcd7ba88c8c2cc',
+  tree: '2c43cecd3713a5e6deecdfbca973da049a8a1bc8',
   baseRevision: 'aeae575a9a6a9c874840f0a4481d11cc303b9d0a',
   baseTree: 'b45024815077a564ecb48eb35e4835b830d44c2f',
   files: Object.freeze(['MARKETING-POSTS.md', 'SPEC.md', 'public/defi.html',
