@@ -1,3 +1,4 @@
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Exact source/control proofs only. Runtime and native tests execute physical current bytes.
@@ -48,9 +49,11 @@ function readMonitorSource(file) {
   assert.equal(entry, expectedEntry, 'Actual Monitor source has its independently qualified current identity');
   const accepted = contractReleaseDeskInput(file, actual);
   const acceptedEntry = view ? view.pin.mode + ' blob ' + view.pin.blob + '\t' + file : entry;
-  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted Monitor source mode/blob matches the reviewed integration');
-  assert.equal(accepted.replaceAll('\r\n','\n'), git('show', integratedEconomicSource.revision + ':' + file), 'Complete reviewed integration source before Monitor comparison');
-  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, accepted, 'monitor'), 'monitor');
+  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
+  const comparison = ciDeedRecoveryHistoricalInput(file, accepted);
+  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The exact CI predecessor mode/blob matches the reviewed Monitor integration');
+  assert.equal(comparison.replaceAll('\r\n','\n'), git('show', integratedEconomicSource.revision + ':' + file), 'Complete frozen CI predecessor source before Monitor comparison');
+  return economyDeedMergeHistoricalInput(file, businessDeskCombinedHistoricalInput(file, comparison, 'monitor'), 'monitor');
 }
 
 const inverseHunks = diff => {

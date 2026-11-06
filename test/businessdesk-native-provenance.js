@@ -51,7 +51,7 @@ const proofOf = (proof, file, previous, expected) => {
   assert.equal(proof.nativeAdmission, false); assert.equal(proof.priorResultsTransferred, false);
 };
 let applicable = 0, refusals = 0, refinedApplicable = 0, neutralAdditions = 0, sample;
-let activeCloneRefusals = 0, unsealedAdmissionRefusals = 0, acceptedParentRefusals = 0;
+let activeCloneRefusals = 0, unsealedAdmissionRefusals = 0, acceptedParentRefusals = 0, successorRefusals = 0;
 const reject = run => { assert.throws(run); refusals++; };
 const rejectActiveClone = run => { assert.throws(run); activeCloneRefusals++; };
 for (const [file, desk] of Object.entries(nativeParents.businessPins)) {
@@ -111,6 +111,7 @@ const actualSource = activeNative.status === 'SEALED' ? activeNative.authoredRev
 const actualExpected = activeNative.status === 'SEALED' ? activeNative.files.find(row => row.file === file) : expected;
 const current = record('HEAD', file), authored = record(actualSource, file);
 const bytes = git('show', `${actualSource}:${file}`);
+const successorBytesDiffer = activeNative.status === 'SEALED' && actualExpected.blob !== expected.blob;
 if (activeNative.status === 'UNSEALED') {
   assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes), /Unsealed current inputs cannot grant native admission/); unsealedAdmissionRefusals++;
 } else {
@@ -128,8 +129,8 @@ if (activeNative.status === 'UNSEALED') {
   assert.deepEqual(deskProof, sample.proof, 'The existing Desk provenance controls remain intact as a historical stage');
   const parentBytes = git('show', currentNative.authoredRevision + ':' + file);
   assert.equal(sha(parentBytes), expected.sha256); assert.equal(blob(parentBytes), expected.blob);
-  if (actualExpected.blob !== expected.blob) {
-    assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes)); acceptedParentRefusals++;
+  if (successorBytesDiffer) {
+    assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, parentBytes)); acceptedParentRefusals++; successorRefusals++;
   }
   assert.equal(admitted.nativeAdmission, false); assert.equal(admitted.priorResultsTransferred, false);
 }
@@ -151,8 +152,9 @@ for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../sr
   assert.equal(businessDeskCombinedNativeProvenance(unknown, previous, expected), null);
 }
 assert.equal(refusals, 65, 'All original Business refusal categories are retained.');
+assert.equal(successorRefusals, Number(successorBytesDiffer), 'Changed actual successor bytes additionally reject the frozen parent bytes.');
 assert.equal(activeCloneRefusals, 1, 'The current declaration clone is independently refused.');
 assert.equal(unsealedAdmissionRefusals, activeNative.status === 'UNSEALED' ? 1 : 0, 'Unsealed admission refusal remains separate from historical categories.');
 console.log(JSON.stringify({ phase: 'BUSINESS_DESK_CURRENT_NATIVE_PROVENANCE_SOURCE_GUARDS', applicable, refusals,
-  activeCloneRefusals, unsealedAdmissionRefusals, acceptedParentRefusals,
+  activeCloneRefusals, unsealedAdmissionRefusals, acceptedParentRefusals, successorRefusals,
   authoredRevision: currentNative.authoredRevision, relation, refinements: { relation: archivedCombinedRelation, source: nativeParents.profiles.desk.revision, applicable: refinedApplicable }, nativeAdmission: false, nativeExecution: false, priorResultsTransferred: false }));

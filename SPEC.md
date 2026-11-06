@@ -2,18 +2,18 @@
 
 A complete inventory of the built system, and an honest technical-debt register.
 
-The census below records the measured integration snapshot `863d990b33c2`. Availability and activation are documented separately in the deployment guides.
+The census below records the combined release source inventory measured on 2026-11-06. Availability and activation are documented separately in the deployment guides.
 
 ---
 
 ## 1. Size, measured
 
-Counts were measured at `863d990b33c2`, before generated release records; they do not identify a deployed revision.
+Counts were measured for the combined release source on 2026-11-06, before generated release records; they do not identify a deployed revision.
 
 | | |
 |---|---|
 | Backend modules | **601** files, **139179** lines (recursive source inventory) |
-| Test suites | **983** files, **208818** lines (recursive source inventory) |
+| Test suites | **984** files, **208818** lines (recursive source inventory) |
 | HTTP routes | **1363** registrations (**1363** unique; 1262 under `/v1`) |
 | Database tables | **582** (`schema.sql`, 9787 lines) |
 | Client | **14652** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |

@@ -1,3 +1,4 @@
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
 // Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.
@@ -38,9 +39,11 @@ function readCombinedPhysical(file) {
   assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');
   const acceptedEntry = outer?.targets.desk
     ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : actualEntry;
-  assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'Accepted integration mode/blob qualifies before its parent comparison');
-  assert.equal(acceptedLf, git('show', integratedEconomicSource.revision + ':' + file), 'The complete accepted integration source remains exact');
-  const main = integratedEconomicParentInput(file, accepted, 'main');
+  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
+  const comparison = ciDeedRecoveryHistoricalInput(file, accepted);
+  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The separately qualified CI predecessor mode/blob matches the reviewed integration');
+  assert.equal(comparison.replaceAll('\r\n', '\n'), git('show', integratedEconomicSource.revision + ':' + file), 'The complete frozen CI predecessor qualifies before its integration comparison');
+  const main = integratedEconomicParentInput(file, comparison, 'main');
   const parent = git('show', combinedSource.sourceRevision + ':' + file);
   assert(main === parent || main === parent.replaceAll('\n', '\r\n'), 'Exact original combined comparison source');
   return main;

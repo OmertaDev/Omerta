@@ -1,3 +1,4 @@
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 // Qualify actual redesigned bytes independently of the historical readers they preserve.
 import { BUSINESS_DESK_COMBINED_PROFILES, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -79,10 +80,12 @@ for (const file of NOIR_UI_SOURCE_FILES) {
       assert.equal(view.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);
       assert.equal(acceptedEntry, view.pin.mode + ' blob ' + view.pin.blob + '\t' + file);
     }
-    assert.equal(acceptedEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),
-      'Accepted mode/blob matches the frozen integration before its economic parent comparison');
-    assert.equal(acceptedText, git('show', integratedEconomicSource.revision + ':' + file));
-    const actual = lf(integratedEconomicParentInput(file, acceptedPhysical, 'economic'));
+    const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
+    const comparisonPhysical = ciDeedRecoveryHistoricalInput(file, acceptedPhysical);
+    assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(),
+      'The separately qualified CI predecessor mode/blob matches the frozen integration before its economic parent comparison');
+    assert.equal(lf(comparisonPhysical), git('show', integratedEconomicSource.revision + ':' + file));
+    const actual = lf(integratedEconomicParentInput(file, comparisonPhysical, 'economic'));
     assert.equal(actual, git('show', `${combinedEconomicDeedPin.source}:${file}`));
     assert.equal(sha(actual), combined.current.sha256);
     assert.equal(sha(committed), combined.baseline.sha256);

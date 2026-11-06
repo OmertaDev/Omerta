@@ -1,3 +1,4 @@
+import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 // Exact app-source proof only. Historical test text is reconstructed for comparison, never execution.
 import { businessDeskCombinedHistoricalInput, BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -199,7 +200,13 @@ function readAcceptedIntegrationPhysical(file) {
   assert.equal(sha256(lf(acceptedPhysical)), sha256(acceptedText));
   assert.equal(blob(lf(acceptedPhysical)), accepted[2]);
   assert.equal(Buffer.byteLength(lf(acceptedPhysical)), Buffer.byteLength(acceptedText));
-  return { raw: acceptedRaw, text: acceptedPhysical, entry: acceptedEntry };
+  const comparisonRaw = ciDeedRecoveryHistoricalInput(file, acceptedRaw);
+  const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
+  const comparisonText = comparisonRaw.toString('utf8');
+  assert(Buffer.isBuffer(comparisonRaw) && Buffer.from(comparisonText).equals(comparisonRaw));
+  assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The exact CI predecessor retains the reviewed integration identity');
+  assert.equal(lf(comparisonText), git('show', integratedEconomicSource.revision + ':' + file), 'Complete frozen CI predecessor qualifies before older Deed comparisons');
+  return { raw: comparisonRaw, text: comparisonText, entry: comparisonEntry };
 }
 
 // The authored merge and the Deed release both stay independently identifiable after later proof commits.

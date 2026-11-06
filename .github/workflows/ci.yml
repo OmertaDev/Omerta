@@ -47,17 +47,11 @@ jobs:
   suites:
     name: suites + sim (pg-mem)
     runs-on: ubuntu-latest
-    # A HANG bound, never a performance budget. The corrected full local npm lifecycle
-    # (pretest + test) completed in 2294.9825838s (38m14.983s) on Windows/Node 24.19.0,
-    # including the new 100-seed x 250-action property lane in 804.7s. The prior hosted
-    # Ubuntu/Node 22 suites job completed in 1295s before that lane existed; timing for the
-    # expanded suite on the hosted runtime is now measured at 45m45s (candidate748).
-    # Hosted run 38199373348 completed npm test in 55m11s, then hit the enclosing 60m
-    # bound before simulations. Run 38194172207 measured another 5m41s after npm test.
-    # Exact c66 pull-request run38757871584 reached75m while still passing the
-    # commercial memory proofs; all commands below remain required. Give the
-    # expanded lifecycle a finite120m hang bound; this is not a measured duration.
-    # Browser and native PostgreSQL bounds and all proof assertions are unchanged.
+    # A HANG bound, never a performance budget. Post-merge run 42131536154 passed
+    # the complete npm lifecycle in 134m45s, then reached this enclosing 150m bound
+    # while the additional worker harness was still passing. Retain this finite
+    # lifecycle bound and run every additional command in its own bounded job.
+    # Both browser jobs require both jobs; all native and browser bounds remain.
     timeout-minutes: 150
     steps:
       # The knowledge-plane gate inventories the full Git lineage (800+ commits) and
@@ -128,6 +122,28 @@ jobs:
           node test/playthrough-truth.js
           node tools/knowledge-test.js
 
+  suite_tail:
+    name: worker harness + economy simulations
+    needs: suites
+    runs-on: ubuntu-latest
+    # Preserve the complete post-lifecycle command order without spending the
+    # 150m lifecycle budget twice. This is a finite hang bound, not a speed target.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+      - name: Compile original funded-work escrow artifact
+        run: npm run build:funded-work-artifact
+
       - name: Invite-only launch admission and Crew allowance
         run: npm run test:invites
 
@@ -156,7 +172,7 @@ jobs:
 
   browser:
     name: City + mobile browser journeys
-    needs: suites
+    needs: [suites, suite_tail]
     runs-on: ubuntu-latest
     # Hosted a03 completed setup/early controls in 149s and the full City chain in 770s.
     # Adding the measured local mobile run (229s) and gateway (8s) projects 19m16s,
@@ -219,7 +235,7 @@ jobs:
 
   ux_browser:
     name: UX desktop and mobile regression
-    needs: suites
+    needs: [suites, suite_tail]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
