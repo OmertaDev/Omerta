@@ -32,6 +32,8 @@ export const ENTERPRISE_UX_QUALIFIED_METADATA_SHA256 = 'b37b8de9a428f2e23a43c33d
 export const ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA = 'tools/businessdesk-deed-native-inputs.js';
 export const ENTERPRISE_UX_BUSINESS_PREDECESSOR_METADATA_SHA256 = '489be592435800a0d760592006327c624a0a043c15c059c858b9b3c5457755ff';
 export const ENTERPRISE_UX_SUPPORT = Object.freeze([
+ "test/ci-deed-recovery-source.js",
+ "tools/generate-ci-deed-recovery-source.js",
  "tools/enterprise-native-ux-b35-inputs.js",
  "tools/enterprise-native-ux-inputs.js",
  "tools/enterprise-native-ux.js",

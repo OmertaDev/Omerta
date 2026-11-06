@@ -15,6 +15,7 @@ const domains = [
   'test/economy-deed-merge-source-compatibility.js', 'test/wiki-media-source-transfer.js',
   'test/deed-allocation-source-compatibility.js', 'test/economy-monitor-source-compatibility.js',
   'tools/integrated-economic-parent-source.js', 'tools/combined-economic-deed-source-transfer.js',
+  'tools/enterprise-native-ux.js',
 ];
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 const sha = text => createHash('sha256').update(text).digest('hex');

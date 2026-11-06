@@ -5,7 +5,7 @@ import { recoverySource } from './ci-deed-recovery-source-data.js';
 
 const sha = value => createHash('sha256').update(value).digest('hex');
 const blob = value => createHash('sha1').update('blob ' + Buffer.byteLength(value) + '\0').update(value).digest('hex');
-const expectedDigest = 'PENDING';
+const expectedDigest = 'a3d8f7bd685128310dd6d899227a21ad8e48756a458e01d745d7dc5bb3f1c88b';
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
 export const CI_DEED_RECOVERY_SOURCE = freeze(recoverySource);
 function definition() {
@@ -61,7 +61,9 @@ export function ciDeedRecoveryHistoricalRecord(file, record) {
   if (!Object.hasOwn(recoverySource.files, file)) return record;
   assert(record && Buffer.isBuffer(record.raw));
   const row = recoverySource.files[file];
-  assert.equal(record.pin.mode, row.current.mode); assert.equal(record.pin.blob, row.current.blob);
+  assert.deepEqual(record.pin, { ...row.current, rawSha256: { lf: row.current.sha256,
+    crlf: sha(record.raw.toString('utf8').replaceAll('\n', '\r\n')) } }, 'Every actual current Git-record field qualifies first');
+  assert.equal(record.content, record.raw.toString('utf8'), 'Complete current record content qualifies first');
   const content = qualifyCiDeedRecoverySource(file, record.raw).baselineText, raw = Buffer.from(content);
   return { raw, content, pin: { ...row.baseline, rawSha256: { lf: sha(raw), crlf: sha(content.replaceAll('\n', '\r\n')) } } };
 }
