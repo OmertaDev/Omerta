@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7cf5bb4cc0c1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `58ec9ba10183`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5274 |
+| Commits in clone | 5276 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-06 — test: reseal native inputs for documented regression inventory |
+| Latest commit | 2026-11-06 — Merge pull request #317 from OmertaDev/codex/complete-pr316-checks |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4158 |
+| OmertaDev | 4159 |
 | crvydev | 647 |
 | Claude | 156 |
-| Codex | 137 |
+| Codex | 138 |
 | github-actions[bot] | 134 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
@@ -31,15 +31,15 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 879 | historical |
-| knowledge/generated/graph-summary.md | 879 | historical |
-| knowledge/generated/graph.json | 879 | historical |
-| knowledge/generated/inventory.md | 879 | historical |
+| knowledge/generated/github-history.md | 880 | historical |
+| knowledge/generated/graph-summary.md | 880 | historical |
+| knowledge/generated/graph.json | 880 | historical |
+| knowledge/generated/inventory.md | 880 | historical |
 | [SPEC.md](../../SPEC.md) | 624 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 502 | yes |
 | [src/server.js](../../src/server.js) | 454 | yes |
-| knowledge/generated/documents.md | 388 | historical |
+| knowledge/generated/documents.md | 389 | historical |
 | [schema.sql](../../schema.sql) | 383 | yes |
 | [package.json](../../package.json) | 360 | yes |
 | knowledge/generated/modules.md | 301 | historical |
