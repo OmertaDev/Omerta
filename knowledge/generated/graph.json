@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+  "sourceRevision": "f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18054,
-    "edges": 72547,
+    "nodes": 18058,
+    "edges": 72559,
     "byNodeType": {
       "Artifact": 7287,
       "Command": 307,
-      "Commit": 5347,
+      "Commit": 5351,
       "Contract": 156,
       "Document": 967,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5860,
-      "CHANGED": 28130,
+      "CHANGED": 28137,
       "CONTAINS": 7308,
       "DECLARES": 307,
       "DEFINED_IN": 1798,
       "DEPENDS_ON": 69,
       "EXECUTES": 1221,
       "HANDLED_BY": 940,
-      "HAS_COMMIT": 5347,
+      "HAS_COMMIT": 5351,
       "IMPLEMENTS": 124,
-      "IMPORTS": 8857,
+      "IMPORTS": 8858,
       "INHERITS": 47,
       "REFERENCES": 3941,
       "REPRESENTS": 2694,
@@ -148229,20 +148229,20 @@
       "path": "test/noir-ui-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8040,
-      "lines": 118,
-      "version": "eb91a37e31305b30",
+      "bytes": 9512,
+      "lines": 135,
+      "version": "70934091ed398e82",
       "text": true,
       "provenance": [
         {
           "file": "test/noir-ui-source-compatibility.js",
           "line": 1,
-          "version": "eb91a37e31305b30"
+          "version": "70934091ed398e82"
         }
       ],
-      "lastChangedAt": "2026-11-05T05:10:37.000Z",
+      "lastChangedAt": "2026-11-06T05:14:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1866a0064e9933a84cb5bd4ced9a80199fd7fc8b"
+      "lastChangedCommit": "efe8607ed1c72fc329cb315b507fe57217fb3120"
     },
     {
       "key": "Artifact:test/npcwar.js",
@@ -159987,20 +159987,20 @@
       "path": "tools/contract-release-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 951227,
-      "lines": 2904,
-      "version": "a0bb8fc3bfd4e50c",
+      "bytes": 954476,
+      "lines": 2908,
+      "version": "fa9bcfc08dfb0541",
       "text": true,
       "provenance": [
         {
           "file": "tools/contract-release-source-data.js",
           "line": 1,
-          "version": "a0bb8fc3bfd4e50c"
+          "version": "fa9bcfc08dfb0541"
         }
       ],
-      "lastChangedAt": "2026-11-06T04:28:48.000Z",
+      "lastChangedAt": "2026-11-06T05:29:14.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d8fa51b1ebe2c4fcbea930263db7d098ce572e4f"
+      "lastChangedCommit": "a819646b65757d54458c2937f4935b5b59da157a"
     },
     {
       "key": "Artifact:tools/contract-release-source-format.js",
@@ -160906,18 +160906,18 @@
       "extension": ".js",
       "bytes": 529867,
       "lines": 14121,
-      "version": "799feca4f553c0cb",
+      "version": "2c0173abcc0caaa0",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-contract-release-inputs.js",
           "line": 1,
-          "version": "799feca4f553c0cb"
+          "version": "2c0173abcc0caaa0"
         }
       ],
-      "lastChangedAt": "2026-11-06T04:36:53.000Z",
+      "lastChangedAt": "2026-11-06T05:38:18.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3c53ece7a8875ea20b5144a3c3f2faef46408c45"
+      "lastChangedCommit": "f3b72f35a6c58deb105cc55628ae1f01ba04fe32"
     },
     {
       "key": "Artifact:tools/enterprise-native-deed-inputs.js",
@@ -202928,6 +202928,22 @@
       ]
     },
     {
+      "key": "Commit:5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "type": "Commit",
+      "id": "5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "label": "Regenerate Knowledge for the corrected release source bindings",
+      "title": "Regenerate Knowledge for the corrected release source bindings",
+      "date": "2026-11-06T04:40:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "provenance": [
+        {
+          "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+        }
+      ]
+    },
+    {
       "key": "Commit:5ea313a1003718c22ca6632f1f5a34086c81a3e7",
       "type": "Commit",
       "id": "5ea313a1003718c22ca6632f1f5a34086c81a3e7",
@@ -228512,6 +228528,22 @@
       ]
     },
     {
+      "key": "Commit:a819646b65757d54458c2937f4935b5b59da157a",
+      "type": "Commit",
+      "id": "a819646b65757d54458c2937f4935b5b59da157a",
+      "label": "Bind the corrected Noir source comparison and current release inputs",
+      "title": "Bind the corrected Noir source comparison and current release inputs",
+      "date": "2026-11-06T05:29:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a819646b65757d54458c2937f4935b5b59da157a",
+      "provenance": [
+        {
+          "commit": "a819646b65757d54458c2937f4935b5b59da157a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a819646b65757d54458c2937f4935b5b59da157a"
+        }
+      ]
+    },
+    {
       "key": "Commit:a828862c4d244d24ebcd8c5f26ead1888d63dd70",
       "type": "Commit",
       "id": "a828862c4d244d24ebcd8c5f26ead1888d63dd70",
@@ -251328,6 +251360,22 @@
       ]
     },
     {
+      "key": "Commit:efe8607ed1c72fc329cb315b507fe57217fb3120",
+      "type": "Commit",
+      "id": "efe8607ed1c72fc329cb315b507fe57217fb3120",
+      "label": "Qualify the integrated Noir UI source before frozen economic comparisons",
+      "title": "Qualify the integrated Noir UI source before frozen economic comparisons",
+      "date": "2026-11-06T05:14:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/efe8607ed1c72fc329cb315b507fe57217fb3120",
+      "provenance": [
+        {
+          "commit": "efe8607ed1c72fc329cb315b507fe57217fb3120",
+          "url": "https://github.com/OmertaDev/Omerta/commit/efe8607ed1c72fc329cb315b507fe57217fb3120"
+        }
+      ]
+    },
+    {
       "key": "Commit:eff0364ea464d92c03826feef663d49827d40108",
       "type": "Commit",
       "id": "eff0364ea464d92c03826feef663d49827d40108",
@@ -252924,6 +252972,22 @@
         {
           "commit": "f3b67b8ced38cdbb34bf44b9d1bf674d7d5be071",
           "url": "https://github.com/OmertaDev/Omerta/commit/f3b67b8ced38cdbb34bf44b9d1bf674d7d5be071"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
+      "type": "Commit",
+      "id": "f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
+      "label": "Seal release inputs after the verified Noir comparison correction",
+      "title": "Seal release inputs after the verified Noir comparison correction",
+      "date": "2026-11-06T05:38:18.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
+      "provenance": [
+        {
+          "commit": "f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f3b72f35a6c58deb105cc55628ae1f01ba04fe32"
         }
       ]
     },
@@ -285912,6 +285976,9 @@
           "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
         },
         {
+          "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+        },
+        {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
         },
         {
@@ -288582,6 +288649,9 @@
           "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
         },
         {
+          "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+        },
+        {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
         },
         {
@@ -291250,6 +291320,9 @@
         },
         {
           "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        },
+        {
+          "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
         },
         {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
@@ -294667,6 +294740,9 @@
         },
         {
           "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        },
+        {
+          "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
         },
         {
           "commit": "5ee68c063ea851c97d273aaa2e426e017c88e677"
@@ -311178,7 +311254,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "3c53ece7a8875ea20b5144a3c3f2faef46408c45",
+      "revision": "f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
       "currentBranch": "codex/contract-launch-fixes",
       "defaultBranch": "main",
       "visibility": "public",
@@ -357551,13 +357627,13 @@
       "type": "TestSuite",
       "id": "test/noir-ui-source-compatibility.js",
       "label": "test/noir-ui-source-compatibility.js",
-      "lines": 118,
-      "version": "eb91a37e31305b30",
+      "lines": 135,
+      "version": "70934091ed398e82",
       "provenance": [
         {
           "file": "test/noir-ui-source-compatibility.js",
           "line": 1,
-          "version": "eb91a37e31305b30"
+          "version": "70934091ed398e82"
         }
       ]
     },
@@ -490381,6 +490457,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5ea313a1003718c22ca6632f1f5a34086c81a3e7",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -551697,6 +551805,14 @@
       "to": "Artifact:test/classic-interface-source-compatibility.js",
       "provenance": {
         "commit": "a8178716f80c9eec41cf309134116222888a0ca5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a819646b65757d54458c2937f4935b5b59da157a",
+      "to": "Artifact:tools/contract-release-source-data.js",
+      "provenance": {
+        "commit": "a819646b65757d54458c2937f4935b5b59da157a"
       }
     },
     {
@@ -625205,6 +625321,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:efe8607ed1c72fc329cb315b507fe57217fb3120",
+      "to": "Artifact:test/noir-ui-source-compatibility.js",
+      "provenance": {
+        "commit": "efe8607ed1c72fc329cb315b507fe57217fb3120"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:eff0364ea464d92c03826feef663d49827d40108",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -631465,6 +631589,14 @@
       "to": "Artifact:test/ux-expanded-browser.js",
       "provenance": {
         "commit": "f3b1fe4768fe2a6ef18dba5edb45bfdb090a04b7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
+      "to": "Artifact:tools/enterprise-native-contract-release-inputs.js",
+      "provenance": {
+        "commit": "f3b72f35a6c58deb105cc55628ae1f01ba04fe32"
       }
     },
     {
@@ -762970,6 +763102,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5e9eefed37853db08f218dfdc849b294a1bc0ec5",
+      "provenance": {
+        "commit": "5e9eefed37853db08f218dfdc849b294a1bc0ec5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5ea313a1003718c22ca6632f1f5a34086c81a3e7",
       "provenance": {
         "commit": "5ea313a1003718c22ca6632f1f5a34086c81a3e7"
@@ -775762,6 +775902,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a819646b65757d54458c2937f4935b5b59da157a",
+      "provenance": {
+        "commit": "a819646b65757d54458c2937f4935b5b59da157a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a828862c4d244d24ebcd8c5f26ead1888d63dd70",
       "provenance": {
         "commit": "a828862c4d244d24ebcd8c5f26ead1888d63dd70"
@@ -787170,6 +787318,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:efe8607ed1c72fc329cb315b507fe57217fb3120",
+      "provenance": {
+        "commit": "efe8607ed1c72fc329cb315b507fe57217fb3120"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:eff0364ea464d92c03826feef663d49827d40108",
       "provenance": {
         "commit": "eff0364ea464d92c03826feef663d49827d40108"
@@ -787965,6 +788121,14 @@
       "to": "Commit:f3b67b8ced38cdbb34bf44b9d1bf674d7d5be071",
       "provenance": {
         "commit": "f3b67b8ced38cdbb34bf44b9d1bf674d7d5be071"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f3b72f35a6c58deb105cc55628ae1f01ba04fe32",
+      "provenance": {
+        "commit": "f3b72f35a6c58deb105cc55628ae1f01ba04fe32"
       }
     },
     {
@@ -837263,7 +837427,7 @@
       "to": "Artifact:tools/businessdesk-noir-source-transfer.js",
       "provenance": {
         "file": "test/noir-ui-source-compatibility.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -837272,7 +837436,16 @@
       "to": "Artifact:tools/combined-economic-deed-source-transfer.js",
       "provenance": {
         "file": "test/noir-ui-source-compatibility.js",
-        "line": 12
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/noir-ui-source-compatibility.js",
+      "to": "Artifact:tools/contract-release-source-data.js",
+      "provenance": {
+        "file": "test/noir-ui-source-compatibility.js",
+        "line": 9
       }
     },
     {
@@ -837290,7 +837463,7 @@
       "to": "Artifact:tools/economy-deed-merge-source-compatibility.js",
       "provenance": {
         "file": "test/noir-ui-source-compatibility.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -837308,7 +837481,7 @@
       "to": "Artifact:tools/wiki-media-source-transfer.js",
       "provenance": {
         "file": "test/noir-ui-source-compatibility.js",
-        "line": 14
+        "line": 15
       }
     },
     {
@@ -860600,7 +860773,7 @@
       "to": "Artifact:tools/contract-release-source-data.js",
       "provenance": {
         "file": "tools/contract-release-source-data.js",
-        "line": 2494
+        "line": 2498
       }
     },
     {
