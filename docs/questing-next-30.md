@@ -25,7 +25,7 @@ Recommended first: mood-based discovery, the rehearsal room, chain of custody, p
 19. **A promise ledger.** Track voluntary commitments, choose when to fulfill them, and explicitly renegotiate obligations.
 20. **Adversarial case review.** Have an examiner challenge a completed argument with alternative explanations the player must address or concede.
 21. **Provisional case closure.** Allow an honest insufficient-evidence finding and define which later discoveries can reopen the case.
-22. **One-room bottle episodes.** Publish compact stories with a few strong characters and concentrated discovery in a single location.
+22. **Confidence-weighted verdicts.** Record how certain investigators are before the reveal, then explain which evidence justified or contradicted their confidence without changing rewards.
 23. **A mentor observation seat.** Let an invited expert suggest questions while the learner retains every submission and decision.
 24. **Evidence-linked discussions.** Attach shared questions and replies directly to evidence, keeping collaboration arguments easy to follow.
 25. **Solvability explanations for authors.** Show conflicting valid solutions or contradictory clues when a workshop mystery cannot be published.
