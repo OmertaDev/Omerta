@@ -21,6 +21,7 @@ export { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };
 export const QUESTING_NATIVE_SUPPORT = Object.freeze([
   'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',
   'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,
+  'tools/questing-enterprise-catalog.js', 'test/questing-enterprise-catalog-guard.js',
   'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',
   ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',
     'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']
@@ -255,7 +256,12 @@ export async function runQuestingEnterpriseNative() {
       await new Promise(resolve => log.end(resolve));
       const proof = { file: name, database, port, sourceSha256: source.files[`test/${name}.js`].sha256, ...status, error,
         durationMs: Date.now() - started, state: status.code === 0 && status.signal === null && error === null ? 'passed' : 'failed', logSha256: sha(fs.readFileSync(logFile)) };
-      result.results.push(proof); save(); assertQuestingEnterpriseStable(source);
+      result.results.push(proof); save();
+      if (proof.state === 'failed') {
+        const output = fs.readFileSync(logFile);
+        console.error(JSON.stringify({ file: name, state: 'failed', logTail: output.subarray(Math.max(0, output.length - 8192)).toString('utf8') }));
+      }
+      assertQuestingEnterpriseStable(source);
       for (const used of ports) { const zero = await freshZero(pg, profile, used, urls[used]); result.caseZeros.push(zero); save(); assert.ok(zero.complete, 'Post-child strict fresh zero'); }
       assert.equal(proof.state, 'passed', `Failure retained; no partial qualification: ${name}`); console.log(JSON.stringify({ file: name, state: 'passed' }));
     }

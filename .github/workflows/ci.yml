@@ -251,6 +251,7 @@ jobs:
         run: |
           node test/questing-source-transfer.js
           node test/enterprise-native-questing-guard.js
+          node test/questing-enterprise-catalog-guard.js
       - name: Quest runtime, cases and community workshop
         run: npm run test:questing
       - name: Production quest and clue interfaces

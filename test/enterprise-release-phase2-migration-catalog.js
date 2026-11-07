@@ -34,7 +34,23 @@ const dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8
 const dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);
 const commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa21bcfe2f3bc163b26f08eea4c6f0dac97c';
 const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';
-if(commerceDeedCurrent){
+const questingCurrent=hash(lf(dispatchRaw))==='af6d9ad01566eaddf8ec6b4c4da4add77837b13e6a3510697bebf62b180b97e7';
+if(questingCurrent){
+  const adapter=await import('../tools/questing-enterprise-catalog.js');
+  const sources=adapter.questingCatalogSource(dispatchRaw);
+  assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);
+  console.log('Exact actual quest585 source retains complete582 plus three additive tables; old catalog admission remains separate.');
+  if(native){
+    const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});
+    try{
+      const result=await adapter.verifyQuestingEnterpriseCatalog(pool,endpoint.href,dispatchRaw);
+      assert.equal(result.actualTables,585);assert.equal(result.baselineTables,582);assert.equal(result.ddlCausal,13);assert(result.causal>300);
+      console.log(JSON.stringify({phase:'ACTUAL_QUEST585_ENTERPRISE_CATALOG',freshTables:585,upgradeTables:585,baselineTables:582,
+        questTables:3,questColumns:21,metadataCausal:result.causal,rollbackDdlCausal:result.ddlCausal,
+        historicalReferenceCausal:result.historical.causal,native:true,priorNativeResultsTransferred:false}));
+    }finally{await pool.end();}
+  }
+}else if(commerceDeedCurrent){
   frozenText('../tools/commerce-deed-release-phase2-native-catalog.js','dc84df23e59ad3282fc16c556943150be1e9fcc219facd2e94b83f6b2c817f4b','tools/commerce-deed-release-phase2-native-catalog.js');
   frozenText('../tools/commerce-release-phase2-native-catalog.js','be4307efac154a7e5f0c17c6bb020a7dc6ae96d053bfe2163e944a694d6db637');
   frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e','tools/enterprise-deed-release-phase2-migration-catalog.js');
