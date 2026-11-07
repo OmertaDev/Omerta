@@ -71,7 +71,7 @@
 | [src/citywide.js](../../src/citywide.js) | 32 | world-progression | 5 / 3 | 1 | 0 | 1 |
 | [src/citywire.js](../../src/citywire.js) | 96 | platform-core | 1 / 2 | 0 | 1 | 1 |
 | [src/client-ip.js](../../src/client-ip.js) | 66 | platform-core | 0 / 4 | 0 | 0 | 0 |
-| [src/clue-puzzles.js](../../src/clue-puzzles.js) | 94 | platform-core | 1 / 4 | 0 | 0 | 2 |
+| [src/clue-puzzles.js](../../src/clue-puzzles.js) | 97 | platform-core | 1 / 4 | 0 | 0 | 2 |
 | [src/clues.js](../../src/clues.js) | 140 | platform-core | 5 / 5 | 4 | 5 | 0 |
 | [src/collection.js](../../src/collection.js) | 112 | law-intelligence | 2 / 13 | 2 | 7 | 1 |
 | [src/collision.js](../../src/collision.js) | 38 | engagement-growth | 2 / 4 | 1 | 2 | 2 |
@@ -387,8 +387,8 @@
 | [src/projection-events.js](../../src/projection-events.js) | 179 | platform-core | 1 / 3 | 0 | 13 | 2 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 2 | 6 | 1 |
 | [src/quest-workshop-schema.js](../../src/quest-workshop-schema.js) | 35 | platform-core | 0 / 1 | 0 | 3 | 1 |
-| [src/quest-workshop.js](../../src/quest-workshop.js) | 230 | platform-core | 1 / 3 | 0 | 4 | 2 |
-| [src/questing-contract.js](../../src/questing-contract.js) | 96 | platform-core | 0 / 2 | 0 | 0 | 1 |
+| [src/quest-workshop.js](../../src/quest-workshop.js) | 226 | platform-core | 1 / 3 | 0 | 4 | 2 |
+| [src/questing-contract.js](../../src/questing-contract.js) | 97 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/questing.js](../../src/questing.js) | 97 | platform-core | 1 / 2 | 0 | 5 | 1 |
 | [src/races.js](../../src/races.js) | 518 | vice-competition | 4 / 10 | 11 | 9 | 3 |
 | [src/ratelimit.js](../../src/ratelimit.js) | 134 | platform-core | 1 / 3 | 0 | 0 | 0 |
