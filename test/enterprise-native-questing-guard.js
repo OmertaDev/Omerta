@@ -64,7 +64,8 @@ if (actual.status === 'UNSEALED') {
   const current = record('HEAD'), authored = record(actual.authoredRevision), bytes = git('show', `HEAD:${row.file}`);
   const physical = fs.readFileSync(row.file); assert.ok(fs.lstatSync(row.file).isFile() && !fs.lstatSync(row.file).isSymbolicLink());
   assertEnterpriseNativeTrackedBytes(physical, bytes, false);
-  assert.strictEqual(assertQuestingEnterpriseTrackedInput(row.file, current, authored, bytes).current, row);
+  assert.strictEqual(assertQuestingEnterpriseTrackedInput(row.file, current, authored, bytes).current,
+    actual.files.find(input => input.file === row.file));
   const otherMode = current.mode === '100644' ? '100755' : '100644';
   for (const [now, anchor, raw] of [
     [{ ...current, mode: otherMode }, authored, bytes], [current, { ...authored, mode: otherMode }, bytes],
