@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `eb0c21c4ed9c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `64fb420a00c2`.
 
 ## Repository
 
@@ -9,21 +9,21 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5427 |
+| Commits in clone | 5437 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-07 — Merge questing upgrade: investigations, saga and community mysteries |
+| Latest commit | 2026-11-07 — Merge public site SEO, recovery and optional analytics (#319) |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4308 |
+| OmertaDev | 4317 |
 | crvydev | 647 |
 | Claude | 156 |
 | Codex | 138 |
-| github-actions[bot] | 136 |
+| github-actions[bot] | 137 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,34 +31,34 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 904 | historical |
-| knowledge/generated/graph-summary.md | 904 | historical |
-| knowledge/generated/graph.json | 904 | historical |
-| knowledge/generated/inventory.md | 904 | historical |
-| [SPEC.md](../../SPEC.md) | 638 | yes |
+| knowledge/generated/github-history.md | 905 | historical |
+| knowledge/generated/graph-summary.md | 905 | historical |
+| knowledge/generated/graph.json | 905 | historical |
+| knowledge/generated/inventory.md | 905 | historical |
+| [SPEC.md](../../SPEC.md) | 640 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 507 | yes |
-| [src/server.js](../../src/server.js) | 456 | yes |
+| [public/index.html](../../public/index.html) | 508 | yes |
+| [src/server.js](../../src/server.js) | 458 | yes |
 | knowledge/generated/documents.md | 398 | historical |
 | [schema.sql](../../schema.sql) | 384 | yes |
-| [package.json](../../package.json) | 366 | yes |
+| [package.json](../../package.json) | 368 | yes |
 | knowledge/generated/modules.md | 309 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | knowledge/generated/graph.mmd | 247 | historical |
-| [test/gates.js](../../test/gates.js) | 217 | yes |
+| [test/gates.js](../../test/gates.js) | 218 | yes |
 | [src/game.js](../../src/game.js) | 199 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | knowledge/generated/schema.md | 175 | historical |
 | [src/invariants.js](../../src/invariants.js) | 171 | yes |
 | knowledge/generated/routes.md | 152 | historical |
 | [test/client.js](../../test/client.js) | 146 | yes |
-| [src/worker.js](../../src/worker.js) | 143 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 140 | yes |
+| [src/worker.js](../../src/worker.js) | 144 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 141 | yes |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 130 | yes |
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 127 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 119 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 121 | yes |
 | [public/wiki.html](../../public/wiki.html) | 103 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 99 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
@@ -66,9 +66,9 @@
 | [test/migrate.js](../../test/migrate.js) | 94 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 92 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
+| [test/hardening.js](../../test/hardening.js) | 72 | yes |
 | [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 72 | yes |
 | [src/preflight.js](../../src/preflight.js) | 71 | yes |
-| [test/hardening.js](../../test/hardening.js) | 71 | yes |
 | [test/director-migration.js](../../test/director-migration.js) | 70 | yes |
 | [tools/enterprise-native-ux-inputs.js](../../tools/enterprise-native-ux-inputs.js) | 66 | yes |
 
