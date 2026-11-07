@@ -1,0 +1,586 @@
+{
+  "edges": [
+    {
+      "from": "case-reward",
+      "to": "case-closed",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "clerk-oath",
+      "to": "combined-route",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "combined-route",
+      "to": "handoff",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "courier-oath",
+      "to": "combined-route",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "door-map",
+      "to": "private-map",
+      "type": "REVEALS"
+    },
+    {
+      "from": "door-map",
+      "to": "courier-oath",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "handoff",
+      "to": "case-reward",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "manifest",
+      "to": "private-manifest",
+      "type": "REVEALS"
+    },
+    {
+      "from": "manifest",
+      "to": "clerk-oath",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "opening",
+      "to": "door-map",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "opening",
+      "to": "manifest",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "party-policy",
+      "to": "clerk",
+      "type": "PERFORMED_BY_ROLE"
+    },
+    {
+      "from": "party-policy",
+      "to": "courier",
+      "type": "PERFORMED_BY_ROLE"
+    },
+    {
+      "from": "party-policy",
+      "to": "party-quorum",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "sixth-envelope",
+      "to": "party-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "sixth-envelope",
+      "to": "opening",
+      "type": "UNLOCKS"
+    }
+  ],
+  "growth": {
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward",
+    "role": "internal_only"
+  },
+  "namespace": "omerta.quest.sixth-envelope",
+  "nodes": [
+    {
+      "id": "case-closed",
+      "payload": {
+        "effects": [
+          {
+            "claimPolicy": "self",
+            "collectibleId": "saga-sixth-envelope-memento",
+            "kind": "award_collectible",
+            "recipientPolicy": "all_participants"
+          }
+        ],
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "title": "The Sixth Envelope — Filed"
+      },
+      "type": "terminal"
+    },
+    {
+      "id": "case-reward",
+      "payload": {
+        "cash": 0,
+        "claimOnce": true,
+        "tradeableItems": 0
+      },
+      "type": "reward_bundle"
+    },
+    {
+      "id": "clerk",
+      "payload": {
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "privateAgenda": {
+          "choiceId": "preserve",
+          "completionNodeId": "clerk-oath",
+          "consentRequired": true,
+          "prompt": "Your source asked you to retain the carbon copy. Choose preserve when filing the clerk's records."
+        },
+        "title": "clerk"
+      },
+      "type": "role"
+    },
+    {
+      "id": "clerk-oath",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "clerk"
+          }
+        ],
+        "options": [
+          {
+            "id": "preserve",
+            "label": "Preserve the carbon copy in sealed custody",
+            "storyFlagIds": [
+              "clerk-oath-preserve-memory"
+            ]
+          },
+          {
+            "id": "discard",
+            "label": "Discard the duplicate after recording its contents",
+            "storyFlagIds": [
+              "clerk-oath-discard-memory"
+            ]
+          }
+        ],
+        "prompt": "Your role owns this filing decision. The other participant will learn your private objective only in the final debrief.",
+        "title": "The Carbon Copy"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "clerk-oath-discard-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.sixth-envelope.carbon",
+        "kind": "case_evidence",
+        "title": "The Carbon Copy: Discard the duplicate after recording its contents",
+        "value": "discard"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "clerk-oath-preserve-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.sixth-envelope.carbon",
+        "kind": "case_evidence",
+        "title": "The Carbon Copy: Preserve the carbon copy in sealed custody",
+        "value": "preserve"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "combined-route",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "combined-route-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "clerk"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "seven",
+              "label": "Bay Seven"
+            },
+            {
+              "id": "nine",
+              "label": "Bay Nine"
+            },
+            {
+              "id": "unknown",
+              "label": "The wrapping-paper color determines the bay"
+            }
+          ],
+          "kind": "deduction"
+        },
+        "prompt": "Combine the clerk's manifest with the courier's door map. Ask your partner to leave an interpretation in the shared notes. Which bay takes the sixth envelope?",
+        "summary": "Combine the clerk's manifest with the courier's door map. Ask your partner to leave an interpretation in the shared notes. Which bay takes the sixth envelope?",
+        "title": "A Route Neither Half Can Prove"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "combined-route-answer",
+      "payload": {
+        "solution": [
+          "seven"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "courier",
+      "payload": {
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "privateAgenda": {
+          "choiceId": "anonymous",
+          "completionNodeId": "courier-oath",
+          "consentRequired": true,
+          "prompt": "Your witness asked to remain anonymous in the courier's note. Choose anonymous when recording the route."
+        },
+        "title": "courier"
+      },
+      "type": "role"
+    },
+    {
+      "id": "courier-oath",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "courier"
+          }
+        ],
+        "options": [
+          {
+            "id": "anonymous",
+            "label": "Record the route without the witness's name",
+            "storyFlagIds": [
+              "courier-oath-anonymous-memory"
+            ]
+          },
+          {
+            "id": "named",
+            "label": "Record the witness by name",
+            "storyFlagIds": [
+              "courier-oath-named-memory"
+            ]
+          }
+        ],
+        "prompt": "Your role owns the witness-note decision. You can share the routing evidence without naming the person who supplied it.",
+        "title": "The Witness Name"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "courier-oath-anonymous-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.sixth-envelope.witness",
+        "kind": "witness_spared",
+        "title": "The Witness Name: Record the route without the witness's name",
+        "value": "anonymous"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "courier-oath-named-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.sixth-envelope.witness",
+        "kind": "witness_spared",
+        "title": "The Witness Name: Record the witness by name",
+        "value": "named"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "door-map",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "door-map-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "courier"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "seven",
+              "label": "Bay Seven"
+            },
+            {
+              "id": "nine",
+              "label": "Bay Nine"
+            }
+          ],
+          "kind": "scene",
+          "slots": [
+            {
+              "id": "triangle",
+              "label": "Triangle seal"
+            },
+            {
+              "id": "circle",
+              "label": "Circle seal"
+            }
+          ]
+        },
+        "prompt": "Your private door map places triangle-sealed deliveries at Bay Seven and circle-sealed deliveries at Bay Nine. Copy both assignments into your route file.",
+        "summary": "Your private door map places triangle-sealed deliveries at Bay Seven and circle-sealed deliveries at Bay Nine. Copy both assignments into your route file.",
+        "title": "The Courier's Half"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "door-map-answer",
+      "payload": {
+        "solution": {
+          "circle": "nine",
+          "triangle": "seven"
+        },
+        "verifier": "mapping"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "handoff",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "clerk"
+          }
+        ],
+        "options": [
+          {
+            "id": "joint",
+            "label": "Sign the joint handoff receipt",
+            "storyFlagIds": [
+              "handoff-joint-memory"
+            ]
+          },
+          {
+            "id": "archive",
+            "label": "Seal the handoff with the archive",
+            "storyFlagIds": [
+              "handoff-archive-memory"
+            ]
+          }
+        ],
+        "prompt": "Both accounts remain in the file. Close with a signed joint receipt or a sealed archive receipt; the debrief will reveal what each participant privately promised.",
+        "title": "Two Accounts, One Handoff"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "handoff-archive-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.sixth-envelope.handoff",
+        "kind": "future_scene_variant",
+        "title": "Two Accounts, One Handoff: Seal the handoff with the archive",
+        "value": "archive"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "handoff-joint-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.sixth-envelope.handoff",
+        "kind": "future_scene_variant",
+        "title": "Two Accounts, One Handoff: Sign the joint handoff receipt",
+        "value": "joint"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "manifest",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "manifest-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "clerk"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "triangle",
+              "label": "Triangle seal"
+            },
+            {
+              "id": "circle",
+              "label": "Circle seal"
+            },
+            {
+              "id": "blue",
+              "label": "Blue wrapping paper"
+            }
+          ],
+          "kind": "deduction"
+        },
+        "prompt": "Your private manifest assigns the sixth envelope a triangle seal. The handwritten word blue names the wrapping paper, not the seal. Select the seal recorded by the signed manifest.",
+        "summary": "Your private manifest assigns the sixth envelope a triangle seal. The handwritten word blue names the wrapping paper, not the seal. Select the seal recorded by the signed manifest.",
+        "title": "The Clerk's Half"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "manifest-answer",
+      "payload": {
+        "solution": [
+          "triangle"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "opening",
+      "payload": {
+        "summary": "A clerk and courier each hold half of a delivery explanation. Work at different times, share only the evidence you choose to put in the case notes, and settle your private promises before the handoff.",
+        "title": "The Sixth Envelope"
+      },
+      "type": "chapter"
+    },
+    {
+      "id": "party-policy",
+      "payload": {
+        "allowRoleReplacement": true,
+        "organizationScopes": [
+          "crew",
+          "extended_family"
+        ],
+        "recheckConsent": true,
+        "roleLockOnStart": true,
+        "uniqueParticipants": true
+      },
+      "type": "party_policy"
+    },
+    {
+      "id": "party-quorum",
+      "payload": {
+        "minimumOrganizations": 1,
+        "minimumParticipants": 2,
+        "uniqueParticipants": true
+      },
+      "type": "quorum"
+    },
+    {
+      "id": "private-manifest",
+      "payload": {
+        "evidenceKind": "fact",
+        "roleId": "clerk",
+        "shareScope": "role_private",
+        "summary": "The sixth envelope has a triangle seal. Blue describes only its wrapping.",
+        "title": "Private manifest fragment"
+      },
+      "type": "evidence"
+    },
+    {
+      "id": "private-map",
+      "payload": {
+        "evidenceKind": "fact",
+        "roleId": "courier",
+        "shareScope": "role_private",
+        "summary": "Triangle seals belong at Bay Seven. Circle seals belong at Bay Nine.",
+        "title": "Private route fragment"
+      },
+      "type": "evidence"
+    },
+    {
+      "id": "saga-sixth-envelope-memento",
+      "payload": {
+        "gameplayPower": "none",
+        "rarity": "story",
+        "title": "The Sixth Envelope: Case Memento"
+      },
+      "type": "collectible_def"
+    },
+    {
+      "id": "sixth-envelope",
+      "payload": {
+        "expectations": {
+          "combat": "None",
+          "commitments": [
+            "Each role has a private objective requiring explicit consent.",
+            "Releasing a seat preserves contributions but gives up current membership and future self-claim rights."
+          ],
+          "difficulty": "Experienced",
+          "durationMinutes": 30,
+          "group": "Two members of one Crew or Extended Family",
+          "reasoning": "Evidence, interpretation and consequences",
+          "summary": "A clerk and courier each hold half of a delivery explanation. Work at different times, share only the evidence you choose to put in the case notes, and settle your private promises before the handoff."
+        },
+        "gates": [],
+        "summary": "A clerk and courier each hold half of a delivery explanation. Work at different times, share only the evidence you choose to put in the case notes, and settle your private promises before the handoff.",
+        "title": "The Sixth Envelope"
+      },
+      "type": "mystery"
+    }
+  ],
+  "runtime": {
+    "actionNodeIds": [
+      "manifest",
+      "door-map",
+      "clerk-oath",
+      "courier-oath",
+      "combined-route",
+      "handoff"
+    ],
+    "entryNodeId": "sixth-envelope",
+    "experienceId": "sixth-envelope",
+    "nodeIds": [
+      "sixth-envelope",
+      "party-policy",
+      "party-quorum",
+      "clerk",
+      "courier",
+      "opening",
+      "case-reward",
+      "saga-sixth-envelope-memento",
+      "case-closed",
+      "manifest",
+      "manifest-answer",
+      "door-map",
+      "door-map-answer",
+      "private-manifest",
+      "private-map",
+      "clerk-oath-preserve-memory",
+      "clerk-oath-discard-memory",
+      "clerk-oath",
+      "courier-oath-anonymous-memory",
+      "courier-oath-named-memory",
+      "courier-oath",
+      "combined-route",
+      "combined-route-answer",
+      "handoff-joint-memory",
+      "handoff-archive-memory",
+      "handoff"
+    ],
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed"
+  },
+  "schemaVersion": 1,
+  "version": 1,
+  "contentHash": "2389f87c7dac12be8255a7cfa10b0727b5870ea66b315cf7a13b8df4dfca1e1a"
+}

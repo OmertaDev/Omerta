@@ -1,0 +1,350 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.inherited-file",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward"
+  },
+  "runtime": {
+    "experienceId": "inherited-file",
+    "entryNodeId": "inherited-file",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "inherited-file",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-inherited-file-memento",
+      "case-closed",
+      "old-notes",
+      "old-notes-answer",
+      "reconstruct",
+      "reconstruct-answer",
+      "legacy-open-memory",
+      "legacy-private-memory",
+      "legacy",
+      "legacy-filed-memory"
+    ],
+    "actionNodeIds": [
+      "old-notes",
+      "reconstruct",
+      "legacy"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "inherited-file",
+      "type": "mystery",
+      "payload": {
+        "title": "The File They Left Behind",
+        "summary": "A family case file contains an unfinished accusation against Rosa. The notes and account-owned evidence survive a change of character. Check the predecessor's assumptions before deciding what the family record should say.",
+        "gates": [
+          {
+            "kind": "story_flag_is",
+            "key": "omerta.quest.missing-name.complete",
+            "value": "filed"
+          }
+        ],
+        "expectations": {
+          "durationMinutes": 25,
+          "difficulty": "Experienced",
+          "summary": "A family case file contains an unfinished accusation against Rosa. The notes and account-owned evidence survive a change of character. Check the predecessor's assumptions before deciding what the family record should say.",
+          "reasoning": "Evidence, interpretation and consequences",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": []
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "The File They Left Behind",
+        "summary": "A family case file contains an unfinished accusation against Rosa. The notes and account-owned evidence survive a change of character. Check the predecessor's assumptions before deciding what the family record should say."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "saga-inherited-file-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "The File They Left Behind: Case Memento",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The File They Left Behind — Filed",
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "saga-inherited-file-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "old-notes",
+      "type": "puzzle",
+      "payload": {
+        "title": "A Pencil Mark Is Not a Verdict",
+        "prompt": "The old investigator underlined Rosa's name but supplied no observation. Rosa's signed shift card places her at work; a dated ferry ticket places the courier at the archive. Which record actually tests Rosa's alibi?",
+        "summary": "The old investigator underlined Rosa's name but supplied no observation. Rosa's signed shift card places her at work; a dated ferry ticket places the courier at the archive. Which record actually tests Rosa's alibi?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "old-notes-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "shift",
+              "label": "Rosa's signed shift card"
+            },
+            {
+              "id": "underline",
+              "label": "Unexplained pencil underline"
+            },
+            {
+              "id": "ferry",
+              "label": "Courier's ferry ticket"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "old-notes-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "shift"
+        ]
+      }
+    },
+    {
+      "id": "reconstruct",
+      "type": "puzzle",
+      "payload": {
+        "title": "What the Family Did Not Know",
+        "prompt": "The family note was written on 4 May. The corrected payroll was deposited on 5 May. Rosa's reply arrived on 6 May. Reconstruct why the old file lacked her explanation.",
+        "summary": "The family note was written on 4 May. The corrected payroll was deposited on 5 May. Rosa's reply arrived on 6 May. Reconstruct why the old file lacked her explanation.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "reconstruct-answer",
+        "interaction": {
+          "kind": "timeline",
+          "items": [
+            {
+              "id": "reply",
+              "label": "6 May: Rosa's reply"
+            },
+            {
+              "id": "note",
+              "label": "4 May: family note"
+            },
+            {
+              "id": "payroll",
+              "label": "5 May: corrected payroll"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "reconstruct-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "ordered_ids",
+        "solution": [
+          "note",
+          "payroll",
+          "reply"
+        ]
+      }
+    },
+    {
+      "id": "legacy-open-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.inherited-file.legacy",
+        "kind": "public_reputation",
+        "value": "open",
+        "title": "The Family Record: Record both the error and its correction",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "legacy-private-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.inherited-file.legacy",
+        "kind": "public_reputation",
+        "value": "private",
+        "title": "The Family Record: Amend the file and explain the change to Rosa",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "legacy",
+      "type": "choice",
+      "payload": {
+        "title": "The Family Record",
+        "prompt": "You can correct the accusation openly, preserving the original mistake beside the evidence, or privately amend the family file with an explanation to Rosa.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "open",
+            "label": "Record both the error and its correction",
+            "storyFlagIds": [
+              "legacy-open-memory",
+              "legacy-filed-memory"
+            ]
+          },
+          {
+            "id": "private",
+            "label": "Amend the file and explain the change to Rosa",
+            "storyFlagIds": [
+              "legacy-private-memory",
+              "legacy-filed-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "legacy-filed-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.inherited-file.complete",
+        "kind": "case_evidence",
+        "value": "filed",
+        "title": "The File They Left Behind: case filed",
+        "gameplayPower": "none"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "inherited-file",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "inherited-file",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "old-notes"
+    },
+    {
+      "from": "old-notes",
+      "type": "UNLOCKS",
+      "to": "reconstruct"
+    },
+    {
+      "from": "reconstruct",
+      "type": "UNLOCKS",
+      "to": "legacy"
+    },
+    {
+      "from": "legacy",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

@@ -1,0 +1,340 @@
+{
+  "edges": [
+    {
+      "from": "access",
+      "to": "case-reward",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "archive-service",
+      "to": "party-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "archive-service",
+      "to": "opening",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "case-reward",
+      "to": "case-closed",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "keepsake",
+      "to": "practice",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "opening",
+      "to": "keepsake",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "party-policy",
+      "to": "investigator",
+      "type": "PERFORMED_BY_ROLE"
+    },
+    {
+      "from": "party-policy",
+      "to": "party-quorum",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "practice",
+      "to": "access",
+      "type": "UNLOCKS"
+    }
+  ],
+  "growth": {
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward",
+    "role": "internal_only"
+  },
+  "namespace": "omerta.quest.archive-service",
+  "nodes": [
+    {
+      "id": "access",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "accept",
+            "label": "Accept access to the casework reading desk",
+            "storyFlagIds": [
+              "access-accept-memory",
+              "access-filed-memory"
+            ]
+          },
+          {
+            "id": "letter",
+            "label": "Accept access and leave a thank-you letter",
+            "storyFlagIds": [
+              "access-letter-memory",
+              "access-filed-memory"
+            ]
+          }
+        ],
+        "prompt": "The custodian offers you future access to the casework reading desk. It is a narrative service with further exercises, not a source of cash or combat advantage.",
+        "title": "A Place to Work"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "access-accept-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.archive-service.reading-desk",
+        "kind": "future_scene_variant",
+        "title": "A Place to Work: Accept access to the casework reading desk",
+        "value": "open"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "access-filed-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.archive-service.complete",
+        "kind": "case_evidence",
+        "title": "The Back Room of the Archive: case filed",
+        "value": "filed"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "access-letter-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.archive-service.reading-desk",
+        "kind": "future_scene_variant",
+        "title": "A Place to Work: Accept access and leave a thank-you letter",
+        "value": "open"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "archive-service",
+      "payload": {
+        "expectations": {
+          "combat": "None",
+          "commitments": [],
+          "difficulty": "Intermediate",
+          "durationMinutes": 15,
+          "group": "Solo",
+          "reasoning": "Evidence, interpretation and consequences",
+          "summary": "The completed early-obituary case memento identifies you to the archive custodian. Use the newly available reading room to practice checking an anonymous witness account against dated records."
+        },
+        "gates": [
+          {
+            "collectibleId": "saga-early-obituary-memento",
+            "kind": "collectible_owned"
+          }
+        ],
+        "summary": "The completed early-obituary case memento identifies you to the archive custodian. Use the newly available reading room to practice checking an anonymous witness account against dated records.",
+        "title": "The Back Room of the Archive"
+      },
+      "type": "mystery"
+    },
+    {
+      "id": "case-closed",
+      "payload": {
+        "effects": [
+          {
+            "claimPolicy": "self",
+            "collectibleId": "saga-archive-service-memento",
+            "kind": "award_collectible",
+            "recipientPolicy": "all_participants"
+          }
+        ],
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "title": "The Back Room of the Archive — Filed"
+      },
+      "type": "terminal"
+    },
+    {
+      "id": "case-reward",
+      "payload": {
+        "cash": 0,
+        "claimOnce": true,
+        "tradeableItems": 0
+      },
+      "type": "reward_bundle"
+    },
+    {
+      "id": "investigator",
+      "payload": {
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "title": "investigator"
+      },
+      "type": "role"
+    },
+    {
+      "id": "keepsake",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "keepsake-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "visitors",
+              "label": "Signed visitor book, 11:00"
+            },
+            {
+              "id": "opinion",
+              "label": "Your opinion that the witness is wrong"
+            }
+          ],
+          "kind": "interrogation"
+        },
+        "prompt": "The custodian recognizes your filed case memento. A witness says the archive was closed all day, but its signed visitor book records an 11:00 reading. Present the record that checks the claim.",
+        "summary": "The custodian recognizes your filed case memento. A witness says the archive was closed all day, but its signed visitor book records an 11:00 reading. Present the record that checks the claim.",
+        "title": "A Familiar Fold in the Paper"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "keepsake-answer",
+      "payload": {
+        "solution": [
+          "visitors"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "opening",
+      "payload": {
+        "summary": "The completed early-obituary case memento identifies you to the archive custodian. Use the newly available reading room to practice checking an anonymous witness account against dated records.",
+        "title": "The Back Room of the Archive"
+      },
+      "type": "chapter"
+    },
+    {
+      "id": "party-policy",
+      "payload": {
+        "accountLegacyContinuity": true,
+        "organizationScopes": [
+          "personal"
+        ],
+        "recheckConsent": true,
+        "roleLockOnStart": true,
+        "uniqueParticipants": true
+      },
+      "type": "party_policy"
+    },
+    {
+      "id": "party-quorum",
+      "payload": {
+        "minimumOrganizations": 1,
+        "minimumParticipants": 1,
+        "uniqueParticipants": true
+      },
+      "type": "quorum"
+    },
+    {
+      "id": "practice",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "practice-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "presence",
+              "label": "The signed visitor was present"
+            },
+            {
+              "id": "meeting",
+              "label": "An uncorroborated meeting occurred"
+            }
+          ],
+          "kind": "deduction"
+        },
+        "prompt": "A room can be open without every visitor meeting every other visitor. The book confirms presence, while an unsigned note claims a meeting. File only the confirmed fact.",
+        "summary": "A room can be open without every visitor meeting every other visitor. The book confirms presence, while an unsigned note claims a meeting. File only the confirmed fact.",
+        "title": "The Custodian's Exercise"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "practice-answer",
+      "payload": {
+        "solution": [
+          "presence"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "saga-archive-service-memento",
+      "payload": {
+        "gameplayPower": "none",
+        "rarity": "story",
+        "title": "The Back Room of the Archive: Case Memento"
+      },
+      "type": "collectible_def"
+    }
+  ],
+  "runtime": {
+    "actionNodeIds": [
+      "keepsake",
+      "practice",
+      "access"
+    ],
+    "entryNodeId": "archive-service",
+    "experienceId": "archive-service",
+    "nodeIds": [
+      "archive-service",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-archive-service-memento",
+      "case-closed",
+      "keepsake",
+      "keepsake-answer",
+      "practice",
+      "practice-answer",
+      "access-accept-memory",
+      "access-letter-memory",
+      "access",
+      "access-filed-memory"
+    ],
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed"
+  },
+  "schemaVersion": 1,
+  "version": 1,
+  "contentHash": "c23cbcd95ba32f2771f9627d54ab5f6a16d0dd72feea5b0d62157d9c3a3da4ca"
+}

@@ -1,0 +1,559 @@
+{
+  "edges": [
+    {
+      "from": "case-reward",
+      "to": "case-closed",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "dish",
+      "to": "settlement",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "family-dinner",
+      "to": "party-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "family-dinner",
+      "to": "opening",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "invitations",
+      "to": "kindness",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "kindness",
+      "to": "seating",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "last-toast",
+      "to": "case-reward",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "opening",
+      "to": "invitations",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "party-policy",
+      "to": "investigator",
+      "type": "PERFORMED_BY_ROLE"
+    },
+    {
+      "from": "party-policy",
+      "to": "party-quorum",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "seating",
+      "to": "dish",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "settlement",
+      "to": "last-toast",
+      "type": "UNLOCKS"
+    }
+  ],
+  "growth": {
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward",
+    "role": "internal_only"
+  },
+  "namespace": "omerta.quest.family-dinner",
+  "nodes": [
+    {
+      "id": "case-closed",
+      "payload": {
+        "effects": [
+          {
+            "claimPolicy": "self",
+            "collectibleId": "saga-family-dinner-memento",
+            "kind": "award_collectible",
+            "recipientPolicy": "all_participants"
+          }
+        ],
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "title": "A Very Small Family Dinner — Filed"
+      },
+      "type": "terminal"
+    },
+    {
+      "id": "case-reward",
+      "payload": {
+        "cash": 0,
+        "claimOnce": true,
+        "tradeableItems": 0
+      },
+      "type": "reward_bundle"
+    },
+    {
+      "id": "dish",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "dish-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "chalk",
+              "label": "Tailor's chalk"
+            },
+            {
+              "id": "cloth",
+              "label": "Clean cloth"
+            },
+            {
+              "id": "invitation",
+              "label": "Gold invitation"
+            }
+          ],
+          "kind": "inventory",
+          "slots": [
+            {
+              "id": "locate",
+              "label": "Mark the shelf from the list"
+            },
+            {
+              "id": "lift",
+              "label": "Lift the hot dish"
+            }
+          ]
+        },
+        "prompt": "The family's grand silver dome contains a sandwich. Ada left three notes: chalk locates the borrowed dish on the storeroom list; a clean cloth lifts it safely; the invitation is no cooking implement. Match each useful object to its task.",
+        "summary": "The family's grand silver dome contains a sandwich. Ada left three notes: chalk locates the borrowed dish on the storeroom list; a clean cloth lifts it safely; the invitation is no cooking implement. Match each useful object to its task.",
+        "title": "The Missing Ceremonial Dish"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "dish-answer",
+      "payload": {
+        "solution": {
+          "lift": "cloth",
+          "locate": "chalk"
+        },
+        "verifier": "mapping"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "family-dinner",
+      "payload": {
+        "expectations": {
+          "combat": "None",
+          "commitments": [],
+          "difficulty": "Intermediate",
+          "durationMinutes": 25,
+          "group": "Solo",
+          "reasoning": "Evidence, interpretation and consequences",
+          "summary": "Ada invites you to a dinner that has acquired three extra guests, two forged invitations, and a seating chart described by everyone as a personal insult. Tomas only wants one ordinary evening."
+        },
+        "gates": [],
+        "summary": "Ada invites you to a dinner that has acquired three extra guests, two forged invitations, and a seating chart described by everyone as a personal insult. Tomas only wants one ordinary evening.",
+        "title": "A Very Small Family Dinner"
+      },
+      "type": "mystery"
+    },
+    {
+      "id": "investigator",
+      "payload": {
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "title": "investigator"
+      },
+      "type": "role"
+    },
+    {
+      "id": "invitations",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "invitations-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "flour",
+              "label": "Number 3, flour stamp"
+            },
+            {
+              "id": "gold",
+              "label": "Unnumbered gold card"
+            },
+            {
+              "id": "blank",
+              "label": "Unsigned blank envelope"
+            }
+          ],
+          "kind": "deduction"
+        },
+        "prompt": "Ada's real invitations use a small flour stamp and are numbered 1–4 in her book. The numbered card with the flour stamp is genuine; a gold card with no number is not. File the genuine invitation.",
+        "summary": "Ada's real invitations use a small flour stamp and are numbered 1–4 in her book. The numbered card with the flour stamp is genuine; a gold card with no number is not. File the genuine invitation.",
+        "title": "Guests Who Invited Themselves"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "invitations-answer",
+      "payload": {
+        "solution": [
+          "flour"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "kindness",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "ada",
+            "label": "Help Ada prepare and hear why the bakery matters",
+            "storyFlagIds": [
+              "kindness-ada-memory"
+            ]
+          },
+          {
+            "id": "doorman",
+            "label": "Sit with the doorman and hear about his missing daughter",
+            "storyFlagIds": [
+              "kindness-doorman-memory"
+            ]
+          }
+        ],
+        "prompt": "Ada is overwhelmed; the retired doorman is waiting alone. You have time to help one of them properly before dinner.",
+        "title": "Before the Guests Arrive"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "kindness-ada-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.family-dinner.friend",
+        "kind": "npc_ally",
+        "title": "Before the Guests Arrive: Help Ada prepare and hear why the bakery matters",
+        "value": "ada"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "kindness-doorman-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.family-dinner.friend",
+        "kind": "npc_ally",
+        "title": "Before the Guests Arrive: Sit with the doorman and hear about his missing daughter",
+        "value": "doorman"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "last-toast",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "friend",
+            "label": "Promise to return as a friend",
+            "storyFlagIds": [
+              "last-toast-friend-memory",
+              "last-toast-filed-memory"
+            ]
+          },
+          {
+            "id": "business",
+            "label": "Keep a respectful business relationship",
+            "storyFlagIds": [
+              "last-toast-business-memory",
+              "last-toast-filed-memory"
+            ]
+          }
+        ],
+        "prompt": "Tomas asks what you will remember: a contact who helped your work, or a friend whose evening you helped save?",
+        "title": "The Last Toast"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "last-toast-business-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.family-dinner.relationship",
+        "kind": "npc_ally",
+        "title": "The Last Toast: Keep a respectful business relationship",
+        "value": "business"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "last-toast-filed-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.family-dinner.complete",
+        "kind": "case_evidence",
+        "title": "A Very Small Family Dinner: case filed",
+        "value": "filed"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "last-toast-friend-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.family-dinner.relationship",
+        "kind": "npc_ally",
+        "title": "The Last Toast: Promise to return as a friend",
+        "value": "friend"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "opening",
+      "payload": {
+        "summary": "Ada invites you to a dinner that has acquired three extra guests, two forged invitations, and a seating chart described by everyone as a personal insult. Tomas only wants one ordinary evening.",
+        "title": "A Very Small Family Dinner"
+      },
+      "type": "chapter"
+    },
+    {
+      "id": "party-policy",
+      "payload": {
+        "accountLegacyContinuity": true,
+        "organizationScopes": [
+          "personal"
+        ],
+        "recheckConsent": true,
+        "roleLockOnStart": true,
+        "uniqueParticipants": true
+      },
+      "type": "party_policy"
+    },
+    {
+      "id": "party-quorum",
+      "payload": {
+        "minimumOrganizations": 1,
+        "minimumParticipants": 1,
+        "uniqueParticipants": true
+      },
+      "type": "quorum"
+    },
+    {
+      "id": "saga-family-dinner-memento",
+      "payload": {
+        "gameplayPower": "none",
+        "rarity": "story",
+        "title": "A Very Small Family Dinner: Case Memento"
+      },
+      "type": "collectible_def"
+    },
+    {
+      "id": "seating",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "seating-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "ada",
+              "label": "Ada"
+            },
+            {
+              "id": "tomas",
+              "label": "Tomas"
+            },
+            {
+              "id": "doorman",
+              "label": "The doorman"
+            }
+          ],
+          "kind": "scene",
+          "slots": [
+            {
+              "id": "door",
+              "label": "Door seat"
+            },
+            {
+              "id": "kitchen",
+              "label": "Kitchen seat"
+            },
+            {
+              "id": "window",
+              "label": "Window seat"
+            }
+          ]
+        },
+        "prompt": "There are three labeled seats. Ada needs the kitchen seat to serve. Tomas requested the window. The doorman needs the remaining door seat. Arrange their place cards; all three preferences are written down.",
+        "summary": "There are three labeled seats. Ada needs the kitchen seat to serve. Tomas requested the window. The doorman needs the remaining door seat. Arrange their place cards; all three preferences are written down.",
+        "title": "Diplomacy With Place Cards"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "seating-answer",
+      "payload": {
+        "solution": {
+          "door": "doorman",
+          "kitchen": "ada",
+          "window": "tomas"
+        },
+        "verifier": "mapping"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "settlement",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "settlement-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "quiet",
+              "label": "End the gathering before 22:00"
+            },
+            {
+              "id": "key",
+              "label": "Return the borrowed press key"
+            },
+            {
+              "id": "ride",
+              "label": "Arrange the homeward ride"
+            }
+          ],
+          "kind": "planning",
+          "slots": [
+            {
+              "id": "ada",
+              "label": "Ada's agreement"
+            },
+            {
+              "id": "tomas",
+              "label": "Tomas's agreement"
+            },
+            {
+              "id": "doorman",
+              "label": "Doorman's agreement"
+            }
+          ]
+        },
+        "prompt": "Ada wants quiet after 22:00. Tomas wants the press key returned. The doorman wants a lift home. Assign each stated concession to its beneficiary; no payment satisfies their requests.",
+        "summary": "Ada wants quiet after 22:00. Tomas wants the press key returned. The doorman wants a lift home. Assign each stated concession to its beneficiary; no payment satisfies their requests.",
+        "title": "Three Promises, No Money"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "settlement-answer",
+      "payload": {
+        "solution": {
+          "ada": "quiet",
+          "doorman": "ride",
+          "tomas": "key"
+        },
+        "verifier": "mapping"
+      },
+      "type": "answer_spec"
+    }
+  ],
+  "runtime": {
+    "actionNodeIds": [
+      "invitations",
+      "kindness",
+      "seating",
+      "dish",
+      "settlement",
+      "last-toast"
+    ],
+    "entryNodeId": "family-dinner",
+    "experienceId": "family-dinner",
+    "nodeIds": [
+      "family-dinner",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-family-dinner-memento",
+      "case-closed",
+      "invitations",
+      "invitations-answer",
+      "kindness-ada-memory",
+      "kindness-doorman-memory",
+      "kindness",
+      "seating",
+      "seating-answer",
+      "dish",
+      "dish-answer",
+      "settlement",
+      "settlement-answer",
+      "last-toast-friend-memory",
+      "last-toast-business-memory",
+      "last-toast",
+      "last-toast-filed-memory"
+    ],
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed"
+  },
+  "schemaVersion": 1,
+  "version": 1,
+  "contentHash": "b1432b03160a023caf0a4655f094fe829390c925b196f01e5c7e4080f979dda7"
+}

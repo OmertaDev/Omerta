@@ -6,7 +6,8 @@ import { integratedEconomicSource, integratedEconomicParentInput } from '../tool
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { contractReleaseDeskInput as priorContractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';
 import { NOIR_UI_SOURCE, NOIR_UI_SOURCE_FILES, assertNoirUiSourceTransfer,
@@ -22,6 +23,7 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 });
 const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const lf = text => text.replaceAll('\r\n', '\n');
+const contractReleaseDeskInput = (file, input) => priorContractReleaseDeskInput(file, questingHistoricalInput(file, input));
 assert.equal(NOIR_UI_SOURCE.revision, revision);
 assert.equal(combinedEconomicDeedPin.noirSource, revision);
 assert.deepEqual(Object.keys(combinedEconomicDeedPin.noirFiles), ['package.json', 'public/index.html', 'test/ux-community-browser.js']);
@@ -64,14 +66,14 @@ for (const file of NOIR_UI_SOURCE_FILES) {
       assert.throws(() => assertWikiMediaNoirMergeSourceTransfer(file, proof.baselineText, 'main')); refusals++;
     }
   }
-  assert.equal(lf(physical), committed, 'Actual UI source matches reviewed revision: ' + file);
+  assert.equal(lf(physical), committed, 'Exact UI predecessor comparison matches reviewed revision: ' + file);
   const combined = combinedEconomicDeedPin.noirFiles[file];
   if (combined) {
     // Actual HEAD, index and whole physical bytes qualified above; project only after that admission.
     const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file], view = outer?.targets.desk;
     const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
-    assert.equal(currentEntry, view ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file : acceptedEntry,
-      'Current Root mode/blob qualifies before its accepted integration comparison');
+    assert.equal(questingHistoricalEntry(file, currentEntry, 'tree'), view ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file : acceptedEntry,
+      'The exact questing predecessor identity qualifies for its accepted integration comparison');
     const acceptedPhysical = contractReleaseDeskInput(file, rawPhysical);
     const acceptedText = git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file);
     assert(acceptedPhysical === acceptedText || acceptedPhysical === acceptedText.replaceAll('\n', '\r\n'),

@@ -1302,6 +1302,8 @@
 <link rel="stylesheet" href="/ux-tools.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-identity.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-story.css?v=20261025-1">
+<link rel="stylesheet" href="/ux-quests.css?v=20261106-1">
+<link rel="stylesheet" href="/ux-clues.css?v=20261106-1">
 <link rel="stylesheet" href="/ux-community.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-tactics.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-investigation.css?v=20261024-2">
@@ -1781,6 +1783,8 @@
 <script src="/ux-tools.js?v=20261025-1"></script>
 <script src="/ux-identity.js?v=20261025-1"></script>
 <script src="/ux-story.js?v=20261025-1"></script>
+<script src="/ux-quests.js?v=20261106-1"></script>
+<script src="/ux-clues.js?v=20261106-1"></script>
 <script src="/ux-community.js?v=20261025-1"></script>
 <script src="/ux-tactics.js?v=20261105-noir-release"></script>
 <script src="/ux-investigation.js?v=20261024-2"></script>
@@ -8058,6 +8062,7 @@
       ? `<div class="desk-empty desk-empty--compact"><b>No move is issued to you.</b><span>Another party role may need to act before this file advances.</span></div>` : '';
     return `<div class="desk-issued">${actions.map((action) => {
       if (action.kind === 'start_instance') return `<section class="desk-prompt"><span class="desk-kicker">Party authority</span><h3>Every required seat is ready.</h3><button class="act prime" type="button" data-desk-instance-action="${esc(action.id)}">start the case</button></section>`;
+      if (action.kind === 'solve' && action.interaction) return `<section class="desk-prompt"><span class="desk-kicker">Investigation</span><h3>${esc(action.title || 'Work the evidence')}</h3><p>Use the interactive case file below to arrange evidence and submit your deduction.</p></section>`;
       if (action.kind === 'solve') return `<form class="desk-prompt" data-desk-solve="${esc(action.id)}"><span class="desk-kicker">Evidence question</span><h3>${esc(action.title || 'Submit an answer')}</h3>${action.prompt ? `<p>${esc(action.prompt)}</p>` : ''}
         <label>Your answer<input name="answer" autocomplete="off" required placeholder="Type the answer from the evidence"></label><button class="act prime" type="submit">submit answer</button></form>`;
       if (action.kind === 'choose') return `<section class="desk-prompt"><span class="desk-kicker">Decision required</span><h3>${esc(action.title || 'Choose how this ends')}</h3>${action.prompt ? `<p>${esc(action.prompt)}</p>` : ''}
@@ -8199,6 +8204,7 @@
     if (!panel) return;
     panel.innerHTML = deskState.board ? deskShell(deskState.board) : deskLoading();
     bindContentDesk();
+    uxCall('render');
   }
   async function reloadContentDesk() {
     if (deskState.loading) return;
@@ -10703,7 +10709,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
     // and patched this slot in a beat late; it is a board in /v1/block like the rest).
     { const slot = t.querySelector('#clue-slot');
       const c = blk.clues;
-      if (slot && c) {
+      if (slot && c && !window.renderOmertaCluePuzzle?.(slot, c, { action: act, refresh: renderStreets })) {
         slot.innerHTML = c.scroll ? `<div class="card" style="border-color:var(--gold,#c9a227);margin-top:8px">
             <span class="t" style="color:var(--gold,#c9a227)">🗺 THE TREASURE TRAIL</span> <span class="chip">${esc(c.scroll.tierName || 'a Scroll')}</span> <span class="d">step ${c.scroll.step} of ${c.scroll.of}${c.scroll.kind && c.scroll.kind !== 'riddle' ? ` · ${c.scroll.kind}` : ''}</span>
             <div class="d" style="font-style:italic">“${esc(c.scroll.riddle)}”</div>
@@ -14604,7 +14610,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   if (workspaceUX) uxModules.push(workspaceUX);
   for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,
     window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,
-    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaCommunity, window.createOmertaWorld]) {
+    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld]) {
     if (!factory) continue;
     try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }
     catch (error) { console.warn('UI enhancement unavailable', error); }

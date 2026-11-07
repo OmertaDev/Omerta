@@ -9785,3 +9785,36 @@ CREATE TABLE IF NOT EXISTS ux_community_portrait_consents (
 CREATE TABLE IF NOT EXISTS ux_mentor_subjects (
  account_id TEXT PRIMARY KEY, specialties TEXT NOT NULL, help_subject TEXT NOT NULL DEFAULT '', published_until TIMESTAMPTZ NOT NULL, updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Bounded player-authored mysteries: fictional evidence, account-owned play and ratings.
+CREATE TABLE IF NOT EXISTS quest_workshop_mysteries (
+  id TEXT PRIMARY KEY,
+  author_account_id TEXT NOT NULL REFERENCES accounts(id),
+  author_credit TEXT NOT NULL,
+  title TEXT NOT NULL,
+  template_id TEXT NOT NULL,
+  scene_id TEXT NOT NULL,
+  culprit_id TEXT NOT NULL,
+  clue_ids TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','published')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  published_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_quest_workshop_author ON quest_workshop_mysteries(author_account_id);
+CREATE INDEX IF NOT EXISTS ix_quest_workshop_published ON quest_workshop_mysteries(status,published_at);
+CREATE TABLE IF NOT EXISTS quest_workshop_plays (
+  mystery_id TEXT NOT NULL REFERENCES quest_workshop_mysteries(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  attempts INT NOT NULL DEFAULT 0,
+  solved_at TIMESTAMPTZ,
+  stars INT CHECK (stars BETWEEN 1 AND 5),
+  PRIMARY KEY (mystery_id,account_id)
+);
+CREATE TABLE IF NOT EXISTS quest_reading_room (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  day_ordinal INT NOT NULL,
+  exercise_id TEXT NOT NULL,
+  attempts INT NOT NULL DEFAULT 0,
+  solved_at TIMESTAMPTZ,
+  PRIMARY KEY (account_id,day_ordinal)
+);

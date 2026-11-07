@@ -1,6 +1,7 @@
 import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalRecord } from '../tools/ci-deed-recovery-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
-import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { contractReleaseDeskInput as priorContractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 // Raw current-source qualification and finite historical comparisons only. No native/runtime execution.
 import assert from 'node:assert/strict';
 import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
@@ -89,6 +90,7 @@ const record = (revision, file) => {
     rawSha256: { lf: sha(raw), crlf: sha(content.replaceAll('\n', '\r\n')) } } };
 };
 const currentInputs = new Map(), expectedRows = new Map();
+const contractReleaseDeskInput = (file, input) => priorContractReleaseDeskInput(file, questingHistoricalInput(file, input));
 for (const file of files) {
   const authored = record(source.sourceRevision, file), current = record('HEAD', file);
   const integration = record(integratedEconomicSource.revision, file), acceptedRecord = record(CONTRACT_RELEASE_SOURCE_DATA.baseRevision, file);
@@ -98,11 +100,16 @@ for (const file of files) {
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical comparison source must be a regular file.');
   const actualPhysical = fs.readFileSync(file), crlf = Buffer.from(current.content.replaceAll('\n', '\r\n'));
   assert(actualPhysical.equals(current.raw) || actualPhysical.equals(crlf), 'Actual complete LF/CRLF physical bytes qualify before projection: ' + file);
+  const comparisonRaw = questingHistoricalInput(file, current.raw), comparisonContent = comparisonRaw.toString('utf8');
+  const comparisonPin = { mode: current.pin.mode, blob: blob(comparisonRaw), sha256: sha(comparisonRaw), bytes: comparisonRaw.length,
+    rawSha256: { lf: sha(comparisonRaw), crlf: sha(comparisonContent.replaceAll('\n', '\r\n')) } };
+  assert.equal(questingHistoricalEntry(file, `${current.pin.mode} blob ${current.pin.blob}\t${file}`, 'tree'),
+    `${comparisonPin.mode} blob ${comparisonPin.blob}\t${file}`, 'Only the exact pinned questing predecessor identity is compared');
   const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
   if (outer?.targets.desk) {
     const { file: domain, ...expected } = outer.current; assert.equal(domain, file);
-    assert.deepEqual(current.pin, expected, 'The exact current contract source identity qualifies before the historical view');
-  } else assert.deepEqual(current.pin, acceptedRecord.pin, 'Unchanged current source retains the exact accepted predecessor identity');
+    assert.deepEqual(comparisonPin, expected, 'The exact questing predecessor comparison retains the prior contract source identity');
+  } else assert.deepEqual(comparisonPin, acceptedRecord.pin, 'The exact questing predecessor comparison retains the accepted source identity');
   const acceptedPhysical = contractReleaseDeskInput(file, actualPhysical);
   assert(acceptedPhysical.equals(acceptedRecord.raw) || acceptedPhysical.equals(Buffer.from(acceptedRecord.content.replaceAll('\n','\r\n'))), 'The complete accepted integration source qualifies before its parent comparison');
   const acceptedIntegration = ciDeedRecoveryHistoricalRecord(file, acceptedRecord);

@@ -4,7 +4,8 @@ import { businessDeskCombinedHistoricalInput, BUSINESS_DESK_COMBINED_SOURCE_FILE
 import assert from 'node:assert/strict';
 import { integratedEconomicSource, integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
-import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { contractReleaseDeskInput as priorContractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { wikiMediaMergeHistoricalInput } from '../tools/wiki-media-source-transfer.js';
 import crypto from 'node:crypto';
@@ -23,11 +24,24 @@ import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-sou
 import { economyMonitorHistoricalInput } from '../tools/economy-monitor-source-transfer.js';
 
 const lf = text => text.replaceAll('\r\n', '\n');
+const contractReleaseDeskInput = (file, input) => priorContractReleaseDeskInput(file, questingHistoricalInput(file, input));
 const sha256 = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 const git = (...args) => lf(execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'],
 }));
+function readQuestingComparison(file) {
+  const entry = git('ls-tree', 'HEAD', '--', file).trim(), match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), `${match[1]} ${match[2]} 0\t${file}`);
+  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], { windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
+  const text = committed.toString('utf8'), raw = fs.readFileSync(file), stat = fs.lstatSync(file);
+  assert(Buffer.from(text).equals(committed) && !text.includes('\r'));
+  assert.equal(blob(committed), match[2]); assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(raw.equals(committed) || raw.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
+    'Actual complete physical source qualifies before its questing comparison: ' + file);
+  return String(questingHistoricalInput(file, raw));
+}
 assert.deepEqual(process.argv.slice(2), [], 'Bare source-only entry point required');
 assert.equal(DEED_ALLOCATION_SOURCE_PREDECESSOR, 'b35dd222054f0c5f3ca814f228dd7d9a46c58ae9');
 assert.equal(git('rev-parse', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}^{tree}`).trim(), DEED_ALLOCATION_SOURCE_PREDECESSOR_TREE);
@@ -140,14 +154,15 @@ for (const file of [null, { toString: () => 'package.json' }]) {
 }
 const actualSchema = lf(fs.readFileSync('schema.sql', 'utf8'));
 assert.equal(deedAllocationHistoricalInput('schema.sql', actualSchema), actualSchema, 'Deed normalization excludes the native schema');
-assert.equal(currentEconomicTermsBaseline('schema.sql', integratedEconomicParentInput('schema.sql', actualSchema, 'economic')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
+const comparisonSchema = readQuestingComparison('schema.sql');
+assert.equal(currentEconomicTermsBaseline('schema.sql', integratedEconomicParentInput('schema.sql', comparisonSchema, 'economic')), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
   'Only the independently reviewed economic schema can reconstruct its predecessor for source comparison');
-assert.equal(lf(economyMonitorHistoricalInput('schema.sql', integratedEconomicParentInput('schema.sql', actualSchema, 'main'))),
+assert.equal(lf(economyMonitorHistoricalInput('schema.sql', integratedEconomicParentInput('schema.sql', comparisonSchema, 'main'))),
   git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:schema.sql`),
   'Deed source transfer grants no schema/native migration alias; only the separately pinned monitor index is reconstructed');
 for (const file of ['tools/deed-quest-source-transfer.js', 'tools/economy-hardening-source-transfer.js',
   'tools/next-five-source-compatibility.js', 'tools/release-source-transfer.js', 'tools/continuous-city-source-data.js'])
-  assert.equal(lf(contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8'))), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),
+  assert.equal(lf(contractReleaseDeskInput(file, readQuestingComparison(file))), git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:${file}`),
     'Historical literal source pins remain unchanged: ' + file);
 assert.equal(lf(fs.readFileSync('tools/enterprise-native-ux-b35-inputs.js', 'utf8')),
   git('show', `${DEED_ALLOCATION_SOURCE_PREDECESSOR}:tools/enterprise-native-ux-inputs.js`),
@@ -174,6 +189,10 @@ function readAcceptedIntegrationPhysical(file) {
   assert(Buffer.from(physical).equals(raw), 'Lossless actual UTF-8 source qualifies first');
   assert(physical === head || physical === head.replaceAll('\n', '\r\n'),
     'Whole actual LF/CRLF physical source qualifies before any historical comparison');
+  const comparisonHead = String(questingHistoricalInput(file, head));
+  const priorCurrentEntry = questingHistoricalEntry(file, actualEntry, 'tree');
+  const priorCurrent = priorCurrentEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(priorCurrent && priorCurrent[3] === file); assert.equal(blob(comparisonHead), priorCurrent[2]);
   const acceptedEntry = git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
   const accepted = acceptedEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
   assert(accepted && accepted[3] === file, 'Regular accepted integration source required');
@@ -181,15 +200,15 @@ function readAcceptedIntegrationPhysical(file) {
   assert.equal(blob(acceptedText), accepted[2], 'Complete accepted Git source has its own exact blob');
   const outer = CONTRACT_RELEASE_SOURCE_DATA.sourceViews[file];
   if (outer?.targets.desk) {
-    assert.deepEqual(outer.current, { file, mode: actual[1], blob: actual[2], sha256: sha256(head),
-      bytes: Buffer.byteLength(head), rawSha256: { lf: sha256(head), crlf: sha256(head.replaceAll('\n', '\r\n')) } },
-    'The complete actual Root source identity qualifies before projection');
+    assert.deepEqual(outer.current, { file, mode: priorCurrent[1], blob: priorCurrent[2], sha256: sha256(comparisonHead),
+      bytes: Buffer.byteLength(comparisonHead), rawSha256: { lf: sha256(comparisonHead), crlf: sha256(comparisonHead.replaceAll('\n', '\r\n')) } },
+    'The exact questing predecessor retains the prior Root comparison identity');
     assert.equal(outer.targets.desk.revision, CONTRACT_RELEASE_SOURCE_DATA.baseRevision);
     assert.deepEqual(outer.targets.desk.pin, { file, mode: accepted[1], blob: accepted[2],
       sha256: sha256(acceptedText), bytes: Buffer.byteLength(acceptedText) });
   } else {
-    assert.equal(actualEntry, acceptedEntry, 'An unchanged Root input retains its exact accepted mode/blob');
-    assert.equal(head, acceptedText, 'An unchanged Root input retains its complete accepted source');
+    assert.equal(priorCurrentEntry, acceptedEntry, 'The exact questing predecessor retains its accepted comparison mode/blob');
+    assert.equal(comparisonHead, acceptedText, 'The exact questing predecessor retains its complete accepted comparison source');
   }
   const acceptedRaw = contractReleaseDeskInput(file, raw);
   assert(Buffer.isBuffer(acceptedRaw), 'The comparison-only projection preserves Buffer type');

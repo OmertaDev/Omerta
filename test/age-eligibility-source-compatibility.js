@@ -1,4 +1,6 @@
 import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import './questing-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 // Exact source transfer for the merged age policy; actual runtime tests retain current policy bytes.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -42,7 +44,8 @@ const qualifyPhysical = ({ file, committedRaw, treeEntry, indexEntry, physicalRa
   assert.equal(sha(normalized), sha(committed));
   return physical;
 };
-const comparisonInput = (file, input) => file === 'src/server.js' ? businessDeskHistoricalInput(file, contractReleaseDeskInput(file, input)) : input;
+const comparisonInput = (file, input) => file === 'src/server.js'
+  ? businessDeskHistoricalInput(file, contractReleaseDeskInput(file, questingHistoricalInput(file, input))) : input;
 const inverseHunks = diff => {
   const inverses = []; let hunk = null;
   for (const line of diff.split('\n')) {

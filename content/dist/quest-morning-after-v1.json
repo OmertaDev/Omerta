@@ -1,0 +1,531 @@
+{
+  "edges": [
+    {
+      "from": "case-reward",
+      "to": "case-closed",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "correction",
+      "to": "friendship",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "friendship",
+      "to": "case-reward",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "morning-after",
+      "to": "party-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "morning-after",
+      "to": "opening",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "opening",
+      "to": "return",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "party-policy",
+      "to": "investigator",
+      "type": "PERFORMED_BY_ROLE"
+    },
+    {
+      "from": "party-policy",
+      "to": "party-quorum",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "reopened",
+      "to": "friendship",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "return",
+      "to": "correction",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "return",
+      "to": "reopened",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "return",
+      "to": "shuttered",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "shuttered",
+      "to": "friendship",
+      "type": "UNLOCKS"
+    }
+  ],
+  "growth": {
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward",
+    "role": "internal_only"
+  },
+  "namespace": "omerta.quest.morning-after",
+  "nodes": [
+    {
+      "id": "case-closed",
+      "payload": {
+        "effects": [
+          {
+            "claimPolicy": "self",
+            "collectibleId": "saga-morning-after-memento",
+            "kind": "award_collectible",
+            "recipientPolicy": "all_participants"
+          }
+        ],
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "title": "When the Shop Opens Again — Filed"
+      },
+      "type": "terminal"
+    },
+    {
+      "id": "case-reward",
+      "payload": {
+        "cash": 0,
+        "claimOnce": true,
+        "tradeableItems": 0
+      },
+      "type": "reward_bundle"
+    },
+    {
+      "id": "correction",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "correction-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "alive",
+              "label": "Dated appearance of Tomas alive"
+            },
+            {
+              "id": "rumor",
+              "label": "Rumor that the notice was a joke"
+            }
+          ],
+          "kind": "deduction"
+        },
+        "prompt": "The correction names the dated original notice and the verified appearance of Tomas alive. Choose the verifiable observation rather than the rumor.",
+        "summary": "The correction names the dated original notice and the verified appearance of Tomas alive. Choose the verifiable observation rather than the rumor.",
+        "title": "A Correction With a Source"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "correction-answer",
+      "payload": {
+        "solution": [
+          "alive"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "friendship",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "deliver",
+            "label": "Deliver the sealed letter without reading it",
+            "storyFlagIds": [
+              "friendship-deliver-memory",
+              "friendship-filed-memory"
+            ]
+          },
+          {
+            "gates": [
+              {
+                "key": "omerta.quest.family-dinner.relationship",
+                "kind": "story_flag_is",
+                "value": "friend"
+              }
+            ],
+            "id": "listen",
+            "label": "Hear Ada's worries as a friend, then deliver it",
+            "storyFlagIds": [
+              "friendship-listen-memory",
+              "friendship-filed-memory"
+            ]
+          }
+        ],
+        "prompt": "Ada asks you to deliver a personal letter, with no fee or influence attached. Someone who promised friendship at dinner can hear why the reply matters.",
+        "title": "Help Without Keeping Score",
+        "unlockMode": "any"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "friendship-deliver-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.morning-after.trust",
+        "kind": "npc_ally",
+        "title": "Help Without Keeping Score: Deliver the sealed letter without reading it",
+        "value": "deliver"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "friendship-filed-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.morning-after.complete",
+        "kind": "case_evidence",
+        "title": "When the Shop Opens Again: case filed",
+        "value": "filed"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "friendship-listen-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.morning-after.trust",
+        "kind": "npc_ally",
+        "title": "Help Without Keeping Score: Hear Ada's worries as a friend, then deliver it",
+        "value": "listen"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "investigator",
+      "payload": {
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "title": "investigator"
+      },
+      "type": "role"
+    },
+    {
+      "id": "morning-after",
+      "payload": {
+        "expectations": {
+          "combat": "None",
+          "commitments": [],
+          "difficulty": "Intermediate",
+          "durationMinutes": 20,
+          "group": "Solo",
+          "reasoning": "Evidence, interpretation and consequences",
+          "summary": "Return to Tomas and Ada after the forged obituary. The shop window and their next request depend on how you protected them. The file is personal to your own history."
+        },
+        "gates": [
+          {
+            "key": "omerta.quest.early-obituary.complete",
+            "kind": "story_flag_is",
+            "value": "filed"
+          }
+        ],
+        "summary": "Return to Tomas and Ada after the forged obituary. The shop window and their next request depend on how you protected them. The file is personal to your own history.",
+        "title": "When the Shop Opens Again"
+      },
+      "type": "mystery"
+    },
+    {
+      "id": "opening",
+      "payload": {
+        "summary": "Return to Tomas and Ada after the forged obituary. The shop window and their next request depend on how you protected them. The file is personal to your own history.",
+        "title": "When the Shop Opens Again"
+      },
+      "type": "chapter"
+    },
+    {
+      "id": "party-policy",
+      "payload": {
+        "accountLegacyContinuity": true,
+        "organizationScopes": [
+          "personal"
+        ],
+        "recheckConsent": true,
+        "roleLockOnStart": true,
+        "uniqueParticipants": true
+      },
+      "type": "party_policy"
+    },
+    {
+      "id": "party-quorum",
+      "payload": {
+        "minimumOrganizations": 1,
+        "minimumParticipants": 1,
+        "uniqueParticipants": true
+      },
+      "type": "quorum"
+    },
+    {
+      "id": "reopened",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "reopened-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "sign",
+              "label": "Open sign"
+            },
+            {
+              "id": "letters",
+              "label": "Ada's private forwarding letters"
+            }
+          ],
+          "kind": "scene",
+          "slots": [
+            {
+              "id": "window",
+              "label": "Shop window"
+            },
+            {
+              "id": "counter",
+              "label": "Behind the counter"
+            }
+          ]
+        },
+        "prompt": "Tomas has reopened. Ada's forwarding letters belong behind the counter, not on the public noticeboard. Place the open sign in the window and private letters behind the counter.",
+        "summary": "Tomas has reopened. Ada's forwarding letters belong behind the counter, not on the public noticeboard. Place the open sign in the window and private letters behind the counter.",
+        "title": "A Window Lit Again"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "reopened-answer",
+      "payload": {
+        "solution": {
+          "counter": "letters",
+          "window": "sign"
+        },
+        "verifier": "mapping"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "return",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "new",
+            "label": "Review the public correction",
+            "nextNodeIds": [
+              "correction"
+            ],
+            "storyFlagIds": [
+              "return-new-memory"
+            ]
+          },
+          {
+            "gates": [
+              {
+                "key": "omerta.quest.early-obituary.protection",
+                "kind": "story_flag_is",
+                "value": "public"
+              }
+            ],
+            "id": "public",
+            "label": "Visit Tomas's reopened shop while Ada is away",
+            "nextNodeIds": [
+              "reopened"
+            ],
+            "storyFlagIds": [
+              "return-public-memory"
+            ]
+          },
+          {
+            "gates": [
+              {
+                "key": "omerta.quest.early-obituary.protection",
+                "kind": "story_flag_is",
+                "value": "quiet"
+              }
+            ],
+            "id": "quiet",
+            "label": "Help Ada prepare for Tomas's return from temporary closure",
+            "nextNodeIds": [
+              "shuttered"
+            ],
+            "storyFlagIds": [
+              "return-quiet-memory"
+            ]
+          }
+        ],
+        "prompt": "Read the consequence of your earlier decision, or investigate the public correction if this is your first encounter with the family.",
+        "title": "What Kind of Morning?"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "return-new-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.morning-after.visit",
+        "kind": "future_scene_variant",
+        "title": "What Kind of Morning?: Review the public correction",
+        "value": "new"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "return-public-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.morning-after.visit",
+        "kind": "future_scene_variant",
+        "title": "What Kind of Morning?: Visit Tomas's reopened shop while Ada is away",
+        "value": "public"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "return-quiet-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.morning-after.visit",
+        "kind": "future_scene_variant",
+        "title": "What Kind of Morning?: Help Ada prepare for Tomas's return from temporary closure",
+        "value": "quiet"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "saga-morning-after-memento",
+      "payload": {
+        "gameplayPower": "none",
+        "rarity": "story",
+        "title": "When the Shop Opens Again: Case Memento"
+      },
+      "type": "collectible_def"
+    },
+    {
+      "id": "shuttered",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "shuttered-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "sign",
+              "label": "Turn open sign"
+            },
+            {
+              "id": "ask",
+              "label": "Ask Tomas"
+            },
+            {
+              "id": "approval",
+              "label": "Receive Tomas's approval"
+            }
+          ],
+          "kind": "planning"
+        },
+        "prompt": "Tomas must approve reopening; Ada has already checked the locks. Arrange the remaining steps: ask Tomas, receive his approval, turn the open sign.",
+        "summary": "Tomas must approve reopening; Ada has already checked the locks. Arrange the remaining steps: ask Tomas, receive his approval, turn the open sign.",
+        "title": "A Door Ready to Open"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "shuttered-answer",
+      "payload": {
+        "solution": [
+          "ask",
+          "approval",
+          "sign"
+        ],
+        "verifier": "ordered_ids"
+      },
+      "type": "answer_spec"
+    }
+  ],
+  "runtime": {
+    "actionNodeIds": [
+      "return",
+      "correction",
+      "reopened",
+      "shuttered",
+      "friendship"
+    ],
+    "entryNodeId": "morning-after",
+    "experienceId": "morning-after",
+    "nodeIds": [
+      "morning-after",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-morning-after-memento",
+      "case-closed",
+      "return-new-memory",
+      "return-public-memory",
+      "return-quiet-memory",
+      "return",
+      "correction",
+      "correction-answer",
+      "reopened",
+      "reopened-answer",
+      "shuttered",
+      "shuttered-answer",
+      "friendship-deliver-memory",
+      "friendship-listen-memory",
+      "friendship",
+      "friendship-filed-memory"
+    ],
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed"
+  },
+  "schemaVersion": 1,
+  "version": 1,
+  "contentHash": "81d200443d1e1ffc5bd45759f6f27951fce38c5cd4f42e6d573ac57035a15bb7"
+}

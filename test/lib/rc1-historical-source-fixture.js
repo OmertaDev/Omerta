@@ -27,6 +27,7 @@ import { CITY_ACTIVITY_SOURCE_INVERSES, CITY_ACTIVITY_SOURCE_TRANSFER, cityActiv
 import { qualifyCityActivityMarketSource } from '../../tools/rc1-city-activity-market-source-compatibility.js';
 import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';
 import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';
+import { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -233,10 +234,53 @@ function composedHistoricalHelperSource(file, input) {
   assert.equal(sha256(current), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
   return null;
 }
+function currentQuestingWorldHelperRecord(file) {
+  assert.equal(arguments.length, 1);
+  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');
+  const entry = String(git(['--no-replace-objects', 'ls-tree', '-z', 'HEAD', '--', file]));
+  const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0]+)\0$/);
+  assert(match && match[3] === file, 'Actual qualification helper has a regular Git entry');
+  const physicalPath = path.join(root, file), stat = fs.lstatSync(physicalPath);
+  return { head: { mode: match[1], blob: match[2] },
+    index: String(git(['--no-replace-objects', 'ls-files', '--stage', '--', file])).trim(),
+    committed: git(['--no-replace-objects', 'show', 'HEAD:' + file]), physical: originalRead(physicalPath),
+    regular: stat.isFile(), symbolic: stat.isSymbolicLink() };
+}
+function qualifyCurrentQuestingWorldHelper(file, actual) {
+  assert.equal(arguments.length, 2);
+  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');
+  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'Exact current helper source declaration required');
+  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());
+  const pin = QUESTING_SOURCE.files[file].current;
+  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');
+  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\t' + file, 'Actual helper index equals its complete HEAD identity');
+  assert.equal(actual.regular, true); assert.equal(actual.symbolic, false);
+  assert(Buffer.isBuffer(actual.committed) && Buffer.isBuffer(actual.physical));
+  const text = actual.committed.toString('utf8');
+  assert(Buffer.from(text).equals(actual.committed) && !text.includes('\r'), 'Actual helper Git text is lossless canonical LF');
+  assert.equal(blobHash(actual.committed), pin.blob); assert.equal(sha256(actual.committed), pin.sha256);
+  assert.equal(actual.committed.length, pin.bytes);
+  assert(actual.physical.equals(actual.committed) || actual.physical.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
+    'Actual regular helper physical bytes equal complete HEAD in LF or uniform CRLF');
+  // This is a source comparison proof only. Its text never selects an executing module.
+  const proof = qualifyQuestingSource(file, actual.committed);
+  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,
+    proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
+  return proof;
+}
+function questingWorldHelperComparison(file, input) {
+  assert.equal(arguments.length, 2);
+  const actual = currentQuestingWorldHelperRecord(file);
+  const proof = qualifyCurrentQuestingWorldHelper(file, actual);
+  const raw = uniformHistoricalInput(file, input);
+  // Synthetic historical controls retain their old guards. Only exact admitted current
+  // bytes gain this additional comparison layer; execution still uses the archived blob.
+  return canonical(raw) === actual.committed.toString('utf8') ? proof.baselineText : raw;
+}
 function cityActivityWorldHelperSource(file, input) {
   const spec = cityActivityWorldHelper;
   assert.equal(file, spec.file, 'City activity qualification helper domain changed');
-  const current = canonical(economyHardeningSourceBaseline(file, uniformHistoricalInput(file, input)));
+  const current = canonical(economyHardeningSourceBaseline(file, questingWorldHelperComparison(file, input)));
   const frozen = blob(file, release);
   assert.equal(release.get(file), spec.predecessorBlob, 'Frozen qualification helper blob changed');
   assert.equal(sha256(frozen), spec.predecessorSha256, 'Frozen qualification helper source changed');
@@ -403,6 +447,7 @@ async function rejectCurrentNpcRules() {
   loadInventories();
   rejectComposedHistoricalHelperSources();
   rejectCityActivityWorldHelperSources();
+  rejectQuestingWorldHelperSources();
   rejectHistoricalApplicationSources();
   rejectCityActivityHistoricalSources();
   const { assertNpcCarSources } = await import('../../tools/rc1-npc-car-acquisition.js');
@@ -485,7 +530,7 @@ function rejectComposedHistoricalHelperSources() {
 function rejectCityActivityWorldHelperSources() {
   const spec = cityActivityWorldHelper, raw = String(originalRead(path.join(root, spec.file)));
   const current = canonical(raw);
-  const reviewed = canonical(economyHardeningSourceBaseline(spec.file, raw));
+  const reviewed = canonical(economyHardeningSourceBaseline(spec.file, questingWorldHelperComparison(spec.file, raw)));
   const frozen = blob(spec.file, release);
   let positives = 0, refusals = 0;
   for (const supplied of [current, current.replaceAll('\n', '\r\n')]) {
@@ -493,6 +538,7 @@ function rejectCityActivityWorldHelperSources() {
     assert.equal(sha256(selected), spec.predecessorSha256);
     assert.equal(blobHash(selected), spec.predecessorBlob);
     assert.equal(String(selected), String(frozen));
+    assert.strictEqual(selected, frozen, 'Only the independently archived Buffer may reach historical execution');
     positives++;
   }
   for (const supplied of [String(frozen), String(frozen).replaceAll('\n', '\r\n')]) {
@@ -527,6 +573,48 @@ function rejectCityActivityWorldHelperSources() {
   console.log(`PASS_HISTORICAL_ACTIVITY_HELPER_GUARDS: ${positives} current/frozen LF/CRLF controls; ${refusals} raw/inverse/semantic/domain refusals; unchanged b12 tool body only`);
 }
 
+function rejectQuestingWorldHelperSources() {
+  const file = cityActivityWorldHelper.file, actual = currentQuestingWorldHelperRecord(file);
+  const lf = actual.committed.toString('utf8');
+  let currentPositives = 0, currentRefusals = 0;
+  for (const physical of [Buffer.from(lf), Buffer.from(lf.replaceAll('\n', '\r\n'))]) {
+    const proof = qualifyCurrentQuestingWorldHelper(file, { ...actual, physical });
+    assert.equal(sha256(economyHardeningSourceBaseline(file, proof.baselineText)), cityActivityWorldHelper.currentSha256);
+    currentPositives++;
+  }
+  const changed = [
+    { ...actual, head: { ...actual.head, mode: '100755' } },
+    { ...actual, head: { ...actual.head, mode: '120000' } },
+    { ...actual, head: { ...actual.head, blob: '0'.repeat(40) } },
+    { ...actual, index: actual.index.replace(actual.head.blob, '0'.repeat(40)) },
+    { ...actual, index: actual.index + '\n' },
+    { ...actual, committed: Buffer.concat([actual.committed, Buffer.from('\n')]) },
+    { ...actual, committed: actual.committed.subarray(1) },
+    { ...actual, committed: Buffer.from([255]) },
+    { ...actual, committed: lf },
+    { ...actual, physical: Buffer.concat([actual.physical, Buffer.from('\n')]) },
+    { ...actual, physical: actual.physical.subarray(1) },
+    { ...actual, physical: Buffer.from(lf.replace('\n', '\r\n')) },
+    { ...actual, physical: Buffer.from([255]) },
+    { ...actual, physical: lf },
+    { ...actual, regular: false }, { ...actual, symbolic: true }, { ...actual, extra: true },
+  ];
+  for (const value of changed) { assert.throws(() => qualifyCurrentQuestingWorldHelper(file, value)); currentRefusals++; }
+  for (const name of ['../tools/rc1-world-qualification.js', 'src/server.js', '__proto__']) {
+    assert.throws(() => qualifyCurrentQuestingWorldHelper(name, actual)); currentRefusals++;
+  }
+  assert.throws(() => qualifyCurrentQuestingWorldHelper(file, actual, {})); currentRefusals++;
+  const seam = 'questingHistoricalInput(file, await readFile(file))';
+  assert(lf.includes(seam), 'The actual current helper contains the exact reviewed comparison seam');
+  for (const supplied of [lf + '\n// unreviewed-current-helper\n', lf.slice(1), '\ufeff' + lf, lf + '\0',
+    lf.replace(seam, 'await readFile(file)'), lf.replace(/\S/, '?')]) {
+    assert.notEqual(supplied, lf);
+    assert.throws(() => cityActivityWorldHelperSource(file, supplied)); currentRefusals++;
+  }
+  assert.throws(() => questingWorldHelperComparison(file, lf, {})); currentRefusals++;
+  console.log(JSON.stringify({ phase: 'QUESTING_HISTORICAL_HELPER_COMPARISON_CONTROLS', currentPositives,
+    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
+}
 function rejectHistoricalApplicationSources() {
   const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
     'src/db.js', 'src/deeds.js', 'src/explore.js'];

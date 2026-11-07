@@ -128,8 +128,12 @@ try {
   await page.locator('#ux-effects-volume').fill('25'); await page.locator('#ux-celebration').selectOption('quiet');
   assert.equal(await page.locator('body').getAttribute('data-celebration'), 'quiet');
   await page.locator('button[aria-label="Close feedback preferences"]').click();
+  // The real job above consumed the shared cooldown. Make only this disposable
+  // player's next window ready before testing the reachable, enabled controls.
+  await pool.query('UPDATE characters SET street_action_at=NULL WHERE id=$1', [player.ch.id]);
   await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await hideIntro(page);
   await openTab(page, 'streets');
+  await page.locator('#tab-streets [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled').first().waitFor();
   await openDisclosure(page, '#ux-screen-tools');
   await page.locator('[data-ux-pin][aria-pressed="true"]').waitFor();
   assert.equal(await page.locator('body').getAttribute('data-celebration'), 'quiet', 'feedback preference survives reload');

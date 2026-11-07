@@ -1,0 +1,81 @@
+Questing backend focused review — 2026-11-06
+Phase: working-tree source review; no production activation.
+Node v24.19.0; Fastify 5.12.5; pg-mem 3.0.14.
+Pre-fix structural reproduction (exit 0): {"reservedRuntimeFactAccepted":true,"unevaluatedTerminalGateAccepted":true}
+Static: node --check on 10 in-scope JS files passed. Bounded rg search for eval/new Function/child_process/spawn/exec found no matches.
+Static triage: SQL interpolation in workshop board builds only $n placeholders from a bounded result list; data values remain bound parameters.
+PostgreSQL: DATABASE_URL absent; psql/postgres/pg_ctl unavailable. No real-PostgreSQL concurrency proof claimed.
+
+$ node test/content-narrative-security.js
+exit=0
+✓ narrative security: reserved metadata and ignored gates rejected, private references scoped, 47 exhaustive structured-answer checks passed
+
+$ node test/content-narrative.js
+exit=0
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ narrative play validates structured evidence, hints, suspicion, recovery, branching, stable variants, and cross-case claimed access
+
+$ node test/content-casework.js
+exit=0
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✓ casework protects complementary evidence and private objectives, coordinates notes and self-handoffs, and binds rival invitations to consent and current organizations
+
+$ node test/content-graph.js
+exit=0
+✓ content CLI validates a non-vacuous pack and emits its deterministic bundle identity
+✓ canonical bundle identity is independent of author/object/node/edge ordering
+✓ dangling authored dependencies fail closed with the exact edge named
+✓ node ontology is allowlisted; authored executable kinds fail closed
+✓ edge ontology is allowlisted; unknown dependency verbs fail closed
+✓ duplicate node identities fail closed before dependency resolution
+✓ duplicate dependencies fail closed before hashing or runtime application
+✓ arbitrary authored gate evaluators cannot enter the compiled bundle
+✓ arbitrary authored effects cannot execute through the content runtime
+✓ growth intent is mandatory even for intentionally internal content
+✓ agent cash is confined to qualified activation/retention, never raw signup
+✓ agent referral cash must fit inside an explicit reserved liability
+✓ the reviewed graph explicitly compiles cash rewards for agent recruiters
+✓ accidental content dependency cycles fail with the exact cycle path
+✓ build emits a byte-identical immutable bundle and supports idempotent rebuilds
+✓ recruitment graphs cannot authorize autonomous outreach or publication
+✓ the compiler rejects time-based OMR faucets
+✓ collectible export is optional and gameplay-inert by construction
+✓ crafting recipes cannot compile with impossible ingredients
+✓ raw material sources compile only with finite epoch budgets
+✓ collaboration graphs require distinct agent and consenting human roles
+✓ Sixth Chair vertical slice spans mysteries, social growth, items, export, and finite OMR
+✓ live runtime manifests are strict, capability-gated, private-answer-complete, and single-authority
+✓ Sixth Chair v2 activates only its complete, private-answer-backed, value-neutral mystery spine
+✓ six district storylets are personal, location-gated, sequential, private-answer-safe, and value-neutral
+✓ late-game content declarations are rank-gated, build-reactive, optionally social, and narratively persistent
+✓ identity content declarations are closed over canonical Path, skill, regimen, honor, and Underworld catalogs
+✓ seven Don Cases form a rank-gated, build-reactive, persistent, value-neutral late-game spine
+✓ six Path Cases are identity-gated, build-reactive, persistent, and value-neutral
+
+$ node test/content-api.js
+exit=0
+✅ authored content API and OpenAPI contracts passed
+
+$ node test/quest-workshop.js
+exit=0
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+quest workshop: solvability, strict inputs, auth, ownership, hidden solutions, persistence, ratings, author cap and value-neutrality passed
+
+$ node test/quest-saga.js
+exit=0
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+quest saga: connected branches, evidence, timelines, item use, social relationships, remembered consequences, pressure/recovery, legacy, mementos, services and value-neutrality passed
+
+QREV-04 follow-up — 2026-11-06T22:57:53Z
+Root reported pre-fix Fastify inject reproductions: submission.ids and invitedAccountIds scalar strings reached the DB handler because AJV coerced them into arrays.
+Correction inspected: raw recursive preValidation rejects wrong array/item/map-value types before coercion. HTTP item/slot limit is 64; structured IDs are at most 160 characters.
+Post-fix syntax checks passed for src/routes/content.js, src/content/narrative.js, and src/agentgateway.js.
+$ node test/content-api.js
+exit=0
+✅ authored content API and OpenAPI contracts passed
+
+$ node test/content-narrative-security.js
+exit=0
+✓ narrative security: reserved metadata and ignored gates rejected, private references scoped, 47 exhaustive structured-answer checks passed
+
+

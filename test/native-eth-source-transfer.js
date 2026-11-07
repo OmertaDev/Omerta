@@ -7,6 +7,7 @@ import { NATIVE_ETH_SOURCE_TRANSFER as manifest, NATIVE_ETH_SOURCE_FILES,
   assertNativeEthSourceTransfer, nativeEthHistoricalInput } from '../tools/native-eth-source-transfer.js';
 import { GENESIS_FEE_READINESS_DOMAINS, assertGenesisFeeReadinessSourceTransfer } from '../tools/genesis-fee-readiness-source-transfer.js';
 import { MARKET_FEE_COPY_DOMAINS, assertMarketFeeCopySourceTransfer } from '../tools/market-fee-copy-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 const lf = text => text.replaceAll('\r\n', '\n');
@@ -22,7 +23,22 @@ let positives = 0, refusals = 0;
 for (const [file, pin] of Object.entries(manifest.files)) {
   assert(NATIVE_ETH_SOURCE_FILES.includes(file), 'Only closed historical domains may be projected');
   assert(Object.isFrozen(pin));
-  const physical = fs.readFileSync(file, 'utf8'), current = lf(physical);
+  // This is a historical text proof, not actual-current native admission. Qualify
+  // complete actual HEAD/index/physical source before the exact successor view.
+  const entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file, 'Actual committed regular-file identity required');
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), `${match[1]} ${match[2]} 0\t${file}`);
+  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file],
+    { windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
+  const committedText = committed.toString('utf8'), raw = fs.readFileSync(file), stat = fs.lstatSync(file);
+  assert(stat.isFile() && !stat.isSymbolicLink() && Buffer.from(committedText).equals(committed));
+  assert.equal(blob(committed), match[2], 'Actual committed whole blob qualifies first');
+  assert(!committedText.includes('\r'), 'Committed source must remain canonical LF');
+  assert(raw.equals(committed) || raw.equals(Buffer.from(committedText.replaceAll('\n', '\r\n'))),
+    'Complete actual physical LF/CRLF source qualifies before comparison: ' + file);
+  const physical = String(questingHistoricalInput(file, raw)), current = lf(physical);
+  assert.equal(questingHistoricalEntry(file, entry, 'tree'), `${match[1]} blob ${blob(current)}\t${file}`);
   const previous = git('show', `${NATIVE_ETH_PREDECESSOR_REVISION}:${file}`);
   assert.notEqual(current, previous, 'Unchanged files do not need a new postimage bridge');
   assert.equal(sha(current), pin.currentSha256); assert.equal(blob(current), pin.currentBlob);

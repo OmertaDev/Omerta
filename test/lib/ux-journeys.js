@@ -1,4 +1,5 @@
 import { integratedEconomicParentInput } from '../../tools/integrated-economic-parent-source.js';
+import { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';
 import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { readFileSync, lstatSync } from 'node:fs';
@@ -84,7 +85,8 @@ export function runAfterwordSourceProof() {
       && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;
     const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;
     const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file);
-    const expected = desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,
+    const questing = Object.hasOwn(QUESTING_SOURCE.files, file) ? QUESTING_SOURCE.files[file] : null;
+    const expected = questing ? questing.current : desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,
       sha256: domain.currentSha256, bytes: domain.currentBytes };
     assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');
     assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);
@@ -101,45 +103,56 @@ export function runAfterwordSourceProof() {
       assert.throws(() => assertBusinessDeskCombinedSourceTransfer(file, changed, 'desk'));
   };
   const historicalHeadRecord = file => {
-    let raw = record('HEAD', file);
-    const committed = git('show', 'HEAD:' + file);
-    const indexed = git('ls-files', '--stage', '--', file).trim();
-    assert.equal(indexed, raw.mode + ' ' + raw.blob + ' 0\t' + file, 'Actual index must equal raw HEAD before any historical view');
+    const actualHead = record('HEAD', file), actualCommitted = git('show', 'HEAD:' + file);
+    const actualIndexed = git('ls-files', '--stage', '--', file).trim();
+    assert.equal(actualIndexed, actualHead.mode + ' ' + actualHead.blob + ' 0\t' + file, 'Actual index must equal raw HEAD before any historical view');
+    assert.equal(blob(actualCommitted), actualHead.blob, 'Complete committed UTF-8 text reproduces the actual HEAD blob');
+    assert(!actualCommitted.includes('\r'), 'Committed comparison source uses canonical LF');
     const physicalPath = new URL('../../' + file, import.meta.url), stat = lstatSync(physicalPath);
     assert(stat.isFile() && !stat.isSymbolicLink(), 'Actual physical comparison input is a regular file');
-    const physical = readFileSync(physicalPath, 'utf8');
-    assert(physical === committed || physical === committed.replaceAll('\n', '\r\n'), 'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');
-    let source = committed;
+    const actualPhysical = readFileSync(physicalPath);
+    assert(actualPhysical.equals(Buffer.from(actualCommitted)) || actualPhysical.equals(Buffer.from(actualCommitted.replaceAll('\n', '\r\n'))),
+      'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');
+    // The exact comparison view follows actual HEAD/index/whole physical admission.
+    // Runtime/native consumers continue to use their unchanged actual inputs.
+    let comparisonSource = questingHistoricalInput(file, actualCommitted);
+    const comparisonTree = questingHistoricalEntry(file, actualHead.mode + ' blob ' + actualHead.blob + '\t' + file, 'tree');
+    const comparisonIndex = questingHistoricalEntry(file, actualIndexed, 'index');
+    const comparisonMatch = comparisonTree.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+    assert(comparisonMatch && comparisonMatch[3] === file, 'Exact regular comparison Git entry');
+    let comparisonRecord = { mode: comparisonMatch[1], blob: comparisonMatch[2] };
+    assert.equal(comparisonIndex, comparisonRecord.mode + ' ' + comparisonRecord.blob + ' 0\t' + file);
+    assert.equal(blob(comparisonSource), comparisonRecord.blob, 'Whole comparison bytes and identity remain bound');
     const rootDesk = rootSource.status === 'BOUND' && rootSource.sourceViews[file]?.targets.desk;
     if (rootDesk) {
-      const outer = assertContractReleaseSourceTransfer(file, committed, 'desk');
-      assert.deepEqual(raw, { mode: rootSource.sourceViews[file].current.mode, blob: rootSource.sourceViews[file].current.blob });
+      const outer = assertContractReleaseSourceTransfer(file, comparisonSource, 'desk');
+      assert.deepEqual(comparisonRecord, { mode: rootSource.sourceViews[file].current.mode, blob: rootSource.sourceViews[file].current.blob });
       assert.deepEqual([outer.sourceOnly, outer.runtime, outer.native], [true, false, false]);
       assert.equal(outer.sourceRevision, rootSource.sourceRevision);
       assert.equal(outer.predecessorRevision, rootDesk.revision);
-      source = outer.baselineText;
-      raw = record(outer.predecessorRevision, file);
-      assert.deepEqual(raw, { mode: rootDesk.pin.mode, blob: rootDesk.pin.blob });
-      assert.equal(source, git('show', outer.predecessorRevision + ':' + file));
+      comparisonSource = outer.baselineText;
+      comparisonRecord = record(outer.predecessorRevision, file);
+      assert.deepEqual(comparisonRecord, { mode: rootDesk.pin.mode, blob: rootDesk.pin.blob });
+      assert.equal(comparisonSource, git('show', outer.predecessorRevision + ':' + file));
     }
-    const mainSource = integratedEconomicParentInput(file, source, 'main');
-    source = mainSource;
-    raw = { mode: raw.mode, blob: blob(source) };
+    const mainSource = integratedEconomicParentInput(file, comparisonSource, 'main');
+    comparisonSource = mainSource;
+    comparisonRecord = { mode: comparisonRecord.mode, blob: blob(comparisonSource) };
     const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.desk);
     if (combined) {
-      assert.deepEqual(raw, { mode: combined.current.mode, blob: combined.current.blob });
-      const proof = assertBusinessDeskCombinedSourceTransfer(file, source, 'desk');
+      assert.deepEqual(comparisonRecord, { mode: combined.current.mode, blob: combined.current.blob });
+      const proof = assertBusinessDeskCombinedSourceTransfer(file, comparisonSource, 'desk');
       assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
-      source = proof.targetText;
-      raw = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };
-      assert.deepEqual(raw, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));
-      assert.equal(source, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));
+      comparisonSource = proof.targetText;
+      comparisonRecord = { mode: combined.parents.desk.mode, blob: combined.parents.desk.blob };
+      assert.deepEqual(comparisonRecord, record(BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision, file));
+      assert.equal(comparisonSource, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.desk.revision + ':' + file));
       rejectCombinedMutation(file, mainSource);
     }
-    if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return raw;
+    if (!Object.hasOwn(BUSINESS_DESK_DOMAINS, file)) return comparisonRecord;
     const domain = BUSINESS_DESK_DOMAINS[file];
-    assert.deepEqual(raw, { mode: domain.mode, blob: domain.currentBlob }, 'Actual raw HEAD must qualify before historical bookkeeping');
-    const proof = assertBusinessDeskSourceTransfer(file, source);
+    assert.deepEqual(comparisonRecord, { mode: domain.mode, blob: domain.currentBlob }, 'Exact frozen Desk comparison identity required');
+    const proof = assertBusinessDeskSourceTransfer(file, comparisonSource);
     assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
     const predecessor = record(BUSINESS_DESK_PREDECESSOR, file);
     assert.deepEqual(predecessor, { mode: domain.baselineMode, blob: domain.baselineBlob });
@@ -170,7 +183,7 @@ export function runAfterwordSourceProof() {
     const current = git('show', pin.revision + ':' + row.file), baseline = git('show', pin.targetRevision + ':' + row.file);
     assert.deepEqual(record(pin.revision, row.file), { mode: row.mode, blob: row.currentBlob });
     assert.deepEqual(record(pin.targetRevision, row.file), { mode: row.targetMode, blob: row.targetBlob });
-    assert.deepEqual(historicalHeadRecord(row.file), record(pin.revision, row.file), 'Actual checked-out content remains the authored successor');
+    assert.deepEqual(historicalHeadRecord(row.file), record(pin.revision, row.file), 'Exact comparison view retains the frozen Afterword authored identity');
     assert.deepEqual(row.inverses, gitInverses(row.file), 'Every ordered inverse is the actual context-three Git hunk');
     assert.equal(sha(current), row.currentSha256); assert.equal(blob(current), row.currentBlob); assert.equal(Buffer.byteLength(current), row.currentBytes);
     assert.equal(sha(baseline), row.targetSha256); assert.equal(blob(baseline), row.targetBlob); assert.equal(Buffer.byteLength(baseline), row.targetBytes);
@@ -179,8 +192,9 @@ export function runAfterwordSourceProof() {
     const actualHead = git('show', 'HEAD:' + row.file), actualRecord = record('HEAD', row.file);
     const rawPhysical = readFileSync(new URL('../../' + row.file, import.meta.url), 'utf8');
     assertActualHeadInput(row.file, actualRecord, actualHead, rawPhysical);
-    const physical = businessDeskHistoricalInput(row.file, integratedEconomicParentInput(row.file, contractReleaseDeskInput(row.file, rawPhysical), 'main'));
-    assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Complete actual LF/CRLF content only');
+    const comparisonPhysical = questingHistoricalInput(row.file, rawPhysical);
+    const comparison = businessDeskHistoricalInput(row.file, integratedEconomicParentInput(row.file, contractReleaseDeskInput(row.file, comparisonPhysical), 'main'));
+    assert(comparison === current || comparison === current.replaceAll('\n', '\r\n'), 'Complete exact predecessor LF/CRLF comparison content only');
     for (const input of [actualHead, actualHead.replaceAll('\n', '\r\n')]) {
       assertActualHeadInput(row.file, actualRecord, actualHead, input); rawCurrentPositives++;
     }

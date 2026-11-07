@@ -15,7 +15,7 @@ import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,
-  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches } from '../tools/ux-release-phase2-native-catalog.js';
+  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches, assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
@@ -972,5 +972,5 @@ async function queryPlans(pool) {
   } finally{await c.query('ROLLBACK');c.release();}
 }
 
-try { const url=endpoint(); if(process.env.P2_TEST_CHILD) await child(url); else await parent(url); }
+try { assertQuestingPhase2SourceInputs(); const url=endpoint(); if(process.env.P2_TEST_CHILD) await child(url); else await parent(url); }
 catch(error) { console.error('phase2-postgres: FAIL '+safeError(error)); process.exitCode=1; }

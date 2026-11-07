@@ -261,7 +261,7 @@ export function systemEligibility(entry, ctx) {
     case 'clue': {
       if (jailed(ctx.ch) || safeHoused(ctx.ch)) return stop('status');
       const scroll = ctx.live.clueBoard?.scroll || ctx.owned.work?.clue;
-      return gate(!!scroll && num(ctx.ch.energy) >= CLUES.DIG_ENERGY, 'clue:dig', scroll ? 'resource' : 'status');
+      return gate(!!scroll && num(ctx.ch.energy) >= CLUES.DIG_ENERGY, scroll?.interaction ? 'clue:answer' : 'clue:dig', scroll ? 'resource' : 'status');
     }
     case 'reachableFamily': {
       if (ctx.owned.gangId) return stop('status');

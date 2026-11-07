@@ -14,9 +14,10 @@
 // account-level lifetime legend (survives death, the boxing_wins precedent). `clue_at` (the
 // post-casket cooldown) is a DIRECT-SQL column — never in the positional persist.
 import { GameError, notify } from './game.js';
-import { CLUES, clueStepOf, clueRankOf, clueTierOf, cityHourOf , jailed, safeHoused } from './rules.js';
+import { CLUES, clueRankOf, clueTierOf, cityHourOf , jailed, safeHoused } from './rules.js';
 import { logCollect } from './collection.js';
 import { claimFirst } from './firsts.js';
+import { cluePuzzleOf, publicCluePuzzle } from './clue-puzzles.js';
 
 
 // ── the board: your scroll + the riddle + the legend ──
@@ -28,9 +29,10 @@ export async function clueBoard(pool, ch, acct) {
   const relics = Number((await pool.query(
     "SELECT COUNT(*) n FROM collection_log WHERE account_id=$1 AND category='relics'", [ch.account_id])).rows[0]?.n || 0);
   let scroll = null;
-  if (s) { const step = clueStepOf(s.salt, Number(s.step)); const t = clueTierOf(s.tier);
+  if (s) { const step = cluePuzzleOf(s.salt, Number(s.step)); const t = clueTierOf(s.tier);
     scroll = { step: Number(s.step), of: Number(s.steps), riddle: step.riddle, kind: step.kind,
-      tier: t.id, tierName: t.name, casketBand: [t.casketMin, t.casketMax] }; }
+      tier: t.id, tierName: t.name, casketBand: [t.casketMin, t.casketMax],
+      ...(step.version === 2 ? { interaction: publicCluePuzzle(step) } : {}) }; }
   return {
     scroll,
     cooldownSeconds: Math.max(0, Math.ceil(cdMs / 1000)),
@@ -42,14 +44,33 @@ export async function clueBoard(pool, ch, acct) {
 
 // ── the dig — stand on the right ground (inside the window if timed), pay the shovel work ──
 export async function dig(ch, client, h) {
+  return attempt(ch, client, h, null);
+}
+
+export async function answer(ch, input, client, h) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)
+      || Object.keys(input).length !== 2 || !Object.hasOwn(input, 'step') || !Object.hasOwn(input, 'answerId')
+      || !Number.isSafeInteger(input.step) || input.step < 1 || input.step > 7
+      || typeof input.answerId !== 'string' || !/^[a-f0-9]{20}$/.test(input.answerId)) {
+    throw new GameError('bad_clue_answer', 'Choose one of the current clue’s supplied answers.');
+  }
+  return attempt(ch, client, h, input);
+}
+
+async function attempt(ch, client, h, input) {
   if (jailed(ch)) throw new GameError('jailed', 'No digging from lockup.');
   // (red-team, D2 consistency) a casket is a collect-class faucet — no shovel work from a safehouse
   if (safeHoused(ch)) throw new GameError('safe', 'No digging while you are off the grid — surface first.');
   const s = (await client.query('SELECT * FROM clue_scrolls WHERE character_id=$1 FOR UPDATE', [ch.id])).rows[0];
   if (!s) throw new GameError('no_scroll', 'No scroll in hand — clues turn up on jobs.');
+  const step = cluePuzzleOf(s.salt, Number(s.step));
+  if (step.version === 2) {
+    if (!input) throw new GameError('clue_answer_required', 'This trail needs a deduction. Read its observations and choose an answer.');
+    if (input.step !== Number(s.step) || !step.choices.some((choice) => choice.id === input.answerId))
+      throw new GameError('stale_clue_answer', 'The trail moved on. Refresh its current clue before answering.');
+  } else if (input) throw new GameError('clue_dig_required', 'This older scroll is completed by digging in the right district.');
   if (Number(ch.energy) < CLUES.DIG_ENERGY) throw new GameError('energy', `Digging takes ${CLUES.DIG_ENERGY} energy.`);
   ch.energy = Number(ch.energy) - CLUES.DIG_ENERGY;   // the shovel is paid win or lose (pacing)
-  const step = clueStepOf(s.salt, Number(s.step));
   if (ch.loc !== step.district)
     return { ok: false, cold: true, riddle: step.riddle, energy: CLUES.DIG_ENERGY, hint: 'Cold ground. Read it again — this is not the place.' };
   if (step.window) {
@@ -57,11 +78,16 @@ export async function dig(ch, client, h) {
     if (hr < step.window.lo || hr > step.window.hi)
       return { ok: false, cold: true, riddle: step.riddle, energy: CLUES.DIG_ENERGY, hint: `Right ground, wrong hour — come ${step.window.text} (h${step.window.lo}–${step.window.hi}).` };
   }
+  if (step.version === 2 && input.answerId !== step.answerId)
+    return { ok: false, cold: true, riddle: step.riddle, energy: CLUES.DIG_ENERGY,
+      hint: 'That deduction does not fit all of the observations. Read the evidence again.' };
   const done = Number(s.step) >= Number(s.steps);
   if (!done) {
     const next = Number(s.step) + 1;
     await client.query('UPDATE clue_scrolls SET step=$2 WHERE character_id=$1', [ch.id, next]);
-    return { ok: true, step: next, of: Number(s.steps), riddle: clueStepOf(s.salt, next).riddle };
+    const nextPuzzle = cluePuzzleOf(s.salt, next);
+    return { ok: true, step: next, of: Number(s.steps), riddle: nextPuzzle.riddle,
+      ...(nextPuzzle.version === 2 ? { interaction: publicCluePuzzle(nextPuzzle) } : {}) };
   }
   // THE CASKET — the final dig. TIER-4: the take band scales with the scroll's TIER (the one faucet:
   // rng-audited, ledgered, cooldown stamped). A rare roll also yields a RELIC (status, never $OMR).

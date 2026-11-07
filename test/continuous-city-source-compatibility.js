@@ -1,3 +1,5 @@
+import './questing-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 import { rebuildInterfaceHistoricalInput } from '../tools/classic-interface-source-compatibility.js';
 import { parse as parseCatalogueSource } from 'acorn';
 import path from 'node:path';
@@ -37,13 +39,13 @@ for (const row of CLASSIC_INTERFACE_OVER_F92.files) {
   const target = git('--no-replace-objects', 'show', CLASSIC_INTERFACE_OVER_F92.targetRevision + ':' + file);
   assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.revision, '--', file).trim(), row.mode + ' blob ' + row.currentBlob + '\t' + file);
   assert.equal(git('--no-replace-objects', 'ls-tree', CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file).trim(), row.mode + ' blob ' + row.targetBlob + '\t' + file);
-  const headText = git('--no-replace-objects', 'show', 'HEAD:' + file);
+  const headText = questingHistoricalInput(file, git('--no-replace-objects', 'show', 'HEAD:' + file));
   assert.equal(git('--no-replace-objects', 'ls-tree', 'HEAD', '--', file).trim().split(' ')[0], row.mode, 'Actual committed mode remains regular');
   assert.equal(rebuildInterfaceHistoricalInput(file, integratedHistoricalInput(file, headText)), current,
     'Only the exact economy-hardening successor reconstructs the authored classic-interface input');
   assert.equal(hash(current), row.currentSha256); assert.equal(hash(target), row.targetSha256);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-  const physical = fs.readFileSync(file, 'utf8');
+  const physical = questingHistoricalInput(file, fs.readFileSync(file, 'utf8'));
   assert.equal(lf(rebuildInterfaceHistoricalInput(file, integratedHistoricalInput(file, physical))), current);
   assert.deepEqual(row.inverses, hunks(git('diff', '--no-ext-diff', '--unified=3', CLASSIC_INTERFACE_OVER_F92.targetRevision, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)));
   for (const input of [physical, current, current.replaceAll('\n', '\r\n')]) {
@@ -73,7 +75,7 @@ for (const file of ['__proto__', 'constructor', 'toString', '../package.json', '
 }
 for (const mutate of [pin => { pin.status = 'UNSEALED'; }, pin => { pin.revision = pin.targetRevision; }, pin => { pin.files[0].currentBlob = '0'.repeat(40); }, pin => { pin.files.pop(); }, pin => { pin.files[0].inverses.push(pin.files[0].inverses[0]); }]) {
   const pin = JSON.parse(JSON.stringify(CLASSIC_INTERFACE_OVER_F92)); mutate(pin); freezeClassicProbe(pin);
-  assert.throws(() => qualifyClassicInterfaceSource('package.json', fs.readFileSync('package.json', 'utf8'), pin)); classicRefusals++;
+  assert.throws(() => qualifyClassicInterfaceSource('package.json', questingHistoricalInput('package.json', fs.readFileSync('package.json', 'utf8')), pin)); classicRefusals++;
 }
 // A frozen array with inherited toJSON must not hide alternate rows from the binding checksum.
 {
@@ -227,7 +229,7 @@ function qualifyCurrentHomeOverGUI59(file, input, expected, mode, pin = CURRENT_
   for (const revision of [pin.revision, 'HEAD']) {
     const row = git('ls-tree', revision, '--', file).trim().split(/\s+/);
     assert.deepEqual(row, [pin.currentMode, 'blob', pin.currentBlob, file], 'HOME actual authored/HEAD row must match the full reviewed input');
-    assert.equal(git('show', revision + ':' + file), text, 'HOME authored/HEAD whole body must match physical canonical bytes');
+    assert.equal(questingHistoricalInput(file, git('show', revision + ':' + file)), text, 'HOME authored/HEAD whole body must match physical canonical bytes');
   }
   assert.equal(pin.targetRevision, '59dbb6d99312fa44dba1fbec5bdf24948740e0dc'); assert.equal(pin.targetTree, '558374c74221edeb57b9ff0588171a8b16aa1080');
   assert.equal(pin.targetMode, '100644'); assert.equal(git('rev-parse', pin.targetRevision + '^{tree}').trim(), pin.targetTree);
@@ -271,7 +273,7 @@ function qualifyCurrentSceneOverGUI59(file, input, expected, mode, pin = CURRENT
   assert.equal(git('rev-parse', pin.revision + '^{tree}').trim(), pin.tree); git('merge-base', '--is-ancestor', pin.revision, 'HEAD');
   for (const revision of [pin.revision, 'HEAD']) {
     assert.deepEqual(git('ls-tree', revision, '--', file).trim().split(/\s+/), [record.currentMode, 'blob', record.currentBlob, file]);
-    assert.equal(git('show', revision + ':' + file), text, 'Scene authored/HEAD whole body must match physical canonical bytes');
+    assert.equal(questingHistoricalInput(file, git('show', revision + ':' + file)), text, 'Scene authored/HEAD whole body must match physical canonical bytes');
   }
   assert.equal(pin.targetRevision, '59dbb6d99312fa44dba1fbec5bdf24948740e0dc'); assert.equal(pin.targetTree, '558374c74221edeb57b9ff0588171a8b16aa1080');
   assert.equal(git('rev-parse', pin.targetRevision + '^{tree}').trim(), pin.targetTree);
@@ -292,7 +294,7 @@ function qualifyCurrentSceneOverGUI59(file, input, expected, mode, pin = CURRENT
 }
 for (const [file, pin] of Object.entries(CONTINUOUS_CITY_SOURCE_DOMAINS)) {
   const current = git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file);
-  const physical = classicInterfaceHistoricalInput(file, integratedHistoricalInput(file, fs.readFileSync(file, 'utf8')));
+  const physical = classicInterfaceHistoricalInput(file, integratedHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))));
   const actualPhysical = file === 'public/index.html'
     ? qualifyCurrentUIOverGUI59(file, physical, current, git('ls-files', '--stage', '--', file).split(' ')[0]).baselineText
     : file === 'test/city-world-host-browser.js'
@@ -315,7 +317,7 @@ assert.equal(Object.keys(CONTINUOUS_CITY_FIXTURE_DOMAINS).length, 36);
 for (const [file, pin] of Object.entries(CONTINUOUS_CITY_FIXTURE_DOMAINS)) {
   assert(file.startsWith('test/'), 'Reader proofs cannot admit production source');
   assert(!Object.hasOwn(CONTINUOUS_CITY_SOURCE_DOMAINS, file), 'GUI and reader domains stay disjoint');
-  const actual = lf(classicInterfaceHistoricalInput(file, integratedHistoricalInput(file, fs.readFileSync(file, 'utf8')))), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);
+  const actual = lf(classicInterfaceHistoricalInput(file, integratedHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))))), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);
   assert.equal(git('ls-files', '--stage', '--', file).split(' ')[0], pin.currentMode);
   assert.equal(git('ls-tree', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file).split(' ')[0], pin.baselineMode);
   verify(file, pin, actual, baseline, qualifyContinuousCityFixtureSource,
@@ -413,7 +415,7 @@ function assertCurrentCatalogueSupport(pin) {
   assert(directory.isDirectory() && !directory.isSymbolicLink(), 'Pinned support directory must be ordinary and not redirected');
   assert(physical.isFile() && !physical.isSymbolicLink(), 'Pinned support must be an ordinary non-symlink file');
   readPinnedCatalogueReference(pin);
-  const actual = catalogueLF(fs.readFileSync(pin.file, 'utf8'));
+  const actual = catalogueLF(questingHistoricalInput(pin.file, fs.readFileSync(pin.file, 'utf8')));
   assert.equal(git('ls-files', '--stage', '--', pin.file), pin.mode + ' ' + blob(actual) + ' 0\t' + pin.file + '\n', 'Actual support index/body must remain exact');
   const text = rebuildInterfaceHistoricalInput(pin.file, actual);
   assert.equal(Buffer.byteLength(text), pin.bytes); assert.equal(hash(text), pin.sha256); assert.equal(blob(text), pin.blob);
@@ -484,7 +486,7 @@ function authoredCombinedCatalogueLegacyProof() {
   return readPinnedCatalogueReference(LEGACY_NATIVE_REFERENCE);
 }
 for (const file of ['tools/enterprise-current-source-compatibility.js', 'tools/enterprise-current-source-data.js', 'tools/enterprise-native-inputs.js']) {
-  assert.equal(lf(file === 'tools/enterprise-native-inputs.js' ? await normalizeCombinedCatalogueForLegacyProof(fs.readFileSync(file, 'utf8')) : fs.readFileSync(file, 'utf8')),
+  assert.equal(lf(file === 'tools/enterprise-native-inputs.js' ? await normalizeCombinedCatalogueForLegacyProof(questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))) : questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))),
     file === 'tools/enterprise-native-inputs.js'
       ? authoredCombinedCatalogueLegacyProof()
       : git('show', CONTINUOUS_CITY_SOURCE_REVISION + ':' + file), 'Predecessor guard/data is immutable: ' + file);

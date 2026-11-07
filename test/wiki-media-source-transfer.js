@@ -1,6 +1,7 @@
 import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
-import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { contractReleaseDeskInput as priorContractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 // Exact source-only evidence for the already-authored wiki/media release. No native/runtime admission.
 import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -16,6 +17,7 @@ import { WIKI_MEDIA_SOURCE, WIKI_MEDIA_SOURCE_SHA256, assertWikiMediaSourceTrans
 
 
 // Admit actual HEAD, index and complete physical bytes before either source-only view.
+const contractReleaseDeskInput = (file, input) => priorContractReleaseDeskInput(file, questingHistoricalInput(file, input));
 function readCombinedPhysical(file) {
   assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');
   assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);
@@ -33,12 +35,13 @@ function readCombinedPhysical(file) {
   const expectedEntry = outer?.targets.desk
     ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
     : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
-  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');
+  const priorCurrentEntry = questingHistoricalEntry(file, actualEntry, 'tree');
+  assert.equal(priorCurrentEntry, expectedEntry, 'The exact questing predecessor comparison retains the prior source identity');
   const accepted = contractReleaseDeskInput(file, physical);
   const acceptedLf = accepted.replaceAll('\r\n', '\n');
   assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');
   const acceptedEntry = outer?.targets.desk
-    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : actualEntry;
+    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : priorCurrentEntry;
   const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
   const comparison = ciDeedRecoveryHistoricalInput(file, accepted);
   assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The separately qualified CI predecessor mode/blob matches the reviewed integration');
@@ -53,6 +56,18 @@ assert.deepEqual(process.argv.slice(2), [], 'Source-only proof has no native/run
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
+function readQuestingComparison(file) {
+  const entry = git('ls-tree', 'HEAD', '--', file).trim(), match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), `${match[1]} ${match[2]} 0\t${file}`);
+  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], { maxBuffer: 32 * 1024 * 1024 });
+  const text = committed.toString('utf8'), raw = fs.readFileSync(file), stat = fs.lstatSync(file);
+  assert(Buffer.from(text).equals(committed) && !text.includes('\r'));
+  assert.equal(blob(committed), match[2]); assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(raw.equals(committed) || raw.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
+    'Actual complete physical source qualifies before its questing comparison: ' + file);
+  return String(questingHistoricalInput(file, raw));
+}
 const files = ["docs/WIKI.md","package.json","public/index.html","public/ux-feedback.js","public/wiki.html","src/server.js","test/ux-feedback.js"];
 assert.equal(WIKI_MEDIA_SOURCE.revision, '37ff08fae831f2756b5be373b74fa5f4b14445c0');
 assert.equal(WIKI_MEDIA_SOURCE.predecessorRevision, 'f4474d358e8c9feddcd01deaadf77c1a67ace9cb');
@@ -161,7 +176,7 @@ const wiring = [
 ];
 for (const item of wiring) {
   let current = wikiMediaMergeHistoricalInput(item.file,
-    contractReleaseDeskInput(item.file, fs.readFileSync(new URL('../' + item.file, import.meta.url), 'utf8')), 'wiki').replaceAll('\r\n', '\n');
+    contractReleaseDeskInput(item.file, readQuestingComparison(item.file)), 'wiki').replaceAll('\r\n', '\n');
   assert.equal(current.split(item.imports).length, 2);
   current = current.replace(item.imports, '');
   for (const name of item.calls || []) {
@@ -200,8 +215,8 @@ assert.deepEqual(Object.keys(merge.files), changedMergeFiles, 'Only the finite a
 let mergePositives = 0, mergeRefusals = 0, mergeHunks = 0;
 for (const [file, row] of Object.entries(merge.files)) {
   const current = git('show', merge.revision + ':' + file);
-  assert.equal(wikiMediaNoirMergeHistoricalInput(file, contractReleaseDeskInput(file, fs.readFileSync(file, 'utf8')), 'wiki').replaceAll('\r\n', '\n'), current,
-    'Actual physical merge source remains exact after the separately qualified integration: ' + file);
+  assert.equal(wikiMediaNoirMergeHistoricalInput(file, contractReleaseDeskInput(file, readQuestingComparison(file)), 'wiki').replaceAll('\r\n', '\n'), current,
+    'The exact merge predecessor comparison remains intact after actual physical qualification: ' + file);
   assert(Object.isFrozen(row) && Object.isFrozen(row.current));
   const checkRecord = (revision, record, text) => {
     assert.equal(git('ls-tree', revision, '--', file).trim(), record.mode + ' blob ' + record.lf.blob + '\t' + file);
