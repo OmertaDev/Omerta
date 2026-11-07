@@ -17,7 +17,7 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
   assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
 git('merge-base', '--is-ancestor', source.predecessor, source.revision);
 git('merge-base', '--is-ancestor', source.revision, 'HEAD');
-const scope = file => file === 'SPEC.md' || file === 'package.json' || file === 'schema.sql'
+const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql'
   || file === '.github/workflows/ci.yml' || /^(?:src|test|tools|public)\//.test(file);
 const excluded = new Set(['tools/site-basics-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
 const changed = kind => git('diff', '--name-only', '--diff-filter=' + kind, '-z', source.predecessor, source.revision)

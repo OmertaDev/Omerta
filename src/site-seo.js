@@ -1,7 +1,7 @@
 import { PATH_IDS } from './path-funnel.js';
 
 const DEFAULT_ORIGIN = 'https://www.omerta.fun';
-const SHARE_IMAGE = '/art/site-share.png';
+const SHARE_IMAGE = '/site-share.png';
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[char]));

@@ -731,7 +731,7 @@ export async function buildServer() {
   // the app icons — binary PNGs, served from a filename allowlist Map (the /art precedent; no traversal
   // surface by construction) with a long cache (they change only on a redeploy).
   const PWA_ICONS = new Map();
-  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {
+  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'site-share.png']) {
     try { PWA_ICONS.set(f, readFileSync(pub(f))); } catch { /* headless */ }
   }
   for (const [name, buf] of PWA_ICONS) {

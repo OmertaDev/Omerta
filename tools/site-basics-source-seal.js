@@ -18,7 +18,7 @@ const regular = (revision, file) => {
   assert(!/[\r\0\ufeff]/.test(text), 'Committed whole UTF-8 LF text only: ' + file);
   return { text, pin: { mode: match[1], blob: match[2], sha256: sha(text), bytes: Buffer.byteLength(text) } };
 };
-const scope = file => file === 'SPEC.md' || file === 'package.json' || file === 'schema.sql'
+const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql'
   || file === '.github/workflows/ci.yml' || /^(?:src|test|tools|public)\//.test(file);
 function inverses(current, diff) {
   const rows = []; let row;

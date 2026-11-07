@@ -21,7 +21,7 @@ for (const [file, path] of [['index', '/'], ['wiki', '/wiki'], ['arena', '/arena
   assert.equal((head.match(/name="description"/g) || []).length, 1, `${path} has one description`);
   assert.ok(head.includes(`<link rel="canonical" href="${origin}${path}">`));
   assert.ok(head.includes(`<meta property="og:url" content="${origin}${path}">`));
-  assert.ok(head.includes(`<meta property="og:image" content="${origin}/art/site-share.png">`));
+  assert.ok(head.includes(`<meta property="og:image" content="${origin}/site-share.png">`));
   assert.ok(head.includes('<meta name="twitter:card" content="summary_large_image">'));
   assert.ok(head.includes('href="/icon-192.png"') && head.includes('href="/apple-touch-icon.png"'));
   const identity = JSON.parse(head.match(/id="omerta-page-identity">([\s\S]*?)<\/script>/)[1]);
@@ -74,7 +74,7 @@ assert.ok(robots.includes(`Sitemap: ${origin}/sitemap.xml`));
 assert.ok(robots.includes('Disallow: /admin') && robots.includes('Disallow: /v1/auth/'));
 assert.ok(!robots.includes('Disallow: /v1/\n'), 'public agent API discovery remains available');
 
-const png = readFileSync(new URL('../public/art/site-share.png', import.meta.url));
+const png = readFileSync(new URL('../public/site-share.png', import.meta.url));
 assert.equal(png.subarray(1, 4).toString(), 'PNG', 'the site share image is a raster PNG');
 assert.equal(png.readUInt32BE(16), 1200);
 assert.equal(png.readUInt32BE(20), 630);
