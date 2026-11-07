@@ -20,7 +20,7 @@ export function questingPostgresTarget(raw) {
 export async function runQuestingPostgres(raw = process.env.QUESTING_TEST_DATABASE_URL) {
   const { endpoint, database } = questingPostgresTarget(raw);
   const { Pool } = await import('pg');
-  const { dbCaps } = await import('../src/db.js');
+  const { dbCaps, migrateSchemaUnderLock } = await import('../src/db.js');
   const { withCharacter } = await import('../src/game.js');
   const { QUEST_SAGA_PACKS } = await import('../src/content/quest-saga.js');
   const { compileContentPack } = await import('../src/content/compiler.js');
@@ -42,7 +42,7 @@ export async function runQuestingPostgres(raw = process.env.QUESTING_TEST_DATABA
     options: `-c search_path=${schema} -c statement_timeout=15000 -c lock_timeout=10000 -c idle_in_transaction_session_timeout=20000` };
   const pool = new Pool(scoped), peer = new Pool(scoped);
   const priorCaps = { ...dbCaps };
-  let created = false;
+  let created = false, primaryFailure = null;
   const packs = new Map(QUEST_SAGA_PACKS.filter(pack => ['sixth-envelope', 'rival-accord'].includes(pack.runtime.experienceId))
     .map(pack => [pack.runtime.experienceId, pack]));
   const as = (who, fn, db = pool) => withCharacter(db, who.accountId, fn);
@@ -112,7 +112,21 @@ export async function runQuestingPostgres(raw = process.env.QUESTING_TEST_DATABA
     assert.equal(server.database, database);
     assert.match(server.version, /PostgreSQL/);
     await admin.query(`CREATE SCHEMA ${schema}`); created = true;
-    await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
+    const boot = await pool.connect();
+    let bootstrapFailure = null;
+    try {
+      await boot.query('SELECT pg_advisory_lock(hashtext($1))', [schema]);
+      await migrateSchemaUnderLock(boot, {
+        schemaText: fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'), compatibility: 'postgres',
+      });
+    } catch (error) { bootstrapFailure = error; throw error; }
+    finally {
+      try { await boot.query('SELECT pg_advisory_unlock(hashtext($1))', [schema]); }
+      catch (error) {
+        if (!bootstrapFailure) throw error;
+        console.error(`Native bootstrap unlock also failed: ${error.code || error.message}`);
+      } finally { boot.release(); }
+    }
     Object.assign(dbCaps, { skipLocked: true, indexedTextArrayAny: true, timestampText: true });
     const firstConnection = await pool.connect(), secondConnection = await peer.connect();
     try {
@@ -227,10 +241,15 @@ export async function runQuestingPostgres(raw = process.env.QUESTING_TEST_DATABA
     assert.equal(Number((await pool.query('SELECT COUNT(*) AS n FROM transactions')).rows[0].n), 0);
     console.log('PASS native PostgreSQL questing proof; real transactions and independent connections, no pg-mem fallback or economic movement.');
     return { nativePostgres: true, passed: true };
-  } finally {
+  } catch (error) { primaryFailure = error; throw error; }
+  finally {
     Object.assign(dbCaps, priorCaps);
     await Promise.all([pool.end(), peer.end()]);
     try { if (created) await admin.query(`DROP SCHEMA ${schema} CASCADE`); }
+    catch (error) {
+      if (!primaryFailure) throw error;
+      console.error(`Native schema cleanup also failed: ${error.code || error.message}`);
+    }
     finally { await admin.end(); }
   }
 }

@@ -268,7 +268,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U postgres"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
@@ -281,6 +281,30 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Set owned test PostgreSQL lock capacity for populated migrations
+        timeout-minutes: 3
+        shell: bash
+        env:
+          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          # The context identifies only this matrix job's disposable service container.
+          [[ "$POSTGRES_SERVICE_ID" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }
+          timeout 15s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'
+          timeout 45s docker restart --timeout 30 "$POSTGRES_SERVICE_ID"
+          ready=0
+          deadline=$((SECONDS + 60))
+          while (( SECONDS < deadline )); do
+            if timeout 3s docker exec "$POSTGRES_SERVICE_ID" pg_isready -q -t 1 -U postgres -d postgres; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          [[ "$ready" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }
+          actual="$(timeout 10s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')"
+          [[ "$actual" == 512 ]] || { echo "Unexpected test max_locks_per_transaction: $actual" >&2; exit 1; }
+
       - name: Native invitation, handoff and receipt races
         env:
           QUESTING_TEST_DATABASE_URL: postgres://postgres:questing@127.0.0.1:5432/omerta_questing_ci
