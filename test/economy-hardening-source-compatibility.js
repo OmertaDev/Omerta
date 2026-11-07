@@ -2,7 +2,9 @@ import { wikiMediaHistoricalInput } from '../tools/wiki-media-source-transfer.js
 import { age21HistoricalInput } from '../tools/age21-source-transfer.js';
 import { deedAllocationHistoricalInput } from '../tools/deed-allocation-source-transfer.js';
 import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transfer.js';
-import { contractReleaseDeskInput, contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
+import { contractReleaseDeskInput as priorContractReleaseDeskInput,
+  contractReleaseFeeInput as priorContractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
 import { economyDeedMergeHistoricalInput } from '../tools/economy-deed-merge-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -184,6 +186,10 @@ const socialReceiptSafetyFiles = [
 ];
 const socialReceiptFiles = ['src/db.js', 'src/growth.js', 'test/growth.js', 'test/sweeps.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
+// Only historical text comparisons see this exact source-only successor view.
+// Runtime/native helpers and the actual files they load remain unchanged.
+const contractReleaseDeskInput = (file, input) => priorContractReleaseDeskInput(file, questingHistoricalInput(file, input));
+const contractReleaseFeeInput = (file, input) => priorContractReleaseFeeInput(file, questingHistoricalInput(file, input));
 const physicalFeeCopySource = file => {
   const input = contractReleaseFeeInput(file, fs.readFileSync(file, 'utf8'));
   return Object.hasOwn(MARKET_FEE_COPY_DOMAINS, file)

@@ -1,6 +1,7 @@
 import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
-import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { contractReleaseDeskInput as priorContractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 // Exact immutable Git source/provenance controls; no reconstructed source is executed.
 import { BUSINESS_DESK_COMBINED_SOURCE as combinedSource, BUSINESS_DESK_COMBINED_SOURCE_SHA256 as combinedSourceSha, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -51,6 +52,7 @@ const inverses = (prior, authored, file) => {
 };
 
 // Admit actual HEAD, index and complete physical bytes before either source-only view.
+const contractReleaseDeskInput = (file, input) => priorContractReleaseDeskInput(file, questingHistoricalInput(file, input));
 function readCombinedPhysical(file) {
   assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');
   assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);
@@ -68,12 +70,13 @@ function readCombinedPhysical(file) {
   const expectedEntry = outer?.targets.desk
     ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
     : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
-  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');
+  const priorCurrentEntry = questingHistoricalEntry(file, actualEntry, 'tree');
+  assert.equal(priorCurrentEntry, expectedEntry, 'The exact questing predecessor comparison retains the prior source identity');
   const accepted = contractReleaseDeskInput(file, physical);
   const acceptedLf = accepted.replaceAll('\r\n', '\n');
   assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');
   const acceptedEntry = outer?.targets.desk
-    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : actualEntry;
+    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : priorCurrentEntry;
   const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
   const comparison = ciDeedRecoveryHistoricalInput(file, accepted);
   assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The separately qualified CI predecessor mode/blob matches the reviewed integration');

@@ -1,3 +1,5 @@
+import './questing-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 // Current physical source transfer is separate from the immutable classic/F92 proof.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -48,9 +50,9 @@ for(const row of pin.files){
  assert.equal(git('ls-tree',pin.revision,'--',row.file).trim(),row.mode+' blob '+row.currentBlob+'\t'+row.file);
  assert.equal(git('ls-tree',pin.targetRevision,'--',row.file).trim(),row.mode+' blob '+row.targetBlob+'\t'+row.file);
  const committedInput=actionReadinessHistoricalInput(row.file,
-   economyReadinessMergeHistoricalInput(row.file,git('show','HEAD:'+row.file)));
+   economyReadinessMergeHistoricalInput(row.file,questingHistoricalInput(row.file, git('show','HEAD:'+row.file))));
  const physicalInput=actionReadinessHistoricalInput(row.file,
-   economyReadinessMergeHistoricalInput(row.file,fs.readFileSync(row.file,'utf8')));
+   economyReadinessMergeHistoricalInput(row.file,questingHistoricalInput(row.file, fs.readFileSync(row.file,'utf8'))));
  assert.equal(economyHardeningSourceBaseline(row.file,committedInput),current,'Current committed source transfers exactly to the frozen rebuilt interface');
  assert.equal(economyHardeningSourceBaseline(row.file,physicalInput).replaceAll('\r\n','\n'),current,'Physical authored source transfers exactly to the frozen rebuilt interface');
  for(const input of [current,current.replaceAll('\n','\r\n')]){assert.equal(source.qualifyRebuildInterfaceSource(row.file,input).baselineText,target);assert.equal(source.classicInterfaceHistoricalInput(row.file,input),source.classicInterfaceHistoricalInput(row.file,target));positives++;}
@@ -87,8 +89,8 @@ for(const row of successor.files){
  const current=git('show',successor.revision+':'+row.file),target=git('show',successor.targetRevision+':'+row.file);
  for(const [revision,expectedBlob]of [[successor.revision,row.currentBlob],[successor.targetRevision,row.targetBlob]])
   assert.equal(git('ls-tree',revision,'--',row.file).trim(),row.mode+' blob '+expectedBlob+'\t'+row.file);
- const committed=economyReadinessMergeHistoricalInput(row.file,git('show','HEAD:'+row.file));
- const physical=economyReadinessMergeHistoricalInput(row.file,fs.readFileSync(row.file,'utf8')),stat=fs.lstatSync(row.file);
+ const committed=economyReadinessMergeHistoricalInput(row.file,questingHistoricalInput(row.file, git('show','HEAD:'+row.file)));
+ const physical=economyReadinessMergeHistoricalInput(row.file,questingHistoricalInput(row.file, fs.readFileSync(row.file,'utf8'))),stat=fs.lstatSync(row.file);
  assert(stat.isFile()&&!stat.isSymbolicLink(),'Physical successor source is a regular file');
  assert.equal(committed,current,'Current committed successor source remains exact after the sealed merge bridge');
  assert(physical===current||physical===current.replaceAll('\n','\r\n'),'Physical successor source remains exact');

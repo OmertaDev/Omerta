@@ -11,7 +11,8 @@ import { BUSINESS_DESK_NOIR_SOURCE, BUSINESS_DESK_NOIR_SOURCE_SHA256 } from '../
 import { BUSINESS_DESK_NOIR_SOURCE_FILES, assertBusinessDeskNoirSourceTransfer,
   businessDeskNoirHistoricalInput } from '../tools/businessdesk-noir-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
-import { contractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { contractReleaseDeskInput as priorContractReleaseDeskInput } from '../tools/contract-release-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 import { BUSINESS_DESK_NOIR_NATIVE_FILES } from '../tools/businessdesk-noir-native-provenance.js';
 import { businessDeskCombinedNativeProvenance } from '../tools/businessdesk-combined-native-provenance.js';
 import { BUSINESS_DESK_COMBINED_NATIVE_PARENTS as nativeParents } from '../tools/businessdesk-combined-native-parents.js';
@@ -21,9 +22,12 @@ import { NOIR_UI_SOURCE } from '../tools/noir-ui-source-data.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as previousNative } from '../tools/enterprise-native-ux-b35-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as currentNative } from '../tools/enterprise-native-deed-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
+import { QUESTING_ENTERPRISE_NATIVE_INPUTS as questingNative,
+  assertQuestingEnterpriseTrackedInput } from '../tools/enterprise-native-questing.js';
 
 
 // Admit actual HEAD, index and complete physical bytes before either source-only view.
+const contractReleaseDeskInput = (file, input) => priorContractReleaseDeskInput(file, questingHistoricalInput(file, input));
 function readCombinedPhysical(file) {
   assert.equal(combinedSource.status, 'SEALED', 'Bind the exact combined source before historical comparisons');
   assert.equal(crypto.createHash('sha256').update(JSON.stringify(combinedSource)).digest('hex'), combinedSourceSha);
@@ -41,12 +45,13 @@ function readCombinedPhysical(file) {
   const expectedEntry = outer?.targets.desk
     ? outer.current.mode + ' blob ' + outer.current.blob + '\t' + file
     : git('ls-tree', CONTRACT_RELEASE_SOURCE_DATA.baseRevision, '--', file).trim();
-  assert.equal(actualEntry, expectedEntry, 'Current source identity qualifies independently of every historical view');
+  const priorCurrentEntry = questingHistoricalEntry(file, actualEntry, 'tree');
+  assert.equal(priorCurrentEntry, expectedEntry, 'The exact questing predecessor comparison retains the prior source identity');
   const accepted = contractReleaseDeskInput(file, physical);
   const acceptedLf = accepted.replaceAll('\r\n', '\n');
   assert.equal(acceptedLf, git('show', CONTRACT_RELEASE_SOURCE_DATA.baseRevision + ':' + file), 'Exact accepted predecessor source after current qualification');
   const acceptedEntry = outer?.targets.desk
-    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : actualEntry;
+    ? outer.targets.desk.pin.mode + ' blob ' + outer.targets.desk.pin.blob + '\t' + file : priorCurrentEntry;
   const comparisonEntry = ciDeedRecoveryHistoricalEntry(file, acceptedEntry, 'tree');
   const comparison = ciDeedRecoveryHistoricalInput(file, accepted);
   assert.equal(comparisonEntry, git('ls-tree', integratedEconomicSource.revision, '--', file).trim(), 'The separately qualified CI predecessor mode/blob matches the reviewed integration');
@@ -192,6 +197,8 @@ const record = (revision, file) => {
 const relation = 'exact-reviewed-monitor-wiki-desk-native-pin-provenance-only';
 let nativeRelations = 0, nativeRefusals = 0, neutralAdditions = 0, sample;
 let activeCloneRefusals = 0, unsealedAdmissionRefusals = 0;
+let questingCurrentQualifications = 0, questingUnsealedRefusals = 0;
+const refusedSupersededCurrentInputs = [];
 const refusedDeskParentInputs = [];
 const nativeRefused = run => { assert.throws(run); nativeRefusals++; };
 const activeCloneRefused = run => { assert.throws(run); activeCloneRefusals++; };
@@ -233,13 +240,15 @@ for (const file of nativeFiles) {
   assert.equal(sha(historicalBytes), expected.sha256); assert.equal(blob(historicalBytes), expected.blob);
   const actualSource = activeNative.status === 'SEALED' ? activeNative.authoredRevision : currentNative.authoredRevision;
   const actualExpected = activeNative.status === 'SEALED' ? activeNative.files.find(row => row.file === file) : expected;
-  const current = record('HEAD', file), authored = record(actualSource, file);
+  // Retain the original admission proof and its mutations on exact archived Git
+  // inputs. The separate branch below alone qualifies actual current bytes.
+  const current = record(actualSource, file), authored = record(actualSource, file);
   const bytes = Buffer.from(git('show', `${actualSource}:${file}`));
   if (activeNative.status === 'UNSEALED') {
     assert.throws(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes), /Unsealed current inputs cannot grant native admission/); unsealedAdmissionRefusals++;
   } else {
     assert.equal(activeNative.status, 'SEALED'); assert(actualExpected && Object.isFrozen(actualExpected));
-    assert.equal(git('show', `HEAD:${file}`), bytes.toString('utf8'), 'The actual current source retains its sealed authored native bytes.');
+    assert.equal(git('show', `${actualSource}:${file}`), bytes.toString('utf8'), 'The archived admission case retains its exact sealed authored Git bytes.');
     assert.equal(sha(bytes), actualExpected.sha256); assert.equal(blob(bytes), actualExpected.blob);
     const admitted = assertEnterpriseUxTrackedInput(file, current, authored, bytes);
     assert(admitted && Object.isFrozen(admitted)); assert.strictEqual(admitted.current, actualExpected);
@@ -269,15 +278,51 @@ for (const file of nativeFiles) {
   ]) nativeRefused(() => assertEnterpriseUxTrackedInput(file, now, anchor, raw));
   nativeRefused(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...currentNative })));
   activeCloneRefused(() => assertEnterpriseUxTrackedInput(file, current, authored, bytes, Object.freeze({ ...activeNative })));
+  // No historical text or identity projection is allowed in this actual-current
+  // branch: independently qualify HEAD, index and whole physical LF/CRLF source.
+  const now = record('HEAD', file), actualBytes = Buffer.from(git('show', 'HEAD:' + file));
+  const physicalRaw = fs.readFileSync(file), stat = fs.lstatSync(file);
+  assert(stat.isFile() && !stat.isSymbolicLink()); assert.equal(blob(actualBytes), now.blob);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), `${now.mode} ${now.blob} 0\t${file}`);
+  assert(physicalRaw.equals(actualBytes) || physicalRaw.equals(Buffer.from(actualBytes.toString('utf8').replaceAll('\n', '\r\n'))),
+    'Complete actual physical native input must match HEAD before qualification');
+  if (now.mode !== current.mode || now.blob !== current.blob) {
+    assert.throws(() => assertEnterpriseUxTrackedInput(file, now, authored, actualBytes),
+      'The superseded declaration must refuse changed actual current source');
+    assert.throws(() => assertEnterpriseUxTrackedInput(file, now, authored, bytes),
+      'Archived bytes cannot grant admission for changed actual current metadata');
+    refusedSupersededCurrentInputs.push(file);
+  }
+  if (questingNative.status === 'UNSEALED') {
+    assert.throws(() => assertQuestingEnterpriseTrackedInput(file, now, now, actualBytes), /UNSEALED/);
+    questingUnsealedRefusals++;
+  } else {
+    const actualAuthored = record(questingNative.authoredRevision, file);
+    const qualified = assertQuestingEnterpriseTrackedInput(file, now, actualAuthored, actualBytes);
+    assert.strictEqual(qualified.current, questingNative.files.find(row => row.file === file));
+    assert.strictEqual(qualified.predecessor, activeNative.files.find(row => row.file === file));
+    assert.equal(qualified.authoredRevision, questingNative.authoredRevision);
+    assert.equal(qualified.predecessorRevision, activeNative.authoredRevision);
+    assert.equal(qualified.nativeAdmission, false); assert.equal(qualified.priorResultsTransferred, false);
+    assert.throws(() => assertQuestingEnterpriseTrackedInput(file, now, actualAuthored, actualBytes, Object.freeze({ ...questingNative })));
+    assert.throws(() => assertQuestingEnterpriseTrackedInput(file, now, actualAuthored, Buffer.concat([actualBytes, Buffer.from('\n')])));
+    assert.throws(() => assertQuestingEnterpriseTrackedInput(file, { ...now, blob: '0'.repeat(40) }, actualAuthored, actualBytes));
+    questingCurrentQualifications++;
+  }
   sample ||= { previous, expected }; nativeRelations++;
 }
 assert.deepEqual(refusedDeskParentInputs, ['package.json', 'public/index.html']);
 assert.equal(nativeRelations, 7); assert.equal(neutralAdditions, 2); assert.equal(nativeRefusals, 119, 'All original Noir refusal categories are retained.'); assert(sample);
 assert.equal(activeCloneRefusals, 7, 'Every current declaration clone is independently refused.');
 assert.equal(unsealedAdmissionRefusals, activeNative.status === 'UNSEALED' ? 7 : 0, 'Unsealed admission refusals remain separate from historical categories.');
+assert(refusedSupersededCurrentInputs.includes('package.json') && refusedSupersededCurrentInputs.includes('public/index.html'),
+  'Both changed product inputs must be refused by the superseded native declaration');
+assert.equal(questingCurrentQualifications, questingNative.status === 'SEALED' ? 7 : 0);
+assert.equal(questingUnsealedRefusals, questingNative.status === 'UNSEALED' ? 7 : 0);
 for (const unknown of ['unknown', '__proto__', 'constructor', 'toString', '../public/index.html', null, undefined, 1, Symbol('source'),
   Object.freeze({ toString() { throw Error('No coercion'); } })]) assert.equal(businessDeskCombinedNativeProvenance(unknown, sample.previous, sample.expected), null);
 console.log(JSON.stringify({ phase, source: source.revision, tree: source.tree, targets, inverseHunks: inverseCount,
   positives, refusals, nativeRelations, nativeRefusals, activeCloneRefusals, unsealedAdmissionRefusals,
+  questingCurrentQualifications, questingUnsealedRefusals, refusedSupersededCurrentInputs,
   refusedDeskParentInputs, activeStatus: activeNative.status, sourceOnly: true, runtime: false, native: false,
   migration: false, financial: false, activation: false, deployment: false }));

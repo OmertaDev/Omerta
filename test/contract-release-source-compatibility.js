@@ -22,6 +22,7 @@ import { businessDeskHistoricalInput } from '../tools/businessdesk-source-transf
 import { assertDeedAllocationSourceTransfer } from '../tools/deed-allocation-source-transfer.js';
 import { assertMarketFeeCopySourceTransfer } from '../tools/market-fee-copy-source-transfer.js';
 import { BUSINESS_DESK_COMBINED_SOURCE_FILES } from '../tools/businessdesk-combined-source-transfer.js';
+import { questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
@@ -30,6 +31,25 @@ const lf = value => value.replaceAll('\r\n', '\n');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   cwd: root, encoding: 'utf8', windowsHide: true, maxBuffer: 32 * 1024 * 1024,
 });
+// Actual HEAD/index/physical bytes qualify independently before any exact text
+// comparison with the already frozen contract-release checkpoint.
+const actualPhysicalSource = file => {
+  const entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file, 'Actual committed regular-file identity required');
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), `${match[1]} ${match[2]} 0\t${file}`);
+  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file],
+    { cwd: root, windowsHide: true, maxBuffer: 32 * 1024 * 1024 });
+  const text = committed.toString('utf8'), raw = fs.readFileSync(path.join(root, file));
+  const stat = fs.lstatSync(path.join(root, file));
+  assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(Buffer.from(text).equals(committed), 'Complete lossless committed UTF-8 source required');
+  assert.equal(blob(committed), match[2], 'Actual committed whole blob qualifies first');
+  assert(!text.includes('\r'), 'Committed source must remain canonical LF');
+  assert(raw.equals(committed) || raw.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
+    'Complete actual physical LF/CRLF bytes qualify before comparison: ' + file);
+  return { entry, raw, committed };
+};
 const gitInverses = (before, after, contextLines = 3) => {
   const result = []; let hunk;
   for (const line of lf(git('diff', '--no-ext-diff', '--unified=' + contextLines, before, after)).split('\n')) {
@@ -115,8 +135,9 @@ try {
     for (const [file, row] of Object.entries(data.sourceViews)) {
       const filename = path.join(root, file), stat = fs.lstatSync(filename);
       assert(stat.isFile() && !stat.isSymbolicLink());
-      assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), row.current.mode + ' blob ' + row.current.blob + '\t' + file);
-      const physical = fs.readFileSync(filename), text = lf(physical.toString('utf8'));
+      const actual = actualPhysicalSource(file);
+      assert.equal(questingHistoricalEntry(file, actual.entry, 'tree'), row.current.mode + ' blob ' + row.current.blob + '\t' + file);
+      const physical = questingHistoricalInput(file, actual.raw), text = lf(physical.toString('utf8'));
       for (const [view, target] of Object.entries(row.targets)) {
         const expected = lf(git('show', target.revision + ':' + file));
         assertMeasuredInverses(target, row.current);
@@ -358,6 +379,13 @@ try {
     const row = originRecord(file, Buffer.from(git('show', revision + ':' + file)));
     assert.equal(git('ls-tree', revision, '--', file).trim(), '100644 blob ' + row.pin.blob + '\t' + file); return row;
   };
+  const questingComparisonOriginRecord = file => {
+    const actual = actualPhysicalSource(file), current = committedOriginRecord('HEAD', file);
+    assert(current.bytes.equals(actual.committed), 'The actual current origin record qualifies before its comparison view');
+    const bytes = questingHistoricalInput(file, actual.committed), row = originRecord(file, bytes);
+    assert.equal(questingHistoricalEntry(file, actual.entry, 'tree'), '100644 blob ' + row.pin.blob + '\t' + file);
+    return row;
+  };
   for (const file of mobileFiles) {
     const base = committedOriginRecord('de84c0f7b3dfb18b8cb44e9b3a4563ad890d0660', file);
     let mobileStage = base;
@@ -572,8 +600,8 @@ try {
   for (const file of nextResolution.files) {
     const base = committedOriginRecord(nextResolution.baseRevision, file);
     const checkpoint = committedOriginRecord(nextResolution.revision, file);
-    const actual = committedOriginRecord('HEAD', file);
-    assert.deepEqual(actual, checkpoint, 'Actual merged product equals the new complete scoped source checkpoint');
+    const actual = questingComparisonOriginRecord(file);
+    assert.deepEqual(actual, checkpoint, 'Exact questing predecessor comparison equals the complete scoped source checkpoint');
     assert.deepEqual(deriveContractReleaseApprovedSource(file, base), checkpoint);
     assert.deepEqual(assertContractReleaseApprovedSource(file, base, actual), checkpoint); positives += 3;
     for (const bytes of [Buffer.concat([actual.bytes, Buffer.from('unreviewed\n')]), actual.bytes.subarray(1)])

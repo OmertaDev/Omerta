@@ -1,3 +1,5 @@
+import './questing-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 // Independent exact-source and mutation proofs; no runtime or native results transfer.
 import assert from 'node:assert/strict';
 import { integratedEconomicParentInput } from '../tools/integrated-economic-parent-source.js';
@@ -45,8 +47,8 @@ const currentSaleSource = (file, input) => {
 };
 for (const row of pin.files) {
   const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
-  const physical = currentSaleSource(row.file, fs.readFileSync(row.file, 'utf8'));
-  const committed = currentSaleSource(row.file, git('show', 'HEAD:' + row.file));
+  const physical = currentSaleSource(row.file, questingHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')));
+  const committed = currentSaleSource(row.file, questingHistoricalInput(row.file, git('show', 'HEAD:' + row.file)));
   const stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink());
   assert.equal(committed, current, 'Actual committed sale source remains exact after the reviewed outer transfer');
@@ -97,7 +99,7 @@ for (const file of ['../src/server.js', '__proto__', 'constructor', 'public/sale
 }
 // Original commerce boot directory predicates remain one complete, unchanged source block.
 assert.equal(fs.readFileSync('src/server.js', 'utf8').replaceAll('\r\n', '\n').split(COMMERCE_CURRENT_BOOT_READER).length, 2);
-let conserved = fs.readFileSync('tools/ux-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+let conserved = questingHistoricalInput('tools/ux-source-compatibility.js', fs.readFileSync('tools/ux-source-compatibility.js', 'utf8')).replaceAll('\r\n', '\n');
 for (const hook of ["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", '  input = saleHistoricalInput(file, input);\n']) {
   assert.equal(conserved.split(hook).length, 2, 'One exact sale integration hook'); conserved = conserved.replace(hook, '');
 }
@@ -109,7 +111,7 @@ assert.equal(conserved, git('show', pin.targetRevision + ':tools/ux-source-compa
 // its monitor parent. Retain that parent's independently pinned correction-reader conservation
 // proof below; neither reconstruction executes historical source or admits native bytes.
 const correctionFile = 'tools/economy-ux-merge-source-compatibility.js';
-const correctionPhysical = economyDeedMergeHistoricalInput(correctionFile, fs.readFileSync(correctionFile, 'utf8'), 'monitor');
+const correctionPhysical = economyDeedMergeHistoricalInput(correctionFile, questingHistoricalInput(correctionFile, fs.readFileSync(correctionFile, 'utf8')), 'monitor');
 let candidateConserved = correctionPhysical.replaceAll('\r\n', '\n');
 const correctionRevision = '77882cdfc2e54f94602065c58132b9da913b5427';
 const correctionPredecessor = '6fdc897851ef23e8c2cf691733ad944a7663242a';
@@ -183,7 +185,7 @@ for (const [hook, count] of [["import { saleHistoricalInput } from './sale-sourc
 assert.equal(candidateConserved, git('show', 'c86bcd310e5f38845642637230ba4bec7d653183:tools/economy-ux-merge-source-compatibility.js'), 'All committed economy merge qualifiers and refusal predicates remain byte-identical');
 console.log(JSON.stringify({ phase: pin.phase, files: pin.files.length, hunks, positives, refusals, runtime: false, native: false }));
 
-let economicConserved = integratedEconomicParentInput(correctionFile, fs.readFileSync(correctionFile, 'utf8'), 'economic').replaceAll('\r\n', '\n');
+let economicConserved = integratedEconomicParentInput(correctionFile, questingHistoricalInput(correctionFile, fs.readFileSync(correctionFile, 'utf8')), 'economic').replaceAll('\r\n', '\n');
 for (const [hook, count] of [["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", 1], ['  input = saleHistoricalInput(file, input);\n', 2],
   ["import { deedAllocationHistoricalInput } from './deed-allocation-source-transfer.js';\n", 1],
   ['  input = deedAllocationHistoricalInput(file, input);\n', 2],

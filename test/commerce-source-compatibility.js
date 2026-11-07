@@ -1,3 +1,5 @@
+import './questing-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 // Generated from actual committed Commerce source and its genuine Enterprise predecessor.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -30,7 +32,7 @@ for(const[file,p]of Object.entries(COMMERCE_SOURCE_DOMAINS)){
  assert(Object.isFrozen(p)&&Object.isFrozen(p.inverses)&&p.inverses.every(Object.isFrozen));assert.throws(()=>{p.currentSha256='0'.repeat(64);},TypeError);refusals++;
 }
 for(const[file,p]of Object.entries(COMMERCE_OWNED_CURRENT_SOURCES)){
- const raw=fs.readFileSync(path.join(root,file),'utf8'),current=git('show',COMMERCE_OWNED_CURRENT_SOURCE_REVISION+':'+file);assert.equal(sha(current),p.currentSha256);
+ const raw=questingHistoricalInput(file, fs.readFileSync(path.join(root,file),'utf8')),current=git('show',COMMERCE_OWNED_CURRENT_SOURCE_REVISION+':'+file);assert.equal(sha(current),p.currentSha256);
  for(const input of[raw,current,current.replaceAll('\n','\r\n')]){assert.equal(assertCommerceOwnedSource(file,input).sourceRevision,COMMERCE_OWNED_CURRENT_SOURCE_REVISION);owned++;}
  for(const input of[current+'\n',current.replace('\n','\r\n')]){assert.throws(()=>assertCommerceOwnedSource(file,input));refusals++;}
  assert.throws(()=>assertCommerceSourceTransfer(file,current));assert(Object.isFrozen(p));refusals++;
@@ -45,7 +47,7 @@ console.log(JSON.stringify({phase:'PASS_SCOPED_COMMERCE_SOURCE_TRANSFER_ONLY',so
  const actualRecord=(revision,file)=>{const value=git('ls-tree',revision,'--',file).trim(),m=value.match(/^(100644|100755) blob ([a-f0-9]{40})\t/);assert(m,'Actual committed regular file only: '+file);return{mode:m[1],blob:m[2]};};
  let currentDomains=0,currentIdentities=0,currentOwned=0,currentRefusals=0;
  for(const [kind,records]of [['domain',COMMERCE_ENTERPRISE_SOURCE_DOMAINS],['identity',COMMERCE_ENTERPRISE_IDENTITY_SOURCES]])for(const[file,p]of Object.entries(records)){
-  const raw=classicInterfaceHistoricalInput(file,fs.readFileSync(path.join(root,file),'utf8')),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file),baseline=git('show',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR+':'+file);
+  const raw=classicInterfaceHistoricalInput(file,questingHistoricalInput(file, fs.readFileSync(path.join(root,file),'utf8'))),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file),baseline=git('show',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR+':'+file);
   assert(raw===current||raw===current.replaceAll('\n','\r\n'),'Actual complete current C source required: '+file);
   assert.equal(sha(current),p.currentSha256);assert.equal(currentBlob(current),p.currentBlob);assert.equal(actualRecord(COMMERCE_ENTERPRISE_SOURCE_REVISION,file).mode,p.currentMode);
   assert.equal(sha(baseline),p.baselineSha256);assert.equal(currentBlob(baseline),p.baselineBlob);assert.equal(actualRecord(COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR,file).mode,p.baselineMode);
@@ -55,7 +57,7 @@ console.log(JSON.stringify({phase:'PASS_SCOPED_COMMERCE_SOURCE_TRANSFER_ONLY',so
   assert(Object.isFrozen(p));if(kind==='domain')currentDomains++;else{assert.equal(current,baseline);currentIdentities++;}
  }
  for(const[file,p]of Object.entries(COMMERCE_ENTERPRISE_OWNED_CURRENT_SOURCES)){
-  const raw=classicInterfaceHistoricalInput(file,fs.readFileSync(path.join(root,file),'utf8')),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file);assert.equal(git('ls-tree',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR,'--',file),'','Actual E absence, never a fabricated empty baseline');
+  const raw=classicInterfaceHistoricalInput(file,questingHistoricalInput(file, fs.readFileSync(path.join(root,file),'utf8'))),current=git('show',COMMERCE_ENTERPRISE_SOURCE_REVISION+':'+file);assert.equal(git('ls-tree',COMMERCE_ENTERPRISE_SOURCE_PREDECESSOR,'--',file),'','Actual E absence, never a fabricated empty baseline');
   assert(raw===current||raw===current.replaceAll('\n','\r\n'));assert.equal(sha(current),p.currentSha256);assert.equal(actualRecord(COMMERCE_ENTERPRISE_SOURCE_REVISION,file).mode,p.currentMode);
   for(const input of [raw,current,current.replaceAll('\n','\r\n')])assert.equal(assertCommerceEnterpriseOwnedSource(file,input).sourceRevision,COMMERCE_ENTERPRISE_SOURCE_REVISION);
   assert.throws(()=>assertCommerceEnterpriseOwnedSource(file,current+'x'));assert.throws(()=>assertCommerceEnterpriseSourceTransfer(file,current));currentRefusals+=2;assert(Object.isFrozen(p));currentOwned++;

@@ -74,3 +74,16 @@ Final release file hashes (supporting schema/game scope remains limited as above
 | `src/quest-workshop-schema.js` | `76053b8399ad437352168ba822be0d3aecac3dcbdbd0c6a08e9fb80d614eb50e` |
 | `schema.sql` | `90b44532991cabcb1bcc16db39575d9f73eec24501ff7e7aea4f07987f866e53` |
 | `src/game.js` | `bf9fe31aebf2db2aa54db874dc1a9af3dfbf292d041c9e73310c818f41891cab` |
+
+
+## Release qualification follow-up — 2026-11-07 UTC
+
+The workshop board now uses literal locked/unlocked reads and two fixed fifty-slot parameter lists, padded with NULL for its existing fifty-entry page. The optional fixture bootstrap emits four literal DDL statements; production continues to use schema.sql. The workshop test passes. The shared SQL scanner records 172/173 unmodeled interpolations and 44/44 unmodeled nonliteral arguments, with no workshop statements in either unchecked category. Guard ceilings are unchanged.
+
+Canonical LF SHA-256 pins for this follow-up (earlier physical-byte review pins remain historical):
+
+- `src/quest-workshop.js`: `c54932679505b1c6b02ad5094d795e2dc6a6966239bbd38f3f03905ed74b751d`
+- `src/quest-workshop-schema.js`: `9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c`
+- `schema.sql`: `af6d9ad01566eaddf8ec6b4c4da4add77837b13e6a3510697bebf62b180b97e7`
+
+The PostgreSQL quest fixture now uses the production migration entry point in its isolated schema. The new enterprise qualifier preserves the previous input inventory, manifests and strict sixteen-case execution guards, while binding a separate current input declaration. Source-comparison inverses qualify exact new bytes before reconstructing older comparison text. These source records do not transfer native test results, financial clearance, activation status or deployment status; fresh native and release checks remain required.

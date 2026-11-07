@@ -247,6 +247,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright-core install --with-deps chromium
+      - name: Quest source and current native admission guards
+        run: |
+          node test/questing-source-transfer.js
+          node test/enterprise-native-questing-guard.js
       - name: Quest runtime, cases and community workshop
         run: npm run test:questing
       - name: Production quest and clue interfaces
@@ -1467,7 +1471,7 @@ jobs:
           RESOURCE_ECONOMY: 'off'
           ENTERPRISE_NATIVE_PROFILE: ci
           ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
-        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:postgres
+        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:questing:postgres
 
   pgcheck_commerce:
     if: ${{ !inputs.tail_only }}

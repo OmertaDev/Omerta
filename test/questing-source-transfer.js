@@ -1,0 +1,102 @@
+// Source-comparison proof only: no reconstructed source is loaded or executed.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { QUESTING_SOURCE as source, qualifyQuestingSource,
+  questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
+
+const files = ['.github/workflows/ci.yml', 'package.json', 'public/index.html', 'schema.sql',
+  'src/explore.js', 'src/game.js', 'src/server.js'];
+const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
+  encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
+});
+const sha = text => crypto.createHash('sha256').update(text).digest('hex');
+const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
+assert.equal(source.status, 'SEALED');
+assert.equal(source.phase, 'EXACT_QUESTING_SOURCE_COMPARISON_ONLY');
+assert.equal(source.revision, 'a25c568a324c3cc400681095ca4f1566ac7c1638');
+assert.equal(source.predecessor, '17fdf85fdd21fd3767463df8ba47614f7d1f6432');
+assert.deepEqual(Object.keys(source.files), files);
+assert(Object.isFrozen(source) && Object.isFrozen(source.files));
+for (const [revision, tree] of [[source.revision, source.tree], [source.predecessor, source.predecessorTree]])
+  assert.equal(git('rev-parse', `${revision}^{tree}`).trim(), tree);
+git('merge-base', '--is-ancestor', source.predecessor, source.revision);
+git('merge-base', '--is-ancestor', source.revision, 'HEAD');
+const changed = git('diff', '--name-only', '--diff-filter=M', '-z', source.predecessor, source.revision)
+  .split('\0').filter(file => files.includes(file));
+assert.deepEqual(changed, files, 'Every changed comparison domain is pinned independently');
+let positives = 0, refusals = 0, hunks = 0;
+for (const [file, row] of Object.entries(source.files)) {
+  assert(Object.isFrozen(row) && Object.isFrozen(row.current) && Object.isFrozen(row.baseline)
+    && Object.isFrozen(row.inverses) && row.inverses.every(Object.isFrozen));
+  const current = git('show', `${source.revision}:${file}`), baseline = git('show', `${source.predecessor}:${file}`);
+  for (const [revision, text, pin] of [[source.revision, current, row.current], [source.predecessor, baseline, row.baseline]]) {
+    assert.equal(git('ls-tree', revision, '--', file).trim(), `${pin.mode} blob ${pin.blob}\t${file}`);
+    assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob);
+    assert.equal(Buffer.byteLength(text), pin.bytes);
+  }
+  // Actual physical and stage-zero bytes qualify against actual HEAD first.
+  const committed = git('show', `HEAD:${file}`), raw = fs.readFileSync(file), stat = fs.lstatSync(file);
+  const entry = git('ls-tree', 'HEAD', '--', file).trim(), index = git('ls-files', '--stage', '--', file).trim();
+  assert(stat.isFile() && !stat.isSymbolicLink());
+  assert.equal(committed, current, 'The scoped physical source must still be exactly the approved questing source');
+  assert.equal(entry, `${row.current.mode} blob ${blob(committed)}\t${file}`);
+  assert.equal(index, `${row.current.mode} ${blob(committed)} 0\t${file}`);
+  assert(raw.equals(Buffer.from(committed)) || raw.equals(Buffer.from(committed.replaceAll('\n', '\r\n'))),
+    'Actual physical source must be complete uniform LF or CRLF: ' + file);
+  for (const input of [current, current.replaceAll('\n', '\r\n'), Buffer.from(current), raw]) {
+    const proof = qualifyQuestingSource(file, input);
+    assert.equal(proof.baselineText, baseline);
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,
+      proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
+    assert.equal(String(questingHistoricalInput(file, input)), baseline);
+    assert.equal(Buffer.isBuffer(questingHistoricalInput(file, input)), Buffer.isBuffer(input)); positives++;
+  }
+  for (const kind of ['tree', 'index']) {
+    const actual = kind === 'tree' ? entry : index;
+    const expected = kind === 'tree' ? `${row.baseline.mode} blob ${row.baseline.blob}\t${file}`
+      : `${row.baseline.mode} ${row.baseline.blob} 0\t${file}`;
+    assert.equal(questingHistoricalEntry(file, actual, kind), expected);
+    assert.equal(questingHistoricalEntry(file, actual + '\n', kind), expected + '\n'); positives += 2;
+    for (const mutation of [actual.replace(row.current.blob, '0'.repeat(40)), ' ' + actual,
+      actual + '\n\n', actual + '\r\n', actual.replace(row.current.mode, '120000'), actual.replace(file, 'src/unapproved.js')]) {
+      assert.throws(() => questingHistoricalEntry(file, mutation, kind)); refusals++;
+    }
+  }
+  const byteMutation = Buffer.from(current); byteMutation[Math.floor(byteMutation.length / 2)] ^= 1;
+  for (const mutation of [current + '\n// unrelated broad source edit\n', current.slice(1), '\ufeff' + current,
+    current + '\0', current.replace(/\S/, '?'), current.replace('\n', '\r\n'), current.replace('\n', '\r'),
+    byteMutation, baseline, null]) {
+    assert.throws(() => qualifyQuestingSource(file, mutation));
+    assert.strictEqual(questingHistoricalInput(file, mutation), mutation); refusals++;
+  }
+  const invalidUtf8 = Buffer.from([0xc3, 0x28]);
+  assert.throws(() => qualifyQuestingSource(file, invalidUtf8));
+  assert.throws(() => questingHistoricalInput(file, invalidUtf8)); refusals++;
+  for (const inverse of row.inverses) {
+    assert.equal(current.slice(inverse.at, inverse.at + inverse.current.length), inverse.current);
+    for (const replacement of [inverse.baseline, '', inverse.current + inverse.current,
+      inverse.current.replace(/\S/, character => character === '?' ? '!' : '?')]) {
+      const partial = current.slice(0, inverse.at) + replacement + current.slice(inverse.at + inverse.current.length);
+      assert.notEqual(partial, current, 'Each inverse refusal must actually mutate the whole source');
+      assert.throws(() => qualifyQuestingSource(file, partial));
+      assert.strictEqual(questingHistoricalInput(file, partial), partial); refusals++;
+    }
+    hunks++;
+  }
+  assert.throws(() => qualifyQuestingSource(file, current, { sourceOnly: false })); refusals++;
+}
+for (const file of ['src/content/runtime.js', 'src/clues.js', '../src/server.js', 'src\\server.js',
+  'omerta.quest.anything', '__proto__', 'constructor', '.github/workflows/economy-hardening.yml']) {
+  const input = 'unapproved namespace source\n', entry = '100644 blob ' + 'a'.repeat(40) + '\t' + file;
+  assert.throws(() => qualifyQuestingSource(file, input));
+  assert.strictEqual(questingHistoricalInput(file, input), input);
+  assert.strictEqual(questingHistoricalEntry(file, entry, 'tree'), entry); refusals++;
+}
+// This new envelope is absent from production code; it cannot cause runtime or
+// native tests to execute reconstructed predecessor implementations.
+assert.throws(() => git('grep', '-n', 'questing-source-transfer', '--', 'src'),
+  error => error.status === 1, 'No game source imports this comparison-only envelope');
+assert.equal(hunks, 17);
+console.log(`Questing exact source-only successor PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; no runtime/native/economic/deployment results transferred`);

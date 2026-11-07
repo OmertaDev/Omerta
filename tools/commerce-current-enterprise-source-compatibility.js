@@ -1,4 +1,5 @@
 import {rebuildInterfaceHistoricalInput} from './classic-interface-source-compatibility.js';
+import { questingHistoricalInput } from './questing-source-transfer.js';
 export {REBUILD_INTERFACE_SOURCE,qualifyRebuildInterfaceSource} from './classic-interface-source-compatibility.js';
 // Separate current-E text namespace. Historical C-to-E helpers and maps stay independent.
 import assert from 'node:assert/strict';
@@ -360,6 +361,9 @@ export function qualifyClassicInterfaceSource(file, input, pin = CLASSIC_INTERFA
   return Object.freeze({ baselineText: restored, sourceRevision: pin.revision, targetRevision: pin.targetRevision, sourceOnly: true, native: false, runtime: false });
 }
 export function classicInterfaceHistoricalInput(file, input) {
+  // Exact historical-text composition only; native declarations and executed
+  // runtime bytes remain independently admitted and unchanged by this reader.
+  input = questingHistoricalInput(file, input);
   const economyBuffer = Buffer.isBuffer(input), economyText = economyBuffer ? input.toString('utf8') : input;
   if (economyBuffer) assert(Buffer.from(economyText, 'utf8').equals(input), 'Classic interface physical input must be lossless UTF-8');
   const economyBaseline = economyHardeningSourceBaseline(file, economyText);

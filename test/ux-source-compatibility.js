@@ -1,3 +1,5 @@
+import './questing-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 // Independent immutable UX successor proof; existing historical pins and refusals stay strict.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -29,9 +31,9 @@ const inverseHunks = diff => {
 };
 let positives = 0, refusals = 0, inverseCount = 0;
 for (const row of pin.files) {
-  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))))), stat = fs.lstatSync(row.file);
+  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file), physical = uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, questingHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8')))))), stat = fs.lstatSync(row.file);
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Physical guarded source is a regular file');
-  assert.equal(uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, git('show', 'HEAD:' + row.file))))), current, 'Actual current committed source must retain the authored UX checkpoint after the exact workflow-parent forward layer');
+  assert.equal(uxSuitesGateHistoricalInput(row.file, uxWorkflowBoundHistoricalInput(row.file, saleHistoricalInput(row.file, uxAfterwordHistoricalInput(row.file, questingHistoricalInput(row.file, git('show', 'HEAD:' + row.file)))))), current, 'Actual current committed source must retain the authored UX checkpoint after the exact workflow-parent forward layer');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Actual physical source must retain the complete UX checkpoint');
   for (const [revision, mode, expectedBlob] of [[pin.revision, row.mode, row.currentBlob], [pin.targetRevision, row.targetMode, row.targetBlob]])
     assert.equal(git('ls-tree', revision, '--', row.file).trim(), mode + ' blob ' + expectedBlob + '\t' + row.file);
@@ -83,7 +85,7 @@ const readerEdits = {
   ],
 };
 for (const [file, edits] of Object.entries(readerEdits)) {
-  let restored = economyUxMergeMainHistoricalInput(file, fs.readFileSync(file, 'utf8')).replaceAll('\r\n', '\n');
+  let restored = economyUxMergeMainHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))).replaceAll('\r\n', '\n');
   for (const [current, baseline] of edits) { assert.equal(restored.split(current).length, 2, 'Unique reader-only integration edit: ' + file); restored = restored.replace(current, () => baseline); }
   assert.equal(restored, git('show', pin.targetRevision + ':' + file), 'Every prior binding, assertion and refusal is preserved verbatim: ' + file);
 }
@@ -101,8 +103,8 @@ await import('./lib/ux-director-reader-source-compatibility.js');
   assert.deepEqual(next.files.map(row => row.file), [file]);
   for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
   git('merge-base', '--is-ancestor', next.targetRevision, next.revision); git('merge-base', '--is-ancestor', next.revision, 'HEAD');
-  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file), physical = economyUxMergeMainHistoricalInput(file, fs.readFileSync(file, 'utf8'));
-  assert.equal(economyUxMergeMainHistoricalInput(file, git('show', 'HEAD:' + file)), current, 'Parent-qualified actual HEAD workflow is the complete new authored file');
+  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file), physical = economyUxMergeMainHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8')));
+  assert.equal(economyUxMergeMainHistoricalInput(file, questingHistoricalInput(file, git('show', 'HEAD:' + file))), current, 'Parent-qualified actual HEAD workflow is the complete new authored file');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Raw physical workflow is whole LF/CRLF authored source');
   assert(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink());
   for (const [revision, mode, expected] of [[next.revision, row.mode, row.currentBlob], [next.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', file).trim(), mode + ' blob ' + expected + '\t' + file);
@@ -129,7 +131,7 @@ await import('./lib/ux-director-reader-source-compatibility.js');
   assert.throws(() => uxWorkflowBoundHistoricalInput(file, Buffer.concat([Buffer.from(current), Buffer.from([255])])), /lossless|Lossless/); refusals++;
   for (const unknown of ['../.github/workflows/ci.yml', '__proto__', 'schema.sql']) { assert.throws(() => qualifyUxWorkflowBoundSource(unknown, current)); assert.equal(uxWorkflowBoundHistoricalInput(unknown, current), current); refusals++; }
   for (const input of [prior, current + '\n# unknown future workflow\n', current.slice(1)]) assert.equal(uxWorkflowBoundHistoricalInput(file, input), input);
-  let conservedModule = fs.readFileSync('tools/ux-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+  let conservedModule = questingHistoricalInput('tools/ux-source-compatibility.js', fs.readFileSync('tools/ux-source-compatibility.js', 'utf8')).replaceAll('\r\n', '\n');
   for (const hook of ["import { saleHistoricalInput } from './sale-source-compatibility.js';\n", '  input = saleHistoricalInput(file, input);\n']) {
     assert.equal(conservedModule.split(hook).length, 2, 'One exact sale source integration hook');
     conservedModule = conservedModule.replace(hook, '');
@@ -156,8 +158,8 @@ await import('./lib/ux-director-reader-source-compatibility.js');
   assert.deepEqual(next.files.map(row => row.file), [file]);
   for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
   git('merge-base', '--is-ancestor', next.targetRevision, next.revision); git('merge-base', '--is-ancestor', next.revision, 'HEAD');
-  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file), physical = economyUxMergeMainHistoricalInput(file, fs.readFileSync(file, 'utf8'));
-  assert.equal(economyUxMergeMainHistoricalInput(file, git('show', 'HEAD:' + file)), current, 'Parent-qualified HEAD is the complete newly authored gate file');
+  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file), physical = economyUxMergeMainHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8')));
+  assert.equal(economyUxMergeMainHistoricalInput(file, questingHistoricalInput(file, git('show', 'HEAD:' + file))), current, 'Parent-qualified HEAD is the complete newly authored gate file');
   assert(physical === current || physical === current.replaceAll('\n', '\r\n')); assert(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink());
   for (const [revision, mode, expected] of [[next.revision, row.mode, row.currentBlob], [next.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', file).trim(), mode + ' blob ' + expected + '\t' + file);
   const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === file); assert(mergeRow);
@@ -191,7 +193,7 @@ await import('./lib/ux-director-reader-source-compatibility.js');
   assert.throws(() => uxSuitesGateHistoricalInput(file, Buffer.concat([Buffer.from(current), Buffer.from([255])])), /lossless UTF-8/); refusals++;
   for (const unknown of ['../test/gates.js', '__proto__', 'schema.sql']) { assert.throws(() => qualifyUxSuitesGateSource(unknown, current)); assert.equal(uxSuitesGateHistoricalInput(unknown, current), current); refusals++; }
   for (const input of [prior, current + '\n// unknown future source\n', current.slice(1)]) assert.equal(uxSuitesGateHistoricalInput(file, input), input);
-  let conserved = fs.readFileSync('tools/ux-director-reader-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+  let conserved = questingHistoricalInput('tools/ux-director-reader-source-compatibility.js', fs.readFileSync('tools/ux-director-reader-source-compatibility.js', 'utf8')).replaceAll('\r\n', '\n');
   conserved = conserved.replace("import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\n", '');
   conserved = conserved.replace("import { UX_SOURCE } from './ux-source-data.js';\n", '').replace("import { UX_SUITES_GATE_SOURCE, UX_SUITES_GATE_SOURCE_SHA256 } from './ux-suites-gate-source-data.js';\n", '');
   const begin = conserved.indexOf('export { UX_SUITES_GATE_SOURCE };'), end = conserved.indexOf('export function uxDirectorReaderHistoricalInput(file, input) {', begin); assert(begin >= 0 && end > begin); conserved = conserved.slice(0, begin) + conserved.slice(end);

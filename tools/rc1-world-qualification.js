@@ -1,4 +1,5 @@
 import { BUSINESS_SEASON_SOURCE_TRANSFER } from './rc1-business-season-source-compatibility.js';
+import { questingHistoricalInput } from './questing-source-transfer.js';
 import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
 import { COMMERCIAL_REPUTATION_SOURCE_TRANSFER } from './rc1-commercial-reputation-source-compatibility.js';
 import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from './rc1-company-opportunity-source-compatibility.js';
@@ -194,7 +195,10 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 34, reviewedRevisi
 export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
   for (const [file, expected] of Object.entries(sourceFiles)) {
-    const raw = companyOperatorSourceBaseline(file, playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file, cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(await readFile(file)))))));
+    // This compares the retained recovery-rule source model only. It transfers
+    // no actual-current runtime/native admission or measured world outcomes.
+    const comparison = questingHistoricalInput(file, await readFile(file));
+    const raw = companyOperatorSourceBaseline(file, playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file, cityActivitySourceBaseline(file, economyHardeningSourceBaseline(file, String(comparison))))));
     const homeBaseline = file === 'src/server.js' && sha256(raw) === CITY_HOMES_LEAGUE_SERVER_PIN
       ? assertCityHomesLeagueServerTransfer(raw).baselineText : raw;
     const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, homeBaseline));
