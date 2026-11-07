@@ -43,6 +43,7 @@ const files = [
   "test/enterprise-current-source-compatibility.js",
   "test/enterprise-release-phase2-migration-catalog.js",
   "test/gates.js",
+  "test/lib/ux-journeys.js",
   "test/native-eth-source-transfer.js",
   "test/noir-ui-source-compatibility.js",
   "test/phase2-postgres.js",
@@ -59,7 +60,7 @@ const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 assert.equal(source.status, 'SEALED');
 assert.equal(source.phase, 'EXACT_QUESTING_SOURCE_COMPARISON_ONLY');
-assert.equal(source.revision, '243a5f6a5fbfc9565abe8fa127ff0a1db5a31573');
+assert.equal(source.revision, '7430b6686afc952720953c0c66e10b0a0c285c45');
 assert.equal(source.predecessor, '17fdf85fdd21fd3767463df8ba47614f7d1f6432');
 assert.deepEqual(Object.keys(source.files), files);
 assert(Object.isFrozen(source) && Object.isFrozen(source.files));
@@ -152,7 +153,7 @@ for (const file of ['src/economy.js', 'src/questing.js', 'tools/questing-source-
 // native tests to execute reconstructed predecessor implementations.
 assert.throws(() => git('grep', '-n', 'questing-source-transfer', '--', 'src'),
   error => error.status === 1, 'No game source imports this comparison-only envelope');
-assert.equal(hunks, 210);
+assert.equal(hunks, 215);
 console.log(`Questing exact source-only successor PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; no runtime/native/economic/deployment results transferred`);
 
 // Pure helper-module controls exercise the private success-only cache without
