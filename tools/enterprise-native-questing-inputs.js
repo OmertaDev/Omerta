@@ -4,15 +4,15 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+  "authoredRevision": "f623a8f1997de280dfc4da6b1ae1168465912fa3",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
     {
       "file": ".github/workflows/ci.yml",
       "mode": "100644",
-      "blob": "294684d7d0a91544833029928bc59b82782733b8",
-      "sha256": "71b73145b1656e814d53b7c516201d5bba63f7f07bb02bd21c5d81c679e7fde0"
+      "blob": "d8eb7bff05619dcb43dc4bc09065078e99011278",
+      "sha256": "8116d288255ca705e890601935682ddd4bdb859b4623ea0e9a7a6d2ec611ee15"
     },
     {
       "file": ".github/workflows/forge.yml",
@@ -7613,8 +7613,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/gates.js",
       "mode": "100644",
-      "blob": "ae0e58869346821e37162c9c1f332455009a238b",
-      "sha256": "ab7f34f6707fb76272981d9f17925b9c9d2e4871acb02c5bf6b53a5e4cca3eba"
+      "blob": "e68dc6ff306b95845f786b918c9082e03292cff0",
+      "sha256": "a97332e0ceb380dfeff0b55c96d642463f9ba03437e4717d0ca502671ff6af8e"
     },
     {
       "file": "test/graph.js",
@@ -11225,8 +11225,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-source-transfer.js",
       "mode": "100644",
-      "blob": "507ca13ebd80d90c6e69e9f7c08406dee1c0d2f3",
-      "sha256": "ba1d11cf90cbca731ab5e9f67fb7cbdc725278ffe188ef6112a0bc93f2c6b4ba"
+      "blob": "7a9668ea3e334a22ab63ac97f5face6947cc05de",
+      "sha256": "c8850eb8e414f49198cd2e67255ef1788f037b139ae49eedbb6f75746571a010"
     },
     {
       "file": "test/questing-ux-release-phase2-native-catalog-guard.js",
@@ -11261,8 +11261,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/questing-source-transfer.js",
       "mode": "100644",
-      "blob": "e1022df31edc717a6768c9f6dae5ceb9dbfc718f",
-      "sha256": "5df60db7688f2aca365862298cefcffd15240b20ea58347e14042bf47764d43a"
+      "blob": "86137a955f2eab142fd914093a8a01deed7acab3",
+      "sha256": "959b8bde826a583e7ec69f38c5be7c55ed2d6dd307fd3bb475e9a83516607d93"
     },
     {
       "file": "tools/questing-ux-release-phase2-native-catalog.js",
@@ -11283,8 +11283,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": ".github/workflows/ci.yml",
         "mode": "100644",
-        "blob": "294684d7d0a91544833029928bc59b82782733b8",
-        "sha256": "71b73145b1656e814d53b7c516201d5bba63f7f07bb02bd21c5d81c679e7fde0"
+        "blob": "d8eb7bff05619dcb43dc4bc09065078e99011278",
+        "sha256": "8116d288255ca705e890601935682ddd4bdb859b4623ea0e9a7a6d2ec611ee15"
       }
     },
     {
@@ -11508,8 +11508,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/gates.js",
         "mode": "100644",
-        "blob": "ae0e58869346821e37162c9c1f332455009a238b",
-        "sha256": "ab7f34f6707fb76272981d9f17925b9c9d2e4871acb02c5bf6b53a5e4cca3eba"
+        "blob": "e68dc6ff306b95845f786b918c9082e03292cff0",
+        "sha256": "a97332e0ceb380dfeff0b55c96d642463f9ba03437e4717d0ca502671ff6af8e"
       }
     },
     {
@@ -12003,8 +12003,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-source-transfer.js",
       "mode": "100644",
-      "blob": "507ca13ebd80d90c6e69e9f7c08406dee1c0d2f3",
-      "sha256": "ba1d11cf90cbca731ab5e9f67fb7cbdc725278ffe188ef6112a0bc93f2c6b4ba"
+      "blob": "7a9668ea3e334a22ab63ac97f5face6947cc05de",
+      "sha256": "c8850eb8e414f49198cd2e67255ef1788f037b139ae49eedbb6f75746571a010"
     },
     {
       "file": "test/questing-ux-release-phase2-native-catalog-guard.js",
@@ -12039,8 +12039,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/questing-source-transfer.js",
       "mode": "100644",
-      "blob": "e1022df31edc717a6768c9f6dae5ceb9dbfc718f",
-      "sha256": "5df60db7688f2aca365862298cefcffd15240b20ea58347e14042bf47764d43a"
+      "blob": "86137a955f2eab142fd914093a8a01deed7acab3",
+      "sha256": "959b8bde826a583e7ec69f38c5be7c55ed2d6dd307fd3bb475e9a83516607d93"
     },
     {
       "file": "tools/questing-ux-release-phase2-native-catalog.js",
@@ -12050,4 +12050,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "1650a5199660f1b5508df3a3959071891f3bcf9fb8ec9d67d5341b04cb33d353";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "0ac01b95f558f22e749bd8d5967afbcf7b4c72b4e38ef1af136364877f78ab82";
