@@ -150,7 +150,8 @@ export function register(app, { pool, auth, coordination, context: contextOverri
     ['/consigliere.js', 'consigliere.js', 'application/javascript; charset=utf-8'],
   ]) {
     const content = readFileSync(new URL('../../public/' + file, import.meta.url), 'utf8');
-    app.get(url, respond(async (_req, reply) => reply.header('x-frame-options', 'DENY').type(type).send(content)));
+    app.get(url, respond(async (_req, reply) => reply.header('x-frame-options', 'DENY')
+      .header('X-Robots-Tag', 'noindex').type(type).send(content)));
   }
   return { gateway, security, events, muse };
 }

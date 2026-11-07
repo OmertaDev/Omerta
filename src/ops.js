@@ -119,7 +119,7 @@ export async function opsOverview(pool) {
 // The live event feed — recent telemetry rows (what's happening right now), newest first.
 export async function opsActivity(pool, limit = 50) {
   const n = Math.min(200, Math.max(1, Math.floor(Number(limit) || 50)));
-  const rows = (await pool.query('SELECT event, props, at FROM telemetry ORDER BY at DESC LIMIT $1', [n])).rows;
+  const rows = (await pool.query("SELECT event, props, at FROM telemetry WHERE event <> 'website_count' ORDER BY at DESC LIMIT $1", [n])).rows;
   return { events: rows.map((r) => ({ event: r.event, at: r.at, props: safeParse(r.props) })) };
 }
 

@@ -1,10 +1,12 @@
 // Source-comparison proof only: no reconstructed source is loaded or executed.
+import './site-basics-source-transfer.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { QUESTING_SOURCE as source, qualifyQuestingSource,
   questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
+import { siteBasicsHistoricalInput, siteBasicsHistoricalEntry } from '../tools/site-basics-source-transfer.js';
 
 const files = [
   ".github/workflows/ci.yml",
@@ -90,12 +92,13 @@ for (const [file, row] of Object.entries(source.files)) {
   const committed = git('show', `HEAD:${file}`), raw = fs.readFileSync(file), stat = fs.lstatSync(file);
   const entry = git('ls-tree', 'HEAD', '--', file).trim(), index = git('ls-files', '--stage', '--', file).trim();
   assert(stat.isFile() && !stat.isSymbolicLink());
-  assert.equal(committed, current, 'The scoped physical source must still be exactly the approved questing source');
+  assert.equal(String(siteBasicsHistoricalInput(file, committed)), current,
+    'The independently qualified site comparison must preserve the complete approved questing source');
   assert.equal(entry, `${row.current.mode} blob ${blob(committed)}\t${file}`);
   assert.equal(index, `${row.current.mode} ${blob(committed)} 0\t${file}`);
   assert(raw.equals(Buffer.from(committed)) || raw.equals(Buffer.from(committed.replaceAll('\n', '\r\n'))),
     'Actual physical source must be complete uniform LF or CRLF: ' + file);
-  for (const input of [current, current.replaceAll('\n', '\r\n'), Buffer.from(current), raw]) {
+  for (const input of [current, current.replaceAll('\n', '\r\n'), Buffer.from(current), siteBasicsHistoricalInput(file, raw)]) {
     const proof = qualifyQuestingSource(file, input);
     assert.equal(proof.baselineText, baseline);
     assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,
@@ -104,7 +107,7 @@ for (const [file, row] of Object.entries(source.files)) {
     assert.equal(Buffer.isBuffer(questingHistoricalInput(file, input)), Buffer.isBuffer(input)); positives++;
   }
   for (const kind of ['tree', 'index']) {
-    const actual = kind === 'tree' ? entry : index;
+    const actual = siteBasicsHistoricalEntry(file, kind === 'tree' ? entry : index, kind);
     const expected = kind === 'tree' ? `${row.baseline.mode} blob ${row.baseline.blob}\t${file}`
       : `${row.baseline.mode} ${row.baseline.blob} 0\t${file}`;
     assert.equal(questingHistoricalEntry(file, actual, kind), expected);
@@ -171,7 +174,9 @@ const invalidDigest = helperText.replace(/const expectedDigest = '([a-f0-9]{64})
   `const expectedDigest = '${digest[0] === '0' ? '1' : '0'}${digest.slice(1)}';`);
 for (const text of [invalidStatus, invalidDigest]) {
   assert.notEqual(text, helperText, 'The isolated binding control must actually change the module');
-  const guard = await import('data:text/javascript;base64,' + Buffer.from(text).toString('base64'));
+  const transport = text.replace("from './site-basics-source-transfer.js';",
+    'from ' + JSON.stringify(new URL('../tools/site-basics-source-transfer.js', import.meta.url).href) + ';');
+  const guard = await import('data:text/javascript;base64,' + Buffer.from(transport).toString('base64'));
   for (let attempt = 0; attempt < 2; attempt++) {
     cacheRefused(() => guard.qualifyQuestingSource(cacheFile, cacheCurrent), { code: 'ERR_ASSERTION' });
   }

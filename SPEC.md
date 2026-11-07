@@ -12,11 +12,11 @@ Counts were measured for the combined release source on 2026-11-06, before gener
 
 | | |
 |---|---|
-| Backend modules | **610** files, **140775** lines (recursive source inventory) |
-| Test suites | **1002** files, **212398** lines (recursive source inventory) |
-| HTTP routes | **1378** registrations (**1378** unique; 1273 under `/v1`) |
+| Backend modules | **612** files, **140997** lines (recursive source inventory) |
+| Test suites | **1008** files, **213140** lines (recursive source inventory) |
+| HTTP routes | **1381** registrations (**1381** unique; 1274 under `/v1`) |
 | Database tables | **585** (`schema.sql`, 9820 lines) |
-| Client | **14652** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
+| Client | **14678** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |

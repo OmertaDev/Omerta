@@ -392,9 +392,12 @@ assert(/extractionPrerequisites:[\s\S]*SIWE-link an EVM wallet[\s\S]*mint the ch
 // surfaces — the manual must be readable by ChatGPT/Grok/open-source fetchers, not just Claude.
 const rb = await app.inject({ method: 'GET', url: '/robots.txt' });
 assert(rb.statusCode === 200 && /text\/plain/.test(rb.headers['content-type'])
-  && /User-agent: \*/.test(rb.body) && /Allow: \//.test(rb.body) && !/Disallow/.test(rb.body)
+  && /User-agent: \*/.test(rb.body) && /Allow: \//.test(rb.body)
   && /llms\.txt/.test(rb.body) && /Sitemap: .*\/sitemap\.xml/.test(rb.body),
   'robots.txt welcomes all crawlers/AI agents and points at discovery surfaces');
+assert.deepEqual([...rb.body.matchAll(/^Disallow: (.+)$/gm)].map(match => match[1]).sort(),
+  ['/admin', '/consigliere', '/v1/auth/', '/v1/mod/'].sort(),
+  'crawler exclusions cover private surfaces while public pages and AI discovery stay accessible');
 const sm = await app.inject({ method: 'GET', url: '/sitemap.xml' });
 assert(sm.statusCode === 200 && /application\/xml/.test(sm.headers['content-type'])
   && /<loc>.*\/arena<\/loc>/.test(sm.body), 'sitemap publishes the indexable public surfaces');
