@@ -145,3 +145,31 @@ assert.throws(() => git('grep', '-n', 'questing-source-transfer', '--', 'src'),
   error => error.status === 1, 'No game source imports this comparison-only envelope');
 assert.equal(hunks, 185);
 console.log(`Questing exact source-only successor PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; no runtime/native/economic/deployment results transferred`);
+
+// Pure helper-module controls exercise the private success-only cache without
+// modifying repository source, index, declarations, or any runtime evidence.
+const helperText = fs.readFileSync(new URL('../tools/questing-source-transfer.js', import.meta.url), 'utf8');
+const cacheFile = 'src/server.js', cacheCurrent = git('show', `${source.revision}:${cacheFile}`);
+const cacheBaseline = git('show', `${source.predecessor}:${cacheFile}`);
+let cacheRefusals = 0;
+const cacheRefused = (operation, expected) => { assert.throws(operation, expected); cacheRefusals++; };
+const invalidStatus = helperText.replace('"status": "SEALED"', '"status": "UNBOUND"');
+const invalidDigest = helperText.replace(/const expectedDigest = '([a-f0-9]{64})';/, (_match, digest) =>
+  `const expectedDigest = '${digest[0] === '0' ? '1' : '0'}${digest.slice(1)}';`);
+for (const text of [invalidStatus, invalidDigest]) {
+  assert.notEqual(text, helperText, 'The isolated binding control must actually change the module');
+  const guard = await import('data:text/javascript;base64,' + Buffer.from(text).toString('base64'));
+  for (let attempt = 0; attempt < 2; attempt++) {
+    cacheRefused(() => guard.qualifyQuestingSource(cacheFile, cacheCurrent), { code: 'ERR_ASSERTION' });
+  }
+}
+assert.equal(qualifyQuestingSource(cacheFile, cacheCurrent).baselineText, cacheBaseline);
+cacheRefused(() => { source.status = 'UNBOUND'; }, TypeError);
+cacheRefused(() => { source.files[cacheFile].current.sha256 = '0'.repeat(64); }, TypeError);
+cacheRefused(() => qualifyQuestingSource(cacheFile, cacheCurrent + '\n'), { code: 'ERR_ASSERTION' });
+cacheRefused(() => qualifyQuestingSource('src/game.js', cacheCurrent), { code: 'ERR_ASSERTION' });
+cacheRefused(() => qualifyQuestingSource('omerta.quest.unreviewed', cacheCurrent), { code: 'ERR_ASSERTION' });
+assert.equal(cacheRefusals, 9);
+console.log(JSON.stringify({ phase: 'QUESTING_DEFINITION_CACHE_CONTROLS', positiveWarmups: 1,
+  additionalRefusals: cacheRefusals, failedFirstAndSecondBindingCalls: 4,
+  sourceOnly: true, runtime: false, native: false }));

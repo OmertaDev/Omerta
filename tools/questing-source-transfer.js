@@ -1506,18 +1506,21 @@ const freeze = value => {
   return value;
 };
 export const QUESTING_SOURCE = freeze(source);
+let definitionValidated = false;
 
 function definition() {
+  if (definitionValidated) return;
   assert.equal(source.status, 'SEALED');
   assert.equal(source.phase, 'EXACT_QUESTING_SOURCE_COMPARISON_ONLY');
   assert.equal(source.revision, '9ad1a0652156e5a2e7731f4d1fc51ad27512844f');
   assert.equal(source.predecessor, '17fdf85fdd21fd3767463df8ba47614f7d1f6432');
   assert.equal(sha(JSON.stringify(source)), expectedDigest, 'The complete questing comparison envelope changed');
+  definitionValidated = true;
 }
 const known = file => typeof file === 'string' && Object.hasOwn(source.files, file);
 function canonical(input) {
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless complete UTF-8 source required');
+  if (buffer) assert(Buffer.from(text).equals(input), 'lossless UTF-8 source required');
   if (typeof text !== 'string') return null;
   const lf = text.replaceAll('\r\n', '\n');
   if (lf.includes('\r') || (text !== lf && text !== lf.replaceAll('\n', '\r\n'))) return null;

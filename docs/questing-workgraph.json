@@ -5149,7 +5149,14 @@
       "baselineRevision": "e56cf576065c5f1bbb9bb55115f5961267f7d654"
     },
     "productionActivation": "Not performed",
-    "postgresConcurrency": "Not verified: no PostgreSQL environment configured"
+    "postgresConcurrency": {
+      "passed": true,
+      "sourceRevision": "c1d379b953e926f10ebaa4aae73e24e7b76532ef",
+      "databaseMajor": 18,
+      "fixtureBlob": "df514b74e4cdc3fb03586b3df7d5b05a9d2aabbb",
+      "job": "https://github.com/OmertaDev/Omerta/actions/runs/42322598438/job/128250413870",
+      "scope": "Fresh isolated-schema quest authority, privacy, invitation, handoff, claim and workshop concurrency; candidate evidence before final release CI and production activation"
+    }
   },
   "releasePort": {
     "baseRevision": "17fdf85fdd21fd3767463df8ba47614f7d1f6432",
@@ -5163,7 +5170,14 @@
       "simulator": "passed",
       "worldGraph": "passed",
       "currentMainFormerBlockers": "both pass unchanged",
-      "nativeQuestConcurrency": "pending CI"
+      "nativeQuestConcurrency": {
+        "passed": true,
+        "sourceRevision": "c1d379b953e926f10ebaa4aae73e24e7b76532ef",
+        "databaseMajor": 18,
+        "fixtureBlob": "df514b74e4cdc3fb03586b3df7d5b05a9d2aabbb",
+        "job": "https://github.com/OmertaDev/Omerta/actions/runs/42322598438/job/128250413870",
+        "scope": "Fresh isolated-schema quest authority, privacy, invitation, handoff, claim and workshop concurrency; candidate evidence before final release CI and production activation"
+      }
     }
   },
   "sourceHashFormat": "SHA-256 of UTF-8 source with CRLF/CR normalized to LF"
