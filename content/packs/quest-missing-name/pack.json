@@ -1,0 +1,927 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.missing-name",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward"
+  },
+  "runtime": {
+    "experienceId": "missing-name",
+    "entryNodeId": "missing-name",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "missing-name",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-missing-name-memento",
+      "case-closed",
+      "absence",
+      "absence-answer",
+      "method-archive-memory",
+      "method-specialist-memory",
+      "method-friend-memory",
+      "method",
+      "archive",
+      "archive-answer",
+      "impressions",
+      "impressions-answer",
+      "daughter",
+      "daughter-answer",
+      "countermove-ordinary-memory",
+      "countermove-public-memory",
+      "countermove-quiet-memory",
+      "countermove",
+      "original",
+      "original-answer",
+      "originals-rule",
+      "originals-rule-answer",
+      "watched-delivery",
+      "watched-delivery-answer",
+      "identify",
+      "identify-answer",
+      "identity-privacy-memory",
+      "identity-letter-memory",
+      "identity",
+      "identity-filed-memory"
+    ],
+    "actionNodeIds": [
+      "absence",
+      "method",
+      "archive",
+      "impressions",
+      "daughter",
+      "countermove",
+      "original",
+      "originals-rule",
+      "watched-delivery",
+      "identify",
+      "identity"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "missing-name",
+      "type": "mystery",
+      "payload": {
+        "title": "The Name Between the Lines",
+        "summary": "A payroll has twelve wage envelopes and eleven names. The doorman remembers his daughter at the printworks, but every official list has a blank where her name should be. Orsini has learned that investigators compare copies.",
+        "gates": [
+          {
+            "kind": "story_flag_is",
+            "key": "omerta.quest.early-obituary.complete",
+            "value": "filed"
+          }
+        ],
+        "expectations": {
+          "durationMinutes": 35,
+          "difficulty": "Experienced",
+          "summary": "A payroll has twelve wage envelopes and eleven names. The doorman remembers his daughter at the printworks, but every official list has a blank where her name should be. Orsini has learned that investigators compare copies.",
+          "reasoning": "Evidence, interpretation and consequences",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "The archive route remains available without specialist training."
+          ]
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "The Name Between the Lines",
+        "summary": "A payroll has twelve wage envelopes and eleven names. The doorman remembers his daughter at the printworks, but every official list has a blank where her name should be. Orsini has learned that investigators compare copies."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "saga-missing-name-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "The Name Between the Lines: Case Memento",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Name Between the Lines — Filed",
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "saga-missing-name-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "absence",
+      "type": "puzzle",
+      "payload": {
+        "title": "Twelve Envelopes, Eleven Names",
+        "prompt": "Eleven numbered signatures account for eleven envelopes; envelope 12 is stamped collected. A shift photograph has twelve workers. Select the two independent records that establish an omitted worker.",
+        "summary": "Eleven numbered signatures account for eleven envelopes; envelope 12 is stamped collected. A shift photograph has twelve workers. Select the two independent records that establish an omitted worker.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "absence-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "envelope",
+              "label": "Envelope 12: collected"
+            },
+            {
+              "id": "photo",
+              "label": "Twelve workers in shift photograph"
+            },
+            {
+              "id": "smudge",
+              "label": "A coffee stain over a margin"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "absence-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "envelope",
+          "photo"
+        ]
+      }
+    },
+    {
+      "id": "method-archive-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.method",
+        "kind": "future_scene_variant",
+        "value": "archive",
+        "title": "Recover a Person, Not Just a Name: Compare the public archive",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "method-specialist-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.method",
+        "kind": "future_scene_variant",
+        "value": "specialist",
+        "title": "Recover a Person, Not Just a Name: Use ledger mastery to reconstruct impressions",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "method-friend-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.method",
+        "kind": "future_scene_variant",
+        "value": "friend",
+        "title": "Recover a Person, Not Just a Name: Ask the doorman about his daughter",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "method",
+      "type": "choice",
+      "payload": {
+        "title": "Recover a Person, Not Just a Name",
+        "prompt": "The archive has older copies. A trained reader can reconstruct the impressions in the ledger. The doorman will speak freely to someone who sat with him at dinner.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "archive",
+            "label": "Compare the public archive",
+            "nextNodeIds": [
+              "archive"
+            ],
+            "storyFlagIds": [
+              "method-archive-memory"
+            ]
+          },
+          {
+            "id": "specialist",
+            "label": "Use ledger mastery to reconstruct impressions",
+            "gates": [
+              {
+                "kind": "mastery_at_least",
+                "trackId": "commerce",
+                "level": 5
+              }
+            ],
+            "nextNodeIds": [
+              "impressions"
+            ],
+            "storyFlagIds": [
+              "method-specialist-memory"
+            ]
+          },
+          {
+            "id": "friend",
+            "label": "Ask the doorman about his daughter",
+            "gates": [
+              {
+                "kind": "story_flag_is",
+                "key": "omerta.quest.family-dinner.friend",
+                "value": "doorman"
+              }
+            ],
+            "nextNodeIds": [
+              "daughter"
+            ],
+            "storyFlagIds": [
+              "method-friend-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "archive",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Copy He Could Not Recall",
+        "prompt": "Archive deposits are dated: 3 May, Rosa's signed shift record; 4 May, the official name-removal order; 5 May, a replacement payroll. Order the chain of alteration.",
+        "summary": "Archive deposits are dated: 3 May, Rosa's signed shift record; 4 May, the official name-removal order; 5 May, a replacement payroll. Order the chain of alteration.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "archive-answer",
+        "interaction": {
+          "kind": "timeline",
+          "items": [
+            {
+              "id": "replacement",
+              "label": "5 May: replacement payroll"
+            },
+            {
+              "id": "rosa",
+              "label": "3 May: Rosa signs"
+            },
+            {
+              "id": "order",
+              "label": "4 May: removal order"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "archive-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "ordered_ids",
+        "solution": [
+          "rosa",
+          "order",
+          "replacement"
+        ]
+      }
+    },
+    {
+      "id": "impressions",
+      "type": "puzzle",
+      "payload": {
+        "title": "What the Ledger Kept",
+        "prompt": "The first carbon sheet preserves R, the second OSA. The two impressions have matching ruled lines. Place the fragments in their marked positions.",
+        "summary": "The first carbon sheet preserves R, the second OSA. The two impressions have matching ruled lines. Place the fragments in their marked positions.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "impressions-answer",
+        "interaction": {
+          "kind": "scene",
+          "items": [
+            {
+              "id": "r",
+              "label": "Left fragment: R"
+            },
+            {
+              "id": "osa",
+              "label": "Right fragment: OSA"
+            }
+          ],
+          "slots": [
+            {
+              "id": "left",
+              "label": "Left of matching line"
+            },
+            {
+              "id": "right",
+              "label": "Right of matching line"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "impressions-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "left": "r",
+          "right": "osa"
+        }
+      }
+    },
+    {
+      "id": "daughter",
+      "type": "puzzle",
+      "payload": {
+        "title": "A Name Said Aloud",
+        "prompt": "The doorman says Rosa carried a crescent-shaped lunch tin. The photograph shows that tin beside envelope 12. Which record checks his recollection against the payroll?",
+        "summary": "The doorman says Rosa carried a crescent-shaped lunch tin. The photograph shows that tin beside envelope 12. Which record checks his recollection against the payroll?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "daughter-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "photo",
+              "label": "Shift photograph: crescent tin and envelope 12"
+            },
+            {
+              "id": "weather",
+              "label": "That day's weather report"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "daughter-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "photo"
+        ]
+      }
+    },
+    {
+      "id": "countermove-ordinary-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.response",
+        "kind": "future_scene_variant",
+        "value": "ordinary",
+        "title": "Orsini Changes the Rules: Use the independently deposited archive original",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "countermove-public-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.response",
+        "kind": "future_scene_variant",
+        "value": "public",
+        "title": "Orsini Changes the Rules: Challenge his new originals-only rule with the archive receipt",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "countermove-quiet-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.response",
+        "kind": "future_scene_variant",
+        "value": "quiet",
+        "title": "Orsini Changes the Rules: Use Ada's knowledge of the watched delivery schedule",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "countermove",
+      "type": "choice",
+      "payload": {
+        "title": "Orsini Changes the Rules",
+        "prompt": "If you exposed his office stamp, Orsini now insists that only original records count. If you kept the source private, his men instead watch Ada's deliveries. Choose an available lead.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "ordinary",
+            "label": "Use the independently deposited archive original",
+            "nextNodeIds": [
+              "original"
+            ],
+            "storyFlagIds": [
+              "countermove-ordinary-memory"
+            ]
+          },
+          {
+            "id": "public",
+            "label": "Challenge his new originals-only rule with the archive receipt",
+            "gates": [
+              {
+                "kind": "story_flag_is",
+                "key": "omerta.quest.early-obituary.protection",
+                "value": "public"
+              }
+            ],
+            "nextNodeIds": [
+              "originals-rule"
+            ],
+            "storyFlagIds": [
+              "countermove-public-memory"
+            ]
+          },
+          {
+            "id": "quiet",
+            "label": "Use Ada's knowledge of the watched delivery schedule",
+            "gates": [
+              {
+                "kind": "story_flag_is",
+                "key": "omerta.quest.early-obituary.protection",
+                "value": "quiet"
+              }
+            ],
+            "nextNodeIds": [
+              "watched-delivery"
+            ],
+            "storyFlagIds": [
+              "countermove-quiet-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "original",
+      "type": "puzzle",
+      "payload": {
+        "title": "Independent Custody",
+        "prompt": "The archive receipt predates Orsini's removal order. Select the evidence establishing that his office did not supply this copy.",
+        "summary": "The archive receipt predates Orsini's removal order. Select the evidence establishing that his office did not supply this copy.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "original-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "receipt",
+              "label": "Independent archive deposit receipt"
+            },
+            {
+              "id": "claim",
+              "label": "Orsini's unsigned assurance"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "original-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "receipt"
+        ]
+      }
+    },
+    {
+      "id": "originals-rule",
+      "type": "puzzle",
+      "payload": {
+        "title": "His Own Standard",
+        "prompt": "Orsini demands an original. The archive custodian has the original deposit receipt, with its dated seal. Present it.",
+        "summary": "Orsini demands an original. The archive custodian has the original deposit receipt, with its dated seal. Present it.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "originals-rule-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "seal",
+              "label": "Custodian's original sealed receipt"
+            },
+            {
+              "id": "rumor",
+              "label": "A rumor about the missing name"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "originals-rule-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "seal"
+        ]
+      }
+    },
+    {
+      "id": "watched-delivery",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Cart He Watches",
+        "prompt": "Ada's watched bread cart leaves at noon; the archive's public reading room opens at eleven. Choose the route that needs no secret delivery.",
+        "summary": "Ada's watched bread cart leaves at noon; the archive's public reading room opens at eleven. Choose the route that needs no secret delivery.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "watched-delivery-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "room",
+              "label": "Meet Rosa in the public reading room at eleven"
+            },
+            {
+              "id": "cart",
+              "label": "Put Rosa on the watched cart at noon"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "watched-delivery-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "room"
+        ]
+      }
+    },
+    {
+      "id": "identify",
+      "type": "puzzle",
+      "payload": {
+        "title": "Who Belongs in the Missing Line?",
+        "prompt": "Three workers could occupy the omitted line. The signed wage receipts assign envelope 12 to Rosa, 11 to Mara, and 10 to Elena. Independently, the shift photograph shows the omitted worker carrying a crescent tin; the cloakroom register assigns that tin to Rosa, a square tin to Mara, and a round tin to Elena. File the inferred identity and the independent visual record corroborating it.",
+        "summary": "Three workers could occupy the omitted line. The signed wage receipts assign envelope 12 to Rosa, 11 to Mara, and 10 to Elena. Independently, the shift photograph shows the omitted worker carrying a crescent tin; the cloakroom register assigns that tin to Rosa, a square tin to Mara, and a round tin to Elena. File the inferred identity and the independent visual record corroborating it.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "identify-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "rosa",
+              "label": "Rosa"
+            },
+            {
+              "id": "mara",
+              "label": "Mara"
+            },
+            {
+              "id": "elena",
+              "label": "Elena"
+            },
+            {
+              "id": "photograph",
+              "label": "Dated shift photograph, checked against cloakroom register"
+            },
+            {
+              "id": "rumor",
+              "label": "Anonymous rumor about a missing daughter"
+            }
+          ],
+          "slots": [
+            {
+              "id": "identity",
+              "label": "Identity belonging to the missing line"
+            },
+            {
+              "id": "corroboration",
+              "label": "Independent corroboration of the wage receipt"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "identify-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "identity": "rosa",
+          "corroboration": "photograph"
+        }
+      }
+    },
+    {
+      "id": "identity-privacy-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.rosa",
+        "kind": "district_contact",
+        "value": "privacy",
+        "title": "Who Owns the Corrected Record?: Restore her work record; keep her address private",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "identity-letter-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.rosa",
+        "kind": "district_contact",
+        "value": "letter",
+        "title": "Who Owns the Corrected Record?: Restore the record and offer a mediated family letter",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "identity",
+      "type": "choice",
+      "payload": {
+        "title": "Who Owns the Corrected Record?",
+        "prompt": "Rosa wants her wages and name restored, but does not want her new address published. The doorman asks to send a letter through the archive.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "privacy",
+            "label": "Restore her work record; keep her address private",
+            "storyFlagIds": [
+              "identity-privacy-memory",
+              "identity-filed-memory"
+            ]
+          },
+          {
+            "id": "letter",
+            "label": "Restore the record and offer a mediated family letter",
+            "storyFlagIds": [
+              "identity-letter-memory",
+              "identity-filed-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "identity-filed-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.missing-name.complete",
+        "kind": "case_evidence",
+        "value": "filed",
+        "title": "The Name Between the Lines: case filed",
+        "gameplayPower": "none"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "missing-name",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "missing-name",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "archive",
+      "type": "UNLOCKS",
+      "to": "countermove"
+    },
+    {
+      "from": "impressions",
+      "type": "UNLOCKS",
+      "to": "countermove"
+    },
+    {
+      "from": "daughter",
+      "type": "UNLOCKS",
+      "to": "countermove"
+    },
+    {
+      "from": "original",
+      "type": "UNLOCKS",
+      "to": "identify"
+    },
+    {
+      "from": "originals-rule",
+      "type": "UNLOCKS",
+      "to": "identify"
+    },
+    {
+      "from": "watched-delivery",
+      "type": "UNLOCKS",
+      "to": "identify"
+    },
+    {
+      "from": "identify",
+      "type": "UNLOCKS",
+      "to": "identity"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "absence"
+    },
+    {
+      "from": "absence",
+      "type": "UNLOCKS",
+      "to": "method"
+    },
+    {
+      "from": "method",
+      "type": "UNLOCKS",
+      "to": "archive"
+    },
+    {
+      "from": "method",
+      "type": "UNLOCKS",
+      "to": "impressions"
+    },
+    {
+      "from": "method",
+      "type": "UNLOCKS",
+      "to": "daughter"
+    },
+    {
+      "from": "countermove",
+      "type": "UNLOCKS",
+      "to": "original"
+    },
+    {
+      "from": "countermove",
+      "type": "UNLOCKS",
+      "to": "originals-rule"
+    },
+    {
+      "from": "countermove",
+      "type": "UNLOCKS",
+      "to": "watched-delivery"
+    },
+    {
+      "from": "identity",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

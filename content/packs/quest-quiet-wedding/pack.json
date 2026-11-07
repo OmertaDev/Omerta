@@ -1,0 +1,1039 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quiet-wedding",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward"
+  },
+  "runtime": {
+    "experienceId": "quiet-wedding",
+    "entryNodeId": "quiet-wedding",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quiet-wedding",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-quiet-wedding-memento",
+      "case-closed",
+      "case-venue",
+      "case-venue-answer",
+      "cover-band-memory",
+      "cover-flowers-memory",
+      "cover",
+      "band-plan",
+      "band-plan-answer",
+      "flower-plan",
+      "flower-plan-answer",
+      "band-cover-test",
+      "band-cover-test-answer",
+      "band-usher-talk",
+      "band-usher-talk-answer",
+      "band-decoy",
+      "band-decoy-answer",
+      "band-scene-record",
+      "band-inspection",
+      "band-inspection-answer",
+      "flower-cover-test",
+      "flower-cover-test-answer",
+      "flower-usher-talk",
+      "flower-usher-talk-answer",
+      "flower-decoy",
+      "flower-decoy-answer",
+      "flower-scene-record",
+      "flower-inspection",
+      "flower-inspection-answer",
+      "rescue-explain-memory",
+      "rescue-ordinary-memory",
+      "rescue",
+      "rescue-filed-memory"
+    ],
+    "actionNodeIds": [
+      "case-venue",
+      "cover",
+      "band-plan",
+      "flower-plan",
+      "band-cover-test",
+      "band-usher-talk",
+      "band-decoy",
+      "band-inspection",
+      "flower-cover-test",
+      "flower-usher-talk",
+      "flower-decoy",
+      "flower-inspection",
+      "rescue"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quiet-wedding",
+      "type": "mystery",
+      "payload": {
+        "title": "Nothing Happened at the Wedding",
+        "summary": "A witness must leave a wedding safely while the guests enjoy an ordinary evening. Case the venue, choose a cover, and preserve the appearance of a routine delivery.",
+        "gates": [
+          {
+            "kind": "story_flag_is",
+            "key": "omerta.quest.three-witnesses.complete",
+            "value": "filed"
+          }
+        ],
+        "expectations": {
+          "durationMinutes": 35,
+          "difficulty": "Experienced",
+          "summary": "A witness must leave a wedding safely while the guests enjoy an ordinary evening. Case the venue, choose a cover, and preserve the appearance of a routine delivery.",
+          "reasoning": "Evidence, interpretation and consequences",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Failed cover attempts open a negotiation route. No player property is at risk."
+          ]
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "Nothing Happened at the Wedding",
+        "summary": "A witness must leave a wedding safely while the guests enjoy an ordinary evening. Case the venue, choose a cover, and preserve the appearance of a routine delivery."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "saga-quiet-wedding-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Nothing Happened at the Wedding: Case Memento",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Nothing Happened at the Wedding — Filed",
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "saga-quiet-wedding-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "case-venue",
+      "type": "puzzle",
+      "payload": {
+        "title": "Read Before You Enter",
+        "prompt": "The public schedule lists the band loading through the east door at 20:00, dinner at 20:15, and a watched main entrance throughout. Select the useful delivery opportunity.",
+        "summary": "The public schedule lists the band loading through the east door at 20:00, dinner at 20:15, and a watched main entrance throughout. Select the useful delivery opportunity.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "case-venue-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "east",
+              "label": "East band entrance at 20:00"
+            },
+            {
+              "id": "main",
+              "label": "Watched main entrance at any hour"
+            },
+            {
+              "id": "kitchen",
+              "label": "Unverified rumor of a kitchen tunnel"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "case-venue-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "east"
+        ]
+      }
+    },
+    {
+      "id": "cover-band-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quiet-wedding.cover",
+        "kind": "future_scene_variant",
+        "value": "band",
+        "title": "Choose the Plan: Prepare the band's equipment route",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "cover-flowers-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quiet-wedding.cover",
+        "kind": "future_scene_variant",
+        "value": "flowers",
+        "title": "Choose the Plan: Prepare the florist's scheduled delivery",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "cover",
+      "type": "choice",
+      "payload": {
+        "title": "Choose the Plan",
+        "prompt": "You can join the band's load-out or carry the signed florist order. Each plan requires different preparation.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "band",
+            "label": "Prepare the band's equipment route",
+            "nextNodeIds": [
+              "band-plan"
+            ],
+            "storyFlagIds": [
+              "cover-band-memory"
+            ]
+          },
+          {
+            "id": "flowers",
+            "label": "Prepare the florist's scheduled delivery",
+            "nextNodeIds": [
+              "flower-plan"
+            ],
+            "storyFlagIds": [
+              "cover-flowers-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "band-plan",
+      "type": "puzzle",
+      "payload": {
+        "title": "Cases With a Purpose",
+        "prompt": "A marked equipment case holds the witness's ordinary coat. A trolley moves it without blocking guests. Match those items to their stated uses.",
+        "summary": "A marked equipment case holds the witness's ordinary coat. A trolley moves it without blocking guests. Match those items to their stated uses.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "band-plan-answer",
+        "interaction": {
+          "kind": "inventory",
+          "items": [
+            {
+              "id": "case",
+              "label": "Marked equipment case"
+            },
+            {
+              "id": "trolley",
+              "label": "Band trolley"
+            },
+            {
+              "id": "glass",
+              "label": "Champagne glass"
+            }
+          ],
+          "slots": [
+            {
+              "id": "coat",
+              "label": "Carry the ordinary coat"
+            },
+            {
+              "id": "transport",
+              "label": "Move equipment safely"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "band-plan-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "coat": "case",
+          "transport": "trolley"
+        }
+      }
+    },
+    {
+      "id": "flower-plan",
+      "type": "puzzle",
+      "payload": {
+        "title": "An Order That Checks Out",
+        "prompt": "The florist order assigns white flowers to table 2 and blue flowers to table 5. Arrange the delivery as written to maintain a credible cover.",
+        "summary": "The florist order assigns white flowers to table 2 and blue flowers to table 5. Arrange the delivery as written to maintain a credible cover.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "flower-plan-answer",
+        "interaction": {
+          "kind": "scene",
+          "items": [
+            {
+              "id": "white",
+              "label": "White flowers"
+            },
+            {
+              "id": "blue",
+              "label": "Blue flowers"
+            }
+          ],
+          "slots": [
+            {
+              "id": "table2",
+              "label": "Table 2"
+            },
+            {
+              "id": "table5",
+              "label": "Table 5"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "flower-plan-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "table2": "white",
+          "table5": "blue"
+        }
+      }
+    },
+    {
+      "id": "band-cover-test",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Usher Tests Your Chosen Cover",
+        "prompt": "Your equipment plan uses the east door at 20:00. The usher asks for the signed band load-out docket matching that schedule. A florist order covers a different entrance and cannot support your chosen cover.",
+        "summary": "Your equipment plan uses the east door at 20:00. The usher asks for the signed band load-out docket matching that schedule. A florist order covers a different entrance and cannot support your chosen cover.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "band-cover-test-answer",
+        "interaction": {
+          "kind": "stealth",
+          "items": [
+            {
+              "id": "docket",
+              "label": "Signed band load-out docket, east door 20:00"
+            },
+            {
+              "id": "gossip",
+              "label": "Claim that you know the groom"
+            },
+            {
+              "id": "card",
+              "label": "Unsigned calling card"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "suspicion": {
+          "onWrong": 1,
+          "max": 2
+        },
+        "successNextNodeIds": [
+          "band-decoy"
+        ],
+        "failForward": {
+          "afterAttempts": 2,
+          "nextNodeId": "band-usher-talk",
+          "summary": "Your cover draws attention. The usher agrees to hear a direct request about this route."
+        }
+      }
+    },
+    {
+      "id": "band-cover-test-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "docket"
+        ]
+      }
+    },
+    {
+      "id": "band-usher-talk",
+      "type": "puzzle",
+      "payload": {
+        "title": "Ask the Usher for Supervised Help",
+        "prompt": "The equipment cover drew attention. The usher wants guests safe and the ceremony uninterrupted. A supervised service-door exit satisfies both. A fire-alarm diversion does not.",
+        "summary": "The equipment cover drew attention. The usher wants guests safe and the ceremony uninterrupted. A supervised service-door exit satisfies both. A fire-alarm diversion does not.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "band-usher-talk-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "supervised",
+              "label": "Supervised quiet service-door exit"
+            },
+            {
+              "id": "alarm",
+              "label": "Trigger a false alarm"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "band-usher-talk-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "supervised"
+        ]
+      }
+    },
+    {
+      "id": "band-decoy",
+      "type": "puzzle",
+      "payload": {
+        "title": "Construct the Scene Your Plan Requires",
+        "prompt": "Maintain the band plan you prepared: keep the program on the noticeboard, put the tagged equipment case on its trolley, and leave the coat hanger in the cloakroom. The inspector will check this particular equipment movement.",
+        "summary": "Maintain the band plan you prepared: keep the program on the noticeboard, put the tagged equipment case on its trolley, and leave the coat hanger in the cloakroom. The inspector will check this particular equipment movement.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "band-decoy-answer",
+        "interaction": {
+          "kind": "scene",
+          "items": [
+            {
+              "id": "program",
+              "label": "Band program"
+            },
+            {
+              "id": "case",
+              "label": "Tagged equipment case"
+            },
+            {
+              "id": "hanger",
+              "label": "Empty coat hanger"
+            }
+          ],
+          "slots": [
+            {
+              "id": "board",
+              "label": "Noticeboard"
+            },
+            {
+              "id": "trolley",
+              "label": "Band trolley"
+            },
+            {
+              "id": "cloakroom",
+              "label": "Cloakroom"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "band-decoy-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "board": "program",
+          "trolley": "case",
+          "cloakroom": "hanger"
+        }
+      }
+    },
+    {
+      "id": "band-scene-record",
+      "type": "evidence",
+      "payload": {
+        "title": "The Constructed Scene",
+        "summary": "Maintain the band plan you prepared: keep the program on the noticeboard, put the tagged equipment case on its trolley, and leave the coat hanger in the cloakroom. The inspector will check this particular equipment movement.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "band-inspection",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Inspector Tests Your Constructed Scene",
+        "prompt": "The inspector checks the equipment case you placed on the trolley against the scheduled band departure. Select the signed load-out docket and matching case tag. A florist invoice cannot explain this scene.",
+        "summary": "The inspector checks the equipment case you placed on the trolley against the scheduled band departure. Select the signed load-out docket and matching case tag. A florist invoice cannot explain this scene.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "band-inspection-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "docket",
+              "label": "Signed east-door band docket, 20:00"
+            },
+            {
+              "id": "tag",
+              "label": "Case tag matching the trolley load"
+            },
+            {
+              "id": "flowers",
+              "label": "Unrelated florist invoice"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "band-inspection-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "docket",
+          "tag"
+        ]
+      }
+    },
+    {
+      "id": "flower-cover-test",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Usher Tests Your Chosen Cover",
+        "prompt": "Your florist plan uses the service door at 19:45. The usher asks for the signed florist order listing the table deliveries. The band's later east-door docket cannot support your chosen cover.",
+        "summary": "Your florist plan uses the service door at 19:45. The usher asks for the signed florist order listing the table deliveries. The band's later east-door docket cannot support your chosen cover.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "flower-cover-test-answer",
+        "interaction": {
+          "kind": "stealth",
+          "items": [
+            {
+              "id": "order",
+              "label": "Signed florist order, service door 19:45"
+            },
+            {
+              "id": "gossip",
+              "label": "Claim that you know the groom"
+            },
+            {
+              "id": "card",
+              "label": "Unsigned calling card"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "suspicion": {
+          "onWrong": 1,
+          "max": 2
+        },
+        "successNextNodeIds": [
+          "flower-decoy"
+        ],
+        "failForward": {
+          "afterAttempts": 2,
+          "nextNodeId": "flower-usher-talk",
+          "summary": "Your cover draws attention. The usher agrees to hear a direct request about this route."
+        }
+      }
+    },
+    {
+      "id": "flower-cover-test-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "order"
+        ]
+      }
+    },
+    {
+      "id": "flower-usher-talk",
+      "type": "puzzle",
+      "payload": {
+        "title": "Ask the Usher for Supervised Help",
+        "prompt": "The florist cover drew attention. The usher wants guests safe and the ceremony uninterrupted. A supervised service-door exit satisfies both. A fire-alarm diversion does not.",
+        "summary": "The florist cover drew attention. The usher wants guests safe and the ceremony uninterrupted. A supervised service-door exit satisfies both. A fire-alarm diversion does not.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "flower-usher-talk-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "supervised",
+              "label": "Supervised quiet service-door exit"
+            },
+            {
+              "id": "alarm",
+              "label": "Trigger a false alarm"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "flower-usher-talk-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "supervised"
+        ]
+      }
+    },
+    {
+      "id": "flower-decoy",
+      "type": "puzzle",
+      "payload": {
+        "title": "Construct the Scene Your Plan Requires",
+        "prompt": "Maintain the florist plan you prepared: white flowers stay on table 2, blue flowers on table 5, and the signed order stays with the service-door porter. The inspector will compare these placements to the order.",
+        "summary": "Maintain the florist plan you prepared: white flowers stay on table 2, blue flowers on table 5, and the signed order stays with the service-door porter. The inspector will compare these placements to the order.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "flower-decoy-answer",
+        "interaction": {
+          "kind": "scene",
+          "items": [
+            {
+              "id": "white",
+              "label": "White flowers"
+            },
+            {
+              "id": "blue",
+              "label": "Blue flowers"
+            },
+            {
+              "id": "order",
+              "label": "Signed florist order"
+            }
+          ],
+          "slots": [
+            {
+              "id": "table2",
+              "label": "Table 2"
+            },
+            {
+              "id": "table5",
+              "label": "Table 5"
+            },
+            {
+              "id": "porter",
+              "label": "Service-door porter"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "flower-decoy-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "table2": "white",
+          "table5": "blue",
+          "porter": "order"
+        }
+      }
+    },
+    {
+      "id": "flower-scene-record",
+      "type": "evidence",
+      "payload": {
+        "title": "The Constructed Scene",
+        "summary": "Maintain the florist plan you prepared: white flowers stay on table 2, blue flowers on table 5, and the signed order stays with the service-door porter. The inspector will compare these placements to the order.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "flower-inspection",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Inspector Tests Your Constructed Scene",
+        "prompt": "The inspector checks the flower placements you constructed against the porter's signed order: white on table 2, blue on table 5. Select the two records supporting this scene. Band equipment records cannot explain the florist delivery.",
+        "summary": "The inspector checks the flower placements you constructed against the porter's signed order: white on table 2, blue on table 5. Select the two records supporting this scene. Band equipment records cannot explain the florist delivery.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "flower-inspection-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "order",
+              "label": "Signed florist order: table 2 white, table 5 blue"
+            },
+            {
+              "id": "tables",
+              "label": "Porter's checked delivery record matching both tables"
+            },
+            {
+              "id": "band",
+              "label": "Unrelated band equipment docket"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "flower-inspection-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "order",
+          "tables"
+        ]
+      }
+    },
+    {
+      "id": "rescue-explain-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quiet-wedding.aftermath",
+        "kind": "future_scene_variant",
+        "value": "explain",
+        "title": "What the Guests Remember: Explain privately after the ceremony",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "rescue-ordinary-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quiet-wedding.aftermath",
+        "kind": "future_scene_variant",
+        "value": "ordinary",
+        "title": "What the Guests Remember: Let them remember an ordinary wedding",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "rescue",
+      "type": "choice",
+      "payload": {
+        "title": "What the Guests Remember",
+        "prompt": "The witness is safe. You can quietly tell the couple why the usher helped, or leave their evening entirely their own.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "explain",
+            "label": "Explain privately after the ceremony",
+            "storyFlagIds": [
+              "rescue-explain-memory",
+              "rescue-filed-memory"
+            ]
+          },
+          {
+            "id": "ordinary",
+            "label": "Let them remember an ordinary wedding",
+            "storyFlagIds": [
+              "rescue-ordinary-memory",
+              "rescue-filed-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "rescue-filed-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quiet-wedding.complete",
+        "kind": "case_evidence",
+        "value": "filed",
+        "title": "Nothing Happened at the Wedding: case filed",
+        "gameplayPower": "none"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quiet-wedding",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quiet-wedding",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "band-decoy",
+      "type": "REVEALS",
+      "to": "band-scene-record"
+    },
+    {
+      "from": "band-plan",
+      "type": "UNLOCKS",
+      "to": "band-cover-test"
+    },
+    {
+      "from": "band-cover-test",
+      "type": "UNLOCKS",
+      "to": "band-decoy"
+    },
+    {
+      "from": "band-cover-test",
+      "type": "UNLOCKS",
+      "to": "band-usher-talk"
+    },
+    {
+      "from": "band-usher-talk",
+      "type": "UNLOCKS",
+      "to": "band-decoy"
+    },
+    {
+      "from": "band-decoy",
+      "type": "UNLOCKS",
+      "to": "band-inspection"
+    },
+    {
+      "from": "flower-decoy",
+      "type": "REVEALS",
+      "to": "flower-scene-record"
+    },
+    {
+      "from": "flower-plan",
+      "type": "UNLOCKS",
+      "to": "flower-cover-test"
+    },
+    {
+      "from": "flower-cover-test",
+      "type": "UNLOCKS",
+      "to": "flower-decoy"
+    },
+    {
+      "from": "flower-cover-test",
+      "type": "UNLOCKS",
+      "to": "flower-usher-talk"
+    },
+    {
+      "from": "flower-usher-talk",
+      "type": "UNLOCKS",
+      "to": "flower-decoy"
+    },
+    {
+      "from": "flower-decoy",
+      "type": "UNLOCKS",
+      "to": "flower-inspection"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "case-venue"
+    },
+    {
+      "from": "case-venue",
+      "type": "UNLOCKS",
+      "to": "cover"
+    },
+    {
+      "from": "cover",
+      "type": "UNLOCKS",
+      "to": "band-plan"
+    },
+    {
+      "from": "cover",
+      "type": "UNLOCKS",
+      "to": "flower-plan"
+    },
+    {
+      "from": "band-inspection",
+      "type": "UNLOCKS",
+      "to": "rescue"
+    },
+    {
+      "from": "flower-inspection",
+      "type": "UNLOCKS",
+      "to": "rescue"
+    },
+    {
+      "from": "rescue",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

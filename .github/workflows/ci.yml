@@ -233,6 +233,64 @@ jobs:
           POPULATION_OFF: 'on'      # residents on the streets roster would vary the screens run to run
         run: npm run mobile
 
+  questing_browser:
+    name: Quest acceptance and browser playthroughs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright-core install --with-deps chromium
+      - name: Quest runtime, cases and community workshop
+        run: npm run test:questing
+      - name: Production quest and clue interfaces
+        run: |
+          export CHROMIUM_PATH="$(node --input-type=module -e 'import { chromium } from "playwright-core"; process.stdout.write(chromium.executablePath());')"
+          npm run test:questing:browser
+      - run: npm run questing:check
+
+  questing_native:
+    name: Quest authority and concurrency (PostgreSQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: questing
+          POSTGRES_DB: omerta_questing_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Native invitation, handoff and receipt races
+        env:
+          QUESTING_TEST_DATABASE_URL: postgres://postgres:questing@127.0.0.1:5432/omerta_questing_ci
+          JWT_SECRET: ci-questing-jwt-not-a-real-secret
+          MOD_KEY: ci-questing-mod-not-a-real-secret
+          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4
+          SOCIAL_VERIFY_MODE: 'off'
+          POPULATION_OFF: 'on'
+        run: npm run test:questing:postgres
+
   ux_browser:
     name: UX desktop and mobile regression
     needs: [suites, suite_tail]

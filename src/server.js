@@ -208,6 +208,8 @@ import { register as registerLeaderboards } from './routes/leaderboards.js';
 import { register as registerModTools } from './routes/modtools.js';
 import { registerRwa } from './routes/rwa.js';
 import { register as registerContent } from './routes/content.js';
+import { register as registerQuestWorkshop } from './routes/quest-workshop.js';
+import { register as registerQuesting } from './routes/questing.js';
 import { register as registerCoordination } from './routes/coordination.js';
 import { register as registerWorldKernel } from './routes/world-kernel.js';
 import { register as registerFamilyOperations } from './routes/family-operations.js';
@@ -655,7 +657,7 @@ export async function buildServer() {
     ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],
     ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],
     ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],
-    ...['feel', 'tools', 'identity', 'story', 'community'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
+    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
     ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],
     ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],
     ['ux-investigation.js', 'application/javascript'], ['ux-investigation.css', 'text/css'],
@@ -2413,6 +2415,8 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.repayHouseLoan(ch, client, h)));
   registerModTools(app, { pool, auth, modAuth, closeAccountSockets });
   registerContent(app, { pool, auth, modAuth });
+  registerQuestWorkshop(app, { pool, auth });
+  registerQuesting(app, { pool, auth });
   const coordination = registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
   registerUxWorkspace(app, { pool, auth });
@@ -3979,6 +3983,8 @@ export async function buildServer() {
     G.readCharacter(pool, req.user.sub, (ch, client, h) => Clues.clueBoard(client, ch, h.acct)));
   app.post('/v1/clues/dig', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Clues.dig(ch, client, h)));
+  app.post('/v1/clues/answer', { preHandler: auth, bodyLimit: 1024 }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => Clues.answer(ch, req.body, client, h)));
   app.get('/v1/world', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client, h) => World.worldBoard(client, ch, h)));
   app.post('/v1/world/:npcId/raid', { preHandler: auth }, async (req) =>

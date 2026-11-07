@@ -445,7 +445,7 @@ export function createContextGateway({ pool, coordination = null } = {}) {
           const { ch, acct } = await snapshot(); const scroll = await clueBoard(pool, ch, acct); const clues = [];
           for (const entry of (await mysteryCatalog()).mysteries) if (entry.started)
             clues.push(...(await mystery(entry.graphId)).nodes.filter((node) => node.type === 'evidence').map((node) => ({ ...node, graphId: entry.graphId })));
-          return { clues, scroll: scroll.scroll ? pick(scroll.scroll, ['step', 'of', 'riddle', 'kind', 'tier', 'tierName']) : null,
+          return { clues, scroll: scroll.scroll ? pick(scroll.scroll, ['step', 'of', 'riddle', 'kind', 'tier', 'tierName', 'interaction']) : null,
             theories: [], note: 'No solution, scroll seed, or undiscovered clue is included.' };
         }
         case 'get_coordination_requests': return coordinationCatalog();

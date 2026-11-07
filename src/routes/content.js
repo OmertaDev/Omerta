@@ -12,6 +12,8 @@ import {
   actOnContentInstance,
   leaveContentInstance,
   claimContentRewards,
+  addContentCaseNote,
+  releaseContentRole,
 } from '../content/runtime.js';
 import {
   craftingBoard,
@@ -31,8 +33,10 @@ import {
 const createBody = {
   type: 'object', additionalProperties: false, required: ['scopeKind', 'roleId'],
   properties: {
-    scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family'] },
+    scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family', 'invitation'] },
     roleId: { type: 'string', minLength: 1 }, consent: { type: 'boolean' },
+    agendaConsent: { type: 'boolean' },
+    invitedAccountIds: { type: 'array', maxItems: 8, uniqueItems: true, items: { type: 'string', minLength: 1, maxLength: 160 } },
   },
 };
 const joinBody = {
@@ -40,6 +44,7 @@ const joinBody = {
   properties: {
     expectedRevision: { type: 'integer', minimum: 0 }, roleId: { type: 'string', minLength: 1 },
     consent: { type: 'boolean' },
+    agendaConsent: { type: 'boolean' },
   },
 };
 const consentBody = {
@@ -52,11 +57,27 @@ const actBody = {
   properties: {
     expectedRevision: { type: 'integer', minimum: 0 }, actionId: { type: 'string', minLength: 1 },
     answer: { type: 'string' }, choiceId: { type: 'string', minLength: 1 },
+    submission: {
+      type: 'object', additionalProperties: false,
+      properties: {
+        ids: { type: 'array', maxItems: 64, items: { type: 'string', minLength: 1, maxLength: 160 } },
+        assignments: { type: 'object', maxProperties: 64, additionalProperties: { type: 'string', minLength: 1, maxLength: 160 } },
+      },
+      oneOf: [{ required: ['ids'] }, { required: ['assignments'] }],
+    },
+    hint: { type: 'boolean' },
   },
 };
 const revisionBody = {
   type: 'object', additionalProperties: false, required: ['expectedRevision'],
   properties: { expectedRevision: { type: 'integer', minimum: 0 } },
+};
+const noteBody = {
+  type: 'object', additionalProperties: false, required: ['expectedRevision', 'text'],
+  properties: {
+    expectedRevision: { type: 'integer', minimum: 0 },
+    text: { type: 'string', minLength: 1, maxLength: 500 },
+  },
 };
 const activationBody = {
   type: 'object', additionalProperties: false, required: ['bundle', 'expectedHash'],
@@ -88,6 +109,23 @@ const invalidBody = (message) => {
   error.code = 'bad_request';
   throw error;
 };
+const strictValue = (rule, value, key) => {
+  if (rule.type === 'integer' && !Number.isInteger(value)) invalidBody(`${key} must be an integer.`);
+  if (rule.type === 'string' && typeof value !== 'string') invalidBody(`${key} must be a string.`);
+  if (rule.type === 'boolean' && typeof value !== 'boolean') invalidBody(`${key} must be a boolean.`);
+  if (rule.type === 'array') {
+    if (!Array.isArray(value)) invalidBody(`${key} must be an array.`);
+    if (rule.items) value.forEach((item, index) => strictValue(rule.items, item, `${key}[${index}]`));
+  }
+  if (rule.type === 'object') {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) invalidBody(`${key} must be an object.`);
+    for (const [name, item] of Object.entries(value)) {
+      const child = Object.hasOwn(rule.properties || {}, name) ? rule.properties[name]
+        : typeof rule.additionalProperties === 'object' ? rule.additionalProperties : null;
+      if (child) strictValue(child, item, `${key}.${name}`);
+    }
+  }
+};
 const strictBody = (shape) => async (req) => {
   const body = req.body;
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
@@ -101,13 +139,7 @@ const strictBody = (shape) => async (req) => {
   }
   for (const [key, rule] of Object.entries(shape.properties)) {
     if (!Object.hasOwn(body, key)) continue;
-    const value = body[key];
-    if (rule.type === 'integer' && !Number.isInteger(value)) invalidBody(`${key} must be an integer.`);
-    if (rule.type === 'string' && typeof value !== 'string') invalidBody(`${key} must be a string.`);
-    if (rule.type === 'boolean' && typeof value !== 'boolean') invalidBody(`${key} must be a boolean.`);
-    if (rule.type === 'object' && (!value || typeof value !== 'object' || Array.isArray(value))) {
-      invalidBody(`${key} must be an object.`);
-    }
+    strictValue(rule, body[key], key);
   }
   if (shape.not?.required?.every((key) => Object.hasOwn(body, key))) {
     invalidBody(`${shape.not.required.join(' and ')} cannot be supplied together.`);
@@ -226,7 +258,8 @@ export function register(app, { pool, auth, modAuth }) {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => createContentInstance(
       ch,
       req.params.namespace,
-      { scopeKind: req.body?.scopeKind, roleId: req.body?.roleId, consent: req.body?.consent },
+      { scopeKind: req.body?.scopeKind, roleId: req.body?.roleId, consent: req.body?.consent,
+        agendaConsent: req.body?.agendaConsent, invitedAccountIds: req.body?.invitedAccountIds },
       client,
       h,
     )));
@@ -241,6 +274,7 @@ export function register(app, { pool, auth, modAuth }) {
         expectedRevision: req.body?.expectedRevision,
         roleId: req.body?.roleId,
         consent: req.body?.consent,
+        agendaConsent: req.body?.agendaConsent,
       }, client, h))));
 
   app.post('/v1/content/instances/:instanceId/consent', guarded(auth, consentBody), async (req, reply) =>
@@ -257,6 +291,8 @@ export function register(app, { pool, auth, modAuth }) {
         actionId: req.body?.actionId,
         answer: req.body?.answer,
         choiceId: req.body?.choiceId,
+        submission: req.body?.submission,
+        hint: req.body?.hint,
       }, client, h))));
 
   app.post('/v1/content/instances/:instanceId/leave', guarded(auth, revisionBody), async (req, reply) =>
@@ -264,6 +300,16 @@ export function register(app, { pool, auth, modAuth }) {
       leaveContentInstance(ch, req.params.instanceId, {
         expectedRevision: req.body?.expectedRevision,
       }, client, h))));
+
+  app.post('/v1/content/instances/:instanceId/notes', guarded(auth, noteBody), async (req, reply) =>
+    instanceMutation(reply, () => G.withCharacter(pool, req.user.sub, (ch, client, h) =>
+      addContentCaseNote(ch, req.params.instanceId, {
+        expectedRevision: req.body?.expectedRevision, text: req.body?.text,
+      }, client, h))));
+
+  app.post('/v1/content/instances/:instanceId/release', guarded(auth, revisionBody), async (req, reply) =>
+    instanceMutation(reply, () => G.withCharacter(pool, req.user.sub, (ch, client, h) =>
+      releaseContentRole(ch, req.params.instanceId, { expectedRevision: req.body?.expectedRevision }, client, h))));
 
   app.post('/v1/content/instances/:instanceId/claim', guarded(auth, revisionBody), async (req, reply) =>
     instanceMutation(reply, () => G.withCharacter(pool, req.user.sub, (ch, client, h) =>

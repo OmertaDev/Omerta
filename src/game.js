@@ -2,6 +2,7 @@ export const eventMarketCompletionRevision='event_market_v1';
 export const commercialCampaignCompletionRevision = 'commercial_campaign_v1';
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
+import { newClueSalt, cluePuzzleOf } from './clue-puzzles.js';
 import { carChoiceQuote } from './car-choices.js';
 import { recordMeeting } from './contacts.js';
 import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
@@ -2359,14 +2360,14 @@ export async function doCrime(ch, crimeId, client, h, approach) {
           try {
             const held = (await client.query('SELECT 1 FROM clue_scrolls WHERE character_id=$1', [ch.id])).rows[0];
             if (!held) {
-              const salt = crypto.randomUUID();
+              const salt = newClueSalt();
               // TIER-4 §A: roll the trail TIER (weighted — harder is rarer); it sets the step count
               const tier = rollClueTier(Math.random());
               const nSteps = tier.steps;
               await client.query('INSERT INTO clue_scrolls (character_id, salt, step, steps, tier) VALUES ($1,$2,1,$3,$4)', [ch.id, salt, nSteps, tier.id]);
               // (red-team flag) the entry ticket to a cash faucet is audited randomness
               await h.rngLog(client, ch.id, 'clue:drop', clueRoll, `${tier.id} scroll dropped (${nSteps} steps)`);
-              clue = { steps: nSteps, tier: tier.id, tierName: tier.name, riddle: clueStepOf(salt, 1).riddle };
+              clue = { steps: nSteps, tier: tier.id, tierName: tier.name, riddle: cluePuzzleOf(salt, 1).riddle };
               await notify(client, ch.id, 'clue_found', clue);
             }
             if (clueSavepoints) await client.query('RELEASE SAVEPOINT clue_drop');

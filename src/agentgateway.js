@@ -30,6 +30,7 @@ import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contr
 import { GATEWAY_CONTRACTS } from './gateway/http-contract.js';
 import { MUSE_CONTRACTS } from './integrations/muse/schemas.js';
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
+import { QUESTING_CONTRACTS, QUESTING_SCHEMAS } from './questing-contract.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { CITY_HOME_BODIES, CITY_HOME_SCHEMAS } from './city-home-contract.js';
 import { CITY_ENCOUNTER_CONTRACTS, CITY_ENCOUNTER_SCHEMAS } from './city-encounters-contract.js';
@@ -83,6 +84,8 @@ const TAG_DESC = {
   wire: 'The intelligence terminal: wiretaps, sweeps, the Street Wire.',
   underworld: 'Named-NPC relationships: standing, gifts, favors, errands.',
   content: 'Hash-pinned authored stories: personal district storylets and organization-scoped mysteries with exact-once rewards.',
+  questing: 'Personal casework reputation, remembered relationships, district aftermath, and earned reading-room exercises.',
+  'quest-workshop': 'Player-authored, value-neutral deduction mysteries. Author drafts remain private until explicitly published.',
   coordination: 'Private, value-neutral coordination runs. Direct issued actions only; disabled by default and separate from Agent Act, item custody, authored content, and currency authority.',
   worldgraph: 'Conserved Phase 1 inventory, data-defined crafting, mysteries, and four-account Crew operations. Direct actions only; this surface is not autonomous-agent authority.',
   wallet: 'SIWE wallet linking for on-chain extraction.',
@@ -318,6 +321,7 @@ export const COORDINATION_SCHEMAS = {
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  ...QUESTING_CONTRACTS,
   'GET /v1/deeds/discovery': {
     operationId: 'getDeedDiscovery',
     requestParameters: [{ name: 'district', in: 'query', required: false,
@@ -843,9 +847,11 @@ const OPERATION_CONTRACTS = {
     operationId: 'createContentInstance',
     requestSchema: { type: 'object', additionalProperties: false,
       required: ['scopeKind', 'roleId'], properties: {
-        scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family'] },
+        scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family', 'invitation'] },
         roleId: { type: 'string', minLength: 1 },
         consent: { type: 'boolean' },
+        agendaConsent: { type: 'boolean' },
+        invitedAccountIds: { type: 'array', maxItems: 8, uniqueItems: true, items: { type: 'string', minLength: 1, maxLength: 160 } },
       } },
     responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
   },
@@ -859,6 +865,7 @@ const OPERATION_CONTRACTS = {
       required: ['expectedRevision', 'roleId'], properties: {
         expectedRevision: { type: 'integer', minimum: 0 }, roleId: { type: 'string', minLength: 1 },
         consent: { type: 'boolean' },
+        agendaConsent: { type: 'boolean' },
       } },
     responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
     extraResponses: { 409: CONTENT_STALE_RESPONSE },
@@ -878,6 +885,15 @@ const OPERATION_CONTRACTS = {
       required: ['expectedRevision', 'actionId'], properties: {
         expectedRevision: { type: 'integer', minimum: 0 }, actionId: { type: 'string', minLength: 1 },
         answer: { type: 'string' }, choiceId: { type: 'string', minLength: 1 },
+        submission: {
+          type: 'object', additionalProperties: false,
+          properties: {
+            ids: { type: 'array', maxItems: 64, items: { type: 'string', minLength: 1, maxLength: 160 } },
+            assignments: { type: 'object', maxProperties: 64, additionalProperties: { type: 'string', minLength: 1, maxLength: 160 } },
+          },
+          oneOf: [{ required: ['ids'] }, { required: ['assignments'] }],
+        },
+        hint: { type: 'boolean' },
       }, not: { required: ['answer', 'choiceId'] } },
     responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
     extraResponses: { 409: CONTENT_STALE_RESPONSE },
@@ -895,6 +911,20 @@ const OPERATION_CONTRACTS = {
       required: ['expectedRevision'], properties: { expectedRevision: { type: 'integer', minimum: 0 } } },
     responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
     extraResponses: { 409: CONTENT_STALE_RESPONSE },
+  },
+  'POST /v1/content/instances/:instanceId/notes': {
+    operationId: 'addContentCaseNote',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['expectedRevision', 'text'], properties: {
+      expectedRevision: { type: 'integer', minimum: 0 }, text: { type: 'string', minLength: 1, maxLength: 500 },
+    } },
+    responseSchema: { $ref: '#/components/schemas/ContentReceipt' }, extraResponses: { 409: CONTENT_STALE_RESPONSE },
+  },
+  'POST /v1/content/instances/:instanceId/release': {
+    operationId: 'releaseContentRole',
+    requestSchema: { type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: {
+      expectedRevision: { type: 'integer', minimum: 0 },
+    } },
+    responseSchema: { $ref: '#/components/schemas/ContentReceipt' }, extraResponses: { 409: CONTENT_STALE_RESPONSE },
   },
   'POST /v1/worldgraph/items/:itemId/assign-current-character': worldGraphMutation(
     'assignWorldGraphItemToCurrentCharacter',
@@ -1010,6 +1040,7 @@ const OPERATION_CONTRACTS = {
 };
 
 const AGENT_SCHEMAS = {
+  ...QUESTING_SCHEMAS,
   DeedDiscovery: {
     type: 'object', required: ['config', 'primaryClaimed', 'currentDistrict', 'questEligible', 'actorEligible', 'buildings'],
     properties: {
@@ -1078,6 +1109,7 @@ const AGENT_SCHEMAS = {
         'party_role', 'at_location', 'level_at_least', 'mastery_at_least', 'path_is',
         'skill_owned', 'discipline_at_least', 'honor_at_least', 'honor_at_most',
         'underworld_standing_at_least', 'crew_membership', 'season_phase_is',
+        'story_flag_is', 'completed_node', 'collectible_owned',
         'source_claim', 'source_exhausted', 'inventory_cap', 'materials',
         'skill_level', 'job_active', 'facility_location', 'tool_missing', 'tool_broken', 'tool_full',
       ] },
@@ -1087,6 +1119,7 @@ const AGENT_SCHEMAS = {
       disciplineId: { type: 'string' }, npcId: { type: 'string' },
       title: { type: 'string' }, roleId: { type: 'string' }, itemId: { type: 'string' },
       facilityId: { type: 'string' }, toolId: { type: 'string' },
+      key: { type: 'string' }, nodeId: { type: 'string' }, collectibleId: { type: 'string' },
       location: { oneOf: [{ $ref: '#/components/schemas/ContentLocation' }, { type: 'null' }] },
     },
   },
@@ -1108,6 +1141,12 @@ const AGENT_SCHEMAS = {
     properties: {
       id: { type: 'string', minLength: 1 }, kind: { type: 'string' },
       nodeId: { type: 'string' }, title: { type: 'string' }, prompt: { type: ['string', 'null'] },
+      submissionKind: { type: 'string', enum: ['normalized_exact', 'ordered_ids', 'unordered_ids', 'mapping'] },
+      interaction: { $ref: '#/components/schemas/ContentInteraction' },
+      hints: { type: 'array', maxItems: 8, items: { type: 'string' } },
+      hintsRemaining: { type: 'integer', minimum: 0 }, canRequestHint: { type: 'boolean' },
+      attempts: { type: 'integer', minimum: 0 }, suspicion: { type: 'integer', minimum: 0 },
+      maxSuspicion: { type: 'integer', minimum: 1 }, feedback: { type: 'string' },
       options: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['id', 'label', 'available', 'blockedBy'], properties: {
           id: { type: 'string' }, label: { type: 'string' },
@@ -1127,20 +1166,22 @@ const AGENT_SCHEMAS = {
   },
   ContentRole: {
     type: 'object', additionalProperties: false,
-    required: ['id', 'title', 'participantKinds', 'consentRequired'],
+    required: ['id', 'title', 'participantKinds', 'consentRequired', 'agendaConsentRequired'],
     properties: {
       id: { type: 'string' }, title: { type: 'string' },
       participantKinds: { type: 'array', items: {
         type: 'string', enum: ['agent', 'human_eligible_non_agent'],
       } },
       consentRequired: { type: 'boolean' },
+      agendaConsentRequired: { type: 'boolean' },
     },
   },
   ContentOpenRole: {
     type: 'object', additionalProperties: false,
-    required: ['id', 'title', 'consentRequired'],
+    required: ['id', 'title', 'consentRequired', 'agendaConsentRequired'],
     properties: {
       id: { type: 'string' }, title: { type: 'string' }, consentRequired: { type: 'boolean' },
+      agendaConsentRequired: { type: 'boolean' },
     },
   },
   ContentLocation: {
@@ -1157,6 +1198,8 @@ const AGENT_SCHEMAS = {
       id: { type: 'string' }, type: { type: 'string' }, state: { type: 'string' },
       title: { type: ['string', 'null'] }, prompt: { type: 'string' }, summary: { type: 'string' },
       choiceId: { type: 'string' },
+      outcome: { type: 'string', enum: ['success', 'complication'] },
+      evidenceKind: { type: 'string', enum: ['confirmed', 'testimony'] },
     },
   },
   ContentAward: {
@@ -1172,12 +1215,13 @@ const AGENT_SCHEMAS = {
     type: 'object', additionalProperties: false,
     required: ['id', 'namespace', 'version', 'contentHash', 'experienceId', 'title', 'scopeKind',
       'status', 'revision', 'runKey', 'leader', 'members', 'nodes', 'facts', 'actions', 'awards',
-      'createdAt', 'startedAt', 'completedAt', 'formingExpiresAt'],
+      'createdAt', 'startedAt', 'completedAt', 'formingExpiresAt', 'notes', 'agenda', 'debrief',
+      'canReleaseRole', 'journal', 'expectations', 'recap', 'recapText', 'suspicion'],
     properties: {
       id: { type: 'string' }, namespace: { type: 'string' },
       version: { type: 'integer', minimum: 1 }, contentHash: { type: 'string', pattern: '^[a-f0-9]{64}$' },
       experienceId: { type: 'string' }, title: { type: 'string' },
-      scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family'] },
+      scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family', 'invitation'] },
       status: { type: 'string', enum: ['forming', 'active', 'completed', 'abandoned'] },
       revision: { type: 'integer', minimum: 0 }, runKey: { type: 'string' },
       leader: { type: 'boolean' },
@@ -1186,6 +1230,14 @@ const AGENT_SCHEMAS = {
       facts: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['key', 'value'], properties: { key: { type: 'string' }, value: {} } } },
       actions: { type: 'array', items: { $ref: '#/components/schemas/ContentAction' } },
+      notes: { type: 'array', maxItems: 100, items: { $ref: '#/components/schemas/ContentCaseNote' } },
+      agenda: { oneOf: [{ $ref: '#/components/schemas/ContentAgenda' }, { type: 'null' }] },
+      debrief: { type: 'array', items: { $ref: '#/components/schemas/ContentDebriefEntry' } },
+      canReleaseRole: { type: 'boolean' },
+      journal: { type: 'array', items: { $ref: '#/components/schemas/ContentJournalEntry' } },
+      expectations: { oneOf: [{ $ref: '#/components/schemas/ContentExpectations' }, { type: 'null' }] },
+      recap: { $ref: '#/components/schemas/ContentRecap' }, recapText: { type: 'string' },
+      suspicion: { type: 'integer', minimum: 0 },
       awards: { type: 'object', additionalProperties: false,
         required: ['pending', 'applied', 'mine'], properties: {
           pending: { type: 'integer', minimum: 0 }, applied: { type: 'integer', minimum: 0 },
@@ -1214,8 +1266,8 @@ const AGENT_SCHEMAS = {
       id: { type: 'string' }, namespace: { type: 'string' },
       version: { type: 'integer', minimum: 1 }, contentHash: { type: 'string', pattern: '^[a-f0-9]{64}$' },
       experienceId: { type: 'string' }, title: { type: 'string' },
-      scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family'] },
-      status: { type: 'string', const: 'forming' }, revision: { type: 'integer', minimum: 0 },
+      scopeKind: { type: 'string', enum: ['personal', 'crew', 'extended_family', 'invitation'] },
+      status: { type: 'string', enum: ['forming', 'active'] }, revision: { type: 'integer', minimum: 0 },
       runKey: { type: 'string' },
       members: { type: 'array', items: { $ref: '#/components/schemas/ContentMember' } },
       openRoles: { type: 'array', items: { $ref: '#/components/schemas/ContentOpenRole' } },
@@ -1655,7 +1707,7 @@ const AGENT_SCHEMAS = {
       experiences: { type: 'array', items: { type: 'object', additionalProperties: false,
         required: ['namespace', 'version', 'contentHash', 'experienceId', 'title', 'location',
           'runPolicy', 'runKey', 'availableHere', 'eligible', 'blockedBy', 'season',
-          'systems', 'scopes', 'roles'], properties: {
+          'systems', 'scopes', 'roles', 'expectations'], properties: {
           namespace: { type: 'string' }, version: { type: 'integer', minimum: 1 },
           contentHash: { type: 'string', pattern: '^[a-f0-9]{64}$' }, experienceId: { type: 'string' },
           title: { type: 'string' },
@@ -1671,7 +1723,8 @@ const AGENT_SCHEMAS = {
               daysUntilChange: { type: 'integer', minimum: 1 },
             } }, { type: 'null' }] },
           systems: { type: 'array', items: { type: 'string' } },
-          scopes: { type: 'array', items: { type: 'string', enum: ['personal', 'crew', 'extended_family'] } },
+          expectations: { oneOf: [{ $ref: '#/components/schemas/ContentExpectations' }, { type: 'null' }] },
+          scopes: { type: 'array', items: { type: 'string', enum: ['personal', 'crew', 'extended_family', 'invitation'] } },
           roles: { type: 'array', items: { $ref: '#/components/schemas/ContentRole' } },
         } } },
       lobbies: { type: 'array', items: { $ref: '#/components/schemas/ContentLobby' } },
@@ -1694,6 +1747,7 @@ const AGENT_SCHEMAS = {
     properties: {
       character: { type: ['object', 'null'], additionalProperties: true },
       ok: { type: 'boolean' }, left: { type: 'boolean' },
+      released: { type: 'boolean' }, roleId: { type: 'string' },
       instance: { oneOf: [
         { $ref: '#/components/schemas/ContentInstance' },
         { $ref: '#/components/schemas/ContentLobby' },

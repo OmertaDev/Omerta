@@ -1,0 +1,628 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.rival-accord",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward"
+  },
+  "runtime": {
+    "experienceId": "rival-accord",
+    "entryNodeId": "rival-accord",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "rival-accord",
+      "party-policy",
+      "party-quorum",
+      "mediator",
+      "delegate",
+      "opening",
+      "case-reward",
+      "saga-rival-accord-memento",
+      "case-closed",
+      "house-ledger",
+      "house-ledger-answer",
+      "loan-record",
+      "loan-record-answer",
+      "offer-public-memory",
+      "offer-sealed-memory",
+      "offer",
+      "public-response",
+      "sealed-response",
+      "reconcile-agree-memory",
+      "reconcile-archive-memory",
+      "reconcile",
+      "public-close-file-memory",
+      "public-close-copy-memory",
+      "public-close",
+      "sealed-close-file-memory",
+      "sealed-close-copy-memory",
+      "sealed-close"
+    ],
+    "actionNodeIds": [
+      "house-ledger",
+      "loan-record",
+      "offer",
+      "public-response",
+      "sealed-response",
+      "reconcile",
+      "public-close",
+      "sealed-close"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "rival-accord",
+      "type": "mystery",
+      "payload": {
+        "title": "The Receipt Between Two Houses",
+        "summary": "Two organizations receive incompatible accounts of a fictional warehouse dispute. Only explicitly invited participants enter this case. Each side retains its own organization and must consent to its role.",
+        "gates": [],
+        "expectations": {
+          "durationMinutes": 30,
+          "difficulty": "Experienced",
+          "summary": "Two organizations receive incompatible accounts of a fictional warehouse dispute. Only explicitly invited participants enter this case. Each side retains its own organization and must consent to its role.",
+          "reasoning": "Evidence, interpretation and consequences",
+          "combat": "None",
+          "group": "Two explicitly invited members from distinct Crews",
+          "commitments": [
+            "All participants opt in.",
+            "The dispute moves no territory, money, inventory or player liabilities."
+          ]
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "invitation"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "invitation": {
+          "organizationKind": "crew",
+          "maxInvitees": 3
+        }
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 2,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 2
+      }
+    },
+    {
+      "id": "mediator",
+      "type": "role",
+      "payload": {
+        "title": "mediator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "delegate",
+      "type": "role",
+      "payload": {
+        "title": "delegate",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "The Receipt Between Two Houses",
+        "summary": "Two organizations receive incompatible accounts of a fictional warehouse dispute. Only explicitly invited participants enter this case. Each side retains its own organization and must consent to its role."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0,
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "saga-rival-accord-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "The Receipt Between Two Houses: Case Memento",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Receipt Between Two Houses — Filed",
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "saga-rival-accord-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "house-ledger",
+      "type": "puzzle",
+      "payload": {
+        "title": "The First House's Receipt",
+        "prompt": "The first house claims ownership because its receipt says purchased. The same signed receipt specifies twelve crates, while the dispute concerns one borrowed press. Which detail limits that claim?",
+        "summary": "The first house claims ownership because its receipt says purchased. The same signed receipt specifies twelve crates, while the dispute concerns one borrowed press. Which detail limits that claim?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mediator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "house-ledger-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "crates",
+              "label": "The receipt purchases twelve crates"
+            },
+            {
+              "id": "word",
+              "label": "The word purchased by itself"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "house-ledger-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "crates"
+        ]
+      }
+    },
+    {
+      "id": "loan-record",
+      "type": "puzzle",
+      "payload": {
+        "title": "The Second House's Record",
+        "prompt": "The second house calls the press a gift, but its signed ledger says return after restoration. Present the term that checks the claim.",
+        "summary": "The second house calls the press a gift, but its signed ledger says return after restoration. Present the term that checks the claim.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "delegate"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "loan-record-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "return",
+              "label": "Signed term: return after restoration"
+            },
+            {
+              "id": "gift",
+              "label": "An unsigned note calling it a gift"
+            }
+          ]
+        },
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ]
+      }
+    },
+    {
+      "id": "loan-record-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "return"
+        ]
+      }
+    },
+    {
+      "id": "offer-public-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.offer",
+        "kind": "future_scene_variant",
+        "value": "public",
+        "title": "Propose a Settlement: Offer a supervised return and public correction",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "offer-sealed-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.offer",
+        "kind": "future_scene_variant",
+        "value": "sealed",
+        "title": "Propose a Settlement: Offer a sealed return and joint acknowledgement",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "offer",
+      "type": "choice",
+      "payload": {
+        "title": "Propose a Settlement",
+        "prompt": "Both documents establish that the press was borrowed. Offer either a supervised return with a public correction, or a sealed return with an acknowledgement to both houses.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mediator"
+          }
+        ],
+        "options": [
+          {
+            "id": "public",
+            "label": "Offer a supervised return and public correction",
+            "nextNodeIds": [
+              "public-response"
+            ],
+            "storyFlagIds": [
+              "offer-public-memory"
+            ]
+          },
+          {
+            "id": "sealed",
+            "label": "Offer a sealed return and joint acknowledgement",
+            "nextNodeIds": [
+              "sealed-response"
+            ],
+            "storyFlagIds": [
+              "offer-sealed-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "public-response",
+      "type": "choice",
+      "payload": {
+        "title": "The Other House Answers Publicly",
+        "prompt": "The mediator offered a public correction. Your side may accept, or request that the witness's name be withheld from it.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "delegate"
+          }
+        ],
+        "options": [
+          {
+            "id": "accept",
+            "label": "Accept the public correction",
+            "nextNodeIds": [
+              "public-close"
+            ]
+          },
+          {
+            "id": "counter",
+            "label": "Counteroffer: publish the finding without naming the witness",
+            "nextNodeIds": [
+              "reconcile"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sealed-response",
+      "type": "choice",
+      "payload": {
+        "title": "The Other House Answers Privately",
+        "prompt": "The mediator offered a sealed return. Your side may accept, or ask that both houses receive identical copies of the acknowledgement.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "delegate"
+          }
+        ],
+        "options": [
+          {
+            "id": "accept",
+            "label": "Accept the sealed return",
+            "nextNodeIds": [
+              "sealed-close"
+            ]
+          },
+          {
+            "id": "counter",
+            "label": "Counteroffer: both houses receive identical acknowledgements",
+            "nextNodeIds": [
+              "reconcile"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "reconcile-agree-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.counteragreement",
+        "kind": "future_scene_variant",
+        "value": "agree",
+        "title": "Answer the Counteroffer: Accept the requested protection and equal record",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "reconcile-archive-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.counteragreement",
+        "kind": "future_scene_variant",
+        "value": "archive",
+        "title": "Answer the Counteroffer: Ask the neutral archive to hold the agreed record",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "reconcile",
+      "type": "choice",
+      "payload": {
+        "title": "Answer the Counteroffer",
+        "prompt": "The delegate has requested protection of the witness or equal copies of the acknowledgement. Neither condition changes ownership or adds a payment. Choose how to record agreement.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mediator"
+          }
+        ],
+        "options": [
+          {
+            "id": "agree",
+            "label": "Accept the requested protection and equal record",
+            "storyFlagIds": [
+              "reconcile-agree-memory"
+            ]
+          },
+          {
+            "id": "archive",
+            "label": "Ask the neutral archive to hold the agreed record",
+            "storyFlagIds": [
+              "reconcile-archive-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "public-close-file-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.public-agreement",
+        "kind": "future_scene_variant",
+        "value": "file",
+        "title": "A Public Correction Agreed: File the joint public receipt",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "public-close-copy-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.public-agreement",
+        "kind": "future_scene_variant",
+        "value": "copy",
+        "title": "A Public Correction Agreed: File the receipt and give both houses a copy",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "public-close",
+      "type": "choice",
+      "payload": {
+        "title": "A Public Correction Agreed",
+        "prompt": "Both parties accepted the correction. Record the agreed fictional return; this grants no authority over player assets.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mediator"
+          }
+        ],
+        "options": [
+          {
+            "id": "file",
+            "label": "File the joint public receipt",
+            "storyFlagIds": [
+              "public-close-file-memory"
+            ]
+          },
+          {
+            "id": "copy",
+            "label": "File the receipt and give both houses a copy",
+            "storyFlagIds": [
+              "public-close-copy-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sealed-close-file-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.sealed-agreement",
+        "kind": "future_scene_variant",
+        "value": "file",
+        "title": "A Sealed Return Agreed: File the sealed receipt",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "sealed-close-copy-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.rival-accord.sealed-agreement",
+        "kind": "future_scene_variant",
+        "value": "copy",
+        "title": "A Sealed Return Agreed: File the receipt and give both houses a copy",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "sealed-close",
+      "type": "choice",
+      "payload": {
+        "title": "A Sealed Return Agreed",
+        "prompt": "Both parties accepted the sealed return. Record the agreed fictional return; this grants no authority over player assets.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "mediator"
+          }
+        ],
+        "options": [
+          {
+            "id": "file",
+            "label": "File the sealed receipt",
+            "storyFlagIds": [
+              "sealed-close-file-memory"
+            ]
+          },
+          {
+            "id": "copy",
+            "label": "File the receipt and give both houses a copy",
+            "storyFlagIds": [
+              "sealed-close-copy-memory"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "rival-accord",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "mediator"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "delegate"
+    },
+    {
+      "from": "rival-accord",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "house-ledger"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "loan-record"
+    },
+    {
+      "from": "house-ledger",
+      "type": "UNLOCKS",
+      "to": "offer"
+    },
+    {
+      "from": "loan-record",
+      "type": "UNLOCKS",
+      "to": "offer"
+    },
+    {
+      "from": "offer",
+      "type": "UNLOCKS",
+      "to": "public-response"
+    },
+    {
+      "from": "offer",
+      "type": "UNLOCKS",
+      "to": "sealed-response"
+    },
+    {
+      "from": "public-response",
+      "type": "UNLOCKS",
+      "to": "public-close"
+    },
+    {
+      "from": "public-response",
+      "type": "UNLOCKS",
+      "to": "reconcile"
+    },
+    {
+      "from": "sealed-response",
+      "type": "UNLOCKS",
+      "to": "sealed-close"
+    },
+    {
+      "from": "sealed-response",
+      "type": "UNLOCKS",
+      "to": "reconcile"
+    },
+    {
+      "from": "public-close",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    },
+    {
+      "from": "sealed-close",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    },
+    {
+      "from": "reconcile",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

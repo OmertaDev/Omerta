@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { HONOR, MASTERY, PATHS, REGIMEN, SEASON_PHASES, SKILLS, UNDERWORLD } from '../rules.js';
+import { NARRATIVE_VERIFIERS, validateNarrativeAnswer, validateNarrativePuzzle } from './narrative.js';
 
 export const NODE_TYPES = Object.freeze([
   'mystery', 'chapter', 'puzzle', 'choice', 'terminal', 'evidence', 'answer_spec',
@@ -24,7 +25,7 @@ export const EDGE_TYPES = Object.freeze([
 export const GATE_KINDS = Object.freeze([
   'level_at_least', 'stat_at_least', 'mastery_at_least', 'path_is', 'skill_owned',
   'discipline_at_least', 'honor_at_least', 'honor_at_most', 'underworld_standing_at_least', 'owns_item',
-  'season_phase_is',
+  'season_phase_is', 'story_flag_is', 'collectible_owned',
   'item_quality_at_least', 'at_location', 'completed_node', 'world_fact',
   'family_rank', 'family_post', 'crew_membership', 'coalition_membership',
   'party_role', 'unique_participants', 'unique_families', 'availability_window',
@@ -49,14 +50,14 @@ export const RUNTIME_EDGE_TYPES = Object.freeze([
 export const RUNTIME_GATE_KINDS = Object.freeze([
   'party_role', 'at_location', 'level_at_least', 'mastery_at_least', 'path_is',
   'skill_owned', 'discipline_at_least', 'honor_at_least', 'honor_at_most',
-  'underworld_standing_at_least', 'crew_membership', 'season_phase_is',
+  'underworld_standing_at_least', 'crew_membership', 'season_phase_is', 'story_flag_is', 'completed_node', 'collectible_owned',
 ]);
 export const RUNTIME_STORY_FLAG_KINDS = Object.freeze([
   'npc_ally', 'npc_grudge', 'district_contact', 'witness_spared', 'family_debt',
   'case_evidence', 'public_reputation', 'future_scene_variant',
 ]);
 export const RUNTIME_EFFECT_KINDS = Object.freeze(['award_status', 'award_collectible']);
-export const RUNTIME_ANSWER_VERIFIERS = Object.freeze(['normalized_exact']);
+export const RUNTIME_ANSWER_VERIFIERS = Object.freeze(['normalized_exact', ...NARRATIVE_VERIFIERS]);
 export const CRAFTING_NODE_TYPES = Object.freeze([
   'location', 'budget', 'source', 'item_def', 'recipe', 'work_order', 'skill_track', 'sink',
   'tool', 'facility',
@@ -99,6 +100,23 @@ function validateRuntimeGate(gate, { owner, nodeById, profileIds, temporal = fal
   if (!gate || typeof gate !== 'object' || Array.isArray(gate)
     || !RUNTIME_GATE_KINDS.includes(gate.kind)) {
     throw new Error(`${owner} has unsupported gate ${gate?.kind}`);
+  }
+  if (gate.kind === 'story_flag_is') {
+    if (!ownKeysAre(gate, new Set(['kind', 'key', 'value'])) || !stableId(gate.key) || !stableId(gate.value)) {
+      throw new Error(`${owner} story_flag_is requires canonical key and value`);
+    }
+    return;
+  }
+  if (gate.kind === 'collectible_owned') {
+    if (!ownKeysAre(gate, new Set(['kind', 'collectibleId'])) || !stableId(gate.collectibleId)) {
+      throw new Error(`${owner} collectible_owned requires a canonical collectibleId`);
+    }
+    return;
+  }
+  if (gate.kind === 'completed_node') {
+    if (!ownKeysAre(gate, new Set(['kind', 'nodeId'])) || !profileIds.has(gate.nodeId)
+      || !nodeById.has(gate.nodeId)) throw new Error(`${owner} completed_node requires a profiled node`);
+    return;
   }
   if (gate.kind === 'party_role') {
     if (!ownKeysAre(gate, new Set(['kind', 'role']))) throw new Error(`${owner} party_role has unknown fields`);
@@ -272,7 +290,7 @@ export function validateRuntimeContentPack(bundle) {
 
   const policyPayload = policy.payload ?? {};
   if (!uniqueStrings(policyPayload.organizationScopes)
-    || policyPayload.organizationScopes.some((scope) => !['personal', 'crew', 'extended_family'].includes(scope))
+    || policyPayload.organizationScopes.some((scope) => !['personal', 'crew', 'extended_family', 'invitation'].includes(scope))
     || policyPayload.uniqueParticipants !== true
     || policyPayload.roleLockOnStart !== true
     || policyPayload.recheckConsent !== true) {
@@ -284,6 +302,25 @@ export function validateRuntimeContentPack(bundle) {
     || !Number.isInteger(quorumPayload.minimumOrganizations) || quorumPayload.minimumOrganizations < 1) {
     throw new Error(`runtime quorum ${quorum.id} must declare positive participant/organization counts and unique participants`);
   }
+  if (policyPayload.allowRoleReplacement !== undefined && typeof policyPayload.allowRoleReplacement !== 'boolean') {
+    throw new Error(`runtime party policy ${policy.id} allowRoleReplacement must be boolean`);
+  }
+  if (policyPayload.accountLegacyContinuity !== undefined && (typeof policyPayload.accountLegacyContinuity !== 'boolean'
+    || !policyPayload.organizationScopes.includes('personal'))) {
+    throw new Error(`runtime party policy ${policy.id} accountLegacyContinuity requires a personal policy and boolean`);
+  }
+  if (policyPayload.organizationScopes.includes('invitation')) {
+    if (policyPayload.organizationScopes.length !== 1
+      || !ownKeysAre(policyPayload.invitation, new Set(['organizationKind', 'maxInvitees']))
+      || !['crew', 'extended_family'].includes(policyPayload.invitation.organizationKind)
+      || !Number.isInteger(policyPayload.invitation.maxInvitees) || policyPayload.invitation.maxInvitees < 1
+      || policyPayload.invitation.maxInvitees > 8 || quorumPayload.minimumOrganizations < 2
+      || quorumPayload.minimumOrganizations > quorumPayload.minimumParticipants) {
+      throw new Error(`runtime invitation policy ${policy.id} requires isolated bounded invitations and a distinct-organization quorum`);
+    }
+  } else if (policyPayload.invitation !== undefined) {
+    throw new Error(`runtime party policy ${policy.id} invitation metadata requires invitation scope`);
+  }
 
   const supportedNodes = new Set(RUNTIME_NODE_TYPES);
   const supportedGates = new Set(RUNTIME_GATE_KINDS);
@@ -293,6 +330,9 @@ export function validateRuntimeContentPack(bundle) {
   for (const id of runtime.nodeIds) {
     const node = nodeById.get(id);
     if (!supportedNodes.has(node.type)) throw new Error(`runtime node ${id} has unsupported type ${node.type}`);
+    if ((node.payload?.gates || []).length && id !== runtime.entryNodeId && !actionIds.has(id)) {
+      throw new Error(`runtime node ${id} gates require an entry or actionable node`);
+    }
     for (const gate of node.payload?.gates ?? []) {
       if (!supportedGates.has(gate.kind)) throw new Error(`runtime node ${id} has unsupported gate ${gate.kind}`);
       validateRuntimeGate(gate, {
@@ -329,6 +369,7 @@ export function validateRuntimeContentPack(bundle) {
       if (!answerSpec) throw new Error(`runtime puzzle ${id} answerSpecId ${answerSpecId} references a missing node`);
       if (answerSpec.type !== 'answer_spec') throw new Error(`runtime puzzle ${id} answerSpecId ${answerSpecId} must reference answer_spec`);
       if (!profileIds.has(answerSpecId)) throw new Error(`runtime puzzle ${id} answerSpecId ${answerSpecId} is outside nodeIds`);
+      validateNarrativePuzzle(node, nodeById, profileIds);
     }
     if (node.type === 'role') {
       const participantKinds = node.payload?.participantKinds;
@@ -340,11 +381,28 @@ export function validateRuntimeContentPack(bundle) {
           throw new Error(`runtime role ${id} has unsupported participant kind ${kind}`);
         }
       }
+      const agenda = node.payload?.privateAgenda;
+      if (agenda !== undefined) {
+        const objective = nodeById.get(agenda.completionNodeId);
+        if (!ownKeysAre(agenda, new Set(['prompt', 'consentRequired', 'completionNodeId', 'choiceId']))
+          || typeof agenda.prompt !== 'string' || !agenda.prompt.trim() || agenda.prompt.length > 4096
+          || agenda.consentRequired !== true || !profileIds.has(agenda.completionNodeId)
+          || !['puzzle', 'choice'].includes(objective?.type)
+          || !(objective.payload?.gates || []).some((gate) => gate.kind === 'party_role' && gate.role === id)
+          || (agenda.choiceId !== undefined && (objective.type !== 'choice'
+            || !objective.payload.options.some((option) => option.id === agenda.choiceId)))) {
+          throw new Error(`runtime role ${id} privateAgenda requires consent and an objective owned by its role`);
+        }
+      }
     }
     if (node.type === 'answer_spec') {
       const payload = node.payload ?? {};
       if (!RUNTIME_ANSWER_VERIFIERS.includes(payload.verifier)) {
         throw new Error(`runtime answer spec ${id} has unsupported verifier ${payload.verifier}`);
+      }
+      if (NARRATIVE_VERIFIERS.includes(payload.verifier)) {
+        validateNarrativeAnswer(node, `runtime answer spec ${id}`);
+        continue;
       }
       if (!uniqueStrings(payload.acceptedValues)) {
         throw new Error(`runtime answer spec ${id} requires non-empty acceptedValues`);
@@ -362,7 +420,7 @@ export function validateRuntimeContentPack(bundle) {
       const options = node.payload?.options;
       if (!Array.isArray(options) || options.length < 2
         || options.some((option) => !option || typeof option !== 'object' || Array.isArray(option)
-          || !ownKeysAre(option, new Set(['id', 'label', 'gates', 'storyFlagIds']))
+          || !ownKeysAre(option, new Set(['id', 'label', 'gates', 'storyFlagIds', 'nextNodeIds', 'summary']))
           || typeof option.id !== 'string' || !option.id.trim()
           || typeof option.label !== 'string' || !option.label.trim())) {
         throw new Error(`runtime choice ${id} requires at least two stable options`);
@@ -374,6 +432,10 @@ export function validateRuntimeContentPack(bundle) {
       for (const option of options) {
         if (optionIds.has(option.id)) throw new Error(`runtime choice ${id} has duplicate option id ${option.id}`);
         optionIds.add(option.id);
+        if (option.summary !== undefined && (typeof option.summary !== 'string'
+          || !option.summary.trim() || option.summary.length > 4096)) {
+          throw new Error(`runtime choice ${id} option ${option.id} summary must be bounded text`);
+        }
         if (option.gates !== undefined && !Array.isArray(option.gates)) {
           throw new Error(`runtime choice ${id} option ${option.id} gates must be an array`);
         }
@@ -432,9 +494,37 @@ export function validateRuntimeContentPack(bundle) {
         throw new Error(`runtime story flag ${id} must be gameplay-inert`);
       }
     }
-    if (node.type === 'evidence'
-      && (node.payload?.shareScope ?? 'party_summary_only') !== 'party_summary_only') {
-      throw new Error(`runtime evidence ${id} has unsupported shareScope ${node.payload?.shareScope}`);
+    if (node.type === 'evidence') {
+      const shareScope = node.payload?.shareScope ?? 'party_summary_only';
+      if (!['party_summary_only', 'role_private'].includes(shareScope)) {
+        throw new Error(`runtime evidence ${id} has unsupported shareScope ${shareScope}`);
+      }
+      if (shareScope === 'role_private' && (!profileIds.has(node.payload.roleId)
+        || nodeById.get(node.payload.roleId)?.type !== 'role')) {
+        throw new Error(`runtime private evidence ${id} requires a profiled owner role`);
+      }
+    }
+    if (node.type === 'world_fact' && (typeof node.payload?.key !== 'string'
+      || !node.payload.key.trim() || node.payload.key.startsWith('runtime.'))) {
+      throw new Error(`runtime world fact ${id} requires a non-reserved key`);
+    }
+    if (node.payload?.unlockMode !== undefined && !['all', 'any'].includes(node.payload.unlockMode)) {
+      throw new Error(`runtime node ${id} unlockMode must be all or any`);
+    }
+    const nextLists = node.type === 'choice' ? node.payload.options.map((option) => option.nextNodeIds)
+      : node.type === 'puzzle' ? [node.payload.successNextNodeIds] : [];
+    for (const next of nextLists.filter((value) => value !== undefined)) {
+      if (!uniqueStrings(next) || next.some((target) => !profileIds.has(target)
+        || !edges.some((edge) => edge.from === id && edge.to === target && edge.type === 'UNLOCKS'))) {
+        throw new Error(`runtime node ${id} nextNodeIds must name outgoing UNLOCKS targets`);
+      }
+    }
+    if (node.payload?.failForward && !edges.some((edge) => edge.from === id
+      && edge.type === 'UNLOCKS' && edge.to === node.payload.failForward.nextNodeId)) {
+      throw new Error(`runtime puzzle ${id} fail-forward target requires an UNLOCKS edge`);
+    }
+    if (node.payload?.failForward && node.payload.successNextNodeIds?.includes(node.payload.failForward.nextNodeId)) {
+      throw new Error(`runtime puzzle ${id} success and fail-forward routes must be distinct`);
     }
   }
   if ((terminal.payload?.effects ?? []).length === 0) {

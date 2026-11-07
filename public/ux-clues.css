@@ -1,0 +1,13 @@
+.clue-puzzle { border-color:var(--gold,#c9a227); margin-top:8px; }
+.clue-puzzle h3 { margin:0 0 .5rem; }
+.clue-puzzle-meta { font-size:.8rem; color:var(--muted,#a8a29e); }
+.clue-puzzle-riddle { font-style:italic; }
+.clue-puzzle li { margin:.5rem 0; overflow-wrap:anywhere; }
+.clue-puzzle details { margin:.75rem 0; }
+.clue-puzzle summary { cursor:pointer; }
+.clue-puzzle fieldset { min-width:0; margin:.75rem 0; border:1px solid var(--line,#555); border-radius:6px; }
+.clue-puzzle-choice { display:flex; align-items:flex-start; gap:.6rem; padding:.6rem .25rem; cursor:pointer; }
+.clue-puzzle-choice input { flex:0 0 auto; width:auto; margin:.2rem 0 0; }
+.clue-puzzle-choice span { overflow-wrap:anywhere; }
+.clue-puzzle button { max-width:100%; white-space:normal; }
+.clue-puzzle-result { min-height:1.2em; }

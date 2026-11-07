@@ -1,5 +1,5 @@
 // Player-owned presentation state. No game authority, currencies, inventory, or credentials.
-const namespaces = new Set(['navigation', 'navigationTour', 'progression', 'social', 'investigation', 'tactics', 'world', 'layout', 'identity', 'feel', 'tools', 'story', 'community']);
+const namespaces = new Set(['navigation', 'navigationTour', 'progression', 'social', 'investigation', 'tactics', 'world', 'layout', 'identity', 'feel', 'tools', 'story', 'community', 'quests']);
 const dangerous = /^(?:__proto__|prototype|constructor|token|authorization|password|secret|credential|privatekey|seedphrase)$/i;
 export function validWorkspace(value, depth = 0) {
   if (depth > 10) return false;

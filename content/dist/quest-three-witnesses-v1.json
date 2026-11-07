@@ -1,0 +1,509 @@
+{
+  "edges": [
+    {
+      "from": "account",
+      "to": "case-reward",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "case-reward",
+      "to": "case-closed",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "combined",
+      "to": "account",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "driver",
+      "to": "swap-proof",
+      "type": "REVEALS"
+    },
+    {
+      "from": "driver",
+      "to": "rosa",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "opening",
+      "to": "waiter",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "party-policy",
+      "to": "investigator",
+      "type": "PERFORMED_BY_ROLE"
+    },
+    {
+      "from": "party-policy",
+      "to": "party-quorum",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "rosa",
+      "to": "combined",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "three-witnesses",
+      "to": "party-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "three-witnesses",
+      "to": "opening",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "waiter",
+      "to": "coat",
+      "type": "REVEALS"
+    },
+    {
+      "from": "waiter",
+      "to": "driver",
+      "type": "UNLOCKS"
+    }
+  ],
+  "growth": {
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward",
+    "role": "internal_only"
+  },
+  "namespace": "omerta.quest.three-witnesses",
+  "nodes": [
+    {
+      "id": "account",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "corroboration",
+            "label": "The corroborated coat exchange",
+            "storyFlagIds": [
+              "account-corroboration-memory",
+              "account-filed-memory"
+            ]
+          },
+          {
+            "id": "limits",
+            "label": "The limits of each honest witness's view",
+            "storyFlagIds": [
+              "account-limits-memory",
+              "account-filed-memory"
+            ]
+          }
+        ],
+        "prompt": "The witnesses agree once you distinguish observation from assumption. What will the file emphasize?",
+        "title": "File the Limits of Each Account"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "account-corroboration-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.three-witnesses.finding",
+        "kind": "case_evidence",
+        "title": "File the Limits of Each Account: The corroborated coat exchange",
+        "value": "corroboration"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "account-filed-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.three-witnesses.complete",
+        "kind": "case_evidence",
+        "title": "Three Witnesses, One Room: case filed",
+        "value": "filed"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "account-limits-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.three-witnesses.finding",
+        "kind": "case_evidence",
+        "title": "File the Limits of Each Account: The limits of each honest witness's view",
+        "value": "limits"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "case-closed",
+      "payload": {
+        "effects": [
+          {
+            "claimPolicy": "self",
+            "collectibleId": "saga-three-witnesses-memento",
+            "kind": "award_collectible",
+            "recipientPolicy": "all_participants"
+          }
+        ],
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "title": "Three Witnesses, One Room — Filed"
+      },
+      "type": "terminal"
+    },
+    {
+      "id": "case-reward",
+      "payload": {
+        "cash": 0,
+        "claimOnce": true,
+        "tradeableItems": 0
+      },
+      "type": "reward_bundle"
+    },
+    {
+      "id": "coat",
+      "payload": {
+        "evidenceKind": "testimony",
+        "shareScope": "party_summary_only",
+        "summary": "At 19:00 the blue coat hung left and the gray coat right. The waiter did not see the later exchange.",
+        "title": "Waiter's Observed Detail"
+      },
+      "type": "evidence"
+    },
+    {
+      "id": "combined",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "combined-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "exchange",
+              "label": "Driver's timed coat exchange"
+            },
+            {
+              "id": "key",
+              "label": "Engraved office key in gray coat"
+            },
+            {
+              "id": "color",
+              "label": "An assumption that colors identify people"
+            }
+          ],
+          "kind": "deduction",
+          "slots": [
+            {
+              "id": "changed-owner",
+              "label": "The coat changed owners before departure"
+            },
+            {
+              "id": "habitual-owner",
+              "label": "Orsini habitually owned the gray coat"
+            }
+          ]
+        },
+        "prompt": "Connect each conclusion to the independent record supporting it. One record establishes that a coat changed owners; another identifies the habitual owner of the gray coat. Color alone establishes neither conclusion.",
+        "summary": "Connect each conclusion to the independent record supporting it. One record establishes that a coat changed owners; another identifies the habitual owner of the gray coat. Color alone establishes neither conclusion.",
+        "title": "A Person Is Not a Coat"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "combined-answer",
+      "payload": {
+        "solution": {
+          "changed-owner": "exchange",
+          "habitual-owner": "key"
+        },
+        "verifier": "mapping"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "driver",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "driver-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "leave",
+              "label": "19:06 — passenger leaves in blue"
+            },
+            {
+              "id": "arrive",
+              "label": "19:04 — passenger arrives in gray"
+            },
+            {
+              "id": "swap",
+              "label": "19:05 — coats exchanged"
+            }
+          ],
+          "kind": "timeline"
+        },
+        "prompt": "As the driver, you see the gray-coated passenger arrive at 19:04, exchange coats at 19:05, and leave wearing blue at 19:06. Put those observations in order.",
+        "summary": "As the driver, you see the gray-coated passenger arrive at 19:04, exchange coats at 19:05, and leave wearing blue at 19:06. Put those observations in order.",
+        "title": "19:04 — The Driver"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "driver-answer",
+      "payload": {
+        "solution": [
+          "arrive",
+          "swap",
+          "leave"
+        ],
+        "verifier": "ordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "investigator",
+      "payload": {
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "title": "investigator"
+      },
+      "type": "role"
+    },
+    {
+      "id": "opening",
+      "payload": {
+        "summary": "A banquet ended with a missing ledger. Revisit the same seven minutes as the waiter, the driver and Rosa. Each saw something true; none saw the whole room.",
+        "title": "Three Witnesses, One Room"
+      },
+      "type": "chapter"
+    },
+    {
+      "id": "party-policy",
+      "payload": {
+        "accountLegacyContinuity": true,
+        "organizationScopes": [
+          "personal"
+        ],
+        "recheckConsent": true,
+        "roleLockOnStart": true,
+        "uniqueParticipants": true
+      },
+      "type": "party_policy"
+    },
+    {
+      "id": "party-quorum",
+      "payload": {
+        "minimumOrganizations": 1,
+        "minimumParticipants": 1,
+        "uniqueParticipants": true
+      },
+      "type": "quorum"
+    },
+    {
+      "id": "rosa",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "rosa-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "key",
+              "label": "Office key with Orsini's engraved tag"
+            },
+            {
+              "id": "ticket",
+              "label": "Borrowed guest ticket"
+            }
+          ],
+          "kind": "interrogation"
+        },
+        "prompt": "As Rosa, you inspect the left-behind gray coat. Its inside pocket holds Orsini's office key, while its outside pocket holds a borrowed guest ticket. Which object identifies its habitual owner?",
+        "summary": "As Rosa, you inspect the left-behind gray coat. Its inside pocket holds Orsini's office key, while its outside pocket holds a borrowed guest ticket. Which object identifies its habitual owner?",
+        "title": "19:07 — Rosa"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "rosa-answer",
+      "payload": {
+        "solution": [
+          "key"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "saga-three-witnesses-memento",
+      "payload": {
+        "gameplayPower": "none",
+        "rarity": "story",
+        "title": "Three Witnesses, One Room: Case Memento"
+      },
+      "type": "collectible_def"
+    },
+    {
+      "id": "swap-proof",
+      "payload": {
+        "evidenceKind": "testimony",
+        "shareScope": "party_summary_only",
+        "summary": "A coat changed owners before departure. Coat color alone cannot identify the departing person.",
+        "title": "Driver's Observed Detail"
+      },
+      "type": "evidence"
+    },
+    {
+      "id": "three-witnesses",
+      "payload": {
+        "expectations": {
+          "combat": "None",
+          "commitments": [],
+          "difficulty": "Experienced",
+          "durationMinutes": 30,
+          "group": "Solo",
+          "reasoning": "Evidence, interpretation and consequences",
+          "summary": "A banquet ended with a missing ledger. Revisit the same seven minutes as the waiter, the driver and Rosa. Each saw something true; none saw the whole room."
+        },
+        "gates": [
+          {
+            "key": "omerta.quest.missing-name.complete",
+            "kind": "story_flag_is",
+            "value": "filed"
+          }
+        ],
+        "summary": "A banquet ended with a missing ledger. Revisit the same seven minutes as the waiter, the driver and Rosa. Each saw something true; none saw the whole room.",
+        "title": "Three Witnesses, One Room"
+      },
+      "type": "mystery"
+    },
+    {
+      "id": "waiter",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "waiter-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "blue",
+              "label": "Guest's blue coat"
+            },
+            {
+              "id": "gray",
+              "label": "Inspector's gray coat"
+            }
+          ],
+          "kind": "scene",
+          "slots": [
+            {
+              "id": "left",
+              "label": "Left hook"
+            },
+            {
+              "id": "right",
+              "label": "Right hook"
+            }
+          ]
+        },
+        "prompt": "As the waiter, you place the guest's blue coat on the left hook and the inspector's gray coat on the right. Put both where the cloakroom ticket says they belonged.",
+        "summary": "As the waiter, you place the guest's blue coat on the left hook and the inspector's gray coat on the right. Put both where the cloakroom ticket says they belonged.",
+        "title": "19:00 — The Waiter"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "waiter-answer",
+      "payload": {
+        "solution": {
+          "left": "blue",
+          "right": "gray"
+        },
+        "verifier": "mapping"
+      },
+      "type": "answer_spec"
+    }
+  ],
+  "runtime": {
+    "actionNodeIds": [
+      "waiter",
+      "driver",
+      "rosa",
+      "combined",
+      "account"
+    ],
+    "entryNodeId": "three-witnesses",
+    "experienceId": "three-witnesses",
+    "nodeIds": [
+      "three-witnesses",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-three-witnesses-memento",
+      "case-closed",
+      "waiter",
+      "waiter-answer",
+      "coat",
+      "driver",
+      "driver-answer",
+      "swap-proof",
+      "rosa",
+      "rosa-answer",
+      "combined",
+      "combined-answer",
+      "account-corroboration-memory",
+      "account-limits-memory",
+      "account",
+      "account-filed-memory"
+    ],
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed"
+  },
+  "schemaVersion": 1,
+  "version": 1,
+  "contentHash": "090e64df9987c9e5628dd99dd3d7f6ebdbb54905a4bd2873da1602113f6628b4"
+}

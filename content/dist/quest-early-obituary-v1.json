@@ -1,0 +1,709 @@
+{
+  "edges": [
+    {
+      "from": "alibi",
+      "to": "safe-route",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "approach",
+      "to": "compositor",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "approach",
+      "to": "delivery",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "case-reward",
+      "to": "case-closed",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "compositor",
+      "to": "witness-account",
+      "type": "REVEALS"
+    },
+    {
+      "from": "compositor",
+      "to": "alibi",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "delivery",
+      "to": "courier-proof",
+      "type": "REVEALS"
+    },
+    {
+      "from": "delivery",
+      "to": "alibi",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "early-obituary",
+      "to": "party-policy",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "early-obituary",
+      "to": "opening",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "negotiated-exit",
+      "to": "protection",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "notice",
+      "to": "notice-fact",
+      "type": "REVEALS"
+    },
+    {
+      "from": "notice",
+      "to": "approach",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "opening",
+      "to": "notice",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "party-policy",
+      "to": "investigator",
+      "type": "PERFORMED_BY_ROLE"
+    },
+    {
+      "from": "party-policy",
+      "to": "party-quorum",
+      "type": "REQUIRES"
+    },
+    {
+      "from": "protection",
+      "to": "case-reward",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "safe-route",
+      "to": "negotiated-exit",
+      "type": "UNLOCKS"
+    },
+    {
+      "from": "safe-route",
+      "to": "protection",
+      "type": "UNLOCKS"
+    }
+  ],
+  "growth": {
+    "exemptReason": "Authored investigations with no external acquisition action or economic reward",
+    "role": "internal_only"
+  },
+  "namespace": "omerta.quest.early-obituary",
+  "nodes": [
+    {
+      "id": "alibi",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "alibi-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "ferry",
+              "label": "Last ferry — real 18:05"
+            },
+            {
+              "id": "watch",
+              "label": "Watch reading 18:10 — correct by minus twenty"
+            },
+            {
+              "id": "photo",
+              "label": "Shop photograph — real 18:00"
+            }
+          ],
+          "kind": "timeline"
+        },
+        "prompt": "Tomas's watch is twenty minutes fast. It reads 18:10 when the harbor bell rings at real 17:50. The shop photograph is stamped real 18:00; the last ferry leaves at 18:05. Arrange the corrected events.",
+        "summary": "Tomas's watch is twenty minutes fast. It reads 18:10 when the harbor bell rings at real 17:50. The shop photograph is stamped real 18:00; the last ferry leaves at 18:05. Arrange the corrected events.",
+        "title": "The Impossible Alibi",
+        "unlockMode": "any"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "alibi-answer",
+      "payload": {
+        "solution": [
+          "watch",
+          "photo",
+          "ferry"
+        ],
+        "verifier": "ordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "approach",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "witness",
+            "label": "Interview the compositor",
+            "nextNodeIds": [
+              "compositor"
+            ],
+            "storyFlagIds": [
+              "approach-witness-memory"
+            ]
+          },
+          {
+            "id": "records",
+            "label": "Reconstruct the delivery route",
+            "nextNodeIds": [
+              "delivery"
+            ],
+            "storyFlagIds": [
+              "approach-records-memory"
+            ]
+          }
+        ],
+        "prompt": "Ada can take you to the compositor, or you can examine the distribution ledger. These approaches expose different evidence.",
+        "title": "Which Lead First?"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "approach-records-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.early-obituary.method",
+        "kind": "future_scene_variant",
+        "title": "Which Lead First?: Reconstruct the delivery route",
+        "value": "records"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "approach-witness-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.early-obituary.method",
+        "kind": "future_scene_variant",
+        "title": "Which Lead First?: Interview the compositor",
+        "value": "witness"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "case-closed",
+      "payload": {
+        "effects": [
+          {
+            "claimPolicy": "self",
+            "collectibleId": "saga-early-obituary-memento",
+            "kind": "award_collectible",
+            "recipientPolicy": "all_participants"
+          }
+        ],
+        "summary": "Your evidence and decisions remain in the account case file.",
+        "title": "The Obituary Arrives Early — Filed"
+      },
+      "type": "terminal"
+    },
+    {
+      "id": "case-reward",
+      "payload": {
+        "cash": 0,
+        "claimOnce": true,
+        "tradeableItems": 0
+      },
+      "type": "reward_bundle"
+    },
+    {
+      "id": "compositor",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "compositor-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "key",
+              "label": "Signed violet-press key receipt"
+            },
+            {
+              "id": "ticket",
+              "label": "Black-ink job ticket"
+            },
+            {
+              "id": "gossip",
+              "label": "Rumor Nico dislikes Tomas"
+            }
+          ],
+          "kind": "interrogation"
+        },
+        "prompt": "Nico says he never touched the notice. His sleeve has violet ink; the job ticket calls for black; a locked violet press was opened with his signed key receipt. Present the receipt that checks his claim.",
+        "summary": "Nico admits taking a print order from Inspector Orsini, but says the threatened witness was Ada.",
+        "title": "The Ink on His Sleeve"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "compositor-answer",
+      "payload": {
+        "solution": [
+          "key"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "courier-proof",
+      "payload": {
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only",
+        "summary": "The return receipt links the forged delivery to Orsini's office.",
+        "title": "Stamped Return Receipt"
+      },
+      "type": "evidence"
+    },
+    {
+      "id": "delivery",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "delivery-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "receipt",
+              "label": "17:20 — courier returns"
+            },
+            {
+              "id": "plate",
+              "label": "16:00 — plate leaves"
+            },
+            {
+              "id": "notice",
+              "label": "17:00 — notice arrives"
+            }
+          ],
+          "kind": "timeline"
+        },
+        "prompt": "The ledger timestamps are explicit: a plate left the press at 16:00, the false notice arrived at Tomas's shop at 17:00, and its courier returned a signed receipt at 17:20. Arrange those events.",
+        "summary": "The returning receipt bears Inspector Orsini's office stamp; the delivery was a warning intended to provoke Ada.",
+        "title": "The Parcel That Came Back"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "delivery-answer",
+      "payload": {
+        "solution": [
+          "plate",
+          "notice",
+          "receipt"
+        ],
+        "verifier": "ordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "early-obituary",
+      "payload": {
+        "expectations": {
+          "combat": "None",
+          "commitments": [
+            "Your final protection decision is remembered in later cases."
+          ],
+          "difficulty": "Experienced",
+          "durationMinutes": 35,
+          "group": "Solo",
+          "reasoning": "Evidence, interpretation and consequences",
+          "summary": "Ada Vale brings tomorrow's newspaper. It reports the death of living printer Tomas Bell at 23:00 tonight. Ada wants her brother safe; exposing the forged notice could identify the witness who warned her."
+        },
+        "gates": [],
+        "summary": "Ada Vale brings tomorrow's newspaper. It reports the death of living printer Tomas Bell at 23:00 tonight. Ada wants her brother safe; exposing the forged notice could identify the witness who warned her.",
+        "title": "The Obituary Arrives Early"
+      },
+      "type": "mystery"
+    },
+    {
+      "id": "investigator",
+      "payload": {
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ],
+        "title": "investigator"
+      },
+      "type": "role"
+    },
+    {
+      "id": "negotiated-exit",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "negotiated-exit-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "photo",
+              "label": "Dated shop photograph"
+            },
+            {
+              "id": "rumor",
+              "label": "Unattributed street rumor"
+            }
+          ],
+          "kind": "interrogation"
+        },
+        "prompt": "The watcher will stand down if shown that Tomas was photographed alive after the supposed death notice was printed. Which evidence can verify that?",
+        "summary": "The watcher will stand down if shown that Tomas was photographed alive after the supposed death notice was printed. Which evidence can verify that?",
+        "title": "A Conversation Instead of a Chase"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "negotiated-exit-answer",
+      "payload": {
+        "solution": [
+          "photo"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "notice",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "notice-answer",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "A future date alone does not prove a forgery.",
+          "Compare something observed now with the legitimate production schedule.",
+          "Use Tomas's appearance and the press register together."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "description": "You spoke to Tomas yourself.",
+              "id": "tomas",
+              "label": "Tomas is alive at 18:00"
+            },
+            {
+              "description": "The legitimate edition has not been printed.",
+              "id": "press",
+              "label": "Press register: 04:00 tomorrow"
+            },
+            {
+              "description": "Weather says nothing about authorship.",
+              "id": "rain",
+              "label": "Rain is forecast"
+            }
+          ],
+          "kind": "deduction"
+        },
+        "prompt": "The paper bears tomorrow's date. Tomas answers you in person at 18:00. The edition register says tomorrow's press run starts at 04:00. Which two records prove this notice was planted before the legitimate edition?",
+        "summary": "The paper bears tomorrow's date. Tomas answers you in person at 18:00. The edition register says tomorrow's press run starts at 04:00. Which two records prove this notice was planted before the legitimate edition?",
+        "title": "A Death Before Its Time"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "notice-answer",
+      "payload": {
+        "solution": [
+          "tomas",
+          "press"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "notice-fact",
+      "payload": {
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only",
+        "summary": "Tomas is alive, and the real edition has not run. Someone printed the death notice separately.",
+        "title": "Confirmed: An Unauthorized Printing"
+      },
+      "type": "evidence"
+    },
+    {
+      "id": "opening",
+      "payload": {
+        "summary": "Ada Vale brings tomorrow's newspaper. It reports the death of living printer Tomas Bell at 23:00 tonight. Ada wants her brother safe; exposing the forged notice could identify the witness who warned her.",
+        "title": "The Obituary Arrives Early"
+      },
+      "type": "chapter"
+    },
+    {
+      "id": "party-policy",
+      "payload": {
+        "accountLegacyContinuity": true,
+        "organizationScopes": [
+          "personal"
+        ],
+        "recheckConsent": true,
+        "roleLockOnStart": true,
+        "uniqueParticipants": true
+      },
+      "type": "party_policy"
+    },
+    {
+      "id": "party-quorum",
+      "payload": {
+        "minimumOrganizations": 1,
+        "minimumParticipants": 1,
+        "uniqueParticipants": true
+      },
+      "type": "quorum"
+    },
+    {
+      "id": "protection",
+      "payload": {
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "public",
+            "label": "Publish the stamp with Tomas's consent; Ada accepts relocation",
+            "storyFlagIds": [
+              "protection-public-memory",
+              "protection-filed-memory"
+            ]
+          },
+          {
+            "id": "quiet",
+            "label": "Keep Ada anonymous; arrange Tomas's temporary closure",
+            "storyFlagIds": [
+              "protection-quiet-memory",
+              "protection-filed-memory"
+            ]
+          }
+        ],
+        "prompt": "Publishing the office stamp protects Tomas publicly but identifies Ada as the source. Keeping the proof private lets Ada leave safely, while Tomas must close his shop until the threat is resolved. Both have asked you to hear their wishes.",
+        "title": "Whose Safety Carries the Cost?",
+        "unlockMode": "any"
+      },
+      "type": "choice"
+    },
+    {
+      "id": "protection-filed-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.early-obituary.complete",
+        "kind": "case_evidence",
+        "title": "The Obituary Arrives Early: case filed",
+        "value": "filed"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "protection-public-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.early-obituary.protection",
+        "kind": "witness_spared",
+        "title": "Whose Safety Carries the Cost?: Publish the stamp with Tomas's consent; Ada accepts relocation",
+        "value": "public"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "protection-quiet-memory",
+      "payload": {
+        "gameplayPower": "none",
+        "key": "omerta.quest.early-obituary.protection",
+        "kind": "witness_spared",
+        "title": "Whose Safety Carries the Cost?: Keep Ada anonymous; arrange Tomas's temporary closure",
+        "value": "quiet"
+      },
+      "type": "story_flag"
+    },
+    {
+      "id": "safe-route",
+      "payload": {
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "safe-route-answer",
+        "failForward": {
+          "afterAttempts": 2,
+          "nextNodeId": "negotiated-exit",
+          "summary": "The watchers notice the probing. Ada secures a conversation at the bakery instead."
+        },
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "hints": [
+          "Separate each witness claim from the evidence that can check it.",
+          "Compare the stated constraints before choosing an arrangement."
+        ],
+        "interaction": {
+          "items": [
+            {
+              "id": "front",
+              "label": "Walk Tomas through the watched front door"
+            },
+            {
+              "id": "bakery",
+              "label": "Use the bakery service court and its scheduled cart"
+            },
+            {
+              "id": "roof",
+              "label": "Climb an uninspected roof"
+            }
+          ],
+          "kind": "planning"
+        },
+        "prompt": "The front door is watched. Ada's bakery opens onto an unobserved service court; its cart goes to the harbor after closing. Choose the observed safe route, rather than guessing from street gossip.",
+        "successNextNodeIds": [
+          "protection"
+        ],
+        "summary": "The front door is watched. Ada's bakery opens onto an unobserved service court; its cart goes to the harbor after closing. Choose the observed safe route, rather than guessing from street gossip.",
+        "title": "Leave the Notice Where It Is"
+      },
+      "type": "puzzle"
+    },
+    {
+      "id": "safe-route-answer",
+      "payload": {
+        "solution": [
+          "bakery"
+        ],
+        "verifier": "unordered_ids"
+      },
+      "type": "answer_spec"
+    },
+    {
+      "id": "saga-early-obituary-memento",
+      "payload": {
+        "gameplayPower": "none",
+        "rarity": "story",
+        "title": "The Obituary Arrives Early: Case Memento"
+      },
+      "type": "collectible_def"
+    },
+    {
+      "id": "witness-account",
+      "payload": {
+        "evidenceKind": "testimony",
+        "shareScope": "party_summary_only",
+        "summary": "Nico names Orsini and believes Ada is the intended target. His belief is testimony, not yet a confirmed motive.",
+        "title": "Nico's Account"
+      },
+      "type": "evidence"
+    }
+  ],
+  "runtime": {
+    "actionNodeIds": [
+      "notice",
+      "approach",
+      "compositor",
+      "delivery",
+      "alibi",
+      "safe-route",
+      "negotiated-exit",
+      "protection"
+    ],
+    "entryNodeId": "early-obituary",
+    "experienceId": "early-obituary",
+    "nodeIds": [
+      "early-obituary",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "saga-early-obituary-memento",
+      "case-closed",
+      "notice",
+      "notice-answer",
+      "notice-fact",
+      "approach-witness-memory",
+      "approach-records-memory",
+      "approach",
+      "compositor",
+      "compositor-answer",
+      "delivery",
+      "delivery-answer",
+      "witness-account",
+      "courier-proof",
+      "alibi",
+      "alibi-answer",
+      "safe-route",
+      "safe-route-answer",
+      "negotiated-exit",
+      "negotiated-exit-answer",
+      "protection-public-memory",
+      "protection-quiet-memory",
+      "protection",
+      "protection-filed-memory"
+    ],
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed"
+  },
+  "schemaVersion": 1,
+  "version": 1,
+  "contentHash": "5035e26cf459eeb9aae21f98827288cb38bfaec600981acfe00657908f76df99"
+}
