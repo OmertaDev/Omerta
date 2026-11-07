@@ -185,3 +185,139 @@ assert.equal(nativeAttempts, 0);
 console.log(JSON.stringify({phase:'QUESTING_PHASE2_DIRECTOR_NATIVE_GUARDS', protectedEngineExact:true,
   finiteSubstitutions:substitutions.length, copyRefusals, profiles, metadataRefusals, constraintRefusals,
   admissionRefusals, nativeAttempts, nativeExecution:false, historicalResultsTransferred:false}));
+// Additive pure reader conservation controls. No source is evaluated or substituted into runtime.
+const readerCopyPins = Object.freeze([
+  {
+    "original": "test/lib/ux-native-reader-source-compatibility.js",
+    "target": "test/lib/questing-ux-native-reader-source-compatibility.js",
+    "exportName": "questingNativeReaderView",
+    "files": [
+      "test/phase2-postgres.js",
+      "tools/enterprise-native.js",
+      "test/enterprise-native-guard.js"
+    ],
+    "oldSha256": "f433b7807bd56b3ebb6d0bcf761c40f601e9f05062abff14276349ddd7f736c2",
+    "bytes": 23341,
+    "sha256": "edc637f8492814d77a2433604e3be99d614225c22e0ab4e62030135d23905fc9",
+    "prefixCharacters": 1966,
+    "prefixSha256": "a16dd1e9643d443bfe0fd089293fb40c8bbe5fd310ccdfd1733df434df752676",
+    "edits": [
+      [
+        "  const actualEntry = entry, actualRaw = raw, combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.wiki);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\\t', ' 0\\t'),\n    'The actual index qualifies before the source-only parent view');\n",
+        "  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\\t', ' 0\\t'),\n    'The actual index qualifies before the source-only parent view');\n  const questView = questingNativeReaderView(file, raw, entry);\n  raw = questView.input; entry = questView.entry;\n  const actualEntry = entry, actualRaw = raw, combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.wiki);\n"
+      ],
+      [
+        "businessDeskCombinedHistoricalInput(row.file, rawPhysical, 'wiki')",
+        "businessDeskCombinedHistoricalInput(row.file, questingNativeReaderView(row.file, rawPhysical, actualEntry).input, 'wiki')"
+      ],
+      [
+        "businessDeskCombinedHistoricalInput(row.file, checkedOut, 'wiki')",
+        "businessDeskCombinedHistoricalInput(row.file, questingNativeReaderView(row.file, checkedOut, actualEntry).input, 'wiki')"
+      ],
+      [
+        "businessDeskCombinedHistoricalInput(file, rawPhysical, 'wiki')",
+        "businessDeskCombinedHistoricalInput(file, questingNativeReaderView(file, rawPhysical, actualEntry).input, 'wiki')"
+      ],
+      [
+        "businessDeskCombinedHistoricalInput(file, checkedOut, 'wiki')",
+        "businessDeskCombinedHistoricalInput(file, questingNativeReaderView(file, checkedOut, actualEntry).input, 'wiki')"
+      ]
+    ],
+    "oldEntry": "100644 blob 0a09ea5c6fd3e9a8d01d398e7183cb87a5e3a133\ttest/lib/ux-native-reader-source-compatibility.js"
+  },
+  {
+    "original": "test/lib/ux-director-reader-source-compatibility.js",
+    "target": "test/lib/questing-ux-director-reader-source-compatibility.js",
+    "exportName": "questingDirectorReaderView",
+    "files": [
+      "test/director-migration.js"
+    ],
+    "oldSha256": "93863ba374e6df23371cb84c41ab39009110f420f8441d5bcb639df7a6f32225",
+    "bytes": 10237,
+    "sha256": "603696309eae395a64ba601ea8e8db07ba48ae0a828a77aa3c7aed21853efeb1",
+    "prefixCharacters": 3168,
+    "prefixSha256": "e6da6cb6bc475ab8e92e42f8cb337181fd651ffe0188ff633976d13c701ff687",
+    "edits": [
+      [
+        "for (const row of pin.files) {\n  const current =",
+        "for (const row of pin.files) {\n  const questReader = admittedQuestingDirectorReader(row.file);\n  const current ="
+      ],
+      [
+        "economyUxMergeMainHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))",
+        "economyUxMergeMainHistoricalInput(row.file, questReader.physical.input)"
+      ],
+      [
+        "economyUxMergeMainHistoricalInput(row.file, git('show', 'HEAD:' + row.file))",
+        "economyUxMergeMainHistoricalInput(row.file, questReader.head.input)"
+      ],
+      [
+        "  const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === row.file); assert(mergeRow);\n",
+        "  const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === row.file); assert(mergeRow);\n  assert.equal(questReader.head.entry, git('ls-tree', QUESTING_SOURCE.predecessor, '--', row.file).trim(), 'The independently admitted quest predecessor retains its exact Git source entry');\n"
+      ]
+    ],
+    "oldEntry": "100644 blob 6415830c9bbd1f50608f496530f87f1eba3ca28e\ttest/lib/ux-director-reader-source-compatibility.js"
+  }
+].map(record => Object.freeze({ ...record,
+  files: Object.freeze(record.files), edits: Object.freeze(record.edits.map(Object.freeze)) })));
+function qualifyPureReaderCopy(input, record) {
+  assert(readerCopyPins.includes(record), 'Only the exact finite reader copy declarations');
+  assert.equal(typeof input, 'string'); const lf = input.replaceAll('\r\n', '\n');
+  assert(!lf.includes('\r') && (input === lf || input === lf.replaceAll('\n', '\r\n')));
+  assert.equal(Buffer.byteLength(lf), record.bytes); assert.equal(sha(lf), record.sha256);
+  const prefix = lf.slice(0, record.prefixCharacters); assert.equal(sha(prefix), record.prefixSha256);
+  let restored = lf.slice(record.prefixCharacters);
+  for (const [before, after] of record.edits.toReversed()) {
+    assert.equal(restored.split(after).length, 2, 'Every source-only reader bridge has one exact context');
+    restored = restored.replace(after, () => before);
+  }
+  const original = git('show', '17fdf85fdd21fd3767463df8ba47614f7d1f6432:' + record.original).toString('utf8');
+  assert.equal(sha(original), record.oldSha256); assert.equal(restored, original, 'Every old assertion/refusal is preserved in exact complete source');
+  return true;
+}
+let readerCopyRefusals = 0, readerViewRefusals = 0, readerViewPositives = 0, retainedReaderBridges = 0;
+const { QUESTING_SOURCE: readerQuestSource } = await import('../tools/questing-source-transfer.js');
+for (const record of readerCopyPins) {
+  const oldCommitted = git('show', 'HEAD:' + record.original), oldPhysical = fs.readFileSync(record.original), oldText = oldCommitted.toString('utf8');
+  assert.equal(git('ls-tree', 'HEAD', '--', record.original).toString('utf8').trim(), record.oldEntry, 'Protected old reader retains exact Git mode/blob');
+  assert.equal(sha(oldCommitted), record.oldSha256); assert(Buffer.from(oldText).equals(oldCommitted));
+  const stat = fs.lstatSync(record.original); assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(oldPhysical.equals(oldCommitted) || oldPhysical.equals(Buffer.from(oldText.replaceAll('\n','\r\n'))));
+  const newStat = fs.lstatSync(record.target); assert(newStat.isFile() && !newStat.isSymbolicLink());
+  const source = fs.readFileSync(record.target, 'utf8').replaceAll('\r\n','\n');
+  assert(qualifyPureReaderCopy(source, record));
+  const crlfSource = source.replaceAll('\n','\r\n'); assert.notEqual(crlfSource, source); assert(qualifyPureReaderCopy(crlfSource, record));
+  for (const bad of [source+'\n', source.slice(1), '\ufeff'+source, source.replace('\n','\r\n'),
+    source.replace(/\S/,'?'), source.slice(0,record.prefixCharacters)+source.slice(record.prefixCharacters).replace(/\S/,'?')]) {
+    assert.notEqual(bad, source); assert.throws(() => qualifyPureReaderCopy(bad, record)); readerCopyRefusals++;
+  }
+  for (const [before, after] of record.edits) { assert.throws(() => qualifyPureReaderCopy(source.replace(after,()=>before), record)); readerCopyRefusals++; retainedReaderBridges++; }
+  assert.throws(() => qualifyPureReaderCopy(source, Object.freeze({...record}))); readerCopyRefusals++;
+  const module = await import(new URL('../'+record.target, import.meta.url)), view = module[record.exportName]; assert.equal(typeof view, 'function');
+  for (const file of record.files) {
+    const text = git('show','HEAD:'+file).toString('utf8'), entry = git('ls-tree','HEAD','--',file).toString('utf8').trim();
+    const tracked = Object.hasOwn(readerQuestSource.files,file);
+    const expectedText = tracked ? git('show',readerQuestSource.predecessor+':'+file).toString('utf8') : text;
+    const expectedEntry = tracked ? git('ls-tree',readerQuestSource.predecessor,'--',file).toString('utf8').trim() : entry;
+    const crlf = text.replaceAll('\n','\r\n'); assert.notEqual(crlf,text);
+    for (const input of [text,crlf,Buffer.from(text)]) {
+      const result=view(file,input,entry); assert(Object.isFrozen(result));
+      const viewedText=Buffer.isBuffer(result.input)?result.input.toString('utf8'):result.input;
+      assert(Buffer.from(viewedText.replaceAll('\r\n','\n')).equals(Buffer.from(expectedText)), 'The complete reader view equals its exact declared source');
+      if(!tracked)assert.strictEqual(result.input,input,'Unchanged readers preserve their original LF/CRLF input without an alias');
+      assert.equal(result.entry,expectedEntry);
+      assert.deepEqual([result.sourceOnly,result.runtime,result.native,result.financial,result.activation,result.deployment,result.priorResultsTransferred], [true,false,false,false,false,false,false]); readerViewPositives++;
+    }
+    for (const bad of [text+'\n',text.slice(1),'\ufeff'+text,text+'\0',text.replace('\n','\r\n'),Buffer.concat([Buffer.from(text),Buffer.from([255])]),null]) {
+      assert.throws(()=>view(file,bad,entry));readerViewRefusals++;
+    }
+    for (const bad of [entry.replace(/blob [a-f0-9]{40}/,'blob '+'0'.repeat(40)),entry.replace(' blob ',' tree '),entry+'\n']) {
+      assert.throws(()=>view(file,text,bad));readerViewRefusals++;
+    }
+    if(tracked){const otherMode=entry.startsWith('100644')?'100755':'100644';assert.throws(()=>view(file,text,otherMode+entry.slice(6)));readerViewRefusals++;}
+    assert.throws(()=>view(file,text,entry,{}));readerViewRefusals++;
+  }
+  for(const file of ['../test/phase2-postgres.js','constructor','__proto__',null]){assert.throws(()=>view(file,'x','x'));readerViewRefusals++;}
+}
+console.log(JSON.stringify({phase:'QUESTING_PURE_READER_SUCCESSOR_GUARDS',readerCopies:readerCopyPins.length,
+  retainedReaderBridges,readerCopyRefusals,readerViewPositives,readerViewRefusals,
+  sourceOnly:true,runtime:false,native:false,nativeExecution:false,historicalResultsTransferred:false}));

@@ -1,0 +1,239 @@
+// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.
+import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';
+export function questingNativeReaderView(file, input, entry) {
+  assert.equal(arguments.length, 3);
+  assert(["test/phase2-postgres.js","tools/enterprise-native.js","test/enterprise-native-guard.js"].includes(file), 'Only the finite retained reader domains');
+  const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
+  assert.equal(typeof text, 'string'); if (buffer) assert(Buffer.from(text).equals(input), 'Lossless whole reader bytes');
+  const lf = text.replaceAll('\r\n', '\n');
+  assert(!lf.includes('\r') && (text === lf || text === lf.replaceAll('\n', '\r\n')), 'Whole LF or uniform CRLF reader source');
+  assert.equal(typeof entry, 'string');
+  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0\r\n]+)$/);
+  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');
+  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');
+  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };
+  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });
+  const proof = qualifyQuestingSource(file, input);
+  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
+  const priorEntry = questingHistoricalEntry(file, entry, 'tree');
+  return Object.freeze({ input: buffer ? Buffer.from(proof.baselineText) : proof.baselineText, entry: priorEntry, ...flags });
+}
+
+import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer, businessDeskCombinedHistoricalInput } from '../../tools/businessdesk-combined-source-transfer.js';
+// Independently pinned source-reader conservation. No native compiler/runtime is imported here.
+import assert from 'node:assert/strict';
+import { WIKI_MEDIA_MERGE_SOURCE, assertWikiMediaMergeSourceTransfer,
+  WIKI_MEDIA_NOIR_MERGE_SOURCE, assertWikiMediaNoirMergeSourceTransfer } from '../../tools/wiki-media-source-transfer.js';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { UX_NATIVE_READER_SOURCE as pin, UX_NATIVE_READER_SOURCE_FILES, qualifyUxNativeReaderSource, uxNativeReaderHistoricalInput, UX_PHASE2_UPGRADE_BOUND_SOURCE, UX_PHASE2_UPGRADE_BOUND_FILE, qualifyUxPhase2UpgradeBoundSource, uxPhase2UpgradeBoundHistoricalInput } from '../../tools/ux-native-reader-source-compatibility.js';
+import { qualifyUxSource, uxHistoricalInput } from '../../tools/ux-source-compatibility.js';
+import { ECONOMY_UX_MERGE_SOURCE, economyUxMergeMainHistoricalInput } from '../../tools/economy-ux-merge-source-compatibility.js';
+import { DEED_ALLOCATION_SOURCE_PREDECESSOR, DEED_ALLOCATION_SOURCE_DOMAINS, assertDeedAllocationSourceTransfer } from '../../tools/deed-allocation-source-transfer.js';
+import { ECONOMY_DEED_MERGE_SOURCE, assertEconomyDeedMergeSource,
+  economyDeedMergeHistoricalInput } from '../../tools/economy-deed-merge-source-compatibility.js';
+const AUTHORED_NATIVE_READER_FIX = 'c1720a694799e743c6f70bc3069dba2bbecae08e';
+const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
+const sha = value => crypto.createHash('sha256').update(value).digest('hex');
+const gitRaw = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
+let integrationReaderControls = 0;
+assert.equal(pin.status, 'SEALED'); assert.equal(pin.revision, AUTHORED_NATIVE_READER_FIX);
+assert.equal(pin.targetRevision, 'a93245c8eb798dd3760720b65e61c300cb0fceed');
+assert.deepEqual(UX_NATIVE_READER_SOURCE_FILES, ['test/phase2-postgres.js', 'tools/enterprise-native.js', 'test/enterprise-native-guard.js']);
+for (const [revision, tree] of [[pin.revision, pin.tree], [pin.targetRevision, pin.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
+git('merge-base', '--is-ancestor', pin.targetRevision, pin.revision); git('merge-base', '--is-ancestor', pin.revision, 'HEAD');
+const hunks = diff => {
+  const result = []; let hunk;
+  for (const line of diff.split('\n')) {
+    if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; result.push(hunk); }
+    else if (hunk && /^[ +\-]/.test(line)) { if (line[0] !== '-') hunk.current += line.slice(1) + '\n'; if (line[0] !== '+') hunk.baseline += line.slice(1) + '\n'; }
+  }
+  return result;
+};
+// This is only the historical reader's qualified view; raw HEAD is independently pinned below.
+function qualifiedNativeReaderHeadEntry(file) {
+  assert(UX_NATIVE_READER_SOURCE_FILES.includes(file), 'Only the three frozen source readers are qualified');
+  const committed = gitRaw('show', 'HEAD:' + file), physicalBytes = fs.readFileSync(file), physicalStat = fs.lstatSync(file);
+  let raw = committed.toString('utf8'), entry = git('ls-tree', 'HEAD', '--', file).trim();
+  const actual = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(actual && actual[3] === file, 'Actual committed regular source identity is required');
+  assert(Buffer.from(raw).equals(committed) && !/[\r\0\ufeff]/.test(raw), 'Actual Git source is complete lossless UTF-8 LF');
+  assert.equal(crypto.createHash('sha1').update('blob ' + committed.length + '\0').update(committed).digest('hex'), actual[2]);
+  assert(physicalStat.isFile() && !physicalStat.isSymbolicLink(), 'Actual physical reader is a regular non-symlink file');
+  assert(physicalBytes.equals(committed) || physicalBytes.equals(Buffer.from(raw.replaceAll('\n', '\r\n'))),
+    'Whole physical LF/CRLF reader bytes qualify before any historical view');
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), entry.replace(' blob ', ' ').replace('\t', ' 0\t'),
+    'The actual index qualifies before the source-only parent view');
+  const questView = questingNativeReaderView(file, raw, entry);
+  raw = questView.input; entry = questView.entry;
+  const actualEntry = entry, actualRaw = raw, combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file && row.parents.wiki);
+  if (combined) {
+    assert.equal(actualEntry, combined.current.mode + ' blob ' + combined.current.blob + '\t' + file);
+    const proof = assertBusinessDeskCombinedSourceTransfer(file, actualRaw, 'wiki');
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    raw = proof.targetText;
+    entry = git('ls-tree', BUSINESS_DESK_COMBINED_SOURCE.profiles.wiki.revision, '--', file).trim();
+    assert.equal(raw, git('show', BUSINESS_DESK_COMBINED_SOURCE.profiles.wiki.revision + ':' + file));
+  }
+  const noirMerged = WIKI_MEDIA_NOIR_MERGE_SOURCE.files[file];
+  if (noirMerged) {
+    assert.equal(entry, noirMerged.current.mode + ' blob ' + noirMerged.current.lf.blob + '\t' + file,
+      'Actual HEAD must qualify before the source-only wiki parent');
+    raw = assertWikiMediaNoirMergeSourceTransfer(file, raw, 'wiki').baselineText;
+    entry = git('ls-tree', WIKI_MEDIA_NOIR_MERGE_SOURCE.parents.wiki.revision, '--', file).trim();
+  }
+  const merged = WIKI_MEDIA_MERGE_SOURCE.files[file];
+  if (merged) {
+    assert.equal(entry, merged.current.mode + ' blob ' + merged.current.lf.blob + '\t' + file,
+      'Actual merged HEAD identity must qualify before source-only reader bookkeeping');
+    raw = assertWikiMediaMergeSourceTransfer(file, raw).baselineText;
+    entry = git('ls-tree', WIKI_MEDIA_MERGE_SOURCE.parents.main.revision, '--', file).trim();
+  }
+  const integrated = economyDeedMergeHistoricalInput(file, raw, 'deed');
+  if (integrated !== raw) {
+    const integration = ECONOMY_DEED_MERGE_SOURCE.files.find(row => row.file === file);
+    assert(integration, 'Only an existing closed integration source file can enter the Deed view');
+    assert.equal(entry, integration.current.mode + ' blob ' + integration.current.blob + '\t' + file,
+      'Actual integrated HEAD mode/blob qualifies before source-only Deed bookkeeping');
+    const proof = assertEconomyDeedMergeSource(file, raw, 'deed');
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    assert.equal(proof.baselineText, integrated);
+    const parent = ECONOMY_DEED_MERGE_SOURCE.profiles.deed.revision;
+    const parentEntry = integration.parents.deed.mode + ' blob ' + integration.parents.deed.blob + '\t' + file;
+    assert.equal(parentEntry, git('ls-tree', parent, '--', file).trim());
+    assert.equal(integrated, git('show', parent + ':' + file), 'Complete frozen Deed source remains exact');
+    for (const changed of [raw + '\n', raw.slice(1), '\ufeff' + raw, raw + '\0']) {
+      assert.throws(() => assertEconomyDeedMergeSource(file, changed, 'deed')); integrationReaderControls++;
+    }
+    assert.throws(() => assertEconomyDeedMergeSource(file, raw, 'deed', Object.freeze({ ...ECONOMY_DEED_MERGE_SOURCE })));
+    integrationReaderControls++;
+    raw = integrated; entry = parentEntry;
+  }
+  const deed = DEED_ALLOCATION_SOURCE_DOMAINS[file];
+  if (deed) {
+    assert.equal(entry, deed.currentMode + ' blob ' + deed.currentBlob + '\t' + file, 'Raw Deed HEAD mode/blob must qualify before historical source bookkeeping');
+    const proof = assertDeedAllocationSourceTransfer(file, raw);
+    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native], [true, false, false]);
+    assert.equal(proof.predecessorRevision, DEED_ALLOCATION_SOURCE_PREDECESSOR);
+    const baselineEntry = git('ls-tree', DEED_ALLOCATION_SOURCE_PREDECESSOR, '--', file).trim();
+    assert.equal(baselineEntry, deed.baselineMode + ' blob ' + deed.baselineBlob + '\t' + file);
+    assert.equal(proof.baselineText, git('show', DEED_ALLOCATION_SOURCE_PREDECESSOR + ':' + file));
+    entry = baselineEntry;
+  }
+  const mergeQualified = economyUxMergeMainHistoricalInput(file, raw);
+  if (mergeQualified !== raw) {
+    const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === file); assert(mergeRow);
+    assert.equal(entry, mergeRow.mode + ' blob ' + mergeRow.currentBlob + '\t' + file, 'Raw integrated HEAD mode/blob must qualify before parent normalization');
+    assert.equal(sha(mergeQualified), mergeRow.main.sha256); entry = mergeRow.main.mode + ' blob ' + mergeRow.main.blob + '\t' + file;
+  }
+  const qualified = uxPhase2UpgradeBoundHistoricalInput(file, raw);
+  if (qualified === mergeQualified) return entry;
+  const row = UX_PHASE2_UPGRADE_BOUND_SOURCE.files[0];
+  assert.equal(file, row.file); assert.equal(entry, row.mode + ' blob ' + row.currentBlob + '\t' + file, 'Parent-normalized HEAD mode/blob must qualify before historical entry normalization');
+  assert.equal(sha(qualified), row.targetSha256);
+  return row.targetMode + ' blob ' + row.targetBlob + '\t' + file;
+}
+let positives = 0, refusals = 0, inverseHunks = 0;
+for (const row of pin.files) {
+  const current = git('show', pin.revision + ':' + row.file), target = git('show', pin.targetRevision + ':' + row.file);
+  const rawPhysical = fs.readFileSync(row.file, 'utf8'), checkedOut = git('show', 'HEAD:' + row.file), stat = fs.lstatSync(row.file);
+  assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+    'Complete raw physical reader must match actual HEAD before historical reconstruction');
+  const actualEntry = git('ls-tree', 'HEAD', '--', row.file).trim();
+  assert.equal(git('ls-files', '--stage', '--', row.file).trim(), actualEntry.replace(' blob ', ' ').replace('\t', ' 0\t'));
+  const comparisonPhysical = businessDeskCombinedHistoricalInput(row.file, questingNativeReaderView(row.file, rawPhysical, actualEntry).input, 'wiki');
+  const comparisonHead = businessDeskCombinedHistoricalInput(row.file, questingNativeReaderView(row.file, checkedOut, actualEntry).input, 'wiki');
+  const physical = uxPhase2UpgradeBoundHistoricalInput(row.file, comparisonPhysical);
+  assert.equal(uxPhase2UpgradeBoundHistoricalInput(row.file, comparisonHead), current, 'Actual committed native-reader source remains authored source');
+  assert.equal(qualifiedNativeReaderHeadEntry(row.file), row.mode + ' blob ' + row.currentBlob + '\t' + row.file, 'Actual committed reader mode and blob remain exact');
+  assert(physical === current || physical === current.replaceAll('\n', '\r\n'));
+  for (const [revision, mode, expected] of [[pin.revision, row.mode, row.currentBlob], [pin.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', row.file).trim(), mode + ' blob ' + expected + '\t' + row.file);
+  assert.deepEqual(row.inverses, hunks(git('diff', '--no-ext-diff', '--unified=3', pin.targetRevision, pin.revision, '--', row.file)), 'Exact actual Git inverse hunks only');
+  for (const input of [physical, current, current.replaceAll('\n', '\r\n')]) {
+    const proof = qualifyUxNativeReaderSource(row.file, input);
+    assert.equal(proof.baselineText, target); assert.equal(proof.sourceRevision, pin.revision); assert.equal(proof.targetRevision, pin.targetRevision);
+    assert.deepEqual([proof.sourceOnly, proof.native, proof.runtime], [true, false, false]); assert.equal(uxNativeReaderHistoricalInput(row.file, input), target); positives++;
+  }
+  assert.deepEqual(uxNativeReaderHistoricalInput(row.file, Buffer.from(current)), Buffer.from(target)); positives++;
+  const reject = input => { assert.notEqual(input, current); assert.throws(() => qualifyUxNativeReaderSource(row.file, input)); refusals++; };
+  for (const input of [current + '\n', current.slice(1), '\ufeff' + current, current + '\0', current.replace(/\S/, '?'), current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null]) reject(input);
+  for (const inverse of row.inverses) {
+    for (const input of [current.replace(inverse.current, ''), current.replace(inverse.current, () => inverse.current + inverse.current), current.replace(inverse.current, () => inverse.baseline), current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) reject(input);
+    inverseHunks++;
+  }
+  if (row.inverses.length > 1) { const [left, right] = row.inverses, marker = '\u0001NATIVE_READER_HUNK_SWAP\u0001'; assert(!current.includes(marker)); reject(current.replace(left.current, () => marker).replace(right.current, () => left.current).replace(marker, () => right.current)); }
+  for (const input of [current + '\n// arbitrary future source\n', current.slice(1), target]) assert.equal(uxNativeReaderHistoricalInput(row.file, input), input);
+  assert.throws(() => qualifyUxNativeReaderSource(row.file, current, Object.freeze({ ...pin }))); refusals++;
+  assert.throws(() => uxNativeReaderHistoricalInput(row.file, Buffer.concat([Buffer.from(current), Buffer.from([0xff])])), /Lossless UTF-8/); refusals++;
+  assert.throws(() => qualifyUxSource(row.file, current)); refusals++;
+  assert.equal(sha(current), row.currentSha256);
+}
+for (const file of ['../schema.sql', 'schema.sql', 'constructor', '__proto__', 'src/unknown.js']) { assert.throws(() => qualifyUxNativeReaderSource(file, 'x')); assert.equal(uxNativeReaderHistoricalInput(file, 'x'), 'x'); refusals++; }
+console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor: pin.targetRevision, files: pin.files.length, inverseHunks, positives, refusals, integrationReaderControls, sourceOnly: true, runtime: false, native: false }));
+
+// A distinct one-file forward layer, never a native execution or runtime clearance.
+{
+  const next = UX_PHASE2_UPGRADE_BOUND_SOURCE, file = UX_PHASE2_UPGRADE_BOUND_FILE;
+  assert.equal(next.status, 'SEALED');
+  assert.equal(next.revision, '2ce8bfeb648b61ec73ac55c4ef17d75b654aaeca');
+  assert.equal(next.targetRevision, 'ae8f8688960d5165b94a5de1c29d6306ad9f0c9c');
+  assert.deepEqual(next.files.map(row => row.file), [file]);
+  for (const [revision, tree] of [[next.revision, next.tree], [next.targetRevision, next.targetTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
+  git('merge-base', '--is-ancestor', next.targetRevision, next.revision); git('merge-base', '--is-ancestor', next.revision, 'HEAD');
+  const row = next.files[0], current = git('show', next.revision + ':' + file), prior = git('show', next.targetRevision + ':' + file);
+  const rawPhysical = fs.readFileSync(file, 'utf8'), checkedOut = git('show', 'HEAD:' + file);
+  assert(rawPhysical === checkedOut || rawPhysical === checkedOut.replaceAll('\n', '\r\n'),
+    'Complete raw physical Phase2 source must match actual HEAD before its source-only view');
+  assert(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink());
+  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), actualEntry.replace(' blob ', ' ').replace('\t', ' 0\t'));
+  const comparisonPhysical = businessDeskCombinedHistoricalInput(file, questingNativeReaderView(file, rawPhysical, actualEntry).input, 'wiki');
+  const comparisonHead = businessDeskCombinedHistoricalInput(file, questingNativeReaderView(file, checkedOut, actualEntry).input, 'wiki');
+  const physical = economyUxMergeMainHistoricalInput(file, comparisonPhysical);
+  assert.equal(economyUxMergeMainHistoricalInput(file, comparisonHead), current, 'Parent-qualified actual HEAD retains the complete new authored Phase2 file');
+  assert(physical === current || physical === current.replaceAll('\n', '\r\n'), 'Raw physical Phase2 file is whole LF/CRLF authored source');
+  assert(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink());
+  for (const [revision, mode, expected] of [[next.revision, row.mode, row.currentBlob], [next.targetRevision, row.targetMode, row.targetBlob]]) assert.equal(git('ls-tree', revision, '--', file).trim(), mode + ' blob ' + expected + '\t' + file);
+  assert.deepEqual(row.inverses, hunks(git('diff', '--no-ext-diff', '--unified=3', next.targetRevision, next.revision, '--', file)));
+  assert.equal(row.inverses.length, 1); assert.equal(row.mode, row.targetMode);
+  assert.equal(prior, git('show', pin.revision + ':' + file), 'New predecessor is the complete old c172 authored Phase2 source');
+  let positives = 0, refusals = 0;
+  for (const input of [physical, current, current.replaceAll('\n', '\r\n')]) {
+    const proof = qualifyUxPhase2UpgradeBoundSource(file, input);
+    assert.equal(proof.baselineText, prior); assert.deepEqual([proof.sourceOnly, proof.native, proof.runtime], [true, false, false]);
+    assert.equal(uxPhase2UpgradeBoundHistoricalInput(file, input), prior);
+    assert.equal(uxNativeReaderHistoricalInput(file, input), git('show', pin.targetRevision + ':' + file));
+    assert.equal(uxHistoricalInput(file, input), git('show', pin.targetRevision + ':' + file)); positives++;
+    assert.throws(() => qualifyUxNativeReaderSource(file, input), 'New bytes never receive old direct native-reader qualification'); refusals++;
+  }
+  assert.deepEqual(uxPhase2UpgradeBoundHistoricalInput(file, Buffer.from(current)), Buffer.from(prior)); positives++;
+  const start = current.indexOf("timeout: mode === 'upgrade' ? 600000 : 240000"), end = current.indexOf(', maxBuffer:', start);
+  assert(start > 0 && end > start); const expression = current.slice(start + 'timeout: '.length, end);
+  assert.equal(expression, "mode === 'upgrade' ? 600000 : 240000");
+  const timeoutFor = Function('mode', 'return (' + expression + ');');
+  assert.equal(timeoutFor('upgrade'), 600000);
+  for (const mode of ['clean', 'scalar', 'missing-unique', 'lots-boundary', 'lots', 'lots-upgrade', 'upgrade ', 'UPGRADE', undefined, null, 1, new String('upgrade')]) assert.equal(timeoutFor(mode), 240000);
+  const reject = input => { assert.notEqual(input, current); assert.throws(() => qualifyUxPhase2UpgradeBoundSource(file, input)); refusals++; };
+  for (const input of [current + '\n', current.slice(1), '\ufeff' + current, current + '\0', current.replace(/\S/, '?'), current.replace('\n', '\r\n'), current.replace('\n', '\r'), Buffer.from(current), null, prior]) reject(input);
+  for (const changed of ["mode === 'upgrade' ? 601000 : 240000", "mode === 'lots-upgrade' ? 600000 : 240000", "mode === 'upgrade' ? 600000 : 600000", "mode !== 'upgrade' ? 600000 : 240000", "mode == 'upgrade' ? 600000 : 240000", 'Number(process.env.P2_TIMEOUT || 600000)', '600000']) reject(current.replace(expression, changed));
+  reject(current.replace('statement_timeout=30000', 'statement_timeout=60000'));
+  reject(current.replace('lock_timeout=5000', 'lock_timeout=10000'));
+  reject(current.replace("PG_POOL_MAX: '12'", "PG_POOL_MAX: '24'"));
+  reject(current.replace("['clean','upgrade','scalar','missing-unique']", "['clean','scalar','missing-unique']"));
+  const inverse = row.inverses[0];
+  for (const input of [current.replace(inverse.current, ''), current.replace(inverse.current, () => inverse.current + inverse.current), current.replace(inverse.current, () => inverse.baseline), current.replace(inverse.current, () => inverse.current.replace(/\S/, '?'))]) reject(input);
+  assert.throws(() => qualifyUxPhase2UpgradeBoundSource(file, current, Object.freeze({ ...next }))); refusals++;
+  assert.throws(() => uxPhase2UpgradeBoundHistoricalInput(file, Buffer.concat([Buffer.from(current), Buffer.from([255])])), /Lossless UTF-8/); refusals++;
+  for (const unknown of ['../test/phase2-postgres.js', '__proto__', 'schema.sql']) { assert.throws(() => qualifyUxPhase2UpgradeBoundSource(unknown, current)); assert.equal(uxPhase2UpgradeBoundHistoricalInput(unknown, current), current); refusals++; }
+  for (const input of [prior, current + '\n// unknown future source\n', current.slice(1)]) assert.equal(uxPhase2UpgradeBoundHistoricalInput(file, input), input);
+  let conserved = fs.readFileSync('tools/ux-native-reader-source-compatibility.js', 'utf8').replaceAll('\r\n', '\n');
+  conserved = conserved.replace("import { economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\n", '');
+  conserved = conserved.replace("import { UX_PHASE2_UPGRADE_BOUND_SOURCE, UX_PHASE2_UPGRADE_BOUND_SOURCE_SHA256 } from './ux-phase2-upgrade-bound-source-data.js';\n", '');
+  const begin = conserved.indexOf('export { UX_PHASE2_UPGRADE_BOUND_SOURCE };'), finish = conserved.indexOf('export function uxNativeReaderHistoricalInput(file, input) {', begin);
+  assert(begin >= 0 && finish > begin); conserved = conserved.slice(0, begin) + conserved.slice(finish);
+  conserved = conserved.replace('  input = uxPhase2UpgradeBoundHistoricalInput(file, input);\n', '');
+  assert.equal(conserved, git('show', next.targetRevision + ':tools/ux-native-reader-source-compatibility.js'), 'Only the new forward layer may differ from the complete prior native-reader module');
+  console.log(JSON.stringify({ phase: next.phase, files: 1, inverseHunks: 1, positives, refusals, upgradeHangMilliseconds: 600000, otherModeHangMilliseconds: 240000, runtime: false, native: false }));
+}

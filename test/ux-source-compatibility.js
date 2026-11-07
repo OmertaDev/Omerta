@@ -90,9 +90,9 @@ for (const [file, edits] of Object.entries(readerEdits)) {
   assert.equal(restored, git('show', pin.targetRevision + ':' + file), 'Every prior binding, assertion and refusal is preserved verbatim: ' + file);
 }
 console.log(JSON.stringify({ phase: pin.phase, source: pin.revision, predecessor: pin.targetRevision, files: pin.files.length, inverseHunks: inverseCount, positives, refusals, readerOnlyEdits: Object.values(readerEdits).reduce((total, edits) => total + edits.length, 0), runtime: false, native: false }));
-await import('./lib/ux-native-reader-source-compatibility.js');
+await import('./lib/questing-ux-native-reader-source-compatibility.js');
 await import('./lib/ux-enterprise-reader-source-compatibility.js');
-await import('./lib/ux-director-reader-source-compatibility.js');
+await import('./lib/questing-ux-director-reader-source-compatibility.js');
 
 // A distinct one-file forward layer; old eight-file pins and refusal predicates above stay exact.
 {
