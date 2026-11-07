@@ -267,7 +267,7 @@ jobs:
     timeout-minutes: 15
     services:
       postgres:
-        image: postgres:18
+        image: postgres:18.4
         env:
           POSTGRES_PASSWORD: pgcheck
           POSTGRES_DB: omerta_questing_ci
