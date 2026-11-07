@@ -6,8 +6,43 @@ import { execFileSync } from 'node:child_process';
 import { QUESTING_SOURCE as source, qualifyQuestingSource,
   questingHistoricalInput, questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 
-const files = ['.github/workflows/ci.yml', 'package.json', 'public/index.html', 'schema.sql',
-  'src/explore.js', 'src/game.js', 'src/server.js'];
+const files = [
+  ".github/workflows/ci.yml",
+  "package.json",
+  "public/index.html",
+  "schema.sql",
+  "src/agentgateway.js",
+  "src/clues.js",
+  "src/content/compiler.js",
+  "src/content/runtime.js",
+  "src/explore.js",
+  "src/game.js",
+  "src/gateway/context.js",
+  "src/routes/content.js",
+  "src/server.js",
+  "src/ux-workspace.js",
+  "test/age-eligibility-source-compatibility.js",
+  "test/businessdesk-combined-source-compatibility.js",
+  "test/businessdesk-noir-source-compatibility.js",
+  "test/classic-interface-source-compatibility.js",
+  "test/commerce-source-compatibility.js",
+  "test/content-api.js",
+  "test/continuous-city-source-compatibility.js",
+  "test/contract-release-source-compatibility.js",
+  "test/deed-allocation-source-compatibility.js",
+  "test/economy-deed-merge-source-compatibility.js",
+  "test/economy-hardening-source-compatibility.js",
+  "test/economy-monitor-source-compatibility.js",
+  "test/enterprise-current-source-compatibility.js",
+  "test/gates.js",
+  "test/native-eth-source-transfer.js",
+  "test/noir-ui-source-compatibility.js",
+  "test/sale-source-compatibility.js",
+  "test/ux-source-compatibility.js",
+  "test/wiki-media-source-transfer.js",
+  "tools/commerce-current-enterprise-source-compatibility.js",
+  "tools/rc1-world-qualification.js"
+];
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
 });
@@ -15,7 +50,7 @@ const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 assert.equal(source.status, 'SEALED');
 assert.equal(source.phase, 'EXACT_QUESTING_SOURCE_COMPARISON_ONLY');
-assert.equal(source.revision, 'a25c568a324c3cc400681095ca4f1566ac7c1638');
+assert.equal(source.revision, '9ad1a0652156e5a2e7731f4d1fc51ad27512844f');
 assert.equal(source.predecessor, '17fdf85fdd21fd3767463df8ba47614f7d1f6432');
 assert.deepEqual(Object.keys(source.files), files);
 assert(Object.isFrozen(source) && Object.isFrozen(source.files));
@@ -24,7 +59,9 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
 git('merge-base', '--is-ancestor', source.predecessor, source.revision);
 git('merge-base', '--is-ancestor', source.revision, 'HEAD');
 const changed = git('diff', '--name-only', '--diff-filter=M', '-z', source.predecessor, source.revision)
-  .split('\0').filter(file => files.includes(file));
+  .split('\0').filter(file => file === 'package.json' || file === 'schema.sql'
+    || (/^(?:src|test|tools|public)\//.test(file) && /\.(?:[cm]?js|[cm]?ts|jsx|tsx|json|html|css|sql|sh|ps1)$/.test(file))
+    || /^\.github\/workflows\/[^/]+\.ya?ml$/.test(file));
 assert.deepEqual(changed, files, 'Every changed comparison domain is pinned independently');
 let positives = 0, refusals = 0, hunks = 0;
 for (const [file, row] of Object.entries(source.files)) {
@@ -64,7 +101,10 @@ for (const [file, row] of Object.entries(source.files)) {
       assert.throws(() => questingHistoricalEntry(file, mutation, kind)); refusals++;
     }
   }
-  const byteMutation = Buffer.from(current); byteMutation[Math.floor(byteMutation.length / 2)] ^= 1;
+  const byteMutation = Buffer.from(current);
+  let mutationAt = Math.floor(byteMutation.length / 2);
+  while (byteMutation[mutationAt] < 32 || byteMutation[mutationAt] > 126) mutationAt = (mutationAt + 1) % byteMutation.length;
+  byteMutation[mutationAt] = byteMutation[mutationAt] === 63 ? 33 : 63;
   for (const mutation of [current + '\n// unrelated broad source edit\n', current.slice(1), '\ufeff' + current,
     current + '\0', current.replace(/\S/, '?'), current.replace('\n', '\r\n'), current.replace('\n', '\r'),
     byteMutation, baseline, null]) {
@@ -87,16 +127,21 @@ for (const [file, row] of Object.entries(source.files)) {
   }
   assert.throws(() => qualifyQuestingSource(file, current, { sourceOnly: false })); refusals++;
 }
-for (const file of ['src/content/runtime.js', 'src/clues.js', '../src/server.js', 'src\\server.js',
+for (const file of ['src/questing.js', 'src/quest-workshop.js', '../src/server.js', 'src\\server.js',
   'omerta.quest.anything', '__proto__', 'constructor', '.github/workflows/economy-hardening.yml']) {
   const input = 'unapproved namespace source\n', entry = '100644 blob ' + 'a'.repeat(40) + '\t' + file;
   assert.throws(() => qualifyQuestingSource(file, input));
   assert.strictEqual(questingHistoricalInput(file, input), input);
   assert.strictEqual(questingHistoricalEntry(file, entry, 'tree'), entry); refusals++;
 }
+for (const file of ['src/economy.js', 'src/questing.js', 'tools/questing-source-transfer.js']) {
+  const raw = fs.readFileSync(file);
+  assert.throws(() => qualifyQuestingSource(file, raw), 'Unchanged and newly added files cannot inherit prior qualification');
+  assert.strictEqual(questingHistoricalInput(file, raw), raw); refusals++;
+}
 // This new envelope is absent from production code; it cannot cause runtime or
 // native tests to execute reconstructed predecessor implementations.
 assert.throws(() => git('grep', '-n', 'questing-source-transfer', '--', 'src'),
   error => error.status === 1, 'No game source imports this comparison-only envelope');
-assert.equal(hunks, 17);
+assert.equal(hunks, 185);
 console.log(`Questing exact source-only successor PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; no runtime/native/economic/deployment results transferred`);
