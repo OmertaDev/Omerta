@@ -8,6 +8,8 @@ import { QUESTING_SOURCE as source, qualifyQuestingSource,
 
 const files = [
   ".github/workflows/ci.yml",
+  "MARKETING-POSTS.md",
+  "SPEC.md",
   "package.json",
   "public/index.html",
   "schema.sql",
@@ -26,6 +28,7 @@ const files = [
   "test/businessdesk-combined-source-compatibility.js",
   "test/businessdesk-native-provenance.js",
   "test/businessdesk-noir-source-compatibility.js",
+  "test/ci-deed-recovery-source.js",
   "test/classic-interface-source-compatibility.js",
   "test/commerce-release-phase2-migration-catalog.js",
   "test/commerce-source-compatibility.js",
@@ -33,6 +36,7 @@ const files = [
   "test/continuous-city-source-compatibility.js",
   "test/contract-release-source-compatibility.js",
   "test/deed-allocation-source-compatibility.js",
+  "test/director-migration.js",
   "test/economy-deed-merge-source-compatibility.js",
   "test/economy-hardening-source-compatibility.js",
   "test/economy-monitor-source-compatibility.js",
@@ -41,6 +45,7 @@ const files = [
   "test/gates.js",
   "test/native-eth-source-transfer.js",
   "test/noir-ui-source-compatibility.js",
+  "test/phase2-postgres.js",
   "test/sale-source-compatibility.js",
   "test/ux-source-compatibility.js",
   "test/wiki-media-source-transfer.js",
@@ -54,7 +59,7 @@ const sha = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 assert.equal(source.status, 'SEALED');
 assert.equal(source.phase, 'EXACT_QUESTING_SOURCE_COMPARISON_ONLY');
-assert.equal(source.revision, 'adc97a15eb3feb8c6d2501e475b21dff1cd7524f');
+assert.equal(source.revision, '243a5f6a5fbfc9565abe8fa127ff0a1db5a31573');
 assert.equal(source.predecessor, '17fdf85fdd21fd3767463df8ba47614f7d1f6432');
 assert.deepEqual(Object.keys(source.files), files);
 assert(Object.isFrozen(source) && Object.isFrozen(source.files));
@@ -63,7 +68,7 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
 git('merge-base', '--is-ancestor', source.predecessor, source.revision);
 git('merge-base', '--is-ancestor', source.revision, 'HEAD');
 const changed = git('diff', '--name-only', '--diff-filter=M', '-z', source.predecessor, source.revision)
-  .split('\0').filter(file => file === 'package.json' || file === 'schema.sql'
+  .split('\0').filter(file => file === 'package.json' || file === 'schema.sql' || file === 'SPEC.md' || file === 'MARKETING-POSTS.md'
     || (/^(?:src|test|tools|public)\//.test(file) && /\.(?:[cm]?js|[cm]?ts|jsx|tsx|json|html|css|sql|sh|ps1)$/.test(file))
     || /^\.github\/workflows\/[^/]+\.ya?ml$/.test(file));
 assert.deepEqual(changed, files, 'Every changed comparison domain is pinned independently');
@@ -147,7 +152,7 @@ for (const file of ['src/economy.js', 'src/questing.js', 'tools/questing-source-
 // native tests to execute reconstructed predecessor implementations.
 assert.throws(() => git('grep', '-n', 'questing-source-transfer', '--', 'src'),
   error => error.status === 1, 'No game source imports this comparison-only envelope');
-assert.equal(hunks, 196);
+assert.equal(hunks, 210);
 console.log(`Questing exact source-only successor PASS: ${positives} positives, ${refusals} refusals, ${hunks} inverse hunks; no runtime/native/economic/deployment results transferred`);
 
 // Pure helper-module controls exercise the private success-only cache without
