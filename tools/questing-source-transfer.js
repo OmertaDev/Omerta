@@ -5,17 +5,17 @@ import { createHash } from 'node:crypto';
 const source = {
   "status": "SEALED",
   "phase": "EXACT_QUESTING_SOURCE_COMPARISON_ONLY",
-  "revision": "d9b62d978e9d7bbc4ee9afd7a446c243838df5e2",
-  "tree": "955327db432241a63455e5191d78096af3fdc9f8",
+  "revision": "5f270fa4c24eb1348ce6f450faa733230833d242",
+  "tree": "da44f4e2b5e775f9d901fdfe7e9908cbd20d09cf",
   "predecessor": "17fdf85fdd21fd3767463df8ba47614f7d1f6432",
   "predecessorTree": "a0be7bcf49d3b85fb59072042df2f1d0f232b718",
   "files": {
     ".github/workflows/ci.yml": {
       "current": {
         "mode": "100644",
-        "blob": "61fbf95579f245b6711cd8cac45efee5d5e4bf7d",
-        "sha256": "4bb3081e2a4eef8b2ed45d6a0c5b3a75039e3183199b8ea485ab0630b9f35386",
-        "bytes": 76175
+        "blob": "30b0a7e461a25da346c902b6e72ece350734aadb",
+        "sha256": "fe7b3f9c8fa0a98d911d534d36e983da8f6932d5a7ecbb4afd3b0ee79987aa1e",
+        "bytes": 76232
       },
       "baseline": {
         "mode": "100644",
@@ -26,11 +26,11 @@ const source = {
       "inverses": [
         {
           "at": 10702,
-          "current": "          POPULATION_OFF: 'on'      # residents on the streets roster would vary the screens run to run\n        run: npm run mobile\n\n  questing_browser:\n    name: Quest acceptance and browser playthroughs\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - run: npx playwright-core install --with-deps chromium\n      - name: Quest source and current native admission guards\n        run: |\n          node test/questing-source-transfer.js\n          node test/enterprise-native-questing-guard.js\n      - name: Quest runtime, cases and community workshop\n        run: npm run test:questing\n      - name: Production quest and clue interfaces\n        run: |\n          export CHROMIUM_PATH=\"$(node --input-type=module -e 'import { chromium } from \"playwright-core\"; process.stdout.write(chromium.executablePath());')\"\n          npm run test:questing:browser\n      - run: npm run questing:check\n\n  questing_native:\n    name: Quest authority and concurrency (PostgreSQL)\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    services:\n      postgres:\n        image: postgres:18\n        env:\n          POSTGRES_PASSWORD: questing\n          POSTGRES_DB: omerta_questing_ci\n        ports:\n          - 5432:5432\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s\n          --health-timeout 5s\n          --health-retries 12\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\n        timeout-minutes: 3\n        shell: bash\n        env:\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\n        run: |\n          set -euo pipefail\n          # The context identifies only this matrix job's disposable service container.\n          [[ \"$POSTGRES_SERVICE_ID\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\n          timeout 15s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\n          timeout 45s docker restart --timeout 30 \"$POSTGRES_SERVICE_ID\"\n          ready=0\n          deadline=$((SECONDS + 60))\n          while (( SECONDS < deadline )); do\n            if timeout 3s docker exec \"$POSTGRES_SERVICE_ID\" pg_isready -q -t 1 -U postgres -d postgres; then\n              ready=1\n              break\n            fi\n            sleep 1\n          done\n          [[ \"$ready\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\n          actual=\"$(timeout 10s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\"\n          [[ \"$actual\" == 512 ]] || { echo \"Unexpected test max_locks_per_transaction: $actual\" >&2; exit 1; }\n\n      - name: Native invitation, handoff and receipt races\n        env:\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:questing@127.0.0.1:5432/omerta_questing_ci\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\n          MOD_KEY: ci-questing-mod-not-a-real-secret\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\n          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres\n\n  ux_browser:\n    name: UX desktop and mobile regression\n    needs: [suites, suite_tail]\n",
+          "current": "          POPULATION_OFF: 'on'      # residents on the streets roster would vary the screens run to run\n        run: npm run mobile\n\n  questing_browser:\n    name: Quest acceptance and browser playthroughs\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - run: npx playwright-core install --with-deps chromium\n      - name: Quest source and current native admission guards\n        run: |\n          node test/questing-source-transfer.js\n          node test/enterprise-native-questing-guard.js\n          node test/questing-enterprise-catalog-guard.js\n      - name: Quest runtime, cases and community workshop\n        run: npm run test:questing\n      - name: Production quest and clue interfaces\n        run: |\n          export CHROMIUM_PATH=\"$(node --input-type=module -e 'import { chromium } from \"playwright-core\"; process.stdout.write(chromium.executablePath());')\"\n          npm run test:questing:browser\n      - run: npm run questing:check\n\n  questing_native:\n    name: Quest authority and concurrency (PostgreSQL)\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    services:\n      postgres:\n        image: postgres:18\n        env:\n          POSTGRES_PASSWORD: questing\n          POSTGRES_DB: omerta_questing_ci\n        ports:\n          - 5432:5432\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s\n          --health-timeout 5s\n          --health-retries 12\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\n        timeout-minutes: 3\n        shell: bash\n        env:\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\n        run: |\n          set -euo pipefail\n          # The context identifies only this matrix job's disposable service container.\n          [[ \"$POSTGRES_SERVICE_ID\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\n          timeout 15s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\n          timeout 45s docker restart --timeout 30 \"$POSTGRES_SERVICE_ID\"\n          ready=0\n          deadline=$((SECONDS + 60))\n          while (( SECONDS < deadline )); do\n            if timeout 3s docker exec \"$POSTGRES_SERVICE_ID\" pg_isready -q -t 1 -U postgres -d postgres; then\n              ready=1\n              break\n            fi\n            sleep 1\n          done\n          [[ \"$ready\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\n          actual=\"$(timeout 10s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\"\n          [[ \"$actual\" == 512 ]] || { echo \"Unexpected test max_locks_per_transaction: $actual\" >&2; exit 1; }\n\n      - name: Native invitation, handoff and receipt races\n        env:\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:questing@127.0.0.1:5432/omerta_questing_ci\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\n          MOD_KEY: ci-questing-mod-not-a-real-secret\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\n          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres\n\n  ux_browser:\n    name: UX desktop and mobile regression\n    needs: [suites, suite_tail]\n",
           "baseline": "          POPULATION_OFF: 'on'      # residents on the streets roster would vary the screens run to run\n        run: npm run mobile\n\n  ux_browser:\n    name: UX desktop and mobile regression\n    needs: [suites, suite_tail]\n"
         },
         {
-          "at": 72198,
+          "at": 72255,
           "current": "          RESOURCE_ECONOMY: 'off'\n          ENTERPRISE_NATIVE_PROFILE: ci\n          ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:questing:postgres\n\n  pgcheck_commerce:\n    if: ${{ !inputs.tail_only }}\n",
           "baseline": "          RESOURCE_ECONOMY: 'off'\n          ENTERPRISE_NATIVE_PROFILE: ci\n          ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:postgres\n\n  pgcheck_commerce:\n    if: ${{ !inputs.tail_only }}\n"
         }
@@ -1299,6 +1299,27 @@ const source = {
         }
       ]
     },
+    "test/enterprise-release-phase2-migration-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "a0e64889dfa2def52c8f1b6a9148ea19c46a2316",
+        "sha256": "36cb9483ddb241281b57de5315adf8e4b21df2b6ed2bd136afd1f03f6d54fdd3",
+        "bytes": 32468
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "f76f013a03f8190434ea8133c3238670f332ba69",
+        "sha256": "7b0a1c2b9846179f09db40a3572916f9dd9b42d29431ce33bd6c351b846cf498",
+        "bytes": 31229
+      },
+      "inverses": [
+        {
+          "at": 2612,
+          "current": "const dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);\nconst commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa21bcfe2f3bc163b26f08eea4c6f0dac97c';\nconst commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';\nconst questingCurrent=hash(lf(dispatchRaw))==='af6d9ad01566eaddf8ec6b4c4da4add77837b13e6a3510697bebf62b180b97e7';\nif(questingCurrent){\n  const adapter=await import('../tools/questing-enterprise-catalog.js');\n  const sources=adapter.questingCatalogSource(dispatchRaw);\n  assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);\n  console.log('Exact actual quest585 source retains complete582 plus three additive tables; old catalog admission remains separate.');\n  if(native){\n    const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});\n    try{\n      const result=await adapter.verifyQuestingEnterpriseCatalog(pool,endpoint.href,dispatchRaw);\n      assert.equal(result.actualTables,585);assert.equal(result.baselineTables,582);assert.equal(result.ddlCausal,13);assert(result.causal>300);\n      console.log(JSON.stringify({phase:'ACTUAL_QUEST585_ENTERPRISE_CATALOG',freshTables:585,upgradeTables:585,baselineTables:582,\n        questTables:3,questColumns:21,metadataCausal:result.causal,rollbackDdlCausal:result.ddlCausal,\n        historicalReferenceCausal:result.historical.causal,native:true,priorNativeResultsTransferred:false}));\n    }finally{await pool.end();}\n  }\n}else if(commerceDeedCurrent){\n  frozenText('../tools/commerce-deed-release-phase2-native-catalog.js','dc84df23e59ad3282fc16c556943150be1e9fcc219facd2e94b83f6b2c817f4b','tools/commerce-deed-release-phase2-native-catalog.js');\n  frozenText('../tools/commerce-release-phase2-native-catalog.js','be4307efac154a7e5f0c17c6bb020a7dc6ae96d053bfe2163e944a694d6db637');\n  frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e','tools/enterprise-deed-release-phase2-migration-catalog.js');\n",
+          "baseline": "const dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);\nconst commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa21bcfe2f3bc163b26f08eea4c6f0dac97c';\nconst commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';\nif(commerceDeedCurrent){\n  frozenText('../tools/commerce-deed-release-phase2-native-catalog.js','dc84df23e59ad3282fc16c556943150be1e9fcc219facd2e94b83f6b2c817f4b','tools/commerce-deed-release-phase2-native-catalog.js');\n  frozenText('../tools/commerce-release-phase2-native-catalog.js','be4307efac154a7e5f0c17c6bb020a7dc6ae96d053bfe2163e944a694d6db637');\n  frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e','tools/enterprise-deed-release-phase2-migration-catalog.js');\n"
+        }
+      ]
+    },
     "test/gates.js": {
       "current": {
         "mode": "100644",
@@ -1569,7 +1590,7 @@ const source = {
     }
   }
 };
-const expectedDigest = '3705c6bfff18cd909701452fc00702ea68e5fc914fc1108b34d1abdc65144ab8';
+const expectedDigest = '639e31768458e586bfd68c884fae1faedf3e94b871ed92d5944fabca2484bb76';
 
 const sha = value => createHash('sha256').update(value).digest('hex');
 const blob = value => createHash('sha1').update('blob ' + Buffer.byteLength(value) + '\0').update(value).digest('hex');
@@ -1584,7 +1605,7 @@ function definition() {
   if (definitionValidated) return;
   assert.equal(source.status, 'SEALED');
   assert.equal(source.phase, 'EXACT_QUESTING_SOURCE_COMPARISON_ONLY');
-  assert.equal(source.revision, 'd9b62d978e9d7bbc4ee9afd7a446c243838df5e2');
+  assert.equal(source.revision, '5f270fa4c24eb1348ce6f450faa733230833d242');
   assert.equal(source.predecessor, '17fdf85fdd21fd3767463df8ba47614f7d1f6432');
   assert.equal(sha(JSON.stringify(source)), expectedDigest, 'The complete questing comparison envelope changed');
   definitionValidated = true;
@@ -1607,7 +1628,7 @@ function fingerprint(text, pin) {
 export function qualifyQuestingSource(file, input) {
   assert.equal(arguments.length, 2, 'Only a file and complete physical source are accepted');
   definition();
-  assert(known(file), 'Only the 37 explicit questing comparison domains are admitted');
+  assert(known(file), 'Only the 38 explicit questing comparison domains are admitted');
   const current = canonical(input); assert(current, 'Uniform complete LF/CRLF source required');
   const row = source.files[file]; fingerprint(current.lf, row.current);
   let baseline = current.lf, previousEnd = current.lf.length;

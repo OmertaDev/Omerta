@@ -27,6 +27,23 @@ export const QUESTING_NATIVE_SUPPORT = Object.freeze([
     'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']
     .map(id => `content/packs/quest-${id}/pack.json`),
 ]);
+const catalogProof = ENTERPRISE_NATIVE_PROOFS.find(row => row[0] === 'enterprise-release-phase2-migration-catalog');
+export const QUESTING_ENTERPRISE_EXECUTION = Object.freeze([catalogProof, ...ENTERPRISE_NATIVE_PROOFS.filter(row => row !== catalogProof)]);
+export function assertQuestingExecutionOrder(order = QUESTING_ENTERPRISE_EXECUTION) {
+  assertEnterpriseInventory(ENTERPRISE_NATIVE_PROOFS);
+  assert.ok(Array.isArray(order) && Object.isFrozen(order)); assert.equal(order.length, 16);
+  assert.equal(new Set(order).size, 16); assert.strictEqual(order[0], catalogProof);
+  const remaining = ENTERPRISE_NATIVE_PROOFS.filter(row => row !== catalogProof);
+  for (let i = 0; i < remaining.length; i++) assert.strictEqual(order[i + 1], remaining[i], 'Same canonical tuple identities and remaining order');
+  return order;
+}
+export function canonicalQuestingResults(rows) {
+  assert.ok(Array.isArray(rows)); assert.equal(rows.length, 16, 'No missing case receipt may be synthesized');
+  const positions = new Map(ENTERPRISE_NATIVE_PROOFS.map(([name], i) => [name, i]));
+  assert.equal(new Set(rows.map(row => row?.file)).size, 16);
+  for (const row of rows) { assert.ok(row && positions.has(row.file)); assert.equal(row.state, 'passed'); }
+  return [...rows].sort((left, right) => positions.get(left.file) - positions.get(right.file));
+}
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const blob = bytes => crypto.createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
@@ -236,7 +253,7 @@ export async function runQuestingEnterpriseNative() {
       result.backend[port] = await backend(admin); assertEnterpriseBackend(result.backend[port], profile, port);
       const zero = await freshZero(pg, profile, port, urls[port]); result.caseZeros.push(zero); save(); assert.ok(zero.complete, 'Initial strict fresh zero');
     }
-    for (const row of ENTERPRISE_NATIVE_PROOFS) {
+    for (const row of assertQuestingExecutionOrder()) {
       assertQuestingEnterpriseStable(source);
       const [name, , prefix, localPort, timeout] = row, port = profile === 'local' ? localPort : 5432;
       const admin = admins.get(port), database = prefix + crypto.randomBytes(6).toString('hex'); assert.match(database, /^[a-z0-9_]{1,63}$/);
@@ -265,6 +282,7 @@ export async function runQuestingEnterpriseNative() {
       for (const used of ports) { const zero = await freshZero(pg, profile, used, urls[used]); result.caseZeros.push(zero); save(); assert.ok(zero.complete, 'Post-child strict fresh zero'); }
       assert.equal(proof.state, 'passed', `Failure retained; no partial qualification: ${name}`); console.log(JSON.stringify({ file: name, state: 'passed' }));
     }
+    result.results = canonicalQuestingResults(result.results); save();
     assertQuestingEnterpriseStable(source); assertEnterpriseResults(result.results, source, profile);
   } catch (error) { failure = error; result.failure = { code: error.code || 'qualification_failed', message: error.message }; save(); }
   finally {

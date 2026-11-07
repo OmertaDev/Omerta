@@ -5,15 +5,41 @@ import { execFileSync } from 'node:child_process';
 import {
   assertQuestingNativeDefinition, captureQuestingEnterpriseSource, questingNativeMetadataBytes,
   assertQuestingEnterpriseTrackedInput,
+  QUESTING_ENTERPRISE_EXECUTION, assertQuestingExecutionOrder, canonicalQuestingResults,
   QUESTING_NATIVE_METADATA, QUESTING_NATIVE_PREDECESSOR_METADATA, QUESTING_NATIVE_SUPPORT,
 } from '../tools/enterprise-native-questing.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as predecessorHash } from '../tools/enterprise-native-contract-release-inputs.js';
 import { enterpriseUxMetadataBytes } from '../tools/enterprise-native-ux.js';
-import { ENTERPRISE_NATIVE_PROOFS, assertEnterpriseNativeTrackedBytes } from '../tools/enterprise-native.js';
+import { ENTERPRISE_NATIVE_PROOFS, assertEnterpriseNativeTrackedBytes, assertEnterpriseResults } from '../tools/enterprise-native.js';
 import { QUESTING_ENTERPRISE_NATIVE_INPUTS as actual } from '../tools/enterprise-native-questing-inputs.js';
 
 const sha = value => crypto.createHash('sha256').update(value).digest('hex');
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
+assert.strictEqual(assertQuestingExecutionOrder(), QUESTING_ENTERPRISE_EXECUTION);
+assert.equal(QUESTING_ENTERPRISE_EXECUTION[0][0], 'enterprise-release-phase2-migration-catalog');
+let schedulingRefusals = 0;
+for (const order of [
+  QUESTING_ENTERPRISE_EXECUTION.slice(1), [...QUESTING_ENTERPRISE_EXECUTION, QUESTING_ENTERPRISE_EXECUTION[0]],
+  QUESTING_ENTERPRISE_EXECUTION.map((row, i) => i === 1 ? QUESTING_ENTERPRISE_EXECUTION[0] : row),
+  [...QUESTING_ENTERPRISE_EXECUTION].reverse(), [...ENTERPRISE_NATIVE_PROOFS],
+  QUESTING_ENTERPRISE_EXECUTION.map((row, i) => i === 1 ? Object.freeze([...row]) : row),
+]) { assert.throws(() => assertQuestingExecutionOrder(Object.freeze(order))); schedulingRefusals++; }
+assert.throws(() => assertQuestingExecutionOrder([...QUESTING_ENTERPRISE_EXECUTION])); schedulingRefusals++;
+const receiptSource = { revision: 'a'.repeat(40), files: Object.fromEntries(ENTERPRISE_NATIVE_PROOFS.map(([name]) => [`test/${name}.js`, { sha256: 'b'.repeat(64) }])) };
+const chronological = QUESTING_ENTERPRISE_EXECUTION.map(([name, , prefix], i) => ({ file: name, database: prefix + (i + 1).toString(16).padStart(12, '0'), port: 5432,
+  sourceSha256: 'b'.repeat(64), code: 0, signal: null, error: null, durationMs: 1, state: 'passed', logSha256: 'd'.repeat(64) }));
+const canonical = canonicalQuestingResults(chronological);
+assert.deepEqual(canonical.map(row => row.file), ENTERPRISE_NATIVE_PROOFS.map(([name]) => name));
+for (const receipt of canonical) assert.strictEqual(receipt, chronological.find(row => row.file === receipt.file));
+assert.equal(chronological[0].file, 'enterprise-release-phase2-migration-catalog', 'Chronological audit is not mutated');
+assertEnterpriseResults(canonical, receiptSource, 'ci');
+assert.throws(() => assertEnterpriseResults(chronological, receiptSource, 'ci')); schedulingRefusals++;
+for (const receipts of [chronological.slice(1), [...chronological, chronological[0]],
+  chronological.map((row, i) => i === 1 ? chronological[0] : row),
+  chronological.map((row, i) => i === 1 ? { ...row, file: 'unreviewed-case' } : row),
+  chronological.map((row, i) => i === 1 ? { ...row, state: 'failed' } : row)]) {
+  assert.throws(() => canonicalQuestingResults(receipts)); schedulingRefusals++;
+}
 const legacy = new Set(predecessor.files.map(row => row.file));
 const additions = QUESTING_NATIVE_SUPPORT.filter(file => !legacy.has(file)).sort().map(file => ({ file, mode: '100644', blob: 'a'.repeat(40),
   sha256: file === QUESTING_NATIVE_PREDECESSOR_METADATA ? sha(enterpriseUxMetadataBytes(predecessor)) : 'b'.repeat(64) }));
@@ -78,4 +104,4 @@ if (actual.status === 'UNSEALED') {
 }
 console.log(JSON.stringify({ phase: 'SOURCE_ONLY_ACTUAL_CURRENT_ENTERPRISE_GUARDS', syntheticDefinition: true,
   mutationRejections: rejections + 1, predecessorInputs: predecessor.files.length, mandatoryNativeCases: ENTERPRISE_NATIVE_PROOFS.length,
-  actualArgumentRefusals, nativeExecution: false, historicalResultsTransferred: false }));
+  actualArgumentRefusals, schedulingRefusals, nativeExecution: false, historicalResultsTransferred: false }));
