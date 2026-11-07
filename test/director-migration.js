@@ -8,7 +8,7 @@ import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,
-  verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES } from '../tools/ux-release-phase2-native-catalog.js';
+  verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES, assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';
 import { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
@@ -29,6 +29,7 @@ const BASELINE = '44f48a743e549591bd125a1f678099b8382dd78f';
 const address = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
 assert(address, 'An explicit isolated PostgreSQL database URL is required');
 const endpoint = cityGameplayMigrationEndpoint(address);
+assertQuestingPhase2SourceInputs();
 const namespace = `director_migration_${crypto.randomBytes(8).toString('hex')}`;
 const populationNamespace = `${namespace}_population`;
 const admin = new pg.Pool({ connectionString: endpoint.toString() });

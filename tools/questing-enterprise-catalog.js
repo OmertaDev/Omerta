@@ -97,6 +97,7 @@ function validateAdded(metadata, version) {
       unique, primary: row.name.endsWith('_pkey'), valid: true, ready: true, live: true, nulls_not_distinct: false, predicate: null });
   }
 }
+export { validateAdded as verifyQuestingCatalogTables };
 export function questingCatalogProjection(reference, baseline, version) {
   assert.deepEqual(Object.keys(reference).sort(), [...fields].sort()); assert.deepEqual(Object.keys(baseline).sort(), [...fields].sort());
   validateAdded(reference, version);

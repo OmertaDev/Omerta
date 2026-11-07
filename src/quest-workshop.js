@@ -115,10 +115,8 @@ async function readMystery(queryable, accountId, id, { published = false, lock =
 
 async function publicPuzzle(queryable, row, accountId, projection = null) {
   if (!projection) {
-    const [stats, mine] = await Promise.all([
-      queryable.query('SELECT COUNT(stars) AS ratings, AVG(stars) AS rating FROM quest_workshop_plays WHERE mystery_id=$1', [row.id]),
-      queryable.query('SELECT solved_at,stars FROM quest_workshop_plays WHERE mystery_id=$1 AND account_id=$2', [row.id, accountId]),
-    ]);
+    const stats = await queryable.query('SELECT COUNT(stars) AS ratings, AVG(stars) AS rating FROM quest_workshop_plays WHERE mystery_id=$1', [row.id]);
+    const mine = await queryable.query('SELECT solved_at,stars FROM quest_workshop_plays WHERE mystery_id=$1 AND account_id=$2', [row.id, accountId]);
     projection = { stats: stats.rows[0], mine: mine.rows[0] };
   }
   const template = WORKSHOP_TEMPLATES.find((item) => item.id === row.template_id);
@@ -154,14 +152,12 @@ export function createQuestWorkshopService({ pool }) {
         // The catalog is capped at fifty. Fixed bound slots keep every SQL shape
         // preparable; NULL padding cannot match a mystery's non-null primary key.
         const pageIds = Array.from({ length: 50 }, (_value, index) => ids[index] ?? null);
-        const [stats, plays] = await Promise.all([
-          pool.query('SELECT mystery_id,COUNT(stars) AS ratings,AVG(stars) AS rating FROM quest_workshop_plays WHERE mystery_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50) GROUP BY mystery_id', pageIds),
-          pool.query('SELECT mystery_id,solved_at,stars FROM quest_workshop_plays WHERE account_id=$1 AND mystery_id IN ($2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51)', [accountId, ...pageIds]),
-        ]);
+        const stats = await pool.query('SELECT mystery_id,COUNT(stars) AS ratings,AVG(stars) AS rating FROM quest_workshop_plays WHERE mystery_id IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50) GROUP BY mystery_id', pageIds);
+        const plays = await pool.query('SELECT mystery_id,solved_at,stars FROM quest_workshop_plays WHERE account_id=$1 AND mystery_id IN ($2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36,$37,$38,$39,$40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$50,$51)', [accountId, ...pageIds]);
         const statsById = new Map(stats.rows.map((row) => [row.mystery_id, row]));
         const playsById = new Map(plays.rows.map((row) => [row.mystery_id, row]));
-        puzzles = await Promise.all(published.map((row) => publicPuzzle(pool, row, accountId,
-          { stats: statsById.get(row.id), mine: playsById.get(row.id) })));
+        for (const row of published) puzzles.push(await publicPuzzle(pool, row, accountId,
+          { stats: statsById.get(row.id), mine: playsById.get(row.id) }));
       }
       return { templates: WORKSHOP_TEMPLATES, suspects: WORKSHOP_SUSPECTS, scenes: WORKSHOP_SCENES,
         clues: WORKSHOP_CLUES.map(publicClue), mine: mine.map(ownDraft), published: puzzles };

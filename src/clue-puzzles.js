@@ -5,6 +5,8 @@ import { CLUES, clueStepOf } from './rules.js';
 
 const PREFIX = 'trail-v2:';
 const KINDS = ['surveillance', 'route', 'landmark', 'witness'];
+const KIND_NAMES = Object.freeze({ surveillance: 'Surveillance timeline', route: 'Courier route',
+  landmark: 'Landmark matching', witness: 'Witness statements' });
 const PEOPLE = ['The Lookout', 'The Messenger', 'The Clerk'];
 const MARKS = {
   docks: ['The Rope Shed', 'The North Gantry', 'The Weighbridge'],
@@ -87,7 +89,8 @@ export function cluePuzzleOf(salt, step) {
 // The salt, derived district, and correct choice stay behind the authority boundary.
 export function publicCluePuzzle(puzzle) {
   if (puzzle.version !== 2) return null;
-  return { version: 2, kind: puzzle.kind, prompt: puzzle.prompt, observations: [...puzzle.observations],
+  if (!Object.hasOwn(KIND_NAMES, puzzle.kind)) throw new TypeError('Unknown clue puzzle kind');
+  return { version: 2, kind: puzzle.kind, kindName: KIND_NAMES[puzzle.kind], prompt: puzzle.prompt, observations: [...puzzle.observations],
     choices: puzzle.choices.map(({ id, label }) => ({ id, label })), hint: puzzle.hint,
     actionLabel: 'Submit deduction', endpoint: '/v1/clues/answer' };
 }

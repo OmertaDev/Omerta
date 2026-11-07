@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
-import { cluePuzzleOf } from '../src/clue-puzzles.js';
+import { cluePuzzleOf, publicCluePuzzle } from '../src/clue-puzzles.js';
 
 assert(!process.env.DATABASE_URL, 'Clue browser verification uses disposable pg-mem.');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off'; process.env.CLUE_RELIC_P = '0';
@@ -42,6 +42,8 @@ try {
   await page.locator('#jump-list [data-jump="streets"]').first().click();
   const streetCard = page.locator('#tab-streets.on #clue-slot .clue-puzzle'); await streetCard.waitFor();
   assert.equal(await streetCard.getAttribute('data-clue-puzzle'), firstPuzzle.kind, 'the actual Streets renderer mounts structured clues');
+  assert.ok((await streetCard.locator('.clue-puzzle-meta').first().innerText()).includes(publicCluePuzzle(firstPuzzle).kindName),
+    'the production renderer displays the readable mechanic name');
   assert.equal(await page.locator('#clue-slot #clue-dig').count(), 0, 'structured clues do not expose the legacy dig bypass');
   await streetCard.locator(`input[value="${firstPuzzle.choices.find(choice => choice.id !== firstPuzzle.answerId).id}"]`).check();
   const refused = page.waitForResponse(response => response.url().endsWith('/v1/clues/answer') && response.request().method() === 'POST');

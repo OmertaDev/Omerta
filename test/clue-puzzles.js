@@ -7,6 +7,7 @@ import { systemEligibility } from '../src/explore.js';
 process.env.MOD_KEY = 'test-clue-puzzles';
 process.env.CLUE_RELIC_P = '0';
 const kinds = new Set();
+const kindNames = { surveillance: 'Surveillance timeline', route: 'Courier route', landmark: 'Landmark matching', witness: 'Witness statements' };
 for (let index = 0; index < 120; index++) {
   for (let step = 1; step <= 7; step++) {
     const legacySalt = `legacy-${index}`;
@@ -19,6 +20,8 @@ for (let index = 0; index < 120; index++) {
     assert.equal(new Set(puzzle.choices.map((choice) => choice.id)).size, 3);
     assert.equal(puzzle.choices.filter((choice) => choice.id === puzzle.answerId).length, 1);
     const publicPuzzle = publicCluePuzzle(puzzle);
+    assert.equal(publicPuzzle.kind, puzzle.kind, 'the machine discriminator remains stable');
+    assert.equal(publicPuzzle.kindName, kindNames[puzzle.kind], 'every issued mechanic has its finite readable display name');
     assert.doesNotMatch(JSON.stringify(publicPuzzle), /"(?:answerId|district|window|salt)"/);
     kinds.add(puzzle.kind);
     // Independently solve each generated presentation rather than trusting the
@@ -52,6 +55,7 @@ for (let index = 0; index < 120; index++) {
 assert.equal(kinds.size, 4);
 assert(isStructuredClueSalt(newClueSalt()));
 assert.equal(publicCluePuzzle(cluePuzzleOf('legacy', 1)), null);
+assert.throws(() => publicCluePuzzle({ version: 2, kind: 'constructor' }), /Unknown clue puzzle kind/);
 const readiness = (scroll) => systemEligibility({ eligibility: 'clue' },
   { ch: { energy: CLUES.DIG_ENERGY }, acct: {}, owned: {}, live: { clueBoard: { scroll } } });
 assert.equal(readiness({ riddle: 'Legacy scroll' }).operation, 'clue:dig');

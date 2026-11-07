@@ -22,6 +22,8 @@ export const QUESTING_NATIVE_SUPPORT = Object.freeze([
   'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',
   'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,
   'tools/questing-enterprise-catalog.js', 'test/questing-enterprise-catalog-guard.js',
+  'tools/questing-ux-release-phase2-native-catalog.js',
+  'test/questing-ux-release-phase2-native-catalog-guard.js',
   'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',
   ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',
     'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']

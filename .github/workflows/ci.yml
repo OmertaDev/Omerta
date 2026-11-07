@@ -252,6 +252,7 @@ jobs:
           node test/questing-source-transfer.js
           node test/enterprise-native-questing-guard.js
           node test/questing-enterprise-catalog-guard.js
+          node test/questing-ux-release-phase2-native-catalog-guard.js
       - name: Quest runtime, cases and community workshop
         run: npm run test:questing
       - name: Production quest and clue interfaces
@@ -268,7 +269,7 @@ jobs:
       postgres:
         image: postgres:18
         env:
-          POSTGRES_PASSWORD: questing
+          POSTGRES_PASSWORD: pgcheck
           POSTGRES_DB: omerta_questing_ci
         ports:
           - 5432:5432
@@ -310,9 +311,52 @@ jobs:
           actual="$(timeout 10s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')"
           [[ "$actual" == 512 ]] || { echo "Unexpected test max_locks_per_transaction: $actual" >&2; exit 1; }
 
+      - name: Create fresh owned migration fixture databases
+        timeout-minutes: 1
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import pg from 'pg';
+          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });
+          try {
+            await client.connect();
+            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,
+              [{ role: 'postgres', database: 'postgres', port: 5432 }]);
+            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);
+            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');
+            await client.query('CREATE DATABASE omerta_check');
+            await client.query('CREATE DATABASE omerta_query');
+            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,
+              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);
+          } finally { await client.end(); }
+          NODE
+
+      - name: Populated phase2 and Director migration regression
+        run: |
+          set -euo pipefail
+          (
+            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check
+            phase2_status=0
+            npm run phase2:definitions:postgres || phase2_status=1
+            npm run phase2:lots:postgres || phase2_status=1
+            exit "$phase2_status"
+          ) > "$RUNNER_TEMP/questing-phase2-migrations.log" 2>&1 &
+          phase2_pid=$!
+          (
+            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query
+            node test/director-migration.js --postgres
+          ) > "$RUNNER_TEMP/questing-director-migration.log" 2>&1 &
+          director_pid=$!
+          result=0
+          wait "$phase2_pid" || result=1
+          wait "$director_pid" || result=1
+          cat "$RUNNER_TEMP/questing-phase2-migrations.log"
+          cat "$RUNNER_TEMP/questing-director-migration.log"
+          exit "$result"
+
       - name: Native invitation, handoff and receipt races
         env:
-          QUESTING_TEST_DATABASE_URL: postgres://postgres:questing@127.0.0.1:5432/omerta_questing_ci
+          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci
           JWT_SECRET: ci-questing-jwt-not-a-real-secret
           MOD_KEY: ci-questing-mod-not-a-real-secret
           MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4

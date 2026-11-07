@@ -9,7 +9,7 @@
     const card = element('section', null, 'card clue-puzzle');
     card.dataset.cluePuzzle = puzzle.kind;
     const heading = element('h3', 'The treasure trail');
-    card.append(heading, element('p', `${scroll.tierName} · Step ${scroll.step} of ${scroll.of} · ${puzzle.kind}`, 'clue-puzzle-meta'),
+    card.append(heading, element('p', `${scroll.tierName} · Step ${scroll.step} of ${scroll.of} · ${puzzle.kindName}`, 'clue-puzzle-meta'),
       element('p', scroll.riddle, 'clue-puzzle-riddle'), element('p', puzzle.prompt));
     const observations = element('ul');
     for (const text of puzzle.observations || []) observations.append(element('li', text));

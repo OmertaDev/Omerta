@@ -30,6 +30,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'acorn';
 import { DEED_QUEST_SOURCE_DOMAINS, deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
+import { QUESTING_SOURCE, qualifyQuestingSource } from '../tools/questing-source-transfer.js';
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
@@ -3039,6 +3040,14 @@ const SCENERY_WAIVED = {
     'CRLF and LF checkouts normalize to the same reviewed bytes');
   const wholeExploreFileSealAccepts = (bytes) => {
     const digest = wholeExploreFileDigest(bytes);
+    if (digest === QUESTING_SOURCE.files['src/explore.js'].current.sha256) {
+      let proof;
+      try { proof = qualifyQuestingSource('src/explore.js', bytes); } catch { return false; }
+      assert.equal(proof.sourceOnly, true); assert.equal(proof.runtime, false); assert.equal(proof.native, false);
+      assert.equal(proof.priorResultsTransferred, false);
+      if (!scopedSocialContextSealAccepts((Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes)).toString('utf8'))) return false;
+      return wholeExploreFileSealAccepts(Buffer.from(proof.baselineText));
+    }
     if (digest === REVIEWED_EXPLORE_FILE_SHA256) return true;
     if (digest === REVIEWED_ECONOMY_EXPLORE_FILE_SHA256) return true;
     // Admit only the complete reviewed quest candidate's literal bytes, then prove its exact
@@ -4016,7 +4025,7 @@ scopedSocialContext = async function(db) {
   }
   const headers = [...jobsText.matchAll(/^ {2}([A-Za-z0-9_-]+):\s*$/gm)];
   const jobNames = headers.map((m) => m[1]);
-  assert.deepEqual(jobNames, ['suites', 'suite_tail', 'browser', 'ux_browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck_enterprise', 'pgcheck_commerce', 'pgcheck'],
+  assert.deepEqual(jobNames, ['suites', 'suite_tail', 'browser', 'questing_browser', 'questing_native', 'ux_browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck_enterprise', 'pgcheck_commerce', 'pgcheck'],
     '.github/workflows/ci.yml must retain suites, its complete bounded tail, both browser jobs, four isolated native cohorts and their required aggregate');
   const jobs = new Map(headers.map((header, i) => [header[1], jobsText.slice(
     header.index, i + 1 < headers.length ? headers[i + 1].index : jobsText.length)]));
@@ -4031,6 +4040,53 @@ scopedSocialContext = async function(db) {
   const commerceNative = jobs.get('pgcheck_commerce');
   const nativeShape = block => block.replaceAll('\r\n', '\n').split('\n')
     .filter(line => line.trim() && !/^\s*#/.test(line)).map(line => line.trimEnd()).join('\n');
+  const expectedQuestBrowser = "  questing_browser:\n    name: Quest acceptance and browser playthroughs\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - run: npx playwright-core install --with-deps chromium\n      - name: Quest source and current native admission guards\n        run: |\n          node test/questing-source-transfer.js\n          node test/enterprise-native-questing-guard.js\n          node test/questing-enterprise-catalog-guard.js\n          node test/questing-ux-release-phase2-native-catalog-guard.js\n      - name: Quest runtime, cases and community workshop\n        run: npm run test:questing\n      - name: Production quest and clue interfaces\n        run: |\n          export CHROMIUM_PATH=\"$(node --input-type=module -e 'import { chromium } from \"playwright-core\"; process.stdout.write(chromium.executablePath());')\"\n          npm run test:questing:browser\n      - run: npm run questing:check";
+  const expectedQuestNative = "  questing_native:\n    name: Quest authority and concurrency (PostgreSQL)\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    services:\n      postgres:\n        image: postgres:18\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_questing_ci\n        ports:\n          - 5432:5432\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s\n          --health-timeout 5s\n          --health-retries 12\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\n        timeout-minutes: 3\n        shell: bash\n        env:\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\n        run: |\n          set -euo pipefail\n          [[ \"$POSTGRES_SERVICE_ID\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\n          timeout 15s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\n          timeout 45s docker restart --timeout 30 \"$POSTGRES_SERVICE_ID\"\n          ready=0\n          deadline=$((SECONDS + 60))\n          while (( SECONDS < deadline )); do\n            if timeout 3s docker exec \"$POSTGRES_SERVICE_ID\" pg_isready -q -t 1 -U postgres -d postgres; then\n              ready=1\n              break\n            fi\n            sleep 1\n          done\n          [[ \"$ready\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\n          actual=\"$(timeout 10s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\"\n          [[ \"$actual\" == 512 ]] || { echo \"Unexpected test max_locks_per_transaction: $actual\" >&2; exit 1; }\n      - name: Create fresh owned migration fixture databases\n        timeout-minutes: 1\n        run: |\n          node --input-type=module <<'NODE'\n          import assert from 'node:assert/strict';\n          import pg from 'pg';\n          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });\n          try {\n            await client.connect();\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\n            await client.query('CREATE DATABASE omerta_check');\n            await client.query('CREATE DATABASE omerta_query');\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);\n          } finally { await client.end(); }\n          NODE\n      - name: Populated phase2 and Director migration regression\n        run: |\n          set -euo pipefail\n          (\n            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n            phase2_status=0\n            npm run phase2:definitions:postgres || phase2_status=1\n            npm run phase2:lots:postgres || phase2_status=1\n            exit \"$phase2_status\"\n          ) > \"$RUNNER_TEMP/questing-phase2-migrations.log\" 2>&1 &\n          phase2_pid=$!\n          (\n            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query\n            node test/director-migration.js --postgres\n          ) > \"$RUNNER_TEMP/questing-director-migration.log\" 2>&1 &\n          director_pid=$!\n          result=0\n          wait \"$phase2_pid\" || result=1\n          wait \"$director_pid\" || result=1\n          cat \"$RUNNER_TEMP/questing-phase2-migrations.log\"\n          cat \"$RUNNER_TEMP/questing-director-migration.log\"\n          exit \"$result\"\n      - name: Native invitation, handoff and receipt races\n        env:\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\n          MOD_KEY: ci-questing-mod-not-a-real-secret\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\n          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres";
+  const assertQuestJobs = (browserBlock, nativeBlock) => {
+    assert.equal(nativeShape(browserBlock), expectedQuestBrowser, 'The quest browser job retains complete pure guards, cases and real browser commands without database authority');
+    assert.equal(nativeShape(nativeBlock), expectedQuestNative, 'The quest authority job retains its isolated PostgreSQL18 service, owned lock setup and real native endpoint/command');
+  };
+  assertQuestJobs(jobs.get('questing_browser'), jobs.get('questing_native'));
+  const questBrowserLf = jobs.get('questing_browser').replaceAll('\r\n', '\n');
+  const questBrowserCrlf = questBrowserLf.replaceAll('\n', '\r\n');
+  assert.notEqual(questBrowserCrlf, questBrowserLf, 'The CRLF positive must change real newline bytes');
+  assertQuestJobs(questBrowserCrlf, jobs.get('questing_native'));
+  const assertActualQuestYamlControl = changed => {
+    if (changed.includes('if: false')) assert(changed.includes('\n    if: false\n'), 'The skipped-job mutation must insert a real YAML line');
+    if (changed.includes('continue-on-error: true')) assert(changed.includes('\n    continue-on-error: true\n'), 'The error-waiver mutation must insert a real YAML line');
+  };
+  for (const changed of [
+    expectedQuestBrowser.replace('timeout-minutes: 15', 'timeout-minutes: 150'),
+    expectedQuestBrowser.replace('    runs-on:', '    if: false\n    runs-on:'),
+    expectedQuestBrowser.replace('    runs-on:', '    continue-on-error: true\n    runs-on:'),
+    expectedQuestBrowser.replace('npm run test:questing:browser', 'npm run test:questing:browser -- --partial'),
+    expectedQuestBrowser.replace('node test/questing-enterprise-catalog-guard.js', 'node -e "process.exit(0)"'),
+    expectedQuestBrowser.replace('node test/questing-ux-release-phase2-native-catalog-guard.js', 'node -e "process.exit(0)"'),
+    expectedQuestBrowser.replace('npm run test:questing', 'npm run test:questing:postgres'),
+  ]) { assert.notEqual(changed, expectedQuestBrowser); assertActualQuestYamlControl(changed); assert.throws(() => assertQuestJobs(changed, expectedQuestNative)); }
+  for (const changed of [
+    expectedQuestNative.replace('postgres:18', 'postgres:16'),
+    expectedQuestNative.replace('timeout-minutes: 15', 'timeout-minutes: 150'),
+    expectedQuestNative.replace('    runs-on:', '    if: false\n    runs-on:'),
+    expectedQuestNative.replace('    runs-on:', '    continue-on-error: true\n    runs-on:'),
+    expectedQuestNative.replace('127.0.0.1:5432', 'remote.invalid:5432'),
+    expectedQuestNative.replace('omerta_questing_ci', 'production'),
+    expectedQuestNative.replace('= 512;', '= 64;'),
+    expectedQuestNative.replace('job.services.postgres.id', 'inputs.container_id'),
+    expectedQuestNative.replace('test:questing:postgres', 'test:questing:postgres -- --partial'),
+    expectedQuestNative.replace('npm run test:questing:postgres', 'node -e "process.exit(0)"'),
+    expectedQuestNative.replace('POSTGRES_PASSWORD: pgcheck', 'POSTGRES_PASSWORD: questing'),
+    expectedQuestNative.replace("assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');", 'void existing;'),
+    expectedQuestNative.replace('export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query', 'export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check'),
+    expectedQuestNative.replace('npm run phase2:definitions:postgres || phase2_status=1', 'npm run phase2:definitions:postgres &'),
+    expectedQuestNative.replace('npm run phase2:definitions:postgres', 'npm run phase2:definitions:postgres -- --partial'),
+    expectedQuestNative.replace('npm run phase2:lots:postgres', 'node -e "process.exit(0)"'),
+    expectedQuestNative.replace('node test/director-migration.js --postgres', 'node test/director-migration.js --postgres --partial'),
+    expectedQuestNative.replace('wait "$phase2_pid" || result=1', 'true'),
+    expectedQuestNative.replace('wait "$director_pid" || result=1', 'true'),
+    expectedQuestNative.replace('exit "$result"', 'exit 0'),
+  ]) { assert.notEqual(changed, expectedQuestNative); assertActualQuestYamlControl(changed); assert.throws(() => assertQuestJobs(expectedQuestBrowser, changed)); }
+  assert.throws(() => assertQuestJobs(expectedQuestNative, expectedQuestBrowser), 'Native authority cannot substitute for browser interaction coverage');
   assert.equal(nativeShape(nativeGate), "  pgcheck:\n    if: ${{ always() && !inputs.tail_only }}\n    name: real Postgres (${{ matrix.postgres }})\n    needs: [pgcheck_core, pgcheck_economy, pgcheck_enterprise, pgcheck_commerce]\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    steps:\n      - name: Require all four complete native cohorts\n        env:\n          CORE_RESULT: ${{ needs.pgcheck_core.result }}\n          ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}\n          ENTERPRISE_RESULT: ${{ needs.pgcheck_enterprise.result }}\n          COMMERCE_RESULT: ${{ needs.pgcheck_commerce.result }}\n        run: |\n          test \"$CORE_RESULT\" = success\n          test \"$ECONOMY_RESULT\" = success\n          test \"$ENTERPRISE_RESULT\" = success\n          test \"$COMMERCE_RESULT\" = success", 'Required native identities must fail closed on failure, cancellation or a skipped cohort');
   const splitNative = block => { const pieces = block.replaceAll('\r\n', '\n').split(/(?=^      - (?:uses:|run:|name:))/m); return { header: pieces.shift(), steps: pieces }; };
   const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative), enterpriseParts = splitNative(enterpriseNative);
@@ -4078,7 +4134,11 @@ scopedSocialContext = async function(db) {
   assert.throws(()=>assertEnterpriseOwnedLockSetup(ownedSetupEnterprise.replace(expectedEnterpriseOwnedLockSetup,'').replace('      - uses: actions/setup-node',()=>expectedEnterpriseOwnedLockSetup+'      - uses: actions/setup-node')),'Enterprise setup must precede every existing prerequisite step');
   const expectedEnterpriseStep="      - name: Estate workshops, licensed manufacturing, mobile shops, relocation and equipment recovery (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          CHAIN_ENABLED: 'off'\n          RESOURCE_ECONOMY: 'off'\n          ENTERPRISE_NATIVE_PROFILE: ci\n          ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:postgres";
   assert.equal(nativeShape(enterpriseParts.header),nativeShape(economyParts.header).replace('  pgcheck_economy:','  pgcheck_enterprise:').replace('name: native economy (','name: native enterprise (').replace('timeout-minutes: 90','timeout-minutes: 120'),'Enterprise retains the exact existing PG service and Node matrix with its separately closed finite120m bound');
-  assert.deepEqual(enterpriseParts.steps.map(nativeShape),[nativeShape(expectedEnterpriseOwnedLockSetup),...expectedEconomyParts.slice(0,6),nativeShape(expectedEnterpriseStep)],'The complete strict enterprise step executes exactly once after the owned setup and unchanged six prerequisite steps');
+  const expectedCurrentEnterpriseStep = expectedEnterpriseStep.replace('test:agent-economy-enterprise:postgres', 'test:agent-economy-enterprise:questing:postgres');
+  const enterpriseScripts = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).scripts;
+  assert.equal(enterpriseScripts['test:agent-economy-enterprise:postgres'], 'node tools/enterprise-native.js', 'The old native qualifier remains independently available');
+  assert.equal(enterpriseScripts['test:agent-economy-enterprise:questing:postgres'], 'node tools/enterprise-native-questing.js', 'Current execution uses only its separate actual-current full16 runner');
+  assert.deepEqual(enterpriseParts.steps.map(nativeShape),[nativeShape(expectedEnterpriseOwnedLockSetup),...expectedEconomyParts.slice(0,6),nativeShape(expectedCurrentEnterpriseStep)],'The complete strict enterprise step executes exactly once after the owned setup and unchanged six prerequisite steps');
   for(const changed of[expectedEnterpriseStep.replace('env -u RC1_PG_BIN ',''),expectedEnterpriseStep.replace('env -u RC1_PG_BIN','env -u NODE_OPTIONS'),expectedEnterpriseStep.replace("CHAIN_ENABLED: 'off'","CHAIN_ENABLED: 'on'"),expectedEnterpriseStep.replace("RESOURCE_ECONOMY: 'off'",''),expectedEnterpriseStep.replace('ENTERPRISE_NATIVE_PROFILE: ci','ENTERPRISE_NATIVE_PROFILE: local'),expectedEnterpriseStep.replace('127.0.0.1:5432','remote.invalid:5432'),expectedEnterpriseStep.replace('test:agent-economy-enterprise:postgres','test:agent-economy-enterprise:postgres -- --partial'),expectedEnterpriseStep.replace("if: '!cancelled()'","if: success()")])assert.notEqual(nativeShape(changed),nativeShape(expectedEnterpriseStep));
   const commerceParts=splitNative(commerceNative);
   const expectedCommerceStep="      - name: Attributed sales, merchant loyalty, atomic baskets, funded events and campaigns (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          CHAIN_ENABLED: 'off'\n          RESOURCE_ECONOMY: 'off'\n          COMMERCE_CURRENT_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: env -u RC1_PG_BIN npm run test:agent-economy-commerce:postgres\n\n";

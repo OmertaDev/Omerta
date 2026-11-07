@@ -348,6 +348,9 @@ assert.equal(Object.hasOwn(questSpec.components.schemas.QuestWorkshopPuzzle.prop
   'published mystery schemas omit the private author answer');
 assert.doesNotMatch(JSON.stringify(questSpec.components.schemas.ClueDeduction), /answerId|salt|solution/,
   'clue deduction projections expose only issued options');
+assert.ok(questSpec.components.schemas.ClueDeduction.required.includes('kindName'), 'the closed clue projection requires its readable kind name');
+assert.deepEqual(questSpec.components.schemas.ClueDeduction.properties.kindName.enum,
+  ['Surveillance timeline', 'Courier route', 'Landmark matching', 'Witness statements']);
 const serviceMounted = [];
 const serviceApp = {
   get(url) { serviceMounted.push(`GET ${url}`); }, post(url) { serviceMounted.push(`POST ${url}`); },
