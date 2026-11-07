@@ -254,6 +254,7 @@ jobs:
           node test/questing-enterprise-catalog-guard.js
           node test/questing-ux-release-phase2-native-catalog-guard.js
           node test/rc1-npc-retirement-journal.js
+          node test/genesis-fee-readiness-source-transfer.js
       - name: Quest runtime, cases and community workshop
         run: npm run test:questing
       - name: Production quest and clue interfaces
