@@ -256,6 +256,38 @@ const readerCopyPins = Object.freeze([
       ]
     ],
     "oldEntry": "100644 blob 6415830c9bbd1f50608f496530f87f1eba3ca28e\ttest/lib/ux-director-reader-source-compatibility.js"
+  },
+  {
+    "original": "test/lib/ux-enterprise-reader-source-compatibility.js",
+    "target": "test/lib/questing-ux-enterprise-reader-source-compatibility.js",
+    "exportName": "questingEnterpriseReaderView",
+    "files": [
+      "test/enterprise-release-phase2-migration-catalog.js"
+    ],
+    "oldSha256": "d7b9ef827c33f5291228da4aee1f7959bab4b5ced35513e02c3697fb8d186319",
+    "bytes": 9563,
+    "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9",
+    "prefixCharacters": 3205,
+    "prefixSha256": "e7d383a2ff5a65c8b230fcd098a0be41ba85606b10af54777ebd412bed45fc20",
+    "edits": [
+      [
+        "for (const row of pin.files) {\n  const current =",
+        "for (const row of pin.files) {\n  const questReader = admittedQuestingEnterpriseReader(row.file);\n  const current ="
+      ],
+      [
+        "economyUxMergeMainHistoricalInput(row.file, fs.readFileSync(row.file, 'utf8'))",
+        "economyUxMergeMainHistoricalInput(row.file, questReader.physical.input)"
+      ],
+      [
+        "economyUxMergeMainHistoricalInput(row.file, git('show', 'HEAD:' + row.file))",
+        "economyUxMergeMainHistoricalInput(row.file, questReader.head.input)"
+      ],
+      [
+        "  const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === row.file); assert(mergeRow);\n",
+        "  const mergeRow = ECONOMY_UX_MERGE_SOURCE.files.find(item => item.file === row.file); assert(mergeRow);\n  assert.equal(questReader.head.entry, git('ls-tree', QUESTING_SOURCE.predecessor, '--', row.file).trim(), 'The independently admitted quest predecessor retains its exact Git source entry');\n"
+      ]
+    ],
+    "oldEntry": "100644 blob 3382a3fd52c0f84d2c8a2da7606ffa1aae0cd4d1\ttest/lib/ux-enterprise-reader-source-compatibility.js"
   }
 ].map(record => Object.freeze({ ...record,
   files: Object.freeze(record.files), edits: Object.freeze(record.edits.map(Object.freeze)) })));
