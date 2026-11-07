@@ -551,7 +551,7 @@
 | [docs/production-slot-security-review.md](../../docs/production-slot-security-review.md) | documentation | 16 | 2026-10-15 |
 | [docs/public-market-feed-security-review.md](../../docs/public-market-feed-security-review.md) | documentation | 22 | 2026-10-12 |
 | [docs/questing-next-30.md](../../docs/questing-next-30.md) | documentation | 38 | 2026-11-07 |
-| [docs/questing-review.md](../../docs/questing-review.md) | documentation | 77 | 2026-11-07 |
+| [docs/questing-review.md](../../docs/questing-review.md) | documentation | 90 | 2026-11-07 |
 | [docs/questing-upgrades.md](../../docs/questing-upgrades.md) | documentation | 45 | 2026-11-07 |
 | [docs/rc1-alliance-continuation.md](../../docs/rc1-alliance-continuation.md) | documentation | 56 | 2026-09-21 |
 | [docs/rc1-alliance-world.md](../../docs/rc1-alliance-world.md) | documentation | 60 | 2026-09-21 |

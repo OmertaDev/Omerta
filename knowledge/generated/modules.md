@@ -386,8 +386,8 @@
 | [src/productionslots.js](../../src/productionslots.js) | 32 | platform-core | 6 / 8 | 0 | 11 | 3 |
 | [src/projection-events.js](../../src/projection-events.js) | 179 | platform-core | 1 / 3 | 0 | 13 | 2 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 2 | 6 | 1 |
-| [src/quest-workshop-schema.js](../../src/quest-workshop-schema.js) | 37 | platform-core | 0 / 1 | 0 | 3 | 1 |
-| [src/quest-workshop.js](../../src/quest-workshop.js) | 226 | platform-core | 1 / 3 | 0 | 4 | 2 |
+| [src/quest-workshop-schema.js](../../src/quest-workshop-schema.js) | 35 | platform-core | 0 / 1 | 0 | 3 | 1 |
+| [src/quest-workshop.js](../../src/quest-workshop.js) | 230 | platform-core | 1 / 3 | 0 | 4 | 2 |
 | [src/questing-contract.js](../../src/questing-contract.js) | 96 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/questing.js](../../src/questing.js) | 97 | platform-core | 1 / 2 | 0 | 5 | 1 |
 | [src/races.js](../../src/races.js) | 518 | vice-competition | 4 / 10 | 11 | 9 | 3 |
