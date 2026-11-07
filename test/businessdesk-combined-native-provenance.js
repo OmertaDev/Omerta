@@ -13,6 +13,8 @@ import { ENTERPRISE_NATIVE_UX_INPUTS as current } from '../tools/enterprise-nati
 import { ENTERPRISE_NATIVE_UX_INPUTS as previous } from '../tools/enterprise-native-ux-b35-inputs.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as activeNative, assertEnterpriseUxTrackedInput } from '../tools/enterprise-native-ux.js';
 import { economicReleaseNativeProvenance } from '../tools/economic-release-native-provenance.js';
+import { QUESTING_ENTERPRISE_NATIVE_INPUTS as questingNative } from '../tools/enterprise-native-questing-inputs.js';
+import { assertQuestingEnterpriseTrackedInput } from '../tools/enterprise-native-questing.js';
 
 assert.deepEqual(process.argv.slice(2),[],'Bare source-only entrypoint required');
 const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{windowsHide:true,maxBuffer:64*1024*1024});
@@ -46,7 +48,7 @@ assert.equal(text('rev-parse',data.sourceRevision+'^{tree}').trim(),data.sourceT
 git('merge-base','--is-ancestor',BUSINESS_DESK_COMBINED_SOURCE.sourceRevision,data.sourceRevision);
 git('merge-base','--is-ancestor',data.sourceRevision,'HEAD');
 const head=tree('HEAD'),authored=tree(activeNative.authoredRevision),priorRows=new Map(previous.files.map(row=>[row.file,row]));
-const immutableRecord=file=>{const bytes=git('show','HEAD:'+file),row=head.get(file),stat=fs.lstatSync(file),physical=fs.readFileSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());assert(physical.equals(bytes)||physical.equals(Buffer.from(bytes.toString().replaceAll('\n','\r\n'))),'Raw physical source matches actual HEAD before any historical view');return{bytes,row};};
+const immutableRecord=file=>{const bytes=git('show','HEAD:'+file),row=head.get(file),stat=fs.lstatSync(file),physical=fs.readFileSync(file);assert(row&&row.type==='blob'&&stat.isFile()&&!stat.isSymbolicLink());assert.equal(text('ls-files','--stage','--',file).trim(),row.mode+' '+row.blob+' 0\t'+file,'Actual index must match HEAD');const decoded=bytes.toString('utf8'),lossless=Buffer.from(decoded).equals(bytes);assert(physical.equals(bytes)||(lossless&&physical.equals(Buffer.from(decoded.replaceAll('\n','\r\n')))),'Raw physical source matches actual HEAD before any historical view');return{bytes,row};};
 for(const profile of ['desk','monitor','wiki']){
   const p=parents.profiles[profile];assert.equal(p.provisional,false);assert.equal(text('rev-parse',p.revision+'^{tree}').trim(),p.tree);
   git('merge-base','--is-ancestor',parents.commonRevision,p.revision);git('merge-base','--is-ancestor',p.revision,data.sourceRevision);
@@ -95,7 +97,9 @@ for(const row of data.files){
   for(const archive of Object.values(BUSINESS_DESK_COMBINED_NATIVE_PARENT_OBJECTS)){
     const parent=archive.files.find(pin=>pin.file===row.file);if(parent)refuse(()=>businessDeskCombinedNativeProvenance(row.file,before,parent));
   }
-  const bytes=git('show','HEAD:'+row.file),now=head.get(row.file),anchor=authored.get(row.file);
+  // Retain the exact earlier native guard's source relations and all refusal
+  // controls on its own authored Git objects. They grant no current execution.
+  const bytes=git('show',activeNative.authoredRevision+':'+row.file),now=authored.get(row.file),anchor=authored.get(row.file);
   const actualExpected=activeNative.files.find(pin=>pin.file===row.file);assert(actualExpected);
   assert.equal(sha(bytes),actualExpected.sha256);
   const admitted=assertEnterpriseUxTrackedInput(row.file,now,anchor,bytes);
@@ -121,13 +125,43 @@ for(const row of data.files){
 assert(currentRelations>0&&sample);
 const packageRow=data.files.find(row=>row.file==='package.json');assert(packageRow,'The combined package exercises a shared three-parent source transition');
 for(const profile of ['desk','monitor','wiki']){
-  const raw=git('show',parents.profiles[profile].revision+':package.json'),now=head.get('package.json'),anchor=authored.get('package.json');
-  assert(!raw.equals(git('show','HEAD:package.json')),'Combined package retains a distinct actual current source');
+  const raw=git('show',parents.profiles[profile].revision+':package.json'),now=authored.get('package.json'),anchor=authored.get('package.json');
+  assert(!raw.equals(git('show',activeNative.authoredRevision+':package.json')),'Retained native package is distinct from every archived parent');
   refuse(()=>assertEnterpriseUxTrackedInput('package.json',now,anchor,raw));
 }
 for(const unknown of ['unknown','__proto__','constructor','../src/server.js',null,undefined,1,Symbol('domain'),Object.freeze({toString(){throw Error('No coercion');}})])assert.equal(businessDeskCombinedNativeProvenance(unknown,sample.before,sample.expected),null);
 const addition=current.files.find(row=>!priorRows.has(row.file));assert(addition);assert.equal(businessDeskCombinedNativeProvenance(addition.file,undefined,addition),null);
 refuse(()=>{data.files.push({file:'unreviewed'});});refuse(()=>{parents.ownerByFile['package.json']='wiki';});
+
+// Independently admit the real current bytes through the new sealed declaration.
+// No source projector or archived native result participates in this path.
+const actualAuthored=tree(questingNative.authoredRevision);
+let actualCurrentRelations=0,actualCurrentRefusals=0,actualSample;
+const refuseCurrent=operation=>{assert.throws(operation);actualCurrentRefusals++;};
+for(const row of data.files){
+  const actual=immutableRecord(row.file),anchor=actualAuthored.get(row.file);
+  const expected=questingNative.files.find(pin=>pin.file===row.file);assert(expected&&anchor);
+  const admitted=assertQuestingEnterpriseTrackedInput(row.file,actual.row,anchor,actual.bytes);
+  assert.strictEqual(admitted.current,expected);
+  assert(Object.isFrozen(admitted)&&Object.isFrozen(admitted.current));
+  assert.equal(admitted.nativeAdmission,false);assert.equal(admitted.priorResultsTransferred,false);
+  const archived=activeNative.files.find(pin=>pin.file===row.file);assert(archived);
+  if(expected.blob!==archived.blob){
+    refuseCurrent(()=>assertQuestingEnterpriseTrackedInput(row.file,actual.row,anchor,git('show',activeNative.authoredRevision+':'+row.file)));
+    actualSample||={file:row.file,...actual,anchor,admitted};
+  }
+  actualCurrentRelations++;
+}
+assert.equal(actualCurrentRelations,currentRelations);assert(actualSample,'Exercise a genuinely changed current native input');
+const actualCase=actualSample;
+for(const raw of [Buffer.concat([actualCase.bytes,Buffer.from('\n')]),actualCase.bytes.subarray(1),actualCase.bytes.toString(),Buffer.from(actualCase.bytes.toString().replaceAll('\n','\r\n'))])
+  refuseCurrent(()=>assertQuestingEnterpriseTrackedInput(actualCase.file,actualCase.row,actualCase.anchor,raw));
+refuseCurrent(()=>assertQuestingEnterpriseTrackedInput(actualCase.file,{...actualCase.row,mode:actualCase.row.mode==='100644'?'100755':'100644'},actualCase.anchor,actualCase.bytes));
+refuseCurrent(()=>assertQuestingEnterpriseTrackedInput(actualCase.file,actualCase.row,{...actualCase.anchor,blob:'0'.repeat(40)},actualCase.bytes));
+refuseCurrent(()=>assertQuestingEnterpriseTrackedInput(actualCase.file,actualCase.row,actualCase.anchor,actualCase.bytes,Object.freeze({...questingNative})));
+refuseCurrent(()=>assertQuestingEnterpriseTrackedInput('unreviewed',actualCase.row,actualCase.anchor,actualCase.bytes));
+refuseCurrent(()=>{actualCase.admitted.nativeAdmission=true;});
 console.log(JSON.stringify({phase:'BUSINESS_DESK_COMBINED_NATIVE_SOURCE_GUARDS',source:current.authoredRevision,sourceCatalog:data.sourceRevision,
   parentTransitions:Object.fromEntries(Object.entries(parents.parentPaths).map(([name,rows])=>[name,rows.length])),currentRelations,checks,refusals,
+  retainedGuardRevision:activeNative.authoredRevision,actualCurrentRelations,actualCurrentRefusals,actualAuthoredRevision:questingNative.authoredRevision,
   ordinaryArchives:3,nativeExecution:false,postgresImportsOrConnections:0,nativeAdmission:false,priorResultsTransferred:false}));
