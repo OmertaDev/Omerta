@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "547049477c0a510e627fbb914691b61ac65e2aab",
+  "sourceRevision": "eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18251,
-    "edges": 73488,
+    "nodes": 18253,
+    "edges": 73494,
     "byNodeType": {
       "Artifact": 7356,
       "Command": 312,
-      "Commit": 5425,
+      "Commit": 5427,
       "Contract": 156,
       "Document": 970,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5915,
-      "CHANGED": 28451,
+      "CHANGED": 28455,
       "CONTAINS": 7377,
       "DECLARES": 312,
       "DEFINED_IN": 1812,
       "DEPENDS_ON": 69,
       "EXECUTES": 1237,
       "HANDLED_BY": 945,
-      "HAS_COMMIT": 5425,
+      "HAS_COMMIT": 5427,
       "IMPLEMENTS": 124,
       "IMPORTS": 9111,
       "INHERITS": 47,
@@ -236855,6 +236855,22 @@
       ]
     },
     {
+      "key": "Commit:b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "type": "Commit",
+      "id": "b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "label": "chore(knowledge): refresh final Genesis quest release evidence",
+      "title": "chore(knowledge): refresh final Genesis quest release evidence",
+      "date": "2026-11-07T08:30:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "provenance": [
+        {
+          "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b930101e1b6412743d4b6952ec6d15b41788b9af"
+        }
+      ]
+    },
+    {
       "key": "Commit:b933d6e2cf86e3b756e092496e41d3c848eea3cb",
       "type": "Commit",
       "id": "b933d6e2cf86e3b756e092496e41d3c848eea3cb",
@@ -252691,6 +252707,22 @@
         {
           "commit": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c",
           "url": "https://github.com/OmertaDev/Omerta/commit/eb04fbdf0402a2abeb9538aa9d733fc469c7675c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c",
+      "type": "Commit",
+      "id": "eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c",
+      "label": "Merge questing upgrade: investigations, saga and community mysteries",
+      "title": "Merge questing upgrade: investigations, saga and community mysteries",
+      "date": "2026-11-07T11:03:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c",
+      "provenance": [
+        {
+          "commit": "eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c"
         }
       ]
     },
@@ -289961,6 +289993,9 @@
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
         },
         {
+          "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
+        },
+        {
           "commit": "b96cf199df390a141745294e843b0ef7476bf256"
         },
         {
@@ -292679,6 +292714,9 @@
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
         },
         {
+          "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
+        },
+        {
           "commit": "b96cf199df390a141745294e843b0ef7476bf256"
         },
         {
@@ -295395,6 +295433,9 @@
         },
         {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+        },
+        {
+          "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
         },
         {
           "commit": "b96cf199df390a141745294e843b0ef7476bf256"
@@ -298863,6 +298904,9 @@
         },
         {
           "commit": "b9118553fa68ccba9e2f930756bfbce91a1b9d1d"
+        },
+        {
+          "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
         },
         {
           "commit": "b96cf199df390a141745294e843b0ef7476bf256"
@@ -314570,8 +314614,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "547049477c0a510e627fbb914691b61ac65e2aab",
-      "currentBranch": "codex/questing-production-20261106",
+      "revision": "eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -585615,6 +585659,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b93413761fd69153e8aec56460631417bbcfdaca",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-constellation-task3-core.md",
       "provenance": {
@@ -787150,6 +787226,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b930101e1b6412743d4b6952ec6d15b41788b9af",
+      "provenance": {
+        "commit": "b930101e1b6412743d4b6952ec6d15b41788b9af"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b933d6e2cf86e3b756e092496e41d3c848eea3cb",
       "provenance": {
         "commit": "b933d6e2cf86e3b756e092496e41d3c848eea3cb"
@@ -795065,6 +795149,14 @@
       "to": "Commit:eb04fbdf0402a2abeb9538aa9d733fc469c7675c",
       "provenance": {
         "commit": "eb04fbdf0402a2abeb9538aa9d733fc469c7675c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c",
+      "provenance": {
+        "commit": "eb0c21c4ed9c7a48f33f0581c2c2e4492a3f743c"
       }
     },
     {
