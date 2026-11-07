@@ -1617,7 +1617,8 @@ body.modal-open { overflow: hidden; }
     scrollbar-width: thin;
   }
   .agent-showcase__plate { scroll-snap-align: start; }
-  #screen-auth .hero { min-height: calc(100svh - 54px - var(--om-safe-area-top)); padding-block: 64px 72px; }
+  #screen-auth .hero { min-height: calc(100svh - 54px - var(--om-safe-area-top)); padding-block: clamp(12px, 2.5svh, 40px) 48px; }
+  #screen-auth .hero .sub2 { margin-bottom: 16px; }
   #screen-auth .hero > .hero-art,
   #screen-auth .hero::before,
   #screen-auth .hero::after,

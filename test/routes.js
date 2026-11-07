@@ -434,8 +434,8 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 //
 //   • text compresses when the client asks, and MATERIALLY (a hook that ran and saved nothing would
 //     read exactly like a hook that works)
-//   • identity is honoured, byte-for-byte against the file on disk — a client that cannot decode
-//     gzip must get the real thing, not a corrupted one
+//   • identity preserves the file's body after public metadata is added to the head — a client
+//     that cannot decode gzip must still get the complete playable console
 //   • the gzip DECODES to the same bytes. A corrupt stream is the worst failure here: the page is
 //     blank and nothing 500s.
 //   • Vary: Accept-Encoding on BOTH branches, or a shared cache hands the compressed copy to a
@@ -476,9 +476,11 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   assert(raw.length > 200_000, `the shell is ${raw.length} bytes — this check is sized for the real one`);
   assert(gz.rawPayload.length < raw.length * 0.6,
     `GET / compressed to ${gz.rawPayload.length} of ${raw.length} — the hook ran but saved almost nothing`);
-  assert.equal(id.rawPayload.length, raw.length, 'the identity branch must be the file on disk, byte for byte');
-  assert.deepEqual(zlib.gunzipSync(gz.rawPayload), raw,
-    'the gzipped shell must DECODE to the file — a corrupt stream is a blank page and no 500');
+  const source = raw.toString('utf8');
+  assert.ok(id.body.slice(id.body.indexOf('</head>') + 7) === source.slice(source.indexOf('</head>') + 7),
+    'metadata enhancement must preserve the complete document body');
+  assert.deepEqual(zlib.gunzipSync(gz.rawPayload), id.rawPayload,
+    'the gzipped shell must DECODE to the identity response — a corrupt stream is a blank page and no 500');
   for (const [name, r] of [['gzip', gz], ['identity', id]])
     assert(/accept-encoding/i.test(String(r.headers.vary || '')),
       `the ${name} branch must send Vary: Accept-Encoding, or a shared cache serves the wrong copy`);

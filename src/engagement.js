@@ -209,7 +209,7 @@ export async function opsEngagement(pool, days = 14) {
 
   // Flat read, JS aggregation (pg-mem). Windowed, so this scales with activity not with history.
   const rows = (await pool.query(
-    'SELECT account_id, event, props, at FROM telemetry WHERE at >= $1 LIMIT $2', [since, MAX_ROWS])).rows;
+    "SELECT account_id, event, props, at FROM telemetry WHERE at >= $1 AND event <> 'website_count' LIMIT $2", [since, MAX_ROWS])).rows;
 
   const perSystem = new Map();          // system -> {accounts:Set, events:n, last:Date}
   const agentActions = new Map();       // action kind -> {events, recommended}

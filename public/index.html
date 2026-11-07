@@ -1359,6 +1359,7 @@
     <p class="d">Read our <a href="/privacy">Privacy policy</a> and <a href="/terms">Terms</a> before creating a street.</p>
     <div id="enter-city"><button class="act cta" id="btn-guest" data-i18n="e_ghost">PLAY AS A GUEST</button></div>
     <div class="ctahint">Play without a wallet or email. Link your street to X or Privy later.</div>
+    <p id="guest-status" class="ctahint" role="status" aria-live="polite" hidden></p>
     <nav class="hero-index" aria-label="Explore this page"><a href="#city-guide">The gameplay</a><a href="#choose-your-path">Your Path</a><a href="#agent-players">AI players</a><a href="#omr-economy">The money</a></nav>
     <div class="wire-ticker" data-feed-mode="editorial"><span class="wl">SCENES FROM THE CITY</span><span id="wire-line">opening a case file&hellip;</span><button class="act" id="wire-toggle" type="button" aria-pressed="false" aria-label="Pause city scenes">pause</button></div>
     <button class="act hero-motion hidden" id="hero-motion" type="button" aria-pressed="false">Animate scene</button>
@@ -6423,8 +6424,8 @@
   }
   $('#btn-down-retry').onclick = () => { downStop(); $('#down-tick').textContent = 'trying again…'; boot(); };
 
-  const landToken = (r) => {
-    if (r.body?.token) { token = r.body.token; projections.setSession(token); localStorage.setItem('omerta_token', token); api('POST', '/v1/access/session', {}).then(() => boot()); return true; }
+  const landToken = async (r) => {
+    if (r.body?.token) { token = r.body.token; projections.setSession(token); localStorage.setItem('omerta_token', token); await api('POST', '/v1/access/session', {}); await boot(); return true; }
     else toast(r.body?.message || r.body?.error || 'no dice', true);
     return false;
   };
@@ -6461,10 +6462,29 @@
       dialog.querySelector('input').focus();
     });
   }
+  let guestPending = false;
   const enterAsGhost = async () => {
-    if (!await verifyAge()) return;
-    const inviteCode = undefined;
-    landToken(await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {}));
+    if (guestPending) return;
+    guestPending = true;
+    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);
+    const labels = controls.map(button => button.textContent);
+    const status = $('#guest-status');
+    status.hidden = false; status.textContent = 'Checking eligibility…';
+    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });
+    try {
+      if (!await verifyAge()) { status.textContent = ''; status.hidden = true; return; }
+      status.textContent = 'Opening your street…';
+      const inviteCode = undefined;
+      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});
+      if (await landToken(result)) { status.textContent = ''; status.hidden = true; }
+      else status.textContent = result.body?.message || (result.code === 429 ? 'Too many attempts. Wait a moment, then try again.' : 'Your street could not open. Please try again.');
+    } catch {
+      status.textContent = 'Your session could not open. Please try again.';
+      toast(status.textContent, true);
+    } finally {
+      guestPending = false;
+      controls.forEach((button, index) => { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = labels[index]; });
+    }
   };
   $('#btn-guest').onclick = enterAsGhost;
   { const g2 = $('#btn-guest2'); if (g2) g2.onclick = enterAsGhost; } // the secondary CTA at the foot of the pitch

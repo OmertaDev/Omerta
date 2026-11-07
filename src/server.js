@@ -39,6 +39,8 @@ import * as Crew from './crew.js';
 import * as Invites from './invites.js';
 import { accessCookie, clearAccessCookie, readAccessCookie } from './access.js';
 import { legalPage } from './legal.js';
+import { enhancePage, canonicalOrigin, siteRobots, siteSitemap } from './site-seo.js';
+import { registerSiteAnalytics } from './site-analytics.js';
 import * as Discovery from './discovery.js';
 import * as Mentor from './mentor.js';
 import * as Streak from './streak.js';
@@ -475,7 +477,7 @@ export async function buildServer() {
   // invariant worth enforcing (every /v1 route is authed unless explicitly declared public) is about
   // exactly the routes a refactor is most likely to drop on the floor.
   app.decorate('routes', routeRegistry);
-  const baseUrl = process.env.PUBLIC_URL || SOCIAL_GAME_URL;
+  const baseUrl = canonicalOrigin(process.env.PUBLIC_URL || SOCIAL_GAME_URL);
 
   // ── THE WIRE — what the player actually DOWNLOADS ─────────────────────────────────────────────
   // tools/pageweight.js measured a cold load of the landing at 5.3 MB on a phone, of which 757 KB was
@@ -531,7 +533,10 @@ export async function buildServer() {
   // changes on every deploy, so it is `no-cache` (revalidate, never stale) rather than a max-age, and
   // an unchanged deploy answers 304 in a few hundred bytes instead of 319 KB. That is the same
   // reasoning public/sw.js already applies to navigations, one layer down.
-  const servePage = (html, extra = {}) => {
+  const publicPageHtml = (html, path) => enhancePage(html, { baseUrl, path })
+    .replace('</head>', '<script src="/site-analytics.js" defer></script></head>');
+  const servePage = (html, extra = {}, path = null) => {
+    if (path) html = publicPageHtml(html, path);
     const raw = Buffer.from(html, 'utf8');
     const gz = zlib.gzipSync(raw, { level: 9 });   // level 9: paid once at boot, saved on every hit
     const etag = '"' + crypto.createHash('sha256').update(raw).digest('hex').slice(0, 16) + '"';
@@ -574,8 +579,19 @@ export async function buildServer() {
   const inviteHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'invite.html'), 'utf8');
   const privateHeaders = { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization, Accept-Encoding',
     'Referrer-Policy': 'no-referrer' };
-  const invitePage = servePage(inviteHtml, privateHeaders);
-  const gamePage = servePage(clientHtml, privateHeaders);
+  const invitePage = servePage(inviteHtml, privateHeaders, '/');
+  const gamePage = servePage(clientHtml, privateHeaders, '/');
+  const notFoundHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', '404.html'), 'utf8');
+  app.setNotFoundHandler(async (req, reply) => {
+    const path = req.url.split('?')[0];
+    const accept = String(req.headers.accept || '');
+    const navigation = ['GET', 'HEAD'].includes(req.method)
+      && !/^\/(?:v1|site-analytics|art|vendor)(?:\/|$)/.test(path)
+      && (accept.includes('text/html') || (!accept && !/\.[a-z0-9]+$/i.test(path)));
+    reply.code(404).header('Cache-Control', 'no-store').header('X-Robots-Tag', 'noindex');
+    if (navigation) return reply.type('text/html; charset=utf-8').send(notFoundHtml);
+    return reply.send({ statusCode: 404, error: 'Not Found', message: 'Route not found' });
+  });
   // A bearer can restore an existing browser session. The separate cookie only opens public views;
   // gameplay routes continue to demand their bearer and all existing server authority checks.
   const hasViewAccess = async (req) => {
@@ -596,30 +612,34 @@ export async function buildServer() {
   try { adminHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'admin.html'), 'utf8'); } catch { /* headless */ }
   // (red-team R20) the mod ops console — deny framing (clickjacking defense-in-depth; the dashboard holds
   // the mod key in sessionStorage and drives confiscate/ban/mint). No CSP (would break its inline scripts).
-  app.get('/admin', servePage(adminHtml, { 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer' }));
+  app.get('/admin', servePage(enhancePage(adminHtml, { baseUrl, path: '/admin', indexable: false }),
+    { 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer', 'X-Robots-Tag': 'noindex' }));
   // the CODEX: the in-game wiki — every system + gameplay loop (public/wiki.html); public, read-only
   let wikiHtml = '<!doctype html><title>OMERTA codex</title><p>Codex file missing (public/wiki.html).</p>';
   try { wikiHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'wiki.html'), 'utf8'); } catch { /* headless */ }
-  app.get('/wiki', servePage(wikiHtml));
+  app.get('/wiki', servePage(wikiHtml, {}, '/wiki'));
   // THE ARENA: the public, keyless agent showcase (public/arena.html) — "watch the machines run the
   // city." The agent differentiator AND a shareable/indexable marketing surface, in one. Read-only,
   // fetches GET /v1/arena for its data; §10.4-free (banded, no exact per-agent liquid).
   let arenaHtml = '<!doctype html><title>OMERTA arena</title><p>Arena file missing (public/arena.html).</p>';
   try { arenaHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'arena.html'), 'utf8'); } catch { /* headless */ }
-  app.get('/arena', servePage(arenaHtml));
+  app.get('/arena', servePage(arenaHtml, {}, '/arena'));
 
   // The no-code onboarding walkthrough (set up Claude Desktop to play via the MCP connector).
   let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';
   try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }
-  app.get('/play', servePage(playHtml));
+  app.get('/play', servePage(playHtml, {}, '/play'));
   // Public token sale; auction figures remain unavailable until the auction is connected.
   let saleHtml = '<!doctype html><title>$OMR token sale | OMERTÀ</title><p>Token sale page unavailable.</p>';
   try { saleHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sale.html'), 'utf8'); } catch { /* headless */ }
-  app.get('/sale', servePage(saleHtml));
+  app.get('/sale', servePage(saleHtml, {}, '/sale'));
   for (const [url, kind] of Object.entries({ '/privacy': 'privacy', '/terms': 'terms', '/dmca': 'dmca', '/resources': 'resources' })) {
     app.get(url, async (req, reply) => {
       const page = legalPage(kind);
-      return reply.code(page.ready ? 200 : 503).header('Cache-Control', 'no-store').type('text/html; charset=utf-8').send(page.html);
+      const html = page.ready ? publicPageHtml(page.html, url)
+        : enhancePage(page.html, { baseUrl, path: url, indexable: false });
+      if (!page.ready) reply.header('X-Robots-Tag', 'noindex');
+      return reply.code(page.ready ? 200 : 503).header('Cache-Control', 'no-store').type('text/html; charset=utf-8').send(html);
     });
   }
   app.get('/vendor/walletconnect.js', async (req, reply) => reply.type('application/javascript; charset=utf-8')
@@ -631,12 +651,11 @@ export async function buildServer() {
   // THE PATH FINDER — a public, server-rendered acquisition funnel. The content manifest derives its
   // numbers from rules.js, the POST below owns scoring, and each result gets a stable indexable URL
   // with its own OG image. Prepared once at boot like the other public pages: no per-hit rendering.
-  app.get('/path', servePage(renderPathQuizPage({ baseUrl })));
-  const pathPages = new Map(PATH_IDS.map((id) => [id, servePage(renderPathResultPage(id, { baseUrl }))]));
+  app.get('/path', servePage(renderPathQuizPage({ baseUrl }), {}, '/path'));
+  const pathPages = new Map(PATH_IDS.map((id) => [id, servePage(renderPathResultPage(id, { baseUrl }), {}, `/path/${id}`)]));
   app.get('/path/:id', async (req, reply) => {
     const page = pathPages.get(String(req.params.id || '').toLowerCase());
-    if (!page) return reply.code(404).type('text/html; charset=utf-8')
-      .send('<!doctype html><title>Path not found | OMERTÀ</title><p>This doctrine is not in the city.</p>');
+    if (!page) return reply.callNotFound();
     return page(req, reply);
   });
   // Shared interface tokens and public-shell primitives. Keeping this as a tiny, explicit asset route
@@ -648,6 +667,7 @@ export async function buildServer() {
     .header('cache-control', 'no-cache').send(uiCss));
   // City scenes are optional local assets; gameplay remains authoritative through the API.
   for (const [file, type] of [
+    ['site-analytics.js', 'application/javascript'],
     ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
     ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],
@@ -679,13 +699,14 @@ export async function buildServer() {
   // runs fullscreen. Read once at boot (the sw.js/index precedent); a missing file degrades, never crashes.
   const pub = (f) => join(dirname(fileURLToPath(import.meta.url)), '..', 'public', f);
   // Explicit public pages and reviewed deployment modules: no user-controlled file path.
-  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'));
+  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'), {}, '/defi');
   app.get('/defi', defiPage);
   app.get('/defi.html', defiPage);
-  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'));
+  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'), {}, '/fee-flows');
   app.get('/fee-flows', feeflowsPage);
   app.get('/fee-flows.html', feeflowsPage);
-  const genesisdeployPage = servePage(readFileSync(pub('genesis-deploy.html'), 'utf8'));
+  const genesisdeployPage = servePage(enhancePage(readFileSync(pub('genesis-deploy.html'), 'utf8'),
+    { baseUrl, path: '/genesis-deploy', indexable: false }), { 'X-Robots-Tag': 'noindex' });
   app.get('/genesis-deploy', genesisdeployPage);
   app.get('/genesis-deploy.html', genesisdeployPage);
   const reviewedModule = name => {
@@ -710,7 +731,7 @@ export async function buildServer() {
   // the app icons — binary PNGs, served from a filename allowlist Map (the /art precedent; no traversal
   // surface by construction) with a long cache (they change only on a redeploy).
   const PWA_ICONS = new Map();
-  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {
+  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'site-share.png']) {
     try { PWA_ICONS.set(f, readFileSync(pub(f))); } catch { /* headless */ }
   }
   for (const [name, buf] of PWA_ICONS) {
@@ -993,16 +1014,10 @@ export async function buildServer() {
   // robots.txt — every crawler (incl. all AI agents: GPTBot, ClaudeBot, Google-Extended, PerplexityBot,
   // xAI/Grok, open-source fetchers) is explicitly WELCOME and pointed at the machine surfaces. Agents
   // are first-class players here, so the default-allow is stated rather than implied by a 404.
-  app.get('/robots.txt', async (req, reply) => reply.type('text/plain; charset=utf-8').send(
-    ['# OMERTÀ — all crawlers and AI agents welcome. Agents are first-class players.',
-      '# Machine surfaces: /llms.txt (index) · /agents (agent guide) · /openapi.json (API contract) · /play (no-code setup)',
-      `# Start here: ${baseUrl}/llms.txt`,
-      'User-agent: *', 'Allow: /', `Sitemap: ${baseUrl}/sitemap.xml`].join('\n') + '\n'));
+  app.get('/robots.txt', async (req, reply) => reply.type('text/plain; charset=utf-8').send(siteRobots(baseUrl)));
   app.get('/sitemap.xml', async (req, reply) => reply.type('application/xml; charset=utf-8')
     .header('cache-control', 'public, max-age=3600').send(
-      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`
-      + ['/', '/wiki', '/arena', '/play', '/agents'].map((path) => `  <url><loc>${baseUrl}${path}</loc></url>`).join('\n')
-      + '\n</urlset>\n'));
+      siteSitemap(baseUrl, { legalReady: { terms: legalPage('terms').ready, dmca: legalPage('dmca').ready } })));
   // OpenAPI 3.1 of every mounted route — built once, after all routes register (deferred to first hit).
   let openApiCache = null;
   app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));
@@ -1252,6 +1267,7 @@ export async function buildServer() {
       && routeRegistry.some((route) => route.method === req.method
         && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);
   });
+  registerSiteAnalytics(app, { pool, modAuth, baseUrl });
   registerRwa(app, {
     pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,
   });

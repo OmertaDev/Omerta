@@ -1,6 +1,7 @@
 // Exact questing comparison-only successor; never imported by game/runtime/native admission.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { siteBasicsHistoricalInput, siteBasicsHistoricalEntry } from './site-basics-source-transfer.js';
 
 const source = {
   "status": "SEALED",
@@ -1975,6 +1976,8 @@ export function qualifyQuestingSource(file, input) {
 // Unknown bytes remain unmodified so the existing downstream exact assertions
 // reject them. This function never recognizes a namespace prefix or partial hunk.
 export function questingHistoricalInput(file, input) {
+  // The helper's own actual source remains available to its isolated definition controls.
+  if (file !== 'tools/questing-source-transfer.js') input = siteBasicsHistoricalInput(file, input);
   if (!known(file)) return input;
   const current = canonical(input), row = source.files[file];
   if (!current || sha(current.lf) !== row.current.sha256) return input;
@@ -1986,6 +1989,7 @@ export function questingHistoricalInput(file, input) {
 // qualified. No native manifest or runtime loader imports this identity view.
 export function questingHistoricalEntry(file, entry, kind) {
   assert(kind === 'tree' || kind === 'index', 'Choose an explicit Git identity shape');
+  entry = siteBasicsHistoricalEntry(file, entry, kind);
   if (!known(file)) return entry;
   definition();
   const row = source.files[file];

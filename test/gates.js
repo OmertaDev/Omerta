@@ -4098,6 +4098,26 @@ scopedSocialContext = async function(db) {
   const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative), enterpriseParts = splitNative(enterpriseNative);
   const expectedUxNativeStep = "      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)\n        env:\n          UX_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n        run: npm run test:ux:postgres";
   const uxNativeParts = coreParts.steps.filter(part => part.includes('      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)'));
+  const expectedSiteAnalyticsNativeStep = "      - name: Optional website counts on real PostgreSQL\n        env:\n          SITE_ANALYTICS_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n          DATABASE_URL: ''\n        run: node test/site-analytics.js --postgres";
+  const assertSiteAnalyticsNativeStep = block => {
+    const parts = splitNative(block).steps.filter(part => part.includes('      - name: Optional website counts on real PostgreSQL'));
+    assert.equal(parts.length, 1, 'Exactly one complete website aggregate PostgreSQL proof is required');
+    assert.equal(nativeShape(parts[0]), nativeShape(expectedSiteAnalyticsNativeStep),
+      'Optional website counts retain their explicit disposable endpoint, bare native command and unconditional execution');
+  };
+  assertSiteAnalyticsNativeStep(coreNative);
+  assertSiteAnalyticsNativeStep(coreNative.replaceAll('\n', '\r\n'));
+  const siteAnalyticsNativeBlock = coreNative.replaceAll('\r\n', '\n');
+  assert.equal(siteAnalyticsNativeBlock.split(expectedSiteAnalyticsNativeStep).length, 2);
+  for (const change of [expectedSiteAnalyticsNativeStep.replace('        env:', '        if: false\n        env:'),
+    expectedSiteAnalyticsNativeStep.replace('        env:', '        continue-on-error: true\n        env:'),
+    expectedSiteAnalyticsNativeStep.replace('127.0.0.1', 'remote.invalid'),
+    expectedSiteAnalyticsNativeStep.replace(' --postgres', ''), expectedSiteAnalyticsNativeStep + ' --partial'])
+    assert.throws(() => assertSiteAnalyticsNativeStep(siteAnalyticsNativeBlock.replace(expectedSiteAnalyticsNativeStep, change)),
+      'Skipped, optional, remote, non-native or partial website proofs must reject');
+  assert.throws(() => assertSiteAnalyticsNativeStep(siteAnalyticsNativeBlock.replace(expectedSiteAnalyticsNativeStep, '')));
+  assert.throws(() => assertSiteAnalyticsNativeStep(siteAnalyticsNativeBlock.replace(expectedSiteAnalyticsNativeStep,
+    expectedSiteAnalyticsNativeStep + '\n' + expectedSiteAnalyticsNativeStep)));
   assert.equal(uxNativeParts.length, 1, 'Exactly one complete UX native metadata and RLS proof is required');
   assert.equal(nativeShape(uxNativeParts[0]), nativeShape(expectedUxNativeStep), 'UX native proof keeps its disposable endpoint, complete command and unconditional execution');
   for (const changed of [expectedUxNativeStep.replace('test:ux:postgres', 'test:ux:postgres -- --partial'), expectedUxNativeStep.replace('        env:', '        if: false\n        env:'), expectedUxNativeStep.replace('        env:', '        continue-on-error: true\n        env:')])
@@ -4314,6 +4334,7 @@ scopedSocialContext = async function(db) {
   // an unnamed `- run: command`, a named step's `run: command`, and their literal `|` bodies.
   // Unknown block scalar syntax fails closed so a new shape cannot quietly stop being inventoried.
   const exactNativeNodeCommands = new Set([
+    'node test/site-analytics.js --postgres',
     'node test/db-rls.js --postgres',
     'node test/payment-receipts-postgres.js',
     'node test/deeds-supply-postgres.js',
@@ -4387,7 +4408,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'build:funded-work-artifact', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
+    'build:funded-work-artifact', 'node test/site-analytics.js --postgres', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
     'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',
     'pgquery', 'test:goods-market:postgres', 'test:deed-discovery:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:ux:postgres', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:business-desk:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:agent-economy-market-operations:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',

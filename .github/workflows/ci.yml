@@ -455,6 +455,12 @@ jobs:
       - name: Install PostgreSQL client tools matching the server major
         run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
 
+      - name: Optional website counts on real PostgreSQL
+        env:
+          SITE_ANALYTICS_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check
+          DATABASE_URL: ''
+        run: node test/site-analytics.js --postgres
+
       - name: Gateway, RLS and receipt concurrency on real PostgreSQL
         env:
           COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check

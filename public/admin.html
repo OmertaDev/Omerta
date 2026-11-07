@@ -165,6 +165,7 @@
     <div class="panel" id="p-economy"><h2>Economy</h2><div class="body">…</div></div>
     <div class="panel" id="p-players"><h2>Players</h2><div class="body">…</div></div>
     <div class="panel" id="p-funnel"><h2>Onboarding progress</h2><div class="body">…</div></div>
+    <div class="panel" id="p-site-analytics"><h2>Public site analytics</h2><div class="body" aria-live="polite">Loading optional counts…</div></div>
     <div class="panel" id="p-coach"><h2>Current coach prompts</h2><div class="body">…</div></div>
     <div class="panel" id="p-engage"><h2>Engagement &amp; retention</h2><div class="body">…</div></div>
     <div class="panel" id="p-top"><h2>The Powerful</h2><div class="body">…</div></div>
@@ -282,7 +283,7 @@
     $('#dash').setAttribute('aria-busy', 'true');
     $('#status').textContent = 'refreshing…';
     const [ov, inv, fn, res, vig, em, act, rev, eng, bnd, tre, coa, intg, rtr, cpar, bkv, com, thl,
-      rwaBallot, rwaEpochs, rwaBudget, rwaDeliveries] = await Promise.all([
+      rwaBallot, rwaEpochs, rwaBudget, rwaDeliveries, siteAnalytics] = await Promise.all([
       j('GET', '/v1/mod/overview'), j('GET', '/v1/mod/invariants'), j('GET', '/v1/mod/funnel'),
       j('GET', '/v1/mod/reserve'), j('GET', '/v1/mod/vig'), j('GET', '/v1/mod/emission'),
       j('GET', '/v1/mod/activity?limit=60'), j('GET', '/v1/mod/revenue'),
@@ -291,7 +292,7 @@
       j('GET', '/v1/mod/chain/params'), j('GET', '/v1/mod/bank'), j('GET', '/v1/mod/community'),
       j('GET', '/v1/mod/tokenhealth'), j('GET', '/v1/commission/ticker'),
       j('GET', '/v1/mod/brokers'), j('GET', '/v1/mod/treasury/budget'),
-      j('GET', '/v1/mod/treasury/deliveries'),
+      j('GET', '/v1/mod/treasury/deliveries'), j('GET', '/v1/mod/site-analytics'),
     ]);
     $('#dash').removeAttribute('aria-busy');
     if (ov.code === 401) return $('#logout').onclick();
@@ -320,6 +321,7 @@
 
     $('#stamp').textContent = 'as of ' + new Date().toLocaleTimeString();
     renderIntegrity(inv.body); renderEconomy(ov.body, em.body); renderPlayers(ov.body); renderEngagement(eng.body);
+    renderSiteAnalytics(siteAnalytics);
     renderFunnel(fn.body); renderTop(ov.body); renderChain(res.body, vig.body, em.body, rev.body, bnd.body, tre, ov.body, bkv.body, com.body); renderRouter(rtr.body); renderTokenHealth(thl.body);
     renderBackups(ov.body); renderSocial(ov.body); renderCoach(coa.body);
     renderIntegrations(intg.body); window.__cpar = (cpar.body && cpar.body.rows) || []; renderChainParams(cpar.body);
@@ -544,6 +546,28 @@
       `<div class="note">${fmt(c.surveyed)} active players surveyed (last ${c.activeWindowDays}d) · ${fmt(c.silent)} with a quiet coach</div>`
       + (rows || '<div class="note">No players were active during this window.</div>');
   }
+  function renderSiteAnalytics(response) {
+    const panel = $('#p-site-analytics .body');
+    const data = response?.body;
+    if (response?.code !== 200 || !data?.totals) {
+      panel.textContent = 'Optional counts are unavailable. Refresh to retry.';
+      return;
+    }
+    const pages = new Map();
+    for (const row of data.rows || []) {
+      const label = row.event === 'cta' ? `${row.page} → ${row.target === 'guest_start' ? 'Play as guest' : row.target}` : row.page;
+      const key = `${row.event}:${label}`;
+      const previous = pages.get(key);
+      pages.set(key, { label, event: row.event, count: (previous?.count || 0) + Number(row.count || 0) });
+    }
+    const top = [...pages.values()].sort((a, b) => b.count - a.count).slice(0, 12);
+    panel.innerHTML = `<div class="row"><span class="k">page views</span><span class="v">${fmt(data.totals.pageviews)}</span></div>`
+      + `<div class="row"><span class="k">public CTA clicks</span><span class="v">${fmt(data.totals.ctaClicks)}</span></div>`
+      + `<div class="note">Opted-in counts since ${esc(data.since)}. Browser privacy signals are respected. These are event totals, not unique visitors.</div>`
+      + (top.length ? top.map(row => `<div class="row"><span class="k">${esc(row.label)}${row.event === 'cta' ? ' · clicks' : ' · views'}</span><span class="v">${fmt(row.count)}</span></div>`).join('')
+        : '<div class="note">No optional counts yet. Visitors can enable them in Analytics choices.</div>');
+  }
+
   function renderFunnel(fn) {
     if (!fn) return;
     const lv = fn.levels || {}, pr = fn.progression || {}, fw = fn.firstWeek || {};

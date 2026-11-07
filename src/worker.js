@@ -446,6 +446,8 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     // selective telemetry retention (bulletproof audit) — the sweep + its keep-list live beside the
     // season rollover as exported functions so test/hardening.js drives them rather than restating the query
     await safe('telemetry retention', () => sweepTelemetry(pool));
+    await safe('site analytics retention', () => pool.query("DELETE FROM telemetry WHERE event='website_count' AND at < $1",
+      [new Date(Date.now() - 89 * 86400000).toISOString().slice(0, 10)]));
     await safe('oauth state sweep', () => pool.query('DELETE FROM oauth_states WHERE created_at < $1',
       [new Date(Date.now() - 30 * 60000)])); // single-use PKCE states die in 30 min regardless
     // §7.13 tier-2 reconcile: pay the "family tree" fee the post-commit hook couldn't (grandrecruiter
