@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "530f51da4ed61d299d8e589e7300419c142d6504",
+  "sourceRevision": "bebfe4249a5a9705017689a746deda9f5a2313d7",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18243,
-    "edges": 73455,
+    "nodes": 18247,
+    "edges": 73472,
     "byNodeType": {
       "Artifact": 7356,
       "Command": 312,
-      "Commit": 5417,
+      "Commit": 5421,
       "Contract": 156,
       "Document": 970,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5915,
-      "CHANGED": 28429,
+      "CHANGED": 28441,
       "CONTAINS": 7377,
       "DECLARES": 312,
       "DEFINED_IN": 1812,
       "DEPENDS_ON": 69,
       "EXECUTES": 1237,
       "HANDLED_BY": 945,
-      "HAS_COMMIT": 5417,
+      "HAS_COMMIT": 5421,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9108,
+      "IMPORTS": 9109,
       "INHERITS": 47,
       "REFERENCES": 3971,
       "REPRESENTS": 2725,
@@ -7751,20 +7751,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 78732,
-      "lines": 1601,
-      "version": "16a81f21b9e00ac7",
+      "bytes": 78782,
+      "lines": 1602,
+      "version": "71b73145b1656e81",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "16a81f21b9e00ac7"
+          "version": "71b73145b1656e81"
         }
       ],
-      "lastChangedAt": "2026-11-07T05:07:48.000Z",
+      "lastChangedAt": "2026-11-07T07:29:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7430b6686afc952720953c0c66e10b0a0c285c45"
+      "lastChangedCommit": "6655975477e17ee394e578381675e42831e9f1e9"
     },
     {
       "key": "Artifact:.github/workflows/economy-hardening.yml",
@@ -41193,20 +41193,20 @@
       "path": "docs/questing-next-30.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 4254,
+      "bytes": 4309,
       "lines": 38,
-      "version": "8f2666b43afd7f9d",
+      "version": "16ffdded1feb1f97",
       "text": true,
       "provenance": [
         {
           "file": "docs/questing-next-30.md",
           "line": 1,
-          "version": "8f2666b43afd7f9d"
+          "version": "16ffdded1feb1f97"
         }
       ],
-      "lastChangedAt": "2026-11-07T00:16:11.000Z",
+      "lastChangedAt": "2026-11-07T07:29:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "dea68cece4aed9c81c14f728e871d7abcbecee21"
+      "lastChangedCommit": "6655975477e17ee394e578381675e42831e9f1e9"
     },
     {
       "key": "Artifact:docs/questing-review-evidence.txt",
@@ -145124,20 +145124,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 477569,
-      "lines": 5298,
-      "version": "105554e4c1456831",
+      "bytes": 477819,
+      "lines": 5300,
+      "version": "ab7f34f6707fb762",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "105554e4c1456831"
+          "version": "ab7f34f6707fb762"
         }
       ],
-      "lastChangedAt": "2026-11-07T05:07:48.000Z",
+      "lastChangedAt": "2026-11-07T07:29:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7430b6686afc952720953c0c66e10b0a0c285c45"
+      "lastChangedCommit": "6655975477e17ee394e578381675e42831e9f1e9"
     },
     {
       "key": "Artifact:test/gateway-api.js",
@@ -146895,20 +146895,20 @@
       "path": "test/lib/rc1-historical-source-fixture.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 47992,
-      "lines": 740,
-      "version": "0e41cfe41662c59b",
+      "bytes": 54193,
+      "lines": 828,
+      "version": "f890ab2e2a0f56d3",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
           "line": 1,
-          "version": "0e41cfe41662c59b"
+          "version": "f890ab2e2a0f56d3"
         }
       ],
-      "lastChangedAt": "2026-11-05T01:02:38.000Z",
+      "lastChangedAt": "2026-11-07T07:29:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3785994c91797a68c6bbc8673d56f314651858e5"
+      "lastChangedCommit": "6655975477e17ee394e578381675e42831e9f1e9"
     },
     {
       "key": "Artifact:test/lib/rc1-historical-worker-source.js",
@@ -151012,20 +151012,20 @@
       "path": "test/questing-source-transfer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11701,
-      "lines": 186,
-      "version": "0a9ba35f19487e76",
+      "bytes": 11783,
+      "lines": 188,
+      "version": "ba1d11cf90cbca73",
       "text": true,
       "provenance": [
         {
           "file": "test/questing-source-transfer.js",
           "line": 1,
-          "version": "0a9ba35f19487e76"
+          "version": "ba1d11cf90cbca73"
         }
       ],
-      "lastChangedAt": "2026-11-07T05:12:41.000Z",
+      "lastChangedAt": "2026-11-07T07:35:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a4c7c3947b5f006b093d49ffbc4fdb6cbe71a9f2"
+      "lastChangedCommit": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b"
     },
     {
       "key": "Artifact:test/questing-ux-release-phase2-native-catalog-guard.js",
@@ -157935,20 +157935,20 @@
       "path": "test/ux-experience-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 12614,
-      "lines": 167,
-      "version": "83f6a4efbbcaf76d",
+      "bytes": 12984,
+      "lines": 171,
+      "version": "b0d83eb587c4bed0",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "83f6a4efbbcaf76d"
+          "version": "b0d83eb587c4bed0"
         }
       ],
-      "lastChangedAt": "2026-11-05T02:29:40.000Z",
+      "lastChangedAt": "2026-11-07T07:29:19.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "42d9df7628a30653ff7c8bac203b7bd317dee597"
+      "lastChangedCommit": "6655975477e17ee394e578381675e42831e9f1e9"
     },
     {
       "key": "Artifact:test/ux-feedback.js",
@@ -162399,20 +162399,20 @@
       "path": "tools/enterprise-native-questing-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 453642,
-      "lines": 12039,
-      "version": "9fc68f137193149a",
+      "bytes": 454230,
+      "lines": 12054,
+      "version": "1ad6848bc980e5f2",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "9fc68f137193149a"
+          "version": "1ad6848bc980e5f2"
         }
       ],
-      "lastChangedAt": "2026-11-07T05:15:10.000Z",
+      "lastChangedAt": "2026-11-07T07:36:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "530f51da4ed61d299d8e589e7300419c142d6504"
+      "lastChangedCommit": "bebfe4249a5a9705017689a746deda9f5a2313d7"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -164937,20 +164937,20 @@
       "path": "tools/questing-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 503253,
-      "lines": 1890,
-      "version": "b34a7f42d634d338",
+      "bytes": 518441,
+      "lines": 1957,
+      "version": "5df60db7688f2aca",
       "text": true,
       "provenance": [
         {
           "file": "tools/questing-source-transfer.js",
           "line": 1,
-          "version": "b34a7f42d634d338"
+          "version": "5df60db7688f2aca"
         }
       ],
-      "lastChangedAt": "2026-11-07T05:12:41.000Z",
+      "lastChangedAt": "2026-11-07T07:35:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a4c7c3947b5f006b093d49ffbc4fdb6cbe71a9f2"
+      "lastChangedCommit": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b"
     },
     {
       "key": "Artifact:tools/questing-ux-release-phase2-native-catalog.js",
@@ -203095,6 +203095,22 @@
       ]
     },
     {
+      "key": "Commit:58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+      "type": "Commit",
+      "id": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+      "label": "test: bind exact quest source comparisons to archived helper fix",
+      "title": "test: bind exact quest source comparisons to archived helper fix",
+      "date": "2026-11-07T07:35:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+      "provenance": [
+        {
+          "commit": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/58c2729de1f7bcba7c4c0fd573a3906f5e90f33b"
+        }
+      ]
+    },
+    {
       "key": "Commit:58c350be9f30be63f2008f76a2e7b5fe3c3e4f10",
       "type": "Commit",
       "id": "58c350be9f30be63f2008f76a2e7b5fe3c3e4f10",
@@ -208003,6 +208019,22 @@
         {
           "commit": "66521ca5a187c6084ce35fa84dbf4958bb0bdddf",
           "url": "https://github.com/OmertaDev/Omerta/commit/66521ca5a187c6084ce35fa84dbf4958bb0bdddf"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6655975477e17ee394e578381675e42831e9f1e9",
+      "type": "Commit",
+      "id": "6655975477e17ee394e578381675e42831e9f1e9",
+      "label": "Preserve archived worker controls and deterministic mobile setup",
+      "title": "Preserve archived worker controls and deterministic mobile setup",
+      "date": "2026-11-07T07:29:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6655975477e17ee394e578381675e42831e9f1e9",
+      "provenance": [
+        {
+          "commit": "6655975477e17ee394e578381675e42831e9f1e9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6655975477e17ee394e578381675e42831e9f1e9"
         }
       ]
     },
@@ -238631,6 +238663,22 @@
       ]
     },
     {
+      "key": "Commit:bebfe4249a5a9705017689a746deda9f5a2313d7",
+      "type": "Commit",
+      "id": "bebfe4249a5a9705017689a746deda9f5a2313d7",
+      "label": "test: reseal actual quest native inputs after archived helper repair",
+      "title": "test: reseal actual quest native inputs after archived helper repair",
+      "date": "2026-11-07T07:36:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bebfe4249a5a9705017689a746deda9f5a2313d7",
+      "provenance": [
+        {
+          "commit": "bebfe4249a5a9705017689a746deda9f5a2313d7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bebfe4249a5a9705017689a746deda9f5a2313d7"
+        }
+      ]
+    },
+    {
       "key": "Commit:beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03",
       "type": "Commit",
       "id": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03",
@@ -239379,6 +239427,22 @@
         {
           "commit": "c1375d3cb722c294239adfea6038cea1b51787e5",
           "url": "https://github.com/OmertaDev/Omerta/commit/c1375d3cb722c294239adfea6038cea1b51787e5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "type": "Commit",
+      "id": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "label": "chore(knowledge): refresh pinned quest release source",
+      "title": "chore(knowledge): refresh pinned quest release source",
+      "date": "2026-11-07T05:22:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "provenance": [
+        {
+          "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
         }
       ]
     },
@@ -272421,12 +272485,12 @@
       "label": "docs/questing-next-30.md",
       "documentType": "documentation",
       "lines": 38,
-      "version": "8f2666b43afd7f9d",
+      "version": "16ffdded1feb1f97",
       "provenance": [
         {
           "file": "docs/questing-next-30.md",
           "line": 1,
-          "version": "8f2666b43afd7f9d"
+          "version": "16ffdded1feb1f97"
         }
       ]
     },
@@ -279927,7 +279991,7 @@
         },
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
-          "line": 381
+          "line": 425
         },
         {
           "file": "test/liquidityindexer.js",
@@ -280847,7 +280911,7 @@
         },
         {
           "file": "test/gates.js",
-          "line": 4216
+          "line": 4218
         },
         {
           "file": "test/launch-invites-browser.js",
@@ -289899,6 +289963,9 @@
           "commit": "c1375d3cb722c294239adfea6038cea1b51787e5"
         },
         {
+          "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
+        },
+        {
           "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
         },
         {
@@ -292611,6 +292678,9 @@
           "commit": "c1375d3cb722c294239adfea6038cea1b51787e5"
         },
         {
+          "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
+        },
+        {
           "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
         },
         {
@@ -295321,6 +295391,9 @@
         },
         {
           "commit": "c1375d3cb722c294239adfea6038cea1b51787e5"
+        },
+        {
+          "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
         },
         {
           "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
@@ -298783,6 +298856,9 @@
         },
         {
           "commit": "c1375d3cb722c294239adfea6038cea1b51787e5"
+        },
+        {
+          "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
         },
         {
           "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
@@ -314418,7 +314494,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "530f51da4ed61d299d8e589e7300419c142d6504",
+      "revision": "bebfe4249a5a9705017689a746deda9f5a2313d7",
       "currentBranch": "codex/questing-production-20261106",
       "defaultBranch": "main",
       "visibility": "public",
@@ -358529,13 +358605,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 5298,
-      "version": "105554e4c1456831",
+      "lines": 5300,
+      "version": "ab7f34f6707fb762",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "105554e4c1456831"
+          "version": "ab7f34f6707fb762"
         }
       ]
     },
@@ -359669,13 +359745,13 @@
       "type": "TestSuite",
       "id": "test/lib/rc1-historical-source-fixture.js",
       "label": "test/lib/rc1-historical-source-fixture.js",
-      "lines": 740,
-      "version": "0e41cfe41662c59b",
+      "lines": 828,
+      "version": "f890ab2e2a0f56d3",
       "provenance": [
         {
           "file": "test/lib/rc1-historical-source-fixture.js",
           "line": 1,
-          "version": "0e41cfe41662c59b"
+          "version": "f890ab2e2a0f56d3"
         }
       ]
     },
@@ -362354,13 +362430,13 @@
       "type": "TestSuite",
       "id": "test/questing-source-transfer.js",
       "label": "test/questing-source-transfer.js",
-      "lines": 186,
-      "version": "0a9ba35f19487e76",
+      "lines": 188,
+      "version": "ba1d11cf90cbca73",
       "provenance": [
         {
           "file": "test/questing-source-transfer.js",
           "line": 1,
-          "version": "0a9ba35f19487e76"
+          "version": "ba1d11cf90cbca73"
         }
       ]
     },
@@ -366869,13 +366945,13 @@
       "type": "TestSuite",
       "id": "test/ux-experience-browser.js",
       "label": "test/ux-experience-browser.js",
-      "lines": 167,
-      "version": "83f6a4efbbcaf76d",
+      "lines": 171,
+      "version": "b0d83eb587c4bed0",
       "provenance": [
         {
           "file": "test/ux-experience-browser.js",
           "line": 1,
-          "version": "83f6a4efbbcaf76d"
+          "version": "b0d83eb587c4bed0"
         }
       ]
     },
@@ -367844,13 +367920,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 1601,
-      "version": "16a81f21b9e00ac7",
+      "lines": 1602,
+      "version": "71b73145b1656e81",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "16a81f21b9e00ac7"
+          "version": "71b73145b1656e81"
         }
       ]
     },
@@ -492031,6 +492107,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+      "to": "Artifact:test/questing-source-transfer.js",
+      "provenance": {
+        "commit": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "commit": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:58c350be9f30be63f2008f76a2e7b5fe3c3e4f10",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -503971,6 +504063,46 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "66521ca5a187c6084ce35fa84dbf4958bb0bdddf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6655975477e17ee394e578381675e42831e9f1e9",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "6655975477e17ee394e578381675e42831e9f1e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6655975477e17ee394e578381675e42831e9f1e9",
+      "to": "Artifact:docs/questing-next-30.md",
+      "provenance": {
+        "commit": "6655975477e17ee394e578381675e42831e9f1e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6655975477e17ee394e578381675e42831e9f1e9",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "6655975477e17ee394e578381675e42831e9f1e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6655975477e17ee394e578381675e42831e9f1e9",
+      "to": "Artifact:test/lib/rc1-historical-source-fixture.js",
+      "provenance": {
+        "commit": "6655975477e17ee394e578381675e42831e9f1e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6655975477e17ee394e578381675e42831e9f1e9",
+      "to": "Artifact:test/ux-experience-browser.js",
+      "provenance": {
+        "commit": "6655975477e17ee394e578381675e42831e9f1e9"
       }
     },
     {
@@ -591375,6 +591507,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:bebfe4249a5a9705017689a746deda9f5a2313d7",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "bebfe4249a5a9705017689a746deda9f5a2313d7"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03",
       "to": "Artifact:test/graph.js",
       "provenance": {
@@ -594243,6 +594383,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "c1375d3cb722c294239adfea6038cea1b51787e5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
       }
     },
     {
@@ -769942,6 +770114,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:58c2729de1f7bcba7c4c0fd573a3906f5e90f33b",
+      "provenance": {
+        "commit": "58c2729de1f7bcba7c4c0fd573a3906f5e90f33b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:58c350be9f30be63f2008f76a2e7b5fe3c3e4f10",
       "provenance": {
         "commit": "58c350be9f30be63f2008f76a2e7b5fe3c3e4f10"
@@ -772393,6 +772573,14 @@
       "to": "Commit:66521ca5a187c6084ce35fa84dbf4958bb0bdddf",
       "provenance": {
         "commit": "66521ca5a187c6084ce35fa84dbf4958bb0bdddf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6655975477e17ee394e578381675e42831e9f1e9",
+      "provenance": {
+        "commit": "6655975477e17ee394e578381675e42831e9f1e9"
       }
     },
     {
@@ -787710,6 +787898,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:bebfe4249a5a9705017689a746deda9f5a2313d7",
+      "provenance": {
+        "commit": "bebfe4249a5a9705017689a746deda9f5a2313d7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03",
       "provenance": {
         "commit": "beccd6ed4a9f1cedcf8ed11ed88d54a551bebc03"
@@ -788081,6 +788277,14 @@
       "to": "Commit:c1375d3cb722c294239adfea6038cea1b51787e5",
       "provenance": {
         "commit": "c1375d3cb722c294239adfea6038cea1b51787e5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c14e1de57fc0f1e0c6fdc16920cce03ee466910a",
+      "provenance": {
+        "commit": "c14e1de57fc0f1e0c6fdc16920cce03ee466910a"
       }
     },
     {
@@ -839554,7 +839758,7 @@
       "to": "Artifact:tools/company-autonomy-native.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 4516
+        "line": 4518
       }
     },
     {
@@ -839635,7 +839839,7 @@
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "test/gates.js",
-        "line": 4216
+        "line": 4218
       }
     },
     {
@@ -842971,6 +843175,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/lib/rc1-historical-source-fixture.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "test/lib/rc1-historical-source-fixture.js",
+        "line": 30
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/rc1-historical-source-fixture.js",
       "to": "Artifact:tools/rc1-city-activity-market-source-compatibility.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
@@ -842992,7 +843205,7 @@
       "to": "Artifact:tools/rc1-npc-boat-journal.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 409
+        "line": 454
       }
     },
     {
@@ -843001,7 +843214,7 @@
       "to": "Artifact:tools/rc1-npc-car-acquisition.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 408
+        "line": 453
       }
     },
     {
@@ -843010,7 +843223,7 @@
       "to": "Artifact:tools/rc1-npc-market-order-journal.js",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 410
+        "line": 455
       }
     },
     {
@@ -843028,7 +843241,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/lib/rc1-historical-source-fixture.js",
-        "line": 381
+        "line": 425
       }
     },
     {
@@ -875401,7 +875614,7 @@
       "to": "Artifact:tools/ci-deed-recovery-source-transfer.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1726
+        "line": 1793
       }
     },
     {
@@ -875410,7 +875623,7 @@
       "to": "Artifact:tools/ci-deed-recovery-source-transfer.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1727
+        "line": 1794
       }
     },
     {
@@ -875446,7 +875659,7 @@
       "to": "Artifact:tools/classic-interface-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1772
+        "line": 1839
       }
     },
     {
@@ -875455,7 +875668,7 @@
       "to": "Artifact:tools/classic-interface-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1773
+        "line": 1840
       }
     },
     {
@@ -875563,7 +875776,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1654
+        "line": 1700
       }
     },
     {
@@ -875572,7 +875785,7 @@
       "to": "Artifact:tools/deed-allocation-source-transfer.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1655
+        "line": 1701
       }
     },
     {
@@ -875599,7 +875812,7 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1705
+        "line": 1772
       }
     },
     {
@@ -875608,7 +875821,7 @@
       "to": "Artifact:tools/economy-ux-merge-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1706
+        "line": 1773
       }
     },
     {
@@ -875797,7 +876010,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1634
+        "line": 1680
       }
     },
     {
@@ -875806,7 +876019,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1675
+        "line": 1742
       }
     },
     {
@@ -875824,7 +876037,7 @@
       "to": "Artifact:tools/rc1-business-season-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1798
+        "line": 1865
       }
     },
     {
@@ -875833,7 +876046,7 @@
       "to": "Artifact:tools/rc1-business-season-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1799
+        "line": 1866
       }
     },
     {
@@ -875842,7 +876055,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1644
+        "line": 1690
       }
     },
     {
@@ -875851,7 +876064,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1645
+        "line": 1691
       }
     },
     {
@@ -875860,7 +876073,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1654
+        "line": 1700
       }
     },
     {
@@ -875869,7 +876082,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1655
+        "line": 1701
       }
     },
     {
@@ -875878,7 +876091,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1695
+        "line": 1762
       }
     },
     {
@@ -875887,7 +876100,7 @@
       "to": "Artifact:tools/sale-source-compatibility.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1696
+        "line": 1763
       }
     },
     {
@@ -875896,7 +876109,7 @@
       "to": "Artifact:tools/ux-source-data.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1705
+        "line": 1772
       }
     },
     {
@@ -875905,7 +876118,7 @@
       "to": "Artifact:tools/ux-source-data.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1706
+        "line": 1773
       }
     },
     {
@@ -875914,7 +876127,7 @@
       "to": "Artifact:tools/ux-suites-gate-source-data.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1705
+        "line": 1772
       }
     },
     {
@@ -875923,7 +876136,7 @@
       "to": "Artifact:tools/ux-suites-gate-source-data.js",
       "provenance": {
         "file": "tools/questing-source-transfer.js",
-        "line": 1706
+        "line": 1773
       }
     },
     {
