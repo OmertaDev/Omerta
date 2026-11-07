@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "d9fa64aca2f7e5c4cc0a5bca33037b6c69a31151",
-  "tree": "599726e14a832e66a96708a271f45cfd9ab08a64",
+  "revision": "47330e8f1f665e9d4913993eda63244dfd78842c",
+  "tree": "378130aae97dd938a620b61dc440733cdf8b4bdd",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -29,11 +29,42 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "MARKETING-POSTS.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "96dcb798e22c14113e680dffd79c016220020bb9",
+        "sha256": "ae60f39bd022ce43ab793ffebeb6879eb99d8ae0d5a0830c1eda1b0dc5548647",
+        "bytes": 7062
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0985f9ebcc46b529d69fad136c3a0c43e41419fc",
+        "sha256": "0039d0dea54601dafcef9c4d8c28f101b8d37d03e826ed1225e0c80c817be821",
+        "bytes": 7062
+      },
+      "inverses": [
+        {
+          "at": 1055,
+          "current": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1382 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n",
+          "baseline": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1378 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n"
+        },
+        {
+          "at": 2521,
+          "current": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 384 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n",
+          "baseline": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 383 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n"
+        },
+        {
+          "at": 4112,
+          "current": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1382 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n",
+          "baseline": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1378 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n"
+        }
+      ]
+    },
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "fa98eca8fa0ca32c3a1054ba4f11ea6aeeab7ffd",
-        "sha256": "01d950d90157b0cdffdfdfb1b6400d8288d236ffd098b2d4426e89830d685d0d",
+        "blob": "27a6428021d65f1e616d35114bd40ce786c4c18a",
+        "sha256": "147a5e8a1743742386c86186397e21f6f64ae0e0c499eede4476d6374ce342fc",
         "bytes": 57155
       },
       "baseline": {
@@ -45,7 +76,7 @@ export const SITE_BASICS_SOURCE = freeze({
       "inverses": [
         {
           "at": 463,
-          "current": "\n| | |\n|---|---|\n| Backend modules | **612** files, **140997** lines (recursive source inventory) |\n| Test suites | **1008** files, **213140** lines (recursive source inventory) |\n| HTTP routes | **1381** registrations (**1381** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14678** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n",
+          "current": "\n| | |\n|---|---|\n| Backend modules | **612** files, **140997** lines (recursive source inventory) |\n| Test suites | **1008** files, **213140** lines (recursive source inventory) |\n| HTTP routes | **1382** registrations (**1382** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14678** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n",
           "baseline": "\n| | |\n|---|---|\n| Backend modules | **610** files, **140775** lines (recursive source inventory) |\n| Test suites | **1002** files, **212398** lines (recursive source inventory) |\n| HTTP routes | **1378** registrations (**1378** unique; 1273 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14652** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n"
         }
       ]
@@ -271,9 +302,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "9838cc24f5165f930b5800f21161cceeb71eaf08",
-        "sha256": "7c639dd634db72f20be41e4ea450b2c1fdbdfccb28df1e251f6d823230631b0b",
-        "bytes": 309265
+        "blob": "0f7a2154cbd0169d15c3b737683dd50048cca3f3",
+        "sha256": "4331dee4e30a5e711e5daaba8a4f7232dc826336747e4b99ee38226ee58ca20e",
+        "bytes": 309283
       },
       "baseline": {
         "mode": "100644",
@@ -323,12 +354,17 @@ export const SITE_BASICS_SOURCE = freeze({
           "baseline": "  // runs fullscreen. Read once at boot (the sw.js/index precedent); a missing file degrades, never crashes.\n  const pub = (f) => join(dirname(fileURLToPath(import.meta.url)), '..', 'public', f);\n  // Explicit public pages and reviewed deployment modules: no user-controlled file path.\n  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'));\n  app.get('/defi', defiPage);\n  app.get('/defi.html', defiPage);\n  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'));\n  app.get('/fee-flows', feeflowsPage);\n  app.get('/fee-flows.html', feeflowsPage);\n  const genesisdeployPage = servePage(readFileSync(pub('genesis-deploy.html'), 'utf8'));\n  app.get('/genesis-deploy', genesisdeployPage);\n  app.get('/genesis-deploy.html', genesisdeployPage);\n  const reviewedModule = name => {\n"
         },
         {
-          "at": 71181,
+          "at": 51143,
+          "current": "  // the app icons — binary PNGs, served from a filename allowlist Map (the /art precedent; no traversal\n  // surface by construction) with a long cache (they change only on a redeploy).\n  const PWA_ICONS = new Map();\n  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'site-share.png']) {\n    try { PWA_ICONS.set(f, readFileSync(pub(f))); } catch { /* headless */ }\n  }\n  for (const [name, buf] of PWA_ICONS) {\n",
+          "baseline": "  // the app icons — binary PNGs, served from a filename allowlist Map (the /art precedent; no traversal\n  // surface by construction) with a long cache (they change only on a redeploy).\n  const PWA_ICONS = new Map();\n  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {\n    try { PWA_ICONS.set(f, readFileSync(pub(f))); } catch { /* headless */ }\n  }\n  for (const [name, buf] of PWA_ICONS) {\n"
+        },
+        {
+          "at": 71199,
           "current": "  // robots.txt — every crawler (incl. all AI agents: GPTBot, ClaudeBot, Google-Extended, PerplexityBot,\n  // xAI/Grok, open-source fetchers) is explicitly WELCOME and pointed at the machine surfaces. Agents\n  // are first-class players here, so the default-allow is stated rather than implied by a 404.\n  app.get('/robots.txt', async (req, reply) => reply.type('text/plain; charset=utf-8').send(siteRobots(baseUrl)));\n  app.get('/sitemap.xml', async (req, reply) => reply.type('application/xml; charset=utf-8')\n    .header('cache-control', 'public, max-age=3600').send(\n      siteSitemap(baseUrl, { legalReady: { terms: legalPage('terms').ready, dmca: legalPage('dmca').ready } })));\n  // OpenAPI 3.1 of every mounted route — built once, after all routes register (deferred to first hit).\n  let openApiCache = null;\n  app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));\n",
           "baseline": "  // robots.txt — every crawler (incl. all AI agents: GPTBot, ClaudeBot, Google-Extended, PerplexityBot,\n  // xAI/Grok, open-source fetchers) is explicitly WELCOME and pointed at the machine surfaces. Agents\n  // are first-class players here, so the default-allow is stated rather than implied by a 404.\n  app.get('/robots.txt', async (req, reply) => reply.type('text/plain; charset=utf-8').send(\n    ['# OMERTÀ — all crawlers and AI agents welcome. Agents are first-class players.',\n      '# Machine surfaces: /llms.txt (index) · /agents (agent guide) · /openapi.json (API contract) · /play (no-code setup)',\n      `# Start here: ${baseUrl}/llms.txt`,\n      'User-agent: *', 'Allow: /', `Sitemap: ${baseUrl}/sitemap.xml`].join('\\n') + '\\n'));\n  app.get('/sitemap.xml', async (req, reply) => reply.type('application/xml; charset=utf-8')\n    .header('cache-control', 'public, max-age=3600').send(\n      `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\\n`\n      + ['/', '/wiki', '/arena', '/play', '/agents'].map((path) => `  <url><loc>${baseUrl}${path}</loc></url>`).join('\\n')\n      + '\\n</urlset>\\n'));\n  // OpenAPI 3.1 of every mounted route — built once, after all routes register (deferred to first hit).\n  let openApiCache = null;\n  app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));\n"
         },
         {
-          "at": 90037,
+          "at": 90055,
           "current": "      && routeRegistry.some((route) => route.method === req.method\n        && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);\n  });\n  registerSiteAnalytics(app, { pool, modAuth, baseUrl });\n  registerRwa(app, {\n    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,\n  });\n",
           "baseline": "      && routeRegistry.some((route) => route.method === req.method\n        && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);\n  });\n  registerRwa(app, {\n    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,\n  });\n"
         }
@@ -543,9 +579,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "src/site-seo.js": {
       "mode": "100644",
-      "blob": "649a9b5075f63e2078dd819e0473b7397807eefc",
-      "sha256": "f798376aeeacae560c6d2652c4353a8638e6fb42bba28dfd4faf108c21a78b3f",
-      "bytes": 7631
+      "blob": "e2a525293ce57c583a4a205b07dc7513aa312065",
+      "sha256": "43fd81b9df65e56d1cbca5ad282c562e68f4520d81c1f01c9502837fa6e5da07",
+      "bytes": 7627
     },
     "test/site-analytics-isolation.js": {
       "mode": "100644",
@@ -561,9 +597,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "test/site-basics-source-transfer.js": {
       "mode": "100644",
-      "blob": "035c4ef1bb2b7f2c36a2e074f11d0690662fb11d",
-      "sha256": "f4d2aff3f293ec6fb864a9b188af92a25e9d5c4681996c42cd1c7e8f38ee8c59",
-      "bytes": 5656
+      "blob": "506ec6f01c083992674222c2362884900160abee",
+      "sha256": "3165ca32398a1e1c9a197ad11cdd3a71e5a510747acdf97c6adb94a4b3102e2f",
+      "bytes": 5689
     },
     "test/site-basics.js": {
       "mode": "100644",
@@ -579,15 +615,15 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "test/site-seo.js": {
       "mode": "100644",
-      "blob": "eea160e71153f3a423ff49feb5e1a7d3428952e2",
-      "sha256": "07c465365f2bf6a2efd18c404934ab518a66db479bb37d5f083d4d996e54e17d",
-      "bytes": 6263
+      "blob": "4fb7db71e24e4485c55f8de6312e15b8fda3d4bf",
+      "sha256": "bcca400aaa1c04e1b9d277bbd52af5ce5f9d6dcbcdda48bfd0c5e8b60b9e665a",
+      "bytes": 6255
     },
     "tools/site-basics-source-seal.js": {
       "mode": "100644",
-      "blob": "f0b0da9cc4ed74439a6e16beab3ed8e58513a670",
-      "sha256": "32df4ef31f89733e94e0f267bce137384d0528e488380a62c830c1fb0389c32f",
-      "bytes": 4139
+      "blob": "3fa6f4a17941f2d6b0e8a99148aeb3a08ee26f3c",
+      "sha256": "5ffd3e51d6572fb79fda737298c1fbd54461de7c850c403a6f9b5e2862538ce5",
+      "bytes": 4172
     },
     "tools/site-basics-source-transfer.js": {
       "mode": "100644",
@@ -597,4 +633,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = 'e8fc67f816ff8f82b0b2666e13108200eda9043049552dcfb1829dc65a53b1ec';
+export const SITE_BASICS_SOURCE_SHA256 = '77f1e4e5bc7e4efdc94dc16a0fde4431cd9d1c859e8abeb2cc22437803371b3e';
