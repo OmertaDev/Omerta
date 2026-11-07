@@ -100,9 +100,16 @@ export async function runQuestingPostgres(raw = process.env.QUESTING_TEST_DATABA
     assert.fail('The actual authored graph did not finish within its bounded action count.');
   }
   try {
-    const server = (await admin.query('SELECT current_database() AS database, inet_server_addr()::text AS address, version() AS version')).rows[0];
+    const proofConnection = await admin.connect();
+    let server;
+    try {
+      // Docker port forwarding changes the server's interface address; the client's socket
+      // still proves that this process connected only to its explicitly allowed loopback endpoint.
+      assert.ok(['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(proofConnection.connection.stream.remoteAddress),
+        'The client socket must connect only to loopback.');
+      server = (await proofConnection.query('SELECT current_database() AS database, inet_server_addr()::text AS address, version() AS version')).rows[0];
+    } finally { proofConnection.release(); }
     assert.equal(server.database, database);
-    assert.ok(['127.0.0.1/32', '127.0.0.1', '::1/128', '::1'].includes(server.address), 'The connected server must itself be loopback.');
     assert.match(server.version, /PostgreSQL/);
     await admin.query(`CREATE SCHEMA ${schema}`); created = true;
     await pool.query(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
@@ -112,7 +119,7 @@ export async function runQuestingPostgres(raw = process.env.QUESTING_TEST_DATABA
       const firstPid = (await firstConnection.query('SELECT pg_backend_pid() AS pid')).rows[0].pid;
       const secondPid = (await secondConnection.query('SELECT pg_backend_pid() AS pid')).rows[0].pid;
       assert.notEqual(firstPid, secondPid, 'Concurrency must use independent native PostgreSQL connections.');
-      console.log(JSON.stringify({ nativePostgres: true, database, schema, backendPids: [firstPid, secondPid], node: process.version, utc: new Date().toISOString() }));
+      console.log(JSON.stringify({ nativePostgres: true, database, schema, serverInterface: server.address, backendPids: [firstPid, secondPid], node: process.version, utc: new Date().toISOString() }));
     } finally { firstConnection.release(); secondConnection.release(); }
     for (const pack of packs.values()) {
       const bundle = compileContentPack(pack);
