@@ -7,6 +7,7 @@ import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-d
 import { contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
 import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalInput,
   questingHistoricalEntry } from '../tools/questing-source-transfer.js';
+import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../tools/site-basics-source-transfer.js';
 import {
   GENESIS_FEE_READINESS_BASE_REVISION, GENESIS_FEE_READINESS_REVIEWED_REVISION,
   GENESIS_FEE_READINESS_DOMAINS, GENESIS_FEE_READINESS_SOURCE_TRANSFER,
@@ -185,15 +186,24 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   assert(physical === head || physical === head.replaceAll('\n', '\r\n'),
     'Whole actual fixture LF/CRLF bytes qualify before projection');
   assert.deepEqual({ mode: actual[1], blob: actual[2], sha256: sha(head), bytes: Buffer.byteLength(head) },
-    QUESTING_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact questing pin');
+    SITE_BASICS_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact site pin');
   function fixtureComparison(file, input, tree, index) {
     assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');
     assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');
     assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');
-    const proof = qualifyQuestingSource(file, input);
+    const currentPin = SITE_BASICS_SOURCE.files[file].current;
+    assert.equal(tree, currentPin.mode + ' blob ' + currentPin.blob + '\t' + file, 'Only the exact current site tree is admitted');
+    assert.equal(index, currentPin.mode + ' ' + currentPin.blob + ' 0\t' + file, 'Only the exact current site index is admitted');
+    const siteProof = qualifySiteBasicsSource(file, input);
+    assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial, siteProof.activation,
+      siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);
+    const siteText = siteProof.baselineText;
+    assert.deepEqual({ mode: SITE_BASICS_SOURCE.files[file].baseline.mode, blob: gitBlob(siteText), sha256: sha(siteText), bytes: Buffer.byteLength(siteText) },
+      QUESTING_SOURCE.files[file].current, 'The exact site predecessor remains the unchanged complete questing pin');
+    const proof = qualifyQuestingSource(file, Buffer.from(siteText));
     assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,
       proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
-    const source = questingHistoricalInput(file, input), text = source.toString('utf8');
+    const source = questingHistoricalInput(file, Buffer.from(siteText)), text = source.toString('utf8');
     assert(Buffer.isBuffer(source) && Buffer.from(text).equals(source));
     assert.equal(text, proof.baselineText);
     const comparisonTree = questingHistoricalEntry(file, tree, 'tree');
@@ -202,7 +212,7 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
       bytes: Buffer.byteLength(text), rawSha256: { lf: sha(text), crlf: sha(text.replaceAll('\n', '\r\n')) } };
     assert.equal(comparisonTree, pin.mode + ' blob ' + pin.blob + '\t' + file);
     assert.equal(comparisonIndex, pin.mode + ' ' + pin.blob + ' 0\t' + file);
-    return Object.freeze({ source, pin, proof });
+    return Object.freeze({ source, pin, proof, siteProof });
   }
   const comparison = fixtureComparison(fixture, raw, actualEntry, actualIndex);
   assert.equal(CONTRACT_RELEASE_SOURCE_DATA.status, 'BOUND');
@@ -304,6 +314,25 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;
   assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;
   assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);
+  let siteRefusals = 0;
+  const questCurrent = QUESTING_SOURCE.files[fixture].current;
+  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\t' + fixture;
+  const oldIndex = questCurrent.mode + ' ' + questCurrent.blob + ' 0\t' + fixture;
+  const oldInput = Buffer.from(comparison.siteProof.baselineText);
+  for (const [input, tree, index] of [
+    [oldInput, oldTree, oldIndex], [oldInput, actualEntry, actualIndex],
+    [raw, oldTree, actualIndex], [raw, actualEntry, oldIndex], [raw, oldTree, oldIndex],
+    [comparison.source, comparison.pin.mode + ' blob ' + comparison.pin.blob + '\t' + fixture,
+      comparison.pin.mode + ' ' + comparison.pin.blob + ' 0\t' + fixture],
+  ]) { assert.throws(() => fixtureComparison(fixture, input, tree, index)); siteRefusals++; }
+  // Internally consistent forged records must not turn unknown bytes into admitted current source.
+  for (const changed of [head + '\n// unreviewed current fixture\n', head.replace(/\S/, '?')]) {
+    assert.notEqual(changed, head); const changedBlob = gitBlob(changed);
+    assert.throws(() => fixtureComparison(fixture, Buffer.from(changed), actual[1] + ' blob ' + changedBlob + '\t' + fixture,
+      actual[1] + ' ' + changedBlob + ' 0\t' + fixture)); siteRefusals++;
+  }
+  assert.throws(() => { comparison.siteProof.native = true; }, TypeError); siteRefusals++;
+  assert.equal(siteRefusals, 9);
   console.log(JSON.stringify({ phase: 'GENESIS_QUESTING_FIXTURE_COMPARISON_CONTROLS', currentPositives,
-    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
+    currentRefusals, siteRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
 }
