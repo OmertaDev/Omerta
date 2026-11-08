@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "dfd96523a6cfbf4feccadbfe3331324635fecadf",
+  "authoredRevision": "df6b34aa57c3854437ab23b6eddc6e212a9f6221",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11267,8 +11267,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "64215f02c453260b11f59344f2a5b9aa050d3c2e",
-      "sha256": "39377baed060de650ead10c4cd639c78bc6fd98ad62a10578c0f2057db4d3d7e"
+      "blob": "3ec77fa33a1fcf4f0895a28994f630827fac7fa7",
+      "sha256": "2ce037c20597e701a468eb0e5883be3034302d87c676ea5a6e26baf9b491e00e"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -11315,8 +11315,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "15404a0ca751be989b0c80bd160a0a7510b4f81a",
-      "sha256": "8ce654eb0ef973bd70af8fa4c099582bb7977f2adb994c7705f05fa38b6e9198"
+      "blob": "5bd7c701bfec04f44c6dc4e8efb749631ef72588",
+      "sha256": "34773afc99f097c60aa7ca74b96f85bb9c529fd307cc46fb6e1b48dd4cdf0875"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12579,8 +12579,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "64215f02c453260b11f59344f2a5b9aa050d3c2e",
-      "sha256": "39377baed060de650ead10c4cd639c78bc6fd98ad62a10578c0f2057db4d3d7e"
+      "blob": "3ec77fa33a1fcf4f0895a28994f630827fac7fa7",
+      "sha256": "2ce037c20597e701a468eb0e5883be3034302d87c676ea5a6e26baf9b491e00e"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -12627,8 +12627,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "15404a0ca751be989b0c80bd160a0a7510b4f81a",
-      "sha256": "8ce654eb0ef973bd70af8fa4c099582bb7977f2adb994c7705f05fa38b6e9198"
+      "blob": "5bd7c701bfec04f44c6dc4e8efb749631ef72588",
+      "sha256": "34773afc99f097c60aa7ca74b96f85bb9c529fd307cc46fb6e1b48dd4cdf0875"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12638,4 +12638,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "87a7ed26367e7f75e62aa56a4394f4fc8fc51ce516d7df3d196cad16b373f649";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "7ce6345a3917ca899a40d73a7d8e6756c5bdac45a513e02714843346584b887d";
