@@ -1,0 +1,639 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-favors",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-favors",
+    "entryNodeId": "quality-favors",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-favors",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-favors-memento",
+      "case-closed",
+      "network",
+      "network-answer",
+      "guarantee",
+      "failure",
+      "failure-answer",
+      "release-retain-memory",
+      "release-consent-memory",
+      "release",
+      "retained",
+      "retained-answer",
+      "released",
+      "released-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing"
+    ],
+    "actionNodeIds": [
+      "network",
+      "failure",
+      "release",
+      "retained",
+      "released",
+      "closing"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-favors",
+      "type": "mystery",
+      "payload": {
+        "title": "What the Guarantee Covers",
+        "summary": "A fictional favor ledger records Ada’s promise of a cart to Ben, Ben’s promise of a cart to Celia, and Rosa’s guarantee of one replacement cart if Ben fails. Nobody owes real money.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "A fictional favor ledger records Ada’s promise of a cart to Ben, Ben’s promise of a cart to Celia, and Rosa’s guarantee of one replacement cart if Ben fails. Nobody owes real money.",
+          "reasoning": "Inspect and resolve a bounded obligations network",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "Which obligation survives a failure, and who can perform it without inventing a second guarantee?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "A replacement fulfils one underlying cart obligation; connected but separate promises remain separate unless explicitly released.",
+              "evidenceNodeId": "guarantee"
+            }
+          ],
+          "identity": {
+            "activity": "Inspect and resolve a bounded obligations network",
+            "emotionalTurn": "Leverage becomes a specific responsibility"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "network",
+              "text": "Ada owes Ben one cart; Ben owes Celia one cart; Rosa guarantees Ben’s cart to Celia only if Ben cannot deliver. Match each promise.",
+              "nodeId": "network"
+            },
+            {
+              "id": "failure",
+              "text": "Ben cannot deliver; Rosa delivers the guaranteed replacement to Celia. What remains owed to Celia under these exact promises?",
+              "nodeId": "failure"
+            },
+            {
+              "id": "release",
+              "text": "Ada still owes Ben her cart. Celia has received hers. Decide which honest arrangement to record.",
+              "nodeId": "release"
+            },
+            {
+              "id": "retained",
+              "text": "Does Celia’s replacement automatically cancel Ada’s separate promise to Ben?",
+              "nodeId": "retained"
+            },
+            {
+              "id": "released",
+              "text": "Ada agrees to a release. Ben has not yet agreed. Can you record mutual consent?",
+              "nodeId": "released"
+            },
+            {
+              "id": "closing",
+              "text": "The ledger shows who promised what, which guarantee was triggered and what was actually discharged. No account balance changes.",
+              "nodeId": "closing"
+            }
+          ],
+          "npcs": [],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "What the Guarantee Covers",
+        "summary": "A fictional favor ledger records Ada’s promise of a cart to Ben, Ben’s promise of a cart to Celia, and Rosa’s guarantee of one replacement cart if Ben fails. Nobody owes real money."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-favors-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "What the Guarantee Covers: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "What the Guarantee Covers: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-favors-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "network",
+      "type": "puzzle",
+      "payload": {
+        "title": "Follow the arrows",
+        "prompt": "Ada owes Ben one cart; Ben owes Celia one cart; Rosa guarantees Ben’s cart to Celia only if Ben cannot deliver. Match each promise.",
+        "summary": "Ada owes Ben one cart; Ben owes Celia one cart; Rosa guarantees Ben’s cart to Celia only if Ben cannot deliver. Match each promise.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "network-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "ben",
+              "label": "Ben"
+            },
+            {
+              "id": "celia",
+              "label": "Celia"
+            },
+            {
+              "id": "conditional",
+              "label": "Celia only if Ben cannot deliver"
+            }
+          ],
+          "slots": [
+            {
+              "id": "ada",
+              "label": "Ada promises a cart to"
+            },
+            {
+              "id": "ben",
+              "label": "Ben promises a cart to"
+            },
+            {
+              "id": "rosa",
+              "label": "Rosa’s conditional beneficiary"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "network-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "ada": "ben",
+          "ben": "celia",
+          "rosa": "conditional"
+        }
+      }
+    },
+    {
+      "id": "guarantee",
+      "type": "evidence",
+      "payload": {
+        "title": "One bounded guarantee",
+        "summary": "Rosa’s guarantee substitutes one cart for Ben’s unperformed delivery to Celia; it does not create an additional cart.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "failure",
+      "type": "puzzle",
+      "payload": {
+        "title": "One cart, not two",
+        "prompt": "Ben cannot deliver; Rosa delivers the guaranteed replacement to Celia. What remains owed to Celia under these exact promises?",
+        "summary": "Ben cannot deliver; Rosa delivers the guaranteed replacement to Celia. What remains owed to Celia under these exact promises?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "failure-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "fulfilled",
+              "label": "That one cart obligation is fulfilled"
+            },
+            {
+              "id": "double",
+              "label": "A second cart appears because two names were involved"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "failure-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "fulfilled"
+        ]
+      }
+    },
+    {
+      "id": "release-retain-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-favors.release",
+        "kind": "future_scene_variant",
+        "value": "retain",
+        "title": "What about Ada’s separate promise?: Retain Ada’s separate promise to Ben",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "release-consent-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-favors.release",
+        "kind": "future_scene_variant",
+        "value": "consent",
+        "title": "What about Ada’s separate promise?: Ask Ada and Ben to mutually release their separate promise",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "release",
+      "type": "choice",
+      "payload": {
+        "title": "What about Ada’s separate promise?",
+        "prompt": "Ada still owes Ben her cart. Celia has received hers. Decide which honest arrangement to record.",
+        "summary": "Ada still owes Ben her cart. Celia has received hers. Decide which honest arrangement to record.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "retain",
+            "label": "Retain Ada’s separate promise to Ben",
+            "nextNodeIds": [
+              "retained"
+            ],
+            "storyFlagIds": [
+              "release-retain-memory"
+            ]
+          },
+          {
+            "id": "consent",
+            "label": "Ask Ada and Ben to mutually release their separate promise",
+            "nextNodeIds": [
+              "released"
+            ],
+            "storyFlagIds": [
+              "release-consent-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "retained",
+      "type": "puzzle",
+      "payload": {
+        "title": "Separate obligations",
+        "prompt": "Does Celia’s replacement automatically cancel Ada’s separate promise to Ben?",
+        "summary": "Does Celia’s replacement automatically cancel Ada’s separate promise to Ben?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "retained-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "no",
+              "label": "No; that separate promise remains"
+            },
+            {
+              "id": "yes",
+              "label": "Yes, every connected promise vanishes"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "retained-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "no"
+        ]
+      }
+    },
+    {
+      "id": "released",
+      "type": "puzzle",
+      "payload": {
+        "title": "A release needs both parties",
+        "prompt": "Ada agrees to a release. Ben has not yet agreed. Can you record mutual consent?",
+        "summary": "Ada agrees to a release. Ben has not yet agreed. Can you record mutual consent?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "released-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "wait",
+              "label": "Wait for Ben’s explicit agreement"
+            },
+            {
+              "id": "invent",
+              "label": "Treat Ada’s consent as Ben’s"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "released-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "wait"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-favors.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-favors.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "The ledger shows who promised what, which guarantee was triggered and what was actually discharged. No account balance changes.",
+        "summary": "The ledger shows who promised what, which guarantee was triggered and what was actually discharged. No account balance changes.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-favors",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-favors",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "network",
+      "type": "REVEALS",
+      "to": "guarantee"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "network"
+    },
+    {
+      "from": "network",
+      "type": "UNLOCKS",
+      "to": "failure"
+    },
+    {
+      "from": "failure",
+      "type": "UNLOCKS",
+      "to": "release"
+    },
+    {
+      "from": "release",
+      "type": "UNLOCKS",
+      "to": "retained"
+    },
+    {
+      "from": "release",
+      "type": "UNLOCKS",
+      "to": "released"
+    },
+    {
+      "from": "retained",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "released",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

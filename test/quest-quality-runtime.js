@@ -1,0 +1,56 @@
+import assert from 'node:assert/strict';
+import { qualityFixture } from './lib/quest-quality-fixture.js';
+import { applyQualityOperation } from '../src/content/quality-runtime.js';
+
+const f = await qualityFixture();
+try {
+  const alice = await f.identity('Quality investigator'), stranger = await f.identity('Uninvited investigator');
+  const startingCash = (await f.pool.query('SELECT cash FROM characters WHERE id=$1', [alice.characterId])).rows[0].cash;
+  let board = await f.start(alice, 'three-witnesses');
+  const originalRevision = board.instance.revision;
+  const beforeNodes = await f.pool.query('SELECT node_id,state,result_json FROM content_instance_nodes WHERE instance_id=$1 ORDER BY node_id', [board.instance.id]);
+  const old = board;
+  board = await f.quality(alice, board, 'save_draft', { text: 'I suspect the employer’s premise is incomplete.', evidenceIds: [] });
+  assert.equal(board.instance.revision, originalRevision, 'Private drafts do not signal activity to the party.');
+  assert.equal(board.instance.quality.revision, 1);
+  assert.deepEqual((await f.pool.query('SELECT node_id,state,result_json FROM content_instance_nodes WHERE instance_id=$1 ORDER BY node_id', [board.instance.id])).rows,
+    beforeNodes.rows, 'Private reasoning changes no attempts, suspicion or progress.');
+  assert.equal(board.instance.suspicion, 0);
+  await assert.rejects(() => f.quality(alice, old, 'save_draft', { text: 'Stale second tab', evidenceIds: [] }), error => error.code === 'stale_quality');
+  await assert.rejects(() => f.quality(stranger, board, 'save_draft', { text: 'Intrusion', evidenceIds: [] }), error => error.code === 'not_member');
+  await assert.rejects(() => f.quality(alice, board, 'save_draft', { text: '', evidenceIds: ['unseen-private-clue'] }), error => error.code === 'unknown_evidence');
+  board = await f.quality(alice, board, 'study_consent', { consent: true, evidenceType: 'ai', familiarity: 'new' });
+  board = await f.quality(alice, board, 'first_impression', { text: '', unsure: true, share: false });
+  assert.equal(board.instance.quality.sharedImpressions.length, 0, 'Uncertainty can remain private.');
+  assert(!JSON.stringify(board).includes('"proofs"'));
+  const procedure = board.instance.actions.find(action => action.nodeId === 'clock-procedure');
+  const design = f.packs.get('three-witnesses').nodes.find(node => node.id === 'three-witnesses').payload.quality;
+  const calibration = design.procedures[0];
+  assert(!procedure.options.some(option => option.id === calibration.skipOptionId));
+  await assert.rejects(() => f.act(alice, board, procedure, { choiceId: calibration.skipOptionId }), error => error.code === 'procedure_unlearned');
+  board = await f.finish(alice, board);
+  assert.equal(board.instance.quality.debrief.opened, false);
+  assert.equal(board.instance.quality.debrief.text, undefined);
+  assert.equal(board.instance.awards.mine.length, 0, 'Unopened awards cannot reveal the verdict.');
+  assert(!board.instance.nodes.some(node => node.id === 'case-closed'));
+  await assert.rejects(() => f.quality(alice, board, 'study_recall', { memory: 'A guess', enjoyment: 4, understanding: 4 }), error => error.code === 'study_not_due');
+  board = await f.quality(alice, board, 'study_comprehension', { answers: { what: 'The independent records identified a courier.', why: 'Several records establish the same chain.', next: 'Challenge the scope of the commission.' } });
+  const eligible = Date.parse(board.instance.quality.study.eligibleAt);
+  assert(eligible >= Date.now() + 24 * 60 * 60 * 1000 - 2000);
+  await assert.rejects(() => f.quality(alice, board, 'study_recall', { memory: 'Too soon', enjoyment: 4, understanding: 4 }), error => error.code === 'study_not_due');
+  const actor = JSON.parse((await f.pool.query('SELECT value_json FROM content_instance_facts WHERE instance_id=$1 AND fact_key=$2', [board.instance.id, `runtime.quality.actor:${alice.accountId}`])).rows[0].value_json);
+  const context = { instance: board.instance, accountId: alice.accountId, members: [], knownEvidence: new Set(), actions: [], completed: new Set(), now: eligible - 1 };
+  const input = { expectedRevision: board.instance.revision, expectedQualityRevision: actor.revision, operation: 'study_recall', memory: 'A next-day reconstruction.', enjoyment: 4, understanding: 5 };
+  assert.throws(() => applyQualityOperation(design, context, actor, { disclosures: [], fieldworkReports: [], delegations: {} }, input), error => error.code === 'study_not_due');
+  const due = applyQualityOperation(design, { ...context, now: eligible }, actor, { disclosures: [], fieldworkReports: [], delegations: {} }, input);
+  assert.equal(due.actor.study.evidenceType, 'ai', 'A simulated clock boundary remains explicitly automated evidence.');
+  assert.equal(due.actor.study.recall.memory, input.memory);
+  board = await f.quality(alice, board, 'open_debrief');
+  assert(board.instance.quality.debrief.text);
+  assert(board.instance.nodes.some(node => node.id === 'case-closed'));
+  const secondCase = await f.start(alice, 'quality-payday');
+  const practiced = secondCase.instance.actions.find(action => action.nodeId === 'clock-procedure');
+  assert(practiced?.options.some(option => option.id === calibration.skipOptionId), 'Successful practice enables a later procedure shortcut.');
+  assert.equal((await f.pool.query('SELECT cash FROM characters WHERE id=$1', [alice.characterId])).rows[0].cash, startingCash, 'Quality features have no monetary effect.');
+  console.log('quest quality runtime: private state, membership, proof privacy, mastery, individual debrief and honest study timing passed');
+} finally { await f.pool.end(); }

@@ -1,0 +1,1458 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.three-witnesses",
+  "version": 2,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "three-witnesses",
+    "entryNodeId": "three-witnesses",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "three-witnesses",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "three-witnesses-memento",
+      "case-closed",
+      "clock-procedure-learn-memory",
+      "clock-procedure-skip-memory",
+      "clock-procedure",
+      "clock-check",
+      "clock-check-answer",
+      "photo",
+      "photo-answer",
+      "registry",
+      "registry-answer",
+      "door-image",
+      "ledger-register",
+      "driver",
+      "driver-answer",
+      "coat-exchange",
+      "ticket",
+      "ticket-answer",
+      "exit-entry",
+      "pocket",
+      "pocket-answer",
+      "pocket-receipt",
+      "seal",
+      "seal-answer",
+      "seal-closed",
+      "absence",
+      "absence-answer",
+      "complete-exit-scope",
+      "no-orsini-entry",
+      "finding",
+      "finding-answer",
+      "commission-challenge-memory",
+      "commission-limited-memory",
+      "commission",
+      "authority",
+      "authority-answer",
+      "limits",
+      "limits-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing",
+      "rosa",
+      "rosa-answer",
+      "rosa-corrected"
+    ],
+    "actionNodeIds": [
+      "clock-procedure",
+      "clock-check",
+      "photo",
+      "registry",
+      "driver",
+      "ticket",
+      "pocket",
+      "seal",
+      "absence",
+      "finding",
+      "commission",
+      "authority",
+      "limits",
+      "closing",
+      "rosa"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "three-witnesses",
+      "type": "mystery",
+      "payload": {
+        "title": "Three Witnesses, One Room — Open File",
+        "summary": "A ledger vanished during seven minutes at the banquet. Employer Valenti demands that Orsini be named because a gray coat left the room. The clothing, its wearer, and the ledger are separate questions.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "A ledger vanished during seven minutes at the banquet. Employer Valenti demands that Orsini be named because a gray coat left the room. The clothing, its wearer, and the ledger are separate questions.",
+          "reasoning": "Join independently acquired records; file a sufficient proof early",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "Who carried ledger LA-17 through the east door, and what does each independent record establish?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "An absent departure is informative only if every departure required an entry and the complete relevant source was checked.",
+              "evidenceNodeId": "complete-exit-scope"
+            },
+            {
+              "id": "rule-2",
+              "text": "Only LA-17 has the recorded brass-corner repair; color alone does not distinguish the ledger.",
+              "evidenceNodeId": "ledger-register"
+            }
+          ],
+          "identity": {
+            "activity": "Join independently acquired records; file a sufficient proof early",
+            "emotionalTurn": "An accusation becomes a bounded account of what really happened"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "clock-procedure",
+              "text": "Every record below uses the corrected hall clock. Learn how the correction works, or apply the procedure you already demonstrated.",
+              "nodeId": "clock-procedure"
+            },
+            {
+              "id": "clock-check",
+              "text": "At the same instant the bell record reads 19:00 and the hall clock reads 19:02. A hall photograph reads 19:08. Which corrected time belongs to it?",
+              "nodeId": "clock-check"
+            },
+            {
+              "id": "photo",
+              "text": "The corrected timestamps are printed below. Place the contact sheets in time order before using the east-door image.",
+              "nodeId": "photo"
+            },
+            {
+              "id": "registry",
+              "text": "The inventory registers LA-17 as a blue ledger with a repaired brass corner. A blue hymnbook has an unmarked spine. Which feature can distinguish the photographed book?",
+              "nodeId": "registry"
+            },
+            {
+              "id": "driver",
+              "text": "Dario: “I watched Luca trade his blue coat for the gray one at 19:04. I called the gray coat Orsini because that is what we call it. I did not see Orsini’s face.” Select what Dario directly observed.",
+              "nodeId": "driver"
+            },
+            {
+              "id": "ticket",
+              "text": "The east-door clerk recorded each departing guest, checked a face against the guest card, and signed the entry. Luca’s checked entry is at 19:06. Match the entry to what it establishes.",
+              "nodeId": "ticket"
+            },
+            {
+              "id": "pocket",
+              "text": "The checked receipt says ledger LA-17 was placed in the gray coat’s inside pocket before Luca collected that coat. The gray coat’s outside pocket held a menu. Choose the record relevant to the ledger.",
+              "nodeId": "pocket"
+            },
+            {
+              "id": "seal",
+              "text": "A red envelope looks official. The printed seal register says theater props use red wax and official notices use embossed white paper. The envelope contains a theater seating plan. Which record closes this lead?",
+              "nodeId": "seal"
+            },
+            {
+              "id": "absence",
+              "text": "A clerk confirms that every east-door departure required a checked, signed face entry, and checks the complete 19:03–19:07 list. What must be established before Orsini’s absence from that list can count?",
+              "nodeId": "absence"
+            },
+            {
+              "id": "commission",
+              "text": "Valenti: “I asked for Orsini.” The supported finding names Luca’s departure; it does not prove a theft motive. Decide what work you are prepared to do.",
+              "nodeId": "commission"
+            },
+            {
+              "id": "authority",
+              "text": "The archive lending slip is signed before the banquet and identifies Luca as the authorized restorer. Match permission to the record that grants it.",
+              "nodeId": "authority"
+            },
+            {
+              "id": "limits",
+              "text": "Which statement stays within the proof you collected?",
+              "nodeId": "limits"
+            },
+            {
+              "id": "closing",
+              "text": "Dario accepts the correction without retracting what he actually saw. Valenti still believes Orsini arranged the evening. You can disagree and complete the commissioned factual account.",
+              "nodeId": "closing"
+            },
+            {
+              "id": "finding",
+              "text": "Who carried LA-17, and which independent records support that?",
+              "nodeId": "finding"
+            },
+            {
+              "id": "rosa",
+              "text": "Which acquired observation can correct Rosa’s sincere identification?",
+              "nodeId": "rosa"
+            }
+          ],
+          "npcs": [
+            {
+              "id": "dario",
+              "label": "Dario",
+              "knowledge": [
+                {
+                  "evidenceNodeId": "coat-exchange",
+                  "sourceNodeId": "three-witnesses"
+                }
+              ],
+              "voice": "Short practical sentences; distinguishes what he watched from what he called it.",
+              "principles": []
+            },
+            {
+              "id": "valenti",
+              "label": "Valenti",
+              "knowledge": [],
+              "voice": "Speaks in demands and reputational costs.",
+              "principles": [
+                "He will accept a signed factual file even when he dislikes its finding."
+              ]
+            },
+            {
+              "id": "rosa",
+              "label": "Rosa",
+              "knowledge": [
+                {
+                  "evidenceNodeId": "rosa-corrected",
+                  "sourceNodeId": "three-witnesses"
+                }
+              ],
+              "voice": "Names familiar things confidently, then acknowledges the exact limit of her observation."
+            }
+          ],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            },
+            {
+              "id": "seal-alarm",
+              "setupNodeId": "seal",
+              "payoffNodeIds": [
+                "seal-closed"
+              ]
+            }
+          ],
+          "branches": [
+            {
+              "choiceNodeId": "commission",
+              "reconvergeNodeId": "closing",
+              "maxActions": 3
+            }
+          ],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          },
+          "procedures": [
+            {
+              "id": "shared-clock",
+              "nodeId": "clock-procedure",
+              "masteryFlag": "quest.procedure.shared-clock",
+              "skipOptionId": "skip",
+              "learnOptionId": "learn",
+              "learnNodeId": "clock-check"
+            }
+          ],
+          "revelations": [
+            {
+              "nodeId": "driver",
+              "npcId": "dario",
+              "evidenceIds": [
+                "coat-exchange"
+              ],
+              "requiresEvidenceIds": []
+            },
+            {
+              "nodeId": "rosa",
+              "npcId": "rosa",
+              "evidenceIds": [
+                "rosa-corrected"
+              ],
+              "requiresEvidenceIds": [
+                "door-image"
+              ]
+            }
+          ],
+          "disclosures": [
+            {
+              "evidenceId": "door-image",
+              "recipients": [
+                {
+                  "npcId": "rosa",
+                  "label": "Show Rosa the acquired face image",
+                  "report": "Rosa examines the image and agrees to revisit her identification.",
+                  "revealNodeIds": []
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "Three Witnesses, One Room — Open File",
+        "summary": "A ledger vanished during seven minutes at the banquet. Employer Valenti demands that Orsini be named because a gray coat left the room. The clothing, its wearer, and the ledger are separate questions."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "three-witnesses-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Three Witnesses, One Room — Open File: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Three Witnesses, One Room — Open File: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "three-witnesses-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "clock-procedure-learn-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.three-witnesses.clock-procedure",
+        "kind": "future_scene_variant",
+        "value": "learn",
+        "title": "Calibrate the shared clock: Check the bell against the hall clock",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "clock-procedure-skip-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.three-witnesses.clock-procedure",
+        "kind": "future_scene_variant",
+        "value": "skip",
+        "title": "Calibrate the shared clock: Apply my established clock-check procedure",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "clock-procedure",
+      "type": "choice",
+      "payload": {
+        "title": "Calibrate the shared clock",
+        "prompt": "Every record below uses the corrected hall clock. Learn how the correction works, or apply the procedure you already demonstrated.",
+        "summary": "Every record below uses the corrected hall clock. Learn how the correction works, or apply the procedure you already demonstrated.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "learn",
+            "label": "Check the bell against the hall clock",
+            "nextNodeIds": [
+              "clock-check"
+            ],
+            "storyFlagIds": [
+              "clock-procedure-learn-memory"
+            ]
+          },
+          {
+            "id": "skip",
+            "label": "Apply my established clock-check procedure",
+            "nextNodeIds": [
+              "finding"
+            ],
+            "storyFlagIds": [
+              "clock-procedure-skip-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "clock-check",
+      "type": "puzzle",
+      "payload": {
+        "title": "One correction, not two",
+        "prompt": "At the same instant the bell record reads 19:00 and the hall clock reads 19:02. A hall photograph reads 19:08. Which corrected time belongs to it?",
+        "summary": "At the same instant the bell record reads 19:00 and the hall clock reads 19:02. A hall photograph reads 19:08. Which corrected time belongs to it?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "clock-check-answer",
+        "interaction": {
+          "kind": "timeline",
+          "items": [
+            {
+              "id": "1906",
+              "label": "19:06"
+            },
+            {
+              "id": "1908",
+              "label": "19:08"
+            },
+            {
+              "id": "1910",
+              "label": "19:10"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "clock-check-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "1906"
+        ]
+      }
+    },
+    {
+      "id": "photo",
+      "type": "puzzle",
+      "payload": {
+        "title": "The contact sheet",
+        "prompt": "The corrected timestamps are printed below. Place the contact sheets in time order before using the east-door image.",
+        "summary": "The corrected timestamps are printed below. Place the contact sheets in time order before using the east-door image.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "photo-answer",
+        "interaction": {
+          "kind": "timeline",
+          "items": [
+            {
+              "id": "first",
+              "label": "19:03: empty east door"
+            },
+            {
+              "id": "last",
+              "label": "19:07: empty east door"
+            },
+            {
+              "id": "middle",
+              "label": "19:06: Luca leaves carrying a book"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "photo-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "ordered_ids",
+        "solution": [
+          "first",
+          "middle",
+          "last"
+        ]
+      }
+    },
+    {
+      "id": "registry",
+      "type": "puzzle",
+      "payload": {
+        "title": "One blue book among many",
+        "prompt": "The inventory registers LA-17 as a blue ledger with a repaired brass corner. A blue hymnbook has an unmarked spine. Which feature can distinguish the photographed book?",
+        "summary": "The inventory registers LA-17 as a blue ledger with a repaired brass corner. A blue hymnbook has an unmarked spine. Which feature can distinguish the photographed book?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "registry-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "repair",
+              "label": "The repaired brass corner"
+            },
+            {
+              "id": "blue",
+              "label": "Its blue color"
+            },
+            {
+              "id": "size",
+              "label": "A guess about its weight"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "registry-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "repair"
+        ]
+      }
+    },
+    {
+      "id": "door-image",
+      "type": "evidence",
+      "payload": {
+        "title": "East-door image",
+        "summary": "The corrected 19:06 image clearly shows Luca’s face and a blue book with a repaired brass corner.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "ledger-register",
+      "type": "evidence",
+      "payload": {
+        "title": "Inventory register LA-17",
+        "summary": "Before the banquet, LA-17’s repaired brass corner was recorded in the inventory; no other blue book on the table had that repair.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "driver",
+      "type": "puzzle",
+      "payload": {
+        "title": "The driver separates sight from inference",
+        "prompt": "Dario: “I watched the blue-coated guest put on the gray coat at 19:04. I kept that coat in view until its wearer left through the east door at 19:06. We call that coat Orsini. I could not see a face.” Select what Dario directly observed.",
+        "summary": "Dario: “I watched the blue-coated guest put on the gray coat at 19:04. I kept that coat in view until its wearer left through the east door at 19:06. We call that coat Orsini. I could not see a face.” Select what Dario directly observed.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "driver-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "swap",
+              "label": "The exchange and the gray coat’s continuous path to the east door"
+            },
+            {
+              "id": "name",
+              "label": "Orsini left the room"
+            },
+            {
+              "id": "face",
+              "label": "Dario saw Orsini’s face"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "driver-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "swap"
+        ]
+      }
+    },
+    {
+      "id": "coat-exchange",
+      "type": "evidence",
+      "payload": {
+        "title": "Dario’s direct observation",
+        "summary": "Dario watched the gray coat from the 19:04 exchange continuously until its wearer left through the east door at 19:06; he could not identify a face.",
+        "evidenceKind": "testimony",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "ticket",
+      "type": "puzzle",
+      "payload": {
+        "title": "A signed departure",
+        "prompt": "The east-door clerk checked each departing face against its guest card and signed the entry. Exactly one person left at 19:06: the checked entry identifies Luca. Match the entry to what it establishes.",
+        "summary": "The east-door clerk checked each departing face against its guest card and signed the entry. Exactly one person left at 19:06: the checked entry identifies Luca. Match the entry to what it establishes.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "ticket-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "face-entry",
+              "label": "Checked face and signature: Luca, 19:06"
+            },
+            {
+              "id": "coat-color",
+              "label": "The gray coat’s customary owner"
+            }
+          ],
+          "slots": [
+            {
+              "id": "departed",
+              "label": "Who departed through the east door at 19:06"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "ticket-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "departed": "face-entry"
+        }
+      }
+    },
+    {
+      "id": "exit-entry",
+      "type": "evidence",
+      "payload": {
+        "title": "Checked east-door entry",
+        "summary": "Exactly one person left the east door at 19:06; the clerk’s checked face entry identifies Luca. It records identity and time, not the coat or its contents.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "pocket",
+      "type": "puzzle",
+      "payload": {
+        "title": "The cloakroom receipt",
+        "prompt": "The checked receipt says ledger LA-17 was placed in the gray coat’s inside pocket before Luca collected that coat. The gray coat’s outside pocket held a menu. Choose the record relevant to the ledger.",
+        "summary": "The checked receipt says ledger LA-17 was placed in the gray coat’s inside pocket before Luca collected that coat. The gray coat’s outside pocket held a menu. Choose the record relevant to the ledger.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "pocket-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "inside",
+              "label": "Signed LA-17 inside-pocket receipt"
+            },
+            {
+              "id": "menu",
+              "label": "Menu from the outside pocket"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "pocket-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "inside"
+        ]
+      }
+    },
+    {
+      "id": "pocket-receipt",
+      "type": "evidence",
+      "payload": {
+        "title": "LA-17 pocket receipt",
+        "summary": "A signed receipt records LA-17 inside the gray coat before Luca collected it; nobody reopened the checked pocket before departure.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "seal",
+      "type": "puzzle",
+      "payload": {
+        "title": "The frightening red seal",
+        "prompt": "A red envelope looks official. The printed seal register says theater props use red wax and official notices use embossed white paper. The envelope contains a theater seating plan. Which record closes this lead?",
+        "summary": "A red envelope looks official. The printed seal register says theater props use red wax and official notices use embossed white paper. The envelope contains a theater seating plan. Which record closes this lead?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "seal-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "prop",
+              "label": "Prop-seal register and seating plan"
+            },
+            {
+              "id": "plot",
+              "label": "Red wax proves a citywide order"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "seal-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "prop"
+        ]
+      }
+    },
+    {
+      "id": "seal-closed",
+      "type": "evidence",
+      "payload": {
+        "title": "The red seal is accounted for",
+        "summary": "The envelope is a theater prop and its seating plan matches the evening’s rehearsal. It does not identify the ledger carrier.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "absence",
+      "type": "puzzle",
+      "payload": {
+        "title": "The exit list that contains no Orsini",
+        "prompt": "A clerk confirms that every east-door departure required a checked, signed face entry, and checks the complete 19:03–19:07 list. What must be established before Orsini’s absence from that list can count?",
+        "summary": "A clerk confirms that every east-door departure required a checked, signed face entry, and checks the complete 19:03–19:07 list. What must be established before Orsini’s absence from that list can count?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "absence-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "complete",
+              "label": "The complete required list was checked"
+            },
+            {
+              "id": "quiet",
+              "label": "The corridor happened to be quiet"
+            },
+            {
+              "id": "belief",
+              "label": "Valenti dislikes Orsini"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "absence-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "complete"
+        ]
+      }
+    },
+    {
+      "id": "complete-exit-scope",
+      "type": "evidence",
+      "payload": {
+        "title": "Checked complete departure source",
+        "summary": "The clerk’s procedure required a signed face check for every east-door departure and the complete relevant list was checked.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "no-orsini-entry",
+      "type": "evidence",
+      "payload": {
+        "title": "Earned absence: no Orsini entry",
+        "summary": "On that complete required list there is no Orsini entry. This limits east-door departure claims; it does not establish where Orsini went elsewhere.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "finding",
+      "type": "puzzle",
+      "payload": {
+        "title": "A person, a coat, and a ledger",
+        "prompt": "State who carried LA-17 through the east door. Join a direct identification with a record identifying the book, or assemble the independent coat-and-departure chain. A coat’s habitual owner alone identifies nobody.",
+        "summary": "A conclusion must join records that establish the person and the specific ledger.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "finding-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "photo-proof",
+              "label": "East-door image",
+              "evidenceNodeId": "door-image"
+            },
+            {
+              "id": "register-proof",
+              "label": "LA-17 inventory register",
+              "evidenceNodeId": "ledger-register"
+            },
+            {
+              "id": "swap-proof",
+              "label": "Dario’s coat exchange",
+              "evidenceNodeId": "coat-exchange"
+            },
+            {
+              "id": "exit-proof",
+              "label": "Signed east-door entry",
+              "evidenceNodeId": "exit-entry"
+            },
+            {
+              "id": "pocket-proof",
+              "label": "Checked pocket receipt",
+              "evidenceNodeId": "pocket-receipt"
+            }
+          ],
+          "conclusions": [
+            {
+              "id": "luca",
+              "label": "Luca carried LA-17 through the east door"
+            },
+            {
+              "id": "orsini",
+              "label": "Orsini carried it because he usually owns the gray coat"
+            },
+            {
+              "id": "seal",
+              "label": "The red seal establishes the carrier"
+            }
+          ]
+        },
+        "hints": [
+          "Separate identification of the person from identification of the object.",
+          "A clothing color alone cannot identify its present wearer."
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "finding-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "proof_sets",
+        "proofs": [
+          {
+            "conclusionId": "luca",
+            "evidenceIds": [
+              "photo-proof",
+              "register-proof"
+            ]
+          },
+          {
+            "conclusionId": "luca",
+            "evidenceIds": [
+              "swap-proof",
+              "exit-proof",
+              "pocket-proof"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "commission-challenge-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.three-witnesses.commission",
+        "kind": "future_scene_variant",
+        "value": "challenge",
+        "title": "The employer’s requested accusation: Challenge the accusation and verify Luca’s authority",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "commission-limited-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.three-witnesses.commission",
+        "kind": "future_scene_variant",
+        "value": "limited",
+        "title": "The employer’s requested accusation: File only the demonstrated departure and its limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "commission",
+      "type": "choice",
+      "payload": {
+        "title": "The employer’s requested accusation",
+        "prompt": "Valenti: “I asked for Orsini.” The supported finding names Luca’s departure; it does not prove a theft motive. Decide what work you are prepared to do.",
+        "summary": "Valenti: “I asked for Orsini.” The supported finding names Luca’s departure; it does not prove a theft motive. Decide what work you are prepared to do.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "challenge",
+            "label": "Challenge the accusation and verify Luca’s authority",
+            "nextNodeIds": [
+              "authority"
+            ],
+            "storyFlagIds": [
+              "commission-challenge-memory"
+            ]
+          },
+          {
+            "id": "limited",
+            "label": "File only the demonstrated departure and its limits",
+            "nextNodeIds": [
+              "limits"
+            ],
+            "storyFlagIds": [
+              "commission-limited-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "authority",
+      "type": "puzzle",
+      "payload": {
+        "title": "Permission matters",
+        "prompt": "The archive lending slip is signed before the banquet and identifies Luca as the authorized restorer. Match permission to the record that grants it.",
+        "summary": "The archive lending slip is signed before the banquet and identifies Luca as the authorized restorer. Match permission to the record that grants it.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "authority-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "loan",
+              "label": "Signed pre-banquet restoration loan"
+            },
+            {
+              "id": "wish",
+              "label": "Valenti’s wish to blame Orsini"
+            }
+          ],
+          "slots": [
+            {
+              "id": "authority",
+              "label": "Permission to carry LA-17 for restoration"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "authority-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "authority": "loan"
+        }
+      }
+    },
+    {
+      "id": "limits",
+      "type": "puzzle",
+      "payload": {
+        "title": "A finding with boundaries",
+        "prompt": "Which statement stays within the proof you collected?",
+        "summary": "Which statement stays within the proof you collected?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "limits-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "bounded",
+              "label": "Luca carried LA-17 out; the proof alone does not establish theft"
+            },
+            {
+              "id": "theft",
+              "label": "Leaving with the book proves every element of theft"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "limits-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "bounded"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.three-witnesses.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.three-witnesses.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "Dario accepts the correction without retracting what he actually saw. Valenti still believes Orsini arranged the evening. You can disagree and complete the commissioned factual account.",
+        "summary": "Dario accepts the correction without retracting what he actually saw. Valenti still believes Orsini arranged the evening. You can disagree and complete the commissioned factual account.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "rosa-corrected",
+      "type": "evidence",
+      "payload": {
+        "title": "Rosa’s view through the frosted pane",
+        "summary": "Rosa could distinguish a gray coat through frosted glass but could not see the wearer’s face.",
+        "evidenceKind": "testimony",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "rosa",
+      "type": "puzzle",
+      "payload": {
+        "title": "Rosa and the frosted pane",
+        "prompt": "Rosa: “I honestly thought Orsini left. I recognized the gray coat through frosted glass; I could not see a face.” You have acquired the east-door face image. Which record can help her correct the identification without accusing her of inventing what she saw?",
+        "summary": "Rosa corrects her identification while retaining the truthful account of seeing a gray coat.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "completed_node",
+            "nodeId": "door-image"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "rosa-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "image",
+              "label": "The acquired face image"
+            },
+            {
+              "id": "color",
+              "label": "The coat’s familiar gray color"
+            }
+          ]
+        },
+        "hints": [
+          "Her visual limitation concerns the face, not the existence of the coat."
+        ]
+      }
+    },
+    {
+      "id": "rosa-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "image"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "three-witnesses",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "three-witnesses",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "clock-procedure",
+      "type": "UNLOCKS",
+      "to": "clock-check"
+    },
+    {
+      "from": "clock-procedure",
+      "type": "UNLOCKS",
+      "to": "finding"
+    },
+    {
+      "from": "clock-check",
+      "type": "UNLOCKS",
+      "to": "finding"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "clock-procedure"
+    },
+    {
+      "from": "photo",
+      "type": "REVEALS",
+      "to": "door-image"
+    },
+    {
+      "from": "registry",
+      "type": "REVEALS",
+      "to": "ledger-register"
+    },
+    {
+      "from": "driver",
+      "type": "REVEALS",
+      "to": "coat-exchange"
+    },
+    {
+      "from": "ticket",
+      "type": "REVEALS",
+      "to": "exit-entry"
+    },
+    {
+      "from": "pocket",
+      "type": "REVEALS",
+      "to": "pocket-receipt"
+    },
+    {
+      "from": "seal",
+      "type": "REVEALS",
+      "to": "seal-closed"
+    },
+    {
+      "from": "absence",
+      "type": "REVEALS",
+      "to": "complete-exit-scope"
+    },
+    {
+      "from": "absence",
+      "type": "REVEALS",
+      "to": "no-orsini-entry"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "photo"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "registry"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "driver"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "ticket"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "pocket"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "seal"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "absence"
+    },
+    {
+      "from": "finding",
+      "type": "UNLOCKS",
+      "to": "commission"
+    },
+    {
+      "from": "commission",
+      "type": "UNLOCKS",
+      "to": "authority"
+    },
+    {
+      "from": "commission",
+      "type": "UNLOCKS",
+      "to": "limits"
+    },
+    {
+      "from": "authority",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "limits",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "rosa"
+    },
+    {
+      "from": "rosa",
+      "type": "REVEALS",
+      "to": "rosa-corrected"
+    }
+  ]
+}
