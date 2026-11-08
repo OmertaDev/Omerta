@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "7f24213db511dd5d84c3eb763d2666e04aacbb18",
-  "tree": "39bfb680359f3e747c00325be2437a19da524089",
+  "revision": "a4649811142323e0483ff43594059b9208483ab4",
+  "tree": "a8b05a3223c47c9fedd0f01ba546509fa7016ed9",
   "predecessor": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
   "predecessorTree": "75d872c408cd5b5b76c364485d7b2c154f38af9a",
   "files": {
@@ -242,9 +242,9 @@ export const QUEST_QUALITY_SOURCE = freeze({
     "src/content/runtime.js": {
       "current": {
         "mode": "100644",
-        "blob": "1f5f3f0890f9a575f8a8f589e568fc5ecf9385d3",
-        "sha256": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
-        "bytes": 79500
+        "blob": "ed8c406c17c2ca4343525b8b9662286e90ad8d40",
+        "sha256": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "bytes": 79657
       },
       "baseline": {
         "mode": "100644",
@@ -310,31 +310,31 @@ export const QUEST_QUALITY_SOURCE = freeze({
         },
         {
           "at": 62489,
-          "current": "    )).rows[0];\n    if (progress?.state !== 'available') fail('unknown_action', 'That node is not currently actionable.');\n    assertNodeGates(ch, h, selected, graph, member.role_id);\n    const design = qualityDesign(graph);\n    let qualityContext;\n    if (design || selected.payload?.interaction?.conclusions) {\n      const board = await projection(ch, instance, bundle, client, h);\n      const facts = (await client.query('SELECT fact_key, value_json FROM content_instance_facts WHERE instance_id=$1', [instanceId]))\n        .rows.map(row => ({ key: row.fact_key, value: parseJson(row.value_json) }));\n      const completed = new Set((await client.query(\"SELECT node_id FROM content_instance_nodes WHERE instance_id=$1 AND state='completed'\", [instanceId])).rows.map(row => row.node_id));\n      const states = qualityStates(facts, ch.account_id);\n      qualityContext = { board, completed, states, knownEvidence: new Set(board.instance.nodes\n        .filter(node => node.type === 'evidence' && node.state === COMPLETE).map(node => node.id)) };\n      const authorizedNodes = new Set(board.instance.nodes.filter(node => node.state === COMPLETE).map(node => node.id));\n      if (design && !qualitySpoilerAllows(design, selected.id, authorizedNodes)) {\n        fail('unknown_action', 'That scene has not been revealed to you.');\n      }\n      if (design && !qualityRevelationAllowed(design, selected.id, completed, states.shared, graph.nodeById)) {\n        fail('npc_knowledge', 'This conversation requires information the witness has not learned.');\n      }\n      if (design && selected.type === 'choice') {\n        const participants = (await memberRows(client, instanceId)).map(row => ({ id: qualityMemberId(instanceId, row.account_id) }));\n        if ((participants.length > 1 && !states.shared.delegations[selected.id])\n          || !qualityMandateAllows(states.shared, selected.id, qualityMemberId(instanceId, ch.account_id), participants)) {\n          fail('decision_acknowledgement', 'Agree on a scene delegate and acknowledge the decision before committing.');\n        }\n      }\n    }\n    let result;\n    if (selected.type === 'puzzle') {\n      const payload = narrativeVariant(selected, instance.id);\n",
+          "current": "    )).rows[0];\n    if (progress?.state !== 'available') fail('unknown_action', 'That node is not currently actionable.');\n    assertNodeGates(ch, h, selected, graph, member.role_id);\n    const design = qualityDesign(graph);\n    let qualityContext;\n    const usesProofSets = selected.type === 'puzzle'\n      && graph.nodeById.get(narrativeVariant(selected, instance.id).answerSpecId)?.payload.verifier === 'proof_sets';\n    if (design || usesProofSets) {\n      const board = await projection(ch, instance, bundle, client, h);\n      const facts = (await client.query('SELECT fact_key, value_json FROM content_instance_facts WHERE instance_id=$1', [instanceId]))\n        .rows.map(row => ({ key: row.fact_key, value: parseJson(row.value_json) }));\n      const completed = new Set((await client.query(\"SELECT node_id FROM content_instance_nodes WHERE instance_id=$1 AND state='completed'\", [instanceId])).rows.map(row => row.node_id));\n      const states = qualityStates(facts, ch.account_id);\n      qualityContext = { board, completed, states, knownEvidence: new Set(board.instance.nodes\n        .filter(node => node.type === 'evidence' && node.state === COMPLETE).map(node => node.id)) };\n      const authorizedNodes = new Set(board.instance.nodes.filter(node => node.state === COMPLETE).map(node => node.id));\n      if (design && !qualitySpoilerAllows(design, selected.id, authorizedNodes)) {\n        fail('unknown_action', 'That scene has not been revealed to you.');\n      }\n      if (design && !qualityRevelationAllowed(design, selected.id, completed, states.shared, graph.nodeById)) {\n        fail('npc_knowledge', 'This conversation requires information the witness has not learned.');\n      }\n      if (design && selected.type === 'choice') {\n        const participants = (await memberRows(client, instanceId)).map(row => ({ id: qualityMemberId(instanceId, row.account_id) }));\n        if ((participants.length > 1 && !Object.hasOwn(states.shared.delegations, selected.id))\n          || !qualityMandateAllows(states.shared, selected.id, qualityMemberId(instanceId, ch.account_id), participants)) {\n          fail('decision_acknowledgement', 'Agree on a scene delegate and acknowledge the decision before committing.');\n        }\n      }\n    }\n    let result;\n    if (selected.type === 'puzzle') {\n      const payload = narrativeVariant(selected, instance.id);\n",
           "baseline": "    )).rows[0];\n    if (progress?.state !== 'available') fail('unknown_action', 'That node is not currently actionable.');\n    assertNodeGates(ch, h, selected, graph, member.role_id);\n    let result;\n    if (selected.type === 'puzzle') {\n      const payload = narrativeVariant(selected, instance.id);\n"
         },
         {
-          "at": 65427,
+          "at": 65584,
           "current": "        let matched;\n        if (NARRATIVE_VERIFIERS.includes(spec.payload.verifier)) {\n          if (submitted[0] !== 'submission') fail('bad_request', 'This investigation requires its issued structured submission.');\n          const checked = verifyNarrativeSubmission(spec, payload.interaction, opts.submission,\n            { knownEvidenceNodeIds: qualityContext?.knownEvidence || new Set() });\n          if (!checked.valid) fail('bad_request', 'The submission must use only the issued items and slots.');\n          matched = checked.matched;\n        } else {\n",
           "baseline": "        let matched;\n        if (NARRATIVE_VERIFIERS.includes(spec.payload.verifier)) {\n          if (submitted[0] !== 'submission') fail('bad_request', 'This investigation requires its issued structured submission.');\n          const checked = verifyNarrativeSubmission(spec, payload.interaction, opts.submission);\n          if (!checked.valid) fail('bad_request', 'The submission must use only the issued items and slots.');\n          matched = checked.matched;\n        } else {\n"
         },
         {
-          "at": 66807,
+          "at": 66964,
           "current": "        result = { hintLevel: Number(previous.hintLevel || 0), attempts, suspicion, matched,\n          ...(matched ? { outcome: 'success', summary: payload.summary || null }\n            : complication ? { outcome: 'complication', summary: payload.failForward.summary }\n              : { feedback: spec.payload.verifier === 'proof_sets'\n                ? 'Your selected evidence does not establish the conclusion as a complete chain. Compare the stated assumptions with independent observations; selecting every clue does not make a proof.'\n                : 'The evidence does not support that reconstruction. Review your clues or request a hint.' }) };\n      }\n      if (!result.outcome) {\n        await client.query('UPDATE content_instance_nodes SET result_json=$3 WHERE instance_id=$1 AND node_id=$2',\n",
           "baseline": "        result = { hintLevel: Number(previous.hintLevel || 0), attempts, suspicion, matched,\n          ...(matched ? { outcome: 'success', summary: payload.summary || null }\n            : complication ? { outcome: 'complication', summary: payload.failForward.summary }\n              : { feedback: 'The evidence does not support that reconstruction. Review your clues or request a hint.' }) };\n      }\n      if (!result.outcome) {\n        await client.query('UPDATE content_instance_nodes SET result_json=$3 WHERE instance_id=$1 AND node_id=$2',\n"
         },
         {
-          "at": 68175,
+          "at": 68332,
           "current": "      }\n      const choice = selected.payload.options.find((option) => option.id === opts?.choiceId);\n      if (!choice) fail('unknown_action', 'That choice was not offered.');\n      const procedure = design?.procedures?.find(item => item.nodeId === selected.id);\n      if (procedure && choice.id === procedure.skipOptionId && h.authoredStoryFlags.get(procedure.masteryFlag) !== 'learned') {\n        fail('procedure_unlearned', 'Complete this procedure once before using its shortcut.');\n      }\n      assertNodeGates(ch, h, { payload: { gates: choice.gates || [] } }, graph, member.role_id,\n        { option: true });\n      await recordStoryFlags(client, graph, instance, ch, selected, choice);\n",
           "baseline": "      }\n      const choice = selected.payload.options.find((option) => option.id === opts?.choiceId);\n      if (!choice) fail('unknown_action', 'That choice was not offered.');\n      assertNodeGates(ch, h, { payload: { gates: choice.gates || [] } }, graph, member.role_id,\n        { option: true });\n      await recordStoryFlags(client, graph, instance, ch, selected, choice);\n"
         },
         {
-          "at": 68967,
+          "at": 69124,
           "current": "    } else fail('unknown_action', 'That node is not executable.');\n    await completeNode(client, instanceId, selected.id,\n      { accountId: ch.account_id, characterId: ch.id }, result);\n    const learned = design?.procedures?.find(item => item.learnNodeId === selected.id);\n    if (learned && result.matched === true) {\n      await client.query(\n        `INSERT INTO content_story_flags\n          (account_id,flag_key,flag_kind,flag_value,title,source_namespace,source_version,source_instance_id,source_node_id,source_choice_id)\n         VALUES ($1,$2,'case_evidence','learned',$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING`,\n        [ch.account_id, learned.masteryFlag, 'Practiced procedure', instance.namespace, instance.version,\n          instanceId, selected.id, learned.learnOptionId],\n      );\n    }\n    await cascade(client, graph, instance, { accountId: ch.account_id, characterId: ch.id });\n  }\n  await client.query('UPDATE content_instances SET revision=revision+1 WHERE id=$1', [instanceId]);\n",
           "baseline": "    } else fail('unknown_action', 'That node is not executable.');\n    await completeNode(client, instanceId, selected.id,\n      { accountId: ch.account_id, characterId: ch.id }, result);\n    await cascade(client, graph, instance, { accountId: ch.account_id, characterId: ch.id });\n  }\n  await client.query('UPDATE content_instances SET revision=revision+1 WHERE id=$1', [instanceId]);\n"
         },
         {
-          "at": 70075,
+          "at": 70232,
           "current": "  return projection(ch, next, bundle, client, h);\n}\n\n// Private reasoning is stored separately from public progress. The instance lock serializes\n// disclosures/mandates across actors; the private revision catches a second tab's lost update.\nexport async function actOnContentQuality(ch, instanceId, opts, client, h) {\n  const instance = await lockedInstance(client, instanceId);\n  const bundle = await loadBundle(client, instance.namespace, Number(instance.version), instance.content_hash);\n  const graph = graphOf(bundle), design = qualityDesign(graph);\n  if (!design) fail('unsupported_content_feature', 'This case does not use the quality workbench.');\n  const board = await projection(ch, instance, bundle, client, h);\n  await assertRevision(ch, instance, opts?.expectedRevision, bundle, client, h);\n  const members = await memberRows(client, instanceId);\n  const facts = (await client.query('SELECT fact_key, value_json FROM content_instance_facts WHERE instance_id=$1', [instanceId]))\n    .rows.map(row => ({ key: row.fact_key, value: parseJson(row.value_json) }));\n  const states = qualityStates(facts, ch.account_id);\n  const completed = new Set((await client.query(\"SELECT node_id FROM content_instance_nodes WHERE instance_id=$1 AND state='completed'\", [instanceId])).rows.map(row => row.node_id));\n  let outcome;\n  try { outcome = applyQualityOperation(design, {\n    instance, accountId: ch.account_id, members, completed, nodeById: graph.nodeById,\n    actions: board.instance.actions, knownEvidence: new Set(board.instance.quality.evidence.map(item => item.id)), now: Date.now(),\n  }, states.actor, states.shared, opts); }\n  catch (error) { if (error.code === 'stale_quality') error.data = board; throw error; }\n  if (outcome.publicChange) await validateCurrentPartyAuthority(client, graph, instance);\n  const persist = (key, value) => client.query(\n    `INSERT INTO content_instance_facts (instance_id,fact_key,value_json,set_by_node_id)\n     VALUES ($1,$2,$3,'runtime') ON CONFLICT (instance_id,fact_key)\n     DO UPDATE SET value_json=EXCLUDED.value_json, set_at=now()`, [instanceId, key, JSON.stringify(value)],\n  );\n  await persist(qualityActorKey(ch.account_id), outcome.actor);\n  if (outcome.publicChange) {\n    await persist(QUALITY_SHARED_KEY, outcome.shared);\n    for (const nodeId of outcome.revealNodeIds) {\n      const node = graph.nodeById.get(nodeId);\n      if (node?.type !== 'evidence') fail('unsupported_content_feature', 'A quality operation may reveal only authored evidence.');\n      await completeNode(client, instanceId, nodeId, { accountId: ch.account_id, characterId: ch.id });\n    }\n    await cascade(client, graph, instance, { accountId: ch.account_id, characterId: ch.id });\n    await client.query('UPDATE content_instances SET revision=revision+1 WHERE id=$1', [instanceId]);\n  }\n  const next = (await client.query('SELECT * FROM content_instances WHERE id=$1', [instanceId])).rows[0];\n  return projection(ch, next, bundle, client, h);\n}\n\nexport async function leaveContentInstance(ch, instanceId, opts, client, h) {\n  const instance = await lockedInstance(client, instanceId);\n  const bundle = await loadBundle(client, instance.namespace, Number(instance.version), instance.content_hash);\n",
           "baseline": "  return projection(ch, next, bundle, client, h);\n}\n\nexport async function leaveContentInstance(ch, instanceId, opts, client, h) {\n  const instance = await lockedInstance(client, instanceId);\n  const bundle = await loadBundle(client, instance.namespace, Number(instance.version), instance.content_hash);\n"
         }
@@ -587,9 +587,9 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "src/content/quality-runtime.js": {
       "mode": "100644",
-      "blob": "94ef1b0f38e07f8c7d3158256629cf6dc1f0e931",
-      "sha256": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
-      "bytes": 17323
+      "blob": "01f23d0a64341e88662c40c1669921049ab3ebba",
+      "sha256": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+      "bytes": 17517
     },
     "src/content/quality.js": {
       "mode": "100644",
@@ -647,15 +647,15 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "test/quest-quality-runtime.js": {
       "mode": "100644",
-      "blob": "5cf9b917427f120ef8afae98b9148f2ef3c222d6",
-      "sha256": "8aa0244b1c56403f9875fa4621150048d320899d9ce5bcbcbb9b6a9f051e3606",
-      "bytes": 5665
+      "blob": "763988d2e1b4e547388c5e03f58c6d91cb9bb115",
+      "sha256": "3f227f0b0b8158b97d6e1790fcab5f5cdb788320446bcf0ecc378513a903e6a6",
+      "bytes": 7524
     },
     "test/quest-quality-social.js": {
       "mode": "100644",
-      "blob": "98f96d85f8a1575ea8fdbbba36369eb70437d95b",
-      "sha256": "5258dc676258f660d2e88573af1d2a87eb1ba42f6fd43d783000cf767fc54cb8",
-      "bytes": 6894
+      "blob": "b34886765b566045a76024b3ac45c5e47f3c46fd",
+      "sha256": "a4dfce14e220a79d78651ea113c33efbfb4361906882ab2ffe20079c730964a6",
+      "bytes": 7111
     },
     "test/quest-quality-source-transfer.js": {
       "mode": "100644",
@@ -719,4 +719,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'ed22b7e1d923601a598150662355463cbff37c1921868e8f6f9a074b95ab3173';
+export const QUEST_QUALITY_SOURCE_SHA256 = 'e570e5c5da11d246a4bf1a3a26310cfe9ed42caabb8390de91fc915fde6cac24';
