@@ -305,7 +305,7 @@
       return root;
     }
     function interaction(instance, item) {
-      scope(); const spec = item.interaction, form = el('form', 'quest-form quest-quality-proof'), conclusion = field('Conclusion to test', 'select'), evidence = el('fieldset', 'quest-item-choices'), intent = el('div');
+      scope(); const spec = item.interaction, form = el('form', 'quest-form quest-quality-proof quest-quality-action'), conclusion = field('Conclusion to test', 'select'), evidence = el('fieldset', 'quest-item-choices'), intent = el('div');
       const key = instance.id + ':' + item.nodeId, working = currentDraft(instance);
       let draft = proofDrafts.get(key);
       if (!draft) { draft = { conclusionId: working.conclusionId, evidenceIds: list(spec.items).filter(candidate => working.evidenceIds.includes(candidate.evidenceNodeId)).map(candidate => candidate.id) }; proofDrafts.set(key, draft); }
@@ -329,7 +329,7 @@
       return form;
     }
     function choice(instance, item) {
-      scope(); const root = el('div'), choices = el('div', 'quest-choices'), intent = el('div'), quality = instance.quality;
+      scope(); const root = el('div', 'quest-quality-action'), choices = el('div', 'quest-choices'), intent = el('div'), quality = instance.quality;
       for (const option of list(item.options)) {
         const pick = button(option.label, () => {
           let blocker = '';

@@ -18,6 +18,7 @@
     let legacyReadAt = 0, districtAttemptAt = 0, requestedCase = '';
     const districtTabs = new Set(['streets', 'city', 'map', 'fieldwork']);
     const pending = new Map(), local = new Map(), openSections = new Set(), interactionDrafts = new Map();
+    const qualityButtonDisabled = new WeakMap();
     const state = () => getState() || {};
     const qualityUX = window.createOmertaQuestQuality?.({ getState,
       onOperation: (instance, payload, label) => mutate('/v1/content/instances/' + encode(instance.id) + '/quality', {
@@ -454,12 +455,24 @@
       }
       return root;
     }
+    function updateQualityButtons() {
+      const waiting = loading || busy;
+      root.querySelectorAll('[data-quest-quality] button, .quest-quality-action button').forEach(control => {
+        if (waiting) {
+          if (!qualityButtonDisabled.has(control)) qualityButtonDisabled.set(control, control.disabled);
+          control.disabled = true;
+        } else if (qualityButtonDisabled.has(control)) {
+          control.disabled = qualityButtonDisabled.get(control); qualityButtonDisabled.delete(control);
+        }
+      });
+    }
     function paint(force = false, focusedEditor = null) {
       if (!scope() || state().currentTab !== 'desk') return;
       const host = document.getElementById('tab-desk'); if (!host) return;
       if (!root || !root.isConnected || !host.contains(root)) { root?.remove(); root = el('section', 'ux-quests'); root.id = 'ux-quests'; root.dataset.uxPanel = 'quests'; host.append(root); }
       const active = root.contains(document.activeElement) && document.activeElement.matches('input,textarea,select') ? document.activeElement : null;
       root.setAttribute('aria-busy', String(loading || busy));
+      updateQualityButtons();
       if (active && !busy && (!force || !active.closest('.quest-quality,.quest-quality-proof'))) return;
       const focused = force && active ? { label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : force ? focusedEditor : null;
       const header = el('header', 'quest-heading'); header.append(el('span', 'quest-kicker', 'Bureau of unfinished business'), el('h2', '', 'Your case files'));
@@ -471,6 +484,7 @@
       if (loading && !(view === 'cases' ? board : view === 'community' ? workshop : legacy)) nodes.push(el('p', 'quest-muted', 'Opening the file…'));
       else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());
       root.replaceChildren(...nodes);
+      updateQualityButtons();
       // Keep issued-action forms stable during a commit. Private editors retain newer local
       // text while their submitted snapshot is in flight; a reply never commits those edits.
       if (busy) {

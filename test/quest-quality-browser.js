@@ -91,9 +91,25 @@ async function delayQualityWrite(page, operation) {
   await page.route('**/v1/content/instances/*/quality', handler);
   return { entered, release, stop: () => page.unroute('**/v1/content/instances/*/quality', handler) };
 }
+async function delayContentRead(page) {
+  let signal, release, finish;
+  const entered = new Promise(resolve => { signal = resolve; }), pending = new Promise(resolve => { release = resolve; });
+  const finished = new Promise(resolve => { finish = resolve; });
+  let used = false;
+  const handler = async route => {
+    if (!used && route.request().method() === 'GET') {
+      used = true; signal();
+      try { await pending; await route.continue(); } finally { finish(); }
+    } else await route.continue();
+  };
+  await page.route('**/v1/content', handler);
+  return { entered, release, stop: async () => { release(); try { if (used) await finished; } finally { await page.unroute('**/v1/content', handler); } } };
+}
 async function decision(page, nodeId, label) {
+  await page.locator('#ux-quests[aria-busy="false"]').waitFor();
   const action = page.locator('[data-quest-node="' + nodeId + '"]');
   await action.getByRole('button', { name: label, exact: true }).click();
+  await page.locator('#ux-quests[aria-busy="false"]').waitFor();
   const response = page.waitForResponse(reply => reply.request().method() === 'POST' && reply.url().endsWith('/act'));
   await action.getByRole('button', { name: 'Confirm decision', exact: true }).click();
   const reply = await response; assert.equal(reply.status(), 200, JSON.stringify(await reply.json()));
@@ -201,7 +217,21 @@ try {
   await page.locator('[data-quest-node="commission"]').waitFor();
   const proofWrite = writes.filter(write => write.body.submission?.conclusionId === 'luca').at(-1);
   assert.deepEqual(proofWrite.body.submission, { conclusionId: 'luca', evidenceIds: ['photo-proof', 'register-proof'] });
+  await page.locator('#ux-quests[aria-busy="false"]').waitFor();
+  const commissionChoice = page.locator('[data-quest-node="commission"]').getByRole('button', { name: 'Challenge the accusation and verify Luca’s authority', exact: true });
+  assert.equal(await commissionChoice.isEnabled(), true);
+  const delayedRefresh = await delayContentRead(page), commissionWritesBefore = writes.filter(write => write.path.endsWith('/act')).length;
+  try {
+    await page.locator('#ux-quests').getByRole('button', { name: 'Refresh quest files', exact: true }).click();
+    await delayedRefresh.entered;
+    const pendingChoice = await commissionChoice.evaluate(node => ({ panelBusy: node.closest('#ux-quests').getAttribute('aria-busy'), disabled: node.disabled }));
+    assert.deepEqual(pendingChoice, { panelBusy: 'true', disabled: true }, 'An issued decision stays unavailable while a manual case refresh is pending.');
+    delayedRefresh.release();
+    await page.locator('#ux-quests[aria-busy="false"]').waitFor();
+    assert.equal(await commissionChoice.isEnabled(), true, 'The issued decision becomes available when the authoritative refresh finishes.');
+  } finally { delayedRefresh.release(); await delayedRefresh.stop(); }
   await decision(page, 'commission', 'Challenge the accusation and verify Luca’s authority');
+  assert.equal(writes.filter(write => write.path.endsWith('/act')).length, commissionWritesBefore + 1, 'The refreshed commission records exactly one successful decision request.');
   await solve(alice, pilotId, pilot, 'authority'); await refresh(page);
   await decision(page, 'closing', pilot.nodes.find(node => node.id === 'closing').payload.options[0].label);
   instance = await read(alice, pilotId); assert.equal(instance.status, 'completed'); assert.equal(instance.quality.debrief.opened, false); assert.equal(instance.quality.debrief.text, undefined);
