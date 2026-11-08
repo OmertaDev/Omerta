@@ -1,4 +1,6 @@
 name: forge test (contracts)
+permissions:
+  contents: read
 
 # The pre-mainnet gate the sandboxed build environment can't run (Foundry's release binaries are
 # egress-blocked there). GitHub's runners have open internet, so `forge test` — the OMERTÀ Solidity
@@ -11,6 +13,8 @@ on:
     paths:
       - 'omerta-contracts/**'
       - '.github/workflows/forge.yml'
+      - 'tools/foundry-release-api.js'
+      - 'test/foundry-release-api.js'
       - 'src/dexbot.js'                # the v4 encodings the fork prover below executes
       - 'tools/dexbot-e2e.js'
       - 'src/stockdeliver.js'          # the 6551 + StockVault legs the second prover executes
@@ -43,6 +47,8 @@ on:
     paths:
       - 'omerta-contracts/**'
       - '.github/workflows/forge.yml'
+      - 'tools/foundry-release-api.js'
+      - 'test/foundry-release-api.js'
       - 'src/dexbot.js'
       - 'tools/dexbot-e2e.js'
       - 'src/stockdeliver.js'
@@ -102,10 +108,16 @@ jobs:
       # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the
       # position this gate was in. The banner is the instrument: when local and CI disagree again, the
       # log answers "which forge ran this" instead of leaving it to be guessed at.
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
+      - uses: actions/setup-node@v7
         with:
-          version: v1.7.1
+          node-version: '22'
+          cache: npm
+      - name: Install Foundry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node ../test/foundry-release-api.js
+          node ../tools/foundry-release-api.js bootstrap
 
       - name: forge --version (what actually ran)
         working-directory: omerta-contracts

@@ -1,4 +1,6 @@
 name: ci
+permissions:
+  contents: read
 run-name: ${{ inputs.tail_only && 'Candidate19 affected CI remainder' || 'ci' }}
 
 # The three gates the codebase already treats as required, run automatically instead of by hand.
@@ -68,9 +70,12 @@ jobs:
       - run: npm ci
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
-      - uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: v1.7.1
+      - name: Install verified pinned Foundry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node test/foundry-release-api.js
+          node tools/foundry-release-api.js bootstrap
       - name: Compile original funded-work escrow artifact
         run: npm run build:funded-work-artifact
 
@@ -138,9 +143,12 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: v1.7.1
+      - name: Install verified pinned Foundry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node test/foundry-release-api.js
+          node tools/foundry-release-api.js bootstrap
       - name: Compile original funded-work escrow artifact
         run: npm run build:funded-work-artifact
 
@@ -1404,9 +1412,12 @@ jobs:
       - run: npm ci
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
-      - uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: v1.7.1
+      - name: Install verified pinned Foundry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node test/foundry-release-api.js
+          node tools/foundry-release-api.js bootstrap
       - name: Compile original funded-work escrow artifact
         run: npm run build:funded-work-artifact
 
@@ -1508,9 +1519,12 @@ jobs:
       - run: npm ci
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
-      - uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: v1.7.1
+      - name: Install verified pinned Foundry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node test/foundry-release-api.js
+          node tools/foundry-release-api.js bootstrap
       - name: Compile original funded-work escrow artifact
         run: npm run build:funded-work-artifact
 
@@ -1567,9 +1581,12 @@ jobs:
       - run: npm ci
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
-      - uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: v1.7.1
+      - name: Install verified pinned Foundry
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node test/foundry-release-api.js
+          node tools/foundry-release-api.js bootstrap
       - name: Compile original funded-work escrow artifact
         run: npm run build:funded-work-artifact
 

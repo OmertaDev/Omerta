@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "releasePhase": "CI-toolchain-delivery",
+  "assembledAt": "2026-11-08T10:23:19.457Z",
+  "baseRevision": "b15614a1531f8ecbb108d019bc481dd2ae0beb14",
+  "status": "PREPARED_ON_HOLD_NO_CI_INTEGRATION",
+  "reviewedSourceFiles": {
+    "tools/foundry-release-api.js": {
+      "bytes": 20198,
+      "sha256": "57dca16e3c3cfd6b4fd11773892fb1ab0db48efa095e5c4cff138e27d538fa34"
+    },
+    "test/foundry-release-api.js": {
+      "bytes": 12727,
+      "sha256": "5a16ad62dfd2faf9eca28b0c4acf19560d95133281887f11936fcb16633b49f1"
+    }
+  },
+  "reviewedDraftSourceSha256": "c935aa51a7bbec605a831fdb52f3355d82336da7790128c0a42ec783471628b3",
+  "exactCodeConservationExceptFirstComment": true,
+  "actualDataEvidence": {
+    "successfulGhVerifications": 5,
+    "controlledSignatureMutationRejected": true,
+    "liveDataRefusals": 4,
+    "contemporaneousExecutionSourceHashRecorded": false
+  },
+  "independentOfflineEvidence": {
+    "tarRefusals": 38,
+    "elfRefusals": 8,
+    "policyRefusals": 36,
+    "environmentRefusals": 7,
+    "networkUsed": false
+  },
+  "sourceOutputWitness": {
+    "sha256": "307c56bcd694beecf279573eb4bf492f9eb72efe9b1497e7bfb86725095d85e0",
+    "publicProjection": "Each signed bundle and verificationResult are unchanged; bundle_url and initiator metadata omitted."
+  },
+  "bundleReproduction": "Extract attestation.bundle from archive-gh-verification.json[0], serialize JSON plus LF as slsa-selected.json; no archive or executable is included.",
+  "callerTrustAssumptions": [
+    "Isolated trusted GitHub Actions Linux x64 runner.",
+    "Trusted existing Node and GitHub CLI executables and runtime environment.",
+    "No defense is claimed against a compromised host or malicious process with the same operating-system user.",
+    "GitHub API checksums alone do not establish signature validity."
+  ],
+  "explicitLimits": {
+    "linuxPublicationExecuted": false,
+    "foundryBinariesExecuted": false,
+    "foundryInstalledLocally": false,
+    "pathPublishedLocally": false,
+    "forgeBuildExecuted": false,
+    "nativeContractTestsExecuted": false,
+    "productionActions": false,
+    "oldNativeProofResultsReused": false,
+    "ciIntegrationReviewed": false
+  },
+  "excluded": [
+    "GitHub token values and environment dumps",
+    "Opaque signed transport URLs and complete API responses",
+    "Local absolute paths",
+    "Archive and binary payloads",
+    "Native or production clearance"
+  ],
+  "files": [
+    {
+      "file": "anvil-gh-verification.json",
+      "bytes": 16652,
+      "sha256": "75791df69fc2427eefa733a9edd89115158d0130f927e90f647f09900fa563e1"
+    },
+    {
+      "file": "archive-gh-verification.json",
+      "bytes": 16652,
+      "sha256": "75791df69fc2427eefa733a9edd89115158d0130f927e90f647f09900fa563e1"
+    },
+    {
+      "file": "cast-gh-verification.json",
+      "bytes": 16652,
+      "sha256": "75791df69fc2427eefa733a9edd89115158d0130f927e90f647f09900fa563e1"
+    },
+    {
+      "file": "chisel-gh-verification.json",
+      "bytes": 16652,
+      "sha256": "75791df69fc2427eefa733a9edd89115158d0130f927e90f647f09900fa563e1"
+    },
+    {
+      "file": "forge-gh-verification.json",
+      "bytes": 16652,
+      "sha256": "75791df69fc2427eefa733a9edd89115158d0130f927e90f647f09900fa563e1"
+    },
+    {
+      "file": "review-findings.json",
+      "bytes": 1884,
+      "sha256": "705912aa636c5780486e1340b41dab60285cd0d0bdbbce1fd7d07cca7be2adf7"
+    },
+    {
+      "file": "signature-and-publication-refusals.json",
+      "bytes": 1647,
+      "sha256": "0958a5324bb28a5021aad52b9d8f9f9ea01dce56b3643b79304a848df655beef"
+    },
+    {
+      "file": "source-and-offline-checks.json",
+      "bytes": 1814,
+      "sha256": "8213f09d682a1d43f02af97f882db740ed88289b82c414f430cd31f4fa6c5447"
+    },
+    {
+      "file": "verification-commands.json",
+      "bytes": 6879,
+      "sha256": "556bf76444ad1d9855ecce08a72d710fa34cec8683296e7b51c4a250c2f22793"
+    }
+  ]
+}
