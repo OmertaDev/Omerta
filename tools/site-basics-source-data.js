@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "e4282941ecee1e7d0cfddba4edc64d6607e0d577",
-  "tree": "89193b8145eefe5dda17169f03d098bacbb666b1",
+  "revision": "5ef932d88ade241f2336f248f7bdffee4b49181a",
+  "tree": "c56bde1840b8dcb3c910d94f355a0785471abfde",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -984,9 +984,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "test/rc1-world-duration-evidence.js": {
       "current": {
         "mode": "100644",
-        "blob": "c78b737e4030e3e9c9da1ee24ff9202b4fdf065a",
-        "sha256": "4361fee0ac434d34cfd42f80bbd8c8ddbf8c3c9191c4d34733eccaf035989e2a",
-        "bytes": 12128
+        "blob": "c0f11d8dbe25e0c53d3556eef13ab3eb82b09302",
+        "sha256": "b808121a35c7e571d8f3be14acd466c73f098efa1eb965909d34acec4a465222",
+        "bytes": 12166
       },
       "baseline": {
         "mode": "100644",
@@ -1007,11 +1007,11 @@ export const SITE_BASICS_SOURCE = freeze({
         },
         {
           "at": 4697,
-          "current": "// duration scope; accepting additions never loosens the historical source pin.\nconst workerFile = 'src/worker.js';\nassert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);\nconst rawWorker = controller.transformations.find(row => row.file === workerFile).originalSource;\nconst comparisonWorker = questingHistoricalInput(workerFile, rawWorker);\nassert.notEqual(comparisonWorker, rawWorker, 'The complete current worker has a separate exact historical comparison');\nassert.deepEqual(qualifyIntelSource(workerFile, rawWorker), qualifyIntelSource(workerFile, comparisonWorker));\nassert.deepEqual(qualifyIntelSource(workerFile, rawWorker.replaceAll('\\n', '\\r\\n')), qualifyIntelSource(workerFile, rawWorker));\nconst operatorWorker = companyWorkflowSourceBaseline(workerFile, comparisonWorker);\nassert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);\nconst currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);\nassert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);\n",
+          "current": "// duration scope; accepting additions never loosens the historical source pin.\nconst workerFile = 'src/worker.js';\nassert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);\nconst rawWorker = controller.transformations.find(row => row.file === workerFile).originalSource;\nconst comparisonWorker = firstBatchSourceBaseline(workerFile, questingHistoricalInput(workerFile, rawWorker));\nassert.notEqual(comparisonWorker, rawWorker, 'The complete current worker has a separate exact historical comparison');\nassert.deepEqual(qualifyIntelSource(workerFile, rawWorker), qualifyIntelSource(workerFile, comparisonWorker));\nassert.deepEqual(qualifyIntelSource(workerFile, rawWorker.replaceAll('\\n', '\\r\\n')), qualifyIntelSource(workerFile, rawWorker));\nconst operatorWorker = companyWorkflowSourceBaseline(workerFile, comparisonWorker);\nassert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);\nconst currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);\nassert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);\n",
           "baseline": "// duration scope; accepting additions never loosens the historical source pin.\nconst workerFile = 'src/worker.js';\nassert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);\nconst operatorWorker = companyWorkflowSourceBaseline(workerFile, controller.transformations.find(row => row.file === workerFile).originalSource);\nassert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);\nconst currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);\nassert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);\n"
         },
         {
-          "at": 6682,
+          "at": 6720,
           "current": "  assert.deepEqual(measureWorldWorkerDuration(value), measured);\n}\nlet sourceCorruptions = 0;\nfor (const changed of [rawWorker + '\\n// unreviewed website worker suffix\\n', rawWorker.slice(1),\n  rawWorker.replace('runCompanyOperators(pool, 20)', 'runCompanyOperators(pool, 21)'),\n  rawWorker.replace('\\n', '\\r\\n')]) {\n  assert.notEqual(changed, rawWorker);\n  const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = changed;\n  assert.throws(() => measureWorldWorkerDuration(value), /source changed/); sourceCorruptions++;\n}\nfor (const chunk of INTEL_SOURCE_INVERSES[workerFile]) for (const changed of [\n  currentWorker.replace(chunk, ''), currentWorker.replace(chunk, chunk + chunk),\n  currentWorker.replace(chunk, chunk + '// unreviewed change\\n'),\n",
           "baseline": "  assert.deepEqual(measureWorldWorkerDuration(value), measured);\n}\nlet sourceCorruptions = 0;\nfor (const chunk of INTEL_SOURCE_INVERSES[workerFile]) for (const changed of [\n  currentWorker.replace(chunk, ''), currentWorker.replace(chunk, chunk + chunk),\n  currentWorker.replace(chunk, chunk + '// unreviewed change\\n'),\n"
         }
@@ -1113,9 +1113,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "tools/rc1-intel-source-compatibility.js": {
       "current": {
         "mode": "100644",
-        "blob": "66dee2e01fb57274ba79ad1382dc880d89348462",
-        "sha256": "2f057fee66c590d2c6340a7c9dec8ef72bf7448b100839ed3398902a2ad590c5",
-        "bytes": 9176
+        "blob": "33e3a85f9597426ac0506250b78f88e0ee6aca6c",
+        "sha256": "057d448c0fed2bb8ee16fdf83c08eed0e52045044c385503ec7415831002619c",
+        "bytes": 9294
       },
       "baseline": {
         "mode": "100644",
@@ -1126,12 +1126,12 @@ export const SITE_BASICS_SOURCE = freeze({
       "inverses": [
         {
           "at": 0,
-          "current": "import { questingHistoricalInput } from './questing-source-transfer.js';\nimport { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';\nimport { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';\nimport { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';\n",
+          "current": "import { questingHistoricalInput } from './questing-source-transfer.js';\nimport { firstBatchSourceBaseline } from './rc1-first-batch-source-compatibility.js';\nimport { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';\nimport { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';\nimport { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';\n",
           "baseline": "import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';\nimport { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';\nimport { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';\n"
         },
         {
-          "at": 8224,
-          "current": "// Unchanged historical source is accepted without expanding its original scope.\nexport function qualifyIntelSource(file, input) {\n  assert(Object.hasOwn(INTEL_SOURCE_BASELINE_PINS, file), 'Unknown Intel source compatibility file');\n  // Exact current worker bytes reconstruct only the historical source comparison.\n  // Unknown bytes remain untouched for the original rejecting Intel guard.\n  const text = normalize(file === 'src/worker.js' ? questingHistoricalInput(file, input) : input), actualSha256 = hash(text);\n  if (actualSha256 === INTEL_SOURCE_BASELINE_PINS[file])\n    return { file, actualSha256, baselineSha256: actualSha256, baselineText: text, inverseChunks: 0,\n      sourceRevision: INTEL_SOURCE_PREDECESSOR_REVISION, sourceBlob: INTEL_SOURCE_BASELINE_BLOBS[file],\n",
+          "at": 8310,
+          "current": "// Unchanged historical source is accepted without expanding its original scope.\nexport function qualifyIntelSource(file, input) {\n  assert(Object.hasOwn(INTEL_SOURCE_BASELINE_PINS, file), 'Unknown Intel source compatibility file');\n  // Exact current worker bytes reconstruct only the historical source comparison.\n  // Unknown bytes remain untouched for the original rejecting Intel guard.\n  const text = normalize(file === 'src/worker.js' ? firstBatchSourceBaseline(file, questingHistoricalInput(file, input)) : input), actualSha256 = hash(text);\n  if (actualSha256 === INTEL_SOURCE_BASELINE_PINS[file])\n    return { file, actualSha256, baselineSha256: actualSha256, baselineText: text, inverseChunks: 0,\n      sourceRevision: INTEL_SOURCE_PREDECESSOR_REVISION, sourceBlob: INTEL_SOURCE_BASELINE_BLOBS[file],\n",
           "baseline": "// Unchanged historical source is accepted without expanding its original scope.\nexport function qualifyIntelSource(file, input) {\n  assert(Object.hasOwn(INTEL_SOURCE_BASELINE_PINS, file), 'Unknown Intel source compatibility file');\n  const text = normalize(input), actualSha256 = hash(text);\n  if (actualSha256 === INTEL_SOURCE_BASELINE_PINS[file])\n    return { file, actualSha256, baselineSha256: actualSha256, baselineText: text, inverseChunks: 0,\n      sourceRevision: INTEL_SOURCE_PREDECESSOR_REVISION, sourceBlob: INTEL_SOURCE_BASELINE_BLOBS[file],\n"
         }
       ]
@@ -1242,4 +1242,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '905e58a4eabf14e12f9d32819562cbf126b6fdad9cffa4f33a015f95fb3491cf';
+export const SITE_BASICS_SOURCE_SHA256 = '62e5832e9eedda0383633240e1495d058b08bda25c0c7195a11bf91ae2711993';
