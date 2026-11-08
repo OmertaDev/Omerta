@@ -63,7 +63,7 @@ assert.equal(measured.matrixQualifying, false);
 const workerFile = 'src/worker.js';
 assert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);
 const rawWorker = controller.transformations.find(row => row.file === workerFile).originalSource;
-const comparisonWorker = questingHistoricalInput(workerFile, rawWorker);
+const comparisonWorker = firstBatchSourceBaseline(workerFile, questingHistoricalInput(workerFile, rawWorker));
 assert.notEqual(comparisonWorker, rawWorker, 'The complete current worker has a separate exact historical comparison');
 assert.deepEqual(qualifyIntelSource(workerFile, rawWorker), qualifyIntelSource(workerFile, comparisonWorker));
 assert.deepEqual(qualifyIntelSource(workerFile, rawWorker.replaceAll('\n', '\r\n')), qualifyIntelSource(workerFile, rawWorker));

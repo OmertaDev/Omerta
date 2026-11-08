@@ -1,4 +1,5 @@
 import { questingHistoricalInput } from './questing-source-transfer.js';
+import { firstBatchSourceBaseline } from './rc1-first-batch-source-compatibility.js';
 import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';
 import { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';
 import { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';
@@ -106,7 +107,7 @@ export function qualifyIntelSource(file, input) {
   assert(Object.hasOwn(INTEL_SOURCE_BASELINE_PINS, file), 'Unknown Intel source compatibility file');
   // Exact current worker bytes reconstruct only the historical source comparison.
   // Unknown bytes remain untouched for the original rejecting Intel guard.
-  const text = normalize(file === 'src/worker.js' ? questingHistoricalInput(file, input) : input), actualSha256 = hash(text);
+  const text = normalize(file === 'src/worker.js' ? firstBatchSourceBaseline(file, questingHistoricalInput(file, input)) : input), actualSha256 = hash(text);
   if (actualSha256 === INTEL_SOURCE_BASELINE_PINS[file])
     return { file, actualSha256, baselineSha256: actualSha256, baselineText: text, inverseChunks: 0,
       sourceRevision: INTEL_SOURCE_PREDECESSOR_REVISION, sourceBlob: INTEL_SOURCE_BASELINE_BLOBS[file],
