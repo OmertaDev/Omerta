@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "ec68c587eb54cbcdf12c476fc228ef7203665188",
+  "authoredRevision": "9142bf156b7cdcfa5070efe8af5ad4be32476e1b",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -8765,8 +8765,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/rc1-world-duration-evidence.js",
       "mode": "100644",
-      "blob": "90148bf9e1da91378c14681c4939f9c14a3ae9fb",
-      "sha256": "54767e22626f7f6f5bd268a67db9d511780f3c825ee2e5960b1639ccfc85c583"
+      "blob": "5465de199ad43d1c5fb48d8197fc08d2e8b244f9",
+      "sha256": "aa90fe0012db621ab74d0850ad0f3f6f92ff69aa421feca65a414ce84559fd9f"
     },
     {
       "file": "tools/rc1-world-economy-metrics.js",
@@ -11309,8 +11309,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "35c03e2dfa8064820b707cea05c4b4c6a137bac9",
-      "sha256": "5380317b36070b0c7cf3d6bf76d9a8a98b29720202d788f1648567b45496e220"
+      "blob": "44ac600ea2051d9d1bf3910ff7f40b4bfb958799",
+      "sha256": "af2ee8ec89bd3f2ec766e26dc3b84d163b8dd472bd06532caf06d0edfbffd16f"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -11738,6 +11738,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
         "mode": "100644",
         "blob": "33e3a85f9597426ac0506250b78f88e0ee6aca6c",
         "sha256": "057d448c0fed2bb8ee16fdf83c08eed0e52045044c385503ec7415831002619c"
+      }
+    },
+    {
+      "file": "tools/rc1-world-duration-evidence.js",
+      "before": {
+        "file": "tools/rc1-world-duration-evidence.js",
+        "mode": "100644",
+        "blob": "90148bf9e1da91378c14681c4939f9c14a3ae9fb",
+        "sha256": "54767e22626f7f6f5bd268a67db9d511780f3c825ee2e5960b1639ccfc85c583"
+      },
+      "after": {
+        "file": "tools/rc1-world-duration-evidence.js",
+        "mode": "100644",
+        "blob": "5465de199ad43d1c5fb48d8197fc08d2e8b244f9",
+        "sha256": "aa90fe0012db621ab74d0850ad0f3f6f92ff69aa421feca65a414ce84559fd9f"
       }
     },
     {
@@ -12390,8 +12405,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "35c03e2dfa8064820b707cea05c4b4c6a137bac9",
-      "sha256": "5380317b36070b0c7cf3d6bf76d9a8a98b29720202d788f1648567b45496e220"
+      "blob": "44ac600ea2051d9d1bf3910ff7f40b4bfb958799",
+      "sha256": "af2ee8ec89bd3f2ec766e26dc3b84d163b8dd472bd06532caf06d0edfbffd16f"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12401,4 +12416,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "8dea208127f77eb16d4952573bea37a876c12f26998db652e379324e39eeb5e9";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "892d4870836cf849b72ba5d84a530887f8605cb4b31c664925394559bce206a3";
