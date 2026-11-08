@@ -327,7 +327,7 @@ for (const [file, pin] of Object.entries(CONTINUOUS_CITY_FIXTURE_DOMAINS)) {
         ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)
         : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)
           ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)
-          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));
+          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_REVISION, '--', file));
   if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }
 }
 for (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {
