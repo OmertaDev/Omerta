@@ -6,7 +6,9 @@ import { execFileSync } from 'node:child_process';
 import { questQualitySourceDataBytes } from './quest-quality-source-transfer.js';
 
 const predecessor = '8720db9cb45f973a70a30b45dccc4c20f15012f2';
-const excluded = new Set(['tools/quest-quality-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
+// SITE seals this generated comparison next; native admission independently binds both data files.
+// Excluding only that derived data avoids a reciprocal generated-data dependency.
+const excluded = new Set(['tools/quest-quality-source-data.js', 'tools/site-basics-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
 const git = (...args) => execFileSync('git', ['--no-optional-locks', '--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
 });

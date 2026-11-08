@@ -958,6 +958,7 @@ CREATE TABLE IF NOT EXISTS businesses (
   shakedown_at TIMESTAMPTZ,
   inside_at TIMESTAMPTZ,                            -- Heist step 2: per-venue INSIDE JOB cooldown (stamped win or lose)
   rake_cursor NUMERIC NOT NULL DEFAULT 0,           -- Den step 2: den volume already rakeback-claimed (casino kind only)
+  rake_index_cursor TEXT,                          -- exact rational claimed rakeback index; NULL identifies legacy volume cursors
   upkeep_at TIMESTAMPTZ NOT NULL DEFAULT now(),     -- recurring sinks ("the pad"): upkeep accrues off this clock; pay resets it, upgrade squares it
   acquired_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (character_id, kind)
@@ -1215,7 +1216,10 @@ CREATE TABLE IF NOT EXISTS den_volume (
   -- distribution is capped at profit − distributed − open liability, so the den never emits beyond
   -- what the players actually lost. Both mirror the ledger exactly (§10.4 den checks).
   profit NUMERIC NOT NULL DEFAULT 0,
-  distributed NUMERIC NOT NULL DEFAULT 0
+  distributed NUMERIC NOT NULL DEFAULT 0,
+  rake_index TEXT NOT NULL DEFAULT '0',            -- exact per-owner cash entitlement, serialized numerator/denominator
+  rake_checkpoint_volume NUMERIC,                  -- NULL until legacy claims are snapshotted before an ownership change
+  rake_legacy_owners INT NOT NULL DEFAULT 0
 );
 INSERT INTO den_volume (id, total) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM den_volume);
 -- THE VIG POT (NetNet rec C, 2026-08-21): a progressive jackpot RESERVED out of realized den

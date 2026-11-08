@@ -103,6 +103,16 @@ export async function requireKnownPlayer(q, ch, targetId) {
 
 export async function playerIntelBoard(q, ch) {
   const known = await playerIntelMap(q, ch.account_id);
+  // The first-score callout introduces this exact resident to its assigned player. It is not a
+  // sighting: keep the roster actionable without revealing location, level, or the resident's heir.
+  // Projecting the active assignment also repairs beats created before the intelligence board.
+  if (Number(ch.aha_stage) === 1 && ch.aha_rival && !known.has(ch.aha_rival)) {
+    const rival = (await q.query(
+      'SELECT id, name FROM characters WHERE id=$1 AND is_npc AND alive', [ch.aha_rival],
+    )).rows[0];
+    if (rival) known.set(rival.id, { id: rival.id, name: ch.aha_rival_name || rival.name,
+      npc: true, source: 'callout', sourceName: null });
+  }
   const represented = new Set((await q.query(
     `SELECT c.account_id FROM player_intel i JOIN characters c ON c.id=i.target_character
       WHERE i.owner_account=$1`, [ch.account_id])).rows.map((row) => row.account_id));

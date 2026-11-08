@@ -50,8 +50,8 @@ export async function startFirstBlood(pool, accountId) {
     // non-uuid seed (never a production account); nothing partial has committed yet.
     if (!UUID_RE.test(me.account_id) || !UUID_RE.test(rival.account_id)) { await client.query('ROLLBACK'); return null; }
     // the rival "makes a move" — a rival_events row (aggressor = the resident) so it surfaces on the
-    // nemesis card + the rivals ledger exactly like a real player's move; the info-economy rule holds
-    // because the streets already show everyone who is in the district.
+    // nemesis card + the rivals ledger exactly like a real player's move. The intelligence roster
+    // projects this assigned identity for the player only; the callout grants no current sighting.
     await client.query(
       'INSERT INTO rival_events (id, victim_account, aggressor_account, kind, detail) VALUES ($1,$2,$3,$4,$5)',
       [uid(), me.account_id, rival.account_id, 'callout', JSON.stringify({ firstBlood: true })]);

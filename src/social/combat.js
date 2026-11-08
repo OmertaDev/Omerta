@@ -23,6 +23,7 @@ import { resolveWarIfDue } from './gangs.js';
 import { withItemTransaction } from '../items.js';
 import { prelockEquipmentRentalDeathActors } from '../equipmentrentals.js';
 import { hospitalized, isWanted, jailed, now, rand, safeHoused, warActive } from './shared.js';
+import { checkpointCasinoRakeback } from '../casinorakeback.js';
 
 // ═══════════════════ JUMPS (§7.6) ═══════════════════
 export async function jump(ch, victim, client, h, intent) {
@@ -249,11 +250,12 @@ async function sackEmpire(client, ch, victim, h) {
   // (red-team) rake_cursor moves to TODAY's den volume, NOT 0 — the buyBusiness rule ("a new owner earns
   // against future action, not history"); a 0 cursor let a killer claim rakeback on the ENTIRE lifetime
   // den volume, draining the shared profit-capped pool ahead of every honest casino-front owner.
-  const denVol = Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);
+  const rake = best.kind === 'casino' ? await checkpointCasinoRakeback(client) : null;
+  const denVol = rake?.volume ?? Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);
   await client.query(
     `UPDATE businesses SET character_id=$2, spec=NULL, spec_at=NULL, scrutiny=0, scrutiny_at=now(),
-       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3
-     WHERE id=$1`, [best.id, ch.id, denVol]);
+       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3, rake_index_cursor=$4
+     WHERE id=$1`, [best.id, ch.id, denVol, rake?.index ?? null]);
   // keep the victim's loaded fronts honest so the estate report doesn't double-count the seized one
   if (h.victimOwned?.businesses) h.victimOwned.businesses = h.victimOwned.businesses.filter((b) => b.id !== best.id);
   return { kind: best.kind, tier: best.tier, name: best.name };

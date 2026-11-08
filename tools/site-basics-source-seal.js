@@ -18,8 +18,8 @@ const regular = (revision, file) => {
   assert(!/[\r\0\ufeff]/.test(text), 'Committed whole UTF-8 LF text only: ' + file);
   return { text, pin: { mode: match[1], blob: match[2], sha256: sha(text), bytes: Buffer.byteLength(text) } };
 };
-const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql' || file === 'render.yaml'
-  || file === '.github/workflows/ci.yml' || /^(?:src|test|tools|public)\//.test(file);
+const scope = file => file === 'AGENTS.md' || file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'package-lock.json' || file === 'schema.sql' || file === 'render.yaml'
+  || file === 'omerta-mcp/README.md' || file === '.github/workflows/ci.yml' || file === '.github/workflows/forge.yml' || /^(?:src|test|tools|public)\//.test(file);
 function inverses(current, diff) {
   const rows = []; let row;
   const starts = [0]; for (let at = 0; at < current.length; at++) if (current[at] === '\n') starts.push(at + 1);
@@ -40,7 +40,8 @@ assert.equal(git('status', '--porcelain', '--untracked-files=all').trim(), '', '
 git('merge-base', '--is-ancestor', predecessor, revision);
 const changed = git('diff', '--name-only', '--diff-filter=M', '-z', predecessor, revision).split('\0').filter(file => scope(file) && !excluded.has(file));
 const added = git('diff', '--name-only', '--diff-filter=A', '-z', predecessor, revision).split('\0')
-  .filter(file => scope(file) && !excluded.has(file) && /\.(?:js|json|html|css|sql)$/.test(file));
+  .filter(file => scope(file) && !excluded.has(file)
+    && (/\.(?:js|json|html|css|sql)$/.test(file) || file === 'tools/install-foundry-verified.sh'));
 const value = { status: 'SEALED', phase: 'EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY', revision,
   tree: git('rev-parse', revision + '^{tree}').trim(), predecessor,
   predecessorTree: git('rev-parse', predecessor + '^{tree}').trim(), files: {}, additions: {} };

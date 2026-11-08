@@ -20,6 +20,7 @@ export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-con
 export { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };
 export const QUESTING_NATIVE_SUPPORT = Object.freeze([
   'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',
+  'tools/install-foundry-verified.sh',
   'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,
   'tools/questing-enterprise-catalog.js', 'test/questing-enterprise-catalog-guard.js',
   'tools/questing-ux-release-phase2-native-catalog.js',
@@ -27,6 +28,7 @@ export const QUESTING_NATIVE_SUPPORT = Object.freeze([
   'test/lib/questing-ux-native-reader-source-compatibility.js',
   'test/lib/questing-ux-director-reader-source-compatibility.js',
   'test/lib/questing-ux-enterprise-reader-source-compatibility.js',
+  'src/casinorakeback.js',
   'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',
   ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',
     'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']

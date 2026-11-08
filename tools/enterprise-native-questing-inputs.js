@@ -4,21 +4,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "3c68d0f2c7aae16bfa5b0831f5030824e7694bcb",
+  "authoredRevision": "68b15b74da7ce9d708ad96b3edbd70576af37ee9",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
     {
       "file": ".github/workflows/ci.yml",
       "mode": "100644",
-      "blob": "f964aa2908d28fe4ad4e71012320903bedc081cb",
-      "sha256": "e1295d68e45e163fe3390114f593eeba2bf22419f36b14808bce9d85f41a84e5"
+      "blob": "1c80774dce6249309d3dee29e5d18335ccb14152",
+      "sha256": "3ab77e4756025b66bfbdce5f8802ff1e4607564ce767c12bdb1ff90d75df1670"
     },
     {
       "file": ".github/workflows/forge.yml",
       "mode": "100644",
-      "blob": "67b8d93dcceb0c7661c81ed17ece5891a197579b",
-      "sha256": "b700d2a7053edcaa71dedbe9182d049a2cc94be3faca5b89218f953238373c72"
+      "blob": "da9438636cf3d68c3e5bf7e9fc574859e4682609",
+      "sha256": "233f7f266a1deca5df4c0bfd329fae90e78a97f7b0abca027a77f6e91cc7f73f"
     },
     {
       "file": ".github/workflows/knowledge-refresh.yml",
@@ -47,8 +47,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "AGENTS.md",
       "mode": "100644",
-      "blob": "627700e8c897578951ef5ee94f4938fe41800cbc",
-      "sha256": "f5d101cba3010c710cd0d64246fb4b0c080e9632bc7496b582cca8e05dec55b8"
+      "blob": "a4e85493e8cf0c9218323bca2c1c47891d611a8c",
+      "sha256": "38eb8602fec3af443a7125073adcc5c82e03930eff1a51b4e1c99ea23de3d987"
     },
     {
       "file": "content/README.md",
@@ -299,14 +299,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "package-lock.json",
       "mode": "100644",
-      "blob": "558dc61f9de691962cca03fbe7a54f763e5ee8f9",
-      "sha256": "ad275c512da2aabcbd76721cd242dcf10efecf7cd2698742e964c8e8f6ff287a"
+      "blob": "cb692ac8e9381b05a920612cadb51dc2275b85f7",
+      "sha256": "20f8360cea8c6565ddf257e0e5846d009a672dd6fd2ef36df5ddff38fa3eaa7f"
     },
     {
       "file": "package.json",
       "mode": "100644",
-      "blob": "f1beabeb2895544580495cc17ca1935af017ff65",
-      "sha256": "f16e9f7e7297cf8bb31ac81506acc53856591d473bb57377670e5056d27417ed"
+      "blob": "b4c01d90200efe8493d685c7ba56e4912ae7f36c",
+      "sha256": "a64159184378adbf9387773776427f49445b40b178d7f6b0a787b40b9f21675b"
     },
     {
       "file": "public/admin.html",
@@ -3869,8 +3869,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "schema.sql",
       "mode": "100755",
-      "blob": "7a254a435c95a93cc5d8419b453988b0df30b5c1",
-      "sha256": "af6d9ad01566eaddf8ec6b4c4da4add77837b13e6a3510697bebf62b180b97e7"
+      "blob": "86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3",
+      "sha256": "659235a1735d24dbebc5f9b4dfcff8a58ed766a27fd3ae32fc6c6d2ec77006dc"
     },
     {
       "file": "src/access.js",
@@ -3887,8 +3887,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/age.js",
       "mode": "100644",
-      "blob": "94a8b0e92dbb559e79e4d169ac238eaddafca663",
-      "sha256": "b3aea51a8cb6b537fdb45ec2fa44aebeb1a0af39bc248c4e2afaee57eb9cf3dd"
+      "blob": "14222404d3a264414ee0196c762cd874b17bb9b7",
+      "sha256": "8b3eea86549603133ab1e5e2a2c412e08dd73f643a16ab17b4a7e6d6909235be"
     },
     {
       "file": "src/agentcompany.js",
@@ -3899,8 +3899,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/agentgateway.js",
       "mode": "100644",
-      "blob": "a7ec8942ac9ca29e9fb5f4fc33bd68309cecc992",
-      "sha256": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95"
+      "blob": "caca6ad7f577bc3c6f426260f7a1649542446db9",
+      "sha256": "a04f73bdc3d87962361c6626604edb5a1f607c67db38353a73331f349b4b6ae5"
     },
     {
       "file": "src/agentoperatingmemory.js",
@@ -3917,8 +3917,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/agentturn.js",
       "mode": "100644",
-      "blob": "5294e1776283af79ffea8ba92c0d07d869cb6ec0",
-      "sha256": "c95dfae693e344b6d1a470013631f02f55291299442e9adf2fbbd8ecc0fe6455"
+      "blob": "4eed3f888002a21d02c60800072b69912bc47636",
+      "sha256": "1c4fe6e61f94e71c953c9221f1302e67a3acf3d9349ddbe161835f19267ca881"
     },
     {
       "file": "src/aggregate.js",
@@ -3971,8 +3971,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/auth.js",
       "mode": "100644",
-      "blob": "6174b707c640d23370f17f96276f27925085909a",
-      "sha256": "18cb62fc753643f82fec90ebd37c508f2554cfb20239df35aca2a3fb38358d62"
+      "blob": "a147dd0eb8b48b2e3aded148d67fc8f84d546f78",
+      "sha256": "e9aa8c63cf522b2287fdf4d0584e8d054312d225e95b88962e4a7e18d4acc17b"
     },
     {
       "file": "src/avatar.js",
@@ -4025,8 +4025,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/business.js",
       "mode": "100644",
-      "blob": "aca781b54ff0b503935120133eccf8651111f6ae",
-      "sha256": "ab21ead8eb57a92be0f23c3b68f2cf8e3babdae77ddda69bb64857f279a6f8ca"
+      "blob": "c7bd96ed55d1070942161d0e10d89370a20902cd",
+      "sha256": "8a7196b7ee8d705cd157e80d1ab1a09673169b8b5a24c65af42fa1d045daffc8"
     },
     {
       "file": "src/businesspartnerships.js",
@@ -5231,8 +5231,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/firstblood.js",
       "mode": "100644",
-      "blob": "7568de7f861f2453c4f163507b0f314e8a10689d",
-      "sha256": "33be4793e498cec80ef115fb5667389251819e5295b44f5fbd8b8ebfe52912be"
+      "blob": "c838542b5bbe8968c9d777329a8d584558358c05",
+      "sha256": "8ab27498da2f54dd9ec755e7ce8089426a1f919094dd5c788df6407e302c3975"
     },
     {
       "file": "src/firsts.js",
@@ -5915,14 +5915,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/playerintel.js",
       "mode": "100644",
-      "blob": "8a12f5ebaff1ffe4763a47054d069ea34c2665cb",
-      "sha256": "2bc94b95470582fe042510905df825a027ff73454d658ac6f5abceb9b2709662"
+      "blob": "0716e814086186744986f15ebe2b7df166b69571",
+      "sha256": "2ab3b8c1d3c95112f1bcc9c11655d8442a2490cee65386a082301aebb4fc1cd3"
     },
     {
       "file": "src/population.js",
       "mode": "100644",
-      "blob": "81e66e10d3d575f58fe62f486bfed307a7a71328",
-      "sha256": "86ea4b0d0b1b21869860f8d25065ad8800ef691c3ba8be461a4debbce55a9421"
+      "blob": "2e993fa6bc2c0339f60642463803ea72b5573d84",
+      "sha256": "4671510bf6b150b317839210a30ec452caf2a14ee83e292e0829fe37d64a068e"
     },
     {
       "file": "src/port.js",
@@ -5993,8 +5993,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/ratelimit.js",
       "mode": "100644",
-      "blob": "02dd02bc4728301adf91bb30114d72f880d72559",
-      "sha256": "a430d7231b81f9dfb28ab6858d8175a0a258d735ac736077eb1fcb86a8dffd08"
+      "blob": "08c87567ed0386fc04f5f99e3e53792eaa0bb527",
+      "sha256": "bce10b7fef1c8ef2718a205758cb14b3475543d2c09070fa2af3875ef499b17c"
     },
     {
       "file": "src/recipe-policy.js",
@@ -6803,8 +6803,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/server.js",
       "mode": "100644",
-      "blob": "49ec2a2fbb5659278d78fa705d026bb4ce64feea",
-      "sha256": "0f18cac05dfe6763132b431d5fb6ebce1492bda1353643e7f4eb8ddd87982388"
+      "blob": "233d3d43977b23e29dd86db63d9956ad5279d38d",
+      "sha256": "5103563b4519ab7f3876e997ca4935458178af96c373d025ce73f3de0c60a3b9"
     },
     {
       "file": "src/servicesubscriptions.js",
@@ -6833,8 +6833,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/social/combat.js",
       "mode": "100644",
-      "blob": "775b1b3c39fe9a948b8075e0e67b42ef052f14ff",
-      "sha256": "7732eda2646bf2cac1a1bcf2632fd097ad7077cd22d3deba3bbd9eba8abf593c"
+      "blob": "e6125045b02fb1d575578da71e505d9f8905b7eb",
+      "sha256": "56eb560f1c6e10892fd8ae13082906da7c6b30a4e8550b9793336e7615202cbb"
     },
     {
       "file": "src/social/contracts.js",
@@ -6851,8 +6851,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/social/estate.js",
       "mode": "100644",
-      "blob": "c988e5fed83be712c81aaffeacae97a68648df45",
-      "sha256": "5f9634aa6cb6ff046e689bf34c6e6e7e585fa4073af00609bb96c2aaac592d17"
+      "blob": "2d5ce2adc9d5039bbeb8ab1b168b5411ccb32c66",
+      "sha256": "c2387d76fe958bb1ef0e7571c176b3773a68694089adff649d1a121b869453fb"
     },
     {
       "file": "src/social/exchange.js",
@@ -7487,8 +7487,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/enterprise-release-phase2-migration-catalog.js",
       "mode": "100644",
-      "blob": "a0e64889dfa2def52c8f1b6a9148ea19c46a2316",
-      "sha256": "36cb9483ddb241281b57de5315adf8e4b21df2b6ed2bd136afd1f03f6d54fdd3"
+      "blob": "c35ebb7882d2a1103ac080b00630cff2f7fbbb00",
+      "sha256": "a8789026111be911cc53a5348847a2583bf7895f9ad46ee819276e7f51132e3b"
     },
     {
       "file": "test/enterprise-source-compatibility.js",
@@ -7613,8 +7613,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/gates.js",
       "mode": "100644",
-      "blob": "b538670f8ad6440f5317245c2c5d4338a23798cc",
-      "sha256": "20323c79ac69f9b6d3a944ba144066927e2d853e00e822763784fb20f43a8b97"
+      "blob": "5c30eba9758ab52b94b86813346afa19a2c7cbbc",
+      "sha256": "418c13af33c3f7e40cbe74a198f89f8ba3b3f0416412792f77bc4922d3e9b352"
     },
     {
       "file": "test/graph.js",
@@ -7745,8 +7745,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/rc1-historical-source-fixture.js",
       "mode": "100644",
-      "blob": "59b76b0079e401cb57da3ff8bf65488239796f1d",
-      "sha256": "a17a4b01753b724ee704611d7a8c612c534bbff1d44e338edc7c68c257f7e152"
+      "blob": "2939b8d45cab84f02514631addaeadb65ddbc67b",
+      "sha256": "f04494bf0c912b9c7e8ac6ec075270689ee7206d965f356b9026181088555c81"
     },
     {
       "file": "test/lib/rc1-historical-worker-source.js",
@@ -8453,8 +8453,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/rc1-invoice-source-compatibility.js",
       "mode": "100644",
-      "blob": "3eb02714243c10667db896c222c2b03a3c271f93",
-      "sha256": "e8993a705d736145bb0bbe8c1071a37d2b108efc150e8a4e204691b6dbf7d968"
+      "blob": "84ad2afb9318d95b3961d2c98a2108b033a99df4",
+      "sha256": "9058b28d18355a6a94b3c10ef7dcc0585ce02d893fee74bcdef5b7952b1eeb74"
     },
     {
       "file": "tools/rc1-knowledge-diagnostics.js",
@@ -9521,14 +9521,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/client-ip.js",
       "mode": "100644",
-      "blob": "bbb9dcdd73dbf5ae2511787ffcab2711255f9e29",
-      "sha256": "f9364d261dec8a794c87966b56b3e1c5bcf4cb9496e28e517d44eb6d8051c73c"
+      "blob": "b4d333bac5e80e1bfa20780d5a9fc3b01c25b1cf",
+      "sha256": "e61b4fd9d9163eaf0059baf4a847f355c3dd032d7b2b88abb39d52e9307fe3b0"
     },
     {
       "file": "test/client.js",
       "mode": "100644",
-      "blob": "fd83f534638faf520e1d56c28133d05bef5cbd45",
-      "sha256": "b3d3c81a038f42c28fbf1dd5142e3fccecc653cf48ca23b5cc85565e118ffd60"
+      "blob": "7d2baa55480cf76964962be1c9c398388305bddf",
+      "sha256": "9cb4f9873ad8a5c315df076d267a357768f1689edb163f93e67a279b68a2c841"
     },
     {
       "file": "test/continuous-city-host-contract.js",
@@ -9701,8 +9701,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/rc1-invoice-source-compatibility.js",
       "mode": "100644",
-      "blob": "1439d353b1d2a1fb997a627f03cd237331d0b484",
-      "sha256": "092b7519eab69237c307d51b3af5f0ee88e39132515707204ee796a20132ce99"
+      "blob": "1897e847237e33a6f165499d1ba48c1e71cd72a2",
+      "sha256": "0a3ef60abc0180015e82e1f63f4816cccd326140c6ee73bdcf6b2cd5f89b1228"
     },
     {
       "file": "test/rc1-lifecycle-applicability.js",
@@ -10211,8 +10211,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/age-eligibility-source-compatibility.js",
       "mode": "100644",
-      "blob": "c93fc60c295119cda04a8943844c9503f0f0598b",
-      "sha256": "f5726915eec202962572471e229847a7078755e33ab5b582685bba908d3a8d4e"
+      "blob": "ca27667802463efddcd397aba2f1ca3088e8bcb1",
+      "sha256": "c01a42ebabd00aa091387387a00fcaf6f6c84eda8036b47d25fce237c61e9a89"
     },
     {
       "file": "test/age.js",
@@ -10289,8 +10289,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/db-boot-lock-postgres.js",
       "mode": "100644",
-      "blob": "a371a9a38ac1de3f30f528f8df2f007a6f99f2a2",
-      "sha256": "a18e55a9bb90ad675a4e46df1bd733612fd0bcc14a1577abfd95b94948270642"
+      "blob": "fa7407002296d410be838b3d9d2d2bf3408b0b91",
+      "sha256": "ef923e2dcd27a8f9ed5d6edfab6ce83b62479d3134357c6b15620eec6bf19352"
     },
     {
       "file": "test/economy-composition-restart.js",
@@ -11157,6 +11157,12 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "8b8aeb833b7704f9051099f421551b91dcd1c1670076dc825ac6f78699f5beeb"
     },
     {
+      "file": "src/casinorakeback.js",
+      "mode": "100644",
+      "blob": "e63cc40bb9b598dc7dd402a61e91b79f3ce5b1a9",
+      "sha256": "22e4ea6a4024225205727e4997aa8e52319350e00e4625db4cae96c6716bf0f0"
+    },
+    {
       "file": "src/client-shell.js",
       "mode": "100644",
       "blob": "0248b3685944b46a23cdefedf39321acc7b0b47e",
@@ -11237,8 +11243,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/enterprise-native-questing-guard.js",
       "mode": "100644",
-      "blob": "e0837ab99986fc8a225e064aa47db71a42875c69",
-      "sha256": "2dde66b1d75614383814730cece231fddb5848a36ec4256a621320572b552482"
+      "blob": "0229412e142222d321bda8a69daf17ccbe911397",
+      "sha256": "5e5ed54d2b304821d9831977725a993f1638bb8f117efa9afe2e06c6f1757449"
     },
     {
       "file": "test/lib/questing-ux-director-reader-source-compatibility.js",
@@ -11249,8 +11255,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/questing-ux-enterprise-reader-source-compatibility.js",
       "mode": "100644",
-      "blob": "6cd588a6ac98416b7dac2b3bc92f1090d136e5a7",
-      "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9"
+      "blob": "25072693250b1545e046596d9548f1953bd5eb41",
+      "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978"
     },
     {
       "file": "test/lib/questing-ux-native-reader-source-compatibility.js",
@@ -11261,8 +11267,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-enterprise-catalog-guard.js",
       "mode": "100644",
-      "blob": "a43b66e49388608e043dfc7f242d1707aacc80aa",
-      "sha256": "4e13053b8ce6b01981d694d6a0190ba1439bb329d2d6e71b090e868031741fc1"
+      "blob": "a6045d7c764babc1d0572cf4774a0ecc3f29e8df",
+      "sha256": "e75b585345f259e07769fc0dc5a39992a9d583e827c1a89710d09194f1b14aef"
     },
     {
       "file": "test/questing-source-transfer.js",
@@ -11273,14 +11279,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-ux-release-phase2-native-catalog-guard.js",
       "mode": "100644",
-      "blob": "d0ece965f3b2c84efc0fd4eb795d0885cd6d0c54",
-      "sha256": "9f9d869bd00987aa2f58e721a9a39621e37475cc74b41dc4e1a54a2fe3896b3e"
+      "blob": "c70143519c1de9b10d560b62305ca5d467a7859b",
+      "sha256": "34a493ce4e8ddc005abcc25625c3287cff446deb8e4fdced7a3298de8e5b4949"
     },
     {
       "file": "test/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "95bb3837eb63416eb2236dbb501a95c94531f629",
-      "sha256": "cd121515663e8c88fb6a0efc2be8577aeef1d91067e7f759db9ee0dce99bb3f5"
+      "blob": "b47a96027f09c62422eea3cf1bfd14b1c514f32f",
+      "sha256": "c0fced0a06476990303e48bfd81777511dc30c5ed288405c276bb94e3ec54583"
     },
     {
       "file": "tools/ci-foundry.js",
@@ -11303,8 +11309,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/enterprise-native-questing.js",
       "mode": "100644",
-      "blob": "3214b184bf840c87c32082f959acd79831f6ff78",
-      "sha256": "5ad0255cb9cde9c583be9657b91452d17b7726f41ab06fab3c8521ca0994662c"
+      "blob": "93991a6444e0f58eb6e6a1c0249ead248415d6ef",
+      "sha256": "76860a00443a23916ebab3263c9b09ab1883d040d498b70da36a0457b7c38a4d"
     },
     {
       "file": "tools/foundry-release-api.js",
@@ -11313,22 +11319,16 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "57dca16e3c3cfd6b4fd11773892fb1ab0db48efa095e5c4cff138e27d538fa34"
     },
     {
-      "file": "tools/quest-quality-source-data.js",
+      "file": "tools/install-foundry-verified.sh",
       "mode": "100644",
-      "blob": "5bfcf163160466564175353c39aedf5e50695bb7",
-      "sha256": "7aedc3061d16b06df58fe0bc1491fff350698bb041a5877e903f47039a04f04b"
-    },
-    {
-      "file": "tools/quest-quality-source-transfer.js",
-      "mode": "100644",
-      "blob": "72908f02e65daf65309af20a79bb2b978a8d9ff1",
-      "sha256": "c056c3b8e2efe22e9ba465393c3a895bbca94929113ddd1ef0fbcad53f9f7fe9"
+      "blob": "5ab943fc4b59ba396a3e048c1ab2f2b968096cb9",
+      "sha256": "c5414d0e231bf4071ec1c52b03f99ca105e246ecf07428bc513c03e673befee4"
     },
     {
       "file": "tools/questing-enterprise-catalog.js",
       "mode": "100644",
-      "blob": "1b806dfe1de5db15ce53d51b7a42ad750e48a569",
-      "sha256": "feec8aa2a5db0ca40c3232b99728ea72bb04a4bae094b881d20bf0613c618fd1"
+      "blob": "f1e7713e990c0b06ebba84f9f34692d2d334277e",
+      "sha256": "15b4476298609a8e8ec663dcb9c3c0d59829e8d04a25e5681a081561b9978cca"
     },
     {
       "file": "tools/questing-source-transfer.js",
@@ -11339,20 +11339,20 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/questing-ux-release-phase2-native-catalog.js",
       "mode": "100644",
-      "blob": "7c745df4e6ded887b98f8618ae5deacb53198caf",
-      "sha256": "ded65ea0c23d32584899ef6bbf5b49d37971cc62c206f8190e8ce019ec650eb4"
+      "blob": "2b987db6920def5e2a34e04e861c335be2e3be49",
+      "sha256": "65cd8de2870f545c34ed2e869d2cbc1b892a0cdb23feee594e593ed247b40d63"
     },
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "ecfb8393f85de8f4bb62fadddb24a2186221953c",
-      "sha256": "ad2ae328a7f09c582acd98996c3d1646d2b115a94e16c796534f88586a18a0b5"
+      "blob": "d782b4f3dced9fd6fc577362e9f5baefaf7b4683",
+      "sha256": "8fce60a8d4bd9c1a47e77281c52b896378a5c976cfc42c8e66ec554b5d352ed3"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "a014b72ae419ced3b1d279569ee84500969fc5f6",
-      "sha256": "b1cb4ac3db610e7d95ca87f8ff0ec45eb7d61b42f352fd74f223c67de5af2498"
+      "blob": "abdf165711f425b7cda48479c6c816af1915cca4",
+      "sha256": "1b881b6b57056436b0972621c534c611f93ad8ca20a8aae995da58a66283de1c"
     }
   ],
   "replacements": [
@@ -11367,8 +11367,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": ".github/workflows/ci.yml",
         "mode": "100644",
-        "blob": "f964aa2908d28fe4ad4e71012320903bedc081cb",
-        "sha256": "e1295d68e45e163fe3390114f593eeba2bf22419f36b14808bce9d85f41a84e5"
+        "blob": "1c80774dce6249309d3dee29e5d18335ccb14152",
+        "sha256": "3ab77e4756025b66bfbdce5f8802ff1e4607564ce767c12bdb1ff90d75df1670"
       }
     },
     {
@@ -11382,8 +11382,38 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": ".github/workflows/forge.yml",
         "mode": "100644",
-        "blob": "67b8d93dcceb0c7661c81ed17ece5891a197579b",
-        "sha256": "b700d2a7053edcaa71dedbe9182d049a2cc94be3faca5b89218f953238373c72"
+        "blob": "da9438636cf3d68c3e5bf7e9fc574859e4682609",
+        "sha256": "233f7f266a1deca5df4c0bfd329fae90e78a97f7b0abca027a77f6e91cc7f73f"
+      }
+    },
+    {
+      "file": "AGENTS.md",
+      "before": {
+        "file": "AGENTS.md",
+        "mode": "100644",
+        "blob": "627700e8c897578951ef5ee94f4938fe41800cbc",
+        "sha256": "f5d101cba3010c710cd0d64246fb4b0c080e9632bc7496b582cca8e05dec55b8"
+      },
+      "after": {
+        "file": "AGENTS.md",
+        "mode": "100644",
+        "blob": "a4e85493e8cf0c9218323bca2c1c47891d611a8c",
+        "sha256": "38eb8602fec3af443a7125073adcc5c82e03930eff1a51b4e1c99ea23de3d987"
+      }
+    },
+    {
+      "file": "package-lock.json",
+      "before": {
+        "file": "package-lock.json",
+        "mode": "100644",
+        "blob": "558dc61f9de691962cca03fbe7a54f763e5ee8f9",
+        "sha256": "ad275c512da2aabcbd76721cd242dcf10efecf7cd2698742e964c8e8f6ff287a"
+      },
+      "after": {
+        "file": "package-lock.json",
+        "mode": "100644",
+        "blob": "cb692ac8e9381b05a920612cadb51dc2275b85f7",
+        "sha256": "20f8360cea8c6565ddf257e0e5846d009a672dd6fd2ef36df5ddff38fa3eaa7f"
       }
     },
     {
@@ -11397,8 +11427,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "f1beabeb2895544580495cc17ca1935af017ff65",
-        "sha256": "f16e9f7e7297cf8bb31ac81506acc53856591d473bb57377670e5056d27417ed"
+        "blob": "b4c01d90200efe8493d685c7ba56e4912ae7f36c",
+        "sha256": "a64159184378adbf9387773776427f49445b40b178d7f6b0a787b40b9f21675b"
       }
     },
     {
@@ -11487,8 +11517,23 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "schema.sql",
         "mode": "100755",
-        "blob": "7a254a435c95a93cc5d8419b453988b0df30b5c1",
-        "sha256": "af6d9ad01566eaddf8ec6b4c4da4add77837b13e6a3510697bebf62b180b97e7"
+        "blob": "86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3",
+        "sha256": "659235a1735d24dbebc5f9b4dfcff8a58ed766a27fd3ae32fc6c6d2ec77006dc"
+      }
+    },
+    {
+      "file": "src/age.js",
+      "before": {
+        "file": "src/age.js",
+        "mode": "100644",
+        "blob": "94a8b0e92dbb559e79e4d169ac238eaddafca663",
+        "sha256": "b3aea51a8cb6b537fdb45ec2fa44aebeb1a0af39bc248c4e2afaee57eb9cf3dd"
+      },
+      "after": {
+        "file": "src/age.js",
+        "mode": "100644",
+        "blob": "14222404d3a264414ee0196c762cd874b17bb9b7",
+        "sha256": "8b3eea86549603133ab1e5e2a2c412e08dd73f643a16ab17b4a7e6d6909235be"
       }
     },
     {
@@ -11502,8 +11547,53 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "src/agentgateway.js",
         "mode": "100644",
-        "blob": "a7ec8942ac9ca29e9fb5f4fc33bd68309cecc992",
-        "sha256": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95"
+        "blob": "caca6ad7f577bc3c6f426260f7a1649542446db9",
+        "sha256": "a04f73bdc3d87962361c6626604edb5a1f607c67db38353a73331f349b4b6ae5"
+      }
+    },
+    {
+      "file": "src/agentturn.js",
+      "before": {
+        "file": "src/agentturn.js",
+        "mode": "100644",
+        "blob": "5294e1776283af79ffea8ba92c0d07d869cb6ec0",
+        "sha256": "c95dfae693e344b6d1a470013631f02f55291299442e9adf2fbbd8ecc0fe6455"
+      },
+      "after": {
+        "file": "src/agentturn.js",
+        "mode": "100644",
+        "blob": "4eed3f888002a21d02c60800072b69912bc47636",
+        "sha256": "1c4fe6e61f94e71c953c9221f1302e67a3acf3d9349ddbe161835f19267ca881"
+      }
+    },
+    {
+      "file": "src/auth.js",
+      "before": {
+        "file": "src/auth.js",
+        "mode": "100644",
+        "blob": "6174b707c640d23370f17f96276f27925085909a",
+        "sha256": "18cb62fc753643f82fec90ebd37c508f2554cfb20239df35aca2a3fb38358d62"
+      },
+      "after": {
+        "file": "src/auth.js",
+        "mode": "100644",
+        "blob": "a147dd0eb8b48b2e3aded148d67fc8f84d546f78",
+        "sha256": "e9aa8c63cf522b2287fdf4d0584e8d054312d225e95b88962e4a7e18d4acc17b"
+      }
+    },
+    {
+      "file": "src/business.js",
+      "before": {
+        "file": "src/business.js",
+        "mode": "100644",
+        "blob": "aca781b54ff0b503935120133eccf8651111f6ae",
+        "sha256": "ab21ead8eb57a92be0f23c3b68f2cf8e3babdae77ddda69bb64857f279a6f8ca"
+      },
+      "after": {
+        "file": "src/business.js",
+        "mode": "100644",
+        "blob": "c7bd96ed55d1070942161d0e10d89370a20902cd",
+        "sha256": "8a7196b7ee8d705cd157e80d1ab1a09673169b8b5a24c65af42fa1d045daffc8"
       }
     },
     {
@@ -11582,6 +11672,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "src/firstblood.js",
+      "before": {
+        "file": "src/firstblood.js",
+        "mode": "100644",
+        "blob": "7568de7f861f2453c4f163507b0f314e8a10689d",
+        "sha256": "33be4793e498cec80ef115fb5667389251819e5295b44f5fbd8b8ebfe52912be"
+      },
+      "after": {
+        "file": "src/firstblood.js",
+        "mode": "100644",
+        "blob": "c838542b5bbe8968c9d777329a8d584558358c05",
+        "sha256": "8ab27498da2f54dd9ec755e7ce8089426a1f919094dd5c788df6407e302c3975"
+      }
+    },
+    {
       "file": "src/game.js",
       "before": {
         "file": "src/game.js",
@@ -11642,6 +11747,51 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "src/playerintel.js",
+      "before": {
+        "file": "src/playerintel.js",
+        "mode": "100644",
+        "blob": "8a12f5ebaff1ffe4763a47054d069ea34c2665cb",
+        "sha256": "2bc94b95470582fe042510905df825a027ff73454d658ac6f5abceb9b2709662"
+      },
+      "after": {
+        "file": "src/playerintel.js",
+        "mode": "100644",
+        "blob": "0716e814086186744986f15ebe2b7df166b69571",
+        "sha256": "2ab3b8c1d3c95112f1bcc9c11655d8442a2490cee65386a082301aebb4fc1cd3"
+      }
+    },
+    {
+      "file": "src/population.js",
+      "before": {
+        "file": "src/population.js",
+        "mode": "100644",
+        "blob": "81e66e10d3d575f58fe62f486bfed307a7a71328",
+        "sha256": "86ea4b0d0b1b21869860f8d25065ad8800ef691c3ba8be461a4debbce55a9421"
+      },
+      "after": {
+        "file": "src/population.js",
+        "mode": "100644",
+        "blob": "2e993fa6bc2c0339f60642463803ea72b5573d84",
+        "sha256": "4671510bf6b150b317839210a30ec452caf2a14ee83e292e0829fe37d64a068e"
+      }
+    },
+    {
+      "file": "src/ratelimit.js",
+      "before": {
+        "file": "src/ratelimit.js",
+        "mode": "100644",
+        "blob": "02dd02bc4728301adf91bb30114d72f880d72559",
+        "sha256": "a430d7231b81f9dfb28ab6858d8175a0a258d735ac736077eb1fcb86a8dffd08"
+      },
+      "after": {
+        "file": "src/ratelimit.js",
+        "mode": "100644",
+        "blob": "08c87567ed0386fc04f5f99e3e53792eaa0bb527",
+        "sha256": "bce10b7fef1c8ef2718a205758cb14b3475543d2c09070fa2af3875ef499b17c"
+      }
+    },
+    {
       "file": "src/routes/content.js",
       "before": {
         "file": "src/routes/content.js",
@@ -11682,8 +11832,38 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "src/server.js",
         "mode": "100644",
-        "blob": "49ec2a2fbb5659278d78fa705d026bb4ce64feea",
-        "sha256": "0f18cac05dfe6763132b431d5fb6ebce1492bda1353643e7f4eb8ddd87982388"
+        "blob": "233d3d43977b23e29dd86db63d9956ad5279d38d",
+        "sha256": "5103563b4519ab7f3876e997ca4935458178af96c373d025ce73f3de0c60a3b9"
+      }
+    },
+    {
+      "file": "src/social/combat.js",
+      "before": {
+        "file": "src/social/combat.js",
+        "mode": "100644",
+        "blob": "775b1b3c39fe9a948b8075e0e67b42ef052f14ff",
+        "sha256": "7732eda2646bf2cac1a1bcf2632fd097ad7077cd22d3deba3bbd9eba8abf593c"
+      },
+      "after": {
+        "file": "src/social/combat.js",
+        "mode": "100644",
+        "blob": "e6125045b02fb1d575578da71e505d9f8905b7eb",
+        "sha256": "56eb560f1c6e10892fd8ae13082906da7c6b30a4e8550b9793336e7615202cbb"
+      }
+    },
+    {
+      "file": "src/social/estate.js",
+      "before": {
+        "file": "src/social/estate.js",
+        "mode": "100644",
+        "blob": "c988e5fed83be712c81aaffeacae97a68648df45",
+        "sha256": "5f9634aa6cb6ff046e689bf34c6e6e7e585fa4073af00609bb96c2aaac592d17"
+      },
+      "after": {
+        "file": "src/social/estate.js",
+        "mode": "100644",
+        "blob": "2d5ce2adc9d5039bbeb8ab1b168b5411ccb32c66",
+        "sha256": "c2387d76fe958bb1ef0e7571c176b3773a68694089adff649d1a121b869453fb"
       }
     },
     {
@@ -11727,8 +11907,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/enterprise-release-phase2-migration-catalog.js",
         "mode": "100644",
-        "blob": "a0e64889dfa2def52c8f1b6a9148ea19c46a2316",
-        "sha256": "36cb9483ddb241281b57de5315adf8e4b21df2b6ed2bd136afd1f03f6d54fdd3"
+        "blob": "c35ebb7882d2a1103ac080b00630cff2f7fbbb00",
+        "sha256": "a8789026111be911cc53a5348847a2583bf7895f9ad46ee819276e7f51132e3b"
       }
     },
     {
@@ -11742,8 +11922,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/gates.js",
         "mode": "100644",
-        "blob": "b538670f8ad6440f5317245c2c5d4338a23798cc",
-        "sha256": "20323c79ac69f9b6d3a944ba144066927e2d853e00e822763784fb20f43a8b97"
+        "blob": "5c30eba9758ab52b94b86813346afa19a2c7cbbc",
+        "sha256": "418c13af33c3f7e40cbe74a198f89f8ba3b3f0416412792f77bc4922d3e9b352"
       }
     },
     {
@@ -11757,8 +11937,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/lib/rc1-historical-source-fixture.js",
         "mode": "100644",
-        "blob": "59b76b0079e401cb57da3ff8bf65488239796f1d",
-        "sha256": "a17a4b01753b724ee704611d7a8c612c534bbff1d44e338edc7c68c257f7e152"
+        "blob": "2939b8d45cab84f02514631addaeadb65ddbc67b",
+        "sha256": "f04494bf0c912b9c7e8ac6ec075270689ee7206d965f356b9026181088555c81"
       }
     },
     {
@@ -11789,6 +11969,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
         "mode": "100644",
         "blob": "33e3a85f9597426ac0506250b78f88e0ee6aca6c",
         "sha256": "057d448c0fed2bb8ee16fdf83c08eed0e52045044c385503ec7415831002619c"
+      }
+    },
+    {
+      "file": "tools/rc1-invoice-source-compatibility.js",
+      "before": {
+        "file": "tools/rc1-invoice-source-compatibility.js",
+        "mode": "100644",
+        "blob": "3eb02714243c10667db896c222c2b03a3c271f93",
+        "sha256": "e8993a705d736145bb0bbe8c1071a37d2b108efc150e8a4e204691b6dbf7d968"
+      },
+      "after": {
+        "file": "tools/rc1-invoice-source-compatibility.js",
+        "mode": "100644",
+        "blob": "84ad2afb9318d95b3961d2c98a2108b033a99df4",
+        "sha256": "9058b28d18355a6a94b3c10ef7dcc0585ce02d893fee74bcdef5b7952b1eeb74"
       }
     },
     {
@@ -11897,6 +12092,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "test/client-ip.js",
+      "before": {
+        "file": "test/client-ip.js",
+        "mode": "100644",
+        "blob": "bbb9dcdd73dbf5ae2511787ffcab2711255f9e29",
+        "sha256": "f9364d261dec8a794c87966b56b3e1c5bcf4cb9496e28e517d44eb6d8051c73c"
+      },
+      "after": {
+        "file": "test/client-ip.js",
+        "mode": "100644",
+        "blob": "b4d333bac5e80e1bfa20780d5a9fc3b01c25b1cf",
+        "sha256": "e61b4fd9d9163eaf0059baf4a847f355c3dd032d7b2b88abb39d52e9307fe3b0"
+      }
+    },
+    {
       "file": "test/client.js",
       "before": {
         "file": "test/client.js",
@@ -11907,8 +12117,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/client.js",
         "mode": "100644",
-        "blob": "fd83f534638faf520e1d56c28133d05bef5cbd45",
-        "sha256": "b3d3c81a038f42c28fbf1dd5142e3fccecc653cf48ca23b5cc85565e118ffd60"
+        "blob": "7d2baa55480cf76964962be1c9c398388305bddf",
+        "sha256": "9cb4f9873ad8a5c315df076d267a357768f1689edb163f93e67a279b68a2c841"
       }
     },
     {
@@ -12012,8 +12222,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/rc1-invoice-source-compatibility.js",
         "mode": "100644",
-        "blob": "1439d353b1d2a1fb997a627f03cd237331d0b484",
-        "sha256": "092b7519eab69237c307d51b3af5f0ee88e39132515707204ee796a20132ce99"
+        "blob": "1897e847237e33a6f165499d1ba48c1e71cd72a2",
+        "sha256": "0a3ef60abc0180015e82e1f63f4816cccd326140c6ee73bdcf6b2cd5f89b1228"
       }
     },
     {
@@ -12042,8 +12252,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/age-eligibility-source-compatibility.js",
         "mode": "100644",
-        "blob": "c93fc60c295119cda04a8943844c9503f0f0598b",
-        "sha256": "f5726915eec202962572471e229847a7078755e33ab5b582685bba908d3a8d4e"
+        "blob": "ca27667802463efddcd397aba2f1ca3088e8bcb1",
+        "sha256": "c01a42ebabd00aa091387387a00fcaf6f6c84eda8036b47d25fce237c61e9a89"
       }
     },
     {
@@ -12119,6 +12329,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
         "mode": "100644",
         "blob": "3afcfa204a065dfb807424e27b2b14204dbd4221",
         "sha256": "881fadb5054b5831b506d20896e11d8ceccfecfd987f7115f1da895caddeb8ae"
+      }
+    },
+    {
+      "file": "test/db-boot-lock-postgres.js",
+      "before": {
+        "file": "test/db-boot-lock-postgres.js",
+        "mode": "100644",
+        "blob": "a371a9a38ac1de3f30f528f8df2f007a6f99f2a2",
+        "sha256": "a18e55a9bb90ad675a4e46df1bd733612fd0bcc14a1577abfd95b94948270642"
+      },
+      "after": {
+        "file": "test/db-boot-lock-postgres.js",
+        "mode": "100644",
+        "blob": "fa7407002296d410be838b3d9d2d2bf3408b0b91",
+        "sha256": "ef923e2dcd27a8f9ed5d6edfab6ce83b62479d3134357c6b15620eec6bf19352"
       }
     },
     {
@@ -12319,6 +12544,12 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "8b8aeb833b7704f9051099f421551b91dcd1c1670076dc825ac6f78699f5beeb"
     },
     {
+      "file": "src/casinorakeback.js",
+      "mode": "100644",
+      "blob": "e63cc40bb9b598dc7dd402a61e91b79f3ce5b1a9",
+      "sha256": "22e4ea6a4024225205727e4997aa8e52319350e00e4625db4cae96c6716bf0f0"
+    },
+    {
       "file": "src/client-shell.js",
       "mode": "100644",
       "blob": "0248b3685944b46a23cdefedf39321acc7b0b47e",
@@ -12399,8 +12630,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/enterprise-native-questing-guard.js",
       "mode": "100644",
-      "blob": "e0837ab99986fc8a225e064aa47db71a42875c69",
-      "sha256": "2dde66b1d75614383814730cece231fddb5848a36ec4256a621320572b552482"
+      "blob": "0229412e142222d321bda8a69daf17ccbe911397",
+      "sha256": "5e5ed54d2b304821d9831977725a993f1638bb8f117efa9afe2e06c6f1757449"
     },
     {
       "file": "test/lib/questing-ux-director-reader-source-compatibility.js",
@@ -12411,8 +12642,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/questing-ux-enterprise-reader-source-compatibility.js",
       "mode": "100644",
-      "blob": "6cd588a6ac98416b7dac2b3bc92f1090d136e5a7",
-      "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9"
+      "blob": "25072693250b1545e046596d9548f1953bd5eb41",
+      "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978"
     },
     {
       "file": "test/lib/questing-ux-native-reader-source-compatibility.js",
@@ -12423,8 +12654,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-enterprise-catalog-guard.js",
       "mode": "100644",
-      "blob": "a43b66e49388608e043dfc7f242d1707aacc80aa",
-      "sha256": "4e13053b8ce6b01981d694d6a0190ba1439bb329d2d6e71b090e868031741fc1"
+      "blob": "a6045d7c764babc1d0572cf4774a0ecc3f29e8df",
+      "sha256": "e75b585345f259e07769fc0dc5a39992a9d583e827c1a89710d09194f1b14aef"
     },
     {
       "file": "test/questing-source-transfer.js",
@@ -12435,14 +12666,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-ux-release-phase2-native-catalog-guard.js",
       "mode": "100644",
-      "blob": "d0ece965f3b2c84efc0fd4eb795d0885cd6d0c54",
-      "sha256": "9f9d869bd00987aa2f58e721a9a39621e37475cc74b41dc4e1a54a2fe3896b3e"
+      "blob": "c70143519c1de9b10d560b62305ca5d467a7859b",
+      "sha256": "34a493ce4e8ddc005abcc25625c3287cff446deb8e4fdced7a3298de8e5b4949"
     },
     {
       "file": "test/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "95bb3837eb63416eb2236dbb501a95c94531f629",
-      "sha256": "cd121515663e8c88fb6a0efc2be8577aeef1d91067e7f759db9ee0dce99bb3f5"
+      "blob": "b47a96027f09c62422eea3cf1bfd14b1c514f32f",
+      "sha256": "c0fced0a06476990303e48bfd81777511dc30c5ed288405c276bb94e3ec54583"
     },
     {
       "file": "tools/ci-foundry.js",
@@ -12465,8 +12696,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/enterprise-native-questing.js",
       "mode": "100644",
-      "blob": "3214b184bf840c87c32082f959acd79831f6ff78",
-      "sha256": "5ad0255cb9cde9c583be9657b91452d17b7726f41ab06fab3c8521ca0994662c"
+      "blob": "93991a6444e0f58eb6e6a1c0249ead248415d6ef",
+      "sha256": "76860a00443a23916ebab3263c9b09ab1883d040d498b70da36a0457b7c38a4d"
     },
     {
       "file": "tools/foundry-release-api.js",
@@ -12475,22 +12706,16 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "57dca16e3c3cfd6b4fd11773892fb1ab0db48efa095e5c4cff138e27d538fa34"
     },
     {
-      "file": "tools/quest-quality-source-data.js",
+      "file": "tools/install-foundry-verified.sh",
       "mode": "100644",
-      "blob": "5bfcf163160466564175353c39aedf5e50695bb7",
-      "sha256": "7aedc3061d16b06df58fe0bc1491fff350698bb041a5877e903f47039a04f04b"
-    },
-    {
-      "file": "tools/quest-quality-source-transfer.js",
-      "mode": "100644",
-      "blob": "72908f02e65daf65309af20a79bb2b978a8d9ff1",
-      "sha256": "c056c3b8e2efe22e9ba465393c3a895bbca94929113ddd1ef0fbcad53f9f7fe9"
+      "blob": "5ab943fc4b59ba396a3e048c1ab2f2b968096cb9",
+      "sha256": "c5414d0e231bf4071ec1c52b03f99ca105e246ecf07428bc513c03e673befee4"
     },
     {
       "file": "tools/questing-enterprise-catalog.js",
       "mode": "100644",
-      "blob": "1b806dfe1de5db15ce53d51b7a42ad750e48a569",
-      "sha256": "feec8aa2a5db0ca40c3232b99728ea72bb04a4bae094b881d20bf0613c618fd1"
+      "blob": "f1e7713e990c0b06ebba84f9f34692d2d334277e",
+      "sha256": "15b4476298609a8e8ec663dcb9c3c0d59829e8d04a25e5681a081561b9978cca"
     },
     {
       "file": "tools/questing-source-transfer.js",
@@ -12501,21 +12726,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/questing-ux-release-phase2-native-catalog.js",
       "mode": "100644",
-      "blob": "7c745df4e6ded887b98f8618ae5deacb53198caf",
-      "sha256": "ded65ea0c23d32584899ef6bbf5b49d37971cc62c206f8190e8ce019ec650eb4"
+      "blob": "2b987db6920def5e2a34e04e861c335be2e3be49",
+      "sha256": "65cd8de2870f545c34ed2e869d2cbc1b892a0cdb23feee594e593ed247b40d63"
     },
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "ecfb8393f85de8f4bb62fadddb24a2186221953c",
-      "sha256": "ad2ae328a7f09c582acd98996c3d1646d2b115a94e16c796534f88586a18a0b5"
+      "blob": "d782b4f3dced9fd6fc577362e9f5baefaf7b4683",
+      "sha256": "8fce60a8d4bd9c1a47e77281c52b896378a5c976cfc42c8e66ec554b5d352ed3"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "a014b72ae419ced3b1d279569ee84500969fc5f6",
-      "sha256": "b1cb4ac3db610e7d95ca87f8ff0ec45eb7d61b42f352fd74f223c67de5af2498"
+      "blob": "abdf165711f425b7cda48479c6c816af1915cca4",
+      "sha256": "1b881b6b57056436b0972621c534c611f93ad8ca20a8aae995da58a66283de1c"
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "bbe97c61b36578f9a68edde0959ae0fd059c3313e2ca3c6973226d0bccc402cb";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "224ff05a86bc8617bbcd55007846142c56e18e6bbd05690d188d1b98266adede";

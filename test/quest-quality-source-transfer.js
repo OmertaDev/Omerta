@@ -15,7 +15,8 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
 git('merge-base', '--is-ancestor', source.predecessor, source.revision); git('merge-base', '--is-ancestor', source.revision, 'HEAD');
 const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql'
   || /^\.github\/workflows\/[^/]+\.ya?ml$/.test(file) || /^(?:src|test|tools|public|content\/packs)\//.test(file);
-const excluded = new Set(['tools/quest-quality-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
+// SITE independently seals the combined postimage after this data; native admission binds both.
+const excluded = new Set(['tools/quest-quality-source-data.js', 'tools/site-basics-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
 const changed = kind => git('diff', '--name-only', '--diff-filter=' + kind, '-z', source.predecessor, source.revision).split('\0').filter(file => scope(file) && !excluded.has(file));
 assert.deepEqual(Object.keys(source.files), changed('M'));
 assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\.(?:js|json|html|css|sql)$/.test(file)));

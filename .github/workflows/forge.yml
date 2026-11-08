@@ -112,12 +112,30 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Foundry release API offline controls
+        run: node ../test/foundry-release-api.js
       - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+        id: foundry_setup
+        continue-on-error: true
+      - name: Install verified Foundry from the official release API
+        if: steps.foundry_setup.outcome == 'failure'
+        timeout-minutes: 10
+        working-directory: ${{ github.workspace }}
         env:
           GH_TOKEN: ${{ github.token }}
+        run: bash tools/install-foundry-verified.sh
+      - name: Require the pinned Foundry release build
+        shell: bash
         run: |
-          node ../test/foundry-release-api.js
-          node ../tools/foundry-release-api.js bootstrap
+          set -euo pipefail
+          foundry_version="$(forge --version)"
+          printf '%s\n' "$foundry_version"
+          grep -Fxq 'forge Version: 1.7.1' <<< "$foundry_version"
+          grep -Fxq 'Commit SHA: 4072e48705af9d93e3c0f6e29e93b5e9a40caed8' <<< "$foundry_version"
+          grep -Fxq 'Build Profile: dist' <<< "$foundry_version"
 
       - name: forge --version (what actually ran)
         working-directory: omerta-contracts

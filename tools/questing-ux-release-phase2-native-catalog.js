@@ -424,7 +424,8 @@ async function verifyArchivedComparisonBranches(pool, endpoint) {
 
 // Actual585 admission and additive native metadata layer. Archived582 is comparison-only.
 import { QUESTING_CATALOG_BASELINE, QUESTING_CATALOG_SOURCE, QUESTING_CATALOG_TABLES,
-  questingCatalogSource, verifyQuestingCatalogTables } from './questing-enterprise-catalog.js';
+  questingCatalogSource, verifyQuestingCatalogTables, questingCasinoCatalogProjection, questingCasinoCatalogRows,
+  questingCasinoConstraintProjection, QUESTING_CASINO_DDL_CONTROLS } from './questing-enterprise-catalog.js';
 import { QUESTING_ENTERPRISE_NATIVE_INPUTS as questDeclaration,
   assertQuestingEnterpriseTrackedInput, captureQuestingEnterpriseSource,
   assertQuestingEnterpriseStable } from './enterprise-native-questing.js';
@@ -579,13 +580,15 @@ function questProjectMetadata(metadata, reference, full) {
   return Object.fromEntries(questFields.map(field =>
     [field, metadata[field].filter(row => !questNames.has(questTable(field, row)))]));
 }
-async function questProjectedCaller(pool, reference) {
+async function questProjectedCaller(pool, reference, profile) {
   const wrap = async queryable => {
+    questingCasinoCatalogProjection(await original.readCommerceReleasePhase2Metadata(queryable), reference.version, profile, false);
     const context = (await queryable.query(catalogQueries[0])).rows[0];
     return { query: async (sql, values) => {
       if (sql === catalogQueries[0]) {
         const actual = await questOnlyRows(queryable, reference.version);
         assert.deepEqual(actual, reference.full, 'Same-client native quest fields requalify before every catalog reread');
+        questingCasinoCatalogProjection(await original.readCommerceReleasePhase2Metadata(queryable), reference.version, profile, false);
       }
       const result = await queryable.query(sql, values), field = catalogFields.get(sql);
       if (!field) return result;
@@ -595,7 +598,8 @@ async function questProjectedCaller(pool, reference) {
         return { ...row, definition: row.definition.replace(anchor, ' ON $self.') };
       });
       assert.deepEqual(selected, reference.raw[field], 'Exact actual quest ' + field + ' qualifies before filtering');
-      return { ...result, rows: result.rows.filter(row => !questNames.has(questTable(field, row))) };
+      return { ...result, rows: questingCasinoCatalogRows(field,
+        result.rows.filter(row => !questNames.has(questTable(field, row))), reference.version, profile, false) };
     } };
   };
   return { ...await wrap(pool), connect: async () => {
@@ -623,8 +627,15 @@ export function questingNativeQuestProjection(full, version, includeNotNull) {
     sourceOnly: true, nativeAdmission: false, priorResultsTransferred: false,
   });
 }
-function extendQuestCatalog(prior, reference, projected, includeNotNull, current, ddlCausal) {
-  const projection = questingNativeQuestProjection(reference.full, reference.version, includeNotNull);
+export function questingNativeCatalogProjection(full, version, includeNotNull, profile) {
+  assert.equal(arguments.length, 4);
+  const quest = questingNativeQuestProjection(full, version, includeNotNull);
+  return Object.freeze({ projectMetadata: metadata => questingCasinoCatalogProjection(quest.projectMetadata(metadata), version, profile, false),
+    projectConstraints: rows => questingCasinoConstraintProjection(quest.projectConstraints(rows), version, includeNotNull),
+    sourceOnly: true, nativeAdmission: false, priorResultsTransferred: false });
+}
+function extendQuestCatalog(prior, reference, projected, includeNotNull, current, ddlCausal, profile, casinoDdlCausal) {
+  const projection = questingNativeCatalogProjection(reference.full, reference.version, includeNotNull, profile);
   const project = projection.projectMetadata;
   const normalize = typeof prior.normalize === 'function'
     ? rows => prior.normalize(projection.projectConstraints(rows)) : null;
@@ -633,10 +644,26 @@ function extendQuestCatalog(prior, reference, projected, includeNotNull, current
   const result = Object.freeze({ ...prior, ...(normalize ? { normalize } : {}), verifyMetadata,
     ...(prior.verify ? { verify: metadata => prior.verify(project(metadata)) } : {}),
     reference: current, ...(prior.current ? { current } : {}),
-    archived582Reference: prior.reference, questReference: reference.full, questDdlCausal: ddlCausal,
+    archived582Reference: prior.reference, questReference: reference.full, questDdlCausal: ddlCausal, casinoDdlCausal,
     phase: 'Actual585 live metadata with separately qualified archived582 parent comparison; ' + prior.phase,
     questPhase: 'Actual585 native quest rows; exact archived582 comparison only' });
-  questStates.set(result, { prior, reference, projected, includeNotNull }); return result;
+  questStates.set(result, { prior, reference, projected, includeNotNull, profile }); return result;
+}
+async function casinoDdlControls(pool, version, profile) {
+  let causal = 0; const client = await pool.connect();
+  try {
+    for (const ddl of QUESTING_CASINO_DDL_CONTROLS) {
+      await client.query('BEGIN');
+      try {
+        questingCasinoCatalogProjection(await original.readCommerceReleasePhase2Metadata(client), version, profile, false);
+        await client.query(ddl);
+        await assert.rejects(async () => questingCasinoCatalogProjection(await original.readCommerceReleasePhase2Metadata(client), version, profile, false),
+          error => error?.code === 'ERR_ASSERTION'); causal++;
+      } finally { await client.query('ROLLBACK'); }
+      questingCasinoCatalogProjection(await original.readCommerceReleasePhase2Metadata(client), version, profile, false);
+    }
+  } finally { client.release(); }
+  assert.equal(causal, 14); return causal;
 }
 async function questDdlControls(pool, reference) {
   const ddls = [
@@ -681,11 +708,12 @@ export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint
   const reference = freeze({ ...compiled, version });
   assert.deepEqual(await questOnlyRows(pool, version), reference.full);
   const ddlCausal = await questDdlControls(pool, reference);
-  const projected = await questProjectedCaller(pool, reference);
+  const casinoDdlCausal = await casinoDdlControls(pool, version, options.legacyProfile);
+  const projected = await questProjectedCaller(pool, reference, options.legacyProfile);
   const prior = await createArchivedComparisonCatalog(projected, endpoint, archived582ComparisonSource(), options);
   const current = await readCommerceReleasePhase2Metadata(pool);
   assertQuestingEnterpriseStable(questSourceCapture);
-  return extendQuestCatalog(prior, reference, projected, options.includeNotNull, current, ddlCausal);
+  return extendQuestCatalog(prior, reference, projected, options.includeNotNull, current, ddlCausal, options.legacyProfile, casinoDdlCausal);
 }
 export async function verifyCommerceNativeBranches(pool, endpoint) {
   assert.equal(arguments.length, 2);
@@ -695,21 +723,24 @@ export async function verifyCommerceNativeBranches(pool, endpoint) {
   const reference = freeze({ ...compiled, version });
   assert.deepEqual(await questOnlyRows(pool, version), reference.full);
   const ddlCausal = await questDdlControls(pool, reference);
-  const projected = await questProjectedCaller(pool, reference);
+  const casinoDdlCausal = await casinoDdlControls(pool, version, 'fresh');
+  const projected = await questProjectedCaller(pool, reference, 'fresh');
   const prior = await verifyArchivedComparisonBranches(projected, endpoint);
   const current = await readCommerceReleasePhase2Metadata(pool);
   assertQuestingEnterpriseStable(questSourceCapture);
-  return extendQuestCatalog(prior, reference, projected, true, current, ddlCausal);
+  return extendQuestCatalog(prior, reference, projected, true, current, ddlCausal, 'fresh', casinoDdlCausal);
 }
 export async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, rows, verifyRows) {
   assert.equal(arguments.length, 4);
   const state = questStates.get(catalog); assert(state, 'Only the actual-current catalog returned by this native invocation');
   const { prior, reference, projected, includeNotNull } = state;
   assert.deepEqual(await questOnlyRows(pool, reference.version), reference.full);
-  const parentRows = questConstraintProjection(rows, reference, includeNotNull);
+  const withoutQuest = questConstraintProjection(rows, reference, includeNotNull);
+  const parentRows = questingCasinoConstraintProjection(withoutQuest, reference.version, includeNotNull);
+  const casinoRows = withoutQuest.filter(row => !parentRows.includes(row));
   const questRows = rows.filter(row => questNames.has(row.table_name));
   const result = await original.verifyCommerceReleasePhase2CausalNegatives(projected, prior, parentRows,
-    candidate => verifyRows(questOrder([...candidate, ...questRows])));
+    candidate => verifyRows(questOrder([...candidate, ...questRows, ...casinoRows])));
   assert.deepEqual(await questOnlyRows(pool, reference.version), reference.full);
   assertQuestingEnterpriseStable(questSourceCapture);
   return result;

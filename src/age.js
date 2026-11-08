@@ -31,13 +31,13 @@ export function ageStatus(app, req) {
   } catch { return null; }
 }
 
-export function requireAge(app, req) {
+export function requireAge(app, req, { agent = false } = {}) {
   const status = ageStatus(app, req);
   if (status === false) throw new GameError('age_ineligible', 'Account creation is unavailable. See /privacy for help.');
   if (req.body?.birthDate !== undefined) {
     if (eligibleBirthDate(req.body.birthDate)) return;
     throw new GameError('age_ineligible', 'Account creation is unavailable. See /privacy for help.');
   }
-  if (status === true) return;
+  if (status === true || agent) return;
   throw new GameError('age_required', 'Complete the birth date check before creating an account.');
 }

@@ -86,7 +86,9 @@ function crimeDescriptor(crime, { executable, blockedBy } = {}) {
     method: 'POST', path: `/v1/crimes/${crime.id}`, body: { approach: 'standard' }, executable,
     cost: { nerve: crime.nerve },
     reward: { cash: { min: crime.cash[0], max: crime.cash[1] }, respect: crime.respect },
-    risk: { baseSuccessPct: Math.round(success * 1000) / 10, jailMinutes: crime.jail },
+    // The catalog stint is seconds, before character/season/approach modifiers. Keep the legacy
+    // minutes field dimensionally correct while giving clients the explicit base duration.
+    risk: { baseSuccessPct: Math.round(success * 1000) / 10, baseJailSeconds: crime.jail, jailMinutes: crime.jail / 60 },
     ...(blockedBy ? { blockedBy } : {}),
   }, {
     cash: ((crime.cash[0] + crime.cash[1]) / 2) * success,

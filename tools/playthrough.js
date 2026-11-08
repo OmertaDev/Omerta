@@ -70,7 +70,7 @@ const hhmm = (min) => `${Math.floor(min / 60)}h${String(Math.round(min % 60)).pa
 // Every character-scoped timestamp pulled back N minutes == the world advancing N minutes for this
 // player. Listed explicitly (not information_schema) so a new column is a deliberate decision here.
 const CLOCK_COLS = [
-  'last_accrued_at', 'jail_until', 'hosp_until', 'gta_at', 'shoot_cd_until', 'crew_paid_at',
+  'last_accrued_at', 'street_action_at', 'jail_until', 'hosp_until', 'gta_at', 'shoot_cd_until', 'crew_paid_at',
   'heist_at', 'npchit_at', 'safe_until', 'wash_at', 'safehouse_at', 'rwa_at', 'respec_at',
   'guarded_until', 'bank_intransit_at', 'retainer_until', 'witpro_until', 'world_raid_at',
   'pen_safe_until', 'hole_until', 'shank_at', 'train_at', 'mission_at', 'wanted_until',
@@ -229,6 +229,7 @@ let pathDeclared = false;
 // and there is nothing to assert against without playing. So: count the minutes each distinct rung
 // holds, and fail if any one of them holds most of the run.
 const coachMin = new Map();       // label -> minutes it was the top rung
+const coachPostObeyMin = new Map(); // minutes still advised after obedience
 const coachPlanDepth = [];        // how many steps the plan box offered, per tick
 let coachSilent = 0;              // minutes with no advice at all (a vet, correctly)
 const coachObeyed = new Set();    // rungs the harness successfully DID what was asked
@@ -244,6 +245,7 @@ function traceCoach(m) {
   const label = m.coach?.label;
   if (!label) { coachSilent++; return; }
   coachMin.set(label, (coachMin.get(label) || 0) + 1);
+  if (coachObeyed.has(label)) coachPostObeyMin.set(label, (coachPostObeyMin.get(label) || 0) + 1);
   if (!rungFirst.has(label)) rungFirst.set(label, { at: playedMin, worth: m.cash + m.bank, level: m.level });
   if (Array.isArray(m.coachPlan)) coachPlanDepth.push(m.coachPlan.length);
 }
@@ -470,7 +472,7 @@ async function obeyCoach(m) {
     // ("find them on the Wet Work roster and JUMP them") — and it has to be the named one, because
     // settleFirstBlood clears the stage only for that character. Jumping a stranger would look like
     // obedience, do nothing to the rung, and hide the very failure this handler exists to expose.
-    const named = String(m.coach?.hint || '').split(' put the word out')[0].trim();
+    const named = String(m.coach?.hint || '').split(' has been talking you down on the street.')[0].trim();
     const roster = await call('GET', '/v1/streets', { token });
     const list = roster.body?.streets || roster.body?.here || (Array.isArray(roster.body) ? roster.body : []);
     const mark = named ? list.find((x) => x.name === named) : null;
@@ -1224,7 +1226,7 @@ let coachVerdict = 'ok';
   // perfectly healthy rung as a defect on its first run.
   const PIN_PCT = 40;   // an obeyed rung should clear within a few ticks; 40% of a multi-day run is
                         // far past "the player is on their way there" and squarely at "it never went away"
-  const pinned = advised.filter(([label, mins]) =>
+  const pinned = [...coachPostObeyMin].filter(([label, mins]) =>
     coachObeyed.has(label) && totalAdvised && (mins / totalAdvised) * 100 > PIN_PCT);
   if (pinned.length) {
     coachVerdict = `PINNED — "${pinned[0][0]}" held ${Math.round(pinned[0][1] / totalAdvised * 100)}%`

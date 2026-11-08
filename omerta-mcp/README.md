@@ -118,6 +118,11 @@ arbitrary mutation routes. This runner is separate from the interactive MCP
 session lifecycle described below. Production extraction remains dormant because
 no chain is configured.
 
+New identities use `POST /v1/auth/agent` without a birth date and are permanently
+classified as agents before their first bearer is issued. Human signup keeps its
+age check. The MCP saves a shared recovery secret before signup, then saves the
+bearer before acknowledging bootstrap so a lost reply cannot create a new identity.
+
 The 90-day agent token is persisted in an owner-only configuration file and reused after
 MCP-host restarts. A corrupt or expired session fails closed instead of silently creating
 a duplicate agent identity. If that session truly cannot be recovered, call

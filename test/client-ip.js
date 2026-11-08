@@ -116,6 +116,18 @@ try {
     created_ip_authority: CLIENT_IP_AUTHORITY.render,
   }, 'bootstrap recovery updates last_ip without rewriting immutable signup provenance');
 
+  const agentSecret = crypto.randomBytes(32).toString('base64url');
+  const agentAdmission = async (ip) => trusted.inject({ method: 'POST', url: '/v1/auth/agent',
+    remoteAddress: '10.20.30.40', headers: { 'cf-connecting-ip': ip }, payload: { bootstrapSecret: agentSecret } });
+  const agent = await agentAdmission('203.0.113.82');
+  assert.equal(agent.statusCode, 200, agent.body);
+  const agentId = trusted.jwt.decode(agent.json().token).sub;
+  assert.equal((await agentAdmission('203.0.113.83')).statusCode, 200);
+  assert.deepEqual((await trusted.pool.query(
+    'SELECT created_ip, last_ip, created_ip_authority FROM accounts WHERE id=$1', [agentId],
+  )).rows[0], { created_ip: '203.0.113.82', last_ip: '203.0.113.83',
+    created_ip_authority: CLIENT_IP_AUTHORITY.render }, 'agent admission preserves trusted immutable signup provenance');
+
   const { accountForIdentity } = await import('../src/auth.js');
   const identity = { provider: 'client-ip-test', subject: crypto.randomUUID() };
   const provider = await accountForIdentity(

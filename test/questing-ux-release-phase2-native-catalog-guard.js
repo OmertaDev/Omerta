@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
-import {questingNativeQuestProjection, assertQuestingPhase2SourceInputs,
+import {questingNativeQuestProjection, questingNativeCatalogProjection, assertQuestingPhase2SourceInputs,
   createCommerceReleasePhase2MigrationCatalog, verifyCommerceNativeBranches,
   verifyCommerceReleasePhase2CausalNegatives} from '../tools/questing-ux-release-phase2-native-catalog.js';
 import {QUESTING_CATALOG_COLUMNS as columns, QUESTING_CATALOG_TABLES as tables}
@@ -13,11 +13,11 @@ const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{maxBuf
 const protectedFile="tools/ux-release-phase2-native-catalog.js";
 const successorFile="tools/questing-ux-release-phase2-native-catalog.js";
 const copyPin=Object.freeze({
-  "bytes": 52073,
-  "sha256": "ded65ea0c23d32584899ef6bbf5b49d37971cc62c206f8190e8ce019ec650eb4",
+  "bytes": 54498,
+  "sha256": "65cd8de2870f545c34ed2e869d2cbc1b892a0cdb23feee594e593ed247b40d63",
   "engineCharacters": 33242,
   "engineSha256": "2ac048b9ba583355dfa6170f0fdce8d59ff5e7526b3fcc59d3c72a960919923a",
-  "bridgeSha256": "3f2c15f1629371042c212fa74314efbaff2118821aea80e35b2fe8390c990d74",
+  "bridgeSha256": "7a630e127495b5c8c8d83fd887b96c134b3d5eefd7aa797be22d4a9cd0ce3916",
   "protectedSha256": "b90d784c72f4e9167be1df50171360dab04f361152e4a54cda96362de24cb331"
 });
 const substitutions=Object.freeze([
@@ -172,6 +172,38 @@ for (const input of [null, {}, {relations: [], columns: [], constraints: [], ind
   assert.throws(() => questingNativeQuestProjection(input, 18, true)); metadataRefusals++;
 }
 let nativeAttempts = 0, admissionRefusals = 0;
+let casinoProfiles = 0, casinoRefusals = 0;
+for (const version of [16,18]) for (const profile of ['fresh','phase2','director']) {
+  const business=['id','character_id','kind','tier','last_collect_at','launder_used','launder_at','scrutiny','scrutiny_at','shakedown_at','inside_at','rake_cursor','upkeep_at','acquired_at','spec','spec_at','takeover_cd_until'];
+  const volume=['id','total','profit','distributed','jackpot'];
+  const oldColumns=[['businesses',business],['den_volume',volume]].flatMap(([table,names])=>names.map((column_name,i)=>({table_name:table,column_name,ordinal:i+1})));
+  const ordered=profile==='fresh'?[business.toSpliced(12,0,'rake_index_cursor'),volume.toSpliced(4,0,'rake_index','rake_checkpoint_volume','rake_legacy_owners')]
+    :[[...business,'rake_index_cursor'],[...volume,'rake_index','rake_checkpoint_volume','rake_legacy_owners']];
+  const specs={rake_index_cursor:['text',false,null],rake_index:['text',true,"'0'::text"],rake_checkpoint_volume:['numeric',false,null],rake_legacy_owners:['integer',true,'0']};
+  const live=fixture(version), includeNotNull=profile!=='director';
+  live.columns.unshift(...[['businesses',ordered[0]],['den_volume',ordered[1]]].flatMap(([table,names])=>names.map((name,i)=>{
+    const row={table_name:table,column_name:name,ordinal:i+1};if(!specs[name])return row;
+    const[type,not_null,default_expression]=specs[name];return{...row,type,not_null,default_expression,typmod:-1,identity:'',generated:'',collation_schema:type==='text'?'pg_catalog':null,collation_name:type==='text'?'default':null};
+  })));
+  if(version===18)live.constraints.unshift(...['rake_index','rake_legacy_owners'].map(name=>({table_name:'den_volume',name:'den_volume_'+name+'_not_null',type:'n',validated:true,deferrable:false,deferred:false,definition:'NOT NULL '+name,match_type:' ',update_action:' ',delete_action:' ',referenced_schema:null,referenced_table:null,columns:[name],referenced_columns:[]})));
+  const projection=questingNativeCatalogProjection(live,version,includeNotNull,profile);
+  assert.deepEqual(projection.projectMetadata(live),{...structuredClone(baseline),columns:oldColumns});casinoProfiles++;
+  const constraints=live.constraints.filter(row=>includeNotNull||row.type!=='n').map(({table_name,name,definition})=>({table_name,name,definition}));
+  assert.deepEqual(projection.projectConstraints(constraints),[]);
+  const reject=change=>{const bad=structuredClone(live);change(bad);assert.throws(()=>projection.projectMetadata(bad));casinoRefusals++;};
+  for(const[index,row]of live.columns.entries())if(specs[row.column_name]){
+    reject(value=>value.columns.splice(index,1));reject(value=>value.columns.push({...row}));
+    for(const key of Object.keys(row))reject(value=>{value.columns[index][key]=mutate(row[key]);});
+  }
+  reject(value=>value.columns.splice(value.columns.findIndex(row=>row.column_name==='rake_cursor'),1));
+  reject(value=>{value.columns.find(row=>row.column_name==='upkeep_at').ordinal++;});
+  reject(value=>value.columns.push({table_name:'den_volume',column_name:'rake_unknown',ordinal:9}));
+  reject(value=>{value.columns.find(row=>row.column_name==='rake_index_cursor').ordinal=15;});
+  reject(value=>{value.columns.find(row=>row.column_name==='rake_index').ordinal=profile==='fresh'?6:5;});
+  for(const[index,row]of constraints.entries())if(row.table_name==='den_volume'){
+    const bad=structuredClone(constraints);bad[index].definition+=' changed';assert.throws(()=>projection.projectConstraints(bad));casinoRefusals++;
+  }
+}
 const forbidden = { query() { nativeAttempts++; throw Error('No native query in this pure guard'); },
   connect() { nativeAttempts++; throw Error('No native connection in this pure guard'); } };
 for (const call of [
@@ -184,7 +216,7 @@ for (const call of [
 assert.equal(nativeAttempts, 0);
 console.log(JSON.stringify({phase:'QUESTING_PHASE2_DIRECTOR_NATIVE_GUARDS', protectedEngineExact:true,
   finiteSubstitutions:substitutions.length, copyRefusals, profiles, metadataRefusals, constraintRefusals,
-  admissionRefusals, nativeAttempts, nativeExecution:false, historicalResultsTransferred:false}));
+  admissionRefusals, casinoProfiles, casinoRefusals, nativeAttempts, nativeExecution:false, historicalResultsTransferred:false}));
 // Additive pure reader conservation controls. No source is evaluated or substituted into runtime.
 const readerCopyPins = Object.freeze([
   {
@@ -265,10 +297,10 @@ const readerCopyPins = Object.freeze([
       "test/enterprise-release-phase2-migration-catalog.js"
     ],
     "oldSha256": "d7b9ef827c33f5291228da4aee1f7959bab4b5ced35513e02c3697fb8d186319",
-    "bytes": 9563,
-    "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9",
-    "prefixCharacters": 3205,
-    "prefixSha256": "e7d383a2ff5a65c8b230fcd098a0be41ba85606b10af54777ebd412bed45fc20",
+    "bytes": 9936,
+    "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978",
+    "prefixCharacters": 3578,
+    "prefixSha256": "4a35c639dad611939f7d323ca037f6c9e9331689f034cacc56487bec89c86cc0",
     "edits": [
       [
         "for (const row of pin.files) {\n  const current =",
@@ -346,6 +378,19 @@ for (const record of readerCopyPins) {
       assert.throws(()=>view(file,text,bad));readerViewRefusals++;
     }
     if(tracked){const otherMode=entry.startsWith('100644')?'100755':'100644';assert.throws(()=>view(file,text,otherMode+entry.slice(6)));readerViewRefusals++;}
+    if(record.exportName==='questingEnterpriseReaderView'){
+      // Even an internally consistent forged blob cannot gain the exact current-source view.
+      for(const bad of [text+'\n',text.replace('casinoDdlCausal','unknownCasinoDdlCausal')]){
+        assert.notEqual(bad,text);
+        const digest=crypto.createHash('sha1').update('blob '+Buffer.byteLength(bad)+'\0').update(bad).digest('hex');
+        const forged=entry.replace(/blob [a-f0-9]{40}/,'blob '+digest);
+        assert.throws(()=>view(file,bad,forged));readerViewRefusals++;
+      }
+      const preimage=git('show',readerQuestSource.revision+':'+file).toString('utf8');
+      assert.notEqual(preimage,text);assert.throws(()=>view(file,preimage,entry));readerViewRefusals++;
+      const preimageEntry=git('ls-tree',readerQuestSource.revision,'--',file).toString('utf8').trim();
+      assert.throws(()=>view(file,preimage,preimageEntry));readerViewRefusals++;
+    }
     assert.throws(()=>view(file,text,entry,{}));readerViewRefusals++;
   }
   for(const file of ['../test/phase2-postgres.js','constructor','__proto__',null]){assert.throws(()=>view(file,'x','x'));readerViewRefusals++;}

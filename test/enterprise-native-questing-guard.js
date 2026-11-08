@@ -56,6 +56,14 @@ for (const change of [
   value => { value.files.find(row => row.file === 'tools/enterprise-native.js').sha256 = '0'.repeat(64); },
   value => { value.files.find(row => row.file === QUESTING_NATIVE_PREDECESSOR_METADATA).sha256 = '0'.repeat(64); },
   value => { value.additions = []; }, value => { value.files.push({ file: QUESTING_NATIVE_METADATA, mode: '100644', blob: 'a'.repeat(40), sha256: 'b'.repeat(64) }); },
+  value => {
+    value.files = value.files.filter(row => row.file !== 'src/casinorakeback.js');
+    value.additions = value.additions.filter(row => row.file !== 'src/casinorakeback.js');
+  },
+  value => {
+    value.files = value.files.filter(row => row.file !== 'tools/install-foundry-verified.sh');
+    value.additions = value.additions.filter(row => row.file !== 'tools/install-foundry-verified.sh');
+  },
 ]) {
   const mutated = structuredClone(candidate); change(mutated);
   assert.throws(() => assertQuestingNativeDefinition(freeze(mutated))); rejections++;
@@ -82,10 +90,10 @@ if (actual.status === 'UNSEALED') {
   const row = actual.replacements[0]?.after;
   assert.ok(row, 'The authored release must contain a real changed input for argument tests.');
   const git = (...args) => execFileSync('git', ['--no-optional-locks', '--no-replace-objects', ...args], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });
-  const record = revision => {
-    const line = git('ls-tree', '-z', revision, '--', row.file).toString('utf8');
+  const record = (revision, file = row.file) => {
+    const line = git('ls-tree', '-z', revision, '--', file).toString('utf8');
     const match = line.match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0]+)\0$/);
-    assert.ok(match && match[3] === row.file); return { type: 'blob', mode: match[1], blob: match[2] };
+    assert.ok(match && match[3] === file); return { type: 'blob', mode: match[1], blob: match[2] };
   };
   const current = record('HEAD'), authored = record(actual.authoredRevision), bytes = git('show', `HEAD:${row.file}`);
   const physical = fs.readFileSync(row.file); assert.ok(fs.lstatSync(row.file).isFile() && !fs.lstatSync(row.file).isSymbolicLink());
@@ -101,6 +109,37 @@ if (actual.status === 'UNSEALED') {
   ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(row.file, now, anchor, raw)); actualArgumentRefusals++; }
   assert.throws(() => assertQuestingEnterpriseTrackedInput(row.file, current, authored, bytes, Object.freeze({ ...actual })));
   assert.throws(() => assertQuestingEnterpriseTrackedInput('../outside.js', current, authored, bytes)); actualArgumentRefusals += 2;
+  const companion = actual.files.find(input => input.file === 'src/casinorakeback.js');
+  assert.ok(companion, 'The reviewed casino companion has its own exact current native pin.');
+  const companionCurrent = record('HEAD', companion.file), companionAuthored = record(actual.authoredRevision, companion.file);
+  const companionBytes = git('show', `HEAD:${companion.file}`), companionPhysical = fs.readFileSync(companion.file);
+  assert.ok(fs.lstatSync(companion.file).isFile() && !fs.lstatSync(companion.file).isSymbolicLink());
+  assertEnterpriseNativeTrackedBytes(companionPhysical, companionBytes, false);
+  assert.strictEqual(assertQuestingEnterpriseTrackedInput(companion.file, companionCurrent, companionAuthored, companionBytes).current,
+    companion, 'The full committed companion bytes and both Git identities qualify before execution.');
+  for (const [now, anchor, raw] of [
+    [{ ...companionCurrent, mode: companionCurrent.mode === '100644' ? '100755' : '100644' }, companionAuthored, companionBytes],
+    [{ ...companionCurrent, blob: '0'.repeat(40) }, companionAuthored, companionBytes],
+    [companionCurrent, { ...companionAuthored, blob: '1'.repeat(40) }, companionBytes],
+    [companionCurrent, companionAuthored, Buffer.concat([companionBytes, Buffer.from('\n// altered companion\n')])],
+  ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(companion.file, now, anchor, raw)); actualArgumentRefusals++; }
+  const installer = actual.files.find(input => input.file === 'tools/install-foundry-verified.sh');
+  assert.ok(installer, 'The CI installer has its own exact current native pin.');
+  const installerCurrent = record('HEAD', installer.file), installerAuthored = record(actual.authoredRevision, installer.file);
+  const installerBytes = git('show', `HEAD:${installer.file}`), installerPhysical = fs.readFileSync(installer.file);
+  assert.ok(fs.lstatSync(installer.file).isFile() && !fs.lstatSync(installer.file).isSymbolicLink());
+  assertEnterpriseNativeTrackedBytes(installerPhysical, installerBytes, false);
+  assert.strictEqual(assertQuestingEnterpriseTrackedInput(installer.file, installerCurrent, installerAuthored, installerBytes).current,
+    installer, 'The complete installer bytes and both Git identities qualify without executing the shell script.');
+  const installerOtherMode = installerCurrent.mode === '100644' ? '100755' : '100644';
+  for (const [now, anchor, raw] of [
+    [{ ...installerCurrent, mode: installerOtherMode }, installerAuthored, installerBytes],
+    [installerCurrent, { ...installerAuthored, mode: installerOtherMode }, installerBytes],
+    [{ ...installerCurrent, blob: '0'.repeat(40) }, installerAuthored, installerBytes],
+    [installerCurrent, { ...installerAuthored, blob: '1'.repeat(40) }, installerBytes],
+    [installerCurrent, installerAuthored, Buffer.concat([installerBytes, Buffer.from('\n# altered installer\n')])],
+    [installerCurrent, installerAuthored, installerBytes.subarray(1)],
+  ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(installer.file, now, anchor, raw)); actualArgumentRefusals++; }
 }
 console.log(JSON.stringify({ phase: 'SOURCE_ONLY_ACTUAL_CURRENT_ENTERPRISE_GUARDS', syntheticDefinition: true,
   mutationRejections: rejections + 1, predecessorInputs: predecessor.files.length, mandatoryNativeCases: ENTERPRISE_NATIVE_PROOFS.length,

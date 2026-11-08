@@ -999,38 +999,66 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
 // CI failure cannot be reproduced locally, and this gate spent a session in that position with
 // three tests passing on the developer's machine and failing on the runner.
 //
-// The workflow runs the exact release API verifier. Its signed release policy supplies the pin;
-// an action channel or a version argument cannot substitute for that verified toolchain.
-const expectedForgeFoundrySetup = '      - name: Install Foundry\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: |\n          node ../test/foundry-release-api.js\n          node ../tools/foundry-release-api.js bootstrap';
+// The active compiler path keeps its pinned normal action, signer-verified API fallback,
+// and mandatory release identity assertion. The Node verifier runs offline before either path.
+const expectedForgeFoundrySteps = [
+  "      - name: Foundry release API offline controls\n        run: node ../test/foundry-release-api.js",
+  "      - name: Install Foundry\n        uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n        id: foundry_setup\n        continue-on-error: true",
+  "      - name: Install verified Foundry from the official release API\n        if: steps.foundry_setup.outcome == 'failure'\n        timeout-minutes: 10\n        working-directory: ${{ github.workspace }}\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: bash tools/install-foundry-verified.sh",
+  "      - name: Require the pinned Foundry release build\n        shell: bash\n        run: |\n          set -euo pipefail\n          foundry_version=\"$(forge --version)\"\n          printf '%s\\n' \"$foundry_version\"\n          grep -Fxq 'forge Version: 1.7.1' <<< \"$foundry_version\"\n          grep -Fxq 'Commit SHA: 4072e48705af9d93e3c0f6e29e93b5e9a40caed8' <<< \"$foundry_version\"\n          grep -Fxq 'Build Profile: dist' <<< \"$foundry_version\""
+];
+const expectedForgeFoundrySetup = expectedForgeFoundrySteps.join('\n');
 const pinnedFoundryVersion = workflow => {
-  const steps = workflow.split(/(?=^      - (?:uses:|run:|name:))/m);
+  const normalized = workflow.replaceAll('\r\n', '\n');
+  const steps = normalized.split(/(?=^      - (?:uses:|run:|name:))/m).map(step => step.trimEnd());
   const setup = steps.filter(step => step.includes('      - name: Install Foundry'));
-  assert.equal(setup.length, 1, 'Exactly one unconditional verified Foundry setup is required');
-  assert.equal(setup[0].trimEnd(), expectedForgeFoundrySetup,
-    'Foundry setup keeps its step-scoped token, offline guard and cryptographic bootstrap in order');
-  for (const command of ['node ../test/foundry-release-api.js', 'node ../tools/foundry-release-api.js bootstrap'])
-    assert.equal(workflow.split(command).length, 2, 'Foundry validation and installation run exactly once');
-  assert(/^permissions:\n  contents: read\n/m.test(workflow), 'Installer token keeps read-only repository permissions');
-  assert(!/foundry-rs\/foundry-toolchain@/.test(workflow), 'An action channel cannot replace the verified release API installer');
+  assert.equal(setup.length, 1, 'Exactly one complete pinned Foundry action is required');
+  const start = steps.indexOf(setup[0]);
+  assert.deepEqual(steps.slice(start - 1, start + 3), expectedForgeFoundrySteps,
+    'Unconditional offline controls precede the pinned action, failed-only verified fallback and mandatory exact build assertion');
+  assert.equal(normalized.split(expectedForgeFoundrySetup).length, 2, 'The complete compiler setup occurs exactly once');
+  for (const command of ['node ../test/foundry-release-api.js', 'run: bash tools/install-foundry-verified.sh',
+    '      - name: Require the pinned Foundry release build', 'uses: foundry-rs/foundry-toolchain@'])
+    assert.equal(normalized.split(command).length, 2, 'Offline validation, installation and build verification cannot be repeated');
+  assert(/^permissions:\n  contents: read\n/m.test(normalized), 'Installer token keeps read-only repository permissions');
+  assert(!normalized.includes('node ../tools/foundry-release-api.js bootstrap'),
+    'The dormant Node publisher cannot add a second compiler installation');
+  const version = /version: v(\d+\.\d+\.\d+)/.exec(setup[0]);
+  assert(version, 'The actual compiler action carries an exact semantic version');
+  assert.equal('v' + version[1], FOUNDRY_API_POLICY.version);
   assert.equal(FOUNDRY_API_POLICY.version, 'v1.7.1');
   assert.equal(FOUNDRY_API_POLICY.commit, '4072e48705af9d93e3c0f6e29e93b5e9a40caed8');
   assert.equal(FOUNDRY_API_POLICY.archive.sha256, 'cf7e688ed0c4c48adffca788b496076e31060b67ac5afe1e43dbb5499c20c88b');
   assert.equal(FOUNDRY_API_POLICY.pointer.sha256, 'c02be634804dc59dd1e2d27bb0be89dbe65e60a41e00598621db60f64819d052');
-  return FOUNDRY_API_POLICY.version.slice(1);
+  return version[1];
 };
 {
   const wf = read('.github/workflows/forge.yml');
   assert.equal(pinnedFoundryVersion(wf), '1.7.1');
-  for (const changed of [wf.replace(expectedForgeFoundrySetup, ''),
+  assert.equal(pinnedFoundryVersion(wf.replaceAll('\r\n', '\n').replaceAll('\n', '\r\n')), '1.7.1');
+  const changes = [wf.replace(expectedForgeFoundrySetup, ''),
     wf.replace(expectedForgeFoundrySetup, expectedForgeFoundrySetup + '\n' + expectedForgeFoundrySetup),
-    wf.replace('        env:\n          GH_TOKEN:', '        if: false\n        env:\n          GH_TOKEN:'),
-    wf.replace('        env:\n          GH_TOKEN:', '        continue-on-error: true\n        env:\n          GH_TOKEN:'),
-    wf.replace('GH_TOKEN: ${{ github.token }}', 'GH_TOKEN: ${{ secrets.UNREVIEWED_TOKEN }}'),
+    wf.replace(expectedForgeFoundrySteps[0], ''),
+    wf.replace(expectedForgeFoundrySteps[0], expectedForgeFoundrySteps[0] + '\n' + expectedForgeFoundrySteps[0]),
     wf.replace('node ../test/foundry-release-api.js', 'echo guard skipped'),
-    wf.replace('node ../tools/foundry-release-api.js bootstrap', 'echo synthetic compiler'),
-    wf.replace('bootstrap', 'bootstrap --version stable'),
-    wf.replace('bootstrap', 'bootstrap || true'),
-    wf.replace('  contents: read', '  contents: write')]) {
+    wf.replace(expectedForgeFoundrySetup, [expectedForgeFoundrySteps[1], expectedForgeFoundrySteps[0], ...expectedForgeFoundrySteps.slice(2)].join('\n')),
+    wf.replace(expectedForgeFoundrySteps[2], ''), wf.replace(expectedForgeFoundrySteps[3], ''),
+    wf.replace(expectedForgeFoundrySetup, expectedForgeFoundrySetup + '\n      - run: node ../tools/foundry-release-api.js bootstrap')];
+  for (const [before, after] of [
+    ['version: v1.7.1', 'version: stable'],
+    ["if: steps.foundry_setup.outcome == 'failure'", 'if: always()'],
+    ["if: steps.foundry_setup.outcome == 'failure'", "if: steps.foundry_setup.conclusion == 'failure'"],
+    ['timeout-minutes: 10', 'timeout-minutes: 0'], ['timeout-minutes: 10', 'timeout-minutes: 50'],
+    ['GH_TOKEN: ${{ github.token }}', 'GH_TOKEN: ${{ secrets.UNREVIEWED_TOKEN }}'],
+    ['bash tools/install-foundry-verified.sh', 'echo synthetic compiler'],
+    ['bash tools/install-foundry-verified.sh', 'bash tools/install-foundry-verified.sh --version stable'],
+    ['bash tools/install-foundry-verified.sh', 'bash tools/install-foundry-verified.sh || true'],
+    ['set -euo pipefail', 'set +e'], ['forge Version: 1.7.1', 'forge Version: 1.7.0'],
+    ['4072e48705af9d93e3c0f6e29e93b5e9a40caed8', '0'.repeat(40)],
+    ['Build Profile: dist', 'Build Profile: dev'], ['  contents: read', '  contents: write']]) changes.push(wf.replace(before, after));
+  for (const index of [0, 2, 3]) for (const field of ['if: false', 'continue-on-error: true'])
+    changes.push(wf.replace(expectedForgeFoundrySteps[index], expectedForgeFoundrySteps[index].replace('        run:', '        ' + field + '\n        run:')));
+  for (const changed of changes) {
     assert.notEqual(changed, wf, 'Every Foundry workflow mutation changes actual source');
     assert.throws(() => pinnedFoundryVersion(changed), 'Missing, mutable, skipped or optional compiler verification must reject');
   }
