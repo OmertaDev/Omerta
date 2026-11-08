@@ -31,6 +31,30 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'acorn';
 import { DEED_QUEST_SOURCE_DOMAINS, deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
 import { QUESTING_SOURCE, qualifyQuestingSource } from '../tools/questing-source-transfer.js';
+import { FOUNDRY_RELEASE, verifyFoundryArchive } from '../tools/ci-foundry.js';
+
+const expectedFoundryRelease = {
+  version: '1.7.1',
+  url: 'https://api.github.com/repos/foundry-rs/foundry/releases/assets/415095756',
+  bytes: 98596412,
+  sha256: 'cf7e688ed0c4c48adffca788b496076e31060b67ac5afe1e43dbb5499c20c88b',
+};
+assert(Object.isFrozen(FOUNDRY_RELEASE), 'The compiler download definition is immutable');
+assert.deepStrictEqual(FOUNDRY_RELEASE, expectedFoundryRelease, 'Only the exact published Foundry 1.7.1 archive is admitted');
+const foundryArchive = { bytes: expectedFoundryRelease.bytes, sha256: expectedFoundryRelease.sha256 };
+assert.strictEqual(verifyFoundryArchive(foundryArchive), true);
+for (const drift of [null, [], {}, { ...foundryArchive, bytes: foundryArchive.bytes - 1 },
+  { ...foundryArchive, bytes: foundryArchive.bytes + 1 }, { ...foundryArchive, bytes: String(foundryArchive.bytes) },
+  { ...foundryArchive, bytes: NaN }, { ...foundryArchive, bytes: Infinity },
+  { ...foundryArchive, sha256: '0'.repeat(64) }, { ...foundryArchive, sha256: foundryArchive.sha256.toUpperCase() },
+  { ...foundryArchive, sha256: foundryArchive.sha256.slice(1) }, { ...foundryArchive, sha256: foundryArchive.sha256 + '\n' },
+  { bytes: foundryArchive.bytes }, { sha256: foundryArchive.sha256 }, { ...foundryArchive, skipVerification: true }])
+  assert.throws(() => verifyFoundryArchive(drift), 'Wrong size, digest, type or caller-supplied verification bypass must reject');
+const accessorArchive = { ...foundryArchive };
+let archiveGetterRead = false;
+Object.defineProperty(accessorArchive, 'bytes', { get() { archiveGetterRead = true; return foundryArchive.bytes; } });
+assert.throws(() => verifyFoundryArchive(accessorArchive), 'Archive verification must reject accessor records');
+assert.equal(archiveGetterRead, false, 'Archive verification must not execute caller-controlled accessors');
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
@@ -4140,7 +4164,8 @@ scopedSocialContext = async function(db) {
     "      - name: Require the pinned Foundry release build\n        shell: bash\n        run: |\n          set -euo pipefail\n          foundry_version=\"$(forge --version)\"\n          printf '%s\\n' \"$foundry_version\"\n          grep -Fxq 'forge Version: 1.7.1' <<< \"$foundry_version\"\n          grep -Fxq 'Commit SHA: 4072e48705af9d93e3c0f6e29e93b5e9a40caed8' <<< \"$foundry_version\"\n          grep -Fxq 'Build Profile: dist' <<< \"$foundry_version\""
   ];
   const expectedFoundrySetup = expectedFoundrySteps.join('\n');
-  const assertFoundrySetup = (block, expected = expectedFoundrySteps) => {
+  const expectedArtifactStep = '      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact';
+  const assertFoundrySetup = (block, expected = expectedFoundrySteps, requireArtifact = true) => {
     const normalized = block.replaceAll('\r\n', '\n');
     const parts = splitNative(normalized).steps.map(nativeShape);
     const starts = parts.flatMap((part, i) => part.includes('uses: foundry-rs/foundry-toolchain@') ? [i] : []);
@@ -4150,16 +4175,30 @@ scopedSocialContext = async function(db) {
     assert.equal(normalized.split(expected.join('\n')).length, 2, 'The complete reviewed Foundry setup occurs exactly once');
     assert.equal(normalized.split('        run: bash tools/install-foundry-verified.sh').length, 2);
     assert.equal(normalized.split('      - name: Require the pinned Foundry release build').length, 2);
+    if (requireArtifact) assert.equal(parts[starts[0] + 3] || '', expectedArtifactStep,
+      'The genuine compiler artifact build immediately follows the complete verified setup');
   };
-  for (const block of [suites, suiteTail, economyNative, enterpriseNative, commerceNative]) assertFoundrySetup(block);
+  for (const block of [suites, suiteTail, economyNative, enterpriseNative, commerceNative]) {
+    assertFoundrySetup(block);
+    assertFoundrySetup(block.replaceAll('\r\n', '\n').replaceAll('\n', '\r\n'));
+  }
   const expectedForgeFoundrySteps = [expectedFoundrySteps[0].replace('      - uses:', '      - name: Install Foundry\n        uses:'),
     ...expectedFoundrySteps.slice(1)];
-  assertFoundrySetup(fs.readFileSync(path.join(ROOT, '.github/workflows/forge.yml'), 'utf8'), expectedForgeFoundrySteps);
+  assertFoundrySetup(fs.readFileSync(path.join(ROOT, '.github/workflows/forge.yml'), 'utf8'), expectedForgeFoundrySteps, false);
+  const foundryControlJob = economyNative.replaceAll('\r\n', '\n');
+  assertFoundrySetup(foundryControlJob);
+  assert.equal(foundryControlJob.split(expectedFoundrySetup).length, 2);
   for (const changed of [
     expectedFoundrySetup.replace('version: v1.7.1', 'version: stable'),
     expectedFoundrySetup.replace("if: steps.foundry_setup.outcome == 'failure'", 'if: always()'),
     expectedFoundrySetup.replace("if: steps.foundry_setup.outcome == 'failure'", "if: steps.foundry_setup.conclusion == 'failure'"),
     expectedFoundrySetup.replace('timeout-minutes: 10', 'timeout-minutes: 0'),
+    expectedFoundrySetup.replace('timeout-minutes: 10', 'timeout-minutes: 50'),
+    expectedFoundrySetup.replace(expectedFoundrySteps[1], expectedFoundrySteps[1].replace('        run:', '        if: false\n        run:')),
+    expectedFoundrySetup.replace(expectedFoundrySteps[1], expectedFoundrySteps[1].replace('        run:', '        continue-on-error: true\n        run:')),
+    expectedFoundrySetup.replace('bash tools/install-foundry-verified.sh', 'bash tools/install-foundry-verified.sh --version stable'),
+    expectedFoundrySetup.replace('bash tools/install-foundry-verified.sh', 'bash tools/install-foundry-verified.sh || true'),
+    expectedFoundrySetup.replace('bash tools/install-foundry-verified.sh', 'echo synthetic compiler'),
     expectedFoundrySetup.replace('github.workspace', 'runner.temp'),
     expectedFoundrySetup.replace('bash tools/install-foundry-verified.sh', 'bash tools/unverified-foundry.sh'),
     expectedFoundrySetup.replace('Require the pinned Foundry release build\n', 'Require the pinned Foundry release build\n        continue-on-error: true\n'),
@@ -4172,7 +4211,16 @@ scopedSocialContext = async function(db) {
     expectedFoundrySetup.replace(expectedFoundrySteps[2], ''),
   ]) {
     assert.notEqual(changed, expectedFoundrySetup);
-    assert.throws(() => assertFoundrySetup(changed), 'Changed, missing, optional or unverified Foundry setup must reject');
+    assert.throws(() => assertFoundrySetup(foundryControlJob.replace(expectedFoundrySetup, changed)),
+      'Changed, missing, optional or unverified Foundry setup must reject');
+  }
+  assert.throws(() => assertFoundrySetup(foundryControlJob.replace(expectedFoundrySetup, '')));
+  assert.throws(() => assertFoundrySetup(foundryControlJob.replace(expectedFoundrySetup,
+    expectedFoundrySetup + '\n' + expectedFoundrySetup)));
+  for (const changed of [foundryControlJob.replace(expectedArtifactStep, ''),
+    foundryControlJob.replace(expectedArtifactStep, '      - run: echo unreviewed compiler\n' + expectedArtifactStep)]) {
+    assert.notEqual(changed, foundryControlJob);
+    assert.throws(() => assertFoundrySetup(changed), 'Missing or displaced genuine artifact builds must reject');
   }
   const expectedInstallerPins = [
     'readonly archive_name=foundry_v1.7.1_linux_amd64.tar.gz',
@@ -4480,6 +4528,11 @@ scopedSocialContext = async function(db) {
     }
     return commands;
   };
+  for (const command of ['node tools/ci-foundry.js', 'node tools/ci-foundry.js --version stable', 'node tools/unreviewed-compiler.js'])
+    assert.throws(() => nativeCommandsFrom('      - run: ' + command),
+      'Compiler setup requires its exact reviewed block; arbitrary tooling is never a native proof');
+  assert.throws(() => nativeCommandsFrom(pgcheck + '\n      - run: node tools/unreviewed-compiler.js\n'),
+    'Valid compiler setup cannot conceal a later unreviewed tooling command');
   const expectedNativeCommands = [
     'build:funded-work-artifact', 'node test/site-analytics.js --postgres', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
     'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',

@@ -2,7 +2,7 @@
 
 Release phase: candidate verification; deployment is a separate recorded operation.
 Initial base: `bb4a6c451465d6f58caa1e320ffcbed8992b4b1b`; main was subsequently
-integrated through `c638bfa3119e30ae78704a5ddcca8e2945b9d841`, preserving its
+integrated through `ff2cad97b8cb965b5884a1412b17bfb940ba4de7`, preserving its
 signup-origin authority, age-21 cookie-policy binding, analytics compatibility and
 player privacy behavior. Both source histories and historical proof pins remain.
 The older dirty development checkout was not copied wholesale into this release.
@@ -38,6 +38,9 @@ Quest verification executes the existing evaluators and preserves both histories
 Repeated upstream Foundry download failures are handled by an official release-API
 fallback for the same pinned build: exact archive digest and GitHub provenance must
 pass before installation, followed by exact version, commit and build-profile checks.
+Integration preserves the companion archive verifier from PR #327 and all its
+refusal controls. Release CI retains the signer-attested bootstrap already exercised
+on hosted Linux, followed immediately by the original funded-work artifact build.
 
 ## Executed local evidence
 
