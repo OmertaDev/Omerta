@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "0a288b012f89256eecbd1c99205444fb8c4a10eb",
-  "tree": "56ca8ef5b6b678ff78891c1c45f92cd8088c1be3",
+  "revision": "259879db14378039637475f58f4049b0e015043b",
+  "tree": "3489b7b06231c5a4601a4984ec9eb8f7dd125b8b",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -104,9 +104,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "MARKETING-POSTS.md": {
       "current": {
         "mode": "100644",
-        "blob": "ac573fa23811de52f43fdccea89c0da3981773e9",
-        "sha256": "d9ed3613caeb4750460529f18143889baeb6a0ced190c129c3b9e34e13797411",
-        "bytes": 7062
+        "blob": "c0c8b53a16d2bab4eaf04f72be592d3c57fd8b8c",
+        "sha256": "46edecbcab425b0f59976c82124095a5a93a8311517d140be37fbf1dbf8b6403",
+        "bytes": 7262
       },
       "baseline": {
         "mode": "100644",
@@ -121,9 +121,19 @@ export const SITE_BASICS_SOURCE = freeze({
           "baseline": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1378 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n"
         },
         {
+          "at": 2521,
+          "current": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 390 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n",
+          "baseline": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 383 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n"
+        },
+        {
           "at": 4112,
           "current": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1386 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n",
           "baseline": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1378 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n"
+        },
+        {
+          "at": 6411,
+          "current": "read tool, not the game. It says the door opens; every claim about what is behind the door is the\nbusiness of the suites and the harnesses, not of this table.\n\nCurrent candidate source: `1.4.0`, matching the version in `omerta-mcp/package.json`. The dated receipt above covers `1.3.0`; it does not verify publication or installation of the candidate version.\n\n---\n\n## 4. Posting order (when the founder pulls the trigger)\n",
+          "baseline": "read tool, not the game. It says the door opens; every claim about what is behind the door is the\nbusiness of the suites and the harnesses, not of this table.\n\n---\n\n## 4. Posting order (when the founder pulls the trigger)\n"
         }
       ]
     },
@@ -2550,4 +2560,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '67743822be8b40ecda46e8b8e9df4247177e811bf72ef226da01bc90f7a7c036';
+export const SITE_BASICS_SOURCE_SHA256 = '59ba477e19c13db8d4964efd107dcb2470ee922aebdd0c22235dda0700ab81cc';
