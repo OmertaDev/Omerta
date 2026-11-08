@@ -546,7 +546,7 @@
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/player-experience-insights.md](../../docs/player-experience-insights.md) | documentation | 29 | 2026-10-22 |
 | [docs/PLAYER-FIRST-LAUNCH-STRATEGY.md](../../docs/PLAYER-FIRST-LAUNCH-STRATEGY.md) | documentation | 178 | 2026-10-14 |
-| [docs/playtest-release-2026-11-08.md](../../docs/playtest-release-2026-11-08.md) | documentation | 92 | 2026-11-08 |
+| [docs/playtest-release-2026-11-08.md](../../docs/playtest-release-2026-11-08.md) | documentation | 95 | 2026-11-08 |
 | [docs/pons-launch-strategy-2026-10-14.md](../../docs/pons-launch-strategy-2026-10-14.md) | documentation | 126 | 2026-10-14 |
 | [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
 | [docs/production-slot-security-review.md](../../docs/production-slot-security-review.md) | documentation | 16 | 2026-10-15 |
