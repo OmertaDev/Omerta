@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "d0a0c7e791ffbb76dfd93a3966bfd0905e11a8a1",
-  "tree": "305934ad258572351a4ff14aa4376ca09e1f2c69",
+  "revision": "50e1f46995aa8debc8b169f2033b1752459cb6a9",
+  "tree": "d62e14817ae7936d188f22f492bbfcb4cf61a6fc",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -51,6 +51,27 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 80876,
           "current": "      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n        id: foundry_setup\n        continue-on-error: true\n      - name: Install verified Foundry from the official release API\n        if: steps.foundry_setup.outcome == 'failure'\n        timeout-minutes: 10\n        working-directory: ${{ github.workspace }}\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: bash tools/install-foundry-verified.sh\n      - name: Require the pinned Foundry release build\n        shell: bash\n        run: |\n          set -euo pipefail\n          foundry_version=\"$(forge --version)\"\n          printf '%s\\n' \"$foundry_version\"\n          grep -Fxq 'forge Version: 1.7.1' <<< \"$foundry_version\"\n          grep -Fxq 'Commit SHA: 4072e48705af9d93e3c0f6e29e93b5e9a40caed8' <<< \"$foundry_version\"\n          grep -Fxq 'Build Profile: dist' <<< \"$foundry_version\"\n      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n",
           "baseline": "      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n"
+        }
+      ]
+    },
+    ".github/workflows/forge.yml": {
+      "current": {
+        "mode": "100644",
+        "blob": "b9f9dc9869d4c3d8ee7a868cdb2cbea8770db904",
+        "sha256": "90afaf09fdc66354600408b32049b5296a89b79b8d9b72c2fcc1d39186bc46ae",
+        "bytes": 13485
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5b9f629f53efc96da3991572d49b52d332c48ab0",
+        "sha256": "e97eb70c6e22fc816815f425afc1a5408e42aac7b98e0393f2f4ed3249eadfb4",
+        "bytes": 12684
+      },
+      "inverses": [
+        {
+          "at": 4250,
+          "current": "        uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n        id: foundry_setup\n        continue-on-error: true\n      - name: Install verified Foundry from the official release API\n        if: steps.foundry_setup.outcome == 'failure'\n        timeout-minutes: 10\n        working-directory: ${{ github.workspace }}\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: bash tools/install-foundry-verified.sh\n      - name: Require the pinned Foundry release build\n        shell: bash\n        run: |\n          set -euo pipefail\n          foundry_version=\"$(forge --version)\"\n          printf '%s\\n' \"$foundry_version\"\n          grep -Fxq 'forge Version: 1.7.1' <<< \"$foundry_version\"\n          grep -Fxq 'Commit SHA: 4072e48705af9d93e3c0f6e29e93b5e9a40caed8' <<< \"$foundry_version\"\n          grep -Fxq 'Build Profile: dist' <<< \"$foundry_version\"\n\n      - name: forge --version (what actually ran)\n        working-directory: omerta-contracts\n",
+          "baseline": "        uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n\n      - name: forge --version (what actually ran)\n        working-directory: omerta-contracts\n"
         }
       ]
     },
@@ -2325,9 +2346,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "test/site-basics-source-transfer.js": {
       "mode": "100644",
-      "blob": "64215f02c453260b11f59344f2a5b9aa050d3c2e",
-      "sha256": "39377baed060de650ead10c4cd639c78bc6fd98ad62a10578c0f2057db4d3d7e",
-      "bytes": 6327
+      "blob": "3ec77fa33a1fcf4f0895a28994f630827fac7fa7",
+      "sha256": "2ce037c20597e701a468eb0e5883be3034302d87c676ea5a6e26baf9b491e00e",
+      "bytes": 6369
     },
     "test/site-basics.js": {
       "mode": "100644",
@@ -2367,9 +2388,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "tools/site-basics-source-seal.js": {
       "mode": "100644",
-      "blob": "e4eae59a61badd659a225daeaf992dfc8f04254b",
-      "sha256": "ae74cc2a050154f1b88b34b8706688006d0d62c6fb5f6ffd41636211b964d5fb",
-      "bytes": 4343
+      "blob": "9e66d333ed38b3f4bbacbdfb2c99eceaff336559",
+      "sha256": "5dabbc241aa52d2a22b4baccf4fb121b9c4a7c9d0d3a5c5855144a9240bd33ec",
+      "bytes": 4385
     },
     "tools/site-basics-source-transfer.js": {
       "mode": "100644",
@@ -2379,4 +2400,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '2d858d0c5bf851e223045c4ee8392eeb9b462edb073b65c18c3bd9b39e614ae2';
+export const SITE_BASICS_SOURCE_SHA256 = 'cbf9192f97842b824968f9b5e37a4368d49519ecd888479ea07c855add162768';
