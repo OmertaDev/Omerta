@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "c62619c75e902ac29dca17924c267f7567f156ad",
-  "tree": "9d1c6413ed334377524096b31bdf188f94ac0c13",
+  "revision": "7bb30a18b036410cc72ec8eda575d487f36095ca",
+  "tree": "2008fd544b1a0cf1703cbaf6d703f5b0b50ad5a6",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -2066,9 +2066,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "tools/enterprise-native-questing.js": {
       "current": {
         "mode": "100644",
-        "blob": "7fa9a70562273b8575b30f33c85f873136632f0c",
-        "sha256": "104bf57c1f7d4bfec1d4491c9fcd7ad8cbed6b018723c7dc7249abf8cd3fb882",
-        "bytes": 26206
+        "blob": "93991a6444e0f58eb6e6a1c0249ead248415d6ef",
+        "sha256": "76860a00443a23916ebab3263c9b09ab1883d040d498b70da36a0457b7c38a4d",
+        "bytes": 26510
       },
       "baseline": {
         "mode": "100644",
@@ -2086,6 +2086,16 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 1895,
           "current": "  'test/lib/questing-ux-native-reader-source-compatibility.js',\n  'test/lib/questing-ux-director-reader-source-compatibility.js',\n  'test/lib/questing-ux-enterprise-reader-source-compatibility.js',\n  'src/casinorakeback.js',\n  'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',\n  ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',\n    'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']\n",
           "baseline": "  'test/lib/questing-ux-native-reader-source-compatibility.js',\n  'test/lib/questing-ux-director-reader-source-compatibility.js',\n  'test/lib/questing-ux-enterprise-reader-source-compatibility.js',\n  'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',\n  ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',\n    'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']\n"
+        },
+        {
+          "at": 8876,
+          "current": "  assert.strictEqual(actualDeclaration, declaration, 'Caller cannot substitute an actual-current native declaration');\n  assertQuestingNativeDefinition(declaration);\n  assert.equal(sha(JSON.stringify(declaration)), declarationHash, 'Exact sealed actual-current declaration');\n  return assertQuestingTrackedPin(file, current, authored, bytes, declaration.files.find(row => row.file === file));\n}\n// The capture validates the complete immutable declaration before checking any of its pins.\n// Public callers still validate that declaration independently on every invocation.\nfunction assertQuestingTrackedPin(file, current, authored, bytes, expected) {\n  assert.ok(expected, `No undeclared actual-current native input: ${file}`);\n  assert.ok(Buffer.isBuffer(bytes) && current && authored);\n  assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');\n",
+          "baseline": "  assert.strictEqual(actualDeclaration, declaration, 'Caller cannot substitute an actual-current native declaration');\n  assertQuestingNativeDefinition(declaration);\n  assert.equal(sha(JSON.stringify(declaration)), declarationHash, 'Exact sealed actual-current declaration');\n  const expected = declaration.files.find(row => row.file === file);\n  assert.ok(expected, `No undeclared actual-current native input: ${file}`);\n  assert.ok(Buffer.isBuffer(bytes) && current && authored);\n  assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');\n"
+        },
+        {
+          "at": 15148,
+          "current": "  for (const expected of declaration.files) {\n    const actual = read(expected.file); assert.deepEqual(actual.pin, expected);\n    const original = authored.get(expected.file);\n    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);\n    files[expected.file] = { sha256: sha(actual.raw), gitSha256: expected.sha256, blob: expected.blob, binary: binary.has(expected.file), bytes: actual.raw.length };\n  }\n  const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);\n",
+          "baseline": "  for (const expected of declaration.files) {\n    const actual = read(expected.file); assert.deepEqual(actual.pin, expected);\n    const original = authored.get(expected.file);\n    assertQuestingEnterpriseTrackedInput(expected.file, current.get(expected.file), original, actual.canonical);\n    files[expected.file] = { sha256: sha(actual.raw), gitSha256: expected.sha256, blob: expected.blob, binary: binary.has(expected.file), bytes: actual.raw.length };\n  }\n  const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);\n"
         }
       ]
     },
@@ -2437,4 +2447,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '0d97dac80afee6bfa06302e4e0da1672b2df8c255c3f16ab63c2fcbc725ec900';
+export const SITE_BASICS_SOURCE_SHA256 = 'c60ab61f12eb216e4bb9a691e9e77605a00921416e08522d5140fff1bab5620d';
