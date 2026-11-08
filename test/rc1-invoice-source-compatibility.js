@@ -1,3 +1,4 @@
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
@@ -87,7 +88,10 @@ for (const [file, before, after] of [
   assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;
 }
 assert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);
-const worker = companyOperatorSourceBaseline('src/worker.js', normalize(fs.readFileSync('src/worker.js', 'utf8')));
+const workerInput = fs.readFileSync('src/worker.js', 'utf8');
+const unreviewedWorker = workerInput + '\n// unreviewed worker change\n';
+assert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;
+const worker = companyOperatorSourceBaseline('src/worker.js', normalize(questingHistoricalInput('src/worker.js', workerInput)));
 assert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));
 assert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));
 assert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);

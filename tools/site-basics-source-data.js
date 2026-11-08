@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "6868fc89805ad99d86aeb4c407b3a09278453343",
-  "tree": "73a975ac739c4a8deba49a7c41cf5f3ed9cc30b4",
+  "revision": "f76b7e8c22f7047269336e3356074e54a082dc97",
+  "tree": "66e2d8bd54dae97db8bddb009b2f661576ea980c",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -702,6 +702,136 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/rc1-commercial-premises-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "6e328055afc4bd9064a91125c12b2f15ef4e2590",
+        "sha256": "976409c49eb5579d158f415bb156156ac83b95678525693c2a45d8f56943f11b",
+        "bytes": 10588
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "6f4539e0a5a772a3ff5a1613bd2f381b5301812a",
+        "sha256": "76ada8c31c9c7a07ef1cea6b7c205f35af8b728c6a122f0497336268ca04800c",
+        "bytes": 10253
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { questingHistoricalInput } from '../tools/questing-source-transfer.js';\nimport { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n",
+          "baseline": "import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n"
+        },
+        {
+          "at": 8044,
+          "current": " if(file==='src/invariants.js')for(const guard of ['assertFranchiseSourceTransfer','assertDeedBacklogCompatibility']){const actual=D[guard](file,current),old=D[guard](file,prior);assert.deepEqual(actual.commercialPremisesSourceTransfer,proof);assert.deepEqual(actual.companyWorkflowSourceTransfer,old.companyWorkflowSourceTransfer);assert.deepEqual(actual.gameEmploymentSourceTransfer,old.gameEmploymentSourceTransfer);}\n}\nfor(const file of ['src/worker.js','src/commercialpremises.js','toString']){assert.throws(()=>P.assertCommercialPremisesSourceTransfer(file,''));assert.throws(()=>P.qualifyCommercialPremisesSource(file,''));}\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\nassert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;\nconst worker=companyBankSourceBaseline('src/worker.js',questingHistoricalInput('src/worker.js', workerInput));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.commercialPremisesSourceBaseline('src/worker.js',worker),worker);\nassert.deepEqual(WORLD_RECOVERY_REVIEW.commercialPremisesSourceReviewTransfer,P.COMMERCIAL_PREMISES_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer,W.COMPANY_WORKFLOW_SOURCE_TRANSFER);\nconst currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))),priorReader=file=>Object.hasOwn(P.COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);\nassert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}));\n",
+          "baseline": " if(file==='src/invariants.js')for(const guard of ['assertFranchiseSourceTransfer','assertDeedBacklogCompatibility']){const actual=D[guard](file,current),old=D[guard](file,prior);assert.deepEqual(actual.commercialPremisesSourceTransfer,proof);assert.deepEqual(actual.companyWorkflowSourceTransfer,old.companyWorkflowSourceTransfer);assert.deepEqual(actual.gameEmploymentSourceTransfer,old.gameEmploymentSourceTransfer);}\n}\nfor(const file of ['src/worker.js','src/commercialpremises.js','toString']){assert.throws(()=>P.assertCommercialPremisesSourceTransfer(file,''));assert.throws(()=>P.qualifyCommercialPremisesSource(file,''));}\nconst worker=companyBankSourceBaseline('src/worker.js',fs.readFileSync('src/worker.js','utf8'));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.commercialPremisesSourceBaseline('src/worker.js',worker),worker);\nassert.deepEqual(WORLD_RECOVERY_REVIEW.commercialPremisesSourceReviewTransfer,P.COMMERCIAL_PREMISES_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer,W.COMPANY_WORKFLOW_SOURCE_TRANSFER);\nconst currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))),priorReader=file=>Object.hasOwn(P.COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);\nassert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}));\n"
+        }
+      ]
+    },
+    "test/rc1-company-logistics-hub-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "6b7aa3cb861ec81de7d52430b33cb1b8b449407c",
+        "sha256": "cfb7fa33e9f4196f298761af51808ed06c1e12650b5b38152ec5624052b17657",
+        "bytes": 10558
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "634659f102b2398963660a84d391b404fe674ca5",
+        "sha256": "ca6029a5f4115d76137d9e279b363253bc445154b94822550a437491ff783846",
+        "bytes": 10223
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { questingHistoricalInput } from '../tools/questing-source-transfer.js';\nimport { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n",
+          "baseline": "import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n"
+        },
+        {
+          "at": 7818,
+          "current": " if(file==='src/invariants.js')for(const guard of ['assertFranchiseSourceTransfer','assertDeedBacklogCompatibility']){const actual=D[guard](file,current),old=D[guard](file,prior);assert.deepEqual(actual.companyLogisticsHubSourceTransfer,proof);assert.deepEqual(actual.companyBankSourceTransfer,old.companyBankSourceTransfer);assert.deepEqual(actual.commercialPremisesSourceTransfer,old.commercialPremisesSourceTransfer);assert.deepEqual(actual.companyWorkflowSourceTransfer,old.companyWorkflowSourceTransfer);assert.deepEqual(actual.gameEmploymentSourceTransfer,old.gameEmploymentSourceTransfer);}\n}\nfor(const file of ['src/worker.js','src/companylogisticshubs.js','toString']){assert.throws(()=>P.assertCompanyLogisticsHubSourceTransfer(file,''));assert.throws(()=>P.qualifyCompanyLogisticsHubSource(file,''));}\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\nassert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;\nconst worker=buyerCooperativeSourceBaseline('src/worker.js',questingHistoricalInput('src/worker.js', workerInput));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.companyLogisticsHubSourceBaseline('src/worker.js',worker),worker);\nassert.deepEqual(WORLD_RECOVERY_REVIEW.companyLogisticsHubSourceReviewTransfer,P.COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer,W.COMPANY_BANK_SOURCE_TRANSFER);\nconst currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))),priorReader=file=>Object.hasOwn(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);\nassert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}));\n",
+          "baseline": " if(file==='src/invariants.js')for(const guard of ['assertFranchiseSourceTransfer','assertDeedBacklogCompatibility']){const actual=D[guard](file,current),old=D[guard](file,prior);assert.deepEqual(actual.companyLogisticsHubSourceTransfer,proof);assert.deepEqual(actual.companyBankSourceTransfer,old.companyBankSourceTransfer);assert.deepEqual(actual.commercialPremisesSourceTransfer,old.commercialPremisesSourceTransfer);assert.deepEqual(actual.companyWorkflowSourceTransfer,old.companyWorkflowSourceTransfer);assert.deepEqual(actual.gameEmploymentSourceTransfer,old.gameEmploymentSourceTransfer);}\n}\nfor(const file of ['src/worker.js','src/companylogisticshubs.js','toString']){assert.throws(()=>P.assertCompanyLogisticsHubSourceTransfer(file,''));assert.throws(()=>P.qualifyCompanyLogisticsHubSource(file,''));}\nconst worker=buyerCooperativeSourceBaseline('src/worker.js',fs.readFileSync('src/worker.js','utf8'));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.companyLogisticsHubSourceBaseline('src/worker.js',worker),worker);\nassert.deepEqual(WORLD_RECOVERY_REVIEW.companyLogisticsHubSourceReviewTransfer,P.COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer,W.COMPANY_BANK_SOURCE_TRANSFER);\nconst currentReader=file=>(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,String((hasCommerceCurrentEnterpriseSource(file)?commerceOverCurrentEnterpriseSourceBaseline(file,String(fs.readFileSync(file,'utf8'))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))))):continuousCityHistoricalInput(file, fs.readFileSync(file,'utf8'))),priorReader=file=>Object.hasOwn(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);\nassert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}));\n"
+        }
+      ]
+    },
+    "test/rc1-game-employment-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "625c6e39f5b882f3e0d148b1f3d1ee4d7b8ab69f",
+        "sha256": "f0c7cc34681c78e7d7cbb03e4ff48828447f510fbb49987d6f83a1bb6e50d73f",
+        "bytes": 18676
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "6e37ec6b3e187da4d948bf5428fa1bf946154731",
+        "sha256": "8558f19345f3b4449fecb2192c508a2925c4ff1f38199c4271adee10487e48be",
+        "bytes": 18342
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { questingHistoricalInput } from '../tools/questing-source-transfer.js';\nimport { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n",
+          "baseline": "import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n"
+        },
+        {
+          "at": 9071,
+          "current": "  assert.throws(() => assertGameEmploymentSourceTransfer(unknown, ''), /Unknown Game Employment/); assert.throws(() => qualifyGameEmploymentSource(unknown, ''), /Unknown Game Employment/);\n}\nassert.equal(gameEmploymentSourceBaseline('src/unknown.js', 'unknown'), 'unknown');\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\nassert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;\nconst worker = companyWorkflowSourceBaseline('src/worker.js', questingHistoricalInput('src/worker.js', workerInput));\nentire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:src/worker.js`)); entire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:src/worker.js`));\nassert.equal(hash(worker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']); sha256Comparisons++;\nassert.equal(blob(worker), COMPANY_OPERATOR_SOURCE_CURRENT_BLOBS['src/worker.js']); blobComparisons++;\n",
+          "baseline": "  assert.throws(() => assertGameEmploymentSourceTransfer(unknown, ''), /Unknown Game Employment/); assert.throws(() => qualifyGameEmploymentSource(unknown, ''), /Unknown Game Employment/);\n}\nassert.equal(gameEmploymentSourceBaseline('src/unknown.js', 'unknown'), 'unknown');\nconst worker = companyWorkflowSourceBaseline('src/worker.js', fs.readFileSync('src/worker.js', 'utf8'));\nentire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:src/worker.js`)); entire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:src/worker.js`));\nassert.equal(hash(worker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']); sha256Comparisons++;\nassert.equal(blob(worker), COMPANY_OPERATOR_SOURCE_CURRENT_BLOBS['src/worker.js']); blobComparisons++;\n"
+        }
+      ]
+    },
+    "test/rc1-intel-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "627586d73d24ba87c9fcf96d4957243cd7a53b82",
+        "sha256": "d808ff5115f3fa24147fefcb47e74f2ad2903c42c4efc0f3930450ab6c2a8531",
+        "bytes": 8319
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "57814341a22393ef6430ae98d7edafefd10d2e9e",
+        "sha256": "9cc28df1ba9a9a993526d6e5d9d4e19ec1389b0eb9e968b19b877b7e03467914",
+        "bytes": 7985
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { questingHistoricalInput } from '../tools/questing-source-transfer.js';\nimport { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n",
+          "baseline": "import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n"
+        },
+        {
+          "at": 6260,
+          "current": "assert.throws(() => qualifyIntelSource('toString', ''), /Unknown Intel source/);\nassert.match(INTEL_SOURCE_TRANSFER.scope, /separate current-source native proof/);\nassert.match(INTEL_SOURCE_TRANSFER.scope, /no historical runtime, native, deployment or financial qualification/);\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\nassert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;\nconst operatorWorker = companyWorkflowSourceBaseline('src/worker.js', questingHistoricalInput('src/worker.js', workerInput));\nconst operatorTransfer = qualifyIntelSource('src/worker.js', operatorWorker);\nassert.equal(operatorTransfer.actualSha256, COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']);\nassert.equal(operatorTransfer.companyOperatorSourceTransfer.baselineText, gitText(COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS['src/worker.js']));\n",
+          "baseline": "assert.throws(() => qualifyIntelSource('toString', ''), /Unknown Intel source/);\nassert.match(INTEL_SOURCE_TRANSFER.scope, /separate current-source native proof/);\nassert.match(INTEL_SOURCE_TRANSFER.scope, /no historical runtime, native, deployment or financial qualification/);\nconst operatorWorker = companyWorkflowSourceBaseline('src/worker.js', fs.readFileSync('src/worker.js', 'utf8'));\nconst operatorTransfer = qualifyIntelSource('src/worker.js', operatorWorker);\nassert.equal(operatorTransfer.actualSha256, COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']);\nassert.equal(operatorTransfer.companyOperatorSourceTransfer.baselineText, gitText(COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS['src/worker.js']));\n"
+        }
+      ]
+    },
+    "test/rc1-invoice-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "1439d353b1d2a1fb997a627f03cd237331d0b484",
+        "sha256": "092b7519eab69237c307d51b3af5f0ee88e39132515707204ee796a20132ce99",
+        "bytes": 9531
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "b60f53c439f2a1ce12e027d6494c9179f9de54d5",
+        "sha256": "308786781760b9b6f6f8d0596ba21e98fb2864c6a90854a7ad307bf071238de2",
+        "bytes": 9197
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { questingHistoricalInput } from '../tools/questing-source-transfer.js';\nimport { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n",
+          "baseline": "import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n"
+        },
+        {
+          "at": 8007,
+          "current": "  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\nassert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;\nconst worker = companyOperatorSourceBaseline('src/worker.js', normalize(questingHistoricalInput('src/worker.js', workerInput)));\nassert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));\nassert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));\nassert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);\n",
+          "baseline": "  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst worker = companyOperatorSourceBaseline('src/worker.js', normalize(fs.readFileSync('src/worker.js', 'utf8')));\nassert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));\nassert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));\nassert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);\n"
+        }
+      ]
+    },
     "test/routes.js": {
       "current": {
         "mode": "100644",
@@ -869,4 +999,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '3382c51d5783a245a00692aa35a056aa55fefb5849051c04b2b4f872db77fb2d';
+export const SITE_BASICS_SOURCE_SHA256 = 'ba5ca0db45bb880bbcfd64457d4c03b77a4662a3a7cc6c5302a2139061806816';

@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { questQualitySourceDataBytes } from './quest-quality-source-transfer.js';
 
-const predecessor = '7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9';
+const predecessor = 'd33bfe6aabdaa82513ac98996a0e0d065180fa71';
 const excluded = new Set(['tools/quest-quality-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
 const git = (...args) => execFileSync('git', ['--no-optional-locks', '--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
