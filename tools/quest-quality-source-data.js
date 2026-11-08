@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "63cb7f84320d4a65086f25ce1f2f92caeaa974b3",
-  "tree": "ef4e21e0b4419847f300b861dd0116dd78d0e55b",
+  "revision": "1abb46bb9a033bef06dc5b4649b085986dc5ca6c",
+  "tree": "15a8ffd2fa9b35c46b77eae09871bff455b25ae9",
   "predecessor": "d33bfe6aabdaa82513ac98996a0e0d065180fa71",
   "predecessorTree": "56e211efe05118b97ef1d10b28c9a8f57dae8c38",
   "files": {
@@ -454,6 +454,27 @@ export const QUEST_QUALITY_SOURCE = freeze({
         }
       ]
     },
+    "test/continuous-city-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2097eead56f55185ae9ff49a3118fc451b3a01f5",
+        "sha256": "85128ae5e1f731b5d6286dc0604cf29ac5989f5e4d78dc1cda72bbb5b42001a1",
+        "bytes": 80468
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "69e00c520aaaae2829a5534106a74cdcd07452e8",
+        "sha256": "7e4d785990d1ab9d98eb13c1aaae8f5e488477215bedefb7fe372afb00296ecf",
+        "bytes": 80435
+      },
+      "inverses": [
+        {
+          "at": 65645,
+          "current": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_REVISION, '--', file));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n",
+          "baseline": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n"
+        }
+      ]
+    },
     "test/site-basics-source-transfer.js": {
       "current": {
         "mode": "100644",
@@ -719,4 +740,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'd200f494f9826b134ea8670a9457bcfbe2ce61a898014718bbe57580f62e9b63';
+export const QUEST_QUALITY_SOURCE_SHA256 = 'b69bf623a854139daf4549be4bd5888cb282fb6f340eaf0c6607b9daed524147';
