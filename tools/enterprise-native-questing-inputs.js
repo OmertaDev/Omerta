@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "1e4c67cdd13b21f2e2b7a446ea2f0d936bc49088",
+  "authoredRevision": "1138c11d60229423d68f06cb402ce486866d1579",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11237,8 +11237,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/questing-ux-enterprise-reader-source-compatibility.js",
       "mode": "100644",
-      "blob": "6cd588a6ac98416b7dac2b3bc92f1090d136e5a7",
-      "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9"
+      "blob": "25072693250b1545e046596d9548f1953bd5eb41",
+      "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978"
     },
     {
       "file": "test/lib/questing-ux-native-reader-source-compatibility.js",
@@ -11261,8 +11261,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-ux-release-phase2-native-catalog-guard.js",
       "mode": "100644",
-      "blob": "5a15d8fbe2d4f36f3a5f33f4e6218019be805993",
-      "sha256": "940f8b5b95d7c6af26b255b1ff5c98a99284e60095e2c679888b74ba3e053280"
+      "blob": "c70143519c1de9b10d560b62305ca5d467a7859b",
+      "sha256": "34a493ce4e8ddc005abcc25625c3287cff446deb8e4fdced7a3298de8e5b4949"
     },
     {
       "file": "test/site-basics-source-transfer.js",
@@ -11309,8 +11309,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "30175bfd6d779ee42d7fc05a548eec9e326a83eb",
-      "sha256": "f3c9d2b91084ec3e16d4ed4ed015333bbf44300a5af2f0f993a8df26ccb2a205"
+      "blob": "97a0a3cead28c374d32a3be8a209a0437e0a3a18",
+      "sha256": "a21e99b71e9b0bfb3fea8554a5e69f0010be82750fc5bf78e0ed16bb45e50b55"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12498,8 +12498,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/questing-ux-enterprise-reader-source-compatibility.js",
       "mode": "100644",
-      "blob": "6cd588a6ac98416b7dac2b3bc92f1090d136e5a7",
-      "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9"
+      "blob": "25072693250b1545e046596d9548f1953bd5eb41",
+      "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978"
     },
     {
       "file": "test/lib/questing-ux-native-reader-source-compatibility.js",
@@ -12522,8 +12522,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/questing-ux-release-phase2-native-catalog-guard.js",
       "mode": "100644",
-      "blob": "5a15d8fbe2d4f36f3a5f33f4e6218019be805993",
-      "sha256": "940f8b5b95d7c6af26b255b1ff5c98a99284e60095e2c679888b74ba3e053280"
+      "blob": "c70143519c1de9b10d560b62305ca5d467a7859b",
+      "sha256": "34a493ce4e8ddc005abcc25625c3287cff446deb8e4fdced7a3298de8e5b4949"
     },
     {
       "file": "test/site-basics-source-transfer.js",
@@ -12570,8 +12570,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "30175bfd6d779ee42d7fc05a548eec9e326a83eb",
-      "sha256": "f3c9d2b91084ec3e16d4ed4ed015333bbf44300a5af2f0f993a8df26ccb2a205"
+      "blob": "97a0a3cead28c374d32a3be8a209a0437e0a3a18",
+      "sha256": "a21e99b71e9b0bfb3fea8554a5e69f0010be82750fc5bf78e0ed16bb45e50b55"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12581,4 +12581,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "8fb7d11b26b806ed21abe2cad4119296eaa702a2bd8dd37dd3b732a2d6b1b505";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "f7fd4aebe702368eeabb69ac69a1b2cc178e681206044ca227a8fe43a75e3439";
