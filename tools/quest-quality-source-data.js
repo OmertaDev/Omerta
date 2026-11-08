@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "4828633464b48949604beb00cfa1fa782bff91f5",
-  "tree": "8ff8ad299c0e1e4ce8899d6834b93b6733b1ecdf",
+  "revision": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+  "tree": "88bf607bed5c9d457ae1f613668bcf32cdfafa87",
   "predecessor": "e0752e881aa5dc9cd867f9f4fb9752b6a6e2abaf",
   "predecessorTree": "94f08db0aa0cb43f52efc76e34efb7eb8ee182ec",
   "files": {
@@ -428,6 +428,27 @@ export const QUEST_QUALITY_SOURCE = freeze({
         }
       ]
     },
+    "test/client.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "fd83f534638faf520e1d56c28133d05bef5cbd45",
+        "sha256": "b3d3c81a038f42c28fbf1dd5142e3fccecc653cf48ca23b5cc85565e118ffd60",
+        "bytes": 763551
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d76d33df1af070de1b94a21ba8c7a5a64e989fd6",
+        "sha256": "96c1031bab954cf43cb3caf8834d2f3dae53f6ccc44cab590619ea1eb4c89cf1",
+        "bytes": 763513
+      },
+      "inverses": [
+        {
+          "at": 9008,
+          "current": "  ]) {\n    const observed = await vm.runInNewContext(`(async () => {\n      let acting = false, activatedControl = null, operationPending = null, operationPhase = '', _operationResponseCurrent = null;\n      globalThis.window = globalThis;\n      let me = { id: 'owner', generation: 1, loc: 'docks' };\n      const currentTab = 'streets', feedbackUX = null;\n      const noop = () => {}, node = { textContent: '' };\n",
+          "baseline": "  ]) {\n    const observed = await vm.runInNewContext(`(async () => {\n      let acting = false, activatedControl = null, operationPending = null, operationPhase = '', _operationResponseCurrent = null;\n      let me = { id: 'owner', generation: 1, loc: 'docks' };\n      const currentTab = 'streets', feedbackUX = null;\n      const noop = () => {}, node = { textContent: '' };\n"
+        }
+      ]
+    },
     "test/content-api.js": {
       "current": {
         "mode": "100644",
@@ -451,6 +472,27 @@ export const QUEST_QUALITY_SOURCE = freeze({
           "at": 3560,
           "current": "  '/v1/content/instances/{instanceId}/join',\n  '/v1/content/instances/{instanceId}/consent',\n  '/v1/content/instances/{instanceId}/act',\n  '/v1/content/instances/{instanceId}/quality',\n  '/v1/content/instances/{instanceId}/leave',\n  '/v1/content/instances/{instanceId}/notes',\n  '/v1/content/instances/{instanceId}/release',\n",
           "baseline": "  '/v1/content/instances/{instanceId}/join',\n  '/v1/content/instances/{instanceId}/consent',\n  '/v1/content/instances/{instanceId}/act',\n  '/v1/content/instances/{instanceId}/leave',\n  '/v1/content/instances/{instanceId}/notes',\n  '/v1/content/instances/{instanceId}/release',\n"
+        }
+      ]
+    },
+    "test/decision-guide-client.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "7fbbc2a3e5ce3e15d4bf7692ef4ede8195a9734d",
+        "sha256": "c61e3433c9b7ae606fe91c8596acd0d191008cbed7d65871bc924c7383be35ce",
+        "bytes": 7535
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "ce8a155c44a155d44ab0083eeb72dfb8dd1b9334",
+        "sha256": "c0fd97f43f32661e74a2101f5858b866cc236f4d288c7f5c849ef03e268b5e01",
+        "bytes": 7441
+      },
+      "inverses": [
+        {
+          "at": 1161,
+          "current": " projections:{snapshot:()=>1,current:()=>true},cityIdentity:()=> 'key',renderOperationPending(){},busy:{removeAttribute(){},setAttribute(){},classList:{add(){},remove(){}}},\n toast(){},describe:()=>'',shake(){},sfx(){},$:()=>resp,_operationResponseCurrent:null,\n recordOperation:r=>{receipts.push(r);return r;}});\n // Model the browser global while leaving the optional analytics module absent.\n c.window=c;\n c.api=async(method,path,body,options)=>{if(stage==='queued'){c.me={id:'b',generation:1};if(options.beforeDispatch?.()===false)return {code:499,body:{},ignored:true};sent++;}if(stage==='api')c.me={id:'b',generation:1};return {code:400,body:{private:'old'},...(stage==='ignored'?{ignored:true}:{})};};\n c.refresh=async()=>{if(stage==='refresh')c.me={id:'b',generation:1};return {code:200};};\n vm.runInContext(source('act')+'; globalThis.act=act;',c);\n",
+          "baseline": " projections:{snapshot:()=>1,current:()=>true},cityIdentity:()=> 'key',renderOperationPending(){},busy:{removeAttribute(){},setAttribute(){},classList:{add(){},remove(){}}},\n toast(){},describe:()=>'',shake(){},sfx(){},$:()=>resp,_operationResponseCurrent:null,\n recordOperation:r=>{receipts.push(r);return r;}});\n c.api=async(method,path,body,options)=>{if(stage==='queued'){c.me={id:'b',generation:1};if(options.beforeDispatch?.()===false)return {code:499,body:{},ignored:true};sent++;}if(stage==='api')c.me={id:'b',generation:1};return {code:400,body:{private:'old'},...(stage==='ignored'?{ignored:true}:{})};};\n c.refresh=async()=>{if(stage==='refresh')c.me={id:'b',generation:1};return {code:200};};\n vm.runInContext(source('act')+'; globalThis.act=act;',c);\n"
         }
       ]
     },
@@ -755,4 +797,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'fd30c16a853d9abab99b6dfffb839d72e797966032cef3c4faa2e91204ed83ac';
+export const QUEST_QUALITY_SOURCE_SHA256 = 'c8dc40ec60f4babebbc13f278e44d17692edacbde8059a915a350c98637f8ec6';
