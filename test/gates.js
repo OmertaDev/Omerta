@@ -4639,7 +4639,7 @@ scopedSocialContext = async function(db) {
     'a malformed literal scalar must not invent a command position');
   const autonomyScripts=JSON.parse(fs.readFileSync('package.json','utf8')).scripts;
   assert.equal(autonomyScripts['test:company-autonomy:postgres'],'node tools/company-autonomy-native.js');
-  const expectedArtifactCommand="omerta_oz_archive=$(mktemp) && trap 'rm -f \"$omerta_oz_archive\"' EXIT && curl --fail --location --retry 3 --retry-max-time 180 --connect-timeout 15 --max-time 60 --output \"$omerta_oz_archive\" https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz && mkdir -p omerta-contracts/lib/openzeppelin-contracts && tar xzf \"$omerta_oz_archive\" -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol";
+  const expectedArtifactCommand="omerta_oz_archive=$(mktemp) && trap 'rm -f \"$omerta_oz_archive\"' EXIT && curl --fail --location --retry 3 --retry-max-time 180 --connect-timeout 15 --max-time 60 --output \"$omerta_oz_archive\" https://codeload.github.com/OpenZeppelin/openzeppelin-contracts/tar.gz/refs/tags/v5.6.1 && mkdir -p omerta-contracts/lib/openzeppelin-contracts && tar xzf \"$omerta_oz_archive\" -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol";
   assert.equal(autonomyScripts['build:funded-work-artifact'],expectedArtifactCommand,'Genuine pinned OZ/compiler build only');
   const artifactAdmits=(job,command)=>{
     try { assertPinnedFoundrySetup(job); } catch { return false; }
