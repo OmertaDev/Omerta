@@ -5674,7 +5674,7 @@
       // the "Last Word" viewer shows the ACTION result (written here, before refresh's GET /v1/me
       // would otherwise overwrite it — the raw JSON for the deck / power users; the toast is the human read).
       $('#resp').textContent = `${method} ${path}\n` + JSON.stringify(r.body, null, 2);
-      window.OmertaSiteAnalytics?.firstJobResult(method, path, r);
+      globalThis.OmertaSiteAnalytics?.firstJobResult?.(method, path, r);
       _operationResponseCurrent = () => actorCurrent() && (!options.isCurrent || options.isCurrent());
       // a location refusal comes back naming the district (GameError data) — offer the ride rather
       // than leaving the player to find the travel control on one screen out of 25
@@ -6479,7 +6479,7 @@
       status.textContent = 'Opening your street…';
       const inviteCode = undefined;
       const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});
-      window.OmertaSiteAnalytics?.signupResult(result);
+      globalThis.OmertaSiteAnalytics?.signupResult?.(result);
       if (await landToken(result)) { status.textContent = ''; status.hidden = true; }
       else status.textContent = result.body?.message || (result.code === 429 ? 'Too many attempts. Wait a moment, then try again.' : 'Your street could not open. Please try again.');
     } catch {

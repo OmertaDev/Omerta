@@ -30,7 +30,7 @@ try {
     assert.match(image.headers['content-type'], /image\/png/);
     assert.equal(image.rawPayload.readUInt32BE(16), 1200);
     assert.equal(image.rawPayload.readUInt32BE(20), 630);
-    assert.match(head, /src="\/site-analytics.js" defer/);
+    assert.match(head, /src="\/site-analytics\.js\?v=[a-f0-9]{16}" defer/);
     assert.match(head, /rel="icon"/);
   }
   for (const path of ['/gone', '/gone.html', '/path/unknown', '/gone?token=private-value']) {
@@ -60,7 +60,7 @@ try {
   assert.equal(cached.statusCode, 304, 'metadata preserves conditional caching');
   const admin = await app.inject('/admin');
   assert.match(admin.headers['x-robots-tag'], /noindex/);
-  assert.ok(!admin.body.includes('src="/site-analytics.js"'), 'operator activity is not tracked');
+  assert.ok(!admin.body.includes('/site-analytics.js'), 'operator activity is not tracked');
   const consig = await app.inject('/consigliere');
   assert.match(consig.headers['x-robots-tag'], /noindex/);
   console.log('site-basics: PASS — served metadata, real sharing images, crawl discovery and HTML/JSON 404s');

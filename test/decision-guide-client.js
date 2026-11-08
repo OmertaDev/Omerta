@@ -7,9 +7,9 @@ const script=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m
 const tree=acorn.parse(script,{ecmaVersion:'latest',sourceType:'script'});
 function find(node,name){if(node?.type==='FunctionDeclaration'&&node.id.name===name)return node;for(const val of Object.values(node||{})){if(Array.isArray(val)){for(const c of val){if(c&&typeof c==='object'){const n=find(c,name);if(n)return n;}}}else if(val&&typeof val==='object'){const n=find(val,name);if(n)return n;}}}
 const source=name=>{const n=find(tree,name);assert(n,name);return script.slice(n.start,n.end);};
-for (const stage of ['api','refresh','ignored','queued']) {
+for (const analytics of [undefined, {}]) for (const stage of ['api','refresh','ignored','queued']) {
  const resp={textContent:''},receipts=[];let callback=0,sent=0;
- const c=vm.createContext({console,document:{body:{style:{}}},activatedControl:null,acting:false,operationPending:null,
+ const c=vm.createContext({console,OmertaSiteAnalytics:analytics,document:{body:{style:{}}},activatedControl:null,acting:false,operationPending:null,
  me:{id:'a',generation:1},currentTab:'market',operationName:()=> 'buy',uuid:()=> 'once',operationSnapshot:m=>m,
  projections:{snapshot:()=>1,current:()=>true},cityIdentity:()=> 'key',renderOperationPending(){},busy:{removeAttribute(){},setAttribute(){},classList:{add(){},remove(){}}},
  toast(){},describe:()=>'',shake(){},sfx(){},$:()=>resp,_operationResponseCurrent:null,
