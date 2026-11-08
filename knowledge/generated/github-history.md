@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `76b7072ca3a2`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `beafe535b2ff`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5564 |
+| Commits in clone | 5571 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-08 — Bind native closure after final measured documentation corrections |
+| Latest commit | 2026-11-08 — Merge current main while preserving stricter Genesis source admission |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4434 |
+| OmertaDev | 4440 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 147 |
+| github-actions[bot] | 148 |
 | Codex | 138 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
@@ -31,15 +31,15 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 927 | historical |
-| knowledge/generated/graph-summary.md | 927 | historical |
-| knowledge/generated/graph.json | 927 | historical |
-| knowledge/generated/inventory.md | 927 | historical |
+| knowledge/generated/github-history.md | 929 | historical |
+| knowledge/generated/graph-summary.md | 929 | historical |
+| knowledge/generated/graph.json | 929 | historical |
+| knowledge/generated/inventory.md | 929 | historical |
 | [SPEC.md](../../SPEC.md) | 644 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 511 | yes |
 | [src/server.js](../../src/server.js) | 462 | yes |
-| knowledge/generated/documents.md | 403 | historical |
+| knowledge/generated/documents.md | 404 | historical |
 | [schema.sql](../../schema.sql) | 385 | yes |
 | [package.json](../../package.json) | 371 | yes |
 | knowledge/generated/modules.md | 316 | historical |
