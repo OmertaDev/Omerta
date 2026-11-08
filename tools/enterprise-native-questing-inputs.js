@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "8cad15060019fd526cf3c17d2e8eeb1baa6c8bb0",
+  "authoredRevision": "4cbddf3efdce02c0a52f497e0287a18801398c48",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11129,8 +11129,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/landing-loader.js",
       "mode": "100644",
-      "blob": "22382fbce1c169fc69e560024d9bc3394304b55d",
-      "sha256": "822051aae13c4018410b4331de9c10b9ec406aa17fe6ad17be0239fafd28307e"
+      "blob": "bcc937673d3ea7a13579d2b63432630724ab55c1",
+      "sha256": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
     },
     {
       "file": "public/ux-clues.css",
@@ -11159,8 +11159,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/client-shell.js",
       "mode": "100644",
-      "blob": "47e9c15553a03b6dab4dc0650af90d082b7a7df9",
-      "sha256": "f9b104ec79e0e4a7fc5f2501743d9a82db1e233cd98f71bed42cc706fd33bf0e"
+      "blob": "0248b3685944b46a23cdefedf39321acc7b0b47e",
+      "sha256": "48e9ffc844ae08867e0923743dd94d3fcb859d00cdacdf433f82a7323184817c"
     },
     {
       "file": "src/clue-puzzles.js",
@@ -11303,8 +11303,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "977b3f7f4ef27a08cfbbba00a843c2bf05ab62f9",
-      "sha256": "f3d6095b0a41796ab24514f01ba601aedbb7b3e48bce5ad1e2974170e59d814f"
+      "blob": "254d4861d13bb71ebed14fd35f62a69109b9b03f",
+      "sha256": "83d4c5058d1b207b8835b43c501402926eabdd872091544b6a3bc189c25ca723"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12069,8 +12069,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/landing-loader.js",
       "mode": "100644",
-      "blob": "22382fbce1c169fc69e560024d9bc3394304b55d",
-      "sha256": "822051aae13c4018410b4331de9c10b9ec406aa17fe6ad17be0239fafd28307e"
+      "blob": "bcc937673d3ea7a13579d2b63432630724ab55c1",
+      "sha256": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
     },
     {
       "file": "public/ux-clues.css",
@@ -12099,8 +12099,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/client-shell.js",
       "mode": "100644",
-      "blob": "47e9c15553a03b6dab4dc0650af90d082b7a7df9",
-      "sha256": "f9b104ec79e0e4a7fc5f2501743d9a82db1e233cd98f71bed42cc706fd33bf0e"
+      "blob": "0248b3685944b46a23cdefedf39321acc7b0b47e",
+      "sha256": "48e9ffc844ae08867e0923743dd94d3fcb859d00cdacdf433f82a7323184817c"
     },
     {
       "file": "src/clue-puzzles.js",
@@ -12243,8 +12243,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "977b3f7f4ef27a08cfbbba00a843c2bf05ab62f9",
-      "sha256": "f3d6095b0a41796ab24514f01ba601aedbb7b3e48bce5ad1e2974170e59d814f"
+      "blob": "254d4861d13bb71ebed14fd35f62a69109b9b03f",
+      "sha256": "83d4c5058d1b207b8835b43c501402926eabdd872091544b6a3bc189c25ca723"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12254,4 +12254,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "d168e34809dc5a9b694b66a580e88afc82e7dc4459bd74c2de11dbdb41940639";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "aee628fa143eac50dd8573a64de0d30f9dae8ac963493463d12c17665ce4d29b";
