@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "5ef932d88ade241f2336f248f7bdffee4b49181a",
-  "tree": "c56bde1840b8dcb3c910d94f355a0785471abfde",
+  "revision": "0ada21026cc546110cf40a793e7f22ebccfa456c",
+  "tree": "30b3d3ffe7d30068f46c405e96a912af775b1ac5",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -1135,6 +1135,27 @@ export const SITE_BASICS_SOURCE = freeze({
           "baseline": "// Unchanged historical source is accepted without expanding its original scope.\nexport function qualifyIntelSource(file, input) {\n  assert(Object.hasOwn(INTEL_SOURCE_BASELINE_PINS, file), 'Unknown Intel source compatibility file');\n  const text = normalize(input), actualSha256 = hash(text);\n  if (actualSha256 === INTEL_SOURCE_BASELINE_PINS[file])\n    return { file, actualSha256, baselineSha256: actualSha256, baselineText: text, inverseChunks: 0,\n      sourceRevision: INTEL_SOURCE_PREDECESSOR_REVISION, sourceBlob: INTEL_SOURCE_BASELINE_BLOBS[file],\n"
         }
       ]
+    },
+    "tools/rc1-world-duration-evidence.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "5465de199ad43d1c5fb48d8197fc08d2e8b244f9",
+        "sha256": "aa90fe0012db621ab74d0850ad0f3f6f92ff69aa421feca65a414ce84559fd9f",
+        "bytes": 6748
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "90148bf9e1da91378c14681c4939f9c14a3ae9fb",
+        "sha256": "54767e22626f7f6f5bd268a67db9d511780f3c825ee2e5960b1639ccfc85c583",
+        "bytes": 6735
+      },
+      "inverses": [
+        {
+          "at": 1530,
+          "current": "    const actual = edit.originalSource.replaceAll('\\r\\n', '\\n');\n    // Match the loader's exact historical scope, independently of trace metadata.\n    // Current Intel refunds require their separate native domain/API proofs.\n    const baseline = file === 'src/worker.js' ? qualifyIntelSource(file, edit.originalSource).baselineText\n      : file === 'src/db.js' ? coverageSourceBaseline(file,cityGameplaySourceBaseline(file,actual)) : actual;\n    assert.equal(sha256(baseline), pinnedLfSha256);\n    assert.equal(sha256(edit.transformedSource), edit.transformedSourceSha256);\n",
+          "baseline": "    const actual = edit.originalSource.replaceAll('\\r\\n', '\\n');\n    // Match the loader's exact historical scope, independently of trace metadata.\n    // Current Intel refunds require their separate native domain/API proofs.\n    const baseline = file === 'src/worker.js' ? qualifyIntelSource(file, actual).baselineText\n      : file === 'src/db.js' ? coverageSourceBaseline(file,cityGameplaySourceBaseline(file,actual)) : actual;\n    assert.equal(sha256(baseline), pinnedLfSha256);\n    assert.equal(sha256(edit.transformedSource), edit.transformedSourceSha256);\n"
+        }
+      ]
     }
   },
   "additions": {
@@ -1242,4 +1263,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '62e5832e9eedda0383633240e1495d058b08bda25c0c7195a11bf91ae2711993';
+export const SITE_BASICS_SOURCE_SHA256 = 'b9dbce1b172eb32e2a3b5be634bf8343d10e127dc0aaf200da741638202f4ace';
