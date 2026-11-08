@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1eb7f1c2f134`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `76b7072ca3a2`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5542 |
+| Commits in clone | 5564 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-08 — Bind full native input closure after capture optimization |
+| Latest commit | 2026-11-08 — Bind native closure after final measured documentation corrections |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4413 |
+| OmertaDev | 4434 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 146 |
+| github-actions[bot] | 147 |
 | Codex | 138 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
@@ -31,11 +31,11 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 925 | historical |
-| knowledge/generated/graph-summary.md | 925 | historical |
-| knowledge/generated/graph.json | 925 | historical |
-| knowledge/generated/inventory.md | 925 | historical |
-| [SPEC.md](../../SPEC.md) | 643 | yes |
+| knowledge/generated/github-history.md | 927 | historical |
+| knowledge/generated/graph-summary.md | 927 | historical |
+| knowledge/generated/graph.json | 927 | historical |
+| knowledge/generated/inventory.md | 927 | historical |
+| [SPEC.md](../../SPEC.md) | 644 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 511 | yes |
 | [src/server.js](../../src/server.js) | 462 | yes |
@@ -58,7 +58,7 @@
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 127 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 123 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 124 | yes |
 | [public/wiki.html](../../public/wiki.html) | 104 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 101 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
