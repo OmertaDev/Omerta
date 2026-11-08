@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "e788140956ecf5370a841afab7f8843eb00ce42a",
-  "tree": "c789cd87b7d835c31224570ba84ddaf23c00733d",
+  "revision": "4e8ad9db903147cd4d479d21b9732d374099b2c3",
+  "tree": "e05c357ab927dc829ada98d400ec935b26cc10a1",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -666,6 +666,37 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/lib/ux-journeys.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "60b9e2ec24f95bce3da74ee013aee1f36ea84390",
+        "sha256": "5f74eb906f64969bc6a763eeb401b92c713ab5e0d8a98f2730365ce7ad20520c",
+        "bytes": 21970
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "aa5a8cd39819aaa1461c43390e6571f05b5d70a2",
+        "sha256": "df483a60bdd2f33d14aa0c1ea942cc58023058ab0612e724d690242d65a9e82f",
+        "bytes": 21256
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { integratedEconomicParentInput } from '../../tools/integrated-economic-parent-source.js';\nimport { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE } from '../../tools/site-basics-source-transfer.js';\nimport { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { readFileSync, lstatSync } from 'node:fs';\n",
+          "baseline": "import { integratedEconomicParentInput } from '../../tools/integrated-economic-parent-source.js';\nimport { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { readFileSync, lstatSync } from 'node:fs';\n"
+        },
+        {
+          "at": 7287,
+          "current": "    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;\n    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file);\n    const questing = Object.hasOwn(QUESTING_SOURCE.files, file) ? QUESTING_SOURCE.files[file] : null;\n    const site = Object.hasOwn(SITE_BASICS_SOURCE.files, file) ? SITE_BASICS_SOURCE.files[file] : null;\n    const expected = site ? site.current : questing ? questing.current : desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,\n      sha256: domain.currentSha256, bytes: domain.currentBytes };\n    assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');\n    assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);\n",
+          "baseline": "    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;\n    const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file);\n    const questing = Object.hasOwn(QUESTING_SOURCE.files, file) ? QUESTING_SOURCE.files[file] : null;\n    const expected = questing ? questing.current : desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,\n      sha256: domain.currentSha256, bytes: domain.currentBytes };\n    assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');\n    assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);\n"
+        },
+        {
+          "at": 17591,
+          "current": "      actualHead.replace('\\n', '\\r\\n'), actualHead.replace('\\n', '\\r'), baseline]) {\n      rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));\n    }\n    if (Object.hasOwn(SITE_BASICS_SOURCE.files, row.file)) {\n      const site = SITE_BASICS_SOURCE.files[row.file];\n      const stale = git('show', SITE_BASICS_SOURCE.predecessor + ':' + row.file);\n      assert.notEqual(stale, actualHead, 'The prior website source differs from actual HEAD');\n      rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, stale));\n      rejectRaw(() => assertActualHeadInput(row.file, { mode: site.baseline.mode, blob: site.baseline.blob }, stale));\n    }\n    if (row.file === 'src/server.js') {\n      for (const input of [git('show', rootSource.baseRevision + ':' + row.file), current]) {\n        assert.notEqual(input, actualHead, 'The stale server fixture differs from actual HEAD');\n",
+          "baseline": "      actualHead.replace('\\n', '\\r\\n'), actualHead.replace('\\n', '\\r'), baseline]) {\n      rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));\n    }\n    if (row.file === 'src/server.js') {\n      for (const input of [git('show', rootSource.baseRevision + ':' + row.file), current]) {\n        assert.notEqual(input, actualHead, 'The stale server fixture differs from actual HEAD');\n"
+        }
+      ]
+    },
     "test/quest-experience-browser.js": {
       "current": {
         "mode": "100644",
@@ -1025,4 +1056,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = 'd520cf91912c47cad0da976f673b0d88b82e43ad6bac977f381272a7f7fd2b6d';
+export const SITE_BASICS_SOURCE_SHA256 = '1ba55925acc0e982c488187db931054bca8f737d747909cb33291bef6e761b92';
