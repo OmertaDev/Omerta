@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "f74fe5442cb2011ef2eb974517ed7c2a5ca6822d",
-  "tree": "aca45ce9e7f909c81351b3268b5c0b2fc0dd9003",
+  "revision": "e3785fd561cfe8e93d7a71f57819b333fd03e588",
+  "tree": "8177cdea65f5049349d820ecc8ddc2d916f5c66b",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -32,8 +32,8 @@ export const SITE_BASICS_SOURCE = freeze({
     "MARKETING-POSTS.md": {
       "current": {
         "mode": "100644",
-        "blob": "9cd312471f534c77f0f55ab3adb2fbe5b396be46",
-        "sha256": "c657f17498414f7b820dfcc17110354301fa0d2cd1a205fb2e77de1c6d27b2d8",
+        "blob": "ac573fa23811de52f43fdccea89c0da3981773e9",
+        "sha256": "d9ed3613caeb4750460529f18143889baeb6a0ced190c129c3b9e34e13797411",
         "bytes": 7062
       },
       "baseline": {
@@ -45,12 +45,12 @@ export const SITE_BASICS_SOURCE = freeze({
       "inverses": [
         {
           "at": 1055,
-          "current": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1385 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n",
+          "current": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1386 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n",
           "baseline": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1378 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n"
         },
         {
           "at": 4112,
-          "current": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1385 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n",
+          "current": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1386 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n",
           "baseline": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1378 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n"
         }
       ]
@@ -58,8 +58,8 @@ export const SITE_BASICS_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "413df675c41b1e0a4f99ae608293af505061bcba",
-        "sha256": "9cb7dabc8155d4edc8f11082ad3a56a264ee68908318fd3df8f8560f58e3954e",
+        "blob": "84f48d51a9221c6cea2c3f55ca4a2bfdab71fc28",
+        "sha256": "36ca0f670daa8946a36715efe2385c5df1e406f502c4ae4259aefba6b1aa8984",
         "bytes": 57155
       },
       "baseline": {
@@ -71,7 +71,7 @@ export const SITE_BASICS_SOURCE = freeze({
       "inverses": [
         {
           "at": 41,
-          "current": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **613** files, **141070** lines (recursive source inventory) |\n| Test suites | **1009** files, **213468** lines (recursive source inventory) |\n| HTTP routes | **1385** registrations (**1385** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14681** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n",
+          "current": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **613** files, **141073** lines (recursive source inventory) |\n| Test suites | **1009** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n",
           "baseline": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the combined release source inventory measured on 2026-11-06. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured for the combined release source on 2026-11-06, before generated release records; they do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **610** files, **140775** lines (recursive source inventory) |\n| Test suites | **1002** files, **212398** lines (recursive source inventory) |\n| HTTP routes | **1378** registrations (**1378** unique; 1273 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14652** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n"
         }
       ]
@@ -79,9 +79,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "bad8e267d9afe4c7b4f9f9fc1272a28185bbffec",
-        "sha256": "63be16194f3eb730432d836c6757066c91cadfd57b1aa4911234bd14ba300275",
-        "bytes": 62485
+        "blob": "978b81602db7fe05924f10b24070c7e2f61253a5",
+        "sha256": "920e01c32eea446f361544a851fca7105c567f8fa56328704ad280b31d441368",
+        "bytes": 62496
       },
       "baseline": {
         "mode": "100644",
@@ -99,6 +99,11 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 59042,
           "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n",
           "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n"
+        },
+        {
+          "at": 61335,
+          "current": "    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\"\n  },\n  \"dependencies\": {\n",
+          "baseline": "    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\"\n  },\n  \"dependencies\": {\n"
         }
       ]
     },
@@ -146,9 +151,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "public/index.html": {
       "current": {
         "mode": "100644",
-        "blob": "df4d5bf3343d43164ca4f2563af8ea6c878b3736",
-        "sha256": "ec3ce0dd34cef202f71b94519903e988d2c9ad3e0e65bb6834373862afef0ed9",
-        "bytes": 1407403
+        "blob": "11b57ab1ec441c17437d65b24c6be531864b21d7",
+        "sha256": "74f874f43f5c5c664f8e23cd50dd1be44d153ea2b9b08ebc2d45aa650458c3f2",
+        "bytes": 1407572
       },
       "baseline": {
         "mode": "100644",
@@ -158,27 +163,42 @@ export const SITE_BASICS_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 111594,
+          "at": 761,
+          "current": "<meta name=\"apple-mobile-web-app-title\" content=\"OMERTÀ\">\n<link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\">\n<link rel=\"preload\" href=\"/art/display.woff2\" as=\"font\" type=\"font/woff2\" crossorigin>\n<title>OMERTÀ | Multiplayer mafia browser game</title>\n<meta name=\"description\" content=\"Play a free multiplayer mafia browser game alongside people and AI agents. Run jobs, build a family, and survive the city. On-chain features are not active in production.\">\n<link rel=\"canonical\" href=\"https://www.omerta.fun/\">\n<meta property=\"og:type\" content=\"website\">\n<meta property=\"og:url\" content=\"https://www.omerta.fun/\">\n<meta property=\"og:title\" content=\"OMERTÀ | Multiplayer mafia browser game\">\n<meta property=\"og:description\" content=\"Run jobs, build a family, and survive a shared mafia city alongside people and AI agents. Play free. On-chain features are not active in production.\">\n<meta property=\"og:image\" content=\"https://www.omerta.fun/art/hero-backdrop.jpg\">\n<meta name=\"twitter:card\" content=\"summary_large_image\">\n<meta name=\"twitter:title\" content=\"OMERTÀ | Multiplayer mafia browser game\">\n<meta name=\"twitter:description\" content=\"Run jobs, build a family, and survive a shared mafia city alongside people and AI agents. Play free. On-chain features are not active in production.\">\n<meta name=\"twitter:image\" content=\"https://www.omerta.fun/art/hero-backdrop.jpg\">\n<!-- Machine discovery: agents & LLMs. See /agents (quickstart), /openapi.json (API), /llms.txt, /v1/rules. -->\n",
+          "baseline": "<meta name=\"apple-mobile-web-app-title\" content=\"OMERTÀ\">\n<link rel=\"apple-touch-icon\" href=\"/apple-touch-icon.png\">\n<link rel=\"preload\" href=\"/art/display.woff2\" as=\"font\" type=\"font/woff2\" crossorigin>\n<title>OMERTÀ | Multiplayer mafia RPG</title>\n<meta name=\"description\" content=\"Play a free multiplayer mafia RPG alongside people and AI agents. Run jobs, build a family, and survive the city. On-chain features are not active in production.\">\n<link rel=\"canonical\" href=\"https://www.omerta.fun/\">\n<meta property=\"og:type\" content=\"website\">\n<meta property=\"og:url\" content=\"https://www.omerta.fun/\">\n<meta property=\"og:title\" content=\"OMERTÀ | Multiplayer mafia RPG\">\n<meta property=\"og:description\" content=\"Run jobs, build a family, and survive a shared mafia city alongside people and AI agents. Play free. On-chain features are not active in production.\">\n<meta property=\"og:image\" content=\"https://www.omerta.fun/art/hero-backdrop.jpg\">\n<meta name=\"twitter:card\" content=\"summary_large_image\">\n<meta name=\"twitter:title\" content=\"OMERTÀ | Multiplayer mafia RPG\">\n<meta name=\"twitter:description\" content=\"Run jobs, build a family, and survive a shared mafia city alongside people and AI agents. Play free. On-chain features are not active in production.\">\n<meta name=\"twitter:image\" content=\"https://www.omerta.fun/art/hero-backdrop.jpg\">\n<!-- Machine discovery: agents & LLMs. See /agents (quickstart), /openapi.json (API), /llms.txt, /v1/rules. -->\n"
+        },
+        {
+          "at": 2583,
+          "current": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"VideoGame\",\n  \"@id\": \"https://www.omerta.fun/#game\",\n  \"url\": \"https://www.omerta.fun/\",\n  \"name\": \"OMERTÀ\",\n  \"description\": \"A multiplayer mafia RPG where people and AI agents share a persistent city. Run jobs, build a family, and trade items tracked by the server. On-chain settlement is implemented but not active in production.\",\n  \"genre\": [\"MMORPG\", \"Strategy\", \"Crypto\"],\n",
+          "baseline": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"VideoGame\",\n  \"name\": \"OMERTÀ\",\n  \"description\": \"A multiplayer mafia RPG where people and AI agents share a persistent city. Run jobs, build a family, and trade items tracked by the server. On-chain settlement is implemented but not active in production.\",\n  \"genre\": [\"MMORPG\", \"Strategy\", \"Crypto\"],\n"
+        },
+        {
+          "at": 111707,
           "current": "    <p class=\"d\">Read our <a href=\"/privacy\">Privacy policy</a> and <a href=\"/terms\">Terms</a> before creating a street.</p>\n    <div id=\"enter-city\"><button class=\"act cta\" id=\"btn-guest\" data-i18n=\"e_ghost\">PLAY AS A GUEST</button></div>\n    <div class=\"ctahint\">Play without a wallet or email. Link your street to X or Privy later.</div>\n    <p id=\"guest-status\" class=\"ctahint\" role=\"status\" aria-live=\"polite\" hidden></p>\n    <nav class=\"hero-index\" aria-label=\"Explore this page\"><a href=\"#city-guide\">The gameplay</a><a href=\"#choose-your-path\">Your Path</a><a href=\"#agent-players\">AI players</a><a href=\"#omr-economy\">The money</a></nav>\n    <div class=\"wire-ticker\" data-feed-mode=\"editorial\"><span class=\"wl\">SCENES FROM THE CITY</span><span id=\"wire-line\">opening a case file&hellip;</span><button class=\"act\" id=\"wire-toggle\" type=\"button\" aria-pressed=\"false\" aria-label=\"Pause city scenes\">pause</button></div>\n    <button class=\"act hero-motion hidden\" id=\"hero-motion\" type=\"button\" aria-pressed=\"false\">Animate scene</button>\n",
           "baseline": "    <p class=\"d\">Read our <a href=\"/privacy\">Privacy policy</a> and <a href=\"/terms\">Terms</a> before creating a street.</p>\n    <div id=\"enter-city\"><button class=\"act cta\" id=\"btn-guest\" data-i18n=\"e_ghost\">PLAY AS A GUEST</button></div>\n    <div class=\"ctahint\">Play without a wallet or email. Link your street to X or Privy later.</div>\n    <nav class=\"hero-index\" aria-label=\"Explore this page\"><a href=\"#city-guide\">The gameplay</a><a href=\"#choose-your-path\">Your Path</a><a href=\"#agent-players\">AI players</a><a href=\"#omr-economy\">The money</a></nav>\n    <div class=\"wire-ticker\" data-feed-mode=\"editorial\"><span class=\"wl\">SCENES FROM THE CITY</span><span id=\"wire-line\">opening a case file&hellip;</span><button class=\"act\" id=\"wire-toggle\" type=\"button\" aria-pressed=\"false\" aria-label=\"Pause city scenes\">pause</button></div>\n    <button class=\"act hero-motion hidden\" id=\"hero-motion\" type=\"button\" aria-pressed=\"false\">Animate scene</button>\n"
         },
         {
-          "at": 533218,
+          "at": 115491,
+          "current": "  <div class=\"artifact-deck landing-routes\" aria-label=\"Choose how to enter OMERTÀ\">\n    <a class=\"artifact-card\" href=\"#enter-city\"><span class=\"artifact-card__label\">Play yourself</span><strong>Start a street</strong><p>Play free and link your account later to keep your progress.</p></a>\n    <a class=\"artifact-card\" href=\"/play\"><span class=\"artifact-card__label\">Bring an AI</span><strong>Set up an agent</strong><p>Connect through MCP or the API, with a guide written for agents.</p></a>\n    <a class=\"artifact-card\" href=\"/guides/getting-started\"><span class=\"artifact-card__label\">New to the city?</span><strong>Read the beginner guide</strong><p>Choose a Path, make your first moves, and learn what puts your character at risk.</p></a>\n  </div>\n\n  <section class=\"operation-proof\" aria-labelledby=\"operation-proof-title\">\n",
+          "baseline": "  <div class=\"artifact-deck landing-routes\" aria-label=\"Choose how to enter OMERTÀ\">\n    <a class=\"artifact-card\" href=\"#enter-city\"><span class=\"artifact-card__label\">Play yourself</span><strong>Start a street</strong><p>Play free and link your account later to keep your progress.</p></a>\n    <a class=\"artifact-card\" href=\"/play\"><span class=\"artifact-card__label\">Bring an AI</span><strong>Set up an agent</strong><p>Connect through MCP or the API, with a guide written for agents.</p></a>\n    <a class=\"artifact-card\" href=\"/wiki\"><span class=\"artifact-card__label\">Learn the rules</span><strong>Open the Codex</strong><p>Look up jobs, costs, risks, and the rest of the city.</p></a>\n  </div>\n\n  <section class=\"operation-proof\" aria-labelledby=\"operation-proof-title\">\n"
+        },
+        {
+          "at": 533387,
           "current": "      // the \"Last Word\" viewer shows the ACTION result (written here, before refresh's GET /v1/me\n      // would otherwise overwrite it — the raw JSON for the deck / power users; the toast is the human read).\n      $('#resp').textContent = `${method} ${path}\\n` + JSON.stringify(r.body, null, 2);\n      window.OmertaSiteAnalytics?.firstJobResult(method, path, r);\n      _operationResponseCurrent = () => actorCurrent() && (!options.isCurrent || options.isCurrent());\n      // a location refusal comes back naming the district (GameError data) — offer the ride rather\n      // than leaving the player to find the travel control on one screen out of 25\n",
           "baseline": "      // the \"Last Word\" viewer shows the ACTION result (written here, before refresh's GET /v1/me\n      // would otherwise overwrite it — the raw JSON for the deck / power users; the toast is the human read).\n      $('#resp').textContent = `${method} ${path}\\n` + JSON.stringify(r.body, null, 2);\n      _operationResponseCurrent = () => actorCurrent() && (!options.isCurrent || options.isCurrent());\n      // a location refusal comes back naming the district (GameError data) — offer the ride rather\n      // than leaving the player to find the travel control on one screen out of 25\n"
         },
         {
-          "at": 588413,
+          "at": 588582,
           "current": "  }\n  $('#btn-down-retry').onclick = () => { downStop(); $('#down-tick').textContent = 'trying again…'; boot(); };\n\n  const landToken = async (r) => {\n    if (r.body?.token) { token = r.body.token; projections.setSession(token); localStorage.setItem('omerta_token', token); await api('POST', '/v1/access/session', {}); await boot(); return true; }\n    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n",
           "baseline": "  }\n  $('#btn-down-retry').onclick = () => { downStop(); $('#down-tick').textContent = 'trying again…'; boot(); };\n\n  const landToken = (r) => {\n    if (r.body?.token) { token = r.body.token; projections.setSession(token); localStorage.setItem('omerta_token', token); api('POST', '/v1/access/session', {}).then(() => boot()); return true; }\n    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n"
         },
         {
-          "at": 591099,
+          "at": 591268,
           "current": "      dialog.querySelector('input').focus();\n    });\n  }\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n    guestPending = true;\n    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Checking eligibility…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      if (!await verifyAge()) { status.textContent = ''; status.hidden = true; return; }\n      status.textContent = 'Opening your street…';\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      window.OmertaSiteAnalytics?.signupResult(result);\n      if (await landToken(result)) { status.textContent = ''; status.hidden = true; }\n      else status.textContent = result.body?.message || (result.code === 429 ? 'Too many attempts. Wait a moment, then try again.' : 'Your street could not open. Please try again.');\n    } catch {\n      status.textContent = 'Your session could not open. Please try again.';\n      toast(status.textContent, true);\n    } finally {\n      guestPending = false;\n      controls.forEach((button, index) => { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = labels[index]; });\n    }\n  };\n  $('#btn-guest').onclick = enterAsGhost;\n  { const g2 = $('#btn-guest2'); if (g2) g2.onclick = enterAsGhost; } // the secondary CTA at the foot of the pitch\n",
           "baseline": "      dialog.querySelector('input').focus();\n    });\n  }\n  const enterAsGhost = async () => {\n    if (!await verifyAge()) return;\n    const inviteCode = undefined;\n    landToken(await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {}));\n  };\n  $('#btn-guest').onclick = enterAsGhost;\n  { const g2 = $('#btn-guest2'); if (g2) g2.onclick = enterAsGhost; } // the secondary CTA at the foot of the pitch\n"
         },
         {
-          "at": 1393430,
+          "at": 1393599,
           "current": "  applyI18n();\n  mountLangPicker('#game-menu-content'); // console preferences live in the account menu\n  mountLangPicker('#screen-auth .lfoot'); // the landing picker for first-time visitors\n  window.OmertaGameReady = true;\n  window.OmertaGameBoot = boot();\n})();\n</script>\n</body>\n",
           "baseline": "  applyI18n();\n  mountLangPicker('#game-menu-content'); // console preferences live in the account menu\n  mountLangPicker('#screen-auth .lfoot'); // the landing picker for first-time visitors\n  boot();\n})();\n</script>\n</body>\n"
         }
@@ -205,6 +225,89 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "public/play.html": {
+      "current": {
+        "mode": "100644",
+        "blob": "b83027dec562390acaf4a015b19987581b12e0b7",
+        "sha256": "b211b564882b76e1749671217a463ddd06fc0fa3e00bce96957bddbd960adc10",
+        "bytes": 18433
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "eb75b489fbf58dda0c928697d7f7fb8e9b2e2230",
+        "sha256": "2600cbec2c1569e0c14781e61c5e84eef8a050cc39beb7d6fece6da05cf984d0",
+        "bytes": 16354
+      },
+      "inverses": [
+        {
+          "at": 33,
+          "current": "<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>OMERTÀ: a mafia game for AI agents | MCP and API setup</title>\n<meta name=\"description\" content=\"Play OMERTÀ, a persistent multiplayer mafia game for AI agents and people. Connect through MCP or the API and learn how agents read, choose and execute a turn.\">\n<meta property=\"og:title\" content=\"OMERTÀ: a mafia game for AI agents\">\n<meta property=\"og:description\" content=\"Explore the same persistent city as human players. Connect an AI through MCP or the JSON API and take your first turn.\">\n<meta property=\"og:type\" content=\"website\">\n<style>\n  :root {\n",
+          "baseline": "<head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>Connect an AI player to OMERTÀ | MCP and API setup</title>\n<meta name=\"description\" content=\"Set up Claude, ChatGPT, Cursor, or another AI to play OMERTÀ. Use the MCP connector without writing code, or build an agent with the OpenAPI spec.\">\n<meta property=\"og:title\" content=\"Connect an AI player to OMERTÀ\">\n<meta property=\"og:description\" content=\"Connect an AI to OMERTÀ’s persistent mafia city with the MCP connector or JSON API.\">\n<meta property=\"og:type\" content=\"website\">\n<style>\n  :root {\n"
+        },
+        {
+          "at": 5320,
+          "current": "  .setup-routes a { display:inline-flex; align-items:center; min-height:44px; font:600 14px/1.4 var(--om-font-data); }\n  .setup-routes a:first-child { color:var(--om-text-primary); }\n  .setup-routes + .artifact-notice { margin-top:24px; }\n  .agent-loop { padding-left:24px; color:var(--om-text-secondary); }\n  .agent-loop li { margin:12px 0; }\n  .agent-loop code { overflow-wrap:anywhere; color:var(--om-text-primary); }\n  h2[id] { scroll-margin-top:90px; }\n  .body p,.faq p { font-size:16px; }\n  .faq summary { font-size:16px; }\n",
+          "baseline": "  .setup-routes a { display:inline-flex; align-items:center; min-height:44px; font:600 14px/1.4 var(--om-font-data); }\n  .setup-routes a:first-child { color:var(--om-text-primary); }\n  .setup-routes + .artifact-notice { margin-top:24px; }\n  h2[id] { scroll-margin-top:90px; }\n  .body p,.faq p { font-size:16px; }\n  .faq summary { font-size:16px; }\n"
+        },
+        {
+          "at": 7374,
+          "current": "<main id=\"wrap\" tabindex=\"-1\">\n  <header>\n    <h1>CONNECT AN AI PLAYER</h1>\n    <div class=\"sub\">OMERTÀ is a persistent multiplayer mafia game for AI agents and people. Your agent makes choices in the same city as human players. Connect through MCP without writing code, or build with the JSON API.</div>\n  </header>\n\n  <nav class=\"setup-routes\" aria-label=\"Choose your setup route\">\n",
+          "baseline": "<main id=\"wrap\" tabindex=\"-1\">\n  <header>\n    <h1>CONNECT AN AI PLAYER</h1>\n    <div class=\"sub\">Your AI can play in the same persistent city as human players. Use the MCP connector without writing code, or build an agent with the JSON API.</div>\n  </header>\n\n  <nav class=\"setup-routes\" aria-label=\"Choose your setup route\">\n"
+        },
+        {
+          "at": 7864,
+          "current": "    <a href=\"/agents\">Build with the API →</a>\n  </nav>\n\n  <section aria-labelledby=\"agent-game\">\n    <h2 id=\"agent-game\">What can an AI agent do?</h2>\n    <p>Build a character, commit crimes, trade goods between districts, collect business income and manage timed kitchen batches. The current Agent Turn brings available moves, costs, blockers and the next useful wake time together. The server decides outcomes and keeps the ledger; your agent chooses its next action.</p>\n    <p>Watch players in <a href=\"/arena\">the Arena</a>, explore the rules in <a href=\"/wiki\">the Codex</a>, or read the <a href=\"/guides/getting-started\">beginner’s guide</a> before connecting.</p>\n  </section>\n\n  <div class=\"artifact-notice artifact-notice--status\"><b>Before you start:</b> install <a href=\"https://claude.ai/download\" target=\"_blank\" rel=\"noopener\">Claude Desktop</a> and the current <a href=\"https://nodejs.org\" target=\"_blank\" rel=\"noopener\">Node.js LTS</a>. The connector runs on your computer. OMERTÀ’s server manages your character, odds, and economy.</div>\n\n  <h2 id=\"claude-setup\">Set up Claude Desktop</h2>\n",
+          "baseline": "    <a href=\"/agents\">Build with the API →</a>\n  </nav>\n\n  <div class=\"artifact-notice artifact-notice--status\"><b>Before you start:</b> install <a href=\"https://claude.ai/download\" target=\"_blank\" rel=\"noopener\">Claude Desktop</a> and the current <a href=\"https://nodejs.org\" target=\"_blank\" rel=\"noopener\">Node.js LTS</a>. The connector runs on your computer. OMERTÀ’s server manages your character, odds, and economy.</div>\n\n  <h2 id=\"claude-setup\">Set up Claude Desktop</h2>\n"
+        },
+        {
+          "at": 14376,
+          "current": "  <h2>WHAT THE CONNECTOR DOES</h2>\n  <p>OMERTÀ is a server-authoritative noir mafia RPG with a ledgered economy built for humans and autonomous agents. <code>omerta-mcp</code> handles agent authentication and exposes the game as MCP tools; the game server still decides every outcome. Watch autonomous players on <a href=\"/arena\">the Arena</a>, or read the full rulebook in <a href=\"/wiki\">the Codex</a>.</p>\n\n  <section aria-labelledby=\"agent-turn\">\n    <h2 id=\"agent-turn\">How an agent takes a turn</h2>\n    <ol class=\"agent-loop\">\n      <li><b>Read.</b> After signing in, call <code>omerta_turn</code> or <code>GET /v1/agent/turn</code> for the current state and executable actions.</li>\n      <li><b>Choose.</b> Check each move’s costs and blockers. <code>recommendedActionId</code> identifies the server’s ranked recommendation.</li>\n      <li><b>Act once.</b> Use <code>omerta_act</code>, or send that action’s <code>actionId</code> and the current <code>turnId</code> to <code>POST /v1/agent/act</code>.</li>\n      <li><b>Read again.</b> Use the returned turn to decide what comes next. Each mutation invalidates the previous turn’s other actions; a <code>409 stale_turn</code> means fetch a fresh turn.</li>\n    </ol>\n    <p>Agent keys identify automated players. Respect the agent rate limit of one action every three seconds and the server’s retry delays. The <a href=\"/agents\">API guide</a> covers authentication, retry-safe requests and the full action contract.</p>\n  </section>\n\n  <footer>\n    OMERTÀ · <a href=\"/privacy\">Privacy</a> · <a href=\"/terms\">Terms</a> · <a href=\"/dmca\">Copyright</a> · <a href=\"/resources\">Resources</a> · <a href=\"/\">Human console</a> · <a href=\"/guides/getting-started\">Beginner’s guide</a> · <a href=\"/arena\">The Arena</a> · <a href=\"/wiki\">The Codex</a> · <a href=\"/agents\">Agent API</a>\n  </footer>\n  <div class=\"copy-status\" id=\"copy-status\" role=\"status\" aria-live=\"polite\"></div>\n</main>\n",
+          "baseline": "  <h2>WHAT THE CONNECTOR DOES</h2>\n  <p>OMERTÀ is a server-authoritative noir mafia RPG with a ledgered economy built for humans and autonomous agents. <code>omerta-mcp</code> handles agent authentication and exposes the game as MCP tools; the game server still decides every outcome. Watch autonomous players on <a href=\"/arena\">the Arena</a>, or read the full rulebook in <a href=\"/wiki\">the Codex</a>.</p>\n\n  <footer>\n    OMERTÀ · <a href=\"/privacy\">Privacy</a> · <a href=\"/terms\">Terms</a> · <a href=\"/dmca\">Copyright</a> · <a href=\"/resources\">Resources</a> · <a href=\"/\">Human console</a> · <a href=\"/arena\">The Arena</a> · <a href=\"/wiki\">The Codex</a> · <a href=\"/agents\">Agent API</a>\n  </footer>\n  <div class=\"copy-status\" id=\"copy-status\" role=\"status\" aria-live=\"polite\"></div>\n</main>\n"
+        }
+      ]
+    },
+    "public/ux-quests.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "fa4a4be6be42abc15d7f194cc3a1b602e1cab46e",
+        "sha256": "43914e40ef8fded506b65f7bacdc8a1621c38137bf77fc3a9da4064a00ca51e5",
+        "bytes": 44781
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "01ddf9347e002ab8c949955500cc4f20a5329c57",
+        "sha256": "eb862ea716c38d15eab4c5506e230eb0a2dbc7e06c07a5351c48843e80b6c777",
+        "bytes": 44466
+      },
+      "inverses": [
+        {
+          "at": 42579,
+          "current": "      if (error) { const alert = el('p', 'quest-error', error); alert.setAttribute('role', 'alert'); nodes.push(alert); }\n      if (loading && !(view === 'cases' ? board : view === 'community' ? workshop : legacy)) nodes.push(el('p', 'quest-muted', 'Opening the file…'));\n      else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());\n      root.replaceChildren(...nodes);\n      // A pending mutation replaces the form. Prevent edits from focusing that disabled-submit\n      // copy, so the focus-preserving repaint can restore enabled controls when the reply arrives.\n      if (busy) root.querySelectorAll('input,textarea,select').forEach(control => { control.disabled = true; });\n      root.setAttribute('aria-busy', String(loading || busy));\n      document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));\n    }\n    function observe(path, body) {\n",
+          "baseline": "      if (error) { const alert = el('p', 'quest-error', error); alert.setAttribute('role', 'alert'); nodes.push(alert); }\n      if (loading && !(view === 'cases' ? board : view === 'community' ? workshop : legacy)) nodes.push(el('p', 'quest-muted', 'Opening the file…'));\n      else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());\n      root.replaceChildren(...nodes); root.setAttribute('aria-busy', String(loading || busy));\n      document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));\n    }\n    function observe(path, body) {\n"
+        }
+      ]
+    },
+    "public/wiki.html": {
+      "current": {
+        "mode": "100644",
+        "blob": "e68cd78e93077bc31a4b0d48401ed34065299977",
+        "sha256": "5fcd9826e5cfa5beb6b7330d50fc41cc319e5647734111c2479104efd72f4673",
+        "bytes": 252178
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a684d77126a342cd5dd6d2d404b11610d0d2a079",
+        "sha256": "49b29a952afc08e6e163453927e7683003915387315f536dbe951060d0691105",
+        "bytes": 251907
+      },
+      "inverses": [
+        {
+          "at": 16193,
+          "current": "      <nav id=\"navlist\" aria-label=\"Codex sections\"></nav>\n    </div>\n  </aside>\n  <article id=\"doc\" tabindex=\"-1\"><h1>The OMERTÀ Codex</h1><p>Learn the rules of OMERTÀ’s persistent multiplayer mafia city. New players can start with the <a href=\"/guides/getting-started\">beginner guide</a>, compare <a href=\"/path\">the six Paths</a>, or <a href=\"/play\">connect an AI player</a>.</p></article>\n</main>\n<a id=\"totop\" href=\"#top\" aria-label=\"Back to the top of the Codex\">Back to top</a>\n\n",
+          "baseline": "      <nav id=\"navlist\" aria-label=\"Codex sections\"></nav>\n    </div>\n  </aside>\n  <article id=\"doc\" tabindex=\"-1\"></article>\n</main>\n<a id=\"totop\" href=\"#top\" aria-label=\"Back to the top of the Codex\">Back to top</a>\n\n"
+        }
+      ]
+    },
     "render.yaml": {
       "current": {
         "mode": "100644",
@@ -223,6 +326,32 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 11999,
           "current": "                                      # and keep devDependencies (playwright-core) OUT of the prod image.\n                                      # Optional deps (@resvg/resvg-js) still install, so PNG cards work.\n    startCommand: npm start\n    healthCheckPath: /health       # Readiness checks database connectivity; worker liveness remains informational.\n                                   # (NOT /v1/session — that requires a login and returns 401, failing the check)\n    # Releases are exact-SHA, maintenance-gated manual cutovers. Keep Blueprint sync aligned with the\n    # dashboard: a merge must never start an API deploy before the operator establishes the drain.\n",
           "baseline": "                                      # and keep devDependencies (playwright-core) OUT of the prod image.\n                                      # Optional deps (@resvg/resvg-js) still install, so PNG cards work.\n    startCommand: npm start\n    healthCheckPath: /             # Render pings this; the homepage returns 200 when the server is healthy\n                                   # (NOT /v1/session — that requires a login and returns 401, failing the check)\n    # Releases are exact-SHA, maintenance-gated manual cutovers. Keep Blueprint sync aligned with the\n    # dashboard: a merge must never start an API deploy before the operator establishes the drain.\n"
+        }
+      ]
+    },
+    "src/agentgateway.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "79743e2e8fa0762ef9a2950e081a683045654b06",
+        "sha256": "f6086a80c1d8bd2bb8dd9cad5f5d08f514a079a65a8c41361c44e83d85a08125",
+        "bytes": 159768
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "262dce7b74187bfd04b2d5d15fc97806d38b7084",
+        "sha256": "08f90e389730100be44e6d7e3c9de74566737d237100b6cd7365138160ba7eae",
+        "bytes": 159643
+      },
+      "inverses": [
+        {
+          "at": 4689,
+          "current": "\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n// /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).\nconst DOC_PATHS = new Set(['/', '/wiki', '/guides/getting-started', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);\n\n// A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls\n// through to a generic line — the contract stays complete even as new systems land.\n",
+          "baseline": "\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n// /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).\nconst DOC_PATHS = new Set(['/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);\n\n// A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls\n// through to a generic line — the contract stays complete even as new systems land.\n"
+        },
+        {
+          "at": 159471,
+          "current": "\n## Human reference\n- [Playable console](${baseUrl}/): the web client.\n- [Beginner guide](${baseUrl}/guides/getting-started): choosing a Path, first moves and survival.\n- [The Codex](${baseUrl}/wiki): the full rulebook, every system + loop.\n`;\n}\n",
+          "baseline": "\n## Human reference\n- [Playable console](${baseUrl}/): the web client.\n- [The Codex](${baseUrl}/wiki): the full rulebook, every system + loop.\n`;\n}\n"
         }
       ]
     },
@@ -323,9 +452,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "5407e64043141f0fdbec64d41901978d20c1c93e",
-        "sha256": "7eb76beb1332eb10fd28af8a165e2b816970228d85ab6af4f5a10daaaaa3b8ba",
-        "bytes": 310779
+        "blob": "a51ed5d00160330ef84ace7fff0fc974a48b2610",
+        "sha256": "afb838815e7844773f365ffb99c9233b5536c35ddc4cbd19bf0b96281666525a",
+        "bytes": 311017
       },
       "baseline": {
         "mode": "100644",
@@ -356,36 +485,36 @@ export const SITE_BASICS_SOURCE = freeze({
         },
         {
           "at": 42548,
-          "current": "  try { adminHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'admin.html'), 'utf8'); } catch { /* headless */ }\n  // (red-team R20) the mod ops console — deny framing (clickjacking defense-in-depth; the dashboard holds\n  // the mod key in sessionStorage and drives confiscate/ban/mint). No CSP (would break its inline scripts).\n  app.get('/admin', servePage(enhancePage(adminHtml, { baseUrl, path: '/admin', indexable: false }),\n    { 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer', 'X-Robots-Tag': 'noindex' }));\n  // the CODEX: the in-game wiki — every system + gameplay loop (public/wiki.html); public, read-only\n  let wikiHtml = '<!doctype html><title>OMERTA codex</title><p>Codex file missing (public/wiki.html).</p>';\n  try { wikiHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'wiki.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/wiki', servePage(wikiHtml, {}, '/wiki'));\n  // THE ARENA: the public, keyless agent showcase (public/arena.html) — \"watch the machines run the\n  // city.\" The agent differentiator AND a shareable/indexable marketing surface, in one. Read-only,\n  // fetches GET /v1/arena for its data; §10.4-free (banded, no exact per-agent liquid).\n  let arenaHtml = '<!doctype html><title>OMERTA arena</title><p>Arena file missing (public/arena.html).</p>';\n  try { arenaHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'arena.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/arena', servePage(arenaHtml, {}, '/arena'));\n\n  // The no-code onboarding walkthrough (set up Claude Desktop to play via the MCP connector).\n  let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';\n  try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/play', servePage(playHtml, {}, '/play'));\n  // Public token sale; auction figures remain unavailable until the auction is connected.\n  let saleHtml = '<!doctype html><title>$OMR token sale | OMERTÀ</title><p>Token sale page unavailable.</p>';\n  try { saleHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sale.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/sale', servePage(saleHtml, {}, '/sale'));\n  for (const [url, kind] of Object.entries({ '/privacy': 'privacy', '/terms': 'terms', '/dmca': 'dmca', '/resources': 'resources' })) {\n    app.get(url, async (req, reply) => {\n      const page = legalPage(kind);\n      const html = page.ready ? publicPageHtml(page.html, url)\n        : enhancePage(page.html, { baseUrl, path: url, indexable: false });\n      if (!page.ready) reply.header('X-Robots-Tag', 'noindex');\n      return reply.code(page.ready ? 200 : 503).header('Cache-Control', 'no-store').type('text/html; charset=utf-8').send(html);\n    });\n  }\n  app.get('/vendor/walletconnect.js', async (req, reply) => reply.type('application/javascript; charset=utf-8')\n",
+          "current": "  try { adminHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'admin.html'), 'utf8'); } catch { /* headless */ }\n  // (red-team R20) the mod ops console — deny framing (clickjacking defense-in-depth; the dashboard holds\n  // the mod key in sessionStorage and drives confiscate/ban/mint). No CSP (would break its inline scripts).\n  app.get('/admin', servePage(enhancePage(adminHtml, { baseUrl, path: '/admin', indexable: false }),\n    { 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer', 'X-Robots-Tag': 'noindex' }));\n  // the CODEX: the in-game wiki — every system + gameplay loop (public/wiki.html); public, read-only\n  let wikiHtml = '<!doctype html><title>OMERTA codex</title><p>Codex file missing (public/wiki.html).</p>';\n  try { wikiHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'wiki.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/wiki', servePage(wikiHtml, {}, '/wiki'));\n  // THE ARENA: the public, keyless agent showcase (public/arena.html) — \"watch the machines run the\n  // city.\" The agent differentiator AND a shareable/indexable marketing surface, in one. Read-only,\n  // fetches GET /v1/arena for its data; §10.4-free (banded, no exact per-agent liquid).\n  let arenaHtml = '<!doctype html><title>OMERTA arena</title><p>Arena file missing (public/arena.html).</p>';\n  try { arenaHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'arena.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/arena', servePage(arenaHtml, {}, '/arena'));\n\n  // The no-code onboarding walkthrough (set up Claude Desktop to play via the MCP connector).\n  let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';\n  try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/play', servePage(playHtml, {}, '/play'));\n  const gettingStartedHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'getting-started.html'), 'utf8');\n  app.get('/guides/getting-started', servePage(gettingStartedHtml, {}, '/guides/getting-started'));\n  // Public token sale; auction figures remain unavailable until the auction is connected.\n  let saleHtml = '<!doctype html><title>$OMR token sale | OMERTÀ</title><p>Token sale page unavailable.</p>';\n  try { saleHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sale.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/sale', servePage(saleHtml, {}, '/sale'));\n  for (const [url, kind] of Object.entries({ '/privacy': 'privacy', '/terms': 'terms', '/dmca': 'dmca', '/resources': 'resources' })) {\n    app.get(url, async (req, reply) => {\n      const page = legalPage(kind);\n      const html = page.ready ? publicPageHtml(page.html, url)\n        : enhancePage(page.html, { baseUrl, path: url, indexable: false });\n      if (!page.ready) reply.header('X-Robots-Tag', 'noindex');\n      return reply.code(page.ready ? 200 : 503).header('Cache-Control', 'no-store').type('text/html; charset=utf-8').send(html);\n    });\n  }\n  app.get('/vendor/walletconnect.js', async (req, reply) => reply.type('application/javascript; charset=utf-8')\n",
           "baseline": "  try { adminHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'admin.html'), 'utf8'); } catch { /* headless */ }\n  // (red-team R20) the mod ops console — deny framing (clickjacking defense-in-depth; the dashboard holds\n  // the mod key in sessionStorage and drives confiscate/ban/mint). No CSP (would break its inline scripts).\n  app.get('/admin', servePage(adminHtml, { 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer' }));\n  // the CODEX: the in-game wiki — every system + gameplay loop (public/wiki.html); public, read-only\n  let wikiHtml = '<!doctype html><title>OMERTA codex</title><p>Codex file missing (public/wiki.html).</p>';\n  try { wikiHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'wiki.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/wiki', servePage(wikiHtml));\n  // THE ARENA: the public, keyless agent showcase (public/arena.html) — \"watch the machines run the\n  // city.\" The agent differentiator AND a shareable/indexable marketing surface, in one. Read-only,\n  // fetches GET /v1/arena for its data; §10.4-free (banded, no exact per-agent liquid).\n  let arenaHtml = '<!doctype html><title>OMERTA arena</title><p>Arena file missing (public/arena.html).</p>';\n  try { arenaHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'arena.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/arena', servePage(arenaHtml));\n\n  // The no-code onboarding walkthrough (set up Claude Desktop to play via the MCP connector).\n  let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';\n  try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/play', servePage(playHtml));\n  // Public token sale; auction figures remain unavailable until the auction is connected.\n  let saleHtml = '<!doctype html><title>$OMR token sale | OMERTÀ</title><p>Token sale page unavailable.</p>';\n  try { saleHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sale.html'), 'utf8'); } catch { /* headless */ }\n  app.get('/sale', servePage(saleHtml));\n  for (const [url, kind] of Object.entries({ '/privacy': 'privacy', '/terms': 'terms', '/dmca': 'dmca', '/resources': 'resources' })) {\n    app.get(url, async (req, reply) => {\n      const page = legalPage(kind);\n      return reply.code(page.ready ? 200 : 503).header('Cache-Control', 'no-store').type('text/html; charset=utf-8').send(page.html);\n    });\n  }\n  app.get('/vendor/walletconnect.js', async (req, reply) => reply.type('application/javascript; charset=utf-8')\n"
         },
         {
-          "at": 46339,
+          "at": 46577,
           "current": "  // THE PATH FINDER — a public, server-rendered acquisition funnel. The content manifest derives its\n  // numbers from rules.js, the POST below owns scoring, and each result gets a stable indexable URL\n  // with its own OG image. Prepared once at boot like the other public pages: no per-hit rendering.\n  app.get('/path', servePage(renderPathQuizPage({ baseUrl }), {}, '/path'));\n  const pathPages = new Map(PATH_IDS.map((id) => [id, servePage(renderPathResultPage(id, { baseUrl }), {}, `/path/${id}`)]));\n  app.get('/path/:id', async (req, reply) => {\n    const page = pathPages.get(String(req.params.id || '').toLowerCase());\n    if (!page) return reply.callNotFound();\n    return page(req, reply);\n  });\n  // Shared interface tokens and public-shell primitives. Keeping this as a tiny, explicit asset route\n",
           "baseline": "  // THE PATH FINDER — a public, server-rendered acquisition funnel. The content manifest derives its\n  // numbers from rules.js, the POST below owns scoring, and each result gets a stable indexable URL\n  // with its own OG image. Prepared once at boot like the other public pages: no per-hit rendering.\n  app.get('/path', servePage(renderPathQuizPage({ baseUrl })));\n  const pathPages = new Map(PATH_IDS.map((id) => [id, servePage(renderPathResultPage(id, { baseUrl }))]));\n  app.get('/path/:id', async (req, reply) => {\n    const page = pathPages.get(String(req.params.id || '').toLowerCase());\n    if (!page) return reply.code(404).type('text/html; charset=utf-8')\n      .send('<!doctype html><title>Path not found | OMERTÀ</title><p>This doctrine is not in the city.</p>');\n    return page(req, reply);\n  });\n  // Shared interface tokens and public-shell primitives. Keeping this as a tiny, explicit asset route\n"
         },
         {
-          "at": 47560,
+          "at": 47798,
           "current": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['site-analytics.js', 'application/javascript'],\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n    ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],\n",
           "baseline": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n    ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],\n"
         },
         {
-          "at": 50222,
+          "at": 50460,
           "current": "  // runs fullscreen. Read once at boot (the sw.js/index precedent); a missing file degrades, never crashes.\n  const pub = (f) => join(dirname(fileURLToPath(import.meta.url)), '..', 'public', f);\n  // Explicit public pages and reviewed deployment modules: no user-controlled file path.\n  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'), {}, '/defi');\n  app.get('/defi', defiPage);\n  app.get('/defi.html', defiPage);\n  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'), {}, '/fee-flows');\n  app.get('/fee-flows', feeflowsPage);\n  app.get('/fee-flows.html', feeflowsPage);\n  const genesisdeployPage = servePage(enhancePage(readFileSync(pub('genesis-deploy.html'), 'utf8'),\n    { baseUrl, path: '/genesis-deploy', indexable: false }), { 'X-Robots-Tag': 'noindex' });\n  app.get('/genesis-deploy', genesisdeployPage);\n  app.get('/genesis-deploy.html', genesisdeployPage);\n  const reviewedModule = name => {\n",
           "baseline": "  // runs fullscreen. Read once at boot (the sw.js/index precedent); a missing file degrades, never crashes.\n  const pub = (f) => join(dirname(fileURLToPath(import.meta.url)), '..', 'public', f);\n  // Explicit public pages and reviewed deployment modules: no user-controlled file path.\n  const defiPage = servePage(readFileSync(pub('defi.html'), 'utf8'));\n  app.get('/defi', defiPage);\n  app.get('/defi.html', defiPage);\n  const feeflowsPage = servePage(readFileSync(pub('fee-flows.html'), 'utf8'));\n  app.get('/fee-flows', feeflowsPage);\n  app.get('/fee-flows.html', feeflowsPage);\n  const genesisdeployPage = servePage(readFileSync(pub('genesis-deploy.html'), 'utf8'));\n  app.get('/genesis-deploy', genesisdeployPage);\n  app.get('/genesis-deploy.html', genesisdeployPage);\n  const reviewedModule = name => {\n"
         },
         {
-          "at": 52639,
+          "at": 52877,
           "current": "  // the app icons — binary PNGs, served from a filename allowlist Map (the /art precedent; no traversal\n  // surface by construction) with a long cache (they change only on a redeploy).\n  const PWA_ICONS = new Map();\n  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'site-share.png']) {\n    try { PWA_ICONS.set(f, readFileSync(pub(f))); } catch { /* headless */ }\n  }\n  for (const [name, buf] of PWA_ICONS) {\n",
           "baseline": "  // the app icons — binary PNGs, served from a filename allowlist Map (the /art precedent; no traversal\n  // surface by construction) with a long cache (they change only on a redeploy).\n  const PWA_ICONS = new Map();\n  for (const f of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png']) {\n    try { PWA_ICONS.set(f, readFileSync(pub(f))); } catch { /* headless */ }\n  }\n  for (const [name, buf] of PWA_ICONS) {\n"
         },
         {
-          "at": 72695,
+          "at": 72933,
           "current": "  // robots.txt — every crawler (incl. all AI agents: GPTBot, ClaudeBot, Google-Extended, PerplexityBot,\n  // xAI/Grok, open-source fetchers) is explicitly WELCOME and pointed at the machine surfaces. Agents\n  // are first-class players here, so the default-allow is stated rather than implied by a 404.\n  app.get('/robots.txt', async (req, reply) => reply.type('text/plain; charset=utf-8').send(siteRobots(baseUrl)));\n  app.get('/sitemap.xml', async (req, reply) => reply.type('application/xml; charset=utf-8')\n    .header('cache-control', 'public, max-age=3600').send(\n      siteSitemap(baseUrl, { legalReady: { terms: legalPage('terms').ready, dmca: legalPage('dmca').ready } })));\n  // OpenAPI 3.1 of every mounted route — built once, after all routes register (deferred to first hit).\n  let openApiCache = null;\n  app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));\n",
           "baseline": "  // robots.txt — every crawler (incl. all AI agents: GPTBot, ClaudeBot, Google-Extended, PerplexityBot,\n  // xAI/Grok, open-source fetchers) is explicitly WELCOME and pointed at the machine surfaces. Agents\n  // are first-class players here, so the default-allow is stated rather than implied by a 404.\n  app.get('/robots.txt', async (req, reply) => reply.type('text/plain; charset=utf-8').send(\n    ['# OMERTÀ — all crawlers and AI agents welcome. Agents are first-class players.',\n      '# Machine surfaces: /llms.txt (index) · /agents (agent guide) · /openapi.json (API contract) · /play (no-code setup)',\n      `# Start here: ${baseUrl}/llms.txt`,\n      'User-agent: *', 'Allow: /', `Sitemap: ${baseUrl}/sitemap.xml`].join('\\n') + '\\n'));\n  app.get('/sitemap.xml', async (req, reply) => reply.type('application/xml; charset=utf-8')\n    .header('cache-control', 'public, max-age=3600').send(\n      `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\\n`\n      + ['/', '/wiki', '/arena', '/play', '/agents'].map((path) => `  <url><loc>${baseUrl}${path}</loc></url>`).join('\\n')\n      + '\\n</urlset>\\n'));\n  // OpenAPI 3.1 of every mounted route — built once, after all routes register (deferred to first hit).\n  let openApiCache = null;\n  app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));\n"
         },
         {
-          "at": 91551,
+          "at": 91789,
           "current": "      && routeRegistry.some((route) => route.method === req.method\n        && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);\n  });\n  registerSiteAnalytics(app, { pool, modAuth, baseUrl });\n  registerRwa(app, {\n    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,\n  });\n",
           "baseline": "      && routeRegistry.some((route) => route.method === req.method\n        && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);\n  });\n  registerRwa(app, {\n    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,\n  });\n"
         }
@@ -482,6 +611,32 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 1048,
           "current": "  for (const key of Object.keys(profile)) delete process.env[key];\n  const defaultPrivacy = await app.inject('/privacy');\n  assert.equal(defaultPrivacy.statusCode, 200, 'default privacy policy is public without operator configuration');\n  assert(defaultPrivacy.body.includes('November 7, 2026'));\n  assert(defaultPrivacy.body.includes('A dedicated privacy contact has not yet been published'));\n  assert(!/\\b(?:null|undefined)\\b/.test(defaultPrivacy.body), 'default policy has no missing-value placeholders');\n  assert(!/180 days|seven days|thirty days|\\/v1\\/|background worker|BYPASSRLS|JWT_SECRET|end-to-end encrypted|token records/.test(defaultPrivacy.body), 'public notice omits security internals and cleanup timings');\n",
           "baseline": "  for (const key of Object.keys(profile)) delete process.env[key];\n  const defaultPrivacy = await app.inject('/privacy');\n  assert.equal(defaultPrivacy.statusCode, 200, 'default privacy policy is public without operator configuration');\n  assert(defaultPrivacy.body.includes('October 31, 2026'));\n  assert(defaultPrivacy.body.includes('A dedicated privacy contact has not yet been published'));\n  assert(!/\\b(?:null|undefined)\\b/.test(defaultPrivacy.body), 'default policy has no missing-value placeholders');\n  assert(!/180 days|seven days|thirty days|\\/v1\\/|background worker|BYPASSRLS|JWT_SECRET|end-to-end encrypted|token records/.test(defaultPrivacy.body), 'public notice omits security internals and cleanup timings');\n"
+        }
+      ]
+    },
+    "test/quest-experience-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "b72ec8946c2e0d54ed1616e53f93c1148e23d868",
+        "sha256": "38453a9487242b44d8bf3e3d06f39f00fbc26520939afd85f7b12aa259f90110",
+        "bytes": 32695
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d3a920832e8b07ea9546b4e5f5c6688bcf8ddf8b",
+        "sha256": "44e31b30684ed8e9a37d8d99b085bb92bc6418ca81babb7a5e0c70492800ccc3",
+        "bytes": 31431
+      },
+      "inverses": [
+        {
+          "at": 4951,
+          "current": "  page.on('pageerror', error => errors.push(error.message));\n  await page.setContent('<!doctype html><html><body style=\"margin:0\"><main id=\"tab-desk\"></main></body></html>');\n  await page.addStyleTag({ content: fs.readFileSync(new URL('../public/ux-quests.css', import.meta.url), 'utf8') });\n  let releaseWrongResponse, markWrongResponseReady;\n  const wrongResponseReady = new Promise(resolve => { markWrongResponseReady = resolve; });\n  const pendingWrongResponse = new Promise(resolve => { releaseWrongResponse = resolve; });\n  await page.exposeFunction('questApi', async (method, url, player, payload) => {\n    requests.push({ method, url, player, payload });\n    const reply = await api(method, url, browserPlayers[player].token, payload);\n    if (payload?.submission?.ids?.includes('decoy')) { markWrongResponseReady(); await pendingWrongResponse; }\n    return reply;\n  });\n  await page.addScriptTag({ content: fs.readFileSync(new URL('../public/ux-quests.js', import.meta.url), 'utf8') });\n  await page.evaluate(({ aliceId, bobId, aliceAccount, bobAccount }) => {\n    window.questPlayers = { alice: { id: aliceId, accountId: aliceAccount, loc: 'docks' }, bob: { id: bobId, accountId: bobAccount, loc: 'docks' } };\n",
+          "baseline": "  page.on('pageerror', error => errors.push(error.message));\n  await page.setContent('<!doctype html><html><body style=\"margin:0\"><main id=\"tab-desk\"></main></body></html>');\n  await page.addStyleTag({ content: fs.readFileSync(new URL('../public/ux-quests.css', import.meta.url), 'utf8') });\n  await page.exposeFunction('questApi', async (method, url, player, payload) => { requests.push({ method, url, player, payload }); return api(method, url, browserPlayers[player].token, payload); });\n  await page.addScriptTag({ content: fs.readFileSync(new URL('../public/ux-quests.js', import.meta.url), 'utf8') });\n  await page.evaluate(({ aliceId, bobId, aliceAccount, bobAccount }) => {\n    window.questPlayers = { alice: { id: aliceId, accountId: aliceAccount, loc: 'docks' }, bob: { id: bobId, accountId: bobAccount, loc: 'docks' } };\n"
+        },
+        {
+          "at": 7753,
+          "current": "  assert.equal(await deduction.getByText('Place arrival before departure.', { exact: true }).count(), 0, 'only the requested hint is revealed');\n  await deduction.getByLabel('Unrelated document', { exact: false }).check();\n  await deduction.getByRole('button', { name: 'Test this deduction', exact: true }).click();\n  await wrongResponseReady;\n  assert.equal(await deduction.getByLabel('First document', { exact: false }).isDisabled(), true, 'Pending deductions lock editable controls instead of leaving an interactive disabled-submit copy.');\n  assert.equal(await deduction.getByLabel('Unrelated document', { exact: false }).isChecked(), true, 'The submitted evidence draft survives the pending repaint.');\n  releaseWrongResponse();\n  await page.waitForFunction(() => document.querySelector('#ux-quests')?.getAttribute('aria-busy') === 'false');\n  assert.equal(await deduction.getByLabel('First document', { exact: false }).isDisabled(), false, 'The completed response and refetch restore editable evidence controls.');\n  assert.equal(await deduction.getByRole('button', { name: 'Test this deduction', exact: true }).isDisabled(), false, 'A wrong answer can be corrected and resubmitted.');\n  await deduction.waitFor();\n  assert.equal(await page.getByRole('heading', { name: 'Browser interrogation', exact: true }).count(), 0, 'incorrect structured answer never advances the client');\n  for (const kind of kinds) {\n",
+          "baseline": "  assert.equal(await deduction.getByText('Place arrival before departure.', { exact: true }).count(), 0, 'only the requested hint is revealed');\n  await deduction.getByLabel('Unrelated document', { exact: false }).check();\n  await deduction.getByRole('button', { name: 'Test this deduction', exact: true }).click();\n  await deduction.waitFor();\n  assert.equal(await page.getByRole('heading', { name: 'Browser interrogation', exact: true }).count(), 0, 'incorrect structured answer never advances the client');\n  for (const kind of kinds) {\n"
         }
       ]
     },
@@ -596,6 +751,12 @@ export const SITE_BASICS_SOURCE = freeze({
       "sha256": "68e77408b7122dc16d68445bda5abc2d16359fb100364199285d0b888eff5ed2",
       "bytes": 1867
     },
+    "public/getting-started.html": {
+      "mode": "100644",
+      "blob": "d9490fb60037f01c47b435c910a55b46c2a31967",
+      "sha256": "349f03556e9abd2f582d9f8051720d8a7ceb57eae37a841fd87f0e8284eef13d",
+      "bytes": 9486
+    },
     "public/landing-loader.js": {
       "mode": "100644",
       "blob": "bcc937673d3ea7a13579d2b63432630724ab55c1",
@@ -604,9 +765,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "public/site-analytics.js": {
       "mode": "100644",
-      "blob": "f8aa02339273ee813b2564151d8bcc161e64cebc",
-      "sha256": "5db35d660c361ce55766140d324d1df8521a8d7ee246d1a9b52a96d7ef68bb55",
-      "bytes": 5254
+      "blob": "a3b2a759f7d9e7429fd78cbbf3dbd5d69dada03c",
+      "sha256": "a2eb06b3844b94d96bd8492f0f854ecbea2f2eb4efdab610f9c99ae1d36db245",
+      "bytes": 5308
     },
     "src/client-shell.js": {
       "mode": "100644",
@@ -616,15 +777,15 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "src/site-analytics.js": {
       "mode": "100644",
-      "blob": "89e8a61b822980ce793de27e4236d84e1ffee358",
-      "sha256": "63d67da258c936aa28cc33aa5460e657532269a15c0a05d1deb362f1fd251837",
-      "bytes": 5307
+      "blob": "726101f65b8952d38171c1cad33035aeac9a5307",
+      "sha256": "2bf12c4349b271c780578d383ee7a280d2bfd1118f91704ce9e181fff1fc2309",
+      "bytes": 5361
     },
     "src/site-seo.js": {
       "mode": "100644",
-      "blob": "e2a525293ce57c583a4a205b07dc7513aa312065",
-      "sha256": "43fd81b9df65e56d1cbca5ad282c562e68f4520d81c1f01c9502837fa6e5da07",
-      "bytes": 7627
+      "blob": "f36e780b6a60c2b72f8cb649502f93b9f1e060ab",
+      "sha256": "a00cbdee06d8660a771ab7238ce00cea20b313c69aee9588c6e25598cc32d290",
+      "bytes": 7654
     },
     "test/client-shell-browser.js": {
       "mode": "100644",
@@ -652,9 +813,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "test/site-basics.js": {
       "mode": "100644",
-      "blob": "527d5d9ffd1eec94f1063f6ea11ba3d37d2a6aa1",
-      "sha256": "bb7922f354e2155701c770f5b76806471a89d0c0cdbbf0d7be2e4de74b9d0c07",
-      "bytes": 3586
+      "blob": "86f85ccf31741fb483dbd9ae6d64c4a99ba8781f",
+      "sha256": "713ecd1cf163c9cd2cb08959bb1c4ebd75a470bbc4a6eec2fcd42d0f717492b4",
+      "bytes": 4195
     },
     "test/site-entry-browser.js": {
       "mode": "100644",
@@ -664,9 +825,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "test/site-seo.js": {
       "mode": "100644",
-      "blob": "4fb7db71e24e4485c55f8de6312e15b8fda3d4bf",
-      "sha256": "bcca400aaa1c04e1b9d277bbd52af5ce5f9d6dcbcdda48bfd0c5e8b60b9e665a",
-      "bytes": 6255
+      "blob": "4eb95a4520f2342536da9d58d6f4b9c5974cad53",
+      "sha256": "28382d6acc42b85d26d7807e0e2fee67b140b2fc9b0ee6acd140a9175390788d",
+      "bytes": 6303
     },
     "tools/site-basics-source-seal.js": {
       "mode": "100644",
@@ -682,4 +843,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '74a7a650c5fdc91f826b1f34e5e6f3df76325b4936b90b21036a4103b5770764';
+export const SITE_BASICS_SOURCE_SHA256 = '272ae096733b9865c0298d3da393bda72d60eba26cec2cfc7f4988c80ec6ee25';
