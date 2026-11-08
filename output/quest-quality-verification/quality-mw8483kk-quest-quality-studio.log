@@ -1,0 +1,3 @@
+{"phase":"QUEST_QUALITY_AUTHOR_STUDIO","packs":10,"executableCli":true,"factImpactAndAlternativeProofs":true,"promises":true,"branchConsequences":true,"spoilerHeuristics":true,"boundedPriorStatePreview":true,"procedurePreset":"shared-clock","playerResearchConducted":false,"activation":false}
+Preset refuses to overwrite an existing file.
+usage: quest-quality-studio.js validate|report|impact|preview|scenarios <pack-name|file|--all>; presets; preset <name> --out <new.json>
