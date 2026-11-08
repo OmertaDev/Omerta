@@ -1,0 +1,64 @@
+name: Live playtest native regressions
+on:
+  push:
+    branches: [main, codex/live-playtest-fixes-20261108]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      LEGAL_OPERATOR_NAME: CI Test Operator
+      LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+      PRIVACY_CONTACT_EMAIL: privacy@example.test
+      DMCA_AGENT_NAME: CI Test Agent
+      DMCA_AGENT_EMAIL: copyright@example.test
+      DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+      DMCA_AGENT_PHONE: '+1 202 555 0100'
+      DMCA_AGENT_REGISTERED: 'true'
+      PAYMENT_REFUND_POLICY: Synthetic test fixture only.
+    services:
+      postgres:
+        image: docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+        env:
+          POSTGRES_PASSWORD: playtest-fixture-only
+        ports: ['55493:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Create only disposable proof databases
+        run: |
+          node --input-type=module <<'NODE'
+          import { Client } from 'pg';
+          const client = new Client({ connectionString: 'postgres://postgres:playtest-fixture-only@localhost:55493/postgres' });
+          await client.connect();
+          for (const name of ['omerta_agent_review', 'omerta_economy_review', 'omerta_chaos_review']) await client.query('CREATE DATABASE ' + name);
+          await client.end();
+          NODE
+      - name: Agent admission transaction and recovery races
+        env:
+          AGENT_ONBOARDING_TEST_DATABASE_URL: postgres://postgres:playtest-fixture-only@localhost:55493/omerta_agent_review
+        run: npm run test:agent-onboarding:postgres
+      - name: Historical casino settlement migration and races
+        env:
+          CASINO_RAKEBACK_TEST_DATABASE_URL: postgres://postgres:playtest-fixture-only@localhost:55493/omerta_economy_review
+        run: npm run test:casino-rakeback:postgres
+      - name: Linux termination and interrupted transaction recovery
+        env:
+          DATABASE_URL: postgres://postgres:playtest-fixture-only@localhost:55493/omerta_chaos_review
+          JWT_SECRET: ci-jwt-secret-not-a-real-one
+          MOD_KEY: ci-mod-key-long-enough-to-pass-preflight
+          MARKET_SEED: ciMarketSeed7Qx2mVb9PwLn4RtY6hJc
+          SOCIAL_VERIFY_MODE: 'off'
+          POPULATION_OFF: 'on'
+        run: npm run chaos

@@ -15,8 +15,8 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { createHash, randomUUID } from 'node:crypto';
-import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { linkSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir, platform } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
@@ -31,6 +31,7 @@ const defaultSessionFile = () => {
 };
 const SESSION_FILE = resolve(process.env.OMERTA_SESSION_FILE || defaultSessionFile());
 let sessionError = null;
+let bootstrapSecret = null;
 
 // Agent keys last 90 days; losing one on every MCP-host restart silently creates duplicate accounts.
 // Persist only the bearer and its exact origin, with owner-only permissions and an atomic rename.
@@ -39,6 +40,11 @@ function readSession() {
     const saved = JSON.parse(readFileSync(SESSION_FILE, 'utf8'));
     if (saved?.base !== BASE) {
       sessionError = `session belongs to ${saved?.base || 'an unknown origin'}, not ${BASE}`;
+      return null;
+    }
+    if (!saved?.token && typeof saved?.bootstrapSecret === 'string' && /^[A-Za-z0-9_-]{43}$/.test(saved.bootstrapSecret)
+      && Buffer.from(saved.bootstrapSecret, 'base64url').toString('base64url') === saved.bootstrapSecret) {
+      bootstrapSecret = saved.bootstrapSecret;
       return null;
     }
     if (typeof saved?.token !== 'string' || !saved.token) {
@@ -54,10 +60,53 @@ function readSession() {
   }
 }
 function writeSession(nextToken) {
+  writeSessionState({ token: nextToken });
+}
+function writeSessionState(state) {
   mkdirSync(dirname(SESSION_FILE), { recursive: true, mode: 0o700 });
   const temp = `${SESSION_FILE}.${process.pid}.tmp`;
-  writeFileSync(temp, `${JSON.stringify({ version: 1, base: BASE, token: nextToken })}\n`, { mode: 0o600 });
+  writeFileSync(temp, `${JSON.stringify({ version: 1, base: BASE, ...state })}\n`, { mode: 0o600 });
   renameSync(temp, SESSION_FILE);
+}
+
+function publishBootstrapState() {
+  mkdirSync(dirname(SESSION_FILE), { recursive: true, mode: 0o700 });
+  const temp = `${SESSION_FILE}.${process.pid}.${randomUUID()}.bootstrap.tmp`;
+  try {
+    const candidate = bootstrapSecret || randomBytes(32).toString('base64url');
+    writeFileSync(temp, `${JSON.stringify({ version: 1, base: BASE, bootstrapSecret: candidate })}\n`,
+      { mode: 0o600, flag: 'wx' });
+    // Publish complete bytes without replacing another host's session. A hard link is an atomic,
+    // exclusive directory entry, so readers never see an empty/partially written recovery proof.
+    try { linkSync(temp, SESSION_FILE); }
+    catch (error) { if (error?.code !== 'EEXIST') throw error; }
+  } finally { rmSync(temp, { force: true }); }
+  const sharedToken = readSession();
+  if (sessionError) throw new Error('The shared agent session changed or cannot be read.');
+  if (sharedToken) {
+    token = sharedToken;
+    bootstrapSecret = null;
+    return false;
+  }
+  if (!bootstrapSecret) throw new Error('The shared agent recovery credential is unavailable.');
+  return true;
+}
+
+function writeBootstrapSession(nextToken, expectedSecret) {
+  const shared = JSON.parse(readFileSync(SESSION_FILE, 'utf8'));
+  let sameIdentity = shared.token === nextToken;
+  if (shared.token && !sameIdentity) {
+    try {
+      const claims = value => JSON.parse(Buffer.from(value.split('.')[1], 'base64url').toString('utf8'));
+      const prior = claims(shared.token), next = claims(nextToken);
+      sameIdentity = !!next.sub && prior.sub === next.sub && prior.tv === next.tv
+        && prior.agent === true && next.agent === true;
+    } catch { /* an opaque or malformed different token cannot authorize an overwrite */ }
+  }
+  if (shared.base !== BASE || (!sameIdentity && (shared.token || shared.bootstrapSecret !== expectedSecret))) {
+    throw new Error('The shared session changed during signup; refusing to replace it.');
+  }
+  writeSession(nextToken);
 }
 
 let token = process.env.OMERTA_TOKEN || readSession();
@@ -128,7 +177,7 @@ const TOOLS = [
       properties: {
         name: { type: 'string', description: 'Character name to create (2–24 chars, unique among the living). Omit to only authenticate.' },
         inviteCode: { type: 'string', description: 'Closed-alpha invite code, if required (else set OMERTA_INVITE).' },
-        birthDate: { type: 'string', description: 'Human operator birth date YYYY-MM-DD, required only for a new account; checked without storage. Never infer or invent it.' },
+        birthDate: { type: 'string', description: 'Optional legacy date validation (YYYY-MM-DD). Agent signup is exempt; do not prompt for or infer a date. Human signup has a separate age check.' },
         referralCode: { type: 'string', description: "The recruiter's character name, if you were referred." },
         reset: { type: 'boolean', description: 'Explicitly discard an invalid/expired saved session and create a new agent account. Never use this to farm accounts.' },
       },
@@ -163,7 +212,7 @@ const TOOLS = [
   },
 ];
 
-const server = new Server({ name: 'omerta', version: '1.3.0' }, { capabilities: { tools: {} } });
+const server = new Server({ name: 'omerta', version: '1.4.0' }, { capabilities: { tools: {} } });
 server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
 
 server.setRequestHandler(CallToolRequestSchema, async (req) => {
@@ -185,6 +234,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
         catch (e) { return ok({ authed: false, error: 'session_reset',
           message: `The saved session could not be removed: ${e?.message || e}` }); }
         token = null;
+        bootstrapSecret = null;
         sessionError = null;
         cacheTurn(null);
       }
@@ -226,22 +276,22 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
           status: session.status, body: session.body });
       }
       const invite = args.inviteCode || process.env.OMERTA_INVITE;
-      const guest = await api('POST', '/v1/auth/guest', { ...(invite ? { inviteCode: invite } : {}), ...(args.birthDate ? { birthDate: args.birthDate } : {}) });
-      if (guest.status !== 200 || !guest.body?.token) return ok({ step: 'guest', ...guest });
-      token = guest.body.token;
-      const key = await api('POST', '/v1/auth/agent-key', {});
-      if (key.status !== 200 || !key.body?.token) {
-        try { writeSession(token); }
-        catch (e) { return ok({ authed: true, agent: false, resumed: false,
-          step: 'agent_key', status: key.status, body: key.body, error: 'session_write',
-          message: `The guest identity could not be preserved for an agent-key retry: ${e?.message || e}` }); }
-        return ok({ authed: true, agent: false, resumed: false,
-          step: 'agent_key', status: key.status, body: key.body });
-      }
-      token = key.body.token; // switch to the agent token
-      try { writeSession(token); }
+      try {
+        if (!publishBootstrapState()) return ok({ authed: false, error: 'session_changed',
+          message: 'Another MCP host saved a session. Retry omerta_start to verify and resume it.' });
+      } catch (e) { return ok({ authed: false, error: 'session_write',
+        message: `The agent recovery credential could not be saved before signup: ${e?.message || e}` }); }
+      const admission = await api('POST', '/v1/auth/agent', { bootstrapSecret,
+        ...(invite ? { inviteCode: invite } : {}), ...(args.birthDate ? { birthDate: args.birthDate } : {}) });
+      if (admission.status !== 200 || !admission.body?.token) return ok({ step: 'agent_signup', ...admission });
+      try { writeBootstrapSession(admission.body.token, bootstrapSecret); }
       catch (e) { return ok({ authed: true, agent: true, error: 'session_write',
         message: `Agent created but its durable session could not be saved: ${e?.message || e}` }); }
+      token = admission.body.token;
+      bootstrapSecret = null;
+      const acknowledged = await api('POST', '/v1/auth/guest/bootstrap/ack', {});
+      if (acknowledged.status !== 200) return ok({ authed: true, agent: true, resumed: false,
+        step: 'bootstrap_ack', status: acknowledged.status, body: acknowledged.body });
       let character = null;
       if (args.name) {
         const c = await api('POST', '/v1/character', { name: args.name, referralCode: args.referralCode });

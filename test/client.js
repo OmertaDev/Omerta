@@ -144,6 +144,7 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
       const describe = () => 'Completed', cineFor = () => null, revealFor = noop, sfx = noop, bragText = () => null;
       const busy = { setAttribute: noop, removeAttribute: noop, classList: { add: noop, remove: noop } };
       const document = { body: { style: {} } }, $ = () => node;
+      const analyticsResults = [], window = { OmertaSiteAnalytics: { firstJobResult: (...args) => analyticsResults.push(args) } };
       const api = async () => ({ code: 200, body: {}, replayed: false });
       const refresh = async () => {
         if (${refreshCode} === 200 && !${ignored} && ${JSON.stringify(path)}.includes('/travel/')) {
@@ -155,11 +156,15 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
       const recordOperation = value => (operationReceipt = value);
       ${html.slice(actStart, actEnd)}
       const result = await act('POST', ${JSON.stringify(path)}, {});
-      return { code: result.code, receiptRecorded: !!operationReceipt, current: operationReceipt.resourceCurrent() };
+      return { code: result.code, receiptRecorded: !!operationReceipt, current: operationReceipt.resourceCurrent(),
+        analyticsMethod: analyticsResults[0]?.[0], analyticsPath: analyticsResults[0]?.[1], analyticsCalls: analyticsResults.length };
     })()`);
     assert.equal(observed.code, 200, 'A failed refresh must not relabel the confirmed action result.');
     assert.equal(observed.receiptRecorded, true, 'The ordinary operation receipt remains available for recovery.');
     assert.equal(observed.current, expectedCurrent, 'Resource feedback stays bound to the action district.');
+    assert.equal(observed.analyticsCalls, 1, 'The ordinary action forwards one result to the optional analytics bridge.');
+    assert.equal(observed.analyticsMethod, 'POST');
+    assert.equal(observed.analyticsPath, path);
   }
 }
 

@@ -1,7 +1,7 @@
 // Agent-interface regressions. Exercises the published MCP process over stdio against a real local
 // HTTP server, so the assertions cover the same headers and session behavior an MCP host receives.
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -10,7 +10,7 @@ import { spawn } from 'node:child_process';
 async function localApi() {
   const requests = [];
   const state = { sessionStatus: 200, hasCharacter: true, agent: true,
-    characterStatus: 200, agentKeyStatus: 200 };
+    characterStatus: 200, agentKeyStatus: 200, agentSignupStatus: 200 };
   const server = createServer(async (req, res) => {
     const chunks = [];
     for await (const chunk of req) chunks.push(chunk);
@@ -19,6 +19,13 @@ async function localApi() {
       body: raw ? JSON.parse(raw) : undefined });
     res.setHeader('content-type', 'application/json');
     if (req.url === '/v1/auth/guest') return res.end(JSON.stringify({ token: 'guest-token' }));
+    if (req.url === '/v1/auth/agent') {
+      if (state.beforeAgentResponse) await state.beforeAgentResponse();
+      res.statusCode = state.agentSignupStatus;
+      return res.end(JSON.stringify(state.agentSignupStatus === 200
+        ? { token: 'agent-token', agent: true }
+        : { error: 'agent_signup_unavailable', message: 'temporary agent signup failure' }));
+    }
     if (req.url === '/v1/auth/agent-key') {
       res.statusCode = state.agentKeyStatus;
       return res.end(JSON.stringify(state.agentKeyStatus === 200
@@ -120,12 +127,16 @@ async function mcpProcess(base, sessionFile) {
 const dir = await mkdtemp(join(tmpdir(), 'omerta-mcp-test-'));
 const sessionFile = join(dir, 'session.json');
 const api = await localApi();
-let mcp;
+let mcp, peer;
 try {
   mcp = await mcpProcess(api.base, sessionFile);
-  assert.equal(mcp.serverInfo.version, '1.3.0',
+  assert.equal(mcp.serverInfo.version, '1.4.0',
     'the MCP handshake version stays aligned with the published package version');
   const started = await mcp.call('omerta_start');
+  const admission = api.requests.find(r => r.path === '/v1/auth/agent');
+  assert.match(admission.body.bootstrapSecret, /^[A-Za-z0-9_-]{43}$/, 'agent signup uses a durable recovery credential');
+  assert.equal(admission.body.birthDate, undefined, 'machine signup never invents a date');
+  assert.equal(api.requests.some(r => r.path === '/v1/auth/guest'), false, 'new machine signup uses only the agent exemption');
   assert.match(started.next, /No character/i,
     'an auth-only start directs the agent to finish character creation before requesting a turn');
   await mcp.call('omerta_request', { method: 'POST', path: '/v1/action', operationId: 'bodyless-1' });
@@ -157,12 +168,12 @@ try {
   assert.equal(staleAction.error, 'unknown_action',
     'a successful mutation invalidates every sibling action so the agent must refresh before acting again');
 
-  const guestAuths = api.requests.filter((r) => r.path === '/v1/auth/guest').length;
+  const guestAuths = api.requests.filter((r) => r.path === '/v1/auth/agent').length;
   await mcp.stop();
   mcp = null;
   mcp = await mcpProcess(api.base, sessionFile);
   const resumed = await mcp.call('omerta_start');
-  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,
+  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,
     'restarting the MCP reuses the persisted agent identity instead of creating another guest');
   assert.equal(resumed.resumed, true, 'the start response identifies a resumed session');
   api.state.sessionStatus = 503;
@@ -170,13 +181,13 @@ try {
   assert.deepEqual({ error: unavailableSession.error, status: unavailableSession.status },
     { error: 'session_unavailable', status: 503 },
   'a transient session probe failure is not mislabeled as an expired identity');
-  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,
+  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,
     'a transient session probe failure never provisions a replacement guest');
   api.state.sessionStatus = 200;
   const refusedActiveReset = await mcp.call('omerta_start', { reset: true });
   assert.equal(refusedActiveReset.error, 'session_active',
     'reset cannot replace a healthy agent identity');
-  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,
+  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,
     'refusing an active-session reset creates no replacement account');
 
   api.state.hasCharacter = false;
@@ -196,7 +207,7 @@ try {
   mcp = await mcpProcess(api.base, sessionFile);
   const corrupt = await mcp.call('omerta_start');
   assert.equal(corrupt.error, 'session_invalid', 'a corrupt durable session fails closed');
-  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,
+  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,
     'a corrupt session never creates a replacement identity silently');
 
   await mcp.stop();
@@ -205,13 +216,13 @@ try {
   mcp = await mcpProcess(api.base, sessionFile);
   const wrongOrigin = await mcp.call('omerta_start');
   assert.equal(wrongOrigin.error, 'session_invalid', 'a session bound to another API origin fails closed');
-  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,
+  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,
     'an origin mismatch never overwrites the existing identity with a new guest');
 
   const recovered = await mcp.call('omerta_start', { reset: true });
   assert.equal(recovered.authed, true,
     'an explicit reset recovers from an unreadable saved session without manual file surgery');
-  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths + 1,
+  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths + 1,
     'session recovery creates a replacement identity only after the caller explicitly requests reset');
 
   await mcp.stop();
@@ -219,23 +230,74 @@ try {
   await writeFile(sessionFile, '{not-json', 'utf8');
   mcp = await mcpProcess(api.base, sessionFile);
   api.state.agentKeyStatus = 503;
-  const failedUpgrade = await mcp.call('omerta_start', { reset: true });
+  api.state.agent = false;
+  await mcp.stop();
+  await writeFile(sessionFile, JSON.stringify({ version: 1, base: api.base, token: 'legacy-human-token' }), 'utf8');
+  mcp = await mcpProcess(api.base, sessionFile);
+  const failedUpgrade = await mcp.call('omerta_start');
   assert.deepEqual({ step: failedUpgrade.step, status: failedUpgrade.status,
     error: failedUpgrade.body?.error }, { step: 'agent_key', status: 503, error: 'agent_key_failed' },
   'a failed agent-key upgrade is reported as the failing step instead of a successful agent start');
-  const guestsAfterFailedUpgrade = api.requests.filter((r) => r.path === '/v1/auth/guest').length;
+  const guestsAfterFailedUpgrade = api.requests.filter((r) => r.path === '/v1/auth/agent').length;
   await mcp.stop();
   mcp = null;
   api.state.agentKeyStatus = 200;
   api.state.agent = false;
   mcp = await mcpProcess(api.base, sessionFile);
   const retriedUpgrade = await mcp.call('omerta_start');
-  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestsAfterFailedUpgrade,
+  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestsAfterFailedUpgrade,
     'a failed agent-key upgrade persists the guest identity so restart retries the same account');
   assert.deepEqual({ authed: retriedUpgrade.authed, agent: retriedUpgrade.agent,
     resumed: retriedUpgrade.resumed }, { authed: true, agent: true, resumed: true },
   'the resumed guest upgrades cleanly to an agent after the transient failure clears');
+
+  await mcp.stop();
+  mcp = null;
+  await rm(sessionFile, { force: true });
+  api.state.agentSignupStatus = 503;
+  api.state.agent = true;
+  mcp = await mcpProcess(api.base, sessionFile);
+  const uncertainSignup = await mcp.call('omerta_start');
+  assert.equal(uncertainSignup.step, 'agent_signup');
+  const uncertainSecret = api.requests.filter(r => r.path === '/v1/auth/agent').at(-1).body.bootstrapSecret;
+  await mcp.stop();
+  mcp = null;
+  api.state.agentSignupStatus = 200;
+  mcp = await mcpProcess(api.base, sessionFile);
+  const recoveredSignup = await mcp.call('omerta_start');
+  assert.equal(recoveredSignup.agent, true);
+  assert.equal(api.requests.filter(r => r.path === '/v1/auth/agent').at(-1).body.bootstrapSecret, uncertainSecret,
+    'restart after ambiguous signup reuses the same durable recovery proof');
+
+  await mcp.stop(); mcp = null;
+  await rm(sessionFile, { force: true });
+  mcp = await mcpProcess(api.base, sessionFile);
+  peer = await mcpProcess(api.base, sessionFile);
+  const beforeParallel = api.requests.filter(r => r.path === '/v1/auth/agent').length;
+  const parallel = await Promise.all([mcp.call('omerta_start'), peer.call('omerta_start')]);
+  for (const [index, result] of parallel.entries()) {
+    if (result.error === 'session_changed') assert.equal((await [mcp, peer][index].call('omerta_start')).authed, true);
+    else assert.equal(result.authed, true, JSON.stringify(result));
+  }
+  const parallelAdmissions = api.requests.filter(r => r.path === '/v1/auth/agent').slice(beforeParallel);
+  assert.ok(parallelAdmissions.length >= 1);
+  assert.equal(new Set(parallelAdmissions.map(r => r.body.bootstrapSecret)).size, 1,
+    'hosts sharing a new session publish/adopt one recovery proof rather than overwriting each other');
+  await peer.stop(); peer = null;
+
+  await mcp.stop(); mcp = null;
+  await rm(sessionFile, { force: true });
+  mcp = await mcpProcess(api.base, sessionFile);
+  const replacement = { version: 1, base: 'https://another-city.invalid', token: 'another-city-token' };
+  api.state.beforeAgentResponse = async () => {
+    api.state.beforeAgentResponse = null;
+    await writeFile(sessionFile, JSON.stringify(replacement));
+  };
+  assert.equal((await mcp.call('omerta_start')).error, 'session_write',
+    'a late admission response refuses to overwrite a session switched to another origin');
+  assert.deepEqual(JSON.parse(await readFile(sessionFile, 'utf8')), replacement);
 } finally {
+  if (peer) await peer.stop();
   if (mcp) await mcp.stop();
   await api.close();
   await rm(dir, { recursive: true, force: true });

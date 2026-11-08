@@ -1237,7 +1237,8 @@ export async function buildServer() {
     // limiter below while still running withCharacter (FOR UPDATE + a held connection). Treat HEAD as a read.
     if (rateLimitsEnabled() && a.agent_flag && (req.method === 'GET' || req.method === 'HEAD')) {
       const limited = await checkRateLimit({ accountId: req.user.sub, agent: true, path: req.routeOptions?.url || req.url,
-        capoRecruits: effectiveCapoRecruits(a.capo_recruits, a.capo_recruits_at) });
+        capoRecruits: effectiveCapoRecruits(a.capo_recruits, a.capo_recruits_at),
+        turnObservation: (req.routeOptions?.url || req.url) === '/v1/agent/turn' });
       if (limited) return reply.code(429).header('retry-after', limited.retryAfter)
         .send({ error: 'rate_limited', retryAfter: limited.retryAfter });
     }
@@ -1610,6 +1611,14 @@ export async function buildServer() {
     return { token: await signFor(id, {}, '30d', 0) };
   };
   app.post('/v1/auth/guest', guestLogin);
+  app.post('/v1/auth/agent', async (req) => {
+    requireAge(app, req, { agent: true });
+    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(
+      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,
+    );
+    // Recovery remains usable until the returned bearer has been saved durably.
+    return { token: await signFor(accountId, { agent: true }, '90d', tokenVersion), agent: true };
+  });
   app.post('/v1/access/redeem', async (req, reply) => {
     // The browser persists this random recovery credential before submitting. A lost response can
     // recover the same admission instead of burning another code or minting another identity.

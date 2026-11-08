@@ -172,7 +172,7 @@ async function withGuestBootstrapLock(recoveryHash, operation) {
 // and persistent state commit together. Recovery is deliberately event-bounded: only the unretired
 // original guest/token-version/no-character/no-agent state may use the proof. Elapsed wall time cannot
 // destroy the sole credential of an otherwise untouched identity.
-async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {
+async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent = false) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -198,7 +198,7 @@ async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {
       'SELECT 1 FROM characters WHERE account_id=$1 LIMIT 1', [row.id],
     )).rowCount > 0;
     const originalVersion = row.guest_bootstrap_token_version;
-    if (row.guest_bootstrap_retired_at || row.auth_provider !== 'guest' || persistent.agent ||
+    if (row.guest_bootstrap_retired_at || row.auth_provider !== 'guest' || !!persistent.agent !== agent ||
         hasCharacter || originalVersion === null || originalVersion === undefined ||
         Number(row.token_version) !== Number(originalVersion)) {
       throw new GameError('bootstrap_retired', 'Guest bootstrap recovery is retired.');
@@ -217,6 +217,14 @@ async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {
 export async function accountForGuestBootstrap(
   pool, recoverySecret, ip, invite, beforeCreate = () => {}, createdIpAuthority = null,
 ) {
+  return accountForBootstrap(pool, recoverySecret, ip, invite, beforeCreate, false, createdIpAuthority);
+}
+
+export async function accountForAgentBootstrap(pool, recoverySecret, ip, invite, createdIpAuthority = null) {
+  return accountForBootstrap(pool, recoverySecret, ip, invite, () => {}, true, createdIpAuthority);
+}
+
+async function accountForBootstrap(pool, recoverySecret, ip, invite, beforeCreate, agent, createdIpAuthority) {
   if (typeof recoverySecret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(recoverySecret)) {
     throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
   }
@@ -225,11 +233,11 @@ export async function accountForGuestBootstrap(
     throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
   }
   const recoveryHash = crypto.createHash('sha256')
-    .update('omerta-agent-alpha-guest-bootstrap-v1\0')
+    .update(agent ? 'omerta-agent-bootstrap-v1\0' : 'omerta-agent-alpha-guest-bootstrap-v1\0')
     .update(secretBytes)
     .digest('hex');
   return withGuestBootstrapLock(recoveryHash, async () => {
-    const existing = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip);
+    const existing = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent);
     if (existing) return existing;
 
     await beforeCreate();
@@ -237,6 +245,7 @@ export async function accountForGuestBootstrap(
     const id = crypto.randomUUID();
     const tokenVersion = 0;
     const client = await pool.connect();
+    let failure;
     try {
       await client.query('BEGIN');
       await consumeInvite(client, invite);
@@ -247,19 +256,18 @@ export async function accountForGuestBootstrap(
          VALUES ($1, 'guest', $1, $2, $2, $3, $4, $5)`,
         [id, ip, recoveryHash, tokenVersion, normalizeClientIpAuthority(createdIpAuthority)],
       );
-      await client.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);
+      await client.query('INSERT INTO account_persistent (account_id, agent_flag) VALUES ($1,$2)', [id, agent]);
       await client.query('COMMIT');
       return { accountId: id, created: true, tokenVersion };
     } catch (error) {
       await client.query('ROLLBACK');
-      // A different server process may have won the unique-index race. Its committed mapping is
-      // authoritative; adopting it is recovery, while an absent/incomplete row keeps us fail-closed.
-      const winner = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip);
-      if (winner) return winner;
-      throw error;
+      failure = error;
     } finally {
       client.release();
     }
+    const winner = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent);
+    if (winner) return winner;
+    throw failure;
   });
 }
 

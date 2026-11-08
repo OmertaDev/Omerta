@@ -17,6 +17,7 @@ import { markExternalWorkRecoveryAtDeath } from '../fundedexternalwork.js';
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bus, ledger, notify, npcTier, bumpStanding } from '../game.js';
+import { checkpointCasinoOwnerRemoval } from '../casinorakeback.js';
 import { rememberedSkills } from '../skills.js';
 import { M3, LOAN, levelOf, dayOf, VENDETTA, feudTierOf, UNDERWORLD, LAW, MASTERY, estateTierOf, HONOR, seasonModOf, cornerTasksOf, CORNER } from '../rules.js';
 import { abandonRaidsAtDeath } from '../world.js';
@@ -176,6 +177,9 @@ export async function clearInboundPointers(client, charId, accountId) {
 }
 
 export async function runEstate(client, h, victim, killerName, opts = {}) {
+  // Settle the owner's earning interval before their fronts disappear; surviving owners keep
+  // their historical shares. Character locks are already held, before shared singleton work.
+  await checkpointCasinoOwnerRemoval(client, victim.id);
   assertItemTransaction(client);
   await assertEquipmentRentalDeathScope(client, victim.id, h.rentalDeathScope);
   const originalVictim = (await client.query('SELECT account_id,alive,generation FROM characters WHERE id=$1', [victim.id])).rows[0];

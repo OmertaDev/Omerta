@@ -3891,11 +3891,6 @@ scopedSocialContext = async function(db) {
       + 'the ContextPlus .ps1 launcher, so on Linux `join(process.env.SystemRoot, ...)` throws before '
       + 'any assertion runs. Wiring it into the chain would make every Linux run red for a reason '
       + 'that says nothing about the product.',
-    'test/mcp.js':
-      'Needs the SEPARATE omerta-mcp package\'s own dependencies (@modelcontextprotocol/sdk), which '
-      + 'the repo root does not install — `npm ci` here would have to carry a dep only that package '
-      + 'uses. It is the clean-machine check for the published MCP server and belongs to that '
-      + 'package\'s own verification, run from omerta-mcp/ after its install.',
   };
 
   const propertyFixtureFile = 'test/deed-discovery-fixture.js';

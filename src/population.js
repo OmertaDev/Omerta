@@ -30,6 +30,7 @@ import { residentEnterGrandPrix } from './races.js';
 import { residentEnterStakes } from './stable.js';
 import { consumeGoodsLiquidity } from './goodsmarket.js';
 import { goodsBuyQuote } from './goodsquote.js';
+import { checkpointCasinoRakeback, checkpointCasinoOwnerRemoval } from './casinorakeback.js';
 // NPC FAMILIES: founding and joining run through the AUDITED player path, not a copy of it — the
 // name/tag validation, the uniqueness clash check, the ledgered `gang:found` sink, the FOR UPDATE
 // on the gang row and the GANG_MAX_MEMBERS count invariant are all the same code a player runs.
@@ -150,8 +151,12 @@ export async function spawnResident(client, opts = {}) {
   }
   if (wants('front') && M.FRONTS[band.id]) {
     const [kind, tier] = M.FRONTS[band.id];
+    const rake = kind === 'casino' ? await checkpointCasinoRakeback(client) : null;
+    const frontId = uid();
     await client.query('INSERT INTO businesses (id, character_id, kind, tier) VALUES ($1,$2,$3,$4)',
-      [uid(), charId, kind, tier]);
+      [frontId, charId, kind, tier]);
+    if (rake) await client.query('UPDATE businesses SET rake_cursor=$2, rake_index_cursor=$3 WHERE id=$1',
+      [frontId, rake.volume, rake.index]);
   }
   if (wants('boat')) {
     const rrRoll = Math.random();
@@ -191,6 +196,7 @@ export async function retireResident(client, charId) {
   const c = (await client.query(
     'SELECT id, account_id, cash, bank FROM characters WHERE id=$1 AND alive AND is_npc FOR UPDATE', [charId])).rows[0];
   if (!c) return null;
+  await checkpointCasinoOwnerRemoval(client, charId);
 
   // STEP TWO: pull their escrows back in FIRST. A retiring resident with a live loan offer or buy
   // order would otherwise leave it standing on the board forever with nobody behind it — a player

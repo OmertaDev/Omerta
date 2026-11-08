@@ -9,11 +9,12 @@
 // `swap:buy` ledger (no new reason). Step-two scrutiny/raid/extortion risk is deferred by design.
 import crypto from 'node:crypto';
 import { GameError, assertStreetActor, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';
-import { CONSTANTS, M3, CASINO, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
+import { CONSTANTS, M3, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';
 import { recordRival, revengeOwed } from './rivals.js';
 import { bumpHonor } from './honor.js';
 import { denAvailable, denDistribute } from './casino.js';
 import { spendOmr } from './vanity.js';
+import { checkpointCasinoRakeback, casinoRakebackClaim } from './casinorakeback.js';
 
 const uid = () => crypto.randomUUID();
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -25,6 +26,16 @@ export function accrued(row) {
   if (!tier) return 0;
   const elapsed = Math.min(Date.now() - new Date(row.last_collect_at).getTime(), CONSTANTS.BUSINESS_CAP_MS);
   return Math.floor(tier.incomePerHr * Math.max(0, elapsed) / 3600000);
+}
+
+async function creditFrontIncome(ch, raw, client, h) {
+  const income = Math.floor(raw * pathFx(ch, 'frontIncome'));
+  if (income > 0) {
+    ch.cash = Number(ch.cash) + income;
+    await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: income, reason: 'business:income' });
+    await client.query('UPDATE account_persistent SET tycoon_earned = tycoon_earned + $1 WHERE account_id=$2', [income, ch.account_id]);
+  }
+  return income;
 }
 
 // STEP TWO of THE STREET WAR (residents-as-marks): a RESIDENT runs a SLEEPY joint — its effective
@@ -168,12 +179,12 @@ export async function buyBusiness(ch, kind, client, h) {
   if (Number(ch.cash) < tier.cost) throw new GameError('cash', `${art(cat.name, 'The')} costs ${usd(tier.cost)} to set up.`);
   ch.cash = Number(ch.cash) - tier.cost;
   const id = uid();
-  await client.query('INSERT INTO businesses (id, character_id, kind, tier) VALUES ($1,$2,$3,1)', [id, ch.id, kind]);
   // Den rakeback (casino kind): the cursor starts at TODAY's den volume — a new owner earns
-  // against future action, not history
+  // against future action, not history. Checkpoint BEFORE the owner count changes.
+  const rake = kind === 'casino' ? await checkpointCasinoRakeback(client) : null;
+  await client.query('INSERT INTO businesses (id, character_id, kind, tier) VALUES ($1,$2,$3,1)', [id, ch.id, kind]);
   if (kind === 'casino') {
-    const vol = (await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0];
-    await client.query('UPDATE businesses SET rake_cursor=$2 WHERE id=$1', [id, Number(vol?.total || 0)]);
+    await client.query('UPDATE businesses SET rake_cursor=$2, rake_index_cursor=$3 WHERE id=$1', [id, rake.volume, rake.index]);
   }
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -tier.cost, reason: 'business:buy' });
   h.owned.businesses = await businessesOf(client, ch.id); // keep the returned view fresh
@@ -211,20 +222,18 @@ export async function collectBusiness(ch, client, h) {
       // Ledger's +10% is the collector's edge, not more business on the books)
       await addIncomeScrutiny(r, inc, client);
     }
-    // Den RAKEBACK (casino kind): owners split RAKEBACK_BPS of the den's stake volume since their
-    // cursor — the split is by the CURRENT owner count, so total rakeback per unit of volume is
-    // bounded by RAKEBACK_BPS however many fronts exist. A raided casino forfeits with the rest.
+    // Den rakeback follows the owner count at earning time, even when owners join or leave before
+    // collection. A raided casino skips this collection, as before.
     if (r.kind === 'casino') {
-      const vol = Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);
-      const owners = Number((await client.query("SELECT COUNT(*) n FROM businesses WHERE kind='casino'")).rows[0].n) || 1;
-      const share = Math.floor(Math.max(0, vol - Number(r.rake_cursor)) * (CASINO.RAKEBACK_BPS || 0) / 10000 / owners);
+      const rake = await checkpointCasinoRakeback(client);
+      const { amount: share, paidCursor } = casinoRakebackClaim(r, rake);
       // econ pass (mint-on-top fix): rakeback pays only out of the den's REALIZED profit net of open
       // liabilities — all-or-nothing per collect: when the house is under water the cursor doesn't
       // advance, so the owner's claim simply waits for the book to recover (nothing is forfeited).
       if (share > 0 && (await denAvailable(client)) >= share) {
         rakeback += share;
         await denDistribute(client, share);
-        await client.query('UPDATE businesses SET rake_cursor=$2 WHERE id=$1', [r.id, vol]);
+        await client.query('UPDATE businesses SET rake_cursor=$2, rake_index_cursor=$3 WHERE id=$1', [r.id, rake.volume, paidCursor]);
       }
     }
   }
@@ -232,13 +241,10 @@ export async function collectBusiness(ch, client, h) {
     // PATHS v2 — the Ledger's "+10% front income" was ADVERTISED since M4 and never implemented
     // (the migration-sweep map finding); now real. Flagged in BALANCE.md: a ~10% widen of the
     // L1a-flattened front curve for ONE path choice that also carries the soft-hands handicap.
-    total = Math.floor(total * pathFx(ch, 'frontIncome'));
-    ch.cash = Number(ch.cash) + total;
-    await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: total, reason: 'business:income' });
     // TYCOON fold-in (Tier-4): business income counts toward the account-level tycoon_earned legend
     // (the comment gap the code never closed). Direct SQL, own account, OFF persistAccount → clobber-safe;
     // this is on-demand collect income, distinct from ch._accruedIncome — no double-count.
-    await client.query('UPDATE account_persistent SET tycoon_earned = tycoon_earned + $1 WHERE account_id=$2', [total, ch.account_id]);
+    total = await creditFrontIncome(ch, total, client, h);
   }
   if (rakeback > 0) {
     ch.cash = Number(ch.cash) + rakeback;
@@ -323,6 +329,7 @@ export async function shutterBusiness(ch, businessId, client, h) {
   if (jailed(ch)) throw new GameError('jailed', "You can't close up from a cell.");
   const r = (await client.query('SELECT * FROM businesses WHERE id=$1 AND character_id=$2 FOR UPDATE', [businessId, ch.id])).rows[0];
   if (!r) throw new GameError('not_yours', "That's not your business.");
+  if (r.kind === 'casino') await checkpointCasinoRakeback(client);
   const back = Math.floor(businessAssessedValue(r.kind, r.tier) * (CONSTANTS.BUSINESS_SHUTTER_BPS / 10000));
   if (back > 0) {
     ch.cash = Number(ch.cash) + back;
@@ -347,16 +354,17 @@ export async function upgradeBusiness(ch, businessId, client, h) {
   if (!next) throw new GameError('maxed', `Your ${cat.name} already runs at full strength.`);
   if (isCold(r)) throw new GameError('cold', `${art(cat.name, 'The')} is dark — pay the pad before you pour money into it.`);
   const raid = await resolveScrutiny(ch, r, client, h); // a raid seizes the pending before it banks
-  const pending = raid.raided ? 0 : accrued(r);
+  const rawPending = raid.raided ? 0 : accrued(r);
+  const pending = Math.floor(rawPending * pathFx(ch, 'frontIncome'));
   if (Number(ch.cash) + pending < next.cost) throw new GameError('cash', `Upgrading ${art(cat.name)} costs ${usd(next.cost)}.`);
   // bank the pending at the old rate, then debit the upgrade — net in one cash figure. The upgrade
   // also squares the pad (upkeep_at=now): a fresh clock at the new rate, no retroactive rate bump.
-  ch.cash = Number(ch.cash) + pending - next.cost;
+  await creditFrontIncome(ch, rawPending, client, h);
+  ch.cash = Number(ch.cash) - next.cost;
   // the banked pending draws the same income heat a collect does (r still carries the OLD tier in
   // memory, which is the rate the pending accrued at — the right normalization)
-  if (pending > 0) await addIncomeScrutiny(r, pending, client);
+  if (rawPending > 0) await addIncomeScrutiny(r, rawPending, client);
   await client.query('UPDATE businesses SET tier=$2, last_collect_at=now(), upkeep_at=now() WHERE id=$1', [businessId, next.tier]);
-  if (pending > 0) await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: pending, reason: 'business:income' });
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -next.cost, reason: 'business:upgrade' });
   h.owned.businesses = await businessesOf(client, ch.id);
   // FOUND BY PLAYING: this reply carried neither the price nor the consequence, so a $600,000
@@ -537,17 +545,18 @@ export async function specializeBusiness(ch, businessId, spec, client, h) {
 // reset ALL mutable front state on a change of hands — a seized/bought front is never born hot/cold/
 // pending-full/specialized (the speakeasy resetClubToNewOwner precedent). takeover_cd_until is set by the
 // caller BEFORE this (win OR lose) and is deliberately NOT reset here so it survives the handover.
-async function resetFrontToNewOwner(client, businessId, newOwnerId) {
+async function resetFrontToNewOwner(client, businessId, newOwnerId, kind) {
   // (red-team) Den rakeback: the cursor moves to TODAY's volume on a change of hands — the SAME rule
   // buyBusiness states ("a new owner earns against future action, not history"). Leaving it at 0 handed
   // the new owner a claim on the ENTIRE lifetime den volume: not a mint (denAvailable caps every payout
   // at realized profit) but a queue-jump that drains the shared, profit-bounded rakeback pool at the
   // expense of every honest casino-front owner, whose claims then wait for the book to recover.
-  const vol = Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);
+  const rake = kind === 'casino' ? await checkpointCasinoRakeback(client) : null;
+  const vol = rake?.volume ?? Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);
   await client.query(
     `UPDATE businesses SET character_id=$2, tier=tier, spec=NULL, spec_at=NULL, scrutiny=0, scrutiny_at=now(),
-       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3
-     WHERE id=$1`, [businessId, newOwnerId, vol]);
+       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3, rake_index_cursor=$4
+     WHERE id=$1`, [businessId, newOwnerId, vol, rake?.index ?? null]);
 }
 
 // ── Tier-4: THE HOSTILE TAKEOVER — the speakeasy-standover twin, applied to fronts (they change hands,
@@ -607,7 +616,7 @@ export async function takeoverBusiness(ch, owner, businessId, client, h) {
   owner.cash = Number(owner.cash) + net;
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -price, reason: 'business:buyout', counterparty: owner.id });
   await h.ledger(client, { characterId: owner.id, currency: 'cash', amount: net, reason: 'business:buyout', counterparty: ch.id });
-  await resetFrontToNewOwner(client, businessId, ch.id); // fresh: scrutiny 0, spec cleared, clocks reset
+  await resetFrontToNewOwner(client, businessId, ch.id, r.kind); // fresh: scrutiny 0, spec cleared, clocks reset
   await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]); // singleton LAST (canonical order)
   h.owned.businesses = await businessesOf(client, ch.id);
   await h.notify(client, owner.id, 'takeover', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, net });

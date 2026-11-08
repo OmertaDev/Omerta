@@ -67,6 +67,11 @@ jobs:
           cache: npm
       - run: npm ci
 
+      - name: Install isolated MCP client dependencies
+        run: npm install --prefix omerta-mcp --ignore-scripts --package-lock=false
+      - name: MCP identity, recovery and shared-session regressions
+        run: node test/mcp.js
+
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
       - uses: foundry-rs/foundry-toolchain@v1
         with:

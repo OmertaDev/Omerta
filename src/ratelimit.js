@@ -111,7 +111,7 @@ export async function checkPublicRateLimit({ ip }) {
 }
 
 // Returns null when allowed, else {retryAfter} seconds.
-export async function checkRateLimit({ accountId, agent, path, capoRecruits = 0 }) {
+export async function checkRateLimit({ accountId, agent, path, capoRecruits = 0, turnObservation = false }) {
   const take = redis ? takeRedis : takeMemory;
   const humanRate = Number(process.env.RATE_HUMAN_PER_SEC || 1);
   const humanBurst = Number(process.env.RATE_HUMAN_BURST || 5);
@@ -120,7 +120,7 @@ export async function checkRateLimit({ accountId, agent, path, capoRecruits = 0 
   // ring by construction. No license → the §10.2 hard 1/3s stands exactly as before.
   const agentRate = agent ? (capoPerksOf(capoRecruits).rate || AGENT_RATE) : null;
   const main = agent
-    ? await take(`a:${accountId}`, agentRate, AGENT_BURST)
+    ? await take(turnObservation ? `a:turn:${accountId}` : `a:${accountId}`, agentRate, AGENT_BURST)
     : await take(`h:${accountId}`, humanRate, humanBurst);
   if (!main.ok) return { retryAfter: main.retryAfter };
   // the swap bucket covers EVERY route that drives the AMM curve — business laundering rides the

@@ -2,7 +2,8 @@
 // A finite, conservative Agent Turn client. Identity state is deliberately local and reports are
 // deliberately lossy: the session owns the bearer token while telemetry owns no sensitive values.
 import crypto from 'node:crypto';
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { constants as fsConstants } from 'node:fs';
 import { lstat, mkdir, open, readFile, realpath, rename, stat, unlink } from 'node:fs/promises';
 import { createServer } from 'node:net';
@@ -30,12 +31,14 @@ const ALLOWED_KINDS = new Set([
 ]);
 const ACTION_ROLES = {
   general: ALLOWED_KINDS,
+  progression: new Set(['crime', 'onboard_claim', 'daily_claim', 'career_claim']),
   business: new Set(['depot_restock', 'depot_receive', 'depot_travel', 'business_buy', 'business_upkeep', 'business_upgrade', 'business_collect']),
   supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),
 };
 
 const defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
 const execFileAsync = promisify(execFile);
+const windowsSecurityContext = new AsyncLocalStorage();
 
 const WINDOWS_ACL_CHECK = `
   $ErrorActionPreference = 'Stop'
@@ -114,6 +117,11 @@ function windowsPowerShell() {
 }
 
 async function runWindowsSecurityScript(script, path, kind) {
+  const context = windowsSecurityContext.getStore();
+  if (context) {
+    context.worker ||= windowsSecurityWorker();
+    return context.worker.check(script === WINDOWS_ACL_CHECK ? 'check' : 'create', path, kind);
+  }
   await execFileAsync(windowsPowerShell(), [
     '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,
   ], {
@@ -126,6 +134,71 @@ async function runWindowsSecurityScript(script, path, kind) {
     windowsHide: true,
     maxBuffer: 1024,
   });
+}
+
+// Keep the existing ACL and private-file checks, but avoid starting PowerShell for every check.
+// Only operation names and paths cross this pipe; bearer/session bytes remain in the Node process.
+// The worker is scoped to one finite invocation and closes with it, including on failed checks.
+function windowsSecurityWorker() {
+  const script = `
+    [Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    $check = { ${WINDOWS_ACL_CHECK} }
+    $create = { ${WINDOWS_CREATE_PRIVATE_FILE} }
+    while ($null -ne ($line = [Console]::ReadLine())) {
+      try {
+        $request = ConvertFrom-Json $line
+        $env:OMERTA_ALPHA_ACL_TARGET = $request.path
+        $env:OMERTA_ALPHA_ACL_KIND = $request.kind
+        if ($request.operation -eq 'check') { & $check }
+        elseif ($request.operation -eq 'create') { & $create }
+        else { throw 'Unknown security operation' }
+        [Console]::WriteLine('ok')
+      } catch { [Console]::WriteLine('error') }
+      [Console]::Out.Flush()
+    }
+  `;
+  const child = spawn(windowsPowerShell(), [
+    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,
+  ], { windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] });
+  const pending = [];
+  let buffer = '';
+  let failure;
+  let closed = false;
+  const fail = () => {
+    failure ||= new Error('Agent Alpha Windows security check failed');
+    for (const item of pending.splice(0)) { clearTimeout(item.timer); item.reject(failure); }
+  };
+  const exit = new Promise((resolveExit) => {
+    child.once('error', () => { fail(); resolveExit(); });
+    child.once('exit', () => { closed = true; fail(); resolveExit(); });
+  });
+  child.stdin.on('error', fail);
+  child.stdout.on('data', (chunk) => {
+    buffer += chunk.toString('utf8');
+    for (let end; (end = buffer.indexOf('\n')) >= 0;) {
+      const line = buffer.slice(0, end).trim();
+      buffer = buffer.slice(end + 1);
+      const item = pending.shift();
+      if (!item) { fail(); child.kill(); return; }
+      clearTimeout(item.timer);
+      if (line === 'ok') item.resolve();
+      else item.reject(new Error('Agent Alpha Windows security check failed'));
+    }
+  });
+  return {
+    check(operation, path, kind) {
+      if (failure) return Promise.reject(failure);
+      return new Promise((resolveCheck, reject) => {
+        const timer = setTimeout(() => { fail(); child.kill(); }, 10000);
+        pending.push({ resolve: resolveCheck, reject, timer });
+        child.stdin.write(`${JSON.stringify({ operation, path, kind })}\n`);
+      });
+    },
+    async close() {
+      if (!closed) child.stdin.end();
+      await exit;
+    },
+  };
 }
 
 async function assertWindowsPrivateAcl(path, kind) {
@@ -377,29 +450,40 @@ async function requestJson(fetchImpl, base, path, { token, method = 'GET', body,
     ...(body === undefined ? {} : { 'content-type': 'application/json' }),
     ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),
   };
-  const response = await fetchImpl(`${base}${path}`, {
+  const request = {
     method,
     headers,
     redirect: 'manual',
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-  });
-  if (response.redirected || (response.status >= 300 && response.status < 400)) {
-    throw new Error('Agent Alpha API redirects are forbidden by origin binding');
+  };
+  for (let retries = 0; ; retries += 1) {
+    const response = await fetchImpl(`${base}${path}`, request);
+    if (response.redirected || (response.status >= 300 && response.status < 400)) {
+      throw new Error('Agent Alpha API redirects are forbidden by origin binding');
+    }
+    if (response.url && originOf(response.url) !== base) {
+      throw new Error('Agent Alpha response escaped its bound origin');
+    }
+    let payload = null;
+    try { payload = await response.json(); }
+    catch { throw new Error(`Agent Alpha received non-JSON response (${response.status})`); }
+    const timing = windowsSecurityContext.getStore()?.timing;
+    const retryAfter = Number(payload?.retryAfter ?? response.headers.get('retry-after'));
+    if (path !== '/v1/agent/act' && response.status === 429 && payload?.error === 'rate_limited' && retries < 2 &&
+        timing && Number.isFinite(retryAfter) && retryAfter > 0 && retryAfter <= 60) {
+      // A definitive pre-handler refusal is safe to retry with the exact same body/key.
+      await waitForCadence(timing, Math.min(60000, retryAfter * 1000 + 100));
+      continue;
+    }
+    if (!response.ok) {
+      const error = new Error(`Agent Alpha request failed (${response.status})`);
+      error.status = response.status;
+      error.code = typeof payload?.error === 'string' ? payload.error : 'http_error';
+      error.payload = payload;
+      throw error;
+    }
+    return payload;
   }
-  if (response.url && originOf(response.url) !== base) {
-    throw new Error('Agent Alpha response escaped its bound origin');
-  }
-  let payload = null;
-  try { payload = await response.json(); }
-  catch { throw new Error(`Agent Alpha received non-JSON response (${response.status})`); }
-  if (!response.ok) {
-    const error = new Error(`Agent Alpha request failed (${response.status})`);
-    error.status = response.status;
-    error.code = typeof payload?.error === 'string' ? payload.error : 'http_error';
-    error.payload = payload;
-    throw error;
-  }
-  return payload;
 }
 
 function validName(name) {
@@ -522,10 +606,13 @@ async function readSession(stateStore) {
     typeof session.pending.actionId === 'string' && session.pending.actionId &&
     typeof session.pending.startedAt === 'string' && session.pending.startedAt
   );
+  const bootstrapKeys = [
+    'version', 'base', 'phase', 'bootstrapSecret', 'inviteCode', 'characterName', 'pending',
+  ];
   const bootstrapValid = session?.phase === 'bootstrap' &&
-    exactKeys(session, [
-      'version', 'base', 'phase', 'bootstrapSecret', 'inviteCode', 'characterName', 'pending',
-    ]) && validBootstrapSecret(session.bootstrapSecret) && validInviteCode(session.inviteCode) &&
+    ((session.bootstrapKind === 'agent' && exactKeys(session, [...bootstrapKeys, 'bootstrapKind'])) ||
+      (session.bootstrapKind === undefined && exactKeys(session, bootstrapKeys))) &&
+    validBootstrapSecret(session.bootstrapSecret) && validInviteCode(session.inviteCode) &&
     session.pending === null;
   const bearerValid = [
     'guest_bootstrap_ack_pending', 'guest', 'initial_character_pending', 'agent',
@@ -691,11 +778,13 @@ async function releaseLock(lock) {
 }
 
 async function recoverGuestBootstrap({ base, stateStore, session, fetchImpl, birthDate }) {
-  const guest = await requestJson(fetchImpl, base, '/v1/auth/guest', {
+  // Older bootstrap journals retain their original recovery domain and identity.
+  const route = session.bootstrapKind === 'agent' ? '/v1/auth/agent' : '/v1/auth/guest';
+  const guest = await requestJson(fetchImpl, base, route, {
     method: 'POST',
     body: {
       bootstrapSecret: session.bootstrapSecret,
-      ...(birthDate ? { birthDate } : {}),
+      ...(route === '/v1/auth/guest' && birthDate ? { birthDate } : {}),
       ...(session.inviteCode === null ? {} : { inviteCode: session.inviteCode }),
     },
   });
@@ -733,6 +822,7 @@ async function createIdentity({ base, stateStore, name, inviteCode, fetchImpl, b
     version: SESSION_VERSION,
     base,
     phase: 'bootstrap',
+    bootstrapKind: 'agent',
     bootstrapSecret: crypto.randomBytes(32).toString('base64url'),
     inviteCode: storedInvite,
     characterName: name,
@@ -935,13 +1025,17 @@ async function settlePending({ base, fetchImpl, reportStore, stateStore, session
 
 async function runUnlocked(options, timing) {
   const role = options.role ?? 'general';
-  if (!Object.hasOwn(ACTION_ROLES, role)) throw new Error('Agent Alpha role must be general, business or supplier');
+  if (!Object.hasOwn(ACTION_ROLES, role)) throw new Error('Agent Alpha role must be general, progression, business or supplier');
   const base = originOf(options.baseUrl);
   const sessionFile = options.sessionFile;
   const reportStore = options.reportStore;
   const stateStore = options.stateStore;
   const fetchImpl = options.fetchImpl || globalThis.fetch;
   const maxActions = options.maxActions ?? 1;
+  const stopAtLevel = options.stopAtLevel;
+  if (stopAtLevel !== undefined && (!Number.isSafeInteger(stopAtLevel) || stopAtLevel < 1)) {
+    throw new Error('Agent Alpha stopAtLevel must be a positive safe integer');
+  }
   const intervalMs = options.intervalMs ?? MIN_INTERVAL_MS;
   if (!Number.isInteger(maxActions) || maxActions < 1 || maxActions > 50) {
     throw new Error('Agent Alpha maxActions must be an integer from 1 to 50');
@@ -991,8 +1085,18 @@ async function runUnlocked(options, timing) {
     }
   }
   while (attempts < maxActions) {
-    const turn = currentTurn || await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
+    if (stopAtLevel !== undefined && Number(currentTurn?.state?.identity?.level) >= stopAtLevel) {
+      return { status: 'level_reached', actions, level: Number(currentTurn.state.identity.level) };
+    }
+    // Do not spend a turn's authority window on cadence or repeated shell startup.
+    const returnedRecommendation = currentTurn && recommendationOf(currentTurn, role);
+    if (returnedRecommendation && !returnedRecommendation.action && !returnedRecommendation.errorCode) break;
+    await waitForCadence(timing, intervalMs);
+    const turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
     currentTurn = null;
+    if (stopAtLevel !== undefined && Number(turn?.state?.identity?.level) >= stopAtLevel) {
+      return { status: 'level_reached', actions, level: Number(turn.state.identity.level) };
+    }
     const recommendation = recommendationOf(turn, role);
     const action = recommendation.action;
     if (!action) {
@@ -1010,8 +1114,6 @@ async function runUnlocked(options, timing) {
       }
       break;
     }
-    await waitForCadence(timing, intervalMs);
-
     const operationId = role === 'general' ? crypto.randomUUID() : `${role}:${crypto.randomUUID()}`;
     session = {
       ...session,
@@ -1041,10 +1143,13 @@ async function runUnlocked(options, timing) {
     }
   }
 
+  if (stopAtLevel !== undefined && Number(currentTurn?.state?.identity?.level) >= stopAtLevel) {
+    return { status: 'level_reached', actions, level: Number(currentTurn.state.identity.level) };
+  }
   return { status: 'complete', actions };
 }
 
-async function runWithTiming(options, timing) {
+async function runWithSession(options, timing) {
   if (!options.sessionFile) throw new Error('Agent Alpha requires a session file');
   const paths = await canonicalRunnerPaths(options.sessionFile, options.reportFile);
   paths.stateStore.credentialBoundary = timing.credentialBoundary;
@@ -1064,6 +1169,14 @@ async function runWithTiming(options, timing) {
       await paths.stateStore.parent.handle.close().catch(() => {});
     }
   }
+}
+
+async function runWithTiming(options, timing) {
+  const context = { timing };
+  return windowsSecurityContext.run(context, async () => {
+    try { return await runWithSession(options, timing); }
+    finally { await context.worker?.close(); }
+  });
 }
 
 export async function runAgentAlpha(options = {}) {
@@ -1096,6 +1209,7 @@ function cliOptions(argv) {
     else if (arg === '--name') options.name = argv[++index];
     else if (arg === '--birth-date') options.birthDate = argv[++index];
     else if (arg === '--max-actions') options.maxActions = Number(argv[++index]);
+    else if (arg === '--stop-at-level') options.stopAtLevel = Number(argv[++index]);
     else if (arg === '--session') options.sessionFile = argv[++index];
     else if (arg === '--report') options.reportFile = argv[++index];
     else if (arg === '--role') options.role = argv[++index];

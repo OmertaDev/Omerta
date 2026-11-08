@@ -268,7 +268,7 @@ async function initialGuestCrashRecoveryTest() {
       });
       const heldFetch = async (...args) => {
         const response = await fetch(...args);
-        if (new URL(args[0]).pathname === '/v1/auth/guest') {
+        if (new URL(args[0]).pathname === '/v1/auth/agent') {
           process.send?.({ type: 'guest_committed' });
           // Hold forever, and hold it HONESTLY. A bare never-settling promise is not a hang: the
           // moment this child's event loop drains, Node detects the unsettled top-level await and
@@ -323,6 +323,8 @@ async function initialGuestCrashRecoveryTest() {
     try { bootstrapState = JSON.parse(await readFile(sessionFile, 'utf8')); } catch { /* asserted below */ }
     assert.equal(bootstrapState?.phase, 'bootstrap',
       'the recovery identity is durable before the first guest request can return');
+    assert.equal(bootstrapState?.bootstrapKind, 'agent',
+      'new durable recovery state pins the agent bootstrap hash domain');
     assert.equal(typeof bootstrapState?.bootstrapSecret === 'string' &&
       bootstrapState.bootstrapSecret.length === 43, true,
     'the durable bootstrap identity is a high-entropy 256-bit base64url credential');
@@ -631,7 +633,7 @@ async function credentialWriteBoundaryReplacementTest() {
   })), 'every credential-write boundary rejects a parent swap without exposing the new bearer');
 }
 
-async function localApi() {
+async function localApi({ legacyBootstrap = false } = {}) {
   const app = Fastify({ logger: false });
   const requests = [];
   const state = {
@@ -653,7 +655,9 @@ async function localApi() {
       idempotencyKey: req.headers['idempotency-key'],
     });
   });
-  app.post('/v1/auth/guest', async () => {
+  app.post(legacyBootstrap ? '/v1/auth/guest' : '/v1/auth/agent', async (req) => {
+    if (!legacyBootstrap) assert.equal('birthDate' in req.body, false,
+      'agent bootstrap does not invent a human birth date');
     state.guestCalls += 1;
     return { token: 'guest-token-secret' };
   });
@@ -824,7 +828,7 @@ async function lifecycleTest() {
 async function probeApi({ sessionStatus = 200 } = {}) {
   const app = Fastify({ logger: false });
   const state = { guestCalls: 0, sessionCalls: 0, turnCalls: 0, actCalls: 0 };
-  app.post('/v1/auth/guest', async () => {
+  app.post('/v1/auth/agent', async () => {
     state.guestCalls += 1;
     return { token: 'replacement-token' };
   });
@@ -1333,7 +1337,7 @@ async function recoveryApi({ staleFirst = false, staleResponses = staleFirst ? 1
   }));
   app.get('/v1/agent/turn', async () => {
     state.turnCalls += 1;
-    return turn(0);
+    return turn(state.actCalls);
   });
   app.post('/v1/agent/act', async (req, reply) => {
     state.actCalls += 1;
@@ -1460,8 +1464,8 @@ async function staleReplacementTest() {
     });
     assert.equal(summary.actions, 1,
       'a stale non-mutation does not consume the finite successful-action budget');
-    assert.equal(api.state.turnCalls, 1,
-      'the runner consumes the server-provided stale replacement without an extra turn read');
+    assert.equal(api.state.turnCalls, 2,
+      'the runner refreshes stale authority after cadence and report persistence');
     assert.equal(api.state.actCalls, 2,
       'the replacement recommendation executes once after the stale refusal');
     assert.notEqual(api.state.actKeys[0], api.state.actKeys[1],
@@ -1707,7 +1711,7 @@ async function finalAgentWithoutCharacterTest() {
 async function initialNameApi() {
   const app = Fastify({ logger: false });
   const state = { guestCalls: 0, characterCalls: 0, names: [], hasCharacter: false };
-  app.post('/v1/auth/guest', async () => {
+  app.post('/v1/auth/agent', async () => {
     state.guestCalls += 1;
     return { token: 'guest-token-secret' };
   });
@@ -2539,6 +2543,115 @@ async function realElapsedCadenceTest() {
   }
 }
 
+async function freshAuthorityAfterCadenceTest() {
+  const api = await actionApi({ kinds: ['crime', 'daily_claim'] });
+  await withReadySession(api, 'omerta-agent-alpha-fresh-authority-', async ({ sessionFile, reportFile }) => {
+    let issuedAt;
+    const ages = [];
+    const checkingFetch = async (url, options) => {
+      if (new URL(url).pathname === '/v1/agent/act') {
+        const body = JSON.parse(options.body);
+        const durable = JSON.parse(await readFile(sessionFile, 'utf8'));
+        assert.equal(durable.pending.turnId, body.turnId,
+          'the exact fresh turn is durable before sending its mutation');
+        assert.equal(durable.pending.actionId, body.actionId,
+          'freshness never bypasses the durable replay journal');
+        ages.push(performance.now() - issuedAt);
+        assert.ok(ages.at(-1) < 2500,
+          `cadence and journal overhead expired the turn after ${ages.at(-1)}ms`);
+      }
+      const response = await fetch(url, options);
+      if (new URL(url).pathname === '/v1/agent/turn') issuedAt = performance.now();
+      return response;
+    };
+    const summary = await runAgentAlphaProduction({
+      baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 2, fetchImpl: checkingFetch,
+    });
+    assert.deepEqual(summary, { status: 'complete', actions: 2 },
+      'ordinary production timing executes two short-lived turns without spending their lease on cadence');
+    assert.equal(ages.length, 2);
+  });
+}
+
+async function legacyBootstrapDomainTest() {
+  const api = await localApi({ legacyBootstrap: true });
+  const dir = await privateTempDir('omerta-agent-alpha-legacy-bootstrap-');
+  const sessionFile = join(dir, 'session.json');
+  const reportFile = join(dir, 'report.jsonl');
+  try {
+    await writePrivateSession(sessionFile, JSON.stringify({
+      version: 1, base: api.baseUrl, phase: 'bootstrap',
+      bootstrapSecret: crypto.randomBytes(32).toString('base64url'),
+      inviteCode: null, characterName: 'Alpha Machine', pending: null,
+    }));
+    const result = await runAgentAlpha({
+      baseUrl: api.baseUrl, sessionFile, reportFile, birthDate: '1990-01-01', maxActions: 1,
+    });
+    assert.equal(result.actions, 1);
+    assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, 1,
+      'a saved bootstrap without the new discriminator recovers its original human identity');
+    assert.equal(api.requests.some((r) => r.path === '/v1/auth/agent'), false,
+      'legacy recovery never switches hash domains to create a duplicate agent');
+  } finally {
+    await api.close();
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function initialCharacterRateBackoffTest() {
+  const api = await phaseRecoveryApi({ initialPhase: 'initial_character_pending' });
+  await withReadySession(api, 'omerta-agent-alpha-character-backoff-', async ({ sessionFile, reportFile }) => {
+    await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
+      phase: 'initial_character_pending',
+    })));
+    const characterRequests = [];
+    const rateLimitedFetch = async (url, options) => {
+      if (new URL(url).pathname === '/v1/character') {
+        characterRequests.push({ body: options.body, key: options.headers['idempotency-key'] });
+        if (characterRequests.length === 1) return new Response(JSON.stringify({
+          error: 'rate_limited', retryAfter: 3,
+        }), { status: 429 });
+      }
+      return fetch(url, options);
+    };
+    const summary = await runAgentAlpha({
+      baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, fetchImpl: rateLimitedFetch,
+    });
+    assert.equal(summary.status, 'complete');
+    assert.equal(api.state.characterCalls, 1,
+      'a definitive signup rate refusal is retried without creating another character');
+    assert.equal(characterRequests.length, 2);
+    assert.deepEqual(characterRequests[0], characterRequests[1],
+      'rate backoff preserves the exact character request and idempotency key');
+  });
+}
+
+async function progressionRoleAndLevelStopTest() {
+  const api = await actionApi({ kinds: ['crime', 'crime'], turnForIndex: (index) => ({
+    turnId: `progress-${index}`, recommendedActionId: 'arbitrage-profit', policy: POLICY,
+    state: { identity: { level: index === 0 ? 99 : 100 } },
+    actions: [
+      { id: 'arbitrage-profit', kind: 'arbitrage_buy', executable: true },
+      { id: `crime-${index}`, kind: 'crime', executable: true },
+    ],
+  }) });
+  await withReadySession(api, 'omerta-agent-alpha-progression-', async ({ sessionFile, reportFile }) => {
+    const summary = await runAgentAlpha({
+      baseUrl: api.baseUrl, sessionFile, reportFile, role: 'progression', stopAtLevel: 100, maxActions: 5,
+    });
+    assert.deepEqual(summary, { status: 'level_reached', actions: 1, level: 100 });
+    assert.equal(api.state.actCalls, 1, 'level 100 is observed before journaling another action');
+    assert.equal(api.state.actBodies[0].actionId, 'crime-0',
+      'progression selects an issued crime instead of a higher cash arbitrage recommendation');
+    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);
+    const again = await runAgentAlpha({
+      baseUrl: api.baseUrl, sessionFile, reportFile, role: 'progression', stopAtLevel: 100, maxActions: 1,
+    });
+    assert.equal(again.status, 'level_reached', 'resuming a completed goal stays stopped');
+    assert.equal(api.state.actCalls, 1, 'completion never creates another mutation on resume');
+  });
+}
+
 if (process.argv.includes('--decision-recovery')) {
   await decisionAnnotationTest();
   await hardCrashReplayTest({ decisionCall: true });
@@ -2584,5 +2697,9 @@ await danglingReportToFutureLockTest();
 await danglingSessionAliasCreateTest();
 await unrelatedLegacyPortTest();
 await realElapsedCadenceTest();
+await freshAuthorityAfterCadenceTest();
+await legacyBootstrapDomainTest();
+await initialCharacterRateBackoffTest();
+await progressionRoleAndLevelStopTest();
 }
 console.log('agent-alpha tests passed');
