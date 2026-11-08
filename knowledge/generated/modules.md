@@ -10,7 +10,7 @@
 | [src/actioncooldown.js](../../src/actioncooldown.js) | 22 | platform-core | 2 / 3 | 0 | 1 | 1 |
 | [src/age.js](../../src/age.js) | 44 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 17 | 3 | 5 | 15 |
-| [src/agentgateway.js](../../src/agentgateway.js) | 2459 | platform-core | 37 / 10 | 0 | 23 | 9 |
+| [src/agentgateway.js](../../src/agentgateway.js) | 2460 | platform-core | 37 / 10 | 0 | 23 | 9 |
 | [src/agentoperatingmemory.js](../../src/agentoperatingmemory.js) | 70 | platform-core | 3 / 5 | 0 | 11 | 2 |
 | [src/agentreferrals.js](../../src/agentreferrals.js) | 122 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/agentturn.js](../../src/agentturn.js) | 725 | platform-core | 20 / 3 | 0 | 5 | 1 |
@@ -536,7 +536,7 @@
 | [src/saleattribution.js](../../src/saleattribution.js) | 380 | platform-core | 6 / 7 | 0 | 7 | 2 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 7 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 203 | law-intelligence | 4 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 4090 | platform-core | 258 / 46 | 454 | 46 | 20 |
+| [src/server.js](../../src/server.js) | 4092 | platform-core | 258 / 46 | 455 | 46 | 20 |
 | [src/servicesubscriptions.js](../../src/servicesubscriptions.js) | 65 | platform-core | 5 / 6 | 0 | 10 | 2 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/shoppingbasket-api.js](../../src/shoppingbasket-api.js) | 13 | platform-core | 3 / 1 | 0 | 2 | 0 |
