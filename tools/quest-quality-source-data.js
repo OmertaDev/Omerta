@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "475b5beb34a5bc179b96927fd51f4a54199a6e51",
-  "tree": "5027c68438b7793aba45523ec25cc4b3c002174c",
+  "revision": "e85dcf2e652f33fc825bd888c36259f1529fca19",
+  "tree": "08988409de39336293e91fd52c87ac072e0897fd",
   "predecessor": "8720db9cb45f973a70a30b45dccc4c20f15012f2",
   "predecessorTree": "b9cdec2b836a1317376c9b50c4ab7251693a4314",
   "files": {
@@ -1694,6 +1694,27 @@ export const QUEST_QUALITY_SOURCE = freeze({
         }
       ]
     },
+    "test/rc1-invoice-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "1897e847237e33a6f165499d1ba48c1e71cd72a2",
+        "sha256": "0a3ef60abc0180015e82e1f63f4816cccd326140c6ee73bdcf6b2cd5f89b1228",
+        "bytes": 11081
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "1439d353b1d2a1fb997a627f03cd237331d0b484",
+        "sha256": "092b7519eab69237c307d51b3af5f0ee88e39132515707204ee796a20132ce99",
+        "bytes": 9531
+      },
+      "inverses": [
+        {
+          "at": 7897,
+          "current": "  assert.equal(text.split(before).length, 2, 'Targeted accounting/quote/fraction guard exists exactly once');\n  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\n// The exact current population source must enter SITE before the existing\n// hardening/invoice chain. These are source-comparison controls, not native evidence.\nconst populationInput = fs.readFileSync('src/population.js', 'utf8');\nconst populationLf = normalize(populationInput);\nconst populationBaseline = gitText('545c16d65cc482ffbc5364ba2aaa0a56916d7b79:src/population.js');\nassert.equal(hash(populationBaseline), '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb');\nfor (const input of [populationInput, populationLf, populationLf.replaceAll('\\n', '\\r\\n')])\n  assert.equal(invoiceSourceBaseline('src/population.js', input), populationBaseline);\nconst checkpointImport = \"import { checkpointCasinoRakeback, checkpointCasinoOwnerRemoval } from './casinorakeback.js';\\n\";\nassert.equal(populationLf.split(checkpointImport).length, 2, 'The partial-current control removes exactly one reviewed import');\nassert.equal(populationLf.split('ORDER BY id LIMIT 24').length, 2, 'The query drift changes the exact jailbird selection');\nfor (const changed of [populationLf + '\\n// unsupported population source suffix\\n',\n  populationLf.replace(checkpointImport, ''),\n  populationLf.replace('ORDER BY id LIMIT 24', 'ORDER BY id DESC LIMIT 24')]) {\n  assert.notEqual(changed, populationLf, 'Every population refusal changes the actual source');\n  assert.equal(invoiceSourceBaseline('src/population.js', changed), changed,\n    'Unknown, partial-current and query-changed population source cannot acquire historical admission');\n  negatives++;\n}\n\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\n",
+          "baseline": "  assert.equal(text.split(before).length, 2, 'Targeted accounting/quote/fraction guard exists exactly once');\n  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\n"
+        }
+      ]
+    },
     "test/routes.js": {
       "current": {
         "mode": "100644",
@@ -1999,6 +2020,32 @@ export const QUEST_QUALITY_SOURCE = freeze({
           "at": 52759,
           "current": "  const reference = freeze({ ...compiled, version });\n  assert.deepEqual(await questOnlyRows(pool, version), reference.full);\n  const ddlCausal = await questDdlControls(pool, reference);\n  const casinoDdlCausal = await casinoDdlControls(pool, version, 'fresh');\n  const projected = await questProjectedCaller(pool, reference, 'fresh');\n  const prior = await verifyArchivedComparisonBranches(projected, endpoint);\n  const current = await readCommerceReleasePhase2Metadata(pool);\n  assertQuestingEnterpriseStable(questSourceCapture);\n  return extendQuestCatalog(prior, reference, projected, true, current, ddlCausal, 'fresh', casinoDdlCausal);\n}\nexport async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, rows, verifyRows) {\n  assert.equal(arguments.length, 4);\n  const state = questStates.get(catalog); assert(state, 'Only the actual-current catalog returned by this native invocation');\n  const { prior, reference, projected, includeNotNull } = state;\n  assert.deepEqual(await questOnlyRows(pool, reference.version), reference.full);\n  const withoutQuest = questConstraintProjection(rows, reference, includeNotNull);\n  const parentRows = questingCasinoConstraintProjection(withoutQuest, reference.version, includeNotNull);\n  const casinoRows = withoutQuest.filter(row => !parentRows.includes(row));\n  const questRows = rows.filter(row => questNames.has(row.table_name));\n  const result = await original.verifyCommerceReleasePhase2CausalNegatives(projected, prior, parentRows,\n    candidate => verifyRows(questOrder([...candidate, ...questRows, ...casinoRows])));\n  assert.deepEqual(await questOnlyRows(pool, reference.version), reference.full);\n  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n",
           "baseline": "  const reference = freeze({ ...compiled, version });\n  assert.deepEqual(await questOnlyRows(pool, version), reference.full);\n  const ddlCausal = await questDdlControls(pool, reference);\n  const projected = await questProjectedCaller(pool, reference);\n  const prior = await verifyArchivedComparisonBranches(projected, endpoint);\n  const current = await readCommerceReleasePhase2Metadata(pool);\n  assertQuestingEnterpriseStable(questSourceCapture);\n  return extendQuestCatalog(prior, reference, projected, true, current, ddlCausal);\n}\nexport async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, rows, verifyRows) {\n  assert.equal(arguments.length, 4);\n  const state = questStates.get(catalog); assert(state, 'Only the actual-current catalog returned by this native invocation');\n  const { prior, reference, projected, includeNotNull } = state;\n  assert.deepEqual(await questOnlyRows(pool, reference.version), reference.full);\n  const parentRows = questConstraintProjection(rows, reference, includeNotNull);\n  const questRows = rows.filter(row => questNames.has(row.table_name));\n  const result = await original.verifyCommerceReleasePhase2CausalNegatives(projected, prior, parentRows,\n    candidate => verifyRows(questOrder([...candidate, ...questRows])));\n  assert.deepEqual(await questOnlyRows(pool, reference.version), reference.full);\n  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n"
+        }
+      ]
+    },
+    "tools/rc1-invoice-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "84ad2afb9318d95b3961d2c98a2108b033a99df4",
+        "sha256": "9058b28d18355a6a94b3c10ef7dcc0585ce02d893fee74bcdef5b7952b1eeb74",
+        "bytes": 31743
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "3eb02714243c10667db896c222c2b03a3c271f93",
+        "sha256": "e8993a705d736145bb0bbe8c1071a37d2b108efc150e8a4e204691b6dbf7d968",
+        "bytes": 31564
+      },
+      "inverses": [
+        {
+          "at": 546,
+          "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nimport { siteBasicsHistoricalInput } from './site-basics-source-transfer.js';\n\nexport const INVOICE_SOURCE_REVIEWED_REVISION = \"ea654f61659e38acfc09b55cf8c95a4f971e054e\";\nexport const INVOICE_SOURCE_PREDECESSOR_REVISION = \"df4e87984066a296889fbf0173f9179187445b26\";\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\n\nexport const INVOICE_SOURCE_REVIEWED_REVISION = \"ea654f61659e38acfc09b55cf8c95a4f971e054e\";\nexport const INVOICE_SOURCE_PREDECESSOR_REVISION = \"df4e87984066a296889fbf0173f9179187445b26\";\n"
+        },
+        {
+          "at": 30964,
+          "current": "// Compose only the exact current invoice blob. Earlier revisions and unknown\n// bytes still reach the existing closed historical guard unchanged.\nexport function invoiceSourceBaseline(file, input) {\n  const admitted = file === 'src/population.js' ? siteBasicsHistoricalInput(file, input) : input;\n  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, gameEmploymentSourceBaseline(file, economyHardeningSourceBaseline(file, admitted))))))));\n  return Object.hasOwn(INVOICE_SOURCE_CURRENT_PINS, file) && hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]\n    ? qualifyInvoiceSource(file, text).baselineText : text;\n}\n",
+          "baseline": "// Compose only the exact current invoice blob. Earlier revisions and unknown\n// bytes still reach the existing closed historical guard unchanged.\nexport function invoiceSourceBaseline(file, input) {\n  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, gameEmploymentSourceBaseline(file, economyHardeningSourceBaseline(file, input))))))));\n  return Object.hasOwn(INVOICE_SOURCE_CURRENT_PINS, file) && hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]\n    ? qualifyInvoiceSource(file, text).baselineText : text;\n}\n"
         }
       ]
     },
@@ -2320,4 +2367,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'c5b296a8ffb24230dc3a6cd949491012a3218cf5381dadbd6c53ca342bac719a';
+export const QUEST_QUALITY_SOURCE_SHA256 = '365c471b0005390152a0173222351f724c88f50280e65592dc4730dd8a150b5f';
