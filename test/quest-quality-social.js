@@ -7,6 +7,9 @@ const f = await qualityFixture();
 try {
   const alice = await f.identity('Quality records'), bob = await f.identity('Quality residents');
   let field = await f.start(alice, 'quality-field-notes');
+  for (const nodeId of ['constructor', '__proto__', 'toString', 'not-a-mandate']) {
+    await assert.rejects(() => f.quality(alice, field, 'clear_mandate', { nodeId }), error => error.code === 'unknown_mandate');
+  }
   assert(!field.instance.nodes.some(node => ['registry-report', 'quay-report', 'clerk-reaction', 'porter-reaction'].includes(node.id)),
     'Operation-controlled evidence is not collected automatically.');
   assert(!JSON.stringify(field).includes('P-4 appears in the complete dated register'), 'Unissued fieldwork reports stay private.');

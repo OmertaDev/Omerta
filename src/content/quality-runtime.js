@@ -41,7 +41,7 @@ export function qualityRevelationAllowed(design, nodeId, completed, shared, node
   });
 }
 export function qualityMandateAllows(shared, nodeId, memberId, participants) {
-  const mandate = shared.delegations[nodeId];
+  const mandate = Object.hasOwn(shared.delegations, nodeId) ? shared.delegations[nodeId] : null;
   if (!mandate) return true;
   const current = new Set(participants.map(member => member.id));
   return current.has(mandate.delegateAccountId) && mandate.delegateAccountId === memberId
@@ -126,7 +126,7 @@ export function applyQualityOperation(design, context, oldActor, oldShared, inpu
   const requireActive = () => { if (instance.status !== 'active') reject('case_closed', 'That operation needs an active case.'); };
   const known = id => { if (!knownEvidence.has(id)) reject('unknown_evidence', 'Choose evidence already revealed to you.'); };
   const mandateFor = () => {
-    const mandate = shared.delegations[input.nodeId];
+    const mandate = Object.hasOwn(shared.delegations, input.nodeId) ? shared.delegations[input.nodeId] : null;
     if (!mandate) reject('unknown_mandate', 'No current decision mandate exists for that scene.');
     return mandate;
   };
@@ -186,10 +186,10 @@ export function applyQualityOperation(design, context, oldActor, oldShared, inpu
       if ((node.payload.gates || []).some(gate => gate.kind === 'party_role' && gate.role !== delegate.role_id)) {
         reject('content_gate', 'Delegation cannot bypass the scene’s original role requirement.');
       }
-      const old = shared.delegations[input.nodeId];
+      const old = Object.hasOwn(shared.delegations, input.nodeId) ? shared.delegations[input.nodeId] : null;
       if (old && old.proposerMemberId !== memberId) reject('mandate_pending', 'A current proposal must be acknowledged or withdrawn by its proposer.');
-      shared.delegations[input.nodeId] = { delegateAccountId: input.delegateAccountId, proposerMemberId: memberId,
-        acknowledgedAccountIds: [memberId] }; publicChange = true;
+      shared.delegations = { ...shared.delegations, [input.nodeId]: { delegateAccountId: input.delegateAccountId,
+        proposerMemberId: memberId, acknowledgedAccountIds: [memberId] } }; publicChange = true;
       break;
     }
     case 'acknowledge_mandate': {

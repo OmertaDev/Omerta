@@ -1259,7 +1259,7 @@ export async function actOnContentInstance(ch, instanceId, opts, client, h) {
       }
       if (design && selected.type === 'choice') {
         const participants = (await memberRows(client, instanceId)).map(row => ({ id: qualityMemberId(instanceId, row.account_id) }));
-        if ((participants.length > 1 && !states.shared.delegations[selected.id])
+        if ((participants.length > 1 && !Object.hasOwn(states.shared.delegations, selected.id))
           || !qualityMandateAllows(states.shared, selected.id, qualityMemberId(instanceId, ch.account_id), participants)) {
           fail('decision_acknowledgement', 'Agree on a scene delegate and acknowledge the decision before committing.');
         }
