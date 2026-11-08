@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "e3785fd561cfe8e93d7a71f57819b333fd03e588",
-  "tree": "8177cdea65f5049349d820ecc8ddc2d916f5c66b",
+  "revision": "6868fc89805ad99d86aeb4c407b3a09278453343",
+  "tree": "73a975ac739c4a8deba49a7c41cf5f3ed9cc30b4",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -541,6 +541,32 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/age-eligibility-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c93fc60c295119cda04a8943844c9503f0f0598b",
+        "sha256": "f5726915eec202962572471e229847a7078755e33ab5b582685bba908d3a8d4e",
+        "bytes": 11190
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "dd0aa4dc7f57b53eab7529d3de9490fc98635ede",
+        "sha256": "2bca7dfa492c44301280f6814449948b550eeeead355e17f2bc15f205aa7ac6c",
+        "bytes": 10851
+      },
+      "inverses": [
+        {
+          "at": 3274,
+          "current": "  assert.equal(sha(normalized), sha(committed));\n  return physical;\n};\nconst comparisonInput = (file, input) => {\n  const reviewed = questingHistoricalInput(file, input);\n  return file === 'src/server.js'\n    ? businessDeskHistoricalInput(file, contractReleaseDeskInput(file, reviewed)) : reviewed;\n};\nconst inverseHunks = diff => {\n  const inverses = []; let hunk = null;\n  for (const line of diff.split('\\n')) {\n",
+          "baseline": "  assert.equal(sha(normalized), sha(committed));\n  return physical;\n};\nconst comparisonInput = (file, input) => file === 'src/server.js'\n  ? businessDeskHistoricalInput(file, contractReleaseDeskInput(file, questingHistoricalInput(file, input))) : input;\nconst inverseHunks = diff => {\n  const inverses = []; let hunk = null;\n  for (const line of diff.split('\\n')) {\n"
+        },
+        {
+          "at": 5287,
+          "current": "  actualInputs.set(file, actual);\n  const physical = qualifyPhysical(actual);\n  assert.equal(comparisonInput(file, physical).replaceAll('\\r\\n', '\\n'), current, 'Physical merged age policy remains exact: ' + file);\n  if (file === 'src/legal.js' || file === 'test/legal-security.js') {\n    const unreviewed = physical + '\\n// unreviewed policy change\\n';\n    assert.equal(comparisonInput(file, unreviewed), unreviewed, 'Unreviewed policy bytes cannot inherit a historical source view');\n    refusals++;\n  }\n  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));\n  assert.equal(pin.contextLines, 3); assert.equal(pin.currentSha256, sha(current)); assert.equal(pin.currentBlob, blob(current));\n  assert.equal(pin.currentBytes, Buffer.byteLength(current)); assert.equal(pin.baselineSha256, sha(baseline));\n",
+          "baseline": "  actualInputs.set(file, actual);\n  const physical = qualifyPhysical(actual);\n  assert.equal(comparisonInput(file, physical).replaceAll('\\r\\n', '\\n'), current, 'Physical merged age policy remains exact: ' + file);\n  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));\n  assert.equal(pin.contextLines, 3); assert.equal(pin.currentSha256, sha(current)); assert.equal(pin.currentBlob, blob(current));\n  assert.equal(pin.currentBytes, Buffer.byteLength(current)); assert.equal(pin.baselineSha256, sha(baseline));\n"
+        }
+      ]
+    },
     "test/gates.js": {
       "current": {
         "mode": "100644",
@@ -843,4 +869,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '272ae096733b9865c0298d3da393bda72d60eba26cec2cfc7f4988c80ec6ee25';
+export const SITE_BASICS_SOURCE_SHA256 = '3382c51d5783a245a00692aa35a056aa55fefb5849051c04b2b4f872db77fb2d';
