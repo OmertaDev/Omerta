@@ -3,17 +3,17 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "e788140956ecf5370a841afab7f8843eb00ce42a",
-  "tree": "c789cd87b7d835c31224570ba84ddaf23c00733d",
+  "revision": "5e449dd9a6e739323cf1b5f85bef649dc82fef3d",
+  "tree": "7ca6520acf7f0d1ca58ec492d8826ec8ba422e7b",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
     ".github/workflows/ci.yml": {
       "current": {
         "mode": "100644",
-        "blob": "5c58de842c8905b6b9cf566dd1bb5683270533fb",
-        "sha256": "867e277d67cbab1bd844b6680404ba3372ffd7a604b4a780115fb8fdaba09806",
-        "bytes": 79093
+        "blob": "f19c6ee8f32db75035f8fd91dcd403c82da27e2a",
+        "sha256": "16036d9f68f08d78a551fbb2a09d81ddecb3fe8c7f593c398d1e758cdbc8895a",
+        "bytes": 79330
       },
       "baseline": {
         "mode": "100644",
@@ -23,7 +23,12 @@ export const SITE_BASICS_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 21128,
+          "at": 2802,
+          "current": "          cache: npm\n      - run: npm ci\n\n      - name: Install isolated MCP client dependencies\n        run: npm install --prefix omerta-mcp --ignore-scripts --package-lock=false\n      - name: MCP identity, recovery and shared-session regressions\n        run: node test/mcp.js\n\n      # Genuine artifact prerequisite; full contract tests remain in forge.yml.\n      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n",
+          "baseline": "          cache: npm\n      - run: npm ci\n\n      # Genuine artifact prerequisite; full contract tests remain in forge.yml.\n      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n"
+        },
+        {
+          "at": 21365,
           "current": "      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'\n\n      - name: Optional website counts on real PostgreSQL\n        env:\n          SITE_ANALYTICS_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n          DATABASE_URL: ''\n        run: node test/site-analytics.js --postgres\n\n      - name: Gateway, RLS and receipt concurrency on real PostgreSQL\n        env:\n          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check\n",
           "baseline": "      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'\n\n      - name: Gateway, RLS and receipt concurrency on real PostgreSQL\n        env:\n          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check\n"
         }
@@ -76,12 +81,54 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "omerta-mcp/README.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "57c4fc72568867e878f9118f2d0d58de1a39d007",
+        "sha256": "6352d782b1ab6a39c1d07bccd0c773044e57b7d876be9b30ece583413e0b3725",
+        "bytes": 9553
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d59cf863e352ca503ca91785934a8c72c9c9a089",
+        "sha256": "829ab184402a42bf70926dd83520816f345f12ee17fdd13c4a5b26903754583b",
+        "bytes": 9225
+      },
+      "inverses": [
+        {
+          "at": 6559,
+          "current": "session lifecycle described below. Production extraction remains dormant because\nno chain is configured.\n\nNew identities use `POST /v1/auth/agent` without a birth date and are permanently\nclassified as agents before their first bearer is issued. Human signup keeps its\nage check. The MCP saves a shared recovery secret before signup, then saves the\nbearer before acknowledging bootstrap so a lost reply cannot create a new identity.\n\nThe 90-day agent token is persisted in an owner-only configuration file and reused after\nMCP-host restarts. A corrupt or expired session fails closed instead of silently creating\na duplicate agent identity. If that session truly cannot be recovered, call\n",
+          "baseline": "session lifecycle described below. Production extraction remains dormant because\nno chain is configured.\n\nThe 90-day agent token is persisted in an owner-only configuration file and reused after\nMCP-host restarts. A corrupt or expired session fails closed instead of silently creating\na duplicate agent identity. If that session truly cannot be recovered, call\n"
+        }
+      ]
+    },
+    "package-lock.json": {
+      "current": {
+        "mode": "100644",
+        "blob": "cb692ac8e9381b05a920612cadb51dc2275b85f7",
+        "sha256": "20f8360cea8c6565ddf257e0e5846d009a672dd6fd2ef36df5ddff38fa3eaa7f",
+        "bytes": 257066
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "558dc61f9de691962cca03fbe7a54f763e5ee8f9",
+        "sha256": "ad275c512da2aabcbd76721cd242dcf10efecf7cd2698742e964c8e8f6ff287a",
+        "bytes": 257066
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "{\n  \"name\": \"omerta-backend\",\n  \"version\": \"1.6.0\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"omerta-backend\",\n      \"version\": \"1.6.0\",\n      \"hasInstallScript\": true,\n      \"dependencies\": {\n        \"@fastify/jwt\": \"^10.2.0\",\n",
+          "baseline": "{\n  \"name\": \"omerta-backend\",\n  \"version\": \"1.5.1\",\n  \"lockfileVersion\": 3,\n  \"requires\": true,\n  \"packages\": {\n    \"\": {\n      \"name\": \"omerta-backend\",\n      \"version\": \"1.5.1\",\n      \"hasInstallScript\": true,\n      \"dependencies\": {\n        \"@fastify/jwt\": \"^10.2.0\",\n"
+        }
+      ]
+    },
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "978b81602db7fe05924f10b24070c7e2f61253a5",
-        "sha256": "920e01c32eea446f361544a851fca7105c567f8fa56328704ad280b31d441368",
-        "bytes": 62496
+        "blob": "bc218d24a127fe29c1c7ef57067674b443dbbd98",
+        "sha256": "57a4f021aabaf6c5fd0ef70bbe3ba1dd609fb8c4a98a93e07246fc62bf3cc5a4",
+        "bytes": 62904
       },
       "baseline": {
         "mode": "100644",
@@ -91,19 +138,24 @@ export const SITE_BASICS_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 87,
-          "current": "    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:site\": \"node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js\",\n    \"test:site:browser\": \"node test/site-entry-browser.js && node test/client-shell-browser.js\",\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n    \"test:agent-economy-commerce\": \"node test/commerce-source-compatibility.js && node test/commerce-current-native-guard.js && node test/saleattribution.js && node test/saleattribution-witness.js && node test/saleattribution-expiry.js && node test/saleattribution-api.js && node test/saleattribution-estate.js && node test/saleattribution-native-guard.js && node test/merchantloyalty.js && node test/merchantloyalty-accounting.js && node test/merchantloyalty-boundary.js && node test/merchantloyalty-expiry.js && node test/merchantloyalty-estate.js && node test/merchantloyalty-api.js && node test/merchantloyalty-native-guard.js && node test/shoppingbasket.js && node test/shoppingbasket-boundary.js && node test/shoppingbasket-atomicity.js && node test/shoppingbasket-finalization.js && node test/shoppingbasket-expiry.js && node test/shoppingbasket-estate.js && node test/shoppingbasket-api.js && node test/shoppingbasket-native-guard.js && node test/eventmarkets.js && node test/eventmarkets-boundary.js && node test/eventmarkets-integration.js && node test/commercialcampaigns-contracts.js && node test/commercialcampaigns-descriptors.js && node test/commercialcampaigns-metadata.js && node test/commerce-release-phase2-migration-catalog.js\",\n    \"test:agent-economy-commerce:postgres\": \"node tools/commerce-native.js --ci\",\n",
-          "baseline": "    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n    \"test:agent-economy-commerce\": \"node test/commerce-source-compatibility.js && node test/commerce-current-native-guard.js && node test/saleattribution.js && node test/saleattribution-witness.js && node test/saleattribution-expiry.js && node test/saleattribution-api.js && node test/saleattribution-estate.js && node test/saleattribution-native-guard.js && node test/merchantloyalty.js && node test/merchantloyalty-accounting.js && node test/merchantloyalty-boundary.js && node test/merchantloyalty-expiry.js && node test/merchantloyalty-estate.js && node test/merchantloyalty-api.js && node test/merchantloyalty-native-guard.js && node test/shoppingbasket.js && node test/shoppingbasket-boundary.js && node test/shoppingbasket-atomicity.js && node test/shoppingbasket-finalization.js && node test/shoppingbasket-expiry.js && node test/shoppingbasket-estate.js && node test/shoppingbasket-api.js && node test/shoppingbasket-native-guard.js && node test/eventmarkets.js && node test/eventmarkets-boundary.js && node test/eventmarkets-integration.js && node test/commercialcampaigns-contracts.js && node test/commercialcampaigns-descriptors.js && node test/commercialcampaigns-metadata.js && node test/commerce-release-phase2-migration-catalog.js\",\n    \"test:agent-economy-commerce:postgres\": \"node tools/commerce-native.js --ci\",\n"
+          "at": 0,
+          "current": "{\n  \"name\": \"omerta-backend\",\n  \"version\": \"1.6.0\",\n  \"type\": \"module\",\n  \"engines\": {\n    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:site\": \"node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js\",\n    \"test:site:browser\": \"node test/site-entry-browser.js && node test/client-shell-browser.js\",\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n    \"test:agent-economy-commerce\": \"node test/commerce-source-compatibility.js && node test/commerce-current-native-guard.js && node test/saleattribution.js && node test/saleattribution-witness.js && node test/saleattribution-expiry.js && node test/saleattribution-api.js && node test/saleattribution-estate.js && node test/saleattribution-native-guard.js && node test/merchantloyalty.js && node test/merchantloyalty-accounting.js && node test/merchantloyalty-boundary.js && node test/merchantloyalty-expiry.js && node test/merchantloyalty-estate.js && node test/merchantloyalty-api.js && node test/merchantloyalty-native-guard.js && node test/shoppingbasket.js && node test/shoppingbasket-boundary.js && node test/shoppingbasket-atomicity.js && node test/shoppingbasket-finalization.js && node test/shoppingbasket-expiry.js && node test/shoppingbasket-estate.js && node test/shoppingbasket-api.js && node test/shoppingbasket-native-guard.js && node test/eventmarkets.js && node test/eventmarkets-boundary.js && node test/eventmarkets-integration.js && node test/commercialcampaigns-contracts.js && node test/commercialcampaigns-descriptors.js && node test/commercialcampaigns-metadata.js && node test/commerce-release-phase2-migration-catalog.js\",\n    \"test:agent-economy-commerce:postgres\": \"node tools/commerce-native.js --ci\",\n",
+          "baseline": "{\n  \"name\": \"omerta-backend\",\n  \"version\": \"1.5.1\",\n  \"type\": \"module\",\n  \"engines\": {\n    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n    \"test:agent-economy-commerce\": \"node test/commerce-source-compatibility.js && node test/commerce-current-native-guard.js && node test/saleattribution.js && node test/saleattribution-witness.js && node test/saleattribution-expiry.js && node test/saleattribution-api.js && node test/saleattribution-estate.js && node test/saleattribution-native-guard.js && node test/merchantloyalty.js && node test/merchantloyalty-accounting.js && node test/merchantloyalty-boundary.js && node test/merchantloyalty-expiry.js && node test/merchantloyalty-estate.js && node test/merchantloyalty-api.js && node test/merchantloyalty-native-guard.js && node test/shoppingbasket.js && node test/shoppingbasket-boundary.js && node test/shoppingbasket-atomicity.js && node test/shoppingbasket-finalization.js && node test/shoppingbasket-expiry.js && node test/shoppingbasket-estate.js && node test/shoppingbasket-api.js && node test/shoppingbasket-native-guard.js && node test/eventmarkets.js && node test/eventmarkets-boundary.js && node test/eventmarkets-integration.js && node test/commercialcampaigns-contracts.js && node test/commercialcampaigns-descriptors.js && node test/commercialcampaigns-metadata.js && node test/commerce-release-phase2-migration-catalog.js\",\n    \"test:agent-economy-commerce:postgres\": \"node tools/commerce-native.js --ci\",\n"
         },
         {
-          "at": 59042,
+          "at": 11556,
+          "current": "    \"phase2:lots:check\": \"node test/phase2-lot-boundary.js && node test/phase2-lots.js && node test/phase2-lots-property.js\",\n    \"phase2:lots:postgres\": \"node test/phase2-postgres.js --lots\",\n    \"phase2:definitions:postgres\": \"node test/phase2-postgres.js --definitions\",\n    \"test\": \"npm run test:questing && npm run test:ux && node test/classic-interface-source-compatibility.js && npm run test:player-experience && node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/business-settlement.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agent-cohort.js && node test/agentturn.js && node test/agentturn-jail-units.js && node test/local-agent-human-coordination.js && node test/agent-turn-cadence.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/inventory-bond-checkout.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/firstblood-intel.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/agent-onboarding.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client-ip.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy && node test/wiki-economy-media.js\",\n    \"content:check\": \"npm run content:check:corpus\",\n    \"content:check:corpus\": \"node tools/content.js check-corpus content/packs\",\n    \"content:build\": \"node tools/content.js build content/packs/sixth-chair-v2/pack.json content/dist/sixth-chair-v2.json\",\n",
+          "baseline": "    \"phase2:lots:check\": \"node test/phase2-lot-boundary.js && node test/phase2-lots.js && node test/phase2-lots-property.js\",\n    \"phase2:lots:postgres\": \"node test/phase2-postgres.js --lots\",\n    \"phase2:definitions:postgres\": \"node test/phase2-postgres.js --definitions\",\n    \"test\": \"npm run test:questing && npm run test:ux && node test/classic-interface-source-compatibility.js && npm run test:player-experience && node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/inventory-bond-checkout.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client-ip.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy && node test/wiki-economy-media.js\",\n    \"content:check\": \"npm run content:check:corpus\",\n    \"content:check:corpus\": \"node tools/content.js check-corpus content/packs\",\n    \"content:build\": \"node tools/content.js build content/packs/sixth-chair-v2/pack.json content/dist/sixth-chair-v2.json\",\n"
+        },
+        {
+          "at": 59292,
           "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n",
           "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n"
         },
         {
-          "at": 61335,
-          "current": "    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\"\n  },\n  \"dependencies\": {\n",
-          "baseline": "    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\"\n  },\n  \"dependencies\": {\n"
+          "at": 61585,
+          "current": "    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\",\n    \"test:agent-onboarding:postgres\": \"node test/agent-onboarding-postgres.js\",\n    \"test:casino-rakeback:postgres\": \"node test/casino-rakeback-postgres.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n",
+          "baseline": "    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n"
         }
       ]
     },
@@ -329,12 +381,59 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "schema.sql": {
+      "current": {
+        "mode": "100755",
+        "blob": "86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3",
+        "sha256": "659235a1735d24dbebc5f9b4dfcff8a58ed766a27fd3ae32fc6c6d2ec77006dc",
+        "bytes": 625914
+      },
+      "baseline": {
+        "mode": "100755",
+        "blob": "7a254a435c95a93cc5d8419b453988b0df30b5c1",
+        "sha256": "af6d9ad01566eaddf8ec6b4c4da4add77837b13e6a3510697bebf62b180b97e7",
+        "bytes": 625495
+      },
+      "inverses": [
+        {
+          "at": 60634,
+          "current": "  shakedown_at TIMESTAMPTZ,\n  inside_at TIMESTAMPTZ,                            -- Heist step 2: per-venue INSIDE JOB cooldown (stamped win or lose)\n  rake_cursor NUMERIC NOT NULL DEFAULT 0,           -- Den step 2: den volume already rakeback-claimed (casino kind only)\n  rake_index_cursor TEXT,                          -- exact rational claimed rakeback index; NULL identifies legacy volume cursors\n  upkeep_at TIMESTAMPTZ NOT NULL DEFAULT now(),     -- recurring sinks (\"the pad\"): upkeep accrues off this clock; pay resets it, upgrade squares it\n  acquired_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n  UNIQUE (character_id, kind)\n",
+          "baseline": "  shakedown_at TIMESTAMPTZ,\n  inside_at TIMESTAMPTZ,                            -- Heist step 2: per-venue INSIDE JOB cooldown (stamped win or lose)\n  rake_cursor NUMERIC NOT NULL DEFAULT 0,           -- Den step 2: den volume already rakeback-claimed (casino kind only)\n  upkeep_at TIMESTAMPTZ NOT NULL DEFAULT now(),     -- recurring sinks (\"the pad\"): upkeep accrues off this clock; pay resets it, upgrade squares it\n  acquired_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n  UNIQUE (character_id, kind)\n"
+        },
+        {
+          "at": 76748,
+          "current": "  -- distribution is capped at profit − distributed − open liability, so the den never emits beyond\n  -- what the players actually lost. Both mirror the ledger exactly (§10.4 den checks).\n  profit NUMERIC NOT NULL DEFAULT 0,\n  distributed NUMERIC NOT NULL DEFAULT 0,\n  rake_index TEXT NOT NULL DEFAULT '0',            -- exact per-owner cash entitlement, serialized numerator/denominator\n  rake_checkpoint_volume NUMERIC,                  -- NULL until legacy claims are snapshotted before an ownership change\n  rake_legacy_owners INT NOT NULL DEFAULT 0\n);\nINSERT INTO den_volume (id, total) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM den_volume);\n-- THE VIG POT (NetNet rec C, 2026-08-21): a progressive jackpot RESERVED out of realized den\n",
+          "baseline": "  -- distribution is capped at profit − distributed − open liability, so the den never emits beyond\n  -- what the players actually lost. Both mirror the ledger exactly (§10.4 den checks).\n  profit NUMERIC NOT NULL DEFAULT 0,\n  distributed NUMERIC NOT NULL DEFAULT 0\n);\nINSERT INTO den_volume (id, total) SELECT 1, 0 WHERE NOT EXISTS (SELECT 1 FROM den_volume);\n-- THE VIG POT (NetNet rec C, 2026-08-21): a progressive jackpot RESERVED out of realized den\n"
+        }
+      ]
+    },
+    "src/age.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "14222404d3a264414ee0196c762cd874b17bb9b7",
+        "sha256": "8b3eea86549603133ab1e5e2a2c412e08dd73f643a16ab17b4a7e6d6909235be",
+        "bytes": 2109
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "94a8b0e92dbb559e79e4d169ac238eaddafca663",
+        "sha256": "b3aea51a8cb6b537fdb45ec2fa44aebeb1a0af39bc248c4e2afaee57eb9cf3dd",
+        "bytes": 2076
+      },
+      "inverses": [
+        {
+          "at": 1510,
+          "current": "  } catch { return null; }\n}\n\nexport function requireAge(app, req, { agent = false } = {}) {\n  const status = ageStatus(app, req);\n  if (status === false) throw new GameError('age_ineligible', 'Account creation is unavailable. See /privacy for help.');\n  if (req.body?.birthDate !== undefined) {\n    if (eligibleBirthDate(req.body.birthDate)) return;\n    throw new GameError('age_ineligible', 'Account creation is unavailable. See /privacy for help.');\n  }\n  if (status === true || agent) return;\n  throw new GameError('age_required', 'Complete the birth date check before creating an account.');\n}\n",
+          "baseline": "  } catch { return null; }\n}\n\nexport function requireAge(app, req) {\n  const status = ageStatus(app, req);\n  if (status === false) throw new GameError('age_ineligible', 'Account creation is unavailable. See /privacy for help.');\n  if (req.body?.birthDate !== undefined) {\n    if (eligibleBirthDate(req.body.birthDate)) return;\n    throw new GameError('age_ineligible', 'Account creation is unavailable. See /privacy for help.');\n  }\n  if (status === true) return;\n  throw new GameError('age_required', 'Complete the birth date check before creating an account.');\n}\n"
+        }
+      ]
+    },
     "src/agentgateway.js": {
       "current": {
         "mode": "100644",
-        "blob": "79743e2e8fa0762ef9a2950e081a683045654b06",
-        "sha256": "f6086a80c1d8bd2bb8dd9cad5f5d08f514a079a65a8c41361c44e83d85a08125",
-        "bytes": 159768
+        "blob": "a84d4e88be1c4998e25c76e09f8737905003a6e8",
+        "sha256": "28a4b9b18bacd7e0c2c5006327a1a6ff3a1976ea3b8bac59b5232d62d18fc85a",
+        "bytes": 160860
       },
       "baseline": {
         "mode": "100644",
@@ -344,14 +443,157 @@ export const SITE_BASICS_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 4689,
-          "current": "\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n// /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).\nconst DOC_PATHS = new Set(['/', '/wiki', '/guides/getting-started', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);\n\n// A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls\n// through to a generic line — the contract stays complete even as new systems land.\n",
-          "baseline": "\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n// /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).\nconst DOC_PATHS = new Set(['/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);\n\n// A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls\n// through to a generic line — the contract stays complete even as new systems land.\n"
+          "at": 4238,
+          "current": "  '/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json',\n  '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',\n  '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',\n  '/v1/auth/guest', '/v1/auth/agent', '/v1/auth/x', '/v1/auth/privy',\n  '/v1/access/redeem', '/v1/access/logout', '/v1/age-check', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',\n]);\n\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n// /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).\nconst DOC_PATHS = new Set(['/', '/wiki', '/guides/getting-started', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);\n\n// A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls\n// through to a generic line — the contract stays complete even as new systems land.\n",
+          "baseline": "  '/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json',\n  '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',\n  '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',\n  '/v1/auth/guest', '/v1/auth/x', '/v1/auth/privy',\n  '/v1/access/redeem', '/v1/access/logout', '/v1/age-check', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',\n]);\n\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n// /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).\nconst DOC_PATHS = new Set(['/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);\n\n// A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls\n// through to a generic line — the contract stays complete even as new systems land.\n"
         },
         {
-          "at": 159471,
+          "at": 29819,
+          "current": "  'POST /v1/coordination/instances/:instanceId/cancel': coordinationContract('cancelCoordinationInstance', 'CoordinationReceipt', {\n    type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: { expectedRevision: COORDINATION_REVISION },\n  }),\n  'POST /v1/auth/agent': {\n    operationId: 'createAgentIdentity',\n    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n      bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 random bytes as unpadded base64url before signup; retry the same secret after an ambiguous response. Save the bearer before acknowledging bootstrap.' },\n      inviteCode: { type: 'string', maxLength: 128 },\n    } },\n    responseSchema: { type: 'object', required: ['token', 'agent'], properties: {\n      token: { type: 'string', description: '90-day agent bearer.' },\n      agent: { const: true, description: 'Permanently classified at creation; excluded from human-only rewards. No birth date is needed.' },\n    } },\n  },\n  'POST /v1/access/redeem': {\n    operationId: 'redeemLaunchInvite',\n    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n",
+          "baseline": "  'POST /v1/coordination/instances/:instanceId/cancel': coordinationContract('cancelCoordinationInstance', 'CoordinationReceipt', {\n    type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: { expectedRevision: COORDINATION_REVISION },\n  }),\n  'POST /v1/access/redeem': {\n    operationId: 'redeemLaunchInvite',\n    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n"
+        },
+        {
+          "at": 152309,
+          "current": "      summary: 'A server-authoritative noir mafia RPG with a real, ledgered economy, built for agents.',\n      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '\n        + 'POST /v1/auth/agent without a birth date; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n",
+          "baseline": "      summary: 'A server-authoritative noir mafia RPG with a real, ledgered economy, built for agents.',\n      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. Get an agent '\n        + 'key via POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n"
+        },
+        {
+          "at": 155369,
+          "current": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, no birth date, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Human signup requires an age check. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n",
+          "baseline": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- Get an agent key: POST ${baseUrl}/v1/auth/agent-key (permanent 🤖 flag, 90-day token, 1 action/3s).\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n"
+        },
+        {
+          "at": 160563,
           "current": "\n## Human reference\n- [Playable console](${baseUrl}/): the web client.\n- [Beginner guide](${baseUrl}/guides/getting-started): choosing a Path, first moves and survival.\n- [The Codex](${baseUrl}/wiki): the full rulebook, every system + loop.\n`;\n}\n",
           "baseline": "\n## Human reference\n- [Playable console](${baseUrl}/): the web client.\n- [The Codex](${baseUrl}/wiki): the full rulebook, every system + loop.\n`;\n}\n"
+        }
+      ]
+    },
+    "src/agentturn.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4eed3f888002a21d02c60800072b69912bc47636",
+        "sha256": "1c4fe6e61f94e71c953c9221f1302e67a3acf3d9349ddbe161835f19267ca881",
+        "bytes": 45903
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5294e1776283af79ffea8ba92c0d07d869cb6ec0",
+        "sha256": "c95dfae693e344b6d1a470013631f02f55291299442e9adf2fbbd8ecc0fe6455",
+        "bytes": 45680
+      },
+      "inverses": [
+        {
+          "at": 3882,
+          "current": "    method: 'POST', path: `/v1/crimes/${crime.id}`, body: { approach: 'standard' }, executable,\n    cost: { nerve: crime.nerve },\n    reward: { cash: { min: crime.cash[0], max: crime.cash[1] }, respect: crime.respect },\n    // The catalog stint is seconds, before character/season/approach modifiers. Keep the legacy\n    // minutes field dimensionally correct while giving clients the explicit base duration.\n    risk: { baseSuccessPct: Math.round(success * 1000) / 10, baseJailSeconds: crime.jail, jailMinutes: crime.jail / 60 },\n    ...(blockedBy ? { blockedBy } : {}),\n  }, {\n    cash: ((crime.cash[0] + crime.cash[1]) / 2) * success,\n",
+          "baseline": "    method: 'POST', path: `/v1/crimes/${crime.id}`, body: { approach: 'standard' }, executable,\n    cost: { nerve: crime.nerve },\n    reward: { cash: { min: crime.cash[0], max: crime.cash[1] }, respect: crime.respect },\n    risk: { baseSuccessPct: Math.round(success * 1000) / 10, jailMinutes: crime.jail },\n    ...(blockedBy ? { blockedBy } : {}),\n  }, {\n    cash: ((crime.cash[0] + crime.cash[1]) / 2) * success,\n"
+        }
+      ]
+    },
+    "src/auth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "a147dd0eb8b48b2e3aded148d67fc8f84d546f78",
+        "sha256": "e9aa8c63cf522b2287fdf4d0584e8d054312d225e95b88962e4a7e18d4acc17b",
+        "bytes": 20893
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "6174b707c640d23370f17f96276f27925085909a",
+        "sha256": "18cb62fc753643f82fec90ebd37c508f2554cfb20239df35aca2a3fb38358d62",
+        "bytes": 20520
+      },
+      "inverses": [
+        {
+          "at": 9780,
+          "current": "// and persistent state commit together. Recovery is deliberately event-bounded: only the unretired\n// original guest/token-version/no-character/no-agent state may use the proof. Elapsed wall time cannot\n// destroy the sole credential of an otherwise untouched identity.\nasync function recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent = false) {\n  const client = await pool.connect();\n  try {\n    await client.query('BEGIN');\n",
+          "baseline": "// and persistent state commit together. Recovery is deliberately event-bounded: only the unretired\n// original guest/token-version/no-character/no-agent state may use the proof. Elapsed wall time cannot\n// destroy the sole credential of an otherwise untouched identity.\nasync function recoverCommittedGuestBootstrap(pool, recoveryHash, ip) {\n  const client = await pool.connect();\n  try {\n    await client.query('BEGIN');\n"
+        },
+        {
+          "at": 10995,
+          "current": "      'SELECT 1 FROM characters WHERE account_id=$1 LIMIT 1', [row.id],\n    )).rowCount > 0;\n    const originalVersion = row.guest_bootstrap_token_version;\n    if (row.guest_bootstrap_retired_at || row.auth_provider !== 'guest' || !!persistent.agent !== agent ||\n        hasCharacter || originalVersion === null || originalVersion === undefined ||\n        Number(row.token_version) !== Number(originalVersion)) {\n      throw new GameError('bootstrap_retired', 'Guest bootstrap recovery is retired.');\n",
+          "baseline": "      'SELECT 1 FROM characters WHERE account_id=$1 LIMIT 1', [row.id],\n    )).rowCount > 0;\n    const originalVersion = row.guest_bootstrap_token_version;\n    if (row.guest_bootstrap_retired_at || row.auth_provider !== 'guest' || persistent.agent ||\n        hasCharacter || originalVersion === null || originalVersion === undefined ||\n        Number(row.token_version) !== Number(originalVersion)) {\n      throw new GameError('bootstrap_retired', 'Guest bootstrap recovery is retired.');\n"
+        },
+        {
+          "at": 11825,
+          "current": "export async function accountForGuestBootstrap(\n  pool, recoverySecret, ip, invite, beforeCreate = () => {}, createdIpAuthority = null,\n) {\n  return accountForBootstrap(pool, recoverySecret, ip, invite, beforeCreate, false, createdIpAuthority);\n}\n\nexport async function accountForAgentBootstrap(pool, recoverySecret, ip, invite, createdIpAuthority = null) {\n  return accountForBootstrap(pool, recoverySecret, ip, invite, () => {}, true, createdIpAuthority);\n}\n\nasync function accountForBootstrap(pool, recoverySecret, ip, invite, beforeCreate, agent, createdIpAuthority) {\n  if (typeof recoverySecret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(recoverySecret)) {\n    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');\n  }\n",
+          "baseline": "export async function accountForGuestBootstrap(\n  pool, recoverySecret, ip, invite, beforeCreate = () => {}, createdIpAuthority = null,\n) {\n  if (typeof recoverySecret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(recoverySecret)) {\n    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');\n  }\n"
+        },
+        {
+          "at": 12736,
+          "current": "    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');\n  }\n  const recoveryHash = crypto.createHash('sha256')\n    .update(agent ? 'omerta-agent-bootstrap-v1\\0' : 'omerta-agent-alpha-guest-bootstrap-v1\\0')\n    .update(secretBytes)\n    .digest('hex');\n  return withGuestBootstrapLock(recoveryHash, async () => {\n    const existing = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent);\n    if (existing) return existing;\n\n    await beforeCreate();\n",
+          "baseline": "    throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');\n  }\n  const recoveryHash = crypto.createHash('sha256')\n    .update('omerta-agent-alpha-guest-bootstrap-v1\\0')\n    .update(secretBytes)\n    .digest('hex');\n  return withGuestBootstrapLock(recoveryHash, async () => {\n    const existing = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip);\n    if (existing) return existing;\n\n    await beforeCreate();\n"
+        },
+        {
+          "at": 13232,
+          "current": "    const id = crypto.randomUUID();\n    const tokenVersion = 0;\n    const client = await pool.connect();\n    let failure;\n    try {\n      await client.query('BEGIN');\n      await consumeInvite(client, invite);\n",
+          "baseline": "    const id = crypto.randomUUID();\n    const tokenVersion = 0;\n    const client = await pool.connect();\n    try {\n      await client.query('BEGIN');\n      await consumeInvite(client, invite);\n"
+        },
+        {
+          "at": 13651,
+          "current": "         VALUES ($1, 'guest', $1, $2, $2, $3, $4, $5)`,\n        [id, ip, recoveryHash, tokenVersion, normalizeClientIpAuthority(createdIpAuthority)],\n      );\n      await client.query('INSERT INTO account_persistent (account_id, agent_flag) VALUES ($1,$2)', [id, agent]);\n      await client.query('COMMIT');\n      return { accountId: id, created: true, tokenVersion };\n    } catch (error) {\n      await client.query('ROLLBACK');\n      failure = error;\n    } finally {\n      client.release();\n    }\n    const winner = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent);\n    if (winner) return winner;\n    throw failure;\n  });\n}\n\n",
+          "baseline": "         VALUES ($1, 'guest', $1, $2, $2, $3, $4, $5)`,\n        [id, ip, recoveryHash, tokenVersion, normalizeClientIpAuthority(createdIpAuthority)],\n      );\n      await client.query('INSERT INTO account_persistent (account_id) VALUES ($1)', [id]);\n      await client.query('COMMIT');\n      return { accountId: id, created: true, tokenVersion };\n    } catch (error) {\n      await client.query('ROLLBACK');\n      // A different server process may have won the unique-index race. Its committed mapping is\n      // authoritative; adopting it is recovery, while an absent/incomplete row keeps us fail-closed.\n      const winner = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip);\n      if (winner) return winner;\n      throw error;\n    } finally {\n      client.release();\n    }\n  });\n}\n\n"
+        }
+      ]
+    },
+    "src/business.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c7bd96ed55d1070942161d0e10d89370a20902cd",
+        "sha256": "8a7196b7ee8d705cd157e80d1ab1a09673169b8b5a24c65af42fa1d045daffc8",
+        "bytes": 52893
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "aca781b54ff0b503935120133eccf8651111f6ae",
+        "sha256": "ab21ead8eb57a92be0f23c3b68f2cf8e3babdae77ddda69bb64857f279a6f8ca",
+        "bytes": 52684
+      },
+      "inverses": [
+        {
+          "at": 769,
+          "current": "// `swap:buy` ledger (no new reason). Step-two scrutiny/raid/extortion risk is deferred by design.\nimport crypto from 'node:crypto';\nimport { GameError, assertStreetActor, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';\nimport { CONSTANTS, M3, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';\nimport { recordRival, revengeOwed } from './rivals.js';\nimport { bumpHonor } from './honor.js';\nimport { denAvailable, denDistribute } from './casino.js';\nimport { spendOmr } from './vanity.js';\nimport { checkpointCasinoRakeback, casinoRakebackClaim } from './casinorakeback.js';\n\nconst uid = () => crypto.randomUUID();\nconst rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));\n",
+          "baseline": "// `swap:buy` ledger (no new reason). Step-two scrutiny/raid/extortion risk is deferred by design.\nimport crypto from 'node:crypto';\nimport { GameError, assertStreetActor, bus, skillMult, trunkCap, bumpMastery, masteryFx } from './game.js';\nimport { CONSTANTS, M3, CASINO, BUSINESSES, SKILLS, BUSINESS_EMPIRE, RIVALS, POPULATION, businessOf, businessTierOf, businessMaxTier, businessAssessedValue, launderRankOf, levelOf, effStat, pathFx, isMade, jailed, hospitalized, safeHoused, usd, art , coolLeft, coolWait } from './rules.js';\nimport { recordRival, revengeOwed } from './rivals.js';\nimport { bumpHonor } from './honor.js';\nimport { denAvailable, denDistribute } from './casino.js';\nimport { spendOmr } from './vanity.js';\n\nconst uid = () => crypto.randomUUID();\nconst rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));\n"
+        },
+        {
+          "at": 2083,
+          "current": "  return Math.floor(tier.incomePerHr * Math.max(0, elapsed) / 3600000);\n}\n\nasync function creditFrontIncome(ch, raw, client, h) {\n  const income = Math.floor(raw * pathFx(ch, 'frontIncome'));\n  if (income > 0) {\n    ch.cash = Number(ch.cash) + income;\n    await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: income, reason: 'business:income' });\n    await client.query('UPDATE account_persistent SET tycoon_earned = tycoon_earned + $1 WHERE account_id=$2', [income, ch.account_id]);\n  }\n  return income;\n}\n\n// STEP TWO of THE STREET WAR (residents-as-marks): a RESIDENT runs a SLEEPY joint — its effective\n// income is FRONT_INCOME_BPS of the catalog curve. Applied wherever a resident front's pending is\n// REALIZED (rob/shakedown here, the heist inside job) — residents never collect, so this scale IS\n",
+          "baseline": "  return Math.floor(tier.incomePerHr * Math.max(0, elapsed) / 3600000);\n}\n\n// STEP TWO of THE STREET WAR (residents-as-marks): a RESIDENT runs a SLEEPY joint — its effective\n// income is FRONT_INCOME_BPS of the catalog curve. Applied wherever a resident front's pending is\n// REALIZED (rob/shakedown here, the heist inside job) — residents never collect, so this scale IS\n"
+        },
+        {
+          "at": 12861,
+          "current": "  if (Number(ch.cash) < tier.cost) throw new GameError('cash', `${art(cat.name, 'The')} costs ${usd(tier.cost)} to set up.`);\n  ch.cash = Number(ch.cash) - tier.cost;\n  const id = uid();\n  // Den rakeback (casino kind): the cursor starts at TODAY's den volume — a new owner earns\n  // against future action, not history. Checkpoint BEFORE the owner count changes.\n  const rake = kind === 'casino' ? await checkpointCasinoRakeback(client) : null;\n  await client.query('INSERT INTO businesses (id, character_id, kind, tier) VALUES ($1,$2,$3,1)', [id, ch.id, kind]);\n  if (kind === 'casino') {\n    await client.query('UPDATE businesses SET rake_cursor=$2, rake_index_cursor=$3 WHERE id=$1', [id, rake.volume, rake.index]);\n  }\n  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -tier.cost, reason: 'business:buy' });\n  h.owned.businesses = await businessesOf(client, ch.id); // keep the returned view fresh\n",
+          "baseline": "  if (Number(ch.cash) < tier.cost) throw new GameError('cash', `${art(cat.name, 'The')} costs ${usd(tier.cost)} to set up.`);\n  ch.cash = Number(ch.cash) - tier.cost;\n  const id = uid();\n  await client.query('INSERT INTO businesses (id, character_id, kind, tier) VALUES ($1,$2,$3,1)', [id, ch.id, kind]);\n  // Den rakeback (casino kind): the cursor starts at TODAY's den volume — a new owner earns\n  // against future action, not history\n  if (kind === 'casino') {\n    const vol = (await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0];\n    await client.query('UPDATE businesses SET rake_cursor=$2 WHERE id=$1', [id, Number(vol?.total || 0)]);\n  }\n  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -tier.cost, reason: 'business:buy' });\n  h.owned.businesses = await businessesOf(client, ch.id); // keep the returned view fresh\n"
+        },
+        {
+          "at": 15852,
+          "current": "      // Ledger's +10% is the collector's edge, not more business on the books)\n      await addIncomeScrutiny(r, inc, client);\n    }\n    // Den rakeback follows the owner count at earning time, even when owners join or leave before\n    // collection. A raided casino skips this collection, as before.\n    if (r.kind === 'casino') {\n      const rake = await checkpointCasinoRakeback(client);\n      const { amount: share, paidCursor } = casinoRakebackClaim(r, rake);\n      // econ pass (mint-on-top fix): rakeback pays only out of the den's REALIZED profit net of open\n      // liabilities — all-or-nothing per collect: when the house is under water the cursor doesn't\n      // advance, so the owner's claim simply waits for the book to recover (nothing is forfeited).\n      if (share > 0 && (await denAvailable(client)) >= share) {\n        rakeback += share;\n        await denDistribute(client, share);\n        await client.query('UPDATE businesses SET rake_cursor=$2, rake_index_cursor=$3 WHERE id=$1', [r.id, rake.volume, paidCursor]);\n      }\n    }\n  }\n",
+          "baseline": "      // Ledger's +10% is the collector's edge, not more business on the books)\n      await addIncomeScrutiny(r, inc, client);\n    }\n    // Den RAKEBACK (casino kind): owners split RAKEBACK_BPS of the den's stake volume since their\n    // cursor — the split is by the CURRENT owner count, so total rakeback per unit of volume is\n    // bounded by RAKEBACK_BPS however many fronts exist. A raided casino forfeits with the rest.\n    if (r.kind === 'casino') {\n      const vol = Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);\n      const owners = Number((await client.query(\"SELECT COUNT(*) n FROM businesses WHERE kind='casino'\")).rows[0].n) || 1;\n      const share = Math.floor(Math.max(0, vol - Number(r.rake_cursor)) * (CASINO.RAKEBACK_BPS || 0) / 10000 / owners);\n      // econ pass (mint-on-top fix): rakeback pays only out of the den's REALIZED profit net of open\n      // liabilities — all-or-nothing per collect: when the house is under water the cursor doesn't\n      // advance, so the owner's claim simply waits for the book to recover (nothing is forfeited).\n      if (share > 0 && (await denAvailable(client)) >= share) {\n        rakeback += share;\n        await denDistribute(client, share);\n        await client.query('UPDATE businesses SET rake_cursor=$2 WHERE id=$1', [r.id, vol]);\n      }\n    }\n  }\n"
+        },
+        {
+          "at": 16926,
+          "current": "    // PATHS v2 — the Ledger's \"+10% front income\" was ADVERTISED since M4 and never implemented\n    // (the migration-sweep map finding); now real. Flagged in BALANCE.md: a ~10% widen of the\n    // L1a-flattened front curve for ONE path choice that also carries the soft-hands handicap.\n    // TYCOON fold-in (Tier-4): business income counts toward the account-level tycoon_earned legend\n    // (the comment gap the code never closed). Direct SQL, own account, OFF persistAccount → clobber-safe;\n    // this is on-demand collect income, distinct from ch._accruedIncome — no double-count.\n    total = await creditFrontIncome(ch, total, client, h);\n  }\n  if (rakeback > 0) {\n    ch.cash = Number(ch.cash) + rakeback;\n",
+          "baseline": "    // PATHS v2 — the Ledger's \"+10% front income\" was ADVERTISED since M4 and never implemented\n    // (the migration-sweep map finding); now real. Flagged in BALANCE.md: a ~10% widen of the\n    // L1a-flattened front curve for ONE path choice that also carries the soft-hands handicap.\n    total = Math.floor(total * pathFx(ch, 'frontIncome'));\n    ch.cash = Number(ch.cash) + total;\n    await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: total, reason: 'business:income' });\n    // TYCOON fold-in (Tier-4): business income counts toward the account-level tycoon_earned legend\n    // (the comment gap the code never closed). Direct SQL, own account, OFF persistAccount → clobber-safe;\n    // this is on-demand collect income, distinct from ch._accruedIncome — no double-count.\n    await client.query('UPDATE account_persistent SET tycoon_earned = tycoon_earned + $1 WHERE account_id=$2', [total, ch.account_id]);\n  }\n  if (rakeback > 0) {\n    ch.cash = Number(ch.cash) + rakeback;\n"
+        },
+        {
+          "at": 23294,
+          "current": "  if (jailed(ch)) throw new GameError('jailed', \"You can't close up from a cell.\");\n  const r = (await client.query('SELECT * FROM businesses WHERE id=$1 AND character_id=$2 FOR UPDATE', [businessId, ch.id])).rows[0];\n  if (!r) throw new GameError('not_yours', \"That's not your business.\");\n  if (r.kind === 'casino') await checkpointCasinoRakeback(client);\n  const back = Math.floor(businessAssessedValue(r.kind, r.tier) * (CONSTANTS.BUSINESS_SHUTTER_BPS / 10000));\n  if (back > 0) {\n    ch.cash = Number(ch.cash) + back;\n",
+          "baseline": "  if (jailed(ch)) throw new GameError('jailed', \"You can't close up from a cell.\");\n  const r = (await client.query('SELECT * FROM businesses WHERE id=$1 AND character_id=$2 FOR UPDATE', [businessId, ch.id])).rows[0];\n  if (!r) throw new GameError('not_yours', \"That's not your business.\");\n  const back = Math.floor(businessAssessedValue(r.kind, r.tier) * (CONSTANTS.BUSINESS_SHUTTER_BPS / 10000));\n  if (back > 0) {\n    ch.cash = Number(ch.cash) + back;\n"
+        },
+        {
+          "at": 25188,
+          "current": "  if (!next) throw new GameError('maxed', `Your ${cat.name} already runs at full strength.`);\n  if (isCold(r)) throw new GameError('cold', `${art(cat.name, 'The')} is dark — pay the pad before you pour money into it.`);\n  const raid = await resolveScrutiny(ch, r, client, h); // a raid seizes the pending before it banks\n  const rawPending = raid.raided ? 0 : accrued(r);\n  const pending = Math.floor(rawPending * pathFx(ch, 'frontIncome'));\n  if (Number(ch.cash) + pending < next.cost) throw new GameError('cash', `Upgrading ${art(cat.name)} costs ${usd(next.cost)}.`);\n  // bank the pending at the old rate, then debit the upgrade — net in one cash figure. The upgrade\n  // also squares the pad (upkeep_at=now): a fresh clock at the new rate, no retroactive rate bump.\n  await creditFrontIncome(ch, rawPending, client, h);\n  ch.cash = Number(ch.cash) - next.cost;\n  // the banked pending draws the same income heat a collect does (r still carries the OLD tier in\n  // memory, which is the rate the pending accrued at — the right normalization)\n  if (rawPending > 0) await addIncomeScrutiny(r, rawPending, client);\n  await client.query('UPDATE businesses SET tier=$2, last_collect_at=now(), upkeep_at=now() WHERE id=$1', [businessId, next.tier]);\n  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -next.cost, reason: 'business:upgrade' });\n  h.owned.businesses = await businessesOf(client, ch.id);\n  // FOUND BY PLAYING: this reply carried neither the price nor the consequence, so a $600,000\n",
+          "baseline": "  if (!next) throw new GameError('maxed', `Your ${cat.name} already runs at full strength.`);\n  if (isCold(r)) throw new GameError('cold', `${art(cat.name, 'The')} is dark — pay the pad before you pour money into it.`);\n  const raid = await resolveScrutiny(ch, r, client, h); // a raid seizes the pending before it banks\n  const pending = raid.raided ? 0 : accrued(r);\n  if (Number(ch.cash) + pending < next.cost) throw new GameError('cash', `Upgrading ${art(cat.name)} costs ${usd(next.cost)}.`);\n  // bank the pending at the old rate, then debit the upgrade — net in one cash figure. The upgrade\n  // also squares the pad (upkeep_at=now): a fresh clock at the new rate, no retroactive rate bump.\n  ch.cash = Number(ch.cash) + pending - next.cost;\n  // the banked pending draws the same income heat a collect does (r still carries the OLD tier in\n  // memory, which is the rate the pending accrued at — the right normalization)\n  if (pending > 0) await addIncomeScrutiny(r, pending, client);\n  await client.query('UPDATE businesses SET tier=$2, last_collect_at=now(), upkeep_at=now() WHERE id=$1', [businessId, next.tier]);\n  if (pending > 0) await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: pending, reason: 'business:income' });\n  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -next.cost, reason: 'business:upgrade' });\n  h.owned.businesses = await businessesOf(client, ch.id);\n  // FOUND BY PLAYING: this reply carried neither the price nor the consequence, so a $600,000\n"
+        },
+        {
+          "at": 40408,
+          "current": "// reset ALL mutable front state on a change of hands — a seized/bought front is never born hot/cold/\n// pending-full/specialized (the speakeasy resetClubToNewOwner precedent). takeover_cd_until is set by the\n// caller BEFORE this (win OR lose) and is deliberately NOT reset here so it survives the handover.\nasync function resetFrontToNewOwner(client, businessId, newOwnerId, kind) {\n  // (red-team) Den rakeback: the cursor moves to TODAY's volume on a change of hands — the SAME rule\n  // buyBusiness states (\"a new owner earns against future action, not history\"). Leaving it at 0 handed\n  // the new owner a claim on the ENTIRE lifetime den volume: not a mint (denAvailable caps every payout\n  // at realized profit) but a queue-jump that drains the shared, profit-bounded rakeback pool at the\n  // expense of every honest casino-front owner, whose claims then wait for the book to recover.\n  const rake = kind === 'casino' ? await checkpointCasinoRakeback(client) : null;\n  const vol = rake?.volume ?? Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);\n  await client.query(\n    `UPDATE businesses SET character_id=$2, tier=tier, spec=NULL, spec_at=NULL, scrutiny=0, scrutiny_at=now(),\n       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3, rake_index_cursor=$4\n     WHERE id=$1`, [businessId, newOwnerId, vol, rake?.index ?? null]);\n}\n\n// ── Tier-4: THE HOSTILE TAKEOVER — the speakeasy-standover twin, applied to fronts (they change hands,\n",
+          "baseline": "// reset ALL mutable front state on a change of hands — a seized/bought front is never born hot/cold/\n// pending-full/specialized (the speakeasy resetClubToNewOwner precedent). takeover_cd_until is set by the\n// caller BEFORE this (win OR lose) and is deliberately NOT reset here so it survives the handover.\nasync function resetFrontToNewOwner(client, businessId, newOwnerId) {\n  // (red-team) Den rakeback: the cursor moves to TODAY's volume on a change of hands — the SAME rule\n  // buyBusiness states (\"a new owner earns against future action, not history\"). Leaving it at 0 handed\n  // the new owner a claim on the ENTIRE lifetime den volume: not a mint (denAvailable caps every payout\n  // at realized profit) but a queue-jump that drains the shared, profit-bounded rakeback pool at the\n  // expense of every honest casino-front owner, whose claims then wait for the book to recover.\n  const vol = Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);\n  await client.query(\n    `UPDATE businesses SET character_id=$2, tier=tier, spec=NULL, spec_at=NULL, scrutiny=0, scrutiny_at=now(),\n       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3\n     WHERE id=$1`, [businessId, newOwnerId, vol]);\n}\n\n// ── Tier-4: THE HOSTILE TAKEOVER — the speakeasy-standover twin, applied to fronts (they change hands,\n"
+        },
+        {
+          "at": 46230,
+          "current": "  owner.cash = Number(owner.cash) + net;\n  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -price, reason: 'business:buyout', counterparty: owner.id });\n  await h.ledger(client, { characterId: owner.id, currency: 'cash', amount: net, reason: 'business:buyout', counterparty: ch.id });\n  await resetFrontToNewOwner(client, businessId, ch.id, r.kind); // fresh: scrutiny 0, spec cleared, clocks reset\n  await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]); // singleton LAST (canonical order)\n  h.owned.businesses = await businessesOf(client, ch.id);\n  await h.notify(client, owner.id, 'takeover', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, net });\n",
+          "baseline": "  owner.cash = Number(owner.cash) + net;\n  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -price, reason: 'business:buyout', counterparty: owner.id });\n  await h.ledger(client, { characterId: owner.id, currency: 'cash', amount: net, reason: 'business:buyout', counterparty: ch.id });\n  await resetFrontToNewOwner(client, businessId, ch.id); // fresh: scrutiny 0, spec cleared, clocks reset\n  await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]); // singleton LAST (canonical order)\n  h.owned.businesses = await businessesOf(client, ch.id);\n  await h.notify(client, owner.id, 'takeover', { from: ch.name, kind: r.kind, kindName: businessOf(r.kind)?.name || r.kind, net });\n"
         }
       ]
     },
@@ -373,6 +615,27 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 11535,
           "current": "\n  // Flat read, JS aggregation (pg-mem). Windowed, so this scales with activity not with history.\n  const rows = (await pool.query(\n    \"SELECT account_id, event, props, at FROM telemetry WHERE at >= $1 AND event <> 'website_count' LIMIT $2\", [since, MAX_ROWS])).rows;\n\n  const perSystem = new Map();          // system -> {accounts:Set, events:n, last:Date}\n  const agentActions = new Map();       // action kind -> {events, recommended}\n",
           "baseline": "\n  // Flat read, JS aggregation (pg-mem). Windowed, so this scales with activity not with history.\n  const rows = (await pool.query(\n    'SELECT account_id, event, props, at FROM telemetry WHERE at >= $1 LIMIT $2', [since, MAX_ROWS])).rows;\n\n  const perSystem = new Map();          // system -> {accounts:Set, events:n, last:Date}\n  const agentActions = new Map();       // action kind -> {events, recommended}\n"
+        }
+      ]
+    },
+    "src/firstblood.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c838542b5bbe8968c9d777329a8d584558358c05",
+        "sha256": "8ab27498da2f54dd9ec755e7ce8089426a1f919094dd5c788df6407e302c3975",
+        "bytes": 6186
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "7568de7f861f2453c4f163507b0f314e8a10689d",
+        "sha256": "33be4793e498cec80ef115fb5667389251819e5295b44f5fbd8b8ebfe52912be",
+        "bytes": 6163
+      },
+      "inverses": [
+        {
+          "at": 3585,
+          "current": "    // non-uuid seed (never a production account); nothing partial has committed yet.\n    if (!UUID_RE.test(me.account_id) || !UUID_RE.test(rival.account_id)) { await client.query('ROLLBACK'); return null; }\n    // the rival \"makes a move\" — a rival_events row (aggressor = the resident) so it surfaces on the\n    // nemesis card + the rivals ledger exactly like a real player's move. The intelligence roster\n    // projects this assigned identity for the player only; the callout grants no current sighting.\n    await client.query(\n      'INSERT INTO rival_events (id, victim_account, aggressor_account, kind, detail) VALUES ($1,$2,$3,$4,$5)',\n      [uid(), me.account_id, rival.account_id, 'callout', JSON.stringify({ firstBlood: true })]);\n",
+          "baseline": "    // non-uuid seed (never a production account); nothing partial has committed yet.\n    if (!UUID_RE.test(me.account_id) || !UUID_RE.test(rival.account_id)) { await client.query('ROLLBACK'); return null; }\n    // the rival \"makes a move\" — a rival_events row (aggressor = the resident) so it surfaces on the\n    // nemesis card + the rivals ledger exactly like a real player's move; the info-economy rule holds\n    // because the streets already show everyone who is in the district.\n    await client.query(\n      'INSERT INTO rival_events (id, victim_account, aggressor_account, kind, detail) VALUES ($1,$2,$3,$4,$5)',\n      [uid(), me.account_id, rival.account_id, 'callout', JSON.stringify({ firstBlood: true })]);\n"
         }
       ]
     },
@@ -428,6 +691,84 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "src/playerintel.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "0716e814086186744986f15ebe2b7df166b69571",
+        "sha256": "2ab3b8c1d3c95112f1bcc9c11655d8442a2490cee65386a082301aebb4fc1cd3",
+        "bytes": 11291
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "8a12f5ebaff1ffe4763a47054d069ea34c2665cb",
+        "sha256": "2bc94b95470582fe042510905df825a027ff73454d658ac6f5abceb9b2709662",
+        "bytes": 10627
+      },
+      "inverses": [
+        {
+          "at": 5851,
+          "current": "\nexport async function playerIntelBoard(q, ch) {\n  const known = await playerIntelMap(q, ch.account_id);\n  // The first-score callout introduces this exact resident to its assigned player. It is not a\n  // sighting: keep the roster actionable without revealing location, level, or the resident's heir.\n  // Projecting the active assignment also repairs beats created before the intelligence board.\n  if (Number(ch.aha_stage) === 1 && ch.aha_rival && !known.has(ch.aha_rival)) {\n    const rival = (await q.query(\n      'SELECT id, name FROM characters WHERE id=$1 AND is_npc AND alive', [ch.aha_rival],\n    )).rows[0];\n    if (rival) known.set(rival.id, { id: rival.id, name: ch.aha_rival_name || rival.name,\n      npc: true, source: 'callout', sourceName: null });\n  }\n  const represented = new Set((await q.query(\n    `SELECT c.account_id FROM player_intel i JOIN characters c ON c.id=i.target_character\n      WHERE i.owner_account=$1`, [ch.account_id])).rows.map((row) => row.account_id));\n",
+          "baseline": "\nexport async function playerIntelBoard(q, ch) {\n  const known = await playerIntelMap(q, ch.account_id);\n  const represented = new Set((await q.query(\n    `SELECT c.account_id FROM player_intel i JOIN characters c ON c.id=i.target_character\n      WHERE i.owner_account=$1`, [ch.account_id])).rows.map((row) => row.account_id));\n"
+        }
+      ]
+    },
+    "src/population.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2e993fa6bc2c0339f60642463803ea72b5573d84",
+        "sha256": "4671510bf6b150b317839210a30ec452caf2a14ee83e292e0829fe37d64a068e",
+        "bytes": 57515
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "81e66e10d3d575f58fe62f486bfed307a7a71328",
+        "sha256": "86ea4b0d0b1b21869860f8d25065ad8800ef691c3ba8be461a4debbce55a9421",
+        "bytes": 57104
+      },
+      "inverses": [
+        {
+          "at": 2152,
+          "current": "import { residentEnterStakes } from './stable.js';\nimport { consumeGoodsLiquidity } from './goodsmarket.js';\nimport { goodsBuyQuote } from './goodsquote.js';\nimport { checkpointCasinoRakeback, checkpointCasinoOwnerRemoval } from './casinorakeback.js';\n// NPC FAMILIES: founding and joining run through the AUDITED player path, not a copy of it — the\n// name/tag validation, the uniqueness clash check, the ledgered `gang:found` sink, the FOR UPDATE\n// on the gang row and the GANG_MAX_MEMBERS count invariant are all the same code a player runs.\n",
+          "baseline": "import { residentEnterStakes } from './stable.js';\nimport { consumeGoodsLiquidity } from './goodsmarket.js';\nimport { goodsBuyQuote } from './goodsquote.js';\n// NPC FAMILIES: founding and joining run through the AUDITED player path, not a copy of it — the\n// name/tag validation, the uniqueness clash check, the ledgered `gang:found` sink, the FOR UPDATE\n// on the gang row and the GANG_MAX_MEMBERS count invariant are all the same code a player runs.\n"
+        },
+        {
+          "at": 9564,
+          "current": "  }\n  if (wants('front') && M.FRONTS[band.id]) {\n    const [kind, tier] = M.FRONTS[band.id];\n    const rake = kind === 'casino' ? await checkpointCasinoRakeback(client) : null;\n    const frontId = uid();\n    await client.query('INSERT INTO businesses (id, character_id, kind, tier) VALUES ($1,$2,$3,$4)',\n      [frontId, charId, kind, tier]);\n    if (rake) await client.query('UPDATE businesses SET rake_cursor=$2, rake_index_cursor=$3 WHERE id=$1',\n      [frontId, rake.volume, rake.index]);\n  }\n  if (wants('boat')) {\n    const rrRoll = Math.random();\n",
+          "baseline": "  }\n  if (wants('front') && M.FRONTS[band.id]) {\n    const [kind, tier] = M.FRONTS[band.id];\n    await client.query('INSERT INTO businesses (id, character_id, kind, tier) VALUES ($1,$2,$3,$4)',\n      [uid(), charId, kind, tier]);\n  }\n  if (wants('boat')) {\n    const rrRoll = Math.random();\n"
+        },
+        {
+          "at": 12305,
+          "current": "  const c = (await client.query(\n    'SELECT id, account_id, cash, bank FROM characters WHERE id=$1 AND alive AND is_npc FOR UPDATE', [charId])).rows[0];\n  if (!c) return null;\n  await checkpointCasinoOwnerRemoval(client, charId);\n\n  // STEP TWO: pull their escrows back in FIRST. A retiring resident with a live loan offer or buy\n  // order would otherwise leave it standing on the board forever with nobody behind it — a player\n",
+          "baseline": "  const c = (await client.query(\n    'SELECT id, account_id, cash, bank FROM characters WHERE id=$1 AND alive AND is_npc FOR UPDATE', [charId])).rows[0];\n  if (!c) return null;\n\n  // STEP TWO: pull their escrows back in FIRST. A retiring resident with a live loan offer or buy\n  // order would otherwise leave it standing on the board forever with nobody behind it — a player\n"
+        }
+      ]
+    },
+    "src/ratelimit.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "08c87567ed0386fc04f5f99e3e53792eaa0bb527",
+        "sha256": "bce10b7fef1c8ef2718a205758cb14b3475543d2c09070fa2af3875ef499b17c",
+        "bytes": 7230
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "02dd02bc4728301adf91bb30114d72f880d72559",
+        "sha256": "a430d7231b81f9dfb28ab6858d8175a0a258d735ac736077eb1fcb86a8dffd08",
+        "bytes": 7163
+      },
+      "inverses": [
+        {
+          "at": 5828,
+          "current": "}\n\n// Returns null when allowed, else {retryAfter} seconds.\nexport async function checkRateLimit({ accountId, agent, path, capoRecruits = 0, turnObservation = false }) {\n  const take = redis ? takeRedis : takeMemory;\n  const humanRate = Number(process.env.RATE_HUMAN_PER_SEC || 1);\n  const humanBurst = Number(process.env.RATE_HUMAN_BURST || 5);\n",
+          "baseline": "}\n\n// Returns null when allowed, else {retryAfter} seconds.\nexport async function checkRateLimit({ accountId, agent, path, capoRecruits = 0 }) {\n  const take = redis ? takeRedis : takeMemory;\n  const humanRate = Number(process.env.RATE_HUMAN_PER_SEC || 1);\n  const humanBurst = Number(process.env.RATE_HUMAN_BURST || 5);\n"
+        },
+        {
+          "at": 6374,
+          "current": "  // ring by construction. No license → the §10.2 hard 1/3s stands exactly as before.\n  const agentRate = agent ? (capoPerksOf(capoRecruits).rate || AGENT_RATE) : null;\n  const main = agent\n    ? await take(turnObservation ? `a:turn:${accountId}` : `a:${accountId}`, agentRate, AGENT_BURST)\n    : await take(`h:${accountId}`, humanRate, humanBurst);\n  if (!main.ok) return { retryAfter: main.retryAfter };\n  // the swap bucket covers EVERY route that drives the AMM curve — business laundering rides the\n",
+          "baseline": "  // ring by construction. No license → the §10.2 hard 1/3s stands exactly as before.\n  const agentRate = agent ? (capoPerksOf(capoRecruits).rate || AGENT_RATE) : null;\n  const main = agent\n    ? await take(`a:${accountId}`, agentRate, AGENT_BURST)\n    : await take(`h:${accountId}`, humanRate, humanBurst);\n  if (!main.ok) return { retryAfter: main.retryAfter };\n  // the swap bucket covers EVERY route that drives the AMM curve — business laundering rides the\n"
+        }
+      ]
+    },
     "src/routes/gateway.js": {
       "current": {
         "mode": "100644",
@@ -452,9 +793,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "a51ed5d00160330ef84ace7fff0fc974a48b2610",
-        "sha256": "afb838815e7844773f365ffb99c9233b5536c35ddc4cbd19bf0b96281666525a",
-        "bytes": 311017
+        "blob": "70bb3fb7c534305ee3722de6dc1dd76abfe0d4f8",
+        "sha256": "d46f2a3b38cb72b286346508f2421ec7be622778284578fc44b1c87893b5ddea",
+        "bytes": 311553
       },
       "baseline": {
         "mode": "100644",
@@ -514,9 +855,71 @@ export const SITE_BASICS_SOURCE = freeze({
           "baseline": "  // robots.txt — every crawler (incl. all AI agents: GPTBot, ClaudeBot, Google-Extended, PerplexityBot,\n  // xAI/Grok, open-source fetchers) is explicitly WELCOME and pointed at the machine surfaces. Agents\n  // are first-class players here, so the default-allow is stated rather than implied by a 404.\n  app.get('/robots.txt', async (req, reply) => reply.type('text/plain; charset=utf-8').send(\n    ['# OMERTÀ — all crawlers and AI agents welcome. Agents are first-class players.',\n      '# Machine surfaces: /llms.txt (index) · /agents (agent guide) · /openapi.json (API contract) · /play (no-code setup)',\n      `# Start here: ${baseUrl}/llms.txt`,\n      'User-agent: *', 'Allow: /', `Sitemap: ${baseUrl}/sitemap.xml`].join('\\n') + '\\n'));\n  app.get('/sitemap.xml', async (req, reply) => reply.type('application/xml; charset=utf-8')\n    .header('cache-control', 'public, max-age=3600').send(\n      `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\\n`\n      + ['/', '/wiki', '/arena', '/play', '/agents'].map((path) => `  <url><loc>${baseUrl}${path}</loc></url>`).join('\\n')\n      + '\\n</urlset>\\n'));\n  // OpenAPI 3.1 of every mounted route — built once, after all routes register (deferred to first hit).\n  let openApiCache = null;\n  app.get('/openapi.json', async () => (openApiCache ||= buildOpenApi(routeRegistry, { baseUrl })));\n"
         },
         {
-          "at": 91789,
+          "at": 88167,
+          "current": "    // limiter below while still running withCharacter (FOR UPDATE + a held connection). Treat HEAD as a read.\n    if (rateLimitsEnabled() && a.agent_flag && (req.method === 'GET' || req.method === 'HEAD')) {\n      const limited = await checkRateLimit({ accountId: req.user.sub, agent: true, path: req.routeOptions?.url || req.url,\n        capoRecruits: effectiveCapoRecruits(a.capo_recruits, a.capo_recruits_at),\n        turnObservation: (req.routeOptions?.url || req.url) === '/v1/agent/turn' });\n      if (limited) return reply.code(429).header('retry-after', limited.retryAfter)\n        .send({ error: 'rate_limited', retryAfter: limited.retryAfter });\n    }\n",
+          "baseline": "    // limiter below while still running withCharacter (FOR UPDATE + a held connection). Treat HEAD as a read.\n    if (rateLimitsEnabled() && a.agent_flag && (req.method === 'GET' || req.method === 'HEAD')) {\n      const limited = await checkRateLimit({ accountId: req.user.sub, agent: true, path: req.routeOptions?.url || req.url,\n        capoRecruits: effectiveCapoRecruits(a.capo_recruits, a.capo_recruits_at) });\n      if (limited) return reply.code(429).header('retry-after', limited.retryAfter)\n        .send({ error: 'rate_limited', retryAfter: limited.retryAfter });\n    }\n"
+        },
+        {
+          "at": 91871,
           "current": "      && routeRegistry.some((route) => route.method === req.method\n        && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);\n  });\n  registerSiteAnalytics(app, { pool, modAuth, baseUrl });\n  registerRwa(app, {\n    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,\n  });\n",
           "baseline": "      && routeRegistry.some((route) => route.method === req.method\n        && route.url === req.routeOptions.url && route.authKind === 'modAuth')) await modAuth(req, reply);\n  });\n  registerRwa(app, {\n    pool, auth, modAuth, withCharacter: G.withCharacter, reviewerRouteTrust: rwaReviewerRouteTrust,\n  });\n"
+        },
+        {
+          "at": 113688,
+          "current": "    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/auth/agent', async (req) => {\n    requireAge(app, req, { agent: true });\n    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(\n      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,\n    );\n    // Recovery remains usable until the returned bearer has been saved durably.\n    return { token: await signFor(accountId, { agent: true }, '90d', tokenVersion), agent: true };\n  });\n  app.post('/v1/access/redeem', async (req, reply) => {\n    // The browser persists this random recovery credential before submitting. A lost response can\n    // recover the same admission instead of burning another code or minting another identity.\n",
+          "baseline": "    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/access/redeem', async (req, reply) => {\n    // The browser persists this random recovery credential before submitting. A lost response can\n    // recover the same admission instead of burning another code or minting another identity.\n"
+        }
+      ]
+    },
+    "src/social/combat.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "e6125045b02fb1d575578da71e505d9f8905b7eb",
+        "sha256": "56eb560f1c6e10892fd8ae13082906da7c6b30a4e8550b9793336e7615202cbb",
+        "bytes": 87212
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "775b1b3c39fe9a948b8075e0e67b42ef052f14ff",
+        "sha256": "7732eda2646bf2cac1a1bcf2632fd097ad7077cd22d3deba3bbd9eba8abf593c",
+        "bytes": 87001
+      },
+      "inverses": [
+        {
+          "at": 1921,
+          "current": "import { withItemTransaction } from '../items.js';\nimport { prelockEquipmentRentalDeathActors } from '../equipmentrentals.js';\nimport { hospitalized, isWanted, jailed, now, rand, safeHoused, warActive } from './shared.js';\nimport { checkpointCasinoRakeback } from '../casinorakeback.js';\n\n// ═══════════════════ JUMPS (§7.6) ═══════════════════\nexport async function jump(ch, victim, client, h, intent) {\n",
+          "baseline": "import { withItemTransaction } from '../items.js';\nimport { prelockEquipmentRentalDeathActors } from '../equipmentrentals.js';\nimport { hospitalized, isWanted, jailed, now, rand, safeHoused, warActive } from './shared.js';\n\n// ═══════════════════ JUMPS (§7.6) ═══════════════════\nexport async function jump(ch, victim, client, h, intent) {\n"
+        },
+        {
+          "at": 20288,
+          "current": "  // (red-team) rake_cursor moves to TODAY's den volume, NOT 0 — the buyBusiness rule (\"a new owner earns\n  // against future action, not history\"); a 0 cursor let a killer claim rakeback on the ENTIRE lifetime\n  // den volume, draining the shared profit-capped pool ahead of every honest casino-front owner.\n  const rake = best.kind === 'casino' ? await checkpointCasinoRakeback(client) : null;\n  const denVol = rake?.volume ?? Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);\n  await client.query(\n    `UPDATE businesses SET character_id=$2, spec=NULL, spec_at=NULL, scrutiny=0, scrutiny_at=now(),\n       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3, rake_index_cursor=$4\n     WHERE id=$1`, [best.id, ch.id, denVol, rake?.index ?? null]);\n  // keep the victim's loaded fronts honest so the estate report doesn't double-count the seized one\n  if (h.victimOwned?.businesses) h.victimOwned.businesses = h.victimOwned.businesses.filter((b) => b.id !== best.id);\n  return { kind: best.kind, tier: best.tier, name: best.name };\n",
+          "baseline": "  // (red-team) rake_cursor moves to TODAY's den volume, NOT 0 — the buyBusiness rule (\"a new owner earns\n  // against future action, not history\"); a 0 cursor let a killer claim rakeback on the ENTIRE lifetime\n  // den volume, draining the shared profit-capped pool ahead of every honest casino-front owner.\n  const denVol = Number((await client.query('SELECT total FROM den_volume WHERE id=1')).rows[0]?.total || 0);\n  await client.query(\n    `UPDATE businesses SET character_id=$2, spec=NULL, spec_at=NULL, scrutiny=0, scrutiny_at=now(),\n       last_collect_at=now(), launder_used=0, launder_at=now(), upkeep_at=now(), shakedown_at=NULL, rake_cursor=$3\n     WHERE id=$1`, [best.id, ch.id, denVol]);\n  // keep the victim's loaded fronts honest so the estate report doesn't double-count the seized one\n  if (h.victimOwned?.businesses) h.victimOwned.businesses = h.victimOwned.businesses.filter((b) => b.id !== best.id);\n  return { kind: best.kind, tier: best.tier, name: best.name };\n"
+        }
+      ]
+    },
+    "src/social/estate.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2d5ce2adc9d5039bbeb8ab1b168b5411ccb32c66",
+        "sha256": "c2387d76fe958bb1ef0e7571c176b3773a68694089adff649d1a121b869453fb",
+        "bytes": 61458
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c988e5fed83be712c81aaffeacae97a68648df45",
+        "sha256": "5f9634aa6cb6ff046e689bf34c6e6e7e585fa4073af00609bb96c2aaac592d17",
+        "bytes": 61144
+      },
+      "inverses": [
+        {
+          "at": 1187,
+          "current": "// Split out of the 2,003-line src/social.js; every function below is byte-identical to what was\n// there. Import from '../social.js' — it re-exports this package's public surface unchanged.\nimport { GameError, bus, ledger, notify, npcTier, bumpStanding } from '../game.js';\nimport { checkpointCasinoOwnerRemoval } from '../casinorakeback.js';\nimport { rememberedSkills } from '../skills.js';\nimport { M3, LOAN, levelOf, dayOf, VENDETTA, feudTierOf, UNDERWORLD, LAW, MASTERY, estateTierOf, HONOR, seasonModOf, cornerTasksOf, CORNER } from '../rules.js';\nimport { abandonRaidsAtDeath } from '../world.js';\n",
+          "baseline": "// Split out of the 2,003-line src/social.js; every function below is byte-identical to what was\n// there. Import from '../social.js' — it re-exports this package's public surface unchanged.\nimport { GameError, bus, ledger, notify, npcTier, bumpStanding } from '../game.js';\nimport { rememberedSkills } from '../skills.js';\nimport { M3, LOAN, levelOf, dayOf, VENDETTA, feudTierOf, UNDERWORLD, LAW, MASTERY, estateTierOf, HONOR, seasonModOf, cornerTasksOf, CORNER } from '../rules.js';\nimport { abandonRaidsAtDeath } from '../world.js';\n"
+        },
+        {
+          "at": 13335,
+          "current": "}\n\nexport async function runEstate(client, h, victim, killerName, opts = {}) {\n  // Settle the owner's earning interval before their fronts disappear; surviving owners keep\n  // their historical shares. Character locks are already held, before shared singleton work.\n  await checkpointCasinoOwnerRemoval(client, victim.id);\n  assertItemTransaction(client);\n  await assertEquipmentRentalDeathScope(client, victim.id, h.rentalDeathScope);\n  const originalVictim = (await client.query('SELECT account_id,alive,generation FROM characters WHERE id=$1', [victim.id])).rows[0];\n",
+          "baseline": "}\n\nexport async function runEstate(client, h, victim, killerName, opts = {}) {\n  assertItemTransaction(client);\n  await assertEquipmentRentalDeathScope(client, victim.id, h.rentalDeathScope);\n  const originalVictim = (await client.query('SELECT account_id,alive,generation FROM characters WHERE id=$1', [victim.id])).rows[0];\n"
         }
       ]
     },
@@ -544,9 +947,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "test/age-eligibility-source-compatibility.js": {
       "current": {
         "mode": "100644",
-        "blob": "c93fc60c295119cda04a8943844c9503f0f0598b",
-        "sha256": "f5726915eec202962572471e229847a7078755e33ab5b582685bba908d3a8d4e",
-        "bytes": 11190
+        "blob": "ca27667802463efddcd397aba2f1ca3088e8bcb1",
+        "sha256": "c01a42ebabd00aa091387387a00fcaf6f6c84eda8036b47d25fce237c61e9a89",
+        "bytes": 11396
       },
       "baseline": {
         "mode": "100644",
@@ -564,6 +967,124 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 5287,
           "current": "  actualInputs.set(file, actual);\n  const physical = qualifyPhysical(actual);\n  assert.equal(comparisonInput(file, physical).replaceAll('\\r\\n', '\\n'), current, 'Physical merged age policy remains exact: ' + file);\n  if (file === 'src/legal.js' || file === 'test/legal-security.js') {\n    const unreviewed = physical + '\\n// unreviewed policy change\\n';\n    assert.equal(comparisonInput(file, unreviewed), unreviewed, 'Unreviewed policy bytes cannot inherit a historical source view');\n    refusals++;\n  }\n  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));\n  assert.equal(pin.contextLines, 3); assert.equal(pin.currentSha256, sha(current)); assert.equal(pin.currentBlob, blob(current));\n  assert.equal(pin.currentBytes, Buffer.byteLength(current)); assert.equal(pin.baselineSha256, sha(baseline));\n",
           "baseline": "  actualInputs.set(file, actual);\n  const physical = qualifyPhysical(actual);\n  assert.equal(comparisonInput(file, physical).replaceAll('\\r\\n', '\\n'), current, 'Physical merged age policy remains exact: ' + file);\n  assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));\n  assert.equal(pin.contextLines, 3); assert.equal(pin.currentSha256, sha(current)); assert.equal(pin.currentBlob, blob(current));\n  assert.equal(pin.currentBytes, Buffer.byteLength(current)); assert.equal(pin.baselineSha256, sha(baseline));\n"
+        },
+        {
+          "at": 10494,
+          "current": "  assert.throws(() => qualifyPhysical({ ...server, ...patch })); actualReaderControls++;\n}\nassert.throws(() => comparisonInput(server.file, Buffer.from([0xc3, 0x28]))); actualReaderControls++;\nfor (const file of ['src/unknown.js']) {\n  const bytes = Buffer.from([0xff]); assert.strictEqual(comparisonInput(file, bytes), bytes); actualReaderControls++;\n}\nassert.throws(() => comparisonInput('src/age.js', Buffer.from([0xff])), error => error.code === 'ERR_ASSERTION'\n  && /Lossless UTF-8/.test(error.message) && /lossless UTF-8/.test(error.message)); actualReaderControls++;\nassert.equal(git('rev-parse', 'HEAD').trim(), actualRevision, 'Actual source revision must stay fixed throughout the proof');\nconsole.log(JSON.stringify({ phase, revision, files: files.length, positives, refusals, inverseHunks: hunks,\n  actualRevision, actualReaderControls, sourceOnly: true, runtime: false, native: false }));\n",
+          "baseline": "  assert.throws(() => qualifyPhysical({ ...server, ...patch })); actualReaderControls++;\n}\nassert.throws(() => comparisonInput(server.file, Buffer.from([0xc3, 0x28]))); actualReaderControls++;\nfor (const file of ['src/unknown.js', 'src/age.js']) {\n  const bytes = Buffer.from([0xff]); assert.strictEqual(comparisonInput(file, bytes), bytes); actualReaderControls++;\n}\nassert.equal(git('rev-parse', 'HEAD').trim(), actualRevision, 'Actual source revision must stay fixed throughout the proof');\nconsole.log(JSON.stringify({ phase, revision, files: files.length, positives, refusals, inverseHunks: hunks,\n  actualRevision, actualReaderControls, sourceOnly: true, runtime: false, native: false }));\n"
+        }
+      ]
+    },
+    "test/agent-alpha.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "84d219e4e07990795e1ae51870e9d0e2c513828e",
+        "sha256": "51b30a960a4edec2b7ecc01c3971bc5ca1c23b2c2379b751612d59e5f1728a45",
+        "bytes": 111273
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "3b091b32b682ccaf680f8074fb95d67551ef951b",
+        "sha256": "4e54d9feaa1fb48cf5e6a5b2674bcdc851f4f144c2cad3e3de3c678d6c0a9186",
+        "bytes": 105289
+      },
+      "inverses": [
+        {
+          "at": 10648,
+          "current": "      });\n      const heldFetch = async (...args) => {\n        const response = await fetch(...args);\n        if (new URL(args[0]).pathname === '/v1/auth/agent') {\n          process.send?.({ type: 'guest_committed' });\n          // Hold forever, and hold it HONESTLY. A bare never-settling promise is not a hang: the\n          // moment this child's event loop drains, Node detects the unsettled top-level await and\n",
+          "baseline": "      });\n      const heldFetch = async (...args) => {\n        const response = await fetch(...args);\n        if (new URL(args[0]).pathname === '/v1/auth/guest') {\n          process.send?.({ type: 'guest_committed' });\n          // Hold forever, and hold it HONESTLY. A bare never-settling promise is not a hang: the\n          // moment this child's event loop drains, Node detects the unsettled top-level await and\n"
+        },
+        {
+          "at": 13132,
+          "current": "    try { bootstrapState = JSON.parse(await readFile(sessionFile, 'utf8')); } catch { /* asserted below */ }\n    assert.equal(bootstrapState?.phase, 'bootstrap',\n      'the recovery identity is durable before the first guest request can return');\n    assert.equal(bootstrapState?.bootstrapKind, 'agent',\n      'new durable recovery state pins the agent bootstrap hash domain');\n    assert.equal(typeof bootstrapState?.bootstrapSecret === 'string' &&\n      bootstrapState.bootstrapSecret.length === 43, true,\n    'the durable bootstrap identity is a high-entropy 256-bit base64url credential');\n",
+          "baseline": "    try { bootstrapState = JSON.parse(await readFile(sessionFile, 'utf8')); } catch { /* asserted below */ }\n    assert.equal(bootstrapState?.phase, 'bootstrap',\n      'the recovery identity is durable before the first guest request can return');\n    assert.equal(typeof bootstrapState?.bootstrapSecret === 'string' &&\n      bootstrapState.bootstrapSecret.length === 43, true,\n    'the durable bootstrap identity is a high-entropy 256-bit base64url credential');\n"
+        },
+        {
+          "at": 26507,
+          "current": "  })), 'every credential-write boundary rejects a parent swap without exposing the new bearer');\n}\n\nasync function localApi({ legacyBootstrap = false } = {}) {\n  const app = Fastify({ logger: false });\n  const requests = [];\n  const state = {\n",
+          "baseline": "  })), 'every credential-write boundary rejects a parent swap without exposing the new bearer');\n}\n\nasync function localApi() {\n  const app = Fastify({ logger: false });\n  const requests = [];\n  const state = {\n"
+        },
+        {
+          "at": 27090,
+          "current": "      idempotencyKey: req.headers['idempotency-key'],\n    });\n  });\n  app.post(legacyBootstrap ? '/v1/auth/guest' : '/v1/auth/agent', async (req) => {\n    if (!legacyBootstrap) assert.equal('birthDate' in req.body, false,\n      'agent bootstrap does not invent a human birth date');\n    state.guestCalls += 1;\n    return { token: 'guest-token-secret' };\n  });\n",
+          "baseline": "      idempotencyKey: req.headers['idempotency-key'],\n    });\n  });\n  app.post('/v1/auth/guest', async () => {\n    state.guestCalls += 1;\n    return { token: 'guest-token-secret' };\n  });\n"
+        },
+        {
+          "at": 33214,
+          "current": "async function probeApi({ sessionStatus = 200 } = {}) {\n  const app = Fastify({ logger: false });\n  const state = { guestCalls: 0, sessionCalls: 0, turnCalls: 0, actCalls: 0 };\n  app.post('/v1/auth/agent', async () => {\n    state.guestCalls += 1;\n    return { token: 'replacement-token' };\n  });\n",
+          "baseline": "async function probeApi({ sessionStatus = 200 } = {}) {\n  const app = Fastify({ logger: false });\n  const state = { guestCalls: 0, sessionCalls: 0, turnCalls: 0, actCalls: 0 };\n  app.post('/v1/auth/guest', async () => {\n    state.guestCalls += 1;\n    return { token: 'replacement-token' };\n  });\n"
+        },
+        {
+          "at": 55608,
+          "current": "  }));\n  app.get('/v1/agent/turn', async () => {\n    state.turnCalls += 1;\n    return turn(state.actCalls);\n  });\n  app.post('/v1/agent/act', async (req, reply) => {\n    state.actCalls += 1;\n",
+          "baseline": "  }));\n  app.get('/v1/agent/turn', async () => {\n    state.turnCalls += 1;\n    return turn(0);\n  });\n  app.post('/v1/agent/act', async (req, reply) => {\n    state.actCalls += 1;\n"
+        },
+        {
+          "at": 60755,
+          "current": "    });\n    assert.equal(summary.actions, 1,\n      'a stale non-mutation does not consume the finite successful-action budget');\n    assert.equal(api.state.turnCalls, 2,\n      'the runner refreshes stale authority after cadence and report persistence');\n    assert.equal(api.state.actCalls, 2,\n      'the replacement recommendation executes once after the stale refusal');\n    assert.notEqual(api.state.actKeys[0], api.state.actKeys[1],\n",
+          "baseline": "    });\n    assert.equal(summary.actions, 1,\n      'a stale non-mutation does not consume the finite successful-action budget');\n    assert.equal(api.state.turnCalls, 1,\n      'the runner consumes the server-provided stale replacement without an extra turn read');\n    assert.equal(api.state.actCalls, 2,\n      'the replacement recommendation executes once after the stale refusal');\n    assert.notEqual(api.state.actKeys[0], api.state.actKeys[1],\n"
+        },
+        {
+          "at": 70455,
+          "current": "async function initialNameApi() {\n  const app = Fastify({ logger: false });\n  const state = { guestCalls: 0, characterCalls: 0, names: [], hasCharacter: false };\n  app.post('/v1/auth/agent', async () => {\n    state.guestCalls += 1;\n    return { token: 'guest-token-secret' };\n  });\n",
+          "baseline": "async function initialNameApi() {\n  const app = Fastify({ logger: false });\n  const state = { guestCalls: 0, characterCalls: 0, names: [], hasCharacter: false };\n  app.post('/v1/auth/guest', async () => {\n    state.guestCalls += 1;\n    return { token: 'guest-token-secret' };\n  });\n"
+        },
+        {
+          "at": 103910,
+          "current": "  }\n}\n\nasync function freshAuthorityAfterCadenceTest() {\n  const api = await actionApi({ kinds: ['crime', 'daily_claim'] });\n  await withReadySession(api, 'omerta-agent-alpha-fresh-authority-', async ({ sessionFile, reportFile }) => {\n    let issuedAt;\n    const ages = [];\n    const checkingFetch = async (url, options) => {\n      if (new URL(url).pathname === '/v1/agent/act') {\n        const body = JSON.parse(options.body);\n        const durable = JSON.parse(await readFile(sessionFile, 'utf8'));\n        assert.equal(durable.pending.turnId, body.turnId,\n          'the exact fresh turn is durable before sending its mutation');\n        assert.equal(durable.pending.actionId, body.actionId,\n          'freshness never bypasses the durable replay journal');\n        ages.push(performance.now() - issuedAt);\n        assert.ok(ages.at(-1) < 2500,\n          `cadence and journal overhead expired the turn after ${ages.at(-1)}ms`);\n      }\n      const response = await fetch(url, options);\n      if (new URL(url).pathname === '/v1/agent/turn') issuedAt = performance.now();\n      return response;\n    };\n    const summary = await runAgentAlphaProduction({\n      baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 2, fetchImpl: checkingFetch,\n    });\n    assert.deepEqual(summary, { status: 'complete', actions: 2 },\n      'ordinary production timing executes two short-lived turns without spending their lease on cadence');\n    assert.equal(ages.length, 2);\n  });\n}\n\nasync function legacyBootstrapDomainTest() {\n  const api = await localApi({ legacyBootstrap: true });\n  const dir = await privateTempDir('omerta-agent-alpha-legacy-bootstrap-');\n  const sessionFile = join(dir, 'session.json');\n  const reportFile = join(dir, 'report.jsonl');\n  try {\n    await writePrivateSession(sessionFile, JSON.stringify({\n      version: 1, base: api.baseUrl, phase: 'bootstrap',\n      bootstrapSecret: crypto.randomBytes(32).toString('base64url'),\n      inviteCode: null, characterName: 'Alpha Machine', pending: null,\n    }));\n    const result = await runAgentAlpha({\n      baseUrl: api.baseUrl, sessionFile, reportFile, birthDate: '1990-01-01', maxActions: 1,\n    });\n    assert.equal(result.actions, 1);\n    assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, 1,\n      'a saved bootstrap without the new discriminator recovers its original human identity');\n    assert.equal(api.requests.some((r) => r.path === '/v1/auth/agent'), false,\n      'legacy recovery never switches hash domains to create a duplicate agent');\n  } finally {\n    await api.close();\n    await rm(dir, { recursive: true, force: true });\n  }\n}\n\nasync function initialCharacterRateBackoffTest() {\n  const api = await phaseRecoveryApi({ initialPhase: 'initial_character_pending' });\n  await withReadySession(api, 'omerta-agent-alpha-character-backoff-', async ({ sessionFile, reportFile }) => {\n    await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {\n      phase: 'initial_character_pending',\n    })));\n    const characterRequests = [];\n    const rateLimitedFetch = async (url, options) => {\n      if (new URL(url).pathname === '/v1/character') {\n        characterRequests.push({ body: options.body, key: options.headers['idempotency-key'] });\n        if (characterRequests.length === 1) return new Response(JSON.stringify({\n          error: 'rate_limited', retryAfter: 3,\n        }), { status: 429 });\n      }\n      return fetch(url, options);\n    };\n    const summary = await runAgentAlpha({\n      baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, fetchImpl: rateLimitedFetch,\n    });\n    assert.equal(summary.status, 'complete');\n    assert.equal(api.state.characterCalls, 1,\n      'a definitive signup rate refusal is retried without creating another character');\n    assert.equal(characterRequests.length, 2);\n    assert.deepEqual(characterRequests[0], characterRequests[1],\n      'rate backoff preserves the exact character request and idempotency key');\n  });\n}\n\nasync function progressionRoleAndLevelStopTest() {\n  const api = await actionApi({ kinds: ['crime', 'crime'], turnForIndex: (index) => ({\n    turnId: `progress-${index}`, recommendedActionId: 'arbitrage-profit', policy: POLICY,\n    state: { identity: { level: index === 0 ? 99 : 100 } },\n    actions: [\n      { id: 'arbitrage-profit', kind: 'arbitrage_buy', executable: true },\n      { id: `crime-${index}`, kind: 'crime', executable: true },\n    ],\n  }) });\n  await withReadySession(api, 'omerta-agent-alpha-progression-', async ({ sessionFile, reportFile }) => {\n    const summary = await runAgentAlpha({\n      baseUrl: api.baseUrl, sessionFile, reportFile, role: 'progression', stopAtLevel: 100, maxActions: 5,\n    });\n    assert.deepEqual(summary, { status: 'level_reached', actions: 1, level: 100 });\n    assert.equal(api.state.actCalls, 1, 'level 100 is observed before journaling another action');\n    assert.equal(api.state.actBodies[0].actionId, 'crime-0',\n      'progression selects an issued crime instead of a higher cash arbitrage recommendation');\n    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n    const again = await runAgentAlpha({\n      baseUrl: api.baseUrl, sessionFile, reportFile, role: 'progression', stopAtLevel: 100, maxActions: 1,\n    });\n    assert.equal(again.status, 'level_reached', 'resuming a completed goal stays stopped');\n    assert.equal(api.state.actCalls, 1, 'completion never creates another mutation on resume');\n  });\n}\n\nif (process.argv.includes('--decision-recovery')) {\n  await decisionAnnotationTest();\n  await hardCrashReplayTest({ decisionCall: true });\n",
+          "baseline": "  }\n}\n\nif (process.argv.includes('--decision-recovery')) {\n  await decisionAnnotationTest();\n  await hardCrashReplayTest({ decisionCall: true });\n"
+        },
+        {
+          "at": 110962,
+          "current": "await danglingSessionAliasCreateTest();\nawait unrelatedLegacyPortTest();\nawait realElapsedCadenceTest();\nawait freshAuthorityAfterCadenceTest();\nawait legacyBootstrapDomainTest();\nawait initialCharacterRateBackoffTest();\nawait progressionRoleAndLevelStopTest();\n}\nconsole.log('agent-alpha tests passed');\n",
+          "baseline": "await danglingSessionAliasCreateTest();\nawait unrelatedLegacyPortTest();\nawait realElapsedCadenceTest();\n}\nconsole.log('agent-alpha tests passed');\n"
+        }
+      ]
+    },
+    "test/client-ip.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "b4d333bac5e80e1bfa20780d5a9fc3b01c25b1cf",
+        "sha256": "e61b4fd9d9163eaf0059baf4a847f355c3dd032d7b2b88abb39d52e9307fe3b0",
+        "bytes": 7561
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "bbb9dcdd73dbf5ae2511787ffcab2711255f9e29",
+        "sha256": "f9364d261dec8a794c87966b56b3e1c5bcf4cb9496e28e517d44eb6d8051c73c",
+        "bytes": 6711
+      },
+      "inverses": [
+        {
+          "at": 5185,
+          "current": "    created_ip_authority: CLIENT_IP_AUTHORITY.render,\n  }, 'bootstrap recovery updates last_ip without rewriting immutable signup provenance');\n\n  const agentSecret = crypto.randomBytes(32).toString('base64url');\n  const agentAdmission = async (ip) => trusted.inject({ method: 'POST', url: '/v1/auth/agent',\n    remoteAddress: '10.20.30.40', headers: { 'cf-connecting-ip': ip }, payload: { bootstrapSecret: agentSecret } });\n  const agent = await agentAdmission('203.0.113.82');\n  assert.equal(agent.statusCode, 200, agent.body);\n  const agentId = trusted.jwt.decode(agent.json().token).sub;\n  assert.equal((await agentAdmission('203.0.113.83')).statusCode, 200);\n  assert.deepEqual((await trusted.pool.query(\n    'SELECT created_ip, last_ip, created_ip_authority FROM accounts WHERE id=$1', [agentId],\n  )).rows[0], { created_ip: '203.0.113.82', last_ip: '203.0.113.83',\n    created_ip_authority: CLIENT_IP_AUTHORITY.render }, 'agent admission preserves trusted immutable signup provenance');\n\n  const { accountForIdentity } = await import('../src/auth.js');\n  const identity = { provider: 'client-ip-test', subject: crypto.randomUUID() };\n  const provider = await accountForIdentity(\n",
+          "baseline": "    created_ip_authority: CLIENT_IP_AUTHORITY.render,\n  }, 'bootstrap recovery updates last_ip without rewriting immutable signup provenance');\n\n  const { accountForIdentity } = await import('../src/auth.js');\n  const identity = { provider: 'client-ip-test', subject: crypto.randomUUID() };\n  const provider = await accountForIdentity(\n"
+        }
+      ]
+    },
+    "test/client.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "9f3ae820674780b8f3e231872043e79386eaa6f8",
+        "sha256": "f5b6831bc8d5aafb31ea9ee62c9744002c5da03a766f77fad77bf7771eb7003d",
+        "bytes": 764000
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d76d33df1af070de1b94a21ba8c7a5a64e989fd6",
+        "sha256": "96c1031bab954cf43cb3caf8834d2f3dae53f6ccc44cab590619ea1eb4c89cf1",
+        "bytes": 763513
+      },
+      "inverses": [
+        {
+          "at": 9730,
+          "current": "      const describe = () => 'Completed', cineFor = () => null, revealFor = noop, sfx = noop, bragText = () => null;\n      const busy = { setAttribute: noop, removeAttribute: noop, classList: { add: noop, remove: noop } };\n      const document = { body: { style: {} } }, $ = () => node;\n      const analyticsResults = [], window = { OmertaSiteAnalytics: { firstJobResult: (...args) => analyticsResults.push(args) } };\n      const api = async () => ({ code: 200, body: {}, replayed: false });\n      const refresh = async () => {\n        if (${refreshCode} === 200 && !${ignored} && ${JSON.stringify(path)}.includes('/travel/')) {\n",
+          "baseline": "      const describe = () => 'Completed', cineFor = () => null, revealFor = noop, sfx = noop, bragText = () => null;\n      const busy = { setAttribute: noop, removeAttribute: noop, classList: { add: noop, remove: noop } };\n      const document = { body: { style: {} } }, $ = () => node;\n      const api = async () => ({ code: 200, body: {}, replayed: false });\n      const refresh = async () => {\n        if (${refreshCode} === 200 && !${ignored} && ${JSON.stringify(path)}.includes('/travel/')) {\n"
+        },
+        {
+          "at": 10524,
+          "current": "      const recordOperation = value => (operationReceipt = value);\n      ${html.slice(actStart, actEnd)}\n      const result = await act('POST', ${JSON.stringify(path)}, {});\n      return { code: result.code, receiptRecorded: !!operationReceipt, current: operationReceipt.resourceCurrent(),\n        analyticsMethod: analyticsResults[0]?.[0], analyticsPath: analyticsResults[0]?.[1], analyticsCalls: analyticsResults.length };\n    })()`);\n    assert.equal(observed.code, 200, 'A failed refresh must not relabel the confirmed action result.');\n    assert.equal(observed.receiptRecorded, true, 'The ordinary operation receipt remains available for recovery.');\n    assert.equal(observed.current, expectedCurrent, 'Resource feedback stays bound to the action district.');\n    assert.equal(observed.analyticsCalls, 1, 'The ordinary action forwards one result to the optional analytics bridge.');\n    assert.equal(observed.analyticsMethod, 'POST');\n    assert.equal(observed.analyticsPath, path);\n  }\n}\n\n",
+          "baseline": "      const recordOperation = value => (operationReceipt = value);\n      ${html.slice(actStart, actEnd)}\n      const result = await act('POST', ${JSON.stringify(path)}, {});\n      return { code: result.code, receiptRecorded: !!operationReceipt, current: operationReceipt.resourceCurrent() };\n    })()`);\n    assert.equal(observed.code, 200, 'A failed refresh must not relabel the confirmed action result.');\n    assert.equal(observed.receiptRecorded, true, 'The ordinary operation receipt remains available for recovery.');\n    assert.equal(observed.current, expectedCurrent, 'Resource feedback stays bound to the action district.');\n  }\n}\n\n"
         }
       ]
     },
@@ -593,12 +1114,43 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/enterprise-native-questing-guard.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "5fab8348fbb6561a1ae28d46612c41b3baadb9dc",
+        "sha256": "58c4afe38f13fb6b48d34f040620e922f05111ef793f42e81618e9ccf57e2f70",
+        "bytes": 10535
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "e0837ab99986fc8a225e064aa47db71a42875c69",
+        "sha256": "2dde66b1d75614383814730cece231fddb5848a36ec4256a621320572b552482",
+        "bytes": 8894
+      },
+      "inverses": [
+        {
+          "at": 4699,
+          "current": "  value => { value.files.find(row => row.file === 'tools/enterprise-native.js').sha256 = '0'.repeat(64); },\n  value => { value.files.find(row => row.file === QUESTING_NATIVE_PREDECESSOR_METADATA).sha256 = '0'.repeat(64); },\n  value => { value.additions = []; }, value => { value.files.push({ file: QUESTING_NATIVE_METADATA, mode: '100644', blob: 'a'.repeat(40), sha256: 'b'.repeat(64) }); },\n  value => {\n    value.files = value.files.filter(row => row.file !== 'src/casinorakeback.js');\n    value.additions = value.additions.filter(row => row.file !== 'src/casinorakeback.js');\n  },\n]) {\n  const mutated = structuredClone(candidate); change(mutated);\n  assert.throws(() => assertQuestingNativeDefinition(freeze(mutated))); rejections++;\n",
+          "baseline": "  value => { value.files.find(row => row.file === 'tools/enterprise-native.js').sha256 = '0'.repeat(64); },\n  value => { value.files.find(row => row.file === QUESTING_NATIVE_PREDECESSOR_METADATA).sha256 = '0'.repeat(64); },\n  value => { value.additions = []; }, value => { value.files.push({ file: QUESTING_NATIVE_METADATA, mode: '100644', blob: 'a'.repeat(40), sha256: 'b'.repeat(64) }); },\n]) {\n  const mutated = structuredClone(candidate); change(mutated);\n  assert.throws(() => assertQuestingNativeDefinition(freeze(mutated))); rejections++;\n"
+        },
+        {
+          "at": 6724,
+          "current": "  const row = actual.replacements[0]?.after;\n  assert.ok(row, 'The authored release must contain a real changed input for argument tests.');\n  const git = (...args) => execFileSync('git', ['--no-optional-locks', '--no-replace-objects', ...args], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });\n  const record = (revision, file = row.file) => {\n    const line = git('ls-tree', '-z', revision, '--', file).toString('utf8');\n    const match = line.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0]+)\\0$/);\n    assert.ok(match && match[3] === file); return { type: 'blob', mode: match[1], blob: match[2] };\n  };\n  const current = record('HEAD'), authored = record(actual.authoredRevision), bytes = git('show', `HEAD:${row.file}`);\n  const physical = fs.readFileSync(row.file); assert.ok(fs.lstatSync(row.file).isFile() && !fs.lstatSync(row.file).isSymbolicLink());\n",
+          "baseline": "  const row = actual.replacements[0]?.after;\n  assert.ok(row, 'The authored release must contain a real changed input for argument tests.');\n  const git = (...args) => execFileSync('git', ['--no-optional-locks', '--no-replace-objects', ...args], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });\n  const record = revision => {\n    const line = git('ls-tree', '-z', revision, '--', row.file).toString('utf8');\n    const match = line.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0]+)\\0$/);\n    assert.ok(match && match[3] === row.file); return { type: 'blob', mode: match[1], blob: match[2] };\n  };\n  const current = record('HEAD'), authored = record(actual.authoredRevision), bytes = git('show', `HEAD:${row.file}`);\n  const physical = fs.readFileSync(row.file); assert.ok(fs.lstatSync(row.file).isFile() && !fs.lstatSync(row.file).isSymbolicLink());\n"
+        },
+        {
+          "at": 8353,
+          "current": "  ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(row.file, now, anchor, raw)); actualArgumentRefusals++; }\n  assert.throws(() => assertQuestingEnterpriseTrackedInput(row.file, current, authored, bytes, Object.freeze({ ...actual })));\n  assert.throws(() => assertQuestingEnterpriseTrackedInput('../outside.js', current, authored, bytes)); actualArgumentRefusals += 2;\n  const companion = actual.files.find(input => input.file === 'src/casinorakeback.js');\n  assert.ok(companion, 'The reviewed casino companion has its own exact current native pin.');\n  const companionCurrent = record('HEAD', companion.file), companionAuthored = record(actual.authoredRevision, companion.file);\n  const companionBytes = git('show', `HEAD:${companion.file}`), companionPhysical = fs.readFileSync(companion.file);\n  assert.ok(fs.lstatSync(companion.file).isFile() && !fs.lstatSync(companion.file).isSymbolicLink());\n  assertEnterpriseNativeTrackedBytes(companionPhysical, companionBytes, false);\n  assert.strictEqual(assertQuestingEnterpriseTrackedInput(companion.file, companionCurrent, companionAuthored, companionBytes).current,\n    companion, 'The full committed companion bytes and both Git identities qualify before execution.');\n  for (const [now, anchor, raw] of [\n    [{ ...companionCurrent, mode: companionCurrent.mode === '100644' ? '100755' : '100644' }, companionAuthored, companionBytes],\n    [{ ...companionCurrent, blob: '0'.repeat(40) }, companionAuthored, companionBytes],\n    [companionCurrent, { ...companionAuthored, blob: '1'.repeat(40) }, companionBytes],\n    [companionCurrent, companionAuthored, Buffer.concat([companionBytes, Buffer.from('\\n// altered companion\\n')])],\n  ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(companion.file, now, anchor, raw)); actualArgumentRefusals++; }\n}\nconsole.log(JSON.stringify({ phase: 'SOURCE_ONLY_ACTUAL_CURRENT_ENTERPRISE_GUARDS', syntheticDefinition: true,\n  mutationRejections: rejections + 1, predecessorInputs: predecessor.files.length, mandatoryNativeCases: ENTERPRISE_NATIVE_PROOFS.length,\n",
+          "baseline": "  ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(row.file, now, anchor, raw)); actualArgumentRefusals++; }\n  assert.throws(() => assertQuestingEnterpriseTrackedInput(row.file, current, authored, bytes, Object.freeze({ ...actual })));\n  assert.throws(() => assertQuestingEnterpriseTrackedInput('../outside.js', current, authored, bytes)); actualArgumentRefusals += 2;\n}\nconsole.log(JSON.stringify({ phase: 'SOURCE_ONLY_ACTUAL_CURRENT_ENTERPRISE_GUARDS', syntheticDefinition: true,\n  mutationRejections: rejections + 1, predecessorInputs: predecessor.files.length, mandatoryNativeCases: ENTERPRISE_NATIVE_PROOFS.length,\n"
+        }
+      ]
+    },
     "test/gates.js": {
       "current": {
         "mode": "100644",
-        "blob": "3defd01ee988772bcd1686242a31b9f74f30b23c",
-        "sha256": "bd940f0a7710ba1b9fe9309bb16dadd5fe135bfc3a134acf43cefd7d8d07d0e6",
-        "bytes": 480228
+        "blob": "48dafd97be10188afeb5cda58ab547b5034776db",
+        "sha256": "d31ba48a4ec02166682e68873109731e8d69181eb3a795e65fbc8258a346d462",
+        "bytes": 479827
       },
       "baseline": {
         "mode": "100644",
@@ -608,17 +1160,22 @@ export const SITE_BASICS_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 364568,
+          "at": 340388,
+          "current": "      + 'the ContextPlus .ps1 launcher, so on Linux `join(process.env.SystemRoot, ...)` throws before '\n      + 'any assertion runs. Wiring it into the chain would make every Linux run red for a reason '\n      + 'that says nothing about the product.',\n  };\n\n  const propertyFixtureFile = 'test/deed-discovery-fixture.js';\n",
+          "baseline": "      + 'the ContextPlus .ps1 launcher, so on Linux `join(process.env.SystemRoot, ...)` throws before '\n      + 'any assertion runs. Wiring it into the chain would make every Linux run red for a reason '\n      + 'that says nothing about the product.',\n    'test/mcp.js':\n      'Needs the SEPARATE omerta-mcp package\\'s own dependencies (@modelcontextprotocol/sdk), which '\n      + 'the repo root does not install — `npm ci` here would have to carry a dep only that package '\n      + 'uses. It is the clean-machine check for the published MCP server and belongs to that '\n      + 'package\\'s own verification, run from omerta-mcp/ after its install.',\n  };\n\n  const propertyFixtureFile = 'test/deed-discovery-fixture.js';\n"
+        },
+        {
+          "at": 364169,
           "current": "  const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative), enterpriseParts = splitNative(enterpriseNative);\n  const expectedUxNativeStep = \"      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)\\n        env:\\n          UX_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\\n        run: npm run test:ux:postgres\";\n  const uxNativeParts = coreParts.steps.filter(part => part.includes('      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)'));\n  const expectedSiteAnalyticsNativeStep = \"      - name: Optional website counts on real PostgreSQL\\n        env:\\n          SITE_ANALYTICS_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\\n          DATABASE_URL: ''\\n        run: node test/site-analytics.js --postgres\";\n  const assertSiteAnalyticsNativeStep = block => {\n    const parts = splitNative(block).steps.filter(part => part.includes('      - name: Optional website counts on real PostgreSQL'));\n    assert.equal(parts.length, 1, 'Exactly one complete website aggregate PostgreSQL proof is required');\n    assert.equal(nativeShape(parts[0]), nativeShape(expectedSiteAnalyticsNativeStep),\n      'Optional website counts retain their explicit disposable endpoint, bare native command and unconditional execution');\n  };\n  assertSiteAnalyticsNativeStep(coreNative);\n  assertSiteAnalyticsNativeStep(coreNative.replaceAll('\\n', '\\r\\n'));\n  const siteAnalyticsNativeBlock = coreNative.replaceAll('\\r\\n', '\\n');\n  assert.equal(siteAnalyticsNativeBlock.split(expectedSiteAnalyticsNativeStep).length, 2);\n  for (const change of [expectedSiteAnalyticsNativeStep.replace('        env:', '        if: false\\n        env:'),\n    expectedSiteAnalyticsNativeStep.replace('        env:', '        continue-on-error: true\\n        env:'),\n    expectedSiteAnalyticsNativeStep.replace('127.0.0.1', 'remote.invalid'),\n    expectedSiteAnalyticsNativeStep.replace(' --postgres', ''), expectedSiteAnalyticsNativeStep + ' --partial'])\n    assert.throws(() => assertSiteAnalyticsNativeStep(siteAnalyticsNativeBlock.replace(expectedSiteAnalyticsNativeStep, change)),\n      'Skipped, optional, remote, non-native or partial website proofs must reject');\n  assert.throws(() => assertSiteAnalyticsNativeStep(siteAnalyticsNativeBlock.replace(expectedSiteAnalyticsNativeStep, '')));\n  assert.throws(() => assertSiteAnalyticsNativeStep(siteAnalyticsNativeBlock.replace(expectedSiteAnalyticsNativeStep,\n    expectedSiteAnalyticsNativeStep + '\\n' + expectedSiteAnalyticsNativeStep)));\n  assert.equal(uxNativeParts.length, 1, 'Exactly one complete UX native metadata and RLS proof is required');\n  assert.equal(nativeShape(uxNativeParts[0]), nativeShape(expectedUxNativeStep), 'UX native proof keeps its disposable endpoint, complete command and unconditional execution');\n  for (const changed of [expectedUxNativeStep.replace('test:ux:postgres', 'test:ux:postgres -- --partial'), expectedUxNativeStep.replace('        env:', '        if: false\\n        env:'), expectedUxNativeStep.replace('        env:', '        continue-on-error: true\\n        env:')])\n",
           "baseline": "  const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative), enterpriseParts = splitNative(enterpriseNative);\n  const expectedUxNativeStep = \"      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)\\n        env:\\n          UX_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\\n        run: npm run test:ux:postgres\";\n  const uxNativeParts = coreParts.steps.filter(part => part.includes('      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)'));\n  assert.equal(uxNativeParts.length, 1, 'Exactly one complete UX native metadata and RLS proof is required');\n  assert.equal(nativeShape(uxNativeParts[0]), nativeShape(expectedUxNativeStep), 'UX native proof keeps its disposable endpoint, complete command and unconditional execution');\n  for (const changed of [expectedUxNativeStep.replace('test:ux:postgres', 'test:ux:postgres -- --partial'), expectedUxNativeStep.replace('        env:', '        if: false\\n        env:'), expectedUxNativeStep.replace('        env:', '        continue-on-error: true\\n        env:')])\n"
         },
         {
-          "at": 397612,
+          "at": 397213,
           "current": "  // an unnamed `- run: command`, a named step's `run: command`, and their literal `|` bodies.\n  // Unknown block scalar syntax fails closed so a new shape cannot quietly stop being inventoried.\n  const exactNativeNodeCommands = new Set([\n    'node test/site-analytics.js --postgres',\n    'node test/db-rls.js --postgres',\n    'node test/payment-receipts-postgres.js',\n    'node test/deeds-supply-postgres.js',\n",
           "baseline": "  // an unnamed `- run: command`, a named step's `run: command`, and their literal `|` bodies.\n  // Unknown block scalar syntax fails closed so a new shape cannot quietly stop being inventoried.\n  const exactNativeNodeCommands = new Set([\n    'node test/db-rls.js --postgres',\n    'node test/payment-receipts-postgres.js',\n    'node test/deeds-supply-postgres.js',\n"
         },
         {
-          "at": 401376,
+          "at": 400977,
           "current": "    return commands;\n  };\n  const expectedNativeCommands = [\n    'build:funded-work-artifact', 'node test/site-analytics.js --postgres', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',\n    'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',\n    'pgquery', 'test:goods-market:postgres', 'test:deed-discovery:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:ux:postgres', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:business-desk:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:agent-economy-market-operations:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',\n    'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',\n",
           "baseline": "    return commands;\n  };\n  const expectedNativeCommands = [\n    'build:funded-work-artifact', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',\n    'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',\n    'pgquery', 'test:goods-market:postgres', 'test:deed-discovery:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:ux:postgres', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:business-desk:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:agent-economy-market-operations:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',\n    'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',\n"
         }
@@ -663,6 +1220,93 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 1048,
           "current": "  for (const key of Object.keys(profile)) delete process.env[key];\n  const defaultPrivacy = await app.inject('/privacy');\n  assert.equal(defaultPrivacy.statusCode, 200, 'default privacy policy is public without operator configuration');\n  assert(defaultPrivacy.body.includes('November 7, 2026'));\n  assert(defaultPrivacy.body.includes('A dedicated privacy contact has not yet been published'));\n  assert(!/\\b(?:null|undefined)\\b/.test(defaultPrivacy.body), 'default policy has no missing-value placeholders');\n  assert(!/180 days|seven days|thirty days|\\/v1\\/|background worker|BYPASSRLS|JWT_SECRET|end-to-end encrypted|token records/.test(defaultPrivacy.body), 'public notice omits security internals and cleanup timings');\n",
           "baseline": "  for (const key of Object.keys(profile)) delete process.env[key];\n  const defaultPrivacy = await app.inject('/privacy');\n  assert.equal(defaultPrivacy.statusCode, 200, 'default privacy policy is public without operator configuration');\n  assert(defaultPrivacy.body.includes('October 31, 2026'));\n  assert(defaultPrivacy.body.includes('A dedicated privacy contact has not yet been published'));\n  assert(!/\\b(?:null|undefined)\\b/.test(defaultPrivacy.body), 'default policy has no missing-value placeholders');\n  assert(!/180 days|seven days|thirty days|\\/v1\\/|background worker|BYPASSRLS|JWT_SECRET|end-to-end encrypted|token records/.test(defaultPrivacy.body), 'public notice omits security internals and cleanup timings');\n"
+        }
+      ]
+    },
+    "test/mcp.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2701257c2f458af30e02e6d644e73a41d31d846d",
+        "sha256": "52ecbc53075bfa83ee0d107521de13bf654e627948bbf06cec8733ce7f1437ee",
+        "bytes": 16887
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "ec7ec8f1df06d5ef68abfed396dc507764d81649",
+        "sha256": "94e27c84a34e4436cae758de601073d7f52bd42db57bfade7ffbfa1229975954",
+        "bytes": 13396
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Agent-interface regressions. Exercises the published MCP process over stdio against a real local\n// HTTP server, so the assertions cover the same headers and session behavior an MCP host receives.\nimport assert from 'node:assert/strict';\nimport { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';\nimport { createServer } from 'node:http';\nimport { tmpdir } from 'node:os';\nimport { join } from 'node:path';\n",
+          "baseline": "// Agent-interface regressions. Exercises the published MCP process over stdio against a real local\n// HTTP server, so the assertions cover the same headers and session behavior an MCP host receives.\nimport assert from 'node:assert/strict';\nimport { mkdtemp, rm, writeFile } from 'node:fs/promises';\nimport { createServer } from 'node:http';\nimport { tmpdir } from 'node:os';\nimport { join } from 'node:path';\n"
+        },
+        {
+          "at": 465,
+          "current": "async function localApi() {\n  const requests = [];\n  const state = { sessionStatus: 200, hasCharacter: true, agent: true,\n    characterStatus: 200, agentKeyStatus: 200, agentSignupStatus: 200 };\n  const server = createServer(async (req, res) => {\n    const chunks = [];\n    for await (const chunk of req) chunks.push(chunk);\n",
+          "baseline": "async function localApi() {\n  const requests = [];\n  const state = { sessionStatus: 200, hasCharacter: true, agent: true,\n    characterStatus: 200, agentKeyStatus: 200 };\n  const server = createServer(async (req, res) => {\n    const chunks = [];\n    for await (const chunk of req) chunks.push(chunk);\n"
+        },
+        {
+          "at": 923,
+          "current": "      body: raw ? JSON.parse(raw) : undefined });\n    res.setHeader('content-type', 'application/json');\n    if (req.url === '/v1/auth/guest') return res.end(JSON.stringify({ token: 'guest-token' }));\n    if (req.url === '/v1/auth/agent') {\n      if (state.beforeAgentResponse) await state.beforeAgentResponse();\n      res.statusCode = state.agentSignupStatus;\n      return res.end(JSON.stringify(state.agentSignupStatus === 200\n        ? { token: 'agent-token', agent: true }\n        : { error: 'agent_signup_unavailable', message: 'temporary agent signup failure' }));\n    }\n    if (req.url === '/v1/auth/agent-key') {\n      res.statusCode = state.agentKeyStatus;\n      return res.end(JSON.stringify(state.agentKeyStatus === 200\n",
+          "baseline": "      body: raw ? JSON.parse(raw) : undefined });\n    res.setHeader('content-type', 'application/json');\n    if (req.url === '/v1/auth/guest') return res.end(JSON.stringify({ token: 'guest-token' }));\n    if (req.url === '/v1/auth/agent-key') {\n      res.statusCode = state.agentKeyStatus;\n      return res.end(JSON.stringify(state.agentKeyStatus === 200\n"
+        },
+        {
+          "at": 6061,
+          "current": "const dir = await mkdtemp(join(tmpdir(), 'omerta-mcp-test-'));\nconst sessionFile = join(dir, 'session.json');\nconst api = await localApi();\nlet mcp, peer;\ntry {\n  mcp = await mcpProcess(api.base, sessionFile);\n  assert.equal(mcp.serverInfo.version, '1.4.0',\n    'the MCP handshake version stays aligned with the published package version');\n  const started = await mcp.call('omerta_start');\n  const admission = api.requests.find(r => r.path === '/v1/auth/agent');\n  assert.match(admission.body.bootstrapSecret, /^[A-Za-z0-9_-]{43}$/, 'agent signup uses a durable recovery credential');\n  assert.equal(admission.body.birthDate, undefined, 'machine signup never invents a date');\n  assert.equal(api.requests.some(r => r.path === '/v1/auth/guest'), false, 'new machine signup uses only the agent exemption');\n  assert.match(started.next, /No character/i,\n    'an auth-only start directs the agent to finish character creation before requesting a turn');\n  await mcp.call('omerta_request', { method: 'POST', path: '/v1/action', operationId: 'bodyless-1' });\n",
+          "baseline": "const dir = await mkdtemp(join(tmpdir(), 'omerta-mcp-test-'));\nconst sessionFile = join(dir, 'session.json');\nconst api = await localApi();\nlet mcp;\ntry {\n  mcp = await mcpProcess(api.base, sessionFile);\n  assert.equal(mcp.serverInfo.version, '1.3.0',\n    'the MCP handshake version stays aligned with the published package version');\n  const started = await mcp.call('omerta_start');\n  assert.match(started.next, /No character/i,\n    'an auth-only start directs the agent to finish character creation before requesting a turn');\n  await mcp.call('omerta_request', { method: 'POST', path: '/v1/action', operationId: 'bodyless-1' });\n"
+        },
+        {
+          "at": 9187,
+          "current": "  assert.equal(staleAction.error, 'unknown_action',\n    'a successful mutation invalidates every sibling action so the agent must refresh before acting again');\n\n  const guestAuths = api.requests.filter((r) => r.path === '/v1/auth/agent').length;\n  await mcp.stop();\n  mcp = null;\n  mcp = await mcpProcess(api.base, sessionFile);\n  const resumed = await mcp.call('omerta_start');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,\n    'restarting the MCP reuses the persisted agent identity instead of creating another guest');\n  assert.equal(resumed.resumed, true, 'the start response identifies a resumed session');\n  api.state.sessionStatus = 503;\n",
+          "baseline": "  assert.equal(staleAction.error, 'unknown_action',\n    'a successful mutation invalidates every sibling action so the agent must refresh before acting again');\n\n  const guestAuths = api.requests.filter((r) => r.path === '/v1/auth/guest').length;\n  await mcp.stop();\n  mcp = null;\n  mcp = await mcpProcess(api.base, sessionFile);\n  const resumed = await mcp.call('omerta_start');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,\n    'restarting the MCP reuses the persisted agent identity instead of creating another guest');\n  assert.equal(resumed.resumed, true, 'the start response identifies a resumed session');\n  api.state.sessionStatus = 503;\n"
+        },
+        {
+          "at": 9939,
+          "current": "  assert.deepEqual({ error: unavailableSession.error, status: unavailableSession.status },\n    { error: 'session_unavailable', status: 503 },\n  'a transient session probe failure is not mislabeled as an expired identity');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,\n    'a transient session probe failure never provisions a replacement guest');\n  api.state.sessionStatus = 200;\n  const refusedActiveReset = await mcp.call('omerta_start', { reset: true });\n  assert.equal(refusedActiveReset.error, 'session_active',\n    'reset cannot replace a healthy agent identity');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,\n    'refusing an active-session reset creates no replacement account');\n\n  api.state.hasCharacter = false;\n",
+          "baseline": "  assert.deepEqual({ error: unavailableSession.error, status: unavailableSession.status },\n    { error: 'session_unavailable', status: 503 },\n  'a transient session probe failure is not mislabeled as an expired identity');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,\n    'a transient session probe failure never provisions a replacement guest');\n  api.state.sessionStatus = 200;\n  const refusedActiveReset = await mcp.call('omerta_start', { reset: true });\n  assert.equal(refusedActiveReset.error, 'session_active',\n    'reset cannot replace a healthy agent identity');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,\n    'refusing an active-session reset creates no replacement account');\n\n  api.state.hasCharacter = false;\n"
+        },
+        {
+          "at": 11450,
+          "current": "  mcp = await mcpProcess(api.base, sessionFile);\n  const corrupt = await mcp.call('omerta_start');\n  assert.equal(corrupt.error, 'session_invalid', 'a corrupt durable session fails closed');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,\n    'a corrupt session never creates a replacement identity silently');\n\n  await mcp.stop();\n",
+          "baseline": "  mcp = await mcpProcess(api.base, sessionFile);\n  const corrupt = await mcp.call('omerta_start');\n  assert.equal(corrupt.error, 'session_invalid', 'a corrupt durable session fails closed');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,\n    'a corrupt session never creates a replacement identity silently');\n\n  await mcp.stop();\n"
+        },
+        {
+          "at": 11978,
+          "current": "  mcp = await mcpProcess(api.base, sessionFile);\n  const wrongOrigin = await mcp.call('omerta_start');\n  assert.equal(wrongOrigin.error, 'session_invalid', 'a session bound to another API origin fails closed');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths,\n    'an origin mismatch never overwrites the existing identity with a new guest');\n\n  const recovered = await mcp.call('omerta_start', { reset: true });\n  assert.equal(recovered.authed, true,\n    'an explicit reset recovers from an unreadable saved session without manual file surgery');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestAuths + 1,\n    'session recovery creates a replacement identity only after the caller explicitly requests reset');\n\n  await mcp.stop();\n",
+          "baseline": "  mcp = await mcpProcess(api.base, sessionFile);\n  const wrongOrigin = await mcp.call('omerta_start');\n  assert.equal(wrongOrigin.error, 'session_invalid', 'a session bound to another API origin fails closed');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths,\n    'an origin mismatch never overwrites the existing identity with a new guest');\n\n  const recovered = await mcp.call('omerta_start', { reset: true });\n  assert.equal(recovered.authed, true,\n    'an explicit reset recovers from an unreadable saved session without manual file surgery');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestAuths + 1,\n    'session recovery creates a replacement identity only after the caller explicitly requests reset');\n\n  await mcp.stop();\n"
+        },
+        {
+          "at": 12802,
+          "current": "  await writeFile(sessionFile, '{not-json', 'utf8');\n  mcp = await mcpProcess(api.base, sessionFile);\n  api.state.agentKeyStatus = 503;\n  api.state.agent = false;\n  await mcp.stop();\n  await writeFile(sessionFile, JSON.stringify({ version: 1, base: api.base, token: 'legacy-human-token' }), 'utf8');\n  mcp = await mcpProcess(api.base, sessionFile);\n  const failedUpgrade = await mcp.call('omerta_start');\n  assert.deepEqual({ step: failedUpgrade.step, status: failedUpgrade.status,\n    error: failedUpgrade.body?.error }, { step: 'agent_key', status: 503, error: 'agent_key_failed' },\n  'a failed agent-key upgrade is reported as the failing step instead of a successful agent start');\n  const guestsAfterFailedUpgrade = api.requests.filter((r) => r.path === '/v1/auth/agent').length;\n  await mcp.stop();\n  mcp = null;\n  api.state.agentKeyStatus = 200;\n  api.state.agent = false;\n  mcp = await mcpProcess(api.base, sessionFile);\n  const retriedUpgrade = await mcp.call('omerta_start');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/agent').length, guestsAfterFailedUpgrade,\n    'a failed agent-key upgrade persists the guest identity so restart retries the same account');\n  assert.deepEqual({ authed: retriedUpgrade.authed, agent: retriedUpgrade.agent,\n    resumed: retriedUpgrade.resumed }, { authed: true, agent: true, resumed: true },\n  'the resumed guest upgrades cleanly to an agent after the transient failure clears');\n\n  await mcp.stop();\n  mcp = null;\n  await rm(sessionFile, { force: true });\n  api.state.agentSignupStatus = 503;\n  api.state.agent = true;\n  mcp = await mcpProcess(api.base, sessionFile);\n  const uncertainSignup = await mcp.call('omerta_start');\n  assert.equal(uncertainSignup.step, 'agent_signup');\n  const uncertainSecret = api.requests.filter(r => r.path === '/v1/auth/agent').at(-1).body.bootstrapSecret;\n  await mcp.stop();\n  mcp = null;\n  api.state.agentSignupStatus = 200;\n  mcp = await mcpProcess(api.base, sessionFile);\n  const recoveredSignup = await mcp.call('omerta_start');\n  assert.equal(recoveredSignup.agent, true);\n  assert.equal(api.requests.filter(r => r.path === '/v1/auth/agent').at(-1).body.bootstrapSecret, uncertainSecret,\n    'restart after ambiguous signup reuses the same durable recovery proof');\n\n  await mcp.stop(); mcp = null;\n  await rm(sessionFile, { force: true });\n  mcp = await mcpProcess(api.base, sessionFile);\n  peer = await mcpProcess(api.base, sessionFile);\n  const beforeParallel = api.requests.filter(r => r.path === '/v1/auth/agent').length;\n  const parallel = await Promise.all([mcp.call('omerta_start'), peer.call('omerta_start')]);\n  for (const [index, result] of parallel.entries()) {\n    if (result.error === 'session_changed') assert.equal((await [mcp, peer][index].call('omerta_start')).authed, true);\n    else assert.equal(result.authed, true, JSON.stringify(result));\n  }\n  const parallelAdmissions = api.requests.filter(r => r.path === '/v1/auth/agent').slice(beforeParallel);\n  assert.ok(parallelAdmissions.length >= 1);\n  assert.equal(new Set(parallelAdmissions.map(r => r.body.bootstrapSecret)).size, 1,\n    'hosts sharing a new session publish/adopt one recovery proof rather than overwriting each other');\n  await peer.stop(); peer = null;\n\n  await mcp.stop(); mcp = null;\n  await rm(sessionFile, { force: true });\n  mcp = await mcpProcess(api.base, sessionFile);\n  const replacement = { version: 1, base: 'https://another-city.invalid', token: 'another-city-token' };\n  api.state.beforeAgentResponse = async () => {\n    api.state.beforeAgentResponse = null;\n    await writeFile(sessionFile, JSON.stringify(replacement));\n  };\n  assert.equal((await mcp.call('omerta_start')).error, 'session_write',\n    'a late admission response refuses to overwrite a session switched to another origin');\n  assert.deepEqual(JSON.parse(await readFile(sessionFile, 'utf8')), replacement);\n} finally {\n  if (peer) await peer.stop();\n  if (mcp) await mcp.stop();\n  await api.close();\n  await rm(dir, { recursive: true, force: true });\n",
+          "baseline": "  await writeFile(sessionFile, '{not-json', 'utf8');\n  mcp = await mcpProcess(api.base, sessionFile);\n  api.state.agentKeyStatus = 503;\n  const failedUpgrade = await mcp.call('omerta_start', { reset: true });\n  assert.deepEqual({ step: failedUpgrade.step, status: failedUpgrade.status,\n    error: failedUpgrade.body?.error }, { step: 'agent_key', status: 503, error: 'agent_key_failed' },\n  'a failed agent-key upgrade is reported as the failing step instead of a successful agent start');\n  const guestsAfterFailedUpgrade = api.requests.filter((r) => r.path === '/v1/auth/guest').length;\n  await mcp.stop();\n  mcp = null;\n  api.state.agentKeyStatus = 200;\n  api.state.agent = false;\n  mcp = await mcpProcess(api.base, sessionFile);\n  const retriedUpgrade = await mcp.call('omerta_start');\n  assert.equal(api.requests.filter((r) => r.path === '/v1/auth/guest').length, guestsAfterFailedUpgrade,\n    'a failed agent-key upgrade persists the guest identity so restart retries the same account');\n  assert.deepEqual({ authed: retriedUpgrade.authed, agent: retriedUpgrade.agent,\n    resumed: retriedUpgrade.resumed }, { authed: true, agent: true, resumed: true },\n  'the resumed guest upgrades cleanly to an agent after the transient failure clears');\n} finally {\n  if (mcp) await mcp.stop();\n  await api.close();\n  await rm(dir, { recursive: true, force: true });\n"
+        }
+      ]
+    },
+    "test/playthrough-truth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "040f9f9d9284420ff778a1023218e1c9950ee76b",
+        "sha256": "a31002d2c3f3a871fc2ed206982a66d243fd470d20155ddd19b9215e647304d2",
+        "bytes": 2975
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0e9f93013674d93bd5b629ff0ac279af45671b2a",
+        "sha256": "9da0e243fbe16aa2577599bda9ea60d5338a089dd60696cc5a6cae49f228e9a1",
+        "bytes": 1347
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import assert from 'node:assert/strict';\nimport { execFile } from 'node:child_process';\nimport { promisify } from 'node:util';\nimport { crimeCoachRungObeyed } from '../tools/playthrough-truth.js';\n\n// Regression target: the former predicate credited a level-2 player for any\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport { crimeCoachRungObeyed } from '../tools/playthrough-truth.js';\n\n// Regression target: the former predicate credited a level-2 player for any\n"
+        },
+        {
+          "at": 1294,
+          "current": "  }), false, `a failed crime does not complete the ${label} coach rung`);\n}\n\n// Exercise the actual harness with a deterministic local player. Omitting its street clock\n// caps this simulated sitting at one real-time attempt; parsing obsolete coach prose keeps\n// the First Blood instruction permanently uncleared despite the assigned rival being present.\nconst entry = new URL('../tools/playthrough.js', import.meta.url).href;\nconst childCode = `\n  process.env.NODE_ENV = 'test';\n  process.env.RATE_LIMIT = 'off';\n  process.env.SEASON_MOD = 'dead_quiet';\n  process.env.SEASON_PHASE = 'long_game';\n  delete process.env.DATABASE_URL;\n  let seed = 936017;\n  Math.random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };\n  process.argv = [process.execPath, ${JSON.stringify(entry)}, '--days', '1', '--sessions', '1', '--session', '20'];\n  await import(${JSON.stringify(entry)});\n`;\nconst { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '--eval', childCode], {\n  windowsHide: true, timeout: 90000, maxBuffer: 1024 * 1024,\n});\nconst attempts = [...stdout.matchAll(/^\\s+crime:(?:win|bust)\\s+(\\d+)\\s*$/gm)]\n  .reduce((sum, match) => sum + Number(match[1]), 0);\nassert.ok(attempts >= 8,\n  `simulated street cooldowns must advance with the sitting; only ${attempts} crime attempts occurred`);\nconst obeyed = stdout.match(/^  obeyed: (.*)$/m)?.[1] || '';\nassert.ok(obeyed.includes('Settle your first score'),\n  'the actual current coach hint identifies the assigned rival and the harness clears First Blood');\n\nconsole.log(`✓ playthrough coach-truth regression passed (${attempts} crimes; First Blood cleared)`);\n",
+          "baseline": "  }), false, `a failed crime does not complete the ${label} coach rung`);\n}\n\nconsole.log('✓ playthrough coach-truth regression passed');\n"
         }
       ]
     },
@@ -861,9 +1505,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "test/routes.js": {
       "current": {
         "mode": "100644",
-        "blob": "7666103588de85b44d53490fc651d431557b2d80",
-        "sha256": "4086110f9df47c7fa7b5a3b70578dc535ed0d9e81a748cea04048cd45579083d",
-        "bytes": 43242
+        "blob": "159f3f7b79dbd45feb97344cbf8ac34befc662a0",
+        "sha256": "eb2c69365c643c98f835a7dac1212fd06bc7e83638e949b0087ab34cf0f9b2a2",
+        "bytes": 43346
       },
       "baseline": {
         "mode": "100644",
@@ -873,24 +1517,177 @@ export const SITE_BASICS_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 33731,
+          "at": 9155,
+          "current": "    + 'spend comes back to the desk to be sold again is entitled to read the shelf and the sink list',\n  'GET /v1/deeds/plate/:tokenId': 'STREET DEEDS — the on-chain deed\\'s block-plate SVG, the ERC-721 tokenURI image a marketplace/crawler fetches with no token; the untrusted street name is escaped (the /v1/art precedent)',\n  'POST /v1/auth/guest': 'an auth entry point — there is no token to present yet',\n  'POST /v1/auth/agent': 'permanent agent admission issues the first bearer without a human age check',\n  'POST /v1/age-check': 'checks eligibility without saving a birth date before account creation',\n  'POST /v1/access/redeem': 'launch admission authenticates an unused invite and a durable bootstrap credential before creating or recovering an account',\n  'POST /v1/access/logout': 'clears only the caller browser view cookie and grants no account or gameplay authority',\n",
+          "baseline": "    + 'spend comes back to the desk to be sold again is entitled to read the shelf and the sink list',\n  'GET /v1/deeds/plate/:tokenId': 'STREET DEEDS — the on-chain deed\\'s block-plate SVG, the ERC-721 tokenURI image a marketplace/crawler fetches with no token; the untrusted street name is escaped (the /v1/art precedent)',\n  'POST /v1/auth/guest': 'an auth entry point — there is no token to present yet',\n  'POST /v1/age-check': 'checks eligibility without saving a birth date before account creation',\n  'POST /v1/access/redeem': 'launch admission authenticates an unused invite and a durable bootstrap credential before creating or recovering an account',\n  'POST /v1/access/logout': 'clears only the caller browser view cookie and grants no account or gameplay authority',\n"
+        },
+        {
+          "at": 33835,
           "current": "//\n//   • text compresses when the client asks, and MATERIALLY (a hook that ran and saved nothing would\n//     read exactly like a hook that works)\n//   • identity preserves the reviewed markup; the game program transfers separately on entry\n//   • the gzip DECODES to the same bytes. A corrupt stream is the worst failure here: the page is\n//     blank and nothing 500s.\n//   • Vary: Accept-Encoding on BOTH branches, or a shared cache hands the compressed copy to a\n",
           "baseline": "//\n//   • text compresses when the client asks, and MATERIALLY (a hook that ran and saved nothing would\n//     read exactly like a hook that works)\n//   • identity is honoured, byte-for-byte against the file on disk — a client that cannot decode\n//     gzip must get the real thing, not a corrupted one\n//   • the gzip DECODES to the same bytes. A corrupt stream is the worst failure here: the page is\n//     blank and nothing 500s.\n//   • Vary: Accept-Encoding on BOTH branches, or a shared cache hands the compressed copy to a\n"
         },
         {
-          "at": 34664,
+          "at": 34768,
           "current": "  const GZ = { 'accept-encoding': 'gzip' };\n  const ID = { 'accept-encoding': 'identity' };\n  const get = (url, headers) => app.inject({ method: 'GET', url, headers });\n  const bodyOf = value => { const text = String(value).replaceAll('\\r\\n', '\\n'); return text.slice(text.indexOf('</head>') + 7); };\n  for (const name of ['defi', 'fee-flows', 'genesis-deploy']) {\n    const expected = readFileSync(new URL('../public/' + name + '.html', import.meta.url));\n    for (const path of ['/' + name, '/' + name + '.html']) {\n      const page = await get(path, ID);\n      assert.equal(page.statusCode, 200, 'Public crypto page must be reachable: ' + path);\n      assert.ok(bodyOf(page.body) === bodyOf(expected), 'Published page body must match reviewed copy after metadata enhancement: ' + path);\n    }\n  }\n  for (const name of ['genesis-deploy-client.js', 'genesis-deploy-artifact.js',\n",
           "baseline": "  const GZ = { 'accept-encoding': 'gzip' };\n  const ID = { 'accept-encoding': 'identity' };\n  const get = (url, headers) => app.inject({ method: 'GET', url, headers });\n  for (const name of ['defi', 'fee-flows', 'genesis-deploy']) {\n    const expected = readFileSync(new URL('../public/' + name + '.html', import.meta.url));\n    for (const path of ['/' + name, '/' + name + '.html']) {\n      const page = await get(path, ID);\n      assert.equal(page.statusCode, 200, 'Public crypto page must be reachable: ' + path);\n      assert.deepEqual(page.rawPayload, expected, 'Published page must match reviewed copy: ' + path);\n    }\n  }\n  for (const name of ['genesis-deploy-client.js', 'genesis-deploy-artifact.js',\n"
         },
         {
-          "at": 36324,
+          "at": 36428,
           "current": "  assert.equal(id.headers['content-encoding'], undefined, 'GET / must NOT compress for a client that asked for identity');\n  // non-vacuity: a 1 MB shell that gzipped to 999 KB would satisfy \"it compressed\" and save nothing\n  assert(raw.length > 200_000, `the shell is ${raw.length} bytes — this check is sized for the real one`);\n  assert(gz.rawPayload.length < raw.length * 0.2,\n    `GET / compressed to ${gz.rawPayload.length} of ${raw.length} — the hook ran but saved almost nothing`);\n  const source = raw.toString('utf8').replaceAll('\\r\\n', '\\n');\n  const authoredMarkup = bodyOf(source).split('<script src=\"/eth-staking.js')[0];\n  const publicMarkup = bodyOf(id.body).replace(/<p id=\"client-load-failure\"[\\s\\S]*?<\\/p>/, '')\n    .replace('id=\"screen-auth\" class=\"landing\"', 'id=\"screen-auth\" class=\"landing hidden\"');\n  assert.ok(publicMarkup.startsWith(authoredMarkup), 'Reviewed public and game markup remains intact before the deferred transport.');\n  const loaderUrl = id.body.match(/<script src=\"(\\/landing-loader\\.js\\?v=[a-f0-9]+)\"/)[1];\n  const loader = await get(loaderUrl, ID);\n  const runtimeUrl = JSON.parse(loader.body.match(/const CONFIG = (\\{[^\\n]+\\});/)[1]).runtime;\n  const runtime = await get(runtimeUrl, ID);\n  assert.equal(runtime.body, source.match(/<script>\\n(\\(\\(\\) => \\{[\\s\\S]*?)\\n<\\/script>\\s*<\\/body>/)[1],\n    'The deferred program must be exactly the reviewed canonical game source.');\n  assert.deepEqual(zlib.gunzipSync(gz.rawPayload), id.rawPayload,\n    'the gzipped shell must DECODE to the identity response — a corrupt stream is a blank page and no 500');\n  for (const [name, r] of [['gzip', gz], ['identity', id]])\n    assert(/accept-encoding/i.test(String(r.headers.vary || '')),\n      `the ${name} branch must send Vary: Accept-Encoding, or a shared cache serves the wrong copy`);\n",
           "baseline": "  assert.equal(id.headers['content-encoding'], undefined, 'GET / must NOT compress for a client that asked for identity');\n  // non-vacuity: a 1 MB shell that gzipped to 999 KB would satisfy \"it compressed\" and save nothing\n  assert(raw.length > 200_000, `the shell is ${raw.length} bytes — this check is sized for the real one`);\n  assert(gz.rawPayload.length < raw.length * 0.6,\n    `GET / compressed to ${gz.rawPayload.length} of ${raw.length} — the hook ran but saved almost nothing`);\n  assert.equal(id.rawPayload.length, raw.length, 'the identity branch must be the file on disk, byte for byte');\n  assert.deepEqual(zlib.gunzipSync(gz.rawPayload), raw,\n    'the gzipped shell must DECODE to the file — a corrupt stream is a blank page and no 500');\n  for (const [name, r] of [['gzip', gz], ['identity', id]])\n    assert(/accept-encoding/i.test(String(r.headers.vary || '')),\n      `the ${name} branch must send Vary: Accept-Encoding, or a shared cache serves the wrong copy`);\n"
         },
         {
-          "at": 41764,
+          "at": 41868,
           "current": "    'a sub-threshold payload must be left alone — gzip framing can make it bigger');\n\n  console.log(`✅ the wire: the ${(raw.length / 1024).toFixed(0)} KB shell ships as ${(gz.rawPayload.length / 1024).toFixed(0)} KB and `\n    + `revalidates to a 304; deferred runtime is byte-exact; binary and sub-threshold payloads are untouched`);\n}\n\nawait app.close();\n",
           "baseline": "    'a sub-threshold payload must be left alone — gzip framing can make it bigger');\n\n  console.log(`✅ the wire: the ${(raw.length / 1024).toFixed(0)} KB shell ships as ${(gz.rawPayload.length / 1024).toFixed(0)} KB and `\n    + `revalidates to a 304; identity is byte-exact; binary and sub-threshold payloads are untouched`);\n}\n\nawait app.close();\n"
+        }
+      ]
+    },
+    "tools/agent-alpha.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "8312f8ba957922bd22e482512e407fcb4fb80d1a",
+        "sha256": "8fee824901abe08d13d61a721f51dab66926770d670926ee3c3d93153f7b6c26",
+        "bytes": 50955
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "3373122c4ded47a1c36030ae1a703a16f59e7ca7",
+        "sha256": "8d81b506696173916d44d83db5fdafdee21cb635b08a30dcd2d80afc4d57bbfa",
+        "bytes": 45435
+      },
+      "inverses": [
+        {
+          "at": 20,
+          "current": "// A finite, conservative Agent Turn client. Identity state is deliberately local and reports are\n// deliberately lossy: the session owns the bearer token while telemetry owns no sensitive values.\nimport crypto from 'node:crypto';\nimport { execFile, spawn } from 'node:child_process';\nimport { AsyncLocalStorage } from 'node:async_hooks';\nimport { constants as fsConstants } from 'node:fs';\nimport { lstat, mkdir, open, readFile, realpath, rename, stat, unlink } from 'node:fs/promises';\nimport { createServer } from 'node:net';\n",
+          "baseline": "// A finite, conservative Agent Turn client. Identity state is deliberately local and reports are\n// deliberately lossy: the session owns the bearer token while telemetry owns no sensitive values.\nimport crypto from 'node:crypto';\nimport { execFile } from 'node:child_process';\nimport { constants as fsConstants } from 'node:fs';\nimport { lstat, mkdir, open, readFile, realpath, rename, stat, unlink } from 'node:fs/promises';\nimport { createServer } from 'node:net';\n"
+        },
+        {
+          "at": 1458,
+          "current": "]);\nconst ACTION_ROLES = {\n  general: ALLOWED_KINDS,\n  progression: new Set(['crime', 'onboard_claim', 'daily_claim', 'career_claim']),\n  business: new Set(['depot_restock', 'depot_receive', 'depot_travel', 'business_buy', 'business_upkeep', 'business_upgrade', 'business_collect']),\n  supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),\n};\n\nconst defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));\nconst execFileAsync = promisify(execFile);\nconst windowsSecurityContext = new AsyncLocalStorage();\n\nconst WINDOWS_ACL_CHECK = `\n  $ErrorActionPreference = 'Stop'\n",
+          "baseline": "]);\nconst ACTION_ROLES = {\n  general: ALLOWED_KINDS,\n  business: new Set(['depot_restock', 'depot_receive', 'depot_travel', 'business_buy', 'business_upkeep', 'business_upgrade', 'business_collect']),\n  supplier: new Set(['delivery_accept', 'delivery_buy', 'delivery_depot_buy', 'delivery_travel', 'delivery_deliver', 'market_fill']),\n};\n\nconst defaultSleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));\nconst execFileAsync = promisify(execFile);\n\nconst WINDOWS_ACL_CHECK = `\n  $ErrorActionPreference = 'Stop'\n"
+        },
+        {
+          "at": 5066,
+          "current": "}\n\nasync function runWindowsSecurityScript(script, path, kind) {\n  const context = windowsSecurityContext.getStore();\n  if (context) {\n    context.worker ||= windowsSecurityWorker();\n    return context.worker.check(script === WINDOWS_ACL_CHECK ? 'check' : 'create', path, kind);\n  }\n  await execFileAsync(windowsPowerShell(), [\n    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,\n  ], {\n",
+          "baseline": "}\n\nasync function runWindowsSecurityScript(script, path, kind) {\n  await execFileAsync(windowsPowerShell(), [\n    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,\n  ], {\n"
+        },
+        {
+          "at": 5645,
+          "current": "  });\n}\n\n// Keep the existing ACL and private-file checks, but avoid starting PowerShell for every check.\n// Only operation names and paths cross this pipe; bearer/session bytes remain in the Node process.\n// The worker is scoped to one finite invocation and closes with it, including on failed checks.\nfunction windowsSecurityWorker() {\n  const script = `\n    [Console]::InputEncoding = [System.Text.Encoding]::UTF8\n    $check = { ${WINDOWS_ACL_CHECK} }\n    $create = { ${WINDOWS_CREATE_PRIVATE_FILE} }\n    while ($null -ne ($line = [Console]::ReadLine())) {\n      try {\n        $request = ConvertFrom-Json $line\n        $env:OMERTA_ALPHA_ACL_TARGET = $request.path\n        $env:OMERTA_ALPHA_ACL_KIND = $request.kind\n        if ($request.operation -eq 'check') { & $check }\n        elseif ($request.operation -eq 'create') { & $create }\n        else { throw 'Unknown security operation' }\n        [Console]::WriteLine('ok')\n      } catch { [Console]::WriteLine('error') }\n      [Console]::Out.Flush()\n    }\n  `;\n  const child = spawn(windowsPowerShell(), [\n    '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', script,\n  ], { windowsHide: true, stdio: ['pipe', 'pipe', 'ignore'] });\n  const pending = [];\n  let buffer = '';\n  let failure;\n  let closed = false;\n  const fail = () => {\n    failure ||= new Error('Agent Alpha Windows security check failed');\n    for (const item of pending.splice(0)) { clearTimeout(item.timer); item.reject(failure); }\n  };\n  const exit = new Promise((resolveExit) => {\n    child.once('error', () => { fail(); resolveExit(); });\n    child.once('exit', () => { closed = true; fail(); resolveExit(); });\n  });\n  child.stdin.on('error', fail);\n  child.stdout.on('data', (chunk) => {\n    buffer += chunk.toString('utf8');\n    for (let end; (end = buffer.indexOf('\\n')) >= 0;) {\n      const line = buffer.slice(0, end).trim();\n      buffer = buffer.slice(end + 1);\n      const item = pending.shift();\n      if (!item) { fail(); child.kill(); return; }\n      clearTimeout(item.timer);\n      if (line === 'ok') item.resolve();\n      else item.reject(new Error('Agent Alpha Windows security check failed'));\n    }\n  });\n  return {\n    check(operation, path, kind) {\n      if (failure) return Promise.reject(failure);\n      return new Promise((resolveCheck, reject) => {\n        const timer = setTimeout(() => { fail(); child.kill(); }, 10000);\n        pending.push({ resolve: resolveCheck, reject, timer });\n        child.stdin.write(`${JSON.stringify({ operation, path, kind })}\\n`);\n      });\n    },\n    async close() {\n      if (!closed) child.stdin.end();\n      await exit;\n    },\n  };\n}\n\nasync function assertWindowsPrivateAcl(path, kind) {\n  try {\n    await runWindowsSecurityScript(WINDOWS_ACL_CHECK, path, kind);\n",
+          "baseline": "  });\n}\n\nasync function assertWindowsPrivateAcl(path, kind) {\n  try {\n    await runWindowsSecurityScript(WINDOWS_ACL_CHECK, path, kind);\n"
+        },
+        {
+          "at": 17167,
+          "current": "    ...(body === undefined ? {} : { 'content-type': 'application/json' }),\n    ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),\n  };\n  const request = {\n    method,\n    headers,\n    redirect: 'manual',\n    ...(body === undefined ? {} : { body: JSON.stringify(body) }),\n  };\n  for (let retries = 0; ; retries += 1) {\n    const response = await fetchImpl(`${base}${path}`, request);\n    if (response.redirected || (response.status >= 300 && response.status < 400)) {\n      throw new Error('Agent Alpha API redirects are forbidden by origin binding');\n    }\n    if (response.url && originOf(response.url) !== base) {\n      throw new Error('Agent Alpha response escaped its bound origin');\n    }\n    let payload = null;\n    try { payload = await response.json(); }\n    catch { throw new Error(`Agent Alpha received non-JSON response (${response.status})`); }\n    const timing = windowsSecurityContext.getStore()?.timing;\n    const retryAfter = Number(payload?.retryAfter ?? response.headers.get('retry-after'));\n    if (path !== '/v1/agent/act' && response.status === 429 && payload?.error === 'rate_limited' && retries < 2 &&\n        timing && Number.isFinite(retryAfter) && retryAfter > 0 && retryAfter <= 60) {\n      // A definitive pre-handler refusal is safe to retry with the exact same body/key.\n      await waitForCadence(timing, Math.min(60000, retryAfter * 1000 + 100));\n      continue;\n    }\n    if (!response.ok) {\n      const error = new Error(`Agent Alpha request failed (${response.status})`);\n      error.status = response.status;\n      error.code = typeof payload?.error === 'string' ? payload.error : 'http_error';\n      error.payload = payload;\n      throw error;\n    }\n    return payload;\n  }\n}\n\nfunction validName(name) {\n",
+          "baseline": "    ...(body === undefined ? {} : { 'content-type': 'application/json' }),\n    ...(idempotencyKey ? { 'idempotency-key': idempotencyKey } : {}),\n  };\n  const response = await fetchImpl(`${base}${path}`, {\n    method,\n    headers,\n    redirect: 'manual',\n    ...(body === undefined ? {} : { body: JSON.stringify(body) }),\n  });\n  if (response.redirected || (response.status >= 300 && response.status < 400)) {\n    throw new Error('Agent Alpha API redirects are forbidden by origin binding');\n  }\n  if (response.url && originOf(response.url) !== base) {\n    throw new Error('Agent Alpha response escaped its bound origin');\n  }\n  let payload = null;\n  try { payload = await response.json(); }\n  catch { throw new Error(`Agent Alpha received non-JSON response (${response.status})`); }\n  if (!response.ok) {\n    const error = new Error(`Agent Alpha request failed (${response.status})`);\n    error.status = response.status;\n    error.code = typeof payload?.error === 'string' ? payload.error : 'http_error';\n    error.payload = payload;\n    throw error;\n  }\n  return payload;\n}\n\nfunction validName(name) {\n"
+        },
+        {
+          "at": 23922,
+          "current": "    typeof session.pending.actionId === 'string' && session.pending.actionId &&\n    typeof session.pending.startedAt === 'string' && session.pending.startedAt\n  );\n  const bootstrapKeys = [\n    'version', 'base', 'phase', 'bootstrapSecret', 'inviteCode', 'characterName', 'pending',\n  ];\n  const bootstrapValid = session?.phase === 'bootstrap' &&\n    ((session.bootstrapKind === 'agent' && exactKeys(session, [...bootstrapKeys, 'bootstrapKind'])) ||\n      (session.bootstrapKind === undefined && exactKeys(session, bootstrapKeys))) &&\n    validBootstrapSecret(session.bootstrapSecret) && validInviteCode(session.inviteCode) &&\n    session.pending === null;\n  const bearerValid = [\n    'guest_bootstrap_ack_pending', 'guest', 'initial_character_pending', 'agent',\n",
+          "baseline": "    typeof session.pending.actionId === 'string' && session.pending.actionId &&\n    typeof session.pending.startedAt === 'string' && session.pending.startedAt\n  );\n  const bootstrapValid = session?.phase === 'bootstrap' &&\n    exactKeys(session, [\n      'version', 'base', 'phase', 'bootstrapSecret', 'inviteCode', 'characterName', 'pending',\n    ]) && validBootstrapSecret(session.bootstrapSecret) && validInviteCode(session.inviteCode) &&\n    session.pending === null;\n  const bearerValid = [\n    'guest_bootstrap_ack_pending', 'guest', 'initial_character_pending', 'agent',\n"
+        },
+        {
+          "at": 30927,
+          "current": "}\n\nasync function recoverGuestBootstrap({ base, stateStore, session, fetchImpl, birthDate }) {\n  // Older bootstrap journals retain their original recovery domain and identity.\n  const route = session.bootstrapKind === 'agent' ? '/v1/auth/agent' : '/v1/auth/guest';\n  const guest = await requestJson(fetchImpl, base, route, {\n    method: 'POST',\n    body: {\n      bootstrapSecret: session.bootstrapSecret,\n      ...(route === '/v1/auth/guest' && birthDate ? { birthDate } : {}),\n      ...(session.inviteCode === null ? {} : { inviteCode: session.inviteCode }),\n    },\n  });\n",
+          "baseline": "}\n\nasync function recoverGuestBootstrap({ base, stateStore, session, fetchImpl, birthDate }) {\n  const guest = await requestJson(fetchImpl, base, '/v1/auth/guest', {\n    method: 'POST',\n    body: {\n      bootstrapSecret: session.bootstrapSecret,\n      ...(birthDate ? { birthDate } : {}),\n      ...(session.inviteCode === null ? {} : { inviteCode: session.inviteCode }),\n    },\n  });\n"
+        },
+        {
+          "at": 32638,
+          "current": "    version: SESSION_VERSION,\n    base,\n    phase: 'bootstrap',\n    bootstrapKind: 'agent',\n    bootstrapSecret: crypto.randomBytes(32).toString('base64url'),\n    inviteCode: storedInvite,\n    characterName: name,\n",
+          "baseline": "    version: SESSION_VERSION,\n    base,\n    phase: 'bootstrap',\n    bootstrapSecret: crypto.randomBytes(32).toString('base64url'),\n    inviteCode: storedInvite,\n    characterName: name,\n"
+        },
+        {
+          "at": 41822,
+          "current": "\nasync function runUnlocked(options, timing) {\n  const role = options.role ?? 'general';\n  if (!Object.hasOwn(ACTION_ROLES, role)) throw new Error('Agent Alpha role must be general, progression, business or supplier');\n  const base = originOf(options.baseUrl);\n  const sessionFile = options.sessionFile;\n  const reportStore = options.reportStore;\n  const stateStore = options.stateStore;\n  const fetchImpl = options.fetchImpl || globalThis.fetch;\n  const maxActions = options.maxActions ?? 1;\n  const stopAtLevel = options.stopAtLevel;\n  if (stopAtLevel !== undefined && (!Number.isSafeInteger(stopAtLevel) || stopAtLevel < 1)) {\n    throw new Error('Agent Alpha stopAtLevel must be a positive safe integer');\n  }\n  const intervalMs = options.intervalMs ?? MIN_INTERVAL_MS;\n  if (!Number.isInteger(maxActions) || maxActions < 1 || maxActions > 50) {\n    throw new Error('Agent Alpha maxActions must be an integer from 1 to 50');\n",
+          "baseline": "\nasync function runUnlocked(options, timing) {\n  const role = options.role ?? 'general';\n  if (!Object.hasOwn(ACTION_ROLES, role)) throw new Error('Agent Alpha role must be general, business or supplier');\n  const base = originOf(options.baseUrl);\n  const sessionFile = options.sessionFile;\n  const reportStore = options.reportStore;\n  const stateStore = options.stateStore;\n  const fetchImpl = options.fetchImpl || globalThis.fetch;\n  const maxActions = options.maxActions ?? 1;\n  const intervalMs = options.intervalMs ?? MIN_INTERVAL_MS;\n  if (!Number.isInteger(maxActions) || maxActions < 1 || maxActions > 50) {\n    throw new Error('Agent Alpha maxActions must be an integer from 1 to 50');\n"
+        },
+        {
+          "at": 44443,
+          "current": "    }\n  }\n  while (attempts < maxActions) {\n    if (stopAtLevel !== undefined && Number(currentTurn?.state?.identity?.level) >= stopAtLevel) {\n      return { status: 'level_reached', actions, level: Number(currentTurn.state.identity.level) };\n    }\n    // Do not spend a turn's authority window on cadence or repeated shell startup.\n    const returnedRecommendation = currentTurn && recommendationOf(currentTurn, role);\n    if (returnedRecommendation && !returnedRecommendation.action && !returnedRecommendation.errorCode) break;\n    await waitForCadence(timing, intervalMs);\n    const turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });\n    currentTurn = null;\n    if (stopAtLevel !== undefined && Number(turn?.state?.identity?.level) >= stopAtLevel) {\n      return { status: 'level_reached', actions, level: Number(turn.state.identity.level) };\n    }\n    const recommendation = recommendationOf(turn, role);\n    const action = recommendation.action;\n    if (!action) {\n",
+          "baseline": "    }\n  }\n  while (attempts < maxActions) {\n    const turn = currentTurn || await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });\n    currentTurn = null;\n    const recommendation = recommendationOf(turn, role);\n    const action = recommendation.action;\n    if (!action) {\n"
+        },
+        {
+          "at": 45969,
+          "current": "      }\n      break;\n    }\n    const operationId = role === 'general' ? crypto.randomUUID() : `${role}:${crypto.randomUUID()}`;\n    session = {\n      ...session,\n",
+          "baseline": "      }\n      break;\n    }\n    await waitForCadence(timing, intervalMs);\n\n    const operationId = role === 'general' ? crypto.randomUUID() : `${role}:${crypto.randomUUID()}`;\n    session = {\n      ...session,\n"
+        },
+        {
+          "at": 46986,
+          "current": "    }\n  }\n\n  if (stopAtLevel !== undefined && Number(currentTurn?.state?.identity?.level) >= stopAtLevel) {\n    return { status: 'level_reached', actions, level: Number(currentTurn.state.identity.level) };\n  }\n  return { status: 'complete', actions };\n}\n\nasync function runWithSession(options, timing) {\n  if (!options.sessionFile) throw new Error('Agent Alpha requires a session file');\n  const paths = await canonicalRunnerPaths(options.sessionFile, options.reportFile);\n  paths.stateStore.credentialBoundary = timing.credentialBoundary;\n",
+          "baseline": "    }\n  }\n\n  return { status: 'complete', actions };\n}\n\nasync function runWithTiming(options, timing) {\n  if (!options.sessionFile) throw new Error('Agent Alpha requires a session file');\n  const paths = await canonicalRunnerPaths(options.sessionFile, options.reportFile);\n  paths.stateStore.credentialBoundary = timing.credentialBoundary;\n"
+        },
+        {
+          "at": 48135,
+          "current": "  }\n}\n\nasync function runWithTiming(options, timing) {\n  const context = { timing };\n  return windowsSecurityContext.run(context, async () => {\n    try { return await runWithSession(options, timing); }\n    finally { await context.worker?.close(); }\n  });\n}\n\nexport async function runAgentAlpha(options = {}) {\n  return runWithTiming(options, productionTiming(options.sleep));\n}\n",
+          "baseline": "  }\n}\n\nexport async function runAgentAlpha(options = {}) {\n  return runWithTiming(options, productionTiming(options.sleep));\n}\n"
+        },
+        {
+          "at": 49677,
+          "current": "    else if (arg === '--name') options.name = argv[++index];\n    else if (arg === '--birth-date') options.birthDate = argv[++index];\n    else if (arg === '--max-actions') options.maxActions = Number(argv[++index]);\n    else if (arg === '--stop-at-level') options.stopAtLevel = Number(argv[++index]);\n    else if (arg === '--session') options.sessionFile = argv[++index];\n    else if (arg === '--report') options.reportFile = argv[++index];\n    else if (arg === '--role') options.role = argv[++index];\n",
+          "baseline": "    else if (arg === '--name') options.name = argv[++index];\n    else if (arg === '--birth-date') options.birthDate = argv[++index];\n    else if (arg === '--max-actions') options.maxActions = Number(argv[++index]);\n    else if (arg === '--session') options.sessionFile = argv[++index];\n    else if (arg === '--report') options.reportFile = argv[++index];\n    else if (arg === '--role') options.role = argv[++index];\n"
+        }
+      ]
+    },
+    "tools/enterprise-native-questing.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "fb73cae3dd58022310340e6e9dd90f1cc93bfb9e",
+        "sha256": "5bee575459d5f422e9c0fc3ed7905edb9bd79f6291bf6c50bc60febc12e838f0",
+        "bytes": 26167
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "e98650f2bde4162d6d8ea0fdc236abf24a487ce3",
+        "sha256": "45b0d8485765d0002b6d3a27262e41ef49647b93be61cfef275e73809248fc84",
+        "bytes": 26140
+      },
+      "inverses": [
+        {
+          "at": 1856,
+          "current": "  'test/lib/questing-ux-native-reader-source-compatibility.js',\n  'test/lib/questing-ux-director-reader-source-compatibility.js',\n  'test/lib/questing-ux-enterprise-reader-source-compatibility.js',\n  'src/casinorakeback.js',\n  'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',\n  ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',\n    'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']\n",
+          "baseline": "  'test/lib/questing-ux-native-reader-source-compatibility.js',\n  'test/lib/questing-ux-director-reader-source-compatibility.js',\n  'test/lib/questing-ux-enterprise-reader-source-compatibility.js',\n  'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',\n  ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',\n    'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']\n"
+        }
+      ]
+    },
+    "tools/playthrough.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "82b2b301ae85aa8ef20b57909f0e21383a6395fe",
+        "sha256": "7bf9b30682a99f61b4186b554c3a762b6df606c91e4b27c9591b01fba1d5221f",
+        "bytes": 88514
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "b2151894643a8ab498276e9aa623cd27f094d557",
+        "sha256": "62340e0e8fe0413b7c5d43f98e563f2ec295a23642a43de86f3a77d290cfd2e4",
+        "bytes": 88280
+      },
+      "inverses": [
+        {
+          "at": 4747,
+          "current": "// Every character-scoped timestamp pulled back N minutes == the world advancing N minutes for this\n// player. Listed explicitly (not information_schema) so a new column is a deliberate decision here.\nconst CLOCK_COLS = [\n  'last_accrued_at', 'street_action_at', 'jail_until', 'hosp_until', 'gta_at', 'shoot_cd_until', 'crew_paid_at',\n  'heist_at', 'npchit_at', 'safe_until', 'wash_at', 'safehouse_at', 'rwa_at', 'respec_at',\n  'guarded_until', 'bank_intransit_at', 'retainer_until', 'witpro_until', 'world_raid_at',\n  'pen_safe_until', 'hole_until', 'shank_at', 'train_at', 'mission_at', 'wanted_until',\n",
+          "baseline": "// Every character-scoped timestamp pulled back N minutes == the world advancing N minutes for this\n// player. Listed explicitly (not information_schema) so a new column is a deliberate decision here.\nconst CLOCK_COLS = [\n  'last_accrued_at', 'jail_until', 'hosp_until', 'gta_at', 'shoot_cd_until', 'crew_paid_at',\n  'heist_at', 'npchit_at', 'safe_until', 'wash_at', 'safehouse_at', 'rwa_at', 'respec_at',\n  'guarded_until', 'bank_intransit_at', 'retainer_until', 'witpro_until', 'world_raid_at',\n  'pen_safe_until', 'hole_until', 'shank_at', 'train_at', 'mission_at', 'wanted_until',\n"
+        },
+        {
+          "at": 15034,
+          "current": "// and there is nothing to assert against without playing. So: count the minutes each distinct rung\n// holds, and fail if any one of them holds most of the run.\nconst coachMin = new Map();       // label -> minutes it was the top rung\nconst coachPostObeyMin = new Map(); // minutes still advised after obedience\nconst coachPlanDepth = [];        // how many steps the plan box offered, per tick\nlet coachSilent = 0;              // minutes with no advice at all (a vet, correctly)\nconst coachObeyed = new Set();    // rungs the harness successfully DID what was asked\n",
+          "baseline": "// and there is nothing to assert against without playing. So: count the minutes each distinct rung\n// holds, and fail if any one of them holds most of the run.\nconst coachMin = new Map();       // label -> minutes it was the top rung\nconst coachPlanDepth = [];        // how many steps the plan box offered, per tick\nlet coachSilent = 0;              // minutes with no advice at all (a vet, correctly)\nconst coachObeyed = new Set();    // rungs the harness successfully DID what was asked\n"
+        },
+        {
+          "at": 16400,
+          "current": "  const label = m.coach?.label;\n  if (!label) { coachSilent++; return; }\n  coachMin.set(label, (coachMin.get(label) || 0) + 1);\n  if (coachObeyed.has(label)) coachPostObeyMin.set(label, (coachPostObeyMin.get(label) || 0) + 1);\n  if (!rungFirst.has(label)) rungFirst.set(label, { at: playedMin, worth: m.cash + m.bank, level: m.level });\n  if (Array.isArray(m.coachPlan)) coachPlanDepth.push(m.coachPlan.length);\n}\n",
+          "baseline": "  const label = m.coach?.label;\n  if (!label) { coachSilent++; return; }\n  coachMin.set(label, (coachMin.get(label) || 0) + 1);\n  if (!rungFirst.has(label)) rungFirst.set(label, { at: playedMin, worth: m.cash + m.bank, level: m.level });\n  if (Array.isArray(m.coachPlan)) coachPlanDepth.push(m.coachPlan.length);\n}\n"
+        },
+        {
+          "at": 32941,
+          "current": "    // (\"find them on the Wet Work roster and JUMP them\") — and it has to be the named one, because\n    // settleFirstBlood clears the stage only for that character. Jumping a stranger would look like\n    // obedience, do nothing to the rung, and hide the very failure this handler exists to expose.\n    const named = String(m.coach?.hint || '').split(' has been talking you down on the street.')[0].trim();\n    const roster = await call('GET', '/v1/streets', { token });\n    const list = roster.body?.streets || roster.body?.here || (Array.isArray(roster.body) ? roster.body : []);\n    const mark = named ? list.find((x) => x.name === named) : null;\n",
+          "baseline": "    // (\"find them on the Wet Work roster and JUMP them\") — and it has to be the named one, because\n    // settleFirstBlood clears the stage only for that character. Jumping a stranger would look like\n    // obedience, do nothing to the rung, and hide the very failure this handler exists to expose.\n    const named = String(m.coach?.hint || '').split(' put the word out')[0].trim();\n    const roster = await call('GET', '/v1/streets', { token });\n    const list = roster.body?.streets || roster.body?.here || (Array.isArray(roster.body) ? roster.body : []);\n    const mark = named ? list.find((x) => x.name === named) : null;\n"
+        },
+        {
+          "at": 80827,
+          "current": "  // perfectly healthy rung as a defect on its first run.\n  const PIN_PCT = 40;   // an obeyed rung should clear within a few ticks; 40% of a multi-day run is\n                        // far past \"the player is on their way there\" and squarely at \"it never went away\"\n  const pinned = [...coachPostObeyMin].filter(([label, mins]) =>\n    coachObeyed.has(label) && totalAdvised && (mins / totalAdvised) * 100 > PIN_PCT);\n  if (pinned.length) {\n    coachVerdict = `PINNED — \"${pinned[0][0]}\" held ${Math.round(pinned[0][1] / totalAdvised * 100)}%`\n",
+          "baseline": "  // perfectly healthy rung as a defect on its first run.\n  const PIN_PCT = 40;   // an obeyed rung should clear within a few ticks; 40% of a multi-day run is\n                        // far past \"the player is on their way there\" and squarely at \"it never went away\"\n  const pinned = advised.filter(([label, mins]) =>\n    coachObeyed.has(label) && totalAdvised && (mins / totalAdvised) * 100 > PIN_PCT);\n  if (pinned.length) {\n    coachVerdict = `PINNED — \"${pinned[0][0]}\" held ${Math.round(pinned[0][1] / totalAdvised * 100)}%`\n"
         }
       ]
     },
@@ -951,6 +1748,12 @@ export const SITE_BASICS_SOURCE = freeze({
       "sha256": "a2eb06b3844b94d96bd8492f0f854ecbea2f2eb4efdab610f9c99ae1d36db245",
       "bytes": 5308
     },
+    "src/casinorakeback.js": {
+      "mode": "100644",
+      "blob": "e63cc40bb9b598dc7dd402a61e91b79f3ce5b1a9",
+      "sha256": "22e4ea6a4024225205727e4997aa8e52319350e00e4625db4cae96c6716bf0f0",
+      "bytes": 2949
+    },
     "src/client-shell.js": {
       "mode": "100644",
       "blob": "0248b3685944b46a23cdefedf39321acc7b0b47e",
@@ -969,11 +1772,65 @@ export const SITE_BASICS_SOURCE = freeze({
       "sha256": "a00cbdee06d8660a771ab7238ce00cea20b313c69aee9588c6e25598cc32d290",
       "bytes": 7654
     },
+    "test/agent-cohort.js": {
+      "mode": "100644",
+      "blob": "a06c5b8876237802373b85d6902ca12466b9c50a",
+      "sha256": "a0a7b4cd31ba9162ff2cdacf407ed47b52a30f4748b99eb1cd8869a248d220c3",
+      "bytes": 4256
+    },
+    "test/agent-onboarding-postgres.js": {
+      "mode": "100644",
+      "blob": "7d2bae8e9c77283f3cf1fcf8fcb72eccb2ac9996",
+      "sha256": "24b5efdbfebca643a77578ab56c258d928a00a675645a46db6d993a50f076fd1",
+      "bytes": 5064
+    },
+    "test/agent-onboarding.js": {
+      "mode": "100644",
+      "blob": "5a3974e0e4cfdab59a4e4de1b631cec4bf385775",
+      "sha256": "2710afc43a0986f89d2e59bb0c0e0c62bdf7190a3fe8ecbbcd91135da1351398",
+      "bytes": 5335
+    },
+    "test/agent-turn-cadence.js": {
+      "mode": "100644",
+      "blob": "60496d90b3f8e453ef4337c2967ff6886a9b1f9b",
+      "sha256": "daf43bfbb630a2d05b4a9107efdc8afbdce67ab892220ee50cad555105901003",
+      "bytes": 982
+    },
+    "test/agentturn-jail-units.js": {
+      "mode": "100644",
+      "blob": "d5a5504fde9d1dc9d14ce22550ae4cb11655b389",
+      "sha256": "fc5fd11c684c211f5d3470dbfc26b3fcfd1fb99905ee297edc4b77b2469892a7",
+      "bytes": 1946
+    },
+    "test/business-settlement.js": {
+      "mode": "100644",
+      "blob": "28d11b61b5961cd48c34525689f4f5fde8618d7d",
+      "sha256": "5cf976b0fff054e235c817182932f64f539da2244335cba5d80fc28e83787c19",
+      "bytes": 8973
+    },
+    "test/casino-rakeback-postgres.js": {
+      "mode": "100644",
+      "blob": "15def283001304d2056f2440b197e722637e8e38",
+      "sha256": "58c720520a5a1d70321f040cd04084fc9ea194315c6976784b176ac9583a2d04",
+      "bytes": 7791
+    },
     "test/client-shell-browser.js": {
       "mode": "100644",
       "blob": "805adf5072b8e9ecccca92db6fa1618292aa7456",
       "sha256": "b8dcca850e110ea9e7760d44da257edf2b2b4cf5f5e06f3a8a45d31611ff1526",
       "bytes": 19333
+    },
+    "test/firstblood-intel.js": {
+      "mode": "100644",
+      "blob": "90db32ca25176d80531e440049f6b2df597bba38",
+      "sha256": "d6f037a0f38652652d7837e740754d060278ac4a7f1983f813c80fbb499c1ab4",
+      "bytes": 5353
+    },
+    "test/local-agent-human-coordination.js": {
+      "mode": "100644",
+      "blob": "3138550f24f8089786ae4596c17354bfa3e94e01",
+      "sha256": "671f6dd8f7a1e38120c895d659a16b77a03d65f2febae10b3fb163fe2af204a2",
+      "bytes": 6784
     },
     "test/site-analytics-isolation.js": {
       "mode": "100644",
@@ -989,9 +1846,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "test/site-basics-source-transfer.js": {
       "mode": "100644",
-      "blob": "58cbf849fd6ce2a67a7005aa52ba09115eb2ccd9",
-      "sha256": "f87e1028271df6d4f46b68d14e9c4ec6662ec6c1dc8294a3c56a3eeb53787bd5",
-      "bytes": 6186
+      "blob": "52494596c555e833fa35e08e7c70d2b34487ed74",
+      "sha256": "0ae96239b43282455bcca5b8caa4d5365865be5c35159013b762f78dced3e7e4",
+      "bytes": 6253
     },
     "test/site-basics.js": {
       "mode": "100644",
@@ -1011,11 +1868,23 @@ export const SITE_BASICS_SOURCE = freeze({
       "sha256": "28382d6acc42b85d26d7807e0e2fee67b140b2fc9b0ee6acd140a9175390788d",
       "bytes": 6303
     },
+    "tools/agent-cohort.js": {
+      "mode": "100644",
+      "blob": "6e51bb6f06de267beabf54a3df6e40044c136ce9",
+      "sha256": "d19854707cb6b51c1bf68bede6b8dccdf6932de7f28141788299ee1eb9063bd0",
+      "bytes": 13860
+    },
+    "tools/maintenance-worker.js": {
+      "mode": "100644",
+      "blob": "880be37f501cc0f6e2d4a4edc4d8973719d2bacd",
+      "sha256": "f4a9458c11e569b6181280bcafde3db07e372c187f96842aac5a830492698cc9",
+      "bytes": 380
+    },
     "tools/site-basics-source-seal.js": {
       "mode": "100644",
-      "blob": "ad148bc10647a3c98b538d9d0cee6527d3bff05e",
-      "sha256": "a20749a7f0bbe8544eef7a210b39bc3a4b1d9deb109ee53781a60f9f075abea1",
-      "bytes": 4198
+      "blob": "39c80731a094aafda6ec87c799f84277f4fe60a5",
+      "sha256": "7c79bc60c56759b176ddb9c3d9e53358366b976428a4ff1ba78279cb2a4810b0",
+      "bytes": 4265
     },
     "tools/site-basics-source-transfer.js": {
       "mode": "100644",
@@ -1025,4 +1894,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = 'd520cf91912c47cad0da976f673b0d88b82e43ad6bac977f381272a7f7fd2b6d';
+export const SITE_BASICS_SOURCE_SHA256 = 'e8d4855b97f1c0b43f84ddb915399ba11f237106613e5fe8ae27a28fc49a3ae0';
