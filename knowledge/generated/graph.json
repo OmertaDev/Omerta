@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "92dae5ccfbdec594f2b657d00939c6cc8c0a77c1",
+  "sourceRevision": "d33bfe6aabdaa82513ac98996a0e0d065180fa71",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18362,
-    "edges": 73836,
+    "nodes": 18367,
+    "edges": 73871,
     "byNodeType": {
       "Artifact": 7418,
       "Command": 314,
-      "Commit": 5457,
+      "Commit": 5462,
       "Contract": 156,
       "Document": 970,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5937,
-      "CHANGED": 28617,
+      "CHANGED": 28632,
       "CONTAINS": 7439,
       "DECLARES": 314,
       "DEFINED_IN": 1816,
       "DEPENDS_ON": 69,
       "EXECUTES": 1244,
       "HANDLED_BY": 949,
-      "HAS_COMMIT": 5457,
+      "HAS_COMMIT": 5462,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9141,
+      "IMPORTS": 9156,
       "INHERITS": 47,
       "REFERENCES": 3971,
       "REPRESENTS": 2735,
@@ -152990,20 +152990,20 @@
       "path": "test/rc1-commercial-premises-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10253,
-      "lines": 53,
-      "version": "76ada8c31c9c7a07",
+      "bytes": 10588,
+      "lines": 57,
+      "version": "976409c49eb5579d",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-commercial-premises-source-compatibility.js",
           "line": 1,
-          "version": "76ada8c31c9c7a07"
+          "version": "976409c49eb5579d"
         }
       ],
-      "lastChangedAt": "2026-10-17T19:01:21.000Z",
+      "lastChangedAt": "2026-11-08T05:50:22.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7051faddd4beea253d0fb2f9693546c883e01ab5"
+      "lastChangedCommit": "f76b7e8c22f7047269336e3356074e54a082dc97"
     },
     {
       "key": "Artifact:test/rc1-commercial-reputation-source-compatibility.js",
@@ -153059,20 +153059,20 @@
       "path": "test/rc1-company-logistics-hub-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10223,
-      "lines": 51,
-      "version": "ca6029a5f4115d76",
+      "bytes": 10558,
+      "lines": 55,
+      "version": "cfb7fa33e9f4196f",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-company-logistics-hub-source-compatibility.js",
           "line": 1,
-          "version": "ca6029a5f4115d76"
+          "version": "cfb7fa33e9f4196f"
         }
       ],
-      "lastChangedAt": "2026-10-17T19:01:21.000Z",
+      "lastChangedAt": "2026-11-08T05:50:22.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7051faddd4beea253d0fb2f9693546c883e01ab5"
+      "lastChangedCommit": "f76b7e8c22f7047269336e3356074e54a082dc97"
     },
     {
       "key": "Artifact:test/rc1-company-operator-source-compatibility.js",
@@ -153427,20 +153427,20 @@
       "path": "test/rc1-game-employment-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18342,
-      "lines": 135,
-      "version": "8558f19345f3b444",
+      "bytes": 18676,
+      "lines": 139,
+      "version": "f0c7cc34681c78e7",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-game-employment-source-compatibility.js",
           "line": 1,
-          "version": "8558f19345f3b444"
+          "version": "f0c7cc34681c78e7"
         }
       ],
-      "lastChangedAt": "2026-10-17T19:01:21.000Z",
+      "lastChangedAt": "2026-11-08T05:50:22.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7051faddd4beea253d0fb2f9693546c883e01ab5"
+      "lastChangedCommit": "f76b7e8c22f7047269336e3356074e54a082dc97"
     },
     {
       "key": "Artifact:test/rc1-golden-browser-postgres.js",
@@ -153519,20 +153519,20 @@
       "path": "test/rc1-intel-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7985,
-      "lines": 84,
-      "version": "9cc28df1ba9a9a99",
+      "bytes": 8319,
+      "lines": 88,
+      "version": "d808ff5115f3fa24",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-intel-source-compatibility.js",
           "line": 1,
-          "version": "9cc28df1ba9a9a99"
+          "version": "d808ff5115f3fa24"
         }
       ],
-      "lastChangedAt": "2026-10-17T19:01:21.000Z",
+      "lastChangedAt": "2026-11-08T05:50:22.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7051faddd4beea253d0fb2f9693546c883e01ab5"
+      "lastChangedCommit": "f76b7e8c22f7047269336e3356074e54a082dc97"
     },
     {
       "key": "Artifact:test/rc1-invoice-source-compatibility.js",
@@ -153542,20 +153542,20 @@
       "path": "test/rc1-invoice-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9197,
-      "lines": 101,
-      "version": "308786781760b9b6",
+      "bytes": 9531,
+      "lines": 105,
+      "version": "092b7519eab69237",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-invoice-source-compatibility.js",
           "line": 1,
-          "version": "308786781760b9b6"
+          "version": "092b7519eab69237"
         }
       ],
-      "lastChangedAt": "2026-10-17T19:01:21.000Z",
+      "lastChangedAt": "2026-11-08T05:50:22.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7051faddd4beea253d0fb2f9693546c883e01ab5"
+      "lastChangedCommit": "f76b7e8c22f7047269336e3356074e54a082dc97"
     },
     {
       "key": "Artifact:test/rc1-journeys.js",
@@ -163756,20 +163756,20 @@
       "path": "tools/enterprise-native-questing-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 462480,
-      "lines": 12288,
-      "version": "e23f486c06643275",
+      "bytes": 465501,
+      "lines": 12363,
+      "version": "87925a58ba9142ff",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "e23f486c06643275"
+          "version": "87925a58ba9142ff"
         }
       ],
-      "lastChangedAt": "2026-11-08T05:09:12.000Z",
+      "lastChangedAt": "2026-11-08T05:51:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "83fc64d7d33963ef925ff9faf0c22d565908fb79"
+      "lastChangedCommit": "aedc32def1ce79c701f633434b2def172d132494"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -169767,20 +169767,20 @@
       "path": "tools/site-basics-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 153747,
-      "lines": 873,
-      "version": "73dfdbd8f6baec87",
+      "bytes": 175633,
+      "lines": 1003,
+      "version": "558c718b2953e06d",
       "text": true,
       "provenance": [
         {
           "file": "tools/site-basics-source-data.js",
           "line": 1,
-          "version": "73dfdbd8f6baec87"
+          "version": "558c718b2953e06d"
         }
       ],
-      "lastChangedAt": "2026-11-08T05:08:57.000Z",
+      "lastChangedAt": "2026-11-08T05:51:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cc7ae4a742a9854259bfbf54b13d3315c03ee811"
+      "lastChangedCommit": "3b611c97c5dc69ac4541543e60997eab168d266f"
     },
     {
       "key": "Artifact:tools/site-basics-source-seal.js",
@@ -194963,6 +194963,22 @@
       ]
     },
     {
+      "key": "Commit:3b611c97c5dc69ac4541543e60997eab168d266f",
+      "type": "Commit",
+      "id": "3b611c97c5dc69ac4541543e60997eab168d266f",
+      "label": "Bind reviewed worker comparison reader updates",
+      "title": "Bind reviewed worker comparison reader updates",
+      "date": "2026-11-08T05:51:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3b611c97c5dc69ac4541543e60997eab168d266f",
+      "provenance": [
+        {
+          "commit": "3b611c97c5dc69ac4541543e60997eab168d266f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3b611c97c5dc69ac4541543e60997eab168d266f"
+        }
+      ]
+    },
+    {
       "key": "Commit:3b7b369ef918776b1a7b2a4db62686580653a5ab",
       "type": "Commit",
       "id": "3b7b369ef918776b1a7b2a4db62686580653a5ab",
@@ -217715,6 +217731,22 @@
       ]
     },
     {
+      "key": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "type": "Commit",
+      "id": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "label": "chore(knowledge): refresh generated artifacts for 92dae5cc",
+      "title": "chore(knowledge): refresh generated artifacts for 92dae5cc",
+      "date": "2026-11-08T05:20:50.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "provenance": [
+        {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+        }
+      ]
+    },
+    {
       "key": "Commit:7c7b36521f21c0e3dbd613aeb26136a043c8ffda",
       "type": "Commit",
       "id": "7c7b36521f21c0e3dbd613aeb26136a043c8ffda",
@@ -234867,6 +234899,22 @@
       ]
     },
     {
+      "key": "Commit:aedc32def1ce79c701f633434b2def172d132494",
+      "type": "Commit",
+      "id": "aedc32def1ce79c701f633434b2def172d132494",
+      "label": "Bind actual sources after worker reader integration",
+      "title": "Bind actual sources after worker reader integration",
+      "date": "2026-11-08T05:51:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/aedc32def1ce79c701f633434b2def172d132494",
+      "provenance": [
+        {
+          "commit": "aedc32def1ce79c701f633434b2def172d132494",
+          "url": "https://github.com/OmertaDev/Omerta/commit/aedc32def1ce79c701f633434b2def172d132494"
+        }
+      ]
+    },
+    {
       "key": "Commit:aede207442b0e98e0de9ba9c2e86123b9f6ead7e",
       "type": "Commit",
       "id": "aede207442b0e98e0de9ba9c2e86123b9f6ead7e",
@@ -246847,6 +246895,22 @@
         {
           "commit": "d3307edcf4c07ecaef6c36052994ea5ab956bac1",
           "url": "https://github.com/OmertaDev/Omerta/commit/d3307edcf4c07ecaef6c36052994ea5ab956bac1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d33bfe6aabdaa82513ac98996a0e0d065180fa71",
+      "type": "Commit",
+      "id": "d33bfe6aabdaa82513ac98996a0e0d065180fa71",
+      "label": "Merge pull request #323 from OmertaDev/codex/site-followup-source-readers-20261108",
+      "title": "Merge pull request #323 from OmertaDev/codex/site-followup-source-readers-20261108",
+      "date": "2026-11-08T05:53:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d33bfe6aabdaa82513ac98996a0e0d065180fa71",
+      "provenance": [
+        {
+          "commit": "d33bfe6aabdaa82513ac98996a0e0d065180fa71",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d33bfe6aabdaa82513ac98996a0e0d065180fa71"
         }
       ]
     },
@@ -259103,6 +259167,22 @@
         {
           "commit": "f7584338d65a8f39a0ad0c56ffe4d5e23875c684",
           "url": "https://github.com/OmertaDev/Omerta/commit/f7584338d65a8f39a0ad0c56ffe4d5e23875c684"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f76b7e8c22f7047269336e3356074e54a082dc97",
+      "type": "Commit",
+      "id": "f76b7e8c22f7047269336e3356074e54a082dc97",
+      "label": "Compare reviewed worker telemetry retention in historical source readers",
+      "title": "Compare reviewed worker telemetry retention in historical source readers",
+      "date": "2026-11-08T05:50:22.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f76b7e8c22f7047269336e3356074e54a082dc97",
+      "provenance": [
+        {
+          "commit": "f76b7e8c22f7047269336e3356074e54a082dc97",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f76b7e8c22f7047269336e3356074e54a082dc97"
         }
       ]
     },
@@ -280339,11 +280419,11 @@
         },
         {
           "file": "test/rc1-game-employment-source-compatibility.js",
-          "line": 59
+          "line": 60
         },
         {
           "file": "test/rc1-intel-source-compatibility.js",
-          "line": 64
+          "line": 65
         }
       ]
     },
@@ -280355,7 +280435,7 @@
       "provenance": [
         {
           "file": "test/rc1-game-employment-source-compatibility.js",
-          "line": 59
+          "line": 60
         }
       ]
     },
@@ -289325,6 +289405,9 @@
           "commit": "7c2475dae00687bcfbef04b4d6a7a0a0cf6de18c"
         },
         {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+        },
+        {
           "commit": "7cd8476ee7cf0b2dba66cb86928f43487cbfaa5f"
         },
         {
@@ -291309,6 +291392,9 @@
         },
         {
           "commit": "7c5c874de76956f824d346311f60c5ce74fe042c"
+        },
+        {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
         },
         {
           "commit": "7c7b36521f21c0e3dbd613aeb26136a043c8ffda"
@@ -294041,6 +294127,9 @@
           "commit": "7c5c874de76956f824d346311f60c5ce74fe042c"
         },
         {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+        },
+        {
           "commit": "7c7b36521f21c0e3dbd613aeb26136a043c8ffda"
         },
         {
@@ -296771,6 +296860,9 @@
           "commit": "7c5c874de76956f824d346311f60c5ce74fe042c"
         },
         {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+        },
+        {
           "commit": "7c7b36521f21c0e3dbd613aeb26136a043c8ffda"
         },
         {
@@ -298470,6 +298562,9 @@
         },
         {
           "commit": "7bce2c11a1868abb142c3fbfb9c4ccb779f7607f"
+        },
+        {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
         },
         {
           "commit": "7e6e4e52ee9180b82b7813aa98c2b3f057b637fa"
@@ -300252,6 +300347,9 @@
         },
         {
           "commit": "7c5c874de76956f824d346311f60c5ce74fe042c"
+        },
+        {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
         },
         {
           "commit": "7c7b36521f21c0e3dbd613aeb26136a043c8ffda"
@@ -302045,6 +302143,9 @@
           "commit": "7bce2c11a1868abb142c3fbfb9c4ccb779f7607f"
         },
         {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+        },
+        {
           "commit": "7cf77bc0a8157dc2d9c910547d2fc71141748519"
         },
         {
@@ -302784,6 +302885,9 @@
         },
         {
           "commit": "7bb02dcfe1dce1cdae75fbea496e7d6f94c1c00d"
+        },
+        {
+          "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
         },
         {
           "commit": "83659f77604f2571ead7bff876c1ac1270083089"
@@ -316685,7 +316789,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "92dae5ccfbdec594f2b657d00939c6cc8c0a77c1",
+      "revision": "d33bfe6aabdaa82513ac98996a0e0d065180fa71",
       "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
@@ -365227,13 +365331,13 @@
       "type": "TestSuite",
       "id": "test/rc1-commercial-premises-source-compatibility.js",
       "label": "test/rc1-commercial-premises-source-compatibility.js",
-      "lines": 53,
-      "version": "76ada8c31c9c7a07",
+      "lines": 57,
+      "version": "976409c49eb5579d",
       "provenance": [
         {
           "file": "test/rc1-commercial-premises-source-compatibility.js",
           "line": 1,
-          "version": "76ada8c31c9c7a07"
+          "version": "976409c49eb5579d"
         }
       ]
     },
@@ -365272,13 +365376,13 @@
       "type": "TestSuite",
       "id": "test/rc1-company-logistics-hub-source-compatibility.js",
       "label": "test/rc1-company-logistics-hub-source-compatibility.js",
-      "lines": 51,
-      "version": "ca6029a5f4115d76",
+      "lines": 55,
+      "version": "cfb7fa33e9f4196f",
       "provenance": [
         {
           "file": "test/rc1-company-logistics-hub-source-compatibility.js",
           "line": 1,
-          "version": "ca6029a5f4115d76"
+          "version": "cfb7fa33e9f4196f"
         }
       ]
     },
@@ -365512,13 +365616,13 @@
       "type": "TestSuite",
       "id": "test/rc1-game-employment-source-compatibility.js",
       "label": "test/rc1-game-employment-source-compatibility.js",
-      "lines": 135,
-      "version": "8558f19345f3b444",
+      "lines": 139,
+      "version": "f0c7cc34681c78e7",
       "provenance": [
         {
           "file": "test/rc1-game-employment-source-compatibility.js",
           "line": 1,
-          "version": "8558f19345f3b444"
+          "version": "f0c7cc34681c78e7"
         }
       ]
     },
@@ -365572,13 +365676,13 @@
       "type": "TestSuite",
       "id": "test/rc1-intel-source-compatibility.js",
       "label": "test/rc1-intel-source-compatibility.js",
-      "lines": 84,
-      "version": "9cc28df1ba9a9a99",
+      "lines": 88,
+      "version": "d808ff5115f3fa24",
       "provenance": [
         {
           "file": "test/rc1-intel-source-compatibility.js",
           "line": 1,
-          "version": "9cc28df1ba9a9a99"
+          "version": "d808ff5115f3fa24"
         }
       ]
     },
@@ -365587,13 +365691,13 @@
       "type": "TestSuite",
       "id": "test/rc1-invoice-source-compatibility.js",
       "label": "test/rc1-invoice-source-compatibility.js",
-      "lines": 101,
-      "version": "308786781760b9b6",
+      "lines": 105,
+      "version": "092b7519eab69237",
       "provenance": [
         {
           "file": "test/rc1-invoice-source-compatibility.js",
           "line": 1,
-          "version": "308786781760b9b6"
+          "version": "092b7519eab69237"
         }
       ]
     },
@@ -469745,6 +469849,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3b611c97c5dc69ac4541543e60997eab168d266f",
+      "to": "Artifact:tools/site-basics-source-data.js",
+      "provenance": {
+        "commit": "3b611c97c5dc69ac4541543e60997eab168d266f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3b7b369ef918776b1a7b2a4db62686580653a5ab",
       "to": "Artifact:tools/enterprise-native-deed-inputs.js",
       "provenance": {
@@ -526417,6 +526529,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7c7b36521f21c0e3dbd613aeb26136a043c8ffda",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -565109,6 +565285,14 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "commit": "aebcbb0a393bb598f1004f0212b9a00ee56c25ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aedc32def1ce79c701f633434b2def172d132494",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "aedc32def1ce79c701f633434b2def172d132494"
       }
     },
     {
@@ -645373,6 +645557,46 @@
       "to": "Artifact:test/speakeasy.js",
       "provenance": {
         "commit": "f7584338d65a8f39a0ad0c56ffe4d5e23875c684"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f76b7e8c22f7047269336e3356074e54a082dc97",
+      "to": "Artifact:test/rc1-commercial-premises-source-compatibility.js",
+      "provenance": {
+        "commit": "f76b7e8c22f7047269336e3356074e54a082dc97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f76b7e8c22f7047269336e3356074e54a082dc97",
+      "to": "Artifact:test/rc1-company-logistics-hub-source-compatibility.js",
+      "provenance": {
+        "commit": "f76b7e8c22f7047269336e3356074e54a082dc97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f76b7e8c22f7047269336e3356074e54a082dc97",
+      "to": "Artifact:test/rc1-game-employment-source-compatibility.js",
+      "provenance": {
+        "commit": "f76b7e8c22f7047269336e3356074e54a082dc97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f76b7e8c22f7047269336e3356074e54a082dc97",
+      "to": "Artifact:test/rc1-intel-source-compatibility.js",
+      "provenance": {
+        "commit": "f76b7e8c22f7047269336e3356074e54a082dc97"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f76b7e8c22f7047269336e3356074e54a082dc97",
+      "to": "Artifact:test/rc1-invoice-source-compatibility.js",
+      "provenance": {
+        "commit": "f76b7e8c22f7047269336e3356074e54a082dc97"
       }
     },
     {
@@ -770035,6 +770259,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3b611c97c5dc69ac4541543e60997eab168d266f",
+      "provenance": {
+        "commit": "3b611c97c5dc69ac4541543e60997eab168d266f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3b7b369ef918776b1a7b2a4db62686580653a5ab",
       "provenance": {
         "commit": "3b7b369ef918776b1a7b2a4db62686580653a5ab"
@@ -781411,6 +781643,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+      "provenance": {
+        "commit": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7c7b36521f21c0e3dbd613aeb26136a043c8ffda",
       "provenance": {
         "commit": "7c7b36521f21c0e3dbd613aeb26136a043c8ffda"
@@ -789987,6 +790227,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:aedc32def1ce79c701f633434b2def172d132494",
+      "provenance": {
+        "commit": "aedc32def1ce79c701f633434b2def172d132494"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:aede207442b0e98e0de9ba9c2e86123b9f6ead7e",
       "provenance": {
         "commit": "aede207442b0e98e0de9ba9c2e86123b9f6ead7e"
@@ -795974,6 +796222,14 @@
       "to": "Commit:d3307edcf4c07ecaef6c36052994ea5ab956bac1",
       "provenance": {
         "commit": "d3307edcf4c07ecaef6c36052994ea5ab956bac1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d33bfe6aabdaa82513ac98996a0e0d065180fa71",
+      "provenance": {
+        "commit": "d33bfe6aabdaa82513ac98996a0e0d065180fa71"
       }
     },
     {
@@ -802102,6 +802358,14 @@
       "to": "Commit:f7584338d65a8f39a0ad0c56ffe4d5e23875c684",
       "provenance": {
         "commit": "f7584338d65a8f39a0ad0c56ffe4d5e23875c684"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f76b7e8c22f7047269336e3356074e54a082dc97",
+      "provenance": {
+        "commit": "f76b7e8c22f7047269336e3356074e54a082dc97"
       }
     },
     {
@@ -856747,7 +857011,7 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -856756,7 +857020,7 @@
       "to": "Artifact:tools/continuous-city-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 1
+        "line": 2
       }
     },
     {
@@ -856765,7 +857029,7 @@
       "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 3
+        "line": 4
       }
     },
     {
@@ -856774,7 +857038,16 @@
       "to": "Artifact:tools/player-intel-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 16
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-commercial-premises-source-compatibility.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "test/rc1-commercial-premises-source-compatibility.js",
+        "line": 1
       }
     },
     {
@@ -856783,7 +857056,7 @@
       "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -856792,7 +857065,7 @@
       "to": "Artifact:tools/rc1-city-gameplay-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -856801,7 +857074,7 @@
       "to": "Artifact:tools/rc1-commercial-premises-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -856810,7 +857083,7 @@
       "to": "Artifact:tools/rc1-company-bank-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -856819,7 +857092,7 @@
       "to": "Artifact:tools/rc1-company-workflow-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -856828,7 +857101,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 15
+        "line": 16
       }
     },
     {
@@ -856837,7 +857110,7 @@
       "to": "Artifact:tools/rc1-game-employment-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -856846,7 +857119,7 @@
       "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 14
+        "line": 15
       }
     },
     {
@@ -856855,7 +857128,7 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 17
+        "line": 18
       }
     },
     {
@@ -857080,7 +857353,7 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -857089,7 +857362,7 @@
       "to": "Artifact:tools/continuous-city-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 1
+        "line": 2
       }
     },
     {
@@ -857098,7 +857371,16 @@
       "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 3
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-company-logistics-hub-source-compatibility.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "test/rc1-company-logistics-hub-source-compatibility.js",
+        "line": 1
       }
     },
     {
@@ -857107,7 +857389,7 @@
       "to": "Artifact:tools/rc1-buyer-cooperative-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -857116,7 +857398,7 @@
       "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -857125,7 +857407,7 @@
       "to": "Artifact:tools/rc1-company-bank-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -857134,7 +857416,7 @@
       "to": "Artifact:tools/rc1-company-logistics-hub-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -857143,7 +857425,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 14
+        "line": 15
       }
     },
     {
@@ -857152,7 +857434,7 @@
       "to": "Artifact:tools/rc1-game-employment-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -857161,7 +857443,7 @@
       "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -857170,7 +857452,7 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "file": "test/rc1-company-logistics-hub-source-compatibility.js",
-        "line": 15
+        "line": 16
       }
     },
     {
@@ -858160,7 +858442,7 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -858169,7 +858451,7 @@
       "to": "Artifact:tools/continuous-city-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 1
+        "line": 2
       }
     },
     {
@@ -858178,7 +858460,16 @@
       "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 3
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-game-employment-source-compatibility.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "test/rc1-game-employment-source-compatibility.js",
+        "line": 1
       }
     },
     {
@@ -858187,7 +858478,7 @@
       "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -858196,7 +858487,7 @@
       "to": "Artifact:tools/rc1-city-gameplay-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -858205,7 +858496,7 @@
       "to": "Artifact:tools/rc1-company-workflow-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -858214,7 +858505,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 19
+        "line": 20
       }
     },
     {
@@ -858223,7 +858514,7 @@
       "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 18
+        "line": 19
       }
     },
     {
@@ -858232,7 +858523,7 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 17
+        "line": 18
       }
     },
     {
@@ -858241,7 +858532,7 @@
       "to": "ExternalDependency:, ",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 59
+        "line": 60
       }
     },
     {
@@ -858250,7 +858541,7 @@
       "to": "ExternalDependency:), current.replace(",
       "provenance": {
         "file": "test/rc1-game-employment-source-compatibility.js",
-        "line": 59
+        "line": 60
       }
     },
     {
@@ -858430,7 +858721,7 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -858439,7 +858730,7 @@
       "to": "Artifact:tools/continuous-city-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
-        "line": 1
+        "line": 2
       }
     },
     {
@@ -858448,7 +858739,16 @@
       "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
-        "line": 3
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "test/rc1-intel-source-compatibility.js",
+        "line": 1
       }
     },
     {
@@ -858457,7 +858757,7 @@
       "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -858466,67 +858766,13 @@
       "to": "Artifact:tools/rc1-company-operator-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
-        "line": 6
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-company-succession-source-compatibility.js",
-      "provenance": {
-        "file": "test/rc1-intel-source-compatibility.js",
-        "line": 11
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-company-workflow-source-compatibility.js",
-      "provenance": {
-        "file": "test/rc1-intel-source-compatibility.js",
         "line": 7
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
-      "provenance": {
-        "file": "test/rc1-intel-source-compatibility.js",
-        "line": 15
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
-      "provenance": {
-        "file": "test/rc1-intel-source-compatibility.js",
-        "line": 4
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
-      "provenance": {
-        "file": "test/rc1-intel-source-compatibility.js",
-        "line": 8
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-logistics-coverage-source-compatibility.js",
-      "provenance": {
-        "file": "test/rc1-intel-source-compatibility.js",
-        "line": 9
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-market-feed-source-compatibility.js",
+      "to": "Artifact:tools/rc1-company-succession-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
         "line": 12
@@ -858535,7 +858781,52 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-intel-source-compatibility.js",
-      "to": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
+      "to": "Artifact:tools/rc1-company-workflow-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-intel-source-compatibility.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-intel-source-compatibility.js",
+        "line": 16
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-intel-source-compatibility.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-intel-source-compatibility.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/rc1-logistics-coverage-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-intel-source-compatibility.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/rc1-market-feed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
         "line": 13
@@ -858544,10 +858835,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-intel-source-compatibility.js",
+        "line": 14
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-intel-source-compatibility.js",
       "to": "Artifact:tools/rc1-strategy-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -858556,7 +858856,7 @@
       "to": "ExternalDependency:, ",
       "provenance": {
         "file": "test/rc1-intel-source-compatibility.js",
-        "line": 64
+        "line": 65
       }
     },
     {
@@ -858565,7 +858865,7 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -858574,7 +858874,7 @@
       "to": "Artifact:tools/continuous-city-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 1
+        "line": 2
       }
     },
     {
@@ -858583,7 +858883,16 @@
       "to": "Artifact:tools/enterprise-current-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 3
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-invoice-source-compatibility.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "test/rc1-invoice-source-compatibility.js",
+        "line": 1
       }
     },
     {
@@ -858592,7 +858901,7 @@
       "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -858601,7 +858910,7 @@
       "to": "Artifact:tools/rc1-company-operator-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -858610,7 +858919,7 @@
       "to": "Artifact:tools/rc1-company-succession-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -858619,7 +858928,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -858628,7 +858937,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -858637,7 +858946,7 @@
       "to": "Artifact:tools/rc1-intel-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 17
+        "line": 18
       }
     },
     {
@@ -858646,7 +858955,7 @@
       "to": "Artifact:tools/rc1-logistics-coverage-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -858655,7 +858964,7 @@
       "to": "Artifact:tools/rc1-market-feed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -858664,7 +858973,7 @@
       "to": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -858673,7 +858982,7 @@
       "to": "Artifact:tools/rc1-strategy-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-invoice-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -885355,6 +885664,51 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/continuous-city-source-compatibility.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 722
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/continuous-city-source-compatibility.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 748
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/continuous-city-source-compatibility.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 774
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/continuous-city-source-compatibility.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 800
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/continuous-city-source-compatibility.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 826
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
       "to": "Artifact:tools/invites.js",
       "provenance": {
         "file": "tools/site-basics-source-data.js",
@@ -885368,6 +885722,51 @@
       "provenance": {
         "file": "tools/site-basics-source-data.js",
         "line": 469
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 721
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 747
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 773
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 799
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/site-basics-source-data.js",
+      "to": "Artifact:tools/questing-source-transfer.js",
+      "provenance": {
+        "file": "tools/site-basics-source-data.js",
+        "line": 825
       }
     },
     {
