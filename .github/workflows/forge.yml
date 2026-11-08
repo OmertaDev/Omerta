@@ -238,7 +238,7 @@ jobs:
         run: |
           node test/liquidity-deployment-plan.js
           createdb omerta_liquidity_ci_e2e_test
-          node tools/liquidity-e2e.js
+          ANVIL_BIN="$(command -v anvil)" node tools/liquidity-e2e.js
 
       # THE SIZE GATE, LAST ON PURPOSE. Runs after the suite and both provers so an over-limit
       # contract fails on its own step and can never skip them (see the note on `forge build`).
