@@ -21,7 +21,7 @@
 | [src/atomicbarter.js](../../src/atomicbarter.js) | 169 | platform-core | 5 / 6 | 0 | 5 | 3 |
 | [src/atomicbarterinvariants.js](../../src/atomicbarterinvariants.js) | 33 | platform-core | 0 / 2 | 0 | 4 | 1 |
 | [src/auction.js](../../src/auction.js) | 250 | platform-core | 4 / 5 | 5 | 7 | 3 |
-| [src/auth.js](../../src/auth.js) | 374 | platform-core | 3 / 6 | 7 | 6 | 4 |
+| [src/auth.js](../../src/auth.js) | 374 | platform-core | 3 / 7 | 7 | 6 | 4 |
 | [src/avatar.js](../../src/avatar.js) | 63 | platform-core | 1 / 4 | 0 | 0 | 2 |
 | [src/bank.js](../../src/bank.js) | 526 | platform-core | 3 / 6 | 4 | 14 | 2 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
