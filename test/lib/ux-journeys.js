@@ -1,5 +1,6 @@
 import { integratedEconomicParentInput } from '../../tools/integrated-economic-parent-source.js';
 import { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';
+import { SITE_BASICS_SOURCE } from '../../tools/site-basics-source-transfer.js';
 import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { readFileSync, lstatSync } from 'node:fs';
@@ -86,7 +87,8 @@ export function runAfterwordSourceProof() {
     const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;
     const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file);
     const questing = Object.hasOwn(QUESTING_SOURCE.files, file) ? QUESTING_SOURCE.files[file] : null;
-    const expected = questing ? questing.current : desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,
+    const site = Object.hasOwn(SITE_BASICS_SOURCE.files, file) ? SITE_BASICS_SOURCE.files[file] : null;
+    const expected = site ? site.current : questing ? questing.current : desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,
       sha256: domain.currentSha256, bytes: domain.currentBytes };
     assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');
     assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);
@@ -204,6 +206,13 @@ export function runAfterwordSourceProof() {
     for (const input of [actualHead + '\n', actualHead.slice(1), '\ufeff' + actualHead, actualHead + '\0',
       actualHead.replace('\n', '\r\n'), actualHead.replace('\n', '\r'), baseline]) {
       rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));
+    }
+    if (Object.hasOwn(SITE_BASICS_SOURCE.files, row.file)) {
+      const site = SITE_BASICS_SOURCE.files[row.file];
+      const stale = git('show', SITE_BASICS_SOURCE.predecessor + ':' + row.file);
+      assert.notEqual(stale, actualHead, 'The prior website source differs from actual HEAD');
+      rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, stale));
+      rejectRaw(() => assertActualHeadInput(row.file, { mode: site.baseline.mode, blob: site.baseline.blob }, stale));
     }
     if (row.file === 'src/server.js') {
       for (const input of [git('show', rootSource.baseRevision + ':' + row.file), current]) {
