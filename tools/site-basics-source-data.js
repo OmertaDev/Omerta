@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "9e6e64f23b3fbee8e4fc2f107e024b27a41aaa8b",
-  "tree": "2c4ca970fad7dc26138d2005560d5a415fdbf14b",
+  "revision": "37a84fc8be42420004810338408879dc5c2c1f71",
+  "tree": "d9d8245ca930b247d8ba9b56b25d77578c128b22",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -1244,6 +1244,32 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/lib/questing-ux-enterprise-reader-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "25072693250b1545e046596d9548f1953bd5eb41",
+        "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978",
+        "bytes": 9936
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "6cd588a6ac98416b7dac2b3bc92f1090d136e5a7",
+        "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9",
+        "bytes": 9563
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\nexport function questingEnterpriseReaderView(file, input, entry) {\n  assert.equal(arguments.length, 3);\n  assert([\"test/enterprise-release-phase2-migration-catalog.js\"].includes(file), 'Only the finite retained reader domains');\n",
+          "baseline": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingEnterpriseReaderView(file, input, entry) {\n  assert.equal(arguments.length, 3);\n  assert([\"test/enterprise-release-phase2-migration-catalog.js\"].includes(file), 'Only the finite retained reader domains');\n"
+        },
+        {
+          "at": 1049,
+          "current": "  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');\n  const site = qualifySiteBasicsSource(file, input);\n  assert.deepEqual([site.sourceOnly, site.runtime, site.native, site.financial, site.activation, site.deployment, site.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  const proof = qualifyQuestingSource(file, site.baselineText);\n  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  const priorEntry = questingHistoricalEntry(file, entry, 'tree');\n  return Object.freeze({ input: buffer ? Buffer.from(proof.baselineText) : proof.baselineText, entry: priorEntry, ...flags });\n",
+          "baseline": "  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  const priorEntry = questingHistoricalEntry(file, entry, 'tree');\n  return Object.freeze({ input: buffer ? Buffer.from(proof.baselineText) : proof.baselineText, entry: priorEntry, ...flags });\n"
+        }
+      ]
+    },
     "test/mcp.js": {
       "current": {
         "mode": "100644",
@@ -1422,9 +1448,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "test/questing-ux-release-phase2-native-catalog-guard.js": {
       "current": {
         "mode": "100644",
-        "blob": "5a15d8fbe2d4f36f3a5f33f4e6218019be805993",
-        "sha256": "940f8b5b95d7c6af26b255b1ff5c98a99284e60095e2c679888b74ba3e053280",
-        "bytes": 28280
+        "blob": "c70143519c1de9b10d560b62305ca5d467a7859b",
+        "sha256": "34a493ce4e8ddc005abcc25625c3287cff446deb8e4fdced7a3298de8e5b4949",
+        "bytes": 29213
       },
       "baseline": {
         "mode": "100644",
@@ -1452,6 +1478,16 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 16111,
           "current": "assert.equal(nativeAttempts, 0);\nconsole.log(JSON.stringify({phase:'QUESTING_PHASE2_DIRECTOR_NATIVE_GUARDS', protectedEngineExact:true,\n  finiteSubstitutions:substitutions.length, copyRefusals, profiles, metadataRefusals, constraintRefusals,\n  admissionRefusals, casinoProfiles, casinoRefusals, nativeAttempts, nativeExecution:false, historicalResultsTransferred:false}));\n// Additive pure reader conservation controls. No source is evaluated or substituted into runtime.\nconst readerCopyPins = Object.freeze([\n  {\n",
           "baseline": "assert.equal(nativeAttempts, 0);\nconsole.log(JSON.stringify({phase:'QUESTING_PHASE2_DIRECTOR_NATIVE_GUARDS', protectedEngineExact:true,\n  finiteSubstitutions:substitutions.length, copyRefusals, profiles, metadataRefusals, constraintRefusals,\n  admissionRefusals, nativeAttempts, nativeExecution:false, historicalResultsTransferred:false}));\n// Additive pure reader conservation controls. No source is evaluated or substituted into runtime.\nconst readerCopyPins = Object.freeze([\n  {\n"
+        },
+        {
+          "at": 21059,
+          "current": "      \"test/enterprise-release-phase2-migration-catalog.js\"\n    ],\n    \"oldSha256\": \"d7b9ef827c33f5291228da4aee1f7959bab4b5ced35513e02c3697fb8d186319\",\n    \"bytes\": 9936,\n    \"sha256\": \"29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978\",\n    \"prefixCharacters\": 3578,\n    \"prefixSha256\": \"4a35c639dad611939f7d323ca037f6c9e9331689f034cacc56487bec89c86cc0\",\n    \"edits\": [\n      [\n        \"for (const row of pin.files) {\\n  const current =\",\n",
+          "baseline": "      \"test/enterprise-release-phase2-migration-catalog.js\"\n    ],\n    \"oldSha256\": \"d7b9ef827c33f5291228da4aee1f7959bab4b5ced35513e02c3697fb8d186319\",\n    \"bytes\": 9563,\n    \"sha256\": \"ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9\",\n    \"prefixCharacters\": 3205,\n    \"prefixSha256\": \"e7d383a2ff5a65c8b230fcd098a0be41ba85606b10af54777ebd412bed45fc20\",\n    \"edits\": [\n      [\n        \"for (const row of pin.files) {\\n  const current =\",\n"
+        },
+        {
+          "at": 27528,
+          "current": "      assert.throws(()=>view(file,text,bad));readerViewRefusals++;\n    }\n    if(tracked){const otherMode=entry.startsWith('100644')?'100755':'100644';assert.throws(()=>view(file,text,otherMode+entry.slice(6)));readerViewRefusals++;}\n    if(record.exportName==='questingEnterpriseReaderView'){\n      // Even an internally consistent forged blob cannot gain the exact current-source view.\n      for(const bad of [text+'\\n',text.replace('casinoDdlCausal','unknownCasinoDdlCausal')]){\n        assert.notEqual(bad,text);\n        const digest=crypto.createHash('sha1').update('blob '+Buffer.byteLength(bad)+'\\0').update(bad).digest('hex');\n        const forged=entry.replace(/blob [a-f0-9]{40}/,'blob '+digest);\n        assert.throws(()=>view(file,bad,forged));readerViewRefusals++;\n      }\n      const preimage=git('show',readerQuestSource.revision+':'+file).toString('utf8');\n      assert.notEqual(preimage,text);assert.throws(()=>view(file,preimage,entry));readerViewRefusals++;\n      const preimageEntry=git('ls-tree',readerQuestSource.revision,'--',file).toString('utf8').trim();\n      assert.throws(()=>view(file,preimage,preimageEntry));readerViewRefusals++;\n    }\n    assert.throws(()=>view(file,text,entry,{}));readerViewRefusals++;\n  }\n  for(const file of ['../test/phase2-postgres.js','constructor','__proto__',null]){assert.throws(()=>view(file,'x','x'));readerViewRefusals++;}\n",
+          "baseline": "      assert.throws(()=>view(file,text,bad));readerViewRefusals++;\n    }\n    if(tracked){const otherMode=entry.startsWith('100644')?'100755':'100644';assert.throws(()=>view(file,text,otherMode+entry.slice(6)));readerViewRefusals++;}\n    assert.throws(()=>view(file,text,entry,{}));readerViewRefusals++;\n  }\n  for(const file of ['../test/phase2-postgres.js','constructor','__proto__',null]){assert.throws(()=>view(file,'x','x'));readerViewRefusals++;}\n"
         }
       ]
     },
@@ -2069,4 +2105,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '6d2af4060a2be3571698d6e91a852e2afe05c805ef6800075f98894602d3f085';
+export const SITE_BASICS_SOURCE_SHA256 = '23ad756be22409ea2044b0b2ce623f9bbd7a4415aef803e42a0083bdced7dcc2';
