@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "392ef2cb2ba9bc9e6217f30ba1d8a24dbdca98ea",
+  "sourceRevision": "ff2cad97b8cb965b5884a1412b17bfb940ba4de7",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18398,
-    "edges": 73957,
+    "nodes": 18400,
+    "edges": 73963,
     "byNodeType": {
       "Artifact": 7430,
       "Command": 314,
-      "Commit": 5481,
+      "Commit": 5483,
       "Contract": 156,
       "Document": 970,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5938,
-      "CHANGED": 28680,
+      "CHANGED": 28684,
       "CONTAINS": 7451,
       "DECLARES": 314,
       "DEFINED_IN": 1816,
       "DEPENDS_ON": 69,
       "EXECUTES": 1244,
       "HANDLED_BY": 949,
-      "HAS_COMMIT": 5481,
+      "HAS_COMMIT": 5483,
       "IMPLEMENTS": 124,
       "IMPORTS": 9162,
       "INHERITS": 47,
@@ -256935,6 +256935,22 @@
       ]
     },
     {
+      "key": "Commit:f058288139cb38d099629d78fb3057c6893d592b",
+      "type": "Commit",
+      "id": "f058288139cb38d099629d78fb3057c6893d592b",
+      "label": "chore(knowledge): refresh generated artifacts for 392ef2cb",
+      "title": "chore(knowledge): refresh generated artifacts for 392ef2cb",
+      "date": "2026-11-08T10:15:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f058288139cb38d099629d78fb3057c6893d592b",
+      "provenance": [
+        {
+          "commit": "f058288139cb38d099629d78fb3057c6893d592b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f058288139cb38d099629d78fb3057c6893d592b"
+        }
+      ]
+    },
+    {
       "key": "Commit:f05c396248a9336a9b6707ba2ffb3efa32adcc71",
       "type": "Commit",
       "id": "f05c396248a9336a9b6707ba2ffb3efa32adcc71",
@@ -262467,6 +262483,22 @@
         {
           "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d",
           "url": "https://github.com/OmertaDev/Omerta/commit/ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ff2cad97b8cb965b5884a1412b17bfb940ba4de7",
+      "type": "Commit",
+      "id": "ff2cad97b8cb965b5884a1412b17bfb940ba4de7",
+      "label": "Merge pull request #327 from OmertaDev/codex/ci-pinned-foundry-download-20261108",
+      "title": "Merge pull request #327 from OmertaDev/codex/ci-pinned-foundry-download-20261108",
+      "date": "2026-11-08T10:22:50.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ff2cad97b8cb965b5884a1412b17bfb940ba4de7",
+      "provenance": [
+        {
+          "commit": "ff2cad97b8cb965b5884a1412b17bfb940ba4de7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ff2cad97b8cb965b5884a1412b17bfb940ba4de7"
         }
       ]
     },
@@ -293158,6 +293190,9 @@
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
         },
         {
+          "commit": "f058288139cb38d099629d78fb3057c6893d592b"
+        },
+        {
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
         },
         {
@@ -295903,6 +295938,9 @@
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
         },
         {
+          "commit": "f058288139cb38d099629d78fb3057c6893d592b"
+        },
+        {
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
         },
         {
@@ -298646,6 +298684,9 @@
         },
         {
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
+        },
+        {
+          "commit": "f058288139cb38d099629d78fb3057c6893d592b"
         },
         {
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
@@ -302147,6 +302188,9 @@
         },
         {
           "commit": "f053b822a79fb82e73ab8511a207fc7a2ff1b215"
+        },
+        {
+          "commit": "f058288139cb38d099629d78fb3057c6893d592b"
         },
         {
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
@@ -317431,8 +317475,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "392ef2cb2ba9bc9e6217f30ba1d8a24dbdca98ea",
-      "currentBranch": "codex/ci-pinned-foundry-download-20261108",
+      "revision": "ff2cad97b8cb965b5884a1412b17bfb940ba4de7",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -637180,6 +637224,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f058288139cb38d099629d78fb3057c6893d592b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f058288139cb38d099629d78fb3057c6893d592b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f058288139cb38d099629d78fb3057c6893d592b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f058288139cb38d099629d78fb3057c6893d592b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f058288139cb38d099629d78fb3057c6893d592b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f058288139cb38d099629d78fb3057c6893d592b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f058288139cb38d099629d78fb3057c6893d592b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f058288139cb38d099629d78fb3057c6893d592b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f05c396248a9336a9b6707ba2ffb3efa32adcc71",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -802250,6 +802326,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f058288139cb38d099629d78fb3057c6893d592b",
+      "provenance": {
+        "commit": "f058288139cb38d099629d78fb3057c6893d592b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f05c396248a9336a9b6707ba2ffb3efa32adcc71",
       "provenance": {
         "commit": "f05c396248a9336a9b6707ba2ffb3efa32adcc71"
@@ -805013,6 +805097,14 @@
       "to": "Commit:ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d",
       "provenance": {
         "commit": "ff0ff3aaf31e9d9473ea2437e10f26cbfd46a70d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ff2cad97b8cb965b5884a1412b17bfb940ba4de7",
+      "provenance": {
+        "commit": "ff2cad97b8cb965b5884a1412b17bfb940ba4de7"
       }
     },
     {
