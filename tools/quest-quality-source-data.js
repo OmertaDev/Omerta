@@ -3,10 +3,10 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "04de319eb3bfdd9b727bd0d57dc6d040bcedb59e",
-  "tree": "8cfcd792b4faf4ea6ddb6ddbcc666e268a0263d7",
-  "predecessor": "3890d4cbb052728fd15e8f2ed0c2518c177d60cc",
-  "predecessorTree": "875ed3928ea82bd2dcc78832ef807fc66e09f352",
+  "revision": "27c393fe378838db1f8368d835aab1eea9b684e5",
+  "tree": "161d11954bb5ab1cb17098ff2fa0bd51628806a1",
+  "predecessor": "414269a79034966207850b09bb5938470e2c57ee",
+  "predecessorTree": "af1a84018c8985aa451297a74be75c8cf8d1cd9f",
   "files": {
     ".github/workflows/ci.yml": {
       "current": {
@@ -978,8 +978,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "test/quest-quality-source-transfer.js": {
       "mode": "100644",
-      "blob": "8b6ab79e27edbc744e26e7723a160b8617ce7acc",
-      "sha256": "5d3401845bbd23b08604766e881ce7f1dafdcbf2b85063510c488f2ee0f40c07",
+      "blob": "b8eb9b111ae484e6b8ad6e2b76709ad2d3848c18",
+      "sha256": "1aad9f3fd72841be8bbd533bff9118930415e73d13bb27408af59a5fbd410c7a",
       "bytes": 5640
     },
     "test/quest-quality-spoilers.js": {
@@ -1014,8 +1014,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "tools/quest-quality-source-seal.js": {
       "mode": "100644",
-      "blob": "854b0384de47d931c4f602161248c24d028fe790",
-      "sha256": "20e1bed1c3c1422bed2f639b8b3ce2bf485621df860f9ad0a9dca83d18ce364b",
+      "blob": "9c0015c0ee36d60d9794522c5714e249a1932952",
+      "sha256": "a9fa969ed6e89474cfa99c361875047b50d76827624b5c78e19d94c3feef3313",
       "bytes": 4220
     },
     "tools/quest-quality-source-transfer.js": {
@@ -1044,4 +1044,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = '6d8d222403b47c3c4df0399eee10f88fd4a917e091d9315f755522ab2dbc844c';
+export const QUEST_QUALITY_SOURCE_SHA256 = '30523b74b593e7b52ed6475bb7ca589fd4fef91d2f55e69f7e05f55cede9b6f9';
