@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "f76b7e8c22f7047269336e3356074e54a082dc97",
-  "tree": "66e2d8bd54dae97db8bddb009b2f661576ea980c",
+  "revision": "e788140956ecf5370a841afab7f8843eb00ce42a",
+  "tree": "c789cd87b7d835c31224570ba84ddaf23c00733d",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -567,6 +567,32 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/continuous-city-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "3e74303b91b0ba554f3a57303d3362e4e1b735a7",
+        "sha256": "4f1bc1d16fde16c4719cac73fd59189725b9b3de4541701e6936d44d7697698c",
+        "bytes": 80531
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "69e00c520aaaae2829a5534106a74cdcd07452e8",
+        "sha256": "7e4d785990d1ab9d98eb13c1aaae8f5e488477215bedefb7fe372afb00296ecf",
+        "bytes": 80435
+      },
+      "inverses": [
+        {
+          "at": 64880,
+          "current": "  const actual = lf(classicInterfaceHistoricalInput(file, integratedHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))))), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).split(' ')[0], pin.currentMode);\n  assert.equal(git('ls-tree', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file).split(' ')[0], pin.baselineMode);\n  // verify binds the complete normalized fixture to these frozen blobs before comparing their real Git diff.\n  verify(file, pin, actual, baseline, qualifyContinuousCityFixtureSource,\n    file === 'test/lib/rc1-historical-source-fixture.js'\n      ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)\n",
+          "baseline": "  const actual = lf(classicInterfaceHistoricalInput(file, integratedHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))))), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).split(' ')[0], pin.currentMode);\n  assert.equal(git('ls-tree', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file).split(' ')[0], pin.baselineMode);\n  verify(file, pin, actual, baseline, qualifyContinuousCityFixtureSource,\n    file === 'test/lib/rc1-historical-source-fixture.js'\n      ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)\n"
+        },
+        {
+          "at": 65755,
+          "current": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', pin.baselineBlob, pin.currentBlob));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n",
+          "baseline": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n"
+        }
+      ]
+    },
     "test/gates.js": {
       "current": {
         "mode": "100644",
@@ -999,4 +1025,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = 'ba5ca0db45bb880bbcfd64457d4c03b77a4662a3a7cc6c5302a2139061806816';
+export const SITE_BASICS_SOURCE_SHA256 = 'd520cf91912c47cad0da976f673b0d88b82e43ad6bac977f381272a7f7fd2b6d';
