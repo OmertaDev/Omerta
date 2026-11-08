@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "1138c11d60229423d68f06cb402ce486866d1579",
+  "authoredRevision": "916e22705811cea6bfda1a0f6d44dcadf9439162",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -7745,8 +7745,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/rc1-historical-source-fixture.js",
       "mode": "100644",
-      "blob": "236f0654eed02089bf5c11eac45db2634fca2c97",
-      "sha256": "f890ab2e2a0f56d3570eed5b14b517668197fbcd8915e7349ab1d600a8c8bfa7"
+      "blob": "11b045419dfb2ab9599162747cdd2c0a561294e6",
+      "sha256": "d9e33e4e4d6643d4804fb2663f43a861a2cc734121ed28ef6a0bade7979dd69b"
     },
     {
       "file": "test/lib/rc1-historical-worker-source.js",
@@ -10289,8 +10289,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/db-boot-lock-postgres.js",
       "mode": "100644",
-      "blob": "a371a9a38ac1de3f30f528f8df2f007a6f99f2a2",
-      "sha256": "a18e55a9bb90ad675a4e46df1bd733612fd0bcc14a1577abfd95b94948270642"
+      "blob": "fa7407002296d410be838b3d9d2d2bf3408b0b91",
+      "sha256": "ef923e2dcd27a8f9ed5d6edfab6ce83b62479d3134357c6b15620eec6bf19352"
     },
     {
       "file": "test/economy-composition-restart.js",
@@ -11267,8 +11267,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "52494596c555e833fa35e08e7c70d2b34487ed74",
-      "sha256": "0ae96239b43282455bcca5b8caa4d5365865be5c35159013b762f78dced3e7e4"
+      "blob": "cb6b5d7ff74f0630e5f3e76dfd8d2a218b71ab9c",
+      "sha256": "a1a56a2f3cd2f7ad30894b1fe53bff2fe5376c0241569d03ae32da1db7711d01"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -11309,8 +11309,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "97a0a3cead28c374d32a3be8a209a0437e0a3a18",
-      "sha256": "a21e99b71e9b0bfb3fea8554a5e69f0010be82750fc5bf78e0ed16bb45e50b55"
+      "blob": "0d98b1ef16675261cba7a28edf9606ec45ca1d1b",
+      "sha256": "b4662dfce4883d112cbbe55d46c72c949c23ae9ada4e09dfae4a8fae050c8df1"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -11886,8 +11886,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/lib/rc1-historical-source-fixture.js",
         "mode": "100644",
-        "blob": "236f0654eed02089bf5c11eac45db2634fca2c97",
-        "sha256": "f890ab2e2a0f56d3570eed5b14b517668197fbcd8915e7349ab1d600a8c8bfa7"
+        "blob": "11b045419dfb2ab9599162747cdd2c0a561294e6",
+        "sha256": "d9e33e4e4d6643d4804fb2663f43a861a2cc734121ed28ef6a0bade7979dd69b"
       }
     },
     {
@@ -12221,6 +12221,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "test/db-boot-lock-postgres.js",
+      "before": {
+        "file": "test/db-boot-lock-postgres.js",
+        "mode": "100644",
+        "blob": "a371a9a38ac1de3f30f528f8df2f007a6f99f2a2",
+        "sha256": "a18e55a9bb90ad675a4e46df1bd733612fd0bcc14a1577abfd95b94948270642"
+      },
+      "after": {
+        "file": "test/db-boot-lock-postgres.js",
+        "mode": "100644",
+        "blob": "fa7407002296d410be838b3d9d2d2bf3408b0b91",
+        "sha256": "ef923e2dcd27a8f9ed5d6edfab6ce83b62479d3134357c6b15620eec6bf19352"
+      }
+    },
+    {
       "file": "test/economy-deed-merge-source-compatibility.js",
       "before": {
         "file": "test/economy-deed-merge-source-compatibility.js",
@@ -12528,8 +12543,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/site-basics-source-transfer.js",
       "mode": "100644",
-      "blob": "52494596c555e833fa35e08e7c70d2b34487ed74",
-      "sha256": "0ae96239b43282455bcca5b8caa4d5365865be5c35159013b762f78dced3e7e4"
+      "blob": "cb6b5d7ff74f0630e5f3e76dfd8d2a218b71ab9c",
+      "sha256": "a1a56a2f3cd2f7ad30894b1fe53bff2fe5376c0241569d03ae32da1db7711d01"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -12570,8 +12585,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "97a0a3cead28c374d32a3be8a209a0437e0a3a18",
-      "sha256": "a21e99b71e9b0bfb3fea8554a5e69f0010be82750fc5bf78e0ed16bb45e50b55"
+      "blob": "0d98b1ef16675261cba7a28edf9606ec45ca1d1b",
+      "sha256": "b4662dfce4883d112cbbe55d46c72c949c23ae9ada4e09dfae4a8fae050c8df1"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12581,4 +12596,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "f7fd4aebe702368eeabb69ac69a1b2cc178e681206044ca227a8fe43a75e3439";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "bd6e07fe2dbb7707447d060fa149b93d86830591303d4238bd4a36f8d2584303";
