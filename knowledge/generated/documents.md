@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 749 | 2026-11-04 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 754 | 2026-11-08 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -546,6 +546,7 @@
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/player-experience-insights.md](../../docs/player-experience-insights.md) | documentation | 29 | 2026-10-22 |
 | [docs/PLAYER-FIRST-LAUNCH-STRATEGY.md](../../docs/PLAYER-FIRST-LAUNCH-STRATEGY.md) | documentation | 178 | 2026-10-14 |
+| [docs/playtest-release-2026-11-08.md](../../docs/playtest-release-2026-11-08.md) | documentation | 83 | 2026-11-08 |
 | [docs/pons-launch-strategy-2026-10-14.md](../../docs/pons-launch-strategy-2026-10-14.md) | documentation | 126 | 2026-10-14 |
 | [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
 | [docs/production-slot-security-review.md](../../docs/production-slot-security-review.md) | documentation | 16 | 2026-10-15 |
