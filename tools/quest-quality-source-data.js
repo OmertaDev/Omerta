@@ -3,44 +3,44 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "65b948457e4a85f026a3d2e2f3c034a00fc578b9",
-  "tree": "dce401e6e9d0e5e5b8269ce70f56b3a2681ae454",
-  "predecessor": "f649df7d0def8c1a9af0ae0a88193626f9127fa1",
-  "predecessorTree": "873d4c2985beb4199b6d23dfd55c2f3621604842",
+  "revision": "7f24213db511dd5d84c3eb763d2666e04aacbb18",
+  "tree": "39bfb680359f3e747c00325be2437a19da524089",
+  "predecessor": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
+  "predecessorTree": "75d872c408cd5b5b76c364485d7b2c154f38af9a",
   "files": {
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "f76f66479445d035a26b51abc5df79cff5f876ec",
-        "sha256": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
-        "bytes": 63150
+        "blob": "a325b4a3110577b7caab7f30d8cbff0cf735798f",
+        "sha256": "efe1fa9001b69b10f6ab0dd3592df63f2139365021b291c2f352e38a3a01044a",
+        "bytes": 63198
       },
       "baseline": {
         "mode": "100644",
-        "blob": "cecff6f862ba0e996ee0b3f6dfee7141864d0e67",
-        "sha256": "f376d7557e2da7ad25864796f0fb6771f6d82be9326f901edee4a34fc75c0c2c",
-        "bytes": 62448
+        "blob": "978b81602db7fe05924f10b24070c7e2f61253a5",
+        "sha256": "920e01c32eea446f361544a851fca7105c567f8fa56328704ad280b31d441368",
+        "bytes": 62496
       },
       "inverses": [
         {
-          "at": 60980,
-          "current": "    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n    \"quest-quality:verify\": \"node tools/quest-quality-workgraph.js verify\",\n    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n",
-          "baseline": "    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n"
+          "at": 61017,
+          "current": "    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n    \"quest-quality:verify\": \"node tools/quest-quality-workgraph.js verify\",\n    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n",
+          "baseline": "    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n"
         }
       ]
     },
     "public/index.html": {
       "current": {
         "mode": "100644",
-        "blob": "2b6fd09d5503448d5c5ab6ed27fe6bc6e84ef2f7",
-        "sha256": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
-        "bytes": 1408328
+        "blob": "2fa3ad27fefe8bc7091ce603887ae3bf39a8cc69",
+        "sha256": "fab1a66f3b3d928249173fb9628d293510e9b0e85fd6602547b12851d83227a5",
+        "bytes": 1408508
       },
       "baseline": {
         "mode": "100644",
-        "blob": "65c5d7e86d401b760bd98022bb5f522b089dd785",
-        "sha256": "244ef05efe9be5f2e9081d569868b1551402e7239a51d2c37bbab1378dc7c8ec",
-        "bytes": 1407392
+        "blob": "11b57ab1ec441c17437d65b24c6be531864b21d7",
+        "sha256": "74f874f43f5c5c664f8e23cd50dd1be44d153ea2b9b08ebc2d45aa650458c3f2",
+        "bytes": 1407572
       },
       "inverses": [
         {
@@ -59,12 +59,12 @@ export const QUEST_QUALITY_SOURCE = freeze({
           "baseline": "    if (Array.isArray(body?.claimed) && body.instance)\n      return `case record claimed: ${body.claimed.map((item) => txt(item.title || item.kind)).join(', ') || 'filed'}`;\n    if (body?.instance?.namespace && body.instance?.title) {\n      if (body.instance.status === 'completed') return `case closed: ${txt(body.instance.title)}. Your ending is on the permanent record.`;\n      if (body.instance.status === 'active') return `case advanced: ${txt(body.instance.title)}. The next issued move is on the Desk.`;\n      return `party file updated: ${txt(body.instance.title)}. ${body.instance.members?.length || 1} seat${body.instance.members?.length === 1 ? '' : 's'} filled.`;\n"
         },
         {
-          "at": 711055,
+          "at": 711178,
           "current": "    </li>`).join('')}</ol>`;\n  }\n  function deskIssuedActions(instance) {\n    if (instance.quality && instance.status !== 'forming') return `<section class=\"desk-prompt\"><span class=\"desk-kicker\">Investigation workbench</span><h3>Review your reasoning before committing.</h3><p>Your private drafts, evidence and decision previews are in the case file below.</p><button class=\"act prime\" type=\"button\" data-desk-quality-case=\"${esc(instance.id)}\">Open investigation workbench</button></section>`;\n    const actions = deskList(instance.actions);\n    if (!actions.length) return instance.status === 'active'\n      ? `<div class=\"desk-empty desk-empty--compact\"><b>No move is issued to you.</b><span>Another party role may need to act before this file advances.</span></div>` : '';\n",
           "baseline": "    </li>`).join('')}</ol>`;\n  }\n  function deskIssuedActions(instance) {\n    const actions = deskList(instance.actions);\n    if (!actions.length) return instance.status === 'active'\n      ? `<div class=\"desk-empty desk-empty--compact\"><b>No move is issued to you.</b><span>Another party role may need to act before this file advances.</span></div>` : '';\n"
         },
         {
-          "at": 737736,
+          "at": 737859,
           "current": "    const board = deskState.board;\n    if (!panel) return;\n    panel.querySelectorAll('[data-desk-reload]').forEach((button) => { button.onclick = () => reloadContentDesk(); });\n    panel.querySelectorAll('[data-desk-quality-case]').forEach((button) => {\n      button.onclick = () => document.dispatchEvent(new CustomEvent('omerta:quality-case', { detail: { instanceId: button.dataset.deskQualityCase } }));\n    });\n    panel.querySelectorAll('[data-desk-view]').forEach((button) => {\n      button.onclick = () => { deskState.view = button.dataset.deskView; drawContentDesk(); };\n    });\n",
           "baseline": "    const board = deskState.board;\n    if (!panel) return;\n    panel.querySelectorAll('[data-desk-reload]').forEach((button) => { button.onclick = () => reloadContentDesk(); });\n    panel.querySelectorAll('[data-desk-view]').forEach((button) => {\n      button.onclick = () => { deskState.view = button.dataset.deskView; drawContentDesk(); };\n    });\n"
         }
@@ -73,15 +73,15 @@ export const QUEST_QUALITY_SOURCE = freeze({
     "public/ux-quests.js": {
       "current": {
         "mode": "100644",
-        "blob": "c6bc58ed0c39b25dca9a0432937239a877f107cd",
-        "sha256": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
-        "bytes": 47048
+        "blob": "1cb9e732213969d865c8bf066eff0804097521fd",
+        "sha256": "95cb6d48231ca048d42ef10da09a4c1788522502c20af57fea1f723ef90ee367",
+        "bytes": 47597
       },
       "baseline": {
         "mode": "100644",
-        "blob": "01ddf9347e002ab8c949955500cc4f20a5329c57",
-        "sha256": "eb862ea716c38d15eab4c5506e230eb0a2dbc7e06c07a5351c48843e80b6c777",
-        "bytes": 44466
+        "blob": "fa4a4be6be42abc15d7f194cc3a1b602e1cab46e",
+        "sha256": "43914e40ef8fded506b65f7bacdc8a1621c38137bf77fc3a9da4064a00ca51e5",
+        "bytes": 44781
       },
       "inverses": [
         {
@@ -120,12 +120,12 @@ export const QUEST_QUALITY_SOURCE = freeze({
           "baseline": "      }\n      return root;\n    }\n    function paint() {\n      if (!scope() || state().currentTab !== 'desk') return;\n      const host = document.getElementById('tab-desk'); if (!host) return;\n      if (!root || !root.isConnected || !host.contains(root)) { root?.remove(); root = el('section', 'ux-quests'); root.id = 'ux-quests'; root.dataset.uxPanel = 'quests'; host.append(root); }\n      if (root.contains(document.activeElement) && document.activeElement.matches('input,textarea,select') && !busy) return;\n      const header = el('header', 'quest-heading'); header.append(el('span', 'quest-kicker', 'Bureau of unfinished business'), el('h2', '', 'Your case files'));\n      const controls = el('nav', 'quest-tabs'); controls.setAttribute('aria-label', 'Quest tools');\n      for (const [id, title] of [['cases', 'Case files'], ['community', 'Community mysteries'], ['legacy', 'Your history']]) { const tab = button(title, () => { view = id; error = ''; load(); }); tab.setAttribute('aria-pressed', String(view === id)); tab.disabled = busy || loading; controls.append(tab); }\n"
         },
         {
-          "at": 44432,
-          "current": "      else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());\n      root.replaceChildren(...nodes); root.setAttribute('aria-busy', String(loading || busy));\n      document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));\n      if (focused?.label) {\n        const target = [...root.querySelectorAll('input,textarea,select')].find(node => node.getAttribute('aria-label') === focused.label);\n        if (target) { target.focus({ preventScroll: true }); if (focused.start != null && typeof target.setSelectionRange === 'function') try { target.setSelectionRange(focused.start, focused.end); } catch { /* Non-text input. */ } }\n      }\n    }\n    function observe(path, body) {\n      if (!scope()) return;\n",
-          "baseline": "      else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());\n      root.replaceChildren(...nodes); root.setAttribute('aria-busy', String(loading || busy));\n      document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));\n    }\n    function observe(path, body) {\n      if (!scope()) return;\n"
+          "at": 44282,
+          "current": "      if (loading && !(view === 'cases' ? board : view === 'community' ? workshop : legacy)) nodes.push(el('p', 'quest-muted', 'Opening the file…'));\n      else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());\n      root.replaceChildren(...nodes);\n      // Keep issued-action forms stable during a commit. Private editors retain newer local\n      // text while their submitted snapshot is in flight; a reply never commits those edits.\n      if (busy) {\n        root.querySelectorAll('input,textarea,select').forEach(control => {\n          if (!control.closest('[data-quality-section=\"workbench\"],[data-quality-section=\"impression\"]')) control.disabled = true;\n        });\n        root.querySelectorAll('[data-quest-quality] button').forEach(control => { control.disabled = true; });\n      }\n      root.setAttribute('aria-busy', String(loading || busy));\n      document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));\n      if (focused?.label) {\n        const target = [...root.querySelectorAll('input,textarea,select')].find(node => node.getAttribute('aria-label') === focused.label);\n        if (target) { target.focus({ preventScroll: true }); if (focused.start != null && typeof target.setSelectionRange === 'function') try { target.setSelectionRange(focused.start, focused.end); } catch { /* Non-text input. */ } }\n      }\n    }\n    function observe(path, body) {\n      if (!scope()) return;\n",
+          "baseline": "      if (loading && !(view === 'cases' ? board : view === 'community' ? workshop : legacy)) nodes.push(el('p', 'quest-muted', 'Opening the file…'));\n      else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());\n      root.replaceChildren(...nodes);\n      // A pending mutation replaces the form. Prevent edits from focusing that disabled-submit\n      // copy, so the focus-preserving repaint can restore enabled controls when the reply arrives.\n      if (busy) root.querySelectorAll('input,textarea,select').forEach(control => { control.disabled = true; });\n      root.setAttribute('aria-busy', String(loading || busy));\n      document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));\n    }\n    function observe(path, body) {\n      if (!scope()) return;\n"
         },
         {
-          "at": 46002,
+          "at": 46551,
           "current": "      if (state().currentTab !== 'desk') return;\n      paint(); if (!(view === 'cases' ? board : view === 'community' ? workshop : legacy) && !loading && !error) load();\n    }\n    const openQualityCase = event => {\n      if (!scope() || !list(board?.instances).some(instance => instance.id === event.detail?.instanceId && instance.quality)) return;\n      selected = 'run:' + event.detail.instanceId; view = 'cases'; paint();\n      const target = root?.querySelector('.quest-quality-heading h4');\n      if (target) { target.tabIndex = -1; target.focus(); target.scrollIntoView({ block: 'start' }); }\n    };\n    document.addEventListener('omerta:quality-case', openQualityCase);\n    return { render, observe, reloadWorkspace() { if (scope()) { paint(); paintDistrictAftermath(); } }, destroy() { destroyed = true; epoch++; pending.clear(); qualityUX?.reset(); document.removeEventListener('omerta:quality-case', openQualityCase); root?.remove(); root = null; districtRoot?.remove(); districtRoot = null; } };\n  };\n})();\n",
           "baseline": "      if (state().currentTab !== 'desk') return;\n      paint(); if (!(view === 'cases' ? board : view === 'community' ? workshop : legacy) && !loading && !error) load();\n    }\n    return { render, observe, reloadWorkspace() { if (scope()) { paint(); paintDistrictAftermath(); } }, destroy() { destroyed = true; epoch++; pending.clear(); root?.remove(); root = null; districtRoot?.remove(); districtRoot = null; } };\n  };\n})();\n"
         }
@@ -410,19 +410,19 @@ export const QUEST_QUALITY_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "92440c32427833c38482d90aec227520b8884587",
-        "sha256": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
-        "bytes": 309614
+        "blob": "6dce73cdfc6b7346357e65fb63b4e5428e728cf0",
+        "sha256": "654ae619b38a3abddacafcef8e913e6f4cf715c07a83b46f424decb6fff6bfa4",
+        "bytes": 311110
       },
       "baseline": {
         "mode": "100644",
-        "blob": "06879f17622e4e8983483fc1087144518e941032",
-        "sha256": "e69fef7e92cec791f0293a539ebf23f2c1740f61031bfe00197712954a47207d",
-        "bytes": 309521
+        "blob": "a51ed5d00160330ef84ace7fff0fc974a48b2610",
+        "sha256": "afb838815e7844773f365ffb99c9233b5536c35ddc4cbd19bf0b96281666525a",
+        "bytes": 311017
       },
       "inverses": [
         {
-          "at": 47222,
+          "at": 48718,
           "current": "    ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],\n    ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],\n    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n    ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],\n    ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],\n    ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],\n    ['ux-investigation.js', 'application/javascript'], ['ux-investigation.css', 'text/css'],\n",
           "baseline": "    ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],\n    ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],\n    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n    ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],\n    ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],\n    ['ux-investigation.js', 'application/javascript'], ['ux-investigation.css', 'text/css'],\n"
         }
@@ -457,15 +457,15 @@ export const QUEST_QUALITY_SOURCE = freeze({
     "test/site-basics-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "80288a2904df0a8f25a0b0afeb6eb940a6171d8c",
-        "sha256": "6cadcc83aaad11244457b751efc38b660c3ec29e3fe9949bbb845ebeb7924cf2",
-        "bytes": 6573
+        "blob": "95bb3837eb63416eb2236dbb501a95c94531f629",
+        "sha256": "cd121515663e8c88fb6a0efc2be8577aeef1d91067e7f759db9ee0dce99bb3f5",
+        "bytes": 7070
       },
       "baseline": {
         "mode": "100644",
-        "blob": "506ec6f01c083992674222c2362884900160abee",
-        "sha256": "3165ca32398a1e1c9a197ad11cdd3a71e5a510747acdf97c6adb94a4b3102e2f",
-        "bytes": 5689
+        "blob": "58cbf849fd6ce2a67a7005aa52ba09115eb2ccd9",
+        "sha256": "f87e1028271df6d4f46b68d14e9c4ec6662ec6c1dc8294a3c56a3eeb53787bd5",
+        "bytes": 6186
       },
       "inverses": [
         {
@@ -474,7 +474,7 @@ export const QUEST_QUALITY_SOURCE = freeze({
           "baseline": "import fs from 'node:fs';\nimport { createHash } from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\nimport { SITE_BASICS_SOURCE as source, qualifySiteBasicsSource,\n  siteBasicsHistoricalInput, siteBasicsHistoricalEntry, siteBasicsSourceDataBytes } from '../tools/site-basics-source-transfer.js';\n\n"
         },
         {
-          "at": 2268,
+          "at": 2294,
           "current": "  siteBasicsSourceDataBytes(source), 'The only self-reference is complete generated data without executable additions');\nlet positives = 0, refusals = 0;\nfunction actual(file, pin) {\n  const committed = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(physical.equals(Buffer.from(committed)) || physical.equals(Buffer.from(committed.replaceAll('\\n', '\\r\\n'))),\n    'Actual whole committed and physical source qualify before historical comparison: ' + file);\n  const actualBlob = createHash('sha1').update('blob ' + Buffer.byteLength(committed) + '\\0').update(committed).digest('hex');\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), pin.mode + ' blob ' + actualBlob + '\\t' + file);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + actualBlob + ' 0\\t' + file);\n  const text = questQualityHistoricalInput(file, committed), raw = questQualityHistoricalInput(file, physical);\n  assert.equal(text, authored, 'Whole authored source remains the actual committed source: ' + file);\n  assert.equal(sha(text), pin.sha256); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.equal(questQualityHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file).trim(), 'tree'), entry);\n  assert.equal(questQualityHistoricalEntry(file, git('ls-files', '--stage', '--', file).trim(), 'index'), pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))),\n    'Complete physical UTF-8 source is uniformly LF/CRLF: ' + file);\n  return { text, raw, entry };\n",
           "baseline": "  siteBasicsSourceDataBytes(source), 'The only self-reference is complete generated data without executable additions');\nlet positives = 0, refusals = 0;\nfunction actual(file, pin) {\n  const text = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  const stat = fs.lstatSync(file), raw = fs.readFileSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink());\n  assert.equal(text, authored, 'Whole authored source remains the actual committed source: ' + file);\n  assert.equal(sha(text), pin.sha256); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), entry);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))),\n    'Complete physical UTF-8 source is uniformly LF/CRLF: ' + file);\n  return { text, raw, entry };\n"
         }
@@ -483,15 +483,15 @@ export const QUEST_QUALITY_SOURCE = freeze({
     "tools/site-basics-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "db9ee342cc202e65fbe0e94fdc39f48326894300",
-        "sha256": "db3d976269d94dd27d47f98534b72799b2887bb501e647e50a7fe6bca1f47d84",
-        "bytes": 4797
+        "blob": "a014b72ae419ced3b1d279569ee84500969fc5f6",
+        "sha256": "b1cb4ac3db610e7d95ca87f8ff0ec45eb7d61b42f352fd74f223c67de5af2498",
+        "bytes": 4822
       },
       "baseline": {
         "mode": "100644",
-        "blob": "331bded367cd3b7b80862017913ecfcae307f47f",
-        "sha256": "cd9cfbdf3d870d10524dfb82af54c862f008bf5e93b9c79bf7559363d40bc258",
-        "bytes": 4576
+        "blob": "abdf165711f425b7cda48479c6c816af1915cca4",
+        "sha256": "1b881b6b57056436b0972621c534c611f93ad8ca20a8aae995da58a66283de1c",
+        "bytes": 4601
       },
       "inverses": [
         {
@@ -500,12 +500,12 @@ export const QUEST_QUALITY_SOURCE = freeze({
           "baseline": "import assert from 'node:assert/strict';\nimport { createHash } from 'node:crypto';\nimport { SITE_BASICS_SOURCE, SITE_BASICS_SOURCE_SHA256 } from './site-basics-source-data.js';\n\nexport { SITE_BASICS_SOURCE };\nconst sha = text => createHash('sha256').update(text).digest('hex');\n"
         },
         {
-          "at": 3718,
+          "at": 3743,
           "current": "}\n// Unknown or partial changes remain untouched so immutable downstream qualifiers reject them.\nexport function siteBasicsHistoricalInput(file, input) {\n  input = questQualityHistoricalInput(file, input);\n  if (!known(file)) return input;\n  const current = canonical(input), row = SITE_BASICS_SOURCE.files[file];\n  if (!current || sha(current.lf) !== row.current.sha256) return input;\n",
           "baseline": "}\n// Unknown or partial changes remain untouched so immutable downstream qualifiers reject them.\nexport function siteBasicsHistoricalInput(file, input) {\n  if (!known(file)) return input;\n  const current = canonical(input), row = SITE_BASICS_SOURCE.files[file];\n  if (!current || sha(current.lf) !== row.current.sha256) return input;\n"
         },
         {
-          "at": 4234,
+          "at": 4259,
           "current": "}\nexport function siteBasicsHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  entry = questQualityHistoricalEntry(file, entry, kind);\n  if (!known(file)) return entry;\n  const row = SITE_BASICS_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n",
           "baseline": "}\nexport function siteBasicsHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  if (!known(file)) return entry;\n  const row = SITE_BASICS_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n"
         }
@@ -659,8 +659,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "test/quest-quality-source-transfer.js": {
       "mode": "100644",
-      "blob": "36d6f0a122dcfc348d67d3e02024100cdbeb40ea",
-      "sha256": "5a2caf105a177c9c3abf9da39d4e8e5e5ec7584820c18c53ed7806298afc17ab",
+      "blob": "28e0729a4f8c40dee0a778d7b0e0cbd7f34ce53f",
+      "sha256": "61ec41d93d638e226d11215e5f5812ff2b3e8ad2a0d2c2a7d3e86c63a20a8b12",
       "bytes": 5627
     },
     "test/quest-quality-spoilers.js": {
@@ -689,15 +689,15 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "tools/quest-quality-source-seal.js": {
       "mode": "100644",
-      "blob": "30a430199938442455832833a636343760d38746",
-      "sha256": "3f7be2d52270ebdd9e37948a876f60585206c3f01dc6a5424c99cc6ce4e7aeb9",
+      "blob": "31a7d75025bf58c213fd4768d238445184eefd29",
+      "sha256": "833228483a4a5ec275ed4c3ef427c1a7532aeb361ea133e04fdfc8d87178d864",
       "bytes": 4207
     },
     "tools/quest-quality-source-transfer.js": {
       "mode": "100644",
-      "blob": "3d6d170776daa1d8db03f1be6d45eedd9f814210",
-      "sha256": "03625e6a5ae0d753ebb8ee955149070e8b4373fc49c0b684fed3966763216940",
-      "bytes": 4654
+      "blob": "72908f02e65daf65309af20a79bb2b978a8d9ff1",
+      "sha256": "c056c3b8e2efe22e9ba465393c3a895bbca94929113ddd1ef0fbcad53f9f7fe9",
+      "bytes": 4679
     },
     "tools/quest-quality-studio.js": {
       "mode": "100644",
@@ -719,4 +719,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = '6a052c0f088a4c87c12a6790cc8b8c351afb7ddf92a64cf07e4201604c391d54';
+export const QUEST_QUALITY_SOURCE_SHA256 = 'ed22b7e1d923601a598150662355463cbff37c1921868e8f6f9a074b95ab3173';
