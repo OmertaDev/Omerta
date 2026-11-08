@@ -93,20 +93,30 @@ export function spoilerAudit(pack) {
   const nodeById = new Map(pack.nodes.map(node => [node.id, node])), findings = [];
   const stop = new Set(['the', 'a', 'an', 'and', 'or', 'of', 'in', 'at', 'through', 'with', 'who', 'what', 'case', 'file', 'record']);
   for (const puzzle of pack.nodes.filter(node => node.type === 'puzzle')) {
-    const spec = nodeById.get(puzzle.payload.answerSpecId)?.payload;
-    if (spec?.verifier !== 'proof_sets') continue;
-    const accepted = new Set(spec.proofs.map(proof => proof.conclusionId));
-    for (const conclusion of puzzle.payload.interaction.conclusions.filter(row => accepted.has(row.id))) {
+    const payloads = [puzzle.payload, ...(puzzle.payload.variants || []).map(variant => ({ ...puzzle.payload, ...variant }))];
+    for (const payload of payloads) {
+    const spec = nodeById.get(payload.answerSpecId)?.payload;
+    if (!spec) continue;
+    const accepted = new Set(spec.verifier === 'proof_sets' ? spec.proofs.map(proof => proof.conclusionId)
+      : spec.verifier === 'mapping' ? Object.values(spec.solution) : spec.solution || []);
+    const conclusions = spec.verifier === 'proof_sets' ? payload.interaction.conclusions.filter(row => accepted.has(row.id))
+      : spec.verifier === 'normalized_exact' ? spec.acceptedValues.map((label, index) => ({ id: `answer-${index}`, label }))
+        : (payload.interaction?.items || []).filter(row => accepted.has(row.id));
+    for (const conclusion of conclusions) {
       const tokens = new Set(words(conclusion.label).map(word => word.toLowerCase()).filter(word => !stop.has(word)));
       for (const node of pack.nodes) {
         const surfaces = { title: node.payload?.title, marker: node.payload?.marker, error: node.payload?.error,
           rewardTitle: node.type === 'collectible_def' ? node.payload?.title : undefined };
         for (const [surface, text] of Object.entries(surfaces)) if (typeof text === 'string') {
           const overlap = [...new Set(words(text).map(word => word.toLowerCase()))].filter(word => tokens.has(word));
-          if (overlap.length >= 2) findings.push({ nodeId: node.id, surface, conclusionId: conclusion.id,
-            overlap, code: 'possible_semantic_spoiler', severity: 'review', evidenceType: 'lexical-heuristic' });
+          const exactAnswer = spec.verifier === 'normalized_exact' && conclusion.label.length >= 3
+            && text.toLowerCase().includes(conclusion.label.toLowerCase());
+          if (overlap.length >= 2 || exactAnswer) findings.push({ nodeId: node.id, surface, puzzleId: puzzle.id,
+            verifier: spec.verifier, conclusionId: conclusion.id, overlap,
+            code: 'possible_semantic_spoiler', severity: 'review', evidenceType: 'lexical-heuristic' });
         }
       }
+    }
     }
   }
   return findings;

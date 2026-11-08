@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { questStudyReport } from '../tools/quest-quality-study.js';
 
 const now = Date.parse('2026-11-07T12:00:00Z');
@@ -14,4 +18,10 @@ assert.equal(report.sessions[0].status, 'waiting_24_hours'); assert.equal(report
 assert(!JSON.stringify(report).includes('private-account-'), 'Operator reports use pseudonymous session handles.');
 assert.deepEqual(report.sessions[1].comprehension, comprehension, 'Raw free responses remain intact for organizer review.');
 assert.equal(questStudyReport([], now).researchStatus, 'awaiting_user_arranged_testers');
+const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-study-roundtrip-')), file = path.join(directory, 'study.json');
+try {
+  fs.writeFileSync(file, JSON.stringify(report), { flag: 'wx' });
+  const printed = JSON.parse(execFileSync(process.execPath, ['tools/quest-quality-study.js', 'report', file], { encoding: 'utf8', windowsHide: true }));
+  assert.deepEqual(printed, JSON.parse(JSON.stringify(report)), 'The report command accepts the operator export format without inventing results.');
+} finally { fs.unlinkSync(file); fs.rmdirSync(directory); }
 console.log('quest quality study: consent withdrawal, evidence labels, pseudonyms, raw responses and honest pending research passed');

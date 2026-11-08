@@ -32,7 +32,7 @@ function fingerprint(text, pin) {
   assert.equal(sha(text), pin.sha256, 'The complete site comparison source hash changed');
   assert.equal(blob(text), pin.blob, 'The complete site comparison Git blob changed');
 }
-export function qualifySiteBasicsSource(file, input) {
+export function qualifyQuestQualitySource(file, input) {
   assert.equal(arguments.length, 2, 'Only the exact file and whole source are accepted');
   definition(); assert(known(file), 'Only explicitly sealed quest quality comparison domains');
   const current = canonical(input); assert(current, 'Complete uniform LF/CRLF source required');
@@ -57,7 +57,7 @@ export function questQualityHistoricalInput(file, input) {
   if (!known(file)) return input;
   const current = canonical(input), row = QUEST_QUALITY_SOURCE.files[file];
   if (!current || sha(current.lf) !== row.current.sha256) return input;
-  const baseline = qualifySiteBasicsSource(file, input).baselineText;
+  const baseline = qualifyQuestQualitySource(file, input).baselineText;
   return current.buffer ? Buffer.from(baseline) : baseline;
 }
 export function questQualityHistoricalEntry(file, entry, kind) {

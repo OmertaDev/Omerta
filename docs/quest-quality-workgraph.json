@@ -52,8 +52,8 @@
         "test/quest-quality-rules.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules"
       ]
     },
     {
@@ -72,8 +72,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -96,12 +96,12 @@
         "test/quest-quality-stateful.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7dnx6z-quest-quality-postgres",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7dty5h-quest-quality-postgres",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -127,11 +127,11 @@
         "test/quest-quality-browser.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7dngvn-quest-quality-browser"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7dtjpp-quest-quality-browser"
       ]
     },
     {
@@ -153,8 +153,8 @@
         "test/quest-quality-runtime.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn9e8-quest-quality-runtime"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtd9y-quest-quality-runtime"
       ]
     },
     {
@@ -174,9 +174,9 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -196,9 +196,9 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -219,8 +219,8 @@
         "test/quest-quality-rules.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules"
       ]
     },
     {
@@ -244,10 +244,10 @@
         "test/quest-quality-stateful.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -267,9 +267,9 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -289,7 +289,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -308,7 +308,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -332,8 +332,8 @@
         "test/quest-quality-rules.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules"
       ]
     },
     {
@@ -352,7 +352,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -371,8 +371,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -395,9 +395,9 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -417,8 +417,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -437,7 +437,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -454,7 +454,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -474,8 +474,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -495,7 +495,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -512,7 +512,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -535,9 +535,9 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -554,7 +554,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -577,8 +577,8 @@
         "test/quest-quality-social.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7do75a-quest-quality-social"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7du546-quest-quality-social"
       ]
     },
     {
@@ -595,7 +595,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -614,7 +614,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -639,11 +639,11 @@
         "test/quest-quality-stateful.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7do75a-quest-quality-social",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7du546-quest-quality-social",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -663,7 +663,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -680,7 +680,7 @@
         "test/quest-quality-content.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content"
+        "quality-mw7dt65w-quest-quality-content"
       ]
     },
     {
@@ -701,8 +701,8 @@
         "test/quest-quality-browser.js"
       ],
       "executionIds": [
-        "quality-mw7docgb-quest-quality-spoilers",
-        "quality-mw7dngvn-quest-quality-browser"
+        "quality-mw7du8sf-quest-quality-spoilers",
+        "quality-mw7dtjpp-quest-quality-browser"
       ]
     },
     {
@@ -725,9 +725,9 @@
         "test/quest-quality-browser.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dngvn-quest-quality-browser"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtjpp-quest-quality-browser"
       ]
     },
     {
@@ -750,9 +750,9 @@
         "test/quest-quality-browser.js"
       ],
       "executionIds": [
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7docgb-quest-quality-spoilers",
-        "quality-mw7dngvn-quest-quality-browser"
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7du8sf-quest-quality-spoilers",
+        "quality-mw7dtjpp-quest-quality-browser"
       ]
     },
     {
@@ -773,8 +773,8 @@
         "test/quest-quality-browser.js"
       ],
       "executionIds": [
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dngvn-quest-quality-browser"
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtjpp-quest-quality-browser"
       ]
     },
     {
@@ -797,10 +797,10 @@
         "test/quest-quality-stateful.js"
       ],
       "executionIds": [
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -822,9 +822,9 @@
         "test/quest-quality-browser.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dngvn-quest-quality-browser"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtjpp-quest-quality-browser"
       ]
     },
     {
@@ -848,11 +848,11 @@
         "test/quest-quality-stateful.js"
       ],
       "executionIds": [
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7do75a-quest-quality-social",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7dnx6z-quest-quality-postgres",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7du546-quest-quality-social",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7dty5h-quest-quality-postgres",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -880,13 +880,13 @@
         "test/quest-quality-stateful.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7do75a-quest-quality-social",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7dnx6z-quest-quality-postgres",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7du546-quest-quality-social",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7dty5h-quest-quality-postgres",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -911,11 +911,11 @@
         "test/quest-quality-postgres.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7do75a-quest-quality-social",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7dnx6z-quest-quality-postgres"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7du546-quest-quality-social",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7dty5h-quest-quality-postgres"
       ]
     },
     {
@@ -943,13 +943,13 @@
         "test/quest-quality-stateful.js"
       ],
       "executionIds": [
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7do75a-quest-quality-social",
-        "quality-mw7docgb-quest-quality-spoilers",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7dnx6z-quest-quality-postgres",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7du546-quest-quality-social",
+        "quality-mw7du8sf-quest-quality-spoilers",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7dty5h-quest-quality-postgres",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -971,9 +971,9 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -994,8 +994,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -1015,7 +1015,7 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -1036,8 +1036,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -1057,7 +1057,7 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -1083,11 +1083,11 @@
       ],
       "researchStatus": "awaiting_user_arranged_testers",
       "executionIds": [
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7dogcf-quest-quality-study",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7dubr2-quest-quality-study",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     },
     {
@@ -1110,8 +1110,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn026-quest-quality-content",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dt65w-quest-quality-content",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -1134,9 +1134,9 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7docgb-quest-quality-spoilers",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7du8sf-quest-quality-spoilers",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -1158,8 +1158,8 @@
         "test/quest-quality-studio.js"
       ],
       "executionIds": [
-        "quality-mw7dn8id-quest-quality-rules",
-        "quality-mw7dn8mm-quest-quality-studio"
+        "quality-mw7dtcg5-quest-quality-rules",
+        "quality-mw7dtckh-quest-quality-studio"
       ]
     },
     {
@@ -1185,11 +1185,11 @@
       ],
       "researchStatus": "awaiting_user_arranged_testers",
       "executionIds": [
-        "quality-mw7dn9e8-quest-quality-runtime",
-        "quality-mw7dnd4s-quest-quality-api",
-        "quality-mw7dngvn-quest-quality-browser",
-        "quality-mw7dogcf-quest-quality-study",
-        "quality-mw7do5yt-quest-quality-stateful"
+        "quality-mw7dtd9y-quest-quality-runtime",
+        "quality-mw7dtgi9-quest-quality-api",
+        "quality-mw7dtjpp-quest-quality-browser",
+        "quality-mw7dubr2-quest-quality-study",
+        "quality-mw7du4c1-quest-quality-stateful"
       ]
     }
   ],
@@ -1676,6 +1676,490 @@
       "elapsedMs": 106,
       "exitCode": 0,
       "log": "output/quest-quality-verification/quality-mw7dogcf-quest-quality-study.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dt65w-quest-quality-content",
+      "evaluator": "test/quest-quality-content.js",
+      "evaluatorHash": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:18:24.116Z",
+      "elapsedMs": 8106,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dt65w-quest-quality-content.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dtcg5-quest-quality-rules",
+      "evaluator": "test/quest-quality-rules.js",
+      "evaluatorHash": "a826d549449bfff306a42553d5c218412d0b903d7acc0756791787cb19211b08",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:18:32.261Z",
+      "elapsedMs": 111,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dtcg5-quest-quality-rules.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dtckh-quest-quality-studio",
+      "evaluator": "test/quest-quality-studio.js",
+      "evaluatorHash": "7312af34a011503deb2cd3a36ea4f9b667ddc9cc57c6de7e2ef384121ff944f6",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:18:32.417Z",
+      "elapsedMs": 877,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dtckh-quest-quality-studio.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dtd9y-quest-quality-runtime",
+      "evaluator": "test/quest-quality-runtime.js",
+      "evaluatorHash": "8aa0244b1c56403f9875fa4621150048d320899d9ce5bcbcbb9b6a9f051e3606",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:18:33.334Z",
+      "elapsedMs": 4149,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dtd9y-quest-quality-runtime.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dtgi9-quest-quality-api",
+      "evaluator": "test/quest-quality-api.js",
+      "evaluatorHash": "eb06739d7e08a8124b9a91371de7ea2b314339dd20f5a3451138efc08441bd8e",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:18:37.521Z",
+      "elapsedMs": 4122,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dtgi9-quest-quality-api.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dtjpp-quest-quality-browser",
+      "evaluator": "test/quest-quality-browser.js",
+      "evaluatorHash": "a11d2e23ce21ce24179fa44d641cb5621b58d8ec271ff6020bcb024068300722",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:18:41.677Z",
+      "elapsedMs": 18675,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dtjpp-quest-quality-browser.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dty5h-quest-quality-postgres",
+      "evaluator": "test/quest-quality-postgres.js",
+      "evaluatorHash": "2db2c58279dc1eb0c9eb48960700ef9b60882fb31e43add707e78dcc7228d400",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:19:00.389Z",
+      "elapsedMs": 7975,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dty5h-quest-quality-postgres.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7du4c1-quest-quality-stateful",
+      "evaluator": "test/quest-quality-stateful.js",
+      "evaluatorHash": "25b514da3ba7440638639362b814c4145ade0f5050b0297a4c6b39d3bc3e51df",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:19:08.401Z",
+      "elapsedMs": 977,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7du4c1-quest-quality-stateful.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7du546-quest-quality-social",
+      "evaluator": "test/quest-quality-social.js",
+      "evaluatorHash": "5258dc676258f660d2e88573af1d2a87eb1ba42f6fd43d783000cf767fc54cb8",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:19:09.414Z",
+      "elapsedMs": 4726,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7du546-quest-quality-social.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7du8sf-quest-quality-spoilers",
+      "evaluator": "test/quest-quality-spoilers.js",
+      "evaluatorHash": "55fc0fc6512934fccfdf3628b5f178b95fe27722753aba704b1acc515d8876e4",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:19:14.175Z",
+      "elapsedMs": 3803,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7du8sf-quest-quality-spoilers.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7dubr2-quest-quality-study",
+      "evaluator": "test/quest-quality-study.js",
+      "evaluatorHash": "6043fb8143c39ce3b1d418265670565faae908006e07d7760c0cef5f2c5a896b",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7e59174bee74d11e2f98bf4ccc178282116b2e894b61c88bf0efea1201fbf483",
+        "public/index.html": "aff38ac73de6f940d26fdde7d8cd9955eaa04849b4ea230b96dbc256ba4f6709",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "c8b8939f62b8cec32b2379273117e2f2b9be1a3cfa6d2b3decbc2122eef70e83",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "d20578c59bc3ed2765b34e89b828b47c9c4c791d249da07a9f9758580e1f7154",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "5525cba577dbea54b89618a394db6ca904b4e0e9b19842d642baa13fedc6abea",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "46ebb6c6eb7e17d316cff75aeaeb6579344452cbba9ed3b4d153e01ad07e96c0",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:19:18.014Z",
+      "elapsedMs": 158,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7dubr2-quest-quality-study.log",
       "evidenceType": "automated_implementation_check"
     }
   ]

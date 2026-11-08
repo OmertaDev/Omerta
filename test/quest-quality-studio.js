@@ -30,6 +30,23 @@ assert.throws(() => factImpact(witness, 'not-a-fact'));
 const changed = structuredClone(witness);
 changed.nodes.find(node => node.type === 'collectible_def').payload.title = 'Luca carried LA-17 through the east door';
 assert(spoilerAudit(changed).some(row => row.surface === 'rewardTitle' && row.evidenceType === 'lexical-heuristic'), 'Spoiler audit inspects reward meaning against a private accepted conclusion.');
+for (const verifier of ['unordered_ids', 'ordered_ids', 'mapping']) {
+  const ordinary = structuredClone(witness), byId = new Map(ordinary.nodes.map(node => [node.id, node]));
+  const puzzle = ordinary.nodes.find(node => node.type === 'puzzle' && byId.get(node.payload.answerSpecId)?.payload.verifier === verifier);
+  const spec = byId.get(puzzle.payload.answerSpecId).payload;
+  const answerId = verifier === 'mapping' ? Object.values(spec.solution)[0] : spec.solution[0];
+  const answer = puzzle.payload.interaction.items.find(item => item.id === answerId).label;
+  ordinary.nodes.find(node => node.type === 'collectible_def').payload.title = answer;
+  validateQualityPack(ordinary);
+  assert(spoilerAudit(ordinary).some(row => row.surface === 'rewardTitle' && row.verifier === verifier),
+    `Ordinary ${verifier} answers are included in the pre-publication spoiler audit.`);
+}
+const normalized = structuredClone(witness), normalizedPuzzle = normalized.nodes.find(node => node.id === 'photo');
+delete normalizedPuzzle.payload.interaction;
+normalized.nodes.find(node => node.id === normalizedPuzzle.payload.answerSpecId).payload = { verifier: 'normalized_exact', acceptedValues: ['the courier used the east door'] };
+normalized.nodes.find(node => node.type === 'collectible_def').payload.title = 'The courier used the east door';
+validateQualityPack(normalized);
+assert(spoilerAudit(normalized).some(row => row.surface === 'rewardTitle' && row.verifier === 'normalized_exact'));
 const brokenPromise = structuredClone(witness);
 brokenPromise.nodes[0].payload.quality.promises[0].payoffNodeIds = ['no-such-payoff'];
 assert.throws(() => validateQualityPack(brokenPromise), /quality|missing|reference/i);
