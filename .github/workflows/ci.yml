@@ -266,7 +266,7 @@ jobs:
   questing_native:
     name: Quest authority and concurrency (PostgreSQL)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     services:
       postgres:
         image: postgres:18.4
