@@ -24,7 +24,7 @@ Optional closed fields:
 | `promises` | Up to 32 `{id,setupNodeId,payoffNodeIds}`. At least one profiled payoff must follow the setup through the graph. |
 | `branches` | Up to 32 `{choiceNodeId,reconvergeNodeId,maxActions}`. Every declared route must reach its join without an earlier terminal escape. |
 | `budget` | `{maxActions,maxNewConcepts,maxReadingWords}`; positive integer limits of 128, 128 and 20000 respectively. |
-| `spoilers` | Up to 64 `{nodeId,requiresNodeIds}` with at least one prerequisite. Self-prerequisites are invalid. |
+| `spoilers` | Up to 64 `{nodeId,requiresNodeIds}` with at least one prerequisite. Self-prerequisites and mutual dependency cycles are invalid; independently obtained parallel leads remain allowed. |
 | `pacing` | `{pressureNodeIds,safeNodeIds,maxConsecutivePressure}`; unique disjoint profiled IDs and a limit from 1 to 16. |
 | `procedures` | Up to 16 `{id,nodeId,learnNodeId,masteryFlag,skipOptionId,learnOptionId}`. The first node is a choice; `learnNodeId` is a puzzle reached by the learn option. The distinct skip option must retain a terminal path without that puzzle. Flags require the `quest.procedure.` prefix. |
 | `spotlights` | Up to 64 `{nodeId,roleId}`. Each action has at most one suggested actual party role. This declaration conveys no exclusive turn or authority. |

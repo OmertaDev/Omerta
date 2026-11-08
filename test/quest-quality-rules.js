@@ -122,6 +122,8 @@ refuses((q) => { q.revelations[0].npcId = 'nobody'; }, 'npc_reference');
 refuses((q) => { q.promises[0].setupNodeId = 'e2'; }, 'unreachable_payoff');
 refuses((q, b) => { b.edges.push({ from: 'choose', to: 'done', type: 'UNLOCKS' }); }, 'branch_reconvergence');
 refuses((q) => { q.spoilers[0].requiresNodeIds = ['e2']; }, 'self_spoiler');
+refuses((q) => { q.spoilers = [{ nodeId: 'e1', requiresNodeIds: ['e2'] },
+  { nodeId: 'e2', requiresNodeIds: ['e1'] }]; }, 'spoiler_cycle');
 refuses((q) => { q.budget.maxActions = 0; }, 'budget');
 refuses((q) => { q.pacing.safeNodeIds = ['choose']; }, 'pacing_overlap');
 refuses((q) => { q.procedures[0].masteryFlag = 'unrelated.power'; }, 'procedure_flag');
@@ -134,6 +136,8 @@ refuses((q) => { q.fieldworkAssignments[0].outcomes[3].evidenceNodeIds = ['endin
 refuses((q) => { q.disclosures[0].recipients[0].revealNodeIds = ['e4']; }, 'unjustified_revelation');
 refuses((q) => { q.npcs[0].beliefs = [{ evidenceNodeId: 'e1', sourceNodeId: 'entry' }]; q.npcs[0].knowledge.shift(); }, 'unjustified_revelation');
 const warns = fixture(); designOf(warns).budget = { maxActions: 1, maxNewConcepts: 1, maxReadingWords: 1 };
+const optionalLead = fixture(); designOf(optionalLead).spoilers = [{ nodeId: 'e2', requiresNodeIds: ['e4'] }];
+assert.equal(assertQuestQuality(optionalLead).errors.length, 0, 'An independently obtained parallel lead need not strictly precede the reveal in graph topology.');
 const handoff = fixture(); handoff.nodes.push({ id: 'second', type: 'role', payload: {} }); handoff.runtime.nodeIds.push('second');
 handoff.edges.push({ from: 'party', to: 'second', type: 'PERFORMED_BY_ROLE' });
 handoff.nodes.find(node => node.id === 'party').payload.allowRoleReplacement = true;

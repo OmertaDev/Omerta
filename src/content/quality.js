@@ -179,13 +179,20 @@ export function validateQuestQuality(bundle) {
       && reaches(id, row.reconvergeNodeId, undefined, flow));
     if (between.length > row.maxActions) warn('branch_budget', 'quality.branches', 'The branch exposes more actions than its declared budget.');
   }
+  const spoilerDependencies = new Map();
   for (const row of rows(design.spoilers, 'quality.spoilers')) {
     if (!shape(row, ['nodeId', 'requiresNodeIds'], 'quality.spoilers')) continue;
     ref(row.nodeId, 'spoiler.nodeId');
     for (const required of refs(row.requiresNodeIds, 'spoiler.requiresNodeIds', undefined, 1)) {
+      if (!spoilerDependencies.has(row.nodeId)) spoilerDependencies.set(row.nodeId, []);
+      spoilerDependencies.get(row.nodeId).push(required);
       if (required === row.nodeId) error('self_spoiler', 'quality.spoilers', 'A reveal cannot require itself.');
       else if (!reaches(required, row.nodeId)) warn('spoiler_order', 'quality.spoilers', 'Graph ordering alone does not demonstrate this spoiler prerequisite.');
     }
+  }
+  if ([...spoilerDependencies].some(([nodeId, required]) => required.some((id) => id !== nodeId
+    && reaches(id, nodeId, undefined, spoilerDependencies)))) {
+    error('spoiler_cycle', 'quality.spoilers', 'Spoiler prerequisites cannot form a cycle that withholds each other.');
   }
   if (design.budget !== undefined && shape(design.budget, ['maxActions', 'maxNewConcepts', 'maxReadingWords'], 'quality.budget')) {
     for (const [key, max] of [['maxActions', 128], ['maxNewConcepts', 128], ['maxReadingWords', 20000]]) {
