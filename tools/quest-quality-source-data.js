@@ -3,10 +3,10 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "1abb46bb9a033bef06dc5b4649b085986dc5ca6c",
-  "tree": "15a8ffd2fa9b35c46b77eae09871bff455b25ae9",
-  "predecessor": "d33bfe6aabdaa82513ac98996a0e0d065180fa71",
-  "predecessorTree": "56e211efe05118b97ef1d10b28c9a8f57dae8c38",
+  "revision": "df8aab338c91517de24d8004388b5c70a625c823",
+  "tree": "762da16214f01c4a5d94639818443633c1455cad",
+  "predecessor": "e0752e881aa5dc9cd867f9f4fb9752b6a6e2abaf",
+  "predecessorTree": "94f08db0aa0cb43f52efc76e34efb7eb8ee182ec",
   "files": {
     "package.json": {
       "current": {
@@ -454,27 +454,6 @@ export const QUEST_QUALITY_SOURCE = freeze({
         }
       ]
     },
-    "test/continuous-city-source-compatibility.js": {
-      "current": {
-        "mode": "100644",
-        "blob": "2097eead56f55185ae9ff49a3118fc451b3a01f5",
-        "sha256": "85128ae5e1f731b5d6286dc0604cf29ac5989f5e4d78dc1cda72bbb5b42001a1",
-        "bytes": 80468
-      },
-      "baseline": {
-        "mode": "100644",
-        "blob": "69e00c520aaaae2829a5534106a74cdcd07452e8",
-        "sha256": "7e4d785990d1ab9d98eb13c1aaae8f5e488477215bedefb7fe372afb00296ecf",
-        "bytes": 80435
-      },
-      "inverses": [
-        {
-          "at": 65645,
-          "current": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_REVISION, '--', file));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n",
-          "baseline": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n"
-        }
-      ]
-    },
     "test/site-basics-source-transfer.js": {
       "current": {
         "mode": "100644",
@@ -680,8 +659,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "test/quest-quality-source-transfer.js": {
       "mode": "100644",
-      "blob": "251c861496668fcdd67879036291a01ca7a3a547",
-      "sha256": "f20b9778313cfa85007df34c8d527b3fe309adbecbad351fa4249bbbfaa6a874",
+      "blob": "84caa80429af199fba4a60984ab0887f3236fe9f",
+      "sha256": "d40c0483087738eb7b110abbc18143740828ff4aea520ecf81ca225cc8a92015",
       "bytes": 5627
     },
     "test/quest-quality-spoilers.js": {
@@ -710,8 +689,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "tools/quest-quality-source-seal.js": {
       "mode": "100644",
-      "blob": "94eeecb5105210f920b317572f8ebb2dd579b179",
-      "sha256": "31af80e176fcecda42b727870801cb1e31269a988b50fbb4a41e0613572b87d0",
+      "blob": "7f16443d171991d0a3bebca5dd4cd0c0c1a532d6",
+      "sha256": "1297e1724a8ee5214a4987b1fee67eef2f76aa8bb02ba5b5eb5e108b521b86dd",
       "bytes": 4207
     },
     "tools/quest-quality-source-transfer.js": {
@@ -740,4 +719,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'b69bf623a854139daf4549be4bd5888cb282fb6f340eaf0c6607b9daed524147';
+export const QUEST_QUALITY_SOURCE_SHA256 = 'bf2e2c737667253e936d2bf2de59d763b85308925f7fb3b636e35906a4987178';
