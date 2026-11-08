@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "259879db14378039637475f58f4049b0e015043b",
-  "tree": "3489b7b06231c5a4601a4984ec9eb8f7dd125b8b",
+  "revision": "569c4d9a406989451f0a03d3f2af2d03580e5726",
+  "tree": "63de77332145acdbef3d270252bfeb4c55e334de",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -1398,6 +1398,47 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/gateway-context.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4f420b5e556aab70ea9576536917184b0d571572",
+        "sha256": "1c75703a9e278d43759654632ebf0c6d1184f3a5b2914b2200aa46d59ba38b27",
+        "bytes": 19074
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "17ec6a04133dddac4e65195eec850cf60d954d8b",
+        "sha256": "79064a6b9b4939a22c593cb3a3435c53ce03814448afa55941a0b497f3750c7c",
+        "bytes": 16420
+      },
+      "inverses": [
+        {
+          "at": 461,
+          "current": "import { missionReadiness, doMission } from '../src/growth.js';\nimport { MISSIONS, GUNS } from '../src/rules.js';\n\n// Numeric privacy sentinels apply to amounts, not digits inside observation timestamps.\nfunction assertNoNumericSecrets(value, pattern) {\n  const visit = (item) => {\n    if (item && typeof item === 'object') {\n      for (const child of Object.values(item)) visit(child);\n    } else if (typeof item === 'number'\n      || typeof item === 'string' && /^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?$/i.test(item.trim())) {\n      assert.doesNotMatch(String(item).trim(), pattern);\n    }\n  };\n  visit(JSON.parse(JSON.stringify(value)));\n}\nconst inventoryTextSecrets = /foreign-car|owner_id|account_id|ownerScope|ownerId/;\nconst ownedStackTimestamp = '2026-11-08T15:32:05.987Z';\nconst numericSecrets = /987|4321|7777|43210|98765/;\nassertNoNumericSecrets({ createdAt: ownedStackTimestamp,\n  nested: [{ updatedAt: ownedStackTimestamp, date: new Date(ownedStackTimestamp), qty: 10,\n    id: '7f809870-0000-4000-8000-000000000000' }] }, numericSecrets);\nassert.throws(() => assertNoNumericSecrets({ createdAt: 987 }, numericSecrets), { code: 'ERR_ASSERTION' });\nfor (const value of [987, 9876, 98765, 4321, 7777, 43210, 1.987, '987', '9876', '98765', '4321', '7777', '43210',\n  '  +987.5  ', '-0.987', '.987', '987.', '9.987e+2', '1e987', '  -4.4321E-2  ']) {\n  assert.throws(() => assertNoNumericSecrets({ nested: [{ amount: value }] }, numericSecrets), { code: 'ERR_ASSERTION' });\n}\nfor (const value of [9876, '  98765  ']) {\n  assert.throws(() => assertNoNumericSecrets({ nested: [{ toJSON: () => value }] }, numericSecrets), { code: 'ERR_ASSERTION' });\n}\nassert.throws(() => assert.doesNotMatch(JSON.stringify({ equipment: { cars: [{ id: 'foreign-car' }] } }), inventoryTextSecrets),\n  { code: 'ERR_ASSERTION' });\nfor (const key of ['owner_id', 'account_id', 'ownerScope', 'ownerId']) {\n  assert.throws(() => assert.doesNotMatch(JSON.stringify({ nested: [{ [key]: 'private' }] }), inventoryTextSecrets),\n    { code: 'ERR_ASSERTION' });\n}\n\nconst pool = await makeDb();\nconst account = 'gateway-context-account';\nconst character = 'gateway-context-character';\n",
+          "baseline": "import { missionReadiness, doMission } from '../src/growth.js';\nimport { MISSIONS, GUNS } from '../src/rules.js';\n\nconst pool = await makeDb();\nconst account = 'gateway-context-account';\nconst character = 'gateway-context-character';\n"
+        },
+        {
+          "at": 5788,
+          "current": "    await grantStack(client, { scope: 'account', id: account }, 'mat:scrap_steel', 10, 'standard', 'gateway context fixture', 'context:grant');\n    await grantStack(client, { scope: 'account', id: other }, 'mat:wire', 987, 'standard', 'gateway other fixture', 'context:other-grant');\n  });\n  await pool.query(`UPDATE item_stacks SET created_at=$1,updated_at=$1\n    WHERE owner_scope='account' AND owner_id=$2 AND template_id='mat:scrap_steel' AND quality='standard'`,\n  [ownedStackTimestamp, account]);\n  assert.equal(CAPABILITIES.length, new Set(CAPABILITIES.map((entry) => entry.name)).size);\n  for (const entry of CAPABILITIES) {\n    assert.equal(entry.inputSchema.additionalProperties, false, entry.name);\n",
+          "baseline": "    await grantStack(client, { scope: 'account', id: account }, 'mat:scrap_steel', 10, 'standard', 'gateway context fixture', 'context:grant');\n    await grantStack(client, { scope: 'account', id: other }, 'mat:wire', 987, 'standard', 'gateway other fixture', 'context:other-grant');\n  });\n  assert.equal(CAPABILITIES.length, new Set(CAPABILITIES.map((entry) => entry.name)).size);\n  for (const entry of CAPABILITIES) {\n    assert.equal(entry.inputSchema.additionalProperties, false, entry.name);\n"
+        },
+        {
+          "at": 7352,
+          "current": "  const minimal = await run('get_player_context', {}, only('player.read'));\n  assert.equal(minimal.player.name, 'Context Carla');\n  for (const key of ['inventory', 'crew', 'family', 'world', 'economy', 'coordinationRequests', 'activeMysteries']) assert.equal(key in minimal, false, key);\n  assert.doesNotMatch(JSON.stringify(minimal), /foreign-car|context-car|wallet_address|account_id|ammo|cash|bank/);\n  assertNoNumericSecrets(minimal, /4321|7777/);\n\n  const before = (await pool.query('SELECT cash,energy,last_accrued_at FROM characters WHERE id=$1', [character])).rows[0];\n  const inventory = await run('get_inventory');\n  assert.equal(inventory.account.stacks[0].qty, 10);\n  assert.equal(inventory.equipment.cars[0].id, 'context-car');\n  assert.equal(inventory.account.stacks[0].createdAt, ownedStackTimestamp);\n  assert.equal(inventory.account.stacks[0].updatedAt, ownedStackTimestamp);\n  assert.doesNotMatch(JSON.stringify(inventory), inventoryTextSecrets);\n  assertNoNumericSecrets(inventory, /987/);\n  assert.equal((await run('get_item', { itemId: 'context-car' })).item.type, 'vehicle');\n  await assert.rejects(run('get_item', { itemId: 'foreign-car' }), { code: 'gateway_unavailable' });\n  await assert.rejects(run('get_item', { itemId: 'item:belladonna_artifact' }), { code: 'gateway_unavailable' });\n",
+          "baseline": "  const minimal = await run('get_player_context', {}, only('player.read'));\n  assert.equal(minimal.player.name, 'Context Carla');\n  for (const key of ['inventory', 'crew', 'family', 'world', 'economy', 'coordinationRequests', 'activeMysteries']) assert.equal(key in minimal, false, key);\n  assert.doesNotMatch(JSON.stringify(minimal), /4321|7777|foreign-car|context-car|wallet_address|account_id|ammo|cash|bank/);\n\n  const before = (await pool.query('SELECT cash,energy,last_accrued_at FROM characters WHERE id=$1', [character])).rows[0];\n  const inventory = await run('get_inventory');\n  assert.equal(inventory.account.stacks[0].qty, 10);\n  assert.equal(inventory.equipment.cars[0].id, 'context-car');\n  assert.doesNotMatch(JSON.stringify(inventory), /987|foreign-car|owner_id|account_id|ownerScope|ownerId/);\n  assert.equal((await run('get_item', { itemId: 'context-car' })).item.type, 'vehicle');\n  await assert.rejects(run('get_item', { itemId: 'foreign-car' }), { code: 'gateway_unavailable' });\n  await assert.rejects(run('get_item', { itemId: 'item:belladonna_artifact' }), { code: 'gateway_unavailable' });\n"
+        },
+        {
+          "at": 11961,
+          "current": "  await pool.query(`INSERT INTO crew_members (crew_id,account_id,name) VALUES ('context-crew',$1,'Context Carla')`, [account]);\n  const crew = await run('get_crew', {}, only('social.read'));\n  assert.equal(crew.crew.members.length, 2);\n  assert.doesNotMatch(JSON.stringify(crew), /leader_account|account_id|foreign-car|reward|\"pot\"/);\n  assertNoNumericSecrets(crew, /987|4321/);\n  const family = await run('get_family', {}, only('social.read'));\n  assert.equal(family.extendedFamily.marriage.steward, 'Other Oliver');\n  assert.doesNotMatch(JSON.stringify(family), /accountId|account_id|resources|cash|ammo|omr/);\n  assertNoNumericSecrets(family, /43210|98765/);\n  const familyResources = await run('get_group_resources', { group: 'family' });\n  assert.equal(familyResources.resources.cash, 43210);\n  assertNoNumericSecrets(familyResources, /98765/);\n  assert.equal((await run('get_alliances')).relations[0].active, true);\n\n  const notifications = await run('get_notifications', {}, only('player.read'));\n",
+          "baseline": "  await pool.query(`INSERT INTO crew_members (crew_id,account_id,name) VALUES ('context-crew',$1,'Context Carla')`, [account]);\n  const crew = await run('get_crew', {}, only('social.read'));\n  assert.equal(crew.crew.members.length, 2);\n  assert.doesNotMatch(JSON.stringify(crew), /leader_account|account_id|foreign-car|987|4321|reward|\"pot\"/);\n  const family = await run('get_family', {}, only('social.read'));\n  assert.equal(family.extendedFamily.marriage.steward, 'Other Oliver');\n  assert.doesNotMatch(JSON.stringify(family), /accountId|account_id|43210|98765|resources|cash|ammo|omr/);\n  const familyResources = await run('get_group_resources', { group: 'family' });\n  assert.equal(familyResources.resources.cash, 43210);\n  assert.doesNotMatch(JSON.stringify(familyResources), /98765/);\n  assert.equal((await run('get_alliances')).relations[0].active, true);\n\n  const notifications = await run('get_notifications', {}, only('player.read'));\n"
+        },
+        {
+          "at": 15892,
+          "current": "  assert.equal(paths.ownKnowledge[0].id, 'own-clue');\n  assert.equal('ownInventory' in paths, false);\n  assert.equal('ownCraftingOptions' in paths, false);\n  assert.doesNotMatch(JSON.stringify(paths), /foreign-car|\"omr\"|privateEvidence/);\n  assertNoNumericSecrets(paths, /98765|987/);\n  await assert.rejects(withKnowledge.execute('find_coordination_paths', account,\n    { operationId: 'foreign-operation' }, only('social.read', 'coordination.read')), { code: 'operation_unavailable' });\n  const fullPaths = await withKnowledge.execute('find_coordination_paths', account, { operationId: 'context-operation' }, full);\n  assert.equal(fullPaths.ownInventory.equipment.cars[0].id, 'context-car');\n  assert.equal(fullPaths.ownInventory.account.stacks[0].createdAt, ownedStackTimestamp);\n  assert.equal(fullPaths.ownInventory.account.stacks[0].updatedAt, ownedStackTimestamp);\n  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car/);\n  assertNoNumericSecrets(fullPaths, /98765|987/);\n\n  // Every published mission's preview must match its actual refusal/acceptance gate.\n  // The fake query stops exactly at the first write, so no reward is executed here.\n",
+          "baseline": "  assert.equal(paths.ownKnowledge[0].id, 'own-clue');\n  assert.equal('ownInventory' in paths, false);\n  assert.equal('ownCraftingOptions' in paths, false);\n  assert.doesNotMatch(JSON.stringify(paths), /foreign-car|98765|\"omr\"|987|privateEvidence/);\n  await assert.rejects(withKnowledge.execute('find_coordination_paths', account,\n    { operationId: 'foreign-operation' }, only('social.read', 'coordination.read')), { code: 'operation_unavailable' });\n  const fullPaths = await withKnowledge.execute('find_coordination_paths', account, { operationId: 'context-operation' }, full);\n  assert.equal(fullPaths.ownInventory.equipment.cars[0].id, 'context-car');\n  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car|98765|987/);\n\n  // Every published mission's preview must match its actual refusal/acceptance gate.\n  // The fake query stops exactly at the first write, so no reward is executed here.\n"
+        }
+      ]
+    },
     "test/genesis-fee-readiness-source-transfer.js": {
       "current": {
         "mode": "100644",
@@ -2560,4 +2601,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '59ba477e19c13db8d4964efd107dcb2470ee922aebdd0c22235dda0700ab81cc';
+export const SITE_BASICS_SOURCE_SHA256 = '04d1e90e0b5a1d76d74064b28ab2a6be2ea8010806abd59e4948310e3b622f83';
