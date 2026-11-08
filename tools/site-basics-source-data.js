@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "37a84fc8be42420004810338408879dc5c2c1f71",
-  "tree": "d9d8245ca930b247d8ba9b56b25d77578c128b22",
+  "revision": "cb690ce81fc00afc998d3e414e8843b368a865b3",
+  "tree": "f1912f4daae95619b49e7d95c87344991b3d0bb4",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -31,6 +31,32 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 21365,
           "current": "      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'\n\n      - name: Optional website counts on real PostgreSQL\n        env:\n          SITE_ANALYTICS_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n          DATABASE_URL: ''\n        run: node test/site-analytics.js --postgres\n\n      - name: Gateway, RLS and receipt concurrency on real PostgreSQL\n        env:\n          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check\n",
           "baseline": "      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'\n\n      - name: Gateway, RLS and receipt concurrency on real PostgreSQL\n        env:\n          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check\n"
+        }
+      ]
+    },
+    "AGENTS.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "a4e85493e8cf0c9218323bca2c1c47891d611a8c",
+        "sha256": "38eb8602fec3af443a7125073adcc5c82e03930eff1a51b4e1c99ea23de3d987",
+        "bytes": 50024
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "627700e8c897578951ef5ee94f4938fe41800cbc",
+        "sha256": "f5d101cba3010c710cd0d64246fb4b0c080e9632bc7496b582cca8e05dec55b8",
+        "bytes": 49646
+      },
+      "inverses": [
+        {
+          "at": 5170,
+          "current": "\n## The rules of the road\n\n1. **Create an agent identity.** New agents call `POST /v1/auth/agent` with a\n   securely persisted, random 32-byte unpadded-base64url `bootstrapSecret`.\n   The account is permanently marked as an agent before its first 90-day bearer\n   is issued, so no birth date is needed. Human signup still requires its age\n   check. Retry the same secret after an ambiguous response; save the bearer\n   before acknowledging bootstrap. Existing authenticated accounts can become\n   permanent agents through `POST /v1/auth/agent-key`.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n   wallet for you. Prove one you control through `POST /v1/wallet/challenge`\n   → sign → `POST /v1/wallet/verify`. A linked wallet is mandatory for\n",
+          "baseline": "\n## The rules of the road\n\n1. **Get an agent key.** After you authenticate, call\n   `POST /v1/auth/agent-key`. This permanently flags the account as an agent\n   (🤖 badge), and returns a 90-day bearer token. Using an agent key is the\n   required way to identify and run a bot.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n   wallet for you. Prove one you control through `POST /v1/wallet/challenge`\n   → sign → `POST /v1/wallet/verify`. A linked wallet is mandatory for\n"
+        },
+        {
+          "at": 8077,
+          "current": "```bash\nBASE=https://www.omerta.fun\n\n# 1. Generate and securely persist a random 32-byte unpadded-base64url secret ONCE.\n: \"${OMERTA_BOOTSTRAP_SECRET:?Set your securely persisted bootstrap secret}\"\n: \"${OMERTA_TOKEN_FILE:?Set a private token-file path outside the repository}\"\nTOKEN=$(curl -fsS -X POST $BASE/v1/auth/agent -H 'content-type: application/json' \\\n  -d \"{\\\"bootstrapSecret\\\":\\\"$OMERTA_BOOTSTRAP_SECRET\\\"}\" | jq -er .token) || exit 1\n\n# 2. Save the bearer before retiring bootstrap recovery.\numask 077\nprintf '%s\\n' \"$TOKEN\" > \"$OMERTA_TOKEN_FILE\" || exit 1\nAUTH=\"authorization: Bearer $TOKEN\"\ncurl -fsS -X POST $BASE/v1/auth/guest/bootstrap/ack -H \"$AUTH\"\n\n# 3. Create your character (2–24 chars, unique among the living).\ncurl -s -X POST $BASE/v1/character -H \"$AUTH\" \\\n",
+          "baseline": "```bash\nBASE=https://www.omerta.fun\n\n# 1. Authenticate. Guest is instant + keyless (upgrade to X/Privy later to\n#    persist + to extract on-chain). Set OMERTA_INVITE to your launch invitation first.\nTOKEN=$(curl -s -X POST $BASE/v1/auth/guest -H 'content-type: application/json' \\\n  -d \"{\\\"inviteCode\\\":\\\"$OMERTA_INVITE\\\"}\" | jq -r .token)\n\n# 2. Flag as an agent + get the 90-day agent token (use THIS token from now on).\nTOKEN=$(curl -s -X POST $BASE/v1/auth/agent-key \\\n  -H \"authorization: Bearer $TOKEN\" | jq -r .token)\nAUTH=\"authorization: Bearer $TOKEN\"\n\n# 3. Create your character (2–24 chars, unique among the living).\ncurl -s -X POST $BASE/v1/character -H \"$AUTH\" \\\n"
         }
       ]
     },
@@ -1041,6 +1067,27 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/city-home-migration.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "9be8bbb9923a8ed2c3f982f629db979ab4e73a6d",
+        "sha256": "42a32f9beca670ccf2e7668837a2ceccca9a95ef857c2428e15f4bfa96c8a89f",
+        "bytes": 8665
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "1f43caf320cd16dbdbfeb6e34f18e07c2521957a",
+        "sha256": "b38c8ef750d136a9cface1f1512bf1a2c7722106f3753386c4cd669df29f63b1",
+        "bytes": 8665
+      },
+      "inverses": [
+        {
+          "at": 7927,
+          "current": "  assert.deepEqual((await client.query('SELECT * FROM schema_meta WHERE id=1')).rows[0], priorStamp);\n  await client.query('ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_storage_legacy');\n  await migrateSchemaUnderLock(client, { schemaText });\n  assert.equal((await client.query('SELECT app_version FROM schema_meta WHERE id=1')).rows[0].app_version, '1.6.0');\n  console.log('Home custody native migration: existing rows, closed custody gates, restart, late DDL rollback/retry and drift/unvalidated refusal passed');\n} finally {\n  await client.query('SELECT pg_advisory_unlock(918273645)').catch(() => {});\n",
+          "baseline": "  assert.deepEqual((await client.query('SELECT * FROM schema_meta WHERE id=1')).rows[0], priorStamp);\n  await client.query('ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_storage_legacy');\n  await migrateSchemaUnderLock(client, { schemaText });\n  assert.equal((await client.query('SELECT app_version FROM schema_meta WHERE id=1')).rows[0].app_version, '1.5.1');\n  console.log('Home custody native migration: existing rows, closed custody gates, restart, late DDL rollback/retry and drift/unvalidated refusal passed');\n} finally {\n  await client.query('SELECT pg_advisory_unlock(918273645)').catch(() => {});\n"
+        }
+      ]
+    },
     "test/client-ip.js": {
       "current": {
         "mode": "100644",
@@ -1111,6 +1158,27 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 65755,
           "current": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', pin.baselineBlob, pin.currentBlob));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n",
           "baseline": "        ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)\n        : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)\n          ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)\n          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file));\n  if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }\n}\nfor (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {\n"
+        }
+      ]
+    },
+    "test/db-boot-lock-postgres.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "fa7407002296d410be838b3d9d2d2bf3408b0b91",
+        "sha256": "ef923e2dcd27a8f9ed5d6edfab6ce83b62479d3134357c6b15620eec6bf19352",
+        "bytes": 3995
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a371a9a38ac1de3f30f528f8df2f007a6f99f2a2",
+        "sha256": "a18e55a9bb90ad675a4e46df1bd733612fd0bcc14a1577abfd95b94948270642",
+        "bytes": 3995
+      },
+      "inverses": [
+        {
+          "at": 2902,
+          "current": "  const stamp = (await pools[0].query(\n    'SELECT app_version,schema_sha FROM schema_meta WHERE id=1'\n  )).rows[0];\n  assert.equal(stamp.app_version, '1.6.0');\n  assert.equal(stamp.schema_sha,\n    crypto.createHash('sha256').update(fs.readFileSync(new URL('../schema.sql', import.meta.url))).digest('hex').slice(0, 16));\n  assert.equal(Number((await pools[0].query(\n    \"SELECT count(*) n FROM pg_trigger WHERE tgname='social_claims_legacy_receipt_guard' AND NOT tgisinternal\"\n  )).rows[0].n), 1, 'serialized boot leaves exactly one live receipt guard');\n\n  console.log('Native DB boot lock PASS: two booters outwait request lock_timeout and serialize complete 1.6.0 schema setup');\n} finally {\n  restore('DATABASE_URL', original.databaseUrl);\n  restore('PG_STATEMENT_TIMEOUT_MS', original.statementTimeout);\n",
+          "baseline": "  const stamp = (await pools[0].query(\n    'SELECT app_version,schema_sha FROM schema_meta WHERE id=1'\n  )).rows[0];\n  assert.equal(stamp.app_version, '1.5.1');\n  assert.equal(stamp.schema_sha,\n    crypto.createHash('sha256').update(fs.readFileSync(new URL('../schema.sql', import.meta.url))).digest('hex').slice(0, 16));\n  assert.equal(Number((await pools[0].query(\n    \"SELECT count(*) n FROM pg_trigger WHERE tgname='social_claims_legacy_receipt_guard' AND NOT tgisinternal\"\n  )).rows[0].n), 1, 'serialized boot leaves exactly one live receipt guard');\n\n  console.log('Native DB boot lock PASS: two booters outwait request lock_timeout and serialize complete 1.5.1 schema setup');\n} finally {\n  restore('DATABASE_URL', original.databaseUrl);\n  restore('PG_STATEMENT_TIMEOUT_MS', original.statementTimeout);\n"
         }
       ]
     },
@@ -1267,6 +1335,47 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 1049,
           "current": "  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');\n  const site = qualifySiteBasicsSource(file, input);\n  assert.deepEqual([site.sourceOnly, site.runtime, site.native, site.financial, site.activation, site.deployment, site.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  const proof = qualifyQuestingSource(file, site.baselineText);\n  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  const priorEntry = questingHistoricalEntry(file, entry, 'tree');\n  return Object.freeze({ input: buffer ? Buffer.from(proof.baselineText) : proof.baselineText, entry: priorEntry, ...flags });\n",
           "baseline": "  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  const priorEntry = questingHistoricalEntry(file, entry, 'tree');\n  return Object.freeze({ input: buffer ? Buffer.from(proof.baselineText) : proof.baselineText, entry: priorEntry, ...flags });\n"
+        }
+      ]
+    },
+    "test/lib/rc1-historical-source-fixture.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "11b045419dfb2ab9599162747cdd2c0a561294e6",
+        "sha256": "d9e33e4e4d6643d4804fb2663f43a861a2cc734121ed28ef6a0bade7979dd69b",
+        "bytes": 60316
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "236f0654eed02089bf5c11eac45db2634fca2c97",
+        "sha256": "f890ab2e2a0f56d3570eed5b14b517668197fbcd8915e7349ab1d600a8c8bfa7",
+        "bytes": 54193
+      },
+      "inverses": [
+        {
+          "at": 2149,
+          "current": "import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';\nimport { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\n\nexport const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';\nconst releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';\n",
+          "baseline": "import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';\nimport { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';\n\nexport const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';\nconst releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';\n"
+        },
+        {
+          "at": 7533,
+          "current": "  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js', 'src/verify.js',\n  'src/wire.js',\n]);\nconst combinedSiteComparisonFiles = Object.freeze(['src/auth.js', 'src/business.js', 'src/population.js', 'src/social/combat.js']);\nconst economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n",
+          "baseline": "  'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js', 'src/verify.js',\n  'src/wire.js',\n]);\nconst economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n"
+        },
+        {
+          "at": 17679,
+          "current": "    committed: git(['--no-replace-objects', 'show', 'HEAD:' + file]), physical: originalRead(physicalPath),\n    regular: stat.isFile(), symbolic: stat.isSymbolicLink() };\n}\nfunction currentCombinedSiteRecord(file) {\n  assert.equal(arguments.length, 1); assert(combinedSiteComparisonFiles.includes(file), 'Only the four declared current combined comparisons');\n  const entry = String(git(['--no-replace-objects', 'ls-tree', '-z', 'HEAD', '--', file]));\n  const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0]+)\\0$/);\n  assert(match && match[3] === file, 'Actual combined comparison has a regular Git entry');\n  const physicalPath = path.join(root, file), stat = fs.lstatSync(physicalPath);\n  return { head: { mode: match[1], blob: match[2] },\n    index: String(git(['--no-replace-objects', 'ls-files', '--stage', '--', file])).trim(),\n    committed: git(['--no-replace-objects', 'show', 'HEAD:' + file]), physical: originalRead(physicalPath),\n    regular: stat.isFile(), symbolic: stat.isSymbolicLink() };\n}\nfunction qualifyCurrentCombinedSite(file, actual) {\n  assert.equal(arguments.length, 2); assert(combinedSiteComparisonFiles.includes(file), 'Only the four declared current combined comparisons');\n  assert(Object.hasOwn(SITE_BASICS_SOURCE.files, file), 'Exact site comparison domain required');\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  const pin = SITE_BASICS_SOURCE.files[file].current;\n  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual combined HEAD equals its current site source pin');\n  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file, 'Actual combined index equals its complete HEAD identity');\n  assert.equal(actual.regular, true); assert.equal(actual.symbolic, false);\n  assert(Buffer.isBuffer(actual.committed) && Buffer.isBuffer(actual.physical));\n  const text = actual.committed.toString('utf8');\n  assert(Buffer.from(text).equals(actual.committed) && !text.includes('\\r'), 'Actual combined Git text is lossless canonical LF');\n  assert.equal(blobHash(actual.committed), pin.blob); assert.equal(sha256(actual.committed), pin.sha256); assert.equal(actual.committed.length, pin.bytes);\n  assert(actual.physical.equals(actual.committed) || actual.physical.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))),\n    'Actual regular combined physical bytes equal complete HEAD in LF or uniform CRLF');\n  const proof = qualifySiteBasicsSource(file, actual.committed);\n  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred],\n    [true, false, false, false, false, false, false]);\n  return proof;\n}\nfunction qualifyCurrentQuestingWorldHelper(file, actual) {\n  assert.equal(arguments.length, 2);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n",
+          "baseline": "    committed: git(['--no-replace-objects', 'show', 'HEAD:' + file]), physical: originalRead(physicalPath),\n    regular: stat.isFile(), symbolic: stat.isSymbolicLink() };\n}\nfunction qualifyCurrentQuestingWorldHelper(file, actual) {\n  assert.equal(arguments.length, 2);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n"
+        },
+        {
+          "at": 42868,
+          "current": "  console.log(JSON.stringify({ phase: 'QUESTING_HISTORICAL_HELPER_COMPARISON_CONTROLS', currentPositives,\n    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\nfunction rejectCurrentCombinedSiteSources() {\n  assert.deepEqual(enterpriseCombinedHistoricalFiles.filter(file => Object.hasOwn(SITE_BASICS_SOURCE.files, file)), combinedSiteComparisonFiles,\n    'Only the four reviewed combined physical controls have the current site layer');\n  let positives = 0, refusals = 0;\n  for (const file of combinedSiteComparisonFiles) {\n    const actual = currentCombinedSiteRecord(file), text = actual.committed.toString('utf8'), pin = SITE_BASICS_SOURCE.files[file];\n    for (const physical of [actual.committed, Buffer.from(text.replaceAll('\\n', '\\r\\n'))]) {\n      const proof = qualifyCurrentCombinedSite(file, { ...actual, physical });\n      assert.equal(sha256(proof.baselineText), pin.baseline.sha256); assert.equal(blobHash(Buffer.from(proof.baselineText)), pin.baseline.blob); positives++;\n    }\n    const badBlob = '0'.repeat(40), otherMode = actual.head.mode === '100644' ? '100755' : '100644';\n    for (const bad of [\n      { ...actual, head: { ...actual.head, blob: badBlob } }, { ...actual, head: { ...actual.head, mode: otherMode } },\n      { ...actual, index: actual.index.replace(actual.head.blob, badBlob) }, { ...actual, index: otherMode + actual.index.slice(6) },\n      { ...actual, index: actual.index + '\\n' }, { ...actual, regular: false }, { ...actual, symbolic: true },\n      { ...actual, committed: Buffer.concat([actual.committed, Buffer.from('\\n')]) }, { ...actual, committed: Buffer.from([255]) },\n      { ...actual, physical: Buffer.concat([actual.physical, Buffer.from('\\n')]) }, { ...actual, physical: actual.committed.subarray(1) },\n      { ...actual, physical: Buffer.from(text.replace('\\n', '\\r\\n')) }, { ...actual, physical: Buffer.from([255]) },\n      { ...actual, physical: text }, { ...actual, unknown: true },\n    ]) { assert.throws(() => qualifyCurrentCombinedSite(file, bad)); refusals++; }\n    // A self-consistent historical record is not an admitted current record, even with valid old bytes.\n    const archived = git(['--no-replace-objects', 'cat-file', 'blob', pin.baseline.blob]);\n    assert.throws(() => qualifyCurrentCombinedSite(file, { ...actual, head: { mode: pin.baseline.mode, blob: pin.baseline.blob },\n      index: pin.baseline.mode + ' ' + pin.baseline.blob + ' 0\\t' + file, committed: archived, physical: archived })); refusals++;\n    for (const unsupported of ['src/store.js', '../' + file, '__proto__']) {\n      assert.throws(() => qualifyCurrentCombinedSite(unsupported, actual)); refusals++;\n    }\n    assert.throws(() => qualifyCurrentCombinedSite(file, actual, {})); refusals++;\n    assert.throws(() => currentCombinedSiteRecord(file, {})); refusals++;\n  }\n  console.log(JSON.stringify({ phase: 'CURRENT_SITE_COMBINED_PHYSICAL_CONTROLS', domains: combinedSiteComparisonFiles.length,\n    positives, refusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\nfunction rejectHistoricalApplicationSources() {\n  rejectCurrentCombinedSiteSources();\n  const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',\n    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n  let positives = 0, refusals = 0;\n",
+          "baseline": "  console.log(JSON.stringify({ phase: 'QUESTING_HISTORICAL_HELPER_COMPARISON_CONTROLS', currentPositives,\n    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\nfunction rejectHistoricalApplicationSources() {\n  const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',\n    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n  let positives = 0, refusals = 0;\n"
+        },
+        {
+          "at": 49463,
+          "current": "  for (const combinedFile of enterpriseCombinedHistoricalFiles) {\n    const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);\n    const physicalRaw = canonical(originalRead(path.join(root, combinedFile)));\n    let comparisonRaw = physicalRaw;\n    if (combinedSiteComparisonFiles.includes(combinedFile)) {\n      const actual = currentCombinedSiteRecord(combinedFile);\n      assert.equal(physicalRaw, canonical(actual.physical), 'The physical combined comparison remains the same complete source');\n      comparisonRaw = qualifyCurrentCombinedSite(combinedFile, actual).baselineText;\n    }\n    const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, comparisonRaw));\n    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));\n    const combinedFrozen = String(blob(combinedFile, release));\n    const combinedExpected = blob(combinedFile, history);\n",
+          "baseline": "  for (const combinedFile of enterpriseCombinedHistoricalFiles) {\n    const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);\n    const physicalRaw = canonical(originalRead(path.join(root, combinedFile)));\n    const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, physicalRaw));\n    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));\n    const combinedFrozen = String(blob(combinedFile, release));\n    const combinedExpected = blob(combinedFile, history);\n"
         }
       ]
     },
@@ -1659,6 +1768,27 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 41868,
           "current": "    'a sub-threshold payload must be left alone — gzip framing can make it bigger');\n\n  console.log(`✅ the wire: the ${(raw.length / 1024).toFixed(0)} KB shell ships as ${(gz.rawPayload.length / 1024).toFixed(0)} KB and `\n    + `revalidates to a 304; deferred runtime is byte-exact; binary and sub-threshold payloads are untouched`);\n}\n\nawait app.close();\n",
           "baseline": "    'a sub-threshold payload must be left alone — gzip framing can make it bigger');\n\n  console.log(`✅ the wire: the ${(raw.length / 1024).toFixed(0)} KB shell ships as ${(gz.rawPayload.length / 1024).toFixed(0)} KB and `\n    + `revalidates to a 304; identity is byte-exact; binary and sub-threshold payloads are untouched`);\n}\n\nawait app.close();\n"
+        }
+      ]
+    },
+    "test/worldgraph-api.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4f65aa5c6aadfa66181f101699971d879f9ce038",
+        "sha256": "5959f8cecbfc1393cae70b3fceafdfbb9c58a4d6b090a6040ac8bc0bfa2337a5",
+        "bytes": 56136
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "de8df06e3b5e0f8f80bc81a9eca8389dac7f5ff1",
+        "sha256": "7ba73558f4e1877c261ddb58b97bfa9b258bc4897c6bc5f390fa8c4eea5d02a0",
+        "bytes": 56136
+      },
+      "inverses": [
+        {
+          "at": 10812,
+          "current": "\nconst liveSpec = await call('GET', '/openapi.json');\nassert.equal(liveSpec.code, 200);\nassert.equal(liveSpec.body.info.version, '1.6.0');\nassert(liveSpec.body.paths['/v1/worldgraph/operations/{operationId}/role']?.get,\n  'the mounted server publishes the role-private board in its live OpenAPI document');\nfor (const [method, rawPath] of routeTable) {\n",
+          "baseline": "\nconst liveSpec = await call('GET', '/openapi.json');\nassert.equal(liveSpec.code, 200);\nassert.equal(liveSpec.body.info.version, '1.5.1');\nassert(liveSpec.body.paths['/v1/worldgraph/operations/{operationId}/role']?.get,\n  'the mounted server publishes the role-private board in its live OpenAPI document');\nfor (const [method, rawPath] of routeTable) {\n"
         }
       ]
     },
@@ -2057,9 +2187,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "test/site-basics-source-transfer.js": {
       "mode": "100644",
-      "blob": "52494596c555e833fa35e08e7c70d2b34487ed74",
-      "sha256": "0ae96239b43282455bcca5b8caa4d5365865be5c35159013b762f78dced3e7e4",
-      "bytes": 6253
+      "blob": "cb6b5d7ff74f0630e5f3e76dfd8d2a218b71ab9c",
+      "sha256": "a1a56a2f3cd2f7ad30894b1fe53bff2fe5376c0241569d03ae32da1db7711d01",
+      "bytes": 6277
     },
     "test/site-basics.js": {
       "mode": "100644",
@@ -2093,9 +2223,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "tools/site-basics-source-seal.js": {
       "mode": "100644",
-      "blob": "39c80731a094aafda6ec87c799f84277f4fe60a5",
-      "sha256": "7c79bc60c56759b176ddb9c3d9e53358366b976428a4ff1ba78279cb2a4810b0",
-      "bytes": 4265
+      "blob": "eed6f5714e1b12dbdec39845ff12bf360b6bd454",
+      "sha256": "fb06a1701d17328c879a4b497a818927d5e2addcf6ccee9b2cfa872a092bf38a",
+      "bytes": 4289
     },
     "tools/site-basics-source-transfer.js": {
       "mode": "100644",
@@ -2105,4 +2235,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '23ad756be22409ea2044b0b2ce623f9bbd7a4415aef803e42a0083bdced7dcc2';
+export const SITE_BASICS_SOURCE_SHA256 = 'a2e1572ca7d2be2c74fb455d8a87a8bab184df4b0b23dee3cfc61ef5361a32d0';
