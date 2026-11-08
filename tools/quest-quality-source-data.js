@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "a14c1091883792ee2b9c1909b7708c25f73ca639",
-  "tree": "8b1a21a9f77935c9e750c2c6260dca6e4c5edfcf",
+  "revision": "57652e8b6fdcacd70ff6ac4ed7a4f35f473e73b2",
+  "tree": "5fc483e0faa863ce951cc902602e1d84640c737b",
   "predecessor": "414269a79034966207850b09bb5938470e2c57ee",
   "predecessorTree": "af1a84018c8985aa451297a74be75c8cf8d1cd9f",
   "files": {
@@ -62,9 +62,9 @@ export const QUEST_QUALITY_SOURCE = freeze({
     ".github/workflows/forge.yml": {
       "current": {
         "mode": "100644",
-        "blob": "35f4447c4ed16469dab2b5b79d5cbb18c7f7a69e",
-        "sha256": "4d4414429d5d289da3ba02699ecbc8b012247df4e00802280c3ecd1c55799f76",
-        "bytes": 13053
+        "blob": "67b8d93dcceb0c7661c81ed17ece5891a197579b",
+        "sha256": "b700d2a7053edcaa71dedbe9182d049a2cc94be3faca5b89218f953238373c72",
+        "bytes": 13085
       },
       "baseline": {
         "mode": "100644",
@@ -92,6 +92,11 @@ export const QUEST_QUALITY_SOURCE = freeze({
           "at": 4115,
           "current": "      # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the\n      # position this gate was in. The banner is the instrument: when local and CI disagree again, the\n      # log answers \"which forge ran this\" instead of leaving it to be guessed at.\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - name: Install Foundry\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: |\n          node ../test/foundry-release-api.js\n          node ../tools/foundry-release-api.js bootstrap\n\n      - name: forge --version (what actually ran)\n        working-directory: omerta-contracts\n",
           "baseline": "      # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the\n      # position this gate was in. The banner is the instrument: when local and CI disagree again, the\n      # log answers \"which forge ran this\" instead of leaving it to be guessed at.\n      - name: Install Foundry\n        uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n\n      - name: forge --version (what actually ran)\n        working-directory: omerta-contracts\n"
+        },
+        {
+          "at": 11747,
+          "current": "        run: |\n          node test/liquidity-deployment-plan.js\n          createdb omerta_liquidity_ci_e2e_test\n          ANVIL_BIN=\"$(command -v anvil)\" node tools/liquidity-e2e.js\n\n      # THE SIZE GATE, LAST ON PURPOSE. Runs after the suite and both provers so an over-limit\n      # contract fails on its own step and can never skip them (see the note on `forge build`).\n",
+          "baseline": "        run: |\n          node test/liquidity-deployment-plan.js\n          createdb omerta_liquidity_ci_e2e_test\n          node tools/liquidity-e2e.js\n\n      # THE SIZE GATE, LAST ON PURPOSE. Runs after the suite and both provers so an over-limit\n      # contract fails on its own step and can never skip them (see the note on `forge build`).\n"
         }
       ]
     },
@@ -1054,4 +1059,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'd3d21a799ee9ddda74bfd9eee1d1f927806e9f051d559295c4d3752bfb9fe59c';
+export const QUEST_QUALITY_SOURCE_SHA256 = 'c4b146e77231a76c6ac107143899aacf87cb0069e9cc2af91de0be7d184149dd';
