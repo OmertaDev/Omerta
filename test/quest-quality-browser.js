@@ -79,6 +79,18 @@ async function qualityWrite(page, operation, run) {
   await run(); const reply = await response; const body = await reply.json(); assert.equal(reply.status(), 200, JSON.stringify(body));
   await page.locator('#ux-quests[aria-busy="false"]').waitFor(); return body.instance;
 }
+async function delayQualityWrite(page, operation) {
+  let signal, release;
+  const entered = new Promise(resolve => { signal = resolve; }), pending = new Promise(resolve => { release = resolve; });
+  let used = false;
+  const handler = async route => {
+    const request = route.request();
+    if (!used && request.method() === 'POST' && request.postDataJSON()?.operation === operation) { used = true; signal(); await pending; }
+    await route.continue();
+  };
+  await page.route('**/v1/content/instances/*/quality', handler);
+  return { entered, release, stop: () => page.unroute('**/v1/content/instances/*/quality', handler) };
+}
 async function decision(page, nodeId, label) {
   const action = page.locator('[data-quest-node="' + nodeId + '"]');
   await action.getByRole('button', { name: label, exact: true }).click();
@@ -140,6 +152,21 @@ try {
   await qualitySection(page, 'workbench').getByRole('button', { name: 'Undo unsaved draft changes', exact: true }).click();
   assert.equal(await qualitySection(page, 'workbench').getByLabel('Your private case theory').inputValue(), note);
   assert.equal(writes.filter(write => write.path.endsWith('/quality')).length, beforeUndo);
+  const slowDraft = await delayQualityWrite(page, 'save_draft'), submittedDraft = 'Saved snapshot before a slow private response.', newerDraft = 'New unsaved text typed while the request is pending.';
+  await qualitySection(page, 'workbench').getByLabel('Your private case theory').fill(submittedDraft);
+  const pendingDraftResponse = page.waitForResponse(reply => reply.request().method() === 'POST' && reply.url().endsWith('/quality') && reply.request().postDataJSON()?.operation === 'save_draft');
+  await qualitySection(page, 'workbench').getByRole('button', { name: 'Save private case draft', exact: true }).click(); await slowDraft.entered;
+  await qualitySection(page, 'workbench').getByLabel('Your private case theory').fill(newerDraft);
+  slowDraft.release(); const savedDraftReply = await pendingDraftResponse, savedDraft = (await savedDraftReply.json()).instance;
+  assert.equal(savedDraftReply.status(), 200); await page.locator('[data-quest-quality="' + pilotId + '"][data-quality-revision="' + savedDraft.quality.revision + '"]').waitFor(); await slowDraft.stop();
+  await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Your private case theory');
+  assert.equal(await qualitySection(page, 'workbench').getByLabel('Your private case theory').inputValue(), newerDraft, 'A successful slow save preserves newer unsaved text.');
+  assert.equal(await qualitySection(page, 'workbench').getByLabel('Your private case theory').evaluate(node => node === document.activeElement), true, 'The authoritative repaint preserves the active editor.');
+  assert.equal((await read(alice, pilotId)).quality.draft.text, submittedDraft, 'Only the originally submitted snapshot reached the server.');
+  await showCase(page, pilotId);
+  assert.equal(await qualitySection(page, 'workbench').getByLabel('Your private case theory').inputValue(), newerDraft, 'New text also survives a subsequent complete case repaint.');
+  await qualitySection(page, 'workbench').getByRole('button', { name: 'Undo unsaved draft changes', exact: true }).click();
+  assert.equal(await qualitySection(page, 'workbench').getByLabel('Your private case theory').inputValue(), submittedDraft, 'Undo restores the newly confirmed baseline.');
 
   const motives = await openQualitySection(page, 'motives'), beforeMotive = await read(alice, pilotId);
   await motives.getByLabel('Why are you taking this case?').selectOption('duty'); await motives.getByRole('button', { name: 'Review my motive', exact: true }).click();
@@ -247,6 +274,17 @@ try {
   await impression.getByLabel('Your first impression', { exact: true }).fill('Private independent thought from the records role.');
   await impression.getByLabel('I am unsure of this interpretation', { exact: true }).check();
   await qualityWrite(page, 'first_impression', () => impression.getByRole('button', { name: 'Record first impression', exact: true }).click());
+  const slowImpression = await delayQualityWrite(page, 'first_impression'), newerImpression = 'Private independent thought from the records role. Revised while the request is pending.';
+  const pendingImpressionResponse = page.waitForResponse(reply => reply.request().method() === 'POST' && reply.url().endsWith('/quality') && reply.request().postDataJSON()?.operation === 'first_impression');
+  await qualitySection(page, 'impression').getByRole('button', { name: 'Record first impression', exact: true }).click(); await slowImpression.entered;
+  await qualitySection(page, 'impression').getByLabel('Your first impression', { exact: true }).fill(newerImpression);
+  slowImpression.release(); const savedImpressionReply = await pendingImpressionResponse, savedImpression = (await savedImpressionReply.json()).instance;
+  assert.equal(savedImpressionReply.status(), 200); await page.locator('[data-quest-quality="' + joint.id + '"][data-quality-revision="' + savedImpression.quality.revision + '"]').waitFor(); await slowImpression.stop();
+  await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Your first impression');
+  assert.equal(await qualitySection(page, 'impression').getByLabel('Your first impression', { exact: true }).inputValue(), newerImpression, 'A slow first-impression save preserves newer independent reasoning.');
+  assert.equal((await read(alice, joint.id)).quality.firstImpression.text, 'Private independent thought from the records role.');
+  await showCase(page, joint.id);
+  assert.equal(await qualitySection(page, 'impression').getByLabel('Your first impression', { exact: true }).inputValue(), newerImpression);
   await refresh(bobPage); await openQualitySection(bobPage, 'impression');
   assert.ok(!(await qualitySection(bobPage, 'impression').innerText()).includes('Private independent thought'));
   impression = await openQualitySection(page, 'impression'); await impression.getByLabel('Share this impression with case participants', { exact: true }).check();
@@ -258,6 +296,11 @@ try {
   assert.ok(!JSON.stringify(instance.quality).includes(bob.ch.account_id), 'Opaque participant handles do not expose account IDs.');
   await group.getByLabel('Decision to delegate', { exact: true }).selectOption('brief'); await group.getByLabel('Proposed decision maker', { exact: true }).selectOption(own);
   await group.getByRole('button', { name: 'Review decision mandate', exact: true }).click();
+  const proposalsBeforeChange = writes.filter(write => write.body.operation === 'propose_mandate').length;
+  await group.getByLabel('Proposed decision maker', { exact: true }).selectOption(instance.quality.participants.find(member => !member.isMe).id);
+  assert.equal(await group.getByRole('button', { name: 'Confirm decision mandate', exact: true }).count(), 0, 'Changing a reviewed mandate invalidates its commit control.');
+  assert.equal(writes.filter(write => write.body.operation === 'propose_mandate').length, proposalsBeforeChange, 'Changing the picker makes no POST until the new intent is reviewed.');
+  await group.getByLabel('Proposed decision maker', { exact: true }).selectOption(own); await group.getByRole('button', { name: 'Review decision mandate', exact: true }).click();
   await qualityWrite(page, 'propose_mandate', () => group.getByRole('button', { name: 'Confirm decision mandate', exact: true }).click());
   group = await openQualitySection(page, 'cooperation');
   await qualityWrite(page, 'clear_mandate', () => group.getByRole('button', { name: 'Withdraw mandate · keep the decision open', exact: true }).click());

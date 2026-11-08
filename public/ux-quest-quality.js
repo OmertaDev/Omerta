@@ -22,6 +22,8 @@
     const participants = instance => list(instance.quality?.participants);
     const person = (instance, id) => participants(instance).find(candidate => candidate.id === id)?.name || 'A case participant';
     const evidenceName = (quality, id) => list(quality.evidence).find(candidate => candidate.id === id)?.title || id;
+    const draftValue = draft => ({ text: draft.text, evidenceIds: [...draft.evidenceIds], conclusionId: draft.conclusionId || '' });
+    const impressionValue = draft => ({ text: draft.text, unsure: draft.unsure, share: draft.share });
     function section(instance, id, title, content, initiallyOpen = false) {
       const key = instance.id + ':' + id, node = el('details', 'quest-disclosure quest-quality-section');
       node.dataset.qualitySection = id; node.open = opened.has(key) ? opened.get(key) : initiallyOpen;
@@ -39,10 +41,17 @@
       return draft;
     }
     async function operate(instance, operation, payload, label, success) {
-      const reply = await onOperation(instance, { operation, ...payload }, label);
-      if (reply?.code >= 200 && reply.code < 300 && reply.body?.instance) success?.(reply.body.instance);
-      repaint?.();
-      return reply;
+      let editor = null;
+      const edited = event => { const node = event.target; if (node.matches?.('input,textarea,select') && node.closest('[data-quest-quality]')?.dataset.questQuality === instance.id) editor = node; };
+      const leaveEditor = event => { if (event.type === 'pointerdown' ? event.target !== editor : ['Tab', 'Escape'].includes(event.key)) editor = null; };
+      document.addEventListener('input', edited, true); document.addEventListener('pointerdown', leaveEditor, true); document.addEventListener('keydown', leaveEditor, true);
+      try {
+        const reply = await onOperation(instance, { operation, ...payload }, label);
+        if (reply?.code >= 200 && reply.code < 300 && reply.body?.instance) success?.(reply.body.instance);
+        const focused = editor ? { label: editor.getAttribute('aria-label'), start: editor.selectionStart, end: editor.selectionEnd } : null;
+        repaint?.(focused);
+        return reply;
+      } finally { document.removeEventListener('input', edited, true); document.removeEventListener('pointerdown', leaveEditor, true); document.removeEventListener('keydown', leaveEditor, true); }
     }
     function preview(host, title, lines, commit, blocker = '') {
       host.replaceChildren();
@@ -88,10 +97,22 @@
         conclusion.input.onchange = () => { draft.conclusionId = conclusion.input.value; draft.dirty = true; status(); }; notes.append(conclusion.label);
       }
       const controls = el('div', 'quest-quality-controls');
-      controls.append(button('Save private case draft', () => operate(instance, 'save_draft', {
-        text: draft.text, evidenceIds: draft.evidenceIds.filter(id => list(quality.evidence).some(record => record.id === id)),
-        ...(conclusions.some(record => record.id === draft.conclusionId) ? { conclusionId: draft.conclusionId } : {}),
-      }, 'Save private case draft', fresh => { drafts.delete(instance.id); currentDraft(fresh); for (const key of proofDrafts.keys()) if (key.startsWith(instance.id + ':')) proofDrafts.delete(key); })),
+      controls.append(button('Save private case draft', () => {
+        const submitted = draftValue(draft);
+        return operate(instance, 'save_draft', {
+          text: submitted.text, evidenceIds: submitted.evidenceIds.filter(id => list(quality.evidence).some(record => record.id === id)),
+          ...(conclusions.some(record => record.id === submitted.conclusionId) ? { conclusionId: submitted.conclusionId } : {}),
+        }, 'Save private case draft', fresh => {
+          const current = drafts.get(instance.id); if (!current) return;
+          const unchanged = same(draftValue(current), submitted), saved = fresh.quality.draft;
+          current.saved = structuredClone(saved);
+          if (unchanged) {
+            current.text = saved.text; current.evidenceIds = [...saved.evidenceIds]; current.conclusionId = saved.conclusionId || '';
+            for (const key of proofDrafts.keys()) if (key.startsWith(instance.id + ':')) proofDrafts.delete(key);
+          }
+          current.dirty = !same(draftValue(current), { text: saved.text, evidenceIds: saved.evidenceIds, conclusionId: saved.conclusionId || '' });
+        });
+      }),
         button('Undo unsaved draft changes', () => { drafts.delete(instance.id); repaint?.(); }));
       status(); notes.append(controls, state);
       const evidence = el('div', 'quest-quality-evidence'); evidence.append(el('h5', '', 'Evidence beside your theory'));
@@ -135,13 +156,23 @@
     function firstImpression(instance) {
       const quality = instance.quality, body = el('form', 'quest-form'), note = field('Your first impression', 'textarea');
       let draft = impressions.get(instance.id);
-      if (!draft) { draft = { text: text(quality.firstImpression?.text), unsure: quality.firstImpression?.unsure ?? true, share: quality.firstImpression?.shared ?? false }; impressions.set(instance.id, draft); }
+      const saved = { text: text(quality.firstImpression?.text), unsure: quality.firstImpression?.unsure ?? true, share: quality.firstImpression?.shared ?? false };
+      if (!draft || (same(impressionValue(draft), draft.saved) && !same(draft.saved, saved))) { draft = { ...saved, saved }; impressions.set(instance.id, draft); }
       note.input.maxLength = 1000; note.input.required = true; note.input.value = draft.text;
       const unsure = check('I am unsure of this interpretation', draft.unsure), share = check('Share this impression with case participants', draft.share);
-      note.input.oninput = () => { draft.text = note.input.value; }; unsure.input.onchange = () => { draft.unsure = unsure.input.checked; }; share.input.onchange = () => { draft.share = share.input.checked; };
+      const state = el('p', 'quest-muted'), status = () => { state.textContent = same(impressionValue(draft), draft.saved) ? 'Showing your last server-saved impression.' : 'Unsaved changes on this device.'; };
+      note.input.oninput = () => { draft.text = note.input.value; status(); }; unsure.input.onchange = () => { draft.unsure = unsure.input.checked; status(); }; share.input.onchange = () => { draft.share = share.input.checked; status(); };
       const save = button('Record first impression'); save.type = 'submit';
-      body.append(caption('Write independently before comparing interpretations. “Unsure” is a valid starting point. Sharing is an explicit choice.'), note.label, unsure.label, share.label, save);
-      body.onsubmit = event => { event.preventDefault(); operate(instance, 'first_impression', { text: draft.text, unsure: draft.unsure, share: draft.share }, 'Record first impression', () => impressions.delete(instance.id)); };
+      status(); body.append(caption('Write independently before comparing interpretations. “Unsure” is a valid starting point. Sharing is an explicit choice.'), note.label, unsure.label, share.label, save, state);
+      body.onsubmit = event => {
+        event.preventDefault(); const submitted = impressionValue(draft);
+        operate(instance, 'first_impression', submitted, 'Record first impression', fresh => {
+          const current = impressions.get(instance.id); if (!current) return;
+          const record = fresh.quality.firstImpression, saved = { text: record.text, unsure: record.unsure, share: record.shared };
+          if (same(impressionValue(current), submitted)) Object.assign(current, saved);
+          current.saved = saved;
+        });
+      };
       if (list(quality.sharedImpressions).length) {
         const shared = el('div'); shared.append(el('h5', '', 'Impressions participants chose to share'));
         for (const record of list(quality.sharedImpressions)) { const card = el('article', 'quest-case-note'); card.append(el('strong', '', person(instance, record.accountId) + (record.unsure ? ' · unsure' : '')), el('p', 'quest-quality-verbatim', record.text)); shared.append(card); }
@@ -197,7 +228,11 @@
       if (members.length > 1 && decisions.length) {
         const node = field('Decision to delegate', 'select'), delegate = field('Proposed decision maker', 'select'), intent = el('div');
         decisions.forEach(action => node.input.append(option(action.nodeId, action.title))); members.forEach(member => delegate.input.append(option(member.id, member.name + ' · ' + member.roleId)));
-        const prepare = button('Review decision mandate', () => preview(intent, 'Decision mandate', ['Propose ' + person(instance, delegate.input.value) + ' for “' + decisions.find(action => action.nodeId === node.input.value)?.title + '”.', 'Required participants must acknowledge before a delegated commitment.'], () => operate(instance, 'propose_mandate', { nodeId: node.input.value, delegateAccountId: delegate.input.value }, 'Propose scene decision mandate')));
+        node.input.onchange = delegate.input.onchange = () => intent.replaceChildren();
+        const prepare = button('Review decision mandate', () => {
+          const submitted = Object.freeze({ nodeId: node.input.value, delegateAccountId: delegate.input.value });
+          preview(intent, 'Decision mandate', ['Propose ' + person(instance, submitted.delegateAccountId) + ' for “' + decisions.find(action => action.nodeId === submitted.nodeId)?.title + '”.', 'Required participants must acknowledge before a delegated commitment.'], () => operate(instance, 'propose_mandate', submitted, 'Propose scene decision mandate'));
+        });
         body.append(node.label, delegate.label, prepare, intent);
       }
       for (const mandate of list(quality.delegations)) {
@@ -252,6 +287,7 @@
     function render(instance) {
       scope(); if (!instance.quality) return null;
       const quality = instance.quality, root = el('section', 'quest-quality'); root.dataset.questQuality = instance.id; root.setAttribute('aria-label', 'Investigation workbench');
+      root.dataset.qualityRevision = String(quality.revision);
       const heading = el('header', 'quest-quality-heading'); heading.append(el('span', 'quest-kicker', 'Your investigation'), el('h4', '', quality.currentQuestion || quality.question || 'Work the question'));
       if (quality.identity?.activity) heading.append(caption(quality.identity.activity));
       const recap = el('div'); for (const line of list(quality.recap)) recap.append(el('p', '', line));

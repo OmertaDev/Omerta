@@ -22,7 +22,7 @@
     const qualityUX = window.createOmertaQuestQuality?.({ getState,
       onOperation: (instance, payload, label) => mutate('/v1/content/instances/' + encode(instance.id) + '/quality', {
         expectedRevision: instance.revision, expectedQualityRevision: instance.quality.revision, ...payload,
-      }, label), onSubmit: submitAction, repaint: () => paint() });
+      }, label), onSubmit: submitAction, repaint: focused => paint(true, focused) });
     const identity = () => [String(state().session?.accountId || state().me?.accountId || ''), String(state().me?.id || '')];
     const saved = () => workspace?.get('quests', {}) || local.get(owner) || {};
     const save = patch => { const next = { ...saved(), ...patch }; local.set(owner, next); workspace?.set('quests', next); };
@@ -454,11 +454,14 @@
       }
       return root;
     }
-    function paint() {
+    function paint(force = false, focusedEditor = null) {
       if (!scope() || state().currentTab !== 'desk') return;
       const host = document.getElementById('tab-desk'); if (!host) return;
       if (!root || !root.isConnected || !host.contains(root)) { root?.remove(); root = el('section', 'ux-quests'); root.id = 'ux-quests'; root.dataset.uxPanel = 'quests'; host.append(root); }
-      if (root.contains(document.activeElement) && document.activeElement.matches('input,textarea,select') && !busy) return;
+      const active = root.contains(document.activeElement) && document.activeElement.matches('input,textarea,select') ? document.activeElement : null;
+      root.setAttribute('aria-busy', String(loading || busy));
+      if (active && !busy && (!force || !active.closest('.quest-quality,.quest-quality-proof'))) return;
+      const focused = force && active ? { label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : force ? focusedEditor : null;
       const header = el('header', 'quest-heading'); header.append(el('span', 'quest-kicker', 'Bureau of unfinished business'), el('h2', '', 'Your case files'));
       const controls = el('nav', 'quest-tabs'); controls.setAttribute('aria-label', 'Quest tools');
       for (const [id, title] of [['cases', 'Case files'], ['community', 'Community mysteries'], ['legacy', 'Your history']]) { const tab = button(title, () => { view = id; error = ''; load(); }); tab.setAttribute('aria-pressed', String(view === id)); tab.disabled = busy || loading; controls.append(tab); }
@@ -469,6 +472,10 @@
       else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());
       root.replaceChildren(...nodes); root.setAttribute('aria-busy', String(loading || busy));
       document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));
+      if (focused?.label) {
+        const target = [...root.querySelectorAll('input,textarea,select')].find(node => node.getAttribute('aria-label') === focused.label);
+        if (target) { target.focus({ preventScroll: true }); if (focused.start != null && typeof target.setSelectionRange === 'function') try { target.setSelectionRange(focused.start, focused.end); } catch { /* Non-text input. */ } }
+      }
     }
     function observe(path, body) {
       if (!scope()) return;
