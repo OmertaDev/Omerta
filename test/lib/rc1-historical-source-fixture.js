@@ -28,6 +28,7 @@ import { qualifyCityActivityMarketSource } from '../../tools/rc1-city-activity-m
 import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';
 import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';
 import { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';
+import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -79,6 +80,7 @@ const enterpriseCombinedHistoricalFiles = Object.freeze([
   'src/rules.tail.js', 'src/social/combat.js', 'src/stable.js', 'src/streets.js', 'src/verify.js',
   'src/wire.js',
 ]);
+const combinedSiteComparisonFiles = Object.freeze(['src/auth.js', 'src/business.js', 'src/population.js', 'src/social/combat.js']);
 const economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);
 const npcEntries = new Set([
   'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',
@@ -245,6 +247,36 @@ function currentQuestingWorldHelperRecord(file) {
     index: String(git(['--no-replace-objects', 'ls-files', '--stage', '--', file])).trim(),
     committed: git(['--no-replace-objects', 'show', 'HEAD:' + file]), physical: originalRead(physicalPath),
     regular: stat.isFile(), symbolic: stat.isSymbolicLink() };
+}
+function currentCombinedSiteRecord(file) {
+  assert.equal(arguments.length, 1); assert(combinedSiteComparisonFiles.includes(file), 'Only the four declared current combined comparisons');
+  const entry = String(git(['--no-replace-objects', 'ls-tree', '-z', 'HEAD', '--', file]));
+  const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0]+)\0$/);
+  assert(match && match[3] === file, 'Actual combined comparison has a regular Git entry');
+  const physicalPath = path.join(root, file), stat = fs.lstatSync(physicalPath);
+  return { head: { mode: match[1], blob: match[2] },
+    index: String(git(['--no-replace-objects', 'ls-files', '--stage', '--', file])).trim(),
+    committed: git(['--no-replace-objects', 'show', 'HEAD:' + file]), physical: originalRead(physicalPath),
+    regular: stat.isFile(), symbolic: stat.isSymbolicLink() };
+}
+function qualifyCurrentCombinedSite(file, actual) {
+  assert.equal(arguments.length, 2); assert(combinedSiteComparisonFiles.includes(file), 'Only the four declared current combined comparisons');
+  assert(Object.hasOwn(SITE_BASICS_SOURCE.files, file), 'Exact site comparison domain required');
+  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());
+  const pin = SITE_BASICS_SOURCE.files[file].current;
+  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual combined HEAD equals its current site source pin');
+  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\t' + file, 'Actual combined index equals its complete HEAD identity');
+  assert.equal(actual.regular, true); assert.equal(actual.symbolic, false);
+  assert(Buffer.isBuffer(actual.committed) && Buffer.isBuffer(actual.physical));
+  const text = actual.committed.toString('utf8');
+  assert(Buffer.from(text).equals(actual.committed) && !text.includes('\r'), 'Actual combined Git text is lossless canonical LF');
+  assert.equal(blobHash(actual.committed), pin.blob); assert.equal(sha256(actual.committed), pin.sha256); assert.equal(actual.committed.length, pin.bytes);
+  assert(actual.physical.equals(actual.committed) || actual.physical.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
+    'Actual regular combined physical bytes equal complete HEAD in LF or uniform CRLF');
+  const proof = qualifySiteBasicsSource(file, actual.committed);
+  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred],
+    [true, false, false, false, false, false, false]);
+  return proof;
 }
 function qualifyCurrentQuestingWorldHelper(file, actual) {
   assert.equal(arguments.length, 2);
@@ -615,7 +647,41 @@ function rejectQuestingWorldHelperSources() {
   console.log(JSON.stringify({ phase: 'QUESTING_HISTORICAL_HELPER_COMPARISON_CONTROLS', currentPositives,
     currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
 }
+function rejectCurrentCombinedSiteSources() {
+  assert.deepEqual(enterpriseCombinedHistoricalFiles.filter(file => Object.hasOwn(SITE_BASICS_SOURCE.files, file)), combinedSiteComparisonFiles,
+    'Only the four reviewed combined physical controls have the current site layer');
+  let positives = 0, refusals = 0;
+  for (const file of combinedSiteComparisonFiles) {
+    const actual = currentCombinedSiteRecord(file), text = actual.committed.toString('utf8'), pin = SITE_BASICS_SOURCE.files[file];
+    for (const physical of [actual.committed, Buffer.from(text.replaceAll('\n', '\r\n'))]) {
+      const proof = qualifyCurrentCombinedSite(file, { ...actual, physical });
+      assert.equal(sha256(proof.baselineText), pin.baseline.sha256); assert.equal(blobHash(Buffer.from(proof.baselineText)), pin.baseline.blob); positives++;
+    }
+    const badBlob = '0'.repeat(40), otherMode = actual.head.mode === '100644' ? '100755' : '100644';
+    for (const bad of [
+      { ...actual, head: { ...actual.head, blob: badBlob } }, { ...actual, head: { ...actual.head, mode: otherMode } },
+      { ...actual, index: actual.index.replace(actual.head.blob, badBlob) }, { ...actual, index: otherMode + actual.index.slice(6) },
+      { ...actual, index: actual.index + '\n' }, { ...actual, regular: false }, { ...actual, symbolic: true },
+      { ...actual, committed: Buffer.concat([actual.committed, Buffer.from('\n')]) }, { ...actual, committed: Buffer.from([255]) },
+      { ...actual, physical: Buffer.concat([actual.physical, Buffer.from('\n')]) }, { ...actual, physical: actual.committed.subarray(1) },
+      { ...actual, physical: Buffer.from(text.replace('\n', '\r\n')) }, { ...actual, physical: Buffer.from([255]) },
+      { ...actual, physical: text }, { ...actual, unknown: true },
+    ]) { assert.throws(() => qualifyCurrentCombinedSite(file, bad)); refusals++; }
+    // A self-consistent historical record is not an admitted current record, even with valid old bytes.
+    const archived = git(['--no-replace-objects', 'cat-file', 'blob', pin.baseline.blob]);
+    assert.throws(() => qualifyCurrentCombinedSite(file, { ...actual, head: { mode: pin.baseline.mode, blob: pin.baseline.blob },
+      index: pin.baseline.mode + ' ' + pin.baseline.blob + ' 0\t' + file, committed: archived, physical: archived })); refusals++;
+    for (const unsupported of ['src/store.js', '../' + file, '__proto__']) {
+      assert.throws(() => qualifyCurrentCombinedSite(unsupported, actual)); refusals++;
+    }
+    assert.throws(() => qualifyCurrentCombinedSite(file, actual, {})); refusals++;
+    assert.throws(() => currentCombinedSiteRecord(file, {})); refusals++;
+  }
+  console.log(JSON.stringify({ phase: 'CURRENT_SITE_COMBINED_PHYSICAL_CONTROLS', domains: combinedSiteComparisonFiles.length,
+    positives, refusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
+}
 function rejectHistoricalApplicationSources() {
+  rejectCurrentCombinedSiteSources();
   const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
     'src/db.js', 'src/deeds.js', 'src/explore.js'];
   let positives = 0, refusals = 0;
@@ -671,7 +737,13 @@ function rejectHistoricalApplicationSources() {
   for (const combinedFile of enterpriseCombinedHistoricalFiles) {
     const combinedRow = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.find(row => row.file === combinedFile);
     const physicalRaw = canonical(originalRead(path.join(root, combinedFile)));
-    const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, physicalRaw));
+    let comparisonRaw = physicalRaw;
+    if (combinedSiteComparisonFiles.includes(combinedFile)) {
+      const actual = currentCombinedSiteRecord(combinedFile);
+      assert.equal(physicalRaw, canonical(actual.physical), 'The physical combined comparison remains the same complete source');
+      comparisonRaw = qualifyCurrentCombinedSite(combinedFile, actual).baselineText;
+    }
+    const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, comparisonRaw));
     const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));
     const combinedFrozen = String(blob(combinedFile, release));
     const combinedExpected = blob(combinedFile, history);

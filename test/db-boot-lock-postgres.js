@@ -76,14 +76,14 @@ try {
   const stamp = (await pools[0].query(
     'SELECT app_version,schema_sha FROM schema_meta WHERE id=1'
   )).rows[0];
-  assert.equal(stamp.app_version, '1.5.1');
+  assert.equal(stamp.app_version, '1.6.0');
   assert.equal(stamp.schema_sha,
     crypto.createHash('sha256').update(fs.readFileSync(new URL('../schema.sql', import.meta.url))).digest('hex').slice(0, 16));
   assert.equal(Number((await pools[0].query(
     "SELECT count(*) n FROM pg_trigger WHERE tgname='social_claims_legacy_receipt_guard' AND NOT tgisinternal"
   )).rows[0].n), 1, 'serialized boot leaves exactly one live receipt guard');
 
-  console.log('Native DB boot lock PASS: two booters outwait request lock_timeout and serialize complete 1.5.1 schema setup');
+  console.log('Native DB boot lock PASS: two booters outwait request lock_timeout and serialize complete 1.6.0 schema setup');
 } finally {
   restore('DATABASE_URL', original.databaseUrl);
   restore('PG_STATEMENT_TIMEOUT_MS', original.statementTimeout);
