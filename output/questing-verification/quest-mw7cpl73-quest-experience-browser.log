@@ -1,0 +1,91 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+Quest browser failure state: BUREAU OF UNFINISHED BUSINESS
+Your case files
+Case files
+Community mysteries
+Your history
+Refresh quest files
+Case file
+The Man Who Missed the Tide · active
+The Man Who Missed the Tide · available
+The Man Who Missed the Tide
+About 20 minutes
+difficulty: Intermediate
+
+A browser verification case.
+
+Where you left off
+
+Last recorded: An Empty Berth. Next: Browser deduction.
+
+Next: Browser deduction
+
+Progress is saved by the game after each recorded move.
+Suspicion: 0
+Confirmed evidence · 0
+Witness testimony · 0
+Your working theory
+Recorded casework
+DEDUCTION
+Browser deduction
+
+Use the arrival and departure records.
+
+Select the evidence to use
+First document
+The arrival at eight.
+Second document
+The departure at nine.
+Unrelated document
+An unrelated receipt.
+Test this deduction
+Optional hints
+
+Hint 1: The unrelated receipt does not establish a time.
+
+Ask for a stronger hint
+Last quest requests: [{"method":"POST","url":"/v1/content/instances/cbd5003f-e1dd-4104-99b5-551c8f0a68bf/act","player":"alice","payload":{"expectedRevision":2,"actionId":"content_2f8fab1f8ef1a278817dac13","hint":true}},{"method":"GET","url":"/v1/content","player":"alice"},{"method":"POST","url":"/v1/content/instances/cbd5003f-e1dd-4104-99b5-551c8f0a68bf/act","player":"alice","payload":{"expectedRevision":3,"actionId":"content_ef7448ac0b6b7f88ae36f44f","submission":{"ids":["decoy"]}}},{"method":"GET","url":"/v1/content","player":"alice"}]
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 10000ms exceeded.
+Call log:
+[2m  - waiting for locator('[data-quest-action]').filter({ has: getByRole('heading', { name: 'Browser deduction', exact: true }) }).getByRole('button', { name: 'Test this deduction', exact: true })[22m
+[2m    - locator resolved to <button disabled class="act " type="submit">Test this deduction</button>[22m
+[2m  - attempting click action[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not enabled[22m
+[2m    - retrying click action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not enabled[22m
+[2m    - retrying click action[22m
+[2m      - waiting 100ms[22m
+[2m    19 × waiting for element to be visible, enabled and stable[22m
+[2m       - element is not enabled[22m
+[2m     - retrying click action[22m
+[2m       - waiting 500ms[22m
+
+    at C:\Users\Jorge\.codex\worktrees\omerta-site-basics-prod-20261107\test\quest-experience-browser.js:98:83 {
+  log: [
+    "  - waiting for locator('[data-quest-action]').filter({ has: getByRole('heading', { name: 'Browser deduction', exact: true }) }).getByRole('button', { name: 'Test this deduction', exact: true })",
+    '    - locator resolved to <button disabled class="act " type="submit">Test this deduction</button>',
+    '  - attempting click action',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not enabled',
+    '    - retrying click action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not enabled',
+    '    - retrying click action',
+    '      - waiting 100ms',
+    '    19 × waiting for element to be visible, enabled and stable',
+    '       - element is not enabled',
+    '     - retrying click action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0
