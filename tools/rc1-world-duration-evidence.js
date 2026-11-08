@@ -24,7 +24,7 @@ export function measureWorldWorkerDuration({ sourceRevision, configurationSha256
     const actual = edit.originalSource.replaceAll('\r\n', '\n');
     // Match the loader's exact historical scope, independently of trace metadata.
     // Current Intel refunds require their separate native domain/API proofs.
-    const baseline = file === 'src/worker.js' ? qualifyIntelSource(file, actual).baselineText
+    const baseline = file === 'src/worker.js' ? qualifyIntelSource(file, edit.originalSource).baselineText
       : file === 'src/db.js' ? coverageSourceBaseline(file,cityGameplaySourceBaseline(file,actual)) : actual;
     assert.equal(sha256(baseline), pinnedLfSha256);
     assert.equal(sha256(edit.transformedSource), edit.transformedSourceSha256);
