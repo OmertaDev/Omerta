@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { qualityFixture } from './lib/quest-quality-fixture.js';
 import { applyQualityOperation } from '../src/content/quality-runtime.js';
+import { compileContentPack } from '../src/content/compiler.js';
+import { activateContentBundle, createContentInstance } from '../src/content/runtime.js';
 
 const f = await qualityFixture();
 try {
@@ -52,5 +54,23 @@ try {
   const practiced = secondCase.instance.actions.find(action => action.nodeId === 'clock-procedure');
   assert(practiced?.options.some(option => option.id === calibration.skipOptionId), 'Successful practice enables a later procedure shortcut.');
   assert.equal((await f.pool.query('SELECT cash FROM characters WHERE id=$1', [alice.characterId])).rows[0].cash, startingCash, 'Quality features have no monetary effect.');
+  const variantSource = structuredClone(f.packs.get('three-witnesses')), oldNamespace = variantSource.namespace;
+  variantSource.namespace = 'test.quality-proof-variants';
+  delete variantSource.nodes.find(node => node.id === variantSource.runtime.entryNodeId).payload.quality;
+  for (const node of variantSource.nodes.filter(node => node.type === 'story_flag')) node.payload.key = node.payload.key.replace(oldNamespace, variantSource.namespace);
+  const finding = variantSource.nodes.find(node => node.id === 'finding');
+  const proofInteraction = structuredClone(finding.payload.interaction), proofSpecId = finding.payload.answerSpecId;
+  finding.payload.variants = ['first-version', 'second-version'].map(id => ({ id, prompt: finding.payload.prompt,
+    interaction: structuredClone(proofInteraction), answerSpecId: proofSpecId, hints: [] }));
+  finding.payload.answerSpecId = 'base-finding-answer';
+  finding.payload.interaction = { kind: 'deduction', items: proofInteraction.items.map(({ id, label }) => ({ id, label })) };
+  variantSource.nodes.push({ id: 'base-finding-answer', type: 'answer_spec', payload: { verifier: 'unordered_ids', solution: ['photo-proof'] } });
+  variantSource.runtime.nodeIds.push('base-finding-answer');
+  const variantBundle = compileContentPack(variantSource);
+  await activateContentBundle(f.pool, { bundle: variantBundle, expectedHash: variantBundle.contentHash });
+  let variantBoard = await f.as(alice, (ch, client, h) => createContentInstance(ch, variantSource.namespace,
+    { scopeKind: 'personal', roleId: 'investigator' }, client, h));
+  variantBoard = await f.act(alice, variantBoard, variantBoard.instance.actions[0]);
+  await f.finish(alice, variantBoard);
   console.log('quest quality runtime: private state, membership, proof privacy, mastery, individual debrief and honest study timing passed');
 } finally { await f.pool.end(); }

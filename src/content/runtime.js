@@ -1242,7 +1242,9 @@ export async function actOnContentInstance(ch, instanceId, opts, client, h) {
     assertNodeGates(ch, h, selected, graph, member.role_id);
     const design = qualityDesign(graph);
     let qualityContext;
-    if (design || selected.payload?.interaction?.conclusions) {
+    const usesProofSets = selected.type === 'puzzle'
+      && graph.nodeById.get(narrativeVariant(selected, instance.id).answerSpecId)?.payload.verifier === 'proof_sets';
+    if (design || usesProofSets) {
       const board = await projection(ch, instance, bundle, client, h);
       const facts = (await client.query('SELECT fact_key, value_json FROM content_instance_facts WHERE instance_id=$1', [instanceId]))
         .rows.map(row => ({ key: row.fact_key, value: parseJson(row.value_json) }));
