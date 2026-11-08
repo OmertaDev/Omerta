@@ -44,7 +44,7 @@ built and devnet-proven but not open — it stays shut until a third-party secur
 and the game says so in-game rather than pretending otherwise.
 
 Stack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is
-the part I'm proudest of: 383 suites, plus separate harnesses that run every SQL string against
+the part I'm proudest of: 390 suites, plus separate harnesses that run every SQL string against
 real Postgres (pg-mem lies about type unification — that class took us down once), drive real
 Chromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,
 and load-test §10.4 conservation under concurrency.
@@ -115,6 +115,8 @@ are two different claims, and only one of them is what a reader gets.
 **What it does NOT prove**, stated so nobody reads more into it: this exercised the transport and one
 read tool, not the game. It says the door opens; every claim about what is behind the door is the
 business of the suites and the harnesses, not of this table.
+
+Current candidate source: `1.4.0`, matching the version in `omerta-mcp/package.json`. The dated receipt above covers `1.3.0`; it does not verify publication or installation of the candidate version.
 
 ---
 
