@@ -297,10 +297,10 @@ const readerCopyPins = Object.freeze([
       "test/enterprise-release-phase2-migration-catalog.js"
     ],
     "oldSha256": "d7b9ef827c33f5291228da4aee1f7959bab4b5ced35513e02c3697fb8d186319",
-    "bytes": 9563,
-    "sha256": "ca60fac9a8a9d63913f1c38a482a49a357385ea7ab935d5a882bbd7511d112d9",
-    "prefixCharacters": 3205,
-    "prefixSha256": "e7d383a2ff5a65c8b230fcd098a0be41ba85606b10af54777ebd412bed45fc20",
+    "bytes": 9936,
+    "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978",
+    "prefixCharacters": 3578,
+    "prefixSha256": "4a35c639dad611939f7d323ca037f6c9e9331689f034cacc56487bec89c86cc0",
     "edits": [
       [
         "for (const row of pin.files) {\n  const current =",
@@ -378,6 +378,19 @@ for (const record of readerCopyPins) {
       assert.throws(()=>view(file,text,bad));readerViewRefusals++;
     }
     if(tracked){const otherMode=entry.startsWith('100644')?'100755':'100644';assert.throws(()=>view(file,text,otherMode+entry.slice(6)));readerViewRefusals++;}
+    if(record.exportName==='questingEnterpriseReaderView'){
+      // Even an internally consistent forged blob cannot gain the exact current-source view.
+      for(const bad of [text+'\n',text.replace('casinoDdlCausal','unknownCasinoDdlCausal')]){
+        assert.notEqual(bad,text);
+        const digest=crypto.createHash('sha1').update('blob '+Buffer.byteLength(bad)+'\0').update(bad).digest('hex');
+        const forged=entry.replace(/blob [a-f0-9]{40}/,'blob '+digest);
+        assert.throws(()=>view(file,bad,forged));readerViewRefusals++;
+      }
+      const preimage=git('show',readerQuestSource.revision+':'+file).toString('utf8');
+      assert.notEqual(preimage,text);assert.throws(()=>view(file,preimage,entry));readerViewRefusals++;
+      const preimageEntry=git('ls-tree',readerQuestSource.revision,'--',file).toString('utf8').trim();
+      assert.throws(()=>view(file,preimage,preimageEntry));readerViewRefusals++;
+    }
     assert.throws(()=>view(file,text,entry,{}));readerViewRefusals++;
   }
   for(const file of ['../test/phase2-postgres.js','constructor','__proto__',null]){assert.throws(()=>view(file,'x','x'));readerViewRefusals++;}

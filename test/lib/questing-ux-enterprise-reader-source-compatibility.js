@@ -1,5 +1,6 @@
 // Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.
 import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';
+import { qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';
 export function questingEnterpriseReaderView(file, input, entry) {
   assert.equal(arguments.length, 3);
   assert(["test/enterprise-release-phase2-migration-catalog.js"].includes(file), 'Only the finite retained reader domains');
@@ -12,8 +13,10 @@ export function questingEnterpriseReaderView(file, input, entry) {
   assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');
   assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');
   const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };
-  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });
-  const proof = qualifyQuestingSource(file, input);
+  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');
+  const site = qualifySiteBasicsSource(file, input);
+  assert.deepEqual([site.sourceOnly, site.runtime, site.native, site.financial, site.activation, site.deployment, site.priorResultsTransferred], [true, false, false, false, false, false, false]);
+  const proof = qualifyQuestingSource(file, site.baselineText);
   assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
   const priorEntry = questingHistoricalEntry(file, entry, 'tree');
   return Object.freeze({ input: buffer ? Buffer.from(proof.baselineText) : proof.baselineText, entry: priorEntry, ...flags });
