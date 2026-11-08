@@ -1,3 +1,4 @@
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
@@ -69,7 +70,10 @@ assert.throws(() => qualifyIntelSource('src/game.js', ''), /Unknown Intel source
 assert.throws(() => qualifyIntelSource('toString', ''), /Unknown Intel source/);
 assert.match(INTEL_SOURCE_TRANSFER.scope, /separate current-source native proof/);
 assert.match(INTEL_SOURCE_TRANSFER.scope, /no historical runtime, native, deployment or financial qualification/);
-const operatorWorker = companyWorkflowSourceBaseline('src/worker.js', fs.readFileSync('src/worker.js', 'utf8'));
+const workerInput = fs.readFileSync('src/worker.js', 'utf8');
+const unreviewedWorker = workerInput + '\n// unreviewed worker change\n';
+assert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;
+const operatorWorker = companyWorkflowSourceBaseline('src/worker.js', questingHistoricalInput('src/worker.js', workerInput));
 const operatorTransfer = qualifyIntelSource('src/worker.js', operatorWorker);
 assert.equal(operatorTransfer.actualSha256, COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']);
 assert.equal(operatorTransfer.companyOperatorSourceTransfer.baselineText, gitText(COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS['src/worker.js']));
