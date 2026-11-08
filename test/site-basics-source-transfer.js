@@ -18,7 +18,7 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
 git('merge-base', '--is-ancestor', source.predecessor, source.revision);
 git('merge-base', '--is-ancestor', source.revision, 'HEAD');
 const scope = file => file === 'AGENTS.md' || file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'package-lock.json' || file === 'schema.sql' || file === 'render.yaml'
-  || file === 'omerta-mcp/README.md' || file === '.github/workflows/ci.yml' || /^(?:src|test|tools|public)\//.test(file);
+  || file === 'omerta-mcp/README.md' || file === '.github/workflows/ci.yml' || file === '.github/workflows/forge.yml' || /^(?:src|test|tools|public)\//.test(file);
 const excluded = new Set(['tools/site-basics-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
 const changed = kind => git('diff', '--name-only', '--diff-filter=' + kind, '-z', source.predecessor, source.revision)
   .split('\0').filter(file => scope(file) && !excluded.has(file));
