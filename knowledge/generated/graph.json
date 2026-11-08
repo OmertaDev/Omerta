@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "8f7fe60c4e746b314b11bdc91b7f746f2b51c0e5",
+  "sourceRevision": "3e3c0d334076477071547623619977fa39d51671",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18572,
-    "edges": 74447,
+    "nodes": 18581,
+    "edges": 74473,
     "byNodeType": {
       "Artifact": 7557,
       "Command": 317,
-      "Commit": 5504,
+      "Commit": 5513,
       "Contract": 156,
       "Document": 973,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5963,
-      "CHANGED": 28869,
+      "CHANGED": 28884,
       "CONTAINS": 7578,
       "DECLARES": 317,
       "DEFINED_IN": 1817,
       "DEPENDS_ON": 69,
       "EXECUTES": 1259,
       "HANDLED_BY": 950,
-      "HAS_COMMIT": 5504,
+      "HAS_COMMIT": 5513,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9213,
+      "IMPORTS": 9215,
       "INHERITS": 47,
       "REFERENCES": 3974,
       "REPRESENTS": 2755,
@@ -142249,20 +142249,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 763513,
-      "lines": 9822,
-      "version": "96c1031bab954cf4",
+      "bytes": 763551,
+      "lines": 9823,
+      "version": "b3d3c81a038f42c2",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "96c1031bab954cf4"
+          "version": "b3d3c81a038f42c2"
         }
       ],
-      "lastChangedAt": "2026-11-05T07:15:00.000Z",
+      "lastChangedAt": "2026-11-08T07:40:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      "lastChangedCommit": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954"
     },
     {
       "key": "Artifact:test/clue-puzzles-browser.js",
@@ -145538,20 +145538,20 @@
       "path": "test/decision-guide-client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7441,
-      "lines": 89,
-      "version": "c0fd97f43f32661e",
+      "bytes": 7535,
+      "lines": 91,
+      "version": "c61e3433c9b7ae60",
       "text": true,
       "provenance": [
         {
           "file": "test/decision-guide-client.js",
           "line": 1,
-          "version": "c0fd97f43f32661e"
+          "version": "c61e3433c9b7ae60"
         }
       ],
-      "lastChangedAt": "2026-11-05T07:15:00.000Z",
+      "lastChangedAt": "2026-11-08T07:40:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "de2d64e25e45d4f6f8bf491d308b232fb10a4aba"
+      "lastChangedCommit": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954"
     },
     {
       "key": "Artifact:test/decision-guide.js",
@@ -151081,20 +151081,20 @@
       "path": "test/lib/ux-journeys.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 21256,
-      "lines": 250,
-      "version": "df483a60bdd2f33d",
+      "bytes": 22566,
+      "lines": 263,
+      "version": "f4edfb0d836f75fc",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/ux-journeys.js",
           "line": 1,
-          "version": "df483a60bdd2f33d"
+          "version": "f4edfb0d836f75fc"
         }
       ],
-      "lastChangedAt": "2026-11-07T05:07:48.000Z",
+      "lastChangedAt": "2026-11-08T07:33:28.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7430b6686afc952720953c0c66e10b0a0c285c45"
+      "lastChangedCommit": "4828633464b48949604beb00cfa1fa782bff91f5"
     },
     {
       "key": "Artifact:test/lib/ux-native-director-guard.js",
@@ -166815,20 +166815,20 @@
       "path": "tools/enterprise-native-questing-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 467769,
-      "lines": 12423,
-      "version": "ff766c078e65ae49",
+      "bytes": 468828,
+      "lines": 12453,
+      "version": "78f90b69ed8a5484",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "ff766c078e65ae49"
+          "version": "78f90b69ed8a5484"
         }
       ],
-      "lastChangedAt": "2026-11-08T06:29:05.000Z",
+      "lastChangedAt": "2026-11-08T07:41:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8f7fe60c4e746b314b11bdc91b7f746f2b51c0e5"
+      "lastChangedCommit": "3e3c0d334076477071547623619977fa39d51671"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -169307,20 +169307,20 @@
       "path": "tools/quest-quality-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 97853,
-      "lines": 723,
-      "version": "b74ab08c97cd9893",
+      "bytes": 108255,
+      "lines": 801,
+      "version": "b7adcfc6c933aebb",
       "text": true,
       "provenance": [
         {
           "file": "tools/quest-quality-source-data.js",
           "line": 1,
-          "version": "b74ab08c97cd9893"
+          "version": "b7adcfc6c933aebb"
         }
       ],
-      "lastChangedAt": "2026-11-08T06:28:55.000Z",
+      "lastChangedAt": "2026-11-08T07:40:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ca79fac545ba4c7cc68dab5210e058fce4e92db9"
+      "lastChangedCommit": "eb8f09d85c90b177c33d984c0706ba60263029c4"
     },
     {
       "key": "Artifact:tools/quest-quality-source-seal.js",
@@ -179491,6 +179491,22 @@
         {
           "commit": "03efc11a8a39215404defa3e562926f78af36d71",
           "url": "https://github.com/OmertaDev/Omerta/commit/03efc11a8a39215404defa3e562926f78af36d71"
+        }
+      ]
+    },
+    {
+      "key": "Commit:03f887dd2e47c89978b0f5671025db2551c1d525",
+      "type": "Commit",
+      "id": "03f887dd2e47c89978b0f5671025db2551c1d525",
+      "label": "test: bind current UX proof reader source",
+      "title": "test: bind current UX proof reader source",
+      "date": "2026-11-08T07:33:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/03f887dd2e47c89978b0f5671025db2551c1d525",
+      "provenance": [
+        {
+          "commit": "03f887dd2e47c89978b0f5671025db2551c1d525",
+          "url": "https://github.com/OmertaDev/Omerta/commit/03f887dd2e47c89978b0f5671025db2551c1d525"
         }
       ]
     },
@@ -199303,6 +199319,22 @@
       ]
     },
     {
+      "key": "Commit:3e3c0d334076477071547623619977fa39d51671",
+      "type": "Commit",
+      "id": "3e3c0d334076477071547623619977fa39d51671",
+      "label": "test: bind actual inputs after browser fixture repairs",
+      "title": "test: bind actual inputs after browser fixture repairs",
+      "date": "2026-11-08T07:41:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3e3c0d334076477071547623619977fa39d51671",
+      "provenance": [
+        {
+          "commit": "3e3c0d334076477071547623619977fa39d51671",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3e3c0d334076477071547623619977fa39d51671"
+        }
+      ]
+    },
+    {
       "key": "Commit:3e4aa0078847417c078de5f903ae4529ef2487e7",
       "type": "Commit",
       "id": "3e4aa0078847417c078de5f903ae4529ef2487e7",
@@ -202743,6 +202775,22 @@
       ]
     },
     {
+      "key": "Commit:4828633464b48949604beb00cfa1fa782bff91f5",
+      "type": "Commit",
+      "id": "4828633464b48949604beb00cfa1fa782bff91f5",
+      "label": "test: qualify current quest and site inputs before UX historical proofs",
+      "title": "test: qualify current quest and site inputs before UX historical proofs",
+      "date": "2026-11-08T07:33:28.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4828633464b48949604beb00cfa1fa782bff91f5",
+      "provenance": [
+        {
+          "commit": "4828633464b48949604beb00cfa1fa782bff91f5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4828633464b48949604beb00cfa1fa782bff91f5"
+        }
+      ]
+    },
+    {
       "key": "Commit:484ebe2471edcccfba61816c18470f64ffd86c9d",
       "type": "Commit",
       "id": "484ebe2471edcccfba61816c18470f64ffd86c9d",
@@ -203635,6 +203683,22 @@
         {
           "commit": "4a7a767f9641d4ccbb890808a25e28619d653fe1",
           "url": "https://github.com/OmertaDev/Omerta/commit/4a7a767f9641d4ccbb890808a25e28619d653fe1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+      "type": "Commit",
+      "id": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+      "label": "test: provide browser globals to extracted client handler fixtures",
+      "title": "test: provide browser globals to extracted client handler fixtures",
+      "date": "2026-11-08T07:40:29.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+      "provenance": [
+        {
+          "commit": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954"
         }
       ]
     },
@@ -206403,6 +206467,22 @@
         {
           "commit": "5318589c8e8fd7fa64e6e714e6f69111fb0dca0a",
           "url": "https://github.com/OmertaDev/Omerta/commit/5318589c8e8fd7fa64e6e714e6f69111fb0dca0a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5318a106a2fa9b6de7feb33c484cd555db4829c1",
+      "type": "Commit",
+      "id": "5318a106a2fa9b6de7feb33c484cd555db4829c1",
+      "label": "test: bind actual inputs after UX source admission repair",
+      "title": "test: bind actual inputs after UX source admission repair",
+      "date": "2026-11-08T07:33:50.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5318a106a2fa9b6de7feb33c484cd555db4829c1",
+      "provenance": [
+        {
+          "commit": "5318a106a2fa9b6de7feb33c484cd555db4829c1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5318a106a2fa9b6de7feb33c484cd555db4829c1"
         }
       ]
     },
@@ -243095,6 +243175,22 @@
       ]
     },
     {
+      "key": "Commit:bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "type": "Commit",
+      "id": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "label": "chore(knowledge): refresh generated artifacts for e0752e88",
+      "title": "chore(knowledge): refresh generated artifacts for e0752e88",
+      "date": "2026-11-08T06:29:39.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "provenance": [
+        {
+          "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+        }
+      ]
+    },
+    {
       "key": "Commit:bb4f56e67daf47d838e22ca6e302d4321cbcc0e9",
       "type": "Commit",
       "id": "bb4f56e67daf47d838e22ca6e302d4321cbcc0e9",
@@ -253623,6 +253719,22 @@
       ]
     },
     {
+      "key": "Commit:db59f25f6e0c0512dcebd02283bd499ef2efc389",
+      "type": "Commit",
+      "id": "db59f25f6e0c0512dcebd02283bd499ef2efc389",
+      "label": "Merge generated main knowledge refresh preserving combined quest graph",
+      "title": "Merge generated main knowledge refresh preserving combined quest graph",
+      "date": "2026-11-08T06:33:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/db59f25f6e0c0512dcebd02283bd499ef2efc389",
+      "provenance": [
+        {
+          "commit": "db59f25f6e0c0512dcebd02283bd499ef2efc389",
+          "url": "https://github.com/OmertaDev/Omerta/commit/db59f25f6e0c0512dcebd02283bd499ef2efc389"
+        }
+      ]
+    },
+    {
       "key": "Commit:db5e8450380e5878d80b44bb3530877b2fadbc66",
       "type": "Commit",
       "id": "db5e8450380e5878d80b44bb3530877b2fadbc66",
@@ -255811,6 +255923,22 @@
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4",
           "url": "https://github.com/OmertaDev/Omerta/commit/e2781799de5980d960210a7000d2167814507de4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "type": "Commit",
+      "id": "e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "label": "chore: refresh combined graph after main fixture integration",
+      "title": "chore: refresh combined graph after main fixture integration",
+      "date": "2026-11-08T06:33:07.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "provenance": [
+        {
+          "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e2850101fb84783977c7c77f0d1c3acb2d22799d"
         }
       ]
     },
@@ -258707,6 +258835,22 @@
         {
           "commit": "eb8a300580ba4421baf1775b1c5c40fc676049c5",
           "url": "https://github.com/OmertaDev/Omerta/commit/eb8a300580ba4421baf1775b1c5c40fc676049c5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eb8f09d85c90b177c33d984c0706ba60263029c4",
+      "type": "Commit",
+      "id": "eb8f09d85c90b177c33d984c0706ba60263029c4",
+      "label": "test: bind browser fixture source comparison",
+      "title": "test: bind browser fixture source comparison",
+      "date": "2026-11-08T07:40:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eb8f09d85c90b177c33d984c0706ba60263029c4",
+      "provenance": [
+        {
+          "commit": "eb8f09d85c90b177c33d984c0706ba60263029c4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eb8f09d85c90b177c33d984c0706ba60263029c4"
         }
       ]
     },
@@ -284775,7 +284919,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 761
+          "line": 762
         }
       ]
     },
@@ -284787,7 +284931,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 782
+          "line": 783
         }
       ]
     },
@@ -286995,7 +287139,7 @@
         },
         {
           "file": "test/decision-guide-client.js",
-          "line": 30
+          "line": 32
         },
         {
           "file": "test/deed-discovery-ui.js",
@@ -287839,7 +287983,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8804
+          "line": 8805
         },
         {
           "file": "test/deeds.js",
@@ -296063,6 +296207,9 @@
           "commit": "bb3fb87502d446df357408ab825c9816aec30e3d"
         },
         {
+          "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+        },
+        {
           "commit": "bb55398ccc135228353e890648bda18222e76a35"
         },
         {
@@ -296439,6 +296586,9 @@
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
+        },
+        {
+          "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
         },
         {
           "commit": "e2b521d7a32839a38854e691efb9f26176f5398f"
@@ -298814,6 +298964,9 @@
           "commit": "bb3fb87502d446df357408ab825c9816aec30e3d"
         },
         {
+          "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+        },
+        {
           "commit": "bb55398ccc135228353e890648bda18222e76a35"
         },
         {
@@ -299190,6 +299343,9 @@
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
+        },
+        {
+          "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
         },
         {
           "commit": "e2b521d7a32839a38854e691efb9f26176f5398f"
@@ -301565,6 +301721,9 @@
           "commit": "bb3fb87502d446df357408ab825c9816aec30e3d"
         },
         {
+          "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+        },
+        {
           "commit": "bb55398ccc135228353e890648bda18222e76a35"
         },
         {
@@ -301941,6 +302100,9 @@
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
+        },
+        {
+          "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
         },
         {
           "commit": "e2b521d7a32839a38854e691efb9f26176f5398f"
@@ -305078,6 +305240,9 @@
           "commit": "bb3fb87502d446df357408ab825c9816aec30e3d"
         },
         {
+          "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+        },
+        {
           "commit": "bb55398ccc135228353e890648bda18222e76a35"
         },
         {
@@ -305454,6 +305619,9 @@
         },
         {
           "commit": "e2781799de5980d960210a7000d2167814507de4"
+        },
+        {
+          "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
         },
         {
           "commit": "e2b521d7a32839a38854e691efb9f26176f5398f"
@@ -320927,7 +321095,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "8f7fe60c4e746b314b11bdc91b7f746f2b51c0e5",
+      "revision": "3e3c0d334076477071547623619977fa39d51671",
       "currentBranch": "codex/questing-quality-50",
       "defaultBranch": "main",
       "visibility": "public",
@@ -360883,13 +361051,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 9822,
-      "version": "96c1031bab954cf4",
+      "lines": 9823,
+      "version": "b3d3c81a038f42c2",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "96c1031bab954cf4"
+          "version": "b3d3c81a038f42c2"
         }
       ]
     },
@@ -363028,13 +363196,13 @@
       "type": "TestSuite",
       "id": "test/decision-guide-client.js",
       "label": "test/decision-guide-client.js",
-      "lines": 89,
-      "version": "c0fd97f43f32661e",
+      "lines": 91,
+      "version": "c61e3433c9b7ae60",
       "provenance": [
         {
           "file": "test/decision-guide-client.js",
           "line": 1,
-          "version": "c0fd97f43f32661e"
+          "version": "c61e3433c9b7ae60"
         }
       ]
     },
@@ -366448,13 +366616,13 @@
       "type": "TestSuite",
       "id": "test/lib/ux-journeys.js",
       "label": "test/lib/ux-journeys.js",
-      "lines": 250,
-      "version": "df483a60bdd2f33d",
+      "lines": 263,
+      "version": "f4edfb0d836f75fc",
       "provenance": [
         {
           "file": "test/lib/ux-journeys.js",
           "line": 1,
-          "version": "df483a60bdd2f33d"
+          "version": "f4edfb0d836f75fc"
         }
       ]
     },
@@ -430784,6 +430952,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:03f887dd2e47c89978b0f5671025db2551c1d525",
+      "to": "Artifact:tools/quest-quality-source-data.js",
+      "provenance": {
+        "commit": "03f887dd2e47c89978b0f5671025db2551c1d525"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0404ff400bf48571ba370c6aa828cae5d6367e00",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -477344,6 +477520,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:3e3c0d334076477071547623619977fa39d51671",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "3e3c0d334076477071547623619977fa39d51671"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3e4aa0078847417c078de5f903ae4529ef2487e7",
       "to": "Artifact:schema.sql",
       "provenance": {
@@ -486376,6 +486560,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4828633464b48949604beb00cfa1fa782bff91f5",
+      "to": "Artifact:test/lib/ux-journeys.js",
+      "provenance": {
+        "commit": "4828633464b48949604beb00cfa1fa782bff91f5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:485c272b426d865527f1460f86fcb96cfcfda638",
       "to": "Artifact:tools/enterprise-native-ux-inputs.js",
       "provenance": {
@@ -488044,6 +488236,22 @@
       "to": "Artifact:tools/rc1-source-pair.js",
       "provenance": {
         "commit": "4a7a767f9641d4ccbb890808a25e28619d653fe1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+      "to": "Artifact:test/decision-guide-client.js",
+      "provenance": {
+        "commit": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954"
       }
     },
     {
@@ -493188,6 +493396,14 @@
       "to": "Artifact:test/sweeps.js",
       "provenance": {
         "commit": "5318589c8e8fd7fa64e6e714e6f69111fb0dca0a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5318a106a2fa9b6de7feb33c484cd555db4829c1",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "5318a106a2fa9b6de7feb33c484cd555db4829c1"
       }
     },
     {
@@ -596352,6 +596568,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:bb4f56e67daf47d838e22ca6e302d4321cbcc0e9",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-constellation-task0-crosswalk.md",
       "provenance": {
@@ -631320,6 +631568,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e289a9574a3cacc8dc6c3c1b351cdb62e33d00a0",
       "to": "Artifact:package.json",
       "provenance": {
@@ -638220,6 +638500,14 @@
       "to": "Artifact:tools/enterprise-native-ux-inputs.js",
       "provenance": {
         "commit": "eb8a300580ba4421baf1775b1c5c40fc676049c5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eb8f09d85c90b177c33d984c0706ba60263029c4",
+      "to": "Artifact:tools/quest-quality-source-data.js",
+      "provenance": {
+        "commit": "eb8f09d85c90b177c33d984c0706ba60263029c4"
       }
     },
     {
@@ -768826,6 +769114,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:03f887dd2e47c89978b0f5671025db2551c1d525",
+      "provenance": {
+        "commit": "03f887dd2e47c89978b0f5671025db2551c1d525"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0404ff400bf48571ba370c6aa828cae5d6367e00",
       "provenance": {
         "commit": "0404ff400bf48571ba370c6aa828cae5d6367e00"
@@ -778730,6 +779026,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3e3c0d334076477071547623619977fa39d51671",
+      "provenance": {
+        "commit": "3e3c0d334076477071547623619977fa39d51671"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3e4aa0078847417c078de5f903ae4529ef2487e7",
       "provenance": {
         "commit": "3e4aa0078847417c078de5f903ae4529ef2487e7"
@@ -780450,6 +780754,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4828633464b48949604beb00cfa1fa782bff91f5",
+      "provenance": {
+        "commit": "4828633464b48949604beb00cfa1fa782bff91f5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:484ebe2471edcccfba61816c18470f64ffd86c9d",
       "provenance": {
         "commit": "484ebe2471edcccfba61816c18470f64ffd86c9d"
@@ -780893,6 +781205,14 @@
       "to": "Commit:4a7a767f9641d4ccbb890808a25e28619d653fe1",
       "provenance": {
         "commit": "4a7a767f9641d4ccbb890808a25e28619d653fe1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
+      "provenance": {
+        "commit": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954"
       }
     },
     {
@@ -782277,6 +782597,14 @@
       "to": "Commit:5318589c8e8fd7fa64e6e714e6f69111fb0dca0a",
       "provenance": {
         "commit": "5318589c8e8fd7fa64e6e714e6f69111fb0dca0a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5318a106a2fa9b6de7feb33c484cd555db4829c1",
+      "provenance": {
+        "commit": "5318a106a2fa9b6de7feb33c484cd555db4829c1"
       }
     },
     {
@@ -800626,6 +800954,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:bb4a6c451465d6f58caa1e320ffcbed8992b4b1b",
+      "provenance": {
+        "commit": "bb4a6c451465d6f58caa1e320ffcbed8992b4b1b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:bb4f56e67daf47d838e22ca6e302d4321cbcc0e9",
       "provenance": {
         "commit": "bb4f56e67daf47d838e22ca6e302d4321cbcc0e9"
@@ -805890,6 +806226,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:db59f25f6e0c0512dcebd02283bd499ef2efc389",
+      "provenance": {
+        "commit": "db59f25f6e0c0512dcebd02283bd499ef2efc389"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:db5e8450380e5878d80b44bb3530877b2fadbc66",
       "provenance": {
         "commit": "db5e8450380e5878d80b44bb3530877b2fadbc66"
@@ -806981,6 +807325,14 @@
       "to": "Commit:e2781799de5980d960210a7000d2167814507de4",
       "provenance": {
         "commit": "e2781799de5980d960210a7000d2167814507de4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e2850101fb84783977c7c77f0d1c3acb2d22799d",
+      "provenance": {
+        "commit": "e2850101fb84783977c7c77f0d1c3acb2d22799d"
       }
     },
     {
@@ -808429,6 +808781,14 @@
       "to": "Commit:eb8a300580ba4421baf1775b1c5c40fc676049c5",
       "provenance": {
         "commit": "eb8a300580ba4421baf1775b1c5c40fc676049c5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eb8f09d85c90b177c33d984c0706ba60263029c4",
+      "provenance": {
+        "commit": "eb8f09d85c90b177c33d984c0706ba60263029c4"
       }
     },
     {
@@ -839841,7 +840201,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1546
+        "line": 1547
       }
     },
     {
@@ -839859,7 +840219,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 2846
+        "line": 2847
       }
     },
     {
@@ -839886,7 +840246,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6423
+        "line": 6424
       }
     },
     {
@@ -839895,7 +840255,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6526
+        "line": 6527
       }
     },
     {
@@ -839931,7 +840291,7 @@
       "to": "ExternalDependency:\\.\\/([\\w.-]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 761
+        "line": 762
       }
     },
     {
@@ -839940,7 +840300,7 @@
       "to": "ExternalDependency:\\.\\/([\\w./]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 782
+        "line": 783
       }
     },
     {
@@ -839949,7 +840309,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8804
+        "line": 8805
       }
     },
     {
@@ -845871,7 +846231,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/decision-guide-client.js",
-        "line": 32
+        "line": 34
       }
     },
     {
@@ -845880,7 +846240,7 @@
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/decision-guide-client.js",
-        "line": 31
+        "line": 33
       }
     },
     {
@@ -845898,7 +846258,7 @@
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "test/decision-guide-client.js",
-        "line": 30
+        "line": 32
       }
     },
     {
@@ -857076,7 +857436,7 @@
       "to": "Artifact:tools/businessdesk-combined-source-transfer.js",
       "provenance": {
         "file": "test/lib/ux-journeys.js",
-        "line": 3
+        "line": 5
       }
     },
     {
@@ -857085,7 +857445,7 @@
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/lib/ux-journeys.js",
-        "line": 11
+        "line": 13
       }
     },
     {
@@ -857100,6 +857460,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/lib/ux-journeys.js",
+      "to": "Artifact:tools/quest-quality-source-transfer.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-journeys.js",
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "test/lib/ux-journeys.js",
@@ -857109,10 +857478,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/lib/ux-journeys.js",
+      "to": "Artifact:tools/site-basics-source-transfer.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-journeys.js",
       "to": "Artifact:tools/ux-afterword-source-compatibility.js",
       "provenance": {
         "file": "test/lib/ux-journeys.js",
-        "line": 10
+        "line": 12
       }
     },
     {
@@ -959514,7 +959892,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1546
+        "line": 1547
       }
     },
     {
@@ -959532,7 +959910,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 2846
+        "line": 2847
       }
     },
     {
@@ -959559,7 +959937,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6423
+        "line": 6424
       }
     },
     {
@@ -959568,7 +959946,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6526
+        "line": 6527
       }
     },
     {
@@ -963510,7 +963888,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/decision-guide-client.js",
-        "line": 32
+        "line": 34
       }
     },
     {

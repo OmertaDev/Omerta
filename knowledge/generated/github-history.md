@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `8f7fe60c4e74`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3e3c0d334076`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5504 |
+| Commits in clone | 5513 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-08 — test: bind current native inputs after main fixture integration |
+| Latest commit | 2026-11-08 — test: bind actual inputs after browser fixture repairs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4380 |
+| OmertaDev | 4388 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 141 |
+| github-actions[bot] | 142 |
 | Codex | 138 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 914 | historical |
-| knowledge/generated/graph-summary.md | 914 | historical |
-| knowledge/generated/graph.json | 914 | historical |
-| knowledge/generated/inventory.md | 914 | historical |
+| knowledge/generated/github-history.md | 916 | historical |
+| knowledge/generated/graph-summary.md | 916 | historical |
+| knowledge/generated/graph.json | 916 | historical |
+| knowledge/generated/inventory.md | 916 | historical |
 | [SPEC.md](../../SPEC.md) | 643 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 511 | yes |
@@ -51,7 +51,7 @@
 | knowledge/generated/schema.md | 177 | historical |
 | [src/invariants.js](../../src/invariants.js) | 171 | yes |
 | knowledge/generated/routes.md | 157 | historical |
-| [test/client.js](../../test/client.js) | 146 | yes |
+| [test/client.js](../../test/client.js) | 147 | yes |
 | [src/worker.js](../../src/worker.js) | 144 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 141 | yes |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 130 | yes |
