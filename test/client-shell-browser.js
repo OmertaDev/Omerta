@@ -51,7 +51,8 @@ try {
   assert.equal((await app.inject('/game-runtime.js?v=old-client')).statusCode, 409, 'A stale loader cannot mix runtime versions.');
   assert.equal((await app.inject('/landing-loader.js?v=old-client')).statusCode, 409);
   assert.deepEqual((await app.inject('/site-entry.json')).json(), { xOAuth: false });
-  const assets = name => Buffer.from(name === '/ux-quests.js' ? 'quest revision one' : 'fixed asset');
+  const assets = name => name.startsWith('/ux-navigation.') ? fs.readFileSync('public' + name)
+    : Buffer.from(name === '/ux-quests.js' ? 'quest revision one' : 'fixed asset');
   const before = prepareClientShell(source, assets);
   const after = prepareClientShell(source, name => name === '/ux-quests.js' ? Buffer.from('quest revision two') : assets(name));
   assert.notEqual(before.loaderRevision, after.loaderRevision, 'An enhancement-only deployment invalidates the loader cache key.');
@@ -64,13 +65,25 @@ try {
   browser = await chromium.launch({ executablePath, headless: true });
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   const page = await context.newPage();
-  const initialRequests = [];
-  page.on('request', request => initialRequests.push(new URL(request.url()).pathname));
+  const initialRequests = [], gameWrites = [];
+  page.on('request', request => {
+    const path = new URL(request.url()).pathname; initialRequests.push(path);
+    if (path.startsWith('/v1/') && request.method() !== 'GET') gameWrites.push(path);
+  });
   await page.goto(base, { waitUntil: 'networkidle' });
   const gameAssets = new Set([...config.scripts, ...config.styles].map(url => new URL(url, base).pathname));
   assert.ok(!initialRequests.includes('/game-runtime.js') && !initialRequests.some(url => gameAssets.has(url)), 'First paint requests no game scripts or styles.');
   assert.ok(!initialRequests.includes('/v1/rules'), 'Provider discovery does not transfer the full game catalog.');
   assert.equal(await page.locator('#xoauth-row').isHidden(), true, 'Unconfigured X sign-in stays hidden.');
+  await page.locator('#ux-practice summary').click();
+  for (const approach of ['quiet', 'standard', 'loud']) {
+    await page.locator(`[data-practice="${approach}"]`).click();
+    assert.match(await page.locator('.ux-practice-receipt').innerText(), /PRACTICE RECEIPT/);
+    assert.match(await page.locator('.ux-practice-receipt').innerText(), /None · practice only/);
+    assert.equal(await page.locator(`[data-practice="${approach}"]`).getAttribute('aria-pressed'), 'true');
+  }
+  assert.equal(gameWrites.length, 0, 'No-account practice remains entirely local.');
+  assert.ok(!initialRequests.includes('/game-runtime.js') && !initialRequests.some(url => gameAssets.has(url)), 'Practice does not load the game or its enhancement assets.');
   await page.locator('#site-analytics-choices summary').click();
   await page.getByRole('button', { name: 'Allow counts', exact: true }).click();
   const analytics = [];

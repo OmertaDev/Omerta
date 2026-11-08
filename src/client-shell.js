@@ -21,15 +21,22 @@ export function prepareClientShell(source, readAsset = () => null) {
   if (languageStart < 0 || languageEnd < 0) throw new Error('The canonical language packs are missing.');
   const scenes = runtime.match(/const LINES = (\[[\s\S]*?\]);/)?.[1];
   if (!scenes) throw new Error('The canonical editorial scenes are missing.');
+  const navigation = readAsset('/ux-navigation.js')?.toString().replaceAll('\r\n', '\n');
+  const publicLanding = navigation?.match(/    (function landing\(\) \{[\s\S]*?\n    \})\n    function interestHint/)?.[1];
+  if (navigation && !publicLanding) throw new Error('The canonical public practice initializer is missing.');
+  const publicStyles = readAsset('/ux-navigation.css')?.toString().split(/\r?\n/)
+    .filter(line => /\.ux-(?:practice|landing-details)\b|^\.ux-kicker\b/.test(line)).join('\n') || '';
   const dependency = url => tagged(url, version(readAsset(url.split('?')[0]) || html));
   const config = { runtime: `/game-runtime.js?v=${revision}`, scripts: scripts.map(dependency), styles: styles.map(dependency) };
   const loader = `(${landingLoader.toString().replaceAll('\r\n', '\n')})();`.replace('/* OMERTA_LANDING_CONFIG */', `const CONFIG = ${JSON.stringify(config)};`)
     .replace('/* OMERTA_LANDING_LANGUAGES */', runtime.slice(languageStart, languageEnd))
-    .replace('/* OMERTA_LANDING_SCENES */', `const scenes = ${scenes};`);
+    .replace('/* OMERTA_LANDING_SCENES */', `const scenes = ${scenes};`)
+    .replace('/* OMERTA_PUBLIC_LANDING */', publicLanding || 'function landing() {}');
   let landing = html.replace(`<script>\n${runtime}\n</script>`, '')
     .replace(/<script src="[^"]+"[^>]*><\/script>/g, '')
     .replace(/<link rel="stylesheet" href="([^"]+)"[^>]*>/g, (tag, url) => styles.includes(url) ? '' : tag)
     .replace('id="screen-auth" class="landing hidden"', 'id="screen-auth" class="landing"');
+  if (publicStyles) landing = landing.replace('</head>', `<style id="omerta-public-navigation">${publicStyles}</style>\n</head>`);
   landing = landing.replace(/(<p id="guest-status"[^>]*><\/p>)/,
     '$1<p id="client-load-failure" class="ctahint" role="alert" hidden>The city could not load. Check your connection, then <button class="act" type="button" onclick="location.reload()">reload the page</button>.</p>');
   const transport = '<script>(()=>{const failure=document.getElementById("client-load-failure");const timer=setTimeout(()=>{failure.hidden=false},15000);window.OmertaLandingTransport={failed(){clearTimeout(timer);failure.hidden=false},loaded(){clearTimeout(timer);failure.hidden=window.OmertaLandingReady===true}}})();</script>';

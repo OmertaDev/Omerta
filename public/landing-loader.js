@@ -3,6 +3,7 @@ export function landingLoader() {
   /* OMERTA_LANDING_CONFIG */
   /* OMERTA_LANDING_LANGUAGES */
   /* OMERTA_LANDING_SCENES */
+  /* OMERTA_PUBLIC_LANDING */
   const $ = selector => document.querySelector(selector);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const entries = '#btn-guest, #btn-guest2, #btn-xoauth, #btn-provider, #btn-wallet-onboard';
@@ -43,6 +44,7 @@ export function landingLoader() {
       if (event.key !== 'Escape' || !menu.open) return;
       event.preventDefault(); menu.open = false; menu.querySelector('summary').focus();
     });
+    landing();
     let lang = 'en';
     try { const saved = localStorage.getItem('omerta_lang'); if (I18N[saved]) lang = saved; } catch { /* storage is optional */ }
     document.documentElement.lang = lang;

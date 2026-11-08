@@ -12,8 +12,8 @@ Counts were measured for the combined release source on 2026-11-07, before gener
 
 | | |
 |---|---|
-| Backend modules | **613** files, **141063** lines (recursive source inventory) |
-| Test suites | **1009** files, **213455** lines (recursive source inventory) |
+| Backend modules | **613** files, **141070** lines (recursive source inventory) |
+| Test suites | **1009** files, **213468** lines (recursive source inventory) |
 | HTTP routes | **1385** registrations (**1385** unique; 1274 under `/v1`) |
 | Database tables | **585** (`schema.sql`, 9820 lines) |
 | Client | **14681** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
