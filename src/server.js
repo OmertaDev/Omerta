@@ -41,6 +41,7 @@ import { accessCookie, clearAccessCookie, readAccessCookie } from './access.js';
 import { legalPage } from './legal.js';
 import { enhancePage, canonicalOrigin, siteRobots, siteSitemap } from './site-seo.js';
 import { registerSiteAnalytics } from './site-analytics.js';
+import { prepareClientShell } from './client-shell.js';
 import * as Discovery from './discovery.js';
 import * as Mentor from './mentor.js';
 import * as Streak from './streak.js';
@@ -580,7 +581,26 @@ export async function buildServer() {
   const privateHeaders = { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization, Accept-Encoding',
     'Referrer-Policy': 'no-referrer' };
   const invitePage = servePage(inviteHtml, privateHeaders, '/');
-  const gamePage = servePage(clientHtml, privateHeaders, '/');
+  const clientPublicDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'public');
+  const clientShell = prepareClientShell(clientHtml, asset => {
+    try { return readFileSync(join(clientPublicDir, asset.slice(1))); } catch { return null; } // optional interface assets may be absent
+  });
+  const gamePage = servePage(clientShell.html, privateHeaders, '/');
+  const serveClientScript = (source, revision) => {
+    const raw = Buffer.from(source), gz = zlib.gzipSync(raw, { level: 9 });
+    const etag = '"' + crypto.createHash('sha256').update(raw).digest('hex').slice(0, 16) + '"';
+    return async (req, reply) => {
+      reply.header('Cache-Control', 'no-store').header('Vary', 'Accept-Encoding');
+      if (req.query.v !== revision) return reply.code(409).header('Cache-Control', 'no-store').send({ error: 'client_version_changed' });
+      reply.type('application/javascript; charset=utf-8').header('etag', etag);
+      if (req.headers['if-none-match'] === etag) return reply.code(304).send();
+      return /\bgzip\b/i.test(String(req.headers['accept-encoding'] || ''))
+        ? reply.header('content-encoding', 'gzip').send(gz) : reply.send(raw);
+    };
+  };
+  app.get('/game-runtime.js', serveClientScript(clientShell.runtime, clientShell.revision));
+  app.get('/landing-loader.js', serveClientScript(clientShell.loader, clientShell.loaderRevision));
+  app.get('/site-entry.json', async (_req, reply) => reply.header('Cache-Control', 'no-store').send({ xOAuth: A.xOAuthConfigured() }));
   const notFoundHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', '404.html'), 'utf8');
   app.setNotFoundHandler(async (req, reply) => {
     const path = req.url.split('?')[0];

@@ -2,21 +2,21 @@
 
 A complete inventory of the built system, and an honest technical-debt register.
 
-The census below records the combined release source inventory measured on 2026-11-06. Availability and activation are documented separately in the deployment guides.
+The census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.
 
 ---
 
 ## 1. Size, measured
 
-Counts were measured for the combined release source on 2026-11-06, before generated release records; they do not identify a deployed revision.
+Counts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.
 
 | | |
 |---|---|
-| Backend modules | **612** files, **140997** lines (recursive source inventory) |
-| Test suites | **1008** files, **213140** lines (recursive source inventory) |
-| HTTP routes | **1382** registrations (**1382** unique; 1274 under `/v1`) |
+| Backend modules | **613** files, **141063** lines (recursive source inventory) |
+| Test suites | **1009** files, **213455** lines (recursive source inventory) |
+| HTTP routes | **1385** registrations (**1385** unique; 1274 under `/v1`) |
 | Database tables | **585** (`schema.sql`, 9820 lines) |
-| Client | **14678** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
+| Client | **14681** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
