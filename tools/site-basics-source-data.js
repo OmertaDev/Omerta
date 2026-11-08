@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "0ada21026cc546110cf40a793e7f22ebccfa456c",
-  "tree": "30b3d3ffe7d30068f46c405e96a912af775b1ac5",
+  "revision": "c0a0dcb5ec483413436f2252b9a097afa026427c",
+  "tree": "335a0be66eb8294fc470030a77f2a6e071c6e52e",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -758,6 +758,57 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/lib/rc1-historical-source-fixture.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "59b76b0079e401cb57da3ff8bf65488239796f1d",
+        "sha256": "a17a4b01753b724ee704611d7a8c612c534bbff1d44e338edc7c68c257f7e152",
+        "bytes": 58844
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "236f0654eed02089bf5c11eac45db2634fca2c97",
+        "sha256": "f890ab2e2a0f56d3570eed5b14b517668197fbcd8915e7349ab1d600a8c8bfa7",
+        "bytes": 54193
+      },
+      "inverses": [
+        {
+          "at": 2149,
+          "current": "import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';\nimport { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\n\nexport const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';\nconst releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';\n",
+          "baseline": "import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';\nimport { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';\n\nexport const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';\nconst releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';\n"
+        },
+        {
+          "at": 16865,
+          "current": "function currentQuestingWorldHelperRecord(file) {\n  assert.equal(arguments.length, 1);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n  return currentHistoricalHelperRecord(file);\n}\nfunction currentHistoricalHelperRecord(file) {\n  const entry = String(git(['--no-replace-objects', 'ls-tree', '-z', 'HEAD', '--', file]));\n  const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0]+)\\0$/);\n  assert(match && match[3] === file, 'Actual qualification helper has a regular Git entry');\n",
+          "baseline": "function currentQuestingWorldHelperRecord(file) {\n  assert.equal(arguments.length, 1);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n  const entry = String(git(['--no-replace-objects', 'ls-tree', '-z', 'HEAD', '--', file]));\n  const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0]+)\\0$/);\n  assert(match && match[3] === file, 'Actual qualification helper has a regular Git entry');\n"
+        },
+        {
+          "at": 17874,
+          "current": "  assert.equal(arguments.length, 2);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'Exact current helper source declaration required');\n  return qualifyCurrentHistoricalHelper(file, actual, QUESTING_SOURCE.files[file].current, qualifyQuestingSource);\n}\nfunction qualifyCurrentWebsiteHelper(file, actual) {\n  assert.equal(arguments.length, 2);\n  assert(typeof file === 'string' && file.startsWith('tools/') && Object.hasOwn(SITE_BASICS_SOURCE.files, file),\n    'Only an exact sealed website tool comparison');\n  return qualifyCurrentHistoricalHelper(file, actual, SITE_BASICS_SOURCE.files[file].current, qualifySiteBasicsSource);\n}\nfunction qualifyCurrentHistoricalHelper(file, actual, pin, qualify) {\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');\n  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file, 'Actual helper index equals its complete HEAD identity');\n  assert.equal(actual.regular, true); assert.equal(actual.symbolic, false);\n",
+          "baseline": "  assert.equal(arguments.length, 2);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'Exact current helper source declaration required');\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  const pin = QUESTING_SOURCE.files[file].current;\n  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');\n  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file, 'Actual helper index equals its complete HEAD identity');\n  assert.equal(actual.regular, true); assert.equal(actual.symbolic, false);\n"
+        },
+        {
+          "at": 19551,
+          "current": "  assert(actual.physical.equals(actual.committed) || actual.physical.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))),\n    'Actual regular helper physical bytes equal complete HEAD in LF or uniform CRLF');\n  // This is a source comparison proof only. Its text never selects an executing module.\n  const proof = qualify(file, actual.committed);\n  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,\n    proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  return proof;\n}\nfunction websiteHistoricalHelperComparison(file, input) {\n  assert.equal(arguments.length, 2);\n  if (typeof file !== 'string' || !file.startsWith('tools/') || !Object.hasOwn(SITE_BASICS_SOURCE.files, file)) return input;\n  const actual = currentHistoricalHelperRecord(file), proof = qualifyCurrentWebsiteHelper(file, actual);\n  const raw = uniformHistoricalInput(file, input);\n  // Admission checks the complete current helper first. Only the archived body executes.\n  return canonical(raw) === actual.committed.toString('utf8') ? proof.baselineText : raw;\n}\nfunction questingWorldHelperComparison(file, input) {\n  assert.equal(arguments.length, 2);\n  const actual = currentQuestingWorldHelperRecord(file);\n",
+          "baseline": "  assert(actual.physical.equals(actual.committed) || actual.physical.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))),\n    'Actual regular helper physical bytes equal complete HEAD in LF or uniform CRLF');\n  // This is a source comparison proof only. Its text never selects an executing module.\n  const proof = qualifyQuestingSource(file, actual.committed);\n  assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,\n    proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n  return proof;\n}\nfunction questingWorldHelperComparison(file, input) {\n  assert.equal(arguments.length, 2);\n  const actual = currentQuestingWorldHelperRecord(file);\n"
+        },
+        {
+          "at": 31294,
+          "current": "\nasync function rejectCurrentNpcRules() {\n  loadInventories();\n  rejectWebsiteHistoricalHelperSources();\n  rejectComposedHistoricalHelperSources();\n  rejectCityActivityWorldHelperSources();\n  rejectQuestingWorldHelperSources();\n",
+          "baseline": "\nasync function rejectCurrentNpcRules() {\n  loadInventories();\n  rejectComposedHistoricalHelperSources();\n  rejectCityActivityWorldHelperSources();\n  rejectQuestingWorldHelperSources();\n"
+        },
+        {
+          "at": 41356,
+          "current": "  console.log(JSON.stringify({ phase: 'QUESTING_HISTORICAL_HELPER_COMPARISON_CONTROLS', currentPositives,\n    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\nfunction rejectWebsiteHistoricalHelperSources() {\n  let positives = 0, refusals = 0;\n  for (const file of ['tools/rc1-intel-source-compatibility.js', 'tools/rc1-world-duration-evidence.js']) {\n    const actual = currentHistoricalHelperRecord(file), frozen = blob(file, release);\n    const current = actual.committed.toString('utf8'), pin = SITE_BASICS_SOURCE.files[file].current;\n    for (const physical of [actual.committed, Buffer.from(current.replaceAll('\\n', '\\r\\n'))]) {\n      const proof = qualifyCurrentWebsiteHelper(file, { ...actual, physical });\n      assert.equal(proof.baselineText, String(frozen));\n      const comparison = websiteHistoricalHelperComparison(file, physical);\n      assert.equal(comparison, String(frozen));\n      assert.equal(blobHash(Buffer.from(comparison)), release.get(file));\n      assert.equal(composedHistoricalHelperSource(file, economyHardeningSourceBaseline(file, comparison)), null,\n        'The unchanged frozen fallback selects the independently archived Buffer');\n      positives++;\n    }\n    for (const supplied of [String(frozen), String(frozen).replaceAll('\\n', '\\r\\n')]) {\n      assert.strictEqual(websiteHistoricalHelperComparison(file, supplied), supplied); positives++;\n    }\n    const stale = { head: { mode: pin.mode, blob: release.get(file) },\n      index: pin.mode + ' ' + release.get(file) + ' 0\\t' + file, committed: frozen, physical: frozen,\n      regular: true, symbolic: false };\n    const changed = [stale, { ...actual, regular: false }, { ...actual, symbolic: true },\n      { ...actual, head: { ...actual.head, mode: pin.mode === '100644' ? '100755' : '100644' } },\n      { ...actual, head: { ...actual.head, blob: '0'.repeat(40) } }, { ...actual, index: '' },\n      { ...actual, index: actual.index.replace(' 0\\t', ' 2\\t') },\n      { ...actual, committed: frozen }, { ...actual, physical: frozen },\n      { ...actual, committed: Buffer.concat([actual.committed, Buffer.from([255])]) },\n      { ...actual, physical: actual.committed.subarray(1) },\n      { ...actual, physical: Buffer.concat([actual.committed, Buffer.from('\\n')]) },\n      { ...actual, physical: Buffer.from(current.replace('\\n', '\\r\\n')) }];\n    for (const value of changed) { assert.throws(() => qualifyCurrentWebsiteHelper(file, value)); refusals++; }\n    for (const supplied of [current + '\\n// unreviewed website helper\\n', current.slice(1), '\\ufeff' + current, current + '\\0']) {\n      assert.strictEqual(websiteHistoricalHelperComparison(file, supplied), supplied,\n        'Unknown helper bytes are never manufactured into an archived implementation');\n      assert.notEqual(sha256(supplied), sha256(frozen)); refusals++;\n    }\n    assert.throws(() => websiteHistoricalHelperComparison(file, current.replace('\\n', '\\r\\n'))); refusals++;\n    assert.throws(() => qualifyCurrentWebsiteHelper(file, actual, {})); refusals++;\n    assert.throws(() => websiteHistoricalHelperComparison(file, current, {})); refusals++;\n    for (const name of ['../' + file, 'src/worker.js', '__proto__']) {\n      assert.throws(() => qualifyCurrentWebsiteHelper(name, actual)); refusals++;\n    }\n  }\n  console.log(JSON.stringify({ phase: 'WEBSITE_HISTORICAL_HELPER_COMPARISON_CONTROLS', positives, refusals,\n    sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\nfunction rejectHistoricalApplicationSources() {\n  const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',\n    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n",
+          "baseline": "  console.log(JSON.stringify({ phase: 'QUESTING_HISTORICAL_HELPER_COMPARISON_CONTROLS', currentPositives,\n    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\nfunction rejectHistoricalApplicationSources() {\n  const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',\n    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n"
+        },
+        {
+          "at": 57846,
+          "current": "        assert.equal(sha256(source), spec.sha256, 'Current fixture helper source changed');\n        return { ...nextLoad(url, context), source };\n      }\n      const raw = economyHardeningSourceBaseline(file, websiteHistoricalHelperComparison(file, String(originalRead(path.join(root, file))))), selected = composedHistoricalHelperSource(file, raw);\n      if (selected) return { ...nextLoad(url, context), source: selected };\n      const frozen = blob(file, release), reviewed = canonical(raw);\n      assert.equal(sha256(reviewed), sha256(frozen), 'Reviewed tool implementation changed: ' + file);\n",
+          "baseline": "        assert.equal(sha256(source), spec.sha256, 'Current fixture helper source changed');\n        return { ...nextLoad(url, context), source };\n      }\n      const raw = economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file)))), selected = composedHistoricalHelperSource(file, raw);\n      if (selected) return { ...nextLoad(url, context), source: selected };\n      const frozen = blob(file, release), reviewed = canonical(raw);\n      assert.equal(sha256(reviewed), sha256(frozen), 'Reviewed tool implementation changed: ' + file);\n"
+        }
+      ]
+    },
     "test/lib/ux-journeys.js": {
       "current": {
         "mode": "100644",
@@ -1263,4 +1314,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = 'b9dbce1b172eb32e2a3b5be634bf8343d10e127dc0aaf200da741638202f4ace';
+export const SITE_BASICS_SOURCE_SHA256 = '6856ccbc5980ce3b93a9c862df00e7303b76c7e3ae49a441526c2704434b5fda';
