@@ -21,7 +21,7 @@
 | [src/atomicbarter.js](../../src/atomicbarter.js) | 169 | platform-core | 5 / 6 | 0 | 5 | 3 |
 | [src/atomicbarterinvariants.js](../../src/atomicbarterinvariants.js) | 33 | platform-core | 0 / 2 | 0 | 4 | 1 |
 | [src/auction.js](../../src/auction.js) | 250 | platform-core | 4 / 5 | 5 | 7 | 3 |
-| [src/auth.js](../../src/auth.js) | 366 | platform-core | 3 / 5 | 5 | 6 | 3 |
+| [src/auth.js](../../src/auth.js) | 366 | platform-core | 3 / 5 | 6 | 6 | 3 |
 | [src/avatar.js](../../src/avatar.js) | 63 | platform-core | 1 / 4 | 0 | 0 | 2 |
 | [src/bank.js](../../src/bank.js) | 526 | platform-core | 3 / 6 | 4 | 14 | 2 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
@@ -71,6 +71,7 @@
 | [src/citywide.js](../../src/citywide.js) | 32 | world-progression | 5 / 3 | 1 | 0 | 1 |
 | [src/citywire.js](../../src/citywire.js) | 96 | platform-core | 1 / 2 | 0 | 1 | 1 |
 | [src/client-ip.js](../../src/client-ip.js) | 66 | platform-core | 0 / 4 | 0 | 0 | 0 |
+| [src/client-shell.js](../../src/client-shell.js) | 47 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/clue-puzzles.js](../../src/clue-puzzles.js) | 97 | platform-core | 1 / 4 | 0 | 0 | 2 |
 | [src/clues.js](../../src/clues.js) | 140 | platform-core | 5 / 5 | 4 | 5 | 0 |
 | [src/collection.js](../../src/collection.js) | 112 | law-intelligence | 2 / 13 | 2 | 7 | 1 |
@@ -536,14 +537,14 @@
 | [src/saleattribution.js](../../src/saleattribution.js) | 380 | platform-core | 6 / 7 | 0 | 7 | 2 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 7 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 203 | law-intelligence | 4 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 4092 | platform-core | 258 / 46 | 455 | 46 | 20 |
+| [src/server.js](../../src/server.js) | 4112 | platform-core | 259 / 46 | 458 | 46 | 20 |
 | [src/servicesubscriptions.js](../../src/servicesubscriptions.js) | 65 | platform-core | 5 / 6 | 0 | 10 | 2 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/shoppingbasket-api.js](../../src/shoppingbasket-api.js) | 13 | platform-core | 3 / 1 | 0 | 2 | 0 |
 | [src/shoppingbasket-contracts.js](../../src/shoppingbasket-contracts.js) | 23 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/shoppingbasket-schema.js](../../src/shoppingbasket-schema.js) | 22 | platform-core | 0 / 1 | 0 | 4 | 1 |
 | [src/shoppingbasket.js](../../src/shoppingbasket.js) | 282 | platform-core | 3 / 4 | 0 | 6 | 1 |
-| [src/site-analytics.js](../../src/site-analytics.js) | 77 | platform-core | 1 / 2 | 0 | 1 | 1 |
+| [src/site-analytics.js](../../src/site-analytics.js) | 84 | platform-core | 1 / 2 | 0 | 1 | 1 |
 | [src/site-seo.js](../../src/site-seo.js) | 128 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/skills.js](../../src/skills.js) | 171 | world-progression | 4 / 9 | 5 | 4 | 5 |
 | [src/social.js](../../src/social.js) | 27 | social-combat | 6 / 26 | 44 | 3 | 18 |
