@@ -88,6 +88,12 @@ export function validateQuestQuality(bundle) {
   try { if (Buffer.byteLength(JSON.stringify(design)) > 131072) error('size', 'quality', 'Quality metadata exceeds 128 KiB.'); }
   catch { error('data', 'quality', 'Quality metadata must be serializable data.'); }
   if (design.version !== 1) error('version', 'quality.version', 'Only quality version 1 is supported.');
+  for (const nodeId of profile) for (const key of ['title', 'prompt', 'summary']) {
+    const value = nodeById.get(nodeId)?.payload?.[key];
+    if (value !== undefined && value !== null && (typeof value !== 'string' || value.length > 4096)) {
+      error('quality_public_text', `${nodeId}.payload.${key}`, 'Quality profile public text must be a string of at most 4096 characters, or absent/null.');
+    }
+  }
   string(design.question, 'quality.question');
   const assumptions = keyed(design.assumptions, 'quality.assumptions', ['id', 'text'], 32, 1);
   assumptions.forEach((row) => string(row.text, `assumption.${row.id}.text`));
@@ -103,6 +109,7 @@ export function validateQuestQuality(bundle) {
   });
   const spotlightNodes = new Set(), partyRoles = new Set((bundle.edges || [])
     .filter((edge) => edge.from === runtime.partyPolicyId && edge.type === 'PERFORMED_BY_ROLE').map((edge) => edge.to));
+  if (partyRoles.size > 16) error('quality_party_limit', 'quality.partyPolicy', 'Quality cases support at most 16 party roles and participants.');
   if (partyRoles.size > 1 && nodeById.get(runtime.partyPolicyId)?.payload?.allowRoleReplacement !== true) {
     error('quality_handoff_required', 'quality.partyPolicy',
       `Quality case party policy ${runtime.partyPolicyId} must allow role replacement when it declares multiple party roles.`);
@@ -243,7 +250,11 @@ export function validateQuestQuality(bundle) {
       error('procedure_skip_path', `procedure.${row.id}`, 'The skip option must retain a completion path without the procedure puzzle.');
     }
   }
-  for (const assignment of keyed(design.fieldworkAssignments, 'quality.fieldworkAssignments', ['id', 'title', 'questions', 'methods', 'outcomes'], 16)) {
+  const assignments = keyed(design.fieldworkAssignments, 'quality.fieldworkAssignments', ['id', 'title', 'questions', 'methods', 'outcomes'], 16);
+  if (assignments.reduce((total, row) => total + (Array.isArray(row.outcomes) ? row.outcomes.length : 0), 0) > 64) {
+    error('fieldwork_total_limit', 'quality.fieldworkAssignments', 'All assignments together support at most 64 question/method outcomes.');
+  }
+  for (const assignment of assignments) {
     string(assignment.title, `fieldwork.${assignment.id}.title`);
     const questions = keyed(assignment.questions, 'fieldwork.questions', ['id', 'label'], 8, 1);
     const methods = keyed(assignment.methods, 'fieldwork.methods', ['id', 'label'], 8, 1);
@@ -260,10 +271,11 @@ export function validateQuestQuality(bundle) {
     if (combinations.size !== questions.length * methods.length) error('fieldwork_coverage', 'fieldwork.outcomes', 'All question/method combinations need authored outcomes.');
     if (!productive) error('fieldwork_empty', 'fieldwork.outcomes', 'A fieldwork assignment must have an evidence-producing outcome.');
   }
-  const disclosed = new Set();
+  const disclosed = new Set(); let disclosureRecipientCount = 0;
   for (const row of rows(design.disclosures, 'quality.disclosures', 64)) {
     if (!shape(row, ['evidenceId', 'recipients'], 'quality.disclosures')) continue;
     ref(row.evidenceId, 'disclosure.evidenceId', ['evidence']);
+    disclosureRecipientCount += Array.isArray(row.recipients) ? row.recipients.length : 0;
     if (disclosed.has(row.evidenceId)) error('duplicate_disclosure', 'quality.disclosures', 'Declare recipients together for each evidence item.');
     disclosed.add(row.evidenceId); const recipients = new Set();
     for (const recipient of rows(row.recipients, 'disclosure.recipients', 16, 1)) {
@@ -273,6 +285,7 @@ export function validateQuestQuality(bundle) {
       refs(recipient.revealNodeIds, 'disclosure.revealNodeIds', ['evidence']).forEach((id) => justified(npcById.get(recipient.npcId), id, row.evidenceId, 'disclosure.revealNodeIds'));
     }
   }
+  if (disclosureRecipientCount > 256) error('disclosure_total_limit', 'quality.disclosures', 'All evidence items together support at most 256 recipient disclosures.');
   return { errors, warnings };
 }
 

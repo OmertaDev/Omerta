@@ -113,6 +113,11 @@ refuses((q) => { q.spotlights.push({ ...q.spotlights[0] }); }, 'duplicate_spotli
 refuses((q) => { q.spotlights[0].nodeId = 'e1'; }, 'spotlight_reference');
 refuses((q, b) => { b.nodes.push({ id: 'second', type: 'role', payload: {} }); b.runtime.nodeIds.push('second');
   b.edges.push({ from: 'party', to: 'second', type: 'PERFORMED_BY_ROLE' }); }, 'quality_handoff_required');
+refuses((q, b) => { b.nodes.find(node => node.id === 'party').payload.allowRoleReplacement = true;
+  for (let i = 0; i < 16; i++) { const id = 'role-' + i; b.nodes.push({ id, type: 'role', payload: {} }); b.runtime.nodeIds.push(id);
+    b.edges.push({ from: 'party', to: id, type: 'PERFORMED_BY_ROLE' }); } }, 'quality_party_limit');
+refuses((q, b) => { b.nodes.find(node => node.id === 'ending').payload.prompt = 'x'.repeat(4097); }, 'quality_public_text');
+refuses((q, b) => { b.nodes.find(node => node.id === 'e1').payload.summary = 42; }, 'quality_public_text');
 refuses((q) => { q.npcs[0].knowledge = {}; }, 'bounded_array');
 refuses((q) => { q.npcs[0].conceals = ['e4']; }, 'concealed_unknown');
 refuses((q) => { q.npcs[0].knowledge[0].sourceNodeId = 'ask'; }, 'unjustified_revelation');
@@ -133,9 +138,23 @@ refuses((q, b) => { b.nodes[1].payload.options[1].nextNodeIds = ['procedure']; }
 refuses((q) => { q.fieldworkAssignments[0].outcomes.pop(); }, 'fieldwork_coverage');
 refuses((q) => { q.fieldworkAssignments[0].outcomes[0] = q.fieldworkAssignments[0].outcomes[1]; }, 'fieldwork_combination');
 refuses((q) => { q.fieldworkAssignments[0].outcomes[3].evidenceNodeIds = ['ending']; }, 'node_reference');
+refuses((q) => { q.fieldworkAssignments = ['first', 'second'].map(id => ({ id, title: 'An assignment',
+  questions: Array.from({ length: 8 }, (_, i) => ({ id: 'q' + i, label: 'Question' })),
+  methods: Array.from({ length: 8 }, (_, i) => ({ id: 'm' + i, label: 'Method' })),
+  outcomes: Array.from({ length: 64 }, (_, i) => ({ questionId: 'q' + Math.floor(i / 8), methodId: 'm' + i % 8,
+    report: 'An authored observation', evidenceNodeIds: ['e1'] })) })); }, 'fieldwork_total_limit');
+refuses((q, b) => { q.npcs = Array.from({ length: 16 }, (_, i) => ({ id: i ? 'npc-' + i : 'sara', label: 'Recipient',
+  knowledge: [{ evidenceNodeId: 'e1', sourceNodeId: 'entry' }, { evidenceNodeId: 'e2', sourceNodeId: 'entry' }],
+  beliefs: [{ evidenceNodeId: 'e3', sourceNodeId: 'entry' }] }));
+  const evidenceIds = ['e1', 'e2', 'e3', 'e4']; for (let i = 0; i < 13; i++) { const id = 'extra-evidence-' + i;
+    evidenceIds.push(id); b.nodes.push({ id, type: 'evidence', payload: {} }); b.runtime.nodeIds.push(id); }
+  q.disclosures = evidenceIds.map(evidenceId => ({ evidenceId, recipients: q.npcs.map(npc => ({ npcId: npc.id,
+    label: 'Tell this recipient', report: 'Acknowledged', revealNodeIds: [] })) })); }, 'disclosure_total_limit');
 refuses((q) => { q.disclosures[0].recipients[0].revealNodeIds = ['e4']; }, 'unjustified_revelation');
 refuses((q) => { q.npcs[0].beliefs = [{ evidenceNodeId: 'e1', sourceNodeId: 'entry' }]; q.npcs[0].knowledge.shift(); }, 'unjustified_revelation');
 const warns = fixture(); designOf(warns).budget = { maxActions: 1, maxNewConcepts: 1, maxReadingWords: 1 };
+const nullableText = fixture(); nullableText.nodes.find(node => node.id === 'ending').payload.summary = null;
+assert.equal(assertQuestQuality(nullableText).errors.length, 0, 'Missing and null optional public text remain compatible.');
 const optionalLead = fixture(); designOf(optionalLead).spoilers = [{ nodeId: 'e2', requiresNodeIds: ['e4'] }];
 assert.equal(assertQuestQuality(optionalLead).errors.length, 0, 'An independently obtained parallel lead need not strictly precede the reveal in graph topology.');
 const handoff = fixture(); handoff.nodes.push({ id: 'second', type: 'role', payload: {} }); handoff.runtime.nodeIds.push('second');

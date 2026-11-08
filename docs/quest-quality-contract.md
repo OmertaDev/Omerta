@@ -11,6 +11,8 @@ All evidence references name profiled `evidence` nodes. Identifiers use lowercas
 digits, dots, underscores and hyphens, start with a letter or digit, and contain at most
 160 characters. Text is nonempty and at most 4096 characters. Objects are closed data records.
 The quality document is limited to 128 KiB, 512 profile nodes and 4096 graph edges.
+Profile titles, prompts and summaries are limited to 4096 characters; absent or null optional
+values remain valid. Party policies may declare at most 16 party roles.
 
 Optional closed fields:
 
@@ -28,8 +30,8 @@ Optional closed fields:
 | `pacing` | `{pressureNodeIds,safeNodeIds,maxConsecutivePressure}`; unique disjoint profiled IDs and a limit from 1 to 16. |
 | `procedures` | Up to 16 `{id,nodeId,learnNodeId,masteryFlag,skipOptionId,learnOptionId}`. The first node is a choice; `learnNodeId` is a puzzle reached by the learn option. The distinct skip option must retain a terminal path without that puzzle. Flags require the `quest.procedure.` prefix. |
 | `spotlights` | Up to 64 `{nodeId,roleId}`. Each action has at most one suggested actual party role. This declaration conveys no exclusive turn or authority. |
-| `fieldworkAssignments` | Up to 16 `{id,title,questions,methods,outcomes}`. Questions and methods each contain 1–8 `{id,label}` entries. Every question/method pair has exactly one outcome `{questionId,methodId,report,evidenceNodeIds}`. At least one outcome produces evidence. |
-| `disclosures` | Up to 64 `{evidenceId,recipients}`. Each unique evidence item has 1–16 unique recipients `{npcId,label,report,revealNodeIds}`. Targets must be profiled evidence justified by that NPC's knowledge. |
+| `fieldworkAssignments` | Up to 16 `{id,title,questions,methods,outcomes}`, with at most 64 outcomes across all assignments. Questions and methods each contain 1–8 `{id,label}` entries. Every question/method pair has exactly one outcome `{questionId,methodId,report,evidenceNodeIds}`. At least one outcome produces evidence. |
+| `disclosures` | Up to 64 `{evidenceId,recipients}`, with at most 256 recipients across all evidence. Each unique evidence item has 1–16 unique recipients `{npcId,label,report,revealNodeIds}`. Targets must be profiled evidence justified by that NPC's knowledge. |
 
 NPC knowledge sourced at the entry is initial knowledge. Other sources must be guaranteed to
 complete before a revelation or its disclosure input through the graph or a `completed_node`
