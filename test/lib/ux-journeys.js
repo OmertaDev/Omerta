@@ -1,5 +1,7 @@
 import { integratedEconomicParentInput } from '../../tools/integrated-economic-parent-source.js';
 import { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';
+import { QUEST_QUALITY_SOURCE, qualifyQuestQualitySource } from '../../tools/quest-quality-source-transfer.js';
+import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';
 import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { readFileSync, lstatSync } from 'node:fs';
@@ -85,8 +87,12 @@ export function runAfterwordSourceProof() {
       && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;
     const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;
     const combined = BUSINESS_DESK_COMBINED_SOURCE.files.find(row => row.file === file);
+    const quality = Object.hasOwn(QUEST_QUALITY_SOURCE.files, file) ? QUEST_QUALITY_SOURCE.files[file] : null;
+    const siteBasics = Object.hasOwn(SITE_BASICS_SOURCE.files, file) ? SITE_BASICS_SOURCE.files[file] : null;
     const questing = Object.hasOwn(QUESTING_SOURCE.files, file) ? QUESTING_SOURCE.files[file] : null;
-    const expected = questing ? questing.current : desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,
+    const outer = quality ? qualifyQuestQualitySource(file, current) : siteBasics ? qualifySiteBasicsSource(file, current) : null;
+    if (outer) assert.deepEqual([outer.sourceOnly, outer.runtime, outer.native, outer.priorResultsTransferred], [true, false, false, false]);
+    const expected = quality ? quality.current : siteBasics ? siteBasics.current : questing ? questing.current : desk ? desk.current : combined ? combined.current : { mode: domain.mode, blob: domain.currentBlob,
       sha256: domain.currentSha256, bytes: domain.currentBytes };
     assert.deepEqual(raw, { mode: expected.mode, blob: expected.blob }, 'Actual raw HEAD must qualify before historical bookkeeping');
     assert.equal(typeof current, 'string'); assert.equal(sha(current), expected.sha256);
@@ -113,6 +119,7 @@ export function runAfterwordSourceProof() {
     const actualPhysical = readFileSync(physicalPath);
     assert(actualPhysical.equals(Buffer.from(actualCommitted)) || actualPhysical.equals(Buffer.from(actualCommitted.replaceAll('\n', '\r\n'))),
       'Whole actual physical LF/CRLF bytes match raw HEAD before historical bookkeeping');
+    assertActualHeadInput(file, actualHead, actualCommitted, actualPhysical.toString('utf8'));
     // The exact comparison view follows actual HEAD/index/whole physical admission.
     // Runtime/native consumers continue to use their unchanged actual inputs.
     let comparisonSource = questingHistoricalInput(file, actualCommitted);
@@ -204,6 +211,12 @@ export function runAfterwordSourceProof() {
     for (const input of [actualHead + '\n', actualHead.slice(1), '\ufeff' + actualHead, actualHead + '\0',
       actualHead.replace('\n', '\r\n'), actualHead.replace('\n', '\r'), baseline]) {
       rejectRaw(() => assertActualHeadInput(row.file, actualRecord, actualHead, input));
+    }
+    const outerPredecessor = Object.hasOwn(QUEST_QUALITY_SOURCE.files, row.file) ? QUEST_QUALITY_SOURCE.predecessor
+      : Object.hasOwn(SITE_BASICS_SOURCE.files, row.file) ? SITE_BASICS_SOURCE.predecessor : null;
+    if (outerPredecessor) {
+      const staleSource = git('show', outerPredecessor + ':' + row.file);
+      rejectRaw(() => assertActualHeadInput(row.file, record(outerPredecessor, row.file), staleSource, staleSource));
     }
     if (row.file === 'src/server.js') {
       for (const input of [git('show', rootSource.baseRevision + ':' + row.file), current]) {
