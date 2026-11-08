@@ -27,6 +27,7 @@ export const QUESTING_NATIVE_SUPPORT = Object.freeze([
   'test/lib/questing-ux-native-reader-source-compatibility.js',
   'test/lib/questing-ux-director-reader-source-compatibility.js',
   'test/lib/questing-ux-enterprise-reader-source-compatibility.js',
+  'src/casinorakeback.js',
   'public/ux-quests.js', 'public/ux-quests.css', 'public/ux-clues.js', 'public/ux-clues.css',
   ...['early-obituary', 'family-dinner', 'missing-name', 'three-witnesses', 'quiet-wedding',
     'morning-after', 'inherited-file', 'archive-service', 'sixth-envelope', 'rival-accord']
