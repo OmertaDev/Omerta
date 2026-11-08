@@ -2,7 +2,7 @@
 
 Release phase: candidate verification; deployment is a separate recorded operation.
 Initial base: `bb4a6c451465d6f58caa1e320ffcbed8992b4b1b`; main was subsequently
-integrated through `84473ac558e501eec1c2fa78067493d4cf0d7741`, preserving its
+integrated through `3890d4cbb052728fd15e8f2ed0c2518c177d60cc`, preserving its
 signup-origin authority, age-21 cookie-policy binding, analytics compatibility and
 player privacy behavior. Both source histories and historical proof pins remain.
 The older dirty development checkout was not copied wholesale into this release.
@@ -41,6 +41,9 @@ pass before installation, followed by exact version, commit and build-profile ch
 Integration preserves the companion archive verifier from PR #327 and all its
 refusal controls. Release CI retains the signer-attested bootstrap already exercised
 on hosted Linux, followed immediately by the original funded-work artifact build.
+That source build fetches the same pinned dependency from GitHub's archive host,
+using bounded file-backed retries and checking gzip integrity and required archive
+members before extraction. The compiler and source target remain unchanged.
 
 ## Executed local evidence
 

@@ -4658,11 +4658,43 @@ scopedSocialContext = async function(db) {
     'a malformed literal scalar must not invent a command position');
   const autonomyScripts=JSON.parse(fs.readFileSync('package.json','utf8')).scripts;
   assert.equal(autonomyScripts['test:company-autonomy:postgres'],'node tools/company-autonomy-native.js');
-  const expectedArtifactCommand="mkdir -p omerta-contracts/lib/openzeppelin-contracts && curl --fail --location https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz | tar xz -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol";
+  const expectedArtifactCommand="mkdir -p omerta-contracts/lib/openzeppelin-contracts && oz_archive=$(mktemp omerta-contracts/lib/.openzeppelin-contracts-v5.6.1.XXXXXX) && trap 'rm -f -- \"$oz_archive\"' EXIT && curl --fail --location --connect-timeout 15 --max-time 120 --retry 3 --retry-all-errors --retry-max-time 180 --output \"$oz_archive\" https://codeload.github.com/OpenZeppelin/openzeppelin-contracts/tar.gz/refs/tags/v5.6.1 && gzip -t \"$oz_archive\" && tar -tzf \"$oz_archive\" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null && tar xzf \"$oz_archive\" -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol";
   assert.equal(autonomyScripts['build:funded-work-artifact'],expectedArtifactCommand,'Genuine pinned OZ/compiler build only');
   const artifactAdmits=(job,command)=>{try{assertFoundrySetup(job);return job.includes('        run: npm run build:funded-work-artifact')&&command===expectedArtifactCommand;}catch{return false;}};
   assert(artifactAdmits(suites.replaceAll('\r\n','\n'),expectedArtifactCommand));assert(artifactAdmits(pgcheck.replaceAll('\r\n','\n'),expectedArtifactCommand));
-  for(const bad of [expectedArtifactCommand.replace('v5.6.1','master'),'cp retained-artifact.json omerta-contracts/out/OmertaWorkEscrowV2.json','echo synthetic'])assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n'),bad));
+  for (const bad of [
+    expectedArtifactCommand.replace('/refs/tags/v5.6.1', '/refs/tags/master'),
+    expectedArtifactCommand.replace('codeload.github.com', 'mirror.invalid'),
+    expectedArtifactCommand.replace('omerta-contracts/lib/.openzeppelin-contracts-v5.6.1.XXXXXX', '/tmp/openzeppelin.XXXXXX'),
+    expectedArtifactCommand.replace('--output "$oz_archive" ', ''),
+    expectedArtifactCommand.replace('--output "$oz_archive"', '--output retained-archive.tar.gz'),
+    expectedArtifactCommand.replace('--connect-timeout 15', '--connect-timeout 0'),
+    expectedArtifactCommand.replace('--max-time 120', '--max-time 0'),
+    expectedArtifactCommand.replace('--retry 3', '--retry 99'),
+    expectedArtifactCommand.replace('--retry-max-time 180', '--retry-max-time 0'),
+    expectedArtifactCommand.replace('--retry-all-errors ', ''),
+    expectedArtifactCommand.replace('--fail ', ''),
+    expectedArtifactCommand.replace('gzip -t "$oz_archive" && ', ''),
+    expectedArtifactCommand.replace('tar -tzf "$oz_archive" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null && ', ''),
+    expectedArtifactCommand.replace(' openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol', ''),
+    expectedArtifactCommand.replace(' openzeppelin-contracts-5.6.1/package.json', ''),
+    expectedArtifactCommand.replace(' openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol', ''),
+    expectedArtifactCommand.replace('openzeppelin-contracts-5.6.1/package.json', 'openzeppelin-contracts-5.6.1/not-package.json'),
+    expectedArtifactCommand.replace('openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol', 'openzeppelin-contracts-5.6.1/contracts/token/ERC20/Other.sol'),
+    expectedArtifactCommand.replace('tar -tzf "$oz_archive" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null',
+      'tar -tzf "$oz_archive" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null || true'),
+    expectedArtifactCommand.replace('tar -tzf "$oz_archive" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null', 'tar -tzf "$oz_archive" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol | head -n 1'),
+    expectedArtifactCommand.replace('gzip -t "$oz_archive" && tar -tzf "$oz_archive" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null && tar xzf "$oz_archive" -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1',
+      'tar xzf "$oz_archive" -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && gzip -t "$oz_archive" && tar -tzf "$oz_archive" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null'),
+    expectedArtifactCommand.replace(' && gzip -t', '; gzip -t'),
+    expectedArtifactCommand.replace('src/market-v2/OmertaWorkEscrowV2.sol', 'src/market-v2/Other.sol'),
+    'mkdir -p omerta-contracts/lib/openzeppelin-contracts && curl --fail --location https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz | tar xz -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol',
+    'cp retained-artifact.json omerta-contracts/out/OmertaWorkEscrowV2.json', 'echo synthetic',
+  ]) {
+    assert.notEqual(bad, expectedArtifactCommand, 'Each artifact refusal must change its intended pin, bound, output or validation target');
+    assert(!artifactAdmits(pgcheck.replaceAll('\r\n', '\n'), bad),
+      'Only the complete pinned, bounded, owned archive validation followed by the genuine compiler build is admitted');
+  }
   assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n').replace('version: v1.7.1','version: stable'),expectedArtifactCommand));
   const {AUTONOMY_NATIVE_PROOFS}=await import('../tools/company-autonomy-native.js');
   assert.equal(AUTONOMY_NATIVE_PROOFS.length,11,'All eleven fresh proofs required');

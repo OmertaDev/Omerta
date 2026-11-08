@@ -35,8 +35,8 @@ try {
   page.on('pageerror', (error) => errors.push(error.message));
   await page.addInitScript(token => { localStorage.setItem('omerta_token', token); for (const key of ['omerta_tour2', 'omerta_welcomed', 'omerta_alltabs']) localStorage.setItem(key, '1'); }, token);
   await page.goto(base, { waitUntil: 'domcontentloaded' });
-  assert.equal(await page.evaluate(() => typeof window.renderOmertaCluePuzzle), 'function', 'the production page loads the clue renderer');
   await page.locator('#screen-main:not(.hidden)').waitFor();
+  assert.equal(await page.evaluate(() => typeof window.renderOmertaCluePuzzle), 'function', 'the production page loads the clue renderer');
   await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));
   await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('streets');
   await page.locator('#jump-list [data-jump="streets"]').first().click();
