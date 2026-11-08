@@ -108,7 +108,11 @@ export function assertQuestingEnterpriseTrackedInput(file, current, authored, by
   assert.strictEqual(actualDeclaration, declaration, 'Caller cannot substitute an actual-current native declaration');
   assertQuestingNativeDefinition(declaration);
   assert.equal(sha(JSON.stringify(declaration)), declarationHash, 'Exact sealed actual-current declaration');
-  const expected = declaration.files.find(row => row.file === file);
+  return assertQuestingTrackedPin(file, current, authored, bytes, declaration.files.find(row => row.file === file));
+}
+// The capture validates the complete immutable declaration before checking any of its pins.
+// Public callers still validate that declaration independently on every invocation.
+function assertQuestingTrackedPin(file, current, authored, bytes, expected) {
   assert.ok(expected, `No undeclared actual-current native input: ${file}`);
   assert.ok(Buffer.isBuffer(bytes) && current && authored);
   assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');
@@ -192,7 +196,7 @@ export function captureQuestingEnterpriseSource() {
   for (const expected of declaration.files) {
     const actual = read(expected.file); assert.deepEqual(actual.pin, expected);
     const original = authored.get(expected.file);
-    assertQuestingEnterpriseTrackedInput(expected.file, current.get(expected.file), original, actual.canonical);
+    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);
     files[expected.file] = { sha256: sha(actual.raw), gitSha256: expected.sha256, blob: expected.blob, binary: binary.has(expected.file), bytes: actual.raw.length };
   }
   const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);

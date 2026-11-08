@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "94716a36fb953c0082d6731f5177a66ffaf7816e",
-  "tree": "7d8a2d28c7e2e96a931112b9e28fe6f1fd02eade",
+  "revision": "db8e5aaf6c182ac337ed86fd30e2169fd458f1b5",
+  "tree": "1234e7609ed9c594cc3651b06715770feba3e7b7",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -1017,6 +1017,32 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "tools/enterprise-native-questing.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "3214b184bf840c87c32082f959acd79831f6ff78",
+        "sha256": "5ad0255cb9cde9c583be9657b91452d17b7726f41ab06fab3c8521ca0994662c",
+        "bytes": 26444
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "e98650f2bde4162d6d8ea0fdc236abf24a487ce3",
+        "sha256": "45b0d8485765d0002b6d3a27262e41ef49647b93be61cfef275e73809248fc84",
+        "bytes": 26140
+      },
+      "inverses": [
+        {
+          "at": 8810,
+          "current": "  assert.strictEqual(actualDeclaration, declaration, 'Caller cannot substitute an actual-current native declaration');\n  assertQuestingNativeDefinition(declaration);\n  assert.equal(sha(JSON.stringify(declaration)), declarationHash, 'Exact sealed actual-current declaration');\n  return assertQuestingTrackedPin(file, current, authored, bytes, declaration.files.find(row => row.file === file));\n}\n// The capture validates the complete immutable declaration before checking any of its pins.\n// Public callers still validate that declaration independently on every invocation.\nfunction assertQuestingTrackedPin(file, current, authored, bytes, expected) {\n  assert.ok(expected, `No undeclared actual-current native input: ${file}`);\n  assert.ok(Buffer.isBuffer(bytes) && current && authored);\n  assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');\n",
+          "baseline": "  assert.strictEqual(actualDeclaration, declaration, 'Caller cannot substitute an actual-current native declaration');\n  assertQuestingNativeDefinition(declaration);\n  assert.equal(sha(JSON.stringify(declaration)), declarationHash, 'Exact sealed actual-current declaration');\n  const expected = declaration.files.find(row => row.file === file);\n  assert.ok(expected, `No undeclared actual-current native input: ${file}`);\n  assert.ok(Buffer.isBuffer(bytes) && current && authored);\n  assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');\n"
+        },
+        {
+          "at": 15082,
+          "current": "  for (const expected of declaration.files) {\n    const actual = read(expected.file); assert.deepEqual(actual.pin, expected);\n    const original = authored.get(expected.file);\n    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);\n    files[expected.file] = { sha256: sha(actual.raw), gitSha256: expected.sha256, blob: expected.blob, binary: binary.has(expected.file), bytes: actual.raw.length };\n  }\n  const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);\n",
+          "baseline": "  for (const expected of declaration.files) {\n    const actual = read(expected.file); assert.deepEqual(actual.pin, expected);\n    const original = authored.get(expected.file);\n    assertQuestingEnterpriseTrackedInput(expected.file, current.get(expected.file), original, actual.canonical);\n    files[expected.file] = { sha256: sha(actual.raw), gitSha256: expected.sha256, blob: expected.blob, binary: binary.has(expected.file), bytes: actual.raw.length };\n  }\n  const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);\n"
+        }
+      ]
+    },
     "tools/questing-source-transfer.js": {
       "current": {
         "mode": "100644",
@@ -1154,4 +1180,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '0cd49d052fd1eaf1531778947a8261b7ac20209256d724891ff5585dce9661e5';
+export const SITE_BASICS_SOURCE_SHA256 = 'd5607d2bcefb279ce62bf4626e7dcaeb9ccf3fe084ca7f76e37fc3ef6c826f08';
