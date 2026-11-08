@@ -4220,7 +4220,7 @@ scopedSocialContext = async function(db) {
   }
   const expectedForgeFoundrySteps = [expectedFoundrySteps[0].replace('      - uses:', '      - name: Install Foundry\n        uses:'),
     ...expectedFoundrySteps.slice(1)];
-  const forgeWorkflow = fs.readFileSync(path.join(ROOT, '.github/workflows/forge.yml'), 'utf8');
+  const forgeWorkflow = fs.readFileSync(path.join(ROOT, '.github/workflows/forge.yml'), 'utf8').replaceAll('\r\n', '\n');
   const expectedForgeOfflineStep = expectedFoundryOfflineStep.replace('node test/', 'node ../test/');
   assertFoundrySetup(forgeWorkflow, expectedForgeFoundrySteps, false, expectedForgeOfflineStep);
   assertFoundryPermissions(forgeWorkflow);
