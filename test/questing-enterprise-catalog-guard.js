@@ -1,16 +1,18 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { questingCatalogSource, questingCatalogProjection, QUESTING_CATALOG_COLUMNS as columns,
-  QUESTING_CATALOG_TABLES as tables } from '../tools/questing-enterprise-catalog.js';
+  QUESTING_CATALOG_TABLES as tables, questingCasinoCatalogProjection } from '../tools/questing-enterprise-catalog.js';
 
 const raw = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
 const source = questingCatalogSource(raw);
 assert.equal(questingCatalogSource(source.current.replaceAll('\n', '\r\n')).current, source.current);
 let refusals = 0;
-for (const bad of [source.baseline, source.current + '\n', source.current.slice(1), '\ufeff' + source.current,
+for (const bad of [source.baseline, source.archivedBaseline, source.archived, source.current + '\n', source.current.slice(1), '\ufeff' + source.current,
   source.current.replace('\n', '\r\n'), source.current.replace('stars BETWEEN 1 AND 5', 'stars BETWEEN 0 AND 5'),
   source.current.replace('author_account_id TEXT NOT NULL REFERENCES accounts(id)', 'author_account_id TEXT'),
-  source.current.replace('quest_reading_room', 'unreviewed_reading_room')]) {
+  source.current.replace('quest_reading_room', 'unreviewed_reading_room'), source.current.replace('rake_index_cursor TEXT', 'rake_index_cursor VARCHAR'),
+  source.current.replace('rake_checkpoint_volume NUMERIC', 'rake_checkpoint_volume NUMERIC(20,2)'),
+  source.current.replace("rake_index TEXT NOT NULL DEFAULT '0'", "rake_index TEXT NOT NULL DEFAULT '1'")]) {
   assert.throws(() => questingCatalogSource(bad)); refusals++;
 }
 const baseline = { relations: [{ name: 'accounts', kind: 'r', persistence: 'p' }], columns: [], constraints: [], indexes: [] };
@@ -68,5 +70,36 @@ for (const version of [16, 18]) {
     value => { value.constraints[0].is_local = false; }, value => { value.constraints[0].inheritance_count = 1; },
   ]) { const bad = fixture(version); change(bad); assert.throws(() => questingCatalogProjection(bad, structuredClone(baseline), version)); refusals++; }
 }
+let casinoRefusals = 0, casinoProfiles = 0;
+for (const version of [16, 18]) for (const profile of ['fresh', 'phase2', 'director']) for (const flags of [false, true]) {
+  const business = ['id','character_id','kind','tier','last_collect_at','launder_used','launder_at','scrutiny','scrutiny_at','shakedown_at','inside_at','rake_cursor','upkeep_at','acquired_at','spec','spec_at','takeover_cd_until'];
+  const volume = ['id','total','profit','distributed','jackpot'];
+  const legacy = { relations: [], columns: [['businesses',business],['den_volume',volume]].flatMap(([table,names]) =>
+    names.map((column_name,i) => ({ table_name:table,column_name,ordinal:i+1 }))), constraints:[], indexes:[] };
+  const names = profile === 'fresh' ? [business.toSpliced(12,0,'rake_index_cursor'),volume.toSpliced(4,0,'rake_index','rake_checkpoint_volume','rake_legacy_owners')]
+    : [[...business,'rake_index_cursor'],[...volume,'rake_index','rake_checkpoint_volume','rake_legacy_owners']];
+  const specs = { rake_index_cursor:['text',false,null],rake_index:['text',true,"'0'::text"],rake_checkpoint_volume:['numeric',false,null],rake_legacy_owners:['integer',true,'0'] };
+  const live = { ...structuredClone(legacy), columns: [['businesses',names[0]],['den_volume',names[1]]].flatMap(([table,columns]) => columns.map((name,i) => {
+    const row = { table_name:table,column_name:name,ordinal:i+1 }; if (!specs[name]) return row;
+    const [type,not_null,default_expression] = specs[name]; return {...row,type,not_null,default_expression,typmod:-1,identity:'',generated:'',collation_schema:type==='text'?'pg_catalog':null,collation_name:type==='text'?'default':null};
+  })) };
+  if (version === 18) live.constraints = ['rake_index','rake_legacy_owners'].map(name => ({table_name:'den_volume',name:'den_volume_'+name+'_not_null',type:'n',validated:true,deferrable:false,deferred:false,definition:'NOT NULL '+name,match_type:' ',update_action:' ',delete_action:' ',referenced_schema:null,referenced_table:null,columns:[name],referenced_columns:[],...(flags?{no_inherit:false,is_local:true,inheritance_count:0}:{})}));
+  const project = value => questingCasinoCatalogProjection(value,version,profile,flags);
+  assert.deepEqual(project(live),legacy); casinoProfiles++;
+  const reject = change => { const bad=structuredClone(live);change(bad);assert.throws(()=>project(bad));casinoRefusals++; };
+  for (const [index,row] of live.columns.entries()) if (specs[row.column_name]) {
+    reject(value=>value.columns.splice(index,1)); reject(value=>value.columns.splice(index,0,{...row}));
+    for (const key of Object.keys(row)) reject(value=>{const old=value.columns[index][key];value.columns[index][key]=typeof old==='boolean'?!old:typeof old==='number'?old+1:old===null?'unknown':old+'unknown';});
+  }
+  for (const [index,row] of live.constraints.entries()) {
+    reject(value=>value.constraints.splice(index,1)); reject(value=>value.constraints.push({...row}));
+    for (const key of Object.keys(row)) reject(value=>{value.constraints[index][key]=typeof row[key]==='boolean'?!row[key]:'unknown';});
+  }
+  reject(value=>value.columns.splice(value.columns.findIndex(row=>row.column_name==='rake_cursor'),1));
+  reject(value=>{value.columns.find(row=>row.column_name==='upkeep_at').ordinal++;});
+  reject(value=>value.columns.push({table_name:'den_volume',column_name:'rake_unknown',ordinal:9}));
+  reject(value=>{value.columns.find(row=>row.column_name==='rake_index_cursor').ordinal=15;});
+  reject(value=>{value.columns.find(row=>row.column_name==='rake_index').ordinal=profile==='fresh'?6:5;});
+}
 console.log(JSON.stringify({ phase: 'QUESTING_ACTUAL_CATALOG_SOURCE_GUARDS', rawActualTables: 585, rawBaselineTables: 582,
-  explicitRefusals: refusals, syntheticFullFieldCausalRefusals: causal, syntheticFixturesOnly: true, nativeExecution: false }));
+  explicitRefusals: refusals, syntheticFullFieldCausalRefusals: causal, casinoProfiles, casinoRefusals, syntheticFixturesOnly: true, nativeExecution: false }));

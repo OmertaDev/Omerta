@@ -34,20 +34,21 @@ const dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8
 const dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);
 const commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa21bcfe2f3bc163b26f08eea4c6f0dac97c';
 const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';
-const questingCurrent=hash(lf(dispatchRaw))==='af6d9ad01566eaddf8ec6b4c4da4add77837b13e6a3510697bebf62b180b97e7';
+const questingAdapter=await import('../tools/questing-enterprise-catalog.js');
+const questingCurrent=hash(lf(dispatchRaw))===questingAdapter.QUESTING_CATALOG_SOURCE.sha256;
 if(questingCurrent){
-  const adapter=await import('../tools/questing-enterprise-catalog.js');
+  const adapter=questingAdapter;
   const sources=adapter.questingCatalogSource(dispatchRaw);
   assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);
-  console.log('Exact actual quest585 source retains complete582 plus three additive tables; old catalog admission remains separate.');
+  console.log('Exact actual quest585 source retains the reviewed four-field casino delta and unchanged three-table quest suffix; archived catalog admission remains separate.');
   if(native){
     const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});
     try{
       const result=await adapter.verifyQuestingEnterpriseCatalog(pool,endpoint.href,dispatchRaw);
-      assert.equal(result.actualTables,585);assert.equal(result.baselineTables,582);assert.equal(result.ddlCausal,13);assert(result.causal>300);
+      assert.equal(result.actualTables,585);assert.equal(result.baselineTables,582);assert.equal(result.ddlCausal,13);assert.equal(result.casinoDdlCausal,14);assert(result.causal>300);
       console.log(JSON.stringify({phase:'ACTUAL_QUEST585_ENTERPRISE_CATALOG',freshTables:585,upgradeTables:585,baselineTables:582,
         questTables:3,questColumns:21,metadataCausal:result.causal,rollbackDdlCausal:result.ddlCausal,
-        historicalReferenceCausal:result.historical.causal,native:true,priorNativeResultsTransferred:false}));
+        casinoColumns:4,casinoDdlCausal:result.casinoDdlCausal,historicalReferenceCausal:result.historical.causal,native:true,priorNativeResultsTransferred:false}));
     }finally{await pool.end();}
   }
 }else if(commerceDeedCurrent){
