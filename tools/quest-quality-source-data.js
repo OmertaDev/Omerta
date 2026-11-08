@@ -3,10 +3,10 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "21b1d61e27004af89b375271569d4531b659bfb1",
-  "tree": "c633949558cceb28e13fe76ad3029bb33f2a6d9b",
-  "predecessor": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
-  "predecessorTree": "75d872c408cd5b5b76c364485d7b2c154f38af9a",
+  "revision": "63cb7f84320d4a65086f25ce1f2f92caeaa974b3",
+  "tree": "ef4e21e0b4419847f300b861dd0116dd78d0e55b",
+  "predecessor": "d33bfe6aabdaa82513ac98996a0e0d065180fa71",
+  "predecessorTree": "56e211efe05118b97ef1d10b28c9a8f57dae8c38",
   "files": {
     "package.json": {
       "current": {
@@ -659,8 +659,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "test/quest-quality-source-transfer.js": {
       "mode": "100644",
-      "blob": "28e0729a4f8c40dee0a778d7b0e0cbd7f34ce53f",
-      "sha256": "61ec41d93d638e226d11215e5f5812ff2b3e8ad2a0d2c2a7d3e86c63a20a8b12",
+      "blob": "251c861496668fcdd67879036291a01ca7a3a547",
+      "sha256": "f20b9778313cfa85007df34c8d527b3fe309adbecbad351fa4249bbbfaa6a874",
       "bytes": 5627
     },
     "test/quest-quality-spoilers.js": {
@@ -689,8 +689,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "tools/quest-quality-source-seal.js": {
       "mode": "100644",
-      "blob": "31a7d75025bf58c213fd4768d238445184eefd29",
-      "sha256": "833228483a4a5ec275ed4c3ef427c1a7532aeb361ea133e04fdfc8d87178d864",
+      "blob": "94eeecb5105210f920b317572f8ebb2dd579b179",
+      "sha256": "31af80e176fcecda42b727870801cb1e31269a988b50fbb4a41e0613572b87d0",
       "bytes": 4207
     },
     "tools/quest-quality-source-transfer.js": {
@@ -719,4 +719,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = '29377c4e83606c277a7eeb2e62bb5b030abd604867d06f8047d886e2c15c9170';
+export const QUEST_QUALITY_SOURCE_SHA256 = 'd200f494f9826b134ea8670a9457bcfbe2ce61a898014718bbe57580f62e9b63';
