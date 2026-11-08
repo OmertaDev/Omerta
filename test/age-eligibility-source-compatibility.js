@@ -147,9 +147,11 @@ for (const patch of [{ indexEntry: '' }, { indexEntry: server.indexEntry + '\n' 
   assert.throws(() => qualifyPhysical({ ...server, ...patch })); actualReaderControls++;
 }
 assert.throws(() => comparisonInput(server.file, Buffer.from([0xc3, 0x28]))); actualReaderControls++;
-for (const file of ['src/unknown.js', 'src/age.js']) {
+for (const file of ['src/unknown.js']) {
   const bytes = Buffer.from([0xff]); assert.strictEqual(comparisonInput(file, bytes), bytes); actualReaderControls++;
 }
+assert.throws(() => comparisonInput('src/age.js', Buffer.from([0xff])), error => error.code === 'ERR_ASSERTION'
+  && /Lossless UTF-8/.test(error.message) && /lossless UTF-8/.test(error.message)); actualReaderControls++;
 assert.equal(git('rev-parse', 'HEAD').trim(), actualRevision, 'Actual source revision must stay fixed throughout the proof');
 console.log(JSON.stringify({ phase, revision, files: files.length, positives, refusals, inverseHunks: hunks,
   actualRevision, actualReaderControls, sourceOnly: true, runtime: false, native: false }));
