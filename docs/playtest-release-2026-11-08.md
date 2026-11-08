@@ -2,7 +2,7 @@
 
 Release phase: candidate verification; deployment is a separate recorded operation.
 Initial base: `bb4a6c451465d6f58caa1e320ffcbed8992b4b1b`; main was subsequently
-integrated through `3890d4cbb052728fd15e8f2ed0c2518c177d60cc`, preserving its
+integrated through `80fa0ebb9c2974b190ebfc5859a824e5f1118040`, preserving its
 signup-origin authority, age-21 cookie-policy binding, analytics compatibility and
 player privacy behavior. Both source histories and historical proof pins remain.
 The older dirty development checkout was not copied wholesale into this release.
