@@ -10,7 +10,7 @@ const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], 
 const sha = text => createHash('sha256').update(text).digest('hex');
 const blob = text => createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 assert.equal(source.status, 'SEALED'); assert.equal(source.phase, 'EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY');
-assert.equal(source.predecessor, '84473ac558e501eec1c2fa78067493d4cf0d7741');
+assert.equal(source.predecessor, '3890d4cbb052728fd15e8f2ed0c2518c177d60cc');
 for (const [revision, tree] of [[source.revision, source.tree], [source.predecessor, source.predecessorTree]]) assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
 git('merge-base', '--is-ancestor', source.predecessor, source.revision); git('merge-base', '--is-ancestor', source.revision, 'HEAD');
 const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql'

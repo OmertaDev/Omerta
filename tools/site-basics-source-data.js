@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "33e8f3e94479be2944433f2a2bb0c23cd1818834",
-  "tree": "5d95f8da3cc031b4a790f0af9a639c5f583f162a",
+  "revision": "94716a36fb953c0082d6731f5177a66ffaf7816e",
+  "tree": "7d8a2d28c7e2e96a931112b9e28fe6f1fd02eade",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -592,6 +592,27 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/clue-puzzles-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4ebffafd7d96d84f7689b8783f342e522321c935",
+        "sha256": "4947877d555ac655b1b9c485c3299a386964a735af147100fdb650cd0b200783",
+        "bytes": 7713
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "1eacf4f78edd2775d3759a019092798fd8b8e7c1",
+        "sha256": "b324693b29f70643c6b796b5bbe97079194503f4d33f66ed5a5f6e46910d61ad",
+        "bytes": 7713
+      },
+      "inverses": [
+        {
+          "at": 2148,
+          "current": "  page.on('pageerror', (error) => errors.push(error.message));\n  await page.addInitScript(token => { localStorage.setItem('omerta_token', token); for (const key of ['omerta_tour2', 'omerta_welcomed', 'omerta_alltabs']) localStorage.setItem(key, '1'); }, token);\n  await page.goto(base, { waitUntil: 'domcontentloaded' });\n  await page.locator('#screen-main:not(.hidden)').waitFor();\n  assert.equal(await page.evaluate(() => typeof window.renderOmertaCluePuzzle), 'function', 'the production page loads the clue renderer');\n  await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));\n  await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('streets');\n  await page.locator('#jump-list [data-jump=\"streets\"]').first().click();\n",
+          "baseline": "  page.on('pageerror', (error) => errors.push(error.message));\n  await page.addInitScript(token => { localStorage.setItem('omerta_token', token); for (const key of ['omerta_tour2', 'omerta_welcomed', 'omerta_alltabs']) localStorage.setItem(key, '1'); }, token);\n  await page.goto(base, { waitUntil: 'domcontentloaded' });\n  assert.equal(await page.evaluate(() => typeof window.renderOmertaCluePuzzle), 'function', 'the production page loads the clue renderer');\n  await page.locator('#screen-main:not(.hidden)').waitFor();\n  await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));\n  await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('streets');\n  await page.locator('#jump-list [data-jump=\"streets\"]').first().click();\n"
+        }
+      ]
+    },
     "test/continuous-city-source-compatibility.js": {
       "current": {
         "mode": "100644",
@@ -1133,4 +1154,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '52b810254d675d04cf12ea0a43fa76b6226e8866f94ccec8ef2ae33c6514351c';
+export const SITE_BASICS_SOURCE_SHA256 = '0cd49d052fd1eaf1531778947a8261b7ac20209256d724891ff5585dce9661e5';
