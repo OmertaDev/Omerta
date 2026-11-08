@@ -239,6 +239,9 @@ function composedHistoricalHelperSource(file, input) {
 function currentQuestingWorldHelperRecord(file) {
   assert.equal(arguments.length, 1);
   assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');
+  return currentHistoricalHelperRecord(file);
+}
+function currentHistoricalHelperRecord(file) {
   const entry = String(git(['--no-replace-objects', 'ls-tree', '-z', 'HEAD', '--', file]));
   const match = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0]+)\0$/);
   assert(match && match[3] === file, 'Actual qualification helper has a regular Git entry');
@@ -282,8 +285,16 @@ function qualifyCurrentQuestingWorldHelper(file, actual) {
   assert.equal(arguments.length, 2);
   assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');
   assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'Exact current helper source declaration required');
+  return qualifyCurrentHistoricalHelper(file, actual, QUESTING_SOURCE.files[file].current, qualifyQuestingSource);
+}
+function qualifyCurrentWebsiteHelper(file, actual) {
+  assert.equal(arguments.length, 2);
+  assert(typeof file === 'string' && file.startsWith('tools/') && Object.hasOwn(SITE_BASICS_SOURCE.files, file),
+    'Only an exact sealed website tool comparison');
+  return qualifyCurrentHistoricalHelper(file, actual, SITE_BASICS_SOURCE.files[file].current, qualifySiteBasicsSource);
+}
+function qualifyCurrentHistoricalHelper(file, actual, pin, qualify) {
   assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());
-  const pin = QUESTING_SOURCE.files[file].current;
   assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');
   assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\t' + file, 'Actual helper index equals its complete HEAD identity');
   assert.equal(actual.regular, true); assert.equal(actual.symbolic, false);
@@ -295,10 +306,18 @@ function qualifyCurrentQuestingWorldHelper(file, actual) {
   assert(actual.physical.equals(actual.committed) || actual.physical.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
     'Actual regular helper physical bytes equal complete HEAD in LF or uniform CRLF');
   // This is a source comparison proof only. Its text never selects an executing module.
-  const proof = qualifyQuestingSource(file, actual.committed);
+  const proof = qualify(file, actual.committed);
   assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,
     proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
   return proof;
+}
+function websiteHistoricalHelperComparison(file, input) {
+  assert.equal(arguments.length, 2);
+  if (typeof file !== 'string' || !file.startsWith('tools/') || !Object.hasOwn(SITE_BASICS_SOURCE.files, file)) return input;
+  const actual = currentHistoricalHelperRecord(file), proof = qualifyCurrentWebsiteHelper(file, actual);
+  const raw = uniformHistoricalInput(file, input);
+  // Admission checks the complete current helper first. Only the archived body executes.
+  return canonical(raw) === actual.committed.toString('utf8') ? proof.baselineText : raw;
 }
 function questingWorldHelperComparison(file, input) {
   assert.equal(arguments.length, 2);
@@ -477,6 +496,7 @@ export async function executeHistoricalSourceFixture() {
 
 async function rejectCurrentNpcRules() {
   loadInventories();
+  rejectWebsiteHistoricalHelperSources();
   rejectComposedHistoricalHelperSources();
   rejectCityActivityWorldHelperSources();
   rejectQuestingWorldHelperSources();
@@ -679,6 +699,52 @@ function rejectCurrentCombinedSiteSources() {
   }
   console.log(JSON.stringify({ phase: 'CURRENT_SITE_COMBINED_PHYSICAL_CONTROLS', domains: combinedSiteComparisonFiles.length,
     positives, refusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
+}
+function rejectWebsiteHistoricalHelperSources() {
+  let positives = 0, refusals = 0;
+  for (const file of ['tools/rc1-intel-source-compatibility.js', 'tools/rc1-world-duration-evidence.js']) {
+    const actual = currentHistoricalHelperRecord(file), frozen = blob(file, release);
+    const current = actual.committed.toString('utf8'), pin = SITE_BASICS_SOURCE.files[file].current;
+    for (const physical of [actual.committed, Buffer.from(current.replaceAll('\n', '\r\n'))]) {
+      const proof = qualifyCurrentWebsiteHelper(file, { ...actual, physical });
+      assert.equal(proof.baselineText, String(frozen));
+      const comparison = websiteHistoricalHelperComparison(file, physical);
+      assert.equal(comparison, String(frozen));
+      assert.equal(blobHash(Buffer.from(comparison)), release.get(file));
+      assert.equal(composedHistoricalHelperSource(file, economyHardeningSourceBaseline(file, comparison)), null,
+        'The unchanged frozen fallback selects the independently archived Buffer');
+      positives++;
+    }
+    for (const supplied of [String(frozen), String(frozen).replaceAll('\n', '\r\n')]) {
+      assert.strictEqual(websiteHistoricalHelperComparison(file, supplied), supplied); positives++;
+    }
+    const stale = { head: { mode: pin.mode, blob: release.get(file) },
+      index: pin.mode + ' ' + release.get(file) + ' 0\t' + file, committed: frozen, physical: frozen,
+      regular: true, symbolic: false };
+    const changed = [stale, { ...actual, regular: false }, { ...actual, symbolic: true },
+      { ...actual, head: { ...actual.head, mode: pin.mode === '100644' ? '100755' : '100644' } },
+      { ...actual, head: { ...actual.head, blob: '0'.repeat(40) } }, { ...actual, index: '' },
+      { ...actual, index: actual.index.replace(' 0\t', ' 2\t') },
+      { ...actual, committed: frozen }, { ...actual, physical: frozen },
+      { ...actual, committed: Buffer.concat([actual.committed, Buffer.from([255])]) },
+      { ...actual, physical: actual.committed.subarray(1) },
+      { ...actual, physical: Buffer.concat([actual.committed, Buffer.from('\n')]) },
+      { ...actual, physical: Buffer.from(current.replace('\n', '\r\n')) }];
+    for (const value of changed) { assert.throws(() => qualifyCurrentWebsiteHelper(file, value)); refusals++; }
+    for (const supplied of [current + '\n// unreviewed website helper\n', current.slice(1), '\ufeff' + current, current + '\0']) {
+      assert.strictEqual(websiteHistoricalHelperComparison(file, supplied), supplied,
+        'Unknown helper bytes are never manufactured into an archived implementation');
+      assert.notEqual(sha256(supplied), sha256(frozen)); refusals++;
+    }
+    assert.throws(() => websiteHistoricalHelperComparison(file, current.replace('\n', '\r\n'))); refusals++;
+    assert.throws(() => qualifyCurrentWebsiteHelper(file, actual, {})); refusals++;
+    assert.throws(() => websiteHistoricalHelperComparison(file, current, {})); refusals++;
+    for (const name of ['../' + file, 'src/worker.js', '__proto__']) {
+      assert.throws(() => qualifyCurrentWebsiteHelper(name, actual)); refusals++;
+    }
+  }
+  console.log(JSON.stringify({ phase: 'WEBSITE_HISTORICAL_HELPER_COMPARISON_CONTROLS', positives, refusals,
+    sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
 }
 function rejectHistoricalApplicationSources() {
   rejectCurrentCombinedSiteSources();
@@ -884,7 +950,7 @@ if (cold) {
         assert.equal(sha256(source), spec.sha256, 'Current fixture helper source changed');
         return { ...nextLoad(url, context), source };
       }
-      const raw = economyHardeningSourceBaseline(file, String(originalRead(path.join(root, file)))), selected = composedHistoricalHelperSource(file, raw);
+      const raw = economyHardeningSourceBaseline(file, websiteHistoricalHelperComparison(file, String(originalRead(path.join(root, file))))), selected = composedHistoricalHelperSource(file, raw);
       if (selected) return { ...nextLoad(url, context), source: selected };
       const frozen = blob(file, release), reviewed = canonical(raw);
       assert.equal(sha256(reviewed), sha256(frozen), 'Reviewed tool implementation changed: ' + file);
