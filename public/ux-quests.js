@@ -456,7 +456,11 @@
       if (error) { const alert = el('p', 'quest-error', error); alert.setAttribute('role', 'alert'); nodes.push(alert); }
       if (loading && !(view === 'cases' ? board : view === 'community' ? workshop : legacy)) nodes.push(el('p', 'quest-muted', 'Opening the file…'));
       else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());
-      root.replaceChildren(...nodes); root.setAttribute('aria-busy', String(loading || busy));
+      root.replaceChildren(...nodes);
+      // A pending mutation replaces the form. Prevent edits from focusing that disabled-submit
+      // copy, so the focus-preserving repaint can restore enabled controls when the reply arrives.
+      if (busy) root.querySelectorAll('input,textarea,select').forEach(control => { control.disabled = true; });
+      root.setAttribute('aria-busy', String(loading || busy));
       document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));
     }
     function observe(path, body) {

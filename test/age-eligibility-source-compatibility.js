@@ -44,8 +44,11 @@ const qualifyPhysical = ({ file, committedRaw, treeEntry, indexEntry, physicalRa
   assert.equal(sha(normalized), sha(committed));
   return physical;
 };
-const comparisonInput = (file, input) => file === 'src/server.js'
-  ? businessDeskHistoricalInput(file, contractReleaseDeskInput(file, questingHistoricalInput(file, input))) : input;
+const comparisonInput = (file, input) => {
+  const reviewed = questingHistoricalInput(file, input);
+  return file === 'src/server.js'
+    ? businessDeskHistoricalInput(file, contractReleaseDeskInput(file, reviewed)) : reviewed;
+};
 const inverseHunks = diff => {
   const inverses = []; let hunk = null;
   for (const line of diff.split('\n')) {
@@ -75,6 +78,11 @@ for (const file of files) {
   actualInputs.set(file, actual);
   const physical = qualifyPhysical(actual);
   assert.equal(comparisonInput(file, physical).replaceAll('\r\n', '\n'), current, 'Physical merged age policy remains exact: ' + file);
+  if (file === 'src/legal.js' || file === 'test/legal-security.js') {
+    const unreviewed = physical + '\n// unreviewed policy change\n';
+    assert.equal(comparisonInput(file, unreviewed), unreviewed, 'Unreviewed policy bytes cannot inherit a historical source view');
+    refusals++;
+  }
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses) && pin.inverses.every(Object.isFrozen));
   assert.equal(pin.contextLines, 3); assert.equal(pin.currentSha256, sha(current)); assert.equal(pin.currentBlob, blob(current));
   assert.equal(pin.currentBytes, Buffer.byteLength(current)); assert.equal(pin.baselineSha256, sha(baseline));

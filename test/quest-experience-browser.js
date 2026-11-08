@@ -59,7 +59,15 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   await page.setContent('<!doctype html><html><body style="margin:0"><main id="tab-desk"></main></body></html>');
   await page.addStyleTag({ content: fs.readFileSync(new URL('../public/ux-quests.css', import.meta.url), 'utf8') });
-  await page.exposeFunction('questApi', async (method, url, player, payload) => { requests.push({ method, url, player, payload }); return api(method, url, browserPlayers[player].token, payload); });
+  let releaseWrongResponse, markWrongResponseReady;
+  const wrongResponseReady = new Promise(resolve => { markWrongResponseReady = resolve; });
+  const pendingWrongResponse = new Promise(resolve => { releaseWrongResponse = resolve; });
+  await page.exposeFunction('questApi', async (method, url, player, payload) => {
+    requests.push({ method, url, player, payload });
+    const reply = await api(method, url, browserPlayers[player].token, payload);
+    if (payload?.submission?.ids?.includes('decoy')) { markWrongResponseReady(); await pendingWrongResponse; }
+    return reply;
+  });
   await page.addScriptTag({ content: fs.readFileSync(new URL('../public/ux-quests.js', import.meta.url), 'utf8') });
   await page.evaluate(({ aliceId, bobId, aliceAccount, bobAccount }) => {
     window.questPlayers = { alice: { id: aliceId, accountId: aliceAccount, loc: 'docks' }, bob: { id: bobId, accountId: bobAccount, loc: 'docks' } };
@@ -81,6 +89,13 @@ try {
   assert.equal(await deduction.getByText('Place arrival before departure.', { exact: true }).count(), 0, 'only the requested hint is revealed');
   await deduction.getByLabel('Unrelated document', { exact: false }).check();
   await deduction.getByRole('button', { name: 'Test this deduction', exact: true }).click();
+  await wrongResponseReady;
+  assert.equal(await deduction.getByLabel('First document', { exact: false }).isDisabled(), true, 'Pending deductions lock editable controls instead of leaving an interactive disabled-submit copy.');
+  assert.equal(await deduction.getByLabel('Unrelated document', { exact: false }).isChecked(), true, 'The submitted evidence draft survives the pending repaint.');
+  releaseWrongResponse();
+  await page.waitForFunction(() => document.querySelector('#ux-quests')?.getAttribute('aria-busy') === 'false');
+  assert.equal(await deduction.getByLabel('First document', { exact: false }).isDisabled(), false, 'The completed response and refetch restore editable evidence controls.');
+  assert.equal(await deduction.getByRole('button', { name: 'Test this deduction', exact: true }).isDisabled(), false, 'A wrong answer can be corrected and resubmitted.');
   await deduction.waitFor();
   assert.equal(await page.getByRole('heading', { name: 'Browser interrogation', exact: true }).count(), 0, 'incorrect structured answer never advances the client');
   for (const kind of kinds) {
