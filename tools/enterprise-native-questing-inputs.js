@@ -4,15 +4,15 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "f10dbb69826fd816b467032529f56097714ec506",
+  "authoredRevision": "7f51b870296e2c2a8461ff6ec324edda3d2fbd1a",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
     {
       "file": ".github/workflows/ci.yml",
       "mode": "100644",
-      "blob": "5c58de842c8905b6b9cf566dd1bb5683270533fb",
-      "sha256": "867e277d67cbab1bd844b6680404ba3372ffd7a604b4a780115fb8fdaba09806"
+      "blob": "338816d38bd0fbc72fb6097b815a31157e55a4a0",
+      "sha256": "21aceab5066f56ac7d0cf8599eaa03b8328ab2d4ce7c8e2a54959d07ec62880c"
     },
     {
       "file": ".github/workflows/forge.yml",
@@ -7613,8 +7613,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/gates.js",
       "mode": "100644",
-      "blob": "3defd01ee988772bcd1686242a31b9f74f30b23c",
-      "sha256": "bd940f0a7710ba1b9fe9309bb16dadd5fe135bfc3a134acf43cefd7d8d07d0e6"
+      "blob": "8f5ca07ccd23ea14667853781bb2565e7504a85d",
+      "sha256": "ed5cb59910c768b4d125a8e4f3a57e02d9bf101d9d983179028f1dd0f6c09f3d"
     },
     {
       "file": "test/graph.js",
@@ -11265,6 +11265,12 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "f87e1028271df6d4f46b68d14e9c4ec6662ec6c1dc8294a3c56a3eeb53787bd5"
     },
     {
+      "file": "tools/ci-foundry.js",
+      "mode": "100644",
+      "blob": "41d7891536f0c9aebe0c2ec4c2822a04cf65ddb5",
+      "sha256": "ff046baf4a970154bfbd4dbd0b6bb162c37dd29afc34c375e5e8f9508b9595c0"
+    },
+    {
       "file": "tools/enterprise-native-contract-release-inputs.js",
       "mode": "100644",
       "blob": "61440c0218f336ca71c7851c7f72ec29862ae23b",
@@ -11303,8 +11309,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "b22df4e35f8054e80ec3d56ebd3e4b6b33c20741",
-      "sha256": "803c809ab07fa6f8b039300ff8d8560b41ee9f0e714d7cb85cb16d45aef12506"
+      "blob": "1a7d7aeecc3ec0dabb1941b1150a403727a8c1bc",
+      "sha256": "73877724223e9ed8ae097f0569aa37de751743666c12f6f23065a733f46e2b3d"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -11325,8 +11331,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": ".github/workflows/ci.yml",
         "mode": "100644",
-        "blob": "5c58de842c8905b6b9cf566dd1bb5683270533fb",
-        "sha256": "867e277d67cbab1bd844b6680404ba3372ffd7a604b4a780115fb8fdaba09806"
+        "blob": "338816d38bd0fbc72fb6097b815a31157e55a4a0",
+        "sha256": "21aceab5066f56ac7d0cf8599eaa03b8328ab2d4ce7c8e2a54959d07ec62880c"
       }
     },
     {
@@ -11685,8 +11691,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/gates.js",
         "mode": "100644",
-        "blob": "3defd01ee988772bcd1686242a31b9f74f30b23c",
-        "sha256": "bd940f0a7710ba1b9fe9309bb16dadd5fe135bfc3a134acf43cefd7d8d07d0e6"
+        "blob": "8f5ca07ccd23ea14667853781bb2565e7504a85d",
+        "sha256": "ed5cb59910c768b4d125a8e4f3a57e02d9bf101d9d983179028f1dd0f6c09f3d"
       }
     },
     {
@@ -12325,6 +12331,12 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "f87e1028271df6d4f46b68d14e9c4ec6662ec6c1dc8294a3c56a3eeb53787bd5"
     },
     {
+      "file": "tools/ci-foundry.js",
+      "mode": "100644",
+      "blob": "41d7891536f0c9aebe0c2ec4c2822a04cf65ddb5",
+      "sha256": "ff046baf4a970154bfbd4dbd0b6bb162c37dd29afc34c375e5e8f9508b9595c0"
+    },
+    {
       "file": "tools/enterprise-native-contract-release-inputs.js",
       "mode": "100644",
       "blob": "61440c0218f336ca71c7851c7f72ec29862ae23b",
@@ -12363,8 +12375,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "b22df4e35f8054e80ec3d56ebd3e4b6b33c20741",
-      "sha256": "803c809ab07fa6f8b039300ff8d8560b41ee9f0e714d7cb85cb16d45aef12506"
+      "blob": "1a7d7aeecc3ec0dabb1941b1150a403727a8c1bc",
+      "sha256": "73877724223e9ed8ae097f0569aa37de751743666c12f6f23065a733f46e2b3d"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12374,4 +12386,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "8fa5e92d20388ab56932473c5c63fbc6602b9fbbb504322b28262017b8e2e2ee";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "e04f5666d549fb21bc5d5f31495b73b7de73a1e4d89e49721cfc069617b19ab5";
