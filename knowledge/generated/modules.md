@@ -286,7 +286,7 @@
 | [src/genesisrpc.js](../../src/genesisrpc.js) | 10 | platform-core | 1 / 4 | 0 | 0 | 1 |
 | [src/goodsmarket.js](../../src/goodsmarket.js) | 98 | platform-core | 2 / 13 | 0 | 3 | 5 |
 | [src/goodsquote.js](../../src/goodsquote.js) | 56 | platform-core | 1 / 13 | 0 | 0 | 5 |
-| [src/growth.js](../../src/growth.js) | 1304 | engagement-growth | 5 / 21 | 16 | 21 | 8 |
+| [src/growth.js](../../src/growth.js) | 1304 | engagement-growth | 5 / 22 | 16 | 21 | 8 |
 | [src/heist-readiness.js](../../src/heist-readiness.js) | 16 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/heists.js](../../src/heists.js) | 590 | social-combat | 4 / 9 | 10 | 10 | 3 |
 | [src/home.js](../../src/home.js) | 55 | engagement-growth | 13 / 3 | 1 | 0 | 1 |
