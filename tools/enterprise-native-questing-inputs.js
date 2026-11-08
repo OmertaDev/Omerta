@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "2684420ddd46e192ff8e4a1426d4ef59a9931100",
+  "authoredRevision": "bb0d88108789fae99e712c33024be09050937450",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11291,8 +11291,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/enterprise-native-questing.js",
       "mode": "100644",
-      "blob": "7fa9a70562273b8575b30f33c85f873136632f0c",
-      "sha256": "104bf57c1f7d4bfec1d4491c9fcd7ad8cbed6b018723c7dc7249abf8cd3fb882"
+      "blob": "93991a6444e0f58eb6e6a1c0249ead248415d6ef",
+      "sha256": "76860a00443a23916ebab3263c9b09ab1883d040d498b70da36a0457b7c38a4d"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -11321,8 +11321,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "c7f41454d41ffd060f2d97b0518a70e1cace2cd0",
-      "sha256": "808cf0baf1db13e968145b371218656ff173dd7d34aa02ea1c1d56ea61c4328d"
+      "blob": "04ecb4031979841ff309d38e54e1b5890a7200b4",
+      "sha256": "cce011bf9e59b6cbe8483fdf5eb3c62dd3e9ecc9db183b6bea2b3fe69e959a42"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12609,8 +12609,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/enterprise-native-questing.js",
       "mode": "100644",
-      "blob": "7fa9a70562273b8575b30f33c85f873136632f0c",
-      "sha256": "104bf57c1f7d4bfec1d4491c9fcd7ad8cbed6b018723c7dc7249abf8cd3fb882"
+      "blob": "93991a6444e0f58eb6e6a1c0249ead248415d6ef",
+      "sha256": "76860a00443a23916ebab3263c9b09ab1883d040d498b70da36a0457b7c38a4d"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -12639,8 +12639,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/site-basics-source-data.js",
       "mode": "100644",
-      "blob": "c7f41454d41ffd060f2d97b0518a70e1cace2cd0",
-      "sha256": "808cf0baf1db13e968145b371218656ff173dd7d34aa02ea1c1d56ea61c4328d"
+      "blob": "04ecb4031979841ff309d38e54e1b5890a7200b4",
+      "sha256": "cce011bf9e59b6cbe8483fdf5eb3c62dd3e9ecc9db183b6bea2b3fe69e959a42"
     },
     {
       "file": "tools/site-basics-source-transfer.js",
@@ -12650,4 +12650,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "711cef9b81f6eb290a171a8b3319aeb9cd52de8ca34f35265956383a6bbd179b";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "fa20c2c00c2a1deb0636e3618045c2c8c5cdb333715ce4a6dd001ceb2b8c9054";
