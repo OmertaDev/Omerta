@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"2423e284-589b-4bb2-9717-283547a8d0f8"}
+{"component":"player-command","phase":"authorization","correlationId":"2423e284-589b-4bb2-9717-283547a8d0f8","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"2423e284-589b-4bb2-9717-283547a8d0f8","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"2423e284-589b-4bb2-9717-283547a8d0f8","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"2bc4ae2f-4857-4cfa-a8d5-dcf7479ced94"}
+{"component":"player-command","phase":"authorization","correlationId":"2bc4ae2f-4857-4cfa-a8d5-dcf7479ced94","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"2bc4ae2f-4857-4cfa-a8d5-dcf7479ced94","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"2bc4ae2f-4857-4cfa-a8d5-dcf7479ced94","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"3b36245c-a401-4027-bb71-ac563477b9fe"}
+{"component":"player-command","phase":"authorization","correlationId":"3b36245c-a401-4027-bb71-ac563477b9fe","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"3b36245c-a401-4027-bb71-ac563477b9fe","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"3b36245c-a401-4027-bb71-ac563477b9fe","statusCode":409,"elapsedMs":1}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-2UPwGt

@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"c4e4a001-43ff-418c-a923-497e70c68a5b"}
+{"component":"player-command","phase":"authorization","correlationId":"c4e4a001-43ff-418c-a923-497e70c68a5b","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"c4e4a001-43ff-418c-a923-497e70c68a5b","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"c4e4a001-43ff-418c-a923-497e70c68a5b","statusCode":409,"elapsedMs":4}
+{"component":"player-command","phase":"request","correlationId":"02c17959-2d0b-4338-9e17-1f133e2eb50a"}
+{"component":"player-command","phase":"authorization","correlationId":"02c17959-2d0b-4338-9e17-1f133e2eb50a","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"02c17959-2d0b-4338-9e17-1f133e2eb50a","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"02c17959-2d0b-4338-9e17-1f133e2eb50a","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"8c0e8bb4-20a5-4271-a71e-145f41b38270"}
+{"component":"player-command","phase":"authorization","correlationId":"8c0e8bb4-20a5-4271-a71e-145f41b38270","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"8c0e8bb4-20a5-4271-a71e-145f41b38270","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"8c0e8bb4-20a5-4271-a71e-145f41b38270","statusCode":409,"elapsedMs":2}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-54DhlF

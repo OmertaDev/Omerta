@@ -1,6 +1,6 @@
 # Quest quality release review
 
-Scope: the fifty improvements in [the dependency graph](quest-quality-workgraph.json), ten authored cases, player controls, author tools, and the authenticated quality mutation. Reviewed application source: `7f24213db511dd5d84c3eb763d2666e04aacbb18`, including the website integration from `7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9`. Source-only comparison and native-admission metadata are separate from application execution evidence. Production deployment requires the full current [PR #322 checks](https://github.com/OmertaDev/Omerta/pull/322/checks).
+Scope: the fifty improvements in [the dependency graph](quest-quality-workgraph.json), ten authored cases, player controls, author tools, and the authenticated quality mutation. Reviewed application source: `488d21f3e22a7f9e75bd997025d355a116acb13c`, including the website integration from `7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9`. Source-only comparison and native-admission metadata are separate from application execution evidence. Production deployment requires the full current [PR #322 checks](https://github.com/OmertaDev/Omerta/pull/322/checks).
 
 ## Authority and invariants
 
@@ -18,6 +18,8 @@ Scope: the fifty improvements in [the dependency graph](quest-quality-workgraph.
 | QQUAL-R2 | Ordinary spoiler-marked evidence could remain hidden until the debrief and become unusable. | Separate prerequisite revelation from individual finale withholding; actual clue/proof completion regression. |
 | QQUAL-R3 | Author/public clause bounds disagreed. | Align the 128-clause public contract; author refusal and typed response checks. |
 | QQUAL-R4 | Legal fieldwork/disclosure combinations could exceed executable report bounds. | Validate aggregate limits and align participant/evidence/delegation bounds; author refusal tests. |
+| QQUAL-R5 | An inherited object key could be mistaken for an existing mandate. | Require own dictionary entries and use safe computed-key writes; actual runtime refusals for inherited and unknown keys. |
+| QQUAL-R6 | A proof verifier selected by a variant could miss its known-evidence context. | Resolve the issued variant's verifier before authority checks; a full variant playthrough without quality metadata completes. |
 | QQUAL-U1 | A mandate picker could change after its intent was reviewed. | Capture an immutable payload and invalidate changed previews; real browser verifies no POST until re-review. |
 | QQUAL-U2 | A slow save could discard newer local draft/impression edits. | Preserve newer text and update its saved baseline; paused actual requests, full repaint, focus and undo regressions. |
 | QQUAL-A1 | Schema branch validation could strip another operation's valid fields. | One closed top-level object with discriminated operation constraints; actual HTTP save and strict type/extra-field regressions. |

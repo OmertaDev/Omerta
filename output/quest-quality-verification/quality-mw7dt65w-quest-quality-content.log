@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"phase":"QUEST_QUALITY_AUTHORED_RUNTIME","packsPlayed":10,"independentProofChains":2,"earlyOptionalLeadsSkipped":true,"adversarialMotivations":3,"actualFieldworkAndDisclosure":true,"publicSpotlightVolunteer":true,"oldVersionUntouched":true,"economicTransactions":0,"evidenceType":"automated-runtime-test","playerResearchConducted":false}

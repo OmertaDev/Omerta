@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"db5e6367-2793-4c3d-aa21-b323572f84d2"}
+{"component":"player-command","phase":"authorization","correlationId":"db5e6367-2793-4c3d-aa21-b323572f84d2","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"db5e6367-2793-4c3d-aa21-b323572f84d2","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"db5e6367-2793-4c3d-aa21-b323572f84d2","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"00ff4c7b-2e41-4fa6-be19-ced8b068444c"}
+{"component":"player-command","phase":"authorization","correlationId":"00ff4c7b-2e41-4fa6-be19-ced8b068444c","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"00ff4c7b-2e41-4fa6-be19-ced8b068444c","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"00ff4c7b-2e41-4fa6-be19-ced8b068444c","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"917c98ca-8aed-4ef3-bdec-30f5305851d9"}
+{"component":"player-command","phase":"authorization","correlationId":"917c98ca-8aed-4ef3-bdec-30f5305851d9","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"917c98ca-8aed-4ef3-bdec-30f5305851d9","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"917c98ca-8aed-4ef3-bdec-30f5305851d9","statusCode":409,"elapsedMs":1}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-PmodlB

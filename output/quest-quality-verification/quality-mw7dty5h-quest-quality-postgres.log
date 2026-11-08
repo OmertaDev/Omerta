@@ -1,0 +1,1 @@
+{"phase":"QUEST_QUALITY_NATIVE","nativePostgres":true,"postgres":"18.4","backendPids":[50004,41248],"privateCasRace":true,"crossActorPrivateWrites":true,"publicProposalRace":true,"safeExitAndReplacement":true,"independentConnections":true,"pgMemFallback":false,"economicTransactions":0}
