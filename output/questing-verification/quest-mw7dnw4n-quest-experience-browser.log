@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"77a503f2-8e44-436a-a509-71819ecb6cb8"}
+{"component":"player-command","phase":"authorization","correlationId":"77a503f2-8e44-436a-a509-71819ecb6cb8","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"77a503f2-8e44-436a-a509-71819ecb6cb8","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"77a503f2-8e44-436a-a509-71819ecb6cb8","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"464c35a4-ca76-4816-89f0-81f140dee7fa"}
+{"component":"player-command","phase":"authorization","correlationId":"464c35a4-ca76-4816-89f0-81f140dee7fa","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"464c35a4-ca76-4816-89f0-81f140dee7fa","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"464c35a4-ca76-4816-89f0-81f140dee7fa","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"59f46851-9763-48bf-a24f-19a427353525"}
+{"component":"player-command","phase":"authorization","correlationId":"59f46851-9763-48bf-a24f-19a427353525","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"59f46851-9763-48bf-a24f-19a427353525","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"59f46851-9763-48bf-a24f-19a427353525","statusCode":409,"elapsedMs":2}
+Quest browser verification passed: real case open/start, seven structured interactions, hints, wrong-answer refusal, ordered/mapping controls, checkpoints, private notes, claim, account isolation, community author/publish/solve/rate, private agendas, shared handoffs, active role replacement, rival invitation consent, history, personal district aftermath/public/quiet/epilogue/revisit, production shell/assets/actions, full reload with synced theory, and 390px layout. Screenshots: C:\Users\Jorge\AppData\Local\Temp\omerta-quests-PhinFk
