@@ -4,11 +4,10 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { nativeEthHistoricalInput } from '../tools/native-eth-source-transfer.js';
 import { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';
+import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../tools/site-basics-source-transfer.js';
 import { contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';
 import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalInput,
   questingHistoricalEntry } from '../tools/questing-source-transfer.js';
-import { SITE_BASICS_SOURCE, qualifySiteBasicsSource, siteBasicsHistoricalInput,
-  siteBasicsHistoricalEntry } from '../tools/site-basics-source-transfer.js';
 import {
   GENESIS_FEE_READINESS_BASE_REVISION, GENESIS_FEE_READINESS_REVIEWED_REVISION,
   GENESIS_FEE_READINESS_DOMAINS, GENESIS_FEE_READINESS_SOURCE_TRANSFER,
@@ -173,6 +172,7 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
     assertGenesisHistoricalReaderSourceTransfer, genesisHistoricalReaderHistoricalInput } = await import('../tools/genesis-historical-reader-source-transfer.js');
   const { economyHardeningSourceBaseline } = await import('../tools/economy-hardening-source-transfer.js');
   const fixture = binding.file;
+  const site = Object.hasOwn(SITE_BASICS_SOURCE.files, fixture) ? SITE_BASICS_SOURCE.files[fixture] : null;
   const actualEntry = git('ls-tree', 'HEAD', '--', fixture).trim();
   const actual = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
   assert(actual && actual[3] === fixture, 'Regular actual fixture source qualifies first');
@@ -187,42 +187,24 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   assert(physical === head || physical === head.replaceAll('\n', '\r\n'),
     'Whole actual fixture LF/CRLF bytes qualify before projection');
   assert.deepEqual({ mode: actual[1], blob: actual[2], sha256: sha(head), bytes: Buffer.byteLength(head) },
-    SITE_BASICS_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact website pin');
-  function websiteFixtureComparison(file, input, tree, index) {
-    assert.equal(arguments.length, 4, 'Only the closed website fixture byte/tree/index comparison is accepted');
-    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');
-    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');
-    const current = SITE_BASICS_SOURCE.files[file].current;
-    assert.equal(tree, current.mode + ' blob ' + current.blob + '\t' + file);
-    assert.equal(index, current.mode + ' ' + current.blob + ' 0\t' + file);
-    const proof = qualifySiteBasicsSource(file, input);
-    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,
-      proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
-    const source = siteBasicsHistoricalInput(file, input), text = source.toString('utf8');
-    assert(Buffer.isBuffer(source) && Buffer.from(text).equals(source));
-    assert.equal(text, proof.baselineText);
-    const pin = QUESTING_SOURCE.files[file].current;
-    assert.deepEqual({ mode: current.mode, blob: gitBlob(text), sha256: sha(text), bytes: Buffer.byteLength(text) }, pin,
-      'The approved website comparison retains the complete frozen questing source');
-    const comparisonTree = siteBasicsHistoricalEntry(file, tree, 'tree');
-    const comparisonIndex = siteBasicsHistoricalEntry(file, index, 'index');
-    assert.equal(comparisonTree, pin.mode + ' blob ' + pin.blob + '\t' + file);
-    assert.equal(comparisonIndex, pin.mode + ' ' + pin.blob + ' 0\t' + file);
-    return Object.freeze({ source, tree: comparisonTree, index: comparisonIndex, proof });
-  }
+    site?.current || QUESTING_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact current source pin');
   function fixtureComparison(file, input, tree, index) {
     assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');
     assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');
     assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');
-    const website = websiteFixtureComparison(file, input, tree, index);
-    const proof = qualifyQuestingSource(file, website.source);
+    assert.equal(tree, actualEntry, 'Complete actual fixture HEAD qualifies before historical comparison');
+    assert.equal(index, actualIndex, 'Complete actual fixture index qualifies before historical comparison');
+    const siteProof = site ? qualifySiteBasicsSource(file, input) : null;
+    if (siteProof) assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial,
+      siteProof.activation, siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);
+    const proof = qualifyQuestingSource(file, siteProof ? Buffer.from(siteProof.baselineText) : input);
     assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,
       proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);
-    const source = questingHistoricalInput(file, website.source), text = source.toString('utf8');
+    const source = questingHistoricalInput(file, input), text = source.toString('utf8');
     assert(Buffer.isBuffer(source) && Buffer.from(text).equals(source));
     assert.equal(text, proof.baselineText);
-    const comparisonTree = questingHistoricalEntry(file, website.tree, 'tree');
-    const comparisonIndex = questingHistoricalEntry(file, website.index, 'index');
+    const comparisonTree = questingHistoricalEntry(file, tree, 'tree');
+    const comparisonIndex = questingHistoricalEntry(file, index, 'index');
     const pin = { file, mode: QUESTING_SOURCE.files[file].baseline.mode, blob: gitBlob(text), sha256: sha(text),
       bytes: Buffer.byteLength(text), rawSha256: { lf: sha(text), crlf: sha(text.replaceAll('\n', '\r\n')) } };
     assert.equal(comparisonTree, pin.mode + ' blob ' + pin.blob + '\t' + file);
@@ -314,6 +296,14 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
     comparison.source, head, null]) {
     assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;
   }
+  if (site) {
+    const stale = Buffer.from(git('show', SITE_BASICS_SOURCE.predecessor + ':' + fixture));
+    assert.notEqual(stale.toString('utf8'), head, 'The stale website fixture differs from actual HEAD');
+    assert.throws(() => fixtureComparison(fixture, stale, actualEntry, actualIndex)); currentRefusals++;
+    assert.throws(() => fixtureComparison(fixture, stale,
+      site.baseline.mode + ' blob ' + site.baseline.blob + '\t' + fixture,
+      site.baseline.mode + ' ' + site.baseline.blob + ' 0\t' + fixture)); currentRefusals++;
+  }
   for (const kind of ['tree', 'index']) {
     const entry = kind === 'tree' ? actualEntry : actualIndex;
     for (const changed of [entry.replace(actual[2], '0'.repeat(40)), entry.replace(actual[1], '100755'),
@@ -328,42 +318,7 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;
   assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;
   assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;
-  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);
+  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30 + (site ? 2 : 0));
   console.log(JSON.stringify({ phase: 'GENESIS_QUESTING_FIXTURE_COMPARISON_CONTROLS', currentPositives,
     currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
-  let websitePositives = 0, websiteRefusals = 0;
-  for (const supplied of [Buffer.from(head), Buffer.from(head.replaceAll('\n', '\r\n'))]) {
-    const view = websiteFixtureComparison(fixture, supplied, actualEntry, actualIndex);
-    assert.equal(view.source.toString('utf8'), git('show', SITE_BASICS_SOURCE.predecessor + ':' + fixture));
-    assert.equal(qualifyQuestingSource(fixture, view.source).baselineText, comparison.source.toString('utf8'));
-    websitePositives++;
-  }
-  const stale = websiteFixtureComparison(fixture, raw, actualEntry, actualIndex);
-  const missingBridge = head.replace('  rejectWebsiteHistoricalHelperSources();\n', '');
-  assert.notEqual(missingBridge, head, 'The current website bridge removal control changes actual source');
-  for (const supplied of [stale.source, comparison.source, Buffer.from(missingBridge),
-    Buffer.from(head + '\n// unrelated website fixture edit\n'), Buffer.from(head.slice(1)),
-    Buffer.from('\ufeff' + head), Buffer.from(head + '\0'), Buffer.from(head.replace('\n', '\r\n')),
-    Buffer.from(head.replace('\n', '\r')), Buffer.from([255]), head, null, {}]) {
-    assert.throws(() => websiteFixtureComparison(fixture, supplied, actualEntry, actualIndex)); websiteRefusals++;
-  }
-  for (const kind of ['tree', 'index']) {
-    const entry = kind === 'tree' ? actualEntry : actualIndex;
-    for (const changed of [stale[kind], entry.replace(actual[2], '0'.repeat(40)),
-      entry.replace(actual[1], '100755'), entry.replace(actual[1], '120000'), entry + '\n',
-      entry.replace(fixture, 'test/lib/other.js')]) {
-      assert.notEqual(changed, entry);
-      assert.throws(() => websiteFixtureComparison(fixture, raw, kind === 'tree' ? changed : actualEntry,
-        kind === 'index' ? changed : actualIndex)); websiteRefusals++;
-    }
-  }
-  for (const file of ['src/server.js', './' + fixture, 'test/lib/../lib/rc1-historical-source-fixture.js', '__proto__']) {
-    assert.throws(() => websiteFixtureComparison(file, raw, actualEntry, actualIndex)); websiteRefusals++;
-  }
-  assert.throws(() => websiteFixtureComparison(fixture, raw, actualEntry)); websiteRefusals++;
-  assert.throws(() => websiteFixtureComparison(fixture, raw, actualEntry, actualIndex, {})); websiteRefusals++;
-  assert.throws(() => { stale.proof.native = true; }, TypeError); websiteRefusals++;
-  assert.equal(websitePositives, 2); assert.equal(websiteRefusals, 32);
-  console.log(JSON.stringify({ phase: 'GENESIS_WEBSITE_FIXTURE_COMPARISON_CONTROLS', websitePositives,
-    websiteRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));
 }
