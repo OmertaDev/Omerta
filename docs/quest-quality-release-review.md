@@ -4,7 +4,7 @@ Scope: the fifty improvements in [the dependency graph](quest-quality-workgraph.
 
 ## Authority and invariants
 
-Validation-source integration also retains the upstream worker-reader repairs at `d33bfe6aabdaa82513ac98996a0e0d065180fa71`. The game implementation hashes remain unchanged by that integration.
+Validation-source integration retains the upstream worker-reader repairs at `d33bfe6aabdaa82513ac98996a0e0d065180fa71` and the frozen fixture Git-blob diff correction at `e0752e881aa5dc9cd867f9f4fb9752b6a6e2abaf`. The game implementation hashes remain unchanged by those integrations. The current source-only comparison uses the latter as its predecessor; historical proof pins remain unchanged.
 
 - Accounts, membership, roles, scope and issued actions come from the server. A delegation narrows existing authority and requires current participants' acknowledgement.
 - Private drafts, motives, study responses and unopened debriefs remain account-specific. Private saves use a separate revision and do not change public progress, attempts, suspicion or NPC knowledge.

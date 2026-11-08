@@ -320,6 +320,7 @@ for (const [file, pin] of Object.entries(CONTINUOUS_CITY_FIXTURE_DOMAINS)) {
   const actual = lf(classicInterfaceHistoricalInput(file, integratedHistoricalInput(file, questingHistoricalInput(file, fs.readFileSync(file, 'utf8'))))), baseline = git('show', CONTINUOUS_CITY_FIXTURE_PREDECESSOR + ':' + file);
   assert.equal(git('ls-files', '--stage', '--', file).split(' ')[0], pin.currentMode);
   assert.equal(git('ls-tree', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, '--', file).split(' ')[0], pin.baselineMode);
+  // verify binds the complete normalized fixture to these frozen blobs before comparing their real Git diff.
   verify(file, pin, actual, baseline, qualifyContinuousCityFixtureSource,
     file === 'test/lib/rc1-historical-source-fixture.js'
       ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.revision, '--', file)
@@ -327,7 +328,7 @@ for (const [file, pin] of Object.entries(CONTINUOUS_CITY_FIXTURE_DOMAINS)) {
         ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CLASSIC_INTERFACE_OVER_F92.targetRevision, '--', file)
         : Object.hasOwn(ECONOMY_HARDENING_BINDING_DOMAINS, file)
           ? git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, ECONOMY_HARDENING_SOURCE_REVISION, '--', file)
-          : git('diff', '--no-ext-diff', '--unified=3', CONTINUOUS_CITY_FIXTURE_PREDECESSOR, CONTINUOUS_CITY_SOURCE_REVISION, '--', file));
+          : git('diff', '--no-ext-diff', '--unified=3', pin.baselineBlob, pin.currentBlob));
   if (hasEnterpriseOverRootSource(file)) { assert.throws(() => enterpriseOverRootSourceBaseline(file, actual)); refusals++; }
 }
 for (const file of ['__proto__', 'constructor', 'toString', '../package.json', 'src/unknown.js', 'schema.sql.extra']) {
