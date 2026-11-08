@@ -19,7 +19,7 @@ const regular = (revision, file) => {
   return { text, pin: { mode: match[1], blob: match[2], sha256: sha(text), bytes: Buffer.byteLength(text) } };
 };
 const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql' || file === 'render.yaml'
-  || file === '.github/workflows/ci.yml' || /^(?:src|test|tools|public)\//.test(file);
+  || file === 'omerta-mcp/README.md' || file === '.github/workflows/ci.yml' || /^(?:src|test|tools|public)\//.test(file);
 function inverses(current, diff) {
   const rows = []; let row;
   const starts = [0]; for (let at = 0; at < current.length; at++) if (current[at] === '\n') starts.push(at + 1);
