@@ -1,0 +1,623 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-field-notes",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-field-notes",
+    "entryNodeId": "quality-field-notes",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-field-notes",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-field-notes-memento",
+      "case-closed",
+      "known-order",
+      "registry-report",
+      "quay-report",
+      "clerk-reaction",
+      "porter-reaction",
+      "review",
+      "review-answer",
+      "route",
+      "route-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing"
+    ],
+    "actionNodeIds": [
+      "review",
+      "route",
+      "closing"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-field-notes",
+      "type": "mystery",
+      "payload": {
+        "title": "Questions for a Fieldworker",
+        "summary": "Investigator Ina can answer a bounded question by checking a registry or observing the quay. You decide what to commission, inspect her report and explicitly choose which verified facts reach the clerk or the porter.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "Investigator Ina can answer a bounded question by checking a registry or observing the quay. You decide what to commission, inspect her report and explicitly choose which verified facts reach the clerk or the porter.",
+          "reasoning": "Commission fieldwork and route known evidence",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "Which method supports a registry claim, and who needs which finding?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "A registry-entry claim requires a registry source; physical observation establishes only what was observed.",
+              "evidenceNodeId": "known-order"
+            }
+          ],
+          "identity": {
+            "activity": "Commission fieldwork and route known evidence",
+            "emotionalTurn": "Delegation becomes accountable rather than automatic"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "review",
+              "text": "The question is whether P-4 appears in the registry. What kind of report could establish that?",
+              "nodeId": "review"
+            },
+            {
+              "id": "route",
+              "text": "Which instruction keeps each recipient’s new knowledge within the evidence?",
+              "nodeId": "route"
+            },
+            {
+              "id": "closing",
+              "text": "Your file separates the question commissioned, the method used, the report received and the evidence deliberately disclosed.",
+              "nodeId": "closing"
+            }
+          ],
+          "npcs": [
+            {
+              "id": "ina",
+              "label": "Ina",
+              "knowledge": [
+                {
+                  "evidenceNodeId": "registry-report",
+                  "sourceNodeId": "quality-field-notes"
+                },
+                {
+                  "evidenceNodeId": "quay-report",
+                  "sourceNodeId": "quality-field-notes"
+                }
+              ],
+              "voice": "Reports method, interval and limitation before interpretation.",
+              "principles": []
+            },
+            {
+              "id": "clerk",
+              "label": "Registry clerk",
+              "knowledge": [
+                {
+                  "evidenceNodeId": "known-order",
+                  "sourceNodeId": "quality-field-notes"
+                },
+                {
+                  "evidenceNodeId": "clerk-reaction",
+                  "sourceNodeId": "quality-field-notes"
+                }
+              ],
+              "voice": "Uses record identifiers and scope.",
+              "principles": []
+            },
+            {
+              "id": "porter",
+              "label": "Quay porter",
+              "knowledge": [
+                {
+                  "evidenceNodeId": "known-order",
+                  "sourceNodeId": "quality-field-notes"
+                },
+                {
+                  "evidenceNodeId": "porter-reaction",
+                  "sourceNodeId": "quality-field-notes"
+                }
+              ],
+              "voice": "Names observed people, places and actions.",
+              "principles": []
+            }
+          ],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          },
+          "fieldworkAssignments": [
+            {
+              "id": "permit-check",
+              "title": "Ina: check permit P-4",
+              "questions": [
+                {
+                  "id": "registered",
+                  "label": "Was P-4 registered?"
+                },
+                {
+                  "id": "present",
+                  "label": "Was a clinic wagon present?"
+                }
+              ],
+              "methods": [
+                {
+                  "id": "registry",
+                  "label": "Check the dated registry"
+                },
+                {
+                  "id": "observe",
+                  "label": "Observe the quay"
+                }
+              ],
+              "outcomes": [
+                {
+                  "questionId": "registered",
+                  "methodId": "registry",
+                  "report": "P-4 appears in the complete dated register and identifies the clinic wagon.",
+                  "evidenceNodeIds": [
+                    "registry-report"
+                  ]
+                },
+                {
+                  "questionId": "registered",
+                  "methodId": "observe",
+                  "report": "I saw a clinic wagon. Observation cannot establish whether P-4 was registered.",
+                  "evidenceNodeIds": [
+                    "quay-report"
+                  ]
+                },
+                {
+                  "questionId": "present",
+                  "methodId": "registry",
+                  "report": "The registry authorizes a clinic wagon; it does not establish physical presence during the interval.",
+                  "evidenceNodeIds": [
+                    "registry-report"
+                  ]
+                },
+                {
+                  "questionId": "present",
+                  "methodId": "observe",
+                  "report": "I observed a clinic wagon at the quay during the stated interval.",
+                  "evidenceNodeIds": [
+                    "quay-report"
+                  ]
+                }
+              ]
+            }
+          ],
+          "disclosures": [
+            {
+              "evidenceId": "registry-report",
+              "recipients": [
+                {
+                  "npcId": "clerk",
+                  "label": "Tell the registry clerk",
+                  "report": "The clerk records the verified registry finding and reopens the record.",
+                  "revealNodeIds": [
+                    "clerk-reaction"
+                  ]
+                }
+              ]
+            },
+            {
+              "evidenceId": "quay-report",
+              "recipients": [
+                {
+                  "npcId": "porter",
+                  "label": "Tell the quay porter",
+                  "report": "The porter checks the bay while preserving the observation’s limits.",
+                  "revealNodeIds": [
+                    "porter-reaction"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "Questions for a Fieldworker",
+        "summary": "Investigator Ina can answer a bounded question by checking a registry or observing the quay. You decide what to commission, inspect her report and explicitly choose which verified facts reach the clerk or the porter."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-field-notes-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Questions for a Fieldworker: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Questions for a Fieldworker: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-field-notes-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "known-order",
+      "type": "evidence",
+      "payload": {
+        "title": "Known investigation order",
+        "summary": "The order asks whether permit P-4 was entered in the registry, not who currently stands on the quay.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "registry-report",
+      "type": "evidence",
+      "payload": {
+        "title": "Ina’s registry finding",
+        "summary": "Ina checked the complete permit registry for the stated date: P-4 is entered and names the clinic wagon.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "quay-report",
+      "type": "evidence",
+      "payload": {
+        "title": "Ina’s quay observation",
+        "summary": "Ina watched the quay for the stated interval and saw a clinic wagon. Observation alone cannot establish a registry entry.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "clerk-reaction",
+      "type": "evidence",
+      "payload": {
+        "title": "Clerk’s recorded response",
+        "summary": "The clerk’s recorded procedure reopens a wagon record when verified registry evidence is supplied.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "porter-reaction",
+      "type": "evidence",
+      "payload": {
+        "title": "Porter’s recorded response",
+        "summary": "The porter’s stated procedure checks the unloading bay on an attributed observation while keeping authorization separate.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "review",
+      "type": "puzzle",
+      "payload": {
+        "title": "Review the commissioned report",
+        "prompt": "The question is whether P-4 appears in the registry. What kind of report could establish that?",
+        "summary": "The question is whether P-4 appears in the registry. What kind of report could establish that?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "completed_node",
+            "nodeId": "registry-report"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "review-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "register",
+              "label": "A checked registry report"
+            },
+            {
+              "id": "watch",
+              "label": "Seeing a wagon on the quay"
+            },
+            {
+              "id": "guess",
+              "label": "Guessing from the wagon’s color"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "review-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "register"
+        ]
+      }
+    },
+    {
+      "id": "route",
+      "type": "puzzle",
+      "payload": {
+        "title": "Keep observation separate from authorization",
+        "prompt": "Which instruction keeps each recipient’s new knowledge within the evidence?",
+        "summary": "Which instruction keeps each recipient’s new knowledge within the evidence?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          },
+          {
+            "kind": "completed_node",
+            "nodeId": "clerk-reaction"
+          },
+          {
+            "kind": "completed_node",
+            "nodeId": "porter-reaction"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "route-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "bounded",
+              "label": "Give the clerk the registry finding; give the porter the quay observation"
+            },
+            {
+              "id": "invent",
+              "label": "Tell both that watching a wagon proves its permit"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "route-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "bounded"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-field-notes.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-field-notes.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "Your file separates the question commissioned, the method used, the report received and the evidence deliberately disclosed.",
+        "summary": "Your file separates the question commissioned, the method used, the report received and the evidence deliberately disclosed.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-field-notes",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-field-notes",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "review",
+      "type": "REVEALS",
+      "to": "known-order"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "review"
+    },
+    {
+      "from": "review",
+      "type": "UNLOCKS",
+      "to": "route"
+    },
+    {
+      "from": "route",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

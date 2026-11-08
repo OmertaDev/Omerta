@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { questQualityHistoricalInput, questQualityHistoricalEntry } from '../tools/quest-quality-source-transfer.js';
 import { SITE_BASICS_SOURCE as source, qualifySiteBasicsSource,
   siteBasicsHistoricalInput, siteBasicsHistoricalEntry, siteBasicsSourceDataBytes } from '../tools/site-basics-source-transfer.js';
 
@@ -29,14 +30,20 @@ assert.equal(fs.readFileSync(new URL('../tools/site-basics-source-data.js', impo
   siteBasicsSourceDataBytes(source), 'The only self-reference is complete generated data without executable additions');
 let positives = 0, refusals = 0;
 function actual(file, pin) {
-  const text = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);
-  const stat = fs.lstatSync(file), raw = fs.readFileSync(file);
+  const committed = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);
+  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(physical.equals(Buffer.from(committed)) || physical.equals(Buffer.from(committed.replaceAll('\n', '\r\n'))),
+    'Actual whole committed and physical source qualify before historical comparison: ' + file);
+  const actualBlob = createHash('sha1').update('blob ' + Buffer.byteLength(committed) + '\0').update(committed).digest('hex');
+  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), pin.mode + ' blob ' + actualBlob + '\t' + file);
+  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + actualBlob + ' 0\t' + file);
+  const text = questQualityHistoricalInput(file, committed), raw = questQualityHistoricalInput(file, physical);
   assert.equal(text, authored, 'Whole authored source remains the actual committed source: ' + file);
   assert.equal(sha(text), pin.sha256); assert.equal(Buffer.byteLength(text), pin.bytes);
   const entry = pin.mode + ' blob ' + pin.blob + '\t' + file;
-  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), entry);
-  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + pin.blob + ' 0\t' + file);
+  assert.equal(questQualityHistoricalEntry(file, git('ls-tree', 'HEAD', '--', file).trim(), 'tree'), entry);
+  assert.equal(questQualityHistoricalEntry(file, git('ls-files', '--stage', '--', file).trim(), 'index'), pin.mode + ' ' + pin.blob + ' 0\t' + file);
   assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
     'Complete physical UTF-8 source is uniformly LF/CRLF: ' + file);
   return { text, raw, entry };

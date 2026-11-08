@@ -1,4 +1,5 @@
 import { SALE_ATTRIBUTION_CONTRACTS, SALE_ATTRIBUTION_SCHEMAS } from './saleattribution-contracts.js';
+import { QUEST_QUALITY_BODY, QUEST_QUALITY_SCHEMA } from './quest-quality-contracts.js';
 import { MERCHANT_LOYALTY_CONTRACTS, MERCHANT_LOYALTY_SCHEMAS } from './merchantloyalty-contracts.js';
 import { SHOPPING_BASKET_CONTRACTS, SHOPPING_BASKET_SCHEMAS } from './shoppingbasket-contracts.js';
 import { EVENT_MARKET_CONTRACTS, EVENT_MARKET_SCHEMAS } from './eventmarkets-contracts.js';
@@ -890,11 +891,18 @@ const OPERATION_CONTRACTS = {
           properties: {
             ids: { type: 'array', maxItems: 64, items: { type: 'string', minLength: 1, maxLength: 160 } },
             assignments: { type: 'object', maxProperties: 64, additionalProperties: { type: 'string', minLength: 1, maxLength: 160 } },
+            conclusionId: { type: 'string', minLength: 1, maxLength: 160 },
+            evidenceIds: { type: 'array', minItems: 1, maxItems: 64, uniqueItems: true, items: { type: 'string', minLength: 1, maxLength: 160 } },
           },
-          oneOf: [{ required: ['ids'] }, { required: ['assignments'] }],
+          oneOf: [{ required: ['ids'] }, { required: ['assignments'] }, { required: ['conclusionId', 'evidenceIds'] }],
         },
         hint: { type: 'boolean' },
       }, not: { required: ['answer', 'choiceId'] } },
+    responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
+    extraResponses: { 409: CONTENT_STALE_RESPONSE },
+  },
+  'POST /v1/content/instances/:instanceId/quality': {
+    operationId: 'actOnContentQuality', requestSchema: QUEST_QUALITY_BODY,
     responseSchema: { $ref: '#/components/schemas/ContentReceipt' },
     extraResponses: { 409: CONTENT_STALE_RESPONSE },
   },
@@ -1141,8 +1149,10 @@ const AGENT_SCHEMAS = {
     properties: {
       id: { type: 'string', minLength: 1 }, kind: { type: 'string' },
       nodeId: { type: 'string' }, title: { type: 'string' }, prompt: { type: ['string', 'null'] },
-      submissionKind: { type: 'string', enum: ['normalized_exact', 'ordered_ids', 'unordered_ids', 'mapping'] },
+      submissionKind: { type: 'string', enum: ['normalized_exact', 'ordered_ids', 'unordered_ids', 'mapping', 'proof_sets'] },
       interaction: { $ref: '#/components/schemas/ContentInteraction' },
+      spotlight: { type: 'object', additionalProperties: false, required: ['roleId', 'title'],
+        properties: { roleId: { type: 'string' }, title: { type: 'string' } } },
       hints: { type: 'array', maxItems: 8, items: { type: 'string' } },
       hintsRemaining: { type: 'integer', minimum: 0 }, canRequestHint: { type: 'boolean' },
       attempts: { type: 'integer', minimum: 0 }, suspicion: { type: 'integer', minimum: 0 },
@@ -1238,6 +1248,7 @@ const AGENT_SCHEMAS = {
       expectations: { oneOf: [{ $ref: '#/components/schemas/ContentExpectations' }, { type: 'null' }] },
       recap: { $ref: '#/components/schemas/ContentRecap' }, recapText: { type: 'string' },
       suspicion: { type: 'integer', minimum: 0 },
+      quality: QUEST_QUALITY_SCHEMA,
       awards: { type: 'object', additionalProperties: false,
         required: ['pending', 'applied', 'mine'], properties: {
           pending: { type: 'integer', minimum: 0 }, applied: { type: 'integer', minimum: 0 },

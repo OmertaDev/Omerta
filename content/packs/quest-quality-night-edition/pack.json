@@ -1,0 +1,625 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-night-edition",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-night-edition",
+    "entryNodeId": "quality-night-edition",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-night-edition",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-night-edition-memento",
+      "case-closed",
+      "correction",
+      "correction-answer",
+      "ferry-fact",
+      "space-clinic-memory",
+      "space-shelter-memory",
+      "space",
+      "clinic-copy",
+      "clinic-copy-answer",
+      "shelter-copy",
+      "shelter-copy-answer",
+      "interruption",
+      "interruption-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing"
+    ],
+    "actionNodeIds": [
+      "correction",
+      "space",
+      "clinic-copy",
+      "shelter-copy",
+      "interruption",
+      "closing"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-night-edition",
+      "type": "mystery",
+      "payload": {
+        "title": "One Honest Edition",
+        "summary": "You run one newspaper shift: verify a correction, choose space for a useful notice, and handle an interruption before the edition closes. The shift ends with an actual bounded edition.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "You run one newspaper shift: verify a correction, choose space for a useful notice, and handle an interruption before the edition closes. The shift ends with an actual bounded edition.",
+          "reasoning": "Complete a legitimate editorial shift",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "What can this edition truthfully publish while still serving its readers?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "A cargo-loading cancellation does not imply cancellation of passenger travel.",
+              "evidenceNodeId": "ferry-fact"
+            }
+          ],
+          "identity": {
+            "activity": "Complete a legitimate editorial shift",
+            "emotionalTurn": "A dramatic headline gives way to useful public work"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "correction",
+              "text": "Yesterday’s paper printed “ferry canceled.” The harbor order canceled only the cargo loading. Which correction preserves that distinction?",
+              "nodeId": "correction"
+            },
+            {
+              "id": "space",
+              "text": "There is space for one complete service notice. Both are verified. Your choice changes what this edition helps readers do.",
+              "nodeId": "space"
+            },
+            {
+              "id": "clinic-copy",
+              "text": "The clinic admits residents until 21:00 and requires no appointment. Which sentence is supportable?",
+              "nodeId": "clinic-copy"
+            },
+            {
+              "id": "shelter-copy",
+              "text": "The shelter’s front stairs are closed; its signed level side entrance remains open. Choose usable directions.",
+              "nodeId": "shelter-copy"
+            },
+            {
+              "id": "interruption",
+              "text": "A caller names a supposed saboteur but provides no record. The compositor asks whether to stop the verified service notices for it.",
+              "nodeId": "interruption"
+            },
+            {
+              "id": "closing",
+              "text": "The printed edition carries the correction, your chosen useful notice and a clear boundary around the unverified tip. The shift is finished, not converted into an endless delivery task.",
+              "nodeId": "closing"
+            }
+          ],
+          "npcs": [],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [
+            {
+              "choiceNodeId": "space",
+              "reconvergeNodeId": "interruption",
+              "maxActions": 3
+            }
+          ],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "One Honest Edition",
+        "summary": "You run one newspaper shift: verify a correction, choose space for a useful notice, and handle an interruption before the edition closes. The shift ends with an actual bounded edition."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-night-edition-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "One Honest Edition: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "One Honest Edition: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-night-edition-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "correction",
+      "type": "puzzle",
+      "payload": {
+        "title": "Correct what the paper actually got wrong",
+        "prompt": "Yesterday’s paper printed “ferry canceled.” The harbor order canceled only the cargo loading. Which correction preserves that distinction?",
+        "summary": "Yesterday’s paper printed “ferry canceled.” The harbor order canceled only the cargo loading. Which correction preserves that distinction?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "correction-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "precise",
+              "label": "Passenger ferry runs; cargo loading is canceled"
+            },
+            {
+              "id": "all",
+              "label": "Every harbor activity is canceled"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "correction-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "precise"
+        ]
+      }
+    },
+    {
+      "id": "ferry-fact",
+      "type": "evidence",
+      "payload": {
+        "title": "Verified harbor correction",
+        "summary": "The passenger ferry runs; the written cancellation applies to cargo loading only.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "space-clinic-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-night-edition.space",
+        "kind": "future_scene_variant",
+        "value": "clinic",
+        "title": "A finite column: Print the evening clinic’s opening hours",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "space-shelter-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-night-edition.space",
+        "kind": "future_scene_variant",
+        "value": "shelter",
+        "title": "A finite column: Print the rain shelter’s address and access route",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "space",
+      "type": "choice",
+      "payload": {
+        "title": "A finite column",
+        "prompt": "There is space for one complete service notice. Both are verified. Your choice changes what this edition helps readers do.",
+        "summary": "There is space for one complete service notice. Both are verified. Your choice changes what this edition helps readers do.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "clinic",
+            "label": "Print the evening clinic’s opening hours",
+            "nextNodeIds": [
+              "clinic-copy"
+            ],
+            "storyFlagIds": [
+              "space-clinic-memory"
+            ]
+          },
+          {
+            "id": "shelter",
+            "label": "Print the rain shelter’s address and access route",
+            "nextNodeIds": [
+              "shelter-copy"
+            ],
+            "storyFlagIds": [
+              "space-shelter-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "clinic-copy",
+      "type": "puzzle",
+      "payload": {
+        "title": "Useful clinic copy",
+        "prompt": "The clinic admits residents until 21:00 and requires no appointment. Which sentence is supportable?",
+        "summary": "The clinic admits residents until 21:00 and requires no appointment. Which sentence is supportable?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "clinic-copy-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "verified",
+              "label": "Walk-ins admitted until 21:00"
+            },
+            {
+              "id": "promise",
+              "label": "Every illness will be cured tonight"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "clinic-copy-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "verified"
+        ]
+      }
+    },
+    {
+      "id": "shelter-copy",
+      "type": "puzzle",
+      "payload": {
+        "title": "Useful shelter copy",
+        "prompt": "The shelter’s front stairs are closed; its signed level side entrance remains open. Choose usable directions.",
+        "summary": "The shelter’s front stairs are closed; its signed level side entrance remains open. Choose usable directions.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "shelter-copy-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "side",
+              "label": "Use the signed level side entrance"
+            },
+            {
+              "id": "stairs",
+              "label": "Use the closed front stairs"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "shelter-copy-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "side"
+        ]
+      }
+    },
+    {
+      "id": "interruption",
+      "type": "puzzle",
+      "payload": {
+        "title": "The caller wants a scoop",
+        "prompt": "A caller names a supposed saboteur but provides no record. The compositor asks whether to stop the verified service notices for it.",
+        "summary": "A caller names a supposed saboteur but provides no record. The compositor asks whether to stop the verified service notices for it.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "interruption-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "attribute",
+              "label": "Keep the notices; record the unverified tip separately"
+            },
+            {
+              "id": "accuse",
+              "label": "Print the accusation as established fact"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "interruption-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "attribute"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-night-edition.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-night-edition.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "The printed edition carries the correction, your chosen useful notice and a clear boundary around the unverified tip. The shift is finished, not converted into an endless delivery task.",
+        "summary": "The printed edition carries the correction, your chosen useful notice and a clear boundary around the unverified tip. The shift is finished, not converted into an endless delivery task.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-night-edition",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-night-edition",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "correction",
+      "type": "REVEALS",
+      "to": "ferry-fact"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "correction"
+    },
+    {
+      "from": "correction",
+      "type": "UNLOCKS",
+      "to": "space"
+    },
+    {
+      "from": "space",
+      "type": "UNLOCKS",
+      "to": "clinic-copy"
+    },
+    {
+      "from": "space",
+      "type": "UNLOCKS",
+      "to": "shelter-copy"
+    },
+    {
+      "from": "clinic-copy",
+      "type": "UNLOCKS",
+      "to": "interruption"
+    },
+    {
+      "from": "shelter-copy",
+      "type": "UNLOCKS",
+      "to": "interruption"
+    },
+    {
+      "from": "interruption",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

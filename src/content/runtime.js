@@ -2,6 +2,11 @@ import crypto from 'node:crypto';
 import { GameError } from '../game.js';
 import { compileContentPack, validateActivatableContentPack } from './compiler.js';
 import { NARRATIVE_VERIFIERS, narrativeBranchAllows, narrativeVariant, verifyNarrativeSubmission } from './narrative.js';
+import { qualitySpoilerAllows } from './quality.js';
+import {
+  applyQualityOperation, qualityActorKey, QUALITY_SHARED_KEY, qualityControlledEvidence, qualityDesign,
+  qualityMandateAllows, qualityMemberId, qualityRevelationAllowed, qualityStates, projectQualityRuntime,
+} from './quality-runtime.js';
 import {
   MASTERY, PATHS, REGIMEN, SEASON_PHASES, SKILLS, UNDERWORLD,
   disciplineLvlOf, levelOf, masteryLvlOf, seasonIdxOf, seasonPhaseLeft, seasonPhaseOf,
@@ -568,6 +573,19 @@ async function projection(ch, instance, bundle, client, h) {
   const actions = [];
   const quorum = Number(graph.quorum.payload?.minimumParticipants || graph.partyRoles.length);
   const root = graph.nodeById.get(graph.runtime.entryNodeId);
+  const design = qualityDesign(graph);
+  const quality = qualityStates(facts, ch.account_id);
+  const completed = new Set(progress.filter(row => row.state === COMPLETE).map(row => row.node_id));
+  const authorizedNodes = new Set([...completed].filter(nodeId => {
+    const node = graph.nodeById.get(nodeId);
+    return !(node?.type === 'evidence' && node.payload?.shareScope === 'role_private' && node.payload.roleId !== mine.role_id)
+      && !(node?.payload?.gates || []).some(gate => gate.kind === 'party_role' && gate.role !== mine.role_id);
+  }));
+  const knownEvidence = new Set(progress.filter(row => row.state === COMPLETE).filter(row => {
+    const node = graph.nodeById.get(row.node_id);
+    return node?.type === 'evidence' && authorizedNodes.has(node.id)
+      && (!design || qualitySpoilerAllows(design, node.id, authorizedNodes));
+  }).map(row => row.node_id));
   if (instance.status === FORMING && instance.created_by_account === ch.account_id
     && members.length >= quorum
     && blockedGates(ch, h, root?.payload?.gates, graph, mine.role_id).length === 0) {
@@ -579,10 +597,15 @@ async function projection(ch, instance, bundle, client, h) {
       const node = graph.nodeById.get(nodeId);
       if (row?.state !== 'available'
         || blockedGates(ch, h, node.payload?.gates, graph, mine.role_id).length) continue;
+      if (design && !qualityRevelationAllowed(design, nodeId, completed, quality.shared, graph.nodeById)) continue;
+      if (design && !qualitySpoilerAllows(design, nodeId, authorizedNodes)) continue;
       const action = {
         id: actionId(instance, node.type, nodeId), kind: node.type === 'choice' ? 'choose' : 'solve',
         nodeId, title: node.payload?.title || nodeId, prompt: node.payload?.prompt || null,
       };
+      const spotlight = design?.spotlights?.find(item => item.nodeId === nodeId);
+      if (spotlight) action.spotlight = { roleId: spotlight.roleId,
+        title: graph.nodeById.get(spotlight.roleId)?.payload?.title || spotlight.roleId };
       if (node.type === 'puzzle') {
         const payload = narrativeVariant(node, instance.id);
         const spec = graph.nodeById.get(payload.answerSpecId);
@@ -591,6 +614,8 @@ async function projection(ch, instance, bundle, client, h) {
         action.prompt = payload.prompt || null;
         action.submissionKind = spec.payload.verifier;
         if (payload.interaction) action.interaction = { ...payload.interaction, mode: spec.payload.verifier };
+        if (spec.payload.verifier === 'proof_sets') action.interaction.items = payload.interaction.items
+          .filter(item => knownEvidence.has(item.evidenceNodeId));
         action.hints = (payload.hints || []).slice(0, hintLevel);
         action.canRequestHint = hintLevel < (payload.hints || []).length;
         action.hintsRemaining = Math.max(0, (payload.hints || []).length - hintLevel);
@@ -600,7 +625,9 @@ async function projection(ch, instance, bundle, client, h) {
         if (result.feedback) action.feedback = result.feedback;
       }
       if (node.type === 'choice') {
-        action.options = node.payload.options.map((option) => {
+        const procedure = design?.procedures?.find(item => item.nodeId === nodeId);
+        action.options = node.payload.options.filter(option => !procedure || option.id !== procedure.skipOptionId
+          || h.authoredStoryFlags.get(procedure.masteryFlag) === 'learned').map((option) => {
           const blockedBy = blockedGates(ch, h, option.gates, graph, mine.role_id);
           return {
             id: option.id, label: option.label,
@@ -615,6 +642,10 @@ async function projection(ch, instance, bundle, client, h) {
   const visibleNodes = progress.flatMap((row) => {
     const node = graph.nodeById.get(row.node_id);
     if (!node || node.type === 'answer_spec') return [];
+    if (design && !qualitySpoilerAllows(design, node.id, authorizedNodes)) return [];
+    if (design && !quality.actor.debriefOpened && row.state === COMPLETE
+      && (node.type === 'terminal' || (graph.outgoing.get(node.id) || [])
+        .some(edge => edge.type === 'UNLOCKS' && edge.to === graph.runtime.terminalNodeId))) return [];
     if (node.type === 'evidence' && node.payload?.shareScope === 'role_private'
       && node.payload.roleId !== mine.role_id) return [];
     if (ACTION_TYPES.has(node.type) && (node.payload?.gates || []).some((gate) => (
@@ -659,6 +690,13 @@ async function projection(ch, instance, bundle, client, h) {
     return { prompt: agenda.prompt, completed: objective?.state === COMPLETE
       && (!agenda.choiceId || agenda.choiceId === result.choiceId) };
   };
+  const projectedQuality = design ? projectQualityRuntime(design, {
+    instance, accountId: ch.account_id, members, visibleNodes, completed, actions, now: Date.now(),
+    debriefText: progress.filter(row => row.state === COMPLETE).map(row => ({
+      node: graph.nodeById.get(row.node_id), result: parseJson(row.result_json, {}),
+    })).filter(({ node, result }) => result.summary || node?.type === 'terminal')
+      .map(({ node, result }) => result.summary || node.payload.summary || '').filter(Boolean).join('\n\n').slice(0, 16000),
+  }, quality.actor, quality.shared, facts) : null;
   return {
     instance: {
       id: instance.id, namespace: instance.namespace, version: Number(instance.version),
@@ -670,7 +708,7 @@ async function projection(ch, instance, bundle, client, h) {
       members: members.map((row) => projectedMember(row, graph, instance, ch.account_id)),
       nodes: visibleNodes, facts: publicFacts, actions, notes,
       agenda: agendaFor(mine.role_id),
-      debrief: instance.status === COMPLETE ? members.filter((member) => agendaFor(member.role_id)).map((member) => ({
+      debrief: instance.status === COMPLETE && (!design || quality.actor.debriefOpened) ? members.filter((member) => agendaFor(member.role_id)).map((member) => ({
         name: member.name_snapshot, roleId: member.role_id, ...agendaFor(member.role_id),
       })) : [],
       canReleaseRole: instance.status === ACTIVE && graph.policy.payload.allowRoleReplacement === true,
@@ -683,10 +721,11 @@ async function projection(ch, instance, bundle, client, h) {
       awards: {
         pending: effects.filter((effect) => effect.state === 'pending').length,
         applied: effects.filter((effect) => effect.state === 'applied').length,
-        mine: ownEffects,
+        mine: design && !quality.actor.debriefOpened ? [] : ownEffects,
       },
       createdAt: instance.created_at, startedAt: instance.started_at,
       completedAt: instance.completed_at, formingExpiresAt: instance.forming_expires_at || null,
+      ...(projectedQuality ? { quality: projectedQuality } : {}),
     },
   };
 }
@@ -1054,6 +1093,7 @@ async function materializeTerminalEffects(client, graph, instance, terminalNode)
 }
 
 async function cascade(client, graph, instance, actor = null) {
+  const controlledEvidence = qualityControlledEvidence(qualityDesign(graph));
   let changed = true;
   while (changed) {
     changed = false;
@@ -1066,6 +1106,7 @@ async function cascade(client, graph, instance, actor = null) {
 
     for (const nodeId of [...graph.nodeById.keys()].sort()) {
       if (completed.has(nodeId)) continue;
+      if (controlledEvidence.has(nodeId)) continue;
       const node = graph.nodeById.get(nodeId);
       if ((node.payload?.gates || []).length && nodeId !== graph.runtime.entryNodeId && !graph.actionIds.has(nodeId)) {
         fail('unsupported_content_feature', 'This pinned bundle declares an unsupported passive-node gate.');
@@ -1199,6 +1240,33 @@ export async function actOnContentInstance(ch, instanceId, opts, client, h) {
     )).rows[0];
     if (progress?.state !== 'available') fail('unknown_action', 'That node is not currently actionable.');
     assertNodeGates(ch, h, selected, graph, member.role_id);
+    const design = qualityDesign(graph);
+    let qualityContext;
+    const usesProofSets = selected.type === 'puzzle'
+      && graph.nodeById.get(narrativeVariant(selected, instance.id).answerSpecId)?.payload.verifier === 'proof_sets';
+    if (design || usesProofSets) {
+      const board = await projection(ch, instance, bundle, client, h);
+      const facts = (await client.query('SELECT fact_key, value_json FROM content_instance_facts WHERE instance_id=$1', [instanceId]))
+        .rows.map(row => ({ key: row.fact_key, value: parseJson(row.value_json) }));
+      const completed = new Set((await client.query("SELECT node_id FROM content_instance_nodes WHERE instance_id=$1 AND state='completed'", [instanceId])).rows.map(row => row.node_id));
+      const states = qualityStates(facts, ch.account_id);
+      qualityContext = { board, completed, states, knownEvidence: new Set(board.instance.nodes
+        .filter(node => node.type === 'evidence' && node.state === COMPLETE).map(node => node.id)) };
+      const authorizedNodes = new Set(board.instance.nodes.filter(node => node.state === COMPLETE).map(node => node.id));
+      if (design && !qualitySpoilerAllows(design, selected.id, authorizedNodes)) {
+        fail('unknown_action', 'That scene has not been revealed to you.');
+      }
+      if (design && !qualityRevelationAllowed(design, selected.id, completed, states.shared, graph.nodeById)) {
+        fail('npc_knowledge', 'This conversation requires information the witness has not learned.');
+      }
+      if (design && selected.type === 'choice') {
+        const participants = (await memberRows(client, instanceId)).map(row => ({ id: qualityMemberId(instanceId, row.account_id) }));
+        if ((participants.length > 1 && !Object.hasOwn(states.shared.delegations, selected.id))
+          || !qualityMandateAllows(states.shared, selected.id, qualityMemberId(instanceId, ch.account_id), participants)) {
+          fail('decision_acknowledgement', 'Agree on a scene delegate and acknowledge the decision before committing.');
+        }
+      }
+    }
     let result;
     if (selected.type === 'puzzle') {
       const payload = narrativeVariant(selected, instance.id);
@@ -1215,7 +1283,8 @@ export async function actOnContentInstance(ch, instanceId, opts, client, h) {
         let matched;
         if (NARRATIVE_VERIFIERS.includes(spec.payload.verifier)) {
           if (submitted[0] !== 'submission') fail('bad_request', 'This investigation requires its issued structured submission.');
-          const checked = verifyNarrativeSubmission(spec, payload.interaction, opts.submission);
+          const checked = verifyNarrativeSubmission(spec, payload.interaction, opts.submission,
+            { knownEvidenceNodeIds: qualityContext?.knownEvidence || new Set() });
           if (!checked.valid) fail('bad_request', 'The submission must use only the issued items and slots.');
           matched = checked.matched;
         } else {
@@ -1233,7 +1302,9 @@ export async function actOnContentInstance(ch, instanceId, opts, client, h) {
         result = { hintLevel: Number(previous.hintLevel || 0), attempts, suspicion, matched,
           ...(matched ? { outcome: 'success', summary: payload.summary || null }
             : complication ? { outcome: 'complication', summary: payload.failForward.summary }
-              : { feedback: 'The evidence does not support that reconstruction. Review your clues or request a hint.' }) };
+              : { feedback: spec.payload.verifier === 'proof_sets'
+                ? 'Your selected evidence does not establish the conclusion as a complete chain. Compare the stated assumptions with independent observations; selecting every clue does not make a proof.'
+                : 'The evidence does not support that reconstruction. Review your clues or request a hint.' }) };
       }
       if (!result.outcome) {
         await client.query('UPDATE content_instance_nodes SET result_json=$3 WHERE instance_id=$1 AND node_id=$2',
@@ -1248,6 +1319,10 @@ export async function actOnContentInstance(ch, instanceId, opts, client, h) {
       }
       const choice = selected.payload.options.find((option) => option.id === opts?.choiceId);
       if (!choice) fail('unknown_action', 'That choice was not offered.');
+      const procedure = design?.procedures?.find(item => item.nodeId === selected.id);
+      if (procedure && choice.id === procedure.skipOptionId && h.authoredStoryFlags.get(procedure.masteryFlag) !== 'learned') {
+        fail('procedure_unlearned', 'Complete this procedure once before using its shortcut.');
+      }
       assertNodeGates(ch, h, { payload: { gates: choice.gates || [] } }, graph, member.role_id,
         { option: true });
       await recordStoryFlags(client, graph, instance, ch, selected, choice);
@@ -1255,9 +1330,60 @@ export async function actOnContentInstance(ch, instanceId, opts, client, h) {
     } else fail('unknown_action', 'That node is not executable.');
     await completeNode(client, instanceId, selected.id,
       { accountId: ch.account_id, characterId: ch.id }, result);
+    const learned = design?.procedures?.find(item => item.learnNodeId === selected.id);
+    if (learned && result.matched === true) {
+      await client.query(
+        `INSERT INTO content_story_flags
+          (account_id,flag_key,flag_kind,flag_value,title,source_namespace,source_version,source_instance_id,source_node_id,source_choice_id)
+         VALUES ($1,$2,'case_evidence','learned',$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING`,
+        [ch.account_id, learned.masteryFlag, 'Practiced procedure', instance.namespace, instance.version,
+          instanceId, selected.id, learned.learnOptionId],
+      );
+    }
     await cascade(client, graph, instance, { accountId: ch.account_id, characterId: ch.id });
   }
   await client.query('UPDATE content_instances SET revision=revision+1 WHERE id=$1', [instanceId]);
+  const next = (await client.query('SELECT * FROM content_instances WHERE id=$1', [instanceId])).rows[0];
+  return projection(ch, next, bundle, client, h);
+}
+
+// Private reasoning is stored separately from public progress. The instance lock serializes
+// disclosures/mandates across actors; the private revision catches a second tab's lost update.
+export async function actOnContentQuality(ch, instanceId, opts, client, h) {
+  const instance = await lockedInstance(client, instanceId);
+  const bundle = await loadBundle(client, instance.namespace, Number(instance.version), instance.content_hash);
+  const graph = graphOf(bundle), design = qualityDesign(graph);
+  if (!design) fail('unsupported_content_feature', 'This case does not use the quality workbench.');
+  const board = await projection(ch, instance, bundle, client, h);
+  await assertRevision(ch, instance, opts?.expectedRevision, bundle, client, h);
+  const members = await memberRows(client, instanceId);
+  const facts = (await client.query('SELECT fact_key, value_json FROM content_instance_facts WHERE instance_id=$1', [instanceId]))
+    .rows.map(row => ({ key: row.fact_key, value: parseJson(row.value_json) }));
+  const states = qualityStates(facts, ch.account_id);
+  const completed = new Set((await client.query("SELECT node_id FROM content_instance_nodes WHERE instance_id=$1 AND state='completed'", [instanceId])).rows.map(row => row.node_id));
+  let outcome;
+  try { outcome = applyQualityOperation(design, {
+    instance, accountId: ch.account_id, members, completed, nodeById: graph.nodeById,
+    actions: board.instance.actions, knownEvidence: new Set(board.instance.quality.evidence.map(item => item.id)), now: Date.now(),
+  }, states.actor, states.shared, opts); }
+  catch (error) { if (error.code === 'stale_quality') error.data = board; throw error; }
+  if (outcome.publicChange) await validateCurrentPartyAuthority(client, graph, instance);
+  const persist = (key, value) => client.query(
+    `INSERT INTO content_instance_facts (instance_id,fact_key,value_json,set_by_node_id)
+     VALUES ($1,$2,$3,'runtime') ON CONFLICT (instance_id,fact_key)
+     DO UPDATE SET value_json=EXCLUDED.value_json, set_at=now()`, [instanceId, key, JSON.stringify(value)],
+  );
+  await persist(qualityActorKey(ch.account_id), outcome.actor);
+  if (outcome.publicChange) {
+    await persist(QUALITY_SHARED_KEY, outcome.shared);
+    for (const nodeId of outcome.revealNodeIds) {
+      const node = graph.nodeById.get(nodeId);
+      if (node?.type !== 'evidence') fail('unsupported_content_feature', 'A quality operation may reveal only authored evidence.');
+      await completeNode(client, instanceId, nodeId, { accountId: ch.account_id, characterId: ch.id });
+    }
+    await cascade(client, graph, instance, { accountId: ch.account_id, characterId: ch.id });
+    await client.query('UPDATE content_instances SET revision=revision+1 WHERE id=$1', [instanceId]);
+  }
   const next = (await client.query('SELECT * FROM content_instances WHERE id=$1', [instanceId])).rows[0];
   return projection(ch, next, bundle, client, h);
 }

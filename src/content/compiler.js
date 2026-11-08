@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { HONOR, MASTERY, PATHS, REGIMEN, SEASON_PHASES, SKILLS, UNDERWORLD } from '../rules.js';
 import { NARRATIVE_VERIFIERS, validateNarrativeAnswer, validateNarrativePuzzle } from './narrative.js';
+import { assertQuestQuality } from './quality.js';
 
 export const NODE_TYPES = Object.freeze([
   'mystery', 'chapter', 'puzzle', 'choice', 'terminal', 'evidence', 'answer_spec',
@@ -1016,6 +1017,7 @@ export function validateActivatableContentPack(bundle) {
     profiles += 1;
   }
   if (!profiles) throw new Error('activatable content requires a supported capability manifest');
+  assertQuestQuality(bundle);
   return bundle;
 }
 
@@ -1285,6 +1287,7 @@ export function compileContentPack(input) {
     }),
   });
   const canonicalJson = JSON.stringify(source);
+  assertQuestQuality(source);
   return {
     ...source,
     contentHash: crypto.createHash('sha256').update(canonicalJson).digest('hex'),

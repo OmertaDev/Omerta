@@ -1,0 +1,36 @@
+{
+  "phase": "CI-toolchain-delivery",
+  "scope": "Exact promoted bootstrap source and offline guard review; CI integration is on hold and has not been wired or reviewed.",
+  "findings": [
+    {
+      "id": "FAPI-01",
+      "severity": "low",
+      "status": "resolved",
+      "problem": "A draft hardcoded bundle_url as identity and rejected genuine opaque GitHub transport URLs.",
+      "correction": "Opaque locators are neither followed nor trusted; unique exact SLSA subjects and repository ID select the candidate, followed by mandatory cryptographic identity verification.",
+      "retest": "Actual GitHub response plus reordered and alternate opaque-locator fixtures accepted; missing/ambiguous/wrong-repository candidates refused."
+    },
+    {
+      "id": "FAPI-02",
+      "severity": "low",
+      "status": "resolved",
+      "problem": "A draft ignored the byte count of the GITHUB_PATH append.",
+      "correction": "Publication requires a complete write before consuming the fresh verification receipt or reporting success.",
+      "retest": "Final source inspection confirms exact byte-count guard; Linux I/O publication remains pending actual CI."
+    }
+  ],
+  "callerTrustAssumptions": [
+    "Isolated trusted GitHub Actions Linux x64 runner.",
+    "Trusted existing Node and GitHub CLI executables and runtime environment.",
+    "No defense is claimed against a compromised host or malicious process with the same operating-system user.",
+    "GitHub API checksums alone do not establish signature validity."
+  ],
+  "pending": [
+    "CI integration and its exact reviewed source hashes.",
+    "Actual Linux CI ownership, no-follow descriptors and GITHUB_PATH publication.",
+    "Fresh complete Forge build, artifacts and test workflow."
+  ],
+  "noProductionActions": true,
+  "noNativeResultTransfer": true,
+  "verdict": "PASS_SOURCE_REVIEW_WITH_INTEGRATION_PENDING"
+}

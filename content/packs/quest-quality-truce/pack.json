@@ -1,0 +1,645 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-truce",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-truce",
+    "entryNodeId": "quality-truce",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-truce",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-truce-memento",
+      "case-closed",
+      "draft",
+      "draft-answer",
+      "draft-fact",
+      "edgecases",
+      "edgecases-answer",
+      "exception-recorded-memory",
+      "exception-none-memory",
+      "exception",
+      "exception-test",
+      "exception-test-answer",
+      "limited-test",
+      "limited-test-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing"
+    ],
+    "actionNodeIds": [
+      "draft",
+      "edgecases",
+      "exception",
+      "exception-test",
+      "limited-test",
+      "closing"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-truce",
+      "type": "mystery",
+      "payload": {
+        "title": "A Truce in Small Print",
+        "summary": "Two fictional houses agree to stop inspections of each other’s food wagons. A wagon carrying food and hidden weapons makes their first draft fail.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "Two fictional houses agree to stop inspections of each other’s food wagons. A wagon carrying food and hidden weapons makes their first draft fail.",
+          "reasoning": "Draft a bounded agreement and test edge cases",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "Which clauses cover ordinary food, mixed cargo and independently verified emergencies?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "Solely-food cargo AND a valid seal are both necessary; mixed cargo is not solely food.",
+              "evidenceNodeId": "draft-fact"
+            }
+          ],
+          "identity": {
+            "activity": "Draft a bounded agreement and test edge cases",
+            "emotionalTurn": "Good intentions become precise obligations"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "draft",
+              "text": "A protected wagon must carry only food and hold a valid seal. Which clause actually says both conditions are required?",
+              "nodeId": "draft"
+            },
+            {
+              "id": "edgecases",
+              "text": "Classify each wagon under the agreed conjunction. This is a fictional local agreement, not a real legal opinion.",
+              "nodeId": "edgecases"
+            },
+            {
+              "id": "exception",
+              "text": "Both houses accept a neutral doctor’s recorded certification. They disagree about trusting each other’s unrecorded claims.",
+              "nodeId": "exception"
+            },
+            {
+              "id": "exception-test",
+              "text": "A guard reports an emergency but the neutral doctor has made no record. Does the agreed exception apply?",
+              "nodeId": "exception-test"
+            },
+            {
+              "id": "limited-test",
+              "text": "Which report accurately describes the narrower agreement?",
+              "nodeId": "limited-test"
+            },
+            {
+              "id": "closing",
+              "text": "Both houses sign the exact clauses they understand. A remaining disagreement is explicitly recorded, rather than presented as secret consensus.",
+              "nodeId": "closing"
+            }
+          ],
+          "npcs": [],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [
+            {
+              "choiceNodeId": "exception",
+              "reconvergeNodeId": "closing",
+              "maxActions": 3
+            }
+          ],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "A Truce in Small Print",
+        "summary": "Two fictional houses agree to stop inspections of each other’s food wagons. A wagon carrying food and hidden weapons makes their first draft fail."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-truce-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "A Truce in Small Print: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "A Truce in Small Print: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-truce-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "draft",
+      "type": "puzzle",
+      "payload": {
+        "title": "Keep the condition intact",
+        "prompt": "A protected wagon must carry only food and hold a valid seal. Which clause actually says both conditions are required?",
+        "summary": "A protected wagon must carry only food and hold a valid seal. Which clause actually says both conditions are required?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "draft-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "and",
+              "label": "Protect it only if cargo is solely food AND its seal is valid"
+            },
+            {
+              "id": "or",
+              "label": "Protect it if it carries food OR has a seal"
+            },
+            {
+              "id": "any",
+              "label": "Every wagon is protected"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "draft-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "and"
+        ]
+      }
+    },
+    {
+      "id": "draft-fact",
+      "type": "evidence",
+      "payload": {
+        "title": "The agreed conjunction",
+        "summary": "Protection requires both solely-food cargo and a valid seal; neither condition is enough on its own.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "edgecases",
+      "type": "puzzle",
+      "payload": {
+        "title": "Apply the draft without rewriting it",
+        "prompt": "Classify each wagon under the agreed conjunction. This is a fictional local agreement, not a real legal opinion.",
+        "summary": "Classify each wagon under the agreed conjunction. This is a fictional local agreement, not a real legal opinion.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "edgecases-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "protected",
+              "label": "Protected"
+            },
+            {
+              "id": "inspect",
+              "label": "Inspection permitted"
+            }
+          ],
+          "slots": [
+            {
+              "id": "food",
+              "label": "Only food; valid seal"
+            },
+            {
+              "id": "mixed",
+              "label": "Food and weapons; valid seal"
+            },
+            {
+              "id": "unsealed",
+              "label": "Only food; no valid seal"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "edgecases-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "food": "protected",
+          "mixed": "inspect",
+          "unsealed": "inspect"
+        }
+      }
+    },
+    {
+      "id": "exception-recorded-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-truce.exception",
+        "kind": "future_scene_variant",
+        "value": "recorded",
+        "title": "Who can certify an emergency?: Require the neutral doctor’s recorded certification",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "exception-none-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-truce.exception",
+        "kind": "future_scene_variant",
+        "value": "none",
+        "title": "Who can certify an emergency?: Leave emergencies outside this agreement pending a separate process",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "exception",
+      "type": "choice",
+      "payload": {
+        "title": "Who can certify an emergency?",
+        "prompt": "Both houses accept a neutral doctor’s recorded certification. They disagree about trusting each other’s unrecorded claims.",
+        "summary": "Both houses accept a neutral doctor’s recorded certification. They disagree about trusting each other’s unrecorded claims.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "recorded",
+            "label": "Require the neutral doctor’s recorded certification",
+            "nextNodeIds": [
+              "exception-test"
+            ],
+            "storyFlagIds": [
+              "exception-recorded-memory"
+            ]
+          },
+          {
+            "id": "none",
+            "label": "Leave emergencies outside this agreement pending a separate process",
+            "nextNodeIds": [
+              "limited-test"
+            ],
+            "storyFlagIds": [
+              "exception-none-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "exception-test",
+      "type": "puzzle",
+      "payload": {
+        "title": "A rumor is not a certificate",
+        "prompt": "A guard reports an emergency but the neutral doctor has made no record. Does the agreed exception apply?",
+        "summary": "A guard reports an emergency but the neutral doctor has made no record. Does the agreed exception apply?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "exception-test-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "no",
+              "label": "No: the recorded certification condition is unmet"
+            },
+            {
+              "id": "yes",
+              "label": "Yes: the rumor sounds urgent"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "exception-test-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "no"
+        ]
+      }
+    },
+    {
+      "id": "limited-test",
+      "type": "puzzle",
+      "payload": {
+        "title": "Keep the scope honest",
+        "prompt": "Which report accurately describes the narrower agreement?",
+        "summary": "Which report accurately describes the narrower agreement?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "limited-test-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "limited",
+              "label": "It resolves food-wagon rules; emergency handling remains separately disputed"
+            },
+            {
+              "id": "complete",
+              "label": "It resolves every possible emergency"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "limited-test-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "limited"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-truce.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-truce.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "Both houses sign the exact clauses they understand. A remaining disagreement is explicitly recorded, rather than presented as secret consensus.",
+        "summary": "Both houses sign the exact clauses they understand. A remaining disagreement is explicitly recorded, rather than presented as secret consensus.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-truce",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-truce",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "draft",
+      "type": "REVEALS",
+      "to": "draft-fact"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "draft"
+    },
+    {
+      "from": "draft",
+      "type": "UNLOCKS",
+      "to": "edgecases"
+    },
+    {
+      "from": "edgecases",
+      "type": "UNLOCKS",
+      "to": "exception"
+    },
+    {
+      "from": "exception",
+      "type": "UNLOCKS",
+      "to": "exception-test"
+    },
+    {
+      "from": "exception",
+      "type": "UNLOCKS",
+      "to": "limited-test"
+    },
+    {
+      "from": "exception-test",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "limited-test",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

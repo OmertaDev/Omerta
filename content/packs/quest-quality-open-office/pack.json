@@ -1,0 +1,856 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-open-office",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-open-office",
+    "entryNodeId": "quality-open-office",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-open-office",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-open-office-memento",
+      "case-closed",
+      "separate",
+      "separate-answer",
+      "wage-fact",
+      "plan-audit-memory",
+      "plan-witness-memory",
+      "plan",
+      "audit",
+      "audit-answer",
+      "clerks",
+      "clerks-answer",
+      "principle",
+      "principle-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing",
+      "case-rules",
+      "custody-sealed-memory",
+      "custody-public-memory",
+      "custody",
+      "sealed-check",
+      "sealed-check-answer",
+      "public-check",
+      "public-check-answer"
+    ],
+    "actionNodeIds": [
+      "separate",
+      "plan",
+      "audit",
+      "clerks",
+      "principle",
+      "closing",
+      "custody",
+      "sealed-check",
+      "public-check"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-open-office",
+      "type": "mystery",
+      "payload": {
+        "title": "The Office Everyone Uses",
+        "summary": "Orsini openly runs the forged-permit office. Six legitimate clerks depend on its payroll. His stated principle is that he will surrender his own ledgers before exposing the clerks’ home addresses.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "Orsini openly runs the forged-permit office. Six legitimate clerks depend on its payroll. His stated principle is that he will surrender his own ledgers before exposing the clerks’ home addresses.",
+          "reasoning": "Separate illegal authority from legitimate dependants",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "How can the forged-permit operation stop while legitimate clerks remain paid and unexposed?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "A conclusion must use a stated observation; an unexplained suspicion is not evidence.",
+              "evidenceNodeId": "case-rules"
+            }
+          ],
+          "identity": {
+            "activity": "Separate illegal authority from legitimate dependants",
+            "emotionalTurn": "A known adversary becomes predictable without becoming innocent"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "separate",
+              "text": "The payroll book funds six documented clerks. The forged-permit plate authorizes false permits. Match each record to its actual function.",
+              "nodeId": "separate"
+            },
+            {
+              "id": "plan",
+              "text": "Orsini will surrender the plate and his own transactions if the wage book is independently checked and the address list stays sealed. Choose where to establish the guarantee.",
+              "nodeId": "plan"
+            },
+            {
+              "id": "audit",
+              "text": "The auditor needs names and amounts owed, not home addresses. Select the sufficient record.",
+              "nodeId": "audit"
+            },
+            {
+              "id": "clerks",
+              "text": "Mara: “I can sign for my hours. I won’t sign for what happened upstairs.” Which statement should the file request?",
+              "nodeId": "clerks"
+            },
+            {
+              "id": "principle",
+              "text": "Orsini offers his personal transaction ledger but refuses the clerks’ home addresses. Which exchange follows the same principle he stated before your choice?",
+              "nodeId": "principle"
+            },
+            {
+              "id": "closing",
+              "text": "The plate is surrendered and the legitimate wages are independently documented. Orsini disputes your description of his office; the clerks need not adopt his account or yours.",
+              "nodeId": "closing"
+            },
+            {
+              "id": "custody",
+              "text": "How will the supported record be handled?",
+              "nodeId": "custody"
+            }
+          ],
+          "npcs": [
+            {
+              "id": "orsini",
+              "label": "Orsini",
+              "knowledge": [
+                {
+                  "evidenceNodeId": "wage-fact",
+                  "sourceNodeId": "quality-open-office"
+                }
+              ],
+              "voice": "Formal, precise offers; never euphemizes whose ledger he is surrendering.",
+              "principles": [
+                "He offers his own records before exposing dependants’ home addresses."
+              ]
+            }
+          ],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [
+            {
+              "choiceNodeId": "plan",
+              "reconvergeNodeId": "principle",
+              "maxActions": 3
+            },
+            {
+              "choiceNodeId": "custody",
+              "reconvergeNodeId": "closing",
+              "maxActions": 3
+            }
+          ],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "The Office Everyone Uses",
+        "summary": "Orsini openly runs the forged-permit office. Six legitimate clerks depend on its payroll. His stated principle is that he will surrender his own ledgers before exposing the clerks’ home addresses."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-open-office-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "The Office Everyone Uses: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Office Everyone Uses: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-open-office-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "separate",
+      "type": "puzzle",
+      "payload": {
+        "title": "Who loses the wages?",
+        "prompt": "The payroll book funds six documented clerks. The forged-permit plate authorizes false permits. Match each record to its actual function.",
+        "summary": "The payroll book funds six documented clerks. The forged-permit plate authorizes false permits. Match each record to its actual function.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "separate-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "payroll",
+              "label": "Six signed wage entries"
+            },
+            {
+              "id": "plate",
+              "label": "Forged permit plate"
+            },
+            {
+              "id": "addresses",
+              "label": "Private home address list"
+            }
+          ],
+          "slots": [
+            {
+              "id": "wages",
+              "label": "Legitimate dependence"
+            },
+            {
+              "id": "fraud",
+              "label": "Mechanism that must stop"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "separate-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "wages": "payroll",
+          "fraud": "plate"
+        }
+      }
+    },
+    {
+      "id": "wage-fact",
+      "type": "evidence",
+      "payload": {
+        "title": "Verified clerks’ wages",
+        "summary": "Six clerks performed documented legitimate work; their wages are separate from the forged permit plate.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "plan-audit-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-open-office.plan",
+        "kind": "future_scene_variant",
+        "value": "audit",
+        "title": "Choose the protection plan: Arrange an independent wage audit",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "plan-witness-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-open-office.plan",
+        "kind": "future_scene_variant",
+        "value": "witness",
+        "title": "Choose the protection plan: Have the clerks verify their own wage entries",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "plan",
+      "type": "choice",
+      "payload": {
+        "title": "Choose the protection plan",
+        "prompt": "Orsini will surrender the plate and his own transactions if the wage book is independently checked and the address list stays sealed. Choose where to establish the guarantee.",
+        "summary": "Orsini will surrender the plate and his own transactions if the wage book is independently checked and the address list stays sealed. Choose where to establish the guarantee.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "audit",
+            "label": "Arrange an independent wage audit",
+            "nextNodeIds": [
+              "audit"
+            ],
+            "storyFlagIds": [
+              "plan-audit-memory"
+            ]
+          },
+          {
+            "id": "witness",
+            "label": "Have the clerks verify their own wage entries",
+            "nextNodeIds": [
+              "clerks"
+            ],
+            "storyFlagIds": [
+              "plan-witness-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "audit",
+      "type": "puzzle",
+      "payload": {
+        "title": "A bounded audit",
+        "prompt": "The auditor needs names and amounts owed, not home addresses. Select the sufficient record.",
+        "summary": "The auditor needs names and amounts owed, not home addresses. Select the sufficient record.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "audit-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "wages",
+              "label": "Signed names and wage amounts"
+            },
+            {
+              "id": "homes",
+              "label": "Home addresses"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "audit-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "wages"
+        ]
+      }
+    },
+    {
+      "id": "clerks",
+      "type": "puzzle",
+      "payload": {
+        "title": "A clerk speaks for her own work",
+        "prompt": "Mara: “I can sign for my hours. I won’t sign for what happened upstairs.” Which statement should the file request?",
+        "summary": "Mara: “I can sign for my hours. I won’t sign for what happened upstairs.” Which statement should the file request?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "clerks-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "hours",
+              "label": "Mara’s own hours and amount due"
+            },
+            {
+              "id": "office",
+              "label": "A confession about the whole office"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "clerks-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "hours"
+        ]
+      }
+    },
+    {
+      "id": "principle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Test the adversary’s boundary",
+        "prompt": "Orsini offers his personal transaction ledger but refuses the clerks’ home addresses. Which exchange follows the same principle he stated before your choice?",
+        "summary": "Orsini offers his personal transaction ledger but refuses the clerks’ home addresses. Which exchange follows the same principle he stated before your choice?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "principle-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "ledger",
+              "label": "Take his own ledger; keep the address list sealed"
+            },
+            {
+              "id": "homes",
+              "label": "Demand the home list instead"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "principle-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "ledger"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-open-office.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-open-office.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "The plate is surrendered and the legitimate wages are independently documented. Orsini disputes your description of his office; the clerks need not adopt his account or yours.",
+        "summary": "The plate is surrendered and the legitimate wages are independently documented. Orsini disputes your description of his office; the clerks need not adopt his account or yours.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "case-rules",
+      "type": "evidence",
+      "payload": {
+        "title": "Case scope",
+        "summary": "The named records form the complete local scope of this case.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "custody-sealed-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-open-office.custody",
+        "kind": "future_scene_variant",
+        "value": "sealed",
+        "title": "Evidence retained for sealed independent review",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "custody-public-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-open-office.custody",
+        "kind": "future_scene_variant",
+        "value": "public",
+        "title": "Supported finding published with protected addresses",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "custody",
+      "type": "choice",
+      "payload": {
+        "title": "Protect a suspect without erasing evidence",
+        "prompt": "Orsini is the known operator, but preserving evidence does not require publishing every allegation. Choose how the supported record will be handled.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "sealed",
+            "label": "Protect Orsini from a public accusation while retaining the record for independent review",
+            "storyFlagIds": [
+              "custody-sealed-memory"
+            ],
+            "nextNodeIds": [
+              "sealed-check"
+            ]
+          },
+          {
+            "id": "public",
+            "label": "Publish the demonstrated operation and its stated limits",
+            "storyFlagIds": [
+              "custody-public-memory"
+            ],
+            "nextNodeIds": [
+              "public-check"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sealed-check",
+      "type": "puzzle",
+      "payload": {
+        "title": "A sealed record still exists",
+        "prompt": "Which arrangement protects the suspect from public exposure while preserving the case against the known operation?",
+        "summary": "The evidence remains in independent custody; the public record withholds the personal accusation.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "sealed-check-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "retain",
+              "label": "Retain the original ledger in independently logged sealed custody"
+            },
+            {
+              "id": "destroy",
+              "label": "Destroy the ledger to make the suspect seem innocent"
+            }
+          ]
+        },
+        "hints": [
+          "Protection does not require manufacturing innocence."
+        ]
+      }
+    },
+    {
+      "id": "sealed-check-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "retain"
+        ]
+      }
+    },
+    {
+      "id": "public-check",
+      "type": "puzzle",
+      "payload": {
+        "title": "A public claim with boundaries",
+        "prompt": "Which publication stays within the evidence and the agreed privacy boundary?",
+        "summary": "The operation and surrendered plate are described precisely; the clerks’ addresses remain sealed.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "public-check-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "bounded",
+              "label": "Describe the forged plate and documented acts; omit the private address list"
+            },
+            {
+              "id": "everything",
+              "label": "Publish private addresses and every rumor as fact"
+            }
+          ]
+        },
+        "hints": [
+          "Publish the demonstrated acts, not an unlimited accusation."
+        ]
+      }
+    },
+    {
+      "id": "public-check-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "bounded"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-open-office",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-open-office",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "separate",
+      "type": "REVEALS",
+      "to": "wage-fact"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "separate"
+    },
+    {
+      "from": "separate",
+      "type": "UNLOCKS",
+      "to": "plan"
+    },
+    {
+      "from": "plan",
+      "type": "UNLOCKS",
+      "to": "audit"
+    },
+    {
+      "from": "plan",
+      "type": "UNLOCKS",
+      "to": "clerks"
+    },
+    {
+      "from": "audit",
+      "type": "UNLOCKS",
+      "to": "principle"
+    },
+    {
+      "from": "clerks",
+      "type": "UNLOCKS",
+      "to": "principle"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    },
+    {
+      "from": "separate",
+      "type": "REVEALS",
+      "to": "case-rules"
+    },
+    {
+      "from": "principle",
+      "type": "UNLOCKS",
+      "to": "custody"
+    },
+    {
+      "from": "custody",
+      "type": "UNLOCKS",
+      "to": "sealed-check"
+    },
+    {
+      "from": "custody",
+      "type": "UNLOCKS",
+      "to": "public-check"
+    },
+    {
+      "from": "sealed-check",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "public-check",
+      "type": "UNLOCKS",
+      "to": "closing"
+    }
+  ]
+}

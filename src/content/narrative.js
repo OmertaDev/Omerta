@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-export const NARRATIVE_VERIFIERS = Object.freeze(['ordered_ids', 'unordered_ids', 'mapping']);
+export const NARRATIVE_VERIFIERS = Object.freeze(['ordered_ids', 'unordered_ids', 'mapping', 'proof_sets']);
 export const INTERACTION_KINDS = Object.freeze([
   'deduction', 'interrogation', 'timeline', 'scene', 'planning', 'stealth', 'inventory',
 ]);
@@ -10,10 +10,28 @@ const id = (value) => typeof value === 'string' && value.length <= 160 && /^[a-z
 const ids = (value) => Array.isArray(value) && value.length > 0 && value.length <= 64
   && value.every(id) && new Set(value).size === value.length;
 const text = (value) => typeof value === 'string' && value.trim().length > 0 && value.length <= 4096;
+const closed = (value, keys) => only(value, keys)
+  && [Object.prototype, null].includes(Object.getPrototypeOf(value))
+  && Reflect.ownKeys(value).every((key) => typeof key === 'string'
+    && Object.getOwnPropertyDescriptor(value, key)?.value !== undefined);
 
 export function validateNarrativeAnswer(spec, owner) {
   const payload = spec.payload || {};
   if (!NARRATIVE_VERIFIERS.includes(payload.verifier)) return;
+  if (payload.verifier === 'proof_sets') {
+    if (!closed(payload, ['verifier', 'proofs']) || !Array.isArray(payload.proofs)
+      || payload.proofs.length < 1 || payload.proofs.length > 32) throw new Error(`${owner} requires 1-32 bounded proofs`);
+    const seen = new Set();
+    for (const proof of payload.proofs) {
+      if (!closed(proof, ['conclusionId', 'evidenceIds']) || !id(proof.conclusionId) || !ids(proof.evidenceIds)) {
+        throw new Error(`${owner} requires a conclusion and unique cited evidence IDs`);
+      }
+      const key = JSON.stringify([proof.conclusionId, [...proof.evidenceIds].sort()]);
+      if (seen.has(key)) throw new Error(`${owner} has duplicate sufficient proofs`);
+      seen.add(key);
+    }
+    return;
+  }
   if (!only(payload, ['verifier', 'solution'])) throw new Error(`${owner} answer spec has unknown fields`);
   if (payload.verifier === 'mapping') {
     if (!record(payload.solution) || !ids(Object.keys(payload.solution))
@@ -22,6 +40,26 @@ export function validateNarrativeAnswer(spec, owner) {
 }
 
 function validateInteraction(interaction, spec, owner) {
+  if (spec?.payload?.verifier === 'proof_sets') {
+    if (!closed(interaction, ['kind', 'items', 'conclusions']) || interaction.kind !== 'deduction'
+      || !Array.isArray(interaction.items) || !ids(interaction.items.map((item) => item?.id))
+      || interaction.items.some((item) => !closed(item, ['id', 'label', 'description', 'evidenceNodeId'])
+        || !text(item.label) || !id(item.evidenceNodeId)
+        || (item.description !== undefined && !text(item.description)))
+      || new Set(interaction.items.map((item) => item.evidenceNodeId)).size !== interaction.items.length
+      || !Array.isArray(interaction.conclusions) || !ids(interaction.conclusions.map((item) => item?.id))
+      || interaction.conclusions.some((item) => !closed(item, ['id', 'label', 'description'])
+        || !text(item.label) || (item.description !== undefined && !text(item.description)))) {
+      throw new Error(`${owner} requires bounded public conclusions and linked evidence items`);
+    }
+    const items = new Set(interaction.items.map((item) => item.id));
+    const conclusions = new Set(interaction.conclusions.map((item) => item.id));
+    if (spec.payload.proofs.some((proof) => !conclusions.has(proof.conclusionId)
+      || proof.evidenceIds.some((itemId) => !items.has(itemId)))) {
+      throw new Error(`${owner} proof references unknown public conclusions or evidence`);
+    }
+    return;
+  }
   if (!only(interaction, ['kind', 'items', 'slots']) || !INTERACTION_KINDS.includes(interaction.kind)) {
     throw new Error(`${owner} requires a supported narrative interaction`);
   }
@@ -61,6 +99,10 @@ export function validateNarrativePuzzle(node, nodeById, profileIds) {
     if (NARRATIVE_VERIFIERS.includes(spec.payload?.verifier)) {
       validateNarrativeAnswer(spec, owner);
       validateInteraction(value.interaction, spec, owner);
+      if (spec.payload.verifier === 'proof_sets' && value.interaction.items.some((item) =>
+        !profileIds.has(item.evidenceNodeId) || nodeById.get(item.evidenceNodeId)?.type !== 'evidence')) {
+        throw new Error(`${owner} proof evidence must reference profiled evidence nodes`);
+      }
     } else if (value.interaction !== undefined) validateInteraction(value.interaction, spec, owner);
     if (value.hints !== undefined && (!Array.isArray(value.hints) || value.hints.length > 8
       || value.hints.some((hint) => !text(hint)))) throw new Error(`${owner} hints must be bounded text`);
@@ -93,8 +135,19 @@ export function narrativeVariant(node, instanceId) {
   return { ...node.payload, ...variants[hash.readUInt32BE(0) % variants.length] };
 }
 
-export function verifyNarrativeSubmission(spec, interaction, submission) {
+export function verifyNarrativeSubmission(spec, interaction, submission, context) {
   const verifier = spec.payload.verifier;
+  if (verifier === 'proof_sets') {
+    if (!closed(submission, ['conclusionId', 'evidenceIds']) || !id(submission.conclusionId)
+      || !ids(submission.evidenceIds) || !(context?.knownEvidenceNodeIds instanceof Set)
+      || !interaction.conclusions.some((entry) => entry.id === submission.conclusionId)) return { valid: false };
+    const evidence = new Map(interaction.items.map((item) => [item.id, item.evidenceNodeId]));
+    if (submission.evidenceIds.some((itemId) => !evidence.has(itemId)
+      || !context.knownEvidenceNodeIds.has(evidence.get(itemId)))) return { valid: false };
+    const cited = new Set(submission.evidenceIds);
+    return { valid: true, matched: spec.payload.proofs.some((proof) => proof.conclusionId === submission.conclusionId
+      && proof.evidenceIds.length === cited.size && proof.evidenceIds.every((itemId) => cited.has(itemId))) };
+  }
   const items = new Set(interaction.items.map((entry) => entry.id));
   if (verifier === 'mapping') {
     if (!only(submission, ['assignments']) || !record(submission.assignments)) return { valid: false };
