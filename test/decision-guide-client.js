@@ -14,6 +14,8 @@ for (const stage of ['api','refresh','ignored','queued']) {
  projections:{snapshot:()=>1,current:()=>true},cityIdentity:()=> 'key',renderOperationPending(){},busy:{removeAttribute(){},setAttribute(){},classList:{add(){},remove(){}}},
  toast(){},describe:()=>'',shake(){},sfx(){},$:()=>resp,_operationResponseCurrent:null,
  recordOperation:r=>{receipts.push(r);return r;}});
+ // Model the browser global while leaving the optional analytics module absent.
+ c.window=c;
  c.api=async(method,path,body,options)=>{if(stage==='queued'){c.me={id:'b',generation:1};if(options.beforeDispatch?.()===false)return {code:499,body:{},ignored:true};sent++;}if(stage==='api')c.me={id:'b',generation:1};return {code:400,body:{private:'old'},...(stage==='ignored'?{ignored:true}:{})};};
  c.refresh=async()=>{if(stage==='refresh')c.me={id:'b',generation:1};return {code:200};};
  vm.runInContext(source('act')+'; globalThis.act=act;',c);
