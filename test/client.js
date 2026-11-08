@@ -134,6 +134,7 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
   ]) {
     const observed = await vm.runInNewContext(`(async () => {
       let acting = false, activatedControl = null, operationPending = null, operationPhase = '', _operationResponseCurrent = null;
+      globalThis.window = globalThis;
       let me = { id: 'owner', generation: 1, loc: 'docks' };
       const currentTab = 'streets', feedbackUX = null;
       const noop = () => {}, node = { textContent: '' };

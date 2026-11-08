@@ -2,6 +2,7 @@
 // Account, character, organization, participant kind, and effect authority are always derived by
 // the runtime; handlers copy only the caller choices defined by the public contract.
 import * as G from '../game.js';
+import { QUEST_QUALITY_BODY } from '../quest-quality-contracts.js';
 import {
   activateContentBundle,
   contentBoard,
@@ -10,6 +11,7 @@ import {
   joinContentInstance,
   setContentConsent,
   actOnContentInstance,
+  actOnContentQuality,
   leaveContentInstance,
   claimContentRewards,
   addContentCaseNote,
@@ -62,8 +64,10 @@ const actBody = {
       properties: {
         ids: { type: 'array', maxItems: 64, items: { type: 'string', minLength: 1, maxLength: 160 } },
         assignments: { type: 'object', maxProperties: 64, additionalProperties: { type: 'string', minLength: 1, maxLength: 160 } },
+        conclusionId: { type: 'string', minLength: 1, maxLength: 160 },
+        evidenceIds: { type: 'array', minItems: 1, maxItems: 64, uniqueItems: true, items: { type: 'string', minLength: 1, maxLength: 160 } },
       },
-      oneOf: [{ required: ['ids'] }, { required: ['assignments'] }],
+      oneOf: [{ required: ['ids'] }, { required: ['assignments'] }, { required: ['conclusionId', 'evidenceIds'] }],
     },
     hint: { type: 'boolean' },
   },
@@ -122,6 +126,7 @@ const strictValue = (rule, value, key) => {
     for (const [name, item] of Object.entries(value)) {
       const child = Object.hasOwn(rule.properties || {}, name) ? rule.properties[name]
         : typeof rule.additionalProperties === 'object' ? rule.additionalProperties : null;
+      if (!child && rule.additionalProperties === false) invalidBody(`Unexpected request field: ${key}.${name}.`);
       if (child) strictValue(child, item, `${key}.${name}`);
     }
   }
@@ -153,7 +158,7 @@ async function instanceMutation(reply, run) {
   try {
     return await run();
   } catch (error) {
-    if (!['stale_instance', 'stale_content'].includes(error?.code)) throw error;
+    if (!['stale_instance', 'stale_content', 'stale_quality'].includes(error?.code)) throw error;
     return reply.code(409).send({
       error: error.code,
       message: error.message,
@@ -294,6 +299,10 @@ export function register(app, { pool, auth, modAuth }) {
         submission: req.body?.submission,
         hint: req.body?.hint,
       }, client, h))));
+
+  app.post('/v1/content/instances/:instanceId/quality', guarded(auth, QUEST_QUALITY_BODY), async (req, reply) =>
+    instanceMutation(reply, () => G.withCharacter(pool, req.user.sub, (ch, client, h) =>
+      actOnContentQuality(ch, req.params.instanceId, req.body, client, h))));
 
   app.post('/v1/content/instances/:instanceId/leave', guarded(auth, revisionBody), async (req, reply) =>
     instanceMutation(reply, () => G.withCharacter(pool, req.user.sub, (ch, client, h) =>

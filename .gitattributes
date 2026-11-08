@@ -8,6 +8,7 @@ docs/release/evidence/** -text
 docs/release/readiness/** -text
 # Preserve raw quest evaluator output, including recorded Windows line endings.
 output/questing-verification/*.log -text
+output/quest-quality-verification/*.log -text
 # Preserve exact reviewed genesis code and deployment asset bytes across checkouts.
 omerta-contracts/src/market-v2/OmertaHookV2.sol text eol=lf
 omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol text eol=lf

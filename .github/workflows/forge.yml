@@ -1,4 +1,6 @@
 name: forge test (contracts)
+permissions:
+  contents: read
 
 # The pre-mainnet gate the sandboxed build environment can't run (Foundry's release binaries are
 # egress-blocked there). GitHub's runners have open internet, so `forge test` — the OMERTÀ Solidity
@@ -11,6 +13,8 @@ on:
     paths:
       - 'omerta-contracts/**'
       - '.github/workflows/forge.yml'
+      - 'tools/foundry-release-api.js'
+      - 'test/foundry-release-api.js'
       - 'src/dexbot.js'                # the v4 encodings the fork prover below executes
       - 'tools/dexbot-e2e.js'
       - 'src/stockdeliver.js'          # the 6551 + StockVault legs the second prover executes
@@ -43,6 +47,8 @@ on:
     paths:
       - 'omerta-contracts/**'
       - '.github/workflows/forge.yml'
+      - 'tools/foundry-release-api.js'
+      - 'test/foundry-release-api.js'
       - 'src/dexbot.js'
       - 'tools/dexbot-e2e.js'
       - 'src/stockdeliver.js'
@@ -102,6 +108,12 @@ jobs:
       # sibling. A moving compiler means a red gate cannot be reproduced locally, which is exactly the
       # position this gate was in. The banner is the instrument: when local and CI disagree again, the
       # log answers "which forge ran this" instead of leaving it to be guessed at.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Foundry release API offline controls
+        run: node ../test/foundry-release-api.js
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
@@ -244,7 +256,7 @@ jobs:
         run: |
           node test/liquidity-deployment-plan.js
           createdb omerta_liquidity_ci_e2e_test
-          node tools/liquidity-e2e.js
+          ANVIL_BIN="$(command -v anvil)" node tools/liquidity-e2e.js
 
       # THE SIZE GATE, LAST ON PURPOSE. Runs after the suite and both provers so an over-limit
       # contract fails on its own step and can never skip them (see the note on `forge build`).

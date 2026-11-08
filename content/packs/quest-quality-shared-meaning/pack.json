@@ -1,0 +1,494 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-shared-meaning",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-shared-meaning",
+    "entryNodeId": "quality-shared-meaning",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-shared-meaning",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-shared-meaning-memento",
+      "case-closed",
+      "examples",
+      "examples-answer",
+      "meanings",
+      "rewrite",
+      "rewrite-answer",
+      "counterexample",
+      "counterexample-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing"
+    ],
+    "actionNodeIds": [
+      "examples",
+      "rewrite",
+      "counterexample",
+      "closing"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-shared-meaning",
+      "type": "mystery",
+      "payload": {
+        "title": "When Both Offices Say Cleared",
+        "summary": "The harbor uses “cleared” to mean customs permission; the clinic uses it to mean a room disinfected. A perfectly sincere message sends the wrong cart to the wrong door.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "The harbor uses “cleared” to mean customs permission; the clinic uses it to mean a room disinfected. A perfectly sincere message sends the wrong cart to the wrong door.",
+          "reasoning": "Translate institutional meanings through contrasting examples",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "What does each institution’s word establish, and what shared wording prevents the next mistake?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "Customs permission and room disinfection are independent predicates, even when both offices use the same shorthand.",
+              "evidenceNodeId": "meanings"
+            }
+          ],
+          "identity": {
+            "activity": "Translate institutional meanings through contrasting examples",
+            "emotionalTurn": "Apparent deception becomes a repairable misunderstanding"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "examples",
+              "text": "A wagon can have customs permission while its cargo room is not disinfected. A disinfected clinic room can contain cargo with no customs permission. Match the local meanings.",
+              "nodeId": "examples"
+            },
+            {
+              "id": "rewrite",
+              "text": "Which message establishes both conditions without relying on the ambiguous word?",
+              "nodeId": "rewrite"
+            },
+            {
+              "id": "counterexample",
+              "text": "Customs permission is issued; disinfection is still pending. Which sentence is accurate?",
+              "nodeId": "counterexample"
+            },
+            {
+              "id": "closing",
+              "text": "Both offices keep their own terminology but agree on shared messages that name the required conditions. Neither must pretend the other office lied.",
+              "nodeId": "closing"
+            }
+          ],
+          "npcs": [],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "When Both Offices Say Cleared",
+        "summary": "The harbor uses “cleared” to mean customs permission; the clinic uses it to mean a room disinfected. A perfectly sincere message sends the wrong cart to the wrong door."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-shared-meaning-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "When Both Offices Say Cleared: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "When Both Offices Say Cleared: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-shared-meaning-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "examples",
+      "type": "puzzle",
+      "payload": {
+        "title": "Same word, different predicates",
+        "prompt": "A wagon can have customs permission while its cargo room is not disinfected. A disinfected clinic room can contain cargo with no customs permission. Match the local meanings.",
+        "summary": "A wagon can have customs permission while its cargo room is not disinfected. A disinfected clinic room can contain cargo with no customs permission. Match the local meanings.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "examples-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "customs",
+              "label": "Customs permission"
+            },
+            {
+              "id": "clean",
+              "label": "Room disinfected"
+            }
+          ],
+          "slots": [
+            {
+              "id": "harbor",
+              "label": "Harbor: cleared"
+            },
+            {
+              "id": "clinic",
+              "label": "Clinic: cleared"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "examples-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "harbor": "customs",
+          "clinic": "clean"
+        }
+      }
+    },
+    {
+      "id": "meanings",
+      "type": "evidence",
+      "payload": {
+        "title": "Two independent meanings",
+        "summary": "The two offices use “cleared” for distinct conditions; neither local statement implies the other.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "rewrite",
+      "type": "puzzle",
+      "payload": {
+        "title": "Write what the reader needs",
+        "prompt": "Which message establishes both conditions without relying on the ambiguous word?",
+        "summary": "Which message establishes both conditions without relying on the ambiguous word?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "rewrite-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "both",
+              "label": "Customs permission issued AND room disinfected"
+            },
+            {
+              "id": "same",
+              "label": "It is cleared, so everything is ready"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "rewrite-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "both"
+        ]
+      }
+    },
+    {
+      "id": "counterexample",
+      "type": "puzzle",
+      "payload": {
+        "title": "Check a contrasting case",
+        "prompt": "Customs permission is issued; disinfection is still pending. Which sentence is accurate?",
+        "summary": "Customs permission is issued; disinfection is still pending. Which sentence is accurate?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "counterexample-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "pending",
+              "label": "Customs permitted; room disinfection pending"
+            },
+            {
+              "id": "all",
+              "label": "All clinic and harbor conditions complete"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "counterexample-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "pending"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-shared-meaning.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-shared-meaning.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "Both offices keep their own terminology but agree on shared messages that name the required conditions. Neither must pretend the other office lied.",
+        "summary": "Both offices keep their own terminology but agree on shared messages that name the required conditions. Neither must pretend the other office lied.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-shared-meaning",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-shared-meaning",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "examples",
+      "type": "REVEALS",
+      "to": "meanings"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "examples"
+    },
+    {
+      "from": "examples",
+      "type": "UNLOCKS",
+      "to": "rewrite"
+    },
+    {
+      "from": "rewrite",
+      "type": "UNLOCKS",
+      "to": "counterexample"
+    },
+    {
+      "from": "counterexample",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

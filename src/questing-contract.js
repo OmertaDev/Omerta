@@ -17,11 +17,12 @@ const mysterySummary = {
 };
 
 export const QUESTING_SCHEMAS = {
-  ContentInteractionItem: object({ id: string, label: string, description: string }, ['id', 'label']),
+  ContentInteractionItem: object({ id: string, label: string, description: string, evidenceNodeId: string }, ['id', 'label']),
   ContentInteraction: object({
     kind: { type: 'string', enum: ['deduction', 'interrogation', 'timeline', 'scene', 'planning', 'stealth', 'inventory'] },
-    mode: { type: 'string', enum: ['ordered_ids', 'unordered_ids', 'mapping'] },
+    mode: { type: 'string', enum: ['ordered_ids', 'unordered_ids', 'mapping', 'proof_sets'] },
     items: array(ref('ContentInteractionItem'), 64), slots: array(ref('ContentInteractionItem'), 64),
+    conclusions: array(ref('ContentInteractionItem'), 64),
   }, ['kind', 'mode', 'items']),
   ContentExpectations: object({ durationMinutes: { type: 'integer', minimum: 1 }, difficulty: string,
     summary: string, reasoning: string, combat: string, group: string, commitments: array(string) }, []),

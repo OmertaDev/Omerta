@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"ecd73fed-a111-42c7-877f-c9f23cc0b7a9"}
+{"component":"player-command","phase":"authorization","correlationId":"ecd73fed-a111-42c7-877f-c9f23cc0b7a9","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"ecd73fed-a111-42c7-877f-c9f23cc0b7a9","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"ecd73fed-a111-42c7-877f-c9f23cc0b7a9","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"119d2ce8-e4b5-4fed-a394-2819a9588722"}
+{"component":"player-command","phase":"authorization","correlationId":"119d2ce8-e4b5-4fed-a394-2819a9588722","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"119d2ce8-e4b5-4fed-a394-2819a9588722","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"119d2ce8-e4b5-4fed-a394-2819a9588722","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"ea66201f-a3e2-4b7e-9a14-09ca95fb7ab9"}
+{"component":"player-command","phase":"authorization","correlationId":"ea66201f-a3e2-4b7e-9a14-09ca95fb7ab9","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"ea66201f-a3e2-4b7e-9a14-09ca95fb7ab9","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"ea66201f-a3e2-4b7e-9a14-09ca95fb7ab9","statusCode":409,"elapsedMs":1}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-Tl9i6Z

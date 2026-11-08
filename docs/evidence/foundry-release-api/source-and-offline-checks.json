@@ -1,0 +1,64 @@
+{
+  "phase": "CI-toolchain-delivery",
+  "reviewDate": "2026-11-08T10:22:08.892Z",
+  "baseRevision": "b15614a1531f8ecbb108d019bc481dd2ae0beb14",
+  "promotedFiles": {
+    "tools/foundry-release-api.js": {
+      "bytes": 20198,
+      "sha256": "57dca16e3c3cfd6b4fd11773892fb1ab0db48efa095e5c4cff138e27d538fa34"
+    },
+    "test/foundry-release-api.js": {
+      "bytes": 12727,
+      "sha256": "5a16ad62dfd2faf9eca28b0c4acf19560d95133281887f11936fcb16633b49f1"
+    }
+  },
+  "sourceConservation": {
+    "draftSha256": "c935aa51a7bbec605a831fdb52f3355d82336da7790128c0a42ec783471628b3",
+    "exactBytesAfterFirstComment": true,
+    "contemporaneousDraftExecutionPin": false
+  },
+  "tools": {
+    "node": "v24.19.0",
+    "gh": "2.98.0"
+  },
+  "checks": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "tools/foundry-release-api.js"
+      ],
+      "exitCode": 0,
+      "durationMs": 65,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "test/foundry-release-api.js"
+      ],
+      "exitCode": 0,
+      "durationMs": 58,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "test/foundry-release-api.js"
+      ],
+      "exitCode": 0,
+      "durationMs": 190,
+      "stdout": "{\"phase\":\"FOUNDRY_RELEASE_API_OFFLINE_CONTROLS\",\"tarRefusals\":38,\"elfRefusals\":8,\"policyRefusals\":36,\"environmentRefusals\":7,\"cryptographicVerificationPerformed\":false,\"networkUsed\":false,\"installed\":false,\"pathPublished\":false}",
+      "stderr": ""
+    }
+  ],
+  "networkUsed": false,
+  "cryptographicVerificationPerformedByTheseChecks": false,
+  "linuxPublicationTested": false,
+  "nativeBuildOrTestsExecuted": false,
+  "integrationReview": "ON_HOLD_NOT_YET_WIRED",
+  "productionActions": false
+}

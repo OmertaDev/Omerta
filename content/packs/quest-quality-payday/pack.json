@@ -1,0 +1,663 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-payday",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-payday",
+    "entryNodeId": "quality-payday",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-payday",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-payday-memento",
+      "case-closed",
+      "handoff",
+      "handoff-answer",
+      "boundary-fact",
+      "repair",
+      "repair-answer",
+      "test",
+      "test-answer",
+      "clock-procedure-learn-memory",
+      "clock-procedure-skip-memory",
+      "clock-procedure",
+      "clock-check",
+      "clock-check-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing"
+    ],
+    "actionNodeIds": [
+      "handoff",
+      "repair",
+      "test",
+      "clock-procedure",
+      "clock-check",
+      "closing"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-payday",
+      "type": "mystery",
+      "payload": {
+        "title": "The Payday Nobody Stole",
+        "summary": "The dock cashier, foreman and bank all followed their own instructions. Nobody received a duplicate wage, yet the night crew was paid nothing.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "The dock cashier, foreman and bank all followed their own instructions. Nobody received a duplicate wage, yet the night crew was paid nothing.",
+          "reasoning": "Repair and test a small institutional process",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "Which handoff failed, and will a proposed repair survive the next shift boundary?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "“Before 23:00” excludes exactly 23:00; “at or after” includes that instant.",
+              "evidenceNodeId": "boundary-fact"
+            }
+          ],
+          "identity": {
+            "activity": "Repair and test a small institutional process",
+            "emotionalTurn": "Suspicion becomes shared responsibility"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "handoff",
+              "text": "The foreman closes a shift at 23:00. The cashier includes only shifts closed before 23:00, excluding exactly 23:00. The bank executes every submitted batch. Assign the failure to the missing handoff.",
+              "nodeId": "handoff"
+            },
+            {
+              "id": "repair",
+              "text": "The previous batch includes shifts ending before 23:00. Which next-batch rule covers every boundary exactly once?",
+              "nodeId": "repair"
+            },
+            {
+              "id": "test",
+              "text": "Under your repaired partition, place the test shifts. The old batch is before 23:00; the next is at or after 23:00.",
+              "nodeId": "test"
+            },
+            {
+              "id": "clock-procedure",
+              "text": "Every record below uses the corrected hall clock. Learn how the correction works, or apply the procedure you already demonstrated.",
+              "nodeId": "clock-procedure"
+            },
+            {
+              "id": "clock-check",
+              "text": "At the same instant the bell record reads 19:00 and the hall clock reads 19:02. A hall photograph reads 19:08. Which corrected time belongs to it?",
+              "nodeId": "clock-check"
+            },
+            {
+              "id": "closing",
+              "text": "The next payroll includes the boundary shift once. Each clerk signs the revised handoff; the file names a failed interface rather than inventing a thief.",
+              "nodeId": "closing"
+            }
+          ],
+          "npcs": [],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          },
+          "procedures": [
+            {
+              "id": "shared-clock",
+              "nodeId": "clock-procedure",
+              "masteryFlag": "quest.procedure.shared-clock",
+              "skipOptionId": "skip",
+              "learnOptionId": "learn",
+              "learnNodeId": "clock-check"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "The Payday Nobody Stole",
+        "summary": "The dock cashier, foreman and bank all followed their own instructions. Nobody received a duplicate wage, yet the night crew was paid nothing."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-payday-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "The Payday Nobody Stole: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Payday Nobody Stole: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-payday-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "handoff",
+      "type": "puzzle",
+      "payload": {
+        "title": "Three correct local rules",
+        "prompt": "The foreman closes a shift at 23:00. The cashier includes only shifts closed before 23:00, excluding exactly 23:00. The bank executes every submitted batch. Assign the failure to the missing handoff.",
+        "summary": "The foreman closes a shift at 23:00. The cashier includes only shifts closed before 23:00, excluding exactly 23:00. The bank executes every submitted batch. Assign the failure to the missing handoff.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "handoff-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "boundary",
+              "label": "Cashier excludes shifts closing exactly at 23:00"
+            },
+            {
+              "id": "bank",
+              "label": "Bank executes submitted batches"
+            },
+            {
+              "id": "theft",
+              "label": "An unsupported theft accusation"
+            }
+          ],
+          "slots": [
+            {
+              "id": "gap",
+              "label": "Why this documented shift entered no batch"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "handoff-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "gap": "boundary"
+        }
+      }
+    },
+    {
+      "id": "boundary-fact",
+      "type": "evidence",
+      "payload": {
+        "title": "The excluded boundary",
+        "summary": "A documented shift closed at exactly 23:00; the existing cashier condition excludes that instant.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "repair",
+      "type": "puzzle",
+      "payload": {
+        "title": "Write the inclusion rule",
+        "prompt": "The previous batch includes shifts ending before 23:00. Which next-batch rule covers every boundary exactly once?",
+        "summary": "The previous batch includes shifts ending before 23:00. Which next-batch rule covers every boundary exactly once?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "repair-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "include",
+              "label": "Next batch includes shifts ending at or after 23:00"
+            },
+            {
+              "id": "exclude",
+              "label": "Next batch includes only shifts ending after 23:00"
+            },
+            {
+              "id": "both",
+              "label": "Both batches include exactly 23:00"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "repair-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "include"
+        ]
+      }
+    },
+    {
+      "id": "test",
+      "type": "puzzle",
+      "payload": {
+        "title": "Run three test shifts",
+        "prompt": "Under your repaired partition, place the test shifts. The old batch is before 23:00; the next is at or after 23:00.",
+        "summary": "Under your repaired partition, place the test shifts. The old batch is before 23:00; the next is at or after 23:00.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "test-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "old",
+              "label": "Old batch"
+            },
+            {
+              "id": "next",
+              "label": "Next batch"
+            }
+          ],
+          "slots": [
+            {
+              "id": "a",
+              "label": "22:59"
+            },
+            {
+              "id": "b",
+              "label": "23:00"
+            },
+            {
+              "id": "c",
+              "label": "23:01"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "test-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "mapping",
+        "solution": {
+          "a": "old",
+          "b": "next",
+          "c": "next"
+        }
+      }
+    },
+    {
+      "id": "clock-procedure-learn-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-payday.clock-procedure",
+        "kind": "future_scene_variant",
+        "value": "learn",
+        "title": "Calibrate the shared clock: Check the bell against the hall clock",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "clock-procedure-skip-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-payday.clock-procedure",
+        "kind": "future_scene_variant",
+        "value": "skip",
+        "title": "Calibrate the shared clock: Apply my established clock-check procedure",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "clock-procedure",
+      "type": "choice",
+      "payload": {
+        "title": "Calibrate the shared clock",
+        "prompt": "Every record below uses the corrected hall clock. Learn how the correction works, or apply the procedure you already demonstrated.",
+        "summary": "Every record below uses the corrected hall clock. Learn how the correction works, or apply the procedure you already demonstrated.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "learn",
+            "label": "Check the bell against the hall clock",
+            "nextNodeIds": [
+              "clock-check"
+            ],
+            "storyFlagIds": [
+              "clock-procedure-learn-memory"
+            ]
+          },
+          {
+            "id": "skip",
+            "label": "Apply my established clock-check procedure",
+            "nextNodeIds": [
+              "handoff"
+            ],
+            "storyFlagIds": [
+              "clock-procedure-skip-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "clock-check",
+      "type": "puzzle",
+      "payload": {
+        "title": "One correction, not two",
+        "prompt": "At the same instant the bell record reads 19:00 and the hall clock reads 19:02. A hall photograph reads 19:08. Which corrected time belongs to it?",
+        "summary": "At the same instant the bell record reads 19:00 and the hall clock reads 19:02. A hall photograph reads 19:08. Which corrected time belongs to it?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "clock-check-answer",
+        "interaction": {
+          "kind": "timeline",
+          "items": [
+            {
+              "id": "1906",
+              "label": "19:06"
+            },
+            {
+              "id": "1908",
+              "label": "19:08"
+            },
+            {
+              "id": "1910",
+              "label": "19:10"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "clock-check-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "1906"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-payday.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-payday.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "The next payroll includes the boundary shift once. Each clerk signs the revised handoff; the file names a failed interface rather than inventing a thief.",
+        "summary": "The next payroll includes the boundary shift once. Each clerk signs the revised handoff; the file names a failed interface rather than inventing a thief.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-payday",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-payday",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "handoff",
+      "type": "REVEALS",
+      "to": "boundary-fact"
+    },
+    {
+      "from": "clock-procedure",
+      "type": "UNLOCKS",
+      "to": "clock-check"
+    },
+    {
+      "from": "clock-procedure",
+      "type": "UNLOCKS",
+      "to": "handoff"
+    },
+    {
+      "from": "clock-check",
+      "type": "UNLOCKS",
+      "to": "handoff"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "clock-procedure"
+    },
+    {
+      "from": "handoff",
+      "type": "UNLOCKS",
+      "to": "repair"
+    },
+    {
+      "from": "repair",
+      "type": "UNLOCKS",
+      "to": "test"
+    },
+    {
+      "from": "test",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

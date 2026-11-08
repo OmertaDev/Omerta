@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"711c1180-8bfe-4e96-836f-5e2c3a5c1d0c"}
+{"component":"player-command","phase":"authorization","correlationId":"711c1180-8bfe-4e96-836f-5e2c3a5c1d0c","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"711c1180-8bfe-4e96-836f-5e2c3a5c1d0c","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"711c1180-8bfe-4e96-836f-5e2c3a5c1d0c","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"df2274fd-b9cf-42cc-8d13-3dbd3368e5a5"}
+{"component":"player-command","phase":"authorization","correlationId":"df2274fd-b9cf-42cc-8d13-3dbd3368e5a5","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"df2274fd-b9cf-42cc-8d13-3dbd3368e5a5","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"df2274fd-b9cf-42cc-8d13-3dbd3368e5a5","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"ddec7bf1-8133-4a60-b05c-64203469acfe"}
+{"component":"player-command","phase":"authorization","correlationId":"ddec7bf1-8133-4a60-b05c-64203469acfe","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"ddec7bf1-8133-4a60-b05c-64203469acfe","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"ddec7bf1-8133-4a60-b05c-64203469acfe","statusCode":409,"elapsedMs":2}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-1NxuD0

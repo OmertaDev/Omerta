@@ -1,0 +1,820 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-small-fire",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-small-fire",
+    "entryNodeId": "quality-small-fire",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-small-fire",
+      "party-policy",
+      "party-quorum",
+      "records",
+      "residents",
+      "opening",
+      "case-reward",
+      "quality-small-fire-memento",
+      "case-closed",
+      "register",
+      "register-answer",
+      "red-meaning",
+      "whistle",
+      "whistle-answer",
+      "whistle-account",
+      "join",
+      "join-answer",
+      "flue-report",
+      "brief-challenge-memory",
+      "brief-bounded-memory",
+      "brief",
+      "repair",
+      "repair-answer",
+      "account",
+      "account-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing",
+      "stove",
+      "stove-answer"
+    ],
+    "actionNodeIds": [
+      "register",
+      "whistle",
+      "join",
+      "brief",
+      "repair",
+      "account",
+      "closing",
+      "stove"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-small-fire",
+      "type": "mystery",
+      "payload": {
+        "title": "The Fire Under the Teapot",
+        "summary": "Valenti hires two investigators to expose a neighborhood arson ring. A collector sees threatening red marks; a resident hears a coded whistle. Neither observation is invented, and neither yet proves an arson ring.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "Valenti hires two investigators to expose a neighborhood arson ring. A collector sees threatening red marks; a resident hears a coded whistle. Neither observation is invented, and neither yet proves an arson ring.",
+          "reasoning": "Combine two roles’ limited observations and challenge a brief",
+          "combat": "None",
+          "group": "Two consenting investigators",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "What caused the reported smoke, and does the employer’s requested accusation fit the established facts?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "A cause supported by the checked stove report outranks an accusation inferred from already-accounted-for signals.",
+              "evidenceNodeId": "flue-report"
+            }
+          ],
+          "identity": {
+            "activity": "Combine two roles’ limited observations and challenge a brief",
+            "emotionalTurn": "A frightening conspiracy becomes a specific human need"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "register",
+              "text": "The housing register defines red marks as scheduled stove inspections. The marks predate Valenti’s accusation. Choose the recorded meaning.",
+              "nodeId": "register"
+            },
+            {
+              "id": "whistle",
+              "text": "Nella: “I use two notes to tell my father the kettle is ready. I heard the same two notes by the stove. I never saw an attacker.” Select her direct report.",
+              "nodeId": "whistle"
+            },
+            {
+              "id": "join",
+              "text": "The inspection register accounts for the marks; the kettle signal accounts for the whistle. The stove report records a blocked flue. Which explanation fits all three without inventing an attacker?",
+              "nodeId": "join"
+            },
+            {
+              "id": "brief",
+              "text": "Valenti wants an accusation. The residents want a functioning stove and an accurate record. Choose what work to carry forward.",
+              "nodeId": "brief"
+            },
+            {
+              "id": "repair",
+              "text": "The flue report calls for clearing the blockage and testing smoke flow before the stove is used. Arrange those steps.",
+              "nodeId": "repair"
+            },
+            {
+              "id": "account",
+              "text": "Which sentence can both investigators sign?",
+              "nodeId": "account"
+            },
+            {
+              "id": "closing",
+              "text": "The residents get an identified danger and a documented response. Valenti remains suspicious. A completed investigation need not manufacture agreement or a larger villain.",
+              "nodeId": "closing"
+            },
+            {
+              "id": "stove",
+              "text": "What cause did the inspector directly check?",
+              "nodeId": "stove"
+            }
+          ],
+          "npcs": [
+            {
+              "id": "nella",
+              "label": "Nella",
+              "knowledge": [
+                {
+                  "evidenceNodeId": "whistle-account",
+                  "sourceNodeId": "quality-small-fire"
+                }
+              ],
+              "voice": "Names familiar sounds, then separates what she heard from what she feared.",
+              "principles": []
+            },
+            {
+              "id": "valenti",
+              "label": "Valenti",
+              "knowledge": [],
+              "voice": "Thinks in organizations, reputations and orders.",
+              "principles": [
+                "He accepts a signed factual account even when it challenges his brief."
+              ]
+            }
+          ],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [
+            {
+              "choiceNodeId": "brief",
+              "reconvergeNodeId": "closing",
+              "maxActions": 3
+            }
+          ],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          },
+          "spotlights": [
+            {
+              "nodeId": "register",
+              "roleId": "records"
+            },
+            {
+              "nodeId": "whistle",
+              "roleId": "residents"
+            },
+            {
+              "nodeId": "join",
+              "roleId": "records"
+            },
+            {
+              "nodeId": "brief",
+              "roleId": "records"
+            },
+            {
+              "nodeId": "repair",
+              "roleId": "residents"
+            },
+            {
+              "nodeId": "account",
+              "roleId": "residents"
+            },
+            {
+              "nodeId": "closing",
+              "roleId": "records"
+            },
+            {
+              "nodeId": "stove",
+              "roleId": "residents"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "crew",
+          "extended_family"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "allowRoleReplacement": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 2,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "records",
+      "type": "role",
+      "payload": {
+        "title": "records",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "residents",
+      "type": "role",
+      "payload": {
+        "title": "residents",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "The Fire Under the Teapot",
+        "summary": "Valenti hires two investigators to expose a neighborhood arson ring. A collector sees threatening red marks; a resident hears a coded whistle. Neither observation is invented, and neither yet proves an arson ring."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-small-fire-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "The Fire Under the Teapot: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "The Fire Under the Teapot: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-small-fire-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "register",
+      "type": "puzzle",
+      "payload": {
+        "title": "Records specialist: the red marks",
+        "prompt": "The housing register defines red marks as scheduled stove inspections. The marks predate Valenti’s accusation. Choose the recorded meaning.",
+        "summary": "The housing register defines red marks as scheduled stove inspections. The marks predate Valenti’s accusation. Choose the recorded meaning.",
+        "gates": [],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "register-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "inspection",
+              "label": "Scheduled stove inspection"
+            },
+            {
+              "id": "target",
+              "label": "An inferred target list"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "register-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "inspection"
+        ]
+      }
+    },
+    {
+      "id": "red-meaning",
+      "type": "evidence",
+      "payload": {
+        "title": "Recorded meaning of red marks",
+        "summary": "The pre-existing register uses red marks for stove inspections, not attacks.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "whistle",
+      "type": "puzzle",
+      "payload": {
+        "title": "Resident specialist: what the whistle means",
+        "prompt": "Nella: “I use two notes to tell my father the kettle is ready. I heard the same two notes by the stove. I never saw an attacker.” Select her direct report.",
+        "summary": "Nella: “I use two notes to tell my father the kettle is ready. I heard the same two notes by the stove. I never saw an attacker.” Select her direct report.",
+        "gates": [],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "whistle-answer",
+        "interaction": {
+          "kind": "interrogation",
+          "items": [
+            {
+              "id": "heard",
+              "label": "She heard the familiar two-note kettle signal"
+            },
+            {
+              "id": "attacker",
+              "label": "She saw an attacker"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "whistle-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "heard"
+        ]
+      }
+    },
+    {
+      "id": "whistle-account",
+      "type": "evidence",
+      "payload": {
+        "title": "Nella’s limited testimony",
+        "summary": "Nella heard the kettle signal; she did not see an attacker. Her fear was sincere but exceeded what she observed.",
+        "evidenceKind": "testimony",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "join",
+      "type": "puzzle",
+      "payload": {
+        "title": "Two observations are not a conspiracy",
+        "prompt": "The inspection register accounts for the marks; the kettle signal accounts for the whistle. The stove report records a blocked flue. Which explanation fits all three without inventing an attacker?",
+        "summary": "The inspection register accounts for the marks; the kettle signal accounts for the whistle. The stove report records a blocked flue. Which explanation fits all three without inventing an attacker?",
+        "gates": [],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "join-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "flue",
+              "label": "A blocked flue caused smoke during an ordinary kettle signal"
+            },
+            {
+              "id": "ring",
+              "label": "The marks alone prove an arson organization"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "join-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "flue"
+        ]
+      }
+    },
+    {
+      "id": "flue-report",
+      "type": "evidence",
+      "payload": {
+        "title": "Checked stove report",
+        "summary": "The inspector found a blocked flue and recorded how it caused the reported smoke.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "brief-challenge-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-small-fire.brief",
+        "kind": "future_scene_variant",
+        "value": "challenge",
+        "title": "Challenge the employer’s commission: Challenge the arson brief and repair the documented danger",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "brief-bounded-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-small-fire.brief",
+        "kind": "future_scene_variant",
+        "value": "bounded",
+        "title": "Challenge the employer’s commission: Complete a factual account while refusing the unsupported accusation",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "brief",
+      "type": "choice",
+      "payload": {
+        "title": "Challenge the employer’s commission",
+        "prompt": "Valenti wants an accusation. The residents want a functioning stove and an accurate record. Choose what work to carry forward.",
+        "summary": "Valenti wants an accusation. The residents want a functioning stove and an accurate record. Choose what work to carry forward.",
+        "gates": [],
+        "options": [
+          {
+            "id": "challenge",
+            "label": "Challenge the arson brief and repair the documented danger",
+            "nextNodeIds": [
+              "repair"
+            ],
+            "storyFlagIds": [
+              "brief-challenge-memory"
+            ]
+          },
+          {
+            "id": "bounded",
+            "label": "Complete a factual account while refusing the unsupported accusation",
+            "nextNodeIds": [
+              "account"
+            ],
+            "storyFlagIds": [
+              "brief-bounded-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "repair",
+      "type": "puzzle",
+      "payload": {
+        "title": "Remove the actual cause",
+        "prompt": "The flue report calls for clearing the blockage and testing smoke flow before the stove is used. Arrange those steps.",
+        "summary": "The flue report calls for clearing the blockage and testing smoke flow before the stove is used. Arrange those steps.",
+        "gates": [],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "repair-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "clear",
+              "label": "Clear the blockage"
+            },
+            {
+              "id": "test",
+              "label": "Test smoke flow"
+            },
+            {
+              "id": "use",
+              "label": "Return the stove to use"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "repair-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "ordered_ids",
+        "solution": [
+          "clear",
+          "test",
+          "use"
+        ]
+      }
+    },
+    {
+      "id": "account",
+      "type": "puzzle",
+      "payload": {
+        "title": "Keep the disagreement legible",
+        "prompt": "Which sentence can both investigators sign?",
+        "summary": "Which sentence can both investigators sign?",
+        "gates": [],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "account-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "bounded",
+              "label": "The records support a blocked flue; Valenti’s arson claim remains unsupported"
+            },
+            {
+              "id": "agree",
+              "label": "Everyone agrees with Valenti because he commissioned the case"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "account-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "bounded"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-small-fire.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-small-fire.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "The residents get an identified danger and a documented response. Valenti remains suspicious. A completed investigation need not manufacture agreement or a larger villain.",
+        "summary": "The residents get an identified danger and a documented response. Valenti remains suspicious. A completed investigation need not manufacture agreement or a larger villain.",
+        "gates": [],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    },
+    {
+      "id": "stove",
+      "type": "puzzle",
+      "payload": {
+        "title": "Inspect the actual stove record",
+        "prompt": "The inspection sheet records a blocked flue, a smoke-flow test and the date of the visit. Which entry describes a directly checked cause of smoke?",
+        "summary": "The inspector checked the flue and recorded a blockage before the case finding.",
+        "gates": [],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "stove-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "blockage",
+              "label": "A checked flue blockage"
+            },
+            {
+              "id": "rumor",
+              "label": "A rumor about an organization"
+            }
+          ]
+        },
+        "hints": [
+          "Separate a checked physical cause from an inferred organization."
+        ]
+      }
+    },
+    {
+      "id": "stove-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "blockage"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-small-fire",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "records"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "residents"
+    },
+    {
+      "from": "quality-small-fire",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "register",
+      "type": "REVEALS",
+      "to": "red-meaning"
+    },
+    {
+      "from": "whistle",
+      "type": "REVEALS",
+      "to": "whistle-account"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "register"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "whistle"
+    },
+    {
+      "from": "register",
+      "type": "UNLOCKS",
+      "to": "join"
+    },
+    {
+      "from": "whistle",
+      "type": "UNLOCKS",
+      "to": "join"
+    },
+    {
+      "from": "join",
+      "type": "UNLOCKS",
+      "to": "brief"
+    },
+    {
+      "from": "brief",
+      "type": "UNLOCKS",
+      "to": "repair"
+    },
+    {
+      "from": "brief",
+      "type": "UNLOCKS",
+      "to": "account"
+    },
+    {
+      "from": "repair",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "account",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "stove"
+    },
+    {
+      "from": "stove",
+      "type": "REVEALS",
+      "to": "flue-report"
+    },
+    {
+      "from": "stove",
+      "type": "UNLOCKS",
+      "to": "join"
+    }
+  ]
+}

@@ -1,0 +1,562 @@
+{
+  "schemaVersion": 1,
+  "namespace": "omerta.quest.quality-last-ferry",
+  "version": 1,
+  "growth": {
+    "role": "internal_only",
+    "exemptReason": "Authored experimental investigations without external acquisition or economic rewards"
+  },
+  "runtime": {
+    "experienceId": "quality-last-ferry",
+    "entryNodeId": "quality-last-ferry",
+    "partyPolicyId": "party-policy",
+    "quorumId": "party-quorum",
+    "terminalNodeId": "case-closed",
+    "nodeIds": [
+      "quality-last-ferry",
+      "party-policy",
+      "party-quorum",
+      "investigator",
+      "opening",
+      "case-reward",
+      "quality-last-ferry-memento",
+      "case-closed",
+      "character-check",
+      "character-check-answer",
+      "character-knowledge",
+      "priority-instrument-memory",
+      "priority-conversation-memory",
+      "priority",
+      "instrument",
+      "instrument-answer",
+      "conversation",
+      "conversation-answer",
+      "closing-precise-memory",
+      "closing-people-memory",
+      "closing"
+    ],
+    "actionNodeIds": [
+      "character-check",
+      "priority",
+      "instrument",
+      "conversation",
+      "closing"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "quality-last-ferry",
+      "type": "mystery",
+      "payload": {
+        "title": "Before the Last Ferry",
+        "summary": "Player-only prologue: a stagehand has moved a loose loading board over the gangway gap. Your character has not seen the board yet. The ferry will depart at 20:00; that departure is fixed. You can still determine who crosses safely and what they take with them.",
+        "expectations": {
+          "durationMinutes": 20,
+          "difficulty": "Reasoned",
+          "summary": "Player-only prologue: a stagehand has moved a loose loading board over the gangway gap. Your character has not seen the board yet. The ferry will depart at 20:00; that departure is fixed. You can still determine who crosses safely and what they take with them.",
+          "reasoning": "Turn dramatic irony into an informed intervention",
+          "combat": "None",
+          "group": "Solo",
+          "commitments": [
+            "Fictional decisions; no currency or player property is at stake."
+          ]
+        },
+        "quality": {
+          "version": 1,
+          "question": "How can the character establish the gangway risk and protect the departure within a fixed sailing?",
+          "assumptions": [
+            {
+              "id": "clock",
+              "text": "All times use the same local clock unless a record explicitly gives a correction."
+            },
+            {
+              "id": "scope",
+              "text": "Only named people and mechanisms in the case can be required for its resolution."
+            }
+          ],
+          "clauses": [
+            {
+              "id": "rule-1",
+              "text": "The player prologue is not character evidence; the attributable inspection supplies what the character can act on.",
+              "evidenceNodeId": "character-knowledge"
+            }
+          ],
+          "identity": {
+            "activity": "Turn dramatic irony into an informed intervention",
+            "emotionalTurn": "An unavoidable departure still leaves meaningful care"
+          },
+          "motives": [
+            {
+              "id": "care",
+              "label": "Protect people affected by the case"
+            },
+            {
+              "id": "duty",
+              "label": "Keep a precise public record"
+            },
+            {
+              "id": "pragmatism",
+              "label": "Find a workable arrangement"
+            }
+          ],
+          "questions": [
+            {
+              "id": "character-check",
+              "text": "Your character can ask for a gangway check without claiming to know the hidden board. Which request establishes the risk in the world?",
+              "nodeId": "character-check"
+            },
+            {
+              "id": "priority",
+              "text": "The crew can secure the board before departure. You have time to help one passenger properly: carry Nella’s instrument or arrange a final conversation for the departing witness.",
+              "nodeId": "priority"
+            },
+            {
+              "id": "instrument",
+              "text": "Nella’s case has a marked handle and a fragile string bridge. Choose the supported carrying method.",
+              "nodeId": "instrument"
+            },
+            {
+              "id": "conversation",
+              "text": "The witness asks to speak privately to Ada, not to make a public confession. Which arrangement respects the stated request?",
+              "nodeId": "conversation"
+            },
+            {
+              "id": "closing",
+              "text": "The board is secured and the ferry leaves at the stated time. The departure was fixed; the care, possessions and conversation carried into it were not.",
+              "nodeId": "closing"
+            }
+          ],
+          "npcs": [],
+          "promises": [
+            {
+              "id": "opening-promise",
+              "setupNodeId": "opening",
+              "payoffNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "branches": [],
+          "budget": {
+            "maxActions": 32,
+            "maxNewConcepts": 24,
+            "maxReadingWords": 6000
+          },
+          "spoilers": [
+            {
+              "nodeId": "case-closed",
+              "requiresNodeIds": [
+                "closing"
+              ]
+            }
+          ],
+          "pacing": {
+            "pressureNodeIds": [],
+            "safeNodeIds": [
+              "opening",
+              "closing"
+            ],
+            "maxConsecutivePressure": 2
+          }
+        }
+      }
+    },
+    {
+      "id": "party-policy",
+      "type": "party_policy",
+      "payload": {
+        "organizationScopes": [
+          "personal"
+        ],
+        "uniqueParticipants": true,
+        "roleLockOnStart": true,
+        "recheckConsent": true,
+        "accountLegacyContinuity": true
+      }
+    },
+    {
+      "id": "party-quorum",
+      "type": "quorum",
+      "payload": {
+        "minimumParticipants": 1,
+        "uniqueParticipants": true,
+        "minimumOrganizations": 1
+      }
+    },
+    {
+      "id": "investigator",
+      "type": "role",
+      "payload": {
+        "title": "investigator",
+        "participantKinds": [
+          "agent",
+          "human_eligible_non_agent"
+        ]
+      }
+    },
+    {
+      "id": "opening",
+      "type": "chapter",
+      "payload": {
+        "title": "Before the Last Ferry",
+        "summary": "Player-only prologue: a stagehand has moved a loose loading board over the gangway gap. Your character has not seen the board yet. The ferry will depart at 20:00; that departure is fixed. You can still determine who crosses safely and what they take with them."
+      }
+    },
+    {
+      "id": "case-reward",
+      "type": "reward_bundle",
+      "payload": {
+        "claimOnce": true,
+        "cash": 0,
+        "tradeableItems": 0
+      }
+    },
+    {
+      "id": "quality-last-ferry-memento",
+      "type": "collectible_def",
+      "payload": {
+        "title": "Before the Last Ferry: case record",
+        "rarity": "story",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "case-closed",
+      "type": "terminal",
+      "payload": {
+        "title": "Before the Last Ferry: Filed",
+        "summary": "The account retains the investigated facts and the decisions made here.",
+        "effects": [
+          {
+            "kind": "award_collectible",
+            "collectibleId": "quality-last-ferry-memento",
+            "recipientPolicy": "all_participants",
+            "claimPolicy": "self"
+          }
+        ]
+      }
+    },
+    {
+      "id": "character-check",
+      "type": "puzzle",
+      "payload": {
+        "title": "A sensible inspection",
+        "prompt": "Your character can ask for a gangway check without claiming to know the hidden board. Which request establishes the risk in the world?",
+        "summary": "Your character can ask for a gangway check without claiming to know the hidden board. Which request establishes the risk in the world?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "character-check-answer",
+        "interaction": {
+          "kind": "planning",
+          "items": [
+            {
+              "id": "inspect",
+              "label": "Ask the porter to inspect the visible gangway"
+            },
+            {
+              "id": "omniscient",
+              "label": "Accuse the stagehand using only the player prologue"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "character-check-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "character-knowledge",
+      "type": "evidence",
+      "payload": {
+        "title": "Inspected gangway gap",
+        "summary": "The porter’s inspection finds a loose loading board over a gap; the character now has an attributable observation.",
+        "evidenceKind": "fact",
+        "shareScope": "party_summary_only"
+      }
+    },
+    {
+      "id": "priority-instrument-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-last-ferry.priority",
+        "kind": "future_scene_variant",
+        "value": "instrument",
+        "title": "What can still be chosen: Protect Nella’s instrument",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "priority-conversation-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-last-ferry.priority",
+        "kind": "future_scene_variant",
+        "value": "conversation",
+        "title": "What can still be chosen: Arrange the witness’s final conversation",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "priority",
+      "type": "choice",
+      "payload": {
+        "title": "What can still be chosen",
+        "prompt": "The crew can secure the board before departure. You have time to help one passenger properly: carry Nella’s instrument or arrange a final conversation for the departing witness.",
+        "summary": "The crew can secure the board before departure. You have time to help one passenger properly: carry Nella’s instrument or arrange a final conversation for the departing witness.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "instrument",
+            "label": "Protect Nella’s instrument",
+            "nextNodeIds": [
+              "instrument"
+            ],
+            "storyFlagIds": [
+              "priority-instrument-memory"
+            ]
+          },
+          {
+            "id": "conversation",
+            "label": "Arrange the witness’s final conversation",
+            "nextNodeIds": [
+              "conversation"
+            ],
+            "storyFlagIds": [
+              "priority-conversation-memory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "instrument",
+      "type": "puzzle",
+      "payload": {
+        "title": "Carry by the case, not the strings",
+        "prompt": "Nella’s case has a marked handle and a fragile string bridge. Choose the supported carrying method.",
+        "summary": "Nella’s case has a marked handle and a fragile string bridge. Choose the supported carrying method.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "instrument-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "handle",
+              "label": "Use the marked case handle"
+            },
+            {
+              "id": "strings",
+              "label": "Lift by the instrument’s strings"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "instrument-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "handle"
+        ]
+      }
+    },
+    {
+      "id": "conversation",
+      "type": "puzzle",
+      "payload": {
+        "title": "Let the speaker choose",
+        "prompt": "The witness asks to speak privately to Ada, not to make a public confession. Which arrangement respects the stated request?",
+        "summary": "The witness asks to speak privately to Ada, not to make a public confession. Which arrangement respects the stated request?",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "answerMode": "server_owned_canonical",
+        "answerSpecId": "conversation-answer",
+        "interaction": {
+          "kind": "deduction",
+          "items": [
+            {
+              "id": "private",
+              "label": "Arrange their private conversation before boarding"
+            },
+            {
+              "id": "speech",
+              "label": "Replace it with your own public speech"
+            }
+          ]
+        },
+        "hints": [
+          "Separate the stated observation from the interpretation.",
+          "Use the records identified in the question; unsupported assumptions add no proof."
+        ]
+      }
+    },
+    {
+      "id": "conversation-answer",
+      "type": "answer_spec",
+      "payload": {
+        "verifier": "unordered_ids",
+        "solution": [
+          "private"
+        ]
+      }
+    },
+    {
+      "id": "closing-precise-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-last-ferry.closing",
+        "kind": "future_scene_variant",
+        "value": "precise",
+        "title": "What the file will carry: Retain the precise finding and its stated limits",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing-people-memory",
+      "type": "story_flag",
+      "payload": {
+        "key": "omerta.quest.quality-last-ferry.closing",
+        "kind": "future_scene_variant",
+        "value": "people",
+        "title": "What the file will carry: Retain the finding with the affected people’s account",
+        "gameplayPower": "none"
+      }
+    },
+    {
+      "id": "closing",
+      "type": "choice",
+      "payload": {
+        "title": "What the file will carry",
+        "prompt": "The board is secured and the ferry leaves at the stated time. The departure was fixed; the care, possessions and conversation carried into it were not.",
+        "summary": "The board is secured and the ferry leaves at the stated time. The departure was fixed; the care, possessions and conversation carried into it were not.",
+        "gates": [
+          {
+            "kind": "party_role",
+            "role": "investigator"
+          }
+        ],
+        "options": [
+          {
+            "id": "precise",
+            "label": "Retain the precise finding and its stated limits",
+            "storyFlagIds": [
+              "closing-precise-memory"
+            ]
+          },
+          {
+            "id": "people",
+            "label": "Retain the finding with the affected people’s account",
+            "storyFlagIds": [
+              "closing-people-memory"
+            ]
+          }
+        ],
+        "unlockMode": "any"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "quality-last-ferry",
+      "type": "REQUIRES",
+      "to": "party-policy"
+    },
+    {
+      "from": "party-policy",
+      "type": "REQUIRES",
+      "to": "party-quorum"
+    },
+    {
+      "from": "party-policy",
+      "type": "PERFORMED_BY_ROLE",
+      "to": "investigator"
+    },
+    {
+      "from": "quality-last-ferry",
+      "type": "UNLOCKS",
+      "to": "opening"
+    },
+    {
+      "from": "case-reward",
+      "type": "UNLOCKS",
+      "to": "case-closed"
+    },
+    {
+      "from": "character-check",
+      "type": "REVEALS",
+      "to": "character-knowledge"
+    },
+    {
+      "from": "opening",
+      "type": "UNLOCKS",
+      "to": "character-check"
+    },
+    {
+      "from": "character-check",
+      "type": "UNLOCKS",
+      "to": "priority"
+    },
+    {
+      "from": "priority",
+      "type": "UNLOCKS",
+      "to": "instrument"
+    },
+    {
+      "from": "priority",
+      "type": "UNLOCKS",
+      "to": "conversation"
+    },
+    {
+      "from": "instrument",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "conversation",
+      "type": "UNLOCKS",
+      "to": "closing"
+    },
+    {
+      "from": "closing",
+      "type": "UNLOCKS",
+      "to": "case-reward"
+    }
+  ]
+}

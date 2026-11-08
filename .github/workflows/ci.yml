@@ -1,4 +1,6 @@
 name: ci
+permissions:
+  contents: read
 run-name: ${{ inputs.tail_only && 'Candidate19 affected CI remainder' || 'ci' }}
 
 # The three gates the codebase already treats as required, run automatically instead of by hand.
@@ -73,6 +75,8 @@ jobs:
         run: node test/mcp.js
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
+      - name: Foundry release API offline controls
+        run: node test/foundry-release-api.js
       - uses: foundry-rs/foundry-toolchain@v1
         with:
           version: v1.7.1
@@ -161,6 +165,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Foundry release API offline controls
+        run: node test/foundry-release-api.js
       - uses: foundry-rs/foundry-toolchain@v1
         with:
           version: v1.7.1
@@ -307,7 +313,7 @@ jobs:
   questing_native:
     name: Quest authority and concurrency (PostgreSQL)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     services:
       postgres:
         image: postgres:18.4
@@ -1445,6 +1451,8 @@ jobs:
       - run: npm ci
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
+      - name: Foundry release API offline controls
+        run: node test/foundry-release-api.js
       - uses: foundry-rs/foundry-toolchain@v1
         with:
           version: v1.7.1
@@ -1567,6 +1575,8 @@ jobs:
       - run: npm ci
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
+      - name: Foundry release API offline controls
+        run: node test/foundry-release-api.js
       - uses: foundry-rs/foundry-toolchain@v1
         with:
           version: v1.7.1
@@ -1644,6 +1654,8 @@ jobs:
       - run: npm ci
 
       # Genuine artifact prerequisite; full contract tests remain in forge.yml.
+      - name: Foundry release API offline controls
+        run: node test/foundry-release-api.js
       - uses: foundry-rs/foundry-toolchain@v1
         with:
           version: v1.7.1

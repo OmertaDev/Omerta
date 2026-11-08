@@ -1,0 +1,45 @@
+{
+  "phase": "CI-toolchain-delivery",
+  "evidenceKind": "draft-data-refusal-checks",
+  "corruptedSignature": {
+    "mutation": "Decode dsseEnvelope.signatures[0].sig; XOR byte 0 with 1; re-encode base64; leave the genuine archive unchanged.",
+    "originalBundleSha256": "bf0407d3e9b3e2573a0b1e19c9514e70ef68b2035fee1ed64deb2dabd6328035",
+    "mutatedBundleSha256": "b5a6feb3552ea21d3947b61c8a70b5db966a280a37dfbbf817afeb0f910d7b3c",
+    "archiveSha256": "cf7e688ed0c4c48adffca788b496076e31060b67ac5afe1e43dbb5499c20c88b",
+    "actualGhExitCode": 1,
+    "childErrorCode": null,
+    "signal": null,
+    "observedAt": "2026-11-08T10:10:14.857Z",
+    "sanitizedDiagnostics": [
+      "Error: verifying with issuer \"sigstore.dev\""
+    ],
+    "diagnosticLimit": "GitHub CLI exposed a generic issuer-verification error; no more specific internal error is claimed.",
+    "wrapperRejectedBeforeExtraction": true,
+    "serialization": {
+      "original": "JSON.stringify(public gh output attestation.bundle) followed by LF",
+      "mutated": "JSON.stringify(mutated bundle), no trailing LF"
+    }
+  },
+  "liveDataRefusals": [
+    {
+      "case": "cloned_receipt",
+      "result": "rejected"
+    },
+    {
+      "case": "changed_binary_byte_after_verification",
+      "result": "rejected_then_original_byte_restored"
+    },
+    {
+      "case": "hardlink_alias_after_verification",
+      "result": "rejected_then_alias_removed"
+    },
+    {
+      "case": "Windows_publication",
+      "result": "rejected_before_path_write"
+    }
+  ],
+  "noFoundryBinaryExecution": true,
+  "noInstallation": true,
+  "noPathPublication": true,
+  "nativeTestClearance": false
+}
