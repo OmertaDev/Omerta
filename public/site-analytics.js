@@ -1,9 +1,9 @@
 (() => {
   'use strict';
   const key = 'omerta_site_analytics';
-  const pages = new Set(['/', '/wiki', '/arena', '/play', '/sale', '/path', '/defi', '/fee-flows', '/privacy', '/terms', '/dmca', '/resources',
+  const pages = new Set(['/', '/wiki', '/arena', '/play', '/sale', '/path', '/defi', '/fee-flows', '/guides/getting-started', '/privacy', '/terms', '/dmca', '/resources',
     ...['gun', 'ledger', 'kitchen', 'wheel', 'shadow', 'ring'].map(id => `/path/${id}`)]);
-  const targets = new Set(['/', '/wiki', '/arena', '/play', '/sale', '/path', '/agents', '/defi', '/fee-flows']);
+  const targets = new Set(['/', '/wiki', '/arena', '/play', '/sale', '/path', '/agents', '/defi', '/fee-flows', '/guides/getting-started']);
   const page = location.pathname;
   if (!pages.has(page)) return;
   const blocked = () => navigator.globalPrivacyControl === true || navigator.doNotTrack === '1' || window.doNotTrack === '1';

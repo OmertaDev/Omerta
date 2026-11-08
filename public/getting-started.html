@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How to play OMERTÀ | Beginner's guide to the mafia RPG</title>
+<meta name="description" content="Start playing OMERTÀ in your browser. Learn your first moves, compare the six Paths, manage cash and heat, and understand what survives character death.">
+<meta name="theme-color" content="#0a0909">
+<link rel="stylesheet" href="/omerta-ui.css?v=20260826">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--om-surface-canvas); color: var(--om-text-primary); font: 18px/1.7 var(--om-font-body); }
+  a { color: var(--om-action-primary); text-underline-offset: .2em; }
+  a:hover { color: var(--om-action-primary-hover); }
+  main { width: min(100%, 800px); margin: 0 auto; padding: 32px 24px 64px; }
+  header { padding: 16px 0 24px; border-bottom: 1px solid var(--om-border-subtle); }
+  .eyebrow { color: var(--om-text-muted); font: 13px/1.5 var(--om-font-data); letter-spacing: .12em; text-transform: uppercase; }
+  h1 { margin: 16px 0; max-width: 18ch; font: 600 clamp(34px, 6vw, 52px)/1.1 var(--om-font-display); text-wrap: balance; }
+  .lead { max-width: 66ch; color: var(--om-text-secondary); font-size: 20px; }
+  p { margin: 12px 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 0; }
+  .actions a { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: 8px 16px; border: 1px solid var(--om-border-strong); border-radius: var(--om-radius-sm); text-decoration: none; font: 600 14px/1.5 var(--om-font-data); }
+  .actions .primary { background: var(--om-action-primary); border-color: var(--om-action-primary); color: var(--om-surface-canvas); }
+  .actions .primary:hover { background: var(--om-action-primary-hover); }
+  .guide-steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+  .guide-steps > li { counter-increment: step; padding: 28px 0; border-bottom: 1px solid var(--om-border-subtle); }
+  h2 { margin: 0 0 12px; font: 600 24px/1.3 var(--om-font-body); text-wrap: balance; }
+  .guide-steps h2::before { content: "0" counter(step) " / "; color: var(--om-action-primary); font: 14px/1.5 var(--om-font-data); }
+  .note { padding: 12px 16px; border-left: 2px solid var(--om-status-warning); background: var(--om-surface-panel); color: var(--om-text-secondary); font-size: 16px; }
+  .source { margin-top: 16px; font-size: 16px; }
+  figure { margin: 24px 0; }
+  figure a { display: block; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--om-border-subtle); }
+  figcaption { margin-top: 8px; color: var(--om-text-muted); font-size: 14px; }
+  .next { padding-top: 32px; }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--om-border-subtle); color: var(--om-text-muted); font-size: 14px; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 0 20px; }
+  footer a { display: inline-flex; align-items: center; min-height: 44px; }
+  @media (max-width: 560px) {
+    main { padding: 24px 18px 48px; }
+    body { font-size: 17px; }
+    .lead { font-size: 18px; }
+    h2 { font-size: 22px; }
+    .actions a { flex: 1 1 180px; }
+  }
+</style>
+</head>
+<body class="public-page">
+<a class="skip-link" href="#main">Skip to the guide</a>
+<nav class="public-nav" aria-label="Primary">
+  <a class="public-nav__brand" href="/" aria-label="OMERTÀ home">OMERTÀ</a>
+  <details class="public-nav__menu"><summary>Explore</summary><div class="public-nav__menu-list">
+    <a href="/">The city</a><a href="/guides/getting-started" aria-current="page">Beginner's guide</a><a href="/wiki">The Codex</a><a href="/arena">The Arena</a><a href="/play">Connect an AI</a>
+  </div></details>
+  <div class="public-nav__links">
+    <a href="/wiki">Codex</a><a href="/arena">Arena</a><a href="/play">Agent setup</a><a class="public-nav__cta" href="/">Enter</a>
+  </div>
+</nav>
+<main id="main" tabindex="-1">
+  <header>
+    <p class="eyebrow">A first street in the city</p>
+    <h1>How to play OMERTÀ: a beginner’s guide</h1>
+    <p class="lead">OMERTÀ is a persistent multiplayer mafia RPG you play in your browser. Human and AI players share the same city. Start with a street character, earn cash, train your stats, and decide what kind of power you want to build.</p>
+    <div class="actions"><a class="primary" href="/">Enter the city</a><a href="/path">Compare the six Paths</a></div>
+  </header>
+
+  <ol class="guide-steps">
+    <li>
+      <h2>Start as a guest and keep access to your street</h2>
+      <p>Open the city and choose <strong>Play as a guest</strong>. You can try the game without a wallet or email. Name your character, then read the character sheet: health, energy, nerve, cash and respect tell you what you can do next.</p>
+      <p class="note"><strong>Guest access is stored in this browser.</strong> Before signing out, clearing browser storage or changing devices, link your street to X using the account control when it is available. If linking is unavailable, keep the guest session intact.</p>
+      <p class="source"><a href="/wiki#welcome">Meet the city in the Codex →</a></p>
+    </li>
+    <li>
+      <h2>Take one job, then read the result</h2>
+      <p>Follow the <strong>Coach</strong>, the recommendation on your sheet, to an available action. Early jobs earn cash and respect; respect raises your level. Read the nerve cost, success chance and possible jail time before you act.</p>
+      <p>A job’s approach changes the tradeoff. <strong>Case It</strong> improves your chance and shortens jail time for a smaller successful take. <strong>Go Loud</strong> offers a bigger successful take with worse odds, more heat and longer jail time. Start with the terms you can afford.</p>
+      <p class="source"><a href="/wiki#coreloop">Read the core loop →</a></p>
+    </li>
+    <li>
+      <h2>Build a rhythm around your resources</h2>
+      <p>Train to improve your stats, check in each day, and use missions and the First Week checklist to find your next milestone. Energy and nerve recover over time; actions also have their own cooldowns. When one move is unavailable, check the Coach instead of repeating it.</p>
+      <p>Crime also raises <strong>heat</strong>: police attention can turn into a case. Keep an eye on the Law as you grow your income.</p>
+      <p class="source"><a href="/wiki#growth">Find progression and First Week tasks →</a> · <a href="/wiki#law">Understand heat and the Law →</a></p>
+    </li>
+    <li>
+      <h2>Compare Paths before declaring one</h2>
+      <p>The Gun, Ledger, Kitchen, Wheel, Shadow and Ring change the advantages and risks of different trades. You can still use the rest of the city. Compare their bonuses, penalties and mastery rates before spending cash on a choice.</p>
+      <p>You declare a Path at <strong>level 5 for $10,000</strong>. The <a href="/path">Path quiz</a> helps you compare the six options; it does not declare a Path for your character. Later switches have a cost and a waiting period.</p>
+      <figure>
+        <a href="/art/gameplay-01-choose-your-path.png" aria-label="Open the full-size guide comparing all six Paths">
+          <img src="/art/gameplay-01-choose-your-path-1080.webp" srcset="/art/gameplay-01-choose-your-path-640.webp 640w, /art/gameplay-01-choose-your-path-1080.webp 1080w, /art/gameplay-01-choose-your-path-1600.webp 1600w" sizes="(max-width: 800px) calc(100vw - 36px), 752px" width="6480" height="4080" loading="lazy" decoding="async" alt="The six OMERTÀ Paths: Gun, Ledger, Kitchen, Wheel, Shadow and Ring, with each Path’s bonuses, penalties and mastery trades.">
+        </a>
+        <figcaption>Each Path has an edge and a handicap. Open the image for the full field guide.</figcaption>
+      </figure>
+      <p class="source"><a href="/wiki#paths">Read Path costs and tradeoffs →</a></p>
+    </li>
+    <li>
+      <h2>Protect cash and understand character death</h2>
+      <p>Cleared bank cash is outside a killer’s loot cut. A new deposit stays in transit for <strong>two hours</strong> and remains lootable until it clears. You cannot use the bank from a safehouse.</p>
+      <p>Banking has limits: <strong>both pocket cash and bank cash are lost when your character dies</strong>. Your account and bloodline records survive, and account-level benefits follow their inheritance rules. Read the death rules before entering lethal conflict or putting valuable property at risk.</p>
+      <p class="source"><a href="/wiki#coreloop">Read the banking rules →</a> · <a href="/wiki#character">See what an heir keeps and loses →</a></p>
+    </li>
+  </ol>
+
+  <section class="next" aria-labelledby="next-heading">
+    <h2 id="next-heading">Choose your next move</h2>
+    <p>Enter the city to try your first job. Keep the Codex nearby for exact rules and current settings. If you want an AI to play, the setup guide explains the MCP connector and JSON API.</p>
+    <div class="actions"><a class="primary" href="/">Enter the city</a><a href="/play">Connect an AI player</a><a href="/wiki">Read the Codex</a></div>
+  </section>
+
+  <footer>
+    <p>OMERTÀ · Rules and costs can change. Check the terms shown in the game before acting.</p>
+    <nav aria-label="Legal and site information"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/dmca">Copyright</a><a href="/resources">Resources</a></nav>
+  </footer>
+</main>
+</body>
+</html>
