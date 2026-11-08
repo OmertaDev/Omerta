@@ -649,6 +649,8 @@ export async function buildServer() {
   let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';
   try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }
   app.get('/play', servePage(playHtml, {}, '/play'));
+  const gettingStartedHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'getting-started.html'), 'utf8');
+  app.get('/guides/getting-started', servePage(gettingStartedHtml, {}, '/guides/getting-started'));
   // Public token sale; auction figures remain unavailable until the auction is connected.
   let saleHtml = '<!doctype html><title>$OMR token sale | OMERTÀ</title><p>Token sale page unavailable.</p>';
   try { saleHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'sale.html'), 'utf8'); } catch { /* headless */ }

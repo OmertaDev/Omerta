@@ -9,6 +9,7 @@ try {
   const urls = [...sitemap.body.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1]));
   assert.ok(urls.length > 10, 'all stable public guides are discoverable');
   assert.ok(!urls.some(url => ['/admin', '/consigliere'].includes(url.pathname)));
+  assert.ok(urls.some(url => url.pathname === '/guides/getting-started'), 'the beginner guide is in the sitemap');
   assert.ok(['/defi', '/fee-flows'].every(path => urls.some(url => url.pathname === path)), 'current public finance pages are in the sitemap');
   const titles = new Set();
   for (const url of urls) {
@@ -46,6 +47,13 @@ try {
     assert.match(missing.headers['content-type'], /application\/json/);
   }
   const root = await app.inject('/');
+  assert.ok(root.body.includes('href="/guides/getting-started"'), 'the guide is linked from the homepage');
+  const guide = await app.inject('/guides/getting-started');
+  assert.match(guide.body, /<h1[^>]*>How to play OMERTÀ/);
+  assert.match(guide.body, /href="\/path"/);
+  assert.match(guide.body, /href="\/play"/);
+  const openapi = (await app.inject('/openapi.json')).json();
+  assert.ok(!openapi.paths['/guides/getting-started'], 'the HTML guide is excluded from the JSON API contract');
   const agents = await app.inject('/agents');
   assert.match(agents.headers['content-type'], /text\/markdown/, 'existing machine onboarding stays compatible');
   const cached = await app.inject({ url: '/', headers: { 'if-none-match': root.headers.etag } });

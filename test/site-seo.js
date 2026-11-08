@@ -8,7 +8,7 @@ const baseUrl = 'https://preview.example.test/nested?secret=hidden';
 const origin = 'https://preview.example.test';
 const titles = new Set();
 const descriptions = new Set();
-for (const [file, path] of [['index', '/'], ['wiki', '/wiki'], ['arena', '/arena'], ['play', '/play'], ['sale', '/sale'], ['defi', '/defi'], ['fee-flows', '/fee-flows']]) {
+for (const [file, path] of [['index', '/'], ['wiki', '/wiki'], ['arena', '/arena'], ['play', '/play'], ['sale', '/sale'], ['defi', '/defi'], ['fee-flows', '/fee-flows'], ['getting-started', '/guides/getting-started']]) {
   const original = readFileSync(new URL(`../public/${file}.html`, import.meta.url), 'utf8');
   const html = enhancePage(original, { baseUrl, path });
   const head = html.slice(0, html.indexOf('</head>'));
