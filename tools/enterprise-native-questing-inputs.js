@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "2eb8961f9fd721bbcd9296f15a9aaab36f639a33",
+  "authoredRevision": "5595642cff72c0e5500319cc743ab87319f5a339",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11291,14 +11291,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/quest-quality-source-data.js",
       "mode": "100644",
-      "blob": "8f630184ba2ef4f1fb9f73186fa78bc834649c16",
-      "sha256": "3bee24b52740ea1eac0d7c5a3e474d29d1835d24932f0ec784130a023f791e92"
+      "blob": "3152a620e92805a720c12835c2224dc014120293",
+      "sha256": "158677d4e2beb4b3f6754f46115173ecda4d4cf3ab95ba35fa8ffc90888bb7df"
     },
     {
       "file": "tools/quest-quality-source-transfer.js",
       "mode": "100644",
-      "blob": "52301e0d840832664ac4c90c0448181b3fdc6698",
-      "sha256": "6a4317d3c83f64c75ca18a9dcd199fbd5f4091d06c1b3b7acc404844fff55840"
+      "blob": "3d6d170776daa1d8db03f1be6d45eedd9f814210",
+      "sha256": "03625e6a5ae0d753ebb8ee955149070e8b4373fc49c0b684fed3966763216940"
     },
     {
       "file": "tools/questing-enterprise-catalog.js",
@@ -12279,14 +12279,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/quest-quality-source-data.js",
       "mode": "100644",
-      "blob": "8f630184ba2ef4f1fb9f73186fa78bc834649c16",
-      "sha256": "3bee24b52740ea1eac0d7c5a3e474d29d1835d24932f0ec784130a023f791e92"
+      "blob": "3152a620e92805a720c12835c2224dc014120293",
+      "sha256": "158677d4e2beb4b3f6754f46115173ecda4d4cf3ab95ba35fa8ffc90888bb7df"
     },
     {
       "file": "tools/quest-quality-source-transfer.js",
       "mode": "100644",
-      "blob": "52301e0d840832664ac4c90c0448181b3fdc6698",
-      "sha256": "6a4317d3c83f64c75ca18a9dcd199fbd5f4091d06c1b3b7acc404844fff55840"
+      "blob": "3d6d170776daa1d8db03f1be6d45eedd9f814210",
+      "sha256": "03625e6a5ae0d753ebb8ee955149070e8b4373fc49c0b684fed3966763216940"
     },
     {
       "file": "tools/questing-enterprise-catalog.js",
@@ -12320,4 +12320,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "9a8551fe235d1f006acf0efa88433ae06d575a319da1e04425b0bd4a2fb03121";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "5014a21e4487ad31b9b7e81e15185c977514e9815326a8bf3ac0bc469eade7bd";
