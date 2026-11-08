@@ -2,12 +2,12 @@ import { checkPublicRateLimit, rateLimitsEnabled } from './ratelimit.js';
 
 // Every stored dimension is a fixed public label. No request/account identifiers or URLs enter SQL.
 export const SITE_ANALYTICS_PAGES = Object.freeze([
-  '/', '/wiki', '/arena', '/play', '/sale', '/path', '/defi', '/fee-flows',
+  '/', '/wiki', '/arena', '/play', '/sale', '/path', '/defi', '/fee-flows', '/guides/getting-started',
   '/privacy', '/terms', '/dmca', '/resources',
   ...['gun', 'ledger', 'kitchen', 'wheel', 'shadow', 'ring'].map(id => `/path/${id}`),
 ]);
 const pages = SITE_ANALYTICS_PAGES;
-const targets = Object.freeze(['/', '/wiki', '/arena', '/play', '/sale', '/path', '/agents', '/defi', '/fee-flows', 'guest_start']);
+const targets = Object.freeze(['/', '/wiki', '/arena', '/play', '/sale', '/path', '/agents', '/defi', '/fee-flows', '/guides/getting-started', 'guest_start']);
 export const SITE_ANALYTICS_RETENTION_DAYS = 90;
 const counterPrefix = 'website_count:';
 

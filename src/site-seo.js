@@ -11,7 +11,7 @@ const unescape = (value) => String(value ?? '').replace(/&(?:amp|lt|gt|quot|apos
 // Keep discovery limited to mounted, stable public pages. Account pages and URLs carrying
 // referral codes, auth credentials or individual quiz answers never belong in this list.
 export const INDEXABLE_SITE_PATHS = Object.freeze([
-  '/', '/wiki', '/arena', '/play', '/sale', '/agents', '/path', '/defi', '/fee-flows',
+  '/', '/wiki', '/arena', '/play', '/sale', '/agents', '/path', '/defi', '/fee-flows', '/guides/getting-started',
   ...PATH_IDS.map((id) => `/path/${id}`), '/privacy', '/resources',
 ]);
 

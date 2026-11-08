@@ -54,7 +54,7 @@ const PUBLIC_PATHS = new Set([
 
 // Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).
 // /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).
-const DOC_PATHS = new Set(['/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);
+const DOC_PATHS = new Set(['/', '/wiki', '/guides/getting-started', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);
 
 // A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls
 // through to a generic line — the contract stays complete even as new systems land.
@@ -2453,6 +2453,7 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 
 ## Human reference
 - [Playable console](${baseUrl}/): the web client.
+- [Beginner guide](${baseUrl}/guides/getting-started): choosing a Path, first moves and survival.
 - [The Codex](${baseUrl}/wiki): the full rulebook, every system + loop.
 `;
 }
