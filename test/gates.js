@@ -31,6 +31,30 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'acorn';
 import { DEED_QUEST_SOURCE_DOMAINS, deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
 import { QUESTING_SOURCE, qualifyQuestingSource } from '../tools/questing-source-transfer.js';
+import { FOUNDRY_RELEASE, verifyFoundryArchive } from '../tools/ci-foundry.js';
+
+const expectedFoundryRelease = {
+  version: '1.7.1',
+  url: 'https://api.github.com/repos/foundry-rs/foundry/releases/assets/415095756',
+  bytes: 98596412,
+  sha256: 'cf7e688ed0c4c48adffca788b496076e31060b67ac5afe1e43dbb5499c20c88b',
+};
+assert(Object.isFrozen(FOUNDRY_RELEASE), 'The compiler download definition is immutable');
+assert.deepStrictEqual(FOUNDRY_RELEASE, expectedFoundryRelease, 'Only the exact published Foundry 1.7.1 archive is admitted');
+const foundryArchive = { bytes: expectedFoundryRelease.bytes, sha256: expectedFoundryRelease.sha256 };
+assert.strictEqual(verifyFoundryArchive(foundryArchive), true);
+for (const drift of [null, [], {}, { ...foundryArchive, bytes: foundryArchive.bytes - 1 },
+  { ...foundryArchive, bytes: foundryArchive.bytes + 1 }, { ...foundryArchive, bytes: String(foundryArchive.bytes) },
+  { ...foundryArchive, bytes: NaN }, { ...foundryArchive, bytes: Infinity },
+  { ...foundryArchive, sha256: '0'.repeat(64) }, { ...foundryArchive, sha256: foundryArchive.sha256.toUpperCase() },
+  { ...foundryArchive, sha256: foundryArchive.sha256.slice(1) }, { ...foundryArchive, sha256: foundryArchive.sha256 + '\n' },
+  { bytes: foundryArchive.bytes }, { sha256: foundryArchive.sha256 }, { ...foundryArchive, skipVerification: true }])
+  assert.throws(() => verifyFoundryArchive(drift), 'Wrong size, digest, type or caller-supplied verification bypass must reject');
+const accessorArchive = { ...foundryArchive };
+let archiveGetterRead = false;
+Object.defineProperty(accessorArchive, 'bytes', { get() { archiveGetterRead = true; return foundryArchive.bytes; } });
+assert.throws(() => verifyFoundryArchive(accessorArchive), 'Archive verification must reject accessor records');
+assert.equal(archiveGetterRead, false, 'Archive verification must not execute caller-controlled accessors');
 
 const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 const relPath = (from, to) => path.relative(from, to).replaceAll('\\', '/');
@@ -4095,6 +4119,38 @@ scopedSocialContext = async function(db) {
   assert.throws(() => assertQuestJobs(expectedQuestNative, expectedQuestBrowser), 'Native authority cannot substitute for browser interaction coverage');
   assert.equal(nativeShape(nativeGate), "  pgcheck:\n    if: ${{ always() && !inputs.tail_only }}\n    name: real Postgres (${{ matrix.postgres }})\n    needs: [pgcheck_core, pgcheck_economy, pgcheck_enterprise, pgcheck_commerce]\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    steps:\n      - name: Require all four complete native cohorts\n        env:\n          CORE_RESULT: ${{ needs.pgcheck_core.result }}\n          ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}\n          ENTERPRISE_RESULT: ${{ needs.pgcheck_enterprise.result }}\n          COMMERCE_RESULT: ${{ needs.pgcheck_commerce.result }}\n        run: |\n          test \"$CORE_RESULT\" = success\n          test \"$ECONOMY_RESULT\" = success\n          test \"$ENTERPRISE_RESULT\" = success\n          test \"$COMMERCE_RESULT\" = success", 'Required native identities must fail closed on failure, cancellation or a skipped cohort');
   const splitNative = block => { const pieces = block.replaceAll('\r\n', '\n').split(/(?=^      - (?:uses:|run:|name:))/m); return { header: pieces.shift(), steps: pieces }; };
+  const expectedFoundrySetup = '      - name: Install pinned Foundry 1.7.1\n        timeout-minutes: 5\n        run: node tools/ci-foundry.js';
+  const expectedArtifactStep = '      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact';
+  const assertPinnedFoundrySetup = block => {
+    const steps = splitNative(block).steps;
+    const matching = steps.filter(step => step.includes('      - name: Install pinned Foundry 1.7.1'));
+    assert.equal(matching.length, 1, 'Exactly one complete pinned compiler setup is required');
+    assert.equal(nativeShape(matching[0]), nativeShape(expectedFoundrySetup),
+      'Pinned compiler setup keeps its finite bound and bare, unconditional verifier command');
+    assert.equal(steps.filter(step => nativeShape(step).includes('node tools/ci-foundry.js')).length, 1,
+      'The compiler installer cannot be invoked a second time or under another step');
+    assert.equal(nativeShape(steps[steps.indexOf(matching[0]) + 1] || ''), expectedArtifactStep,
+      'The genuine artifact build immediately follows verified compiler setup');
+    return matching[0];
+  };
+  for (const block of [suites, suiteTail, economyNative, enterpriseNative, commerceNative]) {
+    assertPinnedFoundrySetup(block);
+    assertPinnedFoundrySetup(block.replaceAll('\r\n', '\n').replaceAll('\n', '\r\n'));
+  }
+  const foundryControlJob = economyNative.replaceAll('\r\n', '\n');
+  assert.equal(foundryControlJob.split(expectedFoundrySetup).length, 2);
+  for (const drift of [expectedFoundrySetup.replace('timeout-minutes: 5', 'timeout-minutes: 0'),
+    expectedFoundrySetup.replace('timeout-minutes: 5', 'timeout-minutes: 50'),
+    expectedFoundrySetup.replace('        run:', '        if: false\n        run:'),
+    expectedFoundrySetup.replace('        run:', '        continue-on-error: true\n        run:'),
+    expectedFoundrySetup.replace('node tools/ci-foundry.js', 'node tools/ci-foundry.js --version stable'),
+    expectedFoundrySetup.replace('node tools/ci-foundry.js', 'node tools/ci-foundry.js || true'),
+    expectedFoundrySetup.replace('node tools/ci-foundry.js', 'echo synthetic compiler')])
+    assert.throws(() => assertPinnedFoundrySetup(foundryControlJob.replace(expectedFoundrySetup, drift)),
+      'Skipped, optional, unbounded, mutable-version or fake compiler setup must reject');
+  assert.throws(() => assertPinnedFoundrySetup(foundryControlJob.replace(expectedFoundrySetup, '')));
+  assert.throws(() => assertPinnedFoundrySetup(foundryControlJob.replace(expectedFoundrySetup,
+    expectedFoundrySetup + '\n' + expectedFoundrySetup)));
   const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative), enterpriseParts = splitNative(enterpriseNative);
   const expectedUxNativeStep = "      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)\n        env:\n          UX_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n        run: npm run test:ux:postgres";
   const uxNativeParts = coreParts.steps.filter(part => part.includes('      - name: UX metadata concurrency, membership and RLS (disposable PostgreSQL)'));
@@ -4139,7 +4195,7 @@ scopedSocialContext = async function(db) {
   assert.throws(()=>assertOwnedLockSetup(ownedSetupCore.replace(expectedOwnedLockSetup,expectedOwnedLockSetup+expectedOwnedLockSetup)),'Duplicate owned lock setup must reject');
   assert.equal(nativeShape(coreParts.header), "  pgcheck_core:\n    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 120\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --shm-size=256m\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native core service, matrix and finite bound are closed');
   assert.equal(nativeShape(economyParts.header), "  pgcheck_economy:\n    if: ${{ !inputs.tail_only }}\n    name: native economy (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native economy service, matrix and finite bound are closed');
-  const expectedEconomyParts = ["      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0","      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm","      - run: npm ci","      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact","      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'","      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres"];
+  const expectedEconomyParts = ["      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0","      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm","      - run: npm ci","      - name: Install pinned Foundry 1.7.1\n        timeout-minutes: 5\n        run: node tools/ci-foundry.js","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact","      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'","      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres"];
   assert.deepEqual(economyParts.steps.map(nativeShape), expectedEconomyParts, 'Every native economy setup, command, environment and condition remains exact');
   const expectedEnterpriseOwnedLockSetup = expectedOwnedLockSetup.replace('Set owned test PostgreSQL lock capacity for populated migrations','Set owned enterprise test PostgreSQL lock capacity for full-schema catalog cleanup');
   const assertEnterpriseOwnedLockSetup = block => {
@@ -4181,7 +4237,7 @@ scopedSocialContext = async function(db) {
   assert.equal(nativeShape(nextLayerParts[0]), nativeShape(expectedNextLayerStep), 'Next-layer native condition, financial OFF, owned admin endpoint and unfiltered runner remain exact');
   assert.equal(ownedSetupCore.split(expectedOwnedLockSetup).length,2,'Only the exact complete once-reviewed non-proof setup may leave the command-inventory view');
   const coreAsOriginal = ownedSetupCore.replace(expectedOwnedLockSetup,'').replace('  pgcheck_core:', '  pgcheck:').replace('name: native core (', 'name: real Postgres (');
-  const artifactParts = ["      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n"];
+  const artifactParts = ["      - name: Install pinned Foundry 1.7.1\n        timeout-minutes: 5\n        run: node tools/ci-foundry.js\n","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n"];
   const economyProofParts = ["      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres\n\n","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres\n\n","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres\n\n","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres\n\n"];
   const buildBoundary = '      - name: Install PostgreSQL client tools matching the server major';
   const tailBoundary = "      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)";
@@ -4255,7 +4311,7 @@ scopedSocialContext = async function(db) {
     'duplicate native wall bounds must reject');
 
 
-  const expectedSuiteTail = "  suite_tail:\n    name: worker harness + economy simulations\n    needs: suites\n    runs-on: ubuntu-latest\n    timeout-minutes: 45\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n      - name: Invite-only launch admission and Crew allowance\n        run: npm run test:invites\n      - name: RC1 telemetry isolation and complementary campaign regressions\n        run: npm run test:rc1\n      - name: RC1 private command diagnostics and passive confirmation regression\n        run: npm run test:rc1:observability\n      - name: RC1 original worker scheduling and diagnostic harness controls\n        run: npm run test:rc1:harness\n      - name: economy sim (§10.4 drift-0)\n        run: npm run sim\n      - name: scale (population-scale market reachability + §10.4)\n        env:\n          SCALE_PLAYERS: '18'\n          SCALE_DAYS: '2'\n        run: npm run scale";
+  const expectedSuiteTail = "  suite_tail:\n    name: worker harness + economy simulations\n    needs: suites\n    runs-on: ubuntu-latest\n    timeout-minutes: 45\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - name: Install pinned Foundry 1.7.1\n        timeout-minutes: 5\n        run: node tools/ci-foundry.js\n      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n      - name: Invite-only launch admission and Crew allowance\n        run: npm run test:invites\n      - name: RC1 telemetry isolation and complementary campaign regressions\n        run: npm run test:rc1\n      - name: RC1 private command diagnostics and passive confirmation regression\n        run: npm run test:rc1:observability\n      - name: RC1 original worker scheduling and diagnostic harness controls\n        run: npm run test:rc1:harness\n      - name: economy sim (§10.4 drift-0)\n        run: npm run sim\n      - name: scale (population-scale market reachability + §10.4)\n        env:\n          SCALE_PLAYERS: '18'\n          SCALE_DAYS: '2'\n        run: npm run scale";
   const requireSuiteTail = block => assert.equal(nativeShape(block), expectedSuiteTail,
     'Every tail setup, prerequisite, complete command and scale value is unconditional and exact');
   requireSuiteTail(suiteTail);
@@ -4341,6 +4397,14 @@ scopedSocialContext = async function(db) {
     'node test/readiness-migration-failure.js',
   ]);
   const nativeCommandsFrom = (block) => {
+    // Compiler installation is setup, not an economic proof. Only its independently
+    // checked complete block may leave this view; every existing native proof stays.
+    if (block.includes('      - name: Install pinned Foundry 1.7.1')) {
+      const normalized = block.replaceAll('\r\n', '\n');
+      const setup = assertPinnedFoundrySetup(normalized);
+      assert.equal(normalized.split(setup).length, 2);
+      block = normalized.replace(setup, '');
+    }
     const lines = block.replaceAll('\r\n', '\n').split('\n');
     const blank = (line) => /^[ \t]*$/.test(line);
     const trimShellSpace = (line) => line.replace(/^[ \t]+|[ \t]+$/g, '');
@@ -4407,6 +4471,11 @@ scopedSocialContext = async function(db) {
     }
     return commands;
   };
+  for (const command of ['node tools/ci-foundry.js', 'node tools/ci-foundry.js --version stable', 'node tools/unreviewed-compiler.js'])
+    assert.throws(() => nativeCommandsFrom('      - run: ' + command),
+      'Compiler setup requires its exact reviewed block; arbitrary tooling is never a native proof');
+  assert.throws(() => nativeCommandsFrom(pgcheck + '\n      - run: node tools/unreviewed-compiler.js\n'),
+    'Valid compiler setup cannot conceal a later unreviewed tooling command');
   const expectedNativeCommands = [
     'build:funded-work-artifact', 'node test/site-analytics.js --postgres', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
     'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',
@@ -4534,10 +4603,13 @@ scopedSocialContext = async function(db) {
   assert.equal(autonomyScripts['test:company-autonomy:postgres'],'node tools/company-autonomy-native.js');
   const expectedArtifactCommand="mkdir -p omerta-contracts/lib/openzeppelin-contracts && curl --fail --location https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz | tar xz -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol";
   assert.equal(autonomyScripts['build:funded-work-artifact'],expectedArtifactCommand,'Genuine pinned OZ/compiler build only');
-  const artifactAdmits=(job,command)=>job.includes('      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1')&&job.includes('        run: npm run build:funded-work-artifact')&&command===expectedArtifactCommand;
+  const artifactAdmits=(job,command)=>{
+    try { assertPinnedFoundrySetup(job); } catch { return false; }
+    return job.includes('        run: npm run build:funded-work-artifact')&&command===expectedArtifactCommand;
+  };
   assert(artifactAdmits(suites.replaceAll('\r\n','\n'),expectedArtifactCommand));assert(artifactAdmits(pgcheck.replaceAll('\r\n','\n'),expectedArtifactCommand));
   for(const bad of [expectedArtifactCommand.replace('v5.6.1','master'),'cp retained-artifact.json omerta-contracts/out/OmertaWorkEscrowV2.json','echo synthetic'])assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n'),bad));
-  assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n').replace('version: v1.7.1','version: stable'),expectedArtifactCommand));
+  assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n').replace('node tools/ci-foundry.js','node tools/ci-foundry.js --version stable'),expectedArtifactCommand));
   const {AUTONOMY_NATIVE_PROOFS}=await import('../tools/company-autonomy-native.js');
   assert.equal(AUTONOMY_NATIVE_PROOFS.length,11,'All eleven fresh proofs required');
   assert(AUTONOMY_NATIVE_PROOFS.some(([file,key,prefix])=>file==='fundedworkescrowadapter'&&key==='FUNDED_WORK_ADAPTER_TEST_DATABASE_URL'&&prefix==='funded_work_adapter_test_'));
