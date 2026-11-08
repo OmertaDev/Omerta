@@ -3,10 +3,10 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "7702a539ed8bc871492db5e1895ee1f86faeeda9",
-  "tree": "c76d635d45e8600c0438cf5052b16986a2a2e22c",
-  "predecessor": "84473ac558e501eec1c2fa78067493d4cf0d7741",
-  "predecessorTree": "20d4397f23065e084deb3bddc54a4418337d8324",
+  "revision": "04de319eb3bfdd9b727bd0d57dc6d040bcedb59e",
+  "tree": "8cfcd792b4faf4ea6ddb6ddbcc666e268a0263d7",
+  "predecessor": "3890d4cbb052728fd15e8f2ed0c2518c177d60cc",
+  "predecessorTree": "875ed3928ea82bd2dcc78832ef807fc66e09f352",
   "files": {
     ".github/workflows/ci.yml": {
       "current": {
@@ -562,27 +562,6 @@ export const QUEST_QUALITY_SOURCE = freeze({
         }
       ]
     },
-    "test/clue-puzzles-browser.js": {
-      "current": {
-        "mode": "100644",
-        "blob": "18071261094efeb63f1cc213a3f75cc110154e5b",
-        "sha256": "f4d5fdcd227878ef871f709167039e1064197a59c0ccc9e5b19227b3b36509c2",
-        "bytes": 7782
-      },
-      "baseline": {
-        "mode": "100644",
-        "blob": "1eacf4f78edd2775d3759a019092798fd8b8e7c1",
-        "sha256": "b324693b29f70643c6b796b5bbe97079194503f4d33f66ed5a5f6e46910d61ad",
-        "bytes": 7713
-      },
-      "inverses": [
-        {
-          "at": 2148,
-          "current": "  page.on('pageerror', (error) => errors.push(error.message));\n  await page.addInitScript(token => { localStorage.setItem('omerta_token', token); for (const key of ['omerta_tour2', 'omerta_welcomed', 'omerta_alltabs']) localStorage.setItem(key, '1'); }, token);\n  await page.goto(base, { waitUntil: 'domcontentloaded' });\n  await page.waitForFunction(() => window.OmertaGameReady === true);\n  assert.equal(await page.evaluate(() => typeof window.renderOmertaCluePuzzle), 'function', 'the production page loads the clue renderer');\n  await page.locator('#screen-main:not(.hidden)').waitFor();\n  await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));\n",
-          "baseline": "  page.on('pageerror', (error) => errors.push(error.message));\n  await page.addInitScript(token => { localStorage.setItem('omerta_token', token); for (const key of ['omerta_tour2', 'omerta_welcomed', 'omerta_alltabs']) localStorage.setItem(key, '1'); }, token);\n  await page.goto(base, { waitUntil: 'domcontentloaded' });\n  assert.equal(await page.evaluate(() => typeof window.renderOmertaCluePuzzle), 'function', 'the production page loads the clue renderer');\n  await page.locator('#screen-main:not(.hidden)').waitFor();\n  await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));\n"
-        }
-      ]
-    },
     "test/content-api.js": {
       "current": {
         "mode": "100644",
@@ -999,8 +978,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "test/quest-quality-source-transfer.js": {
       "mode": "100644",
-      "blob": "cd6af8f2336b769ede7a9213a5004e97876190a3",
-      "sha256": "f5cde171acedf3396bb0a423267e343844b4e938a620eacea0f4331601584fd4",
+      "blob": "8b6ab79e27edbc744e26e7723a160b8617ce7acc",
+      "sha256": "5d3401845bbd23b08604766e881ce7f1dafdcbf2b85063510c488f2ee0f40c07",
       "bytes": 5640
     },
     "test/quest-quality-spoilers.js": {
@@ -1035,8 +1014,8 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "tools/quest-quality-source-seal.js": {
       "mode": "100644",
-      "blob": "8915acff0a104f168c86dab13604f6fb687f6c4f",
-      "sha256": "c35478931b71a777dc6bf45064c456b63641854e6cecce3be995f6074277f42c",
+      "blob": "854b0384de47d931c4f602161248c24d028fe790",
+      "sha256": "20e1bed1c3c1422bed2f639b8b3ce2bf485621df860f9ad0a9dca83d18ce364b",
       "bytes": 4220
     },
     "tools/quest-quality-source-transfer.js": {
@@ -1065,4 +1044,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = '0670f221e6cf5992951aec4d7d33e677b07389d6d5e30c39b16b785c86a870f3';
+export const QUEST_QUALITY_SOURCE_SHA256 = '6d8d222403b47c3c4df0399eee10f88fd4a917e091d9315f755522ab2dbc844c';
