@@ -550,6 +550,8 @@
 | [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
 | [docs/production-slot-security-review.md](../../docs/production-slot-security-review.md) | documentation | 16 | 2026-10-15 |
 | [docs/public-market-feed-security-review.md](../../docs/public-market-feed-security-review.md) | documentation | 22 | 2026-10-12 |
+| [docs/quest-quality-authoring.md](../../docs/quest-quality-authoring.md) | documentation | 156 | 2026-11-08 |
+| [docs/quest-quality-contract.md](../../docs/quest-quality-contract.md) | documentation | 99 | 2026-11-08 |
 | [docs/questing-next-30.md](../../docs/questing-next-30.md) | documentation | 38 | 2026-11-07 |
 | [docs/questing-review.md](../../docs/questing-review.md) | documentation | 90 | 2026-11-07 |
 | [docs/questing-upgrades.md](../../docs/questing-upgrades.md) | documentation | 45 | 2026-11-07 |
