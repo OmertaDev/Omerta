@@ -103,6 +103,10 @@ export function validateQuestQuality(bundle) {
   });
   const spotlightNodes = new Set(), partyRoles = new Set((bundle.edges || [])
     .filter((edge) => edge.from === runtime.partyPolicyId && edge.type === 'PERFORMED_BY_ROLE').map((edge) => edge.to));
+  if (partyRoles.size > 1 && nodeById.get(runtime.partyPolicyId)?.payload?.allowRoleReplacement !== true) {
+    error('quality_handoff_required', 'quality.partyPolicy',
+      `Quality case party policy ${runtime.partyPolicyId} must allow role replacement when it declares multiple party roles.`);
+  }
   for (const row of rows(design.spotlights, 'quality.spotlights')) {
     if (!shape(row, ['nodeId', 'roleId'], 'quality.spotlights')) continue;
     ref(row.nodeId, 'spotlight.nodeId', ['puzzle', 'choice']); ref(row.roleId, 'spotlight.roleId', ['role']);

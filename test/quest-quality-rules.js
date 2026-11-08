@@ -111,6 +111,8 @@ refuses((q) => { q.assumptions.push({ ...q.assumptions[0] }); }, 'duplicate_id')
 refuses((q) => { q.clauses[0].evidenceNodeId = 'ending'; }, 'node_reference');
 refuses((q) => { q.spotlights.push({ ...q.spotlights[0] }); }, 'duplicate_spotlight');
 refuses((q) => { q.spotlights[0].nodeId = 'e1'; }, 'spotlight_reference');
+refuses((q, b) => { b.nodes.push({ id: 'second', type: 'role', payload: {} }); b.runtime.nodeIds.push('second');
+  b.edges.push({ from: 'party', to: 'second', type: 'PERFORMED_BY_ROLE' }); }, 'quality_handoff_required');
 refuses((q) => { q.npcs[0].knowledge = {}; }, 'bounded_array');
 refuses((q) => { q.npcs[0].conceals = ['e4']; }, 'concealed_unknown');
 refuses((q) => { q.npcs[0].knowledge[0].sourceNodeId = 'ask'; }, 'unjustified_revelation');
@@ -132,6 +134,10 @@ refuses((q) => { q.fieldworkAssignments[0].outcomes[3].evidenceNodeIds = ['endin
 refuses((q) => { q.disclosures[0].recipients[0].revealNodeIds = ['e4']; }, 'unjustified_revelation');
 refuses((q) => { q.npcs[0].beliefs = [{ evidenceNodeId: 'e1', sourceNodeId: 'entry' }]; q.npcs[0].knowledge.shift(); }, 'unjustified_revelation');
 const warns = fixture(); designOf(warns).budget = { maxActions: 1, maxNewConcepts: 1, maxReadingWords: 1 };
+const handoff = fixture(); handoff.nodes.push({ id: 'second', type: 'role', payload: {} }); handoff.runtime.nodeIds.push('second');
+handoff.edges.push({ from: 'party', to: 'second', type: 'PERFORMED_BY_ROLE' });
+handoff.nodes.find(node => node.id === 'party').payload.allowRoleReplacement = true;
+assert.equal(assertQuestQuality(handoff).errors.length, 0, 'A real replacement policy permits the cooperative case.');
 const warnings = assertQuestQuality(warns).warnings;
 assert(warnings.some((row) => row.code === 'action_budget') && warnings.some((row) => row.code === 'reading_budget'));
 const pressure = fixture(); designOf(pressure).pacing = { pressureNodeIds: ['choose', 'procedure', 'ending'], safeNodeIds: [], maxConsecutivePressure: 2 };

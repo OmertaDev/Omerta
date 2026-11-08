@@ -47,6 +47,9 @@ reading or pressure budgets produces warnings. The reading check conservatively 
 authored public text envelope, including alternate branches. Concept count uses declared
 assumptions. Unproven graph ordering for spoilers also warns; runtime disclosure checks remain
 necessary. These diagnostics do not establish that prose is fair, accessible, enjoyable or spoiler-free.
+Quality cases declaring more than one actual party role must set `allowRoleReplacement:true`
+on their party policy. Otherwise `quality_handoff_required` rejects a case whose participants
+cannot safely leave and hand off their roles.
 
 ## Multiple sufficient proofs
 
