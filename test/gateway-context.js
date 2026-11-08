@@ -8,6 +8,39 @@ import { withItemTransaction, grantStack } from '../src/items.js';
 import { missionReadiness, doMission } from '../src/growth.js';
 import { MISSIONS, GUNS } from '../src/rules.js';
 
+// Numeric privacy sentinels apply to amounts, not digits inside observation timestamps.
+function assertNoNumericSecrets(value, pattern) {
+  const visit = (item) => {
+    if (item && typeof item === 'object') {
+      for (const child of Object.values(item)) visit(child);
+    } else if (typeof item === 'number'
+      || typeof item === 'string' && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(item.trim())) {
+      assert.doesNotMatch(String(item).trim(), pattern);
+    }
+  };
+  visit(JSON.parse(JSON.stringify(value)));
+}
+const inventoryTextSecrets = /foreign-car|owner_id|account_id|ownerScope|ownerId/;
+const ownedStackTimestamp = '2026-11-08T15:32:05.987Z';
+const numericSecrets = /987|4321|7777|43210|98765/;
+assertNoNumericSecrets({ createdAt: ownedStackTimestamp,
+  nested: [{ updatedAt: ownedStackTimestamp, date: new Date(ownedStackTimestamp), qty: 10,
+    id: '7f809870-0000-4000-8000-000000000000' }] }, numericSecrets);
+assert.throws(() => assertNoNumericSecrets({ createdAt: 987 }, numericSecrets), { code: 'ERR_ASSERTION' });
+for (const value of [987, 9876, 98765, 4321, 7777, 43210, 1.987, '987', '9876', '98765', '4321', '7777', '43210',
+  '  +987.5  ', '-0.987', '.987', '987.', '9.987e+2', '1e987', '  -4.4321E-2  ']) {
+  assert.throws(() => assertNoNumericSecrets({ nested: [{ amount: value }] }, numericSecrets), { code: 'ERR_ASSERTION' });
+}
+for (const value of [9876, '  98765  ']) {
+  assert.throws(() => assertNoNumericSecrets({ nested: [{ toJSON: () => value }] }, numericSecrets), { code: 'ERR_ASSERTION' });
+}
+assert.throws(() => assert.doesNotMatch(JSON.stringify({ equipment: { cars: [{ id: 'foreign-car' }] } }), inventoryTextSecrets),
+  { code: 'ERR_ASSERTION' });
+for (const key of ['owner_id', 'account_id', 'ownerScope', 'ownerId']) {
+  assert.throws(() => assert.doesNotMatch(JSON.stringify({ nested: [{ [key]: 'private' }] }), inventoryTextSecrets),
+    { code: 'ERR_ASSERTION' });
+}
+
 const pool = await makeDb();
 const account = 'gateway-context-account';
 const character = 'gateway-context-character';
@@ -48,6 +81,9 @@ try {
     await grantStack(client, { scope: 'account', id: account }, 'mat:scrap_steel', 10, 'standard', 'gateway context fixture', 'context:grant');
     await grantStack(client, { scope: 'account', id: other }, 'mat:wire', 987, 'standard', 'gateway other fixture', 'context:other-grant');
   });
+  await pool.query(`UPDATE item_stacks SET created_at=$1,updated_at=$1
+    WHERE owner_scope='account' AND owner_id=$2 AND template_id='mat:scrap_steel' AND quality='standard'`,
+  [ownedStackTimestamp, account]);
   assert.equal(CAPABILITIES.length, new Set(CAPABILITIES.map((entry) => entry.name)).size);
   for (const entry of CAPABILITIES) {
     assert.equal(entry.inputSchema.additionalProperties, false, entry.name);
@@ -64,13 +100,17 @@ try {
   const minimal = await run('get_player_context', {}, only('player.read'));
   assert.equal(minimal.player.name, 'Context Carla');
   for (const key of ['inventory', 'crew', 'family', 'world', 'economy', 'coordinationRequests', 'activeMysteries']) assert.equal(key in minimal, false, key);
-  assert.doesNotMatch(JSON.stringify(minimal), /4321|7777|foreign-car|context-car|wallet_address|account_id|ammo|cash|bank/);
+  assert.doesNotMatch(JSON.stringify(minimal), /foreign-car|context-car|wallet_address|account_id|ammo|cash|bank/);
+  assertNoNumericSecrets(minimal, /4321|7777/);
 
   const before = (await pool.query('SELECT cash,energy,last_accrued_at FROM characters WHERE id=$1', [character])).rows[0];
   const inventory = await run('get_inventory');
   assert.equal(inventory.account.stacks[0].qty, 10);
   assert.equal(inventory.equipment.cars[0].id, 'context-car');
-  assert.doesNotMatch(JSON.stringify(inventory), /987|foreign-car|owner_id|account_id|ownerScope|ownerId/);
+  assert.equal(inventory.account.stacks[0].createdAt, ownedStackTimestamp);
+  assert.equal(inventory.account.stacks[0].updatedAt, ownedStackTimestamp);
+  assert.doesNotMatch(JSON.stringify(inventory), inventoryTextSecrets);
+  assertNoNumericSecrets(inventory, /987/);
   assert.equal((await run('get_item', { itemId: 'context-car' })).item.type, 'vehicle');
   await assert.rejects(run('get_item', { itemId: 'foreign-car' }), { code: 'gateway_unavailable' });
   await assert.rejects(run('get_item', { itemId: 'item:belladonna_artifact' }), { code: 'gateway_unavailable' });
@@ -117,13 +157,15 @@ try {
   await pool.query(`INSERT INTO crew_members (crew_id,account_id,name) VALUES ('context-crew',$1,'Context Carla')`, [account]);
   const crew = await run('get_crew', {}, only('social.read'));
   assert.equal(crew.crew.members.length, 2);
-  assert.doesNotMatch(JSON.stringify(crew), /leader_account|account_id|foreign-car|987|4321|reward|"pot"/);
+  assert.doesNotMatch(JSON.stringify(crew), /leader_account|account_id|foreign-car|reward|"pot"/);
+  assertNoNumericSecrets(crew, /987|4321/);
   const family = await run('get_family', {}, only('social.read'));
   assert.equal(family.extendedFamily.marriage.steward, 'Other Oliver');
-  assert.doesNotMatch(JSON.stringify(family), /accountId|account_id|43210|98765|resources|cash|ammo|omr/);
+  assert.doesNotMatch(JSON.stringify(family), /accountId|account_id|resources|cash|ammo|omr/);
+  assertNoNumericSecrets(family, /43210|98765/);
   const familyResources = await run('get_group_resources', { group: 'family' });
   assert.equal(familyResources.resources.cash, 43210);
-  assert.doesNotMatch(JSON.stringify(familyResources), /98765/);
+  assertNoNumericSecrets(familyResources, /98765/);
   assert.equal((await run('get_alliances')).relations[0].active, true);
 
   const notifications = await run('get_notifications', {}, only('player.read'));
@@ -162,12 +204,16 @@ try {
   assert.equal(paths.ownKnowledge[0].id, 'own-clue');
   assert.equal('ownInventory' in paths, false);
   assert.equal('ownCraftingOptions' in paths, false);
-  assert.doesNotMatch(JSON.stringify(paths), /foreign-car|98765|"omr"|987|privateEvidence/);
+  assert.doesNotMatch(JSON.stringify(paths), /foreign-car|"omr"|privateEvidence/);
+  assertNoNumericSecrets(paths, /98765|987/);
   await assert.rejects(withKnowledge.execute('find_coordination_paths', account,
     { operationId: 'foreign-operation' }, only('social.read', 'coordination.read')), { code: 'operation_unavailable' });
   const fullPaths = await withKnowledge.execute('find_coordination_paths', account, { operationId: 'context-operation' }, full);
   assert.equal(fullPaths.ownInventory.equipment.cars[0].id, 'context-car');
-  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car|98765|987/);
+  assert.equal(fullPaths.ownInventory.account.stacks[0].createdAt, ownedStackTimestamp);
+  assert.equal(fullPaths.ownInventory.account.stacks[0].updatedAt, ownedStackTimestamp);
+  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car/);
+  assertNoNumericSecrets(fullPaths, /98765|987/);
 
   // Every published mission's preview must match its actual refusal/acceptance gate.
   // The fake query stops exactly at the first write, so no reward is executed here.
