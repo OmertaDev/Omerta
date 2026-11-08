@@ -20,9 +20,14 @@ const scoped = { ...connection, max: 4, options: `-c search_path=${schema} -c st
 const pool = new Pool(scoped), peer = new Pool(scoped), priorCaps = { ...dbCaps };
 let created = false, primaryFailure;
 try {
-  const server = (await admin.query('SELECT version() AS version,current_database() AS database,inet_server_addr()::text AS address')).rows[0];
+  const observed = await admin.connect();
+  let server;
+  try {
+    assert(['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(observed.connection.stream.remoteAddress),
+      'The native proof client must connect only to its literal loopback target.');
+    server = (await observed.query('SELECT version() AS version,current_database() AS database,inet_server_addr()::text AS address')).rows[0];
+  } finally { observed.release(); }
   assert.match(server.version, /^PostgreSQL (?:16\.\d+|18\.4)(?:\s|$)/); assert.equal(server.database, database);
-  assert(['127.0.0.1/32', '127.0.0.1', '::1/128', '::1'].includes(server.address));
   await admin.query(`CREATE SCHEMA ${schema}`); created = true;
   const boot = await pool.connect();
   try { await migrateSchemaUnderLock(boot, { schemaText: fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'), compatibility: 'postgres' }); }

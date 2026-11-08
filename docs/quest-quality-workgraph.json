@@ -102,7 +102,7 @@
         "quality-mw7epgss-quest-quality-runtime",
         "quality-mw7epkmz-quest-quality-api",
         "quality-mw7epnuo-quest-quality-browser",
-        "quality-mw7eq2ws-quest-quality-postgres",
+        "quality-mw7eyfgx-quest-quality-postgres",
         "quality-mw7eq9iw-quest-quality-stateful"
       ]
     },
@@ -853,7 +853,7 @@
         "quality-mw7epgss-quest-quality-runtime",
         "quality-mw7eqaez-quest-quality-social",
         "quality-mw7epnuo-quest-quality-browser",
-        "quality-mw7eq2ws-quest-quality-postgres",
+        "quality-mw7eyfgx-quest-quality-postgres",
         "quality-mw7eq9iw-quest-quality-stateful"
       ]
     },
@@ -887,7 +887,7 @@
         "quality-mw7epkmz-quest-quality-api",
         "quality-mw7eqaez-quest-quality-social",
         "quality-mw7epnuo-quest-quality-browser",
-        "quality-mw7eq2ws-quest-quality-postgres",
+        "quality-mw7eyfgx-quest-quality-postgres",
         "quality-mw7eq9iw-quest-quality-stateful"
       ]
     },
@@ -917,7 +917,7 @@
         "quality-mw7epfxc-quest-quality-rules",
         "quality-mw7eqaez-quest-quality-social",
         "quality-mw7epnuo-quest-quality-browser",
-        "quality-mw7eq2ws-quest-quality-postgres"
+        "quality-mw7eyfgx-quest-quality-postgres"
       ]
     },
     {
@@ -950,7 +950,7 @@
         "quality-mw7eqaez-quest-quality-social",
         "quality-mw7eqefe-quest-quality-spoilers",
         "quality-mw7epnuo-quest-quality-browser",
-        "quality-mw7eq2ws-quest-quality-postgres",
+        "quality-mw7eyfgx-quest-quality-postgres",
         "quality-mw7eq9iw-quest-quality-stateful"
       ]
     },
@@ -3680,6 +3680,52 @@
       "elapsedMs": 166,
       "exitCode": 0,
       "log": "output/quest-quality-verification/quality-mw7eqhop-quest-quality-study.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mw7eyfgx-quest-quality-postgres",
+      "evaluator": "test/quest-quality-postgres.js",
+      "evaluatorHash": "f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "efe1fa9001b69b10f6ab0dd3592df63f2139365021b291c2f352e38a3a01044a",
+        "public/index.html": "fab1a66f3b3d928249173fb9628d293510e9b0e85fd6602547b12851d83227a5",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "ebd0f32f0c43727b1176c5ef71afdf74ab5d7bd6d7afd60dce7aa6121ac4f2f7",
+        "public/ux-quests.js": "95cb6d48231ca048d42ef10da09a4c1788522502c20af57fea1f723ef90ee367",
+        "src/agentgateway.js": "3fa8b354e53473ffe269c517d0c930bf995130d32a1dab97954c891727c54e95",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "654ae619b38a3abddacafcef8e913e6f4cf715c07a83b46f424decb6fff6bfa4",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "48e9ffc844ae08867e0923743dd94d3fcb859d00cdacdf433f82a7323184817c",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-08T05:50:29.073Z",
+      "elapsedMs": 7740,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mw7eyfgx-quest-quality-postgres.log",
       "evidenceType": "automated_implementation_check"
     }
   ]
